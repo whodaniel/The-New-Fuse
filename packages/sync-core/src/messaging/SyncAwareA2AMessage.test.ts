@@ -1,14 +1,10 @@
-import {
-  SyncAwareA2AMessage,
-  SyncAwareMessageUtils,
-  SyncMetadata
-} from './SyncAwareA2AMessage';
+import { SyncAwareA2AMessage, SyncAwareMessageUtils, SyncMetadata } from './SyncAwareA2AMessage';
 
 describe('SyncAwareA2AMessage', () => {
   describe('SyncAwareMessageUtils', () => {
     it('should create sync metadata with defaults', () => {
       const syncMetadata = SyncAwareMessageUtils.createSyncMetadata();
-      
+
       expect(syncMetadata).toBeDefined();
       expect(syncMetadata.syncId).toBeDefined();
       expect(syncMetadata.syncVersion).toBe(1);
@@ -31,11 +27,11 @@ describe('SyncAwareA2AMessage', () => {
         crossTenantAllowed: true,
         priority: 'high',
         maxRetries: 5,
-        requiresAck: true
+        requiresAck: true,
       };
 
       const syncMetadata = SyncAwareMessageUtils.createSyncMetadata(options);
-      
+
       expect(syncMetadata.tenantId).toBe('test-tenant');
       expect(syncMetadata.crossTenantAllowed).toBe(true);
       expect(syncMetadata.priority).toBe('high');
@@ -53,13 +49,13 @@ describe('SyncAwareA2AMessage', () => {
         payload: { test: 'data' },
         metadata: {
           priority: 'medium' as const,
-          protocol_version: '1.0'
-        }
+          protocol_version: '1.0',
+        },
       };
 
       const syncAwareMessage = SyncAwareMessageUtils.toSyncAware(originalMessage, {
         tenantId: 'test-tenant',
-        priority: 'high'
+        priority: 'high',
       });
 
       expect(syncAwareMessage.id).toBe('test-msg-1');
@@ -72,7 +68,7 @@ describe('SyncAwareA2AMessage', () => {
     it('should extract sync metadata from sync-aware message', () => {
       const syncMetadata = SyncAwareMessageUtils.createSyncMetadata({
         tenantId: 'test-tenant',
-        priority: 'critical'
+        priority: 'critical',
       });
 
       const syncAwareMessage: SyncAwareA2AMessage = {
@@ -84,12 +80,12 @@ describe('SyncAwareA2AMessage', () => {
         metadata: {
           priority: 'critical',
           protocol_version: '1.0',
-          sync: syncMetadata
-        }
+          sync: syncMetadata,
+        },
       };
 
       const extractedMetadata = SyncAwareMessageUtils.extractSyncMetadata(syncAwareMessage);
-      
+
       expect(extractedMetadata).toEqual(syncMetadata);
       expect(extractedMetadata.tenantId).toBe('test-tenant');
       expect(extractedMetadata.priority).toBe('critical');
@@ -106,9 +102,9 @@ describe('SyncAwareA2AMessage', () => {
           priority: 'medium',
           protocol_version: '1.0',
           sync: SyncAwareMessageUtils.createSyncMetadata({
-            crossTenantAllowed: true
-          })
-        }
+            crossTenantAllowed: true,
+          }),
+        },
       };
 
       const singleTenantMessage: SyncAwareA2AMessage = {
@@ -121,9 +117,9 @@ describe('SyncAwareA2AMessage', () => {
           priority: 'medium',
           protocol_version: '1.0',
           sync: SyncAwareMessageUtils.createSyncMetadata({
-            crossTenantAllowed: false
-          })
-        }
+            crossTenantAllowed: false,
+          }),
+        },
       };
 
       expect(SyncAwareMessageUtils.allowsCrossTenant(crossTenantMessage)).toBe(true);
@@ -141,9 +137,9 @@ describe('SyncAwareA2AMessage', () => {
           priority: 'medium',
           protocol_version: '1.0',
           sync: SyncAwareMessageUtils.createSyncMetadata({
-            tenantId: 'test-tenant-123'
-          })
-        }
+            tenantId: 'test-tenant-123',
+          }),
+        },
       };
 
       const tenantId = SyncAwareMessageUtils.getTenantId(message);
@@ -160,13 +156,13 @@ describe('SyncAwareA2AMessage', () => {
         metadata: {
           priority: 'medium',
           protocol_version: '1.0',
-          sync: SyncAwareMessageUtils.createSyncMetadata()
-        }
+          sync: SyncAwareMessageUtils.createSyncMetadata(),
+        },
       };
 
       const message2: SyncAwareA2AMessage = {
         ...message1,
-        payload: { test: 'different-data', value: 456 }
+        payload: { test: 'different-data', value: 456 },
       };
 
       const checksum1 = SyncAwareMessageUtils.calculateChecksum(message1);
@@ -212,9 +208,9 @@ describe('SyncAwareA2AMessage', () => {
           priority: 'medium',
           protocol_version: '1.0',
           sync: SyncAwareMessageUtils.createSyncMetadata({
-            tenantId: 'valid-tenant-123'
-          })
-        }
+            tenantId: 'valid-tenant-123',
+          }),
+        },
       };
 
       const invalidMessage = {
@@ -228,9 +224,9 @@ describe('SyncAwareA2AMessage', () => {
           protocol_version: '1.0',
           sync: {
             // Missing required fields
-            syncVersion: 1
-          }
-        }
+            syncVersion: 1,
+          },
+        },
       } as any;
 
       expect(SyncAwareMessageUtils.validateMessage(validMessage)).toBe(true);
@@ -245,17 +241,17 @@ describe('SyncAwareA2AMessage', () => {
           version: '2.0',
           priority: 'high' as const,
           source: 'test-source',
-          target: 'test-target'
+          target: 'test-target',
         },
         body: {
           content: { test: 'v2-data' },
           metadata: {
             sent_at: Date.now(),
             sync: SyncAwareMessageUtils.createSyncMetadata({
-              tenantId: 'v2-tenant'
-            })
-          }
-        }
+              tenantId: 'v2-tenant',
+            }),
+          },
+        },
       };
 
       const syncMetadata = SyncAwareMessageUtils.extractSyncMetadata(v2Message);

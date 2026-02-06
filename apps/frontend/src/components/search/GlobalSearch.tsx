@@ -1,5 +1,5 @@
-import React from 'react';
 import { useSearch } from '@/hooks/useSearch';
+import React from 'react';
 import { SearchFilters } from './SearchFilters';
 import { SearchResults } from './SearchResults';
 
@@ -8,15 +8,8 @@ export const GlobalSearch: React.FC = () => {
 
   return (
     <div className="global-search">
-      <SearchBar
-        value={query}
-        onChange={search}
-        hotkey="cmd+k"
-      />
-      <SearchFilters
-        filters={filters}
-        onChange={setFilters}
-      />
+      <SearchBar value={query} onChange={search} hotkey="cmd+k" />
+      <SearchFilters filters={filters} onChange={setFilters} />
       <SearchResults results={results} />
     </div>
   );

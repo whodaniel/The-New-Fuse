@@ -1,11 +1,11 @@
 import { TimelineService as ITimelineService } from '../../../types/services';
-import { TimelineEvent, TimelineBranch, TimelineWorkflow } from '../../../types/timeline';
+import { TimelineBranch, TimelineEvent, TimelineWorkflow } from '../../../types/timeline';
 import { api } from '../../../utils/api';
 
 export class TimelineService implements ITimelineService {
   async getEventTimeline(branchId: string, includeDetails = false): Promise<TimelineEvent[]> {
     const response = await api.get(`/timeline/events/${branchId}`, {
-      params: { includeDetails }
+      params: { includeDetails },
     });
     return response.data;
   }
@@ -28,7 +28,7 @@ export class TimelineService implements ITimelineService {
     const response = await api.post('/timeline/branches', {
       name,
       startEventId,
-      parentBranchId
+      parentBranchId,
     });
     return response.data;
   }
@@ -40,7 +40,7 @@ export class TimelineService implements ITimelineService {
   ): Promise<void> {
     await api.post(`/timeline/branches/${branchId}/merge`, {
       targetEventId,
-      mergedFromEvents
+      mergedFromEvents,
     });
   }
 

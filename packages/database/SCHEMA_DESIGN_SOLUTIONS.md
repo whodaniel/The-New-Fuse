@@ -2,7 +2,10 @@
 
 ## Executive Summary
 
-This document provides complete solutions for all database schema design issues while preserving The New Fuse's unique and advanced features. All decisions are based on business logic analysis, industry best practices, and scalability requirements.
+This document provides complete solutions for all database schema design issues
+while preserving The New Fuse's unique and advanced features. All decisions are
+based on business logic analysis, industry best practices, and scalability
+requirements.
 
 ---
 
@@ -10,10 +13,12 @@ This document provides complete solutions for all database schema design issues 
 
 ### Issue 1.1: Unencrypted API Keys in LLMConfig
 
-**Problem**: `LLMConfig.apiKey` stores sensitive credentials in plaintext (line 780)
+**Problem**: `LLMConfig.apiKey` stores sensitive credentials in plaintext
+(line 780)
 
 **Solution**:
-```prisma
+
+```drizzle
 model LLMConfig {
   // ... other fields
 
@@ -30,22 +35,27 @@ model LLMConfig {
 ```
 
 **Implementation Strategy**:
+
 - Use AES-256-GCM encryption at application layer
 - Store encrypted value in database
-- Use environment variable or external KMS (AWS KMS, HashiCorp Vault) for encryption keys
+- Use environment variable or external KMS (AWS KMS, HashiCorp Vault) for
+  encryption keys
 - Implement automatic key rotation
 - Migration: Encrypt existing keys during deployment
 
-**Business Decision**: Use application-level encryption initially, migrate to external KMS for production at scale.
+**Business Decision**: Use application-level encryption initially, migrate to
+external KMS for production at scale.
 
 ---
 
 ### Issue 1.2: CodeExecutionSession.ownerId Not Foreign-Keyed
 
-**Problem**: `ownerId` is a string without FK constraint, risking orphaned records
+**Problem**: `ownerId` is a string without FK constraint, risking orphaned
+records
 
 **Solution**:
-```prisma
+
+```drizzle
 model CodeExecutionSession {
   id              String    @id @default(uuid())
   name            String
@@ -72,7 +82,8 @@ model User {
 }
 ```
 
-**Business Decision**: Cascade delete - when user is deleted, their code sessions are deleted.
+**Business Decision**: Cascade delete - when user is deleted, their code
+sessions are deleted.
 
 ---
 
@@ -84,30 +95,45 @@ model User {
 
 **Solution - Two-Part Approach**:
 
-#### Part A: Prisma Middleware (Global Filter)
+#### Part A: Drizzle Middleware (Global Filter)
+
 ```typescript
-// packages/database/src/prisma.service.ts
+// packages/database/src/drizzle.service.ts
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '../generated/prisma';
+import { DrizzleClient } from '../generated/drizzle';
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit {
+export class DatabaseService extends DrizzleClient implements OnModuleInit {
   async onModuleInit() {
     await this.$connect();
 
     // Soft delete middleware
     this.$use(async (params, next) => {
       const modelsWithSoftDelete = [
-        'user', 'agent', 'chat', 'pipeline', 'task',
-        'workflow', 'llmConfig', 'registeredEntity'
+        'user',
+        'agent',
+        'chat',
+        'pipeline',
+        'task',
+        'workflow',
+        'llmConfig',
+        'registeredEntity',
       ];
 
       // Only apply to models with deletedAt
       if (modelsWithSoftDelete.includes(params.model?.toLowerCase() || '')) {
-
         // Intercept findUnique, findFirst, findMany, count, aggregate
-        if (['findUnique', 'findFirst', 'findMany', 'count', 'aggregate', 'groupBy'].includes(params.action)) {
+        if (
+          [
+            'findUnique',
+            'findFirst',
+            'findMany',
+            'count',
+            'aggregate',
+            'groupBy',
+          ].includes(params.action)
+        ) {
           if (params.args.where) {
             if (params.args.where.deletedAt === undefined) {
               params.args.where.deletedAt = null;
@@ -158,6 +184,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 ```
 
 #### Part B: Repository Method Additions
+
 ```typescript
 // packages/database/src/repositories/base.repository.ts
 
@@ -165,30 +192,33 @@ export abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> {
   // ... existing methods
 
   async findManyIncludingDeleted(filters?: WhereInput): Promise<T[]> {
-    return this.prisma[this.modelName].findMany({
-      where: { ...filters, deletedAt: undefined } as any
+    return this.drizzle[this.modelName].findMany({
+      where: { ...filters, deletedAt: undefined } as any,
     });
   }
 
   async restore(id: string): Promise<T> {
-    return this.prisma[this.modelName].update({
+    return this.drizzle[this.modelName].update({
       where: { id },
-      data: { deletedAt: null, updatedAt: new Date() }
+      data: { deletedAt: null, updatedAt: new Date() },
     });
   }
 }
 ```
 
-**Business Decision**: Soft deletes for audit trail and recovery; middleware prevents accidental inclusion of deleted records.
+**Business Decision**: Soft deletes for audit trail and recovery; middleware
+prevents accidental inclusion of deleted records.
 
 ---
 
 ### Issue 2.2: Message Model Relationship Ambiguity
 
-**Problem**: Message can belong to Chat OR ChatRoom OR be standalone, no constraints
+**Problem**: Message can belong to Chat OR ChatRoom OR be standalone, no
+constraints
 
 **Solution**:
-```prisma
+
+```drizzle
 model Message {
   id              String      @id @default(uuid())
   content         String      @db.Text
@@ -243,6 +273,7 @@ model Agent {
 ```
 
 **Validation at Application Layer**:
+
 ```typescript
 // In MessageService or MessageRepository
 
@@ -271,16 +302,20 @@ validateMessageContext(data: CreateMessageDto): void {
 }
 ```
 
-**Business Decision**: XOR constraint enforced at application layer (Prisma doesn't support database-level XOR). ChatRoom is for multi-agent/multi-user conversations; Chat is for 1-on-1 agent interactions.
+**Business Decision**: XOR constraint enforced at application layer (Drizzle
+doesn't support database-level XOR). ChatRoom is for multi-agent/multi-user
+conversations; Chat is for 1-on-1 agent interactions.
 
 ---
 
 ### Issue 2.3: ChatMessage Model Orphaned
 
-**Problem**: ChatMessage has no relationship to Chat or ChatRoom, only userId string
+**Problem**: ChatMessage has no relationship to Chat or ChatRoom, only userId
+string
 
 **Solution - Consolidate ChatMessage into Message**:
-```prisma
+
+```drizzle
 // REMOVE ChatMessage model entirely
 
 // ENHANCE Message model:
@@ -296,34 +331,37 @@ model Message {
 ```
 
 **Migration Strategy**:
+
 1. Migrate existing ChatMessage records to Message
 2. Set `isEphemeral = true` and `expiresAt` for migrated records
 3. Create cleanup job to delete expired ephemeral messages
 4. Drop ChatMessage table
 
 **Cleanup Job**:
+
 ```typescript
 // packages/api/src/jobs/cleanup-ephemeral-messages.job.ts
 
 @Injectable()
 export class CleanupEphemeralMessagesJob {
-  constructor(private prisma: PrismaService) {}
+  constructor(private drizzle: DatabaseService) {}
 
-  @Cron('0 * * * *')  // Every hour
+  @Cron('0 * * * *') // Every hour
   async cleanupExpiredMessages() {
-    await this.prisma.message.deleteMany({
+    await this.drizzle.message.deleteMany({
       where: {
         isEphemeral: true,
         expiresAt: {
-          lte: new Date()
-        }
-      }
+          lte: new Date(),
+        },
+      },
     });
   }
 }
 ```
 
-**Business Decision**: Consolidate to single Message model for consistency; use flags for behavior differentiation.
+**Business Decision**: Consolidate to single Message model for consistency; use
+flags for behavior differentiation.
 
 ---
 
@@ -331,10 +369,12 @@ export class CleanupEphemeralMessagesJob {
 
 ### Issue 3.1: WorkflowStep.nextSteps Array Without FK
 
-**Problem**: `nextSteps String[]` references step IDs but no FK enforcement, cycles possible
+**Problem**: `nextSteps String[]` references step IDs but no FK enforcement,
+cycles possible
 
 **Solution - Hybrid Approach**:
-```prisma
+
+```drizzle
 model WorkflowStep {
   id              String          @id @default(uuid())
   name            String
@@ -393,16 +433,16 @@ model WorkflowStepEdge {
 ```
 
 **Cycle Detection at Application Layer**:
+
 ```typescript
 // packages/api/src/services/workflow-validation.service.ts
 
 @Injectable()
 export class WorkflowValidationService {
-
   async detectCycles(workflowId: string): Promise<boolean> {
-    const steps = await this.prisma.workflowStep.findMany({
+    const steps = await this.drizzle.workflowStep.findMany({
       where: { workflowId },
-      include: { nextStepEdges: true }
+      include: { nextStepEdges: true },
     });
 
     // Depth-first search for cycle detection
@@ -410,13 +450,13 @@ export class WorkflowValidationService {
     const recursionStack = new Set<string>();
 
     const hasCycle = (stepId: string): boolean => {
-      if (recursionStack.has(stepId)) return true;  // Cycle found
+      if (recursionStack.has(stepId)) return true; // Cycle found
       if (visited.has(stepId)) return false;
 
       visited.add(stepId);
       recursionStack.add(stepId);
 
-      const step = steps.find(s => s.id === stepId);
+      const step = steps.find((s) => s.id === stepId);
       if (step) {
         for (const edge of step.nextStepEdges) {
           if (hasCycle(edge.toStepId)) return true;
@@ -440,7 +480,7 @@ export class WorkflowValidationService {
     if (hasCycle) {
       return {
         valid: false,
-        errors: ['Workflow contains circular dependencies']
+        errors: ['Workflow contains circular dependencies'],
       };
     }
 
@@ -450,16 +490,20 @@ export class WorkflowValidationService {
 }
 ```
 
-**Business Decision**: Explicit edge table for referential integrity + application-level cycle detection. Allows complex branching logic while maintaining data consistency.
+**Business Decision**: Explicit edge table for referential integrity +
+application-level cycle detection. Allows complex branching logic while
+maintaining data consistency.
 
 ---
 
 ### Issue 3.2: Agent NFT Ownership vs User Ownership
 
-**Problem**: `Agent.userId` (single owner) vs `AgentNFT` with fractional shares (multiple owners)
+**Problem**: `Agent.userId` (single owner) vs `AgentNFT` with fractional shares
+(multiple owners)
 
 **Solution - Clear Ownership Hierarchy**:
-```prisma
+
+```drizzle
 model Agent {
   id                String               @id @default(uuid())
   name              String
@@ -539,12 +583,15 @@ model User {
 ```
 
 **Ownership Logic**:
+
 1. **Agent.creatorId**: Original creator (immutable, for attribution)
 2. **Agent.ownerId**: Current operational owner (can transfer via marketplace)
 3. **AgentNFT.minterId**: NFT minter (usually = creator)
 4. **FractionalShare.ownerAddress**: Revenue share holders
 
-**Business Decision**: Separate operational ownership from revenue rights. Agent ownership can be transferred via marketplace while revenue shares track financial stakeholders.
+**Business Decision**: Separate operational ownership from revenue rights. Agent
+ownership can be transferred via marketplace while revenue shares track
+financial stakeholders.
 
 ---
 
@@ -556,11 +603,11 @@ model User {
 
 **Solution - Single Source of Truth with Schema Views**:
 
-```prisma
-// PRIMARY SCHEMA: packages/database/prisma/schema.prisma
+```drizzle
+// PRIMARY SCHEMA: packages/database/drizzle/schema.drizzle
 // Keep as-is, this is the source of truth
 
-// MCP SCHEMA: src/mcp/prisma/schema.prisma
+// MCP SCHEMA: src/mcp/drizzle/schema.drizzle
 // Convert to view/adapter pattern
 
 model MCPAgent {
@@ -594,52 +641,53 @@ model MCPAgent {
 ```
 
 **Sync Service**:
+
 ```typescript
 // packages/api/src/mcp/services/mcp-agent-sync.service.ts
 
 @Injectable()
 export class MCPAgentSyncService {
   constructor(
-    private mainPrisma: PrismaService,  // Main schema
-    private mcpPrisma: MCPPrismaService  // MCP schema
+    private mainDrizzle: DatabaseService, // Main schema
+    private mcpDrizzle: MCPDatabaseService // MCP schema
   ) {}
 
   async registerAgentForMCP(agentId: string): Promise<MCPAgent> {
     // Get agent from main schema
-    const agent = await this.mainPrisma.agent.findUnique({
-      where: { id: agentId }
+    const agent = await this.mainDrizzle.agent.findUnique({
+      where: { id: agentId },
     });
 
     if (!agent) throw new Error('Agent not found');
 
     // Create MCP agent record
-    const mcpAgent = await this.mcpPrisma.mCPAgent.create({
+    const mcpAgent = await this.mcpDrizzle.mCPAgent.create({
       data: {
         coreAgentId: agentId,
         apiKey: generateSecureApiKey(),
         mcpCapabilities: this.mapCapabilitiesToMCP(agent.capabilities),
-        isOnline: true
-      }
+        isOnline: true,
+      },
     });
 
     return mcpAgent;
   }
 
   async syncAgentData(agentId: string): Promise<void> {
-    const agent = await this.mainPrisma.agent.findUnique({
-      where: { id: agentId }
+    const agent = await this.mainDrizzle.agent.findUnique({
+      where: { id: agentId },
     });
 
-    const mcpAgent = await this.mcpPrisma.mCPAgent.findUnique({
-      where: { coreAgentId: agentId }
+    const mcpAgent = await this.mcpDrizzle.mCPAgent.findUnique({
+      where: { coreAgentId: agentId },
     });
 
     if (agent && mcpAgent) {
-      await this.mcpPrisma.mCPAgent.update({
+      await this.mcpDrizzle.mCPAgent.update({
         where: { id: mcpAgent.id },
         data: {
-          mcpCapabilities: this.mapCapabilitiesToMCP(agent.capabilities)
-        }
+          mcpCapabilities: this.mapCapabilitiesToMCP(agent.capabilities),
+        },
       });
     }
   }
@@ -652,14 +700,14 @@ export class MCPAgentSyncService {
       // ... more mappings
     };
 
-    return capabilities
-      .map(cap => mcpMap[cap])
-      .filter(Boolean);
+    return capabilities.map((cap) => mcpMap[cap]).filter(Boolean);
   }
 }
 ```
 
-**Business Decision**: Main schema is source of truth for agent identity. MCP schema contains protocol-specific data and ephemeral state. Sync service keeps them aligned.
+**Business Decision**: Main schema is source of truth for agent identity. MCP
+schema contains protocol-specific data and ephemeral state. Sync service keeps
+them aligned.
 
 ---
 
@@ -670,7 +718,8 @@ export class MCPAgentSyncService {
 **Problem**: No VC model exists despite identity features
 
 **Solution - Complete VC Implementation**:
-```prisma
+
+```drizzle
 // Add to main schema
 
 enum CredentialType {
@@ -754,6 +803,7 @@ model User {
 ```
 
 **VC Service Implementation**:
+
 ```typescript
 // packages/api/src/services/verifiable-credential.service.ts
 
@@ -761,7 +811,7 @@ import { ethers } from 'ethers';
 
 @Injectable()
 export class VerifiableCredentialService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private drizzle: DatabaseService) {}
 
   async issueCredential(params: {
     subjectType: 'Agent' | 'User';
@@ -771,7 +821,6 @@ export class VerifiableCredentialService {
     issuerAgentId?: string;
     issuerUserId?: string;
   }): Promise<VerifiableCredential> {
-
     // Create W3C-compliant credential
     const credential = {
       '@context': ['https://www.w3.org/2018/credentials/v1'],
@@ -780,8 +829,8 @@ export class VerifiableCredentialService {
       issuanceDate: new Date().toISOString(),
       credentialSubject: {
         id: `${params.subjectType}:${params.subjectId}`,
-        ...params.data
-      }
+        ...params.data,
+      },
     };
 
     // Generate cryptographic proof
@@ -791,7 +840,7 @@ export class VerifiableCredentialService {
     const txHash = await this.storeOnChain(credential, proof);
 
     // Save to database
-    return this.prisma.verifiableCredential.create({
+    return this.drizzle.verifiableCredential.create({
       data: {
         subjectType: params.subjectType,
         subjectId: params.subjectId,
@@ -802,14 +851,14 @@ export class VerifiableCredentialService {
         proofType: 'EIP712Signature',
         proof: proof,
         blockchainTxHash: txHash,
-        status: 'ACTIVE'
-      }
+        status: 'ACTIVE',
+      },
     });
   }
 
   async verifyCredential(credentialId: string): Promise<boolean> {
-    const credential = await this.prisma.verifiableCredential.findUnique({
-      where: { id: credentialId }
+    const credential = await this.drizzle.verifiableCredential.findUnique({
+      where: { id: credentialId },
     });
 
     if (!credential) return false;
@@ -824,13 +873,13 @@ export class VerifiableCredentialService {
   }
 
   async revokeCredential(credentialId: string, reason: string): Promise<void> {
-    await this.prisma.verifiableCredential.update({
+    await this.drizzle.verifiableCredential.update({
       where: { id: credentialId },
       data: {
         status: 'REVOKED',
         revokedAt: new Date(),
-        revokedReason: reason
-      }
+        revokedReason: reason,
+      },
     });
   }
 
@@ -848,7 +897,7 @@ export class VerifiableCredentialService {
         { name: 'issuer', type: 'string' },
         { name: 'issuanceDate', type: 'string' },
         { name: 'credentialSubject', type: 'string' },
-      ]
+      ],
     };
 
     // Sign with system wallet
@@ -860,7 +909,7 @@ export class VerifiableCredentialService {
       created: new Date().toISOString(),
       proofPurpose: 'assertionMethod',
       verificationMethod: wallet.address,
-      signature
+      signature,
     };
   }
 
@@ -873,10 +922,13 @@ export class VerifiableCredentialService {
 
     // Call smart contract to store hash
     // Return transaction hash
-    return credentialHash;  // Placeholder
+    return credentialHash; // Placeholder
   }
 
-  private async verifyCryptographicProof(credential: any, proof: any): Promise<boolean> {
+  private async verifyCryptographicProof(
+    credential: any,
+    proof: any
+  ): Promise<boolean> {
     const domain = {
       name: 'TheNewFuse',
       version: '1',
@@ -889,7 +941,7 @@ export class VerifiableCredentialService {
         { name: 'issuer', type: 'string' },
         { name: 'issuanceDate', type: 'string' },
         { name: 'credentialSubject', type: 'string' },
-      ]
+      ],
     };
 
     const recoveredAddress = ethers.utils.verifyTypedData(
@@ -904,7 +956,9 @@ export class VerifiableCredentialService {
 }
 ```
 
-**Business Decision**: Implement full W3C Verifiable Credentials standard with blockchain anchoring for agent reputation, performance metrics, and compliance certifications.
+**Business Decision**: Implement full W3C Verifiable Credentials standard with
+blockchain anchoring for agent reputation, performance metrics, and compliance
+certifications.
 
 ---
 
@@ -913,7 +967,8 @@ export class VerifiableCredentialService {
 **Problem**: No explicit organization/team model for enterprise use
 
 **Solution - Complete Multi-Tenant Architecture**:
-```prisma
+
+```drizzle
 enum OrganizationType {
   INDIVIDUAL
   TEAM
@@ -1060,25 +1115,26 @@ model User {
 ```
 
 **Access Control Service**:
+
 ```typescript
 // packages/api/src/services/organization-access.service.ts
 
 @Injectable()
 export class OrganizationAccessService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private drizzle: DatabaseService) {}
 
   async checkAccess(
     userId: string,
     organizationId: string,
     requiredRole: MemberRole
   ): Promise<boolean> {
-    const member = await this.prisma.organizationMember.findUnique({
+    const member = await this.drizzle.organizationMember.findUnique({
       where: {
         organizationId_userId: {
           organizationId,
-          userId
-        }
-      }
+          userId,
+        },
+      },
     });
 
     if (!member) return false;
@@ -1088,7 +1144,7 @@ export class OrganizationAccessService {
       ADMIN: 4,
       MANAGER: 3,
       DEVELOPER: 2,
-      VIEWER: 1
+      VIEWER: 1,
     };
 
     return roleHierarchy[member.role] >= roleHierarchy[requiredRole];
@@ -1099,9 +1155,9 @@ export class OrganizationAccessService {
     resourceType: 'agent' | 'workflow' | 'llmConfig',
     resourceId: string
   ): Promise<boolean> {
-    const resource = await this.prisma[resourceType].findUnique({
+    const resource = await this.drizzle[resourceType].findUnique({
       where: { id: resourceId },
-      select: { organizationId: true, userId: true }
+      select: { organizationId: true, userId: true },
     });
 
     if (!resource) return false;
@@ -1121,7 +1177,9 @@ export class OrganizationAccessService {
 }
 ```
 
-**Business Decision**: Full multi-tenant architecture supporting personal, team, and enterprise use cases. Role-based access control with customizable permissions.
+**Business Decision**: Full multi-tenant architecture supporting personal, team,
+and enterprise use cases. Role-based access control with customizable
+permissions.
 
 ---
 
@@ -1132,6 +1190,7 @@ export class OrganizationAccessService {
 **Problem**: 16+ Json fields without validation schemas
 
 **Solution - JSON Schema Definitions**:
+
 ```typescript
 // packages/api/src/schemas/json-schemas.ts
 
@@ -1145,9 +1204,9 @@ export const AgentConfigSchema = {
     frequencyPenalty: { type: 'number', minimum: -2, maximum: 2 },
     presencePenalty: { type: 'number', minimum: -2, maximum: 2 },
     stop: { type: 'array', items: { type: 'string' } },
-    customParameters: { type: 'object' }
+    customParameters: { type: 'object' },
   },
-  additionalProperties: false
+  additionalProperties: false,
 };
 
 export const WorkflowDefinitionSchema = {
@@ -1165,9 +1224,9 @@ export const WorkflowDefinitionSchema = {
           type: { type: 'string' },
           name: { type: 'string' },
           config: { type: 'object' },
-          order: { type: 'integer' }
-        }
-      }
+          order: { type: 'integer' },
+        },
+      },
     },
     triggers: {
       type: 'array',
@@ -1175,13 +1234,16 @@ export const WorkflowDefinitionSchema = {
         type: 'object',
         required: ['type', 'config'],
         properties: {
-          type: { type: 'string', enum: ['schedule', 'webhook', 'manual', 'event'] },
-          config: { type: 'object' }
-        }
-      }
-    }
+          type: {
+            type: 'string',
+            enum: ['schedule', 'webhook', 'manual', 'event'],
+          },
+          config: { type: 'object' },
+        },
+      },
+    },
   },
-  additionalProperties: false
+  additionalProperties: false,
 };
 
 export const WorkflowStatisticsSchema = {
@@ -1191,10 +1253,13 @@ export const WorkflowStatisticsSchema = {
     successfulExecutions: { type: 'integer', minimum: 0 },
     failedExecutions: { type: 'integer', minimum: 0 },
     avgExecutionTime: { type: 'number', minimum: 0 },
-    lastExecutionStatus: { type: 'string', enum: ['success', 'failed', 'cancelled'] },
-    lastExecutionTime: { type: 'string', format: 'date-time' }
+    lastExecutionStatus: {
+      type: 'string',
+      enum: ['success', 'failed', 'cancelled'],
+    },
+    lastExecutionTime: { type: 'string', format: 'date-time' },
   },
-  additionalProperties: false
+  additionalProperties: false,
 };
 
 export const RevenueDistributionSchema = {
@@ -1207,38 +1272,44 @@ export const RevenueDistributionSchema = {
         type: 'object',
         required: ['address', 'share'],
         properties: {
-          address: { type: 'string', pattern: '^0x[a-fA-F0-9]{40}$' },  // Ethereum address
-          share: { type: 'number', minimum: 0, maximum: 1 }
-        }
-      }
+          address: { type: 'string', pattern: '^0x[a-fA-F0-9]{40}$' }, // Ethereum address
+          share: { type: 'number', minimum: 0, maximum: 1 },
+        },
+      },
     },
     amounts: {
       type: 'object',
       patternProperties: {
-        '^0x[a-fA-F0-9]{40}$': { type: 'string' }  // Amount as string to preserve precision
-      }
+        '^0x[a-fA-F0-9]{40}$': { type: 'string' }, // Amount as string to preserve precision
+      },
     },
     total: { type: 'string' },
-    timestamp: { type: 'string', format: 'date-time' }
+    timestamp: { type: 'string', format: 'date-time' },
   },
-  additionalProperties: false
+  additionalProperties: false,
 };
 
 // Validation decorator
 export function ValidateJson(schemaName: keyof typeof JsonSchemas) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+  ) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
       const schema = JsonSchemas[schemaName];
-      const dataToValidate = args[0];  // Assuming first arg is the data
+      const dataToValidate = args[0]; // Assuming first arg is the data
 
       const ajv = new Ajv();
       const validate = ajv.compile(schema);
       const valid = validate(dataToValidate);
 
       if (!valid) {
-        throw new Error(`JSON validation failed: ${JSON.stringify(validate.errors)}`);
+        throw new Error(
+          `JSON validation failed: ${JSON.stringify(validate.errors)}`
+        );
       }
 
       return originalMethod.apply(this, args);
@@ -1258,24 +1329,25 @@ export const JsonSchemas = {
 ```
 
 **Usage in Services**:
+
 ```typescript
 @Injectable()
 export class WorkflowService {
-
   @ValidateJson('WorkflowDefinition')
   async createWorkflow(data: CreateWorkflowDto) {
     // definition field is validated automatically
-    return this.prisma.workflow.create({
+    return this.drizzle.workflow.create({
       data: {
         ...data,
-        definition: data.definition  // Already validated
-      }
+        definition: data.definition, // Already validated
+      },
     });
   }
 }
 ```
 
-**Business Decision**: Use JSON Schema for runtime validation of complex JSON fields. Provides type safety without rigid database constraints.
+**Business Decision**: Use JSON Schema for runtime validation of complex JSON
+fields. Provides type safety without rigid database constraints.
 
 ---
 
@@ -1284,7 +1356,8 @@ export class WorkflowService {
 ### Issue 7.1: Missing Indexes
 
 **Solution - Comprehensive Index Strategy**:
-```prisma
+
+```drizzle
 // Add these indexes to existing models:
 
 model CodeExecutionUsage {
@@ -1338,37 +1411,43 @@ model VerifiableCredential {
 }
 ```
 
-**Business Decision**: Add composite indexes for common query patterns. Prioritize read performance for dashboards and analytics.
+**Business Decision**: Add composite indexes for common query patterns.
+Prioritize read performance for dashboards and analytics.
 
 ---
 
 ## 8. MIGRATION PLAN
 
 ### Phase 1: Critical Security (Week 1)
+
 1. Encrypt LLMConfig.apiKey
 2. Add CodeExecutionSession.ownerId FK
 3. Implement soft delete middleware
 4. Deploy encryption service
 
 ### Phase 2: Data Integrity (Week 2-3)
+
 1. Add Message validation
 2. Consolidate ChatMessage → Message
 3. Implement WorkflowStepEdge
 4. Add cycle detection
 
 ### Phase 3: Multi-Tenancy (Week 4-5)
+
 1. Create Organization model
 2. Migrate agents to organizations
 3. Implement access control
 4. Add organization dashboards
 
 ### Phase 4: Advanced Features (Week 6-7)
+
 1. Implement VerifiableCredentials
 2. Add JSON schema validation
 3. Create MCP agent sync
 4. Add comprehensive indexes
 
 ### Phase 5: Testing & Optimization (Week 8)
+
 1. Load testing
 2. Query optimization
 3. Index tuning
@@ -1386,30 +1465,31 @@ All changes maintain backwards compatibility through:
 4. **Feature Flags**: New features behind flags for gradual rollout
 
 Example migration:
+
 ```typescript
 // Migration: 20250120_encrypt_llm_config_keys.ts
 
-import { PrismaClient } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
 import { encryptApiKey } from '../utils/encryption';
 
-export async function up(prisma: PrismaClient) {
-  const configs = await prisma.lLMConfig.findMany();
+export async function up(drizzle: DrizzleClient) {
+  const configs = await drizzle.lLMConfig.findMany();
 
   for (const config of configs) {
     const encrypted = await encryptApiKey(config.apiKey);
 
-    await prisma.lLMConfig.update({
+    await drizzle.lLMConfig.update({
       where: { id: config.id },
       data: {
         apiKeyEncrypted: encrypted.ciphertext,
         encryptionKeyId: encrypted.keyId,
-        apiKey: 'MIGRATED'  // Placeholder
-      }
+        apiKey: 'MIGRATED', // Placeholder
+      },
     });
   }
 
   // After verification, drop old apiKey column
-  await prisma.$executeRaw`ALTER TABLE llm_configs DROP COLUMN IF EXISTS api_key`;
+  await drizzle.$executeRaw`ALTER TABLE llm_configs DROP COLUMN IF EXISTS api_key`;
 }
 ```
 
@@ -1417,7 +1497,7 @@ export async function up(prisma: PrismaClient) {
 
 ## 10. MONITORING & OBSERVABILITY ENHANCEMENTS
 
-```prisma
+```drizzle
 model SystemEvent {
   id            String      @id @default(uuid())
   eventType     String      // "agent.created", "workflow.executed", etc.
@@ -1462,13 +1542,12 @@ model PerformanceMetric {
 
 This comprehensive schema design:
 
-✅ **Preserves ALL unique features** of The New Fuse
-✅ **Fixes all identified security issues**
-✅ **Ensures data integrity** with proper relationships
-✅ **Supports multi-tenancy** for enterprise scale
-✅ **Implements verifiable credentials** for trust
-✅ **Provides migration paths** for safe deployment
-✅ **Optimizes for performance** with strategic indexes
-✅ **Maintains backwards compatibility**
+✅ **Preserves ALL unique features** of The New Fuse ✅ **Fixes all identified
+security issues** ✅ **Ensures data integrity** with proper relationships ✅
+**Supports multi-tenancy** for enterprise scale ✅ **Implements verifiable
+credentials** for trust ✅ **Provides migration paths** for safe deployment ✅
+**Optimizes for performance** with strategic indexes ✅ **Maintains backwards
+compatibility**
 
-All business decisions are based on real-world usage patterns identified in the codebase and industry best practices for AI agent platforms.
+All business decisions are based on real-world usage patterns identified in the
+codebase and industry best practices for AI agent platforms.

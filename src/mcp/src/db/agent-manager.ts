@@ -1,5 +1,4 @@
-import { prisma } from './prisma-client.js';
-import { v4 as uuidv4 } from 'uuid';
+import { db } from './db-client.js';
 import { logger } from './logger.js';
 import crypto from 'crypto';
 
@@ -26,13 +25,16 @@ export class AgentManager {
       const apiKey = this.generateApiKey();
       
       // Create the agent record
-      const agent = await prisma.agent.create({
+      const agent = await db.agent.create({
         data: {
           name,
           description,
           type,
           capabilities,
           apiKey,
+          isActive: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
         }
       });
       
@@ -59,7 +61,7 @@ export class AgentManager {
    */
   async verifyApiKey(apiKey: string): Promise<string | null> {
     try {
-      const agent = await prisma.agent.findUnique({
+      const agent = await db.agent.findUnique({
         where: { apiKey }
       });
       
@@ -81,7 +83,7 @@ export class AgentManager {
    */
   async getAgentById(agentId: string): Promise<any> {
     try {
-      const agent = await prisma.agent.findUnique({
+      const agent = await db.agent.findUnique({
         where: { id: agentId }
       });
       
@@ -112,9 +114,9 @@ export class AgentManager {
    */
   async updateCapabilities(agentId: string, capabilities: string[]): Promise<void> {
     try {
-      await prisma.agent.update({
+      await db.agent.update({
         where: { id: agentId },
-        data: { capabilities }
+        data: { capabilities, updatedAt: new Date() }
       });
       
       logger.info(`Updated capabilities for agent ${agentId}`);
@@ -132,23 +134,7 @@ export class AgentManager {
    */
   async setState(agentId: string, key: string, value: any): Promise<void> {
     try {
-      await prisma.agentState.upsert({
-        where: {
-          agentId_key: {
-            agentId,
-            key
-          }
-        },
-        create: {
-          agentId,
-          key,
-          value
-        },
-        update: {
-          value,
-          updatedAt: new Date()
-        }
-      });
+      const existing = await db.agentState.findUnique({ where: { agentId, key } });\n\n      if (existing) {\n        await db.agentState.update({\n          where: { id: existing.id },\n          data: { value, updatedAt: new Date() }\n        });\n      } else {\n        await db.agentState.create({\n          data: {\n            agentId,\n            key,\n            value,\n            createdAt: new Date(),\n            updatedAt: new Date()\n          }\n        });\n      }
       
       logger.debug(`Set state for agent ${agentId}: ${key}`);
     } catch (error) {
@@ -165,14 +151,7 @@ export class AgentManager {
    */
   async getState(agentId: string, key: string): Promise<any> {
     try {
-      const state = await prisma.agentState.findUnique({
-        where: {
-          agentId_key: {
-            agentId,
-            key
-          }
-        }
-      });
+      const state = await db.agentState.findUnique({ where: { agentId, key } });
       
       return state ? state.value : null;
     } catch (error) {
@@ -201,16 +180,8 @@ export class AgentManager {
         };
       }
       
-      const agents = await prisma.agent.findMany({
+      const agents = await db.agent.findMany({
         where: filter,
-        select: {
-          id: true,
-          name: true,
-          description: true,
-          type: true,
-          capabilities: true,
-          createdAt: true
-        },
         orderBy: { createdAt: 'desc' }
       });
       
@@ -228,9 +199,9 @@ export class AgentManager {
    */
   async deactivateAgent(agentId: string): Promise<void> {
     try {
-      await prisma.agent.update({
+      await db.agent.update({
         where: { id: agentId },
-        data: { isActive: false }
+        data: { isActive: false, updatedAt: new Date() }
       });
       
       logger.info(`Deactivated agent ${agentId}`);

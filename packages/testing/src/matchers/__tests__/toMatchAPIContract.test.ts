@@ -5,27 +5,27 @@ describe('toMatchAPIContract', () => {
   const userSchema = z.object({
     id: z.string(),
     name: z.string(),
-    email: z.string().email()
+    email: z.string().email(),
   });
 
   const testContract: APIContract = {
     status: 200,
     headers: {
-      'content-type': 'application/json'
+      'content-type': 'application/json',
     },
-    schema: userSchema
+    schema: userSchema,
   };
 
   const validResponse = {
     status: 200,
     headers: {
-      'content-type': 'application/json'
+      'content-type': 'application/json',
     },
     data: {
       id: '123',
       name: 'Test User',
-      email: 'test@example.com'
-    }
+      email: 'test@example.com',
+    },
   };
 
   it('should pass for valid response', async () => {
@@ -36,7 +36,7 @@ describe('toMatchAPIContract', () => {
   it('should fail for mismatched status code', async () => {
     const invalidResponse = {
       ...validResponse,
-      status: 404
+      status: 404,
     };
     const result = await toMatchAPIContract.call({} as any, invalidResponse, testContract);
     expect(result.pass).toBe(false);
@@ -45,7 +45,7 @@ describe('toMatchAPIContract', () => {
   it('should fail for missing required header', async () => {
     const invalidResponse = {
       ...validResponse,
-      headers: {}
+      headers: {},
     };
     const result = await toMatchAPIContract.call({} as any, invalidResponse, testContract);
     expect(result.pass).toBe(false);
@@ -57,8 +57,8 @@ describe('toMatchAPIContract', () => {
       data: {
         id: '123',
         name: 'Test User',
-        email: 'invalid-email' // Invalid email format
-      }
+        email: 'invalid-email', // Invalid email format
+      },
     };
     const result = await toMatchAPIContract.call({} as any, invalidResponse, testContract);
     expect(result.pass).toBe(false);
@@ -67,7 +67,7 @@ describe('toMatchAPIContract', () => {
   it('should handle response without headers requirement', async () => {
     const contractWithoutHeaders: APIContract = {
       status: 200,
-      schema: userSchema
+      schema: userSchema,
     };
     const result = await toMatchAPIContract.call({} as any, validResponse, contractWithoutHeaders);
     expect(result.pass).toBe(true);

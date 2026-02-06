@@ -2,7 +2,7 @@
  * Authentication Middleware - JWT token validation
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 interface AuthenticatedRequest extends Request {
@@ -16,7 +16,7 @@ interface AuthenticatedRequest extends Request {
 export function authMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       res.status(401).json({ error: 'No token provided' });
       return;
@@ -24,18 +24,18 @@ export function authMiddleware(req: AuthenticatedRequest, res: Response, next: N
 
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
     const jwtSecret = process.env.JWT_SECRET || '';
-    
+
     if (!jwtSecret) {
       res.status(500).json({ error: 'JWT secret not configured' });
       return;
     }
 
     const decoded = jwt.verify(token, jwtSecret) as any;
-    
+
     req.user = {
       id: decoded.id,
       email: decoded.email,
-      role: decoded.role
+      role: decoded.role,
     };
 
     next();

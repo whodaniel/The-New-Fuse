@@ -1,9 +1,9 @@
+import { GlassCard } from '@/components/ui/premium';
+import { useAuth } from '@/providers/AuthProvider';
+import { unstoppableDomainsService } from '@/services/unstoppableDomains.service';
+import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { unstoppableDomainsService } from '@/services/unstoppableDomains.service';
-import { useAuth } from '@/providers/AuthProvider';
-import { GlassCard } from '@/components/ui/premium';
-import { Loader2 } from 'lucide-react';
 
 /**
  * Callback page for Unstoppable Domains OAuth flow
@@ -30,7 +30,7 @@ const UnstoppableDomainsCallback: React.FC = () => {
       } catch (err: any) {
         console.error('Unstoppable Domains callback error:', err);
         setError(err.message || 'Authentication failed');
-        
+
         // Redirect to login after error
         setTimeout(() => {
           navigate('/auth/login', { replace: true });
@@ -69,20 +69,14 @@ const UnstoppableDomainsCallback: React.FC = () => {
                     />
                   </svg>
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">
-                  Authentication Failed
-                </h2>
+                <h2 className="text-2xl font-bold text-white mb-2">Authentication Failed</h2>
                 <p className="text-gray-400 text-sm">{error}</p>
-                <p className="text-gray-500 text-xs mt-2">
-                  Redirecting to login...
-                </p>
+                <p className="text-gray-500 text-xs mt-2">Redirecting to login...</p>
               </>
             ) : (
               <>
                 <Loader2 className="w-16 h-16 mx-auto mb-4 text-blue-400 animate-spin" />
-                <h2 className="text-2xl font-bold text-white mb-2">
-                  Completing Authentication
-                </h2>
+                <h2 className="text-2xl font-bold text-white mb-2">Completing Authentication</h2>
                 <p className="text-gray-400 text-sm">
                   Please wait while we verify your Unstoppable Domain...
                 </p>

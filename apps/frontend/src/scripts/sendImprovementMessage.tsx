@@ -23,7 +23,7 @@ export async function sendImprovementMessage(
     component,
     description,
     priority,
-    metadata
+    metadata,
   };
 
   try {
@@ -32,8 +32,8 @@ export async function sendImprovementMessage(
       payload: message,
       metadata: {
         timestamp: Date.now(),
-        source: 'frontend'
-      }
+        source: 'frontend',
+      },
     });
 
     logger.info('Sent improvement message', { component, priority });

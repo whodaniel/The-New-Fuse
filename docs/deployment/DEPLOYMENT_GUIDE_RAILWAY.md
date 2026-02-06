@@ -1,6 +1,7 @@
 # The New Fuse - Railway Deployment Guide
 
-This guide will help you deploy The New Fuse AI Agent Orchestration Platform to Railway using Docker.
+This guide will help you deploy The New Fuse AI Agent Orchestration Platform to
+Railway using Docker.
 
 ## Prerequisites
 
@@ -39,6 +40,7 @@ railway init
 ### Step 3: Add Database Services
 
 In Railway Dashboard:
+
 1. Click "New" → "Database" → "PostgreSQL"
 2. Click "New" → "Database" → "Redis"
 
@@ -46,24 +48,29 @@ Note the connection strings provided by Railway.
 
 ### Step 4: Deploy Each Service
 
-Railway will automatically detect your `railway.toml` files and deploy each service.
+Railway will automatically detect your `railway.toml` files and deploy each
+service.
 
 #### Deploy Frontend
+
 ```bash
 railway up --service frontend
 ```
 
 #### Deploy API Gateway
+
 ```bash
 railway up --service api-gateway
 ```
 
 #### Deploy API Service
+
 ```bash
 railway up --service api
 ```
 
 #### Deploy Backend Service
+
 ```bash
 railway up --service backend
 ```
@@ -73,6 +80,7 @@ railway up --service backend
 For each service, set these environment variables in Railway Dashboard:
 
 #### Frontend Service
+
 ```
 NODE_ENV=production
 PORT=3000
@@ -80,6 +88,7 @@ VITE_API_URL=<your-api-gateway-url>
 ```
 
 #### API Gateway Service
+
 ```
 NODE_ENV=production
 PORT=3002
@@ -87,6 +96,7 @@ API_URL=<your-api-service-url>
 ```
 
 #### API Service
+
 ```
 NODE_ENV=production
 PORT=3001
@@ -96,6 +106,7 @@ JWT_SECRET=<generate-a-secure-secret>
 ```
 
 #### Backend Service
+
 ```
 NODE_ENV=production
 PORT=3004
@@ -108,6 +119,7 @@ REDIS_URL=${{Redis.REDIS_URL}}
 If automatic detection doesn't work, create services manually:
 
 ### 1. Create Frontend Service
+
 ```bash
 railway service create frontend
 railway link <project-id>
@@ -116,6 +128,7 @@ railway up
 ```
 
 ### 2. Create API Gateway Service
+
 ```bash
 railway service create api-gateway
 railway link <project-id>
@@ -124,6 +137,7 @@ railway up
 ```
 
 ### 3. Create API Service
+
 ```bash
 railway service create api
 railway link <project-id>
@@ -132,6 +146,7 @@ railway up
 ```
 
 ### 4. Create Backend Service
+
 ```bash
 railway service create backend
 railway link <project-id>
@@ -186,6 +201,7 @@ docker-compose -f docker-compose.prod.yml down
 **Problem**: Docker build fails during dependency installation
 
 **Solution**:
+
 ```bash
 # Clear Docker cache
 docker builder prune -a
@@ -196,13 +212,15 @@ docker build --no-cache -f apps/<service>/Dockerfile -t <service> .
 
 **Problem**: Workspace dependencies not found
 
-**Solution**: Ensure all `package.json` files are copied in the Dockerfile deps stage.
+**Solution**: Ensure all `package.json` files are copied in the Dockerfile deps
+stage.
 
 ### Deployment Failures
 
 **Problem**: Railway deployment times out
 
 **Solution**: Increase health check timeout in `railway.toml`:
+
 ```toml
 [deploy]
 healthcheckTimeout = 600  # Increase to 10 minutes
@@ -211,6 +229,7 @@ healthcheckTimeout = 600  # Increase to 10 minutes
 **Problem**: Service crashes on startup
 
 **Solution**: Check Railway logs:
+
 ```bash
 railway logs --service <service-name>
 ```
@@ -220,6 +239,7 @@ railway logs --service <service-name>
 **Problem**: Cannot connect to PostgreSQL
 
 **Solution**:
+
 1. Verify `DATABASE_URL` environment variable is set correctly
 2. Use Railway's template variables: `${{Postgres.DATABASE_URL}}`
 3. Ensure database service is healthy before app starts
@@ -229,14 +249,17 @@ railway logs --service <service-name>
 ### Required Variables
 
 All services need:
+
 - `NODE_ENV=production`
 - `PORT=<service-port>`
 
 Services with database access need:
+
 - `DATABASE_URL` - PostgreSQL connection string
 - `REDIS_URL` - Redis connection string
 
 Frontend needs:
+
 - `VITE_API_URL` - URL of API Gateway service
 
 ### Optional Variables
@@ -248,6 +271,7 @@ Frontend needs:
 ## Monitoring and Logs
 
 ### View Service Logs
+
 ```bash
 railway logs --service frontend
 railway logs --service api-gateway
@@ -256,19 +280,23 @@ railway logs --service backend
 ```
 
 ### Monitor Service Health
+
 Railway Dashboard → Service → Metrics
 
 ### Database Monitoring
+
 Railway Dashboard → PostgreSQL → Metrics
 
 ## Cost Optimization
 
 ### Development Setup
+
 - Use shared PostgreSQL instance
 - Use shared Redis instance
 - Scale down to 1 replica per service
 
 ### Production Setup
+
 - Dedicated PostgreSQL instance (Hobby plan minimum)
 - Dedicated Redis instance
 - Auto-scaling enabled (2-4 replicas per service)

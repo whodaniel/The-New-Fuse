@@ -1,18 +1,17 @@
 /**
  * Service Mesh Monitor
- * 
+ *
  * Provides comprehensive monitoring capabilities for MCP services in a service mesh,
  * including health monitoring, metrics collection, and performance tracking.
  */
 
 import { EventEmitter } from 'events';
-import {
-  ServiceMeshProvider,
-  ServiceMeshMetrics,
-  ServiceMeshIntegrationResult
-} from './MCPServiceMesh';
 import { ServiceHealth } from '../types/broker';
-import { MCPErrorClass as MCPError, MCPErrorCode } from '../types/error';
+import {
+  ServiceMeshIntegrationResult,
+  ServiceMeshMetrics,
+  ServiceMeshProvider,
+} from './MCPServiceMesh';
 
 /**
  * Monitoring configuration
@@ -171,7 +170,7 @@ export class ServiceMeshMonitor extends EventEmitter {
       averageResponseTime: 0,
       totalMetricsCollected: 0,
       monitoringUptime: 0,
-      lastUpdate: new Date()
+      lastUpdate: new Date(),
     };
   }
 
@@ -183,7 +182,7 @@ export class ServiceMeshMonitor extends EventEmitter {
       if (this.isRunning) {
         return {
           success: false,
-          message: 'Monitoring is already running'
+          message: 'Monitoring is already running',
         };
       }
 
@@ -208,10 +207,9 @@ export class ServiceMeshMonitor extends EventEmitter {
         metadata: {
           healthCheckInterval: this.config.healthCheckInterval,
           metricsInterval: this.config.metricsInterval,
-          startTime: new Date().toISOString()
-        }
+          startTime: new Date().toISOString(),
+        },
       };
-
     } catch (error) {
       return {
         success: false,
@@ -219,8 +217,8 @@ export class ServiceMeshMonitor extends EventEmitter {
         error: {
           code: 'MONITORING_START_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error
-        }
+          details: error,
+        },
       };
     }
   }
@@ -233,7 +231,7 @@ export class ServiceMeshMonitor extends EventEmitter {
       if (!this.isRunning) {
         return {
           success: false,
-          message: 'Monitoring is not running'
+          message: 'Monitoring is not running',
         };
       }
 
@@ -256,10 +254,9 @@ export class ServiceMeshMonitor extends EventEmitter {
         message: 'Service mesh monitoring stopped successfully',
         metadata: {
           stopTime: new Date().toISOString(),
-          totalUptime: Date.now() - this.statistics.lastUpdate.getTime()
-        }
+          totalUptime: Date.now() - this.statistics.lastUpdate.getTime(),
+        },
       };
-
     } catch (error) {
       return {
         success: false,
@@ -267,8 +264,8 @@ export class ServiceMeshMonitor extends EventEmitter {
         error: {
           code: 'MONITORING_STOP_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error
-        }
+          details: error,
+        },
       };
     }
   }
@@ -281,7 +278,7 @@ export class ServiceMeshMonitor extends EventEmitter {
       if (this.monitoredServices.has(serviceId)) {
         return {
           success: false,
-          message: `Service ${serviceId} is already being monitored`
+          message: `Service ${serviceId} is already being monitored`,
         };
       }
 
@@ -300,8 +297,8 @@ export class ServiceMeshMonitor extends EventEmitter {
         monitoringStarted: new Date(),
         alertStatus: {
           inAlert: false,
-          activeAlerts: []
-        }
+          activeAlerts: [],
+        },
       };
 
       this.monitoredServices.set(serviceId, monitoringData);
@@ -314,10 +311,9 @@ export class ServiceMeshMonitor extends EventEmitter {
         metadata: {
           serviceId,
           initialHealth: health.status,
-          initialHealthScore: health.score
-        }
+          initialHealthScore: health.score,
+        },
       };
-
     } catch (error) {
       return {
         success: false,
@@ -325,8 +321,8 @@ export class ServiceMeshMonitor extends EventEmitter {
         error: {
           code: 'SERVICE_ADD_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error
-        }
+          details: error,
+        },
       };
     }
   }
@@ -339,7 +335,7 @@ export class ServiceMeshMonitor extends EventEmitter {
       if (!this.monitoredServices.has(serviceId)) {
         return {
           success: false,
-          message: `Service ${serviceId} is not being monitored`
+          message: `Service ${serviceId} is not being monitored`,
         };
       }
 
@@ -352,10 +348,9 @@ export class ServiceMeshMonitor extends EventEmitter {
         message: `Service ${serviceId} removed from monitoring`,
         metadata: {
           serviceId,
-          removedAt: new Date().toISOString()
-        }
+          removedAt: new Date().toISOString(),
+        },
       };
-
     } catch (error) {
       return {
         success: false,
@@ -363,8 +358,8 @@ export class ServiceMeshMonitor extends EventEmitter {
         error: {
           code: 'SERVICE_REMOVE_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error
-        }
+          details: error,
+        },
       };
     }
   }
@@ -408,7 +403,7 @@ export class ServiceMeshMonitor extends EventEmitter {
       .filter(([_, data]) => data.alertStatus.inAlert)
       .map(([serviceId, data]) => ({
         serviceId,
-        alerts: data.alertStatus.activeAlerts
+        alerts: data.alertStatus.activeAlerts,
       }));
   }
 
@@ -416,8 +411,8 @@ export class ServiceMeshMonitor extends EventEmitter {
    * Perform health checks for all monitored services
    */
   private async performHealthChecks(): Promise<void> {
-    const healthCheckPromises = Array.from(this.monitoredServices.keys()).map(
-      serviceId => this.performHealthCheck(serviceId)
+    const healthCheckPromises = Array.from(this.monitoredServices.keys()).map((serviceId) =>
+      this.performHealthCheck(serviceId)
     );
 
     await Promise.allSettled(healthCheckPromises);
@@ -435,10 +430,10 @@ export class ServiceMeshMonitor extends EventEmitter {
       this.statistics.totalHealthChecks++;
 
       const health = await this.provider.getServiceHealth(serviceId);
-      
+
       // Update monitoring data
       monitoringData.health = health;
-      
+
       if (health.status === 'online') {
         monitoringData.consecutiveFailures = 0;
         monitoringData.lastSuccessfulCheck = new Date();
@@ -451,7 +446,6 @@ export class ServiceMeshMonitor extends EventEmitter {
       await this.checkHealthAlerts(serviceId, monitoringData);
 
       this.emit('health-check-completed', serviceId, health);
-
     } catch (error) {
       const monitoringData = this.monitoredServices.get(serviceId);
       if (monitoringData) {
@@ -467,8 +461,8 @@ export class ServiceMeshMonitor extends EventEmitter {
    * Collect metrics for all monitored services
    */
   private async collectMetrics(): Promise<void> {
-    const metricsPromises = Array.from(this.monitoredServices.keys()).map(
-      serviceId => this.collectServiceMetrics(serviceId)
+    const metricsPromises = Array.from(this.monitoredServices.keys()).map((serviceId) =>
+      this.collectServiceMetrics(serviceId)
     );
 
     await Promise.allSettled(metricsPromises);
@@ -484,15 +478,15 @@ export class ServiceMeshMonitor extends EventEmitter {
       if (!monitoringData) return;
 
       const metrics = await this.provider.getServiceMetrics(serviceId);
-      
+
       // Update monitoring data
       monitoringData.metrics = metrics;
       monitoringData.metricsHistory.push(metrics);
 
       // Trim history to retention period
-      const retentionCutoff = Date.now() - (this.config.metricsRetention * 1000);
+      const retentionCutoff = Date.now() - this.config.metricsRetention * 1000;
       monitoringData.metricsHistory = monitoringData.metricsHistory.filter(
-        m => m.timestamp.getTime() > retentionCutoff
+        (m) => m.timestamp.getTime() > retentionCutoff
       );
 
       this.statistics.totalMetricsCollected++;
@@ -501,7 +495,6 @@ export class ServiceMeshMonitor extends EventEmitter {
       await this.checkPerformanceAlerts(serviceId, monitoringData);
 
       this.emit('metrics-collected', serviceId, metrics);
-
     } catch (error) {
       this.emit('metrics-collection-failed', serviceId, error);
     }
@@ -510,7 +503,10 @@ export class ServiceMeshMonitor extends EventEmitter {
   /**
    * Check for health-related alerts
    */
-  private async checkHealthAlerts(serviceId: string, monitoringData: ServiceMonitoringData): Promise<void> {
+  private async checkHealthAlerts(
+    serviceId: string,
+    monitoringData: ServiceMonitoringData
+  ): Promise<void> {
     const alerts: Alert[] = [];
 
     // Check consecutive failures
@@ -523,9 +519,9 @@ export class ServiceMeshMonitor extends EventEmitter {
         details: {
           consecutiveFailures: monitoringData.consecutiveFailures,
           lastSuccessfulCheck: monitoringData.lastSuccessfulCheck,
-          currentStatus: monitoringData.health.status
+          currentStatus: monitoringData.health.status,
         },
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
 
@@ -538,14 +534,14 @@ export class ServiceMeshMonitor extends EventEmitter {
         message: `Service ${serviceId} health score is below threshold`,
         details: {
           currentScore: monitoringData.health.score,
-          threshold: this.config.alertThresholds.healthScoreThreshold
+          threshold: this.config.alertThresholds.healthScoreThreshold,
         },
         timestamp: new Date(),
         triggerMetric: {
           name: 'health_score',
           value: monitoringData.health.score,
-          threshold: this.config.alertThresholds.healthScoreThreshold
-        }
+          threshold: this.config.alertThresholds.healthScoreThreshold,
+        },
       });
     }
 
@@ -557,7 +553,10 @@ export class ServiceMeshMonitor extends EventEmitter {
   /**
    * Check for performance-related alerts
    */
-  private async checkPerformanceAlerts(serviceId: string, monitoringData: ServiceMonitoringData): Promise<void> {
+  private async checkPerformanceAlerts(
+    serviceId: string,
+    monitoringData: ServiceMonitoringData
+  ): Promise<void> {
     if (!this.config.enablePerformanceMonitoring) return;
 
     const alerts: Alert[] = [];
@@ -572,14 +571,14 @@ export class ServiceMeshMonitor extends EventEmitter {
         message: `Service ${serviceId} CPU utilization is above threshold`,
         details: {
           currentCPU: metrics.resources.cpu,
-          threshold: this.config.alertThresholds.cpuThreshold
+          threshold: this.config.alertThresholds.cpuThreshold,
         },
         timestamp: new Date(),
         triggerMetric: {
           name: 'cpu_utilization',
           value: metrics.resources.cpu,
-          threshold: this.config.alertThresholds.cpuThreshold
-        }
+          threshold: this.config.alertThresholds.cpuThreshold,
+        },
       });
     }
 
@@ -592,14 +591,14 @@ export class ServiceMeshMonitor extends EventEmitter {
         message: `Service ${serviceId} memory utilization is above threshold`,
         details: {
           currentMemory: metrics.resources.memory,
-          threshold: this.config.alertThresholds.memoryThreshold
+          threshold: this.config.alertThresholds.memoryThreshold,
         },
         timestamp: new Date(),
         triggerMetric: {
           name: 'memory_utilization',
           value: metrics.resources.memory,
-          threshold: this.config.alertThresholds.memoryThreshold
-        }
+          threshold: this.config.alertThresholds.memoryThreshold,
+        },
       });
     }
 
@@ -615,14 +614,14 @@ export class ServiceMeshMonitor extends EventEmitter {
           currentErrorRate: errorRate,
           threshold: this.config.alertThresholds.errorRateThreshold,
           totalRequests: metrics.requests.total,
-          failedRequests: metrics.requests.failed
+          failedRequests: metrics.requests.failed,
         },
         timestamp: new Date(),
         triggerMetric: {
           name: 'error_rate',
           value: errorRate,
-          threshold: this.config.alertThresholds.errorRateThreshold
-        }
+          threshold: this.config.alertThresholds.errorRateThreshold,
+        },
       });
     }
 
@@ -635,14 +634,14 @@ export class ServiceMeshMonitor extends EventEmitter {
         message: `Service ${serviceId} response time is above threshold`,
         details: {
           currentResponseTime: metrics.responseTime.average,
-          threshold: this.config.alertThresholds.responseTimeThreshold
+          threshold: this.config.alertThresholds.responseTimeThreshold,
         },
         timestamp: new Date(),
         triggerMetric: {
           name: 'response_time',
           value: metrics.responseTime.average,
-          threshold: this.config.alertThresholds.responseTimeThreshold
-        }
+          threshold: this.config.alertThresholds.responseTimeThreshold,
+        },
       });
     }
 
@@ -664,7 +663,7 @@ export class ServiceMeshMonitor extends EventEmitter {
     monitoringData.alertStatus.lastAlertTime = new Date();
 
     // Emit alert events
-    alerts.forEach(alert => {
+    alerts.forEach((alert) => {
       this.emit('alert', serviceId, alert);
     });
 
@@ -677,18 +676,20 @@ export class ServiceMeshMonitor extends EventEmitter {
   private updateStatistics(): void {
     this.statistics.totalServices = this.monitoredServices.size;
     this.statistics.healthyServices = this.getServicesByHealthStatus('online').length;
-    this.statistics.unhealthyServices = this.getServicesByHealthStatus('offline').length + 
-                                       this.getServicesByHealthStatus('degraded').length;
+    this.statistics.unhealthyServices =
+      this.getServicesByHealthStatus('offline').length +
+      this.getServicesByHealthStatus('degraded').length;
     this.statistics.servicesInAlert = this.getServicesInAlert().length;
-    
+
     // Calculate average response time
     const responseTimes = Array.from(this.monitoredServices.values())
-      .map(data => data.metrics.responseTime.average)
-      .filter(time => time > 0);
-    
-    this.statistics.averageResponseTime = responseTimes.length > 0 
-      ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length 
-      : 0;
+      .map((data) => data.metrics.responseTime.average)
+      .filter((time) => time > 0);
+
+    this.statistics.averageResponseTime =
+      responseTimes.length > 0
+        ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
+        : 0;
 
     this.statistics.monitoringUptime = Date.now() - this.statistics.lastUpdate.getTime();
     this.statistics.lastUpdate = new Date();

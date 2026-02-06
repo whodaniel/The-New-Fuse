@@ -17,7 +17,7 @@
 | ------------------------ | ---------------------------- | ---------------------------------- |
 | NestJS modular structure | `apps/backend/`, `packages/` | Service-based architecture         |
 | Monorepo with Turborepo  | Root level                   | `pnpm` workspaces, shared packages |
-| Prisma for database      | `packages/database/`         | PostgreSQL with generated types    |
+| Drizzle for database      | `packages/database/`         | PostgreSQL with generated types    |
 | Redis for caching/pubsub | Agent inbox, heartbeat       | Used for real-time coordination    |
 
 ### Conventions
@@ -52,7 +52,7 @@
 | ---------------------------------- | -------------------------------- | ------------------------------------- |
 | `Module not found` in monorepo     | Package not built                | Run `pnpm build` in package directory |
 | CORS errors from extension         | Origin not whitelisted           | Add extension ID to CORS config       |
-| Type errors after schema change    | Prisma types stale               | Run `pnpm prisma generate`            |
+| Type errors after schema change    | Drizzle types stale               | Run `pnpm drizzle generate`            |
 | Service worker registration failed | Syntax error in background.js    | Check for duplicate declarations      |
 | Context window exhaustion          | Too much info stuffed in context | Use planning files, write to disk     |
 
@@ -83,7 +83,7 @@
 | Package                    | Purpose                     |
 | -------------------------- | --------------------------- |
 | `@the-new-fuse/core`       | Core utilities and types    |
-| `@the-new-fuse/database`   | Prisma schema and client    |
+| `@the-new-fuse/database`   | Drizzle schema and client    |
 | `@the-new-fuse/relay-core` | WebSocket relay server      |
 | `@the-new-fuse/agent`      | Agent framework             |
 | `@the-new-fuse/mcp-core`   | MCP protocol implementation |

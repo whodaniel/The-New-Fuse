@@ -1,14 +1,14 @@
 # Railway Clean Deployment Plan
-**Date:** October 25, 2025
-**Project:** The New Fuse (TNF)
-**Project ID:** 041cee9d-8648-4074-b5a6-0eae436de1d1
-**Environment:** production
+
+**Date:** October 25, 2025 **Project:** The New Fuse (TNF) **Project ID:**
+041cee9d-8648-4074-b5a6-0eae436de1d1 **Environment:** production
 
 ---
 
 ## 📋 Services to Deploy
 
 ### Priority 1: Infrastructure Services
+
 These must be deployed first as other services may depend on them.
 
 1. **core-vector-db**
@@ -28,6 +28,7 @@ These must be deployed first as other services may depend on them.
    - Start Command: `node dist/index.js`
 
 ### Priority 2: Backend Services
+
 Core backend and API package services.
 
 3. **backend-package**
@@ -43,6 +44,7 @@ Core backend and API package services.
    - Health Check: `/health`
 
 ### Priority 3: Application Layer
+
 Main application services.
 
 5. **backend**
@@ -65,6 +67,7 @@ Main application services.
    - Health Check: `/health`
 
 ### Priority 4: Frontend
+
 The web application frontend.
 
 8. **frontend**
@@ -131,13 +134,15 @@ OPENAI_API_KEY=...
 
 ### Step 1: Ensure All Services Exist in Railway
 
-Before running the deployment script, verify all 8 services exist in the Railway dashboard:
+Before running the deployment script, verify all 8 services exist in the Railway
+dashboard:
 
 1. Go to: https://railway.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 2. Click "+ New" → "Empty Service" for each service that doesn't exist
 3. Name them exactly as shown in the service list above
 
 **Service Names Required:**
+
 - core-vector-db
 - relay-core
 - backend-package
@@ -163,9 +168,11 @@ chmod +x railway-clean-deploy.sh
 ### Step 4: Configure Environment Variables
 
 For each service, add the required environment variables via:
+
 - Railway Dashboard → Service → Variables
 
 Or use the CLI:
+
 ```bash
 railway service core-vector-db
 railway variables set DATABASE_URL="postgresql://..."
@@ -174,11 +181,13 @@ railway variables set DATABASE_URL="postgresql://..."
 ### Step 5: Verify Deployments
 
 Check that all services are running:
+
 ```bash
 railway status
 ```
 
 View logs for any service:
+
 ```bash
 railway logs --service core-vector-db
 ```
@@ -190,11 +199,13 @@ railway logs --service core-vector-db
 All services use one of these build methods:
 
 ### Dockerfile-based (Most services)
+
 - Configuration: `railway.toml` specifies `builder = "DOCKERFILE"`
 - File: `Dockerfile` in service directory
 - Process: Railway builds the Docker image and runs it
 
 ### Nixpacks-based (Some services)
+
 - Configuration: `nixpacks.toml` in service directory
 - Process: Railway auto-detects and builds with Nixpacks
 
@@ -212,7 +223,8 @@ restartPolicyMaxRetries = 10
 restartPolicyType = "ON_FAILURE"
 ```
 
-Each service should implement a `/health` endpoint that returns 200 OK when healthy.
+Each service should implement a `/health` endpoint that returns 200 OK when
+healthy.
 
 ---
 
@@ -247,21 +259,25 @@ After deployment, monitor:
 ## 🐛 Troubleshooting
 
 ### Service won't deploy
+
 - Check build logs in Railway dashboard
 - Verify Dockerfile/nixpacks.toml is correct
 - Ensure all dependencies are in package.json
 
 ### Service builds but won't start
+
 - Check runtime logs
 - Verify environment variables are set
 - Check that PORT is used correctly (Railway provides $PORT)
 
 ### Health check failing
+
 - Implement `/health` endpoint in service
 - Verify endpoint returns 200 OK
 - Check healthcheckTimeout is sufficient
 
 ### Can't connect to database
+
 - Verify DATABASE_URL environment variable
 - Check database is running
 - Verify network connectivity (Railway provides internal URLs)
@@ -284,7 +300,8 @@ After all services are deployed:
 
 ## 🔗 Useful Links
 
-- **Project Dashboard:** https://railway.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+- **Project Dashboard:**
+  https://railway.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 - **Railway Docs:** https://docs.railway.com
 - **Railway CLI Docs:** https://docs.railway.com/develop/cli
 
@@ -293,9 +310,11 @@ After all services are deployed:
 ## 📞 Support
 
 For Railway-specific issues:
+
 - Discord: https://discord.gg/railway
 - Docs: https://docs.railway.com
 
 For TNF project issues:
+
 - Check service logs: `railway logs --service <name>`
 - Review deployment documentation in `/docs/deployment/`

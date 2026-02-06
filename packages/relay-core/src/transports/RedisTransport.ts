@@ -1,14 +1,13 @@
-
 /**
  * Redis Transport for The New Fuse Relay System
- * 
+ *
  * Provides pub/sub messaging and distributed coordination
  * Based on existing Redis infrastructure in src/redis/
  */
 
 import { EventEmitter } from 'events';
 import Redis from 'ioredis';
-import { Transport, RelayMessage } from '../types/index.js';
+import { RelayMessage, Transport } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
 
 export interface RedisTransportConfig {
@@ -40,7 +39,7 @@ export class RedisTransport extends EventEmitter implements Transport {
     super();
     this.config = config;
     this.logger = config.logger;
-    
+
     // Create Redis clients
     const redisOptions = {
       host: config.host || 'localhost',
@@ -55,7 +54,7 @@ export class RedisTransport extends EventEmitter implements Transport {
 
     this.publisher = new Redis(redisOptions);
     this.subscriber = new Redis(redisOptions);
-    
+
     this.setupEventHandlers();
   }
 
@@ -66,7 +65,9 @@ export class RedisTransport extends EventEmitter implements Transport {
     });
 
     this.publisher.on('error', (error) => {
-      this.logger.error(`Redis publisher error: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Redis publisher error: ${error instanceof Error ? error.message : String(error)}`
+      );
       this.emit('error', error);
     });
 
@@ -77,7 +78,9 @@ export class RedisTransport extends EventEmitter implements Transport {
     });
 
     this.subscriber.on('error', (error) => {
-      this.logger.error(`Redis subscriber error: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Redis subscriber error: ${error instanceof Error ? error.message : String(error)}`
+      );
       this.emit('error', error);
     });
 
@@ -117,7 +120,9 @@ export class RedisTransport extends EventEmitter implements Transport {
       await this.subscriber.subscribe(...channels);
       this.logger.info(`Subscribed to Redis channels: ${channels.join(', ')}`);
     } catch (error) {
-      this.logger.error(`Failed to subscribe to channels: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to subscribe to channels: ${error instanceof Error ? error.message : String(error)}`
+      );
       throw error;
     }
   }
@@ -125,48 +130,52 @@ export class RedisTransport extends EventEmitter implements Transport {
   private handleRedisMessage(channel: string, messageString: string): void {
     try {
       const message: RelayMessage = JSON.parse(messageString);
-      
-      this.logger.debug(`Received Redis message on ${channel}: ${message.type} from ${message.source}`);
-      
+
+      this.logger.debug(
+        `Received Redis message on ${channel}: ${message.type} from ${message.source}`
+      );
+
       // Add Redis-specific metadata
       message.metadata = {
         ...message.metadata,
         transport: 'redis',
         channel,
-        receivedAt: new Date().toISOString()
+        receivedAt: new Date().toISOString(),
       };
 
       // Notify message handlers
-      this.messageHandlers.forEach(handler => {
+      this.messageHandlers.forEach((handler) => {
         try {
           handler(message);
         } catch (error) {
-          this.logger.error(`Error in message handler: ${error instanceof Error ? error.message : String(error)}`);
+          this.logger.error(
+            `Error in message handler: ${error instanceof Error ? error.message : String(error)}`
+          );
         }
       });
-
     } catch (error) {
-      this.logger.error(`Failed to parse Redis message: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to parse Redis message: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
   async start(): Promise<boolean> {
     try {
       this.logger.info('Starting Redis transport');
-      
+
       // Connect both clients
-      await Promise.all([
-        this.publisher.connect(),
-        this.subscriber.connect()
-      ]);
+      await Promise.all([this.publisher.connect(), this.subscriber.connect()]);
 
       // Start heartbeat
       this.startHeartbeat();
-      
+
       this.logger.info('Redis transport started successfully');
       return true;
     } catch (error) {
-      this.logger.error(`Failed to start Redis transport: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to start Redis transport: ${error instanceof Error ? error.message : String(error)}`
+      );
       return false;
     }
   }
@@ -174,22 +183,21 @@ export class RedisTransport extends EventEmitter implements Transport {
   async stop(): Promise<void> {
     try {
       this.logger.info('Stopping Redis transport');
-      
+
       // Stop heartbeat
       if (this.heartbeatInterval) {
         clearInterval(this.heartbeatInterval);
       }
 
       // Disconnect clients
-      await Promise.all([
-        this.publisher.quit(),
-        this.subscriber.quit()
-      ]);
+      await Promise.all([this.publisher.quit(), this.subscriber.quit()]);
 
       this._isConnected = false;
       this.logger.info('Redis transport stopped');
     } catch (error) {
-      this.logger.error(`Error stopping Redis transport: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Error stopping Redis transport: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -202,7 +210,7 @@ export class RedisTransport extends EventEmitter implements Transport {
     try {
       // Determine channel based on message type
       const channel = this.getChannelForMessage(message);
-      
+
       // Add transport metadata
       const enrichedMessage = {
         ...message,
@@ -210,16 +218,18 @@ export class RedisTransport extends EventEmitter implements Transport {
           ...message.metadata,
           transport: 'redis',
           channel,
-          sentAt: new Date().toISOString()
-        }
+          sentAt: new Date().toISOString(),
+        },
       };
 
       await this.publisher.publish(channel, JSON.stringify(enrichedMessage));
-      
+
       this.logger.debug(`Sent message to Redis channel ${channel}: ${message.type}`);
       return true;
     } catch (error) {
-      this.logger.error(`Failed to send Redis message: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to send Redis message: ${error instanceof Error ? error.message : String(error)}`
+      );
       return false;
     }
   }
@@ -230,15 +240,15 @@ export class RedisTransport extends EventEmitter implements Transport {
       case 'WORKFLOW_STATUS':
       case 'WORKFLOW_COMPLETE':
         return this.config.channels.workflowExecution;
-      
+
       case 'HEARTBEAT':
         return this.config.channels.heartbeat;
-      
+
       case 'SYSTEM_STATUS':
       case 'AGENT_REGISTERED':
       case 'AGENT_DISCONNECTED':
         return this.config.channels.systemEvents;
-      
+
       default:
         return this.config.channels.agentCommunication;
     }
@@ -262,10 +272,10 @@ export class RedisTransport extends EventEmitter implements Transport {
           timestamp: new Date().toISOString(),
           connections: {
             publisher: this.publisher.status,
-            subscriber: this.subscriber.status
-          }
+            subscriber: this.subscriber.status,
+          },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       await this.send(heartbeatMessage);
@@ -279,7 +289,9 @@ export class RedisTransport extends EventEmitter implements Transport {
       const result = await this.publisher.set(key, value, 'PX', ttlMs, 'NX');
       return result === 'OK';
     } catch (error) {
-      this.logger.error(`Failed to set distributed lock: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to set distributed lock: ${error instanceof Error ? error.message : String(error)}`
+      );
       return false;
     }
   }
@@ -296,7 +308,9 @@ export class RedisTransport extends EventEmitter implements Transport {
       const result = await this.publisher.eval(script, 1, key, value);
       return result === 1;
     } catch (error) {
-      this.logger.error(`Failed to release distributed lock: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to release distributed lock: ${error instanceof Error ? error.message : String(error)}`
+      );
       return false;
     }
   }
@@ -305,16 +319,18 @@ export class RedisTransport extends EventEmitter implements Transport {
     try {
       const key = `agent:state:${agentId}`;
       const stateString = JSON.stringify(state);
-      
+
       if (ttlMs) {
         await this.publisher.setex(key, Math.floor(ttlMs / 1000), stateString);
       } else {
         await this.publisher.set(key, stateString);
       }
-      
+
       return true;
     } catch (error) {
-      this.logger.error(`Failed to store agent state: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to store agent state: ${error instanceof Error ? error.message : String(error)}`
+      );
       return false;
     }
   }
@@ -325,7 +341,9 @@ export class RedisTransport extends EventEmitter implements Transport {
       const stateString = await this.publisher.get(key);
       return stateString ? JSON.parse(stateString) : null;
     } catch (error) {
-      this.logger.error(`Failed to get agent state: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to get agent state: ${error instanceof Error ? error.message : String(error)}`
+      );
       return null;
     }
   }
@@ -336,7 +354,9 @@ export class RedisTransport extends EventEmitter implements Transport {
       await this.publisher.lpush(queueKey, JSON.stringify(task));
       return true;
     } catch (error) {
-      this.logger.error(`Failed to add to workflow queue: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to add to workflow queue: ${error instanceof Error ? error.message : String(error)}`
+      );
       return false;
     }
   }
@@ -347,7 +367,9 @@ export class RedisTransport extends EventEmitter implements Transport {
       const taskString = await this.publisher.rpop(queueKey);
       return taskString ? JSON.parse(taskString) : null;
     } catch (error) {
-      this.logger.error(`Failed to get from workflow queue: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to get from workflow queue: ${error instanceof Error ? error.message : String(error)}`
+      );
       return null;
     }
   }

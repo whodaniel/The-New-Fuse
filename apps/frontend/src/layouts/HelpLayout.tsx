@@ -1,30 +1,55 @@
-import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import { 
-  FileText, 
-  Video, 
-  HelpCircle, 
-  MessageSquare, 
-  Users, 
-  ChevronLeft, 
-  Search 
+import {
+  ChevronLeft,
+  FileText,
+  HelpCircle,
+  MessageSquare,
+  Search,
+  Users,
+  Video,
 } from 'lucide-react';
+import React from 'react';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 
 /**
  * Layout for help and support pages
  */
 const HelpLayout: React.FC = () => {
   const location = useLocation();
-  
+
   // Help navigation items
   const helpNavItems = [
-    { name: 'Documentation', icon: FileText, href: '/help/documentation', current: location.pathname === '/help/documentation' },
-    { name: 'Tutorials', icon: Video, href: '/help/tutorials', current: location.pathname === '/help/tutorials' },
-    { name: 'FAQ', icon: HelpCircle, href: '/help/faq', current: location.pathname === '/help/faq' },
-    { name: 'Support', icon: MessageSquare, href: '/help/support', current: location.pathname === '/help/support' },
-    { name: 'Community', icon: Users, href: '/help/community', current: location.pathname === '/help/community' },
+    {
+      name: 'Documentation',
+      icon: FileText,
+      href: '/help/documentation',
+      current: location.pathname === '/help/documentation',
+    },
+    {
+      name: 'Tutorials',
+      icon: Video,
+      href: '/help/tutorials',
+      current: location.pathname === '/help/tutorials',
+    },
+    {
+      name: 'FAQ',
+      icon: HelpCircle,
+      href: '/help/faq',
+      current: location.pathname === '/help/faq',
+    },
+    {
+      name: 'Support',
+      icon: MessageSquare,
+      href: '/help/support',
+      current: location.pathname === '/help/support',
+    },
+    {
+      name: 'Community',
+      icon: Users,
+      href: '/help/community',
+      current: location.pathname === '/help/community',
+    },
   ];
-  
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="bg-white shadow">
@@ -32,7 +57,10 @@ const HelpLayout: React.FC = () => {
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <Link to="/dashboard" className="flex items-center text-blue-600 hover:text-blue-800">
+                <Link
+                  to="/dashboard"
+                  className="flex items-center text-blue-600 hover:text-blue-800"
+                >
                   <ChevronLeft className="h-5 w-5 mr-1" />
                   <span className="font-medium">Back to Dashboard</span>
                 </Link>
@@ -44,7 +72,7 @@ const HelpLayout: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="mb-6">
           <div className="relative">
@@ -58,7 +86,7 @@ const HelpLayout: React.FC = () => {
             />
           </div>
         </div>
-        
+
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-64 mb-6 md:mb-0 md:mr-6">
             <div className="bg-white shadow rounded-lg overflow-hidden">
@@ -80,7 +108,9 @@ const HelpLayout: React.FC = () => {
                       >
                         <item.icon
                           className={`${
-                            item.current ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-500'
+                            item.current
+                              ? 'text-blue-600'
+                              : 'text-gray-400 group-hover:text-gray-500'
                           } mr-3 flex-shrink-0 h-5 w-5`}
                         />
                         {item.name}
@@ -90,11 +120,12 @@ const HelpLayout: React.FC = () => {
                 </nav>
               </div>
             </div>
-            
+
             <div className="mt-6 bg-blue-50 rounded-lg p-4">
               <h3 className="text-sm font-medium text-blue-800">Need help?</h3>
               <p className="mt-2 text-sm text-blue-700">
-                Can't find what you're looking for? Contact our support team for personalized assistance.
+                Can't find what you're looking for? Contact our support team for personalized
+                assistance.
               </p>
               <div className="mt-3">
                 <Link
@@ -106,7 +137,7 @@ const HelpLayout: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="flex-1">
             <div className="bg-white shadow rounded-lg">
               <div className="px-4 py-5 sm:p-6">

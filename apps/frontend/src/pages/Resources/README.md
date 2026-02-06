@@ -1,10 +1,13 @@
 # Resources Dashboard
 
-A comprehensive, beautiful frontend dashboard for browsing and using Claude skills, n8n workflows, and agent templates.
+A comprehensive, beautiful frontend dashboard for browsing and using Claude
+skills, n8n workflows, and agent templates.
 
 ## Overview
 
-The Resources Dashboard is a marketplace-style interface that allows users to discover, preview, and use various resources including:
+The Resources Dashboard is a marketplace-style interface that allows users to
+discover, preview, and use various resources including:
+
 - **Claude Skills**: MCP tools, prompts, workflows, and integrations
 - **n8n Workflows**: Pre-built automation workflows
 - **Agent Templates**: Pre-configured agent templates for different use cases
@@ -12,6 +15,7 @@ The Resources Dashboard is a marketplace-style interface that allows users to di
 ## Features
 
 ### Main Dashboard (`ResourcesDashboard.tsx`)
+
 - **Stats Overview**: Display total resources, skills, workflows, and downloads
 - **Tabbed Interface**: Easy navigation between different resource types
 - **Animated Transitions**: Smooth animations using Framer Motion
@@ -19,8 +23,10 @@ The Resources Dashboard is a marketplace-style interface that allows users to di
 - **Responsive Design**: Works on all screen sizes
 
 ### Skills Browser (`SkillsBrowser.tsx`)
+
 - **Search & Filters**: Search by name, description, tags
-- **Category Filtering**: Filter by development, productivity, communication, etc.
+- **Category Filtering**: Filter by development, productivity, communication,
+  etc.
 - **Sorting Options**: Sort by popularity, recent updates, or rating
 - **Skill Details Modal**: View full skill information including:
   - Capabilities
@@ -34,6 +40,7 @@ The Resources Dashboard is a marketplace-style interface that allows users to di
   - View detailed documentation
 
 ### Workflow Browser (`WorkflowBrowser.tsx`)
+
 - **Advanced Filtering**: Filter by complexity (simple, medium, complex)
 - **Integration Preview**: See which services are integrated
 - **Node Count Display**: Shows workflow complexity
@@ -45,6 +52,7 @@ The Resources Dashboard is a marketplace-style interface that allows users to di
   - View full details
 
 ### Agent Templates Browser (`AgentTemplatesBrowser.tsx`)
+
 - **Template Types**: Chat, Task, Analysis, Automation agents
 - **Model Information**: See which Claude model is used
 - **Capability Preview**: View agent capabilities
@@ -57,6 +65,7 @@ The Resources Dashboard is a marketplace-style interface that allows users to di
   - Share template
 
 ### Unified Search (`ResourceSearch.tsx`)
+
 - **Cross-Resource Search**: Search across all resource types
 - **Advanced Filters**:
   - Resource type (skills, workflows, templates)
@@ -74,24 +83,26 @@ The dashboard integrates with the backend through `resources.service.ts`:
 
 ```typescript
 // Fetch resources
-resourcesService.getSkills()
-resourcesService.getWorkflows()
-resourcesService.getTemplates()
-resourcesService.getAllResources()
+resourcesService.getSkills();
+resourcesService.getWorkflows();
+resourcesService.getTemplates();
+resourcesService.getAllResources();
 
 // Search
-resourcesService.searchResources(filter)
+resourcesService.searchResources(filter);
 
 // Actions
-resourcesService.executeSkill(skillId)
-resourcesService.importWorkflow(workflowId)
-resourcesService.createAgentFromTemplate(templateId)
-resourcesService.toggleFavorite(resourceId, userId)
-resourcesService.shareResource(share)
+resourcesService.executeSkill(skillId);
+resourcesService.importWorkflow(workflowId);
+resourcesService.createAgentFromTemplate(templateId);
+resourcesService.toggleFavorite(resourceId, userId);
+resourcesService.shareResource(share);
 ```
 
 ### Mock Data
+
 The service includes comprehensive mock data for development and testing:
+
 - 4 Claude Skills with full metadata
 - 3 n8n Workflows with integration details
 - 3 Agent Templates with configurations
@@ -113,7 +124,8 @@ All types are defined in `/types/resources.ts`:
 
 ## Routing
 
-The dashboard is accessible at `/resources` with the route defined in `ComprehensiveRouter.tsx`:
+The dashboard is accessible at `/resources` with the route defined in
+`ComprehensiveRouter.tsx`:
 
 ```tsx
 <Route path="/resources" element={<ResourcesDashboard />} />
@@ -122,12 +134,14 @@ The dashboard is accessible at `/resources` with the route defined in `Comprehen
 ## Navigation
 
 The Resources link is available in the main navigation (`SmartNavigation.tsx`):
+
 - Public navigation: "Resources" link
 - Authenticated navigation: "📦 Resources" button with gradient styling
 
 ## Styling
 
 The dashboard uses:
+
 - **Tailwind CSS**: For utility-first styling
 - **Framer Motion**: For smooth animations and transitions
 - **Lucide React (react-icons/fi)**: For consistent iconography
@@ -155,7 +169,7 @@ Resources/
 import { ResourcesDashboard } from './pages/Resources';
 
 // In your routing
-<Route path="/resources" element={<ResourcesDashboard />} />
+<Route path="/resources" element={<ResourcesDashboard />} />;
 ```
 
 ### With React Query
@@ -182,6 +196,7 @@ const { data: skills = [], isLoading } = useQuery({
 ### Styling
 
 All components use Tailwind CSS classes. To customize:
+
 - Colors: Update gradient classes (e.g., `from-blue-600 to-purple-600`)
 - Spacing: Adjust padding and margin classes
 - Animations: Modify Framer Motion props
@@ -219,22 +234,26 @@ To test the Resources Dashboard:
 ## Troubleshooting
 
 ### Resources not loading
+
 - Check API connection in `resources.service.ts`
 - Verify mock data is being returned
 - Check browser console for errors
 
 ### Styling issues
+
 - Ensure Tailwind CSS is configured
 - Check that all utility classes are available
 - Verify dark mode classes are working
 
 ### Animation issues
+
 - Ensure Framer Motion is installed: `pnpm add framer-motion`
 - Check for conflicting CSS
 
 ## Contributing
 
 When adding new features:
+
 1. Follow the existing component patterns
 2. Update types in `resources.ts`
 3. Add API methods to `resources.service.ts`

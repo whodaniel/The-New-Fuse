@@ -1,22 +1,21 @@
 import React, { useCallback, useState } from 'react';
 import ReactFlow, {
   Background,
+  Connection,
   Controls,
   MiniMap,
-  addEdge,
-  useNodesState,
-  useEdgesState,
   Node,
-  Edge,
-  Connection
+  addEdge,
+  useEdgesState,
+  useNodesState,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { NodeToolbar } from './NodeToolbar';
-import { WorkflowToolbar } from '../workflow/WorkflowToolbar';
 import { useWorkflow } from '../../hooks/useWorkflow';
-import { nodeTypes } from './nodes';
-import { edgeTypes } from '../workflow/edges';
 import { showNotification } from '../../utils/notifications';
+import { edgeTypes } from '../workflow/edges';
+import { WorkflowToolbar } from '../workflow/WorkflowToolbar';
+import { nodeTypes } from './nodes';
+import { NodeToolbar } from './NodeToolbar';
 
 export const WorkflowCanvas: React.FC = () => {
   const { saveWorkflow, executeWorkflow } = useWorkflow();
@@ -43,7 +42,7 @@ export const WorkflowCanvas: React.FC = () => {
         name: workflowName,
         nodes,
         edges,
-        version: 1
+        version: 1,
       });
       showNotification({ message: 'Workflow saved successfully!', type: 'success' });
     } catch (err) {
@@ -58,18 +57,18 @@ export const WorkflowCanvas: React.FC = () => {
     try {
       const result = await executeWorkflow({
         nodes,
-        edges
+        edges,
       });
-      showNotification({ 
-        message: `Completed ${result.nodeCount} nodes in ${result.executionTime}ms`, 
+      showNotification({
+        message: `Completed ${result.nodeCount} nodes in ${result.executionTime}ms`,
         type: 'success',
-        title: 'Workflow executed'
+        title: 'Workflow executed',
       });
     } catch (err) {
-      showNotification({ 
-        message: (err as Error).message, 
+      showNotification({
+        message: (err as Error).message,
         type: 'error',
-        title: 'Error executing workflow'
+        title: 'Error executing workflow',
       });
     } finally {
       setIsExecuting(false);
@@ -86,15 +85,17 @@ export const WorkflowCanvas: React.FC = () => {
         isSaving={isSaving}
         isExecuting={isExecuting}
       />
-      <NodeToolbar onAddNode={(nodeType, position) => {
-        const newNode = {
-          id: `node-${Date.now()}`,
-          type: nodeType,
-          position,
-          data: { label: nodeType }
-        };
-        setNodes(nodes => [...nodes, newNode]);
-      }} />
+      <NodeToolbar
+        onAddNode={(nodeType, position) => {
+          const newNode = {
+            id: `node-${Date.now()}`,
+            type: nodeType,
+            position,
+            data: { label: nodeType },
+          };
+          setNodes((nodes) => [...nodes, newNode]);
+        }}
+      />
       <ReactFlow
         nodes={nodes}
         edges={edges}

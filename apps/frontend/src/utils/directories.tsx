@@ -1,51 +1,63 @@
 export function middleTruncate(str: string, maxLength: number): string {
   if (str.length <= maxLength) return str;
-  
-  const ellipsis = "...";
+
+  const ellipsis = '...';
   const charsToShow = maxLength - ellipsis.length;
   const frontChars = Math.ceil(charsToShow / 2);
   const backChars = Math.floor(charsToShow / 2);
-  
+
   return str.slice(0, frontChars) + ellipsis + str.slice(str.length - backChars);
 }
 
 export function truncateFileExtension(filename: string): string {
-  const parts = filename.split(".");
+  const parts = filename.split('.');
   if (parts.length <= 1) return filename;
-  return parts.slice(0, -1).join(".");
+  return parts.slice(0, -1).join('.');
 }
 
 export function getFileExtension(filename: string): string {
-  const parts = filename.split(".");
-  if (parts.length <= 1) return "";
+  const parts = filename.split('.');
+  if (parts.length <= 1) return '';
   return parts[parts.length - 1].toLowerCase();
 }
 
 export function isImageByExtension(filename: string): boolean {
   const ext = getFileExtension(filename);
-  return ["jpg", "jpeg", "png", "gif", "webp", "svg", "bmp"].includes(ext);
+  return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext);
 }
 
 export function isVideoByExtension(filename: string): boolean {
   const ext = getFileExtension(filename);
-  return ["mp4", "webm", "ogg", "mov", "avi"].includes(ext);
+  return ['mp4', 'webm', 'ogg', 'mov', 'avi'].includes(ext);
 }
 
 export function isAudioByExtension(filename: string): boolean {
   const ext = getFileExtension(filename);
-  return ["mp3", "wav", "ogg", "m4a", "aac"].includes(ext);
+  return ['mp3', 'wav', 'ogg', 'm4a', 'aac'].includes(ext);
 }
 
 export function isPDFByExtension(filename: string): boolean {
   const ext = getFileExtension(filename);
-  return ext === "pdf";
+  return ext === 'pdf';
 }
 
 export function isTextByExtension(filename: string): boolean {
   const ext = getFileExtension(filename);
   return [
-    "txt", "md", "json", "csv", "yml", "yaml", "xml",
-    "html", "htm", "css", "js", "ts", "jsx", "tsx"
+    'txt',
+    'md',
+    'json',
+    'csv',
+    'yml',
+    'yaml',
+    'xml',
+    'html',
+    'htm',
+    'css',
+    'js',
+    'ts',
+    'jsx',
+    'tsx',
   ].includes(ext);
 }
 
@@ -68,7 +80,7 @@ export function getDirectoryPath(path: string): string {
 }
 
 export function joinPaths(...paths: string[]): string {
-  return normalizePath(paths.map(path => path.replace(/^\/|\/$/g, '')).join('/'));
+  return normalizePath(paths.map((path) => path.replace(/^\/|\/$/g, '')).join('/'));
 }
 
 export function isSubPath(parent: string, child: string): boolean {
@@ -97,13 +109,13 @@ export function getCommonPath(paths: string[]): string {
   if (paths.length === 0) return '';
   if (paths.length === 1) return getDirectoryPath(paths[0]);
 
-  const parts = paths.map(path => normalizePath(path).split('/'));
-  const minLength = Math.min(...parts.map(p => p.length));
+  const parts = paths.map((path) => normalizePath(path).split('/'));
+  const minLength = Math.min(...parts.map((p) => p.length));
 
   const commonParts: string[] = [];
   for (let i = 0; i < minLength; i++) {
     const part = parts[0][i];
-    if (parts.every(p => p[i] === part)) {
+    if (parts.every((p) => p[i] === part)) {
       commonParts.push(part);
     } else {
       break;
@@ -117,7 +129,12 @@ export function isValidFileName(fileName: string): boolean {
   // Check for invalid characters in file names
 
   const invalidChars = /[<>:"/\\|?*\x00-\x1F]/;
-  return !invalidChars.test(fileName) && fileName.trim() === fileName && fileName !== '.' && fileName !== '..';
+  return (
+    !invalidChars.test(fileName) &&
+    fileName.trim() === fileName &&
+    fileName !== '.' &&
+    fileName !== '..'
+  );
 }
 
 export function sanitizeFileName(fileName: string): string {
@@ -147,6 +164,6 @@ export function parsePathParts(path: string): {
     root,
     dir,
     name,
-    ext
+    ext,
   };
 }

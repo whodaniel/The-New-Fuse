@@ -174,7 +174,10 @@ export class WebVitalsMonitor {
 
     const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
     if (navigation) {
-      this.trackCustomMetric('dns-lookup', navigation.domainLookupEnd - navigation.domainLookupStart);
+      this.trackCustomMetric(
+        'dns-lookup',
+        navigation.domainLookupEnd - navigation.domainLookupStart
+      );
       this.trackCustomMetric('tcp-connection', navigation.connectEnd - navigation.connectStart);
       this.trackCustomMetric('request-time', navigation.responseStart - navigation.requestStart);
       this.trackCustomMetric('response-time', navigation.responseEnd - navigation.responseStart);
@@ -195,22 +198,29 @@ export class WebVitalsMonitor {
     const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
 
     // Calculate resource loading metrics
-    const scriptResources = resources.filter(r => r.initiatorType === 'script');
-    const styleResources = resources.filter(r => r.initiatorType === 'link' || r.initiatorType === 'css');
-    const imageResources = resources.filter(r => r.initiatorType === 'img');
+    const scriptResources = resources.filter((r) => r.initiatorType === 'script');
+    const styleResources = resources.filter(
+      (r) => r.initiatorType === 'link' || r.initiatorType === 'css'
+    );
+    const imageResources = resources.filter((r) => r.initiatorType === 'img');
 
     if (scriptResources.length > 0) {
-      const avgScriptLoad = scriptResources.reduce((sum, r) => sum + r.duration, 0) / scriptResources.length;
-      this.trackCustomMetric('avg-script-load-time', avgScriptLoad, { count: scriptResources.length });
+      const avgScriptLoad =
+        scriptResources.reduce((sum, r) => sum + r.duration, 0) / scriptResources.length;
+      this.trackCustomMetric('avg-script-load-time', avgScriptLoad, {
+        count: scriptResources.length,
+      });
     }
 
     if (styleResources.length > 0) {
-      const avgStyleLoad = styleResources.reduce((sum, r) => sum + r.duration, 0) / styleResources.length;
+      const avgStyleLoad =
+        styleResources.reduce((sum, r) => sum + r.duration, 0) / styleResources.length;
       this.trackCustomMetric('avg-style-load-time', avgStyleLoad, { count: styleResources.length });
     }
 
     if (imageResources.length > 0) {
-      const avgImageLoad = imageResources.reduce((sum, r) => sum + r.duration, 0) / imageResources.length;
+      const avgImageLoad =
+        imageResources.reduce((sum, r) => sum + r.duration, 0) / imageResources.length;
       this.trackCustomMetric('avg-image-load-time', avgImageLoad, { count: imageResources.length });
     }
 

@@ -21,9 +21,7 @@ export class AnthropicXmlTools {
     if (tool.parameters && Object.keys(tool.parameters).length > 0) {
       xmlString += '  <parameters>\n';
 
-      for (const [paramName, paramSchema] of Object.entries(
-        tool.parameters,
-      )) {
+      for (const [paramName, paramSchema] of Object.entries(tool.parameters)) {
         xmlString += `    <parameter>\n`;
         xmlString += `      <name>${paramName}</name>\n`;
         xmlString += `      <type>${paramSchema.type || 'string'}</type>\n`;

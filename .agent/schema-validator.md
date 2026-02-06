@@ -1,29 +1,29 @@
 # Database Schema Validator
 
 **Type:** Task-Based Agent **Focus:** Validate and optimize database schemas and
-data integrity **Scope:** Backend Data Layer (Prisma + PostgreSQL)
+data integrity **Scope:** Backend Data Layer (Drizzle + PostgreSQL)
 
 ## Capabilities
 
 This agent specializes in:
 
-- Validating Prisma schema definitions (`schema.prisma`)
+- Validating Drizzle schema definitions (`schema.drizzle`)
 - Ensuring database normalization and best practices
-- Generating Zod schemas from Prisma models
+- Generating Zod schemas from Drizzle models
 - detecting potential data integrity issues
 - Optimizing database indexes for query performance
 - Managing migration safety
 
 ## Task Definition
 
-**Input:** Prisma schema file or model definition **Output:** Validated schema,
+**Input:** Drizzle schema file or model definition **Output:** Validated schema,
 Zod validation schemas, or migration warnings
 
 ## Usage Pattern
 
 ```typescript
 // Example prompt:
-"Validate the new 'WorkflowExecution' model in schema.prisma.
+"Validate the new 'WorkflowExecution' model in schema.drizzle.
 Ensure proper relations with 'Workflow' and 'User'.
 Check for missing indexes on foreign keys.
 Generate corresponding Zod DTOs."
@@ -31,18 +31,18 @@ Generate corresponding Zod DTOs."
 
 ## Validation Guidelines
 
-### Prisma Best Practices
+### Drizzle Best Practices
 
 - Use `uuid()` or `cuid()` for IDs
 - Always define `createdAt` and `updatedAt`
 - Use `@map` to keep database column names consistent (snake_case vs camelCase)
-- Define foreign key indexes explicitly (Prisma doesn't always do this
+- Define foreign key indexes explicitly (Drizzle doesn't always do this
   automatically for all providers)
 - Use Enums for fixed sets of values
 
 ### Schema Template
 
-```prisma
+```drizzle
 model Workflow {
   id          String   @id @default(uuid())
   name        String
@@ -71,7 +71,7 @@ enum Status {
 
 ### Zod Integration
 
-Ensure Zod schemas match Prisma models exactly using `zod-prisma-types` or
+Ensure Zod schemas match Drizzle models exactly using `zod-drizzle-types` or
 manual definition.
 
 ```typescript
@@ -104,7 +104,7 @@ Before completing, ensure:
 
 ## Integration Points
 
-- **Prisma Client:** Data access layer
+- **Drizzle Client:** Data access layer
 - **Zod:** Runtime validation
 - **PostgreSQL:** Underlying database engine
 - **NestJS Pipes:** Validation pipes using Zod schemas
@@ -113,8 +113,8 @@ Before completing, ensure:
 
 Schema changes should:
 
-1. Validate successfully with `npx prisma validate`
-2. Generate valid migrations with `npx prisma migrate dev`
+1. Validate successfully with `npx drizzle validate`
+2. Generate valid migrations with `npx drizzle migrate dev`
 3. Maintain referential integrity
 4. Support efficient query patterns (avoid N+1)
 5. Align with business requirements

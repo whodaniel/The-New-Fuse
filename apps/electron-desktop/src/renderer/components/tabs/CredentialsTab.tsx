@@ -1,91 +1,85 @@
 /**
  * CredentialsTab - Secure Credentials Management UI
- * 
+ *
  * Comprehensive credential management for AI providers, Google services,
  * MCP servers, and custom integrations with OS-level encryption.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Badge,
   Box,
-  VStack,
-  HStack,
-  Text,
   Button,
+  Flex,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Heading,
+  HStack,
+  Icon,
+  IconButton,
   Input,
   InputGroup,
   InputRightElement,
-  IconButton,
-  Badge,
-  Heading,
-  Divider,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  useToast,
-  Tooltip,
-  FormControl,
-  FormLabel,
-  FormHelperText,
-  Select,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  useDisclosure,
-  Icon,
-  Spinner,
-  SimpleGrid,
-  Flex,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
   Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Select,
+  SimpleGrid,
+  Spinner,
+  Text,
+  Tooltip,
+  useDisclosure,
+  useToast,
+  VStack,
 } from '@chakra-ui/react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
-  FiKey,
+  FiAlertTriangle,
+  FiBox,
+  FiCheck,
+  FiCode,
+  FiDatabase,
+  FiExternalLink,
   FiEye,
   FiEyeOff,
-  FiPlus,
-  FiTrash2,
-  FiCheck,
-  FiShield,
-  FiAlertTriangle,
-  FiRefreshCw,
-  FiLock,
-  FiUnlock,
-  FiExternalLink,
-  FiServer,
-  FiDatabase,
-  FiMessageSquare,
-  FiCode,
+  FiKey,
   FiLink,
-  FiBox,
+  FiLock,
+  FiMessageSquare,
+  FiPlus,
+  FiRefreshCw,
+  FiServer,
+  FiShield,
+  FiTrash2,
+  FiUnlock,
 } from 'react-icons/fi';
 import {
-  SiOpenai,
-  SiGoogle,
-  SiGithub,
-  SiSlack,
-  SiNotion,
   SiDiscord,
-  SiMongodb,
-  SiRedis,
   SiFirebase,
+  SiGithub,
+  SiGoogle,
+  SiMongodb,
+  SiNotion,
+  SiOpenai,
+  SiRedis,
+  SiSlack,
   SiStripe,
 } from 'react-icons/si';
-import type { StoredCredential, AIProviderInfo } from '../../../shared/types';
+import type { AIProviderInfo, StoredCredential } from '../../../shared/types';
 
 // Extended provider info type
 interface ProviderInfo extends AIProviderInfo {
@@ -179,7 +173,9 @@ const CredentialsTab: React.FC = () => {
   const [credentials, setCredentials] = useState<CredentialWithStatus[]>([]);
   const [providers, setProviders] = useState<Record<string, ProviderInfo>>({});
   const [categories, setCategories] = useState<Record<string, CategoryInfo>>({});
-  const [encryptionStatus, setEncryptionStatus] = useState<SecureStorageStatusResponse | null>(null);
+  const [encryptionStatus, setEncryptionStatus] = useState<SecureStorageStatusResponse | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProvider, setSelectedProvider] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -188,20 +184,20 @@ const CredentialsTab: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [deletingProvider, setDeletingProvider] = useState<string | null>(null);
-  
+
   // Custom provider form
   const [customProviderId, setCustomProviderId] = useState('');
   const [customProviderName, setCustomProviderName] = useState('');
   const [customProviderEnvKey, setCustomProviderEnvKey] = useState('');
   const [customProviderCategory, setCustomProviderCategory] = useState<string>('custom');
-  
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isCustomOpen, onOpen: onCustomOpen, onClose: onCustomClose } = useDisclosure();
   const toast = useToast();
 
   // Check if electronAPI is available
-  const hasSecureStorage = typeof window !== 'undefined' && 
-    window.electronAPI?.secureStorage !== undefined;
+  const hasSecureStorage =
+    typeof window !== 'undefined' && window.electronAPI?.secureStorage !== undefined;
 
   // Load data on mount
   useEffect(() => {
@@ -242,11 +238,13 @@ const CredentialsTab: React.FC = () => {
 
       // Merge credentials with hasKey status
       if (credentialsResult.success) {
-        const credsWithStatus: CredentialWithStatus[] = credentialsResult.credentials.map((cred: any) => ({
-          ...cred,
-          hasKey: true,
-          category: cred.category || providersResult?.[cred.provider]?.category || 'custom',
-        }));
+        const credsWithStatus: CredentialWithStatus[] = credentialsResult.credentials.map(
+          (cred: any) => ({
+            ...cred,
+            hasKey: true,
+            category: cred.category || providersResult?.[cred.provider]?.category || 'custom',
+          })
+        );
         setCredentials(credsWithStatus);
       }
     } catch (error) {
@@ -288,7 +286,7 @@ const CredentialsTab: React.FC = () => {
           status: 'success',
           duration: 3000,
         });
-        
+
         // Reset form and reload
         setSelectedProvider('');
         setApiKeyInput('');
@@ -372,7 +370,7 @@ const CredentialsTab: React.FC = () => {
         isCustom: true,
       };
 
-      setProviders(prev => ({
+      setProviders((prev) => ({
         ...prev,
         [customProviderId]: newProvider,
       }));
@@ -407,21 +405,25 @@ const CredentialsTab: React.FC = () => {
 
   // Get list of providers that don't have keys yet
   const availableProviders = Object.keys(providers).filter(
-    p => !credentials.some(c => c.provider === p)
+    (p) => !credentials.some((c) => c.provider === p)
   );
 
   // Filter providers by category
-  const filteredProviders = selectedCategory === 'all' 
-    ? availableProviders 
-    : availableProviders.filter(p => providers[p]?.category === selectedCategory);
+  const filteredProviders =
+    selectedCategory === 'all'
+      ? availableProviders
+      : availableProviders.filter((p) => providers[p]?.category === selectedCategory);
 
   // Group credentials by category
-  const groupedCredentials = credentials.reduce((acc, cred) => {
-    const cat = cred.category || 'custom';
-    if (!acc[cat]) acc[cat] = [];
-    acc[cat].push(cred);
-    return acc;
-  }, {} as Record<string, CredentialWithStatus[]>);
+  const groupedCredentials = credentials.reduce(
+    (acc, cred) => {
+      const cat = cred.category || 'custom';
+      if (!acc[cat]) acc[cat] = [];
+      acc[cat].push(cred);
+      return acc;
+    },
+    {} as Record<string, CredentialWithStatus[]>
+  );
 
   if (!hasSecureStorage) {
     return (
@@ -431,8 +433,8 @@ const CredentialsTab: React.FC = () => {
           <Box>
             <AlertTitle>Secure Storage Not Available</AlertTitle>
             <AlertDescription>
-              Credential management is only available in the Electron desktop app.
-              Please run the app using Electron to access this feature.
+              Credential management is only available in the Electron desktop app. Please run the
+              app using Electron to access this feature.
             </AlertDescription>
           </Box>
         </Alert>
@@ -483,12 +485,7 @@ const CredentialsTab: React.FC = () => {
               onClick={loadData}
             />
           </Tooltip>
-          <Button
-            leftIcon={<FiBox />}
-            variant="outline"
-            size="sm"
-            onClick={onCustomOpen}
-          >
+          <Button leftIcon={<FiBox />} variant="outline" size="sm" onClick={onCustomOpen}>
             Custom Provider
           </Button>
           <Button
@@ -516,39 +513,38 @@ const CredentialsTab: React.FC = () => {
           </AlertTitle>
           <AlertDescription fontSize="xs" color="whiteAlpha.700">
             {encryptionStatus?.available
-              ? 'Your credentials are encrypted using your operating system\'s secure keychain.'
+              ? "Your credentials are encrypted using your operating system's secure keychain."
               : 'OS-level encryption is not available. Keys will be stored with basic encoding.'}
           </AlertDescription>
         </Box>
-        <Badge
-          colorScheme={encryptionStatus?.available ? 'green' : 'yellow'}
-          fontSize="10px"
-        >
+        <Badge colorScheme={encryptionStatus?.available ? 'green' : 'yellow'} fontSize="10px">
           {encryptionStatus?.usingKeychain ? 'Keychain' : 'Fallback'}
         </Badge>
       </Alert>
 
       {/* Category Quick Stats */}
       <SimpleGrid columns={{ base: 2, md: 4 }} spacing={3}>
-        {Object.entries(categoryColors).slice(0, 4).map(([cat, color]) => {
-          const count = groupedCredentials[cat]?.length || 0;
-          const CatIcon = categoryIcons[cat] || FiKey;
-          return (
-            <Box key={cat} {...cardStyle} p={3}>
-              <HStack justify="space-between">
-                <HStack spacing={2}>
-                  <Icon as={CatIcon} color={`${color}.400`} />
-                  <Text fontSize="xs" textTransform="capitalize" color="whiteAlpha.700">
-                    {cat}
-                  </Text>
+        {Object.entries(categoryColors)
+          .slice(0, 4)
+          .map(([cat, color]) => {
+            const count = groupedCredentials[cat]?.length || 0;
+            const CatIcon = categoryIcons[cat] || FiKey;
+            return (
+              <Box key={cat} {...cardStyle} p={3}>
+                <HStack justify="space-between">
+                  <HStack spacing={2}>
+                    <Icon as={CatIcon} color={`${color}.400`} />
+                    <Text fontSize="xs" textTransform="capitalize" color="whiteAlpha.700">
+                      {cat}
+                    </Text>
+                  </HStack>
+                  <Badge colorScheme={color} fontSize="10px">
+                    {count} stored
+                  </Badge>
                 </HStack>
-                <Badge colorScheme={color} fontSize="10px">
-                  {count} stored
-                </Badge>
-              </HStack>
-            </Box>
-          );
-        })}
+              </Box>
+            );
+          })}
       </SimpleGrid>
 
       {/* Stored Credentials by Category */}
@@ -557,7 +553,7 @@ const CredentialsTab: React.FC = () => {
           {Object.entries(groupedCredentials).map(([category, creds]) => {
             const CatIcon = categoryIcons[category] || FiKey;
             const color = categoryColors[category] || 'gray';
-            
+
             return (
               <AccordionItem key={category} border="none" mb={2}>
                 <AccordionButton
@@ -587,11 +583,7 @@ const CredentialsTab: React.FC = () => {
                       >
                         <HStack justify="space-between" align="start">
                           <HStack spacing={3}>
-                            <Box
-                              p={2}
-                              borderRadius="lg"
-                              bg={`${color}.900`}
-                            >
+                            <Box p={2} borderRadius="lg" bg={`${color}.900`}>
                               <Icon
                                 as={getProviderIcon(cred.provider, category)}
                                 boxSize={4}
@@ -599,7 +591,9 @@ const CredentialsTab: React.FC = () => {
                               />
                             </Box>
                             <VStack align="start" spacing={0}>
-                              <Text fontWeight="600" fontSize="sm">{cred.name}</Text>
+                              <Text fontWeight="600" fontSize="sm">
+                                {cred.name}
+                              </Text>
                               <Text fontSize="xs" color="whiteAlpha.500">
                                 {providers[cred.provider]?.envKey || cred.provider}
                               </Text>
@@ -619,7 +613,9 @@ const CredentialsTab: React.FC = () => {
                                   icon={<FiExternalLink />}
                                   size="xs"
                                   variant="ghost"
-                                  onClick={() => window.open(providers[cred.provider].docsUrl, '_blank')}
+                                  onClick={() =>
+                                    window.open(providers[cred.provider].docsUrl, '_blank')
+                                  }
                                 />
                               </Tooltip>
                             )}
@@ -661,12 +657,7 @@ const CredentialsTab: React.FC = () => {
                 Add your first credential to start using integrated services securely.
               </Text>
             </VStack>
-            <Button
-              leftIcon={<FiPlus />}
-              colorScheme="brand"
-              size="sm"
-              onClick={onOpen}
-            >
+            <Button leftIcon={<FiPlus />} colorScheme="brand" size="sm" onClick={onOpen}>
               Add Your First Credential
             </Button>
           </VStack>
@@ -699,7 +690,9 @@ const CredentialsTab: React.FC = () => {
                   border="1px solid"
                   borderColor="whiteAlpha.100"
                 >
-                  <option value="all" style={{ background: '#1e293b' }}>All Categories</option>
+                  <option value="all" style={{ background: '#1e293b' }}>
+                    All Categories
+                  </option>
                   {Object.entries(categoryColors).map(([cat, color]) => (
                     <option key={cat} value={cat} style={{ background: '#1e293b' }}>
                       {cat.charAt(0).toUpperCase() + cat.slice(1).replace('_', ' ')}
@@ -721,7 +714,8 @@ const CredentialsTab: React.FC = () => {
                   {filteredProviders.map((key) => (
                     <option key={key} value={key} style={{ background: '#1e293b' }}>
                       {providers[key]?.name || key}
-                      {providers[key]?.description && ` - ${providers[key].description.slice(0, 30)}...`}
+                      {providers[key]?.description &&
+                        ` - ${providers[key].description.slice(0, 30)}...`}
                     </option>
                   ))}
                 </Select>
@@ -737,7 +731,11 @@ const CredentialsTab: React.FC = () => {
                 <InputGroup>
                   <Input
                     type={showPassword ? 'text' : 'password'}
-                    placeholder={selectedProvider ? providers[selectedProvider]?.placeholder || 'Enter your API key' : 'Select a provider first'}
+                    placeholder={
+                      selectedProvider
+                        ? providers[selectedProvider]?.placeholder || 'Enter your API key'
+                        : 'Select a provider first'
+                    }
                     value={apiKeyInput}
                     onChange={(e) => setApiKeyInput(e.target.value)}
                     bg="whiteAlpha.50"
@@ -779,11 +777,7 @@ const CredentialsTab: React.FC = () => {
                   <Box flex="1">
                     <Text fontSize="sm" color="whiteAlpha.800">
                       Need an API key?{' '}
-                      <Link
-                        href={providers[selectedProvider].docsUrl}
-                        isExternal
-                        color="cyan.400"
-                      >
+                      <Link href={providers[selectedProvider].docsUrl} isExternal color="cyan.400">
                         Get one here <Icon as={FiExternalLink} mx="2px" />
                       </Link>
                     </Text>
@@ -834,7 +828,9 @@ const CredentialsTab: React.FC = () => {
                 <Input
                   placeholder="e.g., my_custom_api"
                   value={customProviderId}
-                  onChange={(e) => setCustomProviderId(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '_'))}
+                  onChange={(e) =>
+                    setCustomProviderId(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '_'))
+                  }
                   bg="whiteAlpha.50"
                   border="1px solid"
                   borderColor="whiteAlpha.100"
@@ -862,7 +858,11 @@ const CredentialsTab: React.FC = () => {
                 <Input
                   placeholder="e.g., MY_CUSTOM_API_KEY"
                   value={customProviderEnvKey}
-                  onChange={(e) => setCustomProviderEnvKey(e.target.value.toUpperCase().replace(/[^A-Z0-9_]/g, '_'))}
+                  onChange={(e) =>
+                    setCustomProviderEnvKey(
+                      e.target.value.toUpperCase().replace(/[^A-Z0-9_]/g, '_')
+                    )
+                  }
                   bg="whiteAlpha.50"
                   border="1px solid"
                   borderColor="whiteAlpha.100"
@@ -879,7 +879,7 @@ const CredentialsTab: React.FC = () => {
                   border="1px solid"
                   borderColor="whiteAlpha.100"
                 >
-                  {Object.keys(categoryColors).map(cat => (
+                  {Object.keys(categoryColors).map((cat) => (
                     <option key={cat} value={cat} style={{ background: '#1e293b' }}>
                       {cat.charAt(0).toUpperCase() + cat.slice(1)}
                     </option>

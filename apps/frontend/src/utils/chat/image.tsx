@@ -19,7 +19,7 @@ export async function getImageDimensions(file: File): Promise<ImageDimensions> {
     img.onload = () => {
       resolve({
         width: img.width,
-        height: img.height
+        height: img.height,
       });
     };
     img.onerror = () => reject(new Error('Failed to load image'));
@@ -27,16 +27,13 @@ export async function getImageDimensions(file: File): Promise<ImageDimensions> {
   });
 }
 
-export async function resizeImage(
-  file: File,
-  options: ResizeOptions = {}
-): Promise<Blob> {
+export async function resizeImage(file: File, options: ResizeOptions = {}): Promise<Blob> {
   const {
     maxWidth = 1920,
     maxHeight = 1080,
     maintainAspectRatio = true,
     format = 'jpeg',
-    quality = 0.8
+    quality = 0.8,
   } = options;
 
   return new Promise(async (resolve, reject) => {
@@ -103,7 +100,7 @@ export function createImageThumbnail(file: File): Promise<string> {
         maxWidth: 200,
         maxHeight: 200,
         format: 'jpeg',
-        quality: 0.7
+        quality: 0.7,
       });
 
       const reader = new FileReader();

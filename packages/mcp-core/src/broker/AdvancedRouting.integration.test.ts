@@ -1,16 +1,16 @@
 /**
  * Advanced Routing Integration Tests
- * 
+ *
  * Comprehensive integration tests for advanced routing features including
  * event subscription, pattern matching, selective routing, and performance monitoring.
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MCPBroker } from './MCPBroker';
 import { MCPNotification } from '../interfaces/IMCPMessage';
-import { MCPServiceInfo, BrokerConfig } from '../types';
-import { ServiceStatus, LoadBalancingStrategy } from '../types/common';
+import { BrokerConfig, MCPServiceInfo } from '../types';
+import { LoadBalancingStrategy, ServiceStatus } from '../types/common';
 import { PatternType } from './EventSubscriptionManager';
+import { MCPBroker } from './MCPBroker';
 
 describe('Advanced Routing Integration', () => {
   let broker: MCPBroker;
@@ -26,20 +26,20 @@ describe('Advanced Routing Integration', () => {
       registry: {
         type: 'memory',
         serviceTTL: 300,
-        cleanupInterval: 60
+        cleanupInterval: 60,
       },
       healthCheck: {
         enabled: false, // Disable health checking for integration tests
         interval: 30,
         timeout: 5000,
         failureThreshold: 3,
-        recoveryThreshold: 2
+        recoveryThreshold: 2,
       },
       loadBalancing: {
         defaultStrategy: LoadBalancingStrategy.ROUND_ROBIN,
         useHealthCheck: false, // Disable health check integration for tests
-        stickySession: false
-      }
+        stickySession: false,
+      },
     };
 
     broker = new MCPBroker(config);
@@ -59,7 +59,7 @@ describe('Advanced Routing Integration', () => {
         metadata: { domain: 'auth', tier: 'critical' },
         registeredAt: new Date(),
         lastHeartbeat: new Date(),
-        tags: ['security', 'authentication']
+        tags: ['security', 'authentication'],
       },
       {
         id: 'analytics-service',
@@ -73,7 +73,7 @@ describe('Advanced Routing Integration', () => {
         metadata: { domain: 'analytics', tier: 'standard' },
         registeredAt: new Date(),
         lastHeartbeat: new Date(),
-        tags: ['analytics', 'metrics']
+        tags: ['analytics', 'metrics'],
       },
       {
         id: 'notification-service',
@@ -87,7 +87,7 @@ describe('Advanced Routing Integration', () => {
         metadata: { domain: 'communication', tier: 'standard' },
         registeredAt: new Date(),
         lastHeartbeat: new Date(),
-        tags: ['notifications', 'communication']
+        tags: ['notifications', 'communication'],
       },
       {
         id: 'audit-service',
@@ -101,8 +101,8 @@ describe('Advanced Routing Integration', () => {
         metadata: { domain: 'compliance', tier: 'critical' },
         registeredAt: new Date(),
         lastHeartbeat: new Date(),
-        tags: ['audit', 'compliance', 'logging']
-      }
+        tags: ['audit', 'compliance', 'logging'],
+      },
     ];
 
     // Register all services
@@ -168,7 +168,7 @@ describe('Advanced Routing Integration', () => {
         {
           userId: { min: 1000, max: 9999 }, // User ID range filter
           action: ['login', 'logout', 'signup'], // Action whitelist
-          source: { regex: '^web-.*' } // Source pattern filter
+          source: { regex: '^web-.*' }, // Source pattern filter
         }
       );
 
@@ -179,18 +179,22 @@ describe('Advanced Routing Integration', () => {
 
     it('should unsubscribe from events', async () => {
       const subscription1 = await broker.subscribeToEvents('auth-service', 'user.login');
-      const subscription2 = await broker.subscribeToEvents('analytics-service', 'user.*', PatternType.WILDCARD);
+      const subscription2 = await broker.subscribeToEvents(
+        'analytics-service',
+        'user.*',
+        PatternType.WILDCARD
+      );
 
       let stats = broker.getEventSubscriptionStatistics();
       expect(stats.totalSubscriptions).toBe(2);
 
       await broker.unsubscribeFromEvents(subscription1);
-      
+
       stats = broker.getEventSubscriptionStatistics();
       expect(stats.totalSubscriptions).toBe(1);
 
       await broker.unsubscribeFromEvents(subscription2);
-      
+
       stats = broker.getEventSubscriptionStatistics();
       expect(stats.totalSubscriptions).toBe(0);
     });
@@ -221,12 +225,14 @@ describe('Advanced Routing Integration', () => {
       const notification: MCPNotification = {
         jsonrpc: '2.0',
         method: 'user.login',
-        params: { userId: 12345, timestamp: Date.now() }
+        params: { userId: 12345, timestamp: Date.now() },
       };
 
       // Mock the message router's sendNotificationToService method
       const mockRouter = broker['messageRouter'];
-      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest
+        .spyOn(mockRouter as any, 'sendNotificationToService')
+        .mockResolvedValue(undefined);
 
       await broker.routeNotification(notification);
 
@@ -240,11 +246,13 @@ describe('Advanced Routing Integration', () => {
       const notification: MCPNotification = {
         jsonrpc: '2.0',
         method: 'user.signup',
-        params: { userId: 67890 }
+        params: { userId: 67890 },
       };
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest
+        .spyOn(mockRouter as any, 'sendNotificationToService')
+        .mockResolvedValue(undefined);
 
       await broker.routeNotification(notification);
 
@@ -257,11 +265,13 @@ describe('Advanced Routing Integration', () => {
       const notification: MCPNotification = {
         jsonrpc: '2.0',
         method: 'audit.security.failed_login',
-        params: { userId: 12345, reason: 'invalid_password' }
+        params: { userId: 12345, reason: 'invalid_password' },
       };
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest
+        .spyOn(mockRouter as any, 'sendNotificationToService')
+        .mockResolvedValue(undefined);
 
       await broker.routeNotification(notification);
 
@@ -274,11 +284,13 @@ describe('Advanced Routing Integration', () => {
       const notification: MCPNotification = {
         jsonrpc: '2.0',
         method: 'system.maintenance.started',
-        params: { scheduledBy: 'admin', duration: '2h' }
+        params: { scheduledBy: 'admin', duration: '2h' },
       };
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest
+        .spyOn(mockRouter as any, 'sendNotificationToService')
+        .mockResolvedValue(undefined);
 
       await broker.routeNotification(notification);
 
@@ -291,11 +303,13 @@ describe('Advanced Routing Integration', () => {
       const notification: MCPNotification = {
         jsonrpc: '2.0',
         method: 'unmatched.event',
-        params: { data: 'test' }
+        params: { data: 'test' },
       };
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest
+        .spyOn(mockRouter as any, 'sendNotificationToService')
+        .mockResolvedValue(undefined);
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await broker.routeNotification(notification);
@@ -310,19 +324,16 @@ describe('Advanced Routing Integration', () => {
   describe('Filter-based Routing', () => {
     it('should route notifications based on parameter filters', async () => {
       // Subscribe with specific filters
-      await broker.subscribeToEvents(
-        'analytics-service',
-        'user.action',
-        PatternType.EXACT,
-        {
-          userId: { min: 1000, max: 9999 },
-          action: ['login', 'logout'],
-          source: { regex: '^web-.*' }
-        }
-      );
+      await broker.subscribeToEvents('analytics-service', 'user.action', PatternType.EXACT, {
+        userId: { min: 1000, max: 9999 },
+        action: ['login', 'logout'],
+        source: { regex: '^web-.*' },
+      });
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest
+        .spyOn(mockRouter as any, 'sendNotificationToService')
+        .mockResolvedValue(undefined);
 
       // Matching notification
       const matchingNotification: MCPNotification = {
@@ -331,8 +342,8 @@ describe('Advanced Routing Integration', () => {
         params: {
           userId: 5000,
           action: 'login',
-          source: 'web-app'
-        }
+          source: 'web-app',
+        },
       };
 
       await broker.routeNotification(matchingNotification);
@@ -348,8 +359,8 @@ describe('Advanced Routing Integration', () => {
         params: {
           userId: 500, // Below minimum
           action: 'login',
-          source: 'web-app'
-        }
+          source: 'web-app',
+        },
       };
 
       await broker.routeNotification(nonMatchingNotification1);
@@ -362,8 +373,8 @@ describe('Advanced Routing Integration', () => {
         params: {
           userId: 5000,
           action: 'signup', // Not in allowed actions
-          source: 'web-app'
-        }
+          source: 'web-app',
+        },
       };
 
       await broker.routeNotification(nonMatchingNotification2);
@@ -376,8 +387,8 @@ describe('Advanced Routing Integration', () => {
         params: {
           userId: 5000,
           action: 'login',
-          source: 'mobile-app' // Doesn't match '^web-.*' pattern
-        }
+          source: 'mobile-app', // Doesn't match '^web-.*' pattern
+        },
       };
 
       await broker.routeNotification(nonMatchingNotification3);
@@ -386,19 +397,16 @@ describe('Advanced Routing Integration', () => {
 
     it('should handle complex filter combinations', async () => {
       const currentTime = Date.now();
-      await broker.subscribeToEvents(
-        'audit-service',
-        'security.event',
-        PatternType.EXACT,
-        {
-          severity: ['high', 'critical'],
-          category: { regex: '^(authentication|authorization)$' }
-          // Remove timestamp filter as it requires range validation which is complex
-        }
-      );
+      await broker.subscribeToEvents('audit-service', 'security.event', PatternType.EXACT, {
+        severity: ['high', 'critical'],
+        category: { regex: '^(authentication|authorization)$' },
+        // Remove timestamp filter as it requires range validation which is complex
+      });
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest
+        .spyOn(mockRouter as any, 'sendNotificationToService')
+        .mockResolvedValue(undefined);
 
       const complexNotification: MCPNotification = {
         jsonrpc: '2.0',
@@ -407,8 +415,8 @@ describe('Advanced Routing Integration', () => {
           severity: 'critical',
           category: 'authentication',
           timestamp: currentTime,
-          details: 'Multiple failed login attempts detected'
-        }
+          details: 'Multiple failed login attempts detected',
+        },
       };
 
       await broker.routeNotification(complexNotification);
@@ -438,10 +446,10 @@ describe('Advanced Routing Integration', () => {
 
     it('should handle service reregistration after unsubscription', async () => {
       const subscription = await broker.subscribeToEvents('auth-service', 'user.login');
-      
+
       // Unregister service
       await broker.unregisterService('auth-service');
-      
+
       let stats = broker.getEventSubscriptionStatistics();
       expect(stats.totalSubscriptions).toBe(0);
 
@@ -450,7 +458,7 @@ describe('Advanced Routing Integration', () => {
 
       // Create new subscription
       const newSubscription = await broker.subscribeToEvents('auth-service', 'user.logout');
-      
+
       stats = broker.getEventSubscriptionStatistics();
       expect(stats.totalSubscriptions).toBe(1);
       expect(newSubscription).not.toBe(subscription);
@@ -492,7 +500,9 @@ describe('Advanced Routing Integration', () => {
       await broker.subscribeToEvents('analytics-service', '*', PatternType.WILDCARD);
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService').mockResolvedValue(undefined);
+      const sendSpy = jest
+        .spyOn(mockRouter as any, 'sendNotificationToService')
+        .mockResolvedValue(undefined);
 
       // Send many notifications
       const startTime = Date.now();
@@ -501,7 +511,7 @@ describe('Advanced Routing Integration', () => {
         const notification: MCPNotification = {
           jsonrpc: '2.0',
           method: `test.event.${i}`,
-          params: { data: i }
+          params: { data: i },
         };
         promises.push(broker.routeNotification(notification));
       }
@@ -525,11 +535,13 @@ describe('Advanced Routing Integration', () => {
       const notification: MCPNotification = {
         jsonrpc: '2.0',
         method: 'test.event',
-        params: {}
+        params: {},
       };
 
       await expect(broker.routeNotification(notification)).rejects.toThrow('Broker is not running');
-      await expect(broker.subscribeToEvents('test-service', 'test.pattern')).rejects.toThrow('Broker is not running');
+      await expect(broker.subscribeToEvents('test-service', 'test.pattern')).rejects.toThrow(
+        'Broker is not running'
+      );
     });
 
     it('should handle subscription failures gracefully', async () => {
@@ -546,7 +558,8 @@ describe('Advanced Routing Integration', () => {
       await broker.subscribeToEvents('auth-service', 'user.login');
 
       const mockRouter = broker['messageRouter'];
-      const sendSpy = jest.spyOn(mockRouter as any, 'sendNotificationToService')
+      const sendSpy = jest
+        .spyOn(mockRouter as any, 'sendNotificationToService')
         .mockRejectedValue(new Error('Service unavailable'));
 
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -554,7 +567,7 @@ describe('Advanced Routing Integration', () => {
       const notification: MCPNotification = {
         jsonrpc: '2.0',
         method: 'user.login',
-        params: {}
+        params: {},
       };
 
       // Should not throw even if individual service notifications fail
@@ -571,18 +584,26 @@ describe('Advanced Routing Integration', () => {
 
     it('should handle pattern matching edge cases', async () => {
       // Empty pattern
-      await expect(
-        broker.subscribeToEvents('auth-service', '', PatternType.EXACT)
-      ).rejects.toThrow('Pattern cannot be empty');
+      await expect(broker.subscribeToEvents('auth-service', '', PatternType.EXACT)).rejects.toThrow(
+        'Pattern cannot be empty'
+      );
 
       // Very long pattern
       const longPattern = 'a'.repeat(10000);
-      const subscription = await broker.subscribeToEvents('auth-service', longPattern, PatternType.EXACT);
+      const subscription = await broker.subscribeToEvents(
+        'auth-service',
+        longPattern,
+        PatternType.EXACT
+      );
       expect(subscription).toBeDefined();
 
       // Special characters in exact pattern
       const specialPattern = 'user.login-test_123@domain.com';
-      const specialSubscription = await broker.subscribeToEvents('auth-service', specialPattern, PatternType.EXACT);
+      const specialSubscription = await broker.subscribeToEvents(
+        'auth-service',
+        specialPattern,
+        PatternType.EXACT
+      );
       expect(specialSubscription).toBeDefined();
     });
   });

@@ -1,5 +1,5 @@
-import Redis from 'ioredis';
 import { EventEmitter } from 'events';
+import Redis from 'ioredis';
 
 /**
  * Distributed lock implementation using Redis
@@ -47,22 +47,12 @@ export class DistributedLock extends EventEmitter {
   /**
    * Try to acquire lock (single attempt)
    */
-  private async tryAcquire(
-    key: string,
-    token: string,
-    ttl: number
-  ): Promise<boolean> {
+  private async tryAcquire(key: string, token: string, ttl: number): Promise<boolean> {
     const lockKey = `lock:${key}`;
 
     // SET NX: only set if key doesn't exist
     // PX: set expiry in milliseconds
-    const result = await this.redis.set(
-      lockKey,
-      token,
-      'PX',
-      ttl,
-      'NX'
-    );
+    const result = await this.redis.set(lockKey, token, 'PX', ttl, 'NX');
 
     return result === 'OK';
   }
@@ -143,11 +133,7 @@ export class DistributedLock extends EventEmitter {
   /**
    * Execute function with lock
    */
-  async withLock<T>(
-    key: string,
-    fn: () => Promise<T>,
-    ttl: number = 30000
-  ): Promise<T> {
+  async withLock<T>(key: string, fn: () => Promise<T>, ttl: number = 30000): Promise<T> {
     const token = await this.acquire(key, ttl);
 
     if (!token) {

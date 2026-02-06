@@ -1,6 +1,6 @@
 /**
  * Relay Core Integration
- * 
+ *
  * This module provides integration with The New Fuse Relay Core package,
  * enabling MCP services to participate in the platform's communication relay system.
  */
@@ -51,15 +51,18 @@ export interface RelayServiceInfo {
  */
 export const RelayIntegration = {
   isAvailable: !!relayCore,
-  
+
   /**
    * Register MCP service with relay core
    */
-  async registerMCPService(serviceInfo: any, config?: Partial<RelayIntegrationConfig>): Promise<boolean> {
+  async registerMCPService(
+    serviceInfo: any,
+    config?: Partial<RelayIntegrationConfig>
+  ): Promise<boolean> {
     if (!relayCore || !relayCore.registerService) {
       return false;
     }
-    
+
     try {
       const relayServiceInfo: RelayServiceInfo = {
         id: serviceInfo.id,
@@ -73,29 +76,29 @@ export const RelayIntegration = {
           mcpVersion: '1.0.0',
           resources: serviceInfo.resources || [],
           tools: serviceInfo.tools || [],
-          ...serviceInfo.metadata
+          ...serviceInfo.metadata,
         },
         health: {
           status: 'healthy',
           lastCheck: new Date(),
-          responseTime: 0
-        }
+          responseTime: 0,
+        },
       };
-      
+
       const result = await relayCore.registerService('mcp', relayServiceInfo);
-      
+
       if (config?.autoRegister && result) {
         // Set up automatic heartbeat
         this.setupHeartbeat(serviceInfo.id, config);
       }
-      
+
       return result;
     } catch (error) {
       console.error('Failed to register MCP service with relay core:', error);
       return false;
     }
   },
-  
+
   /**
    * Unregister MCP service from relay core
    */
@@ -103,7 +106,7 @@ export const RelayIntegration = {
     if (!relayCore || !relayCore.unregisterService) {
       return false;
     }
-    
+
     try {
       return await relayCore.unregisterService('mcp', serviceId);
     } catch (error) {
@@ -111,7 +114,7 @@ export const RelayIntegration = {
       return false;
     }
   },
-  
+
   /**
    * Get shared configuration from relay core
    */
@@ -119,7 +122,7 @@ export const RelayIntegration = {
     if (!relayCore || !relayCore.getConfig) {
       return {};
     }
-    
+
     try {
       const config = relayCore.getConfig('mcp');
       return key ? config[key] : config;
@@ -128,19 +131,23 @@ export const RelayIntegration = {
       return {};
     }
   },
-  
+
   /**
    * Send message through relay core
    */
-  async sendMessage(targetService: string, message: any, options?: {
-    timeout?: number;
-    priority?: 'low' | 'normal' | 'high' | 'critical';
-    retries?: number;
-  }): Promise<any> {
+  async sendMessage(
+    targetService: string,
+    message: any,
+    options?: {
+      timeout?: number;
+      priority?: 'low' | 'normal' | 'high' | 'critical';
+      retries?: number;
+    }
+  ): Promise<any> {
     if (!relayCore || !relayCore.sendMessage) {
       throw new Error('Relay core not available for message sending');
     }
-    
+
     try {
       const relayMessage = {
         id: `mcp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -152,17 +159,17 @@ export const RelayIntegration = {
         metadata: {
           priority: options?.priority || 'normal',
           timeout: options?.timeout || 30000,
-          retries: options?.retries || 3
-        }
+          retries: options?.retries || 3,
+        },
       };
-      
+
       return await relayCore.sendMessage(relayMessage);
     } catch (error) {
       console.error('Failed to send message through relay core:', error);
       throw error;
     }
   },
-  
+
   /**
    * Subscribe to relay core events
    */
@@ -170,7 +177,7 @@ export const RelayIntegration = {
     if (!relayCore || !relayCore.subscribe) {
       return () => {}; // Return empty cleanup function
     }
-    
+
     try {
       const subscription = relayCore.subscribe(eventTypes, (event: any) => {
         // Filter for MCP-related events
@@ -178,7 +185,7 @@ export const RelayIntegration = {
           callback(event);
         }
       });
-      
+
       return () => {
         if (subscription && subscription.unsubscribe) {
           subscription.unsubscribe();
@@ -189,7 +196,7 @@ export const RelayIntegration = {
       return () => {};
     }
   },
-  
+
   /**
    * Publish event to relay core
    */
@@ -197,7 +204,7 @@ export const RelayIntegration = {
     if (!relayCore || !relayCore.publishEvent) {
       return false;
     }
-    
+
     try {
       const event = {
         id: `mcp_event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -207,17 +214,17 @@ export const RelayIntegration = {
         data,
         metadata: {
           version: '1.0.0',
-          ...metadata
-        }
+          ...metadata,
+        },
       };
-      
+
       return await relayCore.publishEvent(event);
     } catch (error) {
       console.error('Failed to publish event to relay core:', error);
       return false;
     }
   },
-  
+
   /**
    * Get service discovery from relay core
    */
@@ -230,47 +237,48 @@ export const RelayIntegration = {
     if (!relayCore || !relayCore.discoverServices) {
       return [];
     }
-    
+
     try {
       const services = await relayCore.discoverServices({
         namespace: 'mcp',
-        ...query
+        ...query,
       });
-      
-      return services.filter((service: any) => 
-        service.metadata?.protocol === 'mcp'
-      );
+
+      return services.filter((service: any) => service.metadata?.protocol === 'mcp');
     } catch (error) {
       console.error('Failed to discover services through relay core:', error);
       return [];
     }
   },
-  
+
   /**
    * Setup heartbeat for service health monitoring
    */
-  setupHeartbeat(serviceId: string, config: Partial<RelayIntegrationConfig>): NodeJS.Timeout | null {
+  setupHeartbeat(
+    serviceId: string,
+    config: Partial<RelayIntegrationConfig>
+  ): NodeJS.Timeout | null {
     if (!relayCore || !relayCore.updateServiceHealth) {
       return null;
     }
-    
+
     const interval = config.heartbeatInterval || 30000; // 30 seconds default
-    
+
     return setInterval(async () => {
       try {
         const healthInfo = {
           status: 'healthy' as const,
           lastCheck: new Date(),
-          responseTime: Date.now() // This should be measured properly
+          responseTime: Date.now(), // This should be measured properly
         };
-        
+
         await relayCore.updateServiceHealth('mcp', serviceId, healthInfo);
       } catch (error) {
         console.error('Failed to send heartbeat to relay core:', error);
       }
     }, interval);
   },
-  
+
   /**
    * Get relay core status and metrics
    */
@@ -287,10 +295,10 @@ export const RelayIntegration = {
         services: 0,
         messagesSent: 0,
         messagesReceived: 0,
-        lastActivity: new Date(0)
+        lastActivity: new Date(0),
       };
     }
-    
+
     try {
       return await relayCore.getStatus();
     } catch (error) {
@@ -300,10 +308,10 @@ export const RelayIntegration = {
         services: 0,
         messagesSent: 0,
         messagesReceived: 0,
-        lastActivity: new Date(0)
+        lastActivity: new Date(0),
       };
     }
-  }
+  },
 };
 
 /**
@@ -315,7 +323,7 @@ export const DEFAULT_RELAY_CONFIG: RelayIntegrationConfig = {
   heartbeatInterval: 30000, // 30 seconds
   retryAttempts: 3,
   retryDelay: 1000, // 1 second
-  namespace: 'mcp'
+  namespace: 'mcp',
 };
 
 /**
@@ -330,7 +338,7 @@ export const MCP_RELAY_EVENTS = {
   MESSAGE_FAILED: 'message.failed',
   CONNECTION_ESTABLISHED: 'connection.established',
   CONNECTION_LOST: 'connection.lost',
-  ERROR_OCCURRED: 'error.occurred'
+  ERROR_OCCURRED: 'error.occurred',
 } as const;
 
 /**
@@ -340,17 +348,17 @@ export const MCP_RELAY_EVENTS = {
 export class RelayIntegrationFactory {
   static create(config?: Partial<RelayIntegrationConfig>) {
     const finalConfig = { ...DEFAULT_RELAY_CONFIG, ...config };
-    
+
     return {
       config: finalConfig,
       integration: RelayIntegration,
-      
+
       async initialize() {
         if (!RelayIntegration.isAvailable) {
           console.log('Relay core not available, skipping initialization');
           return false;
         }
-        
+
         try {
           // Perform any initialization tasks
           const status = await RelayIntegration.getRelayStatus();
@@ -361,33 +369,33 @@ export class RelayIntegrationFactory {
           return false;
         }
       },
-      
+
       async registerService(serviceInfo: any) {
         return await RelayIntegration.registerMCPService(serviceInfo, finalConfig);
       },
-      
+
       createEventBridge() {
         const subscriptions = new Map<string, () => void>();
-        
+
         return {
           subscribe: (eventType: string, callback: (event: any) => void) => {
             const cleanup = RelayIntegration.subscribeToEvents([eventType], callback);
             subscriptions.set(eventType, cleanup);
             return cleanup;
           },
-          
+
           publish: async (eventType: string, data: any, metadata?: any) => {
             return await RelayIntegration.publishEvent(eventType, data, metadata);
           },
-          
+
           cleanup: () => {
             for (const cleanup of subscriptions.values()) {
               cleanup();
             }
             subscriptions.clear();
-          }
+          },
         };
-      }
+      },
     };
   }
 }

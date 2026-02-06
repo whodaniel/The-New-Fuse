@@ -5,7 +5,7 @@ export enum VersioningStrategy {
   URI = 'uri',
   HEADER = 'header',
   MEDIA_TYPE = 'media-type',
-  QUERY_PARAM = 'query-param'
+  QUERY_PARAM = 'query-param',
 }
 
 export interface ApiVersioningConfig {
@@ -26,13 +26,21 @@ export class ApiVersioningService {
   constructor(private readonly configService: ConfigService) {
     this.config = {
       enabled: this.configService.get<boolean>('api.versioning.enabled', true),
-      strategy: this.configService.get<VersioningStrategy>('api.versioning.strategy', VersioningStrategy.HEADER),
+      strategy: this.configService.get<VersioningStrategy>(
+        'api.versioning.strategy',
+        VersioningStrategy.HEADER,
+      ),
       defaultVersion: this.configService.get<string>('api.versioning.defaultVersion', '1'),
-      supportedVersions: this.configService.get<string[]>('api.versioning.supportedVersions', ['1']),
+      supportedVersions: this.configService.get<string[]>('api.versioning.supportedVersions', [
+        '1',
+      ]),
       headerName: this.configService.get<string>('api.versioning.headerName', 'x-api-version'),
       queryParamName: this.configService.get<string>('api.versioning.queryParamName', 'version'),
       deprecatedVersions: this.configService.get<string[]>('api.versioning.deprecatedVersions', []),
-      sunsetVersions: this.configService.get<Record<string, Date>>('api.versioning.sunsetVersions', {})
+      sunsetVersions: this.configService.get<Record<string, Date>>(
+        'api.versioning.sunsetVersions',
+        {},
+      ),
     };
     this.validateConfiguration();
     this.logger.log('API versioning service initialized');
@@ -123,7 +131,9 @@ export class ApiVersioningService {
     // Validate deprecated versions are also supported
     for (const deprecatedVersion of this.config.deprecatedVersions) {
       if (!this.config.supportedVersions.includes(deprecatedVersion)) {
-        errors.push(`Deprecated version ${deprecatedVersion} must be included in supported versions`);
+        errors.push(
+          `Deprecated version ${deprecatedVersion} must be included in supported versions`,
+        );
       }
     }
 
@@ -136,7 +146,7 @@ export class ApiVersioningService {
 
     if (errors.length > 0) {
       this.logger.error('API versioning configuration validation failed:');
-      errors.forEach(error => this.logger.error(`- ${error}`));
+      errors.forEach((error) => this.logger.error(`- ${error}`));
       throw new Error(`Invalid API versioning configuration: ${errors.join(', ')}`);
     }
   }

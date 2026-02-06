@@ -1,12 +1,15 @@
 # VS Code Extension Migration Plan
 
-This document outlines the step-by-step plan for migrating the remaining features from the old VS Code extension to the new version.
+This document outlines the step-by-step plan for migrating the remaining
+features from the old VS Code extension to the new version.
 
 ## Current Migration Status
 
-The migration has made significant progress with the following components already migrated:
+The migration has made significant progress with the following components
+already migrated:
 
-- ✅ Core infrastructure (AgentRegistry, AgentCommunicationService, FileProtocolService)
+- ✅ Core infrastructure (AgentRegistry, AgentCommunicationService,
+  FileProtocolService)
 - ✅ LLM providers (Anthropic, Cerebras, OpenAI, Ollama, VS Code)
 - ✅ Base command system with legacy command bridging
 - ✅ Basic chat view implementation
@@ -18,7 +21,8 @@ The migration has made significant progress with the following components alread
 
 1. Create the Communication Hub Provider class:
    - Create `/vscode-extension/src/views/CommunicationHubProvider.ts`
-   - Port functionality from old `/old-vscode-extension/src/views/communication-hub-provider.ts`
+   - Port functionality from old
+     `/old-vscode-extension/src/views/communication-hub-provider.ts`
    - Integrate with existing services (AgentCommunicationService)
 
 2. Register the Communication Hub webview:
@@ -127,13 +131,13 @@ The migration has made significant progress with the following components alread
 
 ## Implementation Timeline
 
-| Phase | Components | Priority | Estimated Time |
-|-------|------------|----------|----------------|
-| 2     | UI Components & Dashboard | Medium | 2-3 days |
-| 3     | Advanced Collaboration | Medium | 3-4 days |
-| 4     | WebSocket Integration | Low | 1-2 days |
-| 5     | Extension Configuration | Low-Medium | 1 day |
-| 6     | Documentation & Testing | Low | 2 days |
+| Phase | Components                | Priority   | Estimated Time |
+| ----- | ------------------------- | ---------- | -------------- |
+| 2     | UI Components & Dashboard | Medium     | 2-3 days       |
+| 3     | Advanced Collaboration    | Medium     | 3-4 days       |
+| 4     | WebSocket Integration     | Low        | 1-2 days       |
+| 5     | Extension Configuration   | Low-Medium | 1 day          |
+| 6     | Documentation & Testing   | Low        | 2 days         |
 
 ## Getting Started
 
@@ -144,4 +148,5 @@ To begin the next phase of migration, follow these steps:
 3. Implement the basic Dashboard UI
 4. Connect components to existing services
 
-This plan will ensure a methodical, step-by-step migration of all remaining functionality from the old extension to the new improved version.
+This plan will ensure a methodical, step-by-step migration of all remaining
+functionality from the old extension to the new improved version.

@@ -135,7 +135,7 @@ I analyze the project to understand:
 
 - Nest.js version and configuration
 - Module structure and organization
-- Database setup (TypeORM/Mongoose/Prisma)
+- Database setup (TypeORM/Mongoose/Drizzle)
 - Testing framework configuration
 - Authentication implementation
 
@@ -153,7 +153,7 @@ grep "@nestjs/core" package.json | sed 's/.*"\([0-9\.]*\)".*/Nest.js version: \1
 # Check database setup
 grep -q "@nestjs/typeorm" package.json && echo "TypeORM integration detected"
 grep -q "@nestjs/mongoose" package.json && echo "Mongoose integration detected"
-grep -q "@prisma/client" package.json && echo "Prisma ORM detected"
+grep -q "@drizzle/client" package.json && echo "Drizzle ORM detected"
 
 # Check authentication
 grep -q "@nestjs/passport" package.json && echo "Passport authentication detected"
@@ -485,9 +485,9 @@ When reviewing Nest.js applications, focus on:
 
 ```
 Project Requirements:
-├─ Need migrations? → TypeORM or Prisma
+├─ Need migrations? → TypeORM or Drizzle
 ├─ NoSQL database? → Mongoose
-├─ Type safety priority? → Prisma
+├─ Type safety priority? → Drizzle
 ├─ Complex relations? → TypeORM
 └─ Existing database? → TypeORM (better legacy support)
 ```

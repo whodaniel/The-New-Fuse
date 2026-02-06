@@ -1,10 +1,12 @@
 # API Usage Examples
 
-This document provides practical examples of how to use the new REST API endpoints.
+This document provides practical examples of how to use the new REST API
+endpoints.
 
 ## Authentication
 
 All requests require a JWT token in the Authorization header:
+
 ```
 Authorization: Bearer <your-jwt-token>
 ```
@@ -14,12 +16,14 @@ Authorization: Bearer <your-jwt-token>
 ## 1. User Profile Management
 
 ### Get User Profile
+
 ```bash
 curl -X GET http://localhost:3004/users/usr_123/profile \
   -H "Authorization: Bearer <token>"
 ```
 
 **Response:**
+
 ```json
 {
   "id": "usr_123",
@@ -41,6 +45,7 @@ curl -X GET http://localhost:3004/users/usr_123/profile \
 ```
 
 ### Update User Profile
+
 ```bash
 curl -X PUT http://localhost:3004/users/usr_123/profile \
   -H "Authorization: Bearer <token>" \
@@ -62,12 +67,14 @@ curl -X PUT http://localhost:3004/users/usr_123/profile \
 ## 2. Agent Execution History
 
 ### Get All Executions (Paginated)
+
 ```bash
 curl -X GET "http://localhost:3004/agents/executions?page=1&limit=20" \
   -H "Authorization: Bearer <token>"
 ```
 
 **Response:**
+
 ```json
 {
   "executions": [
@@ -100,18 +107,21 @@ curl -X GET "http://localhost:3004/agents/executions?page=1&limit=20" \
 ```
 
 ### Filter Executions by Agent and Status
+
 ```bash
 curl -X GET "http://localhost:3004/agents/executions?agentId=agent_123&status=FAILED&page=1&limit=10" \
   -H "Authorization: Bearer <token>"
 ```
 
 ### Filter by Date Range
+
 ```bash
 curl -X GET "http://localhost:3004/agents/executions?startDate=2024-01-01T00:00:00Z&endDate=2024-01-31T23:59:59Z" \
   -H "Authorization: Bearer <token>"
 ```
 
 ### Get Single Execution Details
+
 ```bash
 curl -X GET http://localhost:3004/agents/executions/exec_001 \
   -H "Authorization: Bearer <token>"
@@ -122,12 +132,14 @@ curl -X GET http://localhost:3004/agents/executions/exec_001 \
 ## 3. Workflow Templates
 
 ### Get All Templates
+
 ```bash
 curl -X GET http://localhost:3004/workflows/templates \
   -H "Authorization: Bearer <token>"
 ```
 
 **Response:**
+
 ```json
 [
   {
@@ -166,12 +178,14 @@ curl -X GET http://localhost:3004/workflows/templates \
 ```
 
 ### Get Template by ID
+
 ```bash
 curl -X GET http://localhost:3004/workflows/templates/tmpl_001 \
   -H "Authorization: Bearer <token>"
 ```
 
 ### Create New Template
+
 ```bash
 curl -X POST http://localhost:3004/workflows/templates \
   -H "Authorization: Bearer <token>" \
@@ -210,6 +224,7 @@ curl -X POST http://localhost:3004/workflows/templates \
 ```
 
 ### Update Template
+
 ```bash
 curl -X PUT http://localhost:3004/workflows/templates/tmpl_001 \
   -H "Authorization: Bearer <token>" \
@@ -222,6 +237,7 @@ curl -X PUT http://localhost:3004/workflows/templates/tmpl_001 \
 ```
 
 ### Delete Template
+
 ```bash
 curl -X DELETE http://localhost:3004/workflows/templates/tmpl_001 \
   -H "Authorization: Bearer <token>"
@@ -232,6 +248,7 @@ curl -X DELETE http://localhost:3004/workflows/templates/tmpl_001 \
 ## 4. File Upload/Download
 
 ### Upload File
+
 ```bash
 curl -X POST http://localhost:3004/files/upload \
   -H "Authorization: Bearer <token>" \
@@ -239,6 +256,7 @@ curl -X POST http://localhost:3004/files/upload \
 ```
 
 **Response:**
+
 ```json
 {
   "id": "file_001",
@@ -256,12 +274,14 @@ curl -X POST http://localhost:3004/files/upload \
 ```
 
 ### Get User Files (Paginated)
+
 ```bash
 curl -X GET "http://localhost:3004/files?page=1&limit=20" \
   -H "Authorization: Bearer <token>"
 ```
 
 **Response:**
+
 ```json
 {
   "files": [
@@ -289,12 +309,14 @@ curl -X GET "http://localhost:3004/files?page=1&limit=20" \
 ```
 
 ### Filter Files by Category
+
 ```bash
 curl -X GET "http://localhost:3004/files?category=IMAGE&page=1&limit=20" \
   -H "Authorization: Bearer <token>"
 ```
 
 ### Download File
+
 ```bash
 curl -X GET http://localhost:3004/files/file_001 \
   -H "Authorization: Bearer <token>" \
@@ -302,6 +324,7 @@ curl -X GET http://localhost:3004/files/file_001 \
 ```
 
 ### Delete File
+
 ```bash
 curl -X DELETE http://localhost:3004/files/file_001 \
   -H "Authorization: Bearer <token>"
@@ -312,12 +335,14 @@ curl -X DELETE http://localhost:3004/files/file_001 \
 ## 5. System Health & Metrics
 
 ### Get Comprehensive System Metrics (Admin Only)
+
 ```bash
 curl -X GET http://localhost:3004/system/metrics \
   -H "Authorization: Bearer <admin-token>"
 ```
 
 **Response:**
+
 ```json
 {
   "status": "healthy",
@@ -374,12 +399,14 @@ curl -X GET http://localhost:3004/system/metrics \
 ```
 
 ### Get Quick Health Check
+
 ```bash
 curl -X GET http://localhost:3004/system/health \
   -H "Authorization: Bearer <token>"
 ```
 
 **Response:**
+
 ```json
 {
   "status": "healthy",
@@ -397,35 +424,48 @@ curl -X GET http://localhost:3004/system/health \
 ```typescript
 // Get user profile
 async function getUserProfile(userId: string, token: string) {
-  const response = await fetch(`http://localhost:3004/users/${userId}/profile`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
+  const response = await fetch(
+    `http://localhost:3004/users/${userId}/profile`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }
-  });
+  );
   return await response.json();
 }
 
 // Update user profile
-async function updateUserProfile(userId: string, profileData: any, token: string) {
-  const response = await fetch(`http://localhost:3004/users/${userId}/profile`, {
-    method: 'PUT',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(profileData)
-  });
+async function updateUserProfile(
+  userId: string,
+  profileData: any,
+  token: string
+) {
+  const response = await fetch(
+    `http://localhost:3004/users/${userId}/profile`,
+    {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(profileData),
+    }
+  );
   return await response.json();
 }
 
 // Get agent executions
 async function getAgentExecutions(filters: any, token: string) {
   const params = new URLSearchParams(filters);
-  const response = await fetch(`http://localhost:3004/agents/executions?${params}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
+  const response = await fetch(
+    `http://localhost:3004/agents/executions?${params}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }
-  });
+  );
   return await response.json();
 }
 
@@ -437,9 +477,9 @@ async function uploadFile(file: File, token: string) {
   const response = await fetch('http://localhost:3004/files/upload', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
-    body: formData
+    body: formData,
   });
   return await response.json();
 }
@@ -449,10 +489,10 @@ async function createWorkflowTemplate(template: any, token: string) {
   const response = await fetch('http://localhost:3004/workflows/templates', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(template)
+    body: JSON.stringify(template),
   });
   return await response.json();
 }
@@ -466,8 +506,8 @@ import axios from 'axios';
 const api = axios.create({
   baseURL: 'http://localhost:3004',
   headers: {
-    'Authorization': `Bearer ${token}`
-  }
+    Authorization: `Bearer ${token}`,
+  },
 });
 
 // Get user profile
@@ -482,8 +522,8 @@ const executions = await api.get('/agents/executions', {
     agentId: 'agent_123',
     status: 'COMPLETED',
     page: 1,
-    limit: 20
-  }
+    limit: 20,
+  },
 });
 
 // Upload file
@@ -491,8 +531,8 @@ const formData = new FormData();
 formData.append('file', file);
 const uploadedFile = await api.post('/files/upload', formData, {
   headers: {
-    'Content-Type': 'multipart/form-data'
-  }
+    'Content-Type': 'multipart/form-data',
+  },
 });
 
 // Create workflow template
@@ -509,18 +549,17 @@ const metrics = await api.get('/system/metrics');
 All endpoints follow a consistent error response format:
 
 ### 400 Bad Request
+
 ```json
 {
   "statusCode": 400,
-  "message": [
-    "name must be a string",
-    "email must be a valid email address"
-  ],
+  "message": ["name must be a string", "email must be a valid email address"],
   "error": "Bad Request"
 }
 ```
 
 ### 401 Unauthorized
+
 ```json
 {
   "statusCode": 401,
@@ -530,6 +569,7 @@ All endpoints follow a consistent error response format:
 ```
 
 ### 403 Forbidden
+
 ```json
 {
   "statusCode": 403,
@@ -539,6 +579,7 @@ All endpoints follow a consistent error response format:
 ```
 
 ### 404 Not Found
+
 ```json
 {
   "statusCode": 404,
@@ -548,6 +589,7 @@ All endpoints follow a consistent error response format:
 ```
 
 ### 500 Internal Server Error
+
 ```json
 {
   "statusCode": 500,
@@ -561,11 +603,13 @@ All endpoints follow a consistent error response format:
 ## Rate Limiting
 
 The API implements rate limiting to prevent abuse:
+
 - **Default**: 100 requests per minute per user
 - **Admin endpoints**: 200 requests per minute
 - **File uploads**: 10 uploads per minute
 
 When rate limit is exceeded, you'll receive:
+
 ```json
 {
   "statusCode": 429,
@@ -578,10 +622,13 @@ When rate limit is exceeded, you'll receive:
 
 ## Best Practices
 
-1. **Always handle errors**: Check response status codes and handle errors appropriately
+1. **Always handle errors**: Check response status codes and handle errors
+   appropriately
 2. **Use pagination**: When fetching lists, always use page and limit parameters
 3. **Validate file sizes**: Before uploading, check that files are under 10MB
 4. **Cache responses**: Cache GET responses when appropriate to reduce API calls
-5. **Use filtering**: Take advantage of query parameters to filter results server-side
-6. **Monitor health**: Regularly check the `/system/health` endpoint for system status
+5. **Use filtering**: Take advantage of query parameters to filter results
+   server-side
+6. **Monitor health**: Regularly check the `/system/health` endpoint for system
+   status
 7. **Secure tokens**: Never expose JWT tokens in client-side code or logs

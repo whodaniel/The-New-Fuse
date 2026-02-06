@@ -1,5 +1,5 @@
-import { Injectable, NestMiddleware, HttpException, HttpStatus, Logger } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { HttpException, HttpStatus, Injectable, Logger, NestMiddleware } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
 import { RedisRateLimiterService } from './redis-rate-limiter.service';
 
 /**
@@ -38,7 +38,7 @@ export class RateLimitMiddleware implements NestMiddleware {
           {
             statusCode: HttpStatus.TOO_MANY_REQUESTS,
             message: 'Too many requests. Please try again later.',
-            error: 'Too Many Requests'
+            error: 'Too Many Requests',
           },
           HttpStatus.TOO_MANY_REQUESTS
         );
@@ -57,15 +57,9 @@ export class RateLimitMiddleware implements NestMiddleware {
   }
 
   private shouldSkip(req: Request): boolean {
-    const skipPaths = [
-      '/health',
-      '/metrics',
-      '/readiness',
-      '/liveness',
-      '/.well-known'
-    ];
+    const skipPaths = ['/health', '/metrics', '/readiness', '/liveness', '/.well-known'];
 
-    return skipPaths.some(path => req.path.startsWith(path));
+    return skipPaths.some((path) => req.path.startsWith(path));
   }
 
   private getRateLimitKey(req: Request): string {
@@ -75,10 +69,11 @@ export class RateLimitMiddleware implements NestMiddleware {
       return `user:${user.id}`;
     }
 
-    const ip = req.ip ||
-                req.headers['x-forwarded-for'] as string ||
-                req.connection.remoteAddress ||
-                'unknown';
+    const ip =
+      req.ip ||
+      (req.headers['x-forwarded-for'] as string) ||
+      req.connection.remoteAddress ||
+      'unknown';
 
     return `ip:${ip}`;
   }

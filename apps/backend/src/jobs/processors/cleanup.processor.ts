@@ -1,11 +1,10 @@
-import { Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
+import { OnQueueActive, OnQueueCompleted, OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
+import { authSessions, DatabaseService } from '@the-new-fuse/database';
 import { Job } from 'bull';
+import { lt } from 'drizzle-orm';
 import { QueueName } from '../constants/queue-names';
 import { CleanupJobData } from '../interfaces/job-data.interface';
-import { DatabaseService } from '@the-new-fuse/database';
-import { authSessions } from '@the-new-fuse/database';
-import { lt } from 'drizzle-orm';
 
 /**
  * Cleanup job processor
@@ -22,9 +21,7 @@ export class CleanupProcessor {
    */
   @Process('cleanup')
   async handleCleanup(job: Job<CleanupJobData>) {
-    this.logger.log(
-      `Processing cleanup job ${job.id} for type ${job.data.cleanupType}`,
-    );
+    this.logger.log(`Processing cleanup job ${job.id} for type ${job.data.cleanupType}`);
 
     try {
       const { cleanupType, olderThan, batchSize } = job.data;
@@ -53,7 +50,7 @@ export class CleanupProcessor {
       await job.progress(100);
 
       this.logger.log(
-        `Cleanup completed for ${cleanupType}. Removed ${result.removedCount} items.`,
+        `Cleanup completed for ${cleanupType}. Removed ${result.removedCount} items.`
       );
 
       return {
@@ -78,7 +75,7 @@ export class CleanupProcessor {
     cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
 
     // TODO: Implement actual database cleanup
-    // Example: await this.prisma.session.deleteMany({
+    // Example: await this.db.session.deleteMany({
     //   where: { updatedAt: { lt: cutoffDate } }
     // });
 
@@ -118,9 +115,7 @@ export class CleanupProcessor {
 
     const now = new Date();
 
-    const result = await this.db.client
-      .delete(authSessions)
-      .where(lt(authSessions.expiresAt, now));
+    const result = await this.db.client.delete(authSessions).where(lt(authSessions.expiresAt, now));
 
     return {
       processedCount: (result as any).rowCount,
@@ -162,7 +157,7 @@ export class CleanupProcessor {
   @OnQueueCompleted()
   onCompleted(job: Job, result: any) {
     this.logger.log(
-      `Cleanup job ${job.id} completed. Type: ${result.cleanupType}, Removed: ${result.removedCount} items`,
+      `Cleanup job ${job.id} completed. Type: ${result.cleanupType}, Removed: ${result.removedCount} items`
     );
   }
 
@@ -173,7 +168,7 @@ export class CleanupProcessor {
   onFailed(job: Job, error: Error) {
     this.logger.error(
       `Cleanup job ${job.id} failed after ${job.attemptsMade} attempts. Error: ${error.message}`,
-      error.stack,
+      error.stack
     );
   }
 

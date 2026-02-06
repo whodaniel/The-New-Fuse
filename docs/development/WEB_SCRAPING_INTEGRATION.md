@@ -2,7 +2,10 @@
 
 ## 🎯 **Overview**
 
-The New Fuse now includes comprehensive web scraping infrastructure that enables AI agents to have **full internet access** through both simple proxy requests and complete browser automation. This implementation provides the exact functionality described in your requirements.
+The New Fuse now includes comprehensive web scraping infrastructure that enables
+AI agents to have **full internet access** through both simple proxy requests
+and complete browser automation. This implementation provides the exact
+functionality described in your requirements.
 
 ## 🚀 **What's Been Implemented**
 
@@ -32,6 +35,7 @@ The New Fuse now includes comprehensive web scraping infrastructure that enables
 ## 🛠 **Available Tools for AI Agents**
 
 ### 1. **Simple Web Scraping** (`scrape_website_simple`)
+
 ```json
 {
   "name": "scrape_website_simple",
@@ -47,9 +51,10 @@ The New Fuse now includes comprehensive web scraping infrastructure that enables
 ```
 
 ### 2. **Full Browser Scraping** (`scrape_website_full`)
+
 ```json
 {
-  "name": "scrape_website_full", 
+  "name": "scrape_website_full",
   "description": "Complete page rendering with JavaScript",
   "parameters": {
     "url": "https://spa-app.com",
@@ -65,6 +70,7 @@ The New Fuse now includes comprehensive web scraping infrastructure that enables
 ```
 
 ### 3. **Auto-Detect Scraping** (`scrape_website_auto`)
+
 ```json
 {
   "name": "scrape_website_auto",
@@ -76,6 +82,7 @@ The New Fuse now includes comprehensive web scraping infrastructure that enables
 ```
 
 ### 4. **CORS Proxy** (`proxy_web_request`)
+
 ```json
 {
   "name": "proxy_web_request",
@@ -83,13 +90,14 @@ The New Fuse now includes comprehensive web scraping infrastructure that enables
   "parameters": {
     "url": "https://api.example.com/data",
     "method": "POST",
-    "headers": {"Content-Type": "application/json"},
+    "headers": { "Content-Type": "application/json" },
     "body": "{\"query\": \"search\"}"
   }
 }
 ```
 
 ### 5. **Website Analysis** (`analyze_website`)
+
 ```json
 {
   "name": "analyze_website",
@@ -104,23 +112,27 @@ The New Fuse now includes comprehensive web scraping infrastructure that enables
 ## 🔧 **Quick Setup**
 
 ### 1. **Install Dependencies**
+
 ```bash
 pnpm install
 ```
 
 ### 2. **Start MCP Server with Web Scraping**
+
 ```bash
 # Run the web scraping MCP server
 pnpm run packages/mcp-core/examples/web-scraping-server.ts
 ```
 
 ### 3. **Deploy Serverless Functions**
+
 ```bash
 # Deploy to Vercel (already configured)
 vercel deploy
 ```
 
 ### 4. **Test the Integration**
+
 ```bash
 # Test simple scraping
 curl "https://your-app.vercel.app/api/scrape?url=https://example.com&method=simple"
@@ -139,6 +151,7 @@ curl -X POST https://your-app.vercel.app/api/proxy \
 ## 🛡️ **Security Features**
 
 ### **Built-in Protection**
+
 - ✅ Domain allowlists/blocklists
 - ✅ Private IP address blocking
 - ✅ Content type filtering
@@ -148,19 +161,21 @@ curl -X POST https://your-app.vercel.app/api/proxy \
 - ✅ Error message sanitization
 
 ### **Configuration Example**
+
 ```typescript
 const securityPolicy = {
   allowedDomains: ['wikipedia.org', 'github.com', 'stackoverflow.com'],
   blockedDomains: ['facebook.com', 'twitter.com'],
   maxFileSize: 5 * 1024 * 1024, // 5MB
   rateLimit: { requests: 30, windowMs: 60000 },
-  contentFiltering: true
+  contentFiltering: true,
 };
 ```
 
 ## 📊 **Performance & Monitoring**
 
 ### **Built-in Metrics**
+
 - Request success/failure rates
 - Response times
 - Resource usage
@@ -168,6 +183,7 @@ const securityPolicy = {
 - Rate limit monitoring
 
 ### **Usage Statistics**
+
 ```typescript
 // Get scraping statistics
 const stats = webTools.getStatistics();
@@ -178,6 +194,7 @@ console.log('Average response time:', stats.webScraping.averageResponseTime);
 ## 🌐 **Deployment Architecture**
 
 ### **Phase 1: Vercel (Current)**
+
 ```
 AI Agent → Vercel Functions → Target Website
          ↓
@@ -186,6 +203,7 @@ AI Agent → Vercel Functions → Target Website
 ```
 
 ### **Integration with Existing Deployment**
+
 - ✅ Works with current Vercel setup
 - ✅ Integrates with MCP infrastructure
 - ✅ Uses existing monitoring system
@@ -194,6 +212,7 @@ AI Agent → Vercel Functions → Target Website
 ## 🧪 **Testing the Implementation**
 
 ### **1. Test MCP Server**
+
 ```bash
 # Start the web scraping MCP server
 cd packages/mcp-core
@@ -201,17 +220,19 @@ pnpm run examples/web-scraping-server.ts
 ```
 
 ### **2. Test Serverless Functions**
+
 ```bash
 # Test scraping endpoint
 curl "http://localhost:3000/api/scrape?url=https://example.com&method=auto"
 
-# Test proxy endpoint  
+# Test proxy endpoint
 curl -X POST http://localhost:3000/api/proxy \
   -H "Content-Type: application/json" \
   -d '{"url": "https://httpbin.org/json"}'
 ```
 
 ### **3. Test MCP Tools**
+
 ```bash
 # Call MCP tool directly
 curl -X POST http://localhost:3005/tools/call \
@@ -225,10 +246,11 @@ curl -X POST http://localhost:3005/tools/call \
 ## 🎯 **AI Agent Usage Examples**
 
 ### **Example 1: Research Assistant**
+
 ```typescript
 // AI agent researching a topic
 const result = await mcpClient.callTool('scrape_website_auto', {
-  url: 'https://en.wikipedia.org/wiki/Artificial_Intelligence'
+  url: 'https://en.wikipedia.org/wiki/Artificial_Intelligence',
 });
 
 console.log('Article title:', result.title);
@@ -236,22 +258,24 @@ console.log('Main content:', result.text.substring(0, 1000));
 ```
 
 ### **Example 2: News Monitoring**
+
 ```typescript
 // AI agent monitoring news
 const news = await mcpClient.callTool('scrape_website_full', {
   url: 'https://news.ycombinator.com',
-  config: { waitForSelector: '.storylink' }
+  config: { waitForSelector: '.storylink' },
 });
 
 console.log('Top stories:', news.links.slice(0, 10));
 ```
 
 ### **Example 3: API Data Access**
+
 ```typescript
 // AI agent accessing API through proxy
 const apiData = await mcpClient.callTool('proxy_web_request', {
   url: 'https://api.github.com/repos/microsoft/vscode',
-  method: 'GET'
+  method: 'GET',
 });
 
 console.log('Repository data:', JSON.parse(apiData.body));
@@ -260,16 +284,19 @@ console.log('Repository data:', JSON.parse(apiData.body));
 ## 🔄 **Integration with Existing Systems**
 
 ### **MCP Core Integration**
+
 - Uses existing `ToolExecutionEngine` for security and monitoring
 - Integrates with `MCPServer` for tool registration
 - Leverages existing error handling and logging
 
 ### **Deployment Integration**
+
 - Works with current Vercel configuration
 - Uses existing environment variables
 - Follows established security patterns
 
 ### **Monitoring Integration**
+
 - Integrates with core monitoring system
 - Uses existing metrics collection
 - Follows established logging patterns
@@ -277,12 +304,14 @@ console.log('Repository data:', JSON.parse(apiData.body));
 ## 🚀 **Next Steps**
 
 ### **Immediate Usage**
+
 1. **Deploy**: The infrastructure is ready for immediate deployment
 2. **Configure**: Set up security policies for your use case
 3. **Test**: Use the provided examples to verify functionality
 4. **Integrate**: Connect AI agents to the MCP tools
 
 ### **Advanced Configuration**
+
 1. **Custom Security Policies**: Tailor domain restrictions
 2. **Performance Tuning**: Adjust timeouts and limits
 3. **Monitoring Setup**: Configure alerts and dashboards
@@ -290,7 +319,8 @@ console.log('Repository data:', JSON.parse(apiData.body));
 
 ## ✅ **Summary**
 
-**The New Fuse now has complete web scraping infrastructure that enables AI agents to:**
+**The New Fuse now has complete web scraping infrastructure that enables AI
+agents to:**
 
 - ✅ **Access any website** through simple HTTP or full browser rendering
 - ✅ **Bypass CORS restrictions** with serverless proxy functions
@@ -302,4 +332,6 @@ console.log('Repository data:', JSON.parse(apiData.body));
 - ✅ **Scale automatically** with serverless deployment
 - ✅ **Monitor performance** with built-in metrics
 
-This implementation provides exactly what you described: **a serverless proxy that allows AI agents full views of the internet**, with both simple HTML access and complete browser rendering capabilities.
+This implementation provides exactly what you described: **a serverless proxy
+that allows AI agents full views of the internet**, with both simple HTML access
+and complete browser rendering capabilities.

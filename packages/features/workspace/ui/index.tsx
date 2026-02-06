@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const Button = ({ children, onClick, className, variant, ...props }: any) => (
   <button
     onClick={onClick}
@@ -11,7 +9,10 @@ export const Button = ({ children, onClick, className, variant, ...props }: any)
 );
 
 export const Card = ({ children, className, ...props }: any) => (
-  <div className={`border rounded-lg shadow-sm bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 ${className}`} {...props}>
+  <div
+    className={`border rounded-lg shadow-sm bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 ${className}`}
+    {...props}
+  >
     {children}
   </div>
 );

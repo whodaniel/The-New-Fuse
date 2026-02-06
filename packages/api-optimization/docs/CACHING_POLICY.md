@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document defines the caching policies and best practices for The New Fuse API optimization infrastructure.
+This document defines the caching policies and best practices for The New Fuse
+API optimization infrastructure.
 
 ## Caching Strategy
 
@@ -29,27 +30,27 @@ This document defines the caching policies and best practices for The New Fuse A
 
 ### By Resource Type
 
-| Resource Type | TTL | Reasoning |
-|--------------|-----|-----------|
-| Static Assets | 1 year | Immutable, versioned files |
-| User Profile | 5 minutes | Moderate update frequency |
-| Dashboard Data | 1 minute | Frequently updated |
-| Search Results | 5 minutes | Acceptable staleness |
-| Analytics | 15 minutes | Expensive to compute |
-| Configuration | 1 hour | Rarely changes |
-| Public API | 15 minutes | Balance freshness/performance |
-| Authentication | 0 seconds | Never cache sensitive data |
+| Resource Type  | TTL        | Reasoning                     |
+| -------------- | ---------- | ----------------------------- |
+| Static Assets  | 1 year     | Immutable, versioned files    |
+| User Profile   | 5 minutes  | Moderate update frequency     |
+| Dashboard Data | 1 minute   | Frequently updated            |
+| Search Results | 5 minutes  | Acceptable staleness          |
+| Analytics      | 15 minutes | Expensive to compute          |
+| Configuration  | 1 hour     | Rarely changes                |
+| Public API     | 15 minutes | Balance freshness/performance |
+| Authentication | 0 seconds  | Never cache sensitive data    |
 
 ### By Update Frequency
 
-| Update Frequency | Recommended TTL |
-|-----------------|-----------------|
-| Real-time | 0-30 seconds |
-| High (hourly) | 1-5 minutes |
-| Medium (daily) | 15-60 minutes |
-| Low (weekly) | 1-24 hours |
-| Rarely | 1-7 days |
-| Static | 30 days - 1 year |
+| Update Frequency | Recommended TTL  |
+| ---------------- | ---------------- |
+| Real-time        | 0-30 seconds     |
+| High (hourly)    | 1-5 minutes      |
+| Medium (daily)   | 15-60 minutes    |
+| Low (weekly)     | 1-24 hours       |
+| Rarely           | 1-7 days         |
+| Static           | 30 days - 1 year |
 
 ## Cache Headers
 
@@ -90,7 +91,7 @@ Group related cache entries with tags for efficient bulk invalidation:
 // Set cache with tags
 await cache.set('user:123', userData, {
   ttl: 300,
-  tags: ['users', 'user:123', 'dashboard']
+  tags: ['users', 'user:123', 'dashboard'],
 });
 
 // Invalidate all user-related caches
@@ -98,6 +99,7 @@ await cache.invalidateByTag('users');
 ```
 
 **Use cases:**
+
 - User updates: Invalidate all user-related caches
 - Entity changes: Invalidate entity and dependent caches
 - Bulk operations: Invalidate entire categories
@@ -112,6 +114,7 @@ await cache.invalidateByPattern('cache:*workflow*');
 ```
 
 **Use cases:**
+
 - Wildcard invalidation
 - Namespace cleanup
 - Testing and development
@@ -126,6 +129,7 @@ await cache.set('analytics:daily', data, { ttl: 86400 });
 ```
 
 **Use cases:**
+
 - Predictable refresh cycles
 - Resource optimization
 - Scheduled updates
@@ -142,6 +146,7 @@ eventEmitter.on('user.updated', async (userId) => {
 ```
 
 **Use cases:**
+
 - Real-time updates
 - Webhook handling
 - Message queue processing
@@ -179,6 +184,7 @@ Warm cache on startup and periodically for critical data:
 ### 1. Cache What's Expensive
 
 Prioritize caching for:
+
 - Database queries
 - API calls to external services
 - Complex computations
@@ -187,6 +193,7 @@ Prioritize caching for:
 ### 2. Don't Cache Sensitive Data
 
 Never cache:
+
 - Authentication tokens
 - User credentials
 - Personal financial information
@@ -209,6 +216,7 @@ const cacheKey = `users:v2:${userId}`;
 ### 5. Monitor Cache Performance
 
 Track:
+
 - Hit rate (target: >70%)
 - Memory usage
 - Invalidation frequency
@@ -238,6 +246,7 @@ Use structured, hierarchical keys:
 ```
 
 Examples:
+
 - `cache:user:123:v1`
 - `cache:workflow:abc:v2`
 - `cache:analytics:daily:2024-11-18:v1`
@@ -245,35 +254,39 @@ Examples:
 ## Cache Size Limits
 
 ### Memory Cache (L1)
+
 - Maximum items: 500
 - Maximum size: 50MB
 - Eviction: LRU (Least Recently Used)
 
 ### Redis Cache (L2)
+
 - Maximum size: Configured per instance
 - Eviction: allkeys-lru
 - Monitoring: Track memory usage
 
 ## Performance Targets
 
-| Metric | Target | Critical |
-|--------|--------|----------|
-| Cache Hit Rate | >70% | <50% |
-| Response Time (cached) | <10ms | >50ms |
-| Response Time (uncached) | <200ms | >1000ms |
-| Memory Usage | <80% | >95% |
-| Invalidation Time | <100ms | >500ms |
+| Metric                   | Target | Critical |
+| ------------------------ | ------ | -------- |
+| Cache Hit Rate           | >70%   | <50%     |
+| Response Time (cached)   | <10ms  | >50ms    |
+| Response Time (uncached) | <200ms | >1000ms  |
+| Memory Usage             | <80%   | >95%     |
+| Invalidation Time        | <100ms | >500ms   |
 
 ## Troubleshooting
 
 ### Low Hit Rate
 
 **Symptoms:**
+
 - Hit rate <50%
 - High database load
 - Slow response times
 
 **Solutions:**
+
 - Increase TTL for stable data
 - Review cache key generation
 - Check invalidation frequency
@@ -282,11 +295,13 @@ Examples:
 ### High Memory Usage
 
 **Symptoms:**
+
 - Memory >90%
 - Frequent evictions
 - Cache misses for recent data
 
 **Solutions:**
+
 - Reduce cache size or TTL
 - Implement compression
 - Review cached data size
@@ -295,11 +310,13 @@ Examples:
 ### Stale Data
 
 **Symptoms:**
+
 - Users see outdated information
 - Inconsistent responses
 - Invalidation not working
 
 **Solutions:**
+
 - Reduce TTL
 - Implement proper invalidation
 - Use event-driven invalidation
@@ -354,6 +371,7 @@ if (!data) {
 ## Review Schedule
 
 This caching policy should be reviewed:
+
 - Quarterly: Performance metrics and targets
 - On major releases: Cache schema and strategies
 - When issues arise: Specific problem areas

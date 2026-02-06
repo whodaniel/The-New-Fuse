@@ -1,37 +1,35 @@
 /**
  * BuildOrchestrator - Main build coordination logic
- * 
+ *
  * Integrates all build optimization components to provide memory-efficient
  * build orchestration with staged execution and real-time monitoring.
  */
 
 import { EventEmitter } from 'events';
+import { ConcurrencyController } from '../concurrency/ConcurrencyController.js';
+import { DependencyGraphAnalyzer } from '../dependency/DependencyGraphAnalyzer.js';
+import { DEFAULT_CONFIG } from '../index.js';
 import {
   IBuildOrchestrator,
-  ISystemResourceDetector,
-  IMemoryMonitor,
-  IDependencyGraphAnalyzer,
   IConcurrencyController,
-  ITypeScriptCompilationManager
+  IDependencyGraphAnalyzer,
+  IMemoryMonitor,
+  ISystemResourceDetector,
+  ITypeScriptCompilationManager,
 } from '../interfaces/index.js';
-import {
-  BuildStrategy,
-  BuildResult,
-  SystemResources,
-  BuildEventData,
-  BuildEventCallback,
-  BuildStage,
-  PackageDependency,
-  MemoryUsage,
-  BuildMetrics,
-  BuildEvent
-} from '../types/index.js';
-import { SystemResourceDetector } from '../system/SystemResourceDetector.js';
 import { MemoryMonitor } from '../system/MemoryMonitor.js';
-import { DependencyGraphAnalyzer } from '../dependency/DependencyGraphAnalyzer.js';
-import { ConcurrencyController } from '../concurrency/ConcurrencyController.js';
+import { SystemResourceDetector } from '../system/SystemResourceDetector.js';
+import {
+  BuildEvent,
+  BuildEventCallback,
+  BuildEventData,
+  BuildMetrics,
+  BuildResult,
+  BuildStage,
+  BuildStrategy,
+  SystemResources,
+} from '../types/index.js';
 import { TypeScriptCompilationManager } from '../typescript/TypeScriptCompilationManager.js';
-import { DEFAULT_CONFIG } from '../index.js';
 
 /**
  * Main build orchestrator that coordinates all build optimization components
@@ -42,7 +40,7 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
   private dependencyAnalyzer: IDependencyGraphAnalyzer;
   private concurrencyController: IConcurrencyController;
   private typescriptManager: ITypeScriptCompilationManager;
-  
+
   private isBuilding = false;
   private shouldStop = false;
   private currentStrategy?: BuildStrategy;
@@ -58,7 +56,7 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
     typescriptManager?: ITypeScriptCompilationManager
   ) {
     super();
-    
+
     // Initialize components with defaults if not provided
     this.systemResourceDetector = systemResourceDetector || new SystemResourceDetector();
     this.memoryMonitor = memoryMonitor || MemoryMonitor.getInstance();
@@ -97,14 +95,16 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
       // Analyze dependencies and create build stages
       const workspaceRoot = process.cwd();
       const dependencies = await this.dependencyAnalyzer.analyzeDependencies(workspaceRoot);
-      const buildStages = this.dependencyAnalyzer.createBuildStages(dependencies, strategy.stageSize);
+      const buildStages = this.dependencyAnalyzer.createBuildStages(
+        dependencies,
+        strategy.stageSize
+      );
 
       // Execute staged builds
       const result = await this.executeStagedBuilds(buildStages, strategy);
 
       this.emitBuildEvent('build-completed', { result });
       return result;
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       const result: BuildResult = {
@@ -113,16 +113,15 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
         peakMemoryUsage: this.buildMetrics.peakMemoryUsage,
         packagesBuilt: this.buildMetrics.successfulBuilds,
         error: errorMessage,
-        metrics: this.buildMetrics
+        metrics: this.buildMetrics,
       };
 
       this.emitBuildEvent('build-failed', { error: errorMessage, result });
       return result;
-
     } finally {
       this.isBuilding = false;
       this.memoryMonitor.stopMonitoring();
-      
+
       // Cleanup if enabled
       if (strategy.cleanupBetweenStages) {
         this.typescriptManager.cleanupCompilerMemory();
@@ -144,7 +143,7 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
     if (availableMemoryGB < 4) {
       return {
         ...DEFAULT_CONFIG.STRATEGIES['ultra-memory-optimized'],
-        maxConcurrency: Math.max(1, Math.floor(cpuCores / 4))
+        maxConcurrency: Math.max(1, Math.floor(cpuCores / 4)),
       };
     }
 
@@ -152,14 +151,14 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
     if (availableMemoryGB < 8) {
       return {
         ...DEFAULT_CONFIG.STRATEGIES.development,
-        maxConcurrency: Math.max(1, Math.floor(cpuCores / 2))
+        maxConcurrency: Math.max(1, Math.floor(cpuCores / 2)),
       };
     }
 
     // Production strategy for systems with 8GB+ available memory
     return {
       ...DEFAULT_CONFIG.STRATEGIES.production,
-      maxConcurrency: Math.min(cpuCores, Math.floor(availableMemoryGB / 2))
+      maxConcurrency: Math.min(cpuCores, Math.floor(availableMemoryGB / 2)),
     };
   }
 
@@ -172,10 +171,13 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
     }
 
     const currentUsage = this.memoryMonitor.getCurrentUsage();
-    
+
     // Update metrics
     this.buildMetrics.memoryHistory.push(currentUsage);
-    this.buildMetrics.peakMemoryUsage = Math.max(this.buildMetrics.peakMemoryUsage, currentUsage.current);
+    this.buildMetrics.peakMemoryUsage = Math.max(
+      this.buildMetrics.peakMemoryUsage,
+      currentUsage.current
+    );
     this.buildMetrics.averageMemoryUsage = this.calculateAverageMemoryUsage();
 
     // Adjust concurrency based on memory usage
@@ -200,13 +202,16 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
   /**
    * Execute staged builds with memory monitoring
    */
-  private async executeStagedBuilds(buildStages: BuildStage[], strategy: BuildStrategy): Promise<BuildResult> {
+  private async executeStagedBuilds(
+    buildStages: BuildStage[],
+    strategy: BuildStrategy
+  ): Promise<BuildResult> {
     let totalPackagesBuilt = 0;
     let hasErrors = false;
 
     for (let i = 0; i < buildStages.length && !this.shouldStop; i++) {
       const stage = buildStages[i];
-      
+
       this.emitBuildEvent('stage-started', { stage, stageIndex: i });
       this.buildMetrics.stagesExecuted++;
 
@@ -219,14 +224,14 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
           if (global.gc) {
             global.gc();
           }
-          
+
           // Wait a bit for cleanup to take effect
           await this.sleep(1000);
         }
 
         // Execute stage builds
         const stageResult = await this.executeStage(stage, strategy);
-        
+
         if (stageResult.success) {
           totalPackagesBuilt += stage.packages.length;
           this.buildMetrics.successfulBuilds += stage.packages.length;
@@ -235,25 +240,24 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
           this.buildMetrics.failedBuilds += stage.packages.length;
         }
 
-        this.emitBuildEvent('stage-completed', { 
-          stage, 
-          stageIndex: i, 
+        this.emitBuildEvent('stage-completed', {
+          stage,
+          stageIndex: i,
           success: stageResult.success,
-          packagesBuilt: stage.packages.length
+          packagesBuilt: stage.packages.length,
         });
 
         // Cleanup between stages if enabled
         if (strategy.cleanupBetweenStages && i < buildStages.length - 1) {
           await this.cleanupBetweenStages();
         }
-
       } catch (error) {
         hasErrors = true;
         this.buildMetrics.failedBuilds += stage.packages.length;
-        this.emitBuildEvent('build-failed', { 
-          stage, 
-          stageIndex: i, 
-          error: error instanceof Error ? error.message : 'Unknown error'
+        this.emitBuildEvent('build-failed', {
+          stage,
+          stageIndex: i,
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
@@ -266,14 +270,17 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
       duration,
       peakMemoryUsage: this.buildMetrics.peakMemoryUsage,
       packagesBuilt: totalPackagesBuilt,
-      metrics: this.buildMetrics
+      metrics: this.buildMetrics,
     };
   }
 
   /**
    * Execute a single build stage
    */
-  private async executeStage(stage: BuildStage, strategy: BuildStrategy): Promise<{ success: boolean }> {
+  private async executeStage(
+    stage: BuildStage,
+    strategy: BuildStrategy
+  ): Promise<{ success: boolean }> {
     if (stage.parallelizable && strategy.maxConcurrency > 1) {
       // Execute packages in parallel with concurrency control
       return await this.executeParallelStage(stage, strategy);
@@ -286,7 +293,10 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
   /**
    * Execute stage packages in parallel
    */
-  private async executeParallelStage(stage: BuildStage, strategy: BuildStrategy): Promise<{ success: boolean }> {
+  private async executeParallelStage(
+    stage: BuildStage,
+    strategy: BuildStrategy
+  ): Promise<{ success: boolean }> {
     const concurrency = Math.min(
       this.concurrencyController.getCurrentConcurrency(),
       stage.packages.length
@@ -298,9 +308,9 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
     for (const chunk of chunks) {
       if (this.shouldStop) break;
 
-      const promises = chunk.map(packageName => this.buildPackage(packageName, strategy));
+      const promises = chunk.map((packageName) => this.buildPackage(packageName, strategy));
       const results = await Promise.allSettled(promises);
-      
+
       // Check if any builds failed
       for (const result of results) {
         if (result.status === 'rejected') {
@@ -318,7 +328,10 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
   /**
    * Execute stage packages sequentially
    */
-  private async executeSequentialStage(stage: BuildStage, strategy: BuildStrategy): Promise<{ success: boolean }> {
+  private async executeSequentialStage(
+    stage: BuildStage,
+    strategy: BuildStrategy
+  ): Promise<{ success: boolean }> {
     let allSuccessful = true;
 
     for (const packageName of stage.packages) {
@@ -341,7 +354,7 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
   private async buildPackage(packageName: string, strategy: BuildStrategy): Promise<void> {
     // This is a placeholder for actual package building logic
     // In a real implementation, this would call bun build or similar
-    
+
     // Simulate build time (shorter for tests)
     const buildTime = Math.random() * 200 + 100; // 100-300ms
     await this.sleep(buildTime);
@@ -388,17 +401,17 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
   private setupMemoryMonitoring(): void {
     this.memoryMonitor.onThresholdExceeded((usage) => {
       this.emitBuildEvent('memory-threshold-exceeded', { usage });
-      
+
       // Automatically adjust concurrency
       const oldConcurrency = this.concurrencyController.getCurrentConcurrency();
       this.concurrencyController.adjustConcurrency(usage);
       const newConcurrency = this.concurrencyController.getCurrentConcurrency();
-      
+
       if (newConcurrency !== oldConcurrency) {
-        this.emitBuildEvent('concurrency-adjusted', { 
-          oldConcurrency, 
-          newConcurrency, 
-          reason: 'memory-threshold-exceeded' 
+        this.emitBuildEvent('concurrency-adjusted', {
+          oldConcurrency,
+          newConcurrency,
+          reason: 'memory-threshold-exceeded',
         });
       }
     });
@@ -411,9 +424,9 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
     const event: BuildEventData = {
       type,
       timestamp: Date.now(),
-      payload
+      payload,
     };
-    
+
     this.emit('buildEvent', event);
   }
 
@@ -428,7 +441,7 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
       stagesExecuted: 0,
       successfulBuilds: 0,
       failedBuilds: 0,
-      memoryHistory: []
+      memoryHistory: [],
     };
   }
 
@@ -459,6 +472,6 @@ export class BuildOrchestrator extends EventEmitter implements IBuildOrchestrato
    * Sleep for specified milliseconds
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

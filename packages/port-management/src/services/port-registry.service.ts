@@ -3,7 +3,6 @@
 import { EventEmitter } from 'events';
 import * as net from 'net';
 
-
 export interface PortRegistration {
   id: string;
   port: number;
@@ -79,7 +78,7 @@ export class PortRegistryService extends EventEmitter {
       host = 'localhost',
       protocol = 'http',
       healthCheckUrl,
-      metadata = {}
+      metadata = {},
     } = config;
 
     let { port } = config;
@@ -101,7 +100,7 @@ export class PortRegistryService extends EventEmitter {
       healthCheckUrl,
       createdAt: new Date(),
       updatedAt: new Date(),
-      metadata
+      metadata,
     };
 
     this.registry.set(registration.id, registration);
@@ -113,11 +112,14 @@ export class PortRegistryService extends EventEmitter {
   /**
    * Find an available port for a service
    */
-  async findAvailablePort(serviceName: string, environment: PortRegistration['environment']): Promise<number> {
+  async findAvailablePort(
+    serviceName: string,
+    environment: PortRegistration['environment']
+  ): Promise<number> {
     const config = this.getServiceConfiguration(serviceName, environment);
-    
+
     // Try preferred port first
-    if (config.preferredPort && await this.isPortAvailable(config.preferredPort)) {
+    if (config.preferredPort && (await this.isPortAvailable(config.preferredPort))) {
       return config.preferredPort;
     }
 
@@ -137,7 +139,9 @@ export class PortRegistryService extends EventEmitter {
       }
     }
 
-    throw new Error(`No available ports found for service ${serviceName} in environment ${environment}`);
+    throw new Error(
+      `No available ports found for service ${serviceName} in environment ${environment}`
+    );
   }
 
   /**
@@ -146,7 +150,7 @@ export class PortRegistryService extends EventEmitter {
   async isPortAvailable(port: number, host: string = 'localhost'): Promise<boolean> {
     return new Promise((resolve) => {
       const server = net.createServer();
-      
+
       server.listen(port, host, () => {
         server.once('close', () => resolve(true));
         server.close();
@@ -180,16 +184,21 @@ export class PortRegistryService extends EventEmitter {
   /**
    * Get service configuration
    */
-  private getServiceConfiguration(serviceName: string, environment: PortRegistration['environment']): ServiceConfiguration {
+  private getServiceConfiguration(
+    serviceName: string,
+    environment: PortRegistration['environment']
+  ): ServiceConfiguration {
     const key = `${serviceName}-${environment}`;
-    return this.configurations.get(key) || {
-      serviceName,
-      environment,
-      fallbackPorts: [],
-      autoAssign: true,
-      portRangeMin: 3000,
-      portRangeMax: 9999
-    };
+    return (
+      this.configurations.get(key) || {
+        serviceName,
+        environment,
+        fallbackPorts: [],
+        autoAssign: true,
+        portRangeMin: 3000,
+        portRangeMax: 9999,
+      }
+    );
   }
 
   /**
@@ -204,7 +213,7 @@ export class PortRegistryService extends EventEmitter {
         fallbackPorts: [3010, 3020, 3030],
         autoAssign: true,
         portRangeMin: 3000,
-        portRangeMax: 3099
+        portRangeMax: 3099,
       },
       {
         serviceName: 'api',
@@ -213,8 +222,8 @@ export class PortRegistryService extends EventEmitter {
         fallbackPorts: [3011, 3021, 3031],
         autoAssign: true,
         portRangeMin: 3001,
-        portRangeMax: 3199
-      }
+        portRangeMax: 3199,
+      },
     ];
 
     for (const config of defaultConfigs) {
@@ -228,13 +237,12 @@ export class PortRegistryService extends EventEmitter {
   }
 
   findByPort(port: number): PortRegistration | undefined {
-    return Array.from(this.registry.values()).find(reg => reg.port === port);
+    return Array.from(this.registry.values()).find((reg) => reg.port === port);
   }
 
   getByService(serviceName: string, environment?: string): PortRegistration[] {
-    return Array.from(this.registry.values()).filter(reg => 
-      reg.serviceName === serviceName && 
-      (!environment || reg.environment === environment)
+    return Array.from(this.registry.values()).filter(
+      (reg) => reg.serviceName === serviceName && (!environment || reg.environment === environment)
     );
   }
 

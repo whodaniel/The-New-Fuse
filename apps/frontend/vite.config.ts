@@ -110,6 +110,7 @@ export default defineConfig(({ mode }) => {
         '@types/react-dom',
       ],
       alias: {
+        'scheduler': path.resolve(__dirname, 'node_modules/scheduler'),
         '@': path.resolve(__dirname, 'src'),
         // Note: @the-new-fuse/core is NOT aliased because it contains Node.js-only code
         // @the-new-fuse/utils is aliased to a browser-safe shim

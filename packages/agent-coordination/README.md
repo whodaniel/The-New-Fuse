@@ -1,12 +1,14 @@
 # Agent Coordination Package
 
-Redis-based agent-to-agent communication and coordination system for The New Fuse framework.
+Redis-based agent-to-agent communication and coordination system for The New
+Fuse framework.
 
 ## Features
 
 - **Pub/Sub Channels**: Real-time agent communication using Redis pub/sub
 - **Task Distribution**: Robust task queue system using BullMQ
-- **Presence Tracking**: Agent heartbeat system with automatic failover (30s intervals)
+- **Presence Tracking**: Agent heartbeat system with automatic failover (30s
+  intervals)
 - **Shared State**: Distributed state management with optimistic locking
 - **Broadcast System**: Multi-agent coordination and announcements
 - **Message Serialization**: Efficient data transmission (JSON/MessagePack)
@@ -30,10 +32,10 @@ import { SerializationFormat } from '@the-new-fuse/agent-coordination';
 
 const coordinator = new RedisCoordinator(redisService, {
   keyPrefix: 'agent-coord:',
-  heartbeatInterval: 30000,        // 30 seconds
-  heartbeatTimeout: 90000,         // 90 seconds (3x heartbeat)
+  heartbeatInterval: 30000, // 30 seconds
+  heartbeatTimeout: 90000, // 90 seconds (3x heartbeat)
   serializationFormat: SerializationFormat.JSON,
-  defaultTaskTimeout: 60000,       // 60 seconds
+  defaultTaskTimeout: 60000, // 60 seconds
   maxRetries: 3,
   enableMetrics: true,
   queueConfig: {
@@ -90,17 +92,15 @@ await coordinator.sendDirectMessage(
 // Subscribe to direct messages
 await coordinator.subscribeToDirectMessages('agent-2', async (message) => {
   console.log('Received message:', message);
-  
+
   // Process message
   const result = await processData(message.payload);
-  
+
   // Send response if required
   if (message.requiresResponse) {
-    await coordinator.sendDirectMessage(
-      message.toAgent,
-      message.fromAgent,
-      { result }
-    );
+    await coordinator.sendDirectMessage(message.toAgent, message.fromAgent, {
+      result,
+    });
   }
 });
 ```
@@ -125,7 +125,7 @@ await coordinator.broadcast(
 // Subscribe to broadcasts
 await coordinator.subscribeToBroadcast(async (message) => {
   console.log('Broadcast received:', message);
-  
+
   if (message.payload.type === 'system-announcement') {
     // Prepare for maintenance
     await prepareForMaintenance();
@@ -157,7 +157,7 @@ await coordinator.registerTaskProcessor(
   'data-processing',
   async (task) => {
     console.log('Processing task:', task.id);
-    
+
     try {
       const result = await performDataProcessing(task.payload);
       return result;
@@ -230,14 +230,14 @@ if (lock) {
 // Subscribe to coordination events
 await coordinator.subscribeToEvents('task:completed', async (event) => {
   console.log('Task completed:', event.data);
-  
+
   // Trigger follow-up actions
   await triggerNextTask(event.data);
 });
 
 await coordinator.subscribeToEvents('agent:registered', async (event) => {
   console.log('New agent registered:', event.agentId);
-  
+
   // Assign initial tasks to new agent
   await assignInitialTasks(event.agentId);
 });
@@ -290,10 +290,7 @@ class ResilientAgent {
   private readonly maxFailures = 5;
   private circuitOpen = false;
 
-  async sendMessageWithCircuitBreaker(
-    toAgent: string,
-    payload: any
-  ) {
+  async sendMessageWithCircuitBreaker(toAgent: string, payload: any) {
     if (this.circuitOpen) {
       throw new Error('Circuit breaker is open');
     }
@@ -303,17 +300,17 @@ class ResilientAgent {
       this.failureCount = 0; // Reset on success
     } catch (error) {
       this.failureCount++;
-      
+
       if (this.failureCount >= this.maxFailures) {
         this.circuitOpen = true;
-        
+
         // Reset after timeout
         setTimeout(() => {
           this.circuitOpen = false;
           this.failureCount = 0;
         }, 60000);
       }
-      
+
       throw error;
     }
   }
@@ -325,10 +322,10 @@ class ResilientAgent {
 ```typescript
 async function electLeader(agentId: string) {
   const lock = await coordinator.acquireStateLock('leader', agentId, 30);
-  
+
   if (lock) {
     console.log(agentId + ' is now the leader');
-    
+
     // Perform leader duties
     const leaderInterval = setInterval(async () => {
       // Renew leadership
@@ -337,7 +334,7 @@ async function electLeader(agentId: string) {
         lock.lockId,
         30
       );
-      
+
       if (!renewed) {
         console.log('Lost leadership');
         clearInterval(leaderInterval);
@@ -366,7 +363,7 @@ class WorkflowCoordinator {
     // Execute each step
     for (let i = 0; i < steps.length; i++) {
       const step = steps[i];
-      
+
       // Create task for step
       const task = await coordinator.createTask({
         type: step.type,
@@ -387,11 +384,15 @@ class WorkflowCoordinator {
       );
 
       // Broadcast progress
-      await coordinator.broadcast('coordinator', {
-        workflowId,
-        step: i + 1,
-        total: steps.length,
-      }, { topic: 'workflow-progress' });
+      await coordinator.broadcast(
+        'coordinator',
+        {
+          workflowId,
+          step: i + 1,
+          total: steps.length,
+        },
+        { topic: 'workflow-progress' }
+      );
     }
 
     // Mark workflow complete
@@ -479,11 +480,7 @@ import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
   imports: [
     // ... other imports
   ],
-  providers: [
-    UnifiedRedisService,
-    RedisCoordinator,
-    A2AService,
-  ],
+  providers: [UnifiedRedisService, RedisCoordinator, A2AService],
 })
 export class AgentModule {}
 ```

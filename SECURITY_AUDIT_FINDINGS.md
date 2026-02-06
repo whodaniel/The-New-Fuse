@@ -34,7 +34,7 @@ This report details the findings of a security audit conducted on the codebase.
 
 ### 3. Potentially Unencrypted API Keys in Database
 
-- **File:** `packages/database/prisma/schema.prisma`
+- **File:** `packages/database/drizzle/schema.drizzle`
 - **Issue:** The `LLMConfig` model has an `apiKey` field with a comment stating
   that it should be encrypted in production. This suggests that API keys may be
   stored in plaintext in the database, which is a major security risk.
@@ -44,7 +44,7 @@ This report details the findings of a security audit conducted on the codebase.
 
 ### 4. Potentially Unencrypted Auth Token in Database
 
-- **File:** `packages/database/prisma/schema.prisma`
+- **File:** `packages/database/drizzle/schema.drizzle`
 - **Issue:** The `AgentRegistration` model has an `authToken` field that may be
   stored in plaintext.
 - **Severity:** **MEDIUM**

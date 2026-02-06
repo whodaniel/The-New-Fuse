@@ -1,10 +1,12 @@
 # Integration Guidelines
 
-This document provides comprehensive guidelines for integrating new components, services, and features into The New Fuse platform.
+This document provides comprehensive guidelines for integrating new components,
+services, and features into The New Fuse platform.
 
 ## Overview
 
-The New Fuse follows a modular architecture with strict integration protocols to ensure system stability, maintainability, and scalability.
+The New Fuse follows a modular architecture with strict integration protocols to
+ensure system stability, maintainability, and scalability.
 
 ## Integration Process
 
@@ -38,6 +40,7 @@ packages/
 ### 3. Integration Steps
 
 #### Step 1: Create Package Structure
+
 ```bash
 # Create new package directory
 mkdir -p packages/your-feature/src/{components,services,types}
@@ -48,6 +51,7 @@ pnpm init -y
 ```
 
 #### Step 2: Configure TypeScript
+
 ```json
 {
   "extends": "../../tsconfig.json",
@@ -61,12 +65,14 @@ pnpm init -y
 ```
 
 #### Step 3: Implement Core Components
+
 - Create service interfaces
 - Implement React components
 - Define TypeScript types
 - Add proper exports
 
 #### Step 4: Integration Testing
+
 ```bash
 # Run integration script
 ./integrate-your-feature.sh
@@ -136,7 +142,7 @@ interface YourComponentProps {
 export const YourComponent: React.FC<YourComponentProps> = ({
   data,
   onAction,
-  loading = false
+  loading = false,
 }) => {
   // Component implementation
 };
@@ -147,6 +153,7 @@ export const YourComponent: React.FC<YourComponentProps> = ({
 ### Adding New Node Types
 
 1. **Define Node Interface**:
+
 ```typescript
 export interface YourFeatureNode extends BaseNode {
   type: 'your-feature';
@@ -155,16 +162,18 @@ export interface YourFeatureNode extends BaseNode {
 ```
 
 2. **Create Node Component**:
+
 ```typescript
 export const YourFeatureNodeComponent: React.FC<NodeProps<YourFeatureNode>> = ({
   data,
-  onUpdate
+  onUpdate,
 }) => {
   // Node implementation
 };
 ```
 
 3. **Register in Toolbar**:
+
 ```typescript
 // Add to NodeToolbar configuration
 {
@@ -266,7 +275,7 @@ describe('Your Feature API', () => {
       .post('/api/your-features')
       .send({ name: 'Test Feature' })
       .expect(201);
-    
+
     expect(response.body.name).toBe('Test Feature');
   });
 });
@@ -289,8 +298,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'your-feature-action') {
     // Handle your feature action
     handleYourFeatureAction(request.data)
-      .then(result => sendResponse({ success: true, result }))
-      .catch(error => sendResponse({ success: false, error: error.message }));
+      .then((result) => sendResponse({ success: true, result }))
+      .catch((error) => sendResponse({ success: false, error: error.message }));
     return true; // Keep message channel open
   }
 });
@@ -303,7 +312,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 function integrateYourFeature() {
   // Add your feature to web pages
   const elements = document.querySelectorAll('.target-selector');
-  elements.forEach(element => {
+  elements.forEach((element) => {
     // Enhance element with your feature
     enhanceElement(element);
   });
@@ -380,18 +389,13 @@ Brief description of your feature.
 
 ## Installation
 
-\`\`\`bash
-pnpm install @the-new-fuse/your-feature
-\`\`\`
+\`\`\`bash pnpm install @the-new-fuse/your-feature \`\`\`
 
 ## Usage
 
-\`\`\`typescript
-import { YourFeature } from '@the-new-fuse/your-feature';
+\`\`\`typescript import { YourFeature } from '@the-new-fuse/your-feature';
 
-const feature = new YourFeature();
-feature.doSomething();
-\`\`\`
+const feature = new YourFeature(); feature.doSomething(); \`\`\`
 
 ## API Reference
 
@@ -402,10 +406,12 @@ feature.doSomething();
 Description of what this method does.
 
 **Parameters:**
+
 - `param1` (string): Description
 - `param2` (number, optional): Description
 
 **Returns:**
+
 - `Promise<Result>`: Description of return value
 
 ## Examples
@@ -463,16 +469,19 @@ RUN cd packages/your-feature && pnpm install && pnpm run build
 ### Common Issues
 
 **Build Errors**
+
 - Check TypeScript configuration
 - Verify all dependencies are installed
 - Ensure proper import/export statements
 
 **Runtime Errors**
+
 - Check browser console for detailed errors
 - Verify service registration
 - Check API endpoint availability
 
 **Integration Failures**
+
 - Verify package.json configurations
 - Check Turbo pipeline settings
 - Ensure proper TypeScript types
@@ -511,5 +520,4 @@ For integration support:
 
 ---
 
-*Integration guidelines for The New Fuse platform*
-*Last updated: June 2025*
+_Integration guidelines for The New Fuse platform_ _Last updated: June 2025_

@@ -17,8 +17,8 @@ export class ApiClientFactory {
       timeout: options.timeout || 30000,
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
+        Accept: 'application/json',
+      },
     });
     // Add API version header if specified
     if (options.apiVersion) {
@@ -42,14 +42,14 @@ export class ApiClientFactory {
           method: config.method?.toUpperCase(),
           url: config.url,
           baseURL: config.baseURL,
-          headers: redactedConfig.headers
+          headers: redactedConfig.headers,
         });
         return config;
       },
       (error) => {
         this.logger.error('Request interceptor error', error);
         return Promise.reject(error);
-      }
+      },
     );
     // Response interceptor for logging
     client.interceptors.response.use(
@@ -57,7 +57,7 @@ export class ApiClientFactory {
         this.logger.debug('API Response', {
           status: response.status,
           statusText: response.statusText,
-          url: response.config.url
+          url: response.config.url,
         });
         return response;
       },
@@ -65,10 +65,10 @@ export class ApiClientFactory {
         this.logger.error('API Error', {
           message: error.message,
           status: error.response?.status,
-          url: error.config?.url
+          url: error.config?.url,
         });
         return Promise.reject(error);
-      }
+      },
     );
     return client;
   }
@@ -90,16 +90,19 @@ export class ApiClientFactory {
           config.retry++;
           const delay = retryDelay * Math.pow(2, config.retry - 1); // Exponential backoff
 
-          this.logger.warn(`API request failed, retrying in ${delay}ms (attempt ${config.retry}/${retryAttempts})`, {
-            url: config.url,
-            status: error.response?.status
-          });
+          this.logger.warn(
+            `API request failed, retrying in ${delay}ms (attempt ${config.retry}/${retryAttempts})`,
+            {
+              url: config.url,
+              status: error.response?.status,
+            },
+          );
           await this.delay(delay);
           return client(config);
         }
 
         return Promise.reject(error);
-      }
+      },
     );
     return client;
   }
@@ -114,6 +117,6 @@ export class ApiClientFactory {
   }
 
   private static delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

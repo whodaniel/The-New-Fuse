@@ -52,7 +52,7 @@ export class CreateCoreTables1694000000000 implements MigrationInterface {
           },
         ],
       }),
-      true
+      true,
     );
 
     // Create agents table
@@ -113,7 +113,7 @@ export class CreateCoreTables1694000000000 implements MigrationInterface {
           },
         ],
       }),
-      true
+      true,
     );
 
     await queryRunner.createForeignKey(
@@ -123,7 +123,7 @@ export class CreateCoreTables1694000000000 implements MigrationInterface {
         referencedTableName: 'users',
         referencedColumnNames: ['id'],
         onDelete: 'CASCADE',
-      })
+      }),
     );
 
     // Create pipelines table
@@ -179,7 +179,7 @@ export class CreateCoreTables1694000000000 implements MigrationInterface {
           },
         ],
       }),
-      true
+      true,
     );
 
     await queryRunner.createForeignKey(
@@ -189,7 +189,7 @@ export class CreateCoreTables1694000000000 implements MigrationInterface {
         referencedTableName: 'users',
         referencedColumnNames: ['id'],
         onDelete: 'CASCADE',
-      })
+      }),
     );
 
     // Create pipeline_stages table
@@ -242,7 +242,7 @@ export class CreateCoreTables1694000000000 implements MigrationInterface {
           },
         ],
       }),
-      true
+      true,
     );
 
     await queryRunner.createForeignKey(
@@ -252,7 +252,7 @@ export class CreateCoreTables1694000000000 implements MigrationInterface {
         referencedTableName: 'pipelines',
         referencedColumnNames: ['id'],
         onDelete: 'CASCADE',
-      })
+      }),
     );
 
     await queryRunner.createForeignKey(
@@ -262,14 +262,14 @@ export class CreateCoreTables1694000000000 implements MigrationInterface {
         referencedTableName: 'agents',
         referencedColumnNames: ['id'],
         onDelete: 'CASCADE',
-      })
+      }),
     );
 
     await queryRunner.createIndex(
       'pipeline_stages',
       new TableIndex({
         columnNames: ['pipeline_id', 'order_index'],
-      })
+      }),
     );
   }
 

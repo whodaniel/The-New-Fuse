@@ -2,28 +2,34 @@
 
 ## Overview
 
-This document provides a high-level visualization and description of the different types of AI agents within The New Fuse ecosystem, their core capabilities, and their primary relationships.
+This document provides a high-level visualization and description of the
+different types of AI agents within The New Fuse ecosystem, their core
+capabilities, and their primary relationships.
 
 **Purpose:**
+
 - Understand the different roles and specializations of agents.
 - Visualize how agents might interact or collaborate.
 - Identify available capabilities within the agent network.
 - Assist in planning agent development and integration.
 
-**Maintenance:**
-This map should be updated whenever significant changes are made to:
+**Maintenance:** This map should be updated whenever significant changes are
+made to:
+
 - Agent registration or discovery mechanisms.
 - Core capabilities provided by standard agent types.
 - Introduction or removal of major agent types or roles.
-- Significant changes in how agents interact (e.g., direct communication vs. broker-mediated).
+- Significant changes in how agents interact (e.g., direct communication vs.
+  broker-mediated).
 
-*(Update this document according to the guidelines in `docs/AI_DOCUMENTATION_GUIDE.md`)*
+_(Update this document according to the guidelines in
+`docs/AI_DOCUMENTATION_GUIDE.md`)_
 
 ---
 
 ## Agent Categories / Types
 
-*(Use subsections for different categories or specific types of agents)*
+_(Use subsections for different categories or specific types of agents)_
 
 ### Core System Agents
 
@@ -43,41 +49,54 @@ graph LR
     Marketplace -- Provides Info --> AgentY(General Agent); %% Example Interaction
 
 ```
+
 **Components:**
+
 - **MCP Broker:** Central communication hub.
 - **Director Agent:** Task coordination and lifecycle management.
 - **MCP Marketplace:** Agent/Tool discovery service.
 
-*(Add more details as needed)*
+_(Add more details as needed)_
 
 ### Capability-Specific Agents
 
-**Description:** Agents designed to provide specific, focused capabilities (e.g., file system access, code execution, database interaction).
+**Description:** Agents designed to provide specific, focused capabilities
+(e.g., file system access, code execution, database interaction).
 
-*(Add subsections for specific agents like FileSystemAgent, CodeExecutionAgent, etc., potentially with diagrams showing their primary interactions or dependencies)*
+_(Add subsections for specific agents like FileSystemAgent, CodeExecutionAgent,
+etc., potentially with diagrams showing their primary interactions or
+dependencies)_
 
 #### Filesystem Agent
-**Capabilities:** Read, write, list files/directories.
-**Primary Interaction:** Via MCP Broker, often invoked by Director or other agents.
+
+**Capabilities:** Read, write, list files/directories. **Primary Interaction:**
+Via MCP Broker, often invoked by Director or other agents.
 
 #### Code Execution Agent
-**Capabilities:** Execute code snippets in various languages within sandboxed environments.
-**Primary Interaction:** Via MCP Broker.
 
-*(Add more agent types)*
+**Capabilities:** Execute code snippets in various languages within sandboxed
+environments. **Primary Interaction:** Via MCP Broker.
+
+_(Add more agent types)_
 
 ### Application-Specific Agents
 
-**Description:** Agents tailored for specific applications or workflows built on The New Fuse.
+**Description:** Agents tailored for specific applications or workflows built on
+The New Fuse.
 
-*(Add subsections for application-specific agents)*
+_(Add subsections for application-specific agents)_
 
 ---
 
 ## Key Agent Relationships & Interactions
 
-- **Discovery:** Agents typically register with the `MCP Broker` and/or `MCP Marketplace`. Other agents query the `Marketplace` to find needed capabilities.
-- **Task Execution:** The `Director Agent` often receives high-level tasks, breaks them down, and coordinates execution by invoking tools on specific capability agents via the `MCP Broker`.
-- **Direct vs. Brokered:** Define whether certain agent types are expected to communicate directly or always through the broker.
+- **Discovery:** Agents typically register with the `MCP Broker` and/or
+  `MCP Marketplace`. Other agents query the `Marketplace` to find needed
+  capabilities.
+- **Task Execution:** The `Director Agent` often receives high-level tasks,
+  breaks them down, and coordinates execution by invoking tools on specific
+  capability agents via the `MCP Broker`.
+- **Direct vs. Brokered:** Define whether certain agent types are expected to
+  communicate directly or always through the broker.
 
-*(Add more details on standard interaction patterns)*
+_(Add more details on standard interaction patterns)_

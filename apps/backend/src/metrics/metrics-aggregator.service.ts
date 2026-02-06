@@ -8,7 +8,7 @@ export class MetricsAggregatorService {
 
   constructor(
     private readonly agentService: AgentService,
-    private readonly systemMetricsService: SystemMetricsService,
+    private readonly systemMetricsService: SystemMetricsService
   ) {}
 
   async getDashboardMetrics() {

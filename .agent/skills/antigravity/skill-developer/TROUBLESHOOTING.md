@@ -190,14 +190,14 @@ Expected: Your skill should appear in the output.
 ]
 ```
 
-- File has: `import { PrismaService } from './prisma'` → ✅ Matches
+- File has: `import { DatabaseService } from './drizzle'` → ✅ Matches
 - File has: `import { Database } from './db'` → ❌ Doesn't match
 
 **Debug:**
 
 ```bash
 # Check if pattern exists in file
-grep -i "prisma" path/to/file.ts
+grep -i "drizzle" path/to/file.ts
 ```
 
 **Fix:** Adjust content patterns or add missing imports
@@ -358,20 +358,20 @@ Expected:
 
 ```json
 "contentPatterns": [
-  "Prisma"  // Matches in comments, strings, etc.
+  "Drizzle"  // Matches in comments, strings, etc.
 ]
 ```
 
-- Triggers on: `// Don't use Prisma here`
-- Triggers on: `const note = "Prisma is cool"`
+- Triggers on: `// Don't use Drizzle here`
+- Triggers on: `const note = "Drizzle is cool"`
 
 **Solution:** Make patterns more specific
 
 ```json
 "contentPatterns": [
   "import.*[Pp]risma",        // Only imports
-  "PrismaService\\.",         // Only actual usage
-  "prisma\\.(findMany|create)" // Specific methods
+  "DatabaseService\\.",         // Only actual usage
+  "drizzle\\.(findMany|create)" // Specific methods
 ]
 ```
 

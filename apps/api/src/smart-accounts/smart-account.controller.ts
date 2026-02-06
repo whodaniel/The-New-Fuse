@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, Logger } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
 import { SmartAccountService } from './smart-account.service';
 
 @Controller('smart-accounts')
@@ -13,7 +13,7 @@ export class SmartAccountController {
       const result = await this.smartAccountService.enableSmartAccountForWallet(walletId);
       return {
         success: true,
-        ...result
+        ...result,
       };
     } catch (error) {
       this.logger.error('Failed to enable Smart Account:', error);
@@ -27,7 +27,7 @@ export class SmartAccountController {
       const result = await this.smartAccountService.deploySmartAccount(walletId);
       return {
         success: true,
-        ...result
+        ...result,
       };
     } catch (error) {
       this.logger.error('Failed to deploy Smart Account:', error);
@@ -38,7 +38,8 @@ export class SmartAccountController {
   @Post('execute/:walletId')
   async executeTransaction(
     @Param('walletId') walletId: string,
-    @Body() transactionData: {
+    @Body()
+    transactionData: {
       target: string;
       value: string;
       data?: string;
@@ -52,10 +53,10 @@ export class SmartAccountController {
         BigInt(value),
         data
       );
-      
+
       return {
         success: true,
-        transactionHash: txHash
+        transactionHash: txHash,
       };
     } catch (error) {
       this.logger.error('Failed to execute Smart Account transaction:', error);
@@ -66,7 +67,8 @@ export class SmartAccountController {
   @Post('execute-batch/:walletId')
   async executeBatchTransaction(
     @Param('walletId') walletId: string,
-    @Body() batchData: {
+    @Body()
+    batchData: {
       transactions: Array<{
         target: string;
         value: string;
@@ -75,20 +77,20 @@ export class SmartAccountController {
     }
   ) {
     try {
-      const transactions = batchData.transactions.map(tx => ({
+      const transactions = batchData.transactions.map((tx) => ({
         target: tx.target,
         value: BigInt(tx.value),
-        data: tx.data || '0x'
+        data: tx.data || '0x',
       }));
 
       const txHash = await this.smartAccountService.executeBatchSmartAccountTransaction(
         walletId,
         transactions
       );
-      
+
       return {
         success: true,
-        transactionHash: txHash
+        transactionHash: txHash,
       };
     } catch (error) {
       this.logger.error('Failed to execute batch Smart Account transaction:', error);
@@ -102,7 +104,7 @@ export class SmartAccountController {
       const info = await this.smartAccountService.getSmartAccountInfo(walletId);
       return {
         success: true,
-        ...info
+        ...info,
       };
     } catch (error) {
       this.logger.error('Failed to get Smart Account info:', error);

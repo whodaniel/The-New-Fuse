@@ -1,6 +1,6 @@
 /**
  * Platform Types Integration
- * 
+ *
  * This module provides integration with The New Fuse shared types package,
  * ensuring compatibility between MCP Core and the broader platform ecosystem.
  */
@@ -28,7 +28,7 @@ export interface PlatformIntegrationConfig {
  */
 export const PlatformTypesBridge = {
   isAvailable: !!platformTypes,
-  
+
   /**
    * Map MCP Service Info to platform Agent type
    */
@@ -45,15 +45,15 @@ export const PlatformTypesBridge = {
           mcpEndpoint: serviceInfo.endpoint,
           mcpResources: serviceInfo.resources,
           mcpTools: serviceInfo.tools,
-          mcpStatus: serviceInfo.status
+          mcpStatus: serviceInfo.status,
         },
         createdAt: serviceInfo.registeredAt,
-        updatedAt: serviceInfo.lastHeartbeat
+        updatedAt: serviceInfo.lastHeartbeat,
       };
     }
     return serviceInfo;
   },
-  
+
   /**
    * Map platform Agent type to MCP Service Info
    */
@@ -72,12 +72,12 @@ export const PlatformTypesBridge = {
         registeredAt: agent.createdAt,
         lastHeartbeat: agent.updatedAt,
         healthScore: agent.metadata.healthScore || 1.0,
-        tags: agent.tags || []
+        tags: agent.tags || [],
       };
     }
     return null;
   },
-  
+
   /**
    * Get platform communication types
    */
@@ -90,17 +90,17 @@ export const PlatformTypesBridge = {
         REQUEST: 'request',
         RESPONSE: 'response',
         NOTIFICATION: 'notification',
-        ERROR: 'error'
+        ERROR: 'error',
       },
       ProtocolType: {
         WEBSOCKET: 'websocket',
         HTTP: 'http',
         GRPC: 'grpc',
-        MCP: 'mcp'
-      }
+        MCP: 'mcp',
+      },
     };
   },
-  
+
   /**
    * Get platform authentication types
    */
@@ -113,11 +113,11 @@ export const PlatformTypesBridge = {
         JWT: 'jwt',
         API_KEY: 'api_key',
         OAUTH: 'oauth',
-        BASIC: 'basic'
-      }
+        BASIC: 'basic',
+      },
     };
   },
-  
+
   /**
    * Map MCP error to platform error format
    */
@@ -130,12 +130,12 @@ export const PlatformTypesBridge = {
         source: 'mcp-core',
         timestamp: new Date().toISOString(),
         data: mcpError.data,
-        retryable: mcpError.retryable || false
+        retryable: mcpError.retryable || false,
       };
     }
     return mcpError;
   },
-  
+
   /**
    * Create platform-compatible event
    */
@@ -147,11 +147,11 @@ export const PlatformTypesBridge = {
         source: 'mcp-core',
         timestamp: new Date().toISOString(),
         data,
-        version: '1.0'
+        version: '1.0',
       };
     }
     return { type: eventType, data };
-  }
+  },
 };
 
 /**
@@ -211,7 +211,7 @@ export const DEFAULT_PLATFORM_CONFIG: PlatformIntegrationConfig = {
   enableSharedTypes: true,
   enableCommunicationBridge: true,
   enableDatabaseIntegration: true,
-  enableRelayCore: true
+  enableRelayCore: true,
 };
 
 /**
@@ -223,67 +223,67 @@ export const PlatformUtils = {
    */
   isPlatformEnvironment: () => {
     return !!(
-      platformTypes || 
+      platformTypes ||
       process.env.NEW_FUSE_PLATFORM === 'true' ||
       process.env.NODE_ENV === 'production'
     );
   },
-  
+
   /**
    * Get platform configuration
    */
   getPlatformConfig: (): Partial<PlatformIntegrationConfig> => {
     const config: Partial<PlatformIntegrationConfig> = {};
-    
+
     if (process.env.MCP_ENABLE_SHARED_TYPES !== undefined) {
       config.enableSharedTypes = process.env.MCP_ENABLE_SHARED_TYPES === 'true';
     }
-    
+
     if (process.env.MCP_ENABLE_COMMUNICATION_BRIDGE !== undefined) {
       config.enableCommunicationBridge = process.env.MCP_ENABLE_COMMUNICATION_BRIDGE === 'true';
     }
-    
+
     if (process.env.MCP_ENABLE_DATABASE_INTEGRATION !== undefined) {
       config.enableDatabaseIntegration = process.env.MCP_ENABLE_DATABASE_INTEGRATION === 'true';
     }
-    
+
     if (process.env.MCP_ENABLE_RELAY_CORE !== undefined) {
       config.enableRelayCore = process.env.MCP_ENABLE_RELAY_CORE === 'true';
     }
-    
+
     return config;
   },
-  
+
   /**
    * Validate platform compatibility
    */
   validateCompatibility: () => {
     const issues: string[] = [];
-    
+
     if (platformTypes) {
       // Check for required types
       if (!platformTypes.AgentTypes) {
         issues.push('Platform types missing AgentTypes');
       }
-      
+
       if (!platformTypes.CommunicationTypes) {
         issues.push('Platform types missing CommunicationTypes');
       }
-      
+
       // Check version compatibility
       const platformVersion = platformTypes.version || '1.0.0';
       const requiredVersion = '1.0.0';
-      
+
       if (platformVersion < requiredVersion) {
         issues.push(`Platform types version ${platformVersion} < required ${requiredVersion}`);
       }
     }
-    
+
     return {
       compatible: issues.length === 0,
-      issues
+      issues,
     };
-  }
+  },
 };
 
 export default PlatformTypesBridge;

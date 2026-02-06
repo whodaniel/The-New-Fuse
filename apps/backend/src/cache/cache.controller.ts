@@ -1,19 +1,18 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Delete,
   Body,
-  Param,
-  Query,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
   HttpStatus,
-  UseGuards,
+  Param,
+  Post,
+  Query,
 } from '@nestjs/common';
 import { AdvancedCacheManager } from './services/advanced-cache.manager';
+import { CacheInvalidationService } from './services/cache-invalidation.service';
 import { CacheMonitoringService } from './services/cache-monitoring.service';
 import { CacheWarmingService } from './services/cache-warming.service';
-import { CacheInvalidationService } from './services/cache-invalidation.service';
 
 @Controller('cache')
 export class CacheController {
@@ -21,7 +20,7 @@ export class CacheController {
     private readonly cacheManager: AdvancedCacheManager,
     private readonly monitoringService: CacheMonitoringService,
     private readonly warmingService: CacheWarmingService,
-    private readonly invalidationService: CacheInvalidationService,
+    private readonly invalidationService: CacheInvalidationService
   ) {}
 
   /**
@@ -29,13 +28,12 @@ export class CacheController {
    */
   @Get('stats')
   async getStats() {
-    const [cacheStats, monitoringStats, warmingStatus, invalidationStats] =
-      await Promise.all([
-        this.cacheManager.getStats(),
-        this.monitoringService.exportMetrics(),
-        this.warmingService.getStatus(),
-        this.invalidationService.getStats(),
-      ]);
+    const [cacheStats, monitoringStats, warmingStatus, invalidationStats] = await Promise.all([
+      this.cacheManager.getStats(),
+      this.monitoringService.exportMetrics(),
+      this.warmingService.getStatus(),
+      this.invalidationService.getStats(),
+    ]);
 
     return {
       cache: cacheStats,
@@ -75,10 +73,7 @@ export class CacheController {
    * Get cache value by key
    */
   @Get('key/:key')
-  async getCacheValue(
-    @Param('key') key: string,
-    @Query('prefix') prefix?: string,
-  ) {
+  async getCacheValue(@Param('key') key: string, @Query('prefix') prefix?: string) {
     const value = await this.cacheManager.get(key, { prefix });
 
     if (value === null) {
@@ -107,7 +102,7 @@ export class CacheController {
   @HttpCode(HttpStatus.CREATED)
   async setCacheValue(
     @Param('key') key: string,
-    @Body() body: { value: any; ttl?: number; prefix?: string; tags?: string[] },
+    @Body() body: { value: any; ttl?: number; prefix?: string; tags?: string[] }
   ) {
     await this.cacheManager.set(key, body.value, {
       ttl: body.ttl,
@@ -127,10 +122,7 @@ export class CacheController {
    */
   @Delete('key/:key')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteCacheKey(
-    @Param('key') key: string,
-    @Query('prefix') prefix?: string,
-  ) {
+  async deleteCacheKey(@Param('key') key: string, @Query('prefix') prefix?: string) {
     await this.cacheManager.delete(key, { prefix });
   }
 
@@ -138,10 +130,7 @@ export class CacheController {
    * Delete cache keys by pattern
    */
   @Delete('pattern/:pattern')
-  async deleteCachePattern(
-    @Param('pattern') pattern: string,
-    @Query('prefix') prefix?: string,
-  ) {
+  async deleteCachePattern(@Param('pattern') pattern: string, @Query('prefix') prefix?: string) {
     const count = await this.cacheManager.deletePattern(pattern, { prefix });
 
     return {
@@ -249,7 +238,7 @@ export class CacheController {
       patterns?: string[];
       tags?: string[];
       prefix?: string;
-    },
+    }
   ) {
     const count = await this.invalidationService.invalidate(body);
 

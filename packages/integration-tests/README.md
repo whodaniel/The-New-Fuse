@@ -1,14 +1,18 @@
 # Integration Tests for The New Fuse Framework
 
-This package contains comprehensive integration tests for The New Fuse unified framework, validating the integration between Master Agent Registry, Workflow Engine, and Extension System components.
+This package contains comprehensive integration tests for The New Fuse unified
+framework, validating the integration between Master Agent Registry, Workflow
+Engine, and Extension System components.
 
 ## Overview
 
 The integration tests demonstrate and validate:
 
-- **Master Agent Registry**: Single source of truth for all agents with universal onboarding
+- **Master Agent Registry**: Single source of truth for all agents with
+  universal onboarding
 - **Workflow Engine**: Unified orchestration system with agent task assignment
-- **Extension System**: Comprehensive extension architecture with security sandboxing
+- **Extension System**: Comprehensive extension architecture with security
+  sandboxing
 - **Cross-System Integration**: All components working together seamlessly
 
 ## Test Structure
@@ -76,6 +80,7 @@ pnpm run benchmark:report
 These tests validate the integration between framework components:
 
 #### Master Agent Registry + Workflow Engine Integration
+
 - Agent task assignment in workflows
 - Agent capability matching for task assignment
 - Agent handoffs with context preservation
@@ -85,6 +90,7 @@ These tests validate the integration between framework components:
 - Error handling and recovery mechanisms
 
 #### Extension System Integration
+
 - Extension loading and management
 - Agent capability extensions integration
 - Workflow node extensions integration
@@ -97,6 +103,7 @@ These tests validate the integration between framework components:
 Complete real-world scenarios combining all systems:
 
 #### Data Processing Pipeline
+
 - CSV parsing with custom extensions
 - Agent-based data validation and cleaning
 - Statistical analysis with workflow nodes
@@ -104,6 +111,7 @@ Complete real-world scenarios combining all systems:
 - Quality assurance throughout the pipeline
 
 #### Multi-Agent Collaboration
+
 - Software development team simulation
 - Task coordination with specialized agents
 - Communication and progress tracking
@@ -111,12 +119,14 @@ Complete real-world scenarios combining all systems:
 - Team performance analytics
 
 #### Error Recovery and Resilience
+
 - System failures and graceful recovery
 - Extension error handling
 - Agent failure fallback mechanisms
 - Data consistency during failures
 
 #### Performance and Scalability
+
 - High-load concurrent processing
 - Resource optimization under stress
 - System stability during peak usage
@@ -127,24 +137,28 @@ Complete real-world scenarios combining all systems:
 Comprehensive performance testing:
 
 #### Master Agent Registry Performance
+
 - Agent registration throughput
 - Capability update performance
 - Profile retrieval speed
 - Concurrent operations handling
 
 #### Workflow Engine Performance
+
 - Workflow creation and execution speed
 - Node processing performance
 - Concurrent workflow handling
 - Memory usage optimization
 
 #### Extension System Performance
+
 - Extension loading times
 - Runtime execution performance
 - Resource usage monitoring
 - Concurrent extension usage
 
 #### Integrated System Performance
+
 - End-to-end workflow performance
 - Memory usage analysis
 - Cross-system communication overhead
@@ -164,6 +178,7 @@ await runDataPipelineExample();
 ```
 
 **Features:**
+
 - CSV data ingestion and parsing
 - Agent-based data validation
 - Statistical analysis with custom extensions
@@ -182,6 +197,7 @@ await runCollaborationExample();
 ```
 
 **Features:**
+
 - Software development team simulation
 - Task coordination and assignment
 - Real-time communication hub
@@ -193,22 +209,26 @@ await runCollaborationExample();
 The test environment automatically configures:
 
 ### Database
+
 - In-memory SQLite for fast testing
-- Prisma ORM integration
+- Drizzle ORM integration
 - Automatic schema migration
 
 ### Master Agent Registry
+
 - Merkle tree verification enabled
 - Heartbeat monitoring active
 - Protocol compliance required
 - Universal onboarding system
 
 ### Workflow Engine
+
 - Agent integration enabled
 - Extension support configured
 - Performance monitoring active
 
 ### Extension System
+
 - Security sandboxing enabled
 - Permission validation active
 - Resource limit enforcement
@@ -224,10 +244,14 @@ import { TestHelpers } from './setup/test-setup';
 const agent = await TestHelpers.createTestAgent('TestAgent', 'TEST_TYPE');
 
 // Create test workflow
-const { workflow, builder } = await TestHelpers.createTestWorkflow('Test Workflow');
+const { workflow, builder } =
+  await TestHelpers.createTestWorkflow('Test Workflow');
 
 // Create test extension
-const extension = await TestHelpers.createTestExtension('test-extension', 'workflow_node');
+const extension = await TestHelpers.createTestExtension(
+  'test-extension',
+  'workflow_node'
+);
 
 // Wait for conditions
 await TestHelpers.waitForCondition(async () => {
@@ -254,6 +278,7 @@ const extensionManager = env.extensionManager;
 ## Assertions and Expectations
 
 ### Agent Registry Assertions
+
 ```typescript
 // Agent registration
 expect(result.success).toBe(true);
@@ -267,6 +292,7 @@ expect(profile.status).toBe('ACTIVE');
 ```
 
 ### Workflow Engine Assertions
+
 ```typescript
 // Workflow execution
 expect(execution.status).toBe(WorkflowExecutionStatus.COMPLETED);
@@ -278,6 +304,7 @@ expect(agentProfile.todoList[0].priority).toBe('high');
 ```
 
 ### Extension System Assertions
+
 ```typescript
 // Extension loading
 expect(loadResult.success).toBe(true);
@@ -358,7 +385,7 @@ DEBUG=extension-system pnpm test
 
 1. **Database Connection Errors**
    - Ensure test database is properly configured
-   - Check Prisma schema migrations
+   - Check Drizzle schema migrations
 
 2. **Extension Loading Failures**
    - Verify extension manifest format
@@ -375,6 +402,7 @@ DEBUG=extension-system pnpm test
 ### Test Data Cleanup
 
 Tests automatically clean up:
+
 - Test databases and connections
 - Temporary extension directories
 - Agent registrations and workflows

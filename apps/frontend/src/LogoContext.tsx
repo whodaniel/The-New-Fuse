@@ -1,4 +1,4 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, ReactNode, useState } from 'react';
 
 interface LogoContextType {
   logo: string | null;
@@ -30,11 +30,7 @@ export const LogoProvider: React.FC<LogoProviderProps> = ({ children }) => {
     isCustomLogo,
   };
 
-  return (
-    <LogoContext.Provider value={contextValue}>
-      {children}
-    </LogoContext.Provider>
-  );
+  return <LogoContext.Provider value={contextValue}>{children}</LogoContext.Provider>;
 };
 
 export default LogoContext;

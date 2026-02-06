@@ -1,12 +1,12 @@
-import { ServerManager } from '../utils/server-manager';
 import { TestCleanup } from '../utils/cleanup';
-import { VisualRegression } from '../utils/visual-regression';
 import { logger } from '../utils/logger';
 import { PerformanceMonitor } from '../utils/performance';
+import { ServerManager } from '../utils/server-manager';
+import { VisualRegression } from '../utils/visual-regression';
 
 beforeAll(async () => {
   logger.info('Setting up E2E test environment');
-  
+
   if (process.env.START_SERVER) {
     const server = ServerManager.getInstance();
     await server.start();

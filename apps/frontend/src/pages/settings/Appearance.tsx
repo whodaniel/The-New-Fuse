@@ -1,16 +1,13 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 export default function Appearance() {
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium">Appearance Settings</h3>
-        <p className="text-sm text-muted-foreground">
-          Customize how The New Fuse looks and feels
-        </p>
+        <p className="text-sm text-muted-foreground">Customize how The New Fuse looks and feels</p>
       </div>
       <Card>
         <CardHeader>

@@ -3,7 +3,7 @@
  * Comprehensive test suite for N8N workflow conversion
  */
 
-import { N8nWorkflowConverter, N8nWorkflow, ReactFlowWorkflow } from '../N8nWorkflowConverter';
+import { N8nWorkflow, N8nWorkflowConverter, ReactFlowWorkflow } from '../N8nWorkflowConverter';
 
 describe('N8nWorkflowConverter', () => {
   let converter: N8nWorkflowConverter;
@@ -249,12 +249,8 @@ describe('N8nWorkflowConverter', () => {
 
       expect(reactFlowWorkflow.edges).toHaveLength(2);
 
-      const trueBranchEdge = reactFlowWorkflow.edges.find(
-        (e) => e.target === 'true-node'
-      );
-      const falseBranchEdge = reactFlowWorkflow.edges.find(
-        (e) => e.target === 'false-node'
-      );
+      const trueBranchEdge = reactFlowWorkflow.edges.find((e) => e.target === 'true-node');
+      const falseBranchEdge = reactFlowWorkflow.edges.find((e) => e.target === 'false-node');
 
       expect(trueBranchEdge).toBeDefined();
       expect(falseBranchEdge).toBeDefined();
@@ -357,9 +353,7 @@ describe('N8nWorkflowConverter', () => {
 
       expect(reactFlowWorkflow.pinData).toBeDefined();
       expect(reactFlowWorkflow.pinData?.['Test Node']).toBeDefined();
-      expect(reactFlowWorkflow.pinData?.['Test Node'][0].json.testKey).toBe(
-        'testValue'
-      );
+      expect(reactFlowWorkflow.pinData?.['Test Node'][0].json.testKey).toBe('testValue');
     });
 
     it('should preserve pin data on export', () => {
@@ -512,9 +506,7 @@ describe('N8nWorkflowConverter', () => {
       const result = converter.validateN8nWorkflow(invalidWorkflow);
 
       expect(result.valid).toBe(false);
-      expect(
-        result.errors.some((e) => e.includes('non-existent target node'))
-      ).toBe(true);
+      expect(result.errors.some((e) => e.includes('non-existent target node'))).toBe(true);
     });
 
     it('should validate ReactFlow workflow', () => {
@@ -601,9 +593,7 @@ describe('N8nWorkflowConverter', () => {
       expect(finalN8n.description).toBe(originalN8n.description);
       expect(finalN8n.nodes).toHaveLength(originalN8n.nodes.length);
       expect(finalN8n.nodes[0].notes).toBe(originalN8n.nodes[0].notes);
-      expect(finalN8n.nodes[1].retryOnFail).toBe(
-        originalN8n.nodes[1].retryOnFail
-      );
+      expect(finalN8n.nodes[1].retryOnFail).toBe(originalN8n.nodes[1].retryOnFail);
       expect(finalN8n.settings?.timezone).toBe(originalN8n.settings?.timezone);
     });
   });

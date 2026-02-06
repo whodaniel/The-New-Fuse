@@ -219,9 +219,7 @@ const WorkflowTemplates: React.FC = () => {
 
             {filteredTemplates.length === 0 ? (
               <div className="bg-muted/50 border border-border rounded-md p-6 text-center">
-                <p className="text-muted-foreground">
-                  No templates match your search criteria.
-                </p>
+                <p className="text-muted-foreground">No templates match your search criteria.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

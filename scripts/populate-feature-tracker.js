@@ -4,8 +4,8 @@ import client_1 from '@the-new-fuse/database/client';
 import FeatureTrackingService_1 from '../packages/database/src/services/FeatureTrackingService.js';
 import feature_tracker_1 from '@the-new-fuse/feature-tracker';
 async function populateFeatureTracker() {
-    const prisma = new client_1.PrismaClient();
-    const featureService = new FeatureTrackingService_1.FeatureTrackingService(prisma);
+    const drizzle = new client_1.DrizzleClient();
+    const featureService = new FeatureTrackingService_1.FeatureTrackingService(drizzle);
     try {
         const coreFeature = await featureService.createFeature('Core System', 'Core functionality and infrastructure of The New Fuse', []);
         const dbFeature = await featureService.createFeature('Database Layer', 'Database infrastructure and ORM integration', [coreFeature.featureId]);
@@ -113,7 +113,7 @@ async function populateFeatureTracker() {
         console.error('Error populating feature tracker:', error);
     }
     finally {
-        await prisma.$disconnect();
+        await drizzle.$disconnect();
     }
 }
 populateFeatureTracker();

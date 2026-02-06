@@ -82,7 +82,7 @@ export class FailoverManager extends EventEmitter {
   private readonly endpoints: Map<string, ServiceEndpoint> = new Map();
   private readonly circuitBreakers: Map<string, CircuitBreaker> = new Map();
   private readonly degradationManager?: GracefulDegradationManager;
-  
+
   private currentEndpointIndex = 0;
   private healthCheckTimer?: NodeJS.Timeout;
   private stats: FailoverStats;
@@ -93,11 +93,11 @@ export class FailoverManager extends EventEmitter {
     logger?: Logger
   ) {
     super();
-    
+
     this.config = config;
     this.logger = logger || new Logger(`FailoverManager:${config.serviceName}`);
     this.degradationManager = degradationManager;
-    
+
     this.stats = {
       serviceName: config.serviceName,
       totalEndpoints: 0,
@@ -107,7 +107,7 @@ export class FailoverManager extends EventEmitter {
       totalRequests: 0,
       successfulRequests: 0,
       failedRequests: 0,
-      averageResponseTime: 0
+      averageResponseTime: 0,
     };
 
     this.startHealthChecking();
@@ -116,30 +116,32 @@ export class FailoverManager extends EventEmitter {
   /**
    * Add service endpoint
    */
-  addEndpoint(endpoint: Omit<ServiceEndpoint, 'healthy' | 'lastHealthCheck' | 'responseTime' | 'errorCount'>): void {
+  addEndpoint(
+    endpoint: Omit<ServiceEndpoint, 'healthy' | 'lastHealthCheck' | 'responseTime' | 'errorCount'>
+  ): void {
     const fullEndpoint: ServiceEndpoint = {
       ...endpoint,
       healthy: true,
       lastHealthCheck: new Date(),
       responseTime: 0,
-      errorCount: 0
+      errorCount: 0,
     };
 
     this.endpoints.set(endpoint.id, fullEndpoint);
-    
+
     // Create circuit breaker for endpoint
     const circuitBreaker = new CircuitBreaker(
       `${this.config.serviceName}-${endpoint.id}`,
       {
         failureThreshold: 3,
         timeout: 30000,
-        enableMonitoring: true
+        enableMonitoring: true,
       },
       this.logger
     );
-    
+
     this.circuitBreakers.set(endpoint.id, circuitBreaker);
-    
+
     this.updateStats();
     this.logger.info(`Added endpoint ${endpoint.id} for service ${this.config.serviceName}`);
     this.emit('endpointAdded', endpoint.id, fullEndpoint);
@@ -151,31 +153,29 @@ export class FailoverManager extends EventEmitter {
   removeEndpoint(endpointId: string): boolean {
     const removed = this.endpoints.delete(endpointId);
     this.circuitBreakers.delete(endpointId);
-    
+
     if (removed) {
       this.updateStats();
       this.logger.info(`Removed endpoint ${endpointId} from service ${this.config.serviceName}`);
       this.emit('endpointRemoved', endpointId);
     }
-    
+
     return removed;
   }
 
   /**
    * Execute request with failover support
    */
-  async executeWithFailover<T>(
-    operation: (endpoint: ServiceEndpoint) => Promise<T>
-  ): Promise<T> {
+  async executeWithFailover<T>(operation: (endpoint: ServiceEndpoint) => Promise<T>): Promise<T> {
     this.stats.totalRequests++;
     const startTime = Date.now();
-    
+
     let lastError: Error | undefined;
     let attempts = 0;
-    
+
     // Get available endpoints in order
     const availableEndpoints = this.getAvailableEndpoints();
-    
+
     if (availableEndpoints.length === 0) {
       // No healthy endpoints available
       if (this.degradationManager) {
@@ -184,7 +184,7 @@ export class FailoverManager extends EventEmitter {
           'No healthy endpoints available'
         );
       }
-      
+
       throw new Error(`No healthy endpoints available for service ${this.config.serviceName}`);
     }
 
@@ -194,7 +194,7 @@ export class FailoverManager extends EventEmitter {
       }
 
       attempts++;
-      
+
       try {
         const circuitBreaker = this.circuitBreakers.get(endpoint.id);
         if (!circuitBreaker) {
@@ -204,21 +204,21 @@ export class FailoverManager extends EventEmitter {
         const result = await circuitBreaker.execute(async () => {
           const operationStartTime = Date.now();
           const operationResult = await operation(endpoint);
-          
+
           // Update endpoint response time
           endpoint.responseTime = Date.now() - operationStartTime;
           endpoint.errorCount = 0; // Reset on success
-          
+
           return operationResult;
         });
 
         if (result.success && result.data !== undefined) {
           this.stats.successfulRequests++;
           this.updateAverageResponseTime(Date.now() - startTime);
-          
+
           // Mark endpoint as healthy
           this.markEndpointHealthy(endpoint.id);
-          
+
           return result.data;
         } else if (result.rejected) {
           // Circuit breaker rejected the request
@@ -232,9 +232,9 @@ export class FailoverManager extends EventEmitter {
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
         this.handleEndpointError(endpoint.id, lastError);
-        
+
         this.logger.warn(`Request failed for endpoint ${endpoint.id}:`, lastError.message);
-        
+
         // Wait before retry if not the last attempt
         if (attempts < this.config.maxRetryAttempts && this.config.retryDelay > 0) {
           await this.delay(this.config.retryDelay);
@@ -244,12 +244,9 @@ export class FailoverManager extends EventEmitter {
 
     // All endpoints failed
     this.stats.failedRequests++;
-    
+
     if (this.degradationManager) {
-      this.degradationManager.degradeToLevel(
-        ServiceLevel.MINIMAL,
-        'All endpoints failed'
-      );
+      this.degradationManager.degradeToLevel(ServiceLevel.MINIMAL, 'All endpoints failed');
     }
 
     throw lastError || new Error(`All endpoints failed for service ${this.config.serviceName}`);
@@ -273,7 +270,7 @@ export class FailoverManager extends EventEmitter {
    * Get healthy endpoints
    */
   getHealthyEndpoints(): ServiceEndpoint[] {
-    return Array.from(this.endpoints.values()).filter(endpoint => endpoint.healthy);
+    return Array.from(this.endpoints.values()).filter((endpoint) => endpoint.healthy);
   }
 
   /**
@@ -292,7 +289,7 @@ export class FailoverManager extends EventEmitter {
       endpoint.healthy = true;
       endpoint.errorCount = 0;
       endpoint.lastHealthCheck = new Date();
-      
+
       this.updateStats();
       this.logger.info(`Endpoint ${endpointId} marked as healthy`);
       this.emit('endpointRecovered', endpointId, endpoint);
@@ -308,11 +305,11 @@ export class FailoverManager extends EventEmitter {
       endpoint.healthy = false;
       endpoint.lastError = error;
       endpoint.lastHealthCheck = new Date();
-      
+
       this.updateStats();
       this.logger.warn(`Endpoint ${endpointId} marked as unhealthy:`, error?.message);
       this.emit('endpointFailed', endpointId, endpoint, error);
-      
+
       // Trigger failover if this was the active endpoint
       if (this.stats.activeEndpoint?.id === endpointId) {
         this.triggerFailover(endpointId, error);
@@ -336,7 +333,7 @@ export class FailoverManager extends EventEmitter {
 
     this.logger.info(`Forced failover from ${oldEndpoint?.id || 'none'} to ${targetEndpointId}`);
     this.emit('failover', oldEndpoint?.id, targetEndpointId, 'manual');
-    
+
     return true;
   }
 
@@ -348,7 +345,7 @@ export class FailoverManager extends EventEmitter {
       clearInterval(this.healthCheckTimer);
       this.healthCheckTimer = undefined;
     }
-    
+
     this.removeAllListeners();
     this.logger.debug(`Failover manager for ${this.config.serviceName} shutdown`);
   }
@@ -358,30 +355,30 @@ export class FailoverManager extends EventEmitter {
    */
   private getAvailableEndpoints(): ServiceEndpoint[] {
     const healthyEndpoints = this.getHealthyEndpoints();
-    
+
     switch (this.config.loadBalancingStrategy) {
       case 'priority':
         return healthyEndpoints.sort((a, b) => a.priority - b.priority);
-      
+
       case 'response_time':
         return healthyEndpoints.sort((a, b) => a.responseTime - b.responseTime);
-      
+
       case 'round_robin':
         // Simple round-robin implementation
         if (healthyEndpoints.length === 0) return [];
-        
+
         const sortedEndpoints = healthyEndpoints.sort((a, b) => a.priority - b.priority);
         this.currentEndpointIndex = (this.currentEndpointIndex + 1) % sortedEndpoints.length;
-        
+
         return [
           ...sortedEndpoints.slice(this.currentEndpointIndex),
-          ...sortedEndpoints.slice(0, this.currentEndpointIndex)
+          ...sortedEndpoints.slice(0, this.currentEndpointIndex),
         ];
-      
+
       case 'least_connections':
         // For now, use priority as a proxy for connections
         return healthyEndpoints.sort((a, b) => a.priority - b.priority);
-      
+
       default:
         return healthyEndpoints.sort((a, b) => a.priority - b.priority);
     }
@@ -408,7 +405,7 @@ export class FailoverManager extends EventEmitter {
    */
   private triggerFailover(failedEndpointId: string, error?: Error): void {
     const availableEndpoints = this.getAvailableEndpoints();
-    
+
     if (availableEndpoints.length === 0) {
       this.logger.error(`No healthy endpoints available for failover from ${failedEndpointId}`);
       this.stats.activeEndpoint = undefined;
@@ -417,7 +414,7 @@ export class FailoverManager extends EventEmitter {
 
     const newActiveEndpoint = availableEndpoints[0];
     const oldEndpoint = this.stats.activeEndpoint;
-    
+
     this.stats.activeEndpoint = newActiveEndpoint;
     this.stats.totalFailovers++;
     this.stats.lastFailover = new Date();
@@ -440,7 +437,7 @@ export class FailoverManager extends EventEmitter {
 
       const isHealthy = circuitBreaker.getState() !== CircuitState.OPEN;
       endpoint.lastHealthCheck = new Date();
-      
+
       return isHealthy;
     } catch (error) {
       this.logger.error(`Health check failed for endpoint ${endpoint.id}:`, error);
@@ -454,14 +451,14 @@ export class FailoverManager extends EventEmitter {
   private startHealthChecking(): void {
     this.healthCheckTimer = setInterval(async () => {
       const endpoints = Array.from(this.endpoints.values());
-      
+
       for (const endpoint of endpoints) {
         const healthy = await this.performHealthCheck(endpoint);
-        
+
         if (healthy && !endpoint.healthy) {
           // Endpoint recovered
           this.markEndpointHealthy(endpoint.id);
-          
+
           // Consider failback if enabled
           if (this.config.enableAutoFailback) {
             await this.considerFailback(endpoint);
@@ -489,13 +486,13 @@ export class FailoverManager extends EventEmitter {
     if (recoveredEndpoint.priority < this.stats.activeEndpoint.priority) {
       // Wait for failback delay
       await this.delay(this.config.failbackDelay);
-      
+
       // Double-check endpoint is still healthy
       const stillHealthy = await this.performHealthCheck(recoveredEndpoint);
       if (stillHealthy) {
         const oldEndpoint = this.stats.activeEndpoint;
         this.stats.activeEndpoint = recoveredEndpoint;
-        
+
         this.logger.info(`Failback from ${oldEndpoint.id} to ${recoveredEndpoint.id}`);
         this.emit('failback', oldEndpoint.id, recoveredEndpoint.id);
       }
@@ -507,14 +504,14 @@ export class FailoverManager extends EventEmitter {
    */
   private updateStats(): void {
     const endpoints = Array.from(this.endpoints.values());
-    
+
     this.stats.totalEndpoints = endpoints.length;
-    this.stats.healthyEndpoints = endpoints.filter(e => e.healthy).length;
-    this.stats.failedEndpoints = endpoints.filter(e => !e.healthy).length;
-    
+    this.stats.healthyEndpoints = endpoints.filter((e) => e.healthy).length;
+    this.stats.failedEndpoints = endpoints.filter((e) => !e.healthy).length;
+
     // Set active endpoint if not set
     if (!this.stats.activeEndpoint && this.stats.healthyEndpoints > 0) {
-      const healthyEndpoints = endpoints.filter(e => e.healthy);
+      const healthyEndpoints = endpoints.filter((e) => e.healthy);
       this.stats.activeEndpoint = healthyEndpoints.sort((a, b) => a.priority - b.priority)[0];
     }
   }
@@ -526,8 +523,8 @@ export class FailoverManager extends EventEmitter {
     if (this.stats.successfulRequests === 1) {
       this.stats.averageResponseTime = responseTime;
     } else {
-      this.stats.averageResponseTime = 
-        (this.stats.averageResponseTime * (this.stats.successfulRequests - 1) + responseTime) / 
+      this.stats.averageResponseTime =
+        (this.stats.averageResponseTime * (this.stats.successfulRequests - 1) + responseTime) /
         this.stats.successfulRequests;
     }
   }
@@ -536,6 +533,6 @@ export class FailoverManager extends EventEmitter {
    * Utility delay function
    */
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

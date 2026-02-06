@@ -101,7 +101,10 @@ export class UserService extends BaseService {
    * @param newPassword New password
    * @returns Promise with password change response
    */
-  async changePassword(currentPassword: string, newPassword: string): Promise<{ success: boolean; message: string }> {
+  async changePassword(
+    currentPassword: string,
+    newPassword: string
+  ): Promise<{ success: boolean; message: string }> {
     this.validateRequired({ currentPassword, newPassword }, ['currentPassword', 'newPassword']);
     return this.post<{ success: boolean; message: string }>('/change-password', {
       currentPassword,

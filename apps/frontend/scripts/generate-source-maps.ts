@@ -4,13 +4,12 @@ import path from 'path';
 // Function to recursively walk through directories
 const walkSync = (dir, filelist = []): any => {
   const files = fs.readdirSync(dir);
-  files.forEach(file => {
+  files.forEach((file) => {
     const filepath = path.join(dir, file);
     const stat = fs.statSync(filepath);
     if (stat.isDirectory()) {
       filelist = walkSync(filepath, filelist);
     } else if (file.endsWith('.js') && !fs.existsSync(`${filepath}.map`)) {
-      
       // Create a basic source map
       const sourceFile = file.replace('.js', '.tsx');
       if (fs.existsSync(path.join(dir, sourceFile))) {
@@ -20,7 +19,7 @@ const walkSync = (dir, filelist = []): any => {
           sources: [sourceFile],
           names: [],
           mappings: '',
-          sourceRoot: ''
+          sourceRoot: '',
         };
         fs.writeFileSync(`${filepath}.map`, JSON.stringify(sourceMap));
       } else {
@@ -33,7 +32,7 @@ const walkSync = (dir, filelist = []): any => {
             sources: [tsSourceFile],
             names: [],
             mappings: '',
-            sourceRoot: ''
+            sourceRoot: '',
           };
           fs.writeFileSync(`${filepath}.map`, JSON.stringify(sourceMap));
         } else {
@@ -44,7 +43,7 @@ const walkSync = (dir, filelist = []): any => {
             sources: [file],
             names: [],
             mappings: '',
-            sourceRoot: ''
+            sourceRoot: '',
           };
           fs.writeFileSync(`${filepath}.map`, JSON.stringify(sourceMap));
         }

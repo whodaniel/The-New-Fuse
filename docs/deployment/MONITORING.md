@@ -1,6 +1,7 @@
 # The New Fuse Monitoring Guide
 
 ## Table of Contents
+
 1. [Overview](#overview)
 2. [Metrics Collection](#metrics-collection)
 3. [Logging Setup](#logging-setup)
@@ -11,6 +12,7 @@
 ## Overview
 
 The New Fuse uses a comprehensive monitoring stack:
+
 - Prometheus for metrics collection
 - Grafana for visualization
 - ELK Stack for log aggregation
@@ -22,6 +24,7 @@ The New Fuse uses a comprehensive monitoring stack:
 ### 1. Prometheus Setup
 
 1. Install Prometheus:
+
 ```bash
 # Download Prometheus
 wget https://github.com/prometheus/prometheus/releases/download/v2.40.0/prometheus-2.40.0.linux-amd64.tar.gz
@@ -32,6 +35,7 @@ cd prometheus-*
 ```
 
 2. Configure Prometheus (`prometheus.yml`):
+
 ```yaml
 global:
   scrape_interval: 15s
@@ -87,6 +91,7 @@ docker run -d --name postgres-exporter \
 ### 1. ELK Stack Configuration
 
 1. Install Elasticsearch:
+
 ```bash
 # Add Elastic repository
 wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
@@ -95,6 +100,7 @@ sudo apt update && sudo apt install elasticsearch
 ```
 
 2. Configure Logstash (`logstash.conf`):
+
 ```conf
 input {
   file {
@@ -121,15 +127,17 @@ output {
 ```
 
 3. Configure Kibana:
+
 ```yaml
 server.port: 5601
-server.host: "localhost"
-elasticsearch.hosts: ["http://localhost:9200"]
+server.host: 'localhost'
+elasticsearch.hosts: ['http://localhost:9200']
 ```
 
 ### 2. Log Rotation
 
 Configure logrotate (`/etc/logrotate.d/fuse`):
+
 ```conf
 /var/log/fuse/*.log {
     daily
@@ -150,41 +158,45 @@ Configure logrotate (`/etc/logrotate.d/fuse`):
 ### 1. Prometheus Alerting Rules
 
 Create `alerts.yml`:
+
 ```yaml
 groups:
-- name: fuse-alerts
-  rules:
-  - alert: HighErrorRate
-    expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.01
-    for: 5m
-    labels:
-      severity: critical
-    annotations:
-      summary: High error rate detected
-      description: Error rate is above 1% for the last 5 minutes
+  - name: fuse-alerts
+    rules:
+      - alert: HighErrorRate
+        expr:
+          rate(http_requests_total{status=~"5.."}[5m]) /
+          rate(http_requests_total[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: High error rate detected
+          description: Error rate is above 1% for the last 5 minutes
 
-  - alert: HighLatency
-    expr: http_request_duration_seconds{quantile="0.95"} > 0.5
-    for: 5m
-    labels:
-      severity: warning
-    annotations:
-      summary: High latency detected
-      description: P95 latency is above 500ms
+      - alert: HighLatency
+        expr: http_request_duration_seconds{quantile="0.95"} > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High latency detected
+          description: P95 latency is above 500ms
 
-  - alert: HighMemoryUsage
-    expr: process_resident_memory_bytes / process_heap_bytes > 0.85
-    for: 5m
-    labels:
-      severity: warning
-    annotations:
-      summary: High memory usage
-      description: Memory usage is above 85%
+      - alert: HighMemoryUsage
+        expr: process_resident_memory_bytes / process_heap_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High memory usage
+          description: Memory usage is above 85%
 ```
 
 ### 2. Alert Notification
 
 Configure alert manager (`alertmanager.yml`):
+
 ```yaml
 global:
   resolve_timeout: 5m
@@ -197,11 +209,11 @@ route:
   receiver: 'slack'
 
 receivers:
-- name: 'slack'
-  slack_configs:
-  - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
-    channel: '#alerts'
-    send_resolved: true
+  - name: 'slack'
+    slack_configs:
+      - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+        channel: '#alerts'
+        send_resolved: true
 ```
 
 ## Dashboard Setup
@@ -220,6 +232,7 @@ sudo apt-get install grafana
 ### 2. Dashboard Configuration
 
 Import the following dashboards:
+
 - Node Exporter Full (ID: 1860)
 - Redis Dashboard (ID: 763)
 - PostgreSQL Overview (ID: 9628)
@@ -228,6 +241,7 @@ Import the following dashboards:
 ### 3. Custom Metrics Dashboard
 
 Create a custom dashboard with:
+
 - Request rate by endpoint
 - Error rate
 - Response time percentiles
@@ -242,6 +256,7 @@ Create a custom dashboard with:
 ### 1. Application Metrics
 
 Monitor the following metrics:
+
 ```typescript
 // Request metrics
 http_requests_total{method, path, status}
@@ -269,6 +284,7 @@ task_status{status}
 ### 2. Resource Monitoring
 
 System resources to monitor:
+
 - CPU usage
 - Memory usage
 - Disk I/O
@@ -280,6 +296,7 @@ System resources to monitor:
 ### 3. Business Metrics
 
 Track the following business metrics:
+
 - Active users
 - Agent creation rate
 - Task completion rate
@@ -303,6 +320,7 @@ sudo apt-get install stackdriver-agent
 ### 2. Custom Metrics Export
 
 Configure custom metrics export in `app.yaml`:
+
 ```yaml
 env_variables:
   GOOGLE_CLOUD_PROJECT: your-project-id
@@ -312,6 +330,7 @@ env_variables:
 ### 3. Cloud Logging
 
 Enable structured logging:
+
 ```typescript
 const logger = new LoggingService({
   projectId: process.env.GOOGLE_CLOUD_PROJECT,
@@ -320,8 +339,8 @@ const logger = new LoggingService({
     type: 'cloud_run_revision',
     labels: {
       service_name: 'fuse',
-      revision_name: process.env.K_REVISION
-    }
-  }
+      revision_name: process.env.K_REVISION,
+    },
+  },
 });
-``` 
+```

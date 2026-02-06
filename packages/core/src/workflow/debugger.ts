@@ -48,10 +48,7 @@ class DebugSession {
 }
 
 class StepTracer {
-  async recordStepExecution(
-    stepId: string,
-    executionData: Record<string, unknown>
-  ): Promise<void> {
+  async recordStepExecution(stepId: string, executionData: Record<string, unknown>): Promise<void> {
     // Implementation
     console.log(`Recording step execution: ${stepId}`, executionData);
   }
@@ -66,10 +63,7 @@ export class WorkflowDebugger {
     this.stepTracer = new StepTracer();
   }
 
-  async debugWorkflow(
-    workflow: WorkflowTemplate,
-    context: DebugContext
-  ): Promise<DebugSession> {
+  async debugWorkflow(workflow: WorkflowTemplate, context: DebugContext): Promise<DebugSession> {
     const session = new DebugSession(workflow, context);
     this.sessions.set(session.getId(), session);
     session.onBreakpoint(async (stepId: string) => {
@@ -89,23 +83,16 @@ export class WorkflowDebugger {
     };
   }
 
-  private async handleBreakpoint(
-    _session: DebugSession,
-    _stepId: string,
-  ): Promise<void> {
+  private async handleBreakpoint(_session: DebugSession, _stepId: string): Promise<void> {
     // Implementation
   }
 
-  private async getCurrentStep(
-    _sessionId: string,
-  ): Promise<WorkflowStep | null> {
+  private async getCurrentStep(_sessionId: string): Promise<WorkflowStep | null> {
     // Implementation
     return null;
   }
 
-  private async getVariables(
-    _sessionId: string,
-  ): Promise<Record<string, unknown>> {
+  private async getVariables(_sessionId: string): Promise<Record<string, unknown>> {
     // Implementation
     return {};
   }

@@ -1,4 +1,4 @@
-import { prisma } from './prisma-client.js';
+import { db } from './db-client.js';
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from './logger.js';
 
@@ -13,195 +13,219 @@ export class ConversationManager {
    */
   async createConversation(id?: string): Promise<{ conversationId: string }> {
     const conversationId = id || uuidv4();
-    
-    await prisma.conversation.create({
+
+    await db.conversation.create({
       data: {
         id: conversationId,
         title: `Conversation ${new Date().toLocaleString()}`,
-        metadata: {}
-      }
+        metadata: {},
+        isArchived: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     });
-    
+
     logger.info(`Created conversation with ID: ${conversationId}`);
     return { conversationId };
   }
-  
+
   /**
    * Add a message to a conversation
-   * @param conversationId The ID of the conversation
-   * @param message The message to add
-   * @returns The created message
    */
   async addMessage(
-    conversationId: string, 
+    conversationId: string,
     senderId: string,
-    content: string, 
+    content: string,
     role: string,
     receiverId?: string,
     toolCalls?: any[]
   ): Promise<any> {
     try {
-      // Check if conversation exists
-      const conversation = await prisma.conversation.findUnique({
-        where: { id: conversationId }
-      });
-      
+      const conversation = await db.conversation.findUnique({ where: { id: conversationId } });
+
       if (!conversation) {
         throw new Error(`Conversation with ID ${conversationId} not found`);
       }
-      
-      // Create the message
-      const message = await prisma.message.create({
+
+      const messageId = uuidv4();
+      const message = await db.message.create({
         data: {
+          id: messageId,
           conversationId,
           senderId,
           receiverId,
           content,
           role,
           timestamp: new Date(),
-          ...(toolCalls && toolCalls.length > 0 ? {
-            toolCalls: {
-              create: toolCalls.map(tc => ({
-                toolId: tc.toolId,
-                parameters: tc.parameters,
-                status: 'pending'
-              }))
-            }
-          } : {})
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
-        include: {
-          toolCalls: true
+      });
+
+      const createdToolCalls: any[] = [];
+      if (toolCalls && toolCalls.length > 0) {
+        for (const call of toolCalls) {
+          const toolCall = await db.toolCall.create({
+            data: {
+              id: uuidv4(),
+              messageId,
+              toolId: call.toolId,
+              parameters: call.parameters,
+              status: 'pending',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+          });
+          createdToolCalls.push(toolCall);
         }
-      });
-      
-      // Update conversation's updatedAt timestamp
-      await prisma.conversation.update({
+      }
+
+      await db.conversation.update({
         where: { id: conversationId },
-        data: { updatedAt: new Date() }
+        data: { updatedAt: new Date() },
       });
-      
+
+      await this.linkConversationAgent(conversationId, senderId);
+      if (receiverId) {
+        await this.linkConversationAgent(conversationId, receiverId);
+      }
+
       logger.info(`Added message to conversation ${conversationId}`);
-      return message;
-    } catch (error) {
+      return { ...message, toolCalls: createdToolCalls };
+    } catch (error: any) {
       logger.error(`Error adding message to conversation: ${error.message}`);
       throw error;
     }
   }
-  
+
   /**
    * Get the message history for a conversation
-   * @param conversationId The ID of the conversation
-   * @returns Array of messages
    */
   async getHistory(conversationId: string): Promise<any[]> {
     try {
-      const messages = await prisma.message.findMany({
+      const messages = await db.message.findMany({
         where: { conversationId },
-        include: {
-          toolCalls: {
-            include: {
-              execution: true
-            }
-          }
-        },
-        orderBy: { timestamp: 'asc' }
+        orderBy: { timestamp: 'asc' },
       });
-      
-      logger.info(`Retrieved ${messages.length} messages for conversation ${conversationId}`);
-      return messages;
-    } catch (error) {
+
+      const toolCalls = await db.toolCall.findMany();
+      const toolExecutions = await db.toolExecution.findMany();
+      const executionsByToolCall = new Map(toolExecutions.map((exec) => [exec.toolCallId, exec]));
+
+      const enriched = messages.map((message) => {
+        const messageToolCalls = toolCalls
+          .filter((call) => call.messageId === message.id)
+          .map((call) => ({
+            ...call,
+            execution: executionsByToolCall.get(call.id) ?? null,
+          }));
+        return { ...message, toolCalls: messageToolCalls };
+      });
+
+      logger.info(`Retrieved ${enriched.length} messages for conversation ${conversationId}`);
+      return enriched;
+    } catch (error: any) {
       logger.error(`Error retrieving conversation history: ${error.message}`);
       throw error;
     }
   }
-  
+
   /**
    * Archive a conversation
-   * @param conversationId The ID of the conversation to archive
    */
   async archiveConversation(conversationId: string): Promise<void> {
     try {
-      await prisma.conversation.update({
+      await db.conversation.update({
         where: { id: conversationId },
-        data: { isArchived: true }
+        data: { isArchived: true, updatedAt: new Date() },
       });
-      
+
       logger.info(`Archived conversation ${conversationId}`);
-    } catch (error) {
+    } catch (error: any) {
       logger.error(`Error archiving conversation: ${error.message}`);
       throw error;
     }
   }
-  
+
   /**
    * Delete a conversation and all its messages
-   * @param conversationId The ID of the conversation to delete
    */
   async deleteConversation(conversationId: string): Promise<void> {
     try {
-      await prisma.conversation.delete({
-        where: { id: conversationId }
-      });
-      
+      const messages = await db.message.findMany({ where: { conversationId } });
+      const messageIds = messages.map((message) => message.id);
+
+      for (const messageId of messageIds) {
+        await db.toolCall.deleteMany({ where: { messageId } });
+      }
+
+      await db.message.deleteMany({ where: { conversationId } });
+      await db.conversationAgent.deleteMany({ where: { conversationId } });
+      await db.conversation.delete({ where: { id: conversationId } });
+
       logger.info(`Deleted conversation ${conversationId}`);
-    } catch (error) {
+    } catch (error: any) {
       logger.error(`Error deleting conversation: ${error.message}`);
       throw error;
     }
   }
-  
+
   /**
    * List all conversations, optionally filtering by agent
-   * @param agentId Optional agent ID to filter by
-   * @param includeArchived Whether to include archived conversations
-   * @returns Array of conversations
    */
   async listConversations(agentId?: string, includeArchived = false): Promise<any[]> {
     try {
       const filter: any = {};
-      
+
       if (!includeArchived) {
         filter.isArchived = false;
       }
-      
-      let conversations;
-      
+
+      let conversations = await db.conversation.findMany({
+        where: filter,
+        orderBy: { updatedAt: 'desc' },
+      });
+
       if (agentId) {
-        conversations = await prisma.conversation.findMany({
-          where: {
-            ...filter,
-            agents: {
-              some: {
-                agentId
-              }
-            }
-          },
-          include: {
-            agents: true,
-            _count: {
-              select: { messages: true }
-            }
-          },
-          orderBy: { updatedAt: 'desc' }
-        });
-      } else {
-        conversations = await prisma.conversation.findMany({
-          where: filter,
-          include: {
-            agents: true,
-            _count: {
-              select: { messages: true }
-            }
-          },
-          orderBy: { updatedAt: 'desc' }
-        });
+        const links = await db.conversationAgent.findMany({ where: { agentId } });
+        const allowed = new Set(links.map((link) => link.conversationId));
+        conversations = conversations.filter((conv) => allowed.has(conv.id));
       }
-      
-      logger.info(`Retrieved ${conversations.length} conversations${agentId ? ` for agent ${agentId}` : ''}`);
-      return conversations;
-    } catch (error) {
+
+      const allAgents = await db.conversationAgent.findMany();
+      const allMessages = await db.message.findMany();
+
+      const enriched = conversations.map((conv) => {
+        const agents = allAgents.filter((link) => link.conversationId === conv.id);
+        const messageCount = allMessages.filter((msg) => msg.conversationId === conv.id).length;
+        return {
+          ...conv,
+          agents,
+          _count: { messages: messageCount },
+        };
+      });
+
+      logger.info(
+        `Retrieved ${enriched.length} conversations${agentId ? ` for agent ${agentId}` : ''}`
+      );
+      return enriched;
+    } catch (error: any) {
       logger.error(`Error listing conversations: ${error.message}`);
       throw error;
     }
+  }
+
+  private async linkConversationAgent(conversationId: string, agentId: string): Promise<void> {
+    const existing = await db.conversationAgent.findUnique({ where: { conversationId, agentId } });
+    if (existing) return;
+    await db.conversationAgent.create({
+      data: {
+        id: uuidv4(),
+        conversationId,
+        agentId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
   }
 }

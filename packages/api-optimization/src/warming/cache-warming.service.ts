@@ -55,35 +55,23 @@ export class CacheWarmingService implements OnModuleInit {
         name: 'critical-endpoints',
         enabled: true,
         priority: 1,
-        urls: [
-          '/api/dashboard',
-          '/api/users/me',
-          '/api/agents',
-          '/api/workflows'
-        ],
-        tags: ['dashboard', 'users', 'agents', 'workflows']
+        urls: ['/api/dashboard', '/api/users/me', '/api/agents', '/api/workflows'],
+        tags: ['dashboard', 'users', 'agents', 'workflows'],
       },
       {
         name: 'static-data',
         enabled: true,
         priority: 2,
-        urls: [
-          '/api/config',
-          '/api/settings',
-          '/api/metadata'
-        ],
-        tags: ['config', 'settings']
+        urls: ['/api/config', '/api/settings', '/api/metadata'],
+        tags: ['config', 'settings'],
       },
       {
         name: 'analytics',
         enabled: false,
         priority: 3,
-        urls: [
-          '/api/analytics/summary',
-          '/api/analytics/trends'
-        ],
-        tags: ['analytics']
-      }
+        urls: ['/api/analytics/summary', '/api/analytics/trends'],
+        tags: ['analytics'],
+      },
     ];
 
     this.logger.log(`Initialized ${this.warmingStrategies.length} warming strategies`);
@@ -94,7 +82,7 @@ export class CacheWarmingService implements OnModuleInit {
    */
   async warmAll(): Promise<WarmingJob[]> {
     const enabledStrategies = this.warmingStrategies
-      .filter(s => s.enabled)
+      .filter((s) => s.enabled)
       .sort((a, b) => a.priority - b.priority);
 
     const jobs: WarmingJob[] = [];
@@ -117,7 +105,7 @@ export class CacheWarmingService implements OnModuleInit {
       strategy,
       status: 'running',
       startTime: new Date(),
-      itemsWarmed: 0
+      itemsWarmed: 0,
     };
 
     this.jobs.set(jobId, job);
@@ -226,7 +214,7 @@ export class CacheWarmingService implements OnModuleInit {
    * Enable/disable a strategy
    */
   setStrategyEnabled(name: string, enabled: boolean): boolean {
-    const strategy = this.warmingStrategies.find(s => s.name === name);
+    const strategy = this.warmingStrategies.find((s) => s.name === name);
     if (strategy) {
       strategy.enabled = enabled;
       this.logger.log(`Strategy ${name} ${enabled ? 'enabled' : 'disabled'}`);
@@ -270,10 +258,10 @@ export class CacheWarmingService implements OnModuleInit {
 
     return {
       totalJobs: jobs.length,
-      completedJobs: jobs.filter(j => j.status === 'completed').length,
-      failedJobs: jobs.filter(j => j.status === 'failed').length,
+      completedJobs: jobs.filter((j) => j.status === 'completed').length,
+      failedJobs: jobs.filter((j) => j.status === 'failed').length,
       totalItemsWarmed: jobs.reduce((sum, j) => sum + (j.itemsWarmed || 0), 0),
-      activeStrategies: this.warmingStrategies.filter(s => s.enabled).length
+      activeStrategies: this.warmingStrategies.filter((s) => s.enabled).length,
     };
   }
 
@@ -307,9 +295,7 @@ export class CacheWarmingService implements OnModuleInit {
       await this.warmStrategy(strategy);
     }, intervalMs);
 
-    this.logger.log(
-      `Scheduled warming for ${strategy.name} every ${intervalMs / 1000}s`
-    );
+    this.logger.log(`Scheduled warming for ${strategy.name} every ${intervalMs / 1000}s`);
 
     return interval;
   }

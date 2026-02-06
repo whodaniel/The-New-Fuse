@@ -1,7 +1,6 @@
-import { marked } from 'marked';
-import hljs from 'highlight.js';
-import { decode } from 'he';
 import DOMPurify from 'dompurify';
+import { decode } from 'he';
+import { marked } from 'marked';
 
 interface MarkdownOptions {
   disableLinks?: boolean;
@@ -50,10 +49,7 @@ marked.setOptions({
   },
 });
 
-export default function renderMarkdown(
-  content: string,
-  options: MarkdownOptions = {}
-): string {
+export default function renderMarkdown(content: string, options: MarkdownOptions = {}): string {
   if (!content) return '';
 
   const { disableLinks, disableHighlight, stripHtml } = options;
@@ -73,10 +69,9 @@ export default function renderMarkdown(
 
   // Disable links if requested
   if (disableLinks) {
-    renderedContent = renderedContent.replace(
-      /<a [^>]*>/g,
-      '<span class="text-primary-button">'
-    ).replace(/<\/a>/g, '</span>');
+    renderedContent = renderedContent
+      .replace(/<a [^>]*>/g, '<span class="text-primary-button">')
+      .replace(/<\/a>/g, '</span>');
   }
 
   // Disable syntax highlighting if requested
@@ -88,19 +83,52 @@ export default function renderMarkdown(
   // This prevents XSS attacks by removing dangerous HTML/JS
   return DOMPurify.sanitize(renderedContent, {
     ALLOWED_TAGS: [
-      'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'blockquote', 'code', 'pre', 'ul', 'ol', 'li', 'a', 'img', 'table',
-      'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'hr'
+      'p',
+      'br',
+      'strong',
+      'em',
+      'u',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'blockquote',
+      'code',
+      'pre',
+      'ul',
+      'ol',
+      'li',
+      'a',
+      'img',
+      'table',
+      'thead',
+      'tbody',
+      'tr',
+      'th',
+      'td',
+      'span',
+      'div',
+      'hr',
     ],
     ALLOWED_ATTR: [
-      'href', 'src', 'alt', 'title', 'class', 'target', 'rel',
-      'width', 'height', 'align'
+      'href',
+      'src',
+      'alt',
+      'title',
+      'class',
+      'target',
+      'rel',
+      'width',
+      'height',
+      'align',
     ],
     FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed'],
     FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover'],
     ALLOW_DATA_ATTR: false,
     KEEP_CONTENT: true,
-    RETURN_TRUSTED_TYPE: false
+    RETURN_TRUSTED_TYPE: false,
   });
 }
 

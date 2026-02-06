@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 import { AnalyzerAgentService } from './analyzer.service';
 import { ArchitectAgentService } from './architect.service';
 import { ImplementerAgentService } from './implementer.service';
@@ -50,7 +50,7 @@ export class CoordinatorAgentService {
   private chatHistory: ChatMessage[] = [];
 
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly db: DatabaseService,
     private readonly analyzer: AnalyzerAgentService,
     private readonly architect: ArchitectAgentService,
     private readonly implementer: ImplementerAgentService,

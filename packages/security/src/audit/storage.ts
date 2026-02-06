@@ -21,7 +21,7 @@ export class InMemoryAuditStorage implements AuditStorage {
   }
 
   async query(filter: Record<string, unknown>): Promise<Record<string, unknown>[]> {
-    return this.entries.filter(entry => {
+    return this.entries.filter((entry) => {
       return Object.entries(filter).every(([key, value]) => entry[key] === value);
     });
   }

@@ -11,7 +11,7 @@ export class ConversationExportService {
   async exportConversation(
     content: string,
     format: ExportFormat,
-    outputPath: string
+    outputPath: string,
   ): Promise<string> {
     const tempDir = fs.mkdtempSync(path.join(process.cwd(), 'tmp-conv-'));
     const inputFile = path.join(tempDir, 'input.md');

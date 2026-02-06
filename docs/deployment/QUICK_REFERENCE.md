@@ -125,11 +125,11 @@ export RUN_TESTS="true"
 
 ## Deployment Strategies
 
-| Strategy | Command | Use Case | Downtime |
-|----------|---------|----------|----------|
-| **Rolling** | `--strategy=rolling` | Quick updates, low risk | Minimal |
-| **Blue-Green** | `--strategy=blue-green` | Zero-downtime, instant rollback | None |
-| **Canary** | `--strategy=canary` | High-risk changes, gradual rollout | None |
+| Strategy       | Command                 | Use Case                           | Downtime |
+| -------------- | ----------------------- | ---------------------------------- | -------- |
+| **Rolling**    | `--strategy=rolling`    | Quick updates, low risk            | Minimal  |
+| **Blue-Green** | `--strategy=blue-green` | Zero-downtime, instant rollback    | None     |
+| **Canary**     | `--strategy=canary`     | High-risk changes, gradual rollout | None     |
 
 ## Common Workflows
 
@@ -169,7 +169,7 @@ export RUN_TESTS="true"
 ./scripts/deployment/db-migrate.sh
 
 # 3. Verify
-pnpm prisma migrate status
+pnpm drizzle migrate status
 ```
 
 ### Health Check Only
@@ -251,10 +251,10 @@ cat .deployment-state/api-gateway-state.json | jq .
 
 ```bash
 # Check connection
-pnpm prisma db execute --stdin <<< "SELECT 1;"
+pnpm drizzle db execute --stdin <<< "SELECT 1;"
 
 # Migration status
-pnpm prisma migrate status
+pnpm drizzle migrate status
 
 # List backups
 ls -lh backups/database/
@@ -262,11 +262,11 @@ ls -lh backups/database/
 
 ## Exit Codes
 
-| Code | Meaning |
-|------|---------|
-| 0 | Success |
-| 1 | Validation failed / Deployment failed |
-| 130 | User cancelled (Ctrl+C) |
+| Code | Meaning                               |
+| ---- | ------------------------------------- |
+| 0    | Success                               |
+| 1    | Validation failed / Deployment failed |
+| 130  | User cancelled (Ctrl+C)               |
 
 ## Keyboard Shortcuts
 
@@ -282,6 +282,7 @@ ls -lh backups/database/
 ## Support
 
 For detailed documentation, see:
+
 - [Automated Deployment Guide](AUTOMATED_DEPLOYMENT_GUIDE.md)
 - [Emergency Procedures](EMERGENCY_PROCEDURES.md)
 - [Rollback Procedures](ROLLBACK_PROCEDURES.md)

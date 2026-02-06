@@ -1,6 +1,7 @@
 # The New Fuse API Documentation
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Authentication](#authentication)
 3. [Base URL](#base-url)
@@ -21,11 +22,14 @@
 
 ## Introduction
 
-This document provides comprehensive documentation for The New Fuse API, including REST endpoints and WebSocket communication protocols.
+This document provides comprehensive documentation for The New Fuse API,
+including REST endpoints and WebSocket communication protocols.
 
 ## Authentication
 
-All API endpoints except `/api/v1/auth/login`, `/api/v1/auth/register`, and other explicitly marked public endpoints require authentication using a JWT token.
+All API endpoints except `/api/v1/auth/login`, `/api/v1/auth/register`, and
+other explicitly marked public endpoints require authentication using a JWT
+token.
 
 Include the token in the Authorization header:
 
@@ -56,9 +60,11 @@ All API endpoints are prefixed with `/api`
 ### Authentication Endpoints
 
 #### POST /api/auth/login
+
 Authenticate a user and receive access tokens.
 
 **Request Body:**
+
 ```json
 {
   "username": "string",
@@ -67,6 +73,7 @@ Authenticate a user and receive access tokens.
 ```
 
 **Response:**
+
 ```json
 {
   "userId": "number",
@@ -77,12 +84,15 @@ Authenticate a user and receive access tokens.
 ```
 
 **Cookies Set:**
+
 - `refreshToken`: HTTP-only secure cookie for token refresh
 
 #### POST /api/auth/register
+
 Register a new user account.
 
 **Request Body:**
+
 ```json
 {
   "username": "string",
@@ -92,6 +102,7 @@ Register a new user account.
 ```
 
 **Response:**
+
 ```json
 {
   "userId": "number",
@@ -102,9 +113,11 @@ Register a new user account.
 ```
 
 #### POST /api/auth/refresh
+
 Refresh the access token using the refresh token cookie.
 
 **Response:**
+
 ```json
 {
   "accessToken": "string",
@@ -115,9 +128,11 @@ Refresh the access token using the refresh token cookie.
 ### Agent Management
 
 #### GET /api/v1/agents
+
 Get all agents for the authenticated user.
 
 **Response:**
+
 ```json
 {
   "agents": [
@@ -134,9 +149,11 @@ Get all agents for the authenticated user.
 ```
 
 #### POST /api/v1/agents
+
 Create a new agent.
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -146,19 +163,20 @@ Create a new agent.
 }
 ```
 
-**Response:**
-Returns the created agent object.
+**Response:** Returns the created agent object.
 
 #### GET /api/v1/agents/{id}
+
 Get a specific agent by ID.
 
-**Response:**
-Returns the agent object.
+**Response:** Returns the agent object.
 
 #### PUT /api/v1/agents/{id}
+
 Update an existing agent.
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -168,21 +186,22 @@ Update an existing agent.
 }
 ```
 
-**Response:**
-Returns the updated agent object.
+**Response:** Returns the updated agent object.
 
 #### DELETE /api/v1/agents/{id}
+
 Delete an agent.
 
-**Response:**
-204 No Content
+**Response:** 204 No Content
 
 ### Workflow Management
 
 #### POST /api/v1/workflows
+
 Create a new workflow.
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -192,19 +211,20 @@ Create a new workflow.
 }
 ```
 
-**Response:**
-Returns the created workflow object.
+**Response:** Returns the created workflow object.
 
 #### GET /api/v1/workflows/{id}
+
 Get a specific workflow by ID.
 
-**Response:**
-Returns the workflow object.
+**Response:** Returns the workflow object.
 
 #### PUT /api/v1/workflows/{id}
+
 Update an existing workflow.
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -214,15 +234,16 @@ Update an existing workflow.
 }
 ```
 
-**Response:**
-Returns the updated workflow object.
+**Response:** Returns the updated workflow object.
 
 ### Task Management Endpoints
 
 #### GET /api/tasks
+
 Get all tasks for the authenticated user.
 
 **Response:**
+
 ```json
 {
   "tasks": [
@@ -240,9 +261,11 @@ Get all tasks for the authenticated user.
 ```
 
 #### POST /api/tasks
+
 Create a new task.
 
 **Request Body:**
+
 ```json
 {
   "title": "string",
@@ -252,13 +275,15 @@ Create a new task.
 ```
 
 #### PUT /api/tasks/:taskId
+
 Update task status or priority.
 
 ## WebSocket API
 
 ### Connection
 
-WebSocket connections are established at `/api/ws` with required authentication parameters.
+WebSocket connections are established at `/api/ws` with required authentication
+parameters.
 
 ```typescript
 const ws = new WebSocket('ws://api.example.com/ws');
@@ -287,6 +312,7 @@ interface WebSocketMessage {
 #### 1. Room Management
 
 ##### Join Room
+
 ```json
 {
   "type": "joinRoom",
@@ -297,6 +323,7 @@ interface WebSocketMessage {
 ```
 
 ##### Leave Room
+
 ```json
 {
   "type": "leaveRoom",
@@ -309,6 +336,7 @@ interface WebSocketMessage {
 #### 2. Chat Messages
 
 ##### Send Message
+
 ```json
 {
   "type": "message",
@@ -325,6 +353,7 @@ interface WebSocketMessage {
 ```
 
 ##### Message Received
+
 ```json
 {
   "type": "messageReceived",
@@ -340,6 +369,7 @@ interface WebSocketMessage {
 #### 3. Task Updates
 
 ##### Task Status Update
+
 ```json
 {
   "type": "taskUpdate",
@@ -355,6 +385,7 @@ interface WebSocketMessage {
 #### 4. System Messages
 
 ##### Error Message
+
 ```json
 {
   "type": "error",
@@ -369,6 +400,7 @@ interface WebSocketMessage {
 ### Message Priority Levels
 
 Messages can include a priority field:
+
 - 0: System Critical
 - 1: High Priority
 - 2: Normal Priority (default)
@@ -378,12 +410,15 @@ Messages can include a priority field:
 ### Error Handling
 
 #### Reconnection Strategy
+
 The client should implement exponential backoff when attempting to reconnect:
+
 1. Initial delay: 1000ms
 2. Maximum delay: 30000ms
 3. Multiplier: 1.5
 
 #### Error Codes
+
 - 1000: Normal closure
 - 1001: Going away
 - 1002: Protocol error
@@ -397,6 +432,7 @@ The client should implement exponential backoff when attempting to reconnect:
 ## Error Responses
 
 All error responses follow the format:
+
 ```json
 {
   "error": {
@@ -428,6 +464,7 @@ All error responses follow the format:
 The New Fuse uses a secure session middleware for managing user sessions.
 
 ### Features
+
 - Automatic session validation
 - Session refresh handling
 - User context attachment
@@ -447,6 +484,7 @@ interface SessionOptions {
 ```
 
 ### Security Considerations
+
 - CSRF protection
 - XSS prevention
 - Session fixation protection

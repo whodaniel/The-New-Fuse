@@ -1,14 +1,17 @@
 # API Documentation
 
 ## Base URL
+
 All API endpoints are prefixed with `/api`
 
 ## Authentication Endpoints
 
 ### POST /api/auth/login
+
 Authenticate a user and receive access tokens.
 
 **Request Body:**
+
 ```json
 {
   "username": "string",
@@ -17,6 +20,7 @@ Authenticate a user and receive access tokens.
 ```
 
 **Response:**
+
 ```json
 {
   "userId": "number",
@@ -27,12 +31,15 @@ Authenticate a user and receive access tokens.
 ```
 
 **Cookies Set:**
+
 - `refreshToken`: HTTP-only secure cookie for token refresh
 
 ### POST /api/auth/register
+
 Register a new user account.
 
 **Request Body:**
+
 ```json
 {
   "username": "string",
@@ -42,6 +49,7 @@ Register a new user account.
 ```
 
 **Response:**
+
 ```json
 {
   "userId": "number",
@@ -52,9 +60,11 @@ Register a new user account.
 ```
 
 ### POST /api/auth/refresh
+
 Refresh the access token using the refresh token cookie.
 
 **Response:**
+
 ```json
 {
   "accessToken": "string",
@@ -65,9 +75,11 @@ Refresh the access token using the refresh token cookie.
 ## Task Management Endpoints
 
 ### GET /api/tasks
+
 Get all tasks for the authenticated user.
 
 **Response:**
+
 ```json
 {
   "tasks": [
@@ -85,9 +97,11 @@ Get all tasks for the authenticated user.
 ```
 
 ### POST /api/tasks
+
 Create a new task.
 
 **Request Body:**
+
 ```json
 {
   "title": "string",
@@ -97,9 +111,11 @@ Create a new task.
 ```
 
 ### PUT /api/tasks/:taskId
+
 Update task status or priority.
 
 **Request Body:**
+
 ```json
 {
   "status": "string",
@@ -110,18 +126,22 @@ Update task status or priority.
 ## WebSocket Endpoints
 
 ### /api/ws
+
 Main WebSocket connection endpoint.
 
 **Connection Query Parameters:**
+
 - `userId`: User ID for authentication
 - `token`: Valid JWT access token
 
 ## Health Check
 
 ### GET /api/health
+
 Check system health status.
 
 **Response:**
+
 ```json
 {
   "status": "string",
@@ -144,6 +164,7 @@ Check system health status.
 All endpoints may return the following error responses:
 
 ### 400 Bad Request
+
 ```json
 {
   "statusCode": 400,
@@ -153,6 +174,7 @@ All endpoints may return the following error responses:
 ```
 
 ### 401 Unauthorized
+
 ```json
 {
   "statusCode": 401,
@@ -162,6 +184,7 @@ All endpoints may return the following error responses:
 ```
 
 ### 403 Forbidden
+
 ```json
 {
   "statusCode": 403,
@@ -171,6 +194,7 @@ All endpoints may return the following error responses:
 ```
 
 ### 500 Internal Server Error
+
 ```json
 {
   "statusCode": 500,

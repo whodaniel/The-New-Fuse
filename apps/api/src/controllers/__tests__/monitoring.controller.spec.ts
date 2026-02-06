@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../app.module';
 
@@ -23,7 +22,7 @@ describe('MonitoringController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/monitoring/memory')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body).toHaveProperty('items');
         expect(Array.isArray(res.body.items)).toBe(true);
         expect(res.body).toHaveProperty('stats');
@@ -36,7 +35,7 @@ describe('MonitoringController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/monitoring/metrics')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body).toHaveProperty('stepMetrics');
         expect(Array.isArray(res.body.stepMetrics)).toBe(true);
         expect(res.body).toHaveProperty('memoryMetrics');

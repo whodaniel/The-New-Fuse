@@ -1,7 +1,14 @@
 // Resource types for the Resources Dashboard
 
 export type ResourceType = 'skill' | 'workflow' | 'template' | 'tool' | 'integration';
-export type ResourceCategory = 'development' | 'productivity' | 'communication' | 'data' | 'automation' | 'ai' | 'other';
+export type ResourceCategory =
+  | 'development'
+  | 'productivity'
+  | 'communication'
+  | 'data'
+  | 'automation'
+  | 'ai'
+  | 'other';
 
 export interface Resource {
   id: string;

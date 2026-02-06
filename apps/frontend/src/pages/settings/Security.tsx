@@ -1,9 +1,8 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 export default function Security() {
   return (
@@ -14,7 +13,7 @@ export default function Security() {
           Manage your account security and authentication settings
         </p>
       </div>
-      
+
       <Card>
         <CardHeader>
           <CardTitle>Change Password</CardTitle>

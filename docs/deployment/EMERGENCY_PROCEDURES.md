@@ -7,18 +7,21 @@ Critical procedures for handling deployment emergencies.
 ### Immediate Actions
 
 1. **Alert Team**
+
    ```bash
    # Post in team channel
    # Subject: CRITICAL - Service Down
    ```
 
 2. **Check Service Status**
+
    ```bash
    railway status
    railway logs --service <failed-service>
    ```
 
 3. **Restart Service**
+
    ```bash
    railway restart --service <failed-service>
    ```
@@ -33,13 +36,15 @@ Critical procedures for handling deployment emergencies.
 ### Database Connection Lost
 
 1. **Check DATABASE_URL**
+
    ```bash
    railway variables --service api-gateway
    ```
 
 2. **Test Connection**
+
    ```bash
-   pnpm prisma db execute --stdin <<< "SELECT 1;"
+   pnpm drizzle db execute --stdin <<< "SELECT 1;"
    ```
 
 3. **Restart Database** (Railway dashboard)
@@ -47,11 +52,13 @@ Critical procedures for handling deployment emergencies.
 ### Data Corruption
 
 1. **Stop All Services Immediately**
+
    ```bash
    railway down
    ```
 
 2. **Restore from Latest Backup**
+
    ```bash
    # Find latest backup
    ls -ltr backups/database/
@@ -61,8 +68,9 @@ Critical procedures for handling deployment emergencies.
    ```
 
 3. **Verify Data Integrity**
+
    ```bash
-   pnpm prisma db execute --stdin <<< "SELECT COUNT(*) FROM users;"
+   pnpm drizzle db execute --stdin <<< "SELECT COUNT(*) FROM users;"
    ```
 
 4. **Restart Services**
@@ -80,11 +88,13 @@ Critical procedures for handling deployment emergencies.
    - Network issues?
 
 2. **Check Railway Status**
+
    ```bash
    railway status
    ```
 
 3. **Emergency Rollback**
+
    ```bash
    # Find last known good deployment
    ls -ltr logs/deployment/*-state.json
@@ -105,6 +115,7 @@ Critical procedures for handling deployment emergencies.
 ### Immediate Actions
 
 1. **Rotate All Secrets**
+
    ```bash
    # Generate new secrets
    node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
@@ -119,6 +130,7 @@ Critical procedures for handling deployment emergencies.
    - Force user re-login
 
 3. **Review Access Logs**
+
    ```bash
    railway logs --service api-gateway | grep -i "error\|unauthorized"
    ```
@@ -134,6 +146,7 @@ Critical procedures for handling deployment emergencies.
    - Which tables affected?
 
 2. **Find Closest Backup**
+
    ```bash
    ls -ltr backups/database/
 
@@ -142,6 +155,7 @@ Critical procedures for handling deployment emergencies.
    ```
 
 3. **Restore Specific Tables** (if possible)
+
    ```bash
    # Extract specific table from backup
    pg_restore -t users -d $DATABASE_URL backups/database/backup-<id>.sql
@@ -158,16 +172,19 @@ Critical procedures for handling deployment emergencies.
 ### Resolution
 
 1. **Check Deployment Status**
+
    ```bash
    railway status
    ```
 
 2. **View Deployment Logs**
+
    ```bash
    railway logs
    ```
 
 3. **Cancel Stuck Deployment**
+
    ```bash
    # Use Railway dashboard to cancel
    # Or force restart
@@ -175,6 +192,7 @@ Critical procedures for handling deployment emergencies.
    ```
 
 4. **Clean Up**
+
    ```bash
    # Remove partial builds
    rm -rf apps/*/dist
@@ -188,12 +206,14 @@ Critical procedures for handling deployment emergencies.
 ### Quick Mitigation
 
 1. **Scale Services**
+
    ```bash
    # Use Railway dashboard to scale
    # Or adjust resources
    ```
 
 2. **Enable Caching**
+
    ```bash
    # Check Redis
    redis-cli -u $REDIS_URL INFO
@@ -231,5 +251,4 @@ After resolving:
 
 ---
 
-**Emergency Hotline:** [Number]
-**Last Updated:** 2024-11-18
+**Emergency Hotline:** [Number] **Last Updated:** 2024-11-18

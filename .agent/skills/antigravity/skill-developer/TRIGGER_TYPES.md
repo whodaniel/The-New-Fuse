@@ -144,7 +144,7 @@ Domain/area-specific activation based on file location in the project.
 - `*` = Any characters within a directory name
 - Examples:
   - `frontend/src/**/*.tsx` = All .tsx files in frontend/src and subdirs
-  - `**/schema.prisma` = schema.prisma anywhere in project
+  - `**/schema.drizzle` = schema.drizzle anywhere in project
   - `form/src/**/*.ts` = All .ts files in form/src subdirs
 
 ### Example
@@ -175,7 +175,7 @@ email/src/**/*.ts           # Email service
 users/src/**/*.ts           # Users service
 
 # Database
-**/schema.prisma            # Prisma schema (anywhere)
+**/schema.drizzle            # Drizzle schema (anywhere)
 **/migrations/**/*.sql      # Migration files
 database/src/**/*.ts        # Database scripts
 
@@ -200,7 +200,7 @@ file).
 
 ### Use For
 
-Technology-specific activation based on what the code imports or uses (Prisma,
+Technology-specific activation based on what the code imports or uses (Drizzle,
 controllers, specific libraries).
 
 ### Configuration
@@ -209,7 +209,7 @@ controllers, specific libraries).
 "fileTriggers": {
   "contentPatterns": [
     "import.*[Pp]risma",
-    "PrismaService",
+    "DatabaseService",
     "\\.findMany\\(",
     "\\.create\\("
   ]
@@ -218,9 +218,9 @@ controllers, specific libraries).
 
 ### Examples
 
-**Prisma Detection:**
+**Drizzle Detection:**
 
-- File contains: `import { PrismaService } from '@project/database'`
+- File contains: `import { DatabaseService } from '@project/database'`
 - Matches: `import.*[Pp]risma`
 - Activates: `database-verification`
 
@@ -241,11 +241,11 @@ controllers, specific libraries).
 ### Common Content Patterns
 
 ```regex
-# Prisma/Database
-import.*[Pp]risma                # Prisma imports
-PrismaService                    # PrismaService usage
-prisma\.                         # prisma.something
-\.findMany\(                     # Prisma query methods
+# Drizzle/Database
+import.*[Pp]risma                # Drizzle imports
+DatabaseService                    # DatabaseService usage
+drizzle\.                         # drizzle.something
+\.findMany\(                     # Drizzle query methods
 \.create\(
 \.update\(
 \.delete\(

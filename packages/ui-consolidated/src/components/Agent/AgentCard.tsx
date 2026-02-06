@@ -1,16 +1,15 @@
+import { Edit, ExternalLink, Info, PauseCircle, PlayCircle, Settings, Trash } from 'lucide-react';
 import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '../Card/Card';
-import { Button } from '../Button/Button';
 import { Badge } from '../Badge/Badge';
+import { Button } from '../Button/Button';
 import {
-  PlayCircle,
-  PauseCircle,
-  Edit,
-  Trash,
-  Info,
-  ExternalLink,
-  Settings
-} from 'lucide-react';
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../Card/Card';
 
 // Comprehensive Agent type that supports all protocol features
 export interface Agent {
@@ -101,25 +100,25 @@ export interface AgentCardProps {
 
 const statusColors: Record<string, string> = {
   // Uppercase status values
-  'IDLE': 'bg-green-100 text-green-800',
-  'BUSY': 'bg-yellow-100 text-yellow-800',
-  'ERROR': 'bg-red-100 text-red-800',
-  'OFFLINE': 'bg-gray-100 text-gray-800',
-  'ACTIVE': 'bg-green-100 text-green-800',
-  'INACTIVE': 'bg-gray-100 text-gray-800',
-  'PENDING': 'bg-blue-100 text-blue-800',
-  'DELETED': 'bg-red-100 text-red-800',
-  'INITIALIZING': 'bg-blue-100 text-blue-800',
-  'READY': 'bg-green-100 text-green-800',
-  'TERMINATED': 'bg-red-100 text-red-800',
-  'LEARNING': 'bg-purple-100 text-purple-800',
+  IDLE: 'bg-green-100 text-green-800',
+  BUSY: 'bg-yellow-100 text-yellow-800',
+  ERROR: 'bg-red-100 text-red-800',
+  OFFLINE: 'bg-gray-100 text-gray-800',
+  ACTIVE: 'bg-green-100 text-green-800',
+  INACTIVE: 'bg-gray-100 text-gray-800',
+  PENDING: 'bg-blue-100 text-blue-800',
+  DELETED: 'bg-red-100 text-red-800',
+  INITIALIZING: 'bg-blue-100 text-blue-800',
+  READY: 'bg-green-100 text-green-800',
+  TERMINATED: 'bg-red-100 text-red-800',
+  LEARNING: 'bg-purple-100 text-purple-800',
 
   // Lowercase status values
-  'idle': 'bg-green-100 text-green-800',
-  'busy': 'bg-yellow-100 text-yellow-800',
-  'error': 'bg-red-100 text-red-800',
-  'offline': 'bg-gray-100 text-gray-800',
-  'active': 'bg-green-100 text-green-800',
+  idle: 'bg-green-100 text-green-800',
+  busy: 'bg-yellow-100 text-yellow-800',
+  error: 'bg-red-100 text-red-800',
+  offline: 'bg-gray-100 text-gray-800',
+  active: 'bg-green-100 text-green-800',
 };
 
 export const AgentCard: React.FC<AgentCardProps> = ({
@@ -145,18 +144,11 @@ export const AgentCard: React.FC<AgentCardProps> = ({
   const statusColor = statusColors[agent.status] || 'bg-gray-100 text-gray-800';
 
   return (
-    <Card
-      className={className}
-      variant="default"
-      size={compact ? "sm" : "default"}
-      hover={true}
-    >
+    <Card className={className} variant="default" size={compact ? 'sm' : 'default'} hover={true}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-medium text-gray-900">{agent.name}</CardTitle>
-          <Badge className={statusColor}>
-            {agent.status}
-          </Badge>
+          <Badge className={statusColor}>{agent.status}</Badge>
         </div>
 
         {!compact && (
@@ -209,7 +201,10 @@ export const AgentCard: React.FC<AgentCardProps> = ({
                 <div className="flex items-center">
                   <span className="font-medium mr-1">Discovery:</span>
                   <span className="truncate">{agent.endpoints.discovery}</span>
-                  <ExternalLink className="h-3 w-3 ml-1 cursor-pointer" onClick={() => window.open(agent.endpoints.discovery, '_blank')} />
+                  <ExternalLink
+                    className="h-3 w-3 ml-1 cursor-pointer"
+                    onClick={() => window.open(agent.endpoints.discovery, '_blank')}
+                  />
                 </div>
               )}
               {agent.endpoints.messaging && (
@@ -228,7 +223,9 @@ export const AgentCard: React.FC<AgentCardProps> = ({
             <div className="mt-1 space-y-1 text-xs text-gray-500">
               <div>Authentication: {agent.security.authentication || 'none'}</div>
               <div>Encryption: {agent.security.encryption ? 'Enabled' : 'Disabled'}</div>
-              {agent.security.rateLimit && <div>Rate Limit: {agent.security.rateLimit} req/min</div>}
+              {agent.security.rateLimit && (
+                <div>Rate Limit: {agent.security.rateLimit} req/min</div>
+              )}
             </div>
           </div>
         )}
@@ -237,9 +234,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
           <div className="flex items-center justify-between text-sm text-gray-500">
             {agent.metadata.version && <span>Version: {agent.metadata.version}</span>}
             {agent.metadata.lastActive && (
-              <span>
-                Last active: {new Date(agent.metadata.lastActive).toLocaleString()}
-              </span>
+              <span>Last active: {new Date(agent.metadata.lastActive).toLocaleString()}</span>
             )}
           </div>
         )}
@@ -247,11 +242,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 
       <CardFooter className="flex justify-end space-x-2">
         {onSelect && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onSelect(agent)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => onSelect(agent)}>
             Select
           </Button>
         )}

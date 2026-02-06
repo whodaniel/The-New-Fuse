@@ -3,13 +3,13 @@
  * Tests circuit breaker, graceful degradation, and failover working together
  */
 
-import { CircuitBreaker, CircuitState, CircuitBreakerManager } from './CircuitBreaker';
-import { GracefulDegradationManager, ServiceLevel, DegradationConfig } from './GracefulDegradation';
-import { FailoverManager, ServiceEndpoint } from './FailoverManager';
-import { MCPErrorHandler } from './MCPErrorHandler';
-import { ErrorMonitor } from './ErrorMonitor';
-import { MCPErrorClass, MCPErrorCode, ErrorSeverity } from '../types/error';
+import { ErrorSeverity, MCPErrorClass, MCPErrorCode } from '../types/error';
 import { Logger } from '../utils/Logger';
+import { CircuitBreakerManager, CircuitState } from './CircuitBreaker';
+import { ErrorMonitor } from './ErrorMonitor';
+import { FailoverManager, ServiceEndpoint } from './FailoverManager';
+import { DegradationConfig, GracefulDegradationManager, ServiceLevel } from './GracefulDegradation';
+import { MCPErrorHandler } from './MCPErrorHandler';
 
 describe('System Resilience Integration', () => {
   let mockLogger: jest.Mocked<Logger>;
@@ -26,11 +26,11 @@ describe('System Resilience Integration', () => {
       warn: jest.fn(),
       error: jest.fn(),
       setLogLevel: jest.fn(),
-      getLogLevel: jest.fn()
+      getLogLevel: jest.fn(),
     } as any;
 
     circuitBreakerManager = new CircuitBreakerManager(mockLogger);
-    
+
     const degradationConfig: DegradationConfig = {
       serviceName: 'test-service',
       levels: {
@@ -39,37 +39,37 @@ describe('System Resilience Integration', () => {
           description: 'Full service',
           availableFeatures: ['read', 'write', 'delete'],
           disabledFeatures: [],
-          fallbackHandlers: new Map()
+          fallbackHandlers: new Map(),
         },
         [ServiceLevel.DEGRADED]: {
           name: ServiceLevel.DEGRADED,
           description: 'Degraded service',
           availableFeatures: ['read', 'write'],
           disabledFeatures: ['delete'],
-          fallbackHandlers: new Map()
+          fallbackHandlers: new Map(),
         },
         [ServiceLevel.MINIMAL]: {
           name: ServiceLevel.MINIMAL,
           description: 'Minimal service',
           availableFeatures: ['read'],
           disabledFeatures: ['write', 'delete'],
-          fallbackHandlers: new Map()
+          fallbackHandlers: new Map(),
         },
         [ServiceLevel.OFFLINE]: {
           name: ServiceLevel.OFFLINE,
           description: 'Service offline',
           availableFeatures: [],
           disabledFeatures: ['read', 'write', 'delete'],
-          fallbackHandlers: new Map()
-        }
+          fallbackHandlers: new Map(),
+        },
       },
       healthCheckInterval: 100,
       enableAutoRecovery: true,
-      recoveryCheckInterval: 200
+      recoveryCheckInterval: 200,
     };
 
     degradationManager = new GracefulDegradationManager(degradationConfig, mockLogger);
-    
+
     failoverManager = new FailoverManager(
       {
         serviceName: 'test-service',
@@ -79,25 +79,31 @@ describe('System Resilience Integration', () => {
         retryDelay: 100,
         enableAutoFailback: true,
         failbackDelay: 500,
-        loadBalancingStrategy: 'priority'
+        loadBalancingStrategy: 'priority',
       },
       degradationManager,
       mockLogger
     );
 
-    errorHandler = new MCPErrorHandler({
-      enableAutoRecovery: true,
-      maxRecoveryAttempts: 2,
-      statisticsInterval: 0,
-      enableLogging: true
-    }, mockLogger);
+    errorHandler = new MCPErrorHandler(
+      {
+        enableAutoRecovery: true,
+        maxRecoveryAttempts: 2,
+        statisticsInterval: 0,
+        enableLogging: true,
+      },
+      mockLogger
+    );
 
-    errorMonitor = new ErrorMonitor({
-      metricsInterval: 100,
-      retentionPeriod: 60000,
-      enableAlerting: true,
-      alertInterval: 50
-    }, mockLogger);
+    errorMonitor = new ErrorMonitor(
+      {
+        metricsInterval: 100,
+        retentionPeriod: 60000,
+        enableAlerting: true,
+        alertInterval: 50,
+      },
+      mockLogger
+    );
   });
 
   afterEach(() => {
@@ -127,19 +133,19 @@ describe('System Resilience Integration', () => {
       for (let i = 0; i < 6; i++) {
         const result = await circuitBreaker.execute(unreliableFunction);
         results.push(result);
-        
+
         if (result.success) {
           break;
         }
-        
+
         // Small delay between calls
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
       }
 
       // Should have some failures and eventually success or circuit open
-      const failures = results.filter(r => !r.success && !r.rejected);
-      const rejections = results.filter(r => r.rejected);
-      const successes = results.filter(r => r.success);
+      const failures = results.filter((r) => !r.success && !r.rejected);
+      const rejections = results.filter((r) => r.rejected);
+      const successes = results.filter((r) => r.success);
 
       expect(failures.length).toBeGreaterThan(0);
       expect(rejections.length + successes.length).toBeGreaterThan(0);
@@ -147,19 +153,15 @@ describe('System Resilience Integration', () => {
 
     it('should coordinate circuit breaker with graceful degradation', async () => {
       const circuitBreaker = circuitBreakerManager.getCircuitBreaker('test-service');
-      
+
       // Register fallback handler for degraded mode
-      degradationManager.registerFallbackHandler(
-        ServiceLevel.DEGRADED,
-        'read',
-        {
-          name: 'cached-read',
-          description: 'Read from cache',
-          handler: async () => 'cached-data',
-          priority: 1,
-          available: true
-        }
-      );
+      degradationManager.registerFallbackHandler(ServiceLevel.DEGRADED, 'read', {
+        name: 'cached-read',
+        description: 'Read from cache',
+        handler: async () => 'cached-data',
+        priority: 1,
+        available: true,
+      });
 
       let serviceCallCount = 0;
       const failingService = async () => {
@@ -168,17 +170,13 @@ describe('System Resilience Integration', () => {
       };
 
       // Execute operation with both circuit breaker and degradation
-      const result = await degradationManager.executeOperation(
-        'read',
-        { id: 'test' },
-        async () => {
-          const cbResult = await circuitBreaker.execute(failingService);
-          if (!cbResult.success) {
-            throw cbResult.error || new Error('Circuit breaker failure');
-          }
-          return cbResult.data;
+      const result = await degradationManager.executeOperation('read', { id: 'test' }, async () => {
+        const cbResult = await circuitBreaker.execute(failingService);
+        if (!cbResult.success) {
+          throw cbResult.error || new Error('Circuit breaker failure');
         }
-      );
+        return cbResult.data;
+      });
 
       // Should get fallback result
       expect(result).toBe('cached-data');
@@ -189,13 +187,16 @@ describe('System Resilience Integration', () => {
   describe('Failover Integration', () => {
     it('should integrate failover with circuit breakers', async () => {
       // Add multiple endpoints
-      const endpoints: Omit<ServiceEndpoint, 'healthy' | 'lastHealthCheck' | 'responseTime' | 'errorCount'>[] = [
+      const endpoints: Omit<
+        ServiceEndpoint,
+        'healthy' | 'lastHealthCheck' | 'responseTime' | 'errorCount'
+      >[] = [
         { id: 'primary', url: 'http://primary:8080', priority: 1 },
         { id: 'secondary', url: 'http://secondary:8080', priority: 2 },
-        { id: 'tertiary', url: 'http://tertiary:8080', priority: 3 }
+        { id: 'tertiary', url: 'http://tertiary:8080', priority: 3 },
       ];
 
-      endpoints.forEach(endpoint => failoverManager.addEndpoint(endpoint));
+      endpoints.forEach((endpoint) => failoverManager.addEndpoint(endpoint));
 
       let primaryCalls = 0;
       let secondaryCalls = 0;
@@ -209,25 +210,25 @@ describe('System Resilience Integration', () => {
               throw new Error('Primary service down');
             }
             return 'primary-response';
-          
+
           case 'secondary':
             secondaryCalls++;
             if (secondaryCalls <= 2) {
               throw new Error('Secondary service down');
             }
             return 'secondary-response';
-          
+
           case 'tertiary':
             tertiaryCalls++;
             return 'tertiary-response';
-          
+
           default:
             throw new Error('Unknown endpoint');
         }
       };
 
       const result = await failoverManager.executeWithFailover(serviceCall);
-      
+
       // Should eventually succeed with tertiary
       expect(result).toBe('tertiary-response');
       expect(primaryCalls).toBeGreaterThan(0);
@@ -254,8 +255,8 @@ describe('System Resilience Integration', () => {
       }
 
       // Wait for degradation to be triggered
-      await new Promise(resolve => setTimeout(resolve, 50));
-      
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
       expect(degradationTriggered).toBe(true);
       expect(degradationManager.getServiceStatus().currentLevel).not.toBe(ServiceLevel.FULL);
     });
@@ -264,17 +265,19 @@ describe('System Resilience Integration', () => {
   describe('Error Monitoring Integration', () => {
     it('should monitor errors across all resilience components', async () => {
       const circuitBreaker = circuitBreakerManager.getCircuitBreaker('monitored-service');
-      
+
       // Generate various types of errors
       const errors = [
         new MCPErrorClass(MCPErrorCode.CONNECTION_TIMEOUT, 'Connection timeout'),
         new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Service unavailable'),
         new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, 'Resource not found'),
-        new MCPErrorClass(MCPErrorCode.SYSTEM_OVERLOADED, 'System overloaded', { severity: ErrorSeverity.CRITICAL })
+        new MCPErrorClass(MCPErrorCode.SYSTEM_OVERLOADED, 'System overloaded', {
+          severity: ErrorSeverity.CRITICAL,
+        }),
       ];
 
       // Record errors in monitor
-      errors.forEach(error => errorMonitor.recordError(error));
+      errors.forEach((error) => errorMonitor.recordError(error));
 
       // Also trigger circuit breaker failures
       for (let i = 0; i < 5; i++) {
@@ -284,10 +287,10 @@ describe('System Resilience Integration', () => {
       }
 
       // Wait for metrics to be updated
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
 
       const metrics = errorMonitor.getCurrentMetrics();
-      
+
       expect(metrics.totalErrors).toBeGreaterThan(0);
       expect(metrics.errorRate).toBeGreaterThan(0);
       expect(metrics.healthScore).toBeLessThan(100);
@@ -295,7 +298,7 @@ describe('System Resilience Integration', () => {
 
     it('should trigger alerts based on system resilience state', async () => {
       let alertsTriggered = 0;
-      
+
       errorMonitor.registerAlertRule({
         name: 'system-resilience-alert',
         description: 'System resilience compromised',
@@ -304,18 +307,20 @@ describe('System Resilience Integration', () => {
         condition: (metrics) => metrics.healthScore < 80,
         action: async () => {
           alertsTriggered++;
-        }
+        },
       });
 
       // Generate enough errors to trigger alert
       for (let i = 0; i < 10; i++) {
         errorMonitor.recordError(
-          new MCPErrorClass(MCPErrorCode.SYSTEM_OVERLOADED, `Error ${i}`, { severity: ErrorSeverity.HIGH })
+          new MCPErrorClass(MCPErrorCode.SYSTEM_OVERLOADED, `Error ${i}`, {
+            severity: ErrorSeverity.HIGH,
+          })
         );
       }
 
       // Wait for alert processing
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       expect(alertsTriggered).toBeGreaterThan(0);
     });
@@ -325,21 +330,17 @@ describe('System Resilience Integration', () => {
     it('should handle cascading failures gracefully', async () => {
       // Set up complete resilience stack
       const circuitBreaker = circuitBreakerManager.getCircuitBreaker('e2e-service');
-      
+
       failoverManager.addEndpoint({ id: 'primary', url: 'http://primary:8080', priority: 1 });
       failoverManager.addEndpoint({ id: 'backup', url: 'http://backup:8080', priority: 2 });
 
-      degradationManager.registerFallbackHandler(
-        ServiceLevel.MINIMAL,
-        'read',
-        {
-          name: 'emergency-cache',
-          description: 'Emergency cache fallback',
-          handler: async () => 'emergency-data',
-          priority: 1,
-          available: true
-        }
-      );
+      degradationManager.registerFallbackHandler(ServiceLevel.MINIMAL, 'read', {
+        name: 'emergency-cache',
+        description: 'Emergency cache fallback',
+        handler: async () => 'emergency-data',
+        priority: 1,
+        available: true,
+      });
 
       let primaryFailures = 0;
       let backupFailures = 0;
@@ -364,13 +365,9 @@ describe('System Resilience Integration', () => {
         finalResult = await failoverManager.executeWithFailover(cascadingFailureService);
       } catch (error) {
         // If failover fails, try degradation
-        finalResult = await degradationManager.executeOperation(
-          'read',
-          {},
-          async () => {
-            throw error;
-          }
-        );
+        finalResult = await degradationManager.executeOperation('read', {}, async () => {
+          throw error;
+        });
       }
 
       // Should get some result (either backup success or emergency fallback)
@@ -381,7 +378,7 @@ describe('System Resilience Integration', () => {
 
     it('should recover from failures automatically', async () => {
       const circuitBreaker = circuitBreakerManager.getCircuitBreaker('recovery-service');
-      
+
       let callCount = 0;
       let recoveryDetected = false;
 
@@ -397,17 +394,17 @@ describe('System Resilience Integration', () => {
       // Initial failures should open circuit
       for (let i = 0; i < 6; i++) {
         await circuitBreaker.execute(recoveringService);
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
       }
 
       expect(circuitBreaker.getState()).toBe(CircuitState.OPEN);
 
       // Wait for circuit breaker timeout and recovery
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Try again - should attempt recovery
       const result = await circuitBreaker.execute(recoveringService);
-      
+
       if (result.success) {
         expect(result.data).toBe('recovered');
         expect(recoveryDetected).toBe(true);
@@ -432,7 +429,7 @@ describe('System Resilience Integration', () => {
       // Add endpoints to failover manager
       failoverManager.addEndpoint({ id: 'healthy', url: 'http://healthy:8080', priority: 1 });
       failoverManager.addEndpoint({ id: 'unhealthy', url: 'http://unhealthy:8080', priority: 2 });
-      
+
       // Mark one as unhealthy
       failoverManager.markEndpointUnhealthy('unhealthy', new Error('Service down'));
 
@@ -440,7 +437,7 @@ describe('System Resilience Integration', () => {
       errorMonitor.recordError(new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Service down'));
       errorMonitor.recordError(new MCPErrorClass(MCPErrorCode.CONNECTION_TIMEOUT, 'Timeout'));
 
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
 
       // Get comprehensive health status
       const circuitBreakerHealth = circuitBreakerManager.getSystemHealth();
@@ -450,13 +447,13 @@ describe('System Resilience Integration', () => {
 
       expect(circuitBreakerHealth.totalCircuits).toBe(2);
       expect(circuitBreakerHealth.openCircuits).toBeGreaterThan(0);
-      
+
       expect(failoverStats.totalEndpoints).toBe(2);
       expect(failoverStats.healthyEndpoints).toBeLessThan(2);
-      
+
       expect(degradationStatus.serviceName).toBe('test-service');
       expect(degradationStatus.errorCount).toBeGreaterThanOrEqual(0);
-      
+
       expect(errorMetrics.totalErrors).toBeGreaterThan(0);
       expect(errorMetrics.healthScore).toBeLessThan(100);
     });
@@ -465,19 +462,20 @@ describe('System Resilience Integration', () => {
   describe('Performance Under Load', () => {
     it('should maintain performance under concurrent load', async () => {
       const circuitBreaker = circuitBreakerManager.getCircuitBreaker('load-test-service');
-      
+
       let successCount = 0;
       let failureCount = 0;
 
       const loadTestService = async () => {
         // Simulate variable response times and occasional failures
         const delay = Math.random() * 10;
-        await new Promise(resolve => setTimeout(resolve, delay));
-        
-        if (Math.random() < 0.1) { // 10% failure rate
+        await new Promise((resolve) => setTimeout(resolve, delay));
+
+        if (Math.random() < 0.1) {
+          // 10% failure rate
           throw new Error('Random failure');
         }
-        
+
         return 'success';
       };
 
@@ -493,11 +491,11 @@ describe('System Resilience Integration', () => {
       });
 
       const results = await Promise.all(promises);
-      
+
       expect(results.length).toBe(50);
       expect(successCount + failureCount).toBe(50);
       expect(successCount).toBeGreaterThan(0); // Should have some successes
-      
+
       // Circuit breaker should still be functional
       const stats = circuitBreaker.getStats();
       expect(stats.totalRequests).toBe(50);

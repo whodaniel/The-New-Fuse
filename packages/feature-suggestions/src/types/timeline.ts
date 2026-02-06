@@ -1,19 +1,26 @@
-import { FeatureSuggestion, TodoItem } from '../types';
 import { FeatureProgress } from '@the-new-fuse/feature-tracker';
 
 // Re-export SuggestionStatus enum for use throughout the application
 export enum SuggestionStatus {
-    NEW = 'NEW',
-    UNDER_REVIEW = 'UNDER_REVIEW',
-    APPROVED = 'APPROVED',
-    REJECTED = 'REJECTED',
-    IMPLEMENTED = 'IMPLEMENTED',
-    SUBMITTED = 'SUBMITTED',
-    PENDING = 'PENDING',
-    CONVERTED = 'CONVERTED'
+  NEW = 'NEW',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  IMPLEMENTED = 'IMPLEMENTED',
+  SUBMITTED = 'SUBMITTED',
+  PENDING = 'PENDING',
+  CONVERTED = 'CONVERTED',
 }
 
-export type TimelineEventType = 'SUGGESTION' | 'TODO' | 'FEATURE' | 'WORKFLOW_STEP' | 'AGENT' | 'NOTE' | 'VIRTUAL' | 'COMMENT';
+export type TimelineEventType =
+  | 'SUGGESTION'
+  | 'TODO'
+  | 'FEATURE'
+  | 'WORKFLOW_STEP'
+  | 'AGENT'
+  | 'NOTE'
+  | 'VIRTUAL'
+  | 'COMMENT';
 
 export interface TimelineItem {
   id: string;

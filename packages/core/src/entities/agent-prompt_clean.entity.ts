@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Agent } from './agent.entity';
 import { PromptTemplate } from './prompt.entity';
 
@@ -24,7 +32,7 @@ export class AgentPrompt {
   @Column({
     type: 'enum',
     enum: ['system', 'user', 'function', 'response'],
-    default: 'user'
+    default: 'user',
   })
   purpose!: 'system' | 'user' | 'function' | 'response';
 

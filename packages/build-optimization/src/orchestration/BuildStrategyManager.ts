@@ -1,24 +1,27 @@
 /**
  * BuildStrategyManager - Configuration system for build strategies
- * 
+ *
  * Manages different build strategies (development, production, memory-optimized)
  * with automatic strategy selection based on system resources and environment detection.
  */
 
-import {
-  BuildStrategy,
-  BuildConfiguration,
-  SystemResources,
-  BuildEnvironment,
-  EnhancedBuildConfiguration
-} from '../types/index.js';
 import { DEFAULT_CONFIG } from '../index.js';
+import {
+  BuildConfiguration,
+  BuildEnvironment,
+  BuildStrategy,
+  EnhancedBuildConfiguration,
+  SystemResources,
+} from '../types/index.js';
 
 /**
  * Configuration validation error
  */
 export class ConfigurationValidationError extends Error {
-  constructor(message: string, public field?: string) {
+  constructor(
+    message: string,
+    public field?: string
+  ) {
     super(message);
     this.name = 'ConfigurationValidationError';
   }
@@ -64,7 +67,10 @@ export class BuildStrategyManager {
   /**
    * Automatically select optimal strategy based on system resources
    */
-  selectOptimalStrategy(systemResources: SystemResources, environment?: BuildEnvironment): BuildStrategy {
+  selectOptimalStrategy(
+    systemResources: SystemResources,
+    environment?: BuildEnvironment
+  ): BuildStrategy {
     const availableMemoryGB = systemResources.availableMemory / 1024;
     const cpuCores = systemResources.cpuCores;
 
@@ -95,30 +101,46 @@ export class BuildStrategyManager {
    */
   createConfigurationFromEnvironment(): EnhancedBuildConfiguration {
     const environment = this.detectEnvironment();
-    const strategy = process.env.BUILD_STRATEGY || this.getDefaultStrategyForEnvironment(environment);
-    
+    const strategy =
+      process.env.BUILD_STRATEGY || this.getDefaultStrategyForEnvironment(environment);
+
     return {
       strategy: strategy as any,
       maxMemoryUsage: this.parseEnvNumber('MAX_MEMORY_USAGE', 4096),
       maxConcurrency: this.parseEnvNumber('MAX_CONCURRENCY', DEFAULT_CONFIG.MAX_CONCURRENCY),
       enableIncrementalBuilds: this.parseEnvBoolean('ENABLE_INCREMENTAL_BUILDS', true),
       stageCleanup: this.parseEnvBoolean('STAGE_CLEANUP', true),
-      monitoringInterval: this.parseEnvNumber('MONITORING_INTERVAL', DEFAULT_CONFIG.MONITORING_INTERVAL),
+      monitoringInterval: this.parseEnvNumber(
+        'MONITORING_INTERVAL',
+        DEFAULT_CONFIG.MONITORING_INTERVAL
+      ),
       environment,
       forceMemoryOptimization: this.parseEnvBoolean('FORCE_MEMORY_OPTIMIZATION', false),
       ideConfig: {
-        buildFirst: this.parseEnvBoolean('THEIA_BUILD_FIRST', DEFAULT_CONFIG.THEIA_CONFIG.buildFirst),
+        buildFirst: this.parseEnvBoolean(
+          'THEIA_BUILD_FIRST',
+          DEFAULT_CONFIG.THEIA_CONFIG.buildFirst
+        ),
         estimatedMemoryUsage: DEFAULT_CONFIG.THEIA_CONFIG.estimatedMemoryUsage,
-        cleanupAfterBuild: this.parseEnvBoolean('THEIA_CLEANUP_AFTER_BUILD', DEFAULT_CONFIG.THEIA_CONFIG.cleanupAfterBuild)
+        cleanupAfterBuild: this.parseEnvBoolean(
+          'THEIA_CLEANUP_AFTER_BUILD',
+          DEFAULT_CONFIG.THEIA_CONFIG.cleanupAfterBuild
+        ),
       },
       monorepoConfig: {
-        totalPackages: this.parseEnvNumber('TOTAL_PACKAGES', DEFAULT_CONFIG.MONOREPO_CONFIG.totalPackages),
+        totalPackages: this.parseEnvNumber(
+          'TOTAL_PACKAGES',
+          DEFAULT_CONFIG.MONOREPO_CONFIG.totalPackages
+        ),
         priorityPackages: [...DEFAULT_CONFIG.MONOREPO_CONFIG.priorityPackages],
         heavyPackages: [...DEFAULT_CONFIG.MONOREPO_CONFIG.heavyPackages],
-        maxPackagesPerStage: this.parseEnvNumber('MAX_PACKAGES_PER_STAGE', DEFAULT_CONFIG.MONOREPO_CONFIG.maxPackagesPerStage),
+        maxPackagesPerStage: this.parseEnvNumber(
+          'MAX_PACKAGES_PER_STAGE',
+          DEFAULT_CONFIG.MONOREPO_CONFIG.maxPackagesPerStage
+        ),
         workspaceRoot: process.cwd(),
-        packageManager: (process.env.PACKAGE_MANAGER as any) || 'bun'
-      }
+        packageManager: (process.env.PACKAGE_MANAGER as any) || 'bun',
+      },
     };
   }
 
@@ -127,15 +149,24 @@ export class BuildStrategyManager {
    */
   validateConfiguration(config: BuildConfiguration): void {
     if (config.maxMemoryUsage <= 0) {
-      throw new ConfigurationValidationError('maxMemoryUsage must be greater than 0', 'maxMemoryUsage');
+      throw new ConfigurationValidationError(
+        'maxMemoryUsage must be greater than 0',
+        'maxMemoryUsage'
+      );
     }
 
     if (config.maxConcurrency <= 0) {
-      throw new ConfigurationValidationError('maxConcurrency must be greater than 0', 'maxConcurrency');
+      throw new ConfigurationValidationError(
+        'maxConcurrency must be greater than 0',
+        'maxConcurrency'
+      );
     }
 
     if (config.monitoringInterval <= 0) {
-      throw new ConfigurationValidationError('monitoringInterval must be greater than 0', 'monitoringInterval');
+      throw new ConfigurationValidationError(
+        'monitoringInterval must be greater than 0',
+        'monitoringInterval'
+      );
     }
 
     const validStrategies = ['development', 'production', 'memory-optimized'];
@@ -152,11 +183,17 @@ export class BuildStrategyManager {
    */
   validateStrategy(strategy: BuildStrategy): void {
     if (strategy.maxConcurrency <= 0) {
-      throw new ConfigurationValidationError('maxConcurrency must be greater than 0', 'maxConcurrency');
+      throw new ConfigurationValidationError(
+        'maxConcurrency must be greater than 0',
+        'maxConcurrency'
+      );
     }
 
     if (strategy.memoryThreshold <= 0 || strategy.memoryThreshold > 100) {
-      throw new ConfigurationValidationError('memoryThreshold must be between 1 and 100', 'memoryThreshold');
+      throw new ConfigurationValidationError(
+        'memoryThreshold must be between 1 and 100',
+        'memoryThreshold'
+      );
     }
 
     if (strategy.stageSize <= 0) {
@@ -181,7 +218,7 @@ export class BuildStrategyManager {
         ideConfig: {
           buildFirst: true,
           estimatedMemoryUsage: 1536,
-          cleanupAfterBuild: true
+          cleanupAfterBuild: true,
         },
         monorepoConfig: {
           totalPackages: 50,
@@ -189,8 +226,8 @@ export class BuildStrategyManager {
           heavyPackages: [...DEFAULT_CONFIG.MONOREPO_CONFIG.heavyPackages],
           maxPackagesPerStage: 4,
           workspaceRoot: process.cwd(),
-          packageManager: 'bun'
-        }
+          packageManager: 'bun',
+        },
       },
       'high-performance': {
         strategy: 'production',
@@ -204,7 +241,7 @@ export class BuildStrategyManager {
         ideConfig: {
           buildFirst: true,
           estimatedMemoryUsage: 2048,
-          cleanupAfterBuild: false
+          cleanupAfterBuild: false,
         },
         monorepoConfig: {
           totalPackages: 50,
@@ -212,8 +249,8 @@ export class BuildStrategyManager {
           heavyPackages: [...DEFAULT_CONFIG.MONOREPO_CONFIG.heavyPackages],
           maxPackagesPerStage: 16,
           workspaceRoot: process.cwd(),
-          packageManager: 'bun'
-        }
+          packageManager: 'bun',
+        },
       },
       'ci-optimized': {
         strategy: 'production',
@@ -227,7 +264,7 @@ export class BuildStrategyManager {
         ideConfig: {
           buildFirst: true,
           estimatedMemoryUsage: 2048,
-          cleanupAfterBuild: true
+          cleanupAfterBuild: true,
         },
         monorepoConfig: {
           totalPackages: 50,
@@ -235,9 +272,9 @@ export class BuildStrategyManager {
           heavyPackages: [...DEFAULT_CONFIG.MONOREPO_CONFIG.heavyPackages],
           maxPackagesPerStage: 8,
           workspaceRoot: process.cwd(),
-          packageManager: 'bun'
-        }
-      }
+          packageManager: 'bun',
+        },
+      },
     };
   }
 
@@ -246,23 +283,39 @@ export class BuildStrategyManager {
    */
   mergeWithDefaults(config: Partial<EnhancedBuildConfiguration>): EnhancedBuildConfiguration {
     const defaults = this.createConfigurationFromEnvironment();
-    
+
     const result: EnhancedBuildConfiguration = {
       ...defaults,
       ...config,
       ideConfig: {
         buildFirst: config.ideConfig?.buildFirst ?? defaults.ideConfig?.buildFirst ?? true,
-        estimatedMemoryUsage: config.ideConfig?.estimatedMemoryUsage ?? defaults.ideConfig?.estimatedMemoryUsage ?? 2048,
-        cleanupAfterBuild: config.ideConfig?.cleanupAfterBuild ?? defaults.ideConfig?.cleanupAfterBuild ?? true
+        estimatedMemoryUsage:
+          config.ideConfig?.estimatedMemoryUsage ??
+          defaults.ideConfig?.estimatedMemoryUsage ??
+          2048,
+        cleanupAfterBuild:
+          config.ideConfig?.cleanupAfterBuild ?? defaults.ideConfig?.cleanupAfterBuild ?? true,
       },
       monorepoConfig: {
-        totalPackages: config.monorepoConfig?.totalPackages ?? defaults.monorepoConfig?.totalPackages ?? 50,
-        priorityPackages: config.monorepoConfig?.priorityPackages ?? defaults.monorepoConfig?.priorityPackages ?? [],
-        heavyPackages: config.monorepoConfig?.heavyPackages ?? defaults.monorepoConfig?.heavyPackages ?? [],
-        maxPackagesPerStage: config.monorepoConfig?.maxPackagesPerStage ?? defaults.monorepoConfig?.maxPackagesPerStage ?? 8,
-        workspaceRoot: config.monorepoConfig?.workspaceRoot ?? defaults.monorepoConfig?.workspaceRoot ?? process.cwd(),
-        packageManager: config.monorepoConfig?.packageManager ?? defaults.monorepoConfig?.packageManager ?? 'bun'
-      }
+        totalPackages:
+          config.monorepoConfig?.totalPackages ?? defaults.monorepoConfig?.totalPackages ?? 50,
+        priorityPackages:
+          config.monorepoConfig?.priorityPackages ??
+          defaults.monorepoConfig?.priorityPackages ??
+          [],
+        heavyPackages:
+          config.monorepoConfig?.heavyPackages ?? defaults.monorepoConfig?.heavyPackages ?? [],
+        maxPackagesPerStage:
+          config.monorepoConfig?.maxPackagesPerStage ??
+          defaults.monorepoConfig?.maxPackagesPerStage ??
+          8,
+        workspaceRoot:
+          config.monorepoConfig?.workspaceRoot ??
+          defaults.monorepoConfig?.workspaceRoot ??
+          process.cwd(),
+        packageManager:
+          config.monorepoConfig?.packageManager ?? defaults.monorepoConfig?.packageManager ?? 'bun',
+      },
     };
     return result;
   }
@@ -275,7 +328,10 @@ export class BuildStrategyManager {
     this.strategies.set('development', DEFAULT_CONFIG.STRATEGIES.development);
     this.strategies.set('production', DEFAULT_CONFIG.STRATEGIES.production);
     this.strategies.set('memory-optimized', DEFAULT_CONFIG.STRATEGIES['ultra-memory-optimized']);
-    this.strategies.set('ultra-memory-optimized', DEFAULT_CONFIG.STRATEGIES['ultra-memory-optimized']);
+    this.strategies.set(
+      'ultra-memory-optimized',
+      DEFAULT_CONFIG.STRATEGIES['ultra-memory-optimized']
+    );
   }
 
   /**
@@ -284,7 +340,7 @@ export class BuildStrategyManager {
   private getUltraMemoryOptimizedStrategy(systemResources: SystemResources): BuildStrategy {
     return {
       ...DEFAULT_CONFIG.STRATEGIES['ultra-memory-optimized'],
-      maxConcurrency: Math.max(1, Math.floor(systemResources.cpuCores / 4))
+      maxConcurrency: Math.max(1, Math.floor(systemResources.cpuCores / 4)),
     };
   }
 
@@ -294,7 +350,7 @@ export class BuildStrategyManager {
   private getDevelopmentStrategy(systemResources: SystemResources): BuildStrategy {
     return {
       ...DEFAULT_CONFIG.STRATEGIES.development,
-      maxConcurrency: Math.max(1, Math.floor(systemResources.cpuCores / 2))
+      maxConcurrency: Math.max(1, Math.floor(systemResources.cpuCores / 2)),
     };
   }
 
@@ -305,7 +361,7 @@ export class BuildStrategyManager {
     const availableMemoryGB = systemResources.availableMemory / 1024;
     return {
       ...DEFAULT_CONFIG.STRATEGIES.production,
-      maxConcurrency: Math.min(systemResources.cpuCores, Math.floor(availableMemoryGB / 2))
+      maxConcurrency: Math.min(systemResources.cpuCores, Math.floor(availableMemoryGB / 2)),
     };
   }
 
@@ -314,14 +370,14 @@ export class BuildStrategyManager {
    */
   private getCIOptimizedStrategy(systemResources: SystemResources): BuildStrategy {
     const availableMemoryGB = systemResources.availableMemory / 1024;
-    
+
     // CI environments often have memory constraints but need reliability
     return {
       maxConcurrency: Math.min(4, Math.max(1, Math.floor(systemResources.cpuCores / 2))),
       memoryThreshold: 75, // More conservative in CI
       stageSize: 8,
       enableIncremental: true,
-      cleanupBetweenStages: true
+      cleanupBetweenStages: true,
     };
   }
 
@@ -369,7 +425,7 @@ export class BuildStrategyManager {
   private parseEnvNumber(envVar: string, defaultValue: number): number {
     const value = process.env[envVar];
     if (!value) return defaultValue;
-    
+
     const parsed = parseInt(value, 10);
     return isNaN(parsed) ? defaultValue : parsed;
   }
@@ -380,7 +436,7 @@ export class BuildStrategyManager {
   private parseEnvBoolean(envVar: string, defaultValue: boolean): boolean {
     const value = process.env[envVar];
     if (!value) return defaultValue;
-    
+
     return value.toLowerCase() === 'true' || value === '1';
   }
 }

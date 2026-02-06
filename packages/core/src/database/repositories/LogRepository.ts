@@ -44,7 +44,10 @@ export class LogRepository extends Repository<Log> {
     return result;
   }
 
-  async getTopContexts(since: Date, limit: number = 10): Promise<{ context: string; count: number }[]> {
+  async getTopContexts(
+    since: Date,
+    limit: number = 10,
+  ): Promise<{ context: string; count: number }[]> {
     const topContextsResult = await this.createQueryBuilder('log')
       .select('log.context', 'context')
       .addSelect('COUNT(*)', 'count')

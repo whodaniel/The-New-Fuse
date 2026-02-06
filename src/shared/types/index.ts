@@ -32,7 +32,7 @@ export type {
 export type {
   ExpressRequest,
   ExpressResponse,
-  PrismaClient,
+  DrizzleClient,
   DatabaseQuery,
   DatabaseResult,
   WorkflowDefinition,

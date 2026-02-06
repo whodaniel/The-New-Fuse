@@ -4,7 +4,6 @@
 
 // @ts-expect-error - Jest globals are available without import
 import { MCPValidator, mcpValidator } from './validator';
-import { MCPErrorCode } from '../types/error';
 
 describe('MCPValidator', () => {
   let validator: MCPValidator;
@@ -19,7 +18,7 @@ describe('MCPValidator', () => {
         jsonrpc: '2.0',
         id: 1,
         method: 'test.method',
-        params: { key: 'value' }
+        params: { key: 'value' },
       };
 
       const result = validator.validateJSONRPCRequest(request);
@@ -31,7 +30,7 @@ describe('MCPValidator', () => {
     it('should reject request without jsonrpc version', () => {
       const request = {
         id: 1,
-        method: 'test.method'
+        method: 'test.method',
       };
 
       const result = validator.validateJSONRPCRequest(request);
@@ -43,18 +42,18 @@ describe('MCPValidator', () => {
       const request = {
         jsonrpc: '1.0',
         id: 1,
-        method: 'test.method'
+        method: 'test.method',
       };
 
       const result = validator.validateJSONRPCRequest(request);
       expect(result.valid).toBe(false);
-      expect(result.errors.some(error => error.includes('must be equal to constant'))).toBe(true);
+      expect(result.errors.some((error) => error.includes('must be equal to constant'))).toBe(true);
     });
 
     it('should reject request without method', () => {
       const request = {
         jsonrpc: '2.0',
-        id: 1
+        id: 1,
       };
 
       const result = validator.validateJSONRPCRequest(request);
@@ -66,7 +65,7 @@ describe('MCPValidator', () => {
       const request = {
         jsonrpc: '2.0',
         id: 1,
-        method: 'test.method'
+        method: 'test.method',
       };
 
       const result = validator.validateJSONRPCRequest(request);
@@ -79,7 +78,7 @@ describe('MCPValidator', () => {
       const response = {
         jsonrpc: '2.0',
         id: 1,
-        result: { success: true }
+        result: { success: true },
       };
 
       const result = validator.validateJSONRPCResponse(response);
@@ -93,8 +92,8 @@ describe('MCPValidator', () => {
         id: 1,
         error: {
           code: -32600,
-          message: 'Invalid Request'
-        }
+          message: 'Invalid Request',
+        },
       };
 
       const result = validator.validateJSONRPCResponse(response);
@@ -109,8 +108,8 @@ describe('MCPValidator', () => {
         result: { success: true },
         error: {
           code: -32600,
-          message: 'Invalid Request'
-        }
+          message: 'Invalid Request',
+        },
       };
 
       const result = validator.validateJSONRPCResponse(response);
@@ -120,7 +119,7 @@ describe('MCPValidator', () => {
     it('should reject response without result or error', () => {
       const response = {
         jsonrpc: '2.0',
-        id: 1
+        id: 1,
       };
 
       const result = validator.validateJSONRPCResponse(response);
@@ -133,7 +132,7 @@ describe('MCPValidator', () => {
       const notification = {
         jsonrpc: '2.0',
         method: 'test.notification',
-        params: { message: 'hello' }
+        params: { message: 'hello' },
       };
 
       const result = validator.validateJSONRPCNotification(notification);
@@ -145,7 +144,7 @@ describe('MCPValidator', () => {
       const notification = {
         jsonrpc: '2.0',
         id: 1,
-        method: 'test.notification'
+        method: 'test.notification',
       };
 
       const result = validator.validateJSONRPCNotification(notification);
@@ -155,7 +154,7 @@ describe('MCPValidator', () => {
     it('should accept notification without params', () => {
       const notification = {
         jsonrpc: '2.0',
-        method: 'test.notification'
+        method: 'test.notification',
       };
 
       const result = validator.validateJSONRPCNotification(notification);
@@ -172,8 +171,8 @@ describe('MCPValidator', () => {
         mimeType: 'text/plain',
         permissions: {
           read: true,
-          write: false
-        }
+          write: false,
+        },
       };
 
       const result = validator.validateMCPResource(resource);
@@ -183,7 +182,7 @@ describe('MCPValidator', () => {
 
     it('should reject resource without uri', () => {
       const resource = {
-        name: 'Test Resource'
+        name: 'Test Resource',
       };
 
       const result = validator.validateMCPResource(resource);
@@ -193,7 +192,7 @@ describe('MCPValidator', () => {
 
     it('should reject resource without name', () => {
       const resource = {
-        uri: 'file:///test.txt'
+        uri: 'file:///test.txt',
       };
 
       const result = validator.validateMCPResource(resource);
@@ -210,10 +209,10 @@ describe('MCPValidator', () => {
         inputSchema: {
           type: 'object',
           properties: {
-            input: { type: 'string' }
+            input: { type: 'string' },
           },
-          required: ['input']
-        }
+          required: ['input'],
+        },
       };
 
       const result = validator.validateMCPTool(tool);
@@ -225,8 +224,8 @@ describe('MCPValidator', () => {
       const tool = {
         description: 'A test tool',
         inputSchema: {
-          type: 'object'
-        }
+          type: 'object',
+        },
       };
 
       const result = validator.validateMCPTool(tool);
@@ -237,7 +236,7 @@ describe('MCPValidator', () => {
     it('should reject tool without inputSchema', () => {
       const tool = {
         name: 'test-tool',
-        description: 'A test tool'
+        description: 'A test tool',
       };
 
       const result = validator.validateMCPTool(tool);
@@ -251,9 +250,9 @@ describe('MCPValidator', () => {
       const customSchema = {
         type: 'object',
         properties: {
-          customField: { type: 'string' }
+          customField: { type: 'string' },
         },
-        required: ['customField']
+        required: ['customField'],
       };
 
       validator.addSchema('custom', customSchema);
@@ -272,8 +271,8 @@ describe('MCPValidator', () => {
       const customSchema = {
         type: 'object',
         properties: {
-          customField: { type: 'string' }
-        }
+          customField: { type: 'string' },
+        },
       };
 
       validator.addSchema('custom', customSchema);
@@ -303,7 +302,7 @@ describe('MCPValidator', () => {
       const invalidRequest = {
         jsonrpc: '1.0', // Wrong version
         id: 1,
-        method: 'test'
+        method: 'test',
       };
 
       expect(() => {
@@ -315,7 +314,7 @@ describe('MCPValidator', () => {
       const validRequest = {
         jsonrpc: '2.0',
         id: 1,
-        method: 'test'
+        method: 'test',
       };
 
       const result = validator.validateOrThrow('jsonrpcRequest', validRequest);
@@ -333,7 +332,7 @@ describe('Global Validator Instance', () => {
     const request = {
       jsonrpc: '2.0',
       id: 1,
-      method: 'test.method'
+      method: 'test.method',
     };
 
     const result = mcpValidator.validateJSONRPCRequest(request);

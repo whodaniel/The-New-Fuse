@@ -8,10 +8,16 @@
 
 ```typescript
 // Use Drizzle repositories (recommended)
-import { drizzleUserRepository, drizzleAgentRepository } from '@the-new-fuse/database/drizzle';
+import {
+  drizzleUserRepository,
+  drizzleAgentRepository,
+} from '@the-new-fuse/database/drizzle';
 
 // Or use compatibility aliases (works with existing code)
-import { UserRepository, AgentRepository } from '@the-new-fuse/database/drizzle';
+import {
+  UserRepository,
+  AgentRepository,
+} from '@the-new-fuse/database/drizzle';
 ```
 
 ### Basic CRUD Operations
@@ -37,22 +43,24 @@ const updated = await drizzleUserRepository.update(userId, {
 await drizzleUserRepository.softDelete(userId);
 ```
 
-## Key Differences from Prisma
+## Key Differences from Drizzle
 
 ### 1. Repository Pattern vs Direct Client
 
-**Prisma (Old):**
+**Drizzle (Old):**
+
 ```typescript
-import { PrismaService } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 
-constructor(private prisma: PrismaService) {}
+constructor(private drizzle: DatabaseService) {}
 
-const user = await this.prisma.user.findUnique({
+const user = await this.drizzle.user.findUnique({
   where: { email }
 });
 ```
 
 **Drizzle (New):**
+
 ```typescript
 import { drizzleUserRepository } from '@the-new-fuse/database/drizzle';
 
@@ -61,17 +69,18 @@ const user = await drizzleUserRepository.findByEmail(email);
 
 ### 2. Field Name Changes
 
-| Prisma Field | Drizzle Field |
-|--------------|---------------|
-| `user.password` | `user.hashedPassword` |
-| `agent.config` | `agent.config` (same) |
-| All other fields | Same as Prisma |
+| Drizzle Field     | Drizzle Field         |
+| ---------------- | --------------------- |
+| `user.password`  | `user.hashedPassword` |
+| `agent.config`   | `agent.config` (same) |
+| All other fields | Same as Drizzle        |
 
 ### 3. No More Transactions (Simplified)
 
-**Prisma (Old):**
+**Drizzle (Old):**
+
 ```typescript
-await this.prisma.$transaction(async (tx) => {
+await this.drizzle.$transaction(async (tx) => {
   const user = await tx.user.create({ data: userData });
   const session = await tx.session.create({ data: sessionData });
   return user;
@@ -79,19 +88,26 @@ await this.prisma.$transaction(async (tx) => {
 ```
 
 **Drizzle (New):**
+
 ```typescript
 // Sequential operations (simpler, still reliable)
 const user = await drizzleUserRepository.create(userData);
-const session = await drizzleUserRepository.createSession(user.id, token, expiresAt);
+const session = await drizzleUserRepository.createSession(
+  user.id,
+  token,
+  expiresAt
+);
 ```
 
-> **Note**: We simplified transaction usage for Phase 2. Complex transactions can be added back in Phase 4 if needed using Drizzle's transaction API.
+> **Note**: We simplified transaction usage for Phase 2. Complex transactions
+> can be added back in Phase 4 if needed using Drizzle's transaction API.
 
 ### 4. Query Building
 
-**Prisma (Old):**
+**Drizzle (Old):**
+
 ```typescript
-const agents = await this.prisma.agent.findMany({
+const agents = await this.drizzle.agent.findMany({
   where: {
     userId,
     status: 'ACTIVE',
@@ -104,9 +120,13 @@ const agents = await this.prisma.agent.findMany({
 ```
 
 **Drizzle (New):**
+
 ```typescript
 // Use repository methods (preferred)
-const agents = await drizzleAgentRepository.findByStatusAndUserId('ACTIVE', userId);
+const agents = await drizzleAgentRepository.findByStatusAndUserId(
+  'ACTIVE',
+  userId
+);
 
 // Or use the query builder directly
 import { db } from '@the-new-fuse/database/drizzle';
@@ -116,11 +136,13 @@ import { and, desc, eq, isNull } from 'drizzle-orm';
 const result = await db
   .select()
   .from(agents)
-  .where(and(
-    eq(agents.userId, userId),
-    eq(agents.status, 'ACTIVE'),
-    isNull(agents.deletedAt)
-  ))
+  .where(
+    and(
+      eq(agents.userId, userId),
+      eq(agents.status, 'ACTIVE'),
+      isNull(agents.deletedAt)
+    )
+  )
   .orderBy(desc(agents.createdAt))
   .offset(10)
   .limit(20);
@@ -246,11 +268,11 @@ await drizzleWorkflowRepository.findTemplatesByCategory(category);
 
 ## Migration Checklist
 
-When migrating a service from Prisma to Drizzle:
+When migrating a service from Drizzle to Drizzle:
 
-- [ ] Replace `PrismaService` import with repository imports
-- [ ] Remove Prisma dependency injection from constructor
-- [ ] Replace Prisma queries with repository method calls
+- [ ] Replace `DatabaseService` import with repository imports
+- [ ] Remove Drizzle dependency injection from constructor
+- [ ] Replace Drizzle queries with repository method calls
 - [ ] Update field names (e.g., `password` → `hashedPassword`)
 - [ ] Remove transaction wrappers (use sequential operations)
 - [ ] Test all CRUD operations
@@ -318,10 +340,7 @@ const result = await db
     status: agents.status,
   })
   .from(agents)
-  .where(and(
-    eq(agents.userId, userId),
-    isNull(agents.deletedAt)
-  ));
+  .where(and(eq(agents.userId, userId), isNull(agents.deletedAt)));
 
 // Raw SQL (use sparingly)
 const result = await db.execute(sql`
@@ -360,6 +379,9 @@ async findAgentsByTag(tag: string): Promise<Agent[]> {
 ## Need Help?
 
 - Review migrated files in `apps/backend/src/` for examples
-- Check [MIGRATION_PROGRESS_REPORT.md](./MIGRATION_PROGRESS_REPORT.md) for status
-- See [PRISMA_TO_DRIZZLE_MIGRATION_PLAN.md](./PRISMA_TO_DRIZZLE_MIGRATION_PLAN.md) for full plan
+- Check [MIGRATION_PROGRESS_REPORT.md](./MIGRATION_PROGRESS_REPORT.md) for
+  status
+- See
+  [PRISMA_TO_DRIZZLE_MIGRATION_PLAN.md](./PRISMA_TO_DRIZZLE_MIGRATION_PLAN.md)
+  for full plan
 - Repository source: `packages/database/src/drizzle/repositories/`

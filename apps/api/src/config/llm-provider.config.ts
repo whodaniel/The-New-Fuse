@@ -13,5 +13,12 @@ export default () => ({
       maxTokens: parseInt(process.env.ANTHROPIC_MAX_TOKENS || '4000'),
       temperature: parseFloat(process.env.ANTHROPIC_TEMPERATURE || '0.7'),
     },
+    sambanova: {
+      apiKey: process.env.SAMBANOVA_API_KEY,
+      model: process.env.SAMBANOVA_MODEL || 'llama3-405b-instruct',
+      baseUrl: process.env.SAMBANOVA_BASE_URL || 'https://api.sambanova.ai/v1',
+      maxTokens: parseInt(process.env.SAMBANOVA_MAX_TOKENS || '4000'),
+      temperature: parseFloat(process.env.SAMBANOVA_TEMPERATURE || '0.7'),
+    },
   },
 });

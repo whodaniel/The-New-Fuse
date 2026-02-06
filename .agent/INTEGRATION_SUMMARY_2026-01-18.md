@@ -43,7 +43,7 @@ capabilities:
 
 **Database**
 
-- database-design, prisma-expert
+- database-design, drizzle-expert
 
 **Infrastructure**
 
@@ -82,7 +82,7 @@ capabilities:
 Perfect alignment with The New Fuse stack:
 
 - **nestjs-expert** → Matches our NestJS backend
-- **prisma-expert** → Matches our Prisma ORM + PostgreSQL
+- **drizzle-expert** → Matches our Drizzle ORM + PostgreSQL
 - **react-patterns** → Enhances our React frontend
 - **docker-expert** → Supports our containerization
 - **testing-patterns** → Strengthens our testing infrastructure
@@ -307,7 +307,7 @@ pnpm run build
 │  └──────────────────────────────────────────────────────────┘  │
 │                                                                  │
 ├─────────────────────────────────────────────────────────────────┤
-│  Database: PostgreSQL + Prisma ORM                              │
+│  Database: PostgreSQL + Drizzle ORM                              │
 │  Cache: Redis                                                   │
 │  Queue: Bull                                                    │
 │  Monitoring: Custom metrics                                     │

@@ -1,6 +1,8 @@
 # Complete Agent Communication Guide
 
-This comprehensive guide consolidates all agent communication documentation including the TNF Agent Relay, inter-extension communication, workflow builder, and collaboration features.
+This comprehensive guide consolidates all agent communication documentation
+including the TNF Agent Relay, inter-extension communication, workflow builder,
+and collaboration features.
 
 ## Table of Contents
 
@@ -17,7 +19,9 @@ This comprehensive guide consolidates all agent communication documentation incl
 
 ## Agent Communication Overview
 
-The New Fuse provides a comprehensive agent communication framework that enables AI agents to collaborate across different environments including VS Code extensions, Chrome extensions, terminal applications, and external services.
+The New Fuse provides a comprehensive agent communication framework that enables
+AI agents to collaborate across different environments including VS Code
+extensions, Chrome extensions, terminal applications, and external services.
 
 ### Core Components
 
@@ -55,7 +59,9 @@ The New Fuse provides a comprehensive agent communication framework that enables
 
 ### Overview
 
-The TNF Agent Communication Relay is a macOS application that serves as the central communication hub for AI agents across different environments. It handles message routing, agent discovery, and protocol translation.
+The TNF Agent Communication Relay is a macOS application that serves as the
+central communication hub for AI agents across different environments. It
+handles message routing, agent discovery, and protocol translation.
 
 ### Installation
 
@@ -72,6 +78,7 @@ bash scripts/install-tnf-relay.sh
 #### Manual Installation
 
 1. **Create the relay application:**
+
    ```bash
    # Navigate to the relay directory
    cd scripts/tnf-agent-relay
@@ -99,22 +106,22 @@ property relayConfig : {
     -- Agent discovery settings
     agentDiscoveryInterval: 30,
     discoveryMethods: {"websocket", "redis", "file", "mcp"},
-    
+
     -- Message handling
     messageRetryAttempts: 3,
     messageTimeout: 5000,
     maxQueueSize: 1000,
-    
+
     -- Logging and monitoring
     logLevel: "info",
     logRetentionDays: 7,
     metricsEnabled: true,
-    
+
     -- Protocol settings
     enabledProtocols: {"websocket", "redis", "file", "mcp"},
     websocketPort: 3711,
     redisConnection: "redis://localhost:6379",
-    
+
     -- Security settings
     enableAuthentication: false,
     allowedOrigins: {"*"},
@@ -126,6 +133,7 @@ property relayConfig : {
 ### Core Relay Functions
 
 #### Agent Registration
+
 ```applescript
 -- Register a new agent
 on registerAgent(agentInfo)
@@ -139,30 +147,31 @@ on registerAgent(agentInfo)
         lastSeen: (current date),
         connectionInfo: (connectionInfo of agentInfo)
     }
-    
+
     set end of agentRegistry to agentRecord
     logMessage("Agent registered: " & agentID, "info")
-    
+
     -- Broadcast agent availability
     broadcastAgentStatus(agentID, "online")
 end registerAgent
 ```
 
 #### Message Routing
+
 ```applescript
 -- Route message between agents
 on routeMessage(messageData)
     set sourceAgent to (source of messageData)
     set targetAgent to (target of messageData)
     set messageContent to (content of messageData)
-    
+
     -- Find target agent
     set targetInfo to findAgent(targetAgent)
     if targetInfo is missing value then
         logMessage("Target agent not found: " & targetAgent, "error")
         return false
     end if
-    
+
     -- Route based on agent connection type
     set connectionType to (connectionType of targetInfo)
     if connectionType is "websocket" then
@@ -178,30 +187,31 @@ end routeMessage
 ```
 
 #### Agent Discovery
+
 ```applescript
 -- Discover available agents
 on discoverAgents()
     set discoveredAgents to {}
-    
+
     -- WebSocket discovery
     set wsAgents to discoverWebSocketAgents()
     set discoveredAgents to discoveredAgents & wsAgents
-    
+
     -- Redis discovery
     set redisAgents to discoverRedisAgents()
     set discoveredAgents to discoveredAgents & redisAgents
-    
+
     -- File protocol discovery
     set fileAgents to discoverFileAgents()
     set discoveredAgents to discoveredAgents & fileAgents
-    
+
     -- MCP discovery
     set mcpAgents to discoverMCPAgents()
     set discoveredAgents to discoveredAgents & mcpAgents
-    
+
     -- Update agent registry
     updateAgentRegistry(discoveredAgents)
-    
+
     return discoveredAgents
 end discoverAgents
 ```
@@ -211,6 +221,7 @@ end discoverAgents
 ### WebSocket Protocol
 
 #### Message Format
+
 ```typescript
 interface AgentMessage {
   version: string;
@@ -240,6 +251,7 @@ interface AgentMessage {
 ```
 
 #### WebSocket Client Implementation
+
 ```typescript
 class AgentWebSocketClient {
   private ws: WebSocket | null = null;
@@ -255,7 +267,7 @@ class AgentWebSocketClient {
   async connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.ws = new WebSocket('ws://localhost:3711');
-      
+
       this.ws.onopen = () => {
         this.registerAgent();
         resolve();
@@ -284,10 +296,10 @@ class AgentWebSocketClient {
       source: {
         agentId: this.agentId,
         agentType: 'generic',
-        capabilities: this.capabilities
+        capabilities: this.capabilities,
       },
       target: {
-        agentId: 'tnf-relay'
+        agentId: 'tnf-relay',
       },
       content: {
         type: 'request',
@@ -295,10 +307,10 @@ class AgentWebSocketClient {
         data: {
           agentId: this.agentId,
           capabilities: this.capabilities,
-          status: 'online'
+          status: 'online',
         },
-        priority: 'high'
-      }
+        priority: 'high',
+      },
     };
 
     this.send(registrationMessage);
@@ -319,7 +331,7 @@ class AgentWebSocketClient {
 
   private handleMessage(message: AgentMessage): void {
     const handlers = this.messageHandlers.get(message.content.action) || [];
-    handlers.forEach(handler => handler(message));
+    handlers.forEach((handler) => handler(message));
   }
 }
 ```
@@ -327,6 +339,7 @@ class AgentWebSocketClient {
 ### Redis Protocol
 
 #### Redis Bridge Configuration
+
 ```typescript
 import Redis from 'ioredis';
 
@@ -363,7 +376,7 @@ class RedisBridge {
       status: 'online',
       lastSeen: Date.now(),
       capabilities: this.capabilities,
-      connectionType: 'redis'
+      connectionType: 'redis',
     };
 
     await this.redis.hset(
@@ -380,7 +393,7 @@ class RedisBridge {
     const redisMessage = {
       ...message,
       timestamp: Date.now(),
-      source: { agentId: this.agentId }
+      source: { agentId: this.agentId },
     };
 
     if (targetAgentId === 'broadcast') {
@@ -403,6 +416,7 @@ class RedisBridge {
 ### File Protocol
 
 #### File-Based Communication
+
 ```typescript
 import * as fs from 'fs';
 import * as path from 'path';
@@ -419,7 +433,7 @@ class FileProtocol {
       process.env.HOME || process.env.USERPROFILE || '/tmp',
       '.tnf-messages'
     );
-    
+
     // Ensure message directory exists
     if (!fs.existsSync(this.messagePath)) {
       fs.mkdirSync(this.messagePath, { recursive: true });
@@ -428,10 +442,9 @@ class FileProtocol {
 
   async initialize(): Promise<void> {
     // Watch for incoming messages
-    this.watcher = chokidar.watch(
-      path.join(this.messagePath, 'incoming'),
-      { ignoreInitial: true }
-    );
+    this.watcher = chokidar.watch(path.join(this.messagePath, 'incoming'), {
+      ignoreInitial: true,
+    });
 
     this.watcher.on('add', async (filePath) => {
       await this.processIncomingMessage(filePath);
@@ -440,8 +453,8 @@ class FileProtocol {
     // Create agent-specific directories
     const incomingPath = path.join(this.messagePath, 'incoming');
     const outgoingPath = path.join(this.messagePath, 'outgoing');
-    
-    [incomingPath, outgoingPath].forEach(dir => {
+
+    [incomingPath, outgoingPath].forEach((dir) => {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
@@ -454,16 +467,13 @@ class FileProtocol {
       source: { agentId: this.agentId },
       target: { agentId: targetAgentId },
       timestamp: Date.now(),
-      messageId: `${this.agentId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      messageId: `${this.agentId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     };
 
     const fileName = `${messageData.messageId}.json`;
     const filePath = path.join(this.messagePath, 'outgoing', fileName);
 
-    await fs.promises.writeFile(
-      filePath,
-      JSON.stringify(messageData, null, 2)
-    );
+    await fs.promises.writeFile(filePath, JSON.stringify(messageData, null, 2));
   }
 
   private async processIncomingMessage(filePath: string): Promise<void> {
@@ -472,7 +482,10 @@ class FileProtocol {
       const message = JSON.parse(content);
 
       // Check if message is for this agent
-      if (message.target.agentId === this.agentId || message.target.agentId === 'broadcast') {
+      if (
+        message.target.agentId === this.agentId ||
+        message.target.agentId === 'broadcast'
+      ) {
         this.handleMessage(message);
       }
 
@@ -501,6 +514,7 @@ class FileProtocol {
 ### VS Code ↔ Chrome Extension Communication
 
 #### Shared Message Interface
+
 ```typescript
 interface InterExtensionMessage {
   type: 'code-analysis' | 'ui-update' | 'sync-request' | 'collaboration';
@@ -513,6 +527,7 @@ interface InterExtensionMessage {
 ```
 
 #### VS Code Extension Communication Handler
+
 ```typescript
 import * as vscode from 'vscode';
 
@@ -521,10 +536,11 @@ class VSCodeCommunicationHandler {
   private fileProtocol: FileProtocol;
 
   constructor() {
-    this.webSocketClient = new AgentWebSocketClient(
-      'vscode-extension',
-      ['code-analysis', 'file-operations', 'ui-integration']
-    );
+    this.webSocketClient = new AgentWebSocketClient('vscode-extension', [
+      'code-analysis',
+      'file-operations',
+      'ui-integration',
+    ]);
     this.fileProtocol = new FileProtocol('vscode-extension');
   }
 
@@ -533,7 +549,10 @@ class VSCodeCommunicationHandler {
     await this.fileProtocol.initialize();
 
     // Register message handlers
-    this.webSocketClient.onMessage('code-analysis', this.handleCodeAnalysis.bind(this));
+    this.webSocketClient.onMessage(
+      'code-analysis',
+      this.handleCodeAnalysis.bind(this)
+    );
     this.webSocketClient.onMessage('ui-update', this.handleUIUpdate.bind(this));
 
     // Register VS Code commands
@@ -543,7 +562,7 @@ class VSCodeCommunicationHandler {
   private registerCommands(): void {
     vscode.commands.registerCommand('thefuse.sendMessage', async () => {
       const message = await vscode.window.showInputBox({
-        prompt: 'Enter message for Chrome extension'
+        prompt: 'Enter message for Chrome extension',
       });
 
       if (message) {
@@ -552,7 +571,7 @@ class VSCodeCommunicationHandler {
           payload: { message },
           source: 'vscode',
           target: 'chrome',
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       }
     });
@@ -568,17 +587,17 @@ class VSCodeCommunicationHandler {
         source: {
           agentId: 'vscode-extension',
           agentType: 'vscode',
-          capabilities: ['code-analysis', 'file-operations']
+          capabilities: ['code-analysis', 'file-operations'],
         },
         target: {
-          agentId: 'chrome-extension'
+          agentId: 'chrome-extension',
         },
         content: {
           type: 'request',
           action: message.type,
           data: message.payload,
-          priority: 'medium'
-        }
+          priority: 'medium',
+        },
       });
     } catch (error) {
       // Fallback to file protocol
@@ -589,10 +608,10 @@ class VSCodeCommunicationHandler {
   private handleCodeAnalysis(message: any): void {
     // Handle code analysis requests from other extensions
     const { code, language } = message.content.data;
-    
+
     // Perform VS Code specific analysis
     const analysis = this.analyzeCode(code, language);
-    
+
     // Send response back
     this.webSocketClient.send({
       version: '1.0',
@@ -601,26 +620,27 @@ class VSCodeCommunicationHandler {
       source: {
         agentId: 'vscode-extension',
         agentType: 'vscode',
-        capabilities: ['code-analysis']
+        capabilities: ['code-analysis'],
       },
       target: {
-        agentId: message.source.agentId
+        agentId: message.source.agentId,
       },
       content: {
         type: 'response',
         action: 'code-analysis-result',
         data: analysis,
-        priority: 'medium'
+        priority: 'medium',
       },
       metadata: {
-        correlationId: message.messageId
-      }
+        correlationId: message.messageId,
+      },
     });
   }
 }
 ```
 
 #### Chrome Extension Communication Handler
+
 ```typescript
 class ChromeCommunicationHandler {
   private webSocketClient: WebSocket | null = null;
@@ -640,7 +660,7 @@ class ChromeCommunicationHandler {
   private async connectWebSocket(): Promise<void> {
     try {
       this.webSocketClient = new WebSocket('ws://localhost:3711');
-      
+
       this.webSocketClient.onopen = () => {
         console.log('Chrome extension connected to TNF relay');
         this.reconnectAttempts = 0;
@@ -674,27 +694,30 @@ class ChromeCommunicationHandler {
       source: {
         agentId: 'chrome-extension',
         agentType: 'chrome',
-        capabilities: ['web-interaction', 'dom-manipulation', 'user-interface']
+        capabilities: ['web-interaction', 'dom-manipulation', 'user-interface'],
       },
       target: {
-        agentId: 'tnf-relay'
+        agentId: 'tnf-relay',
       },
       content: {
         type: 'request',
         action: 'register',
         data: {
           agentId: 'chrome-extension',
-          status: 'online'
+          status: 'online',
         },
-        priority: 'high'
-      }
+        priority: 'high',
+      },
     };
 
     this.send(registrationMessage);
   }
 
   send(message: any): void {
-    if (this.webSocketClient && this.webSocketClient.readyState === WebSocket.OPEN) {
+    if (
+      this.webSocketClient &&
+      this.webSocketClient.readyState === WebSocket.OPEN
+    ) {
       this.webSocketClient.send(JSON.stringify(message));
     } else {
       this.messageQueue.push(message);
@@ -712,7 +735,7 @@ class ChromeCommunicationHandler {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       const delay = Math.pow(2, this.reconnectAttempts) * 1000;
-      
+
       setTimeout(() => {
         console.log(`Reconnection attempt ${this.reconnectAttempts}`);
         this.connectWebSocket();
@@ -795,7 +818,10 @@ class WorkflowEngine {
     this.agentRegistry = agentRegistry;
   }
 
-  async executeWorkflow(workflowId: string, inputs: Record<string, any>): Promise<string> {
+  async executeWorkflow(
+    workflowId: string,
+    inputs: Record<string, any>
+  ): Promise<string> {
     const workflow = this.workflows.get(workflowId);
     if (!workflow) {
       throw new Error(`Workflow not found: ${workflowId}`);
@@ -810,7 +836,7 @@ class WorkflowEngine {
       currentStep: workflow.steps[0].id,
       variables: { ...workflow.variables, ...inputs },
       stepResults: new Map(),
-      errors: []
+      errors: [],
     };
 
     this.executionContext.set(executionId, execution);
@@ -825,7 +851,10 @@ class WorkflowEngine {
     }
   }
 
-  private async executeStep(execution: WorkflowExecution, step: WorkflowStep): Promise<void> {
+  private async executeStep(
+    execution: WorkflowExecution,
+    step: WorkflowStep
+  ): Promise<void> {
     execution.currentStep = step.id;
 
     try {
@@ -860,18 +889,20 @@ class WorkflowEngine {
       // Execute next steps
       for (const nextStepId of step.nextSteps) {
         const workflow = this.workflows.get(execution.workflowId)!;
-        const nextStep = workflow.steps.find(s => s.id === nextStepId);
+        const nextStep = workflow.steps.find((s) => s.id === nextStepId);
         if (nextStep) {
           await this.executeStep(execution, nextStep);
         }
       }
-
     } catch (error) {
       await this.handleStepError(execution, step, error);
     }
   }
 
-  private async executeAgentTask(step: WorkflowStep, variables: Record<string, any>): Promise<any> {
+  private async executeAgentTask(
+    step: WorkflowStep,
+    variables: Record<string, any>
+  ): Promise<any> {
     const agent = this.agentRegistry.getAgent(step.agentId!);
     if (!agent) {
       throw new Error(`Agent not found: ${step.agentId}`);
@@ -888,27 +919,34 @@ class WorkflowEngine {
       source: {
         agentId: 'workflow-engine',
         agentType: 'system',
-        capabilities: ['workflow-execution']
+        capabilities: ['workflow-execution'],
       },
       target: {
-        agentId: step.agentId
+        agentId: step.agentId,
       },
       content: {
         type: 'request',
         action: step.action,
         data: resolvedInputs,
-        priority: 'medium'
-      }
+        priority: 'medium',
+      },
     };
 
     return await agent.sendMessage(taskMessage);
   }
 
-  private resolveVariables(inputs: Record<string, any>, variables: Record<string, any>): Record<string, any> {
+  private resolveVariables(
+    inputs: Record<string, any>,
+    variables: Record<string, any>
+  ): Record<string, any> {
     const resolved: Record<string, any> = {};
 
     Object.entries(inputs).forEach(([key, value]) => {
-      if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
+      if (
+        typeof value === 'string' &&
+        value.startsWith('{{') &&
+        value.endsWith('}}')
+      ) {
         // Variable reference
         const variableName = value.slice(2, -2).trim();
         resolved[key] = variables[variableName];
@@ -938,7 +976,7 @@ class CollaborationManager {
 
   createSession(initiatorId: string, participants: string[]): string {
     const sessionId = `collab-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     const session: CollaborationSession = {
       id: sessionId,
       initiator: initiatorId,
@@ -947,13 +985,13 @@ class CollaborationManager {
       sharedState: {},
       messageHistory: [],
       startTime: Date.now(),
-      status: 'active'
+      status: 'active',
     };
 
     this.sessions.set(sessionId, session);
 
     // Invite participants
-    participants.forEach(participantId => {
+    participants.forEach((participantId) => {
       this.inviteParticipant(sessionId, participantId);
     });
 
@@ -967,18 +1005,26 @@ class CollaborationManager {
     }
 
     session.activeParticipants.add(participantId);
-    
+
     // Notify other participants
-    this.broadcastToSession(sessionId, {
-      type: 'participant-joined',
-      participantId,
-      timestamp: Date.now()
-    }, participantId);
+    this.broadcastToSession(
+      sessionId,
+      {
+        type: 'participant-joined',
+        participantId,
+        timestamp: Date.now(),
+      },
+      participantId
+    );
 
     return true;
   }
 
-  shareCodeChanges(sessionId: string, participantId: string, changes: CodeChange[]): void {
+  shareCodeChanges(
+    sessionId: string,
+    participantId: string,
+    changes: CodeChange[]
+  ): void {
     const session = this.sessions.get(sessionId);
     if (!session || !session.activeParticipants.has(participantId)) {
       return;
@@ -988,22 +1034,26 @@ class CollaborationManager {
       type: 'code-changes',
       participantId,
       changes,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     session.messageHistory.push(changeMessage);
     this.broadcastToSession(sessionId, changeMessage, participantId);
   }
 
-  private broadcastToSession(sessionId: string, message: any, excludeParticipant?: string): void {
+  private broadcastToSession(
+    sessionId: string,
+    message: any,
+    excludeParticipant?: string
+  ): void {
     const session = this.sessions.get(sessionId);
     if (!session) return;
 
-    session.activeParticipants.forEach(participantId => {
+    session.activeParticipants.forEach((participantId) => {
       if (participantId !== excludeParticipant) {
         this.sendToParticipant(participantId, {
           sessionId,
-          ...message
+          ...message,
         });
       }
     });
@@ -1049,7 +1099,6 @@ class CollaborativeCompletion {
     position: Position,
     context: CompletionContext
   ): Promise<CompletionResult[]> {
-    
     const sessionId = `completion-${Date.now()}`;
     const session: CompletionSession = {
       id: sessionId,
@@ -1057,7 +1106,7 @@ class CollaborativeCompletion {
       position,
       context,
       responses: [],
-      startTime: Date.now()
+      startTime: Date.now(),
     };
 
     this.completionSessions.set(sessionId, session);
@@ -1066,13 +1115,15 @@ class CollaborativeCompletion {
     const agentRequests = [
       this.requestFromAgent('copilot-agent', code, position, context),
       this.requestFromAgent('claude-agent', code, position, context),
-      this.requestFromAgent('local-analyzer', code, position, context)
+      this.requestFromAgent('local-analyzer', code, position, context),
     ];
 
     const responses = await Promise.allSettled(agentRequests);
     const validResponses = responses
-      .filter(result => result.status === 'fulfilled')
-      .map(result => (result as PromiseFulfilledResult<CompletionResult>).value);
+      .filter((result) => result.status === 'fulfilled')
+      .map(
+        (result) => (result as PromiseFulfilledResult<CompletionResult>).value
+      );
 
     // Merge and rank completions
     const mergedCompletions = this.mergeCompletions(validResponses);
@@ -1087,7 +1138,6 @@ class CollaborativeCompletion {
     position: Position,
     context: CompletionContext
   ): Promise<CompletionResult> {
-    
     const agent = this.agentClients.get(agentId);
     if (!agent) {
       throw new Error(`Agent not available: ${agentId}`);
@@ -1100,10 +1150,10 @@ class CollaborativeCompletion {
       source: {
         agentId: 'completion-manager',
         agentType: 'system',
-        capabilities: ['completion-coordination']
+        capabilities: ['completion-coordination'],
       },
       target: {
-        agentId: agentId
+        agentId: agentId,
       },
       content: {
         type: 'request',
@@ -1111,10 +1161,10 @@ class CollaborativeCompletion {
         data: {
           code,
           position,
-          context
+          context,
         },
-        priority: 'high'
-      }
+        priority: 'high',
+      },
     };
 
     return await agent.send(requestMessage);
@@ -1150,7 +1200,7 @@ class AgentMonitoringDashboard {
       averageResponseTime: metrics?.averageResponseTime || 0,
       capabilities: metrics?.capabilities || [],
       memoryUsage: health?.memoryUsage || 0,
-      cpuUsage: health?.cpuUsage || 0
+      cpuUsage: health?.cpuUsage || 0,
     };
   }
 
@@ -1169,12 +1219,11 @@ class AgentMonitoringDashboard {
         timestamp: Date.now(),
         memoryUsage: pingResult.memoryUsage || 0,
         cpuUsage: pingResult.cpuUsage || 0,
-        errors: []
+        errors: [],
       };
 
       this.healthChecks.set(agentId, healthResult);
       return healthResult;
-
     } catch (error) {
       const healthResult: HealthCheckResult = {
         agentId,
@@ -1183,7 +1232,7 @@ class AgentMonitoringDashboard {
         timestamp: Date.now(),
         memoryUsage: 0,
         cpuUsage: 0,
-        errors: [error.message]
+        errors: [error.message],
       };
 
       this.healthChecks.set(agentId, healthResult);
@@ -1197,19 +1246,22 @@ class AgentMonitoringDashboard {
   }
 
   generateReport(): MonitoringReport {
-    const agentStatuses = Array.from(this.metrics.keys()).map(agentId => 
+    const agentStatuses = Array.from(this.metrics.keys()).map((agentId) =>
       this.getAgentStatus(agentId)
     );
 
     return {
       timestamp: Date.now(),
       totalAgents: agentStatuses.length,
-      healthyAgents: agentStatuses.filter(a => a.status === 'healthy').length,
-      unhealthyAgents: agentStatuses.filter(a => a.status === 'unhealthy').length,
+      healthyAgents: agentStatuses.filter((a) => a.status === 'healthy').length,
+      unhealthyAgents: agentStatuses.filter((a) => a.status === 'unhealthy')
+        .length,
       totalMessages: agentStatuses.reduce((sum, a) => sum + a.messageCount, 0),
       totalErrors: agentStatuses.reduce((sum, a) => sum + a.errorCount, 0),
-      averageResponseTime: agentStatuses.reduce((sum, a) => sum + a.averageResponseTime, 0) / agentStatuses.length,
-      agentDetails: agentStatuses
+      averageResponseTime:
+        agentStatuses.reduce((sum, a) => sum + a.averageResponseTime, 0) /
+        agentStatuses.length,
+      agentDetails: agentStatuses,
     };
   }
 }
@@ -1239,7 +1291,7 @@ log() {
 # Register with TNF relay
 register_agent() {
     log "Registering terminal agent with TNF relay"
-    
+
     # Create registration message
     cat > /tmp/tnf-register.json << EOF
 {
@@ -1277,10 +1329,10 @@ EOF
             -H "Content-Type: application/json" \
             -d @/tmp/tnf-register.json || log "Failed to register via HTTP"
     fi
-    
+
     # Also try file protocol
     cp /tmp/tnf-register.json "$HOME/.tnf-messages/outgoing/" 2>/dev/null || true
-    
+
     rm -f /tmp/tnf-register.json
 }
 
@@ -1289,7 +1341,7 @@ handle_command() {
     local message="$1"
     local action=$(echo "$message" | jq -r '.content.action')
     local data=$(echo "$message" | jq -r '.content.data')
-    
+
     case "$action" in
         "execute-shell")
             execute_shell_command "$data"
@@ -1311,21 +1363,21 @@ execute_shell_command() {
     local command_data="$1"
     local command=$(echo "$command_data" | jq -r '.command')
     local working_dir=$(echo "$command_data" | jq -r '.workingDirectory // "."')
-    
+
     log "Executing command: $command in directory: $working_dir"
-    
+
     # Change to working directory
     cd "$working_dir" || {
         send_error "Failed to change to directory: $working_dir"
         return 1
     }
-    
+
     # Execute command and capture output
     local output
     local exit_code
     output=$(eval "$command" 2>&1)
     exit_code=$?
-    
+
     # Send result back
     send_command_result "$command" "$output" "$exit_code"
 }
@@ -1335,7 +1387,7 @@ send_command_result() {
     local command="$1"
     local output="$2"
     local exit_code="$3"
-    
+
     cat > /tmp/tnf-result.json << EOF
 {
     "version": "1.0",
@@ -1371,13 +1423,13 @@ EOF
 # Monitor for incoming messages
 monitor_messages() {
     local message_dir="$HOME/.tnf-messages/incoming"
-    
+
     if ! command -v fswatch > /dev/null; then
         log "fswatch not available, using polling"
         poll_messages
         return
     fi
-    
+
     log "Monitoring for messages using fswatch"
     fswatch -o "$message_dir" | while read num_changes; do
         for file in "$message_dir"/*.json; do
@@ -1391,7 +1443,7 @@ monitor_messages() {
 # Polling fallback for message monitoring
 poll_messages() {
     local message_dir="$HOME/.tnf-messages/incoming"
-    
+
     while true; do
         for file in "$message_dir"/*.json; do
             if [[ -f "$file" ]]; then
@@ -1406,16 +1458,16 @@ poll_messages() {
 handle_message_file() {
     local file="$1"
     local message
-    
+
     message=$(cat "$file" 2>/dev/null) || return
-    
+
     # Check if message is for this agent
     local target_agent=$(echo "$message" | jq -r '.target.agentId')
     if [[ "$target_agent" == "$AGENT_ID" || "$target_agent" == "broadcast" ]]; then
         log "Processing message from file: $(basename "$file")"
         handle_command "$message"
     fi
-    
+
     # Remove processed message
     rm -f "$file"
 }
@@ -1423,14 +1475,14 @@ handle_message_file() {
 # Main execution
 main() {
     log "Starting TNF Terminal Agent"
-    
+
     # Create necessary directories
     mkdir -p "$HOME/.tnf-messages/incoming"
     mkdir -p "$HOME/.tnf-messages/outgoing"
-    
+
     # Register with relay
     register_agent
-    
+
     # Start monitoring for messages
     monitor_messages
 }
@@ -1455,9 +1507,9 @@ class VSCodeAgent {
     'file-operations',
     'ui-interaction',
     'debugging',
-    'git-operations'
+    'git-operations',
   ];
-  
+
   private webSocketClient: AgentWebSocketClient;
   private statusBarItem: vscode.StatusBarItem;
   private outputChannel: vscode.OutputChannel;
@@ -1465,10 +1517,10 @@ class VSCodeAgent {
   constructor(context: vscode.ExtensionContext) {
     this.outputChannel = vscode.window.createOutputChannel('TNF VS Code Agent');
     this.statusBarItem = vscode.window.createStatusBarItem(
-      vscode.StatusBarAlignment.Right, 
+      vscode.StatusBarAlignment.Right,
       100
     );
-    
+
     this.initialize(context);
   }
 
@@ -1477,16 +1529,21 @@ class VSCodeAgent {
     this.statusBarItem.show();
 
     try {
-      this.webSocketClient = new AgentWebSocketClient(this.agentId, this.capabilities);
+      this.webSocketClient = new AgentWebSocketClient(
+        this.agentId,
+        this.capabilities
+      );
       await this.webSocketClient.connect();
-      
+
       this.statusBarItem.text = '$(check) TNF Connected';
       this.statusBarItem.color = '#00ff00';
-      
+
       this.registerMessageHandlers();
       this.registerCommands(context);
-      
-      this.outputChannel.appendLine('TNF VS Code Agent initialized successfully');
+
+      this.outputChannel.appendLine(
+        'TNF VS Code Agent initialized successfully'
+      );
     } catch (error) {
       this.statusBarItem.text = '$(error) TNF Error';
       this.statusBarItem.color = '#ff0000';
@@ -1495,30 +1552,57 @@ class VSCodeAgent {
   }
 
   private registerMessageHandlers(): void {
-    this.webSocketClient.onMessage('analyze-code', this.handleCodeAnalysis.bind(this));
-    this.webSocketClient.onMessage('run-command', this.handleRunCommand.bind(this));
-    this.webSocketClient.onMessage('get-file-content', this.handleGetFileContent.bind(this));
-    this.webSocketClient.onMessage('write-file', this.handleWriteFile.bind(this));
-    this.webSocketClient.onMessage('git-operation', this.handleGitOperation.bind(this));
+    this.webSocketClient.onMessage(
+      'analyze-code',
+      this.handleCodeAnalysis.bind(this)
+    );
+    this.webSocketClient.onMessage(
+      'run-command',
+      this.handleRunCommand.bind(this)
+    );
+    this.webSocketClient.onMessage(
+      'get-file-content',
+      this.handleGetFileContent.bind(this)
+    );
+    this.webSocketClient.onMessage(
+      'write-file',
+      this.handleWriteFile.bind(this)
+    );
+    this.webSocketClient.onMessage(
+      'git-operation',
+      this.handleGitOperation.bind(this)
+    );
   }
 
   private registerCommands(context: vscode.ExtensionContext): void {
     const commands = [
-      vscode.commands.registerCommand('tnf.sendMessage', this.sendMessage.bind(this)),
-      vscode.commands.registerCommand('tnf.analyzeCurrentFile', this.analyzeCurrentFile.bind(this)),
-      vscode.commands.registerCommand('tnf.startCollaboration', this.startCollaboration.bind(this)),
-      vscode.commands.registerCommand('tnf.showAgentStatus', this.showAgentStatus.bind(this))
+      vscode.commands.registerCommand(
+        'tnf.sendMessage',
+        this.sendMessage.bind(this)
+      ),
+      vscode.commands.registerCommand(
+        'tnf.analyzeCurrentFile',
+        this.analyzeCurrentFile.bind(this)
+      ),
+      vscode.commands.registerCommand(
+        'tnf.startCollaboration',
+        this.startCollaboration.bind(this)
+      ),
+      vscode.commands.registerCommand(
+        'tnf.showAgentStatus',
+        this.showAgentStatus.bind(this)
+      ),
     ];
 
-    commands.forEach(cmd => context.subscriptions.push(cmd));
+    commands.forEach((cmd) => context.subscriptions.push(cmd));
   }
 
   private async handleCodeAnalysis(message: any): Promise<void> {
     const { code, language, analysisType } = message.content.data;
-    
+
     try {
       let analysis: any;
-      
+
       switch (analysisType) {
         case 'syntax':
           analysis = await this.performSyntaxAnalysis(code, language);
@@ -1536,70 +1620,82 @@ class VSCodeAgent {
       await this.sendResponse(message, {
         success: true,
         analysis,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     } catch (error) {
       await this.sendError(message, error.message);
     }
   }
 
-  private async performSyntaxAnalysis(code: string, language: string): Promise<any> {
+  private async performSyntaxAnalysis(
+    code: string,
+    language: string
+  ): Promise<any> {
     // Use VS Code's built-in language services
     const document = await vscode.workspace.openTextDocument({
       content: code,
-      language: language
+      language: language,
     });
 
     // Get diagnostics from VS Code
     const diagnostics = vscode.languages.getDiagnostics(document.uri);
-    
+
     return {
       type: 'syntax',
-      issues: diagnostics.map(diag => ({
+      issues: diagnostics.map((diag) => ({
         severity: diag.severity,
         message: diag.message,
         range: {
-          start: { line: diag.range.start.line, character: diag.range.start.character },
-          end: { line: diag.range.end.line, character: diag.range.end.character }
+          start: {
+            line: diag.range.start.line,
+            character: diag.range.start.character,
+          },
+          end: {
+            line: diag.range.end.line,
+            character: diag.range.end.character,
+          },
         },
-        source: diag.source
+        source: diag.source,
       })),
-      isValid: diagnostics.length === 0
+      isValid: diagnostics.length === 0,
     };
   }
 
   private async handleRunCommand(message: any): Promise<void> {
     const { command, args } = message.content.data;
-    
+
     try {
       // Execute VS Code command
       const result = await vscode.commands.executeCommand(command, ...args);
-      
+
       await this.sendResponse(message, {
         success: true,
         result,
         command,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     } catch (error) {
-      await this.sendError(message, `Command execution failed: ${error.message}`);
+      await this.sendError(
+        message,
+        `Command execution failed: ${error.message}`
+      );
     }
   }
 
   private async handleGetFileContent(message: any): Promise<void> {
     const { filePath } = message.content.data;
-    
+
     try {
       const uri = vscode.Uri.file(filePath);
       const document = await vscode.workspace.openTextDocument(uri);
-      
+
       await this.sendResponse(message, {
         success: true,
         content: document.getText(),
         language: document.languageId,
         lineCount: document.lineCount,
         filePath,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     } catch (error) {
       await this.sendError(message, `Failed to read file: ${error.message}`);
@@ -1608,10 +1704,10 @@ class VSCodeAgent {
 
   private async handleWriteFile(message: any): Promise<void> {
     const { filePath, content, createIfNotExists } = message.content.data;
-    
+
     try {
       const uri = vscode.Uri.file(filePath);
-      
+
       // Check if file exists
       try {
         await vscode.workspace.fs.stat(uri);
@@ -1620,14 +1716,14 @@ class VSCodeAgent {
           throw new Error('File does not exist and createIfNotExists is false');
         }
       }
-      
+
       await vscode.workspace.fs.writeFile(uri, Buffer.from(content, 'utf8'));
-      
+
       await this.sendResponse(message, {
         success: true,
         filePath,
         bytesWritten: Buffer.byteLength(content, 'utf8'),
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     } catch (error) {
       await this.sendError(message, `Failed to write file: ${error.message}`);
@@ -1642,26 +1738,29 @@ class VSCodeAgent {
       source: {
         agentId: this.agentId,
         agentType: 'vscode',
-        capabilities: this.capabilities
+        capabilities: this.capabilities,
       },
       target: {
-        agentId: originalMessage.source.agentId
+        agentId: originalMessage.source.agentId,
       },
       content: {
         type: 'response',
         action: `${originalMessage.content.action}-result`,
         data,
-        priority: 'medium'
+        priority: 'medium',
       },
       metadata: {
-        correlationId: originalMessage.messageId
-      }
+        correlationId: originalMessage.messageId,
+      },
     };
 
     await this.webSocketClient.send(response);
   }
 
-  private async sendError(originalMessage: any, errorMessage: string): Promise<void> {
+  private async sendError(
+    originalMessage: any,
+    errorMessage: string
+  ): Promise<void> {
     const response = {
       version: '1.0',
       messageId: `vscode-error-${Date.now()}`,
@@ -1669,23 +1768,23 @@ class VSCodeAgent {
       source: {
         agentId: this.agentId,
         agentType: 'vscode',
-        capabilities: this.capabilities
+        capabilities: this.capabilities,
       },
       target: {
-        agentId: originalMessage.source.agentId
+        agentId: originalMessage.source.agentId,
       },
       content: {
         type: 'response',
         action: 'error',
         data: {
           error: errorMessage,
-          originalAction: originalMessage.content.action
+          originalAction: originalMessage.content.action,
         },
-        priority: 'high'
+        priority: 'high',
       },
       metadata: {
-        correlationId: originalMessage.messageId
-      }
+        correlationId: originalMessage.messageId,
+      },
     };
 
     await this.webSocketClient.send(response);
@@ -1712,10 +1811,10 @@ interface AgentConfiguration {
   displayName: string;
   description: string;
   version: string;
-  
+
   capabilities: AgentCapability[];
   protocols: ProtocolConfiguration[];
-  
+
   communication: {
     primaryProtocol: 'websocket' | 'redis' | 'file' | 'mcp';
     fallbackProtocols: string[];
@@ -1723,27 +1822,27 @@ interface AgentConfiguration {
     timeoutMs: number;
     heartbeatIntervalMs: number;
   };
-  
+
   resources: {
     maxMemoryMB: number;
     maxCpuPercent: number;
     maxConcurrentTasks: number;
   };
-  
+
   security: {
     authenticationRequired: boolean;
     allowedOrigins: string[];
     rateLimitRpm: number;
     encryptionEnabled: boolean;
   };
-  
+
   monitoring: {
     metricsEnabled: boolean;
     healthCheckIntervalMs: number;
     logLevel: 'debug' | 'info' | 'warn' | 'error';
     logRetentionDays: number;
   };
-  
+
   customSettings: Record<string, any>;
 }
 
@@ -1778,16 +1877,16 @@ class ConfigurationManager {
   async loadConfigurations(): Promise<void> {
     try {
       const configFiles = await fs.promises.readdir(this.configPath);
-      
+
       for (const file of configFiles) {
         if (file.endsWith('.json')) {
           const filePath = path.join(this.configPath, file);
           const configData = await fs.promises.readFile(filePath, 'utf8');
           const config: AgentConfiguration = JSON.parse(configData);
-          
+
           // Validate configuration
           this.validateConfiguration(config);
-          
+
           this.configurations.set(config.agentId, config);
         }
       }
@@ -1800,7 +1899,10 @@ class ConfigurationManager {
     return this.configurations.get(agentId);
   }
 
-  async updateConfiguration(agentId: string, updates: Partial<AgentConfiguration>): Promise<void> {
+  async updateConfiguration(
+    agentId: string,
+    updates: Partial<AgentConfiguration>
+  ): Promise<void> {
     const existing = this.configurations.get(agentId);
     if (!existing) {
       throw new Error(`Configuration not found for agent: ${agentId}`);
@@ -1808,9 +1910,9 @@ class ConfigurationManager {
 
     const updated = { ...existing, ...updates };
     this.validateConfiguration(updated);
-    
+
     this.configurations.set(agentId, updated);
-    
+
     // Save to file
     const filePath = path.join(this.configPath, `${agentId}.json`);
     await fs.promises.writeFile(filePath, JSON.stringify(updated, null, 2));
@@ -1819,14 +1921,16 @@ class ConfigurationManager {
   private validateConfiguration(config: AgentConfiguration): void {
     // Implement configuration validation logic
     if (!config.agentId || !config.agentType) {
-      throw new Error('Invalid configuration: agentId and agentType are required');
+      throw new Error(
+        'Invalid configuration: agentId and agentType are required'
+      );
     }
-    
+
     // Validate capabilities
     if (!Array.isArray(config.capabilities)) {
       throw new Error('Invalid configuration: capabilities must be an array');
     }
-    
+
     // Validate protocols
     if (!Array.isArray(config.protocols)) {
       throw new Error('Invalid configuration: protocols must be an array');
@@ -1835,4 +1939,9 @@ class ConfigurationManager {
 }
 ```
 
-This complete agent communication guide consolidates all agent-related documentation including the TNF Agent Relay system, communication protocols, inter-extension communication, workflow builder, collaboration features, monitoring capabilities, and advanced configuration options. All technical details and implementation examples have been preserved while providing a comprehensive reference for agent communication development and deployment.
+This complete agent communication guide consolidates all agent-related
+documentation including the TNF Agent Relay system, communication protocols,
+inter-extension communication, workflow builder, collaboration features,
+monitoring capabilities, and advanced configuration options. All technical
+details and implementation examples have been preserved while providing a
+comprehensive reference for agent communication development and deployment.

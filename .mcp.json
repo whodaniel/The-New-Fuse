@@ -58,9 +58,9 @@
       },
       "disabled": true
     },
-    "prisma-mcp-server": {
+    "drizzle-mcp-server": {
       "command": "npx",
-      "args": ["-y", "prisma", "mcp"],
+      "args": ["-y", "drizzle", "mcp"],
       "env": {},
       "disabled": false
     },

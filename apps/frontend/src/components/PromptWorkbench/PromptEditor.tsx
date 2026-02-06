@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import MonacoEditor from '@monaco-editor/react';
+import React, { useState } from 'react';
 import { FaCode, FaMarkdown, FaQuestionCircle } from 'react-icons/fa';
 
 interface PromptEditorProps {
@@ -28,9 +28,7 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onChange }) 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">
-          Prompt Template
-        </h3>
+        <h3 className="text-lg font-medium text-gray-900">Prompt Template</h3>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setEditorMode('plain')}
@@ -77,32 +75,34 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onChange }) 
             </button>
 
             <div className="absolute right-0 top-full mt-2 w-72 p-4 bg-white border border-gray-200 rounded-lg shadow-xl z-10 hidden group-hover:block text-sm">
-               <div className="space-y-4">
-                 <div>
-                   <p className="font-bold mb-1">Template Variables</p>
-                   <p className="text-gray-600 mb-2">Use <code>{'{{variable_name}}'}</code> syntax for variables.</p>
-                   <div className="bg-gray-50 p-2 rounded text-xs border border-gray-100 font-mono">
-                     Hello, my name is {'{{ name }}'} and I am {'{{ age }}'} years old.
-                   </div>
-                 </div>
+              <div className="space-y-4">
+                <div>
+                  <p className="font-bold mb-1">Template Variables</p>
+                  <p className="text-gray-600 mb-2">
+                    Use <code>{'{{variable_name}}'}</code> syntax for variables.
+                  </p>
+                  <div className="bg-gray-50 p-2 rounded text-xs border border-gray-100 font-mono">
+                    Hello, my name is {'{{ name }}'} and I am {'{{ age }}'} years old.
+                  </div>
+                </div>
 
-                 <div>
-                   <p className="font-bold mb-1">System Instructions</p>
-                   <p className="text-gray-600 mb-2">Start with clear system instructions:</p>
-                   <div className="bg-gray-50 p-2 rounded text-xs border border-gray-100 font-mono">
-                     You are a helpful assistant that provides concise answers.
-                   </div>
-                 </div>
+                <div>
+                  <p className="font-bold mb-1">System Instructions</p>
+                  <p className="text-gray-600 mb-2">Start with clear system instructions:</p>
+                  <div className="bg-gray-50 p-2 rounded text-xs border border-gray-100 font-mono">
+                    You are a helpful assistant that provides concise answers.
+                  </div>
+                </div>
 
-                 <div>
-                    <p className="font-bold mb-1">Formatting Tips</p>
-                    <ul className="text-gray-600 list-disc list-inside">
-                      <li>Use triple backticks for code blocks</li>
-                      <li>Use bullet points for lists</li>
-                      <li>Separate instructions clearly</li>
-                    </ul>
-                 </div>
-               </div>
+                <div>
+                  <p className="font-bold mb-1">Formatting Tips</p>
+                  <ul className="text-gray-600 list-disc list-inside">
+                    <li>Use triple backticks for code blocks</li>
+                    <li>Use bullet points for lists</li>
+                    <li>Separate instructions clearly</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>

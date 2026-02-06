@@ -3,11 +3,16 @@
 ## 1. MONOREPO FOUNDATION & BUILD SYSTEM RESTORATION
 
 ### 1.1 TypeScript Configuration Audit
+
 - [x] **Active package configuration audit completed**:
-  - TaskProcessor.tsx build errors fixed (lines 108, 136) - removed invalid `id` property from TaskResult type
-  - GDesignerAdapter.tsx build errors fixed (line 70) - removed invalid `nextSteps` property from WorkflowStep type
-  - TypeScript type mismatches resolved between @the-new-fuse/types definitions and implementation code
-- [ ] **Verify all tsconfig.json files** across packages have correct module resolution settings:
+  - TaskProcessor.tsx build errors fixed (lines 108, 136) - removed invalid `id`
+    property from TaskResult type
+  - GDesignerAdapter.tsx build errors fixed (line 70) - removed invalid
+    `nextSteps` property from WorkflowStep type
+  - TypeScript type mismatches resolved between @the-new-fuse/types definitions
+    and implementation code
+- [ ] **Verify all tsconfig.json files** across packages have correct module
+      resolution settings:
   - `"moduleResolution": "node"` or `"bundler"`
   - `"allowSyntheticDefaultImports": true`
   - `"esModuleInterop": true`
@@ -22,9 +27,10 @@
   - Verify `dist/` outputs contain proper .d.ts files
 
 ### 1.2 Package Architecture Verification (**42 packages identified**)
+
 - [x] **Core package structure exists**:
   - `packages/core/` - Agent orchestration core ✓
-  - `packages/database/` - Prisma database layer ✓
+  - `packages/database/` - Drizzle database layer ✓
   - `packages/extension-system/` - Extension management ✓
   - `packages/workflow-engine/` - Workflow orchestration ✓
   - `packages/relay-core/` - Agent communication relay ✓
@@ -32,7 +38,8 @@
   - `packages/agent/` - Agent implementation package ✓
   - `packages/types/` - Centralized type definitions ✓
   - **Additional specialized packages discovered**:
-    - `packages/a2a-core/` & `packages/a2a-react/` - Agent-to-Agent communication
+    - `packages/a2a-core/` & `packages/a2a-react/` - Agent-to-Agent
+      communication
     - `packages/fairtable-*` - Fair table components ecosystem (5 packages)
     - `packages/api-*` - API layer packages (4 packages)
     - `packages/ui-*` - UI component packages (3 packages)
@@ -47,16 +54,17 @@
 
 ## 2. DATABASE & PRISMA SYSTEM RESTORATION
 
-### 2.1 Prisma Schema Verification
+### 2.1 Drizzle Schema Verification
+
 - [ ] **Schema consistency check**:
-  - `packages/database/prisma/schema.prisma` exists and is valid
+  - `packages/database/drizzle/schema.drizzle` exists and is valid
   - Generated client in `packages/database/generated/` is up-to-date
   - `AgentStatus` enum matches between schema and TypeScript types
   - `RegisteredEntity` type definitions are consistent across packages
 - [ ] **Database connectivity**:
   - Environment variables for database URL are configured
-  - `bun prisma generate` runs successfully
-  - `bun prisma db push` or `bun prisma migrate dev` works without errors
+  - `bun drizzle generate` runs successfully
+  - `bun drizzle db push` or `bun drizzle migrate dev` works without errors
 - [ ] **Repository pattern implementation**:
   - `packages/database/src/repositories/` contains proper repository classes
   - Type-safe database operations for all entities
@@ -65,6 +73,7 @@
 ## 3. MCP (MODEL CONTEXT PROTOCOL) SYSTEM RESTORATION
 
 ### 3.1 MCP Server Implementation
+
 - [ ] **TheNewFuseMCPServer core**:
   - Main MCP server class with proper protocol implementation
   - Resource discovery and capability advertisement
@@ -80,6 +89,7 @@
   - Connection pooling and retry logic
 
 ### 3.2 MCP Integration Points
+
 - [ ] **Workflow Integration**:
   - MCP workflow integration services
   - Task delegation through MCP protocol
@@ -92,6 +102,7 @@
 ## 4. BROWSER HUB & ELECTRON INTEGRATION RESTORATION
 
 ### 4.1 Electron Application Structure
+
 - [ ] **Apps structure verification**:
   - `apps/browser-hub/` (not packages/browser-hub/)
   - Proper Electron main process in `src/main/`
@@ -108,6 +119,7 @@
   - Secure command execution sandbox
 
 ### 4.2 Browser Hub Services
+
 - [ ] **Startup and lifecycle management**:
   - Proper Electron app lifecycle handling
   - Window management and restoration
@@ -120,6 +132,7 @@
 ## 5. AGENT ORCHESTRATION SYSTEM RESTORATION
 
 ### 5.1 Core Agent Infrastructure
+
 - [ ] **Agent Orchestrator implementation**:
   - `packages/core/src/agents/agent-orchestrator.ts` exists and functional
   - Agent lifecycle management (spawn, monitor, terminate)
@@ -137,6 +150,7 @@
   - Resource usage monitoring
 
 ### 5.2 Task Management & Workflow
+
 - [ ] **Task execution engine**:
   - `packages/core/src/task/TaskModule.ts` properly implemented
   - Task priority queue system
@@ -156,6 +170,7 @@
 ## 6. API & BACKEND SERVICES RESTORATION
 
 ### 6.1 NestJS API Structure
+
 - [x] **API applications structure confirmed**:
   - `apps/api/` main API server ✓
   - `apps/backend/` additional backend service ✓
@@ -181,12 +196,13 @@
   - Role-based access control
 
 ### 6.2 Service Integration
+
 - [ ] **MCP integration in API**:
   - API endpoints for MCP server management
   - Agent communication through API
   - WebSocket integration for real-time updates
 - [ ] **Database integration**:
-  - Proper Prisma client usage in services
+  - Proper Drizzle client usage in services
   - Repository pattern implementation
   - Transaction management
   - Connection pooling
@@ -194,6 +210,7 @@
 ## 7. FRONTEND & UI RESTORATION
 
 ### 7.1 Frontend Applications
+
 - [x] **Frontend app structure confirmed**:
   - `apps/frontend/` React/NextJS application ✓
   - `apps/electron-desktop/` Electron desktop application ✓
@@ -214,6 +231,7 @@
   - Accessibility compliance
 
 ### 7.2 A2A Protocol Frontend Integration
+
 - [ ] **Agent-to-Agent protocol UI**:
   - Real-time agent status display
   - Task management interface
@@ -223,6 +241,7 @@
 ## 8. THEIA IDE INTEGRATION RESTORATION
 
 ### 8.1 IDE Integration Points
+
 - [ ] **SkIDEancer IDE setup**:
   - SkIDEancer IDE configuration and startup
   - Extension loading and management
@@ -235,6 +254,7 @@
   - Plugin API integration
 
 ### 8.2 Development Tools Integration
+
 - [ ] **VSCode integration**:
   - VSCode extension configuration
   - Terminal integration services
@@ -244,6 +264,7 @@
 ## 9. SECURITY & SUBPROCESS EXECUTION RESTORATION
 
 ### 9.1 Security Infrastructure
+
 - [ ] **Security package verification**:
   - `packages/security/src/` contains all security utilities
   - Cryptographic utilities implementation
@@ -256,6 +277,7 @@
   - Resource limits and monitoring
 
 ### 9.2 Git Transaction Logging
+
 - [ ] **Git integration services**:
   - `GitTransactionService` for automated commits
   - AI change tracking and logging
@@ -265,13 +287,15 @@
 ## 10. PYDANTIC FOUNDATIONAL PROTOCOL SYSTEM RESTORATION
 
 ### 10.1 Pydantic as Root Agentic Protocol
+
 - [ ] **Pydantic version compatibility**:
   - Verify latest Pydantic version compatibility (check for v2.x updates)
   - Update Pydantic dependencies across all Python components
   - Ensure backward compatibility with existing models
   - Performance optimizations from newer Pydantic versions
 - [ ] **Root protocol implementation**:
-  - `packages/relay-core/src/types/index.ts` shows `'pydantic-v1.0'` protocol support
+  - `packages/relay-core/src/types/index.ts` shows `'pydantic-v1.0'` protocol
+    support
   - Pydantic as the foundational protocol for all agent communication
   - Protocol translator implementation for Pydantic models
   - Data validation and serialization between TypeScript and Python
@@ -283,6 +307,7 @@
   - Type-safe data exchange between Node.js and Python services
 
 ### 10.2 Python Component Verification
+
 - [ ] **Python environment setup**:
   - Python dependencies and virtual environment configuration
   - Pydantic installation and version compatibility
@@ -294,6 +319,7 @@
   - Error handling for schema mismatches
 
 ### 10.3 Testing Infrastructure
+
 - [ ] **Python testing utilities**:
   - `tools/testing/test_server.py` functionality verification
   - Cross-language integration tests
@@ -303,6 +329,7 @@
 ## 11. ANTHROPIC & GEMINI PROTOCOL COMPATIBILITY RESTORATION
 
 ### 11.1 Anthropic Protocol Standards & SDK Integration
+
 - [ ] **Latest Anthropic documentation review**:
   - Regular checks of Anthropic documentation for protocol updates
   - Claude Sub-Agents Protocol latest version implementation
@@ -315,6 +342,7 @@
   - Authentication and rate limiting compliance
 
 ### 11.2 Google Gemini CLI & SDK Integration
+
 - [ ] **Gemini CLI integration**:
   - Terminal-based Gemini CLI automation
   - VSCode API commands for terminal creation and management
@@ -331,6 +359,7 @@
   - Error handling for CLI startup failures
 
 ### 11.3 Claude.md Customization & Gemini Delegation
+
 - [ ] **Advanced Claude.md configuration**:
   - Sophisticated prompt engineering for maximum capability
   - Negative prompting to prevent common errors
@@ -350,6 +379,7 @@
 ## 12. CHRONOLOGICAL SYNCHRONIZATION & MASTER CLOCK SYSTEM
 
 ### 12.1 Master Clock Architecture
+
 - [ ] **Central timing system**:
   - Master clock implementation for system-wide synchronization
   - Timestamp coordination across all components
@@ -362,6 +392,7 @@
   - Distributed system clock management
 
 ### 12.2 Dormancy Prevention & Awakening System
+
 - [ ] **Automated reprompting system**:
   - Regular intervals for Claude awakening
   - Continuation of ongoing conversations
@@ -376,6 +407,7 @@
 ## 13. EXTENSION SYSTEM RESTORATION
 
 ### 13.1 Extension Architecture
+
 - [x] **Extension system core**:
   - `packages/extension-system/src/` implementation ✓
   - Extension loader and manager ✓
@@ -388,6 +420,7 @@
   - Integration with main project README ✓
 
 ### 13.2 Extension Lifecycle
+
 - [x] **Extension lifecycle**:
   - Extension installation and activation ✓
   - Dependency management ✓
@@ -402,6 +435,7 @@
 ## 14. INTEGRATION TESTS & VERIFICATION
 
 ### 14.1 Test Infrastructure
+
 - [ ] **Integration test suite**:
   - `packages/integration-tests/` exists with comprehensive tests
   - End-to-end workflow testing
@@ -415,6 +449,7 @@
   - Performance benchmarking
 
 ### 14.2 System Verification Commands
+
 - [ ] **Build verification**:
   ```bash
   pnpm install
@@ -437,6 +472,7 @@
 ## 15. FAIRTABLE ECOSYSTEM RESTORATION
 
 ### 15.1 FairTable Core Components
+
 - [x] **FairTable package ecosystem identified** (5 packages):
   - `packages/fairtable-core/` - Core table functionality ✓
   - `packages/fairtable-components/` - React table components ✓
@@ -451,6 +487,7 @@
   - Custom cell renderers and editors
 
 ### 15.2 FairTable Integration Points
+
 - [ ] **Agent data visualization**:
   - Agent status tables
   - Task execution results display
@@ -464,6 +501,7 @@
 ## 16. FEATURE MANAGEMENT SYSTEM RESTORATION
 
 ### 16.1 Feature Framework Components
+
 - [x] **Feature management packages identified** (3 packages):
   - `packages/features/` - Core feature management ✓
   - `packages/feature-tracker/` - Feature tracking system ✓
@@ -475,6 +513,7 @@
   - Performance impact monitoring
 
 ### 16.2 Feature Development Lifecycle
+
 - [ ] **Feature suggestion pipeline**:
   - User feedback collection
   - Feature request prioritization
@@ -488,6 +527,7 @@
 ## 17. PROMPT TEMPLATING & LLM INTEGRATION RESTORATION
 
 ### 17.1 Prompt Management System
+
 - [x] **Prompt templating package identified**:
   - `packages/prompt-templating/` - LLM prompt management ✓
 - [ ] **Prompt template engine**:
@@ -502,6 +542,7 @@
   - Response caching and optimization
 
 ### 17.2 Advanced LLM Workflows
+
 - [ ] **Multi-agent prompt coordination**:
   - Agent-specific prompt templates
   - Cross-agent context sharing
@@ -511,6 +552,7 @@
 ## 18. DEPLOYMENT & PRODUCTION READINESS
 
 ### 18.1 Production Configuration
+
 - [ ] **Environment configuration**:
   - Production environment variables
   - Database connection configuration
@@ -523,6 +565,7 @@
   - Health check endpoints
 
 ### 18.2 Monitoring & Observability
+
 - [ ] **Logging infrastructure**:
   - Structured logging implementation
   - Log aggregation and analysis
@@ -533,15 +576,22 @@
 
 ## RESTORATION EXECUTION STRATEGY
 
-1. **Start with Foundation** (Items 1-2): Ensure monorepo builds and database connectivity
-2. **Core Systems** (Items 3-5): Restore MCP, browser hub, and agent orchestration
+1. **Start with Foundation** (Items 1-2): Ensure monorepo builds and database
+   connectivity
+2. **Core Systems** (Items 3-5): Restore MCP, browser hub, and agent
+   orchestration
 3. **Application Layer** (Items 6-7): API and frontend restoration
-4. **Integration Systems** (Items 8-13): Python/Pydantic, Anthropic/Gemini protocols, chronological sync, IDE, security, and extensions
+4. **Integration Systems** (Items 8-13): Python/Pydantic, Anthropic/Gemini
+   protocols, chronological sync, IDE, security, and extensions
 5. **Verification** (Items 14): Comprehensive testing
-6. **Specialized Systems** (Items 15-17): FairTable, Feature Management, and Prompt Templating
+6. **Specialized Systems** (Items 15-17): FairTable, Feature Management, and
+   Prompt Templating
 7. **Production Deployment** (Item 18): Deployment readiness and monitoring
 
-Each item should be verified with specific commands and tests before moving to the next phase. This roadmap ensures that all the sophisticated multi-agent orchestration, browser automation, and IDE integration capabilities identified in the conversation history are properly restored and functional.
+Each item should be verified with specific commands and tests before moving to
+the next phase. This roadmap ensures that all the sophisticated multi-agent
+orchestration, browser automation, and IDE integration capabilities identified
+in the conversation history are properly restored and functional.
 
 ---
 
@@ -550,28 +600,37 @@ Each item should be verified with specific commands and tests before moving to t
 **Last Updated:** August 4, 2025  
 **Current Phase:** Foundation Enhancement & Specialized System Discovery  
 **Completed Sections:**
-- ✅ Section 1.1: TypeScript Configuration Audit (partial) - Active build errors resolved
-- ✅ Section 1.2: Package Architecture Verification - 42 packages identified and catalogued
+
+- ✅ Section 1.1: TypeScript Configuration Audit (partial) - Active build errors
+  resolved
+- ✅ Section 1.2: Package Architecture Verification - 42 packages identified and
+  catalogued
 - ✅ Section 6.1: NestJS API Structure - Application structure confirmed
 - ✅ Section 7.1: Frontend Applications - Multi-app structure confirmed
 - ✅ Section 15: FairTable Ecosystem - 5-package ecosystem identified
 - ✅ Section 16: Feature Management System - 3-package system identified
 - ✅ Section 17: Prompt Templating System - LLM integration package identified
 
-**Currently In Progress:** 
+**Currently In Progress:**
+
 - 🔄 TypeScript build system comprehensive audit
 - 🔄 MCP system implementation status assessment
 - 🔄 Agent orchestration core functionality verification
 
 **Critical Findings:**
+
 - **42 total packages** identified (vs original estimate of ~6 core packages)
-- **Specialized ecosystems discovered**: FairTable (5 packages), Feature Management (3 packages), API layer (4 packages), UI components (3+ packages)
-- **Build errors actively resolved**: TaskResult and WorkflowStep type mismatches fixed
-- **Multi-application architecture confirmed**: 5 apps (api, backend, api-gateway, frontend, electron-desktop)
+- **Specialized ecosystems discovered**: FairTable (5 packages), Feature
+  Management (3 packages), API layer (4 packages), UI components (3+ packages)
+- **Build errors actively resolved**: TaskResult and WorkflowStep type
+  mismatches fixed
+- **Multi-application architecture confirmed**: 5 apps (api, backend,
+  api-gateway, frontend, electron-desktop)
 
 **Next Priority Steps:**
+
 1. Complete TypeScript configuration audit across all 42 packages
 2. Verify MCP server implementation status
 3. Test end-to-end build process (`pnpm run build`)
-4. Assess database connectivity and Prisma schema status
+4. Assess database connectivity and Drizzle schema status
 5. Validate agent orchestration core functionality

@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
-import { WalletMonitoringService, SystemHealth, SecurityAlert } from './wallet-monitoring.service';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { SecurityAlert, SystemHealth, WalletMonitoringService } from './wallet-monitoring.service';
 
 @Controller('monitoring')
 export class MonitoringController {
@@ -26,12 +26,15 @@ export class MonitoringController {
   }
 
   @Post('alert')
-  async createAlert(@Body() alertData: {
-    type: string;
-    severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-    message: string;
-    metadata?: any;
-  }): Promise<{ success: boolean }> {
+  async createAlert(
+    @Body()
+    alertData: {
+      type: string;
+      severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+      message: string;
+      metadata?: any;
+    }
+  ): Promise<{ success: boolean }> {
     await this.monitoringService.createAlert(alertData as any);
     return { success: true };
   }

@@ -152,7 +152,7 @@ const fixes = {
     
     // Fix common module resolution issues
     const moduleReplacements = {
-      '@the-new-fuse/database/src/prisma.service': '@the-new-fuse/database',
+      '@the-new-fuse/database/src/drizzle.service': '@the-new-fuse/database',
       '@the-new-fuse/core/types': '@the-new-fuse/types',
       '@the-new-fuse/database/client': '@the-new-fuse/database'
     };
@@ -277,27 +277,27 @@ function fixSpecificFiles() {
     // Fix usage of Agent as value
     newContent = newContent.replace(
       /Agent\.findMany/g,
-      'prisma.agent.findMany'
+      'drizzle.agent.findMany'
     );
     
     newContent = newContent.replace(
       /Agent\.findUnique/g,
-      'prisma.agent.findUnique'
+      'drizzle.agent.findUnique'
     );
     
     newContent = newContent.replace(
       /Agent\.create/g,
-      'prisma.agent.create'
+      'drizzle.agent.create'
     );
     
     newContent = newContent.replace(
       /Agent\.update/g,
-      'prisma.agent.update'
+      'drizzle.agent.update'
     );
     
     newContent = newContent.replace(
       /Agent\.delete/g,
-      'prisma.agent.delete'
+      'drizzle.agent.delete'
     );
     
     if (newContent !== agentContent) {

@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { getAuthToken, setupTestApp, cleanupTestData } from '../test-utils/test-helpers';
 import { AuthService } from '../../../apps/api/src/services/auth.service';
-import { PrismaService } from '../../../apps/api/src/services/prisma.service';
+import { DatabaseService } from '../../../apps/api/src/services/db.service';
 import { SessionService } from '../../../apps/api/src/services/session.service';
 import { JwtService } from '@nestjs/jwt';
 import { WorkflowService } from '../../../apps/api/src/services/workflow.service';
@@ -12,7 +12,7 @@ import request from 'supertest';
 describe('Authentication Integration Tests', () => {
   let app: INestApplication;
   let authService: AuthService;
-  let prismaService: PrismaService;
+  let dbService: DatabaseService;
   let sessionService: SessionService;
   let jwtService: JwtService;
   let workflowService: WorkflowService;
@@ -21,7 +21,7 @@ describe('Authentication Integration Tests', () => {
   beforeAll(async () => {
     app = await setupTestApp();
     authService = app.get(AuthService);
-    prismaService = app.get(PrismaService);
+    dbService = app.get(DatabaseService);
     sessionService = app.get(SessionService);
     jwtService = app.get(JwtService);
     workflowService = app.get(WorkflowService);
@@ -127,7 +127,7 @@ describe('Authentication Integration Tests', () => {
       await authService.verifyEmail(verificationToken);
 
       // Check user is now verified
-      const verifiedUser = await prismaService.user.findUnique({
+      const verifiedUser = await dbService.user.findUnique({
         where: { id: userId }
       });
 
@@ -471,7 +471,7 @@ describe('Authentication Integration Tests', () => {
       };
 
       // Mock database error
-      jest.spyOn(prismaService.user, 'create').mockRejectedValue(
+      jest.spyOn(dbService.user, 'create').mockRejectedValue(
         new Error('Database connection failed')
       );
 
@@ -548,7 +548,7 @@ describe('Authentication Integration Tests', () => {
       expect(successfulUpdates.length).toBeGreaterThan(0);
 
       // Final state should be consistent
-      const finalUser = await prismaService.user.findUnique({
+      const finalUser = await dbService.user.findUnique({
         where: { id: userId }
       });
       expect(finalUser.firstName).toBeDefined();

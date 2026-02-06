@@ -10,7 +10,7 @@ import { execSync } from 'child_process';
  * - Backend App: 3004
  * - API Gateway: 3005
  * - SkIDEancer IDE: 3006, 3007, 3008
- * - Database UI: 5555 (Prisma Studio)
+ * - Database UI: 5555 (Drizzle Studio)
  * - Frontend Dev: 5173 (Vite)
  */
 

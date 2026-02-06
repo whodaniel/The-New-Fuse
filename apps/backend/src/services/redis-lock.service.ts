@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,8 +14,8 @@ export class RedisLockService implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
     const redisUrl = this.configService.get<string>('REDIS_URL');
     this.redis = new Redis(redisUrl, {
-        maxRetriesPerRequest: 3,
-        lazyConnect: true,
+      maxRetriesPerRequest: 3,
+      lazyConnect: true,
     });
 
     this.redis.on('connect', () => this.logger.log('Redis connection established for locking'));
@@ -59,7 +59,12 @@ export class RedisLockService implements OnModuleInit, OnModuleDestroy {
     return `${uuidv4()}-${this.processId}`;
   }
 
-  public async acquireLock(key: string, ttl: number, maxRetries = 3, initialDelay = 100): Promise<string | null> {
+  public async acquireLock(
+    key: string,
+    ttl: number,
+    maxRetries = 3,
+    initialDelay = 100
+  ): Promise<string | null> {
     const lockId = this.generateLockId();
     const lockKey = `lock:${key}`;
     let retries = 0;
@@ -73,7 +78,7 @@ export class RedisLockService implements OnModuleInit, OnModuleDestroy {
 
       const delay = initialDelay * Math.pow(2, retries);
       this.logger.debug(`Failed to acquire lock for key: ${lockKey}. Retrying in ${delay}ms...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
       retries++;
     }
 
@@ -88,7 +93,9 @@ export class RedisLockService implements OnModuleInit, OnModuleDestroy {
       this.logger.debug(`Lock released for key: ${lockKey}`);
       return true;
     }
-    this.logger.warn(`Failed to release lock for key: ${lockKey}. Lock ID mismatch or key expired.`);
+    this.logger.warn(
+      `Failed to release lock for key: ${lockKey}. Lock ID mismatch or key expired.`
+    );
     return false;
   }
 

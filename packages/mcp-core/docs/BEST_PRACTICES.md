@@ -1,6 +1,7 @@
 # MCP Core Best Practices
 
-This guide outlines best practices for developing, deploying, and maintaining MCP systems using the MCP Core package.
+This guide outlines best practices for developing, deploying, and maintaining
+MCP systems using the MCP Core package.
 
 ## Table of Contents
 
@@ -19,12 +20,13 @@ This guide outlines best practices for developing, deploying, and maintaining MC
 ### 1. Design for Scalability
 
 **Use Connection Pooling**
+
 ```typescript
 // Good: Use connection pooling for multiple clients
 const connectionPool = new MCPConnectionPool({
   serverUrl: 'ws://localhost:8080',
   maxConnections: 10,
-  idleTimeout: 30000
+  idleTimeout: 30000,
 });
 
 // Bad: Creating new connections for each request
@@ -33,11 +35,12 @@ await client.connect(); // Creates new connection every time
 ```
 
 **Implement Proper Resource Management**
+
 ```typescript
 // Good: Proper resource cleanup
 class ResourceAwareHandler extends ResourceHandler {
   private resources = new Map();
-  
+
   async dispose(): Promise<void> {
     // Clean up all resources
     for (const [key, resource] of this.resources) {
@@ -60,7 +63,7 @@ class CircuitBreakerClient {
   private circuitBreaker = new CircuitBreaker({
     failureThreshold: 5,
     resetTimeout: 30000,
-    monitoringPeriod: 10000
+    monitoringPeriod: 10000,
   });
 
   async callTool(name: string, params: any): Promise<any> {
@@ -102,7 +105,7 @@ class Handler {
 // Good: Comprehensive input validation
 class SecureToolHandler extends ToolHandler {
   private ajv = new Ajv({ strict: true });
-  
+
   async execute(params: any): Promise<any> {
     // Validate against schema
     const valid = this.ajv.validate(this.getSchema(), params);
@@ -113,13 +116,13 @@ class SecureToolHandler extends ToolHandler {
         { errors: this.ajv.errors }
       );
     }
-    
+
     // Sanitize input
     const sanitized = this.sanitizeInput(params);
-    
+
     return this.performOperation(sanitized);
   }
-  
+
   private sanitizeInput(params: any): any {
     // Remove dangerous properties
     const { __proto__, constructor, ...safe } = params;
@@ -137,16 +140,19 @@ class AuthenticatedServer extends MCPServer {
     // Validate authentication
     const token = this.extractToken(request);
     const user = await this.validateToken(token);
-    
+
     // Check authorization
     const hasPermission = await this.checkPermission(user, request.method);
     if (!hasPermission) {
-      throw new MCPError(MCPErrorCode.AUTHORIZATION_FAILED, 'Insufficient permissions');
+      throw new MCPError(
+        MCPErrorCode.AUTHORIZATION_FAILED,
+        'Insufficient permissions'
+      );
     }
-    
+
     // Add user context
     request.meta = { ...request.meta, user };
-    
+
     return super.handleRequest(request);
   }
 }
@@ -164,8 +170,8 @@ const server = MCPSystemFactory.createServer({
     enabled: true,
     cert: fs.readFileSync('server.crt'),
     key: fs.readFileSync('server.key'),
-    ca: fs.readFileSync('ca.crt')
-  }
+    ca: fs.readFileSync('ca.crt'),
+  },
 });
 ```
 
@@ -178,27 +184,27 @@ const server = MCPSystemFactory.createServer({
 class CachedResourceHandler extends ResourceHandler {
   private memoryCache = new Map();
   private diskCache = new DiskCache();
-  
+
   async read(uri: string): Promise<any> {
     // Check memory cache first
     if (this.memoryCache.has(uri)) {
       return this.memoryCache.get(uri);
     }
-    
+
     // Check disk cache
     const diskCached = await this.diskCache.get(uri);
     if (diskCached) {
       this.memoryCache.set(uri, diskCached);
       return diskCached;
     }
-    
+
     // Read from source
     const data = await this.readFromSource(uri);
-    
+
     // Cache at both levels
     this.memoryCache.set(uri, data);
     await this.diskCache.set(uri, data);
-    
+
     return data;
   }
 }
@@ -211,21 +217,21 @@ class CachedResourceHandler extends ResourceHandler {
 class BatchingClient {
   private pendingRequests: MCPRequest[] = [];
   private batchTimeout: NodeJS.Timeout | null = null;
-  
+
   async sendRequest(request: MCPRequest): Promise<MCPResponse> {
     return new Promise((resolve, reject) => {
       this.pendingRequests.push({ ...request, resolve, reject });
-      
+
       if (!this.batchTimeout) {
         this.batchTimeout = setTimeout(() => this.processBatch(), 10);
       }
     });
   }
-  
+
   private async processBatch(): Promise<void> {
     const batch = this.pendingRequests.splice(0);
     this.batchTimeout = null;
-    
+
     try {
       const responses = await this.client.sendBatch(batch);
       // Resolve individual promises
@@ -233,7 +239,7 @@ class BatchingClient {
         req.resolve(responses[index]);
       });
     } catch (error) {
-      batch.forEach(req => req.reject(error));
+      batch.forEach((req) => req.reject(error));
     }
   }
 }
@@ -247,16 +253,16 @@ class ResourceOptimizedServer extends MCPServer {
   private resourceMonitor = new ResourceMonitor({
     maxMemoryUsage: 512 * 1024 * 1024, // 512MB
     maxCpuUsage: 80, // 80%
-    checkInterval: 5000
+    checkInterval: 5000,
   });
-  
+
   constructor(config: MCPServerConfig) {
     super(config);
-    
+
     this.resourceMonitor.on('memoryWarning', () => {
       this.triggerGarbageCollection();
     });
-    
+
     this.resourceMonitor.on('cpuWarning', () => {
       this.throttleRequests();
     });
@@ -276,22 +282,21 @@ class RobustHandler extends ToolHandler {
       toolName: this.name,
       params: this.sanitizeForLogging(params),
       timestamp: new Date().toISOString(),
-      requestId: params.requestId
+      requestId: params.requestId,
     };
-    
+
     try {
       return await this.performOperation(params);
     } catch (error) {
       // Log with context
       this.logger.error('Tool execution failed', { error, context });
-      
+
       // Transform to appropriate MCP error
       if (error instanceof ValidationError) {
-        throw new MCPError(
-          MCPErrorCode.TOOL_VALIDATION_FAILED,
-          error.message,
-          { context, originalError: error.message }
-        );
+        throw new MCPError(MCPErrorCode.TOOL_VALIDATION_FAILED, error.message, {
+          context,
+          originalError: error.message,
+        });
       } else if (error instanceof TimeoutError) {
         throw new MCPError(
           MCPErrorCode.TOOL_TIMEOUT,
@@ -320,29 +325,33 @@ class RetryableClient {
     maxAttempts = 3
   ): Promise<T> {
     let lastError: Error;
-    
+
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         return await operation();
       } catch (error) {
         lastError = error;
-        
+
         if (!this.isRetryable(error) || attempt === maxAttempts) {
           throw error;
         }
-        
+
         const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
         await this.sleep(delay);
       }
     }
-    
+
     throw lastError!;
   }
-  
+
   private isRetryable(error: any): boolean {
-    return error instanceof MCPError && 
-           [MCPErrorCode.SERVICE_UNAVAILABLE, MCPErrorCode.CONNECTION_TIMEOUT]
-           .includes(error.code);
+    return (
+      error instanceof MCPError &&
+      [
+        MCPErrorCode.SERVICE_UNAVAILABLE,
+        MCPErrorCode.CONNECTION_TIMEOUT,
+      ].includes(error.code)
+    );
   }
 }
 ```
@@ -355,55 +364,57 @@ class RetryableClient {
 // Good: Comprehensive test coverage
 describe('TextProcessorTool', () => {
   let tool: TextProcessorTool;
-  
+
   beforeEach(() => {
     tool = new TextProcessorTool();
   });
-  
+
   describe('execute', () => {
     it('should uppercase text correctly', async () => {
       const result = await tool.execute({
         text: 'hello world',
-        operation: 'uppercase'
+        operation: 'uppercase',
       });
-      
+
       expect(result.result).toBe('HELLO WORLD');
       expect(result.operation).toBe('uppercase');
     });
-    
+
     it('should handle empty text', async () => {
       const result = await tool.execute({
         text: '',
-        operation: 'uppercase'
+        operation: 'uppercase',
       });
-      
+
       expect(result.result).toBe('');
     });
-    
+
     it('should throw error for invalid operation', async () => {
-      await expect(tool.execute({
-        text: 'hello',
-        operation: 'invalid'
-      })).rejects.toThrow('Unknown operation: invalid');
+      await expect(
+        tool.execute({
+          text: 'hello',
+          operation: 'invalid',
+        })
+      ).rejects.toThrow('Unknown operation: invalid');
     });
   });
-  
+
   describe('validate', () => {
     it('should validate correct parameters', async () => {
       const valid = await tool.validate({
         text: 'hello',
-        operation: 'uppercase'
+        operation: 'uppercase',
       });
-      
+
       expect(valid).toBe(true);
     });
-    
+
     it('should reject invalid parameters', async () => {
       const valid = await tool.validate({
         text: 123,
-        operation: 'uppercase'
+        operation: 'uppercase',
       });
-      
+
       expect(valid).toBe(false);
     });
   });
@@ -417,39 +428,42 @@ describe('TextProcessorTool', () => {
 describe('MCP Server Integration', () => {
   let server: MCPServer;
   let client: MCPClient;
-  
+
   beforeAll(async () => {
     server = MCPSystemFactory.createServer({
       name: 'test-server',
       version: '1.0.0',
-      port: 8081
+      port: 8081,
     });
-    
-    await server.registerTool({
-      name: 'echo',
-      description: 'Echo tool',
-      inputSchema: { type: 'object' }
-    }, new EchoTool());
-    
+
+    await server.registerTool(
+      {
+        name: 'echo',
+        description: 'Echo tool',
+        inputSchema: { type: 'object' },
+      },
+      new EchoTool()
+    );
+
     await server.start();
-    
+
     client = MCPSystemFactory.createClient({
-      serverUrl: 'ws://localhost:8081'
+      serverUrl: 'ws://localhost:8081',
     });
-    
+
     await client.connect();
   });
-  
+
   afterAll(async () => {
     await client.disconnect();
     await server.stop();
   });
-  
+
   it('should handle tool execution end-to-end', async () => {
     const result = await client.callTool('echo', {
-      message: 'test message'
+      message: 'test message',
     });
-    
+
     expect(result.echo).toBe('test message');
   });
 });
@@ -465,43 +479,44 @@ class ObservableServer extends MCPServer {
   private logger = new Logger({
     level: 'info',
     format: 'json',
-    includeCorrelationId: true
+    includeCorrelationId: true,
   });
-  
+
   async handleRequest(request: MCPRequest): Promise<MCPResponse> {
-    const correlationId = request.meta?.correlationId || this.generateCorrelationId();
+    const correlationId =
+      request.meta?.correlationId || this.generateCorrelationId();
     const startTime = Date.now();
-    
+
     this.logger.info('Request received', {
       correlationId,
       method: request.method,
-      id: request.id
+      id: request.id,
     });
-    
+
     try {
       const response = await super.handleRequest(request);
       const duration = Date.now() - startTime;
-      
+
       this.logger.info('Request completed', {
         correlationId,
         method: request.method,
         id: request.id,
         duration,
-        success: !response.error
+        success: !response.error,
       });
-      
+
       return response;
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       this.logger.error('Request failed', {
         correlationId,
         method: request.method,
         id: request.id,
         duration,
-        error: error.message
+        error: error.message,
       });
-      
+
       throw error;
     }
   }
@@ -514,12 +529,12 @@ class ObservableServer extends MCPServer {
 // Good: Comprehensive health checks
 class HealthCheckServer extends MCPServer {
   private healthChecks = new Map<string, HealthCheck>();
-  
+
   constructor(config: MCPServerConfig) {
     super(config);
     this.setupHealthChecks();
   }
-  
+
   private setupHealthChecks(): void {
     this.healthChecks.set('memory', {
       name: 'Memory Usage',
@@ -528,43 +543,46 @@ class HealthCheckServer extends MCPServer {
         const heapPercent = (usage.heapUsed / usage.heapTotal) * 100;
         return {
           healthy: heapPercent < 90,
-          details: { heapPercent, heapUsed: usage.heapUsed }
+          details: { heapPercent, heapUsed: usage.heapUsed },
         };
-      }
+      },
     });
-    
+
     this.healthChecks.set('connections', {
       name: 'Active Connections',
       check: () => {
         const activeConnections = this.getActiveConnectionCount();
         return {
           healthy: activeConnections < this.config.maxConnections * 0.9,
-          details: { activeConnections, maxConnections: this.config.maxConnections }
+          details: {
+            activeConnections,
+            maxConnections: this.config.maxConnections,
+          },
         };
-      }
+      },
     });
   }
-  
+
   async getHealthStatus(): Promise<HealthStatus> {
     const results = new Map();
-    
+
     for (const [name, check] of this.healthChecks) {
       try {
         results.set(name, await check.check());
       } catch (error) {
         results.set(name, {
           healthy: false,
-          error: error.message
+          error: error.message,
         });
       }
     }
-    
-    const allHealthy = Array.from(results.values()).every(r => r.healthy);
-    
+
+    const allHealthy = Array.from(results.values()).every((r) => r.healthy);
+
     return {
       healthy: allHealthy,
       checks: Object.fromEntries(results),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -579,12 +597,12 @@ class HealthCheckServer extends MCPServer {
 class ConfigManager {
   static getConfig(): MCPServerConfig {
     const env = process.env.NODE_ENV || 'development';
-    
+
     const baseConfig = {
       name: 'mcp-server',
-      version: process.env.APP_VERSION || '1.0.0'
+      version: process.env.APP_VERSION || '1.0.0',
     };
-    
+
     switch (env) {
       case 'production':
         return {
@@ -593,18 +611,18 @@ class ConfigManager {
           maxConnections: 1000,
           rateLimiting: {
             enabled: true,
-            maxRequestsPerMinute: 1000
+            maxRequestsPerMinute: 1000,
           },
           logging: {
             level: 'info',
-            format: 'json'
+            format: 'json',
           },
           security: {
             enableAuth: true,
-            enableCors: false
-          }
+            enableCors: false,
+          },
         };
-        
+
       case 'development':
         return {
           ...baseConfig,
@@ -612,14 +630,14 @@ class ConfigManager {
           maxConnections: 10,
           logging: {
             level: 'debug',
-            format: 'text'
+            format: 'text',
           },
           security: {
             enableAuth: false,
-            enableCors: true
-          }
+            enableCors: true,
+          },
         };
-        
+
       default:
         throw new Error(`Unknown environment: ${env}`);
     }
@@ -633,32 +651,32 @@ class ConfigManager {
 // Good: Graceful shutdown handling
 class GracefulServer extends MCPServer {
   private isShuttingDown = false;
-  
+
   constructor(config: MCPServerConfig) {
     super(config);
     this.setupGracefulShutdown();
   }
-  
+
   private setupGracefulShutdown(): void {
     const shutdown = async (signal: string) => {
       if (this.isShuttingDown) return;
-      
+
       console.log(`Received ${signal}, starting graceful shutdown...`);
       this.isShuttingDown = true;
-      
+
       try {
         // Stop accepting new connections
         await this.stopAcceptingConnections();
-        
+
         // Wait for existing requests to complete
         await this.waitForActiveRequests(30000); // 30 second timeout
-        
+
         // Close all connections
         await this.closeAllConnections();
-        
+
         // Stop the server
         await this.stop();
-        
+
         console.log('Graceful shutdown completed');
         process.exit(0);
       } catch (error) {
@@ -666,11 +684,11 @@ class GracefulServer extends MCPServer {
         process.exit(1);
       }
     };
-    
+
     process.on('SIGTERM', () => shutdown('SIGTERM'));
     process.on('SIGINT', () => shutdown('SIGINT'));
   }
-  
+
   async handleRequest(request: MCPRequest): Promise<MCPResponse> {
     if (this.isShuttingDown) {
       throw new MCPError(
@@ -678,7 +696,7 @@ class GracefulServer extends MCPServer {
         'Server is shutting down'
       );
     }
-    
+
     return super.handleRequest(request);
   }
 }
@@ -726,4 +744,6 @@ class DbRH extends ResourceHandler {
 }
 ```
 
-These best practices will help you build robust, scalable, and maintainable MCP systems. Always consider the specific requirements of your use case and adapt these practices accordingly.
+These best practices will help you build robust, scalable, and maintainable MCP
+systems. Always consider the specific requirements of your use case and adapt
+these practices accordingly.

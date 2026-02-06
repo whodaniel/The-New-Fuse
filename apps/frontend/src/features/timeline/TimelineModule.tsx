@@ -1,7 +1,6 @@
 import React from 'react';
-import { TimelineView } from './components/TimelineView';
-import { TimelineSlider } from './components/TimelineSlider'; // Fixed import
 import { EnhancedTimelineView } from './components/EnhancedTimelineView';
+import { TimelineSlider } from './components/TimelineSlider'; // Fixed import
 import { useTimeline } from './hooks/useTimeline';
 import { TimelineService } from './services/timeline.service';
 
@@ -16,9 +15,9 @@ export const TimelineModule: React.FC = () => {
     handleBranchSelect,
     handleEventClick,
     handleCreateBranch,
-    handleMergeBranch
+    handleMergeBranch,
   } = useTimeline({
-    timelineService: new TimelineService()
+    timelineService: new TimelineService(),
   });
 
   if (loading) return <div>Loading timeline data...</div>;

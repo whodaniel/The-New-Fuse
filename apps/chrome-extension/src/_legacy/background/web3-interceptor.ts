@@ -5,11 +5,11 @@
 
 import { Logger } from '../utils/logger';
 import {
-  resolveWeb3Url,
-  isWeb3Url,
-  getWeb3Protocol,
-  validateWeb3Url,
   DEFAULT_WEB3_CONFIG,
+  getWeb3Protocol,
+  isWeb3Url,
+  resolveWeb3Url,
+  validateWeb3Url,
   type Web3Config,
 } from '../utils/web3-url-resolver';
 
@@ -145,7 +145,11 @@ export class Web3Interceptor {
   /**
    * Show notification about Web3 URL resolution
    */
-  async showNotification(originalUrl: string, resolvedUrl: string, protocol: string): Promise<void> {
+  async showNotification(
+    originalUrl: string,
+    resolvedUrl: string,
+    protocol: string
+  ): Promise<void> {
     try {
       await chrome.notifications.create({
         type: 'basic',

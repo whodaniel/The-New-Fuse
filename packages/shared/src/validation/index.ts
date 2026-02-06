@@ -13,7 +13,8 @@ export interface ValidationResult {
  */
 export class Validators {
   private static readonly EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  private static readonly UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  private static readonly UUID_REGEX =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   private static readonly URL_REGEX = /^https?:\/\/.+/;
 
   /**
@@ -136,7 +137,7 @@ export class Validators {
     const isValid = pattern.test(value);
     return {
       isValid,
-      error: isValid ? undefined : (errorMessage || 'Invalid format'),
+      error: isValid ? undefined : errorMessage || 'Invalid format',
     };
   }
 

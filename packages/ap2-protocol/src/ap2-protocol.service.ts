@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
+import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class Ap2ProtocolService {

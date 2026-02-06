@@ -3,10 +3,15 @@
 ## Overview
 
 This document describes how we've integrated two VS Code extensions:
-1. **The New Fuse** - A comprehensive extension for AI Agent Orchestration with MCP integration
-2. **VSCode AI Coder Connector** - A specialized extension for connecting to a Chrome extension and monitoring Roo output
 
-The integration combines the functionality of both extensions into a single comprehensive VS Code extension that preserves all original features while adding new capabilities.
+1. **The New Fuse** - A comprehensive extension for AI Agent Orchestration with
+   MCP integration
+2. **VSCode AI Coder Connector** - A specialized extension for connecting to a
+   Chrome extension and monitoring Roo output
+
+The integration combines the functionality of both extensions into a single
+comprehensive VS Code extension that preserves all original features while
+adding new capabilities.
 
 ## Integration Architecture
 
@@ -35,6 +40,7 @@ The integration combines the functionality of both extensions into a single comp
 ### Configuration Updates
 
 The `package.json` file has been updated with:
+
 - New commands for AI Coder integration
 - New configuration settings for ports and feature toggles
 - Additional sidebar view for AI Coder functionality
@@ -50,6 +56,7 @@ chmod +x ./integrate-extensions.sh
 ```
 
 This script:
+
 - Creates a backup of the current development directory
 - Verifies all required integration files are present
 - Checks package.json for required entries
@@ -60,11 +67,13 @@ This script:
 ### Method 2: Manual Testing
 
 1. Navigate to the extension directory:
+
    ```bash
    cd ./src/vscode-extension
    ```
 
 2. Run the test script:
+
    ```bash
    ./test-integrated-extension.sh
    ```
@@ -77,7 +86,9 @@ This script:
 
 ### Method 3: Using VS Code Tasks
 
-The "Launch VS Code with Extension" task can be used from the VS Code Command Palette:
+The "Launch VS Code with Extension" task can be used from the VS Code Command
+Palette:
+
 1. Open Command Palette (Cmd+Shift+P)
 2. Select "Tasks: Run Task"
 3. Choose "Launch VS Code with Extension"
@@ -85,13 +96,16 @@ The "Launch VS Code with Extension" task can be used from the VS Code Command Pa
 ## Known Issues
 
 1. **Extension Development Path**  
-   If the VS Code launch fails, verify that the `launch-vscode.sh` script points to the correct extension directory.
+   If the VS Code launch fails, verify that the `launch-vscode.sh` script points
+   to the correct extension directory.
 
 2. **WebSocket Port Conflicts**  
-   The extension uses ports 3710 and 3711. If another application is using these ports, the extension may fail to start properly.
+   The extension uses ports 3710 and 3711. If another application is using these
+   ports, the extension may fail to start properly.
 
 3. **Roo Output Channel**  
-   The Roo output monitoring depends on the existence of Roo's output channel. If Roo is not installed, this feature will not work properly.
+   The Roo output monitoring depends on the existence of Roo's output channel.
+   If Roo is not installed, this feature will not work properly.
 
 ## Next Steps
 

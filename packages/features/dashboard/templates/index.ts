@@ -1,4 +1,4 @@
-export * from './types';
-export * from './presets';
 export * from './DataSourceConfig';
+export * from './presets';
 export * from './TemplateGallery';
+export * from './types';

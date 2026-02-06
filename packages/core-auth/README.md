@@ -1,14 +1,20 @@
 # @the-new-fuse/core-auth
 
-Comprehensive authentication and authorization system for The New Fuse. Provides JWT-based authentication, OAuth integration (Google, GitHub), and session management with NestJS.
+Comprehensive authentication and authorization system for The New Fuse. Provides
+JWT-based authentication, OAuth integration (Google, GitHub), and session
+management with NestJS.
 
 ## Overview
 
-The core-auth package is a production-ready authentication module built with NestJS, providing complete authentication flows including registration, login, password reset, email verification, and OAuth integration. It integrates seamlessly with The New Fuse ecosystem and Prisma database.
+The core-auth package is a production-ready authentication module built with
+NestJS, providing complete authentication flows including registration, login,
+password reset, email verification, and OAuth integration. It integrates
+seamlessly with The New Fuse ecosystem and Drizzle database.
 
 ## Features
 
-- **JWT Authentication**: Secure token-based authentication with access and refresh tokens
+- **JWT Authentication**: Secure token-based authentication with access and
+  refresh tokens
 - **OAuth Strategies**: Google and GitHub OAuth 2.0 integration
 - **User Registration**: Complete registration flow with email validation
 - **Login System**: Secure login with bcrypt password hashing
@@ -18,7 +24,7 @@ The core-auth package is a production-ready authentication module built with Nes
 - **Guards**: Pre-built authentication guards for NestJS
 - **Strategies**: Passport.js strategies for JWT and OAuth
 - **Type Safety**: Full TypeScript support with comprehensive types
-- **Prisma Integration**: Works seamlessly with @the-new-fuse/database
+- **Drizzle Integration**: Works seamlessly with @the-new-fuse/database
 
 ## Installation
 
@@ -175,10 +181,7 @@ await authService.requestPasswordReset('user@example.com');
 Reset password using reset token.
 
 ```typescript
-await authService.resetPassword(
-  'reset-token-from-email',
-  'NewSecurePass123!'
-);
+await authService.resetPassword('reset-token-from-email', 'NewSecurePass123!');
 ```
 
 #### sendVerificationEmail(email: string): Promise<void>
@@ -441,7 +444,7 @@ export const CurrentUser = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
     return request.user;
-  },
+  }
 );
 
 // Usage
@@ -460,10 +463,10 @@ export class ProfileController {
 ### Database Integration
 
 ```typescript
-// Uses @the-new-fuse/database PrismaService
-import { PrismaService } from '@the-new-fuse/database';
+// Uses @the-new-fuse/database DatabaseService
+import { DatabaseService } from '@the-new-fuse/database';
 
-// AuthService automatically integrates with Prisma
+// AuthService automatically integrates with Drizzle
 // No additional configuration needed
 ```
 
@@ -471,7 +474,10 @@ import { PrismaService } from '@the-new-fuse/database';
 
 ```typescript
 // Uses @the-new-fuse/core-error-handling
-import { AuthenticationError, TokenExpiredError } from '@the-new-fuse/core-error-handling';
+import {
+  AuthenticationError,
+  TokenExpiredError,
+} from '@the-new-fuse/core-error-handling';
 
 // Automatically throws appropriate errors
 try {
@@ -603,7 +609,7 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      providers: [AuthService, PrismaService, JwtService],
+      providers: [AuthService, DatabaseService, JwtService],
     }).compile();
 
     authService = module.get<AuthService>(AuthService);
@@ -655,18 +661,21 @@ describe('AuthController (e2e)', () => {
 ### Common Issues
 
 **JWT_SECRET not set**
+
 ```bash
 Error: JWT_SECRET is required
 Solution: Set JWT_SECRET in .env file
 ```
 
 **Token expired**
+
 ```typescript
 // Increase token expiration time
 JWT_EXPIRATION=30m
 ```
 
 **OAuth callback fails**
+
 ```bash
 # Ensure callback URLs match exactly
 GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
@@ -674,6 +683,7 @@ GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
 ```
 
 **Password reset token invalid**
+
 ```typescript
 // Tokens expire after 1 hour
 // Request new reset token if expired
@@ -701,6 +711,7 @@ packages/core-auth/
 ## Dependencies
 
 This package depends on:
+
 - `@nestjs/common` - NestJS core
 - `@nestjs/jwt` - JWT utilities
 - `@nestjs/passport` - Passport integration
@@ -709,7 +720,7 @@ This package depends on:
 - `passport-google-oauth20` - Google OAuth
 - `passport-github2` - GitHub OAuth
 - `bcrypt` - Password hashing
-- `@the-new-fuse/database` - Prisma integration
+- `@the-new-fuse/database` - Drizzle integration
 
 ## License
 
@@ -722,13 +733,14 @@ Contributions are welcome! Please follow our contributing guidelines.
 ## Support
 
 For issues and questions:
+
 - Open an issue on GitHub
 - Check the documentation
 - Contact the maintainers
 
 ## Related Packages
 
-- `@the-new-fuse/database` - Prisma database client
+- `@the-new-fuse/database` - Drizzle database client
 - `@the-new-fuse/core-error-handling` - Error handling utilities
 - `@the-new-fuse/core` - Core functionality
 - `@the-new-fuse/api` - REST API implementation

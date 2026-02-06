@@ -5,10 +5,10 @@ global:
   imageRepository: the-new-fuse/the-new-fuse-containers
   imageTag: latest
   imagePullPolicy: IfNotPresent
-  
+
   # Environment
   environment: production
-  
+
   # Secrets
   secretsManager:
     enabled: true
@@ -20,17 +20,17 @@ apiServer:
   enabled: true
   name: api-server
   replicaCount: 3
-  
+
   image:
     repository: api-server
     tag: ""
     pullPolicy: IfNotPresent
-  
+
   service:
     type: ClusterIP
     port: 3001
     targetPort: 3001
-  
+
   ingress:
     enabled: true
     className: nginx
@@ -46,7 +46,7 @@ apiServer:
       - secretName: api-tls
         hosts:
           - api.thenewfuse.com
-  
+
   resources:
     limits:
       cpu: 1000m
@@ -54,14 +54,14 @@ apiServer:
     requests:
       cpu: 500m
       memory: 1Gi
-  
+
   autoscaling:
     enabled: true
     minReplicas: 3
     maxReplicas: 10
     targetCPUUtilizationPercentage: 70
     targetMemoryUtilizationPercentage: 80
-  
+
   env:
     NODE_ENV: production
     PORT: "3001"
@@ -71,17 +71,17 @@ a2aService:
   enabled: true
   name: a2a-service
   replicaCount: 2
-  
+
   image:
     repository: a2a-service
     tag: ""
     pullPolicy: IfNotPresent
-  
+
   service:
     type: ClusterIP
     port: 3000
     targetPort: 3000
-  
+
   resources:
     limits:
       cpu: 500m
@@ -89,7 +89,7 @@ a2aService:
     requests:
       cpu: 250m
       memory: 512Mi
-  
+
   autoscaling:
     enabled: true
     minReplicas: 2
@@ -101,17 +101,17 @@ syncCore:
   enabled: true
   name: sync-core
   replicaCount: 2
-  
+
   image:
     repository: sync-core
     tag: ""
     pullPolicy: IfNotPresent
-  
+
   service:
     type: ClusterIP
     port: 3003
     targetPort: 3003
-  
+
   resources:
     limits:
       cpu: 500m
@@ -119,7 +119,7 @@ syncCore:
     requests:
       cpu: 250m
       memory: 512Mi
-  
+
   autoscaling:
     enabled: true
     minReplicas: 2
@@ -131,17 +131,17 @@ mcpCore:
   enabled: true
   name: mcp-core
   replicaCount: 2
-  
+
   image:
     repository: mcp-core
     tag: ""
     pullPolicy: IfNotPresent
-  
+
   service:
     type: ClusterIP
     port: 3004
     targetPort: 3004
-  
+
   resources:
     limits:
       cpu: 1000m
@@ -149,7 +149,7 @@ mcpCore:
     requests:
       cpu: 500m
       memory: 1Gi
-  
+
   autoscaling:
     enabled: true
     minReplicas: 2
@@ -180,21 +180,21 @@ redis:
 # Monitoring Configuration
 monitoring:
   enabled: true
-  
+
   prometheus:
     enabled: true
     serviceMonitor:
       enabled: true
       interval: 30s
       scrapeTimeout: 10s
-  
+
   grafana:
     enabled: true
     adminPassword: ""
     dashboards:
       enabled: true
       configMapName: the-new-fuse-dashboards
-  
+
   alerts:
     enabled: true
     configMapName: the-new-fuse-alerts
@@ -203,10 +203,10 @@ monitoring:
 security:
   networkPolicies:
     enabled: true
-  
+
   podSecurityPolicy:
     enabled: true
-  
+
   rbac:
     enabled: true
     serviceAccountName: the-new-fuse
@@ -224,7 +224,7 @@ secrets:
           clusterLocation: us-central1
           serviceAccountRef:
             name: the-new-fuse-gsa
-  
+
   # Secret names
   secretNames:
     database: postgresql-credentials
@@ -242,7 +242,7 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/rate-limit: "100"
-  
+
   hosts:
     - host: thenewfuse.com
       paths:
@@ -252,7 +252,7 @@ ingress:
         - path: /
           pathType: Prefix
           service: frontend
-  
+
   tls:
     - secretName: thenewfuse-tls
       hosts:

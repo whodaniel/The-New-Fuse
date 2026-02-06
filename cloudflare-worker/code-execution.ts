@@ -753,8 +753,10 @@ function safeEvaluateRuby(expression: string, context: Record<string, any>): any
   if (trimmed === 'nil') return null;
 
   // Handle strings (double and single quotes)
-  if ((trimmed.startsWith('"') && trimmed.endsWith('"')) ||
-      (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
     return trimmed.substring(1, trimmed.length - 1);
   }
 

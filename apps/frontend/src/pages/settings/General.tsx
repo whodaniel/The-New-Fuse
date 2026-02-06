@@ -1,18 +1,15 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function General() {
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium">General Settings</h3>
-        <p className="text-sm text-muted-foreground">
-          Configure your general preferences
-        </p>
+        <p className="text-sm text-muted-foreground">Configure your general preferences</p>
       </div>
       <Card>
         <CardHeader>

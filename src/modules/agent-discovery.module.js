@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgentDiscoveryModule = void 0;
 const common_1 = require("@nestjs/common");
 const agent_discovery_service_js_1 = require("../services/agent-discovery.service.js");
-const prisma_module_js_1 = require("../lib/prisma/prisma.module.js");
+const drizzle_module_js_1 = require("../lib/drizzle/drizzle.module.js");
 const mcp_module_js_1 = require("../mcp/mcp.module.js");
 const event_emitter_1 = require("@nestjs/event-emitter");
 let AgentDiscoveryModule = class AgentDiscoveryModule {
@@ -18,7 +18,7 @@ exports.AgentDiscoveryModule = AgentDiscoveryModule;
 exports.AgentDiscoveryModule = AgentDiscoveryModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            prisma_module_js_1.PrismaModule,
+            drizzle_module_js_1.DrizzleModule,
             mcp_module_js_1.MCPModule,
             event_emitter_1.EventEmitterModule.forRoot()
         ],

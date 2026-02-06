@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 type TextSize = 'sm' | 'md' | 'lg';
 
@@ -14,7 +14,7 @@ const DEFAULT_SIZE: TextSize = 'md';
 const sizeToClassMap: Record<TextSize, string> = {
   sm: 'text-sm',
   md: 'text-base',
-  lg: 'text-lg'
+  lg: 'text-lg',
 };
 
 export default function useTextSize(): UseTextSizeReturn {
@@ -36,6 +36,6 @@ export default function useTextSize(): UseTextSizeReturn {
   return {
     textSize,
     textSizeClass: sizeToClassMap[textSize],
-    setTextSize
+    setTextSize,
   };
 }

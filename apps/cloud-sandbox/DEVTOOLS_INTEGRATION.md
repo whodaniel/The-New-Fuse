@@ -2,7 +2,9 @@
 
 ## Problem Statement
 
-The current Live View system using Socket.IO screenshot broadcasting is unreliable on Railway due to:
+The current Live View system using Socket.IO screenshot broadcasting is
+unreliable on Railway due to:
+
 1. WebSocket connection instability through Railway's edge proxy
 2. Screenshots only showing once and then failing
 3. No real-time console visibility
@@ -10,8 +12,9 @@ The current Live View system using Socket.IO screenshot broadcasting is unreliab
 
 ## Solution: Chrome DevTools Protocol (CDP) Integration
 
-Instead of broadcasting screenshots via Socket.IO, we'll expose Railway browsers via the Chrome DevTools Protocol,
-allowing **Antigravity to connect directly using the Chrome DevTools MCP server**.
+Instead of broadcasting screenshots via Socket.IO, we'll expose Railway browsers
+via the Chrome DevTools Protocol, allowing **Antigravity to connect directly
+using the Chrome DevTools MCP server**.
 
 ## Architecture
 
@@ -29,10 +32,12 @@ allowing **Antigravity to connect directly using the Chrome DevTools MCP server*
 
 ## Benefits
 
-1. **Native Chrome DevTools Access**: Antigravity gets full console, network, performance access
+1. **Native Chrome DevTools Access**: Antigravity gets full console, network,
+   performance access
 2. **No Screenshot Broadcasting**: Real-time visual updates via CDP
 3. **Stable HTTP/REST**: Browser discovery via simple HTTP API
-4. **Railway Compatible**: Uses standard HTTP + WebSocket (with proper CDP handling)
+4. **Railway Compatible**: Uses standard HTTP + WebSocket (with proper CDP
+   handling)
 5. **Multiple Browsers**: Support for multiple concurrent browser instances
 
 ## Implementation Steps
@@ -42,6 +47,7 @@ allowing **Antigravity to connect directly using the Chrome DevTools MCP server*
 File: `apps/cloud-sandbox/src/services/devtools-bridge.ts` ✅ CREATED
 
 This service:
+
 - Manages multiple browser instances
 - Connects to each via CDP
 - Exposes WebSocket server for Antigravity
@@ -85,7 +91,11 @@ async function getBrowser(): Promise<Browser> {
 
     // Register with DevTools Bridge
     const wsEndpoint = browser.wsEndpoint();
-    await devToolsBridge.registerBrowser('main-browser', wsEndpoint, 'audit-bot');
+    await devToolsBridge.registerBrowser(
+      'main-browser',
+      wsEndpoint,
+      'audit-bot'
+    );
     console.log('[DevTools] Browser registered:', wsEndpoint);
   }
   return browser;
@@ -104,14 +114,14 @@ app.get('/api/devtools/browsers', (_req, res) => {
   const browsers = devToolsBridge.getBrowsers();
   res.json({
     success: true,
-    browsers: browsers.map(b => ({
+    browsers: browsers.map((b) => ({
       id: b.id,
       status: b.status,
       agentType: b.agentType,
       lastActivity: b.lastActivity,
       // Don't expose full wsEndpoint for security
-      available: b.status === 'active'
-    }))
+      available: b.status === 'active',
+    })),
   });
 });
 
@@ -125,7 +135,7 @@ app.get('/api/devtools/browsers/:id/endpoint', (req, res) => {
   if (!endpoint) {
     return res.status(404).json({
       success: false,
-      error: 'Browser not found'
+      error: 'Browser not found',
     });
   }
 
@@ -136,7 +146,7 @@ app.get('/api/devtools/browsers/:id/endpoint', (req, res) => {
     success: true,
     browserId: id,
     wsEndpoint: endpoint,
-    proxyEndpoint: `wss://${process.env.RAILWAY_PUBLIC_DOMAIN || 'localhost'}/devtools/browser/${id}`
+    proxyEndpoint: `wss://${process.env.RAILWAY_PUBLIC_DOMAIN || 'localhost'}/devtools/browser/${id}`,
   });
 });
 
@@ -146,7 +156,7 @@ app.get('/api/devtools/browsers/:id/endpoint', (req, res) => {
  */
 app.ws('/devtools/browser/:id', async (ws, req) => {
   const { id } = req.params;
-  const browser = devToolsBridge.getBrowsers().find(b => b.id === id);
+  const browser = devToolsBridge.getBrowsers().find((b) => b.id === id);
 
   if (!browser?.cdpClient) {
     ws.close(1008, 'Browser not found');
@@ -184,7 +194,7 @@ app.post('/api/devtools/browsers/:id/screenshot', async (req, res) => {
     if (!screenshot) {
       return res.status(404).json({
         success: false,
-        error: 'Browser not found or screenshot failed'
+        error: 'Browser not found or screenshot failed',
       });
     }
 
@@ -193,7 +203,7 @@ app.post('/api/devtools/browsers/:id/screenshot', async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -201,13 +211,17 @@ app.post('/api/devtools/browsers/:id/screenshot', async (req, res) => {
 
 ### 3. Update Audit Script
 
-Modify `apps/cloud-sandbox/scripts/audit_website.js` to notify DevTools Bridge of activity:
+Modify `apps/cloud-sandbox/scripts/audit_website.js` to notify DevTools Bridge
+of activity:
 
 ```javascript
 // After each navigation or action
-await fetch('https://tnf-cloud-sandbox-v2-production.up.railway.app/api/devtools/browsers/main-browser/screenshot', {
-  method: 'POST'
-});
+await fetch(
+  'https://tnf-cloud-sandbox-v2-production.up.railway.app/api/devtools/browsers/main-browser/screenshot',
+  {
+    method: 'POST',
+  }
+);
 ```
 
 ### 4. Configure Antigravity MCP
@@ -254,6 +268,7 @@ npx -y chrome-devtools-mcp@latest
 ```
 
 Make executable:
+
 ```bash
 chmod +x ~/.gemini/scripts/tnf-devtools-connect.sh
 ```
@@ -267,6 +282,7 @@ curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/devtools/browser
 ```
 
 Expected response:
+
 ```json
 {
   "success": true,
@@ -289,6 +305,7 @@ curl https://tnf-cloud-sandbox-v2-production.up.railway.app/api/devtools/browser
 ```
 
 Expected response:
+
 ```json
 {
   "success": true,
@@ -375,9 +392,11 @@ Once configured, you can use natural language:
 ## Next Steps
 
 Would you like me to:
+
 1. Update `server.ts` with the integration code?
 2. Create the helper connection script?
 3. Test the browser discovery API?
 4. Configure Antigravity to connect?
 
-This approach will give you **real, working live view** with full DevTools capabilities!
+This approach will give you **real, working live view** with full DevTools
+capabilities!

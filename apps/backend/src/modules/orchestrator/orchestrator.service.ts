@@ -2,8 +2,9 @@ import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nest
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import Redis from 'ioredis';
-import { AgentLifecycleManager } from './AgentLifecycleManager';
 import { RedisLockService } from '../../services/redis-lock.service';
+import { AgentLifecycleManager } from './AgentLifecycleManager';
+import { drizzleAuditLogsRepository } from '@the-new-fuse/database';
 
 // Types for the orchestrator services
 interface HeartbeatConfig {
@@ -45,7 +46,11 @@ class HeartbeatMonitoringService {
   private eventEmitter: EventEmitter2;
   private redisLockService: RedisLockService;
 
-  constructor(config: HeartbeatConfig, eventEmitter: EventEmitter2, redisLockService: RedisLockService) {
+  constructor(
+    config: HeartbeatConfig,
+    eventEmitter: EventEmitter2,
+    redisLockService: RedisLockService
+  ) {
     this.config = config;
     this.eventEmitter = eventEmitter;
     this.redisLockService = redisLockService;
@@ -69,7 +74,9 @@ class HeartbeatMonitoringService {
   async registerAgent(agentId: string, expectedResponseTime?: number): Promise<void> {
     const lockId = await this.redisLockService.acquireLock(`registerAgent:${agentId}`, 10);
     if (!lockId) {
-      this.logger.warn(`Could not acquire lock to register agent ${agentId}. It might be registered by another instance.`);
+      this.logger.warn(
+        `Could not acquire lock to register agent ${agentId}. It might be registered by another instance.`
+      );
       return;
     }
 
@@ -231,7 +238,7 @@ export class OrchestratorService implements OnModuleInit, OnModuleDestroy {
   constructor(
     @Inject(ConfigService) private configService: ConfigService,
     @Inject(EventEmitter2) private eventEmitter: EventEmitter2,
-    private readonly redisLockService: RedisLockService,
+    private readonly redisLockService: RedisLockService
   ) {
     // NEW: Initialize Redis client
     const redisUrl = this.configService.get('REDIS_URL') || 'redis://localhost:6379';
@@ -250,7 +257,11 @@ export class OrchestratorService implements OnModuleInit, OnModuleDestroy {
       stagnationThresholdMs: parseInt(this.configService.get('STAGNATION_THRESHOLD_MS') || '30000'),
     };
 
-    this.heartbeatService = new HeartbeatMonitoringService(heartbeatConfig, this.eventEmitter, this.redisLockService);
+    this.heartbeatService = new HeartbeatMonitoringService(
+      heartbeatConfig,
+      this.eventEmitter,
+      this.redisLockService
+    );
     this.heartbeatService.start();
 
     // Register TNF itself as the Master Agent
@@ -334,16 +345,125 @@ export class OrchestratorService implements OnModuleInit, OnModuleDestroy {
     return this.heartbeatService;
   }
 
-  registerAgent(agentId: string, expectedResponseTime?: number): void {
+  registerAgent(
+    agentId: string,
+    expectedResponseTime?: number,
+    metadata?: Record<string, unknown>
+  ): void {
     if (this.heartbeatService) {
       this.heartbeatService.registerAgent(agentId, expectedResponseTime);
     }
+
+    if (metadata) {
+      const registrationPayload = {
+        agentId,
+        ...metadata,
+        registeredAt: new Date().toISOString(),
+      };
+      this.redis
+        .hset(`agent:${agentId}:orchestrator`, registrationPayload as any)
+        .catch((error) => {
+          this.logger.warn(`Failed to persist orchestrator metadata for ${agentId}: ${error}`);
+        });
+    }
+
+    this.eventEmitter.emit('agent.registered', {
+      agentId,
+      timestamp: new Date(),
+      metadata: metadata || {},
+    });
+
+    drizzleAuditLogsRepository
+      .create({
+        action: 'agent.orchestrator.registered',
+        resourceType: 'agent',
+        resourceId: agentId,
+        status: 'success',
+        details: {
+          expectedResponseTime,
+          tenantId: metadata?.tenantId,
+          organizationId: metadata?.organizationId,
+          agencyId: metadata?.agencyId,
+        },
+        metadata: metadata || {},
+      })
+      .catch((error) => {
+        this.logger.warn(`Failed to write audit log for agent registration: ${error}`);
+      });
   }
 
   recordAgentHeartbeat(agentId: string, taskId?: string): void {
     if (this.heartbeatService) {
       this.heartbeatService.recordHeartbeat(agentId, taskId);
     }
+
+    drizzleAuditLogsRepository
+      .create({
+        action: 'agent.heartbeat',
+        resourceType: 'agent',
+        resourceId: agentId,
+        status: 'success',
+        details: {
+          taskId,
+        },
+      })
+      .catch((error) => {
+        this.logger.warn(`Failed to write audit log for heartbeat: ${error}`);
+      });
+  }
+
+  recordAgentActivity(agentId: string, activityType: string, metadata?: Record<string, unknown>): void {
+    if (this.heartbeatService) {
+      this.heartbeatService.recordActivity(agentId, activityType, metadata);
+    }
+
+    drizzleAuditLogsRepository
+      .create({
+        action: 'agent.activity',
+        resourceType: 'agent',
+        resourceId: agentId,
+        status: 'success',
+        details: {
+          activityType,
+        },
+        metadata: metadata || {},
+      })
+      .catch((error) => {
+        this.logger.warn(`Failed to write audit log for activity: ${error}`);
+      });
+  }
+
+  recordAgentHandoff(agentId: string, summary: string, metadata?: Record<string, unknown>): void {
+    const entry = {
+      agentId,
+      summary,
+      metadata: metadata || {},
+      timestamp: new Date().toISOString(),
+    };
+
+    this.redis
+      .lpush(`agent:${agentId}:handoff`, JSON.stringify(entry))
+      .then(() => this.redis.ltrim(`agent:${agentId}:handoff`, 0, 49))
+      .catch((error) => {
+        this.logger.warn(`Failed to store handoff for ${agentId}: ${error}`);
+      });
+
+    this.eventEmitter.emit('agent.handoff', entry);
+
+    drizzleAuditLogsRepository
+      .create({
+        action: 'agent.handoff',
+        resourceType: 'agent',
+        resourceId: agentId,
+        status: 'success',
+        details: {
+          summary,
+        },
+        metadata: metadata || {},
+      })
+      .catch((error) => {
+        this.logger.warn(`Failed to write audit log for handoff: ${error}`);
+      });
   }
 
   getSystemHealth(): ReturnType<HeartbeatMonitoringService['getHealthMetrics']> | null {

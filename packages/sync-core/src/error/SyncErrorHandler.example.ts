@@ -4,17 +4,17 @@
  */
 
 import { Logger } from '@nestjs/common';
-import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { IMonitoringSystem } from '@the-new-fuse/core-monitoring';
-import { 
-  SyncErrorHandler, 
-  SyncRetryManager, 
-  SyncFallbackProcessor,
-  SyncError,
-  SyncContext,
-  SyncErrorHandlerConfig,
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import {
+  FallbackProcessorConfig,
   RetryConfig,
-  FallbackProcessorConfig
+  SyncContext,
+  SyncError,
+  SyncErrorHandler,
+  SyncErrorHandlerConfig,
+  SyncFallbackProcessor,
+  SyncRetryManager,
 } from './index.js';
 
 /**
@@ -48,8 +48,8 @@ export class SyncErrorHandlingExample {
       alertThresholds: {
         errorRate: 10, // errors per minute
         criticalErrorCount: 5,
-        failedRecoveryRate: 0.5 // 50%
-      }
+        failedRecoveryRate: 0.5, // 50%
+      },
     };
 
     // Configure retry manager with circuit breaker
@@ -61,7 +61,7 @@ export class SyncErrorHandlingExample {
       jitterEnabled: true,
       circuitBreakerEnabled: true,
       circuitBreakerThreshold: 5,
-      circuitBreakerTimeout: 60000 // 1 minute
+      circuitBreakerTimeout: 60000, // 1 minute
     };
 
     // Configure fallback processor with graceful degradation
@@ -72,7 +72,7 @@ export class SyncErrorHandlingExample {
       maxConcurrentProcessing: 3,
       enableMetrics: true,
       enableAlternativeActions: true,
-      gracefulDegradationEnabled: true
+      gracefulDegradationEnabled: true,
     };
 
     // Initialize components
@@ -83,11 +83,7 @@ export class SyncErrorHandlingExample {
       this.logger
     );
 
-    this.retryManager = new SyncRetryManager(
-      this.redisService,
-      retryConfig,
-      this.logger
-    );
+    this.retryManager = new SyncRetryManager(this.redisService, retryConfig, this.logger);
 
     this.fallbackProcessor = new SyncFallbackProcessor(
       this.redisService,
@@ -111,7 +107,7 @@ export class SyncErrorHandlingExample {
         syncId: context.syncId,
         tenantId: context.tenantId,
         resourceType: error.resourceType,
-        operation: error.syncOperation
+        operation: error.syncOperation,
       });
 
       // Trigger incident management system
@@ -120,15 +116,16 @@ export class SyncErrorHandlingExample {
 
     // Handle fallback operation processing
     this.errorHandler.on('processFallbackOperation', (operation, callback) => {
-      this.fallbackProcessor.processFallbackOperation(operation)
-        .then(result => callback(result.success))
+      this.fallbackProcessor
+        .processFallbackOperation(operation)
+        .then((result) => callback(result.success))
         .catch(() => callback(false));
     });
 
     // Handle retry execution
     this.retryManager.on('executeRetry', (retry, callback) => {
       this.executeRetryOperation(retry)
-        .then(success => callback(success))
+        .then((success) => callback(success))
         .catch(() => callback(false));
     });
 
@@ -137,14 +134,13 @@ export class SyncErrorHandlingExample {
       this.logger.warn('Circuit breaker opened', {
         operation,
         failureCount: breaker.failureCount,
-        nextAttemptAt: breaker.nextAttemptAt
+        nextAttemptAt: breaker.nextAttemptAt,
       });
 
       // Notify monitoring system
-      this.monitoringSystem.getMetricsCollector().incrementCounter(
-        'sync_circuit_breaker_opened_total',
-        { operation }
-      );
+      this.monitoringSystem
+        .getMetricsCollector()
+        .incrementCounter('sync_circuit_breaker_opened_total', { operation });
     });
 
     // Handle graceful degradation
@@ -152,7 +148,7 @@ export class SyncErrorHandlingExample {
       this.logger.warn('System entering graceful degradation mode', {
         operation: operation.operation,
         resourceType: operation.context.syncType,
-        tenantId: operation.context.tenantId
+        tenantId: operation.context.tenantId,
       });
 
       // Notify users of degraded service
@@ -162,7 +158,7 @@ export class SyncErrorHandlingExample {
     // Handle alert triggers
     this.errorHandler.on('alertTriggered', (alert) => {
       this.logger.error('Sync error alert triggered', alert);
-      
+
       // Send to alerting system
       this.sendAlert(alert);
     });
@@ -184,13 +180,13 @@ export class SyncErrorHandlingExample {
         try {
           // Try to restore from local cache or backup
           const restored = await this.restoreFromBackup(operation);
-          
+
           return {
             success: restored,
             strategy: 'fileSyncFallback',
             executionTime: 0,
             shouldRetry: !restored,
-            data: restored ? { restoredFromBackup: true } : undefined
+            data: restored ? { restoredFromBackup: true } : undefined,
           };
         } catch (error) {
           return {
@@ -198,10 +194,10 @@ export class SyncErrorHandlingExample {
             strategy: 'fileSyncFallback',
             executionTime: 0,
             error: error instanceof Error ? error : new Error(String(error)),
-            shouldRetry: false
+            shouldRetry: false,
           };
         }
-      }
+      },
     });
 
     // Agent sync fallback strategy
@@ -216,13 +212,13 @@ export class SyncErrorHandlingExample {
         try {
           // Try simplified agent sync without full state
           const simplified = await this.performSimplifiedAgentSync(operation);
-          
+
           return {
             success: simplified,
             strategy: 'agentSyncFallback',
             executionTime: 0,
             shouldRetry: false,
-            data: { simplifiedSync: true }
+            data: { simplifiedSync: true },
           };
         } catch (error) {
           return {
@@ -230,10 +226,10 @@ export class SyncErrorHandlingExample {
             strategy: 'agentSyncFallback',
             executionTime: 0,
             error: error instanceof Error ? error : new Error(String(error)),
-            shouldRetry: false
+            shouldRetry: false,
           };
         }
-      }
+      },
     });
 
     // Template sync fallback strategy
@@ -248,13 +244,13 @@ export class SyncErrorHandlingExample {
         try {
           // Use cached template version
           const cached = await this.useCachedTemplate(operation);
-          
+
           return {
             success: cached,
             strategy: 'templateSyncFallback',
             executionTime: 0,
             shouldRetry: false,
-            data: { usedCache: true }
+            data: { usedCache: true },
           };
         } catch (error) {
           return {
@@ -262,21 +258,17 @@ export class SyncErrorHandlingExample {
             strategy: 'templateSyncFallback',
             executionTime: 0,
             error: error instanceof Error ? error : new Error(String(error)),
-            shouldRetry: false
+            shouldRetry: false,
           };
         }
-      }
+      },
     });
   }
 
   /**
    * Example: Handle a sync error with complete workflow
    */
-  async handleSyncError(
-    error: Error,
-    context: SyncContext,
-    operation: string
-  ): Promise<void> {
+  async handleSyncError(error: Error, context: SyncContext, operation: string): Promise<void> {
     try {
       // Step 1: Process error through error handler
       const result = await this.errorHandler.handleSyncError(error, context, operation);
@@ -285,7 +277,7 @@ export class SyncErrorHandlingExample {
         this.logger.info('Error recovered successfully', {
           syncId: context.syncId,
           strategy: result.strategy,
-          attempts: result.attempts
+          attempts: result.attempts,
         });
         return;
       }
@@ -293,7 +285,7 @@ export class SyncErrorHandlingExample {
       // Step 2: If recovery failed and error is retryable, schedule retry
       if (!result || !result.success) {
         const syncError = this.createSyncError(error, context, operation);
-        
+
         if (syncError.retryable) {
           try {
             const retryId = await this.retryManager.scheduleRetry(
@@ -306,12 +298,12 @@ export class SyncErrorHandlingExample {
             this.logger.info('Retry scheduled', {
               retryId,
               syncId: context.syncId,
-              operation
+              operation,
             });
           } catch (retryError) {
             this.logger.error('Failed to schedule retry', {
               error: retryError.message,
-              syncId: context.syncId
+              syncId: context.syncId,
             });
 
             // Queue for fallback processing
@@ -322,12 +314,11 @@ export class SyncErrorHandlingExample {
           await this.errorHandler.queueFallbackOperation(syncError, context);
         }
       }
-
     } catch (handlingError) {
       this.logger.error('Error in error handling workflow', {
         originalError: error.message,
         handlingError: handlingError.message,
-        syncId: context.syncId
+        syncId: context.syncId,
       });
     }
   }
@@ -343,20 +334,20 @@ export class SyncErrorHandlingExample {
     return {
       errorHandler: {
         statistics: this.errorHandler.getSyncStatistics(),
-        isRunning: true
+        isRunning: true,
       },
       retryManager: {
         statistics: await this.retryManager.getStatistics(),
-        circuitBreakers: Array.from(this.retryManager.getCircuitBreakerStates().entries())
+        circuitBreakers: Array.from(this.retryManager.getCircuitBreakerStates().entries()),
       },
       fallbackProcessor: {
         statistics: this.fallbackProcessor.getStatistics(),
-        strategies: this.fallbackProcessor.getStrategies().map(s => ({
+        strategies: this.fallbackProcessor.getStrategies().map((s) => ({
           name: s.name,
           enabled: s.enabled,
-          priority: s.priority
-        }))
-      }
+          priority: s.priority,
+        })),
+      },
     };
   }
 
@@ -387,8 +378,8 @@ export class SyncErrorHandlingExample {
       metadata: {
         syncContext: context,
         originalError: error,
-        stackTrace: error.stack
-      }
+        stackTrace: error.stack,
+      },
     } as SyncError;
   }
 
@@ -404,9 +395,7 @@ export class SyncErrorHandlingExample {
 
   private isRetryableError(error: Error): boolean {
     const retryablePatterns = ['network', 'timeout', 'connection', 'temporary'];
-    return retryablePatterns.some(pattern => 
-      error.message.toLowerCase().includes(pattern)
-    );
+    return retryablePatterns.some((pattern) => error.message.toLowerCase().includes(pattern));
   }
 
   private determineSeverity(error: Error): any {
@@ -435,7 +424,7 @@ export class SyncErrorHandlingExample {
     this.logger.debug('Executing retry operation', {
       retryId: retry.id,
       operation: retry.operation,
-      attemptNumber: retry.attemptNumber
+      attemptNumber: retry.attemptNumber,
     });
 
     // Simulate retry logic
@@ -446,7 +435,7 @@ export class SyncErrorHandlingExample {
     // Implementation would restore file from backup system
     this.logger.debug('Attempting to restore from backup', {
       operationId: operation.id,
-      resourcePath: operation.context.resourcePath
+      resourcePath: operation.context.resourcePath,
     });
 
     // Simulate backup restoration
@@ -457,7 +446,7 @@ export class SyncErrorHandlingExample {
     // Implementation would perform simplified agent synchronization
     this.logger.debug('Performing simplified agent sync', {
       operationId: operation.id,
-      agentId: operation.data?.agentId
+      agentId: operation.data?.agentId,
     });
 
     // Simulate simplified sync
@@ -468,7 +457,7 @@ export class SyncErrorHandlingExample {
     // Implementation would use cached template version
     this.logger.debug('Using cached template', {
       operationId: operation.id,
-      templateId: operation.data?.templateId
+      templateId: operation.data?.templateId,
     });
 
     // Simulate cache usage
@@ -480,7 +469,7 @@ export class SyncErrorHandlingExample {
     this.logger.error('Triggering incident for critical sync error', {
       errorCode: error.code,
       syncId: context.syncId,
-      tenantId: context.tenantId
+      tenantId: context.tenantId,
     });
   }
 
@@ -488,7 +477,7 @@ export class SyncErrorHandlingExample {
     // Implementation would notify users of degraded service
     this.logger.warn('Notifying users of degraded service', {
       operation: operation.operation,
-      tenantId: operation.context.tenantId
+      tenantId: operation.context.tenantId,
     });
   }
 
@@ -509,11 +498,7 @@ export class ExampleSyncService {
     private readonly monitoringSystem: IMonitoringSystem,
     private readonly logger: Logger
   ) {
-    this.errorHandling = new SyncErrorHandlingExample(
-      redisService,
-      monitoringSystem,
-      logger
-    );
+    this.errorHandling = new SyncErrorHandlingExample(redisService, monitoringSystem, logger);
   }
 
   async syncFile(filePath: string, tenantId: string): Promise<void> {
@@ -524,19 +509,18 @@ export class ExampleSyncService {
       operation: 'file-sync',
       tenantId,
       resourcePath: filePath,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     try {
       // Perform actual file sync operation
       await this.performFileSync(filePath, tenantId);
-      
+
       this.logger.info('File sync completed successfully', {
         filePath,
         tenantId,
-        syncId: context.syncId
+        syncId: context.syncId,
       });
-
     } catch (error) {
       // Handle error through comprehensive error handling system
       await this.errorHandling.handleSyncError(
@@ -550,12 +534,12 @@ export class ExampleSyncService {
   private async performFileSync(filePath: string, tenantId: string): Promise<void> {
     // Implementation would perform actual file synchronization
     // This might involve chokidar file watching, Redis pub/sub, etc.
-    
+
     // Simulate potential errors for demonstration
     if (Math.random() < 0.3) {
       throw new Error('Network connection timeout during file sync');
     }
-    
+
     if (Math.random() < 0.1) {
       throw new Error('File conflict detected during sync');
     }

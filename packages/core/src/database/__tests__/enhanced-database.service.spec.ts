@@ -1,4 +1,3 @@
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { EnhancedDatabaseService } from '../enhanced-database.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';

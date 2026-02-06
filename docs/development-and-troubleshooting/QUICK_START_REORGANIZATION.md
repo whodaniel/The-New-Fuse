@@ -2,11 +2,15 @@
 
 ## Overview
 
-This guide provides step-by-step instructions to implement the comprehensive reorganization plan for The New Fuse codebase. The reorganization preserves 100% of existing functionality while improving structure, maintainability, and developer experience.
+This guide provides step-by-step instructions to implement the comprehensive
+reorganization plan for The New Fuse codebase. The reorganization preserves 100%
+of existing functionality while improving structure, maintainability, and
+developer experience.
 
 ## Prerequisites
 
 ✅ **Before Starting:**
+
 - Ensure all current work is committed or stashed
 - Verify Bun and Node.js are installed
 - Have backup procedures ready
@@ -15,49 +19,63 @@ This guide provides step-by-step instructions to implement the comprehensive reo
 ## Quick Start Commands
 
 ### 1. Initialize the Reorganization
+
 ```bash
 pnpm run reorganize:init
 ```
+
 This command will:
+
 - Perform comprehensive pre-checks
 - Create backup branches and tags
 - Set up validation infrastructure
 - Initialize the reorganization branch
 
 ### 2. Execute Phase 1 - Package Standardization
+
 ```bash
 pnpm run reorganize:phase1
 ```
+
 This will:
+
 - Update all `@tnf/` imports to `@the-new-fuse/`
 - Standardize package.json files
 - Run validation checks
 
 ### 3. Validate After Each Phase
+
 ```bash
 pnpm run reorganize:validate
 ```
+
 Always run this after completing any phase to ensure functionality is preserved.
 
 ### 4. If Issues Arise - Rollback
+
 ```bash
 pnpm run reorganize:rollback
 ```
+
 Provides guided rollback options:
+
 - Complete rollback to backup
 - Partial rollback of specific commits
 - File-level rollback
 - Database rollback
 
 ### 5. Emergency Procedures
+
 ```bash
 pnpm run reorganize:emergency
 ```
+
 For critical issues requiring immediate intervention.
 
 ## Phase-by-Phase Implementation
 
 ### Phase 1: Package Standardization (Days 3-5)
+
 **Status**: Automated ✅
 
 ```bash
@@ -70,15 +88,19 @@ pnpm test
 ```
 
 **What it does:**
+
 - Updates all package imports from `@tnf/` to `@the-new-fuse/`
 - Standardizes package.json naming
 - Updates workspace dependencies
 
 ### Phase 2: TypeScript Configuration (Days 6-8)
+
 **Status**: Manual Implementation Required
 
 **Steps:**
+
 1. Create unified `tsconfig.base.json`:
+
 ```json
 {
   "compilerOptions": {
@@ -107,10 +129,13 @@ pnpm test
 3. Validate: `pnpm run reorganize:validate`
 
 ### Phase 3: Directory Structure (Days 9-12)
+
 **Status**: Manual Implementation Required
 
 **Key Actions:**
+
 1. Remove duplicate webhooks directory:
+
 ```bash
 rm -rf src/modules/webhooks/
 ```
@@ -120,38 +145,47 @@ rm -rf src/modules/webhooks/
 4. Validate: `pnpm run reorganize:validate`
 
 ### Phase 4: Configuration Management (Days 13-15)
+
 **Status**: Manual Implementation Required
 
 **Focus Areas:**
+
 - Consolidate environment files
 - Unify database configuration
 - Standardize build outputs
 
 ### Phase 5: Testing Infrastructure (Days 16-17)
+
 **Status**: Manual Implementation Required
 
 **Actions:**
+
 - Standardize test framework usage
 - Create test utilities package
 - Set up coverage reporting
 
 ### Phase 6: Documentation & DX (Days 18-19)
+
 **Status**: Manual Implementation Required
 
 **Deliverables:**
+
 - Updated README files
 - API documentation
 - VS Code workspace configuration
 
 ### Phase 7: Performance Optimization (Day 20)
+
 **Status**: Manual Implementation Required
 
 **Tasks:**
+
 - Bundle analysis
 - Build time optimization
 - Runtime performance review
 
 ### Phase 8: Final Validation (Day 21)
+
 **Status**: Automated ✅
 
 ```bash
@@ -161,6 +195,7 @@ pnpm run reorganize:validate
 ## Validation Checkpoints
 
 ### After Each Phase:
+
 ```bash
 # Check TypeScript compilation
 pnpm run type-check
@@ -176,6 +211,7 @@ pnpm run build
 ```
 
 ### Critical Validation Points:
+
 - [ ] All imports resolve correctly
 - [ ] TypeScript compiles without errors
 - [ ] All tests pass
@@ -187,6 +223,7 @@ pnpm run build
 ### Common Issues and Solutions:
 
 **Import Resolution Errors:**
+
 ```bash
 # Re-run import updates
 pnpm run reorganize:phase1
@@ -196,6 +233,7 @@ grep -r "@tnf/" . --include="*.ts" --include="*.js"
 ```
 
 **TypeScript Compilation Errors:**
+
 ```bash
 # Check configuration
 pnpm run type-check
@@ -204,6 +242,7 @@ pnpm run type-check
 ```
 
 **Build Failures:**
+
 ```bash
 # Clear cache and rebuild
 bun pm cache rm
@@ -212,6 +251,7 @@ pnpm run build
 ```
 
 ### Emergency Rollback:
+
 ```bash
 # Immediate rollback to backup
 git checkout backup-$(date +%Y%m%d)
@@ -222,18 +262,21 @@ pnpm run build
 ## Success Criteria
 
 ✅ **Technical Validation:**
+
 - Zero TypeScript errors
 - All tests passing
 - Successful build process
 - No broken imports
 
 ✅ **Functional Validation:**
+
 - All API endpoints responding
 - Frontend loads correctly
 - Database connections working
 - Authentication functioning
 
 ✅ **Performance Validation:**
+
 - Build time maintained or improved
 - Application startup time unchanged
 - Memory usage optimized
@@ -241,11 +284,13 @@ pnpm run build
 ## Getting Help
 
 ### Resources:
+
 - Full plan: `COMPREHENSIVE_REORGANIZATION_PLAN.md`
 - Validation scripts: `scripts/` directory
 - Backup procedures: `scripts/rollback-procedure.js`
 
 ### Support Commands:
+
 ```bash
 # Get reorganization status
 git status
@@ -267,4 +312,5 @@ pnpm run reorganize:rollback
 
 ---
 
-**Remember**: The reorganization is designed to be safe and reversible. Use the validation tools frequently and don't hesitate to rollback if issues arise.
+**Remember**: The reorganization is designed to be safe and reversible. Use the
+validation tools frequently and don't hesitate to rollback if issues arise.

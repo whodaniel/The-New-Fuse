@@ -2,8 +2,6 @@
  * Monitoring and metrics type definitions
  */
 
-import { ErrorCategory, ErrorSeverity } from './error';
-
 /**
  * Performance metrics interface
  */
@@ -82,7 +80,7 @@ export enum AlertSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 /**
@@ -92,7 +90,7 @@ export enum AlertStatus {
   ACTIVE = 'active',
   RESOLVED = 'resolved',
   ACKNOWLEDGED = 'acknowledged',
-  SUPPRESSED = 'suppressed'
+  SUPPRESSED = 'suppressed',
 }
 
 /**

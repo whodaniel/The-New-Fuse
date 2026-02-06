@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 interface WorkspaceMetrics {
@@ -55,7 +55,7 @@ export default function WorkspaceAnalytics() {
         messagesThisWeek: 1247,
         messagesLastWeek: 1089,
         storageUsed: 12.4,
-        storageLimit: 50
+        storageLimit: 50,
       });
 
       setActivityData([
@@ -65,7 +65,7 @@ export default function WorkspaceAnalytics() {
         { date: '2024-01-13', messages: 234, tasksCompleted: 18, agentInteractions: 156 },
         { date: '2024-01-14', messages: 189, tasksCompleted: 22, agentInteractions: 178 },
         { date: '2024-01-15', messages: 156, tasksCompleted: 9, agentInteractions: 145 },
-        { date: '2024-01-16', messages: 178, tasksCompleted: 14, agentInteractions: 167 }
+        { date: '2024-01-16', messages: 178, tasksCompleted: 14, agentInteractions: 167 },
       ]);
 
       setProjects([
@@ -76,7 +76,7 @@ export default function WorkspaceAnalytics() {
           progress: 75,
           members: 6,
           dueDate: '2024-02-15',
-          priority: 'high'
+          priority: 'high',
         },
         {
           id: '2',
@@ -85,7 +85,7 @@ export default function WorkspaceAnalytics() {
           progress: 45,
           members: 4,
           dueDate: '2024-02-28',
-          priority: 'high'
+          priority: 'high',
         },
         {
           id: '3',
@@ -94,7 +94,7 @@ export default function WorkspaceAnalytics() {
           progress: 20,
           members: 8,
           dueDate: '2024-03-30',
-          priority: 'medium'
+          priority: 'medium',
         },
         {
           id: '4',
@@ -103,7 +103,7 @@ export default function WorkspaceAnalytics() {
           progress: 100,
           members: 3,
           dueDate: '2024-01-15',
-          priority: 'high'
+          priority: 'high',
         },
         {
           id: '5',
@@ -112,8 +112,8 @@ export default function WorkspaceAnalytics() {
           progress: 60,
           members: 2,
           dueDate: '2024-02-10',
-          priority: 'low'
-        }
+          priority: 'low',
+        },
       ]);
 
       setLoading(false);
@@ -148,7 +148,7 @@ export default function WorkspaceAnalytics() {
 
   const calculateGrowth = (current: number, previous: number) => {
     if (previous === 0) return 0;
-    return ((current - previous) / previous * 100).toFixed(1);
+    return (((current - previous) / previous) * 100).toFixed(1);
   };
 
   if (loading) {
@@ -248,16 +248,26 @@ export default function WorkspaceAnalytics() {
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
                 <div>
-                  <p className="text-lg font-bold text-blue-900">{metrics.messagesThisWeek.toLocaleString()}</p>
+                  <p className="text-lg font-bold text-blue-900">
+                    {metrics.messagesThisWeek.toLocaleString()}
+                  </p>
                   <p className="text-sm text-blue-700">Messages This Week</p>
                 </div>
                 <div className="text-right">
-                  <p className={`text-sm font-medium ${
-                    parseFloat(calculateGrowth(metrics.messagesThisWeek, metrics.messagesLastWeek)) >= 0 
-                      ? 'text-green-600' 
-                      : 'text-red-600'
-                  }`}>
-                    {parseFloat(calculateGrowth(metrics.messagesThisWeek, metrics.messagesLastWeek)) >= 0 ? '+' : ''}
+                  <p
+                    className={`text-sm font-medium ${
+                      parseFloat(
+                        calculateGrowth(metrics.messagesThisWeek, metrics.messagesLastWeek)
+                      ) >= 0
+                        ? 'text-green-600'
+                        : 'text-red-600'
+                    }`}
+                  >
+                    {parseFloat(
+                      calculateGrowth(metrics.messagesThisWeek, metrics.messagesLastWeek)
+                    ) >= 0
+                      ? '+'
+                      : ''}
                     {calculateGrowth(metrics.messagesThisWeek, metrics.messagesLastWeek)}%
                   </p>
                   <p className="text-xs text-gray-500">vs last week</p>
@@ -266,7 +276,9 @@ export default function WorkspaceAnalytics() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <p className="text-lg font-bold text-gray-900">{metrics.messagesLastWeek.toLocaleString()}</p>
+                  <p className="text-lg font-bold text-gray-900">
+                    {metrics.messagesLastWeek.toLocaleString()}
+                  </p>
                   <p className="text-sm text-gray-600">Last Week</p>
                 </div>
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
@@ -287,15 +299,17 @@ export default function WorkspaceAnalytics() {
             <div className="space-y-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-gray-600">Used Storage</span>
-                <span className="text-sm font-medium">{metrics.storageUsed} GB of {metrics.storageLimit} GB</span>
+                <span className="text-sm font-medium">
+                  {metrics.storageUsed} GB of {metrics.storageLimit} GB
+                </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
-                <div 
-                  className="bg-blue-600 h-3 rounded-full transition-all duration-300" 
+                <div
+                  className="bg-blue-600 h-3 rounded-full transition-all duration-300"
                   style={{ width: `${(metrics.storageUsed / metrics.storageLimit) * 100}%` }}
                 ></div>
               </div>
-              
+
               <div className="grid grid-cols-3 gap-4 mt-4">
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
                   <p className="text-lg font-bold text-gray-900">78%</p>
@@ -325,27 +339,27 @@ export default function WorkspaceAnalytics() {
                 {new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}
               </div>
               <div className="space-y-1">
-                <div 
-                  className="bg-blue-500 rounded mx-auto" 
-                  style={{ 
-                    height: `${Math.max(20, (day.messages / 250) * 60)}px`, 
-                    width: '12px' 
+                <div
+                  className="bg-blue-500 rounded mx-auto"
+                  style={{
+                    height: `${Math.max(20, (day.messages / 250) * 60)}px`,
+                    width: '12px',
                   }}
                   title={`${day.messages} messages`}
                 ></div>
-                <div 
-                  className="bg-green-500 rounded mx-auto" 
-                  style={{ 
-                    height: `${Math.max(20, (day.tasksCompleted / 25) * 60)}px`, 
-                    width: '12px' 
+                <div
+                  className="bg-green-500 rounded mx-auto"
+                  style={{
+                    height: `${Math.max(20, (day.tasksCompleted / 25) * 60)}px`,
+                    width: '12px',
                   }}
                   title={`${day.tasksCompleted} tasks completed`}
                 ></div>
-                <div 
-                  className="bg-purple-500 rounded mx-auto" 
-                  style={{ 
-                    height: `${Math.max(20, (day.agentInteractions / 200) * 60)}px`, 
-                    width: '12px' 
+                <div
+                  className="bg-purple-500 rounded mx-auto"
+                  style={{
+                    height: `${Math.max(20, (day.agentInteractions / 200) * 60)}px`,
+                    width: '12px',
                   }}
                   title={`${day.agentInteractions} agent interactions`}
                 ></div>
@@ -373,24 +387,33 @@ export default function WorkspaceAnalytics() {
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-900">Project Status</h2>
-          <Link
-            to="/tasks"
-            className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-          >
+          <Link to="/tasks" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
             View All Projects →
           </Link>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Members</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Project
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Priority
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Progress
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Members
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Due Date
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -400,20 +423,24 @@ export default function WorkspaceAnalytics() {
                     <div className="text-sm font-medium text-gray-900">{project.name}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusBadge(project.status)}`}>
+                    <span
+                      className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusBadge(project.status)}`}
+                    >
                       {project.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getPriorityBadge(project.priority)}`}>
+                    <span
+                      className={`px-2 py-1 text-xs font-medium rounded-full border ${getPriorityBadge(project.priority)}`}
+                    >
                       {project.priority}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                        <div 
-                          className="bg-blue-600 h-2 rounded-full" 
+                        <div
+                          className="bg-blue-600 h-2 rounded-full"
                           style={{ width: `${project.progress}%` }}
                         ></div>
                       </div>
@@ -443,7 +470,7 @@ export default function WorkspaceAnalytics() {
           <div className="font-medium">Create New Task</div>
           <div className="text-sm opacity-90">Start a new project task</div>
         </Link>
-        
+
         <Link
           to="/agents/new"
           className="bg-purple-600 text-white p-6 rounded-lg hover:bg-purple-700 transition-colors text-center"
@@ -452,7 +479,7 @@ export default function WorkspaceAnalytics() {
           <div className="font-medium">Deploy New Agent</div>
           <div className="text-sm opacity-90">Add AI agent to workspace</div>
         </Link>
-        
+
         <Link
           to="/workspace/members"
           className="bg-green-600 text-white p-6 rounded-lg hover:bg-green-700 transition-colors text-center"

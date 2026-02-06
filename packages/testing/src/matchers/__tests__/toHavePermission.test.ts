@@ -7,9 +7,9 @@ describe('toHavePermission', () => {
     roles: [
       {
         name: 'editor',
-        permissions: ['edit:posts', 'delete:posts']
-      }
-    ]
+        permissions: ['edit:posts', 'delete:posts'],
+      },
+    ],
   };
 
   it('should pass for direct permission', async () => {
@@ -37,7 +37,7 @@ describe('toHavePermission', () => {
     const userWithEmpty = {
       id: 'user3',
       permissions: [],
-      roles: []
+      roles: [],
     };
     const result = await toHavePermission.call({} as any, userWithEmpty, 'read:posts');
     expect(result.pass).toBe(false);

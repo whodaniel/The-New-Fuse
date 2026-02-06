@@ -31,7 +31,7 @@ export class ComponentAnalysisSubscriber {
   notify(event: ComponentAnalysisEvent): void {
     const callbacks = this.subscribers.get(event.componentId);
     if (callbacks) {
-      callbacks.forEach(callback => callback(event));
+      callbacks.forEach((callback) => callback(event));
     }
   }
 }

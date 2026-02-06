@@ -32,8 +32,8 @@ class MetricsCollector {
       errorRate: Math.random() * 0.1,
       resourceUsage: {
         cpu: Math.random() * 100,
-        memory: Math.random() * 100
-      }
+        memory: Math.random() * 100,
+      },
     };
   }
 }
@@ -44,8 +44,8 @@ class InsightGenerator {
       summary: 'Workflow performance analysis completed',
       recommendations: [
         'Consider optimizing step execution order',
-        'Monitor resource usage during peak times'
-      ]
+        'Monitor resource usage during peak times',
+      ],
     };
   }
 }
@@ -62,12 +62,15 @@ export class WorkflowAnalytics {
       generate: (data: any) => ({
         charts: [],
         tables: [],
-        summary: data
-      })
+        summary: data,
+      }),
     };
   }
 
-  async generateBusinessInsights(workflowId: string, timeRange: DateRange): Promise<WorkflowInsights> {
+  async generateBusinessInsights(
+    workflowId: string,
+    timeRange: DateRange,
+  ): Promise<WorkflowInsights> {
     const metrics = await this.metricsCollector.collect(workflowId, timeRange);
     const trends = await this.analyzeTrends(metrics);
     return {
@@ -75,7 +78,7 @@ export class WorkflowAnalytics {
       bottlenecks: this.identifyBottlenecks(metrics),
       optimization: this.generateOptimizationSuggestions(metrics),
       businessImpact: this.calculateBusinessImpact(metrics),
-      predictions: await this.generatePredictions(trends)
+      predictions: await this.generatePredictions(trends),
     };
   }
 
@@ -83,14 +86,14 @@ export class WorkflowAnalytics {
     const workflowId = filters.workflowId || '';
     const timeRange = filters.timeRange || {
       startDate: new Date(Date.now() - 24 * 60 * 60 * 1000), // 24 hours ago
-      endDate: new Date()
+      endDate: new Date(),
     };
     const metrics = await this.metricsCollector.collect(workflowId, timeRange);
     const insights = this.insightGenerator.generateInsights(metrics);
     return {
       performance: metrics,
       trends: await this.analyzeTrends(metrics),
-      insights: insights
+      insights: insights,
     };
   }
 
@@ -101,7 +104,7 @@ export class WorkflowAnalytics {
       direction: 'improving',
       confidence: 0.85,
       throughput: metrics.throughput,
-      executionTime: metrics.executionTime
+      executionTime: metrics.executionTime,
     };
   }
 
@@ -109,7 +112,7 @@ export class WorkflowAnalytics {
     return {
       averageExecutionTime: metrics.executionTime || 0,
       throughput: metrics.throughput || 0,
-      successRate: 1 - (metrics.errorRate || 0)
+      successRate: 1 - (metrics.errorRate || 0),
     };
   }
 
@@ -119,8 +122,8 @@ export class WorkflowAnalytics {
         type: 'resource',
         description: 'High CPU usage detected',
         severity: 'medium',
-        suggestion: 'Consider optimizing computational steps'
-      }
+        suggestion: 'Consider optimizing computational steps',
+      },
     ];
   }
 
@@ -129,12 +132,12 @@ export class WorkflowAnalytics {
       suggestions: [
         'Implement parallel processing for independent steps',
         'Add caching for frequently accessed data',
-        'Optimize database queries'
+        'Optimize database queries',
       ],
       estimatedImpact: {
         performanceGain: '15-20%',
-        costReduction: '10%'
-      }
+        costReduction: '10%',
+      },
     };
   }
 
@@ -142,7 +145,7 @@ export class WorkflowAnalytics {
     return {
       costSavings: metrics.throughput * 0.1,
       timeReduction: metrics.executionTime * 0.05,
-      qualityImprovement: 1 - (metrics.errorRate || 0)
+      qualityImprovement: 1 - (metrics.errorRate || 0),
     };
   }
 
@@ -150,12 +153,9 @@ export class WorkflowAnalytics {
     return {
       nextWeekPerformance: {
         expectedThroughput: trends.throughput * 1.1,
-        expectedExecutionTime: trends.executionTime * 0.95
+        expectedExecutionTime: trends.executionTime * 0.95,
       },
-      riskFactors: [
-        'Increased load during peak hours',
-        'Potential resource constraints'
-      ]
+      riskFactors: ['Increased load during peak hours', 'Potential resource constraints'],
     };
   }
 }

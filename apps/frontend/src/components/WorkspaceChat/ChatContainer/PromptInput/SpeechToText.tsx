@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Mic, MicOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Mic, MicOff } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface SpeechToTextProps {
   onTranscript?: (transcript: string) => void;
@@ -8,10 +8,10 @@ interface SpeechToTextProps {
   className?: string;
 }
 
-const SpeechToText: React.FC<SpeechToTextProps> = ({ 
+const SpeechToText: React.FC<SpeechToTextProps> = ({
   onTranscript,
   disabled = false,
-  className 
+  className,
 }) => {
   const [isListening, setIsListening] = useState(false);
   const hasSupport = typeof window !== 'undefined' && 'webkitSpeechRecognition' in window;
@@ -61,14 +61,14 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({
       onClick={isListening ? stopListening : startListening}
       disabled={disabled}
       className={cn(
-        "p-2 rounded-md transition-colors",
-        isListening 
-          ? "bg-red-100 text-red-600 hover:bg-red-200" 
-          : "bg-slate-100 text-slate-600 hover:bg-slate-200",
-        disabled && "opacity-50 cursor-not-allowed",
+        'p-2 rounded-md transition-colors',
+        isListening
+          ? 'bg-red-100 text-red-600 hover:bg-red-200'
+          : 'bg-slate-100 text-slate-600 hover:bg-slate-200',
+        disabled && 'opacity-50 cursor-not-allowed',
         className
       )}
-      title={isListening ? "Stop listening" : "Start voice input"}
+      title={isListening ? 'Stop listening' : 'Start voice input'}
     >
       {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
     </button>

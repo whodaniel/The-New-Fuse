@@ -1,7 +1,7 @@
-import { ErrorService } from '../core/services/ErrorService';
 import * as Sentry from '@sentry/browser';
 import { BrowserTracing } from '@sentry/tracing';
-import { ErrorPriority, ErrorCategory } from '../shared/types/errors';
+import { ErrorService } from '../core/services/ErrorService';
+import { ErrorCategory, ErrorPriority } from '../shared/types/errors';
 import { Logger } from '../utils/logger';
 
 interface ErrorContext {
@@ -78,9 +78,8 @@ export class ErrorTrackingService {
       'Load failed',
     ];
 
-    return ignoredMessages.some(msg => 
-      event.message?.includes(msg) || 
-      event.exception?.values?.[0]?.value?.includes(msg)
+    return ignoredMessages.some(
+      (msg) => event.message?.includes(msg) || event.exception?.values?.[0]?.value?.includes(msg)
     );
   }
 
@@ -95,9 +94,7 @@ export class ErrorTrackingService {
 
     // Mask sensitive fields
     if (sanitizedEvent.request?.headers) {
-      sanitizedEvent.request.headers = this.maskSensitiveHeaders(
-        sanitizedEvent.request.headers
-      );
+      sanitizedEvent.request.headers = this.maskSensitiveHeaders(sanitizedEvent.request.headers);
     }
 
     return sanitizedEvent;
@@ -150,7 +147,7 @@ export class ErrorTrackingService {
             scope.setTag('priority', context.priority);
           }
           if (context.tags) {
-            context.tags.forEach(tag => scope.setTag(tag, true));
+            context.tags.forEach((tag) => scope.setTag(tag, true));
           }
           if (context.metadata) {
             scope.setExtras(context.metadata);
@@ -187,7 +184,7 @@ export class ErrorTrackingService {
 
   public clearUser(): void {
     if (!this.isInitialized) return;
-    
+
     try {
       Sentry.setUser(null);
     } catch (e) {
@@ -195,11 +192,7 @@ export class ErrorTrackingService {
     }
   }
 
-  public addBreadcrumb(
-    message: string,
-    category?: string,
-    level?: Sentry.SeverityLevel
-  ): void {
+  public addBreadcrumb(message: string, category?: string, level?: Sentry.SeverityLevel): void {
     if (!this.isInitialized) return;
 
     try {

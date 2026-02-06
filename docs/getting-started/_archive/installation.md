@@ -1,6 +1,7 @@
 # Installation and Setup Guide
 
-This guide provides detailed instructions for installing and setting up The New Fuse framework for development and production use.
+This guide provides detailed instructions for installing and setting up The New
+Fuse framework for development and production use.
 
 ## Prerequisites
 
@@ -39,19 +40,19 @@ Before installing Fuse, ensure you have the following prerequisites:
    NODE_ENV=development
    PORT=3000
    API_PREFIX=/api
-   
+
    # Database
    DATABASE_URL=postgresql://username:password@localhost:5432/fuse_db
-   
+
    # Redis
    REDIS_HOST=localhost
    REDIS_PORT=6379
    REDIS_PASSWORD=
-   
+
    # Authentication
    JWT_SECRET=your-jwt-secret-key
    JWT_EXPIRATION=3600
-   
+
    # Logging
    LOG_LEVEL=debug
    ```
@@ -119,7 +120,7 @@ To integrate Fuse with VS Code:
 3. **Configure the extension**
 
    Open VS Code settings (Ctrl+,) and set:
-   
+
    ```json
    {
      "fuse.mcp.serverUrl": "http://localhost:3000",
@@ -238,4 +239,5 @@ After installation, consider:
 1. Exploring the [API Documentation](./API_SPECIFICATION.md)
 2. Running through the examples in `examples/`
 3. Setting up a test workflow with `yarn workflow:create-example`
-4. Reading the [Architecture Overview](./ARCHITECTURE.md) for deeper understanding
+4. Reading the [Architecture Overview](./ARCHITECTURE.md) for deeper
+   understanding

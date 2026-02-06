@@ -1,5 +1,12 @@
-
-import { DataType, ViewType, FilterOperator, View, KanbanViewOptions, TimelineViewOptions, Table } from './types.js';
+import {
+  DataType,
+  FilterOperator,
+  KanbanViewOptions,
+  Table,
+  TimelineViewOptions,
+  View,
+  ViewType,
+} from './types.js';
 
 // Simple ID generator function
 const generateId = (): string => {
@@ -26,10 +33,10 @@ export const DATA_TYPE_ICONS: Record<DataType | ViewType, string> = {
   [DataType.CREATED_TIME]: '⏱️',
   [DataType.LAST_MODIFIED_TIME]: '⏱️',
   [DataType.VOTES]: '👍', // Icon for Votes
-  [ViewType.GRID]: '▦', 
-  [ViewType.KANBAN]: ' Kanban', 
-  [ViewType.CALENDAR]: '📅', 
-  [ViewType.GALLERY]: '🖼️', 
+  [ViewType.GRID]: '▦',
+  [ViewType.KANBAN]: ' Kanban',
+  [ViewType.CALENDAR]: '📅',
+  [ViewType.GALLERY]: '🖼️',
   [ViewType.TIMELINE]: '📊',
 };
 
@@ -37,32 +44,95 @@ export const DATA_TYPE_OPTIONS = [
   { value: DataType.TEXT, label: 'Text', icon: DATA_TYPE_ICONS[DataType.TEXT] },
   { value: DataType.NUMBER, label: 'Number', icon: DATA_TYPE_ICONS[DataType.NUMBER] },
   { value: DataType.BOOLEAN, label: 'Checkbox', icon: DATA_TYPE_ICONS[DataType.BOOLEAN] },
-  { value: DataType.SINGLE_SELECT, label: 'Single Select', icon: DATA_TYPE_ICONS[DataType.SINGLE_SELECT] },
+  {
+    value: DataType.SINGLE_SELECT,
+    label: 'Single Select',
+    icon: DATA_TYPE_ICONS[DataType.SINGLE_SELECT],
+  },
   { value: DataType.LONG_TEXT, label: 'Long Text', icon: DATA_TYPE_ICONS[DataType.LONG_TEXT] },
   { value: DataType.DATE, label: 'Date', icon: DATA_TYPE_ICONS[DataType.DATE] },
   { value: DataType.URL, label: 'URL', icon: DATA_TYPE_ICONS[DataType.URL] },
   { value: DataType.EMAIL, label: 'Email', icon: DATA_TYPE_ICONS[DataType.EMAIL] },
-  { value: DataType.LINKED_RECORD, label: 'Link to another record', icon: DATA_TYPE_ICONS[DataType.LINKED_RECORD] },
+  {
+    value: DataType.LINKED_RECORD,
+    label: 'Link to another record',
+    icon: DATA_TYPE_ICONS[DataType.LINKED_RECORD],
+  },
   { value: DataType.FORMULA, label: 'Formula', icon: DATA_TYPE_ICONS[DataType.FORMULA] },
   { value: DataType.ATTACHMENT, label: 'Attachment', icon: DATA_TYPE_ICONS[DataType.ATTACHMENT] },
   { value: DataType.VOTES, label: 'Votes', icon: DATA_TYPE_ICONS[DataType.VOTES] },
-  { value: DataType.CREATED_TIME, label: 'Created time', icon: DATA_TYPE_ICONS[DataType.CREATED_TIME] },
-  { value: DataType.LAST_MODIFIED_TIME, label: 'Last modified time', icon: DATA_TYPE_ICONS[DataType.LAST_MODIFIED_TIME] },
+  {
+    value: DataType.CREATED_TIME,
+    label: 'Created time',
+    icon: DATA_TYPE_ICONS[DataType.CREATED_TIME],
+  },
+  {
+    value: DataType.LAST_MODIFIED_TIME,
+    label: 'Last modified time',
+    icon: DATA_TYPE_ICONS[DataType.LAST_MODIFIED_TIME],
+  },
 ];
 
-export const FILTER_OPERATOR_OPTIONS: Record<FilterOperator, { label: string; applicableTypes: DataType[] }> = {
-  [FilterOperator.EQ]: { label: 'is', applicableTypes: [DataType.TEXT, DataType.NUMBER, DataType.SINGLE_SELECT, DataType.DATE, DataType.URL, DataType.EMAIL, DataType.BOOLEAN, DataType.VOTES] },
-  [FilterOperator.NEQ]: { label: 'is not', applicableTypes: [DataType.TEXT, DataType.NUMBER, DataType.SINGLE_SELECT, DataType.DATE, DataType.URL, DataType.EMAIL, DataType.BOOLEAN, DataType.VOTES] },
-  [FilterOperator.GT]: { label: '>', applicableTypes: [DataType.NUMBER, DataType.DATE, DataType.VOTES] },
-  [FilterOperator.LT]: { label: '<', applicableTypes: [DataType.NUMBER, DataType.DATE, DataType.VOTES] },
-  [FilterOperator.GTE]: { label: '>=', applicableTypes: [DataType.NUMBER, DataType.DATE, DataType.VOTES] },
-  [FilterOperator.LTE]: { label: '<=', applicableTypes: [DataType.NUMBER, DataType.DATE, DataType.VOTES] },
-  [FilterOperator.CONTAINS]: { label: 'contains', applicableTypes: [DataType.TEXT, DataType.LONG_TEXT, DataType.URL, DataType.EMAIL] },
-  [FilterOperator.NOT_CONTAINS]: { label: 'does not contain', applicableTypes: [DataType.TEXT, DataType.LONG_TEXT, DataType.URL, DataType.EMAIL] },
+export const FILTER_OPERATOR_OPTIONS: Record<
+  FilterOperator,
+  { label: string; applicableTypes: DataType[] }
+> = {
+  [FilterOperator.EQ]: {
+    label: 'is',
+    applicableTypes: [
+      DataType.TEXT,
+      DataType.NUMBER,
+      DataType.SINGLE_SELECT,
+      DataType.DATE,
+      DataType.URL,
+      DataType.EMAIL,
+      DataType.BOOLEAN,
+      DataType.VOTES,
+    ],
+  },
+  [FilterOperator.NEQ]: {
+    label: 'is not',
+    applicableTypes: [
+      DataType.TEXT,
+      DataType.NUMBER,
+      DataType.SINGLE_SELECT,
+      DataType.DATE,
+      DataType.URL,
+      DataType.EMAIL,
+      DataType.BOOLEAN,
+      DataType.VOTES,
+    ],
+  },
+  [FilterOperator.GT]: {
+    label: '>',
+    applicableTypes: [DataType.NUMBER, DataType.DATE, DataType.VOTES],
+  },
+  [FilterOperator.LT]: {
+    label: '<',
+    applicableTypes: [DataType.NUMBER, DataType.DATE, DataType.VOTES],
+  },
+  [FilterOperator.GTE]: {
+    label: '>=',
+    applicableTypes: [DataType.NUMBER, DataType.DATE, DataType.VOTES],
+  },
+  [FilterOperator.LTE]: {
+    label: '<=',
+    applicableTypes: [DataType.NUMBER, DataType.DATE, DataType.VOTES],
+  },
+  [FilterOperator.CONTAINS]: {
+    label: 'contains',
+    applicableTypes: [DataType.TEXT, DataType.LONG_TEXT, DataType.URL, DataType.EMAIL],
+  },
+  [FilterOperator.NOT_CONTAINS]: {
+    label: 'does not contain',
+    applicableTypes: [DataType.TEXT, DataType.LONG_TEXT, DataType.URL, DataType.EMAIL],
+  },
   [FilterOperator.IS_EMPTY]: { label: 'is empty', applicableTypes: Object.values(DataType) },
-  [FilterOperator.IS_NOT_EMPTY]: { label: 'is not empty', applicableTypes: Object.values(DataType) },
+  [FilterOperator.IS_NOT_EMPTY]: {
+    label: 'is not empty',
+    applicableTypes: Object.values(DataType),
+  },
 };
-
 
 export const SINGLE_SELECT_COLOR_PALETTE: { name: string; value: string }[] = [
   { name: 'Gray', value: 'bg-gray-200 text-gray-800' },
@@ -85,9 +155,9 @@ export const SINGLE_SELECT_COLOR_PALETTE: { name: string; value: string }[] = [
   { name: 'Rose', value: 'bg-rose-200 text-rose-800' },
 ];
 
-export const NEW_TABLE_DEFAULT_NAME = "New Table";
-export const NEW_COLUMN_DEFAULT_NAME = "New Column";
-export const NEW_VIEW_DEFAULT_NAME = "New View";
+export const NEW_TABLE_DEFAULT_NAME = 'New Table';
+export const NEW_COLUMN_DEFAULT_NAME = 'New Column';
+export const NEW_VIEW_DEFAULT_NAME = 'New View';
 
 export const getDefaultGridView = (): View => ({
   id: generateId(),
@@ -96,30 +166,30 @@ export const getDefaultGridView = (): View => ({
   filters: [],
   sorts: [],
   groupBy: [],
-  viewSpecificOptions: {}, 
+  viewSpecificOptions: {},
 });
 
 export const getDefaultKanbanViewOptions = (table: Table): KanbanViewOptions => {
-    const { columns } = table;
-    const singleSelectCol = columns.find(c => c.type === DataType.SINGLE_SELECT);
-    if (singleSelectCol) return { groupByColumnId: singleSelectCol.id };
-    const linkedRecordCol = columns.find(c => c.type === DataType.LINKED_RECORD);
-    if (linkedRecordCol) return { groupByColumnId: linkedRecordCol.id };
-    const textCol = columns.find(c => c.type === DataType.TEXT);
-    if (textCol) return { groupByColumnId: textCol.id };
-    return { groupByColumnId: columns.length > 0 ? columns[0].id : null };
+  const { columns } = table;
+  const singleSelectCol = columns.find((c) => c.type === DataType.SINGLE_SELECT);
+  if (singleSelectCol) return { groupByColumnId: singleSelectCol.id };
+  const linkedRecordCol = columns.find((c) => c.type === DataType.LINKED_RECORD);
+  if (linkedRecordCol) return { groupByColumnId: linkedRecordCol.id };
+  const textCol = columns.find((c) => c.type === DataType.TEXT);
+  if (textCol) return { groupByColumnId: textCol.id };
+  return { groupByColumnId: columns.length > 0 ? columns[0].id : null };
 };
 
 export const getDefaultTimelineViewOptions = (table: Table): TimelineViewOptions => {
-    const { columns } = table;
-    const dateColumns = columns.filter(c => c.type === DataType.DATE);
-    const firstDateCol = dateColumns[0];
-    const secondDateCol = dateColumns.length > 1 ? dateColumns[1] : undefined;
-    const firstTextCol = columns.find(c => c.type === DataType.TEXT);
+  const { columns } = table;
+  const dateColumns = columns.filter((c) => c.type === DataType.DATE);
+  const firstDateCol = dateColumns[0];
+  const secondDateCol = dateColumns.length > 1 ? dateColumns[1] : undefined;
+  const firstTextCol = columns.find((c) => c.type === DataType.TEXT);
 
-    return {
-        startDateColumnId: firstDateCol?.id || null,
-        endDateColumnId: secondDateCol?.id || null,
-        labelColumnId: firstTextCol?.id || (columns.length > 0 ? columns[0].id : null),
-    };
+  return {
+    startDateColumnId: firstDateCol?.id || null,
+    endDateColumnId: secondDateCol?.id || null,
+    labelColumnId: firstTextCol?.id || (columns.length > 0 ? columns[0].id : null),
+  };
 };

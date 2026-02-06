@@ -7,10 +7,10 @@
  * - RelayController: REST API endpoints for relay management
  */
 
-import { Module, Global } from '@nestjs/common';
-import { RelayService } from './relay.service';
+import { Global, Module } from '@nestjs/common';
 import { RelayController } from './relay.controller';
 import { RelayGateway } from './relay.gateway';
+import { RelayService } from './relay.service';
 
 @Global()
 @Module({

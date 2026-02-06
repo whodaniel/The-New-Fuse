@@ -68,17 +68,13 @@ export class RedisCacheService {
     }
   }
 
-  async set<T>(
-    key: string, 
-    value: T, 
-    options: CacheOptions = {}
-  ): Promise<boolean> {
+  async set<T>(key: string, value: T, options: CacheOptions = {}): Promise<boolean> {
     try {
       const serialized = JSON.stringify(value);
       const ttl = options.ttl || 300; // Default 5 minutes
-      
+
       await this.unifiedRedis.set(key, serialized, ttl);
-      
+
       // Store tags for bulk invalidation
       if (options.tags?.length) {
         for (const tag of options.tags) {
@@ -86,7 +82,7 @@ export class RedisCacheService {
           await this.unifiedRedis.expire(`tag:${tag}`, ttl);
         }
       }
-      
+
       this.stats.sets++;
       return true;
     } catch (error) {
@@ -110,14 +106,14 @@ export class RedisCacheService {
     try {
       const keys = await this.unifiedRedis.smembers(`tag:${tag}`);
       if (keys.length === 0) return 0;
-      
+
       // Batch delete using Promise.all for better performance
-      const deletePromises = keys.map(key => this.unifiedRedis.del(key));
+      const deletePromises = keys.map((key) => this.unifiedRedis.del(key));
       await Promise.all(deletePromises);
       await this.unifiedRedis.del(`tag:${tag}`);
-      
+
       this.stats.deletes += keys.length;
-      
+
       this.logger.log(`Invalidated ${keys.length} keys for tag: ${tag}`);
       return keys.length;
     } catch (error) {
@@ -215,12 +211,12 @@ export class RedisCacheService {
   async batchGet<T>(keys: string[]): Promise<Array<T | null>> {
     try {
       // Use Promise.all for parallel operations
-      const results = await Promise.all(keys.map(key => this.unifiedRedis.get(key)));
-      
-      this.stats.hits += results.filter(r => r !== null).length;
-      this.stats.misses += results.filter(r => r === null).length;
-      
-      return results.map(result => {
+      const results = await Promise.all(keys.map((key) => this.unifiedRedis.get(key)));
+
+      this.stats.hits += results.filter((r) => r !== null).length;
+      this.stats.misses += results.filter((r) => r === null).length;
+
+      return results.map((result) => {
         if (result) {
           return JSON.parse(result);
         }
@@ -233,7 +229,9 @@ export class RedisCacheService {
     }
   }
 
-  async batchSet<T>(items: Array<{ key: string; value: T; options?: CacheOptions }>): Promise<boolean[]> {
+  async batchSet<T>(
+    items: Array<{ key: string; value: T; options?: CacheOptions }>
+  ): Promise<boolean[]> {
     try {
       // Use Promise.all for parallel operations
       const setPromises = items.map(async ({ key, value, options = {} }) => {
@@ -246,10 +244,10 @@ export class RedisCacheService {
           return false;
         }
       });
-      
+
       const results = await Promise.all(setPromises);
       this.stats.sets += items.length;
-      
+
       return results;
     } catch (error) {
       this.logger.error('Batch set error:', error);
@@ -260,17 +258,17 @@ export class RedisCacheService {
   // Cache warming methods
   async warmCache(userId: string): Promise<void> {
     this.logger.log(`Warming cache for user: ${userId}`);
-    
+
     try {
       // Warm user data
       // Implementation would fetch and cache user's most accessed data
-      
+
       // Warm dashboard data
       // Implementation would pre-calculate and cache dashboard metrics
-      
+
       // Warm recent agents, workflows, tasks
       // Implementation would cache recently accessed items
-      
+
       this.logger.log(`Cache warming completed for user: ${userId}`);
     } catch (error) {
       this.logger.error(`Cache warming failed for user ${userId}:`, error);
@@ -283,11 +281,12 @@ export class RedisCacheService {
       // Get metrics from UnifiedRedisService
       const health = await this.unifiedRedis.getHealth();
       const metrics = this.unifiedRedis.getMetrics();
-      
-      const hitRate = this.stats.hits + this.stats.misses > 0 
-        ? (this.stats.hits / (this.stats.hits + this.stats.misses)) * 100 
-        : 0;
-      
+
+      const hitRate =
+        this.stats.hits + this.stats.misses > 0
+          ? (this.stats.hits / (this.stats.hits + this.stats.misses)) * 100
+          : 0;
+
       return {
         ...this.stats,
         memory: metrics.memory || 0,
@@ -310,7 +309,7 @@ export class RedisCacheService {
   // Cache health check
   async healthCheck(): Promise<{ status: string; latency: number }> {
     const startTime = Date.now();
-    
+
     try {
       await this.unifiedRedis.ping();
       return {
@@ -332,7 +331,7 @@ export class RedisCacheService {
     let hash = 0;
     for (let i = 0; i < input.length; i++) {
       const char = input.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(36);
@@ -357,21 +356,21 @@ export class RedisCacheService {
 export function Cacheable(options: CacheOptions & { key: string }) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
-    
+
     descriptor.value = async function (...args: any[]) {
       const cache: RedisCacheService = this.cacheService;
       if (!cache) return originalMethod.apply(this, args);
-      
+
       const cacheKey = options.key + ':' + JSON.stringify(args);
       const cached = await cache.get(cacheKey);
-      
+
       if (cached) {
         return cached;
       }
-      
+
       const result = await originalMethod.apply(this, args);
       await cache.set(cacheKey, result, options);
-      
+
       return result;
     };
   };

@@ -1,13 +1,13 @@
 /**
  * Health check service
  * Monitors the health of application dependencies
- * Updated to use Drizzle ORM instead of Prisma
+ * Updated to use Drizzle ORM instead of legacy ORM
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseService } from './database.service';
 import { HealthIndicator } from '@nestjs/terminus';
 import { toError } from '../utils/error';
+import { DatabaseService } from './database.service';
 
 // Local type definitions to avoid cross-package import issues
 interface HealthIndicatorResult {
@@ -18,7 +18,10 @@ interface HealthIndicatorResult {
 }
 
 class HealthCheckError extends Error {
-  constructor(message: string, public causes: HealthIndicatorResult) {
+  constructor(
+    message: string,
+    public causes: HealthIndicatorResult
+  ) {
     super(message);
   }
 }
@@ -49,7 +52,7 @@ export class HealthService extends HealthIndicator {
       );
     }
   }
-  
+
   // Add other health checks as needed (e.g., external APIs, cache)
 }
 

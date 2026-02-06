@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
 export interface SuggestionActionsContextType {
   submitSuggestion: (suggestion: any) => Promise<void>;

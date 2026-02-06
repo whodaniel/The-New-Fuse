@@ -1,9 +1,9 @@
+import { Building2, Calendar, Mail, Phone, Users, X } from 'lucide-react';
 import React, { useState } from 'react';
-import { X, Calendar, Users, Mail, Building2, Phone } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../ui/dialog';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
 import { useAnalytics } from '../../hooks/useAnalytics';
+import { Button } from '../ui/button';
+import { Dialog, DialogDescription, DialogTitle } from '../ui/dialog';
+import { Input } from '../ui/input';
 
 export interface DemoRequestData {
   name: string;
@@ -133,25 +133,25 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
     }
   };
 
-  const handleChange = (field: keyof DemoRequestData) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    setFormData(prev => ({ ...prev, [field]: e.target.value }));
-    // Clear error for this field when user starts typing
-    if (errors[field]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
-    }
-  };
+  const handleChange =
+    (field: keyof DemoRequestData) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+      // Clear error for this field when user starts typing
+      if (errors[field]) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[field];
+          return newErrors;
+        });
+      }
+    };
 
   const handleClose = () => {
     if (!isSubmitting) {
       trackEvent('modal_close', {
         modal_type: 'demo_request',
-        had_input: Object.values(formData).some(v => v.trim() !== ''),
+        had_input: Object.values(formData).some((v) => v.trim() !== ''),
       });
       onClose();
     }
@@ -168,7 +168,8 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                 Request a Demo
               </DialogTitle>
               <DialogDescription className="mt-2 text-gray-600 dark:text-gray-400">
-                See how The New Fuse can transform your workflow. We'll schedule a personalized demo for your team.
+                See how The New Fuse can transform your workflow. We'll schedule a personalized demo
+                for your team.
               </DialogDescription>
             </div>
             <button
@@ -199,7 +200,10 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
               {/* Name */}
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   Full Name *
                 </label>
                 <div className="relative">
@@ -214,16 +218,17 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                     disabled={isSubmitting}
                   />
                 </div>
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                )}
+                {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
               </div>
 
               {/* Email and Company (Grid) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Email */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
                     Work Email *
                   </label>
                   <div className="relative">
@@ -238,14 +243,15 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                       disabled={isSubmitting}
                     />
                   </div>
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                  )}
+                  {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                 </div>
 
                 {/* Company */}
                 <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label
+                    htmlFor="company"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
                     Company *
                   </label>
                   <div className="relative">
@@ -260,9 +266,7 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                       disabled={isSubmitting}
                     />
                   </div>
-                  {errors.company && (
-                    <p className="mt-1 text-sm text-red-600">{errors.company}</p>
-                  )}
+                  {errors.company && <p className="mt-1 text-sm text-red-600">{errors.company}</p>}
                 </div>
               </div>
 
@@ -270,7 +274,10 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Phone */}
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
                     Phone Number
                   </label>
                   <div className="relative">
@@ -285,14 +292,15 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                       disabled={isSubmitting}
                     />
                   </div>
-                  {errors.phone && (
-                    <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
-                  )}
+                  {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
                 </div>
 
                 {/* Team Size */}
                 <div>
-                  <label htmlFor="teamSize" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label
+                    htmlFor="teamSize"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
                     Team Size
                   </label>
                   <select
@@ -314,7 +322,10 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
 
               {/* Message */}
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="message"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   What are you looking to achieve? (Optional)
                 </label>
                 <textarea
@@ -398,20 +409,11 @@ export const DemoRequestButton: React.FC<{
 
   return (
     <>
-      <Button
-        variant={variant}
-        size={size}
-        onClick={handleOpen}
-        className={className}
-      >
+      <Button variant={variant} size={size} onClick={handleOpen} className={className}>
         <Calendar className="mr-2 w-4 h-4" />
         {buttonText}
       </Button>
-      <DemoRequestModal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        onSubmit={onSubmit}
-      />
+      <DemoRequestModal isOpen={isOpen} onClose={() => setIsOpen(false)} onSubmit={onSubmit} />
     </>
   );
 };

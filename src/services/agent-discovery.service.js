@@ -13,21 +13,21 @@ var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgentDiscoveryService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_js_1 = require("../lib/prisma/prisma.service.js");
+const drizzle_service_js_1 = require("../lib/drizzle/drizzle.service.js");
 const mcp_broker_service_tsx_1 = require("../mcp/services/mcp-broker.service.tsx");
-const client_1 = require("@prisma/client");
+const client_1 = require("@drizzle/client");
 const event_emitter_1 = require("@nestjs/event-emitter");
 /**
  * Service for discovering and registering agents
  * This implements the standard discovery protocol for all agents
  */
 let AgentDiscoveryService = AgentDiscoveryService_1 = class AgentDiscoveryService {
-    prisma;
+    drizzle;
     mcpBroker;
     eventEmitter;
     logger = new common_1.Logger(AgentDiscoveryService_1.name);
-    constructor(prisma, mcpBroker, eventEmitter) {
-        this.prisma = prisma;
+    constructor(drizzle, mcpBroker, eventEmitter) {
+        this.drizzle = drizzle;
         this.mcpBroker = mcpBroker;
         this.eventEmitter = eventEmitter;
     }
@@ -38,7 +38,7 @@ let AgentDiscoveryService = AgentDiscoveryService_1 = class AgentDiscoveryServic
         try {
             this.logger.log(`Registering agent: ${name}`);
             // Check if agent already exists
-            const existingAgent = await this.prisma.agent.findFirst({
+            const existingAgent = await this.drizzle.agent.findFirst({
                 where: {
                     name
                 }
@@ -48,7 +48,7 @@ let AgentDiscoveryService = AgentDiscoveryService_1 = class AgentDiscoveryServic
                 return existingAgent;
             }
             // Register agent in database
-            const agent = await this.prisma.agent.create({
+            const agent = await this.drizzle.agent.create({
                 data: {
                     name,
                     description,
@@ -67,7 +67,7 @@ let AgentDiscoveryService = AgentDiscoveryService_1 = class AgentDiscoveryServic
             });
             this.logger.log(`Successfully registered agent ${name} with ID: ${agent.id}`);
             // Create metrics entry for the agent
-            await this.prisma.codeMetrics.create({
+            await this.drizzle.codeMetrics.create({
                 data: {
                     agentId: agent.id,
                     linesOfCode: 0,
@@ -115,7 +115,7 @@ let AgentDiscoveryService = AgentDiscoveryService_1 = class AgentDiscoveryServic
     async discoverAgents() {
         try {
             this.logger.log('Discovering registered agents...');
-            const agents = await this.prisma.agent.findMany({
+            const agents = await this.drizzle.agent.findMany({
                 where: {
                     status: client_1.AgentStatus.ACTIVE
                 },
@@ -137,7 +137,7 @@ let AgentDiscoveryService = AgentDiscoveryService_1 = class AgentDiscoveryServic
     async updateAgentTools(agentId, tools) {
         try {
             this.logger.log(`Updating tools for agent ${agentId}`);
-            const agent = await this.prisma.agent.findUnique({
+            const agent = await this.drizzle.agent.findUnique({
                 where: { id: agentId }
             });
             if (!agent) {
@@ -150,7 +150,7 @@ let AgentDiscoveryService = AgentDiscoveryService_1 = class AgentDiscoveryServic
                 ...config.metadata,
                 lastUpdated: new Date().toISOString()
             };
-            await this.prisma.agent.update({
+            await this.drizzle.agent.update({
                 where: { id: agentId },
                 data: { config }
             });
@@ -203,7 +203,7 @@ let AgentDiscoveryService = AgentDiscoveryService_1 = class AgentDiscoveryServic
 exports.AgentDiscoveryService = AgentDiscoveryService;
 exports.AgentDiscoveryService = AgentDiscoveryService = AgentDiscoveryService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof prisma_service_js_1.PrismaService !== "undefined" && prisma_service_js_1.PrismaService) === "function" ? _a : Object, mcp_broker_service_tsx_1.MCPBrokerService,
+    __metadata("design:paramtypes", [typeof (_a = typeof drizzle_service_js_1.DatabaseService !== "undefined" && drizzle_service_js_1.DatabaseService) === "function" ? _a : Object, mcp_broker_service_tsx_1.MCPBrokerService,
         event_emitter_1.EventEmitter2])
 ], AgentDiscoveryService);
 //# sourceMappingURL=agent-discovery.service.js.map

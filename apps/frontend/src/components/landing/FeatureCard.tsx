@@ -1,6 +1,6 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { LucideIcon } from 'lucide-react';
+import React from 'react';
 
 export interface FeatureCardProps {
   icon: LucideIcon;
@@ -104,9 +104,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
           </h3>
 
           {/* Description */}
-          <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-            {description}
-          </p>
+          <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">{description}</p>
 
           {/* Image/Screenshot */}
           {imageSrc && (
@@ -115,11 +113,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
               transition={{ duration: 0.3 }}
               className="relative overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700"
             >
-              <img
-                src={imageSrc}
-                alt={imageAlt || title}
-                className="w-full h-auto object-cover"
-              />
+              <img src={imageSrc} alt={imageAlt || title} className="w-full h-auto object-cover" />
               {/* Overlay on hover */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
             </motion.div>

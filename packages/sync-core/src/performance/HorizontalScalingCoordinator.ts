@@ -53,10 +53,10 @@ export class HorizontalScalingCoordinator {
       await this.registerInstance();
       await this.startHeartbeat();
       await this.startLoadMonitoring();
-      
+
       this.logger.info('Horizontal scaling coordinator initialized', {
         instanceId: this.config.instanceId,
-        clusterKey: this.config.clusterKey
+        clusterKey: this.config.clusterKey,
       });
     } catch (error) {
       this.logger.error('Failed to initialize scaling coordinator', { error });
@@ -75,12 +75,12 @@ export class HorizontalScalingCoordinator {
       capabilities: ['file-sync', 'agent-sync', 'template-sync'],
       load: 0,
       lastHeartbeat: new Date(),
-      status: 'active'
+      status: 'active',
     };
 
     const key = `${this.config.clusterKey}:instances:${this.config.instanceId}`;
     await this.redisService.setex(key, 60, JSON.stringify(instance));
-    
+
     // Add to active instances set
     await this.redisService.sadd(`${this.config.clusterKey}:active`, this.config.instanceId);
   }
@@ -105,12 +105,12 @@ export class HorizontalScalingCoordinator {
     const instance: Partial<ScalingInstance> = {
       load: this.currentLoad,
       lastHeartbeat: new Date(),
-      status: this.currentLoad > this.config.loadThreshold ? 'draining' : 'active'
+      status: this.currentLoad > this.config.loadThreshold ? 'draining' : 'active',
     };
 
     const key = `${this.config.clusterKey}:instances:${this.config.instanceId}`;
     const existingData = await this.redisService.get(key);
-    
+
     if (existingData) {
       const existing = JSON.parse(existingData);
       const updated = { ...existing, ...instance };
@@ -128,13 +128,14 @@ export class HorizontalScalingCoordinator {
     for (const instanceId of activeIds) {
       const key = `${this.config.clusterKey}:instances:${instanceId}`;
       const data = await this.redisService.get(key);
-      
+
       if (data) {
         const instance = JSON.parse(data) as ScalingInstance;
         // Check if instance is still alive (heartbeat within last 2 minutes)
         const heartbeatAge = Date.now() - new Date(instance.lastHeartbeat).getTime();
-        
-        if (heartbeatAge < 120000) { // 2 minutes
+
+        if (heartbeatAge < 120000) {
+          // 2 minutes
           instances.push(instance);
         } else {
           // Remove stale instance
@@ -152,7 +153,7 @@ export class HorizontalScalingCoordinator {
   private async removeStaleInstance(instanceId: string): Promise<void> {
     await this.redisService.srem(`${this.config.clusterKey}:active`, instanceId);
     await this.redisService.del(`${this.config.clusterKey}:instances:${instanceId}`);
-    
+
     this.logger.warn('Removed stale instance from cluster', { instanceId });
   }
 
@@ -161,10 +162,11 @@ export class HorizontalScalingCoordinator {
    */
   async distributeWork(workType: string, workload: any): Promise<string> {
     const instances = await this.getActiveInstances();
-    const availableInstances = instances.filter(i => 
-      i.status === 'active' && 
-      i.capabilities.includes(workType) &&
-      i.load < this.config.loadThreshold
+    const availableInstances = instances.filter(
+      (i) =>
+        i.status === 'active' &&
+        i.capabilities.includes(workType) &&
+        i.load < this.config.loadThreshold
     );
 
     if (availableInstances.length === 0) {
@@ -172,24 +174,27 @@ export class HorizontalScalingCoordinator {
     }
 
     // Select instance with lowest load
-    const selectedInstance = availableInstances.reduce((prev, current) => 
+    const selectedInstance = availableInstances.reduce((prev, current) =>
       prev.load < current.load ? prev : current
     );
 
     // Queue work for selected instance
     const workKey = `${this.config.clusterKey}:work:${selectedInstance.instanceId}`;
-    await this.redisService.lpush(workKey, JSON.stringify({
-      id: `${Date.now()}-${Math.random()}`,
-      type: workType,
-      payload: workload,
-      assignedAt: new Date(),
-      assignedBy: this.config.instanceId
-    }));
+    await this.redisService.lpush(
+      workKey,
+      JSON.stringify({
+        id: `${Date.now()}-${Math.random()}`,
+        type: workType,
+        payload: workload,
+        assignedAt: new Date(),
+        assignedBy: this.config.instanceId,
+      })
+    );
 
     this.logger.debug('Work distributed to instance', {
       workType,
       targetInstance: selectedInstance.instanceId,
-      currentLoad: selectedInstance.load
+      currentLoad: selectedInstance.load,
     });
 
     return selectedInstance.instanceId;
@@ -201,13 +206,13 @@ export class HorizontalScalingCoordinator {
   async getAssignedWork(): Promise<any[]> {
     const workKey = `${this.config.clusterKey}:work:${this.config.instanceId}`;
     const workItems = await this.redisService.lrange(workKey, 0, -1);
-    
+
     // Clear the queue after retrieving
     if (workItems.length > 0) {
       await this.redisService.del(workKey);
     }
 
-    return workItems.map(item => JSON.parse(item));
+    return workItems.map((item) => JSON.parse(item));
   }
 
   /**
@@ -237,12 +242,12 @@ export class HorizontalScalingCoordinator {
    */
   private async triggerLoadRedistribution(): Promise<void> {
     const instances = await this.getActiveInstances();
-    const overloadedInstances = instances.filter(i => i.load > this.config.loadThreshold);
-    
+    const overloadedInstances = instances.filter((i) => i.load > this.config.loadThreshold);
+
     if (overloadedInstances.length > 0) {
       this.logger.warn('Load redistribution triggered', {
         overloadedCount: overloadedInstances.length,
-        currentLoad: this.currentLoad
+        currentLoad: this.currentLoad,
       });
 
       // Publish redistribution event for cluster coordination
@@ -251,8 +256,8 @@ export class HorizontalScalingCoordinator {
         JSON.stringify({
           type: 'load_redistribution',
           timestamp: new Date(),
-          overloadedInstances: overloadedInstances.map(i => i.instanceId),
-          triggeredBy: this.config.instanceId
+          overloadedInstances: overloadedInstances.map((i) => i.instanceId),
+          triggeredBy: this.config.instanceId,
         })
       );
     }
@@ -274,7 +279,7 @@ export class HorizontalScalingCoordinator {
       // Mark instance as draining
       const key = `${this.config.clusterKey}:instances:${this.config.instanceId}`;
       const data = await this.redisService.get(key);
-      
+
       if (data) {
         const instance = JSON.parse(data);
         instance.status = 'inactive';

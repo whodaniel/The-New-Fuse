@@ -3,9 +3,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MessageSerializer, SerializationUtils } from './serialization';
-import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
+import { MCPNotification, MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
 import { MCPErrorCode } from '../types/error';
+import { MessageSerializer, SerializationUtils } from './serialization';
 
 describe('MessageSerializer', () => {
   describe('Basic Serialization', () => {
@@ -14,7 +14,7 @@ describe('MessageSerializer', () => {
         jsonrpc: '2.0',
         id: 1,
         method: 'test.method',
-        params: { key: 'value' }
+        params: { key: 'value' },
       };
 
       const result = MessageSerializer.serialize(request);
@@ -33,13 +33,13 @@ describe('MessageSerializer', () => {
       const response: MCPResponse = {
         jsonrpc: '2.0',
         id: 1,
-        result: { success: true, data: [1, 2, 3] }
+        result: { success: true, data: [1, 2, 3] },
       };
 
       const result = MessageSerializer.serialize(response);
       expect(result.success).toBe(true);
       expect(result.data).toBeDefined();
-      
+
       const parsed = JSON.parse(result.data!);
       expect(parsed.jsonrpc).toBe('2.0');
       expect(parsed.id).toBe(1);
@@ -50,13 +50,13 @@ describe('MessageSerializer', () => {
       const notification: MCPNotification = {
         jsonrpc: '2.0',
         method: 'test.notification',
-        params: { message: 'hello' }
+        params: { message: 'hello' },
       };
 
       const result = MessageSerializer.serialize(notification);
       expect(result.success).toBe(true);
       expect(result.data).toBeDefined();
-      
+
       const parsed = JSON.parse(result.data!);
       expect(parsed.jsonrpc).toBe('2.0');
       expect(parsed.method).toBe('test.notification');
@@ -72,13 +72,13 @@ describe('MessageSerializer', () => {
         meta: {
           timestamp: new Date('2023-01-01T00:00:00Z'),
           source: 'test-client',
-          priority: 'high'
-        }
+          priority: 'high',
+        },
       };
 
       const result = MessageSerializer.serialize(request, { includeMeta: true });
       expect(result.success).toBe(true);
-      
+
       const parsed = JSON.parse(result.data!);
       expect(parsed.meta).toBeDefined();
       expect(parsed.meta.timestamp).toBe('2023-01-01T00:00:00.000Z');
@@ -93,13 +93,13 @@ describe('MessageSerializer', () => {
         method: 'test.method',
         meta: {
           timestamp: new Date(),
-          source: 'test-client'
-        }
+          source: 'test-client',
+        },
       };
 
       const result = MessageSerializer.serialize(request, { includeMeta: false });
       expect(result.success).toBe(true);
-      
+
       const parsed = JSON.parse(result.data!);
       expect(parsed.meta).toBeUndefined();
     });
@@ -108,7 +108,7 @@ describe('MessageSerializer', () => {
       const request: MCPRequest = {
         jsonrpc: '2.0',
         id: 1,
-        method: 'test.method'
+        method: 'test.method',
       };
 
       const result = MessageSerializer.serialize(request, { prettyPrint: true });
@@ -134,7 +134,7 @@ describe('MessageSerializer', () => {
         jsonrpc: '2.0',
         id: 1,
         method: 'test.method',
-        params: { key: 'value' }
+        params: { key: 'value' },
       });
 
       const result = MessageSerializer.deserialize(requestData);
@@ -156,7 +156,7 @@ describe('MessageSerializer', () => {
       const requestData = JSON.stringify({
         jsonrpc: '2.0',
         id: 1,
-        method: 'test.method'
+        method: 'test.method',
       });
 
       const result = MessageSerializer.deserialize(requestData, { validate: true });
@@ -168,7 +168,7 @@ describe('MessageSerializer', () => {
       const invalidData = JSON.stringify({
         jsonrpc: '1.0', // Wrong version
         id: 1,
-        method: 'test.method'
+        method: 'test.method',
       });
 
       const result = MessageSerializer.deserialize(invalidData, { validate: true });
@@ -182,13 +182,13 @@ describe('MessageSerializer', () => {
         id: 1,
         method: 'test.method',
         meta: {
-          timestamp: '2023-01-01T00:00:00.000Z'
-        }
+          timestamp: '2023-01-01T00:00:00.000Z',
+        },
       });
 
       const result = MessageSerializer.deserialize(requestData, { normalize: true });
       expect(result.success).toBe(true);
-      
+
       const message = result.message as MCPRequest;
       expect(message.meta?.timestamp).toBeInstanceOf(Date);
       expect((message.meta?.timestamp as Date).toISOString()).toBe('2023-01-01T00:00:00.000Z');
@@ -210,13 +210,13 @@ describe('MessageSerializer', () => {
         {
           jsonrpc: '2.0' as const,
           id: 1,
-          method: 'test.method1'
+          method: 'test.method1',
         },
         {
           jsonrpc: '2.0' as const,
           id: 2,
-          method: 'test.method2'
-        }
+          method: 'test.method2',
+        },
       ];
 
       const result = MessageSerializer.serializeBatch(messages);
@@ -232,7 +232,7 @@ describe('MessageSerializer', () => {
     it('should deserialize batch of messages', () => {
       const batchData = JSON.stringify([
         JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'test.method1' }),
-        JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'test.method2' })
+        JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'test.method2' }),
       ]);
 
       const results = MessageSerializer.deserializeBatch(batchData);
@@ -244,7 +244,7 @@ describe('MessageSerializer', () => {
     it('should handle batch serialization errors', () => {
       const messages = [
         { jsonrpc: '2.0' as const, id: 1, method: 'test.method1' },
-        null as any // Invalid message
+        null as any, // Invalid message
       ];
 
       const result = MessageSerializer.serializeBatch(messages);
@@ -274,13 +274,13 @@ describe('MessageSerializer', () => {
           boolean: true,
           array: [1, 2, 3],
           object: { nested: 'value' },
-          null: null
+          null: null,
         },
         meta: {
           timestamp: new Date('2023-01-01T00:00:00Z'),
           source: 'test-client',
-          priority: 'high'
-        }
+          priority: 'high',
+        },
       };
 
       // Serialize
@@ -300,12 +300,14 @@ describe('MessageSerializer', () => {
       expect(message.meta?.priority).toBe(originalRequest.meta?.priority);
       // Compare timestamps - handle both Date and string types
       if (originalRequest.meta?.timestamp) {
-        const originalTimestamp = originalRequest.meta.timestamp instanceof Date 
-          ? originalRequest.meta.timestamp.toISOString() 
-          : originalRequest.meta.timestamp;
-        const messageTimestamp = message.meta?.timestamp instanceof Date 
-          ? message.meta.timestamp.toISOString() 
-          : message.meta?.timestamp;
+        const originalTimestamp =
+          originalRequest.meta.timestamp instanceof Date
+            ? originalRequest.meta.timestamp.toISOString()
+            : originalRequest.meta.timestamp;
+        const messageTimestamp =
+          message.meta?.timestamp instanceof Date
+            ? message.meta.timestamp.toISOString()
+            : message.meta?.timestamp;
         expect(messageTimestamp).toBe(originalTimestamp);
       }
     });
@@ -320,8 +322,8 @@ describe('SerializationUtils', () => {
         id: 1,
         method: 'test.method',
         meta: {
-          timestamp: new Date('2023-01-01T00:00:00Z')
-        }
+          timestamp: new Date('2023-01-01T00:00:00Z'),
+        },
       };
 
       const copy = SerializationUtils.createSerializableCopy(request);
@@ -336,7 +338,7 @@ describe('SerializationUtils', () => {
         jsonrpc: '2.0',
         id: 1,
         method: 'test.method',
-        params: { key: 'value' }
+        params: { key: 'value' },
       };
 
       const isValid = SerializationUtils.validateRoundtrip(request);
@@ -347,7 +349,7 @@ describe('SerializationUtils', () => {
       const invalidMessage: any = {
         jsonrpc: '2.0',
         id: 1,
-        method: 'test.method'
+        method: 'test.method',
       };
       // Add circular reference
       invalidMessage.circular = invalidMessage;
@@ -360,7 +362,7 @@ describe('SerializationUtils', () => {
       const messages = [
         { jsonrpc: '2.0' as const, id: 1, method: 'short' },
         { jsonrpc: '2.0' as const, id: 2, method: 'longer.method.name', params: { data: 'value' } },
-        { jsonrpc: '2.0' as const, id: 3, method: 'medium.method' }
+        { jsonrpc: '2.0' as const, id: 3, method: 'medium.method' },
       ];
 
       const stats = SerializationUtils.getMessageSizeStats(messages);

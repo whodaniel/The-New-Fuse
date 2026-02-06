@@ -1,16 +1,16 @@
 /**
  * Extension System Integration Tests
- * 
+ *
  * Tests the integration between the Extension System and other framework components,
  * validating extension loading, agent integration, workflow integration, and security
- * 
+ *
  * @jest-environment node
  */
 
 import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
 // import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
-import * as path from 'path';
 import * as fs from 'fs-extra';
+import * as path from 'path';
 
 describe('Extension System Integration', () => {
   let env: any;
@@ -22,11 +22,14 @@ describe('Extension System Integration', () => {
   describe('Extension Loading and Management', () => {
     test('should load and manage extensions successfully', async () => {
       // Create test extension
-      const testExtension = await TestHelpers.createTestExtension('basic-processor', 'workflow_node');
+      const testExtension = await TestHelpers.createTestExtension(
+        'basic-processor',
+        'workflow_node'
+      );
 
       // Load extension
       const loadResult = await env.extensionManager.loadExtension(testExtension.extensionDir);
-      
+
       expect(loadResult.success).toBe(true);
       expect(loadResult.extension.name).toBe(`@test/${testExtension.name}`);
       expect(loadResult.extension.status).toBe('loaded');
@@ -47,12 +50,15 @@ describe('Extension System Integration', () => {
       // Get all extensions
       const allExtensions = env.extensionManager.getAllExtensions();
       expect(allExtensions.length).toBeGreaterThan(0);
-      expect(allExtensions.some(ext => ext.id === loadResult.extension.id)).toBe(true);
+      expect(allExtensions.some((ext) => ext.id === loadResult.extension.id)).toBe(true);
     });
 
     test('should handle extension configuration updates', async () => {
       // Create and load test extension
-      const testExtension = await TestHelpers.createTestExtension('configurable-extension', 'agent_capability');
+      const testExtension = await TestHelpers.createTestExtension(
+        'configurable-extension',
+        'agent_capability'
+      );
       const loadResult = await env.extensionManager.loadExtension(testExtension.extensionDir);
 
       // Set extension configuration
@@ -60,7 +66,7 @@ describe('Extension System Integration', () => {
         enabled: true,
         timeout: 5000,
         retries: 3,
-        debug: true
+        debug: true,
       };
 
       const configResult = await env.extensionManager.setExtensionConfig(
@@ -77,34 +83,34 @@ describe('Extension System Integration', () => {
     test('should validate extension permissions and security', async () => {
       // Debug: Check if env and testDataDir are properly set
       // env and env.testDataDir logged for debugging
-      
+
       // Create extension with specific permissions directly in test
       const extensionName = 'secure-extension';
-      
+
       // Use the test environment's testDataDir or fallback to a temp directory
       const testDataDir = env?.testDataDir || path.join(process.cwd(), 'temp-test-data');
       const extensionDir = path.join(testDataDir, 'extensions', extensionName);
       const manifestPath = path.join(extensionDir, 'extension.json');
       const indexPath = path.join(extensionDir, 'index.js');
-      
+
       // testDataDir, extensionDir, process.cwd(), manifestPath, indexPath logged for debugging
-      
+
       try {
         // Ensure the extension directory exists
         await fs.ensureDir(extensionDir);
         // Directory created successfully
-        
+
         // Check if directory actually exists
         const dirExists = await fs.pathExists(extensionDir);
         // Directory exists after creation: dirExists
-        
+
         // Create the extension.json file directly with permissions
         const manifest = {
           name: `@test/${extensionName}`,
           version: '1.0.0',
           main: 'index.js',
           type: 'custom',
-          permissions: ['filesystem_read', 'network_access', 'agent_control']
+          permissions: ['filesystem_read', 'network_access', 'agent_control'],
         };
 
         await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
@@ -113,13 +119,13 @@ describe('Extension System Integration', () => {
         // Create a basic index.js file
         await fs.writeFile(indexPath, 'module.exports = { init: () => {} };');
         // Index file written
-        
+
         // Add a small delay to ensure filesystem operations complete
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
         // Check if files exist immediately after creation
         // manifestPath and indexPath existence checked
-        
+
         // Try to read the files to see if they actually exist
         try {
           const manifestContent = await fs.readFile(manifestPath, 'utf8');
@@ -127,22 +133,21 @@ describe('Extension System Integration', () => {
         } catch (readError) {
           console.error('Error reading manifest file:', readError);
         }
-        
+
         try {
           const indexContent = await fs.readFile(indexPath, 'utf8');
           // Index content read successfully, length: indexContent.length
         } catch (readError) {
           console.error('Error reading index file:', readError);
         }
-        
       } catch (error) {
         console.error('Error during file operations:', error);
         throw error;
       }
 
       // Since fs.pathExists is working after the delay, use it for the test
-        expect(await fs.pathExists(manifestPath)).toBe(true);
-        expect(await fs.pathExists(indexPath)).toBe(true);
+      expect(await fs.pathExists(manifestPath)).toBe(true);
+      expect(await fs.pathExists(indexPath)).toBe(true);
 
       // Load extension using the mock extension manager
       const loadResult = await env.extensionManager.loadExtension(extensionDir);
@@ -154,15 +159,19 @@ describe('Extension System Integration', () => {
       // Since the mock extension manager doesn't actually read files,
       // we'll verify the files were created correctly
       // File path, existence, and content length logged for debugging
-        const fileContent = await fs.readFile(manifestPath, 'utf8');
+      const fileContent = await fs.readFile(manifestPath, 'utf8');
       // File content length logged for debugging
       expect(fileContent).toBeDefined();
       expect(fileContent.length).toBeGreaterThan(0);
-      
+
       const updatedManifest = JSON.parse(fileContent);
       expect(updatedManifest).toBeDefined();
       expect(updatedManifest.permissions).toBeDefined();
-      expect(updatedManifest.permissions).toEqual(['filesystem_read', 'network_access', 'agent_control']);
+      expect(updatedManifest.permissions).toEqual([
+        'filesystem_read',
+        'network_access',
+        'agent_control',
+      ]);
 
       // Verify security validation was performed (mock returns safe: true)
       expect(loadResult.securityScan).toBeDefined();
@@ -173,8 +182,11 @@ describe('Extension System Integration', () => {
   describe('Extension-Agent Integration', () => {
     test('should integrate agent capability extensions with Master Agent Registry', async () => {
       // Create agent capability extension
-      const capabilityExtension = await TestHelpers.createTestExtension('data-analysis-capability', 'agent_capability');
-      
+      const capabilityExtension = await TestHelpers.createTestExtension(
+        'data-analysis-capability',
+        'agent_capability'
+      );
+
       // Load and activate extension
       const loadResult = await env.extensionManager.loadExtension(capabilityExtension.extensionDir);
       await env.extensionManager.activateExtension(loadResult.extension.id);
@@ -191,9 +203,9 @@ describe('Extension System Integration', () => {
       // Verify agent has access to extension capabilities
       const agentProfile = await env.agentRegistry.getAgentProfile(agent.agentId);
       expect(agentProfile.availableExtensions).toBeDefined();
-      expect(agentProfile.availableExtensions.some(ext => 
-        ext.includes('data-analysis-capability')
-      )).toBe(true);
+      expect(
+        agentProfile.availableExtensions.some((ext) => ext.includes('data-analysis-capability'))
+      ).toBe(true);
 
       // Test capability execution through agent
       const capabilityResult = await env.agentRegistry.executeAgentCapability(
@@ -211,17 +223,17 @@ describe('Extension System Integration', () => {
       const extensions = await Promise.all([
         TestHelpers.createTestExtension('file-processor', 'agent_capability'),
         TestHelpers.createTestExtension('api-connector', 'agent_capability'),
-        TestHelpers.createTestExtension('data-transformer', 'agent_capability')
+        TestHelpers.createTestExtension('data-transformer', 'agent_capability'),
       ]);
 
       // Load all extensions
       const loadResults = await Promise.all(
-        extensions.map(ext => env.extensionManager.loadExtension(ext.extensionDir))
+        extensions.map((ext) => env.extensionManager.loadExtension(ext.extensionDir))
       );
 
       // Activate all extensions
       await Promise.all(
-        loadResults.map(result => env.extensionManager.activateExtension(result.extension.id))
+        loadResults.map((result) => env.extensionManager.activateExtension(result.extension.id))
       );
 
       // Create agent
@@ -236,19 +248,22 @@ describe('Extension System Integration', () => {
       // Verify agent has access to all capability extensions
       const agentProfile = await env.agentRegistry.getAgentProfile(agent.agentId);
       expect(agentProfile.availableExtensions.length).toBe(3);
-      
+
       const extensionNames = agentProfile.availableExtensions;
-      expect(extensionNames.some(name => name.includes('file-processor'))).toBe(true);
-      expect(extensionNames.some(name => name.includes('api-connector'))).toBe(true);
-      expect(extensionNames.some(name => name.includes('data-transformer'))).toBe(true);
+      expect(extensionNames.some((name) => name.includes('file-processor'))).toBe(true);
+      expect(extensionNames.some((name) => name.includes('api-connector'))).toBe(true);
+      expect(extensionNames.some((name) => name.includes('data-transformer'))).toBe(true);
     });
   });
 
   describe('Extension-Workflow Integration', () => {
     test('should integrate workflow node extensions with Workflow Engine', async () => {
       // Create workflow node extension
-      const nodeExtension = await TestHelpers.createTestExtension('custom-processor-node', 'workflow_node');
-      
+      const nodeExtension = await TestHelpers.createTestExtension(
+        'custom-processor-node',
+        'workflow_node'
+      );
+
       // Load and activate extension
       const loadResult = await env.extensionManager.loadExtension(nodeExtension.extensionDir);
       await env.extensionManager.activateExtension(loadResult.extension.id);
@@ -261,14 +276,14 @@ describe('Extension System Integration', () => {
 
       // Create workflow using custom node
       const { workflow, builder } = await TestHelpers.createTestWorkflow('Custom Node Test');
-      
+
       const customNode = builder.addNode(
         'custom-processor-node' as string,
         'Custom Processing',
         { x: 200, y: 100 },
         {
           processingType: 'advanced',
-          parameters: { threshold: 0.8 }
+          parameters: { threshold: 0.8 },
         }
       );
 
@@ -278,10 +293,9 @@ describe('Extension System Integration', () => {
 
       // Execute workflow
       const savedWorkflow = await env.workflowEngine.repository.createWorkflow(workflow);
-      const executionId = await env.workflowEngine.engine.executeWorkflow(
-        savedWorkflow.id,
-        { data: TestHelpers.generateTestData(10) }
-      );
+      const executionId = await env.workflowEngine.engine.executeWorkflow(savedWorkflow.id, {
+        data: TestHelpers.generateTestData(10),
+      });
 
       // Wait for execution
       await TestHelpers.waitForCondition(async () => {
@@ -292,7 +306,9 @@ describe('Extension System Integration', () => {
       // Verify custom node executed
       const execution = await env.workflowEngine.engine.getExecutionStatus(executionId);
       expect(execution).toBeDefined();
-      expect(execution.nodeExecutions.some(ne => ne.nodeType === 'custom-processor-node')).toBe(true);
+      expect(execution.nodeExecutions.some((ne) => ne.nodeType === 'custom-processor-node')).toBe(
+        true
+      );
     });
 
     test('should handle dynamic workflow node registration from extensions', async () => {
@@ -300,25 +316,27 @@ describe('Extension System Integration', () => {
       const nodeExtensions = await Promise.all([
         TestHelpers.createTestExtension('validator-node', 'workflow_node'),
         TestHelpers.createTestExtension('aggregator-node', 'workflow_node'),
-        TestHelpers.createTestExtension('formatter-node', 'workflow_node')
+        TestHelpers.createTestExtension('formatter-node', 'workflow_node'),
       ]);
 
       // Load all extensions
       const loadResults = await Promise.all(
-        nodeExtensions.map(ext => env.extensionManager.loadExtension(ext.extensionDir))
+        nodeExtensions.map((ext) => env.extensionManager.loadExtension(ext.extensionDir))
       );
 
       // Activate all extensions
       await Promise.all(
-        loadResults.map(result => env.extensionManager.activateExtension(result.extension.id))
+        loadResults.map((result) => env.extensionManager.activateExtension(result.extension.id))
       );
 
       // Wait for workflow engine to register all node types
       await TestHelpers.waitForCondition(async () => {
         const availableNodeTypes = env.workflowEngine.engine.getAvailableNodeTypes();
-        return availableNodeTypes.includes('validator-node') &&
-               availableNodeTypes.includes('aggregator-node') &&
-               availableNodeTypes.includes('formatter-node');
+        return (
+          availableNodeTypes.includes('validator-node') &&
+          availableNodeTypes.includes('aggregator-node') &&
+          availableNodeTypes.includes('formatter-node')
+        );
       });
 
       // Verify all node types are available
@@ -328,11 +346,22 @@ describe('Extension System Integration', () => {
       expect(availableNodeTypes).toContain('formatter-node');
 
       // Create workflow using all custom nodes
-      const { workflow, builder } = await TestHelpers.createTestWorkflow('Multi-Node Extension Test');
-      
-      const validatorNode = builder.addNode('validator-node' as string, 'Validate', { x: 150, y: 100 });
-      const aggregatorNode = builder.addNode('aggregator-node' as string, 'Aggregate', { x: 300, y: 100 });
-      const formatterNode = builder.addNode('formatter-node' as string, 'Format', { x: 450, y: 100 });
+      const { workflow, builder } = await TestHelpers.createTestWorkflow(
+        'Multi-Node Extension Test'
+      );
+
+      const validatorNode = builder.addNode('validator-node' as string, 'Validate', {
+        x: 150,
+        y: 100,
+      });
+      const aggregatorNode = builder.addNode('aggregator-node' as string, 'Aggregate', {
+        x: 300,
+        y: 100,
+      });
+      const formatterNode = builder.addNode('formatter-node' as string, 'Format', {
+        x: 450,
+        y: 100,
+      });
 
       // Connect nodes in sequence
       builder.addConnection(workflow.definition.nodes[0].id, 'output', validatorNode.id, 'input');
@@ -352,27 +381,30 @@ describe('Extension System Integration', () => {
     test('should handle extension loading failures gracefully', async () => {
       // Create invalid extension (missing main file)
       const invalidExtension = await TestHelpers.createTestExtension('invalid-extension', 'custom');
-      
+
       // Remove the main file to make it invalid
       const mainFilePath = path.join(invalidExtension.extensionDir, 'index.js');
       await require('fs-extra').remove(mainFilePath);
 
       // Attempt to load invalid extension
       const loadResult = await env.extensionManager.loadExtension(invalidExtension.extensionDir);
-      
+
       expect(loadResult.success).toBe(false);
       expect(loadResult.error).toBeDefined();
       expect(loadResult.error.message).toContain('main file not found');
 
       // Verify extension was not added to registry
       const extensions = env.extensionManager.getAllExtensions();
-      expect(extensions.some(ext => ext.name === invalidExtension.name)).toBe(false);
+      expect(extensions.some((ext) => ext.name === invalidExtension.name)).toBe(false);
     });
 
     test('should handle extension runtime errors without affecting system stability', async () => {
       // Create extension that throws errors
-      const errorExtension = await TestHelpers.createTestExtension('error-extension', 'agent_capability');
-      
+      const errorExtension = await TestHelpers.createTestExtension(
+        'error-extension',
+        'agent_capability'
+      );
+
       // Update main file to throw error
       const errorContent = `
 class ErrorExtension {
@@ -392,14 +424,14 @@ class ErrorExtension {
 
 module.exports = ErrorExtension;
 `;
-      
+
       const mainFilePath = path.join(errorExtension.extensionDir, 'index.js');
       await require('fs-extra').writeFile(mainFilePath, errorContent);
 
       // Load and activate extension
       const loadResult = await env.extensionManager.loadExtension(errorExtension.extensionDir);
       expect(loadResult.success).toBe(true);
-      
+
       await env.extensionManager.activateExtension(loadResult.extension.id);
 
       // Create agent and attempt to use extension
@@ -430,7 +462,10 @@ module.exports = ErrorExtension;
 
     test('should handle extension unloading and cleanup', async () => {
       // Create and load test extension
-      const testExtension = await TestHelpers.createTestExtension('cleanup-test-extension', 'workflow_node');
+      const testExtension = await TestHelpers.createTestExtension(
+        'cleanup-test-extension',
+        'workflow_node'
+      );
       const loadResult = await env.extensionManager.loadExtension(testExtension.extensionDir);
       await env.extensionManager.activateExtension(loadResult.extension.id);
 
@@ -455,9 +490,12 @@ module.exports = ErrorExtension;
   describe('Extension Performance and Monitoring', () => {
     test('should monitor extension resource usage and performance', async () => {
       // Removed console.log for linter compliance - was logging test start
-      
+
       // Create test extension
-      const testExtension = await TestHelpers.createTestExtension('performance-test-extension', 'agent_capability');
+      const testExtension = await TestHelpers.createTestExtension(
+        'performance-test-extension',
+        'agent_capability'
+      );
       const loadResult = await env.extensionManager.loadExtension(testExtension.extensionDir);
       await env.extensionManager.activateExtension(loadResult.extension.id);
 
@@ -496,7 +534,10 @@ module.exports = ErrorExtension;
 
     test('should handle concurrent extension usage', async () => {
       // Create extension for concurrent testing
-      const testExtension = await TestHelpers.createTestExtension('concurrent-test-extension', 'agent_capability');
+      const testExtension = await TestHelpers.createTestExtension(
+        'concurrent-test-extension',
+        'agent_capability'
+      );
       const loadResult = await env.extensionManager.loadExtension(testExtension.extensionDir);
       await env.extensionManager.activateExtension(loadResult.extension.id);
 
@@ -504,24 +545,23 @@ module.exports = ErrorExtension;
       const agents = await Promise.all([
         TestHelpers.createTestAgent('ConcurrentAgent1', 'CONCURRENT_TEST'),
         TestHelpers.createTestAgent('ConcurrentAgent2', 'CONCURRENT_TEST'),
-        TestHelpers.createTestAgent('ConcurrentAgent3', 'CONCURRENT_TEST')
+        TestHelpers.createTestAgent('ConcurrentAgent3', 'CONCURRENT_TEST'),
       ]);
 
       // Wait for extension availability
       await TestHelpers.waitForCondition(async () => {
         const agentProfiles = await Promise.all(
-          agents.map(a => env.agentRegistry.getAgentProfile(a.agentId))
+          agents.map((a) => env.agentRegistry.getAgentProfile(a.agentId))
         );
-        return agentProfiles.every(profile => profile?.availableExtensions?.length > 0);
+        return agentProfiles.every((profile) => profile?.availableExtensions?.length > 0);
       });
 
       // Execute capability concurrently from multiple agents
       const concurrentExecutions = agents.map((agent, index) =>
-        env.agentRegistry.executeAgentCapability(
-          agent.agentId,
-          'concurrent-test-extension',
-          { agentIndex: index, timestamp: Date.now() }
-        )
+        env.agentRegistry.executeAgentCapability(agent.agentId, 'concurrent-test-extension', {
+          agentIndex: index,
+          timestamp: Date.now(),
+        })
       );
 
       const results = await Promise.all(concurrentExecutions);

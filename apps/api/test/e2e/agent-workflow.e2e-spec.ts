@@ -1,14 +1,14 @@
-import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
+import { DatabaseService } from '../../src/db/db.service';
 import { setupApp } from '../../src/setup';
-import { PrismaService } from '../../src/prisma/prisma.service';
-import { createTestUser, createTestAgent } from '../utils/test-helpers';
+import { createTestAgent, createTestUser } from '../utils/test-helpers';
 
 describe('Agent Workflow (e2e)', () => {
   let app: INestApplication;
-  let prisma: PrismaService;
+  let db: DatabaseService;
   let authToken: string;
   let testAgent: any;
 
@@ -21,23 +21,21 @@ describe('Agent Workflow (e2e)', () => {
     setupApp(app);
     await app.init();
 
-    prisma = app.get(PrismaService);
-    
+    db = app.get(DatabaseService);
+
     // Setup test data
-    const user = await createTestUser(prisma);
-    const loginResponse = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({
-        email: user.email,
-        password: 'testpassword',
-      });
-    
+    const user = await createTestUser(db);
+    const loginResponse = await request(app.getHttpServer()).post('/auth/login').send({
+      email: user.email,
+      password: 'testpassword',
+    });
+
     authToken = loginResponse.body.access_token;
-    testAgent = await createTestAgent(prisma, user.id);
+    testAgent = await createTestAgent(db, user.id);
   });
 
   afterAll(async () => {
-    await prisma.cleanDatabase();
+    await db.cleanDatabase();
     await app.close();
   });
 
@@ -75,24 +73,26 @@ describe('Agent Workflow (e2e)', () => {
     });
 
     it('should handle concurrent conversations', async () => {
-      const conversationPromises = Array(5).fill(null).map(() =>
-        request(app.getHttpServer())
-          .post('/conversations')
-          .set('Authorization', `Bearer ${authToken}`)
-          .send({
-            agentId: testAgent.id,
-            message: 'Concurrent test',
-          })
-      );
+      const conversationPromises = Array(5)
+        .fill(null)
+        .map(() =>
+          request(app.getHttpServer())
+            .post('/conversations')
+            .set('Authorization', `Bearer ${authToken}`)
+            .send({
+              agentId: testAgent.id,
+              message: 'Concurrent test',
+            })
+        );
 
       const responses = await Promise.all(conversationPromises);
-      
-      responses.forEach(response => {
+
+      responses.forEach((response) => {
         expect(response.status).toBe(201);
         expect(response.body).toHaveProperty('id');
       });
 
-      const uniqueIds = new Set(responses.map(r => r.body.id));
+      const uniqueIds = new Set(responses.map((r) => r.body.id));
       expect(uniqueIds.size).toBe(5); // All conversations should have unique IDs
     });
   });

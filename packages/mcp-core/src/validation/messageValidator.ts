@@ -2,15 +2,10 @@
  * Message-specific validation utilities
  */
 
-import { mcpValidator, ValidationResult } from './validator';
-import {
-  MCPRequest,
-  MCPResponse,
-  MCPNotification,
-  MCPMessage
-} from '../interfaces/IMCPMessage';
+import { MCPMessage } from '../interfaces/IMCPMessage';
+import { ErrorCategory, ErrorSeverity, MCPErrorClass, MCPErrorCode } from '../types/error';
 import { MessageValidationResult } from '../types/message';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
+import { mcpValidator, ValidationResult } from './validator';
 
 /**
  * Message validator class for MCP protocol compliance
@@ -23,7 +18,7 @@ export class MessageValidator {
     if (!message || typeof message !== 'object') {
       return {
         valid: false,
-        errors: ['Message must be an object']
+        errors: ['Message must be an object'],
       };
     }
 
@@ -31,7 +26,7 @@ export class MessageValidator {
     if (message.jsonrpc !== '2.0') {
       return {
         valid: false,
-        errors: ['Message must have jsonrpc: "2.0"']
+        errors: ['Message must have jsonrpc: "2.0"'],
       };
     }
 
@@ -39,7 +34,10 @@ export class MessageValidator {
     if (message.id !== undefined && message.method !== undefined) {
       // Request message
       return this.validateRequest(message);
-    } else if (message.id !== undefined && (message.result !== undefined || message.error !== undefined)) {
+    } else if (
+      message.id !== undefined &&
+      (message.result !== undefined || message.error !== undefined)
+    ) {
       // Response message
       return this.validateResponse(message);
     } else if (message.method !== undefined && message.id === undefined) {
@@ -48,7 +46,7 @@ export class MessageValidator {
     } else {
       return {
         valid: false,
-        errors: ['Unable to determine message type']
+        errors: ['Unable to determine message type'],
       };
     }
   }
@@ -90,12 +88,14 @@ export class MessageValidator {
       return {
         valid: true,
         errors: [],
-        data: params
+        data: params,
       };
     } catch (error) {
       return {
         valid: false,
-        errors: [`Invalid parameters for method ${method}: ${error instanceof Error ? error.message : 'Unknown error'}`]
+        errors: [
+          `Invalid parameters for method ${method}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        ],
       };
     }
   }
@@ -113,12 +113,14 @@ export class MessageValidator {
       return {
         valid: true,
         errors: [],
-        data: result
+        data: result,
       };
     } catch (error) {
       return {
         valid: false,
-        errors: [`Invalid result for method ${method}: ${error instanceof Error ? error.message : 'Unknown error'}`]
+        errors: [
+          `Invalid result for method ${method}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        ],
       };
     }
   }
@@ -130,7 +132,7 @@ export class MessageValidator {
     if (!error || typeof error !== 'object') {
       return {
         valid: false,
-        errors: ['Error must be an object']
+        errors: ['Error must be an object'],
       };
     }
 
@@ -147,7 +149,7 @@ export class MessageValidator {
     return {
       valid: errors.length === 0,
       errors,
-      data: error
+      data: error,
     };
   }
 
@@ -159,21 +161,21 @@ export class MessageValidator {
       return {
         valid: true,
         errors: [],
-        data: id
+        data: id,
       };
     }
 
     if (typeof id !== 'string' && typeof id !== 'number') {
       return {
         valid: false,
-        errors: ['Message ID must be a string, number, or null']
+        errors: ['Message ID must be a string, number, or null'],
       };
     }
 
     return {
       valid: true,
       errors: [],
-      data: id
+      data: id,
     };
   }
 
@@ -184,14 +186,14 @@ export class MessageValidator {
     if (typeof method !== 'string') {
       return {
         valid: false,
-        errors: ['Method name must be a string']
+        errors: ['Method name must be a string'],
       };
     }
 
     if (method.length === 0) {
       return {
         valid: false,
-        errors: ['Method name cannot be empty']
+        errors: ['Method name cannot be empty'],
       };
     }
 
@@ -199,14 +201,14 @@ export class MessageValidator {
     if (method.startsWith('rpc.') && !this.isValidRPCMethod(method)) {
       return {
         valid: false,
-        errors: [`Reserved method name: ${method}`]
+        errors: [`Reserved method name: ${method}`],
       };
     }
 
     return {
       valid: true,
       errors: [],
-      data: method
+      data: method,
     };
   }
 
@@ -214,11 +216,7 @@ export class MessageValidator {
    * Check if RPC method is valid
    */
   private static isValidRPCMethod(method: string): boolean {
-    const validRPCMethods = [
-      'rpc.discover',
-      'rpc.ping',
-      'rpc.info'
-    ];
+    const validRPCMethods = ['rpc.discover', 'rpc.ping', 'rpc.info'];
     return validRPCMethods.includes(method);
   }
 
@@ -229,7 +227,7 @@ export class MessageValidator {
     return {
       valid: result.valid,
       errors: result.errors,
-      normalizedMessage: result.data
+      normalizedMessage: result.data,
     };
   }
 
@@ -237,16 +235,12 @@ export class MessageValidator {
    * Create validation error
    */
   static createValidationError(message: string, details?: any): MCPErrorClass {
-    return new MCPErrorClass(
-      MCPErrorCode.MESSAGE_INVALID_FORMAT,
-      message,
-      {
-        category: ErrorCategory.VALIDATION,
-        severity: ErrorSeverity.MEDIUM,
-        retryable: false,
-        details
-      }
-    );
+    return new MCPErrorClass(MCPErrorCode.MESSAGE_INVALID_FORMAT, message, {
+      category: ErrorCategory.VALIDATION,
+      severity: ErrorSeverity.MEDIUM,
+      retryable: false,
+      details,
+    });
   }
 
   /**
@@ -255,10 +249,10 @@ export class MessageValidator {
   static validateAndNormalize(message: any): MCPMessage {
     const result = this.validateMessage(message);
     if (!result.valid) {
-      throw this.createValidationError(
-        `Message validation failed: ${result.errors.join(', ')}`,
-        { originalMessage: message, errors: result.errors }
-      );
+      throw this.createValidationError(`Message validation failed: ${result.errors.join(', ')}`, {
+        originalMessage: message,
+        errors: result.errors,
+      });
     }
     return result.normalizedMessage as MCPMessage;
   }

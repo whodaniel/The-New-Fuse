@@ -1,11 +1,6 @@
-import { useState, useCallback } from 'react';
-import {
-  FeatureSuggestion,
-  SuggestionStatus,
-  SuggestionPriority,
-  TodoItem
-} from '../types';
+import { useCallback, useState } from 'react';
 import { SuggestionService } from '../services/types';
+import { FeatureSuggestion, SuggestionPriority, SuggestionStatus, TodoItem } from '../types';
 
 /**
  * Props for the useFeatureSuggestions hook
@@ -47,7 +42,9 @@ interface UseFeatureSuggestionsReturn {
   refresh: () => Promise<void>;
 }
 
-export const useFeatureSuggestions = ({ suggestionService }: UseFeatureSuggestionsProps): UseFeatureSuggestionsReturn => {
+export const useFeatureSuggestions = ({
+  suggestionService,
+}: UseFeatureSuggestionsProps): UseFeatureSuggestionsReturn => {
   const [suggestions, setSuggestions] = useState<FeatureSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -64,113 +61,121 @@ export const useFeatureSuggestions = ({ suggestionService }: UseFeatureSuggestio
     }
   }, [suggestionService]);
 
-  const submitSuggestion = useCallback(async (
-    title: string,
-    description: string,
-    submittedBy: string,
-    priority: SuggestionPriority,
-    tags: string[]
-  ): Promise<FeatureSuggestion> => {
-    try {
-      const newSuggestion = await suggestionService.submitSuggestion({
-        title,
-        description,
-        submittedBy,
-        priority,
-        tags,
-        status: SuggestionStatus.PENDING
-      });
-      await loadSuggestions();
-      return newSuggestion;
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to submit suggestion'));
-      throw err;
-    }
-  }, [suggestionService, loadSuggestions]);
+  const submitSuggestion = useCallback(
+    async (
+      title: string,
+      description: string,
+      submittedBy: string,
+      priority: SuggestionPriority,
+      tags: string[]
+    ): Promise<FeatureSuggestion> => {
+      try {
+        const newSuggestion = await suggestionService.submitSuggestion({
+          title,
+          description,
+          submittedBy,
+          priority,
+          tags,
+          status: SuggestionStatus.PENDING,
+        });
+        await loadSuggestions();
+        return newSuggestion;
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to submit suggestion'));
+        throw err;
+      }
+    },
+    [suggestionService, loadSuggestions]
+  );
 
-  const voteSuggestion = useCallback(async (
-    suggestionId: string,
-    userId: string
-  ): Promise<void> => {
-    try {
-      await suggestionService.voteSuggestion(suggestionId, userId);
-      await loadSuggestions();
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to vote for suggestion'));
-      throw err;
-    }
-  }, [suggestionService, loadSuggestions]);
+  const voteSuggestion = useCallback(
+    async (suggestionId: string, userId: string): Promise<void> => {
+      try {
+        await suggestionService.voteSuggestion(suggestionId, userId);
+        await loadSuggestions();
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to vote for suggestion'));
+        throw err;
+      }
+    },
+    [suggestionService, loadSuggestions]
+  );
 
-  const convertToFeature = useCallback(async (suggestionId: string): Promise<FeatureSuggestion> => {
-    try {
-      const convertedSuggestion = await suggestionService.convertToFeature(suggestionId);
-      await loadSuggestions();
-      return convertedSuggestion;
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to convert suggestion to feature'));
-      throw err;
-    }
-  }, [suggestionService, loadSuggestions]);
+  const convertToFeature = useCallback(
+    async (suggestionId: string): Promise<FeatureSuggestion> => {
+      try {
+        const convertedSuggestion = await suggestionService.convertToFeature(suggestionId);
+        await loadSuggestions();
+        return convertedSuggestion;
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to convert suggestion to feature'));
+        throw err;
+      }
+    },
+    [suggestionService, loadSuggestions]
+  );
 
-  const updateSuggestionStatus = useCallback(async (
-    suggestionId: string,
-    newStatus: SuggestionStatus
-  ): Promise<void> => {
-    try {
-      await suggestionService.updateSuggestionStatus(suggestionId, newStatus);
-      await loadSuggestions();
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to update suggestion status'));
-      throw err;
-    }
-  }, [suggestionService, loadSuggestions]);
+  const updateSuggestionStatus = useCallback(
+    async (suggestionId: string, newStatus: SuggestionStatus): Promise<void> => {
+      try {
+        await suggestionService.updateSuggestionStatus(suggestionId, newStatus);
+        await loadSuggestions();
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to update suggestion status'));
+        throw err;
+      }
+    },
+    [suggestionService, loadSuggestions]
+  );
 
   // Alias for convertToFeature to match what FeatureManagementView expects
   const convertSuggestionToFeature = convertToFeature;
 
-  const addTodo = useCallback(async (
-    title: string,
-    description: string,
-    priority: SuggestionPriority,
-    suggestionId: string,
-    assignedTo?: string,
-    dueDate?: Date
-  ): Promise<TodoItem> => {
-    try {
-      const newTodo = await suggestionService.addTodo({
-        title,
-        description,
-        priority,
-        suggestionId,
-        assignedTo,
-        dueDate
-      });
-      await loadSuggestions();
-      return newTodo;
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to create todo'));
-      throw err;
-    }
-  }, [suggestionService, loadSuggestions]);
+  const addTodo = useCallback(
+    async (
+      title: string,
+      description: string,
+      priority: SuggestionPriority,
+      suggestionId: string,
+      assignedTo?: string,
+      dueDate?: Date
+    ): Promise<TodoItem> => {
+      try {
+        const newTodo = await suggestionService.addTodo({
+          title,
+          description,
+          priority,
+          suggestionId,
+          assignedTo,
+          dueDate,
+        });
+        await loadSuggestions();
+        return newTodo;
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to create todo'));
+        throw err;
+      }
+    },
+    [suggestionService, loadSuggestions]
+  );
 
-  const addComment = useCallback(async (
-    suggestionId: string,
-    content: string,
-    authorId: string
-  ): Promise<Comment> => {
-    try {
-      const newComment = await suggestionService.addComment({
-        suggestionId,
-        content,
-        authorId
-      });
-      await loadSuggestions();
-      return newComment;
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to add comment'));
-      throw err;
-    }
-  }, [suggestionService, loadSuggestions]);
+  const addComment = useCallback(
+    async (suggestionId: string, content: string, authorId: string): Promise<Comment> => {
+      try {
+        const newComment = await suggestionService.addComment({
+          suggestionId,
+          content,
+          authorId,
+        });
+        await loadSuggestions();
+        return newComment;
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to add comment'));
+        throw err;
+      }
+    },
+    [suggestionService, loadSuggestions]
+  );
 
   return {
     suggestions,

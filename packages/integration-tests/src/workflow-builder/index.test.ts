@@ -1,18 +1,18 @@
 /**
  * Workflow Builder Test Suite Index
- * 
+ *
  * Comprehensive test runner for all drag and drop workflow builder functionality.
  * This file orchestrates all workflow builder tests and provides summary reporting.
  */
 
-import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
 import { performance } from 'perf_hooks';
+import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
 
 // Import all test suites
-import './workflow-builder.test';
-import './ui-components.test';
 import './canvas-interactions.test';
+import './ui-components.test';
 import './validation-execution.test';
+import './workflow-builder.test';
 
 interface TestSuiteResult {
   name: string;
@@ -42,7 +42,7 @@ describe('Workflow Builder Test Suite', () => {
   let testReport: WorkflowBuilderTestReport;
 
   beforeAll(async () => {
-    env = await getTestEnvironment();  // Added await here
+    env = await getTestEnvironment(); // Added await here
 
     // Debug logs to validate env - removed for linter compliance
 
@@ -57,9 +57,9 @@ describe('Workflow Builder Test Suite', () => {
       performanceMetrics: {
         averageTestTime: 0,
         slowestTest: '',
-        fastestTest: ''
+        fastestTest: '',
       },
-      recommendations: []
+      recommendations: [],
     };
 
     // Starting Comprehensive Workflow Builder Test Suite
@@ -69,7 +69,7 @@ describe('Workflow Builder Test Suite', () => {
     // Generate and display test report
     generateTestReport();
     displayTestReport();
-    
+
     // Workflow Builder Test Suite Completed
   });
 
@@ -79,7 +79,7 @@ describe('Workflow Builder Test Suite', () => {
       expect(env.agentRegistry).toBeDefined();
       expect(env.workflowEngine).toBeDefined();
       expect(env.extensionManager).toBeDefined();
-      
+
       // Test environment validated
     });
 
@@ -87,7 +87,6 @@ describe('Workflow Builder Test Suite', () => {
       // Check for WorkflowBuilder class
       // const { WorkflowBuilder } = require('@the-new-fuse/workflow-engine/builder'); // Removed workflow-engine dependency
       // expect(WorkflowBuilder).toBeDefined();
-
       // Check for workflow types
       // const { WorkflowNodeType } = require('@the-new-fuse/workflow-engine/types'); // Removed workflow-engine dependency
       // expect(WorkflowNodeType).toBeDefined();
@@ -96,7 +95,6 @@ describe('Workflow Builder Test Suite', () => {
       // expect(WorkflowNodeType.CONDITION).toBeDefined();
       // expect(WorkflowNodeType.PARALLEL).toBeDefined();
       // expect(WorkflowNodeType.END).toBeDefined();
-
       // Dependencies verified
     });
 
@@ -121,17 +119,17 @@ describe('Workflow Builder Test Suite', () => {
     test('should verify core workflow builder functionality coverage', async () => {
       const coverageAreas = [
         'Node Creation and Management',
-        'Connection Management', 
+        'Connection Management',
         'Canvas Operations',
         'Validation and Error Handling',
         'Undo/Redo Operations',
         'Performance and Scalability',
         'Template and Export Operations',
-        'Auto-save and Recovery'
+        'Auto-save and Recovery',
       ];
 
       // Each area should have multiple test cases
-      coverageAreas.forEach(area => {
+      coverageAreas.forEach((area) => {
         // Coverage verified for each area
       });
 
@@ -141,14 +139,14 @@ describe('Workflow Builder Test Suite', () => {
     test('should verify UI components functionality coverage', async () => {
       const uiCoverageAreas = [
         'WorkflowCanvas Component',
-        'NodeLibrary Component', 
+        'NodeLibrary Component',
         'DynamicNode Component',
         'Drag and Drop Integration',
         'Canvas Interactions',
-        'Error Handling and Edge Cases'
+        'Error Handling and Edge Cases',
       ];
 
-      uiCoverageAreas.forEach(area => {
+      uiCoverageAreas.forEach((area) => {
         // UI Coverage verified for each area
       });
 
@@ -160,12 +158,12 @@ describe('Workflow Builder Test Suite', () => {
         'Mouse Interactions',
         'Drag and Drop Visual Feedback',
         'Selection Tools',
-        'Keyboard Interactions', 
+        'Keyboard Interactions',
         'Performance with Visual Effects',
-        'Accessibility and User Experience'
+        'Accessibility and User Experience',
       ];
 
-      interactionAreas.forEach(area => {
+      interactionAreas.forEach((area) => {
         // Interaction Coverage verified for each area
       });
 
@@ -178,10 +176,10 @@ describe('Workflow Builder Test Suite', () => {
         'Real-Time Validation',
         'Execution Simulation and Monitoring',
         'Integration with Agent System',
-        'Performance Validation'
+        'Performance Validation',
       ];
 
-      validationAreas.forEach(area => {
+      validationAreas.forEach((area) => {
         // Validation Coverage verified for each area
       });
 
@@ -193,7 +191,7 @@ describe('Workflow Builder Test Suite', () => {
     test('should verify workflow builder integrates with Master Agent Registry', async () => {
       // Test that workflow builder can access and validate agents
       const agent = await TestHelpers.createTestAgent('IntegrationAgent', 'INTEGRATION_TEST');
-      
+
       // Verify agent is accessible from workflow context
       const agentProfile = await env.agentRegistry.getAgentProfile(agent.agentId);
       expect(agentProfile).toBeDefined();
@@ -204,8 +202,11 @@ describe('Workflow Builder Test Suite', () => {
 
     test('should verify workflow builder integrates with Extension System', async () => {
       // Test that workflow builder can load and use extensions
-      const testExtension = await TestHelpers.createTestExtension('integration-extension', 'workflow_node');
-      
+      const testExtension = await TestHelpers.createTestExtension(
+        'integration-extension',
+        'workflow_node'
+      );
+
       const loadResult = await env.extensionManager.loadExtension(testExtension.extensionDir);
       expect(loadResult.success).toBe(true);
 
@@ -215,7 +216,7 @@ describe('Workflow Builder Test Suite', () => {
     test('should verify workflow builder integrates with Workflow Engine', async () => {
       // Test that workflow builder can create and execute workflows
       const { workflow } = await TestHelpers.createTestWorkflow('Integration Test Workflow');
-      
+
       const savedWorkflow = await env.workflowEngine.repository.createWorkflow(workflow);
       expect(savedWorkflow.id).toBeDefined();
 
@@ -267,11 +268,7 @@ describe('Workflow Builder Test Suite', () => {
       // Create nodes first
       const nodes = [];
       for (let i = 0; i < 50; i++) {
-        const node = builder.addNode(
-          'agent_task',
-          `Connection Task ${i}`,
-          { x: i * 100, y: 100 }
-        );
+        const node = builder.addNode('agent_task', `Connection Task ${i}`, { x: i * 100, y: 100 });
         nodes.push(node);
       }
 
@@ -319,10 +316,12 @@ describe('Workflow Builder Test Suite', () => {
 
       // Connect nodes in complex pattern
       for (let i = 0; i < nodes.length - 1; i++) {
-        if (i % 10 !== 9) { // Connect within rows
+        if (i % 10 !== 9) {
+          // Connect within rows
           builder.addConnection(nodes[i].id, 'output', nodes[i + 1].id, 'input');
         }
-        if (i + 10 < nodes.length) { // Connect between rows
+        if (i + 10 < nodes.length) {
+          // Connect between rows
           builder.addConnection(nodes[i].id, 'output', nodes[i + 10].id, 'input');
         }
       }
@@ -353,48 +352,54 @@ describe('Workflow Builder Test Suite', () => {
         passed: 25,
         failed: 0,
         duration: 2500,
-        coverage: 95
+        coverage: 95,
       },
       {
         name: 'UI Components',
         passed: 18,
         failed: 0,
         duration: 1800,
-        coverage: 88
+        coverage: 88,
       },
       {
         name: 'Canvas Interactions',
         passed: 22,
         failed: 0,
         duration: 2200,
-        coverage: 92
+        coverage: 92,
       },
       {
         name: 'Validation & Execution',
         passed: 20,
         failed: 0,
         duration: 3000,
-        coverage: 90
-      }
+        coverage: 90,
+      },
     ];
 
     // Calculate totals
-    testReport.totalTests = testReport.suites.reduce((sum, suite) => sum + suite.passed + suite.failed, 0);
+    testReport.totalTests = testReport.suites.reduce(
+      (sum, suite) => sum + suite.passed + suite.failed,
+      0
+    );
     testReport.totalPassed = testReport.suites.reduce((sum, suite) => sum + suite.passed, 0);
     testReport.totalFailed = testReport.suites.reduce((sum, suite) => sum + suite.failed, 0);
     testReport.totalDuration = testReport.suites.reduce((sum, suite) => sum + suite.duration, 0);
-    testReport.overallCoverage = testReport.suites.reduce((sum, suite) => sum + (suite.coverage || 0), 0) / testReport.suites.length;
+    testReport.overallCoverage =
+      testReport.suites.reduce((sum, suite) => sum + (suite.coverage || 0), 0) /
+      testReport.suites.length;
 
     // Calculate performance metrics
-    testReport.performanceMetrics.averageTestTime = testReport.totalDuration / testReport.totalTests;
+    testReport.performanceMetrics.averageTestTime =
+      testReport.totalDuration / testReport.totalTests;
 
     // Generate recommendations
     testReport.recommendations = [
       'All workflow builder functionality is working correctly',
-      'Performance benchmarks are within acceptable limits', 
+      'Performance benchmarks are within acceptable limits',
       'Integration with framework components is successful',
       'UI components are rendering and functioning properly',
-      'Validation and execution features are comprehensive'
+      'Validation and execution features are comprehensive',
     ];
   }
 

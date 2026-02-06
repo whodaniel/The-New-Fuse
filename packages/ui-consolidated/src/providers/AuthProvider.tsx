@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
 import { UseAuthResult } from '@the-new-fuse/hooks';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 
 /**
  * Authentication provider props
@@ -19,11 +19,11 @@ const AuthContext = createContext<UseAuthResult | undefined>(undefined);
  */
 export function useAuthContext(): UseAuthResult {
   const context = useContext(AuthContext);
-  
+
   if (!context) {
     throw new Error('useAuthContext must be used within an AuthProvider');
   }
-  
+
   return context;
 }
 
@@ -39,7 +39,8 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Add aliases for consistent naming
   const isLoading = loading;
 
-  const login = async (email: string, _password: string) => { // renamed password to _password
+  const login = async (email: string, _password: string) => {
+    // renamed password to _password
     try {
       setLoading(true);
       setError(null);
@@ -54,7 +55,8 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const register = async (name: string, email: string, _password: string) => { // renamed password to _password
+  const register = async (name: string, email: string, _password: string) => {
+    // renamed password to _password
     try {
       setLoading(true);
       setError(null);
@@ -73,21 +75,24 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsAuthenticated(false);
     setUser(null);
   };
-  
+
   // Removed unused 'auth' variable from useAuth() hook
-  
-  const value = useMemo(() => ({
-    isAuthenticated,
-    user,
-    login,
-    logout,
-    register,
-    loading,
-    error,
-    isLoading,
-  }), [isAuthenticated, user, loading, error, isLoading]);
-  
+
+  const value = useMemo(
+    () => ({
+      isAuthenticated,
+      user,
+      login,
+      logout,
+      register,
+      loading,
+      error,
+      isLoading,
+    }),
+    [isAuthenticated, user, loading, error, isLoading]
+  );
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+};
 
 export { AuthProvider };

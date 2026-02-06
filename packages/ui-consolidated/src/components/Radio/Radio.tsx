@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
 import { cn } from '../../utils';
 
 /**
@@ -25,7 +25,8 @@ export const radioVariants = cva(
  * Radio component props
  */
 export interface RadioProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
+  extends
+    Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
     VariantProps<typeof radioVariants> {
   /**
    * Label for the radio
@@ -66,18 +67,18 @@ export interface RadioProps
  * <Radio name="fruit" value="banana" label="Banana" />
  *
  * // With helper text
- * <Radio 
- *   name="plan" 
- *   value="basic" 
- *   label="Basic Plan" 
+ * <Radio
+ *   name="plan"
+ *   value="basic"
+ *   label="Basic Plan"
  *   helperText="Free tier with limited features"
  * />
  *
  * // With error
- * <Radio 
- *   name="required" 
- *   value="yes" 
- *   label="Required option" 
+ * <Radio
+ *   name="required"
+ *   value="yes"
+ *   label="Required option"
  *   error="This field is required"
  * />
  *
@@ -85,19 +86,22 @@ export interface RadioProps
  * <Radio size="lg" name="size" value="large" label="Large radio" />
  */
 const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
-  ({
-    className,
-    size,
-    label,
-    helperText,
-    error,
-    containerClassName,
-    labelClassName,
-    helperTextClassName,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      size,
+      label,
+      helperText,
+      error,
+      containerClassName,
+      labelClassName,
+      helperTextClassName,
+      ...props
+    },
+    ref
+  ) => {
     const id = React.useId();
-    
+
     return (
       <div className={cn('flex flex-col space-y-2', containerClassName)}>
         <div className="flex items-center space-x-2">
@@ -289,12 +293,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
         ))}
       </div>
       {(error || helperText) && (
-        <p
-          className={cn(
-            'text-sm',
-            error ? 'text-destructive' : 'text-muted-foreground'
-          )}
-        >
+        <p className={cn('text-sm', error ? 'text-destructive' : 'text-muted-foreground')}>
           {error || helperText}
         </p>
       )}

@@ -1,9 +1,8 @@
-
-import { useState } from 'react';
 import { ChevronDown, Info, Play, Terminal } from 'lucide-react';
+import { useState } from 'react';
 import { ADMIN_COMMANDS, AdminCommand } from '../../config/admin-commands';
-import { Tooltip } from '../ui/tooltip';
 import { cn } from '../../lib/utils';
+import { Tooltip } from '../ui/tooltip';
 // Assuming we have a configured axios instance or similar service
 import axios from 'axios';
 import { getApiUrl } from '../../config/ports';
@@ -15,12 +14,19 @@ interface CommandDropdownProps {
 export function CommandDropdown({ className }: CommandDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState<string | null>(null);
-  const [status, setStatus] = useState<{ id: string; type: 'success' | 'error'; message: string } | null>(null);
+  const [status, setStatus] = useState<{
+    id: string;
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const executeCommand = async (command: AdminCommand) => {
-    if (command.requiresConfirmation && !window.confirm(`Are you sure you want to run: ${command.label}?`)) {
+    if (
+      command.requiresConfirmation &&
+      !window.confirm(`Are you sure you want to run: ${command.label}?`)
+    ) {
       return;
     }
 
@@ -37,24 +43,23 @@ export function CommandDropdown({ className }: CommandDropdownProps) {
       await axios({
         method: command.method,
         url,
-        headers
+        headers,
       });
 
       setStatus({
         id: command.id,
         type: 'success',
-        message: 'Command triggered successfully'
+        message: 'Command triggered successfully',
       });
 
       // Auto-clear success message after 3 seconds
       setTimeout(() => setStatus(null), 3000);
-
     } catch (error: any) {
       console.error(`Error executing command ${command.id}:`, error);
       setStatus({
         id: command.id,
         type: 'error',
-        message: error.response?.data?.message || 'Failed to execute command'
+        message: error.response?.data?.message || 'Failed to execute command',
       });
     } finally {
       setLoading(null);
@@ -62,16 +67,19 @@ export function CommandDropdown({ className }: CommandDropdownProps) {
   };
 
   // Group commands by category
-  const groupedCommands = ADMIN_COMMANDS.reduce((acc, command) => {
-    if (!acc[command.category]) {
-      acc[command.category] = [];
-    }
-    acc[command.category].push(command);
-    return acc;
-  }, {} as Record<string, AdminCommand[]>);
+  const groupedCommands = ADMIN_COMMANDS.reduce(
+    (acc, command) => {
+      if (!acc[command.category]) {
+        acc[command.category] = [];
+      }
+      acc[command.category].push(command);
+      return acc;
+    },
+    {} as Record<string, AdminCommand[]>
+  );
 
   return (
-    <div className={cn("relative inline-block text-left", className)}>
+    <div className={cn('relative inline-block text-left', className)}>
       <div>
         <button
           type="button"
@@ -99,7 +107,10 @@ export function CommandDropdown({ className }: CommandDropdownProps) {
                 {category}
               </div>
               {commands.map((command) => (
-                <div key={command.id} className="px-4 py-3 hover:bg-gray-50 flex items-center justify-between group">
+                <div
+                  key={command.id}
+                  className="px-4 py-3 hover:bg-gray-50 flex items-center justify-between group"
+                >
                   <div className="flex items-center flex-1 min-w-0 mr-4">
                     {command.icon && (
                       <command.icon className="h-4 w-4 text-gray-400 mr-3 flex-shrink-0 group-hover:text-blue-500" />
@@ -107,10 +118,12 @@ export function CommandDropdown({ className }: CommandDropdownProps) {
                     <div className="truncate">
                       <p className="text-sm font-medium text-gray-900">{command.label}</p>
                       {status?.id === command.id && (
-                        <p className={cn(
-                          "text-xs truncate",
-                          status.type === 'success' ? "text-green-600" : "text-red-600"
-                        )}>
+                        <p
+                          className={cn(
+                            'text-xs truncate',
+                            status.type === 'success' ? 'text-green-600' : 'text-red-600'
+                          )}
+                        >
                           {status.message}
                         </p>
                       )}
@@ -126,14 +139,19 @@ export function CommandDropdown({ className }: CommandDropdownProps) {
                       onClick={() => executeCommand(command)}
                       disabled={loading === command.id}
                       className={cn(
-                        "p-1.5 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500",
+                        'p-1.5 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500',
                         loading === command.id
-                          ? "bg-gray-100 cursor-wait"
-                          : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                          ? 'bg-gray-100 cursor-wait'
+                          : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
                       )}
                       title="Run Command"
                     >
-                       <Play className={cn("h-3 w-3 fill-current", loading === command.id && "animate-pulse")} />
+                      <Play
+                        className={cn(
+                          'h-3 w-3 fill-current',
+                          loading === command.id && 'animate-pulse'
+                        )}
+                      />
                     </button>
                   </div>
                 </div>
@@ -145,10 +163,7 @@ export function CommandDropdown({ className }: CommandDropdownProps) {
 
       {/* Click outside to close (simplified) - in a real app use a hook */}
       {isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-transparent"
-          onClick={() => setIsOpen(false)}
-        />
+        <div className="fixed inset-0 z-40 bg-transparent" onClick={() => setIsOpen(false)} />
       )}
     </div>
   );

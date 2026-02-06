@@ -13,22 +13,22 @@ afterAll(async () => {
 // Export test utilities for use in other test files
 export const testUtils = {
   createMockUser: () => ({
-    id: "test-user-id",
-    email: "test@example.com",
+    id: 'test-user-id',
+    email: 'test@example.com',
   }),
 
   createMockAgent: () => ({
-    id: "test-agent-id",
-    name: "Test Agent",
-    type: "test",
-    provider: "test-provider",
-    status: "active",
+    id: 'test-agent-id',
+    name: 'Test Agent',
+    type: 'test',
+    provider: 'test-provider',
+    status: 'active',
   }),
 };
 
 // Example test
-describe("API Package", () => {
-  it("should load successfully", () => {
+describe('API Package', () => {
+  it('should load successfully', () => {
     expect(true).toBe(true);
   });
 });

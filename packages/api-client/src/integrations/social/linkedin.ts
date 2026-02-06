@@ -1,7 +1,7 @@
 // Import required API client and types
-import { ApiClient } from '../../core/ApiClient';
 import { ApiConfig } from '../../config/ApiConfig';
-import { Integration, IntegrationType, IntegrationConfig, AuthType } from '../types';
+import { ApiClient } from '../../core/ApiClient';
+import { AuthType, Integration, IntegrationConfig, IntegrationType } from '../types';
 
 /**
  * LinkedIn API configuration
@@ -43,16 +43,16 @@ export class LinkedInIntegration implements Integration {
   isEnabled: boolean = true;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
-  
+
   private apiClient: ApiClient;
-  
+
   constructor(config: LinkedInConfig) {
     this.id = config.id;
     this.name = config.name;
     this.type = config.type;
     this.description = config.description;
     this.config = config;
-    
+
     // Default LinkedIn capabilities
     this.capabilities = {
       actions: [
@@ -67,7 +67,7 @@ export class LinkedInIntegration implements Integration {
         'get_analytics',
         'search_people',
         'search_companies',
-        'get_network_updates'
+        'get_network_updates',
       ],
       triggers: [
         'new_connection',
@@ -75,32 +75,32 @@ export class LinkedInIntegration implements Integration {
         'profile_view',
         'post_engagement',
         'job_application',
-        'company_page_follow'
+        'company_page_follow',
       ],
       supportsWebhooks: true,
-      supportsPolling: true
+      supportsPolling: true,
     };
-    
+
     // Create API client for LinkedIn API
     const apiConfig: ApiConfig = {
       baseURL: config.baseUrl || '',
       headers: {
         ...config.defaultHeaders,
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     };
-    
+
     // Add access token if provided
     if (config.accessToken) {
       apiConfig.headers = {
         ...apiConfig.headers,
-        'Authorization': `Bearer ${config.accessToken}`
+        Authorization: `Bearer ${config.accessToken}`,
       };
     }
-    
+
     this.apiClient = new ApiClient(apiConfig);
   }
-  
+
   /**
    * Connect to LinkedIn API
    */
@@ -113,10 +113,12 @@ export class LinkedInIntegration implements Integration {
       return true;
     } catch (error) {
       this.isConnected = false;
-      throw new Error(`Failed to connect to LinkedIn API: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to connect to LinkedIn API: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Disconnect from LinkedIn API
    */
@@ -125,7 +127,7 @@ export class LinkedInIntegration implements Integration {
     this.updatedAt = new Date();
     return true;
   }
-  
+
   /**
    * Execute a LinkedIn API action
    */
@@ -133,7 +135,7 @@ export class LinkedInIntegration implements Integration {
     if (!this.isConnected) {
       throw new Error('Not connected to LinkedIn API. Call connect() first.');
     }
-    
+
     switch (action) {
       case 'create_post':
         return this.createPost(params.text, params.visibility, params.media);
@@ -159,7 +161,7 @@ export class LinkedInIntegration implements Integration {
         throw new Error(`Unsupported LinkedIn action: ${action}`);
     }
   }
-  
+
   /**
    * Create a post on LinkedIn
    */
@@ -171,27 +173,29 @@ export class LinkedInIntegration implements Integration {
         specificContent: {
           'com.linkedin.ugc.ShareContent': {
             shareCommentary: {
-              text
+              text,
             },
-            shareMediaCategory: media && media.length > 0 ? 'IMAGE' : 'NONE'
-          }
+            shareMediaCategory: media && media.length > 0 ? 'IMAGE' : 'NONE',
+          },
         },
         visibility: {
-          'com.linkedin.ugc.MemberNetworkVisibility': visibility
-        }
+          'com.linkedin.ugc.MemberNetworkVisibility': visibility,
+        },
       };
-      
+
       // Add media if provided
       if (media && media.length > 0) {
         payload.specificContent['com.linkedin.ugc.ShareContent'].media = media;
       }
-      
+
       return await this.apiClient.post('/v2/ugcPosts', payload);
     } catch (error) {
-      throw new Error(`Failed to create post: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to create post: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Share an update on LinkedIn
    */
@@ -200,21 +204,23 @@ export class LinkedInIntegration implements Integration {
       const payload = {
         content,
         distribution: {
-          linkedInDistributionTarget: {}
+          linkedInDistributionTarget: {},
         },
         owner: `urn:li:person:${this.getProfileId()}`,
         subject: content.title || 'Shared Update',
         text: {
-          text: content.text
-        }
+          text: content.text,
+        },
       };
-      
+
       return await this.apiClient.post('/v2/shares', payload);
     } catch (error) {
-      throw new Error(`Failed to share update: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to share update: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get profile information
    */
@@ -222,10 +228,12 @@ export class LinkedInIntegration implements Integration {
     try {
       return await this.apiClient.get('/v2/me');
     } catch (error) {
-      throw new Error(`Failed to get profile: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get profile: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get profile ID from the cached data or fetch it
    */
@@ -234,10 +242,12 @@ export class LinkedInIntegration implements Integration {
       const profile = await this.getProfile();
       return profile.id;
     } catch (error) {
-      throw new Error(`Failed to get profile ID: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get profile ID: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get connections
    */
@@ -245,10 +255,12 @@ export class LinkedInIntegration implements Integration {
     try {
       return await this.apiClient.get(`/v2/connections?start=${start}&count=${count}`);
     } catch (error) {
-      throw new Error(`Failed to get connections: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get connections: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Send connection invitation
    */
@@ -257,25 +269,27 @@ export class LinkedInIntegration implements Integration {
       const payload: any = {
         invitee: {
           'com.linkedin.voyager.growth.invitation.InviteeProfile': {
-            profileId: recipient
-          }
-        }
+            profileId: recipient,
+          },
+        },
       };
-      
+
       if (message) {
         payload.message = {
           'com.linkedin.voyager.growth.invitation.CustomMessage': {
-            body: message
-          }
+            body: message,
+          },
         };
       }
-      
+
       return await this.apiClient.post('/v2/invitations', payload);
     } catch (error) {
-      throw new Error(`Failed to send invitation: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to send invitation: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get company page information
    */
@@ -283,10 +297,12 @@ export class LinkedInIntegration implements Integration {
     try {
       return await this.apiClient.get(`/v2/organizations/${companyId}`);
     } catch (error) {
-      throw new Error(`Failed to get company page: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get company page: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Create a post on a company page
    */
@@ -298,80 +314,90 @@ export class LinkedInIntegration implements Integration {
         specificContent: {
           'com.linkedin.ugc.ShareContent': {
             shareCommentary: {
-              text: content.text
+              text: content.text,
             },
-            shareMediaCategory: content.media ? 'IMAGE' : 'NONE'
-          }
+            shareMediaCategory: content.media ? 'IMAGE' : 'NONE',
+          },
         },
         visibility: {
-          'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC'
-        }
+          'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC',
+        },
       };
-      
+
       // Add media if provided
       if (content.media) {
         if (payload.specificContent['com.linkedin.ugc.ShareContent']) {
           (payload.specificContent['com.linkedin.ugc.ShareContent'] as any).media = content.media;
         }
       }
-      
+
       return await this.apiClient.post('/v2/ugcPosts', payload);
     } catch (error) {
-      throw new Error(`Failed to create company post: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to create company post: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get company analytics
    */
   private async getAnalytics(companyId: string, timeRange: string): Promise<any> {
     try {
-      return await this.apiClient.get(`/v2/organizationalEntityFollowerStatistics?q=organizationalEntity&organizationalEntity=urn:li:organization:${companyId}&timeIntervals.timeGranularityType=${timeRange}&timeIntervals.timeRange=CUSTOM&timeIntervals.startTime=1577836800000`);
+      return await this.apiClient.get(
+        `/v2/organizationalEntityFollowerStatistics?q=organizationalEntity&organizationalEntity=urn:li:organization:${companyId}&timeIntervals.timeGranularityType=${timeRange}&timeIntervals.timeRange=CUSTOM&timeIntervals.startTime=1577836800000`
+      );
     } catch (error) {
-      throw new Error(`Failed to get analytics: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get analytics: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Search for people
    */
   private async searchPeople(keywords: string, filters?: any): Promise<any> {
     try {
       let url = `/v2/people-search?keywords=${encodeURIComponent(keywords)}`;
-      
+
       // Add any additional filters
       if (filters) {
-        Object.keys(filters).forEach(key => {
+        Object.keys(filters).forEach((key) => {
           url += `&${key}=${encodeURIComponent(filters[key])}`;
         });
       }
-      
+
       return await this.apiClient.get(url);
     } catch (error) {
-      throw new Error(`Failed to search people: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to search people: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Search for companies
    */
   private async searchCompanies(keywords: string, filters?: any): Promise<any> {
     try {
       let url = `/v2/company-search?keywords=${encodeURIComponent(keywords)}`;
-      
+
       // Add any additional filters
       if (filters) {
-        Object.keys(filters).forEach(key => {
+        Object.keys(filters).forEach((key) => {
           url += `&${key}=${encodeURIComponent(filters[key])}`;
         });
       }
-      
+
       return await this.apiClient.get(url);
     } catch (error) {
-      throw new Error(`Failed to search companies: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to search companies: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get metadata about this integration
    */
@@ -383,7 +409,7 @@ export class LinkedInIntegration implements Integration {
       capabilities: this.capabilities,
       isConnected: this.isConnected,
       isEnabled: this.isEnabled,
-      lastUpdated: this.updatedAt
+      lastUpdated: this.updatedAt,
     };
   }
 }
@@ -391,7 +417,9 @@ export class LinkedInIntegration implements Integration {
 /**
  * Create a new LinkedIn integration
  */
-export function createLinkedInIntegration(config: Partial<LinkedInConfig> = {}): LinkedInIntegration {
+export function createLinkedInIntegration(
+  config: Partial<LinkedInConfig> = {}
+): LinkedInIntegration {
   const defaultConfig: LinkedInConfig = {
     id: 'linkedin',
     name: 'LinkedIn',
@@ -403,11 +431,12 @@ export function createLinkedInIntegration(config: Partial<LinkedInConfig> = {}):
     webhookSupport: true,
     apiVersion: 'v2',
     docUrl: 'https://docs.microsoft.com/en-us/linkedin/consumer/',
-    logoUrl: 'https://content.linkedin.com/content/dam/me/business/en-us/amp/brand-site/v2/bg/LI-Bug.svg.original.svg'
+    logoUrl:
+      'https://content.linkedin.com/content/dam/me/business/en-us/amp/brand-site/v2/bg/LI-Bug.svg.original.svg',
   };
-  
+
   return new LinkedInIntegration({
     ...defaultConfig,
-    ...config
+    ...config,
   });
 }

@@ -5,51 +5,61 @@ This directory contains the core components of the AI Communication System.
 ## Directory Structure
 
 ### Agents
+
 - Base agent implementations
 - Agent factories and registries
 - Agent state management
 
 ### Bridges
+
 - Communication bridges
 - Protocol handlers
 - Message routing
 
 ### Context
+
 - Context management
 - State persistence
 - Distributed context
 
 ### Error
+
 - Error handling
 - Recovery mechanisms
 - Circuit breakers
 
 ### Monitoring
+
 - Metrics collection
 - Performance monitoring
 - Health checks
 
 ### Validation
+
 - Message validation
 - Schema enforcement
 - Version compatibility
 
 ### Network
+
 - Network protocols
 - Connection management
 - Security
 
 ### Innovation
+
 - Feature processing
 - Decision engines
 - Integration orchestration
 
 ### Products
+
 - Product validation
 - Pipeline management
 - Stage management
 
 ### Analysis
+
 - Framework classification
 - Project analysis
 - Performance analysis

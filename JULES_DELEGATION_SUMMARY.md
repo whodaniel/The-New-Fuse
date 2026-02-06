@@ -26,10 +26,10 @@ to the Jules CLI for parallel autonomous execution.
 4. ✅ **JULES_TASK_04** - Create Drizzle Chat & Message Repositories
    - Session ID: (check `jules remote list --session`)
 
-5. ✅ **JULES_TASK_05** - Migrate Core Package Prisma Service to Drizzle
+5. ✅ **JULES_TASK_05** - Migrate Core Package Drizzle Service to Drizzle
    - Session ID: (check `jules remote list --session`)
 
-6. ✅ **JULES_TASK_06** - Migrate MessagingService from Prisma to Drizzle
+6. ✅ **JULES_TASK_06** - Migrate MessagingService from Drizzle to Drizzle
    - Session ID: (check `jules remote list --session`)
 
 ### Code Quality & Infrastructure Tasks
@@ -102,7 +102,7 @@ Created `submit-jules-tasks.sh` for batch task submission:
 
 ### High Priority (Database Migration)
 
-- Tasks 1-6: Critical for Prisma 7 → Drizzle ORM migration
+- Tasks 1-6: Critical for Drizzle 7 → Drizzle ORM migration
 - These resolve TypeScript stack overflow issues
 
 ### Medium Priority (Quality & Testing)
@@ -120,7 +120,7 @@ Created `submit-jules-tasks.sh` for batch task submission:
 Once Jules completes these tasks, the codebase will have:
 
 1. ✅ Complete Drizzle ORM repository layer
-2. ✅ Migrated core services away from Prisma
+2. ✅ Migrated core services away from Drizzle
 3. ✅ Comprehensive unit tests for database layer
 4. ✅ Updated documentation
 5. ✅ Improved code quality (linting, formatting)

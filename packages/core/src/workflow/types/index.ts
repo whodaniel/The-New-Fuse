@@ -6,7 +6,8 @@
 export * from '../types';
 // Workflow-specific error class
 export class WorkflowError extends Error {
-  constructor(message: string,
+  constructor(
+    message: string,
     public readonly code: string,
     public readonly workflowId?: string,
     public readonly stepId?: string,

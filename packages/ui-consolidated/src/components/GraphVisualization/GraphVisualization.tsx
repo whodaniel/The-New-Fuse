@@ -1,24 +1,24 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactFlow, {
   Background,
   Controls,
+  Edge,
   MiniMap,
+  Node,
+  NodeChange,
+  NodeProps,
   Panel,
   useReactFlow,
-  Node,
-  Edge,
-  NodeProps,
-  NodeChange,
-} from "reactflow";
-import "reactflow/dist/style.css";
+} from 'reactflow';
+import 'reactflow/dist/style.css';
 import { useGraphWebSocket } from '../hooks/useGraphWebSocket';
 import { MemoryGraphAdapter } from '../memory/memory-graph-adapter';
 import styles from './graph-visualization.module.css';
 
 interface NodeData {
   label: string;
-  status?: "running" | "error" | "idle";
-  priority?: "high" | "medium" | "low";
+  status?: 'running' | 'error' | 'idle';
+  priority?: 'high' | 'medium' | 'low';
   metadata?: Record<string, string | number>;
   expanded?: boolean;
 }
@@ -49,9 +49,9 @@ interface GraphVisualizationProps {
 }
 
 const DefaultNode: React.FC<NodeProps<NodeData>> = ({ data }) => {
-  const nodeClass = `${styles.defaultNode} ${data.status === "running" ? "animate-pulse" : ""} ${
-    data.status === "error" ? "border-red-500" : ""
-  } ${data.priority === "high" ? "ring-2 ring-yellow-400" : ""}`;
+  const nodeClass = `${styles.defaultNode} ${data.status === 'running' ? 'animate-pulse' : ''} ${
+    data.status === 'error' ? 'border-red-500' : ''
+  } ${data.priority === 'high' ? 'ring-2 ring-yellow-400' : ''}`;
 
   return (
     <div className={nodeClass}>
@@ -70,8 +70,8 @@ const DefaultNode: React.FC<NodeProps<NodeData>> = ({ data }) => {
 };
 
 const TaskNode: React.FC<NodeProps<NodeData>> = ({ data }) => {
-  const nodeClass = `${styles.taskNode} ${data.status === "running" ? "animate-pulse" : ""} ${
-    data.status === "error" ? "border-red-500" : ""
+  const nodeClass = `${styles.taskNode} ${data.status === 'running' ? 'animate-pulse' : ''} ${
+    data.status === 'error' ? 'border-red-500' : ''
   }`;
 
   return (
@@ -96,9 +96,9 @@ const AgentNode: React.FC<NodeProps<NodeData>> = ({ data }) => {
       <div className="font-medium">{data.label}</div>
       {data.status && (
         <div className="text-xs mt-1 flex items-center gap-2">
-          <div 
+          <div
             className={`${styles.statusIndicator} ${
-              data.status === "running" ? styles.statusRunning : styles.statusIdle
+              data.status === 'running' ? styles.statusRunning : styles.statusIdle
             }`}
           />
           {data.status}
@@ -117,7 +117,7 @@ const nodeTypes = {
 function toReactFlowNode(node: GraphNode): Node<NodeData> {
   return {
     id: node.id,
-    type: node.type || "default",
+    type: node.type || 'default',
     position: node.position || { x: 0, y: 0 },
     data: node.data,
   };
@@ -128,7 +128,7 @@ function toReactFlowEdge(edge: GraphEdge): Edge {
     id: edge.id || `${edge.source}-${edge.target}`,
     source: edge.source,
     target: edge.target,
-    type: edge.type || "default",
+    type: edge.type || 'default',
     animated: edge.animated,
     style: edge.style,
     label: edge.label,
@@ -136,25 +136,17 @@ function toReactFlowEdge(edge: GraphEdge): Edge {
 }
 
 export function GraphVisualization({
-  websocketUrl = "ws://localhost:3000/graph",
-  className = "",
+  websocketUrl = 'ws://localhost:3000/graph',
+  className = '',
   showMiniMap = true,
   showControls = true,
   darkMode = false,
 }: GraphVisualizationProps) {
-  const {
-    data,
-    config,
-    loading,
-    error,
-    updateLayout,
-    selectNodes,
-    expandNode,
-    filterGraph,
-  } = useGraphWebSocket({
-    url: websocketUrl,
-    autoConnect: true,
-  });
+  const { data, config, loading, error, updateLayout, selectNodes, expandNode, filterGraph } =
+    useGraphWebSocket({
+      url: websocketUrl,
+      autoConnect: true,
+    });
 
   const { fitView } = useReactFlow();
   const [memoryAdapter] = useState(() => new MemoryGraphAdapter({ dimensions: 128 }));
@@ -181,18 +173,21 @@ export function GraphVisualization({
     return [...data.edges.map(toReactFlowEdge), ...suggestedConnections];
   }, [data.edges, suggestedConnections]);
 
-  const onNodesChange = useCallback((changes: NodeChange[]) => {
-    changes.forEach((change) => {
-      if (change.type === "select") {
-        selectNodes(
-          changes
-            .filter((c) => c.type === "select" && 'selected' in c && c.selected)
-            .map((c) => 'id' in c ? c.id : '')
-            .filter(Boolean)
-        );
-      }
-    });
-  }, [selectNodes]);
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      changes.forEach((change) => {
+        if (change.type === 'select') {
+          selectNodes(
+            changes
+              .filter((c) => c.type === 'select' && 'selected' in c && c.selected)
+              .map((c) => ('id' in c ? c.id : ''))
+              .filter(Boolean)
+          );
+        }
+      });
+    },
+    [selectNodes]
+  );
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node<NodeData>) => {
@@ -211,9 +206,9 @@ export function GraphVisualization({
 
   const graphStyles = useMemo(
     () => ({
-      background: darkMode ? "#1a1a1a" : "#ffffff",
-      width: "100%",
-      height: "100%",
+      background: darkMode ? '#1a1a1a' : '#ffffff',
+      width: '100%',
+      height: '100%',
     }),
     [darkMode]
   );
@@ -238,7 +233,7 @@ export function GraphVisualization({
     );
   }
 
-  const containerClass = `${styles.graphContainer} ${className} ${darkMode ? styles.darkMode : ""}`;
+  const containerClass = `${styles.graphContainer} ${className} ${darkMode ? styles.darkMode : ''}`;
 
   return (
     <div className={containerClass}>
@@ -259,15 +254,15 @@ export function GraphVisualization({
         nodesConnectable={config.nodesConnectable}
         elementsSelectable={config.elementsSelectable}
       >
-        <Background color={darkMode ? "#333333" : "#aaaaaa"} gap={16} />
+        <Background color={darkMode ? '#333333' : '#aaaaaa'} gap={16} />
         {showControls && <Controls />}
         {showMiniMap && (
           <MiniMap
             nodeColor={(n) => {
               const data = n.data as NodeData;
-              return data.status === "running" ? "#34d399" : "#3b82f6";
+              return data.status === 'running' ? '#34d399' : '#3b82f6';
             }}
-            maskColor={darkMode ? "rgba(0, 0, 0, 0.7)" : "rgba(255, 255, 255, 0.7)"}
+            maskColor={darkMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)'}
           />
         )}
         <Panel position="top-right" className="space-y-2">

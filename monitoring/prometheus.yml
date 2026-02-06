@@ -3,16 +3,16 @@ global:
   evaluation_interval: 15s
 
 scrape_configs:
-  - job_name: 'gdesigner'
+  - job_name: "gdesigner"
     static_configs:
-      - targets: ['localhost:9090']
-    metrics_path: '/metrics'
-    scheme: 'http'
-    
+      - targets: ["localhost:9090"]
+    metrics_path: "/metrics"
+    scheme: "http"
+
 alerting:
   alertmanagers:
     - static_configs:
-      - targets: ['alertmanager:9093']
+        - targets: ["alertmanager:9093"]
 
 rules:
   - alert: HighLatency

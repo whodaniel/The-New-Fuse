@@ -4,7 +4,7 @@ import { WorkflowMonitoringService } from '../services/WorkflowMonitoringService
 import { WorkflowMCPIntegrationService } from '../services/WorkflowMCPIntegrationService.js';
 import { AnalyticsIntegrationService } from '../services/AnalyticsIntegrationService.js';
 import { SchemaValidationService } from '../services/SchemaValidationService.js';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { DatabaseService } from '../drizzle/drizzle.service.js';
 import { MetricsService } from '../metrics/metrics.service.js';
 import { RedisService } from '../redis/redis.service.tsx';
 import { Logger } from '../common/logger.service.js';
@@ -16,7 +16,7 @@ import { Logger } from '../common/logger.service.js';
     WorkflowMCPIntegrationService,
     AnalyticsIntegrationService,
     SchemaValidationService,
-    PrismaService,
+    DatabaseService,
     MetricsService,
     RedisService,
     Logger

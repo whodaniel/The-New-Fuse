@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuthorization, PermissionCheck } from '../../hooks/useAuthorization';
+import { PermissionCheck, useAuthorization } from '../../hooks/useAuthorization';
 
 interface ProtectedProps {
   children: React.ReactNode;
@@ -16,12 +16,12 @@ interface ProtectedProps {
  *   <button>Configure Agent</button>
  * </Protected>
  */
-export const Protected: React.FC<ProtectedProps> = ({ 
-  children, 
-  fallback = null, 
-  permission, 
+export const Protected: React.FC<ProtectedProps> = ({
+  children,
+  fallback = null,
+  permission,
   roles,
-  tenantId 
+  tenantId,
 }) => {
   const { canAccess, hasRole } = useAuthorization();
 

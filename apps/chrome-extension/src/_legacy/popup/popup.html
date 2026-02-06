@@ -1,292 +1,307 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The New Fuse</title>
-    <link rel="stylesheet" href="popup.css">
-</head>
-<body>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
     <!-- Notifications Container -->
     <div id="notifications-container"></div>
 
     <!-- Main Popup Container -->
     <div class="popup-container">
-        <!-- Header -->
-        <div class="header">
-            <h1>The New Fuse</h1>
-            <div id="connection-status" class="connection-status">
-                <span id="status-indicator" class="status-indicator offline"></span>
-                <span id="status-text">Disconnected</span>
+      <!-- Header -->
+      <div class="header">
+        <h1>The New Fuse</h1>
+        <div id="connection-status" class="connection-status">
+          <span id="status-indicator" class="status-indicator offline"></span>
+          <span id="status-text">Disconnected</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="tabs">
+        <button class="tab-button active" data-tab="home">
+          <div class="tab-icon">🏠</div>
+          <div class="tab-label">Home</div>
+        </button>
+        <button class="tab-button" data-tab="elements">
+          <div class="tab-icon">🎯</div>
+          <div class="tab-label">Elements</div>
+        </button>
+        <button class="tab-button" data-tab="ai">
+          <div class="tab-icon">🤖</div>
+          <div class="tab-label">AI Chat</div>
+        </button>
+        <button class="tab-button" data-tab="code">
+          <div class="tab-icon">💻</div>
+          <div class="tab-label">Code</div>
+        </button>
+        <button class="tab-button" data-tab="connection">
+          <div class="tab-icon">🔌</div>
+          <div class="tab-label">Connection</div>
+        </button>
+        <button class="tab-button" data-tab="settings">
+          <div class="tab-icon">⚙️</div>
+          <div class="tab-label">Settings</div>
+        </button>
+      </div>
+
+      <!-- Content Area -->
+      <div class="content">
+        <!-- Home Tab -->
+        <div id="home" class="tab-content active">
+          <!-- Selection Preview -->
+          <div id="selection-preview" class="card hidden">
+            <h3>📋 SELECTED TEXT</h3>
+            <div class="selection-text-container">
+              <div id="selection-text"></div>
             </div>
+            <div class="button-group">
+              <button id="send-selection-btn" class="btn btn-primary">📤 Send to VS Code</button>
+              <button id="copy-selection-btn" class="btn btn-success">📋 Copy</button>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card">
+            <h3>⚡ QUICK ACTIONS</h3>
+            <div class="button-group-vertical">
+              <button id="extract-chat-btn" class="btn btn-info">📤 Extract Chat Content</button>
+              <button id="open-view-btn" class="btn btn-purple">🎯 Open VS Code View</button>
+              <button id="analyze-selection-btn" class="btn btn-warning">
+                🔍 Analyze Selection
+              </button>
+              <button id="execute-selection-btn" class="btn btn-success">
+                ▶️ Execute Selection
+              </button>
+            </div>
+          </div>
+
+          <!-- Current Page Info -->
+          <div class="card">
+            <h3>🌐 CURRENT PAGE</h3>
+            <div id="current-url" class="url-display">Loading...</div>
+          </div>
+
+          <!-- Active Chat Info -->
+          <div id="active-chat-info" class="card hidden">
+            <h3>💬 ACTIVE CHAT</h3>
+            <div id="chat-platform-info"></div>
+          </div>
         </div>
 
-        <!-- Navigation Tabs -->
-        <div class="tabs">
-            <button class="tab-button active" data-tab="home">
-                <div class="tab-icon">🏠</div>
-                <div class="tab-label">Home</div>
-            </button>
-            <button class="tab-button" data-tab="elements">
-                <div class="tab-icon">🎯</div>
-                <div class="tab-label">Elements</div>
-            </button>
-            <button class="tab-button" data-tab="ai">
-                <div class="tab-icon">🤖</div>
-                <div class="tab-label">AI Chat</div>
-            </button>
-            <button class="tab-button" data-tab="code">
-                <div class="tab-icon">💻</div>
-                <div class="tab-label">Code</div>
-            </button>
-            <button class="tab-button" data-tab="connection">
-                <div class="tab-icon">🔌</div>
-                <div class="tab-label">Connection</div>
-            </button>
-            <button class="tab-button" data-tab="settings">
-                <div class="tab-icon">⚙️</div>
-                <div class="tab-label">Settings</div>
-            </button>
+        <!-- Elements Tab -->
+        <div id="elements" class="tab-content">
+          <div class="card">
+            <h3>🎯 ELEMENT DETECTION</h3>
+
+            <!-- Element Status -->
+            <div class="element-status">
+              <div class="status-row">
+                <span>Input Field:</span>
+                <span id="input-status" class="status-indicator failure">●</span>
+              </div>
+              <div class="status-row">
+                <span>Send Button:</span>
+                <span id="button-status" class="status-indicator failure">●</span>
+              </div>
+              <div class="status-row">
+                <span>Output Area:</span>
+                <span id="output-status" class="status-indicator failure">●</span>
+              </div>
+            </div>
+
+            <!-- Element Actions -->
+            <div class="button-group-vertical">
+              <button id="auto-detect-btn" class="btn btn-success">🔍 Auto-Detect Elements</button>
+              <button id="select-input-btn" class="btn btn-purple">💬 Select Chat Input</button>
+              <button id="select-button-btn" class="btn btn-purple">➤ Select Send Button</button>
+              <button id="select-output-btn" class="btn btn-purple">💬 Select Chat Output</button>
+              <button id="validate-btn" class="btn btn-primary">✅ Validate Elements</button>
+              <button id="toggle-floating-panel-btn" class="btn btn-warning">
+                🎛️ Toggle Floating Panel
+              </button>
+            </div>
+          </div>
         </div>
 
-        <!-- Content Area -->
-        <div class="content">
-            <!-- Home Tab -->
-            <div id="home" class="tab-content active">
-                <!-- Selection Preview -->
-                <div id="selection-preview" class="card hidden">
-                    <h3>📋 SELECTED TEXT</h3>
-                    <div class="selection-text-container">
-                        <div id="selection-text"></div>
-                    </div>
-                    <div class="button-group">
-                        <button id="send-selection-btn" class="btn btn-primary">📤 Send to VS Code</button>
-                        <button id="copy-selection-btn" class="btn btn-success">📋 Copy</button>
-                    </div>
-                </div>
+        <!-- AI Chat Tab -->
+        <div id="ai" class="tab-content">
+          <div class="card">
+            <h3>🤖 AI CHAT</h3>
 
-                <!-- Quick Actions -->
-                <div class="card">
-                    <h3>⚡ QUICK ACTIONS</h3>
-                    <div class="button-group-vertical">
-                        <button id="extract-chat-btn" class="btn btn-info">📤 Extract Chat Content</button>
-                        <button id="open-view-btn" class="btn btn-purple">🎯 Open VS Code View</button>
-                        <button id="analyze-selection-btn" class="btn btn-warning">🔍 Analyze Selection</button>
-                        <button id="execute-selection-btn" class="btn btn-success">▶️ Execute Selection</button>
-                    </div>
-                </div>
+            <!-- Chat Messages -->
+            <div id="chat-messages" class="chat-messages"></div>
 
-                <!-- Current Page Info -->
-                <div class="card">
-                    <h3>🌐 CURRENT PAGE</h3>
-                    <div id="current-url" class="url-display">Loading...</div>
-                </div>
-
-                <!-- Active Chat Info -->
-                <div id="active-chat-info" class="card hidden">
-                    <h3>💬 ACTIVE CHAT</h3>
-                    <div id="chat-platform-info"></div>
-                </div>
+            <!-- Chat Input -->
+            <div class="chat-input-container">
+              <input type="text" id="chat-input" placeholder="Type your message..." />
+              <button id="send-chat-btn" class="btn btn-primary">Send</button>
             </div>
-
-            <!-- Elements Tab -->
-            <div id="elements" class="tab-content">
-                <div class="card">
-                    <h3>🎯 ELEMENT DETECTION</h3>
-                    
-                    <!-- Element Status -->
-                    <div class="element-status">
-                        <div class="status-row">
-                            <span>Input Field:</span>
-                            <span id="input-status" class="status-indicator failure">●</span>
-                        </div>
-                        <div class="status-row">
-                            <span>Send Button:</span>
-                            <span id="button-status" class="status-indicator failure">●</span>
-                        </div>
-                        <div class="status-row">
-                            <span>Output Area:</span>
-                            <span id="output-status" class="status-indicator failure">●</span>
-                        </div>
-                    </div>
-
-                    <!-- Element Actions -->
-                    <div class="button-group-vertical">
-                        <button id="auto-detect-btn" class="btn btn-success">🔍 Auto-Detect Elements</button>
-                        <button id="select-input-btn" class="btn btn-purple">💬 Select Chat Input</button>
-                        <button id="select-button-btn" class="btn btn-purple">➤ Select Send Button</button>
-                        <button id="select-output-btn" class="btn btn-purple">💬 Select Chat Output</button>
-                        <button id="validate-btn" class="btn btn-primary">✅ Validate Elements</button>
-                        <button id="toggle-floating-panel-btn" class="btn btn-warning">🎛️ Toggle Floating Panel</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AI Chat Tab -->
-            <div id="ai" class="tab-content">
-                <div class="card">
-                    <h3>🤖 AI CHAT</h3>
-                    
-                    <!-- Chat Messages -->
-                    <div id="chat-messages" class="chat-messages"></div>
-                    
-                    <!-- Chat Input -->
-                    <div class="chat-input-container">
-                        <input type="text" id="chat-input" placeholder="Type your message..." />
-                        <button id="send-chat-btn" class="btn btn-primary">Send</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Code Tab -->
-            <div id="code" class="tab-content">
-                <div class="card">
-                    <h3>💻 CODE EXECUTION</h3>
-                    
-                    <textarea id="code-input" placeholder="Enter your code here..." rows="10"></textarea>
-                    
-                    <div class="button-group-vertical">
-                        <button id="code-execute-btn" class="btn btn-success">▶️ Execute Code</button>
-                        <button id="code-analyze-btn" class="btn btn-info">🔍 Analyze Code</button>
-                        <button id="code-save-btn" class="btn btn-warning">💾 Save Snippet</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Connection Tab -->
-            <div id="connection" class="tab-content">
-                <div class="card">
-                    <h3>🔌 CONNECTION STATUS</h3>
-                    
-                    <!-- Detailed Status -->
-                    <div class="connection-details">
-                        <div class="status-row">
-                            <span>VS Code:</span>
-                            <span id="vscode-status" class="status-value offline">Disconnected</span>
-                        </div>
-                        <div class="status-row">
-                            <span>WebSocket:</span>
-                            <span id="websocket-status" class="status-value offline">Disconnected</span>
-                        </div>
-                        <div class="status-row">
-                            <span>Auth:</span>
-                            <span id="auth-status" class="status-value offline">Not authenticated</span>
-                        </div>
-                    </div>
-
-                    <!-- Connection Form -->
-                    <form id="connection-form">
-                        <div class="form-group">
-                            <label for="ws-protocol">Protocol:</label>
-                            <select id="ws-protocol">
-                                <option value="ws">ws</option>
-                                <option value="wss">wss</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="ws-host">Host:</label>
-                            <input type="text" id="ws-host" value="localhost" />
-                        </div>
-                        <div class="form-group">
-                            <label for="ws-port">Port:</label>
-                            <input type="number" id="ws-port" value="3712" />
-                        </div>
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" id="ws-compression" checked />
-                                Use Compression
-                            </label>
-                        </div>
-                    </form>
-
-                    <div class="button-group">
-                        <button id="save-connection-btn" class="btn btn-primary">💾 Save Settings</button>
-                        <button id="connect-btn" class="btn btn-success">🔗 Connect</button>
-                    </div>
-
-                    <!-- WebSocket Controls -->
-                    <div class="websocket-controls">
-                        <div class="button-group">
-                            <button id="websocket-connect-btn" class="btn btn-success">Connect WS</button>
-                            <button id="websocket-disconnect-btn" class="btn btn-danger">Disconnect WS</button>
-                        </div>
-                        <div id="websocket-log" class="log-container"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Settings Tab -->
-            <div id="settings" class="tab-content">
-                <div class="card">
-                    <h3>⚙️ SETTINGS</h3>
-                    
-                    <form id="settings-form">
-                        <!-- General Settings -->
-                        <div class="settings-section">
-                            <h4>General</h4>
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" id="auto-connect" checked />
-                                    Auto-connect on startup
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" id="show-notifications" checked />
-                                    Show notifications
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" id="save-history" checked />
-                                    Save chat history
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" id="debug-mode" />
-                                    Debug mode
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Connection Settings -->
-                        <div class="settings-section">
-                            <h4>Connection</h4>
-                            <div class="form-group">
-                                <label for="relay-url">Relay URL:</label>
-                                <input type="text" id="relay-url" value="http://localhost:3000" />
-                            </div>
-                            <div class="form-group">
-                                <label for="retry-attempts">Max Retry Attempts:</label>
-                                <input type="number" id="retry-attempts" value="5" min="1" max="20" />
-                            </div>
-                            <div class="form-group">
-                                <label for="retry-delay">Retry Delay (ms):</label>
-                                <input type="number" id="retry-delay" value="2000" min="500" max="10000" step="500" />
-                            </div>
-                        </div>
-
-                        <!-- Security Settings -->
-                        <div class="settings-section">
-                            <h4>Security</h4>
-                            <div class="form-group">
-                                <label for="shared-secret">Shared Secret:</label>
-                                <input type="password" id="shared-secret" placeholder="Enter shared secret..." />
-                            </div>
-                            <button type="button" id="save-secret" class="btn btn-warning">🔐 Save Secret</button>
-                        </div>
-                    </form>
-
-                    <div class="button-group-vertical">
-                        <button id="save-settings" class="btn btn-primary">💾 Save Settings</button>
-                        <button id="reset-settings" class="btn btn-danger">🔄 Reset to Defaults</button>
-                        <button id="clear-chat-history" class="btn btn-warning">🗑️ Clear Chat History</button>
-                        <button id="export-logs" class="btn btn-info">📄 Export Logs</button>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+
+        <!-- Code Tab -->
+        <div id="code" class="tab-content">
+          <div class="card">
+            <h3>💻 CODE EXECUTION</h3>
+
+            <textarea id="code-input" placeholder="Enter your code here..." rows="10"></textarea>
+
+            <div class="button-group-vertical">
+              <button id="code-execute-btn" class="btn btn-success">▶️ Execute Code</button>
+              <button id="code-analyze-btn" class="btn btn-info">🔍 Analyze Code</button>
+              <button id="code-save-btn" class="btn btn-warning">💾 Save Snippet</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Connection Tab -->
+        <div id="connection" class="tab-content">
+          <div class="card">
+            <h3>🔌 CONNECTION STATUS</h3>
+
+            <!-- Detailed Status -->
+            <div class="connection-details">
+              <div class="status-row">
+                <span>VS Code:</span>
+                <span id="vscode-status" class="status-value offline">Disconnected</span>
+              </div>
+              <div class="status-row">
+                <span>WebSocket:</span>
+                <span id="websocket-status" class="status-value offline">Disconnected</span>
+              </div>
+              <div class="status-row">
+                <span>Auth:</span>
+                <span id="auth-status" class="status-value offline">Not authenticated</span>
+              </div>
+            </div>
+
+            <!-- Connection Form -->
+            <form id="connection-form">
+              <div class="form-group">
+                <label for="ws-protocol">Protocol:</label>
+                <select id="ws-protocol">
+                  <option value="ws">ws</option>
+                  <option value="wss">wss</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="ws-host">Host:</label>
+                <input type="text" id="ws-host" value="localhost" />
+              </div>
+              <div class="form-group">
+                <label for="ws-port">Port:</label>
+                <input type="number" id="ws-port" value="3712" />
+              </div>
+              <div class="form-group">
+                <label>
+                  <input type="checkbox" id="ws-compression" checked />
+                  Use Compression
+                </label>
+              </div>
+            </form>
+
+            <div class="button-group">
+              <button id="save-connection-btn" class="btn btn-primary">💾 Save Settings</button>
+              <button id="connect-btn" class="btn btn-success">🔗 Connect</button>
+            </div>
+
+            <!-- WebSocket Controls -->
+            <div class="websocket-controls">
+              <div class="button-group">
+                <button id="websocket-connect-btn" class="btn btn-success">Connect WS</button>
+                <button id="websocket-disconnect-btn" class="btn btn-danger">Disconnect WS</button>
+              </div>
+              <div id="websocket-log" class="log-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+          <div class="card">
+            <h3>⚙️ SETTINGS</h3>
+
+            <form id="settings-form">
+              <!-- General Settings -->
+              <div class="settings-section">
+                <h4>General</h4>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="auto-connect" checked />
+                    Auto-connect on startup
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="show-notifications" checked />
+                    Show notifications
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="save-history" checked />
+                    Save chat history
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="debug-mode" />
+                    Debug mode
+                  </label>
+                </div>
+              </div>
+
+              <!-- Connection Settings -->
+              <div class="settings-section">
+                <h4>Connection</h4>
+                <div class="form-group">
+                  <label for="relay-url">Relay URL:</label>
+                  <input type="text" id="relay-url" value="http://localhost:3000" />
+                </div>
+                <div class="form-group">
+                  <label for="retry-attempts">Max Retry Attempts:</label>
+                  <input type="number" id="retry-attempts" value="5" min="1" max="20" />
+                </div>
+                <div class="form-group">
+                  <label for="retry-delay">Retry Delay (ms):</label>
+                  <input
+                    type="number"
+                    id="retry-delay"
+                    value="2000"
+                    min="500"
+                    max="10000"
+                    step="500"
+                  />
+                </div>
+              </div>
+
+              <!-- Security Settings -->
+              <div class="settings-section">
+                <h4>Security</h4>
+                <div class="form-group">
+                  <label for="shared-secret">Shared Secret:</label>
+                  <input type="password" id="shared-secret" placeholder="Enter shared secret..." />
+                </div>
+                <button type="button" id="save-secret" class="btn btn-warning">
+                  🔐 Save Secret
+                </button>
+              </div>
+            </form>
+
+            <div class="button-group-vertical">
+              <button id="save-settings" class="btn btn-primary">💾 Save Settings</button>
+              <button id="reset-settings" class="btn btn-danger">🔄 Reset to Defaults</button>
+              <button id="clear-chat-history" class="btn btn-warning">🗑️ Clear Chat History</button>
+              <button id="export-logs" class="btn btn-info">📄 Export Logs</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Theme Toggle -->
@@ -294,5 +309,5 @@
 
     <!-- Load the JavaScript -->
     <script src="popup.js"></script>
-</body>
+  </body>
 </html>

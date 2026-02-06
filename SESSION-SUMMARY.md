@@ -97,7 +97,7 @@
 ```bash
 # Migrate database
 cd /path/to/project
-npx prisma migrate dev --name migration_name
+npx drizzle migrate dev --name migration_name
 
 # Check services
 lsof -i :3000

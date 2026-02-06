@@ -134,6 +134,9 @@ this.scheduler = new ClawdScheduler({
 - [ ] **Add prompt injection detection** in ClawdEngine
 - [ ] **Audit existing skills** in `~/.clawd/skills/` for malicious patterns
 
+**Status Update:** Skill signature verification enforcement added via:
+`OPENCLAW_SKILL_SIGNATURE_REQUIRED` and `OPENCLAW_SKILL_SIGNING_KEY`.
+
 ### Medium Priority
 
 - [x] **Add credential isolation** - Session scope set to `per-channel-peer` ✅

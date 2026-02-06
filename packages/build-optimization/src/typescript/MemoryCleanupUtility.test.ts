@@ -2,8 +2,8 @@
  * Unit tests for MemoryCleanupUtility
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { MemoryCleanupUtility, MemoryCleanupConfig } from './MemoryCleanupUtility.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { MemoryCleanupConfig, MemoryCleanupUtility } from './MemoryCleanupUtility.js';
 
 describe('MemoryCleanupUtility', () => {
   let utility: MemoryCleanupUtility;
@@ -15,7 +15,7 @@ describe('MemoryCleanupUtility', () => {
     // Store original values
     originalProcess = global.process;
     originalGc = global.gc;
-    
+
     // Mock process
     global.process = {
       ...originalProcess,
@@ -23,13 +23,13 @@ describe('MemoryCleanupUtility', () => {
         heapUsed: 200 * 1024 * 1024, // 200MB
         heapTotal: 400 * 1024 * 1024,
         external: 20 * 1024 * 1024,
-        rss: 300 * 1024 * 1024
-      }))
+        rss: 300 * 1024 * 1024,
+      })),
     } as any;
-    
+
     // Mock global gc
     global.gc = vi.fn();
-    
+
     // Create utility instance
     utility = new MemoryCleanupUtility();
   });
@@ -55,9 +55,9 @@ describe('MemoryCleanupUtility', () => {
         aggressiveGC: false,
         clearModuleCache: false,
         cleanupDelay: 200,
-        maxCleanupAttempts: 5
+        maxCleanupAttempts: 5,
       };
-      
+
       const customUtility = new MemoryCleanupUtility(config);
       expect(customUtility).toBeInstanceOf(MemoryCleanupUtility);
     });
@@ -73,12 +73,12 @@ describe('MemoryCleanupUtility', () => {
           heapUsed: callCount === 1 ? 200 * 1024 * 1024 : 150 * 1024 * 1024, // 200MB -> 150MB
           heapTotal: 400 * 1024 * 1024,
           external: 20 * 1024 * 1024,
-          rss: 300 * 1024 * 1024
+          rss: 300 * 1024 * 1024,
         };
       });
 
       const result = await utility.performCleanup();
-      
+
       expect(result.success).toBe(true);
       expect(result.memoryBefore.current).toBe(200);
       expect(result.memoryAfter.current).toBe(150);
@@ -89,21 +89,21 @@ describe('MemoryCleanupUtility', () => {
 
     it('should handle cleanup failure gracefully', async () => {
       // Create utility with high threshold to force failure
-      const highThresholdUtility = new MemoryCleanupUtility({ 
+      const highThresholdUtility = new MemoryCleanupUtility({
         memoryThreshold: 1000,
-        maxCleanupAttempts: 1 // Reduce attempts to speed up test
+        maxCleanupAttempts: 1, // Reduce attempts to speed up test
       });
-      
+
       // Mock memory usage to show no improvement
       global.process.memoryUsage = vi.fn(() => ({
         heapUsed: 200 * 1024 * 1024, // No change
         heapTotal: 400 * 1024 * 1024,
         external: 20 * 1024 * 1024,
-        rss: 300 * 1024 * 1024
+        rss: 300 * 1024 * 1024,
       }));
 
       const result = await highThresholdUtility.performCleanup();
-      
+
       expect(result.success).toBe(false);
       expect(result.memoryFreed).toBe(0);
       // Should have error about not meeting threshold or just be unsuccessful
@@ -113,26 +113,29 @@ describe('MemoryCleanupUtility', () => {
     it('should retry cleanup multiple times', async () => {
       const config: MemoryCleanupConfig = {
         maxCleanupAttempts: 2,
-        memoryThreshold: 100 // High threshold to force retries
+        memoryThreshold: 100, // High threshold to force retries
       };
-      
+
       const retryUtility = new MemoryCleanupUtility(config);
-      
+
       // Mock memory usage to show gradual improvement
       let callCount = 0;
       global.process.memoryUsage = vi.fn(() => {
         callCount++;
-        const heapUsed = Math.max(100 * 1024 * 1024, 200 * 1024 * 1024 - (callCount * 20 * 1024 * 1024));
+        const heapUsed = Math.max(
+          100 * 1024 * 1024,
+          200 * 1024 * 1024 - callCount * 20 * 1024 * 1024
+        );
         return {
           heapUsed,
           heapTotal: 400 * 1024 * 1024,
           external: 20 * 1024 * 1024,
-          rss: 300 * 1024 * 1024
+          rss: 300 * 1024 * 1024,
         };
       });
 
       const result = await retryUtility.performCleanup();
-      
+
       expect(result.duration).toBeGreaterThan(0);
       expect(callCount).toBeGreaterThan(2); // Should have made multiple calls
     });
@@ -146,7 +149,7 @@ describe('MemoryCleanupUtility', () => {
 
     it('should handle missing global.gc gracefully', async () => {
       delete (global as any).gc;
-      
+
       await expect(async () => {
         await utility.forceGarbageCollection();
       }).not.toThrow();
@@ -154,7 +157,7 @@ describe('MemoryCleanupUtility', () => {
 
     it('should create memory pressure for aggressive GC', async () => {
       const aggressiveUtility = new MemoryCleanupUtility({ aggressiveGC: true });
-      
+
       await expect(async () => {
         await aggressiveUtility.forceGarbageCollection();
       }).not.toThrow();
@@ -167,28 +170,28 @@ describe('MemoryCleanupUtility', () => {
       const mockCache = {
         '/path/to/typescript/module.js': {},
         '/path/to/regular/module.js': {},
-        '/path/to/core/module.js': {}
+        '/path/to/core/module.js': {},
       };
-      
+
       // Store original require.cache
       const originalCache = require.cache;
       Object.assign(require.cache, mockCache);
-      
+
       utility.clearModuleCache();
-      
+
       // Restore original cache
-      Object.keys(mockCache).forEach(key => {
+      Object.keys(mockCache).forEach((key) => {
         delete require.cache[key];
       });
       Object.assign(require.cache, originalCache);
-      
+
       // Test passes if no error is thrown
       expect(true).toBe(true);
     });
 
     it('should skip module cache clearing when disabled', () => {
       const noModuleCacheUtility = new MemoryCleanupUtility({ clearModuleCache: false });
-      
+
       expect(() => {
         noModuleCacheUtility.clearModuleCache();
       }).not.toThrow();
@@ -204,7 +207,7 @@ describe('MemoryCleanupUtility', () => {
 
     it('should skip TypeScript cleanup when disabled', async () => {
       const noTSUtility = new MemoryCleanupUtility({ clearTypeScriptCache: false });
-      
+
       await expect(async () => {
         await noTSUtility.clearTypeScriptCompilerMemory();
       }).not.toThrow();
@@ -215,11 +218,11 @@ describe('MemoryCleanupUtility', () => {
       (global as any).ts = {
         programs: { clear: vi.fn() },
         services: { clear: vi.fn() },
-        diagnostics: { clear: vi.fn() }
+        diagnostics: { clear: vi.fn() },
       };
-      
+
       await utility.clearTypeScriptCompilerMemory();
-      
+
       expect((global as any).ts.programs.clear).toHaveBeenCalled();
       expect((global as any).ts.services.clear).toHaveBeenCalled();
       expect((global as any).ts.diagnostics.clear).toHaveBeenCalled();
@@ -232,16 +235,16 @@ describe('MemoryCleanupUtility', () => {
         current: 200,
         peak: 250,
         percentage: 80,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       const afterMemory = {
         current: 140, // 60MB freed (above 50MB threshold)
         peak: 250,
         percentage: 56,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       const isSuccessful = utility.verifyMemoryCleanup(beforeMemory, afterMemory);
       expect(isSuccessful).toBe(true);
     });
@@ -251,16 +254,16 @@ describe('MemoryCleanupUtility', () => {
         current: 100,
         peak: 120,
         percentage: 80,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       const afterMemory = {
         current: 85, // 15% freed
         peak: 120,
         percentage: 68,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       const isSuccessful = utility.verifyMemoryCleanup(beforeMemory, afterMemory);
       expect(isSuccessful).toBe(true);
     });
@@ -270,16 +273,16 @@ describe('MemoryCleanupUtility', () => {
         current: 200,
         peak: 300,
         percentage: 67,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       const afterMemory = {
         current: 190, // Below 70% of peak (210)
         peak: 300,
         percentage: 63,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       const isSuccessful = utility.verifyMemoryCleanup(beforeMemory, afterMemory);
       expect(isSuccessful).toBe(true);
     });
@@ -289,16 +292,16 @@ describe('MemoryCleanupUtility', () => {
         current: 200,
         peak: 220,
         percentage: 91,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       const afterMemory = {
         current: 195, // Only 5MB freed, less than 10%, above 70% of peak
         peak: 220,
         percentage: 89,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       const isSuccessful = utility.verifyMemoryCleanup(beforeMemory, afterMemory);
       expect(isSuccessful).toBe(false);
     });
@@ -314,12 +317,12 @@ describe('MemoryCleanupUtility', () => {
           heapUsed: callCount === 1 ? 200 * 1024 * 1024 : 150 * 1024 * 1024,
           heapTotal: 400 * 1024 * 1024,
           external: 20 * 1024 * 1024,
-          rss: 300 * 1024 * 1024
+          rss: 300 * 1024 * 1024,
         };
       });
 
       await utility.performCleanup();
-      
+
       const history = utility.getCleanupHistory();
       expect(history.length).toBe(1);
       expect(history[0].success).toBe(true);
@@ -335,13 +338,13 @@ describe('MemoryCleanupUtility', () => {
           heapUsed: callCount % 2 === 1 ? 200 * 1024 * 1024 : 150 * 1024 * 1024,
           heapTotal: 400 * 1024 * 1024,
           external: 20 * 1024 * 1024,
-          rss: 300 * 1024 * 1024
+          rss: 300 * 1024 * 1024,
         };
       });
 
       await utility.performCleanup();
       await utility.performCleanup();
-      
+
       const stats = utility.getCleanupStatistics();
       expect(stats.totalCleanups).toBe(2);
       expect(stats.successfulCleanups).toBe(2);
@@ -363,7 +366,7 @@ describe('MemoryCleanupUtility', () => {
       // Perform a cleanup first
       await utility.performCleanup();
       expect(utility.getCleanupHistory().length).toBe(1);
-      
+
       // Reset history
       utility.resetHistory();
       expect(utility.getCleanupHistory().length).toBe(0);
@@ -374,15 +377,17 @@ describe('MemoryCleanupUtility', () => {
     it('should handle errors during cleanup gracefully', async () => {
       // Test with a simpler error scenario - mock executeCleanupStep to throw
       const errorUtility = new MemoryCleanupUtility({ maxCleanupAttempts: 1 });
-      
+
       // Mock the private method by overriding it
-      (errorUtility as any).executeCleanupStep = vi.fn().mockRejectedValue(new Error('Cleanup step failed'));
+      (errorUtility as any).executeCleanupStep = vi
+        .fn()
+        .mockRejectedValue(new Error('Cleanup step failed'));
 
       const result = await errorUtility.performCleanup();
-      
+
       expect(result.success).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
-      expect(result.errors.some(error => error.includes('Cleanup step failed'))).toBe(true);
+      expect(result.errors.some((error) => error.includes('Cleanup step failed'))).toBe(true);
     });
 
     it('should handle module cache errors gracefully', () => {
@@ -392,7 +397,7 @@ describe('MemoryCleanupUtility', () => {
         get: () => {
           throw new Error('Cache access error');
         },
-        configurable: true
+        configurable: true,
       });
 
       expect(() => {
@@ -403,7 +408,7 @@ describe('MemoryCleanupUtility', () => {
       Object.defineProperty(require, 'cache', {
         value: originalCache,
         configurable: true,
-        writable: true
+        writable: true,
       });
     });
   });
@@ -411,7 +416,7 @@ describe('MemoryCleanupUtility', () => {
   describe('configuration options', () => {
     it('should respect aggressiveGC configuration', async () => {
       const nonAggressiveUtility = new MemoryCleanupUtility({ aggressiveGC: false });
-      
+
       await expect(async () => {
         await nonAggressiveUtility.forceGarbageCollection();
       }).not.toThrow();
@@ -419,32 +424,32 @@ describe('MemoryCleanupUtility', () => {
 
     it('should respect cleanup delay configuration', async () => {
       const fastUtility = new MemoryCleanupUtility({ cleanupDelay: 10 });
-      
+
       const startTime = Date.now();
       await fastUtility.performCleanup();
       const duration = Date.now() - startTime;
-      
+
       // Should complete relatively quickly with short delay
       expect(duration).toBeLessThan(1000);
     });
 
     it('should respect memory threshold configuration', () => {
       const highThresholdUtility = new MemoryCleanupUtility({ memoryThreshold: 100 });
-      
+
       const beforeMemory = {
         current: 200,
         peak: 200, // Set peak same as current to avoid peak ratio success
         percentage: 80,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       const afterMemory = {
         current: 190, // Only 10MB freed (5%), below 100MB threshold and below 10%
         peak: 200,
         percentage: 76,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       const isSuccessful = highThresholdUtility.verifyMemoryCleanup(beforeMemory, afterMemory);
       expect(isSuccessful).toBe(false);
     });

@@ -9,11 +9,11 @@ import { FilesService } from './files.service';
       dest: './uploads',
       limits: {
         fileSize: 10 * 1024 * 1024, // 10MB
-      }
-    })
+      },
+    }),
   ],
   controllers: [FilesController],
   providers: [FilesService],
-  exports: [FilesService]
+  exports: [FilesService],
 })
 export class FilesModule {}

@@ -5,7 +5,9 @@ This directory contains comprehensive documentation for The New Fuse API.
 ## Available Documentation
 
 ### 📖 [API Usage Guide](./API_USAGE_GUIDE.md)
+
 Complete guide for developers using The New Fuse API, including:
+
 - Getting started instructions
 - Authentication flow
 - Common use cases with examples
@@ -14,7 +16,9 @@ Complete guide for developers using The New Fuse API, including:
 - Code examples in JavaScript/TypeScript, Python, and cURL
 
 ### 📋 [OpenAPI Specification](../openapi.yaml)
+
 OpenAPI 3.1 specification file with:
+
 - All API endpoints documented
 - Request/response schemas
 - Authentication requirements
@@ -28,11 +32,13 @@ OpenAPI 3.1 specification file with:
 The API includes interactive Swagger UI documentation:
 
 **Development:**
+
 ```
 http://localhost:3001/api-docs
 ```
 
 **Production:**
+
 ```
 https://api.thenewfuse.com/api-docs
 ```
@@ -57,35 +63,45 @@ curl -X GET http://localhost:3001/api/agents \
 ## API Features
 
 ### 🤖 Agent Management
+
 Create, manage, and orchestrate AI agents with various capabilities:
+
 - Natural language processing
 - Code generation
 - Data analysis
 - Workflow execution
 
 ### 💬 Real-Time Chat
+
 WebSocket-based chat system with:
+
 - Room management
 - Message history
 - Real-time notifications
 - Analytics
 
 ### ⚙️ Workflow Automation
+
 Build and execute complex workflows:
+
 - Visual workflow builder
 - Node-based execution
 - Template library
 - Execution monitoring
 
 ### 💰 Web3 Integration
+
 Blockchain functionality including:
+
 - Wallet creation and management
 - Transaction execution
 - Smart Account (ERC-4337) support
 - Batch transactions
 
 ### 🔌 MCP Protocol
+
 Model Context Protocol for agent communication:
+
 - Server registration
 - Status monitoring
 - OAuth integration
@@ -93,8 +109,9 @@ Model Context Protocol for agent communication:
 ## Architecture
 
 The New Fuse API is built using:
+
 - **Framework**: NestJS
-- **Database**: PostgreSQL with Prisma ORM
+- **Database**: PostgreSQL with Drizzle ORM
 - **Authentication**: JWT with refresh tokens
 - **Real-time**: Socket.IO for WebSocket connections
 - **Documentation**: Swagger/OpenAPI 3.1
@@ -102,15 +119,16 @@ The New Fuse API is built using:
 
 ## Base URLs
 
-| Environment | URL |
-|-------------|-----|
-| Development API | http://localhost:3001/api |
-| API Gateway | http://localhost:4000/api/v1 |
-| Production | https://api.thenewfuse.com/api |
+| Environment     | URL                            |
+| --------------- | ------------------------------ |
+| Development API | http://localhost:3001/api      |
+| API Gateway     | http://localhost:4000/api/v1   |
+| Production      | https://api.thenewfuse.com/api |
 
 ## Available Endpoints
 
 ### Authentication
+
 - POST `/auth/login` - User login
 - POST `/auth/register` - User registration
 - POST `/auth/refresh` - Refresh token
@@ -118,6 +136,7 @@ The New Fuse API is built using:
 - GET `/auth/me` - Get current user
 
 ### Agents
+
 - GET `/agents` - List agents
 - POST `/agents` - Create agent
 - GET `/agents/{id}` - Get agent
@@ -127,12 +146,14 @@ The New Fuse API is built using:
 - GET `/agents/{id}/stats` - Agent statistics
 
 ### Chat
+
 - GET `/chat/rooms` - List rooms
 - GET `/chat/rooms/{roomId}/messages` - Get messages
 - POST `/chat/rooms/{roomId}/messages` - Send message
 - GET `/chat/analytics` - Chat analytics
 
 ### Workflows
+
 - GET `/workflows` - List workflows
 - POST `/workflows` - Create workflow
 - POST `/workflows/execute` - Execute workflow
@@ -140,37 +161,42 @@ The New Fuse API is built using:
 - POST `/workflows/executions/{id}/cancel` - Cancel execution
 
 ### Wallets
+
 - POST `/wallets/create` - Create wallet
 - GET `/wallets/user/{userId}` - Get user wallets
 - GET `/wallets/address/{address}` - Get wallet by address
 
 ### Transactions
+
 - POST `/transactions/execute/{walletId}` - Execute transaction
 - POST `/transactions/execute-batch/{walletId}` - Batch transaction
 - GET `/transactions/wallet/{walletId}` - Get transactions
 
 ### Smart Accounts
+
 - POST `/smart-accounts/enable/{walletId}` - Enable smart account
 - POST `/smart-accounts/deploy/{walletId}` - Deploy smart account
 - POST `/smart-accounts/execute/{walletId}` - Execute transaction
 
 ### MCP Protocol
+
 - GET `/mcp/servers` - List MCP servers
 - POST `/mcp/servers` - Register server
 - GET `/mcp/servers/{id}/status` - Server status
 
 ## Rate Limiting
 
-| Tier | Requests/Minute |
-|------|----------------|
-| Auth | 10 |
-| API | 60 |
-| Premium | 120 |
-| Admin | 300 |
+| Tier    | Requests/Minute |
+| ------- | --------------- |
+| Auth    | 10              |
+| API     | 60              |
+| Premium | 120             |
+| Admin   | 300             |
 
 ## Error Handling
 
 The API uses standard HTTP status codes:
+
 - `200` - Success
 - `201` - Created
 - `400` - Bad Request
@@ -181,6 +207,7 @@ The API uses standard HTTP status codes:
 - `500` - Server Error
 
 Error responses include:
+
 ```json
 {
   "statusCode": 400,
@@ -196,46 +223,61 @@ Connect to WebSocket for real-time updates:
 
 ```javascript
 const socket = io('http://localhost:3001', {
-  auth: { token: accessToken }
+  auth: { token: accessToken },
 });
 
 // Agent events
-socket.on('agent_status', (data) => { /* ... */ });
-socket.on('agent_task_completed', (data) => { /* ... */ });
+socket.on('agent_status', (data) => {
+  /* ... */
+});
+socket.on('agent_task_completed', (data) => {
+  /* ... */
+});
 
 // Chat events
-socket.on('new_message', (message) => { /* ... */ });
+socket.on('new_message', (message) => {
+  /* ... */
+});
 
 // Workflow events
-socket.on('execution_progress', (data) => { /* ... */ });
-socket.on('execution_completed', (data) => { /* ... */ });
+socket.on('execution_progress', (data) => {
+  /* ... */
+});
+socket.on('execution_completed', (data) => {
+  /* ... */
+});
 ```
 
 ## Development Setup
 
 ### Prerequisites
+
 - Node.js 18+
 - PostgreSQL
 - pnpm (recommended) or npm
 
 ### Install Dependencies
+
 ```bash
 pnpm install
 ```
 
 ### Setup Environment Variables
+
 ```bash
 cp .env.example .env
 # Edit .env with your configuration
 ```
 
 ### Run API Server
+
 ```bash
 cd apps/api
 pnpm dev
 ```
 
 ### View API Documentation
+
 ```
 http://localhost:3001/api-docs
 ```
@@ -243,11 +285,12 @@ http://localhost:3001/api-docs
 ## SDK and Client Libraries
 
 ### TypeScript/JavaScript
+
 ```typescript
 import { FuseAPIClient } from '@the-new-fuse/api-client';
 
 const client = new FuseAPIClient({
-  baseURL: 'http://localhost:3001/api'
+  baseURL: 'http://localhost:3001/api',
 });
 
 await client.login('user@example.com', 'password');
@@ -255,6 +298,7 @@ const agents = await client.agents.list();
 ```
 
 ### Python
+
 ```python
 from fuse_api import FuseClient
 
@@ -266,12 +310,14 @@ agents = client.agents.list()
 ## Testing
 
 ### Using Swagger UI
+
 1. Navigate to http://localhost:3001/api-docs
 2. Click "Authorize" and enter your JWT token
 3. Expand an endpoint and click "Try it out"
 4. Fill in parameters and click "Execute"
 
 ### Using cURL
+
 ```bash
 # Get access token
 TOKEN=$(curl -X POST http://localhost:3001/api/auth/login \
@@ -285,6 +331,7 @@ curl -X GET http://localhost:3001/api/agents \
 ```
 
 ### Using Postman
+
 1. Import the OpenAPI specification from `/openapi.yaml`
 2. Set up authentication with Bearer token
 3. Start making requests
@@ -298,7 +345,8 @@ curl -X GET http://localhost:3001/api/agents \
 
 ## Contributing
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines on contributing to the API.
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines on contributing to the
+API.
 
 ## License
 
@@ -306,5 +354,4 @@ MIT License - see [LICENSE](../LICENSE) for details
 
 ---
 
-**Last Updated**: 2025-11-18
-**API Version**: 1.0.0
+**Last Updated**: 2025-11-18 **API Version**: 1.0.0

@@ -6,21 +6,21 @@ export enum ErrorCode {
   INTERNAL_ERROR = 'INTERNAL_ERROR',
   BAD_REQUEST = 'BAD_REQUEST',
   CONFLICT = 'CONFLICT',
-  RATE_LIMITED = 'RATE_LIMITED'
+  RATE_LIMITED = 'RATE_LIMITED',
 }
 
 export enum LogLevel {
   DEBUG = 'debug',
   INFO = 'info',
   WARN = 'warn',
-  ERROR = 'error'
+  ERROR = 'error',
 }
 
 export enum Environment {
   DEVELOPMENT = 'development',
   STAGING = 'staging',
   PRODUCTION = 'production',
-  TEST = 'test'
+  TEST = 'test',
 }
 
 export enum ServiceStatus {
@@ -28,5 +28,5 @@ export enum ServiceStatus {
   RUNNING = 'running',
   STOPPING = 'stopping',
   STOPPED = 'stopped',
-  ERROR = 'error'
+  ERROR = 'error',
 }

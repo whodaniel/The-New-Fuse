@@ -4,11 +4,13 @@ Shared utilities, components, and hooks for The New Fuse.
 
 ## Overview
 
-This package contains shared code that is used across multiple packages in The New Fuse monorepo.
+This package contains shared code that is used across multiple packages in The
+New Fuse monorepo.
 
 ## Testing
 
-The shared package uses Jest for testing. The configuration is in `jest.config.js`.
+The shared package uses Jest for testing. The configuration is in
+`jest.config.js`.
 
 ### Running Tests
 
@@ -28,7 +30,8 @@ npx jest --watch
 
 ### Test Structure
 
-- Tests are located in `__tests__` directories or named with `.test.ts` or `.spec.ts` suffix
+- Tests are located in `__tests__` directories or named with `.test.ts` or
+  `.spec.ts` suffix
 - Test setup is in `test/setup.ts`
 - Mock files are in `test/__mocks__`
 

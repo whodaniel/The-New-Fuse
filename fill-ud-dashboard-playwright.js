@@ -11,23 +11,28 @@ async function fillUDDashboard() {
 
   const browser = await chromium.launch({
     headless: false, // Show the browser
-    args: ['--start-maximized']
+    args: ['--start-maximized'],
   });
 
   try {
     const context = await browser.newContext({
-      viewport: null
+      viewport: null,
     });
 
     const page = await context.newPage();
 
     console.log('\nNavigating to Unstoppable Domains dashboard...');
-    console.log('URL: https://dashboard.auth.unstoppabledomains.com/clients/4d85fd51-b1a8-4e26-b97c-e67a5338a9da/branding\n');
+    console.log(
+      'URL: https://dashboard.auth.unstoppabledomains.com/clients/4d85fd51-b1a8-4e26-b97c-e67a5338a9da/branding\n'
+    );
 
-    await page.goto('https://dashboard.auth.unstoppabledomains.com/clients/4d85fd51-b1a8-4e26-b97c-e67a5338a9da/branding', {
-      waitUntil: 'networkidle',
-      timeout: 30000
-    });
+    await page.goto(
+      'https://dashboard.auth.unstoppabledomains.com/clients/4d85fd51-b1a8-4e26-b97c-e67a5338a9da/branding',
+      {
+        waitUntil: 'networkidle',
+        timeout: 30000,
+      }
+    );
 
     // Wait for page to fully load
     await page.waitForTimeout(3000);
@@ -39,9 +44,13 @@ async function fillUDDashboard() {
     const bodyText = await page.textContent('body');
     if (bodyText.includes('500') || bodyText.includes('Something went wrong')) {
       console.log('\n⚠️  ERROR PAGE DETECTED');
-      console.log('\n📋 Since the automated session shows an error, here\'s what to do:\n');
-      console.log('1. In the browser window that just opened, sign in manually to Unstoppabledomains.com');
-      console.log('2. Navigate to: https://dashboard.auth.unstoppabledomains.com/clients/4d85fd51-b1a8-4e26-b97c-e67a5338a9da/branding');
+      console.log("\n📋 Since the automated session shows an error, here's what to do:\n");
+      console.log(
+        '1. In the browser window that just opened, sign in manually to Unstoppabledomains.com'
+      );
+      console.log(
+        '2. Navigate to: https://dashboard.auth.unstoppabledomains.com/clients/4d85fd51-b1a8-4e26-b97c-e67a5338a9da/branding'
+      );
       console.log('3. Use these values to fill the form:\n');
       console.log('   Application Name: The New Fuse');
       console.log('   Description: AI-powered browser extension with Web3 authentication');
@@ -63,11 +72,11 @@ async function fillUDDashboard() {
 
     const inputs = await page.evaluate(() => {
       const allInputs = Array.from(document.querySelectorAll('input, textarea'));
-      return allInputs.map(input => ({
+      return allInputs.map((input) => ({
         type: input.type,
         name: input.name || input.id || input.getAttribute('aria-label') || 'unnamed',
         placeholder: input.placeholder || '',
-        label: input.labels?.[0]?.textContent || ''
+        label: input.labels?.[0]?.textContent || '',
       }));
     });
 
@@ -92,7 +101,6 @@ async function fillUDDashboard() {
 
     // Keep browser open
     await new Promise(() => {});
-
   } catch (error) {
     console.error('\n❌ Error:', error.message);
     console.log('\n📝 Manual steps:');
@@ -103,7 +111,7 @@ async function fillUDDashboard() {
   }
 }
 
-fillUDDashboard().catch(error => {
+fillUDDashboard().catch((error) => {
   console.error('Fatal error:', error);
   process.exit(1);
 });

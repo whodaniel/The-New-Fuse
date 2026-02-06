@@ -1,10 +1,10 @@
-import { Logger } from 'winston';
 import { EventEmitter } from 'events';
+import { Logger } from 'winston';
 import {
   DeploymentConfig,
   DeploymentResult,
-  DeploymentStrategy as StrategyType,
   HealthCheckResult,
+  DeploymentStrategy as StrategyType,
 } from '../types/pipeline';
 
 /**
@@ -109,7 +109,7 @@ export enum DeploymentPhase {
   COMPLETING = 'completing',
   ROLLING_BACK = 'rolling_back',
   COMPLETED = 'completed',
-  FAILED = 'failed'
+  FAILED = 'failed',
 }
 
 export enum ServiceDeploymentStatus {
@@ -117,7 +117,7 @@ export enum ServiceDeploymentStatus {
   DEPLOYING = 'deploying',
   READY = 'ready',
   FAILED = 'failed',
-  ROLLING_BACK = 'rolling_back'
+  ROLLING_BACK = 'rolling_back',
 }
 
 /**
@@ -140,7 +140,7 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
     const healthChecks: HealthCheckConfig[] = [];
 
     // Add service-specific health checks
-    config.services.forEach(service => {
+    config.services.forEach((service) => {
       if (service.healthCheck) {
         healthChecks.push({
           name: `${service.name}-health`,
@@ -152,13 +152,13 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
           timeout: service.healthCheck.timeoutSeconds * 1000,
           interval: service.healthCheck.periodSeconds * 1000,
           retries: service.healthCheck.failureThreshold,
-          expectedStatus: 200
+          expectedStatus: 200,
         });
       }
     });
 
     // Add deployment-specific health checks
-    config.healthChecks.forEach(check => {
+    config.healthChecks.forEach((check) => {
       healthChecks.push({
         name: (check as any).name || 'deployment-health',
         type: check.type as any,
@@ -169,7 +169,7 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
         timeout: check.timeoutSeconds * 1000,
         interval: check.periodSeconds * 1000,
         retries: check.failureThreshold,
-        expectedStatus: 200
+        expectedStatus: 200,
       });
     });
 
@@ -198,7 +198,7 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
       totalSteps: this.calculateTotalSteps(strategy, services.length),
       completedSteps: 0,
       estimatedTimeRemaining: 0,
-      services: services.map(service => ({
+      services: services.map((service) => ({
         name: service.name,
         status: ServiceDeploymentStatus.PENDING,
         progress: 0,
@@ -206,26 +206,23 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
           desired: service.replicas,
           ready: 0,
           available: 0,
-          unavailable: service.replicas
+          unavailable: service.replicas,
         },
         version: {
           current: 'unknown',
-          target: service.tag
+          target: service.tag,
         },
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       })),
       healthChecks: [],
-      logs: []
+      logs: [],
     };
 
     this.deployments.set(deploymentId, progress);
     return progress;
   }
 
-  protected updateProgress(
-    deploymentId: string,
-    updates: Partial<DeploymentProgress>
-  ): void {
+  protected updateProgress(deploymentId: string, updates: Partial<DeploymentProgress>): void {
     const progress = this.deployments.get(deploymentId);
     if (progress) {
       Object.assign(progress, updates);
@@ -298,9 +295,8 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
         status: success ? 'healthy' : 'unhealthy',
         message,
         timestamp: endTime,
-        duration
+        duration,
       };
-
     } catch (error) {
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -310,44 +306,47 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
         status: 'unhealthy',
         message: error.message,
         timestamp: endTime,
-        duration
+        duration,
       };
     }
   }
 
-  private async executeHttpHealthCheck(check: HealthCheckConfig): Promise<{ success: boolean; message: string }> {
+  private async executeHttpHealthCheck(
+    check: HealthCheckConfig
+  ): Promise<{ success: boolean; message: string }> {
     const axios = await import('axios');
-    
+
     try {
       const url = check.endpoint || `http://localhost:${check.port}${check.path || '/health'}`;
       const response = await axios.default.get(url, {
         timeout: check.timeout,
-        validateStatus: (status) => status === (check.expectedStatus || 200)
+        validateStatus: (status) => status === (check.expectedStatus || 200),
       });
 
       return {
         success: true,
-        message: `HTTP health check passed: ${response.status}`
+        message: `HTTP health check passed: ${response.status}`,
       };
-
     } catch (error) {
       return {
         success: false,
-        message: `HTTP health check failed: ${error.message}`
+        message: `HTTP health check failed: ${error.message}`,
       };
     }
   }
 
-  private async executeTcpHealthCheck(check: HealthCheckConfig): Promise<{ success: boolean; message: string }> {
+  private async executeTcpHealthCheck(
+    check: HealthCheckConfig
+  ): Promise<{ success: boolean; message: string }> {
     const net = await import('net');
-    
+
     return new Promise((resolve) => {
       const socket = new net.Socket();
       const timeout = setTimeout(() => {
         socket.destroy();
         resolve({
           success: false,
-          message: `TCP health check timed out after ${check.timeout}ms`
+          message: `TCP health check timed out after ${check.timeout}ms`,
         });
       }, check.timeout);
 
@@ -356,7 +355,7 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
         socket.destroy();
         resolve({
           success: true,
-          message: `TCP connection successful on port ${check.port}`
+          message: `TCP connection successful on port ${check.port}`,
         });
       });
 
@@ -364,27 +363,29 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
         clearTimeout(timeout);
         resolve({
           success: false,
-          message: `TCP health check failed: ${error.message}`
+          message: `TCP health check failed: ${error.message}`,
         });
       });
     });
   }
 
-  private async executeExecHealthCheck(check: HealthCheckConfig): Promise<{ success: boolean; message: string }> {
+  private async executeExecHealthCheck(
+    check: HealthCheckConfig
+  ): Promise<{ success: boolean; message: string }> {
     const { spawn } = await import('child_process');
-    
+
     return new Promise((resolve) => {
       if (!check.command || check.command.length === 0) {
         resolve({
           success: false,
-          message: 'No command specified for exec health check'
+          message: 'No command specified for exec health check',
         });
         return;
       }
 
       const [command, ...args] = check.command;
       const process = spawn(command, args, {
-        timeout: check.timeout
+        timeout: check.timeout,
       });
 
       let stdout = '';
@@ -400,9 +401,9 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
 
       process.on('close', (code) => {
         const success = code === 0;
-        const message = success ? 
-          `Command executed successfully: ${stdout.trim()}` :
-          `Command failed with code ${code}: ${stderr.trim()}`;
+        const message = success
+          ? `Command executed successfully: ${stdout.trim()}`
+          : `Command failed with code ${code}: ${stderr.trim()}`;
 
         resolve({ success, message });
       });
@@ -410,7 +411,7 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
       process.on('error', (error) => {
         resolve({
           success: false,
-          message: `Exec health check failed: ${error.message}`
+          message: `Exec health check failed: ${error.message}`,
         });
       });
     });
@@ -422,23 +423,22 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
     timeout: number = 300000
   ): Promise<boolean> {
     const startTime = Date.now();
-    
+
     while (Date.now() - startTime < timeout) {
       try {
         // This would integrate with actual orchestration platform (Kubernetes, Docker Swarm, etc.)
         // For now, simulate the check
         const readyReplicas = await this.getServiceReadyReplicas(serviceName);
-        
+
         if (readyReplicas >= targetReplicas) {
           return true;
         }
 
         // Wait before next check
-        await new Promise(resolve => setTimeout(resolve, 5000));
-
+        await new Promise((resolve) => setTimeout(resolve, 5000));
       } catch (error) {
         this.logger.warn(`Error checking service readiness: ${serviceName}`, {
-          error: error.message
+          error: error.message,
         });
       }
     }
@@ -452,9 +452,13 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
     return Math.floor(Math.random() * 3) + 1;
   }
 
-  protected logDeploymentStep(deploymentId: string, message: string, level: 'info' | 'warn' | 'error' = 'info'): void {
+  protected logDeploymentStep(
+    deploymentId: string,
+    message: string,
+    level: 'info' | 'warn' | 'error' = 'info'
+  ): void {
     this.logger[level](message, { deploymentId });
-    
+
     const progress = this.deployments.get(deploymentId);
     if (progress) {
       progress.logs.push(`[${new Date().toISOString()}] ${message}`);

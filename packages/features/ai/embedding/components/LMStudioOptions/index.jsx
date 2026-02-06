@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import System from "@/models/system";
-import PreLoader from "@/components/Preloader";
-import { LMSTUDIO_COMMON_URLS } from "@/utils/constants";
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
-import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
+import PreLoader from '@/components/Preloader';
+import useProviderEndpointAutoDiscovery from '@/hooks/useProviderEndpointAutoDiscovery';
+import System from '@/models/system';
+import { LMSTUDIO_COMMON_URLS } from '@/utils/constants';
+import { CaretDown, CaretUp } from '@phosphor-icons/react';
+import { useEffect, useState } from 'react';
 
 export default function LMStudioEmbeddingOptions({ settings }) {
   const {
@@ -14,7 +14,7 @@ export default function LMStudioEmbeddingOptions({ settings }) {
     setShowAdvancedControls,
     handleAutoDetectClick,
   } = useProviderEndpointAutoDiscovery({
-    provider: "lmstudio",
+    provider: 'lmstudio',
     initialBasePath: settings?.EmbeddingBasePath,
     ENDPOINTS: LMSTUDIO_COMMON_URLS,
   });
@@ -60,7 +60,7 @@ export default function LMStudioEmbeddingOptions({ settings }) {
           }}
           className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
-          {showAdvancedControls ? "Hide" : "Show"} Manual Endpoint Input
+          {showAdvancedControls ? 'Hide' : 'Show'} Manual Endpoint Input
           {showAdvancedControls ? (
             <CaretUp size={14} className="ml-1" />
           ) : (
@@ -73,9 +73,7 @@ export default function LMStudioEmbeddingOptions({ settings }) {
         <div className="w-full flex items-start gap-4">
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
-              <label className="text-white text-sm font-semibold">
-                LM Studio Base URL
-              </label>
+              <label className="text-white text-sm font-semibold">LM Studio Base URL</label>
               {loading ? (
                 <PreLoader size="6" />
               ) : (
@@ -126,14 +124,10 @@ function LMStudioModelSelection({ settings, basePath = null }) {
       }
       setLoading(true);
       try {
-        const { models } = await System.customModels(
-          "lmstudio",
-          null,
-          basePath
-        );
+        const { models } = await System.customModels('lmstudio', null, basePath);
         setCustomModels(models || []);
       } catch (error) {
-        console.error("Failed to fetch custom models:", error);
+        console.error('Failed to fetch custom models:', error);
         setCustomModels([]);
       }
       setLoading(false);
@@ -153,14 +147,12 @@ function LMStudioModelSelection({ settings, basePath = null }) {
           className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
         >
           <option disabled={true} selected={true}>
-            {!!basePath
-              ? "--loading available models--"
-              : "Enter LM Studio URL first"}
+            {!!basePath ? '--loading available models--' : 'Enter LM Studio URL first'}
           </option>
         </select>
         <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
-          Select the LM Studio model for embeddings. Models will load after
-          entering a valid LM Studio URL.
+          Select the LM Studio model for embeddings. Models will load after entering a valid LM
+          Studio URL.
         </p>
       </div>
     );

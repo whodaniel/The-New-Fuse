@@ -1,21 +1,18 @@
 /**
  * Anthropic XML Protocol Adapter
- * 
+ *
  * Based on existing AnthropicXmlAdapter in packages/core/src/protocols/adapters/
  * Handles Anthropic's XML-based function calling and tool invocation format
  */
 
-import { ProtocolAdapter } from './ProtocolAdapter.js';
-import { RelayMessage, ProtocolType } from '../types/index.js';
+import { ProtocolType, RelayMessage } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
+import { ProtocolAdapter } from './ProtocolAdapter.js';
 
 export class AnthropicXmlAdapter implements ProtocolAdapter {
   public readonly name = 'anthropic-xml';
   public readonly version = '1.0.0';
-  public readonly supportedProtocols: ProtocolType[] = [
-    'anthropic-xml-v1.0',
-    'a2a-v2.0'
-  ];
+  public readonly supportedProtocols: ProtocolType[] = ['anthropic-xml-v1.0', 'a2a-v2.0'];
 
   private logger: Logger;
 
@@ -27,8 +24,11 @@ export class AnthropicXmlAdapter implements ProtocolAdapter {
     return this.supportedProtocols.includes(from) && this.supportedProtocols.includes(to);
   }
 
-  async translate(message: RelayMessage, sourceProtocol: ProtocolType, targetProtocol: ProtocolType): Promise<RelayMessage> {
-
+  async translate(
+    message: RelayMessage,
+    sourceProtocol: ProtocolType,
+    targetProtocol: ProtocolType
+  ): Promise<RelayMessage> {
     if (sourceProtocol === 'anthropic-xml-v1.0' && targetProtocol === 'a2a-v2.0') {
       return this.anthropicXmlToA2A(message);
     } else if (sourceProtocol === 'a2a-v2.0' && targetProtocol === 'anthropic-xml-v1.0') {
@@ -49,14 +49,14 @@ export class AnthropicXmlAdapter implements ProtocolAdapter {
         payload: {
           function: this.extractFunctionName(payload),
           parameters: this.extractFunctionParameters(payload),
-          reasoning: this.extractReasoning(payload)
+          reasoning: this.extractReasoning(payload),
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'anthropic-xml-v1.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -68,14 +68,14 @@ export class AnthropicXmlAdapter implements ProtocolAdapter {
         payload: {
           result: this.extractToolResult(payload),
           success: this.extractToolSuccess(payload),
-          metadata: this.extractToolMetadata(payload)
+          metadata: this.extractToolMetadata(payload),
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'anthropic-xml-v1.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -85,14 +85,14 @@ export class AnthropicXmlAdapter implements ProtocolAdapter {
       payload: {
         content: this.extractTextContent(payload),
         thinking: this.extractThinking(payload),
-        artifacts: this.extractArtifacts(payload)
+        artifacts: this.extractArtifacts(payload),
       },
       metadata: {
         ...message.metadata,
         protocol: 'a2a-v2.0',
         originalProtocol: 'anthropic-xml-v1.0',
-        translatedAt: new Date().toISOString()
-      }
+        translatedAt: new Date().toISOString(),
+      },
     };
   }
 
@@ -112,8 +112,8 @@ export class AnthropicXmlAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'anthropic-xml-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -130,8 +130,8 @@ export class AnthropicXmlAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'anthropic-xml-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -143,8 +143,8 @@ export class AnthropicXmlAdapter implements ProtocolAdapter {
         ...message.metadata,
         protocol: 'anthropic-xml-v1.0',
         originalProtocol: 'a2a-v2.0',
-        translatedAt: new Date().toISOString()
-      }
+        translatedAt: new Date().toISOString(),
+      },
     };
   }
 
@@ -165,9 +165,9 @@ export class AnthropicXmlAdapter implements ProtocolAdapter {
   private extractFunctionParameters(xmlContent: string): any {
     const paramMatch = xmlContent.match(/<parameter name="([^"]+)">([^<]+)<\/parameter>/g);
     const parameters: any = {};
-    
+
     if (paramMatch) {
-      paramMatch.forEach(param => {
+      paramMatch.forEach((param) => {
         const nameMatch = param.match(/name="([^"]+)"/);
         const valueMatch = param.match(/>([^<]+)</);
         if (nameMatch && valueMatch) {
@@ -175,7 +175,7 @@ export class AnthropicXmlAdapter implements ProtocolAdapter {
         }
       });
     }
-    
+
     return parameters;
   }
 
@@ -202,15 +202,15 @@ export class AnthropicXmlAdapter implements ProtocolAdapter {
 
   private extractToolMetadata(xmlContent: string): any {
     const metadata: any = {};
-    
+
     // Extract tool ID
     const idMatch = xmlContent.match(/tool_call_id="([^"]+)"/);
     if (idMatch) metadata.toolCallId = idMatch[1];
-    
+
     // Extract timestamp
     const timestampMatch = xmlContent.match(/timestamp="([^"]+)"/);
     if (timestampMatch) metadata.timestamp = timestampMatch[1];
-    
+
     return metadata;
   }
 
@@ -227,80 +227,84 @@ export class AnthropicXmlAdapter implements ProtocolAdapter {
   private extractArtifacts(xmlContent: string): any[] {
     const artifacts: any[] = [];
     const artifactMatches = xmlContent.match(/<artifact[^>]*>(.*?)<\/artifact>/gs);
-    
+
     if (artifactMatches) {
-      artifactMatches.forEach(artifact => {
+      artifactMatches.forEach((artifact) => {
         const typeMatch = artifact.match(/type="([^"]+)"/);
         const nameMatch = artifact.match(/name="([^"]+)"/);
         const contentMatch = artifact.match(/<artifact[^>]*>(.*?)<\/artifact>/s);
-        
+
         artifacts.push({
           type: typeMatch ? typeMatch[1] : 'unknown',
           name: nameMatch ? nameMatch[1] : 'untitled',
-          content: contentMatch ? contentMatch[1] : ''
+          content: contentMatch ? contentMatch[1] : '',
         });
       });
     }
-    
+
     return artifacts;
   }
 
   // Anthropic XML generation helpers
-  private createAnthropicXmlFunctionCall(functionName: string, parameters: any, reasoning?: string): string {
+  private createAnthropicXmlFunctionCall(
+    functionName: string,
+    parameters: any,
+    reasoning?: string
+  ): string {
     let xml = '';
-    
+
     if (reasoning) {
       xml += `<thinking>\n${reasoning}\n</thinking>\n\n`;
     }
-    
+
     xml += '<function_calls>\n';
     xml += `<invoke name="${functionName}">\n`;
-    
+
     for (const [key, value] of Object.entries(parameters)) {
       xml += `<parameter name="${key}">${value}</parameter>\n`;
     }
-    
+
     xml += '</invoke>\n';
     xml += '</function_calls>';
-    
+
     return xml;
   }
 
   private createAnthropicXmlToolResponse(result: any, success: boolean, metadata?: any): string {
     let xml = '<tool_result';
-    
+
     if (metadata?.toolCallId) {
       xml += ` tool_call_id="${metadata.toolCallId}"`;
     }
-    
+
     if (!success) {
       xml += ' error="true"';
     }
-    
+
     xml += '>\n';
-    
+
     if (typeof result === 'object') {
       xml += JSON.stringify(result, null, 2);
     } else {
       xml += result;
     }
-    
+
     xml += '\n</tool_result>';
-    
+
     return xml;
   }
 
   private createAnthropicXmlContent(payload: any): string {
     let xml = '';
-    
+
     if (payload.thinking) {
       xml += `<thinking>\n${payload.thinking}\n</thinking>\n\n`;
     }
-    
+
     if (payload.content) {
       xml += payload.content;
     }
-    
+
     if (payload.artifacts && payload.artifacts.length > 0) {
       xml += '\n\n';
       payload.artifacts.forEach((artifact: any) => {
@@ -309,7 +313,7 @@ export class AnthropicXmlAdapter implements ProtocolAdapter {
         xml += '\n</artifact>\n';
       });
     }
-    
+
     return xml;
   }
 }

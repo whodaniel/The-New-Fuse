@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import System from "@/models/system";
-import PreLoader from "@/components/Preloader";
-import { OLLAMA_COMMON_URLS } from "@/utils/constants";
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
-import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
+import PreLoader from '@/components/Preloader';
+import useProviderEndpointAutoDiscovery from '@/hooks/useProviderEndpointAutoDiscovery';
+import System from '@/models/system';
+import { OLLAMA_COMMON_URLS } from '@/utils/constants';
+import { CaretDown, CaretUp } from '@phosphor-icons/react';
+import { useEffect, useState } from 'react';
 
 export default function OllamaEmbeddingOptions({ settings }) {
   const {
@@ -14,7 +14,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
     setShowAdvancedControls,
     handleAutoDetectClick,
   } = useProviderEndpointAutoDiscovery({
-    provider: "ollama",
+    provider: 'ollama',
     initialBasePath: settings?.EmbeddingBasePath,
     ENDPOINTS: OLLAMA_COMMON_URLS,
   });
@@ -30,10 +30,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
-        <OllamaEmbeddingModelSelection
-          settings={settings}
-          basePath={basePath.value}
-        />
+        <OllamaEmbeddingModelSelection settings={settings} basePath={basePath.value} />
         <div className="flex flex-col w-60">
           <label className="text-white text-sm font-semibold block mb-2">
             Max Embedding Chunk Length
@@ -63,7 +60,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
           }}
           className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
-          {showAdvancedControls ? "Hide" : "Show"} Manual Endpoint Input
+          {showAdvancedControls ? 'Hide' : 'Show'} Manual Endpoint Input
           {showAdvancedControls ? (
             <CaretUp size={14} className="ml-1" />
           ) : (
@@ -76,9 +73,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
         <div className="w-full flex items-start gap-4">
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
-              <label className="text-white text-sm font-semibold">
-                Ollama Base URL
-              </label>
+              <label className="text-white text-sm font-semibold">Ollama Base URL</label>
               {loading ? (
                 <PreLoader size="6" />
               ) : (
@@ -129,10 +124,10 @@ function OllamaEmbeddingModelSelection({ settings, basePath = null }) {
       }
       setLoading(true);
       try {
-        const { models } = await System.customModels("ollama", null, basePath);
+        const { models } = await System.customModels('ollama', null, basePath);
         setCustomModels(models || []);
       } catch (error) {
-        console.error("Failed to fetch custom models:", error);
+        console.error('Failed to fetch custom models:', error);
         setCustomModels([]);
       }
       setLoading(false);
@@ -152,14 +147,12 @@ function OllamaEmbeddingModelSelection({ settings, basePath = null }) {
           className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
         >
           <option disabled={true} selected={true}>
-            {!!basePath
-              ? "--loading available models--"
-              : "Enter Ollama URL first"}
+            {!!basePath ? '--loading available models--' : 'Enter Ollama URL first'}
           </option>
         </select>
         <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
-          Select the Ollama model for embeddings. Models will load after
-          entering a valid Ollama URL.
+          Select the Ollama model for embeddings. Models will load after entering a valid Ollama
+          URL.
         </p>
       </div>
     );
@@ -167,9 +160,7 @@ function OllamaEmbeddingModelSelection({ settings, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-2">
-        Ollama Embedding Model
-      </label>
+      <label className="text-white text-sm font-semibold block mb-2">Ollama Embedding Model</label>
       <select
         name="EmbeddingModelPref"
         required={true}

@@ -23,9 +23,7 @@ interface AgentState {
 
 @Injectable()
 export class AgentCoordinationService {
-  constructor(
-    private readonly syncOrchestrator: SyncOrchestrator,
-  ) {}
+  constructor(private readonly syncOrchestrator: SyncOrchestrator) {}
 
   /**
    * Update agent status with real-time sync
@@ -61,16 +59,12 @@ export class AgentCoordinationService {
     });
 
     // Update task status
-    await this.syncOrchestrator.syncTenantData(
-      tenantId,
-      'task',
-      {
-        id: taskId,
-        status: 'RUNNING',
-        assignedAgent: agentId,
-        startedAt: new Date(),
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(tenantId, 'task', {
+      id: taskId,
+      status: 'RUNNING',
+      assignedAgent: agentId,
+      startedAt: new Date(),
+    });
 
     console.log(`Agent ${agentId} started task ${taskId}`);
   }
@@ -78,12 +72,7 @@ export class AgentCoordinationService {
   /**
    * Update task progress with real-time sync
    */
-  async updateTaskProgress(
-    agentId: string,
-    taskId: string,
-    progress: number,
-    tenantId: string
-  ) {
+  async updateTaskProgress(agentId: string, taskId: string, progress: number, tenantId: string) {
     // Update agent state with progress
     await this.updateAgentStatus(agentId, 'PROCESSING', {
       progress,
@@ -91,15 +80,11 @@ export class AgentCoordinationService {
     });
 
     // Sync task progress
-    await this.syncOrchestrator.syncTenantData(
-      tenantId,
-      'task',
-      {
-        id: taskId,
-        progress,
-        lastUpdate: new Date(),
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(tenantId, 'task', {
+      id: taskId,
+      progress,
+      lastUpdate: new Date(),
+    });
 
     console.log(`Task ${taskId} progress: ${progress}%`);
   }
@@ -107,12 +92,7 @@ export class AgentCoordinationService {
   /**
    * Complete task and update agent state
    */
-  async completeAgentTask(
-    agentId: string,
-    taskId: string,
-    result: any,
-    tenantId: string
-  ) {
+  async completeAgentTask(agentId: string, taskId: string, result: any, tenantId: string) {
     // Mark agent as idle
     await this.updateAgentStatus(agentId, 'IDLE', {
       progress: 100,
@@ -121,16 +101,12 @@ export class AgentCoordinationService {
     });
 
     // Sync task completion
-    await this.syncOrchestrator.syncTenantData(
-      tenantId,
-      'task',
-      {
-        id: taskId,
-        status: 'COMPLETED',
-        result,
-        completedAt: new Date(),
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(tenantId, 'task', {
+      id: taskId,
+      status: 'COMPLETED',
+      result,
+      completedAt: new Date(),
+    });
 
     console.log(`Agent ${agentId} completed task ${taskId}`);
   }
@@ -138,31 +114,22 @@ export class AgentCoordinationService {
   /**
    * Handle agent errors
    */
-  async handleAgentError(
-    agentId: string,
-    taskId: string,
-    error: Error,
-    tenantId: string
-  ) {
+  async handleAgentError(agentId: string, taskId: string, error: Error, tenantId: string) {
     // Mark agent as error state
     await this.updateAgentStatus(agentId, 'ERROR', {
       lastHeartbeat: new Date(),
     });
 
     // Sync task failure
-    await this.syncOrchestrator.syncTenantData(
-      tenantId,
-      'task',
-      {
-        id: taskId,
-        status: 'FAILED',
-        error: {
-          message: error.message,
-          stack: error.stack,
-        },
-        failedAt: new Date(),
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(tenantId, 'task', {
+      id: taskId,
+      status: 'FAILED',
+      error: {
+        message: error.message,
+        stack: error.stack,
+      },
+      failedAt: new Date(),
+    });
 
     console.error(`Agent ${agentId} error on task ${taskId}:`, error);
   }

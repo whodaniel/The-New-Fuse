@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { Task, AgentInfo } from '../core/types';
+import { AgentInfo } from '../core/types';
 import { Coordinator } from '../orchestration/Coordinator';
 
 /**
@@ -57,10 +57,7 @@ export class ConsensusPattern<T = any> extends EventEmitter {
   private votes: Map<string, Vote<T>[]> = new Map();
   private strategy: ConsensusStrategy;
 
-  constructor(
-    coordinator: Coordinator,
-    strategy: ConsensusStrategy = ConsensusStrategy.MAJORITY
-  ) {
+  constructor(coordinator: Coordinator, strategy: ConsensusStrategy = ConsensusStrategy.MAJORITY) {
     super();
     this.coordinator = coordinator;
     this.strategy = strategy;
@@ -153,10 +150,7 @@ export class ConsensusPattern<T = any> extends EventEmitter {
       const checkCompletion = setInterval(() => {
         const proposalVotes = this.votes.get(proposal.id) || [];
 
-        if (
-          proposalVotes.length === agents.length ||
-          Date.now() - startTime > timeout
-        ) {
+        if (proposalVotes.length === agents.length || Date.now() - startTime > timeout) {
           clearInterval(checkCompletion);
           this.emit('consensus:voting:completed', {
             proposalId: proposal.id,
@@ -270,11 +264,7 @@ export class ConsensusPattern<T = any> extends EventEmitter {
       this.emit('consensus:round:started', { round, value: currentValue });
 
       // Create proposal
-      const proposal = await this.propose(
-        currentValue,
-        proposerId,
-        { round }
-      );
+      const proposal = await this.propose(currentValue, proposerId, { round });
 
       // Request votes
       const votes = await this.requestVotes(proposal, agents, timeout);

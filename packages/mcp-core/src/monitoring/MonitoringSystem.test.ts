@@ -3,9 +3,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MonitoringSystem } from './MonitoringSystem';
 import { MonitoringConfig } from '../types/monitoring';
 import { Logger } from '../utils/Logger';
+import { MonitoringSystem } from './MonitoringSystem';
 
 describe('MonitoringSystem', () => {
   let monitoringSystem: MonitoringSystem;
@@ -33,8 +33,8 @@ describe('MonitoringSystem', () => {
         enableDashboards: true,
         dashboardRefreshInterval: 30000,
         storage: {
-          type: 'memory'
-        }
+          type: 'memory',
+        },
       };
 
       await monitoringSystem.initialize(config);
@@ -56,8 +56,8 @@ describe('MonitoringSystem', () => {
         enableDashboards: false,
         dashboardRefreshInterval: 30000,
         storage: {
-          type: 'memory'
-        }
+          type: 'memory',
+        },
       };
 
       await monitoringSystem.initialize(config);
@@ -67,9 +67,13 @@ describe('MonitoringSystem', () => {
     });
 
     it('should throw error when accessing components before initialization', () => {
-      expect(() => monitoringSystem.getMetricsCollector()).toThrow('Monitoring system not initialized');
+      expect(() => monitoringSystem.getMetricsCollector()).toThrow(
+        'Monitoring system not initialized'
+      );
       expect(() => monitoringSystem.getAlertManager()).toThrow('Monitoring system not initialized');
-      expect(() => monitoringSystem.getDashboardManager()).toThrow('Monitoring system not initialized');
+      expect(() => monitoringSystem.getDashboardManager()).toThrow(
+        'Monitoring system not initialized'
+      );
     });
   });
 
@@ -84,8 +88,8 @@ describe('MonitoringSystem', () => {
         enableDashboards: true,
         dashboardRefreshInterval: 30000,
         storage: {
-          type: 'memory'
-        }
+          type: 'memory',
+        },
       };
 
       await monitoringSystem.initialize(config);
@@ -151,8 +155,8 @@ describe('MonitoringSystem', () => {
         enableDashboards: true,
         dashboardRefreshInterval: 30000,
         storage: {
-          type: 'memory'
-        }
+          type: 'memory',
+        },
       };
 
       await monitoringSystem.initialize(config);
@@ -161,7 +165,7 @@ describe('MonitoringSystem', () => {
     it('should export metrics in JSON format', async () => {
       const jsonMetrics = await monitoringSystem.exportMetrics('json');
       expect(jsonMetrics).toBeDefined();
-      
+
       const parsed = JSON.parse(jsonMetrics);
       expect(parsed).toHaveProperty('requests');
       expect(parsed).toHaveProperty('connections');
@@ -179,7 +183,9 @@ describe('MonitoringSystem', () => {
     });
 
     it('should throw error for unsupported export format', async () => {
-      await expect(monitoringSystem.exportMetrics('xml' as any)).rejects.toThrow('Unsupported export format: xml');
+      await expect(monitoringSystem.exportMetrics('xml' as any)).rejects.toThrow(
+        'Unsupported export format: xml'
+      );
     });
   });
 
@@ -194,8 +200,8 @@ describe('MonitoringSystem', () => {
         enableDashboards: true,
         dashboardRefreshInterval: 30000,
         storage: {
-          type: 'memory'
-        }
+          type: 'memory',
+        },
       };
 
       await monitoringSystem.initialize(config);
@@ -211,11 +217,19 @@ describe('MonitoringSystem', () => {
       // Trigger metrics collection
       const metricsCollector = monitoringSystem.getMetricsCollector();
       metricsCollector.emit('metricsCollected', {
-        requests: { total: 0, successful: 0, failed: 0, rps: 0, avgResponseTime: 0, p95ResponseTime: 0, p99ResponseTime: 0 },
+        requests: {
+          total: 0,
+          successful: 0,
+          failed: 0,
+          rps: 0,
+          avgResponseTime: 0,
+          p95ResponseTime: 0,
+          p99ResponseTime: 0,
+        },
         connections: { active: 0, total: 0, failed: 0, avgConnectionTime: 0 },
         resources: { total: 0, accessCount: 0, cacheHitRate: 0, avgReadTime: 0 },
         tools: { total: 0, executionCount: 0, avgExecutionTime: 0, successRate: 0 },
-        system: { memoryUsage: 0, cpuUsage: 0, uptime: 0, healthScore: 100 }
+        system: { memoryUsage: 0, cpuUsage: 0, uptime: 0, healthScore: 100 },
       });
     });
 
@@ -242,12 +256,12 @@ describe('MonitoringSystem', () => {
         enableDashboards: true,
         dashboardRefreshInterval: 30000,
         storage: {
-          type: 'memory'
-        }
+          type: 'memory',
+        },
       };
 
       await monitoringSystem.initialize(config);
-      
+
       let shutdownEventEmitted = false;
       monitoringSystem.on('shutdown', () => {
         shutdownEventEmitted = true;
@@ -271,7 +285,7 @@ describe('MonitoringSystem', () => {
       const status = await monitoringSystem.getStatus();
       expect(status.running).toBe(false);
       expect(status.uptime).toBe(0);
-      expect(Object.values(status.components).every(c => c === false)).toBe(true);
+      expect(Object.values(status.components).every((c) => c === false)).toBe(true);
     });
 
     it('should report correct status when initialized', async () => {
@@ -284,8 +298,8 @@ describe('MonitoringSystem', () => {
         enableDashboards: true,
         dashboardRefreshInterval: 30000,
         storage: {
-          type: 'memory'
-        }
+          type: 'memory',
+        },
       };
 
       await monitoringSystem.initialize(config);

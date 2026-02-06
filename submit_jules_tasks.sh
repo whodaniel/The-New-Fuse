@@ -15,7 +15,7 @@ jules new "Fix 12 TypeScript errors in apps/api/src/modules/chat/chat.service.ts
 jules new "Fix 11 TypeScript errors in apps/api/src/middleware/enhanced-error-handler.middleware.ts. Fix handler types and signatures."
 
 # Batch 5: Workflow Controller
-jules new "Fix 10 TypeScript errors in apps/api/src/controllers/workflow.controller.ts. Fix Prisma schema mismatches (createdAt vs startTime), request.user casting, and enum values."
+jules new "Fix 10 TypeScript errors in apps/api/src/controllers/workflow.controller.ts. Fix Drizzle schema mismatches (createdAt vs startTime), request.user casting, and enum values."
 
 # Batch 6: Security Integration Service
 jules new "Fix 9 TypeScript errors in apps/api/src/security/security-integration.service.ts. Fix type annotations."

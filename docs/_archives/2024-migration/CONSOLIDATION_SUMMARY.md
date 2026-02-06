@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document summarizes the comprehensive consolidation plan for The New Fuse documentation and scripts.
+This document summarizes the comprehensive consolidation plan for The New Fuse
+documentation and scripts.
 
 **Full Plan:** See [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md)
 
@@ -12,43 +13,43 @@ This document summarizes the comprehensive consolidation plan for The New Fuse d
 
 ### Current State
 
-| Category | Current Count |
-|----------|--------------|
-| **Scripts** | |
-| Total scripts | ~630 |
-| scripts/ directory | 431 |
-| Project root | 200+ |
-| Fix scripts | 76 |
-| Build scripts | ~40 |
-| Launch scripts | ~35 |
-| **Documentation** | |
-| Total doc files | ~200+ |
-| Root-level docs | 23 |
-| Directories | 68 |
-| Archive directories | 8 |
-| Port management docs | 8 |
-| MCP docs | 14 |
-| Development guides | 3 |
+| Category             | Current Count |
+| -------------------- | ------------- |
+| **Scripts**          |               |
+| Total scripts        | ~630          |
+| scripts/ directory   | 431           |
+| Project root         | 200+          |
+| Fix scripts          | 76            |
+| Build scripts        | ~40           |
+| Launch scripts       | ~35           |
+| **Documentation**    |               |
+| Total doc files      | ~200+         |
+| Root-level docs      | 23            |
+| Directories          | 68            |
+| Archive directories  | 8             |
+| Port management docs | 8             |
+| MCP docs             | 14            |
+| Development guides   | 3             |
 
 ### Target State
 
-| Category | Target Count | Reduction |
-|----------|-------------|-----------|
-| **Scripts** | |
-| Active scripts | 45 | **93% reduction** |
-| scripts/ directory | 45 | From 431 |
-| Project root | 0-2 links | From 200+ |
-| Fix scripts | 1 | From 76 |
-| Build scripts | 4 | From 40 |
-| Launch scripts | 4 | From 35 |
-| **Documentation** | |
-| Active doc files | ~100 | **50% reduction** |
-| Root-level docs | 1 (README) | From 23 |
-| Directories | 15-20 | From 68 |
-| Archive directories | 1 (consolidated) | From 8 |
-| Port management docs | 2 | From 8 |
-| MCP docs | 3 | From 14 |
-| Development guides | 1 | From 3 |
+| Category             | Target Count     | Reduction         |
+| -------------------- | ---------------- | ----------------- |
+| **Scripts**          |                  |
+| Active scripts       | 45               | **93% reduction** |
+| scripts/ directory   | 45               | From 431          |
+| Project root         | 0-2 links        | From 200+         |
+| Fix scripts          | 1                | From 76           |
+| Build scripts        | 4                | From 40           |
+| Launch scripts       | 4                | From 35           |
+| **Documentation**    |                  |
+| Active doc files     | ~100             | **50% reduction** |
+| Root-level docs      | 1 (README)       | From 23           |
+| Directories          | 15-20            | From 68           |
+| Archive directories  | 1 (consolidated) | From 8            |
+| Port management docs | 2                | From 8            |
+| MCP docs             | 3                | From 14           |
+| Development guides   | 1                | From 3            |
 
 ---
 
@@ -159,24 +160,24 @@ scripts/
 
 ### Documentation
 
-| Original Files | Consolidated To | Count |
-|----------------|-----------------|-------|
-| PORT_MANAGEMENT*.md (8 files) | reference/architecture/port-management.md + troubleshooting/port-management.md | 8→2 |
-| MCP*.md (14 files) | guides/mcp-integration.md + reference/protocols/mcp-specification.md + troubleshooting/mcp.md | 14→3 |
-| DEVELOPMENT*.md (3 files) | guides/development.md | 3→1 |
-| GETTING_STARTED*.md (3 files) | getting-started/README.md | 3→1 |
-| development-and-troubleshooting/ (22 files) | Organized into troubleshooting/ + _archive/ | 22→~8 |
-| project/ + project-management/ + project-planning/ | Consolidated project/ directory | ~60→~30 |
+| Original Files                                     | Consolidated To                                                                               | Count   |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------- |
+| PORT_MANAGEMENT\*.md (8 files)                     | reference/architecture/port-management.md + troubleshooting/port-management.md                | 8→2     |
+| MCP\*.md (14 files)                                | guides/mcp-integration.md + reference/protocols/mcp-specification.md + troubleshooting/mcp.md | 14→3    |
+| DEVELOPMENT\*.md (3 files)                         | guides/development.md                                                                         | 3→1     |
+| GETTING_STARTED\*.md (3 files)                     | getting-started/README.md                                                                     | 3→1     |
+| development-and-troubleshooting/ (22 files)        | Organized into troubleshooting/ + \_archive/                                                  | 22→~8   |
+| project/ + project-management/ + project-planning/ | Consolidated project/ directory                                                               | ~60→~30 |
 
 ### Scripts
 
-| Original Scripts | Consolidated To | Count |
-|------------------|-----------------|-------|
-| fix-*.sh (76 files) | _deprecated/2024-q4/fix-scripts/ (keep 1) | 76→1 |
-| reset-*.sh (4 files) | database/reset.sh | 4→1 |
-| build-*.sh (40 files) | build/ directory (4 scripts) | 40→4 |
-| launch-*.sh (35 files) | launch/ directory (4 scripts) | 35→4 |
-| Root scripts (200+ files) | Moved to scripts/ or _deprecated/ | 200→0 |
+| Original Scripts          | Consolidated To                            | Count |
+| ------------------------- | ------------------------------------------ | ----- |
+| fix-\*.sh (76 files)      | \_deprecated/2024-q4/fix-scripts/ (keep 1) | 76→1  |
+| reset-\*.sh (4 files)     | database/reset.sh                          | 4→1   |
+| build-\*.sh (40 files)    | build/ directory (4 scripts)               | 40→4  |
+| launch-\*.sh (35 files)   | launch/ directory (4 scripts)              | 35→4  |
+| Root scripts (200+ files) | Moved to scripts/ or \_deprecated/         | 200→0 |
 
 ---
 
@@ -184,16 +185,16 @@ scripts/
 
 ### 8-Week Phased Approach
 
-| Week | Focus | Deliverables |
-|------|-------|--------------|
-| **1** | Audit & Planning | Content matrices, dependency graphs |
-| **2** | Port & MCP Docs | Consolidated port-management.md, mcp-integration.md |
-| **3** | Dev & Getting Started | Consolidated development.md, getting-started/ |
-| **4** | Troubleshooting & Project | troubleshooting/ reorganized, project/ consolidated |
-| **5** | New READMEs & Architecture | Main README.md, architecture docs |
-| **6** | Root Scripts Migration | All root scripts moved to scripts/ or _deprecated/ |
-| **7** | Scripts Consolidation | Core scripts organized, deprecated scripts archived |
-| **8** | Testing & Finalization | Full validation, migration guide, team training |
+| Week  | Focus                      | Deliverables                                        |
+| ----- | -------------------------- | --------------------------------------------------- |
+| **1** | Audit & Planning           | Content matrices, dependency graphs                 |
+| **2** | Port & MCP Docs            | Consolidated port-management.md, mcp-integration.md |
+| **3** | Dev & Getting Started      | Consolidated development.md, getting-started/       |
+| **4** | Troubleshooting & Project  | troubleshooting/ reorganized, project/ consolidated |
+| **5** | New READMEs & Architecture | Main README.md, architecture docs                   |
+| **6** | Root Scripts Migration     | All root scripts moved to scripts/ or \_deprecated/ |
+| **7** | Scripts Consolidation      | Core scripts organized, deprecated scripts archived |
+| **8** | Testing & Finalization     | Full validation, migration guide, team training     |
 
 ---
 
@@ -202,6 +203,7 @@ scripts/
 ### Developer Experience
 
 **Before:**
+
 - 😵 630+ scripts scattered everywhere
 - 🤷 Can't find the right script to use
 - 📚 200+ docs with lots of duplication
@@ -209,6 +211,7 @@ scripts/
 - 🚧 Unclear which scripts are current
 
 **After:**
+
 - ✅ 45 well-organized scripts
 - 📖 Clear README lists all scripts
 - 📑 100 organized docs with no duplication
@@ -218,6 +221,7 @@ scripts/
 ### Maintenance Burden
 
 **Before:**
+
 - Update 8 files for port management changes
 - Update 14 files for MCP changes
 - Keep 76 fix scripts up-to-date (why?)
@@ -225,6 +229,7 @@ scripts/
 - Maintain 630+ scripts
 
 **After:**
+
 - Update 2 files for port management
 - Update 3 files for MCP changes
 - 1 fix script (only the essential one)
@@ -234,11 +239,13 @@ scripts/
 ### Onboarding
 
 **Before:**
+
 - New developer: "Which build script do I use?"
 - Team: "Uh... try build-intelligent.sh? Or maybe build.sh? Or..."
 - New developer spends hours trying scripts
 
 **After:**
+
 - New developer: "Which build script do I use?"
 - Team: "Run `pnpm build` or check scripts/README.md"
 - New developer productive in hours, not days
@@ -249,11 +256,11 @@ scripts/
 
 ### High Risks
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Breaking CI/CD | HIGH | Audit all CI/CD refs first, update before moving |
-| Breaking developer workflows | MEDIUM | Communication plan, migration guide, soft links |
-| Losing critical information | MEDIUM | Manual review of merges, preserve in git history |
+| Risk                         | Impact | Mitigation                                       |
+| ---------------------------- | ------ | ------------------------------------------------ |
+| Breaking CI/CD               | HIGH   | Audit all CI/CD refs first, update before moving |
+| Breaking developer workflows | MEDIUM | Communication plan, migration guide, soft links  |
+| Losing critical information  | MEDIUM | Manual review of merges, preserve in git history |
 
 ### Safety Measures
 
@@ -300,6 +307,7 @@ scripts/
 ### Port Management: 8 Files → 2 Files
 
 **Before:**
+
 ```
 docs/
 ├── PORT_MANAGEMENT.md
@@ -316,6 +324,7 @@ docs/
 ```
 
 **After:**
+
 ```
 docs/
 ├── reference/architecture/
@@ -325,6 +334,7 @@ docs/
 ```
 
 **Impact:**
+
 - 75% fewer files to maintain
 - Single source of truth
 - Clear separation: reference vs troubleshooting
@@ -333,21 +343,24 @@ docs/
 ### Database Scripts: 4 Files → 1 File
 
 **Before:**
+
 ```
 scripts/
 ├── reset-database.sh
 ├── reset-db-simple.sh
-├── reset-prisma-db.sh
-└── reset-prisma-db-with-password.sh
+├── reset-drizzle-db.sh
+└── reset-drizzle-db-with-password.sh
 ```
 
 **After:**
+
 ```
 scripts/database/
 └── reset.sh                         # Handles all use cases
 ```
 
 **Usage:**
+
 ```bash
 # Simple reset
 ./scripts/database/reset.sh
@@ -360,6 +373,7 @@ scripts/database/
 ```
 
 **Impact:**
+
 - 75% fewer files
 - All functionality preserved
 - Clearer usage with flags
@@ -368,6 +382,7 @@ scripts/database/
 ### Fix Scripts: 76 Files → 1 File
 
 **Before:**
+
 ```
 scripts/
 ├── fix-all-import-issues.sh
@@ -381,6 +396,7 @@ scripts/
 ```
 
 **After:**
+
 ```
 scripts/
 ├── maintenance/
@@ -390,12 +406,14 @@ scripts/
 ```
 
 **Reasoning:**
+
 - Fix scripts solve specific problems at specific times
 - Once fixed, they're rarely needed again
 - Archiving preserves history without clutter
 - Keep only the one fix that's regularly needed
 
 **Impact:**
+
 - 99% reduction (76 → 1)
 - Cleaner scripts directory
 - History preserved in archive
@@ -407,7 +425,8 @@ scripts/
 
 ### Step 1: Read the Full Plan
 
-Read [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md) completely before starting.
+Read [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md) completely before
+starting.
 
 ### Step 2: Review with Team
 
@@ -440,6 +459,7 @@ Use the detailed checklist in Appendix C of the full plan.
 ### Prevent Future Accumulation
 
 **Documentation Rules:**
+
 1. ❌ No new docs in root (except README.md)
 2. ✅ All new docs in appropriate subdirectory
 3. ✅ Update README when adding sections
@@ -447,10 +467,11 @@ Use the detailed checklist in Appendix C of the full plan.
 5. ✅ Quarterly doc review
 
 **Scripts Rules:**
+
 1. ❌ No new scripts in project root (EVER)
 2. ✅ All new scripts in scripts/ subdirectory
 3. ✅ Update scripts/README.md when adding
-4. ✅ One-time fixes go directly to _deprecated/
+4. ✅ One-time fixes go directly to \_deprecated/
 5. ✅ Quarterly script review
 
 ### Quarterly Review Checklist
@@ -467,16 +488,19 @@ Use the detailed checklist in Appendix C of the full plan.
 ## Questions?
 
 **Technical Questions:**
+
 - Check [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md)
 - Search plan for specific topics
 - Ask in #dev-discussion
 
 **Process Questions:**
+
 - See Implementation Timeline section
 - See Risk Mitigation section
 - Contact project lead
 
 **Feedback:**
+
 - Open issue: [link]
 - Comment on PR: [link]
 - Discuss in: #consolidation-project
@@ -487,38 +511,36 @@ Use the detailed checklist in Appendix C of the full plan.
 
 ### Top Scripts to Keep
 
-| Script | Location | Purpose |
-|--------|----------|---------|
-| build.sh | scripts/core/ | Build entire project |
-| dev.sh | scripts/core/ | Start dev environment |
-| setup-dev.sh | scripts/core/ | Initial setup |
-| unified.sh | scripts/launch/ | **Recommended launcher** |
-| reset.sh | scripts/database/ | Database reset |
-| setup.sh | scripts/mcp/ | MCP setup |
+| Script       | Location          | Purpose                  |
+| ------------ | ----------------- | ------------------------ |
+| build.sh     | scripts/core/     | Build entire project     |
+| dev.sh       | scripts/core/     | Start dev environment    |
+| setup-dev.sh | scripts/core/     | Initial setup            |
+| unified.sh   | scripts/launch/   | **Recommended launcher** |
+| reset.sh     | scripts/database/ | Database reset           |
+| setup.sh     | scripts/mcp/      | MCP setup                |
 
 ### Top Docs to Consolidate
 
-| Topic | Files to Merge | Target |
-|-------|----------------|--------|
-| Port Management | 8 files | 2 files |
-| MCP | 14 files | 3 files |
-| Development | 3 files | 1 file |
-| Getting Started | 3 files | 1 file |
+| Topic           | Files to Merge | Target  |
+| --------------- | -------------- | ------- |
+| Port Management | 8 files        | 2 files |
+| MCP             | 14 files       | 3 files |
+| Development     | 3 files        | 1 file  |
+| Getting Started | 3 files        | 1 file  |
 
 ### Key Directories
 
-| Directory | Purpose | Keep/Archive |
-|-----------|---------|--------------|
-| docs/guides/ | How-to guides | Keep, expand |
-| docs/reference/ | Technical reference | Keep, organize |
-| docs/troubleshooting/ | Problem solving | Keep, consolidate |
-| docs/development-and-troubleshooting/ | Mixed content | Archive, redistribute |
-| docs/project-management/ | Management docs | Merge to docs/project/ |
-| docs/project-planning/ | Planning docs | Merge to docs/project/ |
+| Directory                             | Purpose             | Keep/Archive           |
+| ------------------------------------- | ------------------- | ---------------------- |
+| docs/guides/                          | How-to guides       | Keep, expand           |
+| docs/reference/                       | Technical reference | Keep, organize         |
+| docs/troubleshooting/                 | Problem solving     | Keep, consolidate      |
+| docs/development-and-troubleshooting/ | Mixed content       | Archive, redistribute  |
+| docs/project-management/              | Management docs     | Merge to docs/project/ |
+| docs/project-planning/                | Planning docs       | Merge to docs/project/ |
 
 ---
 
-**Document:** Consolidation Summary
-**Version:** 1.0
-**Last Updated:** 2025-10-23
-**Full Plan:** [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md)
+**Document:** Consolidation Summary **Version:** 1.0 **Last Updated:**
+2025-10-23 **Full Plan:** [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md)

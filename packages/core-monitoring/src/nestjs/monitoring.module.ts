@@ -55,7 +55,8 @@ export class MonitoringModuleFactory {
           useFactory: async () => {
             if (options.sentry?.enabled) {
               const { SentryService } = await import('../sentry/sentry-integrations');
-              const { getSentryConfigFromEnv, beforeSendFilter } = await import('../sentry/sentry-config');
+              const { getSentryConfigFromEnv, beforeSendFilter } =
+                await import('../sentry/sentry-config');
 
               const service = new SentryService();
               const config = {

@@ -1,4 +1,3 @@
-import React from 'react';
 import type { BaseEmbeddingSettings } from '@/types/embedding';
 import { COMMON_STYLES } from '@/types/embedding';
 
@@ -10,10 +9,13 @@ interface GenericOpenAiOptionsProps {
 const OPENAI_MODELS = [
   'text-embedding-3-small',
   'text-embedding-3-large',
-  'text-embedding-ada-002'
+  'text-embedding-ada-002',
 ];
 
-export function GenericOpenAiOptions({ settings, provider = 'OpenAI Compatible' }: GenericOpenAiOptionsProps) {
+export function GenericOpenAiOptions({
+  settings,
+  provider = 'OpenAI Compatible',
+}: GenericOpenAiOptionsProps) {
   return (
     <div className={COMMON_STYLES.container}>
       <div className={COMMON_STYLES.inputsContainer}>

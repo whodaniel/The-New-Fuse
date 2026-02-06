@@ -1,8 +1,7 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { OnboardingAISettings } from '../OnboardingAISettings';
 import { OnboardingAdminService } from '../../../../services/onboarding-admin.service';
+import { OnboardingAISettings } from '../OnboardingAISettings';
 
 // Mock the service
 jest.mock('../../../../services/onboarding-admin.service');
@@ -15,48 +14,49 @@ const mockAISettings = {
   vectorDatabaseConfig: {
     pineconeApiKey: 'test-api-key',
     pineconeEnvironment: 'test-env',
-    pineconeIndex: 'onboarding-knowledge'
+    pineconeIndex: 'onboarding-knowledge',
   },
-  
+
   // LLM Settings
   defaultLLMProvider: 'openai',
   defaultLLMModel: 'gpt-4',
   defaultTemperature: 0.7,
   defaultMaxTokens: 1000,
-  
+
   // Greeter Agent Settings
   greeterAgentEnabled: true,
   greeterAgentName: 'Fuse Assistant',
   greeterAgentAvatar: '/assets/images/greeter-avatar.png',
-  greeterAgentPrompt: 'You are Fuse Assistant, a helpful AI assistant designed to help users get started with The New Fuse platform.',
+  greeterAgentPrompt:
+    'You are Fuse Assistant, a helpful AI assistant designed to help users get started with The New Fuse platform.',
   greeterAgentKnowledgeBase: [
     {
       id: 'kb-1',
       name: 'Platform Overview',
       description: 'General information about The New Fuse platform',
-      enabled: true
-    }
+      enabled: true,
+    },
   ],
-  
+
   // Multimodal Settings
   multimodalEnabled: true,
   supportedModalities: ['text', 'image'],
   imageAnalysisModel: 'gpt-4-vision',
   audioTranscriptionModel: 'whisper-large-v3',
-  
+
   // Advanced Settings
   enableDebugMode: false,
   logUserInteractions: true,
   maxConcurrentRequests: 5,
   requestTimeout: 30,
-  fallbackBehavior: 'graceful-degradation'
+  fallbackBehavior: 'graceful-degradation',
 };
 
 describe('OnboardingAISettings', () => {
   beforeEach(() => {
     // Reset mocks
     jest.clearAllMocks();
-    
+
     // Setup mock implementations
     (OnboardingAdminService.getAISettings as jest.Mock).mockResolvedValue(mockAISettings);
     (OnboardingAdminService.updateAISettings as jest.Mock).mockResolvedValue({ success: true });
@@ -64,34 +64,22 @@ describe('OnboardingAISettings', () => {
 
   it('renders loading state initially', () => {
     render(
-      
-        <OnboardingAISettings 
-          onSave={jest.fn()} 
-          onChange={jest.fn()} 
-          hasUnsavedChanges={false} 
-        />
-      
+      <OnboardingAISettings onSave={jest.fn()} onChange={jest.fn()} hasUnsavedChanges={false} />
     );
-    
+
     expect(screen.getByText('Loading AI settings...')).toBeInTheDocument();
   });
 
   it('renders AI settings after loading', async () => {
     render(
-      
-        <OnboardingAISettings 
-          onSave={jest.fn()} 
-          onChange={jest.fn()} 
-          hasUnsavedChanges={false} 
-        />
-      
+      <OnboardingAISettings onSave={jest.fn()} onChange={jest.fn()} hasUnsavedChanges={false} />
     );
-    
+
     // Wait for loading to complete
     await waitFor(() => {
       expect(screen.queryByText('Loading AI settings...')).not.toBeInTheDocument();
     });
-    
+
     // Check if tabs are rendered
     expect(screen.getByText('RAG Settings')).toBeInTheDocument();
     expect(screen.getByText('LLM Settings')).toBeInTheDocument();
@@ -100,56 +88,44 @@ describe('OnboardingAISettings', () => {
 
   it('allows changing settings', async () => {
     const handleChange = jest.fn();
-    
+
     render(
-      
-        <OnboardingAISettings 
-          onSave={jest.fn()} 
-          onChange={handleChange} 
-          hasUnsavedChanges={false} 
-        />
-      
+      <OnboardingAISettings onSave={jest.fn()} onChange={handleChange} hasUnsavedChanges={false} />
     );
-    
+
     // Wait for loading to complete
     await waitFor(() => {
       expect(screen.queryByText('Loading AI settings...')).not.toBeInTheDocument();
     });
-    
+
     // Find and toggle RAG enabled switch
     const ragEnabledSwitch = screen.getByLabelText('Enable RAG');
     fireEvent.click(ragEnabledSwitch);
-    
+
     // Check if onChange was called
     expect(handleChange).toHaveBeenCalled();
   });
 
   it('saves changes when save button is clicked', async () => {
     const handleSave = jest.fn();
-    
+
     render(
-      
-        <OnboardingAISettings 
-          onSave={handleSave} 
-          onChange={jest.fn()} 
-          hasUnsavedChanges={true} 
-        />
-      
+      <OnboardingAISettings onSave={handleSave} onChange={jest.fn()} hasUnsavedChanges={true} />
     );
-    
+
     // Wait for loading to complete
     await waitFor(() => {
       expect(screen.queryByText('Loading AI settings...')).not.toBeInTheDocument();
     });
-    
+
     // Click save button
     fireEvent.click(screen.getByText('Save Changes'));
-    
+
     // Check if service method was called
     await waitFor(() => {
       expect(OnboardingAdminService.updateAISettings).toHaveBeenCalled();
     });
-    
+
     // Check if onSave was called
     expect(handleSave).toHaveBeenCalled();
   });
@@ -157,22 +133,16 @@ describe('OnboardingAISettings', () => {
   it('handles API errors gracefully', async () => {
     // Setup error mock
     (OnboardingAdminService.getAISettings as jest.Mock).mockRejectedValue(new Error('API Error'));
-    
+
     render(
-      
-        <OnboardingAISettings 
-          onSave={jest.fn()} 
-          onChange={jest.fn()} 
-          hasUnsavedChanges={false} 
-        />
-      
+      <OnboardingAISettings onSave={jest.fn()} onChange={jest.fn()} hasUnsavedChanges={false} />
     );
-    
+
     // Wait for error to be displayed
     await waitFor(() => {
       expect(screen.getByText('Error Loading Settings')).toBeInTheDocument();
     });
-    
+
     // Check if retry button is present
     expect(screen.getByText('Retry')).toBeInTheDocument();
   });

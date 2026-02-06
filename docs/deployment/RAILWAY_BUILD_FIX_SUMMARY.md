@@ -138,7 +138,7 @@ Now matches the tsconfig output directory.
    - Service package.json
    - All node_modules
    - **All packages/** (includes built dist/ directories)
-   - Prisma schema (if applicable)
+   - Drizzle schema (if applicable)
 
 2. Setup non-root user for security
 

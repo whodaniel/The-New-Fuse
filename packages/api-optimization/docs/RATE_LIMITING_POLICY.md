@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document defines the rate limiting policies and strategies for The New Fuse API to ensure fair usage, prevent abuse, and maintain system stability.
+This document defines the rate limiting policies and strategies for The New Fuse
+API to ensure fair usage, prevent abuse, and maintain system stability.
 
 ## Rate Limiting Strategy
 
@@ -24,6 +25,7 @@ Remaining = 100 - 87 = 13
 ```
 
 **Benefits:**
+
 - More accurate than fixed windows
 - Prevents burst at window boundaries
 - Fair distribution across time
@@ -161,11 +163,13 @@ Retry-After: 45
 ### Priority Order
 
 1. **User ID** (authenticated users)
+
    ```
    Key: user:12345
    ```
 
 2. **API Key** (API consumers)
+
    ```
    Key: apikey:abc123...
    ```
@@ -212,6 +216,7 @@ export class HealthController {
 ### Automatic Blocking
 
 Triggered when:
+
 - Rate limit exceeded
 - Configurable block duration per tier
 - Repeated violations increase block time
@@ -231,12 +236,13 @@ Apply temporary rate reductions:
 // Reduce rate limit by 50% for 1 hour
 await rateLimiter.applyPenalty(
   userId,
-  50,  // penalty points
+  50, // penalty points
   3600 // duration in seconds
 );
 ```
 
 **Triggers:**
+
 - Suspicious activity patterns
 - Failed authentication attempts
 - Malformed requests
@@ -264,12 +270,12 @@ await rateLimiter.applyPenalty(
 
 ### Alert Thresholds
 
-| Metric | Warning | Critical |
-|--------|---------|----------|
-| Blocked Keys | >10 | >50 |
-| Rate Limit Latency | >50ms | >200ms |
-| Redis Errors | >1% | >5% |
-| Abuse Reports | >5/hour | >20/hour |
+| Metric             | Warning | Critical |
+| ------------------ | ------- | -------- |
+| Blocked Keys       | >10     | >50      |
+| Rate Limit Latency | >50ms   | >200ms   |
+| Redis Errors       | >1%     | >5%      |
+| Abuse Reports      | >5/hour | >20/hour |
 
 ## Best Practices
 
@@ -429,11 +435,13 @@ describe('Rate Limiting', () => {
 ### False Positives
 
 **Symptoms:**
+
 - Legitimate users blocked
 - High complaint rate
 - Business impact
 
 **Solutions:**
+
 - Review tier assignments
 - Adjust limits based on usage
 - Implement manual overrides
@@ -442,11 +450,13 @@ describe('Rate Limiting', () => {
 ### Redis Issues
 
 **Symptoms:**
+
 - Inconsistent rate limiting
 - High latency
 - Connection errors
 
 **Solutions:**
+
 - Check Redis health
 - Scale Redis cluster
 - Implement connection pooling
@@ -455,11 +465,13 @@ describe('Rate Limiting', () => {
 ### Distributed Systems
 
 **Symptoms:**
+
 - Different limits per server
 - Race conditions
 - Inconsistent state
 
 **Solutions:**
+
 - Use Redis for distributed state
 - Implement atomic operations
 - Add synchronization
@@ -491,6 +503,7 @@ const points = newLimit;
 ## Review Schedule
 
 This rate limiting policy should be reviewed:
+
 - Monthly: Metrics and abuse patterns
 - Quarterly: Tier limits and pricing
 - On major releases: Implementation changes

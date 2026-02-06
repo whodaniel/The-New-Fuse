@@ -19,7 +19,7 @@ export class MessageSerializer {
       case SerializationFormat.MSGPACK:
         const buffer = msgpack.encode(data);
         return buffer.toString('base64');
-      
+
       case SerializationFormat.JSON:
       default:
         return JSON.stringify(data);
@@ -38,7 +38,7 @@ export class MessageSerializer {
         } catch (error) {
           throw new Error(`Failed to deserialize MessagePack data: ${error}`);
         }
-      
+
       case SerializationFormat.JSON:
       default:
         try {

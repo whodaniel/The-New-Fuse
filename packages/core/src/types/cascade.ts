@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-  export enum CascadeMode {
-READ = 'read',
+export enum CascadeMode {
+  READ = 'read',
   WRITE = 'write',
 }
 

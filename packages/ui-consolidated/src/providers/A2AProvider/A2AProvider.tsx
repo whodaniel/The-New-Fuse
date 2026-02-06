@@ -1,6 +1,6 @@
+import { A2AMessage, AgentRegistration, AgentStatus } from '@the-new-fuse/a2a-core';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useA2A, A2AConnectionConfig, A2AHookReturn } from './useA2A';
-import { AgentRegistration, A2AMessage, AgentStatus } from '@the-new-fuse/a2a-core';
+import { A2AConnectionConfig, A2AHookReturn, useA2A } from './useA2A';
 
 interface A2AContextType extends A2AHookReturn {
   agents: AgentRegistration[];
@@ -17,12 +17,12 @@ export interface A2AProviderProps {
   agentRegistration?: Omit<AgentRegistration, 'agentId'>;
 }
 
-export function A2AProvider({ 
-  children, 
-  config, 
+export function A2AProvider({
+  children,
+  config,
   autoConnect = true,
   autoRegister = false,
-  agentRegistration 
+  agentRegistration,
 }: A2AProviderProps) {
   const a2a = useA2A(config);
   const [agents, setAgents] = useState<AgentRegistration[]>([]);
@@ -46,7 +46,7 @@ export function A2AProvider({
 
     const registration: AgentRegistration = {
       ...agentRegistration,
-      agentId: config.agentId
+      agentId: config.agentId,
     };
 
     try {
@@ -54,9 +54,9 @@ export function A2AProvider({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(config.token && { 'Authorization': `Bearer ${config.token}` })
+          ...(config.token && { Authorization: `Bearer ${config.token}` }),
         },
-        body: JSON.stringify(registration)
+        body: JSON.stringify(registration),
       });
 
       if (!response.ok) {
@@ -86,8 +86,8 @@ export function A2AProvider({
   // Listen for agent registration events
   useEffect(() => {
     const unsubscribe = a2a.onAgentRegistered((agent) => {
-      setAgents(prev => {
-        const exists = prev.find(a => a.agentId === agent.agentId);
+      setAgents((prev) => {
+        const exists = prev.find((a) => a.agentId === agent.agentId);
         if (exists) return prev;
         return [...prev, agent];
       });
@@ -99,7 +99,7 @@ export function A2AProvider({
   // Listen for agent disconnections
   useEffect(() => {
     const unsubscribe = a2a.onAgentDisconnected((agentId) => {
-      setAgents(prev => prev.filter(a => a.agentId !== agentId));
+      setAgents((prev) => prev.filter((a) => a.agentId !== agentId));
     });
 
     return unsubscribe;
@@ -108,14 +108,10 @@ export function A2AProvider({
   const contextValue: A2AContextType = {
     ...a2a,
     agents,
-    refreshAgents
+    refreshAgents,
   };
 
-  return (
-    <A2AContext.Provider value={contextValue}>
-      {children}
-    </A2AContext.Provider>
-  );
+  return <A2AContext.Provider value={contextValue}>{children}</A2AContext.Provider>;
 }
 
 export function useA2AContext(): A2AContextType {
@@ -130,15 +126,13 @@ export function useA2AContext(): A2AContextType {
 
 export function useA2AAgents() {
   const { agents, refreshAgents, discoverAgents } = useA2AContext();
-  
+
   const findAgentsByCapability = (capability: string) => {
-    return agents.filter(agent => 
-      agent.capabilities.some(cap => cap.name === capability)
-    );
+    return agents.filter((agent) => agent.capabilities.some((cap) => cap.name === capability));
   };
 
   const findAgentsByType = (type: string) => {
-    return agents.filter(agent => agent.type === type);
+    return agents.filter((agent) => agent.type === type);
   };
 
   const getOnlineAgents = async () => {
@@ -150,7 +144,7 @@ export function useA2AAgents() {
     refreshAgents,
     findAgentsByCapability,
     findAgentsByType,
-    getOnlineAgents
+    getOnlineAgents,
   };
 }
 
@@ -169,16 +163,16 @@ export function useA2AMessages() {
     let filtered = messages;
 
     if (filters.fromAgent) {
-      filtered = filtered.filter(msg => msg.fromAgent === filters.fromAgent);
+      filtered = filtered.filter((msg) => msg.fromAgent === filters.fromAgent);
     }
     if (filters.toAgent) {
-      filtered = filtered.filter(msg => msg.toAgent === filters.toAgent);
+      filtered = filtered.filter((msg) => msg.toAgent === filters.toAgent);
     }
     if (filters.conversationId) {
-      filtered = filtered.filter(msg => msg.conversationId === filters.conversationId);
+      filtered = filtered.filter((msg) => msg.conversationId === filters.conversationId);
     }
     if (filters.type) {
-      filtered = filtered.filter(msg => msg.type === filters.type);
+      filtered = filtered.filter((msg) => msg.type === filters.type);
     }
 
     setFilteredMessages(filtered);
@@ -192,7 +186,7 @@ export function useA2AMessages() {
     broadcast,
     onMessage,
     filters,
-    setFilters
+    setFilters,
   };
 }
 
@@ -203,8 +197,8 @@ export function useA2AConversations() {
   // Group messages by conversation
   useEffect(() => {
     const convMap = new Map<string, A2AMessage[]>();
-    
-    messages.forEach(message => {
+
+    messages.forEach((message) => {
       if (message.conversationId) {
         if (!convMap.has(message.conversationId)) {
           convMap.set(message.conversationId, []);
@@ -225,10 +219,10 @@ export function useA2AConversations() {
       id,
       messages: msgs,
       lastMessage: msgs[msgs.length - 1],
-      participantCount: new Set(msgs.map(m => m.fromAgent)).size
+      participantCount: new Set(msgs.map((m) => m.fromAgent)).size,
     })),
     getConversationMessages,
     joinConversation,
-    leaveConversation
+    leaveConversation,
   };
 }

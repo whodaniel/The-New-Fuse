@@ -1,15 +1,15 @@
 import { createServer } from 'http';
-import * as path from 'path';
-import * as fs from 'fs';
 
 // Initialize basic HTTP server
 const server = createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({
-    status: 'running',
-    message: 'The New Fuse backend is operational',
-    time: new Date().toISOString()
-  }));
+  res.end(
+    JSON.stringify({
+      status: 'running',
+      message: 'The New Fuse backend is operational',
+      time: new Date().toISOString(),
+    })
+  );
 });
 
 // Default port

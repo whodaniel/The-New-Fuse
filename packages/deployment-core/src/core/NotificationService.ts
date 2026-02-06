@@ -1,14 +1,14 @@
+import axios from 'axios';
+import { Logger } from 'winston';
 import {
-  PipelineDefinition,
-  PipelineResult,
   BuildResult,
   DeploymentResult,
-  RollbackResult,
   NotificationChannel,
-  NotificationEvent
+  NotificationEvent,
+  PipelineDefinition,
+  PipelineResult,
+  RollbackResult,
 } from '../types/pipeline';
-import { Logger } from 'winston';
-import axios from 'axios';
 
 /**
  * Notification Service handles sending notifications for pipeline events
@@ -26,7 +26,7 @@ export class NotificationService {
   async notifyPipelineStart(pipeline: PipelineDefinition, executionId: string): Promise<void> {
     this.logger.info(`Sending pipeline start notifications: ${pipeline.name}`, {
       pipelineId: pipeline.id,
-      executionId
+      executionId,
     });
 
     const message = {
@@ -34,11 +34,11 @@ export class NotificationService {
       pipeline: {
         id: pipeline.id,
         name: pipeline.name,
-        environment: pipeline.environment.name
+        environment: pipeline.environment.name,
       },
       executionId,
       timestamp: new Date(),
-      message: `Pipeline "${pipeline.name}" has started execution`
+      message: `Pipeline "${pipeline.name}" has started execution`,
     };
 
     await this.sendNotifications(pipeline.notifications, message);
@@ -51,7 +51,7 @@ export class NotificationService {
     this.logger.info(`Sending pipeline completion notifications: ${result.id}`, {
       pipelineId: result.pipelineId,
       status: result.status,
-      duration: result.duration
+      duration: result.duration,
     });
 
     const message = {
@@ -60,7 +60,7 @@ export class NotificationService {
         id: result.pipelineId,
         executionId: result.id,
         status: result.status,
-        environment: result.environment
+        environment: result.environment,
       },
       result: {
         status: result.status,
@@ -68,10 +68,10 @@ export class NotificationService {
         startTime: result.startTime,
         endTime: result.endTime,
         stageCount: result.stages.length,
-        artifactCount: result.artifacts.length
+        artifactCount: result.artifacts.length,
       },
       timestamp: new Date(),
-      message: `Pipeline execution ${result.status}: ${result.id} (${this.formatDuration(result.duration)})`
+      message: `Pipeline execution ${result.status}: ${result.id} (${this.formatDuration(result.duration)})`,
     };
 
     // Get pipeline config to access notification settings
@@ -86,31 +86,31 @@ export class NotificationService {
   async notifyPipelineFailed(result: PipelineResult): Promise<void> {
     this.logger.info(`Sending pipeline failure notifications: ${result.id}`, {
       pipelineId: result.pipelineId,
-      error: result.error
+      error: result.error,
     });
 
-    const failedStages = result.stages.filter(s => s.status === 'failed');
-    
+    const failedStages = result.stages.filter((s) => s.status === 'failed');
+
     const message = {
       type: 'pipeline_failed',
       pipeline: {
         id: result.pipelineId,
         executionId: result.id,
         status: result.status,
-        environment: result.environment
+        environment: result.environment,
       },
       result: {
         status: result.status,
         duration: result.duration,
         error: result.error,
-        failedStages: failedStages.map(s => ({
+        failedStages: failedStages.map((s) => ({
           name: s.name,
-          error: s.error
-        }))
+          error: s.error,
+        })),
       },
       timestamp: new Date(),
       message: `Pipeline execution FAILED: ${result.id} - ${result.error}`,
-      severity: 'high'
+      severity: 'high',
     };
 
     const defaultNotifications = this.getDefaultNotifications();
@@ -124,7 +124,7 @@ export class NotificationService {
     this.logger.info(`Sending build completion notifications: ${result.id}`, {
       triggerId: result.triggerId,
       status: result.status,
-      duration: result.duration
+      duration: result.duration,
     });
 
     const message = {
@@ -132,16 +132,16 @@ export class NotificationService {
       build: {
         id: result.id,
         triggerId: result.triggerId,
-        status: result.status
+        status: result.status,
       },
       result: {
         status: result.status,
         duration: result.duration,
         artifactCount: result.artifacts.length,
-        metrics: result.metrics
+        metrics: result.metrics,
       },
       timestamp: new Date(),
-      message: `Build ${result.status}: ${result.id} (${this.formatDuration(result.duration)})`
+      message: `Build ${result.status}: ${result.id} (${this.formatDuration(result.duration)})`,
     };
 
     const defaultNotifications = this.getDefaultNotifications();
@@ -155,7 +155,7 @@ export class NotificationService {
     this.logger.info(`Sending deployment completion notifications: ${result.id}`, {
       deploymentId: result.deploymentId,
       environment: result.environment,
-      status: result.status
+      status: result.status,
     });
 
     const message = {
@@ -163,24 +163,24 @@ export class NotificationService {
       deployment: {
         id: result.deploymentId,
         environment: result.environment,
-        status: result.status
+        status: result.status,
       },
       result: {
         status: result.status,
         duration: result.duration,
-        services: result.services.map(s => ({
+        services: result.services.map((s) => ({
           name: s.name,
           status: s.status,
           replicas: s.replicas,
-          version: s.version
+          version: s.version,
         })),
-        healthChecks: result.healthChecks.map(h => ({
+        healthChecks: result.healthChecks.map((h) => ({
           name: h.name,
-          status: h.status
-        }))
+          status: h.status,
+        })),
       },
       timestamp: new Date(),
-      message: `Deployment ${result.status} to ${result.environment}: ${result.id}`
+      message: `Deployment ${result.status} to ${result.environment}: ${result.id}`,
     };
 
     const defaultNotifications = this.getDefaultNotifications();
@@ -194,7 +194,7 @@ export class NotificationService {
     this.logger.info(`Sending deployment failure notifications: ${result.id}`, {
       deploymentId: result.deploymentId,
       environment: result.environment,
-      error: result.error
+      error: result.error,
     });
 
     const message = {
@@ -202,17 +202,17 @@ export class NotificationService {
       deployment: {
         id: result.deploymentId,
         environment: result.environment,
-        status: result.status
+        status: result.status,
       },
       result: {
         status: result.status,
         error: result.error,
         duration: result.duration,
-        failedServices: result.services.filter(s => s.status === 'failed')
+        failedServices: result.services.filter((s) => s.status === 'failed'),
       },
       timestamp: new Date(),
       message: `Deployment FAILED to ${result.environment}: ${result.error}`,
-      severity: 'critical'
+      severity: 'critical',
     };
 
     const defaultNotifications = this.getDefaultNotifications();
@@ -225,7 +225,7 @@ export class NotificationService {
   async notifyRollbackComplete(result: RollbackResult): Promise<void> {
     this.logger.info(`Sending rollback completion notifications: ${result.id}`, {
       deploymentId: result.deploymentId,
-      status: result.status
+      status: result.status,
     });
 
     const message = {
@@ -233,17 +233,17 @@ export class NotificationService {
       rollback: {
         id: result.id,
         deploymentId: result.deploymentId,
-        status: result.status
+        status: result.status,
       },
       result: {
         status: result.status,
         duration: result.duration,
         previousVersion: result.previousVersion,
         currentVersion: result.currentVersion,
-        reason: result.reason
+        reason: result.reason,
       },
       timestamp: new Date(),
-      message: `Rollback ${result.status}: ${result.deploymentId} (${result.reason})`
+      message: `Rollback ${result.status}: ${result.deploymentId} (${result.reason})`,
     };
 
     const defaultNotifications = this.getDefaultNotifications();
@@ -252,18 +252,15 @@ export class NotificationService {
 
   // Private helper methods
 
-  private async sendNotifications(
-    notifications: any[], 
-    message: any
-  ): Promise<void> {
+  private async sendNotifications(notifications: any[], message: any): Promise<void> {
     for (const notification of notifications) {
       if (!notification.enabled) {
         continue;
       }
 
       // Check if this event type should trigger notifications
-      const shouldNotify = notification.events.some((event: NotificationEvent) => 
-        event.type === message.type && event.enabled
+      const shouldNotify = notification.events.some(
+        (event: NotificationEvent) => event.type === message.type && event.enabled
       );
 
       if (!shouldNotify) {
@@ -283,7 +280,7 @@ export class NotificationService {
           this.logger.error(`Failed to send notification to ${channel.type}`, {
             channel: channel.type,
             error: error.message,
-            messageType: message.type
+            messageType: message.type,
           });
         }
       }
@@ -316,27 +313,27 @@ export class NotificationService {
     }
 
     const slackMessage = this.formatSlackMessage(message);
-    
+
     await axios.post(webhookUrl, slackMessage, {
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     this.logger.debug('Slack notification sent', {
       channel: channel.configuration.channel,
-      messageType: message.type
+      messageType: message.type,
     });
   }
 
   private async sendEmailNotification(channel: NotificationChannel, message: any): Promise<void> {
     // Email notification implementation would go here
     // This would typically integrate with an email service like SendGrid, SES, etc.
-    
+
     this.logger.info('Email notification sent (simulated)', {
       recipients: channel.recipients,
       subject: this.getEmailSubject(message),
-      messageType: message.type
+      messageType: message.type,
     });
   }
 
@@ -349,25 +346,25 @@ export class NotificationService {
     const headers = {
       'Content-Type': 'application/json',
       'User-Agent': 'TNF-Pipeline-Notifier/1.0',
-      ...channel.configuration.headers
+      ...channel.configuration.headers,
     };
 
     await axios.post(webhookUrl, message, { headers });
 
     this.logger.debug('Webhook notification sent', {
       url: webhookUrl,
-      messageType: message.type
+      messageType: message.type,
     });
   }
 
   private async sendSMSNotification(channel: NotificationChannel, message: any): Promise<void> {
     // SMS notification implementation would go here
     // This would typically integrate with a service like Twilio, AWS SNS, etc.
-    
+
     this.logger.info('SMS notification sent (simulated)', {
       recipients: channel.recipients,
       message: this.getSMSMessage(message),
-      messageType: message.type
+      messageType: message.type,
     });
   }
 
@@ -376,21 +373,21 @@ export class NotificationService {
     const emoji = this.getSlackEmoji(message);
 
     let text = `${emoji} ${message.message}`;
-    
+
     const fields: any[] = [];
 
     if (message.pipeline) {
       fields.push({
         title: 'Pipeline',
         value: message.pipeline.name || message.pipeline.id,
-        short: true
+        short: true,
       });
 
       if (message.pipeline.environment) {
         fields.push({
           title: 'Environment',
           value: message.pipeline.environment,
-          short: true
+          short: true,
         });
       }
     }
@@ -399,7 +396,7 @@ export class NotificationService {
       fields.push({
         title: 'Environment',
         value: message.deployment.environment,
-        short: true
+        short: true,
       });
     }
 
@@ -408,7 +405,7 @@ export class NotificationService {
         fields.push({
           title: 'Duration',
           value: this.formatDuration(message.result.duration),
-          short: true
+          short: true,
         });
       }
 
@@ -416,18 +413,20 @@ export class NotificationService {
         fields.push({
           title: 'Error',
           value: message.result.error,
-          short: false
+          short: false,
         });
       }
     }
 
     return {
-      attachments: [{
-        color,
-        text,
-        fields,
-        ts: Math.floor(message.timestamp.getTime() / 1000)
-      }]
+      attachments: [
+        {
+          color,
+          text,
+          fields,
+          ts: Math.floor(message.timestamp.getTime() / 1000),
+        },
+      ],
     };
   }
 
@@ -498,13 +497,15 @@ export class NotificationService {
       return true;
     }
 
-    return conditions.every(condition => {
+    return conditions.every((condition) => {
       switch (condition.type) {
         case 'status':
           return message.result?.status === condition.value;
         case 'environment':
-          return message.pipeline?.environment === condition.value || 
-                 message.deployment?.environment === condition.value;
+          return (
+            message.pipeline?.environment === condition.value ||
+            message.deployment?.environment === condition.value
+          );
         case 'duration':
           const duration = message.result?.duration || 0;
           switch (condition.operator) {
@@ -523,7 +524,7 @@ export class NotificationService {
 
   private formatDuration(duration?: number): string {
     if (!duration) return '0s';
-    
+
     const seconds = Math.floor(duration / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
@@ -538,25 +539,29 @@ export class NotificationService {
   }
 
   private getDefaultNotifications(): any[] {
-    return [{
-      enabled: true,
-      channels: [{
-        type: 'slack',
-        configuration: {
-          webhookUrl: process.env.SLACK_WEBHOOK_URL,
-          channel: '#ci-cd'
-        },
-        recipients: []
-      }],
-      events: [
-        { type: 'pipeline_start', enabled: true },
-        { type: 'pipeline_complete', enabled: true },
-        { type: 'pipeline_failed', enabled: true },
-        { type: 'deployment_complete', enabled: true },
-        { type: 'deployment_failed', enabled: true },
-        { type: 'rollback_complete', enabled: true }
-      ],
-      conditions: []
-    }];
+    return [
+      {
+        enabled: true,
+        channels: [
+          {
+            type: 'slack',
+            configuration: {
+              webhookUrl: process.env.SLACK_WEBHOOK_URL,
+              channel: '#ci-cd',
+            },
+            recipients: [],
+          },
+        ],
+        events: [
+          { type: 'pipeline_start', enabled: true },
+          { type: 'pipeline_complete', enabled: true },
+          { type: 'pipeline_failed', enabled: true },
+          { type: 'deployment_complete', enabled: true },
+          { type: 'deployment_failed', enabled: true },
+          { type: 'rollback_complete', enabled: true },
+        ],
+        conditions: [],
+      },
+    ];
   }
 }

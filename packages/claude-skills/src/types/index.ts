@@ -89,7 +89,7 @@ export enum SkillCategory {
   TESTING = 'testing',
   REFACTORING = 'refactoring',
   DOCUMENTATION = 'documentation',
-  OTHER = 'other'
+  OTHER = 'other',
 }
 
 /**

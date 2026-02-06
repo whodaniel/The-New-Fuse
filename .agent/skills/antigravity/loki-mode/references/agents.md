@@ -118,7 +118,7 @@ completion.
 
 - PostgreSQL, MySQL, MongoDB, Redis
 - Schema design, normalization
-- Migrations (Prisma, Drizzle, Knex, Alembic)
+- Migrations (Drizzle, Drizzle, Knex, Alembic)
 - Query optimization, indexing
 - Replication, sharding strategies
 - Backup and recovery

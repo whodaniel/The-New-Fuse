@@ -140,9 +140,9 @@ console.log("✅ All TypeScript errors fixed successfully!");
 // Now run the build process
 console.log("🔧 Running the build process with database migrations skipped...");
 try {
-  // First generate Prisma client
-  console.log("✅ Generating Prisma client...");
-  execSync('cd packages/database && npx prisma generate', { stdio: 'inherit' });
+  // First generate Drizzle client
+  console.log("✅ Generating Drizzle client...");
+  execSync('cd packages/database && npx drizzle generate', { stdio: 'inherit' });
   
   // Then run the build skipping database package
   console.log("✅ Building all packages except database...");

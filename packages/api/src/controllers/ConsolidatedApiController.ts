@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Put, Body, Query, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
 import { AgentService } from '../services/agent.service';
 import { WorkflowService } from '../services/workflow.service';
@@ -51,7 +51,7 @@ export interface ResourceWithRelations {
 export class ConsolidatedApiController {
   constructor(
     private readonly agentService: AgentService,
-    private readonly workflowService: WorkflowService,
+    private readonly workflowService: WorkflowService
     // private readonly taskService: TaskService,
     // private readonly userService: UserService,
   ) {}
@@ -62,7 +62,7 @@ export class ConsolidatedApiController {
   @ApiResponse({ status: 200, description: 'Batch operation results' })
   async batchAgentOperations(
     @Body() request: BatchOperationRequest<any>,
-    @CurrentUser() user: UserModel,
+    @CurrentUser() user: UserModel
   ): Promise<BatchOperationResponse<any>> {
     const startTime = Date.now();
     const results: Array<{
@@ -78,7 +78,10 @@ export class ConsolidatedApiController {
         let result;
         switch (operation.action) {
           case 'create':
-            result = await this.agentService.createAgent({ ...operation.data, userId: user.id }, user.id);
+            result = await this.agentService.createAgent(
+              { ...operation.data, userId: user.id },
+              user.id
+            );
             break;
           case 'update':
             result = await this.agentService.updateAgent(operation.id!, operation.data, user.id);
@@ -87,7 +90,7 @@ export class ConsolidatedApiController {
             result = await this.agentService.deleteAgent(operation.id!, user.id);
             break;
         }
-        
+
         results.push({
           id: operation.id || (result as any).id,
           action: operation.action,
@@ -105,7 +108,7 @@ export class ConsolidatedApiController {
     }
 
     const duration = Date.now() - startTime;
-    const successful = results.filter(r => r.success).length;
+    const successful = results.filter((r) => r.success).length;
 
     return {
       results,
@@ -123,12 +126,13 @@ export class ConsolidatedApiController {
   @ApiOperation({ summary: 'Fetch multiple resources in a single request' })
   @ApiResponse({ status: 200, description: 'Multi-resource response' })
   async multiFetch(
-    @Body() request: {
+    @Body()
+    request: {
       agents?: ResourceWithRelations[];
       workflows?: ResourceWithRelations[];
       tasks?: ResourceWithRelations[];
     },
-    @CurrentUser() user: UserModel,
+    @CurrentUser() user: UserModel
   ): Promise<{
     agents?: any[];
     workflows?: any[];
@@ -218,12 +222,18 @@ export class ConsolidatedApiController {
       // urgentTasks,
       systemHealth,
     ] = await Promise.all([
-      this.agentService.getAgents(user.id).then(agents => agents.length), // Assuming countByUser is not directly available
-      this.workflowService.getWorkflows(user.id).then(workflows => workflows.filter(w => (w.status as string) === 'ACTIVE').length),
+      this.agentService.getAgents(user.id).then((agents) => agents.length), // Assuming countByUser is not directly available
+      this.workflowService
+        .getWorkflows(user.id)
+        .then((workflows) => workflows.filter((w) => (w.status as string) === 'ACTIVE').length),
       // this.taskService.countPending(user.id),
       this.getRecentActivityCount(user.id),
-      this.agentService.getAgents(user.id).then(agents => agents.slice(0, 5)),
-      this.workflowService.getWorkflows(user.id).then(workflows => workflows.filter(w => (w.status as string) === 'ACTIVE').slice(0, 5)),
+      this.agentService.getAgents(user.id).then((agents) => agents.slice(0, 5)),
+      this.workflowService
+        .getWorkflows(user.id)
+        .then((workflows) =>
+          workflows.filter((w) => (w.status as string) === 'ACTIVE').slice(0, 5)
+        ),
       // this.taskService.findUrgent(user.id, 10),
       this.getSystemHealth(),
     ]);
@@ -256,19 +266,20 @@ export class ConsolidatedApiController {
   @ApiOperation({ summary: 'Update status for multiple resources' })
   @ApiResponse({ status: 200, description: 'Bulk status update results' })
   async bulkStatusUpdate(
-    @Body() request: {
+    @Body()
+    request: {
       agents?: Array<{ id: string; status: string }>;
       workflows?: Array<{ id: string; status: string }>;
       tasks?: Array<{ id: string; status: string }>;
     },
-    @CurrentUser() user: UserModel,
+    @CurrentUser() user: UserModel
   ): Promise<{
     updated: { agents: number; workflows: number; tasks: number };
     errors: Array<{ type: string; id: string; error: string }>;
   }> {
-    const results = { 
-      updated: { agents: 0, workflows: 0, tasks: 0 }, 
-      errors: [] as Array<{ type: string; id: string; error: string }> 
+    const results = {
+      updated: { agents: 0, workflows: 0, tasks: 0 },
+      errors: [] as Array<{ type: string; id: string; error: string }>,
     };
 
     // Update agent statuses
@@ -278,7 +289,11 @@ export class ConsolidatedApiController {
           await this.agentService.updateAgent(id, { status: status as any }, user.id); // Cast status to any for now
           results.updated.agents++;
         } catch (error) {
-          results.errors.push({ type: 'agent', id, error: error instanceof Error ? error.message : String(error) });
+          results.errors.push({
+            type: 'agent',
+            id,
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
       }
     }
@@ -290,7 +305,11 @@ export class ConsolidatedApiController {
           await this.workflowService.updateWorkflow(id, { status: status as any }, user.id); // Cast status to any for now
           results.updated.workflows++;
         } catch (error) {
-          results.errors.push({ type: 'workflow', id, error: error instanceof Error ? error.message : String(error) });
+          results.errors.push({
+            type: 'workflow',
+            id,
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
       }
     }
@@ -302,7 +321,11 @@ export class ConsolidatedApiController {
           // await this.taskService.updateStatus(id, status, user.id);
           // results.updated.tasks++;
         } catch (error) {
-          results.errors.push({ type: 'task', id, error: error instanceof Error ? error.message : String(error) });
+          results.errors.push({
+            type: 'task',
+            id,
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
       }
     }
@@ -318,7 +341,7 @@ export class ConsolidatedApiController {
     @Query('q') query: string,
     @Query('types') types: string = 'agents,workflows,tasks',
     @Query('limit') limit: number = 10,
-    @CurrentUser() user: UserModel,
+    @CurrentUser() user: UserModel
   ): Promise<{
     agents: any[];
     workflows: any[];
@@ -334,13 +357,23 @@ export class ConsolidatedApiController {
 
     if (searchTypes.includes('agents')) {
       searchPromises.push(
-        this.agentService.getAgents(user.id).then((r: any) => ({ type: 'agents', data: r.filter((agent: any) => agent.name.includes(query)).slice(0, limit) })) // Assuming search method is not directly available
+        this.agentService
+          .getAgents(user.id)
+          .then((r: any) => ({
+            type: 'agents',
+            data: r.filter((agent: any) => agent.name.includes(query)).slice(0, limit),
+          })) // Assuming search method is not directly available
       );
     }
 
     if (searchTypes.includes('workflows')) {
       searchPromises.push(
-        this.workflowService.getWorkflows(user.id).then((r: any) => ({ type: 'workflows', data: r.filter((workflow: any) => workflow.name.includes(query)).slice(0, limit) })) // Assuming search method is not directly available
+        this.workflowService
+          .getWorkflows(user.id)
+          .then((r: any) => ({
+            type: 'workflows',
+            data: r.filter((workflow: any) => workflow.name.includes(query)).slice(0, limit),
+          })) // Assuming search method is not directly available
       );
     }
 
@@ -353,7 +386,7 @@ export class ConsolidatedApiController {
 
     const searchResults = await Promise.all(searchPromises);
 
-    searchResults.forEach(result => {
+    searchResults.forEach((result) => {
       results[result.type] = result.data;
       results.total += result.data.length;
     });
@@ -370,7 +403,7 @@ export class ConsolidatedApiController {
   @ApiResponse({ status: 200, description: 'Analytics data' })
   async getAnalyticsSummary(
     @Query('period') period: string = '7d',
-    @CurrentUser() user: UserModel,
+    @CurrentUser() user: UserModel
   ): Promise<{
     period: string;
     metrics: {
@@ -390,8 +423,12 @@ export class ConsolidatedApiController {
     };
   }> {
     const [agentMetrics, workflowMetrics, performanceMetrics] = await Promise.all([
-      this.agentService.getAgents(user.id).then(agents => ({ count: agents.length, creationTrend: [] })), // Assuming getMetrics is not directly available
-      this.workflowService.getWorkflows(user.id).then(workflows => ({ count: workflows.length, executionTrend: [] })), // Assuming getMetrics is not directly available
+      this.agentService
+        .getAgents(user.id)
+        .then((agents) => ({ count: agents.length, creationTrend: [] })), // Assuming getMetrics is not directly available
+      this.workflowService
+        .getWorkflows(user.id)
+        .then((workflows) => ({ count: workflows.length, executionTrend: [] })), // Assuming getMetrics is not directly available
       // this.taskService.getMetrics(user.id, period),
       this.getPerformanceMetrics(period),
     ]);

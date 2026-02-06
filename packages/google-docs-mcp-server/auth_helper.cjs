@@ -1,14 +1,13 @@
-
 const { spawn } = require('child_process');
 const readline = require('readline');
 
 const child = spawn('node', ['dist/server.js'], {
-  stdio: ['pipe', 'pipe', 'pipe']
+  stdio: ['pipe', 'pipe', 'pipe'],
 });
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 child.stderr.on('data', (data) => {
@@ -19,10 +18,10 @@ child.stderr.on('data', (data) => {
     console.log('\n\n--------------- AUTH URL ---------------');
     console.log(url);
     console.log('----------------------------------------\n\n');
-    
+
     rl.question('Paste the code here: ', (code) => {
-        child.stdin.write(code + '\n');
-        rl.close();
+      child.stdin.write(code + '\n');
+      rl.close();
     });
   } else {
     process.stdout.write(output);

@@ -4,7 +4,7 @@ export enum MemoryType {
   SYSTEM = 'system',
   CONTEXT = 'context',
   KNOWLEDGE = 'knowledge',
-  TEMP = 'temp'
+  TEMP = 'temp',
 }
 
 export interface MemoryDistribution {

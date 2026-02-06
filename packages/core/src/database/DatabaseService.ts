@@ -73,13 +73,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       logger.info('Starting DatabaseService');
 
       const dbConfig = this.configService.getDatabaseConfig();
-      
+
       // Initialize connection pool
       await this.initializeConnectionPool(dbConfig);
-      
+
       // Start health check interval
       this.healthCheckInterval = setInterval(() => {
-        this.performHealthCheck().catch(error => {
+        this.performHealthCheck().catch((error) => {
           logger.error('Database health check failed', error as Error);
         });
       }, 30000); // Check every 30 seconds
@@ -92,9 +92,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     } catch (error) {
       this.state = ServiceState.ERROR;
       logger.error('Failed to start DatabaseService', error as Error);
-      throw new DatabaseError('Failed to start database service', 'DATABASE_INITIALIZATION_FAILED', {
-        error: (error as Error).message,
-      });
+      throw new DatabaseError(
+        'Failed to start database service',
+        'DATABASE_INITIALIZATION_FAILED',
+        {
+          error: (error as Error).message,
+        },
+      );
     }
   }
 
@@ -133,25 +137,25 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   // Query execution methods
   async query<T = any>(sql: string, params: any[] = []): Promise<QueryResult<T>> {
     this.ensureRunning();
-    
+
     const startTime = Date.now();
     const queryId = this.generateQueryId();
-    
+
     try {
       logger.debug('Executing query', { queryId, sql: this.sanitizeSql(sql) });
-      
+
       // In production, this would use a real database connection
       const mockResult = await this.executeQuery(sql, params);
-      
+
       const executionTime = Date.now() - startTime;
       this.updateQueryStats(executionTime, false);
-      
-      logger.debug('Query executed successfully', { 
-        queryId, 
-        executionTime, 
-        rowCount: mockResult.data.length 
+
+      logger.debug('Query executed successfully', {
+        queryId,
+        executionTime,
+        rowCount: mockResult.data.length,
       });
-      
+
       return {
         data: mockResult.data,
         count: mockResult.data.length,
@@ -161,23 +165,19 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     } catch (error) {
       const executionTime = Date.now() - startTime;
       this.updateQueryStats(executionTime, true);
-      
-      logger.error('Query execution failed', error as Error, { 
-        queryId, 
+
+      logger.error('Query execution failed', error as Error, {
+        queryId,
         sql: this.sanitizeSql(sql),
         executionTime,
       });
-      
-      throw new DatabaseError(
-        'Query execution failed',
-        'DATABASE_QUERY_FAILED',
-        {
-          queryId,
-          sql: this.sanitizeSql(sql),
-          error: (error as Error).message,
-          executionTime,
-        }
-      );
+
+      throw new DatabaseError('Query execution failed', 'DATABASE_QUERY_FAILED', {
+        queryId,
+        sql: this.sanitizeSql(sql),
+        error: (error as Error).message,
+        executionTime,
+      });
     }
   }
 
@@ -195,37 +195,43 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     const columns = Object.keys(data);
     const values = Object.values(data);
     const placeholders = columns.map(() => '?').join(', ');
-    
+
     const sql = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders})`;
     return await this.query<T>(sql, values);
   }
 
   async update<T = any>(
-    table: string, 
-    data: Record<string, any>, 
-    where: Record<string, any>
+    table: string,
+    data: Record<string, any>,
+    where: Record<string, any>,
   ): Promise<QueryResult<T>> {
-    const setClause = Object.keys(data).map(key => `${key} = ?`).join(', ');
-    const whereClause = Object.keys(where).map(key => `${key} = ?`).join(' AND ');
-    
+    const setClause = Object.keys(data)
+      .map((key) => `${key} = ?`)
+      .join(', ');
+    const whereClause = Object.keys(where)
+      .map((key) => `${key} = ?`)
+      .join(' AND ');
+
     const sql = `UPDATE ${table} SET ${setClause} WHERE ${whereClause}`;
     const params = [...Object.values(data), ...Object.values(where)];
-    
+
     return await this.query<T>(sql, params);
   }
 
   async delete<T = any>(table: string, where: Record<string, any>): Promise<QueryResult<T>> {
-    const whereClause = Object.keys(where).map(key => `${key} = ?`).join(' AND ');
+    const whereClause = Object.keys(where)
+      .map((key) => `${key} = ?`)
+      .join(' AND ');
     const sql = `DELETE FROM ${table} WHERE ${whereClause}`;
     const params = Object.values(where);
-    
+
     return await this.query<T>(sql, params);
   }
 
   // Transaction management
   async transaction<T>(operations: (context: TransactionContext) => Promise<T>): Promise<T> {
     this.ensureRunning();
-    
+
     const transactionId = this.generateTransactionId();
     const context: TransactionContext = {
       id: transactionId,
@@ -233,26 +239,26 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       operations: [],
       isActive: true,
     };
-    
+
     logger.debug('Starting transaction', { transactionId });
-    
+
     try {
       // In production, this would begin a real database transaction
       await this.beginTransaction(transactionId);
-      
+
       const result = await operations(context);
-      
+
       // Commit transaction
       await this.commitTransaction(transactionId);
       context.isActive = false;
-      
+
       const duration = Date.now() - context.startTime.getTime();
-      logger.info('Transaction completed successfully', { 
-        transactionId, 
+      logger.info('Transaction completed successfully', {
+        transactionId,
         duration,
         operationsCount: context.operations.length,
       });
-      
+
       return result;
     } catch (error) {
       // Rollback transaction
@@ -262,30 +268,26 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       } catch (rollbackError) {
         logger.error('Transaction rollback failed', rollbackError as Error, { transactionId });
       }
-      
+
       const duration = Date.now() - context.startTime.getTime();
-      logger.error('Transaction failed', error as Error, { 
-        transactionId, 
+      logger.error('Transaction failed', error as Error, {
+        transactionId,
         duration,
         operationsCount: context.operations.length,
       });
-      
-      throw new DatabaseError(
-        'Transaction failed',
-        'DATABASE_TRANSACTION_FAILED',
-        {
-          transactionId,
-          error: (error as Error).message,
-          duration,
-        }
-      );
+
+      throw new DatabaseError('Transaction failed', 'DATABASE_TRANSACTION_FAILED', {
+        transactionId,
+        error: (error as Error).message,
+        duration,
+      });
     }
   }
 
   // Connection management
   async getConnection(): Promise<DatabaseConnection> {
     this.ensureRunning();
-    
+
     const connectionId = this.generateConnectionId();
     const connection: DatabaseConnection = {
       id: connectionId,
@@ -294,10 +296,10 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       lastUsed: new Date(),
       queryCount: 0,
     };
-    
+
     this.connections.set(connectionId, connection);
     this.updateConnectionStats();
-    
+
     logger.debug('Created database connection', { connectionId });
     return connection;
   }
@@ -308,9 +310,9 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       connection.isActive = false;
       this.connections.delete(connectionId);
       this.updateConnectionStats();
-      
-      logger.debug('Released database connection', { 
-        connectionId, 
+
+      logger.debug('Released database connection', {
+        connectionId,
         queryCount: connection.queryCount,
         lifetime: Date.now() - connection.createdAt.getTime(),
       });
@@ -332,9 +334,9 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       const startTime = Date.now();
       await this.query('SELECT 1 as health_check');
       const responseTime = Date.now() - startTime;
-      
+
       const stats = this.getStats();
-      
+
       return {
         status: 'healthy',
         details: {
@@ -368,11 +370,9 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   // Private methods
   private ensureRunning(): void {
     if (this.state !== ServiceState.RUNNING) {
-      throw new DatabaseError(
-        'DatabaseService is not running',
-        'DATABASE_SERVICE_NOT_RUNNING',
-        { state: this.state }
-      );
+      throw new DatabaseError('DatabaseService is not running', 'DATABASE_SERVICE_NOT_RUNNING', {
+        state: this.state,
+      });
     }
   }
 
@@ -382,25 +382,28 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       maxConnections: config.maxConnections,
       connectionTimeout: config.connectionTimeout,
     });
-    
+
     // Simulate connection pool initialization
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
   private async closeAllConnections(): Promise<void> {
     const connectionIds = Array.from(this.connections.keys());
-    
+
     for (const connectionId of connectionIds) {
       await this.releaseConnection(connectionId);
     }
-    
+
     logger.info('Closed all database connections', { count: connectionIds.length });
   }
 
-  private async executeQuery(sql: string, params: any[]): Promise<{ data: any[]; affectedRows?: number }> {
+  private async executeQuery(
+    sql: string,
+    params: any[],
+  ): Promise<{ data: any[]; affectedRows?: number }> {
     // Mock query execution - in production, this would use a real database driver
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 50)); // Simulate query time
-    
+    await new Promise((resolve) => setTimeout(resolve, Math.random() * 50)); // Simulate query time
+
     // Return mock data based on query type
     if (sql.toLowerCase().includes('select')) {
       return {
@@ -440,21 +443,23 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
 
   private updateQueryStats(executionTime: number, isError: boolean): void {
     this.stats.totalQueries++;
-    
+
     if (isError) {
       this.stats.errorCount++;
     }
-    
+
     // Update average query time (simple moving average)
-    this.stats.averageQueryTime = (
-      (this.stats.averageQueryTime * (this.stats.totalQueries - 1)) + executionTime
-    ) / this.stats.totalQueries;
+    this.stats.averageQueryTime =
+      (this.stats.averageQueryTime * (this.stats.totalQueries - 1) + executionTime) /
+      this.stats.totalQueries;
   }
 
   private updateConnectionStats(): void {
-    const activeConnections = Array.from(this.connections.values()).filter(c => c.isActive).length;
+    const activeConnections = Array.from(this.connections.values()).filter(
+      (c) => c.isActive,
+    ).length;
     const totalConnections = this.connections.size;
-    
+
     this.stats.totalConnections = totalConnections;
     this.stats.activeConnections = activeConnections;
     this.stats.idleConnections = totalConnections - activeConnections;

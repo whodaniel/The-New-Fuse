@@ -22,7 +22,7 @@ export class YouTubeIntegrator {
         description: 'Sample Description',
         url: `https://youtube.com/watch?v=${videoId}`,
         duration: 300,
-        publishedAt: new Date()
+        publishedAt: new Date(),
       };
     } catch (error) {
       this.logger.error(`Failed to fetch video ${videoId}`, error);

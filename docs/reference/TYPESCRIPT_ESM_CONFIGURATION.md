@@ -2,15 +2,22 @@
 
 ## Overview
 
-This document provides guidance on configuring TypeScript projects to work properly with ECMAScript Modules (ESM). This is particularly relevant for projects that use `"type": "module"` in their package.json, indicating they use native ES modules instead of CommonJS.
+This document provides guidance on configuring TypeScript projects to work
+properly with ECMAScript Modules (ESM). This is particularly relevant for
+projects that use `"type": "module"` in their package.json, indicating they use
+native ES modules instead of CommonJS.
 
 ## Common Issues
 
-When working with TypeScript and ES modules, you may encounter these common issues:
+When working with TypeScript and ES modules, you may encounter these common
+issues:
 
-1. **Unknown File Extension Error**: `ERR_UNKNOWN_FILE_EXTENSION: Unknown file extension ".ts"`
-2. **Module Resolution Errors**: Path aliases like `@/*` don't work with native ESM
-3. **ESM/CommonJS Compatibility**: `exports is not defined in ES module scope` or similar errors
+1. **Unknown File Extension Error**:
+   `ERR_UNKNOWN_FILE_EXTENSION: Unknown file extension ".ts"`
+2. **Module Resolution Errors**: Path aliases like `@/*` don't work with native
+   ESM
+3. **ESM/CommonJS Compatibility**: `exports is not defined in ES module scope`
+   or similar errors
 4. **Missing File Extensions**: ESM requires explicit file extensions in imports
 
 ## Configuration Guide
@@ -82,20 +89,23 @@ Configure nodemon to use ts-node with proper ESM support:
 
 In TypeScript ESM projects, you need to:
 
-1. **Add `.js` extensions** to all local imports, even though you're importing `.ts` files:
+1. **Add `.js` extensions** to all local imports, even though you're importing
+   `.ts` files:
+
    ```typescript
    // Correct for ESM
    import { MyClass } from './my-class.js';
-   
+
    // Won't work in ESM
    import { MyClass } from './my-class';
    ```
 
 2. **Use relative imports** instead of path aliases when possible:
+
    ```typescript
    // Better for ESM compatibility
    import { MyClass } from '../components/my-class.js';
-   
+
    // May need special handling
    import { MyClass } from '@/components/my-class';
    ```
@@ -108,16 +118,16 @@ When converting from CommonJS to ESM:
 
 1. Replace CommonJS syntax with ESM equivalents:
 
-   | CommonJS | ESM |
-   |----------|-----|
+   | CommonJS                     | ESM                     |
+   | ---------------------------- | ----------------------- |
    | `const { x } = require('y')` | `import { x } from 'y'` |
-   | `exports.x = y` | `export const x = y` |
-   | `module.exports = x` | `export default x` |
+   | `exports.x = y`              | `export const x = y`    |
+   | `module.exports = x`         | `export default x`      |
 
 2. Remove CommonJS compatibility code:
    ```typescript
    // Remove this
-   Object.defineProperty(exports, "__esModule", { value: true });
+   Object.defineProperty(exports, '__esModule', { value: true });
    ```
 
 ## Troubleshooting
@@ -151,18 +161,21 @@ For libraries that only work with CommonJS:
 If you see experimental warnings in your console:
 
 1. **Replace `--loader ts-node/esm` with `--import ts-node/register/esm`**
+
    ```json
    "exec": "node --import ts-node/register/esm src/index.ts"
    ```
 
 2. **Remove `experimentalSpecifierResolution` from your ts-node configuration**
+
    ```json
    "ts-node": {
      "esm": true
    }
    ```
 
-3. **Use `tsconfig-paths` package** for path alias resolution instead of experimental flags
+3. **Use `tsconfig-paths` package** for path alias resolution instead of
+   experimental flags
 
 ## Example Project Structure
 
@@ -186,14 +199,20 @@ my-project/
 
 ## Implementation Notes - May 16, 2025
 
-The New Fuse project successfully implemented the ESM configuration. Here's what we learned:
+The New Fuse project successfully implemented the ESM configuration. Here's what
+we learned:
 
-1. **Experimental Warnings**: Running with `--experimental-specifier-resolution=node` shows warnings that can be safely ignored:
+1. **Experimental Warnings**: Running with
+   `--experimental-specifier-resolution=node` shows warnings that can be safely
+   ignored:
+
    ```
    ExperimentalWarning: The Node.js specifier resolution flag is experimental. It could change or be removed at any time.
    ```
 
-2. **Multiple Apps Coordination**: When working with multiple interconnected apps (API and backend), all apps must use consistent ESM configuration. We standardized:
+2. **Multiple Apps Coordination**: When working with multiple interconnected
+   apps (API and backend), all apps must use consistent ESM configuration. We
+   standardized:
    - All apps use the same nodemon.json configuration
    - All apps use compatible tsconfig.node.json settings
    - Path aliases were handled consistently across apps
@@ -205,10 +224,12 @@ The New Fuse project successfully implemented the ESM configuration. Here's what
    - Then fix import statements
    - Lastly, update package.json scripts
 
-4. **Verification**: A successful implementation shows servers starting on their respective ports with no module resolution errors.
+4. **Verification**: A successful implementation shows servers starting on their
+   respective ports with no module resolution errors.
 
-See `docs/DEVELOPMENT-LOG.md` for a detailed account of the specific fixes applied to The New Fuse project.
+See `docs/DEVELOPMENT-LOG.md` for a detailed account of the specific fixes
+applied to The New Fuse project.
 
 ---
 
-*Last updated: May 16, 2025 (Modern ESM configuration)*
+_Last updated: May 16, 2025 (Modern ESM configuration)_

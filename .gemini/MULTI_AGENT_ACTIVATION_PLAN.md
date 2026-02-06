@@ -206,9 +206,9 @@ const UNIVERSAL_ONBOARDING = {
 
 ## 🎯 Phase 3: Expand Agent Type Schema
 
-### Current AgentType Enum (Prisma)
+### Current AgentType Enum (Drizzle)
 
-```prisma
+```drizzle
 enum AgentType {
   BASIC
   CONVERSATIONAL

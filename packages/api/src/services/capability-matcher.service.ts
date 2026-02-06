@@ -7,9 +7,9 @@
 
 import {
   AgentCapability,
-  DiscoveredAgent,
   CapabilityComposition,
   CapabilityDependency,
+  DiscoveredAgent,
 } from '../types/agent-discovery.types';
 
 export interface MatchScore {
@@ -271,11 +271,7 @@ export class CapabilityMatcher {
     }
 
     // Find composition chains
-    const chains = this.findCompositionChains(
-      requiredCapabilities,
-      capabilityMap,
-      maxChainLength
-    );
+    const chains = this.findCompositionChains(requiredCapabilities, capabilityMap, maxChainLength);
 
     for (const chain of chains) {
       const composition = this.buildComposition(chain, requiredCapabilities);
@@ -363,9 +359,7 @@ export class CapabilityMatcher {
       const agent = chain[i];
       const capabilityName = capabilities[i];
 
-      const capability = agent.registration.capabilities.find(
-        (cap) => cap.name === capabilityName
-      );
+      const capability = agent.registration.capabilities.find((cap) => cap.name === capabilityName);
 
       if (capability?.pricing?.perInvocation) {
         totalCost += capability.pricing.perInvocation;

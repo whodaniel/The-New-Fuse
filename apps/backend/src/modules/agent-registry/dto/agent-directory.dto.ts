@@ -1,6 +1,6 @@
-import { IsString, IsOptional, IsBoolean, IsArray, IsNumber, Min, Max } from 'class-validator';
-import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import { IsArray, IsBoolean, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class SearchAgentsDto {
   @ApiPropertyOptional({ description: 'Search query' })
@@ -35,6 +35,21 @@ export class SearchAgentsDto {
   @IsOptional()
   tags?: string[];
 
+  @ApiPropertyOptional({ description: 'Tenant identifier filter' })
+  @IsString()
+  @IsOptional()
+  tenantId?: string;
+
+  @ApiPropertyOptional({ description: 'Organization identifier filter' })
+  @IsString()
+  @IsOptional()
+  organizationId?: string;
+
+  @ApiPropertyOptional({ description: 'Agency identifier filter' })
+  @IsString()
+  @IsOptional()
+  agencyId?: string;
+
   @ApiPropertyOptional({ description: 'Page number', default: 1 })
   @IsNumber()
   @IsOptional()
@@ -50,7 +65,10 @@ export class SearchAgentsDto {
   @Type(() => Number)
   limit?: number = 20;
 
-  @ApiPropertyOptional({ description: 'Sort by field', enum: ['rating', 'usageCount', 'lastActiveAt', 'createdAt'] })
+  @ApiPropertyOptional({
+    description: 'Sort by field',
+    enum: ['rating', 'usageCount', 'lastActiveAt', 'createdAt'],
+  })
   @IsString()
   @IsOptional()
   sortBy?: 'rating' | 'usageCount' | 'lastActiveAt' | 'createdAt';

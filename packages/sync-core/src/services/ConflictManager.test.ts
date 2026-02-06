@@ -1,11 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictManager } from './ConflictManager';
+import { DatabaseService, SyncConflict, SyncState } from '@the-new-fuse/database/generated/db';
 import { SyncDatabaseService } from '../database/SyncDatabaseService';
-import { PrismaClient, SyncConflict, SyncState } from '@the-new-fuse/database/generated/prisma';
-import { ConflictResolutionStrategy } from '../types';
+import { ConflictManager } from './ConflictManager';
 
-// Mock PrismaClient
-const mockPrismaClient = {
+// Mock DatabaseService
+const mockDbClient = {
   $transaction: jest.fn(),
   syncConflict: {
     create: jest.fn(),
@@ -34,7 +33,7 @@ const mockSyncDatabaseService = {
 
 describe('ConflictManager', () => {
   let service: ConflictManager;
-  let prisma: jest.Mocked<PrismaClient>;
+  let db: jest.Mocked<DatabaseService>;
   let syncDb: jest.Mocked<SyncDatabaseService>;
 
   beforeEach(async () => {
@@ -42,8 +41,8 @@ describe('ConflictManager', () => {
       providers: [
         ConflictManager,
         {
-          provide: PrismaClient,
-          useValue: mockPrismaClient,
+          provide: DatabaseService,
+          useValue: mockDbClient,
         },
         {
           provide: SyncDatabaseService,
@@ -53,7 +52,7 @@ describe('ConflictManager', () => {
     }).compile();
 
     service = module.get<ConflictManager>(ConflictManager);
-    prisma = module.get(PrismaClient);
+    db = module.get(DatabaseService);
     syncDb = module.get(SyncDatabaseService);
 
     // Reset all mocks
@@ -102,7 +101,7 @@ describe('ConflictManager', () => {
       );
 
       expect(result).toBeNull();
-      
+
       // Restore original method
       (service as any).calculateChecksum = originalCalculateChecksum;
     });
@@ -140,9 +139,9 @@ describe('ConflictManager', () => {
       };
 
       syncDb.getSyncState.mockResolvedValue(mockSyncState);
-      
+
       // Mock transaction
-      prisma.$transaction.mockImplementation(async (callback) => {
+      db.$transaction.mockImplementation(async (callback) => {
         const mockTx = {
           syncConflict: {
             create: jest.fn().mockResolvedValue(mockConflict),
@@ -165,7 +164,7 @@ describe('ConflictManager', () => {
       );
 
       expect(result).toEqual(mockConflict);
-      expect(prisma.$transaction).toHaveBeenCalled();
+      expect(db.$transaction).toHaveBeenCalled();
     });
 
     it('should handle tenant-specific conflicts', async () => {
@@ -219,7 +218,7 @@ describe('ConflictManager', () => {
       };
 
       // Mock transaction
-      prisma.$transaction.mockImplementation(async (callback) => {
+      db.$transaction.mockImplementation(async (callback) => {
         const mockTx = {
           syncConflict: {
             findUnique: jest.fn().mockResolvedValue(mockConflict),
@@ -241,11 +240,7 @@ describe('ConflictManager', () => {
 
       syncDb.upsertSyncState.mockResolvedValue({} as any);
 
-      const result = await service.resolveConflict(
-        conflictId,
-        'latest_wins',
-        'test-resolver'
-      );
+      const result = await service.resolveConflict(conflictId, 'latest_wins', 'test-resolver');
 
       expect(result.strategy).toBe('latest_wins');
       expect(result.resolvedData).toEqual(mockConflict.remoteVersion);
@@ -274,7 +269,7 @@ describe('ConflictManager', () => {
       };
 
       // Mock transaction
-      prisma.$transaction.mockImplementation(async (callback) => {
+      db.$transaction.mockImplementation(async (callback) => {
         const mockTx = {
           syncConflict: {
             findUnique: jest.fn().mockResolvedValue(mockConflict),
@@ -296,11 +291,7 @@ describe('ConflictManager', () => {
 
       syncDb.upsertSyncState.mockResolvedValue({} as any);
 
-      const result = await service.resolveConflict(
-        conflictId,
-        'merge',
-        'test-resolver'
-      );
+      const result = await service.resolveConflict(conflictId, 'merge', 'test-resolver');
 
       expect(result.strategy).toBe('merge');
       expect(result.resolvedData).toMatchObject({
@@ -327,7 +318,7 @@ describe('ConflictManager', () => {
       };
 
       // Mock transaction
-      prisma.$transaction.mockImplementation(async (callback) => {
+      db.$transaction.mockImplementation(async (callback) => {
         const mockTx = {
           syncConflict: {
             findUnique: jest.fn().mockResolvedValue(mockConflict),
@@ -358,7 +349,7 @@ describe('ConflictManager', () => {
       };
 
       // Mock transaction
-      prisma.$transaction.mockImplementation(async (callback) => {
+      db.$transaction.mockImplementation(async (callback) => {
         const mockTx = {
           syncConflict: {
             findUnique: jest.fn().mockResolvedValue(mockConflict),
@@ -367,9 +358,9 @@ describe('ConflictManager', () => {
         return await callback(mockTx);
       });
 
-      await expect(
-        service.resolveConflict(conflictId, 'manual', 'test-resolver')
-      ).rejects.toThrow('Manual resolution strategy requires human intervention');
+      await expect(service.resolveConflict(conflictId, 'manual', 'test-resolver')).rejects.toThrow(
+        'Manual resolution strategy requires human intervention'
+      );
     });
   });
 
@@ -451,7 +442,7 @@ describe('ConflictManager', () => {
       ];
 
       syncDb.getPendingConflicts.mockResolvedValue(mockConflicts);
-      
+
       // Mock the resolveConflict method
       const resolveConflictSpy = jest.spyOn(service, 'resolveConflict').mockResolvedValue({
         strategy: 'latest_wins',
@@ -489,7 +480,7 @@ describe('ConflictManager', () => {
       ];
 
       syncDb.getPendingConflicts.mockResolvedValue(mockConflicts);
-      
+
       const resolveConflictSpy = jest.spyOn(service, 'resolveConflict');
 
       const result = await service.autoResolveConflicts();
@@ -546,7 +537,7 @@ describe('ConflictManager', () => {
 
     it('should handle transaction errors in resolveConflict', async () => {
       const error = new Error('Transaction failed');
-      prisma.$transaction.mockRejectedValue(error);
+      db.$transaction.mockRejectedValue(error);
 
       await expect(
         service.resolveConflict('conflict-id', 'latest_wins', 'test-resolver')

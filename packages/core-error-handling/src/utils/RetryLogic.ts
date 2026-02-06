@@ -6,8 +6,8 @@
  * including exponential backoff, jitter, and circuit breaker patterns.
  */
 
-import { Logger } from './Logger.js';
 import { ApplicationError } from '../errors/CustomErrors.js';
+import { Logger } from './Logger.js';
 
 /**
  * Retry configuration options
@@ -327,10 +327,7 @@ export class RetryHandler {
   /**
    * Execute operation with timeout
    */
-  private async executeWithTimeout<T>(
-    operation: () => Promise<T>,
-    timeout: number
-  ): Promise<T> {
+  private async executeWithTimeout<T>(operation: () => Promise<T>, timeout: number): Promise<T> {
     return Promise.race([
       operation(),
       new Promise<T>((_, reject) =>
@@ -518,20 +515,12 @@ export async function retry<T>(
  * Decorator for automatic retry
  */
 export function Retry(config?: Partial<RetryConfig>) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
       const operationName = `${target.constructor.name}.${propertyKey}`;
-      return retry(
-        () => originalMethod.apply(this, args),
-        config,
-        operationName
-      );
+      return retry(() => originalMethod.apply(this, args), config, operationName);
     };
 
     return descriptor;
@@ -541,17 +530,10 @@ export function Retry(config?: Partial<RetryConfig>) {
 /**
  * Circuit breaker decorator
  */
-export function WithCircuitBreaker(config: {
-  failureThreshold: number;
-  resetTimeout: number;
-}) {
+export function WithCircuitBreaker(config: { failureThreshold: number; resetTimeout: number }) {
   const breakers = new Map<string, CircuitBreaker<any>>();
 
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
     const breakerKey = `${target.constructor.name}.${propertyKey}`;
 
@@ -559,13 +541,10 @@ export function WithCircuitBreaker(config: {
       if (!breakers.has(breakerKey)) {
         breakers.set(
           breakerKey,
-          new CircuitBreaker(
-            () => originalMethod.apply(this, args),
-            {
-              ...config,
-              operationName: breakerKey,
-            }
-          )
+          new CircuitBreaker(() => originalMethod.apply(this, args), {
+            ...config,
+            operationName: breakerKey,
+          })
         );
       }
 

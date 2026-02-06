@@ -1,5 +1,5 @@
-import { defineConfig } from 'vitest/config';
 import { resolve } from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
@@ -21,10 +21,7 @@ export default defineConfig({
       ],
     },
     // Separate integration tests from unit tests
-    include: [
-      'src/**/*.test.ts',
-      'src/**/*.spec.ts',
-    ],
+    include: ['src/**/*.test.ts', 'src/**/*.spec.ts'],
     // Run integration tests separately
     pool: 'threads',
     poolOptions: {

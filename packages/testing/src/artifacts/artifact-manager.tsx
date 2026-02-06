@@ -1,6 +1,6 @@
 /**
  * Test Artifact Generation Utilities for The New Fuse
- * 
+ *
  * This module provides utilities for generating and managing test artifacts
  * such as snapshots, logs, and other outputs from tests.
  */
@@ -39,34 +39,37 @@ export interface CreateArtifactOptions {
 export class ArtifactManager {
   private baseDir: string;
   private runId: string;
-  
+
   /**
    * Create a new ArtifactManager
    * @param options Options for the artifact manager
    */
   constructor(options?: { baseDir?: string; runId?: string }) {
-    this.baseDir = options?.baseDir || process.env.TEST_ARTIFACTS_DIR || path.join(process.cwd(), 'test-artifacts');
+    this.baseDir =
+      options?.baseDir ||
+      process.env.TEST_ARTIFACTS_DIR ||
+      path.join(process.cwd(), 'test-artifacts');
     this.runId = options?.runId || process.env.TEST_RUN_ID || `test-run-${Date.now()}`;
-    
+
     // Ensure the base directory exists
     if (!fs.existsSync(this.baseDir)) {
       fs.mkdirSync(this.baseDir, { recursive: true });
     }
-    
+
     // Ensure the run directory exists
     const runDir = this.getRunDirectory();
     if (!fs.existsSync(runDir)) {
       fs.mkdirSync(runDir, { recursive: true });
     }
   }
-  
+
   /**
    * Get the directory for the current test run
    */
   getRunDirectory(): string {
     return path.join(this.baseDir, this.runId);
   }
-  
+
   /**
    * Create a new artifact
    * @param options Options for creating the artifact
@@ -79,17 +82,17 @@ export class ArtifactManager {
       extension = 'json',
       metadata = {},
       stringify = true,
-      pretty = true
+      pretty = true,
     } = options;
-    
+
     // Create a sanitized filename
     const timestamp = new Date().toISOString().replace(/:/g, '-');
     const sanitizedName = name.replace(/[^a-z0-9]/gi, '-').toLowerCase();
     const filename = `${sanitizedName}-${timestamp}.${extension}`;
-    
+
     // Create the artifact path
     const artifactPath = path.join(this.getRunDirectory(), filename);
-    
+
     // Prepare the content
     let fileContent: string;
     if (stringify) {
@@ -98,24 +101,22 @@ export class ArtifactManager {
         metadata: {
           timestamp: new Date().toISOString(),
           runId: this.runId,
-          ...metadata
+          ...metadata,
         },
-        content
+        content,
       };
-      fileContent = pretty
-        ? JSON.stringify(fullContent, null, 2)
-        : JSON.stringify(fullContent);
+      fileContent = pretty ? JSON.stringify(fullContent, null, 2) : JSON.stringify(fullContent);
     } else {
       // For raw content (like images, text, etc.)
       fileContent = content.toString();
     }
-    
+
     // Write the artifact to disk
     fs.writeFileSync(artifactPath, fileContent);
-    
+
     return artifactPath;
   }
-  
+
   /**
    * Create a snapshot artifact
    * @param name Name of the snapshot
@@ -129,11 +130,11 @@ export class ArtifactManager {
       content: data,
       metadata: {
         category: 'snapshot',
-        ...metadata
-      }
+        ...metadata,
+      },
     });
   }
-  
+
   /**
    * Create a log artifact
    * @param name Name of the log
@@ -147,11 +148,11 @@ export class ArtifactManager {
       content: entries,
       metadata: {
         category: 'log',
-        ...metadata
-      }
+        ...metadata,
+      },
     });
   }
-  
+
   /**
    * Create a report artifact
    * @param name Name of the report
@@ -165,11 +166,11 @@ export class ArtifactManager {
       content: data,
       metadata: {
         category: 'report',
-        ...metadata
-      }
+        ...metadata,
+      },
     });
   }
-  
+
   /**
    * List all artifacts for the current run
    * @returns Array of artifact paths
@@ -179,12 +180,13 @@ export class ArtifactManager {
     if (!fs.existsSync(runDir)) {
       return [];
     }
-    
-    return fs.readdirSync(runDir)
+
+    return fs
+      .readdirSync(runDir)
       .filter(file => !file.startsWith('.'))
       .map(file => path.join(runDir, file));
   }
-  
+
   /**
    * Get an artifact by name
    * @param name Name of the artifact
@@ -193,11 +195,11 @@ export class ArtifactManager {
   getArtifact(name: string): any | null {
     const artifacts = this.listArtifacts();
     const artifact = artifacts.find(a => path.basename(a).includes(name));
-    
+
     if (!artifact) {
       return null;
     }
-    
+
     const content = fs.readFileSync(artifact, 'utf8');
     try {
       return JSON.parse(content);
@@ -221,14 +223,14 @@ export function createArtifactMatcher(artifactManager: ArtifactManager): any {
       const artifactPath = artifactManager.createArtifact({
         name,
         content: received,
-        metadata
+        metadata,
       });
-      
+
       return {
         pass: true,
-        message: () => `Generated artifact: ${artifactPath}`
+        message: () => `Generated artifact: ${artifactPath}`,
       };
-    }
+    },
   };
 }
 
@@ -248,8 +250,8 @@ try {
     // console.log('Successfully extended Jest expect with artifact matchers.'); // Optional debug log
   }
 } catch (error) {
-   console.error('Could not automatically extend Jest expect:', error);
-   // This might happen in non-Jest environments or if Jest types are missing.
+  console.error('Could not automatically extend Jest expect:', error);
+  // This might happen in non-Jest environments or if Jest types are missing.
 }
 
 // Default export remains the manager instance

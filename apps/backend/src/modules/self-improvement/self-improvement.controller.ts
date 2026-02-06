@@ -21,7 +21,7 @@ export class SelfImprovementController {
       pattern: 'Manual Admin Trigger',
       occurrences: 1,
       successRate: 1.0,
-      examples: ['Triggered via Admin Dashboard']
+      examples: ['Triggered via Admin Dashboard'],
     };
     await this.service.triggerManualImprovement(demoPattern);
     return { success: true, message: 'Jules improvement loop manually triggered' };

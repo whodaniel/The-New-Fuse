@@ -1,14 +1,14 @@
 /**
  * MCP System Factory
- * 
+ *
  * Unified factory for creating integrated MCP systems that work seamlessly
  * with relay-core, workflow-engine, and other platform components.
  */
 
 import { MCPServer } from '../server/MCPServer';
-import { MCPServerConfig } from '../types/server';
 import { LogLevel } from '../types/common';
-// import { PrismaClient } from '@prisma/client';
+import { MCPServerConfig } from '../types/server';
+// import { DatabaseService } from '@db/client';
 
 // Import types from relay-core for integration
 type Logger = {
@@ -27,13 +27,13 @@ type HeartbeatMonitoringService = any; // Will be properly typed when we integra
 export interface MCPSystemConfig {
   /** MCP Server configuration */
   server: MCPServerConfig;
-  
+
   /** Database configuration */
   database?: {
-    prisma?: any; // PrismaClient;
+    db?: any; // DatabaseService;
     connectionString?: string;
   };
-  
+
   /** Relay integration configuration */
   relay?: {
     enabled: boolean;
@@ -41,27 +41,27 @@ export interface MCPSystemConfig {
     heartbeatService?: HeartbeatMonitoringService;
     logger?: Logger;
   };
-  
+
   /** Workflow integration configuration */
   workflow?: {
     enabled: boolean;
     engineConfig?: any;
   };
-  
+
   /** SkIDEancer integration configuration */
   ide?: {
     enabled: boolean;
     port?: number;
     aiFeatures?: boolean;
   };
-  
+
   /** Monitoring configuration */
   monitoring?: {
     enabled: boolean;
     metricsPort?: number;
     prometheusEnabled?: boolean;
   };
-  
+
   /** Development configuration */
   development?: {
     hotReload: boolean;
@@ -76,28 +76,28 @@ export interface MCPSystemConfig {
 export interface MCPSystem {
   /** Core MCP Server */
   server: MCPServer;
-  
+
   /** System configuration */
   config: MCPSystemConfig;
-  
+
   /** Start the entire system */
   start(): Promise<void>;
-  
+
   /** Stop the entire system */
   stop(): Promise<void>;
-  
+
   /** Get system health status */
   getHealth(): Promise<SystemHealth>;
-  
+
   /** Get system metrics */
   getMetrics(): Promise<SystemMetrics>;
-  
+
   /** Register a new resource */
   registerResource(resource: any): Promise<void>;
-  
+
   /** Register a new tool */
   registerTool(tool: any): Promise<void>;
-  
+
   /** Get integrated components */
   getComponents(): SystemComponents;
 }
@@ -148,7 +148,7 @@ export interface SystemMetrics {
  */
 export interface SystemComponents {
   server: MCPServer;
-  database?: any; // PrismaClient;
+  database?: any; // DatabaseService;
   relay?: {
     agentRegistry?: MasterAgentRegistry;
     heartbeatService?: HeartbeatMonitoringService;
@@ -164,7 +164,7 @@ export interface SystemComponents {
 class MCPSystemImpl implements MCPSystem {
   public readonly server: MCPServer;
   public readonly config: MCPSystemConfig;
-  
+
   private components: SystemComponents;
   private startTime: Date | null = null;
   private running = false;
@@ -173,7 +173,7 @@ class MCPSystemImpl implements MCPSystem {
     this.config = config;
     this.server = new MCPServer();
     this.components = { server: this.server };
-    
+
     this.initializeComponents();
   }
 
@@ -182,19 +182,19 @@ class MCPSystemImpl implements MCPSystem {
    */
   private initializeComponents(): void {
     // Initialize database if configured
-    if (this.config.database?.prisma) {
-      this.components.database = this.config.database.prisma;
+    if (this.config.database?.db) {
+      this.components.database = this.config.database.db;
     }
-    
+
     // Initialize relay components if configured
     if (this.config.relay?.enabled) {
       this.components.relay = {
         agentRegistry: this.config.relay.agentRegistry,
         heartbeatService: this.config.relay.heartbeatService,
-        logger: this.config.relay.logger
+        logger: this.config.relay.logger,
       };
     }
-    
+
     // Initialize workflow components if configured
     if (this.config.workflow?.enabled) {
       this.components.workflow = this.config.workflow.engineConfig;
@@ -211,22 +211,24 @@ class MCPSystemImpl implements MCPSystem {
 
     try {
       this.log('info', 'Starting MCP System...');
-      
+
       // Start core MCP server
       await this.server.start(this.config.server);
-      
+
       // Initialize default resources and tools
       await this.registerDefaultResources();
       await this.registerDefaultTools();
-      
+
       // Start additional components
       await this.startAdditionalComponents();
-      
+
       this.running = true;
       this.startTime = new Date();
-      
-      this.log('info', `MCP System started successfully on ${this.config.server.host}:${this.config.server.port}`);
-      
+
+      this.log(
+        'info',
+        `MCP System started successfully on ${this.config.server.host}:${this.config.server.port}`
+      );
     } catch (error) {
       this.log('error', 'Failed to start MCP System', error);
       throw error;
@@ -243,18 +245,17 @@ class MCPSystemImpl implements MCPSystem {
 
     try {
       this.log('info', 'Stopping MCP System...');
-      
+
       // Stop additional components first
       await this.stopAdditionalComponents();
-      
+
       // Stop core MCP server
       await this.server.stop();
-      
+
       this.running = false;
       this.startTime = null;
-      
+
       this.log('info', 'MCP System stopped successfully');
-      
     } catch (error) {
       this.log('error', 'Error stopping MCP System', error);
       throw error;
@@ -266,11 +267,11 @@ class MCPSystemImpl implements MCPSystem {
    */
   async getHealth(): Promise<SystemHealth> {
     const serverHealth = this.server.isRunning() ? 'up' : 'down';
-    
+
     const components: SystemHealth['components'] = {
-      server: serverHealth
+      server: serverHealth,
     };
-    
+
     // Check database health
     if (this.components.database) {
       try {
@@ -280,28 +281,28 @@ class MCPSystemImpl implements MCPSystem {
         components.database = 'down';
       }
     }
-    
+
     // Check relay health
     if (this.components.relay) {
       components.relay = 'up'; // Simplified for now
     }
-    
+
     // Check workflow health
     if (this.components.workflow) {
       components.workflow = 'up'; // Simplified for now
     }
-    
+
     // Determine overall status
-    const allUp = Object.values(components).every(status => status === 'up');
-    const anyDown = Object.values(components).some(status => status === 'down');
-    
+    const allUp = Object.values(components).every((status) => status === 'up');
+    const anyDown = Object.values(components).some((status) => status === 'down');
+
     const status = allUp ? 'healthy' : anyDown ? 'unhealthy' : 'degraded';
-    
+
     return {
       status,
       components,
       timestamp: new Date(),
-      uptime: this.startTime ? Date.now() - this.startTime.getTime() : 0
+      uptime: this.startTime ? Date.now() - this.startTime.getTime() : 0,
     };
   }
 
@@ -310,27 +311,27 @@ class MCPSystemImpl implements MCPSystem {
    */
   async getMetrics(): Promise<SystemMetrics> {
     const serverInfo = this.server.getServerInfo();
-    
+
     return {
       requests: {
         total: serverInfo.metadata?.requestCount || 0,
         successful: serverInfo.metadata?.successfulRequests || 0,
         failed: serverInfo.metadata?.failedRequests || 0,
-        averageResponseTime: serverInfo.metadata?.averageResponseTime || 0
+        averageResponseTime: serverInfo.metadata?.averageResponseTime || 0,
       },
       resources: {
         registered: this.server.getRegisteredResources().length,
-        accessed: 0 // TODO: Track resource access
+        accessed: 0, // TODO: Track resource access
       },
       tools: {
         registered: this.server.getRegisteredTools().length,
-        executed: 0 // TODO: Track tool executions
+        executed: 0, // TODO: Track tool executions
       },
       connections: {
         active: serverInfo.activeConnections,
-        total: serverInfo.metadata?.totalConnections || 0
+        total: serverInfo.metadata?.totalConnections || 0,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
@@ -371,34 +372,35 @@ class MCPSystemImpl implements MCPSystem {
         async read() {
           const health = await self.getHealth();
           const metrics = await self.getMetrics();
-          
+
           return {
             uri: 'system://info',
             mimeType: 'application/json',
             content: JSON.stringify({ health, metrics }, null, 2),
             metadata: {
-              generated: new Date().toISOString()
-            }
+              generated: new Date().toISOString(),
+            },
           };
-        }
-      }
+        },
+      },
     });
-    
+
     // Register configuration resource
     this.server.registerResource({
       uri: 'system://config',
       name: 'System Configuration',
       description: 'Current system configuration',
       handler: {
-        read: () => Promise.resolve({
-          uri: 'system://config',
-          mimeType: 'application/json',
-          content: JSON.stringify(self.config, null, 2),
-          metadata: {
-            generated: new Date().toISOString()
-          }
-        })
-      }
+        read: () =>
+          Promise.resolve({
+            uri: 'system://config',
+            mimeType: 'application/json',
+            content: JSON.stringify(self.config, null, 2),
+            metadata: {
+              generated: new Date().toISOString(),
+            },
+          }),
+      },
     });
   }
 
@@ -413,29 +415,29 @@ class MCPSystemImpl implements MCPSystem {
       inputSchema: {
         type: 'object',
         properties: {
-          detailed: { type: 'boolean', default: false }
-        }
+          detailed: { type: 'boolean', default: false },
+        },
       },
       handler: {
         execute: async (params: { detailed?: boolean }) => {
           const health = await this.getHealth();
-          
+
           if (params.detailed) {
             const metrics = await this.getMetrics();
             return {
               success: true,
-              result: { health, metrics }
+              result: { health, metrics },
             };
           }
-          
+
           return {
             success: true,
-            result: health
+            result: health,
           };
-        }
-      }
+        },
+      },
     });
-    
+
     // Register system restart tool
     this.server.registerTool({
       name: 'system-restart',
@@ -443,8 +445,8 @@ class MCPSystemImpl implements MCPSystem {
       inputSchema: {
         type: 'object',
         properties: {
-          graceful: { type: 'boolean', default: true }
-        }
+          graceful: { type: 'boolean', default: true },
+        },
       },
       handler: {
         execute: async (params: { graceful?: boolean }) => {
@@ -457,19 +459,19 @@ class MCPSystemImpl implements MCPSystem {
               await this.stop();
               await this.start();
             }
-            
+
             return {
               success: true,
-              result: 'System restarted successfully'
+              result: 'System restarted successfully',
             };
           } catch (error) {
             return {
               success: false,
-              error: error instanceof Error ? error.message : 'Restart failed'
+              error: error instanceof Error ? error.message : 'Restart failed',
             };
           }
-        }
-      }
+        },
+      },
     });
   }
 
@@ -479,7 +481,7 @@ class MCPSystemImpl implements MCPSystem {
   private async registerRelayResources(): Promise<void> {
     // Check if already registered to avoid duplicates (e.g. if using RelayBridge)
     const registeredResources = this.server.getRegisteredResources();
-    if (registeredResources.some(r => r.uri === 'relay://agents')) {
+    if (registeredResources.some((r) => r.uri === 'relay://agents')) {
       this.log('debug', 'Relay resources already registered, skipping');
       return;
     }
@@ -502,11 +504,11 @@ class MCPSystemImpl implements MCPSystem {
               content: JSON.stringify(agents, null, 2),
               metadata: {
                 count: agents.length,
-                generated: new Date().toISOString()
-              }
+                generated: new Date().toISOString(),
+              },
             };
-          }
-        }
+          },
+        },
       });
     }
 
@@ -518,27 +520,27 @@ class MCPSystemImpl implements MCPSystem {
         description: 'Current heartbeat monitoring status',
         handler: {
           read: async () => {
-             let status;
-             if (heartbeatService.getStagnationStatus) {
-               status = await heartbeatService.getStagnationStatus();
-             } else {
-               status = {
+            let status;
+            if (heartbeatService.getStagnationStatus) {
+              status = await heartbeatService.getStagnationStatus();
+            } else {
+              status = {
                 active: true,
                 lastCheck: new Date().toISOString(),
-                monitoredAgents: 0
-               };
-             }
+                monitoredAgents: 0,
+              };
+            }
 
             return {
               uri: 'relay://heartbeat',
               mimeType: 'application/json',
               content: JSON.stringify(status, null, 2),
               metadata: {
-                generated: new Date().toISOString()
-              }
+                generated: new Date().toISOString(),
+              },
             };
-          }
-        }
+          },
+        },
       });
     }
 
@@ -548,17 +550,22 @@ class MCPSystemImpl implements MCPSystem {
       name: 'Relay Configuration',
       description: 'Current relay configuration',
       handler: {
-        read: () => Promise.resolve({
-          uri: 'relay://config',
-          mimeType: 'application/json',
-          content: JSON.stringify({
-            relay: this.config.relay
-          }, null, 2),
-          metadata: {
-            generated: new Date().toISOString()
-          }
-        })
-      }
+        read: () =>
+          Promise.resolve({
+            uri: 'relay://config',
+            mimeType: 'application/json',
+            content: JSON.stringify(
+              {
+                relay: this.config.relay,
+              },
+              null,
+              2
+            ),
+            metadata: {
+              generated: new Date().toISOString(),
+            },
+          }),
+      },
     });
 
     this.log('debug', 'Registered relay-specific resources');
@@ -570,7 +577,7 @@ class MCPSystemImpl implements MCPSystem {
   private async registerRelayTools(): Promise<void> {
     // Check if already registered
     const registeredTools = this.server.getRegisteredTools();
-    if (registeredTools.some(t => t.name === 'relay-agent-lookup')) {
+    if (registeredTools.some((t) => t.name === 'relay-agent-lookup')) {
       this.log('debug', 'Relay tools already registered, skipping');
       return;
     }
@@ -587,9 +594,9 @@ class MCPSystemImpl implements MCPSystem {
           type: 'object',
           properties: {
             agentId: { type: 'string' },
-            includeMetadata: { type: 'boolean', default: false }
+            includeMetadata: { type: 'boolean', default: false },
           },
-          required: ['agentId']
+          required: ['agentId'],
         },
         handler: {
           execute: async (params: { agentId: string; includeMetadata?: boolean }) => {
@@ -602,30 +609,32 @@ class MCPSystemImpl implements MCPSystem {
               if (!resultAgent) {
                 return {
                   success: false,
-                  error: `Agent not found: ${params.agentId}`
+                  error: `Agent not found: ${params.agentId}`,
                 };
               }
 
-              const result = params.includeMetadata ? resultAgent : {
-                id: resultAgent.id,
-                name: resultAgent.name,
-                type: resultAgent.type,
-                status: resultAgent.status,
-                lastSeen: resultAgent.lastSeen
-              };
+              const result = params.includeMetadata
+                ? resultAgent
+                : {
+                    id: resultAgent.id,
+                    name: resultAgent.name,
+                    type: resultAgent.type,
+                    status: resultAgent.status,
+                    lastSeen: resultAgent.lastSeen,
+                  };
 
               return {
                 success: true,
-                result
+                result,
               };
             } catch (error) {
               return {
                 success: false,
-                error: error instanceof Error ? error.message : 'Agent lookup failed'
+                error: error instanceof Error ? error.message : 'Agent lookup failed',
               };
             }
-          }
-        }
+          },
+        },
       });
 
       // Register agent registration tool
@@ -641,12 +650,12 @@ class MCPSystemImpl implements MCPSystem {
                 id: { type: 'string' },
                 name: { type: 'string' },
                 type: { type: 'string' },
-                capabilities: { type: 'object' } // Accept object for capabilities
+                capabilities: { type: 'object' }, // Accept object for capabilities
               },
-              required: ['name', 'type']
-            }
+              required: ['name', 'type'],
+            },
           },
-          required: ['agentData']
+          required: ['agentData'],
         },
         handler: {
           execute: async (params: { agentData: any }) => {
@@ -657,17 +666,17 @@ class MCPSystemImpl implements MCPSystem {
                 success: true,
                 result: registrationResult || {
                   registered: true,
-                  timestamp: new Date().toISOString()
-                }
+                  timestamp: new Date().toISOString(),
+                },
               };
             } catch (error) {
               return {
                 success: false,
-                error: error instanceof Error ? error.message : 'Agent registration failed'
+                error: error instanceof Error ? error.message : 'Agent registration failed',
               };
             }
-          }
-        }
+          },
+        },
       });
     }
 
@@ -680,37 +689,37 @@ class MCPSystemImpl implements MCPSystem {
           type: 'object',
           properties: {
             agentId: { type: 'string' },
-            force: { type: 'boolean', default: false }
+            force: { type: 'boolean', default: false },
           },
-          required: ['agentId']
+          required: ['agentId'],
         },
         handler: {
           execute: async (params: { agentId: string; force?: boolean }) => {
             try {
               if (heartbeatService.recordHeartbeat) {
-                  // recordHeartbeat might be sync or async
-                  await Promise.resolve(heartbeatService.recordHeartbeat(params.agentId));
+                // recordHeartbeat might be sync or async
+                await Promise.resolve(heartbeatService.recordHeartbeat(params.agentId));
               }
 
               const result = {
                 agentId: params.agentId,
                 heartbeatSent: true,
                 timestamp: new Date().toISOString(),
-                forced: params.force || false
+                forced: params.force || false,
               };
 
               return {
                 success: true,
-                result
+                result,
               };
             } catch (error) {
               return {
                 success: false,
-                error: error instanceof Error ? error.message : 'Heartbeat trigger failed'
+                error: error instanceof Error ? error.message : 'Heartbeat trigger failed',
               };
             }
-          }
-        }
+          },
+        },
       });
     }
 
@@ -734,13 +743,13 @@ class MCPSystemImpl implements MCPSystem {
         this.log('error', 'Failed to start relay integration', error);
       }
     }
-    
+
     // Start workflow integration if enabled
     if (this.config.workflow?.enabled) {
       this.log('info', 'Starting workflow integration...');
       // TODO: Initialize workflow integration
     }
-    
+
     // Start SkIDEancer integration if enabled
     if (this.config.ide?.enabled) {
       this.log('info', 'Starting SkIDEancer integration...');
@@ -757,12 +766,12 @@ class MCPSystemImpl implements MCPSystem {
       this.log('info', 'Stopping SkIDEancer integration...');
       // TODO: Stop SkIDEancer integration
     }
-    
+
     if (this.config.workflow?.enabled) {
       this.log('info', 'Stopping workflow integration...');
       // TODO: Stop workflow integration
     }
-    
+
     if (this.config.relay?.enabled) {
       this.log('info', 'Stopping relay integration...');
       // Relay integration resources are cleaned up when server stops
@@ -779,7 +788,7 @@ class MCPSystemImpl implements MCPSystem {
       // Fallback to console logging
       const timestamp = new Date().toISOString();
       const logMessage = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
-      
+
       if (level === 'error') {
         console.error(logMessage, meta);
       } else if (level === 'warn') {
@@ -811,27 +820,27 @@ export class MCPSystemFactory {
         timeout: 30000,
         enableAuth: true,
         enableTLS: false,
-        logLevel: LogLevel.INFO
+        logLevel: LogLevel.INFO,
       },
       relay: {
-        enabled: true
+        enabled: true,
       },
       workflow: {
-        enabled: true
+        enabled: true,
       },
       ide: {
-        enabled: false
+        enabled: false,
       },
       monitoring: {
         enabled: true,
         metricsPort: 9090,
-        prometheusEnabled: true
+        prometheusEnabled: true,
       },
       development: {
         hotReload: false,
         debugMode: false,
-        mockServices: false
-      }
+        mockServices: false,
+      },
     };
 
     const mergedConfig = this.mergeConfigs(defaultConfig, config);
@@ -852,29 +861,29 @@ export class MCPSystemFactory {
         timeout: 30000,
         enableAuth: false,
         enableTLS: false,
-        logLevel: LogLevel.DEBUG
+        logLevel: LogLevel.DEBUG,
       },
       relay: {
-        enabled: true
+        enabled: true,
       },
       workflow: {
-        enabled: true
+        enabled: true,
       },
       ide: {
         enabled: true,
         port: 3006,
-        aiFeatures: true
+        aiFeatures: true,
       },
       monitoring: {
         enabled: true,
         metricsPort: 9091,
-        prometheusEnabled: false
+        prometheusEnabled: false,
       },
       development: {
         hotReload: true,
         debugMode: true,
-        mockServices: true
-      }
+        mockServices: true,
+      },
     };
 
     const mergedConfig = this.mergeConfigs(defaultConfig, config);
@@ -895,25 +904,25 @@ export class MCPSystemFactory {
         timeout: 5000,
         enableAuth: false,
         enableTLS: false,
-        logLevel: LogLevel.ERROR
+        logLevel: LogLevel.ERROR,
       },
       relay: {
-        enabled: false
+        enabled: false,
       },
       workflow: {
-        enabled: false
+        enabled: false,
       },
       ide: {
-        enabled: false
+        enabled: false,
       },
       monitoring: {
-        enabled: false
+        enabled: false,
       },
       development: {
         hotReload: false,
         debugMode: false,
-        mockServices: true
-      }
+        mockServices: true,
+      },
     };
 
     const mergedConfig = this.mergeConfigs(defaultConfig, config);
@@ -937,10 +946,10 @@ export class MCPSystemFactory {
       development: {
         hotReload: false,
         debugMode: false,
-        mockServices: true
-      }
+        mockServices: true,
+      },
     };
-    
+
     const system = new MCPSystemImpl(systemConfig);
     return system.server;
   }
@@ -949,22 +958,22 @@ export class MCPSystemFactory {
    * Merge configuration objects deeply
    */
   private static mergeConfigs(
-    defaultConfig: MCPSystemConfig, 
+    defaultConfig: MCPSystemConfig,
     userConfig: Partial<MCPSystemConfig>
   ): MCPSystemConfig {
     const merged = { ...defaultConfig };
-    
+
     for (const [key, value] of Object.entries(userConfig)) {
       if (value && typeof value === 'object' && !Array.isArray(value)) {
         merged[key as keyof MCPSystemConfig] = {
           ...merged[key as keyof MCPSystemConfig],
-          ...value
+          ...value,
         } as any;
       } else {
         merged[key as keyof MCPSystemConfig] = value as any;
       }
     }
-    
+
     return merged;
   }
 }

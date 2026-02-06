@@ -2,7 +2,9 @@
 
 ## Overview
 
-This guide explains how the crypto agents integrate with The New Fuse's existing Pydantic agent infrastructure. The implementation follows TNF's established patterns while adding decentralized crypto capabilities.
+This guide explains how the crypto agents integrate with The New Fuse's existing
+Pydantic agent infrastructure. The implementation follows TNF's established
+patterns while adding decentralized crypto capabilities.
 
 ## Architecture
 
@@ -181,9 +183,15 @@ The TypeScript service allows NestJS to invoke crypto agents.
 
 @Injectable()
 export class CryptoAgentExecutorService {
-  async executeAgent(agentName: string, inputData: Record<string, any>): Promise<CryptoAgentResult> {
+  async executeAgent(
+    agentName: string,
+    inputData: Record<string, any>
+  ): Promise<CryptoAgentResult> {
     // Routes to Python executor
-    const result = await this.executeViaSocket({ agent_name: agentName, input_data: inputData });
+    const result = await this.executeViaSocket({
+      agent_name: agentName,
+      input_data: inputData,
+    });
     return { success: true, data: result };
   }
 
@@ -258,9 +266,7 @@ import { CryptoAgentExecutorService } from '@tnf/crypto-agent-framework';
 
 @Injectable()
 export class MyService {
-  constructor(
-    private readonly cryptoAgents: CryptoAgentExecutorService,
-  ) {}
+  constructor(private readonly cryptoAgents: CryptoAgentExecutorService) {}
 
   async performSwap() {
     const result = await this.cryptoAgents.swapTokens({
@@ -335,6 +341,7 @@ project = ProjectPlan(
 ## Agent Capabilities
 
 ### ENSO DeFi Agent (Layer 2)
+
 - **Protocol**: ENSO
 - **Capabilities**:
   - Token swaps with optimal routing
@@ -345,6 +352,7 @@ project = ProjectPlan(
 - **Supported Chains**: Ethereum, Base, Arbitrum, Optimism, Polygon, Avalanche
 
 ### Render Network Agent (Layer 3)
+
 - **Protocol**: Render Network
 - **Capabilities**:
   - AI-powered 3D model generation
@@ -355,6 +363,7 @@ project = ProjectPlan(
 - **Use Cases**: NFT creation, game assets, product visualization
 
 ### Akash Compute Agent (Layer 3)
+
 - **Protocol**: Akash Network
 - **Capabilities**:
   - AI model training (LLMs, vision models)
@@ -365,6 +374,7 @@ project = ProjectPlan(
 - **Cost Advantage**: 60-80% cheaper than AWS/GCP/Azure
 
 ### Arweave Memory Agent (Layer 4)
+
 - **Protocol**: Arweave + AO
 - **Capabilities**:
   - Permanent data storage (200+ year guarantee)
@@ -416,6 +426,7 @@ cd ./packages/crypto-agent-framework
 ```
 
 This will:
+
 1. Create Python virtual environment
 2. Install dependencies
 3. Generate agent ID
@@ -496,6 +507,7 @@ class CryptoAgentExecutor:
 ## Best Practices
 
 ### 1. Always Log Critical Operations
+
 ```python
 # ENSO swap - automatically logged
 result = await executor.execute_agent("enso-defi-agent", {...})
@@ -509,6 +521,7 @@ await executor.execute_agent("arweave-memory-agent", {
 ```
 
 ### 2. Use Typed Inputs
+
 ```python
 # Good: Use Pydantic model for validation
 from enso_defi_agent import EnsoDeFiInput
@@ -526,6 +539,7 @@ result = await executor.execute_agent("enso-defi-agent", {"operation_type": "swa
 ```
 
 ### 3. Handle Async Properly
+
 ```python
 # Good: Proper async/await
 async def my_function():
@@ -537,6 +551,7 @@ result = asyncio.run(executor.execute_agent(...))  # Blocks event loop
 ```
 
 ### 4. Store Important Artifacts
+
 ```python
 # After generating 3D model, store on Arweave
 model_result = await executor.execute_agent("render-network-agent", {...})
@@ -584,25 +599,31 @@ console.log(`Crypto agents healthy: ${isHealthy}`);
 ## Troubleshooting
 
 ### "Unknown agent" Error
+
 - Ensure agent is registered in `CryptoAgentExecutor.agent_registry`
-- Check agent name matches exactly (e.g., "enso-defi-agent", not "enso_defi_agent")
+- Check agent name matches exactly (e.g., "enso-defi-agent", not
+  "enso_defi_agent")
 
 ### "Missing API key" Error
+
 - Verify `.env` file is properly configured
 - Check environment variables are loaded: `echo $ENSO_API_KEY`
 
 ### Import Errors
+
 - Ensure virtual environment is activated: `source venv/bin/activate`
 - Install dependencies: `pip install -r requirements.txt`
 
 ### TypeScript Bridge Issues
+
 - Check Python executor is running: `ps aux | grep crypto_agent_executor`
 - Verify socket path is correct: `/tmp/crypto-agent-executor.sock`
 
 ## Next Steps
 
 1. **Deploy crypto-agent-framework**: Set up the Python executor as a service
-2. **Integrate with NestJS**: Import `CryptoAgentExecutorService` in your modules
+2. **Integrate with NestJS**: Import `CryptoAgentExecutorService` in your
+   modules
 3. **Configure environment**: Set up all API keys and credentials
 4. **Test operations**: Use the test suite to verify functionality
 5. **Monitor in production**: Track agent operations via Arweave logs
@@ -610,6 +631,8 @@ console.log(`Crypto agents healthy: ${isHealthy}`);
 ## Support
 
 For issues or questions:
+
 - Check `/packages/crypto-agent-framework/README.md`
 - View test suite for examples: `/packages/crypto-agent-framework/tests/`
-- Examine agent definitions: `/packages/extension-system/src/agents/pydantic/7.0_crypto_operations_division/`
+- Examine agent definitions:
+  `/packages/extension-system/src/agents/pydantic/7.0_crypto_operations_division/`

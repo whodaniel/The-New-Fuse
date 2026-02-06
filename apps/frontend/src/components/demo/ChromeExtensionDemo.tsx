@@ -1,17 +1,15 @@
-import React, { useState } from "react";
 import { Extension, X } from 'lucide-react';
+import React, { useState } from 'react';
 import { Button } from '../../ui/design-system';
 
-import { PopupContainer } from "../ui/popup";
+import { PopupContainer } from '../ui/popup';
 
 export interface ChromeExtensionDemoProps {
   /** Whether to show the demo by default */
   defaultOpen?: boolean;
 }
 
-const ChromeExtensionDemo: React.FC<ChromeExtensionDemoProps> = ({
-  defaultOpen = false,
-}) => {
+const ChromeExtensionDemo: React.FC<ChromeExtensionDemoProps> = ({ defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -28,13 +26,10 @@ const ChromeExtensionDemo: React.FC<ChromeExtensionDemoProps> = ({
             <p className="text-xl font-bold">Chrome Extension UI Demo</p>
           </div>
           <p className="text-gray-600 mb-4">
-            Experience the recovered Chrome extension interface integrated into
-            the main application.
+            Experience the recovered Chrome extension interface integrated into the main
+            application.
           </p>
-          <Button
-            onClick={() => setIsOpen(true)}
-            className="flex items-center gap-2"
-          >
+          <Button onClick={() => setIsOpen(true)} className="flex items-center gap-2">
             <Extension size={16} /> Open Extension Interface
           </Button>
         </div>
@@ -43,7 +38,9 @@ const ChromeExtensionDemo: React.FC<ChromeExtensionDemoProps> = ({
   }
 
   return (
-    <div className={`fixed top-5 right-5 z-[9999] shadow-2xl rounded-lg overflow-hidden bg-white transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+    <div
+      className={`fixed top-5 right-5 z-[9999] shadow-2xl rounded-lg overflow-hidden bg-white transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+    >
       {/* Close Button */}
       <div className="absolute top-2 right-2 z-[10000]">
         <button
@@ -60,9 +57,9 @@ const ChromeExtensionDemo: React.FC<ChromeExtensionDemoProps> = ({
         initialDarkMode={isDarkMode}
         onThemeChange={handleThemeChange}
         containerStyle={{
-          width: "420px",
-          height: "620px",
-          maxHeight: "90vh",
+          width: '420px',
+          height: '620px',
+          maxHeight: '90vh',
         }}
       />
     </div>

@@ -1,27 +1,27 @@
 /**
  * BuildOrchestrator Integration Tests
- * 
+ *
  * Comprehensive tests for build orchestration including component integration,
  * memory monitoring, staged builds, and error handling.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
-import { BuildOrchestrator } from './BuildOrchestrator.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  ISystemResourceDetector,
-  IMemoryMonitor,
-  IDependencyGraphAnalyzer,
   IConcurrencyController,
-  ITypeScriptCompilationManager
+  IDependencyGraphAnalyzer,
+  IMemoryMonitor,
+  ISystemResourceDetector,
+  ITypeScriptCompilationManager,
 } from '../interfaces/index.js';
 import {
-  SystemResources,
-  MemoryUsage,
-  BuildStrategy,
+  BuildEventData,
   BuildStage,
+  BuildStrategy,
+  MemoryUsage,
   PackageDependency,
-  BuildEventData
+  SystemResources,
 } from '../types/index.js';
+import { BuildOrchestrator } from './BuildOrchestrator.js';
 
 // Mock implementations
 class MockSystemResourceDetector implements ISystemResourceDetector {
@@ -31,7 +31,7 @@ class MockSystemResourceDetector implements ISystemResourceDetector {
       availableMemory: 4096,
       cpuCores: 4,
       platform: 'darwin',
-      nodeVersion: '18.0.0'
+      nodeVersion: '18.0.0',
     };
   }
 
@@ -40,7 +40,7 @@ class MockSystemResourceDetector implements ISystemResourceDetector {
       current: 2048,
       peak: 2048,
       percentage: 50,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
@@ -67,7 +67,7 @@ class MockMemoryMonitor implements IMemoryMonitor {
       current: 2048,
       peak: 2500,
       percentage: 50,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
@@ -89,9 +89,9 @@ class MockMemoryMonitor implements IMemoryMonitor {
       current: 3500,
       peak: 3500,
       percentage: 85,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    this.callbacks.forEach(callback => callback(usage));
+    this.callbacks.forEach((callback) => callback(usage));
   }
 
   isCurrentlyMonitoring(): boolean {
@@ -107,22 +107,22 @@ class MockDependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
         path: '/test/package-a',
         dependencies: [],
         devDependencies: [],
-        estimatedMemoryUsage: 512
+        estimatedMemoryUsage: 512,
       },
       {
         name: '@test/package-b',
         path: '/test/package-b',
         dependencies: ['@test/package-a'],
         devDependencies: [],
-        estimatedMemoryUsage: 768
+        estimatedMemoryUsage: 768,
       },
       {
         name: '@test/package-c',
         path: '/test/package-c',
         dependencies: ['@test/package-a'],
         devDependencies: [],
-        estimatedMemoryUsage: 1024
-      }
+        estimatedMemoryUsage: 1024,
+      },
     ];
   }
 
@@ -133,15 +133,15 @@ class MockDependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
         packages: ['@test/package-a'],
         estimatedMemoryUsage: 512,
         dependencies: [],
-        parallelizable: true
+        parallelizable: true,
       },
       {
         id: 'stage-2',
         packages: ['@test/package-b', '@test/package-c'],
         estimatedMemoryUsage: 1792,
         dependencies: ['stage-1'],
-        parallelizable: true
-      }
+        parallelizable: true,
+      },
     ];
   }
 
@@ -203,7 +203,7 @@ class MockTypeScriptCompilationManager implements ITypeScriptCompilationManager 
   getCompilationMetrics(): any {
     return {
       compiledProjects: this.compiledProjects.length,
-      totalTime: 1000
+      totalTime: 1000,
     };
   }
 
@@ -253,7 +253,7 @@ describe('BuildOrchestrator', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       const result = await orchestrator.executeBuild(strategy);
@@ -277,7 +277,7 @@ describe('BuildOrchestrator', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       const result = await orchestrator.executeBuild(strategy);
@@ -293,14 +293,16 @@ describe('BuildOrchestrator', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       // Start first build
       const buildPromise = orchestrator.executeBuild(strategy);
 
       // Try to start second build
-      await expect(orchestrator.executeBuild(strategy)).rejects.toThrow('Build already in progress');
+      await expect(orchestrator.executeBuild(strategy)).rejects.toThrow(
+        'Build already in progress'
+      );
 
       // Wait for first build to complete
       await buildPromise;
@@ -312,15 +314,15 @@ describe('BuildOrchestrator', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       // Start build and immediately stop it
       const buildPromise = orchestrator.executeBuild(strategy);
-      
+
       // Give it a moment to start
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       orchestrator.stopBuild();
       const result = await buildPromise;
 
@@ -335,7 +337,7 @@ describe('BuildOrchestrator', () => {
         availableMemory: 2048, // 2GB available
         cpuCores: 2,
         platform: 'linux',
-        nodeVersion: '18.0.0'
+        nodeVersion: '18.0.0',
       };
 
       const strategy = orchestrator.determineOptimalStrategy(lowMemoryResources);
@@ -353,7 +355,7 @@ describe('BuildOrchestrator', () => {
         availableMemory: 6144, // 6GB available
         cpuCores: 4,
         platform: 'darwin',
-        nodeVersion: '18.0.0'
+        nodeVersion: '18.0.0',
       };
 
       const strategy = orchestrator.determineOptimalStrategy(mediumMemoryResources);
@@ -371,7 +373,7 @@ describe('BuildOrchestrator', () => {
         availableMemory: 12288, // 12GB available
         cpuCores: 8,
         platform: 'linux',
-        nodeVersion: '18.0.0'
+        nodeVersion: '18.0.0',
       };
 
       const strategy = orchestrator.determineOptimalStrategy(highMemoryResources);
@@ -391,15 +393,15 @@ describe('BuildOrchestrator', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       expect(mockMemoryMonitor.isCurrentlyMonitoring()).toBe(false);
 
       const buildPromise = orchestrator.executeBuild(strategy);
-      
+
       // Give it a moment to start monitoring
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
       expect(mockMemoryMonitor.isCurrentlyMonitoring()).toBe(true);
 
       await buildPromise;
@@ -412,7 +414,7 @@ describe('BuildOrchestrator', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       const events: BuildEventData[] = [];
@@ -421,21 +423,21 @@ describe('BuildOrchestrator', () => {
       });
 
       const buildPromise = orchestrator.executeBuild(strategy);
-      
+
       // Give it a moment to start
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       // Simulate memory threshold exceeded
       mockMemoryMonitor.simulateThresholdExceeded();
-      
+
       await buildPromise;
 
       // Check that memory threshold exceeded event was emitted
-      const memoryEvents = events.filter(e => e.type === 'memory-threshold-exceeded');
+      const memoryEvents = events.filter((e) => e.type === 'memory-threshold-exceeded');
       expect(memoryEvents.length).toBeGreaterThan(0);
 
       // Check that concurrency was adjusted
-      const concurrencyEvents = events.filter(e => e.type === 'concurrency-adjusted');
+      const concurrencyEvents = events.filter((e) => e.type === 'concurrency-adjusted');
       expect(concurrencyEvents.length).toBeGreaterThan(0);
     });
 
@@ -454,7 +456,7 @@ describe('BuildOrchestrator', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       const events: BuildEventData[] = [];
@@ -465,7 +467,7 @@ describe('BuildOrchestrator', () => {
       await orchestrator.executeBuild(strategy);
 
       // Check that key events were emitted
-      const eventTypes = events.map(e => e.type);
+      const eventTypes = events.map((e) => e.type);
       expect(eventTypes).toContain('build-started');
       expect(eventTypes).toContain('stage-started');
       expect(eventTypes).toContain('stage-completed');
@@ -483,7 +485,7 @@ describe('BuildOrchestrator', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       const events: BuildEventData[] = [];
@@ -493,7 +495,7 @@ describe('BuildOrchestrator', () => {
 
       await orchestrator.executeBuild(strategy);
 
-      const eventTypes = events.map(e => e.type);
+      const eventTypes = events.map((e) => e.type);
       expect(eventTypes).toContain('build-failed');
     });
   });
@@ -505,7 +507,7 @@ describe('BuildOrchestrator', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       mockTypeScriptManager.resetCompiledProjects();
@@ -523,7 +525,7 @@ describe('BuildOrchestrator', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       const cleanupSpy = vi.spyOn(mockTypeScriptManager, 'cleanupCompilerMemory');
@@ -542,7 +544,7 @@ describe('BuildOrchestrator', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       // Spy on key methods to verify integration
@@ -574,7 +576,7 @@ describe('BuildOrchestrator', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       const result = await orchestrator.executeBuild(strategy);
@@ -593,7 +595,7 @@ describe('BuildOrchestrator', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       const result = await orchestrator.executeBuild(strategy);

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
 import { BrowserProvider, formatEther, parseEther } from 'ethers';
 import { Eye, Heart, Search, ShoppingCart, TrendingUp, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 // Type declarations for Web3
 declare global {
@@ -227,10 +227,10 @@ const NFTMarketplace: React.FC = () => {
     <div className="p-6 max-w-[1600px] mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-            NFT Marketplace
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">Discover, collect, and trade AI agents and platform assets</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">NFT Marketplace</h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Discover, collect, and trade AI agents and platform assets
+          </p>
         </div>
 
         <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
@@ -241,12 +241,39 @@ const NFTMarketplace: React.FC = () => {
       {/* Marketplace Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
-          { label: 'Total Volume', value: '1,247 ETH', help: '+12.3%', helpColor: 'text-green-500', icon: TrendingUp },
-          { label: 'Floor Price', value: '0.8 ETH', help: 'Lowest available', helpColor: 'text-gray-500', icon: null },
-          { label: 'Active Listings', value: nfts.filter((nft) => nft.isForSale).length, help: 'Currently for sale', helpColor: 'text-gray-500', icon: null },
-          { label: 'Unique Owners', value: '3,456', help: 'Community members', helpColor: 'text-gray-500', icon: null },
+          {
+            label: 'Total Volume',
+            value: '1,247 ETH',
+            help: '+12.3%',
+            helpColor: 'text-green-500',
+            icon: TrendingUp,
+          },
+          {
+            label: 'Floor Price',
+            value: '0.8 ETH',
+            help: 'Lowest available',
+            helpColor: 'text-gray-500',
+            icon: null,
+          },
+          {
+            label: 'Active Listings',
+            value: nfts.filter((nft) => nft.isForSale).length,
+            help: 'Currently for sale',
+            helpColor: 'text-gray-500',
+            icon: null,
+          },
+          {
+            label: 'Unique Owners',
+            value: '3,456',
+            help: 'Community members',
+            helpColor: 'text-gray-500',
+            icon: null,
+          },
         ].map((stat, idx) => (
-          <div key={idx} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <div
+            key={idx}
+            className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+          >
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{stat.label}</p>
             <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{stat.value}</p>
             <div className="flex items-center gap-1 text-sm">
@@ -299,17 +326,25 @@ const NFTMarketplace: React.FC = () => {
                 alt={nft.name}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
-              <span className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-semibold ${getRarityColor(nft.rarity)}`}>
+              <span
+                className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-semibold ${getRarityColor(nft.rarity)}`}
+              >
                 {nft.rarity}
               </span>
             </div>
 
             <div className="p-4 flex flex-col gap-3">
               <div>
-                <h3 className="font-bold text-lg text-gray-900 dark:text-white truncate" title={nft.name}>
+                <h3
+                  className="font-bold text-lg text-gray-900 dark:text-white truncate"
+                  title={nft.name}
+                >
                   {nft.name}
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2" title={nft.description}>
+                <p
+                  className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2"
+                  title={nft.description}
+                >
                   {nft.description}
                 </p>
               </div>
@@ -351,9 +386,12 @@ const NFTMarketplace: React.FC = () => {
 
       {/* NFT Detail Modal */}
       {isModalOpen && selectedNFT && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={(e) => {
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          onClick={(e) => {
             if (e.target === e.currentTarget) closeModal();
-        }}>
+          }}
+        >
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center sticky top-0 bg-white dark:bg-gray-800 z-10">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white truncate pr-4">
@@ -377,20 +415,24 @@ const NFTMarketplace: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                <p className="text-gray-700 dark:text-gray-300">
-                  {selectedNFT.description}
-                </p>
+                <p className="text-gray-700 dark:text-gray-300">{selectedNFT.description}</p>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Creator</p>
-                    <p className="font-mono text-sm text-gray-900 dark:text-white truncate" title={selectedNFT.creator}>
+                    <p
+                      className="font-mono text-sm text-gray-900 dark:text-white truncate"
+                      title={selectedNFT.creator}
+                    >
                       {selectedNFT.creator}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Owner</p>
-                    <p className="font-mono text-sm text-gray-900 dark:text-white truncate" title={selectedNFT.owner}>
+                    <p
+                      className="font-mono text-sm text-gray-900 dark:text-white truncate"
+                      title={selectedNFT.owner}
+                    >
                       {selectedNFT.owner}
                     </p>
                   </div>
@@ -402,7 +444,9 @@ const NFTMarketplace: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Rarity</p>
-                    <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-semibold ${getRarityColor(selectedNFT.rarity)}`}>
+                    <span
+                      className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-semibold ${getRarityColor(selectedNFT.rarity)}`}
+                    >
                       {selectedNFT.rarity}
                     </span>
                   </div>
@@ -422,17 +466,19 @@ const NFTMarketplace: React.FC = () => {
                     onClick={() => purchaseNFT(selectedNFT)}
                     disabled={!selectedNFT.isForSale}
                     className={`flex items-center gap-2 px-6 py-3 rounded-lg font-bold text-white transition-colors ${
-                       selectedNFT.isForSale
+                      selectedNFT.isForSale
                         ? 'bg-purple-600 hover:bg-purple-700'
                         : 'bg-gray-400 cursor-not-allowed'
                     }`}
                   >
                     {selectedNFT.isForSale ? (
-                        <>
-                            <ShoppingCart className="w-5 h-5" />
-                            Buy Now
-                        </>
-                    ) : 'Not For Sale'}
+                      <>
+                        <ShoppingCart className="w-5 h-5" />
+                        Buy Now
+                      </>
+                    ) : (
+                      'Not For Sale'
+                    )}
                   </button>
                 </div>
               </div>

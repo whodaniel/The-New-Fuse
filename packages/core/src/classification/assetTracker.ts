@@ -104,7 +104,7 @@ export class AssetTracker {
 
     if (assetData.dependencies.size > 10) {
       analysis.recommendations.push(
-        'Consider simplifying integrations due to high number of dependencies'
+        'Consider simplifying integrations due to high number of dependencies',
       );
     }
 

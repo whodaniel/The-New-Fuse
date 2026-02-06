@@ -1,6 +1,7 @@
 # The New Fuse Automation Summary
 
-This document summarizes the automation work that has been done to improve The New Fuse project.
+This document summarizes the automation work that has been done to improve The
+New Fuse project.
 
 ## Automated Fixes
 
@@ -13,7 +14,7 @@ This document summarizes the automation work that has been done to improve The N
 2. **Database Issues**
    - Fixed database migration issues
    - Added composite: true to database tsconfig.json
-   - Fixed Prisma schema issues
+   - Fixed Drizzle schema issues
 
 3. **Frontend Issues**
    - Fixed module resolution issues
@@ -50,7 +51,8 @@ This document summarizes the automation work that has been done to improve The N
 
 ## Documentation
 
-1. **AUTOMATION-GUIDE.md**: Provides instructions on how to use the automation scripts
+1. **AUTOMATION-GUIDE.md**: Provides instructions on how to use the automation
+   scripts
 2. **AUTOMATION-SUMMARY.md**: Summarizes the automation work that has been done
 
 ## Next Steps
@@ -58,4 +60,5 @@ This document summarizes the automation work that has been done to improve The N
 1. **Testing**: Run the tests and fix any failing tests
 2. **Documentation**: Update the project documentation to reflect the changes
 3. **Deployment**: Set up a CI/CD pipeline to automate the deployment process
-4. **Monitoring**: Set up monitoring to track the application's performance and errors
+4. **Monitoring**: Set up monitoring to track the application's performance and
+   errors

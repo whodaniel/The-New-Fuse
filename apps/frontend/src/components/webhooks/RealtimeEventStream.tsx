@@ -1,23 +1,28 @@
-import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@the-new-fuse/ui-consolidated';
-import { Button } from '@the-new-fuse/ui-consolidated';
-import { Badge } from '@the-new-fuse/ui-consolidated';
-import { Input } from '@the-new-fuse/ui-consolidated';
-import { Select } from '@the-new-fuse/ui-consolidated';
+import { BusinessEventType, EventPriority, IntegrationSource } from '@the-new-fuse/types';
 import {
-  Search,
-  RefreshCw,
-  Download,
-  Pause,
-  Play,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+  Select,
+} from '@the-new-fuse/ui-consolidated';
+import {
   AlertCircle,
   CheckCircle,
   Clock,
   DollarSign,
-  Users,
+  Download,
+  Pause,
+  Play,
+  RefreshCw,
+  Search,
   ShoppingCart,
+  Users,
 } from 'lucide-react';
-import { BusinessEventType, IntegrationSource, EventPriority } from '@the-new-fuse/types';
+import { useMemo, useState } from 'react';
 import { useSSEConnection } from './hooks/useSSEConnection';
 
 export interface RealtimeEventStreamProps {
@@ -66,13 +71,7 @@ export function RealtimeEventStream({
   const [selectedPriority, setSelectedPriority] = useState<EventPriority | 'all'>('all');
   const [isPaused, setIsPaused] = useState(false);
 
-  const { 
-    events, 
-    connectionState, 
-    clearEvents,
-    connect,
-    disconnect,
-  } = useSSEConnection({
+  const { events, connectionState, clearEvents, connect, disconnect } = useSSEConnection({
     autoReconnect: !isPaused,
   });
 
@@ -80,27 +79,21 @@ export function RealtimeEventStream({
     let filtered = events.slice(-maxEvents);
 
     if (searchTerm) {
-      filtered = filtered.filter(event =>
+      filtered = filtered.filter((event) =>
         JSON.stringify(event.data).toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     if (selectedEventType !== 'all') {
-      filtered = filtered.filter(event => 
-        event.data.event_type === selectedEventType
-      );
+      filtered = filtered.filter((event) => event.data.event_type === selectedEventType);
     }
 
     if (selectedSource !== 'all') {
-      filtered = filtered.filter(event => 
-        event.data.source === selectedSource
-      );
+      filtered = filtered.filter((event) => event.data.source === selectedSource);
     }
 
     if (selectedPriority !== 'all') {
-      filtered = filtered.filter(event => 
-        event.data.priority === selectedPriority
-      );
+      filtered = filtered.filter((event) => event.data.priority === selectedPriority);
     }
 
     return filtered.reverse(); // Show newest first
@@ -108,19 +101,25 @@ export function RealtimeEventStream({
 
   const eventMetrics = useMemo(() => {
     const recentEvents = events.slice(-100); // Last 100 events for metrics
-    
+
     return {
       total: recentEvents.length,
-      byType: recentEvents.reduce((acc, event) => {
-        const type = event.data.event_type || 'unknown';
-        acc[type] = (acc[type] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>),
-      byPriority: recentEvents.reduce((acc, event) => {
-        const priority = event.data.priority || EventPriority.LOW;
-        acc[priority] = (acc[priority] || 0) + 1;
-        return acc;
-      }, {} as Record<EventPriority, number>),
+      byType: recentEvents.reduce(
+        (acc, event) => {
+          const type = event.data.event_type || 'unknown';
+          acc[type] = (acc[type] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
+      byPriority: recentEvents.reduce(
+        (acc, event) => {
+          const priority = event.data.priority || EventPriority.LOW;
+          acc[priority] = (acc[priority] || 0) + 1;
+          return acc;
+        },
+        {} as Record<EventPriority, number>
+      ),
       eventsPerMinute: Math.round(recentEvents.length / 5), // Rough estimate
     };
   }, [events]);
@@ -150,15 +149,20 @@ export function RealtimeEventStream({
     try {
       // Extract key information from the event
       const keys = ['amount', 'customer_id', 'order_id', 'status', 'email', 'name'];
-      const extracted = keys.reduce((acc, key) => {
-        if (data[key] !== undefined) {
-          acc[key] = data[key];
-        }
-        return acc;
-      }, {} as Record<string, unknown>);
+      const extracted = keys.reduce(
+        (acc, key) => {
+          if (data[key] !== undefined) {
+            acc[key] = data[key];
+          }
+          return acc;
+        },
+        {} as Record<string, unknown>
+      );
 
-      return Object.keys(extracted).length > 0 
-        ? JSON.stringify(extracted, null, 1).replace(/[{}"\n]/g, '').trim()
+      return Object.keys(extracted).length > 0
+        ? JSON.stringify(extracted, null, 1)
+            .replace(/[{}"\n]/g, '')
+            .trim()
         : 'Event received';
     } catch {
       return 'Event received';
@@ -166,7 +170,10 @@ export function RealtimeEventStream({
   };
 
   const getEventTypeLabel = (type: BusinessEventType): string => {
-    return type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+    return type
+      .replace(/_/g, ' ')
+      .toLowerCase()
+      .replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
   return (
@@ -175,16 +182,18 @@ export function RealtimeEventStream({
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <h3 className="text-lg font-semibold">Live Event Stream</h3>
-          <Badge className={connectionState.isConnected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+          <Badge
+            className={
+              connectionState.isConnected
+                ? 'bg-green-100 text-green-800'
+                : 'bg-red-100 text-red-800'
+            }
+          >
             {connectionState.isConnected ? 'Connected' : 'Disconnected'}
           </Badge>
         </div>
         <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleToggleConnection}
-          >
+          <Button variant="outline" size="sm" onClick={handleToggleConnection}>
             {isPaused ? (
               <>
                 <Play className="w-4 h-4 mr-1" />
@@ -197,11 +206,7 @@ export function RealtimeEventStream({
               </>
             )}
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={clearEvents}
-          >
+          <Button variant="outline" size="sm" onClick={clearEvents}>
             <RefreshCw className="w-4 h-4 mr-1" />
             Clear
           </Button>
@@ -270,7 +275,7 @@ export function RealtimeEventStream({
                 onValueChange={(value: BusinessEventType | 'all') => setSelectedEventType(value)}
               >
                 <option value="all">All Event Types</option>
-                {Object.values(BusinessEventType).map(type => (
+                {Object.values(BusinessEventType).map((type) => (
                   <option key={type} value={type}>
                     {getEventTypeLabel(type)}
                   </option>
@@ -281,7 +286,7 @@ export function RealtimeEventStream({
                 onValueChange={(value: IntegrationSource | 'all') => setSelectedSource(value)}
               >
                 <option value="all">All Sources</option>
-                {Object.values(IntegrationSource).map(source => (
+                {Object.values(IntegrationSource).map((source) => (
                   <option key={source} value={source}>
                     {source}
                   </option>
@@ -292,7 +297,7 @@ export function RealtimeEventStream({
                 onValueChange={(value: EventPriority | 'all') => setSelectedPriority(value)}
               >
                 <option value="all">All Priorities</option>
-                {Object.values(EventPriority).map(priority => (
+                {Object.values(EventPriority).map((priority) => (
                   <option key={priority} value={priority}>
                     {priority}
                   </option>
@@ -310,9 +315,7 @@ export function RealtimeEventStream({
             <span>Events ({filteredEvents.length})</span>
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               {connectionState.lastEventTime && (
-                <span>
-                  Last event: {connectionState.lastEventTime.toLocaleTimeString()}
-                </span>
+                <span>Last event: {connectionState.lastEventTime.toLocaleTimeString()}</span>
               )}
             </div>
           </CardTitle>
@@ -335,8 +338,9 @@ export function RealtimeEventStream({
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className="flex items-center space-x-2">
-                          {EVENT_ICONS[event.data.event_type as BusinessEventType] || 
-                           <AlertCircle className="w-4 h-4 text-gray-400" />}
+                          {EVENT_ICONS[event.data.event_type as BusinessEventType] || (
+                            <AlertCircle className="w-4 h-4 text-gray-400" />
+                          )}
                           <span className="font-medium">
                             {getEventTypeLabel(event.data.event_type || 'Unknown')}
                           </span>
@@ -346,11 +350,7 @@ export function RealtimeEventStream({
                             {event.data.priority}
                           </Badge>
                         )}
-                        {event.data.source && (
-                          <Badge variant="outline">
-                            {event.data.source}
-                          </Badge>
-                        )}
+                        {event.data.source && <Badge variant="outline">{event.data.source}</Badge>}
                       </div>
                       <span className="text-xs text-muted-foreground">
                         {event.timestamp.toLocaleTimeString()}

@@ -8,15 +8,15 @@
 import { EventEmitter } from 'events';
 import Redis from 'ioredis';
 import {
-  AgentRegistration,
+  AgentHealthMetrics,
   AgentHeartbeat,
+  AgentRegistration,
   AgentStatus,
   DiscoveredAgent,
-  DiscoveryQuery,
-  DiscoveryQueryResult,
   DiscoveryEvent,
   DiscoveryEventPayload,
-  AgentHealthMetrics,
+  DiscoveryQuery,
+  DiscoveryQueryResult,
   LoadBalancingRecommendation,
 } from '../types/agent-discovery.types';
 
@@ -138,7 +138,12 @@ export class AgentDiscoveryRegistry extends EventEmitter {
     await this.indexCapabilities(registration);
 
     // Initialize heartbeat with current timestamp
-    await this.redis.set(heartbeatKey, Date.now().toString(), 'EX', Math.floor(this.options.heartbeatTimeout / 1000));
+    await this.redis.set(
+      heartbeatKey,
+      Date.now().toString(),
+      'EX',
+      Math.floor(this.options.heartbeatTimeout / 1000)
+    );
 
     // Publish registration event
     await this.publishEvent({
@@ -159,10 +164,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
 
     for (const capability of registration.capabilities) {
       // Index by capability name
-      pipeline.sadd(
-        `${this.AGENT_CAPABILITY_INDEX}:${capability.name}`,
-        registration.agentId
-      );
+      pipeline.sadd(`${this.AGENT_CAPABILITY_INDEX}:${capability.name}`, registration.agentId);
 
       // Index by languages
       if (capability.languages) {
@@ -214,13 +216,28 @@ export class AgentDiscoveryRegistry extends EventEmitter {
     const metricsKey = this.AGENT_METRICS_PREFIX + heartbeat.agentId;
 
     // Update heartbeat timestamp
-    await this.redis.set(heartbeatKey, Date.now().toString(), 'EX', Math.floor(this.options.heartbeatTimeout / 1000));
+    await this.redis.set(
+      heartbeatKey,
+      Date.now().toString(),
+      'EX',
+      Math.floor(this.options.heartbeatTimeout / 1000)
+    );
 
     // Update metrics
-    await this.redis.set(metricsKey, JSON.stringify(heartbeat.metrics), 'EX', Math.floor(this.options.heartbeatTimeout / 1000));
+    await this.redis.set(
+      metricsKey,
+      JSON.stringify(heartbeat.metrics),
+      'EX',
+      Math.floor(this.options.heartbeatTimeout / 1000)
+    );
 
     // Store status
-    await this.redis.set(`${this.AGENT_KEY_PREFIX}${heartbeat.agentId}:status`, heartbeat.status, 'EX', Math.floor(this.options.heartbeatTimeout / 1000));
+    await this.redis.set(
+      `${this.AGENT_KEY_PREFIX}${heartbeat.agentId}:status`,
+      heartbeat.status,
+      'EX',
+      Math.floor(this.options.heartbeatTimeout / 1000)
+    );
 
     // Publish heartbeat event
     await this.publishEvent({
@@ -279,25 +296,37 @@ export class AgentDiscoveryRegistry extends EventEmitter {
 
       if (capability.languages) {
         for (const lang of capability.languages) {
-          pipeline.srem(`${this.AGENT_CAPABILITY_INDEX}:lang:${lang.toLowerCase()}`, registration.agentId);
+          pipeline.srem(
+            `${this.AGENT_CAPABILITY_INDEX}:lang:${lang.toLowerCase()}`,
+            registration.agentId
+          );
         }
       }
 
       if (capability.frameworks) {
         for (const framework of capability.frameworks) {
-          pipeline.srem(`${this.AGENT_CAPABILITY_INDEX}:framework:${framework.toLowerCase()}`, registration.agentId);
+          pipeline.srem(
+            `${this.AGENT_CAPABILITY_INDEX}:framework:${framework.toLowerCase()}`,
+            registration.agentId
+          );
         }
       }
     }
 
     if (registration.groups) {
       for (const group of registration.groups) {
-        pipeline.srem(`${this.AGENT_CAPABILITY_INDEX}:group:${group.toLowerCase()}`, registration.agentId);
+        pipeline.srem(
+          `${this.AGENT_CAPABILITY_INDEX}:group:${group.toLowerCase()}`,
+          registration.agentId
+        );
       }
     }
 
     if (registration.type) {
-      pipeline.srem(`${this.AGENT_CAPABILITY_INDEX}:type:${registration.type.toLowerCase()}`, registration.agentId);
+      pipeline.srem(
+        `${this.AGENT_CAPABILITY_INDEX}:type:${registration.type.toLowerCase()}`,
+        registration.agentId
+      );
     }
 
     await pipeline.exec();
@@ -447,8 +476,13 @@ export class AgentDiscoveryRegistry extends EventEmitter {
   /**
    * Intersect agent IDs with language filter
    */
-  private async intersectWithLanguages(agentIds: Set<string>, languages: string[]): Promise<Set<string>> {
-    const sets = languages.map((lang) => `${this.AGENT_CAPABILITY_INDEX}:lang:${lang.toLowerCase()}`);
+  private async intersectWithLanguages(
+    agentIds: Set<string>,
+    languages: string[]
+  ): Promise<Set<string>> {
+    const sets = languages.map(
+      (lang) => `${this.AGENT_CAPABILITY_INDEX}:lang:${lang.toLowerCase()}`
+    );
     const intersection = await this.redis.sinter(...sets);
     return new Set(intersection.filter((id) => agentIds.has(id)));
   }
@@ -456,8 +490,13 @@ export class AgentDiscoveryRegistry extends EventEmitter {
   /**
    * Intersect agent IDs with framework filter
    */
-  private async intersectWithFrameworks(agentIds: Set<string>, frameworks: string[]): Promise<Set<string>> {
-    const sets = frameworks.map((fw) => `${this.AGENT_CAPABILITY_INDEX}:framework:${fw.toLowerCase()}`);
+  private async intersectWithFrameworks(
+    agentIds: Set<string>,
+    frameworks: string[]
+  ): Promise<Set<string>> {
+    const sets = frameworks.map(
+      (fw) => `${this.AGENT_CAPABILITY_INDEX}:framework:${fw.toLowerCase()}`
+    );
     const intersection = await this.redis.sinter(...sets);
     return new Set(intersection.filter((id) => agentIds.has(id)));
   }
@@ -466,7 +505,9 @@ export class AgentDiscoveryRegistry extends EventEmitter {
    * Intersect agent IDs with group filter
    */
   private async intersectWithGroups(agentIds: Set<string>, groups: string[]): Promise<Set<string>> {
-    const sets = groups.map((group) => `${this.AGENT_CAPABILITY_INDEX}:group:${group.toLowerCase()}`);
+    const sets = groups.map(
+      (group) => `${this.AGENT_CAPABILITY_INDEX}:group:${group.toLowerCase()}`
+    );
     const intersection = await this.redis.sinter(...sets);
     return new Set(intersection.filter((id) => agentIds.has(id)));
   }
@@ -515,8 +556,7 @@ export class AgentDiscoveryRegistry extends EventEmitter {
 
     if (query.maxCost !== undefined) {
       const hasAffordableCapability = agent.registration.capabilities.some(
-        (cap) =>
-          !cap.pricing?.perInvocation || cap.pricing.perInvocation <= query.maxCost!
+        (cap) => !cap.pricing?.perInvocation || cap.pricing.perInvocation <= query.maxCost!
       );
       if (!hasAffordableCapability) {
         return false;

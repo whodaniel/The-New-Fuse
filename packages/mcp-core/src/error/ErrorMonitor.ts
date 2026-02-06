@@ -3,7 +3,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPErrorClass, ErrorCategory, ErrorSeverity, ErrorStatistics } from '../types/error';
+import { ErrorCategory, ErrorSeverity, ErrorStatistics, MCPErrorClass } from '../types/error';
 import { Logger } from '../utils/Logger';
 
 export interface ErrorMetrics {
@@ -73,14 +73,14 @@ export class ErrorMonitor extends EventEmitter {
   private readonly errorHistory: Array<{ error: MCPErrorClass; timestamp: Date }> = [];
   private readonly alertRules: Map<string, AlertRule> = new Map();
   private readonly metricsHistory: Array<{ metrics: ErrorMetrics; timestamp: Date }> = [];
-  
+
   private metricsTimer?: NodeJS.Timeout;
   private alertTimer?: NodeJS.Timeout;
   private currentMetrics: ErrorMetrics;
 
   constructor(config: Partial<MonitorConfig> = {}, logger?: Logger) {
     super();
-    
+
     this.config = {
       metricsInterval: 30000, // 30 seconds
       retentionPeriod: 24 * 60 * 60 * 1000, // 24 hours
@@ -90,13 +90,13 @@ export class ErrorMonitor extends EventEmitter {
         errorRate: 0.4,
         severity: 0.3,
         recovery: 0.2,
-        trends: 0.1
+        trends: 0.1,
       },
-      ...config
+      ...config,
     };
 
     this.logger = logger || new Logger('ErrorMonitor');
-    
+
     this.currentMetrics = this.initializeMetrics();
     this.initializeDefaultAlertRules();
     this.startMonitoring();
@@ -108,10 +108,10 @@ export class ErrorMonitor extends EventEmitter {
   recordError(error: MCPErrorClass): void {
     const timestamp = new Date();
     this.errorHistory.push({ error, timestamp });
-    
+
     // Clean up old entries
     this.cleanupHistory();
-    
+
     // Update metrics immediately for critical errors
     if (error.severity === ErrorSeverity.CRITICAL) {
       this.updateMetrics();
@@ -132,7 +132,7 @@ export class ErrorMonitor extends EventEmitter {
    */
   getMetricsHistory(hours: number = 24): Array<{ metrics: ErrorMetrics; timestamp: Date }> {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
-    return this.metricsHistory.filter(entry => entry.timestamp >= cutoff);
+    return this.metricsHistory.filter((entry) => entry.timestamp >= cutoff);
   }
 
   /**
@@ -170,19 +170,21 @@ export class ErrorMonitor extends EventEmitter {
     recommendations: string[];
   } {
     const cutoff = new Date(Date.now() - timeWindow * 60 * 60 * 1000);
-    const recentErrors = this.errorHistory.filter(entry => entry.timestamp >= cutoff);
-    
+    const recentErrors = this.errorHistory.filter((entry) => entry.timestamp >= cutoff);
+
     const recommendations: string[] = [];
-    
+
     // Analyze error patterns and generate recommendations
     if (this.currentMetrics.errorRate > 10) {
-      recommendations.push('High error rate detected. Consider investigating system load and performance.');
+      recommendations.push(
+        'High error rate detected. Consider investigating system load and performance.'
+      );
     }
-    
+
     if (this.currentMetrics.severityDistribution[ErrorSeverity.CRITICAL] > 0) {
       recommendations.push('Critical errors detected. Immediate attention required.');
     }
-    
+
     if (this.currentMetrics.trends.increasing) {
       recommendations.push('Error rate is increasing. Monitor system health closely.');
     }
@@ -190,7 +192,7 @@ export class ErrorMonitor extends EventEmitter {
     return {
       summary: this.currentMetrics,
       trends: this.analyzeTrends(),
-      recommendations
+      recommendations,
     };
   }
 
@@ -202,12 +204,12 @@ export class ErrorMonitor extends EventEmitter {
       clearInterval(this.metricsTimer);
       this.metricsTimer = undefined;
     }
-    
+
     if (this.alertTimer) {
       clearInterval(this.alertTimer);
       this.alertTimer = undefined;
     }
-    
+
     this.removeAllListeners();
     this.logger.debug('ErrorMonitor shutdown complete');
   }
@@ -226,9 +228,9 @@ export class ErrorMonitor extends EventEmitter {
       trends: {
         increasing: false,
         changeRate: 0,
-        timeWindow: '1h'
+        timeWindow: '1h',
       },
-      healthScore: 100
+      healthScore: 100,
     };
   }
 
@@ -257,7 +259,7 @@ export class ErrorMonitor extends EventEmitter {
   private updateMetrics(): void {
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-    const recentErrors = this.errorHistory.filter(entry => entry.timestamp >= oneHourAgo);
+    const recentErrors = this.errorHistory.filter((entry) => entry.timestamp >= oneHourAgo);
 
     // Calculate basic metrics
     this.currentMetrics.totalErrors = this.errorHistory.length;
@@ -266,14 +268,14 @@ export class ErrorMonitor extends EventEmitter {
     // Calculate category distribution
     this.currentMetrics.categoryDistribution = {} as Record<ErrorCategory, number>;
     recentErrors.forEach(({ error }) => {
-      this.currentMetrics.categoryDistribution[error.category] = 
+      this.currentMetrics.categoryDistribution[error.category] =
         (this.currentMetrics.categoryDistribution[error.category] || 0) + 1;
     });
 
     // Calculate severity distribution
     this.currentMetrics.severityDistribution = {} as Record<ErrorSeverity, number>;
     recentErrors.forEach(({ error }) => {
-      this.currentMetrics.severityDistribution[error.severity] = 
+      this.currentMetrics.severityDistribution[error.severity] =
         (this.currentMetrics.severityDistribution[error.severity] || 0) + 1;
     });
 
@@ -287,7 +289,7 @@ export class ErrorMonitor extends EventEmitter {
       .map(([code, count]) => ({
         code: parseInt(code),
         count,
-        percentage: (count / recentErrors.length) * 100
+        percentage: (count / recentErrors.length) * 100,
       }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
@@ -301,16 +303,21 @@ export class ErrorMonitor extends EventEmitter {
     // Store metrics history
     this.metricsHistory.push({
       metrics: { ...this.currentMetrics },
-      timestamp: now
+      timestamp: now,
     });
 
     // Clean up old metrics
     const cutoff = new Date(now.getTime() - this.config.retentionPeriod);
     const initialLength = this.metricsHistory.length;
-    this.metricsHistory.splice(0, this.metricsHistory.findIndex(entry => entry.timestamp >= cutoff));
-    
+    this.metricsHistory.splice(
+      0,
+      this.metricsHistory.findIndex((entry) => entry.timestamp >= cutoff)
+    );
+
     if (this.metricsHistory.length < initialLength) {
-      this.logger.debug(`Cleaned up ${initialLength - this.metricsHistory.length} old metrics entries`);
+      this.logger.debug(
+        `Cleaned up ${initialLength - this.metricsHistory.length} old metrics entries`
+      );
     }
 
     this.emit('metricsUpdated', this.currentMetrics);
@@ -336,7 +343,7 @@ export class ErrorMonitor extends EventEmitter {
     return {
       increasing: changeRate > 10, // 10% increase threshold
       changeRate,
-      timeWindow: '1h'
+      timeWindow: '1h',
     };
   }
 
@@ -358,8 +365,9 @@ export class ErrorMonitor extends EventEmitter {
     score -= severityImpact * weights.severity;
 
     // Trend impact (0-10 points)
-    const trendImpact = this.currentMetrics.trends.increasing ? 
-      Math.min(Math.abs(this.currentMetrics.trends.changeRate) / 10, 10) : 0;
+    const trendImpact = this.currentMetrics.trends.increasing
+      ? Math.min(Math.abs(this.currentMetrics.trends.changeRate) / 10, 10)
+      : 0;
     score -= trendImpact * weights.trends;
 
     return Math.max(0, Math.min(100, score));
@@ -370,12 +378,11 @@ export class ErrorMonitor extends EventEmitter {
    */
   private async checkAlerts(): Promise<void> {
     const now = new Date();
-    
+
     for (const [name, rule] of this.alertRules) {
       try {
         // Check cooldown
-        if (rule.lastTriggered && 
-            (now.getTime() - rule.lastTriggered.getTime()) < rule.cooldown) {
+        if (rule.lastTriggered && now.getTime() - rule.lastTriggered.getTime() < rule.cooldown) {
           continue;
         }
 
@@ -386,20 +393,22 @@ export class ErrorMonitor extends EventEmitter {
           errorsBySeverity: this.currentMetrics.severityDistribution,
           errorsByCode: {},
           errorRate: this.currentMetrics.errorRate,
-          lastError: this.errorHistory.length > 0 ? 
-            this.errorHistory[this.errorHistory.length - 1].timestamp : undefined
+          lastError:
+            this.errorHistory.length > 0
+              ? this.errorHistory[this.errorHistory.length - 1].timestamp
+              : undefined,
         };
 
         if (rule.condition(this.currentMetrics, statistics)) {
           rule.lastTriggered = now;
-          
+
           this.logger.warn(`Alert triggered: ${rule.name}`, {
             severity: rule.severity,
-            description: rule.description
+            description: rule.description,
           });
 
           this.emit('alertTriggered', rule, this.currentMetrics, statistics);
-          
+
           // Execute alert action
           await rule.action(this.currentMetrics, statistics);
         }
@@ -415,9 +424,12 @@ export class ErrorMonitor extends EventEmitter {
   private cleanupHistory(): void {
     const cutoff = new Date(Date.now() - this.config.retentionPeriod);
     const initialLength = this.errorHistory.length;
-    
-    this.errorHistory.splice(0, this.errorHistory.findIndex(entry => entry.timestamp >= cutoff));
-    
+
+    this.errorHistory.splice(
+      0,
+      this.errorHistory.findIndex((entry) => entry.timestamp >= cutoff)
+    );
+
     if (this.errorHistory.length < initialLength) {
       this.logger.debug(`Cleaned up ${initialLength - this.errorHistory.length} old error entries`);
     }
@@ -436,7 +448,7 @@ export class ErrorMonitor extends EventEmitter {
       condition: (metrics) => metrics.errorRate > 20,
       action: async (metrics) => {
         this.logger.error(`HIGH ERROR RATE ALERT: ${metrics.errorRate} errors in the last hour`);
-      }
+      },
     });
 
     // Critical error alert
@@ -449,7 +461,7 @@ export class ErrorMonitor extends EventEmitter {
       action: async (metrics) => {
         const criticalCount = metrics.severityDistribution[ErrorSeverity.CRITICAL];
         this.logger.error(`CRITICAL ERROR ALERT: ${criticalCount} critical errors detected`);
-      }
+      },
     });
 
     // Health score alert
@@ -461,7 +473,7 @@ export class ErrorMonitor extends EventEmitter {
       condition: (metrics) => metrics.healthScore < 70,
       action: async (metrics) => {
         this.logger.warn(`LOW HEALTH SCORE ALERT: System health at ${metrics.healthScore}%`);
-      }
+      },
     });
   }
 }

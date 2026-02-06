@@ -1,6 +1,6 @@
-import React from 'react';
-import { X, FileText, Image, File } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { File, FileText, Image, X } from 'lucide-react';
+import React from 'react';
 
 interface AttachItemProps {
   id: string;
@@ -11,14 +11,7 @@ interface AttachItemProps {
   className?: string;
 }
 
-const AttachItem: React.FC<AttachItemProps> = ({ 
-  id,
-  name,
-  size,
-  type,
-  onRemove,
-  className 
-}) => {
+const AttachItem: React.FC<AttachItemProps> = ({ id, name, size, type, onRemove, className }) => {
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -38,24 +31,22 @@ const AttachItem: React.FC<AttachItemProps> = ({
   };
 
   return (
-    <div className={cn(
-      "flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200",
-      className
-    )}>
+    <div
+      className={cn(
+        'flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200',
+        className
+      )}
+    >
       <div className="flex items-center gap-3">
-        <div className="p-2 bg-slate-100 rounded">
-          {getFileIcon()}
-        </div>
+        <div className="p-2 bg-slate-100 rounded">{getFileIcon()}</div>
         <div>
-          <p className="text-sm font-medium text-slate-900 truncate max-w-48">
-            {name}
-          </p>
+          <p className="text-sm font-medium text-slate-900 truncate max-w-48">{name}</p>
           <p className="text-xs text-slate-500">
             {formatFileSize(size)} • {type}
           </p>
         </div>
       </div>
-      
+
       <button
         onClick={() => onRemove?.(id)}
         className="p-1.5 hover:bg-slate-200 rounded-md transition-colors"

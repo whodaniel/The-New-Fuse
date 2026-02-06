@@ -3,10 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 
 export interface RateLimitConfig {
-  points: number;           // Number of requests
-  duration: number;         // Time window in seconds
-  blockDuration?: number;   // Block duration in seconds (default: duration)
-  keyPrefix?: string;       // Redis key prefix
+  points: number; // Number of requests
+  duration: number; // Time window in seconds
+  blockDuration?: number; // Block duration in seconds (default: duration)
+  keyPrefix?: string; // Redis key prefix
 }
 
 export interface RateLimitResult {
@@ -41,28 +41,28 @@ export class RedisRateLimiterService {
   private readonly tiers: Record<string, RateLimitTier> = {
     free: {
       name: 'free',
-      points: 100,        // 100 requests
-      duration: 60,       // per minute
-      blockDuration: 300  // block for 5 minutes
+      points: 100, // 100 requests
+      duration: 60, // per minute
+      blockDuration: 300, // block for 5 minutes
     },
     pro: {
       name: 'pro',
-      points: 1000,       // 1000 requests
-      duration: 60,       // per minute
-      blockDuration: 60   // block for 1 minute
+      points: 1000, // 1000 requests
+      duration: 60, // per minute
+      blockDuration: 60, // block for 1 minute
     },
     enterprise: {
       name: 'enterprise',
-      points: 10000,      // 10000 requests
-      duration: 60,       // per minute
-      blockDuration: 30   // block for 30 seconds
+      points: 10000, // 10000 requests
+      duration: 60, // per minute
+      blockDuration: 30, // block for 30 seconds
     },
     burst: {
       name: 'burst',
-      points: 10,         // 10 requests
-      duration: 1,        // per second
-      blockDuration: 5    // block for 5 seconds
-    }
+      points: 10, // 10 requests
+      duration: 1, // per second
+      blockDuration: 5, // block for 5 seconds
+    },
   };
 
   constructor(private configService: ConfigService) {
@@ -82,7 +82,7 @@ export class RedisRateLimiterService {
         const delay = Math.min(times * 50, 2000);
         return delay;
       },
-      maxRetriesPerRequest: 3
+      maxRetriesPerRequest: 3,
     });
 
     this.redis.on('error', (error) => {
@@ -97,14 +97,11 @@ export class RedisRateLimiterService {
   /**
    * Check rate limit using sliding window algorithm
    */
-  async consume(
-    key: string,
-    config: RateLimitConfig = this.tiers.free
-  ): Promise<RateLimitResult> {
+  async consume(key: string, config: RateLimitConfig = this.tiers.free): Promise<RateLimitResult> {
     const keyPrefix = config.keyPrefix || 'ratelimit';
     const redisKey = `${keyPrefix}:${key}`;
     const now = Date.now();
-    const windowStart = now - (config.duration * 1000);
+    const windowStart = now - config.duration * 1000;
 
     try {
       // Use Redis pipeline for atomic operations
@@ -135,15 +132,11 @@ export class RedisRateLimiterService {
       const allowed = totalHits <= config.points;
 
       // Calculate reset time
-      const resetTime = new Date(now + (config.duration * 1000));
+      const resetTime = new Date(now + config.duration * 1000);
 
       // If blocked, set block duration
       if (!allowed && config.blockDuration) {
-        await this.redis.setex(
-          `${redisKey}:blocked`,
-          config.blockDuration,
-          '1'
-        );
+        await this.redis.setex(`${redisKey}:blocked`, config.blockDuration, '1');
       }
 
       return {
@@ -151,7 +144,7 @@ export class RedisRateLimiterService {
         remaining,
         resetTime,
         retryAfter: allowed ? undefined : config.blockDuration || config.duration,
-        totalHits
+        totalHits,
       };
     } catch (error) {
       this.logger.error(`Rate limit check error for key ${key}:`, error);
@@ -159,8 +152,8 @@ export class RedisRateLimiterService {
       return {
         allowed: true,
         remaining: config.points,
-        resetTime: new Date(now + (config.duration * 1000)),
-        totalHits: 0
+        resetTime: new Date(now + config.duration * 1000),
+        totalHits: 0,
       };
     }
   }
@@ -196,14 +189,11 @@ export class RedisRateLimiterService {
   /**
    * Get remaining points for a key
    */
-  async getRemaining(
-    key: string,
-    config: RateLimitConfig = this.tiers.free
-  ): Promise<number> {
+  async getRemaining(key: string, config: RateLimitConfig = this.tiers.free): Promise<number> {
     const keyPrefix = config.keyPrefix || 'ratelimit';
     const redisKey = `${keyPrefix}:${key}`;
     const now = Date.now();
-    const windowStart = now - (config.duration * 1000);
+    const windowStart = now - config.duration * 1000;
 
     try {
       // Count requests in current window
@@ -254,11 +244,11 @@ export class RedisRateLimiterService {
       } while (cursor !== '0');
 
       // Filter blocked keys
-      const blockedKeys = keys.filter(k => k.endsWith(':blocked'));
+      const blockedKeys = keys.filter((k) => k.endsWith(':blocked'));
 
       // Get top consumers
       const topConsumers: Array<{ key: string; count: number }> = [];
-      const regularKeys = keys.filter(k => !k.endsWith(':blocked'));
+      const regularKeys = keys.filter((k) => !k.endsWith(':blocked'));
 
       for (const key of regularKeys.slice(0, 10)) {
         const count = await this.redis.zcard(key);
@@ -270,14 +260,14 @@ export class RedisRateLimiterService {
       return {
         totalKeys: regularKeys.length,
         blockedKeys: blockedKeys.length,
-        topConsumers: topConsumers.slice(0, 10)
+        topConsumers: topConsumers.slice(0, 10),
       };
     } catch (error) {
       this.logger.error('Error getting rate limit metrics:', error);
       return {
         totalKeys: 0,
         blockedKeys: 0,
-        topConsumers: []
+        topConsumers: [],
       };
     }
   }
@@ -323,13 +313,13 @@ export class RedisRateLimiterService {
       await this.redis.ping();
       return {
         status: 'healthy',
-        latency: Date.now() - startTime
+        latency: Date.now() - startTime,
       };
     } catch (error) {
       this.logger.error('Rate limiter health check failed:', error);
       return {
         status: 'unhealthy',
-        latency: Date.now() - startTime
+        latency: Date.now() - startTime,
       };
     }
   }

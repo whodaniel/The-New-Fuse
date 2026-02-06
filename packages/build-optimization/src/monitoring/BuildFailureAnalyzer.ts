@@ -3,18 +3,13 @@
  */
 
 import { EventEmitter } from 'events';
-import {
-  BuildEventData,
-  MemoryUsage,
-  SystemResources,
-  BuildResult
-} from '../types/index.js';
+import { BuildResult, MemoryUsage, SystemResources } from '../types/index.js';
 import { DetailedBuildMetrics } from './BuildMetricsCollector.js';
 
 /**
  * Types of build failures
  */
-export type FailureType = 
+export type FailureType =
   | 'memory-exhaustion'
   | 'compilation-error'
   | 'dependency-error'
@@ -119,11 +114,7 @@ export class BuildFailureAnalyzer extends EventEmitter {
     );
 
     // Generate recommendations based on analysis
-    const recommendations = this.generateRecommendations(
-      analysis,
-      buildMetrics,
-      systemResources
-    );
+    const recommendations = this.generateRecommendations(analysis, buildMetrics, systemResources);
 
     // Store analysis for pattern learning
     this.analysisHistory.push(analysis);
@@ -147,7 +138,7 @@ export class BuildFailureAnalyzer extends EventEmitter {
       return recommendations;
     }
 
-    const peakMemory = Math.max(...memoryHistory.map(m => m.current));
+    const peakMemory = Math.max(...memoryHistory.map((m) => m.current));
     const avgMemory = memoryHistory.reduce((sum, m) => sum + m.current, 0) / memoryHistory.length;
     const memoryGrowthRate = this.calculateMemoryGrowthRate(memoryHistory);
 
@@ -162,19 +153,20 @@ export class BuildFailureAnalyzer extends EventEmitter {
           'Reduce build concurrency to 1-2 processes',
           'Enable staged builds with memory cleanup',
           'Consider upgrading system memory',
-          'Use incremental builds to reduce memory pressure'
+          'Use incremental builds to reduce memory pressure',
         ],
         expectedImpact: 'Prevent out-of-memory errors and improve build stability',
         configChanges: {
           maxConcurrency: Math.max(1, Math.floor(systemResources.cpuCores / 4)),
           memoryThreshold: 70,
-          cleanupBetweenStages: true
-        }
+          cleanupBetweenStages: true,
+        },
       });
     }
 
     // Memory leak detection
-    if (memoryGrowthRate > 10) { // MB per minute
+    if (memoryGrowthRate > 10) {
+      // MB per minute
       recommendations.push({
         category: 'memory',
         priority: 'high',
@@ -184,13 +176,13 @@ export class BuildFailureAnalyzer extends EventEmitter {
           'Enable garbage collection between build stages',
           'Reduce TypeScript compiler memory retention',
           'Monitor for memory leaks in build tools',
-          'Use memory profiling tools to identify leaks'
+          'Use memory profiling tools to identify leaks',
         ],
         expectedImpact: 'Prevent memory exhaustion during long builds',
         configChanges: {
           cleanupBetweenStages: true,
-          monitoringInterval: 500
-        }
+          monitoringInterval: 500,
+        },
       });
     }
 
@@ -205,13 +197,13 @@ export class BuildFailureAnalyzer extends EventEmitter {
           'Use memory-optimized TypeScript compiler options',
           'Enable incremental compilation',
           'Reduce concurrent build processes',
-          'Consider using swap space for temporary relief'
+          'Consider using swap space for temporary relief',
         ],
         expectedImpact: 'Improve overall build performance and stability',
         configChanges: {
           strategy: 'memory-optimized',
-          enableIncremental: true
-        }
+          enableIncremental: true,
+        },
       });
     }
 
@@ -228,7 +220,8 @@ export class BuildFailureAnalyzer extends EventEmitter {
     const recommendations: BuildRecommendation[] = [];
 
     // Low memory system recommendations
-    if (systemResources.totalMemory < 4096) { // Less than 4GB
+    if (systemResources.totalMemory < 4096) {
+      // Less than 4GB
       recommendations.push({
         category: 'system',
         priority: 'high',
@@ -239,7 +232,7 @@ export class BuildFailureAnalyzer extends EventEmitter {
           'Enable aggressive memory cleanup',
           'Use incremental builds exclusively',
           'Consider adding swap space',
-          'Close unnecessary applications during builds'
+          'Close unnecessary applications during builds',
         ],
         expectedImpact: 'Enable builds on low-memory systems',
         configChanges: {
@@ -247,8 +240,8 @@ export class BuildFailureAnalyzer extends EventEmitter {
           memoryThreshold: 60,
           strategy: 'memory-optimized',
           cleanupBetweenStages: true,
-          enableIncremental: true
-        }
+          enableIncremental: true,
+        },
       });
     }
 
@@ -258,19 +251,20 @@ export class BuildFailureAnalyzer extends EventEmitter {
         category: 'system',
         priority: 'low',
         title: 'High-Performance System Optimization',
-        description: 'System has abundant resources. Can optimize for speed over memory efficiency.',
+        description:
+          'System has abundant resources. Can optimize for speed over memory efficiency.',
         actions: [
           'Increase build concurrency',
           'Use performance-optimized strategy',
           'Enable parallel TypeScript compilation',
-          'Consider using build caching'
+          'Consider using build caching',
         ],
         expectedImpact: 'Significantly faster build times',
         configChanges: {
           maxConcurrency: Math.min(systemResources.cpuCores, 8),
           strategy: 'production',
-          memoryThreshold: 85
-        }
+          memoryThreshold: 85,
+        },
       });
     }
 
@@ -284,9 +278,9 @@ export class BuildFailureAnalyzer extends EventEmitter {
         actions: [
           'Use native file system watching',
           'Optimize for APFS file system',
-          'Consider using Rosetta 2 optimizations if on Apple Silicon'
+          'Consider using Rosetta 2 optimizations if on Apple Silicon',
         ],
-        expectedImpact: 'Better performance on macOS systems'
+        expectedImpact: 'Better performance on macOS systems',
       });
     }
 
@@ -317,7 +311,7 @@ export class BuildFailureAnalyzer extends EventEmitter {
     systemResources: SystemResources
   ): string {
     const timestamp = new Date().toISOString();
-    
+
     let log = `
 Build Failure Troubleshooting Log
 Generated: ${timestamp}
@@ -366,7 +360,7 @@ RECENT EVENTS
 
     // Add recent events
     const recentEvents = buildMetrics.events.slice(-20); // Last 20 events
-    recentEvents.forEach(event => {
+    recentEvents.forEach((event) => {
       const time = new Date(event.timestamp).toLocaleTimeString();
       log += `${time}: ${event.type} - ${JSON.stringify(event.payload)}\n`;
     });
@@ -397,22 +391,12 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
     // Try to match against known failure patterns
     for (const pattern of this.failurePatterns) {
       if (this.matchesPattern(pattern, buildResult, buildMetrics, errorLogs)) {
-        return this.createAnalysisFromPattern(
-          pattern,
-          buildResult,
-          buildMetrics,
-          systemResources
-        );
+        return this.createAnalysisFromPattern(pattern, buildResult, buildMetrics, systemResources);
       }
     }
 
     // Fallback to heuristic analysis
-    return this.performHeuristicAnalysis(
-      buildResult,
-      buildMetrics,
-      systemResources,
-      errorLogs
-    );
+    return this.performHeuristicAnalysis(buildResult, buildMetrics, systemResources, errorLogs);
   }
 
   /**
@@ -427,23 +411,24 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
     // Check error message patterns
     if (pattern.errorPatterns.length > 0) {
       const allErrors = [buildResult.error || '', ...errorLogs].join(' ');
-      const hasMatchingError = pattern.errorPatterns.some(regex => regex.test(allErrors));
+      const hasMatchingError = pattern.errorPatterns.some((regex) => regex.test(allErrors));
       if (!hasMatchingError) return false;
     }
 
     // Check memory patterns
     if (pattern.memoryPatterns) {
       const { peakUsage, rapidIncrease, threshold } = pattern.memoryPatterns;
-      
+
       if (peakUsage && buildMetrics.peakMemoryUsage < peakUsage) return false;
       if (threshold && buildMetrics.performanceStats.memoryViolations === 0) return false;
-      if (rapidIncrease && this.calculateMemoryGrowthRate(buildMetrics.memorySnapshots) < 5) return false;
+      if (rapidIncrease && this.calculateMemoryGrowthRate(buildMetrics.memorySnapshots) < 5)
+        return false;
     }
 
     // Check event patterns
     if (pattern.eventPatterns) {
-      const eventTypes = buildMetrics.events.map(e => e.type);
-      const hasEventPattern = pattern.eventPatterns.every(eventType => 
+      const eventTypes = buildMetrics.events.map((e) => e.type);
+      const hasEventPattern = pattern.eventPatterns.every((eventType) =>
         eventTypes.includes(eventType as any)
       );
       if (!hasEventPattern) return false;
@@ -461,8 +446,8 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
     buildMetrics: DetailedBuildMetrics,
     systemResources: SystemResources
   ): FailureAnalysis {
-    const failedStages = buildMetrics.stageMetrics.filter(s => !s.success);
-    const affectedComponents = failedStages.flatMap(s => s.packages);
+    const failedStages = buildMetrics.stageMetrics.filter((s) => !s.success);
+    const affectedComponents = failedStages.flatMap((s) => s.packages);
 
     return {
       type: pattern.failureType,
@@ -471,7 +456,7 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
       rootCause: this.getRootCause(pattern.failureType, buildMetrics, systemResources),
       affectedComponents,
       memoryAtFailure: buildMetrics.memorySnapshots[buildMetrics.memorySnapshots.length - 1],
-      systemResourcesAtFailure: systemResources
+      systemResourcesAtFailure: systemResources,
     };
   }
 
@@ -512,8 +497,8 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
       confidence = 80;
     }
 
-    const failedStages = buildMetrics.stageMetrics.filter(s => !s.success);
-    const affectedComponents = failedStages.flatMap(s => s.packages);
+    const failedStages = buildMetrics.stageMetrics.filter((s) => !s.success);
+    const affectedComponents = failedStages.flatMap((s) => s.packages);
 
     return {
       type: failureType,
@@ -522,7 +507,7 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
       rootCause: this.getRootCause(failureType, buildMetrics, systemResources),
       affectedComponents,
       memoryAtFailure: buildMetrics.memorySnapshots[buildMetrics.memorySnapshots.length - 1],
-      systemResourcesAtFailure: systemResources
+      systemResourcesAtFailure: systemResources,
     };
   }
 
@@ -544,7 +529,9 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
     // Type-specific recommendations
     switch (analysis.type) {
       case 'memory-exhaustion':
-        recommendations.push(...this.getMemoryExhaustionRecommendations(buildMetrics, systemResources));
+        recommendations.push(
+          ...this.getMemoryExhaustionRecommendations(buildMetrics, systemResources)
+        );
         break;
       case 'compilation-error':
         recommendations.push(...this.getCompilationErrorRecommendations(analysis));
@@ -563,7 +550,9 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
     }
 
     // Add memory-specific recommendations
-    recommendations.push(...this.analyzeMemoryIssues(buildMetrics.memorySnapshots, systemResources));
+    recommendations.push(
+      ...this.analyzeMemoryIssues(buildMetrics.memorySnapshots, systemResources)
+    );
 
     // Add system-specific recommendations
     recommendations.push(...this.generateSystemRecommendations(systemResources, buildMetrics));
@@ -589,25 +578,25 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
           /out of memory/i,
           /heap out of memory/i,
           /maximum heap size/i,
-          /cannot allocate memory/i
+          /cannot allocate memory/i,
         ],
         memoryPatterns: {
           peakUsage: 1000,
-          threshold: 80
+          threshold: 80,
         },
         failureType: 'memory-exhaustion',
-        confidence: 95
+        confidence: 95,
       },
       {
         id: 'memory-exhaustion-threshold',
         errorPatterns: [],
         memoryPatterns: {
           rapidIncrease: true,
-          threshold: 90
+          threshold: 90,
         },
         eventPatterns: ['memory-threshold-exceeded'],
         failureType: 'memory-exhaustion',
-        confidence: 85
+        confidence: 85,
       },
       {
         id: 'typescript-compilation-error',
@@ -615,10 +604,10 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
           /typescript error/i,
           /ts\(\d+\)/,
           /type.*error/i,
-          /cannot find module.*\.ts/i
+          /cannot find module.*\.ts/i,
         ],
         failureType: 'compilation-error',
-        confidence: 90
+        confidence: 90,
       },
       {
         id: 'dependency-resolution-error',
@@ -626,21 +615,17 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
           /cannot resolve/i,
           /module not found/i,
           /dependency.*not found/i,
-          /package.*does not exist/i
+          /package.*does not exist/i,
         ],
         failureType: 'dependency-error',
-        confidence: 85
+        confidence: 85,
       },
       {
         id: 'build-timeout',
-        errorPatterns: [
-          /timeout/i,
-          /timed out/i,
-          /operation.*timeout/i
-        ],
+        errorPatterns: [/timeout/i, /timed out/i, /operation.*timeout/i],
         failureType: 'timeout',
-        confidence: 80
-      }
+        confidence: 80,
+      },
     ];
   }
 
@@ -731,16 +716,16 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
           'Enable aggressive memory cleanup between stages',
           'Use incremental builds only',
           'Close all unnecessary applications',
-          'Consider adding system memory or swap space'
+          'Consider adding system memory or swap space',
         ],
         expectedImpact: 'Prevent build failures due to memory exhaustion',
         configChanges: {
           maxConcurrency: 1,
           memoryThreshold: 60,
           cleanupBetweenStages: true,
-          strategy: 'memory-optimized'
-        }
-      }
+          strategy: 'memory-optimized',
+        },
+      },
     ];
   }
 
@@ -758,10 +743,10 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
           'Review and fix TypeScript errors in affected packages',
           'Check tsconfig.json configuration',
           'Verify type definitions are installed',
-          'Run type checking separately to isolate issues'
+          'Run type checking separately to isolate issues',
         ],
-        expectedImpact: 'Resolve compilation failures and enable successful builds'
-      }
+        expectedImpact: 'Resolve compilation failures and enable successful builds',
+      },
     ];
   }
 
@@ -779,10 +764,10 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
           'Run package manager install/update',
           'Check package.json for missing dependencies',
           'Verify workspace configuration',
-          'Clear node_modules and reinstall if necessary'
+          'Clear node_modules and reinstall if necessary',
         ],
-        expectedImpact: 'Resolve dependency issues and enable successful builds'
-      }
+        expectedImpact: 'Resolve dependency issues and enable successful builds',
+      },
     ];
   }
 
@@ -803,17 +788,19 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
           'Increase build timeout limits',
           'Enable incremental builds to reduce build time',
           'Optimize TypeScript compilation settings',
-          'Consider using build caching'
+          'Consider using build caching',
         ],
-        expectedImpact: 'Reduce build times and prevent timeout failures'
-      }
+        expectedImpact: 'Reduce build times and prevent timeout failures',
+      },
     ];
   }
 
   /**
    * Get system resource recommendations
    */
-  private getSystemResourceRecommendations(systemResources: SystemResources): BuildRecommendation[] {
+  private getSystemResourceRecommendations(
+    systemResources: SystemResources
+  ): BuildRecommendation[] {
     return [
       {
         category: 'system',
@@ -824,10 +811,10 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
           'Close unnecessary applications',
           'Free up disk space',
           'Consider system upgrades',
-          'Use resource monitoring tools'
+          'Use resource monitoring tools',
         ],
-        expectedImpact: 'Improve system resource availability for builds'
-      }
+        expectedImpact: 'Improve system resource availability for builds',
+      },
     ];
   }
 
@@ -848,10 +835,10 @@ Timestamp: ${new Date(analysis.memoryAtFailure.timestamp).toISOString()}
           'Enable build monitoring and logging',
           'Use incremental builds when possible',
           'Optimize build configuration for your system',
-          'Consider using build caching'
+          'Consider using build caching',
         ],
-        expectedImpact: 'Improve overall build reliability and performance'
-      }
+        expectedImpact: 'Improve overall build reliability and performance',
+      },
     ];
   }
 }

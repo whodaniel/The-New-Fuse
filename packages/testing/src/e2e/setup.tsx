@@ -5,7 +5,7 @@ interface TestConfig {
 
 class TestEnvironment {
   constructor(private config: TestConfig) {}
-  
+
   async runBehaviorTests(): Promise<void> {
     // Implementation here
   }
@@ -17,12 +17,12 @@ interface AgentTestRunner {
 
 export class E2ETestFramework {
   private agentTestRunner: AgentTestRunner;
-  
+
   constructor(private config: TestConfig) {
     this.agentTestRunner = {
       async initialize() {
         // Implementation here
-      }
+      },
     };
   }
 

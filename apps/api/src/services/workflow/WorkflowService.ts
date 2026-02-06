@@ -36,7 +36,7 @@ export class WorkflowService {
       steps: data.steps || [],
       createdAt: new Date(),
       updatedAt: new Date(),
-      userId
+      userId,
     };
 
     this.workflows.set(workflow.id, workflow);
@@ -48,8 +48,7 @@ export class WorkflowService {
   }
 
   async getUserWorkflows(userId: string): Promise<Workflow[]> {
-    return Array.from(this.workflows.values())
-      .filter(workflow => workflow.userId === userId);
+    return Array.from(this.workflows.values()).filter((workflow) => workflow.userId === userId);
   }
 
   async updateWorkflow(id: string, data: Partial<Workflow>): Promise<Workflow | null> {
@@ -61,7 +60,7 @@ export class WorkflowService {
     const updatedWorkflow = {
       ...workflow,
       ...data,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.workflows.set(id, updatedWorkflow);
@@ -83,8 +82,8 @@ export class WorkflowService {
 
     try {
       // Mock execution - in real implementation, this would execute steps
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       workflow.status = 'completed';
     } catch (error) {
       workflow.status = 'error';

@@ -1,6 +1,8 @@
 # Code Style Guidelines
 
-This document outlines the comprehensive code style guidelines for The New Fuse SaaS platform, ensuring consistency, maintainability, and quality across all applications.
+This document outlines the comprehensive code style guidelines for The New Fuse
+SaaS platform, ensuring consistency, maintainability, and quality across all
+applications.
 
 ## Table of Contents
 
@@ -20,26 +22,31 @@ This document outlines the comprehensive code style guidelines for The New Fuse 
 ## General Principles
 
 ### 1. Consistency First
+
 - Always follow established patterns in the codebase
 - Use existing utilities and helpers when available
 - Maintain consistent project structure across apps
 
 ### 2. Simplicity
+
 - Write clear, readable code
 - Avoid unnecessary complexity
 - Prefer simple solutions over clever ones
 
 ### 3. Testability
+
 - Write code that is easy to test
 - Use dependency injection where appropriate
 - Separate business logic from UI components
 
 ### 4. Performance
+
 - Write efficient code from the start
 - Consider performance implications of decisions
 - Use appropriate data structures and algorithms
 
 ### 5. Security
+
 - Validate all inputs
 - Sanitize outputs
 - Use secure defaults
@@ -47,11 +54,14 @@ This document outlines the comprehensive code style guidelines for The New Fuse 
 ## TypeScript/JavaScript
 
 ### File Extensions
+
 - **TypeScript**: `.ts` for implementation, `.tsx` for React components
-- **JavaScript**: `.js` only for specific legacy cases (should be converted to TypeScript)
+- **JavaScript**: `.js` only for specific legacy cases (should be converted to
+  TypeScript)
 - **Type Definitions**: `.d.ts` for external library type definitions
 
 ### Type Safety
+
 ```typescript
 // ✅ Good: Use strict typing
 interface User {
@@ -76,6 +86,7 @@ const processUser = (user: any) => {
 ```
 
 ### Variable Declarations
+
 ```typescript
 // ✅ Good: Use const/let appropriately
 const API_URL = 'https://api.example.com';
@@ -86,6 +97,7 @@ var oldStyle = 'avoid';
 ```
 
 ### Function Declarations
+
 ```typescript
 // ✅ Good: Explicit return types and parameter types
 const formatUserName = (user: User): string => {
@@ -106,14 +118,15 @@ const fetchUser = async (id: string): Promise<User> => {
 ## React Components
 
 ### Component Structure
-```tsx
+
+````tsx
 /**
  * Dashboard component for displaying system overview
- * 
+ *
  * @description
  * Renders a comprehensive dashboard with system metrics, agent status,
  * and real-time data updates. Includes error boundaries and loading states.
- * 
+ *
  * @example
  * ```tsx
  * <Dashboard>
@@ -121,7 +134,7 @@ const fetchUser = async (id: string): Promise<User> => {
  *   <PerformanceMetrics />
  * </Dashboard>
  * ```
- * 
+ *
  * @component
  * @requires AgentSummary
  * @requires PerformanceMetrics
@@ -161,123 +174,127 @@ interface DashboardState {
 
 /**
  * Main Dashboard component
- * 
+ *
  * Displays system overview with real-time updates
  */
-const Dashboard: React.FC<DashboardProps> = memo<DashboardProps>(({
-  initialData,
-  refreshInterval = 30000,
-  debugMode = false,
-  className = '',
-}) => {
-  // State management
-  const [state, setState] = useState<DashboardState>({
-    agents: initialData?.agents || [],
-    metrics: initialData?.metrics || {} as MetricData,
-    isLoading: !initialData,
-    error: null,
-  });
+const Dashboard: React.FC<DashboardProps> = memo<DashboardProps>(
+  ({
+    initialData,
+    refreshInterval = 30000,
+    debugMode = false,
+    className = '',
+  }) => {
+    // State management
+    const [state, setState] = useState<DashboardState>({
+      agents: initialData?.agents || [],
+      metrics: initialData?.metrics || ({} as MetricData),
+      isLoading: !initialData,
+      error: null,
+    });
 
-  // Hooks
-  const { user, hasPermission } = useAuth();
-  const { isConnected, sendMessage } = useWebSocket();
+    // Hooks
+    const { user, hasPermission } = useAuth();
+    const { isConnected, sendMessage } = useWebSocket();
 
-  // Event handlers
-  const handleAgentUpdate = useCallback((agents: AgentData[]) => {
-    setState(prev => ({ ...prev, agents, error: null }));
-  }, []);
+    // Event handlers
+    const handleAgentUpdate = useCallback((agents: AgentData[]) => {
+      setState((prev) => ({ ...prev, agents, error: null }));
+    }, []);
 
-  const handleError = useCallback((error: Error) => {
-    console.error('Dashboard error:', error);
-    setState(prev => ({ ...prev, error: error.message }));
-  }, []);
+    const handleError = useCallback((error: Error) => {
+      console.error('Dashboard error:', error);
+      setState((prev) => ({ ...prev, error: error.message }));
+    }, []);
 
-  // Effects
-  useEffect(() => {
-    if (isConnected) {
-      sendMessage('dashboard:subscribe', { userId: user?.id });
+    // Effects
+    useEffect(() => {
+      if (isConnected) {
+        sendMessage('dashboard:subscribe', { userId: user?.id });
+      }
+    }, [isConnected, sendMessage, user?.id]);
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        // Auto-refresh logic
+      }, refreshInterval);
+
+      return () => clearInterval(interval);
+    }, [refreshInterval]);
+
+    // Render
+    if (state.isLoading) {
+      return <LoadingSpinner />;
     }
-  }, [isConnected, sendMessage, user?.id]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Auto-refresh logic
-    }, refreshInterval);
+    if (state.error) {
+      return (
+        <ErrorBoundary>
+          <div className={`dashboard error ${className}`}>
+            <h2>Error loading dashboard</h2>
+            <p>{state.error}</p>
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        </ErrorBoundary>
+      );
+    }
 
-    return () => clearInterval(interval);
-  }, [refreshInterval]);
-
-  // Render
-  if (state.isLoading) {
-    return <LoadingSpinner />;
-  }
-
-  if (state.error) {
     return (
       <ErrorBoundary>
-        <div className={`dashboard error ${className}`}>
-          <h2>Error loading dashboard</h2>
-          <p>{state.error}</p>
-          <button onClick={() => window.location.reload()}>
-            Retry
-          </button>
+        <div className={`dashboard ${className}`} data-testid="dashboard">
+          {debugMode && <DebugPanel state={state} />}
+
+          <header className="dashboard-header">
+            <h1>System Dashboard</h1>
+            <div className="status-indicators">
+              <StatusIndicator connected={isConnected} label="WebSocket" />
+              <StatusIndicator
+                connected={user !== null}
+                label="Authenticated"
+              />
+            </div>
+          </header>
+
+          <main className="dashboard-content">
+            <section className="agents-section">
+              <h2>Active Agents</h2>
+              <AgentSummary agents={state.agents} />
+            </section>
+
+            <section className="metrics-section">
+              <h2>Performance Metrics</h2>
+              <PerformanceMetrics data={state.metrics} />
+            </section>
+          </main>
         </div>
       </ErrorBoundary>
     );
   }
-
-  return (
-    <ErrorBoundary>
-      <div className={`dashboard ${className}`} data-testid="dashboard">
-        {debugMode && <DebugPanel state={state} />}
-        
-        <header className="dashboard-header">
-          <h1>System Dashboard</h1>
-          <div className="status-indicators">
-            <StatusIndicator connected={isConnected} label="WebSocket" />
-            <StatusIndicator connected={user !== null} label="Authenticated" />
-          </div>
-        </header>
-
-        <main className="dashboard-content">
-          <section className="agents-section">
-            <h2>Active Agents</h2>
-            <AgentSummary agents={state.agents} />
-          </section>
-
-          <section className="metrics-section">
-            <h2>Performance Metrics</h2>
-            <PerformanceMetrics data={state.metrics} />
-          </section>
-        </main>
-      </div>
-    </ErrorBoundary>
-  );
-});
+);
 
 // Display name for React DevTools
 Dashboard.displayName = 'Dashboard';
 
 export { Dashboard };
 export type { DashboardProps, DashboardState };
-```
+````
 
 ### Hooks Guidelines
-```typescript
+
+````typescript
 /**
  * Custom hook for managing agent data
- * 
+ *
  * @description
  * Provides a consistent interface for fetching, updating, and caching
  * agent data with automatic error handling and loading states.
- * 
+ *
  * @param {string[]} agentIds - IDs of agents to fetch
  * @param {Object} options - Configuration options
  * @param {boolean} options.realTime - Enable real-time updates
  * @param {number} options.cacheTime - Cache duration in milliseconds
- * 
+ *
  * @returns {Object} Hook return value with data, loading, error, and actions
- * 
+ *
  * @example
  * ```typescript
  * const { agents, loading, error, refresh, selectAgent } = useAgents(
@@ -302,32 +319,51 @@ export const useAgents = (
     selectAgent,
   };
 };
-```
+````
 
 ## NestJS Backend
 
 ### Controller Structure
-```typescript
-import { Controller, Get, Post, Body, Param, Query, UseGuards, Logger } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+
+````typescript
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  Logger,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { AgentService } from '../services/agent.service';
-import { CreateAgentDto, UpdateAgentDto, AgentQueryDto } from '../dtos/agent.dto';
+import {
+  CreateAgentDto,
+  UpdateAgentDto,
+  AgentQueryDto,
+} from '../dtos/agent.dto';
 import { User } from '../entities/user.entity';
 import { Agent } from '../entities/agent.entity';
 import type { PaginatedResult, ServiceResponse } from '../types/common';
 
 /**
  * Controller for managing AI agents
- * 
+ *
  * @description
  * Handles CRUD operations for AI agents, including creation, retrieval,
  * updating, and deletion. Provides agent collaboration features and
  * performance monitoring.
- * 
+ *
  * @tags agents
  * @version 1.0
  */
@@ -342,18 +378,18 @@ export class AgentController {
 
   /**
    * Create a new AI agent
-   * 
+   *
    * @description
    * Creates a new agent with the specified configuration and capabilities.
    * Validates input data and sets up the agent's environment.
-   * 
+   *
    * @param createAgentDto - Agent creation data
    * @param currentUser - Current authenticated user
    * @returns Created agent with full configuration
-   * 
+   *
    * @throws {ValidationError} When agent configuration is invalid
    * @throws {ConflictException} When agent with same name already exists
-   * 
+   *
    * @example
    * ```typescript
    * // Create a chat agent
@@ -368,55 +404,59 @@ export class AgentController {
    */
   @Post()
   @Roles('admin', 'agent_creator')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Create a new AI agent',
-    description: 'Creates a new agent with specified configuration and capabilities'
+    description:
+      'Creates a new agent with specified configuration and capabilities',
   })
-  @ApiResponse({ 
-    status: 201, 
+  @ApiResponse({
+    status: 201,
     description: 'Agent created successfully',
-    type: Agent 
+    type: Agent,
   })
-  @ApiResponse({ 
-    status: 400, 
-    description: 'Invalid agent configuration' 
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid agent configuration',
   })
-  @ApiResponse({ 
-    status: 409, 
-    description: 'Agent with same name already exists' 
+  @ApiResponse({
+    status: 409,
+    description: 'Agent with same name already exists',
   })
   async create(
     @Body() createAgentDto: CreateAgentDto,
-    @CurrentUser() currentUser: User,
+    @CurrentUser() currentUser: User
   ): Promise<ServiceResponse<Agent>> {
     this.logger.log(`Creating new agent: ${createAgentDto.name}`);
-    
+
     try {
       const agent = await this.agentService.create(createAgentDto, currentUser);
       this.logger.log(`Agent created successfully: ${agent.id}`);
-      
+
       return {
         success: true,
         data: agent,
         message: 'Agent created successfully',
       };
     } catch (error) {
-      this.logger.error(`Failed to create agent: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to create agent: ${error.message}`,
+        error.stack
+      );
       throw error;
     }
   }
 
   /**
    * Get paginated list of agents
-   * 
+   *
    * @description
    * Retrieves a paginated list of agents with optional filtering
    * and sorting. Supports complex queries for agent discovery.
-   * 
+   *
    * @param query - Query parameters for filtering and pagination
    * @param currentUser - Current authenticated user
    * @returns Paginated result with agent data
-   * 
+   *
    * @example
    * ```typescript
    * // Get active chat agents
@@ -433,7 +473,7 @@ export class AgentController {
   @Get()
   @ApiOperation({
     summary: 'Get paginated list of agents',
-    description: 'Retrieves agents with filtering, sorting, and pagination'
+    description: 'Retrieves agents with filtering, sorting, and pagination',
   })
   @ApiResponse({
     status: 200,
@@ -441,12 +481,12 @@ export class AgentController {
   })
   async findAll(
     @Query() query: AgentQueryDto,
-    @CurrentUser() currentUser: User,
+    @CurrentUser() currentUser: User
   ): Promise<ServiceResponse<PaginatedResult<Agent>>> {
     this.logger.log(`Fetching agents for user: ${currentUser.email}`);
-    
+
     const result = await this.agentService.findAll(query, currentUser);
-    
+
     return {
       success: true,
       data: result,
@@ -454,14 +494,24 @@ export class AgentController {
     };
   }
 }
-```
+````
 
 ### Service Structure
+
 ```typescript
-import { Injectable, Logger, NotFoundException, ConflictException } from '@nestjs/common';
-import { PrismaService } from './prisma.service';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
+import { DatabaseService } from './drizzle.service';
 import { AgentRepository } from '../repositories/agent.repository';
-import { CreateAgentDto, UpdateAgentDto, AgentQueryDto } from '../dtos/agent.dto';
+import {
+  CreateAgentDto,
+  UpdateAgentDto,
+  AgentQueryDto,
+} from '../dtos/agent.dto';
 import { User } from '../entities/user.entity';
 import { Agent } from '../entities/agent.entity';
 import { AgentValidator } from '../validators/agent.validator';
@@ -470,12 +520,12 @@ import type { PaginatedResult, ServiceResponse } from '../types/common';
 
 /**
  * Service for managing AI agents
- * 
+ *
  * @description
  * Provides business logic for agent operations including creation,
  * validation, execution, and lifecycle management. Integrates with
  * external AI services and manages agent state.
- * 
+ *
  * @since 1.0.0
  */
 @Injectable()
@@ -483,41 +533,42 @@ export class AgentService {
   private readonly logger = new Logger(AgentService.name);
 
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly drizzle: DatabaseService,
     private readonly agentRepository: AgentRepository,
     private readonly agentValidator: AgentValidator,
-    private readonly agentFactory: AgentFactory,
+    private readonly agentFactory: AgentFactory
   ) {}
 
   /**
    * Create a new AI agent
-   * 
+   *
    * @description
    * Creates a new agent with validation, factory instantiation,
    * and database persistence. Handles all aspects of agent setup
    * including model configuration and environment variables.
-   * 
+   *
    * @param createAgentDto - Agent creation data
    * @param owner - Agent owner
    * @returns Created agent entity
-   * 
+   *
    * @throws {ValidationError} When agent configuration is invalid
    * @throws {ConflictException} When agent name already exists
    * @throws {ServiceUnavailableException} When AI service is unavailable
    */
-  async create(
-    createAgentDto: CreateAgentDto,
-    owner: User,
-  ): Promise<Agent> {
+  async create(createAgentDto: CreateAgentDto, owner: User): Promise<Agent> {
     this.logger.log(`Creating agent: ${createAgentDto.name}`);
 
     // Validate agent configuration
     await this.agentValidator.validateCreateDto(createAgentDto);
 
     // Check for name conflicts
-    const existingAgent = await this.agentRepository.findByName(createAgentDto.name);
+    const existingAgent = await this.agentRepository.findByName(
+      createAgentDto.name
+    );
     if (existingAgent) {
-      throw new ConflictException(`Agent with name "${createAgentDto.name}" already exists`);
+      throw new ConflictException(
+        `Agent with name "${createAgentDto.name}" already exists`
+      );
     }
 
     try {
@@ -530,26 +581,29 @@ export class AgentService {
       this.logger.log(`Agent created successfully: ${savedAgent.id}`);
       return savedAgent;
     } catch (error) {
-      this.logger.error(`Failed to create agent: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to create agent: ${error.message}`,
+        error.stack
+      );
       throw error;
     }
   }
 
   /**
    * Find all agents with filtering and pagination
-   * 
+   *
    * @description
    * Retrieves agents based on query parameters with support for
    * complex filtering, sorting, and pagination. Optimized for
    * performance with proper indexing.
-   * 
+   *
    * @param query - Query parameters
    * @param user - Current user for permission filtering
    * @returns Paginated result
    */
   async findAll(
     query: AgentQueryDto,
-    user: User,
+    user: User
   ): Promise<PaginatedResult<Agent>> {
     const { page = 1, limit = 20, ...filters } = query;
     const offset = (page - 1) * limit;
@@ -598,6 +652,7 @@ export class AgentService {
 ## File Organization
 
 ### Directory Structure
+
 ```
 src/
 ├── components/           # Reusable UI components
@@ -659,6 +714,7 @@ utils.test.ts
 ## Naming Conventions
 
 ### Variables and Functions
+
 ```typescript
 // ✅ Good: Descriptive, camelCase
 const activeUserList = [];
@@ -672,6 +728,7 @@ const getUP = (id: string) => {};
 ```
 
 ### Classes and Interfaces
+
 ```typescript
 // ✅ Good: PascalCase, descriptive
 class UserProfileManager {}
@@ -685,6 +742,7 @@ enum UR {}
 ```
 
 ### Constants
+
 ```typescript
 // ✅ Good: UPPER_SNAKE_CASE
 const MAX_RETRY_ATTEMPTS = 3;
@@ -697,57 +755,66 @@ const apiBaseUrl = 'https://api.example.com';
 ```
 
 ### CSS Classes (BEM Methodology)
+
 ```css
 /* Block */
-.dashboard {}
+.dashboard {
+}
 
 /* Element */
-.dashboard__header {}
-.dashboard__content {}
-.dashboard__footer {}
+.dashboard__header {
+}
+.dashboard__content {
+}
+.dashboard__footer {
+}
 
 /* Modifier */
-.dashboard--loading {}
-.dashboard__header--large {}
-.dashboard__content--full-width {}
+.dashboard--loading {
+}
+.dashboard__header--large {
+}
+.dashboard__content--full-width {
+}
 ```
 
 ## Comments and Documentation
 
 ### JSDoc Comments
-```typescript
+
+````typescript
 /**
  * Formats a date string to human-readable format
- * 
+ *
  * @description
  * Converts ISO date strings to localized, human-readable format
  * with support for different date styles and time zones.
- * 
+ *
  * @param date - Date string in ISO format or Date object
  * @param options - Formatting options
  * @param options.locale - Locale string (default: 'en-US')
  * @param options.style - Date style: 'short', 'medium', 'long' (default: 'medium')
  * @param options.includeTime - Whether to include time (default: false)
- * 
+ *
  * @returns Formatted date string
- * 
+ *
  * @example
  * ```typescript
  * // Basic usage
  * formatDate('2024-01-15T10:30:00Z');
  * // Returns: "Jan 15, 2024"
- * 
+ *
  * // With options
- * formatDate(new Date(), { 
- *   style: 'long', 
+ * formatDate(new Date(), {
+ *   style: 'long',
  *   includeTime: true,
  *   locale: 'en-GB'
  * });
  * // Returns: "15 January 2024 at 10:30 AM"
  * ```
- * 
+ *
  * @throws {TypeError} When date parameter is invalid
- * 
+ *
  * @since 2.1.0
  * @author Frontend Team
  * @see DateUtils for related functions
@@ -762,9 +829,10 @@ export const formatDate = (
 ): string => {
   // Implementation...
 };
-```
+````
 
 ### Inline Comments
+
 ```typescript
 // ✅ Good: Explain WHY, not WHAT
 // Cache agent data to reduce API calls and improve performance
@@ -783,10 +851,11 @@ const agents = []; // Initialize array
 ## Error Handling
 
 ### Frontend Error Boundaries
+
 ```tsx
 /**
  * Error boundary component for React components
- * 
+ *
  * @description
  * Catches JavaScript errors in component tree, logs them,
  * and displays a fallback UI instead of crashing the app.
@@ -795,7 +864,10 @@ class ErrorBoundary extends React.Component<
   { children: React.ReactNode; fallback?: React.ComponentType<any> },
   { hasError: boolean; error?: Error }
 > {
-  constructor(props: { children: React.ReactNode; fallback?: React.ComponentType<any> }) {
+  constructor(props: {
+    children: React.ReactNode;
+    fallback?: React.ComponentType<any>;
+  }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -826,6 +898,7 @@ class ErrorBoundary extends React.Component<
 ```
 
 ### Backend Error Handling
+
 ```typescript
 /**
  * Custom application error classes
@@ -842,7 +915,7 @@ export class AppError extends Error {
     super(message);
     this.statusCode = statusCode;
     this.isOperational = isOperational;
-    
+
     Error.captureStackTrace(this, this.constructor);
   }
 }
@@ -871,13 +944,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const request = ctx.getRequest();
 
-    const status = exception instanceof AppError 
-      ? exception.statusCode 
-      : HttpStatus.INTERNAL_SERVER_ERROR;
+    const status =
+      exception instanceof AppError
+        ? exception.statusCode
+        : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const message = exception instanceof AppError 
-      ? exception.message 
-      : 'Internal server error';
+    const message =
+      exception instanceof AppError
+        ? exception.message
+        : 'Internal server error';
 
     const errorResponse = {
       success: false,
@@ -904,6 +979,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 ## Testing
 
 ### Unit Test Structure
+
 ```typescript
 describe('AgentService', () => {
   let agentService: AgentService;
@@ -921,7 +997,7 @@ describe('AgentService', () => {
     agentService = new AgentService(
       agentRepository,
       agentValidator,
-      agentFactory,
+      agentFactory
     );
   });
 
@@ -947,7 +1023,9 @@ describe('AgentService', () => {
 
       // Assert
       expect(result).toBe(expectedAgent);
-      expect(agentValidator.validateCreateDto).toHaveBeenCalledWith(createAgentDto);
+      expect(agentValidator.validateCreateDto).toHaveBeenCalledWith(
+        createAgentDto
+      );
       expect(agentFactory.create).toHaveBeenCalledWith(createAgentDto, user);
     });
 
@@ -955,21 +1033,22 @@ describe('AgentService', () => {
       // Arrange
       const invalidDto = { name: '' } as CreateAgentDto;
       const user = { id: 'user-1' } as User;
-      
+
       agentValidator.validateCreateDto.mockRejectedValue(
         new ValidationError('Name is required', 'name')
       );
 
       // Act & Assert
-      await expect(agentService.create(invalidDto, user))
-        .rejects
-        .toThrow(ValidationError);
+      await expect(agentService.create(invalidDto, user)).rejects.toThrow(
+        ValidationError
+      );
     });
   });
 });
 ```
 
 ### Component Testing
+
 ```typescript
 describe('Dashboard', () => {
   const defaultProps: DashboardProps = {
@@ -988,19 +1067,19 @@ describe('Dashboard', () => {
 
   it('should render loading state initially', () => {
     renderDashboard({ initialData: undefined });
-    
+
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
   });
 
   it('should render error state on failure', async () => {
     // Mock error scenario
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-    
+
     renderDashboard({ initialData: { agents: [] } });
-    
+
     // Trigger error through websocket mock
     // ...
-    
+
     await waitFor(() => {
       expect(screen.getByText('Error loading dashboard')).toBeInTheDocument();
     });
@@ -1012,9 +1091,9 @@ describe('Dashboard', () => {
     const mockAgents = [
       { id: 'agent-1', name: 'Test Agent', status: 'active' },
     ];
-    
+
     renderDashboard({
-      initialData: { 
+      initialData: {
         agents: mockAgents,
         metrics: { totalAgents: 1, activeAgents: 1 }
       }
@@ -1031,6 +1110,7 @@ describe('Dashboard', () => {
 ## Performance
 
 ### React Performance
+
 ```typescript
 /**
  * Memoize expensive calculations
@@ -1081,6 +1161,7 @@ const PureListItem = memo<ListItemProps>(({ item, onClick }) => {
 ```
 
 ### Backend Performance
+
 ```typescript
 /**
  * Database query optimization
@@ -1089,7 +1170,7 @@ const PureListItem = memo<ListItemProps>(({ item, onClick }) => {
 export class AgentService {
   async findAgentsWithOptimizedQuery(query: AgentQueryDto) {
     // Use selective field loading
-    const agents = await this.prisma.agent.findMany({
+    const agents = await this.drizzle.agent.findMany({
       where: this.buildWhereClause(query),
       select: {
         id: true,
@@ -1104,7 +1185,7 @@ export class AgentService {
     });
 
     // Use COUNT(*) for pagination
-    const total = await this.prisma.agent.count({
+    const total = await this.drizzle.agent.count({
       where: this.buildWhereClause(query),
     });
 
@@ -1117,7 +1198,7 @@ export class AgentService {
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(300) // 5 minutes
   async getAgentConfiguration(agentId: string) {
-    return this.prisma.agent.findUnique({
+    return this.drizzle.agent.findUnique({
       where: { id: agentId },
       select: {
         config: true,
@@ -1131,6 +1212,7 @@ export class AgentService {
 ## Security
 
 ### Input Validation
+
 ```typescript
 /**
  * Validate all user inputs
@@ -1142,12 +1224,18 @@ class AgentValidator {
   async validateCreateDto(dto: CreateAgentDto): Promise<void> {
     // Validate name
     if (!dto.name || dto.name.length < 3 || dto.name.length > 100) {
-      throw new ValidationError('Name must be between 3 and 100 characters', 'name');
+      throw new ValidationError(
+        'Name must be between 3 and 100 characters',
+        'name'
+      );
     }
 
     // Validate capabilities
     if (!Array.isArray(dto.capabilities) || dto.capabilities.length === 0) {
-      throw new ValidationError('At least one capability is required', 'capabilities');
+      throw new ValidationError(
+        'At least one capability is required',
+        'capabilities'
+      );
     }
 
     // Sanitize inputs
@@ -1176,6 +1264,7 @@ class AgentValidator {
 ```
 
 ### Authentication & Authorization
+
 ```typescript
 /**
  * JWT Auth Guard with role-based access
@@ -1184,7 +1273,7 @@ class AgentValidator {
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
     private readonly userService: UserService,
-    private readonly logger: Logger,
+    private readonly logger: Logger
   ) {
     super();
   }
@@ -1200,7 +1289,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     try {
       const payload = this.jwtService.verify(token);
       const user = await this.userService.findById(payload.sub);
-      
+
       if (!user || !user.isActive) {
         throw new UnauthorizedException('User not found or inactive');
       }
@@ -1228,6 +1317,7 @@ export const Roles = (...roles: UserRole[]) => SetMetadata('roles', roles);
 ## Linting and Formatting
 
 ### ESLint Configuration
+
 ```json
 {
   "extends": [
@@ -1248,6 +1338,7 @@ export const Roles = (...roles: UserRole[]) => SetMetadata('roles', roles);
 ```
 
 ### Prettier Configuration
+
 ```json
 {
   "semi": true,
@@ -1262,6 +1353,7 @@ export const Roles = (...roles: UserRole[]) => SetMetadata('roles', roles);
 ```
 
 ### Package.json Scripts
+
 ```json
 {
   "scripts": {
@@ -1277,7 +1369,9 @@ export const Roles = (...roles: UserRole[]) => SetMetadata('roles', roles);
 
 ---
 
-This document should be updated as the codebase evolves and new patterns emerge. All team members are responsible for maintaining these standards and suggesting improvements when needed.
+This document should be updated as the codebase evolves and new patterns emerge.
+All team members are responsible for maintaining these standards and suggesting
+improvements when needed.
 
 **Last Updated**: 2025-01-08  
 **Version**: 1.0.0  

@@ -1,12 +1,15 @@
 # Agent Coordination Examples with MCP
 
-This document shows **real execution traces** of agents using MCP tools to coordinate and complete complex workflows.
+This document shows **real execution traces** of agents using MCP tools to
+coordinate and complete complex workflows.
 
 ## Example 1: E-Commerce Order Processing
 
-**Scenario**: Process a new e-commerce order with payment, inventory, and fulfillment.
+**Scenario**: Process a new e-commerce order with payment, inventory, and
+fulfillment.
 
 **Agents**:
+
 - **Coordinator** - Orchestrates the order workflow
 - **Payment Processor** - Handles payment verification
 - **Inventory Manager** - Checks and reserves stock
@@ -21,9 +24,9 @@ const order = {
   customer: 'customer@email.com',
   items: [
     { sku: 'LAPTOP-001', quantity: 1, price: 1299.99 },
-    { sku: 'MOUSE-042', quantity: 2, price: 29.99 }
+    { sku: 'MOUSE-042', quantity: 2, price: 29.99 },
   ],
-  total: 1359.97
+  total: 1359.97,
 };
 
 // ========== T+0.1s - Coordinator Starts Workflow ==========
@@ -33,8 +36,8 @@ const workflow = await coordinator.callTool('workflow.create', {
   name: 'Process Order ORD-12345',
   description: 'Payment → Inventory → Fulfillment',
   definition: {
-    steps: ['payment', 'inventory', 'fulfillment']
-  }
+    steps: ['payment', 'inventory', 'fulfillment'],
+  },
 });
 // ✓ Created: wf_order_12345
 
@@ -42,7 +45,7 @@ const workflow = await coordinator.callTool('workflow.create', {
 console.log('[Coordinator] Discovering required agents...');
 
 const agents = await coordinator.callTool('agent.discover', {
-  capability: 'order_processing'
+  capability: 'order_processing',
 });
 // ✓ Found 3 agents: payment_processor, inventory_manager, fulfillment_agent
 
@@ -54,7 +57,7 @@ const paymentTask = await coordinator.callTool('task.create', {
   description: 'Verify and charge $1359.97',
   assignedTo: 'payment_processor',
   priority: 'high',
-  metadata: { order, amount: 1359.97 }
+  metadata: { order, amount: 1359.97 },
 });
 // ✓ Task created: task_payment_001
 
@@ -72,8 +75,8 @@ await coordinator.callTool('task.update', {
     success: true,
     transactionId: 'txn_789xyz',
     amount: 1359.97,
-    timestamp: new Date()
-  }
+    timestamp: new Date(),
+  },
 });
 
 // ========== T+2.0s - Payment Confirmed ==========
@@ -84,9 +87,9 @@ await coordinator.callTool('agent.message', {
   message: {
     type: 'payment_confirmed',
     orderId: 'ORD-12345',
-    transactionId: 'txn_789xyz'
+    transactionId: 'txn_789xyz',
   },
-  messageType: 'notification'
+  messageType: 'notification',
 });
 
 // ========== T+2.1s - Step 2: Inventory Check ==========
@@ -96,7 +99,7 @@ const inventoryTask = await coordinator.callTool('task.create', {
   title: 'Reserve inventory for ORD-12345',
   assignedTo: 'inventory_manager',
   priority: 'high',
-  metadata: { items: order.items }
+  metadata: { items: order.items },
 });
 
 // Inventory Manager executes
@@ -115,8 +118,8 @@ await coordinator.callTool('task.update', {
   result: {
     success: true,
     reservationId: 'rsv_456abc',
-    items: order.items
-  }
+    items: order.items,
+  },
 });
 
 // ========== T+3.5s - Inventory Reserved ==========
@@ -128,10 +131,10 @@ await coordinator.callTool('agent.message', {
     type: 'items_reserved',
     orderId: 'ORD-12345',
     reservationId: 'rsv_456abc',
-    location: 'warehouse_section_C'
+    location: 'warehouse_section_C',
   },
   messageType: 'request',
-  priority: 'normal'
+  priority: 'normal',
 });
 
 // ========== T+3.6s - Step 3: Fulfillment ==========
@@ -143,8 +146,8 @@ const fulfillmentTask = await coordinator.callTool('task.create', {
   priority: 'normal',
   metadata: {
     orderId: 'ORD-12345',
-    reservationId: 'rsv_456abc'
-  }
+    reservationId: 'rsv_456abc',
+  },
 });
 
 console.log('[Fulfillment Agent] Picking items from warehouse...');
@@ -163,8 +166,8 @@ await coordinator.callTool('task.update', {
     shipmentId: 'SHIP-789012',
     carrier: 'UPS',
     trackingNumber: '1Z999AA10123456784',
-    estimatedDelivery: '2025-01-20'
-  }
+    estimatedDelivery: '2025-01-20',
+  },
 });
 
 // ========== T+5.7s - Broadcast Completion ==========
@@ -176,10 +179,10 @@ await coordinator.callTool('communication.broadcast', {
     orderId: 'ORD-12345',
     status: 'shipped',
     shipmentId: 'SHIP-789012',
-    trackingNumber: '1Z999AA10123456784'
+    trackingNumber: '1Z999AA10123456784',
   },
   targets: ['payment_processor', 'inventory_manager', 'fulfillment_agent'],
-  priority: 'normal'
+  priority: 'normal',
 });
 
 // ========== T+5.8s - Workflow Complete ==========
@@ -188,7 +191,7 @@ console.log('[Coordinator] Order processing complete!');
 await coordinator.callTool('workflow.execute', {
   workflowId: workflow.result.workflowId,
   inputs: order,
-  async: false
+  async: false,
 });
 
 console.log('\n=== Final Status ===');
@@ -257,6 +260,7 @@ console.log('Tasks Completed: 3');
 **Scenario**: Create blog post with research, writing, editing, and publishing.
 
 **Agents**:
+
 - **Research Agent** - Gathers information and sources
 - **Writer Agent** - Drafts content
 - **Editor Agent** - Reviews and improves content
@@ -324,9 +328,11 @@ Agents Involved: 5
 
 ## Example 3: Customer Support Ticket Resolution
 
-**Scenario**: Handle a customer support ticket with triage, investigation, and resolution.
+**Scenario**: Handle a customer support ticket with triage, investigation, and
+resolution.
 
 **Agents**:
+
 - **Triage Agent** - Categorizes and prioritizes tickets
 - **Knowledge Agent** - Searches knowledge base
 - **Investigation Agent** - Analyzes logs and data
@@ -341,7 +347,7 @@ const ticket = {
   customer: 'user@company.com',
   subject: 'Cannot login to account',
   message: 'Getting error: "Invalid credentials" but password is correct',
-  priority: 'unknown'
+  priority: 'unknown',
 };
 
 // ===== STEP 1: TRIAGE =====
@@ -351,9 +357,9 @@ const category = await triageAgent.callTool('agent.message', {
   targetAgent: 'knowledge_agent',
   message: {
     action: 'categorize',
-    text: ticket.message
+    text: ticket.message,
   },
-  requiresResponse: true
+  requiresResponse: true,
 });
 // Category: "authentication_issue"
 // Priority: "high"
@@ -362,19 +368,19 @@ await triageAgent.callTool('task.create', {
   title: 'Resolve authentication issue',
   assignedTo: 'investigation_agent',
   priority: 'high',
-  metadata: { ticket, category: 'authentication_issue' }
+  metadata: { ticket, category: 'authentication_issue' },
 });
 
 // ===== STEP 2: KNOWLEDGE SEARCH =====
 console.log('[Knowledge Agent] Searching knowledge base...');
 
 const articles = await knowledgeAgent.callTool('resource.read', {
-  uri: 'fuse://knowledge/authentication_issues'
+  uri: 'fuse://knowledge/authentication_issues',
 });
 // Found 5 related articles
 
 // Check if known issue
-const knownIssue = articles.result.find(a =>
+const knownIssue = articles.result.find((a) =>
   a.symptoms.includes('invalid_credentials')
 );
 
@@ -386,8 +392,8 @@ if (knownIssue) {
     message: {
       type: 'known_issue',
       kbArticle: 'KB-1234',
-      solution: 'Clear browser cache and cookies'
-    }
+      solution: 'Clear browser cache and cookies',
+    },
   });
 }
 
@@ -400,7 +406,7 @@ const userStatus = {
   passwordLastChanged: '2025-01-10',
   loginAttempts: 3,
   lastSuccessfulLogin: '2025-01-15',
-  currentIssue: 'session_conflict'
+  currentIssue: 'session_conflict',
 };
 
 console.log('[Investigation Agent] Found issue: Session conflict');
@@ -412,8 +418,8 @@ await investigationAgent.callTool('task.update', {
   result: {
     issue: 'session_conflict',
     resolution: 'clear_sessions',
-    applied: true
-  }
+    applied: true,
+  },
 });
 
 // ===== STEP 4: RESPONSE =====
@@ -438,15 +444,15 @@ const response = {
 
     Best regards,
     Support Team
-  `
+  `,
 };
 
 await responseAgent.callTool('agent.message', {
   targetAgent: 'email_service',
   message: {
     action: 'send',
-    ...response
-  }
+    ...response,
+  },
 });
 
 console.log('[Response Agent] ✓ Response sent to customer');
@@ -458,8 +464,8 @@ await coordinator.callTool('task.update', {
   result: {
     resolution: 'session_conflict_cleared',
     responseTime: '3.2 minutes',
-    customerNotified: true
-  }
+    customerNotified: true,
+  },
 });
 
 console.log('[Coordinator] Ticket TICKET-7890 resolved');
@@ -471,10 +477,10 @@ await coordinator.callTool('communication.broadcast', {
     ticketId: 'TICKET-7890',
     category: 'authentication_issue',
     resolution: 'session_conflict_cleared',
-    responseTime: '3.2 minutes'
+    responseTime: '3.2 minutes',
   },
   targets: ['support_team', 'analytics_agent'],
-  priority: 'low'
+  priority: 'low',
 });
 ```
 
@@ -521,12 +527,14 @@ Knowledge Base: KB-1234 applied
 ## Communication Patterns Demonstrated
 
 ### 1. Sequential Processing
+
 ```
 Agent A → Agent B → Agent C → Done
 Example: Order Processing (Payment → Inventory → Fulfillment)
 ```
 
 ### 2. Parallel Processing
+
 ```
            ┌→ Agent A →┐
 Coordinator┼→ Agent B →┼→ Aggregator
@@ -535,6 +543,7 @@ Example: Multi-source data fetching
 ```
 
 ### 3. Request-Response
+
 ```
 Agent A ─[Request]→ Agent B
 Agent A ←[Response]─ Agent B
@@ -542,6 +551,7 @@ Example: Knowledge base queries
 ```
 
 ### 4. Broadcast
+
 ```
             ┌→ Agent A
 Coordinator ┼→ Agent B
@@ -551,6 +561,7 @@ Example: Status updates to all agents
 ```
 
 ### 5. Collaboration
+
 ```
 Agent A ←→ Agent B
    ↕        ↕
@@ -563,6 +574,7 @@ Example: Multi-agent problem solving
 ## Performance Metrics
 
 ### Order Processing Example
+
 - **Total Execution Time**: 5.8 seconds
 - **Agents**: 4
 - **Tasks**: 3
@@ -570,6 +582,7 @@ Example: Multi-agent problem solving
 - **Success Rate**: 100%
 
 ### Content Pipeline Example
+
 - **Total Execution Time**: 18.3 seconds
 - **Agents**: 5
 - **Tasks**: 4
@@ -577,6 +590,7 @@ Example: Multi-agent problem solving
 - **Words Generated**: 2,145
 
 ### Support Ticket Example
+
 - **Total Execution Time**: 3.2 minutes
 - **Agents**: 4
 - **Tasks**: 2
@@ -597,4 +611,5 @@ Example: Multi-agent problem solving
 
 ---
 
-These examples demonstrate that **MCP enables sophisticated multi-agent coordination** with minimal overhead and maximum flexibility! 🚀
+These examples demonstrate that **MCP enables sophisticated multi-agent
+coordination** with minimal overhead and maximum flexibility! 🚀

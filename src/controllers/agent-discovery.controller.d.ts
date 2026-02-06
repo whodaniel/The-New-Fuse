@@ -1,5 +1,5 @@
 import { AgentDiscoveryService } from '../services/agent-discovery.service.js';
-import { AgentType } from '@prisma/client';
+import { AgentType } from '@drizzle/client';
 interface RegisterAgentDto {
     name: string;
     description: string;

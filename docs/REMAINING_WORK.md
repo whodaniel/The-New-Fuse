@@ -58,7 +58,7 @@ Here's the current status:
   - `apps/api/src/entities/workflow-step.entity.ts`
   - `apps/api/src/entities/workflow.entity.ts`
   - `apps/api/src/modules/webhooks/entities/*.entity.ts` (6 files)
-- **Action**: Migrate all to Prisma, remove TypeORM imports from modules
+- **Action**: Migrate all to Drizzle, remove TypeORM imports from modules
 - **Effort**: 1-2 days
 - **Impact**: High - eliminates dual ORM complexity
 
@@ -183,7 +183,7 @@ Here's the current status:
 1. **Production Blocker Removed**: Health checks now work
 2. **Major Features Unlocked**: Agency Hub + Webhooks (9 controllers)
 3. **Visibility Achieved**: Complete audit of everything
-4. **Migration Started**: Prisma pattern established
+4. **Migration Started**: Drizzle pattern established
 5. **Documentation Complete**: Everything is explained
 
 **Impact**: You can now deploy to production with monitoring
@@ -235,7 +235,7 @@ Here's the current status:
 
 **Outcome**: All features accessible, no orphaned controllers
 
-### Sprint 2: Complete Prisma Migration (1 week)
+### Sprint 2: Complete Drizzle Migration (1 week)
 
 **Goal**: Eliminate technical debt
 

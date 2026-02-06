@@ -7,7 +7,7 @@ import { MCPAgentServer } from '../mcp/MCPAgentServer.tsx';
 import { AgentCapabilityDiscoveryService, CapabilityRequirement } from './AgentCapabilityDiscoveryService.js';
 import { WorkflowMonitoringService } from './WorkflowMonitoringService.js';
 import { Logger } from '../common/logger.service.js';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { DatabaseService } from '../drizzle/drizzle.service.js';
 import { 
   WorkflowError, 
   WorkflowValidationError, 
@@ -49,7 +49,7 @@ export class AgentWorkflowService {
     private readonly mcpAgentServer: MCPAgentServer,
     private readonly capabilityDiscovery: AgentCapabilityDiscoveryService,
     private readonly workflowMonitor: WorkflowMonitoringService,
-    private readonly prisma: PrismaService,
+    private readonly drizzle: DatabaseService,
     private readonly logger: Logger
   ) {}
 
@@ -173,7 +173,7 @@ export class AgentWorkflowService {
   }
 
   private async findAgentWithCapability(capabilityId: string): Promise<any> {
-    return await this.prisma.agent.findFirst({
+    return await this.drizzle.agent.findFirst({
       where: {
         capabilities: {
           some: {

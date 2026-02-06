@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DatabaseService = void 0;
 const common_1 = require("@nestjs/common");
 const database_1 = require("@the-new-fuse/database");
-let DatabaseService = class DatabaseService extends database_1.PrismaClient {
+let DatabaseService = class DatabaseService extends database_1.DrizzleClient {
     constructor() {
         super({
             log: ["query", "info", "warn", "error"],

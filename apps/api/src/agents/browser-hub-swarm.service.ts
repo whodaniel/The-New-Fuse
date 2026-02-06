@@ -14,7 +14,7 @@
 
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { PrismaService } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 
 // ========================== TYPES ==========================
 
@@ -752,7 +752,7 @@ export class BrowserHubSwarmService implements OnModuleInit {
   };
 
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly db: DatabaseService,
     private readonly eventEmitter: EventEmitter2
   ) {
     // Initialize specialized agents

@@ -1,5 +1,3 @@
-import React from 'react';
-
 export interface ResultsCountProps {
   count: number;
   singularLabel?: string;

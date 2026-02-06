@@ -1,6 +1,12 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Logger } from '@nestjs/common';
-import { JwtAuthGuard } from './jwt-auth.guard'; // Assuming this exists and works
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ApiKeyAuthGuard } from './api-key-auth.guard';
+import { JwtAuthGuard } from './jwt-auth.guard'; // Assuming this exists and works
 
 @Injectable()
 export class ServiceOrUserAuthGuard implements CanActivate {
@@ -8,7 +14,7 @@ export class ServiceOrUserAuthGuard implements CanActivate {
 
   constructor(
     private readonly jwtGuard: JwtAuthGuard,
-    private readonly apiKeyGuard: ApiKeyAuthGuard,
+    private readonly apiKeyGuard: ApiKeyAuthGuard
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -22,9 +28,11 @@ export class ServiceOrUserAuthGuard implements CanActivate {
         return true;
       }
     } catch (jwtError) {
-        // If JWT guard throws UnauthorizedException, it means JWT was present but invalid, or missing.
-        // We don't log this as an error yet, as API key might still work.
-        this.logger.debug(`JWT check failed or JWT not present: ${jwtError instanceof Error ? jwtError.message : 'Unknown error'}`);
+      // If JWT guard throws UnauthorizedException, it means JWT was present but invalid, or missing.
+      // We don't log this as an error yet, as API key might still work.
+      this.logger.debug(
+        `JWT check failed or JWT not present: ${jwtError instanceof Error ? jwtError.message : 'Unknown error'}`
+      );
     }
 
     // If JWT failed or wasn't present, try API Key authentication
@@ -41,8 +49,10 @@ export class ServiceOrUserAuthGuard implements CanActivate {
         return true;
       }
     } catch (apiKeyError) {
-        // If API Key guard throws UnauthorizedException, it means key was invalid or missing.
-        this.logger.debug(`API Key check failed: ${apiKeyError instanceof Error ? apiKeyError.message : 'Unknown error'}`);
+      // If API Key guard throws UnauthorizedException, it means key was invalid or missing.
+      this.logger.debug(
+        `API Key check failed: ${apiKeyError instanceof Error ? apiKeyError.message : 'Unknown error'}`
+      );
     }
 
     // If both failed, deny access

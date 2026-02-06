@@ -1,11 +1,11 @@
 import { BaseEntity } from './core/base-types';
 
 export enum WorkflowStatus {
-  DRAFT = "DRAFT",
-  ACTIVE = "ACTIVE",
-  PAUSED = "PAUSED", 
-  COMPLETED = "COMPLETED",
-  ERROR = "ERROR"
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  PAUSED = 'PAUSED',
+  COMPLETED = 'COMPLETED',
+  ERROR = 'ERROR',
 }
 
 export interface WorkflowStep {
@@ -80,11 +80,11 @@ export interface UpdateWorkflowDto {
 }
 
 export enum WorkflowExecutionStatus {
-  PENDING = "PENDING",
-  RUNNING = "RUNNING",
-  COMPLETED = "COMPLETED",
-  FAILED = "FAILED",
-  CANCELLED = "CANCELLED"
+  PENDING = 'PENDING',
+  RUNNING = 'RUNNING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED',
 }
 
 export interface WorkflowInput {
@@ -103,4 +103,3 @@ export interface WorkflowExecution {
   startedAt: Date;
   completedAt?: Date;
 }
-

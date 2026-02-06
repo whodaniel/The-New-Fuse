@@ -1,7 +1,6 @@
-import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import { StatusMonitor } from '../StatusMonitor';
 import { useWebSocket } from '../../hooks/useWebSocket';
+import { StatusMonitor } from '../StatusMonitor';
 
 jest.mock('../../hooks/useWebSocket');
 
@@ -10,7 +9,7 @@ const mockSystemStatus = {
   memory: 60,
   activeConnections: 123,
   queueSize: 50,
-  status: 'healthy'
+  status: 'healthy',
 };
 
 describe('StatusMonitor', () => {
@@ -23,7 +22,7 @@ describe('StatusMonitor', () => {
     });
 
     (useWebSocket as jest.Mock).mockReturnValue({
-      subscribe: mockSubscribe
+      subscribe: mockSubscribe,
     });
   });
 

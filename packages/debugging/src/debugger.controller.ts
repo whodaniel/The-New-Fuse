@@ -2,39 +2,39 @@
 // Provides comprehensive debugging interface for multi-agent communication
 
 import {
+  Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   Put,
-  Delete,
-  Param,
-  Body,
   Query,
+  Sse,
   UseGuards,
   UseInterceptors,
-  Sse,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
   ApiBearerAuth,
-  ApiQuery,
-  ApiParam,
   ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
+import { User } from '@db/client';
 import { Observable, interval, map } from 'rxjs';
-import { JwtAuthGuard } from '../modules/auth/guards/jwt-auth.guard';
 import { PerformanceInterceptor } from '../interceptors/performance.interceptor';
+import { JwtAuthGuard } from '../modules/auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../modules/decorators/current-user.decorator';
-import { User } from '@prisma/client';
 import {
-  A2ADebuggerService,
-  DebugSession,
   A2ADebugMessage,
-  ConversationTrace,
+  A2ADebuggerService,
   AgentDebugInfo,
+  ConversationTrace,
   DebugFilter,
+  DebugSession,
   DebugSettings,
   MessageAnalysis,
 } from './a2a-debugger.service';
@@ -94,9 +94,15 @@ export class DebuggerController {
           items: {
             type: 'object',
             properties: {
-              type: { type: 'string', enum: ['agent', 'messageType', 'priority', 'keyword', 'timeRange'] },
+              type: {
+                type: 'string',
+                enum: ['agent', 'messageType', 'priority', 'keyword', 'timeRange'],
+              },
               value: { type: 'string' },
-              operator: { type: 'string', enum: ['equals', 'contains', 'greater', 'less', 'between'] },
+              operator: {
+                type: 'string',
+                enum: ['equals', 'contains', 'greater', 'less', 'between'],
+              },
               enabled: { type: 'boolean' },
             },
           },
@@ -110,7 +116,7 @@ export class DebuggerController {
   })
   async createDebugSession(
     @Body() request: CreateDebugSessionRequest,
-    @CurrentUser() user: User,
+    @CurrentUser() user: User
   ): Promise<{ sessionId: string; message: string }> {
     const sessionId = await this.debuggerService.createDebugSession(
       request.name,
@@ -152,7 +158,7 @@ export class DebuggerController {
   })
   async getDebugSessions(
     @Query('status') status?: 'active' | 'paused' | 'stopped',
-    @Query('limit') limit: number = 50,
+    @Query('limit') limit: number = 50
   ): Promise<DebugSession[]> {
     // Implementation would filter and return sessions
     // For now, return mock data structure
@@ -172,9 +178,7 @@ export class DebuggerController {
     status: 200,
     description: 'Debug session details retrieved successfully',
   })
-  async getDebugSession(
-    @Param('sessionId') sessionId: string,
-  ): Promise<{
+  async getDebugSession(@Param('sessionId') sessionId: string): Promise<{
     session: DebugSession;
     statistics: {
       totalMessages: number;
@@ -201,7 +205,7 @@ export class DebuggerController {
     description: 'Active session set successfully',
   })
   async setActiveSession(
-    @Param('sessionId') sessionId: string,
+    @Param('sessionId') sessionId: string
   ): Promise<{ success: boolean; message: string }> {
     const success = await this.debuggerService.setActiveSession(sessionId);
     return {
@@ -224,10 +228,10 @@ export class DebuggerController {
     description: 'Debug session stopped successfully',
   })
   async stopDebugSession(
-    @Param('sessionId') sessionId: string,
+    @Param('sessionId') sessionId: string
   ): Promise<{ success: boolean; summary: any }> {
     const success = await this.debuggerService.stopDebugSession(sessionId);
-    
+
     if (success) {
       const exportData = await this.debuggerService.exportDebugSession(sessionId);
       return {
@@ -235,7 +239,7 @@ export class DebuggerController {
         summary: exportData.session,
       };
     }
-    
+
     return {
       success: false,
       summary: null,
@@ -256,7 +260,7 @@ export class DebuggerController {
     description: 'Debug session deleted successfully',
   })
   async deleteDebugSession(
-    @Param('sessionId') sessionId: string,
+    @Param('sessionId') sessionId: string
   ): Promise<{ success: boolean; message: string }> {
     // Implementation would delete session and cleanup data
     return {
@@ -308,7 +312,7 @@ export class DebuggerController {
     @Query('limit') limit: number = 100,
     @Query('fromAgent') fromAgent?: string,
     @Query('toAgent') toAgent?: string,
-    @Query('messageType') messageType?: string,
+    @Query('messageType') messageType?: string
   ): Promise<{
     messages: A2ADebugMessage[];
     totalCount: number;
@@ -345,7 +349,7 @@ export class DebuggerController {
   })
   async analyzeMessage(
     @Param('messageId') messageId: string,
-    @Body() request: AnalyzeMessageRequest,
+    @Body() request: AnalyzeMessageRequest
   ): Promise<MessageAnalysis> {
     return this.debuggerService.analyzeMessage(messageId);
   }
@@ -375,7 +379,7 @@ export class DebuggerController {
     description: 'Conversation trace started successfully',
   })
   async startConversationTrace(
-    @Body() request: { participants: string[]; name?: string },
+    @Body() request: { participants: string[]; name?: string }
   ): Promise<{ conversationId: string; message: string }> {
     const conversationId = await this.debuggerService.startConversationTrace(request.participants);
     return {
@@ -398,7 +402,7 @@ export class DebuggerController {
     description: 'Conversation trace retrieved successfully',
   })
   async getConversationTrace(
-    @Param('conversationId') conversationId: string,
+    @Param('conversationId') conversationId: string
   ): Promise<ConversationTrace> {
     // Implementation would return conversation trace
     throw new Error('Implementation pending');
@@ -417,9 +421,7 @@ export class DebuggerController {
     status: 200,
     description: 'Conversation analysis completed successfully',
   })
-  async analyzeConversation(
-    @Param('conversationId') conversationId: string,
-  ): Promise<{
+  async analyzeConversation(@Param('conversationId') conversationId: string): Promise<{
     conversation: ConversationTrace;
     analysis: {
       efficiency: number;
@@ -445,7 +447,7 @@ export class DebuggerController {
     description: 'Conversation trace ended successfully',
   })
   async endConversationTrace(
-    @Param('conversationId') conversationId: string,
+    @Param('conversationId') conversationId: string
   ): Promise<ConversationTrace | null> {
     return this.debuggerService.endConversationTrace(conversationId);
   }
@@ -467,7 +469,7 @@ export class DebuggerController {
     description: 'Monitored agents retrieved successfully',
   })
   async getMonitoredAgents(
-    @Query('includeInactive') includeInactive: boolean = false,
+    @Query('includeInactive') includeInactive: boolean = false
   ): Promise<AgentDebugInfo[]> {
     // Implementation would return list of monitored agents
     return [];
@@ -486,9 +488,7 @@ export class DebuggerController {
     status: 200,
     description: 'Agent debug information retrieved successfully',
   })
-  async getAgentDebugInfo(
-    @Param('agentId') agentId: string,
-  ): Promise<AgentDebugInfo | null> {
+  async getAgentDebugInfo(@Param('agentId') agentId: string): Promise<AgentDebugInfo | null> {
     return this.debuggerService.getAgentDebugInfo(agentId);
   }
 
@@ -520,7 +520,7 @@ export class DebuggerController {
   async getAgentMessageHistory(
     @Param('agentId') agentId: string,
     @Query('direction') direction: 'sent' | 'received' | 'all' = 'all',
-    @Query('limit') limit: number = 100,
+    @Query('limit') limit: number = 100
   ): Promise<{
     messages: A2ADebugMessage[];
     statistics: {
@@ -562,9 +562,15 @@ export class DebuggerController {
           items: {
             type: 'object',
             properties: {
-              type: { type: 'string', enum: ['agent', 'messageType', 'priority', 'keyword', 'timeRange'] },
+              type: {
+                type: 'string',
+                enum: ['agent', 'messageType', 'priority', 'keyword', 'timeRange'],
+              },
               value: { type: 'string' },
-              operator: { type: 'string', enum: ['equals', 'contains', 'greater', 'less', 'between'] },
+              operator: {
+                type: 'string',
+                enum: ['equals', 'contains', 'greater', 'less', 'between'],
+              },
               enabled: { type: 'boolean' },
             },
           },
@@ -578,7 +584,7 @@ export class DebuggerController {
   })
   async updateDebugFilters(
     @Param('sessionId') sessionId: string,
-    @Body() request: UpdateDebugFiltersRequest,
+    @Body() request: UpdateDebugFiltersRequest
   ): Promise<{ success: boolean; message: string }> {
     const success = await this.debuggerService.setDebugFilters(sessionId, request.filters);
     return {
@@ -602,9 +608,7 @@ export class DebuggerController {
     status: 200,
     description: 'Real-time debug stream established',
   })
-  async getDebugStream(
-    @Param('sessionId') sessionId: string,
-  ): Observable<{ data: any }> {
+  async getDebugStream(@Param('sessionId') sessionId: string): Observable<{ data: any }> {
     // Enable real-time debugging for this session
     await this.debuggerService.enableRealTimeDebugging(sessionId);
 
@@ -665,7 +669,7 @@ export class DebuggerController {
   })
   async exportDebugSession(
     @Param('sessionId') sessionId: string,
-    @Query('format') format: 'json' | 'csv' | 'xlsx' = 'json',
+    @Query('format') format: 'json' | 'csv' | 'xlsx' = 'json'
   ): Promise<{
     session: DebugSession;
     messages: A2ADebugMessage[];
@@ -679,7 +683,7 @@ export class DebuggerController {
     };
   }> {
     const exportData = await this.debuggerService.exportDebugSession(sessionId);
-    
+
     return {
       ...exportData,
       exportInfo: {
@@ -718,15 +722,15 @@ export class DebuggerController {
     description: 'Message captured successfully',
   })
   async manualMessageCapture(
-    @Body() request: { message: any; sessionId?: string },
+    @Body() request: { message: any; sessionId?: string }
   ): Promise<{ success: boolean; debugMessageId: string }> {
     // If sessionId provided, temporarily set as active
     if (request.sessionId) {
       await this.debuggerService.setActiveSession(request.sessionId);
     }
-    
+
     await this.debuggerService.captureMessage(request.message);
-    
+
     return {
       success: true,
       debugMessageId: `debug_msg_${Date.now()}`,
@@ -750,7 +754,7 @@ export class DebuggerController {
     lastActivity: number;
   }> {
     const dashboard = await this.debuggerService.getDebugDashboard();
-    
+
     return {
       status: 'healthy',
       activeSessions: dashboard.activeSessions,
@@ -786,11 +790,12 @@ export class DebuggerController {
   })
   async replayConversation(
     @Param('sessionId') sessionId: string,
-    @Body() request: {
+    @Body()
+    request: {
       conversationId: string;
       speed?: number;
       pauseOnErrors?: boolean;
-    },
+    }
   ): Promise<{
     replayId: string;
     status: 'started';

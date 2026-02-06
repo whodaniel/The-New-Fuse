@@ -1,10 +1,14 @@
 # VS Code Extension Documentation
 
-This document provides comprehensive documentation for The New Fuse VS Code extension.
+This document provides comprehensive documentation for The New Fuse VS Code
+extension.
 
 ## Overview
 
-The New Fuse VS Code extension enables AI agent coordination and workflow automation directly within your development environment. It provides a seamless interface for interacting with AI agents, managing workflows, and automating common development tasks.
+The New Fuse VS Code extension enables AI agent coordination and workflow
+automation directly within your development environment. It provides a seamless
+interface for interacting with AI agents, managing workflows, and automating
+common development tasks.
 
 ## Architecture
 
@@ -73,7 +77,8 @@ The extension follows a modular architecture with the following key components:
 The extension provides the following commands:
 
 - `The New Fuse: Hello World` - Display a simple greeting message
-- `The New Fuse: Start AI Collaboration` - Start a collaborative coding session with AI agents
+- `The New Fuse: Start AI Collaboration` - Start a collaborative coding session
+  with AI agents
 - `The New Fuse: Activate AI Agent` - Connect to the AI agent server
 
 ### Status Bar Items
@@ -81,7 +86,8 @@ The extension provides the following commands:
 The extension adds the following status bar items:
 
 - **AI Connection Status**: Shows the connection status to the AI agent server
-- **AI Collaboration Status**: Shows the status of the current collaboration session
+- **AI Collaboration Status**: Shows the status of the current collaboration
+  session
 
 ### Views
 
@@ -103,8 +109,10 @@ The extension can be configured through VS Code settings:
 
 ### Available Settings
 
-- `thefuse.agentServerUrl`: URL of the AI agent server (default: `ws://localhost:3002`)
-- `thefuse.enableAutoConnect`: Automatically connect to the agent server on startup (default: `false`)
+- `thefuse.agentServerUrl`: URL of the AI agent server (default:
+  `ws://localhost:3002`)
+- `thefuse.enableAutoConnect`: Automatically connect to the agent server on
+  startup (default: `false`)
 - `thefuse.logLevel`: Log level for the extension (default: `info`)
 
 ## Development
@@ -154,12 +162,12 @@ The extension uses a message-based protocol for communication with AI agents:
 
 ```typescript
 interface AgentMessage {
-    id: string;
-    sender: string;
-    recipient: string;
-    action: string;
-    payload: any;
-    timestamp: number;
+  id: string;
+  sender: string;
+  recipient: string;
+  action: string;
+  payload: any;
+  timestamp: number;
 }
 ```
 
@@ -193,4 +201,7 @@ If commands are not working:
 
 ## Conclusion
 
-The New Fuse VS Code extension provides powerful AI agent coordination and workflow automation capabilities directly within your development environment. By following this documentation, you can effectively use and extend the functionality of the extension.
+The New Fuse VS Code extension provides powerful AI agent coordination and
+workflow automation capabilities directly within your development environment.
+By following this documentation, you can effectively use and extend the
+functionality of the extension.

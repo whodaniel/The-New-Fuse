@@ -19,7 +19,7 @@ Backend:
 
 Database:
   primary: PostgreSQL
-  orm: Prisma / Drizzle
+  orm: Drizzle / Drizzle
   hosting: Supabase / Neon
 
 Auth:

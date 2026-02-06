@@ -14,7 +14,7 @@ export class AppService {
       service: 'Fuse Core',
       status: 'running',
       version: this.getVersion(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }

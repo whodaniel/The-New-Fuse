@@ -1,8 +1,15 @@
-import { Redis } from 'ioredis';
 import { Logger } from '@nestjs/common';
+import { Redis } from 'ioredis';
 
 interface AgentMessage {
-  type: 'initialization' | 'acknowledgment' | 'task_request' | 'task_update' | 'code_review' | 'suggestion' | 'task_response';
+  type:
+    | 'initialization'
+    | 'acknowledgment'
+    | 'task_request'
+    | 'task_update'
+    | 'code_review'
+    | 'suggestion'
+    | 'task_response';
   timestamp: string;
   message?: string;
   metadata?: {
@@ -29,7 +36,7 @@ class RooCoderClient {
       },
       maxRetriesPerRequest: 5,
       enableReadyCheck: true,
-      reconnectOnError: () => true
+      reconnectOnError: () => true,
     };
 
     this.redis = new (Redis as any)(redisUrl, redisOptions);
@@ -77,11 +84,12 @@ class RooCoderClient {
       const message: AgentMessage = {
         type: 'acknowledgment',
         timestamp: new Date().toISOString(),
-        message: 'Hello Composer! I have received your instructions and am ready to collaborate on The New Fuse AI Agent framework.',
+        message:
+          'Hello Composer! I have received your instructions and am ready to collaborate on The New Fuse AI Agent framework.',
         metadata: {
           version: '1.0.0',
-          priority: 'high'
-        }
+          priority: 'high',
+        },
       };
 
       await this.pubClient.publish('agent:composer', JSON.stringify(message));
@@ -94,7 +102,7 @@ class RooCoderClient {
     try {
       const taskId = `task-${Date.now()}`;
       this.logger.log(`\nSending task request to Composer (${taskId})...`);
-      
+
       const message: AgentMessage = {
         type: 'task_request',
         taskId,
@@ -102,8 +110,8 @@ class RooCoderClient {
         message: taskDescription,
         metadata: {
           version: '1.0.0',
-          priority: 'medium'
-        }
+          priority: 'medium',
+        },
       };
 
       await this.pubClient.publish('agent:composer', JSON.stringify(message));
@@ -117,18 +125,18 @@ class RooCoderClient {
   async sendCodeReview(code: string, comments: string): Promise<void> {
     try {
       this.logger.log('\nSending code review to Composer...');
-      
+
       const message: AgentMessage = {
         type: 'code_review',
         timestamp: new Date().toISOString(),
         details: {
           code,
-          comments
+          comments,
         },
         metadata: {
           version: '1.0.0',
-          priority: 'medium'
-        }
+          priority: 'medium',
+        },
       };
 
       await this.pubClient.publish('agent:composer', JSON.stringify(message));
@@ -152,22 +160,22 @@ async function main(): Promise<void> {
   const client = new RooCoderClient();
   try {
     await client.initialize();
-    
+
     // Example: Send a task request after 5 seconds
     setTimeout(async () => {
       try {
-        await client.sendTaskRequest('I would like to implement the Agent model with proper TypeScript interfaces');
+        await client.sendTaskRequest(
+          'I would like to implement the Agent model with proper TypeScript interfaces'
+        );
       } catch (error) {
         console.error('Failed to send task request:', error);
       }
     }, 5000);
-
   } catch (error) {
     console.error('Failed to run Roo Coder client:', error);
   } finally {
     // Keep the process running to receive messages
     process.on('SIGINT', async () => {
-      
       await client.cleanup();
       process.exit(0);
     });

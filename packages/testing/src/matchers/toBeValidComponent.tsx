@@ -14,7 +14,9 @@ export type ComponentValidatorInput = ComponentValidator | z.ZodTypeAny;
 
 // Helper type guard to check if a type is a component constructor
 // Use unknown for generic parameter
-function isComponentConstructor(type: string | JSXElementConstructor<unknown>): type is JSXElementConstructor<unknown> {
+function isComponentConstructor(
+  type: string | JSXElementConstructor<unknown>,
+): type is JSXElementConstructor<unknown> {
   return typeof type === 'function' || (typeof type === 'object' && type !== null);
 }
 
@@ -41,14 +43,19 @@ export const toBeValidComponent = createMatcher(
     if (componentValidator.displayName) {
       const type = received.type;
       // Use type assertion to access displayName
-      if (!isComponentConstructor(type) || (type as any).displayName !== componentValidator.displayName) {
+      if (
+        !isComponentConstructor(type) ||
+        (type as any).displayName !== componentValidator.displayName
+      ) {
         return false;
       }
     }
 
     // Check required props
     if (componentValidator.requiredProps) {
-      const missingProps = componentValidator.requiredProps.filter((prop: string) => !(prop in receivedProps));
+      const missingProps = componentValidator.requiredProps.filter(
+        (prop: string) => !(prop in receivedProps),
+      );
       if (missingProps.length > 0) {
         return false;
       }
@@ -98,7 +105,9 @@ export const toBeValidComponent = createMatcher(
     }
 
     if (componentValidator.requiredProps) {
-      const missingProps = componentValidator.requiredProps.filter((prop: string) => !(prop in receivedProps));
+      const missingProps = componentValidator.requiredProps.filter(
+        (prop: string) => !(prop in receivedProps),
+      );
       if (missingProps.length > 0) {
         return `Component is missing required props: ${missingProps.join(', ')}`;
       }
@@ -118,5 +127,5 @@ export const toBeValidComponent = createMatcher(
 
     return 'Component validation failed for an unspecified reason';
   },
-  () => 'Expected component not to be valid, but it was'
+  () => 'Expected component not to be valid, but it was',
 );

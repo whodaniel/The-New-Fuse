@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import system from "@/models/system";
-import { CaretUp, CaretDown } from "@phosphor-icons/react";
-import { Preloader } from "@/components/Preloader";
-import { LOCALAI_COMMON_URLS } from "@/utils/constants";
-import { useProviderEndpointAutoDiscovery } from "@/hooks/useProviderEndpointAutoDiscovery";
+import { Preloader } from '@/components/Preloader';
+import { useProviderEndpointAutoDiscovery } from '@/hooks/useProviderEndpointAutoDiscovery';
+import system from '@/models/system';
+import { LOCALAI_COMMON_URLS } from '@/utils/constants';
+import { CaretDown, CaretUp } from '@phosphor-icons/react';
+import React, { useState } from 'react';
 
 interface LocalAiSettings {
   LocalAiBasePath?: string;
@@ -24,7 +24,7 @@ interface ModelSelectionProps {
 }
 
 export default function LocalAiOptions({ settings }: LocalAiOptionsProps): React.ReactElement {
-  const { 
+  const {
     autoDetecting,
     basePath,
     basePathValue,
@@ -32,22 +32,18 @@ export default function LocalAiOptions({ settings }: LocalAiOptionsProps): React
     setShowAdvancedControls,
     handleAutoDetectClick,
   } = useProviderEndpointAutoDiscovery({
-    provider: "localai",
+    provider: 'localai',
     initialBasePath: settings?.LocalAiBasePath,
-    ENDPOINTS: LOCALAI_COMMON_URLS
+    ENDPOINTS: LOCALAI_COMMON_URLS,
   });
 
   const [tokenLimit, setTokenLimit] = useState<number>(settings?.LocalAiTokenLimit || 4096);
-  const [apiKey] = useState<string>(settings?.LocalAiApiKey || "");
+  const [apiKey] = useState<string>(settings?.LocalAiApiKey || '');
 
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
-        <LocalAIModelSelection 
-          settings={settings} 
-          basePath={basePath.value}
-          apiKey={apiKey}
-        />
+        <LocalAIModelSelection settings={settings} basePath={basePath.value} apiKey={apiKey} />
         <div className="flex flex-col w-60">
           <label className="text-white text-sm font-semibold block mb-2" id="token-limit-label">
             Token context window
@@ -72,7 +68,7 @@ export default function LocalAiOptions({ settings }: LocalAiOptionsProps): React
           onClick={() => setShowAdvancedControls(!showAdvancedControls)}
           className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
-          {showAdvancedControls ? "Hide" : "Show"} Manual Endpoint Input
+          {showAdvancedControls ? 'Hide' : 'Show'} Manual Endpoint Input
           {showAdvancedControls ? (
             <CaretUp size={14} className="ml-1" />
           ) : (
@@ -121,13 +117,17 @@ export default function LocalAiOptions({ settings }: LocalAiOptionsProps): React
   );
 }
 
-function LocalAIModelSelection({ settings, basePath = null, apiKey = null }: ModelSelectionProps): React.ReactElement {
+function LocalAIModelSelection({
+  settings,
+  basePath = null,
+  apiKey = null,
+}: ModelSelectionProps): React.ReactElement {
   const [customModels, setCustomModels] = useState<Array<{ id: string }>>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   React.useEffect(() => {
     async function findCustomModels() {
-      if (!basePath || !basePath.includes("/v1")) {
+      if (!basePath || !basePath.includes('/v1')) {
         setCustomModels([]);
         setLoading(false);
         return;
@@ -135,10 +135,10 @@ function LocalAIModelSelection({ settings, basePath = null, apiKey = null }: Mod
 
       setLoading(true);
       try {
-        const { models } = await system.customModels("localai", apiKey, basePath);
+        const { models } = await system.customModels('localai', apiKey, basePath);
         setCustomModels(models || []);
       } catch (error) {
-        console.error("Failed to fetch custom models:", error);
+        console.error('Failed to fetch custom models:', error);
         setCustomModels([]);
       }
       setLoading(false);
@@ -160,9 +160,7 @@ function LocalAIModelSelection({ settings, basePath = null, apiKey = null }: Mod
           className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
         >
           <option disabled selected>
-            {basePath?.includes("/v1")
-              ? "--loading available models--"
-              : "Enter LocalAI URL first"}
+            {basePath?.includes('/v1') ? '--loading available models--' : 'Enter LocalAI URL first'}
           </option>
         </select>
       </div>
@@ -181,11 +179,7 @@ function LocalAIModelSelection({ settings, basePath = null, apiKey = null }: Mod
         className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
       >
         {customModels.map((model) => (
-          <option
-            key={model.id}
-            value={model.id}
-            selected={settings.LocalAiModelPref === model.id}
-          >
+          <option key={model.id} value={model.id} selected={settings.LocalAiModelPref === model.id}>
             {model.id}
           </option>
         ))}

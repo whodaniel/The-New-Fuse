@@ -6,7 +6,13 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { SystemMonitor } from './SystemMonitor';
 import { MetricsCollector } from './MetricsCollector';
 import { PerformanceMonitor } from './PerformanceMonitor';
-import { PerformanceMetrics, HealthStatus, Alert, AlertSeverity, AlertStatus } from '../types/monitoring';
+import {
+  PerformanceMetrics,
+  HealthStatus,
+  Alert,
+  AlertSeverity,
+  AlertStatus,
+} from '../types/monitoring';
 import { ServiceState } from '../constants/types';
 import { logger } from '../utils/logger';
 import { BaseError } from '../utils/errors';
@@ -20,7 +26,7 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly systemMonitor: SystemMonitor,
     private readonly metricsCollector: MetricsCollector,
-    private readonly performanceMonitor: PerformanceMonitor
+    private readonly performanceMonitor: PerformanceMonitor,
   ) {
     logger.setContext('UnifiedMonitoringService');
   }
@@ -119,9 +125,9 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
   // Error tracking
   captureError(error: Error, context?: Record<string, any>): void {
     this.ensureRunning();
-    
+
     logger.error('Captured error', error, context);
-    
+
     this.recordCounter('errors_total', 1, {
       error_type: error.name,
       error_message: error.message.substring(0, 100), // Truncate for tags
@@ -169,10 +175,10 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
       operator: 'greater' | 'less' | 'equals' | 'not_equals';
       threshold: number;
       duration: number;
-    }
+    },
   ): string {
     const alertId = `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     const alert: Alert = {
       id: alertId,
       name,
@@ -187,7 +193,7 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
 
     this.alerts.set(alertId, alert);
     logger.info('Created alert', { alertId, name, severity });
-    
+
     return alertId;
   }
 
@@ -199,10 +205,10 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
 
     alert.status = AlertStatus.RESOLVED;
     alert.resolvedAt = new Date();
-    
+
     logger.info('Resolved alert', { alertId, name: alert.name });
     this.notifyAlertCallbacks(alert);
-    
+
     return true;
   }
 
@@ -211,7 +217,7 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
   }
 
   getActiveAlerts(): Alert[] {
-    return Array.from(this.alerts.values()).filter(alert => alert.status === 'ACTIVE');
+    return Array.from(this.alerts.values()).filter((alert) => alert.status === 'ACTIVE');
   }
 
   onAlert(callback: (alert: Alert) => void): void {
@@ -222,7 +228,7 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
   async trackOperation<T>(
     operationName: string,
     operation: () => Promise<T>,
-    tags?: Record<string, string>
+    tags?: Record<string, string>,
   ): Promise<T> {
     this.ensureRunning();
     return await this.performanceMonitor.trackOperation(operationName, operation, tags);
@@ -231,7 +237,7 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
   trackOperationSync<T>(
     operationName: string,
     operation: () => T,
-    tags?: Record<string, string>
+    tags?: Record<string, string>,
   ): T {
     this.ensureRunning();
     return this.performanceMonitor.trackOperationSync(operationName, operation, tags);
@@ -251,7 +257,7 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
     metrics: Record<string, any>;
   }> {
     this.ensureRunning();
-    
+
     const [health, performance, alerts, metrics] = await Promise.all([
       this.getHealthStatus(),
       this.monitor(),
@@ -269,11 +275,9 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
 
   private ensureRunning(): void {
     if (this.state !== ServiceState.RUNNING) {
-      throw new BaseError(
-        'UnifiedMonitoringService is not running',
-        'SERVICE_NOT_RUNNING',
-        { state: this.state }
-      );
+      throw new BaseError('UnifiedMonitoringService is not running', 'SERVICE_NOT_RUNNING', {
+        state: this.state,
+      });
     }
   }
 
@@ -283,10 +287,11 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
     if (!errorMetrics) return;
 
     const recentErrors = errorMetrics.dataPoints.filter(
-      dp => dp.timestamp > new Date(Date.now() - 5 * 60 * 1000) // Last 5 minutes
+      (dp) => dp.timestamp > new Date(Date.now() - 5 * 60 * 1000), // Last 5 minutes
     );
 
-    if (recentErrors.length > 10) { // More than 10 errors in 5 minutes
+    if (recentErrors.length > 10) {
+      // More than 10 errors in 5 minutes
       const alertId = this.createAlert(
         'High Error Rate',
         `High error rate detected: ${recentErrors.length} errors in the last 5 minutes`,
@@ -296,7 +301,7 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
           operator: 'greater',
           threshold: 10,
           duration: 300, // 5 minutes
-        }
+        },
       );
 
       const alert = this.alerts.get(alertId);
@@ -307,7 +312,7 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
   }
 
   private notifyAlertCallbacks(alert: Alert): void {
-    this.alertCallbacks.forEach(callback => {
+    this.alertCallbacks.forEach((callback) => {
       try {
         callback(alert);
       } catch (error) {

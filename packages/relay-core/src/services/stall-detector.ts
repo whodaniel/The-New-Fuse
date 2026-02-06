@@ -71,7 +71,13 @@ export class StallDetector extends EventEmitter {
     }
 
     console.log('[StallDetector] Starting stall monitoring...');
-    this.checkInterval = setInterval(() => this.checkForStalls(), this.config.checkIntervalMs);
+    this.checkInterval = setInterval(() => {
+      this.checkForStalls();
+      // Proactively cleanup old conversations every 5 minutes
+      if (Date.now() % 300000 < this.config.checkIntervalMs) {
+        this.cleanup();
+      }
+    }, this.config.checkIntervalMs);
   }
 
   /**

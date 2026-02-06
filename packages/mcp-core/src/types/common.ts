@@ -10,7 +10,7 @@ export enum LogLevel {
   WARN = 'warn',
   INFO = 'info',
   DEBUG = 'debug',
-  TRACE = 'trace'
+  TRACE = 'trace',
 }
 
 /**
@@ -20,7 +20,7 @@ export enum ServiceStatus {
   ONLINE = 'online',
   OFFLINE = 'offline',
   DEGRADED = 'degraded',
-  MAINTENANCE = 'maintenance'
+  MAINTENANCE = 'maintenance',
 }
 
 /**
@@ -30,7 +30,7 @@ export enum LoadBalancingStrategy {
   ROUND_ROBIN = 'round_robin',
   LEAST_CONNECTIONS = 'least_connections',
   WEIGHTED = 'weighted',
-  RANDOM = 'random'
+  RANDOM = 'random',
 }
 
 /**
@@ -149,7 +149,18 @@ export interface FilterConfig {
   /** Field to filter by */
   field: string;
   /** Filter operator */
-  operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'nin' | 'contains' | 'startsWith' | 'endsWith';
+  operator:
+    | 'eq'
+    | 'ne'
+    | 'gt'
+    | 'gte'
+    | 'lt'
+    | 'lte'
+    | 'in'
+    | 'nin'
+    | 'contains'
+    | 'startsWith'
+    | 'endsWith';
   /** Filter value */
   value: any;
 }

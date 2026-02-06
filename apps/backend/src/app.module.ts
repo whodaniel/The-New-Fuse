@@ -24,7 +24,7 @@ import { RelayModule } from './modules/relay/relay.module';
 import { SelfImprovementModule } from './modules/self-improvement/self-improvement.module';
 import { SystemMetricsModule } from './modules/system-metrics/system-metrics.module';
 import { WorkflowTemplatesModule } from './modules/workflow-templates/workflow-templates.module';
-// PrismaModule removed - migrated to DrizzleModule
+// Legacy ORM module removed - migrated to DrizzleModule
 import { MetricsModule } from './metrics/metrics.module';
 import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
 import { AdminModule } from './modules/admin/admin.module';

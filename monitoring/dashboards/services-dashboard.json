@@ -24,11 +24,7 @@
       {
         "title": "Resource Utilization",
         "type": "gauge",
-        "metrics": [
-          "cpu_usage",
-          "memory_usage",
-          "network_throughput"
-        ]
+        "metrics": ["cpu_usage", "memory_usage", "network_throughput"]
       },
       {
         "title": "State Synchronization",

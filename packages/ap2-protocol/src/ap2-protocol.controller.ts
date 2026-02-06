@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Logger } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
 import { Ap2ProtocolService } from './ap2-protocol.service';
 
 @Controller('ap2')

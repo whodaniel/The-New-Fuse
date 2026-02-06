@@ -16,7 +16,7 @@ export enum BusinessEventType {
   WORKFLOW_TRIGGERED = 'workflow_triggered',
   CUSTOMER_UPDATED = 'customer_updated',
   PRODUCT_SOLD = 'product_sold',
-  SUBSCRIPTION_CHANGED = 'subscription_changed'
+  SUBSCRIPTION_CHANGED = 'subscription_changed',
 }
 
 export enum IntegrationSource {
@@ -31,7 +31,7 @@ export enum IntegrationSource {
   QUICKBOOKS = 'quickbooks',
   ZAPIER = 'zapier',
   WORKATO = 'workato',
-  POWER_AUTOMATE = 'power_automate'
+  POWER_AUTOMATE = 'power_automate',
 }
 
 export interface EventMetadata {
@@ -48,7 +48,7 @@ export enum EventPriority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export enum ProcessingStatus {
@@ -56,7 +56,7 @@ export enum ProcessingStatus {
   PROCESSING = 'processing',
   COMPLETED = 'completed',
   FAILED = 'failed',
-  RETRYING = 'retrying'
+  RETRYING = 'retrying',
 }
 
 // Webhook Configuration Types
@@ -234,14 +234,14 @@ export enum InsightType {
   CHURN_RISK = 'churn_risk',
   PROCESS_OPTIMIZATION = 'process_optimization',
   ANOMALY_DETECTION = 'anomaly_detection',
-  CUSTOMER_BEHAVIOR = 'customer_behavior'
+  CUSTOMER_BEHAVIOR = 'customer_behavior',
 }
 
 export enum ImpactLevel {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 // API Types
@@ -302,21 +302,32 @@ export enum DeliveryStatus {
   PENDING = 'pending',
   DELIVERED = 'delivered',
   FAILED = 'failed',
-  RETRYING = 'retrying'
+  RETRYING = 'retrying',
 }
 
 // Service Interfaces
 export interface WebhookService {
   registerWebhook(request: WebhookRegistrationRequest): Promise<WebhookRegistrationResponse>;
-  handleWebhook(source: IntegrationSource, payload: any, signature: string): Promise<WebhookEventResponse>;
+  handleWebhook(
+    source: IntegrationSource,
+    payload: any,
+    signature: string
+  ): Promise<WebhookEventResponse>;
   getWebhookStatus(id: string): Promise<WebhookStatusResponse>;
-  validateSignature(payload: string, signature: string, config: WebhookSecurityConfig): Promise<boolean>;
+  validateSignature(
+    payload: string,
+    signature: string,
+    config: WebhookSecurityConfig
+  ): Promise<boolean>;
 }
 
 export interface BusinessEventService {
   createEvent(event: Omit<BusinessEvent, 'id' | 'timestamp'>): Promise<BusinessEvent>;
   processEvent(eventId: string): Promise<void>;
-  getEventHistory(organizationId: string, request: EventHistoryRequest): Promise<EventHistoryResponse>;
+  getEventHistory(
+    organizationId: string,
+    request: EventHistoryRequest
+  ): Promise<EventHistoryResponse>;
   retryFailedEvent(eventId: string): Promise<void>;
 }
 
@@ -330,5 +341,10 @@ export interface SSEService {
 export interface AnalyticsService {
   generateMetrics(organizationId: string, timeRange: string): Promise<AnalyticsMetrics>;
   streamMetrics(organizationId: string): Promise<ReadableStream>;
-  recordMetric(organizationId: string, metricType: string, value: number, dimensions?: Record<string, any>): Promise<void>;
+  recordMetric(
+    organizationId: string,
+    metricType: string,
+    value: number,
+    dimensions?: Record<string, any>
+  ): Promise<void>;
 }

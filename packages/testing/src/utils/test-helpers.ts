@@ -9,7 +9,7 @@
  */
 export async function waitFor(
   condition: () => boolean | Promise<boolean>,
-  options: { timeout?: number; interval?: number } = {}
+  options: { timeout?: number; interval?: number } = {},
 ): Promise<void> {
   const { timeout = 5000, interval = 100 } = options;
   const startTime = Date.now();
@@ -34,7 +34,10 @@ export function sleep(ms: number): Promise<void> {
 /**
  * Create a mock function with TypeScript support
  */
-export function mockFn<T extends (...args: any[]) => any>(): jest.Mock<ReturnType<T>, Parameters<T>> {
+export function mockFn<T extends (...args: any[]) => any>(): jest.Mock<
+  ReturnType<T>,
+  Parameters<T>
+> {
   return jest.fn();
 }
 
@@ -70,7 +73,9 @@ export function createDeferred<T>(): Deferred<T> {
  * Generate a random string
  */
 export function randomString(length: number = 10): string {
-  return Math.random().toString(36).substring(2, length + 2);
+  return Math.random()
+    .toString(36)
+    .substring(2, length + 2);
 }
 
 /**
@@ -84,9 +89,9 @@ export function randomEmail(): string {
  * Generate a random UUID (simple version)
  */
 export function randomUUID(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -96,10 +101,10 @@ export function randomUUID(): string {
  */
 export function createSpyObj<T extends Record<string, any>>(
   baseName: string,
-  methodNames: (keyof T)[]
+  methodNames: (keyof T)[],
 ): { [K in keyof T]: jest.Mock } {
   const obj: any = {};
-  methodNames.forEach((methodName) => {
+  methodNames.forEach(methodName => {
     obj[methodName] = jest.fn().mockName(`${baseName}.${String(methodName)}`);
   });
   return obj;
@@ -110,7 +115,7 @@ export function createSpyObj<T extends Record<string, any>>(
  */
 export async function expectThrowsAsync(
   fn: () => Promise<any>,
-  errorMessageOrType?: string | RegExp | (new (...args: any[]) => Error)
+  errorMessageOrType?: string | RegExp | (new (...args: any[]) => Error),
 ): Promise<void> {
   let didThrow = false;
   let error: any;
@@ -130,19 +135,19 @@ export async function expectThrowsAsync(
     if (typeof errorMessageOrType === 'string') {
       if (!error.message.includes(errorMessageOrType)) {
         throw new Error(
-          `Expected error message to include "${errorMessageOrType}", but got "${error.message}"`
+          `Expected error message to include "${errorMessageOrType}", but got "${error.message}"`,
         );
       }
     } else if (errorMessageOrType instanceof RegExp) {
       if (!errorMessageOrType.test(error.message)) {
         throw new Error(
-          `Expected error message to match ${errorMessageOrType}, but got "${error.message}"`
+          `Expected error message to match ${errorMessageOrType}, but got "${error.message}"`,
         );
       }
     } else {
       if (!(error instanceof errorMessageOrType)) {
         throw new Error(
-          `Expected error to be instance of ${errorMessageOrType.name}, but got ${error.constructor.name}`
+          `Expected error to be instance of ${errorMessageOrType.name}, but got ${error.constructor.name}`,
         );
       }
     }
@@ -153,17 +158,17 @@ export async function expectThrowsAsync(
  * Suppress console output during test
  */
 export function suppressConsole(
-  methods: ('log' | 'warn' | 'error' | 'info')[] = ['log', 'warn', 'error', 'info']
+  methods: ('log' | 'warn' | 'error' | 'info')[] = ['log', 'warn', 'error', 'info'],
 ): () => void {
   const originalMethods: any = {};
 
-  methods.forEach((method) => {
+  methods.forEach(method => {
     originalMethods[method] = console[method];
     console[method] = jest.fn();
   });
 
   return () => {
-    methods.forEach((method) => {
+    methods.forEach(method => {
       console[method] = originalMethods[method];
     });
   };

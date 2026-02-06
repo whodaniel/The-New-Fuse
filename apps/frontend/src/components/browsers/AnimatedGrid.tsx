@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ReactNode } from 'react';
 
 export interface AnimatedGridProps<T> {
   items: T[];

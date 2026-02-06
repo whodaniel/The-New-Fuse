@@ -1,10 +1,12 @@
 # Quick Start: Deploy The New Fuse to Railway
 
-This is a simplified guide to get The New Fuse up and running on Railway quickly.
+This is a simplified guide to get The New Fuse up and running on Railway
+quickly.
 
 ## Prerequisites (5 minutes)
 
-1. **Docker Desktop** - Download and start: https://www.docker.com/products/docker-desktop
+1. **Docker Desktop** - Download and start:
+   https://www.docker.com/products/docker-desktop
 2. **Railway Account** - Sign up: https://railway.app (free tier available)
 3. **Railway CLI** - Install:
    ```bash
@@ -49,16 +51,19 @@ Choose option 1 to deploy all services, or deploy them individually.
 In Railway Dashboard, for each service, add:
 
 **Frontend:**
+
 - `VITE_API_URL` = URL of your API Gateway (from Railway)
 
 **API, Backend, API Gateway:**
+
 - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}`
 - `REDIS_URL` = `${{Redis.REDIS_URL}}`
 - `JWT_SECRET` = (generate with: `openssl rand -base64 32`)
 
 ### Step 5: Redeploy
 
-After adding environment variables, Railway will automatically redeploy your services.
+After adding environment variables, Railway will automatically redeploy your
+services.
 
 ## Option 2: Manual Step-by-Step Deploy
 
@@ -91,6 +96,7 @@ cd ../..
 ### 3. Add Databases
 
 In Railway Dashboard:
+
 - Add PostgreSQL
 - Add Redis
 
@@ -135,15 +141,18 @@ railway up
 ## Troubleshooting
 
 ### Build fails with "Cannot find module"
+
 - Make sure you're in the project root directory
 - Run: `pnpm install` before building
 
 ### Service crashes after deploy
+
 - Check Railway logs: `railway logs --service <name>`
 - Verify environment variables are set
 - Make sure DATABASE_URL is configured
 
 ### Cannot access frontend
+
 - Check if VITE_API_URL is set correctly
 - Verify API Gateway/API Service is running
 - Check Railway domains in dashboard
@@ -164,6 +173,7 @@ After successful deployment:
 - **Free Tier**: Available for testing (500 hours/month)
 
 Each service uses approximately:
+
 - Frontend: ~256MB RAM, minimal CPU
 - API Service: ~512MB RAM, moderate CPU
 - PostgreSQL: ~256MB RAM

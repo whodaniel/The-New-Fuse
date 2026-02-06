@@ -4,10 +4,7 @@ interface CopyOptions {
   notification?: boolean;
 }
 
-export async function copyToClipboard(
-  text: string,
-  options: CopyOptions = {}
-): Promise<boolean> {
+export async function copyToClipboard(text: string, options: CopyOptions = {}): Promise<boolean> {
   const { stripMarkdown = false, stripFormatting = false, notification = true } = options;
 
   try {

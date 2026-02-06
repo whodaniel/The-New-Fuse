@@ -1,10 +1,12 @@
 # GraphQL API Examples
 
-This document provides example queries and mutations for The New Fuse GraphQL API.
+This document provides example queries and mutations for The New Fuse GraphQL
+API.
 
 ## Authentication
 
-All GraphQL requests require authentication via JWT token in the Authorization header:
+All GraphQL requests require authentication via JWT token in the Authorization
+header:
 
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
@@ -261,6 +263,7 @@ mutation CreateAgent($input: CreateAgentInput!) {
 ```
 
 Variables:
+
 ```json
 {
   "input": {
@@ -288,13 +291,19 @@ mutation UpdateAgent($input: UpdateAgentInput!) {
 ```
 
 Variables:
+
 ```json
 {
   "input": {
     "id": "agent-uuid-here",
     "name": "Updated Agent Name",
     "description": "Updated description",
-    "capabilities": ["chat", "task-execution", "data-analysis", "code-generation"],
+    "capabilities": [
+      "chat",
+      "task-execution",
+      "data-analysis",
+      "code-generation"
+    ],
     "isActive": true
   }
 }
@@ -319,6 +328,7 @@ mutation CreateWorkflow($input: CreateWorkflowInput!) {
 ```
 
 Variables:
+
 ```json
 {
   "input": {
@@ -347,6 +357,7 @@ mutation ExecuteWorkflow($input: ExecuteWorkflowInput!) {
 ```
 
 Variables:
+
 ```json
 {
   "input": {
@@ -398,6 +409,7 @@ http://localhost:3000/graphql
 ```
 
 The playground provides:
+
 - Interactive query and mutation builder
 - Schema documentation
 - Auto-completion
@@ -422,6 +434,7 @@ GraphQL errors follow this format:
 ```
 
 Common error codes:
+
 - `UNAUTHENTICATED`: Missing or invalid authentication token
 - `FORBIDDEN`: User doesn't have permission
 - `BAD_USER_INPUT`: Invalid input data

@@ -27,26 +27,31 @@ export class AppModule {}
 ### Server-Side
 
 #### Broadcast to All
+
 ```typescript
 wsGateway.broadcast('event', { data: 'value' });
 ```
 
 #### Send to User
+
 ```typescript
 wsGateway.sendToUser('user-id', 'event', { data: 'value' });
 ```
 
 #### Send to Room
+
 ```typescript
 wsGateway.sendToRoom('room-name', 'event', { data: 'value' });
 ```
 
 #### Queue Message
+
 ```typescript
 const id = wsGateway.queueMessage('event', data, priority);
 ```
 
 #### Get Metrics
+
 ```typescript
 const metrics = await wsGateway.getMetrics();
 const health = await wsGateway.getHealth();
@@ -56,6 +61,7 @@ const stats = wsGateway.getConnectionStats();
 ### Client-Side
 
 #### Connect
+
 ```typescript
 import { WebSocketTestClient } from '@the-new-fuse/websocket-infrastructure/testing';
 
@@ -68,6 +74,7 @@ await client.connect();
 ```
 
 #### Subscribe
+
 ```typescript
 client.on('event', (data) => {
   console.log('Received:', data);
@@ -75,35 +82,38 @@ client.on('event', (data) => {
 ```
 
 #### Send
+
 ```typescript
 client.send('event', { data: 'value' });
 ```
 
 #### Join Room
+
 ```typescript
 client.joinRoom('room-name');
 ```
 
 #### Leave Room
+
 ```typescript
 client.leaveRoom('room-name');
 ```
 
 ## Configuration Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `cors.origin` | `string\|string[]` | `'*'` | CORS origins |
-| `redis.host` | `string` | `'localhost'` | Redis host |
-| `redis.port` | `number` | `6379` | Redis port |
-| `heartbeat.interval` | `number` | `30000` | Ping interval (ms) |
-| `heartbeat.timeout` | `number` | `60000` | Pong timeout (ms) |
-| `compression.enabled` | `boolean` | `false` | Enable compression |
-| `compression.threshold` | `number` | `1024` | Min size for compression |
-| `messageQueue.enabled` | `boolean` | `false` | Enable message queue |
-| `messageQueue.maxSize` | `number` | `10000` | Max queue size |
-| `connectionPool.maxConnections` | `number` | `10000` | Max connections |
-| `monitoring.enabled` | `boolean` | `false` | Enable metrics |
+| Option                          | Type               | Default       | Description              |
+| ------------------------------- | ------------------ | ------------- | ------------------------ |
+| `cors.origin`                   | `string\|string[]` | `'*'`         | CORS origins             |
+| `redis.host`                    | `string`           | `'localhost'` | Redis host               |
+| `redis.port`                    | `number`           | `6379`        | Redis port               |
+| `heartbeat.interval`            | `number`           | `30000`       | Ping interval (ms)       |
+| `heartbeat.timeout`             | `number`           | `60000`       | Pong timeout (ms)        |
+| `compression.enabled`           | `boolean`          | `false`       | Enable compression       |
+| `compression.threshold`         | `number`           | `1024`        | Min size for compression |
+| `messageQueue.enabled`          | `boolean`          | `false`       | Enable message queue     |
+| `messageQueue.maxSize`          | `number`           | `10000`       | Max queue size           |
+| `connectionPool.maxConnections` | `number`           | `10000`       | Max connections          |
+| `monitoring.enabled`            | `boolean`          | `false`       | Enable metrics           |
 
 ## Environment Variables
 
@@ -127,22 +137,22 @@ METRICS_PORT=9090
 
 ### Server → Client
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `connected` | `{ id, timestamp }` | Connection established |
-| `ping` | `{ timestamp }` | Heartbeat ping |
-| `disconnect:reason` | `{ reason }` | Disconnect notification |
-| `heartbeat:timeout` | - | Heartbeat timeout |
-| `error` | `{ message }` | Error occurred |
+| Event               | Payload             | Description             |
+| ------------------- | ------------------- | ----------------------- |
+| `connected`         | `{ id, timestamp }` | Connection established  |
+| `ping`              | `{ timestamp }`     | Heartbeat ping          |
+| `disconnect:reason` | `{ reason }`        | Disconnect notification |
+| `heartbeat:timeout` | -                   | Heartbeat timeout       |
+| `error`             | `{ message }`       | Error occurred          |
 
 ### Client → Server
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `message` | `{ channel, data }` | Send message |
-| `pong` | `{ timestamp }` | Heartbeat pong |
-| `join:room` | `roomName` | Join room |
-| `leave:room` | `roomName` | Leave room |
+| Event        | Payload             | Description    |
+| ------------ | ------------------- | -------------- |
+| `message`    | `{ channel, data }` | Send message   |
+| `pong`       | `{ timestamp }`     | Heartbeat pong |
+| `join:room`  | `roomName`          | Join room      |
+| `leave:room` | `roomName`          | Leave room     |
 
 ## Metrics
 
@@ -163,6 +173,7 @@ curl http://localhost:3000/health
 ```
 
 Response:
+
 ```json
 {
   "healthy": true,
@@ -190,6 +201,7 @@ const results = await new WebSocketLoadTester({
 ## Reconnection Strategies
 
 ### Exponential Backoff (Default)
+
 ```typescript
 new ExponentialBackoffStrategy(
   maxAttempts: 10,
@@ -200,6 +212,7 @@ new ExponentialBackoffStrategy(
 ```
 
 ### Linear Backoff
+
 ```typescript
 new LinearBackoffStrategy(
   maxAttempts: 10,
@@ -210,6 +223,7 @@ new LinearBackoffStrategy(
 ```
 
 ### Fibonacci Backoff
+
 ```typescript
 new FibonacciBackoffStrategy(
   maxAttempts: 10,
@@ -221,6 +235,7 @@ new FibonacciBackoffStrategy(
 ## Compression
 
 ### Manual
+
 ```typescript
 import { CompressionUtil } from '@the-new-fuse/websocket-infrastructure';
 
@@ -229,6 +244,7 @@ const decompressed = CompressionUtil.decompress(compressed, 'gzip');
 ```
 
 ### Automatic (Middleware)
+
 ```typescript
 const middleware = new CompressionMiddleware(1024, 'gzip');
 const result = middleware.processOutgoing(largeData);
@@ -251,21 +267,25 @@ const original = MessageSerializer.deserialize(data, type);
 ## Common Issues
 
 ### High Memory
+
 - Reduce `maxConnections`
 - Enable compression
 - Lower queue size
 
 ### Connection Drops
+
 - Increase `heartbeat.timeout`
 - Check network stability
 - Review load balancer config
 
 ### Slow Messages
+
 - Check Redis latency
 - Enable binary protocol
 - Review queue size
 
 ### Failed Reconnections
+
 - Increase `maxAttempts`
 - Adjust `maxDelay`
 - Check server availability
@@ -298,12 +318,12 @@ services:
     environment:
       REDIS_HOST: redis
     ports:
-      - "3000:3000"
+      - '3000:3000'
 
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'
 ```
 
 ## Best Practices

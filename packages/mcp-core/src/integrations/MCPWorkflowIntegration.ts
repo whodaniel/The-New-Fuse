@@ -1,31 +1,31 @@
 /**
  * MCP Workflow Integration Implementation
- * 
+ *
  * Provides integration between MCP services and workflow execution systems.
  * Handles task delegation, execution tracking, and callback management.
  */
 
 import { EventEmitter } from 'events';
-import { 
-  IMCPWorkflowIntegration, 
-  WorkflowStep, 
-  WorkflowContext, 
-  StepResult, 
-  Task, 
-  TaskResult, 
-  ExecutionStatus, 
-  MCPCallback, 
-  TaskExecutionStatus,
-  ErrorRecoveryConfig,
-  MonitoringConfig
-} from '../interfaces/IMCPWorkflowIntegration';
-import { IMCPClient } from '../interfaces/IMCPClient';
 import { IMCPBroker } from '../interfaces/IMCPBroker';
+import { IMCPClient } from '../interfaces/IMCPClient';
 import { MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
+import {
+  ErrorRecoveryConfig,
+  ExecutionStatus,
+  IMCPWorkflowIntegration,
+  MCPCallback,
+  MonitoringConfig,
+  StepResult,
+  Task,
+  TaskExecutionStatus,
+  TaskResult,
+  WorkflowContext,
+  WorkflowStep,
+} from '../interfaces/IMCPWorkflowIntegration';
 import { RetryPolicy } from '../types/common';
 import { MCPErrorClass } from '../types/error';
+import { CallbackHandlerConfig, MCPCallbackHandler } from './MCPCallbackHandler';
 import { WorkflowExecutionMonitor } from './WorkflowExecutionMonitor';
-import { MCPCallbackHandler, CallbackHandlerConfig } from './MCPCallbackHandler';
 
 /**
  * Configuration for MCP workflow integration
@@ -33,25 +33,25 @@ import { MCPCallbackHandler, CallbackHandlerConfig } from './MCPCallbackHandler'
 export interface MCPWorkflowIntegrationConfig {
   /** MCP client for service communication */
   client: IMCPClient;
-  
+
   /** MCP broker for service discovery */
   broker: IMCPBroker;
-  
+
   /** Default timeout for operations */
   defaultTimeout: number;
-  
+
   /** Default retry policy */
   defaultRetryPolicy: RetryPolicy;
-  
+
   /** Error recovery configuration */
   errorRecovery: ErrorRecoveryConfig;
-  
+
   /** Monitoring configuration */
   monitoring: MonitoringConfig;
-  
+
   /** Callback handler configuration */
   callbackConfig?: CallbackHandlerConfig;
-  
+
   /** Enable debug logging */
   debug?: boolean;
 }
@@ -70,10 +70,10 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
   constructor(config: MCPWorkflowIntegrationConfig) {
     super();
     this.config = config;
-    
+
     // Initialize monitoring and callback handling
     this.monitor = new WorkflowExecutionMonitor(config.monitoring, config.errorRecovery);
-    
+
     const callbackConfig: CallbackHandlerConfig = config.callbackConfig || {
       maxRetries: 3,
       retryDelay: 1000,
@@ -83,11 +83,11 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
       maxQueueSize: 1000,
       enablePersistence: false,
       batchSize: 10,
-      processingInterval: 1000
+      processingInterval: 1000,
     };
-    
+
     this.callbackHandler = new MCPCallbackHandler(callbackConfig);
-    
+
     this.setupEventHandlers();
   }
 
@@ -103,19 +103,24 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
       // Start monitoring and callback handling
       this.monitor.start();
       this.callbackHandler.start();
-      
+
       // Set up callback handling
       this.setupCallbackHandling();
-      
+
       this.isInitialized = true;
       this.emit('initialized');
-      
+
       if (this.config.debug) {
         console.log('[MCPWorkflowIntegration] Initialized successfully');
       }
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
-      this.emit('error', new MCPErrorClass(-32603, `Failed to initialize workflow integration: ${err.message}`, { cause: err }));
+      this.emit(
+        'error',
+        new MCPErrorClass(-32603, `Failed to initialize workflow integration: ${err.message}`, {
+          cause: err,
+        })
+      );
       throw err;
     }
   }
@@ -131,16 +136,21 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
     try {
       this.monitor.stop();
       this.callbackHandler.stop();
-      
+
       this.isInitialized = false;
       this.emit('shutdown');
-      
+
       if (this.config.debug) {
         console.log('[MCPWorkflowIntegration] Shutdown completed');
       }
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
-      this.emit('error', new MCPErrorClass(-32603, `Failed to shutdown workflow integration: ${err.message}`, { cause: err }));
+      this.emit(
+        'error',
+        new MCPErrorClass(-32603, `Failed to shutdown workflow integration: ${err.message}`, {
+          cause: err,
+        })
+      );
       throw err;
     }
   }
@@ -150,7 +160,7 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
    */
   async executeWorkflowStep(step: WorkflowStep, context: WorkflowContext): Promise<StepResult> {
     const startTime = Date.now();
-    
+
     try {
       if (this.config.debug) {
         console.log(`[MCPWorkflowIntegration] Executing workflow step: ${step.id}`);
@@ -170,28 +180,38 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
           workflowId: context.workflowId,
           stepId: step.id,
           stepType: step.type,
-          mcpService: step.mcpService
-        }
+          mcpService: step.mcpService,
+        },
       };
-      
+
       this.trackExecution(executionId, TaskExecutionStatus.RUNNING);
       this.monitor.trackExecution(executionId, executionStatus);
 
       // Prepare MCP request based on step type
       const mcpRequest = await this.prepareMCPRequest(step, context);
-      
+
       // Execute the MCP request with retry logic
-      const mcpResponse = await this.executeWithRetry(mcpRequest, step.mcpService, step.retryPolicy || this.config.defaultRetryPolicy);
-      
+      const mcpResponse = await this.executeWithRetry(
+        mcpRequest,
+        step.mcpService,
+        step.retryPolicy || this.config.defaultRetryPolicy
+      );
+
       // Process the response
       const result = await this.processStepResponse(mcpResponse, step, context);
-      
+
       // Update execution tracking
       this.updateExecution(executionId, TaskExecutionStatus.COMPLETED, result);
-      this.monitor.updateExecutionStatus(executionId, TaskExecutionStatus.COMPLETED, 100, 'Step completed successfully', result);
-      
+      this.monitor.updateExecutionStatus(
+        executionId,
+        TaskExecutionStatus.COMPLETED,
+        100,
+        'Step completed successfully',
+        result
+      );
+
       const duration = Date.now() - startTime;
-      
+
       const stepResult: StepResult = {
         success: true,
         result: result,
@@ -200,22 +220,23 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
           executionId,
           stepType: step.type,
           mcpService: step.mcpService,
-          mcpMethod: step.mcpMethod
-        }
+          mcpMethod: step.mcpMethod,
+        },
       };
 
       this.emit('stepCompleted', { step, context, result: stepResult });
-      
+
       if (this.config.debug) {
-        console.log(`[MCPWorkflowIntegration] Step completed successfully: ${step.id} (${duration}ms)`);
+        console.log(
+          `[MCPWorkflowIntegration] Step completed successfully: ${step.id} (${duration}ms)`
+        );
       }
 
       return stepResult;
-
     } catch (error) {
       const duration = Date.now() - startTime;
       const err = error instanceof Error ? error : new Error(String(error));
-      
+
       const stepResult: StepResult = {
         success: false,
         error: err.message,
@@ -224,12 +245,12 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
           stepType: step.type,
           mcpService: step.mcpService,
           mcpMethod: step.mcpMethod,
-          errorType: err.constructor.name
-        }
+          errorType: err.constructor.name,
+        },
       };
 
       this.emit('stepFailed', { step, context, error: err, result: stepResult });
-      
+
       if (this.config.debug) {
         console.error(`[MCPWorkflowIntegration] Step failed: ${step.id}`, err);
       }
@@ -244,10 +265,12 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
   async delegateTask(task: Task, mcpService: string): Promise<TaskResult> {
     const startTime = new Date();
     const executionId = this.generateTaskExecutionId(task.id);
-    
+
     try {
       if (this.config.debug) {
-        console.log(`[MCPWorkflowIntegration] Delegating task: ${task.id} to service: ${mcpService}`);
+        console.log(
+          `[MCPWorkflowIntegration] Delegating task: ${task.id} to service: ${mcpService}`
+        );
       }
 
       // Track task execution
@@ -259,10 +282,10 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
         metadata: {
           taskId: task.id,
           taskType: task.type,
-          mcpService
-        }
+          mcpService,
+        },
       };
-      
+
       this.trackExecution(executionId, TaskExecutionStatus.RUNNING);
       this.monitor.trackExecution(executionId, executionStatus);
 
@@ -279,20 +302,26 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
         method: 'tools/call',
         params: {
           name: task.type,
-          arguments: task.parameters
-        }
+          arguments: task.parameters,
+        },
       };
 
       // Execute the task
       const response = await this.config.client.sendRequest(mcpRequest);
-      
+
       if (response.error) {
         throw new MCPErrorClass(response.error.code, response.error.message, response.error.data);
       }
 
       // Update execution tracking
       this.updateExecution(executionId, TaskExecutionStatus.COMPLETED, response.result);
-      this.monitor.updateExecutionStatus(executionId, TaskExecutionStatus.COMPLETED, 100, 'Task completed successfully', response.result);
+      this.monitor.updateExecutionStatus(
+        executionId,
+        TaskExecutionStatus.COMPLETED,
+        100,
+        'Task completed successfully',
+        response.result
+      );
 
       const taskResult: TaskResult = {
         executionId,
@@ -304,25 +333,34 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
         metadata: {
           mcpService,
           taskType: task.type,
-          duration: Date.now() - startTime.getTime()
-        }
+          duration: Date.now() - startTime.getTime(),
+        },
       };
 
       this.emit('taskCompleted', { task, result: taskResult });
-      
+
       if (this.config.debug) {
         console.log(`[MCPWorkflowIntegration] Task completed: ${task.id}`);
       }
 
       return taskResult;
-
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
-      
+
       // Update execution tracking
       this.updateExecution(executionId, TaskExecutionStatus.FAILED, null, err.message);
-      this.monitor.updateExecutionStatus(executionId, TaskExecutionStatus.FAILED, undefined, err.message);
-      this.monitor.updateExecutionStatus(executionId, TaskExecutionStatus.FAILED, undefined, err.message);
+      this.monitor.updateExecutionStatus(
+        executionId,
+        TaskExecutionStatus.FAILED,
+        undefined,
+        err.message
+      );
+      this.monitor.updateExecutionStatus(
+        executionId,
+        TaskExecutionStatus.FAILED,
+        undefined,
+        err.message
+      );
 
       const taskResult: TaskResult = {
         executionId,
@@ -334,12 +372,12 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
         metadata: {
           mcpService,
           taskType: task.type,
-          errorType: err.constructor.name
-        }
+          errorType: err.constructor.name,
+        },
       };
 
       this.emit('taskFailed', { task, error: err, result: taskResult });
-      
+
       if (this.config.debug) {
         console.error(`[MCPWorkflowIntegration] Task failed: ${task.id}`, err);
       }
@@ -357,17 +395,17 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
     if (monitorStatus) {
       return monitorStatus;
     }
-    
+
     // Fallback to internal tracker
     const status = this.executionTracker.get(executionId);
-    
+
     if (!status) {
       throw new MCPErrorClass(-32001, `Execution not found: ${executionId}`);
     }
 
     // Update last accessed time
     status.lastUpdated = new Date();
-    
+
     return { ...status };
   }
 
@@ -377,7 +415,9 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
   async handleMCPCallback(callback: MCPCallback): Promise<void> {
     try {
       if (this.config.debug) {
-        console.log(`[MCPWorkflowIntegration] Handling callback: ${callback.type} for execution: ${callback.executionId}`);
+        console.log(
+          `[MCPWorkflowIntegration] Handling callback: ${callback.type} for execution: ${callback.executionId}`
+        );
       }
 
       // Let the monitor handle the callback (it will update execution status)
@@ -392,19 +432,19 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
             execution.message = callback.payload.message;
             execution.lastUpdated = new Date();
             break;
-            
+
           case 'result':
             execution.status = TaskExecutionStatus.COMPLETED;
             execution.progress = 100;
             execution.lastUpdated = new Date();
             break;
-            
+
           case 'error':
             execution.status = TaskExecutionStatus.FAILED;
             execution.message = callback.payload.error;
             execution.lastUpdated = new Date();
             break;
-            
+
           case 'status':
             execution.status = callback.payload.status;
             execution.message = callback.payload.message;
@@ -417,11 +457,10 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
       await this.callbackHandler.handleCallback(callback);
 
       this.emit('callbackReceived', callback);
-
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
       this.emit('callbackError', { callback, error: err });
-      
+
       if (this.config.debug) {
         console.error(`[MCPWorkflowIntegration] Callback handling failed:`, err);
       }
@@ -431,7 +470,10 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
   /**
    * Register a callback handler for a specific execution
    */
-  registerCallbackHandler(executionId: string, handler: (callback: MCPCallback) => Promise<void>): void {
+  registerCallbackHandler(
+    executionId: string,
+    handler: (callback: MCPCallback) => Promise<void>
+  ): void {
     this.callbackHandlers.set(executionId, handler);
     this.callbackHandler.registerHandler(executionId, handler);
   }
@@ -455,12 +497,12 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
   } {
     // Use monitor statistics if available (more comprehensive)
     const monitorMetrics = this.monitor.getMetrics();
-    
+
     return {
       totalExecutions: monitorMetrics.totalExecutions,
       activeExecutions: monitorMetrics.activeExecutions,
       completedExecutions: monitorMetrics.completedExecutions,
-      failedExecutions: monitorMetrics.failedExecutions
+      failedExecutions: monitorMetrics.failedExecutions,
     };
   }
 
@@ -498,20 +540,23 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
   cleanupExecutions(olderThanMs: number = 24 * 60 * 60 * 1000): number {
     const cutoffTime = new Date(Date.now() - olderThanMs);
     let cleanedCount = 0;
-    
+
     for (const [executionId, status] of this.executionTracker.entries()) {
-      if (status.lastUpdated < cutoffTime && 
-          (status.status === TaskExecutionStatus.COMPLETED || status.status === TaskExecutionStatus.FAILED)) {
+      if (
+        status.lastUpdated < cutoffTime &&
+        (status.status === TaskExecutionStatus.COMPLETED ||
+          status.status === TaskExecutionStatus.FAILED)
+      ) {
         this.executionTracker.delete(executionId);
         this.callbackHandlers.delete(executionId);
         cleanedCount++;
       }
     }
-    
+
     if (this.config.debug && cleanedCount > 0) {
       console.log(`[MCPWorkflowIntegration] Cleaned up ${cleanedCount} old executions`);
     }
-    
+
     return cleanedCount;
   }
 
@@ -527,10 +572,13 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
 
   private setupCallbackHandling(): void {
     // Set up periodic cleanup of old executions
-    setInterval(() => {
-      this.cleanupExecutions();
-      this.monitor.cleanupExecutions();
-    }, 60 * 60 * 1000); // Clean up every hour
+    setInterval(
+      () => {
+        this.cleanupExecutions();
+        this.monitor.cleanupExecutions();
+      },
+      60 * 60 * 1000
+    ); // Clean up every hour
 
     // Forward monitor events
     this.monitor.on('executionStarted', (event) => this.emit('executionStarted', event));
@@ -548,32 +596,35 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
     if (!step.id) {
       throw new MCPErrorClass(-32602, 'Workflow step must have an ID');
     }
-    
+
     if (!step.mcpService) {
       throw new MCPErrorClass(-32602, 'Workflow step must specify an MCP service');
     }
-    
+
     if (!step.mcpMethod) {
       throw new MCPErrorClass(-32602, 'Workflow step must specify an MCP method');
     }
-    
+
     if (!['mcp_call', 'mcp_resource', 'mcp_tool'].includes(step.type)) {
       throw new MCPErrorClass(-32602, 'Invalid workflow step type');
     }
   }
 
-  private async prepareMCPRequest(step: WorkflowStep, context: WorkflowContext): Promise<MCPRequest> {
+  private async prepareMCPRequest(
+    step: WorkflowStep,
+    context: WorkflowContext
+  ): Promise<MCPRequest> {
     const requestId = this.generateExecutionId(context.executionId, step.id);
-    
+
     switch (step.type) {
       case 'mcp_call':
         return {
           jsonrpc: '2.0',
           id: requestId,
           method: step.mcpMethod,
-          params: this.resolveParameters(step.parameters, context)
+          params: this.resolveParameters(step.parameters, context),
         };
-        
+
       case 'mcp_resource':
         return {
           jsonrpc: '2.0',
@@ -581,10 +632,10 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
           method: 'resources/read',
           params: {
             uri: step.parameters.uri,
-            ...this.resolveParameters(step.parameters, context)
-          }
+            ...this.resolveParameters(step.parameters, context),
+          },
         };
-        
+
       case 'mcp_tool':
         return {
           jsonrpc: '2.0',
@@ -592,10 +643,10 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
           method: 'tools/call',
           params: {
             name: step.mcpMethod,
-            arguments: this.resolveParameters(step.parameters, context)
-          }
+            arguments: this.resolveParameters(step.parameters, context),
+          },
         };
-        
+
       default:
         throw new MCPErrorClass(-32602, `Unsupported step type: ${step.type}`);
     }
@@ -605,28 +656,28 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
     if (typeof parameters !== 'object' || parameters === null) {
       return parameters;
     }
-    
+
     // Simple parameter resolution - replace ${variable} patterns
     const resolved = JSON.parse(JSON.stringify(parameters));
-    
+
     const resolveValue = (value: any): any => {
       if (typeof value === 'string' && value.includes('${')) {
         return value.replace(/\$\{([^}]+)\}/g, (match, varName) => {
           const parts = varName.split('.');
           let result: any = context;
-          
+
           for (const part of parts) {
             result = result?.[part];
           }
-          
+
           return result !== undefined ? String(result) : match;
         });
       }
-      
+
       if (Array.isArray(value)) {
         return value.map(resolveValue);
       }
-      
+
       if (typeof value === 'object' && value !== null) {
         const resolvedObj: any = {};
         for (const [key, val] of Object.entries(value)) {
@@ -634,45 +685,54 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
         }
         return resolvedObj;
       }
-      
+
       return value;
     };
-    
+
     return resolveValue(resolved);
   }
 
-  private async executeWithRetry(request: MCPRequest, serviceName: string, retryPolicy: RetryPolicy): Promise<MCPResponse> {
+  private async executeWithRetry(
+    request: MCPRequest,
+    serviceName: string,
+    retryPolicy: RetryPolicy
+  ): Promise<MCPResponse> {
     let lastError: Error | null = null;
-    
+
     for (let attempt = 0; attempt <= retryPolicy.maxAttempts; attempt++) {
       try {
         if (attempt > 0) {
           const delay = this.calculateRetryDelay(attempt, retryPolicy);
           await this.sleep(delay);
-          
+
           if (this.config.debug) {
-            console.log(`[MCPWorkflowIntegration] Retrying request (attempt ${attempt + 1}/${retryPolicy.maxAttempts + 1})`);
+            console.log(
+              `[MCPWorkflowIntegration] Retrying request (attempt ${attempt + 1}/${retryPolicy.maxAttempts + 1})`
+            );
           }
         }
-        
+
         return await this.config.client.sendRequest(request);
-        
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        
+
         if (attempt === retryPolicy.maxAttempts) {
           break;
         }
       }
     }
-    
-    throw new MCPErrorClass(-32603, `Request failed after ${retryPolicy.maxAttempts + 1} attempts: ${lastError?.message}`, { cause: lastError || undefined });
+
+    throw new MCPErrorClass(
+      -32603,
+      `Request failed after ${retryPolicy.maxAttempts + 1} attempts: ${lastError?.message}`,
+      { cause: lastError || undefined }
+    );
   }
 
   private calculateRetryDelay(attempt: number, retryPolicy: RetryPolicy): number {
     const multiplier = retryPolicy.backoffMultiplier || 2;
     let delay: number;
-    
+
     if (multiplier > 1) {
       // Exponential backoff
       delay = retryPolicy.baseDelay * Math.pow(multiplier, attempt - 1);
@@ -680,25 +740,34 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
       // Fixed delay
       delay = retryPolicy.baseDelay;
     }
-    
+
     // Apply jitter if specified
     if (retryPolicy.jitter && retryPolicy.jitter > 0) {
       const jitterAmount = delay * retryPolicy.jitter * Math.random();
       delay = delay + jitterAmount;
     }
-    
+
     return Math.min(delay, retryPolicy.maxDelay);
   }
 
-  private async processStepResponse(response: MCPResponse, step: WorkflowStep, context: WorkflowContext): Promise<any> {
+  private async processStepResponse(
+    response: MCPResponse,
+    step: WorkflowStep,
+    context: WorkflowContext
+  ): Promise<any> {
     if (response.error) {
       throw new MCPErrorClass(response.error.code, response.error.message, response.error.data);
     }
-    
+
     return response.result;
   }
 
-  private trackExecution(executionId: string, status: TaskExecutionStatus, result?: any, error?: string): void {
+  private trackExecution(
+    executionId: string,
+    status: TaskExecutionStatus,
+    result?: any,
+    error?: string
+  ): void {
     this.executionTracker.set(executionId, {
       executionId,
       status,
@@ -706,18 +775,23 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
       message: error || undefined,
       intermediateResults: result ? [result] : undefined,
       lastUpdated: new Date(),
-      metadata: {}
+      metadata: {},
     });
   }
 
-  private updateExecution(executionId: string, status: TaskExecutionStatus, result?: any, error?: string): void {
+  private updateExecution(
+    executionId: string,
+    status: TaskExecutionStatus,
+    result?: any,
+    error?: string
+  ): void {
     const execution = this.executionTracker.get(executionId);
     if (execution) {
       execution.status = status;
       execution.progress = status === TaskExecutionStatus.COMPLETED ? 100 : execution.progress;
       execution.message = error || execution.message;
       execution.lastUpdated = new Date();
-      
+
       if (result !== undefined) {
         execution.intermediateResults = execution.intermediateResults || [];
         execution.intermediateResults.push(result);
@@ -734,6 +808,6 @@ export class MCPWorkflowIntegration extends EventEmitter implements IMCPWorkflow
   }
 
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

@@ -12,8 +12,6 @@ export class HealthService {
 
   check(): Promise<HealthCheckResult> {
     this.logger.log('Performing health check...');
-    return this.health.check([
-      () => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
-    ]);
+    return this.health.check([() => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com')]);
   }
 }

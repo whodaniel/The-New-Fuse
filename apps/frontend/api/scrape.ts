@@ -1,6 +1,6 @@
 /**
  * Vercel Serverless Function: Web Scraping
- * 
+ *
  * Provides web scraping capabilities for AI agents
  */
 
@@ -13,21 +13,18 @@ const scrapingService = new WebScrapingService(
     maxFileSize: 5 * 1024 * 1024, // 5MB limit
     rateLimit: {
       requests: 20,
-      windowMs: 60000 // 1 minute
+      windowMs: 60000, // 1 minute
     },
-    contentFiltering: true
+    contentFiltering: true,
   },
   {
     timeout: 15000, // 15 second timeout
     userAgent: 'Mozilla/5.0 (compatible; TheNewFuse-Scraper/1.0)',
-    viewport: { width: 1280, height: 720 } // Smaller viewport for serverless
+    viewport: { width: 1280, height: 720 }, // Smaller viewport for serverless
   }
 );
 
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
-) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -43,20 +40,21 @@ export default async function handler(
   if (!['GET', 'POST'].includes(req.method || '')) {
     return res.status(405).json({
       success: false,
-      error: 'Method not allowed'
+      error: 'Method not allowed',
     });
   }
 
   try {
     // Extract parameters
-    const params = req.method === 'GET' 
-      ? {
-          url: req.query.url as string,
-          method: (req.query.method as string) || 'simple',
-          config: req.query.config ? JSON.parse(req.query.config as string) : {},
-          extraction: req.query.extraction ? JSON.parse(req.query.extraction as string) : {}
-        }
-      : req.body;
+    const params =
+      req.method === 'GET'
+        ? {
+            url: req.query.url as string,
+            method: (req.query.method as string) || 'simple',
+            config: req.query.config ? JSON.parse(req.query.config as string) : {},
+            extraction: req.query.extraction ? JSON.parse(req.query.extraction as string) : {},
+          }
+        : req.body;
 
     const { url, method = 'simple', config = {}, extraction = {} } = params;
 
@@ -64,7 +62,7 @@ export default async function handler(
     if (!url) {
       return res.status(400).json({
         success: false,
-        error: 'URL parameter is required'
+        error: 'URL parameter is required',
       });
     }
 
@@ -72,7 +70,7 @@ export default async function handler(
     if (!['simple', 'full', 'auto'].includes(method)) {
       return res.status(400).json({
         success: false,
-        error: 'Method must be one of: simple, full, auto'
+        error: 'Method must be one of: simple, full, auto',
       });
     }
 
@@ -107,22 +105,21 @@ export default async function handler(
         metadata: {
           executionTime: result.metadata?.executionTime,
           method: result.metadata?.method,
-          timestamp: result.metadata?.timestamp
-        }
+          timestamp: result.metadata?.timestamp,
+        },
       },
-      error: result.error
+      error: result.error,
     });
-
   } catch (error) {
     console.error('Scraping error:', error);
-    
+
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Internal server error',
       metadata: {
         timestamp: new Date().toISOString(),
-        function: 'scrape'
-      }
+        function: 'scrape',
+      },
     });
   } finally {
     // Cleanup resources

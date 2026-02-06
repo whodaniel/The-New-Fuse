@@ -7,13 +7,13 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 80
-    targetPort: http
-    protocol: TCP
-    name: http
-  - port: 9090
-    targetPort: metrics
-    protocol: TCP
-    name: metrics
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: 9090
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
   selector:
     app: fuse-api

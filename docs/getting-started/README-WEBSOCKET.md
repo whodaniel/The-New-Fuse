@@ -1,10 +1,13 @@
 # The New Fuse WebSocket Integration
 
-This document provides information about the WebSocket integration between the VSCode extension and Chrome extension for The New Fuse project.
+This document provides information about the WebSocket integration between the
+VSCode extension and Chrome extension for The New Fuse project.
 
 ## Overview
 
-The New Fuse project uses WebSocket to establish a connection between the VSCode extension and Chrome extension. This allows for real-time communication between the two extensions, enabling features such as:
+The New Fuse project uses WebSocket to establish a connection between the VSCode
+extension and Chrome extension. This allows for real-time communication between
+the two extensions, enabling features such as:
 
 - Sending code from web pages to VSCode for analysis
 - Receiving AI-generated responses in the Chrome extension
@@ -15,9 +18,12 @@ The New Fuse project uses WebSocket to establish a connection between the VSCode
 
 ### 1. VSCode Extension WebSocket Server
 
-The VSCode extension includes a WebSocket server that listens on port 3710 by default. This server handles connections from the Chrome extension and processes messages.
+The VSCode extension includes a WebSocket server that listens on port 3710 by
+default. This server handles connections from the Chrome extension and processes
+messages.
 
 Key features:
+
 - Secure WebSocket support (wss://)
 - Authentication
 - Message compression
@@ -26,9 +32,12 @@ Key features:
 
 ### 2. Chrome Extension WebSocket Client
 
-The Chrome extension includes a WebSocket client that connects to the VSCode extension's WebSocket server. This client sends and receives messages to/from the VSCode extension.
+The Chrome extension includes a WebSocket client that connects to the VSCode
+extension's WebSocket server. This client sends and receives messages to/from
+the VSCode extension.
 
 Key features:
+
 - Automatic connection on startup
 - Reconnection with exponential backoff
 - Error handling
@@ -36,7 +45,9 @@ Key features:
 
 ### 3. Test WebSocket Server
 
-For testing purposes, a standalone WebSocket server is provided that simulates the VSCode extension's WebSocket server. This server runs on port 3711 to avoid conflicts with the VSCode extension.
+For testing purposes, a standalone WebSocket server is provided that simulates
+the VSCode extension's WebSocket server. This server runs on port 3711 to avoid
+conflicts with the VSCode extension.
 
 ## Message Types
 
@@ -65,23 +76,27 @@ The WebSocket integration supports the following message types:
 
 ### Test WebSocket Server
 
-To test the WebSocket integration without the VSCode extension, you can use the test WebSocket server:
+To test the WebSocket integration without the VSCode extension, you can use the
+test WebSocket server:
 
 ```bash
 node test-websocket-server.cjs
 ```
 
-This will start a WebSocket server on port 3711 that simulates the VSCode extension's WebSocket server.
+This will start a WebSocket server on port 3711 that simulates the VSCode
+extension's WebSocket server.
 
 ### Browser Test Client
 
-To test the WebSocket connection from a browser, you can use the browser test client:
+To test the WebSocket connection from a browser, you can use the browser test
+client:
 
 ```bash
 open browser-test-client.html
 ```
 
-This will open a browser window with a WebSocket client that can connect to either the test WebSocket server or the VSCode extension's WebSocket server.
+This will open a browser window with a WebSocket client that can connect to
+either the test WebSocket server or the VSCode extension's WebSocket server.
 
 ### Chrome Extension
 
@@ -125,7 +140,8 @@ To add a new message type:
 1. Add the message type to the WebSocket server's message handler
 2. Add the message type to the Chrome extension's message handler
 3. Update the UI to support the new message type
-4. Test the new message type with both the test WebSocket server and the VSCode extension
+4. Test the new message type with both the test WebSocket server and the VSCode
+   extension
 
 ### Improving Error Handling
 
@@ -138,4 +154,7 @@ To improve error handling:
 
 ## Conclusion
 
-The WebSocket integration between the VSCode extension and Chrome extension provides a robust and reliable connection for real-time communication. With proper testing and error handling, this integration enables seamless collaboration between the browser and IDE environments.
+The WebSocket integration between the VSCode extension and Chrome extension
+provides a robust and reliable connection for real-time communication. With
+proper testing and error handling, this integration enables seamless
+collaboration between the browser and IDE environments.

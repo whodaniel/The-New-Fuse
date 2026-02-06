@@ -1,22 +1,22 @@
 /**
  * CMS Integration Tests
- * 
+ *
  * Integration tests for the CMS system components to verify
  * they work together correctly with mocked dependencies.
  */
 
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-const vi = jest;
-import { 
-  ContentType, 
-  PrivacyLevel, 
-  Permission,
+import { describe, expect, it, jest } from '@jest/globals';
+import {
   CMSEventType,
+  ConflictResolutionStrategy,
+  ContentType,
+  Permission,
+  PrivacyLevel,
   SyncFrequency,
-  ConflictResolutionStrategy
 } from './types';
+const vi = jest;
 
-// Mock UserRole enum since Prisma client is not available in tests
+// Mock UserRole enum since Drizzle client is not available in tests
 enum UserRole {
   USER = 'USER',
   ADMIN = 'ADMIN',
@@ -24,7 +24,7 @@ enum UserRole {
   AGENCY_OWNER = 'AGENCY_OWNER',
   AGENCY_ADMIN = 'AGENCY_ADMIN',
   AGENCY_MANAGER = 'AGENCY_MANAGER',
-  AGENT_OPERATOR = 'AGENT_OPERATOR'
+  AGENT_OPERATOR = 'AGENT_OPERATOR',
 }
 
 describe('CMS Integration Types and Enums', () => {
@@ -79,7 +79,7 @@ describe('CMS Content Item Structure', () => {
         language: 'en',
         format: 'markdown',
         size: 100,
-        accessCount: 0
+        accessCount: 0,
       },
       ownerId: 'user-123',
       tenantId: 'tenant-123',
@@ -88,12 +88,12 @@ describe('CMS Content Item Structure', () => {
         isPublic: false,
         allowedUsers: [],
         allowedRoles: [],
-        permissions: []
+        permissions: [],
       },
       createdAt: new Date(),
       updatedAt: new Date(),
       version: 1,
-      checksum: 'abc123'
+      checksum: 'abc123',
     };
 
     expect(contentItem.id).toBe('content-123');
@@ -114,12 +114,12 @@ describe('CMS Project Configuration Structure', () => {
         database: {
           host: 'localhost',
           port: 5432,
-          name: 'testdb'
+          name: 'testdb',
         },
         api: {
           baseUrl: 'http://localhost:3000',
-          timeout: 5000
-        }
+          timeout: 5000,
+        },
       },
       ownerId: 'user-123',
       tenantId: 'tenant-123',
@@ -130,19 +130,19 @@ describe('CMS Project Configuration Structure', () => {
           role: UserRole.AGENCY_MANAGER,
           permissions: [Permission.READ, Permission.WRITE],
           addedAt: new Date(),
-          addedBy: 'user-123'
-        }
+          addedBy: 'user-123',
+        },
       ],
       syncSettings: {
         enabled: true,
         frequency: SyncFrequency.REAL_TIME,
         conflictResolution: ConflictResolutionStrategy.LAST_WRITE_WINS,
         backupEnabled: true,
-        versionHistory: true
+        versionHistory: true,
       },
       createdAt: new Date(),
       updatedAt: new Date(),
-      version: 1
+      version: 1,
     };
 
     expect(projectConfig.id).toBe('project-123');
@@ -163,7 +163,7 @@ describe('CMS Sharing Permission Structure', () => {
       permissions: [Permission.READ, Permission.WRITE],
       grantedBy: 'owner-123',
       grantedAt: new Date(),
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
     };
 
     expect(sharingPermission.userId).toBe('target-user-456');
@@ -185,15 +185,15 @@ describe('CMS Privacy Boundary Structure', () => {
         {
           type: 'role_based' as any,
           value: 'ADMIN',
-          description: 'Only admins can access'
+          description: 'Only admins can access',
         },
         {
           type: 'time_window' as any,
           value: '09:00-17:00',
-          description: 'Business hours only'
-        }
+          description: 'Business hours only',
+        },
       ],
-      auditRequired: true
+      auditRequired: true,
     };
 
     expect(privacyBoundary.tenantId).toBe('tenant-123');
@@ -215,9 +215,9 @@ describe('CMS Event Structure', () => {
       metadata: {
         contentType: ContentType.DOCUMENT,
         privacy: PrivacyLevel.PRIVATE,
-        title: 'Test Document'
+        title: 'Test Document',
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     expect(cmsEvent.type).toBe(CMSEventType.CONTENT_CREATED);
@@ -237,12 +237,8 @@ describe('CMS Configuration Validation', () => {
       enableCollaboration: true,
       defaultPrivacy: PrivacyLevel.PRIVATE,
       maxContentSize: 10 * 1024 * 1024, // 10MB
-      allowedContentTypes: [
-        ContentType.DOCUMENT,
-        ContentType.TEMPLATE,
-        ContentType.CONFIGURATION
-      ],
-      syncInterval: 30000 // 30 seconds
+      allowedContentTypes: [ContentType.DOCUMENT, ContentType.TEMPLATE, ContentType.CONFIGURATION],
+      syncInterval: 30000, // 30 seconds
     };
 
     expect(cmsConfig.enablePersonalContent).toBe(true);
@@ -282,13 +278,15 @@ describe('CMS Role-Based Permissions', () => {
       [UserRole.AGENCY_ADMIN]: 4,
       [UserRole.AGENCY_OWNER]: 5,
       [UserRole.ADMIN]: 6,
-      [UserRole.SUPER_ADMIN]: 7
+      [UserRole.SUPER_ADMIN]: 7,
     };
 
     expect(roleHierarchy[UserRole.USER]).toBe(1);
     expect(roleHierarchy[UserRole.SUPER_ADMIN]).toBe(7);
     expect(roleHierarchy[UserRole.ADMIN]).toBeGreaterThan(roleHierarchy[UserRole.AGENCY_OWNER]);
-    expect(roleHierarchy[UserRole.AGENCY_MANAGER]).toBeGreaterThan(roleHierarchy[UserRole.AGENT_OPERATOR]);
+    expect(roleHierarchy[UserRole.AGENCY_MANAGER]).toBeGreaterThan(
+      roleHierarchy[UserRole.AGENT_OPERATOR]
+    );
   });
 
   it('should validate permission assignments', () => {
@@ -296,8 +294,19 @@ describe('CMS Role-Based Permissions', () => {
       [UserRole.USER]: [Permission.READ],
       [UserRole.AGENT_OPERATOR]: [Permission.READ, Permission.WRITE],
       [UserRole.AGENCY_MANAGER]: [Permission.READ, Permission.WRITE, Permission.SHARE],
-      [UserRole.AGENCY_ADMIN]: [Permission.READ, Permission.WRITE, Permission.SHARE, Permission.DELETE],
-      [UserRole.ADMIN]: [Permission.READ, Permission.WRITE, Permission.SHARE, Permission.DELETE, Permission.ADMIN]
+      [UserRole.AGENCY_ADMIN]: [
+        Permission.READ,
+        Permission.WRITE,
+        Permission.SHARE,
+        Permission.DELETE,
+      ],
+      [UserRole.ADMIN]: [
+        Permission.READ,
+        Permission.WRITE,
+        Permission.SHARE,
+        Permission.DELETE,
+        Permission.ADMIN,
+      ],
     };
 
     expect(rolePermissions[UserRole.USER]).toEqual([Permission.READ]);
@@ -310,10 +319,10 @@ describe('CMS Role-Based Permissions', () => {
 describe('CMS Tenant Isolation', () => {
   it('should generate proper tenant IDs', () => {
     const userId = 'user-123';
-    
+
     const privateTenantId = userId; // Private uses userId as tenantId
     const tenantScopedId = `tenant_${userId}`;
-    
+
     expect(privateTenantId).toBe('user-123');
     expect(tenantScopedId).toBe('tenant_user-123');
   });
@@ -322,11 +331,11 @@ describe('CMS Tenant Isolation', () => {
     const userId = 'user-123';
     const tenantId = 'tenant_user-123';
     const otherUserId = 'user-456';
-    
+
     // User should have access to their own tenant
     const hasOwnAccess = tenantId.includes(userId);
     expect(hasOwnAccess).toBe(true);
-    
+
     // User should not have access to other user's tenant
     const hasOtherAccess = tenantId.includes(otherUserId);
     expect(hasOtherAccess).toBe(false);
@@ -336,7 +345,7 @@ describe('CMS Tenant Isolation', () => {
 describe('CMS Sync Settings', () => {
   it('should validate sync frequency options', () => {
     const frequencies = Object.values(SyncFrequency);
-    
+
     expect(frequencies).toContain(SyncFrequency.REAL_TIME);
     expect(frequencies).toContain(SyncFrequency.EVERY_MINUTE);
     expect(frequencies).toContain(SyncFrequency.EVERY_HOUR);
@@ -346,7 +355,7 @@ describe('CMS Sync Settings', () => {
 
   it('should validate conflict resolution strategies', () => {
     const strategies = Object.values(ConflictResolutionStrategy);
-    
+
     expect(strategies).toContain(ConflictResolutionStrategy.LAST_WRITE_WINS);
     expect(strategies).toContain(ConflictResolutionStrategy.MERGE);
     expect(strategies).toContain(ConflictResolutionStrategy.MANUAL);
@@ -361,7 +370,7 @@ describe('CMS Integration Requirements Validation', () => {
       ownerId: 'user-123', // References User.id
       tenantId: 'user-123', // Tenant isolation using userId
       privacy: PrivacyLevel.PRIVATE,
-      syncedAcrossSessions: true // Synchronized across user's active sessions
+      syncedAcrossSessions: true, // Synchronized across user's active sessions
     };
 
     expect(contentItem.ownerId).toBeTruthy();
@@ -377,9 +386,9 @@ describe('CMS Integration Requirements Validation', () => {
       privacy: PrivacyLevel.PRIVATE,
       syncSettings: {
         enabled: true,
-        frequency: SyncFrequency.REAL_TIME
+        frequency: SyncFrequency.REAL_TIME,
       },
-      privacyBoundariesMaintained: true
+      privacyBoundariesMaintained: true,
     };
 
     expect(projectConfig.ownerId).toBeTruthy();
@@ -394,10 +403,10 @@ describe('CMS Integration Requirements Validation', () => {
       collaborator: {
         userId: 'collaborator-456',
         role: UserRole.AGENCY_MANAGER, // Uses existing UserRole enum
-        permissions: [Permission.READ, Permission.WRITE]
+        permissions: [Permission.READ, Permission.WRITE],
       },
       usesExistingRoleBasedAccess: true,
-      syncedAppropriately: true
+      syncedAppropriately: true,
     };
 
     expect(Object.values(UserRole)).toContain(collaboration.collaborator.role);
@@ -411,7 +420,7 @@ describe('CMS Integration Requirements Validation', () => {
       tenantId: 'user-123',
       usesExistingTenantPatterns: true,
       neverSyncedOutsideScope: true,
-      auditTrailMaintained: true // Via existing AuthEvent logging
+      auditTrailMaintained: true, // Via existing AuthEvent logging
     };
 
     expect(dataIsolation.tenantId).toBeTruthy();
@@ -426,7 +435,7 @@ describe('CMS Integration Requirements Validation', () => {
       userRole: UserRole.ADMIN,
       hasSystemWideVisibility: true,
       auditTrailMaintained: true,
-      usesExistingAuthEventLogging: true
+      usesExistingAuthEventLogging: true,
     };
 
     expect(adminAccess.userRole).toBe(UserRole.ADMIN);

@@ -256,7 +256,7 @@ Architecture Modernization **Sessions Launched:** 14 (3 hit rate limit)
 - `registerResource()` method
 - `discoverResources()` with semantic/filter support
 - `findResourceForSkill()` by reliability
-- Prisma schema for resources table
+- Drizzle schema for resources table
 - Database integration
 
 **Dependencies:**
@@ -397,12 +397,12 @@ After Jules sessions complete, execute manually:
 ### 1. Database Migrations (CRITICAL)
 
 ```bash
-# Create Prisma migrations for new tables
-cd prisma
-npx prisma migrate dev --name add_skills_resources_subtasks
+# Create Drizzle migrations for new tables
+cd drizzle
+npx drizzle migrate dev --name add_skills_resources_subtasks
 
-# Generate Prisma client
-npx prisma generate
+# Generate Drizzle client
+npx drizzle generate
 ```
 
 **Tables to Create:**
@@ -455,7 +455,7 @@ Once all sessions complete:
 - [ ] Review for conflicts and consistency
 - [ ] Apply patches individually (not bulk)
 - [ ] Run database migrations
-- [ ] Generate Prisma client
+- [ ] Generate Drizzle client
 - [ ] Update module imports/exports
 
 ### Phase 2: Service Registration
@@ -522,7 +522,7 @@ Once all sessions complete:
 
 **Risk:** Breaking changes to existing tables **Mitigation:**
 
-- Use Prisma migrations (not manual SQL)
+- Use Drizzle migrations (not manual SQL)
 - Test migrations on dev database first
 - Keep rollback scripts ready
 

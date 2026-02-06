@@ -1,6 +1,7 @@
 # Railway Deployment Guide
 
-Complete guide for deploying The New Fuse platform to Railway with proper environment configuration.
+Complete guide for deploying The New Fuse platform to Railway with proper
+environment configuration.
 
 ## Table of Contents
 
@@ -45,11 +46,13 @@ node -e "for(let i=0; i<5; i++) console.log(require('crypto').randomBytes(32).to
 ### 2. Provision Database Services
 
 #### PostgreSQL
+
 1. Click "New" → "Database" → "Add PostgreSQL"
 2. Railway will automatically create `DATABASE_URL` variable
 3. Note the internal reference: `${{Postgres.DATABASE_URL}}`
 
 #### Redis
+
 1. Click "New" → "Database" → "Add Redis"
 2. Railway will automatically create `REDIS_URL` variable
 3. Note the internal reference: `${{Redis.REDIS_URL}}`
@@ -61,6 +64,7 @@ node -e "for(let i=0; i<5; i++) console.log(require('crypto').randomBytes(32).to
 **Service Name:** `api-service`
 
 **Build Configuration:**
+
 - Build Command: `npm install && npm run build`
 - Start Command: `npm run start:prod`
 - Root Directory: `/`
@@ -138,6 +142,7 @@ EMAIL_FROM_ADDRESS=noreply@thenewfuse.com
 **Service Name:** `api-gateway`
 
 **Build Configuration:**
+
 - Build Command: `npm install && npm run build`
 - Start Command: `npm run start:prod`
 - Root Directory: `/`
@@ -171,6 +176,7 @@ HEALTH_CHECK_INTERVAL=30000
 **Service Name:** `backend-service`
 
 **Build Configuration:**
+
 - Build Command: `npm install && npm run build`
 - Start Command: `npm run start:prod`
 - Root Directory: `/`
@@ -228,6 +234,7 @@ MARKETPLACE_CONTRACT_ADDRESS=0x...
 **Service Name:** `frontend`
 
 **Build Configuration:**
+
 - Build Command: `npm install && npm run build`
 - Start Command: `npm run preview`
 - Root Directory: `/`
@@ -279,8 +286,8 @@ VITE_VERSION=1.0.0
 
 These must be **exactly the same** across all services:
 
-| Variable | Services | Purpose | Generation |
-|----------|----------|---------|------------|
+| Variable     | Services     | Purpose           | Generation             |
+| ------------ | ------------ | ----------------- | ---------------------- |
 | `JWT_SECRET` | API, Backend | JWT token signing | `openssl rand -hex 32` |
 
 ### Service Communication URLs
@@ -288,7 +295,8 @@ These must be **exactly the same** across all services:
 After deploying each service, update these variables:
 
 1. **After API Service deployment:**
-   - Copy the Railway URL (e.g., `https://api-service-production-xxxx.up.railway.app`)
+   - Copy the Railway URL (e.g.,
+     `https://api-service-production-xxxx.up.railway.app`)
    - Update `API_BASE_URL` and `API_URL` in API service
    - Update `AGENTS_SERVICE_URL` in API Gateway
 
@@ -328,7 +336,7 @@ After API service is deployed, run migrations:
 
 ```bash
 # From Railway CLI or dashboard
-railway run npm run prisma:migrate:deploy
+railway run npm run drizzle:migrate:deploy
 ```
 
 ### 2. Verify Health Endpoints
@@ -360,6 +368,7 @@ fetch('https://api-gateway-production.up.railway.app/health')
 ### 4. Monitor Logs
 
 Watch deployment logs in Railway dashboard for:
+
 - Successful startup messages
 - No environment validation errors
 - Successful database connections
@@ -373,6 +382,7 @@ Watch deployment logs in Railway dashboard for:
 **Symptom:** Frontend shows CORS errors in console
 
 **Solution:**
+
 - Verify `CORS_ORIGINS` includes exact frontend URL (including `https://`)
 - Check `ALLOWED_ORIGINS` in API service
 - Ensure no trailing slashes in URLs
@@ -382,6 +392,7 @@ Watch deployment logs in Railway dashboard for:
 **Symptom:** Token validation errors, 401 responses
 
 **Solution:**
+
 - Ensure `JWT_SECRET` is **identical** in API and Backend services
 - Verify secret is at least 32 characters
 - Check that secret doesn't contain special characters that need escaping
@@ -391,16 +402,20 @@ Watch deployment logs in Railway dashboard for:
 **Symptom:** "Connection refused" or "Cannot connect to database"
 
 **Solution:**
-- Verify `DATABASE_URL` uses Railway's internal reference: `${{Postgres.DATABASE_URL}}`
+
+- Verify `DATABASE_URL` uses Railway's internal reference:
+  `${{Postgres.DATABASE_URL}}`
 - Check PostgreSQL service is running in Railway dashboard
-- Ensure Prisma migrations have been run
+- Ensure Drizzle migrations have been run
 
 #### 4. Service Cannot Reach Other Services
 
 **Symptom:** 502/503 errors when services call each other
 
 **Solution:**
-- Verify service URLs are correct (check Railway dashboard → Service → Settings → Domains)
+
+- Verify service URLs are correct (check Railway dashboard → Service → Settings
+  → Domains)
 - Use HTTPS URLs for all cross-service communication
 - Check that services are deployed and running
 
@@ -409,6 +424,7 @@ Watch deployment logs in Railway dashboard for:
 **Symptom:** "Missing required environment variable" errors
 
 **Solution:**
+
 - Check Railway dashboard → Service → Variables
 - Ensure no typos in variable names
 - For frontend (Vite), ensure variables start with `VITE_`
@@ -421,7 +437,8 @@ If health checks fail during deployment:
 1. Check logs for startup errors
 2. Verify `PORT` environment variable matches the port your service listens on
 3. Ensure health check path exists (e.g., `/health`)
-4. Increase `healthcheckTimeout` in `railway.toml` if service takes time to start
+4. Increase `healthcheckTimeout` in `railway.toml` if service takes time to
+   start
 
 ### Viewing Logs
 
@@ -482,10 +499,12 @@ After successful deployment:
 ## Support
 
 For Railway-specific issues:
+
 - Railway Documentation: https://docs.railway.app
 - Railway Discord: https://discord.gg/railway
 
 For application issues:
+
 - Check service logs in Railway dashboard
 - Review environment validation output
 - Verify all environment variables are correctly set

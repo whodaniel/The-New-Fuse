@@ -3,8 +3,8 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MetricsCollector } from './MetricsCollector';
 import { Logger } from '../utils/Logger';
+import { MetricsCollector } from './MetricsCollector';
 
 describe('MetricsCollector', () => {
   let metricsCollector: MetricsCollector;
@@ -12,11 +12,14 @@ describe('MetricsCollector', () => {
 
   beforeEach(() => {
     logger = new Logger('TestMetricsCollector');
-    metricsCollector = new MetricsCollector({
-      interval: 1000, // 1 second for testing
-      retentionPeriod: 60000, // 1 minute for testing
-      storage: { type: 'memory' }
-    }, logger);
+    metricsCollector = new MetricsCollector(
+      {
+        interval: 1000, // 1 second for testing
+        retentionPeriod: 60000, // 1 minute for testing
+        storage: { type: 'memory' },
+      },
+      logger
+    );
   });
 
   afterEach(async () => {
@@ -113,9 +116,9 @@ describe('MetricsCollector', () => {
 
     it('should track request lifecycle', () => {
       const requestId = 'test-request-1';
-      
+
       metricsCollector.recordRequestStart(requestId);
-      
+
       // Simulate some processing time
       setTimeout(() => {
         metricsCollector.recordRequestEnd(requestId, true);
@@ -156,7 +159,7 @@ describe('MetricsCollector', () => {
 
     it('should handle connection errors', () => {
       metricsCollector.recordConnectionEvent('error');
-      
+
       // Should not affect active connection count
       const metrics = metricsCollector.getCurrentMetrics();
       expect(metrics.connections.active).toBe(0);
@@ -205,18 +208,18 @@ describe('MetricsCollector', () => {
 
       const history = metricsCollector.getMetricsHistory(1); // 1 hour
       expect(history.length).toBeGreaterThan(0);
-      
-      const testMetricHistory = history.find(h => h.name === 'test_metric');
+
+      const testMetricHistory = history.find((h) => h.name === 'test_metric');
       expect(testMetricHistory).toBeDefined();
       expect(testMetricHistory!.dataPoints.length).toBe(3);
     });
 
     it('should filter history by time range', () => {
       const now = Date.now();
-      
+
       // Record old metric
       metricsCollector.recordMetric('old_metric', 1);
-      
+
       // Mock old timestamp
       const metric = metricsCollector.getMetric('old_metric');
       if (metric && metric.dataPoints.length > 0) {
@@ -227,8 +230,8 @@ describe('MetricsCollector', () => {
       metricsCollector.recordMetric('recent_metric', 2);
 
       const recentHistory = metricsCollector.getMetricsHistory(1); // 1 hour
-      const recentMetricNames = recentHistory.map(h => h.name);
-      
+      const recentMetricNames = recentHistory.map((h) => h.name);
+
       expect(recentMetricNames).toContain('recent_metric');
       // old_metric might still be there depending on cleanup timing
     });
@@ -241,7 +244,7 @@ describe('MetricsCollector', () => {
 
     it('should provide current performance metrics', () => {
       const metrics = metricsCollector.getCurrentMetrics();
-      
+
       expect(metrics).toHaveProperty('requests');
       expect(metrics).toHaveProperty('connections');
       expect(metrics).toHaveProperty('resources');

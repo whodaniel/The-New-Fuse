@@ -140,7 +140,7 @@ export class SystemMonitor {
         }
       } catch (error) {
         logger.error(`Health check failed for service ${name}`, error as Error);
-        
+
         const updatedService: ServiceHealth = {
           ...service,
           status: 'unhealthy',
@@ -187,8 +187,8 @@ export class SystemMonitor {
       return 'healthy';
     }
 
-    const unhealthyCount = services.filter(s => s.status === 'unhealthy').length;
-    const degradedCount = services.filter(s => s.status === 'degraded').length;
+    const unhealthyCount = services.filter((s) => s.status === 'unhealthy').length;
+    const degradedCount = services.filter((s) => s.status === 'degraded').length;
 
     if (unhealthyCount > 0) {
       return unhealthyCount > services.length / 2 ? 'unhealthy' : 'degraded';
@@ -204,7 +204,7 @@ export class SystemMonitor {
   private async getCPUMetrics(): Promise<SystemMetrics['cpu']> {
     // In a real implementation, this would use os module or system monitoring libraries
     const os = await import('os');
-    
+
     return {
       usage: Math.random() * 100, // Simulated CPU usage
       cores: os.cpus().length,
@@ -215,7 +215,7 @@ export class SystemMonitor {
   private async getMemoryMetrics(): Promise<SystemMetrics['memory']> {
     const os = await import('os');
     const process = await import('process');
-    
+
     const totalMemory = os.totalmem();
     const freeMemory = os.freemem();
     const usedMemory = totalMemory - freeMemory;

@@ -1,6 +1,7 @@
 # Environment Variables Documentation
 
-Complete reference for all environment variables used across The New Fuse platform.
+Complete reference for all environment variables used across The New Fuse
+platform.
 
 ## Table of Contents
 
@@ -17,7 +18,9 @@ Complete reference for all environment variables used across The New Fuse platfo
 
 ## Overview
 
-Environment variables configure application behavior across different environments (development, staging, production). This document provides a comprehensive reference for all variables used in the platform.
+Environment variables configure application behavior across different
+environments (development, staging, production). This document provides a
+comprehensive reference for all variables used in the platform.
 
 ### Variable Naming Conventions
 
@@ -37,10 +40,9 @@ These variables must be **identical** across multiple services.
 
 ### JWT_SECRET
 
-**Used in:** API Service, Backend Service
-**Type:** String (minimum 32 characters)
-**Required:** Yes
-**Security:** CRITICAL - Never commit to version control
+**Used in:** API Service, Backend Service **Type:** String (minimum 32
+characters) **Required:** Yes **Security:** CRITICAL - Never commit to version
+control
 
 Secret key used for signing and verifying JWT tokens.
 
@@ -50,6 +52,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 **Production Requirements:**
+
 - Minimum 64 characters recommended
 - Use cryptographically secure random generation
 - Must be identical in API and Backend services
@@ -58,6 +61,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 **Default:** `your-secret-key` (development only)
 
 **Example:**
+
 ```bash
 JWT_SECRET=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6
 ```
@@ -66,23 +70,25 @@ JWT_SECRET=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6
 
 ### DATABASE_URL
 
-**Used in:** API Service, Backend Service
-**Type:** PostgreSQL connection string
+**Used in:** API Service, Backend Service **Type:** PostgreSQL connection string
 **Required:** Yes
 
 PostgreSQL database connection URL.
 
 **Format:**
+
 ```bash
 postgresql://[user]:[password]@[host]:[port]/[database]?[params]
 ```
 
 **Railway:**
+
 ```bash
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 ```
 
 **Example:**
+
 ```bash
 # Development
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/fuse
@@ -92,6 +98,7 @@ DATABASE_URL=postgresql://postgres:***@containers-us-west-1.railway.app:5432/rai
 ```
 
 **Related Variables:**
+
 - `DB_HOST`
 - `DB_PORT`
 - `DB_USERNAME`
@@ -102,24 +109,26 @@ DATABASE_URL=postgresql://postgres:***@containers-us-west-1.railway.app:5432/rai
 
 ### REDIS_URL
 
-**Used in:** API Service, Backend Service
-**Type:** Redis connection string
+**Used in:** API Service, Backend Service **Type:** Redis connection string
 **Required:** Recommended
 
 Redis connection URL for caching and session management.
 
 **Format:**
+
 ```bash
 redis://[password]@[host]:[port]/[db]
 rediss://[password]@[host]:[port]/[db]  # Secure
 ```
 
 **Railway:**
+
 ```bash
 REDIS_URL=${{Redis.REDIS_URL}}
 ```
 
 **Example:**
+
 ```bash
 # Development
 REDIS_URL=redis://localhost:6379
@@ -139,14 +148,14 @@ REDIS_URL=redis://password@containers-us-west-1.railway.app:6379
 #### Server Configuration
 
 ##### NODE_ENV
-**Type:** String
-**Required:** No
-**Default:** `development`
-**Valid values:** `development`, `production`, `test`
+
+**Type:** String **Required:** No **Default:** `development` **Valid values:**
+`development`, `production`, `test`
 
 Determines application environment and behavior.
 
 **Effects:**
+
 - `production`: Enables optimizations, disables debug features, strict security
 - `development`: Enables debug features, verbose logging, relaxed security
 - `test`: Used for automated testing
@@ -156,10 +165,8 @@ NODE_ENV=production
 ```
 
 ##### PORT / API_PORT
-**Type:** Number
-**Required:** No
-**Default:** `3001`
-**Range:** 1-65535
+
+**Type:** Number **Required:** No **Default:** `3001` **Range:** 1-65535
 
 Port number for API server to listen on.
 
@@ -171,12 +178,13 @@ API_PORT=3001  # Alternative name
 #### JWT Configuration
 
 ##### JWT_SECRET
+
 See [Shared Variables](#jwt_secret)
 
 ##### JWT_REFRESH_SECRET
-**Type:** String (minimum 32 characters)
-**Required:** Yes
-**Security:** CRITICAL
+
+**Type:** String (minimum 32 characters) **Required:** Yes **Security:**
+CRITICAL
 
 Separate secret for refresh token signing.
 
@@ -185,13 +193,35 @@ JWT_REFRESH_SECRET=<64-character-random-string>
 ```
 
 ##### JWT_EXPIRATION / JWT_EXPIRES_IN
-**Type:** String (time span)
-**Required:** No
-**Default:** `1h`
+
+**Type:** String (time span) **Required:** No **Default:** `1h`
 
 Access token expiration time.
 
-**Format:** `<number><unit>` where unit is `s` (seconds), `m` (minutes), `h` (hours), `d` (days)
+#### Agent Security & Federation
+
+##### A2A_REQUIRE_TENANT_SCOPE
+
+**Type:** Boolean **Required:** No **Default:** `true`
+
+Require tenant/org/agency scope on A2A subscriptions outside system/broadcast channels.
+
+```bash
+A2A_REQUIRE_TENANT_SCOPE=true
+```
+
+##### AGENT_INVITE_REQUIRED
+
+**Type:** Boolean **Required:** No **Default:** `true`
+
+Require invitation codes for agent registration and orchestrator onboarding.
+
+```bash
+AGENT_INVITE_REQUIRED=true
+```
+
+**Format:** `<number><unit>` where unit is `s` (seconds), `m` (minutes), `h`
+(hours), `d` (days)
 
 ```bash
 JWT_EXPIRATION=1h
@@ -199,9 +229,8 @@ JWT_EXPIRES_IN=15m  # More secure
 ```
 
 ##### JWT_REFRESH_EXPIRATION / JWT_REFRESH_EXPIRES_IN
-**Type:** String (time span)
-**Required:** No
-**Default:** `7d`
+
+**Type:** String (time span) **Required:** No **Default:** `7d`
 
 Refresh token expiration time.
 
@@ -210,9 +239,8 @@ JWT_REFRESH_EXPIRATION=7d
 ```
 
 ##### JWT_ISSUER
-**Type:** String
-**Required:** No
-**Default:** `the-new-fuse-api`
+
+**Type:** String **Required:** No **Default:** `the-new-fuse-api`
 
 JWT issuer claim for token validation.
 
@@ -221,9 +249,8 @@ JWT_ISSUER=the-new-fuse-api
 ```
 
 ##### JWT_AUDIENCE
-**Type:** String
-**Required:** No
-**Default:** `the-new-fuse-clients`
+
+**Type:** String **Required:** No **Default:** `the-new-fuse-clients`
 
 JWT audience claim for token validation.
 
@@ -234,8 +261,8 @@ JWT_AUDIENCE=the-new-fuse-clients
 #### CORS Configuration
 
 ##### ALLOWED_ORIGINS
-**Type:** Comma-separated string
-**Required:** Recommended for production
+
+**Type:** Comma-separated string **Required:** Recommended for production
 
 Allowed origins for CORS requests.
 
@@ -250,8 +277,8 @@ ALLOWED_ORIGINS=https://app.thenewfuse.com,https://admin.thenewfuse.com
 **Security:** Never use `*` in production
 
 ##### FRONTEND_URL
-**Type:** URL string
-**Required:** Recommended
+
+**Type:** URL string **Required:** Recommended
 
 Primary frontend application URL.
 
@@ -262,9 +289,8 @@ FRONTEND_URL=https://app.thenewfuse.com
 #### Rate Limiting
 
 ##### RATE_LIMIT_DEFAULT
-**Type:** Number
-**Required:** No
-**Default:** `100`
+
+**Type:** Number **Required:** No **Default:** `100`
 
 Default number of requests allowed per window.
 
@@ -273,9 +299,8 @@ RATE_LIMIT_DEFAULT=100
 ```
 
 ##### RATE_LIMIT_WINDOW
-**Type:** Number (milliseconds)
-**Required:** No
-**Default:** `60000` (1 minute)
+
+**Type:** Number (milliseconds) **Required:** No **Default:** `60000` (1 minute)
 
 Time window for rate limiting.
 
@@ -284,9 +309,8 @@ RATE_LIMIT_WINDOW=60000  # 1 minute
 ```
 
 ##### RATE_LIMIT_AUTH
-**Type:** Number
-**Required:** No
-**Default:** `5`
+
+**Type:** Number **Required:** No **Default:** `5`
 
 Rate limit for authentication endpoints (login, register).
 
@@ -295,9 +319,8 @@ RATE_LIMIT_AUTH=5  # 5 attempts per minute
 ```
 
 ##### RATE_LIMIT_API
-**Type:** Number
-**Required:** No
-**Default:** `100`
+
+**Type:** Number **Required:** No **Default:** `100`
 
 Rate limit for general API endpoints.
 
@@ -308,8 +331,8 @@ RATE_LIMIT_API=100
 #### External Services
 
 ##### OPENAI_API_KEY
-**Type:** String (starts with `sk-`)
-**Required:** Conditional (if using OpenAI)
+
+**Type:** String (starts with `sk-`) **Required:** Conditional (if using OpenAI)
 **Security:** SECRET
 
 OpenAI API key for GPT models.
@@ -319,9 +342,9 @@ OPENAI_API_KEY=sk-...
 ```
 
 ##### ANTHROPIC_API_KEY
-**Type:** String (starts with `sk-ant-`)
-**Required:** Conditional (if using Claude)
-**Security:** SECRET
+
+**Type:** String (starts with `sk-ant-`) **Required:** Conditional (if using
+Claude) **Security:** SECRET
 
 Anthropic API key for Claude models.
 
@@ -330,8 +353,8 @@ ANTHROPIC_API_KEY=sk-ant-...
 ```
 
 ##### WEB3AUTH_CLIENT_ID
-**Type:** String
-**Required:** Conditional (if using Web3Auth)
+
+**Type:** String **Required:** Conditional (if using Web3Auth)
 
 Web3Auth client identifier.
 
@@ -340,9 +363,9 @@ WEB3AUTH_CLIENT_ID=your-client-id
 ```
 
 ##### WEB3AUTH_JWT_SECRET
-**Type:** String (minimum 32 characters)
-**Required:** Conditional (if using Web3Auth)
-**Security:** SECRET
+
+**Type:** String (minimum 32 characters) **Required:** Conditional (if using
+Web3Auth) **Security:** SECRET
 
 Secret for Web3Auth JWT signing.
 
@@ -351,8 +374,8 @@ WEB3AUTH_JWT_SECRET=<64-character-random-string>
 ```
 
 ##### ETHEREUM_RPC_URL
-**Type:** URL
-**Required:** Conditional (if using blockchain features)
+
+**Type:** URL **Required:** Conditional (if using blockchain features)
 
 Ethereum RPC endpoint URL.
 
@@ -363,8 +386,8 @@ ETHEREUM_RPC_URL=https://rpc.ankr.com/eth
 #### Email Configuration
 
 ##### SMTP_HOST
-**Type:** String
-**Required:** Conditional (if using email)
+
+**Type:** String **Required:** Conditional (if using email)
 
 SMTP server hostname.
 
@@ -373,9 +396,9 @@ SMTP_HOST=smtp.sendgrid.net
 ```
 
 ##### SMTP_PORT
-**Type:** Number
-**Required:** Conditional (if using email)
-**Common values:** 587 (TLS), 465 (SSL), 25 (unsecured)
+
+**Type:** Number **Required:** Conditional (if using email) **Common values:**
+587 (TLS), 465 (SSL), 25 (unsecured)
 
 SMTP server port.
 
@@ -384,8 +407,8 @@ SMTP_PORT=587
 ```
 
 ##### SMTP_USER
-**Type:** String
-**Required:** Conditional (if using email)
+
+**Type:** String **Required:** Conditional (if using email)
 
 SMTP authentication username.
 
@@ -394,9 +417,8 @@ SMTP_USER=apikey
 ```
 
 ##### SMTP_PASS
-**Type:** String
-**Required:** Conditional (if using email)
-**Security:** SECRET
+
+**Type:** String **Required:** Conditional (if using email) **Security:** SECRET
 
 SMTP authentication password.
 
@@ -407,10 +429,9 @@ SMTP_PASS=SG.xxxxx
 #### Monitoring & Logging
 
 ##### LOG_LEVEL
-**Type:** String
-**Required:** No
-**Default:** `info`
-**Valid values:** `error`, `warn`, `info`, `debug`, `verbose`
+
+**Type:** String **Required:** No **Default:** `info` **Valid values:** `error`,
+`warn`, `info`, `debug`, `verbose`
 
 Logging verbosity level.
 
@@ -423,8 +444,8 @@ LOG_LEVEL=debug
 ```
 
 ##### SENTRY_DSN
-**Type:** URL
-**Required:** Optional
+
+**Type:** URL **Required:** Optional
 
 Sentry error tracking DSN.
 
@@ -437,9 +458,8 @@ SENTRY_DSN=https://xxxxx@sentry.io/xxxxx
 #### Backend Service URLs
 
 ##### BACKEND_SERVICE_URL
-**Type:** URL
-**Required:** No
-**Default:** `http://localhost:3001`
+
+**Type:** URL **Required:** No **Default:** `http://localhost:3001`
 
 Backend service URL for proxying requests.
 
@@ -452,9 +472,8 @@ BACKEND_SERVICE_URL=https://backend-production.up.railway.app
 ```
 
 ##### AGENTS_SERVICE_URL
-**Type:** URL
-**Required:** No
-**Default:** `http://localhost:3001`
+
+**Type:** URL **Required:** No **Default:** `http://localhost:3001`
 
 AI Agents service URL.
 
@@ -463,9 +482,8 @@ AGENTS_SERVICE_URL=https://api-service-production.up.railway.app
 ```
 
 ##### WEBHOOKS_SERVICE_URL
-**Type:** URL
-**Required:** No
-**Default:** `http://localhost:3002`
+
+**Type:** URL **Required:** No **Default:** `http://localhost:3002`
 
 Webhooks service URL.
 
@@ -474,9 +492,8 @@ WEBHOOKS_SERVICE_URL=https://webhooks-production.up.railway.app
 ```
 
 ##### THEIA_IDE_URL
-**Type:** URL
-**Required:** No
-**Default:** `http://localhost:3007`
+
+**Type:** URL **Required:** No **Default:** `http://localhost:3007`
 
 SkIDEancer IDE service URL.
 
@@ -487,9 +504,9 @@ THEIA_IDE_URL=https://ide-production.up.railway.app
 #### CORS Configuration
 
 ##### CORS_ORIGINS
-**Type:** Comma-separated string
-**Required:** No
-**Default:** `http://localhost:3000,http://localhost:5173`
+
+**Type:** Comma-separated string **Required:** No **Default:**
+`http://localhost:3000,http://localhost:5173`
 
 Allowed CORS origins for API Gateway.
 
@@ -502,9 +519,8 @@ CORS_ORIGINS=https://app.thenewfuse.com
 #### Server Configuration
 
 ##### PORT
-**Type:** Number
-**Required:** No
-**Default:** `5000`
+
+**Type:** Number **Required:** No **Default:** `5000`
 
 Backend service port.
 
@@ -512,11 +528,33 @@ Backend service port.
 PORT=5000
 ```
 
+#### OpenClaw / Skill Security
+
+##### OPENCLAW_SKILL_SIGNATURE_REQUIRED
+
+**Type:** Boolean **Required:** No **Default:** `false`
+
+Require skill signature verification before execution.
+
+```bash
+OPENCLAW_SKILL_SIGNATURE_REQUIRED=true
+```
+
+##### OPENCLAW_SKILL_SIGNING_KEY
+
+**Type:** String **Required:** Conditional (if signature required) **Security:** SECRET
+
+HMAC secret used to verify OpenClaw skill signatures.
+
+```bash
+OPENCLAW_SKILL_SIGNING_KEY=your-hmac-secret
+```
+
 #### Authentication
 
 ##### GOOGLE_CLIENT_ID
-**Type:** String
-**Required:** Conditional (if using Google OAuth)
+
+**Type:** String **Required:** Conditional (if using Google OAuth)
 
 Google OAuth 2.0 client ID.
 
@@ -525,9 +563,9 @@ GOOGLE_CLIENT_ID=xxxxx.apps.googleusercontent.com
 ```
 
 ##### GOOGLE_CLIENT_SECRET
-**Type:** String
-**Required:** Conditional (if using Google OAuth)
-**Security:** SECRET
+
+**Type:** String **Required:** Conditional (if using Google OAuth) **Security:**
+SECRET
 
 Google OAuth 2.0 client secret.
 
@@ -536,8 +574,8 @@ GOOGLE_CLIENT_SECRET=xxxxx
 ```
 
 ##### GOOGLE_CALLBACK_URL
-**Type:** URL
-**Required:** Conditional (if using Google OAuth)
+
+**Type:** URL **Required:** Conditional (if using Google OAuth)
 
 OAuth callback URL registered with Google.
 
@@ -548,9 +586,8 @@ GOOGLE_CALLBACK_URL=https://app.thenewfuse.com/auth/google/callback
 #### AWS Configuration
 
 ##### AWS_ACCESS_KEY_ID
-**Type:** String
-**Required:** Conditional (if using S3)
-**Security:** SECRET
+
+**Type:** String **Required:** Conditional (if using S3) **Security:** SECRET
 
 AWS access key for S3 operations.
 
@@ -559,9 +596,8 @@ AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
 ```
 
 ##### AWS_SECRET_ACCESS_KEY
-**Type:** String
-**Required:** Conditional (if using S3)
-**Security:** CRITICAL
+
+**Type:** String **Required:** Conditional (if using S3) **Security:** CRITICAL
 
 AWS secret key for S3 operations.
 
@@ -570,9 +606,9 @@ AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 ```
 
 ##### AWS_REGION
-**Type:** String
-**Required:** Conditional (if using AWS)
-**Default:** `us-east-1`
+
+**Type:** String **Required:** Conditional (if using AWS) **Default:**
+`us-east-1`
 
 AWS region for services.
 
@@ -581,8 +617,8 @@ AWS_REGION=us-east-1
 ```
 
 ##### S3_BUCKET_NAME
-**Type:** String
-**Required:** Conditional (if using S3)
+
+**Type:** String **Required:** Conditional (if using S3)
 
 S3 bucket name for file uploads.
 
@@ -592,14 +628,14 @@ S3_BUCKET_NAME=tnf-uploads-production
 
 ### Frontend Service
 
-Frontend variables must be prefixed with `VITE_` to be accessible in the browser.
+Frontend variables must be prefixed with `VITE_` to be accessible in the
+browser.
 
 #### API Configuration
 
 ##### VITE_API_URL
-**Type:** URL
-**Required:** No
-**Default:** `http://localhost:3001`
+
+**Type:** URL **Required:** No **Default:** `http://localhost:3001`
 
 Backend API base URL.
 
@@ -612,9 +648,8 @@ VITE_API_URL=https://api-gateway.thenewfuse.com
 ```
 
 ##### VITE_WS_URL
-**Type:** WebSocket URL
-**Required:** No
-**Default:** `ws://localhost:3001`
+
+**Type:** WebSocket URL **Required:** No **Default:** `ws://localhost:3001`
 
 WebSocket server URL.
 
@@ -629,9 +664,8 @@ VITE_WS_URL=wss://api-gateway.thenewfuse.com
 #### Feature Flags
 
 ##### VITE_ENABLE_ANALYTICS
-**Type:** Boolean string
-**Required:** No
-**Default:** `false`
+
+**Type:** Boolean string **Required:** No **Default:** `false`
 
 Enable analytics tracking.
 
@@ -640,9 +674,8 @@ VITE_ENABLE_ANALYTICS=true
 ```
 
 ##### VITE_ENABLE_DEBUG
-**Type:** Boolean string
-**Required:** No
-**Default:** `true`
+
+**Type:** Boolean string **Required:** No **Default:** `true`
 
 Enable debug features.
 
@@ -659,25 +692,25 @@ VITE_ENABLE_DEBUG=true
 All Firebase variables are required together if using Firebase authentication.
 
 ##### VITE_FIREBASE_API_KEY
-**Type:** String
-**Required:** Conditional
-**Security:** PUBLIC (but restrict in Firebase console)
+
+**Type:** String **Required:** Conditional **Security:** PUBLIC (but restrict in
+Firebase console)
 
 ```bash
 VITE_FIREBASE_API_KEY=AIzaSyXXXXXXXXXXXXXXXXXXXXX
 ```
 
 ##### VITE_FIREBASE_AUTH_DOMAIN
-**Type:** String
-**Required:** Conditional
+
+**Type:** String **Required:** Conditional
 
 ```bash
 VITE_FIREBASE_AUTH_DOMAIN=your-app.firebaseapp.com
 ```
 
 ##### VITE_FIREBASE_PROJECT_ID
-**Type:** String
-**Required:** Conditional
+
+**Type:** String **Required:** Conditional
 
 ```bash
 VITE_FIREBASE_PROJECT_ID=your-app
@@ -746,6 +779,7 @@ validateEnvironmentOrExit();
 ```
 
 Validation checks:
+
 - Required variables are present
 - Values match expected format
 - Secrets meet minimum length
@@ -779,4 +813,3 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 - [ ] Debug features are disabled
 - [ ] Email service is configured
 - [ ] All required variables are set
-

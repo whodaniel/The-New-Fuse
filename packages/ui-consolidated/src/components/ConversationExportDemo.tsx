@@ -12,7 +12,7 @@ export const ConversationExportDemo: React.FC = () => {
       <textarea
         className="w-full h-32 p-2 border rounded mb-4 text-sm"
         value={conversation}
-        onChange={e => setConversation(e.target.value)}
+        onChange={(e) => setConversation(e.target.value)}
         aria-label="Conversation text"
       />
       <div className="flex gap-2">

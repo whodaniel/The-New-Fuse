@@ -1,7 +1,7 @@
 /**
  * Workflow-related type definitions
  */
-import { UUID, ISODateTime } from './common';
+import { ISODateTime, UUID } from './common';
 
 export enum WorkflowStatus {
   DRAFT = 'draft',
@@ -110,15 +110,18 @@ export interface WorkflowMetrics {
   totalSteps: number;
   completedSteps: number;
   failedSteps: number;
-  stepMetrics: Record<string, {
-    id: string;
-    status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
-    attempts: number;
-    startTime?: number;
-    endTime?: number;
-    duration?: number;
-    type?: string;
-  }>;
+  stepMetrics: Record<
+    string,
+    {
+      id: string;
+      status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+      attempts: number;
+      startTime?: number;
+      endTime?: number;
+      duration?: number;
+      type?: string;
+    }
+  >;
 }
 
 export interface WorkflowError {

@@ -5,22 +5,22 @@
 
 // Export all type definitions
 export * from './agent';
-export * from './user';
-export * from './workflow';
+export * from './auth';
 export * from './request';
 export * from './response';
-export * from './auth';
+export * from './user';
+export * from './workflow';
 
 // Export common types except BaseResponse (already exported from response.js)
 export type {
-  UUID,
-  ISODateTime,
-  Pagination,
-  SortOptions,
-  FilterOptions,
-  QueryOptions,
-  HealthCheck,
   ApiResponse,
+  FilterOptions,
+  HealthCheck,
+  ISODateTime,
   Message,
-  MessageType
+  MessageType,
+  Pagination,
+  QueryOptions,
+  SortOptions,
+  UUID,
 } from './common';

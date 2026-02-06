@@ -1,6 +1,7 @@
 # Running Phase 4 Integration Tests
 
-This guide explains how to run the comprehensive integration test suite for all Drizzle repositories.
+This guide explains how to run the comprehensive integration test suite for all
+Drizzle repositories.
 
 ## Prerequisites
 
@@ -49,6 +50,7 @@ pnpm test
 ```
 
 Expected output:
+
 - **268 tests** across 5 repository test suites
 - All tests should pass
 - Test execution time: ~30-60 seconds (depending on hardware)
@@ -68,6 +70,7 @@ pnpm test:coverage
 ```
 
 Generates coverage report showing:
+
 - **Target**: 95% code coverage
 - Line coverage
 - Branch coverage
@@ -183,6 +186,7 @@ All files                 |   95+   |   90+    |  100    |   95+   |
 **Error**: `Error: connect ECONNREFUSED ::1:5433`
 
 **Solution**:
+
 ```bash
 # Start PostgreSQL
 pnpm run docker:start
@@ -199,6 +203,7 @@ psql postgresql://newfuse:secretpass123@localhost:5433/the_new_fuse_test
 **Error**: `Table does not exist`
 
 **Solution**:
+
 ```bash
 # Reset and re-run migrations
 cd packages/database
@@ -211,6 +216,7 @@ pnpm drizzle:migrate
 **Error**: Test timeout or failures
 
 **Solution**:
+
 ```bash
 # Clear test database
 pnpm drizzle:push --force
@@ -227,6 +233,7 @@ pnpm test:verbose
 **Error**: `JavaScript heap out of memory`
 
 **Solution**:
+
 ```bash
 # Increase Node.js memory limit
 NODE_OPTIONS="--max-old-space-size=4096" pnpm test
@@ -246,9 +253,11 @@ The ChatRepository was modified after tests were written to add 7 new methods:
 6. `upsertReadReceipt(data: NewReadReceipt)`
 7. `findJoinedRooms(userId: string)`
 
-**Impact**: Test coverage for ChatRepository will be lower than expected (~75% instead of 95%)
+**Impact**: Test coverage for ChatRepository will be lower than expected (~75%
+instead of 95%)
 
-**Action Required**: Add tests for these 7 methods (estimated 14+ additional tests needed)
+**Action Required**: Add tests for these 7 methods (estimated 14+ additional
+tests needed)
 
 ## Next Steps
 
@@ -256,13 +265,15 @@ After running tests successfully:
 
 1. **Verify Coverage**: Check that all repositories meet 95% coverage target
 2. **Add Missing Tests**: Write tests for the 7 new ChatRepository methods
-3. **Performance Benchmarks** (optional): Create benchmark tests for performance validation
+3. **Performance Benchmarks** (optional): Create benchmark tests for performance
+   validation
 4. **CI/CD Integration**: Ensure tests run in GitHub Actions pipeline
 5. **Documentation**: Update migration progress report with test results
 
 ## CI/CD Integration
 
 Tests should run automatically on:
+
 - Every push to `main` or `develop`
 - Every pull request affecting `packages/database/**`
 

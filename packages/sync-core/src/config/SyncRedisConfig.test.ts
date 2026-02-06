@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-const vi = jest;
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { ConfigService } from '@nestjs/config';
 import { SyncRedisConfig } from './SyncRedisConfig';
+const vi = jest;
 
 describe('SyncRedisConfig', () => {
   let config: SyncRedisConfig;
@@ -11,10 +11,10 @@ describe('SyncRedisConfig', () => {
     configService = {
       get: jest.fn((key: string, defaultValue?: any) => {
         const values: Record<string, any> = {
-          'REDIS_KEY_PREFIX': 'tnf',
-          'SYNC_LOCK_TTL': 30,
-          'SYNC_HEARTBEAT_TTL': 60,
-          'SYNC_REDIS_MAX_RETRIES': 3,
+          REDIS_KEY_PREFIX: 'tnf',
+          SYNC_LOCK_TTL: 30,
+          SYNC_HEARTBEAT_TTL: 60,
+          SYNC_REDIS_MAX_RETRIES: 3,
         };
         return values[key] ?? defaultValue;
       }),
@@ -32,10 +32,12 @@ describe('SyncRedisConfig', () => {
       const patterns = config.getKeyspatterns();
 
       expect(patterns.masterClock.timestamp).toBe('tnf:sync:clock:timestamp');
-      expect(patterns.tenantSync.state('tenant-1', 'agent', 'agent-123'))
-        .toBe('tnf:sync:tenant:tenant-1:agent:agent-123:state');
-      expect(patterns.globalSync.state('template', 'template-456'))
-        .toBe('tnf:sync:global:template:template-456:state');
+      expect(patterns.tenantSync.state('tenant-1', 'agent', 'agent-123')).toBe(
+        'tnf:sync:tenant:tenant-1:agent:agent-123:state'
+      );
+      expect(patterns.globalSync.state('template', 'template-456')).toBe(
+        'tnf:sync:global:template:template-456:state'
+      );
     });
 
     it('should generate correct channel patterns', () => {

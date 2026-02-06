@@ -1,5 +1,5 @@
 import { Controller, Get, Header } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PerformanceMetricsService } from './performance-metrics.service';
 
 /**
@@ -9,9 +9,7 @@ import { PerformanceMetricsService } from './performance-metrics.service';
 @ApiTags('monitoring')
 @Controller('metrics')
 export class PerformanceMetricsController {
-  constructor(
-    private readonly metricsService: PerformanceMetricsService,
-  ) {}
+  constructor(private readonly metricsService: PerformanceMetricsService) {}
 
   @Get()
   @Header('Content-Type', 'text/plain; version=0.0.4; charset=utf-8')

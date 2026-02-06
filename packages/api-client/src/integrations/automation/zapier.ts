@@ -1,7 +1,7 @@
 // Import required API client and types
-import { ApiClient } from '../../core/ApiClient';
 import { ApiConfig } from '../../config/ApiConfig';
-import { Integration, IntegrationType, IntegrationConfig, AuthType } from '../types';
+import { ApiClient } from '../../core/ApiClient';
+import { AuthType, Integration, IntegrationConfig, IntegrationType } from '../types';
 
 /**
  * Zapier integration configuration
@@ -31,16 +31,16 @@ export class ZapierIntegration implements Integration {
   isEnabled: boolean = true;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
-  
+
   private apiClient: ApiClient;
-  
+
   constructor(config: ZapierConfig) {
     this.id = config.id;
     this.name = config.name;
     this.type = config.type;
     this.description = config.description;
     this.config = config;
-    
+
     // Default Zapier capabilities
     this.capabilities = {
       actions: [
@@ -54,38 +54,34 @@ export class ZapierIntegration implements Integration {
         'execute_zap',
         'create_webhook',
         'list_webhooks',
-        'delete_webhook'
+        'delete_webhook',
       ],
-      triggers: [
-        'zap_triggered',
-        'zap_succeeded',
-        'zap_failed'
-      ],
+      triggers: ['zap_triggered', 'zap_succeeded', 'zap_failed'],
       supportsWebhooks: true,
       supportsPolling: true,
-      supportsCustomFields: true
+      supportsCustomFields: true,
     };
-    
+
     // Create API client for Zapier
     const apiConfig: ApiConfig = {
       baseURL: config.baseUrl || '',
       headers: {
         ...config.defaultHeaders,
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     };
-    
+
     // Add API key if provided
     if (config.apiKey) {
       apiConfig.headers = {
         ...apiConfig.headers,
-        'X-API-Key': config.apiKey
+        'X-API-Key': config.apiKey,
       };
     }
-    
+
     this.apiClient = new ApiClient(apiConfig);
   }
-  
+
   /**
    * Connect to Zapier API
    */
@@ -98,10 +94,12 @@ export class ZapierIntegration implements Integration {
       return true;
     } catch (error) {
       this.isConnected = false;
-      throw new Error(`Failed to connect to Zapier: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to connect to Zapier: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Disconnect from Zapier API
    */
@@ -110,7 +108,7 @@ export class ZapierIntegration implements Integration {
     this.updatedAt = new Date();
     return true;
   }
-  
+
   /**
    * Execute a Zapier action
    */
@@ -118,7 +116,7 @@ export class ZapierIntegration implements Integration {
     if (!this.isConnected) {
       throw new Error('Not connected to Zapier. Call connect() first.');
     }
-    
+
     switch (action) {
       case 'list_zaps':
         return this.listZaps();
@@ -151,7 +149,7 @@ export class ZapierIntegration implements Integration {
         throw new Error(`Unsupported Zapier action: ${action}`);
     }
   }
-  
+
   /**
    * List user's Zaps
    */
@@ -159,10 +157,12 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.get('/v1/zaps');
     } catch (error) {
-      throw new Error(`Failed to list Zaps: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to list Zaps: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get a specific Zap
    */
@@ -170,23 +170,27 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.get(`/v1/zaps/${zapId}`);
     } catch (error) {
-      throw new Error(`Failed to get Zap: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get Zap: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Toggle a Zap on or off
    */
   private async toggleZap(zapId: string, enabled: boolean): Promise<any> {
     try {
       return await this.apiClient.patch(`/v1/zaps/${zapId}`, {
-        active: enabled
+        active: enabled,
       });
     } catch (error) {
-      throw new Error(`Failed to toggle Zap: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to toggle Zap: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * List available apps
    */
@@ -194,10 +198,12 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.get('/v1/apps');
     } catch (error) {
-      throw new Error(`Failed to list apps: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to list apps: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * List triggers for an app
    */
@@ -205,10 +211,12 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.get(`/v1/apps/${appId}/triggers`);
     } catch (error) {
-      throw new Error(`Failed to list triggers: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to list triggers: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * List actions for an app
    */
@@ -216,10 +224,12 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.get(`/v1/apps/${appId}/actions`);
     } catch (error) {
-      throw new Error(`Failed to list actions: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to list actions: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * List searches for an app
    */
@@ -227,10 +237,12 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.get(`/v1/apps/${appId}/searches`);
     } catch (error) {
-      throw new Error(`Failed to list searches: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to list searches: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Execute a Zap with data
    */
@@ -238,10 +250,12 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.post(`/v1/zaps/${zapId}/execute`, data);
     } catch (error) {
-      throw new Error(`Failed to execute Zap: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to execute Zap: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Create a webhook for a Zap
    */
@@ -249,13 +263,15 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.post(`/v1/zaps/${zapId}/webhooks`, {
         url,
-        event
+        event,
       });
     } catch (error) {
-      throw new Error(`Failed to create webhook: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to create webhook: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * List webhooks for a Zap
    */
@@ -263,10 +279,12 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.get(`/v1/zaps/${zapId}/webhooks`);
     } catch (error) {
-      throw new Error(`Failed to list webhooks: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to list webhooks: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Delete a webhook
    */
@@ -274,10 +292,12 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.delete(`/v1/webhooks/${webhookId}`);
     } catch (error) {
-      throw new Error(`Failed to delete webhook: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to delete webhook: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Make a Natural Language Actions (NLA) request
    */
@@ -285,13 +305,15 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.post('/v1/nla/requests', {
         prompt,
-        params: params || {}
+        params: params || {},
       });
     } catch (error) {
-      throw new Error(`Failed to process NLA request: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to process NLA request: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get metadata about this integration
    */
@@ -303,9 +325,9 @@ export class ZapierIntegration implements Integration {
       capabilities: this.capabilities,
       isConnected: this.isConnected,
       isEnabled: this.isEnabled,
-      lastUpdated: this.updatedAt
+      lastUpdated: this.updatedAt,
     };
-    
+
     if (this.isConnected) {
       try {
         metadata.zaps = await this.listZaps();
@@ -313,7 +335,7 @@ export class ZapierIntegration implements Integration {
         metadata.zapError = error instanceof Error ? error.message : String(error);
       }
     }
-    
+
     return metadata;
   }
 }
@@ -333,11 +355,11 @@ export function createZapierIntegration(config: Partial<ZapierConfig> = {}): Zap
     apiVersion: 'v1',
     nlaEnabled: false,
     docUrl: 'https://zapier.com/developer/documentation/v2/',
-    logoUrl: 'https://cdn.zapier.com/zapier/images/logos/zapier-logo.svg'
+    logoUrl: 'https://cdn.zapier.com/zapier/images/logos/zapier-logo.svg',
   };
-  
+
   return new ZapierIntegration({
     ...defaultConfig,
-    ...config
+    ...config,
   });
 }

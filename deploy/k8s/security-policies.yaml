@@ -25,30 +25,30 @@ spec:
   requiredDropCapabilities:
     - ALL
   volumes:
-    - 'configMap'
-    - 'emptyDir'
-    - 'projected'
-    - 'secret'
-    - 'downwardAPI'
-    - 'persistentVolumeClaim'
+    - "configMap"
+    - "emptyDir"
+    - "projected"
+    - "secret"
+    - "downwardAPI"
+    - "persistentVolumeClaim"
   hostNetwork: false
   hostIPC: false
   hostPID: false
   runAsUser:
-    rule: 'MustRunAsNonRoot'
+    rule: "MustRunAsNonRoot"
   supplementalGroups:
-    rule: 'MustRunAs'
+    rule: "MustRunAs"
     ranges:
       - min: 1
         max: 65535
   fsGroup:
-    rule: 'MustRunAs'
+    rule: "MustRunAs"
     ranges:
       - min: 1
         max: 65535
   readOnlyRootFilesystem: false
   seLinux:
-    rule: 'RunAsAny'
+    rule: "RunAsAny"
 
 ---
 # Security Context Constraints for OpenShift (if applicable)
@@ -67,15 +67,15 @@ allowPrivilegedContainer: false
 allowedCapabilities: null
 defaultAddCapabilities: null
 requiredDropCapabilities:
-- KILL
-- MKNOD
-- SETUID
-- SETGID
+  - KILL
+  - MKNOD
+  - SETUID
+  - SETGID
 fsGroup:
   type: MustRunAs
   ranges:
-  - min: 1
-    max: 65535
+    - min: 1
+      max: 65535
 readOnlyRootFilesystem: false
 runAsUser:
   type: MustRunAsNonRoot
@@ -84,15 +84,15 @@ seLinuxContext:
 supplementalGroups:
   type: MustRunAs
   ranges:
-  - min: 1
-    max: 65535
+    - min: 1
+      max: 65535
 volumes:
-- configMap
-- downwardAPI
-- emptyDir
-- persistentVolumeClaim
-- projected
-- secret
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - persistentVolumeClaim
+  - projected
+  - secret
 
 ---
 # Network Security Policy
@@ -106,8 +106,8 @@ metadata:
 spec:
   podSelector: {}
   policyTypes:
-  - Ingress
-  - Egress
+    - Ingress
+    - Egress
 
 ---
 # API Server Security Policy
@@ -124,45 +124,45 @@ spec:
     matchLabels:
       app: fuse-api
   policyTypes:
-  - Ingress
-  - Egress
+    - Ingress
+    - Egress
   ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          app: nginx-ingress
-    - podSelector:
-        matchLabels:
-          app: fuse-frontend
-    - podSelector:
-        matchLabels:
-          app: fuse-autoscaler
-    ports:
-    - protocol: TCP
-      port: 8080
+    - from:
+        - podSelector:
+            matchLabels:
+              app: nginx-ingress
+        - podSelector:
+            matchLabels:
+              app: fuse-frontend
+        - podSelector:
+            matchLabels:
+              app: fuse-autoscaler
+      ports:
+        - protocol: TCP
+          port: 8080
   egress:
-  - to:
-    - podSelector:
-        matchLabels:
-          app: postgres
-    ports:
-    - protocol: TCP
-      port: 5432
-  - to:
-    - podSelector:
-        matchLabels:
-          app: redis
-    ports:
-    - protocol: TCP
-      port: 6379
-  - to: []
-    ports:
-    - protocol: TCP
-      port: 53
-    - protocol: UDP
-      port: 53
-    - protocol: TCP
-      port: 443
+    - to:
+        - podSelector:
+            matchLabels:
+              app: postgres
+      ports:
+        - protocol: TCP
+          port: 5432
+    - to:
+        - podSelector:
+            matchLabels:
+              app: redis
+      ports:
+        - protocol: TCP
+          port: 6379
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 443
 
 ---
 # Resource Quotas for Security
@@ -196,26 +196,26 @@ metadata:
     security.component: limit-range
 spec:
   limits:
-  - default:
-      cpu: "500m"
-      memory: "512Mi"
-    defaultRequest:
-      cpu: "100m"
-      memory: "128Mi"
-    max:
-      cpu: "2"
-      memory: "4Gi"
-    min:
-      cpu: "50m"
-      memory: "64Mi"
-    type: Container
-  - default:
-      storage: "10Gi"
-    max:
-      storage: "100Gi"
-    min:
-      storage: "1Gi"
-    type: PersistentVolumeClaim
+    - default:
+        cpu: "500m"
+        memory: "512Mi"
+      defaultRequest:
+        cpu: "100m"
+        memory: "128Mi"
+      max:
+        cpu: "2"
+        memory: "4Gi"
+      min:
+        cpu: "50m"
+        memory: "64Mi"
+      type: Container
+    - default:
+        storage: "10Gi"
+      max:
+        storage: "100Gi"
+      min:
+        storage: "1Gi"
+      type: PersistentVolumeClaim
 
 ---
 # Service Account with restricted permissions
@@ -238,12 +238,12 @@ metadata:
   labels:
     security.component: restricted-role
 rules:
-- apiGroups: [""]
-  resources: ["configmaps", "secrets"]
-  verbs: ["get", "list"]
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["configmaps", "secrets"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
 
 ---
 # RoleBinding for restricted service account
@@ -255,9 +255,9 @@ metadata:
   labels:
     security.component: restricted-role-binding
 subjects:
-- kind: ServiceAccount
-  name: fuse-restricted-sa
-  namespace: production
+  - kind: ServiceAccount
+    name: fuse-restricted-sa
+    namespace: production
 roleRef:
   kind: Role
   name: fuse-restricted-role
@@ -296,71 +296,71 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-      - name: fuse-api
-        image: fuse-api:latest
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 3000
-          capabilities:
-            drop:
-            - ALL
-          seccompProfile:
-            type: RuntimeDefault
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "200m"
-          limits:
-            memory: "1Gi"
-            cpu: "1"
-        livenessProbe:
-          httpGet:
-            path: /api/v1/health
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /api/v1/health
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 5
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: PORT
-          value: "8080"
-        volumeMounts:
-        - name: tmp-volume
-          mountPath: /tmp
-        - name: var-cache
-          mountPath: /var/cache
-        - name: var-run
-          mountPath: /var/run
+        - name: fuse-api
+          image: fuse-api:latest
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 3000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "8080"
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+            - name: var-cache
+              mountPath: /var/cache
+            - name: var-run
+              mountPath: /var/run
       volumes:
-      - name: tmp-volume
-        emptyDir: {}
-      - name: var-cache
-        emptyDir: {}
-      - name: var-run
-        emptyDir: {}
+        - name: tmp-volume
+          emptyDir: {}
+        - name: var-cache
+          emptyDir: {}
+        - name: var-run
+          emptyDir: {}
       nodeSelector:
         kubernetes.io/os: linux
       tolerations:
-      - key: "node.kubernetes.io/not-ready"
-        operator: "Exists"
-        effect: "NoExecute"
-        tolerationSeconds: 300
-      - key: "node.kubernetes.io/unreachable"
-        operator: "Exists"
-        effect: "NoExecute"
-        tolerationSeconds: 300
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 300
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 300
 
 ---
 # Admission Controller Configuration (ValidatingAdmissionWebhook)
@@ -371,24 +371,24 @@ metadata:
   labels:
     security.component: admission-webhook
 webhooks:
-- name: security.fuse.com
-  clientConfig:
-    service:
-      name: fuse-security-webhook
-      namespace: production
-      path: "/validate"
-  rules:
-  - operations: ["CREATE", "UPDATE"]
-    apiGroups: ["apps"]
-    apiVersions: ["v1"]
-    resources: ["deployments", "daemonsets", "statefulsets"]
-  - operations: ["CREATE", "UPDATE"]
-    apiGroups: [""]
-    apiVersions: ["v1"]
-    resources: ["pods"]
-  admissionReviewVersions: ["v1", "v1beta1"]
-  sideEffects: None
-  failurePolicy: Fail
+  - name: security.fuse.com
+    clientConfig:
+      service:
+        name: fuse-security-webhook
+        namespace: production
+        path: "/validate"
+    rules:
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        resources: ["deployments", "daemonsets", "statefulsets"]
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
+    admissionReviewVersions: ["v1", "v1beta1"]
+    sideEffects: None
+    failurePolicy: Fail
 
 ---
 # Secret for storing sensitive configuration

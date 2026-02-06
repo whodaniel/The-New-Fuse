@@ -1,9 +1,12 @@
 # Remaining Chakra UI Migration Work
 
 ## Summary
-Infrastructure migration is complete. Component migration is still needed for files that use Chakra UI components.
+
+Infrastructure migration is complete. Component migration is still needed for
+files that use Chakra UI components.
 
 ## Completed ✅
+
 1. ✅ Removed Chakra UI from all package.json files (4 files)
 2. ✅ Removed `packageManager` field that was causing pnpm errors
 3. ✅ Ran ppnpm install successfully
@@ -15,14 +18,19 @@ Infrastructure migration is complete. Component migration is still needed for fi
 ## Remaining Work 🚧
 
 ### Electron Desktop App Components (Priority: HIGH)
+
 These 5 files have extensive Chakra UI usage and need full migration:
 
 1. **apps/electron-desktop/src/renderer/components/tabs/LocalServicesTab.tsx**
-   - Components used: VStack, HStack, Box, Text, Button, Input, Card, CardBody, Badge, Divider, useToast, Alert, AlertIcon, Grid, GridItem, IconButton, NumberInput, FormControl, FormLabel
+   - Components used: VStack, HStack, Box, Text, Button, Input, Card, CardBody,
+     Badge, Divider, useToast, Alert, AlertIcon, Grid, GridItem, IconButton,
+     NumberInput, FormControl, FormLabel
    - ~625 lines
 
 2. **apps/electron-desktop/src/renderer/components/tabs/ConnectionTab.tsx**
-   - Components used: VStack, HStack, Text, Button, Input, FormControl, FormLabel, Card, CardBody, Badge, Divider, useToast, Alert, AlertIcon, AlertTitle, AlertDescription, Switch, NumberInput, Box
+   - Components used: VStack, HStack, Text, Button, Input, FormControl,
+     FormLabel, Card, CardBody, Badge, Divider, useToast, Alert, AlertIcon,
+     AlertTitle, AlertDescription, Switch, NumberInput, Box
    - ~353 lines
 
 3. **apps/electron-desktop/src/renderer/components/tabs/ChatTab.tsx**
@@ -35,10 +43,12 @@ These 5 files have extensive Chakra UI usage and need full migration:
    - Components used: useToast + other Chakra components
 
 ### Frontend Components (Priority: MEDIUM)
+
 These 3 files have Chakra imports:
 
 1. **apps/frontend/src/components/AdminPanel/ScriptRunner.tsx**
-   - Components used: Box, Button, Select, Text, useToast, VStack, FormControl, FormLabel
+   - Components used: Box, Button, Select, Text, useToast, VStack, FormControl,
+     FormLabel
    - ~87 lines
 
 2. **apps/frontend/src/components/WorkflowBuilder/WorkflowCanvas.tsx**
@@ -50,7 +60,9 @@ These 3 files have Chakra imports:
 ## Migration Guide
 
 ### Toast Migration
+
 **Chakra UI:**
+
 ```typescript
 import { useToast } from '@chakra-ui/react';
 
@@ -65,6 +77,7 @@ toast({
 ```
 
 **ui-consolidated:**
+
 ```typescript
 import { useToast } from '@the-new-fuse/ui-consolidated';
 
@@ -79,6 +92,7 @@ toast({
 ```
 
 **Status to Variant Mapping:**
+
 - `status: 'success'` → `variant: 'success'`
 - `status: 'error'` → `variant: 'destructive'`
 - `status: 'warning'` → `variant: 'warning'`
@@ -87,6 +101,7 @@ toast({
 ### Component Replacements
 
 Available in `@the-new-fuse/ui-consolidated`:
+
 - ✅ Button
 - ✅ Card
 - ✅ Input
@@ -100,6 +115,7 @@ Available in `@the-new-fuse/ui-consolidated`:
 - ✅ Tabs
 
 Need Tailwind equivalents:
+
 - VStack → `<div className="flex flex-col space-y-{n}">`
 - HStack → `<div className="flex flex-row space-x-{n}">`
 - Box → `<div>`
@@ -115,12 +131,15 @@ Need Tailwind equivalents:
 ## Recommended Approach
 
 ### Phase 1: Create Missing Components (if needed)
+
 1. Create NumberInput component in ui-consolidated if not present
 2. Create IconButton variant in Button component
 3. Create FormControl and FormLabel components for better form UX
 
 ### Phase 2: Migrate Electron Desktop Components
+
 Migrate each file one by one:
+
 1. LocalServicesTab.tsx
 2. ConnectionTab.tsx
 3. ChatTab.tsx
@@ -128,19 +147,23 @@ Migrate each file one by one:
 5. CommandCenter.tsx
 
 ### Phase 3: Migrate Frontend Components
+
 1. ScriptRunner.tsx
 2. WorkflowBuilder/WorkflowCanvas.tsx
 3. workflow/WorkflowCanvas.tsx
 
 ### Phase 4: Final Verification
+
 1. Run full codebase search for remaining Chakra imports
 2. Test all migrated components
 3. Verify toast functionality works across app
-4. Remove @chakra-ui/* from node_modules completely
+4. Remove @chakra-ui/\* from node_modules completely
 5. Update documentation
 
 ## Notes
-- The electron-desktop components are the most complex and will require significant effort
+
+- The electron-desktop components are the most complex and will require
+  significant effort
 - Each component needs thorough testing after migration
 - Consider migrating incrementally to avoid breaking changes
 - May need to create additional utility components for common patterns

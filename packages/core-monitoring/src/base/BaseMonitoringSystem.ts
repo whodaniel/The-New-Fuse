@@ -4,15 +4,14 @@
  */
 
 import { EventEmitter } from 'events';
-import { 
-  IMonitoringSystem, 
-  IMetricsCollector, 
+import {
   IAlertManager,
-  IPerformanceMonitor,
   IDashboardManager,
-  ISystemHealthMonitor
+  IMetricsCollector,
+  IMonitoringSystem,
+  IPerformanceMonitor,
+  ISystemHealthMonitor,
 } from '../interfaces/IMonitoring';
-import { BaseMetricsCollector } from './BaseMetricsCollector';
 import { Logger } from '../utils/Logger';
 
 /**
@@ -35,9 +34,13 @@ export interface BaseMonitoringConfig {
 /**
  * Base monitoring system that can be extended
  */
-export abstract class BaseMonitoringSystem<TMetrics = any, TConfig extends BaseMonitoringConfig = BaseMonitoringConfig> 
-  extends EventEmitter implements IMonitoringSystem<TMetrics, TConfig> {
-  
+export abstract class BaseMonitoringSystem<
+  TMetrics = any,
+  TConfig extends BaseMonitoringConfig = BaseMonitoringConfig,
+>
+  extends EventEmitter
+  implements IMonitoringSystem<TMetrics, TConfig>
+{
   protected readonly logger: Logger;
   protected config?: TConfig;
   protected running = false;
@@ -157,13 +160,13 @@ export abstract class BaseMonitoringSystem<TMetrics = any, TConfig extends BaseM
       alertManager: !!this.alertManager,
       performanceMonitor: !!this.performanceMonitor,
       dashboardManager: !!this.dashboardManager,
-      systemHealthMonitor: !!this.systemHealthMonitor
+      systemHealthMonitor: !!this.systemHealthMonitor,
     };
 
     return {
       running: this.running,
       uptime,
-      components
+      components,
     };
   }
 

@@ -14,7 +14,7 @@ export class AppController {
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
-      service: 'Fuse Core API'
+      service: 'Fuse Core API',
     };
   }
 }

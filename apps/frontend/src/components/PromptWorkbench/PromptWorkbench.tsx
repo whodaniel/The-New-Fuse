@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { PromptEditor } from './PromptEditor';
-import { VariableManager } from './VariableManager';
-import { TestCaseManager } from './TestCaseManager';
-import { ResultsViewer } from './ResultsViewer';
-import { VersionHistory } from './VersionHistory';
-import { PromptSaveModal } from './PromptSaveModal';
-import { usePromptTemplates } from '../../hooks/usePromptTemplates';
 import { useModels } from '../../hooks/useModels';
+import { usePromptTemplates } from '../../hooks/usePromptTemplates';
 import { Button, Tabs } from '../ui/design-system';
+import { PromptEditor } from './PromptEditor';
+import { PromptSaveModal } from './PromptSaveModal';
+import { ResultsViewer } from './ResultsViewer';
+import { TestCaseManager } from './TestCaseManager';
+import { VariableManager } from './VariableManager';
+import { VersionHistory } from './VersionHistory';
 
 export const PromptWorkbench: React.FC = () => {
   const { templates, saveTemplate } = usePromptTemplates();
@@ -65,7 +65,7 @@ export const PromptWorkbench: React.FC = () => {
             testCase: testCase.name,
             prompt: compiledPrompt,
             result,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
         }
         setResults(newResults);
@@ -73,11 +73,13 @@ export const PromptWorkbench: React.FC = () => {
         // Run with current variables
         const compiledPrompt = compilePrompt(prompt, variables);
         const result = await generateCompletion(compiledPrompt);
-        setResults([{
-          prompt: compiledPrompt,
-          result,
-          timestamp: new Date().toISOString()
-        }]);
+        setResults([
+          {
+            prompt: compiledPrompt,
+            result,
+            timestamp: new Date().toISOString(),
+          },
+        ]);
       }
 
       // toast success replaced with console or custom notification if available
@@ -95,7 +97,7 @@ export const PromptWorkbench: React.FC = () => {
 
   const handleTemplateSelect = (templateId: string) => {
     if (templateId) {
-      const template = templates.find(t => t.id === templateId);
+      const template = templates.find((t) => t.id === templateId);
       if (template) {
         setPrompt(template.content);
         setVariables(template.variables || {});
@@ -112,28 +114,28 @@ export const PromptWorkbench: React.FC = () => {
     {
       id: 'edit',
       title: 'Edit Prompt',
-      content: <PromptEditor prompt={prompt} onChange={handlePromptChange} />
+      content: <PromptEditor prompt={prompt} onChange={handlePromptChange} />,
     },
     {
       id: 'variables',
       title: 'Variables',
-      content: <VariableManager variables={variables} onChange={handleVariablesChange} />
+      content: <VariableManager variables={variables} onChange={handleVariablesChange} />,
     },
     {
       id: 'test-cases',
       title: 'Test Cases',
-      content: <TestCaseManager testCases={testCases} onChange={handleTestCasesChange} />
+      content: <TestCaseManager testCases={testCases} onChange={handleTestCasesChange} />,
     },
     {
       id: 'results',
       title: 'Results',
-      content: <ResultsViewer results={results} />
+      content: <ResultsViewer results={results} />,
     },
     {
       id: 'history',
       title: 'Version History',
-      content: <VersionHistory templateId={activeTemplate} />
-    }
+      content: <VersionHistory templateId={activeTemplate} />,
+    },
   ];
 
   return (
@@ -146,27 +148,30 @@ export const PromptWorkbench: React.FC = () => {
             value={selectedModel}
             onChange={(e) => setSelectedModel(e.target.value)}
           >
-            <option value="" disabled>Select model</option>
-            {models.map(model => (
-              <option key={model.id} value={model.id}>{model.name}</option>
+            <option value="" disabled>
+              Select model
+            </option>
+            {models.map((model) => (
+              <option key={model.id} value={model.id}>
+                {model.name}
+              </option>
             ))}
           </select>
 
           <select
             className="input w-full md:w-[250px]"
-            value={activeTemplate || ""}
+            value={activeTemplate || ''}
             onChange={(e) => handleTemplateSelect(e.target.value)}
           >
             <option value="">Load template...</option>
             {templates.map((template: any) => (
-              <option key={template.id} value={template.id}>{template.name}</option>
+              <option key={template.id} value={template.id}>
+                {template.name}
+              </option>
             ))}
           </select>
 
-          <Button
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-            onClick={handleSave}
-          >
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={handleSave}>
             Save Template
           </Button>
 
@@ -196,11 +201,11 @@ export const PromptWorkbench: React.FC = () => {
             description,
             content: prompt,
             variables,
-            testCases
+            testCases,
           });
           console.log('Template saved');
         }}
-        initialData={activeTemplate ? templates.find(t => t.id === activeTemplate) : undefined}
+        initialData={activeTemplate ? templates.find((t) => t.id === activeTemplate) : undefined}
       />
     </div>
   );

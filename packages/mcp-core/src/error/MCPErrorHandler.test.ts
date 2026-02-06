@@ -2,9 +2,9 @@
  * Unit tests for MCPErrorHandler
  */
 
-import { MCPErrorHandler, ErrorHandlerConfig, ErrorContext, ErrorHandler } from './MCPErrorHandler';
-import { MCPErrorClass, ErrorCategory, ErrorSeverity, MCPErrorCode } from '../types/error';
+import { ErrorCategory, ErrorSeverity, MCPErrorClass, MCPErrorCode } from '../types/error';
 import { Logger } from '../utils/Logger';
+import { ErrorContext, ErrorHandler, ErrorHandlerConfig, MCPErrorHandler } from './MCPErrorHandler';
 
 describe('MCPErrorHandler', () => {
   let errorHandler: MCPErrorHandler;
@@ -17,7 +17,7 @@ describe('MCPErrorHandler', () => {
       warn: jest.fn(),
       error: jest.fn(),
       setLogLevel: jest.fn(),
-      getLogLevel: jest.fn()
+      getLogLevel: jest.fn(),
     } as any;
 
     const config: Partial<ErrorHandlerConfig> = {
@@ -25,7 +25,7 @@ describe('MCPErrorHandler', () => {
       maxRecoveryAttempts: 2,
       statisticsInterval: 0, // Disable for tests
       enableLogging: true,
-      logLevel: 'debug'
+      logLevel: 'debug',
     };
 
     errorHandler = new MCPErrorHandler(config, mockLogger);
@@ -41,7 +41,7 @@ describe('MCPErrorHandler', () => {
       const context: ErrorContext = {
         component: 'test',
         operation: 'read',
-        correlationId: 'test-123'
+        correlationId: 'test-123',
       };
 
       await errorHandler.handleError(error, context);
@@ -56,7 +56,7 @@ describe('MCPErrorHandler', () => {
       const error = new MCPErrorClass(MCPErrorCode.TOOL_EXECUTION_FAILED, 'Tool failed');
       const context: ErrorContext = {
         component: 'test',
-        operation: 'execute'
+        operation: 'execute',
       };
 
       const errorEventPromise = new Promise((resolve) => {
@@ -72,15 +72,13 @@ describe('MCPErrorHandler', () => {
     });
 
     it('should log errors with appropriate severity', async () => {
-      const criticalError = new MCPErrorClass(
-        MCPErrorCode.SYSTEM_OVERLOADED,
-        'System overloaded',
-        { severity: ErrorSeverity.CRITICAL }
-      );
-      
+      const criticalError = new MCPErrorClass(MCPErrorCode.SYSTEM_OVERLOADED, 'System overloaded', {
+        severity: ErrorSeverity.CRITICAL,
+      });
+
       const context: ErrorContext = {
         component: 'test',
-        operation: 'process'
+        operation: 'process',
       };
 
       await errorHandler.handleError(criticalError, context);
@@ -99,10 +97,10 @@ describe('MCPErrorHandler', () => {
         'Connection timeout',
         { retryable: true }
       );
-      
+
       const context: ErrorContext = {
         component: 'test',
-        operation: 'connect'
+        operation: 'connect',
       };
 
       // Register a mock recovery strategy
@@ -111,7 +109,7 @@ describe('MCPErrorHandler', () => {
         applicableErrorCodes: [MCPErrorCode.CONNECTION_TIMEOUT],
         maxAttempts: 1,
         delay: 0,
-        recover: jest.fn().mockResolvedValue(true)
+        recover: jest.fn().mockResolvedValue(true),
       });
 
       const result = await errorHandler.handleError(retryableError, context);
@@ -127,10 +125,10 @@ describe('MCPErrorHandler', () => {
         'Auth failed',
         { retryable: false }
       );
-      
+
       const context: ErrorContext = {
         component: 'test',
-        operation: 'authenticate'
+        operation: 'authenticate',
       };
 
       const result = await errorHandler.handleError(nonRetryableError, context);
@@ -142,7 +140,7 @@ describe('MCPErrorHandler', () => {
       const error = new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Service down');
       const context: ErrorContext = {
         component: 'test',
-        operation: 'call'
+        operation: 'call',
       };
 
       const failingStrategy = jest.fn().mockResolvedValue(false);
@@ -153,7 +151,7 @@ describe('MCPErrorHandler', () => {
         applicableErrorCodes: [MCPErrorCode.SERVICE_UNAVAILABLE],
         maxAttempts: 1,
         delay: 0,
-        recover: failingStrategy
+        recover: failingStrategy,
       });
 
       errorHandler.registerRecoveryStrategy({
@@ -161,7 +159,7 @@ describe('MCPErrorHandler', () => {
         applicableErrorCodes: [MCPErrorCode.SERVICE_UNAVAILABLE],
         maxAttempts: 1,
         delay: 0,
-        recover: successfulStrategy
+        recover: successfulStrategy,
       });
 
       const result = await errorHandler.handleError(error, context);
@@ -174,25 +172,25 @@ describe('MCPErrorHandler', () => {
 
     it('should respect max recovery attempts', async () => {
       const config: Partial<ErrorHandlerConfig> = {
-        maxRecoveryAttempts: 1
+        maxRecoveryAttempts: 1,
       };
-      
+
       const limitedHandler = new MCPErrorHandler(config, mockLogger);
-      
+
       const error = new MCPErrorClass(MCPErrorCode.CONNECTION_FAILED, 'Connection failed');
       const context: ErrorContext = {
         component: 'test',
-        operation: 'connect'
+        operation: 'connect',
       };
 
       const recoveryFn = jest.fn().mockResolvedValue(false);
-      
+
       limitedHandler.registerRecoveryStrategy({
         name: 'test-strategy-1',
         applicableErrorCodes: [MCPErrorCode.CONNECTION_FAILED],
         maxAttempts: 1,
         delay: 0,
-        recover: recoveryFn
+        recover: recoveryFn,
       });
 
       limitedHandler.registerRecoveryStrategy({
@@ -200,7 +198,7 @@ describe('MCPErrorHandler', () => {
         applicableErrorCodes: [MCPErrorCode.CONNECTION_FAILED],
         maxAttempts: 1,
         delay: 0,
-        recover: recoveryFn
+        recover: recoveryFn,
       });
 
       const result = await limitedHandler.handleError(error, context);
@@ -218,7 +216,7 @@ describe('MCPErrorHandler', () => {
       const customHandler: ErrorHandler = {
         name: 'custom-handler',
         canHandle: (error) => error.code === MCPErrorCode.TOOL_NOT_FOUND,
-        handle: jest.fn()
+        handle: jest.fn(),
       };
 
       errorHandler.registerErrorHandler(MCPErrorCode.TOOL_NOT_FOUND, customHandler);
@@ -226,7 +224,7 @@ describe('MCPErrorHandler', () => {
       const error = new MCPErrorClass(MCPErrorCode.TOOL_NOT_FOUND, 'Tool not found');
       const context: ErrorContext = {
         component: 'test',
-        operation: 'execute'
+        operation: 'execute',
       };
 
       await errorHandler.handleError(error, context);
@@ -238,7 +236,7 @@ describe('MCPErrorHandler', () => {
       const error = new MCPErrorClass(MCPErrorCode.RESOURCE_CORRUPTED, 'Resource corrupted');
       const context: ErrorContext = {
         component: 'test',
-        operation: 'read'
+        operation: 'read',
       };
 
       // Should not throw and should handle with generic handler
@@ -252,12 +250,14 @@ describe('MCPErrorHandler', () => {
         new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, 'Not found'),
         new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, 'Not found again'),
         new MCPErrorClass(MCPErrorCode.TOOL_EXECUTION_FAILED, 'Tool failed'),
-        new MCPErrorClass(MCPErrorCode.SYSTEM_OVERLOADED, 'Overloaded', { severity: ErrorSeverity.CRITICAL })
+        new MCPErrorClass(MCPErrorCode.SYSTEM_OVERLOADED, 'Overloaded', {
+          severity: ErrorSeverity.CRITICAL,
+        }),
       ];
 
       const context: ErrorContext = {
         component: 'test',
-        operation: 'various'
+        operation: 'various',
       };
 
       for (const error of errors) {
@@ -265,7 +265,7 @@ describe('MCPErrorHandler', () => {
       }
 
       const stats = errorHandler.getStatistics();
-      
+
       expect(stats.totalErrors).toBe(4);
       expect(stats.errorsByCategory[ErrorCategory.RESOURCE]).toBe(2);
       expect(stats.errorsByCategory[ErrorCategory.TOOL]).toBe(1);
@@ -280,7 +280,7 @@ describe('MCPErrorHandler', () => {
       // Create many errors to test history limit
       const context: ErrorContext = {
         component: 'test',
-        operation: 'bulk'
+        operation: 'bulk',
       };
 
       // Add more than 1000 errors to test limit
@@ -291,7 +291,7 @@ describe('MCPErrorHandler', () => {
 
       const history = errorHandler.getErrorHistory();
       expect(history.length).toBe(1000); // Should be limited to 1000
-      
+
       // Should keep the most recent errors
       expect(history[history.length - 1].message).toBe('Error 1004');
     });
@@ -300,7 +300,7 @@ describe('MCPErrorHandler', () => {
       const error = new MCPErrorClass(MCPErrorCode.TIMEOUT, 'Timeout');
       const context: ErrorContext = {
         component: 'test',
-        operation: 'clear'
+        operation: 'clear',
       };
 
       await errorHandler.handleError(error, context);
@@ -314,41 +314,41 @@ describe('MCPErrorHandler', () => {
   describe('Configuration', () => {
     it('should respect logging configuration', async () => {
       const noLogConfig: Partial<ErrorHandlerConfig> = {
-        enableLogging: false
+        enableLogging: false,
       };
-      
+
       const noLogHandler = new MCPErrorHandler(noLogConfig, mockLogger);
-      
+
       const error = new MCPErrorClass(MCPErrorCode.INTERNAL_ERROR, 'Internal error');
       const context: ErrorContext = {
         component: 'test',
-        operation: 'log-test'
+        operation: 'log-test',
       };
 
       await noLogHandler.handleError(error, context);
 
       expect(mockLogger.error).not.toHaveBeenCalled();
-      
+
       noLogHandler.shutdown();
     });
 
     it('should respect auto-recovery configuration', async () => {
       const noRecoveryConfig: Partial<ErrorHandlerConfig> = {
-        enableAutoRecovery: false
+        enableAutoRecovery: false,
       };
-      
+
       const noRecoveryHandler = new MCPErrorHandler(noRecoveryConfig, mockLogger);
-      
+
       const error = new MCPErrorClass(MCPErrorCode.CONNECTION_TIMEOUT, 'Timeout');
       const context: ErrorContext = {
         component: 'test',
-        operation: 'recovery-test'
+        operation: 'recovery-test',
       };
 
       const result = await noRecoveryHandler.handleError(error, context);
 
       expect(result).toBeNull(); // No recovery attempted
-      
+
       noRecoveryHandler.shutdown();
     });
   });
@@ -358,7 +358,7 @@ describe('MCPErrorHandler', () => {
       const error = new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Service down');
       const context: ErrorContext = {
         component: 'test',
-        operation: 'event-test'
+        operation: 'event-test',
       };
 
       errorHandler.registerRecoveryStrategy({
@@ -366,7 +366,7 @@ describe('MCPErrorHandler', () => {
         applicableErrorCodes: [MCPErrorCode.SERVICE_UNAVAILABLE],
         maxAttempts: 1,
         delay: 0,
-        recover: jest.fn().mockResolvedValue(true)
+        recover: jest.fn().mockResolvedValue(true),
       });
 
       const recoverySuccessPromise = new Promise((resolve) => {
@@ -379,7 +379,7 @@ describe('MCPErrorHandler', () => {
       expect(result).toMatchObject({
         error,
         context,
-        strategy: 'success-strategy'
+        strategy: 'success-strategy',
       });
     });
 
@@ -387,7 +387,7 @@ describe('MCPErrorHandler', () => {
       const error = new MCPErrorClass(MCPErrorCode.CONNECTION_FAILED, 'Connection failed');
       const context: ErrorContext = {
         component: 'test',
-        operation: 'failure-test'
+        operation: 'failure-test',
       };
 
       errorHandler.registerRecoveryStrategy({
@@ -395,7 +395,7 @@ describe('MCPErrorHandler', () => {
         applicableErrorCodes: [MCPErrorCode.CONNECTION_FAILED],
         maxAttempts: 1,
         delay: 0,
-        recover: jest.fn().mockResolvedValue(false)
+        recover: jest.fn().mockResolvedValue(false),
       });
 
       const recoveryFailurePromise = new Promise((resolve) => {
@@ -408,7 +408,7 @@ describe('MCPErrorHandler', () => {
       expect(result).toMatchObject({
         error,
         context,
-        attempts: 1
+        attempts: 1,
       });
     });
   });
@@ -440,7 +440,10 @@ describe('MCPErrorHandler', () => {
 
     it('should correctly identify retryable errors', () => {
       const retryableError = new MCPErrorClass(MCPErrorCode.CONNECTION_TIMEOUT, 'Timeout');
-      const nonRetryableError = new MCPErrorClass(MCPErrorCode.AUTHENTICATION_FAILED, 'Auth failed');
+      const nonRetryableError = new MCPErrorClass(
+        MCPErrorCode.AUTHENTICATION_FAILED,
+        'Auth failed'
+      );
 
       expect(retryableError.retryable).toBe(true);
       expect(nonRetryableError.retryable).toBe(false);

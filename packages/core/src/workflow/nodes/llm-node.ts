@@ -22,7 +22,10 @@ export interface WorkflowContext {
 export class LLMNodeHandler {
   constructor(private dependencies: any) {}
 
-  async handle(step: WorkflowStep, context: WorkflowContext): Promise<{ success: boolean; data?: any; error?: string }> {
+  async handle(
+    step: WorkflowStep,
+    context: WorkflowContext,
+  ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       const config = step.config as LLMConfig;
       if (!config.model || !config.prompt) {

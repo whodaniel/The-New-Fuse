@@ -1,10 +1,12 @@
 # Railway Deployment Guide for The New Fuse SAAS
 
-This guide provides step-by-step instructions for deploying all SAAS-related packages to Railway.
+This guide provides step-by-step instructions for deploying all SAAS-related
+packages to Railway.
 
 ## Prerequisites
 
 1. **Railway CLI**: Install the Railway CLI
+
    ```bash
    npm install -g @railway/cli
    ```
@@ -21,17 +23,22 @@ This guide provides step-by-step instructions for deploying all SAAS-related pac
 The following SAAS services will be deployed to Railway:
 
 ### Core API Services
+
 - **API Server** (`apps/api`) - Main API service (Port: 3000)
 - **Backend** (`apps/backend`) - Backend services (Port: 3001)
 - **API Gateway** (`apps/api-gateway`) - API Gateway (Port: 3002)
 
 ### Frontend Applications
+
 - **Frontend** (`apps/frontend`) - Main frontend application (Port: 3003)
 
 ### Communication Services
-- **Relay Server** (`apps/relay-server`) - Relay communication service (Port: 3004)
+
+- **Relay Server** (`apps/relay-server`) - Relay communication service
+  (Port: 3004)
 - **Browser Hub** (`apps/browser-hub`) - Browser management service (Port: 3005)
-- **MCP Servers** (`apps/mcp-servers`) - Model Context Protocol servers (Port: 3006)
+- **MCP Servers** (`apps/mcp-servers`) - Model Context Protocol servers
+  (Port: 3006)
 
 ## Deployment Methods
 
@@ -80,6 +87,7 @@ railway up --detach
 ## Configuration Files
 
 Each service includes:
+
 - `railway.toml` - Railway deployment configuration
 - `nixpacks.toml` - Build configuration using Nixpacks
 
@@ -110,11 +118,13 @@ PORT = "[service-port]"
 Copy `.env.example` to `.env` and configure the following:
 
 #### Database Configuration
+
 - `DATABASE_URL` - PostgreSQL connection string
 - `REDIS_URL` - Redis connection string
 - `MONGODB_URI` - MongoDB connection string (if used)
 
 #### Service URLs
+
 - `API_BASE_URL` - API service URL
 - `BACKEND_URL` - Backend service URL
 - `FRONTEND_URL` - Frontend service URL
@@ -123,14 +133,16 @@ Copy `.env.example` to `.env` and configure the following:
 - `MCP_SERVERS_URL` - MCP servers URL
 
 #### Authentication & Security
+
 - `JWT_SECRET` - JWT signing secret
 - `API_KEY` - API authentication key
 - `INTERNAL_API_KEY` - Internal service API key
 
 #### External Services
+
 - `OPENAI_API_KEY` - OpenAI API key
 - `ANTHROPIC_API_KEY` - Anthropic API key
-- `PRISMA_ACCELERATE_API_KEY` - Prisma Accelerate API key
+- `PRISMA_ACCELERATE_API_KEY` - Drizzle Accelerate API key
 
 ### Setting Environment Variables in Railway
 
@@ -151,6 +163,7 @@ Copy `.env.example` to `.env` and configure the following:
 ### PostgreSQL Database
 
 1. **Add PostgreSQL Plugin**:
+
    ```bash
    railway add postgresql
    ```
@@ -163,6 +176,7 @@ Copy `.env.example` to `.env` and configure the following:
 ### Redis Cache
 
 1. **Add Redis Plugin**:
+
    ```bash
    railway add redis
    ```
@@ -175,10 +189,12 @@ Copy `.env.example` to `.env` and configure the following:
 ## Health Checks
 
 Each service includes health check endpoints:
+
 - API services: `/health`
 - Frontend: `/` (root path)
 
 Health checks are configured with:
+
 - Timeout: 300 seconds
 - Restart policy: On failure
 - Max retries: 10
@@ -186,6 +202,7 @@ Health checks are configured with:
 ## Monitoring & Logging
 
 ### View Logs
+
 ```bash
 # View logs for a specific service
 railway logs
@@ -195,6 +212,7 @@ railway logs --follow
 ```
 
 ### Service Status
+
 ```bash
 # Check service status
 railway status
@@ -240,6 +258,7 @@ railway restart
 ### Verify Deployments
 
 1. Check all services are running:
+
    ```bash
    railway status
    ```
@@ -269,11 +288,13 @@ railway restart
 ## Scaling & Performance
 
 ### Horizontal Scaling
+
 - Railway supports automatic scaling
 - Configure in service settings
 - Monitor resource usage
 
 ### Resource Limits
+
 - Set appropriate CPU/memory limits
 - Monitor performance metrics
 - Adjust based on usage patterns

@@ -1,6 +1,6 @@
 /**
  * Drizzle ORM Enum Definitions
- * Direct mapping from Prisma schema enums
+ * Direct mapping from legacy schema enums
  */
 import { pgEnum } from 'drizzle-orm/pg-core';
 
@@ -16,9 +16,12 @@ export const agentTypeEnum = pgEnum('AgentType', [
   'ANALYZER',
   'COORDINATOR',
   'COMMUNICATOR',
+  'CODE_REVIEWER',
+  'CODE_TESTER',
+  'CODE_SECURITY',
 ]);
 
-export const agentStatusEnum = pgEnum('AgentStatus', ['IDLE', 'BUSY', 'ERROR', 'OFFLINE']);
+export const agentStatusEnum = pgEnum('AgentStatus', ['IDLE', 'BUSY', 'ERROR', 'OFFLINE', 'ACTIVE']);
 
 export const agentCapabilityEnum = pgEnum('AgentCapability', [
   'CODE_GENERATION',

@@ -1,16 +1,16 @@
-import { Logger } from 'winston';
 import { EventEmitter } from 'events';
+import { Logger } from 'winston';
 import {
   DeploymentConfig,
   DeploymentResult,
-  DeploymentStrategy as StrategyType,
+  PipelineStatus,
   RollbackResult,
-  PipelineStatus
+  DeploymentStrategy as StrategyType,
 } from '../types/pipeline';
-import { IDeploymentStrategy, DeploymentProgress } from './DeploymentStrategy';
-import { RollingUpdateStrategy } from './RollingUpdateStrategy';
 import { BlueGreenStrategy } from './BlueGreenStrategy';
 import { CanaryStrategy } from './CanaryStrategy';
+import { DeploymentProgress, IDeploymentStrategy } from './DeploymentStrategy';
+import { RollingUpdateStrategy } from './RollingUpdateStrategy';
 
 /**
  * Deployment approval interface
@@ -31,7 +31,7 @@ export enum ApprovalStatus {
   PENDING = 'pending',
   APPROVED = 'approved',
   REJECTED = 'rejected',
-  EXPIRED = 'expired'
+  EXPIRED = 'expired',
 }
 
 /**
@@ -80,7 +80,7 @@ export class DeploymentOrchestrator extends EventEmitter {
     this.logger.info(`Starting deployment orchestration: ${deploymentId}`, {
       environment: config.environment,
       strategy: config.strategy.type,
-      services: config.services.length
+      services: config.services.length,
     });
 
     try {
@@ -93,7 +93,7 @@ export class DeploymentOrchestrator extends EventEmitter {
         currentPhase: 'validation',
         approvals: [],
         gates: [],
-        logs: []
+        logs: [],
       };
 
       this.activeDeployments.set(deploymentId, execution);
@@ -102,7 +102,7 @@ export class DeploymentOrchestrator extends EventEmitter {
       await this.validateDeployment(config, execution);
 
       // Phase 2: Handle approvals if required
-      if (config.approvals.some(a => a.required)) {
+      if (config.approvals.some((a) => a.required)) {
         execution.currentPhase = 'approval';
         await this.handleApprovals(config, execution);
       }
@@ -134,15 +134,14 @@ export class DeploymentOrchestrator extends EventEmitter {
 
       this.logger.info(`Deployment orchestration completed: ${deploymentId}`, {
         status: result.status,
-        duration: result.duration
+        duration: result.duration,
       });
 
       return result;
-
     } catch (error) {
       this.logger.error(`Deployment orchestration failed: ${deploymentId}`, {
         error: error.message,
-        stack: error.stack
+        stack: error.stack,
       });
 
       const execution = this.activeDeployments.get(deploymentId);
@@ -164,14 +163,13 @@ export class DeploymentOrchestrator extends EventEmitter {
         services: [],
         healthChecks: [],
         logs: [error.message],
-        error: error.message
+        error: error.message,
       };
 
       this.deploymentHistory.set(deploymentId, failedResult);
       this.emit('deployment:failed', { deploymentId, result: failedResult, error });
 
       return failedResult;
-
     } finally {
       this.activeDeployments.delete(deploymentId);
     }
@@ -195,7 +193,7 @@ export class DeploymentOrchestrator extends EventEmitter {
       createdAt: new Date(),
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
       reason,
-      metadata: {}
+      metadata: {},
     };
 
     this.approvals.set(approvalId, approval);
@@ -203,7 +201,7 @@ export class DeploymentOrchestrator extends EventEmitter {
     this.logger.info(`Approval requested: ${approvalId}`, {
       deploymentId,
       approvers: approvers.length,
-      reason
+      reason,
     });
 
     this.emit('approval:requested', { approvalId, approval });
@@ -239,11 +237,11 @@ export class DeploymentOrchestrator extends EventEmitter {
     approval.approvers.push(approver);
     approval.metadata[approver] = {
       approvedAt: new Date(),
-      comment
+      comment,
     };
 
     // Check if all required approvals are received
-    const hasAllApprovals = approval.requiredApprovers.every(required =>
+    const hasAllApprovals = approval.requiredApprovers.every((required) =>
       approval.approvers.includes(required)
     );
 
@@ -255,7 +253,7 @@ export class DeploymentOrchestrator extends EventEmitter {
       deploymentId: approval.deploymentId,
       approvers: approval.approvers.length,
       required: approval.requiredApprovers.length,
-      complete: hasAllApprovals
+      complete: hasAllApprovals,
     });
 
     this.emit('approval:updated', { approvalId, approval, approver });
@@ -266,11 +264,7 @@ export class DeploymentOrchestrator extends EventEmitter {
   /**
    * Reject a deployment
    */
-  async rejectDeployment(
-    approvalId: string,
-    approver: string,
-    reason: string
-  ): Promise<void> {
+  async rejectDeployment(approvalId: string, approver: string, reason: string): Promise<void> {
     const approval = this.approvals.get(approvalId);
     if (!approval) {
       throw new Error(`Approval not found: ${approvalId}`);
@@ -287,7 +281,7 @@ export class DeploymentOrchestrator extends EventEmitter {
 
     this.logger.info(`Deployment rejected by ${approver}: ${approvalId}`, {
       deploymentId: approval.deploymentId,
-      reason
+      reason,
     });
 
     this.emit('approval:rejected', { approvalId, approval, approver, reason });
@@ -307,7 +301,7 @@ export class DeploymentOrchestrator extends EventEmitter {
       return await strategy.getProgress(deploymentId);
     } catch (error) {
       this.logger.warn(`Failed to get deployment progress: ${deploymentId}`, {
-        error: error.message
+        error: error.message,
       });
       return null;
     }
@@ -331,10 +325,9 @@ export class DeploymentOrchestrator extends EventEmitter {
       this.emit('deployment:cancelled', { deploymentId, reason });
 
       return true;
-
     } catch (error) {
       this.logger.error(`Failed to cancel deployment: ${deploymentId}`, {
-        error: error.message
+        error: error.message,
       });
       return false;
     }
@@ -349,8 +342,8 @@ export class DeploymentOrchestrator extends EventEmitter {
       throw new Error(`Deployment not found: ${deploymentId}`);
     }
 
-    const strategy = this.getStrategy(result.services[0]?.name || 'rolling_update' as any);
-    return await strategy.rollback(deploymentId, reason) as any;
+    const strategy = this.getStrategy(result.services[0]?.name || ('rolling_update' as any));
+    return (await strategy.rollback(deploymentId, reason)) as any;
   }
 
   /**
@@ -358,9 +351,7 @@ export class DeploymentOrchestrator extends EventEmitter {
    */
   getDeploymentHistory(limit: number = 50): DeploymentResult[] {
     const results = Array.from(this.deploymentHistory.values());
-    return results
-      .sort((a, b) => b.startTime.getTime() - a.startTime.getTime())
-      .slice(0, limit);
+    return results.sort((a, b) => b.startTime.getTime() - a.startTime.getTime()).slice(0, limit);
   }
 
   // Private helper methods
@@ -452,15 +443,15 @@ export class DeploymentOrchestrator extends EventEmitter {
     }
 
     // Validate all services are healthy
-    const unhealthyServices = result.services.filter(s => s.status !== 'success');
+    const unhealthyServices = result.services.filter((s) => s.status !== 'success');
     if (unhealthyServices.length > 0) {
-      throw new Error(`Unhealthy services: ${unhealthyServices.map(s => s.name).join(', ')}`);
+      throw new Error(`Unhealthy services: ${unhealthyServices.map((s) => s.name).join(', ')}`);
     }
 
     // Validate health checks
-    const failedHealthChecks = result.healthChecks.filter(h => h.status !== 'healthy');
+    const failedHealthChecks = result.healthChecks.filter((h) => h.status !== 'healthy');
     if (failedHealthChecks.length > 0) {
-      throw new Error(`Failed health checks: ${failedHealthChecks.map(h => h.name).join(', ')}`);
+      throw new Error(`Failed health checks: ${failedHealthChecks.map((h) => h.name).join(', ')}`);
     }
 
     execution.logs.push('Post-deployment validation completed');
@@ -472,9 +463,9 @@ export class DeploymentOrchestrator extends EventEmitter {
   ): Promise<void> {
     // Validate that the target environment is ready for deployment
     execution.logs.push(`Validating ${config.environment} environment readiness`);
-    
+
     // This would integrate with actual environment validation
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
   private async validateResourceAvailability(
@@ -483,14 +474,14 @@ export class DeploymentOrchestrator extends EventEmitter {
   ): Promise<void> {
     // Validate that sufficient resources are available
     execution.logs.push('Validating resource availability');
-    
+
     // This would integrate with actual resource validation
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
   private async waitForApproval(approvalId: string, timeout: number): Promise<boolean> {
     const startTime = Date.now();
-    
+
     while (Date.now() - startTime < timeout) {
       const approval = this.approvals.get(approvalId);
       if (!approval) {
@@ -501,12 +492,15 @@ export class DeploymentOrchestrator extends EventEmitter {
         return true;
       }
 
-      if (approval.status === ApprovalStatus.REJECTED || approval.status === ApprovalStatus.EXPIRED) {
+      if (
+        approval.status === ApprovalStatus.REJECTED ||
+        approval.status === ApprovalStatus.EXPIRED
+      ) {
         return false;
       }
 
       // Wait before checking again
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
 
     // Mark as expired

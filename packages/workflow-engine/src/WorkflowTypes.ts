@@ -2,7 +2,7 @@
  * Workflow Engine Types - The New Fuse
  *
  * This file is the single, authoritative source for all workflow-related data structures.
- * It integrates with the Prisma database schema and the Master Agent Registry.
+ * It integrates with the database database schema and the Master Agent Registry.
  */
 
 import type { ResourceRequirement } from '@the-new-fuse/mcp-core';

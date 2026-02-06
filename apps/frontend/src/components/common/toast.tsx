@@ -1,12 +1,16 @@
-import * as React from 'react';
 import * as ToastPrimitives from '@radix-ui/react-toast';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { X } from 'lucide-react';
+import * as React from 'react';
 import { cn } from '../../lib/utils';
 
-export const ToastProvider: React.FC<React.ComponentProps<typeof ToastPrimitives.Provider>> = ToastPrimitives.Provider;
+export const ToastProvider: React.FC<React.ComponentProps<typeof ToastPrimitives.Provider>> =
+  ToastPrimitives.Provider;
 
-export const ToastViewport: React.ForwardRefExoticComponent<React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport> & React.RefAttributes<HTMLOListElement>> = React.forwardRef<
+export const ToastViewport: React.ForwardRefExoticComponent<
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport> &
+    React.RefAttributes<HTMLOListElement>
+> = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Viewport>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
 >(({ className, ...props }, ref) => (
@@ -38,32 +42,28 @@ const toastVariants = cva(
 );
 
 export interface ToastProps
-  extends React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root>,
+  extends
+    React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root>,
     VariantProps<typeof toastVariants> {}
 
-export const Toast = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Root>,
-  ToastProps
->(({ className, variant, ...props }, ref) => {
-  return (
-    <ToastPrimitives.Root
-      ref={ref}
-      className={cn(toastVariants({ variant }), className)}
-      {...props}
-    />
-  );
-});
+export const Toast = React.forwardRef<React.ElementRef<typeof ToastPrimitives.Root>, ToastProps>(
+  ({ className, variant, ...props }, ref) => {
+    return (
+      <ToastPrimitives.Root
+        ref={ref}
+        className={cn(toastVariants({ variant }), className)}
+        {...props}
+      />
+    );
+  }
+);
 Toast.displayName = ToastPrimitives.Root.displayName;
 
 export const ToastTitle = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Title>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
 >(({ className, ...props }, ref) => (
-  <ToastPrimitives.Title
-    ref={ref}
-    className={cn('text-sm font-semibold', className)}
-    {...props}
-  />
+  <ToastPrimitives.Title ref={ref} className={cn('text-sm font-semibold', className)} {...props} />
 ));
 ToastTitle.displayName = ToastPrimitives.Title.displayName;
 

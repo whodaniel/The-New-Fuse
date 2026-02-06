@@ -1,14 +1,21 @@
 # SyncOrchestrator Service
 
-The `SyncOrchestrator` is the central coordination service for multi-tenant synchronization in The New Fuse platform. It integrates with existing services including Redis, WebSocket, Prisma database, and prompt templating to provide seamless real-time synchronization across all system components.
+The `SyncOrchestrator` is the central coordination service for multi-tenant
+synchronization in The New Fuse platform. It integrates with existing services
+including Redis, WebSocket, Drizzle database, and prompt templating to provide
+seamless real-time synchronization across all system components.
 
 ## Overview
 
-The SyncOrchestrator manages synchronization operations across multiple tenants while maintaining strict data isolation and security. It handles:
+The SyncOrchestrator manages synchronization operations across multiple tenants
+while maintaining strict data isolation and security. It handles:
 
-- **Tenant-aware synchronization**: Ensures data is synchronized within tenant boundaries
-- **Global data synchronization**: Manages system-wide data that needs to be available across all tenants
-- **Agent state synchronization**: Real-time agent status and configuration updates
+- **Tenant-aware synchronization**: Ensures data is synchronized within tenant
+  boundaries
+- **Global data synchronization**: Manages system-wide data that needs to be
+  available across all tenants
+- **Agent state synchronization**: Real-time agent status and configuration
+  updates
 - **Prompt template synchronization**: Template versioning and distribution
 - **Conflict resolution**: Automatic and manual conflict resolution strategies
 - **Real-time notifications**: WebSocket-based updates to connected clients
@@ -24,7 +31,7 @@ The SyncOrchestrator integrates with existing platform services:
                                 │
                                 ▼
                        ┌─────────────────┐
-                       │ Prisma Database │
+                       │ Drizzle Database │
                        └─────────────────┘
                                 │
                                 ▼
@@ -60,7 +67,7 @@ const agentState: AgentState = {
   id: 'agent-123',
   status: 'PROCESSING',
   metadata: { currentTask: 'document-analysis', progress: 45 },
-  lastUpdate: new Date()
+  lastUpdate: new Date(),
 };
 
 await syncOrchestrator.syncAgentState('agent-123', agentState);
@@ -74,8 +81,8 @@ const templates = [
     id: 'template-1',
     name: 'Code Review Template',
     content: 'Review the following code...',
-    variables: { code_content: '', context: '' }
-  }
+    variables: { code_content: '', context: '' },
+  },
 ];
 
 await syncOrchestrator.syncPromptTemplates(templates);
@@ -83,7 +90,8 @@ await syncOrchestrator.syncPromptTemplates(templates);
 
 ### 4. Conflict Resolution
 
-The service automatically detects and resolves synchronization conflicts using various strategies:
+The service automatically detects and resolves synchronization conflicts using
+various strategies:
 
 - **Latest Wins**: Uses timestamp-based resolution
 - **Merge**: Combines non-conflicting changes
@@ -98,7 +106,7 @@ const conflict: SyncConflictData = {
   conflictType: 'concurrent',
   localVersion: { status: 'IDLE' },
   remoteVersion: { status: 'PROCESSING' },
-  createdAt: new Date()
+  createdAt: new Date(),
 };
 
 const resolution = await syncOrchestrator.resolveConflict(conflict);
@@ -110,18 +118,18 @@ The SyncOrchestrator uses the following configuration:
 
 ```typescript
 interface SyncOrchestratorConfig {
-  syncChannelPrefix: string;      // 'sync:' - Redis channel prefix
-  conflictChannelPrefix: string;  // 'conflict:' - Conflict channel prefix
-  batchSize: number;              // 50 - Max operations per batch
-  syncTimeout: number;            // 30000ms - Operation timeout
-  retryAttempts: number;          // 3 - Max retry attempts
+  syncChannelPrefix: string; // 'sync:' - Redis channel prefix
+  conflictChannelPrefix: string; // 'conflict:' - Conflict channel prefix
+  batchSize: number; // 50 - Max operations per batch
+  syncTimeout: number; // 30000ms - Operation timeout
+  retryAttempts: number; // 3 - Max retry attempts
   tenantIsolationEnabled: boolean; // true - Enable tenant isolation
 }
 ```
 
 ## Database Schema
 
-The service extends the existing Prisma schema with sync tracking tables:
+The service extends the existing Drizzle schema with sync tracking tables:
 
 ```sql
 -- Sync state tracking
@@ -161,21 +169,21 @@ The service provides comprehensive metrics for monitoring:
 ```typescript
 interface SyncMetrics {
   operations: {
-    sync: number;           // Total sync operations
-    conflicts: number;      // Conflicts resolved
-    fileChanges: number;    // File change events
-    clockSync: number;      // Clock sync operations
+    sync: number; // Total sync operations
+    conflicts: number; // Conflicts resolved
+    fileChanges: number; // File change events
+    clockSync: number; // Clock sync operations
   };
   performance: {
     avgSyncLatency: number; // Average sync latency (ms)
     maxSyncLatency: number; // Maximum sync latency (ms)
-    conflictRate: number;   // Conflict rate percentage
-    successRate: number;    // Success rate percentage
+    conflictRate: number; // Conflict rate percentage
+    successRate: number; // Success rate percentage
   };
   resources: {
-    activeTenants: number;     // Active tenant count
-    watchedFiles: number;      // Watched file count
-    syncedResources: number;   // Synced resource count
+    activeTenants: number; // Active tenant count
+    watchedFiles: number; // Watched file count
+    syncedResources: number; // Synced resource count
     pendingOperations: number; // Pending operations
   };
 }
@@ -210,7 +218,7 @@ The service implements comprehensive error handling:
 
 ### Tenant Isolation
 
-- **Database Level**: Uses existing Prisma tenant isolation patterns
+- **Database Level**: Uses existing Drizzle tenant isolation patterns
 - **Redis Keyspace**: Tenant-specific Redis key prefixes
 - **WebSocket**: Tenant-aware message routing
 - **Access Control**: Integration with existing RBAC system
@@ -244,14 +252,12 @@ import { SyncOrchestrator } from '@the-new-fuse/sync-core';
 
 @Injectable()
 export class MyService {
-  constructor(
-    private readonly syncOrchestrator: SyncOrchestrator
-  ) {}
+  constructor(private readonly syncOrchestrator: SyncOrchestrator) {}
 
   async updateUserData(userId: string, data: any) {
     // Update in database
     await this.updateDatabase(data);
-    
+
     // Sync across all user sessions
     await this.syncOrchestrator.syncTenantData(userId, 'user', data);
   }
@@ -265,10 +271,10 @@ export class MyService {
 const agents = [
   { id: 'agent-1', status: 'ACTIVE' },
   { id: 'agent-2', status: 'IDLE' },
-  { id: 'agent-3', status: 'PROCESSING' }
+  { id: 'agent-3', status: 'PROCESSING' },
 ];
 
-const syncPromises = agents.map(agent =>
+const syncPromises = agents.map((agent) =>
   syncOrchestrator.syncTenantData('tenant-123', 'agent', agent)
 );
 
@@ -281,20 +287,20 @@ await Promise.all(syncPromises);
 async function syncWithRetry<T>(operation: () => Promise<T>): Promise<T> {
   const maxRetries = 3;
   let lastError: Error;
-  
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       return await operation();
     } catch (error) {
       lastError = error as Error;
       if (attempt < maxRetries) {
-        await new Promise(resolve => 
+        await new Promise((resolve) =>
           setTimeout(resolve, Math.pow(2, attempt) * 1000)
         );
       }
     }
   }
-  
+
   throw lastError;
 }
 ```
@@ -375,5 +381,6 @@ When contributing to the SyncOrchestrator:
 
 - [MasterClockService](./MasterClockService.md) - Time synchronization
 - [EnhancedFileSystemWatcher](./EnhancedFileSystemWatcher.md) - File monitoring
-- [Multi-Tenant Architecture](../../../docs/MULTI_TENANT_ARCHITECTURE.md) - Platform architecture
+- [Multi-Tenant Architecture](../../../docs/MULTI_TENANT_ARCHITECTURE.md) -
+  Platform architecture
 - [Redis Integration](../../../docs/REDIS_INTEGRATION.md) - Redis usage patterns

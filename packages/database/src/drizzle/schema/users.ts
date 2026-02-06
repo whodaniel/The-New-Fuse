@@ -2,7 +2,7 @@
  * Drizzle ORM Schema - User Management & Authentication
  */
 import { relations } from 'drizzle-orm';
-import { boolean, jsonb, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { boolean, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 import { userRoleEnum } from './enums';
 
 // =============================================================================
@@ -12,8 +12,14 @@ import { userRoleEnum } from './enums';
 export const users = pgTable('users', {
   id: varchar('id', { length: 255 }).primaryKey(),
   email: varchar('email', { length: 255 }).unique().notNull(),
-  // username: varchar('username', { length: 255 }).unique(),
+  username: varchar('username', { length: 255 }).unique(),
   name: varchar('name', { length: 255 }),
+  walletAddress: varchar('walletAddress', { length: 255 }).unique(),
+  isActive: boolean('isActive').default(true).notNull(),
+  lastLogin: timestamp('lastLogin'),
+  refreshToken: text('refreshToken'),
+  emailVerified: boolean('emailVerified').default(false).notNull(),
+  deletedAt: timestamp('deletedAt'),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt').defaultNow().notNull(),
   hashedPassword: varchar('passwordHash', { length: 255 }),

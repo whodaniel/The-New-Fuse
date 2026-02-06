@@ -1,44 +1,38 @@
-import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
 import { cn } from '../../utils';
 
 /**
  * Accordion variants using class-variance-authority
  */
-export const accordionVariants = cva(
-  'w-full',
-  {
-    variants: {
-      variant: {
-        default: 'border rounded-md',
-        bordered: 'border rounded-md divide-y',
-        ghost: '',
-      },
+export const accordionVariants = cva('w-full', {
+  variants: {
+    variant: {
+      default: 'border rounded-md',
+      bordered: 'border rounded-md divide-y',
+      ghost: '',
     },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
 
 /**
  * Accordion item variants using class-variance-authority
  */
-export const accordionItemVariants = cva(
-  '',
-  {
-    variants: {
-      variant: {
-        default: 'border-b last:border-0',
-        bordered: '',
-        ghost: 'border-b last:border-0',
-      },
+export const accordionItemVariants = cva('', {
+  variants: {
+    variant: {
+      default: 'border-b last:border-0',
+      bordered: '',
+      ghost: 'border-b last:border-0',
     },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
 
 /**
  * Accordion trigger variants using class-variance-authority
@@ -82,8 +76,7 @@ export const accordionContentVariants = cva(
  * Accordion component props
  */
 export interface AccordionProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof accordionVariants> {
+  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof accordionVariants> {
   /**
    * Type of accordion
    * @default 'single'
@@ -112,8 +105,7 @@ export interface AccordionProps
  * Accordion item component props
  */
 export interface AccordionItemProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof accordionItemVariants> {
+  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof accordionItemVariants> {
   /**
    * Value of the accordion item
    */
@@ -129,7 +121,8 @@ export interface AccordionItemProps
  * Accordion trigger component props
  */
 export interface AccordionTriggerProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof accordionTriggerVariants> {
   /**
    * Whether to show the chevron icon
@@ -146,8 +139,7 @@ export interface AccordionTriggerProps
  * Accordion content component props
  */
 export interface AccordionContentProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof accordionContentVariants> {}
+  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof accordionContentVariants> {}
 
 /**
  * Accordion context
@@ -227,30 +219,36 @@ const useAccordionItem = () => {
  * </Accordion>
  */
 const Accordion = React.forwardRef<HTMLDivElement, AccordionProps>(
-  ({
-    className,
-    variant,
-    type = 'single',
-    defaultValue,
-    value,
-    onValueChange,
-    collapsible = true,
-    children,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      variant,
+      type = 'single',
+      defaultValue,
+      value,
+      onValueChange,
+      collapsible = true,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     const [internalValue, setInternalValue] = React.useState<string | string[]>(
       defaultValue || (type === 'multiple' ? [] : '')
     );
-    
+
     const currentValue = value !== undefined ? value : internalValue;
-    
-    const handleValueChange = React.useCallback((newValue: string | string[]) => {
-      if (value === undefined) {
-        setInternalValue(newValue);
-      }
-      onValueChange?.(newValue);
-    }, [value, onValueChange]);
-    
+
+    const handleValueChange = React.useCallback(
+      (newValue: string | string[]) => {
+        if (value === undefined) {
+          setInternalValue(newValue);
+        }
+        onValueChange?.(newValue);
+      },
+      [value, onValueChange]
+    );
+
     return (
       <AccordionContext.Provider
         value={{
@@ -261,11 +259,7 @@ const Accordion = React.forwardRef<HTMLDivElement, AccordionProps>(
           variant: variant || 'default',
         }}
       >
-        <div
-          ref={ref}
-          className={cn(accordionVariants({ variant }), className)}
-          {...props}
-        >
+        <div ref={ref} className={cn(accordionVariants({ variant }), className)} {...props}>
           {children}
         </div>
       </AccordionContext.Provider>
@@ -279,23 +273,23 @@ Accordion.displayName = 'Accordion';
  * Accordion item component for containing accordion content
  */
 const AccordionItem = React.forwardRef<HTMLDivElement, AccordionItemProps>(
-  ({
-    className,
-    variant,
-    value,
-    disabled = false,
-    children,
-    ...props
-  }, ref) => {
-    const { value: accordionValue, onValueChange, type, collapsible, variant: accordionVariant } = useAccordion();
-    
-    const isOpen = type === 'single'
-      ? accordionValue === value
-      : Array.isArray(accordionValue) && accordionValue.includes(value);
-    
+  ({ className, variant, value, disabled = false, children, ...props }, ref) => {
+    const {
+      value: accordionValue,
+      onValueChange,
+      type,
+      collapsible,
+      variant: accordionVariant,
+    } = useAccordion();
+
+    const isOpen =
+      type === 'single'
+        ? accordionValue === value
+        : Array.isArray(accordionValue) && accordionValue.includes(value);
+
     const toggle = React.useCallback(() => {
       if (disabled) return;
-      
+
       if (type === 'single') {
         if (collapsible && accordionValue === value) {
           onValueChange('');
@@ -312,7 +306,7 @@ const AccordionItem = React.forwardRef<HTMLDivElement, AccordionItemProps>(
         }
       }
     }, [accordionValue, collapsible, disabled, onValueChange, type, value]);
-    
+
     return (
       <AccordionItemContext.Provider
         value={{
@@ -346,17 +340,10 @@ AccordionItem.displayName = 'AccordionItem';
  * Accordion trigger component for toggling accordion content
  */
 const AccordionTrigger = React.forwardRef<HTMLButtonElement, AccordionTriggerProps>(
-  ({
-    className,
-    variant,
-    showChevron = true,
-    chevron,
-    children,
-    ...props
-  }, ref) => {
+  ({ className, variant, showChevron = true, chevron, children, ...props }, ref) => {
     const { isOpen, isDisabled, toggle } = useAccordionItem();
     const { variant: accordionVariant } = useAccordion();
-    
+
     return (
       <button
         ref={ref}
@@ -410,17 +397,12 @@ AccordionTrigger.displayName = 'AccordionTrigger';
  * Accordion content component for displaying accordion content
  */
 const AccordionContent = React.forwardRef<HTMLDivElement, AccordionContentProps>(
-  ({
-    className,
-    variant,
-    children,
-    ...props
-  }, ref) => {
+  ({ className, variant, children, ...props }, ref) => {
     const { isOpen } = useAccordionItem();
     const { variant: accordionVariant } = useAccordion();
-    
+
     if (!isOpen) return null;
-    
+
     return (
       <div
         ref={ref}
@@ -439,9 +421,4 @@ const AccordionContent = React.forwardRef<HTMLDivElement, AccordionContentProps>
 
 AccordionContent.displayName = 'AccordionContent';
 
-export {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-};
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger };

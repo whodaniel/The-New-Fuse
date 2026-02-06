@@ -1,21 +1,13 @@
-import { Module, Global } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { RedisRateLimiterService } from './redis-rate-limiter.service';
 import { RateLimitGuard } from './rate-limit.guard';
 import { RateLimitMiddleware } from './rate-limit.middleware';
+import { RedisRateLimiterService } from './redis-rate-limiter.service';
 
 @Global()
 @Module({
   imports: [ConfigModule],
-  providers: [
-    RedisRateLimiterService,
-    RateLimitGuard,
-    RateLimitMiddleware
-  ],
-  exports: [
-    RedisRateLimiterService,
-    RateLimitGuard,
-    RateLimitMiddleware
-  ]
+  providers: [RedisRateLimiterService, RateLimitGuard, RateLimitMiddleware],
+  exports: [RedisRateLimiterService, RateLimitGuard, RateLimitMiddleware],
 })
 export class RateLimitModule {}

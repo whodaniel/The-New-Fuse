@@ -65,7 +65,10 @@ export class ClawdEngine {
       console.log('[OpenClawEngine] Connected to OpenClaw Gateway');
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.warn('[OpenClawEngine] Failed to connect to OpenClaw Gateway (Will retry on usage):', e);
+      console.warn(
+        '[OpenClawEngine] Failed to connect to OpenClaw Gateway (Will retry on usage):',
+        e
+      );
     }
 
     // Initialize Scheduler with proactive skills
@@ -93,7 +96,9 @@ export class ClawdEngine {
           if (trigger.startsWith('cron:')) {
             const expression = trigger.replace('cron:', '').trim();
             // eslint-disable-next-line no-console
-            console.log(`[OpenClawEngine] Scheduling skill '${skill.name}' with cron: ${expression}`);
+            console.log(
+              `[OpenClawEngine] Scheduling skill '${skill.name}' with cron: ${expression}`
+            );
 
             await this.scheduler.scheduleSkill(skill.name, expression, {}, async () => {
               // Fallback / Local Handler
@@ -163,6 +168,10 @@ export class ClawdEngine {
     const skill = this.assimilationService.getSkill(skillName);
     if (!skill) {
       throw new Error(`Skill ${skillName} not found`);
+    }
+
+    if (process.env.OPENCLAW_SKILL_SIGNATURE_REQUIRED === 'true' && !skill.verified) {
+      throw new Error(`Skill ${skillName} is not verified and cannot be executed`);
     }
 
     // eslint-disable-next-line no-console

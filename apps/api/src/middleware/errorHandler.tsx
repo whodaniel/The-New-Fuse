@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Logger } from 'winston';
 
 export class ApiError extends Error {
@@ -12,28 +12,23 @@ export class ApiError extends Error {
 }
 
 export const errorHandler = (logger: Logger): any => {
-  return (
-    error: Error,
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  return (error: Error, req: Request, res: Response, next: NextFunction) => {
     if (error instanceof ApiError) {
       logger.warn(`API Error: ${error.message}`, {
         statusCode: error.statusCode,
         details: error.details,
-        path: req.path
+        path: req.path,
       });
 
       return res.status(error.statusCode).json({
         error: error.message,
-        details: error.details
+        details: error.details,
       });
     }
 
     logger.error('Unhandled Error:', error);
     res.status(500).json({
-      error: 'Internal server error'
+      error: 'Internal server error',
     });
   };
 };

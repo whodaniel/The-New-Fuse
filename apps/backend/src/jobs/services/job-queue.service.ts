@@ -1,15 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
-import { Queue, JobOptions } from 'bull';
-import { QueueName, JobPriority, JOB_ATTEMPTS, JOB_BACKOFF } from '../constants/queue-names';
+import { Injectable, Logger } from '@nestjs/common';
+import { Queue } from 'bull';
+import { JOB_ATTEMPTS, JOB_BACKOFF, JobPriority, QueueName } from '../constants/queue-names';
 import {
-  EmailJobData,
-  WelcomeEmailJobData,
-  NotificationEmailJobData,
   AgentExecutionJobData,
-  ReportGenerationJobData,
-  DataSyncJobData,
   CleanupJobData,
+  DataSyncJobData,
+  EmailJobData,
+  NotificationEmailJobData,
+  ReportGenerationJobData,
+  WelcomeEmailJobData,
 } from '../interfaces/job-data.interface';
 
 /**
@@ -25,7 +25,7 @@ export class JobQueueService {
     @InjectQueue(QueueName.AGENT_EXECUTION) private agentQueue: Queue,
     @InjectQueue(QueueName.REPORT_GENERATION) private reportQueue: Queue,
     @InjectQueue(QueueName.DATA_SYNC) private dataSyncQueue: Queue,
-    @InjectQueue(QueueName.CLEANUP) private cleanupQueue: Queue,
+    @InjectQueue(QueueName.CLEANUP) private cleanupQueue: Queue
   ) {}
 
   /**
@@ -67,7 +67,7 @@ export class JobQueueService {
    */
   async sendNotificationEmail(
     data: NotificationEmailJobData,
-    priority: JobPriority = JobPriority.NORMAL,
+    priority: JobPriority = JobPriority.NORMAL
   ) {
     const job = await this.emailQueue.add('notification-email', data, {
       priority,
@@ -85,10 +85,7 @@ export class JobQueueService {
   /**
    * Execute an agent in the background
    */
-  async executeAgent(
-    data: AgentExecutionJobData,
-    priority: JobPriority = JobPriority.NORMAL,
-  ) {
+  async executeAgent(data: AgentExecutionJobData, priority: JobPriority = JobPriority.NORMAL) {
     const job = await this.agentQueue.add('execute-agent', data, {
       priority,
       attempts: JOB_ATTEMPTS.AGENT_EXECUTION,
@@ -108,16 +105,20 @@ export class JobQueueService {
    */
   async executeBatchAgents(
     agents: AgentExecutionJobData[],
-    priority: JobPriority = JobPriority.NORMAL,
+    priority: JobPriority = JobPriority.NORMAL
   ) {
-    const job = await this.agentQueue.add('batch-execute-agents', { agents }, {
-      priority,
-      attempts: JOB_ATTEMPTS.AGENT_EXECUTION,
-      backoff: {
-        type: 'exponential',
-        delay: JOB_BACKOFF.AGENT_EXECUTION,
-      },
-    });
+    const job = await this.agentQueue.add(
+      'batch-execute-agents',
+      { agents },
+      {
+        priority,
+        attempts: JOB_ATTEMPTS.AGENT_EXECUTION,
+        backoff: {
+          type: 'exponential',
+          delay: JOB_BACKOFF.AGENT_EXECUTION,
+        },
+      }
+    );
 
     this.logger.log(`Batch agent execution job added with ${agents.length} agents: ${job.id}`);
     return job;
@@ -126,10 +127,7 @@ export class JobQueueService {
   /**
    * Generate a report
    */
-  async generateReport(
-    data: ReportGenerationJobData,
-    priority: JobPriority = JobPriority.NORMAL,
-  ) {
+  async generateReport(data: ReportGenerationJobData, priority: JobPriority = JobPriority.NORMAL) {
     const job = await this.reportQueue.add('generate-report', data, {
       priority,
       attempts: JOB_ATTEMPTS.REPORT_GENERATION,
@@ -156,9 +154,7 @@ export class JobQueueService {
       },
     });
 
-    this.logger.log(
-      `Data sync job added from ${data.source} to ${data.destination}: ${job.id}`,
-    );
+    this.logger.log(`Data sync job added from ${data.source} to ${data.destination}: ${job.id}`);
     return job;
   }
 
@@ -187,7 +183,7 @@ export class JobQueueService {
     jobName: string,
     data: any,
     delay: number,
-    priority: JobPriority = JobPriority.NORMAL,
+    priority: JobPriority = JobPriority.NORMAL
   ) {
     const queue = this.getQueue(queueName);
     const job = await queue.add(jobName, data, {
@@ -200,9 +196,7 @@ export class JobQueueService {
       },
     });
 
-    this.logger.log(
-      `Delayed job added to ${queueName} (delay: ${delay}ms): ${job.id}`,
-    );
+    this.logger.log(`Delayed job added to ${queueName} (delay: ${delay}ms): ${job.id}`);
     return job;
   }
 

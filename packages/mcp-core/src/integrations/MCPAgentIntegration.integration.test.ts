@@ -1,14 +1,14 @@
 /**
  * Integration tests for MCPAgentIntegration
- * 
+ *
  * These tests verify the end-to-end functionality of agent-to-agent MCP communication,
  * including message routing, capability discovery, and collaboration tracking.
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MCPAgentIntegration } from './MCPAgentIntegration';
-import { AgentStatus } from '../interfaces/IMCPAgentIntegration';
 import type { Agent, IMCPBroker, IMCPClient } from '../interfaces';
+import { AgentStatus } from '../interfaces/IMCPAgentIntegration';
+import { MCPAgentIntegration } from './MCPAgentIntegration';
 
 // Mock implementations for integration testing
 const mockBroker: IMCPBroker = {
@@ -16,7 +16,7 @@ const mockBroker: IMCPBroker = {
   unregisterService: jest.fn(),
   discoverServices: jest.fn(),
   routeRequest: jest.fn(),
-  getServiceHealth: jest.fn()
+  getServiceHealth: jest.fn(),
 };
 
 const mockClient: IMCPClient = {
@@ -27,7 +27,7 @@ const mockClient: IMCPClient = {
   listResources: jest.fn(),
   readResource: jest.fn(),
   callTool: jest.fn(),
-  getServerCapabilities: jest.fn()
+  getServerCapabilities: jest.fn(),
 };
 
 describe('MCPAgentIntegration Integration Tests', () => {
@@ -38,7 +38,7 @@ describe('MCPAgentIntegration Integration Tests', () => {
   beforeEach(async () => {
     // Reset all mocks
     jest.clearAllMocks();
-    
+
     // Setup successful mock responses
     (mockBroker.registerService as Mock).mockResolvedValue(undefined);
     (mockBroker.unregisterService as Mock).mockResolvedValue(undefined);
@@ -46,14 +46,14 @@ describe('MCPAgentIntegration Integration Tests', () => {
       serviceId: 'test',
       status: 'online',
       responseTime: 100,
-      errorRate: 0.01
+      errorRate: 0.01,
     });
 
     integration = new MCPAgentIntegration(mockBroker, mockClient, {
       defaultTimeout: 5000,
       maxRetries: 2,
       heartbeatInterval: 1000,
-      enableAuditLog: false
+      enableAuditLog: false,
     });
 
     // Create test agents
@@ -69,7 +69,7 @@ describe('MCPAgentIntegration Integration Tests', () => {
       status: AgentStatus.ACTIVE,
       createdAt: new Date(),
       lastActivity: new Date(),
-      metadata: { type: 'test', priority: 'high' }
+      metadata: { type: 'test', priority: 'high' },
     };
 
     testAgent2 = {
@@ -84,7 +84,7 @@ describe('MCPAgentIntegration Integration Tests', () => {
       status: AgentStatus.ACTIVE,
       createdAt: new Date(),
       lastActivity: new Date(),
-      metadata: { type: 'test', priority: 'medium' }
+      metadata: { type: 'test', priority: 'medium' },
     };
   });
 
@@ -105,8 +105,8 @@ describe('MCPAgentIntegration Integration Tests', () => {
       // List all registered agents
       const endpoints = await integration.listAgentEndpoints();
       expect(endpoints).toHaveLength(2);
-      
-      const agentIds = endpoints.map(e => e.agentId);
+
+      const agentIds = endpoints.map((e) => e.agentId);
       expect(agentIds).toContain(testAgent1.id);
       expect(agentIds).toContain(testAgent2.id);
     });
@@ -128,7 +128,7 @@ describe('MCPAgentIntegration Integration Tests', () => {
       await integration.registerAgentAsMCPService(testAgent1);
 
       const capabilities = await integration.getAgentMCPCapabilities(testAgent1.id);
-      
+
       expect(capabilities.agentId).toBe(testAgent1.id);
       expect(capabilities.capabilities).toHaveLength(3); // Default capabilities
       expect(capabilities.resources).toEqual(testAgent1.resources);
@@ -148,21 +148,17 @@ describe('MCPAgentIntegration Integration Tests', () => {
       const message = {
         type: 'request',
         content: 'Hello from agent 1',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       // Mock the broker's routeRequest method to simulate successful routing
       (mockBroker.routeRequest as Mock).mockResolvedValue({
         jsonrpc: '2.0',
         id: 'test-id',
-        result: { success: true, response: 'Hello back from agent 2' }
+        result: { success: true, response: 'Hello back from agent 2' },
       });
 
-      const result = await integration.routeAgentMessage(
-        testAgent1.id,
-        testAgent2.id,
-        message
-      );
+      const result = await integration.routeAgentMessage(testAgent1.id, testAgent2.id, message);
 
       expect(result.success).toBe(true);
       expect(result.routingInfo.fromAgentId).toBe(testAgent1.id);
@@ -173,28 +169,23 @@ describe('MCPAgentIntegration Integration Tests', () => {
 
     it('should handle message routing with custom routing options', async () => {
       const message = { content: 'Priority message' };
-      
+
       (mockBroker.routeRequest as Mock).mockResolvedValue({
         jsonrpc: '2.0',
         id: 'test-id',
-        result: { received: true }
+        result: { received: true },
       });
 
-      const result = await integration.routeAgentMessage(
-        testAgent1.id,
-        testAgent2.id,
-        message,
-        {
-          messageType: 'notification',
-          priority: 'high',
-          timeout: 10000,
-          retryPolicy: {
-            maxRetries: 1,
-            backoffMs: 500,
-            exponential: false
-          }
-        }
-      );
+      const result = await integration.routeAgentMessage(testAgent1.id, testAgent2.id, message, {
+        messageType: 'notification',
+        priority: 'high',
+        timeout: 10000,
+        retryPolicy: {
+          maxRetries: 1,
+          backoffMs: 500,
+          exponential: false,
+        },
+      });
 
       expect(result.success).toBe(true);
       expect(result.routingInfo.messageType).toBe('notification');
@@ -204,28 +195,23 @@ describe('MCPAgentIntegration Integration Tests', () => {
 
     it('should retry failed message routing', async () => {
       const message = { content: 'Test retry' };
-      
+
       // Mock first call to fail, second to succeed
       (mockBroker.routeRequest as Mock)
         .mockRejectedValueOnce(new Error('Network error'))
         .mockResolvedValueOnce({
           jsonrpc: '2.0',
           id: 'test-id',
-          result: { success: true }
+          result: { success: true },
         });
 
-      const result = await integration.routeAgentMessage(
-        testAgent1.id,
-        testAgent2.id,
-        message,
-        {
-          retryPolicy: {
-            maxRetries: 1,
-            backoffMs: 10,
-            exponential: false
-          }
-        }
-      );
+      const result = await integration.routeAgentMessage(testAgent1.id, testAgent2.id, message, {
+        retryPolicy: {
+          maxRetries: 1,
+          backoffMs: 10,
+          exponential: false,
+        },
+      });
 
       expect(result.success).toBe(true);
       expect(result.retryCount).toBe(1);
@@ -237,12 +223,8 @@ describe('MCPAgentIntegration Integration Tests', () => {
       await integration.updateAgentStatus(testAgent2.id, AgentStatus.INACTIVE);
 
       const message = { content: 'Test message' };
-      
-      const result = await integration.routeAgentMessage(
-        testAgent1.id,
-        testAgent2.id,
-        message
-      );
+
+      const result = await integration.routeAgentMessage(testAgent1.id, testAgent2.id, message);
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('is not active');
@@ -298,7 +280,7 @@ describe('MCPAgentIntegration Integration Tests', () => {
       const testAgent3: Agent = {
         ...testAgent1,
         id: 'agent-3',
-        name: 'Test Agent 3'
+        name: 'Test Agent 3',
       };
       await integration.registerAgentAsMCPService(testAgent3);
 
@@ -375,8 +357,8 @@ describe('MCPAgentIntegration Integration Tests', () => {
       expect(initialHealth.availability).toBeGreaterThan(0.9);
 
       // Wait a bit and check availability (should still be high due to recent registration)
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       const laterHealth = await integration.getAgentHealth(testAgent1.id);
       expect(laterHealth.availability).toBeGreaterThan(0.8); // Should still be reasonably high
     });
@@ -396,11 +378,9 @@ describe('MCPAgentIntegration Integration Tests', () => {
     it('should handle message routing to non-existent agent', async () => {
       await integration.registerAgentAsMCPService(testAgent1);
 
-      const result = await integration.routeAgentMessage(
-        testAgent1.id,
-        'non-existent-agent',
-        { content: 'test' }
-      );
+      const result = await integration.routeAgentMessage(testAgent1.id, 'non-existent-agent', {
+        content: 'test',
+      });
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('not found or not registered');
@@ -408,9 +388,9 @@ describe('MCPAgentIntegration Integration Tests', () => {
 
     it('should handle operations on unregistered agents', async () => {
       // Try to get capabilities for non-existent agent
-      await expect(
-        integration.getAgentMCPCapabilities('non-existent')
-      ).rejects.toThrow('not found');
+      await expect(integration.getAgentMCPCapabilities('non-existent')).rejects.toThrow(
+        'not found'
+      );
 
       // Try to update status for non-existent agent
       const statusResult = await integration.updateAgentStatus('non-existent', AgentStatus.ACTIVE);
@@ -445,7 +425,7 @@ describe('MCPAgentIntegration Integration Tests', () => {
         const agent: Agent = {
           ...testAgent1,
           id: `agent-${i}`,
-          name: `Test Agent ${i}`
+          name: `Test Agent ${i}`,
         };
         agents.push(agent);
         registrationPromises.push(integration.registerAgentAsMCPService(agent));
@@ -453,9 +433,9 @@ describe('MCPAgentIntegration Integration Tests', () => {
 
       // Register all agents concurrently
       const results = await Promise.all(registrationPromises);
-      
+
       // All registrations should succeed
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.success).toBe(true);
       });
 
@@ -464,9 +444,7 @@ describe('MCPAgentIntegration Integration Tests', () => {
       expect(endpoints).toHaveLength(10);
 
       // Clean up
-      const unregisterPromises = agents.map(agent => 
-        integration.unregisterAgent(agent.id)
-      );
+      const unregisterPromises = agents.map((agent) => integration.unregisterAgent(agent.id));
       await Promise.all(unregisterPromises);
     });
 
@@ -478,25 +456,21 @@ describe('MCPAgentIntegration Integration Tests', () => {
       (mockBroker.routeRequest as Mock).mockResolvedValue({
         jsonrpc: '2.0',
         id: 'test-id',
-        result: { success: true }
+        result: { success: true },
       });
 
       // Send multiple messages rapidly
       const messagePromises: Promise<any>[] = [];
       for (let i = 0; i < 20; i++) {
         messagePromises.push(
-          integration.routeAgentMessage(
-            testAgent1.id,
-            testAgent2.id,
-            { content: `Message ${i}` }
-          )
+          integration.routeAgentMessage(testAgent1.id, testAgent2.id, { content: `Message ${i}` })
         );
       }
 
       const results = await Promise.all(messagePromises);
-      
+
       // All messages should be routed successfully
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.success).toBe(true);
       });
     });

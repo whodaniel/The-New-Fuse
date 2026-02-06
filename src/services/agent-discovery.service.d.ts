@@ -1,17 +1,17 @@
-import { PrismaService } from '../lib/prisma/prisma.service.js';
+import { DatabaseService } from '../lib/drizzle/drizzle.service.js';
 import { MCPBrokerService } from '../mcp/services/mcp-broker.service.tsx';
-import { AgentType } from '@prisma/client';
+import { AgentType } from '@drizzle/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 /**
  * Service for discovering and registering agents
  * This implements the standard discovery protocol for all agents
  */
 export declare class AgentDiscoveryService {
-    private readonly prisma;
+    private readonly drizzle;
     private readonly mcpBroker;
     private readonly eventEmitter;
     private readonly logger;
-    constructor(prisma: PrismaService, mcpBroker: MCPBrokerService, eventEmitter: EventEmitter2);
+    constructor(drizzle: DatabaseService, mcpBroker: MCPBrokerService, eventEmitter: EventEmitter2);
     /**
      * Register a new agent with its tools
      */

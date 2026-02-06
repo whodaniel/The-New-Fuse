@@ -1,6 +1,8 @@
 # The New Fuse API - Usage Guide
 
-Welcome to The New Fuse API! This guide will help you get started with our comprehensive API for multi-agent orchestration, workflow automation, and blockchain integration.
+Welcome to The New Fuse API! This guide will help you get started with our
+comprehensive API for multi-agent orchestration, workflow automation, and
+blockchain integration.
 
 ## Table of Contents
 
@@ -32,6 +34,7 @@ Interactive API documentation is available via Swagger UI:
 - **Production**: https://api.thenewfuse.com/api-docs
 
 The Swagger UI provides:
+
 - Interactive API testing
 - Request/response schemas
 - Authentication configuration
@@ -47,7 +50,8 @@ The Swagger UI provides:
 
 ## Authentication
 
-The New Fuse API uses **JWT (JSON Web Token)** authentication for most endpoints.
+The New Fuse API uses **JWT (JSON Web Token)** authentication for most
+endpoints.
 
 ### 1. Register a New Account
 
@@ -64,6 +68,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -93,7 +98,8 @@ Content-Type: application/json
 
 ### 3. Use the Access Token
 
-Include the access token in the `Authorization` header for all authenticated requests:
+Include the access token in the `Authorization` header for all authenticated
+requests:
 
 ```bash
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -101,7 +107,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ### 4. Refresh Tokens
 
-Access tokens expire in 15 minutes. Use the refresh token to get a new access token:
+Access tokens expire in 15 minutes. Use the refresh token to get a new access
+token:
 
 ```bash
 POST /api/auth/refresh
@@ -117,6 +124,7 @@ Content-Type: application/json
 ## API Endpoints Overview
 
 ### Authentication (`/auth`)
+
 - `POST /auth/register` - Register new user
 - `POST /auth/login` - User login
 - `POST /auth/refresh` - Refresh access token
@@ -124,6 +132,7 @@ Content-Type: application/json
 - `GET /auth/me` - Get current user info
 
 ### Agents (`/agents`)
+
 - `GET /agents` - List all agents (filterable)
 - `POST /agents` - Create new agent
 - `GET /agents/active` - Get active agents
@@ -137,6 +146,7 @@ Content-Type: application/json
 - `PUT /agents/{id}/pause` - Pause agent
 
 ### Chat (`/chat`)
+
 - `GET /chat/rooms` - List chat rooms
 - `GET /chat/rooms/{roomId}` - Get room details
 - `GET /chat/rooms/{roomId}/messages` - Get messages (paginated)
@@ -144,6 +154,7 @@ Content-Type: application/json
 - `GET /chat/analytics` - Get chat analytics
 
 ### Workflows (`/workflows`)
+
 - `GET /workflows` - List workflows (paginated)
 - `POST /workflows` - Create workflow
 - `GET /workflows/{id}` - Get workflow details
@@ -156,12 +167,14 @@ Content-Type: application/json
 - `POST /workflows/from-template` - Create from template
 
 ### Web3 Wallets (`/wallets`)
+
 - `POST /wallets/create` - Create new wallet
 - `GET /wallets/user/{userId}` - Get user's wallets
 - `GET /wallets/address/{address}` - Get wallet by address
 - `GET /wallets/info/{walletId}` - Get wallet with smart account info
 
 ### Transactions (`/transactions`)
+
 - `POST /transactions/execute/{walletId}` - Execute transaction
 - `POST /transactions/execute-batch/{walletId}` - Execute batch transaction
 - `GET /transactions/wallet/{walletId}` - Get wallet transactions
@@ -169,6 +182,7 @@ Content-Type: application/json
 - `POST /transactions/ai-user-operation` - Create AI UserOperation
 
 ### Smart Accounts (`/smart-accounts`)
+
 - `POST /smart-accounts/enable/{walletId}` - Enable smart account
 - `POST /smart-accounts/deploy/{walletId}` - Deploy smart account
 - `POST /smart-accounts/execute/{walletId}` - Execute smart account transaction
@@ -176,6 +190,7 @@ Content-Type: application/json
 - `GET /smart-accounts/info/{walletId}` - Get smart account info
 
 ### MCP Protocol (`/mcp`)
+
 - `GET /mcp/servers` - List MCP servers
 - `POST /mcp/servers` - Register MCP server
 - `GET /mcp/servers/{id}/status` - Get server status
@@ -224,6 +239,7 @@ Authorization: Bearer <your-token>
 ```
 
 **Response:**
+
 ```json
 {
   "uptime": 99.2,
@@ -407,16 +423,17 @@ Authorization: Bearer <your-token>
 
 ## Rate Limiting
 
-The API implements tiered rate limiting to ensure fair usage and system stability.
+The API implements tiered rate limiting to ensure fair usage and system
+stability.
 
 ### Rate Limit Tiers
 
-| Tier | Requests per Minute | Applied To |
-|------|---------------------|------------|
-| Auth | 10 | Authentication endpoints |
-| API | 60 | Standard API endpoints |
-| Premium | 120 | Premium users |
-| Admin | 300 | Admin users |
+| Tier    | Requests per Minute | Applied To               |
+| ------- | ------------------- | ------------------------ |
+| Auth    | 10                  | Authentication endpoints |
+| API     | 60                  | Standard API endpoints   |
+| Premium | 120                 | Premium users            |
+| Admin   | 300                 | Admin users              |
 
 ### Rate Limit Headers
 
@@ -430,7 +447,8 @@ X-RateLimit-Reset: 1640000000
 
 ### Handling Rate Limits
 
-When you exceed the rate limit, you'll receive a `429 Too Many Requests` response:
+When you exceed the rate limit, you'll receive a `429 Too Many Requests`
+response:
 
 ```json
 {
@@ -450,7 +468,7 @@ async function apiCall(url, options, retries = 3) {
     if (response.status === 429) {
       const resetTime = response.headers.get('X-RateLimit-Reset');
       const waitTime = Math.min(Math.pow(2, i) * 1000, 60000); // Max 1 minute
-      await new Promise(resolve => setTimeout(resolve, waitTime));
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
       continue;
     }
 
@@ -468,20 +486,20 @@ The API uses standard HTTP status codes and provides detailed error messages.
 
 ### Common Status Codes
 
-| Code | Meaning | Description |
-|------|---------|-------------|
-| 200 | OK | Successful request |
-| 201 | Created | Resource created successfully |
-| 204 | No Content | Successful deletion |
-| 400 | Bad Request | Invalid request data |
-| 401 | Unauthorized | Missing or invalid authentication |
-| 403 | Forbidden | Insufficient permissions |
-| 404 | Not Found | Resource not found |
-| 409 | Conflict | Resource already exists |
-| 422 | Unprocessable Entity | Validation errors |
-| 429 | Too Many Requests | Rate limit exceeded |
-| 500 | Internal Server Error | Server error |
-| 502 | Bad Gateway | Service unavailable |
+| Code | Meaning               | Description                       |
+| ---- | --------------------- | --------------------------------- |
+| 200  | OK                    | Successful request                |
+| 201  | Created               | Resource created successfully     |
+| 204  | No Content            | Successful deletion               |
+| 400  | Bad Request           | Invalid request data              |
+| 401  | Unauthorized          | Missing or invalid authentication |
+| 403  | Forbidden             | Insufficient permissions          |
+| 404  | Not Found             | Resource not found                |
+| 409  | Conflict              | Resource already exists           |
+| 422  | Unprocessable Entity  | Validation errors                 |
+| 429  | Too Many Requests     | Rate limit exceeded               |
+| 500  | Internal Server Error | Server error                      |
+| 502  | Bad Gateway           | Service unavailable               |
 
 ### Error Response Format
 
@@ -505,10 +523,10 @@ try {
   const response = await fetch('http://localhost:3001/api/agents', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(agentData)
+    body: JSON.stringify(agentData),
   });
 
   if (!response.ok) {
@@ -592,12 +610,12 @@ The New Fuse API provides WebSocket support for real-time features.
 ```javascript
 const socket = io('http://localhost:3001', {
   auth: {
-    token: accessToken
+    token: accessToken,
   },
   transports: ['websocket'],
   reconnection: true,
   reconnectionDelay: 1000,
-  reconnectionAttempts: 5
+  reconnectionAttempts: 5,
 });
 
 // Connection events
@@ -630,7 +648,7 @@ socket.on('new_message', (message) => {
 socket.emit('send_message', {
   roomId: 'room123',
   content: 'Hello!',
-  type: 'text'
+  type: 'text',
 });
 ```
 
@@ -691,7 +709,7 @@ class FuseAPIClient {
   async login(email: string, password: string) {
     const response = await axios.post(`${API_BASE_URL}/auth/login`, {
       email,
-      password
+      password,
     });
 
     this.accessToken = response.data.accessToken;
@@ -706,7 +724,7 @@ class FuseAPIClient {
     }
 
     const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-      refreshToken: this.refreshToken
+      refreshToken: this.refreshToken,
     });
 
     this.accessToken = response.data.accessToken;
@@ -720,9 +738,9 @@ class FuseAPIClient {
         url: `${API_BASE_URL}${path}`,
         data,
         headers: {
-          'Authorization': `Bearer ${this.accessToken}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       return response.data;
@@ -766,7 +784,7 @@ class FuseAPIClient {
   async executeWorkflow(workflowId: string, input: any) {
     return this.request('POST', '/workflows/execute', {
       workflowId,
-      input
+      input,
     });
   }
 
@@ -786,7 +804,7 @@ async function main() {
   const agent = await client.createAgent({
     name: 'My Assistant',
     type: 'CHAT',
-    description: 'A helpful assistant'
+    description: 'A helpful assistant',
   });
 
   console.log('Created agent:', agent);
@@ -794,12 +812,16 @@ async function main() {
   // Create and execute a workflow
   const workflow = await client.createWorkflow({
     name: 'Test Workflow',
-    nodes: [/* ... */],
-    edges: [/* ... */]
+    nodes: [
+      /* ... */
+    ],
+    edges: [
+      /* ... */
+    ],
   });
 
   const execution = await client.executeWorkflow(workflow.id, {
-    param1: 'value1'
+    param1: 'value1',
   });
 
   console.log('Execution started:', execution);
@@ -960,16 +982,19 @@ curl -X POST http://localhost:3001/api/wallets/create \
 ## Support and Resources
 
 ### Documentation
+
 - **Swagger UI**: http://localhost:3001/api-docs
 - **OpenAPI Spec**: `/openapi.yaml` in the repository
 - **GitHub**: https://github.com/whodaniel/fuse
 
 ### Getting Help
+
 - **Email**: support@thenewfuse.com
 - **Discord**: https://discord.gg/thenewfuse
 - **GitHub Issues**: https://github.com/whodaniel/fuse/issues
 
 ### Additional Resources
+
 - [Architecture Overview](./ARCHITECTURE.md)
 - [Agent Development Guide](./AGENT_DEVELOPMENT.md)
 - [Workflow Builder Guide](./WORKFLOW_GUIDE.md)
@@ -980,6 +1005,7 @@ curl -X POST http://localhost:3001/api/wallets/create \
 ## Changelog
 
 ### Version 1.0.0 (2025-11-18)
+
 - Initial API documentation
 - Complete OpenAPI 3.1 specification
 - Swagger UI integration

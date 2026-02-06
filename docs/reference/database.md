@@ -2,11 +2,61 @@
 
 ## Overview
 
-The New Fuse uses PostgreSQL as its primary database. This document outlines the database schema, indexes, and relationships.
+The New Fuse uses PostgreSQL as its primary database. This document outlines the
+database schema, indexes, and relationships.
 
 ## Tables
 
+### Agent Registry
+
+```sql
+CREATE TABLE agent_registrations (
+    id UUID PRIMARY KEY,
+    agent_id UUID NOT NULL,
+    auth_token VARCHAR(512) NOT NULL,
+    verification_status VARCHAR(50) DEFAULT 'PENDING',
+    onboarding_status VARCHAR(50) DEFAULT 'INITIALIZED',
+    onboarding_progress REAL DEFAULT 0,
+    heartbeat_interval INTEGER DEFAULT 60000,
+    is_online BOOLEAN DEFAULT FALSE,
+    last_heartbeat TIMESTAMP,
+    tenant_id VARCHAR(255),
+    organization_id VARCHAR(255),
+    agency_id UUID,
+    identity_long_term_id VARCHAR(255),
+    identity_ephemeral_id VARCHAR(255),
+    identity_federation_id VARCHAR(255),
+    protocol_version VARCHAR(50),
+    trust_tier VARCHAR(50),
+    invite_id UUID,
+    metadata JSONB,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE agent_invitation_codes (
+    id UUID PRIMARY KEY,
+    code_hash VARCHAR(128) UNIQUE NOT NULL,
+    status VARCHAR(50) DEFAULT 'ACTIVE',
+    max_uses INTEGER DEFAULT 1,
+    used_count INTEGER DEFAULT 0,
+    expires_at TIMESTAMP,
+    tenant_id VARCHAR(255),
+    organization_id VARCHAR(255),
+    agency_id UUID,
+    metadata JSONB,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX agent_registrations_tenant_idx ON agent_registrations(tenant_id);
+CREATE INDEX agent_registrations_org_idx ON agent_registrations(organization_id);
+CREATE INDEX agent_registrations_agency_idx ON agent_registrations(agency_id);
+CREATE INDEX agent_registrations_trust_idx ON agent_registrations(trust_tier);
+```
+
 ### Users
+
 ```sql
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -27,6 +77,7 @@ CREATE INDEX idx_users_status ON users(status);
 ```
 
 ### Tasks
+
 ```sql
 CREATE TABLE tasks (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -50,6 +101,7 @@ CREATE INDEX idx_tasks_due_date ON tasks(due_date);
 ```
 
 ### Messages
+
 ```sql
 CREATE TABLE messages (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -69,6 +121,7 @@ CREATE INDEX idx_messages_created_at ON messages(created_at);
 ```
 
 ### Attachments
+
 ```sql
 CREATE TABLE attachments (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -125,23 +178,27 @@ CREATE TABLE stage_transitions (
 ## Relationships
 
 ### Feature Relationships
+
 - One feature can have multiple code metrics (1:1)
 - One feature can have multiple stage transitions (1:N)
 - Features can have dependencies on other features (N:N)
 
 ### User Relationships
+
 - One user can create many tasks (1:N)
 - One user can be assigned many tasks (1:N)
 - One user can send many messages (1:N)
 - One user can upload many attachments (1:N)
 
 ### Task Relationships
+
 - One task belongs to one creator (N:1)
 - One task can be assigned to one user (N:1)
 - One task can have many messages (1:N)
 - One task can have many attachments (1:N)
 
 ### Message Relationships
+
 - One message belongs to one sender (N:1)
 - One message belongs to one task (N:1)
 - One message can have many attachments (1:N)
@@ -149,6 +206,7 @@ CREATE TABLE stage_transitions (
 ## Triggers
 
 ### Updated At Trigger
+
 ```sql
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -177,13 +235,15 @@ CREATE TRIGGER update_messages_updated_at
 
 ## Migrations
 
-Database migrations are managed using TypeORM. Migration files are located in:
+Database migrations are managed using Drizzle. Migration files are located in:
+
 ```
-/apps/api/src/database/migrations/
+/packages/database/drizzle/
 ```
 
 ## Backup and Recovery
 
 For backup and recovery procedures, see:
+
 - [Backup Procedures](/docs/operations/backup.md)
 - [Recovery Procedures](/docs/operations/recovery.md)

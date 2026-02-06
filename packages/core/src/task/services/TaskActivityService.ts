@@ -20,7 +20,7 @@ export class TaskActivityService {
       userId,
       action,
       details,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     const taskActivities = this.activities.get(taskId) || [];

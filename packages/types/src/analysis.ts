@@ -1,10 +1,10 @@
 // packages/types/src/analysis.ts
 
 // Import enums from core to avoid duplication
-import { AnalysisType, AnalysisStatus } from './core/enums';
+import { AnalysisStatus, AnalysisType } from './core/enums';
 
 // Re-export the imported enums
-export { AnalysisType, AnalysisStatus };
+export { AnalysisStatus, AnalysisType };
 
 export type Severity = 'HIGH' | 'MEDIUM' | 'LOW' | 'CRITICAL';
 

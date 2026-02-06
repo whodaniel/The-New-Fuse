@@ -14,7 +14,7 @@ START: What's your MAIN concern?
 │  │     ├─ YES → Repository worth the indirection
 │  │     └─ NO  → Consider simpler ORM direct access
 │  └─ LOW (simple CRUD, single database)
-│     → ORM directly (Prisma, Drizzle)
+│     → ORM directly (Drizzle, Drizzle)
 │     Simpler = Better, Faster
 │
 ├─ Business Rules Complexity?

@@ -289,12 +289,12 @@ export default function ComprehensiveAdminDashboard() {
           <h2 className="text-2xl font-bold text-red-800 mb-2">Failed to Load Data</h2>
           <p className="text-red-600 mb-6">{error}</p>
           <button
-              onClick={loadDashboardData}
-              className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center mx-auto"
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-              Retry
-            </button>
+            onClick={loadDashboardData}
+            className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center mx-auto"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Retry
+          </button>
         </div>
       </div>
     );

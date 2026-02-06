@@ -1,19 +1,18 @@
 /**
  * Message Router Implementation
- * 
+ *
  * Handles routing of MCP requests to appropriate services with load balancing,
  * retry logic, and comprehensive error handling.
  */
 
 import { EventEmitter } from 'events';
-import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
-import { IMessageRouter, EventCallback } from '../interfaces/IMessageRouter';
-import { RoutingMetrics, RoutingInfo, MCPServiceInfo } from '../types/broker';
-import { LoadBalancingStrategy } from '../types/common';
-import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
+import { MCPNotification, MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
+import { EventCallback, IMessageRouter } from '../interfaces/IMessageRouter';
+import { MCPServiceInfo, RoutingInfo, RoutingMetrics } from '../types/broker';
+import { JSONRPCErrorCode, MCPErrorClass, MCPErrorCode } from '../types/error';
+import { EventSubscriptionManager } from './EventSubscriptionManager';
 import { LoadBalancer } from './LoadBalancer';
-import { EventSubscriptionManager, EventMatchResult } from './EventSubscriptionManager';
-import { MessageQueue, QueuedMessage } from './MessageQueue';
+import { MessageQueue } from './MessageQueue';
 
 /**
  * Request tracking information
@@ -39,7 +38,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
   private isStarted: boolean = false;
 
   constructor(
-    loadBalancer: LoadBalancer, 
+    loadBalancer: LoadBalancer,
     eventSubscriptionManager?: EventSubscriptionManager,
     messageQueue?: MessageQueue
   ) {
@@ -79,10 +78,12 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
     // Cancel all active requests
     for (const [requestId, tracker] of this.activeRequests.entries()) {
       // Reject pending requests with a cancellation error
-      tracker.reject(new MCPErrorClass(
-        JSONRPCErrorCode.INTERNAL_ERROR,
-        `Request ${requestId} cancelled: Message router stopped`
-      ));
+      tracker.reject(
+        new MCPErrorClass(
+          JSONRPCErrorCode.INTERNAL_ERROR,
+          `Request ${requestId} cancelled: Message router stopped`
+        )
+      );
       this.emit('requestCancelled', requestId, tracker);
     }
     this.activeRequests.clear();
@@ -100,23 +101,19 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
   /**
    * Route a request to an appropriate service
    */
-  async routeRequest(
-    request: MCPRequest, 
-    routing?: RoutingInfo
-  ): Promise<MCPResponse> {
+  async routeRequest(request: MCPRequest, routing?: RoutingInfo): Promise<MCPResponse> {
     if (!this.isStarted) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Message router is not started'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Message router is not started');
     }
 
     return new Promise<MCPResponse>(async (resolve, reject) => {
       if (!this.isStarted) {
-        reject(new MCPErrorClass(
-          MCPErrorCode.SERVICE_UNAVAILABLE, // This is correct, router not started is a service issue
-          'Message router is not started'
-        ));
+        reject(
+          new MCPErrorClass(
+            MCPErrorCode.SERVICE_UNAVAILABLE, // This is correct, router not started is a service issue
+            'Message router is not started'
+          )
+        );
         return;
       }
 
@@ -130,7 +127,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
         startTime,
         targetService,
         attempts: 0,
-        reject: reject // Store the reject function of this promise
+        reject: reject, // Store the reject function of this promise
       };
 
       this.activeRequests.set(requestId, tracker);
@@ -152,14 +149,16 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
       } catch (error) {
         // Update failure metrics
         this.metrics.failedRequests++;
-        
+
         if (error instanceof MCPErrorClass) {
           reject(error);
         } else {
-          reject(new MCPErrorClass(
-            JSONRPCErrorCode.INTERNAL_ERROR,
-            `Request routing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-          ));
+          reject(
+            new MCPErrorClass(
+              JSONRPCErrorCode.INTERNAL_ERROR,
+              `Request routing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+            )
+          );
         }
       } finally {
         // Clean up request tracker
@@ -174,10 +173,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
    */
   async broadcastNotification(notification: MCPNotification): Promise<void> {
     if (!this.isStarted) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Message router is not started'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Message router is not started');
     }
 
     const services = this.loadBalancer.getAllServices();
@@ -185,7 +181,10 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
       try {
         await this.sendNotificationToService(notification, serviceInstance.service.id);
       } catch (error) {
-        console.error(`Failed to send notification to service ${serviceInstance.service.id}:`, error);
+        console.error(
+          `Failed to send notification to service ${serviceInstance.service.id}:`,
+          error
+        );
       }
     });
 
@@ -197,10 +196,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
    */
   async routeNotification(notification: MCPNotification): Promise<void> {
     if (!this.isStarted) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Message router is not started'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Message router is not started');
     }
 
     // If no event subscription manager or it's not started, fall back to broadcast
@@ -227,7 +223,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
         this.emit('notificationRouted', {
           notification,
           subscription: matchResult.subscription,
-          matchResult
+          matchResult,
         });
       } catch (error) {
         console.error(
@@ -238,8 +234,10 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
     });
 
     await Promise.allSettled(promises);
-    
-    console.log(`Notification ${notification.method} routed to ${matchResults.length} subscribed services`);
+
+    console.log(
+      `Notification ${notification.method} routed to ${matchResults.length} subscribed services`
+    );
   }
 
   /**
@@ -293,7 +291,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
     }
 
     const queuedMessages = await this.messageQueue.dequeueMessagesForService(serviceId);
-    
+
     if (queuedMessages.length === 0) {
       return;
     }
@@ -432,7 +430,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
   ): Promise<MCPResponse> {
     const maxAttempts = routingInfo?.retryPolicy?.maxAttempts || 3;
     const timeout = routingInfo?.timeout || 30000; // 30 seconds default
-    
+
     let lastError: Error | null = null;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -443,11 +441,11 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
       try {
         // Select target service
         let service: MCPServiceInfo | null = null;
-        
+
         if (targetService) {
           // Find specific target service
           const allServices = this.loadBalancer.getAllServices();
-          const serviceInstance = allServices.find(s => s.service.id === targetService);
+          const serviceInstance = allServices.find((s) => s.service.id === targetService);
           service = serviceInstance?.service || null;
         } else {
           // Use load balancer to select service
@@ -461,9 +459,9 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
             await this.queueRequest(request, targetService, {
               priority: routingInfo?.metadata?.priority || 5,
               maxRetries: routingInfo?.retryPolicy?.maxAttempts || 3,
-              timeoutMs: routingInfo?.timeout || 300000
+              timeoutMs: routingInfo?.timeout || 300000,
             });
-            
+
             // Return a deferred response indicating the request was queued
             return {
               jsonrpc: '2.0',
@@ -472,8 +470,8 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
                 status: 'queued',
                 message: 'Request queued for offline service',
                 targetService,
-                timestamp: new Date().toISOString()
-              }
+                timestamp: new Date().toISOString(),
+              },
             };
           } else {
             throw new MCPErrorClass(
@@ -492,23 +490,23 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
         try {
           // Send request to service
           const response = await this.sendRequestToService(request, service.id, timeout);
-          
+
           // Decrement connection count on success
           this.loadBalancer.decrementConnections(service.id);
-          
+
           return response;
         } catch (error) {
           // Decrement connection count on error
           this.loadBalancer.decrementConnections(service.id);
-          
+
           // Update error distribution
           this.updateErrorDistribution(service.id);
-          
+
           throw error;
         }
       } catch (error) {
         lastError = error instanceof Error ? error : new Error('Unknown error');
-        
+
         if (tracker) {
           tracker.lastError = lastError.message;
         }
@@ -527,46 +525,58 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
     }
 
     // This should never be reached, but just in case
-    throw lastError || new MCPErrorClass(JSONRPCErrorCode.INTERNAL_ERROR, 'Request routing failed after all attempts');
+    throw (
+      lastError ||
+      new MCPErrorClass(
+        JSONRPCErrorCode.INTERNAL_ERROR,
+        'Request routing failed after all attempts'
+      )
+    );
   }
 
   /**
    * Send request to a specific service
    */
   private async sendRequestToService(
-    request: MCPRequest, 
-    serviceId: string, 
+    request: MCPRequest,
+    serviceId: string,
     timeout: number
   ): Promise<MCPResponse> {
     // This is a placeholder implementation
     // In a real implementation, this would use the actual MCP client to send the request
-    
+
     return new Promise((resolve, reject) => {
       const timeoutId = setTimeout(() => {
-        reject(new MCPErrorClass(MCPErrorCode.CONNECTION_TIMEOUT, `Request timeout after ${timeout}ms`));
+        reject(
+          new MCPErrorClass(MCPErrorCode.CONNECTION_TIMEOUT, `Request timeout after ${timeout}ms`)
+        );
       }, timeout);
 
       // Simulate request processing
-      setTimeout(() => {
-        clearTimeout(timeoutId);
-        
-        // Simulate occasional failures for testing
-        if (Math.random() < 0.1) { // 10% failure rate
-          reject(new MCPErrorClass(JSONRPCErrorCode.INTERNAL_ERROR, 'Simulated service error'));
-          return;
-        }
+      setTimeout(
+        () => {
+          clearTimeout(timeoutId);
 
-        // Return successful response
-        resolve({
-          jsonrpc: '2.0',
-          id: request.id,
-          result: {
-            serviceId,
-            method: request.method,
-            timestamp: new Date().toISOString()
+          // Simulate occasional failures for testing
+          if (Math.random() < 0.1) {
+            // 10% failure rate
+            reject(new MCPErrorClass(JSONRPCErrorCode.INTERNAL_ERROR, 'Simulated service error'));
+            return;
           }
-        });
-      }, Math.random() * 100 + 50); // 50-150ms response time
+
+          // Return successful response
+          resolve({
+            jsonrpc: '2.0',
+            id: request.id,
+            result: {
+              serviceId,
+              method: request.method,
+              timestamp: new Date().toISOString(),
+            },
+          });
+        },
+        Math.random() * 100 + 50
+      ); // 50-150ms response time
     });
   }
 
@@ -574,23 +584,27 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
    * Send notification to a specific service
    */
   private async sendNotificationToService(
-    notification: MCPNotification, 
+    notification: MCPNotification,
     serviceId: string
   ): Promise<void> {
     // This is a placeholder implementation
     // In a real implementation, this would use the actual MCP client to send the notification
-    
+
     return new Promise((resolve, reject) => {
       // Simulate notification sending
-      setTimeout(() => {
-        // Simulate occasional failures
-        if (Math.random() < 0.05) { // 5% failure rate
-          reject(new Error('Simulated notification failure'));
-          return;
-        }
-        
-        resolve();
-      }, Math.random() * 50 + 10); // 10-60ms processing time
+      setTimeout(
+        () => {
+          // Simulate occasional failures
+          if (Math.random() < 0.05) {
+            // 5% failure rate
+            reject(new Error('Simulated notification failure'));
+            return;
+          }
+
+          resolve();
+        },
+        Math.random() * 50 + 10
+      ); // 10-60ms processing time
     });
   }
 
@@ -601,7 +615,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
     if (error instanceof MCPErrorClass) {
       return error.retryable;
     }
-    
+
     // All other errors (including generic ones not instances of MCPErrorClass) are retryable by default
     return true;
   }
@@ -631,7 +645,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
    * Sleep for specified milliseconds
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -646,7 +660,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
       requestsPerSecond: 0,
       activeConnections: 0,
       serviceDistribution: {},
-      errorDistribution: {}
+      errorDistribution: {},
     };
   }
 
@@ -656,7 +670,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
   private updateResponseTimeMetrics(responseTime: number): void {
     const totalRequests = this.metrics.successfulRequests + this.metrics.failedRequests;
     if (totalRequests > 1) {
-      this.metrics.averageResponseTime = 
+      this.metrics.averageResponseTime =
         (this.metrics.averageResponseTime * (totalRequests - 1) + responseTime) / totalRequests;
     } else {
       this.metrics.averageResponseTime = responseTime;
@@ -667,7 +681,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
    * Update service distribution metrics
    */
   private updateServiceDistribution(serviceId: string): void {
-    this.metrics.serviceDistribution[serviceId] = 
+    this.metrics.serviceDistribution[serviceId] =
       (this.metrics.serviceDistribution[serviceId] || 0) + 1;
   }
 
@@ -675,7 +689,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
    * Update error distribution metrics
    */
   private updateErrorDistribution(serviceId: string): void {
-    this.metrics.errorDistribution[serviceId] = 
+    this.metrics.errorDistribution[serviceId] =
       (this.metrics.errorDistribution[serviceId] || 0) + 1;
   }
 }

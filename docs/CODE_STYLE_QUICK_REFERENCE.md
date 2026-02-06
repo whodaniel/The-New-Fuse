@@ -4,14 +4,14 @@ Quick reference for common code style patterns in The New Fuse monorepo.
 
 ## File Naming
 
-| Type | Convention | Example |
-| --- | --- | --- |
-| React Components | PascalCase | `UserProfile.tsx` |
-| Utilities | camelCase | `formatDate.ts` |
-| Constants | UPPER_SNAKE_CASE | `API_ENDPOINTS.ts` |
-| Types/Interfaces | PascalCase | `UserData.ts` |
-| Tests | `.test.ts` or `.spec.ts` | `UserProfile.test.tsx` |
-| Hooks | `use` prefix | `useAuth.ts` |
+| Type             | Convention               | Example                |
+| ---------------- | ------------------------ | ---------------------- |
+| React Components | PascalCase               | `UserProfile.tsx`      |
+| Utilities        | camelCase                | `formatDate.ts`        |
+| Constants        | UPPER_SNAKE_CASE         | `API_ENDPOINTS.ts`     |
+| Types/Interfaces | PascalCase               | `UserData.ts`          |
+| Tests            | `.test.ts` or `.spec.ts` | `UserProfile.test.tsx` |
+| Hooks            | `use` prefix             | `useAuth.ts`           |
 
 ## Import Order
 
@@ -81,7 +81,8 @@ function process(data: unknown) {}
 const name = user?.profile?.name ?? 'Anonymous';
 
 // ❌ Bad
-const name = user && user.profile && user.profile.name ? user.profile.name : 'Anonymous';
+const name =
+  user && user.profile && user.profile.name ? user.profile.name : 'Anonymous';
 ```
 
 ## React Patterns

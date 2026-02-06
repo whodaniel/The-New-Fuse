@@ -113,7 +113,9 @@ export class AnalysisManager {
       return report;
     } catch (error) {
       this.logger.error(`Analysis failed: ${analysisId}`, error);
-      throw new Error(`Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
@@ -152,10 +154,7 @@ export class AnalysisManager {
           severity: 'high',
           message: 'Potential hardcoded credential detected',
           file,
-          suggestions: [
-            'Use environment variables for credentials',
-            'Use a secure vault service',
-          ],
+          suggestions: ['Use environment variables for credentials', 'Use a secure vault service'],
           timestamp: new Date(),
         });
       }
@@ -192,10 +191,7 @@ export class AnalysisManager {
       type: 'dependency',
       severity: 'medium',
       message: 'Outdated dependency detected',
-      suggestions: [
-        'Update to latest stable version',
-        'Review breaking changes before updating',
-      ],
+      suggestions: ['Update to latest stable version', 'Review breaking changes before updating'],
       timestamp: new Date(),
     });
     return results;
@@ -213,17 +209,17 @@ export class AnalysisManager {
         message: 'High cyclomatic complexity detected',
         file,
         line: 15,
-        suggestions: [
-          'Refactor complex conditional logic',
-          'Extract methods to reduce complexity',
-        ],
+        suggestions: ['Refactor complex conditional logic', 'Extract methods to reduce complexity'],
         timestamp: new Date(),
       });
     }
     return results;
   }
 
-  private async applyCustomRules(files: string[], rules: AnalysisRule[]): Promise<AnalysisResult[]> {
+  private async applyCustomRules(
+    files: string[],
+    rules: AnalysisRule[],
+  ): Promise<AnalysisResult[]> {
     const results: AnalysisResult[] = [];
 
     for (const file of files) {
@@ -244,10 +240,13 @@ export class AnalysisManager {
     return results;
   }
 
-  private filterBySeverity(results: AnalysisResult[], threshold: AnalysisResult['severity']): AnalysisResult[] {
+  private filterBySeverity(
+    results: AnalysisResult[],
+    threshold: AnalysisResult['severity'],
+  ): AnalysisResult[] {
     const severityOrder = { low: 0, medium: 1, high: 2, critical: 3 };
     const thresholdLevel = severityOrder[threshold];
-    return results.filter(result => severityOrder[result.severity] >= thresholdLevel);
+    return results.filter((result) => severityOrder[result.severity] >= thresholdLevel);
   }
 
   private generateSummary(results: AnalysisResult[]): AnalysisReport['summary'] {
@@ -294,12 +293,7 @@ export class AnalysisManager {
       includeDependency: true,
       includeComplexity: true,
       severityThreshold: 'low',
-      excludePatterns: [
-        'node_modules/**',
-        'dist/**',
-        '*.test.*',
-        '*.spec.*',
-      ],
+      excludePatterns: ['node_modules/**', 'dist/**', '*.test.*', '*.spec.*'],
     };
   }
 }

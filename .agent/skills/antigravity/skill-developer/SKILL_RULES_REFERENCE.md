@@ -124,7 +124,7 @@ Complete example of a blocking guardrail skill with all features:
 
     "promptTriggers": {
       "keywords": [
-        "prisma",
+        "drizzle",
         "database",
         "table",
         "column",
@@ -141,7 +141,7 @@ Complete example of a blocking guardrail skill with all features:
 
     "fileTriggers": {
       "pathPatterns": [
-        "**/schema.prisma",
+        "**/schema.drizzle",
         "**/migrations/**/*.sql",
         "database/src/**/*.ts",
         "form/src/**/*.ts",
@@ -153,8 +153,8 @@ Complete example of a blocking guardrail skill with all features:
       "pathExclusions": ["**/*.test.ts", "**/*.spec.ts"],
       "contentPatterns": [
         "import.*[Pp]risma",
-        "PrismaService",
-        "prisma\\.",
+        "DatabaseService",
+        "drizzle\\.",
         "\\.findMany\\(",
         "\\.findUnique\\(",
         "\\.findFirst\\(",
@@ -168,7 +168,7 @@ Complete example of a blocking guardrail skill with all features:
       ]
     },
 
-    "blockMessage": "⚠️ BLOCKED - Database Operation Detected\n\n📋 REQUIRED ACTION:\n1. Use Skill tool: 'database-verification'\n2. Verify ALL table and column names against schema\n3. Check database structure with DESCRIBE commands\n4. Then retry this edit\n\nReason: Prevent column name errors in Prisma queries\nFile: {file_path}\n\n💡 TIP: Add '// @skip-validation' comment to skip future checks",
+    "blockMessage": "⚠️ BLOCKED - Database Operation Detected\n\n📋 REQUIRED ACTION:\n1. Use Skill tool: 'database-verification'\n2. Verify ALL table and column names against schema\n3. Check database structure with DESCRIBE commands\n4. Then retry this edit\n\nReason: Prevent column name errors in Drizzle queries\nFile: {file_path}\n\n💡 TIP: Add '// @skip-validation' comment to skip future checks",
 
     "skipConditions": {
       "sessionSkillUsed": true,

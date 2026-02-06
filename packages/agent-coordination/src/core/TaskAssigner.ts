@@ -1,11 +1,5 @@
 import { EventEmitter } from 'events';
-import {
-  Task,
-  AgentInfo,
-  TaskAssignment,
-  AgentStatus,
-  CoordinationConfig,
-} from './types';
+import { AgentInfo, AgentStatus, CoordinationConfig, Task, TaskAssignment } from './types';
 
 /**
  * Task assignment and load balancing
@@ -65,10 +59,7 @@ export class TaskAssigner extends EventEmitter {
   /**
    * Filter agents that can handle the task
    */
-  private filterEligibleAgents(
-    task: Task,
-    agents: AgentInfo[]
-  ): AgentInfo[] {
+  private filterEligibleAgents(task: Task, agents: AgentInfo[]): AgentInfo[] {
     return agents.filter((agent) => {
       // Check agent status
       if (agent.status !== AgentStatus.IDLE && agent.status !== AgentStatus.BUSY) {
@@ -81,10 +72,7 @@ export class TaskAssigner extends EventEmitter {
       }
 
       // Check capabilities if required
-      if (
-        this.config.loadBalancing?.considerCapabilities &&
-        task.requiredCapabilities
-      ) {
+      if (this.config.loadBalancing?.considerCapabilities && task.requiredCapabilities) {
         const agentCapabilityNames = agent.capabilities.map((c) => c.name);
         const hasAllCapabilities = task.requiredCapabilities.every((required) =>
           agentCapabilityNames.includes(required)

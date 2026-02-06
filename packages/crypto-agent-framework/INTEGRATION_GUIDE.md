@@ -1,6 +1,7 @@
 # Integration Guide: 4-Layer Crypto Agent Framework with The New Fuse
 
-This guide walks you through integrating the Python-based crypto agent framework with The New Fuse TypeScript/NestJS backend.
+This guide walks you through integrating the Python-based crypto agent framework
+with The New Fuse TypeScript/NestJS backend.
 
 ## Architecture Integration
 
@@ -149,6 +150,7 @@ if __name__ == "__main__":
 ```
 
 Run it:
+
 ```bash
 pip install fastapi uvicorn
 python api_server.py
@@ -180,7 +182,7 @@ export class EnhancedNFTService {
     // Use crypto agent for complex multi-step operation
     const result = await this.cryptoAgent.submitTask({
       prompt: `Generate image of '${description}', mint as NFT on Base, list for 100 USDC`,
-      requester: userId
+      requester: userId,
     });
 
     // Store task in your database for tracking
@@ -194,7 +196,7 @@ export class EnhancedNFTService {
    */
   async autoStakeNFTProceeds(nftSaleAmount: number) {
     return await this.cryptoAgent.submitTask({
-      prompt: `Stake ${nftSaleAmount} USDC in highest-yield pool`
+      prompt: `Stake ${nftSaleAmount} USDC in highest-yield pool`,
     });
   }
 }
@@ -210,8 +212,8 @@ export class CryptoAgentFrontendService {
   private api = axios.create({
     baseURL: '/api/crypto-agent',
     headers: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   });
 
   async submitTask(prompt: string) {
@@ -230,11 +232,15 @@ export class CryptoAgentFrontendService {
   }
 
   // Convenience methods
-  async generateAndMintNFT(description: string, chain = 'base', listingPrice = '100 USDC') {
+  async generateAndMintNFT(
+    description: string,
+    chain = 'base',
+    listingPrice = '100 USDC'
+  ) {
     return await this.api.post('/nft/generate-and-mint', {
       description,
       chain,
-      listingPrice
+      listingPrice,
     });
   }
 
@@ -328,7 +334,7 @@ services:
       context: ./packages/crypto-agent-framework
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - '8000:8000'
     environment:
       - AGENT_ID=${AGENT_ID}
       - AGENT_PRIVATE_KEY=${AGENT_PRIVATE_KEY}
@@ -337,7 +343,7 @@ services:
     volumes:
       - ./arweave-keyfile.json:/app/arweave-keyfile.json:ro
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:8000/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -386,11 +392,13 @@ ls -la  # Should see .ts files
 ### Issue: Python process crashes
 
 Check logs:
+
 ```bash
 tail -f packages/crypto-agent-framework/logs/agent.log
 ```
 
 Enable debug mode:
+
 ```bash
 export LOG_LEVEL=DEBUG
 python main.py
@@ -399,6 +407,7 @@ python main.py
 ### Issue: CORS errors from frontend
 
 Add to NestJS CORS config:
+
 ```typescript
 app.enableCors({
   origin: process.env.FRONTEND_URL,

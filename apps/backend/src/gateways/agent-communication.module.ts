@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AgentCommunicationGateway } from './agent-communication.gateway';
 import { RedisModule } from '../modules/redis/redis.module';
+import { AgentCommunicationGateway } from './agent-communication.gateway';
 
 @Module({
   imports: [RedisModule],

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { PrismaClient } from '@prisma/client';
+import { DatabaseService } from '@db/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { RedisClientType } from 'redis';
 import { JulesWebhookHandler } from '../src/JulesWebhookHandler';
@@ -11,12 +11,12 @@ class JulesUsageTracker {
 
 describe('JulesWebhookHandler', () => {
   let handler: JulesWebhookHandler;
-  let db: DeepMockProxy<PrismaClient>;
+  let db: DeepMockProxy<DatabaseService>;
   let redis: DeepMockProxy<RedisClientType>;
   let usageTracker: JulesUsageTracker;
 
   beforeEach(() => {
-    db = mockDeep<PrismaClient>();
+    db = mockDeep<DatabaseService>();
     redis = mockDeep<RedisClientType>();
     usageTracker = new JulesUsageTracker();
     handler = new JulesWebhookHandler(db as any, redis as any, usageTracker);

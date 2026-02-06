@@ -7,37 +7,37 @@
  */
 
 import {
+  ApiIntegrationError,
   ApplicationError,
-  NetworkError,
-  TimeoutError,
-  ConnectionError,
-  HttpError,
   AuthenticationError,
-  TokenExpiredError,
-  InvalidCredentialsError,
   AuthorizationError,
-  InsufficientPermissionsError,
-  ValidationError,
-  RequiredFieldError,
-  InvalidFormatError,
-  OutOfRangeError,
   BusinessError,
-  NotFoundError,
-  ConflictError,
-  DuplicateResourceError,
-  OperationNotAllowedError,
-  RateLimitError,
-  SystemError,
-  DatabaseError,
   ConfigurationError,
-  ServiceUnavailableError,
+  ConflictError,
+  ConnectionError,
+  DatabaseError,
+  DuplicateResourceError,
   ExternalServiceError,
   FileSystemError,
-  IntegrationError,
-  ApiIntegrationError,
-  PaymentError,
-  PaymentDeclinedError,
+  HttpError,
   InsufficientFundsError,
+  InsufficientPermissionsError,
+  IntegrationError,
+  InvalidCredentialsError,
+  InvalidFormatError,
+  NetworkError,
+  NotFoundError,
+  OperationNotAllowedError,
+  OutOfRangeError,
+  PaymentDeclinedError,
+  PaymentError,
+  RateLimitError,
+  RequiredFieldError,
+  ServiceUnavailableError,
+  SystemError,
+  TimeoutError,
+  TokenExpiredError,
+  ValidationError,
 } from '../errors/CustomErrors.js';
 import { ErrorCategory, ErrorSeverity } from '../interfaces/IErrorHandling.js';
 
@@ -273,12 +273,7 @@ export class ErrorFactory {
   /**
    * Create out of range error
    */
-  static outOfRange(
-    field: string,
-    min?: number,
-    max?: number,
-    actualValue?: any
-  ): OutOfRangeError {
+  static outOfRange(field: string, min?: number, max?: number, actualValue?: any): OutOfRangeError {
     return new OutOfRangeError(field, min, max, actualValue);
   }
 
@@ -420,11 +415,7 @@ export class ErrorFactory {
   /**
    * Create payment error
    */
-  static payment(
-    message: string,
-    code?: number,
-    metadata?: Record<string, any>
-  ): PaymentError {
+  static payment(message: string, code?: number, metadata?: Record<string, any>): PaymentError {
     return new PaymentError(message, code, metadata);
   }
 

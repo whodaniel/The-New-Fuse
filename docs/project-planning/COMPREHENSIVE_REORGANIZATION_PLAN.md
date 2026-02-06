@@ -2,14 +2,18 @@
 
 ## Executive Summary
 
-This document outlines a complete step-by-step plan to reorganize The New Fuse codebase, addressing structural issues while preserving 100% of existing functionality. The reorganization will improve maintainability, developer experience, and system performance.
+This document outlines a complete step-by-step plan to reorganize The New Fuse
+codebase, addressing structural issues while preserving 100% of existing
+functionality. The reorganization will improve maintainability, developer
+experience, and system performance.
 
 ## Current State Assessment
 
 ### Identified Issues
 
 - Package import naming inconsistencies (`@tnf/types` vs `@the-new-fuse/types`)
-- Duplicate code paths (`src/modules/webhooks/` vs `apps/api/src/modules/webhooks/`)
+- Duplicate code paths (`src/modules/webhooks/` vs
+  `apps/api/src/modules/webhooks/`)
 - TypeORM decorator syntax incompatibilities
 - Complex TypeScript configuration spread across multiple files
 - Inconsistent build processes
@@ -108,13 +112,13 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
    // scripts/update-imports.js
    const fs = require('fs');
    const path = require('path');
-   
+
    const replacements = {
      '@tnf/types': '@the-new-fuse/types',
      '@tnf/core': '@the-new-fuse/core',
-     '@tnf/shared': '@the-new-fuse/shared'
+     '@tnf/shared': '@the-new-fuse/shared',
    };
-   
+
    // Implement recursive file processing
    ```
 
@@ -322,7 +326,7 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
      url: process.env.DATABASE_URL,
      entities: ['dist/**/*.entity.js'],
      migrations: ['dist/migrations/*.js'],
-     synchronize: false
+     synchronize: false,
    };
    ```
 
@@ -424,8 +428,11 @@ This document outlines a complete step-by-step plan to reorganize The New Fuse c
 
    ```markdown
    # docs/DEVELOPMENT.md
+
    ## Getting Started
+
    ## Architecture Overview
+
    ## Contributing Guidelines
    ```
 
@@ -687,6 +694,10 @@ pnpm run scripts/validate-functionality.js
 
 ## Conclusion
 
-This comprehensive reorganization plan addresses all identified structural issues while maintaining a rigorous focus on functionality preservation. The phased approach ensures manageable risk levels and provides multiple validation checkpoints throughout the process.
+This comprehensive reorganization plan addresses all identified structural
+issues while maintaining a rigorous focus on functionality preservation. The
+phased approach ensures manageable risk levels and provides multiple validation
+checkpoints throughout the process.
 
-The expected outcome is a more maintainable, performant, and developer-friendly codebase that serves as a solid foundation for future development.
+The expected outcome is a more maintainable, performant, and developer-friendly
+codebase that serves as a solid foundation for future development.

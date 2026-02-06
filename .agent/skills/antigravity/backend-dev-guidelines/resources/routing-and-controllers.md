@@ -434,7 +434,7 @@ router.post('/:formID/submit', async (req: Request, res: Response) => {
     }
 
     // ❌ Response processing in route
-    const post = await PrismaService.main.post.findUnique({
+    const post = await DatabaseService.main.post.findUnique({
       where: { id: postData.id },
       include: { comments: true },
     });
@@ -670,7 +670,7 @@ this.handleError(new ForbiddenError('No permission'), res, 'operation', 403);
 
 - Route file > 100 lines
 - Multiple try-catch blocks in one route
-- Direct database access (Prisma calls)
+- Direct database access (Drizzle calls)
 - Complex business logic (if statements, loops)
 - Permission checks in routes
 
@@ -680,8 +680,8 @@ this.handleError(new ForbiddenError('No permission'), res, 'operation', 403);
 # Find large route files
 wc -l form/src/routes/*.ts | sort -n
 
-# Find routes with Prisma usage
-grep -r "PrismaService" form/src/routes/
+# Find routes with Drizzle usage
+grep -r "DatabaseService" form/src/routes/
 ```
 
 ### Refactoring Process
@@ -756,11 +756,11 @@ export class ActionService {
 // Repository handles data access
 export class ActionRepository {
   async findById(id: number): Promise<Entity | null> {
-    return PrismaService.main.entity.findUnique({ where: { id } });
+    return DatabaseService.main.entity.findUnique({ where: { id } });
   }
 
   async update(id: number, data: Partial<Entity>): Promise<Entity> {
-    return PrismaService.main.entity.update({ where: { id }, data });
+    return DatabaseService.main.entity.update({ where: { id }, data });
   }
 }
 ```

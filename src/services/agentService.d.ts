@@ -1,12 +1,12 @@
 import { Agent, CreateAgentDto, UpdateAgentDto, AgentStatus } from "@the-new-fuse/types";
-import { PrismaService } from '../lib/prisma.service.tsx';
+import { DatabaseService } from '../lib/drizzle.service.tsx';
 import { ConfigService } from "@nestjs/config";
 export declare class AgentService {
-    private readonly prisma;
+    private readonly drizzle;
     private readonly config;
     private readonly logger;
-    constructor(prisma: PrismaService, config: ConfigService);
-    private transformPrismaAgent;
+    constructor(drizzle: DatabaseService, config: ConfigService);
+    private transformDrizzleAgent;
     createAgent(data: CreateAgentDto, userId: string): Promise<Agent>;
     getAgents(userId: string): Promise<Agent[]>;
     getAgent(id: string, userId: string): Promise<Agent>;

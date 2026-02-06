@@ -5,6 +5,7 @@
 All source files have been created with the new neon cyberpunk design:
 
 ### Created Files:
+
 1. ✅ `manifest.json` - Updated to v4.0.0
 2. ✅ `src/styles/theme.css` - Complete neon design system
 3. ✅ `src/popup/popup-neon.html` - New popup HTML (vanilla JS version)
@@ -12,6 +13,7 @@ All source files have been created with the new neon cyberpunk design:
 5. ✅ `src/popup/popup-neon.css` - Neon-themed styles
 
 ### Documentation:
+
 - ✅ `REDESIGN_SPEC.md` - Full design specification
 - ✅ `IMPLEMENTATION_SUMMARY.md` - Complete implementation details
 - ✅ `BUILD_INSTRUCTIONS.md` - This file
@@ -25,12 +27,14 @@ All source files have been created with the new neon cyberpunk design:
 The project already has webpack configured. You need to:
 
 1. **Update the HTML entry point:**
+
    ```bash
    cd apps/chrome-extension
    cp src/popup/popup-neon.html src/popup/popup.html
    ```
 
 2. **Install dependencies** (if not already done):
+
    ```bash
    pnpm install
    # or
@@ -38,6 +42,7 @@ The project already has webpack configured. You need to:
    ```
 
 3. **Build the extension:**
+
    ```bash
    pnpm run build
    # or
@@ -55,12 +60,14 @@ The project already has webpack configured. You need to:
 For quick testing without webpack:
 
 1. **Create a simple dist folder:**
+
    ```bash
    cd apps/chrome-extension
    mkdir -p dist-manual/icons
    ```
 
 2. **Copy files:**
+
    ```bash
    # Manifest
    cp manifest.json dist-manual/
@@ -85,18 +92,19 @@ For quick testing without webpack:
    cp -r dist/icons/* dist-manual/icons/
    ```
 
-3. **Update popup.html paths:**
-   Edit `dist-manual/popup.html` and change:
+3. **Update popup.html paths:** Edit `dist-manual/popup.html` and change:
+
    ```html
-   <link rel="stylesheet" href="../styles/theme.css">
-   <link rel="stylesheet" href="popup-neon.css">
+   <link rel="stylesheet" href="../styles/theme.css" />
+   <link rel="stylesheet" href="popup-neon.css" />
    <script src="popup-neon.js"></script>
    ```
 
    To:
+
    ```html
-   <link rel="stylesheet" href="theme.css">
-   <link rel="stylesheet" href="popup-neon.css">
+   <link rel="stylesheet" href="theme.css" />
+   <link rel="stylesheet" href="popup-neon.css" />
    <script src="popup.js"></script>
    ```
 
@@ -113,6 +121,7 @@ For quick testing without webpack:
 Once built and loaded, you'll see:
 
 ### Popup Interface:
+
 - **Neon gradient header** with TNF logo and pulsing status dot
 - **4 tabs**: Connect, Agents, Network, Settings
 - **Connection status** with real-time indicators
@@ -122,6 +131,7 @@ Once built and loaded, you'll see:
 - **Settings panel** for configuration
 
 ### Visual Features:
+
 - Cyan (#00D9FF) → Purple (#9D4EDD) gradients
 - Glowing neon effects on hover
 - Pulsing status indicators
@@ -133,7 +143,8 @@ Once built and loaded, you'll see:
 
 ## 🔧 Webpack Configuration Update (Optional)
 
-If you want to use webpack to build the new neon popup, update `webpack.config.cjs`:
+If you want to use webpack to build the new neon popup, update
+`webpack.config.cjs`:
 
 ```javascript
 entry: {
@@ -145,6 +156,7 @@ entry: {
 ```
 
 And in the CopyPlugin patterns:
+
 ```javascript
 { from: './src/popup/popup-neon.html', to: 'popup.html' },
 { from: './src/popup/popup-neon.css', to: 'popup-neon.css' },
@@ -156,22 +168,27 @@ And in the CopyPlugin patterns:
 ## 🐛 Troubleshooting
 
 ### Icons Missing
+
 If you see broken icon images:
+
 - Check that `dist/icons/` folder exists
 - Icons should be copied from the existing build
 - Or generate new ones from the TNF monogram
 
 ### Styles Not Loading
+
 - Make sure `theme.css` is loaded before `popup-neon.css`
 - Check browser console for 404 errors
 - Verify file paths in HTML match actual file locations
 
 ### Background Connection Fails
+
 - The extension uses existing background service (`dist/background.js`)
 - Make sure TNF Relay server is running on `ws://localhost:3001/ws`
 - Check Settings tab to configure relay URL
 
 ### No Platform Detected
+
 - Navigate to an AI chat site (ChatGPT, Claude, Gemini)
 - Platform detection happens in content script
 - May need to refresh the page after loading extension
@@ -225,6 +242,7 @@ dist/ (or dist-manual/)
 ## 🎯 Success Criteria
 
 You'll know it's working when:
+
 - ✅ Popup opens with neon cyberpunk design
 - ✅ Status indicators show connection states
 - ✅ Tabs switch smoothly with animations

@@ -3,18 +3,22 @@
  * Tests all 32 methods of the workflow repository
  */
 
-import { drizzleWorkflowRepository } from '../../src/drizzle/repositories/workflow.repository';
-import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository';
 import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository';
-import { UserFactory, AgentFactory, WorkflowFactory } from '../utils/factories';
+import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository';
+import { drizzleWorkflowRepository } from '../../src/drizzle/repositories/workflow.repository';
+import type {
+  NewWorkflowExecution,
+  NewWorkflowStep,
+  NewWorkflowTemplate,
+} from '../../src/drizzle/types';
 import {
-  expectDatabaseRow,
-  expectSoftDeleted,
-  expectNotNull,
   expectArrayLength,
+  expectDatabaseRow,
   expectNotDeleted,
+  expectNotNull,
+  expectSoftDeleted,
 } from '../utils/assertions';
-import type { NewWorkflowStep, NewWorkflowExecution, NewWorkflowTemplate } from '../../src/drizzle/types';
+import { AgentFactory, UserFactory, WorkflowFactory } from '../utils/factories';
 
 describe('DrizzleWorkflowRepository', () => {
   let testUserId: string;
@@ -129,8 +133,12 @@ describe('DrizzleWorkflowRepository', () => {
 
     describe('findWorkflowsByCreatorId', () => {
       it('should find all workflows for creator', async () => {
-        await drizzleWorkflowRepository.createWorkflow(WorkflowFactory.build({ userId: testUserId }));
-        await drizzleWorkflowRepository.createWorkflow(WorkflowFactory.build({ userId: testUserId }));
+        await drizzleWorkflowRepository.createWorkflow(
+          WorkflowFactory.build({ userId: testUserId })
+        );
+        await drizzleWorkflowRepository.createWorkflow(
+          WorkflowFactory.build({ userId: testUserId })
+        );
 
         const workflows = await drizzleWorkflowRepository.findWorkflowsByCreatorId(testUserId);
 
@@ -139,7 +147,8 @@ describe('DrizzleWorkflowRepository', () => {
       });
 
       it('should return empty array for creator with no workflows', async () => {
-        const workflows = await drizzleWorkflowRepository.findWorkflowsByCreatorId('non-existent-user');
+        const workflows =
+          await drizzleWorkflowRepository.findWorkflowsByCreatorId('non-existent-user');
 
         expect(workflows).toEqual([]);
       });
@@ -162,9 +171,15 @@ describe('DrizzleWorkflowRepository', () => {
 
     describe('findWorkflowsByStatus', () => {
       it('should find workflows by status', async () => {
-        await drizzleWorkflowRepository.createWorkflow(WorkflowFactory.build({ userId: testUserId, status: 'DRAFT' }));
-        await drizzleWorkflowRepository.createWorkflow(WorkflowFactory.build({ userId: testUserId, status: 'ACTIVE' }));
-        await drizzleWorkflowRepository.createWorkflow(WorkflowFactory.build({ userId: testUserId, status: 'DRAFT' }));
+        await drizzleWorkflowRepository.createWorkflow(
+          WorkflowFactory.build({ userId: testUserId, status: 'DRAFT' })
+        );
+        await drizzleWorkflowRepository.createWorkflow(
+          WorkflowFactory.build({ userId: testUserId, status: 'ACTIVE' })
+        );
+        await drizzleWorkflowRepository.createWorkflow(
+          WorkflowFactory.build({ userId: testUserId, status: 'DRAFT' })
+        );
 
         const drafts = await drizzleWorkflowRepository.findWorkflowsByStatus('DRAFT');
 
@@ -189,7 +204,8 @@ describe('DrizzleWorkflowRepository', () => {
       });
 
       it('should return empty array for agent with no workflows', async () => {
-        const workflows = await drizzleWorkflowRepository.findWorkflowsByAgentId('non-existent-agent');
+        const workflows =
+          await drizzleWorkflowRepository.findWorkflowsByAgentId('non-existent-agent');
 
         expect(workflows).toEqual([]);
       });
@@ -212,7 +228,9 @@ describe('DrizzleWorkflowRepository', () => {
       });
 
       it('should return null for non-existent workflow', async () => {
-        const updated = await drizzleWorkflowRepository.updateWorkflow('non-existent-id', { name: 'New Name' });
+        const updated = await drizzleWorkflowRepository.updateWorkflow('non-existent-id', {
+          name: 'New Name',
+        });
 
         expect(updated).toBeNull();
       });
@@ -235,7 +253,11 @@ describe('DrizzleWorkflowRepository', () => {
 
     describe('activateWorkflow', () => {
       it('should activate workflow', async () => {
-        const workflowData = WorkflowFactory.build({ userId: testUserId, isActive: false, status: 'DRAFT' });
+        const workflowData = WorkflowFactory.build({
+          userId: testUserId,
+          isActive: false,
+          status: 'DRAFT',
+        });
         const created = await drizzleWorkflowRepository.createWorkflow(workflowData);
 
         const activated = await drizzleWorkflowRepository.activateWorkflow(created.id);
@@ -254,7 +276,11 @@ describe('DrizzleWorkflowRepository', () => {
 
     describe('deactivateWorkflow', () => {
       it('should deactivate workflow', async () => {
-        const workflowData = WorkflowFactory.build({ userId: testUserId, isActive: true, status: 'ACTIVE' });
+        const workflowData = WorkflowFactory.build({
+          userId: testUserId,
+          isActive: true,
+          status: 'ACTIVE',
+        });
         const created = await drizzleWorkflowRepository.createWorkflow(workflowData);
 
         const deactivated = await drizzleWorkflowRepository.deactivateWorkflow(created.id);
@@ -450,7 +476,9 @@ describe('DrizzleWorkflowRepository', () => {
       });
 
       it('should return null for non-existent step', async () => {
-        const updated = await drizzleWorkflowRepository.updateStep('non-existent-id', { name: 'New Name' });
+        const updated = await drizzleWorkflowRepository.updateStep('non-existent-id', {
+          name: 'New Name',
+        });
 
         expect(updated).toBeNull();
       });
@@ -511,7 +539,11 @@ describe('DrizzleWorkflowRepository', () => {
         });
 
         // Reorder: step2 first, then step1, then step3
-        await drizzleWorkflowRepository.reorderSteps(testWorkflowId, [step2.id, step1.id, step3.id]);
+        await drizzleWorkflowRepository.reorderSteps(testWorkflowId, [
+          step2.id,
+          step1.id,
+          step3.id,
+        ]);
 
         const updated1 = await drizzleWorkflowRepository.findStepById(step1.id);
         const updated2 = await drizzleWorkflowRepository.findStepById(step2.id);
@@ -592,7 +624,8 @@ describe('DrizzleWorkflowRepository', () => {
           triggeredBy: testUserId,
         });
 
-        const executions = await drizzleWorkflowRepository.findExecutionsByWorkflowId(testWorkflowId);
+        const executions =
+          await drizzleWorkflowRepository.findExecutionsByWorkflowId(testWorkflowId);
 
         expectArrayLength(executions, 2);
         expect(executions.every((e) => e.workflowId === testWorkflowId)).toBe(true);
@@ -607,7 +640,10 @@ describe('DrizzleWorkflowRepository', () => {
           });
         }
 
-        const executions = await drizzleWorkflowRepository.findExecutionsByWorkflowId(testWorkflowId, 3);
+        const executions = await drizzleWorkflowRepository.findExecutionsByWorkflowId(
+          testWorkflowId,
+          3
+        );
 
         expectArrayLength(executions, 3);
       });
@@ -653,7 +689,9 @@ describe('DrizzleWorkflowRepository', () => {
       });
 
       it('should return null for non-existent execution', async () => {
-        const updated = await drizzleWorkflowRepository.updateExecution('non-existent-id', { status: 'RUNNING' });
+        const updated = await drizzleWorkflowRepository.updateExecution('non-existent-id', {
+          status: 'RUNNING',
+        });
 
         expect(updated).toBeNull();
       });
@@ -678,7 +716,9 @@ describe('DrizzleWorkflowRepository', () => {
       });
 
       it('should return null for non-existent execution', async () => {
-        const completed = await drizzleWorkflowRepository.completeExecution('non-existent-id', { result: 'done' });
+        const completed = await drizzleWorkflowRepository.completeExecution('non-existent-id', {
+          result: 'done',
+        });
 
         expect(completed).toBeNull();
       });
@@ -734,7 +774,8 @@ describe('DrizzleWorkflowRepository', () => {
       });
 
       it('should return empty array for workflow with no executions', async () => {
-        const counts = await drizzleWorkflowRepository.countExecutionsByStatus('non-existent-workflow');
+        const counts =
+          await drizzleWorkflowRepository.countExecutionsByStatus('non-existent-workflow');
 
         expect(counts).toEqual([]);
       });
@@ -749,9 +790,7 @@ describe('DrizzleWorkflowRepository', () => {
           description: 'Template for email workflows',
           category: 'automation',
           config: { maxRetries: 3 },
-          steps: [
-            { name: 'Send Email', type: 'ACTION', order: 0, config: {} },
-          ],
+          steps: [{ name: 'Send Email', type: 'ACTION', order: 0, config: {} }],
           creatorId: testUserId,
           isPublic: false,
           usageCount: 0,
@@ -864,7 +903,8 @@ describe('DrizzleWorkflowRepository', () => {
           usageCount: 0,
         });
 
-        const automationTemplates = await drizzleWorkflowRepository.findPublicTemplates('automation');
+        const automationTemplates =
+          await drizzleWorkflowRepository.findPublicTemplates('automation');
 
         expect(automationTemplates.length).toBeGreaterThanOrEqual(1);
         expect(automationTemplates.every((t) => t.category === 'automation')).toBe(true);
@@ -920,7 +960,8 @@ describe('DrizzleWorkflowRepository', () => {
       });
 
       it('should return empty array for creator with no templates', async () => {
-        const templates = await drizzleWorkflowRepository.findTemplatesByCreatorId('non-existent-creator');
+        const templates =
+          await drizzleWorkflowRepository.findTemplatesByCreatorId('non-existent-creator');
 
         expect(templates).toEqual([]);
       });
@@ -975,7 +1016,9 @@ describe('DrizzleWorkflowRepository', () => {
       });
 
       it('should return null for non-existent template', async () => {
-        const updated = await drizzleWorkflowRepository.updateTemplate('non-existent-id', { name: 'New Name' });
+        const updated = await drizzleWorkflowRepository.updateTemplate('non-existent-id', {
+          name: 'New Name',
+        });
 
         expect(updated).toBeNull();
       });
@@ -1022,7 +1065,10 @@ describe('DrizzleWorkflowRepository', () => {
 
     it('should handle very long workflow descriptions', async () => {
       const longDescription = 'a'.repeat(5000);
-      const workflowData = WorkflowFactory.build({ userId: testUserId, description: longDescription });
+      const workflowData = WorkflowFactory.build({
+        userId: testUserId,
+        description: longDescription,
+      });
 
       const workflow = await drizzleWorkflowRepository.createWorkflow(workflowData);
 
@@ -1030,9 +1076,13 @@ describe('DrizzleWorkflowRepository', () => {
     });
 
     it('should handle concurrent workflow creates', async () => {
-      const workflows = Array.from({ length: 5 }, () => WorkflowFactory.build({ userId: testUserId }));
+      const workflows = Array.from({ length: 5 }, () =>
+        WorkflowFactory.build({ userId: testUserId })
+      );
 
-      const created = await Promise.all(workflows.map((w) => drizzleWorkflowRepository.createWorkflow(w)));
+      const created = await Promise.all(
+        workflows.map((w) => drizzleWorkflowRepository.createWorkflow(w))
+      );
 
       expect(created).toHaveLength(5);
       const uniqueIds = new Set(created.map((w) => w.id));

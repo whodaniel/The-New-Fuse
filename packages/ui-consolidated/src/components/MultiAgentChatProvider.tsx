@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useRef, useCallback, createContext, useContext } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { MultiAgentChatFirebaseService } from '../services/multi-agent-chat-firebase.service';
 import { MultiAgentChatLLMService } from '../services/multi-agent-chat-llm.service';
-import { 
-  Agent, 
-  Message, 
-  ConversationRule, 
-  ChatSession, 
+import {
+  Agent,
   ChatContextValue,
-  MultiAgentChatProps,
-  ImageGenerationRequest
+  ChatSession,
+  ConversationRule,
+  ImageGenerationRequest,
+  Message,
 } from '../types/multi-agent-chat.types';
 
 // Create context
@@ -25,13 +24,33 @@ export const useMultiAgentChat = () => {
 
 // Icons as React components
 const EditIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
   </svg>
 );
 
 const DeleteIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polyline points="3 6 5 6 21 6"></polyline>
     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
     <line x1="10" y1="11" x2="10" y2="17"></line>
@@ -40,7 +59,17 @@ const DeleteIcon = () => (
 );
 
 const SettingsIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <circle cx="12" cy="12" r="3"></circle>
     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
   </svg>
@@ -48,25 +77,28 @@ const SettingsIcon = () => (
 
 const SystemIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"/>
+    <path
+      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 // Provider details with icons
 const providerDetails = {
-  gemini: { icon: () => <span>✨</span>, name: "Google Gemini" },
-  openai: { icon: () => <span>🤖</span>, name: "OpenAI GPT" },
-  anthropic: { icon: () => <span>🧠</span>, name: "Anthropic Claude" },
-  cohere: { icon: () => <span>🔮</span>, name: "Cohere" },
-  sambanova: { icon: () => <span>⚡</span>, name: "SambaNova" },
-  deepseek: { icon: () => <span>🔍</span>, name: "DeepSeek" },
-  mistral: { icon: () => <span>🌪️</span>, name: "Mistral" },
-  openrouter: { icon: () => <span>🛣️</span>, name: "OpenRouter" },
-  'claude-code-cli': { icon: () => <span>💻</span>, name: "Claude Code CLI (Local)" }
+  gemini: { icon: () => <span>✨</span>, name: 'Google Gemini' },
+  openai: { icon: () => <span>🤖</span>, name: 'OpenAI GPT' },
+  anthropic: { icon: () => <span>🧠</span>, name: 'Anthropic Claude' },
+  cohere: { icon: () => <span>🔮</span>, name: 'Cohere' },
+  sambanova: { icon: () => <span>⚡</span>, name: 'SambaNova' },
+  deepseek: { icon: () => <span>🔍</span>, name: 'DeepSeek' },
+  mistral: { icon: () => <span>🌪️</span>, name: 'Mistral' },
+  openrouter: { icon: () => <span>🛣️</span>, name: 'OpenRouter' },
+  'claude-code-cli': { icon: () => <span>💻</span>, name: 'Claude Code CLI (Local)' },
 };
 
 // Multi-Agent Chat Provider Component
-export const MultiAgentChatProvider: React.FC<{ 
+export const MultiAgentChatProvider: React.FC<{
   children: React.ReactNode;
   firebaseService: MultiAgentChatFirebaseService;
   llmService: MultiAgentChatLLMService;
@@ -85,7 +117,7 @@ export const MultiAgentChatProvider: React.FC<{
     const initializeChat = async () => {
       try {
         setIsLoading(true);
-        
+
         // Authenticate user if not provided
         if (!currentUserId) {
           const user = await firebaseService.authenticateUser();
@@ -97,12 +129,14 @@ export const MultiAgentChatProvider: React.FC<{
           const unsubscribeAgents = firebaseService.subscribeToAgents(currentUserId, setAgents);
           const unsubscribeMessages = firebaseService.subscribeToMessages(currentUserId, (msgs) => {
             if (msgs.length === 0) {
-              setMessages([{ 
-                id: 'welcome-msg', 
-                text: "Welcome! Create an AI agent or use 'Automate All' to begin.", 
-                sender: 'system',
-                timestamp: new Date()
-              }]);
+              setMessages([
+                {
+                  id: 'welcome-msg',
+                  text: "Welcome! Create an AI agent or use 'Automate All' to begin.",
+                  sender: 'system',
+                  timestamp: new Date(),
+                },
+              ]);
             } else {
               setMessages(msgs);
             }
@@ -137,61 +171,82 @@ export const MultiAgentChatProvider: React.FC<{
     rules,
 
     // Agent management
-    createAgent: useCallback(async (agentData) => {
-      if (!currentUserId) throw new Error('User not authenticated');
-      await firebaseService.createAgent(currentUserId, agentData);
-    }, [currentUserId, firebaseService]),
+    createAgent: useCallback(
+      async (agentData) => {
+        if (!currentUserId) throw new Error('User not authenticated');
+        await firebaseService.createAgent(currentUserId, agentData);
+      },
+      [currentUserId, firebaseService]
+    ),
 
-    updateAgent: useCallback(async (id, updates) => {
-      if (!currentUserId) throw new Error('User not authenticated');
-      await firebaseService.updateAgent(currentUserId, id, updates);
-    }, [currentUserId, firebaseService]),
+    updateAgent: useCallback(
+      async (id, updates) => {
+        if (!currentUserId) throw new Error('User not authenticated');
+        await firebaseService.updateAgent(currentUserId, id, updates);
+      },
+      [currentUserId, firebaseService]
+    ),
 
-    deleteAgent: useCallback(async (id) => {
-      if (!currentUserId) throw new Error('User not authenticated');
-      await firebaseService.deleteAgent(currentUserId, id);
-    }, [currentUserId, firebaseService]),
+    deleteAgent: useCallback(
+      async (id) => {
+        if (!currentUserId) throw new Error('User not authenticated');
+        await firebaseService.deleteAgent(currentUserId, id);
+      },
+      [currentUserId, firebaseService]
+    ),
 
     // Message management
-    sendMessage: useCallback(async (text, senderId, recipientId) => {
-      if (!currentUserId) throw new Error('User not authenticated');
-      
-      const senderAgent = senderId && senderId !== 'You' ? agents.find(a => a.id === senderId) : null;
-      const senderName = senderAgent ? senderAgent.name : "You";
-      
-      // Add user message
-      await firebaseService.addMessage(currentUserId, {
-        text,
-        sender: senderName,
-        agentId: senderId !== 'You' ? senderId : undefined
-      });
+    sendMessage: useCallback(
+      async (text, senderId, recipientId) => {
+        if (!currentUserId) throw new Error('User not authenticated');
 
-      // Generate bot response if recipient is specified
-      if (recipientId) {
-        const respondingAgent = agents.find(a => a.id === recipientId);
-        if (respondingAgent) {
-          try {
-            const history = messages.slice(-5).map(m => `${m.sender}: ${m.text}`).join('\n');
-            const prompt = `Previous conversation:\n${history}\n\nNew message from ${senderName}:\n"${text}"\n\nYour turn, ${respondingAgent.name}. What is your response?`;
-            
-            const botText = await llmService.callTextAPI(prompt, respondingAgent.systemPrompt, respondingAgent.llm, respondingAgent.model);
-            
-            await firebaseService.addMessage(currentUserId, {
-              text: botText || `(${respondingAgent.name} had no response)`,
-              sender: respondingAgent.name,
-              llm: respondingAgent.llm,
-              agentId: respondingAgent.id
-            });
-          } catch (error) {
-            console.error(`Error with ${respondingAgent.name}:`, error);
-            await firebaseService.addMessage(currentUserId, {
-              text: `Error generating response for ${respondingAgent.name}: ${error instanceof Error ? error.message : 'Unknown error'}`,
-              sender: 'system'
-            });
+        const senderAgent =
+          senderId && senderId !== 'You' ? agents.find((a) => a.id === senderId) : null;
+        const senderName = senderAgent ? senderAgent.name : 'You';
+
+        // Add user message
+        await firebaseService.addMessage(currentUserId, {
+          text,
+          sender: senderName,
+          agentId: senderId !== 'You' ? senderId : undefined,
+        });
+
+        // Generate bot response if recipient is specified
+        if (recipientId) {
+          const respondingAgent = agents.find((a) => a.id === recipientId);
+          if (respondingAgent) {
+            try {
+              const history = messages
+                .slice(-5)
+                .map((m) => `${m.sender}: ${m.text}`)
+                .join('\n');
+              const prompt = `Previous conversation:\n${history}\n\nNew message from ${senderName}:\n"${text}"\n\nYour turn, ${respondingAgent.name}. What is your response?`;
+
+              const botText = await llmService.callTextAPI(
+                prompt,
+                respondingAgent.systemPrompt,
+                respondingAgent.llm,
+                respondingAgent.model
+              );
+
+              await firebaseService.addMessage(currentUserId, {
+                text: botText || `(${respondingAgent.name} had no response)`,
+                sender: respondingAgent.name,
+                llm: respondingAgent.llm,
+                agentId: respondingAgent.id,
+              });
+            } catch (error) {
+              console.error(`Error with ${respondingAgent.name}:`, error);
+              await firebaseService.addMessage(currentUserId, {
+                text: `Error generating response for ${respondingAgent.name}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                sender: 'system',
+              });
+            }
           }
         }
-      }
-    }, [currentUserId, firebaseService, llmService, agents, messages]),
+      },
+      [currentUserId, firebaseService, llmService, agents, messages]
+    ),
 
     clearMessages: useCallback(async () => {
       if (!currentUserId) throw new Error('User not authenticated');
@@ -199,74 +254,92 @@ export const MultiAgentChatProvider: React.FC<{
     }, [currentUserId, firebaseService]),
 
     // Rule management
-    createRule: useCallback(async (rule) => {
-      if (!currentUserId) throw new Error('User not authenticated');
-      await firebaseService.createRule(currentUserId, rule);
-    }, [currentUserId, firebaseService]),
+    createRule: useCallback(
+      async (rule) => {
+        if (!currentUserId) throw new Error('User not authenticated');
+        await firebaseService.createRule(currentUserId, rule);
+      },
+      [currentUserId, firebaseService]
+    ),
 
-    updateRule: useCallback(async (id, updates) => {
-      if (!currentUserId) throw new Error('User not authenticated');
-      await firebaseService.updateRule(currentUserId, id, updates);
-    }, [currentUserId, firebaseService]),
+    updateRule: useCallback(
+      async (id, updates) => {
+        if (!currentUserId) throw new Error('User not authenticated');
+        await firebaseService.updateRule(currentUserId, id, updates);
+      },
+      [currentUserId, firebaseService]
+    ),
 
-    deleteRule: useCallback(async (id) => {
-      if (!currentUserId) throw new Error('User not authenticated');
-      await firebaseService.deleteRule(currentUserId, id);
-    }, [currentUserId, firebaseService]),
+    deleteRule: useCallback(
+      async (id) => {
+        if (!currentUserId) throw new Error('User not authenticated');
+        await firebaseService.deleteRule(currentUserId, id);
+      },
+      [currentUserId, firebaseService]
+    ),
 
     // Session management
-    startSession: useCallback(async (goal) => {
-      if (!currentUserId) throw new Error('User not authenticated');
-      const newSession: ChatSession = {
-        id: `session-${Date.now()}`,
-        userId: currentUserId,
-        agents,
-        messages,
-        rules,
-        state: {
-          goal: goal || '',
-          mode: 'manual',
-          isActive: true,
-          turnCount: 0,
-          startedAt: new Date(),
-          lastActivity: new Date()
-        },
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      setSession(newSession);
-    }, [currentUserId, agents, messages, rules]),
+    startSession: useCallback(
+      async (goal) => {
+        if (!currentUserId) throw new Error('User not authenticated');
+        const newSession: ChatSession = {
+          id: `session-${Date.now()}`,
+          userId: currentUserId,
+          agents,
+          messages,
+          rules,
+          state: {
+            goal: goal || '',
+            mode: 'manual',
+            isActive: true,
+            turnCount: 0,
+            startedAt: new Date(),
+            lastActivity: new Date(),
+          },
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        setSession(newSession);
+      },
+      [currentUserId, agents, messages, rules]
+    ),
 
     stopSession: useCallback(async () => {
       setSession(null);
     }, []),
 
-    setMode: useCallback((mode) => {
-      if (session) {
-        setSession({
-          ...session,
-          state: { ...session.state, mode }
-        });
-      }
-    }, [session]),
+    setMode: useCallback(
+      (mode) => {
+        if (session) {
+          setSession({
+            ...session,
+            state: { ...session.state, mode },
+          });
+        }
+      },
+      [session]
+    ),
 
-    setGoal: useCallback((goal) => {
-      if (session) {
-        setSession({
-          ...session,
-          state: { ...session.state, goal }
-        });
-      }
-    }, [session]),
+    setGoal: useCallback(
+      (goal) => {
+        if (session) {
+          setSession({
+            ...session,
+            state: { ...session.state, goal },
+          });
+        }
+      },
+      [session]
+    ),
 
     // Automation
     automateAll: useCallback(async () => {
       if (!currentUserId) throw new Error('User not authenticated');
-      
+
       try {
         await firebaseService.addMessage(currentUserId, {
           text: '🚀 Clearing previous session and starting full automation...',
-          sender: 'system'
+          sender: 'system',
         });
 
         // Clear all data
@@ -274,19 +347,19 @@ export const MultiAgentChatProvider: React.FC<{
 
         await firebaseService.addMessage(currentUserId, {
           text: 'Generating new scenario, characters, and rules...',
-          sender: 'system'
+          sender: 'system',
         });
 
         // Generate scenario using LLM
         const setupPrompt = `Create a complete setup for a multi-agent chat application. The theme should be interesting and creative (e.g., historical figures debating, sci-fi characters on a mission, fantasy creatures in a tavern). Provide your response as a single JSON object with the following keys: "conversationGoal" (string), "initialScenario" (string), "agents" (an array of exactly two agent objects, each with "name" and "systemPrompt"), and "rules" (an array of rule objects, each with "sourceIndex" and "targetIndex" corresponding to the agents array, creating a simple loop like 0->1 and 1->0).`;
 
         const setupJson = await llmService.callTextAPI(
-          setupPrompt, 
-          "You are a creative scenario designer...", 
-          "gemini", 
-          "gemini-2.0-flash", 
-          undefined, 
-          { responseMimeType: "application/json" }
+          setupPrompt,
+          'You are a creative scenario designer...',
+          'gemini',
+          'gemini-2.0-flash',
+          undefined,
+          { responseMimeType: 'application/json' }
         );
 
         const setup = JSON.parse(setupJson);
@@ -297,7 +370,7 @@ export const MultiAgentChatProvider: React.FC<{
           if (agentData?.systemPrompt && agentData?.name) {
             // Generate profile picture
             const picPrompt = `Create a profile picture for an AI character. It should be a simple, clean, cartoon-style portrait. Character persona: "${agentData.systemPrompt}"`;
-            
+
             try {
               const imageResponse = await llmService.generateImage({ prompt: picPrompt });
               const agentId = await firebaseService.createAgent(currentUserId, {
@@ -305,7 +378,7 @@ export const MultiAgentChatProvider: React.FC<{
                 llm: 'gemini',
                 model: 'gemini-2.0-flash',
                 profilePictureUrl: imageResponse.url,
-                isActive: true
+                isActive: true,
               });
               createdAgentIds.push(agentId);
             } catch (imageError) {
@@ -314,7 +387,7 @@ export const MultiAgentChatProvider: React.FC<{
                 ...agentData,
                 llm: 'gemini',
                 model: 'gemini-2.0-flash',
-                isActive: true
+                isActive: true,
               });
               createdAgentIds.push(agentId);
             }
@@ -332,7 +405,7 @@ export const MultiAgentChatProvider: React.FC<{
                   sourceId,
                   targetId,
                   priority: 1,
-                  isActive: true
+                  isActive: true,
                 });
               }
             }
@@ -341,67 +414,73 @@ export const MultiAgentChatProvider: React.FC<{
 
         await firebaseService.addMessage(currentUserId, {
           text: `Scenario Injected: "${setup.initialScenario}"`,
-          sender: 'system'
+          sender: 'system',
         });
 
         await firebaseService.addMessage(currentUserId, {
           text: 'Starting conversation...',
-          sender: 'system'
+          sender: 'system',
         });
-
       } catch (error) {
-        console.error("Automation failed:", error);
+        console.error('Automation failed:', error);
         if (currentUserId) {
           await firebaseService.addMessage(currentUserId, {
             text: `Full automation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            sender: 'system'
+            sender: 'system',
           });
         }
       }
     }, [currentUserId, firebaseService, llmService]),
 
-    injectScenario: useCallback(async (scenario) => {
-      if (!currentUserId) throw new Error('User not authenticated');
-      
-      await firebaseService.addMessage(currentUserId, {
-        text: `Scenario Injected: "${scenario}"`,
-        sender: 'system'
-      });
+    injectScenario: useCallback(
+      async (scenario) => {
+        if (!currentUserId) throw new Error('User not authenticated');
 
-      if (agents.length > 0) {
-        const firstAgent = agents[0];
         await firebaseService.addMessage(currentUserId, {
-          text: 'Starting conversation based on new scenario...',
-          sender: 'system'
+          text: `Scenario Injected: "${scenario}"`,
+          sender: 'system',
         });
 
-        try {
-          const initialPrompt = `As ${firstAgent.name}, start a new conversation based on this scenario: "${scenario}"`;
-          const response = await llmService.callTextAPI(initialPrompt, firstAgent.systemPrompt, firstAgent.llm, firstAgent.model);
-          
+        if (agents.length > 0) {
+          const firstAgent = agents[0];
           await firebaseService.addMessage(currentUserId, {
-            text: response,
-            sender: firstAgent.name,
-            agentId: firstAgent.id,
-            llm: firstAgent.llm
+            text: 'Starting conversation based on new scenario...',
+            sender: 'system',
           });
-        } catch (error) {
-          console.error('Failed to generate initial response:', error);
+
+          try {
+            const initialPrompt = `As ${firstAgent.name}, start a new conversation based on this scenario: "${scenario}"`;
+            const response = await llmService.callTextAPI(
+              initialPrompt,
+              firstAgent.systemPrompt,
+              firstAgent.llm,
+              firstAgent.model
+            );
+
+            await firebaseService.addMessage(currentUserId, {
+              text: response,
+              sender: firstAgent.name,
+              agentId: firstAgent.id,
+              llm: firstAgent.llm,
+            });
+          } catch (error) {
+            console.error('Failed to generate initial response:', error);
+          }
         }
-      }
-    }, [currentUserId, firebaseService, llmService, agents]),
+      },
+      [currentUserId, firebaseService, llmService, agents]
+    ),
 
     // Image generation
-    generateImage: useCallback(async (request: ImageGenerationRequest) => {
-      return await llmService.generateImage(request);
-    }, [llmService])
+    generateImage: useCallback(
+      async (request: ImageGenerationRequest) => {
+        return await llmService.generateImage(request);
+      },
+      [llmService]
+    ),
   };
 
-  return (
-    <ChatContext.Provider value={contextValue}>
-      {children}
-    </ChatContext.Provider>
-  );
+  return <ChatContext.Provider value={contextValue}>{children}</ChatContext.Provider>;
 };
 
-export { EditIcon, DeleteIcon, SettingsIcon, SystemIcon, providerDetails };
+export { DeleteIcon, EditIcon, providerDetails, SettingsIcon, SystemIcon };

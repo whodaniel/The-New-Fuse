@@ -1,17 +1,15 @@
 import axios from 'axios';
 import {
-  Resource,
+  AgentTemplate,
   ClaudeSkill,
   N8NWorkflow,
-  AgentTemplate,
+  Resource,
   ResourceFilter,
-  ResourceStats,
-  FavoriteResource,
   ResourceShare,
+  ResourceStats,
 } from '../types/resources';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
-
 
 class ResourcesService {
   // Fetch all resources
@@ -74,7 +72,10 @@ class ResourcesService {
 
   // Create agent from template
   async createAgentFromTemplate(templateId: string, customConfig?: any): Promise<any> {
-    const response = await axios.post(`${API_BASE}/templates/${templateId}/create-agent`, customConfig);
+    const response = await axios.post(
+      `${API_BASE}/templates/${templateId}/create-agent`,
+      customConfig
+    );
     return response.data;
   }
 }

@@ -1,1097 +1,1176 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The New Fuse Browser Hub - Complete Unified Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta name="description" content="TNF Browser Hub - Unified platform for AI services, development tools, MCP services, and enterprise applications">
-    <meta name="keywords" content="AI, development, enterprise, browser, platform, MCP, Model Context Protocol">
-    <meta name="robots" content="noindex, nofollow">
-    
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <meta
+      name="description"
+      content="TNF Browser Hub - Unified platform for AI services, development tools, MCP services, and enterprise applications"
+    />
+    <meta
+      name="keywords"
+      content="AI, development, enterprise, browser, platform, MCP, Model Context Protocol"
+    />
+    <meta name="robots" content="noindex, nofollow" />
+
     <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' http://localhost:* https://localhost:* http://127.0.0.1:* https://127.0.0.1:*; connect-src 'self' ws://localhost:* wss://localhost:* http://localhost:* https://localhost:*;">
-    
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' http://localhost:* https://localhost:* http://127.0.0.1:* https://127.0.0.1:*; connect-src 'self' ws://localhost:* wss://localhost:* http://localhost:* https://localhost:*;"
+    />
+
     <style>
-        :root {
-            /* Dark Theme Colors */
-            --bg-primary: #1a1d29;
-            --bg-secondary: #252836;
-            --bg-tertiary: #2d3142;
-            --text-primary: #ffffff;
-            --text-secondary: #9ca3af;
-            --text-muted: #6b7280;
-            --accent-primary: #4f46e5;
-            --accent-secondary: #06b6d4;
-            --accent-success: #10b981;
-            --accent-warning: #f59e0b;
-            --accent-error: #ef4444;
-            --border-color: #2d3142;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --transition: all 0.2s ease;
-        }
+      :root {
+        /* Dark Theme Colors */
+        --bg-primary: #1a1d29;
+        --bg-secondary: #252836;
+        --bg-tertiary: #2d3142;
+        --text-primary: #ffffff;
+        --text-secondary: #9ca3af;
+        --text-muted: #6b7280;
+        --accent-primary: #4f46e5;
+        --accent-secondary: #06b6d4;
+        --accent-success: #10b981;
+        --accent-warning: #f59e0b;
+        --accent-error: #ef4444;
+        --border-color: #2d3142;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --transition: all 0.2s ease;
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.5;
-            overflow: hidden;
-        }
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.5;
+        overflow: hidden;
+      }
 
-        .app-container {
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
+      .app-container {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
 
-        /* Sidebar Styles */
+      /* Sidebar Styles */
+      .sidebar {
+        width: 300px;
+        background-color: var(--bg-secondary);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        transition: var(--transition);
+        overflow: hidden;
+      }
+
+      .sidebar.collapsed {
+        width: 60px;
+      }
+
+      .sidebar-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .logo {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+        font-size: 14px;
+      }
+
+      .logo-text {
+        font-weight: 600;
+        font-size: 1.125rem;
+        color: var(--text-primary);
+      }
+
+      .sidebar.collapsed .logo-text {
+        display: none;
+      }
+
+      .nav-section {
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .nav-section-header {
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: var(--transition);
+        user-select: none;
+      }
+
+      .nav-section-header:hover {
+        background-color: var(--bg-tertiary);
+      }
+
+      .nav-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .nav-section-content {
+        padding: 0.5rem 0;
+      }
+
+      .nav-section-content.collapsed {
+        display: none;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: var(--transition);
+        font-size: 0.875rem;
+        position: relative;
+        cursor: pointer;
+      }
+
+      .nav-item:hover {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+      }
+
+      .nav-item.active {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+      }
+
+      .nav-item.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background-color: var(--accent-primary);
+      }
+
+      .sidebar.collapsed .nav-item {
+        justify-content: center;
+        padding: 0.75rem;
+      }
+
+      .sidebar.collapsed .nav-item span {
+        display: none;
+      }
+
+      .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-left: auto;
+      }
+
+      .status-dot.online {
+        background: var(--accent-success);
+        animation: none;
+      }
+
+      .status-dot.warning {
+        background: var(--accent-warning);
+        animation: pulse 2s infinite;
+      }
+
+      .status-dot.offline {
+        background: var(--accent-error);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      /* Main Content Styles */
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .tab-bar {
+        display: flex;
+        background-color: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-color);
+        overflow-x: auto;
+        min-height: 48px;
+      }
+
+      .tab {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: var(--transition);
+        white-space: nowrap;
+        position: relative;
+        min-width: 120px;
+      }
+
+      .tab:hover {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+      }
+
+      .tab.active {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+      }
+
+      .tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: var(--accent-primary);
+      }
+
+      .tab-close {
+        margin-left: auto;
+        padding: 0.125rem;
+        border-radius: 2px;
+        transition: var(--transition);
+      }
+
+      .tab-close:hover {
+        background-color: var(--bg-tertiary);
+      }
+
+      .content-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .content-view {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .tab-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: none;
+        background-color: var(--bg-primary);
+        padding: 2rem;
+        overflow-y: auto;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      /* Service Toolbar */
+      .service-toolbar {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-color);
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .service-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .service-group-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-right: 4px;
+      }
+
+      .service-chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        background: #374151;
+        border-radius: 6px;
+        font-size: 12px;
+        color: #ffffff;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .service-chip:hover {
+        background: #4b5563;
+      }
+
+      .service-chip.active {
+        background: var(--accent-success);
+      }
+
+      .service-chip.warning {
+        background: var(--accent-warning);
+      }
+
+      .service-chip.error {
+        background: var(--accent-error);
+      }
+
+      /* Dashboard Components */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-md);
+        backdrop-filter: blur(10px);
+        transition: var(--transition);
+      }
+
+      .card:hover {
+        border-color: var(--accent-primary);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .card-title i {
+        color: var(--accent-primary);
+      }
+
+      .metric-card {
+        background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        transition: var(--transition);
+      }
+
+      .metric-card:hover {
+        transform: translateY(-2px);
+      }
+
+      .metric-value {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .metric-label {
+        opacity: 0.9;
+        font-size: 0.9rem;
+      }
+
+      .resource-list,
+      .tool-list {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .resource-item,
+      .tool-item {
+        background: var(--bg-primary);
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid var(--accent-primary);
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+      }
+
+      .resource-item:hover,
+      .tool-item:hover {
+        transform: translateX(4px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .resource-name,
+      .tool-name {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .resource-uri,
+      .tool-description {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .resource-actions,
+      .tool-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: var(--transition);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background: var(--accent-primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #4338ca;
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+      }
+
+      .btn-secondary:hover {
+        background: #4b5563;
+      }
+
+      .btn-success {
+        background: var(--accent-success);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #059669;
+      }
+
+      /* Log Container */
+      .log-container {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        padding: 1rem;
+        border-radius: 8px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.9rem;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .log-entry {
+        margin-bottom: 0.5rem;
+        padding: 0.25rem 0;
+        border-left: 3px solid transparent;
+        padding-left: 0.5rem;
+      }
+
+      .log-entry.info {
+        border-left-color: #007acc;
+      }
+
+      .log-entry.warn {
+        border-left-color: #ff9800;
+      }
+
+      .log-entry.error {
+        border-left-color: #f44336;
+      }
+
+      /* Loading States */
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        color: var(--text-secondary);
+      }
+
+      .loading-spinner {
+        width: 20px;
+        height: 20px;
+        border: 3px solid var(--border-color);
+        border-top: 3px solid var(--accent-primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 1rem;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+      }
+
+      .modal-content {
+        background-color: var(--bg-secondary);
+        margin: 5% auto;
+        padding: 2rem;
+        border-radius: 12px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .close {
+        color: var(--text-secondary);
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .close:hover {
+        color: var(--text-primary);
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 1rem;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      /* Toast Notifications */
+      .toast-container {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .toast {
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        color: white;
+        font-size: 0.875rem;
+        box-shadow: var(--shadow-lg);
+        animation: slideIn 0.3s ease;
+        max-width: 400px;
+        word-wrap: break-word;
+      }
+
+      .toast.success {
+        background-color: var(--accent-success);
+      }
+
+      .toast.error {
+        background-color: var(--accent-error);
+      }
+
+      .toast.warning {
+        background-color: var(--accent-warning);
+      }
+
+      .toast.info {
+        background-color: var(--accent-primary);
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* MCP Service Styles */
+      .mcp-service-card {
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transition: var(--transition);
+      }
+
+      .mcp-service-card:hover {
+        border-color: var(--accent-primary);
+        box-shadow: var(--shadow-md);
+      }
+
+      .mcp-service-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+
+      .mcp-service-name {
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .mcp-service-status {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+      }
+
+      .mcp-service-status.online {
+        color: var(--accent-success);
+      }
+
+      .mcp-service-status.offline {
+        color: var(--accent-error);
+      }
+
+      .mcp-service-status.connecting {
+        color: var(--accent-warning);
+      }
+
+      .mcp-service-description {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .mcp-service-tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+      }
+
+      .mcp-tool-tag {
+        background-color: var(--bg-tertiary);
+        color: var(--text-secondary);
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        font-size: 0.75rem;
+        font-family: monospace;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
         .sidebar {
-            width: 300px;
-            background-color: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            transition: var(--transition);
-            overflow: hidden;
+          width: 250px;
         }
 
-        .sidebar.collapsed {
-            width: 60px;
-        }
-
-        .sidebar-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .logo {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 14px;
-        }
-
-        .logo-text {
-            font-weight: 600;
-            font-size: 1.125rem;
-            color: var(--text-primary);
-        }
-
-        .sidebar.collapsed .logo-text {
-            display: none;
-        }
-
-        .nav-section {
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .nav-section-header {
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            transition: var(--transition);
-            user-select: none;
-        }
-
-        .nav-section-header:hover {
-            background-color: var(--bg-tertiary);
-        }
-
-        .nav-section-title {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .nav-section-content {
-            padding: 0.5rem 0;
-        }
-
-        .nav-section-content.collapsed {
-            display: none;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1.5rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: var(--transition);
-            font-size: 0.875rem;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .nav-item:hover {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .nav-item.active {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background-color: var(--accent-primary);
-        }
-
-        .sidebar.collapsed .nav-item {
-            justify-content: center;
-            padding: 0.75rem;
-        }
-
-        .sidebar.collapsed .nav-item span {
-            display: none;
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            margin-left: auto;
-        }
-
-        .status-dot.online { 
-            background: var(--accent-success);
-            animation: none;
-        }
-
-        .status-dot.warning { 
-            background: var(--accent-warning);
-            animation: pulse 2s infinite;
-        }
-
-        .status-dot.offline { 
-            background: var(--accent-error);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        /* Main Content Styles */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .tab-bar {
-            display: flex;
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            overflow-x: auto;
-            min-height: 48px;
-        }
-
-        .tab {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: var(--transition);
-            white-space: nowrap;
-            position: relative;
-            min-width: 120px;
-        }
-
-        .tab:hover {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .tab.active {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-        }
-
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: var(--accent-primary);
-        }
-
-        .tab-close {
-            margin-left: auto;
-            padding: 0.125rem;
-            border-radius: 2px;
-            transition: var(--transition);
-        }
-
-        .tab-close:hover {
-            background-color: var(--bg-tertiary);
-        }
-
-        .content-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .content-view {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tab-content {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: none;
-            background-color: var(--bg-primary);
-            padding: 2rem;
-            overflow-y: auto;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Service Toolbar */
-        .service-toolbar {
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            padding: 12px 24px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .service-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .service-group-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-right: 4px;
-        }
-
-        .service-chip {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 8px;
-            background: #374151;
-            border-radius: 6px;
-            font-size: 12px;
-            color: #ffffff;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .service-chip:hover {
-            background: #4b5563;
-        }
-
-        .service-chip.active {
-            background: var(--accent-success);
-        }
-
-        .service-chip.warning {
-            background: var(--accent-warning);
-        }
-
-        .service-chip.error {
-            background: var(--accent-error);
-        }
-
-        /* Dashboard Components */
         .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
+          grid-template-columns: 1fr;
         }
-
-        .card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-md);
-            backdrop-filter: blur(10px);
-            transition: var(--transition);
-        }
-
-        .card:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .card-title i {
-            color: var(--accent-primary);
-        }
-
-        .metric-card {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .metric-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .metric-value {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .metric-label {
-            opacity: 0.9;
-            font-size: 0.9rem;
-        }
-
-        .resource-list, .tool-list {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .resource-item, .tool-item {
-            background: var(--bg-primary);
-            padding: 1rem;
-            border-radius: 8px;
-            border-left: 4px solid var(--accent-primary);
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-        }
-
-        .resource-item:hover, .tool-item:hover {
-            transform: translateX(4px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .resource-name, .tool-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .resource-uri, .tool-description {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .resource-actions, .tool-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: var(--transition);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background: var(--accent-primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #4338ca;
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-secondary:hover {
-            background: #4b5563;
-        }
-
-        .btn-success {
-            background: var(--accent-success);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #059669;
-        }
-
-        /* Log Container */
-        .log-container {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 1rem;
-            border-radius: 8px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9rem;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .log-entry {
-            margin-bottom: 0.5rem;
-            padding: 0.25rem 0;
-            border-left: 3px solid transparent;
-            padding-left: 0.5rem;
-        }
-
-        .log-entry.info {
-            border-left-color: #007acc;
-        }
-
-        .log-entry.warn {
-            border-left-color: #ff9800;
-        }
-
-        .log-entry.error {
-            border-left-color: #f44336;
-        }
-
-        /* Loading States */
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            color: var(--text-secondary);
-        }
-
-        .loading-spinner {
-            width: 20px;
-            height: 20px;
-            border: 3px solid var(--border-color);
-            border-top: 3px solid var(--accent-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background-color: var(--bg-secondary);
-            margin: 5% auto;
-            padding: 2rem;
-            border-radius: 12px;
-            width: 80%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .close {
-            color: var(--text-secondary);
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover {
-            color: var(--text-primary);
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1rem;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* Toast Notifications */
-        .toast-container {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .toast {
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            color: white;
-            font-size: 0.875rem;
-            box-shadow: var(--shadow-lg);
-            animation: slideIn 0.3s ease;
-            max-width: 400px;
-            word-wrap: break-word;
-        }
-
-        .toast.success {
-            background-color: var(--accent-success);
-        }
-
-        .toast.error {
-            background-color: var(--accent-error);
-        }
-
-        .toast.warning {
-            background-color: var(--accent-warning);
-        }
-
-        .toast.info {
-            background-color: var(--accent-primary);
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* MCP Service Styles */
-        .mcp-service-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            transition: var(--transition);
-        }
-
-        .mcp-service-card:hover {
-            border-color: var(--accent-primary);
-            box-shadow: var(--shadow-md);
-        }
-
-        .mcp-service-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-
-        .mcp-service-name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .mcp-service-status {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            font-size: 0.875rem;
-        }
-
-        .mcp-service-status.online {
-            color: var(--accent-success);
-        }
-
-        .mcp-service-status.offline {
-            color: var(--accent-error);
-        }
-
-        .mcp-service-status.connecting {
-            color: var(--accent-warning);
-        }
-
-        .mcp-service-description {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .mcp-service-tools {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.25rem;
-        }
-
-        .mcp-tool-tag {
-            background-color: var(--bg-tertiary);
-            color: var(--text-secondary);
-            padding: 0.25rem 0.5rem;
-            border-radius: 3px;
-            font-size: 0.75rem;
-            font-family: monospace;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 250px;
-            }
-            
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="app-container">
-        <!-- Sidebar -->
-        <nav class="sidebar" id="sidebar" aria-label="Main navigation">
-            <div class="sidebar-header">
-                <div class="logo">TNF</div>
-                <div class="logo-text">Browser Hub</div>
-            </div>
+      <!-- Sidebar -->
+      <nav class="sidebar" id="sidebar" aria-label="Main navigation">
+        <div class="sidebar-header">
+          <div class="logo">TNF</div>
+          <div class="logo-text">Browser Hub</div>
+        </div>
 
-            <!-- AI Services -->
-            <div class="nav-section">
-                <div class="nav-section-header" onclick="toggleSection('ai')" role="button" aria-expanded="true" aria-controls="ai">
-                    <div class="nav-section-title">
-                        <i class="fas fa-robot"></i>
-                        <span>AI Services</span>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="nav-section-content" id="ai">
-                    <div class="nav-item" data-service="chat" role="menuitem" tabindex="0">
-                        <i class="fas fa-comments"></i>
-                        <span>AI Chat</span>
-                        <div class="status-dot online"></div>
-                    </div>
-                    <div class="nav-item" data-service="code" role="menuitem" tabindex="0">
-                        <i class="fas fa-code"></i>
-                        <span>Code Assistant</span>
-                        <div class="status-dot online"></div>
-                    </div>
-                    <div class="nav-item" data-service="image" role="menuitem" tabindex="0">
-                        <i class="fas fa-image"></i>
-                        <span>Image Generation</span>
-                        <div class="status-dot warning"></div>
-                    </div>
-                    <div class="nav-item" data-service="voice" role="menuitem" tabindex="0">
-                        <i class="fas fa-microphone"></i>
-                        <span>Voice Assistant</span>
-                        <div class="status-dot offline"></div>
-                    </div>
-                </div>
+        <!-- AI Services -->
+        <div class="nav-section">
+          <div
+            class="nav-section-header"
+            onclick="toggleSection('ai')"
+            role="button"
+            aria-expanded="true"
+            aria-controls="ai"
+          >
+            <div class="nav-section-title">
+              <i class="fas fa-robot"></i>
+              <span>AI Services</span>
             </div>
-
-            <!-- Development Tools -->
-            <div class="nav-section">
-                <div class="nav-section-header" onclick="toggleSection('dev')" role="button" aria-expanded="true" aria-controls="dev">
-                    <div class="nav-section-title">
-                        <i class="fas fa-tools"></i>
-                        <span>Development Tools</span>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="nav-section-content" id="dev">
-                    <div class="nav-item" data-service="ide" role="menuitem" tabindex="0">
-                        <i class="fas fa-laptop-code"></i>
-                        <span>Web IDE</span>
-                        <div class="status-dot online"></div>
-                    </div>
-                    <div class="nav-item" data-service="git" role="menuitem" tabindex="0">
-                        <i class="fab fa-git-alt"></i>
-                        <span>Git Manager</span>
-                        <div class="status-dot online"></div>
-                    </div>
-                    <div class="nav-item" data-service="docker" role="menuitem" tabindex="0">
-                        <i class="fab fa-docker"></i>
-                        <span>Docker Manager</span>
-                        <div class="status-dot warning"></div>
-                    </div>
-                    <div class="nav-item" data-service="extensions" role="menuitem" tabindex="0">
-                        <i class="fas fa-puzzle-piece"></i>
-                        <span>Extension Manager</span>
-                        <div class="status-dot offline"></div>
-                    </div>
-                </div>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="nav-section-content" id="ai">
+            <div class="nav-item" data-service="chat" role="menuitem" tabindex="0">
+              <i class="fas fa-comments"></i>
+              <span>AI Chat</span>
+              <div class="status-dot online"></div>
             </div>
-
-            <!-- MCP Services -->
-            <div class="nav-section">
-                <div class="nav-section-header" onclick="toggleSection('mcp')" role="button" aria-expanded="true" aria-controls="mcp">
-                    <div class="nav-section-title">
-                        <i class="fas fa-network-wired"></i>
-                        <span>MCP Services</span>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="nav-section-content" id="mcp">
-                    <div class="nav-item" data-service="mcp-discovery" role="menuitem" tabindex="0">
-                        <i class="fas fa-search"></i>
-                        <span>Service Discovery</span>
-                        <div class="status-dot online"></div>
-                    </div>
-                    <div class="nav-item" data-service="mcp-registry" role="menuitem" tabindex="0">
-                        <i class="fas fa-database"></i>
-                        <span>Service Registry</span>
-                        <div class="status-dot online"></div>
-                    </div>
-                    <div class="nav-item" data-service="mcp-monitor" role="menuitem" tabindex="0">
-                        <i class="fas fa-heartbeat"></i>
-                        <span>Health Monitor</span>
-                        <div class="status-dot warning"></div>
-                    </div>
-                    <div class="nav-item" data-service="mcp-config" role="menuitem" tabindex="0">
-                        <i class="fas fa-cog"></i>
-                        <span>Configuration</span>
-                        <div class="status-dot online"></div>
-                    </div>
-                </div>
+            <div class="nav-item" data-service="code" role="menuitem" tabindex="0">
+              <i class="fas fa-code"></i>
+              <span>Code Assistant</span>
+              <div class="status-dot online"></div>
             </div>
-
-            <!-- Data & Analytics -->
-            <div class="nav-section">
-                <div class="nav-section-header" onclick="toggleSection('data')" role="button" aria-expanded="true" aria-controls="data">
-                    <div class="nav-section-title">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Data & Analytics</span>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="nav-section-content" id="data">
-                    <div class="nav-item" data-service="database" role="menuitem" tabindex="0">
-                        <i class="fas fa-database"></i>
-                        <span>Database Explorer</span>
-                        <div class="status-dot online"></div>
-                    </div>
-                    <div class="nav-item" data-service="analytics" role="menuitem" tabindex="0">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Analytics Dashboard</span>
-                        <div class="status-dot online"></div>
-                    </div>
-                    <div class="nav-item" data-service="pipeline" role="menuitem" tabindex="0">
-                        <i class="fas fa-stream"></i>
-                        <span>Data Pipeline</span>
-                        <div class="status-dot warning"></div>
-                    </div>
-                </div>
+            <div class="nav-item" data-service="image" role="menuitem" tabindex="0">
+              <i class="fas fa-image"></i>
+              <span>Image Generation</span>
+              <div class="status-dot warning"></div>
             </div>
-
-            <!-- Administration -->
-            <div class="nav-section">
-                <div class="nav-section-header" onclick="toggleSection('admin')" role="button" aria-expanded="true" aria-controls="admin">
-                    <div class="nav-section-title">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Administration</span>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="nav-section-content" id="admin">
-                    <div class="nav-item" data-service="users" role="menuitem" tabindex="0">
-                        <i class="fas fa-users"></i>
-                        <span>User Management</span>
-                        <div class="status-dot online"></div>
-                    </div>
-                    <div class="nav-item" data-service="security" role="menuitem" tabindex="0">
-                        <i class="fas fa-lock"></i>
-                        <span>Security Dashboard</span>
-                        <div class="status-dot warning"></div>
-                    </div>
-                    <div class="nav-item" data-service="monitoring" role="menuitem" tabindex="0">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>System Monitoring</span>
-                        <div class="status-dot online"></div>
-                    </div>
-                </div>
+            <div class="nav-item" data-service="voice" role="menuitem" tabindex="0">
+              <i class="fas fa-microphone"></i>
+              <span>Voice Assistant</span>
+              <div class="status-dot offline"></div>
             </div>
-        </nav>
+          </div>
+        </div>
 
-        <!-- Main Content Area -->
-        <main class="main-content" id="main-content">
-            <!-- Tab Bar -->
-            <div class="tab-bar" role="tablist" aria-label="Service tabs">
-                <div class="tab active" id="tab-dashboard" role="tab" aria-selected="true" aria-controls="content-dashboard" tabindex="0">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                    <button class="tab-close" onclick="closeTab('dashboard')" aria-label="Close tab">
-                        <i class="fas fa-times"></i>
+        <!-- Development Tools -->
+        <div class="nav-section">
+          <div
+            class="nav-section-header"
+            onclick="toggleSection('dev')"
+            role="button"
+            aria-expanded="true"
+            aria-controls="dev"
+          >
+            <div class="nav-section-title">
+              <i class="fas fa-tools"></i>
+              <span>Development Tools</span>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="nav-section-content" id="dev">
+            <div class="nav-item" data-service="ide" role="menuitem" tabindex="0">
+              <i class="fas fa-laptop-code"></i>
+              <span>Web IDE</span>
+              <div class="status-dot online"></div>
+            </div>
+            <div class="nav-item" data-service="git" role="menuitem" tabindex="0">
+              <i class="fab fa-git-alt"></i>
+              <span>Git Manager</span>
+              <div class="status-dot online"></div>
+            </div>
+            <div class="nav-item" data-service="docker" role="menuitem" tabindex="0">
+              <i class="fab fa-docker"></i>
+              <span>Docker Manager</span>
+              <div class="status-dot warning"></div>
+            </div>
+            <div class="nav-item" data-service="extensions" role="menuitem" tabindex="0">
+              <i class="fas fa-puzzle-piece"></i>
+              <span>Extension Manager</span>
+              <div class="status-dot offline"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MCP Services -->
+        <div class="nav-section">
+          <div
+            class="nav-section-header"
+            onclick="toggleSection('mcp')"
+            role="button"
+            aria-expanded="true"
+            aria-controls="mcp"
+          >
+            <div class="nav-section-title">
+              <i class="fas fa-network-wired"></i>
+              <span>MCP Services</span>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="nav-section-content" id="mcp">
+            <div class="nav-item" data-service="mcp-discovery" role="menuitem" tabindex="0">
+              <i class="fas fa-search"></i>
+              <span>Service Discovery</span>
+              <div class="status-dot online"></div>
+            </div>
+            <div class="nav-item" data-service="mcp-registry" role="menuitem" tabindex="0">
+              <i class="fas fa-database"></i>
+              <span>Service Registry</span>
+              <div class="status-dot online"></div>
+            </div>
+            <div class="nav-item" data-service="mcp-monitor" role="menuitem" tabindex="0">
+              <i class="fas fa-heartbeat"></i>
+              <span>Health Monitor</span>
+              <div class="status-dot warning"></div>
+            </div>
+            <div class="nav-item" data-service="mcp-config" role="menuitem" tabindex="0">
+              <i class="fas fa-cog"></i>
+              <span>Configuration</span>
+              <div class="status-dot online"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data & Analytics -->
+        <div class="nav-section">
+          <div
+            class="nav-section-header"
+            onclick="toggleSection('data')"
+            role="button"
+            aria-expanded="true"
+            aria-controls="data"
+          >
+            <div class="nav-section-title">
+              <i class="fas fa-chart-bar"></i>
+              <span>Data & Analytics</span>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="nav-section-content" id="data">
+            <div class="nav-item" data-service="database" role="menuitem" tabindex="0">
+              <i class="fas fa-database"></i>
+              <span>Database Explorer</span>
+              <div class="status-dot online"></div>
+            </div>
+            <div class="nav-item" data-service="analytics" role="menuitem" tabindex="0">
+              <i class="fas fa-chart-line"></i>
+              <span>Analytics Dashboard</span>
+              <div class="status-dot online"></div>
+            </div>
+            <div class="nav-item" data-service="pipeline" role="menuitem" tabindex="0">
+              <i class="fas fa-stream"></i>
+              <span>Data Pipeline</span>
+              <div class="status-dot warning"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Administration -->
+        <div class="nav-section">
+          <div
+            class="nav-section-header"
+            onclick="toggleSection('admin')"
+            role="button"
+            aria-expanded="true"
+            aria-controls="admin"
+          >
+            <div class="nav-section-title">
+              <i class="fas fa-shield-alt"></i>
+              <span>Administration</span>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="nav-section-content" id="admin">
+            <div class="nav-item" data-service="users" role="menuitem" tabindex="0">
+              <i class="fas fa-users"></i>
+              <span>User Management</span>
+              <div class="status-dot online"></div>
+            </div>
+            <div class="nav-item" data-service="security" role="menuitem" tabindex="0">
+              <i class="fas fa-lock"></i>
+              <span>Security Dashboard</span>
+              <div class="status-dot warning"></div>
+            </div>
+            <div class="nav-item" data-service="monitoring" role="menuitem" tabindex="0">
+              <i class="fas fa-tachometer-alt"></i>
+              <span>System Monitoring</span>
+              <div class="status-dot online"></div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main Content Area -->
+      <main class="main-content" id="main-content">
+        <!-- Tab Bar -->
+        <div class="tab-bar" role="tablist" aria-label="Service tabs">
+          <div
+            class="tab active"
+            id="tab-dashboard"
+            role="tab"
+            aria-selected="true"
+            aria-controls="content-dashboard"
+            tabindex="0"
+          >
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+            <button class="tab-close" onclick="closeTab('dashboard')" aria-label="Close tab">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Service Toolbars -->
+        <div class="service-toolbar">
+          <div class="service-group">
+            <span class="service-group-label">Core Services:</span>
+            <div class="service-chip active">● 3/4</div>
+            <div class="service-chip active">TNF Frontend</div>
+            <div class="service-chip active">API Gateway</div>
+            <div class="service-chip warning">SkIDEancer IDE</div>
+            <div class="service-chip error">ML Service</div>
+            <button class="btn btn-secondary" onclick="refreshServices()">
+              <i class="fas fa-sync"></i>
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <div class="service-toolbar">
+          <div class="service-group">
+            <span class="service-group-label">AI Services:</span>
+            <div class="service-chip active">● 2/4</div>
+            <div class="service-chip active">Claude</div>
+            <div class="service-chip active">Gemini</div>
+            <div class="service-chip warning">ChatGPT</div>
+            <div class="service-chip error">Voice AI</div>
+          </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+          <div class="content-view">
+            <div
+              class="tab-content active"
+              id="content-dashboard"
+              role="tabpanel"
+              aria-labelledby="tab-dashboard"
+            >
+              <!-- Dashboard Content -->
+              <div class="dashboard-grid">
+                <div class="metric-card">
+                  <div class="metric-value" id="activeConnections">8</div>
+                  <div class="metric-label">Active Connections</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-value" id="totalRequests">1,247</div>
+                  <div class="metric-label">Total Requests</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-value" id="errorRate">2.3%</div>
+                  <div class="metric-label">Error Rate</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-value" id="uptime">47h</div>
+                  <div class="metric-label">Uptime</div>
+                </div>
+              </div>
+
+              <div class="dashboard-grid">
+                <!-- System Health Card -->
+                <div class="card">
+                  <div class="card-header">
+                    <h2 class="card-title">
+                      <i class="fas fa-heartbeat"></i>
+                      System Health
+                    </h2>
+                  </div>
+                  <div id="healthStatus">
+                    <div class="loading">
+                      <div class="loading-spinner"></div>
+                      Loading health status...
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Resources Card -->
+                <div class="card">
+                  <div class="card-header">
+                    <h2 class="card-title">
+                      <i class="fas fa-database"></i>
+                      Available Resources
+                    </h2>
+                    <button class="btn btn-primary" onclick="showAddResourceModal()">
+                      <i class="fas fa-plus"></i> Add Resource
                     </button>
-                </div>
-            </div>
-
-            <!-- Service Toolbars -->
-            <div class="service-toolbar">
-                <div class="service-group">
-                    <span class="service-group-label">Core Services:</span>
-                    <div class="service-chip active">● 3/4</div>
-                    <div class="service-chip active">TNF Frontend</div>
-                    <div class="service-chip active">API Gateway</div>
-                    <div class="service-chip warning">SkIDEancer IDE</div>
-                    <div class="service-chip error">ML Service</div>
-                    <button class="btn btn-secondary" onclick="refreshServices()">
-                        <i class="fas fa-sync"></i>
-                        Refresh
-                    </button>
-                </div>
-            </div>
-
-            <div class="service-toolbar">
-                <div class="service-group">
-                    <span class="service-group-label">AI Services:</span>
-                    <div class="service-chip active">● 2/4</div>
-                    <div class="service-chip active">Claude</div>
-                    <div class="service-chip active">Gemini</div>
-                    <div class="service-chip warning">ChatGPT</div>
-                    <div class="service-chip error">Voice AI</div>
-                </div>
-            </div>
-
-            <!-- Content Area -->
-            <div class="content-area">
-                <div class="content-view">
-                    <div class="tab-content active" id="content-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
-                        <!-- Dashboard Content -->
-                        <div class="dashboard-grid">
-                            <div class="metric-card">
-                                <div class="metric-value" id="activeConnections">8</div>
-                                <div class="metric-label">Active Connections</div>
-                            </div>
-                            <div class="metric-card">
-                                <div class="metric-value" id="totalRequests">1,247</div>
-                                <div class="metric-label">Total Requests</div>
-                            </div>
-                            <div class="metric-card">
-                                <div class="metric-value" id="errorRate">2.3%</div>
-                                <div class="metric-label">Error Rate</div>
-                            </div>
-                            <div class="metric-card">
-                                <div class="metric-value" id="uptime">47h</div>
-                                <div class="metric-label">Uptime</div>
-                            </div>
-                        </div>
-
-                        <div class="dashboard-grid">
-                            <!-- System Health Card -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h2 class="card-title">
-                                        <i class="fas fa-heartbeat"></i>
-                                        System Health
-                                    </h2>
-                                </div>
-                                <div id="healthStatus">
-                                    <div class="loading">
-                                        <div class="loading-spinner"></div>
-                                        Loading health status...
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Resources Card -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h2 class="card-title">
-                                        <i class="fas fa-database"></i>
-                                        Available Resources
-                                    </h2>
-                                    <button class="btn btn-primary" onclick="showAddResourceModal()">
-                                        <i class="fas fa-plus"></i> Add Resource
-                                    </button>
-                                </div>
-                                <div id="resourcesList">
-                                    <div class="loading">
-                                        <div class="loading-spinner"></div>
-                                        Loading resources...
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Tools Card -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h2 class="card-title">
-                                        <i class="fas fa-tools"></i>
-                                        Available Tools
-                                    </h2>
-                                    <button class="btn btn-primary" onclick="showAddToolModal()">
-                                        <i class="fas fa-plus"></i> Add Tool
-                                    </button>
-                                </div>
-                                <div id="toolsList">
-                                    <div class="loading">
-                                        <div class="loading-spinner"></div>
-                                        Loading tools...
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- MCP Services Card -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h2 class="card-title">
-                                        <i class="fas fa-network-wired"></i>
-                                        MCP Services
-                                    </h2>
-                                </div>
-                                <div id="mcpServicesList">
-                                    <div class="loading">
-                                        <div class="loading-spinner"></div>
-                                        Loading MCP services...
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Logs Card -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h2 class="card-title">
-                                        <i class="fas fa-list"></i>
-                                        System Logs
-                                    </h2>
-                                    <button class="btn btn-secondary" onclick="clearLogs()">
-                                        <i class="fas fa-trash"></i> Clear
-                                    </button>
-                                </div>
-                                <div class="log-container" id="logContainer">
-                                    <div class="log-entry info">System initialized...</div>
-                                </div>
-                            </div>
-
-                            <!-- Settings Card -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h2 class="card-title">
-                                        <i class="fas fa-cog"></i>
-                                        Configuration
-                                    </h2>
-                                </div>
-                                <form id="settingsFormElement">
-                                    <div class="form-group">
-                                        <label>WebSocket URL</label>
-                                        <input type="text" id="wsUrl" value="ws://localhost:3000" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Request Timeout (ms)</label>
-                                        <input type="number" id="requestTimeout" value="5000" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Reconnect Interval (ms)</label>
-                                        <input type="number" id="reconnectInterval" value="3000" />
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save"></i> Save Settings
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
+                  </div>
+                  <div id="resourcesList">
+                    <div class="loading">
+                      <div class="loading-spinner"></div>
+                      Loading resources...
                     </div>
+                  </div>
                 </div>
+
+                <!-- Tools Card -->
+                <div class="card">
+                  <div class="card-header">
+                    <h2 class="card-title">
+                      <i class="fas fa-tools"></i>
+                      Available Tools
+                    </h2>
+                    <button class="btn btn-primary" onclick="showAddToolModal()">
+                      <i class="fas fa-plus"></i> Add Tool
+                    </button>
+                  </div>
+                  <div id="toolsList">
+                    <div class="loading">
+                      <div class="loading-spinner"></div>
+                      Loading tools...
+                    </div>
+                  </div>
+                </div>
+
+                <!-- MCP Services Card -->
+                <div class="card">
+                  <div class="card-header">
+                    <h2 class="card-title">
+                      <i class="fas fa-network-wired"></i>
+                      MCP Services
+                    </h2>
+                  </div>
+                  <div id="mcpServicesList">
+                    <div class="loading">
+                      <div class="loading-spinner"></div>
+                      Loading MCP services...
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Logs Card -->
+                <div class="card">
+                  <div class="card-header">
+                    <h2 class="card-title">
+                      <i class="fas fa-list"></i>
+                      System Logs
+                    </h2>
+                    <button class="btn btn-secondary" onclick="clearLogs()">
+                      <i class="fas fa-trash"></i> Clear
+                    </button>
+                  </div>
+                  <div class="log-container" id="logContainer">
+                    <div class="log-entry info">System initialized...</div>
+                  </div>
+                </div>
+
+                <!-- Settings Card -->
+                <div class="card">
+                  <div class="card-header">
+                    <h2 class="card-title">
+                      <i class="fas fa-cog"></i>
+                      Configuration
+                    </h2>
+                  </div>
+                  <form id="settingsFormElement">
+                    <div class="form-group">
+                      <label>WebSocket URL</label>
+                      <input type="text" id="wsUrl" value="ws://localhost:3000" />
+                    </div>
+                    <div class="form-group">
+                      <label>Request Timeout (ms)</label>
+                      <input type="number" id="requestTimeout" value="5000" />
+                    </div>
+                    <div class="form-group">
+                      <label>Reconnect Interval (ms)</label>
+                      <input type="number" id="reconnectInterval" value="3000" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save"></i> Save Settings
+                    </button>
+                  </form>
+                </div>
+              </div>
             </div>
-        </main>
+          </div>
+        </div>
+      </main>
     </div>
 
     <!-- Toast Container -->
@@ -1099,578 +1178,644 @@
 
     <!-- Add Resource Modal -->
     <div id="addResourceModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('addResourceModal')">&times;</span>
-            <h2>Add Resource</h2>
-            <form id="addResourceForm">
-                <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" id="resourceName" required />
-                </div>
-                <div class="form-group">
-                    <label>URI</label>
-                    <input type="text" id="resourceUri" required />
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="resourceDescription"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>MIME Type</label>
-                    <input type="text" id="resourceMimeType" value="text/plain" />
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Add Resource
-                </button>
-            </form>
-        </div>
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('addResourceModal')">&times;</span>
+        <h2>Add Resource</h2>
+        <form id="addResourceForm">
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="resourceName" required />
+          </div>
+          <div class="form-group">
+            <label>URI</label>
+            <input type="text" id="resourceUri" required />
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="resourceDescription"></textarea>
+          </div>
+          <div class="form-group">
+            <label>MIME Type</label>
+            <input type="text" id="resourceMimeType" value="text/plain" />
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Resource
+          </button>
+        </form>
+      </div>
     </div>
 
     <!-- Add Tool Modal -->
     <div id="addToolModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('addToolModal')">&times;</span>
-            <h2>Add Tool</h2>
-            <form id="addToolForm">
-                <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" id="toolName" required />
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="toolDescription" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Input Schema (JSON)</label>
-                    <textarea id="toolInputSchema" placeholder='{"type": "object", "properties": {}}'></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Add Tool
-                </button>
-            </form>
-        </div>
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('addToolModal')">&times;</span>
+        <h2>Add Tool</h2>
+        <form id="addToolForm">
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="toolName" required />
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="toolDescription" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>Input Schema (JSON)</label>
+            <textarea
+              id="toolInputSchema"
+              placeholder='{"type": "object", "properties": {}}'
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Tool
+          </button>
+        </form>
+      </div>
     </div>
 
     <script>
-        // Enhanced Application State with MCP Integration
-        const appState = {
-            services: {
-                // AI Services
-                chat: { url: '/ai/chat', name: 'AI Chat', description: 'Conversational AI assistant' },
-                code: { url: '/ai/code', name: 'Code Assistant', description: 'AI-powered code completion and review' },
-                image: { url: '/ai/image', name: 'Image Generation', description: 'Generate images from text prompts' },
-                voice: { url: '/ai/voice', name: 'Voice Assistant', description: 'Voice-controlled AI assistant' },
-                
-                // Development Tools
-                ide: { url: '/dev/ide', name: 'Web IDE', description: 'Full-featured web-based IDE' },
-                git: { url: '/dev/git', name: 'Git Manager', description: 'Git repository management' },
-                docker: { url: '/dev/docker', name: 'Docker Manager', description: 'Container management interface' },
-                extensions: { url: '/dev/extensions', name: 'Extension Manager', description: 'IDE extensions and plugins' },
-                
-                // MCP Services
-                'mcp-discovery': { url: '/mcp/discovery', name: 'MCP Discovery', description: 'Discover and register MCP services' },
-                'mcp-registry': { url: '/mcp/registry', name: 'MCP Registry', description: 'Manage MCP service registry' },
-                'mcp-monitor': { url: '/mcp/monitor', name: 'MCP Monitor', description: 'Monitor MCP service health' },
-                'mcp-config': { url: '/mcp/config', name: 'MCP Config', description: 'Configure MCP services' },
-                
-                // Data & Analytics
-                database: { url: '/data/explorer', name: 'Database Explorer', description: 'Database management and querying' },
-                analytics: { url: '/analytics/dashboard', name: 'Analytics Dashboard', description: 'Business intelligence and analytics' },
-                pipeline: { url: '/data/pipeline', name: 'Data Pipeline', description: 'ETL and data processing workflows' },
-                
-                // Administration
-                users: { url: '/admin/users', name: 'User Management', description: 'User account and permission management' },
-                security: { url: '/admin/security', name: 'Security Dashboard', description: 'Security monitoring and alerts' },
-                monitoring: { url: '/admin/monitoring', name: 'System Monitoring', description: 'System health and performance monitoring' }
-            },
-            mcpServices: {},
-            openTabs: ['dashboard'],
-            activeTab: 'dashboard',
-            sidebarCollapsed: false,
-            serviceHealth: {},
-            mcpConnections: new Map(),
-            settings: {
-                autoSave: true,
-                notifications: true,
-                theme: 'dark',
-                sidebarWidth: 300,
-                mcpAutoDiscovery: true,
-                mcpHealthCheckInterval: 30000
-            }
-        };
+      // Enhanced Application State with MCP Integration
+      const appState = {
+        services: {
+          // AI Services
+          chat: { url: '/ai/chat', name: 'AI Chat', description: 'Conversational AI assistant' },
+          code: {
+            url: '/ai/code',
+            name: 'Code Assistant',
+            description: 'AI-powered code completion and review',
+          },
+          image: {
+            url: '/ai/image',
+            name: 'Image Generation',
+            description: 'Generate images from text prompts',
+          },
+          voice: {
+            url: '/ai/voice',
+            name: 'Voice Assistant',
+            description: 'Voice-controlled AI assistant',
+          },
 
-        // MCP Client Class (Enhanced from original)
-        class MCPClient {
-            constructor() {
-                this.ws = null;
+          // Development Tools
+          ide: { url: '/dev/ide', name: 'Web IDE', description: 'Full-featured web-based IDE' },
+          git: { url: '/dev/git', name: 'Git Manager', description: 'Git repository management' },
+          docker: {
+            url: '/dev/docker',
+            name: 'Docker Manager',
+            description: 'Container management interface',
+          },
+          extensions: {
+            url: '/dev/extensions',
+            name: 'Extension Manager',
+            description: 'IDE extensions and plugins',
+          },
+
+          // MCP Services
+          'mcp-discovery': {
+            url: '/mcp/discovery',
+            name: 'MCP Discovery',
+            description: 'Discover and register MCP services',
+          },
+          'mcp-registry': {
+            url: '/mcp/registry',
+            name: 'MCP Registry',
+            description: 'Manage MCP service registry',
+          },
+          'mcp-monitor': {
+            url: '/mcp/monitor',
+            name: 'MCP Monitor',
+            description: 'Monitor MCP service health',
+          },
+          'mcp-config': {
+            url: '/mcp/config',
+            name: 'MCP Config',
+            description: 'Configure MCP services',
+          },
+
+          // Data & Analytics
+          database: {
+            url: '/data/explorer',
+            name: 'Database Explorer',
+            description: 'Database management and querying',
+          },
+          analytics: {
+            url: '/analytics/dashboard',
+            name: 'Analytics Dashboard',
+            description: 'Business intelligence and analytics',
+          },
+          pipeline: {
+            url: '/data/pipeline',
+            name: 'Data Pipeline',
+            description: 'ETL and data processing workflows',
+          },
+
+          // Administration
+          users: {
+            url: '/admin/users',
+            name: 'User Management',
+            description: 'User account and permission management',
+          },
+          security: {
+            url: '/admin/security',
+            name: 'Security Dashboard',
+            description: 'Security monitoring and alerts',
+          },
+          monitoring: {
+            url: '/admin/monitoring',
+            name: 'System Monitoring',
+            description: 'System health and performance monitoring',
+          },
+        },
+        mcpServices: {},
+        openTabs: ['dashboard'],
+        activeTab: 'dashboard',
+        sidebarCollapsed: false,
+        serviceHealth: {},
+        mcpConnections: new Map(),
+        settings: {
+          autoSave: true,
+          notifications: true,
+          theme: 'dark',
+          sidebarWidth: 300,
+          mcpAutoDiscovery: true,
+          mcpHealthCheckInterval: 30000,
+        },
+      };
+
+      // MCP Client Class (Enhanced from original)
+      class MCPClient {
+        constructor() {
+          this.ws = null;
+          this.isConnected = false;
+          this.messageId = 0;
+          this.pendingRequests = new Map();
+          this.requestTimeout = 5000;
+          this.reconnectInterval = 3000;
+        }
+
+        async connect(url = 'ws://localhost:3000') {
+          return new Promise((resolve, reject) => {
+            try {
+              this.ws = new WebSocket(url);
+
+              this.ws.onopen = () => {
+                this.isConnected = true;
+                log('info', 'Connected to MCP server');
+                showToast('Connected to MCP server', 'success');
+                resolve();
+              };
+
+              this.ws.onmessage = (event) => {
+                try {
+                  const message = JSON.parse(event.data);
+                  this.handleMessage(message);
+                } catch (error) {
+                  log('error', `Failed to parse message: ${error.message}`);
+                }
+              };
+
+              this.ws.onclose = () => {
                 this.isConnected = false;
-                this.messageId = 0;
-                this.pendingRequests = new Map();
-                this.requestTimeout = 5000;
-                this.reconnectInterval = 3000;
+                log('warn', 'Disconnected from MCP server');
+                showToast('Disconnected from MCP server', 'warning');
+
+                // Attempt to reconnect
+                setTimeout(() => {
+                  if (!this.isConnected) {
+                    log('info', 'Attempting to reconnect...');
+                    this.connect(url);
+                  }
+                }, this.reconnectInterval);
+              };
+
+              this.ws.onerror = (error) => {
+                log('error', `WebSocket error: ${error.message || 'Connection failed'}`);
+                showToast('Connection failed', 'error');
+                reject(error);
+              };
+            } catch (error) {
+              reject(error);
             }
-
-            async connect(url = 'ws://localhost:3000') {
-                return new Promise((resolve, reject) => {
-                    try {
-                        this.ws = new WebSocket(url);
-                        
-                        this.ws.onopen = () => {
-                            this.isConnected = true;
-                            log('info', 'Connected to MCP server');
-                            showToast('Connected to MCP server', 'success');
-                            resolve();
-                        };
-                        
-                        this.ws.onmessage = (event) => {
-                            try {
-                                const message = JSON.parse(event.data);
-                                this.handleMessage(message);
-                            } catch (error) {
-                                log('error', `Failed to parse message: ${error.message}`);
-                            }
-                        };
-                        
-                        this.ws.onclose = () => {
-                            this.isConnected = false;
-                            log('warn', 'Disconnected from MCP server');
-                            showToast('Disconnected from MCP server', 'warning');
-                            
-                            // Attempt to reconnect
-                            setTimeout(() => {
-                                if (!this.isConnected) {
-                                    log('info', 'Attempting to reconnect...');
-                                    this.connect(url);
-                                }
-                            }, this.reconnectInterval);
-                        };
-                        
-                        this.ws.onerror = (error) => {
-                            log('error', `WebSocket error: ${error.message || 'Connection failed'}`);
-                            showToast('Connection failed', 'error');
-                            reject(error);
-                        };
-                    } catch (error) {
-                        reject(error);
-                    }
-                });
-            }
-
-            isReady() {
-                return this.isConnected && this.ws && this.ws.readyState === WebSocket.OPEN;
-            }
-
-            sendRequest(method, params = {}) {
-                if (!this.isReady()) {
-                    return Promise.reject(new Error('WebSocket not connected'));
-                }
-
-                return new Promise((resolve, reject) => {
-                    const id = ++this.messageId;
-                    const message = {
-                        jsonrpc: '2.0',
-                        id,
-                        method,
-                        params
-                    };
-
-                    this.pendingRequests.set(id, { resolve, reject });
-                    this.ws.send(JSON.stringify(message));
-
-                    setTimeout(() => {
-                        if (this.pendingRequests.has(id)) {
-                            this.pendingRequests.delete(id);
-                            reject(new Error('Request timeout'));
-                        }
-                    }, this.requestTimeout);
-                });
-            }
-
-            handleMessage(message) {
-                if (message.id && this.pendingRequests.has(message.id)) {
-                    const { resolve, reject } = this.pendingRequests.get(message.id);
-                    this.pendingRequests.delete(message.id);
-                    
-                    if (message.error) {
-                        reject(new Error(message.error.message));
-                    } else {
-                        resolve(message.result);
-                    }
-                } else if (message.method) {
-                    // Handle notifications
-                    log('info', `Received notification: ${message.method}`);
-                }
-            }
-
-            async getHealth() {
-                try {
-                    return await this.sendRequest('mcp.getHealth');
-                } catch (error) {
-                    // Return mock data for demo
-                    return {
-                        status: 'healthy',
-                        uptime: 169200000,
-                        connections: 8,
-                        requests: 1247,
-                        errors: 29
-                    };
-                }
-            }
-
-            async getMetrics() {
-                try {
-                    return await this.sendRequest('mcp.getMetrics');
-                } catch (error) {
-                    // Return mock data for demo
-                    return {
-                        activeConnections: 8,
-                        totalRequests: 1247,
-                        errorRate: 2.3,
-                        uptime: 169200000
-                    };
-                }
-            }
-
-            async getResources() {
-                try {
-                    return await this.sendRequest('resources/list');
-                } catch (error) {
-                    // Return mock data for demo
-                    return [
-                        {
-                            name: 'User Database',
-                            uri: 'mysql://localhost/users',
-                            description: 'Primary user authentication database',
-                            mimeType: 'application/sql'
-                        },
-                        {
-                            name: 'File Storage',
-                            uri: 'file:///var/www/uploads',
-                            description: 'User uploaded files storage',
-                            mimeType: 'application/octet-stream'
-                        },
-                        {
-                            name: 'Configuration',
-                            uri: 'file:///etc/app/config.json',
-                            description: 'Application configuration file',
-                            mimeType: 'application/json'
-                        }
-                    ];
-                }
-            }
-
-            async getTools() {
-                try {
-                    return await this.sendRequest('tools/list');
-                } catch (error) {
-                    // Return mock data for demo
-                    return [
-                        {
-                            name: 'file_read',
-                            description: 'Read contents of a file',
-                            inputSchema: {
-                                type: 'object',
-                                properties: {
-                                    path: { type: 'string', description: 'Path to the file' }
-                                },
-                                required: ['path']
-                            }
-                        },
-                        {
-                            name: 'database_query',
-                            description: 'Execute a database query',
-                            inputSchema: {
-                                type: 'object',
-                                properties: {
-                                    query: { type: 'string', description: 'SQL query to execute' },
-                                    database: { type: 'string', description: 'Database name' }
-                                },
-                                required: ['query']
-                            }
-                        },
-                        {
-                            name: 'web_request',
-                            description: 'Make HTTP request to external API',
-                            inputSchema: {
-                                type: 'object',
-                                properties: {
-                                    url: { type: 'string', description: 'URL to request' },
-                                    method: { type: 'string', description: 'HTTP method' }
-                                },
-                                required: ['url']
-                            }
-                        }
-                    ];
-                }
-            }
-
-            async readResource(uri) {
-                return this.sendRequest('resources/read', { uri });
-            }
-
-            async callTool(name, arguments_ = {}) {
-                return this.sendRequest('tools/call', { name, arguments: arguments_ });
-            }
-
-            async registerResource(resource) {
-                return this.sendRequest('resources/register', resource);
-            }
-
-            async registerTool(tool) {
-                return this.sendRequest('tools/register', tool);
-            }
+          });
         }
 
-        // MCP Service Management (Enhanced)
-        class MCPServiceManager {
-            constructor() {
-                this.services = new Map();
-                this.connections = new Map();
-                this.healthCheckInterval = null;
-            }
-
-            async discoverServices() {
-                try {
-                    // Mock services for demo
-                    const mockServices = [
-                        {
-                            id: 'mcp-github',
-                            name: 'GitHub MCP',
-                            description: 'GitHub repository management and automation',
-                            endpoint: 'ws://localhost:8080/mcp/github',
-                            tools: ['create_repo', 'list_repos', 'create_issue', 'merge_pr'],
-                            status: 'online'
-                        },
-                        {
-                            id: 'mcp-postgres',
-                            name: 'PostgreSQL MCP',
-                            description: 'Database management and querying',
-                            endpoint: 'ws://localhost:8080/mcp/postgres',
-                            tools: ['query', 'create_table', 'backup', 'restore'],
-                            status: 'online'
-                        },
-                        {
-                            id: 'mcp-filesystem',
-                            name: 'File System MCP',
-                            description: 'File system operations and management',
-                            endpoint: 'ws://localhost:8080/mcp/filesystem',
-                            tools: ['read_file', 'write_file', 'list_dir', 'create_dir'],
-                            status: 'connecting'
-                        },
-                        {
-                            id: 'mcp-slack',
-                            name: 'Slack MCP',
-                            description: 'Slack messaging and workflow automation',
-                            endpoint: 'ws://localhost:8080/mcp/slack',
-                            tools: ['send_message', 'create_channel', 'get_users'],
-                            status: 'offline'
-                        }
-                    ];
-
-                    mockServices.forEach(service => {
-                        this.services.set(service.id, service);
-                    });
-
-                    return Array.from(this.services.values());
-                } catch (error) {
-                    console.error('MCP service discovery failed:', error);
-                    throw error;
-                }
-            }
-
-            getService(serviceId) {
-                return this.services.get(serviceId);
-            }
+        isReady() {
+          return this.isConnected && this.ws && this.ws.readyState === WebSocket.OPEN;
         }
 
-        // Global variables
-        let client = new MCPClient();
-        let mcpManager = new MCPServiceManager();
-        let currentSection = 'dashboard';
+        sendRequest(method, params = {}) {
+          if (!this.isReady()) {
+            return Promise.reject(new Error('WebSocket not connected'));
+          }
 
-        // Utility Functions
-        function log(level, message) {
-            const container = document.getElementById('logContainer');
-            const entry = document.createElement('div');
-            entry.className = `log-entry ${level}`;
-            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-            container.appendChild(entry);
-            container.scrollTop = container.scrollHeight;
+          return new Promise((resolve, reject) => {
+            const id = ++this.messageId;
+            const message = {
+              jsonrpc: '2.0',
+              id,
+              method,
+              params,
+            };
 
-            // Keep only last 100 entries
-            while (container.children.length > 100) {
-                container.removeChild(container.firstChild);
-            }
-        }
+            this.pendingRequests.set(id, { resolve, reject });
+            this.ws.send(JSON.stringify(message));
 
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            
-            container.appendChild(toast);
-            
             setTimeout(() => {
-                toast.remove();
-            }, 5000);
+              if (this.pendingRequests.has(id)) {
+                this.pendingRequests.delete(id);
+                reject(new Error('Request timeout'));
+              }
+            }, this.requestTimeout);
+          });
         }
 
-        function toggleSection(sectionId) {
-            const content = document.getElementById(sectionId);
-            const header = content.previousElementSibling;
-            const icon = header.querySelector('.fas.fa-chevron-down');
-            
-            content.classList.toggle('collapsed');
-            icon.style.transform = content.classList.contains('collapsed') ? 'rotate(-90deg)' : 'rotate(0deg)';
+        handleMessage(message) {
+          if (message.id && this.pendingRequests.has(message.id)) {
+            const { resolve, reject } = this.pendingRequests.get(message.id);
+            this.pendingRequests.delete(message.id);
+
+            if (message.error) {
+              reject(new Error(message.error.message));
+            } else {
+              resolve(message.result);
+            }
+          } else if (message.method) {
+            // Handle notifications
+            log('info', `Received notification: ${message.method}`);
+          }
         }
 
-        function openTab(serviceId) {
-            if (!appState.services[serviceId]) {
-                console.error(`Service ${serviceId} not found.`);
-                return;
-            }
+        async getHealth() {
+          try {
+            return await this.sendRequest('mcp.getHealth');
+          } catch (error) {
+            // Return mock data for demo
+            return {
+              status: 'healthy',
+              uptime: 169200000,
+              connections: 8,
+              requests: 1247,
+              errors: 29,
+            };
+          }
+        }
 
-            if (appState.openTabs.includes(serviceId)) {
-                appState.activeTab = serviceId;
-                renderUI();
-                return;
-            }
+        async getMetrics() {
+          try {
+            return await this.sendRequest('mcp.getMetrics');
+          } catch (error) {
+            // Return mock data for demo
+            return {
+              activeConnections: 8,
+              totalRequests: 1247,
+              errorRate: 2.3,
+              uptime: 169200000,
+            };
+          }
+        }
 
-            appState.openTabs.push(serviceId);
-            appState.activeTab = serviceId;
+        async getResources() {
+          try {
+            return await this.sendRequest('resources/list');
+          } catch (error) {
+            // Return mock data for demo
+            return [
+              {
+                name: 'User Database',
+                uri: 'mysql://localhost/users',
+                description: 'Primary user authentication database',
+                mimeType: 'application/sql',
+              },
+              {
+                name: 'File Storage',
+                uri: 'file:///var/www/uploads',
+                description: 'User uploaded files storage',
+                mimeType: 'application/octet-stream',
+              },
+              {
+                name: 'Configuration',
+                uri: 'file:///etc/app/config.json',
+                description: 'Application configuration file',
+                mimeType: 'application/json',
+              },
+            ];
+          }
+        }
 
-            const service = appState.services[serviceId];
-            const tabBar = document.querySelector('.tab-bar');
-            const contentArea = document.querySelector('.content-view');
+        async getTools() {
+          try {
+            return await this.sendRequest('tools/list');
+          } catch (error) {
+            // Return mock data for demo
+            return [
+              {
+                name: 'file_read',
+                description: 'Read contents of a file',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    path: { type: 'string', description: 'Path to the file' },
+                  },
+                  required: ['path'],
+                },
+              },
+              {
+                name: 'database_query',
+                description: 'Execute a database query',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    query: { type: 'string', description: 'SQL query to execute' },
+                    database: { type: 'string', description: 'Database name' },
+                  },
+                  required: ['query'],
+                },
+              },
+              {
+                name: 'web_request',
+                description: 'Make HTTP request to external API',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    url: { type: 'string', description: 'URL to request' },
+                    method: { type: 'string', description: 'HTTP method' },
+                  },
+                  required: ['url'],
+                },
+              },
+            ];
+          }
+        }
 
-            // Create new tab
-            const tab = document.createElement('div');
-            tab.className = 'tab';
-            tab.id = `tab-${serviceId}`;
-            tab.setAttribute('role', 'tab');
-            tab.innerHTML = `
+        async readResource(uri) {
+          return this.sendRequest('resources/read', { uri });
+        }
+
+        async callTool(name, arguments_ = {}) {
+          return this.sendRequest('tools/call', { name, arguments: arguments_ });
+        }
+
+        async registerResource(resource) {
+          return this.sendRequest('resources/register', resource);
+        }
+
+        async registerTool(tool) {
+          return this.sendRequest('tools/register', tool);
+        }
+      }
+
+      // MCP Service Management (Enhanced)
+      class MCPServiceManager {
+        constructor() {
+          this.services = new Map();
+          this.connections = new Map();
+          this.healthCheckInterval = null;
+        }
+
+        async discoverServices() {
+          try {
+            // Mock services for demo
+            const mockServices = [
+              {
+                id: 'mcp-github',
+                name: 'GitHub MCP',
+                description: 'GitHub repository management and automation',
+                endpoint: 'ws://localhost:8080/mcp/github',
+                tools: ['create_repo', 'list_repos', 'create_issue', 'merge_pr'],
+                status: 'online',
+              },
+              {
+                id: 'mcp-postgres',
+                name: 'PostgreSQL MCP',
+                description: 'Database management and querying',
+                endpoint: 'ws://localhost:8080/mcp/postgres',
+                tools: ['query', 'create_table', 'backup', 'restore'],
+                status: 'online',
+              },
+              {
+                id: 'mcp-filesystem',
+                name: 'File System MCP',
+                description: 'File system operations and management',
+                endpoint: 'ws://localhost:8080/mcp/filesystem',
+                tools: ['read_file', 'write_file', 'list_dir', 'create_dir'],
+                status: 'connecting',
+              },
+              {
+                id: 'mcp-slack',
+                name: 'Slack MCP',
+                description: 'Slack messaging and workflow automation',
+                endpoint: 'ws://localhost:8080/mcp/slack',
+                tools: ['send_message', 'create_channel', 'get_users'],
+                status: 'offline',
+              },
+            ];
+
+            mockServices.forEach((service) => {
+              this.services.set(service.id, service);
+            });
+
+            return Array.from(this.services.values());
+          } catch (error) {
+            console.error('MCP service discovery failed:', error);
+            throw error;
+          }
+        }
+
+        getService(serviceId) {
+          return this.services.get(serviceId);
+        }
+      }
+
+      // Global variables
+      let client = new MCPClient();
+      let mcpManager = new MCPServiceManager();
+      let currentSection = 'dashboard';
+
+      // Utility Functions
+      function log(level, message) {
+        const container = document.getElementById('logContainer');
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${level}`;
+        entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        container.appendChild(entry);
+        container.scrollTop = container.scrollHeight;
+
+        // Keep only last 100 entries
+        while (container.children.length > 100) {
+          container.removeChild(container.firstChild);
+        }
+      }
+
+      function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.remove();
+        }, 5000);
+      }
+
+      function toggleSection(sectionId) {
+        const content = document.getElementById(sectionId);
+        const header = content.previousElementSibling;
+        const icon = header.querySelector('.fas.fa-chevron-down');
+
+        content.classList.toggle('collapsed');
+        icon.style.transform = content.classList.contains('collapsed')
+          ? 'rotate(-90deg)'
+          : 'rotate(0deg)';
+      }
+
+      function openTab(serviceId) {
+        if (!appState.services[serviceId]) {
+          console.error(`Service ${serviceId} not found.`);
+          return;
+        }
+
+        if (appState.openTabs.includes(serviceId)) {
+          appState.activeTab = serviceId;
+          renderUI();
+          return;
+        }
+
+        appState.openTabs.push(serviceId);
+        appState.activeTab = serviceId;
+
+        const service = appState.services[serviceId];
+        const tabBar = document.querySelector('.tab-bar');
+        const contentArea = document.querySelector('.content-view');
+
+        // Create new tab
+        const tab = document.createElement('div');
+        tab.className = 'tab';
+        tab.id = `tab-${serviceId}`;
+        tab.setAttribute('role', 'tab');
+        tab.innerHTML = `
                 <i class="fas fa-window-maximize"></i>
                 <span>${service.name}</span>
                 <button class="tab-close" onclick="closeTab('${serviceId}')" aria-label="Close tab">
                     <i class="fas fa-times"></i>
                 </button>
             `;
-            tab.onclick = () => switchToTab(serviceId);
-            tabBar.appendChild(tab);
+        tab.onclick = () => switchToTab(serviceId);
+        tabBar.appendChild(tab);
 
-            // Create new content pane
-            const content = document.createElement('div');
-            content.className = 'tab-content';
-            content.id = `content-${serviceId}`;
-            content.setAttribute('role', 'tabpanel');
-            content.innerHTML = `
+        // Create new content pane
+        const content = document.createElement('div');
+        content.className = 'tab-content';
+        content.id = `content-${serviceId}`;
+        content.setAttribute('role', 'tabpanel');
+        content.innerHTML = `
                 <div style="padding: 2rem;">
                     <h2><i class="fas fa-window-maximize"></i> ${service.name}</h2>
                     <p>${service.description}</p>
                     <iframe src="${service.url}" style="width:100%; height:calc(100% - 100px); border:0; margin-top: 1rem; border-radius: 8px;"></iframe>
                 </div>
             `;
-            contentArea.appendChild(content);
+        contentArea.appendChild(content);
 
-            renderUI();
-            showToast(`Opened ${service.name}`, 'success');
+        renderUI();
+        showToast(`Opened ${service.name}`, 'success');
+      }
+
+      function closeTab(serviceId) {
+        if (serviceId === 'dashboard') {
+          return;
         }
 
-        function closeTab(serviceId) {
-            if (serviceId === 'dashboard') {
-                return;
-            }
-
-            const tabIndex = appState.openTabs.indexOf(serviceId);
-            if (tabIndex > -1) {
-                appState.openTabs.splice(tabIndex, 1);
-            }
-
-            if (appState.activeTab === serviceId) {
-                appState.activeTab = appState.openTabs[appState.openTabs.length - 1] || 'dashboard';
-            }
-
-            const tab = document.getElementById(`tab-${serviceId}`);
-            const content = document.getElementById(`content-${serviceId}`);
-            if (tab) tab.remove();
-            if (content) content.remove();
-
-            renderUI();
-            showToast(`Closed ${serviceId}`, 'info');
+        const tabIndex = appState.openTabs.indexOf(serviceId);
+        if (tabIndex > -1) {
+          appState.openTabs.splice(tabIndex, 1);
         }
 
-        function switchToTab(serviceId) {
-            appState.activeTab = serviceId;
-            renderUI();
+        if (appState.activeTab === serviceId) {
+          appState.activeTab = appState.openTabs[appState.openTabs.length - 1] || 'dashboard';
         }
 
-        function renderUI() {
-            // Update active tab
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            const activeTabElement = document.getElementById(`tab-${appState.activeTab}`);
-            if (activeTabElement) {
-                activeTabElement.classList.add('active');
-            }
+        const tab = document.getElementById(`tab-${serviceId}`);
+        const content = document.getElementById(`content-${serviceId}`);
+        if (tab) tab.remove();
+        if (content) content.remove();
 
-            // Update active content
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            const activeContentElement = document.getElementById(`content-${appState.activeTab}`);
-            if (activeContentElement) {
-                activeContentElement.classList.add('active');
-            }
+        renderUI();
+        showToast(`Closed ${serviceId}`, 'info');
+      }
+
+      function switchToTab(serviceId) {
+        appState.activeTab = serviceId;
+        renderUI();
+      }
+
+      function renderUI() {
+        // Update active tab
+        document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+        const activeTabElement = document.getElementById(`tab-${appState.activeTab}`);
+        if (activeTabElement) {
+          activeTabElement.classList.add('active');
         }
 
-        function showAddResourceModal() {
-            document.getElementById('addResourceModal').style.display = 'block';
+        // Update active content
+        document.querySelectorAll('.tab-content').forEach((c) => c.classList.remove('active'));
+        const activeContentElement = document.getElementById(`content-${appState.activeTab}`);
+        if (activeContentElement) {
+          activeContentElement.classList.add('active');
+        }
+      }
+
+      function showAddResourceModal() {
+        document.getElementById('addResourceModal').style.display = 'block';
+      }
+
+      function showAddToolModal() {
+        document.getElementById('addToolModal').style.display = 'block';
+      }
+
+      function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+      }
+
+      function clearLogs() {
+        document.getElementById('logContainer').innerHTML =
+          '<div class="log-entry info">Logs cleared...</div>';
+        showToast('Logs cleared', 'info');
+      }
+
+      function refreshServices() {
+        showToast('Refreshing services...', 'info');
+        loadSectionData('dashboard');
+      }
+
+      // Load section data functions
+      async function loadSectionData(sectionId) {
+        if (!client.isReady()) {
+          try {
+            await client.connect();
+          } catch (error) {
+            log('error', 'Failed to connect to MCP server');
+            return;
+          }
         }
 
-        function showAddToolModal() {
-            document.getElementById('addToolModal').style.display = 'block';
+        try {
+          switch (sectionId) {
+            case 'dashboard':
+              await loadDashboardData();
+              break;
+          }
+        } catch (error) {
+          log('error', `Error loading ${sectionId}: ${error.message}`);
         }
+      }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function clearLogs() {
-            document.getElementById('logContainer').innerHTML = '<div class="log-entry info">Logs cleared...</div>';
-            showToast('Logs cleared', 'info');
-        }
-
-        function refreshServices() {
-            showToast('Refreshing services...', 'info');
-            loadSectionData('dashboard');
-        }
-
-        // Load section data functions
-        async function loadSectionData(sectionId) {
-            if (!client.isReady()) {
-                try {
-                    await client.connect();
-                } catch (error) {
-                    log('error', 'Failed to connect to MCP server');
-                    return;
-                }
-            }
-            
-            try {
-                switch (sectionId) {
-                    case 'dashboard':
-                        await loadDashboardData();
-                        break;
-                }
-            } catch (error) {
-                log('error', `Error loading ${sectionId}: ${error.message}`);
-            }
-        }
-
-        async function loadDashboardData() {
-            try {
-                // Load health status
-                const health = await client.getHealth();
-                const healthStatus = document.getElementById('healthStatus');
-                healthStatus.innerHTML = `
+      async function loadDashboardData() {
+        try {
+          // Load health status
+          const health = await client.getHealth();
+          const healthStatus = document.getElementById('healthStatus');
+          healthStatus.innerHTML = `
                     <div style="display: grid; gap: 0.5rem;">
                         <div style="display: flex; justify-content: space-between;">
                             <span>Status:</span>
@@ -1695,15 +1840,17 @@
                     </div>
                 `;
 
-                // Load resources
-                const resources = await client.getResources();
-                const resourcesList = document.getElementById('resourcesList');
-                if (!resources || resources.length === 0) {
-                    resourcesList.innerHTML = '<p>No resources available</p>';
-                } else {
-                    resourcesList.innerHTML = `
+          // Load resources
+          const resources = await client.getResources();
+          const resourcesList = document.getElementById('resourcesList');
+          if (!resources || resources.length === 0) {
+            resourcesList.innerHTML = '<p>No resources available</p>';
+          } else {
+            resourcesList.innerHTML = `
                         <div class="resource-list">
-                            ${resources.map(resource => `
+                            ${resources
+                              .map(
+                                (resource) => `
                                 <div class="resource-item">
                                     <div class="resource-name">${resource.name}</div>
                                     <div class="resource-uri">${resource.uri}</div>
@@ -1717,20 +1864,24 @@
                                         </button>
                                     </div>
                                 </div>
-                            `).join('')}
+                            `
+                              )
+                              .join('')}
                         </div>
                     `;
-                }
+          }
 
-                // Load tools
-                const tools = await client.getTools();
-                const toolsList = document.getElementById('toolsList');
-                if (!tools || tools.length === 0) {
-                    toolsList.innerHTML = '<p>No tools available</p>';
-                } else {
-                    toolsList.innerHTML = `
+          // Load tools
+          const tools = await client.getTools();
+          const toolsList = document.getElementById('toolsList');
+          if (!tools || tools.length === 0) {
+            toolsList.innerHTML = '<p>No tools available</p>';
+          } else {
+            toolsList.innerHTML = `
                         <div class="tool-list">
-                            ${tools.map(tool => `
+                            ${tools
+                              .map(
+                                (tool) => `
                                 <div class="tool-item">
                                     <div class="tool-name">${tool.name}</div>
                                     <div class="tool-description">${tool.description || 'No description'}</div>
@@ -1743,20 +1894,24 @@
                                         </button>
                                     </div>
                                 </div>
-                            `).join('')}
+                            `
+                              )
+                              .join('')}
                         </div>
                     `;
-                }
+          }
 
-                // Load MCP services
-                const mcpServices = await mcpManager.discoverServices();
-                const mcpServicesList = document.getElementById('mcpServicesList');
-                if (!mcpServices || mcpServices.length === 0) {
-                    mcpServicesList.innerHTML = '<p>No MCP services available</p>';
-                } else {
-                    mcpServicesList.innerHTML = `
+          // Load MCP services
+          const mcpServices = await mcpManager.discoverServices();
+          const mcpServicesList = document.getElementById('mcpServicesList');
+          if (!mcpServices || mcpServices.length === 0) {
+            mcpServicesList.innerHTML = '<p>No MCP services available</p>';
+          } else {
+            mcpServicesList.innerHTML = `
                         <div style="display: grid; gap: 1rem;">
-                            ${mcpServices.map(service => `
+                            ${mcpServices
+                              .map(
+                                (service) => `
                                 <div class="mcp-service-card">
                                     <div class="mcp-service-header">
                                         <div class="mcp-service-name">${service.name}</div>
@@ -1767,118 +1922,120 @@
                                     </div>
                                     <div class="mcp-service-description">${service.description}</div>
                                     <div class="mcp-service-tools">
-                                        ${service.tools.map(tool => `<span class="mcp-tool-tag">${tool}</span>`).join('')}
+                                        ${service.tools.map((tool) => `<span class="mcp-tool-tag">${tool}</span>`).join('')}
                                     </div>
                                 </div>
-                            `).join('')}
+                            `
+                              )
+                              .join('')}
                         </div>
                     `;
-                }
+          }
 
-                log('info', 'Dashboard data loaded successfully');
-            } catch (error) {
-                log('error', `Error loading dashboard: ${error.message}`);
-            }
+          log('info', 'Dashboard data loaded successfully');
+        } catch (error) {
+          log('error', `Error loading dashboard: ${error.message}`);
         }
+      }
 
-        // Tool functions
-        function readResource(uri) {
-            showToast(`Reading resource: ${uri}`, 'info');
-            // Implementation would call client.readResource(uri)
-        }
+      // Tool functions
+      function readResource(uri) {
+        showToast(`Reading resource: ${uri}`, 'info');
+        // Implementation would call client.readResource(uri)
+      }
 
-        function callTool(name) {
-            showToast(`Executing tool: ${name}`, 'info');
-            // Implementation would call client.callTool(name)
-        }
+      function callTool(name) {
+        showToast(`Executing tool: ${name}`, 'info');
+        // Implementation would call client.callTool(name)
+      }
 
-        function viewToolSchema(name) {
-            showToast(`Viewing schema for: ${name}`, 'info');
-            // Implementation would show tool schema in modal
-        }
+      function viewToolSchema(name) {
+        showToast(`Viewing schema for: ${name}`, 'info');
+        // Implementation would show tool schema in modal
+      }
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('Copied to clipboard', 'success');
-            });
-        }
-
-        // Event handlers
-        document.addEventListener('DOMContentLoaded', async () => {
-            log('info', 'TNF Browser Hub initializing...');
-
-            // Attach event listeners to nav items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const serviceId = item.dataset.service;
-                    if (serviceId) {
-                        openTab(serviceId);
-                    }
-                });
-            });
-
-            // Setup modals
-            window.onclick = function(event) {
-                if (event.target.classList.contains('modal')) {
-                    event.target.style.display = 'none';
-                }
-            };
-
-            // Form submissions
-            document.getElementById('addResourceForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const resource = {
-                    name: formData.get('resourceName'),
-                    uri: formData.get('resourceUri'),
-                    description: formData.get('resourceDescription'),
-                    mimeType: formData.get('resourceMimeType')
-                };
-                
-                try {
-                    await client.registerResource(resource);
-                    showToast('Resource added successfully', 'success');
-                    closeModal('addResourceModal');
-                    loadSectionData('dashboard');
-                } catch (error) {
-                    showToast('Failed to add resource', 'error');
-                }
-            });
-
-            document.getElementById('addToolForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const tool = {
-                    name: formData.get('toolName'),
-                    description: formData.get('toolDescription'),
-                    inputSchema: JSON.parse(formData.get('toolInputSchema') || '{}')
-                };
-                
-                try {
-                    await client.registerTool(tool);
-                    showToast('Tool added successfully', 'success');
-                    closeModal('addToolModal');
-                    loadSectionData('dashboard');
-                } catch (error) {
-                    showToast('Failed to add tool', 'error');
-                }
-            });
-
-            document.getElementById('settingsFormElement').addEventListener('submit', (e) => {
-                e.preventDefault();
-                showToast('Settings saved', 'success');
-            });
-
-            // Initialize
-            try {
-                await loadSectionData('dashboard');
-                showToast('TNF Browser Hub loaded successfully', 'success');
-            } catch (error) {
-                log('error', `Failed to initialize: ${error.message}`);
-                showToast('Failed to initialize', 'error');
-            }
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('Copied to clipboard', 'success');
         });
+      }
+
+      // Event handlers
+      document.addEventListener('DOMContentLoaded', async () => {
+        log('info', 'TNF Browser Hub initializing...');
+
+        // Attach event listeners to nav items
+        document.querySelectorAll('.nav-item').forEach((item) => {
+          item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const serviceId = item.dataset.service;
+            if (serviceId) {
+              openTab(serviceId);
+            }
+          });
+        });
+
+        // Setup modals
+        window.onclick = function (event) {
+          if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+          }
+        };
+
+        // Form submissions
+        document.getElementById('addResourceForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const resource = {
+            name: formData.get('resourceName'),
+            uri: formData.get('resourceUri'),
+            description: formData.get('resourceDescription'),
+            mimeType: formData.get('resourceMimeType'),
+          };
+
+          try {
+            await client.registerResource(resource);
+            showToast('Resource added successfully', 'success');
+            closeModal('addResourceModal');
+            loadSectionData('dashboard');
+          } catch (error) {
+            showToast('Failed to add resource', 'error');
+          }
+        });
+
+        document.getElementById('addToolForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const tool = {
+            name: formData.get('toolName'),
+            description: formData.get('toolDescription'),
+            inputSchema: JSON.parse(formData.get('toolInputSchema') || '{}'),
+          };
+
+          try {
+            await client.registerTool(tool);
+            showToast('Tool added successfully', 'success');
+            closeModal('addToolModal');
+            loadSectionData('dashboard');
+          } catch (error) {
+            showToast('Failed to add tool', 'error');
+          }
+        });
+
+        document.getElementById('settingsFormElement').addEventListener('submit', (e) => {
+          e.preventDefault();
+          showToast('Settings saved', 'success');
+        });
+
+        // Initialize
+        try {
+          await loadSectionData('dashboard');
+          showToast('TNF Browser Hub loaded successfully', 'success');
+        } catch (error) {
+          log('error', `Failed to initialize: ${error.message}`);
+          showToast('Failed to initialize', 'error');
+        }
+      });
     </script>
-</body>
+  </body>
 </html>

@@ -12,7 +12,7 @@
 
 **Commit Hash**: 974cd7f3  
 **Commit Message**: feat: register critical controllers and modules, migrate to
-Prisma
+Drizzle
 
 ### Changes Included:
 
@@ -41,7 +41,7 @@ Or use GitHub CLI:
 
 ```bash
 gh pr create \
-  --title "feat: Register critical controllers and modules, migrate to Prisma" \
+  --title "feat: Register critical controllers and modules, migrate to Drizzle" \
   --body-file PR_DESCRIPTION.md \
   --base main \
   --head fix/register-orphaned-controllers-and-modules \
@@ -53,7 +53,7 @@ gh pr create \
 ## Pull Request Title
 
 ```
-feat: Register critical controllers and modules, migrate to Prisma
+feat: Register critical controllers and modules, migrate to Drizzle
 ```
 
 ---
@@ -65,11 +65,11 @@ feat: Register critical controllers and modules, migrate to Prisma
 
 This PR brings the application to the next production-ready plateau by
 registering orphaned controllers and modules, enabling critical health
-monitoring, and beginning the migration from TypeORM to Prisma.
+monitoring, and beginning the migration from TypeORM to Drizzle.
 
 ## ⚠️ Breaking Change
 
-**Requires Node.js 20.19+, 22.12+, or 24.0+** due to Prisma 6.11.0 requirements.
+**Requires Node.js 20.19+, 22.12+, or 24.0+** due to Drizzle 6.11.0 requirements.
 
 ---
 
@@ -80,7 +80,7 @@ monitoring, and beginning the migration from TypeORM to Prisma.
 **HealthController** is now registered and functional:
 
 - ✅ Endpoint: `GET /health`
-- ✅ Migrated from TypeORM to Prisma
+- ✅ Migrated from TypeORM to Drizzle
 - ✅ Ready for K8s liveness/readiness probes
 - ✅ Ready for load balancer health checks
 
@@ -107,16 +107,16 @@ monitoring, and beginning the migration from TypeORM to Prisma.
 - **Impact**: Enables webhook integrations and server-sent events
 - **Endpoints**: `/webhooks/*` + SSE streams
 
-### 3. Prisma Migration (First Step) ✅
+### 3. Drizzle Migration (First Step) ✅
 
-- ✅ HealthController migrated from TypeORM to Prisma
+- ✅ HealthController migrated from TypeORM to Drizzle
 - ✅ Removed `@nestjs/typeorm` imports
-- ✅ Replaced `Repository<User>` with `PrismaService`
+- ✅ Replaced `Repository<User>` with `DatabaseService`
 - ✅ Updated query: `userRepository.query('SELECT 1')` →
-  `prisma.$queryRaw\`SELECT 1\``
+  `drizzle.$queryRaw\`SELECT 1\``
 
-**Note**: This is the first step in fully migrating to Prisma. TypeORM entities
-still exist alongside Prisma schema.
+**Note**: This is the first step in fully migrating to Drizzle. TypeORM entities
+still exist alongside Drizzle schema.
 
 ---
 
@@ -163,8 +163,8 @@ Top used packages:
 
 2. **apps/api/src/controllers/health.controller.ts**
    - Removed: TypeORM dependencies
-   - Added: `PrismaService` injection
-   - Updated: Database connectivity check to use Prisma
+   - Added: `DatabaseService` injection
+   - Updated: Database connectivity check to use Drizzle
 
 ### Added
 
@@ -189,7 +189,7 @@ Top used packages:
 - [ ] Health endpoint responds: `curl http://localhost:3001/health`
 - [ ] Agency endpoints accessible (with auth)
 - [ ] Webhook endpoints accessible (with auth)
-- [ ] Prisma connection works: `cd packages/database && pnpm prisma studio`
+- [ ] Drizzle connection works: `cd packages/database && pnpm drizzle studio`
 
 See `IMPLEMENTATION_NOTES.md` for detailed testing instructions.
 
@@ -206,7 +206,7 @@ See `IMPLEMENTATION_NOTES.md` for detailed testing instructions.
 ### Follow-Up Work Required
 
 - Register remaining orphaned controllers (Admin, Security, etc.)
-- Complete TypeORM → Prisma migration
+- Complete TypeORM → Drizzle migration
 - Clean up orphaned frontend components
 - Remove orphaned packages
 
@@ -222,10 +222,10 @@ See `IMPLEMENTATION_NOTES.md` for detailed testing instructions.
 2. **Untested Endpoints**
    - Agency Hub endpoints need integration testing
    - Webhooks module needs integration testing
-   - Health controller Prisma query needs testing
+   - Health controller Drizzle query needs testing
 
 3. **TypeORM Still Present**
-   - TypeORM and Prisma coexist
+   - TypeORM and Drizzle coexist
    - Future PR should complete migration
    - Potential for developer confusion
 
@@ -233,7 +233,7 @@ See `IMPLEMENTATION_NOTES.md` for detailed testing instructions.
 
 ## 📚 References
 
-- [Prisma Migration Guide](https://www.prisma.io/docs/guides/migrate-to-prisma)
+- [Drizzle Migration Guide](https://www.drizzle.io/docs/guides/migrate-to-drizzle)
 - [NestJS Health Checks](https://docs.nestjs.com/recipes/terminus)
 - [Kubernetes Health Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
 
@@ -245,7 +245,7 @@ This PR delivers:
 
 1. **Critical Production Feature**: Health monitoring now functional
 2. **Feature Unlock**: Agency Hub and Webhooks modules now accessible
-3. **Technical Debt Reduction**: Begin migration to Prisma
+3. **Technical Debt Reduction**: Begin migration to Drizzle
 4. **Visibility**: Complete audit of components and packages
 
 **Next Step**: Upgrade Node.js → Test → Merge → Deploy 🚀

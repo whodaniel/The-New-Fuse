@@ -3,12 +3,12 @@
  * 4-Tab Interface with Neon Cyberpunk Theme
  */
 
-import React, { useState, useEffect } from 'react';
-import ConnectTab from './tabs/ConnectTab';
+import { useEffect, useState } from 'react';
+import './popup.css';
 import AgentsTab from './tabs/AgentsTab';
+import ConnectTab from './tabs/ConnectTab';
 import NetworkTab from './tabs/NetworkTab';
 import SettingsTab from './tabs/SettingsTab';
-import './popup.css';
 
 type TabType = 'connect' | 'agents' | 'network' | 'settings';
 

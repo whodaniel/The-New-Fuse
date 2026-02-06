@@ -1,16 +1,15 @@
 import {
+  Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
+  Param,
   Post,
   Put,
-  Body,
-  Param,
   Query,
-  UseGuards,
-  HttpStatus,
-  HttpException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 // import { ServiceCategoryRouterService } from '../../../types/core/services/service-category-router.service';
 // import { EnhancedAgencyService } from '../../../types/core/services/enhanced-agency.service';
 // import { AuthGuard } from '../../../guards/auth.guard';
@@ -32,7 +31,7 @@ export class ServiceRequestController {
   @ApiOperation({ summary: 'Submit a new service request' })
   @ApiResponse({ status: 201, description: 'Service request created' })
   async createServiceRequest(
-    @Body() requestDto: any,
+    @Body() requestDto: any
     // @CurrentUser() user: any
   ) {
     try {
@@ -54,13 +53,13 @@ export class ServiceRequestController {
     @Query('categoryId') categoryId?: string,
     @Query('providerId') providerId?: string,
     @Query('limit') limit: number = 50,
-    @Query('offset') offset: number = 0,
+    @Query('offset') offset: number = 0
     // @CurrentUser() user: any
   ) {
     try {
       // Use agencyId from user context if not provided
       const targetAgencyId = agencyId || 'default';
-      
+
       return { message: 'Service not implemented' };
     } catch (error) {
       throw new HttpException(
@@ -89,10 +88,7 @@ export class ServiceRequestController {
   // @Roles(UserRole.AGENCY_ADMIN, UserRole.AGENCY_MANAGER)
   @ApiOperation({ summary: 'Update service request status' })
   @ApiResponse({ status: 200, description: 'Status updated successfully' })
-  async updateRequestStatus(
-    @Param('requestId') requestId: string,
-    @Body() statusDto: any
-  ) {
+  async updateRequestStatus(@Param('requestId') requestId: string, @Body() statusDto: any) {
     try {
       return { message: 'Service not implemented' };
     } catch (error) {
@@ -108,10 +104,7 @@ export class ServiceRequestController {
   // @Roles(UserRole.AGENCY_ADMIN, UserRole.AGENCY_MANAGER)
   @ApiOperation({ summary: 'Assign service request to provider' })
   @ApiResponse({ status: 200, description: 'Request assigned successfully' })
-  async assignRequest(
-    @Param('requestId') requestId: string,
-    @Body() assignmentDto: any
-  ) {
+  async assignRequest(@Param('requestId') requestId: string, @Body() assignmentDto: any) {
     try {
       return { message: 'Service not implemented' };
     } catch (error) {
@@ -130,14 +123,11 @@ export class ServiceRequestController {
   async autoAssignRequest(@Param('requestId') requestId: string) {
     try {
       const requestDetails = { message: 'Service not implemented' };
-      
+
       const bestProvider = { id: 'default' };
 
       if (!bestProvider) {
-        throw new HttpException(
-          'No suitable provider found',
-          HttpStatus.NOT_FOUND
-        );
+        throw new HttpException('No suitable provider found', HttpStatus.NOT_FOUND);
       }
 
       return { message: 'Service not implemented' };
@@ -155,7 +145,7 @@ export class ServiceRequestController {
   async getProviderRecommendations(@Param('requestId') requestId: string) {
     try {
       const requestDetails = { message: 'Service not implemented' };
-      
+
       return { message: 'Service not implemented' };
     } catch (error) {
       throw new HttpException(
@@ -170,10 +160,7 @@ export class ServiceRequestController {
   // @Roles(UserRole.AGENT_OPERATOR)
   @ApiOperation({ summary: 'Mark service request as completed' })
   @ApiResponse({ status: 200, description: 'Request marked as completed' })
-  async completeRequest(
-    @Param('requestId') requestId: string,
-    @Body() completionDto: any
-  ) {
+  async completeRequest(@Param('requestId') requestId: string, @Body() completionDto: any) {
     try {
       return { message: 'Service not implemented' };
     } catch (error) {
@@ -189,7 +176,7 @@ export class ServiceRequestController {
   @ApiResponse({ status: 201, description: 'Review submitted successfully' })
   async submitReview(
     @Param('requestId') requestId: string,
-    @Body() reviewDto: any,
+    @Body() reviewDto: any
     // @CurrentUser() user: any
   ) {
     try {

@@ -42,7 +42,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WebhookRegistrationRequest'
+              $ref: "#/components/schemas/WebhookRegistrationRequest"
             examples:
               stripe:
                 summary: Stripe webhook registration
@@ -63,22 +63,22 @@ paths:
                     objects: ["Lead", "Opportunity", "Account"]
                     events: ["created", "updated"]
       responses:
-        '201':
+        "201":
           description: Webhook registered successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WebhookRegistrationResponse'
+                $ref: "#/components/schemas/WebhookRegistrationResponse"
               example:
                 id: "webhook_123456789"
                 status: "registered"
                 webhook_url: "https://api.thenewfuse.com/webhooks/incoming/stripe"
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   /webhooks/incoming/{source}:
     post:
@@ -94,7 +94,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/IntegrationSource'
+            $ref: "#/components/schemas/IntegrationSource"
           description: The source platform of the webhook
         - name: stripe-signature
           in: header
@@ -152,19 +152,19 @@ paths:
                     Email: "john.doe@example.com"
                     Company: "Acme Corp"
       responses:
-        '200':
+        "200":
           description: Webhook processed successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WebhookEventResponse'
+                $ref: "#/components/schemas/WebhookEventResponse"
               example:
                 received: true
                 event_id: "event_123456789"
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /webhooks/status/{id}:
     get:
@@ -183,21 +183,21 @@ paths:
             type: string
           description: Webhook configuration ID
       responses:
-        '200':
+        "200":
           description: Webhook status retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WebhookStatusResponse'
+                $ref: "#/components/schemas/WebhookStatusResponse"
               example:
                 id: "webhook_123456789"
                 status: "active"
                 last_received: "2024-01-15T10:30:00Z"
                 event_count: 1247
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /webhooks/events/history:
     get:
@@ -239,16 +239,16 @@ paths:
             default: 100
           description: Maximum number of events to return
       responses:
-        '200':
+        "200":
           description: Event history retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EventHistoryResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: "#/components/schemas/EventHistoryResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /webhooks/events/stream:
     get:
@@ -276,7 +276,7 @@ paths:
             type: string
           description: JSON-encoded filters object
       responses:
-        '200':
+        "200":
           description: SSE stream established
           content:
             text/event-stream:
@@ -284,14 +284,14 @@ paths:
                 type: string
               example: |
                 data: {"type": "connection", "status": "connected"}
-                
+
                 data: {"type": "event", "event_type": "payment_received", "data": {...}}
-                
+
                 data: {"type": "heartbeat", "timestamp": "2024-01-15T10:30:00Z"}
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   /webhooks/events/{id}/retry:
     post:
@@ -310,7 +310,7 @@ paths:
             type: string
           description: Event ID to retry
       responses:
-        '200':
+        "200":
           description: Event retry initiated successfully
           content:
             application/json:
@@ -320,12 +320,12 @@ paths:
                   success:
                     type: boolean
                     example: true
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
 components:
   securitySchemes:
@@ -393,7 +393,7 @@ components:
         - configuration
       properties:
         source:
-          $ref: '#/components/schemas/IntegrationSource'
+          $ref: "#/components/schemas/IntegrationSource"
         endpoint_url:
           type: string
           format: uri
@@ -456,9 +456,9 @@ components:
           type: string
           description: Unique event ID
         type:
-          $ref: '#/components/schemas/BusinessEventType'
+          $ref: "#/components/schemas/BusinessEventType"
         source:
-          $ref: '#/components/schemas/IntegrationSource'
+          $ref: "#/components/schemas/IntegrationSource"
         timestamp:
           type: string
           format: date-time
@@ -468,9 +468,9 @@ components:
           description: Event-specific data payload
           additionalProperties: true
         metadata:
-          $ref: '#/components/schemas/EventMetadata'
+          $ref: "#/components/schemas/EventMetadata"
         processing_status:
-          $ref: '#/components/schemas/ProcessingStatus'
+          $ref: "#/components/schemas/ProcessingStatus"
 
     EventMetadata:
       type: object
@@ -485,7 +485,7 @@ components:
           type: string
           description: Organization ID
         priority:
-          $ref: '#/components/schemas/EventPriority'
+          $ref: "#/components/schemas/EventPriority"
         retry_count:
           type: integer
           description: Number of retry attempts
@@ -523,7 +523,7 @@ components:
         events:
           type: array
           items:
-            $ref: '#/components/schemas/BusinessEvent'
+            $ref: "#/components/schemas/BusinessEvent"
         total:
           type: integer
           description: Total number of events matching criteria
@@ -551,7 +551,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             error: "Invalid request parameters"
             code: "INVALID_PARAMETERS"
@@ -561,7 +561,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             error: "Authentication required"
             code: "UNAUTHORIZED"
@@ -571,7 +571,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             error: "Resource not found"
             code: "NOT_FOUND"
@@ -581,7 +581,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             error: "Internal server error"
             code: "INTERNAL_ERROR"

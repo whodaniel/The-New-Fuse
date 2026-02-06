@@ -13,7 +13,7 @@
  * - Notes and annotations
  */
 
-import { Node as ReactFlowNode, Edge as ReactFlowEdge } from 'reactflow';
+import { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
 
 // ============================================================================
 // N8N Type Definitions (Complete)
@@ -150,40 +150,41 @@ export interface ReactFlowWorkflow {
 const NODE_TYPE_MAP: Record<string, string> = {
   // Triggers
   'webhook-trigger': 'n8n-nodes-base.webhook',
-  'webhook': 'n8n-nodes-base.webhook',
+  webhook: 'n8n-nodes-base.webhook',
   'cron-trigger': 'n8n-nodes-base.cronTrigger',
   'manual-trigger': 'n8n-nodes-base.manualTrigger',
-  'start': 'n8n-nodes-base.start',
+  start: 'n8n-nodes-base.start',
 
   // Logic
-  'if': 'n8n-nodes-base.if',
-  'switch': 'n8n-nodes-base.switch',
-  'merge': 'n8n-nodes-base.merge',
-  'split': 'n8n-nodes-base.splitInBatches',
+  if: 'n8n-nodes-base.if',
+  switch: 'n8n-nodes-base.switch',
+  merge: 'n8n-nodes-base.merge',
+  split: 'n8n-nodes-base.splitInBatches',
 
   // Data
-  'set': 'n8n-nodes-base.set',
-  'code': 'n8n-nodes-base.code',
-  'function': 'n8n-nodes-base.function',
+  set: 'n8n-nodes-base.set',
+  code: 'n8n-nodes-base.code',
+  function: 'n8n-nodes-base.function',
 
   // HTTP
   'http-request': 'n8n-nodes-base.httpRequest',
-  'httpRequest': 'n8n-nodes-base.httpRequest',
+  httpRequest: 'n8n-nodes-base.httpRequest',
   'respond-webhook': 'n8n-nodes-base.respondToWebhook',
 
   // Integrations
-  'slack': 'n8n-nodes-base.slack',
-  'gmail': 'n8n-nodes-base.gmail',
+  slack: 'n8n-nodes-base.slack',
+  gmail: 'n8n-nodes-base.gmail',
   'google-sheets': 'n8n-nodes-base.googleSheets',
 };
 
 // Reverse map for import
-const REVERSE_NODE_TYPE_MAP: Record<string, string> = Object.entries(
-  NODE_TYPE_MAP
-).reduce((acc, [key, value]) => {
-  acc[value] = key;
-  return acc;
-}, {} as Record<string, string>);
+const REVERSE_NODE_TYPE_MAP: Record<string, string> = Object.entries(NODE_TYPE_MAP).reduce(
+  (acc, [key, value]) => {
+    acc[value] = key;
+    return acc;
+  },
+  {} as Record<string, string>
+);
 
 // ============================================================================
 // Multi-Output Node Configuration
@@ -254,9 +255,7 @@ export class N8nWorkflowConverter {
       activeVersionId: workflow.activeVersionId || null,
       versionCounter: workflow.versionCounter || 1,
       meta: workflow.meta || {},
-      tags: workflow.tags?.map((tag) =>
-        typeof tag === 'string' ? { id: tag, name: tag } : tag
-      ),
+      tags: workflow.tags?.map((tag) => (typeof tag === 'string' ? { id: tag, name: tag } : tag)),
     };
   }
 
@@ -275,10 +274,7 @@ export class N8nWorkflowConverter {
       nodes: this.convertNodesFromN8n(n8nWorkflow.nodes),
 
       // Advanced edge creation
-      edges: this.convertConnectionsFromN8n(
-        n8nWorkflow.connections,
-        n8nWorkflow.nodes
-      ),
+      edges: this.convertConnectionsFromN8n(n8nWorkflow.connections, n8nWorkflow.nodes),
 
       // Import all metadata
       settings: n8nWorkflow.settings,
@@ -393,15 +389,10 @@ export class N8nWorkflowConverter {
 
       outputTypes.forEach((outputType) => {
         // Get edges for this output type
-        const typeEdges = sourceEdges.filter(
-          (e) => this.getEdgeOutputType(e) === outputType
-        );
+        const typeEdges = sourceEdges.filter((e) => this.getEdgeOutputType(e) === outputType);
 
         // Group by output index (for branching)
-        const edgesByIndex = this.groupEdgesByOutputIndex(
-          typeEdges,
-          node.data.outputCount || 1
-        );
+        const edgesByIndex = this.groupEdgesByOutputIndex(typeEdges, node.data.outputCount || 1);
 
         connections[sourceId][outputType] = edgesByIndex.map((indexGroup) =>
           indexGroup.map((edge) => ({
@@ -448,10 +439,7 @@ export class N8nWorkflowConverter {
               data: {
                 outputType,
                 branchIndex,
-                branchName: this.getBranchName(
-                  sourceNode.type,
-                  branchIndex
-                ),
+                branchName: this.getBranchName(sourceNode.type, branchIndex),
               },
             };
 
@@ -468,26 +456,21 @@ export class N8nWorkflowConverter {
   // Helper Methods
   // ==========================================================================
 
-  private groupEdgesBySource(
-    edges: ReactFlowEdge[]
-  ): Record<string, ReactFlowEdge[]> {
-    return edges.reduce((acc, edge) => {
-      if (!acc[edge.source]) {
-        acc[edge.source] = [];
-      }
-      acc[edge.source].push(edge);
-      return acc;
-    }, {} as Record<string, ReactFlowEdge[]>);
+  private groupEdgesBySource(edges: ReactFlowEdge[]): Record<string, ReactFlowEdge[]> {
+    return edges.reduce(
+      (acc, edge) => {
+        if (!acc[edge.source]) {
+          acc[edge.source] = [];
+        }
+        acc[edge.source].push(edge);
+        return acc;
+      },
+      {} as Record<string, ReactFlowEdge[]>
+    );
   }
 
-  private groupEdgesByOutputIndex(
-    edges: ReactFlowEdge[],
-    outputCount: number
-  ): ReactFlowEdge[][] {
-    const groups: ReactFlowEdge[][] = Array.from(
-      { length: outputCount },
-      () => []
-    );
+  private groupEdgesByOutputIndex(edges: ReactFlowEdge[], outputCount: number): ReactFlowEdge[][] {
+    const groups: ReactFlowEdge[][] = Array.from({ length: outputCount }, () => []);
 
     edges.forEach((edge) => {
       const index = this.getOutputIndex(edge);
@@ -517,10 +500,7 @@ export class N8nWorkflowConverter {
     return handle ? parseInt(handle, 10) : 0;
   }
 
-  private getBranchName(
-    nodeType: string,
-    branchIndex: number
-  ): string | undefined {
+  private getBranchName(nodeType: string, branchIndex: number): string | undefined {
     const config = MULTI_OUTPUT_NODES[nodeType];
     if (!config || !config.branchNames) return undefined;
 
@@ -535,9 +515,7 @@ export class N8nWorkflowConverter {
     return REVERSE_NODE_TYPE_MAP[n8nType] || 'default';
   }
 
-  private convertSettingsToN8n(
-    settings?: N8nWorkflowSettings
-  ): N8nWorkflowSettings {
+  private convertSettingsToN8n(settings?: N8nWorkflowSettings): N8nWorkflowSettings {
     return {
       saveDataErrorExecution: settings?.saveDataErrorExecution || 'all',
       saveDataSuccessExecution: settings?.saveDataSuccessExecution || 'all',
@@ -549,9 +527,7 @@ export class N8nWorkflowConverter {
     };
   }
 
-  private extractTagNames(
-    tags?: Array<{ id: string; name: string } | string>
-  ): string[] {
+  private extractTagNames(tags?: Array<{ id: string; name: string } | string>): string[] {
     if (!tags) return [];
     return tags.map((tag) => (typeof tag === 'string' ? tag : tag.name));
   }
@@ -604,25 +580,21 @@ export class N8nWorkflowConverter {
 
     // Validate connections reference valid nodes
     const nodeNames = new Set(workflow.nodes?.map((n) => n.name) || []);
-    Object.entries(workflow.connections || {}).forEach(
-      ([sourceNode, outputs]) => {
-        if (!nodeNames.has(sourceNode)) {
-          errors.push(`Connection references non-existent source node: ${sourceNode}`);
-        }
+    Object.entries(workflow.connections || {}).forEach(([sourceNode, outputs]) => {
+      if (!nodeNames.has(sourceNode)) {
+        errors.push(`Connection references non-existent source node: ${sourceNode}`);
+      }
 
-        Object.values(outputs).forEach((branches) => {
-          branches.forEach((branch) => {
-            branch.forEach((conn) => {
-              if (!nodeNames.has(conn.node)) {
-                errors.push(
-                  `Connection references non-existent target node: ${conn.node}`
-                );
-              }
-            });
+      Object.values(outputs).forEach((branches) => {
+        branches.forEach((branch) => {
+          branch.forEach((conn) => {
+            if (!nodeNames.has(conn.node)) {
+              errors.push(`Connection references non-existent target node: ${conn.node}`);
+            }
           });
         });
-      }
-    );
+      });
+    });
 
     return {
       valid: errors.length === 0,

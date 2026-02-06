@@ -6,12 +6,13 @@
 
 1. **Cline (Claude Coder)**
    - **Type**: VS Code Extension Agent
-   - **Capabilities**: Direct code implementation, file operations, MCP integration
+   - **Capabilities**: Direct code implementation, file operations, MCP
+     integration
    - **Interface**: Chat interface within VS Code
    - **Access Method**: Already available in open VS Code instance
    - **Best For**: Complex coding tasks, file manipulation, system integration
 
-2. **RooCoder** 
+2. **RooCoder**
    - **Type**: VS Code Extension Agent
    - **Capabilities**: Code generation, direct file writing, MCP access
    - **Interface**: Chat interface within VS Code
@@ -23,10 +24,11 @@
    - **Capabilities**: AI-powered coding assistance, direct implementation
    - **Interface**: Integrated VS Code chat
    - **Access Method**: Active in current VS Code
-   - **Best For**: Code suggestions, implementation, Google ecosystem integration
+   - **Best For**: Code suggestions, implementation, Google ecosystem
+     integration
 
 4. **Copilot Extension Coder**
-   - **Type**: VS Code Extension Agent  
+   - **Type**: VS Code Extension Agent
    - **Capabilities**: GitHub Copilot integration, code completion, chat
    - **Interface**: VS Code integrated chat and autocomplete
    - **Access Method**: Available in open VS Code
@@ -39,7 +41,7 @@
 5. **Gemini (Google)**
    - **URL**: https://gemini.google.com/app
    - **Type**: Browser-based AI Agent
-   - **Capabilities**: 
+   - **Capabilities**:
      - Code artifact creation
      - Image generation
      - Real-time screen share reading
@@ -56,7 +58,8 @@
      - Advanced prompting
      - Model comparison
    - **Interface**: Web-based prompt interface
-   - **Best For**: Model experimentation, advanced prompting, comparative analysis
+   - **Best For**: Model experimentation, advanced prompting, comparative
+     analysis
 
 7. **Jules (Google) - ⭐ CRITICAL AGENT**
    - **URL**: https://jules.google.com/
@@ -73,7 +76,8 @@
      - Organize GitHub integration carefully
      - Monitor for branch conflicts
      - Ensure proper pull/push coordination
-   - **Best For**: Large-scale coding projects, GitHub integration, repository-wide changes
+   - **Best For**: Large-scale coding projects, GitHub integration,
+     repository-wide changes
 
 8. **GitHub Copilot (Web)**
    - **Location**: GitHub website, top-right button
@@ -98,17 +102,20 @@
 ### High-Priority Coordination Requirements
 
 #### Jules GitHub Agent - Critical Management
+
 - **Risk**: Uncoordinated commits can conflict with local work
 - **Solution**: Establish branch naming conventions and commit tracking
 - **Protocol**: Always coordinate Jules work with local development
 - **Monitoring**: Track all repository changes made by Jules
 
 #### VS Code Agents - Direct Implementation
+
 - **Strategy**: Delegate specific coding tasks with clear requirements
 - **Advantage**: Can directly modify files without manual copy-paste
 - **Best Use**: Implementation of designed solutions, file operations
 
 #### Browser Agents - Advisory Role
+
 - **Strategy**: Use for planning, analysis, and suggestions
 - **Limitation**: Cannot directly implement (except Jules)
 - **Best Use**: Architecture decisions, code review, problem-solving
@@ -116,6 +123,7 @@
 ## 📊 Agent Database Schema Requirements
 
 ### Per-User Agent Registry
+
 ```sql
 CREATE TABLE user_agents (
   id UUID PRIMARY KEY,
@@ -154,6 +162,7 @@ CREATE TABLE agent_capabilities (
 ```
 
 ### Coordination Tracking
+
 ```sql
 CREATE TABLE github_coordination (
   id UUID PRIMARY KEY,
@@ -170,24 +179,28 @@ CREATE TABLE github_coordination (
 ## 🔄 Discovery Protocol for Master Orchestrator
 
 ### Phase 1: VS Code Agent Discovery
+
 1. Scan VS Code extensions for chat interfaces
 2. Test MCP connectivity for each agent
 3. Assess coding capabilities through test tasks
 4. Document response patterns and specializations
 
 ### Phase 2: Browser Agent Verification
+
 1. Verify access to each listed URL
 2. Test artifact creation capabilities
 3. Assess real-time interaction features
 4. Document unique capabilities per agent
 
 ### Phase 3: GitHub Integration Assessment
+
 1. **Jules**: Test repository access and coding capabilities
 2. **GitHub Copilot**: Verify repository integration
 3. Establish coordination protocols for GitHub work
 4. Create branch management workflows
 
 ### Phase 4: Capability Mapping
+
 1. Create detailed capability matrix
 2. Identify optimal task assignments per agent
 3. Establish delegation protocols
@@ -196,22 +209,28 @@ CREATE TABLE github_coordination (
 ## ⚠️ Critical Coordination Notes
 
 ### Jules GitHub Agent Management
+
 - **ALWAYS** coordinate Jules commits with local development
-- Establish clear branch naming: `jules/feature-name` or `jules/task-description`
+- Establish clear branch naming: `jules/feature-name` or
+  `jules/task-description`
 - Monitor repository for unexpected changes
 - Implement pull request workflows for Jules contributions
 - Track all commits to prevent conflicts
 
 ### Token Usage Optimization
+
 - Delegate implementation tasks to VS Code agents
 - Use browser agents for planning and analysis
 - Reserve Master Orchestrator context for high-level coordination
 - Use secondary Claude instance only when necessary
 
 ### Multi-Agent Workflow
+
 1. **Planning**: Browser agents (Gemini, AI Studio)
 2. **Implementation**: VS Code agents (Cline, RooCoder, etc.)
 3. **GitHub Integration**: Jules + coordination protocols
 4. **Orchestration**: Master Orchestrator (primary Claude)
 
-This registry provides the foundation for the Master Orchestrator to immediately begin coordinating a sophisticated multi-agent development environment while maintaining proper oversight and coordination protocols.
+This registry provides the foundation for the Master Orchestrator to immediately
+begin coordinating a sophisticated multi-agent development environment while
+maintaining proper oversight and coordination protocols.

@@ -73,7 +73,7 @@ const results = await service.search({
 });
 
 console.log(`Found ${results.total} resources`);
-results.data.forEach(r => console.log(`- ${r.name}`));
+results.data.forEach((r) => console.log(`- ${r.name}`));
 ```
 
 ### Getting a Resource
@@ -141,6 +141,7 @@ node dist/mcp/resource-registry-mcp-server.js
 ### 3. Use from Claude
 
 The MCP server exposes these tools:
+
 - `search_resources`
 - `get_resource`
 - `create_resource`
@@ -190,8 +191,12 @@ const workflow = await service.create({
   category: 'N8N_WORKFLOW',
   type: 'N8N_JSON',
   content: {
-    nodes: [/* workflow nodes */],
-    connections: {/* workflow connections */},
+    nodes: [
+      /* workflow nodes */
+    ],
+    connections: {
+      /* workflow connections */
+    },
   },
   tags: ['email', 'automation'],
   version: '1.0.0',
@@ -234,7 +239,7 @@ await service.create({
   name: 'Public Resource',
   category: 'CODE_SNIPPET',
   type: 'TYPESCRIPT',
-  content: {code: 'test'},
+  content: { code: 'test' },
   version: '1.0.0',
   source: 'test',
   visibility: 'PUBLIC', // Default
@@ -248,7 +253,7 @@ await service.create({
   name: 'Agent Resource',
   category: 'AGENT_TEMPLATE',
   type: 'JSON',
-  content: {template: {}},
+  content: { template: {} },
   version: '1.0.0',
   source: 'test',
   visibility: 'AGENTS_ONLY', // Only AI agents can access
@@ -262,7 +267,7 @@ await service.create({
   name: 'Private Resource',
   category: 'CODE_SNIPPET',
   type: 'TYPESCRIPT',
-  content: {code: 'secret'},
+  content: { code: 'secret' },
   version: '1.0.0',
   source: 'test',
   visibility: 'PRIVATE', // Only creator can access
@@ -292,13 +297,13 @@ psql $DATABASE_URL
 Reset and re-run migrations:
 
 ```bash
-npx prisma migrate reset
-npx prisma migrate dev
+npx drizzle migrate reset
+npx drizzle migrate dev
 ```
 
 ### TypeScript Errors
 
-Regenerate Prisma client:
+Regenerate Drizzle client:
 
 ```bash
 pnpm db:generate

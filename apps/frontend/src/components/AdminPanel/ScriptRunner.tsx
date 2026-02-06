@@ -1,7 +1,7 @@
-import React from 'react';
 import { Button } from '@/components/ui/design-system';
-import { useSocket } from '../../hooks/useSocket';
 import { useToast } from '@/hooks/useToast';
+import React from 'react';
+import { useSocket } from '../../hooks/useSocket';
 
 const AVAILABLE_SCRIPTS = {
   dev: 'Start Development',
@@ -91,4 +91,3 @@ export const ScriptRunner: React.FC = () => {
     </div>
   );
 };
-

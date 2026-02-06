@@ -12,8 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "ESNext",
-    "moduleResolution": "bundler",
-
+    "moduleResolution": "bundler"
   },
   "include": [],
   "exclude": ["node_modules", "dist"]

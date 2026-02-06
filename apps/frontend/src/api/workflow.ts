@@ -56,13 +56,13 @@ export class WorkflowApiService {
         return {
           success: false,
           error: errorData.message || 'Request failed',
-          message: errorData.message || 'Request failed'
+          message: errorData.message || 'Request failed',
         };
       } catch (e) {
         return {
           success: false,
           error: response.statusText || 'Request failed',
-          message: response.statusText || 'Request failed'
+          message: response.statusText || 'Request failed',
         };
       }
     }
@@ -71,13 +71,13 @@ export class WorkflowApiService {
       const data = await response.json();
       return {
         success: true,
-        data: data as T
+        data: data as T,
       };
     } catch (e) {
       return {
         success: true,
         data: undefined,
-        message: 'Request successful but no data returned'
+        message: 'Request successful but no data returned',
       };
     }
   }
@@ -88,16 +88,16 @@ export class WorkflowApiService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
-        credentials: 'include'
+        credentials: 'include',
       });
       return this.handleResponse<{ workflows: Workflow[]; total: number }>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: 'Failed to fetch workflows'
+        message: 'Failed to fetch workflows',
       };
     }
   }
@@ -108,16 +108,16 @@ export class WorkflowApiService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
-        credentials: 'include'
+        credentials: 'include',
       });
       return this.handleResponse<Workflow>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: `Failed to fetch workflow ${id}`
+        message: `Failed to fetch workflow ${id}`,
       };
     }
   }
@@ -133,43 +133,46 @@ export class WorkflowApiService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
         credentials: 'include',
-        body: JSON.stringify(workflowData)
+        body: JSON.stringify(workflowData),
       });
       return this.handleResponse<Workflow>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: 'Failed to create workflow'
+        message: 'Failed to create workflow',
       };
     }
   }
 
-  async updateWorkflow(id: string, workflowData: {
-    name?: string;
-    description?: string;
-    nodes?: any[];
-    edges?: any[];
-  }): Promise<ApiResponse<Workflow>> {
+  async updateWorkflow(
+    id: string,
+    workflowData: {
+      name?: string;
+      description?: string;
+      nodes?: any[];
+      edges?: any[];
+    }
+  ): Promise<ApiResponse<Workflow>> {
     try {
       const response = await fetch(`${this.baseUrl}/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
         credentials: 'include',
-        body: JSON.stringify(workflowData)
+        body: JSON.stringify(workflowData),
       });
       return this.handleResponse<Workflow>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: `Failed to update workflow ${id}`
+        message: `Failed to update workflow ${id}`,
       };
     }
   }
@@ -180,20 +183,20 @@ export class WorkflowApiService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
         credentials: 'include',
         body: JSON.stringify({
           workflowId,
-          input: input || {}
-        })
+          input: input || {},
+        }),
       });
       return this.handleResponse<WorkflowExecution>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: `Failed to execute workflow ${workflowId}`
+        message: `Failed to execute workflow ${workflowId}`,
       };
     }
   }
@@ -204,16 +207,16 @@ export class WorkflowApiService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
-        credentials: 'include'
+        credentials: 'include',
       });
       return this.handleResponse<WorkflowExecution>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: `Failed to get execution status ${executionId}`
+        message: `Failed to get execution status ${executionId}`,
       };
     }
   }
@@ -233,38 +236,40 @@ export class WorkflowApiService {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
         credentials: 'include',
-        body: JSON.stringify(workflowData)
+        body: JSON.stringify(workflowData),
       });
       return this.handleResponse<Workflow>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: 'Failed to save workflow'
+        message: 'Failed to save workflow',
       };
     }
   }
 
   async getWorkflowTemplates(category?: string): Promise<ApiResponse<WorkflowTemplate[]>> {
     try {
-      const url = category ? `${config.apiUrl}/workflow-templates?category=${category}` : `${config.apiUrl}/workflow-templates`;
+      const url = category
+        ? `${config.apiUrl}/workflow-templates?category=${category}`
+        : `${config.apiUrl}/workflow-templates`;
       const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
-        credentials: 'include'
+        credentials: 'include',
       });
       return this.handleResponse<WorkflowTemplate[]>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: 'Failed to fetch workflow templates'
+        message: 'Failed to fetch workflow templates',
       };
     }
   }
@@ -275,58 +280,63 @@ export class WorkflowApiService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
-        credentials: 'include'
+        credentials: 'include',
       });
       return this.handleResponse<WorkflowTemplate>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: `Failed to fetch workflow template ${id}`
+        message: `Failed to fetch workflow template ${id}`,
       };
     }
   }
 
-  async createWorkflowTemplate(data: Partial<WorkflowTemplate>): Promise<ApiResponse<WorkflowTemplate>> {
+  async createWorkflowTemplate(
+    data: Partial<WorkflowTemplate>
+  ): Promise<ApiResponse<WorkflowTemplate>> {
     try {
       const response = await fetch(`${config.apiUrl}/workflow-templates`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
         credentials: 'include',
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
       return this.handleResponse<WorkflowTemplate>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: 'Failed to create workflow template'
+        message: 'Failed to create workflow template',
       };
     }
   }
 
-  async updateWorkflowTemplate(id: string, data: Partial<WorkflowTemplate>): Promise<ApiResponse<WorkflowTemplate>> {
+  async updateWorkflowTemplate(
+    id: string,
+    data: Partial<WorkflowTemplate>
+  ): Promise<ApiResponse<WorkflowTemplate>> {
     try {
       const response = await fetch(`${config.apiUrl}/workflow-templates/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
         credentials: 'include',
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
       return this.handleResponse<WorkflowTemplate>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: `Failed to update workflow template ${id}`
+        message: `Failed to update workflow template ${id}`,
       };
     }
   }
@@ -337,9 +347,9 @@ export class WorkflowApiService {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
-        credentials: 'include'
+        credentials: 'include',
       });
 
       const result = await this.handleResponse<any>(response);
@@ -347,13 +357,13 @@ export class WorkflowApiService {
         success: result.success,
         data: result.success,
         error: result.error,
-        message: result.message
+        message: result.message,
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: `Failed to delete workflow template ${id}`
+        message: `Failed to delete workflow template ${id}`,
       };
     }
   }

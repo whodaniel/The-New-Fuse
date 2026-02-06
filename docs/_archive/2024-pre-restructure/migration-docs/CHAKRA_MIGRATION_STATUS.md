@@ -13,6 +13,7 @@
 ### Frontend App Components (46 files)
 
 #### Admin Panel (11 files)
+
 - `apps/frontend/src/components/AdminPanel/AdminPanel.tsx`
 - `apps/frontend/src/components/AdminPanel/ApiMonitor.tsx`
 - `apps/frontend/src/components/AdminPanel/AuditLogs.tsx`
@@ -26,6 +27,7 @@
 - `apps/frontend/src/components/AdminPanel/UserManagement.tsx`
 
 #### Onboarding (10 files)
+
 - `apps/frontend/src/components/admin/onboarding/OnboardingAISettings.tsx`
 - `apps/frontend/src/components/admin/onboarding/OnboardingAdmin.tsx`
 - `apps/frontend/src/components/admin/onboarding/OnboardingAnalytics.tsx`
@@ -39,6 +41,7 @@
 - `apps/frontend/src/components/onboarding/UserTypeDetection.tsx`
 
 #### Wizard Components (4 files)
+
 - `apps/frontend/src/components/wizard/GreeterAgent.tsx`
 - `apps/frontend/src/components/wizard/steps/GreeterAgentStep.tsx`
 - `apps/frontend/src/components/wizard/steps/ToolsSelectionStep.tsx`
@@ -46,12 +49,14 @@
 - `apps/frontend/src/components/wizard/steps/WorkspaceSetupStep.tsx`
 
 #### Workflow Builder (4 files)
+
 - `apps/frontend/src/components/WorkflowBuilder/NodeToolbar.tsx`
 - `apps/frontend/src/components/WorkflowBuilder/WorkflowCanvas.tsx`
 - `apps/frontend/src/components/workflow/WorkflowCanvas.tsx`
 - `apps/frontend/src/components/workflow/WorkflowToolbar.tsx`
 
 #### Prompt Workbench (7 files)
+
 - `apps/frontend/src/components/PromptWorkbench/PromptEditor.tsx`
 - `apps/frontend/src/components/PromptWorkbench/PromptSaveModal.tsx`
 - `apps/frontend/src/components/PromptWorkbench/PromptWorkbench.tsx`
@@ -61,6 +66,7 @@
 - `apps/frontend/src/components/PromptWorkbench/VersionHistory.tsx`
 
 #### Other Frontend (10 files)
+
 - `apps/frontend/src/components/admin/APIMonitoring.tsx`
 - `apps/frontend/src/components/admin/AdminDashboard.tsx`
 - `apps/frontend/src/components/admin/McpMonitor.tsx`
@@ -73,15 +79,18 @@
 - `apps/frontend/src/components/mass/MassOptimizationPanel.tsx`
 
 #### Pages (3 files)
+
 - `apps/frontend/src/pages/Admin/Onboarding.tsx`
 - `apps/frontend/src/pages/WorkflowsEnhanced.tsx`
 - `apps/frontend/src/pages/preview/OnboardingPreview.tsx`
 
 #### Theme (2 files)
+
 - `apps/frontend/src/shared/theme/ThemeContext.tsx`
 - `apps/frontend/src/shared/theme/ThemeCustomizer.tsx`
 
 ### Electron Desktop (6 files)
+
 - `apps/electron-desktop/src/renderer/components/CommandCenter.tsx`
 - `apps/electron-desktop/src/renderer/components/tabs/ChatTab.tsx`
 - `apps/electron-desktop/src/renderer/components/tabs/ConnectionTab.tsx`
@@ -90,23 +99,27 @@
 - `apps/electron-desktop/src/renderer/main.tsx`
 
 ### Packages (4 files)
+
 - `packages/features/agents/components/AgentFilters/index.tsx`
 - `packages/features/auth/components/LoginForm.tsx`
 - `packages/features/auth/components/RegisterForm.tsx`
 - `packages/features/theme/types.ts`
 
 ### Tests (1 file)
+
 - `packages/integration-tests/src/workflow-builder/ui-components.test.ts`
 
 ## UI-Consolidated Components Available
 
 ✅ **Layout:**
+
 - Container
 - Layout
 - Sidebar
 - Split/SplitPane
 
 ✅ **Form Components:**
+
 - Button
 - Input
 - Textarea
@@ -116,12 +129,14 @@
 - Switch
 
 ✅ **Feedback:**
+
 - Alert
 - Badge
 - Modal
 - Tooltip
 
 ✅ **Navigation:**
+
 - Accordion
 - Breadcrumb
 - Dropdown
@@ -129,18 +144,22 @@
 - Tabs
 
 ✅ **Data Display:**
+
 - Card
 
 ✅ **Auth:**
+
 - Login/Register forms (pre-built)
 
 ✅ **Utilities:**
+
 - cn (tailwind-merge)
 - Theme utilities
 
 ## Migration Strategy
 
 ### Priority 1: Core UI Components (Your AI is working on these)
+
 - ✅ OnboardingFlow
 - ✅ OnboardingWizard
 - ✅ CompletionStep
@@ -148,14 +167,17 @@
 - 🔄 Remove Chakra dependencies from package.json
 
 ### Priority 2: Admin Panel
+
 - 11 admin components need migration
 - All use similar patterns (tables, forms, metrics)
 
 ### Priority 3: Workflow Builder
+
 - 4 components with complex interactions
 - May need custom canvas components
 
 ### Priority 4: Other Components
+
 - Prompt Workbench (7 files)
 - Electron Desktop (6 files)
 - Misc components
@@ -183,6 +205,7 @@ useDisclosure → useState for modal/drawer state
 
 ## Notes
 
-- **packageManager field** has reappeared in package.json - may need removal again
+- **packageManager field** has reappeared in package.json - may need removal
+  again
 - **ui-consolidated** is well-structured with Radix UI primitives
 - **Tailwind** is properly configured in the project

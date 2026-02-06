@@ -30,22 +30,24 @@ export class AgentCommunicationManager extends EventEmitter {
   private readonly logger = new Logger(AgentCommunicationManager.name);
   private readonly channels = new Map<string, CommunicationChannel>();
   private readonly config: CommunicationConfig;
-  constructor(private readonly communicationBridge: AgentCommunicationBridge,
-    private readonly metricsProcessor: MetricsProcessor
+  constructor(
+    private readonly communicationBridge: AgentCommunicationBridge,
+    private readonly metricsProcessor: MetricsProcessor,
   ) {
     super();
     this.config = {
       level: 'info',
       type: 'direct',
       enabledProtocols: ['A2A_V2', 'MCP'],
-      securityLevel: 'enhanced'
+      securityLevel: 'enhanced',
     };
     this.logger.log('AgentCommunicationManager initialized');
   }
 
-  async createChannel(channelId: string,
+  async createChannel(
+    channelId: string,
     channelType: 'direct' | 'broadcast' | 'group',
-    participants: string[]
+    participants: string[],
   ): Promise<CommunicationChannel> {
     try {
       const channel: CommunicationChannel = {
@@ -55,7 +57,7 @@ export class AgentCommunicationManager extends EventEmitter {
         participants,
         createdAt: new Date(),
         createdBy: 'system',
-        isActive: true
+        isActive: true,
       };
       this.channels.set(channelId, channel);
       this.emit('channelCreated', channel);
@@ -69,7 +71,7 @@ export class AgentCommunicationManager extends EventEmitter {
 
   async sendMessage(
     message: Omit<AgentMessage, 'id' | 'timestamp'>,
-    options: SendMessageOptions = {}
+    options: SendMessageOptions = {},
   ): Promise<void> {
     try {
       const priority = options.priority || 'medium';
@@ -78,7 +80,7 @@ export class AgentCommunicationManager extends EventEmitter {
         ...message,
         id: this.generateMessageId(),
         timestamp: new Date().toISOString(),
-        priority
+        priority,
       };
       if (message.type === 'direct') {
         await this.communicationBridge.sendDirectMessage(fullMessage);
@@ -93,7 +95,7 @@ export class AgentCommunicationManager extends EventEmitter {
         messageId: fullMessage.id,
         type: message.type,
         priority,
-        protocol
+        protocol,
       });
     } catch (error) {
       this.logger.error('Failed to send message', { error, message });
@@ -104,7 +106,7 @@ export class AgentCommunicationManager extends EventEmitter {
 
   async broadcastMessage(
     message: Omit<AgentMessage, 'id' | 'timestamp'>,
-    options: SendMessageOptions = {}
+    options: SendMessageOptions = {},
   ): Promise<void> {
     try {
       const priority = options.priority || 'medium';
@@ -114,7 +116,7 @@ export class AgentCommunicationManager extends EventEmitter {
         id: this.generateMessageId(),
         timestamp: new Date().toISOString(),
         type: 'broadcast',
-        priority
+        priority,
       };
       await this.communicationBridge.broadcastMessage(broadcastMessage);
       this.logger.log('Broadcast message sent', { messageId: broadcastMessage.id });
@@ -146,7 +148,7 @@ export class AgentCommunicationManager extends EventEmitter {
   }
 
   getActiveChannels(): CommunicationChannel[] {
-    return Array.from(this.channels.values()).filter(channel => channel.isActive);
+    return Array.from(this.channels.values()).filter((channel) => channel.isActive);
   }
 
   private generateMessageId(): string {

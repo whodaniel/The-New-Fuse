@@ -69,6 +69,16 @@ export class AgentLifecycleManager {
    */
   async registerAgent(registration: AgentRegistration): Promise<void> {
     const { agentId, role, capabilities, expectedResponseTime, metadata } = registration;
+    const identity = (metadata?.identity as Record<string, any>) || {
+      longTermId: `agent-${agentId}`,
+      ephemeralId: `inst-${Date.now()}`,
+      protocolVersion: 'tnf-1',
+    };
+    const tenancy = (metadata?.tenancy as Record<string, any>) || {
+      tenantId: metadata?.tenantId,
+      organizationId: metadata?.organizationId,
+      agencyId: metadata?.agencyId,
+    };
 
     this.logger.log(`Registering agent: ${agentId} (role: ${role})`);
 
@@ -79,7 +89,11 @@ export class AgentLifecycleManager {
       role,
       capabilities: JSON.stringify(capabilities),
       registeredAt: new Date().toISOString(),
-      metadata: JSON.stringify(metadata || {}),
+      metadata: JSON.stringify({
+        ...(metadata || {}),
+        identity,
+        tenancy,
+      }),
     });
 
     // 2. Store capabilities for routing

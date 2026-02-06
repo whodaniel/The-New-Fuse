@@ -1,18 +1,17 @@
 /**
  * BuildStrategyManager Tests
- * 
+ *
  * Tests for build strategy configuration, validation, and automatic selection.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { BuildStrategyManager, ConfigurationValidationError } from './BuildStrategyManager.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
-  BuildStrategy,
   BuildConfiguration,
+  BuildStrategy,
+  EnhancedBuildConfiguration,
   SystemResources,
-  BuildEnvironment,
-  EnhancedBuildConfiguration
 } from '../types/index.js';
+import { BuildStrategyManager, ConfigurationValidationError } from './BuildStrategyManager.js';
 
 describe('BuildStrategyManager', () => {
   let manager: BuildStrategyManager;
@@ -31,7 +30,7 @@ describe('BuildStrategyManager', () => {
   describe('Strategy Management', () => {
     it('should provide default strategies', () => {
       const strategies = manager.getAvailableStrategies();
-      
+
       expect(strategies).toContain('development');
       expect(strategies).toContain('production');
       expect(strategies).toContain('memory-optimized');
@@ -40,7 +39,7 @@ describe('BuildStrategyManager', () => {
 
     it('should get strategy by name', () => {
       const devStrategy = manager.getStrategy('development');
-      
+
       expect(devStrategy).toBeDefined();
       expect(devStrategy.maxConcurrency).toBe(2);
       expect(devStrategy.memoryThreshold).toBe(65);
@@ -59,11 +58,11 @@ describe('BuildStrategyManager', () => {
         memoryThreshold: 75,
         stageSize: 5,
         enableIncremental: false,
-        cleanupBetweenStages: false
+        cleanupBetweenStages: false,
       };
 
       manager.registerStrategy('custom', customStrategy);
-      
+
       const retrieved = manager.getStrategy('custom');
       expect(retrieved).toEqual(customStrategy);
       expect(manager.getAvailableStrategies()).toContain('custom');
@@ -72,7 +71,7 @@ describe('BuildStrategyManager', () => {
     it('should return copy of strategy to prevent mutation', () => {
       const strategy1 = manager.getStrategy('development');
       const strategy2 = manager.getStrategy('development');
-      
+
       strategy1.maxConcurrency = 999;
       expect(strategy2.maxConcurrency).not.toBe(999);
     });
@@ -85,7 +84,7 @@ describe('BuildStrategyManager', () => {
         availableMemory: 2048, // 2GB available
         cpuCores: 2,
         platform: 'linux',
-        nodeVersion: '18.0.0'
+        nodeVersion: '18.0.0',
       };
 
       const strategy = manager.selectOptimalStrategy(lowMemoryResources);
@@ -103,7 +102,7 @@ describe('BuildStrategyManager', () => {
         availableMemory: 6144, // 6GB available
         cpuCores: 4,
         platform: 'darwin',
-        nodeVersion: '18.0.0'
+        nodeVersion: '18.0.0',
       };
 
       const strategy = manager.selectOptimalStrategy(mediumMemoryResources);
@@ -121,7 +120,7 @@ describe('BuildStrategyManager', () => {
         availableMemory: 12288, // 12GB available
         cpuCores: 8,
         platform: 'linux',
-        nodeVersion: '18.0.0'
+        nodeVersion: '18.0.0',
       };
 
       const strategy = manager.selectOptimalStrategy(highMemoryResources);
@@ -139,7 +138,7 @@ describe('BuildStrategyManager', () => {
         availableMemory: 6144,
         cpuCores: 4,
         platform: 'linux',
-        nodeVersion: '18.0.0'
+        nodeVersion: '18.0.0',
       };
 
       const strategy = manager.selectOptimalStrategy(resources, 'ci');
@@ -157,7 +156,7 @@ describe('BuildStrategyManager', () => {
         availableMemory: 6144,
         cpuCores: 4,
         platform: 'linux',
-        nodeVersion: '18.0.0'
+        nodeVersion: '18.0.0',
       };
 
       const strategy = manager.selectOptimalStrategy(resources, 'production');
@@ -203,18 +202,18 @@ describe('BuildStrategyManager', () => {
 
     it('should detect CI environment', () => {
       process.env.CI = 'true';
-      
+
       const config = manager.createConfigurationFromEnvironment();
-      
+
       expect(config.environment).toBe('ci');
       expect(config.strategy).toBe('memory-optimized'); // Default for CI
     });
 
     it('should detect production environment', () => {
       process.env.NODE_ENV = 'production';
-      
+
       const config = manager.createConfigurationFromEnvironment();
-      
+
       expect(config.environment).toBe('production');
       expect(config.strategy).toBe('production'); // Default for production
     });
@@ -222,9 +221,9 @@ describe('BuildStrategyManager', () => {
     it('should handle invalid environment variable values', () => {
       process.env.MAX_CONCURRENCY = 'invalid';
       process.env.ENABLE_INCREMENTAL_BUILDS = 'maybe';
-      
+
       const config = manager.createConfigurationFromEnvironment();
-      
+
       // Should use defaults for invalid number values, but boolean parsing is strict
       expect(config.maxConcurrency).toBe(3); // DEFAULT_CONFIG.MAX_CONCURRENCY (invalid number -> default)
       expect(config.enableIncrementalBuilds).toBe(false); // 'maybe' is not 'true' or '1' -> false
@@ -239,7 +238,7 @@ describe('BuildStrategyManager', () => {
         maxConcurrency: 2,
         enableIncrementalBuilds: true,
         stageCleanup: true,
-        monitoringInterval: 1500
+        monitoringInterval: 1500,
       };
 
       expect(() => manager.validateConfiguration(validConfig)).not.toThrow();
@@ -252,11 +251,12 @@ describe('BuildStrategyManager', () => {
         maxConcurrency: 2,
         enableIncrementalBuilds: true,
         stageCleanup: true,
-        monitoringInterval: 1500
+        monitoringInterval: 1500,
       };
 
-      expect(() => manager.validateConfiguration(invalidConfig))
-        .toThrow(ConfigurationValidationError);
+      expect(() => manager.validateConfiguration(invalidConfig)).toThrow(
+        ConfigurationValidationError
+      );
     });
 
     it('should reject configuration with invalid maxConcurrency', () => {
@@ -266,11 +266,12 @@ describe('BuildStrategyManager', () => {
         maxConcurrency: -1,
         enableIncrementalBuilds: true,
         stageCleanup: true,
-        monitoringInterval: 1500
+        monitoringInterval: 1500,
       };
 
-      expect(() => manager.validateConfiguration(invalidConfig))
-        .toThrow(ConfigurationValidationError);
+      expect(() => manager.validateConfiguration(invalidConfig)).toThrow(
+        ConfigurationValidationError
+      );
     });
 
     it('should reject configuration with invalid strategy', () => {
@@ -280,11 +281,12 @@ describe('BuildStrategyManager', () => {
         maxConcurrency: 2,
         enableIncrementalBuilds: true,
         stageCleanup: true,
-        monitoringInterval: 1500
+        monitoringInterval: 1500,
       };
 
-      expect(() => manager.validateConfiguration(invalidConfig))
-        .toThrow(ConfigurationValidationError);
+      expect(() => manager.validateConfiguration(invalidConfig)).toThrow(
+        ConfigurationValidationError
+      );
     });
 
     it('should validate build strategy', () => {
@@ -293,7 +295,7 @@ describe('BuildStrategyManager', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       expect(() => manager.validateStrategy(validStrategy)).not.toThrow();
@@ -305,11 +307,10 @@ describe('BuildStrategyManager', () => {
         memoryThreshold: 150, // > 100
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
-      expect(() => manager.validateStrategy(invalidStrategy))
-        .toThrow(ConfigurationValidationError);
+      expect(() => manager.validateStrategy(invalidStrategy)).toThrow(ConfigurationValidationError);
     });
 
     it('should reject custom strategy with validation errors', () => {
@@ -318,11 +319,12 @@ describe('BuildStrategyManager', () => {
         memoryThreshold: 70,
         stageSize: 4,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
-      expect(() => manager.registerStrategy('invalid', invalidStrategy))
-        .toThrow(ConfigurationValidationError);
+      expect(() => manager.registerStrategy('invalid', invalidStrategy)).toThrow(
+        ConfigurationValidationError
+      );
     });
   });
 
@@ -373,8 +375,8 @@ describe('BuildStrategyManager', () => {
         ideConfig: {
           buildFirst: false,
           estimatedMemoryUsage: 1024,
-          cleanupAfterBuild: false
-        }
+          cleanupAfterBuild: false,
+        },
       };
 
       const merged = manager.mergeWithDefaults(partial);
@@ -399,8 +401,8 @@ describe('BuildStrategyManager', () => {
       const partial: Partial<EnhancedBuildConfiguration> = {
         monorepoConfig: {
           maxPackagesPerStage: 16,
-          packageManager: 'npm'
-        }
+          packageManager: 'npm',
+        },
       };
 
       const merged = manager.mergeWithDefaults(partial);
@@ -421,9 +423,9 @@ describe('BuildStrategyManager', () => {
           maxConcurrency: 2,
           enableIncrementalBuilds: true,
           stageCleanup: true,
-          monitoringInterval: 1500
+          monitoringInterval: 1500,
         };
-        
+
         manager.validateConfiguration(invalidConfig);
       } catch (error) {
         expect(error).toBeInstanceOf(ConfigurationValidationError);
@@ -438,12 +440,11 @@ describe('BuildStrategyManager', () => {
         memoryThreshold: 150,
         stageSize: -1,
         enableIncremental: true,
-        cleanupBetweenStages: true
+        cleanupBetweenStages: true,
       };
 
       // Should throw on first validation error encountered
-      expect(() => manager.validateStrategy(invalidStrategy))
-        .toThrow(ConfigurationValidationError);
+      expect(() => manager.validateStrategy(invalidStrategy)).toThrow(ConfigurationValidationError);
     });
   });
 });

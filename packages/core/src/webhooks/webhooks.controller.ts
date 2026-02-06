@@ -55,7 +55,7 @@ export class WebhooksController {
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to register webhook',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -69,7 +69,7 @@ export class WebhooksController {
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get webhooks',
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
@@ -87,7 +87,7 @@ export class WebhooksController {
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get webhook',
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
   }
@@ -97,7 +97,7 @@ export class WebhooksController {
   @ApiResponse({ status: 200, description: 'Webhook updated successfully' })
   async updateWebhook(
     @Param('id') id: string,
-    @Body() updates: UpdateWebhookDto
+    @Body() updates: UpdateWebhookDto,
   ): Promise<WebhookConfig> {
     try {
       const webhook = await this.webhookManager.updateWebhook(id, updates);
@@ -108,7 +108,7 @@ export class WebhooksController {
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to update webhook',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -126,7 +126,7 @@ export class WebhooksController {
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to delete webhook',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -135,7 +135,7 @@ export class WebhooksController {
   @ApiOperation({ summary: 'Trigger webhooks for an event' })
   @ApiResponse({ status: 200, description: 'Webhooks triggered successfully' })
   async triggerWebhooks(
-    @Body() eventData: { type: string; data: any }
+    @Body() eventData: { type: string; data: any },
   ): Promise<{ success: boolean }> {
     try {
       await this.webhookManager.triggerWebhook(eventData.type, eventData.data);
@@ -143,7 +143,7 @@ export class WebhooksController {
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to trigger webhooks',
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
@@ -157,7 +157,7 @@ export class WebhooksController {
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get webhook events',
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
@@ -172,7 +172,7 @@ export class WebhooksController {
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to retry webhooks',
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

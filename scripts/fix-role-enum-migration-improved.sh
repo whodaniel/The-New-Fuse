@@ -53,8 +53,8 @@ fi
 if [ ! -f "./scripts/migration-recovery.sql" ]; then
   echo "Creating migration recovery SQL..."
   cat > ./scripts/migration-recovery.sql << EOF
--- Drop the _prisma_migrations table to start fresh
-DROP TABLE IF EXISTS _prisma_migrations;
+-- Drop the _drizzle_migrations table to start fresh
+DROP TABLE IF EXISTS _drizzle_migrations;
 
 -- Drop the enum type that might be causing issues
 DROP TYPE IF EXISTS "Role_new";
@@ -74,18 +74,18 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# 6. Reset Prisma migration state
-echo "🗑️ Resetting Prisma migration state..."
+# 6. Reset Drizzle migration state
+echo "🗑️ Resetting Drizzle migration state..."
 
-# First, check which prisma schema is being used
-if [ -f "packages/database/prisma/schema.prisma" ]; then
-  echo "Using consolidated schema at packages/database/prisma/schema.prisma"
-  SCHEMA_PATH="packages/database/prisma/schema.prisma"
-  yarn workspace @the-new-fuse/database prisma migrate reset --force
+# First, check which drizzle schema is being used
+if [ -f "packages/database/drizzle/schema.drizzle" ]; then
+  echo "Using consolidated schema at packages/database/drizzle/schema.drizzle"
+  SCHEMA_PATH="packages/database/drizzle/schema.drizzle"
+  yarn workspace @the-new-fuse/database drizzle migrate reset --force
 else
-  echo "Using root schema at prisma/schema.prisma"
-  SCHEMA_PATH="prisma/schema.prisma"
-  yarn prisma migrate reset --force
+  echo "Using root schema at drizzle/schema.drizzle"
+  SCHEMA_PATH="drizzle/schema.drizzle"
+  yarn drizzle migrate reset --force
 fi
 
 # 7. Verify the Role enum is correctly defined
@@ -115,18 +115,18 @@ fi
 echo "🆕 Creating a new migration with the correct Role enum..."
 
 if [[ $SCHEMA_PATH == *"packages/database"* ]]; then
-  yarn workspace @the-new-fuse/database prisma migrate dev --name fix_role_enum
+  yarn workspace @the-new-fuse/database drizzle migrate dev --name fix_role_enum
 else
-  yarn prisma migrate dev --name fix_role_enum
+  yarn drizzle migrate dev --name fix_role_enum
 fi
 
 # 9. Verify the database connection
 echo "🔌 Testing database connection..."
 
 if [[ $SCHEMA_PATH == *"packages/database"* ]]; then
-  yarn workspace @the-new-fuse/database prisma db pull
+  yarn workspace @the-new-fuse/database drizzle db pull
 else
-  yarn prisma db pull
+  yarn drizzle db pull
 fi
 
 echo "✅ Role enum migration fix complete!"

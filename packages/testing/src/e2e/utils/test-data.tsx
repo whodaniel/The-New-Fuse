@@ -19,16 +19,16 @@ export class TestDataManager {
       id: `user-${timestamp}`,
       username: `testuser-${timestamp}`,
       password: 'testpass123',
-      email: `test-${timestamp}@example.com`
+      email: `test-${timestamp}@example.com`,
     };
-    
+
     // Register user via API
     await this.page.request.post('/api/auth/register', {
       data: {
         username: user.username,
         password: user.password,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
 
     this.users.push(user);
@@ -41,8 +41,8 @@ export class TestDataManager {
         name,
         description: 'Test workflow',
         nodes: [],
-        edges: []
-      }
+        edges: [],
+      },
     });
 
     const data = await response.json();

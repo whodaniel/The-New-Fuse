@@ -37,9 +37,7 @@ export interface ConflictResolution<T = any> {
 /**
  * Custom conflict resolver function
  */
-export type ConflictResolverFn<T = any> = (
-  updates: StateUpdate<T>[]
-) => StateUpdate<T>;
+export type ConflictResolverFn<T = any> = (updates: StateUpdate<T>[]) => StateUpdate<T>;
 
 /**
  * Conflict resolver for managing concurrent state updates
@@ -142,9 +140,7 @@ export class ConflictResolver extends EventEmitter {
    */
   private mergeUpdates<T>(updates: StateUpdate<T>[]): StateUpdate<T> {
     // Sort by timestamp
-    const sorted = [...updates].sort(
-      (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
-    );
+    const sorted = [...updates].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 
     // Merge values (deep merge for objects)
     let mergedValue = sorted[0].value;
@@ -246,9 +242,7 @@ export class ConflictResolver extends EventEmitter {
    * Match key against pattern (supports wildcards)
    */
   private matchesPattern(key: string, pattern: string): boolean {
-    const regex = new RegExp(
-      '^' + pattern.replace(/\*/g, '.*').replace(/\?/g, '.') + '$'
-    );
+    const regex = new RegExp('^' + pattern.replace(/\*/g, '.*').replace(/\?/g, '.') + '$');
     return regex.test(key);
   }
 
@@ -285,10 +279,7 @@ export class ConflictResolver extends EventEmitter {
 
       // Update version
       if (resolution.winningUpdate) {
-        this.stateVersions.set(
-          update.key,
-          resolution.winningUpdate.version
-        );
+        this.stateVersions.set(update.key, resolution.winningUpdate.version);
       }
 
       return resolution;

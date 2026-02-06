@@ -1,6 +1,7 @@
 # Service Layer Consolidation
 
-This document provides an overview of the standardized service layer architecture implemented in this project.
+This document provides an overview of the standardized service layer
+architecture implemented in this project.
 
 ## Architecture Overview
 
@@ -31,7 +32,7 @@ These provide consistent patterns across the application:
 
 Common services used throughout the application:
 
-- **PrismaService**: Database connection management
+- **DatabaseService**: Database connection management
 - **AppConfigService**: Centralized configuration access
 - **EventService**: Application-wide event handling
 - **HealthService**: Application health monitoring
@@ -57,7 +58,9 @@ All API endpoints return responses in this standardized format:
 ```json
 {
   "success": true,
-  "data": { /* response data */ },
+  "data": {
+    /* response data */
+  },
   "error": null,
   "timestamp": "2025-04-12T10:30:00.000Z"
 }
@@ -88,6 +91,7 @@ Error responses follow this format:
 Events follow a standard naming convention: `{entity}.{action}`
 
 Examples:
+
 - `agent.created`
 - `agent.updated`
 - `workflow.executed`
@@ -105,7 +109,7 @@ Errors are handled consistently throughout the application:
 To extend the service layer with a new feature:
 
 1. Create a repository class extending `BaseRepository`
-2. Create a service class extending `BaseService` 
+2. Create a service class extending `BaseService`
 3. Create a controller class extending `BaseController`
 4. Create a feature module to wire everything together
 5. Add the feature module to the AppModule

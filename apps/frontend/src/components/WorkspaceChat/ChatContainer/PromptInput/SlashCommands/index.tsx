@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
+import { Tooltip } from 'react-tooltip';
 import SlashCommandIcon from '../icons/SlashCommandIcon';
-import { Tooltip } from "react-tooltip";
-import ResetCommand from './reset';
 import EndAgentSession from './endAgentSession';
+import ResetCommand from './reset';
 import SlashPresets from './SlashPresets';
 
 interface SlashCommandsButtonProps {
@@ -21,16 +21,17 @@ interface UseSlashCommandsReturn {
   setShowSlashCommand: (showing: boolean) => void;
 }
 
-export default function SlashCommandsButton({ showing, setShowSlashCommand }: SlashCommandsButtonProps): JSX.Element {
+export default function SlashCommandsButton({
+  showing,
+  setShowSlashCommand,
+}: SlashCommandsButtonProps): JSX.Element {
   return (
     <div
       id="slash-cmd-btn"
       data-tooltip-id="tooltip-slash-cmd-btn"
       data-tooltip-content="View all available slash commands for chatting."
       onClick={() => setShowSlashCommand(!showing)}
-      className={`flex justify-center items-center cursor-pointer ${
-        showing ? "!opacity-100" : ""
-      }`}
+      className={`flex justify-center items-center cursor-pointer ${showing ? '!opacity-100' : ''}`}
     >
       <SlashCommandIcon
         color="var(--theme-sidebar-footer-icon-fill)"
@@ -46,25 +47,29 @@ export default function SlashCommandsButton({ showing, setShowSlashCommand }: Sl
   );
 }
 
-export function SlashCommands({ showing, setShowing, sendCommand }: SlashCommandsProps): JSX.Element {
+export function SlashCommands({
+  showing,
+  setShowing,
+  sendCommand,
+}: SlashCommandsProps): JSX.Element {
   const cmdRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     function listenForOutsideClick() {
       if (!showing || !cmdRef.current) return false;
-      document.addEventListener("click", closeIfOutside);
+      document.addEventListener('click', closeIfOutside);
     }
     listenForOutsideClick();
-    
+
     // Cleanup listener on unmount
     return () => {
-      document.removeEventListener("click", closeIfOutside);
+      document.removeEventListener('click', closeIfOutside);
     };
   }, [showing, cmdRef.current]);
 
   const closeIfOutside = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
-    if (target.id === "slash-cmd-btn") return;
+    if (target.id === 'slash-cmd-btn') return;
     const isOutside = !cmdRef?.current?.contains(target);
     if (!isOutside) return;
     setShowing(false);

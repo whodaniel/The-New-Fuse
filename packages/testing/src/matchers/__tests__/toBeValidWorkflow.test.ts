@@ -12,9 +12,9 @@ describe('toBeValidWorkflow', () => {
       {
         id: 'step1',
         name: 'First Step',
-        status: WorkflowStatus.ACTIVE
-      }
-    ]
+        status: WorkflowStatus.ACTIVE,
+      },
+    ],
   };
 
   it('should pass for valid workflow', async () => {
@@ -24,7 +24,7 @@ describe('toBeValidWorkflow', () => {
 
   it('should fail for invalid workflow missing required fields', async () => {
     const invalidWorkflow = {
-      name: 'Test Workflow'
+      name: 'Test Workflow',
     };
     const result = await toBeValidWorkflow.call({} as any, invalidWorkflow);
     expect(result.pass).toBe(false);
@@ -33,7 +33,7 @@ describe('toBeValidWorkflow', () => {
   it('should fail for workflow with invalid status', async () => {
     const invalidWorkflow = {
       ...validWorkflow,
-      status: 'invalid-status'
+      status: 'invalid-status',
     };
     const result = await toBeValidWorkflow.call({} as any, invalidWorkflow);
     expect(result.pass).toBe(false);
@@ -42,7 +42,7 @@ describe('toBeValidWorkflow', () => {
   it('should fail for workflow with invalid step structure', async () => {
     const invalidWorkflow = {
       ...validWorkflow,
-      steps: [{ id: 'step1' }] // Missing required name and status
+      steps: [{ id: 'step1' }], // Missing required name and status
     };
     const result = await toBeValidWorkflow.call({} as any, invalidWorkflow);
     expect(result.pass).toBe(false);

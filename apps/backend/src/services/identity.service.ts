@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { createWalletClient, http, namehash, createPublicClient } from 'viem';
+import { ConfigService } from '@nestjs/config';
+import { createPublicClient, createWalletClient, http, namehash } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { polygon } from 'viem/chains';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class IdentityService {
   private walletClient;
   private publicClient;
   private registryAddress = '0xa9a6A14A3645144487de29A04f8461b35430001'; // UNS Registry
-  
+
   // Root domain hashes
   private rootDomains = {
     com: namehash('thenewfuse.com'),
@@ -53,9 +53,7 @@ export class IdentityService {
   async mintMachineID(toAddress: string, isAgent = false): Promise<string> {
     const label = this.generateMachineLabel(isAgent);
     const parentNode = isAgent ? this.rootDomains.agent : this.rootDomains.com;
-    const fullDomain = isAgent 
-      ? `${label}.thenewfuse.agent` 
-      : `${label}.thenewfuse.com`;
+    const fullDomain = isAgent ? `${label}.thenewfuse.agent` : `${label}.thenewfuse.com`;
 
     if (!this.walletClient) {
       console.warn('Wallet not configured. Skipping on-chain minting for:', fullDomain);
@@ -68,26 +66,26 @@ export class IdentityService {
       const abi = [
         {
           inputs: [
-            { name: "node", type: "bytes32" },
-            { name: "label", type: "bytes32" },
-            { name: "owner", type: "address" }
+            { name: 'node', type: 'bytes32' },
+            { name: 'label', type: 'bytes32' },
+            { name: 'owner', type: 'address' },
           ],
-          name: "setSubnodeOwner",
+          name: 'setSubnodeOwner',
           outputs: [],
-          stateMutability: "nonpayable",
-          type: "function"
-        }
+          stateMutability: 'nonpayable',
+          type: 'function',
+        },
       ];
 
       const labelHash = namehash(label) as `0x${string}`; // This is actually incorrect for label, we need keccak256 of label
       // Correct label hash logic:
       // labelHash is keccak256(bytes(label))
-      // But viem's namehash handles full names. 
+      // But viem's namehash handles full names.
       // We need just the label hash for setSubnodeOwner usually.
-      
+
       // For now, logging the intent as placeholder for actual TX execution to avoid gas spend during dev
       // console.log(`Minting ${fullDomain} to ${toAddress}`);
-      
+
       // In production:
       // await this.walletClient.writeContract({
       //   address: this.registryAddress as `0x${string}`,

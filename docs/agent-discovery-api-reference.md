@@ -17,6 +17,7 @@ Register a new agent or update existing registration.
 **Endpoint:** `POST /discovery/register`
 
 **Request Body:**
+
 ```json
 {
   "agentId": "code-reviewer-01",
@@ -42,6 +43,7 @@ Register a new agent or update existing registration.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -61,6 +63,7 @@ Send agent heartbeat with current metrics.
 **Endpoint:** `POST /discovery/heartbeat`
 
 **Request Body:**
+
 ```json
 {
   "agentId": "code-reviewer-01",
@@ -80,6 +83,7 @@ Send agent heartbeat with current metrics.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -99,6 +103,7 @@ Remove agent from discovery system.
 **Endpoint:** `POST /discovery/deregister`
 
 **Request Body:**
+
 ```json
 {
   "agentId": "code-reviewer-01"
@@ -106,6 +111,7 @@ Remove agent from discovery system.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -125,6 +131,7 @@ Query agents based on criteria.
 **Endpoint:** `POST /discover`
 
 **Request Body:**
+
 ```json
 {
   "capability": "code-review",
@@ -139,6 +146,7 @@ Query agents based on criteria.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -180,6 +188,7 @@ Get all registered agents.
 **Endpoint:** `GET /discovery`
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -200,6 +209,7 @@ Get specific agent details.
 **Endpoint:** `GET /discovery/:agentId`
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -223,6 +233,7 @@ Semantic search for capabilities.
 **Endpoint:** `POST /discovery/match`
 
 **Request Body:**
+
 ```json
 {
   "query": "analyze statistical data",
@@ -233,6 +244,7 @@ Semantic search for capabilities.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -267,9 +279,14 @@ Chain multiple agents for workflows.
 **Endpoint:** `POST /discovery/compose`
 
 **Request Body:**
+
 ```json
 {
-  "capabilities": ["data-cleaning", "statistical-analysis", "data-visualization"],
+  "capabilities": [
+    "data-cleaning",
+    "statistical-analysis",
+    "data-visualization"
+  ],
   "maxChainLength": 5,
   "preferReliable": true,
   "maxCost": 0.5
@@ -277,6 +294,7 @@ Chain multiple agents for workflows.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -286,7 +304,11 @@ Chain multiple agents for workflows.
         "composition": {
           "name": "Composed: data-cleaning → statistical-analysis → data-visualization",
           "agentChain": ["cleaner-01", "analyzer-01", "visualizer-01"],
-          "capabilities": ["data-cleaning", "statistical-analysis", "data-visualization"],
+          "capabilities": [
+            "data-cleaning",
+            "statistical-analysis",
+            "data-visualization"
+          ],
           "totalCost": 0.09,
           "estimatedTime": 5200
         },
@@ -295,7 +317,11 @@ Chain multiple agents for workflows.
       }
     ],
     "total": 2,
-    "requestedCapabilities": ["data-cleaning", "statistical-analysis", "data-visualization"]
+    "requestedCapabilities": [
+      "data-cleaning",
+      "statistical-analysis",
+      "data-visualization"
+    ]
   }
 }
 ```
@@ -309,6 +335,7 @@ Get discovery system health status.
 **Endpoint:** `GET /discovery/system/health`
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -337,6 +364,7 @@ Advanced query with semantic search.
 **Endpoint:** `POST /discovery/query/advanced`
 
 **Request Body:**
+
 ```json
 {
   "capability": "code",
@@ -353,6 +381,7 @@ Advanced query with semantic search.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -370,24 +399,24 @@ Advanced query with semantic search.
 
 ### DiscoveryQuery Options
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `capability` | string | Capability name or description to search |
-| `languages` | string[] | Required programming languages |
-| `frameworks` | string[] | Required frameworks |
-| `groups` | string[] | Agent groups to filter by |
-| `types` | string[] | Agent types to filter by |
-| `status` | string[] | Status filter (online, busy, idle, offline, error) |
-| `maxCpuUsage` | number | Maximum CPU usage percentage (0-100) |
-| `maxMemoryUsage` | number | Maximum memory usage percentage (0-100) |
-| `maxLoad` | number | Maximum load (0-1) |
-| `minConfidence` | number | Minimum capability confidence (0-1) |
-| `minSuccessRate` | number | Minimum task success rate (0-1) |
-| `maxCost` | number | Maximum cost per invocation |
-| `semanticSearch` | boolean | Enable semantic search |
-| `sortBy` | string | Sort field (relevance, load, successRate, responseTime, uptime) |
-| `sortDirection` | string | Sort direction (asc, desc) |
-| `limit` | number | Maximum number of results |
+| Parameter        | Type     | Description                                                     |
+| ---------------- | -------- | --------------------------------------------------------------- |
+| `capability`     | string   | Capability name or description to search                        |
+| `languages`      | string[] | Required programming languages                                  |
+| `frameworks`     | string[] | Required frameworks                                             |
+| `groups`         | string[] | Agent groups to filter by                                       |
+| `types`          | string[] | Agent types to filter by                                        |
+| `status`         | string[] | Status filter (online, busy, idle, offline, error)              |
+| `maxCpuUsage`    | number   | Maximum CPU usage percentage (0-100)                            |
+| `maxMemoryUsage` | number   | Maximum memory usage percentage (0-100)                         |
+| `maxLoad`        | number   | Maximum load (0-1)                                              |
+| `minConfidence`  | number   | Minimum capability confidence (0-1)                             |
+| `minSuccessRate` | number   | Minimum task success rate (0-1)                                 |
+| `maxCost`        | number   | Maximum cost per invocation                                     |
+| `semanticSearch` | boolean  | Enable semantic search                                          |
+| `sortBy`         | string   | Sort field (relevance, load, successRate, responseTime, uptime) |
+| `sortDirection`  | string   | Sort direction (asc, desc)                                      |
+| `limit`          | number   | Maximum number of results                                       |
 
 ## Agent Status Values
 
@@ -550,6 +579,7 @@ curl -X POST http://localhost:3000/api/agents/discover \
 ## Support
 
 For API issues:
+
 - Check system health: `GET /discovery/system/health`
 - View all agents: `GET /discovery`
 - Check Redis connection

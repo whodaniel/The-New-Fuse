@@ -22,11 +22,11 @@ export interface ChatThread {
 }
 
 export interface Agent {
-    id: string;
-    name: string;
-    llmConfig: {
-        provider: string;
-    };
+  id: string;
+  name: string;
+  llmConfig: {
+    provider: string;
+  };
 }
 
 export interface UnifiedWorkspace {

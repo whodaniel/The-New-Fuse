@@ -1,19 +1,25 @@
 # CI/CD Pipeline Documentation
 
-This directory contains comprehensive documentation for The New Fuse CI/CD pipeline.
+This directory contains comprehensive documentation for The New Fuse CI/CD
+pipeline.
 
 ## Quick Links
 
-- [Architecture Overview](./architecture.md) - High-level architecture and workflow diagrams
-- [Workflows Guide](./workflows.md) - Detailed guide for each GitHub Actions workflow
-- [Secrets Setup](./secrets-setup.md) - Required secrets and environment variables
+- [Architecture Overview](./architecture.md) - High-level architecture and
+  workflow diagrams
+- [Workflows Guide](./workflows.md) - Detailed guide for each GitHub Actions
+  workflow
+- [Secrets Setup](./secrets-setup.md) - Required secrets and environment
+  variables
 - [Deployment Procedures](./deployment.md) - Step-by-step deployment guides
 - [Troubleshooting](./troubleshooting.md) - Common issues and solutions
-- [Monitoring & Alerts](./monitoring.md) - Monitoring setup and alert configuration
+- [Monitoring & Alerts](./monitoring.md) - Monitoring setup and alert
+  configuration
 
 ## Overview
 
-The New Fuse uses a comprehensive CI/CD pipeline built on GitHub Actions to automate:
+The New Fuse uses a comprehensive CI/CD pipeline built on GitHub Actions to
+automate:
 
 - **Testing**: Unit, integration, and E2E tests with coverage tracking
 - **Building**: Automated builds for all packages and applications
@@ -41,7 +47,8 @@ The New Fuse uses a comprehensive CI/CD pipeline built on GitHub Actions to auto
 
 ### For Developers
 
-1. Read the [Workflows Guide](./workflows.md) to understand what happens when you create a PR
+1. Read the [Workflows Guide](./workflows.md) to understand what happens when
+   you create a PR
 2. Check [Troubleshooting](./troubleshooting.md) if you encounter CI failures
 3. Review [Deployment Procedures](./deployment.md) before deploying
 

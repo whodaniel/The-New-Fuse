@@ -28,7 +28,7 @@ export class VisualizationManager {
         id: config.id,
         output: JSON.stringify(config.data),
         format: 'json',
-        metadata: config.options
+        metadata: config.options,
       };
     } catch (error) {
       this.logger.error('Failed to create visualization', error);
@@ -40,7 +40,10 @@ export class VisualizationManager {
     return this.visualizations.get(id);
   }
 
-  async updateVisualization(id: string, updates: Partial<VisualizationConfig>): Promise<VisualizationResult> {
+  async updateVisualization(
+    id: string,
+    updates: Partial<VisualizationConfig>,
+  ): Promise<VisualizationResult> {
     const existing = this.visualizations.get(id);
     if (!existing) {
       throw new Error(`Visualization not found: ${id}`);
@@ -53,7 +56,7 @@ export class VisualizationManager {
       id,
       output: JSON.stringify(updated.data),
       format: 'json',
-      metadata: updated.options
+      metadata: updated.options,
     };
   }
 

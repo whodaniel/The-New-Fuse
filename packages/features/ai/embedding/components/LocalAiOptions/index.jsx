@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
-import System from "@/models/system";
-import PreLoader from "@/components/Preloader";
-import { LOCALAI_COMMON_URLS } from "@/utils/constants";
-import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
+import PreLoader from '@/components/Preloader';
+import useProviderEndpointAutoDiscovery from '@/hooks/useProviderEndpointAutoDiscovery';
+import System from '@/models/system';
+import { LOCALAI_COMMON_URLS } from '@/utils/constants';
+import { CaretDown, CaretUp } from '@phosphor-icons/react';
+import { useEffect, useState } from 'react';
 
 export default function LocalAiOptions({ settings }) {
   const {
@@ -14,7 +14,7 @@ export default function LocalAiOptions({ settings }) {
     setShowAdvancedControls,
     handleAutoDetectClick,
   } = useProviderEndpointAutoDiscovery({
-    provider: "localai",
+    provider: 'localai',
     initialBasePath: settings?.EmbeddingBasePath,
     ENDPOINTS: LOCALAI_COMMON_URLS,
   });
@@ -24,11 +24,7 @@ export default function LocalAiOptions({ settings }) {
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-center gap-[36px] mt-1.5">
-        <LocalAIModelSelection
-          settings={settings}
-          apiKey={apiKey}
-          basePath={basePath.value}
-        />
+        <LocalAIModelSelection settings={settings} apiKey={apiKey} basePath={basePath.value} />
         <div className="flex flex-col w-60">
           <label className="text-white text-sm font-semibold block mb-2">
             Max embedding chunk length
@@ -48,8 +44,7 @@ export default function LocalAiOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-2">
             <label className="text-white text-sm font-semibold flex items-center gap-x-2">
-              Local AI API Key{" "}
-              <p className="!text-xs !italic !font-thin">optional</p>
+              Local AI API Key <p className="!text-xs !italic !font-thin">optional</p>
             </label>
           </div>
           <input
@@ -57,7 +52,7 @@ export default function LocalAiOptions({ settings }) {
             name="LocalAiApiKey"
             className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="sk-mysecretkey"
-            defaultValue={settings?.LocalAiApiKey ? "*".repeat(20) : ""}
+            defaultValue={settings?.LocalAiApiKey ? '*'.repeat(20) : ''}
             autoComplete="off"
             spellCheck={false}
             onChange={(e) => setApiKeyValue(e.target.value)}
@@ -73,7 +68,7 @@ export default function LocalAiOptions({ settings }) {
           }}
           className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
-          {showAdvancedControls ? "Hide" : "Show"} advanced settings
+          {showAdvancedControls ? 'Hide' : 'Show'} advanced settings
           {showAdvancedControls ? (
             <CaretUp size={14} className="ml-1" />
           ) : (
@@ -85,9 +80,7 @@ export default function LocalAiOptions({ settings }) {
         <div className="w-full flex items-center gap-4">
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
-              <label className="text-white text-sm font-semibold">
-                LocalAI Base URL
-              </label>
+              <label className="text-white text-sm font-semibold">LocalAI Base URL</label>
               {loading ? (
                 <PreLoader size="6" />
               ) : (
@@ -128,15 +121,15 @@ function LocalAIModelSelection({ settings, apiKey = null, basePath = null }) {
 
   useEffect(() => {
     async function findCustomModels() {
-      if (!basePath || !basePath.includes("/v1")) {
+      if (!basePath || !basePath.includes('/v1')) {
         setCustomModels([]);
         setLoading(false);
         return;
       }
       setLoading(true);
       const { models } = await System.customModels(
-        "localai",
-        typeof apiKey === "boolean" ? null : apiKey,
+        'localai',
+        typeof apiKey === 'boolean' ? null : apiKey,
         basePath
       );
       setCustomModels(models || []);
@@ -148,18 +141,14 @@ function LocalAIModelSelection({ settings, apiKey = null, basePath = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-2">
-          Embedding Model Name
-        </label>
+        <label className="text-white text-sm font-semibold block mb-2">Embedding Model Name</label>
         <select
           name="EmbeddingModelPref"
           disabled={true}
           className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
         >
           <option disabled={true} selected={true}>
-            {basePath?.includes("/v1")
-              ? "-- loading available models --"
-              : "-- waiting for URL --"}
+            {basePath?.includes('/v1') ? '-- loading available models --' : '-- waiting for URL --'}
           </option>
         </select>
       </div>
@@ -168,9 +157,7 @@ function LocalAIModelSelection({ settings, apiKey = null, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-2">
-        Embedding Model Name
-      </label>
+      <label className="text-white text-sm font-semibold block mb-2">Embedding Model Name</label>
       <select
         name="EmbeddingModelPref"
         required={true}

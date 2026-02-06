@@ -1,5 +1,4 @@
-
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 // Set a long timeout for the entire crawling process
 test.setTimeout(5 * 60 * 1000);
@@ -22,22 +21,25 @@ test.describe('Crawler', () => {
     const MAX_PAGES = 100;
 
     // Helper to log errors
-    page.on('console', msg => {
+    page.on('console', (msg) => {
       if (msg.type() === 'error') {
         console.error(`CONSOLE ERROR on ${page.url()}: ${msg.text()}`);
         ERRORS.push({ url: page.url(), error: `CONSOLE ERROR: ${msg.text()}` });
       }
     });
 
-    page.on('pageerror', exception => {
+    page.on('pageerror', (exception) => {
       console.error(`PAGE ERROR on ${page.url()}: ${exception.message}`);
       ERRORS.push({ url: page.url(), error: `PAGE ERROR: ${exception.message}` });
     });
 
-    page.on('response', response => {
+    page.on('response', (response) => {
       if (response.status() >= 400) {
         console.error(`NETWORK ERROR on ${page.url()}: ${response.status()} ${response.url()}`);
-        ERRORS.push({ url: page.url(), error: `NETWORK ERROR: ${response.status()} ${response.url()}` });
+        ERRORS.push({
+          url: page.url(),
+          error: `NETWORK ERROR: ${response.status()} ${response.url()}`,
+        });
       }
     });
 
@@ -59,15 +61,21 @@ test.describe('Crawler', () => {
       for (const link of links) {
         try {
           const href = await link.getAttribute('href');
-          if (!href || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('#')) continue;
+          if (
+            !href ||
+            href.startsWith('mailto:') ||
+            href.startsWith('tel:') ||
+            href.startsWith('#')
+          )
+            continue;
 
           // Resolve relative URLs
           const absoluteUrl = new URL(href, currentUrl).toString();
 
           // Only crawl internal links
           if (absoluteUrl.startsWith(startUrl) && !VISITED_URLS.has(absoluteUrl)) {
-             VISITED_URLS.add(absoluteUrl);
-             queue.push(absoluteUrl);
+            VISITED_URLS.add(absoluteUrl);
+            queue.push(absoluteUrl);
           }
         } catch (e) {
           // Ignore stale element errors
@@ -80,16 +88,16 @@ test.describe('Crawler', () => {
       const buttons = await page.locator('button').all();
       for (const button of buttons) {
         try {
-            const isVisible = await button.isVisible();
-            const isDisabled = await button.isDisabled();
-            const text = await button.innerText();
+          const isVisible = await button.isVisible();
+          const isDisabled = await button.isDisabled();
+          const text = await button.innerText();
 
-            if (!isVisible) {
-                // Not necessarily an error, but worth noting if crucial
-                // console.log(`Button hidden on ${currentUrl}: ${text.substring(0, 20)}...`);
-            }
+          if (!isVisible) {
+            // Not necessarily an error, but worth noting if crucial
+            // console.log(`Button hidden on ${currentUrl}: ${text.substring(0, 20)}...`);
+          }
         } catch (e) {
-            // Ignore stale element errors
+          // Ignore stale element errors
         }
       }
     }
@@ -99,10 +107,10 @@ test.describe('Crawler', () => {
     console.log(`Found ${ERRORS.length} errors.`);
 
     if (ERRORS.length > 0) {
-        console.log('Errors found:');
-        ERRORS.forEach(e => console.log(`${e.url} -> ${e.error}`));
-        // We fail the test if there are errors so we can see the report
-        expect(ERRORS.length).toBe(0);
+      console.log('Errors found:');
+      ERRORS.forEach((e) => console.log(`${e.url} -> ${e.error}`));
+      // We fail the test if there are errors so we can see the report
+      expect(ERRORS.length).toBe(0);
     }
   });
 });

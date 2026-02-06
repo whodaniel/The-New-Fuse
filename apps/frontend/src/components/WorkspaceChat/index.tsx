@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import Workspace from "@/models/workspace";
-import LoadingChat from './LoadingChat';
-import ChatContainer from './ChatContainer';
-import paths from "@/utils/paths";
+import Workspace from '@/models/workspace';
+import paths from '@/utils/paths';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { ModalWrapper } from '../ModalWrapper';
-import { useParams } from "react-router-dom";
+import ChatContainer from './ChatContainer';
+import LoadingChat from './LoadingChat';
 // import { DnDFileUploaderProvider } from './ChatContainer/DnDWrapper';
-import { WorkspaceData } from "@/types/workspace";
+import { WorkspaceData } from '@/types/workspace';
 
 interface ChatMessage {
   id: string;
@@ -52,9 +52,7 @@ export default function WorkspaceChat({ loading, workspace }: WorkspaceChatProps
           <ModalWrapper isOpen={true}>
             <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
               <div className="flex flex-col gap-y-4 w-full p-6 text-center">
-                <p className="font-semibold text-red-500 text-xl">
-                  Workspace not found!
-                </p>
+                <p className="font-semibold text-red-500 text-xl">Workspace not found!</p>
                 <p className="text-sm mt-4 text-white">
                   It looks like a workspace by this name is not available.
                 </p>
@@ -77,9 +75,7 @@ export default function WorkspaceChat({ loading, workspace }: WorkspaceChatProps
   }
 
   setEventDelegatorForCodeSnippets();
-  return (
-    <ChatContainer workspace={workspace} knownHistory={history} />
-  );
+  return <ChatContainer workspace={workspace} knownHistory={history} />;
 }
 
 // Enables us to safely markdown and sanitize all responses without risk of injection
@@ -89,31 +85,29 @@ function copyCodeSnippet(uuid: string): boolean {
   const target = document.querySelector(`[data-code="${uuid}"]`);
   if (!target) return false;
   const markdown =
-    target.parentElement?.parentElement?.querySelector(
-      "pre:first-of-type"
-    )?.innerText;
+    target.parentElement?.parentElement?.querySelector('pre:first-of-type')?.innerText;
   if (!markdown) return false;
 
   window.navigator.clipboard.writeText(markdown);
-  target.classList.add("text-green-500");
+  target.classList.add('text-green-500');
   const originalText = target.innerHTML;
-  target.innerText = "Copied!";
-  target.setAttribute("disabled", "true");
+  target.innerText = 'Copied!';
+  target.setAttribute('disabled', 'true');
 
   setTimeout(() => {
-    target.classList.remove("text-green-500");
+    target.classList.remove('text-green-500');
     target.innerHTML = originalText;
-    target.removeAttribute("disabled");
+    target.removeAttribute('disabled');
   }, 2500);
-  
+
   return true;
 }
 
 // Listens and hunts for all data-code-snippet clicks.
 export function setEventDelegatorForCodeSnippets(): void {
-  document?.addEventListener("click", function (e: MouseEvent) {
-    const target = (e.target as Element).closest("[data-code-snippet]");
-    const uuidCode = target?.getAttribute("data-code");
+  document?.addEventListener('click', function (e: MouseEvent) {
+    const target = (e.target as Element).closest('[data-code-snippet]');
+    const uuidCode = target?.getAttribute('data-code');
     if (!uuidCode) return;
     copyCodeSnippet(uuidCode);
   });

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Paperclip, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Paperclip, X } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface Attachment {
   id: string;
@@ -18,12 +18,12 @@ interface AttachmentsProps {
   className?: string;
 }
 
-const Attachments: React.FC<AttachmentsProps> = ({ 
+const Attachments: React.FC<AttachmentsProps> = ({
   attachments = [],
   onAttachmentsChange,
   maxSize = 10,
   acceptedTypes = ['image/*', 'text/*', 'application/pdf'],
-  className 
+  className,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
 
@@ -39,34 +39,34 @@ const Attachments: React.FC<AttachmentsProps> = ({
     if (!files) return;
 
     const newAttachments: Attachment[] = Array.from(files)
-      .filter(file => {
+      .filter((file) => {
         // Check file size
         if (file.size > maxSize * 1024 * 1024) {
           alert(`File ${file.name} is too large. Maximum size is ${maxSize}MB`);
           return false;
         }
-        
+
         // Check file type
-        const accepted = acceptedTypes.some(type => {
+        const accepted = acceptedTypes.some((type) => {
           if (type.endsWith('/*')) {
             return file.type.startsWith(type.slice(0, -1));
           }
           return file.type === type;
         });
-        
+
         if (!accepted) {
           alert(`File type ${file.type} is not supported`);
           return false;
         }
-        
+
         return true;
       })
-      .map(file => ({
+      .map((file) => ({
         id: Math.random().toString(36).substring(2, 15),
         name: file.name,
         size: file.size,
         type: file.type,
-        file
+        file,
       }));
 
     if (onAttachmentsChange) {
@@ -76,7 +76,7 @@ const Attachments: React.FC<AttachmentsProps> = ({
 
   const removeAttachment = (id: string) => {
     if (onAttachmentsChange) {
-      onAttachmentsChange(attachments.filter(att => att.id !== id));
+      onAttachmentsChange(attachments.filter((att) => att.id !== id));
     }
   };
 
@@ -97,7 +97,7 @@ const Attachments: React.FC<AttachmentsProps> = ({
   };
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn('relative', className)}>
       <input
         type="file"
         multiple
@@ -106,13 +106,13 @@ const Attachments: React.FC<AttachmentsProps> = ({
         className="hidden"
         id="file-upload"
       />
-      
+
       <label
         htmlFor="file-upload"
         className={cn(
-          "flex items-center gap-2 px-3 py-2 text-sm cursor-pointer",
-          "bg-slate-100 hover:bg-slate-200 rounded-md transition-colors",
-          isDragging && "bg-blue-100 border-2 border-dashed border-blue-300"
+          'flex items-center gap-2 px-3 py-2 text-sm cursor-pointer',
+          'bg-slate-100 hover:bg-slate-200 rounded-md transition-colors',
+          isDragging && 'bg-blue-100 border-2 border-dashed border-blue-300'
         )}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -124,7 +124,7 @@ const Attachments: React.FC<AttachmentsProps> = ({
 
       {attachments.length > 0 && (
         <div className="mt-2 space-y-2">
-          {attachments.map(attachment => (
+          {attachments.map((attachment) => (
             <div
               key={attachment.id}
               className="flex items-center justify-between p-2 bg-slate-50 rounded-md"

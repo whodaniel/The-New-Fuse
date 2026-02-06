@@ -4,269 +4,278 @@
 
 // Connection States
 export interface ConnectionState {
-  isConnected: boolean
-  status: 'connecting' | 'connected' | 'disconnected' | 'error'
-  lastConnected?: Date
-  error?: string
+  isConnected: boolean;
+  status: 'connecting' | 'connected' | 'disconnected' | 'error';
+  lastConnected?: Date;
+  error?: string;
 }
 
 // TNF Relay Types
 export interface TNFRelayConfig {
-  url: string
-  port: number
-  autoReconnect: boolean
-  maxReconnectAttempts: number
+  url: string;
+  port: number;
+  autoReconnect: boolean;
+  maxReconnectAttempts: number;
 }
 
 export interface TNFRelayStatus extends ConnectionState {
-  relayUrl?: string
-  aiSessionActive: boolean
-  currentPageMapping?: PageElementMapping
+  relayUrl?: string;
+  aiSessionActive: boolean;
+  currentPageMapping?: PageElementMapping;
 }
 
 // MCP Types
 export interface MCPConfig {
-  host: string
-  port: number
-  protocol: 'http' | 'ws'
+  host: string;
+  port: number;
+  protocol: 'http' | 'ws';
 }
 
 export interface MCPStatus extends ConnectionState {
-  host?: string
-  port?: number
-  activeServers: string[]
+  host?: string;
+  port?: number;
+  activeServers: string[];
 }
 
 // Element Detection Types (from background.ts)
 export interface PageElementMapping {
-  chatInput?: ElementInfo
-  sendButton?: ElementInfo
-  chatOutput?: ElementInfo
-  messageContainer?: ElementInfo
-  timestamp: number
-  url: string
-  domain: string
+  chatInput?: ElementInfo;
+  sendButton?: ElementInfo;
+  chatOutput?: ElementInfo;
+  messageContainer?: ElementInfo;
+  timestamp: number;
+  url: string;
+  domain: string;
 }
 
 export interface ElementInfo {
-  selector: string
-  xpath: string
-  tag: string
-  id?: string
-  classes: string[]
-  text: string
-  placeholder?: string
-  type?: string
-  role?: string
-  ariaLabel?: string
-  position: { x: number; y: number; width: number; height: number }
-  isVisible: boolean
-  isInteractable: boolean
-  confidence: number
-  elementType: 'input' | 'button' | 'output' | 'unknown'
+  selector: string;
+  xpath: string;
+  tag: string;
+  id?: string;
+  classes: string[];
+  text: string;
+  placeholder?: string;
+  type?: string;
+  role?: string;
+  ariaLabel?: string;
+  position: { x: number; y: number; width: number; height: number };
+  isVisible: boolean;
+  isInteractable: boolean;
+  confidence: number;
+  elementType: 'input' | 'button' | 'output' | 'unknown';
 }
 
 // Port Monitoring Types
 export interface PortStatus {
-  port: number
-  isOpen: boolean
-  service?: string
-  lastChecked: Date
-  responseTime?: number
+  port: number;
+  isOpen: boolean;
+  service?: string;
+  lastChecked: Date;
+  responseTime?: number;
 }
 
 // Chat Types
 export interface ChatMessage {
-  id: string
-  content: string
-  timestamp: Date
-  sender: 'user' | 'system' | 'ai' | 'chrome'
+  id: string;
+  content: string;
+  timestamp: Date;
+  sender: 'user' | 'system' | 'ai' | 'chrome';
   metadata?: {
-    platform?: string
-    confidence?: number
-    tabId?: number
-    url?: string
-  }
+    platform?: string;
+    confidence?: number;
+    tabId?: number;
+    url?: string;
+  };
 }
 
 // Native Command Types
 export interface NativeCommand {
-  command: string
-  args?: string[]
-  description: string
+  command: string;
+  args?: string[];
+  description: string;
 }
 
 export interface NativeCommandResult {
-  success: boolean
-  output?: string
-  error?: string
-  exitCode?: number
+  success: boolean;
+  output?: string;
+  error?: string;
+  exitCode?: number;
 }
 
 // System Status
 export interface SystemStatus {
-  tnfRelay: TNFRelayStatus
-  mcp: MCPStatus
-  ports: PortStatus[]
-  nativeHost: ConnectionState
-  chrome: ConnectionState
-  uptime: number
-  version: string
+  tnfRelay: TNFRelayStatus;
+  mcp: MCPStatus;
+  ports: PortStatus[];
+  nativeHost: ConnectionState;
+  chrome: ConnectionState;
+  uptime: number;
+  version: string;
 }
 
 // Redux Store Types
 export interface AppState {
   connections: {
-    tnfRelay: TNFRelayStatus
-    mcp: MCPStatus
-    chrome: ConnectionState
-  }
+    tnfRelay: TNFRelayStatus;
+    mcp: MCPStatus;
+    chrome: ConnectionState;
+  };
   elements: {
-    mapping: PageElementMapping | null
-    detectionActive: boolean
-    selectedElement: ElementInfo | null
-  }
+    mapping: PageElementMapping | null;
+    detectionActive: boolean;
+    selectedElement: ElementInfo | null;
+  };
   chat: {
-    messages: ChatMessage[]
-    isActive: boolean
-  }
+    messages: ChatMessage[];
+    isActive: boolean;
+  };
   ports: {
-    monitored: number[]
-    statuses: PortStatus[]
-  }
+    monitored: number[];
+    statuses: PortStatus[];
+  };
   system: {
-    status: SystemStatus | null
-    settings: AppSettings
-  }
+    status: SystemStatus | null;
+    settings: AppSettings;
+  };
 }
 
 // Settings Types
 export interface AppSettings {
-  autoConnectRelay: boolean
-  enableAIAutomation: boolean
-  saveElementMappings: boolean
-  monitoredPorts: number[]
-  theme: 'light' | 'dark'
-  debugMode: boolean
+  autoConnectRelay: boolean;
+  enableAIAutomation: boolean;
+  saveElementMappings: boolean;
+  monitoredPorts: number[];
+  theme: 'light' | 'dark';
+  debugMode: boolean;
 }
 
 // Secure Storage Types
 export interface StoredCredential {
-  id: string
-  name: string
-  provider: string
-  category?: string
-  createdAt: string
-  updatedAt: string
-  metadata?: Record<string, string>
+  id: string;
+  name: string;
+  provider: string;
+  category?: string;
+  createdAt: string;
+  updatedAt: string;
+  metadata?: Record<string, string>;
 }
 
 export interface SecureStorageSaveResponse {
-  success: boolean
-  id: string
-  error?: string
+  success: boolean;
+  id: string;
+  error?: string;
 }
 
 export interface SecureStorageGetResponse {
-  success: boolean
-  apiKey?: string
-  error?: string
+  success: boolean;
+  apiKey?: string;
+  error?: string;
 }
 
 export interface SecureStorageDeleteResponse {
-  success: boolean
-  error?: string
+  success: boolean;
+  error?: string;
 }
 
 export interface SecureStorageListResponse {
-  success: boolean
-  credentials: StoredCredential[]
-  error?: string
+  success: boolean;
+  credentials: StoredCredential[];
+  error?: string;
 }
 
 export interface SecureStorageStatusResponse {
-  available: boolean
-  usingKeychain: boolean
+  available: boolean;
+  usingKeychain: boolean;
 }
 
 export interface AIProviderInfo {
-  name: string
-  envKey: string
-  placeholder: string
+  name: string;
+  envKey: string;
+  placeholder: string;
 }
 
 // IPC Types for Electron communication
 export interface IpcResponse<T = any> {
-  success: boolean
-  data?: T
-  error?: string
+  success: boolean;
+  data?: T;
+  error?: string;
 }
 
 // Window API types (exposed through preload)
 export interface WindowAPI {
   // TNF Relay
-  tnfConnect: (config: TNFRelayConfig) => Promise<IpcResponse<boolean>>
-  tnfDisconnect: () => Promise<IpcResponse<boolean>>
-  tnfStatus: () => Promise<IpcResponse<TNFRelayStatus>>
-  
+  tnfConnect: (config: TNFRelayConfig) => Promise<IpcResponse<boolean>>;
+  tnfDisconnect: () => Promise<IpcResponse<boolean>>;
+  tnfStatus: () => Promise<IpcResponse<TNFRelayStatus>>;
+
   // MCP
-  mcpConnect: (config: MCPConfig) => Promise<IpcResponse<boolean>>
-  mcpDisconnect: () => Promise<IpcResponse<boolean>>
-  mcpStatus: () => Promise<IpcResponse<MCPStatus>>
-  
+  mcpConnect: (config: MCPConfig) => Promise<IpcResponse<boolean>>;
+  mcpDisconnect: () => Promise<IpcResponse<boolean>>;
+  mcpStatus: () => Promise<IpcResponse<MCPStatus>>;
+
   // Port monitoring
-  portsAdd: (port: number) => Promise<IpcResponse<boolean>>
-  portsRemove: (port: number) => Promise<IpcResponse<boolean>>
-  portsList: () => Promise<IpcResponse<number[]>>
-  portsStatus: () => Promise<IpcResponse<PortStatus[]>>
-  
+  portsAdd: (port: number) => Promise<IpcResponse<boolean>>;
+  portsRemove: (port: number) => Promise<IpcResponse<boolean>>;
+  portsList: () => Promise<IpcResponse<number[]>>;
+  portsStatus: () => Promise<IpcResponse<PortStatus[]>>;
+
   // Native commands
-  nativeExecute: (command: string, args?: string[]) => Promise<IpcResponse<NativeCommandResult>>
-  
+  nativeExecute: (command: string, args?: string[]) => Promise<IpcResponse<NativeCommandResult>>;
+
   // Chrome extension
-  chromeElementDetected: (elementData: ElementInfo) => Promise<IpcResponse<boolean>>
-  chromeSendMessage: (message: any) => Promise<IpcResponse<any>>
-  
+  chromeElementDetected: (elementData: ElementInfo) => Promise<IpcResponse<boolean>>;
+  chromeSendMessage: (message: any) => Promise<IpcResponse<any>>;
+
   // System
-  systemStatus: () => Promise<IpcResponse<SystemStatus>>
-  
+  systemStatus: () => Promise<IpcResponse<SystemStatus>>;
+
   // Chat
-  chatSend: (message: string) => Promise<IpcResponse<ChatMessage>>
-  chatHistory: () => Promise<IpcResponse<ChatMessage[]>>
-  
+  chatSend: (message: string) => Promise<IpcResponse<ChatMessage>>;
+  chatHistory: () => Promise<IpcResponse<ChatMessage[]>>;
+
   // Shell integration
-  openExternal: (url: string) => Promise<IpcResponse<boolean>>
-  
+  openExternal: (url: string) => Promise<IpcResponse<boolean>>;
+
   // Secure Storage / API Key Management
-  secureStorageSave: (provider: string, apiKey: string, customName?: string, metadata?: Record<string, string>) => Promise<SecureStorageSaveResponse>
-  secureStorageGet: (provider: string) => Promise<SecureStorageGetResponse>
-  secureStorageDelete: (provider: string) => Promise<SecureStorageDeleteResponse>
-  secureStorageList: () => Promise<SecureStorageListResponse>
-  secureStorageHas: (provider: string) => Promise<boolean>
-  secureStorageStatus: () => Promise<SecureStorageStatusResponse>
-  secureStorageProviders: () => Promise<Record<string, AIProviderInfo>>
-  
+  secureStorageSave: (
+    provider: string,
+    apiKey: string,
+    customName?: string,
+    metadata?: Record<string, string>
+  ) => Promise<SecureStorageSaveResponse>;
+  secureStorageGet: (provider: string) => Promise<SecureStorageGetResponse>;
+  secureStorageDelete: (provider: string) => Promise<SecureStorageDeleteResponse>;
+  secureStorageList: () => Promise<SecureStorageListResponse>;
+  secureStorageHas: (provider: string) => Promise<boolean>;
+  secureStorageStatus: () => Promise<SecureStorageStatusResponse>;
+  secureStorageProviders: () => Promise<Record<string, AIProviderInfo>>;
+
   // Events
-  onSystemEvent: (callback: (event: string, data: any) => void) => void
-  offSystemEvent: (callback: (event: string, data: any) => void) => void
+  onSystemEvent: (callback: (event: string, data: any) => void) => void;
+  offSystemEvent: (callback: (event: string, data: any) => void) => void;
 }
 
 declare global {
   interface Window {
-    api: WindowAPI
+    api: WindowAPI;
     electronAPI: {
-      invoke: (channel: string, ...args: any[]) => Promise<any>
+      invoke: (channel: string, ...args: any[]) => Promise<any>;
       secureStorage: {
-        save: (provider: string, apiKey: string, customName?: string, metadata?: Record<string, string>) => Promise<SecureStorageSaveResponse>
-        get: (provider: string) => Promise<SecureStorageGetResponse>
-        delete: (provider: string) => Promise<SecureStorageDeleteResponse>
-        list: () => Promise<SecureStorageListResponse>
-        has: (provider: string) => Promise<boolean>
-        status: () => Promise<SecureStorageStatusResponse>
-        providers: () => Promise<Record<string, AIProviderInfo>>
-      }
-      [key: string]: any
-    }
+        save: (
+          provider: string,
+          apiKey: string,
+          customName?: string,
+          metadata?: Record<string, string>
+        ) => Promise<SecureStorageSaveResponse>;
+        get: (provider: string) => Promise<SecureStorageGetResponse>;
+        delete: (provider: string) => Promise<SecureStorageDeleteResponse>;
+        list: () => Promise<SecureStorageListResponse>;
+        has: (provider: string) => Promise<boolean>;
+        status: () => Promise<SecureStorageStatusResponse>;
+        providers: () => Promise<Record<string, AIProviderInfo>>;
+      };
+      [key: string]: any;
+    };
   }
 }
-

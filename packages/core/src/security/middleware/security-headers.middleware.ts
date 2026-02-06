@@ -13,7 +13,7 @@ export class SecurityHeadersMiddleware implements NestMiddleware {
           defaultSrc: ["'self'"],
           scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", "data:", "https:"],
+          imgSrc: ["'self'", 'data:', 'https:'],
           connectSrc: ["'self'"],
           objectSrc: ["'none'"],
           mediaSrc: ["'self'"],

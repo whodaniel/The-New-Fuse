@@ -1,5 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthService } from '../auth/auth.service';
 
@@ -19,7 +24,7 @@ interface WebSocketMessage {
 export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private server: Server;
-  
+
   private readonly logger = new Logger(WebSocketService.name);
   private connectedClients = new Map<string, Socket>();
 
@@ -29,7 +34,7 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
     try {
       const token = client.handshake.auth.token;
       const { valid, user } = await this.authService.validateToken(token);
-      
+
       if (!valid || !user) {
         throw new Error('Invalid authentication');
       }
@@ -37,7 +42,6 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
       this.connectedClients.set(user.id, client);
       this.logger.log(`Client connected: ${user.id}`);
       this.broadcastUserStatus(user.id, 'online');
-      
     } catch (error) {
       this.logger.error(`Connection error: ${(error as Error).message}`);
       client.disconnect();
@@ -56,14 +60,14 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
   async broadcastMessage(message: WebSocketMessage): Promise<void> {
     this.server.emit('message', {
       ...message,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
   async sendToUser(userId: string, message: WebSocketMessage): Promise<void> {
     this.server.to(`user:${userId}`).emit('message', {
       ...message,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 

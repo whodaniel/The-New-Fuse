@@ -1,8 +1,8 @@
-import { WebDriver } from 'selenium-webdriver';
-import { PNG } from 'pngjs';
-import pixelmatch from 'pixelmatch';
 import fs from 'fs/promises';
 import path from 'path';
+import pixelmatch from 'pixelmatch';
+import { PNG } from 'pngjs';
+import { WebDriver } from 'selenium-webdriver';
 import { logger } from './logger';
 
 export class VisualRegression {
@@ -21,7 +21,7 @@ export class VisualRegression {
   ): Promise<boolean> {
     const screenshot = await driver.takeScreenshot();
     const screenshotBuffer = Buffer.from(screenshot, 'base64');
-    
+
     const baselinePath = path.join(this.SCREENSHOTS_DIR, `${name}-baseline.png`);
     const diffPath = path.join(this.DIFFS_DIR, `${name}-diff.png`);
 
@@ -33,23 +33,18 @@ export class VisualRegression {
       const { width, height } = img1;
       const diff = new PNG({ width, height });
 
-      const numDiffPixels = pixelmatch(
-        img1.data,
-        img2.data,
-        diff.data,
-        width,
-        height,
-        { threshold }
-      );
+      const numDiffPixels = pixelmatch(img1.data, img2.data, diff.data, width, height, {
+        threshold,
+      });
 
       const diffPercentage = (numDiffPixels / (width * height)) * 100;
-      
+
       if (diffPercentage > threshold * 100) {
         await fs.writeFile(diffPath, PNG.sync.write(diff));
         logger.warn(`Visual difference detected for ${name}: ${diffPercentage.toFixed(2)}%`);
         return false;
       }
-      
+
       return true;
     } catch (error) {
       if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {

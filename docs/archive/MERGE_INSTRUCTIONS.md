@@ -1,21 +1,22 @@
 # How to Safely Merge project-reconstruction to main
 
-**Last Updated**: 2025-11-02
-**Status**: Ready to execute
-**Risk Level**: ✅ LOW (project-reconstruction is more complete than main)
+**Last Updated**: 2025-11-02 **Status**: Ready to execute **Risk Level**: ✅ LOW
+(project-reconstruction is more complete than main)
 
 ---
 
 ## Quick Summary
 
-You asked about merging `project-reconstruction` to `main` without losing features or docs. **Good news**:
+You asked about merging `project-reconstruction` to `main` without losing
+features or docs. **Good news**:
 
-✅ **project-reconstruction has MORE features** (3 additional apps)
-✅ **project-reconstruction has MORE docs** (20+ new analysis documents)
-✅ **project-reconstruction includes recent Supabase integration work**
-⚠️ **main only has old historical archive docs** (can be preserved)
+✅ **project-reconstruction has MORE features** (3 additional apps) ✅
+**project-reconstruction has MORE docs** (20+ new analysis documents) ✅
+**project-reconstruction includes recent Supabase integration work** ⚠️ **main
+only has old historical archive docs** (can be preserved)
 
-**Conclusion**: It's safe to merge project-reconstruction → main. The real risk would be going the other way!
+**Conclusion**: It's safe to merge project-reconstruction → main. The real risk
+would be going the other way!
 
 ---
 
@@ -29,6 +30,7 @@ You asked about merging `project-reconstruction` to `main` without losing featur
 ```
 
 This script will:
+
 1. ✅ Create backup tags for both branches
 2. ✅ Optionally preserve historical docs from main
 3. ✅ Run build validation
@@ -44,6 +46,7 @@ This script will:
 If you prefer manual control:
 
 #### Step 1: Create Backups
+
 ```bash
 git checkout main
 git tag backup-main-$(date +%Y%m%d)
@@ -55,6 +58,7 @@ git push origin backup-project-reconstruction-$(date +%Y%m%d)
 ```
 
 #### Step 2: (Optional) Preserve Historical Docs
+
 ```bash
 git checkout project-reconstruction
 git checkout main -- docs/_archive/
@@ -64,6 +68,7 @@ git push origin project-reconstruction
 ```
 
 #### Step 3: Test Project-Reconstruction
+
 ```bash
 pnpm install
 pnpm run type-check
@@ -71,6 +76,7 @@ pnpm run build
 ```
 
 #### Step 4: Merge to Main
+
 ```bash
 git checkout main
 git merge project-reconstruction --strategy-option theirs -m "feat: merge project-reconstruction with enhanced architecture
@@ -85,6 +91,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
 #### Step 5: Verify and Push
+
 ```bash
 pnpm install
 pnpm run build
@@ -107,7 +114,8 @@ git reset --hard project-reconstruction
 git push origin main --force-with-lease
 ```
 
-⚠️ **Warning**: This completely overwrites main. Use only if you're absolutely sure.
+⚠️ **Warning**: This completely overwrites main. Use only if you're absolutely
+sure.
 
 ---
 
@@ -115,7 +123,8 @@ git push origin main --force-with-lease
 
 ### What main Has (That project-reconstruction Doesn't)
 
-**Historical Archive Docs** (~30 files in docs/_archive/):
+**Historical Archive Docs** (~30 files in docs/\_archive/):
+
 - 2024 consolidation phase reports
 - 2024 deployment reports
 - Pre-restructure migration docs
@@ -123,18 +132,21 @@ git push origin main --force-with-lease
 
 **Assessment**: These are historical records only. No active functionality.
 
-**Recommendation**: ✅ Preserve them by running Step 2 above, then they'll be in _archive/ for reference.
+**Recommendation**: ✅ Preserve them by running Step 2 above, then they'll be in
+\_archive/ for reference.
 
 ---
 
 ### What project-reconstruction Has (That main Doesn't)
 
 **New Apps** (3):
+
 - `apps/cloudflare-worker/` - Edge computing support
 - `apps/relay-server/` - Enhanced relay
 - `apps/vscode-extension/` - VS Code extension
 
 **New Documentation** (20+ files):
+
 - AGENTIC_INFRASTRUCTURE_ASSESSMENT.md
 - AI_COLLABORATION_METHODOLOGY.md
 - BLOCKCHAIN_REFACTORING_SUMMARY.md
@@ -148,6 +160,7 @@ git push origin main --force-with-lease
 - And 10+ more...
 
 **New Features**:
+
 - Complete Supabase integration (VectorDatabaseService, SupabaseService)
 - Enhanced frontend (135 page components vs ~100)
 - Cleaner architecture
@@ -234,6 +247,7 @@ git push origin main --force-with-lease  # WARNING: Requires force push
 After successful merge:
 
 1. **Verify key features work**:
+
    ```bash
    pnpm run dev:hub
    # Test Electron Hub
@@ -247,6 +261,7 @@ After successful merge:
    - Mention any breaking changes (unlikely - same architecture)
 
 3. **Clean up**:
+
    ```bash
    # Optionally delete project-reconstruction branch (after confirming everything works)
    git branch -d project-reconstruction  # Local delete
@@ -277,7 +292,8 @@ Before merging, review these analysis files:
 3. ✅ **Build tested** - Verified everything works before pushing
 4. ✅ **Force-with-lease used** - Prevents accidental overwrites
 5. ✅ **Historical docs preserved** - Nothing important lost
-6. ✅ **Merge strategy specified** - Conflicts resolved to project-reconstruction's favor
+6. ✅ **Merge strategy specified** - Conflicts resolved to
+   project-reconstruction's favor
 
 ---
 
@@ -304,6 +320,7 @@ Are you comfortable with scripts?
 **Use Option 1** (Automated Script): `./scripts/safe-merge-to-main.sh`
 
 This is:
+
 - ✅ Safest (creates backups)
 - ✅ Most thorough (runs tests)
 - ✅ Interactive (asks before each major action)

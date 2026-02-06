@@ -4,13 +4,13 @@
 
 // Re-export connection interfaces from the interfaces module
 export type {
-  ConnectionStatus,
   AuthConfig,
-  TLSConfig,
-  ConnectionOptions,
   ConnectionMetrics,
+  ConnectionOptions,
+  ConnectionStatus,
+  IConnectionManager,
   MCPConnection,
-  IConnectionManager
+  TLSConfig,
 } from '../interfaces/IMCPConnection';
 
 /**
@@ -21,7 +21,7 @@ export enum ConnectionType {
   HTTP = 'http',
   TCP = 'tcp',
   IPC = 'ipc',
-  CUSTOM = 'custom'
+  CUSTOM = 'custom',
 }
 
 /**
@@ -34,7 +34,7 @@ export enum ConnectionEvent {
   ERROR = 'error',
   RECONNECTING = 'reconnecting',
   MESSAGE_SENT = 'message_sent',
-  MESSAGE_RECEIVED = 'message_received'
+  MESSAGE_RECEIVED = 'message_received',
 }
 
 /**
@@ -188,5 +188,8 @@ export interface ConnectionFactory {
    * @param options Connection options
    * @returns Validation result
    */
-  validateConfig(type: ConnectionType, options: import('../interfaces/IMCPConnection').ConnectionOptions): boolean;
+  validateConfig(
+    type: ConnectionType,
+    options: import('../interfaces/IMCPConnection').ConnectionOptions
+  ): boolean;
 }

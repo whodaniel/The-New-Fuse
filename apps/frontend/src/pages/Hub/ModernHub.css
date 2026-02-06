@@ -4,7 +4,11 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
   color: #ffffff;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   overflow-x: hidden;
 }
 
@@ -75,8 +79,13 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Main Content */
@@ -175,10 +184,18 @@
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-.service-category:nth-child(1) { animation-delay: 0.1s; }
-.service-category:nth-child(2) { animation-delay: 0.2s; }
-.service-category:nth-child(3) { animation-delay: 0.3s; }
-.service-category:nth-child(4) { animation-delay: 0.4s; }
+.service-category:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.service-category:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.service-category:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.service-category:nth-child(4) {
+  animation-delay: 0.4s;
+}
 
 .category-header {
   display: flex;
@@ -444,38 +461,38 @@
     flex-direction: column;
     gap: 16px;
   }
-  
+
   .hub-content {
     padding: 20px;
   }
-  
+
   .welcome-title {
     font-size: 32px;
   }
-  
+
   .services-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .service-buttons {
     grid-template-columns: 1fr;
   }
-  
+
   .workflow-templates {
     grid-template-columns: 1fr;
   }
-  
+
   .workflow-header {
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
   }
-  
+
   .quick-actions {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .quick-action {
     width: 100%;
     max-width: 300px;

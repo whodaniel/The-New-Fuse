@@ -1,15 +1,15 @@
 /**
  * Service Mesh Integration Example
- * 
+ *
  * This example demonstrates how to use the MCP Service Mesh integration
  * with monitoring and scaling capabilities.
  */
 
 import {
-  MCPServiceMesh,
   KubernetesServiceMeshProvider,
+  MCPServiceMesh,
   ServiceMeshMonitor,
-  ServiceMeshScaler
+  ServiceMeshScaler,
 } from '../src/integrations';
 import { MCPServiceInfo } from '../src/types/broker';
 import { ServiceStatus } from '../src/types/common';
@@ -25,12 +25,12 @@ async function demonstrateServiceMeshIntegration() {
     meshType: 'istio',
     defaultLabels: {
       'app.kubernetes.io/managed-by': 'mcp-service-mesh',
-      'version': '1.0.0'
+      version: '1.0.0',
     },
     defaultAnnotations: {
       'mcp.io/managed': 'true',
-      'istio.io/rev': 'default'
-    }
+      'istio.io/rev': 'default',
+    },
   });
 
   // 2. Create service mesh integration
@@ -43,14 +43,14 @@ async function demonstrateServiceMeshIntegration() {
       defaultTags: ['mcp-service', 'auto-discovered'],
       defaultMetadata: {
         source: 'mcp-auto-discovery',
-        environment: 'production'
+        environment: 'production',
       },
       defaultHealthCheck: {
         path: '/health',
         interval: 30,
         timeout: 5000,
         failureThreshold: 3,
-        successThreshold: 1
+        successThreshold: 1,
       },
       defaultLoadBalancing: {
         algorithm: 'round_robin',
@@ -59,19 +59,19 @@ async function demonstrateServiceMeshIntegration() {
           failureThreshold: 5,
           recoveryTimeout: 30000,
           halfOpenMaxCalls: 3,
-          minRequestThreshold: 10
-        }
-      }
+          minRequestThreshold: 10,
+        },
+      },
     },
     healthMonitoring: {
       enabled: true,
       interval: 30,
-      timeout: 5000
+      timeout: 5000,
     },
     metricsCollection: {
       enabled: true,
       interval: 60,
-      retention: 3600
+      retention: 3600,
     },
     scaling: {
       enabled: true,
@@ -81,9 +81,9 @@ async function demonstrateServiceMeshIntegration() {
         targetCPU: 0.7,
         targetMemory: 0.8,
         scaleUpCooldown: 300,
-        scaleDownCooldown: 600
-      }
-    }
+        scaleDownCooldown: 600,
+      },
+    },
   });
 
   // 3. Create service mesh monitor
@@ -99,9 +99,9 @@ async function demonstrateServiceMeshIntegration() {
       memoryThreshold: 0.8,
       errorRateThreshold: 0.05,
       responseTimeThreshold: 500,
-      healthScoreThreshold: 0.7
+      healthScoreThreshold: 0.7,
     },
-    metricsRetention: 7200
+    metricsRetention: 7200,
   });
 
   // 4. Create service mesh scaler
@@ -120,28 +120,28 @@ async function demonstrateServiceMeshIntegration() {
           metric: 'cpu',
           targetValue: 0.7,
           scaleUpThreshold: 0.8,
-          scaleDownThreshold: 0.5
+          scaleDownThreshold: 0.5,
         },
         {
           name: 'memory-scaling',
           metric: 'memory',
           targetValue: 0.8,
           scaleUpThreshold: 0.9,
-          scaleDownThreshold: 0.6
+          scaleDownThreshold: 0.6,
         },
         {
           name: 'rps-scaling',
           metric: 'rps',
           targetValue: 100,
           scaleUpThreshold: 120,
-          scaleDownThreshold: 80
-        }
-      ]
+          scaleDownThreshold: 80,
+        },
+      ],
     },
     enablePredictiveScaling: true,
     historyRetention: 3600,
     maxScalingOpsPerHour: 10,
-    enableNotifications: true
+    enableNotifications: true,
   });
 
   // 5. Set up event handlers
@@ -163,20 +163,20 @@ async function demonstrateServiceMeshIntegration() {
             address: service.name,
             port: 8080,
             protocol: 'http',
-            weight: 100
+            weight: 100,
           },
           {
             address: service.name,
             port: 9090,
             protocol: 'http',
             weight: 0,
-            metadata: { metrics: true }
-          }
+            metadata: { metrics: true },
+          },
         ],
         metadata: {
           environment: 'production',
           team: 'platform',
-          criticality: 'high'
+          criticality: 'high',
         },
         healthCheck: {
           path: '/health',
@@ -185,7 +185,7 @@ async function demonstrateServiceMeshIntegration() {
           failureThreshold: 3,
           successThreshold: 1,
           method: 'GET',
-          expectedStatusCodes: [200, 204]
+          expectedStatusCodes: [200, 204],
         },
         loadBalancing: {
           algorithm: 'round_robin',
@@ -195,10 +195,10 @@ async function demonstrateServiceMeshIntegration() {
             failureThreshold: 5,
             recoveryTimeout: 30000,
             halfOpenMaxCalls: 3,
-            minRequestThreshold: 10
-          }
+            minRequestThreshold: 10,
+          },
         },
-        tags: ['mcp-service', 'production', 'high-availability']
+        tags: ['mcp-service', 'production', 'high-availability'],
       };
 
       const result = await serviceMesh.registerService(service, meshRegistration);
@@ -214,7 +214,7 @@ async function demonstrateServiceMeshIntegration() {
     const monitorResult = await monitor.startMonitoring();
     if (monitorResult.success) {
       console.log('✅ Monitoring started successfully');
-      
+
       // Add services to monitoring
       for (const service of services) {
         await monitor.addService(service.id);
@@ -229,7 +229,7 @@ async function demonstrateServiceMeshIntegration() {
     const scalerResult = await scaler.startScaling();
     if (scalerResult.success) {
       console.log('✅ Scaling started successfully');
-      
+
       // Add services to scaling management
       for (const service of services) {
         await scaler.addService(service.id, {
@@ -245,9 +245,9 @@ async function demonstrateServiceMeshIntegration() {
               metric: 'cpu',
               targetValue: 0.75,
               scaleUpThreshold: 0.85,
-              scaleDownThreshold: 0.6
-            }
-          ]
+              scaleDownThreshold: 0.6,
+            },
+          ],
         });
         console.log(`📏 Added ${service.name} to scaling management`);
       }
@@ -264,8 +264,8 @@ async function demonstrateServiceMeshIntegration() {
       defaultTags: ['auto-discovered', 'managed'],
       defaultMetadata: {
         source: 'auto-discovery',
-        discoveredAt: new Date().toISOString()
-      }
+        discoveredAt: new Date().toISOString(),
+      },
     });
 
     if (autoDiscoveryResult.success) {
@@ -277,7 +277,7 @@ async function demonstrateServiceMeshIntegration() {
     // 11. Demonstrate service discovery
     console.log('\n🔎 Discovering services...');
     const discoveredServices = await serviceMesh.discoverServices({
-      tags: ['mcp-service']
+      tags: ['mcp-service'],
     });
     console.log(`Found ${discoveredServices.length} MCP services in the mesh`);
 
@@ -316,11 +316,11 @@ async function demonstrateServiceMeshIntegration() {
     console.log('\n🎛️ Demonstrating manual scaling...');
     const firstService = services[0];
     const scaleResult = await scaler.scaleService(
-      firstService.id, 
-      5, 
+      firstService.id,
+      5,
       'Demo: Manual scale up for load testing'
     );
-    
+
     if (scaleResult.success) {
       console.log(`✅ Successfully scaled ${firstService.name} to 5 instances`);
     } else {
@@ -332,7 +332,9 @@ async function demonstrateServiceMeshIntegration() {
     if (scalingHistory.length > 0) {
       console.log(`\n📜 Recent scaling history for ${firstService.name}:`);
       scalingHistory.forEach((entry, index) => {
-        console.log(`  ${index + 1}. ${entry.event.type}: ${entry.event.previousInstances} → ${entry.event.newInstances} (${entry.result})`);
+        console.log(
+          `  ${index + 1}. ${entry.event.type}: ${entry.event.previousInstances} → ${entry.event.newInstances} (${entry.result})`
+        );
         console.log(`     Reason: ${entry.event.reason}`);
         console.log(`     Duration: ${entry.duration}ms`);
       });
@@ -340,8 +342,7 @@ async function demonstrateServiceMeshIntegration() {
 
     // 17. Run for a demo period
     console.log('\n⏱️ Running demo for 30 seconds...');
-    await new Promise(resolve => setTimeout(resolve, 30000));
-
+    await new Promise((resolve) => setTimeout(resolve, 30000));
   } catch (error) {
     console.error('❌ Demo failed:', error);
   } finally {
@@ -367,14 +368,14 @@ function createSampleMCPServices(): MCPServiceInfo[] {
           name: 'user-profile',
           uri: 'user://profile/{id}',
           description: 'User profile resource',
-          handler: {} as any
+          handler: {} as any,
         },
         {
           name: 'user-preferences',
           uri: 'user://preferences/{id}',
           description: 'User preferences resource',
-          handler: {} as any
-        }
+          handler: {} as any,
+        },
       ],
       tools: [
         {
@@ -385,23 +386,23 @@ function createSampleMCPServices(): MCPServiceInfo[] {
             properties: {
               email: { type: 'string', format: 'email' },
               name: { type: 'string' },
-              role: { type: 'string', enum: ['user', 'admin'] }
+              role: { type: 'string', enum: ['user', 'admin'] },
             },
-            required: ['email', 'name']
+            required: ['email', 'name'],
           },
-          handler: {} as any
-        }
+          handler: {} as any,
+        },
       ],
       status: ServiceStatus.ONLINE,
       metadata: {
         team: 'identity',
         criticality: 'high',
-        dataClassification: 'sensitive'
+        dataClassification: 'sensitive',
       },
       registeredAt: new Date(),
       lastHeartbeat: new Date(),
       healthScore: 0.95,
-      tags: ['identity', 'core-service']
+      tags: ['identity', 'core-service'],
     },
     {
       id: 'notification-service',
@@ -414,8 +415,8 @@ function createSampleMCPServices(): MCPServiceInfo[] {
           name: 'notification-template',
           uri: 'notification://template/{id}',
           description: 'Notification template resource',
-          handler: {} as any
-        }
+          handler: {} as any,
+        },
       ],
       tools: [
         {
@@ -427,11 +428,11 @@ function createSampleMCPServices(): MCPServiceInfo[] {
               to: { type: 'string', format: 'email' },
               subject: { type: 'string' },
               body: { type: 'string' },
-              template: { type: 'string' }
+              template: { type: 'string' },
             },
-            required: ['to', 'subject', 'body']
+            required: ['to', 'subject', 'body'],
           },
-          handler: {} as any
+          handler: {} as any,
         },
         {
           name: 'send-sms',
@@ -440,22 +441,22 @@ function createSampleMCPServices(): MCPServiceInfo[] {
             type: 'object',
             properties: {
               to: { type: 'string' },
-              message: { type: 'string' }
+              message: { type: 'string' },
             },
-            required: ['to', 'message']
+            required: ['to', 'message'],
           },
-          handler: {} as any
-        }
+          handler: {} as any,
+        },
       ],
       status: ServiceStatus.ONLINE,
       metadata: {
         team: 'communications',
-        criticality: 'medium'
+        criticality: 'medium',
       },
       registeredAt: new Date(),
       lastHeartbeat: new Date(),
       healthScore: 0.92,
-      tags: ['communications', 'notifications']
+      tags: ['communications', 'notifications'],
     },
     {
       id: 'analytics-service',
@@ -468,14 +469,14 @@ function createSampleMCPServices(): MCPServiceInfo[] {
           name: 'analytics-report',
           uri: 'analytics://report/{id}',
           description: 'Analytics report resource',
-          handler: {} as any
+          handler: {} as any,
         },
         {
           name: 'metrics-dashboard',
           uri: 'analytics://dashboard/{id}',
           description: 'Metrics dashboard resource',
-          handler: {} as any
-        }
+          handler: {} as any,
+        },
       ],
       tools: [
         {
@@ -490,26 +491,26 @@ function createSampleMCPServices(): MCPServiceInfo[] {
                 type: 'object',
                 properties: {
                   start: { type: 'string', format: 'date' },
-                  end: { type: 'string', format: 'date' }
-                }
-              }
+                  end: { type: 'string', format: 'date' },
+                },
+              },
             },
-            required: ['type', 'metrics']
+            required: ['type', 'metrics'],
           },
-          handler: {} as any
-        }
+          handler: {} as any,
+        },
       ],
       status: ServiceStatus.ONLINE,
       metadata: {
         team: 'data',
         criticality: 'medium',
-        dataClassification: 'internal'
+        dataClassification: 'internal',
       },
       registeredAt: new Date(),
       lastHeartbeat: new Date(),
       healthScore: 0.88,
-      tags: ['analytics', 'data-processing']
-    }
+      tags: ['analytics', 'data-processing'],
+    },
   ];
 }
 
@@ -541,7 +542,9 @@ function setupEventHandlers(
   });
 
   monitor.on('health-check-completed', (serviceId: string, health: any) => {
-    console.log(`💚 Health check completed for ${serviceId}: ${health.status} (score: ${health.score})`);
+    console.log(
+      `💚 Health check completed for ${serviceId}: ${health.status} (score: ${health.score})`
+    );
   });
 
   monitor.on('health-check-failed', (serviceId: string, error: any) => {
@@ -553,7 +556,9 @@ function setupEventHandlers(
   });
 
   monitor.on('metrics-collected', (serviceId: string, metrics: any) => {
-    console.log(`📊 Metrics collected for ${serviceId}: CPU ${(metrics.resources.cpu * 100).toFixed(1)}%, Memory ${(metrics.resources.memory * 100).toFixed(1)}%`);
+    console.log(
+      `📊 Metrics collected for ${serviceId}: CPU ${(metrics.resources.cpu * 100).toFixed(1)}%, Memory ${(metrics.resources.memory * 100).toFixed(1)}%`
+    );
   });
 
   // Scaling events
@@ -567,14 +572,18 @@ function setupEventHandlers(
 
   scaler.on('scaling-decision', (serviceId: string, decision: any) => {
     if (decision.type !== 'no_action') {
-      console.log(`🎯 Scaling decision for ${serviceId}: ${decision.type} (${decision.currentInstances} → ${decision.recommendedInstances})`);
+      console.log(
+        `🎯 Scaling decision for ${serviceId}: ${decision.type} (${decision.currentInstances} → ${decision.recommendedInstances})`
+      );
       console.log(`   Reason: ${decision.reason}`);
       console.log(`   Confidence: ${(decision.confidence * 100).toFixed(1)}%`);
     }
   });
 
   scaler.on('scaling-completed', (serviceId: string, event: any) => {
-    console.log(`✅ Scaling completed for ${serviceId}: ${event.type} (${event.previousInstances} → ${event.newInstances})`);
+    console.log(
+      `✅ Scaling completed for ${serviceId}: ${event.type} (${event.previousInstances} → ${event.newInstances})`
+    );
   });
 
   scaler.on('scaling-failed', (serviceId: string, error: any) => {

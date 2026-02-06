@@ -1,37 +1,31 @@
 /**
  * Collaborative Content Service
- * 
+ *
  * Implements collaborative content sharing using existing UserRole access control.
  * Manages content sharing, permissions, and real-time collaboration while maintaining
  * security and audit trails through existing authentication systems.
  */
 
-import { PrismaClient, User, UserRole } from '@the-new-fuse/database/generated/prisma';
+import { DatabaseService, UserRole } from '@the-new-fuse/database/generated/db';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { 
-  ContentItem,
-  ProjectConfiguration,
-  SharingPermission,
-  CollaborationSettings,
-  Permission,
-  AccessLevel,
+import {
   CMSEvent,
   CMSEventType,
-  Collaborator
+  Collaborator,
+  ContentItem,
+  Permission,
+  ProjectConfiguration,
+  SharingPermission,
 } from './types';
 
 export class CollaborativeContentService {
-  private prisma: PrismaClient;
+  private db: DatabaseService;
   private redis: RedisService;
   private syncOrchestrator: SyncOrchestrator;
 
-  constructor(
-    prisma: PrismaClient,
-    redis: RedisService,
-    syncOrchestrator: SyncOrchestrator
-  ) {
-    this.prisma = prisma;
+  constructor(db: DatabaseService, redis: RedisService, syncOrchestrator: SyncOrchestrator) {
+    this.db = db;
     this.redis = redis;
     this.syncOrchestrator = syncOrchestrator;
   }
@@ -51,9 +45,9 @@ export class CollaborativeContentService {
     await this.verifyOwnership(ownerId, contentId);
 
     // Verify target user exists and get their role
-    const targetUser = await this.prisma.user.findUnique({
+    const targetUser = await this.db.user.findUnique({
       where: { id: targetUserId },
-      select: { id: true, role: true, roles: true }
+      select: { id: true, role: true, roles: true },
     });
 
     if (!targetUser) {
@@ -74,7 +68,7 @@ export class CollaborativeContentService {
       permissions: validatedPermissions,
       grantedBy: ownerId,
       grantedAt: new Date(),
-      expiresAt
+      expiresAt,
     };
 
     // Store sharing permission
@@ -84,15 +78,11 @@ export class CollaborativeContentService {
     await this.updateContentSharingSettings(contentId, sharingPermission);
 
     // Sync sharing update across environments
-    await this.syncOrchestrator.syncTenantData(
-      targetUserId,
-      'content_shared',
-      {
-        contentId,
-        sharingPermission,
-        sharedBy: ownerId
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(targetUserId, 'content_shared', {
+      contentId,
+      sharingPermission,
+      sharedBy: ownerId,
+    });
 
     // Notify target user of shared content
     await this.notifyUserOfSharedContent(targetUserId, contentId, ownerId, permissions);
@@ -105,9 +95,9 @@ export class CollaborativeContentService {
       metadata: {
         targetUserId,
         permissions: validatedPermissions,
-        expiresAt
+        expiresAt,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return sharingPermission;
@@ -128,9 +118,9 @@ export class CollaborativeContentService {
     await this.verifyProjectOwnership(ownerId, projectId);
 
     // Verify collaborator user exists
-    const collaboratorUser = await this.prisma.user.findUnique({
+    const collaboratorUser = await this.db.user.findUnique({
       where: { id: collaboratorUserId },
-      select: { id: true, role: true, roles: true }
+      select: { id: true, role: true, roles: true },
     });
 
     if (!collaboratorUser) {
@@ -153,22 +143,18 @@ export class CollaborativeContentService {
       role,
       permissions: validatedPermissions,
       addedAt: new Date(),
-      addedBy: ownerId
+      addedBy: ownerId,
     };
 
     // Add collaborator to project
     await this.addCollaboratorToProject(projectId, collaborator);
 
     // Sync collaboration update
-    await this.syncOrchestrator.syncTenantData(
-      collaboratorUserId,
-      'project_collaboration',
-      {
-        projectId,
-        collaborator,
-        addedBy: ownerId
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(collaboratorUserId, 'project_collaboration', {
+      projectId,
+      collaborator,
+      addedBy: ownerId,
+    });
 
     // Notify collaborator
     await this.notifyUserOfCollaboration(collaboratorUserId, projectId, ownerId, role);
@@ -181,9 +167,9 @@ export class CollaborativeContentService {
       metadata: {
         collaboratorUserId,
         role,
-        permissions: validatedPermissions
+        permissions: validatedPermissions,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return collaborator;
@@ -193,24 +179,27 @@ export class CollaborativeContentService {
    * Get shared content accessible to user
    * Requirement 13.3: Sync shared content appropriately based on access control
    */
-  async getSharedContent(userId: string, filters?: {
-    contentType?: string;
-    sharedBy?: string;
-    permissions?: Permission[];
-    limit?: number;
-    offset?: number;
-  }): Promise<ContentItem[]> {
+  async getSharedContent(
+    userId: string,
+    filters?: {
+      contentType?: string;
+      sharedBy?: string;
+      permissions?: Permission[];
+      limit?: number;
+      offset?: number;
+    }
+  ): Promise<ContentItem[]> {
     const cacheKey = `shared_content:${userId}:${JSON.stringify(filters)}`;
     const cached = await this.redis.get(cacheKey);
-    
+
     if (cached) {
       return JSON.parse(cached);
     }
 
     // Get user's role for permission validation
-    const user = await this.prisma.user.findUnique({
+    const user = await this.db.user.findUnique({
       where: { id: userId },
-      select: { role: true, roles: true }
+      select: { role: true, roles: true },
     });
 
     if (!user) {
@@ -218,7 +207,12 @@ export class CollaborativeContentService {
     }
 
     // Query shared content based on user's permissions
-    const sharedContent = await this.querySharedContentForUser(userId, user.role, user.roles, filters);
+    const sharedContent = await this.querySharedContentForUser(
+      userId,
+      user.role,
+      user.roles,
+      filters
+    );
 
     // Filter content based on current permissions (handle expired shares)
     const accessibleContent = await this.filterAccessibleContent(userId, sharedContent);
@@ -236,7 +230,7 @@ export class CollaborativeContentService {
   async getCollaborativeProjects(userId: string): Promise<ProjectConfiguration[]> {
     const cacheKey = `collaborative_projects:${userId}`;
     const cached = await this.redis.get(cacheKey);
-    
+
     if (cached) {
       return JSON.parse(cached);
     }
@@ -272,15 +266,11 @@ export class CollaborativeContentService {
     await this.removeFromContentSharingSettings(contentId, targetUserId);
 
     // Sync revocation across environments
-    await this.syncOrchestrator.syncTenantData(
-      targetUserId,
-      'content_sharing_revoked',
-      {
-        contentId,
-        revokedBy: ownerId,
-        revokedAt: new Date()
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(targetUserId, 'content_sharing_revoked', {
+      contentId,
+      revokedBy: ownerId,
+      revokedAt: new Date(),
+    });
 
     // Notify user of revoked access
     await this.notifyUserOfRevokedAccess(targetUserId, contentId, ownerId);
@@ -292,9 +282,9 @@ export class CollaborativeContentService {
       userId: ownerId,
       metadata: {
         targetUserId,
-        revokedAt: new Date()
+        revokedAt: new Date(),
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -320,7 +310,7 @@ export class CollaborativeContentService {
       {
         projectId,
         removedBy: ownerId,
-        removedAt: new Date()
+        removedAt: new Date(),
       }
     );
 
@@ -334,9 +324,9 @@ export class CollaborativeContentService {
       userId: ownerId,
       metadata: {
         collaboratorUserId,
-        removedAt: new Date()
+        removedAt: new Date(),
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -355,7 +345,7 @@ export class CollaborativeContentService {
 
     // Get current collaborator info
     const project = await this.getProjectForOwner(ownerId, projectId);
-    const collaborator = project.collaborators.find(c => c.userId === collaboratorUserId);
+    const collaborator = project.collaborators.find((c) => c.userId === collaboratorUserId);
 
     if (!collaborator) {
       throw new Error('Collaborator not found');
@@ -378,12 +368,17 @@ export class CollaborativeContentService {
       {
         projectId,
         newPermissions: validatedPermissions,
-        updatedBy: ownerId
+        updatedBy: ownerId,
       }
     );
 
     // Notify collaborator of permission changes
-    await this.notifyUserOfPermissionUpdate(collaboratorUserId, projectId, ownerId, validatedPermissions);
+    await this.notifyUserOfPermissionUpdate(
+      collaboratorUserId,
+      projectId,
+      ownerId,
+      validatedPermissions
+    );
 
     // Emit permission update event
     await this.emitCMSEvent({
@@ -393,16 +388,16 @@ export class CollaborativeContentService {
       metadata: {
         collaboratorUserId,
         newPermissions: validatedPermissions,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
   // Private helper methods
 
   private async verifyOwnership(userId: string, contentId: string): Promise<void> {
-    const content = await this.prisma.$queryRaw<any[]>`
+    const content = await this.db.$queryRaw<any[]>`
       SELECT owner_id FROM personal_content WHERE id = ${contentId}
     `;
 
@@ -412,7 +407,7 @@ export class CollaborativeContentService {
   }
 
   private async verifyProjectOwnership(userId: string, projectId: string): Promise<void> {
-    const project = await this.prisma.$queryRaw<any[]>`
+    const project = await this.db.$queryRaw<any[]>`
       SELECT owner_id FROM project_configurations WHERE id = ${projectId}
     `;
 
@@ -431,23 +426,46 @@ export class CollaborativeContentService {
       [UserRole.USER]: [Permission.READ],
       [UserRole.AGENT_OPERATOR]: [Permission.READ, Permission.WRITE],
       [UserRole.AGENCY_MANAGER]: [Permission.READ, Permission.WRITE, Permission.SHARE],
-      [UserRole.AGENCY_ADMIN]: [Permission.READ, Permission.WRITE, Permission.SHARE, Permission.DELETE],
-      [UserRole.AGENCY_OWNER]: [Permission.READ, Permission.WRITE, Permission.SHARE, Permission.DELETE, Permission.ADMIN],
-      [UserRole.ADMIN]: [Permission.READ, Permission.WRITE, Permission.SHARE, Permission.DELETE, Permission.ADMIN],
-      [UserRole.SUPER_ADMIN]: [Permission.READ, Permission.WRITE, Permission.SHARE, Permission.DELETE, Permission.ADMIN]
+      [UserRole.AGENCY_ADMIN]: [
+        Permission.READ,
+        Permission.WRITE,
+        Permission.SHARE,
+        Permission.DELETE,
+      ],
+      [UserRole.AGENCY_OWNER]: [
+        Permission.READ,
+        Permission.WRITE,
+        Permission.SHARE,
+        Permission.DELETE,
+        Permission.ADMIN,
+      ],
+      [UserRole.ADMIN]: [
+        Permission.READ,
+        Permission.WRITE,
+        Permission.SHARE,
+        Permission.DELETE,
+        Permission.ADMIN,
+      ],
+      [UserRole.SUPER_ADMIN]: [
+        Permission.READ,
+        Permission.WRITE,
+        Permission.SHARE,
+        Permission.DELETE,
+        Permission.ADMIN,
+      ],
     };
 
     // Get all allowed permissions for user's roles
     const allowedPermissions = new Set<Permission>();
-    userRoles.forEach(role => {
-      rolePermissions[role]?.forEach(permission => allowedPermissions.add(permission));
+    userRoles.forEach((role) => {
+      rolePermissions[role]?.forEach((permission) => allowedPermissions.add(permission));
     });
 
     // Also include permissions for primary role
-    rolePermissions[userRole]?.forEach(permission => allowedPermissions.add(permission));
+    rolePermissions[userRole]?.forEach((permission) => allowedPermissions.add(permission));
 
     // Filter requested permissions to only include allowed ones
-    return requestedPermissions.filter(permission => allowedPermissions.has(permission));
+    return requestedPermissions.filter((permission) => allowedPermissions.has(permission));
   }
 
   private async validateRoleAssignment(
@@ -456,9 +474,9 @@ export class CollaborativeContentService {
     collaboratorCurrentRole: UserRole
   ): Promise<void> {
     // Get owner's role
-    const owner = await this.prisma.user.findUnique({
+    const owner = await this.db.user.findUnique({
       where: { id: ownerId },
-      select: { role: true, roles: true }
+      select: { role: true, roles: true },
     });
 
     if (!owner) {
@@ -473,12 +491,12 @@ export class CollaborativeContentService {
       [UserRole.AGENCY_ADMIN]: 4,
       [UserRole.AGENCY_OWNER]: 5,
       [UserRole.ADMIN]: 6,
-      [UserRole.SUPER_ADMIN]: 7
+      [UserRole.SUPER_ADMIN]: 7,
     };
 
     const ownerLevel = Math.max(
       roleHierarchy[owner.role],
-      ...owner.roles.map(role => roleHierarchy[role])
+      ...owner.roles.map((role) => roleHierarchy[role])
     );
     const assignedLevel = roleHierarchy[assignedRole];
 
@@ -494,8 +512,11 @@ export class CollaborativeContentService {
     }
   }
 
-  private async storeSharingPermission(contentId: string, permission: SharingPermission): Promise<void> {
-    await this.prisma.$executeRaw`
+  private async storeSharingPermission(
+    contentId: string,
+    permission: SharingPermission
+  ): Promise<void> {
+    await this.db.$executeRaw`
       INSERT INTO content_sharing_permissions (
         content_id, user_id, role, permissions, granted_by, granted_at, expires_at
       ) VALUES (
@@ -510,9 +531,12 @@ export class CollaborativeContentService {
     `;
   }
 
-  private async updateContentSharingSettings(contentId: string, permission: SharingPermission): Promise<void> {
+  private async updateContentSharingSettings(
+    contentId: string,
+    permission: SharingPermission
+  ): Promise<void> {
     // Update the content's sharing settings to include the new permission
-    await this.prisma.$executeRaw`
+    await this.db.$executeRaw`
       UPDATE personal_content 
       SET sharing_settings = JSON_SET(
         COALESCE(sharing_settings, '{"isPublic": false, "allowedUsers": [], "allowedRoles": [], "permissions": []}'),
@@ -527,8 +551,11 @@ export class CollaborativeContentService {
     `;
   }
 
-  private async addCollaboratorToProject(projectId: string, collaborator: Collaborator): Promise<void> {
-    await this.prisma.$executeRaw`
+  private async addCollaboratorToProject(
+    projectId: string,
+    collaborator: Collaborator
+  ): Promise<void> {
+    await this.db.$executeRaw`
       UPDATE project_configurations 
       SET collaborators = JSON_ARRAY_APPEND(
         COALESCE(collaborators, '[]'),
@@ -565,7 +592,7 @@ export class CollaborativeContentService {
       whereClause += ` AND owner_id = '${filters.sharedBy}'`;
     }
 
-    const result = await this.prisma.$queryRaw<any[]>`
+    const result = await this.db.$queryRaw<any[]>`
       SELECT pc.*, csp.permissions as shared_permissions
       FROM personal_content pc
       JOIN content_sharing_permissions csp ON pc.id = csp.content_id
@@ -575,7 +602,7 @@ export class CollaborativeContentService {
       LIMIT ${limit} OFFSET ${offset}
     `;
 
-    return result.map(row => ({
+    return result.map((row) => ({
       id: row.id,
       type: row.type,
       title: row.title,
@@ -588,19 +615,19 @@ export class CollaborativeContentService {
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       version: row.version,
-      checksum: row.checksum
+      checksum: row.checksum,
     }));
   }
 
   private async queryCollaborativeProjects(userId: string): Promise<ProjectConfiguration[]> {
-    const result = await this.prisma.$queryRaw<any[]>`
+    const result = await this.db.$queryRaw<any[]>`
       SELECT * FROM project_configurations 
       WHERE JSON_EXTRACT(collaborators, '$[*].userId') LIKE '%${userId}%'
       AND deleted_at IS NULL
       ORDER BY updated_at DESC
     `;
 
-    return result.map(row => ({
+    return result.map((row) => ({
       id: row.id,
       name: row.name,
       description: row.description,
@@ -612,17 +639,20 @@ export class CollaborativeContentService {
       syncSettings: JSON.parse(row.sync_settings),
       createdAt: row.created_at,
       updatedAt: row.updated_at,
-      version: row.version
+      version: row.version,
     }));
   }
 
-  private async filterAccessibleContent(userId: string, content: ContentItem[]): Promise<ContentItem[]> {
+  private async filterAccessibleContent(
+    userId: string,
+    content: ContentItem[]
+  ): Promise<ContentItem[]> {
     // Filter content based on current permissions and expiration
     const now = new Date();
     const accessible: ContentItem[] = [];
 
     for (const item of content) {
-      const userPermission = item.sharingSettings.permissions.find(p => p.userId === userId);
+      const userPermission = item.sharingSettings.permissions.find((p) => p.userId === userId);
       if (userPermission && (!userPermission.expiresAt || userPermission.expiresAt > now)) {
         accessible.push(item);
       }
@@ -631,16 +661,22 @@ export class CollaborativeContentService {
     return accessible;
   }
 
-  private async filterAccessibleProjects(userId: string, projects: ProjectConfiguration[]): Promise<ProjectConfiguration[]> {
+  private async filterAccessibleProjects(
+    userId: string,
+    projects: ProjectConfiguration[]
+  ): Promise<ProjectConfiguration[]> {
     // Filter projects based on current collaboration status
-    return projects.filter(project => {
-      const collaborator = project.collaborators.find(c => c.userId === userId);
+    return projects.filter((project) => {
+      const collaborator = project.collaborators.find((c) => c.userId === userId);
       return collaborator !== undefined;
     });
   }
 
-  private async getProjectForOwner(ownerId: string, projectId: string): Promise<ProjectConfiguration> {
-    const result = await this.prisma.$queryRaw<any[]>`
+  private async getProjectForOwner(
+    ownerId: string,
+    projectId: string
+  ): Promise<ProjectConfiguration> {
+    const result = await this.db.$queryRaw<any[]>`
       SELECT * FROM project_configurations 
       WHERE id = ${projectId} AND owner_id = ${ownerId}
     `;
@@ -662,19 +698,19 @@ export class CollaborativeContentService {
       syncSettings: JSON.parse(row.sync_settings),
       createdAt: row.created_at,
       updatedAt: row.updated_at,
-      version: row.version
+      version: row.version,
     };
   }
 
   private async removeSharingPermission(contentId: string, userId: string): Promise<void> {
-    await this.prisma.$executeRaw`
+    await this.db.$executeRaw`
       DELETE FROM content_sharing_permissions 
       WHERE content_id = ${contentId} AND user_id = ${userId}
     `;
   }
 
   private async removeFromContentSharingSettings(contentId: string, userId: string): Promise<void> {
-    await this.prisma.$executeRaw`
+    await this.db.$executeRaw`
       UPDATE personal_content 
       SET sharing_settings = JSON_REMOVE(
         sharing_settings,
@@ -685,7 +721,7 @@ export class CollaborativeContentService {
   }
 
   private async removeCollaboratorFromProject(projectId: string, userId: string): Promise<void> {
-    await this.prisma.$executeRaw`
+    await this.db.$executeRaw`
       UPDATE project_configurations 
       SET collaborators = JSON_REMOVE(
         collaborators,
@@ -700,7 +736,7 @@ export class CollaborativeContentService {
     userId: string,
     permissions: Permission[]
   ): Promise<void> {
-    await this.prisma.$executeRaw`
+    await this.db.$executeRaw`
       UPDATE project_configurations 
       SET collaborators = JSON_SET(
         collaborators,
@@ -724,7 +760,7 @@ export class CollaborativeContentService {
         contentId,
         sharedBy,
         permissions,
-        timestamp: new Date()
+        timestamp: new Date(),
       })
     );
   }
@@ -742,7 +778,7 @@ export class CollaborativeContentService {
         projectId,
         addedBy,
         role,
-        timestamp: new Date()
+        timestamp: new Date(),
       })
     );
   }
@@ -758,7 +794,7 @@ export class CollaborativeContentService {
         type: 'content_access_revoked',
         contentId,
         revokedBy,
-        timestamp: new Date()
+        timestamp: new Date(),
       })
     );
   }
@@ -774,7 +810,7 @@ export class CollaborativeContentService {
         type: 'project_collaboration_removed',
         projectId,
         removedBy,
-        timestamp: new Date()
+        timestamp: new Date(),
       })
     );
   }
@@ -792,15 +828,15 @@ export class CollaborativeContentService {
         projectId,
         updatedBy,
         newPermissions,
-        timestamp: new Date()
+        timestamp: new Date(),
       })
     );
   }
 
   private async emitCMSEvent(event: CMSEvent): Promise<void> {
     await this.redis.publish('cms_events', JSON.stringify(event));
-    
-    await this.prisma.authEvent.create({
+
+    await this.db.authEvent.create({
       data: {
         userId: event.userId,
         type: event.type,
@@ -808,9 +844,9 @@ export class CollaborativeContentService {
           contentId: event.contentId,
           tenantId: event.tenantId,
           metadata: event.metadata,
-          timestamp: event.timestamp
-        }
-      }
+          timestamp: event.timestamp,
+        },
+      },
     });
   }
 }

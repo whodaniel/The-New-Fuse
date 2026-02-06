@@ -7,24 +7,24 @@
 
 import { EventEmitter } from 'events';
 import { IMCPBroker } from '../interfaces/IMCPBroker';
-import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
+import { MCPNotification, MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
 import {
-  MCPServiceInfo,
-  ServiceQuery,
-  ServiceHealth,
   BrokerConfig,
-  RoutingMetrics,
   LoadBalancingStrategy,
+  MCPServiceInfo,
+  RoutingInfo,
+  RoutingMetrics,
   ServiceCompatibilityResult,
-  RoutingInfo
+  ServiceHealth,
+  ServiceQuery,
 } from '../types';
 import { ServiceStatus } from '../types/common';
-import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
-import { ServiceRegistry } from './ServiceRegistry';
-import { HealthMonitor } from './HealthMonitor';
-import { MessageRouter } from './MessageRouter';
-import { LoadBalancer } from './LoadBalancer';
+import { JSONRPCErrorCode, MCPErrorClass, MCPErrorCode } from '../types/error';
 import { EventSubscriptionManager, PatternType } from './EventSubscriptionManager';
+import { HealthMonitor } from './HealthMonitor';
+import { LoadBalancer } from './LoadBalancer';
+import { MessageRouter } from './MessageRouter';
+import { ServiceRegistry } from './ServiceRegistry';
 
 /**
  * Default broker configuration
@@ -35,27 +35,27 @@ const DEFAULT_BROKER_CONFIG: BrokerConfig = {
   registry: {
     type: 'memory',
     serviceTTL: 300, // 5 minutes
-    cleanupInterval: 60 // 1 minute
+    cleanupInterval: 60, // 1 minute
   },
   loadBalancing: {
     defaultStrategy: LoadBalancingStrategy.ROUND_ROBIN,
     useHealthCheck: true,
-    stickySession: false
+    stickySession: false,
   },
   healthCheck: {
     interval: 30, // 30 seconds
     timeout: 5000, // 5 seconds
     failureThreshold: 3,
     recoveryThreshold: 2,
-    enabled: true
+    enabled: true,
   },
   options: {
     enableMetrics: true,
     metricsInterval: 60,
     enableDiscoveryCache: true,
     discoveryCacheTTL: 300,
-    maxConcurrentRequests: 1000
-  }
+    maxConcurrentRequests: 1000,
+  },
 };
 
 /**
@@ -93,10 +93,7 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   async start(): Promise<void> {
     if (this.isRunningFlag) {
-      throw new MCPErrorClass(
-        JSONRPCErrorCode.INTERNAL_ERROR,
-        'Broker is already running'
-      );
+      throw new MCPErrorClass(JSONRPCErrorCode.INTERNAL_ERROR, 'Broker is already running');
     }
 
     try {
@@ -173,10 +170,7 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   async registerService(service: MCPServiceInfo): Promise<void> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     try {
@@ -208,19 +202,13 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   async unregisterService(serviceId: string): Promise<void> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     try {
       const service = await this.serviceRegistry.get(serviceId);
       if (!service) {
-        throw new MCPErrorClass(
-          MCPErrorCode.RESOURCE_NOT_FOUND,
-          `Service not found: ${serviceId}`
-        );
+        throw new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, `Service not found: ${serviceId}`);
       }
 
       // Remove from health monitoring
@@ -262,18 +250,15 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   async discoverServices(query: ServiceQuery): Promise<MCPServiceInfo[]> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     try {
       let services = await this.serviceRegistry.discover(query);
 
       if (query.skill) {
-        services = services.filter(service =>
-          service.skills.some(skill => skill.id === query.skill || skill.name === query.skill)
+        services = services.filter((service) =>
+          service.skills.some((skill) => skill.id === query.skill || skill.name === query.skill)
         );
       }
 
@@ -301,17 +286,16 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
   /**
    * Advanced service discovery with capability matching
    */
-  async discoverServicesAdvanced(query: ServiceQuery & {
-    requiredCapabilities?: string[];
-    compatibleWith?: string;
-    minHealthScore?: number;
-    maxAge?: number;
-  }): Promise<MCPServiceInfo[]> {
+  async discoverServicesAdvanced(
+    query: ServiceQuery & {
+      requiredCapabilities?: string[];
+      compatibleWith?: string;
+      minHealthScore?: number;
+      maxAge?: number;
+    }
+  ): Promise<MCPServiceInfo[]> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     try {
@@ -343,19 +327,13 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   async findCompatibleServices(serviceId: string): Promise<MCPServiceInfo[]> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     try {
       const targetService = await this.serviceRegistry.get(serviceId);
       if (!targetService) {
-        throw new MCPErrorClass(
-          MCPErrorCode.RESOURCE_NOT_FOUND,
-          `Service not found: ${serviceId}`
-        );
+        throw new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, `Service not found: ${serviceId}`);
       }
 
       return await this.serviceRegistry.findCompatibleServices(targetService);
@@ -383,19 +361,13 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
     } = {}
   ): Promise<MCPServiceInfo[]> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     try {
       const targetService = await this.serviceRegistry.get(serviceId);
       if (!targetService) {
-        throw new MCPErrorClass(
-          MCPErrorCode.RESOURCE_NOT_FOUND,
-          `Service not found: ${serviceId}`
-        );
+        throw new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, `Service not found: ${serviceId}`);
       }
 
       return await this.serviceRegistry.getServiceRecommendations(targetService, options);
@@ -413,12 +385,12 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
   /**
    * Check capability compatibility between two services
    */
-  async checkServiceCompatibility(serviceIdA: string, serviceIdB: string): Promise<ServiceCompatibilityResult> {
+  async checkServiceCompatibility(
+    serviceIdA: string,
+    serviceIdB: string
+  ): Promise<ServiceCompatibilityResult> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     try {
@@ -441,12 +413,13 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
 
       const result = this.serviceRegistry.checkCapabilityCompatibility(serviceA, serviceB);
       // Add compatibility score calculation
-      const compatibilityScore = result.commonCapabilities.length /
+      const compatibilityScore =
+        result.commonCapabilities.length /
         Math.max(serviceA.capabilities.length, serviceB.capabilities.length, 1);
 
       return {
         ...result,
-        compatibilityScore
+        compatibilityScore,
       };
     } catch (error) {
       if (error instanceof MCPErrorClass) {
@@ -464,10 +437,7 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   async routeRequest(request: MCPRequest, targetService?: string): Promise<MCPResponse> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     try {
@@ -489,17 +459,11 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   async getServiceHealth(serviceId: string): Promise<ServiceHealth> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     if (!this.config.healthCheck.enabled) {
-      throw new MCPErrorClass(
-        JSONRPCErrorCode.METHOD_NOT_FOUND,
-        'Health checking is disabled'
-      );
+      throw new MCPErrorClass(JSONRPCErrorCode.METHOD_NOT_FOUND, 'Health checking is disabled');
     }
 
     try {
@@ -527,10 +491,7 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   async getAllServices(): Promise<MCPServiceInfo[]> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     try {
@@ -548,19 +509,13 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   async updateService(serviceId: string, updates: Partial<MCPServiceInfo>): Promise<void> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     try {
       const existingService = await this.serviceRegistry.get(serviceId);
       if (!existingService) {
-        throw new MCPErrorClass(
-          MCPErrorCode.RESOURCE_NOT_FOUND,
-          `Service not found: ${serviceId}`
-        );
+        throw new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, `Service not found: ${serviceId}`);
       }
 
       const updatedService = { ...existingService, ...updates };
@@ -629,10 +584,7 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
     metadata?: Record<string, unknown>
   ): Promise<string> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     try {
@@ -659,10 +611,7 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   async unsubscribeFromEvents(subscriptionId: string): Promise<void> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     try {
@@ -683,10 +632,7 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   async routeNotification(notification: MCPNotification): Promise<void> {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     try {
@@ -704,10 +650,7 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   getEventSubscriptionStatistics() {
     if (!this.isRunningFlag) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Broker is not running'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Broker is not running');
     }
 
     return this.eventSubscriptionManager.getStatistics();
@@ -727,7 +670,7 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
       registry: { ...DEFAULT_BROKER_CONFIG.registry, ...userConfig.registry },
       loadBalancing: { ...DEFAULT_BROKER_CONFIG.loadBalancing, ...userConfig.loadBalancing },
       healthCheck: { ...DEFAULT_BROKER_CONFIG.healthCheck, ...userConfig.healthCheck },
-      options: { ...DEFAULT_BROKER_CONFIG.options, ...userConfig.options }
+      options: { ...DEFAULT_BROKER_CONFIG.options, ...userConfig.options },
     };
   }
 
@@ -736,16 +679,28 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
    */
   private validateServiceInfo(service: MCPServiceInfo): void {
     if (!service.id || typeof service.id !== 'string') {
-      throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, 'Service ID is required and must be a string');
+      throw new MCPErrorClass(
+        MCPErrorCode.INVALID_PARAMS,
+        'Service ID is required and must be a string'
+      );
     }
     if (!service.name || typeof service.name !== 'string') {
-      throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, 'Service name is required and must be a string');
+      throw new MCPErrorClass(
+        MCPErrorCode.INVALID_PARAMS,
+        'Service name is required and must be a string'
+      );
     }
     if (!service.version || typeof service.version !== 'string') {
-      throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, 'Service version is required and must be a string');
+      throw new MCPErrorClass(
+        MCPErrorCode.INVALID_PARAMS,
+        'Service version is required and must be a string'
+      );
     }
     if (!service.endpoint || typeof service.endpoint !== 'string') {
-      throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, 'Service endpoint is required and must be a string');
+      throw new MCPErrorClass(
+        MCPErrorCode.INVALID_PARAMS,
+        'Service endpoint is required and must be a string'
+      );
     }
     if (!Array.isArray(service.capabilities)) {
       throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, 'Service capabilities must be an array');

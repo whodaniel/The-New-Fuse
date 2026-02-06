@@ -1,25 +1,22 @@
 /**
  * Sync-Aware Messaging System Usage Examples
- * 
+ *
  * This file demonstrates how to use the enhanced agent communication
  * with sync-aware messaging capabilities, integrating with existing
  * AgentWebSocketService and Redis infrastructure.
  */
 
 import {
-  SyncAwareMessagingService,
+  CrossTenantRoutingConfig,
+  MessageFailoverConfig,
+  MessageQueueSyncConfig,
   SyncAwareA2AMessage,
   SyncAwareMessageUtils,
-  CrossTenantRoutingConfig,
-  MessageQueueSyncConfig,
-  MessageFailoverConfig,
-  CommunicationNode
+  SyncAwareMessagingService,
 } from './index';
 
 // Example: Basic sync-aware message sending
-export async function basicMessageSending(
-  messagingService: SyncAwareMessagingService
-) {
+export async function basicMessageSending(messagingService: SyncAwareMessagingService) {
   console.log('=== Basic Sync-Aware Message Sending ===');
 
   // Create a sync-aware message from existing A2A message
@@ -34,8 +31,8 @@ export async function basicMessageSending(
       action: 'process_document',
       parameters: {
         documentId: 'doc-456',
-        priority: 'high'
-      }
+        priority: 'high',
+      },
     },
     metadata: {
       priority: 'high',
@@ -45,42 +42,35 @@ export async function basicMessageSending(
         crossTenantAllowed: false,
         priority: 'high',
         requiresAck: true,
-        conflictResolution: 'latest_wins'
-      })
-    }
+        conflictResolution: 'latest_wins',
+      }),
+    },
   };
 
   try {
-    const syncStatus = await messagingService.sendMessage(
-      'worker-agent-1',
-      basicMessage,
-      {
-        tenantId: 'tenant-acme-corp',
-        priority: 'high',
-        requiresAck: true,
-        timeout: 30000
-      }
-    );
+    const syncStatus = await messagingService.sendMessage('worker-agent-1', basicMessage, {
+      tenantId: 'tenant-acme-corp',
+      priority: 'high',
+      requiresAck: true,
+      timeout: 30000,
+    });
 
     console.log('Message sent successfully:', {
       messageId: syncStatus.messageId,
       status: syncStatus.status,
-      deliveredTo: syncStatus.deliveredTo
+      deliveredTo: syncStatus.deliveredTo,
     });
 
     // Check message status
     const status = await messagingService.getMessageStatus(syncStatus.messageId);
     console.log('Current message status:', status);
-
   } catch (error) {
     console.error('Failed to send message:', error);
   }
 }
 
 // Example: Cross-tenant messaging setup and usage
-export async function crossTenantMessaging(
-  messagingService: SyncAwareMessagingService
-) {
+export async function crossTenantMessaging(messagingService: SyncAwareMessagingService) {
   console.log('=== Cross-Tenant Messaging ===');
 
   // Configure cross-tenant routing
@@ -90,16 +80,16 @@ export async function crossTenantMessaging(
     routingRules: [
       {
         condition: 'always', // Simple condition - can be enhanced with JSONPath
-        action: 'allow'
+        action: 'allow',
       },
       {
         condition: 'message.type === "URGENT_ALERT"',
-        action: 'allow'
+        action: 'allow',
       },
       {
         condition: 'message.payload.confidential === true',
-        action: 'deny'
-      }
+        action: 'deny',
+      },
     ],
     securityPolicy: {
       requireEncryption: true,
@@ -107,9 +97,9 @@ export async function crossTenantMessaging(
       maxMessageSize: 1024 * 1024, // 1MB
       rateLimiting: {
         maxMessagesPerSecond: 10,
-        maxMessagesPerMinute: 100
-      }
-    }
+        maxMessagesPerMinute: 100,
+      },
+    },
   };
 
   await messagingService.configureCrossTenantMessaging(crossTenantConfig);
@@ -124,8 +114,8 @@ export async function crossTenantMessaging(
       systemStatus: 'operational',
       metrics: {
         uptime: '99.9%',
-        responseTime: '150ms'
-      }
+        responseTime: '150ms',
+      },
     },
     metadata: {
       priority: 'medium',
@@ -134,32 +124,29 @@ export async function crossTenantMessaging(
         tenantId: 'tenant-acme-corp',
         crossTenantAllowed: true,
         priority: 'medium',
-        routingKey: 'status-updates'
-      })
-    }
+        routingKey: 'status-updates',
+      }),
+    },
   };
 
   try {
     const results = await messagingService.broadcastMessage(crossTenantMessage, {
       tenantIds: ['tenant-beta-inc', 'tenant-gamma-llc'],
       crossTenant: true,
-      priority: 'medium'
+      priority: 'medium',
     });
 
     console.log('Cross-tenant broadcast results:');
     Object.entries(results).forEach(([tenantId, statuses]) => {
       console.log(`  ${tenantId}: ${statuses.length} messages delivered`);
     });
-
   } catch (error) {
     console.error('Cross-tenant messaging failed:', error);
   }
 }
 
 // Example: Message queue synchronization
-export async function messageQueueSynchronization(
-  messagingService: SyncAwareMessagingService
-) {
+export async function messageQueueSynchronization(messagingService: SyncAwareMessagingService) {
   console.log('=== Message Queue Synchronization ===');
 
   // Configure queue synchronization for high-priority messages
@@ -171,8 +158,8 @@ export async function messageQueueSynchronization(
     retentionPolicy: {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       maxSize: 1000,
-      cleanupInterval: 60 * 60 * 1000 // 1 hour
-    }
+      cleanupInterval: 60 * 60 * 1000, // 1 hour
+    },
   };
 
   // Configure batch synchronization for regular messages
@@ -186,8 +173,8 @@ export async function messageQueueSynchronization(
     retentionPolicy: {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       maxSize: 10000,
-      cleanupInterval: 4 * 60 * 60 * 1000 // 4 hours
-    }
+      cleanupInterval: 4 * 60 * 60 * 1000, // 4 hours
+    },
   };
 
   await messagingService.configureQueueSynchronization(highPriorityQueueConfig);
@@ -202,14 +189,12 @@ export async function messageQueueSynchronization(
     totalQueues: queueMetrics.totalQueues,
     syncedMessages: queueMetrics.syncedMessages,
     conflictCount: queueMetrics.conflictCount,
-    averageSyncTime: queueMetrics.averageSyncTime
+    averageSyncTime: queueMetrics.averageSyncTime,
   });
 }
 
 // Example: Failover mechanism setup and usage
-export async function failoverMechanisms(
-  messagingService: SyncAwareMessagingService
-) {
+export async function failoverMechanisms(messagingService: SyncAwareMessagingService) {
   console.log('=== Failover Mechanisms ===');
 
   // Configure failover for critical tenant
@@ -223,8 +208,8 @@ export async function failoverMechanisms(
       enabled: true,
       failureThreshold: 5,
       recoveryTimeout: 60000, // 1 minute
-      halfOpenMaxCalls: 3
-    }
+      halfOpenMaxCalls: 3,
+    },
   };
 
   await messagingService.configureFailover('tenant-acme-corp', failoverConfig);
@@ -239,7 +224,7 @@ export async function failoverMechanisms(
       alertType: 'SYSTEM_FAILURE',
       severity: 'critical',
       affectedSystems: ['payment-processor', 'user-auth'],
-      estimatedDowntime: '15 minutes'
+      estimatedDowntime: '15 minutes',
     },
     metadata: {
       priority: 'critical',
@@ -249,9 +234,9 @@ export async function failoverMechanisms(
         priority: 'critical',
         maxRetries: 5,
         failoverNodes: ['fallback-hub-1', 'fallback-hub-2'],
-        deadLetterQueue: 'critical-alerts-dlq'
-      })
-    }
+        deadLetterQueue: 'critical-alerts-dlq',
+      }),
+    },
   };
 
   try {
@@ -261,7 +246,7 @@ export async function failoverMechanisms(
       {
         tenantId: 'tenant-acme-corp',
         enableFailover: true,
-        priority: 'critical'
+        priority: 'critical',
       }
     );
 
@@ -273,18 +258,15 @@ export async function failoverMechanisms(
       totalNodes: failoverStats.totalNodes,
       healthyNodes: failoverStats.healthyNodes,
       failedNodes: failoverStats.failedNodes,
-      circuitBreakersOpen: failoverStats.circuitBreakersOpen
+      circuitBreakersOpen: failoverStats.circuitBreakersOpen,
     });
-
   } catch (error) {
     console.error('Critical message delivery failed:', error);
   }
 }
 
 // Example: Advanced message broadcasting with filtering
-export async function advancedBroadcasting(
-  messagingService: SyncAwareMessagingService
-) {
+export async function advancedBroadcasting(messagingService: SyncAwareMessagingService) {
   console.log('=== Advanced Message Broadcasting ===');
 
   // Create system-wide announcement
@@ -299,9 +281,9 @@ export async function advancedBroadcasting(
       maintenanceWindow: {
         start: '2024-01-15T02:00:00Z',
         end: '2024-01-15T04:00:00Z',
-        affectedServices: ['api', 'dashboard', 'reports']
+        affectedServices: ['api', 'dashboard', 'reports'],
       },
-      actionRequired: false
+      actionRequired: false,
     },
     metadata: {
       priority: 'medium',
@@ -310,9 +292,9 @@ export async function advancedBroadcasting(
         crossTenantAllowed: true,
         priority: 'medium',
         deliveryMode: 'broadcast',
-        requiresAck: false
-      })
-    }
+        requiresAck: false,
+      }),
+    },
   };
 
   try {
@@ -321,38 +303,37 @@ export async function advancedBroadcasting(
       tenantIds: ['tenant-acme-corp', 'tenant-beta-inc', 'tenant-gamma-llc'],
       excludeAgents: ['maintenance-agent', 'system-monitor'],
       crossTenant: true,
-      priority: 'medium'
+      priority: 'medium',
     });
 
     console.log('System announcement broadcast results:');
     let totalDelivered = 0;
     Object.entries(results).forEach(([tenantId, statuses]) => {
-      const delivered = statuses.filter(s => s.status === 'delivered').length;
+      const delivered = statuses.filter((s) => s.status === 'delivered').length;
       totalDelivered += delivered;
       console.log(`  ${tenantId}: ${delivered}/${statuses.length} delivered`);
     });
 
     console.log(`Total messages delivered: ${totalDelivered}`);
-
   } catch (error) {
     console.error('Broadcast failed:', error);
   }
 }
 
 // Example: Monitoring and metrics collection
-export async function monitoringAndMetrics(
-  messagingService: SyncAwareMessagingService
-) {
+export async function monitoringAndMetrics(messagingService: SyncAwareMessagingService) {
   console.log('=== Monitoring and Metrics ===');
 
   // Get comprehensive messaging metrics
   const messagingMetrics = messagingService.getMessagingMetrics();
   console.log('Messaging Metrics:', {
     totalMessages: messagingMetrics.totalMessages,
-    successRate: (messagingMetrics.successfulDeliveries / messagingMetrics.totalMessages * 100).toFixed(2) + '%',
+    successRate:
+      ((messagingMetrics.successfulDeliveries / messagingMetrics.totalMessages) * 100).toFixed(2) +
+      '%',
     averageDeliveryTime: messagingMetrics.averageDeliveryTime + 'ms',
     crossTenantMessages: messagingMetrics.crossTenantMessages,
-    activeConnections: messagingMetrics.activeConnections
+    activeConnections: messagingMetrics.activeConnections,
   });
 
   // Get failover statistics
@@ -371,7 +352,7 @@ export async function monitoringAndMetrics(
       status: messageStatus.status,
       deliveredTo: messageStatus.deliveredTo,
       acknowledgedBy: messageStatus.acknowledgedBy,
-      age: Date.now() - messageStatus.createdAt + 'ms'
+      age: Date.now() - messageStatus.createdAt + 'ms',
     });
   }
 
@@ -382,15 +363,13 @@ export async function monitoringAndMetrics(
       deliveryAttempts: deliveryMetrics.deliveryAttempts,
       successfulDeliveries: deliveryMetrics.successfulDeliveries,
       averageDeliveryTime: deliveryMetrics.averageDeliveryTime + 'ms',
-      routingPath: deliveryMetrics.routingPath
+      routingPath: deliveryMetrics.routingPath,
     });
   }
 }
 
 // Example: Error handling and recovery
-export async function errorHandlingAndRecovery(
-  messagingService: SyncAwareMessagingService
-) {
+export async function errorHandlingAndRecovery(messagingService: SyncAwareMessagingService) {
   console.log('=== Error Handling and Recovery ===');
 
   const problematicMessage: SyncAwareA2AMessage = {
@@ -400,7 +379,7 @@ export async function errorHandlingAndRecovery(
     sender: 'test-agent',
     payload: {
       simulateFailure: true,
-      failureType: 'network_timeout'
+      failureType: 'network_timeout',
     },
     metadata: {
       priority: 'low',
@@ -408,23 +387,18 @@ export async function errorHandlingAndRecovery(
       sync: SyncAwareMessageUtils.createSyncMetadata({
         tenantId: 'tenant-test',
         maxRetries: 3,
-        priority: 'low'
-      })
-    }
+        priority: 'low',
+      }),
+    },
   };
 
   try {
-    const syncStatus = await messagingService.sendMessage(
-      'unreliable-agent',
-      problematicMessage,
-      {
-        tenantId: 'tenant-test',
-        timeout: 5000 // Short timeout to trigger failure
-      }
-    );
+    const syncStatus = await messagingService.sendMessage('unreliable-agent', problematicMessage, {
+      tenantId: 'tenant-test',
+      timeout: 5000, // Short timeout to trigger failure
+    });
 
     console.log('Message sent (unexpectedly succeeded):', syncStatus);
-
   } catch (error) {
     console.log('Expected failure occurred:', error.message);
 
@@ -432,28 +406,21 @@ export async function errorHandlingAndRecovery(
     const metrics = messagingService.getMessagingMetrics();
     console.log('Failure recorded in metrics:', {
       failedDeliveries: metrics.failedDeliveries,
-      successRate: (metrics.successfulDeliveries / metrics.totalMessages * 100).toFixed(2) + '%'
+      successRate: ((metrics.successfulDeliveries / metrics.totalMessages) * 100).toFixed(2) + '%',
     });
   }
 
   // Example: Manual failover trigger
   try {
-    await messagingService.triggerFailover(
-      'tenant-test',
-      'unreliable-node',
-      'backup-node'
-    );
+    await messagingService.triggerFailover('tenant-test', 'unreliable-node', 'backup-node');
     console.log('Manual failover triggered successfully');
-
   } catch (error) {
     console.log('Failover trigger failed:', error.message);
   }
 }
 
 // Example: Complete integration workflow
-export async function completeIntegrationWorkflow(
-  messagingService: SyncAwareMessagingService
-) {
+export async function completeIntegrationWorkflow(messagingService: SyncAwareMessagingService) {
   console.log('=== Complete Integration Workflow ===');
 
   try {
@@ -477,7 +444,6 @@ export async function completeIntegrationWorkflow(
     await errorHandlingAndRecovery(messagingService);
 
     console.log('=== Integration workflow completed successfully ===');
-
   } catch (error) {
     console.error('Integration workflow failed:', error);
   }
@@ -498,19 +464,19 @@ export function createSampleMessages(): SyncAwareA2AMessage[] {
         sync: SyncAwareMessageUtils.createSyncMetadata({
           tenantId: 'tenant-sample',
           priority: 'high',
-          requiresAck: true
-        })
-      }
+          requiresAck: true,
+        }),
+      },
     },
     {
       id: 'sample-2',
       type: 'DATA_SYNC',
       timestamp: Date.now(),
       sender: 'data-sync-agent',
-      payload: { 
+      payload: {
         syncType: 'incremental',
         tables: ['users', 'orders'],
-        lastSyncTime: Date.now() - 3600000
+        lastSyncTime: Date.now() - 3600000,
       },
       metadata: {
         priority: 'medium',
@@ -518,18 +484,18 @@ export function createSampleMessages(): SyncAwareA2AMessage[] {
         sync: SyncAwareMessageUtils.createSyncMetadata({
           tenantId: 'tenant-sample',
           priority: 'medium',
-          conflictResolution: 'merge'
-        })
-      }
+          conflictResolution: 'merge',
+        }),
+      },
     },
     {
       id: 'sample-3',
       type: 'HEALTH_CHECK',
       timestamp: Date.now(),
       sender: 'health-monitor',
-      payload: { 
+      payload: {
         services: ['api', 'database', 'cache'],
-        checkType: 'comprehensive'
+        checkType: 'comprehensive',
       },
       metadata: {
         priority: 'low',
@@ -537,10 +503,10 @@ export function createSampleMessages(): SyncAwareA2AMessage[] {
         sync: SyncAwareMessageUtils.createSyncMetadata({
           crossTenantAllowed: true,
           priority: 'low',
-          deliveryMode: 'broadcast'
-        })
-      }
-    }
+          deliveryMode: 'broadcast',
+        }),
+      },
+    },
   ];
 }
 
@@ -554,5 +520,5 @@ export const examples = {
   monitoringAndMetrics,
   errorHandlingAndRecovery,
   completeIntegrationWorkflow,
-  createSampleMessages
+  createSampleMessages,
 };

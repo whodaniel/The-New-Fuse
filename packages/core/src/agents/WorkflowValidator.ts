@@ -3,7 +3,14 @@ import { Injectable, Logger } from '@nestjs/common';
 export interface WorkflowTask {
   id: string;
   name: string;
-  type: 'data_processing' | 'ml_inference' | 'api_call' | 'notification' | 'validation' | 'transformation' | 'custom';
+  type:
+    | 'data_processing'
+    | 'ml_inference'
+    | 'api_call'
+    | 'notification'
+    | 'validation'
+    | 'transformation'
+    | 'custom';
   dependencies?: string[];
   config: any;
   retryPolicy?: RetryPolicy;
@@ -66,18 +73,18 @@ export class WorkflowValidator {
     try {
       // Basic workflow validation
       this.validateBasicStructure(workflow, errors);
-      
+
       // Task validation
       this.validateTasks(workflow.tasks, errors, warnings);
-      
+
       // Dependencies validation
       this.validateDependencies(workflow.tasks, errors);
-      
+
       // Configuration validation
       if (workflow.config) {
         this.validateConfiguration(workflow.config, errors, warnings);
       }
-      
+
       // Metadata validation
       this.validateMetadata(workflow.metadata, errors, warnings);
 
@@ -85,10 +92,10 @@ export class WorkflowValidator {
       if (isValid) {
         this.logger.debug('Workflow validation passed', { workflowId: workflow.id });
       } else {
-        this.logger.warn('Workflow validation failed', { 
-          workflowId: workflow.id, 
+        this.logger.warn('Workflow validation failed', {
+          workflowId: workflow.id,
           errors: errors.length,
-          warnings: warnings.length
+          warnings: warnings.length,
         });
       }
 
@@ -99,7 +106,7 @@ export class WorkflowValidator {
       return {
         isValid: false,
         errors: [errorMessage],
-        warnings
+        warnings,
       };
     }
   }
@@ -129,7 +136,15 @@ export class WorkflowValidator {
     }
 
     const taskIds = new Set<string>();
-    const validTaskTypes = ['data_processing', 'ml_inference', 'api_call', 'notification', 'validation', 'transformation', 'custom'];
+    const validTaskTypes = [
+      'data_processing',
+      'ml_inference',
+      'api_call',
+      'notification',
+      'validation',
+      'transformation',
+      'custom',
+    ];
 
     for (const task of tasks) {
       // Validate task ID uniqueness
@@ -167,7 +182,7 @@ export class WorkflowValidator {
   }
 
   private validateDependencies(tasks: WorkflowTask[], errors: string[]): void {
-    const taskIds = new Set(tasks.map(t => t.id));
+    const taskIds = new Set(tasks.map((t) => t.id));
 
     for (const task of tasks) {
       if (task.dependencies) {
@@ -186,7 +201,7 @@ export class WorkflowValidator {
   private detectCircularDependencies(tasks: WorkflowTask[], errors: string[]): void {
     const visited = new Set<string>();
     const recursionStack = new Set<string>();
-    const taskMap = new Map(tasks.map(t => [t.id, t]));
+    const taskMap = new Map(tasks.map((t) => [t.id, t]));
 
     const hasCycle = (taskId: string): boolean => {
       if (recursionStack.has(taskId)) {
@@ -220,7 +235,11 @@ export class WorkflowValidator {
     }
   }
 
-  private validateConfiguration(config: WorkflowConfig, errors: string[], warnings: string[]): void {
+  private validateConfiguration(
+    config: WorkflowConfig,
+    errors: string[],
+    warnings: string[],
+  ): void {
     if (config.maxConcurrentTasks !== undefined) {
       if (typeof config.maxConcurrentTasks !== 'number' || config.maxConcurrentTasks <= 0) {
         errors.push('maxConcurrentTasks must be a positive number');
@@ -242,7 +261,12 @@ export class WorkflowValidator {
     }
   }
 
-  private validateRetryPolicy(retryPolicy: RetryPolicy, context: string, errors: string[], warnings: string[]): void {
+  private validateRetryPolicy(
+    retryPolicy: RetryPolicy,
+    context: string,
+    errors: string[],
+    warnings: string[],
+  ): void {
     if (typeof retryPolicy.maxRetries !== 'number' || retryPolicy.maxRetries < 0) {
       errors.push(`${context}: maxRetries must be a non-negative number`);
     }
@@ -256,7 +280,11 @@ export class WorkflowValidator {
     }
   }
 
-  private validateNotificationConfig(config: NotificationConfig, errors: string[], warnings: string[]): void {
+  private validateNotificationConfig(
+    config: NotificationConfig,
+    errors: string[],
+    warnings: string[],
+  ): void {
     if (typeof config.enabled !== 'boolean') {
       errors.push('notificationConfig.enabled must be a boolean');
     }

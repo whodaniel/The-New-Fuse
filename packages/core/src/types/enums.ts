@@ -4,7 +4,7 @@ export enum MessageRole {
   SYSTEM = 'SYSTEM',
   ASSISTANT = 'ASSISTANT',
   TOOL = 'TOOL',
-  FUNCTION = 'FUNCTION'
+  FUNCTION = 'FUNCTION',
 }
 
 export enum MessageType {
@@ -17,7 +17,7 @@ export enum MessageType {
   COMMAND = 'COMMAND',
   STREAM = 'STREAM',
   CODE = 'CODE',
-  MARKDOWN = 'MARKDOWN'
+  MARKDOWN = 'MARKDOWN',
 }
 
 export enum MessageStatus {
@@ -26,7 +26,7 @@ export enum MessageStatus {
   ERROR = 'ERROR',
   SENT = 'SENT',
   READ = 'READ',
-  FAILED = 'FAILED'
+  FAILED = 'FAILED',
 }
 
 // Verification levels
@@ -34,7 +34,7 @@ export enum VerificationLevel {
   NONE = 'NONE',
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH'
+  HIGH = 'HIGH',
 }
 
 export enum LogLevel {
@@ -42,5 +42,5 @@ export enum LogLevel {
   WARN = 'WARN',
   INFO = 'INFO',
   DEBUG = 'DEBUG',
-  TRACE = 'TRACE'
+  TRACE = 'TRACE',
 }

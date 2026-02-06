@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
 import { BusinessEventType } from '@the-new-fuse/types';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface SSEConnectionOptions {
   eventTypes?: BusinessEventType[];
@@ -23,9 +23,7 @@ export interface SSEEvent {
   timestamp: Date;
 }
 
-export function useSSEConnection(
-  options: SSEConnectionOptions = {}
-) {
+export function useSSEConnection(options: SSEConnectionOptions = {}) {
   const {
     eventTypes = [],
     filters = {},
@@ -52,11 +50,11 @@ export function useSSEConnection(
   const buildSSEUrl = useCallback(() => {
     const baseUrl = `${process.env.REACT_APP_API_URL || 'http://localhost:3001'}/webhooks/events/stream`;
     const params = new URLSearchParams();
-    
+
     if (eventTypes.length > 0) {
       params.append('event_types', eventTypes.join(','));
     }
-    
+
     if (Object.keys(filters).length > 0) {
       params.append('filters', JSON.stringify(filters));
     }
@@ -71,7 +69,7 @@ export function useSSEConnection(
 
     const token = localStorage.getItem('authToken');
     if (!token) {
-      setConnectionState(prev => ({
+      setConnectionState((prev) => ({
         ...prev,
         error: 'No authentication token available',
         isConnected: false,
@@ -87,9 +85,9 @@ export function useSSEConnection(
 
       // Set authorization header (note: EventSource doesn't support custom headers directly)
       // You may need to pass the token as a query parameter instead
-      
+
       eventSource.onopen = () => {
-        setConnectionState(prev => ({
+        setConnectionState((prev) => ({
           ...prev,
           isConnected: true,
           isReconnecting: false,
@@ -107,9 +105,9 @@ export function useSSEConnection(
             timestamp: new Date(),
           };
 
-          setEvents(prev => [...prev.slice(-99), sseEvent]); // Keep last 100 events
+          setEvents((prev) => [...prev.slice(-99), sseEvent]); // Keep last 100 events
           setLatestEvent(sseEvent);
-          setConnectionState(prev => ({
+          setConnectionState((prev) => ({
             ...prev,
             lastEventTime: new Date(),
           }));
@@ -126,14 +124,14 @@ export function useSSEConnection(
 
       eventSource.onerror = (error) => {
         console.error('SSE connection error:', error);
-        setConnectionState(prev => ({
+        setConnectionState((prev) => ({
           ...prev,
           isConnected: false,
           error: 'Connection error occurred',
         }));
 
         if (autoReconnect && prev.reconnectAttempts < maxReconnectAttempts) {
-          setConnectionState(prev => ({
+          setConnectionState((prev) => ({
             ...prev,
             isReconnecting: true,
             reconnectAttempts: prev.reconnectAttempts + 1,
@@ -147,7 +145,7 @@ export function useSSEConnection(
 
       eventSourceRef.current = eventSource;
     } catch (error) {
-      setConnectionState(prev => ({
+      setConnectionState((prev) => ({
         ...prev,
         error: `Failed to establish connection: ${error}`,
         isConnected: false,
@@ -166,7 +164,7 @@ export function useSSEConnection(
       reconnectTimeoutRef.current = null;
     }
 
-    setConnectionState(prev => ({
+    setConnectionState((prev) => ({
       ...prev,
       isConnected: false,
       isReconnecting: false,
@@ -175,7 +173,7 @@ export function useSSEConnection(
 
   const addEventListener = useCallback((eventType: string, listener: (event: SSEEvent) => void) => {
     eventListenersRef.current.set(eventType, listener);
-    
+
     return () => {
       eventListenersRef.current.delete(eventType);
     };

@@ -1,19 +1,17 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@the-new-fuse/ui-consolidated';
-import { Badge } from '@the-new-fuse/ui-consolidated';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
-  Users, 
-  ShoppingCart, 
+import { BusinessEventType, BusinessMetrics, IntegrationSource } from '@the-new-fuse/types';
+import { Badge, Card, CardContent, CardHeader, CardTitle } from '@the-new-fuse/ui-consolidated';
+import {
   Activity,
   AlertTriangle,
+  BarChart3,
   CheckCircle,
   Clock,
-  BarChart3,
+  DollarSign,
+  ShoppingCart,
+  TrendingDown,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
-import { BusinessMetrics, BusinessEventType, IntegrationSource } from '@the-new-fuse/types';
 
 export interface BusinessMetricsDisplayProps {
   metrics: BusinessMetrics | null;
@@ -157,9 +155,7 @@ export function BusinessMetricsDisplay({
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatNumber(metrics.totalEvents)}
-            </div>
+            <div className="text-2xl font-bold">{formatNumber(metrics.totalEvents)}</div>
             <p className="text-xs text-muted-foreground">
               {formatPercentage(1 - metrics.errorRate)} success rate
             </p>
@@ -172,7 +168,9 @@ export function BusinessMetricsDisplay({
             {getHealthScoreIcon(metrics.processingLatency.avg < 1000 ? 95 : 75)}
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${getHealthScoreColor(metrics.processingLatency.avg < 1000 ? 95 : 75)}`}>
+            <div
+              className={`text-2xl font-bold ${getHealthScoreColor(metrics.processingLatency.avg < 1000 ? 95 : 75)}`}
+            >
               {metrics.processingLatency.avg < 1000 ? '95%' : '75%'}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -195,10 +193,15 @@ export function BusinessMetricsDisplay({
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Error Rate</span>
                   <div className="flex items-center space-x-2">
-                    <span className={`text-sm font-bold ${
-                      metrics.errorRate < 0.01 ? 'text-green-600' : 
-                      metrics.errorRate < 0.05 ? 'text-yellow-600' : 'text-red-600'
-                    }`}>
+                    <span
+                      className={`text-sm font-bold ${
+                        metrics.errorRate < 0.01
+                          ? 'text-green-600'
+                          : metrics.errorRate < 0.05
+                            ? 'text-yellow-600'
+                            : 'text-red-600'
+                      }`}
+                    >
                       {formatPercentage(metrics.errorRate)}
                     </span>
                     {metrics.errorRate < 0.01 ? (
@@ -223,9 +226,7 @@ export function BusinessMetricsDisplay({
 
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Active Integrations</span>
-                  <span className="text-sm font-bold">
-                    {metrics.activeIntegrations}
-                  </span>
+                  <span className="text-sm font-bold">{metrics.activeIntegrations}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -289,7 +290,10 @@ export function BusinessMetricsDisplay({
                     <div key={type} className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <span className="text-sm font-medium">
-                          {type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+                          {type
+                            .replace(/_/g, ' ')
+                            .toLowerCase()
+                            .replace(/\b\w/g, (l) => l.toUpperCase())}
                         </span>
                       </div>
                       <div className="flex items-center space-x-2">

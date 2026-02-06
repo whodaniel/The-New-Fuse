@@ -1,6 +1,6 @@
 /**
  * Heartbeat Adapter
- * 
+ *
  * Bridges the HeartbeatMonitoringService to the interface expected by WorkflowEngineFactory
  */
 

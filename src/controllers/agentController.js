@@ -18,16 +18,16 @@ const common_1 = require("@nestjs/common");
 const jwt_auth_guard_js_1 = require("../guards/jwt-auth.guard.js");
 const types_1 = require("@the-new-fuse/types");
 const agentService_js_1 = require("../services/agentService.js");
-const prisma_service_tsx_1 = require("../lib/prisma.service.tsx");
+const drizzle_service_tsx_1 = require("../lib/drizzle.service.tsx");
 const config_1 = require("@nestjs/config");
 let AgentController = class AgentController {
-    prismaService;
+    drizzleService;
     configService;
     agentService;
-    constructor(prismaService, configService) {
-        this.prismaService = prismaService;
+    constructor(drizzleService, configService) {
+        this.drizzleService = drizzleService;
         this.configService = configService;
-        this.agentService = new agentService_js_1.AgentService(prismaService, configService);
+        this.agentService = new agentService_js_1.AgentService(drizzleService, configService);
     }
     async createAgent(data, req) {
         const userId = req.user?.id;
@@ -83,6 +83,6 @@ __decorate([
 exports.AgentController = AgentController = __decorate([
     (0, common_1.Controller)("agents"),
     (0, common_1.UseGuards)(jwt_auth_guard_js_1.JwtAuthGuard),
-    __metadata("design:paramtypes", [typeof (_a = typeof prisma_service_tsx_1.PrismaService !== "undefined" && prisma_service_tsx_1.PrismaService) === "function" ? _a : Object, config_1.ConfigService])
+    __metadata("design:paramtypes", [typeof (_a = typeof drizzle_service_tsx_1.DatabaseService !== "undefined" && drizzle_service_tsx_1.DatabaseService) === "function" ? _a : Object, config_1.ConfigService])
 ], AgentController);
 //# sourceMappingURL=agentController.js.map

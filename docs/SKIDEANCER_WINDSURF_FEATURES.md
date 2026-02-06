@@ -211,14 +211,14 @@ Features:
 
 ### Needs Porting as SkIDEancer Extensions
 
-| SkIDEancer Feature           | SkIDEancer Implementation                       |
-| ---------------------------- | ------------------------------------------ |
-| **AIFlowService (Cascade)**  | Create `@ide/ai-flow` extension          |
-| **AgentService**             | Create `@ide/agent-core` extension       |
-| **Code Analysis Capability** | Extend existing SkIDEancer AI analysis          |
-| **Suggestion Processor**     | Create enhanced inline completion provider |
-| **Semantic Navigation**      | Create AI-powered navigation extension     |
-| **Memory System**            | Integrate with SkIDEancer preferences/state     |
+| SkIDEancer Feature           | SkIDEancer Implementation                   |
+| ---------------------------- | ------------------------------------------- |
+| **AIFlowService (Cascade)**  | Create `@ide/ai-flow` extension             |
+| **AgentService**             | Create `@ide/agent-core` extension          |
+| **Code Analysis Capability** | Extend existing SkIDEancer AI analysis      |
+| **Suggestion Processor**     | Create enhanced inline completion provider  |
+| **Semantic Navigation**      | Create AI-powered navigation extension      |
+| **Memory System**            | Integrate with SkIDEancer preferences/state |
 
 ### Priority Order for Porting
 
@@ -323,15 +323,15 @@ src/vs/workbench/services/aiEmbeddingVector/
 
 ## Comparison: SkIDEancer vs Current SkIDEancer
 
-| Feature              | SkIDEancer       | Current SkIDEancer  |
-| -------------------- | ---------------- | -------------- |
-| Multi-provider LLM   | ✅ 7 providers   | ✅ 4 providers |
-| Agent with Memory    | ✅ Full          | ❌ None        |
-| Flow Orchestration   | ✅ Cascade-like  | ❌ None        |
-| Code Analysis        | ✅ Deep          | ⚠️ Basic       |
-| Semantic Navigation  | ✅ AI-powered    | ❌ None        |
-| Suggestion Processor | ✅ Context-aware | ⚠️ Basic       |
-| Embedding Vectors    | ✅ Full          | ❌ None        |
+| Feature              | SkIDEancer       | Current SkIDEancer |
+| -------------------- | ---------------- | ------------------ |
+| Multi-provider LLM   | ✅ 7 providers   | ✅ 4 providers     |
+| Agent with Memory    | ✅ Full          | ❌ None            |
+| Flow Orchestration   | ✅ Cascade-like  | ❌ None            |
+| Code Analysis        | ✅ Deep          | ⚠️ Basic           |
+| Semantic Navigation  | ✅ AI-powered    | ❌ None            |
+| Suggestion Processor | ✅ Context-aware | ⚠️ Basic           |
+| Embedding Vectors    | ✅ Full          | ❌ None            |
 
 **Bottom Line**: SkIDEancer has ~5,000+ lines of AI agent code that needs
 porting to SkIDEancer for feature parity.

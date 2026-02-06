@@ -1,16 +1,22 @@
 # Contract Testing Framework
 
-This framework provides tools for implementing contract tests for The New Fuse platform's APIs. It ensures that API requests and responses conform to their TypeScript interfaces at runtime and during testing.
+This framework provides tools for implementing contract tests for The New Fuse platform's APIs. It
+ensures that API requests and responses conform to their TypeScript interfaces at runtime and during
+testing.
 
 ## Core Components
 
 ### SchemaValidator
+
 Validates objects against TypeScript interfaces using class-validator and class-transformer.
+
 - `validateSchema`: Validates single objects
 - `validateNested`: Validates nested objects and arrays
 
 ### ContractEnforcer
+
 Manages API contracts and provides runtime validation.
+
 - `registerContract`: Register new API contracts
 - `validateRequest`: Validate incoming requests
 - `validateResponse`: Validate outgoing responses
@@ -18,7 +24,9 @@ Manages API contracts and provides runtime validation.
 - `generateContractTests`: Generate test boilerplate
 
 ### TestUtils
+
 Utilities for generating test data and mocks.
+
 - `generateMockData`: Create mock data based on TypeScript types
 - `generateMockArray`: Generate arrays of mock data
 - `createMockApiResponse`: Create API response objects
@@ -34,7 +42,7 @@ const createAgentContract: ContractDefinition<Agent> = {
   requestSchema: CreateAgentDto,
   responseSchema: Agent,
   protocol: ProtocolType.REST,
-  security: SecurityScheme.JWT
+  security: SecurityScheme.JWT,
 };
 ```
 
@@ -58,9 +66,9 @@ describe('API Contract Tests', () => {
   it('should validate request schema', async () => {
     const validRequest = {
       name: 'Test Agent',
-      type: AgentType.BASE
+      type: AgentType.BASE,
     };
-    
+
     const result = await enforcer.validateRequest('createAgent', validRequest);
     expect(result.isValid).toBe(true);
   });

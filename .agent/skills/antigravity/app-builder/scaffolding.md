@@ -42,12 +42,12 @@ project-name/
 │   │   └── hooks/                  # Global hooks
 │   │
 │   └── server/                     # Server-only code
-│       ├── db/                     # Database client (Prisma)
+│       ├── db/                     # Database client (Drizzle)
 │       ├── auth/                   # Auth config
 │       └── services/               # External API integrations
 │
-├── prisma/
-│   ├── schema.prisma
+├── drizzle/
+│   ├── schema.drizzle
 │   ├── migrations/
 │   └── seed.ts
 │
@@ -84,7 +84,7 @@ project-name/
 | `.env.example`         | Environment template                       |
 | `README.md`            | Project documentation                      |
 | `.gitignore`           | Git ignore rules                           |
-| `prisma/schema.prisma` | Database schema                            |
+| `drizzle/schema.drizzle` | Database schema                            |
 
 ---
 

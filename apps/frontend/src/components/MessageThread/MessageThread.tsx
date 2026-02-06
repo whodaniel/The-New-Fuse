@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
 import { format } from 'date-fns';
-import { X, Send } from 'lucide-react';
+import { Send, X } from 'lucide-react';
+import React, { useState } from 'react';
 import MarkdownRenderer from '../MarkdownRenderer';
 
 // Placeholder for missing MessageReactions component
@@ -27,7 +27,7 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
   replies,
   onReply,
   onClose,
-  currentUserId
+  currentUserId,
 }) => {
   const [replyContent, setReplyContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,7 +71,9 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-1">
-                <span className="font-medium text-gray-900 dark:text-gray-100">{parentMessage.sender}</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">
+                  {parentMessage.sender}
+                </span>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
                   {format(new Date(parentMessage.timestamp), 'MMM d, h:mm a')}
                 </span>
@@ -87,7 +89,10 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
         {/* Replies */}
         <div className="space-y-4 mb-6">
           {replies.map((reply) => (
-            <div key={reply.id} className="p-4 border border-gray-100 dark:border-gray-700 rounded-lg hover:border-gray-200 dark:hover:border-gray-600 transition-colors bg-white dark:bg-gray-800">
+            <div
+              key={reply.id}
+              className="p-4 border border-gray-100 dark:border-gray-700 rounded-lg hover:border-gray-200 dark:hover:border-gray-600 transition-colors bg-white dark:bg-gray-800"
+            >
               <div className="flex items-start space-x-3">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
@@ -98,7 +103,9 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-medium text-gray-900 dark:text-gray-100">{reply.sender}</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                      {reply.sender}
+                    </span>
                     <span className="text-sm text-gray-500 dark:text-gray-400">
                       {format(new Date(reply.timestamp), 'MMM d, h:mm a')}
                     </span>

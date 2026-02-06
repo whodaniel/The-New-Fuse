@@ -1,15 +1,12 @@
-import { 
-  MCPRequest, 
-  MCPResponse
-} from './IMCPMessage';
 import {
-  MCPServiceInfo,
-  ServiceQuery,
-  ServiceHealth,
   AdvancedServiceQuery,
+  MCPServiceInfo,
   ServiceCompatibilityResult,
-  ServiceRecommendationOptions
+  ServiceHealth,
+  ServiceQuery,
+  ServiceRecommendationOptions,
 } from '../types';
+import { MCPRequest, MCPResponse } from './IMCPMessage';
 
 /**
  * Core MCP Broker interface that defines the contract for MCP broker implementations.
@@ -56,7 +53,10 @@ export interface IMCPBroker {
    * @param serviceIdB The ID of the second service
    * @returns Promise resolving to compatibility analysis
    */
-  checkServiceCompatibility(serviceIdA: string, serviceIdB: string): Promise<ServiceCompatibilityResult>;
+  checkServiceCompatibility(
+    serviceIdA: string,
+    serviceIdB: string
+  ): Promise<ServiceCompatibilityResult>;
 
   /**
    * Get service recommendations based on usage patterns and compatibility
@@ -64,7 +64,10 @@ export interface IMCPBroker {
    * @param options Recommendation options
    * @returns Promise resolving to array of recommended services
    */
-  getServiceRecommendations(serviceId: string, options?: ServiceRecommendationOptions): Promise<MCPServiceInfo[]>;
+  getServiceRecommendations(
+    serviceId: string,
+    options?: ServiceRecommendationOptions
+  ): Promise<MCPServiceInfo[]>;
 
   /**
    * Route a request to an appropriate service

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AgentDiscoveryService } from '../services/agent-discovery.service.js';
-import { PrismaModule } from '../lib/prisma/prisma.module.js';
+import { DrizzleModule } from '../lib/drizzle/drizzle.module.js';
 import { MCPModule } from '../mcp/mcp.module.js';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
-    PrismaModule,
+    DrizzleModule,
     MCPModule,
     EventEmitterModule.forRoot()
   ],

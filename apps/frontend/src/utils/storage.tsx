@@ -14,11 +14,7 @@ export function getStorage(type: StorageType = 'local'): Storage {
   return type === 'local' ? localStorage : sessionStorage;
 }
 
-export function setItem<T>(
-  key: string,
-  value: T,
-  options: StorageOptions = {}
-): void {
+export function setItem<T>(key: string, value: T, options: StorageOptions = {}): void {
   const { type = 'local', expires } = options;
   const storage = getStorage(type);
 
@@ -43,10 +39,7 @@ export function setItem<T>(
   }
 }
 
-export function getItem<T>(
-  key: string,
-  options: StorageOptions = {}
-): T | null {
+export function getItem<T>(key: string, options: StorageOptions = {}): T | null {
   const { type = 'local' } = options;
   const storage = getStorage(type);
 
@@ -55,7 +48,7 @@ export function getItem<T>(
 
   try {
     const parsed = JSON.parse(item) as StorageItem<T>;
-    
+
     if (parsed.expires && Date.now() > parsed.expires) {
       storage.removeItem(key);
       return null;
@@ -68,10 +61,7 @@ export function getItem<T>(
   }
 }
 
-export function removeItem(
-  key: string,
-  options: StorageOptions = {}
-): void {
+export function removeItem(key: string, options: StorageOptions = {}): void {
   const { type = 'local' } = options;
   const storage = getStorage(type);
   storage.removeItem(key);
@@ -86,7 +76,7 @@ export function clearExpired(type: StorageType = 'local'): void {
   const storage = getStorage(type);
   const now = Date.now();
 
-  Object.keys(storage).forEach(key => {
+  Object.keys(storage).forEach((key) => {
     const item = storage.getItem(key);
     if (item) {
       try {

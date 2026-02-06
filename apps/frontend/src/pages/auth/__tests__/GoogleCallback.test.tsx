@@ -1,6 +1,6 @@
+import { AuthContext } from '@/contexts/AuthContext';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { AuthContext } from '@/contexts/AuthContext';
 import GoogleCallback from '../GoogleCallback';
 
 const mockNavigate = jest.fn();
@@ -11,7 +11,7 @@ jest.mock('react-router-dom', () => ({
 
 describe('GoogleCallback', () => {
   const mockLogin = jest.fn();
-  
+
   const wrapper = ({ children }) => (
     <AuthContext.Provider value={{ login: mockLogin }}>
       <MemoryRouter initialEntries={['/auth/google/callback?code=test_code']}>

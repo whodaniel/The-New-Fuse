@@ -1,5 +1,5 @@
-import { Redis } from 'ioredis';
 import { Logger } from '@nestjs/common';
+import { Redis } from 'ioredis';
 
 interface MetricData {
   messageType: string;
@@ -14,7 +14,7 @@ export class TraeMonitor {
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private metricsCollectionInterval: NodeJS.Timeout | null = null;
   private readonly metrics: Map<string, MetricData[]> = new Map();
-  
+
   constructor() {
     const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
     this.redis = new (Redis as any)(redisUrl);
@@ -60,14 +60,14 @@ export class TraeMonitor {
       metadata: {
         version: '1.1.0',
         source: agentId,
-        status: 'active'
-      }
+        status: 'active',
+      },
     };
 
     await this.redis.publish('agent:heartbeat', JSON.stringify(heartbeat));
   }
 
-  public enableMetrics(options: { collectInterval: number, reportInterval: number }): void {
+  public enableMetrics(options: { collectInterval: number; reportInterval: number }): void {
     // Set up metrics collection interval
     this.metricsCollectionInterval = setInterval(() => {
       this.reportMetrics();
@@ -79,7 +79,7 @@ export class TraeMonitor {
     if (!this.metrics.has(messageType)) {
       this.metrics.set(messageType, []);
     }
-    
+
     const metricsList = this.metrics.get(messageType);
     if (metricsList) {
       metricsList.push(data);
@@ -94,19 +94,19 @@ export class TraeMonitor {
         messageFlow: this.calculateMessageFlow(),
         errorRate: this.calculateErrorRate(),
         averageProcessingTime: this.calculateAverageProcessingTime(),
-        queueLength: this.calculateQueueLength()
-      }
+        queueLength: this.calculateQueueLength(),
+      },
     };
 
     await this.redis.publish('monitoring:metrics', JSON.stringify(metricReport));
-    
+
     // Clear old metrics after reporting
     this.metrics.clear();
   }
 
   private calculateMessageFlow(): number {
     let totalMessages = 0;
-    this.metrics.forEach(metricsList => {
+    this.metrics.forEach((metricsList) => {
       totalMessages += metricsList.length;
     });
     return totalMessages;
@@ -115,31 +115,31 @@ export class TraeMonitor {
   private calculateErrorRate(): number {
     let totalErrors = 0;
     let totalMessages = 0;
-    
-    this.metrics.forEach(metricsList => {
+
+    this.metrics.forEach((metricsList) => {
       totalMessages += metricsList.length;
-      metricsList.forEach(metric => {
+      metricsList.forEach((metric) => {
         if (!metric.success) {
           totalErrors++;
         }
       });
     });
-    
-    return totalMessages > 0 ? (totalErrors / totalMessages) : 0;
+
+    return totalMessages > 0 ? totalErrors / totalMessages : 0;
   }
 
   private calculateAverageProcessingTime(): number {
     let totalTime = 0;
     let totalMessages = 0;
-    
-    this.metrics.forEach(metricsList => {
-      metricsList.forEach(metric => {
+
+    this.metrics.forEach((metricsList) => {
+      metricsList.forEach((metric) => {
         totalTime += metric.processingTime;
         totalMessages++;
       });
     });
-    
-    return totalMessages > 0 ? (totalTime / totalMessages) : 0;
+
+    return totalMessages > 0 ? totalTime / totalMessages : 0;
   }
 
   private calculateQueueLength(): number {
@@ -167,12 +167,12 @@ export class TraeMonitor {
       clearInterval(this.heartbeatInterval);
       this.heartbeatInterval = null;
     }
-    
+
     if (this.metricsCollectionInterval) {
       clearInterval(this.metricsCollectionInterval);
       this.metricsCollectionInterval = null;
     }
-    
+
     await this.redis.quit();
   }
 }

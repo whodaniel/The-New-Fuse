@@ -42,15 +42,14 @@ class UnifiedAgentRegistry:
 
 if __name__ == "__main__":
     registry = UnifiedAgentRegistry()
-    # Add dummy data for testing
-    registry.register_agent(AgentMetadataSchema(
-        agent_id="test-agent-python-v1",
-        name="Test Python Agent",
-        version="1.0.0",
-        description="A test agent registered via Pydantic",
-        type="CODER",
-        provider="OPENAI",
-        capabilities=[AgentCapabilitySchema(name="testing", description="Testing capability", version="1.0.0")],
-        tags=["test", "python"]
-    ))
-    registry.export_to_json(".agent/agents/consolidated/pydantic_registry.json")
+    registry_path = ".agent/agents/consolidated/pydantic_registry.json"
+
+    # Load existing registry JSON if present and re-export for consistency checks.
+    if os.path.exists(registry_path):
+        with open(registry_path, "r") as f:
+            data = json.load(f)
+        if isinstance(data, list):
+            for entry in data:
+                registry.register_agent(AgentMetadataSchema(**entry))
+
+    registry.export_to_json(registry_path)

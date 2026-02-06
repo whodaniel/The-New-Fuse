@@ -1,6 +1,6 @@
 ---
 name: express-api
-description: Express.js REST API template principles. TypeScript, Prisma, JWT.
+description: Express.js REST API template principles. TypeScript, Drizzle, JWT.
 ---
 
 # Express.js API Template
@@ -12,7 +12,7 @@ description: Express.js REST API template principles. TypeScript, Prisma, JWT.
 | Runtime    | Node.js 20+         |
 | Framework  | Express.js          |
 | Language   | TypeScript          |
-| Database   | PostgreSQL + Prisma |
+| Database   | PostgreSQL + Drizzle |
 | Validation | Zod                 |
 | Auth       | JWT + bcrypt        |
 
@@ -22,8 +22,8 @@ description: Express.js REST API template principles. TypeScript, Prisma, JWT.
 
 ```
 project-name/
-├── prisma/
-│   └── schema.prisma
+├── drizzle/
+│   └── schema.drizzle
 ├── src/
 │   ├── app.ts           # Express setup
 │   ├── config/          # Environment
@@ -67,8 +67,8 @@ project-name/
 
 1. Create project directory
 2. `npm init -y`
-3. Install deps: `npm install express prisma zod bcrypt jsonwebtoken`
-4. Configure Prisma
+3. Install deps: `npm install express drizzle zod bcrypt jsonwebtoken`
+4. Configure Drizzle
 5. `npm run db:push`
 6. `npm run dev`
 
@@ -80,4 +80,4 @@ project-name/
 - Validate all inputs with Zod
 - Centralized error handling
 - Environment-based config
-- Use Prisma for type-safe DB access
+- Use Drizzle for type-safe DB access

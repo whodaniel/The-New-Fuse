@@ -2,7 +2,9 @@
 
 ## Overview
 
-The New Fuse includes a comprehensive port management system designed to eliminate port conflicts, provide visibility into service allocation, and automate configuration management.
+The New Fuse includes a comprehensive port management system designed to
+eliminate port conflicts, provide visibility into service allocation, and
+automate configuration management.
 
 ## Quick Start
 
@@ -49,36 +51,40 @@ tnf-ports health
 
 ## Default Port Allocation
 
-| Service | Development | Production | Purpose |
-|---------|------------|------------|----------|
-| Frontend | 3000 | 3000 | React/Vite application |
-| API Server | 3001 | 3001 | NestJS API endpoints |
-| Backend | 3004 | - | Additional backend services |
-| Message Broker | - | 3002 | WebSocket/messaging |
-| Database | 5432 | 5432 | PostgreSQL |
-| Redis | 6379 | 6379 | Caching/sessions |
+| Service        | Development | Production | Purpose                     |
+| -------------- | ----------- | ---------- | --------------------------- |
+| Frontend       | 3000        | 3000       | React/Vite application      |
+| API Server     | 3001        | 3001       | NestJS API endpoints        |
+| Backend        | 3004        | -          | Additional backend services |
+| Message Broker | -           | 3002       | WebSocket/messaging         |
+| Database       | 5432        | 5432       | PostgreSQL                  |
+| Redis          | 6379        | 6379       | Caching/sessions            |
 
 ## Features
 
 ### Automatic Conflict Resolution
+
 - **Smart Detection**: Identifies port conflicts across all services
 - **Intelligent Suggestions**: Provides optimal resolution strategies
 - **One-Click Resolution**: Apply suggested fixes instantly
 - **Priority-Based**: Frontend > API > Backend service prioritization
 
 ### Real-Time Monitoring
+
 - **Health Checks**: Continuous monitoring of service endpoints
 - **Status Updates**: Live updates via WebSocket connections
 - **Visual Dashboard**: Interactive port allocation map
 - **Alerting**: Immediate notification of issues
 
 ### Configuration Management
+
 - **Dynamic Updates**: Configuration files update automatically
 - **Backup & Restore**: Automatic backup before changes
 - **Validation**: Ensures configuration integrity
 - **Rollback**: Easy restoration if issues occur
 
 ### Development Workflow Integration
+
 - **VS Code Integration**: Updated launch configurations
 - **Docker Support**: Automatic Docker Compose updates
 - **Environment Sync**: Consistent port allocation across environments
@@ -87,6 +93,7 @@ tnf-ports health
 ## CLI Reference
 
 ### Status Commands
+
 ```bash
 # Show all ports
 tnf-ports status
@@ -99,6 +106,7 @@ tnf-ports status -s frontend
 ```
 
 ### Conflict Management
+
 ```bash
 # Check for conflicts
 tnf-ports conflicts
@@ -108,6 +116,7 @@ tnf-ports conflicts --auto-resolve
 ```
 
 ### Health Monitoring
+
 ```bash
 # Check all services
 tnf-ports health
@@ -120,6 +129,7 @@ tnf-ports health -s api
 ```
 
 ### Development Environment
+
 ```bash
 # Prepare optimized development environment
 tnf-ports dev --optimize
@@ -138,7 +148,7 @@ import { usePortRegistry } from '@/hooks/usePortRegistry';
 
 function PortDashboard() {
   const { ports, conflicts, reassignPort } = usePortRegistry();
-  
+
   return (
     <div>
       {/* Port management UI */}
@@ -160,7 +170,7 @@ await portRegistry.registerPort({
   serviceName: 'my-service',
   serviceType: 'api',
   environment: 'development',
-  port: 3005
+  port: 3005,
 });
 ```
 
@@ -179,19 +189,21 @@ The system automatically updates:
 ### Common Issues
 
 1. **Port Already in Use**
+
    ```bash
    # Check what's using the port
    lsof -i :3000
-   
+
    # Use port management to find alternative
    tnf-ports conflicts --auto-resolve
    ```
 
 2. **Service Not Responding**
+
    ```bash
    # Check service health
    tnf-ports health -s frontend
-   
+
    # Verify port allocation
    tnf-ports status
    ```
@@ -219,6 +231,7 @@ tnf-ports register -s api -e development -p 3001 -t api
 ## Advanced Features
 
 ### Custom Port Ranges
+
 Configure preferred port ranges for different service types:
 
 ```javascript
@@ -226,11 +239,12 @@ Configure preferred port ranges for different service types:
 const serviceConfig = {
   frontend: { range: [3000, 3099], preferred: 3000 },
   api: { range: [3100, 3199], preferred: 3101 },
-  backend: { range: [3200, 3299], preferred: 3201 }
+  backend: { range: [3200, 3299], preferred: 3201 },
 };
 ```
 
 ### Health Check Configuration
+
 Set up custom health check endpoints:
 
 ```javascript
@@ -239,11 +253,12 @@ const healthConfig = {
   path: '/health',
   interval: 30000,
   timeout: 5000,
-  expectedStatus: 200
+  expectedStatus: 200,
 };
 ```
 
 ### Environment-Specific Settings
+
 Different port allocation per environment:
 
 ```javascript
@@ -251,7 +266,7 @@ Different port allocation per environment:
 const envPorts = {
   development: { frontend: 3000, api: 3001 },
   staging: { frontend: 4000, api: 4001 },
-  production: { frontend: 80, api: 443 }
+  production: { frontend: 80, api: 443 },
 };
 ```
 
@@ -288,4 +303,5 @@ For issues or questions about the port management system:
 
 ---
 
-*This documentation is part of The New Fuse platform and is automatically updated as features evolve.*
+_This documentation is part of The New Fuse platform and is automatically
+updated as features evolve._

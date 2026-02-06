@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { A2AService } from '../src/a2a.service';
-import { Ap2ProtocolService } from '@the-new-fuse/ap2-protocol';
 import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { Ap2ProtocolService } from '@the-new-fuse/ap2-protocol';
+import { A2AService } from '../src/a2a.service';
 
 describe('A2AService', () => {
   let service: A2AService;

@@ -5,8 +5,8 @@
  */
 
 import { Inject, Injectable } from '@nestjs/common';
-import * as os from 'os';
 import { DRIZZLE_CLIENT, type DrizzleClient, sql } from '@the-new-fuse/database';
+import * as os from 'os';
 import { ApiLogsRepository } from '../repositories/api-logs.repository';
 
 @Injectable()
@@ -39,7 +39,7 @@ export class SystemMetricsService {
         uptime: os.uptime(),
         totalMemory: os.totalmem(),
         cpus: os.cpus().length,
-      }
+      },
     };
   }
 
@@ -79,7 +79,7 @@ export class SystemMetricsService {
         WHERE state = 'active'
       `);
       return {
-        activeConnections: result[0]?.count || 0
+        activeConnections: result[0]?.count || 0,
       };
     } catch (error) {
       return { activeConnections: 0 };

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AuthService, LoginCredentials, RegisterData } from '../mocks/api-client';
 
 /**
@@ -54,14 +54,14 @@ export interface UseAuthOptions {
  * Hook for authentication
  * @param options Authentication hook options
  * @returns Authentication hook result
- * 
+ *
  * @example
  * // Create auth service
  * const authService = new AuthService(apiClient, tokenStorage);
- * 
+ *
  * // Use auth hook
  * const { isAuthenticated, isLoading, user, login, logout } = useAuth({ authService });
- * 
+ *
  * // Login
  * const handleLogin = async (email, password) => {
  *   try {
@@ -74,20 +74,20 @@ export interface UseAuthOptions {
  */
 export function useAuth(options: UseAuthOptions): UseAuthResult {
   const { authService, checkOnMount = true } = options;
-  
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [user, setUser] = useState<any | null>(null);
-  
+
   const checkAuth = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const isAuth = await authService.isAuthenticated();
       setIsAuthenticated(isAuth);
-      
+
       if (isAuth) {
         const userData = await authService.getCurrentUser();
         setUser(userData);
@@ -102,48 +102,54 @@ export function useAuth(options: UseAuthOptions): UseAuthResult {
       setIsLoading(false);
     }
   }, [authService]);
-  
-  const login = useCallback(async (credentials: LoginCredentials) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const response = await authService.login(credentials);
-      
-      setIsAuthenticated(true);
-      setUser(response.user);
-    } catch (err) {
-      setError(err as Error);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [authService]);
-  
-  const register = useCallback(async (data: RegisterData) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const response = await authService.register(data);
-      
-      setIsAuthenticated(true);
-      setUser(response.user);
-    } catch (err) {
-      setError(err as Error);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [authService]);
-  
+
+  const login = useCallback(
+    async (credentials: LoginCredentials) => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await authService.login(credentials);
+
+        setIsAuthenticated(true);
+        setUser(response.user);
+      } catch (err) {
+        setError(err as Error);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [authService]
+  );
+
+  const register = useCallback(
+    async (data: RegisterData) => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await authService.register(data);
+
+        setIsAuthenticated(true);
+        setUser(response.user);
+      } catch (err) {
+        setError(err as Error);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [authService]
+  );
+
   const logout = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       await authService.logout();
-      
+
       setIsAuthenticated(false);
       setUser(null);
     } catch (err) {
@@ -153,13 +159,13 @@ export function useAuth(options: UseAuthOptions): UseAuthResult {
       setIsLoading(false);
     }
   }, [authService]);
-  
+
   useEffect(() => {
     if (checkOnMount) {
       checkAuth();
     }
   }, [checkOnMount, checkAuth]);
-  
+
   return {
     isAuthenticated,
     isLoading,

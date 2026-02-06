@@ -1,6 +1,6 @@
-import { Controller, Post, Get, Body, Param, Logger } from '@nestjs/common';
-import { WalletsService } from './wallets.service';
+import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
 import { SmartAccountDeploymentResult } from '../smart-accounts/smart-account.service';
+import { WalletsService } from './wallets.service';
 
 @Controller('wallets')
 export class WalletsController {
@@ -9,16 +9,31 @@ export class WalletsController {
   constructor(private readonly walletsService: WalletsService) {}
 
   @Post('create')
-  async createWallet(@Body() createWalletDto: {
-    userId: string;
-    verifierId: string;
-    chainId?: number;
-    userType?: 'HUMAN' | 'AI';
-    enableSmartAccount?: boolean;
-  }): Promise<any> {
+  async createWallet(
+    @Body()
+    createWalletDto: {
+      userId: string;
+      verifierId: string;
+      chainId?: number;
+      userType?: 'HUMAN' | 'AI';
+      enableSmartAccount?: boolean;
+    }
+  ): Promise<any> {
     try {
-      const { userId, verifierId, chainId, userType = 'HUMAN', enableSmartAccount = true } = createWalletDto;
-      return await this.walletsService.createWallet(userId, verifierId, chainId, userType, enableSmartAccount);
+      const {
+        userId,
+        verifierId,
+        chainId,
+        userType = 'HUMAN',
+        enableSmartAccount = true,
+      } = createWalletDto;
+      return await this.walletsService.createWallet(
+        userId,
+        verifierId,
+        chainId,
+        userType,
+        enableSmartAccount
+      );
     } catch (error) {
       this.logger.error('Failed to create wallet:', error);
       throw error;
@@ -46,7 +61,9 @@ export class WalletsController {
   }
 
   @Post('enable-smart-account/:walletId')
-  async enableSmartAccount(@Param('walletId') walletId: string): Promise<SmartAccountDeploymentResult> {
+  async enableSmartAccount(
+    @Param('walletId') walletId: string
+  ): Promise<SmartAccountDeploymentResult> {
     try {
       return await this.walletsService.enableSmartAccountForWallet(walletId);
     } catch (error) {
@@ -56,7 +73,9 @@ export class WalletsController {
   }
 
   @Post('deploy-smart-account/:walletId')
-  async deploySmartAccount(@Param('walletId') walletId: string): Promise<SmartAccountDeploymentResult> {
+  async deploySmartAccount(
+    @Param('walletId') walletId: string
+  ): Promise<SmartAccountDeploymentResult> {
     try {
       return await this.walletsService.deploySmartAccountForWallet(walletId);
     } catch (error) {

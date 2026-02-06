@@ -29,9 +29,9 @@ config:
 
   # Performance thresholds
   ensure:
-    maxErrorRate: 1          # Max 1% error rate
-    p95: 500                 # 95th percentile < 500ms
-    p99: 1000                # 99th percentile < 1000ms
+    maxErrorRate: 1 # Max 1% error rate
+    p95: 500 # 95th percentile < 500ms
+    p99: 1000 # 99th percentile < 1000ms
 
   # Plugins for enhanced reporting
   plugins:

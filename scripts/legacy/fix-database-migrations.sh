@@ -13,7 +13,7 @@ echo "Creating a new migration to fix the role field conflict..."
 
 # Generate a timestamp for the migration
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
-MIGRATION_DIR="./prisma/migrations/${TIMESTAMP}_fix_role_field_conflict"
+MIGRATION_DIR="./drizzle/migrations/${TIMESTAMP}_fix_role_field_conflict"
 
 # Create the migration directory
 mkdir -p "$MIGRATION_DIR"
@@ -47,8 +47,8 @@ DO $$ BEGIN
     END IF;
 END $$;
 
--- Mark all previous problematic migrations as applied in the _prisma_migrations table
-UPDATE "_prisma_migrations" 
+-- Mark all previous problematic migrations as applied in the _drizzle_migrations table
+UPDATE "_drizzle_migrations" 
 SET "applied" = 1, "rolled_back" = 0, "rolled_back_at" = NULL 
 WHERE "migration_name" IN (
     '20250120101622_add_google_auth_fields',
@@ -69,15 +69,15 @@ echo "✅ Database environment configured"
 
 # 3. Apply the new migration
 echo "Applying the corrected migration..."
-npx prisma migrate resolve --applied "${TIMESTAMP}_fix_role_field_conflict"
+npx drizzle migrate resolve --applied "${TIMESTAMP}_fix_role_field_conflict"
 
 echo "✅ Migration applied successfully"
 
-# 4. Generate the Prisma client
-echo "Generating Prisma client..."
-npx prisma generate
+# 4. Generate the Drizzle client
+echo "Generating Drizzle client..."
+npx drizzle generate
 
-echo "✅ Prisma client generated"
+echo "✅ Drizzle client generated"
 
 echo "🎉 Database migration issues have been permanently fixed."
 echo "You can now run 'pnpm run build' to build the entire project."

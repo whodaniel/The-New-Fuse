@@ -1,46 +1,52 @@
-import { Controller, Post, Get, Put, Body, Param, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { execSync } from 'child_process';
+import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { Permission } from '@the-new-fuse/types';
-import { RoleService } from '../services/role.service';
+import { execSync } from 'child_process';
+import {
+  AdminOnly,
+  AuditLog,
+  HighSecurity,
+  RateLimitTier,
+  SecureAuthGuard,
+  SetRateLimitTier,
+} from '../guards/secure-auth.guard';
 import { AuditService } from '../services/audit.service';
 import { MetricsService } from '../services/metrics.service';
-import { SecureAuthGuard, AdminOnly, SetRateLimitTier, RateLimitTier, AuditLog, HighSecurity } from '../guards/secure-auth.guard';
+import { RoleService } from '../services/role.service';
 
 /**
  * Admin Controller
- * 
+ *
  * Handles all administrative operations including system management, role-based
  * access control, audit logging, and system monitoring. This controller provides
  * privileged access to system administration functions and is heavily protected.
- * 
+ *
  * The controller includes:
  * - System script execution capabilities
  * - Role and permission management
  * - Audit log retrieval and analysis
  * - System metrics and monitoring
  * - High-security administrative operations
- * 
+ *
  * All endpoints require:
  * - Admin-level authentication
  * - Rate limiting to prevent abuse
  * - Comprehensive audit logging
  * - High-security request validation
- * 
+ *
  * @warning This controller contains privileged operations that can affect
  * the entire system. Use with extreme caution and ensure proper authorization.
- * 
+ *
  * @example
  * // Get all system roles
  * GET /admin/roles
- * 
+ *
  * @example
  * // Run system maintenance script
  * POST /admin/run-script
  * {
  *   "script": "cleanup:temp-files"
  * }
- * 
+ *
  * @example
  * // Update role permissions
  * PUT /admin/roles/role123/permissions
@@ -57,11 +63,11 @@ import { SecureAuthGuard, AdminOnly, SetRateLimitTier, RateLimitTier, AuditLog, 
 export class AdminController {
   /**
    * Constructor for AdminController
-   * 
+   *
    * @param roleService - Service for managing roles and permissions
    * @param auditService - Service for audit logging and compliance
    * @param metricsService - Service for system metrics and monitoring
-   * 
+   *
    * @example
    * const controller = new AdminController(roleService, auditService, metricsService);
    */
@@ -73,36 +79,36 @@ export class AdminController {
 
   /**
    * Execute system maintenance script
-   * 
+   *
    * Executes predefined system maintenance scripts using the Fuse CLI.
    * This is a highly privileged operation that can perform system-level
    * maintenance tasks. Only whitelisted scripts can be executed for security.
-   * 
+   *
    * @param script - Script identifier to execute
-   * 
+   *
    * @returns Promise containing execution result
    * @returns.success - Whether script execution was successful
    * @returns.output - Script output (stdout)
    * @returns.error - Error message if execution failed
    * @returns.executedAt - Execution timestamp
    * @returns.executionTime - Script execution time in milliseconds
-   * 
+   *
    * @throws ForbiddenException - When script is not whitelisted
    * @throws BadRequestException - When script parameter is invalid
    * @throws InternalServerErrorException - When script execution fails
-   * 
+   *
    * @api
    * POST /admin/run-script
    * @requiresAuth - Admin-level bearer token
    * @requiresPermission - admin:system
    * @rateLimit - 10 requests per hour
-   * 
+   *
    * @securityWarning This endpoint can execute arbitrary system commands.
    * Only whitelisted scripts are permitted. All executions are audited.
-   * 
+   *
    * @example
    * const result = await adminController.runScript('cleanup:temp-files');
-   * 
+   *
    * @example
    * // Successful execution
    * {
@@ -111,7 +117,7 @@ export class AdminController {
    *   "executedAt": "2025-11-05T02:17:55.000Z",
    *   "executionTime": 1250
    * }
-   * 
+   *
    * @example
    * // Failed execution
    * {
@@ -133,11 +139,11 @@ export class AdminController {
 
   /**
    * Get all system roles
-   * 
+   *
    * Retrieves a complete list of all roles defined in the system along with
    * their associated permissions and metadata. This is used for role management
    * and access control administration.
-   * 
+   *
    * @returns Promise containing array of all roles
    * @returns[].id - Unique role identifier
    * @returns[].name - Role name
@@ -147,18 +153,18 @@ export class AdminController {
    * @returns[].createdAt - Role creation timestamp
    * @returns[].updatedAt - Last update timestamp
    * @returns[].userCount - Number of users assigned to this role
-   * 
+   *
    * @throws InternalServerErrorException - When unable to fetch roles
-   * 
+   *
    * @api
    * GET /admin/roles
    * @requiresAuth - Admin-level bearer token
    * @requiresPermission - admin:roles
    * @rateLimit - 100 requests per hour
-   * 
+   *
    * @example
    * const roles = await adminController.getRoles();
-   * 
+   *
    * @example
    * // Successful response
    * [
@@ -191,41 +197,41 @@ export class AdminController {
 
   /**
    * Update role permissions
-   * 
+   *
    * Modifies the permission set associated with a specific role. This is a
    * sensitive operation that can significantly impact system security. Changes
    * are immediately applied and audit logged.
-   * 
+   *
    * @param roleId - Unique role identifier
    * @param permissions - New permission set for the role
-   * 
+   *
    * @returns Promise containing updated role details
    * @returns.id - Role identifier
    * @returns.name - Role name
    * @returns.permissions - Updated permission set
    * @returns.updatedAt - Update timestamp
    * @returns.affectedUsers - Number of users affected by this change
-   * 
+   *
    * @throws NotFoundException - When role is not found
    * @throws BadRequestException - When permissions are invalid
    * @throws ForbiddenException - When attempting to modify protected system roles
-   * 
+   *
    * @api
    * PUT /admin/roles/:roleId/permissions
    * @requiresAuth - Admin-level bearer token
    * @requiresPermission - admin:roles
    * @rateLimit - 50 requests per hour
-   * 
+   *
    * @securityWarning Changing role permissions can immediately affect user access.
    * Verify changes before applying to prevent security breaches.
-   * 
+   *
    * @example
    * const updatedRole = await adminController.updateRolePermissions('role456', [
    *   'read:users',
    *   'write:users',
    *   'admin:agents'
    * ]);
-   * 
+   *
    * @example
    * // Successful response
    * {
@@ -250,11 +256,11 @@ export class AdminController {
 
   /**
    * Get audit logs
-   * 
+   *
    * Retrieves comprehensive audit logs for system compliance and security
    * monitoring. This includes all administrative actions, security events,
    * and user activities. Logs are filtered based on admin access level.
-   * 
+   *
    * @returns Promise containing audit log entries
    * @returns[].id - Unique log entry identifier
    * @returns[].timestamp - Event timestamp
@@ -265,21 +271,21 @@ export class AdminController {
    * @returns[].ipAddress - IP address of the request
    * @returns[].userAgent - User agent string
    * @returns[].severity - Log severity level
-   * 
+   *
    * @throws InternalServerErrorException - When unable to fetch audit logs
-   * 
+   *
    * @api
    * GET /admin/audit-logs
    * @requiresAuth - Admin-level bearer token
    * @requiresPermission - admin:audit
    * @rateLimit - 200 requests per hour
-   * 
+   *
    * @compliance This endpoint is critical for compliance with security
    * standards. Ensure proper access controls and data retention policies.
-   * 
+   *
    * @example
    * const auditLogs = await adminController.getAuditLogs();
-   * 
+   *
    * @example
    * // Successful response
    * [
@@ -307,11 +313,11 @@ export class AdminController {
 
   /**
    * Get system metrics
-   * 
+   *
    * Retrieves comprehensive system performance and health metrics including
    * resource usage, performance indicators, and system status. This data is
    * essential for system monitoring and capacity planning.
-   * 
+   *
    * @returns Promise containing system metrics
    * @returns.cpu - CPU usage statistics
    * @returns.memory - Memory usage statistics
@@ -322,18 +328,18 @@ export class AdminController {
    * @returns.agents - Agent system metrics
    * @returns.users - User activity metrics
    * @returns.timestamp - Metrics collection timestamp
-   * 
+   *
    * @throws InternalServerErrorException - When unable to collect metrics
-   * 
+   *
    * @api
    * GET /admin/metrics
    * @requiresAuth - Admin-level bearer token
    * @requiresPermission - admin:metrics
    * @rateLimit - 300 requests per hour
-   * 
+   *
    * @example
    * const metrics = await adminController.getSystemMetrics();
-   * 
+   *
    * @example
    * // Successful response
    * {
@@ -375,8 +381,8 @@ export class AdminController {
    *   "agents": {
    *     "total": 45,
    *     "active": 38,
-     *     "inactive": 7,
-     *     "avgResponseTime": 1.8
+   *     "inactive": 7,
+   *     "avgResponseTime": 1.8
    *   },
    *   "users": {
    *     "total": 1247,

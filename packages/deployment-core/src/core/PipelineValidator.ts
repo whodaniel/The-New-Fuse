@@ -1,13 +1,13 @@
+import { Logger } from 'winston';
 import {
+  DeploymentConfig,
+  DeploymentStrategy,
   PipelineDefinition,
   PipelineStage,
   PipelineTask,
-  DeploymentConfig,
   StageType,
   TriggerType,
-  DeploymentStrategy
 } from '../types/pipeline';
-import { Logger } from 'winston';
 
 /**
  * Pipeline Validator ensures pipeline configurations are valid and safe to execute
@@ -22,7 +22,9 @@ export class PipelineValidator {
   /**
    * Validate a complete pipeline definition
    */
-  async validatePipeline(pipeline: PipelineDefinition): Promise<{ valid: boolean; errors: string[] }> {
+  async validatePipeline(
+    pipeline: PipelineDefinition
+  ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
     try {
@@ -61,22 +63,21 @@ export class PipelineValidator {
       this.logger.info(`Pipeline validation completed: ${pipeline.name}`, {
         pipelineId: pipeline.id,
         valid: isValid,
-        errorCount: errors.length
+        errorCount: errors.length,
       });
 
       if (!isValid) {
         this.logger.warn(`Pipeline validation errors: ${pipeline.name}`, {
           pipelineId: pipeline.id,
-          errors
+          errors,
         });
       }
 
       return { valid: isValid, errors };
-
     } catch (error) {
       this.logger.error(`Pipeline validation failed: ${error.message}`, {
         pipelineId: pipeline.id,
-        error: error.stack
+        error: error.stack,
       });
 
       errors.push(`Validation error: ${error.message}`);
@@ -87,7 +88,9 @@ export class PipelineValidator {
   /**
    * Validate a deployment configuration
    */
-  async validateDeployment(deployment: DeploymentConfig): Promise<{ valid: boolean; errors: string[] }> {
+  async validateDeployment(
+    deployment: DeploymentConfig
+  ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
     try {
@@ -115,15 +118,14 @@ export class PipelineValidator {
         deploymentId: deployment.id,
         environment: deployment.environment,
         valid: isValid,
-        errorCount: errors.length
+        errorCount: errors.length,
       });
 
       return { valid: isValid, errors };
-
     } catch (error) {
       this.logger.error(`Deployment validation failed: ${error.message}`, {
         deploymentId: deployment.id,
-        error: error.stack
+        error: error.stack,
       });
 
       errors.push(`Deployment validation error: ${error.message}`);
@@ -273,12 +275,16 @@ export class PipelineValidator {
           errors.push(`${taskPrefix}: Kubernetes task requires 'action' parameter`);
         }
         if (!task.parameters.resource && !task.parameters.manifest) {
-          errors.push(`${taskPrefix}: Kubernetes task requires either 'resource' or 'manifest' parameter`);
+          errors.push(
+            `${taskPrefix}: Kubernetes task requires either 'resource' or 'manifest' parameter`
+          );
         }
         break;
       case 'test':
         if (!task.parameters.testCommand && !task.command && !task.script) {
-          errors.push(`${taskPrefix}: Test task requires 'testCommand' parameter or command/script`);
+          errors.push(
+            `${taskPrefix}: Test task requires 'testCommand' parameter or command/script`
+          );
         }
         break;
     }
@@ -300,7 +306,9 @@ export class PipelineValidator {
       if (trigger.filters) {
         trigger.filters.forEach((filter: any, filterIndex: number) => {
           if (!filter.type || !filter.pattern) {
-            errors.push(`${triggerPrefix} - Filter ${filterIndex + 1}: Filter type and pattern are required`);
+            errors.push(
+              `${triggerPrefix} - Filter ${filterIndex + 1}: Filter type and pattern are required`
+            );
           }
         });
       }
@@ -321,21 +329,33 @@ export class PipelineValidator {
         errors.push('Invalid CPU resource quantity format');
       }
 
-      if (environment.resources.memory && !this.isValidResourceQuantity(environment.resources.memory)) {
+      if (
+        environment.resources.memory &&
+        !this.isValidResourceQuantity(environment.resources.memory)
+      ) {
         errors.push('Invalid memory resource quantity format');
       }
 
-      if (environment.resources.storage && !this.isValidResourceQuantity(environment.resources.storage)) {
+      if (
+        environment.resources.storage &&
+        !this.isValidResourceQuantity(environment.resources.storage)
+      ) {
         errors.push('Invalid storage resource quantity format');
       }
     }
 
     if (environment.constraints) {
-      if (environment.constraints.maxConcurrentDeployments && environment.constraints.maxConcurrentDeployments <= 0) {
+      if (
+        environment.constraints.maxConcurrentDeployments &&
+        environment.constraints.maxConcurrentDeployments <= 0
+      ) {
         errors.push('Max concurrent deployments must be positive');
       }
 
-      if (environment.constraints.requiredApprovals && environment.constraints.requiredApprovals < 0) {
+      if (
+        environment.constraints.requiredApprovals &&
+        environment.constraints.requiredApprovals < 0
+      ) {
         errors.push('Required approvals cannot be negative');
       }
     }
@@ -385,25 +405,31 @@ export class PipelineValidator {
 
       notification.channels?.forEach((channel: any, channelIndex: number) => {
         if (!channel.type) {
-          errors.push(`${notificationPrefix} - Channel ${channelIndex + 1}: Channel type is required`);
+          errors.push(
+            `${notificationPrefix} - Channel ${channelIndex + 1}: Channel type is required`
+          );
         }
 
         if (!['slack', 'email', 'webhook', 'sms'].includes(channel.type)) {
-          errors.push(`${notificationPrefix} - Channel ${channelIndex + 1}: Invalid channel type: ${channel.type}`);
+          errors.push(
+            `${notificationPrefix} - Channel ${channelIndex + 1}: Invalid channel type: ${channel.type}`
+          );
         }
 
         if (!channel.configuration) {
-          errors.push(`${notificationPrefix} - Channel ${channelIndex + 1}: Channel configuration is required`);
+          errors.push(
+            `${notificationPrefix} - Channel ${channelIndex + 1}: Channel configuration is required`
+          );
         }
       });
     });
   }
 
   private validateStageDependencies(stages: PipelineStage[], errors: string[]): void {
-    const stageIds = new Set(stages.map(s => s.id));
+    const stageIds = new Set(stages.map((s) => s.id));
 
-    stages.forEach(stage => {
-      stage.dependencies.forEach(depId => {
+    stages.forEach((stage) => {
+      stage.dependencies.forEach((depId) => {
         if (!stageIds.has(depId)) {
           errors.push(`Stage ${stage.name}: Invalid dependency reference: ${depId}`);
         }
@@ -430,8 +456,11 @@ export class PipelineValidator {
         errors.push('Retry policy max delay must be positive');
       }
 
-      if (pipeline.retryPolicy.initialDelay && pipeline.retryPolicy.maxDelay &&
-          pipeline.retryPolicy.initialDelay > pipeline.retryPolicy.maxDelay) {
+      if (
+        pipeline.retryPolicy.initialDelay &&
+        pipeline.retryPolicy.maxDelay &&
+        pipeline.retryPolicy.initialDelay > pipeline.retryPolicy.maxDelay
+      ) {
         errors.push('Retry policy initial delay cannot be greater than max delay');
       }
     }
@@ -443,21 +472,29 @@ export class PipelineValidator {
       for (const task of stage.tasks) {
         // Check for hardcoded secrets
         if (task.command && this.containsHardcodedSecrets(task.command)) {
-          errors.push(`Stage ${stage.name} - Task ${task.name}: Potential hardcoded secrets detected`);
+          errors.push(
+            `Stage ${stage.name} - Task ${task.name}: Potential hardcoded secrets detected`
+          );
         }
 
         if (task.script && this.containsHardcodedSecrets(task.script)) {
-          errors.push(`Stage ${stage.name} - Task ${task.name}: Potential hardcoded secrets detected in script`);
+          errors.push(
+            `Stage ${stage.name} - Task ${task.name}: Potential hardcoded secrets detected in script`
+          );
         }
 
         // Check for dangerous commands
         if (task.command && this.containsDangerousCommands(task.command)) {
-          errors.push(`Stage ${stage.name} - Task ${task.name}: Potentially dangerous command detected`);
+          errors.push(
+            `Stage ${stage.name} - Task ${task.name}: Potentially dangerous command detected`
+          );
         }
 
         // Check for privilege escalation
         if (task.parameters && this.requiresPrivilegeEscalation(task.parameters)) {
-          errors.push(`Stage ${stage.name} - Task ${task.name}: Task requires privilege escalation`);
+          errors.push(
+            `Stage ${stage.name} - Task ${task.name}: Task requires privilege escalation`
+          );
         }
       }
     }
@@ -467,7 +504,7 @@ export class PipelineValidator {
     // Validate resource requirements
     if (pipeline.environment.resources) {
       const resources = pipeline.environment.resources;
-      
+
       if (resources.cpu && !this.isValidResourceQuantity(resources.cpu)) {
         errors.push('Invalid CPU resource specification');
       }
@@ -545,7 +582,9 @@ export class PipelineValidator {
       }
 
       if (!['file', 'directory', 'archive'].includes(artifact.type)) {
-        errors.push(`${taskPrefix} - Artifact ${index + 1}: Invalid artifact type: ${artifact.type}`);
+        errors.push(
+          `${taskPrefix} - Artifact ${index + 1}: Invalid artifact type: ${artifact.type}`
+        );
       }
     });
   }
@@ -665,10 +704,15 @@ export class PipelineValidator {
       }
 
       if ((healthCheck.type === 'http' || healthCheck.type === 'tcp') && !healthCheck.port) {
-        errors.push(`${healthCheckPrefix}: ${healthCheck.type.toUpperCase()} health check requires port`);
+        errors.push(
+          `${healthCheckPrefix}: ${healthCheck.type.toUpperCase()} health check requires port`
+        );
       }
 
-      if (healthCheck.type === 'exec' && (!healthCheck.command || healthCheck.command.length === 0)) {
+      if (
+        healthCheck.type === 'exec' &&
+        (!healthCheck.command || healthCheck.command.length === 0)
+      ) {
         errors.push(`${healthCheckPrefix}: Exec health check requires command`);
       }
 
@@ -736,8 +780,11 @@ export class PipelineValidator {
         errors.push(`${approvalPrefix}: Approval timeout must be positive`);
       }
 
-      if (approval.minApprovals && approval.approvers && 
-          approval.minApprovals > approval.approvers.length) {
+      if (
+        approval.minApprovals &&
+        approval.approvers &&
+        approval.minApprovals > approval.approvers.length
+      ) {
         errors.push(`${approvalPrefix}: Minimum approvals cannot exceed number of approvers`);
       }
     });
@@ -761,7 +808,7 @@ export class PipelineValidator {
       visited.add(stageId);
       recursionStack.add(stageId);
 
-      const stage = stages.find(s => s.id === stageId);
+      const stage = stages.find((s) => s.id === stageId);
       if (stage) {
         for (const depId of stage.dependencies) {
           if (hasCycle(depId)) {
@@ -802,10 +849,10 @@ export class PipelineValidator {
       /token\s*=\s*["'][^"']+["']/i,
       /key\s*=\s*["'][^"']+["']/i,
       /secret\s*=\s*["'][^"']+["']/i,
-      /api[_-]?key\s*=\s*["'][^"']+["']/i
+      /api[_-]?key\s*=\s*["'][^"']+["']/i,
     ];
 
-    return secretPatterns.some(pattern => pattern.test(text));
+    return secretPatterns.some((pattern) => pattern.test(text));
   }
 
   private containsDangerousCommands(command: string): boolean {
@@ -820,17 +867,19 @@ export class PipelineValidator {
       'reboot',
       'halt',
       'init 0',
-      'init 6'
+      'init 6',
     ];
 
-    return dangerousCommands.some(dangerous => command.toLowerCase().includes(dangerous));
+    return dangerousCommands.some((dangerous) => command.toLowerCase().includes(dangerous));
   }
 
   private requiresPrivilegeEscalation(parameters: any): boolean {
     // Check if task parameters require privilege escalation
-    return parameters.privileged === true ||
-           parameters.runAsRoot === true ||
-           parameters.capabilities?.includes('SYS_ADMIN') ||
-           parameters.securityContext?.privileged === true;
+    return (
+      parameters.privileged === true ||
+      parameters.runAsRoot === true ||
+      parameters.capabilities?.includes('SYS_ADMIN') ||
+      parameters.securityContext?.privileged === true
+    );
   }
 }

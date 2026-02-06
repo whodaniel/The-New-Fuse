@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import { MemoryItem, MemoryStats } from '@the-new-fuse/api-types/src/memory';
+import { useEffect, useState } from 'react';
 
 export function useMemoryInspector(agentId?: string): {
   items: MemoryItem[];

@@ -6,13 +6,8 @@
  * and system resilience.
  */
 
-import {
-  RecoveryStrategy,
-  BaseError,
-  ErrorContext,
-  ErrorCategory,
-} from '../interfaces/IErrorHandling.js';
 import { ErrorCodes } from '../errors/CustomErrors.js';
+import { BaseError, ErrorContext, RecoveryStrategy } from '../interfaces/IErrorHandling.js';
 import { Logger } from '../utils/Logger.js';
 
 /**
@@ -188,10 +183,7 @@ export class CacheFallbackStrategy implements RecoveryStrategy {
  */
 export class ServiceFailoverStrategy implements RecoveryStrategy {
   name = 'ServiceFailover';
-  applicableErrorCodes = [
-    ErrorCodes.SERVICE_UNAVAILABLE,
-    ErrorCodes.EXTERNAL_SERVICE_ERROR,
-  ];
+  applicableErrorCodes = [ErrorCodes.SERVICE_UNAVAILABLE, ErrorCodes.EXTERNAL_SERVICE_ERROR];
   maxAttempts = 2;
   delay = 1000;
 

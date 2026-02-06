@@ -10,19 +10,19 @@ export interface LayoutProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default true
    */
   sidebar?: boolean | React.ReactNode;
-  
+
   /**
    * Whether to show the header
    * @default true
    */
   header?: boolean | React.ReactNode;
-  
+
   /**
    * Whether to show the footer
    * @default true
    */
   footer?: boolean | React.ReactNode;
-  
+
   /**
    * Navigation items for the sidebar
    */
@@ -32,12 +32,12 @@ export interface LayoutProps extends React.HTMLAttributes<HTMLDivElement> {
     icon?: React.ReactNode;
     key?: string;
   }>;
-  
+
   /**
    * Current path for highlighting active navigation item
    */
   currentPath?: string;
-  
+
   /**
    * User object for the header
    */
@@ -46,27 +46,27 @@ export interface LayoutProps extends React.HTMLAttributes<HTMLDivElement> {
     email?: string;
     avatar?: string;
   };
-  
+
   /**
    * Callback when navigation item is clicked
    */
   onNavigate?: (href: string) => void;
-  
+
   /**
    * Callback when logout button is clicked
    */
   onLogout?: () => void;
-  
+
   /**
    * Callback when profile button is clicked
    */
   onProfile?: () => void;
-  
+
   /**
    * Callback when settings button is clicked
    */
   onSettings?: () => void;
-  
+
   /**
    * Footer links
    */
@@ -106,24 +106,27 @@ export interface LayoutProps extends React.HTMLAttributes<HTMLDivElement> {
  * </Layout>
  */
 const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
-  ({
-    className,
-    children,
-    sidebar = true,
-    header = true,
-    footer = true,
-    navigation = [],
-    currentPath = '',
-    user,
-    onNavigate,
-    onLogout,
-    onProfile,
-    onSettings,
-    footerLinks = [],
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      children,
+      sidebar = true,
+      header = true,
+      footer = true,
+      navigation = [],
+      currentPath = '',
+      user,
+      onNavigate,
+      onLogout,
+      onProfile,
+      onSettings,
+      footerLinks = [],
+      ...props
+    },
+    ref
+  ) => {
     const [sidebarOpen, setSidebarOpen] = React.useState(false);
-    
+
     // Default header component
     const defaultHeader = (
       <header className="bg-background border-b h-16 flex items-center justify-between px-4">
@@ -151,16 +154,12 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
           </button>
           <div className="text-xl font-semibold">The New Fuse</div>
         </div>
-        
+
         {user && (
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               {user.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.name || 'User'}
-                  className="h-8 w-8 rounded-full"
-                />
+                <img src={user.avatar} alt={user.name || 'User'} className="h-8 w-8 rounded-full" />
               ) : (
                 <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
                   {user.name?.charAt(0) || 'U'}
@@ -171,7 +170,7 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
                 <div className="text-xs text-muted-foreground">{user.email}</div>
               </div>
             </div>
-            
+
             <div className="relative">
               <button
                 type="button"
@@ -201,7 +200,7 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
                 </svg>
               </button>
             </div>
-            
+
             <button
               type="button"
               className="p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground"
@@ -227,7 +226,7 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
         )}
       </header>
     );
-    
+
     // Default sidebar component
     const defaultSidebar = (
       <aside
@@ -260,7 +259,7 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
             </svg>
           </button>
         </div>
-        
+
         <nav className="p-4 space-y-1">
           {navigation.map((item) => (
             <a
@@ -285,7 +284,7 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
         </nav>
       </aside>
     );
-    
+
     // Default footer component
     const defaultFooter = (
       <footer className="bg-background border-t py-4 px-4">
@@ -293,7 +292,7 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
           <div className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} The New Fuse. All rights reserved.
           </div>
-          
+
           {footerLinks.length > 0 && (
             <div className="flex space-x-4 mt-4 md:mt-0">
               {footerLinks.map((link) => (
@@ -314,7 +313,7 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
         </div>
       </footer>
     );
-    
+
     return (
       <div
         ref={ref}
@@ -323,22 +322,20 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
       >
         {/* Header */}
         {header && (typeof header === 'boolean' ? defaultHeader : header)}
-        
+
         <div className="flex flex-1 overflow-hidden">
           {/* Sidebar */}
           {sidebar && (typeof sidebar === 'boolean' ? defaultSidebar : sidebar)}
-          
+
           {/* Main content */}
           <main className="flex-1 overflow-auto">
-            <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
-              {children}
-            </div>
+            <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">{children}</div>
           </main>
         </div>
-        
+
         {/* Footer */}
         {footer && (typeof footer === 'boolean' ? defaultFooter : footer)}
-        
+
         {/* Overlay */}
         {sidebarOpen && (
           <div

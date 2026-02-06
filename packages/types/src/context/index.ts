@@ -21,9 +21,15 @@ export const AuthContext = createContext<AuthContextProps>({
   user: null,
   isAuthenticated: false,
   isLoading: true,
-  login: async () => { throw new Error('Not implemented'); },
-  logout: async () => { throw new Error('Not implemented'); },
-  register: async () => { throw new Error('Not implemented'); },
+  login: async () => {
+    throw new Error('Not implemented');
+  },
+  logout: async () => {
+    throw new Error('Not implemented');
+  },
+  register: async () => {
+    throw new Error('Not implemented');
+  },
 });
 
 // API Client Context Types
@@ -53,7 +59,9 @@ export interface WebSocketContextProps {
 
 export const WebSocketContext = createContext<WebSocketContextProps>({
   isConnected: false,
-  send: () => { throw new Error('Not implemented'); },
+  send: () => {
+    throw new Error('Not implemented');
+  },
   messages: [],
 });
 
@@ -84,9 +92,17 @@ export interface SuggestionActionsContextProps {
 }
 
 export const SuggestionActionsContext = createContext<SuggestionActionsContextProps>({
-  createSuggestion: async () => { throw new Error('Not implemented'); },
-  voteSuggestion: async () => { throw new Error('Not implemented'); },
-  updateStatus: async () => { throw new Error('Not implemented'); },
-  deleteSuggestion: async () => { throw new Error('Not implemented'); },
+  createSuggestion: async () => {
+    throw new Error('Not implemented');
+  },
+  voteSuggestion: async () => {
+    throw new Error('Not implemented');
+  },
+  updateStatus: async () => {
+    throw new Error('Not implemented');
+  },
+  deleteSuggestion: async () => {
+    throw new Error('Not implemented');
+  },
   loading: false,
 });

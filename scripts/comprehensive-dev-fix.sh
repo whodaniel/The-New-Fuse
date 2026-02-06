@@ -19,10 +19,10 @@ rm -rf packages/*/node_modules/.cache/
 rm -rf apps/frontend/node_modules/.vite/
 rm -rf apps/frontend/dist/
 
-# Step 3: Fix Prisma client
-echo "🔧 Step 3: Fixing Prisma client..."
+# Step 3: Fix Drizzle client
+echo "🔧 Step 3: Fixing Drizzle client..."
 cd packages/database
-pnpm dlx prisma generate --schema=../../prisma/schema.prisma || echo "Prisma generation failed, continuing..."
+pnpm dlx drizzle generate --schema=../../drizzle/schema.drizzle || echo "Drizzle generation failed, continuing..."
 cd - > /dev/null
 
 # Step 4: Install missing dependencies

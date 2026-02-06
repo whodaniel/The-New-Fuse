@@ -1,6 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { FeatureFlag, FeatureFlagDocument } from '../models/FeatureFlag';
-import { FeatureFlagContext, Environment, FeatureFlagUpdate, FeatureFlag as IFeatureFlag } from '../types/featureFlags';
+import {
+  FeatureFlagContext,
+  Environment,
+  FeatureFlagUpdate,
+  FeatureFlag as IFeatureFlag,
+} from '../types/featureFlags';
 import { FeatureFlagService } from './FeatureFlagService';
 import * as crypto from 'crypto';
 
@@ -27,7 +32,7 @@ export class MongoFeatureFlagService extends FeatureFlagService {
 
       const savedFeature = await featureFlag.save();
       this.logger.log(`Created MongoDB feature flag: ${data.name} (${id})`);
-      
+
       return this.documentToFeatureFlag(savedFeature);
     } catch (error) {
       this.logger.error('Failed to create MongoDB feature flag:', error);
@@ -52,11 +57,7 @@ export class MongoFeatureFlagService extends FeatureFlagService {
         },
       };
 
-      const updatedFeature = await FeatureFlag.findOneAndUpdate(
-        { id },
-        updatedData,
-        { new: true }
-      );
+      const updatedFeature = await FeatureFlag.findOneAndUpdate({ id }, updatedData, { new: true });
 
       if (!updatedFeature) {
         throw new Error(`Failed to update feature flag ${id}`);
@@ -101,7 +102,7 @@ export class MongoFeatureFlagService extends FeatureFlagService {
       if (environment) {
         query.$or = [
           { environments: { $exists: false } },
-          { environments: { $in: [environment] } }
+          { environments: { $in: [environment] } },
         ];
       }
 
@@ -127,11 +128,11 @@ export class MongoFeatureFlagService extends FeatureFlagService {
     try {
       const result = await FeatureFlag.deleteOne({ id });
       const deleted = result.deletedCount > 0;
-      
+
       if (deleted) {
         this.logger.log(`Deleted MongoDB feature flag: ${id}`);
       }
-      
+
       return deleted;
     } catch (error) {
       this.logger.error('Failed to delete MongoDB feature flag:', error);

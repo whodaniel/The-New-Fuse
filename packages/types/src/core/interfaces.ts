@@ -3,10 +3,10 @@
  */
 
 // Import enums to avoid duplication
-import { TaskStatus, AgentCapability, AgentRole, AgentStatus } from './enums';
+import { AgentCapability, AgentRole, AgentStatus, TaskStatus } from './enums';
 
 // Re-export required enums to maintain backward compatibility
-export { TaskStatus, AgentCapability, AgentRole, AgentStatus };
+export { AgentCapability, AgentRole, AgentStatus, TaskStatus };
 
 /**
  * Agent interface representing an AI agent in the system

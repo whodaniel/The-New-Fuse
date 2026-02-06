@@ -1,16 +1,7 @@
-import WebSocket from 'ws';
+import { Agent, AgentStatus, createMCPRequest, parseMCPMessage } from '@the-new-fuse/types';
 import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  MCPMessage,
-  MCPRequest,
-  MCPResponse,
-  MCPError,
-  AgentStatus,
-  Agent,
-  parseMCPMessage,
-  createMCPRequest,
-} from '@the-new-fuse/types';
+import WebSocket from 'ws';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -39,7 +30,10 @@ const MAX_CONNECTION_ATTEMPTS = 5;
 const RETRY_DELAY = 5000; // 5 seconds
 
 // Store pending requests to match responses
-const pendingRequests = new Map<string, { resolve: (value: any) => void; reject: (reason?: any) => void }>();
+const pendingRequests = new Map<
+  string,
+  { resolve: (value: any) => void; reject: (reason?: any) => void }
+>();
 
 function connect() {
   if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
@@ -105,14 +99,14 @@ function connect() {
     console.error('WebSocket error:', error.message);
     // The 'close' event will usually follow, triggering reconnection logic
     if (ws && ws.readyState !== WebSocket.OPEN) {
-       // If error occurred before 'open', trigger retry logic if not already handled by 'close'
-       if (connectionAttempts < MAX_CONNECTION_ATTEMPTS && !ws.listeners('close').length) {
-         console.log(`Retrying connection due to error in ${RETRY_DELAY / 1000} seconds...`);
-         setTimeout(connect, RETRY_DELAY);
-       } else if (connectionAttempts >= MAX_CONNECTION_ATTEMPTS) {
-         console.error('Max connection attempts reached after error. Exiting.');
-         process.exit(1);
-       }
+      // If error occurred before 'open', trigger retry logic if not already handled by 'close'
+      if (connectionAttempts < MAX_CONNECTION_ATTEMPTS && !ws.listeners('close').length) {
+        console.log(`Retrying connection due to error in ${RETRY_DELAY / 1000} seconds...`);
+        setTimeout(connect, RETRY_DELAY);
+      } else if (connectionAttempts >= MAX_CONNECTION_ATTEMPTS) {
+        console.error('Max connection attempts reached after error. Exiting.');
+        process.exit(1);
+      }
     }
   });
 }
@@ -160,7 +154,6 @@ async function registerAndActivate() {
 
     // Agent is now registered and active. Add any further agent logic here.
     // For this example, we just keep it running.
-
   } catch (error) {
     console.error('Registration or activation failed:', error);
     // Handle specific errors, e.g., maybe agent already exists?
@@ -176,12 +169,12 @@ async function shutdown() {
     try {
       console.log('Setting status to INACTIVE...');
       // Send update status but don't wait indefinitely for response during shutdown
-      sendRequest('updateAgentStatus', { agentId: agentId, status: AgentStatus.INACTIVE })
-        .catch(err => console.warn('Failed to send INACTIVE status on shutdown:', err.message)); // Log error but don't block shutdown
+      sendRequest('updateAgentStatus', { agentId: agentId, status: AgentStatus.INACTIVE }).catch(
+        (err) => console.warn('Failed to send INACTIVE status on shutdown:', err.message)
+      ); // Log error but don't block shutdown
 
       // Allow a brief moment for the message to be sent
-      await new Promise(resolve => setTimeout(resolve, 200));
-
+      await new Promise((resolve) => setTimeout(resolve, 200));
     } finally {
       ws.close(1000, 'Agent shutting down gracefully'); // 1000 is normal closure
       ws = null;

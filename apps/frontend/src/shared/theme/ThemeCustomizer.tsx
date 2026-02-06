@@ -22,11 +22,7 @@ export const ThemeCustomizer: React.FC<{}> = () => {
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      <select
-        value={currentTheme}
-        onChange={(e) => setTheme(e.target.value)}
-        className="input"
-      >
+      <select value={currentTheme} onChange={(e) => setTheme(e.target.value)} className="input">
         <option value="base">Light Theme</option>
         <option value="dark">Dark Theme</option>
         <option value="custom">Custom Theme</option>
@@ -50,12 +46,10 @@ export const ThemeCustomizer: React.FC<{}> = () => {
         />
       </div>
 
-      <select
-        onChange={(e) => handleFontChange(e.target.value)}
-        className="input"
-        defaultValue=""
-      >
-        <option value="" disabled>Select Font Family</option>
+      <select onChange={(e) => handleFontChange(e.target.value)} className="input" defaultValue="">
+        <option value="" disabled>
+          Select Font Family
+        </option>
         <option value="Inter">Inter</option>
         <option value="Roboto">Roboto</option>
         <option value="Open Sans">Open Sans</option>

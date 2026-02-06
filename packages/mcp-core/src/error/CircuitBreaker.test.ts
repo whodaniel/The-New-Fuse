@@ -2,8 +2,8 @@
  * Unit tests for CircuitBreaker
  */
 
-import { CircuitBreaker, CircuitState, CircuitBreakerManager } from './CircuitBreaker';
 import { Logger } from '../utils/Logger';
+import { CircuitBreaker, CircuitBreakerManager, CircuitState } from './CircuitBreaker';
 
 describe('CircuitBreaker', () => {
   let circuitBreaker: CircuitBreaker;
@@ -16,15 +16,19 @@ describe('CircuitBreaker', () => {
       warn: jest.fn(),
       error: jest.fn(),
       setLogLevel: jest.fn(),
-      getLogLevel: jest.fn()
+      getLogLevel: jest.fn(),
     } as any;
 
-    circuitBreaker = new CircuitBreaker('test-circuit', {
-      failureThreshold: 3,
-      successThreshold: 2,
-      timeout: 1000,
-      enableMonitoring: false
-    }, mockLogger);
+    circuitBreaker = new CircuitBreaker(
+      'test-circuit',
+      {
+        failureThreshold: 3,
+        successThreshold: 2,
+        timeout: 1000,
+        enableMonitoring: false,
+      },
+      mockLogger
+    );
   });
 
   describe('Basic Functionality', () => {
@@ -35,9 +39,9 @@ describe('CircuitBreaker', () => {
 
     it('should execute successful operations', async () => {
       const successfulOperation = async () => 'success';
-      
+
       const result = await circuitBreaker.execute(successfulOperation);
-      
+
       expect(result.success).toBe(true);
       expect(result.data).toBe('success');
       expect(result.rejected).toBe(false);
@@ -48,9 +52,9 @@ describe('CircuitBreaker', () => {
       const failingOperation = async () => {
         throw new Error('Operation failed');
       };
-      
+
       const result = await circuitBreaker.execute(failingOperation);
-      
+
       expect(result.success).toBe(false);
       expect(result.error?.message).toBe('Operation failed');
       expect(result.rejected).toBe(false);
@@ -87,17 +91,21 @@ describe('CircuitBreaker', () => {
 
       // Next request should be rejected
       const result = await circuitBreaker.execute(async () => 'should not execute');
-      
+
       expect(result.success).toBe(false);
       expect(result.rejected).toBe(true);
       expect(result.error?.message).toContain('Circuit breaker is OPEN');
     });
 
     it('should transition to half-open after timeout', async () => {
-      const shortTimeoutCircuit = new CircuitBreaker('short-timeout', {
-        failureThreshold: 2,
-        timeout: 50 // 50ms timeout
-      }, mockLogger);
+      const shortTimeoutCircuit = new CircuitBreaker(
+        'short-timeout',
+        {
+          failureThreshold: 2,
+          timeout: 50, // 50ms timeout
+        },
+        mockLogger
+      );
 
       const failingOperation = async () => {
         throw new Error('Failure');
@@ -111,21 +119,25 @@ describe('CircuitBreaker', () => {
       expect(shortTimeoutCircuit.getState()).toBe(CircuitState.OPEN);
 
       // Wait for timeout
-      await new Promise(resolve => setTimeout(resolve, 60));
+      await new Promise((resolve) => setTimeout(resolve, 60));
 
       // Next request should transition to half-open
       const result = await shortTimeoutCircuit.execute(async () => 'test');
-      
+
       // Should have attempted the operation (not rejected)
       expect(result.rejected).toBe(false);
     });
 
     it('should close circuit after successful operations in half-open state', async () => {
-      const shortTimeoutCircuit = new CircuitBreaker('half-open-test', {
-        failureThreshold: 2,
-        successThreshold: 2,
-        timeout: 50
-      }, mockLogger);
+      const shortTimeoutCircuit = new CircuitBreaker(
+        'half-open-test',
+        {
+          failureThreshold: 2,
+          successThreshold: 2,
+          timeout: 50,
+        },
+        mockLogger
+      );
 
       // Open the circuit
       for (let i = 0; i < 2; i++) {
@@ -137,7 +149,7 @@ describe('CircuitBreaker', () => {
       expect(shortTimeoutCircuit.getState()).toBe(CircuitState.OPEN);
 
       // Wait for timeout
-      await new Promise(resolve => setTimeout(resolve, 60));
+      await new Promise((resolve) => setTimeout(resolve, 60));
 
       // Execute successful operations
       for (let i = 0; i < 2; i++) {
@@ -151,10 +163,14 @@ describe('CircuitBreaker', () => {
     });
 
     it('should reopen circuit on failure in half-open state', async () => {
-      const shortTimeoutCircuit = new CircuitBreaker('reopen-test', {
-        failureThreshold: 2,
-        timeout: 50
-      }, mockLogger);
+      const shortTimeoutCircuit = new CircuitBreaker(
+        'reopen-test',
+        {
+          failureThreshold: 2,
+          timeout: 50,
+        },
+        mockLogger
+      );
 
       // Open the circuit
       for (let i = 0; i < 2; i++) {
@@ -166,7 +182,7 @@ describe('CircuitBreaker', () => {
       expect(shortTimeoutCircuit.getState()).toBe(CircuitState.OPEN);
 
       // Wait for timeout
-      await new Promise(resolve => setTimeout(resolve, 60));
+      await new Promise((resolve) => setTimeout(resolve, 60));
 
       // Fail in half-open state
       await shortTimeoutCircuit.execute(async () => {
@@ -190,7 +206,7 @@ describe('CircuitBreaker', () => {
       await circuitBreaker.execute(failingOperation);
 
       const stats = circuitBreaker.getStats();
-      
+
       expect(stats.totalRequests).toBe(3);
       expect(stats.successfulRequests).toBe(2);
       expect(stats.failedRequests).toBe(1);
@@ -212,7 +228,7 @@ describe('CircuitBreaker', () => {
       await circuitBreaker.execute(async () => 'should not execute');
 
       const stats = circuitBreaker.getStats();
-      
+
       expect(stats.rejectedRequests).toBe(1);
       expect(stats.state).toBe(CircuitState.OPEN);
     });
@@ -235,7 +251,7 @@ describe('CircuitBreaker', () => {
       Promise.all([
         circuitBreaker.execute(failingOperation),
         circuitBreaker.execute(failingOperation),
-        circuitBreaker.execute(failingOperation)
+        circuitBreaker.execute(failingOperation),
       ]);
     });
 
@@ -292,11 +308,15 @@ describe('CircuitBreaker', () => {
 
   describe('Rolling Window', () => {
     it('should use rolling window for failure detection', async () => {
-      const rollingWindowCircuit = new CircuitBreaker('rolling-window', {
-        failureThreshold: 3,
-        rollingWindowSize: 5,
-        rollingWindowTime: 1000
-      }, mockLogger);
+      const rollingWindowCircuit = new CircuitBreaker(
+        'rolling-window',
+        {
+          failureThreshold: 3,
+          rollingWindowSize: 5,
+          rollingWindowTime: 1000,
+        },
+        mockLogger
+      );
 
       // Execute mixed operations within rolling window
       await rollingWindowCircuit.execute(async () => 'success');
@@ -327,7 +347,7 @@ describe('CircuitBreakerManager', () => {
       warn: jest.fn(),
       error: jest.fn(),
       setLogLevel: jest.fn(),
-      getLogLevel: jest.fn()
+      getLogLevel: jest.fn(),
     } as any;
 
     manager = new CircuitBreakerManager(mockLogger);
@@ -398,7 +418,7 @@ describe('CircuitBreakerManager', () => {
 
       // Keep one healthy, make one unhealthy
       await cb1.execute(async () => 'success');
-      
+
       for (let i = 0; i < 5; i++) {
         await cb2.execute(async () => {
           throw new Error('failure');
@@ -433,7 +453,7 @@ describe('CircuitBreakerManager', () => {
   describe('Event Forwarding', () => {
     it('should forward events from circuit breakers', (done) => {
       const cb = manager.getCircuitBreaker('event-test');
-      
+
       manager.once('requestSuccess', (name, state) => {
         expect(name).toBe('event-test');
         done();

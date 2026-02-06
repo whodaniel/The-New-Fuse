@@ -1,12 +1,12 @@
+import { Injectable, Logger } from '@nestjs/common';
 import {
   WebSocketGateway as NestWebSocketGateway,
-  WebSocketServer,
-  SubscribeMessage,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Injectable, Logger } from '@nestjs/common';
 import { Message } from '../entities/message.entity';
 
 @Injectable()

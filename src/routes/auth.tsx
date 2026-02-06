@@ -1,10 +1,10 @@
 import express, { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@the-new-fuse/database";
+import { DrizzleClient } from "@the-new-fuse/database";
 
 const router = express.Router();
-const prisma = new PrismaClient();
+const drizzle = new DrizzleClient();
 
 interface RegisterRequest {
   name: string;
@@ -31,7 +31,7 @@ router.post(
       const { name, email, password } = req.body;
 
       // Check if user exists
-      const existingUser = await prisma.user.findUnique({
+      const existingUser = await drizzle.user.findUnique({
         where: { email },
       });
       if (existingUser) {
@@ -43,7 +43,7 @@ router.post(
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Create user
-      const user = await prisma.user.create({
+      const user = await drizzle.user.create({
         data: {
           name,
           email,
@@ -89,7 +89,7 @@ router.post(
       const { email, password } = req.body;
 
       // Find user
-      const user = await prisma.user.findUnique({ where: { email } });
+      const user = await drizzle.user.findUnique({ where: { email } });
       
       if (!user) {
         return res.status(400)

@@ -18,7 +18,7 @@ export class ConfigService {
       AGENT_TIMEOUT: parseInt(process.env.AGENT_TIMEOUT || '30000', 10),
       LOG_LEVEL: process.env.LOG_LEVEL || 'info',
       NODE_ENV: process.env.NODE_ENV || 'development',
-      ...initialConfig
+      ...initialConfig,
     };
   }
 
@@ -30,7 +30,7 @@ export class ConfigService {
    */
   get<T = string>(key: string, defaultValue?: T): T {
     const value = this.config[key];
-    
+
     if (value === undefined) {
       return defaultValue as T;
     }
@@ -39,7 +39,7 @@ export class ConfigService {
     if (typeof defaultValue === 'number') {
       return (typeof value === 'number' ? value : parseInt(String(value), 10)) as T;
     }
-    
+
     if (typeof defaultValue === 'boolean') {
       return (typeof value === 'boolean' ? value : String(value).toLowerCase() === 'true') as T;
     }
@@ -95,7 +95,7 @@ export class ConfigService {
       },
       maxRetriesPerRequest: 3,
       enableReadyCheck: true,
-      lazyConnect: this.get('NODE_ENV') !== 'production'
+      lazyConnect: this.get('NODE_ENV') !== 'production',
     };
   }
 
@@ -108,7 +108,7 @@ export class ConfigService {
       timeout: this.get('AGENT_TIMEOUT', 30000),
       maxRetries: this.get('AGENT_MAX_RETRIES', 3),
       enableMetrics: this.get('AGENT_ENABLE_METRICS', true),
-      logLevel: this.get('LOG_LEVEL', 'info')
+      logLevel: this.get('LOG_LEVEL', 'info'),
     };
   }
 

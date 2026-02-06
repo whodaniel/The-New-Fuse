@@ -1,6 +1,7 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { drizzleAuditLogsRepository } from '@the-new-fuse/database';
 
 /**
  * A2A Message Types
@@ -29,14 +30,14 @@ export enum A2AMessageType {
   // Self-Improvement
   PROMPT_UPDATE_REQUEST = 'PROMPT_UPDATE_REQUEST',
   PROMPT_UPDATED = 'PROMPT_UPDATED',
-  CAPABILITY_ANNOUNCEMENT = 'CAPABILITY_ANNOUNCEMENT'
+  CAPABILITY_ANNOUNCEMENT = 'CAPABILITY_ANNOUNCEMENT',
 }
 
 export enum A2APriority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export interface A2AMessage {
@@ -66,6 +67,9 @@ export interface A2ASubscription {
   agentId: string;
   channel: string;
   handler: (message: A2AMessage) => Promise<void>;
+  tenantId?: string;
+  organizationId?: string;
+  agencyId?: string;
   filters?: {
     types?: A2AMessageType[];
     fromAgents?: string[];
@@ -105,7 +109,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     messagesDelivered: 0,
     messagesFailed: 0,
     activeChannels: 0,
-    activeSubscriptions: 0
+    activeSubscriptions: 0,
   };
 
   constructor(
@@ -142,10 +146,12 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     const fullMessage: A2AMessage = {
       ...message,
       id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    this.logger.log(`Message ${fullMessage.id}: ${fullMessage.from} -> ${fullMessage.to} [${fullMessage.type}]`);
+    this.logger.log(
+      `Message ${fullMessage.id}: ${fullMessage.from} -> ${fullMessage.to} [${fullMessage.type}]`
+    );
 
     if (fullMessage.to === 'broadcast') {
       await this.broadcastMessage(fullMessage);
@@ -157,6 +163,24 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
 
     // Emit event for other services to react
     this.eventEmitter.emit('a2a.message.sent', fullMessage);
+
+    drizzleAuditLogsRepository
+      .create({
+        action: 'a2a.message.sent',
+        resourceType: 'a2a_message',
+        resourceId: fullMessage.id,
+        status: 'success',
+        details: {
+          type: fullMessage.type,
+          from: fullMessage.from,
+          to: fullMessage.to,
+          priority: fullMessage.priority,
+        },
+        metadata: fullMessage.metadata || {},
+      })
+      .catch((error) => {
+        this.logger.warn(`Failed to write audit log for a2a send: ${error}`);
+      });
 
     return fullMessage.id;
   }
@@ -172,13 +196,48 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     // Check if agent has active subscriptions
     const subs = this.subscriptions.get(message.to as string) || [];
     for (const sub of subs) {
-      if (this.matchesFilters(message, sub.filters)) {
-        try {
+        if (this.matchesFilters(message, sub)) {
+          try {
           await sub.handler(message);
           this.metrics.messagesDelivered++;
+          drizzleAuditLogsRepository
+            .create({
+              action: 'a2a.message.delivered',
+              resourceType: 'a2a_message',
+              resourceId: message.id,
+              status: 'success',
+              details: {
+                type: message.type,
+                from: message.from,
+                to: message.to,
+                channel: sub.channel,
+              },
+              metadata: message.metadata || {},
+            })
+            .catch((error) => {
+              this.logger.warn(`Failed to write audit log for a2a delivery: ${error}`);
+            });
         } catch (error) {
           this.logger.error(`Failed to deliver message ${message.id} to ${message.to}`, error);
           this.metrics.messagesFailed++;
+          drizzleAuditLogsRepository
+            .create({
+              action: 'a2a.message.delivery_failed',
+              resourceType: 'a2a_message',
+              resourceId: message.id,
+              status: 'failure',
+              errorMessage: (error as Error).message,
+              details: {
+                type: message.type,
+                from: message.from,
+                to: message.to,
+                channel: sub.channel,
+              },
+              metadata: message.metadata || {},
+            })
+            .catch((logError) => {
+              this.logger.warn(`Failed to write audit log for a2a failure: ${logError}`);
+            });
         }
       }
     }
@@ -196,7 +255,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     // Deliver to all agents with broadcast subscriptions
     for (const [agentId, subs] of this.subscriptions.entries()) {
       for (const sub of subs) {
-        if (sub.channel === 'broadcast' && this.matchesFilters(message, sub.filters)) {
+        if (sub.channel === 'broadcast' && this.matchesFilters(message, sub)) {
           const queue = this.messageQueues.get(agentId) || [];
           queue.push(message);
           this.messageQueues.set(agentId, queue);
@@ -204,9 +263,44 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
           try {
             await sub.handler(message);
             this.metrics.messagesDelivered++;
+            drizzleAuditLogsRepository
+              .create({
+                action: 'a2a.message.broadcast',
+                resourceType: 'a2a_message',
+                resourceId: message.id,
+                status: 'success',
+                details: {
+                  type: message.type,
+                  from: message.from,
+                  to: 'broadcast',
+                  channel: sub.channel,
+                },
+                metadata: message.metadata || {},
+              })
+              .catch((error) => {
+                this.logger.warn(`Failed to write audit log for a2a broadcast: ${error}`);
+              });
           } catch (error) {
             this.logger.error(`Failed to broadcast message ${message.id} to ${agentId}`, error);
             this.metrics.messagesFailed++;
+            drizzleAuditLogsRepository
+              .create({
+                action: 'a2a.message.broadcast_failed',
+                resourceType: 'a2a_message',
+                resourceId: message.id,
+                status: 'failure',
+                errorMessage: (error as Error).message,
+                details: {
+                  type: message.type,
+                  from: message.from,
+                  to: agentId,
+                  channel: sub.channel,
+                },
+                metadata: message.metadata || {},
+              })
+              .catch((logError) => {
+                this.logger.warn(`Failed to write audit log for a2a broadcast failure: ${logError}`);
+              });
           }
         }
       }
@@ -218,12 +312,36 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
   /**
    * Check if a message matches subscription filters
    */
-  private matchesFilters(message: A2AMessage, filters?: A2ASubscription['filters']): boolean {
-    if (!filters) return true;
+  private matchesFilters(message: A2AMessage, subscription?: A2ASubscription): boolean {
+    const filters = subscription?.filters;
+    if (filters) {
+      if (filters.types && !filters.types.includes(message.type)) return false;
+      if (filters.fromAgents && !filters.fromAgents.includes(message.from)) return false;
+      if (filters.priority && !filters.priority.includes(message.priority)) return false;
+    }
 
-    if (filters.types && !filters.types.includes(message.type)) return false;
-    if (filters.fromAgents && !filters.fromAgents.includes(message.from)) return false;
-    if (filters.priority && !filters.priority.includes(message.priority)) return false;
+    const tenantId = subscription?.tenantId;
+    const organizationId = subscription?.organizationId;
+    const agencyId = subscription?.agencyId;
+
+    if (tenantId && !message.metadata?.tenantId) {
+      return false;
+    }
+    if (tenantId && message.metadata?.tenantId !== tenantId) {
+      return false;
+    }
+    if (organizationId && !message.metadata?.organizationId) {
+      return false;
+    }
+    if (organizationId && message.metadata?.organizationId !== organizationId) {
+      return false;
+    }
+    if (agencyId && !message.metadata?.agencyId) {
+      return false;
+    }
+    if (agencyId && message.metadata?.agencyId !== agencyId) {
+      return false;
+    }
 
     return true;
   }
@@ -233,8 +351,38 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
   /**
    * Subscribe an agent to receive messages
    */
-  async subscribe(subscription: Omit<A2ASubscription, 'handler'> & { handler: (message: A2AMessage) => Promise<void> }): Promise<string> {
+  async subscribe(
+    subscription: Omit<A2ASubscription, 'handler'> & {
+      handler: (message: A2AMessage) => Promise<void>;
+    }
+  ): Promise<string> {
     const subId = `sub-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    const requireScope = this.configService.get('A2A_REQUIRE_TENANT_SCOPE') !== 'false';
+    const isSystemChannel = ['system', 'broadcast'].includes(subscription.channel);
+    if (requireScope && !isSystemChannel) {
+      if (!subscription.tenantId && !subscription.organizationId && !subscription.agencyId) {
+        const error = new Error(
+          'Tenant, organization, or agency scope is required for A2A subscriptions'
+        );
+        drizzleAuditLogsRepository
+          .create({
+            action: 'a2a.subscription.rejected',
+            resourceType: 'a2a_subscription',
+            resourceId: subId,
+            status: 'failure',
+            errorMessage: error.message,
+            details: {
+              agentId: subscription.agentId,
+              channel: subscription.channel,
+            },
+          })
+          .catch((logError) => {
+            this.logger.warn(`Failed to write audit log for a2a reject: ${logError}`);
+          });
+        throw error;
+      }
+    }
 
     const subs = this.subscriptions.get(subscription.agentId) || [];
     subs.push(subscription);
@@ -253,7 +401,28 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
 
     this.logger.log(`Agent ${subscription.agentId} subscribed to channel: ${subscription.channel}`);
 
-    this.eventEmitter.emit('a2a.subscription.created', { agentId: subscription.agentId, channel: subscription.channel });
+    this.eventEmitter.emit('a2a.subscription.created', {
+      agentId: subscription.agentId,
+      channel: subscription.channel,
+    });
+
+    drizzleAuditLogsRepository
+      .create({
+        action: 'a2a.subscription.created',
+        resourceType: 'a2a_subscription',
+        resourceId: subId,
+        status: 'success',
+        details: {
+          agentId: subscription.agentId,
+          channel: subscription.channel,
+          tenantId: subscription.tenantId,
+          organizationId: subscription.organizationId,
+          agencyId: subscription.agencyId,
+        },
+      })
+      .catch((error) => {
+        this.logger.warn(`Failed to write audit log for a2a subscription: ${error}`);
+      });
 
     return subId;
   }
@@ -263,7 +432,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
    */
   async unsubscribe(agentId: string, channel: string): Promise<void> {
     const subs = this.subscriptions.get(agentId) || [];
-    const filtered = subs.filter(s => s.channel !== channel);
+    const filtered = subs.filter((s) => s.channel !== channel);
 
     if (filtered.length === 0) {
       this.subscriptions.delete(agentId);
@@ -274,7 +443,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     // Remove from channel participants
     const ch = this.channels.get(channel);
     if (ch) {
-      ch.participants = ch.participants.filter(p => p !== agentId);
+      ch.participants = ch.participants.filter((p) => p !== agentId);
     }
 
     this.metrics.activeSubscriptions--;
@@ -282,6 +451,21 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     this.logger.log(`Agent ${agentId} unsubscribed from channel: ${channel}`);
 
     this.eventEmitter.emit('a2a.subscription.removed', { agentId, channel });
+
+    drizzleAuditLogsRepository
+      .create({
+        action: 'a2a.subscription.removed',
+        resourceType: 'a2a_subscription',
+        resourceId: `${agentId}:${channel}`,
+        status: 'success',
+        details: {
+          agentId,
+          channel,
+        },
+      })
+      .catch((error) => {
+        this.logger.warn(`Failed to write audit log for a2a unsubscribe: ${error}`);
+      });
   }
 
   // ==================== CHANNELS ====================
@@ -296,7 +480,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
       participants: initialParticipants,
       createdAt: new Date(),
       lastActivity: new Date(),
-      messageCount: 0
+      messageCount: 0,
     };
 
     this.channels.set(name, channel);
@@ -312,7 +496,10 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
   /**
    * Send a message to a specific channel
    */
-  async sendToChannel(channelName: string, message: Omit<A2AMessage, 'id' | 'timestamp' | 'to'>): Promise<string> {
+  async sendToChannel(
+    channelName: string,
+    message: Omit<A2AMessage, 'id' | 'timestamp' | 'to'>
+  ): Promise<string> {
     const channel = this.channels.get(channelName);
     if (!channel) {
       throw new Error(`Channel ${channelName} does not exist`);
@@ -322,7 +509,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
       ...message,
       id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       to: `channel:${channelName}`,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     // Deliver to all channel participants
@@ -374,7 +561,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
         type: A2AMessageType.AGENT_ONLINE,
         from: 'system',
         payload: { agentId, action: 'joined' },
-        priority: A2APriority.LOW
+        priority: A2APriority.LOW,
       });
 
       this.logger.log(`Agent ${agentId} joined channel: ${channelName}`);
@@ -388,14 +575,14 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     const channel = this.channels.get(channelName);
     if (!channel) return;
 
-    channel.participants = channel.participants.filter(p => p !== agentId);
+    channel.participants = channel.participants.filter((p) => p !== agentId);
 
     // Notify other participants
     await this.sendToChannel(channelName, {
       type: A2AMessageType.AGENT_OFFLINE,
       from: 'system',
       payload: { agentId, action: 'left' },
-      priority: A2APriority.LOW
+      priority: A2APriority.LOW,
     });
 
     this.logger.log(`Agent ${agentId} left channel: ${channelName}`);
@@ -426,7 +613,11 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
   /**
    * Start a conversation between agents
    */
-  async startConversation(initiatorId: string, participantIds: string[], topic?: string): Promise<string> {
+  async startConversation(
+    initiatorId: string,
+    participantIds: string[],
+    topic?: string
+  ): Promise<string> {
     const conversationId = `conv-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const channelName = `conversation:${conversationId}`;
 
@@ -441,11 +632,13 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
         to: participantId,
         payload: { conversationId, topic, participants: [initiatorId, ...participantIds] },
         priority: A2APriority.MEDIUM,
-        correlationId: conversationId
+        correlationId: conversationId,
       });
     }
 
-    this.logger.log(`Conversation started: ${conversationId} with ${participantIds.length + 1} participants`);
+    this.logger.log(
+      `Conversation started: ${conversationId} with ${participantIds.length + 1} participants`
+    );
 
     return conversationId;
   }
@@ -453,7 +646,11 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
   /**
    * Send a message in a conversation
    */
-  async sendConversationMessage(conversationId: string, fromAgent: string, content: any): Promise<string> {
+  async sendConversationMessage(
+    conversationId: string,
+    fromAgent: string,
+    content: any
+  ): Promise<string> {
     const channelName = `conversation:${conversationId}`;
 
     return this.sendToChannel(channelName, {
@@ -461,7 +658,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
       from: fromAgent,
       payload: { content },
       priority: A2APriority.MEDIUM,
-      correlationId: conversationId
+      correlationId: conversationId,
     });
   }
 
@@ -479,7 +676,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
       from: agentId,
       to: 'broadcast',
       payload: { agentId },
-      priority: A2APriority.LOW
+      priority: A2APriority.LOW,
     });
 
     this.logger.log(`Agent ${agentId} is now online`);
@@ -501,7 +698,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
       from: agentId,
       to: 'broadcast',
       payload: { agentId },
-      priority: A2APriority.LOW
+      priority: A2APriority.LOW,
     });
 
     this.logger.log(`Agent ${agentId} is now offline`);
@@ -529,8 +726,11 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     return {
       ...this.metrics,
       onlineAgents: this.getOnlineAgents().length,
-      pendingMessages: Array.from(this.messageQueues.values()).reduce((sum, q) => sum + q.length, 0),
-      channels: Array.from(this.channels.keys())
+      pendingMessages: Array.from(this.messageQueues.values()).reduce(
+        (sum, q) => sum + q.length,
+        0
+      ),
+      channels: Array.from(this.channels.keys()),
     };
   }
 
@@ -541,13 +741,13 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     return {
       status: 'online',
       metrics: this.getMetrics(),
-      channels: Array.from(this.channels.values()).map(c => ({
+      channels: Array.from(this.channels.values()).map((c) => ({
         name: c.name,
         participants: c.participants.length,
         messageCount: c.messageCount,
-        lastActivity: c.lastActivity
+        lastActivity: c.lastActivity,
       })),
-      onlineAgents: this.getOnlineAgents()
+      onlineAgents: this.getOnlineAgents(),
     };
   }
 
@@ -563,7 +763,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
   private cleanupStaleMessages(): void {
     const now = Date.now();
     for (const [agentId, queue] of this.messageQueues.entries()) {
-      const filtered = queue.filter(msg => {
+      const filtered = queue.filter((msg) => {
         const age = now - msg.timestamp.getTime();
         const ttl = msg.ttl || 3600000; // Default 1 hour
         return age < ttl;
@@ -571,7 +771,9 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
 
       if (filtered.length < queue.length) {
         this.messageQueues.set(agentId, filtered);
-        this.logger.debug(`Cleaned ${queue.length - filtered.length} stale messages for ${agentId}`);
+        this.logger.debug(
+          `Cleaned ${queue.length - filtered.length} stale messages for ${agentId}`
+        );
       }
     }
   }
@@ -581,7 +783,7 @@ export class A2AMessageBrokerService implements OnModuleInit, OnModuleDestroy {
     const timeout = 300000; // 5 minutes
 
     for (const [agentId, presence] of this.agentPresence.entries()) {
-      if (presence.online && (now - presence.lastSeen.getTime()) > timeout) {
+      if (presence.online && now - presence.lastSeen.getTime() > timeout) {
         presence.online = false;
         this.eventEmitter.emit('a2a.agent.timeout', { agentId });
         this.logger.warn(`Agent ${agentId} marked as offline due to inactivity`);

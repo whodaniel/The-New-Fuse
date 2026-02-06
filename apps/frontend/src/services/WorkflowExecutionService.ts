@@ -2,7 +2,7 @@
  * Workflow Execution Service - Real-time workflow execution monitoring
  */
 
-import { WorkflowExecution, WorkflowExecutionLog, NodeExecution } from './WorkflowService';
+import { WorkflowExecution } from './WorkflowService';
 
 export interface ExecutionUpdate {
   type: 'status' | 'log' | 'node' | 'complete' | 'error';
@@ -31,9 +31,9 @@ class WorkflowExecutionService {
     const subscription: ExecutionSubscription = {
       executionId,
       callback,
-      cleanup: () => this.unsubscribe(executionId, subscription)
+      cleanup: () => this.unsubscribe(executionId, subscription),
     };
-    
+
     subscriptions.push(subscription);
     this.subscriptions.set(executionId, subscriptions);
 
@@ -49,9 +49,9 @@ class WorkflowExecutionService {
   private createWebSocketConnection(executionId: string): void {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${window.location.host}/api/workflows/executions/${executionId}/stream`;
-    
+
     const ws = new WebSocket(wsUrl);
-    
+
     ws.onopen = () => {
       console.log(`WebSocket connected for execution ${executionId}`);
     };
@@ -60,9 +60,9 @@ class WorkflowExecutionService {
       try {
         const update: ExecutionUpdate = {
           ...JSON.parse(event.data),
-          timestamp: new Date()
+          timestamp: new Date(),
         };
-        
+
         this.notifySubscribers(executionId, update);
       } catch (error) {
         console.error('Failed to parse execution update:', error);
@@ -76,7 +76,7 @@ class WorkflowExecutionService {
     ws.onclose = () => {
       console.log(`WebSocket closed for execution ${executionId}`);
       this.websockets.delete(executionId);
-      
+
       // Attempt to reconnect after 5 seconds if there are still subscribers
       if (this.subscriptions.has(executionId) && this.subscriptions.get(executionId)!.length > 0) {
         setTimeout(() => {
@@ -90,7 +90,7 @@ class WorkflowExecutionService {
 
   private notifySubscribers(executionId: string, update: ExecutionUpdate): void {
     const subscriptions = this.subscriptions.get(executionId) || [];
-    subscriptions.forEach(subscription => {
+    subscriptions.forEach((subscription) => {
       try {
         subscription.callback(update);
       } catch (error) {
@@ -102,10 +102,10 @@ class WorkflowExecutionService {
   private unsubscribe(executionId: string, subscription: ExecutionSubscription): void {
     const subscriptions = this.subscriptions.get(executionId) || [];
     const index = subscriptions.indexOf(subscription);
-    
+
     if (index > -1) {
       subscriptions.splice(index, 1);
-      
+
       if (subscriptions.length === 0) {
         // No more subscribers, close WebSocket
         const ws = this.websockets.get(executionId);
@@ -123,7 +123,7 @@ class WorkflowExecutionService {
   // Get execution status with polling fallback
   async getExecutionStatus(executionId: string): Promise<WorkflowExecution> {
     const response = await fetch(`/api/workflows/executions/${executionId}`);
-    
+
     if (!response.ok) {
       throw new Error(`Failed to get execution status: ${response.statusText}`);
     }
@@ -133,15 +133,17 @@ class WorkflowExecutionService {
       ...execution,
       startTime: new Date(execution.startTime),
       endTime: execution.endTime ? new Date(execution.endTime) : undefined,
-      logs: execution.logs?.map((log: any) => ({
-        ...log,
-        timestamp: new Date(log.timestamp)
-      })) || [],
-      nodeExecutions: execution.nodeExecutions?.map((nodeExec: any) => ({
-        ...nodeExec,
-        startTime: nodeExec.startTime ? new Date(nodeExec.startTime) : undefined,
-        endTime: nodeExec.endTime ? new Date(nodeExec.endTime) : undefined,
-      })) || [],
+      logs:
+        execution.logs?.map((log: any) => ({
+          ...log,
+          timestamp: new Date(log.timestamp),
+        })) || [],
+      nodeExecutions:
+        execution.nodeExecutions?.map((nodeExec: any) => ({
+          ...nodeExec,
+          startTime: nodeExec.startTime ? new Date(nodeExec.startTime) : undefined,
+          endTime: nodeExec.endTime ? new Date(nodeExec.endTime) : undefined,
+        })) || [],
     };
   }
 
@@ -178,7 +180,7 @@ class WorkflowExecutionService {
 
   // Cleanup all connections
   cleanup(): void {
-    this.websockets.forEach(ws => ws.close());
+    this.websockets.forEach((ws) => ws.close());
     this.websockets.clear();
     this.subscriptions.clear();
   }

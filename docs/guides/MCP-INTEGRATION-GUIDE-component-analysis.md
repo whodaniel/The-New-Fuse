@@ -1,24 +1,29 @@
 # Component Analysis MCP Integration
 
-This document describes the integration of component analysis functionality with the Model Context Protocol (MCP) in The New Fuse.
+This document describes the integration of component analysis functionality with
+the Model Context Protocol (MCP) in The New Fuse.
 
 ## Overview
 
-The component analysis functionality is integrated with MCP, making it discoverable and usable by AI agents. This enables AI agents to analyze the codebase for potentially unused components and suggest improvements.
+The component analysis functionality is integrated with MCP, making it
+discoverable and usable by AI agents. This enables AI agents to analyze the
+codebase for potentially unused components and suggest improvements.
 
 ## Available MCP Tools
 
-| Tool Name | Description | Actions |
-|-----------|-------------|---------|
+| Tool Name            | Description                                         | Actions                 |
+| -------------------- | --------------------------------------------------- | ----------------------- |
 | `component-analysis` | Analyze React/TypeScript components in the codebase | `analyze`, `getResults` |
 
 ## Tool Details
 
 ### component-analysis
 
-This tool allows AI agents to analyze the codebase for potentially unused components and retrieve the analysis results.
+This tool allows AI agents to analyze the codebase for potentially unused
+components and retrieve the analysis results.
 
 **Schema:**
+
 ```json
 {
   "type": "object",
@@ -56,10 +61,12 @@ This tool allows AI agents to analyze the codebase for potentially unused compon
 ```javascript
 // Execute the analyze action
 const result = await mcpManager.executeTool('component-analysis', {
-  action: 'analyze'
+  action: 'analyze',
 });
 
-console.log(`Analysis complete: ${result.stats.totalComponents} components found, ${result.stats.potentiallyLostCount} potentially lost`);
+console.log(
+  `Analysis complete: ${result.stats.totalComponents} components found, ${result.stats.potentiallyLostCount} potentially lost`
+);
 ```
 
 ### Getting Analysis Results
@@ -68,20 +75,20 @@ console.log(`Analysis complete: ${result.stats.totalComponents} components found
 // Get a summary of the results
 const summary = await mcpManager.executeTool('component-analysis', {
   action: 'getResults',
-  detailed: false
+  detailed: false,
 });
 
 console.log(`Total components: ${summary.stats.totalComponents}`);
 console.log(`Potentially lost: ${summary.stats.potentiallyLostCount}`);
 console.log('Most referenced components:');
-summary.mostReferenced.forEach(comp => {
+summary.mostReferenced.forEach((comp) => {
   console.log(`- ${comp.path}: ${comp.referencedBy.length} references`);
 });
 
 // Get detailed results
 const detailed = await mcpManager.executeTool('component-analysis', {
   action: 'getResults',
-  detailed: true
+  detailed: true,
 });
 
 // Access all components, pages, and potentially lost components
@@ -94,10 +101,14 @@ console.log(`Potentially lost: ${detailed.potentiallyLost.length}`);
 
 With this MCP integration, AI agents can:
 
-1. **Analyze Codebase**: Run component analysis to identify potentially unused components
-2. **Retrieve Results**: Get the results of the analysis in various levels of detail
-3. **Make Recommendations**: Suggest component consolidation or removal based on the analysis
-4. **Track Progress**: Compare current analysis with previous results to track progress
+1. **Analyze Codebase**: Run component analysis to identify potentially unused
+   components
+2. **Retrieve Results**: Get the results of the analysis in various levels of
+   detail
+3. **Make Recommendations**: Suggest component consolidation or removal based on
+   the analysis
+4. **Track Progress**: Compare current analysis with previous results to track
+   progress
 
 ## Implementation Details
 
@@ -120,11 +131,13 @@ The component analysis MCP integration consists of:
 If the component analysis tool is not available in MCP:
 
 1. Make sure MCP is initialized:
+
    ```
    vscode.commands.executeCommand('thefuse.mcp.initialize');
    ```
 
 2. Check if the tool is registered:
+
    ```
    const tools = await mcpManager.getTools();
    const hasComponentAnalysis = tools.some(t => t.name === 'component-analysis');

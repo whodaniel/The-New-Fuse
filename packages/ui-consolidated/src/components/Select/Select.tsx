@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
 import { cn } from '../../utils';
 
 /**
@@ -52,7 +52,8 @@ export const selectContentVariants = cva(
   {
     variants: {
       position: {
-        popper: 'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+        popper:
+          'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
         'item-aligned': '',
       },
       size: {
@@ -72,7 +73,8 @@ export const selectContentVariants = cva(
  * Select component props
  */
 export interface SelectProps
-  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'>,
+  extends
+    Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'>,
     VariantProps<typeof selectTriggerVariants> {
   /**
    * Error message to display
@@ -141,22 +143,25 @@ export interface SelectProps
  * />
  */
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-  ({
-    className,
-    variant,
-    size,
-    state,
-    width,
-    label,
-    helperText,
-    error,
-    success,
-    options = [],
-    containerClassName,
-    labelClassName,
-    helperTextClassName,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      state,
+      width,
+      label,
+      helperText,
+      error,
+      success,
+      options = [],
+      containerClassName,
+      labelClassName,
+      helperTextClassName,
+      ...props
+    },
+    ref
+  ) => {
     const selectState = error ? 'error' : success ? 'success' : state;
 
     return (

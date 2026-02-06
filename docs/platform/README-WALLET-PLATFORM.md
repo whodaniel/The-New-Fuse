@@ -1,23 +1,29 @@
 # The New Fuse Universal Wallet Platform
 
-A secure, scalable, and compliant crypto wallet infrastructure for both humans and AI agents using Web3Auth and ERC-4337 Account Abstraction. Every user gets both an EOA (Externally Owned Account) and an optional Smart Account for enhanced functionality.
+A secure, scalable, and compliant crypto wallet infrastructure for both humans
+and AI agents using Web3Auth and ERC-4337 Account Abstraction. Every user gets
+both an EOA (Externally Owned Account) and an optional Smart Account for
+enhanced functionality.
 
 ## 🏗️ Architecture Overview
 
 ### Core Components
 
-1. **Universal Wallet System** - Every user gets both EOA and Smart Account capabilities
+1. **Universal Wallet System** - Every user gets both EOA and Smart Account
+   capabilities
 2. **Web3Auth Integration** - Non-custodial wallet generation using MPC
-3. **ERC-4337 Smart Accounts** - Advanced account features for all users (humans and AI)
+3. **ERC-4337 Smart Accounts** - Advanced account features for all users (humans
+   and AI)
 4. **Custom Paymaster** - Gas sponsorship for authorized Smart Accounts
-5. **Hybrid Transaction Support** - Choose between EOA or Smart Account for each transaction
+5. **Hybrid Transaction Support** - Choose between EOA or Smart Account for each
+   transaction
 6. **Compliance Layer** - Real-time transaction monitoring and risk assessment
 7. **Monitoring System** - 24/7 health checks and security alerts
 
 ### Technology Stack
 
 - **Backend**: NestJS with TypeScript
-- **Database**: PostgreSQL with Prisma ORM
+- **Database**: PostgreSQL with Drizzle ORM
 - **Blockchain**: Ethereum (viem for interaction)
 - **Smart Contracts**: Solidity with Foundry
 - **Authentication**: Web3Auth Node SDK
@@ -35,24 +41,28 @@ A secure, scalable, and compliant crypto wallet infrastructure for both humans a
 ### Installation
 
 1. **Install Dependencies**
+
    ```bash
    cd apps/api
    pnpm install
    ```
 
 2. **Configure Environment**
+
    ```bash
    cp env.example .env
    # Edit .env with your configuration
    ```
 
 3. **Setup Database**
+
    ```bash
-   pnpm dlx prisma migrate dev
-   pnpm dlx prisma generate
+   pnpm dlx drizzle migrate dev
+   pnpm dlx drizzle generate
    ```
 
 4. **Deploy Smart Contracts** (Optional - for full setup)
+
    ```bash
    cd contracts
    forge install
@@ -69,6 +79,7 @@ A secure, scalable, and compliant crypto wallet infrastructure for both humans a
 ### Wallet Management
 
 #### Create Wallet
+
 ```http
 POST /wallets/create
 Content-Type: application/json
@@ -82,11 +93,13 @@ Content-Type: application/json
 ```
 
 #### Get User Wallets
+
 ```http
 GET /wallets/user/{userId}
 ```
 
 #### Get Wallet by Address
+
 ```http
 GET /wallets/address/{address}
 ```
@@ -94,6 +107,7 @@ GET /wallets/address/{address}
 ### Transaction Management
 
 #### Create AI Agent Transaction
+
 ```http
 POST /transactions/ai-transaction
 Content-Type: application/json
@@ -109,11 +123,13 @@ Content-Type: application/json
 ### Monitoring
 
 #### System Health
+
 ```http
 GET /monitoring/health
 ```
 
 #### Recent Alerts
+
 ```http
 GET /monitoring/alerts
 ```
@@ -122,15 +138,15 @@ GET /monitoring/alerts
 
 ### Environment Variables
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `WEB3AUTH_CLIENT_ID` | Web3Auth project client ID | ✅ |
-| `WEB3AUTH_JWT_SECRET` | JWT signing secret | ✅ |
-| `DATABASE_URL` | PostgreSQL connection string | ✅ |
-| `ETHEREUM_RPC_URL` | Ethereum RPC endpoint | ✅ |
-| `ENTRY_POINT_ADDRESS` | ERC-4337 EntryPoint contract | ✅ |
-| `TNF_PAYMASTER_ADDRESS` | Custom Paymaster contract | ⚠️ |
-| `BUNDLER_URL` | Account Abstraction bundler | ⚠️ |
+| Variable                | Description                  | Required |
+| ----------------------- | ---------------------------- | -------- |
+| `WEB3AUTH_CLIENT_ID`    | Web3Auth project client ID   | ✅       |
+| `WEB3AUTH_JWT_SECRET`   | JWT signing secret           | ✅       |
+| `DATABASE_URL`          | PostgreSQL connection string | ✅       |
+| `ETHEREUM_RPC_URL`      | Ethereum RPC endpoint        | ✅       |
+| `ENTRY_POINT_ADDRESS`   | ERC-4337 EntryPoint contract | ✅       |
+| `TNF_PAYMASTER_ADDRESS` | Custom Paymaster contract    | ⚠️       |
+| `BUNDLER_URL`           | Account Abstraction bundler  | ⚠️       |
 
 ⚠️ = Required for full ERC-4337 functionality
 
@@ -144,16 +160,19 @@ GET /monitoring/alerts
 ## 🔐 Security Features
 
 ### Multi-Party Computation (MPC)
+
 - Private keys never stored or exposed
 - Web3Auth handles key shares across multiple parties
 - Non-custodial architecture
 
 ### Compliance Integration
+
 - Real-time transaction risk assessment
 - Configurable compliance API integration
 - Automatic high-risk transaction blocking
 
 ### Monitoring & Alerts
+
 - 24/7 system health monitoring
 - Automated security alerts
 - Anomaly detection for AI agent behavior
@@ -161,27 +180,33 @@ GET /monitoring/alerts
 ## 🏭 Smart Contracts
 
 ### TNFPaymaster
+
 Gas sponsorship contract for authorized AI agents.
 
 **Key Features:**
+
 - Agent authorization management
 - Gas limit enforcement per agent
 - Real-time usage tracking
 - Owner controls and emergency functions
 
 ### TNFSmartAccount
+
 ERC-4337 compliant Smart Account for AI agents.
 
 **Key Features:**
+
 - Web3Auth signature validation
 - Batch transaction support
 - NFT and token compatibility
 - Ownership transfer capabilities
 
 ### TNFSmartAccountFactory
+
 Deterministic Smart Account deployment using CREATE2.
 
 **Key Features:**
+
 - Counterfactual address generation
 - Gas-efficient deployment
 - Duplicate prevention
@@ -202,7 +227,7 @@ Access the monitoring dashboard at `/monitoring/health` for:
 # Run unit tests
 pnpm test
 
-# Run integration tests  
+# Run integration tests
 pnpm test:integration
 
 # Smart contract tests
@@ -212,17 +237,20 @@ cd contracts && forge test
 ## 🚀 Deployment
 
 ### Development
+
 ```bash
 pnpm run dev
 ```
 
 ### Production
+
 ```bash
 pnpm run build
 pnpm run start:prod
 ```
 
 ### Docker
+
 ```bash
 docker build -t tnf-wallet-api .
 docker run -p 3001:3001 tnf-wallet-api
@@ -231,16 +259,19 @@ docker run -p 3001:3001 tnf-wallet-api
 ## 📈 Scaling Considerations
 
 ### Horizontal Scaling
+
 - Stateless API design allows multiple instances
 - Database connection pooling configured
 - Web3Auth handles distributed key management
 
 ### Performance Optimization
+
 - Redis caching for frequent queries
 - Database indexing on wallet addresses
 - Batch transaction processing
 
 ### Security Hardening
+
 - Rate limiting on sensitive endpoints
 - IP whitelisting for admin functions
 - Encrypted sensitive configuration
@@ -250,21 +281,25 @@ docker run -p 3001:3001 tnf-wallet-api
 ### Common Issues
 
 **Web3Auth Connection Failed**
+
 - Verify client ID and network configuration
 - Check JWT secret and verifier setup
 - Ensure proper domain configuration
 
 **Transaction Stuck in Pending**
+
 - Check bundler service health
 - Verify EntryPoint contract address
 - Monitor gas price configuration
 
 **Paymaster Out of Funds**
+
 - Monitor paymaster balance alerts
 - Configure auto-funding if available
 - Check deposit transaction confirmations
 
 ### Debug Mode
+
 ```bash
 DEBUG=tnf:* pnpm run dev
 ```
@@ -290,14 +325,18 @@ This project is licensed under the MIT License.
 
 ## ⚠️ Security Notice
 
-This is a production-ready implementation but should undergo security audits before handling significant value. The smart contracts include standard security patterns but require thorough testing in your specific environment.
+This is a production-ready implementation but should undergo security audits
+before handling significant value. The smart contracts include standard security
+patterns but require thorough testing in your specific environment.
 
 **Audit Recommendations:**
+
 - Engage professional smart contract auditors
-- Conduct penetration testing of API endpoints  
+- Conduct penetration testing of API endpoints
 - Review Web3Auth integration security
 - Validate compliance integration robustness
 
 ---
 
-**The New Fuse Team** - Building the future of AI-powered blockchain interactions
+**The New Fuse Team** - Building the future of AI-powered blockchain
+interactions

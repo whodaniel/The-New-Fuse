@@ -1,11 +1,8 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { DatabaseService } from '@the-new-fuse/database';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { PrismaService } from '@the-new-fuse/database';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import {
-  SyncOperation,
-  ConflictResolution
-} from '../types';
+import { ConflictResolution, SyncOperation } from '../types';
 
 export interface TaskSyncData {
   id: string;
@@ -69,7 +66,7 @@ export interface IWebSocketService {
 @Injectable()
 export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(TaskSynchronizationService.name);
-  
+
   private readonly config = {
     taskChannelPrefix: 'task_sync:',
     executionChannelPrefix: 'task_execution:',
@@ -77,7 +74,7 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
     notificationChannelPrefix: 'task_notification:',
     conflictResolutionTimeout: 30000,
     batchSize: 50,
-    maxRetries: 3
+    maxRetries: 3,
   };
 
   private taskDependencyGraph: Map<string, Set<string>> = new Map();
@@ -87,7 +84,7 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
   constructor(
     private readonly redisService: UnifiedRedisService,
     @Inject('IWebSocketService') private readonly wsService: IWebSocketService,
-    private readonly dbService: PrismaService,
+    private readonly dbService: DatabaseService,
     private readonly syncOrchestrator: SyncOrchestrator
   ) {}
 
@@ -108,12 +105,9 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
    */
   private async initializeChannelSubscriptions(): Promise<void> {
     // Subscribe to task sync events
-    await this.redisService.psubscribe(
-      `${this.config.taskChannelPrefix}*`,
-      async (message) => {
-        await this.handleTaskSyncMessage(message);
-      }
-    );
+    await this.redisService.psubscribe(`${this.config.taskChannelPrefix}*`, async (message) => {
+      await this.handleTaskSyncMessage(message);
+    });
 
     // Subscribe to task execution events
     await this.redisService.psubscribe(
@@ -146,10 +140,10 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
             select: {
               id: true,
               nextSteps: true,
-              conditions: true
-            }
-          }
-        }
+              conditions: true,
+            },
+          },
+        },
       });
 
       for (const workflow of workflows) {
@@ -171,11 +165,11 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
    */
   async syncTaskData(taskData: TaskSyncData, tenantId?: string): Promise<void> {
     const startTime = Date.now();
-    
+
     try {
       // Update task in database with optimistic locking
       const updatedTask = await this.updateTaskWithVersioning(taskData);
-      
+
       // Create sync operation
       const operation: SyncOperation = {
         id: this.generateOperationId(),
@@ -186,12 +180,12 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
         data: {
           ...taskData,
           updatedTask,
-          syncTimestamp: new Date()
+          syncTimestamp: new Date(),
         },
         priority: this.getTaskSyncPriority(taskData.priority),
         retryCount: 0,
         maxRetries: this.config.maxRetries,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       // Store operation
@@ -209,7 +203,7 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
       await this.redisService.publish(channel, {
         operation,
         taskData,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       // Send real-time notifications
@@ -221,7 +215,7 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
         tenantId,
         data: taskData,
         priority: this.mapTaskPriorityToNotificationPriority(taskData.priority),
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       // Update dependent tasks if status changed
@@ -254,12 +248,12 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
         data: {
           execution: executionData,
           updatedExecution,
-          syncTimestamp: new Date()
+          syncTimestamp: new Date(),
         },
         priority: 2, // High priority for execution updates
         retryCount: 0,
         maxRetries: this.config.maxRetries,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       // Sync via orchestrator
@@ -274,13 +268,13 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
       await this.redisService.publish(channel, {
         operation,
         executionData,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       // Send real-time notification for execution completion
       if (executionData.completedAt) {
         const task = await this.dbService.task.findUnique({
-          where: { id: executionData.taskId }
+          where: { id: executionData.taskId },
         });
 
         if (task) {
@@ -293,7 +287,7 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
             data: executionData,
             priority: executionData.error ? 'high' : 'medium',
             timestamp: new Date(),
-            requiresAck: !!executionData.error // Require acknowledgment for failures
+            requiresAck: !!executionData.error, // Require acknowledgment for failures
           };
 
           await this.sendTaskNotification(notification);
@@ -328,7 +322,7 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
         dependencies,
         dependents: this.getDependentTasks(taskId),
         updateType: 'reorder', // Simplified for now
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       // Sync dependency changes
@@ -340,12 +334,12 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
         tenantId,
         data: {
           dependencyUpdate,
-          syncTimestamp: new Date()
+          syncTimestamp: new Date(),
         },
         priority: 3, // Medium priority for dependency updates
         retryCount: 0,
         maxRetries: this.config.maxRetries,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       // Sync via orchestrator
@@ -360,7 +354,7 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
       await this.redisService.publish(channel, {
         operation,
         dependencyUpdate,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       // Notify affected users
@@ -368,7 +362,7 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
       for (const affectedTaskId of affectedTasks) {
         try {
           const task = await this.dbService.task.findUnique({
-            where: { id: affectedTaskId }
+            where: { id: affectedTaskId },
           });
 
           if (task) {
@@ -380,7 +374,7 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
               tenantId,
               data: dependencyUpdate,
               priority: 'medium',
-              timestamp: new Date()
+              timestamp: new Date(),
             };
 
             await this.sendTaskNotification(notification);
@@ -427,9 +421,10 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
           ...localVersion,
           ...remoteVersion,
           // Keep the latest timestamp
-          lastModified: localVersion.lastModified > remoteVersion.lastModified 
-            ? localVersion.lastModified 
-            : remoteVersion.lastModified,
+          lastModified:
+            localVersion.lastModified > remoteVersion.lastModified
+              ? localVersion.lastModified
+              : remoteVersion.lastModified,
           // Increment version
           version: Math.max(localVersion.version, remoteVersion.version) + 1,
           // Merge metadata
@@ -440,9 +435,9 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
             conflictResolvedAt: new Date(),
             originalVersions: {
               local: localVersion.version,
-              remote: remoteVersion.version
-            }
-          }
+              remote: remoteVersion.version,
+            },
+          },
         };
         strategy = 'merge';
       }
@@ -460,8 +455,8 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
           conflictType: 'task_update',
           resolutionTimestamp: new Date(),
           localVersion: localVersion.version,
-          remoteVersion: remoteVersion.version
-        }
+          remoteVersion: remoteVersion.version,
+        },
       };
     } catch (error) {
       this.logger.error(`Failed to resolve task conflict:`, error);
@@ -493,7 +488,9 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
       const channel = `${this.config.notificationChannelPrefix}${notification.tenantId || 'global'}`;
       await this.redisService.publish(channel, notification);
 
-      this.logger.debug(`Queued task notification ${notification.id} for user ${notification.userId}`);
+      this.logger.debug(
+        `Queued task notification ${notification.id} for user ${notification.userId}`
+      );
     } catch (error) {
       this.logger.error(`Failed to send task notification:`, error);
     }
@@ -514,10 +511,10 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
         payload: {
           notifications,
           count: notifications.length,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         timestamp: Date.now(),
-        priority: 2 // HIGH priority
+        priority: 2, // HIGH priority
       });
 
       // Clear pending notifications
@@ -538,11 +535,11 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
     tenantId?: string
   ): Promise<void> {
     const dependentTasks = this.getDependentTasks(taskId);
-    
+
     for (const dependentTaskId of dependentTasks) {
       try {
         const dependentTask = await this.dbService.task.findUnique({
-          where: { id: dependentTaskId }
+          where: { id: dependentTaskId },
         });
 
         if (!dependentTask) continue;
@@ -554,7 +551,7 @@ export class TaskSynchronizationService implements OnModuleInit, OnModuleDestroy
         );
 
         // Update task status if dependencies are met
-if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
+        if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
           const updatedTaskData: TaskSyncData = {
             id: dependentTaskId,
             type: dependentTask.type,
@@ -565,7 +562,7 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
             userId: dependentTask.userId,
             version: 1, // Will be updated by versioning system
             lastModified: new Date(),
-            modifiedBy: 'dependency_system'
+            modifiedBy: 'dependency_system',
           };
 
           await this.syncTaskData(updatedTaskData, tenantId);
@@ -585,15 +582,15 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
     try {
       const tasks = await this.dbService.task.findMany({
         where: {
-          id: { in: dependencies }
+          id: { in: dependencies },
         },
         select: {
           id: true,
-          status: true
-        }
+          status: true,
+        },
       });
 
-      return tasks.every(task => task.status === 'COMPLETED');
+      return tasks.every((task) => task.status === 'COMPLETED');
     } catch (error) {
       this.logger.error('Failed to check dependencies:', error);
       return false;
@@ -605,13 +602,13 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
    */
   private getDependentTasks(taskId: string): string[] {
     const dependents: string[] = [];
-    
+
     for (const [dependentId, dependencies] of this.taskDependencyGraph.entries()) {
       if (dependencies.has(taskId)) {
         dependents.push(dependentId);
       }
     }
-    
+
     return dependents;
   }
 
@@ -620,7 +617,7 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
    */
   private async updateTaskWithVersioning(taskData: TaskSyncData): Promise<any> {
     try {
-      // Use Prisma's optimistic locking pattern
+      // Use Drizzle's optimistic locking pattern
       const result = await this.dbService.$executeRaw`
         UPDATE tasks 
         SET 
@@ -647,7 +644,9 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
   /**
    * Update task execution with versioning
    */
-  private async updateTaskExecutionWithVersioning(executionData: TaskExecutionSyncData): Promise<any> {
+  private async updateTaskExecutionWithVersioning(
+    executionData: TaskExecutionSyncData
+  ): Promise<any> {
     try {
       const result = await this.dbService.$executeRaw`
         UPDATE task_executions 
@@ -673,7 +672,7 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
   private async handleTaskSyncMessage(message: any): Promise<void> {
     try {
       const { operation, taskData } = JSON.parse(message.message);
-      
+
       // Process incoming task sync
       await this.processIncomingTaskSync(operation, taskData);
     } catch (error) {
@@ -684,7 +683,7 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
   private async handleTaskExecutionMessage(message: any): Promise<void> {
     try {
       const { operation, executionData } = JSON.parse(message.message);
-      
+
       // Process incoming execution sync
       await this.processIncomingExecutionSync(operation, executionData);
     } catch (error) {
@@ -695,7 +694,7 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
   private async handleDependencyChangeMessage(message: any): Promise<void> {
     try {
       const { operation, dependencyUpdate } = JSON.parse(message.message);
-      
+
       // Process incoming dependency change
       await this.processIncomingDependencyChange(operation, dependencyUpdate);
     } catch (error) {
@@ -706,10 +705,13 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
   /**
    * Process incoming sync operations
    */
-  private async processIncomingTaskSync(operation: SyncOperation, taskData: TaskSyncData): Promise<void> {
+  private async processIncomingTaskSync(
+    operation: SyncOperation,
+    taskData: TaskSyncData
+  ): Promise<void> {
     // Check for conflicts and apply changes
     const existingTask = await this.dbService.task.findUnique({
-      where: { id: taskData.id }
+      where: { id: taskData.id },
     });
 
     if (existingTask) {
@@ -731,17 +733,20 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
     await this.updateTaskWithVersioning(taskData);
   }
 
-  private async processIncomingExecutionSync(operation: SyncOperation, executionData: TaskExecutionSyncData): Promise<void> {
+  private async processIncomingExecutionSync(
+    operation: SyncOperation,
+    executionData: TaskExecutionSyncData
+  ): Promise<void> {
     // Apply execution sync
     await this.updateTaskExecutionWithVersioning(executionData);
   }
 
-  private async processIncomingDependencyChange(operation: SyncOperation, dependencyUpdate: TaskDependencyUpdate): Promise<void> {
+  private async processIncomingDependencyChange(
+    operation: SyncOperation,
+    dependencyUpdate: TaskDependencyUpdate
+  ): Promise<void> {
     // Update in-memory dependency graph
-    this.taskDependencyGraph.set(
-      dependencyUpdate.taskId,
-      new Set(dependencyUpdate.dependencies)
-    );
+    this.taskDependencyGraph.set(dependencyUpdate.taskId, new Set(dependencyUpdate.dependencies));
   }
 
   /**
@@ -769,17 +774,19 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
       URGENT: 1,
       HIGH: 2,
       MEDIUM: 3,
-      LOW: 4
+      LOW: 4,
     };
     return priorities[taskPriority] || 3;
   }
 
-  private mapTaskPriorityToNotificationPriority(taskPriority: string): 'low' | 'medium' | 'high' | 'urgent' {
+  private mapTaskPriorityToNotificationPriority(
+    taskPriority: string
+  ): 'low' | 'medium' | 'high' | 'urgent' {
     const mapping: Record<string, 'low' | 'medium' | 'high' | 'urgent'> = {
       URGENT: 'urgent',
       HIGH: 'high',
       MEDIUM: 'medium',
-      LOW: 'low'
+      LOW: 'low',
     };
     return mapping[taskPriority] || 'medium';
   }
@@ -800,7 +807,7 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
     // Clean up active operations
     this.activeTaskOperations.clear();
     this.pendingNotifications.clear();
-    
+
     // Unsubscribe from Redis channels
     await this.redisService.punsubscribe(`${this.config.taskChannelPrefix}*`);
     await this.redisService.punsubscribe(`${this.config.executionChannelPrefix}*`);
@@ -811,15 +818,16 @@ if (allDependenciesCompleted && dependentTask.status === 'PENDING') {
    * Public API methods
    */
   async getTaskSyncStatus(taskId: string): Promise<any> {
-    const operation = Array.from(this.activeTaskOperations.values())
-      .find(op => op.resourceId === taskId);
-    
+    const operation = Array.from(this.activeTaskOperations.values()).find(
+      (op) => op.resourceId === taskId
+    );
+
     return {
       taskId,
       hasPendingSync: !!operation,
       lastSyncOperation: operation,
       dependencyCount: this.taskDependencyGraph.get(taskId)?.size || 0,
-      dependentCount: this.getDependentTasks(taskId).length
+      dependentCount: this.getDependentTasks(taskId).length,
     };
   }
 

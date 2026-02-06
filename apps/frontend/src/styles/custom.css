@@ -23,21 +23,25 @@
 
 /* Dark Mode Transitions */
 .dark-mode-transition {
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Workflow Canvas */
 .workflow-canvas {
   touch-action: none;
   background-size: 20px 20px;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
 }
 
 /* Agent Card Animations */
 .agent-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .agent-card:hover {

@@ -11,6 +11,6 @@ export function useAuth(): any {
     isLoading: !context.isInitialized,
     authToken: context.token,
     user: context.user,
-    unsetUser: () => context.setToken(null)
+    unsetUser: () => context.setToken(null),
   };
 }

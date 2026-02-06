@@ -7,14 +7,14 @@ export enum ErrorCategory {
   AUTHORIZATION = 'authorization',
   DATABASE = 'database',
   EXTERNAL_SERVICE = 'external_service',
-  UNKNOWN = 'unknown'
+  UNKNOWN = 'unknown',
 }
 
 export enum ErrorPriority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export interface ErrorMetadata {

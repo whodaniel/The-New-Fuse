@@ -1,6 +1,7 @@
 # WebSocket Infrastructure - Usage Examples
 
 ## Table of Contents
+
 - [Basic Usage](#basic-usage)
 - [Advanced Features](#advanced-features)
 - [Integration Examples](#integration-examples)
@@ -20,7 +21,9 @@ import { WebSocketInfrastructureModule } from '@the-new-fuse/websocket-infrastru
   imports: [
     WebSocketInfrastructureModule.forRoot({
       cors: {
-        origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'],
+        origin: process.env.CORS_ORIGINS?.split(',') || [
+          'http://localhost:3000',
+        ],
         credentials: true,
       },
     }),
@@ -69,27 +72,27 @@ WebSocketInfrastructureModule.forRoot({
 
   // Heartbeat Configuration
   heartbeat: {
-    interval: 30000,  // 30 seconds
-    timeout: 60000,   // 60 seconds
+    interval: 30000, // 30 seconds
+    timeout: 60000, // 60 seconds
   },
 
   // Compression
   compression: {
     enabled: true,
-    threshold: 1024,  // Compress messages > 1KB
+    threshold: 1024, // Compress messages > 1KB
   },
 
   // Message Queue
   messageQueue: {
     enabled: true,
     maxSize: 10000,
-    ttl: 3600000,  // 1 hour
+    ttl: 3600000, // 1 hour
   },
 
   // Connection Pool
   connectionPool: {
     maxConnections: 10000,
-    idleTimeout: 300000,  // 5 minutes
+    idleTimeout: 300000, // 5 minutes
   },
 
   // Monitoring
@@ -97,7 +100,7 @@ WebSocketInfrastructureModule.forRoot({
     enabled: true,
     metricsPort: 9090,
   },
-})
+});
 ```
 
 ### Async Configuration
@@ -116,7 +119,7 @@ WebSocketInfrastructureModule.forRootAsync({
     },
   }),
   inject: [ConfigService],
-})
+});
 ```
 
 ### Custom Authentication
@@ -260,7 +263,7 @@ import { Cron } from '@nestjs/schedule';
 export class DashboardService {
   constructor(private readonly wsGateway: WebSocketGateway) {}
 
-  @Cron('*/5 * * * * *')  // Every 5 seconds
+  @Cron('*/5 * * * * *') // Every 5 seconds
   async broadcastMetrics() {
     const metrics = await this.collectMetrics();
 
@@ -270,8 +273,9 @@ export class DashboardService {
 
   async subscribeToMetrics(userId: string) {
     // User joins dashboard room
-    const connections = this.wsGateway['connectionPool'].getUserConnections(userId);
-    connections.forEach(socket => {
+    const connections =
+      this.wsGateway['connectionPool'].getUserConnections(userId);
+    connections.forEach((socket) => {
       socket.join('dashboard');
     });
 
@@ -442,8 +446,8 @@ services:
       - WS_PORT=3000
       - REDIS_HOST=redis
     ports:
-      - "3001:3000"
-      - "9091:9090"
+      - '3001:3000'
+      - '9091:9090'
     depends_on:
       - redis
 
@@ -454,22 +458,22 @@ services:
       - WS_PORT=3000
       - REDIS_HOST=redis
     ports:
-      - "3002:3000"
-      - "9092:9090"
+      - '3002:3000'
+      - '9092:9090'
     depends_on:
       - redis
 
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis-data:/data
 
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"
+      - '80:80'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
@@ -499,35 +503,35 @@ spec:
         app: websocket-server
     spec:
       containers:
-      - name: websocket
-        image: your-registry/websocket:latest
-        env:
-        - name: REDIS_HOST
-          value: redis-service
-        - name: WS_MAX_CONNECTIONS
-          value: "10000"
-        ports:
-        - containerPort: 3000
-        - containerPort: 9090
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 3000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 3000
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: websocket
+          image: your-registry/websocket:latest
+          env:
+            - name: REDIS_HOST
+              value: redis-service
+            - name: WS_MAX_CONNECTIONS
+              value: '10000'
+          ports:
+            - containerPort: 3000
+            - containerPort: 9090
+          resources:
+            requests:
+              memory: '256Mi'
+              cpu: '250m'
+            limits:
+              memory: '512Mi'
+              cpu: '500m'
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
 
 ---
 apiVersion: v1
@@ -536,13 +540,13 @@ metadata:
   name: websocket-service
 spec:
   type: LoadBalancer
-  sessionAffinity: ClientIP  # Sticky sessions
+  sessionAffinity: ClientIP # Sticky sessions
   selector:
     app: websocket-server
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 3000
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
 ```
 
 ## Testing
@@ -570,10 +574,13 @@ describe('WebSocketGateway', () => {
 
     gateway.broadcast('test', { message: 'hello' });
 
-    expect(spy).toHaveBeenCalledWith('test', expect.objectContaining({
-      channel: 'test',
-      data: { message: 'hello' },
-    }));
+    expect(spy).toHaveBeenCalledWith(
+      'test',
+      expect.objectContaining({
+        channel: 'test',
+        data: { message: 'hello' },
+      })
+    );
   });
 });
 ```

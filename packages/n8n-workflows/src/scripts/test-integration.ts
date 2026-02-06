@@ -4,10 +4,10 @@
  * Demonstrates the n8n workflows integration
  */
 
-import { WorkflowService } from '../services/WorkflowService';
-import { WorkflowParser } from '../parser/WorkflowParser';
-import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer';
 import * as path from 'path';
+import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer';
+import { WorkflowParser } from '../parser/WorkflowParser';
+import { WorkflowService } from '../services/WorkflowService';
 
 async function testIntegration() {
   console.log('=== N8N Workflows Integration Test ===\n');

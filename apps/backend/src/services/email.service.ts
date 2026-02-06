@@ -35,7 +35,7 @@ export class EmailService {
         text: options.text,
         html: options.html,
       });
-      
+
       this.logger.log(`Email sent successfully to ${options.to}`);
     } catch (error) {
       this.logger.error('Failed to send email:', error);

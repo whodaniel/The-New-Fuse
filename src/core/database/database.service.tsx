@@ -1,31 +1,31 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { PrismaClient } from '@the-new-fuse/database';
+import { DrizzleClient } from '@the-new-fuse/database';
 import { DatabaseConfig } from './database.config.tsx';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
-  private prisma: PrismaClient;
+  private drizzle: DrizzleClient;
 
   constructor(private config: DatabaseConfig) {
-    this.prisma = new PrismaClient(this.config.getPrismaConfig());
+    this.drizzle = new DrizzleClient(this.config.getDrizzleConfig());
   }
 
   async onModuleInit(): Promise<void> {
-    await this.prisma.$connect();
+    await this.drizzle.$connect();
   }
 
   async onModuleDestroy(): Promise<void> {
-    await this.prisma.$disconnect();
+    await this.drizzle.$disconnect();
   }
 
-  getClient(): PrismaClient {
-    return this.prisma;
+  getClient(): DrizzleClient {
+    return this.drizzle;
   }
 
   async transaction<T>(
-    fn: (prisma: PrismaClient) => Promise<T>
+    fn: (drizzle: DrizzleClient) => Promise<T>
   ): Promise<T> {
-    return this.prisma.$transaction(fn);
+    return this.drizzle.$transaction(fn);
   }
 
   async cleanDatabase(): Promise<any> {
@@ -33,12 +33,12 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       throw new Error('Cannot clean database in production');
     }
 
-    const models = Reflect.ownKeys(this.prisma).filter((key) => {
+    const models = Reflect.ownKeys(this.drizzle).filter((key) => {
       return typeof key === 'string' && !key.startsWith('_') && !key.startsWith('$');
     });
 
     return Promise.all(
-      models.map((modelKey) => this.prisma[modelKey as string].deleteMany())
+      models.map((modelKey) => this.drizzle[modelKey as string].deleteMany())
     );
   }
 }

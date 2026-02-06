@@ -6,20 +6,20 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { mcpValidator } from './validator';
-import { MessageValidator } from './messageValidator';
 import { JSONRPCErrorCode, MCPErrorCode } from '../types/error';
+import { MessageValidator } from './messageValidator';
+import { mcpValidator } from './validator';
 
 describe('MCP Protocol Compliance', () => {
   describe('JSON-RPC 2.0 Compliance', () => {
     it('should enforce jsonrpc version 2.0', () => {
       const invalidVersions = ['1.0', '2.1', '3.0', null, undefined, 2.0];
 
-      invalidVersions.forEach(version => {
+      invalidVersions.forEach((version) => {
         const request = {
           jsonrpc: version,
           id: 1,
-          method: 'test'
+          method: 'test',
         };
 
         const result = mcpValidator.validateJSONRPCRequest(request);
@@ -30,11 +30,11 @@ describe('MCP Protocol Compliance', () => {
     it('should accept valid request ID types', () => {
       const validIds = ['string-id', 123, 0, -1];
 
-      validIds.forEach(id => {
+      validIds.forEach((id) => {
         const request = {
           jsonrpc: '2.0',
           id,
-          method: 'test'
+          method: 'test',
         };
 
         const result = mcpValidator.validateJSONRPCRequest(request);
@@ -45,11 +45,11 @@ describe('MCP Protocol Compliance', () => {
     it('should accept valid response ID types including null', () => {
       const validIds = ['string-id', 123, 0, -1, null];
 
-      validIds.forEach(id => {
+      validIds.forEach((id) => {
         const response = {
           jsonrpc: '2.0',
           id,
-          result: 'success'
+          result: 'success',
         };
 
         const result = mcpValidator.validateJSONRPCResponse(response);
@@ -61,7 +61,7 @@ describe('MCP Protocol Compliance', () => {
       const notification = {
         jsonrpc: '2.0',
         id: 1, // Notifications must not have id
-        method: 'test.notification'
+        method: 'test.notification',
       };
 
       const result = mcpValidator.validateJSONRPCNotification(notification);
@@ -74,8 +74,8 @@ describe('MCP Protocol Compliance', () => {
         id: 1,
         error: {
           code: -32600,
-          message: 'Invalid Request'
-        }
+          message: 'Invalid Request',
+        },
       };
 
       const result = mcpValidator.validateJSONRPCResponse(validError);
@@ -89,8 +89,8 @@ describe('MCP Protocol Compliance', () => {
         result: 'success',
         error: {
           code: -32600,
-          message: 'Invalid Request'
-        }
+          message: 'Invalid Request',
+        },
       };
 
       const result = mcpValidator.validateJSONRPCResponse(invalidResponse);
@@ -100,7 +100,7 @@ describe('MCP Protocol Compliance', () => {
     it('should reject response with neither result nor error', () => {
       const invalidResponse = {
         jsonrpc: '2.0',
-        id: 1
+        id: 1,
       };
 
       const result = mcpValidator.validateJSONRPCResponse(invalidResponse);
@@ -118,8 +118,8 @@ describe('MCP Protocol Compliance', () => {
         meta: {
           timestamp: new Date().toISOString(),
           source: 'test-client',
-          priority: 'normal'
-        }
+          priority: 'normal',
+        },
       };
 
       const result = mcpValidator.validateMCPRequest(mcpRequest);
@@ -134,8 +134,8 @@ describe('MCP Protocol Compliance', () => {
         meta: {
           timestamp: new Date().toISOString(),
           processingTime: 150,
-          serverId: 'test-server'
-        }
+          serverId: 'test-server',
+        },
       };
 
       const result = mcpValidator.validateMCPResponse(mcpResponse);
@@ -150,8 +150,8 @@ describe('MCP Protocol Compliance', () => {
         meta: {
           timestamp: new Date().toISOString(),
           source: 'test-server',
-          type: 'status'
-        }
+          type: 'status',
+        },
       };
 
       const result = mcpValidator.validateMCPNotification(mcpNotification);
@@ -161,12 +161,12 @@ describe('MCP Protocol Compliance', () => {
     it('should validate priority values in meta', () => {
       const validPriorities = ['low', 'normal', 'high'];
 
-      validPriorities.forEach(priority => {
+      validPriorities.forEach((priority) => {
         const request = {
           jsonrpc: '2.0',
           id: 1,
           method: 'test',
-          meta: { priority }
+          meta: { priority },
         };
 
         const result = mcpValidator.validateMCPRequest(request);
@@ -177,11 +177,11 @@ describe('MCP Protocol Compliance', () => {
     it('should validate notification types in meta', () => {
       const validTypes = ['event', 'status', 'alert'];
 
-      validTypes.forEach(type => {
+      validTypes.forEach((type) => {
         const notification = {
           jsonrpc: '2.0',
           method: 'test.notification',
-          meta: { type }
+          meta: { type },
         };
 
         const result = mcpValidator.validateMCPNotification(notification);
@@ -195,7 +195,7 @@ describe('MCP Protocol Compliance', () => {
       const validResource = {
         uri: 'file:///path/to/resource.txt',
         name: 'Test Resource',
-        permissions: { read: true }
+        permissions: { read: true },
       };
 
       const result = mcpValidator.validateMCPResource(validResource);
@@ -206,7 +206,7 @@ describe('MCP Protocol Compliance', () => {
       const resourceWithoutRead = {
         uri: 'file:///test.txt',
         name: 'Test Resource',
-        permissions: { write: true } // Missing required 'read'
+        permissions: { write: true }, // Missing required 'read'
       };
 
       const result = mcpValidator.validateMCPResource(resourceWithoutRead);
@@ -224,8 +224,8 @@ describe('MCP Protocol Compliance', () => {
           read: true,
           write: false,
           subscribe: true,
-          requiredRoles: ['user', 'admin']
-        }
+          requiredRoles: ['user', 'admin'],
+        },
       };
 
       const result = mcpValidator.validateMCPResource(fullResource);
@@ -241,10 +241,10 @@ describe('MCP Protocol Compliance', () => {
         inputSchema: {
           type: 'object',
           properties: {
-            input: { type: 'string' }
+            input: { type: 'string' },
           },
-          required: ['input']
-        }
+          required: ['input'],
+        },
       };
 
       const result = mcpValidator.validateMCPTool(validTool);
@@ -258,15 +258,15 @@ describe('MCP Protocol Compliance', () => {
         inputSchema: {
           type: 'object',
           properties: {
-            input: { type: 'string' }
-          }
+            input: { type: 'string' },
+          },
         },
         outputSchema: {
           type: 'object',
           properties: {
-            result: { type: 'string' }
-          }
-        }
+            result: { type: 'string' },
+          },
+        },
       };
 
       const result = mcpValidator.validateMCPTool(toolWithOutput);
@@ -281,8 +281,8 @@ describe('MCP Protocol Compliance', () => {
         config: {
           timeout: 5000,
           maxMemory: 1024 * 1024,
-          sandboxed: true
-        }
+          sandboxed: true,
+        },
       };
 
       const result = mcpValidator.validateMCPTool(toolWithConfig);
@@ -294,12 +294,12 @@ describe('MCP Protocol Compliance', () => {
     it('should enforce semantic versioning for capabilities', () => {
       const validVersions = ['1.0.0', '2.1.3', '0.1.0-alpha', '1.0.0-beta.1'];
 
-      validVersions.forEach(version => {
+      validVersions.forEach((version) => {
         const capability = {
           name: 'test-capability',
           version,
           description: 'A test capability',
-          methods: ['test.method']
+          methods: ['test.method'],
         };
 
         const result = mcpValidator.validateMCPCapability(capability);
@@ -310,12 +310,12 @@ describe('MCP Protocol Compliance', () => {
     it('should reject invalid version formats', () => {
       const invalidVersions = ['1.0', '1', 'v1.0.0', '1.0.0.0'];
 
-      invalidVersions.forEach(version => {
+      invalidVersions.forEach((version) => {
         const capability = {
           name: 'test-capability',
           version,
           description: 'A test capability',
-          methods: ['test.method']
+          methods: ['test.method'],
         };
 
         const result = mcpValidator.validateMCPCapability(capability);
@@ -328,7 +328,7 @@ describe('MCP Protocol Compliance', () => {
         name: 'test-capability',
         version: '1.0.0',
         description: 'A test capability',
-        methods: [] // Empty methods array
+        methods: [], // Empty methods array
       };
 
       const result = mcpValidator.validateMCPCapability(capabilityWithoutMethods);
@@ -347,8 +347,8 @@ describe('MCP Protocol Compliance', () => {
           author: 'Test Author',
           documentation: 'https://example.com/docs',
           license: 'MIT',
-          tags: ['test', 'example']
-        }
+          tags: ['test', 'example'],
+        },
       };
 
       const result = mcpValidator.validateMCPCapability(capabilityWithMetadata);
@@ -363,10 +363,10 @@ describe('MCP Protocol Compliance', () => {
         JSONRPCErrorCode.INVALID_REQUEST,
         JSONRPCErrorCode.METHOD_NOT_FOUND,
         JSONRPCErrorCode.INVALID_PARAMS,
-        JSONRPCErrorCode.INTERNAL_ERROR
+        JSONRPCErrorCode.INTERNAL_ERROR,
       ];
 
-      standardCodes.forEach(code => {
+      standardCodes.forEach((code) => {
         expect(typeof code).toBe('number');
         expect(code).toBeLessThan(0);
       });
@@ -377,10 +377,10 @@ describe('MCP Protocol Compliance', () => {
         MCPErrorCode.RESOURCE_NOT_FOUND,
         MCPErrorCode.TOOL_EXECUTION_FAILED,
         MCPErrorCode.SERVICE_UNAVAILABLE,
-        MCPErrorCode.AUTHENTICATION_FAILED
+        MCPErrorCode.AUTHENTICATION_FAILED,
       ];
 
-      mcpCodes.forEach(code => {
+      mcpCodes.forEach((code) => {
         expect(typeof code).toBe('number');
         expect(code).toBeLessThan(-32000);
         expect(code).toBeGreaterThan(-33000);
@@ -393,18 +393,18 @@ describe('MCP Protocol Compliance', () => {
       const request = {
         jsonrpc: '2.0',
         id: 1,
-        method: 'test'
+        method: 'test',
       };
 
       const response = {
         jsonrpc: '2.0',
         id: 1,
-        result: 'success'
+        result: 'success',
       };
 
       const notification = {
         jsonrpc: '2.0',
-        method: 'test.notification'
+        method: 'test.notification',
       };
 
       expect(MessageValidator.validateMessage(request).valid).toBe(true);
@@ -416,7 +416,7 @@ describe('MCP Protocol Compliance', () => {
       // Message with id but no method or result/error
       const ambiguous1 = {
         jsonrpc: '2.0',
-        id: 1
+        id: 1,
       };
 
       // Message with method and id and result (invalid - should be treated as response)
@@ -424,7 +424,7 @@ describe('MCP Protocol Compliance', () => {
         jsonrpc: '2.0',
         id: 1,
         method: 'test',
-        result: 'success'
+        result: 'success',
       };
 
       expect(MessageValidator.validateMessage(ambiguous1).valid).toBe(false);

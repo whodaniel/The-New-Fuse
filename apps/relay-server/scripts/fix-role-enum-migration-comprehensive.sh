@@ -12,8 +12,8 @@ NC='\033[0m' # No Color
 
 # Define paths
 DB_DIR="packages/database"
-SCHEMA_PATH="$DB_DIR/prisma/schema.prisma"
-MIGRATION_PATH="$DB_DIR/prisma/migrations"
+SCHEMA_PATH="$DB_DIR/drizzle/schema.drizzle"
+MIGRATION_PATH="$DB_DIR/drizzle/migrations"
 PROBLEM_MIGRATION="20250409015715_initial_schema"
 SQL_FIX_PATH="$DB_DIR/fix_role_enum_comprehensive.sql"
 
@@ -213,29 +213,29 @@ fi
 
 # Mark the problematic migration as applied
 echo -e "${BLUE}🔧 Marking problematic migration as applied...${NC}"
-cd "$DB_DIR" && npx prisma migrate resolve --applied "$PROBLEM_MIGRATION"
+cd "$DB_DIR" && npx drizzle migrate resolve --applied "$PROBLEM_MIGRATION"
 if [ $? -ne 0 ]; then
   echo -e "${RED}❌ Failed to mark migration as applied${NC}"
   exit 1
 fi
 echo -e "${GREEN}✅ Migration marked as applied${NC}"
 
-# Generate Prisma client
-echo -e "${BLUE}🔧 Generating Prisma client...${NC}"
-cd "$DB_DIR" && npx prisma generate
+# Generate Drizzle client
+echo -e "${BLUE}🔧 Generating Drizzle client...${NC}"
+cd "$DB_DIR" && npx drizzle generate
 if [ $? -ne 0 ]; then
-  echo -e "${RED}❌ Failed to generate Prisma client${NC}"
+  echo -e "${RED}❌ Failed to generate Drizzle client${NC}"
   exit 1
 fi
-echo -e "${GREEN}✅ Prisma client generated${NC}"
+echo -e "${GREEN}✅ Drizzle client generated${NC}"
 
 # Verify database status
 echo -e "${BLUE}🔍 Verifying database migration status...${NC}"
-cd "$DB_DIR" && npx prisma migrate status
+cd "$DB_DIR" && npx drizzle migrate status
 if [ $? -ne 0 ]; then
   echo -e "${RED}❌ Failed to verify migration status${NC}"
   exit 1
 fi
 
 echo -e "${GREEN}✅ Role enum migration fix completed successfully${NC}"
-echo -e "${BLUE}You can now run 'npx prisma migrate dev --name add_your_changes' to create new migrations${NC}"
+echo -e "${BLUE}You can now run 'npx drizzle migrate dev --name add_your_changes' to create new migrations${NC}"

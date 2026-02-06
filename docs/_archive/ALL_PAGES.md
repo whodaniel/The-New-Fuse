@@ -1,70 +1,81 @@
 # Project Structure Documentation
 
 ## Core UI Components
+
 Located in `/apps/frontend/src/shared/ui/core/`
-- Button 
-- Card 
-- Input 
-- Select 
-- Switch 
-- Checkbox 
-- DropdownMenu 
-- TypingIndicator 
-- ThemeToggle 
-- Sidebar 
-- AppCard 
-- UserIcon 
-- ChatBubble 
-- Captcha 
+
+- Button
+- Card
+- Input
+- Select
+- Switch
+- Checkbox
+- DropdownMenu
+- TypingIndicator
+- ThemeToggle
+- Sidebar
+- AppCard
+- UserIcon
+- ChatBubble
+- Captcha
 
 ## Shared Hooks
+
 Located in `/apps/frontend/src/shared/hooks/`
-- useAuth 
-- useChat 
-- useFileUpload 
-- useSpeechRecognition 
-- useTheme 
-- useToast 
-- useWebRTC 
-- useWebSocket 
+
+- useAuth
+- useChat
+- useFileUpload
+- useSpeechRecognition
+- useTheme
+- useToast
+- useWebRTC
+- useWebSocket
 
 ## Shared Types
+
 Located in `/apps/frontend/src/shared/types/`
+
 - hooks.ts (Contains types for all shared hooks)
 - ui.ts (Contains types for UI components)
 
 ## Feature Modules
+
 Located in `/packages/features/`
 
 ### Dashboard
-- Components 
+
+- Components
   - FeatureControls
   - WidgetConfigModal
   - DataSourceConfig
   - TemplateGallery
   - InsightCard
   - InsightVisualization
-- Context 
+- Context
   - DashboardContext
-- Types 
+- Types
   - DataExport
   - WidgetTypes
 
 ### Marketplace
-- Components 
+
+- Components
   - MarketplaceList
   - ItemCard
   - FilterPanel
-- Context 
+- Context
   - MarketplaceContext
 
 ### Theme
-- Components 
+
+- Components
   - ThemeCustomizer
-- Context 
+- Context
   - ThemeContext
 
 ## Project Organization Summary
+
 1. All UI components have been migrated to the shared directory
 2. Hooks have been consolidated and typed
 3. Feature-specific components are organized in their respective modules
@@ -72,6 +83,7 @@ Located in `/packages/features/`
 5. Context providers are properly placed within feature modules
 
 ## Best Practices
+
 1. Use shared components from `/shared/ui/core/`
 2. Import hooks from `/shared/hooks/`
 3. Leverage shared types from `/shared/types/`
@@ -81,45 +93,58 @@ Located in `/packages/features/`
 7. Maintain consistent file structure within modules
 
 ## Next Steps
+
 1. Continue to monitor for any new components that should be shared
 2. Regular review of component usage patterns
 3. Update documentation as new features are added
 4. Consider creating a component playground or storybook
 5. Add comprehensive testing for all shared components
 
-The task was to perform a recursive search for all files with extensions .html, .css, .js, .jsx, .ts, .tsx, or containing "react" or "reactflow" in the project workspace. The search_files tool was used, and it returned 300+ results. Since the task was interrupted, I need to confirm if the search was complete or if further action is needed.
+The task was to perform a recursive search for all files with extensions .html,
+.css, .js, .jsx, .ts, .tsx, or containing "react" or "reactflow" in the project
+workspace. The search_files tool was used, and it returned 300+ results. Since
+the task was interrupted, I need to confirm if the search was complete or if
+further action is needed.
 
-Cline has a question:
-The search_files tool returned 300+ results for the specified file types and keywords. Should I proceed with analyzing these results, or would you like me to refine the search further?
+Cline has a question: The search_files tool returned 300+ results for the
+specified file types and keywords. Should I proceed with analyzing these
+results, or would you like me to refine the search further?
 
 list all results
 
-The user has requested to list all results from the previous search_files operation. Since the search returned 300+ results, I need to determine the most efficient way to present this information. Given the volume, I'll organize the results by file type and provide a summary of the findings.
+The user has requested to list all results from the previous search_files
+operation. Since the search returned 300+ results, I need to determine the most
+efficient way to present this information. Given the volume, I'll organize the
+results by file type and provide a summary of the findings.
 
 Here is the organized list of files found in the search:
 
 # Project Component Structure
 
 ## Core Components
-Located in `/apps/frontend/src/shared/ui/core/`
-- Button 
-- Card 
-- Input 
-- Select 
-- Switch 
-- Checkbox 
-- DropdownMenu 
-- TypingIndicator 
-- ThemeToggle 
-- Sidebar 
-- AppCard 
-- UserIcon 
-- ChatBubble 
 
-## All Components Migrated! 
+Located in `/apps/frontend/src/shared/ui/core/`
+
+- Button
+- Card
+- Input
+- Select
+- Switch
+- Checkbox
+- DropdownMenu
+- TypingIndicator
+- ThemeToggle
+- Sidebar
+- AppCard
+- UserIcon
+- ChatBubble
+
+## All Components Migrated!
 
 ## Feature Modules
+
 Located in `/src/components/features/`
+
 - Data
   - DataModule.tsx
 - Agents
@@ -145,16 +170,21 @@ Located in `/src/components/features/`
   - WorkflowModule.tsx
 
 ## Flow Components
+
 Located in `/apps/frontend/src/components/flow/`
+
 - FlowPage.tsx
 - NodeDetails.tsx
 - FlowContainer.tsx
 
 ## UI Components To Be Migrated
+
 - EditingChatBubble/index.jsx
 
 ## Shared Hooks
+
 Located in `/src/hooks/`
+
 - useSpeechRecognition.ts
 - useAuth.ts
 - useWebSocket.ts
@@ -164,6 +194,7 @@ Located in `/src/hooks/`
 - useChat.ts
 
 ## Areas Needing Consolidation:
+
 1. Feature Modules:
    - Merge overlapping agent management components
    - Consolidate authentication modules
@@ -188,6 +219,7 @@ Located in `/src/hooks/`
 ## Component Categories
 
 ### Core UI Components
+
 1. Layout Components
    - BaseLayout.tsx
    - Layout.tsx
@@ -257,6 +289,7 @@ Located in `/src/hooks/`
    - MultiModalInteraction.tsx
 
 ### Integration Components
+
 1. Data & Storage
    - VectorDBSelection
    - EmbeddingSelection
@@ -270,6 +303,7 @@ Located in `/src/hooks/`
    - MarkdownRenderer.tsx
 
 ### Workflow Components
+
 1. Task Management
    - TaskBoard.tsx
    - WorkspaceManager.tsx
@@ -329,6 +363,7 @@ Located in `/src/hooks/`
    - Update documentation
 
 ## Dependencies to Map
+
 - Need to analyze imports in each component
 - Identify shared dependencies
 - Create dependency graph
@@ -339,23 +374,26 @@ Located in `/src/hooks/`
 ### Current Status
 
 ### Shared UI Components (/apps/frontend/src/shared/ui/core/)
-- Button 
-- Card 
-- Input 
-- Select 
-- Switch 
-- Checkbox 
-- DropdownMenu 
-- TypingIndicator 
-- ThemeToggle 
-- Sidebar 
-- AppCard 
-- UserIcon 
-- ChatBubble 
+
+- Button
+- Card
+- Input
+- Select
+- Switch
+- Checkbox
+- DropdownMenu
+- TypingIndicator
+- ThemeToggle
+- Sidebar
+- AppCard
+- UserIcon
+- ChatBubble
 
 ### Duplicate Components to Migrate
+
 1. Button Components:
-   - `/apps/frontend/src/shared/ui/core/Button/Button.tsx` (Target Implementation)
+   - `/apps/frontend/src/shared/ui/core/Button/Button.tsx` (Target
+     Implementation)
    - `/apps/frontend/src/components/ui/button.tsx`
    - `/apps/frontend/src/components/core/Button/Button.tsx`
    - `/packages/core/components/ui/Button.tsx`
@@ -370,6 +408,7 @@ Located in `/src/hooks/`
 ### Migration Steps
 
 ### 1. Component Audit
+
 - Identify all Button implementations
 - Identify all Card implementations
 - Review each implementation for unique features
@@ -377,12 +416,14 @@ Located in `/src/hooks/`
 - Map component usage across the application
 
 ### 2. Feature Consolidation
+
 - Compare features across implementations
 - Identify missing features in shared components
 - Update shared components with missing features
 - Test all variants and use cases
 
 ### 3. Migration Process
+
 1. **Button Migration**
    - Update shared Button component if needed
    - Create mapping of old props to new props
@@ -398,6 +439,7 @@ Located in `/src/hooks/`
    - Update documentation
 
 ### 4. Testing Strategy
+
 1. Visual Testing
    - Compare rendered output before/after
    - Verify all variants render correctly
@@ -414,6 +456,7 @@ Located in `/src/hooks/`
    - Check form submission behavior
 
 ### 5. Cleanup
+
 - Remove old component files
 - Update import paths
 - Remove unused dependencies
@@ -457,22 +500,22 @@ Located in `/src/hooks/`
 
 ### Feature Comparison
 
-| Feature              | Shared UI | UI Card | Core Card |
-|---------------------|-----------|----------|-----------|
-| Radix UI Base       | | | |
-| Size Variants       | 3         | 1        | 1         |
-| CVA Support         | | | |
-| TypeScript Types    | | | |
-| Shortcut Sizes      | | | |
-| Animations          | | | |
+| Feature          | Shared UI | UI Card | Core Card |
+| ---------------- | --------- | ------- | --------- |
+| Radix UI Base    |           |         |           |
+| Size Variants    | 3         | 1       | 1         |
+| CVA Support      |           |         |           |
+| TypeScript Types |           |         |           |
+| Shortcut Sizes   |           |         |           |
+| Animations       |           |         |           |
 
 ### Size Variants
 
 | Size    | Content Min Width | Padding | Text Size |
-|---------|------------------|----------|-----------|
-| sm      | 6rem             | p-1      | text-xs   |
-| default | 8rem             | p-1      | text-sm   |
-| lg      | 12rem            | p-2      | text-base |
+| ------- | ----------------- | ------- | --------- |
+| sm      | 6rem              | p-1     | text-xs   |
+| default | 8rem              | p-1     | text-sm   |
+| lg      | 12rem             | p-2     | text-base |
 
 ### Migration Strategy
 
@@ -492,37 +535,38 @@ Located in `/src/hooks/`
    - Enhanced TypeScript types
    - Consistent variant system
 
-4. **Migration Steps**
-   a. Update imports:
-      ```typescript
-      // Old import
-      import { Card, CardHeader, CardContent } from '@/components/ui/card'
-      // or
-      import { Card, CardHeader, CardContent } from '@/components/core/Card'
-      
-      // New import
-      import { Card, CardHeader, CardContent } from '@/shared/ui/core/Card'
-      ```
-   
+4. **Migration Steps** a. Update imports:
+
+   ```typescript
+   // Old import
+   import { Card, CardHeader, CardContent } from '@/components/ui/card';
+   // or
+   import { Card, CardHeader, CardContent } from '@/components/core/Card';
+
+   // New import
+   import { Card, CardHeader, CardContent } from '@/shared/ui/core/Card';
+   ```
+
    b. Update props:
-      ```typescript
-      // Old usage (UI Card)
-      <Card className="shadow-lg">
-        <CardHeader className="p-4">
-          <CardTitle>Title</CardTitle>
-        </CardHeader>
-      </Card>
-      
-      // New usage
-      <Card 
-        variant="elevated" 
-        size="sm"
-      >
-        <CardHeader>
-          <CardTitle>Title</CardTitle>
-        </CardHeader>
-      </Card>
-      ```
+
+   ```typescript
+   // Old usage (UI Card)
+   <Card className="shadow-lg">
+     <CardHeader className="p-4">
+       <CardTitle>Title</CardTitle>
+     </CardHeader>
+   </Card>
+
+   // New usage
+   <Card
+     variant="elevated"
+     size="sm"
+   >
+     <CardHeader>
+       <CardTitle>Title</CardTitle>
+     </CardHeader>
+   </Card>
+   ```
 
 5. **Testing Requirements**
    - Visual regression tests for all sizes
@@ -573,23 +617,23 @@ Located in `/src/hooks/`
 
 ### Feature Comparison
 
-| Feature              | Shared UI | UI Switch | Core Switch |
-|---------------------|-----------|-----------|-------------|
-| Radix UI Base       | | | |
-| Size Variants       | 3         | 1         | 1           |
-| Label Support       | | | |
-| Description        | | | |
-| Label Position     | | | |
-| Disabled State     | | | |
-| Focus Ring         | | | |
+| Feature        | Shared UI | UI Switch | Core Switch |
+| -------------- | --------- | --------- | ----------- |
+| Radix UI Base  |           |           |             |
+| Size Variants  | 3         | 1         | 1           |
+| Label Support  |           |           |             |
+| Description    |           |           |             |
+| Label Position |           |           |             |
+| Disabled State |           |           |             |
+| Focus Ring     |           |           |             |
 
 ### Size Variants
 
 | Size    | Switch (WxH) | Thumb (WxH) | Translation |
-|---------|-------------|-------------|-------------|
-| sm      | 9x5         | 4x4         | 4px         |
-| default | 11x6        | 5x5         | 5px         |
-| lg      | 52x7        | 6x6         | 6px         |
+| ------- | ------------ | ----------- | ----------- |
+| sm      | 9x5          | 4x4         | 4px         |
+| default | 11x6         | 5x5         | 5px         |
+| lg      | 52x7         | 6x6         | 6px         |
 
 ### Migration Strategy
 
@@ -609,31 +653,32 @@ Located in `/src/hooks/`
    - Label implementation changes
    - New props for positioning
 
-4. **Migration Steps**
-   a. Update imports:
-      ```typescript
-      // Old import
-      import { Switch } from '@/components/ui/switch'
-      // or
-      import { Switch } from '@/components/core/Switch'
-      
-      // New import
-      import { Switch } from '@/shared/ui/core/Switch'
-      ```
-   
+4. **Migration Steps** a. Update imports:
+
+   ```typescript
+   // Old import
+   import { Switch } from '@/components/ui/switch';
+   // or
+   import { Switch } from '@/components/core/Switch';
+
+   // New import
+   import { Switch } from '@/shared/ui/core/Switch';
+   ```
+
    b. Update props:
-      ```typescript
-      // Old usage (UI Switch)
-      <Switch label="Toggle" />
-      
-      // New usage
-      <Switch 
-        label="Toggle"
-        description="Optional description"
-        size="default"
-        labelPosition="right"
-      />
-      ```
+
+   ```typescript
+   // Old usage (UI Switch)
+   <Switch label="Toggle" />
+
+   // New usage
+   <Switch
+     label="Toggle"
+     description="Optional description"
+     size="default"
+     labelPosition="right"
+   />
+   ```
 
 5. **Testing Requirements**
    - Visual regression tests for all sizes
@@ -663,7 +708,8 @@ Located in `/src/hooks/`
 
 ### Current Implementations
 
-1. **Shared UI Dropdown Menu** (`/apps/frontend/src/shared/ui/core/DropdownMenu/DropdownMenu.tsx`)
+1. **Shared UI Dropdown Menu**
+   (`/apps/frontend/src/shared/ui/core/DropdownMenu/DropdownMenu.tsx`)
    - Uses CVA for variants
    - Multiple size options (sm, default, lg)
    - Consistent styling system
@@ -677,28 +723,29 @@ Located in `/src/hooks/`
    - Basic styling
    - Uses Radix UI primitives
 
-3. **Core Dropdown Menu** (`/apps/frontend/src/components/core/DropdownMenu/index.tsx`)
+3. **Core Dropdown Menu**
+   (`/apps/frontend/src/components/core/DropdownMenu/index.tsx`)
    - Identical to UI implementation
    - Uses Radix UI primitives
 
 ### Feature Comparison
 
-| Feature              | Shared UI | UI Menu | Core Menu |
-|---------------------|-----------|----------|-----------|
-| Radix UI Base       | | | |
-| Size Variants       | 3         | 1        | 1         |
-| CVA Support         | | | |
-| TypeScript Types    | | | |
-| Shortcut Sizes      | | | |
-| Animations          | | | |
+| Feature          | Shared UI | UI Menu | Core Menu |
+| ---------------- | --------- | ------- | --------- |
+| Radix UI Base    |           |         |           |
+| Size Variants    | 3         | 1       | 1         |
+| CVA Support      |           |         |           |
+| TypeScript Types |           |         |           |
+| Shortcut Sizes   |           |         |           |
+| Animations       |           |         |           |
 
 ### Size Variants
 
 | Size    | Content Min Width | Padding | Text Size |
-|---------|------------------|----------|-----------|
-| sm      | 6rem             | p-1      | text-xs   |
-| default | 8rem             | p-1      | text-sm   |
-| lg      | 12rem            | p-2      | text-base |
+| ------- | ----------------- | ------- | --------- |
+| sm      | 6rem              | p-1     | text-xs   |
+| default | 8rem              | p-1     | text-sm   |
+| lg      | 12rem             | p-2     | text-base |
 
 ### Migration Strategy
 
@@ -718,30 +765,31 @@ Located in `/src/hooks/`
    - Enhanced TypeScript types
    - Consistent variant system
 
-4. **Migration Steps**
-   a. Update imports:
-      ```typescript
-      // Old import
-      import { DropdownMenu } from '@/components/ui/dropdown-menu'
-      // or
-      import { DropdownMenu } from '@/components/core/DropdownMenu'
-      
-      // New import
-      import { DropdownMenu } from '@/shared/ui/core/DropdownMenu'
-      ```
-   
+4. **Migration Steps** a. Update imports:
+
+   ```typescript
+   // Old import
+   import { DropdownMenu } from '@/components/ui/dropdown-menu';
+   // or
+   import { DropdownMenu } from '@/components/core/DropdownMenu';
+
+   // New import
+   import { DropdownMenu } from '@/shared/ui/core/DropdownMenu';
+   ```
+
    b. Update props:
-      ```typescript
-      // Old usage
-      <DropdownMenuContent>
-        <DropdownMenuItem>Item</DropdownMenuItem>
-      </DropdownMenuContent>
-      
-      // New usage
-      <DropdownMenuContent size="default">
-        <DropdownMenuItem size="default">Item</DropdownMenuItem>
-      </DropdownMenuContent>
-      ```
+
+   ```typescript
+   // Old usage
+   <DropdownMenuContent>
+     <DropdownMenuItem>Item</DropdownMenuItem>
+   </DropdownMenuContent>
+
+   // New usage
+   <DropdownMenuContent size="default">
+     <DropdownMenuItem size="default">Item</DropdownMenuItem>
+   </DropdownMenuContent>
+   ```
 
 5. **Testing Requirements**
    - Visual regression tests for all sizes
@@ -792,25 +840,25 @@ Located in `/src/hooks/`
 
 ### Feature Comparison
 
-| Feature              | Shared UI | Core Input |
-|---------------------|-----------|------------|
-| CVA Support         | | | |
-| Size Variants       | 3         | 3          |
-| Style Variants      | 5         | 4          |
-| States             | 3         | 2          |
-| Width Control      | | | |
-| Label Support      | | | |
-| Helper Text        | | | |
-| Icons              | | | |
-| TypeScript Types   | | | |
+| Feature          | Shared UI | Core Input |
+| ---------------- | --------- | ---------- | --- |
+| CVA Support      |           |            |     |
+| Size Variants    | 3         | 3          |
+| Style Variants   | 5         | 4          |
+| States           | 3         | 2          |
+| Width Control    |           |            |     |
+| Label Support    |           |            |     |
+| Helper Text      |           |            |     |
+| Icons            |           |            |     |
+| TypeScript Types |           |            |     |
 
 ### Size Variants
 
-| Size    | Height | Padding    | Text Size |
-|---------|--------|------------|-----------|
-| sm      | h-8    | px-3       | text-xs   |
-| default | h-10   | px-4       | text-sm   |
-| lg      | h-12   | px-6       | text-lg   |
+| Size    | Height | Padding | Text Size |
+| ------- | ------ | ------- | --------- |
+| sm      | h-8    | px-3    | text-xs   |
+| default | h-10   | px-4    | text-sm   |
+| lg      | h-12   | px-6    | text-lg   |
 
 ### Style Variants
 
@@ -855,34 +903,35 @@ Located in `/src/hooks/`
    - Enhanced TypeScript types
    - Container structure changes
 
-4. **Migration Steps**
-   a. Update imports:
-      ```typescript
-      // Old import
-      import { Input } from '@/components/core/Input'
-      
-      // New import
-      import { Input } from '@/shared/ui/core/Input'
-      ```
-   
+4. **Migration Steps** a. Update imports:
+
+   ```typescript
+   // Old import
+   import { Input } from '@/components/core/Input';
+
+   // New import
+   import { Input } from '@/shared/ui/core/Input';
+   ```
+
    b. Update props:
-      ```typescript
-      // Old usage
-      <Input
-        label="Username"
-        error={error}
-        startIcon={icon}
-      />
-      
-      // New usage
-      <Input
-        label="Username"
-        error={errorMessage}
-        startIcon={icon}
-        variant="default"
-        size="default"
-      />
-      ```
+
+   ```typescript
+   // Old usage
+   <Input
+     label="Username"
+     error={error}
+     startIcon={icon}
+   />
+
+   // New usage
+   <Input
+     label="Username"
+     error={errorMessage}
+     startIcon={icon}
+     variant="default"
+     size="default"
+   />
+   ```
 
 5. **Testing Requirements**
    - Visual regression tests for all variants
@@ -930,24 +979,24 @@ Located in `/src/hooks/`
 
 ### Feature Comparison
 
-| Feature              | Shared UI | Core Select |
-|---------------------|-----------|-------------|
-| CVA Support         | | N/A         |
-| Size Variants       | 3         | N/A         |
-| Style Variants      | 4         | N/A         |
-| States             | 3         | N/A         |
-| Width Control      | | N/A         |
-| Item Descriptions  | | N/A         |
-| Custom Icons       | | N/A         |
-| TypeScript Types   | | N/A         |
+| Feature           | Shared UI | Core Select |
+| ----------------- | --------- | ----------- |
+| CVA Support       |           | N/A         |
+| Size Variants     | 3         | N/A         |
+| Style Variants    | 4         | N/A         |
+| States            | 3         | N/A         |
+| Width Control     |           | N/A         |
+| Item Descriptions |           | N/A         |
+| Custom Icons      |           | N/A         |
+| TypeScript Types  |           | N/A         |
 
 ### Size Variants
 
-| Size    | Height | Padding    | Text Size |
-|---------|--------|------------|-----------|
-| sm      | h-8    | px-3       | text-xs   |
-| default | h-10   | px-4       | text-sm   |
-| lg      | h-12   | px-6       | text-lg   |
+| Size    | Height | Padding | Text Size |
+| ------- | ------ | ------- | --------- |
+| sm      | h-8    | px-3    | text-xs   |
+| default | h-10   | px-4    | text-sm   |
+| lg      | h-12   | px-6    | text-lg   |
 
 ### Style Variants
 
@@ -987,33 +1036,38 @@ Located in `/src/hooks/`
    - Enhanced TypeScript types
    - New props for items
 
-4. **Migration Steps**
-   a. Update imports:
-      ```typescript
-      // New import
-      import { Select, SelectTrigger, SelectContent } from '@/shared/ui/core/Select'
-      ```
-   
+4. **Migration Steps** a. Update imports:
+
+   ```typescript
+   // New import
+   import {
+     Select,
+     SelectTrigger,
+     SelectContent,
+   } from '@/shared/ui/core/Select';
+   ```
+
    b. Basic usage:
-      ```typescript
-      <Select>
-        <SelectTrigger
-          variant="default"
-          size="default"
-        >
-          Select option
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="1">Option 1</SelectItem>
-          <SelectItem 
-            value="2"
-            description="With description"
-          >
-            Option 2
-          </SelectItem>
-        </SelectContent>
-      </Select>
-      ```
+
+   ```typescript
+   <Select>
+     <SelectTrigger
+       variant="default"
+       size="default"
+     >
+       Select option
+     </SelectTrigger>
+     <SelectContent>
+       <SelectItem value="1">Option 1</SelectItem>
+       <SelectItem
+         value="2"
+         description="With description"
+       >
+         Option 2
+       </SelectItem>
+     </SelectContent>
+   </Select>
+   ```
 
 5. **Testing Requirements**
    - Visual regression tests for all variants
@@ -1042,7 +1096,8 @@ Located in `/src/hooks/`
 
 ### Current Implementations
 
-1. **Shared UI Checkbox** (`/apps/frontend/src/shared/ui/core/Checkbox/Checkbox.tsx`)
+1. **Shared UI Checkbox**
+   (`/apps/frontend/src/shared/ui/core/Checkbox/Checkbox.tsx`)
    - Uses CVA for variants
    - Multiple size options (sm, default, lg)
    - Multiple variants (default, ghost, outline, filled)
@@ -1057,24 +1112,24 @@ Located in `/src/hooks/`
 
 ### Feature Comparison
 
-| Feature              | Shared UI | Core Checkbox |
-|---------------------|-----------|---------------|
-| CVA Support         | | N/A           |
-| Size Variants       | 3         | N/A           |
-| Style Variants      | 4         | N/A           |
-| States             | 3         | N/A           |
-| Label Support      | | N/A           |
-| Description        | | N/A           |
-| Indeterminate      | | N/A           |
-| TypeScript Types   | | N/A           |
+| Feature          | Shared UI | Core Checkbox |
+| ---------------- | --------- | ------------- |
+| CVA Support      |           | N/A           |
+| Size Variants    | 3         | N/A           |
+| Style Variants   | 4         | N/A           |
+| States           | 3         | N/A           |
+| Label Support    |           | N/A           |
+| Description      |           | N/A           |
+| Indeterminate    |           | N/A           |
+| TypeScript Types |           | N/A           |
 
 ### Size Variants
 
-| Size    | Dimensions |
-|---------|------------|
-| sm      | 12px x 12px|
-| default | 16px x 16px|
-| lg      | 20px x 20px|
+| Size    | Dimensions  |
+| ------- | ----------- |
+| sm      | 12px x 12px |
+| default | 16px x 16px |
+| lg      | 20px x 20px |
 
 ### Style Variants
 
@@ -1114,22 +1169,23 @@ Located in `/src/hooks/`
    - Enhanced TypeScript types
    - New props structure
 
-4. **Migration Steps**
-   a. Update imports:
-      ```typescript
-      // New import
-      import { Checkbox } from '@/shared/ui/core/Checkbox'
-      ```
-   
+4. **Migration Steps** a. Update imports:
+
+   ```typescript
+   // New import
+   import { Checkbox } from '@/shared/ui/core/Checkbox';
+   ```
+
    b. Basic usage:
-      ```typescript
-      <Checkbox
-        variant="default"
-        size="default"
-        label="Enable feature"
-        description="Turn on this feature to..."
-      />
-      ```
+
+   ```typescript
+   <Checkbox
+     variant="default"
+     size="default"
+     label="Enable feature"
+     description="Turn on this feature to..."
+   />
+   ```
 
 5. **Testing Requirements**
    - Visual regression tests for all variants
@@ -1155,5 +1211,6 @@ Located in `/src/hooks/`
    - Support team during migration
 
 Would you like me to:
+
 1. Create detailed documentation for the Checkbox component?
 2. Begin working on other components?

@@ -47,7 +47,7 @@ class N8nMetadataService {
           displayName: 'URL',
           type: 'string',
           required: true,
-          description: 'The URL to make the request to'
+          description: 'The URL to make the request to',
         },
         {
           name: 'method',
@@ -60,19 +60,19 @@ class N8nMetadataService {
             { name: 'POST', value: 'POST' },
             { name: 'PUT', value: 'PUT' },
             { name: 'DELETE', value: 'DELETE' },
-            { name: 'PATCH', value: 'PATCH' }
-          ]
+            { name: 'PATCH', value: 'PATCH' },
+          ],
         },
         {
           name: 'headers',
           displayName: 'Headers',
           type: 'collection',
-          description: 'Headers to send with the request'
-        }
+          description: 'Headers to send with the request',
+        },
       ],
       inputs: [1],
       outputs: [1],
-      icon: 'fa:globe'
+      icon: 'fa:globe',
     });
 
     // Slack Node
@@ -89,19 +89,19 @@ class N8nMetadataService {
           displayName: 'Channel',
           type: 'string',
           required: true,
-          description: 'The channel to send the message to'
+          description: 'The channel to send the message to',
         },
         {
           name: 'text',
           displayName: 'Text',
           type: 'string',
-          description: 'The message text to send'
-        }
+          description: 'The message text to send',
+        },
       ],
       credentials: ['slackApi'],
       inputs: [1],
       outputs: [1],
-      icon: 'fab:slack'
+      icon: 'fab:slack',
     });
 
     // Start Node
@@ -115,7 +115,7 @@ class N8nMetadataService {
       parameters: [],
       inputs: [],
       outputs: [1],
-      icon: 'fa:play'
+      icon: 'fa:play',
     });
 
     // End Node
@@ -129,7 +129,7 @@ class N8nMetadataService {
       parameters: [],
       inputs: [1],
       outputs: [],
-      icon: 'fa:stop'
+      icon: 'fa:stop',
     });
 
     // Code Node
@@ -146,12 +146,12 @@ class N8nMetadataService {
           displayName: 'JavaScript Code',
           type: 'string',
           required: true,
-          description: 'The JavaScript code to execute'
-        }
+          description: 'The JavaScript code to execute',
+        },
       ],
       inputs: [1],
       outputs: [1],
-      icon: 'fa:code'
+      icon: 'fa:code',
     });
   }
 
@@ -164,18 +164,19 @@ class N8nMetadataService {
   }
 
   getNodesByCategory(category: string): N8nNodeMetadata[] {
-    return Array.from(this.nodeMetadata.values()).filter(
-      node => node.category === category
-    );
+    return Array.from(this.nodeMetadata.values()).filter((node) => node.category === category);
   }
 
   getCategories(): string[] {
     const categories = new Set<string>();
-    this.nodeMetadata.forEach(node => categories.add(node.category));
+    this.nodeMetadata.forEach((node) => categories.add(node.category));
     return Array.from(categories);
   }
 
-  validateNodeConfiguration(nodeType: string, parameters: any): { isValid: boolean; errors: string[] } {
+  validateNodeConfiguration(
+    nodeType: string,
+    parameters: any
+  ): { isValid: boolean; errors: string[] } {
     const metadata = this.getNodeMetadata(nodeType);
     if (!metadata) {
       return { isValid: false, errors: [`Unknown node type: ${nodeType}`] };
@@ -184,7 +185,7 @@ class N8nMetadataService {
     const errors: string[] = [];
 
     // Check required parameters
-    metadata.parameters.forEach(param => {
+    metadata.parameters.forEach((param) => {
       if (param.required && (!parameters[param.name] || parameters[param.name] === '')) {
         errors.push(`Required parameter '${param.displayName}' is missing`);
       }
@@ -198,7 +199,7 @@ class N8nMetadataService {
     if (!metadata) return {};
 
     const defaults: any = {};
-    metadata.parameters.forEach(param => {
+    metadata.parameters.forEach((param) => {
       if (param.default !== undefined) {
         defaults[param.name] = param.default;
       }

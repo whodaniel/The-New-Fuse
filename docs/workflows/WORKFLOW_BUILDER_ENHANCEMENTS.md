@@ -390,7 +390,7 @@ import { UnifiedWorkflowEngine } from '@the-new-fuse/workflow-engine';
 
 const engine = new UnifiedWorkflowEngine(
   config,
-  prisma,
+  drizzle,
   agentRegistry,
   heartbeatService,
   logger
@@ -543,7 +543,7 @@ socket.on('execution_update', (update) => {
 
    ```bash
    # Ensure workflow tables exist
-   npx prisma migrate deploy
+   npx drizzle migrate deploy
    ```
 
 3. **Start Services**:

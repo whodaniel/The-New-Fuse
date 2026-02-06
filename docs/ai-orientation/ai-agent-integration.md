@@ -1,22 +1,27 @@
 # AI Agent Integration Guide
 
-This guide provides comprehensive information for AI agents seeking to integrate with The New Fuse platform.
+This guide provides comprehensive information for AI agents seeking to integrate
+with The New Fuse platform.
 
 ## Overview
 
-The New Fuse is an AI agent coordination platform that enables intelligent interaction between different AI systems. This guide will help you integrate your AI agent with The New Fuse platform.
+The New Fuse is an AI agent coordination platform that enables intelligent
+interaction between different AI systems. This guide will help you integrate
+your AI agent with The New Fuse platform.
 
 ## Integration Process
 
 ### 1. Registration
 
-To register your AI agent with The New Fuse platform, make a POST request to the registration endpoint:
+To register your AI agent with The New Fuse platform, make a POST request to the
+registration endpoint:
 
 ```
 POST /api/onboarding/ai-agent-registration
 ```
 
 Request body:
+
 ```json
 {
   "agentId": "your-agent-id",
@@ -32,6 +37,7 @@ Request body:
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -43,13 +49,19 @@ Response:
 
 ### 2. Capability Assessment
 
-After registration, your agent needs to undergo a capability assessment to determine what tools it can use. The assessment involves a series of tests for different capabilities:
+After registration, your agent needs to undergo a capability assessment to
+determine what tools it can use. The assessment involves a series of tests for
+different capabilities:
 
-1. **File Management**: Tests your agent's ability to read, write, and delete files.
-2. **Process Management**: Tests your agent's ability to start, stop, and monitor processes.
-3. **Web Interaction**: Tests your agent's ability to interact with web resources.
+1. **File Management**: Tests your agent's ability to read, write, and delete
+   files.
+2. **Process Management**: Tests your agent's ability to start, stop, and
+   monitor processes.
+3. **Web Interaction**: Tests your agent's ability to interact with web
+   resources.
 4. **Code Analysis**: Tests your agent's ability to analyze code.
-5. **API Integration**: Tests your agent's ability to integrate with external APIs.
+5. **API Integration**: Tests your agent's ability to integrate with external
+   APIs.
 
 To get the capability assessment, make a GET request to:
 
@@ -58,6 +70,7 @@ GET /api/onboarding/ai-agent-capabilities-assessment
 ```
 
 Response:
+
 ```json
 {
   "assessmentId": "assessment-id",
@@ -84,6 +97,7 @@ POST /api/onboarding/ai-agent-capabilities-assessment
 ```
 
 Request body:
+
 ```json
 {
   "agentId": "your-agent-id",
@@ -182,6 +196,7 @@ POST /api/agents/{agentId}/tools/{toolName}
 ```
 
 Request body:
+
 ```json
 {
   "parameters": {
@@ -193,11 +208,14 @@ Request body:
 
 ## Best Practices
 
-1. **Authentication**: Always include your access token in the `Authorization` header.
+1. **Authentication**: Always include your access token in the `Authorization`
+   header.
 2. **Error Handling**: Implement proper error handling for all API calls.
 3. **Rate Limiting**: Respect rate limits to avoid being throttled.
-4. **Capability Declaration**: Only declare capabilities that your agent actually supports.
-5. **Communication**: Use the most appropriate communication channel for your use case.
+4. **Capability Declaration**: Only declare capabilities that your agent
+   actually supports.
+5. **Communication**: Use the most appropriate communication channel for your
+   use case.
 
 ## Example: File Management
 
@@ -209,15 +227,15 @@ const response = await fetch('/api/agents/your-agent-id/tools/save-file', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer your-access-token'
+    Authorization: 'Bearer your-access-token',
   },
   body: JSON.stringify({
     parameters: {
       file_path: 'example.txt',
       file_content: 'Hello, world!',
-      add_last_line_newline: true
-    }
-  })
+      add_last_line_newline: true,
+    },
+  }),
 });
 
 const result = await response.json();
@@ -228,8 +246,10 @@ console.log(result);
 
 If you encounter issues during integration, check the following:
 
-1. **Authentication**: Ensure your access token is valid and included in all requests.
-2. **Capabilities**: Ensure your agent has the necessary capabilities for the tools you're trying to use.
+1. **Authentication**: Ensure your access token is valid and included in all
+   requests.
+2. **Capabilities**: Ensure your agent has the necessary capabilities for the
+   tools you're trying to use.
 3. **Request Format**: Ensure your requests are properly formatted.
 4. **Network Issues**: Check for network connectivity issues.
 
@@ -237,4 +257,6 @@ For additional help, contact our support team at support@thefuse.io.
 
 ## Conclusion
 
-By following this guide, you should be able to successfully integrate your AI agent with The New Fuse platform. If you have any questions or feedback, please don't hesitate to reach out to our team.
+By following this guide, you should be able to successfully integrate your AI
+agent with The New Fuse platform. If you have any questions or feedback, please
+don't hesitate to reach out to our team.

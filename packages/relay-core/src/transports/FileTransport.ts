@@ -1,4 +1,3 @@
-
 /**
  * File Transport for The New Fuse Relay System
  *
@@ -6,11 +5,11 @@
  * Handles communication with CLI agents through file-based queues.
  */
 
-import { EventEmitter } from 'events';
 import * as chokidar from 'chokidar';
+import { EventEmitter } from 'events';
 import fs from 'fs/promises';
 import path from 'path';
-import { Transport, RelayMessage } from '../types/index.js';
+import { RelayMessage, Transport } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
 
 export interface FileTransportConfig {
@@ -54,7 +53,9 @@ export class FileTransport extends EventEmitter implements Transport {
       this.logger.info(`File transport started, watching ${this.queueDir}`);
       return true;
     } catch (error) {
-      this.logger.error(`Failed to start file transport: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to start file transport: ${error instanceof Error ? error.message : String(error)}`
+      );
       return false;
     }
   }
@@ -81,7 +82,9 @@ export class FileTransport extends EventEmitter implements Transport {
       await fs.writeFile(filePath, JSON.stringify(message, null, 2));
       return true;
     } catch (error) {
-      this.logger.error(`Failed to send file message to ${targetId}: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to send file message to ${targetId}: ${error instanceof Error ? error.message : String(error)}`
+      );
       return false;
     }
   }
@@ -98,10 +101,12 @@ export class FileTransport extends EventEmitter implements Transport {
     try {
       const content = await fs.readFile(filePath, 'utf8');
       const message: RelayMessage = JSON.parse(content);
-      this.messageHandlers.forEach(handler => handler(message));
+      this.messageHandlers.forEach((handler) => handler(message));
       await fs.unlink(filePath);
     } catch (error) {
-      this.logger.error(`Error processing file ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Error processing file ${filePath}: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 }

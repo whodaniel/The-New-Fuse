@@ -7,10 +7,10 @@
 import axios from 'axios';
 import os from 'os';
 import {
-  AgentRegistration,
-  AgentHeartbeat,
-  AgentStatus,
   AgentHealthMetrics,
+  AgentHeartbeat,
+  AgentRegistration,
+  AgentStatus,
 } from '../../packages/api/src/types/agent-discovery.types';
 
 class DataAnalysisAgent {
@@ -49,7 +49,8 @@ class DataAnalysisAgent {
         {
           name: 'statistical-analysis',
           version: '2.0.0',
-          description: 'Statistical analysis including regression, correlation, and hypothesis testing',
+          description:
+            'Statistical analysis including regression, correlation, and hypothesis testing',
           languages: ['python', 'r'],
           frameworks: ['pandas', 'numpy', 'scipy', 'statsmodels'],
           confidence: 0.93,
@@ -164,7 +165,9 @@ class DataAnalysisAgent {
 
     try {
       await axios.post(`${this.apiBaseUrl}/agents/discovery/heartbeat`, heartbeat);
-      console.log(`Heartbeat sent - Active tasks: ${this.metrics.activeTasks}, Success rate: ${(this.metrics.successRate * 100).toFixed(1)}%`);
+      console.log(
+        `Heartbeat sent - Active tasks: ${this.metrics.activeTasks}, Success rate: ${(this.metrics.successRate * 100).toFixed(1)}%`
+      );
     } catch (error) {
       console.error('Failed to send heartbeat:', error);
     }
@@ -175,11 +178,12 @@ class DataAnalysisAgent {
     const totalMem = os.totalmem();
     const freeMem = os.freemem();
 
-    const cpuUsage = cpus.reduce((acc, cpu) => {
-      const total = Object.values(cpu.times).reduce((a, b) => a + b);
-      const idle = cpu.times.idle;
-      return acc + (1 - idle / total) * 100;
-    }, 0) / cpus.length;
+    const cpuUsage =
+      cpus.reduce((acc, cpu) => {
+        const total = Object.values(cpu.times).reduce((a, b) => a + b);
+        const idle = cpu.times.idle;
+        return acc + (1 - idle / total) * 100;
+      }, 0) / cpus.length;
 
     const memoryUsage = ((totalMem - freeMem) / totalMem) * 100;
     const uptime = Math.floor((Date.now() - this.startTime) / 1000);
@@ -218,7 +222,8 @@ class DataAnalysisAgent {
       if (!success) {
         this.metrics.failedTasks++;
       }
-      this.metrics.successRate = (this.metrics.totalTasks - this.metrics.failedTasks) / this.metrics.totalTasks;
+      this.metrics.successRate =
+        (this.metrics.totalTasks - this.metrics.failedTasks) / this.metrics.totalTasks;
 
       console.log(`Analysis completed. Total tasks: ${this.metrics.totalTasks}`);
     } catch (error) {

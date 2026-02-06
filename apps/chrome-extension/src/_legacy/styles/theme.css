@@ -5,12 +5,12 @@
 
 :root {
   /* === Neon Colors === */
-  --neon-cyan: #00D9FF;
-  --neon-purple: #9D4EDD;
-  --neon-pink: #FF006E;
-  --neon-green: #00F5A0;
-  --neon-blue: #3D5AFE;
-  --neon-orange: #FF9500;
+  --neon-cyan: #00d9ff;
+  --neon-purple: #9d4edd;
+  --neon-pink: #ff006e;
+  --neon-green: #00f5a0;
+  --neon-blue: #3d5afe;
+  --neon-orange: #ff9500;
 
   /* === Dark Theme Backgrounds === */
   --bg-primary: #0a0a0f;
@@ -31,11 +31,11 @@
   --border-active: rgba(0, 217, 255, 0.6);
 
   /* === Status Colors === */
-  --status-online: #00F5A0;
-  --status-busy: #FFB800;
-  --status-idle: #A0A0B0;
+  --status-online: #00f5a0;
+  --status-busy: #ffb800;
+  --status-idle: #a0a0b0;
   --status-offline: #666;
-  --status-error: #FF006E;
+  --status-error: #ff006e;
 
   /* === Gradients === */
   --gradient-primary: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-purple) 100%);
@@ -82,21 +82,21 @@
   --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.25);
 
   /* === Neon Glow Shadows === */
-  --glow-cyan: 0 0 10px var(--neon-cyan),
-               0 0 20px rgba(0, 217, 255, 0.5),
-               inset 0 0 10px rgba(0, 217, 255, 0.1);
+  --glow-cyan:
+    0 0 10px var(--neon-cyan), 0 0 20px rgba(0, 217, 255, 0.5),
+    inset 0 0 10px rgba(0, 217, 255, 0.1);
 
-  --glow-purple: 0 0 10px var(--neon-purple),
-                 0 0 20px rgba(157, 78, 221, 0.5),
-                 inset 0 0 10px rgba(157, 78, 221, 0.1);
+  --glow-purple:
+    0 0 10px var(--neon-purple), 0 0 20px rgba(157, 78, 221, 0.5),
+    inset 0 0 10px rgba(157, 78, 221, 0.1);
 
-  --glow-green: 0 0 10px var(--neon-green),
-                0 0 20px rgba(0, 245, 160, 0.5),
-                inset 0 0 10px rgba(0, 245, 160, 0.1);
+  --glow-green:
+    0 0 10px var(--neon-green), 0 0 20px rgba(0, 245, 160, 0.5),
+    inset 0 0 10px rgba(0, 245, 160, 0.1);
 
-  --glow-pink: 0 0 10px var(--neon-pink),
-               0 0 20px rgba(255, 0, 110, 0.5),
-               inset 0 0 10px rgba(255, 0, 110, 0.1);
+  --glow-pink:
+    0 0 10px var(--neon-pink), 0 0 20px rgba(255, 0, 110, 0.5),
+    inset 0 0 10px rgba(255, 0, 110, 0.1);
 
   /* === Transitions === */
   --transition-fast: 150ms ease;
@@ -201,16 +201,20 @@ body {
 
 .circuit-pattern {
   background-image:
-    repeating-linear-gradient(0deg,
+    repeating-linear-gradient(
+      0deg,
       transparent,
       transparent 2px,
       rgba(0, 217, 255, 0.03) 2px,
-      rgba(0, 217, 255, 0.03) 4px),
-    repeating-linear-gradient(90deg,
+      rgba(0, 217, 255, 0.03) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
       transparent,
       transparent 2px,
       rgba(0, 217, 255, 0.03) 2px,
-      rgba(0, 217, 255, 0.03) 4px);
+      rgba(0, 217, 255, 0.03) 4px
+    );
 }
 
 .truncate {
@@ -240,8 +244,12 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
@@ -256,18 +264,26 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 @keyframes glow {
-  0%, 100% {
-    box-shadow: 0 0 5px var(--neon-cyan),
-                0 0 10px rgba(0, 217, 255, 0.5);
+  0%,
+  100% {
+    box-shadow:
+      0 0 5px var(--neon-cyan),
+      0 0 10px rgba(0, 217, 255, 0.5);
   }
   50% {
-    box-shadow: 0 0 10px var(--neon-cyan),
-                0 0 20px rgba(0, 217, 255, 0.7);
+    box-shadow:
+      0 0 10px var(--neon-cyan),
+      0 0 20px rgba(0, 217, 255, 0.7);
   }
 }
 

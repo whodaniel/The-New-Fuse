@@ -1,6 +1,7 @@
 # Salesforce Integration Setup Guide
 
-This guide walks you through setting up Salesforce webhooks with The New Fuse platform to receive real-time CRM events and automate sales processes.
+This guide walks you through setting up Salesforce webhooks with The New Fuse
+platform to receive real-time CRM events and automate sales processes.
 
 ## 📋 Prerequisites
 
@@ -28,7 +29,7 @@ Description: Platform event for The New Fuse integration
 
 Fields:
 - Event_Type__c (Text, 255) - Required
-- Object_Type__c (Text, 255) - Required  
+- Object_Type__c (Text, 255) - Required
 - Record_Id__c (Text, 18) - Required
 - Old_Values__c (Long Text Area, 32768)
 - New_Values__c (Long Text Area, 32768) - Required
@@ -42,10 +43,10 @@ Create an Apex class to handle record changes and publish events:
 
 ```apex
 public class BusinessEventHandler {
-    
+
     public static void publishLeadEvent(List<Lead> newLeads, Map<Id, Lead> oldLeads, String eventType) {
         List<Business_Event__e> events = new List<Business_Event__e>();
-        
+
         for (Lead lead : newLeads) {
             Business_Event__e event = new Business_Event__e(
                 Event_Type__c = eventType,
@@ -58,15 +59,15 @@ public class BusinessEventHandler {
             );
             events.add(event);
         }
-        
+
         if (!events.isEmpty()) {
             EventBus.publish(events);
         }
     }
-    
+
     public static void publishOpportunityEvent(List<Opportunity> newOpps, Map<Id, Opportunity> oldOpps, String eventType) {
         List<Business_Event__e> events = new List<Business_Event__e>();
-        
+
         for (Opportunity opp : newOpps) {
             Business_Event__e event = new Business_Event__e(
                 Event_Type__c = eventType,
@@ -79,7 +80,7 @@ public class BusinessEventHandler {
             );
             events.add(event);
         }
-        
+
         if (!events.isEmpty()) {
             EventBus.publish(events);
         }
@@ -122,7 +123,8 @@ trigger OpportunityTrigger on Opportunity (after insert, after update, after del
 For organizations with Change Data Capture enabled:
 
 1. Go to **Setup** → **Change Data Capture**
-2. Select objects to monitor: **Lead**, **Opportunity**, **Account**, **Contact**
+2. Select objects to monitor: **Lead**, **Opportunity**, **Account**,
+   **Contact**
 3. Click **Save**
 
 ### 5. Create Connected App
@@ -154,7 +156,7 @@ Create an Apex class to subscribe to platform events and send to The New Fuse:
 
 ```apex
 public class TheNewFuseEventSubscriber {
-    
+
     @future(callout=true)
     public static void sendToTheNewFuse(String eventData) {
         try {
@@ -164,10 +166,10 @@ public class TheNewFuseEventSubscriber {
             request.setHeader('Content-Type', 'application/json');
             request.setHeader('x-salesforce-webhook-signature', generateSignature(eventData));
             request.setBody(eventData);
-            
+
             Http http = new Http();
             HttpResponse response = http.send(request);
-            
+
             if (response.getStatusCode() != 200) {
                 System.debug('Error sending to The New Fuse: ' + response.getBody());
             }
@@ -175,7 +177,7 @@ public class TheNewFuseEventSubscriber {
             System.debug('Exception sending to The New Fuse: ' + e.getMessage());
         }
     }
-    
+
     private static String generateSignature(String payload) {
         // Implement HMAC-SHA256 signature generation
         String secret = 'your_webhook_secret'; // Store in Custom Metadata or Custom Settings
@@ -202,7 +204,7 @@ trigger BusinessEventTrigger on Business_Event__e (after insert) {
             'UserId' => event.User_Id__c,
             'OrganizationId' => event.Organization_Id__c
         };
-        
+
         TheNewFuseEventSubscriber.sendToTheNewFuse(JSON.serialize(eventData));
     }
 }
@@ -248,27 +250,27 @@ curl -X POST https://api.thenewfuse.com/webhooks/register \
 
 ### Lead Events
 
-| Salesforce Event | Business Event Type | Description |
-|------------------|-------------------|-------------|
-| Lead Created | `lead_created` | New lead entered |
-| Lead Updated | `lead_updated` | Lead information changed |
-| Lead Converted | `lead_converted` | Lead converted to opportunity |
+| Salesforce Event | Business Event Type | Description                   |
+| ---------------- | ------------------- | ----------------------------- |
+| Lead Created     | `lead_created`      | New lead entered              |
+| Lead Updated     | `lead_updated`      | Lead information changed      |
+| Lead Converted   | `lead_converted`    | Lead converted to opportunity |
 
 ### Opportunity Events
 
-| Salesforce Event | Business Event Type | Description |
-|------------------|-------------------|-------------|
-| Opportunity Created | `opportunity_created` | New opportunity |
+| Salesforce Event    | Business Event Type   | Description          |
+| ------------------- | --------------------- | -------------------- |
+| Opportunity Created | `opportunity_created` | New opportunity      |
 | Opportunity Updated | `opportunity_updated` | Opportunity modified |
-| Opportunity Won | `opportunity_won` | Deal closed won |
-| Opportunity Lost | `opportunity_lost` | Deal closed lost |
+| Opportunity Won     | `opportunity_won`     | Deal closed won      |
+| Opportunity Lost    | `opportunity_lost`    | Deal closed lost     |
 
 ### Account Events
 
-| Salesforce Event | Business Event Type | Description |
-|------------------|-------------------|-------------|
-| Account Created | `customer_created` | New account/customer |
-| Account Updated | `customer_updated` | Account information changed |
+| Salesforce Event | Business Event Type | Description                 |
+| ---------------- | ------------------- | --------------------------- |
+| Account Created  | `customer_created`  | New account/customer        |
+| Account Updated  | `customer_updated`  | Account information changed |
 
 ## 🔍 Event Payload Examples
 
@@ -442,7 +444,7 @@ Extend integration to custom objects:
 // Custom Object Trigger Example
 trigger CustomObjectTrigger on Custom_Object__c (after insert, after update, after delete) {
     List<Business_Event__e> events = new List<Business_Event__e>();
-    
+
     for (Custom_Object__c obj : Trigger.new) {
         Business_Event__e event = new Business_Event__e(
             Event_Type__c = Trigger.isInsert ? 'created' : 'updated',
@@ -452,7 +454,7 @@ trigger CustomObjectTrigger on Custom_Object__c (after insert, after update, aft
         );
         events.add(event);
     }
-    
+
     EventBus.publish(events);
 }
 ```
@@ -468,13 +470,13 @@ public static Boolean shouldPublishEvent(SObject record, String eventType) {
         Opportunity opp = (Opportunity) record;
         return opp.Amount > 10000;
     }
-    
+
     // Only publish qualified leads
     if (record instanceof Lead) {
         Lead lead = (Lead) record;
         return lead.Status == 'Qualified';
     }
-    
+
     return true;
 }
 ```
@@ -486,10 +488,10 @@ Handle bulk operations efficiently:
 ```apex
 public class BulkEventHandler {
     private static final Integer BATCH_SIZE = 100;
-    
+
     public static void publishBulkEvents(List<SObject> records, String eventType, String objectType) {
         List<Business_Event__e> allEvents = new List<Business_Event__e>();
-        
+
         for (SObject record : records) {
             Business_Event__e event = new Business_Event__e(
                 Event_Type__c = eventType,
@@ -498,14 +500,14 @@ public class BulkEventHandler {
                 New_Values__c = JSON.serialize(record)
             );
             allEvents.add(event);
-            
+
             // Publish in batches to avoid governor limits
             if (allEvents.size() >= BATCH_SIZE) {
                 EventBus.publish(allEvents);
                 allEvents.clear();
             }
         }
-        
+
         // Publish remaining events
         if (!allEvents.isEmpty()) {
             EventBus.publish(allEvents);
@@ -523,7 +525,7 @@ Create comprehensive unit tests:
 ```apex
 @isTest
 public class BusinessEventHandlerTest {
-    
+
     @isTest
     static void testLeadEventPublishing() {
         // Create test lead
@@ -533,11 +535,11 @@ public class BusinessEventHandlerTest {
             Company = 'Test Company',
             Email = 'test@example.com'
         );
-        
+
         Test.startTest();
         insert testLead;
         Test.stopTest();
-        
+
         // Verify event was published
         // Note: Platform events are not queryable in tests
         // Use Test.getEventBus().deliver() to test subscribers
@@ -555,4 +557,5 @@ Test end-to-end webhook delivery:
 
 ---
 
-*For additional support, contact The New Fuse support team or refer to the [Salesforce documentation](https://developer.salesforce.com/docs/atlas.en-us.platform_events.meta/platform_events/).*
+_For additional support, contact The New Fuse support team or refer to the
+[Salesforce documentation](https://developer.salesforce.com/docs/atlas.en-us.platform_events.meta/platform_events/)._

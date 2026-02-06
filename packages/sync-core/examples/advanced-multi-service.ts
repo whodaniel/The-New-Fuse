@@ -6,8 +6,8 @@
  */
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
 import { ConflictManager } from '../src/services/ConflictManager';
+import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
 import { TaskSynchronizationService } from '../src/services/TaskSynchronizationService';
 
 interface WorkflowExecution {
@@ -41,7 +41,7 @@ export class DistributedWorkflowService implements OnModuleInit {
   constructor(
     private readonly syncOrchestrator: SyncOrchestrator,
     private readonly conflictManager: ConflictManager,
-    private readonly taskSync: TaskSynchronizationService,
+    private readonly taskSync: TaskSynchronizationService
   ) {}
 
   async onModuleInit() {
@@ -82,11 +82,7 @@ export class DistributedWorkflowService implements OnModuleInit {
     await this.storeWorkflow(workflow);
 
     // Sync workflow creation
-    await this.syncOrchestrator.syncTenantData(
-      tenantId,
-      'workflow',
-      workflow
-    );
+    await this.syncOrchestrator.syncTenantData(tenantId, 'workflow', workflow);
 
     // Start execution
     await this.executeNextStep(workflow);
@@ -117,16 +113,12 @@ export class DistributedWorkflowService implements OnModuleInit {
     workflow.status = 'RUNNING';
 
     // Sync step start
-    await this.syncOrchestrator.syncTenantData(
-      workflow.tenantId,
-      'workflow_step',
-      {
-        workflowId: workflow.id,
-        stepId: step.id,
-        status: 'RUNNING',
-        startedAt: new Date(),
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(workflow.tenantId, 'workflow_step', {
+      workflowId: workflow.id,
+      stepId: step.id,
+      status: 'RUNNING',
+      startedAt: new Date(),
+    });
 
     try {
       // Execute step based on type
@@ -137,17 +129,13 @@ export class DistributedWorkflowService implements OnModuleInit {
       step.output = result;
 
       // Sync step completion
-      await this.syncOrchestrator.syncTenantData(
-        workflow.tenantId,
-        'workflow_step',
-        {
-          workflowId: workflow.id,
-          stepId: step.id,
-          status: 'COMPLETED',
-          output: result,
-          completedAt: new Date(),
-        }
-      );
+      await this.syncOrchestrator.syncTenantData(workflow.tenantId, 'workflow_step', {
+        workflowId: workflow.id,
+        stepId: step.id,
+        status: 'COMPLETED',
+        output: result,
+        completedAt: new Date(),
+      });
 
       // Move to next step
       workflow.currentStep++;
@@ -155,7 +143,6 @@ export class DistributedWorkflowService implements OnModuleInit {
 
       // Continue execution
       await this.executeNextStep(workflow);
-
     } catch (error) {
       await this.handleStepError(step, workflow, error);
     }
@@ -231,11 +218,7 @@ export class DistributedWorkflowService implements OnModuleInit {
   /**
    * Handle step error with retry logic
    */
-  private async handleStepError(
-    step: WorkflowStep,
-    workflow: WorkflowExecution,
-    error: Error
-  ) {
+  private async handleStepError(step: WorkflowStep, workflow: WorkflowExecution, error: Error) {
     console.error(`Step ${step.id} failed:`, error);
 
     step.retryCount++;
@@ -245,41 +228,32 @@ export class DistributedWorkflowService implements OnModuleInit {
       console.log(`Retrying step ${step.id} (${step.retryCount}/${step.maxRetries})`);
       step.status = 'PENDING';
 
-      await this.syncOrchestrator.syncTenantData(
-        workflow.tenantId,
-        'workflow_step',
-        {
-          workflowId: workflow.id,
-          stepId: step.id,
-          status: 'PENDING',
-          retryCount: step.retryCount,
-          lastError: error.message,
-        }
-      );
+      await this.syncOrchestrator.syncTenantData(workflow.tenantId, 'workflow_step', {
+        workflowId: workflow.id,
+        stepId: step.id,
+        status: 'PENDING',
+        retryCount: step.retryCount,
+        lastError: error.message,
+      });
 
       // Retry after delay
       setTimeout(() => this.executeNextStep(workflow), 5000);
-
     } else {
       // Max retries exceeded - fail workflow
       step.status = 'FAILED';
       workflow.status = 'FAILED';
       workflow.error = error;
 
-      await this.syncOrchestrator.syncTenantData(
-        workflow.tenantId,
-        'workflow',
-        {
-          id: workflow.id,
-          status: 'FAILED',
-          error: {
-            message: error.message,
-            stack: error.stack,
-            failedStep: step.id,
-          },
-          failedAt: new Date(),
-        }
-      );
+      await this.syncOrchestrator.syncTenantData(workflow.tenantId, 'workflow', {
+        id: workflow.id,
+        status: 'FAILED',
+        error: {
+          message: error.message,
+          stack: error.stack,
+          failedStep: step.id,
+        },
+        failedAt: new Date(),
+      });
 
       console.error(`Workflow ${workflow.id} failed at step ${step.id}`);
     }
@@ -293,21 +267,17 @@ export class DistributedWorkflowService implements OnModuleInit {
     workflow.completedAt = new Date();
 
     // Collect results from all steps
-    workflow.result = workflow.steps.map(step => ({
+    workflow.result = workflow.steps.map((step) => ({
       stepId: step.id,
       output: step.output,
     }));
 
-    await this.syncOrchestrator.syncTenantData(
-      workflow.tenantId,
-      'workflow',
-      {
-        id: workflow.id,
-        status: 'COMPLETED',
-        result: workflow.result,
-        completedAt: workflow.completedAt,
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(workflow.tenantId, 'workflow', {
+      id: workflow.id,
+      status: 'COMPLETED',
+      result: workflow.result,
+      completedAt: workflow.completedAt,
+    });
 
     console.log(`Workflow ${workflow.id} completed successfully`);
   }
@@ -324,7 +294,7 @@ export class DistributedWorkflowService implements OnModuleInit {
     }
 
     for (const depId of step.dependencies) {
-      const depStep = workflow.steps.find(s => s.id === depId);
+      const depStep = workflow.steps.find((s) => s.id === depId);
       if (!depStep || depStep.status !== 'COMPLETED') {
         return false;
       }
@@ -337,17 +307,13 @@ export class DistributedWorkflowService implements OnModuleInit {
    * Sync workflow state across instances
    */
   private async syncWorkflowState(workflow: WorkflowExecution) {
-    await this.syncOrchestrator.syncTenantData(
-      workflow.tenantId,
-      'workflow',
-      {
-        id: workflow.id,
-        status: workflow.status,
-        currentStep: workflow.currentStep,
-        steps: workflow.steps,
-        updatedAt: new Date(),
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(workflow.tenantId, 'workflow', {
+      id: workflow.id,
+      status: workflow.status,
+      currentStep: workflow.currentStep,
+      steps: workflow.steps,
+      updatedAt: new Date(),
+    });
   }
 
   /**
@@ -389,15 +355,11 @@ export class DistributedWorkflowService implements OnModuleInit {
     const workflow = await this.getWorkflow(workflowId);
     workflow.status = 'PAUSED';
 
-    await this.syncOrchestrator.syncTenantData(
-      tenantId,
-      'workflow',
-      {
-        id: workflowId,
-        status: 'PAUSED',
-        pausedAt: new Date(),
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(tenantId, 'workflow', {
+      id: workflowId,
+      status: 'PAUSED',
+      pausedAt: new Date(),
+    });
 
     console.log(`Workflow ${workflowId} paused`);
   }
@@ -409,15 +371,11 @@ export class DistributedWorkflowService implements OnModuleInit {
     const workflow = await this.getWorkflow(workflowId);
     workflow.status = 'RUNNING';
 
-    await this.syncOrchestrator.syncTenantData(
-      tenantId,
-      'workflow',
-      {
-        id: workflowId,
-        status: 'RUNNING',
-        resumedAt: new Date(),
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(tenantId, 'workflow', {
+      id: workflowId,
+      status: 'RUNNING',
+      resumedAt: new Date(),
+    });
 
     // Continue execution
     await this.executeNextStep(workflow);
@@ -432,16 +390,12 @@ export class DistributedWorkflowService implements OnModuleInit {
     const workflow = await this.getWorkflow(workflowId);
     workflow.status = 'FAILED';
 
-    await this.syncOrchestrator.syncTenantData(
-      tenantId,
-      'workflow',
-      {
-        id: workflowId,
-        status: 'FAILED',
-        error: { message: 'Cancelled by user' },
-        cancelledAt: new Date(),
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(tenantId, 'workflow', {
+      id: workflowId,
+      status: 'FAILED',
+      error: { message: 'Cancelled by user' },
+      cancelledAt: new Date(),
+    });
 
     console.log(`Workflow ${workflowId} cancelled`);
   }
@@ -489,11 +443,7 @@ export class DistributedWorkflowService implements OnModuleInit {
     console.log('Updating workflow cache');
   }
 
-  private async updateWorkflowWithTaskResult(
-    workflowId: string,
-    stepId: string,
-    task: any
-  ) {
+  private async updateWorkflowWithTaskResult(workflowId: string, stepId: string, task: any) {
     console.log(`Updating workflow ${workflowId} with task result`);
   }
 

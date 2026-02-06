@@ -2,24 +2,30 @@
  * Unit tests for Service Mesh Monitor
  */
 
-import { ServiceMeshMonitor, ServiceMeshMonitorConfig, Alert } from './ServiceMeshMonitor';
-import { ServiceMeshProvider } from './MCPServiceMesh';
 import { ServiceHealth } from '../types/broker';
 import { ServiceStatus } from '../types/common';
+import { ServiceMeshProvider } from './MCPServiceMesh';
+import { Alert, ServiceMeshMonitor, ServiceMeshMonitorConfig } from './ServiceMeshMonitor';
 
 // Mock service mesh provider
 class MockServiceMeshProvider implements ServiceMeshProvider {
   name = 'mock-monitor';
   version = '1.0.0';
-  
+
   private services = new Map<string, any>();
   private available = true;
 
-  async registerService(): Promise<string> { return 'mock-id'; }
+  async registerService(): Promise<string> {
+    return 'mock-id';
+  }
   async unregisterService(): Promise<void> {}
-  async discoverServices(): Promise<any[]> { return []; }
+  async discoverServices(): Promise<any[]> {
+    return [];
+  }
   async configureScaling(): Promise<void> {}
-  async getScalingStatus() { return { currentInstances: 1, desiredInstances: 1, scalingEvents: [] }; }
+  async getScalingStatus() {
+    return { currentInstances: 1, desiredInstances: 1, scalingEvents: [] };
+  }
 
   async getServiceHealth(serviceId: string): Promise<ServiceHealth> {
     const service = this.services.get(serviceId);
@@ -27,15 +33,17 @@ class MockServiceMeshProvider implements ServiceMeshProvider {
       throw new Error('Service not found');
     }
 
-    return service.health || {
-      serviceId,
-      status: ServiceStatus.ONLINE,
-      uptime: 3600000,
-      responseTime: 50,
-      errorRate: 0.01,
-      lastCheck: new Date(),
-      score: 0.95
-    };
+    return (
+      service.health || {
+        serviceId,
+        status: ServiceStatus.ONLINE,
+        uptime: 3600000,
+        responseTime: 50,
+        errorRate: 0.01,
+        lastCheck: new Date(),
+        score: 0.95,
+      }
+    );
   }
 
   async updateServiceHealth(serviceId: string, health: ServiceHealth): Promise<void> {
@@ -50,14 +58,16 @@ class MockServiceMeshProvider implements ServiceMeshProvider {
       throw new Error('Service not found');
     }
 
-    return service.metrics || {
-      serviceId,
-      requests: { total: 1000, successful: 950, failed: 50, rps: 10 },
-      responseTime: { average: 100, p50: 80, p95: 200, p99: 500 },
-      connections: { active: 5, total: 100, errors: 2 },
-      resources: { cpu: 0.5, memory: 0.6, networkIO: 1024 },
-      timestamp: new Date()
-    };
+    return (
+      service.metrics || {
+        serviceId,
+        requests: { total: 1000, successful: 950, failed: 50, rps: 10 },
+        responseTime: { average: 100, p50: 80, p95: 200, p99: 500 },
+        connections: { active: 5, total: 100, errors: 2 },
+        resources: { cpu: 0.5, memory: 0.6, networkIO: 1024 },
+        timestamp: new Date(),
+      }
+    );
   }
 
   async isAvailable(): Promise<boolean> {
@@ -75,7 +85,7 @@ class MockServiceMeshProvider implements ServiceMeshProvider {
       errorRate: 0.01,
       lastCheck: new Date(),
       score: 0.95,
-      ...health
+      ...health,
     };
     this.services.set(serviceId, service);
   }
@@ -89,7 +99,7 @@ class MockServiceMeshProvider implements ServiceMeshProvider {
       connections: { active: 5, total: 100, errors: 2 },
       resources: { cpu: 0.5, memory: 0.6, networkIO: 1024 },
       timestamp: new Date(),
-      ...metrics
+      ...metrics,
     };
     this.services.set(serviceId, service);
   }
@@ -126,9 +136,9 @@ describe('ServiceMeshMonitor', () => {
         memoryThreshold: 0.8,
         errorRateThreshold: 0.1,
         responseTimeThreshold: 200,
-        healthScoreThreshold: 0.7
+        healthScoreThreshold: 0.7,
       },
-      metricsRetention: 3600
+      metricsRetention: 3600,
     };
 
     monitor = new ServiceMeshMonitor(mockProvider, config);
@@ -294,7 +304,7 @@ describe('ServiceMeshMonitor', () => {
     it('should return list of monitored services', async () => {
       mockProvider.addService('service-1');
       mockProvider.addService('service-2');
-      
+
       await monitor.addService('service-1');
       await monitor.addService('service-2');
 
@@ -310,7 +320,7 @@ describe('ServiceMeshMonitor', () => {
     it('should return monitoring statistics', async () => {
       mockProvider.addService('service-1');
       mockProvider.addService('service-2');
-      
+
       await monitor.addService('service-1');
       await monitor.addService('service-2');
 
@@ -327,10 +337,10 @@ describe('ServiceMeshMonitor', () => {
     beforeEach(async () => {
       mockProvider.addService('healthy-service');
       mockProvider.addService('unhealthy-service');
-      
+
       mockProvider.setServiceHealth('healthy-service', { status: ServiceStatus.ONLINE });
       mockProvider.setServiceHealth('unhealthy-service', { status: ServiceStatus.OFFLINE });
-      
+
       await monitor.addService('healthy-service');
       await monitor.addService('unhealthy-service');
     });
@@ -429,7 +439,7 @@ describe('ServiceMeshMonitor', () => {
 
     it('should generate CPU alert when above threshold', (done) => {
       mockProvider.setServiceMetrics('test-service', {
-        resources: { cpu: 0.9, memory: 0.5, networkIO: 1024 } // CPU above 0.8 threshold
+        resources: { cpu: 0.9, memory: 0.5, networkIO: 1024 }, // CPU above 0.8 threshold
       });
 
       monitor.on('alert', (serviceId: string, alert: Alert) => {
@@ -446,7 +456,7 @@ describe('ServiceMeshMonitor', () => {
 
     it('should generate error rate alert when above threshold', (done) => {
       mockProvider.setServiceMetrics('test-service', {
-        requests: { total: 1000, successful: 800, failed: 200, rps: 10 } // 20% error rate
+        requests: { total: 1000, successful: 800, failed: 200, rps: 10 }, // 20% error rate
       });
 
       monitor.on('alert', (serviceId: string, alert: Alert) => {

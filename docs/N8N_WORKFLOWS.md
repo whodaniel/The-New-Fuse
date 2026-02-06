@@ -1,16 +1,22 @@
 # N8N Workflows Integration
 
-Comprehensive integration of n8n workflow collections from community repositories into The New Fuse.
+Comprehensive integration of n8n workflow collections from community
+repositories into The New Fuse.
 
 ## Overview
 
-The N8N Workflows package provides a complete system for fetching, categorizing, searching, and managing n8n workflows from community repositories. It includes thousands of pre-built workflows covering automation, AI, integrations, and more.
+The N8N Workflows package provides a complete system for fetching, categorizing,
+searching, and managing n8n workflows from community repositories. It includes
+thousands of pre-built workflows covering automation, AI, integrations, and
+more.
 
 ## Features
 
-- **Automated Workflow Fetching**: Automatically fetch workflows from 3 major community repositories
+- **Automated Workflow Fetching**: Automatically fetch workflows from 3 major
+  community repositories
 - **Smart Categorization**: AI-powered categorization into 14+ categories
-- **Advanced Search**: Full-text search with filtering by category, tags, complexity
+- **Advanced Search**: Full-text search with filtering by category, tags,
+  complexity
 - **REST API**: Complete REST API for workflow operations
 - **Workflow Import**: Direct import to n8n instances
 - **Persistent Storage**: Local caching and registry management
@@ -102,6 +108,7 @@ GET /api/workflows/n8n
 ```
 
 Query Parameters:
+
 - `query`: Search query string
 - `category`: Filter by category
 - `source`: Filter by source repository
@@ -111,11 +118,13 @@ Query Parameters:
 - `offset`: Pagination offset (default: 0)
 
 **Example:**
+
 ```bash
 curl "http://localhost:3000/api/workflows/n8n?category=ai-agents&limit=10"
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -140,11 +149,13 @@ GET /api/workflows/n8n/:id
 ```
 
 **Example:**
+
 ```bash
 curl "http://localhost:3000/api/workflows/n8n/workflow-abc123"
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -169,6 +180,7 @@ GET /api/workflows/n8n/categories
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -193,6 +205,7 @@ GET /api/workflows/n8n/stats
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -230,6 +243,7 @@ GET /api/workflows/n8n/search?q=<query>
 ```
 
 **Example:**
+
 ```bash
 curl "http://localhost:3000/api/workflows/n8n/search?q=slack+notification"
 ```
@@ -241,6 +255,7 @@ GET /api/workflows/n8n/category/:category
 ```
 
 **Example:**
+
 ```bash
 curl "http://localhost:3000/api/workflows/n8n/category/ai-agents"
 ```
@@ -252,6 +267,7 @@ GET /api/workflows/n8n/tag/:tag
 ```
 
 **Example:**
+
 ```bash
 curl "http://localhost:3000/api/workflows/n8n/tag/openai"
 ```
@@ -263,6 +279,7 @@ GET /api/workflows/n8n/:id/similar?limit=5
 ```
 
 **Example:**
+
 ```bash
 curl "http://localhost:3000/api/workflows/n8n/workflow-abc123/similar"
 ```
@@ -274,11 +291,13 @@ POST /api/workflows/n8n/sync
 ```
 
 **Example:**
+
 ```bash
 curl -X POST "http://localhost:3000/api/workflows/n8n/sync"
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -297,6 +316,7 @@ POST /api/workflows/n8n/import
 ```
 
 **Request Body:**
+
 ```json
 {
   "workflowId": "workflow-abc123",
@@ -307,6 +327,7 @@ POST /api/workflows/n8n/import
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -324,6 +345,7 @@ POST /api/workflows/n8n/import
 Search for n8n workflows using natural language.
 
 **Usage:**
+
 ```
 /n8n-workflow-search AI automation workflows
 /n8n-workflow-search email notification simple
@@ -335,6 +357,7 @@ Search for n8n workflows using natural language.
 Sync workflows from GitHub repositories.
 
 **Usage:**
+
 ```
 /n8n-workflow-sync
 ```
@@ -391,6 +414,7 @@ pnpm run fetch:workflows
 ```
 
 This will:
+
 1. Clone/update all repository sources
 2. Parse workflow JSON files
 3. Categorize workflows
@@ -411,21 +435,21 @@ Runs a continuous sync service that updates workflows every 24 hours.
 
 ```typescript
 interface N8nWorkflow {
-  id: string;                      // Unique workflow ID
-  name: string;                    // Workflow name
-  description: string;             // Description
-  category: WorkflowCategory;      // Auto-categorized
-  nodes: WorkflowNode[];          // Workflow nodes
+  id: string; // Unique workflow ID
+  name: string; // Workflow name
+  description: string; // Description
+  category: WorkflowCategory; // Auto-categorized
+  nodes: WorkflowNode[]; // Workflow nodes
   connections: WorkflowConnections; // Node connections
-  triggers: TriggerNode[];        // Trigger nodes
-  source: WorkflowSource;         // Source repository
-  tags: string[];                 // Tags
-  jsonDefinition: any;            // Raw n8n JSON
-  metadata: WorkflowMetadata;     // Metadata
-  settings?: WorkflowSettings;    // Workflow settings
-  active?: boolean;               // Active status
-  createdAt?: Date;               // Created date
-  updatedAt?: Date;               // Updated date
+  triggers: TriggerNode[]; // Trigger nodes
+  source: WorkflowSource; // Source repository
+  tags: string[]; // Tags
+  jsonDefinition: any; // Raw n8n JSON
+  metadata: WorkflowMetadata; // Metadata
+  settings?: WorkflowSettings; // Workflow settings
+  active?: boolean; // Active status
+  createdAt?: Date; // Created date
+  updatedAt?: Date; // Updated date
 }
 ```
 
@@ -452,7 +476,8 @@ interface WorkflowMetadata {
 
 The N8N Workflows system integrates with The New Fuse's resource registry:
 
-1. **Automatic Registration**: Workflows are automatically registered as resources
+1. **Automatic Registration**: Workflows are automatically registered as
+   resources
 2. **Search Integration**: Workflow search is integrated into the global search
 3. **Agent Discovery**: AI agents can discover and use workflows
 4. **Resource Tagging**: Workflows are tagged and categorized for easy discovery
@@ -460,7 +485,8 @@ The N8N Workflows system integrates with The New Fuse's resource registry:
 ## Performance & Caching
 
 - **Local Caching**: Workflows are cached locally in `.n8n-workflows-cache/`
-- **Registry Storage**: Parsed workflows are stored in `.n8n-workflows-registry/`
+- **Registry Storage**: Parsed workflows are stored in
+  `.n8n-workflows-registry/`
 - **Category Indexes**: Separate indexes for each category for faster queries
 - **Incremental Sync**: Only updated workflows are re-processed
 
@@ -477,6 +503,7 @@ The N8N Workflows system integrates with The New Fuse's resource registry:
 ### Sync Failures
 
 If sync fails:
+
 1. Check network connectivity
 2. Verify GitHub repository access
 3. Clear cache: `rm -rf .n8n-workflows-cache`
@@ -485,6 +512,7 @@ If sync fails:
 ### Missing Workflows
 
 If workflows are missing:
+
 1. Run manual sync: `pnpm run fetch:workflows`
 2. Check error logs
 3. Verify repository configurations
@@ -492,6 +520,7 @@ If workflows are missing:
 ### Import Failures
 
 If import to n8n fails:
+
 1. Verify n8n instance URL
 2. Check API key permissions
 3. Ensure n8n version compatibility
@@ -547,6 +576,7 @@ console.log(`Required credentials: ${analysis.requiredCredentials}`);
 ## Metrics & Analytics
 
 The system tracks:
+
 - Total workflows imported
 - Workflows per category
 - Workflows per source
@@ -565,6 +595,7 @@ The system tracks:
 ## Future Enhancements
 
 Planned features:
+
 - Workflow versioning
 - User ratings and reviews
 - Workflow recommendations
@@ -576,6 +607,7 @@ Planned features:
 ## Support
 
 For issues or questions:
+
 - Check the documentation
 - Review existing workflows
 - Open a GitHub issue

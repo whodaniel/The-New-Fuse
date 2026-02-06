@@ -1,7 +1,6 @@
-import React from 'react';
 import { assertSnapshot } from '@/test/helpers/snapshot';
-import { Dialog } from '../Dialog';
 import { Button } from '../../Button';
+import { Dialog } from '../Dialog';
 
 describe('Dialog Snapshots', () => {
   it('renders basic dialog correctly', () => {
@@ -10,9 +9,7 @@ describe('Dialog Snapshots', () => {
         <Dialog.Content>
           <Dialog.Header>
             <Dialog.Title>Basic Dialog</Dialog.Title>
-            <Dialog.Description>
-              This is a basic dialog content
-            </Dialog.Description>
+            <Dialog.Description>This is a basic dialog content</Dialog.Description>
           </Dialog.Header>
           <p>Dialog content goes here</p>
         </Dialog.Content>
@@ -26,9 +23,7 @@ describe('Dialog Snapshots', () => {
         <Dialog.Content>
           <Dialog.Header>
             <Dialog.Title>Confirmation Dialog</Dialog.Title>
-            <Dialog.Description>
-              Are you sure you want to perform this action?
-            </Dialog.Description>
+            <Dialog.Description>Are you sure you want to perform this action?</Dialog.Description>
           </Dialog.Header>
           <Dialog.Footer>
             <Button variant="outline" onClick={() => {}}>

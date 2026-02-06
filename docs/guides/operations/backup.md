@@ -2,13 +2,15 @@
 
 ## Overview
 
-This document outlines the backup procedures for The New Fuse, covering database backups, file storage backups, and configuration backups.
+This document outlines the backup procedures for The New Fuse, covering database
+backups, file storage backups, and configuration backups.
 
 ## Database Backup
 
 ### PostgreSQL Backup (Local)
 
 1. Create a backup:
+
    ```bash
    pg_dump -h localhost -U postgres -d fuse > backup.sql
    ```
@@ -22,6 +24,7 @@ This document outlines the backup procedures for The New Fuse, covering database
 ### PostgreSQL Backup (Production)
 
 1. Manual backup:
+
    ```bash
    # Full backup
    pg_dump -h [host] -U [username] -d fuse > backup.sql
@@ -38,26 +41,29 @@ This document outlines the backup procedures for The New Fuse, covering database
    psql -h localhost -U postgres -d fuse < backup.sql
    ```
 
-### Prisma Schema Backup
+### Drizzle Schema Backup
 
-1. Keep Prisma migration files in version control:
+1. Keep Drizzle migration files in version control:
+
    ```bash
-   git add packages/database/prisma/migrations/*
+   git add packages/database/drizzle/migrations/*
    ```
 
 2. Backup schema file:
    ```bash
-   cp packages/database/prisma/schema.prisma schema.backup.prisma
+   cp packages/database/drizzle/schema.drizzle schema.backup.drizzle
    ```
 
 ### Recovery Testing
 
 1. Create a test database:
+
    ```bash
    createdb fuse_test
    ```
 
 2. Restore backup to test database:
+
    ```bash
    psql -h localhost -U postgres -d fuse_test < backup.sql
    ```

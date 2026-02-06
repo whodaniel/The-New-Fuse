@@ -34,6 +34,9 @@ export class AgentDirectoryService {
       verifiedOnly,
       publicOnly,
       tags,
+      tenantId,
+      organizationId,
+      agencyId,
       page = 1,
       limit = 20,
       sortBy = 'lastActiveAt',
@@ -107,6 +110,11 @@ export class AgentDirectoryService {
           capabilities = caps.map((c) => c.capabilityName);
         }
 
+        const registrationMetadata = (registration?.metadata || {}) as Record<string, any>;
+        const tenant = registrationMetadata.tenantId || registrationMetadata.tenant_id;
+        const org = registrationMetadata.organizationId || registrationMetadata.organization_id;
+        const agency = registrationMetadata.agencyId || registrationMetadata.agency_id;
+
         return {
           id: entry.agentId,
           displayName: entry.displayName,
@@ -120,6 +128,9 @@ export class AgentDirectoryService {
           lastActiveAt: entry.lastActiveAt,
           featured: entry.featured,
           capabilities,
+          tenantId: tenant,
+          organizationId: org,
+          agencyId: agency,
         };
       })
     );
@@ -132,8 +143,33 @@ export class AgentDirectoryService {
       );
     }
 
+    if (tenantId) {
+      filteredEntries = filteredEntries.filter((e) => e.tenantId === tenantId);
+    }
+
+    if (organizationId) {
+      filteredEntries = filteredEntries.filter((e) => e.organizationId === organizationId);
+    }
+
+    if (agencyId) {
+      filteredEntries = filteredEntries.filter((e) => e.agencyId === agencyId);
+    }
+
     return {
-      data: filteredEntries,
+      data: filteredEntries.map((entry) => ({
+        id: entry.id,
+        displayName: entry.displayName,
+        description: entry.description,
+        category: entry.category,
+        tags: entry.tags,
+        isPublic: entry.isPublic,
+        isVerified: entry.isVerified,
+        rating: entry.rating,
+        usageCount: entry.usageCount,
+        lastActiveAt: entry.lastActiveAt,
+        featured: entry.featured,
+        capabilities: entry.capabilities,
+      })),
       pagination: {
         page,
         limit,

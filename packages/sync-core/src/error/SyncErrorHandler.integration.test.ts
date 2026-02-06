@@ -4,18 +4,17 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { Logger } from '@nestjs/common';
+import { ErrorCategory, ErrorSeverity } from '@the-new-fuse/core-error-handling';
+import { IMetricsCollector, IMonitoringSystem } from '@the-new-fuse/core-monitoring';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { IMonitoringSystem, IMetricsCollector } from '@the-new-fuse/core-monitoring';
-import { ErrorSeverity, ErrorCategory } from '@the-new-fuse/core-error-handling';
-import { 
-  SyncErrorHandler, 
-  SyncError, 
+import {
   SyncContext,
-  SyncErrorHandlerConfig 
+  SyncError,
+  SyncErrorHandler,
+  SyncErrorHandlerConfig,
 } from './SyncErrorHandler.js';
-import { SyncRetryManager, RetryConfig } from './SyncRetryManager.js';
-import { SyncFallbackProcessor, FallbackProcessorConfig } from './SyncFallbackProcessor.js';
+import { FallbackProcessorConfig, SyncFallbackProcessor } from './SyncFallbackProcessor.js';
+import { RetryConfig, SyncRetryManager } from './SyncRetryManager.js';
 
 describe('Sync Error Handling Integration', () => {
   let errorHandler: SyncErrorHandler;
@@ -37,10 +36,10 @@ describe('Sync Error Handling Integration', () => {
       alertThresholds: {
         errorRate: 5,
         criticalErrorCount: 2,
-        failedRecoveryRate: 0.8
-      }
+        failedRecoveryRate: 0.8,
+      },
     } as Partial<SyncErrorHandlerConfig>,
-    
+
     retryManager: {
       maxAttempts: 3,
       baseDelay: 100, // Shorter for testing
@@ -49,9 +48,9 @@ describe('Sync Error Handling Integration', () => {
       jitterEnabled: false,
       circuitBreakerEnabled: true,
       circuitBreakerThreshold: 3,
-      circuitBreakerTimeout: 1000
+      circuitBreakerTimeout: 1000,
     } as Partial<RetryConfig>,
-    
+
     fallbackProcessor: {
       enabled: true,
       processingInterval: 500, // Shorter for testing
@@ -60,8 +59,8 @@ describe('Sync Error Handling Integration', () => {
       defaultTimeout: 5000,
       enableMetrics: true,
       enableAlternativeActions: true,
-      gracefulDegradationEnabled: true
-    } as Partial<FallbackProcessorConfig>
+      gracefulDegradationEnabled: true,
+    } as Partial<FallbackProcessorConfig>,
   };
 
   beforeAll(async () => {
@@ -70,31 +69,34 @@ describe('Sync Error Handling Integration', () => {
       providers: [
         {
           provide: UnifiedRedisService,
-          useValue: createMockRedisService()
+          useValue: createMockRedisService(),
         },
         {
           provide: IMonitoringSystem,
-          useValue: createMockMonitoringSystem()
+          useValue: createMockMonitoringSystem(),
         },
         {
           provide: SyncErrorHandler,
-          useFactory: (redis, monitoring) => 
+          useFactory: (redis, monitoring) =>
             new SyncErrorHandler(redis, testConfig.errorHandler, monitoring),
-          inject: [UnifiedRedisService, IMonitoringSystem]
+          inject: [UnifiedRedisService, IMonitoringSystem],
         },
         {
           provide: SyncRetryManager,
-          useFactory: (redis) => 
-            new SyncRetryManager(redis, testConfig.retryManager),
-          inject: [UnifiedRedisService]
+          useFactory: (redis) => new SyncRetryManager(redis, testConfig.retryManager),
+          inject: [UnifiedRedisService],
         },
         {
           provide: SyncFallbackProcessor,
-          useFactory: (redis, monitoring) => 
-            new SyncFallbackProcessor(redis, testConfig.fallbackProcessor, monitoring?.getMetricsCollector()),
-          inject: [UnifiedRedisService, IMonitoringSystem]
-        }
-      ]
+          useFactory: (redis, monitoring) =>
+            new SyncFallbackProcessor(
+              redis,
+              testConfig.fallbackProcessor,
+              monitoring?.getMetricsCollector()
+            ),
+          inject: [UnifiedRedisService, IMonitoringSystem],
+        },
+      ],
     }).compile();
 
     errorHandler = module.get<SyncErrorHandler>(SyncErrorHandler);
@@ -121,16 +123,20 @@ describe('Sync Error Handling Integration', () => {
         operation: 'sync-operation',
         tenantId: 'tenant-123',
         resourcePath: '/test/integration/path',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       const networkError = new Error('Network connection timeout');
-      
+
       // Step 1: Handle initial error
-      const errorResult = await errorHandler.handleSyncError(networkError, mockContext, 'file-sync');
-      
+      const errorResult = await errorHandler.handleSyncError(
+        networkError,
+        mockContext,
+        'file-sync'
+      );
+
       expect(errorResult).toBeDefined();
-      
+
       // Verify error was recorded
       const stats = errorHandler.getSyncStatistics();
       expect(stats.totalErrors).toBe(1);
@@ -172,7 +178,7 @@ describe('Sync Error Handling Integration', () => {
         maxRetries: 3,
         retryCount: 0,
         nextRetryAt: new Date(),
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       const fallbackResult = await fallbackProcessor.processFallbackOperation(mockFallbackOp);
@@ -186,7 +192,7 @@ describe('Sync Error Handling Integration', () => {
         component: 'master-clock',
         operation: 'master_clock_sync',
         tenantId: 'tenant-123',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       const criticalError: SyncError = {
@@ -203,8 +209,8 @@ describe('Sync Error Handling Integration', () => {
         syncOperation: 'master_clock_sync',
         metadata: {
           syncContext: criticalContext,
-          stackTrace: 'Mock stack trace'
-        }
+          stackTrace: 'Mock stack trace',
+        },
       };
 
       let criticalEventEmitted = false;
@@ -215,7 +221,7 @@ describe('Sync Error Handling Integration', () => {
       await errorHandler.handleSyncError(criticalError, criticalContext);
 
       expect(criticalEventEmitted).toBe(true);
-      
+
       const stats = errorHandler.getSyncStatistics();
       expect(stats.criticalErrors).toBe(1);
     });
@@ -227,11 +233,11 @@ describe('Sync Error Handling Integration', () => {
         component: 'template-sync',
         operation: 'template-update',
         tenantId: 'tenant-456',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       const validationError = new Error('Template validation failed');
-      
+
       await errorHandler.handleSyncError(validationError, mockContext);
 
       // Verify metrics were recorded
@@ -240,7 +246,7 @@ describe('Sync Error Handling Integration', () => {
         expect.objectContaining({
           type: 'validation',
           resourceType: 'template',
-          tenantId: 'tenant-456'
+          tenantId: 'tenant-456',
         })
       );
 
@@ -259,7 +265,7 @@ describe('Sync Error Handling Integration', () => {
         component: 'file-sync',
         operation,
         tenantId: 'tenant-789',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       const networkError: SyncError = {
@@ -274,7 +280,7 @@ describe('Sync Error Handling Integration', () => {
         resourceId: 'file-456',
         tenantId: 'tenant-789',
         syncOperation: operation,
-        metadata: {}
+        metadata: {},
       };
 
       let circuitBreakerOpened = false;
@@ -286,15 +292,18 @@ describe('Sync Error Handling Integration', () => {
       for (let i = 0; i < 4; i++) {
         try {
           await retryManager.scheduleRetry(operation, {}, mockContext, networkError);
-          
+
           // Simulate retry failure
-          retryManager.emit('executeRetry', {
-            id: `retry-${i}`,
-            operation,
-            attemptNumber: 3, // Max attempts
-            maxAttempts: 3
-          }, () => false);
-          
+          retryManager.emit(
+            'executeRetry',
+            {
+              id: `retry-${i}`,
+              operation,
+              attemptNumber: 3, // Max attempts
+              maxAttempts: 3,
+            },
+            () => false
+          );
         } catch (error) {
           // Expected when circuit breaker opens
           expect(error.message).toContain('Circuit breaker open');
@@ -311,7 +320,7 @@ describe('Sync Error Handling Integration', () => {
         component: 'config-sync',
         operation: 'config-update',
         tenantId: 'tenant-priority',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       const mockOperation = {
@@ -323,7 +332,7 @@ describe('Sync Error Handling Integration', () => {
         maxRetries: 3,
         retryCount: 0,
         nextRetryAt: new Date(),
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       // Register custom strategies with different priorities
@@ -338,8 +347,8 @@ describe('Sync Error Handling Integration', () => {
           success: true,
           strategy: 'highPriorityStrategy',
           executionTime: 100,
-          shouldRetry: false
-        })
+          shouldRetry: false,
+        }),
       });
 
       fallbackProcessor.registerStrategy({
@@ -353,8 +362,8 @@ describe('Sync Error Handling Integration', () => {
           success: true,
           strategy: 'lowPriorityStrategy',
           executionTime: 200,
-          shouldRetry: false
-        })
+          shouldRetry: false,
+        }),
       });
 
       const result = await fallbackProcessor.processFallbackOperation(mockOperation);
@@ -370,7 +379,7 @@ describe('Sync Error Handling Integration', () => {
         component: 'task-sync',
         operation: 'task-update',
         tenantId: 'tenant-degradation',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       const mockOperation = {
@@ -382,7 +391,7 @@ describe('Sync Error Handling Integration', () => {
         maxRetries: 3,
         retryCount: 0,
         nextRetryAt: new Date(),
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       // Register a failing strategy
@@ -395,7 +404,7 @@ describe('Sync Error Handling Integration', () => {
         enabled: true,
         execute: async () => {
           throw new Error('Strategy failed');
-        }
+        },
       });
 
       let gracefulDegradationTriggered = false;
@@ -424,7 +433,7 @@ describe('Sync Error Handling Integration', () => {
           component: 'bulk-sync',
           operation: 'bulk-operation',
           tenantId: `tenant-${i % 10}`, // 10 different tenants
-          timestamp: new Date()
+          timestamp: new Date(),
         };
 
         const error = new Error(`Bulk error ${i}`);
@@ -432,7 +441,7 @@ describe('Sync Error Handling Integration', () => {
       }
 
       await Promise.all(promises);
-      
+
       const endTime = Date.now();
       const processingTime = endTime - startTime;
 
@@ -454,7 +463,7 @@ describe('Sync Error Handling Integration', () => {
           component: 'agent-sync',
           operation: 'agent-update',
           tenantId: `tenant-${i % 5}`,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
 
         const error: SyncError = {
@@ -469,18 +478,16 @@ describe('Sync Error Handling Integration', () => {
           resourceId: `agent-${i}`,
           syncOperation: 'agent-update',
           tenantId: context.tenantId,
-          metadata: {}
+          metadata: {},
         };
 
-        promises.push(
-          retryManager.scheduleRetry(`operation-${i}`, { index: i }, context, error)
-        );
+        promises.push(retryManager.scheduleRetry(`operation-${i}`, { index: i }, context, error));
       }
 
       const retryIds = await Promise.all(promises);
-      
+
       expect(retryIds).toHaveLength(retryCount);
-      retryIds.forEach(id => {
+      retryIds.forEach((id) => {
         expect(id).toMatch(/^retry_\d+_[a-z0-9]+$/);
       });
     });
@@ -498,23 +505,19 @@ describe('Sync Error Handling Integration', () => {
         component: 'file-sync',
         operation: 'file-update',
         tenantId: 'tenant-resilience',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       const error = new Error('Test error during Redis failure');
 
       // Should handle Redis failure gracefully
-      await expect(
-        errorHandler.handleSyncError(error, mockContext)
-      ).resolves.toBeDefined();
+      await expect(errorHandler.handleSyncError(error, mockContext)).resolves.toBeDefined();
 
       // Restore Redis functionality
       (redisService.zadd as jest.Mock).mockImplementation(originalZadd);
 
       // Subsequent operations should work
-      await expect(
-        errorHandler.handleSyncError(error, mockContext)
-      ).resolves.toBeDefined();
+      await expect(errorHandler.handleSyncError(error, mockContext)).resolves.toBeDefined();
     });
 
     it('should maintain statistics across service restarts', async () => {
@@ -530,7 +533,7 @@ describe('Sync Error Handling Integration', () => {
           component: 'template-sync',
           operation: 'template-sync',
           tenantId: 'tenant-persistence',
-          timestamp: new Date()
+          timestamp: new Date(),
         };
 
         await errorHandler.handleSyncError(new Error(`Persistence test ${i}`), context);
@@ -560,7 +563,7 @@ describe('Sync Error Handling Integration', () => {
       zrem: jest.fn().mockImplementation(async (key: string, member: string) => {
         const set = sortedSets.get(key);
         if (set) {
-          const index = set.findIndex(item => item.member === member);
+          const index = set.findIndex((item) => item.member === member);
           if (index >= 0) {
             set.splice(index, 1);
             return 1;
@@ -572,7 +575,7 @@ describe('Sync Error Handling Integration', () => {
       zrange: jest.fn().mockImplementation(async (key: string, start: number, stop: number) => {
         const set = sortedSets.get(key) || [];
         const end = stop === -1 ? set.length : stop + 1;
-        return set.slice(start, end).map(item => item.member);
+        return set.slice(start, end).map((item) => item.member);
       }),
 
       get: jest.fn().mockImplementation(async (key: string) => {
@@ -589,9 +592,9 @@ describe('Sync Error Handling Integration', () => {
       keys: jest.fn().mockImplementation(async (pattern: string) => {
         const keys = Array.from(storage.keys());
         if (pattern === '*') return keys;
-        
+
         const regex = new RegExp(pattern.replace(/\*/g, '.*'));
-        return keys.filter(key => regex.test(key));
+        return keys.filter((key) => regex.test(key));
       }),
 
       del: jest.fn().mockImplementation(async (key: string) => {
@@ -606,7 +609,7 @@ describe('Sync Error Handling Integration', () => {
         list.unshift(...values);
         storage.set(key, list);
         return list.length;
-      })
+      }),
     };
   }
 
@@ -620,7 +623,7 @@ describe('Sync Error Handling Integration', () => {
       stop: jest.fn(),
       getCurrentMetrics: jest.fn().mockReturnValue({}),
       getMetricsHistory: jest.fn().mockReturnValue([]),
-      getMetric: jest.fn().mockReturnValue(null)
+      getMetric: jest.fn().mockReturnValue(null),
     };
 
     return {
@@ -631,8 +634,8 @@ describe('Sync Error Handling Integration', () => {
       getStatus: jest.fn().mockResolvedValue({
         running: true,
         uptime: 1000,
-        components: {}
-      })
+        components: {},
+      }),
     };
   }
 });

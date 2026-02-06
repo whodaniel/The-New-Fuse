@@ -4,9 +4,13 @@
  */
 
 import { EventEmitter } from 'events';
+import {
+  AuthConfig,
+  ConnectionOptions,
+  ConnectionStatus,
+  TLSConfig,
+} from '../interfaces/IMCPConnection';
 import { ConnectionManager } from './ConnectionManager';
-import { ConnectionOptions, ConnectionStatus, AuthConfig, TLSConfig } from '../interfaces/IMCPConnection';
-import { MCPErrorClass, MCPErrorCode } from '../types/error';
 
 // Mock secure WebSocket for testing TLS connections
 class MockSecureWebSocket extends EventEmitter {
@@ -19,13 +23,16 @@ class MockSecureWebSocket extends EventEmitter {
   private authHeaders?: Record<string, string>;
   private tlsOptions?: any;
 
-  constructor(public url: string, options?: any) {
+  constructor(
+    public url: string,
+    options?: any
+  ) {
     super();
-    
+
     // Store auth headers and TLS options for verification
     this.authHeaders = options?.headers;
     this.tlsOptions = options;
-    
+
     // Simulate connection delay and validation
     setTimeout(() => {
       // Simulate authentication validation
@@ -34,12 +41,12 @@ class MockSecureWebSocket extends EventEmitter {
         this.emit('error', new Error('Authentication required'));
         return;
       }
-      
+
       // Simulate TLS validation
       if (this.url.startsWith('wss://') && this.tlsOptions?.rejectUnauthorized !== false) {
         // Simulate successful TLS handshake
       }
-      
+
       this.readyState = WebSocket.OPEN;
       this.emit('open');
     }, 20);
@@ -49,17 +56,17 @@ class MockSecureWebSocket extends EventEmitter {
     if (this.readyState !== WebSocket.OPEN) {
       throw new Error('WebSocket is not open');
     }
-    
+
     // Echo back for ping responses
     if (data.includes('"method":"ping"')) {
       const message = JSON.parse(data);
       setTimeout(() => {
-        this.emit('message', { 
+        this.emit('message', {
           data: JSON.stringify({
             jsonrpc: '2.0',
             id: message.id,
-            result: 'pong'
-          })
+            result: 'pong',
+          }),
         });
       }, 10);
     }
@@ -93,7 +100,7 @@ describe('ConnectionManager Integration Tests', () => {
       maxIdleTime: 5000,
       healthCheckInterval: 1000,
       reconnectInterval: 100,
-      maxReconnectAttempts: 3
+      maxReconnectAttempts: 3,
     });
   });
 
@@ -105,7 +112,7 @@ describe('ConnectionManager Integration Tests', () => {
     it('should establish connection with Bearer token authentication', async () => {
       const authConfig: AuthConfig = {
         type: 'bearer',
-        token: 'test-bearer-token-123'
+        token: 'test-bearer-token-123',
       };
 
       const options: ConnectionOptions = {
@@ -113,13 +120,13 @@ describe('ConnectionManager Integration Tests', () => {
         retryAttempts: 2,
         retryDelay: 100,
         keepAlive: true,
-        auth: authConfig
+        auth: authConfig,
       };
 
       const connection = await connectionManager.createConnection('ws://localhost:8080', options);
-      
+
       expect(connection.status).toBe(ConnectionStatus.CONNECTED);
-      
+
       // Verify auth headers were set
       const ws = (connection as any).ws as MockSecureWebSocket;
       const authHeaders = ws.getAuthHeaders();
@@ -130,7 +137,7 @@ describe('ConnectionManager Integration Tests', () => {
       const authConfig: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass'
+        password: 'testpass',
       };
 
       const options: ConnectionOptions = {
@@ -138,13 +145,13 @@ describe('ConnectionManager Integration Tests', () => {
         retryAttempts: 2,
         retryDelay: 100,
         keepAlive: true,
-        auth: authConfig
+        auth: authConfig,
       };
 
       const connection = await connectionManager.createConnection('ws://localhost:8080', options);
-      
+
       expect(connection.status).toBe(ConnectionStatus.CONNECTED);
-      
+
       // Verify auth headers were set
       const ws = (connection as any).ws as MockSecureWebSocket;
       const authHeaders = ws.getAuthHeaders();
@@ -155,7 +162,7 @@ describe('ConnectionManager Integration Tests', () => {
     it('should establish connection with API key authentication', async () => {
       const authConfig: AuthConfig = {
         type: 'api_key',
-        apiKey: 'api-key-12345'
+        apiKey: 'api-key-12345',
       };
 
       const options: ConnectionOptions = {
@@ -163,13 +170,13 @@ describe('ConnectionManager Integration Tests', () => {
         retryAttempts: 2,
         retryDelay: 100,
         keepAlive: true,
-        auth: authConfig
+        auth: authConfig,
       };
 
       const connection = await connectionManager.createConnection('ws://localhost:8080', options);
-      
+
       expect(connection.status).toBe(ConnectionStatus.CONNECTED);
-      
+
       // Verify auth headers were set
       const ws = (connection as any).ws as MockSecureWebSocket;
       const authHeaders = ws.getAuthHeaders();
@@ -181,7 +188,7 @@ describe('ConnectionManager Integration Tests', () => {
         type: 'oauth',
         token: 'oauth-access-token-xyz',
         clientId: 'client-123',
-        clientSecret: 'secret-456'
+        clientSecret: 'secret-456',
       };
 
       const options: ConnectionOptions = {
@@ -189,13 +196,13 @@ describe('ConnectionManager Integration Tests', () => {
         retryAttempts: 2,
         retryDelay: 100,
         keepAlive: true,
-        auth: authConfig
+        auth: authConfig,
       };
 
       const connection = await connectionManager.createConnection('ws://localhost:8080', options);
-      
+
       expect(connection.status).toBe(ConnectionStatus.CONNECTED);
-      
+
       // Verify auth headers were set
       const ws = (connection as any).ws as MockSecureWebSocket;
       const authHeaders = ws.getAuthHeaders();
@@ -208,8 +215,8 @@ describe('ConnectionManager Integration Tests', () => {
         token: 'test-token',
         additionalParams: {
           'X-Client-Version': '1.0.0',
-          'X-Request-ID': 'req-123'
-        }
+          'X-Request-ID': 'req-123',
+        },
       };
 
       const options: ConnectionOptions = {
@@ -217,13 +224,13 @@ describe('ConnectionManager Integration Tests', () => {
         retryAttempts: 2,
         retryDelay: 100,
         keepAlive: true,
-        auth: authConfig
+        auth: authConfig,
       };
 
       const connection = await connectionManager.createConnection('ws://localhost:8080', options);
-      
+
       expect(connection.status).toBe(ConnectionStatus.CONNECTED);
-      
+
       // Verify all headers were set
       const ws = (connection as any).ws as MockSecureWebSocket;
       const authHeaders = ws.getAuthHeaders();
@@ -237,7 +244,7 @@ describe('ConnectionManager Integration Tests', () => {
         timeout: 5000,
         retryAttempts: 2,
         retryDelay: 100,
-        keepAlive: true
+        keepAlive: true,
         // No auth config provided
       };
 
@@ -251,7 +258,7 @@ describe('ConnectionManager Integration Tests', () => {
     it('should establish secure WebSocket connection with TLS enabled', async () => {
       const tlsConfig: TLSConfig = {
         enabled: true,
-        rejectUnauthorized: true
+        rejectUnauthorized: true,
       };
 
       const options: ConnectionOptions = {
@@ -259,14 +266,17 @@ describe('ConnectionManager Integration Tests', () => {
         retryAttempts: 2,
         retryDelay: 100,
         keepAlive: true,
-        tls: tlsConfig
+        tls: tlsConfig,
       };
 
-      const connection = await connectionManager.createConnection('https://secure.example.com', options);
-      
+      const connection = await connectionManager.createConnection(
+        'https://secure.example.com',
+        options
+      );
+
       expect(connection.status).toBe(ConnectionStatus.CONNECTED);
       expect(connection.endpoint).toBe('https://secure.example.com');
-      
+
       // Verify WebSocket URL was converted to secure
       const ws = (connection as any).ws as MockSecureWebSocket;
       expect(ws.url).toBe('wss://secure.example.com');
@@ -279,7 +289,7 @@ describe('ConnectionManager Integration Tests', () => {
         ca: 'custom-ca-cert',
         cert: 'client-cert',
         key: 'client-key',
-        passphrase: 'key-passphrase'
+        passphrase: 'key-passphrase',
       };
 
       const options: ConnectionOptions = {
@@ -287,13 +297,16 @@ describe('ConnectionManager Integration Tests', () => {
         retryAttempts: 2,
         retryDelay: 100,
         keepAlive: true,
-        tls: tlsConfig
+        tls: tlsConfig,
       };
 
-      const connection = await connectionManager.createConnection('wss://secure.example.com', options);
-      
+      const connection = await connectionManager.createConnection(
+        'wss://secure.example.com',
+        options
+      );
+
       expect(connection.status).toBe(ConnectionStatus.CONNECTED);
-      
+
       // Verify TLS options were passed to WebSocket
       const ws = (connection as any).ws as MockSecureWebSocket;
       const tlsOptions = ws.getTLSOptions();
@@ -306,7 +319,7 @@ describe('ConnectionManager Integration Tests', () => {
 
     it('should auto-upgrade HTTP to WSS when TLS is enabled', async () => {
       const tlsConfig: TLSConfig = {
-        enabled: true
+        enabled: true,
       };
 
       const options: ConnectionOptions = {
@@ -314,13 +327,13 @@ describe('ConnectionManager Integration Tests', () => {
         retryAttempts: 2,
         retryDelay: 100,
         keepAlive: true,
-        tls: tlsConfig
+        tls: tlsConfig,
       };
 
       const connection = await connectionManager.createConnection('example.com:8080', options);
-      
+
       expect(connection.status).toBe(ConnectionStatus.CONNECTED);
-      
+
       // Verify URL was upgraded to secure WebSocket
       const ws = (connection as any).ws as MockSecureWebSocket;
       expect(ws.url).toBe('wss://example.com:8080');
@@ -331,12 +344,12 @@ describe('ConnectionManager Integration Tests', () => {
     it('should establish secure authenticated connection', async () => {
       const authConfig: AuthConfig = {
         type: 'bearer',
-        token: 'secure-token-123'
+        token: 'secure-token-123',
       };
 
       const tlsConfig: TLSConfig = {
         enabled: true,
-        rejectUnauthorized: true
+        rejectUnauthorized: true,
       };
 
       const options: ConnectionOptions = {
@@ -347,20 +360,23 @@ describe('ConnectionManager Integration Tests', () => {
         auth: authConfig,
         tls: tlsConfig,
         headers: {
-          'X-Client-ID': 'secure-client-001'
-        }
+          'X-Client-ID': 'secure-client-001',
+        },
       };
 
-      const connection = await connectionManager.createConnection('https://secure-api.example.com', options);
-      
+      const connection = await connectionManager.createConnection(
+        'https://secure-api.example.com',
+        options
+      );
+
       expect(connection.status).toBe(ConnectionStatus.CONNECTED);
-      
+
       // Verify both auth and custom headers were set
       const ws = (connection as any).ws as MockSecureWebSocket;
       const headers = ws.getAuthHeaders();
       expect(headers?.['Authorization']).toBe('Bearer secure-token-123');
       expect(headers?.['X-Client-ID']).toBe('secure-client-001');
-      
+
       // Verify secure WebSocket URL
       expect(ws.url).toBe('wss://secure-api.example.com');
     });
@@ -375,14 +391,14 @@ describe('ConnectionManager Integration Tests', () => {
         retryDelay: 100,
         keepAlive: true,
         auth: { type: 'bearer', token: 'token1' },
-        tls: { enabled: true }
+        tls: { enabled: true },
       };
 
       const insecureOptions: ConnectionOptions = {
         timeout: 5000,
         retryAttempts: 2,
         retryDelay: 100,
-        keepAlive: true
+        keepAlive: true,
       };
 
       const basicAuthOptions: ConnectionOptions = {
@@ -390,7 +406,7 @@ describe('ConnectionManager Integration Tests', () => {
         retryAttempts: 2,
         retryDelay: 100,
         keepAlive: true,
-        auth: { type: 'basic', username: 'user', password: 'pass' }
+        auth: { type: 'basic', username: 'user', password: 'pass' },
       };
 
       await connectionManager.createConnection('wss://secure1.example.com', secureAuthOptions);
@@ -398,14 +414,14 @@ describe('ConnectionManager Integration Tests', () => {
       await connectionManager.createConnection('ws://basic.example.com', basicAuthOptions);
 
       const securityMetrics = connectionManager.getSecurityMetrics();
-      
+
       expect(securityMetrics.security.tlsEnabled).toBe(1);
       expect(securityMetrics.security.tlsPercentage).toBeCloseTo(33.33, 1);
       expect(securityMetrics.security.authenticatedConnections).toBe(2);
       expect(securityMetrics.security.authenticationPercentage).toBeCloseTo(66.67, 1);
       expect(securityMetrics.security.authenticationTypes).toEqual({
         bearer: 1,
-        basic: 1
+        basic: 1,
       });
       expect(securityMetrics.compliance.secureConnections).toBe(1);
       expect(securityMetrics.compliance.insecureConnections).toBe(2);
@@ -418,7 +434,7 @@ describe('ConnectionManager Integration Tests', () => {
         timeout: 5000,
         retryAttempts: 2,
         retryDelay: 100,
-        keepAlive: true
+        keepAlive: true,
       };
 
       // Create multiple connections
@@ -426,14 +442,14 @@ describe('ConnectionManager Integration Tests', () => {
       await connectionManager.createConnection('ws://perf2.example.com', options);
 
       // Wait a bit for connections to establish
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       // Perform health checks to generate metrics
       await connectionManager.checkConnectionHealth('ws://perf1.example.com');
       await connectionManager.checkConnectionHealth('ws://perf2.example.com');
 
       const performanceMetrics = connectionManager.getPerformanceMetrics();
-      
+
       expect(performanceMetrics.throughput.totalDataTransferred).toBeGreaterThanOrEqual(0);
       expect(performanceMetrics.latency.averageResponseTime).toBeGreaterThanOrEqual(0);
       expect(performanceMetrics.reliability.successRate).toBeGreaterThan(0);
@@ -445,7 +461,7 @@ describe('ConnectionManager Integration Tests', () => {
     it('should maintain authentication during reconnection', async () => {
       const authConfig: AuthConfig = {
         type: 'bearer',
-        token: 'persistent-token-123'
+        token: 'persistent-token-123',
       };
 
       const options: ConnectionOptions = {
@@ -453,13 +469,16 @@ describe('ConnectionManager Integration Tests', () => {
         retryAttempts: 2,
         retryDelay: 50,
         keepAlive: true,
-        auth: authConfig
+        auth: authConfig,
       };
 
-      const connection = await connectionManager.createConnection('ws://reconnect-test.example.com', options);
-      
+      const connection = await connectionManager.createConnection(
+        'ws://reconnect-test.example.com',
+        options
+      );
+
       expect(connection.status).toBe(ConnectionStatus.CONNECTED);
-      
+
       // Verify initial auth headers
       let ws = (connection as any).ws as MockSecureWebSocket;
       let authHeaders = ws.getAuthHeaders();
@@ -469,13 +488,13 @@ describe('ConnectionManager Integration Tests', () => {
       return new Promise<void>((resolve) => {
         connectionManager.on('connectionReconnected', (endpoint) => {
           expect(endpoint).toBe('ws://reconnect-test.example.com');
-          
+
           // Verify auth headers are maintained after reconnection
           const reconnectedConnection = connectionManager.getConnection(endpoint);
           const newWs = (reconnectedConnection as any).ws as MockSecureWebSocket;
           const newAuthHeaders = newWs.getAuthHeaders();
           expect(newAuthHeaders?.['Authorization']).toBe('Bearer persistent-token-123');
-          
+
           resolve();
         });
 
@@ -490,7 +509,7 @@ describe('ConnectionManager Integration Tests', () => {
       // Mock WebSocket that fails TLS validation
       class TLSFailureWebSocket extends EventEmitter {
         public readyState = WebSocket.CONNECTING;
-        
+
         constructor(url: string, options?: any) {
           super();
           setTimeout(() => {
@@ -498,7 +517,7 @@ describe('ConnectionManager Integration Tests', () => {
             this.emit('error', new Error('TLS certificate validation failed'));
           }, 10);
         }
-        
+
         send() {}
         close() {
           this.readyState = WebSocket.CLOSED;
@@ -510,7 +529,7 @@ describe('ConnectionManager Integration Tests', () => {
 
       const tlsConfig: TLSConfig = {
         enabled: true,
-        rejectUnauthorized: true
+        rejectUnauthorized: true,
       };
 
       const options: ConnectionOptions = {
@@ -518,7 +537,7 @@ describe('ConnectionManager Integration Tests', () => {
         retryAttempts: 1,
         retryDelay: 50,
         keepAlive: true,
-        tls: tlsConfig
+        tls: tlsConfig,
       };
 
       await expect(
@@ -533,12 +552,14 @@ describe('ConnectionManager Integration Tests', () => {
       // Mock WebSocket that rejects invalid auth
       class AuthFailureWebSocket extends EventEmitter {
         public readyState = WebSocket.CONNECTING;
-        
+
         constructor(url: string, options?: any) {
           super();
           setTimeout(() => {
-            if (!options?.headers?.['Authorization'] || 
-                options.headers['Authorization'] === 'Bearer invalid-token') {
+            if (
+              !options?.headers?.['Authorization'] ||
+              options.headers['Authorization'] === 'Bearer invalid-token'
+            ) {
               this.readyState = WebSocket.CLOSED;
               this.emit('error', new Error('Authentication failed'));
             } else {
@@ -547,7 +568,7 @@ describe('ConnectionManager Integration Tests', () => {
             }
           }, 10);
         }
-        
+
         send() {}
         close() {
           this.readyState = WebSocket.CLOSED;
@@ -559,7 +580,7 @@ describe('ConnectionManager Integration Tests', () => {
 
       const authConfig: AuthConfig = {
         type: 'bearer',
-        token: 'invalid-token'
+        token: 'invalid-token',
       };
 
       const options: ConnectionOptions = {
@@ -567,7 +588,7 @@ describe('ConnectionManager Integration Tests', () => {
         retryAttempts: 1,
         retryDelay: 50,
         keepAlive: true,
-        auth: authConfig
+        auth: authConfig,
       };
 
       await expect(

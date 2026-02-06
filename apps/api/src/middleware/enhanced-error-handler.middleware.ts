@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
+import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import { SecurityLoggingService } from '../security/security-logging.service';
 
 export interface ApiErrorResponse {
@@ -28,7 +28,7 @@ export class EnhancedErrorHandlerMiddleware {
 
       // Determine error response based on error type and security context
       const errorResponse = this.createErrorResponse(err, req);
-      
+
       // Send the response
       res.status(errorResponse.error.statusCode).json(errorResponse);
     };
@@ -87,7 +87,11 @@ export class EnhancedErrorHandlerMiddleware {
   /**
    * Handle validation errors
    */
-  private handleValidationError(error: any, timestamp: string, requestId?: string): ApiErrorResponse {
+  private handleValidationError(
+    error: any,
+    timestamp: string,
+    requestId?: string
+  ): ApiErrorResponse {
     return {
       success: false,
       error: {
@@ -107,7 +111,12 @@ export class EnhancedErrorHandlerMiddleware {
   /**
    * Handle unauthorized errors
    */
-  private handleUnauthorizedError(error: any, timestamp: string, requestId: string | undefined, req: Request): ApiErrorResponse {
+  private handleUnauthorizedError(
+    error: any,
+    timestamp: string,
+    requestId: string | undefined,
+    req: Request
+  ): ApiErrorResponse {
     this.securityLogging.logAuthEvent('auth_failure', {
       ip: req.clientIP,
       userAgent: req.headers['user-agent'],
@@ -137,7 +146,12 @@ export class EnhancedErrorHandlerMiddleware {
   /**
    * Handle forbidden errors
    */
-  private handleForbiddenError(error: any, timestamp: string, requestId: string | undefined, req: Request): ApiErrorResponse {
+  private handleForbiddenError(
+    error: any,
+    timestamp: string,
+    requestId: string | undefined,
+    req: Request
+  ): ApiErrorResponse {
     this.securityLogging.logAuthZEvent('access_denied', {
       userId: req.user?.id,
       ip: req.clientIP,
@@ -168,7 +182,12 @@ export class EnhancedErrorHandlerMiddleware {
   /**
    * Handle not found errors
    */
-  private handleNotFoundError(error: any, timestamp: string, requestId: string | undefined, req: Request): ApiErrorResponse {
+  private handleNotFoundError(
+    error: any,
+    timestamp: string,
+    requestId: string | undefined,
+    req: Request
+  ): ApiErrorResponse {
     return {
       success: false,
       error: {
@@ -189,7 +208,12 @@ export class EnhancedErrorHandlerMiddleware {
   /**
    * Handle rate limit errors
    */
-  private handleRateLimitError(error: any, timestamp: string, requestId: string | undefined, req: Request): ApiErrorResponse {
+  private handleRateLimitError(
+    error: any,
+    timestamp: string,
+    requestId: string | undefined,
+    req: Request
+  ): ApiErrorResponse {
     return {
       success: false,
       error: {
@@ -211,7 +235,12 @@ export class EnhancedErrorHandlerMiddleware {
   /**
    * Handle bad request errors
    */
-  private handleBadRequestError(error: any, timestamp: string, requestId: string | undefined, req: Request): ApiErrorResponse {
+  private handleBadRequestError(
+    error: any,
+    timestamp: string,
+    requestId: string | undefined,
+    req: Request
+  ): ApiErrorResponse {
     this.securityLogging.logInputValidation(req.path, req.method, {
       ip: req.clientIP,
       reason: error.message || 'Bad request',
@@ -236,7 +265,12 @@ export class EnhancedErrorHandlerMiddleware {
   /**
    * Handle server errors
    */
-  private handleServerError(error: any, timestamp: string, requestId: string | undefined, req: Request): ApiErrorResponse {
+  private handleServerError(
+    error: any,
+    timestamp: string,
+    requestId: string | undefined,
+    req: Request
+  ): ApiErrorResponse {
     // Log server errors for monitoring
     this.logger.error('Server Error', {
       error: error.message,
@@ -303,18 +337,18 @@ export class EnhancedErrorHandlerMiddleware {
    */
   private sanitizeErrorDetails(error: any): any {
     const sanitized = { ...error };
-    
+
     // Remove sensitive fields
     delete sanitized.password;
     delete sanitized.token;
     delete sanitized.secret;
     delete sanitized.key;
-    
+
     // Truncate long messages
     if (sanitized.message && sanitized.message.length > 500) {
       sanitized.message = sanitized.message.substring(0, 500) + '...';
     }
-    
+
     return sanitized;
   }
 }

@@ -6,33 +6,21 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
 }
 
-export const Card = ({ children, ...props }: CardProps) => (
-  <div {...props}>{children}</div>
-);
+export const Card = ({ children, ...props }: CardProps) => <div {...props}>{children}</div>;
 
 export interface CardSectionProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
 }
 
-const Header = ({ children, ...props }: CardSectionProps) => (
-  <div {...props}>{children}</div>
-);
+const Header = ({ children, ...props }: CardSectionProps) => <div {...props}>{children}</div>;
 
-const Title = ({ children, ...props }: CardSectionProps) => (
-  <div {...props}>{children}</div>
-);
+const Title = ({ children, ...props }: CardSectionProps) => <div {...props}>{children}</div>;
 
-const Description = ({ children, ...props }: CardSectionProps) => (
-  <div {...props}>{children}</div>
-);
+const Description = ({ children, ...props }: CardSectionProps) => <div {...props}>{children}</div>;
 
-const Content = ({ children, ...props }: CardSectionProps) => (
-  <div {...props}>{children}</div>
-);
+const Content = ({ children, ...props }: CardSectionProps) => <div {...props}>{children}</div>;
 
-const Footer = ({ children, ...props }: CardSectionProps) => (
-  <div {...props}>{children}</div>
-);
+const Footer = ({ children, ...props }: CardSectionProps) => <div {...props}>{children}</div>;
 
 // Attach subcomponents as static properties
 (Card as any).Header = Header;
@@ -59,15 +47,15 @@ CardWithStatics.Content = Content;
 CardWithStatics.Footer = Footer;
 
 export {
-  Header,
-  Title,
-  Description,
-  Content,
-  Footer,
+  Content as CardContent,
+  Description as CardDescription,
+  Footer as CardFooter,
   Header as CardHeader,
   Title as CardTitle,
-  Description as CardDescription,
-  Content as CardContent,
-  Footer as CardFooter
+  Content,
+  Description,
+  Footer,
+  Header,
+  Title,
 };
 export default CardWithStatics;

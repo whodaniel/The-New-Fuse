@@ -51,6 +51,15 @@ export class RegistrySyncService {
             continue;
           }
 
+          if (process.env.AGENT_INVITE_REQUIRED !== 'false') {
+            const tenantId = agentData.metadata?.tenantId || agentData.tenantId;
+            if (!tenantId) {
+              this.logger.warn(`Skipping agent without tenantId while invite gating is enabled: ${agentData.name}`);
+              stats.failed++;
+              continue;
+            }
+          }
+
           // Choose avatar based on type or contents
           const avatarUrl = this.getAvatarForAgent(agentData);
 
@@ -180,18 +189,43 @@ export class RegistrySyncService {
       }
 
       let synced = 0;
+      let failed = 0;
       for (const agentData of data) {
+        if (process.env.AGENT_INVITE_REQUIRED !== 'false') {
+          const tenantId = agentData.metadata?.tenantId || agentData.tenantId;
+          if (!tenantId) {
+            this.logger.warn(`Skipping Pydantic agent without tenantId while invite gating is enabled: ${agentData.name}`);
+            failed++;
+            continue;
+          }
+        }
         const existing = await this.db.agents.findByNameAndUserId(agentData.name, userId);
 
         const agentPayload: any = {
           name: agentData.name,
           description: agentData.description,
           type: agentData.type,
-          capabilities: agentData.capabilities.map((c: any) => c.name),
-          config: agentData.config || {},
+          capabilities: (agentData.capabilities || []).map((c: any) => c.name),
+          config: {
+            ...(agentData.config || {}),
+            schema: agentData.schema || undefined,
+            schema_source: agentData.schema_source || undefined,
+            tools: agentData.tools || [],
+            tags: agentData.tags || [],
+            input_model: agentData.input_model || undefined,
+            output_model: agentData.output_model || undefined,
+            identity: agentData.metadata?.identity || agentData.identity || undefined,
+            trust: agentData.metadata?.trust || agentData.trust || undefined,
+            tenantId: agentData.metadata?.tenantId || agentData.tenantId || undefined,
+            organizationId:
+              agentData.metadata?.organizationId || agentData.organizationId || undefined,
+            agencyId: agentData.metadata?.agencyId || agentData.agencyId || undefined,
+          },
           provider: agentData.provider,
           status: 'ACTIVE',
           userId: userId,
+          systemPrompt: agentData.system_prompt || agentData.systemPrompt || '',
+          metadata: agentData.metadata || {},
         };
 
         if (existing) {
@@ -203,10 +237,100 @@ export class RegistrySyncService {
       }
 
       this.logger.log(`Synced ${synced} Pydantic definitions.`);
-      return { synced, failed: 0 };
+      return { synced, failed };
     } catch (error) {
       this.logger.error('Failed to sync Pydantic definitions:', error);
       return { synced: 0, failed: 1 };
+    }
+  }
+
+  getPydanticToolDefinitions(options?: {
+    includeOutputSchema?: boolean;
+    capability?: string;
+    trustTier?: 'unverified' | 'verified' | 'certified';
+    tenantId?: string;
+    organizationId?: string;
+    agencyId?: string;
+    requireVerified?: boolean;
+  }): Array<Record<string, any>> {
+    const pydanticRegistryPath = path.join(
+      process.cwd(),
+      '.agent/agents/consolidated/pydantic_registry.json'
+    );
+
+    if (!fs.existsSync(pydanticRegistryPath)) {
+      this.logger.warn(`Pydantic registry JSON not found at ${pydanticRegistryPath}.`);
+      return [];
+    }
+
+    try {
+      const data = JSON.parse(fs.readFileSync(pydanticRegistryPath, 'utf8'));
+      if (!Array.isArray(data)) return [];
+
+      const filtered = data.filter((agent: any) => {
+        if (options?.capability) {
+          const matchesCapability = (agent.capabilities || []).some(
+            (cap: any) =>
+              typeof cap?.name === 'string' &&
+              cap.name.toLowerCase().includes(options.capability!.toLowerCase())
+          );
+          if (!matchesCapability) return false;
+        }
+
+        if (options?.tenantId) {
+          const tenantId = agent.metadata?.tenantId || agent.tenantId;
+          if (tenantId !== options.tenantId) return false;
+        }
+
+        if (options?.organizationId) {
+          const organizationId = agent.metadata?.organizationId || agent.organizationId;
+          if (organizationId !== options.organizationId) return false;
+        }
+
+        if (options?.agencyId) {
+          const agencyId = agent.metadata?.agencyId || agent.agencyId;
+          if (agencyId !== options.agencyId) return false;
+        }
+
+        if (options?.trustTier || options?.requireVerified) {
+          const trustTier =
+            agent.metadata?.trust?.tier || agent.trust?.tier || 'unverified';
+          if (options.requireVerified && trustTier === 'unverified') return false;
+          if (options.trustTier && trustTier !== options.trustTier) return false;
+        }
+
+        return true;
+      });
+
+      return filtered.map((agent: any) => ({
+        type: 'function',
+        function: {
+          name: agent.agent_id,
+          description: agent.description || agent.name || '',
+          parameters: agent.schema?.input || {},
+        },
+        metadata: {
+          agent_id: agent.agent_id,
+          name: agent.name,
+          type: agent.type,
+          provider: agent.provider,
+          platform: agent.platform,
+          version: agent.version,
+          tools: agent.tools || [],
+          tags: agent.tags || [],
+          input_model: agent.input_model,
+          output_model: agent.output_model,
+          trust: agent.metadata?.trust || agent.trust,
+          identity: agent.metadata?.identity || agent.identity,
+          tenantId: agent.metadata?.tenantId || agent.tenantId,
+          organizationId: agent.metadata?.organizationId || agent.organizationId,
+          agencyId: agent.metadata?.agencyId || agent.agencyId,
+        },
+        output_schema: options?.includeOutputSchema ? agent.schema?.output : undefined,
+      }));
+    } catch (error) {
+      this.logger.error('Failed to load Pydantic tool definitions:', error);
+      return [];
     }
   }
 

@@ -1,10 +1,12 @@
 # Unstoppable Domains Authentication
 
-The New Fuse Chrome Extension now supports authentication using Unstoppable Domains, allowing users to sign in with their Web3 domains.
+The New Fuse Chrome Extension now supports authentication using Unstoppable
+Domains, allowing users to sign in with their Web3 domains.
 
 ## Overview
 
 **Login with Unstoppable** enables owners of Unstoppable Domains to:
+
 - Authenticate without passwords using their blockchain-based domains
 - Share profile information and verified wallet addresses
 - Access multi-chain verified accounts (Ethereum, Polygon, Solana, etc.)
@@ -13,6 +15,7 @@ The New Fuse Chrome Extension now supports authentication using Unstoppable Doma
 ## Supported Domain Extensions
 
 Users can authenticate with any Unstoppable Domain, including:
+
 - `.crypto`
 - `.nft`
 - `.blockchain`
@@ -28,7 +31,8 @@ Users can authenticate with any Unstoppable Domain, including:
 
 ### 1. Register Your Application
 
-1. Go to [Unstoppable Domains Dashboard](https://dashboard.unstoppabledomains.com)
+1. Go to
+   [Unstoppable Domains Dashboard](https://dashboard.unstoppabledomains.com)
 2. Sign in with your Unstoppable Domain
 3. Create a new application
 4. Configure your application:
@@ -39,6 +43,7 @@ Users can authenticate with any Unstoppable Domain, including:
 ### 2. Get Your Credentials
 
 After creating the application, you'll receive:
+
 - **Client ID**: A unique identifier for your application
 - **Client Secret** (optional): For server-side implementations
 
@@ -68,11 +73,12 @@ The scope defines what information the extension can access:
 
 ```typescript
 {
-  scope: 'openid wallet email:optional humanity_check:optional'
+  scope: 'openid wallet email:optional humanity_check:optional';
 }
 ```
 
 **Available Scopes:**
+
 - `openid` (required): Basic OpenID Connect authentication
 - `wallet`: Access to primary wallet address
 - `email:optional`: User's email address (if provided)
@@ -135,18 +141,18 @@ After successful authentication, you can access:
 const user = unstoppableAuth.getUser();
 
 // Basic information
-console.log(user.sub);              // Domain name (e.g., "alice.crypto")
-console.log(user.wallet_address);   // Primary wallet address
+console.log(user.sub); // Domain name (e.g., "alice.crypto")
+console.log(user.wallet_address); // Primary wallet address
 console.log(user.wallet_type_hint); // Wallet type
 
 // Optional profile (if requested in scope)
-console.log(user.name);             // Display name
-console.log(user.email);            // Email address
-console.log(user.email_verified);   // Email verification status
-console.log(user.picture);          // Profile picture URL
+console.log(user.name); // Display name
+console.log(user.email); // Email address
+console.log(user.email_verified); // Email verification status
+console.log(user.picture); // Profile picture URL
 
 // Humanity check
-console.log(user.humanity_check);   // Verification status
+console.log(user.humanity_check); // Verification status
 console.log(user.humanity_check_id); // Verification ID
 
 // EIP-4361 signature (for additional verification)
@@ -161,7 +167,7 @@ Access verified multi-chain addresses:
 ```typescript
 const verifiedAddresses = await unstoppableAuth.getVerifiedAccounts();
 
-verifiedAddresses.forEach(addr => {
+verifiedAddresses.forEach((addr) => {
   console.log(`${addr.symbol}: ${addr.address}`);
   // ETH: 0x...
   // MATIC: 0x...
@@ -188,53 +194,69 @@ await unstoppableAuth.configure({
 #### Authentication Methods
 
 **loginWithPopup()**
+
 ```typescript
 async loginWithPopup(): Promise<UnstoppableUser>
 ```
+
 Opens a popup window for authentication. Returns user information on success.
 
 **login()**
+
 ```typescript
 async login(): Promise<void>
 ```
+
 Initiates redirect-based authentication flow.
 
 **loginCallback()**
+
 ```typescript
 async loginCallback(): Promise<UnstoppableUser>
 ```
+
 Handles the callback after redirect. Must be called on the redirect page.
 
 **logout()**
+
 ```typescript
 async logout(): Promise<void>
 ```
+
 Logs out the user and clears the session.
 
 #### State Management
 
 **isAuthenticated()**
+
 ```typescript
 isAuthenticated(): boolean
 ```
+
 Returns `true` if user is authenticated and session is valid.
 
 **getUser()**
+
 ```typescript
 getUser(): UnstoppableUser | null
 ```
+
 Returns current user information or `null` if not authenticated.
 
 **getAuthorization()**
+
 ```typescript
 getAuthorization(): UAuthAuthorization | null
 ```
+
 Returns authorization tokens and metadata.
 
 **getVerifiedAccounts()**
+
 ```typescript
 async getVerifiedAccounts(): Promise<VerifiedAddress[]>
 ```
+
 Returns list of verified blockchain addresses.
 
 ## React Component Usage
@@ -318,6 +340,7 @@ function CustomAuth() {
 ### State & Nonce Verification
 
 The authentication service automatically handles:
+
 - **State parameter**: Prevents CSRF attacks
 - **Nonce**: Ensures token freshness and prevents replay attacks
 - **Token expiration**: Automatic session cleanup
@@ -341,27 +364,35 @@ The authentication service automatically handles:
 ### Common Errors
 
 **Configuration Not Set**
+
 ```typescript
 Error: UAuth not configured. Call configure() first.
 ```
+
 Solution: Call `unstoppableAuth.configure()` with valid credentials.
 
 **Popup Blocked**
+
 ```typescript
 Error: Failed to open popup window
 ```
+
 Solution: Ensure popup blockers allow chrome-extension:// origins.
 
 **State Mismatch**
+
 ```typescript
 Error: State mismatch - possible CSRF attack
 ```
+
 Solution: Clear browser cache and storage, try authentication again.
 
 **Token Request Failed**
+
 ```typescript
 Error: Token request failed: Unauthorized
 ```
+
 Solution: Verify Client ID and Secret are correct in dashboard.
 
 ### Error Handling Example
@@ -397,8 +428,8 @@ await unstoppableAuth.configure({
     'email:optional',
     'profile:optional',
     'humanity_check:optional',
-    'social:optional'
-  ].join(' ')
+    'social:optional',
+  ].join(' '),
 });
 ```
 
@@ -407,9 +438,9 @@ await unstoppableAuth.configure({
 ```typescript
 const verifiedAddresses = await unstoppableAuth.getVerifiedAccounts();
 
-const ethAddress = verifiedAddresses.find(a => a.symbol === 'ETH');
-const maticAddress = verifiedAddresses.find(a => a.symbol === 'MATIC');
-const solAddress = verifiedAddresses.find(a => a.symbol === 'SOL');
+const ethAddress = verifiedAddresses.find((a) => a.symbol === 'ETH');
+const maticAddress = verifiedAddresses.find((a) => a.symbol === 'MATIC');
+const solAddress = verifiedAddresses.find((a) => a.symbol === 'SOL');
 
 if (ethAddress) {
   console.log('Ethereum:', ethAddress.address);
@@ -433,11 +464,14 @@ if (unstoppableAuth.isAuthenticated()) {
 
 ## Integration with Electron App
 
-Since the TNF Chrome Extension is installed by default in the Electron app's Chromium browser, Unstoppable Domains authentication is automatically available there too.
+Since the TNF Chrome Extension is installed by default in the Electron app's
+Chromium browser, Unstoppable Domains authentication is automatically available
+there too.
 
 ### Electron-Specific Considerations
 
-1. **Extension URL**: The redirect URI will use the extension's chrome-extension:// URL
+1. **Extension URL**: The redirect URI will use the extension's
+   chrome-extension:// URL
 2. **Native Integration**: Can be integrated with Electron's native modules
 3. **Session Sharing**: Sessions are isolated per Electron window
 
@@ -471,9 +505,12 @@ Since the TNF Chrome Extension is installed by default in the Electron app's Chr
 
 ## Resources
 
-- **Official Documentation**: [Unstoppable Domains Developer Portal](https://docs.unstoppabledomains.com/)
-- **UAuth JS Library**: [SDK Documentation](https://docs.unstoppabledomains.com/identity/sdk-and-libraries/uauth-js/)
-- **Authentication Protocol**: [Login Protocols](https://docs.unstoppabledomains.com/identity/guides/login-protocols/authentication-protocol/)
+- **Official Documentation**:
+  [Unstoppable Domains Developer Portal](https://docs.unstoppabledomains.com/)
+- **UAuth JS Library**:
+  [SDK Documentation](https://docs.unstoppabledomains.com/identity/sdk-and-libraries/uauth-js/)
+- **Authentication Protocol**:
+  [Login Protocols](https://docs.unstoppabledomains.com/identity/guides/login-protocols/authentication-protocol/)
 - **Dashboard**: [Create Application](https://dashboard.unstoppabledomains.com)
 - **Get a Domain**: [Unstoppable Domains](https://unstoppabledomains.com)
 
@@ -481,10 +518,15 @@ Since the TNF Chrome Extension is installed by default in the Electron app's Chr
 
 To enhance the Unstoppable Domains integration:
 
-1. Update [unstoppable-domains-auth.ts](apps/chrome-extension/src/auth/unstoppable-domains-auth.ts)
-2. Modify [UnstoppableLogin.tsx](apps/chrome-extension/src/popup/UnstoppableLogin.tsx) for UI changes
-3. Update styles in [UnstoppableLogin.css](apps/chrome-extension/src/popup/UnstoppableLogin.css)
-4. Add configuration options in [options/index.tsx](apps/chrome-extension/src/options/index.tsx)
+1. Update
+   [unstoppable-domains-auth.ts](apps/chrome-extension/src/auth/unstoppable-domains-auth.ts)
+2. Modify
+   [UnstoppableLogin.tsx](apps/chrome-extension/src/popup/UnstoppableLogin.tsx)
+   for UI changes
+3. Update styles in
+   [UnstoppableLogin.css](apps/chrome-extension/src/popup/UnstoppableLogin.css)
+4. Add configuration options in
+   [options/index.tsx](apps/chrome-extension/src/options/index.tsx)
 5. Update this documentation
 
 ## License
@@ -494,6 +536,7 @@ This feature is part of The New Fuse project and follows the same license terms.
 ---
 
 **Sources:**
+
 - [Authentication Protocol](https://docs.unstoppabledomains.com/identity/guides/login-protocols/authentication-protocol)
 - [UAuth JS Library](https://docs.unstoppabledomains.com/identity/sdk-and-libraries/uauth-js/)
 - [Unstoppable Domains Developer Portal](https://docs.unstoppabledomains.com/)

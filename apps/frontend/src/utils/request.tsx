@@ -26,12 +26,7 @@ export function userFromStorage(): User | null {
 }
 
 export async function request(endpoint: string, config: RequestConfig = {}): Promise<any> {
-  const {
-    params = {},
-    requiresAuth = true,
-    headers: customHeaders = {},
-    ...restConfig
-  } = config;
+  const { params = {}, requiresAuth = true, headers: customHeaders = {}, ...restConfig } = config;
 
   const queryString = new URLSearchParams(params).toString();
   const url = `${endpoint}${queryString ? `?${queryString}` : ''}`;
@@ -63,7 +58,7 @@ export async function request(endpoint: string, config: RequestConfig = {}): Pro
     if (contentType && contentType.includes('application/json')) {
       return await response.json();
     }
-    
+
     return await response.text();
   } catch (error) {
     console.error('Request failed:', error);
@@ -81,7 +76,7 @@ export async function uploadFile(
 
   try {
     const xhr = new XMLHttpRequest();
-    
+
     if (onProgress) {
       xhr.upload.onprogress = (event) => {
         if (event.lengthComputable) {
@@ -93,7 +88,7 @@ export async function uploadFile(
 
     return new Promise((resolve, reject) => {
       xhr.open('POST', endpoint);
-      
+
       const user = userFromStorage();
       if (user?.uid) {
         xhr.setRequestHeader('Authorization', `Bearer ${user.uid}`);
@@ -126,7 +121,11 @@ export function get(url: string, options?: RequestConfig): any {
 }
 
 export function post(url: string, data: any, options?: RequestConfig): any {
-  return request(url, { ...options, method: 'POST', body: data ? JSON.stringify(data) : undefined });
+  return request(url, {
+    ...options,
+    method: 'POST',
+    body: data ? JSON.stringify(data) : undefined,
+  });
 }
 
 export function put(url: string, data: any, options?: RequestConfig): any {

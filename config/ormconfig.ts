@@ -1,5 +1,5 @@
-import { DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
+import { DataSourceOptions } from 'typeorm';
 
 // Load environment variables
 dotenv.config();
@@ -24,7 +24,7 @@ const config: DataSourceOptions = {
   extra: {
     max: parseInt(process.env.DB_POOL_MAX || '20'),
     idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT || '30000'),
-    connectionTimeoutMillis: parseInt(process.env.DB_CONNECTION_TIMEOUT || '5000')
+    connectionTimeoutMillis: parseInt(process.env.DB_CONNECTION_TIMEOUT || '5000'),
   },
   cache: {
     type: 'redis',
@@ -33,9 +33,9 @@ const config: DataSourceOptions = {
       port: parseInt(process.env.REDIS_PORT || '6379', 10),
       db: parseInt(process.env.REDIS_DB || '0'),
       ttl: parseInt(process.env.CACHE_TTL || '3600'),
-      maxRetriesPerRequest: 3
+      maxRetriesPerRequest: 3,
     },
-    duration: 60000 // 1 minute cache duration
+    duration: 60000, // 1 minute cache duration
   },
   // Add monitoring
   maxQueryExecutionTime: 1000, // Log slow queries (>1s)

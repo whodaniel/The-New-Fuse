@@ -1,7 +1,7 @@
+import { ChildProcess, spawn } from 'child_process';
+import * as http from 'http';
 import { Builder, By, until, WebDriver, WebElement } from 'selenium-webdriver';
 import { Options as ChromeOptions } from 'selenium-webdriver/chrome';
-import { spawn, ChildProcess } from 'child_process';
-import * as http from 'http';
 
 describe('Authentication E2E Tests', () => {
   let driver: WebDriver;
@@ -12,13 +12,15 @@ describe('Authentication E2E Tests', () => {
       const startTime = Date.now();
 
       const checkServer = (): any => {
-        http.get(url, (res) => {
-          if (res.statusCode === 200) {
-            resolve();
-          } else {
-            retry();
-          }
-        }).on('error', retry);
+        http
+          .get(url, (res) => {
+            if (res.statusCode === 200) {
+              resolve();
+            } else {
+              retry();
+            }
+          })
+          .on('error', retry);
 
         function retry(): any {
           const elapsed = Date.now() - startTime;
@@ -56,9 +58,7 @@ describe('Authentication E2E Tests', () => {
         const kill = spawn('kill', [`$(lsof -t -i:5173)`], { shell: true });
         kill.on('close', resolve);
       });
-    } catch (error) {
-      
-    }
+    } catch (error) {}
 
     // Start the dev server with mock OAuth enabled
     devServer = spawn('pnpm', ['dev'], {
@@ -68,8 +68,8 @@ describe('Authentication E2E Tests', () => {
       env: {
         ...process.env,
         PORT: '5173',
-        VITE_MOCK_OAUTH: 'true'
-      }
+        VITE_MOCK_OAUTH: 'true',
+      },
     });
 
     await waitForServer('http://localhost:5173', 30000);
@@ -81,10 +81,7 @@ describe('Authentication E2E Tests', () => {
     chromeOptions.addArguments('--disable-dev-shm-usage');
     chromeOptions.addArguments('--window-size=1920,1080');
 
-    driver = await new Builder()
-      .forBrowser('chrome')
-      .setChromeOptions(chromeOptions)
-      .build();
+    driver = await new Builder().forBrowser('chrome').setChromeOptions(chromeOptions).build();
   }, 90000);
 
   afterAll(async () => {
@@ -98,9 +95,7 @@ describe('Authentication E2E Tests', () => {
           const kill = spawn('kill', [`$(lsof -t -i:5173)`], { shell: true });
           kill.on('close', resolve);
         });
-      } catch (error) {
-        
-      }
+      } catch (error) {}
     }
   });
 
@@ -126,7 +121,7 @@ describe('Authentication E2E Tests', () => {
         // Fill mock OAuth form
         const emailInput = await waitForElement('[data-testid="mock-oauth-email"]');
         await emailInput.sendKeys('test@example.com');
-        
+
         const authorizeButton = await waitForElement('[data-testid="mock-oauth-authorize"]');
         await authorizeButton.click();
 
@@ -137,7 +132,7 @@ describe('Authentication E2E Tests', () => {
         // Verify user menu and profile info
         const userMenu = await waitForElement('[data-testid="user-menu"]');
         expect(await userMenu.isDisplayed()).toBe(true);
-        
+
         await userMenu.click();
         const userEmail = await waitForElement('[data-testid="user-email"]');
         expect(await userEmail.getText()).toBe('test@example.com');
@@ -162,7 +157,7 @@ describe('Authentication E2E Tests', () => {
         // Fill mock OAuth form
         const usernameInput = await waitForElement('[data-testid="mock-oauth-username"]');
         await usernameInput.sendKeys('testuser');
-        
+
         const authorizeButton = await waitForElement('[data-testid="mock-oauth-authorize"]');
         await authorizeButton.click();
 
@@ -173,7 +168,7 @@ describe('Authentication E2E Tests', () => {
         // Verify user menu and profile info
         const userMenu = await waitForElement('[data-testid="user-menu"]');
         expect(await userMenu.isDisplayed()).toBe(true);
-        
+
         await userMenu.click();
         const username = await waitForElement('[data-testid="user-name"]');
         expect(await username.getText()).toBe('testuser');
@@ -224,7 +219,7 @@ describe('Authentication E2E Tests', () => {
 
         const emailInput = await waitForElement('[data-testid="mock-oauth-email"]');
         await emailInput.sendKeys('test@example.com');
-        
+
         const authorizeButton = await waitForElement('[data-testid="mock-oauth-authorize"]');
         await authorizeButton.click();
 
@@ -254,7 +249,7 @@ describe('Authentication E2E Tests', () => {
 
         const emailInput = await waitForElement('[data-testid="mock-oauth-email"]');
         await emailInput.sendKeys('test@example.com');
-        
+
         const authorizeButton = await waitForElement('[data-testid="mock-oauth-authorize"]');
         await authorizeButton.click();
 
@@ -275,7 +270,7 @@ describe('Authentication E2E Tests', () => {
 
         // Verify session cleared by trying to access dashboard
         await driver.get('http://localhost:5173/dashboard');
-        
+
         // Should be redirected back to login
         await waitForElement('[data-testid="login-page"]');
       } catch (error) {

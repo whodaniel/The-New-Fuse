@@ -28,25 +28,28 @@ export class PromptService {
     const defaultTemplates: Omit<PromptTemplate, 'id' | 'createdAt' | 'updatedAt'>[] = [
       {
         name: 'Code Review',
-        template: 'Please review the following code for {language}:\n\n{code}\n\nFocus on: {focus_areas}',
+        template:
+          'Please review the following code for {language}:\n\n{code}\n\nFocus on: {focus_areas}',
         variables: ['language', 'code', 'focus_areas'],
         category: 'development',
-        description: 'Template for code review requests'
+        description: 'Template for code review requests',
       },
       {
         name: 'Bug Analysis',
-        template: 'Analyze this bug report:\n\nError: {error_message}\nContext: {context}\nSteps to reproduce: {steps}',
+        template:
+          'Analyze this bug report:\n\nError: {error_message}\nContext: {context}\nSteps to reproduce: {steps}',
         variables: ['error_message', 'context', 'steps'],
         category: 'debugging',
-        description: 'Template for bug analysis'
+        description: 'Template for bug analysis',
       },
       {
         name: 'Feature Planning',
-        template: 'Plan the implementation of: {feature_name}\n\nRequirements: {requirements}\nConstraints: {constraints}',
+        template:
+          'Plan the implementation of: {feature_name}\n\nRequirements: {requirements}\nConstraints: {constraints}',
         variables: ['feature_name', 'requirements', 'constraints'],
         category: 'planning',
-        description: 'Template for feature planning'
-      }
+        description: 'Template for feature planning',
+      },
     ];
 
     for (const template of defaultTemplates) {
@@ -54,20 +57,22 @@ export class PromptService {
     }
   }
 
-  createTemplate(templateData: Omit<PromptTemplate, 'id' | 'createdAt' | 'updatedAt'>): PromptTemplate {
+  createTemplate(
+    templateData: Omit<PromptTemplate, 'id' | 'createdAt' | 'updatedAt'>,
+  ): PromptTemplate {
     const id = this.generateId();
     const now = new Date();
-    
+
     const template: PromptTemplate = {
       ...templateData,
       id,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     };
 
     this.templates.set(id, template);
     this.logger.log(`Created prompt template: ${template.name} (${id})`);
-    
+
     return template;
   }
 
@@ -80,11 +85,13 @@ export class PromptService {
   }
 
   getTemplatesByCategory(category: string): PromptTemplate[] {
-    return Array.from(this.templates.values())
-      .filter(template => template.category === category);
+    return Array.from(this.templates.values()).filter((template) => template.category === category);
   }
 
-  updateTemplate(id: string, updates: Partial<Omit<PromptTemplate, 'id' | 'createdAt'>>): PromptTemplate | null {
+  updateTemplate(
+    id: string,
+    updates: Partial<Omit<PromptTemplate, 'id' | 'createdAt'>>,
+  ): PromptTemplate | null {
     const template = this.templates.get(id);
     if (!template) {
       return null;
@@ -93,12 +100,12 @@ export class PromptService {
     const updatedTemplate: PromptTemplate = {
       ...template,
       ...updates,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.templates.set(id, updatedTemplate);
     this.logger.log(`Updated prompt template: ${updatedTemplate.name} (${id})`);
-    
+
     return updatedTemplate;
   }
 
@@ -110,7 +117,7 @@ export class PromptService {
 
     this.templates.delete(id);
     this.logger.log(`Deleted prompt template: ${template.name} (${id})`);
-    
+
     return true;
   }
 
@@ -130,7 +137,7 @@ export class PromptService {
 
   private interpolateTemplate(template: string, context: PromptContext): string {
     let result = template;
-    
+
     // Replace variables in the format {variable_name}
     const variableRegex = /\{([^}]+)\}/g;
     result = result.replace(variableRegex, (match, variableName) => {
@@ -148,11 +155,11 @@ export class PromptService {
   validateTemplate(template: string): { isValid: boolean; variables: string[]; errors: string[] } {
     const errors: string[] = [];
     const variables: string[] = [];
-    
+
     // Extract variables
     const variableRegex = /\{([^}]+)\}/g;
     let match;
-    
+
     while ((match = variableRegex.exec(template)) !== null) {
       const variableName = match[1];
       if (!variables.includes(variableName)) {
@@ -163,7 +170,7 @@ export class PromptService {
     // Check for unclosed braces
     const openBraces = (template.match(/\{/g) || []).length;
     const closeBraces = (template.match(/\}/g) || []).length;
-    
+
     if (openBraces !== closeBraces) {
       errors.push('Mismatched braces in template');
     }
@@ -176,18 +183,19 @@ export class PromptService {
     return {
       isValid: errors.length === 0,
       variables,
-      errors
+      errors,
     };
   }
 
   searchTemplates(query: string): PromptTemplate[] {
     const lowercaseQuery = query.toLowerCase();
-    
-    return Array.from(this.templates.values()).filter(template => 
-      template.name.toLowerCase().includes(lowercaseQuery) ||
-      template.description?.toLowerCase().includes(lowercaseQuery) ||
-      template.category.toLowerCase().includes(lowercaseQuery) ||
-      template.template.toLowerCase().includes(lowercaseQuery)
+
+    return Array.from(this.templates.values()).filter(
+      (template) =>
+        template.name.toLowerCase().includes(lowercaseQuery) ||
+        template.description?.toLowerCase().includes(lowercaseQuery) ||
+        template.category.toLowerCase().includes(lowercaseQuery) ||
+        template.template.toLowerCase().includes(lowercaseQuery),
     );
   }
 
@@ -227,7 +235,7 @@ export class PromptService {
     }
 
     this.logger.log(`Imported ${imported} templates with ${errors.length} errors`);
-    
+
     return { imported, errors };
   }
 }

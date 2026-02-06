@@ -28,7 +28,7 @@ export default function LiveViewPage() {
   const connect = async () => {
     // Dynamically import socket.io-client to avoid SSR issues if any
     const { io } = await import('socket.io-client');
-    
+
     if (wsRef.current?.connected) return;
 
     addLog('System', `Connecting to Cloud Sandbox (Socket.IO)...`);
@@ -44,24 +44,24 @@ export default function LiveViewPage() {
         reconnectionAttempts: Infinity,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,
-        timeout: 20000
+        timeout: 20000,
       });
-      
+
       // Store socket instance in ref (casting to any to avoid strict type checks momentarily)
       wsRef.current = socket as any;
 
       socket.on('connect', () => {
         setStatus('connected');
         addLog('System', `Connected to Cloud Sandbox via ${socket.io.engine.transport.name}`);
-        
+
         // Register as a monitor
         socket.emit('register_monitor', {
-           id: 'web-viewer-' + Math.random().toString(36).substr(2, 9) 
+          id: 'web-viewer-' + Math.random().toString(36).substr(2, 9),
         });
       });
-      
+
       socket.io.engine.on('upgrade', (transport) => {
-         addLog('System', `Transport upgraded to ${transport.name}`);
+        addLog('System', `Transport upgraded to ${transport.name}`);
       });
 
       socket.on('disconnect', (reason) => {
@@ -73,7 +73,7 @@ export default function LiveViewPage() {
         console.error('Socket error:', error);
         // Only log if we aren't already disconnected to avoid spam
         if (status !== 'disconnected') {
-           addLog('Error', `Connection error: ${error.message}`);
+          addLog('Error', `Connection error: ${error.message}`);
         }
       });
 
@@ -83,11 +83,10 @@ export default function LiveViewPage() {
           addLog('Screenshot', `Updated from ${data.action || 'agent action'}`);
         }
       });
-      
-      socket.on('activity', (data) => {
-         addLog('Activity', data.message || JSON.stringify(data));
-      });
 
+      socket.on('activity', (data) => {
+        addLog('Activity', data.message || JSON.stringify(data));
+      });
     } catch (error) {
       console.error('Connection setup error:', error);
       setStatus('disconnected');

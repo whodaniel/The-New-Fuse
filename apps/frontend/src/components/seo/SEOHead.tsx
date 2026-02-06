@@ -20,7 +20,15 @@ export interface SEOProps {
 export const SEOHead: React.FC<SEOProps> = ({
   title = 'The New Fuse - AI Collaboration Platform',
   description = 'Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation with The New Fuse.',
-  keywords = ['AI', 'automation', 'workflow', 'agent communication', 'MCP', 'A2A protocol', 'AI orchestration'],
+  keywords = [
+    'AI',
+    'automation',
+    'workflow',
+    'agent communication',
+    'MCP',
+    'A2A protocol',
+    'AI orchestration',
+  ],
   image = '/og-image.png',
   url = typeof window !== 'undefined' ? window.location.href : '',
   type = 'website',
@@ -151,7 +159,24 @@ export const SEOHead: React.FC<SEOProps> = ({
       // Reset title to default
       document.title = 'The New Fuse - AI Collaboration Platform';
     };
-  }, [title, description, keywords, image, url, type, author, publishedTime, modifiedTime, section, tags, noIndex, canonical, finalStructuredData, siteName, twitterHandle]);
+  }, [
+    title,
+    description,
+    keywords,
+    image,
+    url,
+    type,
+    author,
+    publishedTime,
+    modifiedTime,
+    section,
+    tags,
+    noIndex,
+    canonical,
+    finalStructuredData,
+    siteName,
+    twitterHandle,
+  ]);
 
   return null; // This component doesn't render anything
 };

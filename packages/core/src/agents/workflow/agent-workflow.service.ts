@@ -67,15 +67,18 @@ export class AgentWorkflowService {
   async createWorkflow(definition: Omit<WorkflowDefinition, 'id'>): Promise<WorkflowDefinition> {
     const workflow: WorkflowDefinition = {
       id: uuidv4(),
-      ...definition
+      ...definition,
     };
-    
+
     this.workflows.set(workflow.id, workflow);
     this.logger.log(`Created workflow: ${workflow.id} - ${workflow.name}`);
     return workflow;
   }
 
-  async executeWorkflow(workflowId: string, variables?: Record<string, any>): Promise<WorkflowExecution> {
+  async executeWorkflow(
+    workflowId: string,
+    variables?: Record<string, any>,
+  ): Promise<WorkflowExecution> {
     const workflow = this.workflows.get(workflowId);
     if (!workflow) {
       throw new Error(`Workflow not found: ${workflowId}`);
@@ -87,17 +90,17 @@ export class AgentWorkflowService {
       status: 'running',
       startTime: new Date(),
       results: {},
-      currentStep: workflow.steps[0]?.id
+      currentStep: workflow.steps[0]?.id,
     };
 
     this.executions.set(execution.id, execution);
 
     try {
       this.eventEmitter.emit('workflow.started', { workflowId, executionId: execution.id });
-      
+
       // Execute workflow steps
       await this.executeSteps(workflow, execution, variables || {});
-      
+
       execution.status = 'completed';
       execution.endTime = new Date();
       this.eventEmitter.emit('workflow.completed', { workflowId, executionId: execution.id });
@@ -105,10 +108,10 @@ export class AgentWorkflowService {
       execution.status = 'failed';
       execution.endTime = new Date();
       execution.error = error instanceof Error ? error.message : 'Unknown error';
-      this.eventEmitter.emit('workflow.failed', { 
-        workflowId, 
-        executionId: execution.id, 
-        error: execution.error 
+      this.eventEmitter.emit('workflow.failed', {
+        workflowId,
+        executionId: execution.id,
+        error: execution.error,
       });
       throw error;
     }
@@ -117,19 +120,19 @@ export class AgentWorkflowService {
   }
 
   private async executeSteps(
-    workflow: WorkflowDefinition, 
-    execution: WorkflowExecution, 
-    variables: Record<string, any>
+    workflow: WorkflowDefinition,
+    execution: WorkflowExecution,
+    variables: Record<string, any>,
   ): Promise<void> {
     for (const step of workflow.steps) {
       // Check if step dependencies are satisfied
       if (step.dependencies) {
-        const unsatisfiedDeps = step.dependencies.filter(depId => 
-          !execution.results[depId]
-        );
-        
+        const unsatisfiedDeps = step.dependencies.filter((depId) => !execution.results[depId]);
+
         if (unsatisfiedDeps.length > 0) {
-          throw new Error(`Unsatisfied dependencies for step ${step.id}: ${unsatisfiedDeps.join(', ')}`);
+          throw new Error(
+            `Unsatisfied dependencies for step ${step.id}: ${unsatisfiedDeps.join(', ')}`,
+          );
         }
       }
 
@@ -139,29 +142,31 @@ export class AgentWorkflowService {
       try {
         const stepResult = await this.executeStep(step, execution.results, variables);
         execution.results[step.id] = stepResult;
-        
+
         this.eventEmitter.emit('workflow.step.completed', {
           workflowId: workflow.id,
           executionId: execution.id,
           stepId: step.id,
-          result: stepResult
+          result: stepResult,
         });
       } catch (error) {
         this.logger.error(`Step execution failed: ${step.id}`, error);
-        throw new Error(`Step ${step.id} failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        throw new Error(
+          `Step ${step.id} failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        );
       }
     }
   }
 
   private async executeStep(
-    step: WorkflowStep, 
-    previousResults: Record<string, any>, 
-    variables: Record<string, any>
+    step: WorkflowStep,
+    previousResults: Record<string, any>,
+    variables: Record<string, any>,
   ): Promise<any> {
     const context = {
       step,
       previousResults,
-      variables
+      variables,
     };
 
     switch (step.type) {
@@ -181,62 +186,67 @@ export class AgentWorkflowService {
   private async executeTaskStep(context: any): Promise<any> {
     // Implementation for task execution
     this.logger.debug(`Executing task step: ${context.step.id}`);
-    
+
     // Simulate task execution
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     return {
       stepId: context.step.id,
       status: 'completed',
       timestamp: new Date(),
-      output: context.step.config
+      output: context.step.config,
     };
   }
 
   private async executeDecisionStep(context: any): Promise<any> {
     // Implementation for decision logic
     this.logger.debug(`Executing decision step: ${context.step.id}`);
-    
+
     const condition = context.step.config.condition || true;
     return {
       stepId: context.step.id,
       decision: condition,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
   private async executeParallelStep(context: any): Promise<any> {
     // Implementation for parallel execution
     this.logger.debug(`Executing parallel step: ${context.step.id}`);
-    
+
     const tasks = context.step.config.tasks || [];
     const results = await Promise.all(
-      tasks.map((task: any) => this.executeTaskStep({ ...context, step: { ...context.step, config: task } }))
+      tasks.map((task: any) =>
+        this.executeTaskStep({ ...context, step: { ...context.step, config: task } }),
+      ),
     );
-    
+
     return {
       stepId: context.step.id,
       results,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
   private async executeSequentialStep(context: any): Promise<any> {
     // Implementation for sequential execution
     this.logger.debug(`Executing sequential step: ${context.step.id}`);
-    
+
     const tasks = context.step.config.tasks || [];
     const results = [];
-    
+
     for (const task of tasks) {
-      const result = await this.executeTaskStep({ ...context, step: { ...context.step, config: task } });
+      const result = await this.executeTaskStep({
+        ...context,
+        step: { ...context.step, config: task },
+      });
       results.push(result);
     }
-    
+
     return {
       stepId: context.step.id,
       results,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
@@ -248,10 +258,10 @@ export class AgentWorkflowService {
 
     execution.status = 'pending'; // Paused state
     this.logger.log(`Workflow paused: ${execution.workflowId}`);
-    
+
     this.eventEmitter.emit('workflow.paused', {
       workflowId: execution.workflowId,
-      executionId
+      executionId,
     });
   }
 
@@ -263,12 +273,12 @@ export class AgentWorkflowService {
 
     execution.status = 'cancelled';
     execution.endTime = new Date();
-    
+
     this.eventEmitter.emit('workflow.cancelled', {
       workflowId: execution.workflowId,
-      executionId
+      executionId,
     });
-    
+
     this.logger.log(`Workflow cancelled: ${execution.workflowId}`);
   }
 
@@ -289,8 +299,8 @@ export class AgentWorkflowService {
   }
 
   getExecutionsForWorkflow(workflowId: string): WorkflowExecution[] {
-    return Array.from(this.executions.values()).filter(execution => 
-      execution.workflowId === workflowId
+    return Array.from(this.executions.values()).filter(
+      (execution) => execution.workflowId === workflowId,
     );
   }
 
@@ -310,21 +320,21 @@ export class AgentWorkflowService {
     return deleted;
   }
 
-  getWorkflowStatus(workflowId: string): { 
+  getWorkflowStatus(workflowId: string): {
     workflow: WorkflowDefinition | undefined;
     executions: WorkflowExecution[];
     activeExecutions: number;
   } {
     const workflow = this.workflows.get(workflowId);
     const executions = this.getExecutionsForWorkflow(workflowId);
-    const activeExecutions = executions.filter(e => 
-      e.status === 'running' || e.status === 'pending'
+    const activeExecutions = executions.filter(
+      (e) => e.status === 'running' || e.status === 'pending',
     ).length;
 
     return {
       workflow,
       executions,
-      activeExecutions
+      activeExecutions,
     };
   }
 }

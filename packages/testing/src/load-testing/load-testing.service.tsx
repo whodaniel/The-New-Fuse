@@ -57,7 +57,10 @@ export class LoadTestingService {
   private readonly outputDir: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.outputDir = this.configService.get<string>('testing.loadTesting.outputDir', 'test-results/load-tests');
+    this.outputDir = this.configService.get<string>(
+      'testing.loadTesting.outputDir',
+      'test-results/load-tests',
+    );
   }
 
   /**
@@ -66,19 +69,19 @@ export class LoadTestingService {
   async runLoadTest(config: LoadTestConfig): Promise<LoadTestResult> {
     // Ensure output directory exists
     await mkdir(this.outputDir, { recursive: true });
-    
+
     // Generate k6 script
     const scriptPath = await this.generateK6Script(config);
-    
+
     // Run k6
     const { stdout, stderr } = await exec(`k6 run ${scriptPath}`);
-    
+
     // Parse results
     const result = this.parseK6Output(stdout, config);
-    
+
     // Save results
     await this.saveResults(result);
-    
+
     return result;
   }
 
@@ -116,10 +119,10 @@ export class LoadTestingService {
         sleep(1 / ${config.rate});
       }
     `;
-    
+
     const scriptPath = path.join(this.outputDir, `load-test-${Date.now()}.js`);
     await writeFile(scriptPath, scriptContent);
-    
+
     return scriptPath;
   }
 
@@ -135,19 +138,21 @@ export class LoadTestingService {
     const httpReqDurationP90 = this.extractMetric(output, 'http_req_duration', 'p(90)');
     const httpReqDurationP95 = this.extractMetric(output, 'http_req_duration', 'p(95)');
     const httpReqDurationP99 = this.extractMetric(output, 'http_req_duration', 'p(99)');
-    
+
     const httpReqs = this.extractMetric(output, 'http_reqs', 'count');
     const httpReqsFailed = this.extractMetric(output, 'http_req_failed', 'rate');
     const httpReqsPerSec = this.extractMetric(output, 'http_reqs', 'rate');
-    
+
     const failureRate = httpReqsFailed / 100; // Convert from percentage to decimal
     const successfulRequests = Math.round(httpReqs * (1 - failureRate));
     const failedRequests = Math.round(httpReqs * failureRate);
-    
+
     // Check assertions
-    const responseTimePassed = !config.assertions?.responseTime || httpReqDurationP95 <= config.assertions.responseTime;
-    const failureRatePassed = !config.assertions?.failureRate || failureRate <= config.assertions.failureRate;
-    
+    const responseTimePassed =
+      !config.assertions?.responseTime || httpReqDurationP95 <= config.assertions.responseTime;
+    const failureRatePassed =
+      !config.assertions?.failureRate || failureRate <= config.assertions.failureRate;
+
     return {
       summary: {
         totalRequests: httpReqs,
@@ -160,26 +165,30 @@ export class LoadTestingService {
         p50ResponseTime: httpReqDurationP50,
         p90ResponseTime: httpReqDurationP90,
         p95ResponseTime: httpReqDurationP95,
-        p99ResponseTime: httpReqDurationP99
+        p99ResponseTime: httpReqDurationP99,
       },
       assertions: {
         passed: responseTimePassed && failureRatePassed,
         details: {
-          responseTime: config.assertions?.responseTime ? {
-            passed: responseTimePassed,
-            actual: httpReqDurationP95,
-            expected: config.assertions.responseTime
-          } : undefined,
-          failureRate: config.assertions?.failureRate ? {
-            passed: failureRatePassed,
-            actual: failureRate,
-            expected: config.assertions.failureRate
-          } : undefined
-        }
+          responseTime: config.assertions?.responseTime
+            ? {
+                passed: responseTimePassed,
+                actual: httpReqDurationP95,
+                expected: config.assertions.responseTime,
+              }
+            : undefined,
+          failureRate: config.assertions?.failureRate
+            ? {
+                passed: failureRatePassed,
+                actual: failureRate,
+                expected: config.assertions.failureRate,
+              }
+            : undefined,
+        },
       },
       timestamp: new Date(),
       config,
-      rawOutput: output
+      rawOutput: output,
     };
   }
 
@@ -189,11 +198,11 @@ export class LoadTestingService {
   private extractMetric(output: string, name: string, type: string): number {
     const regex = new RegExp(`${name}\\s+:\\s+${type}=([\\d\\.]+)`);
     const match = output.match(regex);
-    
+
     if (match && match[1]) {
       return parseFloat(match[1]);
     }
-    
+
     return 0;
   }
 
@@ -203,7 +212,7 @@ export class LoadTestingService {
   private async saveResults(result: LoadTestResult): Promise<void> {
     const timestamp = new Date().toISOString().replace(/:/g, '-');
     const resultPath = path.join(this.outputDir, `load-test-result-${timestamp}.json`);
-    
+
     await writeFile(resultPath, JSON.stringify(result, null, 2));
   }
 }

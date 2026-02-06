@@ -9,31 +9,31 @@ export interface SyncMetadata {
   syncId: string;
   syncVersion: number;
   syncTimestamp: number;
-  
+
   // Tenant isolation
   tenantId?: string;
   crossTenantAllowed: boolean;
-  
+
   // Message routing and delivery
   routingKey: string;
   deliveryMode: 'direct' | 'broadcast' | 'multicast';
   requiresAck: boolean;
-  
+
   // Conflict resolution
   conflictResolution: 'latest_wins' | 'merge' | 'manual' | 'rollback';
   checksumValidation: boolean;
-  
+
   // Failover and reliability
   maxRetries: number;
   retryCount: number;
   failoverNodes?: string[];
   deadLetterQueue?: string;
-  
+
   // Performance and monitoring
   priority: 'low' | 'medium' | 'high' | 'critical';
   traceId?: string;
   parentSpanId?: string;
-  
+
   // Synchronization state
   syncState: 'pending' | 'in_progress' | 'completed' | 'failed' | 'conflicted';
   lastSyncAttempt?: number;
@@ -192,7 +192,7 @@ export class SyncAwareMessageUtils {
       priority: options.priority || 'medium',
       syncState: options.syncState || 'pending',
       syncErrors: options.syncErrors || [],
-      ...options
+      ...options,
     };
   }
 
@@ -213,15 +213,15 @@ export class SyncAwareMessageUtils {
           ...message.header,
           syncId: syncMetadata.syncId,
           tenantId: syncMetadata.tenantId,
-          crossTenantAllowed: syncMetadata.crossTenantAllowed
+          crossTenantAllowed: syncMetadata.crossTenantAllowed,
         },
         body: {
           ...message.body,
           metadata: {
             ...message.body.metadata,
-            sync: syncMetadata
-          }
-        }
+            sync: syncMetadata,
+          },
+        },
       } as SyncAwareA2AMessageV2;
     } else {
       // A2AMessageV1
@@ -229,8 +229,8 @@ export class SyncAwareMessageUtils {
         ...message,
         metadata: {
           ...message.metadata,
-          sync: syncMetadata
-        }
+          sync: syncMetadata,
+        },
       } as SyncAwareA2AMessageV1;
     }
   }
@@ -269,11 +269,11 @@ export class SyncAwareMessageUtils {
     // Create a stable string representation for checksum calculation
     const payload = 'header' in message ? message.body.content : message.payload;
     const str = JSON.stringify(payload, Object.keys(payload).sort());
-    
+
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return hash.toString(16);
@@ -299,7 +299,7 @@ export class SyncAwareMessageUtils {
   static validateMessage(message: SyncAwareA2AMessage): boolean {
     try {
       const syncMetadata = this.extractSyncMetadata(message);
-      
+
       // Basic validation
       if (!syncMetadata.syncId || !syncMetadata.syncTimestamp) {
         return false;

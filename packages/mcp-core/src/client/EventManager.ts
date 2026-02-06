@@ -1,6 +1,6 @@
 /**
  * Event Manager for MCP Client
- * 
+ *
  * Handles event subscription, notification routing, and event-driven
  * communication patterns for MCP clients.
  */
@@ -38,7 +38,7 @@ export class EventManager extends EventEmitter {
   private statistics: EventStatistics = {
     totalNotifications: 0,
     notificationsByMethod: new Map(),
-    subscriptionCount: 0
+    subscriptionCount: 0,
   };
   private subscriptionIdCounter = 0;
 
@@ -51,13 +51,13 @@ export class EventManager extends EventEmitter {
     options: { once?: boolean } = {}
   ): string {
     const subscriptionId = this.generateSubscriptionId();
-    
+
     const subscription: EventSubscription = {
       id: subscriptionId,
       pattern,
       callback,
       once: options.once || false,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     this.subscriptions.set(subscriptionId, subscription);
@@ -151,7 +151,7 @@ export class EventManager extends EventEmitter {
 
     // Find matching subscriptions
     const matchingSubscriptions: EventSubscription[] = [];
-    
+
     for (const subscription of this.subscriptions.values()) {
       if (this.matchesPattern(notification.method, subscription.pattern)) {
         matchingSubscriptions.push(subscription);
@@ -160,7 +160,7 @@ export class EventManager extends EventEmitter {
 
     // Execute callbacks
     const subscriptionsToRemove: string[] = [];
-    
+
     for (const subscription of matchingSubscriptions) {
       try {
         subscription.callback(notification);
@@ -192,15 +192,13 @@ export class EventManager extends EventEmitter {
       // Exact match or wildcard
       if (pattern === method) return true;
       if (pattern === '*') return true;
-      
+
       // Simple glob-style matching
       if (pattern.includes('*')) {
-        const regexPattern = pattern
-          .replace(/\*/g, '.*')
-          .replace(/\?/g, '.');
+        const regexPattern = pattern.replace(/\*/g, '.*').replace(/\?/g, '.');
         return new RegExp(`^${regexPattern}$`).test(method);
       }
-      
+
       return false;
     } else {
       // RegExp pattern
@@ -227,8 +225,9 @@ export class EventManager extends EventEmitter {
    */
   getSubscriptionsForPattern(pattern: string | RegExp): EventSubscription[] {
     const patternStr = pattern.toString();
-    return Array.from(this.subscriptions.values())
-      .filter(sub => sub.pattern.toString() === patternStr);
+    return Array.from(this.subscriptions.values()).filter(
+      (sub) => sub.pattern.toString() === patternStr
+    );
   }
 
   /**
@@ -237,7 +236,7 @@ export class EventManager extends EventEmitter {
   getStatistics(): EventStatistics {
     return {
       ...this.statistics,
-      notificationsByMethod: new Map(this.statistics.notificationsByMethod)
+      notificationsByMethod: new Map(this.statistics.notificationsByMethod),
     };
   }
 
@@ -265,13 +264,13 @@ export class EventManager extends EventEmitter {
    */
   getSubscribedMethods(): string[] {
     const methods = new Set<string>();
-    
+
     for (const subscription of this.subscriptions.values()) {
       if (typeof subscription.pattern === 'string' && !subscription.pattern.includes('*')) {
         methods.add(subscription.pattern);
       }
     }
-    
+
     return Array.from(methods);
   }
 
@@ -282,17 +281,14 @@ export class EventManager extends EventEmitter {
     this.statistics = {
       totalNotifications: 0,
       notificationsByMethod: new Map(),
-      subscriptionCount: this.subscriptions.size
+      subscriptionCount: this.subscriptions.size,
     };
   }
 
   /**
    * Create a promise that resolves when a specific notification is received
    */
-  waitForNotification(
-    pattern: string | RegExp,
-    timeout: number = 30000
-  ): Promise<MCPNotification> {
+  waitForNotification(pattern: string | RegExp, timeout: number = 30000): Promise<MCPNotification> {
     return new Promise((resolve, reject) => {
       const timeoutHandle = setTimeout(() => {
         this.unsubscribe(subscriptionId);
@@ -311,7 +307,7 @@ export class EventManager extends EventEmitter {
    */
   createFilteredStream(pattern: string | RegExp): EventEmitter {
     const stream = new EventEmitter();
-    
+
     const subscriptionId = this.subscribe(pattern, (notification) => {
       stream.emit('notification', notification);
     });

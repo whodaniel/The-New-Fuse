@@ -1,6 +1,6 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { DatabaseService } from '@the-new-fuse/database';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { PrismaService } from '@the-new-fuse/database';
 import { TaskNotification } from './TaskSynchronizationService';
 
 export interface TaskNotificationRule {
@@ -50,14 +50,14 @@ export interface IWebSocketService {
 @Injectable()
 export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(TaskNotificationService.name);
-  
+
   private readonly config = {
     notificationChannelPrefix: 'task_notifications:',
     historyChannelPrefix: 'notification_history:',
     batchSize: 100,
     retryAttempts: 3,
     retryDelay: 5000,
-    maxPendingNotifications: 1000
+    maxPendingNotifications: 1000,
   };
 
   private notificationRules: Map<string, TaskNotificationRule[]> = new Map();
@@ -69,7 +69,7 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly redisService: UnifiedRedisService,
     @Inject('IWebSocketService') private readonly wsService: IWebSocketService,
-    private readonly dbService: PrismaService
+    private readonly dbService: DatabaseService
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -95,12 +95,12 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
         select: {
           id: true,
           preferences: true,
-          role: true
-        }
+          role: true,
+        },
       });
 
       for (const user of users) {
-        const preferences = user.preferences as any || {};
+        const preferences = (user.preferences as any) || {};
         const notificationPrefs = preferences.notifications || {};
 
         // Create default notification rules based on user preferences
@@ -116,12 +116,12 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
               {
                 type: 'websocket',
                 config: { realTime: true },
-                priority: 'medium'
-              }
+                priority: 'medium',
+              },
             ],
             isActive: notificationPrefs.taskUpdates !== false,
             createdAt: new Date(),
-            updatedAt: new Date()
+            updatedAt: new Date(),
           },
           {
             id: `${user.id}_task_completed`,
@@ -132,31 +132,31 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
               {
                 type: 'websocket',
                 config: { realTime: true },
-                priority: 'high'
-              }
+                priority: 'high',
+              },
             ],
             isActive: notificationPrefs.taskCompletions !== false,
             createdAt: new Date(),
-            updatedAt: new Date()
+            updatedAt: new Date(),
           },
           {
             id: `${user.id}_urgent_tasks`,
             userId: user.id,
             eventTypes: ['task_created', 'task_updated', 'task_failed'],
             conditions: {
-              priorities: ['URGENT']
+              priorities: ['URGENT'],
             },
             channels: [
               {
                 type: 'websocket',
                 config: { realTime: true, persistent: true },
-                priority: 'urgent'
-              }
+                priority: 'urgent',
+              },
             ],
             isActive: true,
             createdAt: new Date(),
-            updatedAt: new Date()
-          }
+            updatedAt: new Date(),
+          },
         ];
 
         // Add admin-specific rules
@@ -170,12 +170,12 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
               {
                 type: 'websocket',
                 config: { realTime: true, systemLevel: true },
-                priority: 'high'
-              }
+                priority: 'high',
+              },
             ],
             isActive: true,
             createdAt: new Date(),
-            updatedAt: new Date()
+            updatedAt: new Date(),
           });
         }
 
@@ -201,12 +201,9 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
     );
 
     // Subscribe to notification history events
-    await this.redisService.psubscribe(
-      `${this.config.historyChannelPrefix}*`,
-      async (message) => {
-        await this.handleHistoryMessage(message);
-      }
-    );
+    await this.redisService.psubscribe(`${this.config.historyChannelPrefix}*`, async (message) => {
+      await this.handleHistoryMessage(message);
+    });
 
     this.logger.log('Notification channels initialized');
   }
@@ -233,10 +230,7 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
   /**
    * Send notification to specific user
    */
-  async sendNotificationToUser(
-    userId: string,
-    notification: TaskNotification
-  ): Promise<void> {
+  async sendNotificationToUser(userId: string, notification: TaskNotification): Promise<void> {
     try {
       const userRules = this.notificationRules.get(userId) || [];
       const applicableRules = this.findApplicableRules(userRules, notification);
@@ -272,7 +266,9 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
       const channel = `${this.config.notificationChannelPrefix}${notification.tenantId || 'global'}`;
       await this.redisService.publish(channel, notification);
 
-      this.logger.debug(`Broadcasted notification ${notification.id} to ${relevantUsers.length} users`);
+      this.logger.debug(
+        `Broadcasted notification ${notification.id} to ${relevantUsers.length} users`
+      );
     } catch (error) {
       this.logger.error(`Failed to broadcast notification:`, error);
     }
@@ -281,12 +277,14 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
   /**
    * Create and manage notification rules
    */
-  async createNotificationRule(rule: Omit<TaskNotificationRule, 'id' | 'createdAt' | 'updatedAt'>): Promise<TaskNotificationRule> {
+  async createNotificationRule(
+    rule: Omit<TaskNotificationRule, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<TaskNotificationRule> {
     const newRule: TaskNotificationRule = {
       ...rule,
       id: this.generateRuleId(),
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     const userRules = this.notificationRules.get(rule.userId) || [];
@@ -302,16 +300,16 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
     updates: Partial<TaskNotificationRule>
   ): Promise<TaskNotificationRule | null> {
     for (const [userId, rules] of this.notificationRules.entries()) {
-      const ruleIndex = rules.findIndex(r => r.id === ruleId);
+      const ruleIndex = rules.findIndex((r) => r.id === ruleId);
       if (ruleIndex >= 0) {
         const updatedRule = {
           ...rules[ruleIndex],
           ...updates,
-          updatedAt: new Date()
+          updatedAt: new Date(),
         };
         rules[ruleIndex] = updatedRule;
         this.notificationRules.set(userId, rules);
-        
+
         this.logger.debug(`Updated notification rule ${ruleId}`);
         return updatedRule;
       }
@@ -322,11 +320,11 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
 
   async deleteNotificationRule(ruleId: string): Promise<boolean> {
     for (const [userId, rules] of this.notificationRules.entries()) {
-      const ruleIndex = rules.findIndex(r => r.id === ruleId);
+      const ruleIndex = rules.findIndex((r) => r.id === ruleId);
       if (ruleIndex >= 0) {
         rules.splice(ruleIndex, 1);
         this.notificationRules.set(userId, rules);
-        
+
         this.logger.debug(`Deleted notification rule ${ruleId}`);
         return true;
       }
@@ -348,19 +346,19 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
     }
   ): Promise<TaskNotificationHistory[]> {
     const userHistory = this.notificationHistory.get(userId) || [];
-    
+
     let filteredHistory = userHistory;
 
     if (filters?.startDate) {
-      filteredHistory = filteredHistory.filter(h => h.sentAt >= filters.startDate!);
+      filteredHistory = filteredHistory.filter((h) => h.sentAt >= filters.startDate!);
     }
 
     if (filters?.endDate) {
-      filteredHistory = filteredHistory.filter(h => h.sentAt <= filters.endDate!);
+      filteredHistory = filteredHistory.filter((h) => h.sentAt <= filters.endDate!);
     }
 
     if (filters?.status) {
-      filteredHistory = filteredHistory.filter(h => h.status === filters.status);
+      filteredHistory = filteredHistory.filter((h) => h.status === filters.status);
     }
 
     // Sort by sent date (newest first)
@@ -377,24 +375,21 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
   /**
    * Acknowledge notification
    */
-  async acknowledgeNotification(
-    notificationId: string,
-    userId: string
-  ): Promise<void> {
+  async acknowledgeNotification(notificationId: string, userId: string): Promise<void> {
     try {
       const userHistory = this.notificationHistory.get(userId) || [];
-      const historyItem = userHistory.find(h => h.notificationId === notificationId);
+      const historyItem = userHistory.find((h) => h.notificationId === notificationId);
 
       if (historyItem) {
         historyItem.status = 'acknowledged';
         historyItem.acknowledgedAt = new Date();
-        
+
         // Publish acknowledgment event
         const channel = `${this.config.historyChannelPrefix}acknowledged`;
         await this.redisService.publish(channel, {
           notificationId,
           userId,
-          acknowledgedAt: new Date()
+          acknowledgedAt: new Date(),
         });
 
         this.logger.debug(`Acknowledged notification ${notificationId} for user ${userId}`);
@@ -416,13 +411,13 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
 
     try {
       const batch = this.processingQueue.splice(0, this.config.batchSize);
-      
+
       for (const notification of batch) {
         try {
           await this.broadcastTaskNotification(notification);
         } catch (error) {
           this.logger.error(`Failed to process notification ${notification.id}:`, error);
-          
+
           // Retry logic for failed notifications
           if (notification.priority === 'urgent' || notification.priority === 'high') {
             // Re-queue for retry
@@ -441,33 +436,36 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
     rules: TaskNotificationRule[],
     notification: TaskNotification
   ): TaskNotificationRule[] {
-    return rules.filter(rule => {
+    return rules.filter((rule) => {
       if (!rule.isActive) return false;
-      
+
       // Check event type
       if (!rule.eventTypes.includes(notification.type)) return false;
-      
+
       // Check conditions
       if (rule.conditions) {
         const conditions = rule.conditions;
-        
-        if (conditions.priorities && !conditions.priorities.includes(notification.priority.toUpperCase())) {
+
+        if (
+          conditions.priorities &&
+          !conditions.priorities.includes(notification.priority.toUpperCase())
+        ) {
           return false;
         }
-        
+
         // Add more condition checks as needed
       }
-      
+
       return true;
     });
   }
 
   private async findRelevantUsers(notification: TaskNotification): Promise<string[]> {
     const relevantUsers: Set<string> = new Set();
-    
+
     // Always include the task owner
     relevantUsers.add(notification.userId);
-    
+
     // Find users with applicable notification rules
     for (const [userId, rules] of this.notificationRules.entries()) {
       const applicableRules = this.findApplicableRules(rules, notification);
@@ -475,13 +473,13 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
         relevantUsers.add(userId);
       }
     }
-    
+
     // Add tenant-specific users if applicable
     if (notification.tenantId) {
       // This would be enhanced with actual tenant user lookup
       // For now, we'll use the existing logic
     }
-    
+
     return Array.from(relevantUsers);
   }
 
@@ -520,19 +518,24 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
         payload: {
           notification,
           channel: channel.config,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         timestamp: Date.now(),
         priority: this.mapNotificationPriorityToMessagePriority(notification.priority),
-        requiresAck: notification.requiresAck || channel.config.requiresAck || false
+        requiresAck: notification.requiresAck || channel.config.requiresAck || false,
       };
 
       const success = await this.wsService.sendMessage(userId, message);
-      
+
       if (success) {
         await this.recordNotificationHistory(notification, userId, 'delivered');
       } else {
-        await this.recordNotificationHistory(notification, userId, 'failed', 'WebSocket delivery failed');
+        await this.recordNotificationHistory(
+          notification,
+          userId,
+          'failed',
+          'WebSocket delivery failed'
+        );
       }
     } catch (error) {
       this.logger.error(`Failed to send via WebSocket:`, error);
@@ -592,18 +595,18 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
       metadata: {
         notificationType: notification.type,
         taskId: notification.taskId,
-        priority: notification.priority
-      }
+        priority: notification.priority,
+      },
     };
 
     const userHistory = this.notificationHistory.get(userId) || [];
     userHistory.push(historyItem);
-    
+
     // Keep only recent history (last 1000 items)
     if (userHistory.length > 1000) {
       userHistory.splice(0, userHistory.length - 1000);
     }
-    
+
     this.notificationHistory.set(userId, userHistory);
   }
 
@@ -641,13 +644,13 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
   }
 
   private cleanupOldHistory(): void {
-    const cutoffDate = new Date(Date.now() - (7 * 24 * 60 * 60 * 1000)); // 7 days ago
-    
+    const cutoffDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
+
     for (const [userId, history] of this.notificationHistory.entries()) {
-      const filteredHistory = history.filter(h => h.sentAt > cutoffDate);
+      const filteredHistory = history.filter((h) => h.sentAt > cutoffDate);
       this.notificationHistory.set(userId, filteredHistory);
     }
-    
+
     this.logger.debug('Cleaned up old notification history');
   }
 
@@ -656,7 +659,7 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
       urgent: 1,
       high: 2,
       medium: 3,
-      low: 4
+      low: 4,
     };
     return mapping[priority] || 3;
   }
@@ -677,7 +680,7 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
     // Clean up resources
     this.processingQueue = [];
     this.pendingNotifications.clear();
-    
+
     // Unsubscribe from Redis channels
     await this.redisService.punsubscribe(`${this.config.notificationChannelPrefix}*`);
     await this.redisService.punsubscribe(`${this.config.historyChannelPrefix}*`);
@@ -693,20 +696,20 @@ export class TaskNotificationService implements OnModuleInit, OnModuleDestroy {
   async getNotificationStats(userId: string): Promise<any> {
     const history = this.notificationHistory.get(userId) || [];
     const rules = this.notificationRules.get(userId) || [];
-    
+
     return {
       totalRules: rules.length,
-      activeRules: rules.filter(r => r.isActive).length,
+      activeRules: rules.filter((r) => r.isActive).length,
       totalNotifications: history.length,
-      recentNotifications: history.filter(h => 
-        h.sentAt > new Date(Date.now() - 24 * 60 * 60 * 1000)
+      recentNotifications: history.filter(
+        (h) => h.sentAt > new Date(Date.now() - 24 * 60 * 60 * 1000)
       ).length,
       deliveryStats: {
-        sent: history.filter(h => h.status === 'sent').length,
-        delivered: history.filter(h => h.status === 'delivered').length,
-        failed: history.filter(h => h.status === 'failed').length,
-        acknowledged: history.filter(h => h.status === 'acknowledged').length
-      }
+        sent: history.filter((h) => h.status === 'sent').length,
+        delivered: history.filter((h) => h.status === 'delivered').length,
+        failed: history.filter((h) => h.status === 'failed').length,
+        acknowledged: history.filter((h) => h.status === 'acknowledged').length,
+      },
     };
   }
 }

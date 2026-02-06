@@ -4,12 +4,17 @@ Comprehensive monitoring and observability package for The New Fuse platform.
 
 ## Features
 
-- **Error Tracking**: Sentry integration for error tracking and performance monitoring
+- **Error Tracking**: Sentry integration for error tracking and performance
+  monitoring
 - **Structured Logging**: Winston-based JSON logging with multiple transports
-- **Metrics Collection**: Prometheus metrics for application and business metrics
-- **Health Checks**: Comprehensive health check system with dependency monitoring
-- **Alert Management**: Configurable alert rules with multiple notification channels
-- **NestJS Integration**: Ready-to-use modules, interceptors, and controllers for NestJS
+- **Metrics Collection**: Prometheus metrics for application and business
+  metrics
+- **Health Checks**: Comprehensive health check system with dependency
+  monitoring
+- **Alert Management**: Configurable alert rules with multiple notification
+  channels
+- **NestJS Integration**: Ready-to-use modules, interceptors, and controllers
+  for NestJS
 
 ## Installation
 
@@ -40,7 +45,10 @@ pnpm add check-disk-space
 ### 1. Initialize Sentry
 
 ```typescript
-import { SentryService, getSentryConfigFromEnv } from '@the-new-fuse/core-monitoring';
+import {
+  SentryService,
+  getSentryConfigFromEnv,
+} from '@the-new-fuse/core-monitoring';
 
 const sentryService = new SentryService();
 await sentryService.initialize(getSentryConfigFromEnv('my-service'));
@@ -110,7 +118,10 @@ const metricsText = await metrics.getMetrics();
 ### 4. Setup Health Checks
 
 ```typescript
-import { HealthCheckService, CommonHealthChecks } from '@the-new-fuse/core-monitoring';
+import {
+  HealthCheckService,
+  CommonHealthChecks,
+} from '@the-new-fuse/core-monitoring';
 
 const healthCheckService = new HealthCheckService({
   checkInterval: 30000,
@@ -120,20 +131,14 @@ const healthCheckService = new HealthCheckService({
 // Register database health check
 healthCheckService.register(
   'database',
-  CommonHealthChecks.database(prismaClient)
+  CommonHealthChecks.database(drizzleClient)
 );
 
 // Register Redis health check
-healthCheckService.register(
-  'redis',
-  CommonHealthChecks.redis(redisClient)
-);
+healthCheckService.register('redis', CommonHealthChecks.redis(redisClient));
 
 // Register memory health check
-healthCheckService.register(
-  'memory',
-  CommonHealthChecks.memory(90)
-);
+healthCheckService.register('memory', CommonHealthChecks.memory(90));
 
 // Start periodic checks
 healthCheckService.startPeriodicChecks();
@@ -156,7 +161,7 @@ const alertManager = new AlertManager({
 });
 
 // Add default rules
-defaultAlertRules.forEach(rule => alertManager.addRule(rule));
+defaultAlertRules.forEach((rule) => alertManager.addRule(rule));
 
 // Set metrics provider
 alertManager.setMetricsProvider(async () => ({
@@ -233,7 +238,12 @@ import {
       useFactory: () => new HealthCheckService(),
     },
   ],
-  exports: [SentryService, WinstonLogger, PrometheusMetrics, HealthCheckService],
+  exports: [
+    SentryService,
+    WinstonLogger,
+    PrometheusMetrics,
+    HealthCheckService,
+  ],
 })
 export class MonitoringModule {}
 ```
@@ -249,14 +259,18 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
-import { WinstonLogger, PrometheusMetrics, SentryService } from '@the-new-fuse/core-monitoring';
+import {
+  WinstonLogger,
+  PrometheusMetrics,
+  SentryService,
+} from '@the-new-fuse/core-monitoring';
 
 @Injectable()
 export class MonitoringInterceptor implements NestInterceptor {
   constructor(
     private readonly logger: WinstonLogger,
     private readonly metrics: PrometheusMetrics,
-    private readonly sentry: SentryService,
+    private readonly sentry: SentryService
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -336,14 +350,18 @@ export class MetricsController {
 
 ```typescript
 class SentryService {
-  initialize(config: SentryConfig): Promise<void>
-  captureException(error: Error, context?: ErrorContext): string | undefined
-  captureMessage(message: string, level?: string, context?: ErrorContext): string | undefined
-  addBreadcrumb(breadcrumb: object): void
-  setUser(user: object | null): void
-  setTag(key: string, value: string): void
-  flush(timeout?: number): Promise<boolean>
-  close(timeout?: number): Promise<boolean>
+  initialize(config: SentryConfig): Promise<void>;
+  captureException(error: Error, context?: ErrorContext): string | undefined;
+  captureMessage(
+    message: string,
+    level?: string,
+    context?: ErrorContext
+  ): string | undefined;
+  addBreadcrumb(breadcrumb: object): void;
+  setUser(user: object | null): void;
+  setTag(key: string, value: string): void;
+  flush(timeout?: number): Promise<boolean>;
+  close(timeout?: number): Promise<boolean>;
 }
 ```
 
@@ -351,15 +369,15 @@ class SentryService {
 
 ```typescript
 class WinstonLogger {
-  initialize(): Promise<void>
-  error(message: string, error?: Error, metadata?: object): void
-  warn(message: string, metadata?: object): void
-  info(message: string, metadata?: object): void
-  http(message: string, metadata?: object): void
-  debug(message: string, metadata?: object): void
-  logRequest(req: any, res: any, duration: number): void
-  logSlowQuery(query: string, duration: number, threshold?: number): void
-  child(metadata: object): WinstonLogger
+  initialize(): Promise<void>;
+  error(message: string, error?: Error, metadata?: object): void;
+  warn(message: string, metadata?: object): void;
+  info(message: string, metadata?: object): void;
+  http(message: string, metadata?: object): void;
+  debug(message: string, metadata?: object): void;
+  logRequest(req: any, res: any, duration: number): void;
+  logSlowQuery(query: string, duration: number, threshold?: number): void;
+  child(metadata: object): WinstonLogger;
 }
 ```
 
@@ -367,16 +385,31 @@ class WinstonLogger {
 
 ```typescript
 class PrometheusMetrics {
-  initialize(): Promise<void>
-  recordHttpRequest(method: string, route: string, statusCode: number, duration: number): void
-  recordDatabaseQuery(operation: string, table: string, duration: number, success: boolean): void
-  setDatabaseConnectionPool(database: string, idle: number, active: number, total: number): void
-  recordCacheHit(cacheType: string, keyPattern: string): void
-  recordCacheMiss(cacheType: string, keyPattern: string): void
-  setAgentCount(active: number, inactive: number, type?: string): void
-  recordWorkflowExecution(workflowType: string, success: boolean): void
-  getMetrics(): Promise<string>
-  createMetric(metric: CustomMetric): any
+  initialize(): Promise<void>;
+  recordHttpRequest(
+    method: string,
+    route: string,
+    statusCode: number,
+    duration: number
+  ): void;
+  recordDatabaseQuery(
+    operation: string,
+    table: string,
+    duration: number,
+    success: boolean
+  ): void;
+  setDatabaseConnectionPool(
+    database: string,
+    idle: number,
+    active: number,
+    total: number
+  ): void;
+  recordCacheHit(cacheType: string, keyPattern: string): void;
+  recordCacheMiss(cacheType: string, keyPattern: string): void;
+  setAgentCount(active: number, inactive: number, type?: string): void;
+  recordWorkflowExecution(workflowType: string, success: boolean): void;
+  getMetrics(): Promise<string>;
+  createMetric(metric: CustomMetric): any;
 }
 ```
 
@@ -384,12 +417,12 @@ class PrometheusMetrics {
 
 ```typescript
 class HealthCheckService {
-  register(name: string, check: HealthCheckFunction): void
-  unregister(name: string): void
-  check(): Promise<SystemHealthStatus>
-  startPeriodicChecks(): void
-  stopPeriodicChecks(): void
-  getStatus(): SystemHealthStatus | null
+  register(name: string, check: HealthCheckFunction): void;
+  unregister(name: string): void;
+  check(): Promise<SystemHealthStatus>;
+  startPeriodicChecks(): void;
+  stopPeriodicChecks(): void;
+  getStatus(): SystemHealthStatus | null;
 }
 ```
 
@@ -397,16 +430,16 @@ class HealthCheckService {
 
 ```typescript
 class AlertManager {
-  setMetricsProvider(provider: () => Promise<Record<string, number>>): void
-  addRule(rule: AlertRule): void
-  removeRule(ruleId: string): void
-  updateRule(ruleId: string, updates: Partial<AlertRule>): void
-  getRules(): AlertRule[]
-  getActiveAlerts(): Alert[]
-  getAlertHistory(limit?: number): Alert[]
-  start(): void
-  stop(): void
-  triggerAlert(ruleId: string, value: number, metadata?: object): void
+  setMetricsProvider(provider: () => Promise<Record<string, number>>): void;
+  addRule(rule: AlertRule): void;
+  removeRule(ruleId: string): void;
+  updateRule(ruleId: string, updates: Partial<AlertRule>): void;
+  getRules(): AlertRule[];
+  getActiveAlerts(): Alert[];
+  getAlertHistory(limit?: number): Alert[];
+  start(): void;
+  stop(): void;
+  triggerAlert(ruleId: string, value: number, metadata?: object): void;
 }
 ```
 
@@ -438,7 +471,8 @@ SLACK_WEBHOOK_URL=your_slack_webhook
 
 ## Examples
 
-See the [examples](../../docs/monitoring/MONITORING_SETUP.md) directory for complete integration examples.
+See the [examples](../../docs/monitoring/MONITORING_SETUP.md) directory for
+complete integration examples.
 
 ## Documentation
 

@@ -6,17 +6,17 @@
  */
 
 import { EventEmitter } from 'events';
-import { WebSocketServer, WebSocket } from 'ws';
 import { IncomingMessage } from 'http';
-import { IMCPServer } from '../interfaces/IMCPServer';
-import { MCPRequest, MCPResponse, MCPError } from '../interfaces/IMCPMessage';
-import { MCPResource } from '../interfaces/IMCPResource';
-import { MCPTool } from '../interfaces/IMCPTool';
+import { WebSocket, WebSocketServer } from 'ws';
 import { MCPCapability } from '../interfaces/IMCPCapability';
-import { MCPServerConfig, MCPServerInfo } from '../types/server';
-import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
-import { MessageValidator } from '../validation/messageValidator';
+import { MCPError, MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
+import { MCPResource } from '../interfaces/IMCPResource';
+import { IMCPServer } from '../interfaces/IMCPServer';
+import { MCPTool } from '../interfaces/IMCPTool';
 import { LogLevel } from '../types/common';
+import { JSONRPCErrorCode, MCPErrorClass, MCPErrorCode } from '../types/error';
+import { MCPServerConfig, MCPServerInfo } from '../types/server';
+import { MessageValidator } from '../validation/messageValidator';
 
 /**
  * Core MCP Server implementation
@@ -46,10 +46,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
    */
   async start(config: MCPServerConfig): Promise<void> {
     if (this.running) {
-      throw new MCPErrorClass(
-        JSONRPCErrorCode.INTERNAL_ERROR,
-        'Server is already running'
-      );
+      throw new MCPErrorClass(JSONRPCErrorCode.INTERNAL_ERROR, 'Server is already running');
     }
 
     try {
@@ -65,7 +62,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       // Initialize WebSocket server
       this.wss = new WebSocketServer({
         port: config.port,
-        host: config.host
+        host: config.host,
       });
 
       this.wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
@@ -82,9 +79,9 @@ export class MCPServer extends EventEmitter implements IMCPServer {
           const message = JSON.stringify({
             jsonrpc: '2.0',
             method: notification.method,
-            params: notification.params
+            params: notification.params,
           });
-          this.wss.clients.forEach(client => {
+          this.wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
               client.send(message);
             }
@@ -102,11 +99,13 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       // Emit started event
       this.emit('started', {
         config: this.config,
-        timestamp: this.startTime
+        timestamp: this.startTime,
       });
 
-      this.log(LogLevel.INFO, `MCP Server "${config.name}" started on ${config.host}:${config.port}`);
-
+      this.log(
+        LogLevel.INFO,
+        `MCP Server "${config.name}" started on ${config.host}:${config.port}`
+      );
     } catch (error) {
       this.running = false;
       this.startTime = null;
@@ -132,7 +131,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       // Close WebSocket server
       if (this.wss) {
         // Close all active clients
-        this.wss.clients.forEach(client => {
+        this.wss.clients.forEach((client) => {
           client.terminate();
         });
 
@@ -158,11 +157,10 @@ export class MCPServer extends EventEmitter implements IMCPServer {
 
       // Emit stopped event
       this.emit('stopped', {
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       this.log(LogLevel.INFO, 'MCP Server stopped successfully');
-
     } catch (error) {
       this.emit('error', error);
       throw error;
@@ -174,10 +172,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
    */
   registerResource(resource: MCPResource): void {
     if (!resource.uri || !resource.name) {
-      throw new MCPErrorClass(
-        JSONRPCErrorCode.INVALID_PARAMS,
-        'Resource must have uri and name'
-      );
+      throw new MCPErrorClass(JSONRPCErrorCode.INVALID_PARAMS, 'Resource must have uri and name');
     }
 
     if (this.resources.has(resource.uri)) {
@@ -191,7 +186,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
 
     this.emit('resourceRegistered', {
       resource,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     this.log(LogLevel.DEBUG, `Registered resource: ${resource.name} (${resource.uri})`);
@@ -202,22 +197,14 @@ export class MCPServer extends EventEmitter implements IMCPServer {
    */
   registerTool(tool: MCPTool, handler?: any): void {
     if (!tool.name) {
-      throw new MCPErrorClass(
-        JSONRPCErrorCode.INVALID_PARAMS,
-        'Tool must have name'
-      );
+      throw new MCPErrorClass(JSONRPCErrorCode.INVALID_PARAMS, 'Tool must have name');
     }
 
     // If handler is provided separately, merge it with the tool
-    const toolToRegister = handler
-      ? { ...tool, handler }
-      : tool;
+    const toolToRegister = handler ? { ...tool, handler } : tool;
 
     if (!toolToRegister.handler) {
-      throw new MCPErrorClass(
-        JSONRPCErrorCode.INVALID_PARAMS,
-        'Tool must have handler'
-      );
+      throw new MCPErrorClass(JSONRPCErrorCode.INVALID_PARAMS, 'Tool must have handler');
     }
 
     if (this.tools.has(toolToRegister.name)) {
@@ -231,7 +218,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
 
     this.emit('toolRegistered', {
       tool: toolToRegister,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     this.log(LogLevel.DEBUG, `Registered tool: ${toolToRegister.name}`);
@@ -242,10 +229,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
    */
   registerCapability(capability: MCPCapability): void {
     if (!capability.name) {
-      throw new MCPErrorClass(
-        JSONRPCErrorCode.INVALID_PARAMS,
-        'Capability must have a name'
-      );
+      throw new MCPErrorClass(JSONRPCErrorCode.INVALID_PARAMS, 'Capability must have a name');
     }
 
     if (this.capabilities.has(capability.name)) {
@@ -259,7 +243,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
 
     this.emit('capabilityRegistered', {
       capability,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     this.log(LogLevel.DEBUG, `Registered capability: ${capability.name}`);
@@ -273,7 +257,6 @@ export class MCPServer extends EventEmitter implements IMCPServer {
     this.requestCount++;
     // activeConnections is now managed by WebSocket connection events
 
-
     try {
       // Validate request format
       const validationResult = MessageValidator.validateRequest(request);
@@ -286,10 +269,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
 
       // Check if server is running
       if (!this.running) {
-        throw new MCPErrorClass(
-          MCPErrorCode.SERVICE_UNAVAILABLE,
-          'Server is not running'
-        );
+        throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Server is not running');
       }
 
       // Apply timeout if specified
@@ -312,8 +292,8 @@ export class MCPServer extends EventEmitter implements IMCPServer {
         meta: {
           timestamp: new Date(),
           processingTime: Date.now() - startTime,
-          serverId: this.config?.name
-        }
+          serverId: this.config?.name,
+        },
       };
 
       this.successfulRequests++;
@@ -322,11 +302,10 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       this.emit('requestProcessed', {
         request,
         response,
-        processingTime: Date.now() - startTime
+        processingTime: Date.now() - startTime,
       });
 
       return response;
-
     } catch (error) {
       this.failedRequests++;
 
@@ -340,18 +319,17 @@ export class MCPServer extends EventEmitter implements IMCPServer {
         meta: {
           timestamp: new Date(),
           processingTime: Date.now() - startTime,
-          serverId: this.config?.name
-        }
+          serverId: this.config?.name,
+        },
       };
 
       this.emit('requestError', {
         request,
         error: mcpError,
-        processingTime: Date.now() - startTime
+        processingTime: Date.now() - startTime,
       });
 
       return errorResponse;
-
     } finally {
       // activeConnections is now managed by WebSocket connection events
     }
@@ -362,10 +340,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
    */
   getServerInfo(): MCPServerInfo {
     if (!this.config) {
-      throw new MCPErrorClass(
-        JSONRPCErrorCode.INTERNAL_ERROR,
-        'Server not configured'
-      );
+      throw new MCPErrorClass(JSONRPCErrorCode.INTERNAL_ERROR, 'Server not configured');
     }
 
     return {
@@ -382,15 +357,17 @@ export class MCPServer extends EventEmitter implements IMCPServer {
         timestamp: new Date(),
         details: {
           requestCount: this.requestCount,
-          successRate: this.requestCount > 0 ? (this.successfulRequests / this.requestCount) * 100 : 0,
-          averageResponseTime: this.requestCount > 0 ? this.totalResponseTime / this.requestCount : 0
-        }
+          successRate:
+            this.requestCount > 0 ? (this.successfulRequests / this.requestCount) * 100 : 0,
+          averageResponseTime:
+            this.requestCount > 0 ? this.totalResponseTime / this.requestCount : 0,
+        },
       },
       metadata: {
         resourceCount: this.resources.size,
         toolCount: this.tools.size,
-        capabilityCount: this.capabilities.size
-      }
+        capabilityCount: this.capabilities.size,
+      },
     };
   }
 
@@ -514,7 +491,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       version: '1.0.0',
       description: 'Resource management capability',
       methods: ['resources/list', 'resources/read', 'resources/subscribe'],
-      experimental: false
+      experimental: false,
     });
 
     this.registerCapability({
@@ -522,7 +499,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       version: '1.0.0',
       description: 'Tool execution capability',
       methods: ['tools/list', 'tools/call'],
-      experimental: false
+      experimental: false,
     });
 
     this.registerCapability({
@@ -530,7 +507,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       version: '1.0.0',
       description: 'Server information capability',
       methods: ['server/info', 'server/ping'],
-      experimental: false
+      experimental: false,
     });
   }
 
@@ -569,10 +546,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
         return this.handleToolCall(params);
 
       default:
-        throw new MCPErrorClass(
-          JSONRPCErrorCode.METHOD_NOT_FOUND,
-          `Method "${method}" not found`
-        );
+        throw new MCPErrorClass(JSONRPCErrorCode.METHOD_NOT_FOUND, `Method "${method}" not found`);
     }
   }
 
@@ -590,7 +564,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
-      uptime: this.startTime ? Date.now() - this.startTime.getTime() : 0
+      uptime: this.startTime ? Date.now() - this.startTime.getTime() : 0,
     };
   }
 
@@ -600,7 +574,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
   private handleInitialize(params: any): any {
     // Return server capabilities
     return {
-      capabilities: this.getRegisteredCapabilities()
+      capabilities: this.getRegisteredCapabilities(),
     };
   }
 
@@ -620,9 +594,9 @@ export class MCPServer extends EventEmitter implements IMCPServer {
 
       const pattern = new RegExp(regexPattern, 'i');
       return {
-        resources: resources.filter(resource =>
-          pattern.test(resource.name) || pattern.test(resource.uri)
-        )
+        resources: resources.filter(
+          (resource) => pattern.test(resource.name) || pattern.test(resource.uri)
+        ),
       };
     }
 
@@ -634,18 +608,12 @@ export class MCPServer extends EventEmitter implements IMCPServer {
    */
   private async handleResourceRead(params: any): Promise<any> {
     if (!params?.uri) {
-      throw new MCPErrorClass(
-        JSONRPCErrorCode.INVALID_PARAMS,
-        'Resource URI is required'
-      );
+      throw new MCPErrorClass(JSONRPCErrorCode.INVALID_PARAMS, 'Resource URI is required');
     }
 
     const resource = this.resources.get(params.uri);
     if (!resource) {
-      throw new MCPErrorClass(
-        MCPErrorCode.RESOURCE_NOT_FOUND,
-        `Resource not found: ${params.uri}`
-      );
+      throw new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, `Resource not found: ${params.uri}`);
     }
 
     // Call the resource handler
@@ -657,12 +625,12 @@ export class MCPServer extends EventEmitter implements IMCPServer {
    */
   private handleToolsList(): any {
     return {
-      tools: Array.from(this.tools.values()).map(tool => ({
+      tools: Array.from(this.tools.values()).map((tool) => ({
         name: tool.name,
         description: tool.description,
         inputSchema: tool.inputSchema,
-        outputSchema: tool.outputSchema
-      }))
+        outputSchema: tool.outputSchema,
+      })),
     };
   }
 
@@ -671,18 +639,12 @@ export class MCPServer extends EventEmitter implements IMCPServer {
    */
   private async handleResourceSubscribe(params: any): Promise<any> {
     if (!params?.uri) {
-      throw new MCPErrorClass(
-        JSONRPCErrorCode.INVALID_PARAMS,
-        'Resource URI is required'
-      );
+      throw new MCPErrorClass(JSONRPCErrorCode.INVALID_PARAMS, 'Resource URI is required');
     }
 
     const resource = this.resources.get(params.uri);
     if (!resource) {
-      throw new MCPErrorClass(
-        MCPErrorCode.RESOURCE_NOT_FOUND,
-        `Resource not found: ${params.uri}`
-      );
+      throw new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, `Resource not found: ${params.uri}`);
     }
 
     const subscriptionId = params.uri; // Use URI as subscription ID for simplicity
@@ -700,8 +662,8 @@ export class MCPServer extends EventEmitter implements IMCPServer {
           method: 'notifications/resources/updated',
           params: {
             uri: params.uri,
-            ...data
-          }
+            ...data,
+          },
         });
       });
     } else {
@@ -719,18 +681,12 @@ export class MCPServer extends EventEmitter implements IMCPServer {
    */
   private async handleResourceUnsubscribe(params: any): Promise<any> {
     if (!params?.uri) {
-      throw new MCPErrorClass(
-        JSONRPCErrorCode.INVALID_PARAMS,
-        'Resource URI is required'
-      );
+      throw new MCPErrorClass(JSONRPCErrorCode.INVALID_PARAMS, 'Resource URI is required');
     }
 
     const resource = this.resources.get(params.uri);
     if (!resource) {
-      throw new MCPErrorClass(
-        MCPErrorCode.RESOURCE_NOT_FOUND,
-        `Resource not found: ${params.uri}`
-      );
+      throw new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, `Resource not found: ${params.uri}`);
     }
 
     if (resource.handler.unsubscribe) {
@@ -750,18 +706,12 @@ export class MCPServer extends EventEmitter implements IMCPServer {
    */
   private async handleToolCall(params: any): Promise<any> {
     if (!params?.name) {
-      throw new MCPErrorClass(
-        JSONRPCErrorCode.INVALID_PARAMS,
-        'Tool name is required'
-      );
+      throw new MCPErrorClass(JSONRPCErrorCode.INVALID_PARAMS, 'Tool name is required');
     }
 
     const tool = this.tools.get(params.name);
     if (!tool) {
-      throw new MCPErrorClass(
-        MCPErrorCode.TOOL_NOT_FOUND,
-        `Tool not found: ${params.name}`
-      );
+      throw new MCPErrorClass(MCPErrorCode.TOOL_NOT_FOUND, `Tool not found: ${params.name}`);
     }
 
     // Validate tool parameters if schema is provided
@@ -787,8 +737,8 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       message: error.message || 'Internal server error',
       details: {
         category: 'system',
-        retryable: false
-      }
+        retryable: false,
+      },
     };
   }
 
@@ -799,7 +749,7 @@ export class MCPServer extends EventEmitter implements IMCPServer {
     return [
       MCPErrorCode.SERVICE_UNAVAILABLE,
       MCPErrorCode.CONNECTION_TIMEOUT,
-      MCPErrorCode.RATE_LIMIT_EXCEEDED
+      MCPErrorCode.RATE_LIMIT_EXCEEDED,
     ].includes(code);
   }
 
@@ -809,8 +759,8 @@ export class MCPServer extends EventEmitter implements IMCPServer {
   private async waitForActiveConnections(maxWait = 30000): Promise<void> {
     const startTime = Date.now();
 
-    while (this.activeConnections > 0 && (Date.now() - startTime) < maxWait) {
-      await new Promise(resolve => setTimeout(resolve, 100));
+    while (this.activeConnections > 0 && Date.now() - startTime < maxWait) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
   }
 
@@ -893,8 +843,8 @@ export class MCPServer extends EventEmitter implements IMCPServer {
           error: {
             code: JSONRPCErrorCode.PARSE_ERROR,
             message: 'Parse error',
-            data: { category: 'system', retryable: false }
-          }
+            data: { category: 'system', retryable: false },
+          },
         };
         if (ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify(errorResponse));
@@ -908,7 +858,6 @@ export class MCPServer extends EventEmitter implements IMCPServer {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify(response));
       }
-
     } catch (error: any) {
       this.log(LogLevel.ERROR, `Error handling message: ${error.message}`);
     }

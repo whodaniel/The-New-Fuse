@@ -15,10 +15,13 @@ export interface ServiceMetrics {
 
 export interface HealthStatus {
   status: 'healthy' | 'degraded' | 'unhealthy';
-  details: Record<string, {
-    status: 'up' | 'down';
-    latency?: number;
-    message?: string;
-  }>;
+  details: Record<
+    string,
+    {
+      status: 'up' | 'down';
+      latency?: number;
+      message?: string;
+    }
+  >;
   timestamp: Date;
 }

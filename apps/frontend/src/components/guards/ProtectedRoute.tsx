@@ -1,6 +1,6 @@
+import { useAuth } from '@/providers/AuthProvider';
 import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/providers/AuthProvider';
 
 interface ProtectedRouteProps {
   children: ReactNode;

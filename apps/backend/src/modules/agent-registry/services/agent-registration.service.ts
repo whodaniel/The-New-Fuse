@@ -1,11 +1,18 @@
 import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { drizzleAgentRepository } from '@the-new-fuse/database';
+import { ConfigService } from '@nestjs/config';
+import { drizzleAgentRepository, drizzleAuditLogsRepository } from '@the-new-fuse/database';
 import { randomBytes } from 'crypto';
 import { AgentRegistrationResponseDto, RegisterAgentDto } from '../dto';
+import { AgentInvitationService } from './agent-invitation.service';
 
 @Injectable()
 export class AgentRegistrationService {
   private readonly logger = new Logger(AgentRegistrationService.name);
+
+  constructor(
+    private readonly invitationService: AgentInvitationService,
+    private readonly configService: ConfigService
+  ) {}
 
   /**
    * Register a new agent with auto-discovery
@@ -17,6 +24,20 @@ export class AgentRegistrationService {
     this.logger.log(`Registering new agent: ${data.name}`);
 
     try {
+      const inviteRequired = this.configService.get('AGENT_INVITE_REQUIRED') !== 'false';
+      const requireTenantScope = this.configService.get('A2A_REQUIRE_TENANT_SCOPE') !== 'false';
+
+      this.ensureTenantScope(data, inviteRequired || requireTenantScope);
+      const inviteContext = {
+        tenantId: data.tenantId,
+        organizationId: data.organizationId,
+        agencyId: data.agencyId,
+      };
+
+      const invite = inviteRequired
+        ? await this.invitationService.validateInvitation(data.invitationCode, inviteContext)
+        : null;
+
       // Check for duplicate agent names
       const existingAgent = await drizzleAgentRepository.findByNameAndUserId(data.name, userId);
 
@@ -36,6 +57,9 @@ export class AgentRegistrationService {
         config: {
           version: data.version,
           author: data.author,
+          tenantId: data.tenantId,
+          organizationId: data.organizationId,
+          agencyId: data.agencyId,
           ...data.metadata,
         },
       } as any);
@@ -44,17 +68,75 @@ export class AgentRegistrationService {
       const authToken = this.generateAuthToken();
 
       // Create registration record
+      const identityPayload = {
+        longTermId: data.identity?.longTermId || `agent-${agent.id}`,
+        ephemeralId: data.identity?.ephemeralId || `inst-${randomBytes(8).toString('hex')}`,
+        federationId: data.identity?.federationId || data.metadata?.federationId || null,
+        protocolVersion: data.identity?.protocolVersion || 'tnf-1',
+      };
+
+      let trustTier = data.trust?.tier || 'unverified';
+      if (inviteRequired && trustTier !== 'unverified' && data.metadata?.adminApproved !== true) {
+        trustTier = 'unverified';
+      }
+
+      const trustPayload = {
+        tier: trustTier,
+        inviteId: invite?.id || null,
+        inviteStatus: invite?.status || null,
+      };
+
+      const protocolPayload = this.buildProtocolPayload(data);
+
+      const capabilityMap = (data.capabilities || []).reduce((acc: Record<string, any>, cap) => {
+        acc[cap.name] = {
+          type: cap.type,
+          version: cap.version,
+          description: cap.description,
+          parameters: cap.parameters || {},
+        };
+        return acc;
+      }, {});
+
       const registration = await drizzleAgentRepository.createRegistration({
         agentId: agent.id,
         authToken,
         registrationData: data as any,
-        verificationStatus: 'PENDING',
+        verificationStatus: invite ? 'INVITED' : 'PENDING',
         onboardingStatus: 'INITIALIZED',
         onboardingProgress: 0,
         heartbeatInterval: data.heartbeatInterval || 60000,
         isOnline: true,
-        metadata: data.metadata || {},
+        tenantId: data.tenantId || null,
+        organizationId: data.organizationId || null,
+        agencyId: data.agencyId || null,
+        identityLongTermId: identityPayload.longTermId,
+        identityEphemeralId: identityPayload.ephemeralId,
+        identityFederationId: identityPayload.federationId,
+        protocolVersion: identityPayload.protocolVersion,
+        trustTier: trustPayload.tier,
+        inviteId: invite?.id || null,
+        metadata: {
+          ...(data.metadata || {}),
+          tenantId: data.tenantId,
+          organizationId: data.organizationId,
+          agencyId: data.agencyId,
+          identity: identityPayload,
+          trust: trustPayload,
+          capabilityMap,
+          protocols: protocolPayload,
+        },
       });
+
+      if (invite) {
+        const willExhaust = invite.maxUses !== null && invite.usedCount + 1 >= invite.maxUses;
+        await this.invitationService.redeemInvitation({
+          inviteId: invite.id,
+          agentId: agent.id,
+          registrationId: registration.id,
+          markExhausted: willExhaust,
+        });
+      }
 
       // Register capabilities
       if (data.capabilities && data.capabilities.length > 0) {
@@ -81,6 +163,55 @@ export class AgentRegistrationService {
         eventData: {
           agentName: data.name,
           capabilities: data.capabilities.map((c) => c.name),
+          identity: identityPayload,
+          trust: trustPayload,
+        },
+      });
+
+      if (inviteRequired && trustTier !== (data.trust?.tier || 'unverified')) {
+        await drizzleAgentRepository.createOnboardingEvent({
+          registrationId: registration.id,
+          eventType: 'TRUST_TIER_ENFORCED',
+          message: `Trust tier enforced to ${trustTier}`,
+          eventData: {
+            requestedTier: data.trust?.tier,
+            enforcedTier: trustTier,
+          },
+        });
+      }
+
+      if (invite) {
+        await drizzleAgentRepository.createOnboardingEvent({
+          registrationId: registration.id,
+          eventType: 'INVITATION_VERIFIED',
+          message: `Invitation verified for agent ${data.name}`,
+          eventData: {
+            inviteId: invite.id,
+            tenantId: data.tenantId,
+            organizationId: data.organizationId,
+            agencyId: data.agencyId,
+          },
+        });
+      }
+
+      await drizzleAuditLogsRepository.create({
+        userId: userId || null,
+        action: 'agent.registration.created',
+        resourceType: 'agent',
+        resourceId: agent.id,
+        status: 'success',
+        details: {
+          registrationId: registration.id,
+          verificationStatus: registration.verificationStatus,
+          onboardingStatus: registration.onboardingStatus,
+          tenantId: data.tenantId,
+          organizationId: data.organizationId,
+          agencyId: data.agencyId,
+          inviteId: invite?.id || null,
+        },
+        metadata: {
+          identity: identityPayload,
+          trust: trustPayload,
         },
       });
 
@@ -119,6 +250,67 @@ export class AgentRegistrationService {
       this.logger.error(`Failed to register agent: ${error.message}`, error.stack);
       throw error;
     }
+  }
+
+  async getRegistrationsByProtocol(query: {
+    tenantId?: string;
+    organizationId?: string;
+    agencyId?: string;
+    trustTier?: string;
+    inviteId?: string;
+    limit?: number;
+    offset?: number;
+  }) {
+    const results = await drizzleAgentRepository.findRegistrationsByProtocol(query);
+
+    await drizzleAuditLogsRepository.create({
+      action: 'agent.registration.reporting',
+      resourceType: 'agent_registration',
+      status: 'success',
+      details: {
+        tenantId: query.tenantId,
+        organizationId: query.organizationId,
+        agencyId: query.agencyId,
+        trustTier: query.trustTier,
+        inviteId: query.inviteId,
+        limit: query.limit,
+        offset: query.offset,
+        resultCount: results.length,
+      },
+    });
+
+    return results;
+  }
+
+  async validateRegistrationIntegrity() {
+    if (process.env.AGENT_INVITE_REQUIRED === 'false') {
+      return { status: 'skipped', reason: 'invite_not_required' };
+    }
+
+    const missingTenant = await drizzleAgentRepository.findRegistrationsMissingTenant(200);
+    if (missingTenant.length > 0) {
+      await drizzleAuditLogsRepository.create({
+        action: 'agent.registration.integrity_failed',
+        resourceType: 'agent_registration',
+        status: 'failure',
+        details: {
+          missingTenantCount: missingTenant.length,
+        },
+      });
+      throw new BadRequestException({
+        status: 'failed',
+        missingTenantCount: missingTenant.length,
+        registrations: missingTenant.map((r) => r.id),
+      });
+    }
+
+    await drizzleAuditLogsRepository.create({
+      action: 'agent.registration.integrity_passed',
+      resourceType: 'agent_registration',
+      status: 'success',
+    });
+
+    return { status: 'passed', missingTenantCount: 0 };
   }
 
   /**
@@ -218,6 +410,49 @@ export class AgentRegistrationService {
       `- Assignment of your first tasks\n\n` +
       `Let's get started! 🚀`
     );
+  }
+
+  private buildProtocolPayload(data: RegisterAgentDto): Record<string, any> {
+    const skillsPayload = {
+      progressiveDisclosure:
+        data.protocols?.skills?.progressiveDisclosure ??
+        data.metadata?.skills?.progressiveDisclosure ??
+        true,
+      dynamicMcpLoading:
+        data.protocols?.skills?.dynamicMcpLoading ??
+        data.metadata?.skills?.dynamicMcpLoading ??
+        true,
+      skillIds: data.protocols?.skills?.skillIds ?? data.metadata?.skillIds ?? [],
+      skillProviders: data.protocols?.skills?.skillProviders ?? data.metadata?.skillProviders ?? [],
+    };
+
+    const mcpPayload = {
+      allowDynamicLoading:
+        data.protocols?.mcp?.allowDynamicLoading ??
+        data.metadata?.mcp?.allowDynamicLoading ??
+        true,
+      servers: data.protocols?.mcp?.servers ?? data.metadata?.mcpServers ?? [],
+      allowlist: data.protocols?.mcp?.allowlist ?? data.metadata?.mcpAllowlist ?? [],
+    };
+
+    return {
+      openclaw: data.protocols?.openclaw ?? data.metadata?.openclaw ?? false,
+      skills: skillsPayload,
+      mcp: mcpPayload,
+      handoff: data.protocols?.handoff ?? data.metadata?.handoff ?? {},
+      memory: data.protocols?.memory ?? data.metadata?.memory ?? {},
+      abilityMap: data.protocols?.abilityMap ?? data.metadata?.abilityMap ?? {},
+    };
+  }
+
+  private ensureTenantScope(data: RegisterAgentDto, required: boolean) {
+    if (!required) {
+      return;
+    }
+
+    if (!data.tenantId && !data.organizationId && !data.agencyId) {
+      throw new BadRequestException('tenantId, organizationId, or agencyId is required');
+    }
   }
 
   /**

@@ -27,16 +27,19 @@ export class WebSocketService {
 
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async handleConnection(clientId: string, metadata?: Record<string, any>): Promise<WebSocketConnection> {
+  async handleConnection(
+    clientId: string,
+    metadata?: Record<string, any>,
+  ): Promise<WebSocketConnection> {
     const connection: WebSocketConnection = {
       id: this.generateId(),
       clientId,
       status: 'connected',
       connectedAt: new Date(),
       lastActivity: new Date(),
-      metadata
+      metadata,
     };
-    
+
     this.connections.set(clientId, connection);
     this.eventEmitter.emit('websocket.connected', connection);
     this.logger.log(`Client connected: ${clientId}`);
@@ -60,9 +63,9 @@ export class WebSocketService {
       data,
       timestamp: new Date(),
       clientId,
-      direction: 'outbound'
+      direction: 'outbound',
     };
-    
+
     this.messages.set(message.id, message);
     this.updateLastActivity(clientId);
     this.eventEmitter.emit('websocket.message.sent', message);
@@ -77,9 +80,9 @@ export class WebSocketService {
       data,
       timestamp: new Date(),
       clientId,
-      direction: 'inbound'
+      direction: 'inbound',
     };
-    
+
     this.messages.set(message.id, message);
     this.updateLastActivity(clientId);
     this.eventEmitter.emit('websocket.message.received', message);
@@ -87,11 +90,16 @@ export class WebSocketService {
     return message;
   }
 
-  async broadcastMessage(type: string, data: any, excludeClient?: string): Promise<WebSocketMessage[]> {
+  async broadcastMessage(
+    type: string,
+    data: any,
+    excludeClient?: string,
+  ): Promise<WebSocketMessage[]> {
     const messages: WebSocketMessage[] = [];
-    const activeConnections = Array.from(this.connections.values())
-      .filter(conn => conn.status === 'connected' && conn.clientId !== excludeClient);
-    
+    const activeConnections = Array.from(this.connections.values()).filter(
+      (conn) => conn.status === 'connected' && conn.clientId !== excludeClient,
+    );
+
     for (const connection of activeConnections) {
       const message = await this.sendMessage(connection.clientId, type, data);
       messages.push(message);
@@ -110,23 +118,22 @@ export class WebSocketService {
   }
 
   async getActiveConnections(): Promise<WebSocketConnection[]> {
-    return Array.from(this.connections.values())
-      .filter(conn => conn.status === 'connected');
+    return Array.from(this.connections.values()).filter((conn) => conn.status === 'connected');
   }
 
   async getMessages(clientId?: string, limit?: number): Promise<WebSocketMessage[]> {
     let messages = Array.from(this.messages.values());
-    
+
     if (clientId) {
-      messages = messages.filter(msg => msg.clientId === clientId);
+      messages = messages.filter((msg) => msg.clientId === clientId);
     }
-    
+
     messages.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-    
+
     if (limit) {
       messages = messages.slice(0, limit);
     }
-    
+
     return messages;
   }
 
@@ -137,13 +144,13 @@ export class WebSocketService {
     messagesCount: number;
   }> {
     const connections = Array.from(this.connections.values());
-    const activeConnections = connections.filter(conn => conn.status === 'connected');
-    
+    const activeConnections = connections.filter((conn) => conn.status === 'connected');
+
     return {
       total: connections.length,
       active: activeConnections.length,
       disconnected: connections.length - activeConnections.length,
-      messagesCount: this.messages.size
+      messagesCount: this.messages.size,
     };
   }
 

@@ -1,22 +1,22 @@
-export { TaskSynchronizationService } from './TaskSynchronizationService';
 export { EnhancedTaskManagementService } from './EnhancedTaskManagementService';
 export { TaskNotificationService } from './TaskNotificationService';
+export { TaskSynchronizationService } from './TaskSynchronizationService';
 
 export type {
-  TaskSyncData,
-  TaskExecutionSyncData,
   TaskDependencyUpdate,
-  TaskNotification
+  TaskExecutionSyncData,
+  TaskNotification,
+  TaskSyncData,
 } from './TaskSynchronizationService';
 
 export type {
   EnhancedTaskData,
   TaskExecutionContext,
-  WorkflowTaskIntegration
+  WorkflowTaskIntegration,
 } from './EnhancedTaskManagementService';
 
 export type {
-  TaskNotificationRule,
   NotificationChannel,
-  TaskNotificationHistory
+  TaskNotificationHistory,
+  TaskNotificationRule,
 } from './TaskNotificationService';

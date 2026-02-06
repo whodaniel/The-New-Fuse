@@ -1,8 +1,8 @@
-import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { ConfigService } from '@nestjs/config';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -16,14 +16,17 @@ describe('AppController (e2e)', () => {
           useValue: {
             get: (key: string, defaultValue?: any) => {
               switch (key) {
-                case 'LOG_LEVEL': return 'info';
-                case 'LOG_FORMAT': return 'json';
-                default: return defaultValue;
+                case 'LOG_LEVEL':
+                  return 'info';
+                case 'LOG_FORMAT':
+                  return 'json';
+                default:
+                  return defaultValue;
               }
-            }
-          }
-        }
-      ]
+            },
+          },
+        },
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();

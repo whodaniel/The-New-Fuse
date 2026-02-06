@@ -18,7 +18,7 @@ you need.
 | File                    | Description                           | When to Read       |
 | ----------------------- | ------------------------------------- | ------------------ |
 | `database-selection.md` | PostgreSQL vs Neon vs Turso vs SQLite | Choosing database  |
-| `orm-selection.md`      | Drizzle vs Prisma vs Kysely           | Choosing ORM       |
+| `orm-selection.md`      | Drizzle vs Drizzle vs Kysely           | Choosing ORM       |
 | `schema-design.md`      | Normalization, PKs, relationships     | Designing schema   |
 | `indexing.md`           | Index types, composite indexes        | Performance tuning |
 | `optimization.md`       | N+1, EXPLAIN ANALYZE                  | Query optimization |

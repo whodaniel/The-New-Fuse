@@ -3,9 +3,11 @@
 Generated on: 2025-03-12T18:00:55.868Z
 
 ## auth - serviceAuth
+
 Status: FOUND (100% confidence)
 
 ### Found Implementations:
+
 - packages/core/src/services/auth/service-authentication.ts:2 (interface)
   `export interface AuthStrategy {`
 - packages/core/src/services/auth/service-authentication.ts:6 (class)
@@ -32,9 +34,11 @@ Status: FOUND (100% confidence)
 ---
 
 ## dataConsistency - validation
+
 Status: FOUND (100% confidence)
 
 ### Found Implementations:
+
 - packages/core/src/workflow/validator.ts:27 (constant)
   `async validateTemplate(template: WorkflowTemplate): Promise<void> {`
 - packages/core/src/workflow/validator.ts:52 (constant)
@@ -42,7 +46,8 @@ Status: FOUND (100% confidence)
 - packages/core/src/workflow/validator.ts:57 (constant)
   `(this as any).validateStepDependencies((template as any).steps);`
 - packages/core/src/workflow/validator.ts:59 (constant)
-  `(this as any).(logger as any).debug(`Template ${(template as any).id} validated successfully`, { templateId: (template as any).id });`
+  `(this as any).(logger as any).debug(`Template ${(template as any).id}
+  validated successfully`, { templateId: (template as any).id });`
 - packages/core/src/workflow/validator.ts:77 (constant)
   `private async validateStep(step: WorkflowStep, stepIds: Set<string>): Promise<void> {`
 - packages/core/src/workflow/validator.ts:108 (constant)
@@ -133,16 +138,14 @@ Status: FOUND (100% confidence)
   `ValidationStrategy,`
 - packages/core/src/validation/data-validation.ts:38 (constant)
   `ValidatorFactory,`
-- packages/core/src/validation/data-validation.ts:39 (constant)
-  `DataValidation`
+- packages/core/src/validation/data-validation.ts:39 (constant) `DataValidation`
 - packages/core/src/types/validation.ts:61 (constant)
   `validateAllRules?: boolean;`
 - packages/core/src/types/validation.ts:77 (constant)
   `validate(data: any, schema: ValidationSchema, options?: ValidationOptions): Promise<ValidationResult>;`
 - packages/core/src/types/prompt.types.ts:42 (constant)
   `validate(params: Record<string, unknown>): {`
-- packages/core/src/types/analysis.ts:54 (constant)
-  `validateOnly?: boolean;`
+- packages/core/src/types/analysis.ts:54 (constant) `validateOnly?: boolean;`
 - packages/core/src/temp_auth/TokenManager.ts:87 (constant)
   `async validateAccessToken(token: string): Promise<TokenPayload | null> {`
 - packages/core/src/temp_auth/TokenManager.ts:105 (constant)
@@ -163,8 +166,7 @@ Status: FOUND (100% confidence)
   `await (this as any).validateDependencies(task);`
 - packages/core/src/task/scheduler.ts:263 (constant)
   `private async validateDependencies(task: Task): Promise<void> {`
-- packages/core/src/task/TaskExecutor.ts:209 (constant)
-  `case 'validate':`
+- packages/core/src/task/TaskExecutor.ts:209 (constant) `case 'validate':`
 - packages/core/src/task/TaskExecutor.ts:210 (constant)
   `return this.validateData(data, config);`
 - packages/core/src/task/TaskExecutor.ts:239 (constant)
@@ -211,8 +213,7 @@ Status: FOUND (100% confidence)
   `const isValid = await (this as any).(authService as any).validateCredentials(`
 - packages/core/src/security/auth.ts:64 (constant)
   `(this as any).validatePassword(value);`
-- packages/core/src/security/auth.ts:86 (constant)
-  `async validateCredentials(`
+- packages/core/src/security/auth.ts:86 (constant) `async validateCredentials(`
 - packages/core/src/security/auth.ts:152 (constant)
   `async validateToken(token: string): Promise<AuthToken | null> {`
 - packages/core/src/security/auth.ts:211 (constant)
@@ -285,8 +286,7 @@ Status: FOUND (100% confidence)
   `validateDependencies(`
 - packages/core/src/config/ConfigValidator.ts:203 (constant)
   `validateConstraints(`
-- packages/core/src/config/ConfigManager.ts:21 (constant)
-  `validate?: boolean;`
+- packages/core/src/config/ConfigManager.ts:21 (constant) `validate?: boolean;`
 - packages/core/src/config/ConfigManager.ts:68 (constant)
   `await (this as any).validateConfiguration();`
 - packages/core/src/config/ConfigManager.ts:195 (constant)
@@ -347,8 +347,8 @@ Status: FOUND (100% confidence)
   `const validation = this.validateMessageStructure(message);`
 - packages/core/src/websocket/gateways/ai-coder.gateway.ts:65 (constant)
   `private validateMessageStructure(message: any): {`
-- packages/core/src/services/protocol/protocol-translator.service.ts:14 (constant)
-  `async validateProtocolCompliance(`
+- packages/core/src/services/protocol/protocol-translator.service.ts:14
+  (constant) `async validateProtocolCompliance(`
 - packages/core/src/services/monitoring/MessageProcessor.ts:48 (constant)
   `* Process and validate an incoming message`
 - packages/core/src/services/monitoring/MessageProcessor.ts:55 (constant)
@@ -701,16 +701,13 @@ Status: FOUND (100% confidence)
   `(0, uploadHandler_1.validateFile)(file);`
 - apps/frontend/src/lib/route.js:15 (constant)
   `(0, uploadHandler_1.validateFile)(file);`
-- apps/frontend/src/lib/prompt_manager.tsx:26 (constant)
-  `validate(params) {`
+- apps/frontend/src/lib/prompt_manager.tsx:26 (constant) `validate(params) {`
 - apps/frontend/src/lib/prompt_manager.tsx:78 (constant)
   `const validation = prompt.validate(params);`
-- apps/frontend/src/lib/prompt_manager.ts:28 (constant)
-  `validate(params) {`
+- apps/frontend/src/lib/prompt_manager.ts:28 (constant) `validate(params) {`
 - apps/frontend/src/lib/prompt_manager.ts:96 (constant)
   `const validation = prompt.validate(params);`
-- apps/frontend/src/lib/prompt_manager.js:26 (constant)
-  `validate(params) {`
+- apps/frontend/src/lib/prompt_manager.js:26 (constant) `validate(params) {`
 - apps/frontend/src/lib/prompt_manager.js:78 (constant)
   `const validation = prompt.validate(params);`
 - apps/frontend/src/lib/message-utils.ts:3 (constant)
@@ -733,10 +730,8 @@ Status: FOUND (100% confidence)
   `exports.createSocketPayload = exports.formatTimestamp = exports.validateMessage = exports.getAgentStatusColor = exports.getAgentNameById = exports.createUserMessage = exports.mapMessageResponseToMessage = exports.useAgents = exports.useMessages = exports.AgentSelector = exports.TypingIndicator = exports.EnhancedChatBubble = exports.ChatInterface = void 0;`
 - apps/frontend/src/lib/index copy 4.js:21 (constant)
   `Object.defineProperty(exports, "validateMessage", { enumerable: true, get: function () { return message_utils_1.validateMessage; } });`
-- apps/frontend/src/lib/dashboard.ts:99 (constant)
-  `validateName() {`
-- apps/frontend/src/lib/dashboard.js:99 (constant)
-  `validateName() {`
+- apps/frontend/src/lib/dashboard.ts:99 (constant) `validateName() {`
+- apps/frontend/src/lib/dashboard.js:99 (constant) `validateName() {`
 - apps/frontend/src/lib/agent.ts:3 (constant)
   `exports.convertApiStatus = exports.validateAgentStatus = exports.transformStoreToApiAgent = exports.transformApiToStoreAgent = void 0;`
 - apps/frontend/src/lib/agent.ts:24 (constant)
@@ -771,8 +766,7 @@ Status: FOUND (100% confidence)
   `const isValid = await (0, providers_1.validateProviderConfig)(config);`
 - apps/frontend/src/components/LLMConfigManager.js:22 (constant)
   `const isValid = await (0, providers_1.validateProviderConfig)(config);`
-- apps/frontend/src/core/utils/validation.ts:11 (constant)
-  `validate(data) {`
+- apps/frontend/src/core/utils/validation.ts:11 (constant) `validate(data) {`
 - apps/frontend/src/core/utils/validation.ts:16 (constant)
   `if (!rule.validate(value)) {`
 - apps/frontend/src/core/utils/validation.ts:29 (constant)
@@ -797,8 +791,7 @@ Status: FOUND (100% confidence)
   `custom: (validateFn, message) => ({`
 - apps/frontend/src/core/utils/validation.ts:73 (constant)
   `validate: validateFn,`
-- apps/frontend/src/core/utils/validation.js:11 (constant)
-  `validate(data) {`
+- apps/frontend/src/core/utils/validation.js:11 (constant) `validate(data) {`
 - apps/frontend/src/core/utils/validation.js:16 (constant)
   `if (!rule.validate(value)) {`
 - apps/frontend/src/core/utils/validation.js:29 (constant)
@@ -949,17 +942,18 @@ Status: FOUND (100% confidence)
   `import { SUPPORTED_PROVIDERS, PROVIDER_DEFAULTS, validateProviderConfig } from '@/services/llm/providers';`
 - apps/frontend/src/shared/features/settings/LLMConfigManager.js:22 (constant)
   `const isValid = await validateProviderConfig(config);`
-- apps/frontend/src/components/WorkflowEditor/utils/realtime-validation.ts:5 (constant)
-  `validate(nodes, edges) {`
-- apps/frontend/src/components/WorkflowEditor/utils/realtime-validation.js:5 (constant)
-  `validate(nodes, edges) {`
-- apps/frontend/src/components/WorkflowEditor/utils/realtime-validation.d.ts:4 (constant)
-  `validate(nodes: any[], edges: any[]): string[];`
-- apps/frontend/src/components/WorkflowEditor/utils/node-config-builder.ts:34 (constant)
-  `static validateParameters(config, parameters) {`
-- apps/frontend/src/components/WorkflowEditor/utils/node-config-builder.js:34 (constant)
-  `static validateParameters(config, parameters) {`
-- apps/frontend/src/components/WorkflowEditor/utils/node-config-builder.d.ts:25 (constant)
+- apps/frontend/src/components/WorkflowEditor/utils/realtime-validation.ts:5
+  (constant) `validate(nodes, edges) {`
+- apps/frontend/src/components/WorkflowEditor/utils/realtime-validation.js:5
+  (constant) `validate(nodes, edges) {`
+- apps/frontend/src/components/WorkflowEditor/utils/realtime-validation.d.ts:4
+  (constant) `validate(nodes: any[], edges: any[]): string[];`
+- apps/frontend/src/components/WorkflowEditor/utils/node-config-builder.ts:34
+  (constant) `static validateParameters(config, parameters) {`
+- apps/frontend/src/components/WorkflowEditor/utils/node-config-builder.js:34
+  (constant) `static validateParameters(config, parameters) {`
+- apps/frontend/src/components/WorkflowEditor/utils/node-config-builder.d.ts:25
+  (constant)
   `static validateParameters(config: NodeConfig, parameters: Record<string, any>): string[];`
 - apps/frontend/src/components/WorkflowEditor/utils/converter.ts:36 (function)
   `export function validateWorkflow(workflow) {`
@@ -971,4 +965,3 @@ Status: FOUND (100% confidence)
   `for download URLs are pre-validated and signed by a minimal trust`
 
 ---
-

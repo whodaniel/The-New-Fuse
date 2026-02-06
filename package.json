@@ -102,6 +102,8 @@
     "health-check:full": "pnpm run validate:clean-scripts && pnpm run type-check && pnpm run test && pnpm run validate:build",
     "git:sync-check": "bash scripts/git-sync-check.sh",
     "git:status": "git status && echo '' && bash scripts/git-sync-check.sh",
+    "agents:pydantic:generate": "node tools/generate-pydantic-agents.js",
+    "agents:pydantic:check": "node tools/generate-pydantic-agents.js --check",
     "git:push-check": "bash -c 'UNPUSHED=$(git log @{u}.. --oneline 2>/dev/null | wc -l | tr -d \" \"); if [ \"$UNPUSHED\" -gt 0 ]; then echo \"⚠️  WARNING: $UNPUSHED unpushed commits\"; git log @{u}.. --oneline; exit 1; else echo \"✅ All commits pushed\"; fi'"
   },
   "devDependencies": {

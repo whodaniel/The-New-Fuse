@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
-import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { AgentStatus } from '@the-new-fuse/a2a-core';
-import { AgentPresence, CoordinationChannel } from '../types/coordination.types';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { MessageSerializer } from '../serializers/message-serializer';
+import { AgentPresence, CoordinationChannel } from '../types/coordination.types';
 
 /**
  * Agent presence tracker with heartbeat system
@@ -45,7 +45,7 @@ export class PresenceTracker {
 
     await this.updatePresence(presence);
     this.startHeartbeat(agentId);
-    
+
     this.logger.log(`Agent registered: ${agentId}`);
   }
 
@@ -54,7 +54,7 @@ export class PresenceTracker {
    */
   async unregisterAgent(agentId: string): Promise<void> {
     this.stopHeartbeat(agentId);
-    
+
     const presence = await this.getPresence(agentId);
     if (presence) {
       presence.status = AgentStatus.OFFLINE;
@@ -63,10 +63,10 @@ export class PresenceTracker {
     }
 
     await this.redisService.srem(`${this.keyPrefix}agents:active`, agentId);
-    
+
     // Publish offline event
     await this.publishPresenceEvent(agentId, AgentStatus.OFFLINE);
-    
+
     this.logger.log(`Agent unregistered: ${agentId}`);
   }
 
@@ -89,9 +89,9 @@ export class PresenceTracker {
   async getPresence(agentId: string): Promise<AgentPresence | null> {
     const key = `${this.keyPrefix}presence:${agentId}`;
     const data = await this.redisService.get(key);
-    
+
     if (!data) return null;
-    
+
     try {
       return this.serializer.deserialize<AgentPresence>(data);
     } catch (error) {
@@ -164,12 +164,8 @@ export class PresenceTracker {
   private async updatePresence(presence: AgentPresence): Promise<void> {
     const key = `${this.keyPrefix}presence:${presence.agentId}`;
     const ttl = Math.ceil(this.heartbeatTimeout / 1000);
-    
-    await this.redisService.set(
-      key,
-      this.serializer.serialize(presence),
-      ttl
-    );
+
+    await this.redisService.set(key, this.serializer.serialize(presence), ttl);
 
     // Add to active agents set
     if (presence.status === AgentStatus.ONLINE || presence.status === AgentStatus.BUSY) {
@@ -228,7 +224,7 @@ export class PresenceTracker {
 
     for (const agentId of activeAgentIds) {
       const presence = await this.getPresence(agentId);
-      
+
       if (!presence || !this.isAgentAlive(presence)) {
         // Mark as offline
         if (presence) {
@@ -236,10 +232,10 @@ export class PresenceTracker {
           presence.lastSeen = Date.now();
           await this.updatePresence(presence);
         }
-        
+
         await this.redisService.srem(`${this.keyPrefix}agents:active`, agentId);
         await this.publishPresenceEvent(agentId, AgentStatus.OFFLINE);
-        
+
         this.logger.warn(`Agent marked offline due to stale heartbeat: ${agentId}`);
       }
     }

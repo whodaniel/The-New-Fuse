@@ -16,7 +16,7 @@ Generated: 2025-08-13T19:00:23.117Z
 
 ## Next Steps
 
-1. Review backup files (*.backup) before proceeding
+1. Review backup files (\*.backup) before proceeding
 2. Complete manual migration for complex files
 3. Test all migrated services
 4. Remove backup files after verification

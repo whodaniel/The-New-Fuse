@@ -122,8 +122,10 @@ export class SecureAuthGuard implements CanActivate {
       this.reflector.getAllAndOverride<boolean>(AUDIT_LOG_KEY, [handler, context.getClass()]) ||
       false;
     const sensitiveData =
-      this.reflector.getAllAndOverride<boolean>(SENSITIVE_DATA_KEY, [handler, context.getClass()]) ||
-      false;
+      this.reflector.getAllAndOverride<boolean>(SENSITIVE_DATA_KEY, [
+        handler,
+        context.getClass(),
+      ]) || false;
 
     // Check SSL requirement
     if (requireSSL && !this.isSecure(request)) {

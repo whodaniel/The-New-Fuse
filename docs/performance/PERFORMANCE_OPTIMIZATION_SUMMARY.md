@@ -13,7 +13,7 @@ Impact**: 40-60% Expected Performance Improvement
 
 **Changes Made**:
 
-- Added 24 performance indexes to Prisma schema
+- Added 24 performance indexes to Drizzle schema
 - Optimized queries for User, Agent, Message, ChatRoom, and Workflow models
 - Indexes target common query patterns (filtering, sorting, joins)
 
@@ -30,7 +30,7 @@ Impact**: 40-60% Expected Performance Improvement
 **Next Action Required**:
 
 ```bash
-npx prisma migrate dev --name add_performance_indexes
+npx drizzle migrate dev --name add_performance_indexes
 ```
 
 ---
@@ -182,7 +182,7 @@ async getAgents() {
 
 | Optimization     | Impact    | Files Changed                   | Status   | Expected Gain           |
 | ---------------- | --------- | ------------------------------- | -------- | ----------------------- |
-| Database Indexes | 🔴 HIGH   | 1 (schema.prisma)               | ✅ DONE  | 70-90% faster queries   |
+| Database Indexes | 🔴 HIGH   | 1 (schema.drizzle)               | ✅ DONE  | 70-90% faster queries   |
 | Pagination       | 🔴 HIGH   | 2 (agent.service, chat.service) | ✅ DONE  | 60-80% memory reduction |
 | Field Selection  | 🟡 MEDIUM | 1 (agent.service)               | ✅ DONE  | 40% smaller payloads    |
 | Wildcard Imports | 🟡 MEDIUM | 4 (config files)                | ✅ DONE  | 15-25% bundle reduction |
@@ -225,8 +225,8 @@ async getAgents() {
 1. **Run Database Migration** (5 minutes)
 
    ```bash
-   npx prisma migrate dev --name add_performance_indexes
-   npx prisma generate
+   npx drizzle migrate dev --name add_performance_indexes
+   npx drizzle generate
    ```
 
 2. **Update API Controllers** (1-2 hours)
@@ -360,8 +360,8 @@ If you encounter any issues during implementation:
 2. Verify migrations:
 
    ```bash
-   npx prisma migrate status
-   npx prisma studio # Visual inspection
+   npx drizzle migrate status
+   npx drizzle studio # Visual inspection
    ```
 
 3. Test in development first:
@@ -384,4 +384,4 @@ user experience.
 ---
 
 **Status**: ✅ Ready for Migration and Testing **Next Action**: Run
-`npx prisma migrate dev --name add_performance_indexes`
+`npx drizzle migrate dev --name add_performance_indexes`

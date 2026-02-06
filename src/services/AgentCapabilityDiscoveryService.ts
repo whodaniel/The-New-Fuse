@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MCPBrokerService } from '../mcp/services/mcp-broker.service.tsx';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { DatabaseService } from '../drizzle/drizzle.service.js';
 import { Logger } from '../common/logger.service.js';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -66,7 +66,7 @@ export class AgentCapabilityDiscoveryService {
 
   constructor(
     private readonly mcpBroker: MCPBrokerService,
-    private readonly prisma: PrismaService,
+    private readonly drizzle: DatabaseService,
     private readonly eventEmitter: EventEmitter2,
     private readonly logger: Logger
   ) {
@@ -129,7 +129,7 @@ export class AgentCapabilityDiscoveryService {
     capability: Omit<AgentCapability, 'id'>
   ): Promise<AgentCapability> {
     try {
-      const registeredCapability = await this.prisma.capability.create({
+      const registeredCapability = await this.drizzle.capability.create({
         data: {
           name: capability.name,
           description: capability.description,
@@ -207,7 +207,7 @@ export class AgentCapabilityDiscoveryService {
       this.updateReliabilityMetrics(data.capabilityId, data.agentId, data.metrics);
 
       // Persist updates
-      await this.prisma.capability.update({
+      await this.drizzle.capability.update({
         where: { id: data.capabilityId },
         data: {
           metadata: {
@@ -243,7 +243,7 @@ export class AgentCapabilityDiscoveryService {
 
   private async refreshCapabilityCache(): Promise<void> {
     try {
-      const capabilities = await this.prisma.capability.findMany({
+      const capabilities = await this.drizzle.capability.findMany({
         include: {
           agents: true
         }
@@ -478,7 +478,7 @@ export class AgentCapabilityDiscoveryService {
       this.capabilityCache.set(data.capabilityId, updatedCapability);
 
       // Persist updates to database
-      await this.prisma.capability.update({
+      await this.drizzle.capability.update({
         where: { id: data.capabilityId },
         data: {
           name: updatedCapability.name,

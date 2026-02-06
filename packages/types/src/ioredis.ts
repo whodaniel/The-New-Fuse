@@ -44,7 +44,9 @@ export interface RedisMulti {
   set(key: string, value: string, ttl?: number): RedisMulti;
   del(key: string): RedisMulti;
   exists(key: string): RedisMulti;
-  [key: string]: ((...args: any[]) => RedisMulti) | (() => Promise<[Error | null, unknown][] | null>);
+  [key: string]:
+    | ((...args: any[]) => RedisMulti)
+    | (() => Promise<[Error | null, unknown][] | null>);
 }
 
 // Define the main Redis interface
@@ -63,18 +65,21 @@ export class RedisService implements RedisTransaction {
 
   async executeTransaction(commands: RedisCommand[]): Promise<[Error | null, unknown][] | null> {
     if (!this.client) {
-      throw new Error("Redis client not initialized");
+      throw new Error('Redis client not initialized');
     }
     const multi = this.client.multi();
     for (const command of commands) {
-      ((multi as unknown) as { [key: string]: (...args: unknown[]) => any })[command.cmd].apply(multi, command.args);
+      (multi as unknown as { [key: string]: (...args: unknown[]) => any })[command.cmd].apply(
+        multi,
+        command.args
+      );
     }
     return await multi.exec();
   }
 
   async exec(): Promise<[Error | null, unknown][] | null> {
     if (!this.client) {
-      throw new Error("Redis client not initialized");
+      throw new Error('Redis client not initialized');
     }
     const multi = this.client.multi();
     return await multi.exec();

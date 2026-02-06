@@ -4,9 +4,12 @@
 
 ## Issues Addressed
 
-1. **TypeScript ESM Error**: Fixed `ERR_UNKNOWN_FILE_EXTENSION` errors when running TypeScript files with ES modules.
-2. **Module Resolution**: Fixed import path resolution issues with TypeScript path aliases in ESM context.
-3. **CommonJS/ESM Compatibility**: Addressed `exports is not defined in ES module scope` errors in backend application.
+1. **TypeScript ESM Error**: Fixed `ERR_UNKNOWN_FILE_EXTENSION` errors when
+   running TypeScript files with ES modules.
+2. **Module Resolution**: Fixed import path resolution issues with TypeScript
+   path aliases in ESM context.
+3. **CommonJS/ESM Compatibility**: Addressed
+   `exports is not defined in ES module scope` errors in backend application.
 
 ## Changes Implemented
 
@@ -64,7 +67,8 @@
 
 ## Results
 
-Successfully addressed TypeScript ESM compatibility issues. The project can now run with proper ES module support in both API and backend applications.
+Successfully addressed TypeScript ESM compatibility issues. The project can now
+run with proper ES module support in both API and backend applications.
 
 ## Contributors
 

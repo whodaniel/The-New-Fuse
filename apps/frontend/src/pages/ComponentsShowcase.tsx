@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
+import React, { useState } from 'react';
 
 // Simple placeholder components for demo
 const Container = ({ children, size, className }: any) => (
-  <div className={`container ${size === 'sm' ? 'max-w-sm' : size === 'md' ? 'max-w-md' : size === 'lg' ? 'max-w-lg' : 'max-w-xl'} mx-auto ${className}`}>
+  <div
+    className={`container ${size === 'sm' ? 'max-w-sm' : size === 'md' ? 'max-w-md' : size === 'lg' ? 'max-w-lg' : 'max-w-xl'} mx-auto ${className}`}
+  >
     {children}
   </div>
 );
@@ -20,9 +22,15 @@ const Split = ({ children, direction = 'horizontal', className }: any) => (
 );
 
 const Sidebar = ({ children, open, collapsed, onClose, className }: any) => (
-  <div className={`bg-gray-100 p-4 ${open ? 'block' : 'hidden'} ${collapsed ? 'w-16' : 'w-64'} ${className}`}>
+  <div
+    className={`bg-gray-100 p-4 ${open ? 'block' : 'hidden'} ${collapsed ? 'w-16' : 'w-64'} ${className}`}
+  >
     {children}
-    {onClose && <button onClick={onClose} className="mt-2 text-sm">Close</button>}
+    {onClose && (
+      <button onClick={onClose} className="mt-2 text-sm">
+        Close
+      </button>
+    )}
   </div>
 );
 // Temporarily using local components instead of ui-consolidated
@@ -126,20 +134,12 @@ const ComponentsShowcase: React.FC = () => {
 
             <div className="space-y-2">
               <Label htmlFor="disabled-input">Disabled Input</Label>
-              <Input
-                id="disabled-input"
-                placeholder="This input is disabled"
-                disabled
-              />
+              <Input id="disabled-input" placeholder="This input is disabled" disabled />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="error-input">Input with Error</Label>
-              <Input
-                id="error-input"
-                placeholder="Enter text here"
-                className="border-red-500"
-              />
+              <Input id="error-input" placeholder="Enter text here" className="border-red-500" />
               <p className="text-sm text-red-500">This field is required</p>
             </div>
 
@@ -298,7 +298,9 @@ const ComponentsShowcase: React.FC = () => {
               className="h-full hidden md:block"
             />
 
-            <div className={`${collapsed ? 'ml-16' : 'ml-64'} p-4 transition-all duration-300 md:block hidden`}>
+            <div
+              className={`${collapsed ? 'ml-16' : 'ml-64'} p-4 transition-all duration-300 md:block hidden`}
+            >
               <p>Content next to sidebar</p>
               <p className="mt-2">The sidebar can be collapsed or expanded.</p>
             </div>
@@ -312,7 +314,10 @@ const ComponentsShowcase: React.FC = () => {
         {/* Layout Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Layout</h2>
-          <p className="mb-4">The Layout component provides a complete page layout with header, sidebar, and content area.</p>
+          <p className="mb-4">
+            The Layout component provides a complete page layout with header, sidebar, and content
+            area.
+          </p>
           <p className="mb-4">Click the button below to see a full page layout example:</p>
           <Button onClick={() => window.open('/layout-example', '_blank')}>
             View Layout Example

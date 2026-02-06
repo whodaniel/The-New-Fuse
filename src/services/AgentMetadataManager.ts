@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { DatabaseService } from '../drizzle/drizzle.service';
 import { MetricsService } from './MetricsService.ts';
 import { LoggingService } from './LoggingService.ts';
 
@@ -19,7 +19,7 @@ export class AgentMetadataManager {
   private readonly logger: LoggingService;
 
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly drizzle: DatabaseService,
     private readonly metrics: MetricsService
   ) {
     this.logger = new LoggingService('AgentMetadataManager');
@@ -27,7 +27,7 @@ export class AgentMetadataManager {
 
   async registerAgent(data: Omit<AgentMetadata, 'id'>): Promise<AgentMetadata> {
     try {
-      const agent = await this.prisma.agentMetadata.create({
+      const agent = await this.drizzle.agentMetadata.create({
         data: {
           name: data.name,
           version: data.version,
@@ -57,7 +57,7 @@ export class AgentMetadataManager {
     error?: string
   ): Promise<AgentMetadata> {
     try {
-      const agent = await this.prisma.agentMetadata.update({
+      const agent = await this.drizzle.agentMetadata.update({
         where: { id },
         data: {
           status,
@@ -81,7 +81,7 @@ export class AgentMetadataManager {
 
   async getAgent(id: string): Promise<AgentMetadata | null> {
     try {
-      return await this.prisma.agentMetadata.findUnique({
+      return await this.drizzle.agentMetadata.findUnique({
         where: { id }
       });
     } catch (error) {
@@ -95,7 +95,7 @@ export class AgentMetadataManager {
     capability?: string
   ): Promise<AgentMetadata[]> {
     try {
-      return await this.prisma.agentMetadata.findMany({
+      return await this.drizzle.agentMetadata.findMany({
         where: {
           ...(status ? { status } : {}),
           ...(capability ? { capabilities: { has: capability } } : {})
@@ -112,7 +112,7 @@ export class AgentMetadataManager {
 
   async deleteAgent(id: string): Promise<void> {
     try {
-      await this.prisma.agentMetadata.delete({
+      await this.drizzle.agentMetadata.delete({
         where: { id }
       });
 
@@ -128,7 +128,7 @@ export class AgentMetadataManager {
 
   async updateAgentConfig(id: string, config: Record<string, unknown>): Promise<AgentMetadata> {
     try {
-      const agent = await this.prisma.agentMetadata.update({
+      const agent = await this.drizzle.agentMetadata.update({
         where: { id },
         data: {
           config,

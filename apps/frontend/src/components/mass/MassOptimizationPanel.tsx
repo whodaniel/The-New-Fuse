@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { FiPlay, FiRefreshCw, FiTrendingUp, FiZap, FiSettings, FiCheck, FiX } from 'react-icons/fi';
+import { MassOptimizationConfig, OptimizationJob } from '@the-new-fuse/types';
+import React, { useEffect, useState } from 'react';
+import { FiCheck, FiPlay, FiRefreshCw, FiSettings, FiTrendingUp, FiX, FiZap } from 'react-icons/fi';
 import { useMassOptimization } from '../../hooks/useMassOptimization';
-import { OptimizationJob, MassOptimizationConfig } from '@the-new-fuse/types';
-import { Button, Modal, ModalContent, ModalHeader, ModalFooter, ModalOverlay } from '../../ui/design-system';
+import { Button } from '../../ui/design-system';
 
 interface MassOptimizationPanelProps {
   agentId?: string;
@@ -15,9 +15,11 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
   agentId,
   agentIds,
   topologyId,
-  onOptimizationComplete
+  onOptimizationComplete,
 }) => {
-  const [optimizationStage, setOptimizationStage] = useState<'idle' | 'stage1' | 'stage2' | 'stage3' | 'complete'>('idle');
+  const [optimizationStage, setOptimizationStage] = useState<
+    'idle' | 'stage1' | 'stage2' | 'stage3' | 'complete'
+  >('idle');
   const [currentJobs, setCurrentJobs] = useState<OptimizationJob[]>([]);
   const [config, setConfig] = useState<MassOptimizationConfig>({
     userId: '',
@@ -27,8 +29,8 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
     evaluationSampleSize: 20,
     llmConfig: {
       model: 'gpt-4',
-      temperature: 0.7
-    }
+      temperature: 0.7,
+    },
   });
 
   const [isConfigOpen, setIsConfigOpen] = useState(false);
@@ -43,7 +45,7 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
     getOptimizationJob,
     getUserOptimizationJobs,
     loading,
-    error
+    error,
   } = useMassOptimization();
 
   useEffect(() => {
@@ -104,9 +106,7 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
       const result = await runFullOptimization(agentIds, config);
 
       // Get initial jobs
-      const jobs = await Promise.all(
-        result.jobIds.map(id => getOptimizationJob(id))
-      );
+      const jobs = await Promise.all(result.jobIds.map((id) => getOptimizationJob(id)));
       setCurrentJobs(jobs);
 
       pollJobCompletion(result.jobIds);
@@ -118,31 +118,31 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
   const pollJobCompletion = async (jobIds: string[]) => {
     const pollInterval = setInterval(async () => {
       try {
-        const jobs = await Promise.all(
-          jobIds.map(id => getOptimizationJob(id))
-        );
+        const jobs = await Promise.all(jobIds.map((id) => getOptimizationJob(id)));
 
         setCurrentJobs(jobs);
 
-        const allCompleted = jobs.every(job =>
-          job.status === 'completed' || job.status === 'failed'
+        const allCompleted = jobs.every(
+          (job) => job.status === 'completed' || job.status === 'failed'
         );
 
         if (allCompleted) {
           clearInterval(pollInterval);
           setOptimizationStage('complete');
 
-          const failedJobs = jobs.filter(job => job.status === 'failed');
+          const failedJobs = jobs.filter((job) => job.status === 'failed');
 
           if (failedJobs.length > 0) {
-            alert(`Some optimizations failed: ${failedJobs.length} out of ${jobs.length} jobs failed`);
+            alert(
+              `Some optimizations failed: ${failedJobs.length} out of ${jobs.length} jobs failed`
+            );
           } else {
             console.log('Optimization Complete!');
             onOptimizationComplete?.(jobs);
           }
         } else {
           // Update stage based on job types
-          const runningJobs = jobs.filter(job => job.status === 'running');
+          const runningJobs = jobs.filter((job) => job.status === 'running');
           if (runningJobs.length > 0) {
             const jobType = runningJobs[0].type;
             if (jobType === 'block_level') setOptimizationStage('stage1');
@@ -162,21 +162,31 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
 
   const getStageProgress = () => {
     switch (optimizationStage) {
-      case 'stage1': return 33;
-      case 'stage2': return 66;
-      case 'stage3': return 90;
-      case 'complete': return 100;
-      default: return 0;
+      case 'stage1':
+        return 33;
+      case 'stage2':
+        return 66;
+      case 'stage3':
+        return 90;
+      case 'complete':
+        return 100;
+      default:
+        return 0;
     }
   };
 
   const getStageDescription = () => {
     switch (optimizationStage) {
-      case 'stage1': return 'Optimizing individual agent prompts...';
-      case 'stage2': return 'Finding optimal workflow topology...';
-      case 'stage3': return 'Fine-tuning workflow-level prompts...';
-      case 'complete': return 'Optimization complete!';
-      default: return 'Ready to optimize';
+      case 'stage1':
+        return 'Optimizing individual agent prompts...';
+      case 'stage2':
+        return 'Finding optimal workflow topology...';
+      case 'stage3':
+        return 'Fine-tuning workflow-level prompts...';
+      case 'complete':
+        return 'Optimization complete!';
+      default:
+        return 'Ready to optimize';
     }
   };
 
@@ -206,12 +216,8 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
         {/* Progress Section */}
         <div className="w-full">
           <div className="flex justify-between mb-2">
-            <span className="text-sm text-gray-600">
-              {getStageDescription()}
-            </span>
-            <span className="text-sm font-medium">
-              {getStageProgress()}%
-            </span>
+            <span className="text-sm text-gray-600">{getStageDescription()}</span>
+            <span className="text-sm font-medium">{getStageProgress()}%</span>
           </div>
           <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
             <div
@@ -226,7 +232,7 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
           {[
             { stage: 'stage1', label: 'Stage 1: Prompts', icon: FiRefreshCw },
             { stage: 'stage2', label: 'Stage 2: Topology', icon: FiTrendingUp },
-            { stage: 'stage3', label: 'Stage 3: Workflow', icon: FiZap }
+            { stage: 'stage3', label: 'Stage 3: Workflow', icon: FiZap },
           ].map(({ stage, label, icon: IconComp }) => {
             const isActive = optimizationStage === stage;
             const stageIndex = ['stage1', 'stage2', 'stage3'].indexOf(stage);
@@ -252,9 +258,7 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
                     <IconComp size={16} />
                   )}
                 </div>
-                <span className="text-xs text-center text-gray-600">
-                  {label.split(':')[0]}
-                </span>
+                <span className="text-xs text-center text-gray-600">{label.split(':')[0]}</span>
 
                 {/* Tooltip */}
                 <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
@@ -273,7 +277,13 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
               onClick={handleOptimizeAgent}
               disabled={isOptimizing || !config.validationDatasetId}
             >
-              {isOptimizing ? 'Optimizing...' : <><FiPlay /> Optimize Agent Prompts (Stage 1)</>}
+              {isOptimizing ? (
+                'Optimizing...'
+              ) : (
+                <>
+                  <FiPlay /> Optimize Agent Prompts (Stage 1)
+                </>
+              )}
             </Button>
           )}
 
@@ -283,7 +293,13 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
               onClick={handleOptimizeTopology}
               disabled={isOptimizing || !config.validationDatasetId}
             >
-              {isOptimizing ? 'Optimizing...' : <><FiTrendingUp /> Optimize Topology (Stage 2)</>}
+              {isOptimizing ? (
+                'Optimizing...'
+              ) : (
+                <>
+                  <FiTrendingUp /> Optimize Topology (Stage 2)
+                </>
+              )}
             </Button>
           )}
 
@@ -293,7 +309,13 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
               onClick={handleOptimizeWorkflow}
               disabled={isOptimizing || !config.validationDatasetId}
             >
-              {isOptimizing ? 'Optimizing...' : <><FiZap /> Optimize Workflow (Stage 3)</>}
+              {isOptimizing ? (
+                'Optimizing...'
+              ) : (
+                <>
+                  <FiZap /> Optimize Workflow (Stage 3)
+                </>
+              )}
             </Button>
           )}
 
@@ -303,7 +325,13 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
               onClick={handleFullOptimization}
               disabled={isOptimizing || !config.validationDatasetId}
             >
-              {isOptimizing ? 'Running Full Optimization...' : <><FiZap /> Run Full MASS Pipeline</>}
+              {isOptimizing ? (
+                'Running Full Optimization...'
+              ) : (
+                <>
+                  <FiZap /> Run Full MASS Pipeline
+                </>
+              )}
             </Button>
           )}
         </div>
@@ -314,22 +342,26 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
             <p className="text-sm font-medium mb-2">Current Jobs</p>
             <div className="flex flex-col gap-2">
               {currentJobs.map((job) => (
-                <div key={job.id} className="w-full p-3 bg-gray-50 rounded-md border border-gray-100">
+                <div
+                  key={job.id}
+                  className="w-full p-3 bg-gray-50 rounded-md border border-gray-100"
+                >
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-sm font-medium">
                         {job.type.replace('_', ' ').toUpperCase()}
                       </p>
-                      <p className="text-xs text-gray-600">
-                        ID: {job.id.slice(0, 8)}...
-                      </p>
+                      <p className="text-xs text-gray-600">ID: {job.id.slice(0, 8)}...</p>
                     </div>
                     <span
                       className={`px-2 py-0.5 rounded text-xs font-medium border ${
-                        job.status === 'completed' ? 'bg-green-100 text-green-700 border-green-200' :
-                        job.status === 'failed' ? 'bg-red-100 text-red-700 border-red-200' :
-                        job.status === 'running' ? 'bg-orange-100 text-orange-700 border-orange-200' :
-                        'bg-gray-100 text-gray-700 border-gray-200'
+                        job.status === 'completed'
+                          ? 'bg-green-100 text-green-700 border-green-200'
+                          : job.status === 'failed'
+                            ? 'bg-red-100 text-red-700 border-red-200'
+                            : job.status === 'running'
+                              ? 'bg-orange-100 text-orange-700 border-orange-200'
+                              : 'bg-gray-100 text-gray-700 border-gray-200'
                       }`}
                     >
                       {job.status}
@@ -345,7 +377,8 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
         {!config.validationDatasetId && (
           <div className="w-full p-3 bg-yellow-50 border border-yellow-200 rounded-md">
             <p className="text-sm text-yellow-800 flex items-center gap-2">
-              <span className="text-lg">⚠️</span> Please configure a validation dataset to enable MASS optimization
+              <span className="text-lg">⚠️</span> Please configure a validation dataset to enable
+              MASS optimization
             </p>
           </div>
         )}
@@ -370,7 +403,9 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
                   value={config.validationDatasetId}
                   onChange={(e) => setConfig({ ...config, validationDatasetId: e.target.value })}
                 >
-                  <option value="" disabled>Select validation dataset...</option>
+                  <option value="" disabled>
+                    Select validation dataset...
+                  </option>
                   <option value="dataset-1">Sample Math Problems</option>
                   <option value="dataset-2">Q&A Test Set</option>
                   <option value="dataset-3">Custom Dataset</option>
@@ -384,7 +419,9 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
                     type="number"
                     className="input w-full"
                     value={config.maxCandidates}
-                    onChange={(e) => setConfig({ ...config, maxCandidates: parseInt(e.target.value) || 10 })}
+                    onChange={(e) =>
+                      setConfig({ ...config, maxCandidates: parseInt(e.target.value) || 10 })
+                    }
                     min={5}
                     max={50}
                   />
@@ -396,7 +433,9 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
                     type="number"
                     className="input w-full"
                     value={config.optimizationRounds}
-                    onChange={(e) => setConfig({ ...config, optimizationRounds: parseInt(e.target.value) || 3 })}
+                    onChange={(e) =>
+                      setConfig({ ...config, optimizationRounds: parseInt(e.target.value) || 3 })
+                    }
                     min={1}
                     max={10}
                   />
@@ -409,10 +448,12 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
                   <select
                     className="input w-full"
                     value={config.llmConfig?.model || 'gpt-4'}
-                    onChange={(e) => setConfig({
-                      ...config,
-                      llmConfig: { ...config.llmConfig, model: e.target.value }
-                    })}
+                    onChange={(e) =>
+                      setConfig({
+                        ...config,
+                        llmConfig: { ...config.llmConfig, model: e.target.value },
+                      })
+                    }
                   >
                     <option value="gpt-4">GPT-4</option>
                     <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
@@ -426,7 +467,9 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
                     type="number"
                     className="input w-full"
                     value={config.evaluationSampleSize}
-                    onChange={(e) => setConfig({ ...config, evaluationSampleSize: parseInt(e.target.value) || 20 })}
+                    onChange={(e) =>
+                      setConfig({ ...config, evaluationSampleSize: parseInt(e.target.value) || 20 })
+                    }
                     min={5}
                     max={100}
                   />
@@ -434,9 +477,7 @@ export const MassOptimizationPanel: React.FC<MassOptimizationPanelProps> = ({
               </div>
 
               <div className="flex justify-end pt-4">
-                <Button onClick={onConfigClose}>
-                  Save Configuration
-                </Button>
+                <Button onClick={onConfigClose}>Save Configuration</Button>
               </div>
             </div>
           </div>

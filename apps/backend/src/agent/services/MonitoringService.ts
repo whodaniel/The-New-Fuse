@@ -6,7 +6,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 export class MonitoringService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2
   ) {}
 
   /**
@@ -20,7 +20,12 @@ export class MonitoringService {
    * Record a metric
    */
   recordMetric(metricName: string, value: number, tags: Record<string, string> = {}): void {
-    this.eventEmitter.emit('system.metric', { name: metricName, value, tags, timestamp: new Date() });
+    this.eventEmitter.emit('system.metric', {
+      name: metricName,
+      value,
+      tags,
+      timestamp: new Date(),
+    });
   }
 
   /**

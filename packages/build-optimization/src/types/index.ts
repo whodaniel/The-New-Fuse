@@ -139,7 +139,7 @@ export interface PackageDependency {
 /**
  * Build event types
  */
-export type BuildEvent = 
+export type BuildEvent =
   | 'build-started'
   | 'build-completed'
   | 'build-failed'

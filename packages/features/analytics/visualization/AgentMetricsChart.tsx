@@ -1,6 +1,5 @@
-import React from 'react';
-import { ChartComponent } from 'packages/features/dashboard/components/visualization/ChartComponent';
 import { formatDateTime } from '@/utils/date';
+import { ChartComponent } from 'packages/features/dashboard/components/visualization/ChartComponent';
 
 interface AgentMetric {
   timestamp: Date;
@@ -17,7 +16,7 @@ interface AgentMetricsChartProps {
 }
 
 export function AgentMetricsChart({ metrics, _timeRange }: AgentMetricsChartProps) {
-  const formattedData = metrics.map(m => ({
+  const formattedData = metrics.map((m) => ({
     ...m,
     timestamp: formatDateTime(m.timestamp),
     successRate: m.successRate * 100,

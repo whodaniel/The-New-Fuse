@@ -1,7 +1,7 @@
 /**
  * TNF Unified Message Protocol
  * Based on Gemini's architectural recommendations
- * 
+ *
  * This protocol works across:
  * - WebSocket Relay
  * - Redis Pub/Sub
@@ -17,12 +17,12 @@ import { z } from 'zod';
  * Message Types
  */
 export const MessageType = z.enum([
-  'command',      // Direct action request
-  'event',        // Fire-and-forget notification
-  'task',         // Requires ACK/result
-  'state-sync',   // State synchronization
-  'query',        // Information request
-  'response',     // Response to query/task
+  'command', // Direct action request
+  'event', // Fire-and-forget notification
+  'task', // Requires ACK/result
+  'state-sync', // State synchronization
+  'query', // Information request
+  'response', // Response to query/task
 ]);
 
 export type MessageType = z.infer<typeof MessageType>;
@@ -62,20 +62,20 @@ export const TNFEnvelope = z.object({
   version: z.string().default('1.0').describe('Protocol version'),
   traceId: z.string().uuid().describe('Correlation ID for debugging/tracing'),
   timestamp: z.string().datetime().describe('ISO-8601 timestamp'),
-  
+
   // Message classification
   type: MessageType,
-  
+
   // Routing
   from: AgentIdentity,
   to: AgentIdentity.or(z.object({ broadcast: z.boolean() })),
-  
+
   // Content
   payload: z.record(z.string(), z.unknown()).describe('Message-specific data'),
-  
+
   // Context
   context: MessageContext.optional(),
-  
+
   // Metadata
   metadata: z.record(z.string(), z.unknown()).optional().describe('Additional metadata'),
 });
@@ -119,11 +119,13 @@ export type StateSyncPayload = z.infer<typeof StateSyncPayload>;
 export const ResponsePayload = z.object({
   success: z.boolean(),
   result: z.unknown().optional(),
-  error: z.object({
-    code: z.string(),
-    message: z.string(),
-    details: z.unknown().optional(),
-  }).optional(),
+  error: z
+    .object({
+      code: z.string(),
+      message: z.string(),
+      details: z.unknown().optional(),
+    })
+    .optional(),
 });
 
 export type ResponsePayload = z.infer<typeof ResponsePayload>;

@@ -1,12 +1,16 @@
 # TNF VS Code Agent Integration Guide
 
-This guide provides detailed instructions for integrating VS Code-based AI agents with the TNF Agent Communication Relay.
+This guide provides detailed instructions for integrating VS Code-based AI
+agents with the TNF Agent Communication Relay.
 
 ## Overview
 
-VS Code-based agents can communicate with other agents in The New Fuse ecosystem by:
+VS Code-based agents can communicate with other agents in The New Fuse ecosystem
+by:
+
 1. Monitoring the `/tmp/thefuse/vscode/` directory for incoming messages
-2. Writing messages to the appropriate environment directories for outgoing messages
+2. Writing messages to the appropriate environment directories for outgoing
+   messages
 
 ## Setup
 
@@ -19,6 +23,7 @@ VS Code-based agents can communicate with other agents in The New Fuse ecosystem
 ### Directory Structure
 
 The relay uses these directories for message exchange:
+
 ```
 /tmp/thefuse/
 ├── vscode/     # Messages for VS Code agents
@@ -66,38 +71,45 @@ export function setupMessageDirectory() {
 export function setupMessageWatcher(context: vscode.ExtensionContext) {
   // Ensure directory exists
   setupMessageDirectory();
-  
+
   // Create status bar item
-  const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-  statusBarItem.text = "$(sync) TNF Relay";
-  statusBarItem.tooltip = "TNF Agent Communication Relay is active";
+  const statusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Right,
+    100
+  );
+  statusBarItem.text = '$(sync) TNF Relay';
+  statusBarItem.tooltip = 'TNF Agent Communication Relay is active';
   statusBarItem.show();
   context.subscriptions.push(statusBarItem);
-  
+
   // Set up file system watcher
   const watcher = fs.watch(VSCODE_MESSAGE_DIR, (eventType, filename) => {
-    if (eventType === 'rename' && filename.startsWith('message_') && filename.endsWith('.json')) {
+    if (
+      eventType === 'rename' &&
+      filename.startsWith('message_') &&
+      filename.endsWith('.json')
+    ) {
       const filePath = path.join(VSCODE_MESSAGE_DIR, filename);
-      
+
       // Read the message file
       fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) {
           console.error(`Error reading message file: ${err}`);
           return;
         }
-        
+
         try {
           // Parse the message
           const message: TNFMessage = JSON.parse(data);
-          
+
           // Process the message
           processMessage(message);
-          
+
           // Show notification
           vscode.window.showInformationMessage(
             `Received ${message.content.action} request from ${message.source}`
           );
-          
+
           // Optionally remove the file after processing
           fs.unlink(filePath, (err) => {
             if (err) console.error(`Error removing message file: ${err}`);
@@ -108,13 +120,13 @@ export function setupMessageWatcher(context: vscode.ExtensionContext) {
       });
     }
   });
-  
+
   // Clean up watcher when extension is deactivated
   context.subscriptions.push({
     dispose: () => {
       watcher.close();
       statusBarItem.dispose();
-    }
+    },
   });
 }
 
@@ -123,7 +135,7 @@ function processMessage(message: TNFMessage) {
   // Handle different message types
   if (message.type === 'COLLABORATION_REQUEST') {
     const content = message.content;
-    
+
     // Handle different action types
     switch (content.action) {
       case 'code_review':
@@ -143,10 +155,11 @@ function processMessage(message: TNFMessage) {
 function performCodeReview(context: any) {
   if (context && context.file) {
     // Open the file
-    vscode.workspace.openTextDocument(context.file)
-      .then(document => {
+    vscode.workspace
+      .openTextDocument(context.file)
+      .then((document) => {
         vscode.window.showTextDocument(document);
-        
+
         // Show focus areas if provided
         if (context.focus_areas && Array.isArray(context.focus_areas)) {
           vscode.window.showInformationMessage(
@@ -154,7 +167,7 @@ function performCodeReview(context: any) {
           );
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(`Error opening file for review: ${err}`);
       });
   }
@@ -164,10 +177,11 @@ function performCodeReview(context: any) {
 function performRefactoring(context: any) {
   if (context && context.file) {
     // Open the file
-    vscode.workspace.openTextDocument(context.file)
-      .then(document => {
+    vscode.workspace
+      .openTextDocument(context.file)
+      .then((document) => {
         vscode.window.showTextDocument(document);
-        
+
         // Show objective if provided
         if (context.objective) {
           vscode.window.showInformationMessage(
@@ -175,7 +189,7 @@ function performRefactoring(context: any) {
           );
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(`Error opening file for refactoring: ${err}`);
       });
   }
@@ -197,7 +211,7 @@ export function sendMessageToRelay(
   let targetEnv = 'vscode';
   if (targetId.startsWith('chrome_')) targetEnv = 'chrome';
   else if (targetId.startsWith('terminal_')) targetEnv = 'terminal';
-  
+
   // Create message
   const message: TNFMessage = {
     type: 'COLLABORATION_REQUEST',
@@ -205,21 +219,21 @@ export function sendMessageToRelay(
     target: targetId,
     content: {
       action: actionType,
-      ...messageContent
+      ...messageContent,
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
-  
+
   // Ensure target directory exists
   const targetDir = path.join('/tmp/thefuse', targetEnv);
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir, { recursive: true });
   }
-  
+
   // Write message to file
   const messageFilename = `message_${Date.now()}.json`;
   const filePath = path.join(targetDir, messageFilename);
-  
+
   fs.writeFileSync(filePath, JSON.stringify(message, null, 2));
   return `Message sent to ${targetId} via ${targetEnv}`;
 }
@@ -237,64 +251,78 @@ export function registerCommands(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('tnf.sendMessage', async () => {
       // Get target agent
       const targetId = await vscode.window.showQuickPick(
-        ['chrome_agent_1', 'terminal_agent_1'], 
+        ['chrome_agent_1', 'terminal_agent_1'],
         { placeHolder: 'Select target agent' }
       );
       if (!targetId) return;
-      
+
       // Get message type
       const actionType = await vscode.window.showQuickPick(
-        ['code_review', 'refactoring', 'documentation', 'custom'], 
+        ['code_review', 'refactoring', 'documentation', 'custom'],
         { placeHolder: 'Select message type' }
       );
       if (!actionType) return;
-      
+
       // Get message content
       let defaultContent = '';
       switch (actionType) {
         case 'code_review':
-          defaultContent = JSON.stringify({
-            task_type: 'code_review',
-            context: {
-              file: vscode.window.activeTextEditor?.document.uri.fsPath || '',
-              focus_areas: ['performance', 'security']
+          defaultContent = JSON.stringify(
+            {
+              task_type: 'code_review',
+              context: {
+                file: vscode.window.activeTextEditor?.document.uri.fsPath || '',
+                focus_areas: ['performance', 'security'],
+              },
+              priority: 'medium',
             },
-            priority: 'medium'
-          }, null, 2);
+            null,
+            2
+          );
           break;
         case 'refactoring':
-          defaultContent = JSON.stringify({
-            task_type: 'refactor',
-            context: {
-              file: vscode.window.activeTextEditor?.document.uri.fsPath || '',
-              objective: 'Improve performance and readability'
+          defaultContent = JSON.stringify(
+            {
+              task_type: 'refactor',
+              context: {
+                file: vscode.window.activeTextEditor?.document.uri.fsPath || '',
+                objective: 'Improve performance and readability',
+              },
+              priority: 'high',
             },
-            priority: 'high'
-          }, null, 2);
+            null,
+            2
+          );
           break;
         default:
-          defaultContent = JSON.stringify({
-            task_type: actionType,
-            priority: 'medium'
-          }, null, 2);
+          defaultContent = JSON.stringify(
+            {
+              task_type: actionType,
+              priority: 'medium',
+            },
+            null,
+            2
+          );
       }
-      
+
       const messageContent = await vscode.window.showInputBox({
         prompt: 'Enter message content (JSON format)',
-        value: defaultContent
+        value: defaultContent,
       });
       if (!messageContent) return;
-      
+
       try {
         const content = JSON.parse(messageContent);
         const result = sendMessageToRelay(targetId, actionType, content);
         vscode.window.showInformationMessage(result);
       } catch (error) {
-        vscode.window.showErrorMessage(`Error sending message: ${error instanceof Error ? error.message : String(error)}`);
+        vscode.window.showErrorMessage(
+          `Error sending message: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     })
   );
-  
+
   // Command to view message log
   context.subscriptions.push(
     vscode.commands.registerCommand('tnf.viewMessageLog', () => {
@@ -305,14 +333,14 @@ export function registerCommands(context: vscode.ExtensionContext) {
         vscode.ViewColumn.One,
         {}
       );
-      
+
       // Get message files
       const messageFiles = [
         ...getMessageFiles('/tmp/thefuse/vscode'),
         ...getMessageFiles('/tmp/thefuse/chrome'),
-        ...getMessageFiles('/tmp/thefuse/terminal')
+        ...getMessageFiles('/tmp/thefuse/terminal'),
       ];
-      
+
       // Generate HTML content
       panel.webview.html = generateMessageLogHtml(messageFiles);
     })
@@ -320,12 +348,13 @@ export function registerCommands(context: vscode.ExtensionContext) {
 }
 
 // Helper function to get message files
-function getMessageFiles(directory: string): {path: string, content: any}[] {
+function getMessageFiles(directory: string): { path: string; content: any }[] {
   if (!fs.existsSync(directory)) return [];
-  
-  return fs.readdirSync(directory)
-    .filter(file => file.startsWith('message_') && file.endsWith('.json'))
-    .map(file => {
+
+  return fs
+    .readdirSync(directory)
+    .filter((file) => file.startsWith('message_') && file.endsWith('.json'))
+    .map((file) => {
       const filePath = path.join(directory, file);
       try {
         const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -337,7 +366,9 @@ function getMessageFiles(directory: string): {path: string, content: any}[] {
 }
 
 // Generate HTML for message log
-function generateMessageLogHtml(messageFiles: {path: string, content: any}[]): string {
+function generateMessageLogHtml(
+  messageFiles: { path: string; content: any }[]
+): string {
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -355,12 +386,16 @@ function generateMessageLogHtml(messageFiles: {path: string, content: any}[]): s
     <body>
       <h1>TNF Message Log</h1>
       ${messageFiles.length === 0 ? '<p>No messages found</p>' : ''}
-      ${messageFiles.map(file => `
+      ${messageFiles
+        .map(
+          (file) => `
         <div class="message">
           <div class="message-header">File: ${path.basename(file.path)}</div>
           <div class="message-content">${JSON.stringify(file.content, null, 2)}</div>
         </div>
-      `).join('')}
+      `
+        )
+        .join('')}
     </body>
     </html>
   `;
@@ -375,15 +410,17 @@ Update your extension's activation function:
 // Extension activation
 export function activate(context: vscode.ExtensionContext) {
   console.log('TNF Agent Communication Relay extension is now active');
-  
+
   // Setup message watcher
   setupMessageWatcher(context);
-  
+
   // Register commands
   registerCommands(context);
-  
+
   // Show activation message
-  vscode.window.showInformationMessage('TNF Agent Communication Relay is now active');
+  vscode.window.showInformationMessage(
+    'TNF Agent Communication Relay is now active'
+  );
 }
 
 // Extension deactivation
@@ -436,6 +473,7 @@ Add the commands to your package.json:
 ### Common Issues
 
 1. **Permission Denied**:
+
    ```bash
    chmod -R 777 /tmp/thefuse
    ```
@@ -443,7 +481,8 @@ Add the commands to your package.json:
 2. **Messages Not Being Detected**:
    - Ensure the relay application is running
    - Check that the directories exist
-   - Verify file naming conventions (should start with "message_" and end with ".json")
+   - Verify file naming conventions (should start with "message\_" and end with
+     ".json")
 
 3. **JSON Parsing Errors**:
    - Validate your JSON format before sending

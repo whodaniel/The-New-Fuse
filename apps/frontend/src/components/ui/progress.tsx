@@ -16,7 +16,7 @@ export const Progress: React.FC<ProgressProps> = ({
   color = 'blue',
 }) => {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
-  
+
   const sizeClasses = {
     sm: 'h-2',
     md: 'h-3',
@@ -32,7 +32,9 @@ export const Progress: React.FC<ProgressProps> = ({
   };
 
   return (
-    <div className={`w-full bg-gray-200 rounded-full overflow-hidden ${sizeClasses[size]} ${className}`}>
+    <div
+      className={`w-full bg-gray-200 rounded-full overflow-hidden ${sizeClasses[size]} ${className}`}
+    >
       <div
         className={`${colorClasses[color]} ${sizeClasses[size]} rounded-full transition-all duration-300 ease-out`}
         style={{ width: `${percentage}%` }}

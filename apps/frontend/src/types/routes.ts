@@ -6,7 +6,7 @@ import { RouteObject } from 'react-router-dom';
 // Route path types
 export type CoreRoute = '/' | '/home' | '/dashboard';
 
-export type AIRoute = 
+export type AIRoute =
   | '/multi-agent-chat'
   | '/ai-portal'
   | '/chat'
@@ -14,14 +14,14 @@ export type AIRoute =
   | '/agents/new'
   | '/agents/:id';
 
-export type WorkspaceRoute = 
+export type WorkspaceRoute =
   | '/workspace/overview'
   | '/workspace/analytics'
   | '/workspace/members'
   | '/workspace/settings'
   | '/workspace-chat';
 
-export type TaskRoute = 
+export type TaskRoute =
   | '/tasks'
   | '/tasks/new'
   | '/tasks/:id'
@@ -35,7 +35,7 @@ export type TaskRoute =
   | '/suggestions/new'
   | '/suggestions/:id';
 
-export type AdminRoute = 
+export type AdminRoute =
   | '/admin'
   | '/admin/users'
   | '/admin/workspaces'
@@ -46,14 +46,14 @@ export type AdminRoute =
   | '/admin/onboarding'
   | '/admin/experimental-features';
 
-export type DashboardRoute = 
+export type DashboardRoute =
   | '/dashboard/agents'
   | '/dashboard/agents/new'
   | '/dashboard/agents/:id'
   | '/dashboard/analytics'
   | '/dashboard/settings';
 
-export type SettingsRoute = 
+export type SettingsRoute =
   | '/settings'
   | '/settings/general'
   | '/settings/appearance'
@@ -63,7 +63,7 @@ export type SettingsRoute =
   | '/general-settings'
   | '/general-settings/embedding';
 
-export type AuthRoute = 
+export type AuthRoute =
   | '/login'
   | '/register'
   | '/auth/login'
@@ -72,20 +72,18 @@ export type AuthRoute =
   | '/auth/google-callback'
   | '/auth/oauth-callback';
 
-export type LandingRoute = 
+export type LandingRoute =
   | '/landing'
   | '/landing-page'
   | '/simple-landing'
   | '/onboarding'
   | '/preview/onboarding';
 
-export type LegalRoute = 
-  | '/legal/privacy'
-  | '/legal/terms';
+export type LegalRoute = '/legal/privacy' | '/legal/terms';
 
 export type AnalyticsRoute = '/analytics';
 
-export type DemoRoute = 
+export type DemoRoute =
   | '/components'
   | '/timeline-demo'
   | '/graph-demo'
@@ -94,16 +92,12 @@ export type DemoRoute =
   | '/test'
   | '/components-nav';
 
-export type DevRoute = 
-  | '/debug'
-  | '/build-info'
-  | '/debug-routing'
-  | '/all-pages';
+export type DevRoute = '/debug' | '/build-info' | '/debug-routing' | '/all-pages';
 
 export type ErrorRoute = '/404' | '*';
 
 // Union type of all possible routes
-export type AppRouteType = 
+export type AppRouteType =
   | CoreRoute
   | AIRoute
   | WorkspaceRoute
@@ -131,7 +125,7 @@ export interface AppRoute extends RouteObject {
 }
 
 // Route category types
-export type RouteCategory = 
+export type RouteCategory =
   | 'core'
   | 'ai'
   | 'workspace'
@@ -261,17 +255,48 @@ export function isValidRoute(path: string): path is AppRouteType {
 
 export function getRouteCategory(route: AppRouteType): RouteCategory {
   if (route === '/' || route === '/home' || route === '/dashboard') return 'core';
-  if (route.startsWith('/multi-agent-chat') || route.startsWith('/ai-portal') || route.startsWith('/chat') || route.startsWith('/agents')) return 'ai';
+  if (
+    route.startsWith('/multi-agent-chat') ||
+    route.startsWith('/ai-portal') ||
+    route.startsWith('/chat') ||
+    route.startsWith('/agents')
+  )
+    return 'ai';
   if (route.startsWith('/workspace')) return 'workspace';
-  if (route.startsWith('/tasks') || route.startsWith('/workflows') || route.startsWith('/suggestions')) return 'tasks';
+  if (
+    route.startsWith('/tasks') ||
+    route.startsWith('/workflows') ||
+    route.startsWith('/suggestions')
+  )
+    return 'tasks';
   if (route.startsWith('/admin')) return 'admin';
   if (route.startsWith('/dashboard/')) return 'dashboard';
   if (route.startsWith('/settings') || route.startsWith('/general-settings')) return 'settings';
-  if (route.startsWith('/login') || route.startsWith('/register') || route.startsWith('/auth')) return 'auth';
-  if (route.startsWith('/landing') || route.startsWith('/onboarding') || route.startsWith('/preview') || route.startsWith('/simple-landing')) return 'landing';
+  if (route.startsWith('/login') || route.startsWith('/register') || route.startsWith('/auth'))
+    return 'auth';
+  if (
+    route.startsWith('/landing') ||
+    route.startsWith('/onboarding') ||
+    route.startsWith('/preview') ||
+    route.startsWith('/simple-landing')
+  )
+    return 'landing';
   if (route.startsWith('/legal')) return 'legal';
   if (route === '/analytics') return 'analytics';
-  if (route.startsWith('/components') || route.startsWith('/timeline-demo') || route.startsWith('/graph-demo') || route.startsWith('/frontend-showcase') || route.startsWith('/layout-example') || route === '/test') return 'demos';
-  if (route.startsWith('/debug') || route.startsWith('/build-info') || route.startsWith('/all-pages')) return 'dev';
+  if (
+    route.startsWith('/components') ||
+    route.startsWith('/timeline-demo') ||
+    route.startsWith('/graph-demo') ||
+    route.startsWith('/frontend-showcase') ||
+    route.startsWith('/layout-example') ||
+    route === '/test'
+  )
+    return 'demos';
+  if (
+    route.startsWith('/debug') ||
+    route.startsWith('/build-info') ||
+    route.startsWith('/all-pages')
+  )
+    return 'dev';
   return 'error';
 }

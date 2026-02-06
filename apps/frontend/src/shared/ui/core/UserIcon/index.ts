@@ -1,2 +1,2 @@
-export * from './UserIcon';
 export * from './types';
+export * from './UserIcon';

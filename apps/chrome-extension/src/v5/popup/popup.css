@@ -921,7 +921,8 @@ body {
 }
 
 @keyframes pulse-border {
-  0%, 100% {
+  0%,
+  100% {
     border-color: rgba(255, 179, 0, 0.3);
   }
   50% {
@@ -957,7 +958,6 @@ body {
   font-size: 12px;
 }
 
-
 /* Header Actions */
 .header-actions {
   display: flex;
@@ -977,4 +977,3 @@ body {
   box-shadow: 0 0 15px rgba(0, 217, 255, 0.3) !important;
   transform: scale(1.05) !important;
 }
-

@@ -1,7 +1,7 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 const TermsOfService = () => {
-    return (<div className="container mx-auto py-8 px-4">
+  return (
+    <div className="container mx-auto py-8 px-4">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Terms of Service</CardTitle>
@@ -10,18 +10,18 @@ const TermsOfService = () => {
         <CardContent className="prose dark:prose-invert max-w-none">
           <h2>1. Acceptance of Terms</h2>
           <p>
-            By accessing and using The New Fuse website (https://thenewfuse.com), you accept and agree
-            to be bound by these Terms of Service. If you do not agree to these terms, do not use our
-            service.
+            By accessing and using The New Fuse website (https://thenewfuse.com), you accept and
+            agree to be bound by these Terms of Service. If you do not agree to these terms, do not
+            use our service.
           </p>
 
           <h2>2. Disclaimer of Warranties</h2>
           <p>
             THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT ANY WARRANTIES OF ANY KIND,
-            EXPRESS OR IMPLIED. The New Fuse AND ITS OWNERS, OFFICERS, DIRECTORS, EMPLOYEES, AND AGENTS
-            MAKE NO WARRANTIES OR REPRESENTATIONS ABOUT THE ACCURACY, RELIABILITY, COMPLETENESS, OR
-            TIMELINESS OF THE CONTENT, SERVICES, SOFTWARE, TEXT, GRAPHICS, LINKS, OR COMMUNICATIONS
-            PROVIDED ON OR THROUGH THE USE OF THE SERVICE.
+            EXPRESS OR IMPLIED. The New Fuse AND ITS OWNERS, OFFICERS, DIRECTORS, EMPLOYEES, AND
+            AGENTS MAKE NO WARRANTIES OR REPRESENTATIONS ABOUT THE ACCURACY, RELIABILITY,
+            COMPLETENESS, OR TIMELINESS OF THE CONTENT, SERVICES, SOFTWARE, TEXT, GRAPHICS, LINKS,
+            OR COMMUNICATIONS PROVIDED ON OR THROUGH THE USE OF THE SERVICE.
           </p>
 
           <h2>3. Limitation of Liability</h2>
@@ -69,8 +69,8 @@ const TermsOfService = () => {
           <h2>8. Termination</h2>
           <p>
             We may terminate or suspend your account and bar access to the service immediately,
-            without prior notice or liability, under our sole discretion, for any reason
-            whatsoever, including but not limited to a breach of the Terms.
+            without prior notice or liability, under our sole discretion, for any reason whatsoever,
+            including but not limited to a breach of the Terms.
           </p>
 
           <h2>9. Governing Law</h2>
@@ -101,6 +101,7 @@ const TermsOfService = () => {
           </p>
         </CardContent>
       </Card>
-    </div>);
+    </div>
+  );
 };
 export default TermsOfService;

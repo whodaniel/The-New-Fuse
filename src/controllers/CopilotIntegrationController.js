@@ -29,7 +29,7 @@ const tenant_guard_1 = require("@the-new-fuse/core/guards/tenant.guard");
 const roles_guard_1 = require("../auth/guards/roles.guard");
 const roles_decorator_1 = require("@the-new-fuse/core/decorators/roles.decorator");
 const tenant_decorator_1 = require("../decorators/tenant.decorator");
-const client_1 = require("@prisma/client");
+const client_1 = require("@drizzle/client");
 // DTOs for API documentation and validation
 class CreateChatParticipantDto {
     id;

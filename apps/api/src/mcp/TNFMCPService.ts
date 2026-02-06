@@ -1,9 +1,9 @@
-import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
-import { TheNewFuseMCPServer } from './TheNewFuseMCPServer';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { AgentService } from '../services/agent.service';
 import { ChatService } from '../services/chat.service';
-import { WorkflowService } from '../services/workflow.service';
 import { ClaudeDevAutomationService } from '../services/ClaudeDevAutomationService';
+import { WorkflowService } from '../services/workflow.service';
+import { TheNewFuseMCPServer } from './TheNewFuseMCPServer';
 
 @Injectable()
 export class TNFMCPService implements OnModuleInit {
@@ -14,16 +14,16 @@ export class TNFMCPService implements OnModuleInit {
     private readonly agentService: AgentService,
     private readonly chatService: ChatService,
     private readonly workflowService: WorkflowService,
-    private readonly claudeDevService: ClaudeDevAutomationService,
+    private readonly claudeDevService: ClaudeDevAutomationService
   ) {}
 
   async onModuleInit() {
     this.logger.log('Initializing TNF MCP Service...');
-    
+
     try {
       // Create MCP server instance
       this.mcpServer = new TheNewFuseMCPServer(false); // stdio mode by default
-      
+
       // Inject actual services
       this.mcpServer.setServices({
         agent: this.agentService,

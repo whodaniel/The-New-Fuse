@@ -1,6 +1,6 @@
-import React, { FC } from "react";
-import { useYjs } from '@/hooks/useYjs';
 import { Editor } from '@/components/ui/editor';
+import { useYjs } from '@/hooks/useYjs';
+import { FC } from 'react';
 
 export const CollaborativeEditor: FC<{
   content: unknown;

@@ -441,7 +441,7 @@ class MockWebSocket {
 
 #### Database Stubs
 
-- **Prisma Client**: Properly mocked for unit tests
+- **Drizzle Client**: Properly mocked for unit tests
 - **Redis Client**: Good mock implementation
 - **Missing**: Some edge cases not covered
 

@@ -4,9 +4,12 @@ module.exports = {
   roots: ['<rootDir>/src', '<rootDir>/../../packages/mcp-core/src'],
   testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
   transform: {
-    '^.+\\.[tj]sx?$': ['ts-jest', {
-      tsconfig: 'tsconfig.test.json'
-    }],
+    '^.+\\.[tj]sx?$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.test.json',
+      },
+    ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   moduleNameMapper: {

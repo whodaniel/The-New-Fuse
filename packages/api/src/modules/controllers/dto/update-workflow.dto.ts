@@ -1,6 +1,6 @@
-import { IsString, IsOptional, IsArray, IsEnum, ValidateNested, IsObject } from 'class-validator';
-import { Type } from 'class-transformer';
 import type { UpdateWorkflowDefinitionDto } from '@the-new-fuse/types';
+import { Type } from 'class-transformer';
+import { IsArray, IsEnum, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 export class UpdateWorkflowDto implements UpdateWorkflowDefinitionDto {
   @IsOptional()

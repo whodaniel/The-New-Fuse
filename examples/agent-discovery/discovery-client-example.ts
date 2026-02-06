@@ -6,9 +6,9 @@
 
 import axios from 'axios';
 import {
+  AgentStatus,
   DiscoveryQuery,
   DiscoveryQueryResult,
-  AgentStatus,
 } from '../../packages/api/src/types/agent-discovery.types';
 
 const API_BASE_URL = 'http://localhost:3000/api';
@@ -45,7 +45,9 @@ async function findPythonCodeReviewers() {
       console.log(`  Load: ${(agent.load * 100).toFixed(1)}%`);
       console.log(`  Success Rate: ${(agent.metrics.successRate * 100).toFixed(1)}%`);
       console.log(`  Avg Response: ${agent.metrics.avgResponseTime}ms`);
-      console.log(`  Capabilities: ${agent.registration.capabilities.map((c) => c.name).join(', ')}`);
+      console.log(
+        `  Capabilities: ${agent.registration.capabilities.map((c) => c.name).join(', ')}`
+      );
       console.log('');
     }
 
@@ -84,7 +86,9 @@ async function findLowCpuAgents() {
     console.log(`Found ${result.total} agents with low CPU usage\n`);
 
     for (const agent of result.agents) {
-      console.log(`${agent.registration.name}: CPU ${agent.metrics.cpuUsage.toFixed(1)}%, Load ${(agent.load * 100).toFixed(1)}%`);
+      console.log(
+        `${agent.registration.name}: CPU ${agent.metrics.cpuUsage.toFixed(1)}%, Load ${(agent.load * 100).toFixed(1)}%`
+      );
     }
     console.log('');
   } catch (error: any) {
@@ -116,7 +120,9 @@ async function findDataScienceAgents() {
     for (const agent of result.agents) {
       console.log(`${agent.registration.name}:`);
       console.log(`  Groups: ${agent.registration.groups?.join(', ')}`);
-      console.log(`  Uptime: ${Math.floor(agent.metrics.uptime / 3600)}h ${Math.floor((agent.metrics.uptime % 3600) / 60)}m`);
+      console.log(
+        `  Uptime: ${Math.floor(agent.metrics.uptime / 3600)}h ${Math.floor((agent.metrics.uptime % 3600) / 60)}m`
+      );
       console.log('');
     }
   } catch (error: any) {
@@ -131,15 +137,12 @@ async function semanticCapabilitySearch() {
   console.log('\n=== Semantic Search: "analyze statistical data" ===\n');
 
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}/agents/discovery/match`,
-      {
-        query: 'analyze statistical data',
-        minScore: 0.5,
-        maxResults: 5,
-        preferLowLoad: true,
-      }
-    );
+    const response = await axios.post(`${API_BASE_URL}/agents/discovery/match`, {
+      query: 'analyze statistical data',
+      minScore: 0.5,
+      maxResults: 5,
+      preferLowLoad: true,
+    });
 
     const matches = response.data.data.matches;
 
@@ -165,15 +168,12 @@ async function composeCapabilities() {
   console.log('\n=== Composing Capabilities: Data Cleaning → Analysis → Visualization ===\n');
 
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}/agents/discovery/compose`,
-      {
-        capabilities: ['data-cleaning', 'statistical-analysis', 'data-visualization'],
-        maxChainLength: 5,
-        preferReliable: true,
-        maxCost: 0.5,
-      }
-    );
+    const response = await axios.post(`${API_BASE_URL}/agents/discovery/compose`, {
+      capabilities: ['data-cleaning', 'statistical-analysis', 'data-visualization'],
+      maxChainLength: 5,
+      preferReliable: true,
+      maxCost: 0.5,
+    });
 
     const compositions = response.data.data.compositions;
 
@@ -246,10 +246,7 @@ async function advancedQuery() {
   };
 
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}/agents/discovery/query/advanced`,
-      query
-    );
+    const response = await axios.post(`${API_BASE_URL}/agents/discovery/query/advanced`, query);
 
     const result = response.data.data;
 
@@ -263,12 +260,14 @@ async function advancedQuery() {
       console.log(`  Response Time: ${agent.metrics.avgResponseTime}ms`);
 
       // Show best matching capability
-      const pythonCaps = agent.registration.capabilities.filter(
-        (cap) => cap.languages?.includes('python')
+      const pythonCaps = agent.registration.capabilities.filter((cap) =>
+        cap.languages?.includes('python')
       );
       if (pythonCaps.length > 0) {
         const best = pythonCaps.sort((a, b) => b.confidence - a.confidence)[0];
-        console.log(`  Best Python Capability: ${best.name} (${(best.confidence * 100).toFixed(0)}%)`);
+        console.log(
+          `  Best Python Capability: ${best.name} (${(best.confidence * 100).toFixed(0)}%)`
+        );
       }
       console.log('');
     }
@@ -308,11 +307,11 @@ if (require.main === module) {
 }
 
 export {
-  findPythonCodeReviewers,
-  findLowCpuAgents,
-  findDataScienceAgents,
-  semanticCapabilitySearch,
-  composeCapabilities,
-  getSystemHealth,
   advancedQuery,
+  composeCapabilities,
+  findDataScienceAgents,
+  findLowCpuAgents,
+  findPythonCodeReviewers,
+  getSystemHealth,
+  semanticCapabilitySearch,
 };

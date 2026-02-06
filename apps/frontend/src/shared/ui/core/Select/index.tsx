@@ -1,12 +1,12 @@
 export {
   Select,
-  SelectGroup,
-  SelectValue,
-  SelectTrigger,
   SelectContent,
-  SelectLabel,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectSeparator,
-  type SelectTriggerProps,
+  SelectTrigger,
+  SelectValue,
   type SelectItemProps,
+  type SelectTriggerProps,
 } from './Select';

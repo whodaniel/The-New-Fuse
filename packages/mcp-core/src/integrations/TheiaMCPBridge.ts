@@ -1,12 +1,12 @@
 /**
  * SkIDEancer MCP Bridge
- * 
+ *
  * This bridge integrates mcp-core with SkIDEancer IDE, providing MCP server
  * functionality that's compatible with SkIDEancer's AI features and MCP expectations.
  */
 
+import { MCPSystemConfig, MCPSystemFactory } from '../factory/MCPSystemFactory';
 import { MCPServer } from '../server/MCPServer';
-import { MCPSystemFactory, MCPSystemConfig } from '../factory/MCPSystemFactory';
 import { LogLevel } from '../types/common';
 
 /**
@@ -22,7 +22,7 @@ export interface SkIDEancerMCPBridgeConfig {
     enableAuth: boolean;
     logLevel: LogLevel;
   };
-  
+
   /** SkIDEancer-specific configuration */
   ide: {
     /** Enable AI chat features */
@@ -34,7 +34,7 @@ export interface SkIDEancerMCPBridgeConfig {
     /** Workspace root path */
     workspaceRoot?: string;
   };
-  
+
   /** Bridge options */
   options?: {
     /** Enable stdio transport for SkIDEancer MCP */
@@ -86,18 +86,18 @@ export class SkIDEancerMCPBridge {
           timeout: 30000,
           enableAuth: this.config.server.enableAuth,
           enableTLS: false,
-          logLevel: this.config.server.logLevel
+          logLevel: this.config.server.logLevel,
         },
         ide: {
           enabled: true,
           port: this.config.server.port || 3006,
-          aiFeatures: this.config.ide.enableAIFeatures
+          aiFeatures: this.config.ide.enableAIFeatures,
         },
         development: {
           hotReload: true,
           debugMode: this.config.server.logLevel === LogLevel.DEBUG,
-          mockServices: false
-        }
+          mockServices: false,
+        },
       };
 
       // Create the integrated system
@@ -114,7 +114,6 @@ export class SkIDEancerMCPBridge {
 
       this.isInitialized = true;
       console.log('✅ SkIDEancer MCP Bridge initialized successfully');
-
     } catch (error) {
       console.error('❌ Failed to initialize SkIDEancer MCP Bridge', error);
       throw error;
@@ -131,12 +130,13 @@ export class SkIDEancerMCPBridge {
 
     try {
       console.log('🚀 Starting SkIDEancer MCP Bridge...');
-      
-      await this.mcpSystem.start();
-      
-      console.log('✅ SkIDEancer MCP Bridge started successfully');
-      console.log(`🌐 MCP Server available at http://${this.config.server.host || 'localhost'}:${this.config.server.port || 3006}`);
 
+      await this.mcpSystem.start();
+
+      console.log('✅ SkIDEancer MCP Bridge started successfully');
+      console.log(
+        `🌐 MCP Server available at http://${this.config.server.host || 'localhost'}:${this.config.server.port || 3006}`
+      );
     } catch (error) {
       console.error('❌ Failed to start SkIDEancer MCP Bridge', error);
       throw error;
@@ -153,17 +153,16 @@ export class SkIDEancerMCPBridge {
 
     try {
       console.log('🛑 Stopping SkIDEancer MCP Bridge...');
-      
+
       // Stop stdio transport if running
       if (this.stdioTransport) {
         await this.stdioTransport.stop?.();
         this.stdioTransport = null;
       }
-      
-      await this.mcpSystem.stop();
-      
-      console.log('✅ SkIDEancer MCP Bridge stopped successfully');
 
+      await this.mcpSystem.stop();
+
+      console.log('✅ SkIDEancer MCP Bridge stopped successfully');
     } catch (error) {
       console.error('❌ Error stopping SkIDEancer MCP Bridge', error);
       throw error;
@@ -206,7 +205,7 @@ export class SkIDEancerMCPBridge {
               root: config.ide.workspaceRoot || process.cwd(),
               name: 'SkIDEancer Workspace',
               type: 'workspace',
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
 
             return {
@@ -214,11 +213,11 @@ export class SkIDEancerMCPBridge {
               mimeType: 'application/json',
               content: JSON.stringify(workspaceInfo, null, 2),
               metadata: {
-                generated: new Date().toISOString()
-              }
+                generated: new Date().toISOString(),
+              },
             };
-          }
-        }
+          },
+        },
       });
     }
 
@@ -232,23 +231,27 @@ export class SkIDEancerMCPBridge {
           async read(uri: string, params?: { path?: string }) {
             const fs = await import('fs/promises');
             const path = await import('path');
-            
+
             const targetPath = params?.path || config.ide.workspaceRoot || process.cwd();
-            
+
             try {
               const stats = await fs.stat(targetPath);
-              
+
               if (stats.isDirectory()) {
                 const files = await fs.readdir(targetPath);
                 return {
                   uri,
                   mimeType: 'application/json',
-                  content: JSON.stringify({
-                    type: 'directory',
-                    path: targetPath,
-                    files: files.slice(0, 100), // Limit to first 100 files
-                    count: files.length
-                  }, null, 2)
+                  content: JSON.stringify(
+                    {
+                      type: 'directory',
+                      path: targetPath,
+                      files: files.slice(0, 100), // Limit to first 100 files
+                      count: files.length,
+                    },
+                    null,
+                    2
+                  ),
                 };
               } else {
                 const content = await fs.readFile(targetPath, 'utf8');
@@ -259,22 +262,26 @@ export class SkIDEancerMCPBridge {
                   metadata: {
                     path: targetPath,
                     size: stats.size,
-                    modified: stats.mtime
-                  }
+                    modified: stats.mtime,
+                  },
                 };
               }
             } catch (error) {
               return {
                 uri,
                 mimeType: 'application/json',
-                content: JSON.stringify({
-                  error: error instanceof Error ? error.message : 'File access failed',
-                  path: targetPath
-                }, null, 2)
+                content: JSON.stringify(
+                  {
+                    error: error instanceof Error ? error.message : 'File access failed',
+                    path: targetPath,
+                  },
+                  null,
+                  2
+                ),
               };
             }
-          }
-        }
+          },
+        },
       });
     }
 
@@ -289,12 +296,21 @@ export class SkIDEancerMCPBridge {
             try {
               const { execSync } = await import('child_process');
               const workspaceRoot = config.ide.workspaceRoot || process.cwd();
-              
+
               const gitInfo = {
-                branch: execSync('git branch --show-current', { cwd: workspaceRoot, encoding: 'utf8' }).trim(),
-                status: execSync('git status --porcelain', { cwd: workspaceRoot, encoding: 'utf8' }).trim(),
-                lastCommit: execSync('git log -1 --oneline', { cwd: workspaceRoot, encoding: 'utf8' }).trim(),
-                remotes: execSync('git remote -v', { cwd: workspaceRoot, encoding: 'utf8' }).trim()
+                branch: execSync('git branch --show-current', {
+                  cwd: workspaceRoot,
+                  encoding: 'utf8',
+                }).trim(),
+                status: execSync('git status --porcelain', {
+                  cwd: workspaceRoot,
+                  encoding: 'utf8',
+                }).trim(),
+                lastCommit: execSync('git log -1 --oneline', {
+                  cwd: workspaceRoot,
+                  encoding: 'utf8',
+                }).trim(),
+                remotes: execSync('git remote -v', { cwd: workspaceRoot, encoding: 'utf8' }).trim(),
               };
 
               return {
@@ -303,21 +319,25 @@ export class SkIDEancerMCPBridge {
                 content: JSON.stringify(gitInfo, null, 2),
                 metadata: {
                   workspaceRoot,
-                  generated: new Date().toISOString()
-                }
+                  generated: new Date().toISOString(),
+                },
               };
             } catch (error) {
               return {
                 uri: 'ide://git',
                 mimeType: 'application/json',
-                content: JSON.stringify({
-                  error: 'Git not available or not a git repository',
-                  details: error instanceof Error ? error.message : 'Unknown error'
-                }, null, 2)
+                content: JSON.stringify(
+                  {
+                    error: 'Git not available or not a git repository',
+                    details: error instanceof Error ? error.message : 'Unknown error',
+                  },
+                  null,
+                  2
+                ),
               };
             }
-          }
-        }
+          },
+        },
       });
     }
 
@@ -339,24 +359,24 @@ export class SkIDEancerMCPBridge {
           type: 'object',
           properties: {
             path: { type: 'string', description: 'Path to the file to read' },
-            encoding: { type: 'string', default: 'utf8', description: 'File encoding' }
+            encoding: { type: 'string', default: 'utf8', description: 'File encoding' },
           },
-          required: ['path']
+          required: ['path'],
         },
         handler: {
           execute: async (params: { path: string; encoding?: string }) => {
             try {
               const fs = await import('fs/promises');
               const path = await import('path');
-              
+
               const workspaceRoot = this.config.ide.workspaceRoot || process.cwd();
               const fullPath = path.resolve(workspaceRoot, params.path);
-              
+
               // Security check: ensure file is within workspace
               if (!fullPath.startsWith(workspaceRoot)) {
                 return {
                   success: false,
-                  error: 'Access denied: file outside workspace'
+                  error: 'Access denied: file outside workspace',
                 };
               }
 
@@ -371,17 +391,17 @@ export class SkIDEancerMCPBridge {
                   content,
                   size: stats.size,
                   modified: stats.mtime,
-                  encoding: params.encoding || 'utf8'
-                }
+                  encoding: params.encoding || 'utf8',
+                },
               };
             } catch (error) {
               return {
                 success: false,
-                error: error instanceof Error ? error.message : 'File read failed'
+                error: error instanceof Error ? error.message : 'File read failed',
               };
             }
-          }
-        }
+          },
+        },
       });
 
       // Register file write tool
@@ -393,30 +413,30 @@ export class SkIDEancerMCPBridge {
           properties: {
             path: { type: 'string', description: 'Path to the file to write' },
             content: { type: 'string', description: 'Content to write to the file' },
-            encoding: { type: 'string', default: 'utf8', description: 'File encoding' }
+            encoding: { type: 'string', default: 'utf8', description: 'File encoding' },
           },
-          required: ['path', 'content']
+          required: ['path', 'content'],
         },
         handler: {
           execute: async (params: { path: string; content: string; encoding?: string }) => {
             try {
               const fs = await import('fs/promises');
               const path = await import('path');
-              
+
               const workspaceRoot = this.config.ide.workspaceRoot || process.cwd();
               const fullPath = path.resolve(workspaceRoot, params.path);
-              
+
               // Security check: ensure file is within workspace
               if (!fullPath.startsWith(workspaceRoot)) {
                 return {
                   success: false,
-                  error: 'Access denied: file outside workspace'
+                  error: 'Access denied: file outside workspace',
                 };
               }
 
               // Ensure directory exists
               await fs.mkdir(path.dirname(fullPath), { recursive: true });
-              
+
               const encoding = (params.encoding || 'utf8') as BufferEncoding;
               await fs.writeFile(fullPath, params.content, encoding);
               const stats = await fs.stat(fullPath);
@@ -427,17 +447,17 @@ export class SkIDEancerMCPBridge {
                   path: params.path,
                   written: true,
                   size: stats.size,
-                  modified: stats.mtime
-                }
+                  modified: stats.mtime,
+                },
               };
             } catch (error) {
               return {
                 success: false,
-                error: error instanceof Error ? error.message : 'File write failed'
+                error: error instanceof Error ? error.message : 'File write failed',
               };
             }
-          }
-        }
+          },
+        },
       });
     }
 
@@ -450,9 +470,9 @@ export class SkIDEancerMCPBridge {
           type: 'object',
           properties: {
             command: { type: 'string', description: 'Command to execute' },
-            timeout: { type: 'number', default: 30000, description: 'Timeout in milliseconds' }
+            timeout: { type: 'number', default: 30000, description: 'Timeout in milliseconds' },
           },
-          required: ['command']
+          required: ['command'],
         },
         handler: {
           execute: async (params: { command: string; timeout?: number }) => {
@@ -460,12 +480,12 @@ export class SkIDEancerMCPBridge {
               const { exec } = await import('child_process');
               const { promisify } = await import('util');
               const execAsync = promisify(exec);
-              
+
               const workspaceRoot = this.config.ide.workspaceRoot || process.cwd();
-              
+
               const { stdout, stderr } = await execAsync(params.command, {
                 cwd: workspaceRoot,
-                timeout: params.timeout || 30000
+                timeout: params.timeout || 30000,
               });
 
               return {
@@ -475,8 +495,8 @@ export class SkIDEancerMCPBridge {
                   stdout: stdout.trim(),
                   stderr: stderr.trim(),
                   exitCode: 0,
-                  workspaceRoot
-                }
+                  workspaceRoot,
+                },
               };
             } catch (error: any) {
               return {
@@ -486,12 +506,12 @@ export class SkIDEancerMCPBridge {
                   command: params.command,
                   stdout: error.stdout || '',
                   stderr: error.stderr || '',
-                  exitCode: error.code || 1
-                }
+                  exitCode: error.code || 1,
+                },
               };
             }
-          }
-        }
+          },
+        },
       });
     }
 
@@ -505,7 +525,7 @@ export class SkIDEancerMCPBridge {
     try {
       // This would integrate with @modelcontextprotocol/sdk for stdio transport
       // For now, we'll create a placeholder that can be extended
-      
+
       this.stdioTransport = {
         name: 'ide-stdio',
         isConnected: () => this.isRunning(),
@@ -515,7 +535,7 @@ export class SkIDEancerMCPBridge {
         },
         stop: async () => {
           console.log('📡 Stdio transport stopped');
-        }
+        },
       };
 
       console.log('📡 Stdio transport configured for SkIDEancer MCP');
@@ -528,7 +548,9 @@ export class SkIDEancerMCPBridge {
   /**
    * Create SkIDEancer-compatible server configuration
    */
-  static createSkIDEancerCompatibleServer(config: Partial<SkIDEancerMCPBridgeConfig> = {}): SkIDEancerMCPBridge {
+  static createSkIDEancerCompatibleServer(
+    config: Partial<SkIDEancerMCPBridgeConfig> = {}
+  ): SkIDEancerMCPBridge {
     const defaultConfig: SkIDEancerMCPBridgeConfig = {
       server: {
         name: 'ide-mcp-server',
@@ -537,14 +559,14 @@ export class SkIDEancerMCPBridge {
         host: 'localhost',
         enableAuth: false,
         logLevel: LogLevel.INFO,
-        ...config.server
+        ...config.server,
       },
       ide: {
         enableAIFeatures: true,
         enableToolIntegration: true,
         enableResourceAccess: true,
         workspaceRoot: process.cwd(),
-        ...config.ide
+        ...config.ide,
       },
       options: {
         enableStdioTransport: true,
@@ -552,8 +574,8 @@ export class SkIDEancerMCPBridge {
         enableFileSystemAccess: true,
         enableGitIntegration: true,
         enableTerminalAccess: true,
-        ...config.options
-      }
+        ...config.options,
+      },
     };
 
     return new SkIDEancerMCPBridge(defaultConfig);
@@ -566,10 +588,9 @@ export class SkIDEancerMCPBridge {
     try {
       // This would integrate with SkIDEancer's MCP registration system
       // For now, we'll log that registration would happen here
-      
+
       console.log('🎨 Registering MCP server with SkIDEancer...');
       console.log(`📡 MCP Server registered: ${server.getServerInfo().name}`);
-      
     } catch (error) {
       console.error('❌ Failed to register with SkIDEancer', error);
       throw error;
@@ -580,7 +601,9 @@ export class SkIDEancerMCPBridge {
 /**
  * Factory function for creating SkIDEancer MCP bridges
  */
-export function createSkIDEancerMCPBridge(config?: Partial<SkIDEancerMCPBridgeConfig>): SkIDEancerMCPBridge {
+export function createSkIDEancerMCPBridge(
+  config?: Partial<SkIDEancerMCPBridgeConfig>
+): SkIDEancerMCPBridge {
   return SkIDEancerMCPBridge.createSkIDEancerCompatibleServer(config);
 }
 

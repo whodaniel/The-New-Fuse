@@ -4,9 +4,9 @@
  */
 
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  Catch,
+  ExceptionFilter,
   HttpException,
   HttpStatus,
   Logger,
@@ -23,21 +23,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     // Get status and error information
-    const status = 
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
-    
-    const message = 
-      exception instanceof HttpException
-        ? exception.message
-        : 'Internal server error';
-    
+    const status =
+      exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    const message =
+      exception instanceof HttpException ? exception.message : 'Internal server error';
+
     const details = exception.response?.message || exception.message || message;
-    
+
     // Log the error
     this.logger.error(`Exception: ${message}`, exception.stack);
-    
+
     // Build standardized error response
     const errorResponse: ApiResponse<null> = {
       success: false,

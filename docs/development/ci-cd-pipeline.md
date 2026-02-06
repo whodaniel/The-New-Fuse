@@ -1,10 +1,12 @@
 # CI/CD Pipeline Documentation
 
-This document describes the Continuous Integration and Continuous Deployment (CI/CD) pipeline for The New Fuse project.
+This document describes the Continuous Integration and Continuous Deployment
+(CI/CD) pipeline for The New Fuse project.
 
 ## Overview
 
-The CI/CD pipeline is implemented using GitHub Actions and consists of the following stages:
+The CI/CD pipeline is implemented using GitHub Actions and consists of the
+following stages:
 
 1. **Lint**: Code quality checks
 2. **Test**: Unit and integration tests
@@ -14,7 +16,9 @@ The CI/CD pipeline is implemented using GitHub Actions and consists of the follo
 
 ## Workflow Configuration
 
-The pipeline is defined in `.github/workflows/consolidated-ci-cd.yml` and is triggered on:
+The pipeline is defined in `.github/workflows/consolidated-ci-cd.yml` and is
+triggered on:
+
 - Push to `main` and `develop` branches
 - Pull requests to `main` and `develop` branches
 
@@ -34,9 +38,10 @@ The pipeline is defined in `.github/workflows/consolidated-ci-cd.yml` and is tri
 
 ### Build
 
-The build stage follows a specific order to ensure dependencies are built correctly:
+The build stage follows a specific order to ensure dependencies are built
+correctly:
 
-1. Generate database client (Prisma)
+1. Generate database client (Drizzle)
 2. Build types package first
 3. Build utils package
 4. Build core package
@@ -63,6 +68,7 @@ When code is pushed to the `main` branch:
 ### Notify
 
 After deployment (success or failure):
+
 - Send notification to Slack with deployment status
 
 ## Required Secrets
@@ -109,12 +115,14 @@ If the pipeline fails, check the following:
 
 1. Linting errors: Run `yarn lint` locally to identify and fix issues
 2. Test failures: Run `yarn test` locally to debug failing tests
-3. Build errors: Check if all dependencies are correctly installed and configured
+3. Build errors: Check if all dependencies are correctly installed and
+   configured
 4. Deployment errors: Verify Kubernetes configuration and database connection
 
 ## Maintenance
 
-The CI/CD pipeline should be regularly reviewed and updated to ensure it remains efficient and effective. Consider:
+The CI/CD pipeline should be regularly reviewed and updated to ensure it remains
+efficient and effective. Consider:
 
 - Updating GitHub Actions versions
 - Optimizing build times

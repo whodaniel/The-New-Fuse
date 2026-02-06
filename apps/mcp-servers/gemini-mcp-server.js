@@ -1,4 +1,3 @@
-
 const WebSocket = require('ws');
 const http = require('http');
 const { ToolboxClient } = require('@toolbox-sdk/core');
@@ -8,10 +7,10 @@ const client = new ToolboxClient(TOOLBOX_SERVICE_URL);
 
 const wss = new WebSocket.Server({ port: 3713 });
 
-wss.on('connection', ws => {
+wss.on('connection', (ws) => {
   console.log('Gemini MCP Server: Client connected');
 
-  ws.on('message', async message => {
+  ws.on('message', async (message) => {
     console.log('received: %s', message);
     try {
       const request = JSON.parse(message);
@@ -21,7 +20,12 @@ wss.on('connection', ws => {
         const result = await tool(request.params);
         ws.send(JSON.stringify({ status: 'success', result }));
       } else {
-        ws.send(JSON.stringify({ status: 'error', message: 'Invalid message format. Expected { tool: "toolName", params: {} }' }));
+        ws.send(
+          JSON.stringify({
+            status: 'error',
+            message: 'Invalid message format. Expected { tool: "toolName", params: {} }',
+          })
+        );
       }
     } catch (error) {
       console.error('Error processing message or invoking tool:', error);

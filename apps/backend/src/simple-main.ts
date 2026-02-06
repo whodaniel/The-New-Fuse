@@ -6,19 +6,21 @@ async function bootstrap() {
   const app = await NestFactory.create(SimpleAppModule);
 
   // Enable CORS for frontend access using direct cors middleware
-  app.use(cors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'https://thenewfuse.com',
-      'https://www.thenewfuse.com'
-    ],
-    credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type, Accept, Authorization'
-  }));
+  app.use(
+    cors({
+      origin: [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'https://thenewfuse.com',
+        'https://www.thenewfuse.com',
+      ],
+      credentials: true,
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      allowedHeaders: 'Content-Type, Accept, Authorization',
+    })
+  );
 
   const port = process.env.PORT || 3005;
   await app.listen(port);
@@ -34,7 +36,7 @@ async function bootstrap() {
   console.log(`   DELETE http://localhost:${port}/api/agents/:id`);
 }
 
-bootstrap().catch(err => {
+bootstrap().catch((err) => {
   console.error('Failed to start application:', err);
   process.exit(1);
 });

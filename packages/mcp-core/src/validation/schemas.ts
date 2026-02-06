@@ -10,11 +10,11 @@ export const jsonrpcMessageSchema = {
   properties: {
     jsonrpc: {
       type: 'string',
-      const: '2.0'
-    }
+      const: '2.0',
+    },
   },
   required: ['jsonrpc'],
-  additionalProperties: true
+  additionalProperties: true,
 };
 
 /**
@@ -25,23 +25,17 @@ export const jsonrpcRequestSchema = {
   properties: {
     ...jsonrpcMessageSchema.properties,
     id: {
-      anyOf: [
-        { type: 'string' },
-        { type: 'number' }
-      ]
+      anyOf: [{ type: 'string' }, { type: 'number' }],
     },
     method: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     params: {
-      anyOf: [
-        { type: 'object' },
-        { type: 'array' }
-      ]
-    }
+      anyOf: [{ type: 'object' }, { type: 'array' }],
+    },
   },
-  required: ['jsonrpc', 'id', 'method']
+  required: ['jsonrpc', 'id', 'method'],
 };
 
 /**
@@ -52,39 +46,35 @@ export const jsonrpcResponseSchema = {
   properties: {
     ...jsonrpcMessageSchema.properties,
     id: {
-      anyOf: [
-        { type: 'string' },
-        { type: 'number' },
-        { type: 'null' }
-      ]
+      anyOf: [{ type: 'string' }, { type: 'number' }, { type: 'null' }],
     },
     result: {},
     error: {
       type: 'object',
       properties: {
         code: {
-          type: 'number'
+          type: 'number',
         },
         message: {
-          type: 'string'
+          type: 'string',
         },
-        data: {}
+        data: {},
       },
       required: ['code', 'message'],
-      additionalProperties: false
-    }
+      additionalProperties: false,
+    },
   },
   required: ['jsonrpc', 'id'],
   anyOf: [
-    { 
+    {
       required: ['result'],
-      not: { required: ['error'] }
+      not: { required: ['error'] },
     },
-    { 
+    {
       required: ['error'],
-      not: { required: ['result'] }
-    }
-  ]
+      not: { required: ['result'] },
+    },
+  ],
 };
 
 /**
@@ -96,19 +86,16 @@ export const jsonrpcNotificationSchema = {
     ...jsonrpcMessageSchema.properties,
     method: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     params: {
-      anyOf: [
-        { type: 'object' },
-        { type: 'array' }
-      ]
-    }
+      anyOf: [{ type: 'object' }, { type: 'array' }],
+    },
   },
   required: ['jsonrpc', 'method'],
   not: {
-    required: ['id']
-  }
+    required: ['id'],
+  },
 };
 
 /**
@@ -123,23 +110,23 @@ export const mcpRequestSchema = {
       properties: {
         timestamp: {
           type: 'string',
-          format: 'date-time'
+          format: 'date-time',
         },
         source: {
-          type: 'string'
+          type: 'string',
         },
         priority: {
           type: 'string',
-          enum: ['low', 'normal', 'high']
+          enum: ['low', 'normal', 'high'],
         },
         timeout: {
           type: 'number',
-          minimum: 0
-        }
+          minimum: 0,
+        },
       },
-      additionalProperties: true
-    }
-  }
+      additionalProperties: true,
+    },
+  },
 };
 
 /**
@@ -154,19 +141,19 @@ export const mcpResponseSchema = {
       properties: {
         timestamp: {
           type: 'string',
-          format: 'date-time'
+          format: 'date-time',
         },
         processingTime: {
           type: 'number',
-          minimum: 0
+          minimum: 0,
         },
         serverId: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
-      additionalProperties: true
-    }
-  }
+      additionalProperties: true,
+    },
+  },
 };
 
 /**
@@ -181,19 +168,19 @@ export const mcpNotificationSchema = {
       properties: {
         timestamp: {
           type: 'string',
-          format: 'date-time'
+          format: 'date-time',
         },
         source: {
-          type: 'string'
+          type: 'string',
         },
         type: {
           type: 'string',
-          enum: ['event', 'status', 'alert']
-        }
+          enum: ['event', 'status', 'alert'],
+        },
       },
-      additionalProperties: true
-    }
-  }
+      additionalProperties: true,
+    },
+  },
 };
 
 /**
@@ -204,45 +191,45 @@ export const mcpResourceSchema = {
   properties: {
     uri: {
       type: 'string',
-      format: 'uri'
+      format: 'uri',
     },
     name: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     description: {
-      type: 'string'
+      type: 'string',
     },
     mimeType: {
-      type: 'string'
+      type: 'string',
     },
     metadata: {
-      type: 'object'
+      type: 'object',
     },
     permissions: {
       type: 'object',
       properties: {
         read: {
-          type: 'boolean'
+          type: 'boolean',
         },
         write: {
-          type: 'boolean'
+          type: 'boolean',
         },
         subscribe: {
-          type: 'boolean'
+          type: 'boolean',
         },
         requiredRoles: {
           type: 'array',
           items: {
-            type: 'string'
-          }
-        }
+            type: 'string',
+          },
+        },
       },
-      required: ['read']
-    }
+      required: ['read'],
+    },
   },
   required: ['uri', 'name'],
-  additionalProperties: false
+  additionalProperties: false,
 };
 
 /**
@@ -253,60 +240,60 @@ export const mcpToolSchema = {
   properties: {
     name: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     description: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     inputSchema: {
       type: 'object',
       properties: {
         type: {
-          type: 'string'
+          type: 'string',
         },
         properties: {
-          type: 'object'
+          type: 'object',
         },
         required: {
           type: 'array',
           items: {
-            type: 'string'
-          }
-        }
+            type: 'string',
+          },
+        },
       },
-      required: ['type']
+      required: ['type'],
     },
     outputSchema: {
       type: 'object',
       properties: {
         type: {
-          type: 'string'
+          type: 'string',
         },
         properties: {
-          type: 'object'
-        }
-      }
+          type: 'object',
+        },
+      },
     },
     config: {
       type: 'object',
       properties: {
         timeout: {
           type: 'number',
-          minimum: 0
+          minimum: 0,
         },
         maxMemory: {
           type: 'number',
-          minimum: 0
+          minimum: 0,
         },
         sandboxed: {
-          type: 'boolean'
-        }
-      }
-    }
+          type: 'boolean',
+        },
+      },
+    },
   },
   required: ['name', 'description', 'inputSchema'],
-  additionalProperties: false
+  additionalProperties: false,
 };
 
 /**
@@ -317,58 +304,58 @@ export const mcpCapabilitySchema = {
   properties: {
     name: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     version: {
       type: 'string',
-      pattern: '^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.-]+)?$'
+      pattern: '^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.-]+)?$',
     },
     description: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     methods: {
       type: 'array',
       items: {
         type: 'string',
-        minLength: 1
+        minLength: 1,
       },
-      minItems: 1
+      minItems: 1,
     },
     notifications: {
       type: 'array',
       items: {
         type: 'string',
-        minLength: 1
-      }
+        minLength: 1,
+      },
     },
     experimental: {
-      type: 'boolean'
+      type: 'boolean',
     },
     metadata: {
       type: 'object',
       properties: {
         author: {
-          type: 'string'
+          type: 'string',
         },
         documentation: {
           type: 'string',
-          format: 'uri'
+          format: 'uri',
         },
         license: {
-          type: 'string'
+          type: 'string',
         },
         tags: {
           type: 'array',
           items: {
-            type: 'string'
-          }
-        }
-      }
-    }
+            type: 'string',
+          },
+        },
+      },
+    },
   },
   required: ['name', 'version', 'description', 'methods'],
-  additionalProperties: false
+  additionalProperties: false,
 };
 
 /**
@@ -379,52 +366,61 @@ export const mcpServiceInfoSchema = {
   properties: {
     id: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     name: {
       type: 'string',
-      minLength: 1
+      minLength: 1,
     },
     version: {
       type: 'string',
-      pattern: '^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.-]+)?$'
+      pattern: '^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.-]+)?$',
     },
     endpoint: {
       type: 'string',
-      format: 'uri'
+      format: 'uri',
     },
     capabilities: {
       type: 'array',
       items: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     resources: {
       type: 'array',
-      items: mcpResourceSchema
+      items: mcpResourceSchema,
     },
     tools: {
       type: 'array',
-      items: mcpToolSchema
+      items: mcpToolSchema,
     },
     status: {
       type: 'string',
-      enum: ['online', 'offline', 'degraded', 'maintenance']
+      enum: ['online', 'offline', 'degraded', 'maintenance'],
     },
     metadata: {
-      type: 'object'
+      type: 'object',
     },
     registeredAt: {
       type: 'string',
-      format: 'date-time'
+      format: 'date-time',
     },
     lastHeartbeat: {
       type: 'string',
-      format: 'date-time'
-    }
+      format: 'date-time',
+    },
   },
-  required: ['id', 'name', 'version', 'endpoint', 'capabilities', 'status', 'registeredAt', 'lastHeartbeat'],
-  additionalProperties: false
+  required: [
+    'id',
+    'name',
+    'version',
+    'endpoint',
+    'capabilities',
+    'status',
+    'registeredAt',
+    'lastHeartbeat',
+  ],
+  additionalProperties: false,
 };
 
 /**
@@ -441,5 +437,5 @@ export const schemas = {
   mcpResource: mcpResourceSchema,
   mcpTool: mcpToolSchema,
   mcpCapability: mcpCapabilitySchema,
-  mcpServiceInfo: mcpServiceInfoSchema
+  mcpServiceInfo: mcpServiceInfoSchema,
 };

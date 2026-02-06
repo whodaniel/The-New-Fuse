@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FeatureProgress, FeatureStage, CodeMetrics, QualitativeAssessment } from './types';
+import { CodeMetrics, FeatureProgress, FeatureStage, QualitativeAssessment } from './types';
 
 @Injectable()
 export class FeatureTracker {
@@ -7,7 +7,12 @@ export class FeatureTracker {
 
   constructor() {}
 
-  createFeature(featureId: string, name: string, description: string, dependencies: string[] = []): FeatureProgress {
+  createFeature(
+    featureId: string,
+    name: string,
+    description: string,
+    dependencies: string[] = []
+  ): FeatureProgress {
     const newFeature: FeatureProgress = {
       featureId,
       name,
@@ -18,19 +23,19 @@ export class FeatureTracker {
         filesModified: [],
         newFiles: [],
         tokensUsed: 0,
-        testCoverage: 0
+        testCoverage: 0,
       },
       qualitativeAssessment: {
         challenges: [],
         risks: [],
         notes: '',
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       },
       stageHistory: [],
       dependencies,
       startTime: new Date(),
       lastUpdated: new Date(),
-      completionPercentage: 0
+      completionPercentage: 0,
     };
 
     this.features.set(featureId, newFeature);
@@ -52,7 +57,7 @@ export class FeatureTracker {
       from: feature.currentStage,
       to: newStage,
       timestamp: new Date(),
-      duration: new Date().getTime() - feature.lastUpdated.getTime()
+      duration: new Date().getTime() - feature.lastUpdated.getTime(),
     };
 
     const updatedFeature = {
@@ -60,7 +65,7 @@ export class FeatureTracker {
       currentStage: newStage,
       stageHistory: [...feature.stageHistory, stageTransition],
       lastUpdated: new Date(),
-      completionPercentage: this.calculateCompletionPercentage(newStage)
+      completionPercentage: this.calculateCompletionPercentage(newStage),
     };
 
     this.features.set(featureId, updatedFeature);
@@ -80,16 +85,19 @@ export class FeatureTracker {
       ...feature,
       metrics: {
         ...feature.metrics,
-        ...metrics
+        ...metrics,
       },
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
 
     this.features.set(featureId, updatedFeature);
     return updatedFeature;
   }
 
-  updateQualitativeAssessment(featureId: string, assessment: Partial<QualitativeAssessment>): FeatureProgress {
+  updateQualitativeAssessment(
+    featureId: string,
+    assessment: Partial<QualitativeAssessment>
+  ): FeatureProgress {
     const feature = this.getFeature(featureId);
 
     const updatedFeature = {
@@ -97,9 +105,9 @@ export class FeatureTracker {
       qualitativeAssessment: {
         ...feature.qualitativeAssessment,
         ...assessment,
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       },
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
 
     this.features.set(featureId, updatedFeature);

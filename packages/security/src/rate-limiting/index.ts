@@ -20,7 +20,7 @@ export class RateLimitingService {
   constructor(config: Partial<RateLimitConfig> = {}) {
     this.config = {
       windowMs: config.windowMs || 60000, // 1 minute default
-      maxRequests: config.maxRequests || 100
+      maxRequests: config.maxRequests || 100,
     };
     this.store = new Map();
     // this.logger = new Logger('RateLimitingService');
@@ -45,7 +45,7 @@ export class RateLimitingService {
     return {
       allowed: true,
       remaining: this.config.maxRequests - record.count,
-      resetTime: record.resetTime
+      resetTime: record.resetTime,
     };
   }
 

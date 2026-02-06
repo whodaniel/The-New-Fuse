@@ -9,7 +9,7 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '@the-new-fuse/relay-core';
-// import { PrismaClient } from '@prisma/client';
+// import { DatabaseService } from '@db/client';
 import { MasterAgentRegistry } from '@the-new-fuse/relay-core';
 import { WorkflowRepository } from './WorkflowRepository';
 import { WorkflowValidator } from './WorkflowValidator';
@@ -20,22 +20,22 @@ import {
 
 export class WorkflowEngine extends EventEmitter {
   private logger: Logger;
-  private prisma: any; // PrismaClient;
+  private db: any; // DatabaseService;
   private agentRegistry: MasterAgentRegistry;
   private workflowRepository: WorkflowRepository;
   private workflowValidator: WorkflowValidator;
   private workflows: Map<string, WorkflowDefinition> = new Map();
 
   constructor(
-    prisma: any /* PrismaClient */,
+    db: any /* DatabaseService */,
     logger: Logger,
     agentRegistry: MasterAgentRegistry
   ) {
     super();
-    this.prisma = prisma;
+    this.db = db;
     this.logger = logger;
     this.agentRegistry = agentRegistry;
-    this.workflowRepository = new WorkflowRepository(prisma, logger);
+    this.workflowRepository = new WorkflowRepository(db, logger);
     this.workflowValidator = new WorkflowValidator(this.agentRegistry);
     this.loadWorkflows();
   }

@@ -12,7 +12,7 @@ import {
   AuthenticationError,
   ValidationError,
   NotFoundError,
-  SystemError
+  SystemError,
 } from '@tnf/core-error-handling';
 
 // Retry and recovery
@@ -21,20 +21,17 @@ import {
   RetryHandler,
   CircuitBreaker,
   NetworkReconnectionStrategy,
-  TokenRefreshStrategy
+  TokenRefreshStrategy,
 } from '@tnf/core-error-handling';
 
 // Messages
 import {
   getUserFriendlyMessage,
-  errorMessageFormatter
+  errorMessageFormatter,
 } from '@tnf/core-error-handling';
 
 // Reproduction
-import {
-  errorRecorder,
-  errorReplay
-} from '@tnf/core-error-handling';
+import { errorRecorder, errorReplay } from '@tnf/core-error-handling';
 
 // React components
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -73,22 +70,19 @@ if (!response.ok) {
 
 ```typescript
 // Simple retry
-const data = await retry(
-  async () => fetchData(),
-  { maxAttempts: 3, initialDelay: 1000 }
-);
+const data = await retry(async () => fetchData(), {
+  maxAttempts: 3,
+  initialDelay: 1000,
+});
 
 // With custom logic
-const result = await retry(
-  async () => apiCall(),
-  {
-    maxAttempts: 5,
-    backoffMultiplier: 2,
-    shouldRetry: (error, attempt) => {
-      return error instanceof NetworkError && attempt < 5;
-    }
-  }
-);
+const result = await retry(async () => apiCall(), {
+  maxAttempts: 5,
+  backoffMultiplier: 2,
+  shouldRetry: (error, attempt) => {
+    return error instanceof NetworkError && attempt < 5;
+  },
+});
 ```
 
 ### 4. User-Friendly Messages
@@ -99,7 +93,7 @@ try {
 } catch (error) {
   const msg = getUserFriendlyMessage(error, 'en');
   toast.error(msg.title, {
-    description: msg.message
+    description: msg.message,
   });
 }
 ```
@@ -128,7 +122,7 @@ try {
 } catch (error) {
   const recording = errorRecorder.record(error, {
     component: 'FormComponent',
-    operation: 'submit'
+    operation: 'submit',
   });
   console.log('Error ID:', recording.id);
 }
@@ -136,71 +130,71 @@ try {
 
 ## Error Codes Cheat Sheet
 
-| Code | Error Type            | Example                          |
-|------|-----------------------|----------------------------------|
-| 1000 | Network               | Connection failed                |
-| 1001 | Timeout               | Request timeout                  |
-| 2000 | Authentication        | Login failed                     |
-| 2001 | Token Expired         | Session expired                  |
-| 2100 | Authorization         | Access denied                    |
-| 3000 | Validation            | Invalid input                    |
-| 3001 | Required Field        | Field required                   |
-| 4001 | Not Found             | Resource not found               |
-| 4002 | Conflict              | Resource conflict                |
-| 4005 | Rate Limit            | Too many requests                |
-| 5000 | System                | Internal server error            |
-| 5001 | Database              | Database query failed            |
-| 5003 | Service Unavailable   | Service down                     |
+| Code | Error Type          | Example               |
+| ---- | ------------------- | --------------------- |
+| 1000 | Network             | Connection failed     |
+| 1001 | Timeout             | Request timeout       |
+| 2000 | Authentication      | Login failed          |
+| 2001 | Token Expired       | Session expired       |
+| 2100 | Authorization       | Access denied         |
+| 3000 | Validation          | Invalid input         |
+| 3001 | Required Field      | Field required        |
+| 4001 | Not Found           | Resource not found    |
+| 4002 | Conflict            | Resource conflict     |
+| 4005 | Rate Limit          | Too many requests     |
+| 5000 | System              | Internal server error |
+| 5001 | Database            | Database query failed |
+| 5003 | Service Unavailable | Service down          |
 
 ## Factory Methods Quick Reference
 
 ```typescript
 // Network
-ErrorFactory.network(message, endpoint, method, statusCode)
-ErrorFactory.timeout(endpoint, timeout)
-ErrorFactory.http(statusCode, message, endpoint)
+ErrorFactory.network(message, endpoint, method, statusCode);
+ErrorFactory.timeout(endpoint, timeout);
+ErrorFactory.http(statusCode, message, endpoint);
 
 // Auth
-ErrorFactory.authentication(message)
-ErrorFactory.tokenExpired()
-ErrorFactory.invalidCredentials()
+ErrorFactory.authentication(message);
+ErrorFactory.tokenExpired();
+ErrorFactory.invalidCredentials();
 
 // Authorization
-ErrorFactory.authorization(message, permission, role)
-ErrorFactory.insufficientPermissions(permission, role)
+ErrorFactory.authorization(message, permission, role);
+ErrorFactory.insufficientPermissions(permission, role);
 
 // Validation
-ErrorFactory.validation(message, field, errors)
-ErrorFactory.requiredField(field)
-ErrorFactory.invalidFormat(field, expectedFormat, value)
+ErrorFactory.validation(message, field, errors);
+ErrorFactory.requiredField(field);
+ErrorFactory.invalidFormat(field, expectedFormat, value);
 
 // Business
-ErrorFactory.notFound(resourceType, resourceId)
-ErrorFactory.conflict(message, metadata)
-ErrorFactory.rateLimit(retryAfter)
+ErrorFactory.notFound(resourceType, resourceId);
+ErrorFactory.conflict(message, metadata);
+ErrorFactory.rateLimit(retryAfter);
 
 // System
-ErrorFactory.system(message, code, severity, retryable)
-ErrorFactory.database(message, operation, query)
-ErrorFactory.serviceUnavailable(serviceName)
+ErrorFactory.system(message, code, severity, retryable);
+ErrorFactory.database(message, operation, query);
+ErrorFactory.serviceUnavailable(serviceName);
 ```
 
 ## Recovery Strategies
 
 ```typescript
 // Network reconnection
-new NetworkReconnectionStrategy()
+new NetworkReconnectionStrategy();
 
 // Token refresh
 new TokenRefreshStrategy(async () => {
   const token = await refreshToken();
   return true;
-})
+});
 
 // Cache fallback
 new CacheFallbackStrategy(async (key) => {
   return await cache.get(key);
-})
+});
 
 // Service failover
 const failover = new ServiceFailoverStrategy();
@@ -223,7 +217,9 @@ failover.registerBackupService('api', ['backup1.com', 'backup2.com']);
 ## Monitoring Dashboard
 
 ### Access
+
 Add to your admin panel:
+
 ```typescript
 import { ErrorMonitoringDashboard } from '@/components/ErrorMonitoringDashboard';
 
@@ -231,6 +227,7 @@ import { ErrorMonitoringDashboard } from '@/components/ErrorMonitoringDashboard'
 ```
 
 ### Features
+
 - Real-time error tracking
 - Filter by severity, category, time
 - Export errors
@@ -259,7 +256,7 @@ describe('Error Handling', () => {
 
   it('should create correct error type', () => {
     const error = ErrorFactory.fromHttpResponse(404, {
-      message: 'Not found'
+      message: 'Not found',
     });
     expect(error).toBeInstanceOf(NotFoundError);
   });
@@ -269,12 +266,14 @@ describe('Error Handling', () => {
 ## Configuration
 
 ### Sentry
+
 ```bash
 VITE_SENTRY_DSN=your-dsn
 VITE_APP_VERSION=1.0.0
 ```
 
 ### Language
+
 ```typescript
 import { errorMessageFormatter } from '@tnf/core-error-handling';
 

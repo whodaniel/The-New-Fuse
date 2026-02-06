@@ -22,9 +22,9 @@ import { JobSchedulerService } from './services/job-scheduler.service';
 import { JobsMonitoringController } from './jobs-monitoring.controller';
 
 // Import email service
+import { CacheModule } from '../cache/cache.module';
 import { SystemMetricsModule } from '../modules/system-metrics/system-metrics.module';
 import { EmailService } from '../services/email.service';
-import { CacheModule } from '../cache/cache.module';
 
 /**
  * Jobs module

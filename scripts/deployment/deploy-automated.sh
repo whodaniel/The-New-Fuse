@@ -358,7 +358,7 @@ backup_database() {
   else
     log WARNING "Database backup script not found"
 
-    # Basic Prisma backup
+    # Basic Drizzle backup
     local backup_file="$BACKUP_DIR/database/backup-$DEPLOYMENT_ID.sql"
 
     # This is a placeholder - actual implementation would depend on database type
@@ -387,7 +387,7 @@ run_migrations() {
       return 1
     }
   else
-    # Run Prisma migrations
+    # Run Drizzle migrations
     pnpm run db:migrate || {
       log ERROR "Database migrations failed"
       return 1

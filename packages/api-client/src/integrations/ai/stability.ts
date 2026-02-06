@@ -1,7 +1,7 @@
 // Import required API client and types
-import { ApiClient } from '../../core/ApiClient';
 import { ApiConfig } from '../../config/ApiConfig';
-import { Integration, IntegrationType, IntegrationConfig, AuthType } from '../types';
+import { ApiClient } from '../../core/ApiClient';
+import { AuthType, Integration, IntegrationConfig, IntegrationType } from '../types';
 
 /**
  * Stability AI configuration
@@ -32,16 +32,16 @@ export class StabilityAIIntegration implements Integration {
   isEnabled: boolean = true;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
-  
+
   private apiClient: ApiClient;
-  
+
   constructor(config: StabilityAIConfig) {
     this.id = config.id;
     this.name = config.name;
     this.type = config.type;
     this.description = config.description;
     this.config = config;
-    
+
     // Default StabilityAI capabilities
     this.capabilities = {
       actions: [
@@ -50,34 +50,32 @@ export class StabilityAIIntegration implements Integration {
         'upscale',
         'inpainting',
         'list_engines',
-        'masking'
+        'masking',
       ],
-      dataTypes: [
-        'image'
-      ]
+      dataTypes: ['image'],
     };
-    
+
     // Create API client for StabilityAI
     const apiConfig: ApiConfig = {
       baseURL: config.baseUrl || '',
       headers: {
         ...config.defaultHeaders,
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
+        Accept: 'application/json',
+      },
     };
-    
+
     // Add API key if provided
     if (config.apiKey) {
       apiConfig.headers = {
         ...apiConfig.headers,
-        'Authorization': `Bearer ${config.apiKey}`
+        Authorization: `Bearer ${config.apiKey}`,
       };
     }
-    
+
     this.apiClient = new ApiClient(apiConfig);
   }
-  
+
   /**
    * Connect to Stability API
    */
@@ -90,10 +88,12 @@ export class StabilityAIIntegration implements Integration {
       return true;
     } catch (error) {
       this.isConnected = false;
-      throw new Error(`Failed to connect to Stability AI: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to connect to Stability AI: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Disconnect from Stability API
    */
@@ -102,7 +102,7 @@ export class StabilityAIIntegration implements Integration {
     this.updatedAt = new Date();
     return true;
   }
-  
+
   /**
    * Execute a Stability AI action
    */
@@ -110,7 +110,7 @@ export class StabilityAIIntegration implements Integration {
     if (!this.isConnected) {
       throw new Error('Not connected to Stability AI API. Call connect() first.');
     }
-    
+
     switch (action) {
       case 'text_to_image':
         return this.generateImageFromText(
@@ -145,17 +145,14 @@ export class StabilityAIIntegration implements Integration {
           params.options
         );
       case 'masking':
-        return this.maskImage(
-          params.image,
-          params.options
-        );
+        return this.maskImage(params.image, params.options);
       case 'list_engines':
         return this.listEngines();
       default:
         throw new Error(`Unsupported Stability AI action: ${action}`);
     }
   }
-  
+
   /**
    * List available engines (models)
    */
@@ -163,10 +160,12 @@ export class StabilityAIIntegration implements Integration {
     try {
       return await this.apiClient.get('/v1/engines/list');
     } catch (error) {
-      throw new Error(`Failed to list engines: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to list engines: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Generate an image from a text prompt
    */
@@ -182,37 +181,39 @@ export class StabilityAIIntegration implements Integration {
         text_prompts: [
           {
             text: prompt,
-            weight: 1.0
-          }
+            weight: 1.0,
+          },
         ],
         cfg_scale: options.cfg_scale || this.config.defaultCfgScale || 7,
         height: options.height || this.config.defaultHeight || 1024,
         width: options.width || this.config.defaultWidth || 1024,
         steps: options.steps || this.config.defaultSteps || 30,
-        samples: options.samples || 1
+        samples: options.samples || 1,
       };
-      
+
       // Add negative prompt if provided
       if (negative_prompt) {
         payload.text_prompts.push({
           text: negative_prompt,
-          weight: -1.0
+          weight: -1.0,
         });
       }
-      
+
       // Add additional options
-      Object.keys(options).forEach(key => {
+      Object.keys(options).forEach((key) => {
         if (!['prompt', 'negative_prompt', 'engine'].includes(key)) {
           (payload as Record<string, any>)[key] = options[key];
         }
       });
-      
+
       return await this.apiClient.post(`/v1/generation/${engineId}/text-to-image`, payload);
     } catch (error) {
-      throw new Error(`Failed to generate image from text: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to generate image from text: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Generate an image based on an existing image
    */
@@ -225,39 +226,47 @@ export class StabilityAIIntegration implements Integration {
   ): Promise<any> {
     try {
       const engineId = engine || this.config.engine || 'stable-diffusion-xl-1024-v1-0';
-      
+
       const formData = new FormData();
       formData.append('init_image', init_image);
       formData.append('text_prompts[0][text]', prompt);
       formData.append('text_prompts[0][weight]', '1.0');
-      
+
       if (negative_prompt) {
         formData.append('text_prompts[1][text]', negative_prompt);
         formData.append('text_prompts[1][weight]', '-1.0');
       }
-      
-      formData.append('cfg_scale', options.cfg_scale?.toString() || this.config.defaultCfgScale?.toString() || '7');
-      formData.append('steps', options.steps?.toString() || this.config.defaultSteps?.toString() || '30');
+
+      formData.append(
+        'cfg_scale',
+        options.cfg_scale?.toString() || this.config.defaultCfgScale?.toString() || '7'
+      );
+      formData.append(
+        'steps',
+        options.steps?.toString() || this.config.defaultSteps?.toString() || '30'
+      );
       formData.append('init_image_mode', options.init_image_mode || 'IMAGE_STRENGTH');
       formData.append('image_strength', options.image_strength?.toString() || '0.35');
-      
+
       // Add additional options
-      Object.keys(options).forEach(key => {
+      Object.keys(options).forEach((key) => {
         if (!['prompt', 'negative_prompt', 'engine', 'init_image'].includes(key)) {
           formData.append(key, options[key]?.toString());
         }
       });
-      
+
       return await this.apiClient.post(`/v1/generation/${engineId}/image-to-image`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
     } catch (error) {
-      throw new Error(`Failed to generate image from image: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to generate image from image: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Upscale an image to a higher resolution
    */
@@ -270,33 +279,39 @@ export class StabilityAIIntegration implements Integration {
   ): Promise<any> {
     try {
       const engineId = engine || 'esrgan-v1-x2plus';
-      
+
       const formData = new FormData();
       formData.append('image', image);
-      
+
       if (width) {
         formData.append('width', width.toString());
       }
-      
+
       if (height) {
         formData.append('height', height.toString());
       }
-      
+
       // Add additional options
-      Object.keys(options).forEach(key => {
+      Object.keys(options).forEach((key) => {
         formData.append(key, options[key]?.toString());
       });
-      
-      return await this.apiClient.post(`/v1/generation/${engineId}/image-to-image/upscale`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+
+      return await this.apiClient.post(
+        `/v1/generation/${engineId}/image-to-image/upscale`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }
-      });
+      );
     } catch (error) {
-      throw new Error(`Failed to upscale image: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to upscale image: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Inpaint an image with a mask
    */
@@ -310,64 +325,75 @@ export class StabilityAIIntegration implements Integration {
   ): Promise<any> {
     try {
       const engineId = engine || this.config.engine || 'stable-diffusion-xl-1024-v1-0';
-      
+
       const formData = new FormData();
       formData.append('init_image', image);
       formData.append('mask_image', mask);
       formData.append('text_prompts[0][text]', prompt);
       formData.append('text_prompts[0][weight]', '1.0');
-      
+
       if (negative_prompt) {
         formData.append('text_prompts[1][text]', negative_prompt);
         formData.append('text_prompts[1][weight]', '-1.0');
       }
-      
-      formData.append('cfg_scale', options.cfg_scale?.toString() || this.config.defaultCfgScale?.toString() || '7');
-      formData.append('steps', options.steps?.toString() || this.config.defaultSteps?.toString() || '30');
-      
+
+      formData.append(
+        'cfg_scale',
+        options.cfg_scale?.toString() || this.config.defaultCfgScale?.toString() || '7'
+      );
+      formData.append(
+        'steps',
+        options.steps?.toString() || this.config.defaultSteps?.toString() || '30'
+      );
+
       // Add additional options
-      Object.keys(options).forEach(key => {
+      Object.keys(options).forEach((key) => {
         if (!['prompt', 'negative_prompt', 'engine', 'init_image', 'mask_image'].includes(key)) {
           formData.append(key, options[key]?.toString());
         }
       });
-      
-      return await this.apiClient.post(`/v1/generation/${engineId}/image-to-image/masking`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+
+      return await this.apiClient.post(
+        `/v1/generation/${engineId}/image-to-image/masking`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }
-      });
+      );
     } catch (error) {
-      throw new Error(`Failed to inpaint image: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to inpaint image: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Create a mask from an image
    */
-  private async maskImage(
-    image: string,
-    options: any = {}
-  ): Promise<any> {
+  private async maskImage(image: string, options: any = {}): Promise<any> {
     try {
       const formData = new FormData();
       formData.append('init_image', image);
-      
+
       // Add optional parameters
-      Object.keys(options).forEach(key => {
+      Object.keys(options).forEach((key) => {
         formData.append(key, options[key]?.toString());
       });
-      
+
       return await this.apiClient.post('/v1/generation/mask', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
     } catch (error) {
-      throw new Error(`Failed to create mask: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to create mask: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get metadata about this integration
    */
@@ -379,9 +405,9 @@ export class StabilityAIIntegration implements Integration {
       capabilities: this.capabilities,
       isConnected: this.isConnected,
       isEnabled: this.isEnabled,
-      lastUpdated: this.updatedAt
+      lastUpdated: this.updatedAt,
     };
-    
+
     if (this.isConnected) {
       try {
         metadata.engines = await this.listEngines();
@@ -389,7 +415,7 @@ export class StabilityAIIntegration implements Integration {
         metadata.engineError = error instanceof Error ? error.message : String(error);
       }
     }
-    
+
     return metadata;
   }
 }
@@ -397,7 +423,9 @@ export class StabilityAIIntegration implements Integration {
 /**
  * Create a new StabilityAI integration
  */
-export function createStabilityAIIntegration(config: Partial<StabilityAIConfig> = {}): StabilityAIIntegration {
+export function createStabilityAIIntegration(
+  config: Partial<StabilityAIConfig> = {}
+): StabilityAIIntegration {
   const defaultConfig: StabilityAIConfig = {
     id: 'stability-ai',
     name: 'Stability AI',
@@ -412,11 +440,11 @@ export function createStabilityAIIntegration(config: Partial<StabilityAIConfig> 
     defaultHeight: 1024,
     apiVersion: 'v1',
     docUrl: 'https://platform.stability.ai/docs/api',
-    logoUrl: 'https://stability.ai/dist/stability-ai-logo.svg'
+    logoUrl: 'https://stability.ai/dist/stability-ai-logo.svg',
   };
-  
+
   return new StabilityAIIntegration({
     ...defaultConfig,
-    ...config
+    ...config,
   });
 }

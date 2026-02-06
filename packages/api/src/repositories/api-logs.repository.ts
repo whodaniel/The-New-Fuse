@@ -6,11 +6,11 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import {
+  and,
+  desc,
   DRIZZLE_CLIENT,
   type DrizzleClient,
   drizzleSchema,
-  and,
-  desc,
   gte,
   lte,
   sql,
@@ -20,9 +20,7 @@ const { apiLogs } = drizzleSchema;
 
 @Injectable()
 export class ApiLogsRepository {
-  constructor(
-    @Inject(DRIZZLE_CLIENT) private readonly db: DrizzleClient
-  ) {}
+  constructor(@Inject(DRIZZLE_CLIENT) private readonly db: DrizzleClient) {}
 
   async logRequest(data: typeof apiLogs.$inferInsert) {
     return this.db.insert(apiLogs).values(data).returning();

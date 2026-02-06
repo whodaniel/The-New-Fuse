@@ -17,15 +17,16 @@ cd apps/backend && yarn dev
 
 ### Common Issues & Quick Fixes
 
-| Issue | Quick Fix |
-|-------|-----------|
-| Unknown file extension `.ts` | Check nodemon.json has `--loader ts-node/esm` |
-| Cannot find module | Add `.js` extension to imports or use relative paths |
-| exports is not defined | Replace CommonJS syntax with ESM syntax |
+| Issue                        | Quick Fix                                            |
+| ---------------------------- | ---------------------------------------------------- |
+| Unknown file extension `.ts` | Check nodemon.json has `--loader ts-node/esm`        |
+| Cannot find module           | Add `.js` extension to imports or use relative paths |
+| exports is not defined       | Replace CommonJS syntax with ESM syntax              |
 
 ### Import Style Guide
 
 ✅ **DO**:
+
 ```typescript
 // Local imports need .js extension (even for .ts files)
 import { MyClass } from './my-class.js';
@@ -40,6 +41,7 @@ import { utils } from './utils/js';
 ```
 
 ❌ **DON'T**:
+
 ```typescript
 // Missing extension (won't work in ESM)
 import { MyClass } from './my-class';
@@ -67,6 +69,7 @@ If you encounter module resolution issues, run:
 ```
 
 This script:
+
 - Updates nodemon configuration
 - Creates necessary TypeScript configs
 - Fixes import statements
@@ -76,5 +79,6 @@ This script:
 ### Documentation
 
 For more details, see:
+
 - [TypeScript ESM Configuration Guide](/docs/TYPESCRIPT_ESM_CONFIGURATION.md)
 - [Development Log](/docs/DEVELOPMENT-LOG.md)

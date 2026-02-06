@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { WebsocketGateway } from '../src/websocket/websocket.gateway';
-import { CacheService } from '../src/cache/cache.service';
 import { UnifiedMonitoringService } from '@the-new-fuse/core';
 import { Socket } from 'socket.io';
+import { CacheService } from '../src/cache/cache.service';
+import { WebsocketGateway } from '../src/websocket/websocket.gateway';
 
 describe('WebsocketGateway', () => {
   let gateway: WebsocketGateway;
@@ -12,8 +12,8 @@ describe('WebsocketGateway', () => {
     id: 'test-socket-id',
     handshake: {
       auth: {
-        token: 'test-user-id'
-      }
+        token: 'test-user-id',
+      },
     },
     disconnect: jest.fn(),
     emit: jest.fn(),
@@ -58,14 +58,8 @@ describe('WebsocketGateway', () => {
     it('should handle new connection successfully', async () => {
       await gateway.handleConnection(mockSocket);
 
-      expect(cacheService.set).toHaveBeenCalledWith(
-        'socket:test-socket-id',
-        'test-user-id'
-      );
-      expect(cacheService.sadd).toHaveBeenCalledWith(
-        'online_users',
-        'test-user-id'
-      );
+      expect(cacheService.set).toHaveBeenCalledWith('socket:test-socket-id', 'test-user-id');
+      expect(cacheService.sadd).toHaveBeenCalledWith('online_users', 'test-user-id');
       expect(mockServer.emit).toHaveBeenCalled();
     });
 
@@ -83,7 +77,7 @@ describe('WebsocketGateway', () => {
       const payload = {
         roomId: 'test-room',
         agentId: 'test-agent',
-        content: 'test message'
+        content: 'test message',
       };
 
       jest.spyOn(cacheService, 'get').mockResolvedValue('test-user-id');

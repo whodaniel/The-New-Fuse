@@ -53,13 +53,13 @@ pnpm install || {
 }
 print_status "Dependencies installed successfully"
 
-# Step 3: Generate Prisma client
-print_info "Step 3: Generating Prisma client..."
+# Step 3: Generate Drizzle client
+print_info "Step 3: Generating Drizzle client..."
 pnpm run db:generate || {
-    print_error "Failed to generate Prisma client"
+    print_error "Failed to generate Drizzle client"
     exit 1
 }
-print_status "Prisma client generated successfully"
+print_status "Drizzle client generated successfully"
 
 # Step 4: Build types first
 print_info "Step 4: Building type definitions..."
@@ -151,7 +151,7 @@ print_info "Step 11: Validating system integration..."
 
 # Check if required files exist
 REQUIRED_FILES=(
-    "prisma/schema.prisma"
+    "drizzle/schema.drizzle"
     "packages/database/dist/index.js"
     "packages/types/dist/index.js"
     "apps/api/dist/main.js"
@@ -183,15 +183,15 @@ print_info "Checking for common integration issues..."
 if [ -d "apps/api/src/entities" ]; then
     ENTITY_COUNT=$(find apps/api/src/entities -name "*.ts" | wc -l)
     if [ "$ENTITY_COUNT" -gt 0 ]; then
-        print_warning "TypeORM entities still exist - these should be removed in favor of Prisma"
+        print_warning "TypeORM entities still exist - these should be removed in favor of Drizzle"
     fi
 fi
 
-# Check if Prisma schema matches types
-if grep -q "AgentStatus" prisma/schema.prisma && grep -q "AgentStatus" packages/types/src/agent.ts; then
-    print_status "Prisma schema and TypeScript types are aligned"
+# Check if Drizzle schema matches types
+if grep -q "AgentStatus" drizzle/schema.drizzle && grep -q "AgentStatus" packages/types/src/agent.ts; then
+    print_status "Drizzle schema and TypeScript types are aligned"
 else
-    print_warning "Prisma schema and TypeScript types may be misaligned"
+    print_warning "Drizzle schema and TypeScript types may be misaligned"
 fi
 
 echo ""
@@ -203,7 +203,7 @@ echo ""
 echo "📊 Build Summary:"
 echo "=================="
 echo "✅ Dependencies: Installed"
-echo "✅ Prisma: Generated"
+echo "✅ Drizzle: Generated"
 echo "✅ Types: Built"
 echo "✅ Packages: Built"
 echo "✅ Applications: Built"

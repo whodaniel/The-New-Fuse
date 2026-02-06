@@ -1,14 +1,13 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { EventEmitter } from 'events';
-import { 
-  HeartbeatMonitoringService, 
-  HeartbeatConfig, 
-  AgentHeartbeat, 
-  StagnationAlert 
+import {
+  AgentHeartbeat,
+  HeartbeatMonitoringService,
+  StagnationAlert,
 } from '@the-new-fuse/relay-core';
+import { EventEmitter } from 'events';
+import { ConflictManager } from '../services/ConflictManager';
 import { MasterClockService } from '../services/MasterClockService';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { ConflictManager } from '../services/ConflictManager';
 
 /**
  * Sync health metrics interface
@@ -78,19 +77,19 @@ export interface SyncHealthEscalation {
 @Injectable()
 export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements OnModuleInit {
   private readonly logger = new Logger(SyncAwareHeartbeatMonitoringService.name);
-  
+
   private heartbeatService: HeartbeatMonitoringService;
   private masterClockService: MasterClockService;
   private syncOrchestrator: SyncOrchestrator;
   private conflictManager: ConflictManager;
-  
+
   private syncAwareHeartbeats = new Map<string, SyncAwareAgentHeartbeat>();
   private syncHealthMetrics = new Map<string, SyncHealthMetrics>();
   private escalationHistory = new Map<string, SyncHealthEscalation[]>();
-  
+
   private healthCheckInterval?: NodeJS.Timeout;
   private metricsCollectionInterval?: NodeJS.Timeout;
-  
+
   constructor(
     heartbeatService: HeartbeatMonitoringService,
     masterClockService: MasterClockService,
@@ -193,7 +192,7 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
     try {
       const existingHeartbeat = this.syncAwareHeartbeats.get(agentId);
       const syncMetrics = await this.collectAgentSyncMetrics(agentId);
-      
+
       const syncAwareHeartbeat: SyncAwareAgentHeartbeat = {
         ...(existingHeartbeat || this.createDefaultHeartbeat(agentId)),
         lastHeartbeat: new Date(),
@@ -203,22 +202,21 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
         currentTask: taskId,
         syncMetrics,
         syncState: this.determineSyncState(syncMetrics),
-        lastSyncOperation: existingHeartbeat?.lastSyncOperation
+        lastSyncOperation: existingHeartbeat?.lastSyncOperation,
       };
 
       this.syncAwareHeartbeats.set(agentId, syncAwareHeartbeat);
-      
+
       // Emit sync-aware heartbeat event
       this.emit('sync_aware_heartbeat_received', {
         agentId,
         taskId,
         syncMetrics,
-        syncState: syncAwareHeartbeat.syncState
+        syncState: syncAwareHeartbeat.syncState,
       });
 
       // Check for sync health issues
       await this.checkSyncHealth(agentId, syncAwareHeartbeat);
-      
     } catch (error) {
       this.logger.error(`Error handling sync-aware heartbeat for agent ${agentId}:`, error);
     }
@@ -231,7 +229,7 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
     try {
       const agentId = alert.agentId;
       const heartbeat = this.syncAwareHeartbeats.get(agentId);
-      
+
       if (!heartbeat) {
         this.logger.warn(`No sync-aware heartbeat found for stagnated agent: ${agentId}`);
         return;
@@ -245,17 +243,16 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
           lastSyncOperation: heartbeat.lastSyncOperation?.timestamp,
           pendingOperations: await this.getPendingOperationsCount(agentId),
           conflictCount: heartbeat.syncMetrics.conflictsDetected,
-          errorRate: heartbeat.syncMetrics.syncErrorRate
+          errorRate: heartbeat.syncMetrics.syncErrorRate,
         },
         tenantId: heartbeat.tenantId,
-        escalationPath: this.determineEscalationPath(heartbeat)
+        escalationPath: this.determineEscalationPath(heartbeat),
       };
 
       // Trigger sync-aware escalation
       await this.triggerSyncAwareEscalation(syncAwareAlert);
-      
+
       this.emit('sync_aware_stagnation_detected', syncAwareAlert);
-      
     } catch (error) {
       this.logger.error(`Error handling sync-aware stagnation for agent ${alert.agentId}:`, error);
     }
@@ -271,7 +268,7 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
     // Update sync state based on agent status
     if (newStatus === 'failed' || newStatus === 'stalled') {
       heartbeat.syncState = 'error';
-      
+
       // Trigger sync recovery procedures
       await this.triggerSyncRecovery(agentId, heartbeat);
     }
@@ -281,7 +278,7 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
       oldStatus: heartbeat.status,
       newStatus,
       syncState: heartbeat.syncState,
-      syncMetrics: heartbeat.syncMetrics
+      syncMetrics: heartbeat.syncMetrics,
     });
   }
 
@@ -290,16 +287,16 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
    */
   private handleSyncOperationCompleted(data: any): void {
     const { agentId, operation, duration, tenantId } = data;
-    
+
     const heartbeat = this.syncAwareHeartbeats.get(agentId);
     if (heartbeat) {
       heartbeat.lastSyncOperation = {
         type: operation.type,
         timestamp: new Date(),
         duration,
-        success: true
+        success: true,
       };
-      
+
       // Update sync metrics
       heartbeat.syncMetrics.syncOperationsTotal++;
       heartbeat.syncMetrics.syncOperationsSuccess++;
@@ -307,7 +304,7 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
       heartbeat.syncMetrics.lastSyncTimestamp = new Date();
       heartbeat.syncMetrics.avgSyncDuration = this.calculateAvgSyncDuration(agentId, duration);
       heartbeat.syncMetrics.syncErrorRate = this.calculateSyncErrorRate(heartbeat.syncMetrics);
-      
+
       heartbeat.syncState = 'synchronized';
     }
 
@@ -319,27 +316,27 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
    */
   private handleSyncOperationFailed(data: any): void {
     const { agentId, operation, error, tenantId } = data;
-    
+
     const heartbeat = this.syncAwareHeartbeats.get(agentId);
     if (heartbeat) {
       heartbeat.lastSyncOperation = {
         type: operation.type,
         timestamp: new Date(),
         duration: 0,
-        success: false
+        success: false,
       };
-      
+
       // Update sync metrics
       heartbeat.syncMetrics.syncOperationsTotal++;
       heartbeat.syncMetrics.syncOperationsFailed++;
       heartbeat.syncMetrics.syncErrorRate = this.calculateSyncErrorRate(heartbeat.syncMetrics);
-      
+
       heartbeat.syncState = 'error';
     }
 
     // Trigger escalation for sync failures
     this.triggerSyncFailureEscalation(agentId, error, tenantId);
-    
+
     this.emit('sync_operation_health_updated', { agentId, success: false, error, tenantId });
   }
 
@@ -348,7 +345,7 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
    */
   private handleConflictDetected(data: any): void {
     const { agentId, conflict, tenantId } = data;
-    
+
     const heartbeat = this.syncAwareHeartbeats.get(agentId);
     if (heartbeat) {
       heartbeat.syncMetrics.conflictsDetected++;
@@ -363,11 +360,11 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
    */
   private handleConflictResolved(data: any): void {
     const { agentId, conflict, tenantId } = data;
-    
+
     const heartbeat = this.syncAwareHeartbeats.get(agentId);
     if (heartbeat) {
       heartbeat.syncMetrics.conflictsResolved++;
-      
+
       // Update sync state if no more conflicts
       if (heartbeat.syncMetrics.conflictsDetected === heartbeat.syncMetrics.conflictsResolved) {
         heartbeat.syncState = 'synchronized';
@@ -382,7 +379,7 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
    */
   private handleClockDriftDetected(data: any): void {
     const { instances, maxDrift } = data;
-    
+
     // Update clock sync health for affected agents
     for (const instance of instances) {
       const heartbeat = this.syncAwareHeartbeats.get(instance.instanceId);
@@ -392,7 +389,8 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
     }
 
     // Trigger escalation if drift is significant
-    if (maxDrift > 1000) { // 1 second
+    if (maxDrift > 1000) {
+      // 1 second
       this.triggerClockDriftEscalation(instances, maxDrift);
     }
 
@@ -407,10 +405,9 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
       for (const [agentId, heartbeat] of this.syncAwareHeartbeats) {
         await this.checkSyncHealth(agentId, heartbeat);
       }
-      
+
       // Check system-wide sync health
       await this.checkSystemSyncHealth();
-      
     } catch (error) {
       this.logger.error('Error performing sync health check:', error);
     }
@@ -419,12 +416,16 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
   /**
    * Check sync health for specific agent
    */
-  private async checkSyncHealth(agentId: string, heartbeat: SyncAwareAgentHeartbeat): Promise<void> {
+  private async checkSyncHealth(
+    agentId: string,
+    heartbeat: SyncAwareAgentHeartbeat
+  ): Promise<void> {
     const now = new Date();
     const metrics = heartbeat.syncMetrics;
-    
+
     // Check sync operation health
-    if (metrics.syncErrorRate > 0.1) { // 10% error rate
+    if (metrics.syncErrorRate > 0.1) {
+      // 10% error rate
       await this.createSyncHealthEscalation({
         type: 'sync_failure',
         severity: metrics.syncErrorRate > 0.25 ? 'critical' : 'warning',
@@ -434,15 +435,16 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
         recommendedActions: [
           'Check network connectivity',
           'Verify sync service health',
-          'Review recent sync operations'
+          'Review recent sync operations',
         ],
         autoRecoveryAttempted: false,
-        escalatedAt: now
+        escalatedAt: now,
       });
     }
 
     // Check sync latency
-    if (metrics.syncLatencyMs > 5000) { // 5 seconds
+    if (metrics.syncLatencyMs > 5000) {
+      // 5 seconds
       await this.createSyncHealthEscalation({
         type: 'sync_failure',
         severity: 'warning',
@@ -452,18 +454,19 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
         recommendedActions: [
           'Check system load',
           'Verify network performance',
-          'Review sync operation complexity'
+          'Review sync operation complexity',
         ],
         autoRecoveryAttempted: false,
-        escalatedAt: now
+        escalatedAt: now,
       });
     }
 
     // Check conflict rate
-    const conflictRate = metrics.syncOperationsTotal > 0 ? 
-      metrics.conflictsDetected / metrics.syncOperationsTotal : 0;
-    
-    if (conflictRate > 0.05) { // 5% conflict rate
+    const conflictRate =
+      metrics.syncOperationsTotal > 0 ? metrics.conflictsDetected / metrics.syncOperationsTotal : 0;
+
+    if (conflictRate > 0.05) {
+      // 5% conflict rate
       await this.createSyncHealthEscalation({
         type: 'conflict_storm',
         severity: 'warning',
@@ -473,10 +476,10 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
         recommendedActions: [
           'Review concurrent operations',
           'Check file system permissions',
-          'Verify conflict resolution policies'
+          'Verify conflict resolution policies',
         ],
         autoRecoveryAttempted: false,
-        escalatedAt: now
+        escalatedAt: now,
       });
     }
   }
@@ -486,18 +489,27 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
    */
   private async checkSystemSyncHealth(): Promise<void> {
     const allHeartbeats = Array.from(this.syncAwareHeartbeats.values());
-    
+
     if (allHeartbeats.length === 0) return;
 
     // Calculate system-wide metrics
-    const totalOperations = allHeartbeats.reduce((sum, hb) => sum + hb.syncMetrics.syncOperationsTotal, 0);
-    const totalErrors = allHeartbeats.reduce((sum, hb) => sum + hb.syncMetrics.syncOperationsFailed, 0);
+    const totalOperations = allHeartbeats.reduce(
+      (sum, hb) => sum + hb.syncMetrics.syncOperationsTotal,
+      0
+    );
+    const totalErrors = allHeartbeats.reduce(
+      (sum, hb) => sum + hb.syncMetrics.syncOperationsFailed,
+      0
+    );
     const systemErrorRate = totalOperations > 0 ? totalErrors / totalOperations : 0;
-    
-    const avgLatency = allHeartbeats.reduce((sum, hb) => sum + hb.syncMetrics.syncLatencyMs, 0) / allHeartbeats.length;
-    
+
+    const avgLatency =
+      allHeartbeats.reduce((sum, hb) => sum + hb.syncMetrics.syncLatencyMs, 0) /
+      allHeartbeats.length;
+
     // Check system health thresholds
-    if (systemErrorRate > 0.15) { // 15% system error rate
+    if (systemErrorRate > 0.15) {
+      // 15% system error rate
       await this.createSyncHealthEscalation({
         type: 'sync_failure',
         severity: 'critical',
@@ -507,21 +519,27 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
           syncErrorRate: systemErrorRate,
           syncLatencyMs: avgLatency,
           syncOperationsSuccess: totalOperations - totalErrors,
-          conflictsDetected: allHeartbeats.reduce((sum, hb) => sum + hb.syncMetrics.conflictsDetected, 0),
-          conflictsResolved: allHeartbeats.reduce((sum, hb) => sum + hb.syncMetrics.conflictsResolved, 0),
+          conflictsDetected: allHeartbeats.reduce(
+            (sum, hb) => sum + hb.syncMetrics.conflictsDetected,
+            0
+          ),
+          conflictsResolved: allHeartbeats.reduce(
+            (sum, hb) => sum + hb.syncMetrics.conflictsResolved,
+            0
+          ),
           fileWatcherHealth: 'healthy', // TODO: Implement file watcher health check
           clockSyncHealth: 'synchronized', // TODO: Get from master clock service
           lastSyncTimestamp: new Date(),
-          avgSyncDuration: avgLatency
+          avgSyncDuration: avgLatency,
         },
         recommendedActions: [
           'Check system resources',
           'Review sync service configuration',
           'Investigate network issues',
-          'Consider scaling sync infrastructure'
+          'Consider scaling sync infrastructure',
         ],
         autoRecoveryAttempted: false,
-        escalatedAt: new Date()
+        escalatedAt: new Date(),
       });
     }
 
@@ -529,7 +547,7 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
       totalAgents: allHeartbeats.length,
       systemErrorRate,
       avgLatency,
-      totalOperations
+      totalOperations,
     });
   }
 
@@ -539,7 +557,7 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
   private async collectAgentSyncMetrics(agentId: string): Promise<SyncHealthMetrics> {
     // Get existing metrics or create default
     const existing = this.syncHealthMetrics.get(agentId) || this.createDefaultSyncMetrics();
-    
+
     // TODO: Integrate with actual sync services to get real metrics
     // For now, return existing metrics
     return existing;
@@ -555,13 +573,12 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
         const metrics = await this.collectAgentSyncMetrics(agentId);
         this.syncHealthMetrics.set(agentId, metrics);
       }
-      
+
       this.emit('sync_metrics_collected', {
         timestamp: new Date(),
         agentCount: this.syncAwareHeartbeats.size,
-        metricsCollected: this.syncHealthMetrics.size
+        metricsCollected: this.syncHealthMetrics.size,
       });
-      
     } catch (error) {
       this.logger.error('Error collecting sync metrics:', error);
     }
@@ -572,25 +589,28 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
    */
   private async createSyncHealthEscalation(escalation: SyncHealthEscalation): Promise<void> {
     const key = escalation.agentId || 'system';
-    
+
     if (!this.escalationHistory.has(key)) {
       this.escalationHistory.set(key, []);
     }
-    
+
     const history = this.escalationHistory.get(key)!;
     history.push(escalation);
-    
+
     // Keep only last 100 escalations
     if (history.length > 100) {
       history.splice(0, history.length - 100);
     }
-    
-    this.logger.warn(`Sync health escalation created: ${escalation.type} (${escalation.severity})`, {
-      agentId: escalation.agentId,
-      tenantId: escalation.tenantId,
-      syncMetrics: escalation.syncMetrics
-    });
-    
+
+    this.logger.warn(
+      `Sync health escalation created: ${escalation.type} (${escalation.severity})`,
+      {
+        agentId: escalation.agentId,
+        tenantId: escalation.tenantId,
+        syncMetrics: escalation.syncMetrics,
+      }
+    );
+
     this.emit('sync_health_escalation_created', escalation);
   }
 
@@ -616,7 +636,7 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
    */
   private async executeSyncRecovery(alert: SyncAwareStagnationAlert): Promise<void> {
     this.logger.log(`Executing sync recovery for agent ${alert.agentId}`);
-    
+
     // Emit recovery event for sync orchestrator
     this.emit('sync_recovery_required', {
       agentId: alert.agentId,
@@ -625,8 +645,8 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
       recoveryActions: [
         'restart_sync_operations',
         'clear_sync_queue',
-        'reinitialize_file_watchers'
-      ]
+        'reinitialize_file_watchers',
+      ],
     });
   }
 
@@ -635,13 +655,13 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
    */
   private async executeConflictResolution(alert: SyncAwareStagnationAlert): Promise<void> {
     this.logger.log(`Executing conflict resolution for agent ${alert.agentId}`);
-    
+
     // Emit conflict resolution event for conflict manager
     this.emit('conflict_resolution_required', {
       agentId: alert.agentId,
       tenantId: alert.tenantId,
       syncContext: alert.syncContext,
-      resolutionStrategy: 'automated_merge'
+      resolutionStrategy: 'automated_merge',
     });
   }
 
@@ -650,7 +670,7 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
    */
   private async executeManualIntervention(alert: SyncAwareStagnationAlert): Promise<void> {
     this.logger.log(`Escalating to manual intervention for agent ${alert.agentId}`);
-    
+
     // Create high-priority alert for human operators
     this.emit('manual_intervention_required', {
       agentId: alert.agentId,
@@ -661,8 +681,8 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
         'Review sync logs',
         'Check system resources',
         'Verify network connectivity',
-        'Consider agent restart'
-      ]
+        'Consider agent restart',
+      ],
     });
   }
 
@@ -677,7 +697,7 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
       status: 'active',
       consecutiveFailures: 0,
       syncMetrics: this.createDefaultSyncMetrics(),
-      syncState: 'synchronized'
+      syncState: 'synchronized',
     };
   }
 
@@ -693,20 +713,26 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
       clockSyncHealth: 'synchronized',
       lastSyncTimestamp: new Date(),
       syncErrorRate: 0,
-      avgSyncDuration: 0
+      avgSyncDuration: 0,
     };
   }
 
-  private determineSyncState(metrics: SyncHealthMetrics): 'synchronized' | 'syncing' | 'conflict' | 'error' {
+  private determineSyncState(
+    metrics: SyncHealthMetrics
+  ): 'synchronized' | 'syncing' | 'conflict' | 'error' {
     if (metrics.syncErrorRate > 0.1) return 'error';
     if (metrics.conflictsDetected > metrics.conflictsResolved) return 'conflict';
-    if (metrics.syncOperationsTotal > metrics.syncOperationsSuccess + metrics.syncOperationsFailed) return 'syncing';
+    if (metrics.syncOperationsTotal > metrics.syncOperationsSuccess + metrics.syncOperationsFailed)
+      return 'syncing';
     return 'synchronized';
   }
 
-  private determineEscalationPath(heartbeat: SyncAwareAgentHeartbeat): 'sync_recovery' | 'conflict_resolution' | 'manual_intervention' {
+  private determineEscalationPath(
+    heartbeat: SyncAwareAgentHeartbeat
+  ): 'sync_recovery' | 'conflict_resolution' | 'manual_intervention' {
     if (heartbeat.syncState === 'conflict') return 'conflict_resolution';
-    if (heartbeat.syncState === 'error' && heartbeat.syncMetrics.syncErrorRate < 0.5) return 'sync_recovery';
+    if (heartbeat.syncState === 'error' && heartbeat.syncMetrics.syncErrorRate < 0.5)
+      return 'sync_recovery';
     return 'manual_intervention';
   }
 
@@ -721,16 +747,20 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
   }
 
   private calculateSyncErrorRate(metrics: SyncHealthMetrics): number {
-    return metrics.syncOperationsTotal > 0 ? 
-      metrics.syncOperationsFailed / metrics.syncOperationsTotal : 0;
+    return metrics.syncOperationsTotal > 0
+      ? metrics.syncOperationsFailed / metrics.syncOperationsTotal
+      : 0;
   }
 
-  private async triggerSyncRecovery(agentId: string, heartbeat: SyncAwareAgentHeartbeat): Promise<void> {
+  private async triggerSyncRecovery(
+    agentId: string,
+    heartbeat: SyncAwareAgentHeartbeat
+  ): Promise<void> {
     this.emit('sync_recovery_triggered', {
       agentId,
       tenantId: heartbeat.tenantId,
       syncState: heartbeat.syncState,
-      syncMetrics: heartbeat.syncMetrics
+      syncMetrics: heartbeat.syncMetrics,
     });
   }
 
@@ -745,10 +775,10 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
         'Check sync service logs',
         'Verify agent connectivity',
         'Review error details',
-        'Consider agent restart'
+        'Consider agent restart',
       ],
       autoRecoveryAttempted: false,
-      escalatedAt: new Date()
+      escalatedAt: new Date(),
     });
   }
 
@@ -761,10 +791,10 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
         'Check NTP synchronization',
         'Verify system clock settings',
         'Review network latency',
-        'Consider clock service restart'
+        'Consider clock service restart',
       ],
       autoRecoveryAttempted: false,
-      escalatedAt: new Date()
+      escalatedAt: new Date(),
     });
   }
 
@@ -810,14 +840,26 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
     lastHealthCheck: Date;
   } {
     const allHeartbeats = Array.from(this.syncAwareHeartbeats.values());
-    const totalOperations = allHeartbeats.reduce((sum, hb) => sum + hb.syncMetrics.syncOperationsTotal, 0);
-    const totalErrors = allHeartbeats.reduce((sum, hb) => sum + hb.syncMetrics.syncOperationsFailed, 0);
-    const totalConflicts = allHeartbeats.reduce((sum, hb) => sum + hb.syncMetrics.conflictsDetected, 0);
-    
+    const totalOperations = allHeartbeats.reduce(
+      (sum, hb) => sum + hb.syncMetrics.syncOperationsTotal,
+      0
+    );
+    const totalErrors = allHeartbeats.reduce(
+      (sum, hb) => sum + hb.syncMetrics.syncOperationsFailed,
+      0
+    );
+    const totalConflicts = allHeartbeats.reduce(
+      (sum, hb) => sum + hb.syncMetrics.conflictsDetected,
+      0
+    );
+
     const errorRate = totalOperations > 0 ? totalErrors / totalOperations : 0;
     const conflictRate = totalOperations > 0 ? totalConflicts / totalOperations : 0;
-    const avgLatency = allHeartbeats.length > 0 ? 
-      allHeartbeats.reduce((sum, hb) => sum + hb.syncMetrics.syncLatencyMs, 0) / allHeartbeats.length : 0;
+    const avgLatency =
+      allHeartbeats.length > 0
+        ? allHeartbeats.reduce((sum, hb) => sum + hb.syncMetrics.syncLatencyMs, 0) /
+          allHeartbeats.length
+        : 0;
 
     let systemHealth: 'healthy' | 'degraded' | 'critical' = 'healthy';
     if (errorRate > 0.25 || avgLatency > 10000) {
@@ -828,8 +870,7 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
 
     const activeEscalations = Array.from(this.escalationHistory.values())
       .flat()
-      .filter(esc => esc.escalatedAt > new Date(Date.now() - 24 * 60 * 60 * 1000)) // Last 24 hours
-      .length;
+      .filter((esc) => esc.escalatedAt > new Date(Date.now() - 24 * 60 * 60 * 1000)).length; // Last 24 hours
 
     return {
       systemHealth,
@@ -838,10 +879,10 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
         totalOperations,
         errorRate,
         avgLatency,
-        conflictRate
+        conflictRate,
       },
       activeEscalations,
-      lastHealthCheck: new Date()
+      lastHealthCheck: new Date(),
     };
   }
 
@@ -852,11 +893,11 @@ export class SyncAwareHeartbeatMonitoringService extends EventEmitter implements
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
     }
-    
+
     if (this.metricsCollectionInterval) {
       clearInterval(this.metricsCollectionInterval);
     }
-    
+
     this.logger.log('SyncAwareHeartbeatMonitoringService destroyed');
   }
 }

@@ -1,10 +1,12 @@
 # Skills MCP Server
 
-Model Context Protocol server that exposes The New Fuse skills library for dynamic agent skill discovery and loading.
+Model Context Protocol server that exposes The New Fuse skills library for
+dynamic agent skill discovery and loading.
 
 ## Overview
 
 This MCP server enables AI agents to:
+
 - **Discover** all available skills in the `.agent/skills/` directory
 - **Load** skill documentation on demand
 - **Access** onboarding flows and resource maps
@@ -13,16 +15,19 @@ This MCP server enables AI agents to:
 ## Features
 
 ### Resources
+
 - `skill://<skill-name>` - Access any skill's documentation
 - Automatic skill scanning and caching
 - Support for meta-skills, skills, and context resources
 
 ### Prompts
+
 - All skills available as loadable prompts
 - Meta-skills (skill-builder, library-of-living-knowledge)
 - Context resources (onboarding, resource-map)
 
 ### Tools
+
 - `list_skills` - List all skills (filterable by type)
 - `get_skill_content` - Get full skill documentation
 - `search_skills` - Search by keyword
@@ -154,10 +159,12 @@ The server automatically scans for:
 
 ## Integration with Self-Prompting
 
-This server is a critical component of The New Fuse's self-prompting infrastructure:
+This server is a critical component of The New Fuse's self-prompting
+infrastructure:
 
 1. **Agent Bootstrap**: New agents load `library-of-living-knowledge` via MCP
-2. **Skill Discovery**: Agents query `get_resource_map` to discover available skills
+2. **Skill Discovery**: Agents query `get_resource_map` to discover available
+   skills
 3. **Dynamic Loading**: Agents load specific skills as needed for tasks
 4. **Meta-Learning**: `skill-builder` uses this server to create new skills
 

@@ -14,6 +14,7 @@ import dashboardService from '../services/dashboard.service';
 import { useRoute } from './route-context';
 import { StatsCard } from './ui/premium/GlassCard';
 import { PremiumButton } from './ui/premium/PremiumButton';
+import { ProviderStatusGrid } from './ProviderStatusGrid';
 
 // Skeleton component for StatsCard
 function StatsCardSkeleton() {
@@ -152,6 +153,11 @@ export function Dashboard() {
             />
           </>
         ) : null}
+      </div>
+
+      {/* Intelligence Network Status */}
+      <div className="pt-4">
+        <ProviderStatusGrid />
       </div>
     </div>
   );

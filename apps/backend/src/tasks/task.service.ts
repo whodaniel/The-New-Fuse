@@ -5,11 +5,10 @@ import { Injectable, Logger } from '@nestjs/common';
 @Injectable()
 export class TaskService {
   private readonly logger = new Logger(TaskService.name);
-  constructor(
-    // private readonly redis: RedisService,
-    // private readonly queue: QueueService, // TODO: Implement QueueService
-    // private readonly pubsub: PubSubService, // TODO: Implement PubSubService
-  ) {}
+  constructor() // private readonly redis: RedisService,
+  // private readonly queue: QueueService, // TODO: Implement QueueService
+  // private readonly pubsub: PubSubService, // TODO: Implement PubSubService
+  {}
 
   async createTask(data: any): Promise<string> {
     const taskId = `task:${Date.now()}`;

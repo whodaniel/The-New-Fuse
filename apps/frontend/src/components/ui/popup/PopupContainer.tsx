@@ -1,24 +1,6 @@
-import React from 'react';
 import { Button } from '@/components/ui/design-system';
-import {
-  RefreshCw,
-  Settings,
-  Moon,
-  Sun,
-  Bug,
-  Keyboard,
-  HelpCircle,
-  LayoutDashboard,
-  Globe,
-  Sparkles,
-  Wrench,
-  Monitor,
-  Clock,
-  Code,
-  HardDrive,
-  Shield,
-  Zap,
-} from 'lucide-react';
+import { Code, LayoutDashboard, Monitor, Moon, Settings, Sun } from 'lucide-react';
+import React from 'react';
 
 interface PopupContainerProps {
   isMainApp?: boolean;
@@ -52,11 +34,7 @@ export const PopupContainer: React.FC<PopupContainerProps> = ({
         <h2 className="text-lg font-bold">
           {isMainApp ? 'Main App Integration' : 'Chrome Extension'}
         </h2>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => handleThemeChange(!darkMode)}
-        >
+        <Button size="sm" variant="outline" onClick={() => handleThemeChange(!darkMode)}>
           {darkMode ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
           {darkMode ? 'Light' : 'Dark'}
         </Button>
@@ -83,11 +61,7 @@ export const PopupContainer: React.FC<PopupContainerProps> = ({
       </div>
 
       {/* Status */}
-      <div
-        className={`p-3 rounded-md ${
-          darkMode ? 'bg-neutral-700' : 'bg-neutral-100'
-        }`}
-      >
+      <div className={`p-3 rounded-md ${darkMode ? 'bg-neutral-700' : 'bg-neutral-100'}`}>
         <p className="text-sm font-medium mb-2">System Status</p>
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-success-500 rounded-full" />

@@ -9,9 +9,7 @@
     "allowImportingTsExtensions": false,
     "types": []
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "references": [
     {
       "path": "../types"

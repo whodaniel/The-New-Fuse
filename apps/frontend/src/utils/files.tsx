@@ -29,7 +29,10 @@ export function getFileInfo(file: File): FileInfo {
   };
 }
 
-export function validateFile(file: File, options: FileValidationOptions = {}): FileValidationResult {
+export function validateFile(
+  file: File,
+  options: FileValidationOptions = {}
+): FileValidationResult {
   const errors: string[] = [];
   const { maxSize, allowedTypes } = options;
 
@@ -50,7 +53,10 @@ export function validateFile(file: File, options: FileValidationOptions = {}): F
   };
 }
 
-export function validateFiles(files: File[], options: FileValidationOptions = {}): FileValidationResult {
+export function validateFiles(
+  files: File[],
+  options: FileValidationOptions = {}
+): FileValidationResult {
   const errors: string[] = [];
   const { maxFiles } = options;
 

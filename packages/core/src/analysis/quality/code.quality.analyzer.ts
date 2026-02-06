@@ -4,7 +4,7 @@ enum ErrorSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 interface QualityIssue {
@@ -53,7 +53,7 @@ export class CodeQualityAnalyzer {
         fileName: filePath,
         issues,
         score,
-        metrics
+        metrics,
       };
     } catch (error) {
       console.error('Error analyzing file:', error);
@@ -81,7 +81,7 @@ export class CodeQualityAnalyzer {
       [ErrorSeverity.LOW]: 1,
       [ErrorSeverity.MEDIUM]: 3,
       [ErrorSeverity.HIGH]: 7,
-      [ErrorSeverity.CRITICAL]: 15
+      [ErrorSeverity.CRITICAL]: 15,
     };
 
     const totalWeight = issues.reduce((sum, issue) => {
@@ -91,19 +91,21 @@ export class CodeQualityAnalyzer {
     return Math.max(0, 100 - totalWeight);
   }
 
-  private async getMetrics(filePath: string): Promise<{ complexity: number; maintainability: number; coverage?: number }> {
+  private async getMetrics(
+    filePath: string,
+  ): Promise<{ complexity: number; maintainability: number; coverage?: number }> {
     try {
       // Implementation for getting metrics
       return {
         complexity: 1,
         maintainability: 80,
-        coverage: 85
+        coverage: 85,
       };
     } catch (error) {
       console.error('Error getting metrics:', error);
       return {
         complexity: 1,
-        maintainability: 80
+        maintainability: 80,
       };
     }
   }

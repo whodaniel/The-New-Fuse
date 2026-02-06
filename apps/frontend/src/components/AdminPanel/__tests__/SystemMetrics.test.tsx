@@ -1,7 +1,6 @@
-import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import { SystemMetrics } from '../SystemMetrics';
 import { useSystemMetrics } from '../../../hooks/useSystemMetrics';
+import { SystemMetrics } from '../SystemMetrics';
 
 jest.mock('../../../hooks/useSystemMetrics');
 
@@ -16,12 +15,12 @@ describe('SystemMetrics', () => {
     const mockMetrics = {
       cpuUsage: { value: 45 },
       memoryUsage: { value: 1024 },
-      activeConnections: { value: 100 }
+      activeConnections: { value: 100 },
     };
 
     (useSystemMetrics as jest.Mock).mockReturnValue({
       loading: false,
-      metrics: mockMetrics
+      metrics: mockMetrics,
     });
 
     render(<SystemMetrics />);

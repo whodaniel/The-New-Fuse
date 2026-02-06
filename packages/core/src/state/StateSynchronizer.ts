@@ -40,7 +40,7 @@ export class StateSynchronizer {
       id: `snapshot-${Date.now()}`,
       data: { ...this.state },
       timestamp: new Date(),
-      version: this.version
+      version: this.version,
     };
   }
 

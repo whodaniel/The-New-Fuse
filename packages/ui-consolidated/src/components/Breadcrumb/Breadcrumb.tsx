@@ -1,84 +1,73 @@
-import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
 import { cn } from '../../utils';
 
 /**
  * Breadcrumb variants using class-variance-authority
  */
-export const breadcrumbVariants = cva(
-  'flex flex-wrap items-center',
-  {
-    variants: {
-      size: {
-        default: 'text-sm',
-        sm: 'text-xs',
-        lg: 'text-base',
-      },
+export const breadcrumbVariants = cva('flex flex-wrap items-center', {
+  variants: {
+    size: {
+      default: 'text-sm',
+      sm: 'text-xs',
+      lg: 'text-base',
     },
-    defaultVariants: {
-      size: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
 
 /**
  * Breadcrumb item variants using class-variance-authority
  */
-export const breadcrumbItemVariants = cva(
-  'inline-flex items-center',
-  {
-    variants: {
-      variant: {
-        default: 'text-muted-foreground hover:text-foreground',
-        ghost: 'text-muted-foreground hover:text-foreground',
-        link: 'text-primary hover:underline',
-      },
+export const breadcrumbItemVariants = cva('inline-flex items-center', {
+  variants: {
+    variant: {
+      default: 'text-muted-foreground hover:text-foreground',
+      ghost: 'text-muted-foreground hover:text-foreground',
+      link: 'text-primary hover:underline',
     },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
 
 /**
  * Breadcrumb separator variants using class-variance-authority
  */
-export const breadcrumbSeparatorVariants = cva(
-  'mx-2 text-muted-foreground',
-  {
-    variants: {
-      size: {
-        default: 'text-xs',
-        sm: 'text-[0.6rem]',
-        lg: 'text-sm',
-      },
+export const breadcrumbSeparatorVariants = cva('mx-2 text-muted-foreground', {
+  variants: {
+    size: {
+      default: 'text-xs',
+      sm: 'text-[0.6rem]',
+      lg: 'text-sm',
     },
-    defaultVariants: {
-      size: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
 
 /**
  * Breadcrumb component props
  */
 export interface BreadcrumbProps
-  extends React.HTMLAttributes<HTMLElement>,
-    VariantProps<typeof breadcrumbVariants> {
+  extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof breadcrumbVariants> {
   /**
    * Custom separator to use between breadcrumb items
    * @default "/"
    */
   separator?: React.ReactNode;
-  size?: "default" | "sm" | "lg";
+  size?: 'default' | 'sm' | 'lg';
 }
 
 /**
  * Breadcrumb item component props
  */
 export interface BreadcrumbItemProps
-  extends React.HTMLAttributes<HTMLLIElement>,
-    VariantProps<typeof breadcrumbItemVariants> {
+  extends React.HTMLAttributes<HTMLLIElement>, VariantProps<typeof breadcrumbItemVariants> {
   /**
    * Whether this is the current/active breadcrumb item
    * @default false
@@ -98,8 +87,7 @@ export interface BreadcrumbItemProps
  * Breadcrumb separator component props
  */
 export interface BreadcrumbSeparatorProps
-  extends React.HTMLAttributes<HTMLLIElement>,
-    VariantProps<typeof breadcrumbSeparatorVariants> {}
+  extends React.HTMLAttributes<HTMLLIElement>, VariantProps<typeof breadcrumbSeparatorVariants> {}
 
 /**
  * Breadcrumb context
@@ -145,13 +133,7 @@ const useBreadcrumb = () => {
  * </Breadcrumb>
  */
 const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
-  ({
-    className,
-    size,
-    separator = '/',
-    children,
-    ...props
-  }, ref) => {
+  ({ className, size, separator = '/', children, ...props }, ref) => {
     return (
       <BreadcrumbContext.Provider
         value={{
@@ -165,9 +147,7 @@ const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
           className={cn(breadcrumbVariants({ size }), className)}
           {...props}
         >
-          <ol className="flex flex-wrap items-center">
-            {children}
-          </ol>
+          <ol className="flex flex-wrap items-center">{children}</ol>
         </nav>
       </BreadcrumbContext.Provider>
     );
@@ -180,18 +160,10 @@ Breadcrumb.displayName = 'Breadcrumb';
  * Breadcrumb item component for displaying a breadcrumb item
  */
 const BreadcrumbItem = React.forwardRef<HTMLLIElement, BreadcrumbItemProps>(
-  ({
-    className,
-    variant,
-    isCurrent = false,
-    href,
-    asChild = false,
-    children,
-    ...props
-  }, ref) => {
+  ({ className, variant, isCurrent = false, href, asChild = false, children, ...props }, ref) => {
     const Comp = asChild ? React.Fragment : href && !isCurrent ? 'a' : 'span';
     const compProps = href && !isCurrent && !asChild ? { href } : {};
-    
+
     return (
       <li
         ref={ref}
@@ -205,10 +177,7 @@ const BreadcrumbItem = React.forwardRef<HTMLLIElement, BreadcrumbItemProps>(
       >
         <Comp
           {...compProps}
-          className={cn(
-            'outline-none focus:underline',
-            isCurrent && 'cursor-default'
-          )}
+          className={cn('outline-none focus:underline', isCurrent && 'cursor-default')}
         >
           {children}
         </Comp>
@@ -223,12 +192,9 @@ BreadcrumbItem.displayName = 'BreadcrumbItem';
  * Breadcrumb separator component for displaying a separator between breadcrumb items
  */
 const BreadcrumbSeparator = React.forwardRef<HTMLLIElement, BreadcrumbSeparatorProps>(
-  ({
-    className,
-    ...props
-  }, ref) => {
+  ({ className, ...props }, ref) => {
     const { separator, size } = useBreadcrumb();
-    
+
     return (
       <li
         ref={ref}
@@ -254,26 +220,18 @@ const BreadcrumbList = React.forwardRef<HTMLOListElement, React.HTMLAttributes<H
     const items = React.Children.toArray(children).filter(
       (child) => React.isValidElement(child) && child.type === BreadcrumbItem
     );
-    
+
     // Add separators between items
     const itemsWithSeparators = items.reduce<React.ReactNode[]>((acc, item, index) => {
       if (index === 0) {
         return [item];
       }
-      
-      return [
-        ...acc,
-        <BreadcrumbSeparator key={`separator-${index}`} />,
-        item,
-      ];
+
+      return [...acc, <BreadcrumbSeparator key={`separator-${index}`} />, item];
     }, []);
-    
+
     return (
-      <ol
-        ref={ref}
-        className={cn('flex flex-wrap items-center', className)}
-        {...props}
-      >
+      <ol ref={ref} className={cn('flex flex-wrap items-center', className)} {...props}>
         {itemsWithSeparators}
       </ol>
     );
@@ -282,9 +240,4 @@ const BreadcrumbList = React.forwardRef<HTMLOListElement, React.HTMLAttributes<H
 
 BreadcrumbList.displayName = 'BreadcrumbList';
 
-export {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbSeparator,
-  BreadcrumbList,
-};
+export { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator };

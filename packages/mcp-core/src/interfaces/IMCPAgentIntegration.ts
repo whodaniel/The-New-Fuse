@@ -1,13 +1,12 @@
 /**
  * MCP Agent Integration Interface
- * 
+ *
  * This interface defines the contract for integrating agents with the MCP system,
  * enabling agent-to-agent communication through standardized MCP protocols.
  */
 
-import type { MCPCapability } from './IMCPCapability';
 import type { MCPServiceInfo } from '../types/broker';
-import type { MCPMessage } from './IMCPMessage';
+import type { MCPCapability } from './IMCPCapability';
 
 // Re-export for other modules
 export type { MCPCapability };
@@ -38,7 +37,7 @@ export enum AgentStatus {
   INACTIVE = 'inactive',
   BUSY = 'busy',
   ERROR = 'error',
-  MAINTENANCE = 'maintenance'
+  MAINTENANCE = 'maintenance',
 }
 
 /**
@@ -140,14 +139,14 @@ export interface AgentMessageResult {
 
 /**
  * Main interface for MCP Agent Integration
- * 
+ *
  * This interface provides methods for registering agents as MCP services,
  * enabling agent-to-agent communication, and managing agent capabilities.
  */
 export interface IMCPAgentIntegration {
   /**
    * Register an agent as an MCP service
-   * 
+   *
    * @param agent - The agent to register
    * @returns Promise resolving to registration result
    */
@@ -155,7 +154,7 @@ export interface IMCPAgentIntegration {
 
   /**
    * Unregister an agent from MCP services
-   * 
+   *
    * @param agentId - The ID of the agent to unregister
    * @returns Promise resolving to success status
    */
@@ -163,7 +162,7 @@ export interface IMCPAgentIntegration {
 
   /**
    * Enable MCP communication for a specific agent
-   * 
+   *
    * @param agentId - The ID of the agent to enable
    * @returns Promise resolving to success status
    */
@@ -171,7 +170,7 @@ export interface IMCPAgentIntegration {
 
   /**
    * Disable MCP communication for a specific agent
-   * 
+   *
    * @param agentId - The ID of the agent to disable
    * @returns Promise resolving to success status
    */
@@ -179,7 +178,7 @@ export interface IMCPAgentIntegration {
 
   /**
    * Route a message between agents using MCP protocol
-   * 
+   *
    * @param from - Source agent ID
    * @param to - Target agent ID
    * @param message - Message to route
@@ -187,15 +186,15 @@ export interface IMCPAgentIntegration {
    * @returns Promise resolving to routing result
    */
   routeAgentMessage(
-    from: string, 
-    to: string, 
-    message: any, 
+    from: string,
+    to: string,
+    message: any,
     routing?: Partial<AgentMessageRouting>
   ): Promise<AgentMessageResult>;
 
   /**
    * Get MCP capabilities for a specific agent
-   * 
+   *
    * @param agentId - The ID of the agent
    * @returns Promise resolving to capability discovery result
    */
@@ -203,14 +202,14 @@ export interface IMCPAgentIntegration {
 
   /**
    * List all registered agents with MCP endpoints
-   * 
+   *
    * @returns Promise resolving to array of agent endpoints
    */
   listAgentEndpoints(): Promise<AgentMCPEndpoint[]>;
 
   /**
    * Find agents by capability
-   * 
+   *
    * @param capability - Capability to search for
    * @returns Promise resolving to array of matching agents
    */
@@ -218,21 +217,21 @@ export interface IMCPAgentIntegration {
 
   /**
    * Start collaboration tracking between agents
-   * 
+   *
    * @param participants - Array of agent IDs
    * @param initiator - ID of the initiating agent
    * @param purpose - Purpose of the collaboration
    * @returns Promise resolving to collaboration tracking info
    */
   startCollaboration(
-    participants: string[], 
-    initiator: string, 
+    participants: string[],
+    initiator: string,
     purpose: string
   ): Promise<AgentCollaboration>;
 
   /**
    * End collaboration tracking
-   * 
+   *
    * @param collaborationId - ID of the collaboration to end
    * @returns Promise resolving to success status
    */
@@ -240,7 +239,7 @@ export interface IMCPAgentIntegration {
 
   /**
    * Get active collaborations for an agent
-   * 
+   *
    * @param agentId - The ID of the agent
    * @returns Promise resolving to array of active collaborations
    */
@@ -248,7 +247,7 @@ export interface IMCPAgentIntegration {
 
   /**
    * Update agent status
-   * 
+   *
    * @param agentId - The ID of the agent
    * @param status - New status
    * @returns Promise resolving to success status
@@ -257,7 +256,7 @@ export interface IMCPAgentIntegration {
 
   /**
    * Get agent health status
-   * 
+   *
    * @param agentId - The ID of the agent
    * @returns Promise resolving to health information
    */
@@ -272,7 +271,7 @@ export interface IMCPAgentIntegration {
 
   /**
    * Send heartbeat for an agent
-   * 
+   *
    * @param agentId - The ID of the agent
    * @returns Promise resolving to success status
    */

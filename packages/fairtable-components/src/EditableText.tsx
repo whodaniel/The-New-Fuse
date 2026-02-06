@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface EditableTextProps {
   initialValue: string;
@@ -10,7 +9,14 @@ interface EditableTextProps {
   disabled?: boolean; // Added disabled prop
 }
 
-const EditableText: React.FC<EditableTextProps> = ({ initialValue, onSave, className, inputClassName, placeholder, disabled }) => {
+const EditableText: React.FC<EditableTextProps> = ({
+  initialValue,
+  onSave,
+  className,
+  inputClassName,
+  placeholder,
+  disabled,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -37,9 +43,9 @@ const EditableText: React.FC<EditableTextProps> = ({ initialValue, onSave, class
 
   const handleBlur = () => {
     if (value.trim() === '') {
-        setValue(initialValue); // Revert if empty
+      setValue(initialValue); // Revert if empty
     } else if (value !== initialValue) {
-        onSave(value);
+      onSave(value);
     }
     setIsEditing(false);
   };
@@ -78,9 +84,9 @@ const EditableText: React.FC<EditableTextProps> = ({ initialValue, onSave, class
     <span
       onDoubleClick={handleDoubleClick}
       className={`cursor-pointer p-1 hover:bg-slate-100 rounded ${className} ${disabled ? 'cursor-not-allowed opacity-70' : ''}`}
-      title={disabled ? undefined : "Double-click to edit"}
+      title={disabled ? undefined : 'Double-click to edit'}
     >
-      {value || placeholder || "Untitled"}
+      {value || placeholder || 'Untitled'}
     </span>
   );
 };

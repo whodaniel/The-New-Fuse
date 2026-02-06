@@ -17,7 +17,7 @@ export enum ErrorCode {
   WORKFLOW_ERROR = 'WORKFLOW_ERROR',
   AGENT_ERROR = 'AGENT_ERROR',
   RATE_LIMIT_ERROR = 'RATE_LIMIT_ERROR',
-  LLM_ERROR = 'LLM_ERROR'
+  LLM_ERROR = 'LLM_ERROR',
 }
 
 export interface ErrorResponse {

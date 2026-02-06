@@ -13,7 +13,7 @@ import { MCPModule } from './modules/mcp/mcp.module';
 @Module({
   imports: [
     // ... other modules
-    MCPModule,  // Add this line
+    MCPModule, // Add this line
   ],
 })
 export class AppModule {}
@@ -41,6 +41,7 @@ npm run start:dev
 ```
 
 You should see:
+
 ```
 [MCPServerService] MCP Server started on 0.0.0.0:3100
 [MCPToolRegistry] Registered 16 MCP tools
@@ -91,6 +92,7 @@ testMCP();
 ```
 
 Run it:
+
 ```bash
 npx ts-node test-client.ts
 ```
@@ -157,6 +159,7 @@ curl -X POST http://localhost:3000/mcp/agents/register \
 ```
 
 Expected response:
+
 ```json
 {
   "success": true,
@@ -250,6 +253,7 @@ curl http://localhost:3000/mcp/tools/workflow.create
 ### Port 3100 already in use
 
 Change the port in `.env`:
+
 ```bash
 MCP_PORT=3101
 ```

@@ -1,4 +1,4 @@
-import { A2AMessage, AgentStatus, A2APriority } from '@the-new-fuse/a2a-core';
+import { A2AMessage, A2APriority, AgentStatus } from '@the-new-fuse/a2a-core';
 
 /**
  * Agent coordination channels

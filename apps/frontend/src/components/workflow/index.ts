@@ -1,6 +1,6 @@
-export { WorkflowCanvas } from './WorkflowCanvas';
-export { NodeToolbox } from './NodeToolbox';
 export { NodeProperties } from './NodeProperties';
-export { WorkflowExecutionContext } from './WorkflowExecutionContext';
-export { WorkflowAnalytics } from './WorkflowAnalytics';
 export * from './nodes';
+export { NodeToolbox } from './NodeToolbox';
+export { WorkflowAnalytics } from './WorkflowAnalytics';
+export { WorkflowCanvas } from './WorkflowCanvas';
+export { WorkflowExecutionContext } from './WorkflowExecutionContext';

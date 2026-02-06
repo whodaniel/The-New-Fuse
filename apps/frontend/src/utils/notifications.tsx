@@ -61,7 +61,9 @@ export function warning(message: string, title?: string): void {
   });
 }
 
-export function useNotifications(callback: (notification: NotificationOptions) => void): () => void {
+export function useNotifications(
+  callback: (notification: NotificationOptions) => void
+): () => void {
   const handler = ((event: NotificationEvent) => {
     callback(event.detail);
   }) as EventListener;
@@ -78,7 +80,7 @@ export function requestNotificationPermission(): Promise<NotificationPermission>
   if (!('Notification' in window)) {
     return Promise.resolve('denied');
   }
-  
+
   return Notification.requestPermission();
 }
 

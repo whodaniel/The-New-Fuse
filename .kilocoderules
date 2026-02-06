@@ -41,7 +41,7 @@ workflow management, and cross-platform integration.
 - **Package Manager**: pnpm 9.x (MANDATORY - never use npm/yarn)
 - **Build System**: Turborepo with custom build optimization
 - **Backend Framework**: NestJS 11.x
-- **Database**: PostgreSQL 15+ with Drizzle ORM (migrating from Prisma)
+- **Database**: PostgreSQL 15+ with Drizzle ORM (migrating from Drizzle)
 - **Message Queue**: Redis (Upstash/Railway)
 - **Frontend**: React 18+, Vite, Tailwind CSS
 - **Testing**: Jest, Playwright (e2e)
@@ -1201,7 +1201,7 @@ export class UserController {
 Location: `docs/architecture/adr/`
 
 ```markdown
-# ADR-001: Use Drizzle ORM over Prisma
+# ADR-001: Use Drizzle ORM over Drizzle
 
 ## Status
 
@@ -1224,11 +1224,11 @@ Adopt Drizzle ORM for all new database code.
 - Positive: Better performance, SQL-like syntax
 - Positive: Smaller bundle size
 - Negative: Less mature ecosystem
-- Negative: Migration effort from Prisma
+- Negative: Migration effort from Drizzle
 
 ## Migration Plan
 
-1. Keep Prisma for existing code
+1. Keep Drizzle for existing code
 2. New features use Drizzle
 3. Gradual migration of critical paths
 ```

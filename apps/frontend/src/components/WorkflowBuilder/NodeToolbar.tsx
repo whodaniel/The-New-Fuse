@@ -1,44 +1,102 @@
-import React, { useState } from 'react';
-import { FaRobot, FaTools, FaCode, FaDatabase, FaGlobe, FaWaveSquare, FaBell, FaSearch, FaFileAlt, FaMemory, FaChevronDown, FaPlus } from 'react-icons/fa';
 import { FileText } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+  FaBell,
+  FaChevronDown,
+  FaCode,
+  FaDatabase,
+  FaFileAlt,
+  FaGlobe,
+  FaMemory,
+  FaPlus,
+  FaRobot,
+  FaSearch,
+  FaTools,
+  FaWaveSquare,
+} from 'react-icons/fa';
 
 interface NodeToolbarProps {
-  onAddNode: (nodeType: string, position: { x: number, y: number }) => void;
+  onAddNode: (nodeType: string, position: { x: number; y: number }) => void;
 }
 
 const nodeCategories = [
   {
     name: 'AI',
     nodes: [
-      { type: 'llm', label: 'LLM Completion', icon: FaRobot, description: 'Generate text using an LLM' },
+      {
+        type: 'llm',
+        label: 'LLM Completion',
+        icon: FaRobot,
+        description: 'Generate text using an LLM',
+      },
       { type: 'tool', label: 'Tool Execution', icon: FaTools, description: 'Execute an AI tool' },
-      { type: 'promptTemplate', label: 'Prompt Template', icon: FileText, description: 'Use a versioned prompt template' },
-    ]
+      {
+        type: 'promptTemplate',
+        label: 'Prompt Template',
+        icon: FileText,
+        description: 'Use a versioned prompt template',
+      },
+    ],
   },
   {
     name: 'Data',
     nodes: [
-      { type: 'transform', label: 'Transform', icon: FaCode, description: 'Transform data (format, structure)' },
-      { type: 'data', label: 'Data Source', icon: FaDatabase, description: 'Load data from a source' },
+      {
+        type: 'transform',
+        label: 'Transform',
+        icon: FaCode,
+        description: 'Transform data (format, structure)',
+      },
+      {
+        type: 'data',
+        label: 'Data Source',
+        icon: FaDatabase,
+        description: 'Load data from a source',
+      },
       { type: 'storage', label: 'Data Storage', icon: FaMemory, description: 'Store data' },
-    ]
+    ],
   },
   {
     name: 'Integration',
     nodes: [
-      { type: 'api', label: 'API Call', icon: FaGlobe, description: 'Make HTTP requests to external APIs' },
-      { type: 'webhook', label: 'Webhook', icon: FaWaveSquare, description: 'Send data to webhook endpoints' },
-      { type: 'notification', label: 'Notification', icon: FaBell, description: 'Send notifications' },
-    ]
+      {
+        type: 'api',
+        label: 'API Call',
+        icon: FaGlobe,
+        description: 'Make HTTP requests to external APIs',
+      },
+      {
+        type: 'webhook',
+        label: 'Webhook',
+        icon: FaWaveSquare,
+        description: 'Send data to webhook endpoints',
+      },
+      {
+        type: 'notification',
+        label: 'Notification',
+        icon: FaBell,
+        description: 'Send notifications',
+      },
+    ],
   },
   {
     name: 'Advanced',
     nodes: [
-      { type: 'vectorStore', label: 'Vector Store', icon: FaSearch, description: 'Work with vector databases' },
-      { type: 'documentProcessing', label: 'Document Processing', icon: FaFileAlt, description: 'Process and chunk documents' },
+      {
+        type: 'vectorStore',
+        label: 'Vector Store',
+        icon: FaSearch,
+        description: 'Work with vector databases',
+      },
+      {
+        type: 'documentProcessing',
+        label: 'Document Processing',
+        icon: FaFileAlt,
+        description: 'Process and chunk documents',
+      },
       { type: 'condition', label: 'Condition', icon: FaCode, description: 'Conditional branching' },
-    ]
-  }
+    ],
+  },
 ];
 
 export const NodeToolbar: React.FC<NodeToolbarProps> = ({ onAddNode }) => {
@@ -47,9 +105,9 @@ export const NodeToolbar: React.FC<NodeToolbarProps> = ({ onAddNode }) => {
 
   const handleAddNode = (nodeType: string) => {
     // Calculate position - in a real app this might be based on the current view
-    const position = { 
-      x: Math.random() * 300 + 100, 
-      y: Math.random() * 200 + 100 
+    const position = {
+      x: Math.random() * 300 + 100,
+      y: Math.random() * 200 + 100,
     };
     onAddNode(nodeType, position);
   };
@@ -66,13 +124,15 @@ export const NodeToolbar: React.FC<NodeToolbarProps> = ({ onAddNode }) => {
             Add a node
           </div>
         </div>
-        
+
         {nodeCategories.map((category) => (
           <div key={category.name} className="relative">
             <div className="relative group">
-              <button 
+              <button
                 className="flex items-center space-x-1 px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 transition-colors"
-                onClick={() => setExpandedCategory(expandedCategory === category.name ? null : category.name)}
+                onClick={() =>
+                  setExpandedCategory(expandedCategory === category.name ? null : category.name)
+                }
               >
                 <span>{category.name}</span>
                 <FaChevronDown className="w-3 h-3" />

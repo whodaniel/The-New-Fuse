@@ -1,5 +1,3 @@
-import type { Theme as ChakraTheme } from '@chakra-ui/react';
-
 export type ThemeMode = 'light' | 'dark' | 'system';
 
 export interface ThemeColors {

@@ -328,7 +328,13 @@ export class PrometheusMetrics extends EventEmitter {
   /**
    * Set job queue size
    */
-  setJobQueueSize(queueName: string, pending: number, active: number, completed: number, failed: number): void {
+  setJobQueueSize(
+    queueName: string,
+    pending: number,
+    active: number,
+    completed: number,
+    failed: number
+  ): void {
     if (!this.initialized) return;
 
     this.jobQueueSize.set({ queue_name: queueName, status: 'pending' }, pending);

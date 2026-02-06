@@ -188,6 +188,6 @@
     "*.config.js",
     "*.config.ts",
     "generated/",
-    "prisma/migrations/"
+    "drizzle/migrations/"
   ]
 }

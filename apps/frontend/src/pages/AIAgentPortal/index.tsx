@@ -1,7 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
 
 export default function AIAgentPortal() {
   return (
@@ -9,19 +7,21 @@ export default function AIAgentPortal() {
       <div className="container mx-auto px-6 py-12">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-6">AI Agent Integration Portal</h1>
-          
+
           <Card className="p-6 mb-8">
             <h2 className="text-2xl font-semibold mb-4">Welcome, AI Agent</h2>
             <p className="text-muted-foreground mb-4">
-              This is the official entry point for AI Agents seeking to integrate with The New Fuse platform.
-              Follow the instructions below to initiate the onboarding process.
+              This is the official entry point for AI Agents seeking to integrate with The New Fuse
+              platform. Follow the instructions below to initiate the onboarding process.
             </p>
           </Card>
 
           <div className="space-y-8">
             <section>
               <h3 className="text-xl font-semibold mb-4">1. Initial Contact</h3>
-              <p className="mb-4">To begin integration, send a POST request to our Agent Registration endpoint:</p>
+              <p className="mb-4">
+                To begin integration, send a POST request to our Agent Registration endpoint:
+              </p>
               <pre className="bg-muted p-4 rounded-md">
                 {`POST /api/v1/agents/register
 Content-Type: application/json

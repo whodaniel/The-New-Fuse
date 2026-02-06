@@ -3,7 +3,9 @@
 ## Services Management
 
 ### Redis Configuration
-The development environment uses Redis in Docker. Helper functions are provided in your shell configuration:
+
+The development environment uses Redis in Docker. Helper functions are provided
+in your shell configuration:
 
 ```bash
 # Redis management functions (already added to ~/.zshrc)
@@ -22,17 +24,21 @@ redis-docker-start() {
 ```
 
 To manage Redis:
+
 - Stop all Redis instances: `redis-clean`
 - Start Redis in Docker: `redis-docker-start`
 
 ### Development Services
+
 Access points:
+
 - Main application: http://localhost:3000
 - Additional service: http://localhost:8000
 - PostgreSQL: localhost:5433
 - Redis: localhost:6379
 
 ### Development features:
+
 - Hot-reloading enabled
 - Source code mounted as volume
 - Automatic TypeScript compilation
@@ -41,6 +47,7 @@ Access points:
 ## Coding Standards
 
 ### TypeScript Best Practices
+
 - Use strict mode
 - Implement interfaces
 - Document with TSDoc
@@ -48,6 +55,7 @@ Access points:
 - Handle errors properly
 
 ### React Best Practices
+
 ```typescript
 // Component Structure
 interface ComponentProps {
@@ -65,17 +73,19 @@ export const Component: React.FC<ComponentProps> = ({ }) => {
 ```
 
 ### NestJS Best Practices
+
 ```typescript
 @Module({
   imports: [],
   controllers: [],
   providers: [],
-  exports: []
+  exports: [],
 })
 export class FeatureModule {}
 ```
 
 ### General Guidelines
+
 - Follow ESLint configuration
 - Implement proper error handling
 - Write clear and concise comments
@@ -87,6 +97,7 @@ export class FeatureModule {}
 ## Testing
 
 ### Unit Testing
+
 - **Framework**: Jest
 - **Coverage Target**: 80%
 - **Focus Areas**:
@@ -97,6 +108,7 @@ export class FeatureModule {}
   - WebSocket message handling
 
 ### Integration Testing
+
 - **Framework**: Cypress
 - **Coverage Target**: 70%
 - **Focus Areas**:
@@ -107,6 +119,7 @@ export class FeatureModule {}
   - External service integrations
 
 ### End-to-End Testing
+
 - **Framework**: Selenium
 - **Coverage Target**: 50%
 - **Focus Areas**:
@@ -119,12 +132,14 @@ export class FeatureModule {}
 ## Version Control
 
 ### Branch Strategy
+
 - `main`: Production branch
 - `develop`: Development branch
 - `feature/*`: Feature branches
 - `bugfix/*`: Bug fix branches
 
 ### Commit Guidelines
+
 - Clear commit messages
 - Reference issue numbers
 - Keep commits focused
@@ -133,6 +148,7 @@ export class FeatureModule {}
 ## Contributing
 
 ### Pull Request Process
+
 1. Create feature branch
 2. Implement changes
 3. Write/update tests
@@ -142,6 +158,7 @@ export class FeatureModule {}
 7. Merge after approval
 
 ### Code Review Guidelines
+
 - Check code style
 - Verify test coverage
 - Review documentation
@@ -151,6 +168,7 @@ export class FeatureModule {}
 ## Maintenance
 
 ### Regular Tasks
+
 - Update dependencies
 - Clean up code
 - Update documentation
@@ -158,6 +176,7 @@ export class FeatureModule {}
 - Monitor system health
 
 ### Emergency Procedures
+
 ```bash
 # Database Issues
 pnpm run migration:revert
@@ -175,6 +194,7 @@ top -p $(pgrep -f "node")
 ## Development Cycle
 
 ### Development
+
 ```bash
 # Start development server
 yarn dev
@@ -187,6 +207,7 @@ yarn build
 ```
 
 ### Production
+
 ```bash
 # Build for production
 yarn build
@@ -198,6 +219,7 @@ yarn start:prod
 ## Docker Commands Reference
 
 ### Common Commands
+
 ```bash
 # Start all services
 docker-compose up --build
@@ -219,6 +241,7 @@ docker-compose down -v
 ```
 
 ### Container Management
+
 ```bash
 # List running containers
 docker ps

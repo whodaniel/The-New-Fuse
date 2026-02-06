@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaService } from '../prisma/prisma.service.js';
+import { DatabaseService } from '../drizzle/drizzle.service.js';
 import { BaseService } from '../base.service.js';
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Workflow, WorkflowStep, WorkflowStatus } from "@the-new-fuse/types";
@@ -7,7 +7,7 @@ import { Workflow, WorkflowStep, WorkflowStatus } from "@the-new-fuse/types";
 @Injectable()
 export class WorkflowService extends BaseService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly drizzle: DatabaseService,
     private readonly eventEmitter: EventEmitter2,
   ) {
     super("WorkflowService");
@@ -19,7 +19,7 @@ export class WorkflowService extends BaseService {
   }
 
   async createWorkflow(data: unknown, userId: string): Promise<Workflow> {
-    const workflow = await this.prisma.$transaction(async (tx) => {
+    const workflow = await this.drizzle.$transaction(async (tx) => {
       const workflow = await tx.workflow.create({
         data: {
           ...data,
@@ -34,7 +34,7 @@ export class WorkflowService extends BaseService {
   }
 
   async executeWorkflow(id: string, userId: string): Promise<void> {
-    const workflow = await this.prisma.workflow.findFirst({
+    const workflow = await this.drizzle.workflow.findFirst({
       where: { id, userId },
     });
 
@@ -83,7 +83,7 @@ export class WorkflowService extends BaseService {
 
   private async handleStepCompletion(event: any): Promise<void> {
     const { workflowId, stepId } = event;
-    await this.prisma.workflowStep.update({
+    await this.drizzle.workflowStep.update({
       where: { id: stepId },
       data: { status: "completed", completedAt: new Date() },
     });
@@ -101,7 +101,7 @@ export class WorkflowService extends BaseService {
     id: string,
     status: WorkflowStatus,
   ): Promise<void> {
-    await this.prisma.workflow.update({
+    await this.drizzle.workflow.update({
       where: { id },
       data: { status },
     });
@@ -111,7 +111,7 @@ export class WorkflowService extends BaseService {
   private async validateWorkflowSteps(steps: WorkflowStep[]): Promise<void> {
     for (const step of steps) {
       // Validate agent exists and can perform the action
-      const agent = await this.prisma.agent.findUnique({
+      const agent = await this.drizzle.agent.findUnique({
         where: { id: step.agentId },
       });
 

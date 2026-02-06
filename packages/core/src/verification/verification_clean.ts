@@ -6,7 +6,7 @@ export enum VerificationType {
   SCHEMA = 'schema',
   CONTENT = 'content',
   SECURITY = 'security',
-  HARMLESSNESS = 'harmlessness'
+  HARMLESSNESS = 'harmlessness',
 }
 
 export interface VerificationResult {
@@ -45,33 +45,33 @@ export class VerificationService {
   private async verifyContent(output: any): Promise<VerificationResult> {
     // Mock implementation
     const requiredMetadata = new Set(['timestamp', 'source_id']);
-    const hasMetadata = output && output.metadata &&
-        [...requiredMetadata].every(key => key in output.metadata);
+    const hasMetadata =
+      output && output.metadata && [...requiredMetadata].every((key) => key in output.metadata);
 
     if (!hasMetadata) {
       return { success: false, message: 'Missing required metadata fields' };
     }
-    
+
     return { success: true, message: 'Content verification passed' };
   }
 
   private async verifySecurity(output: any): Promise<VerificationResult> {
     // Mock implementation
     const contentStr = String(output.content ?? '');
-    if (this.sensitivePatterns.some(p => contentStr.includes(p))) {
+    if (this.sensitivePatterns.some((p) => contentStr.includes(p))) {
       return { success: false, message: 'Found potentially sensitive data' };
     }
-    
+
     return { success: true, message: 'Security verification passed' };
   }
 
   private async verifyHarmlessness(output: any): Promise<VerificationResult> {
     // Mock implementation
     const contentStr = String(output.content ?? '');
-    if (this.harmfulPatterns.some(p => contentStr.includes(p))) {
+    if (this.harmfulPatterns.some((p) => contentStr.includes(p))) {
       return { success: false, message: 'Found potentially harmful content' };
     }
-    
+
     return { success: true, message: 'Harmlessness verification passed' };
   }
 }

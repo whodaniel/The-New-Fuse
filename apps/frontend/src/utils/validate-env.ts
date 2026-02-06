@@ -39,8 +39,16 @@ const ENV_VARS: EnvVarConfig[] = [
     name: 'VITE_API_URL',
     required: false,
     defaultValue: 'http://localhost:3001',
-    validator: (val) => val.startsWith('http://') || val.startsWith('https://') || val.startsWith('/'),
+    validator: (val) =>
+      val.startsWith('http://') || val.startsWith('https://') || val.startsWith('/'),
     description: 'API server URL',
+  },
+  {
+    name: 'VITE_EDGE_URL',
+    required: false,
+    defaultValue: 'https://fuse-edge-worker.yourname.workers.dev',
+    validator: (val) => val.startsWith('https://'),
+    description: 'Cloudflare Edge Worker URL',
   },
   {
     name: 'VITE_WS_URL',
@@ -185,11 +193,16 @@ const ENV_VARS: EnvVarConfig[] = [
 /**
  * Validates a single environment variable
  */
-function validateEnvVar(config: EnvVarConfig): { valid: boolean; error?: string; warning?: string } {
+function validateEnvVar(config: EnvVarConfig): {
+  valid: boolean;
+  error?: string;
+  warning?: string;
+} {
   // For frontend, check import.meta.env
-  const value = typeof import.meta !== 'undefined' && import.meta.env
-    ? import.meta.env[config.name] as string | undefined
-    : undefined;
+  const value =
+    typeof import.meta !== 'undefined' && import.meta.env
+      ? (import.meta.env[config.name] as string | undefined)
+      : undefined;
 
   // Check if required variable is missing
   if (config.required && !value) {
@@ -249,11 +262,11 @@ export function validateEnvironment(): EnvValidationResult {
     'VITE_FIREBASE_APP_ID',
   ];
 
-  const hasAnyFirebase = firebaseVars.some(varName =>
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[varName]
+  const hasAnyFirebase = firebaseVars.some(
+    (varName) => typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[varName]
   );
-  const hasAllFirebase = firebaseVars.every(varName =>
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[varName]
+  const hasAllFirebase = firebaseVars.every(
+    (varName) => typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[varName]
   );
 
   if (hasAnyFirebase && !hasAllFirebase) {
@@ -263,8 +276,10 @@ export function validateEnvironment(): EnvValidationResult {
   }
 
   // Check for complete Supabase configuration
-  const hasSupabaseUrl = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_URL;
-  const hasSupabaseKey = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY;
+  const hasSupabaseUrl =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_URL;
+  const hasSupabaseKey =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY;
 
   if ((hasSupabaseUrl || hasSupabaseKey) && !(hasSupabaseUrl && hasSupabaseKey)) {
     warnings.push(
@@ -273,22 +288,25 @@ export function validateEnvironment(): EnvValidationResult {
   }
 
   // Production-specific checks
-  const isProduction = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.MODE === 'production';
+  const isProduction =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.MODE === 'production';
 
   if (isProduction) {
-    const apiUrl = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL as string | undefined;
-    const wsUrl = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_WS_URL as string | undefined;
+    const apiUrl =
+      typeof import.meta !== 'undefined' &&
+      import.meta.env &&
+      (import.meta.env.VITE_API_URL as string | undefined);
+    const wsUrl =
+      typeof import.meta !== 'undefined' &&
+      import.meta.env &&
+      (import.meta.env.VITE_WS_URL as string | undefined);
 
     if (apiUrl && !apiUrl.startsWith('https://') && !apiUrl.startsWith('/')) {
-      warnings.push(
-        '⚠️  VITE_API_URL should use HTTPS in production for security.'
-      );
+      warnings.push('⚠️  VITE_API_URL should use HTTPS in production for security.');
     }
 
     if (wsUrl && !wsUrl.startsWith('wss://')) {
-      warnings.push(
-        '⚠️  VITE_WS_URL should use WSS (secure WebSocket) in production.'
-      );
+      warnings.push('⚠️  VITE_WS_URL should use WSS (secure WebSocket) in production.');
     }
   }
 
@@ -308,14 +326,14 @@ export function validateEnvironmentOrThrow(): void {
   // Print warnings
   if (result.warnings.length > 0) {
     console.log('⚠️  Warnings:\n');
-    result.warnings.forEach(warning => console.log(warning));
+    result.warnings.forEach((warning) => console.log(warning));
     console.log('');
   }
 
   // Throw error if validation failed
   if (!result.isValid) {
     console.error('❌ Environment validation failed!\n');
-    result.errors.forEach(error => console.error(error));
+    result.errors.forEach((error) => console.error(error));
     console.error('\n💡 Tip: Copy .env.example to .env.local and fill in the required values.\n');
     throw new Error('Environment validation failed');
   }

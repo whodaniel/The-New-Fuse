@@ -25,7 +25,7 @@ export class LoadTester implements ILoadTester {
     this.logger.info(`Starting load test: ${config.name}`, {
       concurrency: config.concurrency,
       duration: config.duration,
-      endpoint: config.endpoint
+      endpoint: config.endpoint,
     });
 
     const execution = new LoadTestExecution(config, this.logger);
@@ -34,12 +34,12 @@ export class LoadTester implements ILoadTester {
     try {
       const result = await execution.run();
       this.testHistory.push(result);
-      
+
       this.logger.info(`Load test completed: ${config.name}`, {
         passed: result.passed,
         totalRequests: result.totalRequests,
         successRate: result.successRate,
-        avgResponseTime: result.avgResponseTime
+        avgResponseTime: result.avgResponseTime,
       });
 
       return result;
@@ -52,7 +52,7 @@ export class LoadTester implements ILoadTester {
    * Get running tests
    */
   getRunningTests(): LoadTestConfig[] {
-    return Array.from(this.runningTests.values()).map(execution => execution.config);
+    return Array.from(this.runningTests.values()).map((execution) => execution.config);
   }
 
   /**
@@ -106,12 +106,12 @@ export class LoadTester implements ILoadTester {
       '',
       `## Threshold Validation`,
       `- **Test Passed**: ${result.passed ? '✅ Yes' : '❌ No'}`,
-      ''
+      '',
     ];
 
     if (result.violations.length > 0) {
       report.push(`## Threshold Violations`);
-      result.violations.forEach(violation => {
+      result.violations.forEach((violation) => {
         report.push(`- ❌ ${violation}`);
       });
       report.push('');
@@ -128,8 +128,8 @@ export class LoadTester implements ILoadTester {
     report.push(`## Performance Timeline`);
     report.push(`| Time | Response Time (ms) | RPS | Error Rate (%) |`);
     report.push(`|------|-------------------|-----|----------------|`);
-    
-    result.performanceTimeline.forEach(point => {
+
+    result.performanceTimeline.forEach((point) => {
       const time = point.timestamp.toISOString().substr(11, 8);
       const responseTime = point.responseTime.toFixed(2);
       const rps = point.requestsPerSecond.toFixed(2);
@@ -175,34 +175,33 @@ class LoadTestExecution {
       if (this.stopped) return;
 
       const now = new Date();
-      const recentResults = results.filter(r => 
-        now.getTime() - r.timestamp.getTime() < 10000 // Last 10 seconds
+      const recentResults = results.filter(
+        (r) => now.getTime() - r.timestamp.getTime() < 10000 // Last 10 seconds
       );
 
       if (recentResults.length > 0) {
-        const avgResponseTime = recentResults.reduce((sum, r) => sum + r.responseTime, 0) / recentResults.length;
+        const avgResponseTime =
+          recentResults.reduce((sum, r) => sum + r.responseTime, 0) / recentResults.length;
         const rps = recentResults.length / 10; // 10 second window
-        const errorRate = recentResults.filter(r => !r.success).length / recentResults.length;
+        const errorRate = recentResults.filter((r) => !r.success).length / recentResults.length;
 
         performanceTimeline.push({
           timestamp: now,
           responseTime: avgResponseTime,
           requestsPerSecond: rps,
-          errorRate
+          errorRate,
         });
       }
     }, 10000); // Every 10 seconds
 
     // Start workers
-    const workerPromises = this.workers.map(worker => 
-      worker.start(results, errorsByType)
-    );
+    const workerPromises = this.workers.map((worker) => worker.start(results, errorsByType));
 
     // Wait for test duration or stop signal
     await Promise.race([
       Promise.all(workerPromises),
-      new Promise(resolve => setTimeout(resolve, this.config.duration)),
-      new Promise(resolve => {
+      new Promise((resolve) => setTimeout(resolve, this.config.duration)),
+      new Promise((resolve) => {
         const checkStop = () => {
           if (this.stopped) {
             resolve(undefined);
@@ -211,7 +210,7 @@ class LoadTestExecution {
           }
         };
         checkStop();
-      })
+      }),
     ]);
 
     // Stop all workers
@@ -223,16 +222,18 @@ class LoadTestExecution {
 
     // Calculate results
     const totalRequests = results.length;
-    const successfulRequests = results.filter(r => r.success).length;
+    const successfulRequests = results.filter((r) => r.success).length;
     const failedRequests = totalRequests - successfulRequests;
     const successRate = totalRequests > 0 ? successfulRequests / totalRequests : 0;
     const errorRate = totalRequests > 0 ? failedRequests / totalRequests : 0;
     const requestsPerSecond = totalRequests / (duration / 1000);
 
     // Calculate response time percentiles
-    const responseTimes = results.map(r => r.responseTime).sort((a, b) => a - b);
-    const avgResponseTime = responseTimes.length > 0 ? 
-      responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length : 0;
+    const responseTimes = results.map((r) => r.responseTime).sort((a, b) => a - b);
+    const avgResponseTime =
+      responseTimes.length > 0
+        ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
+        : 0;
     const p95ResponseTime = this.calculatePercentile(responseTimes, 0.95);
     const p99ResponseTime = this.calculatePercentile(responseTimes, 0.99);
 
@@ -241,22 +242,30 @@ class LoadTestExecution {
     let passed = true;
 
     if (avgResponseTime > this.config.thresholds.maxAvgResponseTime) {
-      violations.push(`Average response time ${avgResponseTime.toFixed(2)}ms exceeds threshold ${this.config.thresholds.maxAvgResponseTime}ms`);
+      violations.push(
+        `Average response time ${avgResponseTime.toFixed(2)}ms exceeds threshold ${this.config.thresholds.maxAvgResponseTime}ms`
+      );
       passed = false;
     }
 
     if (p95ResponseTime > this.config.thresholds.maxP95ResponseTime) {
-      violations.push(`P95 response time ${p95ResponseTime.toFixed(2)}ms exceeds threshold ${this.config.thresholds.maxP95ResponseTime}ms`);
+      violations.push(
+        `P95 response time ${p95ResponseTime.toFixed(2)}ms exceeds threshold ${this.config.thresholds.maxP95ResponseTime}ms`
+      );
       passed = false;
     }
 
     if (successRate < this.config.thresholds.minSuccessRate) {
-      violations.push(`Success rate ${(successRate * 100).toFixed(2)}% below threshold ${(this.config.thresholds.minSuccessRate * 100).toFixed(2)}%`);
+      violations.push(
+        `Success rate ${(successRate * 100).toFixed(2)}% below threshold ${(this.config.thresholds.minSuccessRate * 100).toFixed(2)}%`
+      );
       passed = false;
     }
 
     if (errorRate > this.config.thresholds.maxErrorRate) {
-      violations.push(`Error rate ${(errorRate * 100).toFixed(2)}% exceeds threshold ${(this.config.thresholds.maxErrorRate * 100).toFixed(2)}%`);
+      violations.push(
+        `Error rate ${(errorRate * 100).toFixed(2)}% exceeds threshold ${(this.config.thresholds.maxErrorRate * 100).toFixed(2)}%`
+      );
       passed = false;
     }
 
@@ -277,7 +286,7 @@ class LoadTestExecution {
       errorsByType,
       performanceTimeline,
       passed,
-      violations
+      violations,
     };
   }
 
@@ -286,7 +295,7 @@ class LoadTestExecution {
    */
   stop(): void {
     this.stopped = true;
-    this.workers.forEach(worker => worker.stop());
+    this.workers.forEach((worker) => worker.stop());
   }
 
   /**
@@ -318,8 +327,9 @@ class LoadTestWorker {
    * Start the worker
    */
   async start(results: RequestResult[], errorsByType: Record<string, number>): Promise<void> {
-    const requestInterval = this.config.requestRate ? 
-      (1000 / this.config.requestRate) * this.config.concurrency : 0;
+    const requestInterval = this.config.requestRate
+      ? (1000 / this.config.requestRate) * this.config.concurrency
+      : 0;
 
     while (!this.stopped) {
       try {
@@ -333,19 +343,19 @@ class LoadTestWorker {
 
         // Rate limiting
         if (requestInterval > 0) {
-          await new Promise(resolve => setTimeout(resolve, requestInterval));
+          await new Promise((resolve) => setTimeout(resolve, requestInterval));
         }
       } catch (error) {
         this.logger.error(`Worker ${this.id} error:`, error);
-        
+
         const errorType = error instanceof Error ? error.constructor.name : 'Unknown';
         errorsByType[errorType] = (errorsByType[errorType] || 0) + 1;
-        
+
         results.push({
           timestamp: new Date(),
           responseTime: 0,
           success: false,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
@@ -363,19 +373,19 @@ class LoadTestWorker {
    */
   private async makeRequest(): Promise<RequestResult> {
     const startTime = Date.now();
-    
+
     // Simulate request
     const responseTime = 50 + Math.random() * 200; // 50-250ms
-    await new Promise(resolve => setTimeout(resolve, responseTime));
-    
+    await new Promise((resolve) => setTimeout(resolve, responseTime));
+
     // Simulate occasional failures
     const success = Math.random() > 0.05; // 5% failure rate
-    
+
     return {
       timestamp: new Date(),
       responseTime: Date.now() - startTime,
       success,
-      error: success ? undefined : 'Simulated error'
+      error: success ? undefined : 'Simulated error',
     };
   }
 }

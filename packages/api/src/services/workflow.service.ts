@@ -1,18 +1,18 @@
 /**
  * Workflow Service - Drizzle ORM Implementation
- * 
+ *
  * This service provides business logic for Workflow operations.
  * It uses the Drizzle-based WorkflowRepository for data access.
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { 
-  WorkflowRepository, 
+import {
   WorkflowExecutionRepository,
-  type Workflow,
+  WorkflowRepository,
   type NewWorkflow,
-  type WorkflowExecution,
   type NewWorkflowExecution,
+  type Workflow,
+  type WorkflowExecution,
 } from '../repositories/workflow.repository';
 import { toError } from '../utils/error';
 
@@ -99,7 +99,11 @@ export class WorkflowService {
   /**
    * Update a workflow
    */
-  async updateWorkflow(id: string, updates: Partial<NewWorkflow>, userId: string): Promise<Workflow> {
+  async updateWorkflow(
+    id: string,
+    updates: Partial<NewWorkflow>,
+    userId: string
+  ): Promise<Workflow> {
     try {
       // Verify ownership
       await this.getWorkflowById(id, userId);

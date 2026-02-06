@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 export interface DiscoveredAgent {
   id: string;
@@ -16,6 +16,6 @@ export function useA2ADiscovery() {
 
   return {
     discoveredAgents,
-    discoverAgents
+    discoverAgents,
   };
 }

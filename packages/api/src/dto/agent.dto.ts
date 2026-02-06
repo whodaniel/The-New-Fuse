@@ -1,7 +1,6 @@
-import { IsString, IsOptional, IsEnum, IsArray, IsObject, IsDateString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { AgentStatus } from '@the-new-fuse/types';
-
+import { IsArray, IsDateString, IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateAgentDto {
   @ApiProperty({ description: 'Agent name' })

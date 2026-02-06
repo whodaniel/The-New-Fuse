@@ -1,5 +1,5 @@
 import React from 'react';
-import { KanbanColumn, DraggableItem, TodoItem, FeatureSuggestion } from '../types';
+import { DraggableItem, FeatureSuggestion, KanbanColumn, TodoItem } from '../types';
 
 interface KanbanBoardProps {
   columns: KanbanColumn[];
@@ -10,7 +10,12 @@ interface KanbanBoardProps {
 
 // Type guards to determine what kind of item we're dealing with
 const isTodoItem = (item: DraggableItem): item is TodoItem => {
-  return 'assignedTo' in item || item.status === 'TODO' || item.status === 'IN_PROGRESS' || item.status === 'DONE';
+  return (
+    'assignedTo' in item ||
+    item.status === 'TODO' ||
+    item.status === 'IN_PROGRESS' ||
+    item.status === 'DONE'
+  );
 };
 
 const isFeatureSuggestion = (item: DraggableItem): item is FeatureSuggestion => {
@@ -21,7 +26,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
   columns,
   onDragStart,
   onDragEnd,
-  onItemClick
+  onItemClick,
 }) => {
   const handleDragStart = (item: DraggableItem, columnId: string) => {
     if (onDragStart) onDragStart(item, columnId);
@@ -37,11 +42,8 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
 
   return (
     <div className="flex space-x-4 overflow-x-auto p-4">
-      {columns.map(column => (
-        <div
-          key={column.id}
-          className="flex-shrink-0 w-80 bg-gray-100 rounded-lg p-4"
-        >
+      {columns.map((column) => (
+        <div key={column.id} className="flex-shrink-0 w-80 bg-gray-100 rounded-lg p-4">
           <h3 className="font-medium mb-4">{column.title}</h3>
           <div className="space-y-3">
             {column.items.map((item, index) => (
@@ -54,11 +56,15 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
               >
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="font-medium">{item.title}</h4>
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    item.priority === 'HIGH' ? 'bg-red-100 text-red-800' :
-                    item.priority === 'MEDIUM' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-blue-100 text-blue-800'
-                  }`}>
+                  <span
+                    className={`px-2 py-1 text-xs rounded-full ${
+                      item.priority === 'HIGH'
+                        ? 'bg-red-100 text-red-800'
+                        : item.priority === 'MEDIUM'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-blue-100 text-blue-800'
+                    }`}
+                  >
                     {item.priority}
                   </span>
                 </div>
@@ -67,7 +73,10 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
                 {isFeatureSuggestion(item) && item.tags && item.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1">
                     {item.tags.map((tag) => (
-                      <span key={tag} className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full">
+                      <span
+                        key={tag}
+                        className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full"
+                      >
                         {tag}
                       </span>
                     ))}
@@ -75,9 +84,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
                 )}
                 {/* Show assignee only for TodoItems */}
                 {isTodoItem(item) && item.assignedTo && (
-                  <div className="mt-2 text-sm text-gray-500">
-                    Assigned to: {item.assignedTo}
-                  </div>
+                  <div className="mt-2 text-sm text-gray-500">Assigned to: {item.assignedTo}</div>
                 )}
               </div>
             ))}

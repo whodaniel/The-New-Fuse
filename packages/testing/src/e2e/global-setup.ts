@@ -17,18 +17,17 @@ async function globalSetup(_fullConfig: FullConfig): Promise<void> {
         username: config.userPool.admin.username,
         password: config.userPool.admin.password,
         email: 'admin@example.com',
-        isAdmin: true
-      }
+        isAdmin: true,
+      },
     });
 
     // Set up any required test data
     const testUser = await testData.createTestUser();
-    
+
     // Store test data for use in tests
     process.env.TEST_USER_ID = testUser.id;
     process.env.TEST_USER_USERNAME = testUser.username;
     process.env.TEST_USER_PASSWORD = testUser.password;
-
   } catch (error) {
     throw new Error(`Failed to set up test environment: ${error}`);
   } finally {

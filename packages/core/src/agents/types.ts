@@ -225,7 +225,7 @@ export enum AgentType {
   WRITER = 'writer',
   CODER = 'coder',
   COORDINATOR = 'coordinator',
-  SPECIALIST = 'specialist'
+  SPECIALIST = 'specialist',
 }
 
 export enum AgentStatus {
@@ -233,7 +233,7 @@ export enum AgentStatus {
   BUSY = 'busy',
   OFFLINE = 'offline',
   INITIALIZING = 'initializing',
-  ERROR = 'error'
+  ERROR = 'error',
 }
 
 export enum TaskStatus {
@@ -242,7 +242,7 @@ export enum TaskStatus {
   COMPLETED = 'completed',
   FAILED = 'failed',
   CANCELLED = 'cancelled',
-  PAUSED = 'paused'
+  PAUSED = 'paused',
 }
 
 export enum TaskType {
@@ -255,14 +255,14 @@ export enum TaskType {
   COMMUNICATION = 'communication',
   RESEARCH = 'research',
   PLANNING = 'planning',
-  EXECUTION = 'execution'
+  EXECUTION = 'execution',
 }
 
 export enum TaskPriority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export enum WorkflowStatus {
@@ -271,7 +271,7 @@ export enum WorkflowStatus {
   COMPLETED = 'completed',
   FAILED = 'failed',
   PAUSED = 'paused',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
 }
 
 export enum MessageType {
@@ -281,21 +281,21 @@ export enum MessageType {
   TASK_RESPONSE = 'task_response',
   STATUS_UPDATE = 'status_update',
   ERROR = 'error',
-  HEARTBEAT = 'heartbeat'
+  HEARTBEAT = 'heartbeat',
 }
 
 export enum MessagePriority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  URGENT = 'urgent'
+  URGENT = 'urgent',
 }
 
 export enum ChannelType {
   DIRECT = 'direct',
   BROADCAST = 'broadcast',
   GROUP = 'group',
-  SYSTEM = 'system'
+  SYSTEM = 'system',
 }
 
 export enum MemoryType {
@@ -303,7 +303,7 @@ export enum MemoryType {
   PROCEDURE = 'procedure',
   EVENT = 'event',
   CONTEXT = 'context',
-  EXPERIENCE = 'experience'
+  EXPERIENCE = 'experience',
 }
 
 export enum ThoughtType {
@@ -311,7 +311,7 @@ export enum ThoughtType {
   ACTION = 'action',
   OBSERVATION = 'observation',
   COMMUNICATION = 'communication',
-  REFLECTION = 'reflection'
+  REFLECTION = 'reflection',
 }
 
 export enum InteractionType {
@@ -320,7 +320,7 @@ export enum InteractionType {
   SUGGESTION = 'suggestion',
   INSTRUCTION = 'instruction',
   FEEDBACK = 'feedback',
-  COLLABORATION = 'collaboration'
+  COLLABORATION = 'collaboration',
 }
 
 export enum CommunicationProtocol {
@@ -328,19 +328,19 @@ export enum CommunicationProtocol {
   A2A_V2 = 'A2A_V2',
   MCP = 'MCP',
   WEBSOCKET = 'WEBSOCKET',
-  REST = 'REST'
+  REST = 'REST',
 }
 
 export enum FailureStrategy {
   STOP_ON_FIRST_FAILURE = 'stop_on_first_failure',
   CONTINUE_ON_FAILURE = 'continue_on_failure',
-  RETRY_FAILED_TASKS = 'retry_failed_tasks'
+  RETRY_FAILED_TASKS = 'retry_failed_tasks',
 }
 
 export enum TimeoutStrategy {
   FAIL_IMMEDIATELY = 'fail_immediately',
   EXTEND_TIMEOUT = 'extend_timeout',
-  SKIP_TASK = 'skip_task'
+  SKIP_TASK = 'skip_task',
 }
 
 // Result Types

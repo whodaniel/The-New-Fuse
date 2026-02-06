@@ -1,5 +1,11 @@
+import {
+  AgentResponseDto,
+  AgentStatus,
+  AgentType,
+  CreateAgentDto,
+  UpdateAgentDto,
+} from '@the-new-fuse/types';
 import { ApiClient } from './api-client';
-import { CreateAgentDto, UpdateAgentDto, AgentResponseDto, AgentStatus, AgentType } from '@the-new-fuse/types';
 
 export class AgentsClient extends ApiClient {
   private readonly basePath = '/agents';

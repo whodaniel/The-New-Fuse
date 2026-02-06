@@ -1,5 +1,5 @@
+import type { NextFunction, Request, Response, Router } from 'express';
 import express from 'express';
-import type { Router, Request, Response, NextFunction } from 'express';
 
 export function createRouter(): Router {
   return express.Router();
@@ -27,6 +27,6 @@ export function setupRoutes(app: express.Application): RouterSetup {
 
   return {
     mountMiddleware,
-    mountRouter
+    mountRouter,
   };
 }

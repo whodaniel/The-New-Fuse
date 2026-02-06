@@ -1,2 +1,2 @@
-export const workflowTemplates = {} as const
-export type WorkflowTemplateType = keyof typeof workflowTemplates
+export const workflowTemplates = {} as const;
+export type WorkflowTemplateType = keyof typeof workflowTemplates;

@@ -19,7 +19,7 @@ export class TimeStamp {
    */
   constructor(value: Date | string | number = Date.now()) {
     this.timestamp = new Date(value);
-    
+
     // Handle invalid dates
     if (isNaN(this.timestamp.getTime())) {
       this.timestamp = new Date();
@@ -62,7 +62,7 @@ export class TimeStamp {
       includeTime = true,
       includeSeconds = false,
       includeDate = true,
-      format = 'medium'
+      format = 'medium',
     } = options;
 
     const formatOptions: Intl.DateTimeFormatOptions = {
@@ -72,7 +72,7 @@ export class TimeStamp {
       hour: includeTime ? '2-digit' : undefined,
       minute: includeTime ? '2-digit' : undefined,
       second: includeTime && includeSeconds ? '2-digit' : undefined,
-      hour12: true
+      hour12: true,
     };
 
     if (!includeDate) {

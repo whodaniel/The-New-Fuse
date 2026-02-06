@@ -34,13 +34,13 @@ export interface AgentNotification {
 
 /**
  * AgentInbox - Email-like inbox system for agents
- * 
+ *
  * Each agent has:
  * - tasks/ (pending, in-progress, completed)
  * - messages/ (unread, read)
  * - notifications/
  * - delegations/
- * 
+ *
  * Integrates with:
  * - Existing TaskQueue infrastructure
  * - Heartbeat monitoring
@@ -58,13 +58,13 @@ export class AgentInbox {
     agentId: string,
     redis: Redis,
     eventEmitter: EventEmitter2,
-    options?: TaskQueueOptions
+    options?: TaskQueueOptions,
   ) {
     this.agentId = agentId;
     this.redis = redis;
     this.eventEmitter = eventEmitter;
     this.options = options || {};
-    
+
     this.logger.log(`AgentInbox created for agent: ${agentId}`);
   }
 
@@ -75,7 +75,7 @@ export class AgentInbox {
    */
   async create(): Promise<void> {
     this.logger.log(`Creating inbox for agent: ${this.agentId}`);
-    
+
     // Ensure Redis keys exist
     const keys = [
       `agent:${this.agentId}:inbox:tasks:pending`,
@@ -117,11 +117,7 @@ export class AgentInbox {
    * Get all pending tasks
    */
   async getPendingTasks(): Promise<AgentTask[]> {
-    const tasks = await this.redis.lrange(
-      `agent:${this.agentId}:inbox:tasks:pending`,
-      0,
-      -1
-    );
+    const tasks = await this.redis.lrange(`agent:${this.agentId}:inbox:tasks:pending`, 0, -1);
     return tasks.map((t) => JSON.parse(t));
   }
 
@@ -136,11 +132,7 @@ export class AgentInbox {
    * Get in-progress tasks
    */
   async getInProgressTasks(): Promise<AgentTask[]> {
-    const tasks = await this.redis.lrange(
-      `agent:${this.agentId}:inbox:tasks:in-progress`,
-      0,
-      -1
-    );
+    const tasks = await this.redis.lrange(`agent:${this.agentId}:inbox:tasks:in-progress`, 0, -1);
     return tasks.map((t) => JSON.parse(t));
   }
 
@@ -165,14 +157,11 @@ export class AgentInbox {
     };
 
     this.logger.log(
-      `Agent ${this.agentId} receiving task: ${agentTask.id} (type: ${agentTask.type})`
+      `Agent ${this.agentId} receiving task: ${agentTask.id} (type: ${agentTask.type})`,
     );
 
     // Add to pending queue
-    await this.redis.lpush(
-      `agent:${this.agentId}:inbox:tasks:pending`,
-      JSON.stringify(agentTask)
-    );
+    await this.redis.lpush(`agent:${this.agentId}:inbox:tasks:pending`, JSON.stringify(agentTask));
 
     // Emit event
     this.eventEmitter.emit('agent.task_received', {
@@ -201,11 +190,7 @@ export class AgentInbox {
     }
 
     // Remove from pending
-    await this.redis.lrem(
-      `agent:${this.agentId}:inbox:tasks:pending`,
-      1,
-      JSON.stringify(task)
-    );
+    await this.redis.lrem(`agent:${this.agentId}:inbox:tasks:pending`, 1, JSON.stringify(task));
 
     // Add to in-progress
     const inProgressTask = {
@@ -216,7 +201,7 @@ export class AgentInbox {
 
     await this.redis.lpush(
       `agent:${this.agentId}:inbox:tasks:in-progress`,
-      JSON.stringify(inProgressTask)
+      JSON.stringify(inProgressTask),
     );
 
     this.eventEmitter.emit('agent.task_started', {
@@ -236,17 +221,11 @@ export class AgentInbox {
     const task = inProgress.find((t) => t.id === taskId);
 
     if (!task) {
-      throw new Error(
-        `Task ${taskId} not found in in-progress queue for agent ${this.agentId}`
-      );
+      throw new Error(`Task ${taskId} not found in in-progress queue for agent ${this.agentId}`);
     }
 
     // Remove from in-progress
-    await this.redis.lrem(
-      `agent:${this.agentId}:inbox:tasks:in-progress`,
-      1,
-      JSON.stringify(task)
-    );
+    await this.redis.lrem(`agent:${this.agentId}:inbox:tasks:in-progress`, 1, JSON.stringify(task));
 
     // Add to completed
     const completedTask = {
@@ -258,7 +237,7 @@ export class AgentInbox {
 
     await this.redis.lpush(
       `agent:${this.agentId}:inbox:tasks:completed`,
-      JSON.stringify(completedTask)
+      JSON.stringify(completedTask),
     );
 
     this.eventEmitter.emit('agent.task_completed', {
@@ -272,9 +251,7 @@ export class AgentInbox {
     await this.recordActivity('task_completed', { taskId, result });
 
     // Cleanup old completed tasks (keep last 100)
-    const completedCount = await this.redis.llen(
-      `agent:${this.agentId}:inbox:tasks:completed`
-    );
+    const completedCount = await this.redis.llen(`agent:${this.agentId}:inbox:tasks:completed`);
     if (completedCount > 100) {
       await this.redis.ltrim(`agent:${this.agentId}:inbox:tasks:completed`, 0, 99);
     }
@@ -288,17 +265,11 @@ export class AgentInbox {
     const task = inProgress.find((t) => t.id === taskId);
 
     if (!task) {
-      throw new Error(
-        `Task ${taskId} not found in in-progress queue for agent ${this.agentId}`
-      );
+      throw new Error(`Task ${taskId} not found in in-progress queue for agent ${this.agentId}`);
     }
 
     // Remove from in-progress
-    await this.redis.lrem(
-      `agent:${this.agentId}:inbox:tasks:in-progress`,
-      1,
-      JSON.stringify(task)
-    );
+    await this.redis.lrem(`agent:${this.agentId}:inbox:tasks:in-progress`, 1, JSON.stringify(task));
 
     // Add to failed
     const failedTask = {
@@ -308,10 +279,7 @@ export class AgentInbox {
       error: error instanceof Error ? error.message : error,
     };
 
-    await this.redis.lpush(
-      `agent:${this.agentId}:inbox:tasks:failed`,
-      JSON.stringify(failedTask)
-    );
+    await this.redis.lpush(`agent:${this.agentId}:inbox:tasks:failed`, JSON.stringify(failedTask));
 
     this.eventEmitter.emit('agent.task_failed', {
       agentId: this.agentId,
@@ -329,9 +297,7 @@ export class AgentInbox {
    * Delegate task to another agent
    */
   async delegateTask(taskId: string, targetAgentId: string): Promise<void> {
-    this.logger.log(
-      `Agent ${this.agentId} delegating task ${taskId} to ${targetAgentId}`
-    );
+    this.logger.log(`Agent ${this.agentId} delegating task ${taskId} to ${targetAgentId}`);
 
     const pending = await this.getPendingTasks();
     const task = pending.find((t) => t.id === taskId);
@@ -352,25 +318,13 @@ export class AgentInbox {
     };
 
     // Remove from this agent's inbox
-    await this.redis.lrem(
-      `agent:${this.agentId}:inbox:tasks:pending`,
-      1,
-      JSON.stringify(task)
-    );
+    await this.redis.lrem(`agent:${this.agentId}:inbox:tasks:pending`, 1, JSON.stringify(task));
 
     // Add to outbox/delegations
-    await this.redis.lpush(
-      `agent:${this.agentId}:outbox:delegated`,
-      JSON.stringify(delegatedTask)
-    );
+    await this.redis.lpush(`agent:${this.agentId}:outbox:delegated`, JSON.stringify(delegatedTask));
 
     // Send to target agent's inbox
-    const targetInbox = new AgentInbox(
-      targetAgentId,
-      this.redis,
-      this.eventEmitter,
-      this.options
-    );
+    const targetInbox = new AgentInbox(targetAgentId, this.redis, this.eventEmitter, this.options);
     await targetInbox.receiveTask(delegatedTask);
 
     this.eventEmitter.emit('agent.task_delegated', {
@@ -405,7 +359,7 @@ export class AgentInbox {
 
     await this.redis.lpush(
       `agent:${this.agentId}:inbox:messages:unread`,
-      JSON.stringify(agentMessage)
+      JSON.stringify(agentMessage),
     );
 
     this.eventEmitter.emit('agent.message_received', {
@@ -427,11 +381,7 @@ export class AgentInbox {
    * Get unread messages
    */
   async getUnreadMessages(): Promise<AgentMessage[]> {
-    const messages = await this.redis.lrange(
-      `agent:${this.agentId}:inbox:messages:unread`,
-      0,
-      -1
-    );
+    const messages = await this.redis.lrange(`agent:${this.agentId}:inbox:messages:unread`, 0, -1);
     return messages.map((m) => JSON.parse(m));
   }
 
@@ -447,13 +397,13 @@ export class AgentInbox {
       await this.redis.lrem(
         `agent:${this.agentId}:inbox:messages:unread`,
         1,
-        JSON.stringify(message)
+        JSON.stringify(message),
       );
 
       // Add to read
       await this.redis.lpush(
         `agent:${this.agentId}:inbox:messages:read`,
-        JSON.stringify({ ...message, read: true, readAt: new Date() })
+        JSON.stringify({ ...message, read: true, readAt: new Date() }),
       );
 
       await this.recordActivity('message_read', { messageId });
@@ -465,9 +415,7 @@ export class AgentInbox {
   /**
    * Send notification to agent
    */
-  async sendNotification(
-    notification: Partial<AgentNotification>
-  ): Promise<AgentNotification> {
+  async sendNotification(notification: Partial<AgentNotification>): Promise<AgentNotification> {
     const agentNotification: AgentNotification = {
       id: notification.id || uuid(),
       type: notification.type || 'info',
@@ -479,7 +427,7 @@ export class AgentInbox {
 
     await this.redis.lpush(
       `agent:${this.agentId}:inbox:notifications`,
-      JSON.stringify(agentNotification)
+      JSON.stringify(agentNotification),
     );
 
     this.eventEmitter.emit('agent.notification_sent', {
@@ -499,7 +447,7 @@ export class AgentInbox {
     const notifications = await this.redis.lrange(
       `agent:${this.agentId}:inbox:notifications`,
       0,
-      -1
+      -1,
     );
     return notifications.map((n) => JSON.parse(n));
   }
@@ -511,7 +459,7 @@ export class AgentInbox {
    */
   private async recordActivity(
     activityType: string,
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ): Promise<void> {
     await this.redis.publish(
       'agent:activity',
@@ -520,7 +468,7 @@ export class AgentInbox {
         activityType,
         metadata,
         timestamp: new Date(),
-      })
+      }),
     );
   }
 
@@ -531,7 +479,7 @@ export class AgentInbox {
     const inProgress = await this.redis.lrange(
       `agent:${this.agentId}:inbox:tasks:in-progress`,
       0,
-      0
+      0,
     );
     if (inProgress.length > 0) {
       const task: AgentTask = JSON.parse(inProgress[0]);

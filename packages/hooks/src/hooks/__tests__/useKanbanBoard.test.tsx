@@ -1,6 +1,6 @@
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
+import { SuggestionService, SuggestionStatus, TaskStatus } from '../../types/index';
 import { useKanbanBoard } from '../useKanbanBoard';
-import { SuggestionStatus, TaskStatus, SuggestionService } from '../../types/index';
 
 // Use jest.Mock to properly type the mock functions
 const mockSuggestionService: jest.Mocked<SuggestionService> = {
@@ -18,13 +18,13 @@ const mockSuggestionService: jest.Mocked<SuggestionService> = {
   createSuggestion: jest.fn(),
   updateSuggestion: jest.fn(),
   voteForSuggestion: jest.fn(),
-  convertToTask: jest.fn()
+  convertToTask: jest.fn(),
 } as jest.Mocked<SuggestionService>;
 
 const mockSuggestions = [
-  { 
-    id: '1', 
-    title: 'Test Suggestion', 
+  {
+    id: '1',
+    title: 'Test Suggestion',
     description: 'Test description',
     status: SuggestionStatus.SUBMITTED,
     votes: 0,
@@ -32,11 +32,11 @@ const mockSuggestions = [
     updatedAt: new Date(),
     createdBy: 'user-1',
     tags: ['test'],
-    priority: 'medium'
+    priority: 'medium',
   },
-  { 
-    id: '2', 
-    title: 'Another Suggestion', 
+  {
+    id: '2',
+    title: 'Another Suggestion',
     description: 'Another description',
     status: SuggestionStatus.UNDER_REVIEW,
     votes: 2,
@@ -44,30 +44,30 @@ const mockSuggestions = [
     updatedAt: new Date(),
     createdBy: 'user-2',
     tags: ['feature'],
-    priority: 'high'
+    priority: 'high',
   },
 ];
 
 const mockTodos = [
-  { 
-    id: '1', 
-    title: 'Test Todo', 
+  {
+    id: '1',
+    title: 'Test Todo',
     description: 'Test todo description',
     completed: false,
     status: TaskStatus.PENDING,
     createdAt: new Date(),
     updatedAt: new Date(),
-    priority: 'medium'
+    priority: 'medium',
   },
-  { 
-    id: '2', 
-    title: 'Another Todo', 
+  {
+    id: '2',
+    title: 'Another Todo',
     description: 'Another todo description',
     completed: false,
     status: TaskStatus.IN_PROGRESS,
     createdAt: new Date(),
     updatedAt: new Date(),
-    priority: 'high'
+    priority: 'high',
   },
 ];
 
@@ -161,7 +161,7 @@ describe('useKanbanBoard', () => {
       source: { droppableId: 'suggestions', index: 0 },
       destination: { droppableId: 'under-review', index: 0 },
       draggableId: '1',
-      type: 'DEFAULT' // Add the missing type property
+      type: 'DEFAULT', // Add the missing type property
     };
 
     await act(async () => {
@@ -186,9 +186,9 @@ describe('useKanbanBoard', () => {
       updatedAt: new Date(),
       createdBy: 'user-1',
       tags: ['converted', 'feature'],
-      priority: 'high'
+      priority: 'high',
     };
-    
+
     mockSuggestionService.convertToFeature.mockResolvedValue(convertedFeature);
 
     const { result, waitForNextUpdate } = renderHook(() =>

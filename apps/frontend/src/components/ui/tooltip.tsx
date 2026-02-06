@@ -2,8 +2,8 @@
  * Tooltip Component - Chakra-compatible Tooltip for The New Fuse
  */
 
-import React, { useState, useRef, useEffect, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 interface TooltipProps {
   label: string;
@@ -64,9 +64,11 @@ export const Tooltip = ({
 
   const arrowClasses = {
     top: 'bottom-[-4px] left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-b-transparent',
-    bottom: 'top-[-4px] left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-t-transparent',
+    bottom:
+      'top-[-4px] left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-t-transparent',
     left: 'right-[-4px] top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-r-transparent',
-    right: 'left-[-4px] top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-l-transparent',
+    right:
+      'left-[-4px] top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-l-transparent',
   };
 
   return (

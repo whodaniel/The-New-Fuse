@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { Ap2ProtocolService } from '../src/ap2-protocol.service';
 import { HttpService } from '@nestjs/axios';
+import { Test, TestingModule } from '@nestjs/testing';
 import { of } from 'rxjs';
+import { Ap2ProtocolService } from '../src/ap2-protocol.service';
 
 describe('Ap2ProtocolService', () => {
   let service: Ap2ProtocolService;
@@ -55,7 +55,10 @@ describe('Ap2ProtocolService', () => {
 
     const result = await service.createPayment(paymentDetails);
 
-    expect(httpService.post).toHaveBeenCalledWith('http://localhost:8000/create_payment', paymentDetails);
+    expect(httpService.post).toHaveBeenCalledWith(
+      'http://localhost:8000/create_payment',
+      paymentDetails
+    );
     expect(result).toEqual(mockPaymentRequest);
   });
 });

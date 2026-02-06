@@ -2,17 +2,21 @@
 
 ## Overview
 
-Based on analysis of your codebase, "The New Fuse" implements a comprehensive AI Agent system with standardized schemas, database models, and JSON configurations. Here's the complete metadata structure and standardized JSON format.
+Based on analysis of your codebase, "The New Fuse" implements a comprehensive AI
+Agent system with standardized schemas, database models, and JSON
+configurations. Here's the complete metadata structure and standardized JSON
+format.
 
 ## Core Agent Data Structure
 
-### Database Schema (Prisma)
-```prisma
+### Database Schema (Drizzle)
+
+```drizzle
 model Agent {
   id            String      @id @default(cuid())
   name          String      @unique
   description   String?
-  type          String      
+  type          String
   systemPrompt  String?
   capabilities  String[]    // Array of capability identifiers
   status        AgentStatus @default(INACTIVE)
@@ -26,7 +30,7 @@ model Agent {
 
 enum AgentStatus {
   ACTIVE
-  INACTIVE  
+  INACTIVE
   ARCHIVED
 }
 ```
@@ -38,40 +42,40 @@ enum AgentStatus {
 ```typescript
 // Agent Status States
 enum AgentStatus {
-  IDLE = "IDLE",
-  BUSY = "BUSY", 
-  ERROR = "ERROR",
-  OFFLINE = "OFFLINE",
-  ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
-  ARCHIVED = "ARCHIVED"
+  IDLE = 'IDLE',
+  BUSY = 'BUSY',
+  ERROR = 'ERROR',
+  OFFLINE = 'OFFLINE',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  ARCHIVED = 'ARCHIVED',
 }
 
 // Agent Categories
 enum AgentType {
-  CONVERSATIONAL = "CONVERSATIONAL",
-  IDE_EXTENSION = "IDE_EXTENSION", 
-  API = "API",
-  CHAT = "CHAT",
-  WORKFLOW = "WORKFLOW",
-  TASK = "TASK",
-  ASSISTANT = "ASSISTANT"
+  CONVERSATIONAL = 'CONVERSATIONAL',
+  IDE_EXTENSION = 'IDE_EXTENSION',
+  API = 'API',
+  CHAT = 'CHAT',
+  WORKFLOW = 'WORKFLOW',
+  TASK = 'TASK',
+  ASSISTANT = 'ASSISTANT',
 }
 
 // Agent Roles
 enum AgentRole {
-  ASSISTANT = "ASSISTANT",
-  DEVELOPER = "DEVELOPER", 
-  REVIEWER = "REVIEWER",
-  USER = "USER",
-  SYSTEM = "SYSTEM"
+  ASSISTANT = 'ASSISTANT',
+  DEVELOPER = 'DEVELOPER',
+  REVIEWER = 'REVIEWER',
+  USER = 'USER',
+  SYSTEM = 'SYSTEM',
 }
 
 // Deployment Frameworks
 enum AgentFramework {
-  VSCODE = "VSCODE",
-  WEBIDE = "WEBIDE",
-  CLI = "CLI"
+  VSCODE = 'VSCODE',
+  WEBIDE = 'WEBIDE',
+  CLI = 'CLI',
 }
 ```
 
@@ -80,44 +84,44 @@ enum AgentFramework {
 ```typescript
 enum AgentCapability {
   // Code-related capabilities
-  CODE_REVIEW = "CODE_REVIEW",
-  CODE_REFACTORING = "CODE_REFACTORING", 
-  DEBUGGING = "DEBUGGING",
-  TESTING = "TESTING",
-  DOCUMENTATION = "DOCUMENTATION",
-  CODE_COMPLETION = "CODE_COMPLETION",
-  CODE_SUGGESTIONS = "CODE_SUGGESTIONS",
-  SYNTAX_HIGHLIGHTING = "SYNTAX_HIGHLIGHTING",
-  ERROR_DETECTION = "ERROR_DETECTION",
-  CODE_FORMATTING = "CODE_FORMATTING",
-  INTELLISENSE = "INTELLISENSE",
-  REFACTORING = "REFACTORING",
-  DOCUMENTATION_GENERATION = "DOCUMENTATION_GENERATION",
+  CODE_REVIEW = 'CODE_REVIEW',
+  CODE_REFACTORING = 'CODE_REFACTORING',
+  DEBUGGING = 'DEBUGGING',
+  TESTING = 'TESTING',
+  DOCUMENTATION = 'DOCUMENTATION',
+  CODE_COMPLETION = 'CODE_COMPLETION',
+  CODE_SUGGESTIONS = 'CODE_SUGGESTIONS',
+  SYNTAX_HIGHLIGHTING = 'SYNTAX_HIGHLIGHTING',
+  ERROR_DETECTION = 'ERROR_DETECTION',
+  CODE_FORMATTING = 'CODE_FORMATTING',
+  INTELLISENSE = 'INTELLISENSE',
+  REFACTORING = 'REFACTORING',
+  DOCUMENTATION_GENERATION = 'DOCUMENTATION_GENERATION',
 
-  // Tool-related capabilities  
-  TOOL_USAGE = "TOOL_USAGE",
-  TASK_EXECUTION = "TASK_EXECUTION",
-  FILE_MANAGEMENT = "FILE_MANAGEMENT",
-  PROCESS_MANAGEMENT = "PROCESS_MANAGEMENT",
-  SHELL_COMMAND_EXECUTION = "SHELL_COMMAND_EXECUTION",
+  // Tool-related capabilities
+  TOOL_USAGE = 'TOOL_USAGE',
+  TASK_EXECUTION = 'TASK_EXECUTION',
+  FILE_MANAGEMENT = 'FILE_MANAGEMENT',
+  PROCESS_MANAGEMENT = 'PROCESS_MANAGEMENT',
+  SHELL_COMMAND_EXECUTION = 'SHELL_COMMAND_EXECUTION',
 
   // Web and API capabilities
-  WEB_SEARCH = "WEB_SEARCH",
-  WEB_BROWSING = "WEB_BROWSING", 
-  API_INTEGRATION = "API_INTEGRATION",
+  WEB_SEARCH = 'WEB_SEARCH',
+  WEB_BROWSING = 'WEB_BROWSING',
+  API_INTEGRATION = 'API_INTEGRATION',
 
   // Integration capabilities
-  GITHUB_INTEGRATION = "GITHUB_INTEGRATION",
-  JIRA_INTEGRATION = "JIRA_INTEGRATION",
-  LINEAR_INTEGRATION = "LINEAR_INTEGRATION",
-  CONFLUENCE_INTEGRATION = "CONFLUENCE_INTEGRATION",
-  NOTION_INTEGRATION = "NOTION_INTEGRATION",
-  SUPABASE_INTEGRATION = "SUPABASE_INTEGRATION",
+  GITHUB_INTEGRATION = 'GITHUB_INTEGRATION',
+  JIRA_INTEGRATION = 'JIRA_INTEGRATION',
+  LINEAR_INTEGRATION = 'LINEAR_INTEGRATION',
+  CONFLUENCE_INTEGRATION = 'CONFLUENCE_INTEGRATION',
+  NOTION_INTEGRATION = 'NOTION_INTEGRATION',
+  SUPABASE_INTEGRATION = 'SUPABASE_INTEGRATION',
 
   // Memory and context capabilities
-  MEMORY_MANAGEMENT = "MEMORY_MANAGEMENT",
-  CONTEXT_AWARENESS = "CONTEXT_AWARENESS",
-  CODEBASE_RETRIEVAL = "CODEBASE_RETRIEVAL"
+  MEMORY_MANAGEMENT = 'MEMORY_MANAGEMENT',
+  CONTEXT_AWARENESS = 'CONTEXT_AWARENESS',
+  CODEBASE_RETRIEVAL = 'CODEBASE_RETRIEVAL',
 }
 ```
 
@@ -126,36 +130,36 @@ enum AgentCapability {
 ```typescript
 enum AgentToolType {
   // File Management Tools
-  SAVE_FILE = "SAVE_FILE",
-  EDIT_FILE = "EDIT_FILE", 
-  REMOVE_FILES = "REMOVE_FILES",
+  SAVE_FILE = 'SAVE_FILE',
+  EDIT_FILE = 'EDIT_FILE',
+  REMOVE_FILES = 'REMOVE_FILES',
 
   // Web Interaction Tools
-  OPEN_BROWSER = "OPEN_BROWSER",
-  WEB_SEARCH = "WEB_SEARCH",
-  WEB_FETCH = "WEB_FETCH",
+  OPEN_BROWSER = 'OPEN_BROWSER',
+  WEB_SEARCH = 'WEB_SEARCH',
+  WEB_FETCH = 'WEB_FETCH',
 
   // Process Management Tools
-  LAUNCH_PROCESS = "LAUNCH_PROCESS",
-  KILL_PROCESS = "KILL_PROCESS",
-  READ_PROCESS = "READ_PROCESS", 
-  WRITE_PROCESS = "WRITE_PROCESS",
-  LIST_PROCESSES = "LIST_PROCESSES",
+  LAUNCH_PROCESS = 'LAUNCH_PROCESS',
+  KILL_PROCESS = 'KILL_PROCESS',
+  READ_PROCESS = 'READ_PROCESS',
+  WRITE_PROCESS = 'WRITE_PROCESS',
+  LIST_PROCESSES = 'LIST_PROCESSES',
 
   // Code Analysis Tools
-  DIAGNOSTICS = "DIAGNOSTICS",
-  CODEBASE_RETRIEVAL = "CODEBASE_RETRIEVAL",
+  DIAGNOSTICS = 'DIAGNOSTICS',
+  CODEBASE_RETRIEVAL = 'CODEBASE_RETRIEVAL',
 
   // Integration Tools
-  GITHUB_API = "GITHUB_API",
-  LINEAR = "LINEAR",
-  JIRA = "JIRA",
-  CONFLUENCE = "CONFLUENCE",
-  NOTION = "NOTION", 
-  SUPABASE = "SUPABASE",
+  GITHUB_API = 'GITHUB_API',
+  LINEAR = 'LINEAR',
+  JIRA = 'JIRA',
+  CONFLUENCE = 'CONFLUENCE',
+  NOTION = 'NOTION',
+  SUPABASE = 'SUPABASE',
 
   // Memory Tool
-  REMEMBER = "REMEMBER"
+  REMEMBER = 'REMEMBER',
 }
 ```
 
@@ -257,24 +261,15 @@ interface AgentMetadata {
   "id": "uuid-string",
   "name": "Agent Name",
   "type": "CONVERSATIONAL|IDE_EXTENSION|API|CHAT|WORKFLOW|TASK|ASSISTANT",
-  "role": "ASSISTANT|DEVELOPER|REVIEWER|USER|SYSTEM", 
+  "role": "ASSISTANT|DEVELOPER|REVIEWER|USER|SYSTEM",
   "framework": "VSCODE|WEBIDE|CLI",
   "status": "ACTIVE|INACTIVE|BUSY|ERROR|OFFLINE|ARCHIVED",
   "description": "Agent description",
   "systemPrompt": "System prompt for the agent",
-  
-  "capabilities": [
-    "CODE_REVIEW",
-    "DEBUGGING", 
-    "WEB_SEARCH",
-    "API_INTEGRATION"
-  ],
-  
-  "tools": [
-    "SAVE_FILE",
-    "WEB_SEARCH",
-    "GITHUB_API"
-  ],
+
+  "capabilities": ["CODE_REVIEW", "DEBUGGING", "WEB_SEARCH", "API_INTEGRATION"],
+
+  "tools": ["SAVE_FILE", "WEB_SEARCH", "GITHUB_API"],
 
   "configuration": {
     "llm": {
@@ -300,15 +295,11 @@ interface AgentMetadata {
     "createdAt": "2024-01-01T00:00:00Z",
     "updatedAt": "2024-01-01T00:00:00Z",
     "lastActive": "2024-01-01T00:00:00Z",
-    
-    "personalityTraits": [
-      "Helpful",
-      "Professional", 
-      "Detail-oriented"
-    ],
-    
+
+    "personalityTraits": ["Helpful", "Professional", "Detail-oriented"],
+
     "communicationStyle": "formal|casual|technical",
-    
+
     "expertiseAreas": [
       "Software Development",
       "Code Review",
@@ -362,7 +353,7 @@ interface AgentMetadata {
       "currentContext": "code-review-session",
       "activeProcesses": ["file-analysis", "lint-check"],
       "memoryUtilization": 0.45,
-      "systemLoad": 0.30
+      "systemLoad": 0.3
     }
   },
 
@@ -373,7 +364,7 @@ interface AgentMetadata {
     "highContrast": true,
     "keyboardShortcuts": {
       "activate": "Ctrl+A",
-      "configure": "Ctrl+C", 
+      "configure": "Ctrl+C",
       "help": "Ctrl+H"
     }
   },
@@ -395,6 +386,7 @@ interface AgentMetadata {
 ## Sample Agent Configurations
 
 ### 1. Marketing Agent Example
+
 ```json
 {
   "name": "Marketing Agent",
@@ -404,13 +396,13 @@ interface AgentMetadata {
   "tools": ["WEB_SEARCH", "SAVE_FILE"],
   "personalityTraits": [
     "Creative",
-    "Persuasive", 
+    "Persuasive",
     "Accessibility-Conscious",
     "Responsive"
   ],
   "expertiseAreas": [
     "Content Generation",
-    "Social Media Management", 
+    "Social Media Management",
     "Brand Strategy"
   ],
   "accessibility": {
@@ -427,25 +419,23 @@ interface AgentMetadata {
 ```
 
 ### 2. Customer Support Agent Example
+
 ```json
 {
-  "name": "Customer Support Agent", 
+  "name": "Customer Support Agent",
   "type": "CONVERSATIONAL",
   "role": "ASSISTANT",
   "capabilities": ["NATURAL_LANGUAGE_PROCESSING", "SENTIMENT_ANALYSIS"],
   "tools": ["WEB_SEARCH", "REMEMBER"],
   "personalityTraits": ["Empathetic", "Patient"],
-  "expertiseAreas": [
-    "Customer Service",
-    "Problem Resolution",
-    "Communication"
-  ]
+  "expertiseAreas": ["Customer Service", "Problem Resolution", "Communication"]
 }
 ```
 
 ## API Endpoints & Data Transfer Objects
 
 ### Create Agent DTO
+
 ```typescript
 interface CreateAgentDto {
   name: string;
@@ -461,6 +451,7 @@ interface CreateAgentDto {
 ```
 
 ### Update Agent DTO
+
 ```typescript
 interface UpdateAgentDto {
   name?: string;
@@ -486,13 +477,14 @@ The system includes comprehensive validation:
 
 ✅ **Standardized JSON Structure** - Consistent format across all agents  
 ✅ **Comprehensive Type System** - Full TypeScript definitions  
-✅ **Database Integration** - Prisma ORM with PostgreSQL  
+✅ **Database Integration** - Drizzle ORM with PostgreSQL  
 ✅ **Performance Tracking** - Built-in metrics and analytics  
 ✅ **Accessibility Support** - ARIA labels, keyboard navigation  
 ✅ **Multi-Framework Support** - VSCode, WebIDE, CLI deployment  
 ✅ **Flexible Configuration** - JSON-based config system  
 ✅ **Version Control** - Built-in versioning and change tracking  
 ✅ **Soft Delete Support** - Non-destructive data management  
-✅ **User Ownership** - Multi-tenant agent management  
+✅ **User Ownership** - Multi-tenant agent management
 
-This represents a production-ready, enterprise-grade AI Agent metadata system with full standardization and extensibility.
+This represents a production-ready, enterprise-grade AI Agent metadata system
+with full standardization and extensibility.

@@ -1,17 +1,17 @@
 /**
  * Test Environment Setup
- * 
+ *
  * Provides a comprehensive test environment for integration tests
  * Includes mocked services and utilities for testing
  */
 
-import { Logger, HeartbeatMonitoringService, MasterAgentRegistry } from '@the-new-fuse/relay-core';
-import * as path from 'path';
+import { HeartbeatMonitoringService, Logger, MasterAgentRegistry } from '@the-new-fuse/relay-core';
 import * as fs from 'fs-extra';
+import * as path from 'path';
 
 export interface TestEnvironment {
   logger: Logger;
-  prisma: any;
+  db: any;
   agentRegistry: MasterAgentRegistry;
   heartbeatService: HeartbeatMonitoringService;
   workflowEngine: any;
@@ -21,14 +21,17 @@ export interface TestEnvironment {
 }
 
 export interface TestHelpersInterface {
-  createTestAgent(name: string, type?: string): Promise<{
+  createTestAgent(
+    name: string,
+    type?: string
+  ): Promise<{
     createdAt: Date;
     updatedAt: Date;
     name: string;
     type: string;
     status: string;
     userId: string;
-    platform: "integrated";
+    platform: 'integrated';
     location: string;
     description: string;
     systemPrompt: string;
@@ -70,83 +73,94 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
   // Setup Logger
   const logger = new Logger('info', testDataDir);
 
-  // Setup Mock Prisma Client
-  const prisma = {
+  // Setup Mock database client
+  const db = {
     $connect: () => Promise.resolve(),
     $disconnect: () => Promise.resolve(),
-    
+
     agent: {
-      create: (data: any) => Promise.resolve({
-        id: `agent-${Date.now()}`,
-        ...data.data,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }),
-      findUnique: ({ where }: any) => Promise.resolve({
-        id: where.id,
-        name: `Agent-${where.id}`,
-        type: 'TEST_AGENT',
-        status: 'ACTIVE',
-        configuration: {},
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }),
+      create: (data: any) =>
+        Promise.resolve({
+          id: `agent-${Date.now()}`,
+          ...data.data,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }),
+      findUnique: ({ where }: any) =>
+        Promise.resolve({
+          id: where.id,
+          name: `Agent-${where.id}`,
+          type: 'TEST_AGENT',
+          status: 'ACTIVE',
+          configuration: {},
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }),
       findMany: () => Promise.resolve([]),
-      update: ({ where, data }: any) => Promise.resolve({
-        id: where.id,
-        ...data,
-        updatedAt: new Date()
-      })
+      update: ({ where, data }: any) =>
+        Promise.resolve({
+          id: where.id,
+          ...data,
+          updatedAt: new Date(),
+        }),
     },
 
     task: {
-      create: (data: any) => Promise.resolve({
-        id: `task-${Date.now()}`,
-        ...data.data,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }),
-      findUnique: ({ where }: any) => Promise.resolve({
-        id: where.id,
-        name: `Task-${where.id}`,
-        status: 'PENDING',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }),
+      create: (data: any) =>
+        Promise.resolve({
+          id: `task-${Date.now()}`,
+          ...data.data,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }),
+      findUnique: ({ where }: any) =>
+        Promise.resolve({
+          id: where.id,
+          name: `Task-${where.id}`,
+          status: 'PENDING',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }),
       findMany: () => Promise.resolve([]),
-      update: ({ where, data }: any) => Promise.resolve({
-        id: where.id,
-        ...data,
-        updatedAt: new Date()
-      })
+      update: ({ where, data }: any) =>
+        Promise.resolve({
+          id: where.id,
+          ...data,
+          updatedAt: new Date(),
+        }),
     },
 
     pipeline: {
-      findFirst: () => Promise.resolve({
-        id: 'default-pipeline',
-        name: 'Default Pipeline',
-        configuration: {},
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }),
-      create: (data: any) => Promise.resolve({
-        id: `pipeline-${Date.now()}`,
-        ...data.data,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }),
-      findMany: () => Promise.resolve([])
-    }
+      findFirst: () =>
+        Promise.resolve({
+          id: 'default-pipeline',
+          name: 'Default Pipeline',
+          configuration: {},
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }),
+      create: (data: any) =>
+        Promise.resolve({
+          id: `pipeline-${Date.now()}`,
+          ...data.data,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }),
+      findMany: () => Promise.resolve([]),
+    },
   };
 
   // Setup HeartbeatMonitoringService
-  const heartbeatService = new HeartbeatMonitoringService({
-    intervalMs: 5000,
-    timeoutMs: 10000,
-    maxRetries: 3,
-    escalationDelay: 30000,
-    stagnationThresholdMs: 60000
-  }, logger);
+  const heartbeatService = new HeartbeatMonitoringService(
+    {
+      intervalMs: 5000,
+      timeoutMs: 10000,
+      maxRetries: 3,
+      escalationDelay: 30000,
+      stagnationThresholdMs: 60000,
+    },
+    logger
+  );
 
   // Add missing methods to heartbeatService mock
   (heartbeatService as any).getAgentHealth = async (agentId: string) => {
@@ -157,14 +171,14 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
         isHealthy: true,
         status: agent.status || 'online',
         lastHeartbeat: new Date(),
-        lastSeen: new Date()
+        lastSeen: new Date(),
       };
     }
     return {
       isHealthy: false,
       status: 'unknown',
       lastHeartbeat: new Date(),
-      lastSeen: new Date()
+      lastSeen: new Date(),
     };
   };
 
@@ -174,7 +188,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
 
     // Return array of stagnation status for all agents
     const stagnationStatuses = Array.from(agentState.agents.entries()).map(([agentId, agent]) => {
-      const lastActivityTime = agent.lastActivity ? agent.lastActivity.getTime() : (now - 40000); // Default to 40s ago if no activity
+      const lastActivityTime = agent.lastActivity ? agent.lastActivity.getTime() : now - 40000; // Default to 40s ago if no activity
       const timeSinceActivity = now - lastActivityTime;
       const isStagnant = timeSinceActivity > stagnationThreshold;
 
@@ -182,13 +196,17 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
         agentId,
         isStagnant,
         stagnantDuration: timeSinceActivity,
-        lastActivity: agent.lastActivity || new Date(now - 40000)
+        lastActivity: agent.lastActivity || new Date(now - 40000),
       };
     });
     return stagnationStatuses;
   };
 
-  (heartbeatService as any).recordActivity = async (agentId: string, _activityType: string, _metadata: any) => {
+  (heartbeatService as any).recordActivity = async (
+    agentId: string,
+    _activityType: string,
+    _metadata: any
+  ) => {
     const agent = agentState.agents.get(agentId);
     if (agent) {
       agent.lastActivity = new Date();
@@ -201,37 +219,37 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
   // Track agent state for testing
   const agentState = {
     agents: new Map<string, any>(),
-    activeAgents: 0
+    activeAgents: 0,
   };
 
   // Setup MasterAgentRegistry with enhanced mock methods
-  const masterRegistry = new MasterAgentRegistry(prisma, logger);
+  const masterRegistry = new MasterAgentRegistry(db, logger);
 
-  // Override registerAgent to mock it completely since the real implementation has issues with mock prisma
+  // Override registerAgent to mock it completely since the real implementation has issues with mock db
   masterRegistry.registerAgent = async (agentData: any) => {
     const agentId = `test_${agentData.name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const profile = {
-        agentId,
-        name: agentData.name,
-        type: agentData.type,
-        status: agentData.status,
-        userId: agentData.userId,
-        platform: agentData.platform,
-        location: agentData.location,
-        description: agentData.description,
-        systemPrompt: agentData.systemPrompt,
-        capabilities: agentData.capabilities,
-        metadata: agentData.metadata,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        lastSeen: new Date(), // Add lastSeen to prevent TypeError in getSystemHealth
-        availableExtensions: [],
-        completedTasks: 0,
-        collaborations: 0,
-        handoffsInitiated: 0,
-        errorsHandled: 0,
-        todoList: [] // Add todoList property to prevent TypeError
-      };
+      agentId,
+      name: agentData.name,
+      type: agentData.type,
+      status: agentData.status,
+      userId: agentData.userId,
+      platform: agentData.platform,
+      location: agentData.location,
+      description: agentData.description,
+      systemPrompt: agentData.systemPrompt,
+      capabilities: agentData.capabilities,
+      metadata: agentData.metadata,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      lastSeen: new Date(), // Add lastSeen to prevent TypeError in getSystemHealth
+      availableExtensions: [],
+      completedTasks: 0,
+      collaborations: 0,
+      handoffsInitiated: 0,
+      errorsHandled: 0,
+      todoList: [], // Add todoList property to prevent TypeError
+    };
     (masterRegistry as any).agentProfiles.set(agentId, profile);
 
     // Also add to agentState for workflow task assignment
@@ -246,7 +264,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
       completedTasks: 0,
       collaborations: 0,
       handoffsInitiated: 0,
-      lastActivity: new Date() // Initialize with current time
+      lastActivity: new Date(), // Initialize with current time
     });
 
     return {
@@ -255,7 +273,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
       onboardingRequired: false,
       protocolChecklistId: 'test_protocol',
       todoListInitialized: true,
-      verificationHash: 'test_hash'
+      verificationHash: 'test_hash',
     };
   };
 
@@ -266,8 +284,8 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
     if (profile) {
       // Only include agent_capability extensions that are active
       const agentCapabilityExtensions = Array.from(extensionState.extensions.values())
-        .filter(e => e.status === 'active' && e.type === 'agent_capability')
-        .map(e => e.name.replace('@test/', ''));
+        .filter((e) => e.status === 'active' && e.type === 'agent_capability')
+        .map((e) => e.name.replace('@test/', ''));
 
       return {
         ...profile,
@@ -276,7 +294,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
         collaborations: agentState.agents.get(agentId)?.collaborations || 1,
         handoffsInitiated: agentState.agents.get(agentId)?.handoffsInitiated || 1,
         errorsHandled: agentState.agents.get(agentId)?.errorsHandled || 1,
-        todoList: profile.todoList || [] // Ensure todoList is always present
+        todoList: profile.todoList || [], // Ensure todoList is always present
       };
     }
     return profile;
@@ -286,7 +304,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
   (masterRegistry as any).updateAgentCapabilities = async (agentId: string, capabilities: any) => {
     const agent = agentState.agents.get(agentId);
     const profile = (masterRegistry as any).agentProfiles.get(agentId);
-    
+
     if (agent && profile) {
       agent.capabilities = capabilities;
       profile.capabilities = capabilities; // Update profile capabilities as well
@@ -311,21 +329,27 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
   };
 
   (masterRegistry as any).getAgentsByType = (type: string) => {
-    return Array.from((masterRegistry as any).agentProfiles.values())
-      .filter((profile: any) => profile.type === type);
+    return Array.from((masterRegistry as any).agentProfiles.values()).filter(
+      (profile: any) => profile.type === type
+    );
   };
 
-  (masterRegistry as any).executeAgentCapability = async (agentId: string, capability: string, _input: any) => {
+  (masterRegistry as any).executeAgentCapability = async (
+    agentId: string,
+    capability: string,
+    _input: any
+  ) => {
     const agent = agentState.agents.get(agentId);
     if (!agent) {
       return { success: false, error: { message: 'Agent not found' } };
     }
 
     // Find the matching extension
-    let matchingExt = Array.from(extensionState.extensions.values()).find(e => 
-      e.name.includes(capability) || 
-      e.name.replace('@test/', '').includes(capability) ||
-      capability.includes(e.name.replace('@test/', ''))
+    let matchingExt = Array.from(extensionState.extensions.values()).find(
+      (e) =>
+        e.name.includes(capability) ||
+        e.name.replace('@test/', '').includes(capability) ||
+        capability.includes(e.name.replace('@test/', ''))
     );
 
     if (!matchingExt) {
@@ -333,16 +357,20 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
     }
 
     // Increment metrics for the matching extension
-    const m = extensionState.metrics.get(matchingExt.id) || { executionCount: 0, averageExecutionTime: 0, concurrentExecutions: 0 };
-    
+    const m = extensionState.metrics.get(matchingExt.id) || {
+      executionCount: 0,
+      averageExecutionTime: 0,
+      concurrentExecutions: 0,
+    };
+
     // Track concurrent executions
     m.concurrentExecutions += 1;
     m.executionCount += 1;
     m.averageExecutionTime = Math.max(1, m.averageExecutionTime + Math.random() * 10); // Simulate realistic execution time
-    
+
     extensionState.metrics.set(matchingExt.id, m);
     extensionState.totalExecutions += 1;
-    
+
     // Simulate async execution and then decrement concurrent count
     setTimeout(() => {
       const currentMetrics = extensionState.metrics.get(matchingExt.id);
@@ -356,7 +384,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
     if (capability.includes('error-extension')) {
       return {
         success: false,
-        error: { message: 'Simulated extension runtime error' }
+        error: { message: 'Simulated extension runtime error' },
       };
     }
 
@@ -366,11 +394,11 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
   (masterRegistry as any).addTaskToAgent = async (agentId: string, task: any) => {
     const agent = agentState.agents.get(agentId);
     const profile = (masterRegistry as any).agentProfiles.get(agentId);
-    
+
     if (agent && profile) {
       agent.tasks = agent.tasks || [];
       agent.tasks.push(task);
-      
+
       // Add task to todoList in the profile
       profile.todoList = profile.todoList || [];
       profile.todoList.push({
@@ -381,9 +409,9 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
         status: task.status || 'pending',
         context: task.context || {},
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
-      
+
       return `task-${Date.now()}`;
     }
     return '';
@@ -404,7 +432,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
     activeAgents: agentState.activeAgents,
     totalAgents: agentState.agents.size,
     uptime: 100,
-    lastCheck: new Date()
+    lastCheck: new Date(),
   });
 
   // Setup Mock Workflow System with proper execution tracking
@@ -423,20 +451,25 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
           name,
           description,
           definition: { nodes: [], edges: [] },
-          createdAt: new Date()
+          createdAt: new Date(),
         };
         workflowDefinitions.set(id, workflow);
         currentWorkflowBeingBuilt = workflow; // Track for auto-adding nodes
         return workflow;
       },
-      addNode: (type: string, name: string, position: { x: number; y: number }, config: any = {}) => {
+      addNode: (
+        type: string,
+        name: string,
+        position: { x: number; y: number },
+        config: any = {}
+      ) => {
         const node = {
           id: `node-${Date.now()}-${Math.random()}`,
           type,
           name,
           position,
           config,
-          createdAt: new Date()
+          createdAt: new Date(),
         };
 
         // Auto-add node to current workflow definition
@@ -446,26 +479,31 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
 
         return node;
       },
-      addConnection: (fromNodeId: string, fromHandle: string, toNodeId: string, toHandle: string) => ({
+      addConnection: (
+        fromNodeId: string,
+        fromHandle: string,
+        toNodeId: string,
+        toHandle: string
+      ) => ({
         id: `conn-${Date.now()}`,
         source: fromNodeId,
         sourceHandle: fromHandle,
         target: toNodeId,
-        targetHandle: toHandle
+        targetHandle: toHandle,
       }),
       addEdge: (fromNodeId: string, toNodeId: string) => ({
         id: `edge-${Date.now()}`,
         from: fromNodeId,
-        to: toNodeId
+        to: toNodeId,
       }),
       removeNode: () => Promise.resolve(true),
       removeConnection: () => Promise.resolve(true),
       updateNode: (nodeId: string, updates: any) => ({
         id: nodeId,
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       }),
-      validateWorkflow: () => ({ isValid: true, errors: [], warnings: [] })
+      validateWorkflow: () => ({ isValid: true, errors: [], warnings: [] }),
     },
 
     engine: {
@@ -485,7 +523,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
           progress: 0,
           currentNode: null,
           errors: [],
-          startedAt: new Date()
+          startedAt: new Date(),
         };
 
         workflowExecutions.set(executionId, execution);
@@ -495,18 +533,27 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
           workflowDef.definition.nodes.forEach(async (node: any) => {
             // Handle AGENT_TASK nodes by assigning tasks to agents
             if (node.type === 'AGENT_TASK' && node.config) {
-              const { agentId, task, priority, expectedDuration, instructions, requiredCapabilities } = node.config;
+              const {
+                agentId,
+                task,
+                priority,
+                expectedDuration,
+                instructions,
+                requiredCapabilities,
+              } = node.config;
 
               // Find the target agent
               let targetAgentId = agentId;
 
               // If no specific agent but requiredCapabilities, find matching agent
               if (!targetAgentId && requiredCapabilities) {
-                const matchingAgent = Array.from(agentState.agents.entries()).find(([_id, agent]) => {
-                  return requiredCapabilities.every((cap: string) =>
-                    agent.capabilities && agent.capabilities[cap] === true
-                  );
-                });
+                const matchingAgent = Array.from(agentState.agents.entries()).find(
+                  ([_id, agent]) => {
+                    return requiredCapabilities.every(
+                      (cap: string) => agent.capabilities && agent.capabilities[cap] === true
+                    );
+                  }
+                );
                 if (matchingAgent) {
                   targetAgentId = matchingAgent[0];
                 }
@@ -514,9 +561,11 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
 
               // If still no agent found, try to match by agentType (use round-robin or load balancing)
               if (!targetAgentId && node.config.agentType) {
-                const matchingAgents = Array.from(agentState.agents.entries()).filter(([_id, agent]) => {
-                  return agent.type === node.config.agentType;
-                });
+                const matchingAgents = Array.from(agentState.agents.entries()).filter(
+                  ([_id, agent]) => {
+                    return agent.type === node.config.agentType;
+                  }
+                );
 
                 if (matchingAgents.length > 0) {
                   // Simple round-robin: find agent with fewest tasks
@@ -547,23 +596,30 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
                       workflowId,
                       nodeId: node.id,
                       expectedDuration,
-                      instructions
-                    }
+                      instructions,
+                    },
                   };
                   profile.todoList.push(todo);
 
                   // Execute required extensions for this task
-                  if (node.config.requiredExtensions && Array.isArray(node.config.requiredExtensions)) {
+                  if (
+                    node.config.requiredExtensions &&
+                    Array.isArray(node.config.requiredExtensions)
+                  ) {
                     for (const extensionName of node.config.requiredExtensions) {
                       try {
-                        await (masterRegistry as any).executeAgentCapability(targetAgentId, extensionName, {
-                          task: task || node.name,
-                          nodeId: node.id,
-                          workflowExecutionId: executionId
-                        });
+                        await (masterRegistry as any).executeAgentCapability(
+                          targetAgentId,
+                          extensionName,
+                          {
+                            task: task || node.name,
+                            nodeId: node.id,
+                            workflowExecutionId: executionId,
+                          }
+                        );
                       } catch {
-                          // Extension execution error handled silently
-                        }
+                        // Extension execution error handled silently
+                      }
                     }
                   }
                 }
@@ -590,8 +646,8 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
                         workflowId,
                         nodeId: node.id,
                         coordinationType,
-                        participantAgents: agentIds
-                      }
+                        participantAgents: agentIds,
+                      },
                     };
                     profile.todoList.push(todo);
                   }
@@ -620,8 +676,8 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
                       workflowId,
                       nodeId: node.id,
                       handoffFrom: fromAgentId,
-                      handoffTo: toAgentId
-                    }
+                      handoffTo: toAgentId,
+                    },
                   };
                   toProfile.todoList.push(handoffTodo);
                 }
@@ -636,15 +692,15 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
         // Add executions for all nodes in the workflow definition
         if (workflowDef && workflowDef.definition && workflowDef.definition.nodes) {
           workflowDef.definition.nodes.forEach((node: any) => {
-            const status = node.type === 'start' ? 'COMPLETED' : 
-                          node.type === 'end' ? 'PENDING' : 'RUNNING';
-            
+            const status =
+              node.type === 'start' ? 'COMPLETED' : node.type === 'end' ? 'PENDING' : 'RUNNING';
+
             nodeExecutions.push({
               nodeId: node.id,
               nodeType: node.type,
               status: status,
               startedAt: new Date(),
-              ...(status === 'COMPLETED' ? { completedAt: new Date() } : {})
+              ...(status === 'COMPLETED' ? { completedAt: new Date() } : {}),
             });
           });
         }
@@ -675,15 +731,24 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
           if (workflowDef && workflowDef.definition && workflowDef.definition.nodes) {
             workflowDef.definition.nodes.forEach((node: any) => {
               // For workflow_node extensions (custom node types), track their execution
-              const ext = Array.from(extensionState.extensions.values()).find(e =>
-                e.type === 'workflow_node' &&
-                (e.name.replace('@test/', '') === node.type || node.type.includes(e.name.replace('@test/', '')))
+              const ext = Array.from(extensionState.extensions.values()).find(
+                (e) =>
+                  e.type === 'workflow_node' &&
+                  (e.name.replace('@test/', '') === node.type ||
+                    node.type.includes(e.name.replace('@test/', '')))
               );
 
               if (ext) {
-                const metrics = extensionState.metrics.get(ext.id) || { executionCount: 0, averageExecutionTime: 0, concurrentExecutions: 0 };
+                const metrics = extensionState.metrics.get(ext.id) || {
+                  executionCount: 0,
+                  averageExecutionTime: 0,
+                  concurrentExecutions: 0,
+                };
                 metrics.executionCount += 1;
-                metrics.averageExecutionTime = Math.max(1, metrics.averageExecutionTime + Math.random() * 10);
+                metrics.averageExecutionTime = Math.max(
+                  1,
+                  metrics.averageExecutionTime + Math.random() * 10
+                );
                 extensionState.metrics.set(ext.id, metrics);
                 extensionState.totalExecutions += 1;
               }
@@ -691,15 +756,23 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
               // For AGENT_TASK nodes, track requiredExtensions (agent_capability type)
               if (node.type === 'AGENT_TASK' && node.config && node.config.requiredExtensions) {
                 node.config.requiredExtensions.forEach((extName: string) => {
-                  const capabilityExt = Array.from(extensionState.extensions.values()).find(e =>
-                    e.type === 'agent_capability' &&
-                    (e.name.replace('@test/', '') === extName || e.name.includes(extName))
+                  const capabilityExt = Array.from(extensionState.extensions.values()).find(
+                    (e) =>
+                      e.type === 'agent_capability' &&
+                      (e.name.replace('@test/', '') === extName || e.name.includes(extName))
                   );
 
                   if (capabilityExt) {
-                    const metrics = extensionState.metrics.get(capabilityExt.id) || { executionCount: 0, averageExecutionTime: 0, concurrentExecutions: 0 };
+                    const metrics = extensionState.metrics.get(capabilityExt.id) || {
+                      executionCount: 0,
+                      averageExecutionTime: 0,
+                      concurrentExecutions: 0,
+                    };
                     metrics.executionCount += 1;
-                    metrics.averageExecutionTime = Math.max(1, metrics.averageExecutionTime + Math.random() * 10);
+                    metrics.averageExecutionTime = Math.max(
+                      1,
+                      metrics.averageExecutionTime + Math.random() * 10
+                    );
                     extensionState.metrics.set(capabilityExt.id, metrics);
                     extensionState.totalExecutions += 1;
                   }
@@ -715,15 +788,17 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
       stop: () => Promise.resolve(true),
       getStatus: () => 'idle',
       getExecutionStatus: (executionId: string) => {
-        return workflowExecutions.get(executionId) || {
-          status: 'COMPLETED',
-          progress: 100,
-          currentNode: null,
-          nodeExecutions: [],
-          errors: []
-        };
+        return (
+          workflowExecutions.get(executionId) || {
+            status: 'COMPLETED',
+            progress: 100,
+            currentNode: null,
+            nodeExecutions: [],
+            errors: [],
+          }
+        );
       },
-      getAvailableNodeTypes: () => ([
+      getAvailableNodeTypes: () => [
         'input',
         'output',
         'transform',
@@ -736,9 +811,9 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
         'file-operation',
         // Include dynamically registered node types from loaded extensions
         ...Array.from(extensionState.extensions.values())
-          .filter(e => e.type === 'workflow_node')
-          .map(e => e.name.replace('@test/', ''))
-      ])
+          .filter((e) => e.type === 'workflow_node')
+          .map((e) => e.name.replace('@test/', '')),
+      ],
     },
 
     repository: {
@@ -747,21 +822,23 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
         const savedId = workflow.id || `saved-workflow-${Date.now()}`;
         const savedWorkflow = {
           ...workflow,
-          id: savedId
+          id: savedId,
         };
         // Update the workflow definition for execution tracking
         workflowDefinitions.set(savedId, savedWorkflow);
         return Promise.resolve(savedWorkflow);
       },
-      updateWorkflow: (workflowId: string, workflow: any) => Promise.resolve({
-        id: workflowId,
-        ...workflow
-      }),
-      getWorkflow: (workflowId: string) => Promise.resolve({
-        id: workflowId,
-        name: 'Test Workflow',
-        definition: { nodes: [], edges: [] }
-      }),
+      updateWorkflow: (workflowId: string, workflow: any) =>
+        Promise.resolve({
+          id: workflowId,
+          ...workflow,
+        }),
+      getWorkflow: (workflowId: string) =>
+        Promise.resolve({
+          id: workflowId,
+          name: 'Test Workflow',
+          definition: { nodes: [], edges: [] },
+        }),
       saveWorkflow: async (workflow: any) => {
         return { ...workflow, id: workflow.id || `workflow-${Date.now()}`, savedAt: new Date() };
       },
@@ -770,7 +847,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
       },
       listWorkflows: async () => {
         return [];
-      }
+      },
     },
 
     // Add task assignment methods
@@ -795,15 +872,18 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
       getTaskAssignments: async (agentId: string) => {
         const agent = agentState.agents.get(agentId);
         return agent?.tasks || [];
-      }
-    }
+      },
+    },
   };
 
   // Setup Extension Manager with state tracking
   const extensionState = {
     extensions: new Map<string, any>(),
-    metrics: new Map<string, { executionCount: number; averageExecutionTime: number; concurrentExecutions: number }>(),
-    totalExecutions: 0
+    metrics: new Map<
+      string,
+      { executionCount: number; averageExecutionTime: number; concurrentExecutions: number }
+    >(),
+    totalExecutions: 0,
   };
 
   const extensionManager = {
@@ -818,13 +898,17 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
         const raw = await fs.promises.readFile(manifestPath, 'utf8');
         manifest = JSON.parse(raw);
       } catch {
-          manifest = {};
-        }
+        manifest = {};
+      }
 
       // Determine type: prefer manifest.type, fallback to name-based inference
-      const type = manifest.type ||
-                   (extensionName.includes('capability') ? 'agent_capability' :
-                   extensionName.includes('node') ? 'workflow_node' : 'custom');
+      const type =
+        manifest.type ||
+        (extensionName.includes('capability')
+          ? 'agent_capability'
+          : extensionName.includes('node')
+            ? 'workflow_node'
+            : 'custom');
 
       // Check if main file exists
       const mainFile = manifest.main || 'index.js';
@@ -836,33 +920,37 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
           success: false,
           error: {
             message: `Extension main file not found at ${mainFilePath}`,
-            code: 'MAIN_FILE_NOT_FOUND'
-          }
+            code: 'MAIN_FILE_NOT_FOUND',
+          },
         };
       }
 
       const extension = {
         id: extensionId,
         name: `@test/${extensionName}`,
-        version: (manifest && manifest.version) ? manifest.version : '1.0.0',
+        version: manifest && manifest.version ? manifest.version : '1.0.0',
         status: 'loaded',
         type: type,
-        permissions: (manifest && Array.isArray(manifest.permissions)) ? manifest.permissions : [],
+        permissions: manifest && Array.isArray(manifest.permissions) ? manifest.permissions : [],
         configuration: {},
         loadedAt: Date.now(),
-        manifest: manifest || {}
+        manifest: manifest || {},
       };
 
       extensionState.extensions.set(extensionId, extension);
-      extensionState.metrics.set(extensionId, { executionCount: 0, averageExecutionTime: 0, concurrentExecutions: 0 });
+      extensionState.metrics.set(extensionId, {
+        executionCount: 0,
+        averageExecutionTime: 0,
+        concurrentExecutions: 0,
+      });
 
       return {
         success: true,
         extension,
         securityScan: {
           safe: true,
-          issues: []
-        }
+          issues: [],
+        },
       };
     },
 
@@ -900,11 +988,12 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
       return Promise.resolve(true);
     },
     reloadExtension: () => Promise.resolve(true),
-    validateExtension: () => Promise.resolve({
-      isValid: true,
-      errors: [],
-      warnings: []
-    }),
+    validateExtension: () =>
+      Promise.resolve({
+        isValid: true,
+        errors: [],
+        warnings: [],
+      }),
     scanExtensionSecurity: (extensionId?: string) => {
       let permissions: string[] = [];
       if (extensionId) {
@@ -916,7 +1005,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
       return Promise.resolve({
         safe: true,
         issues: [],
-        permissions
+        permissions,
       });
     },
     getExtensionMetrics: (extensionIdOrName: string) => {
@@ -925,10 +1014,11 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
 
       // If not found by ID, try to find by name
       if (!metrics) {
-        const extension = Array.from(extensionState.extensions.values()).find(e =>
-          e.name.replace('@test/', '') === extensionIdOrName ||
-          e.name === extensionIdOrName ||
-          e.name.includes(extensionIdOrName)
+        const extension = Array.from(extensionState.extensions.values()).find(
+          (e) =>
+            e.name.replace('@test/', '') === extensionIdOrName ||
+            e.name === extensionIdOrName ||
+            e.name.includes(extensionIdOrName)
         );
         if (extension) {
           metrics = extensionState.metrics.get(extension.id);
@@ -939,11 +1029,13 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
     },
     getExtensionStats: () => ({
       totalExtensions: extensionState.extensions.size,
-      activeExtensions: Array.from(extensionState.extensions.values()).filter(e => e.status === 'active').length,
-      totalExecutions: extensionState.totalExecutions
+      activeExtensions: Array.from(extensionState.extensions.values()).filter(
+        (e) => e.status === 'active'
+      ).length,
+      totalExecutions: extensionState.totalExecutions,
     }),
     initialize: () => Promise.resolve(true),
-    shutdown: () => Promise.resolve(true)
+    shutdown: () => Promise.resolve(true),
   };
 
   // Initialize all systems
@@ -952,13 +1044,13 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
   const cleanup = async () => {
     await extensionManager.shutdown();
     heartbeatService.stop();
-    await prisma.$disconnect();
+    await db.$disconnect();
     await fs.remove(testDataDir);
   };
 
   globalTestEnv = {
     logger,
-    prisma,
+    db,
     agentRegistry: masterRegistry,
     heartbeatService,
     workflowEngine: workflowSystem,
@@ -967,7 +1059,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
     cleanup,
     // Internal state for testing
     agentState,
-    extensionState
+    extensionState,
   } as any;
 
   return globalTestEnv;
@@ -1027,7 +1119,7 @@ export const TestHelpers: TestHelpersInterface = {
         protocolTranslation: false,
         heartbeatCompliance: false,
         handoffTemplating: false,
-        stagnationRecovery: false
+        stagnationRecovery: false,
       },
       metadata: {
         version: '1.0.0',
@@ -1036,8 +1128,8 @@ export const TestHelpers: TestHelpersInterface = {
         expertiseAreas: ['testing'],
         specializations: ['integration-testing'],
         limitations: ['test-only'],
-        notes: 'Created for testing purposes'
-      }
+        notes: 'Created for testing purposes',
+      },
     };
 
     // Create agent in registry
@@ -1058,7 +1150,7 @@ export const TestHelpers: TestHelpersInterface = {
       agentId: registrationResult.agentId,
       ...agentData,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
   },
 
@@ -1081,7 +1173,7 @@ export const TestHelpers: TestHelpersInterface = {
     // Return the workflow and builder
     return {
       workflow,
-      builder: env.workflowEngine.builder
+      builder: env.workflowEngine.builder,
     };
   },
 
@@ -1093,19 +1185,19 @@ export const TestHelpers: TestHelpersInterface = {
     if (!env) {
       throw new Error('Test environment not initialized');
     }
-    
+
     const extensionPath = path.join(env.testDataDir, 'extensions', name);
     await fs.ensureDir(extensionPath);
-    
+
     // Create basic extension structure
     const extensionJson = {
       name: `@test/${name}`,
       version: '1.0.0',
       main: 'index.js',
       type: type,
-      permissions: []
+      permissions: [],
     };
-    
+
     await fs.writeJson(path.join(extensionPath, 'extension.json'), extensionJson, { spaces: 2 });
 
     const indexJs = `
@@ -1120,17 +1212,17 @@ module.exports = {
     await fs.writeFile(path.join(extensionPath, 'index.js'), indexJs);
 
     // Small delay to ensure filesystem operations complete
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise((resolve) => setTimeout(resolve, 10));
 
     const loadedExtension = await env.extensionManager.loadExtension(extensionPath);
-    
+
     // Return an object with extensionDir property that tests expect
     return {
       ...loadedExtension,
       extensionDir: extensionPath,
       name,
       type,
-      path: extensionPath
+      path: extensionPath,
     };
   },
 
@@ -1143,15 +1235,15 @@ module.exports = {
     intervalMs: number = 100
   ): Promise<void> {
     const startTime = Date.now();
-    
+
     while (Date.now() - startTime < timeoutMs) {
       const result = await condition();
       if (result) {
         return;
       }
-      await new Promise(resolve => setTimeout(resolve, intervalMs));
+      await new Promise((resolve) => setTimeout(resolve, intervalMs));
     }
-    
+
     throw new Error(`Condition not met within ${timeoutMs}ms`);
   },
 
@@ -1163,7 +1255,7 @@ module.exports = {
       id: i + 1,
       name: `Test Item ${i + 1}`,
       value: Math.random() * 1000,
-      timestamp: new Date()
+      timestamp: new Date(),
     }));
-  }
+  },
 };

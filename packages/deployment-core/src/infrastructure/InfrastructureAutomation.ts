@@ -3,8 +3,8 @@
  * Handles automated infrastructure operations, compliance, and disaster recovery
  */
 
-import { InfrastructureManager } from './InfrastructureManager';
 import { EnvironmentManager } from './EnvironmentManager';
+import { InfrastructureManager } from './InfrastructureManager';
 
 export interface AutomationRule {
   id: string;
@@ -30,7 +30,7 @@ export enum TriggerType {
   INFRASTRUCTURE_CHANGE = 'infrastructure_change',
   COMPLIANCE_VIOLATION = 'compliance_violation',
   COST_THRESHOLD = 'cost_threshold',
-  SECURITY_ALERT = 'security_alert'
+  SECURITY_ALERT = 'security_alert',
 }
 
 export interface AutomationAction {
@@ -46,7 +46,7 @@ export enum ActionType {
   SEND_NOTIFICATION = 'send_notification',
   RUN_COMPLIANCE_SCAN = 'run_compliance_scan',
   APPLY_SECURITY_PATCH = 'apply_security_patch',
-  OPTIMIZE_COSTS = 'optimize_costs'
+  OPTIMIZE_COSTS = 'optimize_costs',
 }
 
 export interface AutomationCondition {
@@ -61,7 +61,7 @@ export enum ConditionOperator {
   GREATER_THAN = 'greater_than',
   LESS_THAN = 'less_than',
   CONTAINS = 'contains',
-  REGEX_MATCH = 'regex_match'
+  REGEX_MATCH = 'regex_match',
 }
 
 export interface RetryPolicy {
@@ -92,7 +92,7 @@ export enum ComplianceFramework {
   HIPAA = 'hipaa',
   PCI_DSS = 'pci_dss',
   ISO_27001 = 'iso_27001',
-  CUSTOM = 'custom'
+  CUSTOM = 'custom',
 }
 
 export interface ComplianceControl {
@@ -108,7 +108,7 @@ export enum ComplianceSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export interface DisasterRecoveryPlan {
@@ -135,14 +135,14 @@ export enum BackupType {
   FULL = 'full',
   INCREMENTAL = 'incremental',
   DIFFERENTIAL = 'differential',
-  SNAPSHOT = 'snapshot'
+  SNAPSHOT = 'snapshot',
 }
 
 export enum BackupFrequency {
   HOURLY = 'hourly',
   DAILY = 'daily',
   WEEKLY = 'weekly',
-  MONTHLY = 'monthly'
+  MONTHLY = 'monthly',
 }
 
 export interface RetentionPolicy {
@@ -202,19 +202,24 @@ export class InfrastructureAutomation {
     // Infrastructure automation stopped
   }
 
-  async addAutomationRule(rule: Omit<AutomationRule, 'id' | 'createdAt' | 'updatedAt'>): Promise<AutomationRule> {
+  async addAutomationRule(
+    rule: Omit<AutomationRule, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<AutomationRule> {
     const automationRule: AutomationRule = {
       ...rule,
       id: this.generateId('rule'),
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.automationRules.set(automationRule.id, automationRule);
     return automationRule;
   }
 
-  async executeAutomationRule(ruleId: string, context: Record<string, any> = {}): Promise<AutomationExecutionResult> {
+  async executeAutomationRule(
+    ruleId: string,
+    context: Record<string, any> = {}
+  ): Promise<AutomationExecutionResult> {
     const rule = this.automationRules.get(ruleId);
     if (!rule) {
       throw new Error(`Automation rule ${ruleId} not found`);
@@ -226,7 +231,7 @@ export class InfrastructureAutomation {
         success: false,
         message: 'Rule is disabled',
         executedActions: [],
-        duration: 0
+        duration: 0,
       };
     }
 
@@ -242,7 +247,7 @@ export class InfrastructureAutomation {
           success: false,
           message: 'Conditions not met',
           executedActions: [],
-          duration: Date.now() - startTime
+          duration: Date.now() - startTime,
         };
       }
 
@@ -256,23 +261,22 @@ export class InfrastructureAutomation {
         }
       }
 
-      const allSuccessful = executedActions.every(a => a.success);
+      const allSuccessful = executedActions.every((a) => a.success);
 
       return {
         ruleId,
         success: allSuccessful,
         message: allSuccessful ? 'All actions executed successfully' : 'Some actions failed',
         executedActions,
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
-
     } catch (error) {
       return {
         ruleId,
         success: false,
         message: error instanceof Error ? error.message : 'Unknown error',
         executedActions,
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
     }
   }
@@ -280,7 +284,7 @@ export class InfrastructureAutomation {
   async addCompliancePolicy(policy: Omit<CompliancePolicy, 'id'>): Promise<CompliancePolicy> {
     const compliancePolicy: CompliancePolicy = {
       ...policy,
-      id: this.generateId('policy')
+      id: this.generateId('policy'),
     };
 
     this.compliancePolicies.set(compliancePolicy.id, compliancePolicy);
@@ -288,9 +292,9 @@ export class InfrastructureAutomation {
   }
 
   async runComplianceScan(policyId?: string): Promise<ComplianceScanResult> {
-    const policiesToScan = policyId 
-      ? [this.compliancePolicies.get(policyId)].filter(Boolean) as CompliancePolicy[]
-      : Array.from(this.compliancePolicies.values()).filter(p => p.enabled);
+    const policiesToScan = policyId
+      ? ([this.compliancePolicies.get(policyId)].filter(Boolean) as CompliancePolicy[])
+      : Array.from(this.compliancePolicies.values()).filter((p) => p.enabled);
 
     const results: PolicyScanResult[] = [];
 
@@ -299,7 +303,7 @@ export class InfrastructureAutomation {
       results.push(policyResult);
     }
 
-    const overallCompliant = results.every(r => r.compliant);
+    const overallCompliant = results.every((r) => r.compliant);
     const totalViolations = results.reduce((sum, r) => sum + r.violations.length, 0);
 
     return {
@@ -307,21 +311,26 @@ export class InfrastructureAutomation {
       timestamp: new Date(),
       overallCompliant,
       totalViolations,
-      policyResults: results
+      policyResults: results,
     };
   }
 
-  async addDisasterRecoveryPlan(plan: Omit<DisasterRecoveryPlan, 'id'>): Promise<DisasterRecoveryPlan> {
+  async addDisasterRecoveryPlan(
+    plan: Omit<DisasterRecoveryPlan, 'id'>
+  ): Promise<DisasterRecoveryPlan> {
     const drPlan: DisasterRecoveryPlan = {
       ...plan,
-      id: this.generateId('dr')
+      id: this.generateId('dr'),
     };
 
     this.disasterRecoveryPlans.set(drPlan.id, drPlan);
     return drPlan;
   }
 
-  async executeDisasterRecovery(planId: string, targetEnvironment: string): Promise<DisasterRecoveryResult> {
+  async executeDisasterRecovery(
+    planId: string,
+    targetEnvironment: string
+  ): Promise<DisasterRecoveryResult> {
     const plan = this.disasterRecoveryPlans.get(planId);
     if (!plan) {
       throw new Error(`Disaster recovery plan ${planId} not found`);
@@ -349,9 +358,8 @@ export class InfrastructureAutomation {
         targetEnvironment,
         executedSteps,
         totalDuration: Date.now() - startTime,
-        recoveredAt: new Date()
+        recoveredAt: new Date(),
       };
-
     } catch (error) {
       return {
         planId,
@@ -359,7 +367,7 @@ export class InfrastructureAutomation {
         targetEnvironment,
         executedSteps,
         totalDuration: Date.now() - startTime,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -421,7 +429,10 @@ export class InfrastructureAutomation {
     }, 86400000); // Check daily
   }
 
-  private async evaluateConditions(conditions: AutomationCondition[], context: Record<string, any>): Promise<boolean> {
+  private async evaluateConditions(
+    conditions: AutomationCondition[],
+    context: Record<string, any>
+  ): Promise<boolean> {
     for (const condition of conditions) {
       const contextValue = context[condition.field];
       const conditionMet = this.evaluateCondition(condition, contextValue);
@@ -451,7 +462,10 @@ export class InfrastructureAutomation {
     }
   }
 
-  private async executeAction(action: AutomationAction, context: Record<string, any>): Promise<ActionExecutionResult> {
+  private async executeAction(
+    action: AutomationAction,
+    context: Record<string, any>
+  ): Promise<ActionExecutionResult> {
     const startTime = Date.now();
 
     try {
@@ -484,15 +498,14 @@ export class InfrastructureAutomation {
       return {
         actionType: action.type,
         success: true,
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
-
     } catch (error) {
       return {
         actionType: action.type,
         success: false,
         duration: Date.now() - startTime,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -510,7 +523,7 @@ export class InfrastructureAutomation {
             controlName: control.name,
             description: `Mock violation for ${control.name}`,
             severity: policy.severity,
-            remediation: 'Mock remediation steps'
+            remediation: 'Mock remediation steps',
           });
         }
       }
@@ -522,34 +535,36 @@ export class InfrastructureAutomation {
       framework: policy.framework,
       compliant: violations.length === 0,
       violations,
-      scanTimestamp: new Date()
+      scanTimestamp: new Date(),
     };
   }
 
-  private async executeRecoveryStep(step: RecoveryStep, _targetEnvironment: string): Promise<StepExecutionResult> {
+  private async executeRecoveryStep(
+    step: RecoveryStep,
+    _targetEnvironment: string
+  ): Promise<StepExecutionResult> {
     const startTime = Date.now();
 
     try {
       if (step.automated && step.script) {
         // Mock step execution - in production, would run actual recovery scripts
         // Executing recovery step
-        await new Promise(resolve => setTimeout(resolve, step.estimatedDuration));
+        await new Promise((resolve) => setTimeout(resolve, step.estimatedDuration));
       }
 
       return {
         stepId: step.id,
         stepName: step.name,
         success: true,
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
-
     } catch (error) {
       return {
         stepId: step.id,
         stepName: step.name,
         success: false,
         duration: Date.now() - startTime,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -569,32 +584,50 @@ export class InfrastructureAutomation {
     return daysSinceLastTest > 30; // Test monthly
   }
 
-  private async scaleInfrastructure(config: Record<string, any>, _context: Record<string, any>): Promise<void> {
+  private async scaleInfrastructure(
+    config: Record<string, any>,
+    _context: Record<string, any>
+  ): Promise<void> {
     // Scale infrastructure implementation
     void config;
   }
 
-  private async updateConfiguration(config: Record<string, any>, _context: Record<string, any>): Promise<void> {
+  private async updateConfiguration(
+    config: Record<string, any>,
+    _context: Record<string, any>
+  ): Promise<void> {
     // Update configuration implementation
     void config;
   }
 
-  private async createBackup(config: Record<string, any>, _context: Record<string, any>): Promise<void> {
+  private async createBackup(
+    config: Record<string, any>,
+    _context: Record<string, any>
+  ): Promise<void> {
     // Create backup implementation
     void config;
   }
 
-  private async sendNotification(config: Record<string, any>, _context: Record<string, any>): Promise<void> {
+  private async sendNotification(
+    config: Record<string, any>,
+    _context: Record<string, any>
+  ): Promise<void> {
     // Send notification implementation
     void config;
   }
 
-  private async applySecurityPatch(config: Record<string, any>, _context: Record<string, any>): Promise<void> {
+  private async applySecurityPatch(
+    config: Record<string, any>,
+    _context: Record<string, any>
+  ): Promise<void> {
     // Apply security patch implementation
     void config;
   }
 
-  private async optimizeCosts(_config: Record<string, any>, _context: Record<string, any>): Promise<void> {
+  private async optimizeCosts(
+    _config: Record<string, any>,
+    _context: Record<string, any>
+  ): Promise<void> {
     // Optimizing costs implementation
     void _config;
   }

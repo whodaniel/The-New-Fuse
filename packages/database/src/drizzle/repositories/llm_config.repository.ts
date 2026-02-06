@@ -2,11 +2,11 @@
  * LLM Config Repository - Drizzle ORM Implementation
  * Provides data access for LLM Provider configurations
  */
+import * as crypto from 'crypto';
 import { desc, eq } from 'drizzle-orm';
 import { db } from '../client';
 import { llmConfigs } from '../schema';
 import { LLMConfig, NewLLMConfig } from '../types';
-import * as crypto from 'crypto';
 
 // AES-256-GCM Encryption
 const ALGORITHM = 'aes-256-gcm';
@@ -71,9 +71,9 @@ export class DrizzleLLMConfigRepository {
       .from(llmConfigs)
       .orderBy(desc(llmConfigs.priority), desc(llmConfigs.updatedAt));
 
-    return configs.map(c => ({
+    return configs.map((c) => ({
       ...c,
-      apiKey: decrypt(c.apiKey)
+      apiKey: decrypt(c.apiKey),
     }));
   }
 
@@ -87,9 +87,9 @@ export class DrizzleLLMConfigRepository {
       .where(eq(llmConfigs.enabled, true))
       .orderBy(desc(llmConfigs.priority));
 
-    return configs.map(c => ({
+    return configs.map((c) => ({
       ...c,
-      apiKey: decrypt(c.apiKey)
+      apiKey: decrypt(c.apiKey),
     }));
   }
 
@@ -101,7 +101,7 @@ export class DrizzleLLMConfigRepository {
     if (!config) return null;
     return {
       ...config,
-      apiKey: decrypt(config.apiKey)
+      apiKey: decrypt(config.apiKey),
     };
   }
 
@@ -111,12 +111,12 @@ export class DrizzleLLMConfigRepository {
   async create(data: NewLLMConfig): Promise<LLMConfig> {
     const dataToSave = {
       ...data,
-      apiKey: encrypt(data.apiKey)
+      apiKey: encrypt(data.apiKey),
     };
     const [config] = await db.insert(llmConfigs).values(dataToSave).returning();
     return {
       ...config,
-      apiKey: decrypt(config.apiKey)
+      apiKey: decrypt(config.apiKey),
     };
   }
 
@@ -138,7 +138,7 @@ export class DrizzleLLMConfigRepository {
     if (!config) return null;
     return {
       ...config,
-      apiKey: decrypt(config.apiKey)
+      apiKey: decrypt(config.apiKey),
     };
   }
 

@@ -4,7 +4,7 @@
  * Tests the workflow creation and editing functionality.
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Workflow Creation', () => {
   test.beforeEach(async ({ page }) => {

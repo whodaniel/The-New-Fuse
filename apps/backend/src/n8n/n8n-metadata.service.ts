@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
-import { Logger } from '@nestjs/common';
 
 @Injectable()
 export class N8nMetadataService {
@@ -10,7 +9,7 @@ export class N8nMetadataService {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {
     this.logger = new Logger(N8nMetadataService.name);
   }
@@ -34,7 +33,9 @@ export class N8nMetadataService {
 
       return response.data;
     } catch (error) {
-      this.logger.error(`Failed to fetch node types: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      this.logger.error(
+        `Failed to fetch node types: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
       throw error;
     }
   }
@@ -58,7 +59,9 @@ export class N8nMetadataService {
 
       return response.data;
     } catch (error) {
-      this.logger.error(`Failed to fetch node type description for ${nodeType}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      this.logger.error(
+        `Failed to fetch node type description for ${nodeType}: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
       throw error;
     }
   }
@@ -82,7 +85,9 @@ export class N8nMetadataService {
 
       return response.data;
     } catch (error) {
-      this.logger.error(`Failed to fetch credential types: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      this.logger.error(
+        `Failed to fetch credential types: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
       throw error;
     }
   }

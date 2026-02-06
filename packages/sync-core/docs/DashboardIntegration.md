@@ -1,13 +1,15 @@
 # Dashboard Integration
 
-This document describes how to integrate the sync-aware dashboard system with existing AdminDashboard and user interfaces to provide real-time sync updates.
+This document describes how to integrate the sync-aware dashboard system with
+existing AdminDashboard and user interfaces to provide real-time sync updates.
 
 ## Overview
 
-The dashboard integration extends existing user control panels with real-time synchronization updates, including:
+The dashboard integration extends existing user control panels with real-time
+synchronization updates, including:
 
 - **Sync Metrics**: Real-time performance and operation statistics
-- **System Health**: Service status and clock synchronization monitoring  
+- **System Health**: Service status and clock synchronization monitoring
 - **System Alerts**: Automated alerts for sync issues and thresholds
 - **Operation Tracking**: Live sync operations and conflict resolution
 - **Multi-Session Sync**: Synchronized state across multiple user sessions
@@ -21,19 +23,19 @@ graph TB
         Hook[useSyncDashboard]
         Component[SyncAwareAdminDashboard]
     end
-    
+
     subgraph "Backend Services"
         DS[SyncDashboardService]
         WS[DashboardWebSocketIntegration]
         MI[DashboardMonitoringIntegration]
     end
-    
+
     subgraph "Existing Infrastructure"
         AWS[AgentWebSocketService]
         MS[MonitoringService]
         Redis[Redis Pub/Sub]
     end
-    
+
     UI --> Hook
     Hook --> Component
     Component --> WS
@@ -51,25 +53,27 @@ graph TB
 Core service that manages dashboard data and real-time updates.
 
 **Key Features:**
+
 - Subscribes to sync events from Redis channels
 - Caches dashboard data (metrics, health, alerts, operations)
 - Broadcasts updates via WebSocket integration
 - Integrates with existing monitoring systems
 
 **Usage:**
+
 ```typescript
 import { SyncDashboardService } from '@the-new-fuse/sync-core/dashboard';
 
 @Injectable()
 export class MyService {
   constructor(private dashboardService: SyncDashboardService) {}
-  
+
   async createAlert() {
     await this.dashboardService.createAlert({
       level: 'warning',
       message: 'High sync latency detected',
       component: 'sync_monitor',
-      tenantId: 'tenant-123'
+      tenantId: 'tenant-123',
     });
   }
 }
@@ -143,9 +147,11 @@ export const EnhancedAdminDashboard: React.FC = () => {
 
 ### WebSocket Integration
 
-The `DashboardWebSocketIntegration` extends existing WebSocket infrastructure to support dashboard clients.
+The `DashboardWebSocketIntegration` extends existing WebSocket infrastructure to
+support dashboard clients.
 
 **Features:**
+
 - Multi-session synchronization for users
 - Tenant-aware message broadcasting
 - Real-time dashboard data delivery
@@ -153,9 +159,11 @@ The `DashboardWebSocketIntegration` extends existing WebSocket infrastructure to
 
 ### Monitoring Integration
 
-The `DashboardMonitoringIntegration` connects with existing monitoring systems to create alerts and track metrics.
+The `DashboardMonitoringIntegration` connects with existing monitoring systems
+to create alerts and track metrics.
 
 **Alert Thresholds:**
+
 - Sync error rate > 10% (warning) / 25% (critical)
 - Agent disconnect rate > 20% (warning)
 - Sync latency > 5 seconds (warning)
@@ -168,10 +176,10 @@ The `DashboardMonitoringIntegration` connects with existing monitoring systems t
 Add dashboard services to your existing module:
 
 ```typescript
-import { 
+import {
   SyncDashboardService,
   DashboardWebSocketIntegration,
-  DashboardMonitoringIntegration
+  DashboardMonitoringIntegration,
 } from '@the-new-fuse/sync-core/dashboard';
 
 @Module({
@@ -181,13 +189,13 @@ import {
     DashboardMonitoringIntegration,
     {
       provide: 'IAgentWebSocketService',
-      useExisting: YourExistingWebSocketService
+      useExisting: YourExistingWebSocketService,
     },
     {
-      provide: 'IMonitoringService', 
-      useExisting: YourExistingMonitoringService
-    }
-  ]
+      provide: 'IMonitoringService',
+      useExisting: YourExistingMonitoringService,
+    },
+  ],
 })
 export class YourModule {}
 ```
@@ -208,20 +216,20 @@ export const ExistingDashboard: React.FC = () => {
     tenantId: getCurrentTenantId(),
     userId: getCurrentUserId()
   });
-  
+
   // Merge sync data with existing dashboard data
   return (
     <div>
       {/* Existing dashboard content */}
-      
+
       {/* Add sync status */}
       <div>Sync Status: {isConnected ? 'Connected' : 'Disconnected'}</div>
-      
+
       {/* Add sync metrics */}
       {data.metrics && (
         <SyncMetricsWidget metrics={data.metrics} />
       )}
-      
+
       {/* Add alerts */}
       {data.alerts.length > 0 && (
         <AlertsWidget alerts={data.alerts} />
@@ -239,7 +247,7 @@ Configure WebSocket namespaces for dashboard clients:
 // In your WebSocket gateway
 @WebSocketGateway({
   namespace: '/dashboard',
-  cors: { origin: '*' }
+  cors: { origin: '*' },
 })
 export class DashboardGateway {
   // Dashboard-specific WebSocket handling
@@ -254,15 +262,19 @@ Connect with existing monitoring systems:
 @Injectable()
 export class ExistingMonitoringAdapter implements IMonitoringService {
   constructor(private existingMonitoring: YourMonitoringService) {}
-  
-  async recordMetric(name: string, value: number, tags?: Record<string, string>) {
+
+  async recordMetric(
+    name: string,
+    value: number,
+    tags?: Record<string, string>
+  ) {
     return this.existingMonitoring.recordMetric(name, value, tags);
   }
-  
+
   async getSystemHealth() {
     return this.existingMonitoring.getSystemHealth();
   }
-  
+
   async createAlert(alert: any) {
     return this.existingMonitoring.createAlert(alert);
   }
@@ -391,7 +403,8 @@ interface SystemAlert {
 
 ### Multi-Session Synchronization
 
-The system maintains synchronized state across multiple browser sessions for the same user:
+The system maintains synchronized state across multiple browser sessions for the
+same user:
 
 - Dashboard data is cached per tenant/user
 - Updates are broadcast to all active sessions
@@ -410,7 +423,7 @@ The system maintains synchronized state across multiple browser sessions for the
 ### Update Throttling
 
 - Metrics collection: Every 1 second
-- Health checks: Every 5 seconds  
+- Health checks: Every 5 seconds
 - Alert threshold checks: Every 30 seconds
 - Cache cleanup: Every 5 minutes
 
@@ -431,18 +444,18 @@ import { SyncDashboardService } from './SyncDashboardService';
 
 describe('SyncDashboardService', () => {
   let service: SyncDashboardService;
-  
+
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         SyncDashboardService,
         // Mock providers
-      ]
+      ],
     }).compile();
-    
+
     service = module.get<SyncDashboardService>(SyncDashboardService);
   });
-  
+
   it('should process dashboard updates', async () => {
     // Test implementation
   });
@@ -467,10 +480,12 @@ import { useSyncDashboard } from './useSyncDashboard';
 
 describe('useSyncDashboard', () => {
   it('should connect and receive updates', async () => {
-    const { result } = renderHook(() => useSyncDashboard({
-      tenantId: 'test-tenant'
-    }));
-    
+    const { result } = renderHook(() =>
+      useSyncDashboard({
+        tenantId: 'test-tenant',
+      })
+    );
+
     // Test hook behavior
   });
 });
@@ -519,6 +534,7 @@ const metrics = monitoringIntegration.getMetricsSummary();
 ### Backward Compatibility
 
 The sync-aware dashboard maintains compatibility with existing:
+
 - AdminDashboard component structure
 - WebSocket service interfaces
 - Monitoring system APIs

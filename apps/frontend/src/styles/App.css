@@ -57,7 +57,7 @@ form textarea {
   resize: vertical;
 }
 
-button[type="submit"] {
+button[type='submit'] {
   background-color: #0066cc;
   color: white;
   padding: 12px 24px;
@@ -68,7 +68,7 @@ button[type="submit"] {
   transition: background-color 0.2s;
 }
 
-button[type="submit"]:hover {
+button[type='submit']:hover {
   background-color: #0052a3;
 }
 

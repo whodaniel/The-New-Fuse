@@ -1,28 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { 
+import {
+  ConnectedSocket,
+  MessageBody,
   WebSocketGateway as NestWebSocketGateway,
-  WebSocketServer,
-  SubscribeMessage,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  MessageBody,
-  ConnectedSocket
+  SubscribeMessage,
+  WebSocketServer,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
 import { EventEmitter } from 'events';
-import { 
-  A2AMessage, 
-  A2AMessageSchema, 
-  AgentRegistration, 
-  AgentHeartbeat,
-  A2AMessageType,
-  AgentStatus,
+import { Server, Socket } from 'socket.io';
+import { A2ARedisAdapter } from './redis-adapter';
+import {
   A2AConfig,
   A2AError,
+  A2AMessage,
+  A2AMessageSchema,
   A2AValidationError,
-  IA2ACommunicator
+  AgentHeartbeat,
+  AgentRegistration,
+  AgentStatus,
 } from './types';
-import { A2ARedisAdapter } from './redis-adapter';
 
 interface A2ASocket extends Socket {
   agentId?: string;
@@ -36,9 +34,12 @@ interface A2ASocket extends Socket {
     origin: true,
     credentials: true,
   },
-  transports: ['websocket', 'polling']
+  transports: ['websocket', 'polling'],
 })
-export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnection, OnGatewayDisconnect {
+export class A2AWebSocketAdapter
+  extends EventEmitter
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer() server!: Server;
   private readonly logger = new Logger(A2AWebSocketAdapter.name);
   private readonly connectedAgents = new Map<string, A2ASocket>(); // agentId -> socket
@@ -82,7 +83,7 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
 
   async handleConnection(client: A2ASocket) {
     this.logger.log(`Client connecting: ${client.id}`);
-    
+
     try {
       // Wait for authentication
       const authTimeout = setTimeout(() => {
@@ -96,7 +97,6 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
       client.on('disconnect', () => {
         clearTimeout(authTimeout);
       });
-
     } catch (error) {
       this.logger.error('Connection error:', error);
       client.emit('error', { code: 'CONNECTION_ERROR', message: 'Failed to establish connection' });
@@ -106,21 +106,21 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
 
   async handleDisconnect(client: A2ASocket) {
     const agentId = this.socketToAgent.get(client.id);
-    
+
     if (agentId) {
       this.logger.log(`Agent disconnected: ${agentId} (${client.id})`);
-      
+
       // Clean up mappings
       this.connectedAgents.delete(agentId);
       this.socketToAgent.delete(client.id);
-      
+
       // Update agent status to offline
       try {
         await this.redisAdapter.updateAgentStatus(agentId, AgentStatus.OFFLINE);
       } catch (error) {
         this.logger.error(`Failed to update agent status on disconnect:`, error);
       }
-      
+
       // Emit disconnection event
       this.server.emit('agent:disconnected', { agentId });
     }
@@ -140,11 +140,11 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
       // TODO: Implement proper authentication based on config
       // For now, we'll do basic validation
       const isValid = await this.validateAgent(data.agentId, data.token, data.signature);
-      
+
       if (!isValid) {
-        client.emit('authentication:failed', { 
-          code: 'INVALID_CREDENTIALS', 
-          message: 'Invalid authentication credentials' 
+        client.emit('authentication:failed', {
+          code: 'INVALID_CREDENTIALS',
+          message: 'Invalid authentication credentials',
         });
         client.disconnect();
         return;
@@ -153,7 +153,9 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
       // Check if agent is already connected
       const existingSocket = this.connectedAgents.get(data.agentId);
       if (existingSocket && existingSocket.connected) {
-        this.logger.warn(`Agent ${data.agentId} already connected, disconnecting previous connection`);
+        this.logger.warn(
+          `Agent ${data.agentId} already connected, disconnecting previous connection`
+        );
         existingSocket.disconnect();
       }
 
@@ -171,28 +173,24 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
       await this.redisAdapter.updateAgentStatus(data.agentId, AgentStatus.ONLINE);
 
       // Send authentication success
-      client.emit('authentication:success', { 
+      client.emit('authentication:success', {
         agentId: data.agentId,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       this.logger.log(`Agent authenticated: ${data.agentId} (${client.id})`);
-
     } catch (error) {
       this.logger.error('Authentication error:', error);
-      client.emit('authentication:failed', { 
-        code: 'AUTH_ERROR', 
-        message: error instanceof Error ? error.message : 'Authentication failed' 
+      client.emit('authentication:failed', {
+        code: 'AUTH_ERROR',
+        message: error instanceof Error ? error.message : 'Authentication failed',
       });
       client.disconnect();
     }
   }
 
   @SubscribeMessage('send:message')
-  async handleSendMessage(
-    @ConnectedSocket() client: A2ASocket,
-    @MessageBody() data: A2AMessage
-  ) {
+  async handleSendMessage(@ConnectedSocket() client: A2ASocket, @MessageBody() data: A2AMessage) {
     try {
       if (!client.isAuthenticated || !client.agentId) {
         throw new A2AError('Not authenticated', 'NOT_AUTHENTICATED');
@@ -203,23 +201,25 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
         ...data,
         payload: data.payload ?? {},
         fromAgent: client.agentId, // Ensure fromAgent matches authenticated agent
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       // Send through Redis adapter
-      await this.redisAdapter.sendMessage({ ...validatedMessage, payload: validatedMessage.payload || {} });
-
-      // Acknowledge message sent
-      client.emit('message:sent', { 
-        messageId: validatedMessage.id, 
-        timestamp: validatedMessage.timestamp 
+      await this.redisAdapter.sendMessage({
+        ...validatedMessage,
+        payload: validatedMessage.payload || {},
       });
 
+      // Acknowledge message sent
+      client.emit('message:sent', {
+        messageId: validatedMessage.id,
+        timestamp: validatedMessage.timestamp,
+      });
     } catch (error) {
       this.logger.error('Send message error:', error);
-      client.emit('message:error', { 
+      client.emit('message:error', {
         code: error instanceof A2AError ? error.code : 'SEND_ERROR',
-        message: error instanceof Error ? error.message : 'Failed to send message'
+        message: error instanceof Error ? error.message : 'Failed to send message',
       });
     }
   }
@@ -227,7 +227,8 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
   @SubscribeMessage('send:request')
   async handleSendRequest(
     @ConnectedSocket() client: A2ASocket,
-    @MessageBody() data: {
+    @MessageBody()
+    data: {
       toAgent: string;
       payload: any;
       timeout?: number;
@@ -245,17 +246,16 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
         data.payload,
         {
           timeout: data.timeout,
-          conversationId: data.conversationId
+          conversationId: data.conversationId,
         }
       );
 
       client.emit('request:response', response);
-
     } catch (error) {
       this.logger.error('Send request error:', error);
-      client.emit('request:error', { 
+      client.emit('request:error', {
         code: error instanceof A2AError ? error.code : 'REQUEST_ERROR',
-        message: error instanceof Error ? error.message : 'Request failed'
+        message: error instanceof Error ? error.message : 'Request failed',
       });
     }
   }
@@ -263,7 +263,8 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
   @SubscribeMessage('send:broadcast')
   async handleSendBroadcast(
     @ConnectedSocket() client: A2ASocket,
-    @MessageBody() data: {
+    @MessageBody()
+    data: {
       payload: any;
       channel?: string;
       topic?: string;
@@ -276,18 +277,17 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
 
       await this.redisAdapter.broadcast(client.agentId, data.payload, {
         channel: data.channel,
-        topic: data.topic
+        topic: data.topic,
       });
 
-      client.emit('broadcast:sent', { 
-        timestamp: Date.now() 
+      client.emit('broadcast:sent', {
+        timestamp: Date.now(),
       });
-
     } catch (error) {
       this.logger.error('Send broadcast error:', error);
-      client.emit('broadcast:error', { 
+      client.emit('broadcast:error', {
         code: error instanceof A2AError ? error.code : 'BROADCAST_ERROR',
-        message: error instanceof Error ? error.message : 'Broadcast failed'
+        message: error instanceof Error ? error.message : 'Broadcast failed',
       });
     }
   }
@@ -305,16 +305,15 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
       await this.redisAdapter.joinConversation(data.conversationId, client.agentId);
       client.join(`conversation:${data.conversationId}`);
 
-      client.emit('conversation:joined', { 
+      client.emit('conversation:joined', {
         conversationId: data.conversationId,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-
     } catch (error) {
       this.logger.error('Join conversation error:', error);
-      client.emit('conversation:error', { 
+      client.emit('conversation:error', {
         code: error instanceof A2AError ? error.code : 'CONVERSATION_ERROR',
-        message: error instanceof Error ? error.message : 'Failed to join conversation'
+        message: error instanceof Error ? error.message : 'Failed to join conversation',
       });
     }
   }
@@ -332,16 +331,15 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
       await this.redisAdapter.leaveConversation(data.conversationId, client.agentId);
       client.leave(`conversation:${data.conversationId}`);
 
-      client.emit('conversation:left', { 
+      client.emit('conversation:left', {
         conversationId: data.conversationId,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-
     } catch (error) {
       this.logger.error('Leave conversation error:', error);
-      client.emit('conversation:error', { 
+      client.emit('conversation:error', {
         code: error instanceof A2AError ? error.code : 'CONVERSATION_ERROR',
-        message: error instanceof Error ? error.message : 'Failed to leave conversation'
+        message: error instanceof Error ? error.message : 'Failed to leave conversation',
       });
     }
   }
@@ -349,7 +347,8 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
   @SubscribeMessage('discover:agents')
   async handleDiscoverAgents(
     @ConnectedSocket() client: A2ASocket,
-    @MessageBody() data: {
+    @MessageBody()
+    data: {
       type?: string;
       capabilities?: string[];
       status?: AgentStatus;
@@ -362,12 +361,11 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
 
       const agents = await this.redisAdapter.discoverAgents(data);
       client.emit('agents:discovered', agents);
-
     } catch (error) {
       this.logger.error('Discover agents error:', error);
-      client.emit('discovery:error', { 
+      client.emit('discovery:error', {
         code: error instanceof A2AError ? error.code : 'DISCOVERY_ERROR',
-        message: error instanceof Error ? error.message : 'Agent discovery failed'
+        message: error instanceof Error ? error.message : 'Agent discovery failed',
       });
     }
   }
@@ -385,20 +383,19 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
       const heartbeat: AgentHeartbeat = {
         ...data,
         agentId: client.agentId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       await this.redisAdapter.sendHeartbeat(heartbeat);
 
-      client.emit('heartbeat:sent', { 
-        timestamp: heartbeat.timestamp 
+      client.emit('heartbeat:sent', {
+        timestamp: heartbeat.timestamp,
       });
-
     } catch (error) {
       this.logger.error('Send heartbeat error:', error);
-      client.emit('heartbeat:error', { 
+      client.emit('heartbeat:error', {
         code: error instanceof A2AError ? error.code : 'HEARTBEAT_ERROR',
-        message: error instanceof Error ? error.message : 'Heartbeat failed'
+        message: error instanceof Error ? error.message : 'Heartbeat failed',
       });
     }
   }
@@ -427,12 +424,16 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
   }
 
   // Validate agent authentication
-  private async validateAgent(agentId: string, token?: string, signature?: string): Promise<boolean> {
+  private async validateAgent(
+    agentId: string,
+    token?: string,
+    signature?: string
+  ): Promise<boolean> {
     try {
       // Check if agent exists in Redis
       const agentData = await this.redisAdapter.discoverAgents({ type: undefined });
-      const agent = agentData.find(a => a.agentId === agentId);
-      
+      const agent = agentData.find((a) => a.agentId === agentId);
+
       if (!agent) {
         this.logger.warn(`Authentication failed: Agent ${agentId} not found`);
         return false;
@@ -441,7 +442,6 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
       // TODO: Implement proper token/signature validation based on agent.authentication
       // For now, we'll accept any registered agent
       return true;
-
     } catch (error) {
       this.logger.error('Agent validation error:', error);
       return false;

@@ -61,17 +61,17 @@ metadata:
   labels:
     security.scope: api-operations
 rules:
-- apiGroups: [""]
-  resources: ["configmaps", "secrets"]
-  verbs: ["get", "list"]
-  resourceNames: ["fuse-config", "fuse-secrets"]
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["get", "list"]
-- apiGroups: ["apps"]
-  resources: ["deployments"]
-  verbs: ["get", "list"]
-  resourceNames: ["fuse-api", "fuse-services"]
+  - apiGroups: [""]
+    resources: ["configmaps", "secrets"]
+    verbs: ["get", "list"]
+    resourceNames: ["fuse-config", "fuse-secrets"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list"]
+    resourceNames: ["fuse-api", "fuse-services"]
 ---
 # ClusterRole for Monitoring Services
 apiVersion: rbac.authorization.k8s.io/v1
@@ -81,17 +81,17 @@ metadata:
   labels:
     security.scope: monitoring-operations
 rules:
-- apiGroups: [""]
-  resources: ["nodes", "nodes/proxy", "services", "endpoints", "pods"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["extensions", "apps"]
-  resources: ["deployments", "replicasets", "daemonsets"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: [""]
-  resources: ["configmaps"]
-  verbs: ["get"]
-- nonResourceURLs: ["/metrics"]
-  verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["nodes", "nodes/proxy", "services", "endpoints", "pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions", "apps"]
+    resources: ["deployments", "replicasets", "daemonsets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get"]
+  - nonResourceURLs: ["/metrics"]
+    verbs: ["get"]
 ---
 # ClusterRole for Auto-scaling Services
 apiVersion: rbac.authorization.k8s.io/v1
@@ -101,18 +101,18 @@ metadata:
   labels:
     security.scope: autoscaler-operations
 rules:
-- apiGroups: [""]
-  resources: ["pods", "services", "endpoints"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["apps"]
-  resources: ["deployments", "replicasets"]
-  verbs: ["get", "list", "watch", "patch", "update"]
-- apiGroups: ["autoscaling"]
-  resources: ["horizontalpodautoscalers"]
-  verbs: ["get", "list", "watch", "create", "update", "patch"]
-- apiGroups: ["metrics.k8s.io"]
-  resources: ["pods", "nodes"]
-  verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods", "services", "endpoints"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "list", "watch", "patch", "update"]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["pods", "nodes"]
+    verbs: ["get", "list"]
 ---
 # Role for Frontend Services - Minimal Permissions
 apiVersion: rbac.authorization.k8s.io/v1
@@ -123,10 +123,10 @@ metadata:
   labels:
     security.scope: frontend-operations
 rules:
-- apiGroups: [""]
-  resources: ["configmaps"]
-  verbs: ["get"]
-  resourceNames: ["fuse-frontend-config"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get"]
+    resourceNames: ["fuse-frontend-config"]
 ---
 # ClusterRoleBinding for API Services
 apiVersion: rbac.authorization.k8s.io/v1
@@ -136,9 +136,9 @@ metadata:
   labels:
     security.binding: api-services
 subjects:
-- kind: ServiceAccount
-  name: fuse-api-service-account
-  namespace: production
+  - kind: ServiceAccount
+    name: fuse-api-service-account
+    namespace: production
 roleRef:
   kind: ClusterRole
   name: fuse-api-role
@@ -152,9 +152,9 @@ metadata:
   labels:
     security.binding: monitoring-services
 subjects:
-- kind: ServiceAccount
-  name: fuse-monitoring-service-account
-  namespace: production
+  - kind: ServiceAccount
+    name: fuse-monitoring-service-account
+    namespace: production
 roleRef:
   kind: ClusterRole
   name: fuse-monitoring-role
@@ -168,9 +168,9 @@ metadata:
   labels:
     security.binding: autoscaler-services
 subjects:
-- kind: ServiceAccount
-  name: fuse-autoscaler-service-account
-  namespace: production
+  - kind: ServiceAccount
+    name: fuse-autoscaler-service-account
+    namespace: production
 roleRef:
   kind: ClusterRole
   name: fuse-autoscaler-role
@@ -185,9 +185,9 @@ metadata:
   labels:
     security.binding: frontend-services
 subjects:
-- kind: ServiceAccount
-  name: fuse-frontend-service-account
-  namespace: production
+  - kind: ServiceAccount
+    name: fuse-frontend-service-account
+    namespace: production
 roleRef:
   kind: Role
   name: fuse-frontend-role
@@ -206,18 +206,18 @@ spec:
   requiredDropCapabilities:
     - ALL
   volumes:
-    - 'configMap'
-    - 'emptyDir'
-    - 'projected'
-    - 'secret'
-    - 'downwardAPI'
-    - 'persistentVolumeClaim'
+    - "configMap"
+    - "emptyDir"
+    - "projected"
+    - "secret"
+    - "downwardAPI"
+    - "persistentVolumeClaim"
   runAsUser:
-    rule: 'MustRunAsNonRoot'
+    rule: "MustRunAsNonRoot"
   seLinux:
-    rule: 'RunAsAny'
+    rule: "RunAsAny"
   fsGroup:
-    rule: 'RunAsAny'
+    rule: "RunAsAny"
   readOnlyRootFilesystem: true
   securityContext:
     runAsNonRoot: true
@@ -232,10 +232,10 @@ metadata:
   labels:
     security.scope: pod-security-policy
 rules:
-- apiGroups: ['policy']
-  resources: ['podsecuritypolicies']
-  verbs: ['use']
-  resourceNames: ['fuse-production-psp']
+  - apiGroups: ["policy"]
+    resources: ["podsecuritypolicies"]
+    verbs: ["use"]
+    resourceNames: ["fuse-production-psp"]
 ---
 # ClusterRoleBinding for Pod Security Policy
 apiVersion: rbac.authorization.k8s.io/v1
@@ -249,15 +249,15 @@ roleRef:
   name: fuse-psp-role
   apiGroup: rbac.authorization.k8s.io
 subjects:
-- kind: ServiceAccount
-  name: fuse-api-service-account
-  namespace: production
-- kind: ServiceAccount
-  name: fuse-frontend-service-account
-  namespace: production
-- kind: ServiceAccount
-  name: fuse-monitoring-service-account
-  namespace: production
-- kind: ServiceAccount
-  name: fuse-autoscaler-service-account
-  namespace: production
+  - kind: ServiceAccount
+    name: fuse-api-service-account
+    namespace: production
+  - kind: ServiceAccount
+    name: fuse-frontend-service-account
+    namespace: production
+  - kind: ServiceAccount
+    name: fuse-monitoring-service-account
+    namespace: production
+  - kind: ServiceAccount
+    name: fuse-autoscaler-service-account
+    namespace: production

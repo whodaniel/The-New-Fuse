@@ -12,7 +12,7 @@ export const ROUTES = {
   AGENTS: '/agents',
   WORKFLOWS: '/workflows',
   SETTINGS: '/settings',
-  HEALTH: '/health'
+  HEALTH: '/health',
 };
 
 // Standard HTTP status codes
@@ -26,7 +26,7 @@ export const HTTP_STATUS = {
   NOT_FOUND: 404,
   CONFLICT: 409,
   INTERNAL_SERVER_ERROR: 500,
-  SERVICE_UNAVAILABLE: 503
+  SERVICE_UNAVAILABLE: 503,
 };
 
 // Response messages
@@ -36,5 +36,5 @@ export const MESSAGES = {
   UNAUTHORIZED: 'Unauthorized access',
   NOT_FOUND: 'Resource not found',
   INVALID_REQUEST: 'Invalid request',
-  SERVER_ERROR: 'Internal server error'
+  SERVER_ERROR: 'Internal server error',
 };

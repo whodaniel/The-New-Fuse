@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SchemaValidationService = void 0;
 const common_1 = require("@nestjs/common");
 const zod_1 = require("zod");
-const prisma_service_js_1 = require("../prisma/prisma.service.js");
+const drizzle_service_js_1 = require("../drizzle/drizzle.service.js");
 const logger_service_js_1 = require("../common/logger.service.js");
 const workflowSchema = zod_1.z.object({
     id: zod_1.z.string(),
@@ -43,10 +43,10 @@ const agentSchema = zod_1.z.object({
     metadata: zod_1.z.record(zod_1.z.unknown()).optional()
 });
 let SchemaValidationService = class SchemaValidationService {
-    prisma;
+    drizzle;
     logger;
-    constructor(prisma, logger) {
-        this.prisma = prisma;
+    constructor(drizzle, logger) {
+        this.drizzle = drizzle;
         this.logger = logger;
     }
     async validateWorkflow(workflow) {
@@ -118,7 +118,7 @@ let SchemaValidationService = class SchemaValidationService {
     }
     async validateCapabilities(workflow) {
         const errors = [];
-        const existingCapabilities = await this.prisma.capability.findMany({
+        const existingCapabilities = await this.drizzle.capability.findMany({
             select: { name: true }
         });
         const capabilitySet = new Set(existingCapabilities.map(c => c.name));
@@ -133,7 +133,7 @@ let SchemaValidationService = class SchemaValidationService {
     }
     async validateAgentCapabilities(agent) {
         const errors = [];
-        const existingCapabilities = await this.prisma.capability.findMany({
+        const existingCapabilities = await this.drizzle.capability.findMany({
             select: { name: true }
         });
         const capabilitySet = new Set(existingCapabilities.map(c => c.name));
@@ -185,6 +185,6 @@ let SchemaValidationService = class SchemaValidationService {
 exports.SchemaValidationService = SchemaValidationService;
 exports.SchemaValidationService = SchemaValidationService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof prisma_service_js_1.PrismaService !== "undefined" && prisma_service_js_1.PrismaService) === "function" ? _a : Object, logger_service_js_1.Logger])
+    __metadata("design:paramtypes", [typeof (_a = typeof drizzle_service_js_1.DatabaseService !== "undefined" && drizzle_service_js_1.DatabaseService) === "function" ? _a : Object, logger_service_js_1.Logger])
 ], SchemaValidationService);
 //# sourceMappingURL=SchemaValidationService.js.map

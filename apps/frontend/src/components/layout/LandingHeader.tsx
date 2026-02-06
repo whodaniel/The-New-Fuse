@@ -1,11 +1,14 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 export const LandingHeader = () => {
   return (
     <header className="bg-background shadow-sm sticky top-0 z-50" role="banner">
-      <nav className="container mx-auto px-4 py-3 flex justify-between items-center" role="navigation" aria-label="Main navigation">
+      <nav
+        className="container mx-auto px-4 py-3 flex justify-between items-center"
+        role="navigation"
+        aria-label="Main navigation"
+      >
         <Link
           to="/"
           className="text-2xl font-bold text-primary focus:outline-none focus:ring-4 focus:ring-primary/20 rounded-md px-2 py-1"

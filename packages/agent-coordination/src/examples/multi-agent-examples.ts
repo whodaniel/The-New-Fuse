@@ -77,14 +77,8 @@ export async function example1_MapReduceDataProcessing() {
   // Map function: Calculate revenue per partition
   const mapFn = async (input: unknown, partition: number) => {
     const records = input as any[];
-    const totalPurchases = records.reduce(
-      (sum: number, user: any) => sum + user.purchases,
-      0
-    );
-    const totalRevenue = records.reduce(
-      (sum: number, user: any) => sum + user.revenue,
-      0
-    );
+    const totalPurchases = records.reduce((sum: number, user: any) => sum + user.purchases, 0);
+    const totalRevenue = records.reduce((sum: number, user: any) => sum + user.revenue, 0);
 
     // Simulate processing time
     await new Promise((resolve) => setTimeout(resolve, 100 + Math.random() * 200));
@@ -110,7 +104,7 @@ export async function example1_MapReduceDataProcessing() {
   };
 
   // Execute Map-Reduce
-  const result = await mapReduce.execute(dataset, mapFn, reduceFn, { mapConcurrency: 5 }) as any;
+  const result = (await mapReduce.execute(dataset, mapFn, reduceFn, { mapConcurrency: 5 })) as any;
 
   console.log('\n✅ Map-Reduce Complete!');
   console.log(`   Total Users: ${result.totalUsers}`);
@@ -274,7 +268,7 @@ export async function example2_PipelineDataTransformation() {
   ];
 
   // Execute pipeline
-  const result = await pipeline.execute(rawData, stages) as any;
+  const result = (await pipeline.execute(rawData, stages)) as any;
 
   console.log('\n✅ Pipeline Complete!');
   console.log(`   Records processed: ${result.records.length}`);

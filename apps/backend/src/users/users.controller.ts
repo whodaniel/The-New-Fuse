@@ -1,23 +1,23 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
+  Param,
   Post,
   Put,
-  Delete,
-  Body,
-  Param,
   Query,
   UseGuards,
-  HttpStatus,
-  HttpCode
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
+import { ProfileResponseDto, UpdateProfileDto } from './dto/profile.dto';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
-import { UpdateProfileDto, ProfileResponseDto } from './dto/profile.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { UsersService } from './users.service';
 
 @ApiTags('users')
 @Controller('users')
@@ -36,10 +36,7 @@ export class UsersController {
   @Get()
   @Roles('admin')
   @ApiOperation({ summary: 'Get all users with pagination' })
-  async findAll(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 50
-  ) {
+  async findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 50) {
     return this.usersService.findAll(Number(page), Number(limit));
   }
 
@@ -51,10 +48,7 @@ export class UsersController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update user' })
-  async update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto
-  ) {
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
@@ -70,12 +64,12 @@ export class UsersController {
   @Get(':id/profile')
   @ApiOperation({
     summary: 'Get user profile',
-    description: 'Retrieve detailed user profile information'
+    description: 'Retrieve detailed user profile information',
   })
   @ApiResponse({
     status: 200,
     description: 'User profile retrieved successfully',
-    type: ProfileResponseDto
+    type: ProfileResponseDto,
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   async getProfile(@Param('id') id: string): Promise<ProfileResponseDto> {
@@ -85,12 +79,12 @@ export class UsersController {
   @Put(':id/profile')
   @ApiOperation({
     summary: 'Update user profile',
-    description: 'Update user profile information including bio, avatar, and preferences'
+    description: 'Update user profile information including bio, avatar, and preferences',
   })
   @ApiResponse({
     status: 200,
     description: 'User profile updated successfully',
-    type: ProfileResponseDto
+    type: ProfileResponseDto,
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   async updateProfile(

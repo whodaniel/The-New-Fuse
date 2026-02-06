@@ -82,21 +82,21 @@ export class RedisMigrationUtils {
       // and handle the specific legacy Redis client's key enumeration
       for (const pattern of keyPatterns) {
         this.logger.log(`Processing pattern: ${pattern}`);
-        
+
         // Note: This is pseudo-code - actual implementation would depend
         // on the legacy Redis client's API for key scanning
         const keys = await this.scanKeysFromLegacy(legacyService, pattern);
-        
+
         for (let i = 0; i < keys.length; i += batchSize) {
           const batch = keys.slice(i, i + batchSize);
-          
+
           for (const key of batch) {
             try {
               if (legacyService.get && legacyService.exists) {
                 const exists = await legacyService.exists(key);
                 if (exists) {
                   const value = await legacyService.get(key);
-                  
+
                   if (value !== null && !dryRun) {
                     await this.unifiedRedisService.set(key, value);
                     migrated++;
@@ -137,12 +137,14 @@ export class RedisMigrationUtils {
         if (legacyService.get) {
           const legacyValue = await legacyService.get(key);
           const unifiedValue = await this.unifiedRedisService.get(key);
-          
+
           if (legacyValue === unifiedValue) {
             valid++;
           } else {
             invalid.push(key);
-            this.logger.warn(`Validation failed for key ${key}: legacy=${legacyValue}, unified=${unifiedValue}`);
+            this.logger.warn(
+              `Validation failed for key ${key}: legacy=${legacyValue}, unified=${unifiedValue}`
+            );
           }
         }
       } catch (error) {

@@ -1,6 +1,7 @@
 # UI Component Consolidation Plan
 
-This document outlines our strategy for standardizing and consolidating UI components across The New Fuse application.
+This document outlines our strategy for standardizing and consolidating UI
+components across The New Fuse application.
 
 ## Goals
 
@@ -51,15 +52,19 @@ packages/ui/
 
 ### 2. Component Implementation Guidelines
 
-- **Single Source of Truth**: Each component type will have one canonical implementation
-- **Consistent Props Interface**: All components will follow consistent prop patterns
+- **Single Source of Truth**: Each component type will have one canonical
+  implementation
+- **Consistent Props Interface**: All components will follow consistent prop
+  patterns
 - **Naming Conventions**:
-  - Component files: PascalCase with functional component name matching file name
+  - Component files: PascalCase with functional component name matching file
+    name
   - Props interfaces: `ComponentNameProps`
   - Consistent export patterns using index files
 - **TypeScript**: All components will be properly typed with TypeScript
 - **Documentation**: Each component will include comprehensive JSDoc comments
-- **Accessibility**: All components will support ARIA attributes and keyboard navigation
+- **Accessibility**: All components will support ARIA attributes and keyboard
+  navigation
 - **Testing**: Each component will have unit and visual tests
 
 ### 3. Migration Strategy
@@ -89,6 +94,7 @@ The migration will follow a phased approach:
 ### 4. Consolidated Component Approach
 
 For each component type, we will:
+
 1. Analyze existing implementations to identify all features
 2. Create a unified component that covers all use cases
 3. Ensure backward compatibility where possible

@@ -3,13 +3,16 @@ import path from 'path';
 import fs from 'fs';
 
 export class TestReporter {
-  constructor(private page: Page, private testInfo: TestInfo) {}
+  constructor(
+    private page: Page,
+    private testInfo: TestInfo,
+  ) {}
 
   async captureScreenshot(name: string) {
     const screenshotPath = path.join(this.testInfo.outputDir, `${name}.png`);
     await this.page.screenshot({
       path: screenshotPath,
-      fullPage: true
+      fullPage: true,
     });
     return screenshotPath;
   }
@@ -21,13 +24,13 @@ export class TestReporter {
   async stopVideoRecording(name: string) {
     // const video = this.page.video();
     // if (video) {
-      // await video.stop();
-      // const videoPath = await video.path();
-      // if (videoPath) {
-        // const newPath = path.join(this.testInfo.outputDir, `${name}.webm`);
-        // await fs.promises.rename(videoPath, newPath);
-        // return newPath;
-      // }
+    // await video.stop();
+    // const videoPath = await video.path();
+    // if (videoPath) {
+    // const newPath = path.join(this.testInfo.outputDir, `${name}.webm`);
+    // await fs.promises.rename(videoPath, newPath);
+    // return newPath;
+    // }
     // }
     return null;
   }
@@ -39,7 +42,7 @@ export class TestReporter {
         type: 'request',
         url: request.url(),
         method: request.method(),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
 
@@ -48,7 +51,7 @@ export class TestReporter {
         type: 'response',
         url: response.url(),
         status: response.status(),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
 
@@ -70,12 +73,12 @@ export class TestReporter {
     const metrics = await this.page.evaluate(() => {
       const timing = window.performance.timing;
       const navigationStart = timing.navigationStart;
-      
+
       return {
         loadTime: timing.loadEventEnd - navigationStart,
         domContentLoaded: timing.domContentLoadedEventEnd - navigationStart,
         firstPaint: timing.responseStart - navigationStart,
-        resourceCount: window.performance.getEntriesByType('resource').length
+        resourceCount: window.performance.getEntriesByType('resource').length,
       };
     });
 

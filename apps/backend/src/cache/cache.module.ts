@@ -1,16 +1,16 @@
-import { Module, Global } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ScheduleModule } from '@nestjs/schedule';
 import cacheConfig from './config/cache.config';
 
 // Services
 import { AdvancedCacheManager } from './services/advanced-cache.manager';
+import { CacheInvalidationService } from './services/cache-invalidation.service';
 import { CacheMonitoringService } from './services/cache-monitoring.service';
+import { CacheWarmingService } from './services/cache-warming.service';
 import { DatabaseCacheService } from './services/database-cache.service';
 import { SessionCacheService } from './services/session-cache.service';
-import { CacheWarmingService } from './services/cache-warming.service';
-import { CacheInvalidationService } from './services/cache-invalidation.service';
 
 // Interceptors
 import { CacheInterceptor } from './interceptors/cache.interceptor';

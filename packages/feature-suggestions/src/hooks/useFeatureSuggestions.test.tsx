@@ -1,6 +1,6 @@
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
+import { SuggestionPriority, SuggestionStatus } from '../types';
 import { useFeatureSuggestions } from './useFeatureSuggestions';
-import { SuggestionStatus, SuggestionPriority } from '../types';
 
 // Mock suggestion service
 const mockSuggestionService = {
@@ -13,7 +13,7 @@ const mockSuggestionService = {
   voteSuggestion: jest.fn(),
   convertToFeature: jest.fn(),
   addTodo: jest.fn(),
-  addComment: jest.fn()
+  addComment: jest.fn(),
 };
 
 describe('useFeatureSuggestions', () => {
@@ -34,13 +34,13 @@ describe('useFeatureSuggestions', () => {
         votes: 5,
         tags: ['test'],
         relatedTodoIds: [],
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     ];
 
     mockSuggestionService.getPopularSuggestions.mockResolvedValue(mockSuggestions);
 
-    const { result, waitForNextUpdate } = renderHook(() => 
+    const { result, waitForNextUpdate } = renderHook(() =>
       useFeatureSuggestions({ suggestionService: mockSuggestionService })
     );
 
@@ -62,7 +62,7 @@ describe('useFeatureSuggestions', () => {
     const error = new Error('Failed to load suggestions');
     mockSuggestionService.getPopularSuggestions.mockRejectedValue(error);
 
-    const { result, waitForNextUpdate } = renderHook(() => 
+    const { result, waitForNextUpdate } = renderHook(() =>
       useFeatureSuggestions({ suggestionService: mockSuggestionService })
     );
 
@@ -84,13 +84,13 @@ describe('useFeatureSuggestions', () => {
       votes: 0,
       tags: ['new'],
       relatedTodoIds: [],
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     mockSuggestionService.submitSuggestion.mockResolvedValue(newSuggestion);
     mockSuggestionService.getPopularSuggestions.mockResolvedValue([newSuggestion]);
 
-    const { result, waitForNextUpdate } = renderHook(() => 
+    const { result, waitForNextUpdate } = renderHook(() =>
       useFeatureSuggestions({ suggestionService: mockSuggestionService })
     );
 
@@ -112,7 +112,7 @@ describe('useFeatureSuggestions', () => {
       submittedBy: 'user1',
       priority: SuggestionPriority.HIGH,
       tags: ['new'],
-      status: SuggestionStatus.PENDING
+      status: SuggestionStatus.PENDING,
     });
     expect(mockSuggestionService.getPopularSuggestions).toHaveBeenCalledTimes(2);
   });

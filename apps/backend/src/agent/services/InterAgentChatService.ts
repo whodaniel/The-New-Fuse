@@ -18,13 +18,13 @@ interface AgentMessage {
 export class InterAgentChatService implements OnModuleInit {
   private readonly channelPrefix = 'agent-chat';
   private agentId: string;
-  
+
   constructor(
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
     private readonly alertService: AlertService,
     private readonly monitoringService: MonitoringService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2
   ) {
     this.agentId = this.configService.get<string>('AGENT_ID') || 'unknown-agent';
   }
@@ -39,20 +39,31 @@ export class InterAgentChatService implements OnModuleInit {
    */
   private async subscribeToAgentChannel(): Promise<void> {
     const channel = `${this.channelPrefix}:${this.agentId}`;
-    
+
     try {
       await this.redisService.subscribe(channel, (message) => {
         try {
           const parsedMessage = JSON.parse(message) as AgentMessage;
           this.handleIncomingMessage(parsedMessage);
         } catch (error) {
-          this.alertService.error('agent.message.parse.failed', 'Failed to parse incoming message', { error: (error as Error).message });
+          this.alertService.error(
+            'agent.message.parse.failed',
+            'Failed to parse incoming message',
+            { error: (error as Error).message }
+          );
         }
       });
-      
-      this.monitoringService.logEvent('agent.channel.subscribed', { agentId: this.agentId, channel });
+
+      this.monitoringService.logEvent('agent.channel.subscribed', {
+        agentId: this.agentId,
+        channel,
+      });
     } catch (error) {
-      this.alertService.error('agent.channel.subscribe.failed', `Failed to subscribe to channel ${channel}`, { error: (error as Error).message });
+      this.alertService.error(
+        'agent.channel.subscribe.failed',
+        `Failed to subscribe to channel ${channel}`,
+        { error: (error as Error).message }
+      );
     }
   }
 
@@ -65,10 +76,10 @@ export class InterAgentChatService implements OnModuleInit {
       this.alertService.warning('agent.message.invalid', 'Received invalid message format');
       return;
     }
-    
+
     // Emit event for message handlers
     this.eventEmitter.emit('agent.message.received', message);
-    
+
     // Record metric
     this.monitoringService.recordMetric('agent.messages.received', 1, { from: message.from });
   }
@@ -76,10 +87,14 @@ export class InterAgentChatService implements OnModuleInit {
   /**
    * Send a message to another agent
    */
-  async sendMessage(toAgentId: string, content: string, metadata: Record<string, any> = {}): Promise<string> {
+  async sendMessage(
+    toAgentId: string,
+    content: string,
+    metadata: Record<string, any> = {}
+  ): Promise<string> {
     const messageId = this.generateMessageId();
     const channel = `${this.channelPrefix}:${toAgentId}`;
-    
+
     const message: AgentMessage = {
       id: messageId,
       from: this.agentId,
@@ -88,19 +103,23 @@ export class InterAgentChatService implements OnModuleInit {
       timestamp: new Date(),
       metadata,
     };
-    
+
     try {
       await this.redisService.publish(channel, JSON.stringify(message));
-      
+
       // Record metric
       this.monitoringService.recordMetric('agent.messages.sent', 1, { to: toAgentId });
-      
+
       // Emit event
       this.eventEmitter.emit('agent.message.sent', message);
-      
+
       return messageId;
     } catch (error) {
-      this.alertService.error('agent.message.send.failed', `Failed to send message to agent ${toAgentId}`, { error: (error as Error).message });
+      this.alertService.error(
+        'agent.message.send.failed',
+        `Failed to send message to agent ${toAgentId}`,
+        { error: (error as Error).message }
+      );
       throw error;
     }
   }
@@ -111,7 +130,7 @@ export class InterAgentChatService implements OnModuleInit {
   async broadcastMessage(content: string, metadata: Record<string, any> = {}): Promise<string> {
     const messageId = this.generateMessageId();
     const channel = `${this.channelPrefix}:broadcast`;
-    
+
     const message: AgentMessage = {
       id: messageId,
       from: this.agentId,
@@ -120,19 +139,21 @@ export class InterAgentChatService implements OnModuleInit {
       timestamp: new Date(),
       metadata,
     };
-    
+
     try {
       await this.redisService.publish(channel, JSON.stringify(message));
-      
+
       // Record metric
       this.monitoringService.recordMetric('agent.messages.broadcast', 1);
-      
+
       // Emit event
       this.eventEmitter.emit('agent.message.broadcast', message);
-      
+
       return messageId;
     } catch (error) {
-      this.alertService.error('agent.message.broadcast.failed', 'Failed to broadcast message', { error: (error as Error).message });
+      this.alertService.error('agent.message.broadcast.failed', 'Failed to broadcast message', {
+        error: (error as Error).message,
+      });
       throw error;
     }
   }
@@ -150,14 +171,14 @@ export class InterAgentChatService implements OnModuleInit {
   async checkHealth(): Promise<{ status: string; details?: any }> {
     try {
       const redisHealth = await this.redisService.get('health-check');
-      
+
       if (!redisHealth || redisHealth !== 'healthy') {
         return {
           status: 'unhealthy',
           details: { redis: redisHealth || 'unreachable' },
         };
       }
-      
+
       return { status: 'healthy' };
     } catch (error) {
       return {

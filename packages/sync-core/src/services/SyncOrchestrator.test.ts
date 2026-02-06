@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SyncOrchestrator, AgentState, IWebSocketService } from './SyncOrchestrator';
+import { DatabaseService } from '@the-new-fuse/database';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { PrismaService } from '@the-new-fuse/database';
 import { PromptTemplateServiceImpl } from '@the-new-fuse/prompt-templating';
-import { SyncConflictData, SyncResourceType } from '../types';
+import { SyncConflictData } from '../types';
+import { AgentState, IWebSocketService, SyncOrchestrator } from './SyncOrchestrator';
 
 describe('SyncOrchestrator', () => {
   let service: SyncOrchestrator;
   let redisService: jest.Mocked<UnifiedRedisService>;
   let wsService: jest.Mocked<IWebSocketService>;
-  let dbService: jest.Mocked<PrismaService>;
+  let dbService: jest.Mocked<DatabaseService>;
   let promptTemplateService: jest.Mocked<PromptTemplateServiceImpl>;
 
   const mockUser = {
@@ -17,7 +17,7 @@ describe('SyncOrchestrator', () => {
     role: 'USER',
     email: 'test@example.com',
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   const mockAgent = {
@@ -28,7 +28,7 @@ describe('SyncOrchestrator', () => {
     type: 'CHAT',
     metadata: {},
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   beforeEach(async () => {
@@ -38,35 +38,35 @@ describe('SyncOrchestrator', () => {
       publish: jest.fn(),
       lpush: jest.fn(),
       $executeRaw: jest.fn(),
-      $queryRaw: jest.fn()
+      $queryRaw: jest.fn(),
     };
 
     const mockWsService = {
       sendMessage: jest.fn(),
-      broadcastToAllUsers: jest.fn()
+      broadcastToAllUsers: jest.fn(),
     };
 
     const mockDbService = {
       user: {
-        findMany: jest.fn()
+        findMany: jest.fn(),
       },
       agent: {
         update: jest.fn(),
-        upsert: jest.fn()
+        upsert: jest.fn(),
       },
       task: {
-        upsert: jest.fn()
+        upsert: jest.fn(),
       },
       workflow: {
-        upsert: jest.fn()
+        upsert: jest.fn(),
       },
       $executeRaw: jest.fn(),
-      $queryRaw: jest.fn()
+      $queryRaw: jest.fn(),
     };
 
     const mockPromptTemplateService = {
       updateTemplate: jest.fn(),
-      createTemplate: jest.fn()
+      createTemplate: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -74,27 +74,27 @@ describe('SyncOrchestrator', () => {
         SyncOrchestrator,
         {
           provide: UnifiedRedisService,
-          useValue: mockRedisService
+          useValue: mockRedisService,
         },
         {
           provide: 'IWebSocketService',
-          useValue: mockWsService
+          useValue: mockWsService,
         },
         {
-          provide: PrismaService,
-          useValue: mockDbService
+          provide: DatabaseService,
+          useValue: mockDbService,
         },
         {
           provide: PromptTemplateServiceImpl,
-          useValue: mockPromptTemplateService
-        }
-      ]
+          useValue: mockPromptTemplateService,
+        },
+      ],
     }).compile();
 
     service = module.get<SyncOrchestrator>(SyncOrchestrator);
     redisService = module.get(UnifiedRedisService);
     wsService = module.get('IWebSocketService');
-    dbService = module.get(PrismaService);
+    dbService = module.get(DatabaseService);
     promptTemplateService = module.get(PromptTemplateServiceImpl);
 
     // Setup default mocks
@@ -112,14 +112,8 @@ describe('SyncOrchestrator', () => {
       await service.onModuleInit();
 
       expect(redisService.psubscribe).toHaveBeenCalledTimes(2);
-      expect(redisService.psubscribe).toHaveBeenCalledWith(
-        'sync:*',
-        expect.any(Function)
-      );
-      expect(redisService.psubscribe).toHaveBeenCalledWith(
-        'conflict:*',
-        expect.any(Function)
-      );
+      expect(redisService.psubscribe).toHaveBeenCalledWith('sync:*', expect.any(Function));
+      expect(redisService.psubscribe).toHaveBeenCalledWith('conflict:*', expect.any(Function));
       expect(dbService.user.findMany).toHaveBeenCalled();
     });
 
@@ -142,7 +136,7 @@ describe('SyncOrchestrator', () => {
 
     it('should sync tenant data successfully', async () => {
       const testData = { id: 'test-1', name: 'Test Data' };
-      
+
       await service.syncTenantData('user-1', 'agent', testData);
 
       expect(dbService.$executeRaw).toHaveBeenCalled();
@@ -152,8 +146,8 @@ describe('SyncOrchestrator', () => {
           operation: expect.objectContaining({
             resourceType: 'agent',
             tenantId: 'user-1',
-            data: testData
-          })
+            data: testData,
+          }),
         })
       );
       expect(wsService.sendMessage).toHaveBeenCalledWith(
@@ -162,18 +156,18 @@ describe('SyncOrchestrator', () => {
           type: 'sync_update',
           payload: expect.objectContaining({
             tenantId: 'user-1',
-            resourceType: 'agent'
-          })
+            resourceType: 'agent',
+          }),
         })
       );
     });
 
     it('should throw error for unknown tenant', async () => {
       const testData = { id: 'test-1', name: 'Test Data' };
-      
-      await expect(
-        service.syncTenantData('unknown-tenant', 'agent', testData)
-      ).rejects.toThrow('Tenant context not found: unknown-tenant');
+
+      await expect(service.syncTenantData('unknown-tenant', 'agent', testData)).rejects.toThrow(
+        'Tenant context not found: unknown-tenant'
+      );
     });
   });
 
@@ -184,7 +178,7 @@ describe('SyncOrchestrator', () => {
 
     it('should sync global data successfully', async () => {
       const testData = { id: 'global-1', name: 'Global Data' };
-      
+
       await service.syncGlobalData('template', testData);
 
       expect(dbService.$executeRaw).toHaveBeenCalled();
@@ -193,8 +187,8 @@ describe('SyncOrchestrator', () => {
         expect.objectContaining({
           operation: expect.objectContaining({
             resourceType: 'template',
-            data: testData
-          })
+            data: testData,
+          }),
         })
       );
       expect(wsService.broadcastToAllUsers).toHaveBeenCalledWith(
@@ -202,8 +196,8 @@ describe('SyncOrchestrator', () => {
           type: 'sync_update',
           payload: expect.objectContaining({
             dataType: 'template',
-            global: true
-          })
+            global: true,
+          }),
         })
       );
     });
@@ -220,7 +214,7 @@ describe('SyncOrchestrator', () => {
         id: 'agent-1',
         status: 'ACTIVE',
         metadata: { test: 'data' },
-        lastUpdate: new Date()
+        lastUpdate: new Date(),
       };
 
       await service.syncAgentState('agent-1', agentState);
@@ -230,25 +224,23 @@ describe('SyncOrchestrator', () => {
         data: {
           status: 'ACTIVE',
           metadata: { test: 'data' },
-          updatedAt: expect.any(Date)
-        }
+          updatedAt: expect.any(Date),
+        },
       });
       expect(redisService.publish).toHaveBeenCalled();
     });
 
     it('should handle agent update errors', async () => {
       dbService.agent.update.mockRejectedValue(new Error('Database error'));
-      
+
       const agentState: AgentState = {
         id: 'agent-1',
         status: 'ACTIVE',
         metadata: {},
-        lastUpdate: new Date()
+        lastUpdate: new Date(),
       };
 
-      await expect(
-        service.syncAgentState('agent-1', agentState)
-      ).rejects.toThrow('Database error');
+      await expect(service.syncAgentState('agent-1', agentState)).rejects.toThrow('Database error');
     });
   });
 
@@ -258,9 +250,7 @@ describe('SyncOrchestrator', () => {
     });
 
     it('should sync new templates', async () => {
-      const templates = [
-        { name: 'New Template', content: 'Template content' }
-      ];
+      const templates = [{ name: 'New Template', content: 'Template content' }];
 
       await service.syncPromptTemplates(templates);
 
@@ -270,15 +260,12 @@ describe('SyncOrchestrator', () => {
 
     it('should sync existing templates', async () => {
       const templates = [
-        { id: 'template-1', name: 'Updated Template', content: 'Updated content' }
+        { id: 'template-1', name: 'Updated Template', content: 'Updated content' },
       ];
 
       await service.syncPromptTemplates(templates);
 
-      expect(promptTemplateService.updateTemplate).toHaveBeenCalledWith(
-        'template-1',
-        templates[0]
-      );
+      expect(promptTemplateService.updateTemplate).toHaveBeenCalledWith('template-1', templates[0]);
       expect(redisService.publish).toHaveBeenCalled();
     });
   });
@@ -297,7 +284,7 @@ describe('SyncOrchestrator', () => {
         conflictType: 'version',
         localVersion: { timestamp: '2023-01-01T00:00:00Z', data: 'local' },
         remoteVersion: { timestamp: '2023-01-02T00:00:00Z', data: 'remote' },
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       const resolution = await service.resolveConflict(conflict);
@@ -317,7 +304,7 @@ describe('SyncOrchestrator', () => {
         conflictType: 'checksum',
         localVersion: { field1: 'local', field2: 'shared' },
         remoteVersion: { field1: 'remote', field3: 'new' },
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       const resolution = await service.resolveConflict(conflict);
@@ -327,9 +314,9 @@ describe('SyncOrchestrator', () => {
         expect.objectContaining({
           field1: 'remote', // Remote overwrites local
           field2: 'shared', // Local field preserved
-          field3: 'new',    // New remote field added
+          field3: 'new', // New remote field added
           mergedAt: expect.any(Date),
-          mergeStrategy: 'simple_merge'
+          mergeStrategy: 'simple_merge',
         })
       );
     });
@@ -343,17 +330,14 @@ describe('SyncOrchestrator', () => {
         conflictType: 'concurrent',
         localVersion: { data: 'local' },
         remoteVersion: { data: 'remote' },
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       const resolution = await service.resolveConflict(conflict);
 
       expect(resolution.strategy).toBe('manual');
       expect(resolution.resolvedData).toBeNull();
-      expect(redisService.lpush).toHaveBeenCalledWith(
-        'manual_conflicts',
-        JSON.stringify(conflict)
-      );
+      expect(redisService.lpush).toHaveBeenCalledWith('manual_conflicts', JSON.stringify(conflict));
     });
   });
 
@@ -401,32 +385,32 @@ describe('SyncOrchestrator', () => {
 
     it('should handle Redis publish errors gracefully', async () => {
       redisService.publish.mockRejectedValue(new Error('Redis error'));
-      
+
       const testData = { id: 'test-1', name: 'Test Data' };
-      
-      await expect(
-        service.syncTenantData('user-1', 'agent', testData)
-      ).rejects.toThrow('Redis error');
+
+      await expect(service.syncTenantData('user-1', 'agent', testData)).rejects.toThrow(
+        'Redis error'
+      );
     });
 
     it('should handle database errors gracefully', async () => {
       dbService.$executeRaw.mockRejectedValue(new Error('Database error'));
-      
+
       const testData = { id: 'test-1', name: 'Test Data' };
-      
-      await expect(
-        service.syncTenantData('user-1', 'agent', testData)
-      ).rejects.toThrow('Database error');
+
+      await expect(service.syncTenantData('user-1', 'agent', testData)).rejects.toThrow(
+        'Database error'
+      );
     });
 
     it('should handle WebSocket errors gracefully', async () => {
       wsService.sendMessage.mockRejectedValue(new Error('WebSocket error'));
-      
+
       const testData = { id: 'test-1', name: 'Test Data' };
-      
+
       // Should not throw even if WebSocket fails
       await service.syncTenantData('user-1', 'agent', testData);
-      
+
       expect(dbService.$executeRaw).toHaveBeenCalled();
       expect(redisService.publish).toHaveBeenCalled();
     });

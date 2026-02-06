@@ -1,8 +1,11 @@
 // Import enums from the central types package
-import { SuggestionStatus as CoreSuggestionStatus, SuggestionPriority as CoreSuggestionPriority } from '@the-new-fuse/types';
+import {
+  SuggestionPriority as CoreSuggestionPriority,
+  SuggestionStatus as CoreSuggestionStatus,
+} from '@the-new-fuse/types';
 
 // Re-export the standardized enums
-export { CoreSuggestionStatus as SuggestionStatus, CoreSuggestionPriority as SuggestionPriority };
+export { CoreSuggestionPriority as SuggestionPriority, CoreSuggestionStatus as SuggestionStatus };
 
 // Define service interface
 export interface SuggestionService {

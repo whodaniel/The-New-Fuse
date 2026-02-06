@@ -339,9 +339,14 @@ export function registerCommands(
                 'deepseek-chat',
                 'deepseek-coder',
               ],
-              qwen: ['qwen3-coder-480b', 'qwen-2.5-max', 'qwen-2.5-coder-32b', 'qwen-turbo'],
-              litellm: ['gpt-5.2', 'claude-opus-4.5', 'gemini-3-pro', 'custom-model'],
               copilot: ['gpt-4', 'gpt-3.5-turbo'],
+              'google-antigravity': [
+                'claude-opus-4-5-thinking',
+                'claude-3-5-sonnet-20241022',
+                'gemini-3-pro',
+                'gemini-3-flash',
+              ],
+              kilocode: ['glm-4.7-free', 'minimax-m2.1-free'],
             };
 
             const models = providerModels[currentProvider || 'openai'] || ['gpt-4', 'claude-3'];

@@ -2,20 +2,13 @@
  * Build metrics collection and reporting system
  */
 
-import { EventEmitter } from 'events';
-import { 
-  BaseMetricsCollector, 
-  BaseMetricsCollectorConfig,
-  Logger
-} from '@the-new-fuse/core-monitoring';
 import {
-  BuildEventData,
-  BuildMetrics,
-  MemoryUsage,
-  BuildResult,
-  BuildEvent
-} from '../types/index.js';
+  BaseMetricsCollector,
+  BaseMetricsCollectorConfig,
+  Logger,
+} from '@the-new-fuse/core-monitoring';
 import { IBuildMetricsCollector } from '../interfaces/index.js';
+import { BuildEventData, BuildMetrics, MemoryUsage } from '../types/index.js';
 
 /**
  * Detailed build statistics
@@ -76,7 +69,10 @@ export interface PerformanceStats {
 /**
  * Build metrics collector implementation
  */
-export class BuildMetricsCollector extends BaseMetricsCollector<DetailedBuildMetrics> implements IBuildMetricsCollector {
+export class BuildMetricsCollector
+  extends BaseMetricsCollector<DetailedBuildMetrics>
+  implements IBuildMetricsCollector
+{
   private isCollecting: boolean = false;
   private buildMetrics: DetailedBuildMetrics = {
     totalBuildTime: 0,
@@ -96,8 +92,8 @@ export class BuildMetricsCollector extends BaseMetricsCollector<DetailedBuildMet
       memoryEfficiencyScore: 0,
       concurrencyUtilization: 0,
       cleanupTime: 0,
-      memoryViolations: 0
-    }
+      memoryViolations: 0,
+    },
   };
   private currentStage: StageMetrics | null = null;
   private memoryMonitoringInterval: NodeJS.Timeout | null = null;
@@ -107,7 +103,7 @@ export class BuildMetricsCollector extends BaseMetricsCollector<DetailedBuildMet
     const config: BaseMetricsCollectorConfig = {
       interval: monitoringInterval,
       retentionPeriod: 24 * 60 * 60 * 1000, // 24 hours
-      storage: { type: 'memory' }
+      storage: { type: 'memory' },
     };
     super(config, new Logger('BuildMetricsCollector'));
     this.monitoringIntervalMs = monitoringInterval;
@@ -149,7 +145,7 @@ export class BuildMetricsCollector extends BaseMetricsCollector<DetailedBuildMet
     this.recordEvent({
       type: 'build-started',
       timestamp: Date.now(),
-      payload: { startTime: this.buildMetrics.startTime }
+      payload: { startTime: this.buildMetrics.startTime },
     });
 
     this.emit('collection-started');
@@ -182,10 +178,10 @@ export class BuildMetricsCollector extends BaseMetricsCollector<DetailedBuildMet
     this.recordEvent({
       type: 'build-completed',
       timestamp: Date.now(),
-      payload: { 
+      payload: {
         duration: this.buildMetrics.totalBuildTime,
-        success: this.buildMetrics.failedBuilds === 0
-      }
+        success: this.buildMetrics.failedBuilds === 0,
+      },
     });
 
     this.emit('collection-stopped', this.buildMetrics);
@@ -246,7 +242,8 @@ export class BuildMetricsCollector extends BaseMetricsCollector<DetailedBuildMet
     // Update average memory usage if we have snapshots
     if (this.buildMetrics.memorySnapshots.length > 0) {
       const totalMemory = this.buildMetrics.memorySnapshots.reduce(
-        (sum, snapshot) => sum + snapshot.current, 0
+        (sum, snapshot) => sum + snapshot.current,
+        0
       );
       this.buildMetrics.averageMemoryUsage = totalMemory / this.buildMetrics.memorySnapshots.length;
     }
@@ -277,8 +274,8 @@ export class BuildMetricsCollector extends BaseMetricsCollector<DetailedBuildMet
         memoryEfficiencyScore: 0,
         concurrencyUtilization: 0,
         cleanupTime: 0,
-        memoryViolations: 0
-      }
+        memoryViolations: 0,
+      },
     };
     this.currentStage = null;
   }
@@ -314,7 +311,7 @@ export class BuildMetricsCollector extends BaseMetricsCollector<DetailedBuildMet
     }
 
     this.buildMetrics.successfulBuilds++;
-    
+
     if (this.currentStage) {
       this.currentStage.packages.push(packageName);
     }
@@ -322,7 +319,7 @@ export class BuildMetricsCollector extends BaseMetricsCollector<DetailedBuildMet
     this.recordEvent({
       type: 'build-completed',
       timestamp: Date.now(),
-      payload: { packageName, duration, success: true }
+      payload: { packageName, duration, success: true },
     });
   }
 
@@ -338,7 +335,7 @@ export class BuildMetricsCollector extends BaseMetricsCollector<DetailedBuildMet
     this.recordEvent({
       type: 'build-failed',
       timestamp: Date.now(),
-      payload: { packageName, error, success: false }
+      payload: { packageName, error, success: false },
     });
   }
 
@@ -351,9 +348,13 @@ export class BuildMetricsCollector extends BaseMetricsCollector<DetailedBuildMet
     const durationSeconds = (duration / 1000).toFixed(2);
     const peakMemoryMB = metrics.peakMemoryUsage.toFixed(2);
     const avgMemoryMB = metrics.averageMemoryUsage.toFixed(2);
-    const successRate = metrics.successfulBuilds + metrics.failedBuilds > 0 
-      ? ((metrics.successfulBuilds / (metrics.successfulBuilds + metrics.failedBuilds)) * 100).toFixed(1)
-      : '0';
+    const successRate =
+      metrics.successfulBuilds + metrics.failedBuilds > 0
+        ? (
+            (metrics.successfulBuilds / (metrics.successfulBuilds + metrics.failedBuilds)) *
+            100
+          ).toFixed(1)
+        : '0';
 
     let report = `
 Build Metrics Report
@@ -381,7 +382,7 @@ Stage Breakdown:
       const stageDuration = (stage.duration / 1000).toFixed(2);
       const stageMemory = stage.peakMemoryUsage.toFixed(2);
       const stageStatus = stage.success ? '✓' : '✗';
-      
+
       report += `  ${index + 1}. ${stage.stageId} ${stageStatus}\n`;
       report += `     Duration: ${stageDuration}s, Peak Memory: ${stageMemory} MB\n`;
       report += `     Packages: ${stage.packages.join(', ')}\n`;
@@ -404,9 +405,9 @@ Stage Breakdown:
         current: Math.round(memUsage.heapUsed / 1024 / 1024),
         peak: Math.round(memUsage.heapUsed / 1024 / 1024),
         percentage: 0, // Will be calculated by memory monitor
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       this.recordMemorySnapshot(usage);
     }, this.monitoringIntervalMs);
   }
@@ -437,7 +438,7 @@ Stage Breakdown:
       duration: 0,
       packages: [],
       peakMemoryUsage: 0,
-      success: false
+      success: false,
     };
   }
 
@@ -466,17 +467,18 @@ Stage Breakdown:
    */
   private calculatePerformanceStats(): void {
     const totalPackages = this.buildMetrics.successfulBuilds + this.buildMetrics.failedBuilds;
-    
+
     // Average build time per package
     if (totalPackages > 0) {
-      this.buildMetrics.performanceStats.avgBuildTimePerPackage = 
+      this.buildMetrics.performanceStats.avgBuildTimePerPackage =
         this.buildMetrics.totalBuildTime / totalPackages;
     }
 
     // Calculate average memory usage
     if (this.buildMetrics.memorySnapshots.length > 0) {
       const totalMemory = this.buildMetrics.memorySnapshots.reduce(
-        (sum, snapshot) => sum + snapshot.current, 0
+        (sum, snapshot) => sum + snapshot.current,
+        0
       );
       this.buildMetrics.averageMemoryUsage = totalMemory / this.buildMetrics.memorySnapshots.length;
     }
@@ -488,15 +490,16 @@ Stage Breakdown:
     }
 
     // Calculate cleanup time from events
-    const cleanupEvents = this.buildMetrics.events.filter(e => 
-      e.payload && e.payload.type === 'cleanup'
+    const cleanupEvents = this.buildMetrics.events.filter(
+      (e) => e.payload && e.payload.type === 'cleanup'
     );
     this.buildMetrics.performanceStats.cleanupTime = cleanupEvents.reduce(
-      (sum, event) => sum + (event.payload.duration || 0), 0
+      (sum, event) => sum + (event.payload.duration || 0),
+      0
     );
 
     // Concurrency utilization (simplified calculation)
-    this.buildMetrics.performanceStats.concurrencyUtilization = 
+    this.buildMetrics.performanceStats.concurrencyUtilization =
       this.buildMetrics.stagesExecuted > 0 ? 75 : 0; // Placeholder calculation
   }
 }

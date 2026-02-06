@@ -1,12 +1,12 @@
 /**
  * Message Queue Implementation
- * 
+ *
  * Handles queuing of messages for offline services and retry handling
  * with persistence and delivery guarantees.
  */
 
 import { EventEmitter } from 'events';
-import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
+import { MCPNotification, MCPRequest } from '../interfaces/IMCPMessage';
 import { MCPErrorClass, MCPErrorCode } from '../types/error';
 
 /**
@@ -14,7 +14,7 @@ import { MCPErrorClass, MCPErrorCode } from '../types/error';
  */
 export enum QueuedMessageType {
   REQUEST = 'request',
-  NOTIFICATION = 'notification'
+  NOTIFICATION = 'notification',
 }
 
 /**
@@ -86,7 +86,7 @@ export class MessageQueue extends EventEmitter {
       backoffMultiplier: 2,
       messageTimeoutMs: 300000, // 5 minutes
       cleanupIntervalMs: 60000, // 1 minute
-      ...config
+      ...config,
     };
   }
 
@@ -144,18 +144,12 @@ export class MessageQueue extends EventEmitter {
     } = {}
   ): Promise<string> {
     if (!this.isStarted) {
-      throw new MCPErrorClass(
-        MCPErrorCode.SERVICE_UNAVAILABLE,
-        'Message queue is not started'
-      );
+      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Message queue is not started');
     }
 
     // Check queue size limit
     if (this.queue.size >= this.config.maxSize) {
-      throw new MCPErrorClass(
-        MCPErrorCode.TOOL_RESOURCE_EXHAUSTED,
-        'Message queue is full'
-      );
+      throw new MCPErrorClass(MCPErrorCode.TOOL_RESOURCE_EXHAUSTED, 'Message queue is full');
     }
 
     const messageId = this.generateMessageId();
@@ -173,7 +167,7 @@ export class MessageQueue extends EventEmitter {
       createdAt: now,
       nextAttempt: now,
       expiresAt: new Date(now.getTime() + timeoutMs),
-      metadata: options.metadata
+      metadata: options.metadata,
     };
 
     // Add to queue
@@ -248,10 +242,7 @@ export class MessageQueue extends EventEmitter {
   async markMessageProcessing(messageId: string): Promise<void> {
     const message = this.queue.get(messageId);
     if (!message) {
-      throw new MCPErrorClass(
-        MCPErrorCode.RESOURCE_NOT_FOUND,
-        `Message not found: ${messageId}`
-      );
+      throw new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, `Message not found: ${messageId}`);
     }
 
     this.processingQueue.add(messageId);
@@ -301,7 +292,8 @@ export class MessageQueue extends EventEmitter {
     if (message.currentRetries < message.maxRetries) {
       // Schedule retry with exponential backoff
       const delay = Math.min(
-        this.config.retryDelayMs * Math.pow(this.config.backoffMultiplier, message.currentRetries - 1),
+        this.config.retryDelayMs *
+          Math.pow(this.config.backoffMultiplier, message.currentRetries - 1),
         this.config.maxRetryDelayMs
       );
       message.nextAttempt = new Date(Date.now() + delay);
@@ -311,7 +303,7 @@ export class MessageQueue extends EventEmitter {
     } else {
       // Max retries reached, remove from queue
       this.queue.delete(messageId);
-      
+
       const serviceQueue = this.serviceQueues.get(message.targetService);
       if (serviceQueue) {
         serviceQueue.delete(messageId);
@@ -321,7 +313,9 @@ export class MessageQueue extends EventEmitter {
       }
 
       this.emit('messageFailed', message, error);
-      console.log(`Message ${messageId} failed permanently after ${message.currentRetries} attempts`);
+      console.log(
+        `Message ${messageId} failed permanently after ${message.currentRetries} attempts`
+      );
     }
   }
 
@@ -335,8 +329,8 @@ export class MessageQueue extends EventEmitter {
     }
 
     return Array.from(serviceMessageIds)
-      .map(id => this.queue.get(id))
-      .filter(msg => msg !== undefined) as QueuedMessage[];
+      .map((id) => this.queue.get(id))
+      .filter((msg) => msg !== undefined) as QueuedMessage[];
   }
 
   /**
@@ -381,7 +375,7 @@ export class MessageQueue extends EventEmitter {
     }
 
     const count = serviceMessageIds.size;
-    
+
     for (const messageId of Array.from(serviceMessageIds)) {
       await this.removeMessage(messageId);
     }
@@ -396,45 +390,47 @@ export class MessageQueue extends EventEmitter {
     const messages = Array.from(this.queue.values());
     const now = new Date();
 
-    const pendingMessages = messages.filter(msg => 
-      !this.processingQueue.has(msg.id) && 
-      msg.nextAttempt <= now &&
-      (!msg.expiresAt || msg.expiresAt > now)
+    const pendingMessages = messages.filter(
+      (msg) =>
+        !this.processingQueue.has(msg.id) &&
+        msg.nextAttempt <= now &&
+        (!msg.expiresAt || msg.expiresAt > now)
     ).length;
 
     const processingMessages = this.processingQueue.size;
-    
-    const failedMessages = messages.filter(msg => 
-      msg.currentRetries >= msg.maxRetries
-    ).length;
 
-    const expiredMessages = messages.filter(msg => 
-      msg.expiresAt && msg.expiresAt < now
-    ).length;
+    const failedMessages = messages.filter((msg) => msg.currentRetries >= msg.maxRetries).length;
 
-    const messagesByService = messages.reduce((acc, msg) => {
-      acc[msg.targetService] = (acc[msg.targetService] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const expiredMessages = messages.filter((msg) => msg.expiresAt && msg.expiresAt < now).length;
 
-    const messagesByType = messages.reduce((acc, msg) => {
-      acc[msg.type] = (acc[msg.type] || 0) + 1;
-      return acc;
-    }, {} as Record<QueuedMessageType, number>);
+    const messagesByService = messages.reduce(
+      (acc, msg) => {
+        acc[msg.targetService] = (acc[msg.targetService] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    const messagesByType = messages.reduce(
+      (acc, msg) => {
+        acc[msg.type] = (acc[msg.type] || 0) + 1;
+        return acc;
+      },
+      {} as Record<QueuedMessageType, number>
+    );
 
     const waitTimes = messages
-      .filter(msg => msg.lastAttempt)
-      .map(msg => msg.lastAttempt!.getTime() - msg.createdAt.getTime());
-    
-    const averageWaitTime = waitTimes.length > 0 
-      ? waitTimes.reduce((sum, time) => sum + time, 0) / waitTimes.length 
-      : 0;
+      .filter((msg) => msg.lastAttempt)
+      .map((msg) => msg.lastAttempt!.getTime() - msg.createdAt.getTime());
 
-    const oldestMessage = messages.length > 0 
-      ? messages.reduce((oldest, msg) => 
-          msg.createdAt < oldest.createdAt ? msg : oldest
-        ).createdAt
-      : undefined;
+    const averageWaitTime =
+      waitTimes.length > 0 ? waitTimes.reduce((sum, time) => sum + time, 0) / waitTimes.length : 0;
+
+    const oldestMessage =
+      messages.length > 0
+        ? messages.reduce((oldest, msg) => (msg.createdAt < oldest.createdAt ? msg : oldest))
+            .createdAt
+        : undefined;
 
     return {
       totalMessages: messages.length,
@@ -445,7 +441,7 @@ export class MessageQueue extends EventEmitter {
       messagesByService,
       messagesByType,
       averageWaitTime,
-      oldestMessage
+      oldestMessage,
     };
   }
 

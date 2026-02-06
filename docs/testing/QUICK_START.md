@@ -164,10 +164,12 @@ const mockService = {
 
 ## Tips
 
-1. **Use descriptive test names**: `it('should show error when email is invalid')`
+1. **Use descriptive test names**:
+   `it('should show error when email is invalid')`
 2. **Keep tests focused**: One test, one assertion (when possible)
 3. **Use beforeEach for setup**: Ensure clean state for each test
-4. **Mock external dependencies**: Don't hit real APIs or databases in unit tests
+4. **Mock external dependencies**: Don't hit real APIs or databases in unit
+   tests
 5. **Use test utilities**: Leverage shared helpers and fixtures
 
 ## Next Steps

@@ -1,20 +1,25 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@the-new-fuse/ui-consolidated';
-import { Button } from '@the-new-fuse/ui-consolidated';
-import { Badge } from '@the-new-fuse/ui-consolidated';
+import { IntegrationSource, WebhookConfiguration } from '@the-new-fuse/types';
 import {
-  Settings,
-  Play,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@the-new-fuse/ui-consolidated';
+import {
+  AlertTriangle,
+  CheckCircle,
+  ExternalLink,
+  MoreVertical,
   Pause,
+  Play,
+  Settings,
   TestTube,
   Trash2,
-  ExternalLink,
-  CheckCircle,
   XCircle,
-  AlertTriangle,
-  MoreVertical,
 } from 'lucide-react';
-import { WebhookConfiguration, IntegrationSource } from '@the-new-fuse/types';
+import { useState } from 'react';
 import { useWebhookManagement } from './hooks/useWebhookManagement';
 
 export interface IntegrationStatusGridProps {
@@ -89,12 +94,12 @@ export function IntegrationStatusGrid({
   };
 
   const handleAction = async (configId: string, action: string) => {
-    setActionLoading(prev => ({ ...prev, [configId]: true }));
-    
+    setActionLoading((prev) => ({ ...prev, [configId]: true }));
+
     try {
       switch (action) {
         case 'toggle':
-          const config = configurations.find(c => c.id === configId);
+          const config = configurations.find((c) => c.id === configId);
           if (config) {
             await updateWebhook(configId, { is_active: !config.is_active });
           }
@@ -111,7 +116,7 @@ export function IntegrationStatusGrid({
     } catch (error) {
       console.error(`Failed to ${action} webhook:`, error);
     } finally {
-      setActionLoading(prev => ({ ...prev, [configId]: false }));
+      setActionLoading((prev) => ({ ...prev, [configId]: false }));
     }
   };
 
@@ -146,9 +151,7 @@ export function IntegrationStatusGrid({
         <CardContent className="p-8 text-center">
           <div className="text-gray-400 text-4xl mb-4">🔗</div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No Integrations</h3>
-          <p className="text-gray-500 mb-4">
-            Get started by adding your first webhook integration
-          </p>
+          <p className="text-gray-500 mb-4">Get started by adding your first webhook integration</p>
           <Button>Add Integration</Button>
         </CardContent>
       </Card>
@@ -162,18 +165,13 @@ export function IntegrationStatusGrid({
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <span className="text-2xl">
-                  {INTEGRATION_ICONS[config.source] || '🔗'}
-                </span>
+                <span className="text-2xl">{INTEGRATION_ICONS[config.source] || '🔗'}</span>
                 <div>
                   <CardTitle className="text-base">
                     {INTEGRATION_LABELS[config.source] || config.source}
                   </CardTitle>
                   <p className="text-xs text-muted-foreground">
-                    {config.endpoint_url ? 
-                      new URL(config.endpoint_url).hostname : 
-                      'No endpoint'
-                    }
+                    {config.endpoint_url ? new URL(config.endpoint_url).hostname : 'No endpoint'}
                   </p>
                 </div>
               </div>
@@ -187,11 +185,7 @@ export function IntegrationStatusGrid({
                   >
                     <Settings className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0"
-                  >
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </div>
@@ -226,33 +220,32 @@ export function IntegrationStatusGrid({
                 <div className="space-y-2 text-xs text-muted-foreground">
                   <div className="flex items-center justify-between">
                     <span>Events delivered:</span>
-                    <span className="font-medium">
-                      {config.events_delivered || 0}
-                    </span>
+                    <span className="font-medium">{config.events_delivered || 0}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Success rate:</span>
-                    <span className={`font-medium ${
-                      (config.success_rate || 0) > 95 ? 'text-green-600' : 
-                      (config.success_rate || 0) > 80 ? 'text-yellow-600' : 'text-red-600'
-                    }`}>
+                    <span
+                      className={`font-medium ${
+                        (config.success_rate || 0) > 95
+                          ? 'text-green-600'
+                          : (config.success_rate || 0) > 80
+                            ? 'text-yellow-600'
+                            : 'text-red-600'
+                      }`}
+                    >
                       {((config.success_rate || 0) * 100).toFixed(1)}%
                     </span>
                   </div>
                   {config.last_delivery_at && (
                     <div className="flex items-center justify-between">
                       <span>Last delivery:</span>
-                      <span className="font-medium">
-                        {formatDate(config.last_delivery_at)}
-                      </span>
+                      <span className="font-medium">{formatDate(config.last_delivery_at)}</span>
                     </div>
                   )}
                   {config.created_at && (
                     <div className="flex items-center justify-between">
                       <span>Created:</span>
-                      <span className="font-medium">
-                        {formatDate(config.created_at)}
-                      </span>
+                      <span className="font-medium">{formatDate(config.created_at)}</span>
                     </div>
                   )}
                 </div>

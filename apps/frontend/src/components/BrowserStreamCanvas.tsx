@@ -172,9 +172,7 @@ export const BrowserStreamCanvas: React.FC<BrowserStreamCanvasProps> = ({
               ? 'Unable to connect to browser session. Check backend connection.'
               : 'Connection to browser session lost. Attempting to reconnect...'}
           </div>
-          <div className="text-xs text-gray-600 mt-2 font-mono">
-            {BACKEND_URL}
-          </div>
+          <div className="text-xs text-gray-600 mt-2 font-mono">{BACKEND_URL}</div>
         </div>
       )}
 

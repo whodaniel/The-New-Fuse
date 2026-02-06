@@ -22,7 +22,10 @@ export interface WorkflowContext {
 export class NotificationNodeHandler {
   constructor(private dependencies: any) {}
 
-  async handle(step: WorkflowStep, context: WorkflowContext): Promise<{ success: boolean; data?: any; error?: string }> {
+  async handle(
+    step: WorkflowStep,
+    context: WorkflowContext,
+  ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       const config = step.config as NotificationConfig;
       if (!config.type || !config.recipient || !config.message) {

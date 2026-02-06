@@ -23,7 +23,7 @@ your skills.
 
 ```regex
 (add|create|modify|update).*?(user|table|column|field|schema|migration)
-(database|prisma).*?(change|update|query)
+(database|drizzle).*?(change|update|query)
 ```
 
 ### Error Handling
@@ -76,7 +76,7 @@ projects/src/**/*.ts        # Projects service
 ### Database
 
 ```glob
-**/schema.prisma            # Prisma schema (anywhere)
+**/schema.drizzle            # Drizzle schema (anywhere)
 **/migrations/**/*.sql      # Migration files
 database/src/**/*.ts        # Database scripts
 ```
@@ -100,13 +100,13 @@ form/src/workflow-definitions/**/*.json # Workflow definitions
 
 ## Content Patterns (Regex)
 
-### Prisma/Database
+### Drizzle/Database
 
 ```regex
-import.*[Pp]risma                # Prisma imports
-PrismaService                    # PrismaService usage
-prisma\.                         # prisma.something
-\.findMany\(                     # Prisma query methods
+import.*[Pp]risma                # Drizzle imports
+DatabaseService                    # DatabaseService usage
+drizzle\.                         # drizzle.something
+\.findMany\(                     # Drizzle query methods
 \.create\(
 \.update\(
 \.delete\(

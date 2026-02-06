@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
+import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [react()],
@@ -11,18 +11,18 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'src/renderer/index.html')
-      }
-    }
+        main: resolve(__dirname, 'src/renderer/index.html'),
+      },
+    },
   },
   server: {
     port: 5174,
-    strictPort: true
+    strictPort: true,
   },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src/renderer'),
-      '@shared': resolve(__dirname, 'src/shared')
-    }
-  }
-})
+      '@shared': resolve(__dirname, 'src/shared'),
+    },
+  },
+});

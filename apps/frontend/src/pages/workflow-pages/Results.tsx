@@ -1,5 +1,3 @@
-import React from 'react';
-
 const WorkflowResultsViewer = () => {
   return (
     <div className="p-4">

@@ -4,7 +4,10 @@ Complete integration of Anthropic's Claude Skills into The New Fuse ecosystem.
 
 ## Overview
 
-The Claude Skills package (`@the-new-fuse/claude-skills`) provides a comprehensive integration layer for Anthropic's official Claude Skills repository. This integration enables The New Fuse agents and users to leverage battle-tested skills for document processing, development, design, and more.
+The Claude Skills package (`@the-new-fuse/claude-skills`) provides a
+comprehensive integration layer for Anthropic's official Claude Skills
+repository. This integration enables The New Fuse agents and users to leverage
+battle-tested skills for document processing, development, design, and more.
 
 ## Architecture
 
@@ -27,30 +30,35 @@ The Claude Skills package (`@the-new-fuse/claude-skills`) provides a comprehensi
 ## Features
 
 ### 1. Skill Loader
+
 - Clones/syncs Anthropic's skills repository
 - Auto-updates on configurable interval
 - Filters by category and tags
 - Supports priority skill loading
 
 ### 2. Skill Parser
+
 - Parses SKILL.md files with YAML frontmatter
 - Validates skill definitions using Zod schemas
 - Extracts metadata, instructions, and parameters
 - Categorizes and tags skills automatically
 
 ### 3. Skill Executor
+
 - Executes skills with parameter validation
 - Type checking and constraint validation
 - Comprehensive error handling
 - Execution metrics and monitoring
 
 ### 4. Skill Registry
+
 - In-memory skill storage with indexing
 - Fast lookup by ID, category, tag, or query
 - Search functionality with relevance scoring
 - Statistics and analytics
 
 ### 5. MCP Integration
+
 - Exposes skills as MCP resources (`skill://skill-id`)
 - Converts skills to MCP tools (`skill_skill_name`)
 - Category and tag-based filtering
@@ -59,6 +67,7 @@ The Claude Skills package (`@the-new-fuse/claude-skills`) provides a comprehensi
 ## Available Skills
 
 ### Document Processing (4 skills)
+
 Source: `document-skills/` (Proprietary, reference only)
 
 - **pdf** - Comprehensive PDF manipulation toolkit
@@ -167,7 +176,7 @@ const manager = new ClaudeSkillsManager({
     updateInterval: 24 * 60 * 60 * 1000, // 24 hours
   },
   autoInitialize: false,
-  prioritySkills: ['mcp-builder', 'pdf', 'xlsx', 'webapp-testing']
+  prioritySkills: ['mcp-builder', 'pdf', 'xlsx', 'webapp-testing'],
 });
 
 // Initialize (clones repo and loads skills)
@@ -195,10 +204,10 @@ const result = await manager.executeSkill({
   skillId: 'anthropic.skill.pdf',
   parameters: {
     action: 'extract-text',
-    file: '/path/to/document.pdf'
+    file: '/path/to/document.pdf',
   },
   userId: 'user-123',
-  sessionId: 'session-456'
+  sessionId: 'session-456',
 });
 
 if (result.success) {
@@ -223,7 +232,7 @@ const pythonSkills = await manager.getSkillsByTag('python');
 // List all skills with filters
 const skills = await manager.listSkills({
   categories: [SkillCategory.DOCUMENT_PROCESSING],
-  tags: ['pdf', 'python']
+  tags: ['pdf', 'python'],
 });
 ```
 
@@ -240,10 +249,10 @@ const resources = await mcpProvider.getSkillResources();
 const tools = await mcpProvider.getSkillTools();
 
 // Execute skill via MCP tool
-const output = await mcpProvider.executeSkillTool(
-  'skill_pdf',
-  { action: 'extract-text', file: '/path/to/doc.pdf' }
-);
+const output = await mcpProvider.executeSkillTool('skill_pdf', {
+  action: 'extract-text',
+  file: '/path/to/doc.pdf',
+});
 ```
 
 ### Statistics and Monitoring
@@ -417,8 +426,8 @@ for (const skill of skills) {
     metadata: {
       category: skill.category,
       tags: skill.tags,
-      source: 'anthropic'
-    }
+      source: 'anthropic',
+    },
   });
 }
 ```
@@ -451,7 +460,7 @@ for (const tool of tools) {
     inputSchema: tool.inputSchema,
     handler: async (params) => {
       return await mcpProvider.executeSkillTool(tool.name, params);
-    }
+    },
   });
 }
 ```
@@ -464,7 +473,7 @@ import { ClaudeSkillsManager } from '@the-new-fuse/claude-skills';
 
 const agent = new Agent({
   id: 'agent-1',
-  capabilities: ['document-processing', 'code-analysis']
+  capabilities: ['document-processing', 'code-analysis'],
 });
 
 const skillsManager = new ClaudeSkillsManager();
@@ -476,7 +485,7 @@ agent.on('task', async (task) => {
     const result = await skillsManager.executeSkill({
       skillId: 'anthropic.skill.pdf',
       parameters: task.parameters,
-      userId: task.userId
+      userId: task.userId,
     });
 
     return result.output;
@@ -511,10 +520,12 @@ export default {
     sourceRepositoryUrl: process.env.CLAUDE_SKILLS_REPO_URL,
     localCachePath: process.env.CLAUDE_SKILLS_CACHE_PATH || '.cache/skills',
     autoUpdate: process.env.CLAUDE_SKILLS_AUTO_UPDATE === 'true',
-    updateInterval: parseInt(process.env.CLAUDE_SKILLS_UPDATE_INTERVAL || '86400000'),
+    updateInterval: parseInt(
+      process.env.CLAUDE_SKILLS_UPDATE_INTERVAL || '86400000'
+    ),
     categoriesFilter: ['document-processing', 'development-technical'],
   },
-  prioritySkills: ['mcp-builder', 'pdf', 'xlsx', 'webapp-testing']
+  prioritySkills: ['mcp-builder', 'pdf', 'xlsx', 'webapp-testing'],
 };
 ```
 
@@ -556,6 +567,7 @@ await manager.initialize();
 ### Git Clone Fails
 
 Ensure git is installed and network is accessible:
+
 ```bash
 git --version
 ping github.com
@@ -564,12 +576,12 @@ ping github.com
 ### Skill Validation Errors
 
 Check SKILL.md format:
+
 ```yaml
 ---
 name: skill-name
 description: Description here
 ---
-
 # Skill content
 ```
 
@@ -608,6 +620,7 @@ To add new skills or improve integration:
 
 ## Credits
 
-- Skills source: [Anthropic Skills Repository](https://github.com/anthropics/skills)
+- Skills source:
+  [Anthropic Skills Repository](https://github.com/anthropics/skills)
 - Integration: The New Fuse Team
 - MCP Protocol: Anthropic

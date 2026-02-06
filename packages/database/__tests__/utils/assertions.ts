@@ -83,7 +83,10 @@ export function expectNonEmptyArray<T>(array: T[]) {
 /**
  * Assert that pagination result is valid
  */
-export function expectValidPagination(result: { data: any[]; total: number }, expectedTotal: number) {
+export function expectValidPagination(
+  result: { data: any[]; total: number },
+  expectedTotal: number
+) {
   expect(result).toBeDefined();
   expect(result.data).toBeDefined();
   expect(Array.isArray(result.data)).toBe(true);

@@ -1,6 +1,8 @@
 # Getting Started with Extensions
 
-This guide will walk you through creating your first extension for The New Fuse platform. You'll learn the basics of extension development, from setup to deployment.
+This guide will walk you through creating your first extension for The New Fuse
+platform. You'll learn the basics of extension development, from setup to
+deployment.
 
 ## Prerequisites
 
@@ -69,9 +71,7 @@ Create `extension.json`:
   "author": "Your Name <your.email@example.com>",
   "license": "MIT",
   "keywords": ["text", "processing", "example"],
-  "permissions": [
-    "workflow_modify"
-  ],
+  "permissions": ["workflow_modify"],
   "configuration": {
     "schema": {
       "type": "object",
@@ -125,10 +125,10 @@ Create `tsconfig.json`:
 Create `src/index.ts`:
 
 ```typescript
-import { 
-  ExtensionLifecycle, 
+import {
+  ExtensionLifecycle,
   ExtensionContext,
-  WorkflowNode 
+  WorkflowNode,
 } from '@the-new-fuse/extension-system/types';
 
 interface TextProcessorConfig {
@@ -156,7 +156,7 @@ export class TextProcessorNode implements ExtensionLifecycle, WorkflowNode {
     // Default configuration
     this.config = {
       prefix: 'Processed: ',
-      uppercase: false
+      uppercase: false,
     };
   }
 
@@ -166,7 +166,7 @@ export class TextProcessorNode implements ExtensionLifecycle, WorkflowNode {
   async onLoad(context: ExtensionContext): Promise<void> {
     this.context = context;
     this.config = { ...this.config, ...context.getConfig() };
-    
+
     context.logger?.info('TextProcessorNode extension loaded');
   }
 
@@ -181,7 +181,7 @@ export class TextProcessorNode implements ExtensionLifecycle, WorkflowNode {
    * Extension Lifecycle: Called when configuration changes
    */
   async onConfigChange(
-    config: Record<string, any>, 
+    config: Record<string, any>,
     context: ExtensionContext
   ): Promise<void> {
     this.config = { ...this.config, ...config };
@@ -192,32 +192,34 @@ export class TextProcessorNode implements ExtensionLifecycle, WorkflowNode {
    * Workflow Node: Main processing method
    */
   async execute(
-    input: TextProcessorInput, 
+    input: TextProcessorInput,
     context: any
   ): Promise<TextProcessorOutput> {
     const { text, metadata } = input;
-    
+
     // Apply text processing based on configuration
     let processedText = text;
-    
+
     // Add prefix if configured
     if (this.config.prefix) {
       processedText = this.config.prefix + processedText;
     }
-    
+
     // Convert to uppercase if configured
     if (this.config.uppercase) {
       processedText = processedText.toUpperCase();
     }
-    
+
     // Log processing activity
-    this.context.logger?.debug(`Processed text: "${text}" -> "${processedText}"`);
-    
+    this.context.logger?.debug(
+      `Processed text: "${text}" -> "${processedText}"`
+    );
+
     return {
       processedText,
       originalText: text,
       timestamp: new Date().toISOString(),
-      metadata
+      metadata,
     };
   }
 
@@ -288,7 +290,7 @@ const result = await extensionManager.loadExtension('./my-first-extension');
 
 if (result.success) {
   console.log(`Extension loaded: ${result.extension.name}`);
-  
+
   // Activate the extension
   await extensionManager.activateExtension(result.extension.id);
 } else {
@@ -300,15 +302,17 @@ if (result.success) {
 
 ```typescript
 // Get the loaded extension
-const extension = extensionManager.getExtension('@my-org/my-first-extension@1.0.0');
+const extension = extensionManager.getExtension(
+  '@my-org/my-first-extension@1.0.0'
+);
 
 if (extension && extension.instance) {
   // Test the workflow node functionality
   const testInput = {
     text: 'Hello, World!',
-    metadata: { source: 'test' }
+    metadata: { source: 'test' },
   };
-  
+
   const result = await extension.instance.execute(testInput, {});
   console.log('Processing result:', result);
   // Output: { processedText: 'Processed: Hello, World!', ... }
@@ -321,7 +325,7 @@ if (extension && extension.instance) {
 // Update extension configuration
 await extensionManager.setExtensionConfig('@my-org/my-first-extension@1.0.0', {
   prefix: 'Custom Prefix: ',
-  uppercase: true
+  uppercase: true,
 });
 
 // Test with new configuration
@@ -343,26 +347,26 @@ const workflowDefinition = {
     {
       id: 'input',
       type: 'input',
-      config: {}
+      config: {},
     },
     {
       id: 'text-processor',
-      type: '@my-org/my-first-extension',  // Your extension
+      type: '@my-org/my-first-extension', // Your extension
       config: {
         prefix: 'Workflow: ',
-        uppercase: false
-      }
+        uppercase: false,
+      },
     },
     {
       id: 'output',
       type: 'output',
-      config: {}
-    }
+      config: {},
+    },
   ],
   connections: [
     { from: 'input', to: 'text-processor' },
-    { from: 'text-processor', to: 'output' }
-  ]
+    { from: 'text-processor', to: 'output' },
+  ],
 };
 ```
 
@@ -372,21 +376,27 @@ const workflowDefinition = {
 
 ```typescript
 // Enable debug logging for your extension
-const extensionManager = ExtensionSystemFactory.create({
-  extensionDirectory: './extensions',
-  logLevel: 'debug'
-}, logger);
+const extensionManager = ExtensionSystemFactory.create(
+  {
+    extensionDirectory: './extensions',
+    logLevel: 'debug',
+  },
+  logger
+);
 ```
 
 ### 2. Use Development Mode
 
 ```typescript
 // Enable development mode for hot reloading
-const extensionManager = ExtensionSystemFactory.create({
-  extensionDirectory: './extensions',
-  allowDevelopmentExtensions: true,
-  enableHotReload: true
-}, logger);
+const extensionManager = ExtensionSystemFactory.create(
+  {
+    extensionDirectory: './extensions',
+    allowDevelopmentExtensions: true,
+    enableHotReload: true,
+  },
+  logger
+);
 ```
 
 ### 3. Validate Your Extension
@@ -408,15 +418,19 @@ Congratulations! You've created your first extension. Here are some next steps:
 
 ### 1. Explore More Extension Types
 
-- **[Agent Capability Example](examples/agent-capability-example.md)** - Add skills to AI agents
-- **[NestJS Module Example](examples/nestjs-module-example.md)** - Backend service integration
-- **[API Integration Example](examples/api-integration-example.md)** - External service connectors
+- **[Agent Capability Example](examples/agent-capability-example.md)** - Add
+  skills to AI agents
+- **[NestJS Module Example](examples/nestjs-module-example.md)** - Backend
+  service integration
+- **[API Integration Example](examples/api-integration-example.md)** - External
+  service connectors
 
 ### 2. Learn Advanced Features
 
 - **[Development Guide](development-guide.md)** - Advanced extension development
 - **[Security Model](security-model.md)** - Security best practices
-- **[Integration Patterns](integration-patterns.md)** - Platform integration patterns
+- **[Integration Patterns](integration-patterns.md)** - Platform integration
+  patterns
 
 ### 3. Publish Your Extension
 
@@ -427,7 +441,8 @@ Congratulations! You've created your first extension. Here are some next steps:
 
 - **[API Reference](api-reference.md)** - Complete API documentation
 - **[Troubleshooting](troubleshooting.md)** - Common issues and solutions
-- **[Community](https://github.com/the-new-fuse/framework/discussions)** - Ask questions and share ideas
+- **[Community](https://github.com/the-new-fuse/framework/discussions)** - Ask
+  questions and share ideas
 
 ## Common Patterns
 
@@ -441,7 +456,7 @@ async execute(input: any, context: any): Promise<any> {
   } catch (error) {
     // Log the error
     this.context.logger?.error(`Processing failed: ${error.message}`);
-    
+
     // Return error result
     return {
       success: false,
@@ -461,7 +476,7 @@ async execute(input: any, context: any): Promise<any> {
     method: 'POST',
     body: JSON.stringify(input)
   });
-  
+
   return await response.json();
 }
 ```
@@ -474,11 +489,11 @@ async onConfigChange(config: Record<string, any>, context: ExtensionContext): Pr
   if (!config.apiKey) {
     throw new Error('API key is required');
   }
-  
+
   if (config.timeout && config.timeout < 1000) {
     throw new Error('Timeout must be at least 1000ms');
   }
-  
+
   this.config = { ...this.config, ...config };
 }
 ```

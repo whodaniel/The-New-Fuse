@@ -2,7 +2,7 @@
  * Workflow Validation Service - Comprehensive workflow validation
  */
 
-import { Node, Edge } from 'reactflow';
+import { Edge, Node } from 'reactflow';
 import { Workflow } from './WorkflowService';
 
 export interface ValidationResult {
@@ -26,7 +26,6 @@ export interface ValidationWarning extends ValidationError {
 }
 
 class WorkflowValidationService {
-  
   // Main validation method
   async validateWorkflow(workflow: Workflow): Promise<ValidationResult> {
     const errors: ValidationError[] = [];
@@ -34,7 +33,7 @@ class WorkflowValidationService {
 
     // Structural validation
     errors.push(...this.validateStructure(workflow.nodes, workflow.edges));
-    
+
     // Node validation
     for (const node of workflow.nodes) {
       errors.push(...this.validateNode(node, workflow.nodes, workflow.edges));
@@ -47,18 +46,18 @@ class WorkflowValidationService {
 
     // Workflow-level validation
     errors.push(...this.validateWorkflowLogic(workflow.nodes, workflow.edges));
-    
+
     // Performance warnings
     warnings.push(...this.generatePerformanceWarnings(workflow.nodes, workflow.edges));
 
     // Separate errors and warnings
-    const actualErrors = errors.filter(e => e.severity === 'error');
-    const actualWarnings = [...warnings, ...errors.filter(e => e.severity === 'warning')];
+    const actualErrors = errors.filter((e) => e.severity === 'error');
+    const actualWarnings = [...warnings, ...errors.filter((e) => e.severity === 'warning')];
 
     return {
       valid: actualErrors.length === 0,
       errors: actualErrors,
-      warnings: actualWarnings
+      warnings: actualWarnings,
     };
   }
 
@@ -72,54 +71,50 @@ class WorkflowValidationService {
         id: 'empty-workflow',
         type: 'structure',
         severity: 'error',
-        message: 'Workflow cannot be empty'
+        message: 'Workflow cannot be empty',
       });
       return errors;
     }
 
     // Check for start nodes
-    const startNodes = nodes.filter(node => 
-      !edges.some(edge => edge.target === node.id)
-    );
+    const startNodes = nodes.filter((node) => !edges.some((edge) => edge.target === node.id));
 
     if (startNodes.length === 0) {
       errors.push({
         id: 'no-start-node',
         type: 'structure',
         severity: 'error',
-        message: 'Workflow must have at least one start node (node with no incoming connections)'
+        message: 'Workflow must have at least one start node (node with no incoming connections)',
       });
     }
 
     // Check for end nodes
-    const endNodes = nodes.filter(node => 
-      !edges.some(edge => edge.source === node.id)
-    );
+    const endNodes = nodes.filter((node) => !edges.some((edge) => edge.source === node.id));
 
     if (endNodes.length === 0) {
       errors.push({
         id: 'no-end-node',
         type: 'structure',
         severity: 'warning',
-        message: 'Workflow should have at least one end node (node with no outgoing connections)'
+        message: 'Workflow should have at least one end node (node with no outgoing connections)',
       });
     }
 
     // Check for isolated nodes
     const connectedNodeIds = new Set([
-      ...edges.map(e => e.source),
-      ...edges.map(e => e.target)
+      ...edges.map((e) => e.source),
+      ...edges.map((e) => e.target),
     ]);
 
-    const isolatedNodes = nodes.filter(node => !connectedNodeIds.has(node.id));
-    
-    isolatedNodes.forEach(node => {
+    const isolatedNodes = nodes.filter((node) => !connectedNodeIds.has(node.id));
+
+    isolatedNodes.forEach((node) => {
       errors.push({
         id: `isolated-node-${node.id}`,
         type: 'structure',
         severity: 'warning',
         message: `Node "${node.data?.name || node.id}" is not connected to the workflow`,
-        nodeId: node.id
+        nodeId: node.id,
       });
     });
 
@@ -137,7 +132,7 @@ class WorkflowValidationService {
         type: 'node',
         severity: 'error',
         message: `Node "${node.id}" has no data`,
-        nodeId: node.id
+        nodeId: node.id,
       });
       return errors;
     }
@@ -149,7 +144,7 @@ class WorkflowValidationService {
         type: 'node',
         severity: 'warning',
         message: `Node "${node.id}" has no name`,
-        nodeId: node.id
+        nodeId: node.id,
       });
     }
 
@@ -186,7 +181,7 @@ class WorkflowValidationService {
         type: 'configuration',
         severity: 'error',
         message: `Agent node "${node.data?.name || node.id}" has no agent selected`,
-        nodeId: node.id
+        nodeId: node.id,
       });
     }
 
@@ -204,7 +199,7 @@ class WorkflowValidationService {
         type: 'configuration',
         severity: 'error',
         message: `MCP Tool node "${node.data?.name || node.id}" has no server selected`,
-        nodeId: node.id
+        nodeId: node.id,
       });
     }
 
@@ -214,7 +209,7 @@ class WorkflowValidationService {
         type: 'configuration',
         severity: 'error',
         message: `MCP Tool node "${node.data?.name || node.id}" has no tool selected`,
-        nodeId: node.id
+        nodeId: node.id,
       });
     }
 
@@ -233,19 +228,19 @@ class WorkflowValidationService {
         type: 'configuration',
         severity: 'error',
         message: `Condition node "${node.data?.name || node.id}" has no condition expression`,
-        nodeId: node.id
+        nodeId: node.id,
       });
     }
 
     // Check for multiple output paths
-    const outgoingEdges = allEdges.filter(edge => edge.source === node.id);
+    const outgoingEdges = allEdges.filter((edge) => edge.source === node.id);
     if (outgoingEdges.length < 2) {
       errors.push({
         id: `condition-single-path-${node.id}`,
         type: 'structure',
         severity: 'warning',
         message: `Condition node "${node.data?.name || node.id}" should have at least two output paths`,
-        nodeId: node.id
+        nodeId: node.id,
       });
     }
 
@@ -263,7 +258,7 @@ class WorkflowValidationService {
         type: 'configuration',
         severity: 'error',
         message: `Loop node "${node.data?.name || node.id}" has no collection specified`,
-        nodeId: node.id
+        nodeId: node.id,
       });
     }
 
@@ -281,7 +276,7 @@ class WorkflowValidationService {
         type: 'configuration',
         severity: 'error',
         message: `Subworkflow node "${node.data?.name || node.id}" has no subworkflow selected`,
-        nodeId: node.id
+        nodeId: node.id,
       });
     }
 
@@ -293,26 +288,26 @@ class WorkflowValidationService {
     const errors: ValidationError[] = [];
 
     // Check source node exists
-    const sourceNode = allNodes.find(node => node.id === edge.source);
+    const sourceNode = allNodes.find((node) => node.id === edge.source);
     if (!sourceNode) {
       errors.push({
         id: `edge-invalid-source-${edge.id}`,
         type: 'edge',
         severity: 'error',
         message: `Edge "${edge.id}" has invalid source node "${edge.source}"`,
-        edgeId: edge.id
+        edgeId: edge.id,
       });
     }
 
     // Check target node exists
-    const targetNode = allNodes.find(node => node.id === edge.target);
+    const targetNode = allNodes.find((node) => node.id === edge.target);
     if (!targetNode) {
       errors.push({
         id: `edge-invalid-target-${edge.id}`,
         type: 'edge',
         severity: 'error',
         message: `Edge "${edge.id}" has invalid target node "${edge.target}"`,
-        edgeId: edge.id
+        edgeId: edge.id,
       });
     }
 
@@ -323,7 +318,7 @@ class WorkflowValidationService {
         type: 'edge',
         severity: 'warning',
         message: `Edge "${edge.id}" creates a self-loop`,
-        edgeId: edge.id
+        edgeId: edge.id,
       });
     }
 
@@ -342,7 +337,7 @@ class WorkflowValidationService {
         type: 'dependency',
         severity: 'error',
         message: `Circular dependency detected: ${cycle.join(' → ')}`,
-        details: { cycle }
+        details: { cycle },
       });
     });
 
@@ -357,8 +352,8 @@ class WorkflowValidationService {
 
     // Build adjacency list
     const adjacencyList = new Map<string, string[]>();
-    nodes.forEach(node => adjacencyList.set(node.id, []));
-    edges.forEach(edge => {
+    nodes.forEach((node) => adjacencyList.set(node.id, []));
+    edges.forEach((edge) => {
       const neighbors = adjacencyList.get(edge.source) || [];
       neighbors.push(edge.target);
       adjacencyList.set(edge.source, neighbors);
@@ -387,7 +382,7 @@ class WorkflowValidationService {
     };
 
     // Check each unvisited node
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       if (!visited.has(node.id)) {
         dfs(node.id, []);
       }
@@ -406,7 +401,7 @@ class WorkflowValidationService {
         id: 'too-many-nodes',
         type: 'structure',
         severity: 'warning',
-        message: `Workflow has ${nodes.length} nodes. Consider breaking it into smaller workflows for better performance.`
+        message: `Workflow has ${nodes.length} nodes. Consider breaking it into smaller workflows for better performance.`,
       });
     }
 
@@ -417,7 +412,7 @@ class WorkflowValidationService {
         id: 'deep-nesting',
         type: 'structure',
         severity: 'warning',
-        message: `Workflow has a maximum depth of ${maxDepth} levels. Deep nesting can impact performance.`
+        message: `Workflow has a maximum depth of ${maxDepth} levels. Deep nesting can impact performance.`,
       });
     }
 
@@ -427,16 +422,14 @@ class WorkflowValidationService {
   // Calculate maximum depth of the workflow
   private calculateMaxDepth(nodes: Node[], edges: Edge[]): number {
     // Find start nodes
-    const startNodes = nodes.filter(node => 
-      !edges.some(edge => edge.target === node.id)
-    );
+    const startNodes = nodes.filter((node) => !edges.some((edge) => edge.target === node.id));
 
     if (startNodes.length === 0) return 0;
 
     // Build adjacency list
     const adjacencyList = new Map<string, string[]>();
-    nodes.forEach(node => adjacencyList.set(node.id, []));
-    edges.forEach(edge => {
+    nodes.forEach((node) => adjacencyList.set(node.id, []));
+    edges.forEach((edge) => {
       const neighbors = adjacencyList.get(edge.source) || [];
       neighbors.push(edge.target);
       adjacencyList.set(edge.source, neighbors);
@@ -444,19 +437,22 @@ class WorkflowValidationService {
 
     // BFS to find maximum depth
     let maxDepth = 0;
-    const queue: { nodeId: string; depth: number }[] = startNodes.map(node => ({ nodeId: node.id, depth: 1 }));
+    const queue: { nodeId: string; depth: number }[] = startNodes.map((node) => ({
+      nodeId: node.id,
+      depth: 1,
+    }));
     const visited = new Set<string>();
 
     while (queue.length > 0) {
       const { nodeId, depth } = queue.shift()!;
-      
+
       if (visited.has(nodeId)) continue;
       visited.add(nodeId);
-      
+
       maxDepth = Math.max(maxDepth, depth);
 
       const neighbors = adjacencyList.get(nodeId) || [];
-      neighbors.forEach(neighbor => {
+      neighbors.forEach((neighbor) => {
         if (!visited.has(neighbor)) {
           queue.push({ nodeId: neighbor, depth: depth + 1 });
         }
@@ -481,7 +477,7 @@ class WorkflowValidationService {
         id: 'self-connection',
         type: 'edge',
         severity: 'warning',
-        message: 'Cannot connect a node to itself'
+        message: 'Cannot connect a node to itself',
       });
     }
 
@@ -491,7 +487,7 @@ class WorkflowValidationService {
         id: 'input-to-input',
         type: 'edge',
         severity: 'error',
-        message: 'Cannot connect input node to another input node'
+        message: 'Cannot connect input node to another input node',
       });
     }
 
@@ -500,7 +496,7 @@ class WorkflowValidationService {
         id: 'output-to-output',
         type: 'edge',
         severity: 'error',
-        message: 'Cannot connect output node to another output node'
+        message: 'Cannot connect output node to another output node',
       });
     }
 

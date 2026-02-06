@@ -13,25 +13,25 @@ spec:
         app: fuse-frontend
     spec:
       containers:
-      - name: frontend
-        image: fuse-frontend:latest
-        ports:
-        - containerPort: 80
-        env:
-        - name: NODE_ENV
-          value: production
-        - name: API_URL
-          value: http://fuse-api:80
-        resources:
-          limits:
-            cpu: "500m"
-            memory: "512Mi"
-          requests:
-            cpu: "200m"
-            memory: "256Mi"
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 10
-          periodSeconds: 10
+        - name: frontend
+          image: fuse-frontend:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: API_URL
+              value: http://fuse-api:80
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10

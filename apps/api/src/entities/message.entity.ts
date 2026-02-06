@@ -1,15 +1,15 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
+  Entity,
   ManyToOne,
   OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { User } from './user.entity';
-import { ChatRoom } from './chat-room.entity';
 import { Agent } from './agent.entity';
+import { ChatRoom } from './chat-room.entity';
+import { User } from './user.entity';
 
 @Entity('messages')
 export class Message {

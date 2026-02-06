@@ -172,7 +172,7 @@
 
 **Key Changes:**
 
-- `@prisma/client`: 7.1.0 → 7.2.0
+- `@drizzle/client`: 7.1.0 → 7.2.0
 - `viem`: 2.41.2 → 2.43.3
 - `@nestjs/config`: 3.1.1 → 4.0.2
 - Various other version bumps

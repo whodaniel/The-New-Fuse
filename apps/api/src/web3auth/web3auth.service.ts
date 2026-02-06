@@ -1,8 +1,8 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { Web3Auth } from '@web3auth/node-sdk';
 import { CHAIN_NAMESPACES, WEB3AUTH_NETWORK } from '@web3auth/base';
 import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider';
-import { createWalletClient, http, getAddress } from 'viem';
+import { Web3Auth } from '@web3auth/node-sdk';
+import { createWalletClient, getAddress, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet } from 'viem/chains';
 
@@ -27,13 +27,15 @@ export class Web3authService implements OnModuleInit {
 
       const clientId = process.env.WEB3AUTH_CLIENT_ID;
       if (!clientId) {
-        this.logger.warn('WEB3AUTH_CLIENT_ID environment variable is missing. Web3Auth module will be disabled.');
+        this.logger.warn(
+          'WEB3AUTH_CLIENT_ID environment variable is missing. Web3Auth module will be disabled.'
+        );
         return;
       }
 
       // Initialize the Ethereum provider
       this.privateKeyProvider = new EthereumPrivateKeyProvider({
-        config: { chainConfig: this.chainConfig }
+        config: { chainConfig: this.chainConfig },
       });
 
       // Initialize Web3Auth
@@ -52,10 +54,14 @@ export class Web3authService implements OnModuleInit {
     }
   }
 
-  async getProvider(verifierId: string): Promise<{ provider: any; account: any; walletClient: any }> {
+  async getProvider(
+    verifierId: string
+  ): Promise<{ provider: any; account: any; walletClient: any }> {
     try {
       if (!this.web3auth) {
-        throw new Error('Web3Auth is not initialized. Check WEB3AUTH_CLIENT_ID environment variable.');
+        throw new Error(
+          'Web3Auth is not initialized. Check WEB3AUTH_CLIENT_ID environment variable.'
+        );
       }
       this.logger.log(`Getting provider for verifierId: ${verifierId}`);
 
@@ -67,7 +73,7 @@ export class Web3authService implements OnModuleInit {
       const web3authProvider = await this.web3auth.connect({
         verifier: 'tnf-server-verifier', // Configure this in Web3Auth dashboard
         verifierId,
-        idToken
+        idToken,
       } as any); // Type assertion needed as the API types may be out of sync
 
       if (!web3authProvider) {
@@ -76,15 +82,18 @@ export class Web3authService implements OnModuleInit {
 
       // Get private key from the provider - use the privateKeyProvider instead
       let privateKey: string;
-      if (this.privateKeyProvider && typeof (this.privateKeyProvider as any).request === 'function') {
-        privateKey = await (this.privateKeyProvider as any).request({
-          method: 'eth_private_key'
-        }) as string;
+      if (
+        this.privateKeyProvider &&
+        typeof (this.privateKeyProvider as any).request === 'function'
+      ) {
+        privateKey = (await (this.privateKeyProvider as any).request({
+          method: 'eth_private_key',
+        })) as string;
       } else {
         // Fallback - try to get from web3auth provider directly
-        privateKey = await (web3authProvider as any).request?.({
-          method: 'eth_private_key'
-        }) as string;
+        privateKey = (await (web3authProvider as any).request?.({
+          method: 'eth_private_key',
+        })) as string;
       }
 
       if (!privateKey) {
@@ -96,13 +105,13 @@ export class Web3authService implements OnModuleInit {
       const walletClient = createWalletClient({
         account,
         chain: mainnet,
-        transport: http()
+        transport: http(),
       });
 
       return {
         provider: web3authProvider,
         account,
-        walletClient
+        walletClient,
       };
     } catch (error) {
       this.logger.error(`Failed to get provider for verifierId ${verifierId}:`, error);

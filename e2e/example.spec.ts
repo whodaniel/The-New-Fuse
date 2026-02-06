@@ -4,7 +4,7 @@
  * This is an example of how to write E2E tests with Playwright.
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Homepage', () => {
   test('should load successfully', async ({ page }) => {

@@ -1,14 +1,21 @@
 # Prompt Handoff Flywheel System
 
-The Prompt Handoff Flywheel System provides seamless prompt handoff capabilities that maintain context and execution state as prompts move between agents, integrating with existing template and orchestration systems.
+The Prompt Handoff Flywheel System provides seamless prompt handoff capabilities
+that maintain context and execution state as prompts move between agents,
+integrating with existing template and orchestration systems.
 
 ## Overview
 
-The system addresses the critical need for maintaining context continuity when tasks are handed off between different agents in a multi-agent environment. It provides:
+The system addresses the critical need for maintaining context continuity when
+tasks are handed off between different agents in a multi-agent environment. It
+provides:
 
-- **Complete Context Preservation**: Maintains full execution history and context across handoffs
-- **Template Versioning**: Automatic updates and synchronization of prompt templates
-- **Load Balancing**: Intelligent agent selection based on capabilities and current load
+- **Complete Context Preservation**: Maintains full execution history and
+  context across handoffs
+- **Template Versioning**: Automatic updates and synchronization of prompt
+  templates
+- **Load Balancing**: Intelligent agent selection based on capabilities and
+  current load
 - **Backpressure Management**: Prevents system overload through queue management
 - **Unified Analytics**: Comprehensive metrics and performance tracking
 
@@ -21,27 +28,27 @@ graph TB
         EHS[EnhancedAgentHandoffTemplateService]
         PTI[PromptTemplateIntegration]
     end
-    
+
     subgraph "Existing Infrastructure"
         SO[SyncOrchestrator]
         MC[MasterClockService]
         CM[ConflictManager]
         PTS[PromptTemplateService]
     end
-    
+
     subgraph "Agent Network"
         A1[Agent 1]
         A2[Agent 2]
         A3[Agent N]
     end
-    
+
     PF --> SO
     PF --> MC
     PF --> CM
     EHS --> PF
     PTI --> EHS
     PTI --> PTS
-    
+
     PF -.-> A1
     PF -.-> A2
     PF -.-> A3
@@ -51,9 +58,11 @@ graph TB
 
 ### PromptHandoffFlywheel
 
-The main orchestration engine that manages handoff contexts, queues, and agent coordination.
+The main orchestration engine that manages handoff contexts, queues, and agent
+coordination.
 
 **Key Features:**
+
 - Context lifecycle management
 - Agent capability matching
 - Load balancing algorithms
@@ -62,9 +71,11 @@ The main orchestration engine that manages handoff contexts, queues, and agent c
 
 ### EnhancedAgentHandoffTemplateService
 
-Extends existing template services with flywheel protocol integration, providing versioning, analytics, and real-time synchronization.
+Extends existing template services with flywheel protocol integration, providing
+versioning, analytics, and real-time synchronization.
 
 **Key Features:**
+
 - Template versioning and history
 - Session management
 - Performance analytics
@@ -72,9 +83,11 @@ Extends existing template services with flywheel protocol integration, providing
 
 ### PromptTemplateIntegration
 
-Bridges the flywheel system with existing PromptTemplateServiceImpl for unified template management.
+Bridges the flywheel system with existing PromptTemplateServiceImpl for unified
+template management.
 
 **Key Features:**
+
 - Bidirectional synchronization
 - Conflict resolution
 - Unified execution
@@ -103,6 +116,7 @@ interface HandoffExecution {
 ```
 
 **Implementation:**
+
 - Complete execution history tracking
 - Context preservation scoring
 - Variable and metadata continuity
@@ -126,6 +140,7 @@ interface TemplateVersion {
 ```
 
 **Implementation:**
+
 - Automatic version incrementing
 - Cross-instance synchronization
 - Active handoff updates
@@ -135,10 +150,7 @@ interface TemplateVersion {
 
 ```typescript
 // Load balancing based on agent capabilities and current load
-const optimalAgent = await selectOptimalAgent(
-  requiredCapabilities,
-  priority
-);
+const optimalAgent = await selectOptimalAgent(requiredCapabilities, priority);
 
 // Backpressure management
 if (await shouldApplyBackpressure(queue, context)) {
@@ -147,6 +159,7 @@ if (await shouldApplyBackpressure(queue, context)) {
 ```
 
 **Implementation:**
+
 - Capability-based agent selection
 - Load-aware distribution
 - Queue size monitoring
@@ -165,6 +178,7 @@ if (context.retryCount > context.maxRetries) {
 ```
 
 **Implementation:**
+
 - Configurable retry limits
 - Exponential backoff delays
 - Human escalation triggers
@@ -184,6 +198,7 @@ interface TemplateAnalytics {
 ```
 
 **Implementation:**
+
 - Real-time metrics collection
 - Performance trend analysis
 - Agent utilization tracking
@@ -194,9 +209,9 @@ interface TemplateAnalytics {
 ### Basic Handoff Setup
 
 ```typescript
-import { 
+import {
   PromptHandoffFlywheel,
-  EnhancedAgentHandoffTemplateService 
+  EnhancedAgentHandoffTemplateService,
 } from '@the-new-fuse/sync-core';
 
 // Initialize services
@@ -228,11 +243,11 @@ Review Focus: {{review_focus}}
 Please provide comprehensive code review.`,
   variables: {
     code_changes: '',
-    review_focus: 'general'
+    review_focus: 'general',
   },
   contextRequirements: ['code_changes', 'execution_history'],
   agentCapabilities: ['coding', 'review'],
-  successCriteria: ['code_reviewed', 'context_preserved']
+  successCriteria: ['code_reviewed', 'context_preserved'],
 });
 
 // Initiate handoff session
@@ -241,11 +256,11 @@ const sessionId = await handoffService.initiateHandoffSession(
   templateId,
   {
     code_changes: 'function example() { return "hello"; }',
-    review_focus: 'security and performance'
+    review_focus: 'security and performance',
   },
   {
     targetAgentId: 'code-agent',
-    preserveContext: true
+    preserveContext: true,
   }
 );
 ```
@@ -259,7 +274,7 @@ const templateId = await handoffService.createEnhancedHandoffTemplate({
   // ... other properties
   backpressureThreshold: 5,
   loadBalancingWeight: 2.0,
-  agentCapabilities: ['general']
+  agentCapabilities: ['general'],
 });
 
 // Update agent loads
@@ -291,7 +306,7 @@ const integration = new PromptTemplateIntegration(
 await integration.integrateTemplate(templateId, {
   createBaseTemplate: true,
   autoSync: true,
-  conflictResolution: 'merge'
+  conflictResolution: 'merge',
 });
 
 // Execute via different methods
@@ -323,7 +338,7 @@ console.log(`Average handoff time: ${metrics.averageHandoffTime}ms`);
 // Generate comprehensive report
 const report = await handoffService.generateHandoffReport(templateId, {
   start: new Date(Date.now() - 24 * 60 * 60 * 1000),
-  end: new Date()
+  end: new Date(),
 });
 
 // Set up real-time monitoring
@@ -415,11 +430,11 @@ interface HandoffError {
 
 ```typescript
 // Template conflict resolution strategies
-type ConflictResolution = 
-  | 'handoff_wins'    // Handoff template takes precedence
-  | 'base_wins'       // Base template takes precedence
-  | 'merge'           // Attempt to merge changes
-  | 'manual';         // Require manual resolution
+type ConflictResolution =
+  | 'handoff_wins' // Handoff template takes precedence
+  | 'base_wins' // Base template takes precedence
+  | 'merge' // Attempt to merge changes
+  | 'manual'; // Require manual resolution
 
 // Conflict detection
 interface TemplateConflict {
@@ -435,14 +450,17 @@ interface TemplateConflict {
 
 ### Scalability
 
-- **Horizontal Scaling**: Flywheel instances can be distributed across multiple nodes
-- **Queue Distribution**: Handoff queues are distributed based on agent capabilities
+- **Horizontal Scaling**: Flywheel instances can be distributed across multiple
+  nodes
+- **Queue Distribution**: Handoff queues are distributed based on agent
+  capabilities
 - **Load Balancing**: Automatic load distribution prevents bottlenecks
 - **Caching**: Template compilation results are cached for performance
 
 ### Memory Management
 
-- **Context Cleanup**: Completed contexts are archived after configurable retention period
+- **Context Cleanup**: Completed contexts are archived after configurable
+  retention period
 - **Template Versioning**: Old template versions are cleaned up automatically
 - **Metrics Aggregation**: Historical metrics are aggregated to reduce storage
 
@@ -514,8 +532,10 @@ CREATE TABLE handoff_templates (
 
 ### Template Design
 
-1. **Clear Context Requirements**: Specify exactly what context elements are needed
-2. **Capability Matching**: Ensure agent capabilities align with template requirements
+1. **Clear Context Requirements**: Specify exactly what context elements are
+   needed
+2. **Capability Matching**: Ensure agent capabilities align with template
+   requirements
 3. **Success Criteria**: Define clear, measurable success criteria
 4. **Variable Defaults**: Provide sensible default values for all variables
 
@@ -535,7 +555,8 @@ CREATE TABLE handoff_templates (
 
 ### Error Handling
 
-1. **Retry Strategies**: Implement appropriate retry strategies for different error types
+1. **Retry Strategies**: Implement appropriate retry strategies for different
+   error types
 2. **Escalation Paths**: Define clear escalation paths for unresolvable errors
 3. **Logging**: Comprehensive logging for debugging and monitoring
 4. **Fallback Mechanisms**: Implement fallback mechanisms for critical failures
@@ -552,8 +573,10 @@ CREATE TABLE handoff_templates (
 
 ### Debugging Tools
 
-1. **Context Inspection**: Tools to inspect handoff contexts and execution history
-2. **Template Validation**: Validation tools for template syntax and requirements
+1. **Context Inspection**: Tools to inspect handoff contexts and execution
+   history
+2. **Template Validation**: Validation tools for template syntax and
+   requirements
 3. **Agent Monitoring**: Real-time agent status and performance monitoring
 4. **Queue Analysis**: Tools to analyze queue performance and bottlenecks
 5. **Metrics Dashboard**: Comprehensive metrics and analytics dashboard
@@ -580,9 +603,11 @@ CREATE TABLE handoff_templates (
 
 ### Planned Features
 
-1. **ML-based Context Preservation**: Use machine learning to improve context preservation
+1. **ML-based Context Preservation**: Use machine learning to improve context
+   preservation
 2. **Advanced Load Balancing**: More sophisticated load balancing algorithms
-3. **Template Optimization**: Automatic template optimization based on performance
+3. **Template Optimization**: Automatic template optimization based on
+   performance
 4. **Multi-tenant Isolation**: Enhanced multi-tenant support
 5. **Integration Expansion**: Integration with more external services
 
@@ -590,7 +615,8 @@ CREATE TABLE handoff_templates (
 
 The system is designed to be extensible with:
 
-- **Custom Load Balancing Strategies**: Implement custom load balancing algorithms
+- **Custom Load Balancing Strategies**: Implement custom load balancing
+  algorithms
 - **Custom Conflict Resolution**: Add custom conflict resolution strategies
 - **Custom Metrics Collectors**: Implement custom metrics collection
 - **Custom Template Processors**: Add custom template processing logic
@@ -598,6 +624,11 @@ The system is designed to be extensible with:
 
 ## Conclusion
 
-The Prompt Handoff Flywheel System provides a comprehensive solution for maintaining context continuity in multi-agent environments. It integrates seamlessly with existing infrastructure while providing advanced features for load balancing, error handling, and analytics.
+The Prompt Handoff Flywheel System provides a comprehensive solution for
+maintaining context continuity in multi-agent environments. It integrates
+seamlessly with existing infrastructure while providing advanced features for
+load balancing, error handling, and analytics.
 
-The system fulfills all requirements for context preservation, template versioning, backpressure management, error handling, and unified analytics, making it a robust foundation for complex multi-agent workflows.
+The system fulfills all requirements for context preservation, template
+versioning, backpressure management, error handling, and unified analytics,
+making it a robust foundation for complex multi-agent workflows.

@@ -88,7 +88,8 @@ This document tracks the implementation status of the detailed AI Diplomacy agen
 
 ---
 
-**Status:**  
+**Status:**
+
 - The template and builder infrastructure are in place.
 - Core agent, memory, and analytics infrastructure is present.
 - **Major sub-workflow services and orchestration logic are still needed for full agentic workflow execution.**

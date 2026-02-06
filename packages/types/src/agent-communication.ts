@@ -1,5 +1,5 @@
-import { Message } from "./communication.js";
-import { Priority } from "./core/enums.js";
+import { Message } from './communication.js';
+import { Priority } from './core/enums.js';
 
 export interface AgentMessage extends Message {
   /** Agent ID that sent the message */
@@ -20,7 +20,7 @@ export interface AgentResponse {
   /** Agent ID that sent the response */
   agentId: string;
   /** Response status */
-  status: "success" | "error" | "pending";
+  status: 'success' | 'error' | 'pending';
   /** Response data */
   data?: unknown;
   /** Error information if status is error */

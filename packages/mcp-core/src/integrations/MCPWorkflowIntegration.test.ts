@@ -3,21 +3,21 @@
  */
 
 import { EventEmitter } from 'events';
-import { MCPWorkflowIntegration, MCPWorkflowIntegrationConfig } from './MCPWorkflowIntegration';
-import { 
-  WorkflowStep, 
-  WorkflowContext, 
-  Task, 
-  MCPCallback, 
-  TaskExecutionStatus,
-  ErrorRecoveryConfig,
-  MonitoringConfig
-} from '../interfaces/IMCPWorkflowIntegration';
-import { IMCPClient } from '../interfaces/IMCPClient';
 import { IMCPBroker } from '../interfaces/IMCPBroker';
+import { IMCPClient } from '../interfaces/IMCPClient';
 import { MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
-import { RetryPolicy } from '../types/common';
+import {
+  ErrorRecoveryConfig,
+  MCPCallback,
+  MonitoringConfig,
+  Task,
+  TaskExecutionStatus,
+  WorkflowContext,
+  WorkflowStep,
+} from '../interfaces/IMCPWorkflowIntegration';
 import { MCPServiceInfo } from '../types/broker';
+import { RetryPolicy } from '../types/common';
+import { MCPWorkflowIntegration, MCPWorkflowIntegrationConfig } from './MCPWorkflowIntegration';
 
 // Mock implementations
 class MockMCPClient extends EventEmitter implements IMCPClient {
@@ -38,7 +38,7 @@ class MockMCPClient extends EventEmitter implements IMCPClient {
     const response = this.responses.get(request.method) || {
       jsonrpc: '2.0',
       id: request.id,
-      result: { success: true, data: 'mock result' }
+      result: { success: true, data: 'mock result' },
     };
 
     return response;
@@ -56,10 +56,18 @@ class MockMCPClient extends EventEmitter implements IMCPClient {
 
   // Other required methods (simplified)
   async subscribeToNotifications(): Promise<void> {}
-  async listResources(): Promise<any[]> { return []; }
-  async readResource(): Promise<any> { return {}; }
-  async callTool(): Promise<any> { return {}; }
-  async getServerCapabilities(): Promise<any[]> { return []; }
+  async listResources(): Promise<any[]> {
+    return [];
+  }
+  async readResource(): Promise<any> {
+    return {};
+  }
+  async callTool(): Promise<any> {
+    return {};
+  }
+  async getServerCapabilities(): Promise<any[]> {
+    return [];
+  }
 }
 
 class MockMCPBroker extends EventEmitter implements IMCPBroker {
@@ -99,7 +107,7 @@ describe('MCPWorkflowIntegration', () => {
     maxAttempts: 2,
     baseDelay: 100,
     maxDelay: 1000,
-    strategy: 'exponential'
+    strategy: 'exponential',
   };
 
   const defaultErrorRecovery: ErrorRecoveryConfig = {
@@ -108,7 +116,7 @@ describe('MCPWorkflowIntegration', () => {
     baseDelay: 100,
     maxDelay: 5000,
     enableFallback: true,
-    fallbackServices: ['fallback-service']
+    fallbackServices: ['fallback-service'],
   };
 
   const defaultMonitoring: MonitoringConfig = {
@@ -116,13 +124,13 @@ describe('MCPWorkflowIntegration', () => {
     enableMetrics: true,
     enableDetailedLogging: false,
     metricsInterval: 1000,
-    logLevel: 'info'
+    logLevel: 'info',
   };
 
   beforeEach(() => {
     mockClient = new MockMCPClient();
     mockBroker = new MockMCPBroker();
-    
+
     config = {
       client: mockClient,
       broker: mockBroker,
@@ -130,7 +138,7 @@ describe('MCPWorkflowIntegration', () => {
       defaultRetryPolicy,
       errorRecovery: defaultErrorRecovery,
       monitoring: defaultMonitoring,
-      debug: false
+      debug: false,
     };
 
     integration = new MCPWorkflowIntegration(config);
@@ -172,7 +180,7 @@ describe('MCPWorkflowIntegration', () => {
         type: 'mcp_call',
         mcpService: 'test-service',
         mcpMethod: 'test-method',
-        parameters: { input: 'test' }
+        parameters: { input: 'test' },
       };
 
       const context: WorkflowContext = {
@@ -181,13 +189,13 @@ describe('MCPWorkflowIntegration', () => {
         currentStepId: 'test-step',
         input: {},
         stepResults: {},
-        variables: {}
+        variables: {},
       };
 
       mockClient.setResponse('test-method', {
         jsonrpc: '2.0',
         id: 'test-id',
-        result: { output: 'success' }
+        result: { output: 'success' },
       });
 
       const result = await integration.executeWorkflowStep(step, context);
@@ -204,7 +212,7 @@ describe('MCPWorkflowIntegration', () => {
         type: 'mcp_resource',
         mcpService: 'resource-service',
         mcpMethod: 'get-resource',
-        parameters: { uri: 'file://test.txt' }
+        parameters: { uri: 'file://test.txt' },
       };
 
       const context: WorkflowContext = {
@@ -213,13 +221,13 @@ describe('MCPWorkflowIntegration', () => {
         currentStepId: 'resource-step',
         input: {},
         stepResults: {},
-        variables: {}
+        variables: {},
       };
 
       mockClient.setResponse('resources/read', {
         jsonrpc: '2.0',
         id: 'resource-id',
-        result: { content: 'file content' }
+        result: { content: 'file content' },
       });
 
       const result = await integration.executeWorkflowStep(step, context);
@@ -234,7 +242,7 @@ describe('MCPWorkflowIntegration', () => {
         type: 'mcp_tool',
         mcpService: 'tool-service',
         mcpMethod: 'calculate',
-        parameters: { operation: 'add', values: [1, 2, 3] }
+        parameters: { operation: 'add', values: [1, 2, 3] },
       };
 
       const context: WorkflowContext = {
@@ -243,13 +251,13 @@ describe('MCPWorkflowIntegration', () => {
         currentStepId: 'tool-step',
         input: {},
         stepResults: {},
-        variables: {}
+        variables: {},
       };
 
       mockClient.setResponse('tools/call', {
         jsonrpc: '2.0',
         id: 'tool-id',
-        result: { result: 6 }
+        result: { result: 6 },
       });
 
       const result = await integration.executeWorkflowStep(step, context);
@@ -264,7 +272,7 @@ describe('MCPWorkflowIntegration', () => {
         type: 'mcp_call',
         mcpService: 'test-service',
         mcpMethod: 'failing-method',
-        parameters: {}
+        parameters: {},
       };
 
       const context: WorkflowContext = {
@@ -273,7 +281,7 @@ describe('MCPWorkflowIntegration', () => {
         currentStepId: 'failing-step',
         input: {},
         stepResults: {},
-        variables: {}
+        variables: {},
       };
 
       mockClient.setFailure(true, 3);
@@ -291,10 +299,10 @@ describe('MCPWorkflowIntegration', () => {
         type: 'mcp_call',
         mcpService: 'test-service',
         mcpMethod: 'test-method',
-        parameters: { 
+        parameters: {
           message: '${variables.greeting} ${input.name}',
-          count: '${stepResults.previous.count}'
-        }
+          count: '${stepResults.previous.count}',
+        },
       };
 
       const context: WorkflowContext = {
@@ -303,7 +311,7 @@ describe('MCPWorkflowIntegration', () => {
         currentStepId: 'param-step',
         input: { name: 'World' },
         stepResults: { previous: { count: 42 } },
-        variables: { greeting: 'Hello' }
+        variables: { greeting: 'Hello' },
       };
 
       let capturedRequest: MCPRequest | null = null;
@@ -312,7 +320,7 @@ describe('MCPWorkflowIntegration', () => {
         return Promise.resolve({
           jsonrpc: '2.0',
           id: request.id,
-          result: { success: true }
+          result: { success: true },
         });
       });
 
@@ -320,7 +328,7 @@ describe('MCPWorkflowIntegration', () => {
 
       expect(capturedRequest?.params).toEqual({
         message: 'Hello World',
-        count: '42'
+        count: '42',
       });
     });
 
@@ -330,7 +338,7 @@ describe('MCPWorkflowIntegration', () => {
         type: 'mcp_call',
         mcpService: '',
         mcpMethod: '',
-        parameters: {}
+        parameters: {},
       };
 
       const context: WorkflowContext = {
@@ -339,7 +347,7 @@ describe('MCPWorkflowIntegration', () => {
         currentStepId: 'invalid-step',
         input: {},
         stepResults: {},
-        variables: {}
+        variables: {},
       };
 
       const result = await integration.executeWorkflowStep(invalidStep, context);
@@ -354,7 +362,7 @@ describe('MCPWorkflowIntegration', () => {
         type: 'mcp_call',
         mcpService: 'test-service',
         mcpMethod: 'test-method',
-        parameters: {}
+        parameters: {},
       };
 
       const context: WorkflowContext = {
@@ -363,7 +371,7 @@ describe('MCPWorkflowIntegration', () => {
         currentStepId: 'event-step',
         input: {},
         stepResults: {},
-        variables: {}
+        variables: {},
       };
 
       const stepCompletedPromise = new Promise<any>((resolve) => {
@@ -382,7 +390,7 @@ describe('MCPWorkflowIntegration', () => {
   describe('delegateTask', () => {
     beforeEach(async () => {
       await integration.initialize();
-      
+
       // Add mock service
       mockBroker.addMockService('task-service', {
         id: 'task-service-1',
@@ -395,7 +403,7 @@ describe('MCPWorkflowIntegration', () => {
         status: 'online' as any,
         metadata: {},
         registeredAt: new Date(),
-        lastHeartbeat: new Date()
+        lastHeartbeat: new Date(),
       });
     });
 
@@ -403,13 +411,13 @@ describe('MCPWorkflowIntegration', () => {
       const task: Task = {
         id: 'task-1',
         type: 'calculate',
-        parameters: { operation: 'multiply', values: [3, 4] }
+        parameters: { operation: 'multiply', values: [3, 4] },
       };
 
       mockClient.setResponse('tools/call', {
         jsonrpc: '2.0',
         id: 'task-id',
-        result: { result: 12 }
+        result: { result: 12 },
       });
 
       const result = await integration.delegateTask(task, 'task-service');
@@ -424,7 +432,7 @@ describe('MCPWorkflowIntegration', () => {
       const task: Task = {
         id: 'task-2',
         type: 'calculate',
-        parameters: {}
+        parameters: {},
       };
 
       const result = await integration.delegateTask(task, 'nonexistent-service');
@@ -438,7 +446,7 @@ describe('MCPWorkflowIntegration', () => {
       const task: Task = {
         id: 'task-3',
         type: 'failing-task',
-        parameters: {}
+        parameters: {},
       };
 
       mockClient.setResponse('tools/call', {
@@ -446,8 +454,8 @@ describe('MCPWorkflowIntegration', () => {
         id: 'task-id',
         error: {
           code: -32603,
-          message: 'Task execution failed'
-        }
+          message: 'Task execution failed',
+        },
       });
 
       const result = await integration.delegateTask(task, 'task-service');
@@ -461,7 +469,7 @@ describe('MCPWorkflowIntegration', () => {
       const task: Task = {
         id: 'task-4',
         type: 'test-task',
-        parameters: {}
+        parameters: {},
       };
 
       const taskCompletedPromise = new Promise<any>((resolve) => {
@@ -485,7 +493,7 @@ describe('MCPWorkflowIntegration', () => {
       const task: Task = {
         id: 'tracked-task',
         type: 'test',
-        parameters: {}
+        parameters: {},
       };
 
       // Add mock service
@@ -500,7 +508,7 @@ describe('MCPWorkflowIntegration', () => {
         status: 'online' as any,
         metadata: {},
         registeredAt: new Date(),
-        lastHeartbeat: new Date()
+        lastHeartbeat: new Date(),
       });
 
       const taskResult = await integration.delegateTask(task, 'task-service');
@@ -512,8 +520,9 @@ describe('MCPWorkflowIntegration', () => {
     });
 
     it('should throw error for unknown execution', async () => {
-      await expect(integration.trackMCPExecution('unknown-execution'))
-        .rejects.toThrow('Execution not found');
+      await expect(integration.trackMCPExecution('unknown-execution')).rejects.toThrow(
+        'Execution not found'
+      );
     });
   });
 
@@ -524,12 +533,12 @@ describe('MCPWorkflowIntegration', () => {
 
     it('should handle progress callback', async () => {
       const executionId = 'test-execution';
-      
+
       // Create a tracked execution first
       const task: Task = {
         id: 'callback-task',
         type: 'test',
-        parameters: {}
+        parameters: {},
       };
 
       mockBroker.addMockService('task-service', {
@@ -543,7 +552,7 @@ describe('MCPWorkflowIntegration', () => {
         status: 'online' as any,
         metadata: {},
         registeredAt: new Date(),
-        lastHeartbeat: new Date()
+        lastHeartbeat: new Date(),
       });
 
       const taskResult = await integration.delegateTask(task, 'task-service');
@@ -553,7 +562,7 @@ describe('MCPWorkflowIntegration', () => {
         executionId: taskResult.executionId,
         payload: { progress: 50, message: 'Half done' },
         timestamp: new Date(),
-        source: 'task-service'
+        source: 'task-service',
       };
 
       await integration.handleMCPCallback(callback);
@@ -567,7 +576,7 @@ describe('MCPWorkflowIntegration', () => {
       const task: Task = {
         id: 'result-task',
         type: 'test',
-        parameters: {}
+        parameters: {},
       };
 
       mockBroker.addMockService('task-service', {
@@ -581,7 +590,7 @@ describe('MCPWorkflowIntegration', () => {
         status: 'online' as any,
         metadata: {},
         registeredAt: new Date(),
-        lastHeartbeat: new Date()
+        lastHeartbeat: new Date(),
       });
 
       const taskResult = await integration.delegateTask(task, 'task-service');
@@ -591,7 +600,7 @@ describe('MCPWorkflowIntegration', () => {
         executionId: taskResult.executionId,
         payload: { finalResult: 'completed' },
         timestamp: new Date(),
-        source: 'task-service'
+        source: 'task-service',
       };
 
       await integration.handleMCPCallback(callback);
@@ -607,7 +616,7 @@ describe('MCPWorkflowIntegration', () => {
         executionId: 'test-execution',
         payload: { status: 'running' },
         timestamp: new Date(),
-        source: 'test-service'
+        source: 'test-service',
       };
 
       const callbackPromise = new Promise<MCPCallback>((resolve) => {
@@ -635,7 +644,7 @@ describe('MCPWorkflowIntegration', () => {
         executionId,
         payload: { progress: 25 },
         timestamp: new Date(),
-        source: 'test-service'
+        source: 'test-service',
       };
 
       await integration.handleMCPCallback(callback);
@@ -663,7 +672,7 @@ describe('MCPWorkflowIntegration', () => {
         executionId,
         payload: {},
         timestamp: new Date(),
-        source: 'test'
+        source: 'test',
       };
 
       integration.handleMCPCallback(callback);
@@ -674,7 +683,7 @@ describe('MCPWorkflowIntegration', () => {
   describe('execution statistics', () => {
     beforeEach(async () => {
       await integration.initialize();
-      
+
       mockBroker.addMockService('stats-service', {
         id: 'stats-service-1',
         name: 'stats-service',
@@ -686,7 +695,7 @@ describe('MCPWorkflowIntegration', () => {
         status: 'online' as any,
         metadata: {},
         registeredAt: new Date(),
-        lastHeartbeat: new Date()
+        lastHeartbeat: new Date(),
       });
     });
 
@@ -695,7 +704,7 @@ describe('MCPWorkflowIntegration', () => {
       const task2: Task = { id: 'task-2', type: 'test', parameters: {} };
 
       await integration.delegateTask(task1, 'stats-service');
-      
+
       mockClient.setFailure(true, 3);
       await integration.delegateTask(task2, 'stats-service');
 

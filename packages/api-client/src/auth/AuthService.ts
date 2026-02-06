@@ -75,7 +75,7 @@ export class AuthService {
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     const response = await this.apiClient.post<AuthResponse>('/auth/login', credentials);
-    
+
     return response;
   }
 
@@ -86,7 +86,7 @@ export class AuthService {
    */
   async register(data: RegisterData): Promise<AuthResponse> {
     const response = await this.apiClient.post<AuthResponse>('/auth/register', data);
-    
+
     return response;
   }
 
@@ -97,7 +97,7 @@ export class AuthService {
   async logout(): Promise<void> {
     try {
       const refreshToken = localStorage.getItem('refreshToken');
-      
+
       if (refreshToken) {
         await this.apiClient.post('/auth/logout', { refreshToken });
       }
@@ -115,13 +115,13 @@ export class AuthService {
    */
   async refreshToken(): Promise<AuthResponse> {
     const refreshToken = localStorage.getItem('refreshToken');
-    
+
     if (!refreshToken) {
       throw new Error('No refresh token available');
     }
-    
+
     const response = await this.apiClient.post<AuthResponse>('/auth/refresh', { refreshToken });
-    
+
     return response;
   }
 

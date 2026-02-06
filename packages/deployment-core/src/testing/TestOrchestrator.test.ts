@@ -1,6 +1,6 @@
-import { TestOrchestrator, TestExecutionPlan, TestType, TestPlanStatus } from './TestOrchestrator';
-import { TestFramework, TestStatus } from './TestRunner';
 import winston from 'winston';
+import { TestExecutionPlan, TestOrchestrator, TestPlanStatus, TestType } from './TestOrchestrator';
+import { TestFramework, TestStatus } from './TestRunner';
 
 // Mock the TestRunner
 jest.mock('./TestRunner', () => {
@@ -10,8 +10,8 @@ jest.mock('./TestRunner', () => {
     TestRunner: jest.fn().mockImplementation(() => ({
       executeTests: jest.fn(),
       generateTestSummary: jest.fn(),
-      on: jest.fn()
-    }))
+      on: jest.fn(),
+    })),
   };
 });
 
@@ -24,7 +24,7 @@ describe('TestOrchestrator', () => {
     // Create mock logger
     mockLogger = winston.createLogger({
       level: 'error',
-      transports: [new winston.transports.Console({ silent: true })]
+      transports: [new winston.transports.Console({ silent: true })],
     });
 
     orchestrator = new TestOrchestrator(mockLogger);
@@ -47,7 +47,7 @@ describe('TestOrchestrator', () => {
       failures: [],
       logs: [],
       artifacts: [],
-      metadata: {}
+      metadata: {},
     });
 
     mockTestRunner.generateTestSummary.mockReturnValue({
@@ -63,8 +63,8 @@ describe('TestOrchestrator', () => {
       trends: {
         successRate: 'stable',
         duration: 'stable',
-        coverage: 'stable'
-      }
+        coverage: 'stable',
+      },
     });
   });
 
@@ -113,15 +113,15 @@ describe('TestOrchestrator', () => {
                 parallel: false,
                 coverage: true,
                 reportFormats: [],
-                artifacts: []
-              }
+                artifacts: [],
+              },
             ],
             dependencies: [],
             parallel: false,
             continueOnFailure: false,
             timeout: 60000,
-            conditions: []
-          }
+            conditions: [],
+          },
         ],
         parallelExecution: false,
         failFast: true,
@@ -132,12 +132,12 @@ describe('TestOrchestrator', () => {
           retryOn: [],
           backoffStrategy: 'fixed',
           initialDelay: 1000,
-          maxDelay: 5000
+          maxDelay: 5000,
         },
         qualityGates: [],
         notifications: [],
         environment: {},
-        metadata: {}
+        metadata: {},
       };
 
       const result = await orchestrator.executePlan(plan);
@@ -161,14 +161,16 @@ describe('TestOrchestrator', () => {
         passedTests: 5,
         failedTests: 5,
         skippedTests: 0,
-        failures: [{
-          testName: 'failing test',
-          testFile: 'test.ts',
-          error: 'Test failed'
-        }],
+        failures: [
+          {
+            testName: 'failing test',
+            testFile: 'test.ts',
+            error: 'Test failed',
+          },
+        ],
         logs: ['Test execution failed'],
         artifacts: [],
-        metadata: {}
+        metadata: {},
       });
 
       mockTestRunner.generateTestSummary.mockReturnValueOnce({
@@ -184,8 +186,8 @@ describe('TestOrchestrator', () => {
         trends: {
           successRate: 'stable',
           duration: 'stable',
-          coverage: 'stable'
-        }
+          coverage: 'stable',
+        },
       });
 
       const plan: TestExecutionPlan = {
@@ -207,15 +209,15 @@ describe('TestOrchestrator', () => {
                 parallel: false,
                 coverage: false,
                 reportFormats: [],
-                artifacts: []
-              }
+                artifacts: [],
+              },
             ],
             dependencies: [],
             parallel: false,
             continueOnFailure: false,
             timeout: 60000,
-            conditions: []
-          }
+            conditions: [],
+          },
         ],
         parallelExecution: false,
         failFast: true,
@@ -226,12 +228,12 @@ describe('TestOrchestrator', () => {
           retryOn: [],
           backoffStrategy: 'fixed',
           initialDelay: 1000,
-          maxDelay: 5000
+          maxDelay: 5000,
         },
         qualityGates: [],
         notifications: [],
         environment: {},
-        metadata: {}
+        metadata: {},
       };
 
       const result = await orchestrator.executePlan(plan);

@@ -1,6 +1,7 @@
 # The New Fuse Component Library
 
-This document provides an overview of the component library for The New Fuse platform.
+This document provides an overview of the component library for The New Fuse
+platform.
 
 ## Table of Contents
 
@@ -13,7 +14,10 @@ This document provides an overview of the component library for The New Fuse pla
 
 ## Introduction
 
-The New Fuse Component Library is a comprehensive set of React components designed to provide a consistent user interface across the platform. The library is built with TypeScript, React, and Tailwind CSS, and follows modern best practices for component design.
+The New Fuse Component Library is a comprehensive set of React components
+designed to provide a consistent user interface across the platform. The library
+is built with TypeScript, React, and Tailwind CSS, and follows modern best
+practices for component design.
 
 ## Getting Started
 
@@ -41,7 +45,11 @@ function MyComponent() {
       </Card.Header>
       <Card.Content>
         <Input label="Email" placeholder="Enter your email" />
-        <Input label="Password" type="password" placeholder="Enter your password" />
+        <Input
+          label="Password"
+          type="password"
+          placeholder="Enter your password"
+        />
       </Card.Content>
       <Card.Footer>
         <Button variant="primary">Sign In</Button>
@@ -141,11 +149,13 @@ function App() {
 
 ## Theming
 
-The component library supports light and dark mode themes. The theme is controlled by the `ThemeProvider` component.
+The component library supports light and dark mode themes. The theme is
+controlled by the `ThemeProvider` component.
 
 ### Theme Variables
 
-The theme is defined using CSS variables in the `theme.css` file. These variables can be customized to match your brand colors.
+The theme is defined using CSS variables in the `theme.css` file. These
+variables can be customized to match your brand colors.
 
 ```css
 :root {
@@ -167,7 +177,8 @@ The theme is defined using CSS variables in the `theme.css` file. These variable
 
 ### Theme Toggle
 
-Use the `ThemeToggle` component to allow users to switch between light and dark mode:
+Use the `ThemeToggle` component to allow users to switch between light and dark
+mode:
 
 ```jsx
 import { ThemeToggle } from '@the-new-fuse/ui-consolidated';

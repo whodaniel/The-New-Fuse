@@ -1,5 +1,8 @@
 export class ApiError extends Error {
-  constructor(public status: number, message: string) {
+  constructor(
+    public status: number,
+    message: string
+  ) {
     super(message);
     this.name = 'ApiError';
   }
@@ -36,16 +39,19 @@ export interface ApiRequestOptions {
   params?: Record<string, any>;
 }
 
-export async function apiRequest<T = any>(url: string, options: ApiRequestOptions = {}): Promise<{ data: T }> {
+export async function apiRequest<T = any>(
+  url: string,
+  options: ApiRequestOptions = {}
+): Promise<{ data: T }> {
   const { method = 'GET', data, headers = {}, params } = options;
-  
+
   // Build URL with query parameters
   let finalUrl = url;
   if (params && Object.keys(params).length > 0) {
     const queryString = createQueryString(params);
     finalUrl += `?${queryString}`;
   }
-  
+
   const requestInit: RequestInit = {
     method,
     headers: {
@@ -53,13 +59,13 @@ export async function apiRequest<T = any>(url: string, options: ApiRequestOption
       ...headers,
     },
   };
-  
+
   if (data && method !== 'GET') {
     requestInit.body = JSON.stringify(data);
   }
-  
+
   const response = await fetch(finalUrl, requestInit);
   const responseData = await handleApiResponse<T>(response);
-  
+
   return { data: responseData };
 }

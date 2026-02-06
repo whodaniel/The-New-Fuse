@@ -1,9 +1,9 @@
+import { Preloader } from '@/components/Preloader';
+import { useProviderEndpointAutoDiscovery } from '@/hooks/useProviderEndpointAutoDiscovery';
+import system from '@/models/system';
+import { CaretDown, CaretUp } from '@phosphor-icons/react';
 import React, { useState } from 'react';
-import { CaretUp, CaretDown } from "@phosphor-icons/react";
-import { Preloader } from "@/components/Preloader";
-import { useProviderEndpointAutoDiscovery } from "@/hooks/useProviderEndpointAutoDiscovery";
-import { BaseLLMOptionsProps, ModelSelectionProps, LLMModel } from '../../types';
-import system from "@/models/system";
+import { BaseLLMOptionsProps, LLMModel, ModelSelectionProps } from '../../types';
 
 interface FireworksAiSettings extends BaseLLMOptionsProps {
   settings: {
@@ -19,30 +19,21 @@ interface ModelGroup {
   models: LLMModel[];
 }
 
-const FIREWORKS_COMMON_URLS = [
-  "https://api.fireworks.ai/inference/v1"
-];
+const FIREWORKS_COMMON_URLS = ['https://api.fireworks.ai/inference/v1'];
 
 const MODEL_GROUPS: ModelGroup[] = [
   {
-    name: "Base Models",
-    models: [
-      { id: "llama-v2-70b" },
-      { id: "mixtral-8x7b" },
-      { id: "zephyr-7b" }
-    ]
+    name: 'Base Models',
+    models: [{ id: 'llama-v2-70b' }, { id: 'mixtral-8x7b' }, { id: 'zephyr-7b' }],
   },
   {
-    name: "Fine-tuned Models",
-    models: [
-      { id: "llama-v2-70b-chat" },
-      { id: "mixtral-8x7b-instruct" }
-    ]
-  }
+    name: 'Fine-tuned Models',
+    models: [{ id: 'llama-v2-70b-chat' }, { id: 'mixtral-8x7b-instruct' }],
+  },
 ];
 
 export default function FireworksAiOptions({ settings }: FireworksAiSettings): React.ReactElement {
-  const { 
+  const {
     autoDetecting,
     basePath,
     basePathValue,
@@ -50,22 +41,18 @@ export default function FireworksAiOptions({ settings }: FireworksAiSettings): R
     setShowAdvancedControls,
     handleAutoDetectClick,
   } = useProviderEndpointAutoDiscovery({
-    provider: "fireworks",
+    provider: 'fireworks',
     initialBasePath: settings?.FireworksAiBasePath,
-    ENDPOINTS: FIREWORKS_COMMON_URLS
+    ENDPOINTS: FIREWORKS_COMMON_URLS,
   });
 
   const [tokenLimit, setTokenLimit] = useState<number>(settings?.FireworksAiTokenLimit || 4096);
-  const [apiKey] = useState<string>(settings?.FireworksAiApiKey || "");
+  const [apiKey] = useState<string>(settings?.FireworksAiApiKey || '');
 
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
-        <FireworksAiModelSelection 
-          settings={settings} 
-          basePath={basePath.value}
-          apiKey={apiKey}
-        />
+        <FireworksAiModelSelection settings={settings} basePath={basePath.value} apiKey={apiKey} />
         <div className="flex flex-col w-60">
           <label className="text-white text-sm font-semibold block mb-2" id="token-limit-label">
             Token context window
@@ -90,7 +77,7 @@ export default function FireworksAiOptions({ settings }: FireworksAiSettings): R
           onClick={() => setShowAdvancedControls(!showAdvancedControls)}
           className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
-          {showAdvancedControls ? "Hide" : "Show"} Manual Endpoint Input
+          {showAdvancedControls ? 'Hide' : 'Show'} Manual Endpoint Input
           {showAdvancedControls ? (
             <CaretUp size={14} className="ml-1" />
           ) : (
@@ -139,13 +126,17 @@ export default function FireworksAiOptions({ settings }: FireworksAiSettings): R
   );
 }
 
-function FireworksAiModelSelection({ settings, basePath = null, apiKey = null }: ModelSelectionProps): React.ReactElement {
+function FireworksAiModelSelection({
+  settings,
+  basePath = null,
+  apiKey = null,
+}: ModelSelectionProps): React.ReactElement {
   const [customModels, setCustomModels] = useState<ModelGroup[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   React.useEffect(() => {
     async function findCustomModels() {
-      if (!basePath || !basePath.includes("/v1")) {
+      if (!basePath || !basePath.includes('/v1')) {
         setCustomModels([]);
         setLoading(false);
         return;
@@ -153,22 +144,24 @@ function FireworksAiModelSelection({ settings, basePath = null, apiKey = null }:
 
       setLoading(true);
       try {
-        const { models } = await system.customModels("fireworks", apiKey, basePath);
+        const { models } = await system.customModels('fireworks', apiKey, basePath);
         if (models && models.length > 0) {
           // Group custom models by type
-          const fineTuned = models.filter(m => m.id.includes('-ft-') || m.id.includes('-chat') || m.id.includes('-instruct'));
-          const base = models.filter(m => !fineTuned.includes(m));
-          
+          const fineTuned = models.filter(
+            (m) => m.id.includes('-ft-') || m.id.includes('-chat') || m.id.includes('-instruct')
+          );
+          const base = models.filter((m) => !fineTuned.includes(m));
+
           setCustomModels([
-            { name: "Base Models", models: base },
-            { name: "Fine-tuned Models", models: fineTuned }
+            { name: 'Base Models', models: base },
+            { name: 'Fine-tuned Models', models: fineTuned },
           ]);
         } else {
           // Fall back to default model groups if no custom models found
           setCustomModels(MODEL_GROUPS);
         }
       } catch (error) {
-        console.error("Failed to fetch custom models:", error);
+        console.error('Failed to fetch custom models:', error);
         // Fall back to default model groups if API call fails
         setCustomModels(MODEL_GROUPS);
       }

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AdminAuditLogsController } from '../controllers/admin/admin-audit-logs.controller';
 import { AdminConfigController } from '../controllers/admin/admin-config.controller';
-import { AdminSettingsController } from '../controllers/admin/admin-settings.controller';
 import { AdminMetricsController } from '../controllers/admin/admin-metrics.controller';
+import { AdminSettingsController } from '../controllers/admin/admin-settings.controller';
+import { ApiLogsRepository } from '../repositories/api-logs.repository';
 import { AuditLogsRepository } from '../repositories/audit-logs.repository';
 import { ConfigurationRepository } from '../repositories/configuration.repository';
-import { ApiLogsRepository } from '../repositories/api-logs.repository';
 import { AdminAuditLogsService } from '../services/admin-audit-logs.service';
 import { AdminConfigurationService } from '../services/admin-configuration.service';
 import { SystemMetricsService } from '../services/system-metrics.service';
@@ -17,7 +17,7 @@ import { AuthModule } from './auth/auth.module';
     AdminAuditLogsController,
     AdminConfigController,
     AdminSettingsController,
-    AdminMetricsController
+    AdminMetricsController,
   ],
   providers: [
     AdminAuditLogsService,
@@ -27,10 +27,6 @@ import { AuthModule } from './auth/auth.module';
     SystemMetricsService,
     ApiLogsRepository,
   ],
-  exports: [
-    AdminAuditLogsService,
-    AdminConfigurationService,
-    SystemMetricsService,
-  ],
+  exports: [AdminAuditLogsService, AdminConfigurationService, SystemMetricsService],
 })
 export class AdminModule {}

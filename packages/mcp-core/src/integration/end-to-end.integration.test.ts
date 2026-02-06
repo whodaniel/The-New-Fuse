@@ -6,18 +6,20 @@
  * and real-world usage scenarios.
  */
 
-import { MCPServer } from '../server/MCPServer';
+import { EventEmitter } from 'events';
 import { MCPSystemFactory } from '../factory/MCPSystemFactory';
-import { MCPRequest, MCPResponse, MCPNotification } from '../types/message';
-import { MCPServerConfig } from '../types/server';
 import { ResourceHandler } from '../handlers/ResourceHandler';
 import { ToolHandler } from '../handlers/ToolHandler';
-import WebSocket from 'ws';
-import { EventEmitter } from 'events';
+import { MCPServer } from '../server/MCPServer';
+import { MCPNotification, MCPRequest, MCPResponse } from '../types/message';
+import { MCPServerConfig } from '../types/server';
 
 // Mock WebSocket client for testing
 class MockMCPClient extends EventEmitter {
-  private responses: Map<string | number, { resolve: Function; reject: Function; timeout: NodeJS.Timeout }>;
+  private responses: Map<
+    string | number,
+    { resolve: Function; reject: Function; timeout: NodeJS.Timeout }
+  >;
 
   constructor() {
     super();
@@ -73,19 +75,19 @@ class TestResourceHandler extends ResourceHandler {
     this.testData.set('file:///test/document.txt', {
       content: 'This is a test document',
       mimeType: 'text/plain',
-      size: 23
+      size: 23,
     });
 
     this.testData.set('file:///test/config.json', {
       content: JSON.stringify({ version: '1.0', debug: true }),
       mimeType: 'application/json',
-      size: 33
+      size: 33,
     });
 
     this.testData.set('file:///test/data.csv', {
       content: 'name,age,city\nJohn,25,NYC\nJane,30,SF',
       mimeType: 'text/csv',
-      size: 35
+      size: 35,
     });
   }
 
@@ -100,7 +102,7 @@ class TestResourceHandler extends ResourceHandler {
       content: data.content,
       size: data.size,
       lastModified: new Date(),
-      metadata: {}
+      metadata: {},
     };
   }
 
@@ -113,7 +115,7 @@ class TestResourceHandler extends ResourceHandler {
           uri,
           name: uri.split('/').pop() || uri,
           mimeType: data.mimeType,
-          handler: this
+          handler: this,
         });
       }
     }
@@ -153,7 +155,11 @@ class TestResourceHandler extends ResourceHandler {
 
 // Custom tool handler for testing
 class TestToolHandler extends ToolHandler {
-  constructor(name: string = 'test-tool', description: string = 'Test Tool', inputSchema: any = {}) {
+  constructor(
+    name: string = 'test-tool',
+    description: string = 'Test Tool',
+    inputSchema: any = {}
+  ) {
     super(name, description, inputSchema);
   }
 
@@ -215,8 +221,8 @@ class TestToolHandler extends ToolHandler {
         result: {
           expression,
           result,
-          type: 'number'
-        }
+          type: 'number',
+        },
       };
     } catch (error) {
       throw new Error(`Invalid expression: ${expression}`);
@@ -256,7 +262,7 @@ class TestToolHandler extends ToolHandler {
       return { success: false, error: 'Data must be a non-empty array' };
     }
 
-    const numbers = data.filter(item => typeof item === 'number');
+    const numbers = data.filter((item) => typeof item === 'number');
 
     if (numbers.length === 0) {
       return { success: false, error: 'No numeric data found' };
@@ -268,9 +274,11 @@ class TestToolHandler extends ToolHandler {
     const max = Math.max(...numbers);
 
     const sortedNumbers = [...numbers].sort((a, b) => a - b);
-    const median = sortedNumbers.length % 2 === 0
-      ? (sortedNumbers[sortedNumbers.length / 2 - 1] + sortedNumbers[sortedNumbers.length / 2]) / 2
-      : sortedNumbers[Math.floor(sortedNumbers.length / 2)];
+    const median =
+      sortedNumbers.length % 2 === 0
+        ? (sortedNumbers[sortedNumbers.length / 2 - 1] + sortedNumbers[sortedNumbers.length / 2]) /
+          2
+        : sortedNumbers[Math.floor(sortedNumbers.length / 2)];
 
     return {
       success: true,
@@ -281,8 +289,8 @@ class TestToolHandler extends ToolHandler {
         median,
         min,
         max,
-        range: max - min
-      }
+        range: max - min,
+      },
     };
   }
 
@@ -299,8 +307,8 @@ class TestToolHandler extends ToolHandler {
               format: 'json',
               valid: true,
               data: parsed,
-              keys: Object.keys(parsed)
-            }
+              keys: Object.keys(parsed),
+            },
           };
         } catch {
           return { success: true, result: { format: 'json', valid: false, error: 'Invalid JSON' } };
@@ -309,7 +317,7 @@ class TestToolHandler extends ToolHandler {
       case 'csv':
         const lines = content.split('\n');
         const headers = lines[0]?.split(',') || [];
-        const rows = lines.slice(1).map(line => {
+        const rows = lines.slice(1).map((line) => {
           const values = line.split(',');
           const row: any = {};
           headers.forEach((header, index) => {
@@ -324,8 +332,8 @@ class TestToolHandler extends ToolHandler {
             format: 'csv',
             headers,
             rows,
-            rowCount: rows.length
-          }
+            rowCount: rows.length,
+          },
         };
 
       case 'base64':
@@ -334,8 +342,8 @@ class TestToolHandler extends ToolHandler {
           result: {
             format: 'base64',
             encoded: Buffer.from(content).toString('base64'),
-            originalSize: content.length
-          }
+            originalSize: content.length,
+          },
         };
 
       default:
@@ -358,8 +366,8 @@ describe('End-to-End Integration Tests', () => {
       rateLimiting: {
         enabled: true,
         maxRequestsPerMinute: 100,
-        burstSize: 20
-      }
+        burstSize: 20,
+      },
     };
 
     server = MCPSystemFactory.createServer(config);
@@ -370,46 +378,42 @@ describe('End-to-End Integration Tests', () => {
       uri: 'file:///test/document.txt',
       name: 'Test Document',
       permissions: { read: true },
-      handler: resourceHandler
+      handler: resourceHandler,
     });
 
     await server.registerResource({
       uri: 'file:///test/config.json',
       name: 'Test Config',
       permissions: { read: true },
-      handler: resourceHandler
+      handler: resourceHandler,
     });
 
     await server.registerResource({
       uri: 'file:///test/data.csv',
       name: 'Test Data',
       permissions: { read: true },
-      handler: resourceHandler
+      handler: resourceHandler,
     });
 
     // Register test tools
-    const calculatorTool = new TestToolHandler(
-      'calculator',
-      'Performs mathematical calculations',
-      {
-        type: 'object',
-        properties: {
-          expression: { type: 'string' }
-        },
-        required: ['expression']
-      }
-    );
+    const calculatorTool = new TestToolHandler('calculator', 'Performs mathematical calculations', {
+      type: 'object',
+      properties: {
+        expression: { type: 'string' },
+      },
+      required: ['expression'],
+    });
     await server.registerTool({
       name: 'calculator',
       description: 'Performs mathematical calculations',
       inputSchema: {
         type: 'object',
         properties: {
-          expression: { type: 'string' }
+          expression: { type: 'string' },
         },
-        required: ['expression']
+        required: ['expression'],
       },
-      handler: calculatorTool
+      handler: calculatorTool,
     });
 
     const textProcessorTool = new TestToolHandler(
@@ -419,9 +423,12 @@ describe('End-to-End Integration Tests', () => {
         type: 'object',
         properties: {
           text: { type: 'string' },
-          operation: { type: 'string', enum: ['uppercase', 'lowercase', 'reverse', 'word-count', 'char-count'] }
+          operation: {
+            type: 'string',
+            enum: ['uppercase', 'lowercase', 'reverse', 'word-count', 'char-count'],
+          },
         },
-        required: ['text', 'operation']
+        required: ['text', 'operation'],
       }
     );
     await server.registerTool({
@@ -431,35 +438,34 @@ describe('End-to-End Integration Tests', () => {
         type: 'object',
         properties: {
           text: { type: 'string' },
-          operation: { type: 'string', enum: ['uppercase', 'lowercase', 'reverse', 'word-count', 'char-count'] }
+          operation: {
+            type: 'string',
+            enum: ['uppercase', 'lowercase', 'reverse', 'word-count', 'char-count'],
+          },
         },
-        required: ['text', 'operation']
+        required: ['text', 'operation'],
       },
-      handler: textProcessorTool
+      handler: textProcessorTool,
     });
 
-    const dataAnalyzerTool = new TestToolHandler(
-      'data-analyzer',
-      'Analyzes numeric data',
-      {
-        type: 'object',
-        properties: {
-          data: { type: 'array', items: { type: 'number' } }
-        },
-        required: ['data']
-      }
-    );
+    const dataAnalyzerTool = new TestToolHandler('data-analyzer', 'Analyzes numeric data', {
+      type: 'object',
+      properties: {
+        data: { type: 'array', items: { type: 'number' } },
+      },
+      required: ['data'],
+    });
     await server.registerTool({
       name: 'data-analyzer',
       description: 'Analyzes numeric data',
       inputSchema: {
         type: 'object',
         properties: {
-          data: { type: 'array', items: { type: 'number' } }
+          data: { type: 'array', items: { type: 'number' } },
         },
-        required: ['data']
+        required: ['data'],
       },
-      handler: dataAnalyzerTool
+      handler: dataAnalyzerTool,
     });
 
     const fileConverterTool = new TestToolHandler(
@@ -469,9 +475,9 @@ describe('End-to-End Integration Tests', () => {
         type: 'object',
         properties: {
           content: { type: 'string' },
-          format: { type: 'string', enum: ['json', 'csv', 'base64'] }
+          format: { type: 'string', enum: ['json', 'csv', 'base64'] },
         },
-        required: ['content', 'format']
+        required: ['content', 'format'],
       }
     );
     await server.registerTool({
@@ -481,11 +487,11 @@ describe('End-to-End Integration Tests', () => {
         type: 'object',
         properties: {
           content: { type: 'string' },
-          format: { type: 'string', enum: ['json', 'csv', 'base64'] }
+          format: { type: 'string', enum: ['json', 'csv', 'base64'] },
         },
-        required: ['content', 'format']
+        required: ['content', 'format'],
       },
-      handler: fileConverterTool
+      handler: fileConverterTool,
     });
 
     await server.start(config);
@@ -523,7 +529,7 @@ describe('End-to-End Integration Tests', () => {
         jsonrpc: '2.0',
         id: 'list-resources',
         method: 'resources/list',
-        params: {}
+        params: {},
       });
 
       expect(listResponse.jsonrpc).toBe('2.0');
@@ -541,7 +547,7 @@ describe('End-to-End Integration Tests', () => {
         jsonrpc: '2.0',
         id: 'read-document',
         method: 'resources/read',
-        params: { uri: 'file:///test/document.txt' }
+        params: { uri: 'file:///test/document.txt' },
       });
 
       expect(documentResponse.result).toHaveProperty('content');
@@ -552,7 +558,7 @@ describe('End-to-End Integration Tests', () => {
         jsonrpc: '2.0',
         id: 'read-config',
         method: 'resources/read',
-        params: { uri: 'file:///test/config.json' }
+        params: { uri: 'file:///test/config.json' },
       });
 
       expect(configResponse.result).toHaveProperty('content');
@@ -564,7 +570,7 @@ describe('End-to-End Integration Tests', () => {
         jsonrpc: '2.0',
         id: 'filter-resources',
         method: 'resources/list',
-        params: { pattern: '*.json' }
+        params: { pattern: '*.json' },
       });
 
       const filteredResources = (filteredResponse.result as any).resources;
@@ -578,7 +584,7 @@ describe('End-to-End Integration Tests', () => {
         jsonrpc: '2.0',
         id: 'subscribe-document',
         method: 'resources/subscribe',
-        params: { uri: 'file:///test/document.txt' }
+        params: { uri: 'file:///test/document.txt' },
       });
 
       expect(subscribeResponse.result).toHaveProperty('subscriptionId');
@@ -593,8 +599,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'resources/unsubscribe',
         params: {
           uri: 'file:///test/document.txt',
-          subscriptionId: (subscribeResponse.result as any).subscriptionId
-        }
+          subscriptionId: (subscribeResponse.result as any).subscriptionId,
+        },
       });
 
       expect(unsubscribeResponse.result).toHaveProperty('success');
@@ -609,7 +615,7 @@ describe('End-to-End Integration Tests', () => {
         jsonrpc: '2.0',
         id: 'list-tools',
         method: 'tools/list',
-        params: {}
+        params: {},
       });
 
       expect(toolsResponse.result).toHaveProperty('tools');
@@ -623,8 +629,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'calculator',
-          arguments: { expression: '2 + 3 * 4' }
-        }
+          arguments: { expression: '2 + 3 * 4' },
+        },
       });
 
       expect(calcResponse.result).toHaveProperty('result');
@@ -637,8 +643,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'calculator',
-          arguments: { expression: '(10 + 5) * 2 - 7' }
-        }
+          arguments: { expression: '(10 + 5) * 2 - 7' },
+        },
       });
 
       expect((complexCalcResponse.result as any).result.result).toBe(23);
@@ -654,8 +660,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'text-processor',
-          arguments: { text: testText, operation: 'uppercase' }
-        }
+          arguments: { text: testText, operation: 'uppercase' },
+        },
       });
 
       expect((uppercaseResponse.result as any).result.result).toBe('HELLO WORLD THIS IS A TEST');
@@ -667,8 +673,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'text-processor',
-          arguments: { text: testText, operation: 'word-count' }
-        }
+          arguments: { text: testText, operation: 'word-count' },
+        },
       });
 
       expect((wordCountResponse.result as any).result.result).toBe(6);
@@ -680,8 +686,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'text-processor',
-          arguments: { text: 'ABC', operation: 'reverse' }
-        }
+          arguments: { text: 'ABC', operation: 'reverse' },
+        },
       });
 
       expect((reverseResponse.result as any).result.result).toBe('CBA');
@@ -696,8 +702,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'data-analyzer',
-          arguments: { data: testData }
-        }
+          arguments: { data: testData },
+        },
       });
 
       const analysis = (analysisResponse.result as any).result;
@@ -719,8 +725,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'file-converter',
-          arguments: { content: jsonData, format: 'json' }
-        }
+          arguments: { content: jsonData, format: 'json' },
+        },
       });
 
       const jsonResult = (jsonResponse.result as any).result;
@@ -735,8 +741,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'file-converter',
-          arguments: { content: csvData, format: 'csv' }
-        }
+          arguments: { content: csvData, format: 'csv' },
+        },
       });
 
       const csvResult = (csvResponse.result as any).result;
@@ -752,8 +758,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'file-converter',
-          arguments: { content: textData, format: 'base64' }
-        }
+          arguments: { content: textData, format: 'base64' },
+        },
       });
 
       const base64Result = (base64Response.result as any).result;
@@ -768,7 +774,7 @@ describe('End-to-End Integration Tests', () => {
         jsonrpc: '2.0',
         id: 'read-csv',
         method: 'resources/read',
-        params: { uri: 'file:///test/data.csv' }
+        params: { uri: 'file:///test/data.csv' },
       });
 
       const csvContent = (csvResponse.result as any).content;
@@ -780,15 +786,17 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'file-converter',
-          arguments: { content: csvContent, format: 'csv' }
-        }
+          arguments: { content: csvContent, format: 'csv' },
+        },
       });
 
       const structuredData = (structuredResponse.result as any).result.rows;
       expect(structuredData).toHaveLength(2);
 
       // Step 3: Extract numeric data for analysis
-      const ages = structuredData.map((row: any) => parseInt(row.age)).filter((age: any) => !isNaN(age));
+      const ages = structuredData
+        .map((row: any) => parseInt(row.age))
+        .filter((age: any) => !isNaN(age));
 
       // Step 4: Analyze the numeric data
       const analysisResponse = await client.sendRequest({
@@ -797,8 +805,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'data-analyzer',
-          arguments: { data: ages }
-        }
+          arguments: { data: ages },
+        },
       });
 
       const analysis = (analysisResponse.result as any).result;
@@ -814,8 +822,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'text-processor',
-          arguments: { text: summaryText, operation: 'word-count' }
-        }
+          arguments: { text: summaryText, operation: 'word-count' },
+        },
       });
 
       expect((summaryResponse.result as any).result.result).toBeGreaterThan(0);
@@ -828,7 +836,7 @@ describe('End-to-End Integration Tests', () => {
           jsonrpc: '2.0',
           id: 'concurrent-1',
           method: 'resources/read',
-          params: { uri: 'file:///test/document.txt' }
+          params: { uri: 'file:///test/document.txt' },
         }),
 
         // Tool executions
@@ -838,8 +846,8 @@ describe('End-to-End Integration Tests', () => {
           method: 'tools/call',
           params: {
             name: 'calculator',
-            arguments: { expression: '100 * 2' }
-          }
+            arguments: { expression: '100 * 2' },
+          },
         }),
 
         client.sendRequest({
@@ -848,8 +856,8 @@ describe('End-to-End Integration Tests', () => {
           method: 'tools/call',
           params: {
             name: 'text-processor',
-            arguments: { text: 'Concurrent Test', operation: 'uppercase' }
-          }
+            arguments: { text: 'Concurrent Test', operation: 'uppercase' },
+          },
         }),
 
         client.sendRequest({
@@ -858,8 +866,8 @@ describe('End-to-End Integration Tests', () => {
           method: 'tools/call',
           params: {
             name: 'data-analyzer',
-            arguments: { data: [1, 2, 3, 4, 5] }
-          }
+            arguments: { data: [1, 2, 3, 4, 5] },
+          },
         }),
 
         // Resource listing
@@ -867,8 +875,8 @@ describe('End-to-End Integration Tests', () => {
           jsonrpc: '2.0',
           id: 'concurrent-5',
           method: 'resources/list',
-          params: {}
-        })
+          params: {},
+        }),
       ];
 
       const startTime = performance.now();
@@ -877,7 +885,7 @@ describe('End-to-End Integration Tests', () => {
 
       // Verify all operations completed successfully
       expect(results).toHaveLength(5);
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.jsonrpc).toBe('2.0');
         expect(result).toHaveProperty('result');
       });
@@ -902,7 +910,7 @@ describe('End-to-End Integration Tests', () => {
         jsonrpc: '2.0',
         id: 'missing-resource',
         method: 'resources/read',
-        params: { uri: 'file:///nonexistent/file.txt' }
+        params: { uri: 'file:///nonexistent/file.txt' },
       });
 
       expect(response).toHaveProperty('error');
@@ -916,8 +924,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'calculator',
-          arguments: { expression: 'invalid expression with letters' }
-        }
+          arguments: { expression: 'invalid expression with letters' },
+        },
       });
 
       expect(response).toHaveProperty('error');
@@ -930,7 +938,7 @@ describe('End-to-End Integration Tests', () => {
       const malformedRequest = {
         jsonrpc: '1.0', // Wrong version
         id: 'test',
-        method: 'test'
+        method: 'test',
       };
 
       const response = await server.handleRequest(malformedRequest as any);
@@ -946,8 +954,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'calculator',
-          arguments: { expression: 'undefined_variable' }
-        }
+          arguments: { expression: 'undefined_variable' },
+        },
       });
 
       expect(failResponse).toHaveProperty('error');
@@ -959,8 +967,8 @@ describe('End-to-End Integration Tests', () => {
         method: 'tools/call',
         params: {
           name: 'calculator',
-          arguments: { expression: '2 + 2' }
-        }
+          arguments: { expression: '2 + 2' },
+        },
       });
 
       expect(successResponse.result).toHaveProperty('result');
@@ -986,7 +994,7 @@ describe('End-to-End Integration Tests', () => {
               jsonrpc: '2.0',
               id: `load-${i}`,
               method: 'resources/list',
-              params: {}
+              params: {},
             };
             break;
           case 1:
@@ -994,7 +1002,7 @@ describe('End-to-End Integration Tests', () => {
               jsonrpc: '2.0',
               id: `load-${i}`,
               method: 'resources/read',
-              params: { uri: 'file:///test/document.txt' }
+              params: { uri: 'file:///test/document.txt' },
             };
             break;
           case 2:
@@ -1004,8 +1012,8 @@ describe('End-to-End Integration Tests', () => {
               method: 'tools/call',
               params: {
                 name: 'calculator',
-                arguments: { expression: `${i} + 1` }
-              }
+                arguments: { expression: `${i} + 1` },
+              },
             };
             break;
           default:
@@ -1015,8 +1023,8 @@ describe('End-to-End Integration Tests', () => {
               method: 'tools/call',
               params: {
                 name: 'text-processor',
-                arguments: { text: `Test ${i}`, operation: 'uppercase' }
-              }
+                arguments: { text: `Test ${i}`, operation: 'uppercase' },
+              },
             };
         }
 
@@ -1028,7 +1036,7 @@ describe('End-to-End Integration Tests', () => {
 
       // Verify all requests completed successfully
       expect(responses).toHaveLength(requestCount);
-      responses.forEach(response => {
+      responses.forEach((response) => {
         expect(response.jsonrpc).toBe('2.0');
         if ('error' in response) {
           console.error('Unexpected error:', response.error);
@@ -1037,7 +1045,9 @@ describe('End-to-End Integration Tests', () => {
       });
 
       const throughput = requestCount / (completionTime / 1000);
-      console.log(`Load test: ${requestCount} requests in ${completionTime.toFixed(2)}ms (${throughput.toFixed(2)} req/sec)`);
+      console.log(
+        `Load test: ${requestCount} requests in ${completionTime.toFixed(2)}ms (${throughput.toFixed(2)} req/sec)`
+      );
 
       // Performance expectations
       expect(throughput).toBeGreaterThan(50); // At least 50 requests per second

@@ -8,7 +8,7 @@ const readline = require('readline');
 const DEFAULT_PORT = 3001;
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 async function choosePort(defaultPort) {
@@ -44,7 +44,11 @@ async function main() {
   rl.question('Launch frontend locally or with Docker? (local/docker): ', async (mode) => {
     if (mode.toLowerCase() === 'docker') {
       rl.close();
-      spawn('docker', ['compose', '-f', '../../docker-compose.frontend.yml', 'up', '--build', '-d'], { stdio: 'inherit' });
+      spawn(
+        'docker',
+        ['compose', '-f', '../../docker-compose.frontend.yml', 'up', '--build', '-d'],
+        { stdio: 'inherit' }
+      );
     } else {
       const port = await choosePort(DEFAULT_PORT);
       rl.close();

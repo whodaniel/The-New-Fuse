@@ -27,7 +27,7 @@ export class VisualizationManager {
 
   async createVisualization(request: VisualizationRequest): Promise<VisualizationResult> {
     const id = this.generateId(request);
-    
+
     // Check cache first
     if (this.cache.has(id)) {
       return this.cache.get(id)!;
@@ -35,7 +35,7 @@ export class VisualizationManager {
 
     let data: any;
     const format = request.format || 'json';
-    
+
     switch (request.type) {
       case 'file-tree':
         data = await this.fileVisualizer.generateFileTree(request.target);
@@ -58,8 +58,8 @@ export class VisualizationManager {
       createdAt: new Date(),
       metadata: {
         target: request.target,
-        config: request.config
-      }
+        config: request.config,
+      },
     };
 
     this.cache.set(id, result);
@@ -83,19 +83,21 @@ export class VisualizationManager {
     this.cache.clear();
   }
 
-  async getCacheStats(): Promise<{ size: number, keys: string[], totalMemory: number }> {
+  async getCacheStats(): Promise<{ size: number; keys: string[]; totalMemory: number }> {
     return {
       size: this.cache.size,
       keys: Array.from(this.cache.keys()),
-      totalMemory: JSON.stringify(Array.from(this.cache.values())).length
+      totalMemory: JSON.stringify(Array.from(this.cache.values())).length,
     };
   }
 
   private generateId(request: VisualizationRequest): string {
-    const hash = JSON.stringify(request).split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
+    const hash = JSON.stringify(request)
+      .split('')
+      .reduce((a, b) => {
+        a = (a << 5) - a + b.charCodeAt(0);
+        return a & a;
+      }, 0);
     return Math.abs(hash).toString(36);
   }
 
@@ -103,7 +105,7 @@ export class VisualizationManager {
     return {
       maxDepth: 5,
       includeHidden: false,
-      groupByType: true
+      groupByType: true,
     };
   }
 }

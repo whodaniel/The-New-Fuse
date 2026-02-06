@@ -3,6 +3,7 @@
 ## TSX Files Assessment
 
 ### Core UI Components (To Be Merged)
+
 1. Button Component
    - Old:
      - `/apps/frontend/src/components/core/Button/Button.tsx`
@@ -25,7 +26,8 @@
      - Width variants
      - Full TypeScript support
      - Tailwind styling
-   - Notes: Successfully merged both input implementations into a single, enhanced component
+   - Notes: Successfully merged both input implementations into a single,
+     enhanced component
 
 4. Select Component
    - Status: ✅ Merged
@@ -38,21 +40,25 @@
      - Full keyboard navigation
      - TypeScript support
      - Accessible by default
-   - Notes: Successfully merged both select implementations into a single component with enhanced features
+   - Notes: Successfully merged both select implementations into a single
+     component with enhanced features
 
 5. Switch Component
    - Current:
      - `/apps/frontend/src/components/core/Switch/index.tsx`
      - `/apps/frontend/src/components/ui/switch.tsx`
-   - Status: 🔄 Needs to be merged into `/apps/frontend/src/shared/ui/core/Switch/`
+   - Status: 🔄 Needs to be merged into
+     `/apps/frontend/src/shared/ui/core/Switch/`
 
 6. DropdownMenu Component
    - Current:
      - `/apps/frontend/src/components/core/DropdownMenu/index.tsx`
      - `/apps/frontend/src/components/ui/dropdown-menu.tsx`
-   - Status: 🔄 Needs to be merged into `/apps/frontend/src/shared/ui/core/DropdownMenu/`
+   - Status: 🔄 Needs to be merged into
+     `/apps/frontend/src/shared/ui/core/DropdownMenu/`
 
 ### Feature Components (To Be Organized)
+
 1. Memory Components
    - `/apps/frontend/src/components/memory/visualization/ClusterDetails.tsx`
    - `/apps/frontend/src/components/memory/visualization/MemoryVisualizer.tsx`
@@ -94,6 +100,7 @@
    - Status: 🔄 Move to `/apps/frontend/src/features/gpu/`
 
 ### Shared Components (To Be Organized)
+
 1. Data Visualization
    - `/apps/frontend/src/components/ui/graph-chart.tsx`
    - `/apps/frontend/src/components/ui/graph-visualization.tsx`
@@ -109,14 +116,18 @@
    - Status: 🔄 Move to `/apps/frontend/src/shared/ui/feedback/`
 
 ### Root Components
+
 1. App Components
    - `/apps/frontend/src/App.tsx`
    - `/apps/frontend/src/main.tsx`
    - Status: ✅ Keep in current location
 
-Note: Many files listed in ALL_PAGES.md were not found in their specified locations. These have been removed from tracking and replaced with the actual files found in the codebase.
+Note: Many files listed in ALL_PAGES.md were not found in their specified
+locations. These have been removed from tracking and replaced with the actual
+files found in the codebase.
 
 ### Workflow Builder Components
+
 1. Core Workflow Components
    - `/apps/frontend/src/components/workflow/WorkflowCanvas.tsx`
    - `/apps/frontend/src/components/workflow/NodeToolbox.tsx`
@@ -142,6 +153,7 @@ Note: Many files listed in ALL_PAGES.md were not found in their specified locati
 ## JavaScript Files Assessment
 
 ### Communication Scripts
+
 1. `/src/scripts/send_introduction.js`
    - Status: ❌ Not found
    - Action: Remove from ALL_PAGES.md
@@ -167,11 +179,13 @@ Note: Many files listed in ALL_PAGES.md were not found in their specified locati
    - Action: Remove from ALL_PAGES.md
 
 ### Control Panel Scripts
+
 1. `/packages/redis-communication/src/control-panel/main.js`
    - Status: ❌ Not found
    - Action: Remove from ALL_PAGES.md
 
 ### Utility Scripts
+
 1. `/src/scripts/cascade_introduction.js`
    - Status: ❌ Not found
    - Action: Remove from ALL_PAGES.md
@@ -187,6 +201,7 @@ Note: Many files listed in ALL_PAGES.md were not found in their specified locati
 ## CSS Files Assessment
 
 ### Frontend Styles
+
 1. `/apps/frontend/src/styles/globals.css`
    - Status: ✅ Keep as is
    - Purpose: Global styles and Tailwind configuration
@@ -207,15 +222,18 @@ Note: Many files listed in ALL_PAGES.md were not found in their specified locati
 
 5. `/public/css/custom.css`
    - Status: ❓ Need to check
-   - Action: Verify if file exists and if styles should be merged into globals.css
+   - Action: Verify if file exists and if styles should be merged into
+     globals.css
 
 6. `/public/css/tailwind.css`
    - Status: ❓ Need to check
-   - Action: Verify if this is the compiled Tailwind output (if so, should be in .gitignore)
+   - Action: Verify if this is the compiled Tailwind output (if so, should be in
+     .gitignore)
 
 ## HTML Files Assessment
 
 ### Frontend HTML Files
+
 1. `/apps/frontend/index.html`
    - Status: ✅ Keep as is
    - Purpose: Main entry point for the Vite-based frontend application
@@ -231,6 +249,7 @@ Note: Many files listed in ALL_PAGES.md were not found in their specified locati
    - Action: Compare with `/apps/frontend/index.html` to determine if needed
 
 ### Service HTML Files
+
 1. `/packages/redis-communication/src/control-panel/index.html`
    - Status: ✅ Keep as is
    - Purpose: Control panel for Redis communication service
@@ -247,6 +266,7 @@ Note: Many files listed in ALL_PAGES.md were not found in their specified locati
    - Follows standard structure for the bolt.diy package
 
 ## New Directory Structure
+
 ```
 /apps/frontend/src/
 ├── shared/
@@ -262,3 +282,4 @@ Note: Many files listed in ALL_PAGES.md were not found in their specified locati
 │   ├── utils/             # Shared utilities
 │   ├── types/             # Shared types
 │   └── styles/            # Shared styles
+```

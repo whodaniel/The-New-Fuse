@@ -11,7 +11,9 @@ export class NavigationUtils extends BasePage {
     super(page);
   }
 
-  async navigateToSection(section: 'dashboard' | 'workflows' | 'settings' | 'agents' | 'analytics') {
+  async navigateToSection(
+    section: 'dashboard' | 'workflows' | 'settings' | 'agents' | 'analytics',
+  ) {
     await this.waitAndClick(`${this.navMenu} [data-section="${section}"]`);
     await this.waitForLoad();
   }

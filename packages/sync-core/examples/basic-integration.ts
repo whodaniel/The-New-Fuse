@@ -10,9 +10,7 @@ import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
 
 @Injectable()
 export class UserService implements OnModuleInit {
-  constructor(
-    private readonly syncOrchestrator: SyncOrchestrator,
-  ) {}
+  constructor(private readonly syncOrchestrator: SyncOrchestrator) {}
 
   async onModuleInit() {
     // Subscribe to user data changes
@@ -30,16 +28,12 @@ export class UserService implements OnModuleInit {
     });
 
     // 2. Sync across all instances
-    await this.syncOrchestrator.syncTenantData(
-      tenantId,
-      'user',
-      {
-        id: userId,
-        ...data,
-        version: updatedUser.version,
-        updatedAt: updatedUser.updatedAt,
-      }
-    );
+    await this.syncOrchestrator.syncTenantData(tenantId, 'user', {
+      id: userId,
+      ...data,
+      version: updatedUser.version,
+      updatedAt: updatedUser.updatedAt,
+    });
 
     return updatedUser;
   }
@@ -58,22 +52,16 @@ export class UserService implements OnModuleInit {
   /**
    * Bulk update with batching
    */
-  async bulkUpdateUsers(updates: Array<{id: string, data: any}>, tenantId: string) {
+  async bulkUpdateUsers(updates: Array<{ id: string; data: any }>, tenantId: string) {
     // Update database
     const results = await Promise.all(
-      updates.map(({id, data}) =>
-        this.database.users.update({ where: { id }, data })
-      )
+      updates.map(({ id, data }) => this.database.users.update({ where: { id }, data }))
     );
 
     // Batch sync operations
     await Promise.all(
-      results.map(user =>
-        this.syncOrchestrator.syncTenantData(
-          tenantId,
-          'user',
-          { id: user.id, ...user }
-        )
+      results.map((user) =>
+        this.syncOrchestrator.syncTenantData(tenantId, 'user', { id: user.id, ...user })
       )
     );
 

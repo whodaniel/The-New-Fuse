@@ -1,7 +1,7 @@
-import React from 'react';
-import { Button, Badge } from '@/components/ui/design-system';
-import { useUsers } from '../../hooks/useUsers';
+import { Badge, Button } from '@/components/ui/design-system';
 import { useToast } from '@/hooks/useToast';
+import React from 'react';
+import { useUsers } from '../../hooks/useUsers';
 
 export const UserManagement: React.FC = () => {
   const { users, updateUserStatus, loading } = useUsers();

@@ -10,6 +10,7 @@ npm install
 ```
 
 Required packages (already added to package.json):
+
 - `@nestjs/config`
 - `@nestjs/event-emitter`
 - `@nestjs/schedule`
@@ -33,11 +34,13 @@ CACHE_MONITORING_ENABLED=true
 ## Step 3: Start Redis
 
 ### Using Docker
+
 ```bash
 docker run -d -p 6379:6379 --name redis redis:latest
 ```
 
 ### Using local installation
+
 ```bash
 redis-server
 ```
@@ -45,16 +48,19 @@ redis-server
 ## Step 4: Verify Setup
 
 Start your backend:
+
 ```bash
 npm run start:dev
 ```
 
 Test the cache health endpoint:
+
 ```bash
 curl http://localhost:3004/cache/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "healthy",
@@ -138,6 +144,7 @@ export class ProductController {
 ## Common Use Cases
 
 ### 1. Cache User Profile
+
 ```typescript
 @Cacheable({ key: (id) => `user:${id}`, ttl: 300 })
 async getUserProfile(id: string) {
@@ -146,6 +153,7 @@ async getUserProfile(id: string) {
 ```
 
 ### 2. Cache Product List
+
 ```typescript
 @Cacheable({ key: 'products:all', ttl: 600, tags: ['products'] })
 async getAllProducts() {
@@ -154,6 +162,7 @@ async getAllProducts() {
 ```
 
 ### 3. Cache with Invalidation
+
 ```typescript
 @Cacheable({ key: (id) => `product:${id}`, ttl: 600 })
 @CacheEvict({ key: (id) => `product:${id}`, when: 'after' })
@@ -163,6 +172,7 @@ async updateProduct(id: string, data: any) {
 ```
 
 ### 4. Invalidate Related Caches
+
 ```typescript
 @CacheInvalidate({
   patterns: ['products:*', 'categories:*'],
@@ -177,11 +187,13 @@ async bulkUpdateProducts(ids: string[]) {
 ## Monitoring Cache Performance
 
 ### View Statistics
+
 ```bash
 curl http://localhost:3004/cache/stats
 ```
 
 ### View Top Keys
+
 ```bash
 curl http://localhost:3004/cache/metrics/top-keys?limit=10
 ```
@@ -206,17 +218,18 @@ curl -X DELETE http://localhost:3004/cache/tag/users
 
 Choose the right TTL for your data:
 
-| TTL Preset | Duration | Use Case |
-|-----------|----------|----------|
-| `300` | 5 minutes | Frequently changing data |
-| `1800` | 30 minutes | Standard caching (default) |
-| `7200` | 2 hours | Relatively static data |
-| `86400` | 24 hours | Reference data |
-| `604800` | 7 days | User sessions |
+| TTL Preset | Duration   | Use Case                   |
+| ---------- | ---------- | -------------------------- |
+| `300`      | 5 minutes  | Frequently changing data   |
+| `1800`     | 30 minutes | Standard caching (default) |
+| `7200`     | 2 hours    | Relatively static data     |
+| `86400`    | 24 hours   | Reference data             |
+| `604800`   | 7 days     | User sessions              |
 
 ## Advanced Features
 
 ### Database Query Caching
+
 ```typescript
 import { DatabaseCacheService } from './cache';
 
@@ -240,6 +253,7 @@ const products = await this.dbCache.cachePaginatedQuery(
 ```
 
 ### Session Caching
+
 ```typescript
 import { SessionCacheService } from './cache';
 
@@ -259,6 +273,7 @@ const session = await this.sessionCache.getSession(sessionId);
 ```
 
 ### Cache Warming
+
 ```typescript
 import { CacheWarmingService } from './cache';
 
@@ -279,27 +294,30 @@ this.warming.registerTask({
 ### Cache not working?
 
 1. **Check Redis connection:**
+
    ```bash
    curl http://localhost:3004/cache/health
    ```
 
 2. **Verify environment variables:**
+
    ```bash
    echo $REDIS_HOST
    echo $REDIS_PORT
    ```
 
-3. **Check logs for errors:**
-   Look for "Redis cache connection error" in logs
+3. **Check logs for errors:** Look for "Redis cache connection error" in logs
 
 ### Low cache hit rate?
 
 1. **Check metrics:**
+
    ```bash
    curl http://localhost:3004/cache/metrics
    ```
 
 2. **Review low hit rate keys:**
+
    ```bash
    curl http://localhost:3004/cache/metrics/low-hit-rate
    ```
@@ -309,6 +327,7 @@ this.warming.registerTask({
 ### Memory issues?
 
 1. **Monitor Redis memory:**
+
    ```bash
    redis-cli info memory
    ```
@@ -335,13 +354,15 @@ this.warming.registerTask({
 - 📖 Read the full [Cache README](./src/cache/README.md)
 - 💡 Check [usage examples](./src/cache/examples/cache-usage.example.ts)
 - 📊 Review [implementation summary](./CACHING_IMPLEMENTATION_SUMMARY.md)
-- 🔧 Configure [cache warming](./src/cache/services/cache-warming.service.ts) for your data
+- 🔧 Configure [cache warming](./src/cache/services/cache-warming.service.ts)
+  for your data
 
 ## Need Help?
 
 Common issues and solutions:
 
 **Q: How do I cache a complex query?**
+
 ```typescript
 @Cacheable({
   key: (params) => `query:${JSON.stringify(params)}`,
@@ -350,6 +371,7 @@ Common issues and solutions:
 ```
 
 **Q: How do I invalidate related caches?**
+
 ```typescript
 @CacheEvict({
   pattern: 'users:*',
@@ -359,6 +381,7 @@ Common issues and solutions:
 ```
 
 **Q: How do I cache authenticated requests?**
+
 ```typescript
 @HttpCache({
   keyGenerator: (req) => `user:${req.user.id}:data`,
@@ -367,6 +390,7 @@ Common issues and solutions:
 ```
 
 **Q: How do I warm cache on startup?**
+
 ```typescript
 // In your service
 async onModuleInit() {

@@ -1,15 +1,14 @@
-import React from 'react';
 import type { CohereEmbeddingSettings } from '@/types/embedding';
 import { COMMON_STYLES } from '@/types/embedding';
 
 const COHERE_MODELS = [
-    'embed-english-v3.0',
-    'embed-multilingual-v3.0',
-    'embed-english-light-v3.0',
-    'embed-multilingual-light-v3.0',
-    'embed-english-v2.0',
-    'embed-english-light-v2.0',
-    'embed-multilingual-v2.0',
+  'embed-english-v3.0',
+  'embed-multilingual-v3.0',
+  'embed-english-light-v3.0',
+  'embed-multilingual-light-v3.0',
+  'embed-english-v2.0',
+  'embed-english-light-v2.0',
+  'embed-multilingual-v2.0',
 ];
 
 interface CohereOptionsProps {

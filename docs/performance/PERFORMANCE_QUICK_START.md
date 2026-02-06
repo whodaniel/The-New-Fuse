@@ -147,7 +147,7 @@ curl http://localhost:8080/api/monitoring/database/slow-queries
 
 - Verify `DB_MONITORING_ENABLED=true`
 - Check threshold settings
-- Review Prisma middleware
+- Review Drizzle middleware
 
 ## 📚 Full Documentation
 

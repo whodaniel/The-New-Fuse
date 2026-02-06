@@ -1,6 +1,7 @@
 # Deployment Procedures
 
-Complete guide for deploying The New Fuse to production and staging environments.
+Complete guide for deploying The New Fuse to production and staging
+environments.
 
 ## Table of Contents
 
@@ -14,7 +15,8 @@ Complete guide for deploying The New Fuse to production and staging environments
 
 ## Overview
 
-The New Fuse uses automated deployment to Railway with the following characteristics:
+The New Fuse uses automated deployment to Railway with the following
+characteristics:
 
 - **Platform**: Railway
 - **Strategy**: Zero-downtime rolling updates
@@ -29,6 +31,7 @@ The New Fuse uses automated deployment to Railway with the following characteris
 Before any deployment, ensure:
 
 ### Code Quality
+
 - [ ] All tests pass locally
 - [ ] Code coverage meets requirements (>70%)
 - [ ] No linting errors
@@ -36,18 +39,21 @@ Before any deployment, ensure:
 - [ ] Bundle size is acceptable
 
 ### Review
+
 - [ ] PR approved by required reviewers
 - [ ] All CI checks pass
 - [ ] Breaking changes documented
 - [ ] Migration scripts ready (if needed)
 
 ### Configuration
+
 - [ ] Environment variables updated in Railway
 - [ ] Database migrations prepared
 - [ ] Feature flags configured
 - [ ] Third-party services notified (if needed)
 
 ### Communication
+
 - [ ] Team notified of deployment
 - [ ] Deployment window scheduled
 - [ ] Stakeholders informed
@@ -72,6 +78,7 @@ gh run watch
 ```
 
 **Timeline**:
+
 1. Tests run (15-20 min)
 2. Docker images build (10-15 min)
 3. Railway deployment (5-10 min)
@@ -291,6 +298,7 @@ railway run -- pnpm run db:verify
 After successful deployment:
 
 1. **Notify team**:
+
    ```
    ✅ Deployment successful
    Version: v1.2.3
@@ -420,6 +428,7 @@ After rollback:
 - **Monitoring**: Full monitoring enabled
 
 **Access**:
+
 ```bash
 railway link fuse-production
 railway shell
@@ -434,6 +443,7 @@ railway shell
 - **Monitoring**: Basic monitoring
 
 **Access**:
+
 ```bash
 railway link fuse-staging
 railway shell
@@ -448,7 +458,7 @@ railway shell
 pnpm run db:generate
 
 # Review migration
-cat prisma/migrations/*/migration.sql
+cat drizzle/migrations/*/migration.sql
 
 # Apply to staging
 railway run --service=backend -- pnpm run db:migrate
@@ -480,28 +490,34 @@ railway run --service=backend -- pnpm run db:migrate:rollback --to 2025011500000
 Track these metrics for each deployment:
 
 ### Lead Time
+
 - Time from commit to production
 - Target: <1 hour for hotfixes, <4 hours for features
 
 ### Deployment Frequency
+
 - How often we deploy
 - Target: Multiple times per day
 
 ### Change Failure Rate
+
 - Percentage of deployments causing issues
 - Target: <5%
 
 ### Mean Time to Recovery
+
 - Time to recover from failed deployment
 - Target: <30 minutes
 
 ### Success Rate
+
 - Percentage of successful deployments
 - Target: >95%
 
 ## Troubleshooting Deployments
 
-See [Troubleshooting Guide](./troubleshooting.md) for detailed solutions to common deployment issues.
+See [Troubleshooting Guide](./troubleshooting.md) for detailed solutions to
+common deployment issues.
 
 ## Additional Resources
 

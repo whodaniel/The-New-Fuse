@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BaseService } from '../core/BaseService.js';
-import { PrismaService } from '../../lib/prisma/prisma.service.js';
+import { DatabaseService } from '../../lib/drizzle/drizzle.service.js';
 import { Agent, CreateAgentDto, UpdateAgentDto, AgentStatus } from '@the-new-fuse/types';
 import { AgentFactory } from './AgentFactory.js';
 import { RedisService } from '../redis/redis.service.js';
@@ -8,7 +8,7 @@ import { RedisService } from '../redis/redis.service.js';
 @Injectable()
 export class AgentService extends BaseService {
     constructor(
-        private readonly prisma: PrismaService,
+        private readonly drizzle: DatabaseService,
         private readonly agentFactory: AgentFactory,
         private readonly redis: RedisService
     ) {
@@ -25,7 +25,7 @@ export class AgentService extends BaseService {
 
     async createAgent(data: CreateAgentDto, userId: string): Promise<Agent> {
         try {
-            const agent = await this.prisma.$transaction(async (tx) => {
+            const agent = await this.drizzle.$transaction(async (tx) => {
                 const existingAgent = await tx.agent.findFirst({
                     where: { name: data.name, userId, deletedAt: null }
                 });
@@ -63,7 +63,7 @@ export class AgentService extends BaseService {
     }
 
     async updateAgent(id: string, updates: UpdateAgentDto, userId: string): Promise<Agent> {
-        const agent = await this.prisma.agent.findFirst({
+        const agent = await this.drizzle.agent.findFirst({
             where: { id, userId, deletedAt: null }
         });
 
@@ -71,7 +71,7 @@ export class AgentService extends BaseService {
             throw new Error('Agent not found');
         }
 
-        const updatedAgent = await this.prisma.$transaction(async (tx) => {
+        const updatedAgent = await this.drizzle.$transaction(async (tx) => {
             if (updates.configuration) {
                 await this.agentFactory.updateAgent(
                     agent.instanceId,
@@ -90,7 +90,7 @@ export class AgentService extends BaseService {
     }
 
     async deleteAgent(id: string, userId: string): Promise<void> {
-        const agent = await this.prisma.agent.findFirst({
+        const agent = await this.drizzle.agent.findFirst({
             where: { id, userId, deletedAt: null }
         });
 
@@ -98,7 +98,7 @@ export class AgentService extends BaseService {
             throw new Error('Agent not found');
         }
 
-        await this.prisma.$transaction(async (tx) => {
+        await this.drizzle.$transaction(async (tx) => {
             await this.agentFactory.destroyAgent(agent.instanceId);
             await tx.agent.update({
                 where: { id },
@@ -123,7 +123,7 @@ export class AgentService extends BaseService {
     }
 
     private async handleStatusChange(agentId: string, status: AgentStatus): Promise<void> {
-        await this.prisma.agent.update({
+        await this.drizzle.agent.update({
             where: { id: agentId },
             data: { status }
         });

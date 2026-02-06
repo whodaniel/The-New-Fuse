@@ -49,7 +49,10 @@ export interface DependencyNode {
 export class AnalysisVisualizer {
   private readonly logger = new Logger(AnalysisVisualizer.name);
 
-  async visualizeAnalysis(report: AnalysisReport, options: VisualizationOptions = {}): Promise<VisualizationData> {
+  async visualizeAnalysis(
+    report: AnalysisReport,
+    options: VisualizationOptions = {},
+  ): Promise<VisualizationData> {
     this.logger.debug(`Visualizing analysis report: ${report.id}`);
 
     try {
@@ -69,12 +72,18 @@ export class AnalysisVisualizer {
       }
     } catch (error) {
       this.logger.error(`Visualization failed for report ${report.id}`, error);
-      throw new Error(`Visualization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Visualization failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
-  async visualizeByType(results: AnalysisResult[], analysisType: AnalysisType, options: VisualizationOptions = {}): Promise<VisualizationData> {
-    const filteredResults = results.filter(r => r.type === analysisType);
+  async visualizeByType(
+    results: AnalysisResult[],
+    analysisType: AnalysisType,
+    options: VisualizationOptions = {},
+  ): Promise<VisualizationData> {
+    const filteredResults = results.filter((r) => r.type === analysisType);
 
     switch (analysisType) {
       case AnalysisType.DEPENDENCY:
@@ -94,7 +103,7 @@ export class AnalysisVisualizer {
 
   private generateJsonVisualization(
     report: AnalysisReport,
-    options: VisualizationOptions
+    options: VisualizationOptions,
   ): VisualizationData {
     return {
       type: 'text',
@@ -107,7 +116,7 @@ export class AnalysisVisualizer {
 
   private generateHtmlVisualization(
     report: AnalysisReport,
-    options: VisualizationOptions
+    options: VisualizationOptions,
   ): VisualizationData {
     const theme = options.theme || 'light';
     const html = this.createHtmlReport(report, theme);
@@ -123,7 +132,7 @@ export class AnalysisVisualizer {
 
   private generateSvgVisualization(
     report: AnalysisReport,
-    options: VisualizationOptions
+    options: VisualizationOptions,
   ): VisualizationData {
     const svg = this.createSvgChart(report);
 
@@ -138,7 +147,7 @@ export class AnalysisVisualizer {
 
   private generateTextVisualization(
     report: AnalysisReport,
-    options: VisualizationOptions
+    options: VisualizationOptions,
   ): VisualizationData {
     const sections: string[] = [];
 
@@ -183,7 +192,7 @@ export class AnalysisVisualizer {
 
   private createDependencyVisualization(
     results: AnalysisResult[],
-    options: VisualizationOptions
+    options: VisualizationOptions,
   ): VisualizationData {
     const sections: string[] = [];
 
@@ -208,15 +217,15 @@ export class AnalysisVisualizer {
 
   private createSecurityVisualization(
     results: AnalysisResult[],
-    options: VisualizationOptions
+    options: VisualizationOptions,
   ): VisualizationData {
     const sections: string[] = [];
 
     sections.push('Security Analysis');
     sections.push('This visualization shows security vulnerabilities and risks.');
     sections.push('');
-    const criticalIssues = results.filter(r => r.severity === 'critical');
-    const highIssues = results.filter(r => r.severity === 'high');
+    const criticalIssues = results.filter((r) => r.severity === 'critical');
+    const highIssues = results.filter((r) => r.severity === 'high');
 
     if (criticalIssues.length > 0) {
       sections.push('Critical Security Issues:');
@@ -246,7 +255,7 @@ export class AnalysisVisualizer {
 
   private createPerformanceVisualization(
     results: AnalysisResult[],
-    options: VisualizationOptions
+    options: VisualizationOptions,
   ): VisualizationData {
     const sections: string[] = [];
 
@@ -275,7 +284,7 @@ export class AnalysisVisualizer {
 
   private createCodeQualityVisualization(
     results: AnalysisResult[],
-    options: VisualizationOptions
+    options: VisualizationOptions,
   ): VisualizationData {
     const sections: string[] = [];
 
@@ -304,7 +313,7 @@ export class AnalysisVisualizer {
 
   private createComplexityVisualization(
     results: AnalysisResult[],
-    options: VisualizationOptions
+    options: VisualizationOptions,
   ): VisualizationData {
     const sections: string[] = [];
 
@@ -312,9 +321,7 @@ export class AnalysisVisualizer {
     sections.push('This visualization shows code complexity metrics.');
     sections.push('');
     const complexFiles = this.groupResultsByFile(results);
-    const sortedFiles = Object.entries(complexFiles).sort(
-      ([, a], [, b]) => b.length - a.length
-    );
+    const sortedFiles = Object.entries(complexFiles).sort(([, a], [, b]) => b.length - a.length);
 
     sections.push('Most Complex Files:');
     sortedFiles.slice(0, 10).forEach(([file, issues], index) => {
@@ -378,7 +385,7 @@ export class AnalysisVisualizer {
     sections.push('Dependency Graph');
     sections.push('');
 
-    dependencies.forEach(dep => {
+    dependencies.forEach((dep) => {
       sections.push(`${dep.name}${dep.version ? ` v${dep.version}` : ''}`);
       sections.push(`  Type: ${dep.type}`);
       if (dep.vulnerable) {
@@ -435,13 +442,17 @@ export class AnalysisVisualizer {
         </div>
         <div class="issues">
           <h2>Issues</h2>
-          ${report.results.map(issue => `
+          ${report.results
+            .map(
+              (issue) => `
             <div class="issue ${issue.severity}">
               <strong>[${issue.severity.toUpperCase()}] ${issue.message}</strong>
               ${issue.file ? `<br>File: ${issue.file}${issue.line ? `:${issue.line}` : ''}` : ''}
               ${issue.suggestions ? `<br>Suggestions: ${issue.suggestions.join(', ')}` : ''}
             </div>
-          `).join('')}
+          `,
+            )
+            .join('')}
         </div>
       </body>
       </html>
@@ -453,15 +464,16 @@ export class AnalysisVisualizer {
       { label: 'Critical', value: report.summary.critical, color: '#ff0000' },
       { label: 'High', value: report.summary.high, color: '#ff6600' },
       { label: 'Medium', value: report.summary.medium, color: '#ffcc00' },
-      { label: 'Low', value: report.summary.low, color: '#00cc00' }
+      { label: 'Low', value: report.summary.low, color: '#00cc00' },
     ];
 
     const total = data.reduce((sum, item) => sum + item.value, 0);
-    if (total === 0) return '<svg width="400" height="300"><text x="100" y="150">No data to display</text></svg>';
-    
+    if (total === 0)
+      return '<svg width="400" height="300"><text x="100" y="150">No data to display</text></svg>';
+
     let currentAngle = 0;
 
-    const slices = data.map(item => {
+    const slices = data.map((item) => {
       const sliceAngle = (item.value / total) * 360;
       const startAngle = currentAngle;
       const endAngle = currentAngle + sliceAngle;
@@ -471,7 +483,7 @@ export class AnalysisVisualizer {
         ...item,
         startAngle,
         endAngle,
-        percentage: ((item.value / total) * 100).toFixed(1)
+        percentage: ((item.value / total) * 100).toFixed(1),
       };
     });
 
@@ -479,13 +491,14 @@ export class AnalysisVisualizer {
       <svg width="400" height="300" viewBox="0 0 400 300">
         <title>Analysis Results by Severity</title>
         <g transform="translate(150, 150)">
-          ${slices.map(slice => {
-            const x1 = Math.cos((slice.startAngle - 90) * Math.PI / 180) * 80;
-            const y1 = Math.sin((slice.startAngle - 90) * Math.PI / 180) * 80;
-            const x2 = Math.cos((slice.endAngle - 90) * Math.PI / 180) * 80;
-            const y2 = Math.sin((slice.endAngle - 90) * Math.PI / 180) * 80;
-            const largeArc = slice.endAngle - slice.startAngle > 180 ? 1 : 0;
-            return `
+          ${slices
+            .map((slice) => {
+              const x1 = Math.cos(((slice.startAngle - 90) * Math.PI) / 180) * 80;
+              const y1 = Math.sin(((slice.startAngle - 90) * Math.PI) / 180) * 80;
+              const x2 = Math.cos(((slice.endAngle - 90) * Math.PI) / 180) * 80;
+              const y2 = Math.sin(((slice.endAngle - 90) * Math.PI) / 180) * 80;
+              const largeArc = slice.endAngle - slice.startAngle > 180 ? 1 : 0;
+              return `
               <path d="M 0 0 L ${x1} ${y1} A 80 80 0 ${largeArc} 1 ${x2} ${y2} Z"
                     fill="${slice.color}"
                     stroke="white"
@@ -493,17 +506,22 @@ export class AnalysisVisualizer {
                 <title>${slice.label}: ${slice.value} (${slice.percentage}%)</title>
               </path>
             `;
-          }).join('')}
+            })
+            .join('')}
         </g>
         <g transform="translate(280, 50)">
-          ${slices.map((slice, index) => `
+          ${slices
+            .map(
+              (slice, index) => `
             <g transform="translate(0, ${index * 25})">
               <rect x="0" y="0" width="15" height="15" fill="${slice.color}"/>
               <text x="20" y="12" font-family="Arial" font-size="12">
                 ${slice.label}: ${slice.value}
               </text>
             </g>
-          `).join('')}
+          `,
+            )
+            .join('')}
         </g>
       </svg>
     `;
@@ -515,13 +533,16 @@ export class AnalysisVisualizer {
   }
 
   private groupResultsByFile(results: AnalysisResult[]): Record<string, AnalysisResult[]> {
-    return results.reduce((groups, result) => {
-      const file = result.file || 'Unknown';
-      if (!groups[file]) {
-        groups[file] = [];
-      }
-      groups[file].push(result);
-      return groups;
-    }, {} as Record<string, AnalysisResult[]>);
+    return results.reduce(
+      (groups, result) => {
+        const file = result.file || 'Unknown';
+        if (!groups[file]) {
+          groups[file] = [];
+        }
+        groups[file].push(result);
+        return groups;
+      },
+      {} as Record<string, AnalysisResult[]>,
+    );
   }
 }

@@ -25,7 +25,7 @@ export class TestUtils {
     return {
       success: true,
       data,
-      message: 'Operation successful'
+      message: 'Operation successful',
     };
   }
 

@@ -3,11 +3,7 @@
  */
 
 export function HealthCheck() {
-  return function(
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     return descriptor;
   };
 }
@@ -17,30 +13,32 @@ export function HealthCheck() {
  */
 export class HealthCheckService {
   check(checks: Array<() => Promise<any> | any>) {
-    return Promise.all(checks.map(check => {
-      try {
-        return Promise.resolve(check());
-      } catch (e) {
-        return Promise.reject(e);
-      }
-    }))
-    .then(results => {
-      return {
-        status: 'ok',
-        info: {},
-        error: {},
-        details: Object.assign({}, ...results)
-      };
-    })
-    .catch(error => {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      return {
-        status: 'error',
-        info: {},
-        error: { message: errorMessage },
-        details: { error: errorMessage }
-      };
-    });
+    return Promise.all(
+      checks.map((check) => {
+        try {
+          return Promise.resolve(check());
+        } catch (e) {
+          return Promise.reject(e);
+        }
+      })
+    )
+      .then((results) => {
+        return {
+          status: 'ok',
+          info: {},
+          error: {},
+          details: Object.assign({}, ...results),
+        };
+      })
+      .catch((error) => {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        return {
+          status: 'error',
+          info: {},
+          error: { message: errorMessage },
+          details: { error: errorMessage },
+        };
+      });
   }
 }
 
@@ -56,38 +54,40 @@ export class HealthIndicator {
     return Promise.resolve({
       [key]: {
         status: isHealthy ? 'up' : 'down',
-        ...data
-      }
+        ...data,
+      },
     });
   }
 }
 
 /**
- * Prisma health indicator
+ * Database health indicator
  */
-export class PrismaHealthIndicator extends HealthIndicator {
+export class DatabaseHealthIndicator extends HealthIndicator {
   constructor() {
     super();
   }
 
-  async pingCheck(key: string, prismaService: any): Promise<Record<string, any>> {
+  async pingCheck(key: string, dbService: any): Promise<Record<string, any>> {
     try {
-      if (typeof prismaService.healthCheck === 'function') {
-        const isHealthy = await prismaService.healthCheck();
+      if (typeof dbService.healthCheck === 'function') {
+        const isHealthy = await dbService.healthCheck();
         if (isHealthy) {
           return this.getStatus(key, true);
         }
         throw new Error('Database health check failed');
       }
-      
-      if (typeof prismaService.$queryRaw === 'function') {
-        await prismaService.$queryRaw`SELECT 1`;
+
+      if (typeof dbService.$queryRaw === 'function') {
+        await dbService.$queryRaw`SELECT 1`;
         return this.getStatus(key, true);
       }
-      
+
       throw new Error('Service does not support health check methods');
     } catch (e) {
-      return this.getStatus(key, false, { message: e instanceof Error ? e.message : 'Unknown error' });
+      return this.getStatus(key, false, {
+        message: e instanceof Error ? e.message : 'Unknown error',
+      });
     }
   }
 }
@@ -96,7 +96,10 @@ export class PrismaHealthIndicator extends HealthIndicator {
  * Error thrown when a health check fails
  */
 export class HealthCheckError extends Error {
-  constructor(message: string, public causes: any) {
+  constructor(
+    message: string,
+    public causes: any
+  ) {
     super(message);
   }
 }

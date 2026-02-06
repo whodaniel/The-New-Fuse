@@ -15,12 +15,13 @@ const RegistrationForm: React.FC = () => {
     setMessage(null);
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       return;
     }
 
     try {
-      const response = await fetch('/api/auth/register', { // Assuming API is proxied or on same domain
+      const response = await fetch('/api/auth/register', {
+        // Assuming API is proxied or on same domain
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +48,15 @@ const RegistrationForm: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '20px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '5px' }}>
+    <div
+      style={{
+        maxWidth: '400px',
+        margin: '20px auto',
+        padding: '20px',
+        border: '1px solid #ccc',
+        borderRadius: '5px',
+      }}
+    >
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '10px' }}>
@@ -94,7 +103,17 @@ const RegistrationForm: React.FC = () => {
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
         </div>
-        <button type="submit" style={{ padding: '10px 15px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '3px', cursor: 'pointer' }}>
+        <button
+          type="submit"
+          style={{
+            padding: '10px 15px',
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '3px',
+            cursor: 'pointer',
+          }}
+        >
           Register
         </button>
       </form>

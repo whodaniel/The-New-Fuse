@@ -33,133 +33,133 @@ spec:
         runAsUser: 1001
         fsGroup: 1001
       containers:
-      - name: sync-core
-        image: us-central1-docker.pkg.dev/your-gcp-project-id/the-new-fuse/sync-core:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 3003
-          name: http
-          protocol: TCP
-        - containerPort: 9090
-          name: metrics
-          protocol: TCP
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: REDIS_URL
-          valueFrom:
-            secretKeyRef:
-              name: sync-core-secrets
-              key: redis-url
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: sync-core-secrets
-              key: database-url
-        - name: SYNC_MASTER_CLOCK_ENABLED
-          valueFrom:
-            configMapKeyRef:
-              name: sync-core-config
-              key: master-clock-enabled
-        - name: SYNC_FILE_WATCHER_ENABLED
-          valueFrom:
-            configMapKeyRef:
-              name: sync-core-config
-              key: file-watcher-enabled
-        - name: SYNC_PERFORMANCE_MONITORING
-          valueFrom:
-            configMapKeyRef:
-              name: sync-core-config
-              key: performance-monitoring
-        - name: SYNC_LOG_LEVEL
-          valueFrom:
-            configMapKeyRef:
-              name: sync-core-config
-              key: log-level
-        - name: SYNC_TENANT_ISOLATION
-          valueFrom:
-            configMapKeyRef:
-              name: sync-core-config
-              key: tenant-isolation
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: POD_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /health/sync
-            port: 3003
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /health/sync/ready
-            port: 3003
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          timeoutSeconds: 3
-          failureThreshold: 3
-        startupProbe:
-          httpGet:
-            path: /health/sync/startup
-            port: 3003
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 30
-        volumeMounts:
-        - name: sync-data
-          mountPath: /app/data
-        - name: config-volume
-          mountPath: /app/config
-          readOnly: true
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          capabilities:
-            drop:
-            - ALL
+        - name: sync-core
+          image: us-central1-docker.pkg.dev/your-gcp-project-id/the-new-fuse/sync-core:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3003
+              name: http
+              protocol: TCP
+            - containerPort: 9090
+              name: metrics
+              protocol: TCP
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: sync-core-secrets
+                  key: redis-url
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: sync-core-secrets
+                  key: database-url
+            - name: SYNC_MASTER_CLOCK_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: sync-core-config
+                  key: master-clock-enabled
+            - name: SYNC_FILE_WATCHER_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: sync-core-config
+                  key: file-watcher-enabled
+            - name: SYNC_PERFORMANCE_MONITORING
+              valueFrom:
+                configMapKeyRef:
+                  name: sync-core-config
+                  key: performance-monitoring
+            - name: SYNC_LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: sync-core-config
+                  key: log-level
+            - name: SYNC_TENANT_ISOLATION
+              valueFrom:
+                configMapKeyRef:
+                  name: sync-core-config
+                  key: tenant-isolation
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health/sync
+              port: 3003
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health/sync/ready
+              port: 3003
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /health/sync/startup
+              port: 3003
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          volumeMounts:
+            - name: sync-data
+              mountPath: /app/data
+            - name: config-volume
+              mountPath: /app/config
+              readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
       volumes:
-      - name: sync-data
-        persistentVolumeClaim:
-          claimName: sync-core-pvc
-      - name: config-volume
-        configMap:
-          name: sync-core-config
+        - name: sync-data
+          persistentVolumeClaim:
+            claimName: sync-core-pvc
+        - name: config-volume
+          configMap:
+            name: sync-core-config
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - sync-core
-              topologyKey: kubernetes.io/hostname
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - sync-core
+                topologyKey: kubernetes.io/hostname
       tolerations:
-      - key: "sync-workload"
-        operator: "Equal"
-        value: "true"
-        effect: "NoSchedule"
+        - key: "sync-workload"
+          operator: "Equal"
+          value: "true"
+          effect: "NoSchedule"
 ---
 apiVersion: v1
 kind: Service
@@ -174,14 +174,14 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 80
-    targetPort: 3003
-    protocol: TCP
-    name: http
-  - port: 9090
-    targetPort: 9090
-    protocol: TCP
-    name: metrics
+    - port: 80
+      targetPort: 3003
+      protocol: TCP
+      name: http
+    - port: 9090
+      targetPort: 9090
+      protocol: TCP
+      name: metrics
   selector:
     app: sync-core
 ---
@@ -197,12 +197,12 @@ kind: ClusterRole
 metadata:
   name: sync-core-role
 rules:
-- apiGroups: [""]
-  resources: ["pods", "services", "endpoints"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["apps"]
-  resources: ["deployments", "replicasets"]
-  verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["pods", "services", "endpoints"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -213,9 +213,9 @@ roleRef:
   kind: ClusterRole
   name: sync-core-role
 subjects:
-- kind: ServiceAccount
-  name: sync-core-sa
-  namespace: default
+  - kind: ServiceAccount
+    name: sync-core-sa
+    namespace: default
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

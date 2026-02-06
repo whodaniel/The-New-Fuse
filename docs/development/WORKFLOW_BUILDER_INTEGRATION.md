@@ -2,13 +2,17 @@
 
 ## Overview
 
-The drag and drop workflow builder has been successfully integrated into The Browser Hub electron app, providing users with a powerful visual interface for creating AI-powered workflows.
+The drag and drop workflow builder has been successfully integrated into The
+Browser Hub electron app, providing users with a powerful visual interface for
+creating AI-powered workflows.
 
 ## Features
 
 ### 🎨 Visual Workflow Designer
+
 - **Drag & Drop Interface**: Intuitive node-based workflow creation
-- **Real-time Canvas**: Interactive grid-based canvas with smooth node manipulation
+- **Real-time Canvas**: Interactive grid-based canvas with smooth node
+  manipulation
 - **Node Categories**: Organized palette with different node types:
   - Input/Output nodes
   - AI Processing nodes (Chat, Completion, Image)
@@ -16,11 +20,14 @@ The drag and drop workflow builder has been successfully integrated into The Bro
   - Data Processing nodes (Transform, Filter, Merge)
 
 ### 🔧 Node Management
+
 - **Property Editor**: Dynamic properties panel for selected nodes
-- **Node Customization**: Edit titles, descriptions, and type-specific properties
+- **Node Customization**: Edit titles, descriptions, and type-specific
+  properties
 - **Visual Feedback**: Hover effects, selection states, and port indicators
 
 ### 💾 Workflow Operations
+
 - **Save/Load**: Export workflows as JSON files
 - **Local Storage**: Automatic saving to browser localStorage
 - **New Workflow**: Create fresh workflows with confirmation
@@ -29,18 +36,23 @@ The drag and drop workflow builder has been successfully integrated into The Bro
 ## Integration Points
 
 ### 1. Browser Hub Navigation
+
 The workflow builder is accessible through:
+
 - **AI Services Section**: Click "Workflow Builder" in the sidebar
 - **Panel Interface**: Opens as a slide-out panel from the right
 - **Full-Featured UI**: Complete workflow designer within the Browser Hub
 
 ### 2. Electron Integration
+
 - **IPC Handlers**: Backend communication for workflow operations
 - **File System**: Save/load workflows to local file system
 - **Native Dialogs**: File picker integration for workflow import/export
 
 ### 3. API Integration
+
 Backend handlers for:
+
 - `workflow:create` - Create new workflows
 - `workflow:save` - Save workflow definitions
 - `workflow:load` - Load existing workflows
@@ -50,12 +62,14 @@ Backend handlers for:
 ## Usage Instructions
 
 ### Opening the Workflow Builder
+
 1. Launch the Browser Hub electron app
 2. Navigate to the **AI Services** section in the sidebar
-3. Click on **"Workflow Builder"** 
+3. Click on **"Workflow Builder"**
 4. The workflow designer panel will slide out from the right
 
 ### Creating Workflows
+
 1. **Add Nodes**: Drag nodes from the palette to the canvas
 2. **Configure Nodes**: Click nodes to edit properties in the right panel
 3. **Connect Nodes**: Use input/output ports to create connections (coming soon)
@@ -64,21 +78,25 @@ Backend handlers for:
 ### Node Types Available
 
 #### Input/Output
+
 - **Input**: Receives external data
 - **Output**: Sends results to destinations
 - **Webhook**: HTTP endpoint integration
 
 #### AI Processing
+
 - **AI Chat**: Conversational AI interactions
 - **AI Completion**: Text completion and generation
 - **AI Image**: Image generation and processing
 
 #### Logic & Control
+
 - **Condition**: Conditional branching logic
 - **Loop**: Iterative processing
 - **Delay**: Time-based delays
 
 #### Data Processing
+
 - **Transform**: Data transformation operations
 - **Filter**: Data filtering logic
 - **Merge**: Combine multiple data streams
@@ -86,6 +104,7 @@ Backend handlers for:
 ## Technical Implementation
 
 ### Frontend Components
+
 ```typescript
 // Workflow Builder Panel Integration
 - Enhanced Browser Hub HTML with workflow panel
@@ -95,6 +114,7 @@ Backend handlers for:
 ```
 
 ### Backend Services
+
 ```typescript
 // Electron Main Process
 - IPC handlers for workflow operations
@@ -107,6 +127,7 @@ Backend handlers for:
 ```
 
 ### Workflow Engine Integration
+
 ```typescript
 // WorkflowBuilder Service
 - Node creation and management
@@ -132,18 +153,21 @@ packages/
 ## Future Enhancements
 
 ### Phase 1 (Current)
+
 - ✅ Visual node editor
 - ✅ Property management
 - ✅ Save/load functionality
 - ✅ Browser Hub integration
 
 ### Phase 2 (Planned)
+
 - 🔄 Node connections and flow visualization
 - 🔄 Real workflow execution engine
 - 🔄 Template library
 - 🔄 Collaborative editing
 
 ### Phase 3 (Future)
+
 - 🔄 AI-powered workflow suggestions
 - 🔄 Integration with external APIs
 - 🔄 Workflow marketplace
@@ -158,6 +182,7 @@ Run the test script to verify the integration:
 ```
 
 This will:
+
 1. Start required services
 2. Open the Browser Hub
 3. Provide testing instructions
@@ -166,6 +191,7 @@ This will:
 ## API Reference
 
 ### Workflow Operations
+
 ```javascript
 // Create new workflow
 await window.electronAPI.createWorkflow(workflowData);
@@ -184,22 +210,23 @@ await window.electronAPI.listWorkflows();
 ```
 
 ### Node Configuration
+
 ```javascript
 // Default node properties by type
 const nodeDefaults = {
-  'ai-chat': { 
-    model: 'gpt-4', 
-    temperature: 0.7, 
-    maxTokens: 1000 
+  'ai-chat': {
+    model: 'gpt-4',
+    temperature: 0.7,
+    maxTokens: 1000,
   },
-  'input': { 
-    inputType: 'text', 
-    placeholder: 'Enter input...' 
+  input: {
+    inputType: 'text',
+    placeholder: 'Enter input...',
   },
-  'webhook': { 
-    url: 'https://api.example.com', 
-    method: 'POST' 
-  }
+  webhook: {
+    url: 'https://api.example.com',
+    method: 'POST',
+  },
 };
 ```
 
@@ -223,7 +250,9 @@ const nodeDefaults = {
    - Ensure proper state management
 
 ### Debug Mode
-Enable debug logging by opening Developer Tools in the Browser Hub and checking the console for workflow-related messages.
+
+Enable debug logging by opening Developer Tools in the Browser Hub and checking
+the console for workflow-related messages.
 
 ## Contributing
 
@@ -236,4 +265,8 @@ To extend the workflow builder:
 
 ## Conclusion
 
-The workflow builder integration provides a powerful visual interface for creating AI-powered workflows directly within The Browser Hub. Users can now design, configure, and manage complex workflows using an intuitive drag-and-drop interface, making AI automation accessible to both technical and non-technical users.
+The workflow builder integration provides a powerful visual interface for
+creating AI-powered workflows directly within The Browser Hub. Users can now
+design, configure, and manage complex workflows using an intuitive drag-and-drop
+interface, making AI automation accessible to both technical and non-technical
+users.

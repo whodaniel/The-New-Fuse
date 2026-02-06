@@ -1,14 +1,14 @@
 /**
  * Web Scraping MCP Server Example
- * 
+ *
  * Demonstrates how to create an MCP server with web scraping capabilities
  * for AI agents to access the internet.
  */
 
-import { MCPServer } from '../src/server/MCPServer';
-import { MCPServerConfig } from '../src/types/server';
-import { LogLevel } from '../src/types/common';
 import { WebScrapingMCPTools } from '../../web-scraping/src/mcp/WebScrapingMCPTools';
+import { MCPServer } from '../src/server/MCPServer';
+import { LogLevel } from '../src/types/common';
+import { MCPServerConfig } from '../src/types/server';
 
 async function createWebScrapingMCPServer() {
   // Create server instance
@@ -24,7 +24,7 @@ async function createWebScrapingMCPServer() {
     timeout: 60000, // Longer timeout for web scraping
     enableAuth: true,
     enableTLS: false,
-    logLevel: LogLevel.INFO
+    logLevel: LogLevel.INFO,
   };
 
   try {
@@ -41,23 +41,23 @@ async function createWebScrapingMCPServer() {
         'stackoverflow.com',
         'news.ycombinator.com',
         'reddit.com',
-        'medium.com'
+        'medium.com',
       ],
       blockedDomains: [
         'facebook.com',
-        'twitter.com' // Block social media for privacy
+        'twitter.com', // Block social media for privacy
       ],
       maxFileSize: 5 * 1024 * 1024, // 5MB limit
       rateLimit: {
         requests: 30,
-        windowMs: 60000 // 30 requests per minute
+        windowMs: 60000, // 30 requests per minute
       },
-      contentFiltering: true
+      contentFiltering: true,
     });
 
     // Register all web scraping tools
     const tools = webTools.getTools();
-    tools.forEach(tool => {
+    tools.forEach((tool) => {
       server.registerTool(tool);
       console.log(`📋 Registered tool: ${tool.name}`);
     });
@@ -70,14 +70,18 @@ async function createWebScrapingMCPServer() {
       handler: {
         async read(uri: string) {
           const url = uri.replace('web://', 'https://');
-          
+
           // Use the web scraping service
-          const result = await webTools['webScrapingService'].scrapeAuto(url, {
-            timeout: 15000
-          }, {
-            mainContentOnly: true,
-            maxTextLength: 10000
-          });
+          const result = await webTools['webScrapingService'].scrapeAuto(
+            url,
+            {
+              timeout: 15000,
+            },
+            {
+              mainContentOnly: true,
+              maxTextLength: 10000,
+            }
+          );
 
           return {
             uri,
@@ -88,11 +92,11 @@ async function createWebScrapingMCPServer() {
               description: result.description,
               url: result.url,
               timestamp: new Date().toISOString(),
-              success: result.success
-            }
+              success: result.success,
+            },
           };
-        }
-      }
+        },
+      },
     });
 
     console.log('📋 Registered web content resource');
@@ -104,7 +108,7 @@ async function createWebScrapingMCPServer() {
       version: serverInfo.version,
       status: serverInfo.status,
       capabilities: serverInfo.capabilities,
-      toolCount: serverInfo.metadata?.toolCount
+      toolCount: serverInfo.metadata?.toolCount,
     });
 
     // Test web scraping functionality
@@ -121,10 +125,10 @@ async function createWebScrapingMCPServer() {
           url: 'https://example.com',
           extraction: {
             mainContentOnly: true,
-            maxTextLength: 500
-          }
-        }
-      }
+            maxTextLength: 500,
+          },
+        },
+      },
     });
 
     if (simpleTest.result?.success) {
@@ -144,9 +148,9 @@ async function createWebScrapingMCPServer() {
         name: 'proxy_web_request',
         arguments: {
           url: 'https://httpbin.org/json',
-          method: 'GET'
-        }
-      }
+          method: 'GET',
+        },
+      },
     });
 
     if (proxyTest.result?.success) {
@@ -165,9 +169,9 @@ async function createWebScrapingMCPServer() {
         name: 'analyze_website',
         arguments: {
           url: 'https://news.ycombinator.com',
-          includeScreenshot: false
-        }
-      }
+          includeScreenshot: false,
+        },
+      },
     });
 
     if (analysisTest.result?.success) {
@@ -176,7 +180,7 @@ async function createWebScrapingMCPServer() {
         title: analysisTest.result.result.title,
         wordCount: analysisTest.result.result.wordCount,
         linkCount: analysisTest.result.result.linkCount,
-        loadTime: analysisTest.result.result.loadTime
+        loadTime: analysisTest.result.result.loadTime,
       });
     } else {
       console.log('❌ Website analysis test failed:', analysisTest.error);
@@ -188,15 +192,21 @@ async function createWebScrapingMCPServer() {
     console.log('\n📖 Usage Examples:');
     console.log('1. Simple scraping:');
     console.log('   POST /tools/call');
-    console.log('   {"name": "scrape_website_simple", "arguments": {"url": "https://example.com"}}');
-    
+    console.log(
+      '   {"name": "scrape_website_simple", "arguments": {"url": "https://example.com"}}'
+    );
+
     console.log('\n2. Full browser scraping:');
     console.log('   POST /tools/call');
-    console.log('   {"name": "scrape_website_full", "arguments": {"url": "https://spa-app.com", "config": {"waitForSelector": ".content"}}}');
-    
+    console.log(
+      '   {"name": "scrape_website_full", "arguments": {"url": "https://spa-app.com", "config": {"waitForSelector": ".content"}}}'
+    );
+
     console.log('\n3. Proxy request:');
     console.log('   POST /tools/call');
-    console.log('   {"name": "proxy_web_request", "arguments": {"url": "https://api.example.com", "method": "GET"}}');
+    console.log(
+      '   {"name": "proxy_web_request", "arguments": {"url": "https://api.example.com", "method": "GET"}}'
+    );
 
     // Keep server running
     console.log('\n⏳ Server running... Press Ctrl+C to stop');
@@ -209,7 +219,6 @@ async function createWebScrapingMCPServer() {
       console.log('✅ Server stopped gracefully');
       process.exit(0);
     });
-
   } catch (error) {
     console.error('❌ Error:', error);
     if (server.isRunning()) {

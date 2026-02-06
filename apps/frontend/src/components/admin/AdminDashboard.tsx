@@ -1,11 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  FiUsers, 
-  FiActivity, 
-  FiMessageSquare, 
-  FiServer,
-  FiAlertCircle
-} from 'react-icons/fi';
+import React, { useEffect, useState } from 'react';
+import { FiActivity, FiAlertCircle, FiMessageSquare, FiServer, FiUsers } from 'react-icons/fi';
 
 export const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState({
@@ -15,24 +9,28 @@ export const AdminDashboard: React.FC = () => {
     activeAgents: 0,
     systemHealth: 0,
     userGrowth: 0,
-    agentGrowth: 0
+    agentGrowth: 0,
   });
-  
-  const [recentActivities, setRecentActivities] = useState<Array<{
-    id: string;
-    type: string;
-    user: string;
-    action: string;
-    timestamp: Date;
-  }>>([]);
-  
-  const [alerts, setAlerts] = useState<Array<{
-    id: string;
-    level: 'info' | 'warning' | 'error';
-    message: string;
-    timestamp: Date;
-  }>>([]);
-  
+
+  const [recentActivities, setRecentActivities] = useState<
+    Array<{
+      id: string;
+      type: string;
+      user: string;
+      action: string;
+      timestamp: Date;
+    }>
+  >([]);
+
+  const [alerts, setAlerts] = useState<
+    Array<{
+      id: string;
+      level: 'info' | 'warning' | 'error';
+      message: string;
+      timestamp: Date;
+    }>
+  >([]);
+
   // Simulate fetching data
   useEffect(() => {
     // In a real implementation, this would fetch data from an API
@@ -43,75 +41,75 @@ export const AdminDashboard: React.FC = () => {
       activeAgents: 42,
       systemHealth: 98,
       userGrowth: 12,
-      agentGrowth: 24
+      agentGrowth: 24,
     });
-    
+
     setRecentActivities([
       {
         id: '1',
         type: 'user',
         user: 'John Doe',
         action: 'Created a new workspace',
-        timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
+        timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
       },
       {
         id: '2',
         type: 'agent',
         user: 'Research Assistant',
         action: 'Completed a task',
-        timestamp: new Date(Date.now() - 1000 * 60 * 15) // 15 minutes ago
+        timestamp: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
       },
       {
         id: '3',
         type: 'system',
         user: 'System',
         action: 'Backup completed',
-        timestamp: new Date(Date.now() - 1000 * 60 * 30) // 30 minutes ago
+        timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
       },
       {
         id: '4',
         type: 'user',
         user: 'Jane Smith',
         action: 'Updated profile',
-        timestamp: new Date(Date.now() - 1000 * 60 * 45) // 45 minutes ago
+        timestamp: new Date(Date.now() - 1000 * 60 * 45), // 45 minutes ago
       },
       {
         id: '5',
         type: 'agent',
         user: 'Code Assistant',
         action: 'Generated code',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60) // 1 hour ago
-      }
+        timestamp: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
+      },
     ]);
-    
+
     setAlerts([
       {
         id: '1',
         level: 'info',
         message: 'System update scheduled for tomorrow',
-        timestamp: new Date(Date.now() - 1000 * 60 * 120) // 2 hours ago
+        timestamp: new Date(Date.now() - 1000 * 60 * 120), // 2 hours ago
       },
       {
         id: '2',
         level: 'warning',
         message: 'High CPU usage detected',
-        timestamp: new Date(Date.now() - 1000 * 60 * 180) // 3 hours ago
-      }
+        timestamp: new Date(Date.now() - 1000 * 60 * 180), // 3 hours ago
+      },
     ]);
   }, []);
-  
+
   // Format timestamp
   const formatTime = (date: Date) => {
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / (1000 * 60));
-    
+
     if (diffMins < 1) return 'Just now';
     if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? '' : 's'} ago`;
-    
+
     const diffHours = Math.floor(diffMins / 60);
     if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
-    
+
     const diffDays = Math.floor(diffHours / 24);
     return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
   };
@@ -119,7 +117,7 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
-      
+
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="p-4 shadow-md border border-gray-200 rounded-md">
@@ -133,7 +131,7 @@ export const AdminDashboard: React.FC = () => {
             {stats.userGrowth}% since last month
           </div>
         </div>
-        
+
         <div className="p-4 shadow-md border border-gray-200 rounded-md">
           <div className="text-sm text-gray-500">Active Users</div>
           <div className="text-2xl font-bold">{stats.activeUsers}</div>
@@ -141,7 +139,7 @@ export const AdminDashboard: React.FC = () => {
             {Math.round((stats.activeUsers / stats.totalUsers) * 100)}% of total users
           </div>
         </div>
-        
+
         <div className="p-4 shadow-md border border-gray-200 rounded-md">
           <div className="text-sm text-gray-500">Total Agents</div>
           <div className="flex items-center">
@@ -153,7 +151,7 @@ export const AdminDashboard: React.FC = () => {
             {stats.agentGrowth}% since last month
           </div>
         </div>
-        
+
         <div className="p-4 shadow-md border border-gray-200 rounded-md">
           <div className="text-sm text-gray-500">System Health</div>
           <div className="flex items-center">
@@ -161,11 +159,14 @@ export const AdminDashboard: React.FC = () => {
             <div className="text-2xl font-bold">{stats.systemHealth}%</div>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-2">
-            <div className="bg-green-600 h-2.5 rounded-full" style={{width: `${stats.systemHealth}%`}}></div>
+            <div
+              className="bg-green-600 h-2.5 rounded-full"
+              style={{ width: `${stats.systemHealth}%` }}
+            ></div>
           </div>
         </div>
       </div>
-      
+
       {/* Recent Activity and Alerts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow-md">
@@ -178,7 +179,7 @@ export const AdminDashboard: React.FC = () => {
                 <div key={activity.id} className="py-4">
                   <div className="flex justify-between">
                     <div className="flex">
-                      <FiActivity 
+                      <FiActivity
                         className={`mr-3 ${activity.type === 'user' ? 'text-blue-500' : activity.type === 'agent' ? 'text-green-500' : 'text-gray-500'}`}
                       />
                       <div>
@@ -193,7 +194,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow-md">
           <div className="p-4 border-b">
             <h2 className="text-lg font-semibold">System Alerts</h2>
@@ -201,12 +202,15 @@ export const AdminDashboard: React.FC = () => {
           <div className="p-4">
             <div className="space-y-4">
               {alerts.map((alert) => (
-                <div 
-                  key={alert.id} 
-                  className={`p-4 rounded-md flex items-start ${alert.level === 'info' ? 'bg-blue-100 text-blue-800' : alert.level === 'warning' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
+                <div
+                  key={alert.id}
+                  className={`p-4 rounded-md flex items-start ${alert.level === 'info' ? 'bg-blue-100 text-blue-800' : alert.level === 'warning' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}
+                >
                   <FiAlertCircle className="mr-3 mt-1" />
                   <div>
-                    <div className="font-semibold">{alert.level.charAt(0).toUpperCase() + alert.level.slice(1)}</div>
+                    <div className="font-semibold">
+                      {alert.level.charAt(0).toUpperCase() + alert.level.slice(1)}
+                    </div>
                     <div className="text-sm">{alert.message}</div>
                     <div className="text-xs mt-1">{formatTime(alert.timestamp)}</div>
                   </div>

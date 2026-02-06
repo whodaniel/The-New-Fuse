@@ -1,25 +1,29 @@
 # The New Fuse - Comprehensive Consolidation Plan
 
-**Generated:** 2025-10-23
-**Project:** The New Fuse
-**Scope:** Documentation and Scripts Consolidation
+**Generated:** 2025-10-23 **Project:** The New Fuse **Scope:** Documentation and
+Scripts Consolidation
 
 ---
 
 ## Executive Summary
 
 This project has experienced significant organic growth, resulting in:
-- **431 script files** (274 .sh files in scripts/ root alone, 200+ in project root)
+
+- **431 script files** (274 .sh files in scripts/ root alone, 200+ in project
+  root)
 - **~200+ documentation files** across 68 directories
-- **76 "fix-*" scripts** addressing various issues
+- **76 "fix-\*" scripts** addressing various issues
 - **23 root-level docs** requiring better organization
-- **8 _archive directories** with historical content
+- **8 \_archive directories** with historical content
 - **~11,847 lines** of shell scripts in project root alone
 
 **Key Issues:**
+
 1. Massive duplication of build, launch, and fix scripts
-2. Documentation scattered across overlapping directories (development/ vs development-and-troubleshooting/)
-3. Multiple versions of the same guides (PORT_MANAGEMENT appears in 5+ locations)
+2. Documentation scattered across overlapping directories (development/ vs
+   development-and-troubleshooting/)
+3. Multiple versions of the same guides (PORT_MANAGEMENT appears in 5+
+   locations)
 4. Scripts in both root and scripts/ directories creating confusion
 5. MCP documentation spread across 14+ files
 6. No clear entry point for new developers
@@ -116,6 +120,7 @@ docs/
 #### Phase 1: Merge Duplicate Guides
 
 **1. Port Management Documentation (Priority: HIGH)**
+
 - **Files to Consolidate (5 total):**
   - `/docs/PORT_MANAGEMENT.md`
   - `/docs/PORT_MANAGEMENT_ARCHITECTURE.md`
@@ -127,12 +132,15 @@ docs/
   - `/docs/troubleshooting/PORT-MANAGEMENT-STATUS.md`
 
 - **Consolidate to:**
-  - `/docs/reference/architecture/port-management.md` (Complete technical reference)
+  - `/docs/reference/architecture/port-management.md` (Complete technical
+    reference)
   - `/docs/troubleshooting/port-management.md` (Common issues & solutions)
 
-- **Action:** Extract all unique content, merge chronologically, preserve all technical details
+- **Action:** Extract all unique content, merge chronologically, preserve all
+  technical details
 
 **2. MCP Documentation (Priority: HIGH)**
+
 - **Files to Consolidate (14 total):**
   - `/docs/MCP-COMPLETE-API-WRAPPING.md`
   - `/docs/MCP_TROUBLESHOOTING_GUIDE.md`
@@ -149,6 +157,7 @@ docs/
 - **Archive:** Keep `specifications/_archive/` but add README explaining history
 
 **3. Development Guides (Priority: HIGH)**
+
 - **Files to Consolidate:**
   - `/docs/DEVELOPMENT.md`
   - `/docs/guides/development.md`
@@ -158,6 +167,7 @@ docs/
   - `/docs/guides/development.md` (Single, comprehensive guide)
 
 **4. Getting Started (Priority: HIGH)**
+
 - **Files to Consolidate:**
   - `/docs/GETTING_STARTED.md`
   - `/docs/extensions/getting-started.md`
@@ -169,12 +179,14 @@ docs/
   - `/docs/guides/extensions.md` (Extension-specific content)
 
 **5. Troubleshooting Guides (Priority: MEDIUM)**
+
 - **Consolidate:**
   - All files from `/docs/development-and-troubleshooting/` (22 files)
   - Organize into `/docs/troubleshooting/` by topic
   - Archive implementation logs to `_archive/implementation-logs/`
 
 **6. Project Management Docs (Priority: MEDIUM)**
+
 - **Merge directories:**
   - `/docs/project/` (272K, 29 files)
   - `/docs/project-management/` (380K)
@@ -188,7 +200,9 @@ docs/
 #### Phase 2: Archive Old Content
 
 **Archive to `/docs/_archive/2024-pre-restructure/`:**
-- Implementation logs (DEVELOPMENT_PROGRESS_LOG.md, CLAUDE_DEV_IMPLEMENTATION_LOG.md)
+
+- Implementation logs (DEVELOPMENT_PROGRESS_LOG.md,
+  CLAUDE_DEV_IMPLEMENTATION_LOG.md)
 - Session handoffs (NEXT_SESSION_HANDOFF.md)
 - Temporary analysis files (CRITICAL-FRONTEND-ANALYSIS.md)
 - Old TODO lists (TODO_CHECKLIST.md)
@@ -196,6 +210,7 @@ docs/
 - Old checklists (DEPLOYMENT_CHECKLIST.md)
 
 **Archive to `/docs/_archive/deprecated-guides/`:**
+
 - Outdated integration READMEs
 - Old quick start guides that have been superseded
 - Deprecated agent communication protocols
@@ -203,6 +218,7 @@ docs/
 #### Phase 3: Create Missing Documentation
 
 **New files to create:**
+
 1. `/docs/README.md` - Complete rewrite with clear navigation
 2. `/docs/getting-started/prerequisites.md` - Extract from scattered sources
 3. `/docs/troubleshooting/common-errors.md` - Consolidate common issues
@@ -212,6 +228,7 @@ docs/
 ### Documentation Quality Standards
 
 **All consolidated docs must:**
+
 1. Include a "Last Updated" date
 2. Reference source files in a footer comment
 3. Remove duplicate information
@@ -227,23 +244,26 @@ docs/
 ### Current Scripts Analysis
 
 **Statistics:**
+
 - **Project Root:** 200+ .sh files (~11,847 lines of code)
 - **scripts/ directory:** 274 shell scripts + 157 JavaScript files = 431 total
 - **Deprecated already:** 13 scripts in `deprecated-build-scripts/`
-- **Fix scripts:** 76 different fix-*.sh and fix-*.js files
+- **Fix scripts:** 76 different fix-_.sh and fix-_.js files
 - **Launch scripts:** 12+ different launch variations
 - **Build scripts:** 14+ different build variations
 - **MCP scripts:** 5+ MCP setup/config scripts
 - **Cleanup scripts:** 6+ cleanup variations
-- **Database scripts:** 11+ database/Prisma scripts
+- **Database scripts:** 11+ database/Drizzle scripts
 
 ### Critical Issue: Script Location Chaos
 
 **Problem:** Scripts exist in TWO locations:
+
 1. Project root: 200+ scripts (unmaintainable)
 2. `/scripts/`: 431 scripts (better but still chaotic)
 
 **Impact:**
+
 - Developers don't know which scripts to use
 - Old scripts in root may conflict with newer scripts/
 - No clear versioning or progression
@@ -325,14 +345,15 @@ scripts/
 
 #### Phase 1: Identify Active vs Deprecated Scripts
 
-**Scripts ACTIVELY USED (Keep in core/):**
-Based on:
+**Scripts ACTIVELY USED (Keep in core/):** Based on:
+
 - Referenced in package.json
 - Modified in last 7 days (Oct 23, 2023)
 - Referenced in turbo.json
 - Part of CI/CD pipeline
 
 **Recently Modified (Keep):**
+
 1. `start-all.sh` (Oct 23)
 2. `setup-claude-dev-automation.sh` (Oct 23)
 3. `production-build.sh` (Oct 23)
@@ -345,20 +366,25 @@ Based on:
 10. `setup-dev.sh` (Oct 23)
 
 **Referenced in Package.json (Implicitly Used):**
+
 - None directly (uses turbo/pnpm commands)
 - BUT: Common pattern is developers run scripts/ directly
 
-**Scripts to DEPRECATE (Move to _deprecated/):**
+**Scripts to DEPRECATE (Move to \_deprecated/):**
 
-**1. Fix Scripts (76 files - ARCHIVE ALL):**
-These are one-time fixes that should be archived:
+**1. Fix Scripts (76 files - ARCHIVE ALL):** These are one-time fixes that
+should be archived:
+
 - All `fix-*.sh` and `fix-*.js` in both root and scripts/
-- Reasoning: Fix scripts are temporal - they solve a specific problem at a point in time
-- Action: Move to `_deprecated/2024-q4/fix-scripts/` with README explaining what each fixed
+- Reasoning: Fix scripts are temporal - they solve a specific problem at a point
+  in time
+- Action: Move to `_deprecated/2024-q4/fix-scripts/` with README explaining what
+  each fixed
 - **Exception:** Keep `fix-workspace-deps.sh` (still actively used)
 
 **2. Duplicate Build Scripts:**
-- **Root Directory:** All build-*.sh files (30+ files)
+
+- **Root Directory:** All build-\*.sh files (30+ files)
   - Move to `_deprecated/2024-q4/old-builds/`
   - Keep only: `scripts/build/production.sh`, `scripts/core/build.sh`
 
@@ -370,8 +396,8 @@ These are one-time fixes that should be archived:
   - `build-intelligent.sh` (merge features into main build)
   - All in `deprecated-build-scripts/` (already identified)
 
-**3. Duplicate Launch Scripts:**
-Current: 12 launch variations
+**3. Duplicate Launch Scripts:** Current: 12 launch variations
+
 - **Keep:**
   - `launch-unified.sh` (PRIMARY - most comprehensive)
   - `launch-with-services.sh` (for service-only dev)
@@ -390,18 +416,21 @@ Current: 12 launch variations
   - `launch-prod.sh` (rename to production.sh)
 
 **4. Database Scripts:**
+
 - **Keep (Consolidate to 4 scripts):**
-  - `database/reset.sh` (merge reset-database.sh, reset-db-simple.sh, reset-prisma-db.sh, reset-prisma-db-with-password.sh)
+  - `database/reset.sh` (merge reset-database.sh, reset-db-simple.sh,
+    reset-drizzle-db.sh, reset-drizzle-db-with-password.sh)
   - `database/migrate.sh`
   - `database/seed.sh`
   - `database/init.sql/` (directory)
 
 - **Deprecate:**
-  - All individual reset-*.sh variants (11 scripts)
+  - All individual reset-\*.sh variants (11 scripts)
   - `deprecated-build-scripts/build-bypass-db.sh`
   - `deprecated-build-scripts/build-skip-db-migrate.sh`
 
 **5. Cleanup Scripts:**
+
 - **Keep:**
   - `cleanup.sh` (master cleanup)
   - Move to `scripts/maintenance/cleanup.sh`
@@ -414,6 +443,7 @@ Current: 12 launch variations
   - `cleanup-redundant-scripts.sh` (ironic!)
 
 **6. MCP Scripts:**
+
 - **Keep:**
   - `mcp-setup.sh`
   - `mcp-wizard.sh`
@@ -432,29 +462,36 @@ Current: 12 launch variations
 **Current Root Scripts by Category:**
 
 **Build Scripts (30+):** → `scripts/_deprecated/2024-q4/root-builds/`
+
 - All `build-*.sh`, `comprehensive-build.sh`, `consolidated-build.sh`, etc.
 
 **Launch Scripts (25+):** → `scripts/_deprecated/2024-q4/root-launches/`
+
 - All `launch-*.sh`, `run-*.sh`, `start-*.sh`
 - Exception: `start-all.sh` → move to `scripts/launch/all.sh`
 
 **Fix Scripts (80+):** → `scripts/_deprecated/2024-q4/root-fixes/`
+
 - All `fix-*.sh` files from root
 
 **Setup Scripts (15+):** → Keep only essential
+
 - `setup.sh` → merge into `scripts/core/setup-dev.sh`
 - `install-deps.sh` → merge into `scripts/core/setup-dev.sh`
 - Others → `scripts/_deprecated/2024-q4/root-setup/`
 
 **Docker Scripts (15+):** → Consolidate
+
 - Keep: `scripts/deployment/docker-build.sh` (consolidate all)
 - Deprecate: All individual `docker-*.sh` files
 
 **Test Scripts:** → `scripts/testing/`
+
 - `run-tests.sh` → `scripts/testing/run-tests.sh`
 - `test-*.sh` → `scripts/testing/`
 
 **Utility Scripts:** → Various
+
 - `cleanup.sh` → `scripts/maintenance/cleanup.sh`
 - `status.sh` → `scripts/development/status.sh`
 - `verify-*.sh` → `scripts/maintenance/`
@@ -469,6 +506,7 @@ Create `/scripts/README.md` with:
 ## Quick Start
 
 For most development tasks:
+
 - `pnpm dev` - Start development environment
 - `pnpm build` - Build all packages
 - `pnpm clean` - Clean workspace
@@ -477,52 +515,59 @@ For most development tasks:
 
 These are the essential scripts you'll use daily:
 
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| `build.sh` | Build entire project | `./scripts/core/build.sh` |
-| `dev.sh` | Start dev environment | `./scripts/core/dev.sh` |
-| `clean.sh` | Clean build artifacts | `./scripts/core/clean.sh` |
-| `setup-dev.sh` | Initial setup | `./scripts/core/setup-dev.sh` |
+| Script         | Purpose               | Usage                         |
+| -------------- | --------------------- | ----------------------------- |
+| `build.sh`     | Build entire project  | `./scripts/core/build.sh`     |
+| `dev.sh`       | Start dev environment | `./scripts/core/dev.sh`       |
+| `clean.sh`     | Clean build artifacts | `./scripts/core/clean.sh`     |
+| `setup-dev.sh` | Initial setup         | `./scripts/core/setup-dev.sh` |
 
 ## Specialized Scripts
 
 ### Build Scripts (scripts/build/)
+
 - `production.sh` - Production build with optimizations
 - `incremental.sh` - Incremental build (faster)
 - `docker.sh` - Build Docker images
 - `verify.sh` - Verify build integrity
 
 ### Launch Scripts (scripts/launch/)
-- **RECOMMENDED:** `unified.sh` - Complete system (frontend + backend + services)
+
+- **RECOMMENDED:** `unified.sh` - Complete system (frontend + backend +
+  services)
 - `frontend.sh` - Frontend development only
 - `services.sh` - Backend services only
 - `all.sh` - Everything (most comprehensive)
 
 ### Database Scripts (scripts/database/)
+
 - `reset.sh` - Reset database (drops and recreates)
 - `migrate.sh` - Run migrations
 - `seed.sh` - Seed development data
 
 ### MCP Scripts (scripts/mcp/)
+
 - `setup.sh` - Configure MCP servers
 - `wizard.sh` - Interactive MCP setup
 - `health-check.js` - Check MCP server health
 
 ### Maintenance (scripts/maintenance/)
+
 - `cleanup.sh` - Clean all caches and temp files
 - `port-cleanup.sh` - Kill processes on dev ports
 - `fix-workspace-deps.sh` - Fix dependency issues
 - `verify-install.sh` - Verify installation
 
 ### Development (scripts/development/)
+
 - `analyze-dependencies.js` - Analyze package dependencies
 - `check-health.sh` - System health check
 - `monitor.sh` - Monitor running processes
 
 ## Deprecated Scripts
 
-Old scripts are in `scripts/_deprecated/` for reference.
-See `scripts/_deprecated/README.md` for migration guide.
+Old scripts are in `scripts/_deprecated/` for reference. See
+`scripts/_deprecated/README.md` for migration guide.
 
 ## Script Naming Conventions
 
@@ -546,11 +591,13 @@ Create `/scripts/_deprecated/README.md`:
 ```markdown
 # Deprecated Scripts
 
-This directory contains scripts that are no longer actively maintained but kept for reference.
+This directory contains scripts that are no longer actively maintained but kept
+for reference.
 
 ## Why Scripts Are Deprecated
 
 Scripts are moved here when:
+
 1. They solve a one-time problem (fix scripts)
 2. They've been superseded by better implementations
 3. They're experimental and didn't work out
@@ -561,20 +608,24 @@ Scripts are moved here when:
 ### If you were using...
 
 #### Build Scripts
+
 - `build-intelligent.sh` → Use `pnpm build` or `scripts/core/build.sh`
 - `build-with-memory-optimization.sh` → Now built into main build.sh
 - Any `build-*.sh` → Use `scripts/core/build.sh` with flags
 
 #### Launch Scripts
+
 - `launch-comprehensive.sh` → Use `scripts/launch/unified.sh`
 - `launch-streamlined.sh` → Use `scripts/launch/unified.sh`
 - Any `launch-*.sh` → Use `scripts/launch/unified.sh` (recommended)
 
 #### Database Scripts
+
 - `reset-database.sh` → Use `scripts/database/reset.sh`
-- `reset-prisma-db*.sh` → Use `scripts/database/reset.sh`
+- `reset-drizzle-db*.sh` → Use `scripts/database/reset.sh`
 
 #### Fix Scripts
+
 - `fix-*.sh` → These were one-time fixes. See individual script for context.
 - If issue recurs, integrate fix into main codebase
 
@@ -589,6 +640,7 @@ Scripts are moved here when:
 ## Need Help?
 
 If you need functionality from a deprecated script:
+
 1. Check if it's been integrated into active scripts
 2. Check git history to see why it was deprecated
 3. Ask in #development channel
@@ -597,11 +649,13 @@ If you need functionality from a deprecated script:
 ### Scripts Consolidation Summary
 
 **Files to Move:**
-- **Root → scripts/_deprecated/**: ~170 files
-- **scripts/ → scripts/_deprecated/**: ~200 files
+
+- **Root → scripts/\_deprecated/**: ~170 files
+- **scripts/ → scripts/\_deprecated/**: ~200 files
 - **Total deprecated:** ~370 scripts (85% of total!)
 
 **Files to Keep (Active):**
+
 - **Core scripts:** 4 files
 - **Build scripts:** 4 files
 - **Launch scripts:** 4 files
@@ -623,13 +677,15 @@ If you need functionality from a deprecated script:
 ### Phase 1: Preparation (Do NOT Execute Yet)
 
 **Week 1: Documentation Audit**
-- [ ] Review all PORT_MANAGEMENT*.md files, extract unique content
-- [ ] Review all MCP*.md files, extract unique content
-- [ ] Review all DEVELOPMENT*.md files, extract unique content
+
+- [ ] Review all PORT_MANAGEMENT\*.md files, extract unique content
+- [ ] Review all MCP\*.md files, extract unique content
+- [ ] Review all DEVELOPMENT\*.md files, extract unique content
 - [ ] Create content matrix showing what's in each file
 - [ ] Identify 100% duplicate content vs unique content
 
 **Week 1: Scripts Audit**
+
 - [ ] Run `git log --follow` on top 50 scripts to see usage history
 - [ ] Check which scripts are called by CI/CD
 - [ ] Check which scripts are referenced in documentation
@@ -639,6 +695,7 @@ If you need functionality from a deprecated script:
 ### Phase 2: Documentation Consolidation
 
 **Week 2: High-Priority Doc Merges**
+
 1. **Port Management** (Day 1-2)
    - Merge 8 files → 2 files
    - Validate all port numbers are consistent
@@ -654,38 +711,37 @@ If you need functionality from a deprecated script:
    - Update setup instructions
    - Test setup on clean machine
 
-**Week 3: Medium-Priority Doc Merges**
-4. **Getting Started** (Day 1)
-5. **Troubleshooting** (Day 2-3)
-6. **Project Management** (Day 4-5)
+**Week 3: Medium-Priority Doc Merges** 4. **Getting Started** (Day 1) 5.
+**Troubleshooting** (Day 2-3) 6. **Project Management** (Day 4-5)
 
-**Week 4: Cleanup & New Content**
-7. Create new README.md
-8. Create missing architecture docs
-9. Archive old content
-10. Update all cross-references
+**Week 4: Cleanup & New Content** 7. Create new README.md 8. Create missing
+architecture docs 9. Archive old content 10. Update all cross-references
 
 ### Phase 3: Scripts Consolidation
 
 **Week 5: Deprecation Preparation**
+
 1. Create `scripts/_deprecated/` structure
 2. Create deprecation README
 3. Create migration guide
 4. Test new consolidated scripts
 
 **Week 6: Root Scripts Migration**
+
 1. Move root scripts to `_deprecated/2024-q4/root-scripts/`
 2. Keep only essential links in root (if any)
 3. Update any documentation references
 4. Test that builds still work
 
 **Week 7: Scripts/ Consolidation**
+
 1. Move deprecated scripts to `_deprecated/`
 2. Create consolidated core scripts
 3. Create scripts/README.md
 4. Update all documentation
 
 **Week 8: Testing & Validation**
+
 1. Test all active scripts
 2. Ensure CI/CD still works
 3. Update developer documentation
@@ -694,6 +750,7 @@ If you need functionality from a deprecated script:
 ### Phase 4: Validation
 
 **Documentation Validation:**
+
 - [ ] All internal links work
 - [ ] No broken references to moved files
 - [ ] All code examples are current
@@ -702,6 +759,7 @@ If you need functionality from a deprecated script:
 - [ ] Search still works (if applicable)
 
 **Scripts Validation:**
+
 - [ ] All active scripts execute without errors
 - [ ] Scripts have proper error handling
 - [ ] Scripts have usage documentation
@@ -712,17 +770,20 @@ If you need functionality from a deprecated script:
 ### Phase 5: Communication
 
 **Before Starting:**
+
 - [ ] Post consolidation plan to team channel
 - [ ] Get stakeholder approval
 - [ ] Schedule "freeze" period if needed
 - [ ] Create backup branch
 
 **During Consolidation:**
+
 - [ ] Daily progress updates
 - [ ] Document any issues discovered
 - [ ] Keep team informed of changes
 
 **After Completion:**
+
 - [ ] Post migration guide
 - [ ] Update onboarding docs
 - [ ] Host Q&A session for team
@@ -736,198 +797,207 @@ If you need functionality from a deprecated script:
 
 #### Port Management Consolidation
 
-| Source File | Destination | Action | Notes |
-|------------|-------------|--------|-------|
-| `/docs/PORT_MANAGEMENT.md` | `/docs/reference/architecture/port-management.md` | Merge | Take technical specs |
-| `/docs/PORT_MANAGEMENT_ARCHITECTURE.md` | `/docs/reference/architecture/port-management.md` | Merge | Take architecture details |
-| `/docs/PORT-MAPPING.md` | `/docs/reference/architecture/port-management.md` | Merge | Take port table |
-| `/docs/development-and-troubleshooting/PORT_MANAGEMENT.md` | `/docs/reference/architecture/port-management.md` | Merge | Check for unique content |
-| `/docs/development-and-troubleshooting/PORT_MANAGEMENT_QUICK_REFERENCE.md` | `/docs/reference/architecture/port-management.md` | Merge | Add as quick reference section |
-| `/docs/development/PORT-CONFIGURATION.md` | `/docs/reference/architecture/port-management.md` | Merge | Take configuration details |
-| `/docs/troubleshooting/PORT-MANAGEMENT-SOLUTION.md` | `/docs/troubleshooting/port-management.md` | Merge | Solutions section |
-| `/docs/troubleshooting/PORT-MANAGEMENT-STATUS.md` | `/docs/_archive/` | Archive | Historical status |
+| Source File                                                                | Destination                                       | Action  | Notes                          |
+| -------------------------------------------------------------------------- | ------------------------------------------------- | ------- | ------------------------------ |
+| `/docs/PORT_MANAGEMENT.md`                                                 | `/docs/reference/architecture/port-management.md` | Merge   | Take technical specs           |
+| `/docs/PORT_MANAGEMENT_ARCHITECTURE.md`                                    | `/docs/reference/architecture/port-management.md` | Merge   | Take architecture details      |
+| `/docs/PORT-MAPPING.md`                                                    | `/docs/reference/architecture/port-management.md` | Merge   | Take port table                |
+| `/docs/development-and-troubleshooting/PORT_MANAGEMENT.md`                 | `/docs/reference/architecture/port-management.md` | Merge   | Check for unique content       |
+| `/docs/development-and-troubleshooting/PORT_MANAGEMENT_QUICK_REFERENCE.md` | `/docs/reference/architecture/port-management.md` | Merge   | Add as quick reference section |
+| `/docs/development/PORT-CONFIGURATION.md`                                  | `/docs/reference/architecture/port-management.md` | Merge   | Take configuration details     |
+| `/docs/troubleshooting/PORT-MANAGEMENT-SOLUTION.md`                        | `/docs/troubleshooting/port-management.md`        | Merge   | Solutions section              |
+| `/docs/troubleshooting/PORT-MANAGEMENT-STATUS.md`                          | `/docs/_archive/`                                 | Archive | Historical status              |
 
 #### MCP Documentation Consolidation
 
-| Source File | Destination | Action | Notes |
-|------------|-------------|--------|-------|
-| `/docs/MCP-COMPLETE-API-WRAPPING.md` | `/docs/guides/mcp-integration.md` | Merge | API integration guide |
-| `/docs/MCP_TROUBLESHOOTING_GUIDE.md` | `/docs/troubleshooting/mcp.md` | Merge | Troubleshooting |
-| `/docs/guides/MCP-INTEGRATION-GUIDE-component-analysis.md` | `/docs/guides/mcp-integration.md` | Merge | Component analysis |
-| `/docs/protocols/MCP-COMPLETE-GUIDE.md` | `/docs/guides/mcp-integration.md` | Merge | Complete guide content |
-| `/docs/troubleshooting/MCP-TROUBLESHOOTING-COMPLETE.md` | `/docs/troubleshooting/mcp.md` | Merge | Complete troubleshooting |
-| `/docs/specifications/_archive/MCP-SPECIFICATION.md` | `/docs/reference/protocols/mcp-specification.md` | Merge | Keep spec in archive, link from reference |
-| `/docs/specifications/_archive/MCP_SPECIFICATION.md` | `/docs/reference/protocols/mcp-specification.md` | Merge | Duplicate, merge |
-| `/docs/specifications/_archive/MCP-TASKS-REFERENCE.md` | `/docs/reference/protocols/mcp-specification.md` | Merge | Add as appendix |
-| `/docs/specifications/_archive/MCP_SERVER_DOCUMENTATION.md` | `/docs/guides/mcp-integration.md` | Merge | Server setup section |
-| `/docs/specifications/_archive/MCP_TROUBLESHOOTING.md` | `/docs/troubleshooting/mcp.md` | Merge | Additional troubleshooting |
-| `/docs/specifications/_archive/EXTENDING_MCP_SERVER.md` | `/docs/guides/mcp-integration.md` | Merge | Extension guide |
-| `/docs/specifications/_archive/COMPLETE-MCP-SPECIFICATIONS.md` | `/docs/reference/protocols/mcp-specification.md` | Merge | Complete spec |
-| `/docs/protocols/_archive/MCP-*.md` (4 files) | Keep in archive | Archive | Add README explaining history |
+| Source File                                                    | Destination                                      | Action  | Notes                                     |
+| -------------------------------------------------------------- | ------------------------------------------------ | ------- | ----------------------------------------- |
+| `/docs/MCP-COMPLETE-API-WRAPPING.md`                           | `/docs/guides/mcp-integration.md`                | Merge   | API integration guide                     |
+| `/docs/MCP_TROUBLESHOOTING_GUIDE.md`                           | `/docs/troubleshooting/mcp.md`                   | Merge   | Troubleshooting                           |
+| `/docs/guides/MCP-INTEGRATION-GUIDE-component-analysis.md`     | `/docs/guides/mcp-integration.md`                | Merge   | Component analysis                        |
+| `/docs/protocols/MCP-COMPLETE-GUIDE.md`                        | `/docs/guides/mcp-integration.md`                | Merge   | Complete guide content                    |
+| `/docs/troubleshooting/MCP-TROUBLESHOOTING-COMPLETE.md`        | `/docs/troubleshooting/mcp.md`                   | Merge   | Complete troubleshooting                  |
+| `/docs/specifications/_archive/MCP-SPECIFICATION.md`           | `/docs/reference/protocols/mcp-specification.md` | Merge   | Keep spec in archive, link from reference |
+| `/docs/specifications/_archive/MCP_SPECIFICATION.md`           | `/docs/reference/protocols/mcp-specification.md` | Merge   | Duplicate, merge                          |
+| `/docs/specifications/_archive/MCP-TASKS-REFERENCE.md`         | `/docs/reference/protocols/mcp-specification.md` | Merge   | Add as appendix                           |
+| `/docs/specifications/_archive/MCP_SERVER_DOCUMENTATION.md`    | `/docs/guides/mcp-integration.md`                | Merge   | Server setup section                      |
+| `/docs/specifications/_archive/MCP_TROUBLESHOOTING.md`         | `/docs/troubleshooting/mcp.md`                   | Merge   | Additional troubleshooting                |
+| `/docs/specifications/_archive/EXTENDING_MCP_SERVER.md`        | `/docs/guides/mcp-integration.md`                | Merge   | Extension guide                           |
+| `/docs/specifications/_archive/COMPLETE-MCP-SPECIFICATIONS.md` | `/docs/reference/protocols/mcp-specification.md` | Merge   | Complete spec                             |
+| `/docs/protocols/_archive/MCP-*.md` (4 files)                  | Keep in archive                                  | Archive | Add README explaining history             |
 
 #### Development Guides Consolidation
 
-| Source File | Destination | Action | Notes |
-|------------|-------------|--------|-------|
-| `/docs/DEVELOPMENT.md` | `/docs/guides/development.md` | Merge | Primary content |
-| `/docs/guides/development.md` | `/docs/guides/development.md` | Merge | Already destination |
-| `/docs/concepts/workflow/current/DEVELOPMENT.md` | `/docs/guides/development.md` | Merge | Workflow-specific content |
+| Source File                                      | Destination                   | Action | Notes                     |
+| ------------------------------------------------ | ----------------------------- | ------ | ------------------------- |
+| `/docs/DEVELOPMENT.md`                           | `/docs/guides/development.md` | Merge  | Primary content           |
+| `/docs/guides/development.md`                    | `/docs/guides/development.md` | Merge  | Already destination       |
+| `/docs/concepts/workflow/current/DEVELOPMENT.md` | `/docs/guides/development.md` | Merge  | Workflow-specific content |
 
 #### Root Documentation Files
 
-| Source File | Destination | Action | Notes |
-|------------|-------------|--------|-------|
-| `/docs/GETTING_STARTED.md` | `/docs/getting-started/README.md` | Merge | Main quick start |
-| `/docs/TESTING_GUIDE.md` | `/docs/guides/testing.md` | Move | Testing guide |
-| `/docs/BUILD_OPTIMIZATION.md` | `/docs/guides/build-optimization.md` | Move | Build guide |
-| `/docs/pnpm-optimization-guide.md` | `/docs/guides/pnpm-workspace.md` | Move | Workspace guide |
-| `/docs/VECTOR_DATABASE_HARMONIZATION.md` | `/docs/reference/architecture/vector-database.md` | Move | Architecture doc |
-| `/docs/AGENT-COMMUNICATION-GUIDE.md` | `/docs/guides/agent-communication.md` | Move | Communication guide |
-| `/docs/AGENT_COMMUNICATION_PROTOCOL.md` | `/docs/guides/agent-communication.md` | Merge | Merge with above |
-| `/docs/API-GATEWAY-IMPLEMENTATION.md` | `/docs/reference/api/gateway.md` | Move | API reference |
-| `/docs/AVAILABLE_AGENTS_REGISTRY.md` | `/docs/reference/agents/registry.md` | Move | Agent reference |
-| `/docs/CLEANUP_GUIDE.md` | `/docs/guides/maintenance.md` | Move | Maintenance guide |
-| `/docs/DOCUMENTATION-ORGANIZATION-SUMMARY.md` | `/docs/_archive/` | Archive | Historical |
-| `/docs/ENHANCED-MCP-CONFIG-MANAGER.md` | `/docs/guides/mcp-integration.md` | Merge | MCP config section |
-| `/docs/IMPLEMENTATION-PLAN.md` | `/docs/_archive/` | Archive | Historical |
-| `/docs/IMPLEMENTATION-SUMMARY.md` | `/docs/_archive/` | Archive | Historical |
-| `/docs/MASTER_ORCHESTRATOR_COORDINATION_PROTOCOLS.md` | `/docs/reference/protocols/orchestrator.md` | Move | Protocol reference |
-| `/docs/REACT_AIRTABLE_CLONE_MIGRATION_SUMMARY.md` | `/docs/_archive/` | Archive | Historical migration |
-| `/docs/claude-ping-controller-unified-docs.md` | `/docs/reference/automation/claude-ping.md` | Move | Automation reference |
-| `/docs/ping-system-expansion-plan.md` | `/docs/project/planning/` | Move | Planning doc |
-| `/docs/tnf-tmux-setup-guide.md` | `/docs/guides/tmux-setup.md` | Move | Setup guide |
-| `/docs/index.md` | `/docs/README.md` | Merge | Consolidate into main README |
-| `/docs/ROO_AGENT_AUTOMATION_README.md` | `/docs/automation/README.md` | Move | Already in right place |
+| Source File                                           | Destination                                       | Action  | Notes                        |
+| ----------------------------------------------------- | ------------------------------------------------- | ------- | ---------------------------- |
+| `/docs/GETTING_STARTED.md`                            | `/docs/getting-started/README.md`                 | Merge   | Main quick start             |
+| `/docs/TESTING_GUIDE.md`                              | `/docs/guides/testing.md`                         | Move    | Testing guide                |
+| `/docs/BUILD_OPTIMIZATION.md`                         | `/docs/guides/build-optimization.md`              | Move    | Build guide                  |
+| `/docs/pnpm-optimization-guide.md`                    | `/docs/guides/pnpm-workspace.md`                  | Move    | Workspace guide              |
+| `/docs/VECTOR_DATABASE_HARMONIZATION.md`              | `/docs/reference/architecture/vector-database.md` | Move    | Architecture doc             |
+| `/docs/AGENT-COMMUNICATION-GUIDE.md`                  | `/docs/guides/agent-communication.md`             | Move    | Communication guide          |
+| `/docs/AGENT_COMMUNICATION_PROTOCOL.md`               | `/docs/guides/agent-communication.md`             | Merge   | Merge with above             |
+| `/docs/API-GATEWAY-IMPLEMENTATION.md`                 | `/docs/reference/api/gateway.md`                  | Move    | API reference                |
+| `/docs/AVAILABLE_AGENTS_REGISTRY.md`                  | `/docs/reference/agents/registry.md`              | Move    | Agent reference              |
+| `/docs/CLEANUP_GUIDE.md`                              | `/docs/guides/maintenance.md`                     | Move    | Maintenance guide            |
+| `/docs/DOCUMENTATION-ORGANIZATION-SUMMARY.md`         | `/docs/_archive/`                                 | Archive | Historical                   |
+| `/docs/ENHANCED-MCP-CONFIG-MANAGER.md`                | `/docs/guides/mcp-integration.md`                 | Merge   | MCP config section           |
+| `/docs/IMPLEMENTATION-PLAN.md`                        | `/docs/_archive/`                                 | Archive | Historical                   |
+| `/docs/IMPLEMENTATION-SUMMARY.md`                     | `/docs/_archive/`                                 | Archive | Historical                   |
+| `/docs/MASTER_ORCHESTRATOR_COORDINATION_PROTOCOLS.md` | `/docs/reference/protocols/orchestrator.md`       | Move    | Protocol reference           |
+| `/docs/REACT_AIRTABLE_CLONE_MIGRATION_SUMMARY.md`     | `/docs/_archive/`                                 | Archive | Historical migration         |
+| `/docs/claude-ping-controller-unified-docs.md`        | `/docs/reference/automation/claude-ping.md`       | Move    | Automation reference         |
+| `/docs/ping-system-expansion-plan.md`                 | `/docs/project/planning/`                         | Move    | Planning doc                 |
+| `/docs/tnf-tmux-setup-guide.md`                       | `/docs/guides/tmux-setup.md`                      | Move    | Setup guide                  |
+| `/docs/index.md`                                      | `/docs/README.md`                                 | Merge   | Consolidate into main README |
+| `/docs/ROO_AGENT_AUTOMATION_README.md`                | `/docs/automation/README.md`                      | Move    | Already in right place       |
 
 #### Development and Troubleshooting Directory
 
 **All 22 files from `/docs/development-and-troubleshooting/`:**
 
-| Source File | Destination | Action |
-|------------|-------------|--------|
-| `CLAUDE_DEV_IMPLEMENTATION_LOG.md` | `/docs/_archive/implementation-logs/` | Archive |
-| `CLAUDE_PING_RESEARCH_DOCUMENTATION.md` | `/docs/reference/automation/claude-ping-research.md` | Move |
-| `CRITICAL-FRONTEND-ANALYSIS.md` | `/docs/_archive/` | Archive |
-| `DEPLOYMENT_CHECKLIST.md` | `/docs/guides/deployment.md` | Merge as checklist section |
-| `DEVELOPMENT_PROGRESS_LOG.md` | `/docs/_archive/implementation-logs/` | Archive |
-| `GIT_RECONCILIATION_GUIDE.md` | `/docs/guides/git-workflow.md` | Move |
-| `INTEGRATION_README.md` | `/docs/guides/integration.md` | Move |
-| `MANUAL_SELECTION_PANEL_FIX.md` | `/docs/_archive/fixes/` | Archive |
-| `MASS_INTEGRATION.md` | `/docs/_archive/` | Archive |
-| `NEXT_SESSION_HANDOFF.md` | `/docs/_archive/` | Archive |
-| `PORT_CONFIGURATION.md` | Merge into port-management.md | Merge |
-| `PORT_MANAGEMENT.md` | Merge into port-management.md | Merge |
-| `PORT_MANAGEMENT_QUICK_REFERENCE.md` | Merge into port-management.md | Merge |
-| `PRODUCTION_READY_SITEMAP.md` | `/docs/project/sitemap.md` | Move |
-| `QUICK_START_REORGANIZATION.md` | `/docs/_archive/` | Archive |
-| `QWEN_INTEGRATION_README.md` | `/docs/integrations/qwen.md` | Move |
-| `Reset-Safe.md` | `/docs/troubleshooting/database-reset.md` | Move |
-| `TNF_RELAY_INTEGRATION_COMPLETE.md` | `/docs/integrations/tnf-relay.md` | Move |
-| `TNF_RELAY_INTEGRATION_STATUS.md` | `/docs/_archive/` | Archive |
-| `TODO_CHECKLIST.md` | `/docs/_archive/` | Archive |
-| `TROUBLESHOOTING_GUIDE.md` | `/docs/troubleshooting/general.md` | Move |
-| `verify-mcp-fix.md` | `/docs/_archive/fixes/` | Archive |
+| Source File                             | Destination                                          | Action                     |
+| --------------------------------------- | ---------------------------------------------------- | -------------------------- |
+| `CLAUDE_DEV_IMPLEMENTATION_LOG.md`      | `/docs/_archive/implementation-logs/`                | Archive                    |
+| `CLAUDE_PING_RESEARCH_DOCUMENTATION.md` | `/docs/reference/automation/claude-ping-research.md` | Move                       |
+| `CRITICAL-FRONTEND-ANALYSIS.md`         | `/docs/_archive/`                                    | Archive                    |
+| `DEPLOYMENT_CHECKLIST.md`               | `/docs/guides/deployment.md`                         | Merge as checklist section |
+| `DEVELOPMENT_PROGRESS_LOG.md`           | `/docs/_archive/implementation-logs/`                | Archive                    |
+| `GIT_RECONCILIATION_GUIDE.md`           | `/docs/guides/git-workflow.md`                       | Move                       |
+| `INTEGRATION_README.md`                 | `/docs/guides/integration.md`                        | Move                       |
+| `MANUAL_SELECTION_PANEL_FIX.md`         | `/docs/_archive/fixes/`                              | Archive                    |
+| `MASS_INTEGRATION.md`                   | `/docs/_archive/`                                    | Archive                    |
+| `NEXT_SESSION_HANDOFF.md`               | `/docs/_archive/`                                    | Archive                    |
+| `PORT_CONFIGURATION.md`                 | Merge into port-management.md                        | Merge                      |
+| `PORT_MANAGEMENT.md`                    | Merge into port-management.md                        | Merge                      |
+| `PORT_MANAGEMENT_QUICK_REFERENCE.md`    | Merge into port-management.md                        | Merge                      |
+| `PRODUCTION_READY_SITEMAP.md`           | `/docs/project/sitemap.md`                           | Move                       |
+| `QUICK_START_REORGANIZATION.md`         | `/docs/_archive/`                                    | Archive                    |
+| `QWEN_INTEGRATION_README.md`            | `/docs/integrations/qwen.md`                         | Move                       |
+| `Reset-Safe.md`                         | `/docs/troubleshooting/database-reset.md`            | Move                       |
+| `TNF_RELAY_INTEGRATION_COMPLETE.md`     | `/docs/integrations/tnf-relay.md`                    | Move                       |
+| `TNF_RELAY_INTEGRATION_STATUS.md`       | `/docs/_archive/`                                    | Archive                    |
+| `TODO_CHECKLIST.md`                     | `/docs/_archive/`                                    | Archive                    |
+| `TROUBLESHOOTING_GUIDE.md`              | `/docs/troubleshooting/general.md`                   | Move                       |
+| `verify-mcp-fix.md`                     | `/docs/_archive/fixes/`                              | Archive                    |
 
 ### Scripts File Mapping
 
 #### Core Scripts (Keep Active)
 
-| Source | Destination | Notes |
-|--------|-------------|-------|
-| `scripts/build.sh` | `scripts/core/build.sh` | Move |
-| `scripts/setup-dev.sh` | `scripts/core/setup-dev.sh` | Move |
-| `scripts/cleanup.sh` | `scripts/core/clean.sh` | Rename |
-| New file needed | `scripts/core/dev.sh` | Create - consolidate dev scripts |
+| Source                 | Destination                 | Notes                            |
+| ---------------------- | --------------------------- | -------------------------------- |
+| `scripts/build.sh`     | `scripts/core/build.sh`     | Move                             |
+| `scripts/setup-dev.sh` | `scripts/core/setup-dev.sh` | Move                             |
+| `scripts/cleanup.sh`   | `scripts/core/clean.sh`     | Rename                           |
+| New file needed        | `scripts/core/dev.sh`       | Create - consolidate dev scripts |
 
 #### Build Scripts
 
-| Source | Destination | Notes |
-|--------|-------------|-------|
-| `scripts/production-build.sh` | `scripts/build/production.sh` | Move |
-| `scripts/build-incremental.sh` | `scripts/build/incremental.sh` | Move |
-| `scripts/docker-build.sh` | `scripts/build/docker.sh` | Move |
-| `scripts/comprehensive-build-validation.sh` | `scripts/build/verify.sh` | Move |
-| `scripts/build-intelligent.sh` | `scripts/_deprecated/` | Deprecate - features merged to core |
-| `scripts/build-with-memory-optimization.sh` | `scripts/_deprecated/` | Deprecate - now default |
-| `scripts/build-*.sh` (11 others) | `scripts/_deprecated/2024-q4/builds/` | Deprecate |
+| Source                                      | Destination                           | Notes                               |
+| ------------------------------------------- | ------------------------------------- | ----------------------------------- |
+| `scripts/production-build.sh`               | `scripts/build/production.sh`         | Move                                |
+| `scripts/build-incremental.sh`              | `scripts/build/incremental.sh`        | Move                                |
+| `scripts/docker-build.sh`                   | `scripts/build/docker.sh`             | Move                                |
+| `scripts/comprehensive-build-validation.sh` | `scripts/build/verify.sh`             | Move                                |
+| `scripts/build-intelligent.sh`              | `scripts/_deprecated/`                | Deprecate - features merged to core |
+| `scripts/build-with-memory-optimization.sh` | `scripts/_deprecated/`                | Deprecate - now default             |
+| `scripts/build-*.sh` (11 others)            | `scripts/_deprecated/2024-q4/builds/` | Deprecate                           |
 
 #### Launch Scripts
 
-| Source | Destination | Notes |
-|--------|-------------|-------|
-| `scripts/launch-unified.sh` | `scripts/launch/unified.sh` | Move - RECOMMENDED |
-| `scripts/launch-with-services.sh` | `scripts/launch/services.sh` | Move |
-| `scripts/start-all.sh` | `scripts/launch/all.sh` | Move |
-| New file needed | `scripts/launch/frontend.sh` | Create - consolidate frontend launches |
-| `scripts/launch-comprehensive.sh` | `scripts/_deprecated/` | Deprecate - use unified.sh |
-| `scripts/launch-*.sh` (8 others) | `scripts/_deprecated/2024-q4/launches/` | Deprecate |
+| Source                            | Destination                             | Notes                                  |
+| --------------------------------- | --------------------------------------- | -------------------------------------- |
+| `scripts/launch-unified.sh`       | `scripts/launch/unified.sh`             | Move - RECOMMENDED                     |
+| `scripts/launch-with-services.sh` | `scripts/launch/services.sh`            | Move                                   |
+| `scripts/start-all.sh`            | `scripts/launch/all.sh`                 | Move                                   |
+| New file needed                   | `scripts/launch/frontend.sh`            | Create - consolidate frontend launches |
+| `scripts/launch-comprehensive.sh` | `scripts/_deprecated/`                  | Deprecate - use unified.sh             |
+| `scripts/launch-*.sh` (8 others)  | `scripts/_deprecated/2024-q4/launches/` | Deprecate                              |
 
 #### Database Scripts
 
-| Source | Destination | Notes |
-|--------|-------------|-------|
-| `scripts/reset-database.sh` | Base for consolidated | Merge |
-| `scripts/reset-db-simple.sh` | Merge to reset.sh | Merge |
-| `scripts/reset-prisma-db.sh` | Merge to reset.sh | Merge |
-| `scripts/reset-prisma-db-with-password.sh` | Merge to reset.sh | Merge |
-| Consolidated output | `scripts/database/reset.sh` | Create |
-| Existing | `scripts/database/` (other files) | Keep |
+| Source                                     | Destination                       | Notes  |
+| ------------------------------------------ | --------------------------------- | ------ |
+| `scripts/reset-database.sh`                | Base for consolidated             | Merge  |
+| `scripts/reset-db-simple.sh`               | Merge to reset.sh                 | Merge  |
+| `scripts/reset-drizzle-db.sh`               | Merge to reset.sh                 | Merge  |
+| `scripts/reset-drizzle-db-with-password.sh` | Merge to reset.sh                 | Merge  |
+| Consolidated output                        | `scripts/database/reset.sh`       | Create |
+| Existing                                   | `scripts/database/` (other files) | Keep   |
 
 #### MCP Scripts
 
-| Source | Destination | Notes |
-|--------|-------------|-------|
-| `scripts/mcp-setup.sh` | `scripts/mcp/setup.sh` | Move |
-| `scripts/mcp-wizard.sh` | `scripts/mcp/wizard.sh` | Move |
-| `scripts/mcp-config-manager.js` | `scripts/mcp/config-manager.js` | Move |
-| `scripts/mcp-health-check.js` | `scripts/mcp/health-check.js` | Move |
-| `scripts/auto-mcp-config.sh` | `scripts/_deprecated/` | Deprecate - features in setup.sh |
-| `scripts/auto-setup-mcp.sh` | `scripts/_deprecated/` | Deprecate |
-| `scripts/initialize-mcp*.sh/js` | `scripts/_deprecated/` | Deprecate |
-| `scripts/run-*mcp*.sh` | `scripts/_deprecated/` | Deprecate |
+| Source                          | Destination                     | Notes                            |
+| ------------------------------- | ------------------------------- | -------------------------------- |
+| `scripts/mcp-setup.sh`          | `scripts/mcp/setup.sh`          | Move                             |
+| `scripts/mcp-wizard.sh`         | `scripts/mcp/wizard.sh`         | Move                             |
+| `scripts/mcp-config-manager.js` | `scripts/mcp/config-manager.js` | Move                             |
+| `scripts/mcp-health-check.js`   | `scripts/mcp/health-check.js`   | Move                             |
+| `scripts/auto-mcp-config.sh`    | `scripts/_deprecated/`          | Deprecate - features in setup.sh |
+| `scripts/auto-setup-mcp.sh`     | `scripts/_deprecated/`          | Deprecate                        |
+| `scripts/initialize-mcp*.sh/js` | `scripts/_deprecated/`          | Deprecate                        |
+| `scripts/run-*mcp*.sh`          | `scripts/_deprecated/`          | Deprecate                        |
 
 #### Maintenance Scripts
 
-| Source | Destination | Notes |
-|--------|-------------|-------|
-| `scripts/cleanup-dev-artifacts.sh` | Merge to cleanup.sh | Merge |
-| `scripts/clear-all-dev-ports.sh` | `scripts/maintenance/port-cleanup.sh` | Move |
-| `scripts/fix-workspace-deps.sh` | `scripts/maintenance/fix-workspace-deps.sh` | Move |
-| `scripts/verify-*.sh` (various) | `scripts/maintenance/verify-install.sh` | Consolidate |
-| `scripts/cleanup-*.sh` (5 others) | `scripts/_deprecated/` | Deprecate - one-time use |
+| Source                             | Destination                                 | Notes                    |
+| ---------------------------------- | ------------------------------------------- | ------------------------ |
+| `scripts/cleanup-dev-artifacts.sh` | Merge to cleanup.sh                         | Merge                    |
+| `scripts/clear-all-dev-ports.sh`   | `scripts/maintenance/port-cleanup.sh`       | Move                     |
+| `scripts/fix-workspace-deps.sh`    | `scripts/maintenance/fix-workspace-deps.sh` | Move                     |
+| `scripts/verify-*.sh` (various)    | `scripts/maintenance/verify-install.sh`     | Consolidate              |
+| `scripts/cleanup-*.sh` (5 others)  | `scripts/_deprecated/`                      | Deprecate - one-time use |
 
 #### Fix Scripts (ALL 76 FILES)
 
-| Source | Destination | Action |
-|--------|-------------|--------|
-| `scripts/fix-*.sh` (76 files) | `scripts/_deprecated/2024-q4/fix-scripts/` | Archive ALL |
-| Exception: `fix-workspace-deps.sh` | `scripts/maintenance/` | Keep this one |
+| Source                             | Destination                                | Action        |
+| ---------------------------------- | ------------------------------------------ | ------------- |
+| `scripts/fix-*.sh` (76 files)      | `scripts/_deprecated/2024-q4/fix-scripts/` | Archive ALL   |
+| Exception: `fix-workspace-deps.sh` | `scripts/maintenance/`                     | Keep this one |
 
-**Reasoning:** Fix scripts are temporal. They solved specific issues at specific times. Archiving preserves history without cluttering active scripts. If issues recur, solutions should be integrated into main codebase or build process.
+**Reasoning:** Fix scripts are temporal. They solved specific issues at specific
+times. Archiving preserves history without cluttering active scripts. If issues
+recur, solutions should be integrated into main codebase or build process.
 
 #### Root Directory Scripts (200+ files)
 
 **Build Scripts (~30 files):**
+
 - ALL → `scripts/_deprecated/2024-q4/root-builds/`
 
 **Launch Scripts (~25 files):**
+
 - ALL → `scripts/_deprecated/2024-q4/root-launches/`
 - Exception: Consider soft-linking unified launcher to root for convenience
 
 **Fix Scripts (~80 files):**
+
 - ALL → `scripts/_deprecated/2024-q4/root-fixes/`
 
 **Setup Scripts (~15 files):**
+
 - ALL → `scripts/_deprecated/2024-q4/root-setup/`
 - Exception: Keep `setup.sh` as soft-link to `scripts/core/setup-dev.sh`
 
 **Docker Scripts (~15 files):**
+
 - ALL → `scripts/_deprecated/2024-q4/root-docker/`
 
 **Test Scripts (~10 files):**
+
 - ALL → `scripts/testing/` (consolidate)
 
 **Others (~25 files):**
+
 - Categorize and move to appropriate `scripts/` subdirectory or deprecate
 
 ---
@@ -943,7 +1013,8 @@ If you need functionality from a deprecated script:
 
 2. **Breaking Developer Workflows**
    - Risk: Developers have scripts bookmarked/memorized
-   - Mitigation: Communication plan, migration guide, grace period with soft links
+   - Mitigation: Communication plan, migration guide, grace period with soft
+     links
    - Impact: MEDIUM - Temporary productivity loss
 
 3. **Loss of Critical Information**
@@ -988,24 +1059,27 @@ If you need functionality from a deprecated script:
 ### Documentation Metrics
 
 **Before:**
+
 - ~200 documentation files
 - 68 directories
 - 23 root-level docs
-- 8 _archive directories with 39 files
+- 8 \_archive directories with 39 files
 - Port management: 8 files
 - MCP: 14 files
 - Development guides: 3 files
 
 **After (Target):**
+
 - ~100 active documentation files (50% reduction)
 - 15-20 organized directories
 - 1 root-level README
-- 1 _archive directory (consolidated)
+- 1 \_archive directory (consolidated)
 - Port management: 2 files
 - MCP: 3 files
 - Development guides: 1 file
 
 **Quality Metrics:**
+
 - [ ] 100% of internal links working
 - [ ] 0 duplicate content
 - [ ] Every doc has "Last Updated" date
@@ -1015,6 +1089,7 @@ If you need functionality from a deprecated script:
 ### Scripts Metrics
 
 **Before:**
+
 - 431 scripts in scripts/
 - 200+ scripts in root
 - Total: ~630 scripts
@@ -1023,6 +1098,7 @@ If you need functionality from a deprecated script:
 - Launch scripts: ~35
 
 **After (Target):**
+
 - 45 active scripts in scripts/
 - 0 scripts in root (maybe 1-2 convenience links)
 - Total: ~45 active scripts (93% reduction)
@@ -1031,6 +1107,7 @@ If you need functionality from a deprecated script:
 - Launch scripts: 4
 
 **Quality Metrics:**
+
 - [ ] Every script has usage documentation
 - [ ] Every script has error handling
 - [ ] scripts/README.md lists all active scripts
@@ -1053,6 +1130,7 @@ If you need functionality from a deprecated script:
 ### Governance
 
 **Documentation Rules:**
+
 1. No new docs in root (except README.md)
 2. All new docs must go in appropriate subdirectory
 3. Update docs/ README when adding new sections
@@ -1060,16 +1138,18 @@ If you need functionality from a deprecated script:
 5. Review and update docs quarterly
 
 **Scripts Rules:**
+
 1. No new scripts in project root (ever)
 2. All new scripts must go in scripts/ subdirectory
 3. Update scripts/README.md when adding scripts
 4. Scripts must have usage comments
-5. One-time fix scripts go directly to _deprecated/
+5. One-time fix scripts go directly to \_deprecated/
 6. Review and prune scripts quarterly
 
 ### Quarterly Review Process
 
 **Every Quarter:**
+
 1. Review most/least used documentation
 2. Review most/least used scripts
 3. Archive scripts not used in 6+ months
@@ -1080,6 +1160,7 @@ If you need functionality from a deprecated script:
 ### Prevention Strategies
 
 **Prevent Future Accumulation:**
+
 1. PR template includes doc/script location check
 2. CI checks for scripts in project root (fail if found)
 3. Code review explicitly checks for duplication
@@ -1087,6 +1168,7 @@ If you need functionality from a deprecated script:
 5. Monthly "cleanup" review in team meeting
 
 **Documentation Best Practices:**
+
 1. Before creating new doc, search for existing
 2. Before duplicating content, link to existing
 3. When updating, update all related docs
@@ -1094,6 +1176,7 @@ If you need functionality from a deprecated script:
 5. Use templates for common doc types
 
 **Scripts Best Practices:**
+
 1. Before creating new script, search for existing
 2. Consider adding flag to existing script vs new script
 3. Consolidate similar scripts periodically
@@ -1307,16 +1390,18 @@ New Structure: [LINK]
 ### Pre-Consolidation
 
 **Documentation Audit:**
-- [ ] List all PORT_MANAGEMENT*.md files and content
-- [ ] List all MCP*.md files and content
-- [ ] List all DEVELOPMENT*.md files and content
-- [ ] List all GETTING_STARTED*.md files and content
+
+- [ ] List all PORT_MANAGEMENT\*.md files and content
+- [ ] List all MCP\*.md files and content
+- [ ] List all DEVELOPMENT\*.md files and content
+- [ ] List all GETTING_STARTED\*.md files and content
 - [ ] Create content comparison matrix
 - [ ] Identify 100% duplicates
 - [ ] Identify unique content in each file
 - [ ] Plan merge strategy for each file group
 
 **Scripts Audit:**
+
 - [ ] Run git log on top 50 scripts
 - [ ] Check CI/CD config for script references
 - [ ] Check docs for script references
@@ -1326,6 +1411,7 @@ New Structure: [LINK]
 - [ ] Plan consolidation strategy
 
 **Infrastructure:**
+
 - [ ] Create backup branch
 - [ ] Set up link checker tool
 - [ ] Set up script validator
@@ -1335,6 +1421,7 @@ New Structure: [LINK]
 ### Week 1-2: Port Management & MCP Docs
 
 **Port Management:**
+
 - [ ] Read all 8 port management files
 - [ ] Extract unique content from each
 - [ ] Create consolidated outline
@@ -1351,6 +1438,7 @@ New Structure: [LINK]
 - [ ] Move old files to archive
 
 **MCP Documentation:**
+
 - [ ] Read all 14 MCP files
 - [ ] Extract unique content from each
 - [ ] Create consolidated outline for each target
@@ -1364,11 +1452,12 @@ New Structure: [LINK]
 - [ ] Commit new files
 - [ ] Update links in other docs
 - [ ] Move old files to archive
-- [ ] Add README to specifications/_archive/
+- [ ] Add README to specifications/\_archive/
 
 ### Week 3: Development Guides & Getting Started
 
 **Development Guides:**
+
 - [ ] Read all 3 development files
 - [ ] Extract unique content
 - [ ] Create consolidated outline
@@ -1382,6 +1471,7 @@ New Structure: [LINK]
 - [ ] Move old files to archive
 
 **Getting Started:**
+
 - [ ] Read all getting started files
 - [ ] Extract unique content
 - [ ] Create outline for getting-started/ directory
@@ -1399,6 +1489,7 @@ New Structure: [LINK]
 ### Week 4: Troubleshooting & Project Docs
 
 **Troubleshooting:**
+
 - [ ] Read all troubleshooting files
 - [ ] Categorize by topic
 - [ ] Create troubleshooting/README.md
@@ -1416,6 +1507,7 @@ New Structure: [LINK]
 - [ ] Move old files to archive
 
 **Project Documentation:**
+
 - [ ] Audit project/, project-management/, project-planning/
 - [ ] Identify overlaps
 - [ ] Create consolidation plan
@@ -1428,6 +1520,7 @@ New Structure: [LINK]
 ### Week 5: New README & Architecture
 
 **Main README:**
+
 - [ ] Design new README structure
 - [ ] Write introduction
 - [ ] Write navigation section
@@ -1440,6 +1533,7 @@ New Structure: [LINK]
 - [ ] Commit
 
 **Architecture Docs:**
+
 - [ ] Write reference/architecture/overview.md
 - [ ] Already have reference/architecture/port-management.md
 - [ ] Write reference/architecture/agent-system.md
@@ -1450,27 +1544,30 @@ New Structure: [LINK]
 - [ ] Commit
 
 **Archive READMEs:**
-- [ ] Write _archive/README.md
-- [ ] Write _archive/2024-pre-restructure/README.md
+
+- [ ] Write \_archive/README.md
+- [ ] Write \_archive/2024-pre-restructure/README.md
 - [ ] Explain what's archived and why
 - [ ] Commit
 
 ### Week 6: Root Scripts Migration
 
 **Preparation:**
-- [ ] Create scripts/_deprecated/2024-q4/ structure
+
+- [ ] Create scripts/\_deprecated/2024-q4/ structure
 - [ ] Create all subdirectories
-- [ ] Write scripts/_deprecated/README.md
+- [ ] Write scripts/\_deprecated/README.md
 - [ ] Write migration guide
 - [ ] Commit
 
 **Migration:**
-- [ ] Move build-*.sh (30 files)
-- [ ] Move launch-*.sh (25 files)
-- [ ] Move fix-*.sh (80 files)
-- [ ] Move setup-*.sh (15 files)
-- [ ] Move docker-*.sh (15 files)
-- [ ] Move test-*.sh (10 files)
+
+- [ ] Move build-\*.sh (30 files)
+- [ ] Move launch-\*.sh (25 files)
+- [ ] Move fix-\*.sh (80 files)
+- [ ] Move setup-\*.sh (15 files)
+- [ ] Move docker-\*.sh (15 files)
+- [ ] Move test-\*.sh (10 files)
 - [ ] Categorize and move others (25 files)
 - [ ] Create convenience links if needed
 - [ ] Update any docs referencing these scripts
@@ -1481,6 +1578,7 @@ New Structure: [LINK]
 ### Week 7: Scripts Consolidation
 
 **Core Scripts:**
+
 - [ ] Move build.sh to scripts/core/
 - [ ] Move setup-dev.sh to scripts/core/
 - [ ] Move cleanup.sh to scripts/core/clean.sh
@@ -1489,50 +1587,56 @@ New Structure: [LINK]
 - [ ] Commit
 
 **Build Scripts:**
+
 - [ ] Move production-build.sh to scripts/build/
 - [ ] Move build-incremental.sh to scripts/build/
 - [ ] Move docker-build.sh to scripts/build/
 - [ ] Create scripts/build/verify.sh
 - [ ] Test all build scripts
-- [ ] Move deprecated builds to _deprecated/
+- [ ] Move deprecated builds to \_deprecated/
 - [ ] Commit
 
 **Launch Scripts:**
+
 - [ ] Move launch-unified.sh to scripts/launch/
 - [ ] Move launch-with-services.sh to scripts/launch/
 - [ ] Move start-all.sh to scripts/launch/all.sh
 - [ ] Create scripts/launch/frontend.sh
 - [ ] Test all launch scripts
-- [ ] Move deprecated launches to _deprecated/
+- [ ] Move deprecated launches to \_deprecated/
 - [ ] Commit
 
 **Database Scripts:**
+
 - [ ] Consolidate 4 reset scripts into scripts/database/reset.sh
 - [ ] Test reset script with all use cases
 - [ ] Update other database scripts
-- [ ] Move old scripts to _deprecated/
+- [ ] Move old scripts to \_deprecated/
 - [ ] Commit
 
 **MCP Scripts:**
+
 - [ ] Move mcp-setup.sh to scripts/mcp/
 - [ ] Move mcp-wizard.sh to scripts/mcp/
 - [ ] Move mcp-config-manager.js to scripts/mcp/
 - [ ] Move mcp-health-check.js to scripts/mcp/
 - [ ] Test all MCP scripts
-- [ ] Move deprecated MCP scripts to _deprecated/
+- [ ] Move deprecated MCP scripts to \_deprecated/
 - [ ] Commit
 
 **Maintenance Scripts:**
+
 - [ ] Create scripts/maintenance/cleanup.sh
 - [ ] Create scripts/maintenance/port-cleanup.sh
 - [ ] Move fix-workspace-deps.sh to scripts/maintenance/
 - [ ] Create scripts/maintenance/verify-install.sh
 - [ ] Test all maintenance scripts
-- [ ] Move deprecated cleanup scripts to _deprecated/
+- [ ] Move deprecated cleanup scripts to \_deprecated/
 - [ ] Commit
 
 **Fix Scripts:**
-- [ ] Move ALL fix-*.sh to _deprecated/2024-q4/fix-scripts/
+
+- [ ] Move ALL fix-\*.sh to \_deprecated/2024-q4/fix-scripts/
 - [ ] Exception: keep fix-workspace-deps.sh in maintenance/
 - [ ] Create README in fix-scripts/ explaining each
 - [ ] Commit
@@ -1540,6 +1644,7 @@ New Structure: [LINK]
 ### Week 8: Testing & Finalization
 
 **Documentation Validation:**
+
 - [ ] Check all internal links
 - [ ] Verify no broken references
 - [ ] Test all code examples
@@ -1552,6 +1657,7 @@ New Structure: [LINK]
 - [ ] Final commit
 
 **Scripts Validation:**
+
 - [ ] Test all core scripts
 - [ ] Test all build scripts
 - [ ] Test all launch scripts
@@ -1567,6 +1673,7 @@ New Structure: [LINK]
 - [ ] Final commit
 
 **README Files:**
+
 - [ ] Write scripts/README.md
 - [ ] Verify all active scripts listed
 - [ ] Add usage examples
@@ -1575,6 +1682,7 @@ New Structure: [LINK]
 - [ ] Commit
 
 **Communication:**
+
 - [ ] Create migration guide document
 - [ ] Create video walkthrough (optional)
 - [ ] Post completion announcement
@@ -1585,6 +1693,7 @@ New Structure: [LINK]
 ### Post-Consolidation
 
 **Monitoring:**
+
 - [ ] Monitor for issues first week
 - [ ] Address feedback quickly
 - [ ] Update docs based on questions
@@ -1592,6 +1701,7 @@ New Structure: [LINK]
 - [ ] Document lessons learned
 
 **Maintenance:**
+
 - [ ] Schedule quarterly review
 - [ ] Set up governance rules
 - [ ] Add PR template checks
@@ -1602,7 +1712,9 @@ New Structure: [LINK]
 
 ## Conclusion
 
-This consolidation plan will transform The New Fuse from a cluttered codebase into a well-organized, maintainable project. The 93% reduction in active scripts and 50% reduction in documentation files will significantly improve:
+This consolidation plan will transform The New Fuse from a cluttered codebase
+into a well-organized, maintainable project. The 93% reduction in active scripts
+and 50% reduction in documentation files will significantly improve:
 
 - **Developer Productivity:** Find what you need in <5 minutes
 - **Onboarding Time:** New developers can navigate the project quickly
@@ -1611,6 +1723,7 @@ This consolidation plan will transform The New Fuse from a cluttered codebase in
 - **Team Collaboration:** Everyone knows where things belong
 
 **Key Success Factors:**
+
 1. Thorough planning (this document)
 2. Manual review of all merges (preserve all details)
 3. Clear communication with team
@@ -1619,6 +1732,7 @@ This consolidation plan will transform The New Fuse from a cluttered codebase in
 6. Post-consolidation governance
 
 **Next Steps:**
+
 1. Review this plan with team
 2. Get stakeholder approval
 3. Set start date
@@ -1627,12 +1741,11 @@ This consolidation plan will transform The New Fuse from a cluttered codebase in
 
 ---
 
-**Document Version:** 1.0
-**Created:** 2025-10-23
-**Author:** Consolidation Analysis
-**Status:** Awaiting Approval
+**Document Version:** 1.0 **Created:** 2025-10-23 **Author:** Consolidation
+Analysis **Status:** Awaiting Approval
 
 **Approvals Needed:**
+
 - [ ] Technical Lead
 - [ ] Product Owner
 - [ ] Team Consensus

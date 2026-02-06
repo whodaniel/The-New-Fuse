@@ -2,7 +2,8 @@
 
 ## Connection
 
-WebSocket connections are established at `/api/ws` with required authentication parameters.
+WebSocket connections are established at `/api/ws` with required authentication
+parameters.
 
 ## Message Format
 
@@ -23,6 +24,7 @@ interface WebSocketMessage {
 ### 1. Room Management
 
 #### Join Room
+
 ```json
 {
   "type": "joinRoom",
@@ -33,6 +35,7 @@ interface WebSocketMessage {
 ```
 
 #### Leave Room
+
 ```json
 {
   "type": "leaveRoom",
@@ -45,6 +48,7 @@ interface WebSocketMessage {
 ### 2. Chat Messages
 
 #### Send Message
+
 ```json
 {
   "type": "message",
@@ -61,6 +65,7 @@ interface WebSocketMessage {
 ```
 
 #### Message Received
+
 ```json
 {
   "type": "messageReceived",
@@ -76,6 +81,7 @@ interface WebSocketMessage {
 ### 3. Task Updates
 
 #### Task Status Update
+
 ```json
 {
   "type": "taskUpdate",
@@ -89,6 +95,7 @@ interface WebSocketMessage {
 ```
 
 #### Task Assignment
+
 ```json
 {
   "type": "taskAssign",
@@ -103,6 +110,7 @@ interface WebSocketMessage {
 ### 4. System Messages
 
 #### Error Message
+
 ```json
 {
   "type": "error",
@@ -115,6 +123,7 @@ interface WebSocketMessage {
 ```
 
 #### Health Update
+
 ```json
 {
   "type": "healthUpdate",
@@ -128,6 +137,7 @@ interface WebSocketMessage {
 ## Message Priority Levels
 
 Messages can include a priority field:
+
 - 0: System Critical
 - 1: High Priority
 - 2: Normal Priority (default)
@@ -137,12 +147,15 @@ Messages can include a priority field:
 ## Error Handling
 
 ### Reconnection Strategy
+
 The client should implement exponential backoff when attempting to reconnect:
+
 1. Initial delay: 1000ms
 2. Maximum delay: 30000ms
 3. Multiplier: 1.5
 
 ### Error Codes
+
 - 1000: Normal closure
 - 1001: Going away
 - 1002: Protocol error
@@ -160,8 +173,11 @@ class WebSocketClient {
   private ws: WebSocket;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
-  
-  constructor(private url: string, private token: string) {
+
+  constructor(
+    private url: string,
+    private token: string
+  ) {
     this.connect();
   }
 
@@ -193,7 +209,7 @@ class WebSocketClient {
     }
 
     const delay = Math.min(1000 * Math.pow(1.5, this.reconnectAttempts), 30000);
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
     this.reconnectAttempts++;
     this.connect();
   }

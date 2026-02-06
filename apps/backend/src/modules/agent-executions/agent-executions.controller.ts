@@ -1,13 +1,13 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { AgentExecutionsService } from './agent-executions.service';
 import {
+  AgentExecutionListResponseDto,
   AgentExecutionQueryDto,
   AgentExecutionResponseDto,
-  AgentExecutionListResponseDto,
-  ExecutionStatus
+  ExecutionStatus,
 } from './dto/agent-execution.dto';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @ApiTags('agents')
 @Controller('agents/executions')
@@ -19,10 +19,15 @@ export class AgentExecutionsController {
   @Get()
   @ApiOperation({
     summary: 'Get agent execution history',
-    description: 'Retrieve a paginated list of agent execution records with optional filtering'
+    description: 'Retrieve a paginated list of agent execution records with optional filtering',
   })
   @ApiQuery({ name: 'agentId', required: false, description: 'Filter by agent ID' })
-  @ApiQuery({ name: 'status', required: false, enum: ExecutionStatus, description: 'Filter by status' })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: ExecutionStatus,
+    description: 'Filter by status',
+  })
   @ApiQuery({ name: 'userId', required: false, description: 'Filter by user ID' })
   @ApiQuery({ name: 'startDate', required: false, description: 'Start date (ISO 8601)' })
   @ApiQuery({ name: 'endDate', required: false, description: 'End date (ISO 8601)' })
@@ -31,7 +36,7 @@ export class AgentExecutionsController {
   @ApiResponse({
     status: 200,
     description: 'Execution history retrieved successfully',
-    type: AgentExecutionListResponseDto
+    type: AgentExecutionListResponseDto,
   })
   async findAll(@Query() query: AgentExecutionQueryDto): Promise<AgentExecutionListResponseDto> {
     return this.agentExecutionsService.findAll(query);
@@ -40,12 +45,12 @@ export class AgentExecutionsController {
   @Get(':id')
   @ApiOperation({
     summary: 'Get agent execution details',
-    description: 'Retrieve detailed information about a specific agent execution'
+    description: 'Retrieve detailed information about a specific agent execution',
   })
   @ApiResponse({
     status: 200,
     description: 'Execution details retrieved successfully',
-    type: AgentExecutionResponseDto
+    type: AgentExecutionResponseDto,
   })
   @ApiResponse({ status: 404, description: 'Execution not found' })
   async findOne(@Param('id') id: string): Promise<AgentExecutionResponseDto> {

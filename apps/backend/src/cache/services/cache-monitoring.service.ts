@@ -129,8 +129,7 @@ export class CacheMonitoringService {
 
     // Update average time (moving average)
     const totalOps = keyMetric.hits + keyMetric.misses;
-    keyMetric.averageTime =
-      (keyMetric.averageTime * (totalOps - 1) + duration) / totalOps;
+    keyMetric.averageTime = (keyMetric.averageTime * (totalOps - 1) + duration) / totalOps;
   }
 
   /**
@@ -175,14 +174,12 @@ export class CacheMonitoringService {
 
     const averageHitTime =
       this.metrics.hitTimes.length > 0
-        ? this.metrics.hitTimes.reduce((a, b) => a + b, 0) /
-          this.metrics.hitTimes.length
+        ? this.metrics.hitTimes.reduce((a, b) => a + b, 0) / this.metrics.hitTimes.length
         : 0;
 
     const averageMissTime =
       this.metrics.missTimes.length > 0
-        ? this.metrics.missTimes.reduce((a, b) => a + b, 0) /
-          this.metrics.missTimes.length
+        ? this.metrics.missTimes.reduce((a, b) => a + b, 0) / this.metrics.missTimes.length
         : 0;
 
     return {
@@ -246,7 +243,7 @@ export class CacheMonitoringService {
         `Miss Rate: ${stats.missRate.toFixed(2)}%, ` +
         `Total Ops: ${stats.totalOperations}, ` +
         `Avg Hit Time: ${stats.averageHitTime.toFixed(2)}ms, ` +
-        `Avg Miss Time: ${stats.averageMissTime.toFixed(2)}ms`,
+        `Avg Miss Time: ${stats.averageMissTime.toFixed(2)}ms`
     );
 
     const topKeys = this.getTopKeys(5);
@@ -257,9 +254,9 @@ export class CacheMonitoringService {
             .map(
               (k) =>
                 `  ${k.key}: ${k.hits} hits, ${k.misses} misses, ` +
-                `${((k.hits / (k.hits + k.misses)) * 100).toFixed(1)}% hit rate`,
+                `${((k.hits / (k.hits + k.misses)) * 100).toFixed(1)}% hit rate`
             )
-            .join('\n'),
+            .join('\n')
       );
     }
 

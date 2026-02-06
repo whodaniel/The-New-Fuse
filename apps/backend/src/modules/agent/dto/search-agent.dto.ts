@@ -1,6 +1,6 @@
-import { IsString, IsOptional, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { AgentType, AgentCapability } from '@the-new-fuse/types';
+import { AgentCapability, AgentType } from '@the-new-fuse/types';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class SearchAgentDto {
   @ApiProperty({

@@ -15,11 +15,13 @@ Complete guide for deploying Sync-Core in various environments.
 ## Prerequisites
 
 ### Required
+
 - Node.js 18+
 - PostgreSQL 14+
 - Redis 6+
 
 ### Optional (for cloud deployment)
+
 - Docker 20+
 - Kubernetes 1.24+
 - kubectl CLI
@@ -30,12 +32,14 @@ Complete guide for deploying Sync-Core in various environments.
 ### Using Docker Compose (Recommended)
 
 1. **Create environment file**:
+
 ```bash
 cd packages/sync-core
 cp .env.example .env
 ```
 
 2. **Configure environment variables**:
+
 ```bash
 # Edit .env
 DATABASE_URL=postgresql://tnf:tnf_password@postgres:5432/tnf
@@ -46,16 +50,19 @@ POSTGRES_DB=tnf
 ```
 
 3. **Start all services**:
+
 ```bash
 docker-compose up -d
 ```
 
 4. **View logs**:
+
 ```bash
 docker-compose logs -f sync-core
 ```
 
 5. **Stop services**:
+
 ```bash
 docker-compose down
 ```
@@ -63,22 +70,26 @@ docker-compose down
 ### Using pnpm (Native)
 
 1. **Install dependencies**:
+
 ```bash
 pnpm install
 ```
 
 2. **Start PostgreSQL and Redis** (manually or via Docker):
+
 ```bash
 docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=password postgres:15
 docker run -d -p 6379:6379 redis:7-alpine
 ```
 
 3. **Run migrations**:
+
 ```bash
-pnpm prisma migrate deploy
+pnpm drizzle migrate deploy
 ```
 
 4. **Start development server**:
+
 ```bash
 pnpm --filter @the-new-fuse/sync-core dev
 ```
@@ -165,12 +176,13 @@ kubectl logs -n the-new-fuse -l app=sync-core --tail=100 -f
 ### Step 5: Access Service
 
 **Port Forward (Development)**:
+
 ```bash
 kubectl port-forward -n the-new-fuse svc/sync-core-service 3001:3001
 ```
 
-**Ingress (Production)**:
-Service will be available at: `https://sync.thenewfuse.com`
+**Ingress (Production)**: Service will be available at:
+`https://sync.thenewfuse.com`
 
 ## Production Best Practices
 
@@ -191,6 +203,7 @@ resources:
 ### 2. Horizontal Pod Autoscaling
 
 The HPA configuration scales based on CPU and memory:
+
 - **Min replicas**: 3
 - **Max replicas**: 10
 - **CPU threshold**: 70%
@@ -199,13 +212,14 @@ The HPA configuration scales based on CPU and memory:
 ### 3. High Availability
 
 **Redis Cluster**:
+
 ```yaml
 # Use Redis Sentinel or Cluster mode
-REDIS_URL=redis-sentinel://sentinel:26379/mymaster
-REDIS_CLUSTER_ENABLED=true
+REDIS_URL=redis-sentinel://sentinel:26379/mymaster REDIS_CLUSTER_ENABLED=true
 ```
 
 **PostgreSQL High Availability**:
+
 - Use managed services (AWS RDS, GCP Cloud SQL, Azure Database)
 - Configure connection pooling
 - Enable read replicas for scaling
@@ -213,6 +227,7 @@ REDIS_CLUSTER_ENABLED=true
 ### 4. Security
 
 **TLS/SSL**:
+
 ```yaml
 # In ingress.yaml
 tls:
@@ -222,6 +237,7 @@ tls:
 ```
 
 **Network Policies**:
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -247,6 +263,7 @@ spec:
 ### 5. Backup & Recovery
 
 **Database Backups**:
+
 ```bash
 # Automated daily backups
 kubectl create cronjob sync-core-backup \
@@ -256,6 +273,7 @@ kubectl create cronjob sync-core-backup \
 ```
 
 **Redis Persistence**:
+
 ```yaml
 # In redis deployment
 command: redis-server --appendonly yes --save 900 1 --save 300 10
@@ -266,6 +284,7 @@ command: redis-server --appendonly yes --save 900 1 --save 300 10
 ### Prometheus Integration
 
 **ServiceMonitor**:
+
 ```yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -303,6 +322,7 @@ spec:
 Import dashboard ID: `14058` (Node.js Application Dashboard)
 
 Custom queries:
+
 ```promql
 # Sync operation rate
 rate(sync_operations_total[5m])
@@ -317,6 +337,7 @@ rate(sync_conflicts_total[5m]) / rate(sync_operations_total[5m])
 ### Log Aggregation
 
 **Fluentd/Fluent Bit**:
+
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -344,12 +365,14 @@ data:
 #### 1. Pods Not Starting
 
 **Check logs**:
+
 ```bash
 kubectl describe pod -n the-new-fuse <pod-name>
 kubectl logs -n the-new-fuse <pod-name>
 ```
 
 **Common causes**:
+
 - Database connection issues
 - Redis connection issues
 - Missing secrets
@@ -357,11 +380,13 @@ kubectl logs -n the-new-fuse <pod-name>
 #### 2. High Memory Usage
 
 **Check metrics**:
+
 ```bash
 kubectl top pod -n the-new-fuse -l app=sync-core
 ```
 
 **Solutions**:
+
 - Reduce `CACHE_SIZE_MB`
 - Increase memory limits
 - Enable Redis clustering
@@ -369,24 +394,28 @@ kubectl top pod -n the-new-fuse -l app=sync-core
 #### 3. WebSocket Connection Failures
 
 **Check ingress configuration**:
+
 ```bash
 kubectl get ingress -n the-new-fuse sync-core-ingress -o yaml
 ```
 
 **Verify annotations**:
+
 ```yaml
 nginx.ingress.kubernetes.io/websocket-services: sync-core-service
-nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+nginx.ingress.kubernetes.io/proxy-read-timeout: '3600'
 ```
 
 #### 4. High Sync Latency
 
 **Check Redis performance**:
+
 ```bash
 kubectl exec -n the-new-fuse redis-0 -- redis-cli INFO stats
 ```
 
 **Solutions**:
+
 - Enable Redis clustering
 - Increase batch sizes
 - Add read replicas
@@ -394,11 +423,13 @@ kubectl exec -n the-new-fuse redis-0 -- redis-cli INFO stats
 #### 5. Database Connection Pool Exhaustion
 
 **Check active connections**:
+
 ```sql
 SELECT count(*) FROM pg_stat_activity WHERE datname = 'tnf';
 ```
 
 **Solutions**:
+
 - Increase `MAX_CONNECTIONS`
 - Implement connection pooling with PgBouncer
 - Scale horizontally with more pods
@@ -406,14 +437,17 @@ SELECT count(*) FROM pg_stat_activity WHERE datname = 'tnf';
 ### Health Check Endpoints
 
 **Liveness Probe**: `GET /health`
+
 - Returns 200 if service is running
 - Returns 503 if critical failure
 
 **Readiness Probe**: `GET /ready`
+
 - Returns 200 if ready to accept traffic
 - Returns 503 if initializing or unhealthy dependencies
 
 **Example response**:
+
 ```json
 {
   "status": "healthy",
@@ -455,9 +489,9 @@ EXPLAIN ANALYZE SELECT * FROM sync_states WHERE tenant_id = 'tenant-123';
 ```yaml
 # In configmap.yaml
 data:
-  sync-batch-size: "100"        # Increase for high throughput
-  redis-pool-size: "20"         # More connections for concurrency
-  debounce-file-changes-ms: "1000"  # Reduce for faster response
+  sync-batch-size: '100' # Increase for high throughput
+  redis-pool-size: '20' # More connections for concurrency
+  debounce-file-changes-ms: '1000' # Reduce for faster response
 ```
 
 ## Rollback Procedure
@@ -522,6 +556,7 @@ REDIS_SENTINEL_HOSTS=sentinel-us,sentinel-eu,sentinel-ap
 ## Support
 
 For issues or questions:
+
 - GitHub Issues: https://github.com/whodaniel/fuse/issues
 - Documentation: https://docs.thenewfuse.com
 - Slack: #sync-core channel

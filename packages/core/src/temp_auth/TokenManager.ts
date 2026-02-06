@@ -13,20 +13,17 @@ interface Token {
 @Injectable()
 export class TokenManager {
   private readonly logger = new Logger(TokenManager.name); // From Current
-  
+
   // Store by the token *string* for fast O(1) validation
-  private tokens = new Map<string, Token>(); 
+  private tokens = new Map<string, Token>();
 
   constructor() {}
 
   // Merged: Based on 'Incoming' but async, with logging
-  async generateToken(
-    userId: string,
-    type: 'access' | 'refresh' = 'access',
-  ): Promise<Token> {
+  async generateToken(userId: string, type: 'access' | 'refresh' = 'access'): Promise<Token> {
     this.logger.log(`Generate ${type} token for ${userId}`);
     const tokenString = uuidv4();
-    
+
     const token: Token = {
       id: uuidv4(),
       userId,
@@ -56,7 +53,7 @@ export class TokenManager {
       this.tokens.delete(tokenString); // Clean up expired token
       return null;
     }
-    
+
     return token;
   }
 
@@ -83,7 +80,7 @@ export class TokenManager {
     this.logger.warn(`Invalid or expired refresh token provided`);
     return null;
   }
-  
+
   // Kept from 'Current', but adapted to new structure
   async revokeAllUserTokens(userId: string): Promise<void> {
     this.logger.log(`Revoke all tokens for user ${userId}`);

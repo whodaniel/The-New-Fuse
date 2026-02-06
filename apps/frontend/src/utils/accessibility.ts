@@ -105,10 +105,10 @@ export function announceToScreenReader(message: string): void {
   announcement.style.clip = 'rect(0, 0, 0, 0)';
   announcement.style.whiteSpace = 'nowrap';
   announcement.style.border = '0';
-  
+
   announcement.textContent = message;
   document.body.appendChild(announcement);
-  
+
   setTimeout(() => {
     document.body.removeChild(announcement);
   }, 1000);

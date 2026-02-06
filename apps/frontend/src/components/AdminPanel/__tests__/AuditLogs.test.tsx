@@ -1,7 +1,6 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { AuditLogs } from '../AuditLogs';
+import { render, screen } from '@testing-library/react';
 import { useAuditLogs } from '../../../hooks/useAuditLogs';
+import { AuditLogs } from '../AuditLogs';
 
 jest.mock('../../../hooks/useAuditLogs');
 
@@ -13,8 +12,8 @@ describe('AuditLogs', () => {
       type: 'user',
       user: 'admin',
       action: 'login',
-      details: 'Successful login'
-    }
+      details: 'Successful login',
+    },
   ];
 
   beforeEach(() => {
@@ -22,7 +21,7 @@ describe('AuditLogs', () => {
       logs: mockLogs,
       filters: { type: '', search: '' },
       setFilters: jest.fn(),
-      loading: false
+      loading: false,
     });
   });
 

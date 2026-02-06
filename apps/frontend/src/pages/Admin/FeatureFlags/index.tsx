@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { FeatureFlagConditionsEditor } from '../../../components/AdminPanel/FeatureFlagConditions';
-import { FeatureFlag, FeatureFlagConditions } from '@the-new-fuse/types/featureFlags';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { toast } from '@/components/ui/toast';
+import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Tabs } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
+import { toast } from '@/components/ui/toast';
+import { FeatureFlag, FeatureFlagConditions } from '@the-new-fuse/types/featureFlags';
+import { useEffect, useState } from 'react';
+import { FeatureFlagConditionsEditor } from '../../../components/AdminPanel/FeatureFlagConditions';
 
 export default function FeatureFlagsAdmin() {
   const [features, setFeatures] = useState<FeatureFlag[]>([]);
@@ -36,11 +36,11 @@ export default function FeatureFlagsAdmin() {
       const response = await fetch('/api/admin/features', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) throw new Error('Failed to create feature');
-      
+
       toast.success('Feature created successfully');
       await loadFeatures();
     } catch (error) {
@@ -54,11 +54,11 @@ export default function FeatureFlagsAdmin() {
       const response = await fetch(`/api/admin/features/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) throw new Error('Failed to update feature');
-      
+
       toast.success('Feature updated successfully');
       await loadFeatures();
     } catch (error) {
@@ -72,11 +72,11 @@ export default function FeatureFlagsAdmin() {
 
     try {
       const response = await fetch(`/api/admin/features/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
-      
+
       if (!response.ok) throw new Error('Failed to delete feature');
-      
+
       toast.success('Feature deleted successfully');
       await loadFeatures();
     } catch (error) {
@@ -93,14 +93,18 @@ export default function FeatureFlagsAdmin() {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Feature Flags</h1>
-        <Button onClick={() => setSelectedFeature({
-          name: '',
-          description: '',
-          enabled: false,
-          stage: 'development',
-          priority: 'medium',
-          conditions: {}
-        } as FeatureFlag)}>
+        <Button
+          onClick={() =>
+            setSelectedFeature({
+              name: '',
+              description: '',
+              enabled: false,
+              stage: 'development',
+              priority: 'medium',
+              conditions: {},
+            } as FeatureFlag)
+          }
+        >
           Create Feature
         </Button>
       </div>
@@ -110,11 +114,14 @@ export default function FeatureFlagsAdmin() {
           <h2 className="text-xl font-semibold mb-4">Feature List</h2>
           <div className="space-y-4">
             {features.map((feature: any) => (
-              <Card key={feature.id} className="p-4 hover:bg-secondary/50 cursor-pointer"
+              <Card
+                key={feature.id}
+                className="p-4 hover:bg-secondary/50 cursor-pointer"
                 onClick={() => {
                   setSelectedFeature(feature);
                   setEditingConditions(feature.conditions || {});
-                }}>
+                }}
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">{feature.name}</h3>
@@ -164,10 +171,12 @@ export default function FeatureFlagsAdmin() {
                   <label className="block text-sm mb-1">Name</label>
                   <Input
                     value={selectedFeature.name}
-                    onChange={(e) => setSelectedFeature({
-                      ...selectedFeature,
-                      name: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setSelectedFeature({
+                        ...selectedFeature,
+                        name: e.target.value,
+                      })
+                    }
                   />
                 </div>
 
@@ -175,10 +184,12 @@ export default function FeatureFlagsAdmin() {
                   <label className="block text-sm mb-1">Description</label>
                   <Input
                     value={selectedFeature.description}
-                    onChange={(e) => setSelectedFeature({
-                      ...selectedFeature,
-                      description: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setSelectedFeature({
+                        ...selectedFeature,
+                        description: e.target.value,
+                      })
+                    }
                   />
                 </div>
 
@@ -189,10 +200,12 @@ export default function FeatureFlagsAdmin() {
                       title="Select an option"
                       aria-label="Select an option"
                       value={selectedFeature.stage}
-                      onChange={(e) => setSelectedFeature({
-                        ...selectedFeature,
-                        stage: e.target.value
-                      })}
+                      onChange={(e) =>
+                        setSelectedFeature({
+                          ...selectedFeature,
+                          stage: e.target.value,
+                        })
+                      }
                       className="w-full p-2 border rounded"
                     >
                       <option value="development">Development</option>
@@ -208,10 +221,12 @@ export default function FeatureFlagsAdmin() {
                       title="Select an option"
                       aria-label="Select an option"
                       value={selectedFeature.priority}
-                      onChange={(e) => setSelectedFeature({
-                        ...selectedFeature,
-                        priority: e.target.value
-                      })}
+                      onChange={(e) =>
+                        setSelectedFeature({
+                          ...selectedFeature,
+                          priority: e.target.value,
+                        })
+                      }
                       className="w-full p-2 border rounded"
                     >
                       <option value="low">Low</option>
@@ -224,10 +239,12 @@ export default function FeatureFlagsAdmin() {
                 <div className="flex items-center space-x-2">
                   <Switch
                     checked={selectedFeature.enabled}
-                    onCheckedChange={(checked) => setSelectedFeature({
-                      ...selectedFeature,
-                      enabled: checked
-                    })}
+                    onCheckedChange={(checked) =>
+                      setSelectedFeature({
+                        ...selectedFeature,
+                        enabled: checked,
+                      })
+                    }
                   />
                   <span>Enabled</span>
                 </div>
@@ -240,7 +257,7 @@ export default function FeatureFlagsAdmin() {
                     setEditingConditions(conditions);
                     setSelectedFeature({
                       ...selectedFeature,
-                      conditions
+                      conditions,
                     });
                   }}
                 />
@@ -307,12 +324,12 @@ export default function FeatureFlagsAdmin() {
                   if (selectedFeature.id) {
                     updateFeature(selectedFeature.id, {
                       ...selectedFeature,
-                      conditions: editingConditions
+                      conditions: editingConditions,
                     });
                   } else {
                     createFeature({
                       ...selectedFeature,
-                      conditions: editingConditions
+                      conditions: editingConditions,
                     });
                   }
                   setSelectedFeature(null);

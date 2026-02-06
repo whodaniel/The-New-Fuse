@@ -166,7 +166,7 @@ Access via `@agent-name` syntax:
 Auto-loaded based on context:
 
 - **NestJS Expert** - Perfect for TNF backend
-- **Prisma Expert** - Aligns with TNF database
+- **Drizzle Expert** - Aligns with TNF database
 - **React Patterns** - Enhances TNF frontend
 - **Docker Expert** - Supports containerization
 - Plus 36 more specialized skills

@@ -165,3 +165,4 @@ export { SuggestionPriority, SuggestionStatus } from './core/enums';
 
 // Job types
 export * from './jobs';
+export * from './providers';

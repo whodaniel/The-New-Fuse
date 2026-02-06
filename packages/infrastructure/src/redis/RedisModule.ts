@@ -1,8 +1,8 @@
-import { Module, DynamicModule } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { UnifiedRedisService } from './UnifiedRedisService';
 import { RedisConfig } from './RedisConfig';
 import { RedisConfiguration } from './types';
+import { UnifiedRedisService } from './UnifiedRedisService';
 
 export interface RedisModuleOptions {
   isGlobal?: boolean;
@@ -32,7 +32,9 @@ export class RedisModule {
 
   static forRootAsync(options: {
     isGlobal?: boolean;
-    useFactory?: (...args: any[]) => Promise<Partial<RedisConfiguration>> | Partial<RedisConfiguration>;
+    useFactory?: (
+      ...args: any[]
+    ) => Promise<Partial<RedisConfiguration>> | Partial<RedisConfiguration>;
     inject?: any[];
   }): DynamicModule {
     return {

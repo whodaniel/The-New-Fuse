@@ -1,4 +1,4 @@
-import { Integration, IntegrationType, IntegrationConfig } from "./types";
+import { Integration, IntegrationConfig, IntegrationType } from './types';
 
 /**
  * Base integration class that implements common functionality
@@ -29,7 +29,7 @@ export abstract class BaseIntegration implements Integration {
       actions: string[];
       triggers?: string[];
       [key: string]: any;
-    }>,
+    }>
   ) {
     this.id = id;
     this.name = name;
@@ -73,4 +73,4 @@ export abstract class BaseIntegration implements Integration {
   }
 }
 
-export { IntegrationType } from "./types";
+export { IntegrationType } from './types';

@@ -1,9 +1,9 @@
-import { memo } from "react";
-import { Warning } from "@phosphor-icons/react";
+import { WorkspaceData } from '@/types/workspace';
+import renderMarkdown from '@/utils/chat/markdown';
+import { Warning } from '@phosphor-icons/react';
+import { memo } from 'react';
 import UserIcon from '../../../../UserIcon';
-import renderMarkdown from "@/utils/chat/markdown";
 import Citations from '../Citation';
-import { WorkspaceData } from "@/types/workspace";
 
 interface PromptReplyProps {
   uuid?: string;
@@ -28,15 +28,13 @@ const PromptReply = ({
   sources = [],
   closed = true,
 }: PromptReplyProps): JSX.Element | null => {
-  const assistantBackgroundColor = "bg-theme-bg-chat";
+  const assistantBackgroundColor = 'bg-theme-bg-chat';
 
   if (!reply && sources.length === 0 && !pending && !error) return null;
 
   if (pending) {
     return (
-      <div
-        className={`flex justify-center items-end w-full ${assistantBackgroundColor}`}
-      >
+      <div className={`flex justify-center items-end w-full ${assistantBackgroundColor}`}>
         <div className="py-6 px-4 w-full flex gap-x-5 md:max-w-[80%] flex-col">
           <div className="flex gap-x-5">
             <WorkspaceProfileImage workspace={workspace} />
@@ -49,18 +47,13 @@ const PromptReply = ({
 
   if (error) {
     return (
-      <div
-        className={`flex justify-center items-end w-full ${assistantBackgroundColor}`}
-      >
+      <div className={`flex justify-center items-end w-full ${assistantBackgroundColor}`}>
         <div className="py-6 px-4 w-full flex gap-x-5 md:max-w-[80%] flex-col">
           <div className="flex gap-x-5">
             <WorkspaceProfileImage workspace={workspace} />
-            <span
-              className={`inline-block p-2 rounded-lg bg-red-50 text-red-500`}
-            >
-              <Warning className="h-4 w-4 mb-1 inline-block" /> Could not
-              respond to message.
-              <span className="text-xs">Reason: {error || "unknown"}</span>
+            <span className={`inline-block p-2 rounded-lg bg-red-50 text-red-500`}>
+              <Warning className="h-4 w-4 mb-1 inline-block" /> Could not respond to message.
+              <span className="text-xs">Reason: {error || 'unknown'}</span>
             </span>
           </div>
         </div>
@@ -69,10 +62,7 @@ const PromptReply = ({
   }
 
   return (
-    <div
-      key={uuid}
-      className={`flex justify-center items-end w-full ${assistantBackgroundColor}`}
-    >
+    <div key={uuid} className={`flex justify-center items-end w-full ${assistantBackgroundColor}`}>
       <div className="py-8 px-4 w-full flex gap-x-5 md:max-w-[80%] flex-col">
         <div className="flex gap-x-5">
           <WorkspaceProfileImage workspace={workspace} />

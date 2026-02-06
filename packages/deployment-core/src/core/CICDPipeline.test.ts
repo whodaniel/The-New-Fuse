@@ -1,18 +1,18 @@
-import { CICDPipeline } from './CICDPipeline';
-import { PipelineExecutor } from './PipelineExecutor';
-import { PipelineValidator } from './PipelineValidator';
-import { PipelineStorage } from './PipelineStorage';
-import { NotificationService } from './NotificationService';
-import { MetricsCollector } from './MetricsCollector';
+import winston from 'winston';
 import {
+  BuildTrigger,
+  EnvironmentType,
   PipelineDefinition,
   PipelineStatus,
   StageType,
   TriggerType,
-  BuildTrigger,
-  EnvironmentType
 } from '../types/pipeline';
-import winston from 'winston';
+import { CICDPipeline } from './CICDPipeline';
+import { MetricsCollector } from './MetricsCollector';
+import { NotificationService } from './NotificationService';
+import { PipelineExecutor } from './PipelineExecutor';
+import { PipelineStorage } from './PipelineStorage';
+import { PipelineValidator } from './PipelineValidator';
 
 describe('CICDPipeline', () => {
   let pipeline: CICDPipeline;
@@ -27,7 +27,7 @@ describe('CICDPipeline', () => {
     // Create mock logger
     mockLogger = winston.createLogger({
       level: 'error',
-      transports: [new winston.transports.Console({ silent: true })]
+      transports: [new winston.transports.Console({ silent: true })],
     });
 
     // Create real instances for testing
@@ -58,10 +58,10 @@ describe('CICDPipeline', () => {
           branch: 'main',
           commit: 'abc123',
           author: 'test-user',
-          message: 'Test commit'
+          message: 'Test commit',
         },
         timestamp: new Date(),
-        metadata: {}
+        metadata: {},
       };
 
       // Mock pipeline configuration
@@ -77,15 +77,15 @@ describe('CICDPipeline', () => {
           maxBuilds: 100,
           maxAge: '30d',
           artifactRetention: '7d',
-          logRetention: '30d'
+          logRetention: '30d',
         },
         permissions: {
           read: ['*'],
           write: ['admin'],
           execute: ['developer'],
-          admin: ['admin']
+          admin: ['admin'],
         },
-        metadata: {}
+        metadata: {},
       };
 
       // Mock storage to return pipeline config
@@ -103,7 +103,7 @@ describe('CICDPipeline', () => {
         duration: 1000,
         logs: ['Task completed successfully'],
         artifacts: [],
-        metadata: {}
+        metadata: {},
       });
 
       const result = await pipeline.triggerBuild(trigger);
@@ -122,10 +122,10 @@ describe('CICDPipeline', () => {
           branch: 'main',
           commit: 'abc123',
           author: 'test-user',
-          message: 'Test commit'
+          message: 'Test commit',
         },
         timestamp: new Date(),
-        metadata: {}
+        metadata: {},
       };
 
       // Mock storage to return no pipeline configs
@@ -147,7 +147,7 @@ describe('CICDPipeline', () => {
       // Mock validator to return valid
       jest.spyOn(mockValidator, 'validatePipeline').mockResolvedValue({
         valid: true,
-        errors: []
+        errors: [],
       });
 
       // Mock storage
@@ -164,7 +164,7 @@ describe('CICDPipeline', () => {
         duration: 1000,
         logs: ['Task completed successfully'],
         artifacts: [],
-        metadata: {}
+        metadata: {},
       });
 
       const result = await pipeline.executePipeline(pipelineDefinition);
@@ -181,7 +181,7 @@ describe('CICDPipeline', () => {
       // Mock validator to return invalid
       jest.spyOn(mockValidator, 'validatePipeline').mockResolvedValue({
         valid: false,
-        errors: ['Invalid pipeline configuration']
+        errors: ['Invalid pipeline configuration'],
       });
 
       await expect(pipeline.executePipeline(pipelineDefinition)).rejects.toThrow(
@@ -203,11 +203,11 @@ describe('CICDPipeline', () => {
 
     it('should detect validation errors in pipeline definition', async () => {
       const invalidPipelineDefinition: PipelineDefinition = {
-        id: '',  // Invalid: empty ID
-        name: '',  // Invalid: empty name
+        id: '', // Invalid: empty ID
+        name: '', // Invalid: empty name
         version: '1.0.0',
-        stages: [],  // Invalid: no stages
-        triggers: [],  // Invalid: no triggers
+        stages: [], // Invalid: no stages
+        triggers: [], // Invalid: no triggers
         environment: {
           name: 'test',
           type: EnvironmentType.TEST,
@@ -216,14 +216,14 @@ describe('CICDPipeline', () => {
           resources: {
             cpu: '100m',
             memory: '128Mi',
-            storage: '1Gi'
+            storage: '1Gi',
           },
           constraints: {
             allowedBranches: ['main'],
             requiredApprovals: 0,
             deploymentWindows: [],
-            maxConcurrentDeployments: 1
-          }
+            maxConcurrentDeployments: 1,
+          },
         },
         qualityGates: [],
         notifications: [],
@@ -234,10 +234,10 @@ describe('CICDPipeline', () => {
           backoffStrategy: 'fixed',
           initialDelay: 1000,
           maxDelay: 30000,
-          retryConditions: []
+          retryConditions: [],
         },
         variables: {},
-        metadata: {}
+        metadata: {},
       };
 
       const result = await pipeline.validatePipeline(invalidPipelineDefinition);
@@ -255,7 +255,7 @@ describe('CICDPipeline', () => {
       // Mock validator
       jest.spyOn(mockValidator, 'validatePipeline').mockResolvedValue({
         valid: true,
-        errors: []
+        errors: [],
       });
 
       // Mock storage
@@ -265,7 +265,7 @@ describe('CICDPipeline', () => {
       const executionPromise = pipeline.executePipeline(pipelineDefinition);
 
       // Give it a moment to start
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       // Monitor the pipeline - this should find the running pipeline
       // Since we can't easily get the execution ID, we'll test with a mock ID
@@ -316,11 +316,11 @@ function createTestPipelineDefinition(): PipelineDefinition {
               backoffStrategy: 'fixed',
               initialDelay: 1000,
               maxDelay: 5000,
-              retryConditions: []
+              retryConditions: [],
             },
             conditions: [],
-            artifacts: []
-          }
+            artifacts: [],
+          },
         ],
         conditions: [],
         timeout: 300000,
@@ -330,11 +330,11 @@ function createTestPipelineDefinition(): PipelineDefinition {
           backoffStrategy: 'fixed',
           initialDelay: 1000,
           maxDelay: 5000,
-          retryConditions: []
+          retryConditions: [],
         },
         parallel: false,
         continueOnError: false,
-        environment: {}
+        environment: {},
       },
       {
         id: 'test-stage',
@@ -355,11 +355,11 @@ function createTestPipelineDefinition(): PipelineDefinition {
               backoffStrategy: 'fixed',
               initialDelay: 1000,
               maxDelay: 5000,
-              retryConditions: []
+              retryConditions: [],
             },
             conditions: [],
-            artifacts: []
-          }
+            artifacts: [],
+          },
         ],
         conditions: [],
         timeout: 300000,
@@ -369,28 +369,28 @@ function createTestPipelineDefinition(): PipelineDefinition {
           backoffStrategy: 'fixed',
           initialDelay: 1000,
           maxDelay: 5000,
-          retryConditions: []
+          retryConditions: [],
         },
         parallel: false,
         continueOnError: false,
-        environment: {}
-      }
+        environment: {},
+      },
     ],
     triggers: [
       {
         type: TriggerType.PUSH,
         configuration: {
-          branches: ['main']
+          branches: ['main'],
         },
         filters: [
           {
             type: 'branch',
             pattern: 'main',
-            exclude: false
-          }
+            exclude: false,
+          },
         ],
-        enabled: true
-      }
+        enabled: true,
+      },
     ],
     environment: {
       name: 'test',
@@ -400,14 +400,14 @@ function createTestPipelineDefinition(): PipelineDefinition {
       resources: {
         cpu: '100m',
         memory: '128Mi',
-        storage: '1Gi'
+        storage: '1Gi',
       },
       constraints: {
         allowedBranches: ['main'],
         requiredApprovals: 0,
         deploymentWindows: [],
-        maxConcurrentDeployments: 1
-      }
+        maxConcurrentDeployments: 1,
+      },
     },
     qualityGates: [],
     notifications: [],
@@ -418,9 +418,9 @@ function createTestPipelineDefinition(): PipelineDefinition {
       backoffStrategy: 'fixed',
       initialDelay: 1000,
       maxDelay: 30000,
-      retryConditions: []
+      retryConditions: [],
     },
     variables: {},
-    metadata: {}
+    metadata: {},
   };
 }

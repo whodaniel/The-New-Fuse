@@ -24,7 +24,7 @@ const typeSystemAnalysis: TypeSystemAnalysis = {
     'Runtime type checking gaps',
     'Inconsistent error handling patterns',
     'Missing interface definitions for agent communication',
-    'Weak typing in workflow execution'
+    'Weak typing in workflow execution',
   ],
   proposedSolutions: [
     {
@@ -35,8 +35,8 @@ const typeSystemAnalysis: TypeSystemAnalysis = {
       implementation: [
         'Create type guard functions for AgentMessage interface',
         'Implement validation middleware for message processing',
-        'Add strict typing to message routing'
-      ]
+        'Add strict typing to message routing',
+      ],
     },
     {
       priority: 'high',
@@ -46,8 +46,8 @@ const typeSystemAnalysis: TypeSystemAnalysis = {
       implementation: [
         'Define custom error classes for different failure modes',
         'Implement consistent error reporting across services',
-        'Add error context and stack trace handling'
-      ]
+        'Add error context and stack trace handling',
+      ],
     },
     {
       priority: 'medium',
@@ -57,8 +57,8 @@ const typeSystemAnalysis: TypeSystemAnalysis = {
       implementation: [
         'Add strict typing to workflow step definitions',
         'Implement type-safe workflow state management',
-        'Create validation schemas for workflow configurations'
-      ]
+        'Create validation schemas for workflow configurations',
+      ],
     },
     {
       priority: 'medium',
@@ -68,9 +68,9 @@ const typeSystemAnalysis: TypeSystemAnalysis = {
       implementation: [
         'Define complete agent capability type system',
         'Add type safety to agent registration and discovery',
-        'Implement compile-time validation for agent configurations'
-      ]
-    }
+        'Implement compile-time validation for agent configurations',
+      ],
+    },
   ],
   implementationPriority: {
     immediate: [
@@ -82,9 +82,9 @@ const typeSystemAnalysis: TypeSystemAnalysis = {
         implementation: [
           'Resolve malformed interface definitions',
           'Fix missing type imports',
-          'Correct method signature inconsistencies'
-        ]
-      }
+          'Correct method signature inconsistencies',
+        ],
+      },
     ],
     shortTerm: [
       {
@@ -95,8 +95,8 @@ const typeSystemAnalysis: TypeSystemAnalysis = {
         implementation: [
           'Create zod or joi schemas for all message types',
           'Add runtime validation middleware',
-          'Implement error handling for validation failures'
-        ]
+          'Implement error handling for validation failures',
+        ],
       },
       {
         priority: 'medium',
@@ -106,9 +106,9 @@ const typeSystemAnalysis: TypeSystemAnalysis = {
         implementation: [
           'Add generic types for workflow step configurations',
           'Implement type-safe workflow builders',
-          'Create validation for workflow dependencies'
-        ]
-      }
+          'Create validation for workflow dependencies',
+        ],
+      },
     ],
     longTerm: [
       {
@@ -119,11 +119,11 @@ const typeSystemAnalysis: TypeSystemAnalysis = {
         implementation: [
           'Migrate to strict TypeScript configuration',
           'Implement brand types for domain entities',
-          'Add comprehensive integration testing for types'
-        ]
-      }
-    ]
-  }
+          'Add comprehensive integration testing for types',
+        ],
+      },
+    ],
+  },
 };
 
 export default typeSystemAnalysis;

@@ -38,7 +38,7 @@ export class SecurityTestingService {
       await this.testResponseSanitization(),
       await this.testRateLimiting(),
       await this.testAuthenticationSecurity(),
-      await this.testDataValidation()
+      await this.testDataValidation(),
     ];
   }
 
@@ -51,36 +51,37 @@ export class SecurityTestingService {
     // Test HTML sanitization
     const maliciousHTML = '<script>alert("XSS")</script><img src="x" onerror="alert(1)">';
     const sanitizedHTML = this.sanitizationService.sanitizeHTML(maliciousHTML);
-    
+
     tests.push({
       test: 'HTML Script Tag Removal',
       passed: !sanitizedHTML.includes('<script>'),
-      message: !sanitizedHTML.includes('<script>') 
-        ? 'Script tags properly removed from HTML' 
+      message: !sanitizedHTML.includes('<script>')
+        ? 'Script tags properly removed from HTML'
         : 'Script tags not removed - XSS vulnerability!',
-      severity: 'critical'
+      severity: 'critical',
     });
 
     tests.push({
       test: 'Event Handler Removal',
       passed: !sanitizedHTML.includes('onerror'),
-      message: !sanitizedHTML.includes('onerror') 
-        ? 'Event handlers properly removed' 
+      message: !sanitizedHTML.includes('onerror')
+        ? 'Event handlers properly removed'
         : 'Event handlers not removed - XSS vulnerability!',
-      severity: 'critical'
+      severity: 'critical',
     });
 
     // Test text sanitization
-    const maliciousText = '<script>alert("XSS")</script>Hello World<img src="x" onerror="alert(2)">';
+    const maliciousText =
+      '<script>alert("XSS")</script>Hello World<img src="x" onerror="alert(2)">';
     const sanitizedText = this.sanitizationService.sanitizeText(maliciousText);
-    
+
     tests.push({
       test: 'Text HTML Tag Removal',
       passed: !sanitizedText.includes('<script>') && !sanitizedText.includes('<img'),
-      message: !sanitizedText.includes('<script>') 
-        ? 'HTML tags properly removed from text' 
+      message: !sanitizedText.includes('<script>')
+        ? 'HTML tags properly removed from text'
         : 'HTML tags not removed from text - XSS vulnerability!',
-      severity: 'high'
+      severity: 'high',
     });
 
     return this.createTestSuite('XSS Protection', tests);
@@ -98,19 +99,22 @@ export class SecurityTestingService {
       "1' OR '1'='1",
       "admin'/*",
       "' UNION SELECT password FROM users--",
-      "1; DELETE FROM logs WHERE 1=1--"
+      '1; DELETE FROM logs WHERE 1=1--',
     ];
 
     for (const input of sqlInjectionInputs) {
       const sanitized = this.sanitizationService.sanitizeForDatabase(input);
-      
+
       tests.push({
         test: `SQL Injection Input: ${input.substring(0, 20)}...`,
-        passed: !sanitized.includes('DROP') && !sanitized.includes('UNION') && !sanitized.includes('SELECT'),
-        message: !sanitized.includes('DROP') 
-          ? 'SQL injection attempt properly sanitized' 
+        passed:
+          !sanitized.includes('DROP') &&
+          !sanitized.includes('UNION') &&
+          !sanitized.includes('SELECT'),
+        message: !sanitized.includes('DROP')
+          ? 'SQL injection attempt properly sanitized'
           : 'SQL injection not prevented!',
-        severity: 'critical'
+        severity: 'critical',
       });
     }
 
@@ -126,40 +130,40 @@ export class SecurityTestingService {
     // Test email sanitization
     const maliciousEmail = 'test@<script>alert("XSS")</script>.com';
     const sanitizedEmail = this.sanitizationService.sanitizeEmail(maliciousEmail);
-    
+
     tests.push({
       test: 'Email Sanitization',
       passed: !sanitizedEmail.includes('<script>'),
-      message: !sanitizedEmail.includes('<script>') 
-        ? 'Email properly sanitized' 
+      message: !sanitizedEmail.includes('<script>')
+        ? 'Email properly sanitized'
         : 'Email sanitization failed!',
-      severity: 'medium'
+      severity: 'medium',
     });
 
     // Test phone number sanitization
     const maliciousPhone = '+1-555-1234<script>alert("XSS")</script>';
     const sanitizedPhone = this.sanitizationService.sanitizePhoneNumber(maliciousPhone);
-    
+
     tests.push({
       test: 'Phone Number Sanitization',
       passed: !sanitizedPhone.includes('<script>'),
-      message: !sanitizedPhone.includes('<script>') 
-        ? 'Phone number properly sanitized' 
+      message: !sanitizedPhone.includes('<script>')
+        ? 'Phone number properly sanitized'
         : 'Phone number sanitization failed!',
-      severity: 'medium'
+      severity: 'medium',
     });
 
     // Test URL sanitization
     const maliciousUrl = 'javascript:alert("XSS")//example.com';
     const sanitizedUrl = this.sanitizationService.sanitizeUrl(maliciousUrl);
-    
+
     tests.push({
       test: 'URL Protocol Sanitization',
       passed: !sanitizedUrl.startsWith('javascript:'),
-      message: !sanitizedUrl.startsWith('javascript:') 
-        ? 'Malicious URL protocols properly blocked' 
+      message: !sanitizedUrl.startsWith('javascript:')
+        ? 'Malicious URL protocols properly blocked'
         : 'JavaScript protocol not blocked!',
-      severity: 'high'
+      severity: 'high',
     });
 
     return this.createTestSuite('Input Sanitization', tests);
@@ -173,26 +177,24 @@ export class SecurityTestingService {
 
     // Test CSRF token generation
     const csrfToken = this.generateTestCsrfToken();
-    
+
     tests.push({
       test: 'CSRF Token Generation',
       passed: csrfToken.length >= 32 && /^[a-f0-9]+$/i.test(csrfToken),
-      message: csrfToken.length >= 32 
-        ? 'CSRF tokens properly generated' 
-        : 'CSRF token generation failed!',
-      severity: 'medium'
+      message:
+        csrfToken.length >= 32 ? 'CSRF tokens properly generated' : 'CSRF token generation failed!',
+      severity: 'medium',
     });
 
     // Test session validation
     const sessionId = this.generateTestSessionId();
-    
+
     tests.push({
       test: 'Session ID Generation',
       passed: sessionId.length >= 16,
-      message: sessionId.length >= 16 
-        ? 'Session IDs properly generated' 
-        : 'Session ID generation failed!',
-      severity: 'low'
+      message:
+        sessionId.length >= 16 ? 'Session IDs properly generated' : 'Session ID generation failed!',
+      severity: 'low',
     });
 
     return this.createTestSuite('CSRF Protection', tests);
@@ -210,36 +212,38 @@ export class SecurityTestingService {
       password: 'secret123',
       email: 'test@example.com',
       secretKey: 'my-secret-key',
-      token: 'Bearer abc123'
+      token: 'Bearer abc123',
     };
 
     const sanitizedData = this.responseSanitization.sanitizeResponse(sensitiveData);
-    
+
     tests.push({
       test: 'Password Field Removal',
       passed: !('password' in sanitizedData),
-      message: !('password' in sanitizedData) 
-        ? 'Password field properly removed from response' 
+      message: !('password' in sanitizedData)
+        ? 'Password field properly removed from response'
         : 'Password field not removed - data leak vulnerability!',
-      severity: 'critical'
+      severity: 'critical',
     });
 
     tests.push({
       test: 'Secret Key Masking',
       passed: sanitizedData.secretKey !== 'my-secret-key',
-      message: sanitizedData.secretKey !== 'my-secret-key' 
-        ? 'Secret keys properly masked' 
-        : 'Secret keys not masked - data leak vulnerability!',
-      severity: 'high'
+      message:
+        sanitizedData.secretKey !== 'my-secret-key'
+          ? 'Secret keys properly masked'
+          : 'Secret keys not masked - data leak vulnerability!',
+      severity: 'high',
     });
 
     tests.push({
       test: 'Token Masking',
       passed: sanitizedData.token !== 'Bearer abc123',
-      message: sanitizedData.token !== 'Bearer abc123' 
-        ? 'Tokens properly masked' 
-        : 'Tokens not masked - data leak vulnerability!',
-      severity: 'high'
+      message:
+        sanitizedData.token !== 'Bearer abc123'
+          ? 'Tokens properly masked'
+          : 'Tokens not masked - data leak vulnerability!',
+      severity: 'high',
     });
 
     return this.createTestSuite('Response Sanitization', tests);
@@ -256,7 +260,7 @@ export class SecurityTestingService {
       test: 'Rate Limiting Configuration',
       passed: true, // Assume properly configured
       message: 'Rate limiting appears to be configured',
-      severity: 'medium'
+      severity: 'medium',
     });
 
     return this.createTestSuite('Rate Limiting', tests);
@@ -271,12 +275,14 @@ export class SecurityTestingService {
     // Test password validation
     const weakPassword = '123';
     const strongPassword = 'MyStr0ng!Passw0rd';
-    
+
     tests.push({
       test: 'Password Strength Validation',
-      passed: this.validatePasswordStrength(strongPassword).isValid && !this.validatePasswordStrength(weakPassword).isValid,
+      passed:
+        this.validatePasswordStrength(strongPassword).isValid &&
+        !this.validatePasswordStrength(weakPassword).isValid,
       message: 'Password strength validation working properly',
-      severity: 'medium'
+      severity: 'medium',
     });
 
     return this.createTestSuite('Authentication Security', tests);
@@ -291,27 +297,28 @@ export class SecurityTestingService {
     // Test length validation
     const longInput = 'a'.repeat(10000);
     const sanitizedLong = this.sanitizationService.sanitizeText(longInput);
-    
+
     tests.push({
       test: 'Input Length Limiting',
       passed: sanitizedLong.length <= 10000,
-      message: sanitizedLong.length <= 10000 
-        ? 'Long inputs properly truncated' 
-        : 'Input length not limited - potential DoS vulnerability!',
-      severity: 'medium'
+      message:
+        sanitizedLong.length <= 10000
+          ? 'Long inputs properly truncated'
+          : 'Input length not limited - potential DoS vulnerability!',
+      severity: 'medium',
     });
 
     // Test special character handling
     const specialChars = '<>"\';\\%&()[]{}|';
     const sanitizedSpecial = this.sanitizationService.sanitizeText(specialChars);
-    
+
     tests.push({
       test: 'Special Character Handling',
       passed: !sanitizedSpecial.includes('<') && !sanitizedSpecial.includes('>'),
-      message: !sanitizedSpecial.includes('<') 
-        ? 'Dangerous special characters properly handled' 
+      message: !sanitizedSpecial.includes('<')
+        ? 'Dangerous special characters properly handled'
         : 'Special characters not handled properly!',
-      severity: 'high'
+      severity: 'high',
     });
 
     return this.createTestSuite('Data Validation', tests);
@@ -321,9 +328,9 @@ export class SecurityTestingService {
    * Create test suite summary
    */
   private createTestSuite(name: string, tests: SecurityTestResult[]): SecurityTestSuite {
-    const passed = tests.filter(t => t.passed).length;
-    const failed = tests.filter(t => !t.passed).length;
-    const critical = tests.filter(t => t.severity === 'critical' && !t.passed).length;
+    const passed = tests.filter((t) => t.passed).length;
+    const failed = tests.filter((t) => !t.passed).length;
+    const critical = tests.filter((t) => t.severity === 'critical' && !t.passed).length;
     const overallScore = (passed / tests.length) * 100;
 
     return {
@@ -332,7 +339,7 @@ export class SecurityTestingService {
       overallScore,
       passed,
       failed,
-      critical
+      critical,
     };
   }
 
@@ -341,7 +348,7 @@ export class SecurityTestingService {
    */
   private generateTestCsrfToken(): string {
     return Array.from(crypto.getRandomValues(new Uint8Array(32)))
-      .map(b => b.toString(16).padStart(2, '0'))
+      .map((b) => b.toString(16).padStart(2, '0'))
       .join('');
   }
 
@@ -358,12 +365,12 @@ export class SecurityTestingService {
   private validatePasswordStrength(password: string): { isValid: boolean; score: number } {
     if (password.length < 8) return { isValid: false, score: 0 };
     if (password.length < 12) return { isValid: true, score: 2 };
-    
+
     const hasLower = /[a-z]/.test(password);
     const hasUpper = /[A-Z]/.test(password);
     const hasNumber = /\d/.test(password);
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    
+
     const score = [hasLower, hasUpper, hasNumber, hasSpecial].filter(Boolean).length;
     return { isValid: score >= 3, score };
   }
@@ -381,16 +388,16 @@ export class SecurityTestingService {
     const totalTests = suites.reduce((acc, suite) => acc + suite.tests.length, 0);
     const passedTests = suites.reduce((acc, suite) => acc + suite.passed, 0);
     const totalScore = (passedTests / totalTests) * 100;
-    
+
     const criticalIssues = suites.reduce((acc, suite) => acc + suite.critical, 0);
-    
+
     const recommendations = this.generateRecommendations(suites);
 
     return {
       totalScore: Math.round(totalScore),
       suites,
       criticalIssues,
-      recommendations
+      recommendations,
     };
   }
 
@@ -399,9 +406,9 @@ export class SecurityTestingService {
    */
   private generateRecommendations(suites: SecurityTestSuite[]): string[] {
     const recommendations: string[] = [];
-    
-    suites.forEach(suite => {
-      suite.tests.forEach(test => {
+
+    suites.forEach((suite) => {
+      suite.tests.forEach((test) => {
         if (!test.passed && test.severity === 'critical') {
           recommendations.push(`CRITICAL: ${test.message}`);
         } else if (!test.passed && test.severity === 'high') {

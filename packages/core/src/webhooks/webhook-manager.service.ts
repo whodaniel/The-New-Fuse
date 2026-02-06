@@ -35,7 +35,7 @@ export class WebhookManagerService {
   async registerWebhook(config: Omit<WebhookConfig, 'id'>): Promise<WebhookConfig> {
     const webhook: WebhookConfig = {
       id: this.generateId(),
-      ...config
+      ...config,
     };
     this.webhooks.set(webhook.id, webhook);
     this.eventEmitter.emit('webhook.registered', webhook);
@@ -50,10 +50,13 @@ export class WebhookManagerService {
     return deleted;
   }
 
-  async updateWebhook(webhookId: string, updates: Partial<Omit<WebhookConfig, 'id'>>): Promise<WebhookConfig | null> {
+  async updateWebhook(
+    webhookId: string,
+    updates: Partial<Omit<WebhookConfig, 'id'>>,
+  ): Promise<WebhookConfig | null> {
     const webhook = this.webhooks.get(webhookId);
     if (!webhook) return null;
-    
+
     const updatedWebhook = { ...webhook, ...updates };
     this.webhooks.set(webhookId, updatedWebhook);
     this.eventEmitter.emit('webhook.updated', updatedWebhook);
@@ -69,9 +72,10 @@ export class WebhookManagerService {
   }
 
   async triggerWebhook(eventType: string, data: any): Promise<void> {
-    const relevantWebhooks = Array.from(this.webhooks.values())
-      .filter(webhook => webhook.active && webhook.events.includes(eventType));
-    
+    const relevantWebhooks = Array.from(this.webhooks.values()).filter(
+      (webhook) => webhook.active && webhook.events.includes(eventType),
+    );
+
     for (const webhook of relevantWebhooks) {
       const event: WebhookEvent = {
         id: this.generateId(),
@@ -80,7 +84,7 @@ export class WebhookManagerService {
         timestamp: new Date(),
         webhookId: webhook.id,
         status: 'pending',
-        attempts: 0
+        attempts: 0,
       };
       this.events.set(event.id, event);
       this.sendWebhook(event, webhook);
@@ -90,8 +94,8 @@ export class WebhookManagerService {
   private async sendWebhook(event: WebhookEvent, webhook: WebhookConfig): Promise<void> {
     try {
       // Mock webhook sending - replace with actual HTTP request
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       event.status = 'sent';
       event.attempts += 1;
       event.lastAttempt = new Date();
@@ -111,13 +115,14 @@ export class WebhookManagerService {
 
   async getWebhookEvents(webhookId?: string): Promise<WebhookEvent[]> {
     const events = Array.from(this.events.values());
-    return webhookId ? events.filter(e => e.webhookId === webhookId) : events;
+    return webhookId ? events.filter((e) => e.webhookId === webhookId) : events;
   }
 
   async retryFailedWebhooks(): Promise<void> {
-    const failedEvents = Array.from(this.events.values())
-      .filter(event => event.status === 'failed' && event.attempts < 3);
-    
+    const failedEvents = Array.from(this.events.values()).filter(
+      (event) => event.status === 'failed' && event.attempts < 3,
+    );
+
     for (const event of failedEvents) {
       const webhook = this.webhooks.get(event.webhookId);
       if (webhook) {

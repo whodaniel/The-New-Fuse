@@ -264,22 +264,22 @@ class VirtualUser extends EventEmitter {
         operation: operation.name,
         responseTime,
         success: isValid,
-        result
+        result,
       });
 
       // Think time
       if (operation.thinkTime) {
-        await new Promise(resolve => setTimeout(resolve, operation.thinkTime));
+        await new Promise((resolve) => setTimeout(resolve, operation.thinkTime));
       }
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      
+
       this.emit('operationComplete', {
         userId: this.id,
         operation: operation.name,
         responseTime,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -290,7 +290,7 @@ class VirtualUser extends EventEmitter {
   private selectOperation(operations: LoadTestOperation[]): LoadTestOperation {
     const totalWeight = operations.reduce((sum, op) => sum + op.weight, 0);
     const random = Math.random() * totalWeight;
-    
+
     let currentWeight = 0;
     for (const operation of operations) {
       currentWeight += operation.weight;
@@ -298,7 +298,7 @@ class VirtualUser extends EventEmitter {
         return operation;
       }
     }
-    
+
     return operations[0]; // Fallback
   }
 
@@ -308,10 +308,11 @@ class VirtualUser extends EventEmitter {
   private async performRequest(operation: LoadTestOperation): Promise<any> {
     // Mock HTTP request - in real implementation, use actual HTTP client
     const delay = 50 + Math.random() * 200; // 50-250ms response time
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
 
     // Simulate occasional failures
-    if (Math.random() < 0.05) { // 5% failure rate
+    if (Math.random() < 0.05) {
+      // 5% failure rate
       throw new Error('Simulated request failure');
     }
 
@@ -319,7 +320,7 @@ class VirtualUser extends EventEmitter {
       status: 200,
       headers: { 'content-type': 'application/json' },
       body: { success: true, data: 'mock response' },
-      size: 1024
+      size: 1024,
     };
   }
 
@@ -374,7 +375,7 @@ export class LoadTestRunner extends EventEmitter {
    */
   async runScenario(scenario: LoadTestScenario): Promise<LoadTestResult> {
     this.logger.info(`Starting load test scenario: ${scenario.name}`);
-    
+
     const startTime = new Date();
     this.running = true;
     this.results = [];
@@ -392,7 +393,7 @@ export class LoadTestRunner extends EventEmitter {
       // Execute each phase
       for (const phase of scenario.phases) {
         if (!this.running) break;
-        
+
         this.logger.info(`Starting phase: ${phase.name}`);
         const phaseResult = await this.runPhase(scenario, phase);
         phaseResults.push(phaseResult);
@@ -416,13 +417,13 @@ export class LoadTestRunner extends EventEmitter {
       phases: phaseResults,
       overall,
       timeline: this.timeline,
-      errors: Array.from(this.errors.values())
+      errors: Array.from(this.errors.values()),
     };
 
     this.logger.info(`Load test completed: ${scenario.name}`, {
       duration,
       totalRequests: overall.totalRequests,
-      successRate: overall.successRate
+      successRate: overall.successRate,
     });
 
     this.emit('testComplete', result);
@@ -441,17 +442,14 @@ export class LoadTestRunner extends EventEmitter {
   /**
    * Run a single phase
    */
-  private async runPhase(
-    scenario: LoadTestScenario,
-    phase: LoadTestPhase
-  ): Promise<PhaseResult> {
+  private async runPhase(scenario: LoadTestScenario, phase: LoadTestPhase): Promise<PhaseResult> {
     const phaseStartTime = Date.now();
     const phaseResults: any[] = [];
 
     // Create virtual users
     const maxUsers = Math.max(phase.users.start, phase.users.end);
     this.virtualUsers = [];
-    
+
     for (let i = 0; i < maxUsers; i++) {
       const user = new VirtualUser(`user-${i}`, scenario, this.logger);
       user.on('operationComplete', (result) => {
@@ -468,10 +466,10 @@ export class LoadTestRunner extends EventEmitter {
     await this.rampUpUsers(phase);
 
     // Wait for phase duration
-    await new Promise(resolve => setTimeout(resolve, phase.duration));
+    await new Promise((resolve) => setTimeout(resolve, phase.duration));
 
     // Stop all users
-    this.virtualUsers.forEach(user => user.stop());
+    this.virtualUsers.forEach((user) => user.stop());
 
     const phaseDuration = Date.now() - phaseStartTime;
 
@@ -483,7 +481,7 @@ export class LoadTestRunner extends EventEmitter {
       name: phase.name,
       duration: phaseDuration,
       statistics,
-      operations
+      operations,
     };
   }
 
@@ -493,7 +491,7 @@ export class LoadTestRunner extends EventEmitter {
   private async rampUpUsers(phase: LoadTestPhase): Promise<void> {
     const { start, end, rampUp } = phase.users;
     const rampDuration = Math.min(phase.duration * 0.1, 30000); // 10% of phase or 30s max
-    
+
     if (start === end) {
       // Start all users immediately
       for (let i = 0; i < start; i++) {
@@ -509,7 +507,7 @@ export class LoadTestRunner extends EventEmitter {
     if (rampUp === 'linear') {
       for (let i = 0; i < steps; i++) {
         if (!this.running) break;
-        
+
         const userIndex = start + (userDiff > 0 ? i : -i);
         if (userIndex >= 0 && userIndex < this.virtualUsers.length) {
           if (userDiff > 0) {
@@ -518,40 +516,40 @@ export class LoadTestRunner extends EventEmitter {
             this.virtualUsers[userIndex].stop();
           }
         }
-        
-        await new Promise(resolve => setTimeout(resolve, stepDuration));
+
+        await new Promise((resolve) => setTimeout(resolve, stepDuration));
       }
     } else if (rampUp === 'exponential') {
       // Exponential ramp-up implementation
       for (let i = 0; i < steps; i++) {
         if (!this.running) break;
-        
+
         const progress = i / steps;
         const exponentialProgress = Math.pow(progress, 2);
         const userIndex = start + Math.floor(exponentialProgress * userDiff);
-        
+
         if (userIndex >= 0 && userIndex < this.virtualUsers.length) {
           this.virtualUsers[userIndex].start(phase);
         }
-        
-        await new Promise(resolve => setTimeout(resolve, stepDuration));
+
+        await new Promise((resolve) => setTimeout(resolve, stepDuration));
       }
     } else if (rampUp === 'step') {
       // Step ramp-up implementation
       const stepSize = Math.ceil(steps / 5); // 5 steps
       for (let step = 0; step < 5; step++) {
         if (!this.running) break;
-        
+
         const stepStart = start + step * stepSize;
         const stepEnd = Math.min(start + (step + 1) * stepSize, end);
-        
+
         for (let i = stepStart; i < stepEnd; i++) {
           if (i >= 0 && i < this.virtualUsers.length) {
             this.virtualUsers[i].start(phase);
           }
         }
-        
-        await new Promise(resolve => setTimeout(resolve, rampDuration / 5));
+
+        await new Promise((resolve) => setTimeout(resolve, rampDuration / 5));
       }
     }
   }
@@ -560,23 +558,29 @@ export class LoadTestRunner extends EventEmitter {
    * Capture timeline point
    */
   private captureTimelinePoint(): void {
-    const activeUsers = this.virtualUsers.filter(user => user.listenerCount('operationComplete') > 0).length;
-    const recentResults = this.results.filter(r => 
-      Date.now() - new Date(r.timestamp || Date.now()).getTime() < 1000
+    const activeUsers = this.virtualUsers.filter(
+      (user) => user.listenerCount('operationComplete') > 0
+    ).length;
+    const recentResults = this.results.filter(
+      (r) => Date.now() - new Date(r.timestamp || Date.now()).getTime() < 1000
     );
-    
+
     const rps = recentResults.length;
-    const avgResponseTime = recentResults.length > 0 ?
-      recentResults.reduce((sum, r) => sum + r.responseTime, 0) / recentResults.length : 0;
-    const errorRate = recentResults.length > 0 ?
-      recentResults.filter(r => !r.success).length / recentResults.length : 0;
+    const avgResponseTime =
+      recentResults.length > 0
+        ? recentResults.reduce((sum, r) => sum + r.responseTime, 0) / recentResults.length
+        : 0;
+    const errorRate =
+      recentResults.length > 0
+        ? recentResults.filter((r) => !r.success).length / recentResults.length
+        : 0;
 
     this.timeline.push({
       timestamp: new Date(),
       activeUsers,
       rps,
       avgResponseTime,
-      errorRate
+      errorRate,
     });
   }
 
@@ -586,7 +590,7 @@ export class LoadTestRunner extends EventEmitter {
   private recordError(error: Error): void {
     const key = `${error.constructor.name}: ${error.message}`;
     const existing = this.errors.get(key);
-    
+
     if (existing) {
       existing.count++;
       existing.lastOccurrence = new Date();
@@ -596,7 +600,7 @@ export class LoadTestRunner extends EventEmitter {
         message: error.message,
         count: 1,
         firstOccurrence: new Date(),
-        lastOccurrence: new Date()
+        lastOccurrence: new Date(),
       });
     }
   }
@@ -620,28 +624,30 @@ export class LoadTestRunner extends EventEmitter {
         successRate: 0,
         rps: 0,
         responseTime: { min: 0, max: 0, avg: 0, p50: 0, p95: 0, p99: 0 },
-        throughput: 0
+        throughput: 0,
       };
     }
 
     const totalRequests = results.length;
-    const successfulRequests = results.filter(r => r.success).length;
+    const successfulRequests = results.filter((r) => r.success).length;
     const failedRequests = totalRequests - successfulRequests;
     const successRate = totalRequests > 0 ? successfulRequests / totalRequests : 0;
 
-    const responseTimes = results.map(r => r.responseTime).sort((a, b) => a - b);
+    const responseTimes = results.map((r) => r.responseTime).sort((a, b) => a - b);
     const responseTime = {
       min: responseTimes[0] || 0,
       max: responseTimes[responseTimes.length - 1] || 0,
       avg: responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length,
       p50: this.percentile(responseTimes, 0.5),
       p95: this.percentile(responseTimes, 0.95),
-      p99: this.percentile(responseTimes, 0.99)
+      p99: this.percentile(responseTimes, 0.99),
     };
 
     // Calculate RPS based on timeline
-    const rps = this.timeline.length > 0 ?
-      this.timeline.reduce((sum, point) => sum + point.rps, 0) / this.timeline.length : 0;
+    const rps =
+      this.timeline.length > 0
+        ? this.timeline.reduce((sum, point) => sum + point.rps, 0) / this.timeline.length
+        : 0;
 
     return {
       totalRequests,
@@ -650,7 +656,7 @@ export class LoadTestRunner extends EventEmitter {
       successRate,
       rps,
       responseTime,
-      throughput: 0 // Would calculate based on response sizes
+      throughput: 0, // Would calculate based on response sizes
     };
   }
 
@@ -659,8 +665,8 @@ export class LoadTestRunner extends EventEmitter {
    */
   private calculateOperationResults(results: any[]): OperationResult[] {
     const operationMap = new Map<string, any[]>();
-    
-    results.forEach(result => {
+
+    results.forEach((result) => {
       const operation = result.operation;
       if (!operationMap.has(operation)) {
         operationMap.set(operation, []);
@@ -670,18 +676,18 @@ export class LoadTestRunner extends EventEmitter {
 
     return Array.from(operationMap.entries()).map(([name, opResults]) => {
       const executions = opResults.length;
-      const successes = opResults.filter(r => r.success).length;
+      const successes = opResults.filter((r) => r.success).length;
       const failures = executions - successes;
       const successRate = executions > 0 ? successes / executions : 0;
 
-      const responseTimes = opResults.map(r => r.responseTime).sort((a, b) => a - b);
+      const responseTimes = opResults.map((r) => r.responseTime).sort((a, b) => a - b);
       const responseTime = {
         min: responseTimes[0] || 0,
         max: responseTimes[responseTimes.length - 1] || 0,
         avg: responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length,
         p50: this.percentile(responseTimes, 0.5),
         p95: this.percentile(responseTimes, 0.95),
-        p99: this.percentile(responseTimes, 0.99)
+        p99: this.percentile(responseTimes, 0.99),
       };
 
       return {
@@ -690,7 +696,7 @@ export class LoadTestRunner extends EventEmitter {
         successes,
         failures,
         successRate,
-        responseTime
+        responseTime,
       };
     });
   }
@@ -708,7 +714,7 @@ export class LoadTestRunner extends EventEmitter {
    * Cleanup resources
    */
   private cleanup(): void {
-    this.virtualUsers.forEach(user => user.stop());
+    this.virtualUsers.forEach((user) => user.stop());
     this.virtualUsers = [];
   }
 }

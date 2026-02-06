@@ -1,7 +1,7 @@
 // Import required API client and types
-import { ApiClient } from '../../core/ApiClient';
 import { ApiConfig } from '../../config/ApiConfig';
-import { Integration, IntegrationType, IntegrationConfig, AuthType } from '../types';
+import { ApiClient } from '../../core/ApiClient';
+import { AuthType, Integration, IntegrationConfig, IntegrationType } from '../types';
 
 interface TwitterConfig extends IntegrationConfig {
   id: string;
@@ -37,16 +37,16 @@ export class TwitterIntegration implements Integration {
   isEnabled: boolean = true;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
-  
+
   private apiClient: ApiClient;
-  
+
   constructor(config: TwitterConfig) {
     this.id = config.id;
     this.name = config.name;
     this.type = config.type;
     this.description = config.description;
     this.config = config;
-    
+
     // Default Twitter capabilities
     this.capabilities = {
       actions: [
@@ -64,38 +64,33 @@ export class TwitterIntegration implements Integration {
         'unlike_tweet',
         'retweet',
         'unretweet',
-        'upload_media'
+        'upload_media',
       ],
-      triggers: [
-        'new_tweet_by_user',
-        'new_mention',
-        'new_follower',
-        'new_direct_message'
-      ],
+      triggers: ['new_tweet_by_user', 'new_mention', 'new_follower', 'new_direct_message'],
       supportsWebhooks: true,
-      supportsPolling: true
+      supportsPolling: true,
     };
-    
+
     // Create API client for Twitter API v2
     const apiConfig: ApiConfig = {
       baseURL: config.baseUrl,
       headers: {
         ...config.defaultHeaders,
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     };
-    
+
     // Add bearer token if provided
     if (config.bearerToken) {
       apiConfig.headers = {
         ...apiConfig.headers,
-        'Authorization': `Bearer ${config.bearerToken}`
+        Authorization: `Bearer ${config.bearerToken}`,
       };
     }
-    
+
     this.apiClient = new ApiClient(apiConfig);
   }
-  
+
   /**
    * Connect to Twitter API
    */
@@ -108,10 +103,12 @@ export class TwitterIntegration implements Integration {
       return true;
     } catch (error) {
       this.isConnected = false;
-      throw new Error(`Failed to connect: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to connect: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Disconnect from Twitter API
    */
@@ -120,7 +117,7 @@ export class TwitterIntegration implements Integration {
     this.updatedAt = new Date();
     return true;
   }
-  
+
   /**
    * Execute a Twitter API action
    */
@@ -128,7 +125,7 @@ export class TwitterIntegration implements Integration {
     if (!this.isConnected) {
       throw new Error('Not connected to Twitter API. Call connect() first.');
     }
-    
+
     switch (action) {
       case 'post_tweet':
         return this.postTweet(params.text, params.reply_to, params.media_ids);
@@ -164,28 +161,30 @@ export class TwitterIntegration implements Integration {
         throw new Error(`Unsupported Twitter action: ${action}`);
     }
   }
-  
+
   /**
    * Post a tweet
    */
   private async postTweet(text: string, reply_to?: string, media_ids?: string[]): Promise<any> {
     try {
       const payload: any = { text };
-      
+
       if (reply_to) {
         payload.reply = { in_reply_to_tweet_id: reply_to };
       }
-      
+
       if (media_ids && media_ids.length > 0) {
         payload.media = { media_ids };
       }
-      
+
       return await this.apiClient.post('/2/tweets', payload);
     } catch (error) {
-      throw new Error(`Failed to post tweet: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to post tweet: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Delete a tweet
    */
@@ -193,10 +192,12 @@ export class TwitterIntegration implements Integration {
     try {
       return await this.apiClient.delete(`/2/tweets/${tweet_id}`);
     } catch (error) {
-      throw new Error(`Failed to delete tweet: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to delete tweet: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get tweets for a user
    */
@@ -204,10 +205,12 @@ export class TwitterIntegration implements Integration {
     try {
       return await this.apiClient.get(`/2/users/${user_id}/tweets?max_results=${max_results}`);
     } catch (error) {
-      throw new Error(`Failed to get user tweets: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get user tweets: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get user profile information
    */
@@ -215,16 +218,18 @@ export class TwitterIntegration implements Integration {
     try {
       // Check if the identifier is numeric (user_id) or a username
       const isUserId = /^\d+$/.test(user_identifier);
-      const endpoint = isUserId 
-        ? `/2/users/${user_identifier}` 
+      const endpoint = isUserId
+        ? `/2/users/${user_identifier}`
         : `/2/users/by/username/${user_identifier}`;
-        
+
       return await this.apiClient.get(endpoint);
     } catch (error) {
-      throw new Error(`Failed to get user profile: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get user profile: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get followers list for a user
    */
@@ -232,10 +237,12 @@ export class TwitterIntegration implements Integration {
     try {
       return await this.apiClient.get(`/2/users/${user_id}/followers?max_results=${max_results}`);
     } catch (error) {
-      throw new Error(`Failed to get user followers: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get user followers: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get following list for a user
    */
@@ -243,10 +250,12 @@ export class TwitterIntegration implements Integration {
     try {
       return await this.apiClient.get(`/2/users/${user_id}/following?max_results=${max_results}`);
     } catch (error) {
-      throw new Error(`Failed to get user following: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get user following: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Follow a user
    */
@@ -255,15 +264,17 @@ export class TwitterIntegration implements Integration {
       // Need user ID of authenticated user
       const me = await this.apiClient.get('/2/users/me');
       const userId = me.data.id;
-      
+
       return await this.apiClient.post(`/2/users/${userId}/following`, {
-        target_user_id
+        target_user_id,
       });
     } catch (error) {
-      throw new Error(`Failed to follow user: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to follow user: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Unfollow a user
    */
@@ -272,25 +283,31 @@ export class TwitterIntegration implements Integration {
       // Need user ID of authenticated user
       const me = await this.apiClient.get('/2/users/me');
       const userId = me.data.id;
-      
+
       return await this.apiClient.delete(`/2/users/${userId}/following/${target_user_id}`);
     } catch (error) {
-      throw new Error(`Failed to unfollow user: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to unfollow user: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Search for tweets
    */
   private async searchTweets(query: string, max_results = 10): Promise<any> {
     try {
       const encodedQuery = encodeURIComponent(query);
-      return await this.apiClient.get(`/2/tweets/search/recent?query=${encodedQuery}&max_results=${max_results}`);
+      return await this.apiClient.get(
+        `/2/tweets/search/recent?query=${encodedQuery}&max_results=${max_results}`
+      );
     } catch (error) {
-      throw new Error(`Failed to search tweets: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to search tweets: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get trending topics
    */
@@ -299,10 +316,12 @@ export class TwitterIntegration implements Integration {
       // This uses the v1.1 API as trends are not yet in v2
       return await this.apiClient.get(`/1.1/trends/place.json?id=${woeid}`);
     } catch (error) {
-      throw new Error(`Failed to get trends: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get trends: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Like a tweet
    */
@@ -311,15 +330,17 @@ export class TwitterIntegration implements Integration {
       // Need user ID of authenticated user
       const me = await this.apiClient.get('/2/users/me');
       const userId = me.data.id;
-      
+
       return await this.apiClient.post(`/2/users/${userId}/likes`, {
-        tweet_id
+        tweet_id,
       });
     } catch (error) {
-      throw new Error(`Failed to like tweet: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to like tweet: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Unlike a tweet
    */
@@ -328,13 +349,15 @@ export class TwitterIntegration implements Integration {
       // Need user ID of authenticated user
       const me = await this.apiClient.get('/2/users/me');
       const userId = me.data.id;
-      
+
       return await this.apiClient.delete(`/2/users/${userId}/likes/${tweet_id}`);
     } catch (error) {
-      throw new Error(`Failed to unlike tweet: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to unlike tweet: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Retweet a tweet
    */
@@ -343,15 +366,17 @@ export class TwitterIntegration implements Integration {
       // Need user ID of authenticated user
       const me = await this.apiClient.get('/2/users/me');
       const userId = me.data.id;
-      
+
       return await this.apiClient.post(`/2/users/${userId}/retweets`, {
-        tweet_id
+        tweet_id,
       });
     } catch (error) {
-      throw new Error(`Failed to retweet: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to retweet: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Undo a retweet
    */
@@ -360,13 +385,15 @@ export class TwitterIntegration implements Integration {
       // Need user ID of authenticated user
       const me = await this.apiClient.get('/2/users/me');
       const userId = me.data.id;
-      
+
       return await this.apiClient.delete(`/2/users/${userId}/retweets/${tweet_id}`);
     } catch (error) {
-      throw new Error(`Failed to unretweet: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to unretweet: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Upload media (this still uses v1.1 API)
    */
@@ -374,13 +401,15 @@ export class TwitterIntegration implements Integration {
     try {
       return await this.apiClient.post('https://upload.twitter.com/1.1/media/upload.json', {
         media_data,
-        media_type
+        media_type,
       });
     } catch (error) {
-      throw new Error(`Failed to upload media: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to upload media: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get metadata about this integration
    */
@@ -392,7 +421,7 @@ export class TwitterIntegration implements Integration {
       capabilities: this.capabilities,
       isConnected: this.isConnected,
       isEnabled: this.isEnabled,
-      lastUpdated: this.updatedAt
+      lastUpdated: this.updatedAt,
     };
   }
 }
@@ -412,11 +441,12 @@ export function createTwitterIntegration(config: Partial<TwitterConfig> = {}): T
     webhookSupport: true,
     apiVersion: 'v2',
     docUrl: 'https://developer.twitter.com/en/docs/twitter-api',
-    logoUrl: 'https://about.twitter.com/content/dam/about-twitter/x/brand-toolkit/logo-black.png.twimg.1920.png'
+    logoUrl:
+      'https://about.twitter.com/content/dam/about-twitter/x/brand-toolkit/logo-black.png.twimg.1920.png',
   };
-  
+
   return new TwitterIntegration({
     ...defaultConfig,
-    ...config
+    ...config,
   });
 }

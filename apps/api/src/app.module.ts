@@ -28,6 +28,8 @@ import { WorkflowController } from './controllers/workflow.controller';
 import { WorkspaceController } from './controllers/workspace.controller';
 import { LLMProviderController } from './llm/llm-provider.controller';
 import { LLMProviderService, LLM_REGISTRY, MockLLMRegistry } from './llm/llm-provider.service';
+import { AdvancedLLMProviderController } from './llm/advanced-llm-provider.controller';
+import { AdvancedLLMProviderService } from './llm/advanced-llm-provider.service';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
 import { AdminModule } from './modules/admin/admin.module';
 import { AgencyHubModule } from './modules/agency-hub/agency-hub.module';
@@ -130,6 +132,7 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     CLIController, // CLI command execution endpoints
     HealthController, // CRITICAL: Health checks for monitoring/K8s
     LLMProviderController,
+    AdvancedLLMProviderController,
     MCPController, // MCP server management (20+ endpoints)
     ModelsController, // AI model provider selection
     SystemController,
@@ -146,9 +149,10 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     // LLM Provider Services
     {
       provide: LLM_REGISTRY,
-      useClass: MockLLMRegistry,
+      useClass: RealLLMRegistry,
     },
     LLMProviderService,
+    AdvancedLLMProviderService,
     // Middleware
     SecurityValidationMiddleware,
     CsrfProtectionMiddleware,

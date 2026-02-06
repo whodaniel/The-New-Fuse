@@ -5,7 +5,7 @@ export const TaskType = {
   IMPLEMENTATION: 'IMPLEMENTATION',
   REVIEW: 'REVIEW',
   TEST: 'TEST',
-  DEPLOY: 'DEPLOY'
+  DEPLOY: 'DEPLOY',
 } as const;
 
 export enum TaskStatus {
@@ -13,7 +13,7 @@ export enum TaskStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED'
+  CANCELLED = 'CANCELLED',
 }
 
 export interface TaskMetadata {
@@ -45,7 +45,7 @@ export interface Task {
   description?: string;
   status: TaskStatus;
   priority: TaskPriority;
-  type: keyof typeof TaskType;  // Changed from typeof TaskType
+  type: keyof typeof TaskType; // Changed from typeof TaskType
   metadata: TaskMetadata;
   dependencies?: TaskDependency[];
   userId: string;
@@ -75,7 +75,7 @@ export interface UpdateTaskDto {
 export enum MessageType {
   INFO = 'INFO',
   WARNING = 'WARNING',
-  ERROR = 'ERROR'
+  ERROR = 'ERROR',
 }
 
 export interface TaskService {
@@ -120,7 +120,7 @@ export interface TaskResult {
 export interface TaskFilter {
   status?: TaskStatus[];
   priority?: TaskPriority[];
-  type?: keyof typeof TaskType[];
+  type?: keyof (typeof TaskType)[];
   assigneeId?: string;
   fromDate?: Date;
   toDate?: Date;

@@ -2,9 +2,13 @@
 
 ## Overview
 
-The New Fuse is an advanced AI communication system designed to enable seamless interaction between different AI agents. This document provides a comprehensive overview of the project structure, incorporating the best practices and organization principles from all existing documentation.
+The New Fuse is an advanced AI communication system designed to enable seamless
+interaction between different AI agents. This document provides a comprehensive
+overview of the project structure, incorporating the best practices and
+organization principles from all existing documentation.
 
 ### Key Features
+
 - Advanced AI agent communication
 - Semantic memory management
 - Real-time message processing
@@ -13,6 +17,7 @@ The New Fuse is an advanced AI communication system designed to enable seamless 
 - Security-first design
 
 ### Technical Stack
+
 - TypeScript/Node.js
 - Redis for messaging
 - PostgreSQL for persistence
@@ -68,7 +73,7 @@ The New Fuse is an advanced AI communication system designed to enable seamless 
 ├── examples/               # Example code and usage
 ├── functions/              # Serverless functions
 ├── packages/               # Shared packages
-├── prisma/                 # Prisma ORM configuration
+├── drizzle/                 # Drizzle ORM configuration
 ├── production/             # Production-specific files
 ├── scripts/                # Utility scripts
 ├── src/                    # Source code
@@ -132,6 +137,7 @@ The New Fuse is an advanced AI communication system designed to enable seamless 
 The UI components follow the Atomic Design methodology:
 
 ### Atomic Components
+
 - Button
 - Input
 - Select
@@ -140,6 +146,7 @@ The UI components follow the Atomic Design methodology:
 - Icon
 
 ### Molecular Components
+
 - FormField
 - SearchBar
 - Card
@@ -148,6 +155,7 @@ The UI components follow the Atomic Design methodology:
 - ThemeToggle
 
 ### Organism Components
+
 - TaskList
 - UserProfile
 - Navigation
@@ -158,6 +166,7 @@ The UI components follow the Atomic Design methodology:
 ## Core Components
 
 ### Memory System
+
 ```typescript
 interface Memory {
   id: string;
@@ -176,11 +185,11 @@ class MemorySystem {
   async store(memory: Memory): Promise<void> {
     const embedding = await this.generateEmbedding(memory.content);
     memory.embedding = embedding;
-    
+
     await Promise.all([
       this.store.save(memory),
       this.index.add(memory.id, embedding),
-      this.cache.set(memory.id, memory)
+      this.cache.set(memory.id, memory),
     ]);
   }
 
@@ -193,6 +202,7 @@ class MemorySystem {
 ```
 
 ### Task Management
+
 ```typescript
 interface Task {
   id: string;
@@ -204,3 +214,4 @@ interface Task {
 <path>docs/PROJECT_STRUCTURE.md</path>
 <content>
 [完整内容与 PROJECT_STRUCTURE_updated.md 相同，包含所有更新的 Mermaid 图表]
+```

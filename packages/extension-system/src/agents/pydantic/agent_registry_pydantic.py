@@ -6,8 +6,10 @@ making them discoverable and executable within the TNF ecosystem.
 """
 
 import sys
+import json
+import os
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 # Add paths for imports
 pydantic_path = Path(__file__).parent.parent.parent / "extension-system" / "src" / "agents" / "pydantic" / "7.0_crypto_operations_division"
@@ -314,6 +316,48 @@ def get_crypto_agent_llm_context() -> str:
     """
     registry = CryptoAgentRegistry()
     return registry.get_llm_consumable_registry()
+
+
+class PydanticAgentRegistry:
+    """
+    Registry for all Pydantic agents generated from .agent definitions.
+
+    Reads the consolidated registry JSON produced by tools/generate-pydantic-agents.js.
+    """
+
+    def __init__(self, registry_path: str = ".agent/agents/consolidated/pydantic_registry.json"):
+        self.registry_path = registry_path
+        self.agents = self._load_registry()
+
+    def _load_registry(self) -> List[Dict[str, Any]]:
+        if not os.path.exists(self.registry_path):
+            return []
+        try:
+            with open(self.registry_path, "r") as f:
+                data = json.load(f)
+            if isinstance(data, list):
+                return data
+            return []
+        except Exception:
+            return []
+
+    def list_agents(self) -> List[Dict[str, Any]]:
+        return self.agents
+
+    def get_agent(self, agent_id: str) -> Optional[Dict[str, Any]]:
+        for agent in self.agents:
+            if agent.get("agent_id") == agent_id:
+                return agent
+        return None
+
+    def search_by_capability(self, capability: str) -> List[Dict[str, Any]]:
+        cap_lower = capability.lower()
+        matches = []
+        for agent in self.agents:
+            caps = agent.get("capabilities") or []
+            if any(cap_lower in (c.get("name", "").lower()) for c in caps):
+                matches.append(agent)
+        return matches
 
 
 # ===== CLI Interface =====

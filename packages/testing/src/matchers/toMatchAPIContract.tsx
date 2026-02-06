@@ -54,5 +54,5 @@ export const toMatchAPIContract = createMatcher(
 
     return 'Response matched API contract';
   },
-  () => 'Expected response not to match API contract, but it did'
+  () => 'Expected response not to match API contract, but it did',
 );

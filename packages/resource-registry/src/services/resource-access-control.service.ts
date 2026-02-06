@@ -1,5 +1,5 @@
-import { Injectable, ForbiddenException, Logger } from '@nestjs/common';
-import { ResourceVisibility, Resource } from '../types';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { Resource, ResourceVisibility } from '../types';
 
 export interface AccessContext {
   userId?: string;
@@ -72,7 +72,9 @@ export class ResourceAccessControlService {
    */
   assertCanExecute(resource: Resource, context: AccessContext): void {
     if (!this.canExecute(resource, context)) {
-      this.logger.warn(`Execution denied for resource ${resource.id} to ${context.userId || context.agentId}`);
+      this.logger.warn(
+        `Execution denied for resource ${resource.id} to ${context.userId || context.agentId}`
+      );
       throw new ForbiddenException('You do not have permission to execute this resource');
     }
   }
@@ -82,7 +84,9 @@ export class ResourceAccessControlService {
    */
   assertCanView(resource: Resource, context: AccessContext): void {
     if (!this.canView(resource, context)) {
-      this.logger.warn(`Access denied for resource ${resource.id} to ${context.userId || context.agentId}`);
+      this.logger.warn(
+        `Access denied for resource ${resource.id} to ${context.userId || context.agentId}`
+      );
       throw new ForbiddenException('You do not have permission to view this resource');
     }
   }
@@ -92,7 +96,9 @@ export class ResourceAccessControlService {
    */
   assertCanModify(resource: Resource, context: AccessContext): void {
     if (!this.canModify(resource, context)) {
-      this.logger.warn(`Modification denied for resource ${resource.id} to ${context.userId || context.agentId}`);
+      this.logger.warn(
+        `Modification denied for resource ${resource.id} to ${context.userId || context.agentId}`
+      );
       throw new ForbiddenException('You do not have permission to modify this resource');
     }
   }
@@ -102,7 +108,9 @@ export class ResourceAccessControlService {
    */
   assertCanDelete(resource: Resource, context: AccessContext): void {
     if (!this.canDelete(resource, context)) {
-      this.logger.warn(`Deletion denied for resource ${resource.id} to ${context.userId || context.agentId}`);
+      this.logger.warn(
+        `Deletion denied for resource ${resource.id} to ${context.userId || context.agentId}`
+      );
       throw new ForbiddenException('You do not have permission to delete this resource');
     }
   }

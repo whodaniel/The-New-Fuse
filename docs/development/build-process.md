@@ -1,6 +1,7 @@
 # The New Fuse Build Process Guide
 
-This guide provides detailed instructions for building and running The New Fuse project in different environments.
+This guide provides detailed instructions for building and running The New Fuse
+project in different environments.
 
 ## Table of Contents
 
@@ -41,16 +42,19 @@ fuse/
 
 ### Option 1: Docker-based Development Environment (Recommended)
 
-This approach uses Docker to run the complete development environment, including the frontend, API, message broker, PostgreSQL, and Redis:
+This approach uses Docker to run the complete development environment, including
+the frontend, API, message broker, PostgreSQL, and Redis:
 
 ```bash
 ./run-dev-docker.sh
 ```
 
 This script:
+
 1. Checks if Docker is running
 2. Builds and starts all Docker containers defined in docker-compose.dev.yml
-3. Provides access to the frontend at http://localhost:3000, API at http://localhost:3001, and message broker at http://localhost:3002
+3. Provides access to the frontend at http://localhost:3000, API at
+   http://localhost:3001, and message broker at http://localhost:3002
 
 ### Option 2: Frontend-only Docker Setup
 
@@ -60,17 +64,20 @@ If you only need to run the frontend application:
 ./run-frontend-docker.sh
 ```
 
-This script builds and starts a Docker container for just the frontend application.
+This script builds and starts a Docker container for just the frontend
+application.
 
 ### Option 3: Comprehensive Local Setup
 
-This approach sets up the entire project locally with all dependencies and builds essential packages:
+This approach sets up the entire project locally with all dependencies and
+builds essential packages:
 
 ```bash
 ./comprehensive-setup.sh
 ```
 
 This script:
+
 1. Fixes package.json to use a valid packageManager field
 2. Sets up Yarn properly
 3. Installs all dependencies
@@ -85,19 +92,22 @@ This approach focuses only on running the frontend application locally:
 ./run-frontend.sh
 ```
 
-This script navigates to the frontend directory and starts the development server.
+This script navigates to the frontend directory and starts the development
+server.
 
 ## Build Process
 
 ### Complete Build Process
 
-To build all components of The New Fuse project (frontend, API, message broker, VS Code extension, and Chrome extension), use the comprehensive build script:
+To build all components of The New Fuse project (frontend, API, message broker,
+VS Code extension, and Chrome extension), use the comprehensive build script:
 
 ```bash
 ./build-all.sh
 ```
 
 This script:
+
 1. Fixes TypeScript declaration errors
 2. Installs dependencies
 3. Builds essential packages in the correct order
@@ -108,7 +118,8 @@ This script:
 
 ### Manual Build Process
 
-If you prefer to build manually, follow this order to ensure all dependencies are properly built:
+If you prefer to build manually, follow this order to ensure all dependencies
+are properly built:
 
 1. Fix TypeScript declaration errors: `node fix-declarations.mjs`
 2. Build types package: `pnpm run build:types`
@@ -150,6 +161,7 @@ To run the complete application in development mode using Docker:
 ```
 
 This will start all services in Docker containers:
+
 - Frontend: http://localhost:3000
 - API: http://localhost:3001
 - Message Broker: http://localhost:3002
@@ -199,6 +211,7 @@ To run the application in production mode:
 ```
 
 The production services will be available at:
+
 - Frontend: http://localhost:3000
 - API: http://localhost:3001
 - Message Broker: http://localhost:3002
@@ -214,11 +227,14 @@ For production deployment, use Docker Compose:
 ./run-prod-docker.sh
 ```
 
-This will build and start all services in Docker containers with proper configuration for production.
+This will build and start all services in Docker containers with proper
+configuration for production.
 
 ### Cloud Deployment
 
-For cloud deployment, you can use the Docker images built by the `build-all.sh` script. The images can be pushed to a container registry and deployed to a cloud provider like AWS, Google Cloud, or Azure.
+For cloud deployment, you can use the Docker images built by the `build-all.sh`
+script. The images can be pushed to a container registry and deployed to a cloud
+provider like AWS, Google Cloud, or Azure.
 
 #### Example: AWS Deployment
 
@@ -255,7 +271,8 @@ To deploy the VS Code extension:
    - Open VS Code
    - Go to Extensions view (Ctrl+Shift+X)
    - Click on the "..." menu and select "Install from VSIX..."
-   - Navigate to `packages/vscode-extension/dist/the-new-fuse.vsix` and select it
+   - Navigate to `packages/vscode-extension/dist/the-new-fuse.vsix` and select
+     it
 
 ### Chrome Extension Deployment
 
@@ -319,7 +336,8 @@ pnpm run build
 
 4. **Port Conflicts**
 
-If you have port conflicts, ensure no other services are running on ports 3000, 3001, 3002, 5432, or 6379. You can check for processes using these ports with:
+If you have port conflicts, ensure no other services are running on ports 3000,
+3001, 3002, 5432, or 6379. You can check for processes using these ports with:
 
 ```bash
 # macOS/Linux
@@ -357,7 +375,8 @@ docker-compose up --build
 
 6. **Missing Files or Directories**
 
-If you encounter errors about missing files or directories, ensure that all required directories exist:
+If you encounter errors about missing files or directories, ensure that all
+required directories exist:
 
 ```bash
 # Create necessary directories if they don't exist
@@ -370,7 +389,9 @@ mkdir -p packages/chrome-extension/dist
 
 7. **Environment Variables**
 
-If you encounter issues with environment variables, ensure that all required environment variables are set. You can create a `.env` file in the root directory with the necessary variables:
+If you encounter issues with environment variables, ensure that all required
+environment variables are set. You can create a `.env` file in the root
+directory with the necessary variables:
 
 ```bash
 # Create .env file

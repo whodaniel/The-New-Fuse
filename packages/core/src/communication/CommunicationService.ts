@@ -39,7 +39,12 @@ export class CommunicationService {
     }
   }
 
-  async sendMessage(senderId: string, recipientId: string, type: string, payload: any): Promise<void> {
+  async sendMessage(
+    senderId: string,
+    recipientId: string,
+    type: string,
+    payload: any,
+  ): Promise<void> {
     const recipientSocketId = this.userSockets.get(recipientId);
     if (recipientSocketId) {
       const message = this.protocol.createMessage(type, payload, senderId, recipientId);

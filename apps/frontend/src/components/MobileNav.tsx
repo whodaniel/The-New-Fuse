@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 interface NavLink {
@@ -20,7 +20,7 @@ export default function MobileNav({
     { label: 'Contact', href: '#contact' },
   ],
   logo = '/logo.svg',
-  brandName = 'The New Fuse'
+  brandName = 'The New Fuse',
 }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -59,14 +59,8 @@ export default function MobileNav({
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link
-            to="/"
-            className="flex items-center space-x-2 z-50"
-            onClick={closeMenu}
-          >
-            <span className="text-xl md:text-2xl font-bold text-foreground">
-              {brandName}
-            </span>
+          <Link to="/" className="flex items-center space-x-2 z-50" onClick={closeMenu}>
+            <span className="text-xl md:text-2xl font-bold text-foreground">{brandName}</span>
           </Link>
 
           {/* Desktop Navigation */}

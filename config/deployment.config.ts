@@ -21,21 +21,21 @@ export interface DeploymentConfig {
   isDevelopment: boolean;
   isProduction: boolean;
   isStaging: boolean;
-  
+
   // Core URLs - automatically determined
   apiUrl: string;
   frontendUrl: string;
   wsUrl: string;
-  
+
   // Build configuration
   buildTarget: 'development' | 'staging' | 'production';
   assetPrefix: string;
   publicPath: string;
-  
+
   // Security
   enableCORS: boolean;
   allowedOrigins: string[];
-  
+
   // Performance
   enableCompression: boolean;
   enableCaching: boolean;
@@ -47,7 +47,7 @@ export interface DeploymentConfig {
  */
 class DeploymentConfigManager {
   private static instance: DeploymentConfigManager;
-  
+
   private environments: Record<string, DeploymentEnvironment> = {
     development: {
       name: 'development',
@@ -58,7 +58,7 @@ class DeploymentConfigManager {
         analytics: false,
         debugging: true,
         hotReload: true,
-      }
+      },
     },
     staging: {
       name: 'staging',
@@ -69,7 +69,7 @@ class DeploymentConfigManager {
         analytics: true,
         debugging: true,
         hotReload: false,
-      }
+      },
     },
     production: {
       name: 'production',
@@ -81,8 +81,8 @@ class DeploymentConfigManager {
         analytics: true,
         debugging: false,
         hotReload: false,
-      }
-    }
+      },
+    },
   };
 
   static getInstance(): DeploymentConfigManager {
@@ -98,24 +98,24 @@ class DeploymentConfigManager {
   getConfig(): DeploymentConfig {
     const environment = this.detectEnvironment();
     const env = this.environments[environment];
-    
+
     return {
       environment,
       isDevelopment: environment === 'development',
       isProduction: environment === 'production',
       isStaging: environment === 'staging',
-      
+
       apiUrl: env.apiBaseUrl,
       frontendUrl: env.frontendUrl,
       wsUrl: env.wsBaseUrl,
-      
+
       buildTarget: environment as 'development' | 'staging' | 'production',
       assetPrefix: this.getAssetPrefix(),
       publicPath: this.getPublicPath(),
-      
+
       enableCORS: environment !== 'development',
       allowedOrigins: this.getAllowedOrigins(),
-      
+
       enableCompression: environment === 'production',
       enableCaching: environment === 'production',
       cacheTTL: environment === 'production' ? 86400 : 0,
@@ -130,18 +130,18 @@ class DeploymentConfigManager {
     if (process.env.NODE_ENV === 'production') return 'production';
     if (process.env.NODE_ENV === 'staging') return 'staging';
     if (process.env.NODE_ENV === 'development') return 'development';
-    
+
     // Deployment platform detection
     if (process.env.VERCEL) return process.env.VERCEL_ENV || 'production';
     if (process.env.RAILWAY_ENVIRONMENT) return process.env.RAILWAY_ENVIRONMENT || 'production';
     if (process.env.HEROKU_APP_NAME) return 'production';
     if (process.env.AWS_EXECUTION_ENV) return 'production';
     if (process.env.RENDER) return 'production';
-    
+
     // Docker detection
     if (process.env.KUBERNETES_SERVICE_HOST) return 'production';
     if (process.env.DOCKER_CONTAINER) return 'production';
-    
+
     // Localhost detection
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname;
@@ -149,7 +149,7 @@ class DeploymentConfigManager {
         return 'development';
       }
     }
-    
+
     // Default to development for safety
     return 'development';
   }
@@ -162,16 +162,16 @@ class DeploymentConfigManager {
       const origin = window.location.origin;
       return `${origin}${path}`;
     }
-    
+
     // Server-side: use environment variables or defaults
     const protocol = process.env.HTTPS === 'true' ? 'https:' : 'http:';
     const host = process.env.HOST || 'localhost';
     const port = process.env.PORT || '3000';
-    
+
     if (port === '80' || port === '443') {
       return `${protocol}//${host}${path}`;
     }
-    
+
     return `${protocol}//${host}:${port}${path}`;
   }
 
@@ -184,11 +184,11 @@ class DeploymentConfigManager {
       const host = window.location.host;
       return `${protocol}//${host}/ws`;
     }
-    
+
     const protocol = process.env.HTTPS === 'true' ? 'wss:' : 'ws:';
     const host = process.env.HOST || 'localhost';
     const wsPort = process.env.WS_PORT || process.env.PORT || '3000';
-    
+
     return `${protocol}//${host}:${wsPort}/ws`;
   }
 
@@ -199,11 +199,11 @@ class DeploymentConfigManager {
     if (process.env.CDN_URL) {
       return process.env.CDN_URL;
     }
-    
+
     if (process.env.VERCEL_URL) {
       return `https://${process.env.VERCEL_URL}`;
     }
-    
+
     return '';
   }
 
@@ -220,9 +220,9 @@ class DeploymentConfigManager {
    */
   private getAllowedOrigins(): string[] {
     if (process.env.ALLOWED_ORIGINS) {
-      return process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim());
+      return process.env.ALLOWED_ORIGINS.split(',').map((origin) => origin.trim());
     }
-    
+
     const config = this.getConfig();
     return [config.frontendUrl];
   }

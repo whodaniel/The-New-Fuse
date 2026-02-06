@@ -1,14 +1,19 @@
-import { DataSource } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
+import { DataSource } from 'typeorm';
 import { User } from '../entities/User';
 
 config();
 
 const configService = new ConfigService();
 
-const databaseUrl = configService.get('DATABASE_URL', 'postgresql://postgres:postgres@postgres:5432/fuse');
-const [, , credentials, hostPort, database] = databaseUrl.match(/^postgresql:\/\/(.*):(.*)@(.*?)\/(.*)$/);
+const databaseUrl = configService.get(
+  'DATABASE_URL',
+  'postgresql://postgres:postgres@postgres:5432/fuse'
+);
+const [, , credentials, hostPort, database] = databaseUrl.match(
+  /^postgresql:\/\/(.*):(.*)@(.*?)\/(.*)$/
+);
 
 const [host, port] = hostPort.split(':');
 

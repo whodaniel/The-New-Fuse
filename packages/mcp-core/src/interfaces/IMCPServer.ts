@@ -1,8 +1,8 @@
+import { MCPServerConfig, MCPServerInfo } from '../types';
+import { MCPCapability } from './IMCPCapability';
 import { MCPRequest, MCPResponse } from './IMCPMessage';
 import { MCPResource } from './IMCPResource';
 import { MCPTool } from './IMCPTool';
-import { MCPCapability } from './IMCPCapability';
-import { MCPServerConfig, MCPServerInfo } from '../types';
 
 /**
  * Core MCP Server interface that defines the contract for MCP server implementations.

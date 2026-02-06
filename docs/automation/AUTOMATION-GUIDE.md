@@ -1,6 +1,7 @@
 # The New Fuse Automation Guide
 
-This guide provides instructions on how to use the automation scripts to build and run The New Fuse application.
+This guide provides instructions on how to use the automation scripts to build
+and run The New Fuse application.
 
 ## Master Development Script
 
@@ -11,9 +12,11 @@ The `run-development.sh` script runs the entire development process:
 ```
 
 This script performs the following steps:
+
 1. Builds the project using the comprehensive build script
 2. Runs the tests
-3. Starts the application (either frontend and backend separately or using Docker)
+3. Starts the application (either frontend and backend separately or using
+   Docker)
 
 ## Build Scripts
 
@@ -26,6 +29,7 @@ The `comprehensive-build.sh` script runs all the fixes and builds the project:
 ```
 
 This script performs the following steps:
+
 1. Fixes TypeScript errors
 2. Fixes database composite issue
 3. Fixes frontend imports
@@ -37,7 +41,8 @@ This script performs the following steps:
 
 ### Incremental Build
 
-The `build-incremental.sh` script builds the project incrementally, starting with the most fundamental packages:
+The `build-incremental.sh` script builds the project incrementally, starting
+with the most fundamental packages:
 
 ```bash
 ./build-incremental.sh
@@ -91,7 +96,8 @@ The `run-tests.sh` script runs all the tests:
 
 ### TypeScript Errors
 
-The `fix-all-typescript-errors.sh` script fixes common TypeScript errors in the project:
+The `fix-all-typescript-errors.sh` script fixes common TypeScript errors in the
+project:
 
 ```bash
 ./fix-all-typescript-errors.sh
@@ -107,7 +113,8 @@ The `fix-database-migrations.sh` script fixes the database migration issues:
 
 ### Frontend Imports
 
-The `fix-frontend-imports.sh` script fixes the module resolution issues in the frontend package:
+The `fix-frontend-imports.sh` script fixes the module resolution issues in the
+frontend package:
 
 ```bash
 ./fix-frontend-imports.sh
@@ -115,7 +122,8 @@ The `fix-frontend-imports.sh` script fixes the module resolution issues in the f
 
 ### Chakra UI Imports
 
-The `fix-chakra-imports.sh` script fixes the Chakra UI imports in the frontend package:
+The `fix-chakra-imports.sh` script fixes the Chakra UI imports in the frontend
+package:
 
 ```bash
 ./fix-chakra-imports.sh
@@ -123,7 +131,8 @@ The `fix-chakra-imports.sh` script fixes the Chakra UI imports in the frontend p
 
 ### React Components
 
-The `fix-react-components.sh` script fixes the React component issues in the frontend package:
+The `fix-react-components.sh` script fixes the React component issues in the
+frontend package:
 
 ```bash
 ./fix-react-components.sh

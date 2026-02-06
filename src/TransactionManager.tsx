@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient, Prisma } from '@prisma/client';
+import { DrizzleClient, Drizzle } from '@drizzle/client';
 
-// Create a type for the PrismaService to avoid "private name" error
-export type PrismaService = PrismaClient;
+// Create a type for the DatabaseService to avoid "private name" error
+export type DatabaseService = DrizzleClient;
 
 @Injectable()
 export class TransactionManager {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly drizzle: DatabaseService) {}
 
   /**
    * Execute a function within a transaction
    * @param fn Function to execute within the transaction
    * @returns Result of the transaction
    */
-  async transaction<T>(fn: (prisma: PrismaService) => Promise<T>): Promise<T> {
-    return this.prisma.$transaction(async (prisma) => {
+  async transaction<T>(fn: (drizzle: DatabaseService) => Promise<T>): Promise<T> {
+    return this.drizzle.$transaction(async (drizzle) => {
       try {
-        return await fn(prisma);
+        return await fn(drizzle);
       } catch (error) {
         // Log the transaction error
         console.error('Transaction failed:', error);
@@ -32,12 +32,12 @@ export class TransactionManager {
    * @returns Result of the transaction
    */
   async transactionWithOptions<T>(
-    fn: (prisma: PrismaService) => Promise<T>,
-    options: Prisma.TransactionOptions
+    fn: (drizzle: DatabaseService) => Promise<T>,
+    options: Drizzle.TransactionOptions
   ): Promise<T> {
-    return this.prisma.$transaction(async (prisma) => {
+    return this.drizzle.$transaction(async (drizzle) => {
       try {
-        return await fn(prisma);
+        return await fn(drizzle);
       } catch (error) {
         console.error('Transaction failed:', error);
         throw error;

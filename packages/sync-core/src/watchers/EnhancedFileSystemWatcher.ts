@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as chokidar from 'chokidar';
 import * as crypto from 'crypto';
-import * as fs from 'fs/promises';
-import { Stats } from 'fs';
-import * as path from 'path';
 import { EventEmitter } from 'events';
+import { Stats } from 'fs';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import { SyncRedisConfig } from '../config/SyncRedisConfig';
 import { SyncDatabaseService } from '../database/SyncDatabaseService';
 import { FileChangeEvent, SyncConflictData } from '../types';
@@ -63,9 +63,9 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
       return;
     }
 
-    this.logger.log('Initializing EnhancedFileSystemWatcher', { 
+    this.logger.log('Initializing EnhancedFileSystemWatcher', {
       paths: config.paths,
-      tenantId: config.tenantId 
+      tenantId: config.tenantId,
     });
 
     try {
@@ -94,7 +94,7 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
     }
 
     const watcherId = `tenant:${tenantId}`;
-    
+
     if (this.watchers.has(watcherId)) {
       this.logger.warn(`Tenant watcher already exists for: ${tenantId}`);
       return;
@@ -110,7 +110,7 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
         '*.tmp',
         '*.temp',
         '**/dist/**',
-        '**/build/**'
+        '**/build/**',
       ],
       persistent: true,
       ignoreInitial: false,
@@ -118,8 +118,8 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
       depth: 10,
       awaitWriteFinish: {
         stabilityThreshold: 100,
-        pollInterval: 50
-      }
+        pollInterval: 50,
+      },
     });
 
     // Set up event handlers with tenant context
@@ -134,7 +134,7 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
    */
   async watchGlobalFiles(patterns: string[]): Promise<void> {
     const watcherId = 'global';
-    
+
     if (this.watchers.has(watcherId)) {
       this.logger.warn('Global file watcher already exists');
       return;
@@ -152,7 +152,7 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
         '**/dist/**',
         '**/build/**',
         // Exclude tenant-specific directories from global watching
-        '**/tenant-*/**'
+        '**/tenant-*/**',
       ],
       persistent: true,
       ignoreInitial: false,
@@ -160,8 +160,8 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
       depth: 10,
       awaitWriteFinish: {
         stabilityThreshold: 100,
-        pollInterval: 50
-      }
+        pollInterval: 50,
+      },
     });
 
     // Set up event handlers without tenant context
@@ -245,7 +245,7 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
       // Calculate checksum for non-delete operations
       if (type !== 'delete') {
         checksum = await this.calculateFileChecksum(filePath);
-        
+
         // Check for conflicts if this is an update
         if (type === 'update') {
           const conflicts = await this.detectConflicts(filePath, checksum, context.tenantId);
@@ -253,7 +253,7 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
             await this.handleFileConflicts(filePath, conflicts, context.tenantId);
           }
         }
-        
+
         // Update checksum cache
         this.fileChecksums.set(filePath, checksum);
       } else {
@@ -275,7 +275,7 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
           isDirectory: stats?.isDirectory(),
           extension: path.extname(filePath),
           relativePath: this.getRelativePath(filePath),
-        }
+        },
       };
 
       // Store pending change
@@ -287,12 +287,11 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
       // Update sync state in database
       await this.updateSyncState(changeEvent);
 
-      this.logger.debug(`File ${type}: ${filePath}`, { 
+      this.logger.debug(`File ${type}: ${filePath}`, {
         tenantId: context.tenantId,
         checksum: checksum.substring(0, 8),
-        size: stats?.size 
+        size: stats?.size,
       });
-
     } catch (error) {
       this.logger.error('Error processing file change', { type, filePath, context, error });
       this.emit('error', error);
@@ -315,7 +314,11 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
   /**
    * Detect file conflicts by comparing checksums and modification times
    */
-  async detectConflicts(filePath: string, currentChecksum?: string, tenantId?: string): Promise<FileConflict[]> {
+  async detectConflicts(
+    filePath: string,
+    currentChecksum?: string,
+    tenantId?: string
+  ): Promise<FileConflict[]> {
     const conflicts: FileConflict[] = [];
 
     try {
@@ -326,14 +329,14 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
 
       // Get cached checksum
       const cachedChecksum = this.fileChecksums.get(filePath);
-      
+
       // Get sync state from database
       const syncState = await this.dbService.getSyncState('file', filePath, tenantId);
-      
+
       if (syncState && syncState.checksum !== currentChecksum) {
         // Get file stats
         const stats = await fs.stat(filePath).catch(() => null);
-        
+
         conflicts.push({
           filePath,
           conflictType: 'checksum',
@@ -343,15 +346,15 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
           remoteModified: syncState.lastSync,
           metadata: {
             syncedBy: syncState.syncedBy,
-            version: syncState.version
-          }
+            version: syncState.version,
+          },
         });
       }
 
       // Check for concurrent modifications
       if (cachedChecksum && cachedChecksum !== currentChecksum) {
         const stats = await fs.stat(filePath).catch(() => null);
-        
+
         conflicts.push({
           filePath,
           conflictType: 'concurrent',
@@ -360,11 +363,10 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
           localModified: stats?.mtime || new Date(),
           remoteModified: new Date(), // Approximate
           metadata: {
-            source: 'cache_mismatch'
-          }
+            source: 'cache_mismatch',
+          },
         });
       }
-
     } catch (error) {
       this.logger.error('Error detecting conflicts', { filePath, tenantId, error });
     }
@@ -376,8 +378,8 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
    * Handle file conflicts by creating conflict records
    */
   private async handleFileConflicts(
-    filePath: string, 
-    conflicts: FileConflict[], 
+    filePath: string,
+    conflicts: FileConflict[],
     tenantId?: string
   ): Promise<void> {
     for (const conflict of conflicts) {
@@ -390,25 +392,24 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
           localVersion: {
             checksum: conflict.localChecksum,
             modified: conflict.localModified,
-            metadata: conflict.metadata
+            metadata: conflict.metadata,
           },
           remoteVersion: {
             checksum: conflict.remoteChecksum,
             modified: conflict.remoteModified,
-            metadata: conflict.metadata
-          }
+            metadata: conflict.metadata,
+          },
         };
 
         await this.dbService.createSyncConflict(conflictData);
-        
+
         this.logger.warn(`File conflict detected: ${filePath}`, {
           conflictType: conflict.conflictType,
-          tenantId
+          tenantId,
         });
 
         // Emit conflict event
         this.emit('conflict', conflict);
-
       } catch (error) {
         this.logger.error('Error handling file conflict', { filePath, conflict, error });
       }
@@ -433,7 +434,7 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
           checksum: changeEvent.checksum,
           lastSync: changeEvent.timestamp,
           syncedBy: 'file-watcher',
-          metadata: changeEvent.metadata
+          metadata: changeEvent.metadata,
         });
       }
     } catch (error) {
@@ -453,7 +454,7 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
         const tempWatcher = chokidar.watch(pattern, {
           ignored: ['node_modules/**', '.git/**', '.DS_Store'],
           persistent: false,
-          ignoreInitial: false
+          ignoreInitial: false,
         });
 
         tempWatcher.on('add', async (filePath) => {
@@ -472,7 +473,6 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
             resolve();
           });
         });
-
       } catch (error) {
         this.logger.error(`Error initializing checksums for pattern: ${pattern}`, error);
       }
@@ -517,9 +517,9 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
     this.debounceTimers.clear();
 
     // Close all watchers
-    const closePromises = Array.from(this.watchers.values()).map(watcher => watcher.close());
+    const closePromises = Array.from(this.watchers.values()).map((watcher) => watcher.close());
     await Promise.all(closePromises);
-    
+
     this.watchers.clear();
     this.pendingChanges.clear();
     this.isInitialized = false;
@@ -544,8 +544,8 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
       pendingChanges: this.pendingChanges.size,
       watchers: Array.from(this.watchers.entries()).map(([id, watcher]) => ({
         id,
-        ready: watcher.options.ignoreInitial === false
-      }))
+        ready: watcher.options.ignoreInitial === false,
+      })),
     };
   }
 
@@ -592,9 +592,9 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
     };
   }> {
     const status = this.getWatcherStatus();
-    
+
     let healthStatus: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
-    
+
     if (!status.initialized) {
       healthStatus = 'unhealthy';
     } else if (status.activeWatchers === 0) {
@@ -607,8 +607,8 @@ export class EnhancedFileSystemWatcher extends EventEmitter {
         initialized: status.initialized,
         activeWatchers: status.activeWatchers,
         watchedFiles: status.watchedFiles,
-        errors: this.listenerCount('error')
-      }
+        errors: this.listenerCount('error'),
+      },
     };
   }
 }

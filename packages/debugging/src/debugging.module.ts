@@ -10,10 +10,7 @@ import { DebuggerController } from './debugger.controller';
 import { CacheModule } from '../../cache/src/cache.module';
 
 @Module({
-  imports: [
-    ConfigModule,
-    CacheModule,
-  ],
+  imports: [ConfigModule, CacheModule],
   controllers: [DebuggerController],
   providers: [A2ADebuggerService],
   exports: [A2ADebuggerService],

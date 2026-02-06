@@ -55,7 +55,7 @@ export function createMCPResponse(id: string, result: unknown): MCPMessage {
     id,
     type: 'response',
     data: result,
-    timestamp: new Date()
+    timestamp: new Date(),
   };
 }
 
@@ -64,6 +64,6 @@ export function createMCPError(id: string, error: MCPError): MCPMessage {
     id,
     type: 'error',
     data: error,
-    timestamp: new Date()
+    timestamp: new Date(),
   };
 }

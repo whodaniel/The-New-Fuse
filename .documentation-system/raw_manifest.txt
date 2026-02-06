@@ -1367,7 +1367,7 @@ logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json	385	json	logs	17681089
 .jules/tasks/JULES_TASK_09_redis_agent_registry.md	1789	md	.jules/tasks	1766975169	4f59d4fc04766daf0a87d2644035e5a8f2aa10c737d7742f0dbbe82288e7ab20	43
 .jules/tasks/JULES_TASK_08_frontend_agent_dashboard.md	1724	md	.jules/tasks	1766975169	bc7cb75fe1a9d2400d4bc165f40191ea6061405bc80b51fcf952c88211b8bc4f	39
 .jules/tasks/JULES_TASK_14_code_quality_lint.md	1332	md	.jules/tasks	1766975169	4b716063ee9b8854f279d3a09d7a05b0815c919485e905950374935a5ccaa965	35
-.jules/tasks/JULES_TASK_05_core_prisma_migration.md	1857	md	.jules/tasks	1766975169	cfd8d41a38c35777130525d4cea7aef8bf8339ee8c9bd0a0902569bdf8af180c	42
+.jules/tasks/JULES_TASK_05_core_drizzle_migration.md	1857	md	.jules/tasks	1766975169	cfd8d41a38c35777130525d4cea7aef8bf8339ee8c9bd0a0902569bdf8af180c	42
 .jules/tasks/JULES_TASK_12_test_coverage_database.md	1545	md	.jules/tasks	1766975169	e849e84caf266d5d6f825436ddbfcb7f1c4077097607ca2da93360350f02230c	37
 .jules/tasks/README.md	4564	md	.jules/tasks	1766975169	afe52aebe6e571a32a5eeec6b825d00f8ca400fea3c115efd95e478d79262579	85
 .jules/tasks/JULES_TASK_02_drizzle_workflow_repository.md	2021	md	.jules/tasks	1766975169	94ebbfdfc086af80b0576a6125208ba4bc5a274fc65ff999a0f1f28c778deeec	43
@@ -2093,7 +2093,7 @@ tsconfig.json	498	json	.	1767764017	dfc3cf859e710f076ecb029b71cae24ec62a93be2eca
 .agent/artifacts/PRISMA_TO_DRIZZLE_MIGRATION_PLAN.md	6110	md	.agent/artifacts	1767049316	f1905b043042bc3b4490fd2fc4a69d28268eb41737cb3af7a468a552b844fb94	238
 .agent/artifacts/workflow-ux-audit-report.md	11327	md	.agent/artifacts	1766182778	79d93b55258e9df41b3999682705f825783d709cdcbed21a197f57ac094e8b91	334
 .agent/ENHANCED_CODEBASE_INDEXER.md	22062	md	.agent	1766932971	74e48abce53e281e575bc406b530442f42199e10ece3e3f0174c625b6acae260	769
-.agent/tasks/prisma-to-drizzle-cleanup.md	4338	md	.agent/tasks	1767023125	e8683f21a1bc1a669b688d4610a2dac0ffb28342029f2a5e171abbc072934a03	138
+.agent/tasks/drizzle-to-drizzle-cleanup.md	4338	md	.agent/tasks	1767023125	e8683f21a1bc1a669b688d4610a2dac0ffb28342029f2a5e171abbc072934a03	138
 .agent/tasks/architecture-summary.md	13187	md	.agent/tasks	1767040144	9ed0e07918273acc006cfb01ed4dfbfc160fc082423b154ad644cfbec1ab039b	465
 .agent/tasks/architectural-solutions.md	87264	md	.agent/tasks	1767040143	0b162860242cedf4b643a1a5bde94d0580c2b4c922a3953c8b29e6d15ae4957a	2931
 .agent/IMPLEMENTATION_STATUS.md	3260	md	.agent	1766932971	028a1472fa14887c6947f6d82e667bcab4516fec9b74a8e38f12bea4ea6a2e01	128

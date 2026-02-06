@@ -119,7 +119,7 @@ export class TNFRelayServer extends EventEmitter {
 
     // Initialize stall detector for conversation recovery
     this.stallDetector = createStallDetector({
-      stallThresholdMs: 3600000, // 60 minutes (increased from 45s)
+      stallThresholdMs: 600000, // 10 minutes (reduced from 60 min)
       checkIntervalMs: 5000, // Check every 5 seconds
       maxRecoveryAttempts: 3,
       autoRecover: true,
@@ -315,6 +315,14 @@ export class TNFRelayServer extends EventEmitter {
     const agentId = source || currentAgentId;
 
     console.log(`[Relay] ${type} from ${agentId || 'unknown'}`);
+
+    // Update lastSeen for ANY message from a known agent
+    if (agentId) {
+      const agent = this.agents.get(agentId);
+      if (agent) {
+        agent.lastSeen = Date.now();
+      }
+    }
 
     switch (type) {
       case 'AGENT_REGISTER': {
@@ -673,6 +681,10 @@ export class TNFRelayServer extends EventEmitter {
         break;
       }
 
+      case 'PONG':
+        // Activity already updated above
+        break;
+
       case 'AGENT_METADATA_UPDATE': {
         const agentInfo = (payload as Record<string, unknown>)?.agent;
         if (agentInfo) {
@@ -916,16 +928,29 @@ export class TNFRelayServer extends EventEmitter {
     this.heartbeatInterval = setInterval(() => {
       const now = Date.now();
       this.agents.forEach((agent, agentId) => {
-        if (now - agent.lastSeen > AGENT_TIMEOUT) {
-          console.log(`[Relay] Agent timeout: ${agentId}`);
+        const inactiveTime = now - agent.lastSeen;
+
+        // If inactive for more than AGENT_TIMEOUT, disconnect
+        if (inactiveTime > AGENT_TIMEOUT) {
+          console.log(`[Relay] Agent timeout: ${agentId} (inactive for ${inactiveTime}ms)`);
           const ws = this.sockets.get(agentId);
           if (ws) {
             ws.close();
           }
           this.handleAgentDisconnect(agentId);
         }
+        // If inactive for more than 1/3 of timeout, send a proactive PING
+        else if (inactiveTime > AGENT_TIMEOUT / 3) {
+          const ws = this.sockets.get(agentId);
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            this.send(ws, {
+              type: 'PING',
+              payload: { timestamp: now, inactiveTime },
+            });
+          }
+        }
       });
-    }, HEARTBEAT_INTERVAL);
+    }, HEARTBEAT_INTERVAL / 2); // Check more frequently
   }
 
   public start(): Promise<void> {

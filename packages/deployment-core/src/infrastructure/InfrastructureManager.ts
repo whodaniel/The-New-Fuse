@@ -3,33 +3,33 @@
  * Core implementation for infrastructure management operations
  */
 
+import { MetricsCollector } from '../core/MetricsCollector';
 import {
   IInfrastructureManager,
   InfrastructureFilters,
   InfrastructureImportConfig,
-  InfrastructureMetrics
+  InfrastructureMetrics,
 } from '../interfaces/IInfrastructureManager';
 import {
-  InfrastructureTemplate,
-  InfrastructureUpdate,
-  InfrastructureChange,
-  ExecutionPlan,
-  ProvisionResult,
-  UpdateResult,
-  DestroyResult,
-  ValidationResult,
-  PlanResult,
   ApplyResult,
+  DestroyResult,
+  ExecutionPlan,
+  InfrastructureChange,
   InfrastructureState,
   InfrastructureStatus,
-  ResourceState
+  InfrastructureTemplate,
+  InfrastructureUpdate,
+  PlanResult,
+  ProvisionResult,
+  ResourceState,
+  UpdateResult,
+  ValidationResult,
 } from '../types/infrastructure';
-import { TemplateParser } from './TemplateParser';
-import { StateManager } from './StateManager';
-import { ResourceProvisioner } from './ResourceProvisioner';
-import { TemplateValidator } from './TemplateValidator';
 import { ChangeAnalyzer } from './ChangeAnalyzer';
-import { MetricsCollector } from '../core/MetricsCollector';
+import { ResourceProvisioner } from './ResourceProvisioner';
+import { StateManager } from './StateManager';
+import { TemplateParser } from './TemplateParser';
+import { TemplateValidator } from './TemplateValidator';
 
 export class InfrastructureManager implements IInfrastructureManager {
   private templateParser: TemplateParser;
@@ -57,7 +57,7 @@ export class InfrastructureManager implements IInfrastructureManager {
 
   async provisionInfrastructure(template: InfrastructureTemplate): Promise<ProvisionResult> {
     const startTime = Date.now();
-    
+
     try {
       // Validate template
       const validation = await this.validateTemplate(template);
@@ -67,14 +67,14 @@ export class InfrastructureManager implements IInfrastructureManager {
           infrastructureId: '',
           resources: [],
           duration: Date.now() - startTime,
-          error: `Template validation failed: ${validation.errors.map(e => e.message).join(', ')}`,
-          warnings: validation.warnings.map(w => w.message)
+          error: `Template validation failed: ${validation.errors.map((e) => e.message).join(', ')}`,
+          warnings: validation.warnings.map((w) => w.message),
         };
       }
 
       // Parse template
       const parsedTemplate = await this.templateParser.parse(template);
-      
+
       // Create infrastructure state
       const infrastructureState: InfrastructureState = {
         id: this.generateId(),
@@ -87,8 +87,8 @@ export class InfrastructureManager implements IInfrastructureManager {
         metadata: {
           version: template.version,
           checksum: this.calculateChecksum(template),
-          locked: false
-        }
+          locked: false,
+        },
       };
 
       // Save initial state
@@ -101,7 +101,7 @@ export class InfrastructureManager implements IInfrastructureManager {
       );
 
       // Update state with provisioned resources
-      infrastructureState.resources = provisionResults.map(result => ({
+      infrastructureState.resources = provisionResults.map((result) => ({
         id: result.resourceId || '',
         name: result.resourceName,
         type: result.resourceType,
@@ -109,11 +109,11 @@ export class InfrastructureManager implements IInfrastructureManager {
         properties: {},
         outputs: result.outputs || {},
         lastModified: new Date(),
-        error: result.error
+        error: result.error,
       }));
 
-      infrastructureState.status = provisionResults.every(r => r.success) 
-        ? InfrastructureStatus.PROVISIONED 
+      infrastructureState.status = provisionResults.every((r) => r.success)
+        ? InfrastructureStatus.PROVISIONED
         : InfrastructureStatus.ERROR;
       infrastructureState.updatedAt = new Date();
 
@@ -125,7 +125,7 @@ export class InfrastructureManager implements IInfrastructureManager {
         infrastructureId: infrastructureState.id,
         duration: Date.now() - startTime,
         resourceCount: provisionResults.length,
-        success: infrastructureState.status === InfrastructureStatus.PROVISIONED
+        success: infrastructureState.status === InfrastructureStatus.PROVISIONED,
       });
 
       return {
@@ -133,9 +133,8 @@ export class InfrastructureManager implements IInfrastructureManager {
         infrastructureId: infrastructureState.id,
         resources: provisionResults,
         duration: Date.now() - startTime,
-        warnings: validation.warnings.map(w => w.message)
+        warnings: validation.warnings.map((w) => w.message),
       };
-
     } catch (error) {
       return {
         success: false,
@@ -143,14 +142,14 @@ export class InfrastructureManager implements IInfrastructureManager {
         resources: [],
         duration: Date.now() - startTime,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        warnings: []
+        warnings: [],
       };
     }
   }
 
   async updateInfrastructure(update: InfrastructureUpdate): Promise<UpdateResult> {
     const startTime = Date.now();
-    
+
     try {
       // Get current state
       const currentState = await this.stateManager.getState(update.infrastructureId);
@@ -164,10 +163,10 @@ export class InfrastructureManager implements IInfrastructureManager {
       try {
         // Analyze changes
         const changes = await this.changeAnalyzer.analyzeChanges(currentState, update);
-        
+
         // Plan changes
         const plan = await this.planChanges(changes);
-        
+
         // Apply changes
         const applyResult = await this.applyChanges({
           id: this.generateId(),
@@ -177,7 +176,7 @@ export class InfrastructureManager implements IInfrastructureManager {
           estimatedDuration: plan.timeline.estimatedDuration,
           riskLevel: plan.riskAssessment.level,
           approvals: [],
-          createdAt: new Date()
+          createdAt: new Date(),
         });
 
         return {
@@ -186,14 +185,12 @@ export class InfrastructureManager implements IInfrastructureManager {
           changesApplied: applyResult.changesApplied,
           duration: Date.now() - startTime,
           error: applyResult.error,
-          warnings: applyResult.warnings
+          warnings: applyResult.warnings,
         };
-
       } finally {
         // Always unlock infrastructure
         await this.unlockInfrastructure(update.infrastructureId);
       }
-
     } catch (error) {
       return {
         success: false,
@@ -201,14 +198,14 @@ export class InfrastructureManager implements IInfrastructureManager {
         changesApplied: [],
         duration: Date.now() - startTime,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        warnings: []
+        warnings: [],
       };
     }
   }
 
   async destroyInfrastructure(resourceId: string): Promise<DestroyResult> {
     const startTime = Date.now();
-    
+
     try {
       // Get current state
       const currentState = await this.stateManager.getState(resourceId);
@@ -239,16 +236,14 @@ export class InfrastructureManager implements IInfrastructureManager {
         return {
           success: true,
           infrastructureId: resourceId,
-          resourcesDestroyed: destroyResults.filter(r => r.success).map(r => r.resourceName),
+          resourcesDestroyed: destroyResults.filter((r) => r.success).map((r) => r.resourceName),
           duration: Date.now() - startTime,
-          warnings: destroyResults.filter(r => !r.success).map(r => r.error || 'Unknown error')
+          warnings: destroyResults.filter((r) => !r.success).map((r) => r.error || 'Unknown error'),
         };
-
       } finally {
         // Unlock infrastructure
         await this.unlockInfrastructure(resourceId);
       }
-
     } catch (error) {
       return {
         success: false,
@@ -256,35 +251,35 @@ export class InfrastructureManager implements IInfrastructureManager {
         resourcesDestroyed: [],
         duration: Date.now() - startTime,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        warnings: []
+        warnings: [],
       };
     }
   }
 
   async validateTemplate(template: InfrastructureTemplate): Promise<ValidationResult> {
     const result = await this.templateValidator.validate(template);
-    
+
     // Convert TemplateValidator result to expected ValidationResult format
     return {
       valid: result.isValid,
-      errors: result.errors.map(err => ({
+      errors: result.errors.map((err) => ({
         code: err.rule,
         message: err.message,
         path: err.path,
-        severity: err.severity
+        severity: err.severity,
       })),
-      warnings: result.warnings.map(warn => ({
+      warnings: result.warnings.map((warn) => ({
         code: warn.rule,
         message: warn.message,
         path: warn.path,
-        recommendation: warn.suggestion || ''
+        recommendation: warn.suggestion || '',
       })),
-      suggestions: result.suggestions.map(sugg => ({
+      suggestions: result.suggestions.map((sugg) => ({
         type: sugg.rule as any,
         message: sugg.message,
         path: sugg.path,
-        improvement: sugg.suggestion || ''
-      }))
+        improvement: sugg.suggestion || '',
+      })),
     };
   }
 
@@ -294,7 +289,7 @@ export class InfrastructureManager implements IInfrastructureManager {
 
   async applyChanges(plan: ExecutionPlan): Promise<ApplyResult> {
     const startTime = Date.now();
-    
+
     try {
       // Get current state - plan.templateId is actually the infrastructure ID in this context
       const currentState = await this.stateManager.getState(plan.templateId);
@@ -304,14 +299,13 @@ export class InfrastructureManager implements IInfrastructureManager {
 
       // Apply changes
       const appliedChanges: InfrastructureChange[] = [];
-      
+
       for (const change of plan.changes) {
         try {
           await this.resourceProvisioner.applyChange(change, plan.templateId);
           appliedChanges.push(change);
         } catch (_error) {
           // Log error but continue with other changes
-          
         }
       }
 
@@ -327,11 +321,9 @@ export class InfrastructureManager implements IInfrastructureManager {
         changesApplied: appliedChanges,
         duration: Date.now() - startTime,
         finalState: currentState,
-        warnings: appliedChanges.length < plan.changes.length 
-          ? ['Some changes failed to apply'] 
-          : []
+        warnings:
+          appliedChanges.length < plan.changes.length ? ['Some changes failed to apply'] : [],
       };
-
     } catch (error) {
       return {
         success: false,
@@ -339,9 +331,9 @@ export class InfrastructureManager implements IInfrastructureManager {
         infrastructureId: plan.templateId,
         changesApplied: [],
         duration: Date.now() - startTime,
-        finalState: await this.stateManager.getState(plan.templateId) || null,
+        finalState: (await this.stateManager.getState(plan.templateId)) || null,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        warnings: []
+        warnings: [],
       };
     }
   }
@@ -360,24 +352,24 @@ export class InfrastructureManager implements IInfrastructureManager {
 
   async importInfrastructure(importConfig: InfrastructureImportConfig): Promise<ProvisionResult> {
     const startTime = Date.now();
-    
+
     try {
       // Import existing resources
       const importedResources = await this.resourceProvisioner.importResources(importConfig);
-      
+
       // Create infrastructure state
       const infrastructureState: InfrastructureState = {
         id: this.generateId(),
         templateId: importConfig.templateName,
         environment: importConfig.environment,
-        resources: importedResources.map(resource => ({
+        resources: importedResources.map((resource) => ({
           id: resource.resourceId || '',
           name: resource.resourceName,
           type: resource.resourceType,
           state: ResourceState.CREATED,
           properties: {},
           outputs: resource.outputs || {},
-          lastModified: new Date()
+          lastModified: new Date(),
         })),
         status: InfrastructureStatus.PROVISIONED,
         createdAt: new Date(),
@@ -385,8 +377,8 @@ export class InfrastructureManager implements IInfrastructureManager {
         metadata: {
           version: '1.0.0',
           checksum: this.calculateChecksum(importConfig),
-          locked: false
-        }
+          locked: false,
+        },
       };
 
       // Save state
@@ -397,9 +389,8 @@ export class InfrastructureManager implements IInfrastructureManager {
         infrastructureId: infrastructureState.id,
         resources: importedResources,
         duration: Date.now() - startTime,
-        warnings: []
+        warnings: [],
       };
-
     } catch (error) {
       return {
         success: false,
@@ -407,7 +398,7 @@ export class InfrastructureManager implements IInfrastructureManager {
         resources: [],
         duration: Date.now() - startTime,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        warnings: []
+        warnings: [],
       };
     }
   }
@@ -442,7 +433,7 @@ export class InfrastructureManager implements IInfrastructureManager {
 
   private extractEnvironment(template: InfrastructureTemplate): string {
     // Extract environment from template metadata or variables
-    const envVar = template.variables.find(v => v.name === 'environment');
+    const envVar = template.variables.find((v) => v.name === 'environment');
     return envVar?.defaultValue || 'unknown';
   }
 

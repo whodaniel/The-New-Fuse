@@ -16,8 +16,8 @@ export const toHavePermission = createMatcher(
     // Check role-based permissions
     return received.roles?.some(role => role.permissions.includes(permission)) ?? false;
   },
-  (received, permission) => 
+  (received, permission) =>
     `Expected user ${received.id} to have permission "${permission}", but they don't`,
-  (received, permission) => 
-    `Expected user ${received.id} not to have permission "${permission}", but they do`
+  (received, permission) =>
+    `Expected user ${received.id} not to have permission "${permission}", but they do`,
 );

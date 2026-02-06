@@ -1,6 +1,7 @@
 # Cloudflare Worker Deployment Guide
 
-This guide explains how to deploy the Code Execution Worker to Cloudflare Workers.
+This guide explains how to deploy the Code Execution Worker to Cloudflare
+Workers.
 
 ## Prerequisites
 
@@ -19,7 +20,6 @@ This guide explains how to deploy the Code Execution Worker to Cloudflare Worker
 2. **Update Configuration**
 
    Edit the `wrangler.toml` file to update the following values:
-
    - `API_KEY`: A secure API key for authenticating requests
    - `USAGE_TRACKING`: KV namespace ID for usage tracking
 
@@ -100,7 +100,8 @@ This will show you real-time logs from the worker.
 
 ## Scaling
 
-Cloudflare Workers automatically scale based on demand. There's no need to configure scaling manually.
+Cloudflare Workers automatically scale based on demand. There's no need to
+configure scaling manually.
 
 ## Troubleshooting
 
@@ -122,6 +123,9 @@ The worker implements several security measures:
 
 ## Cost Management
 
-Cloudflare Workers are billed based on the number of requests and the amount of CPU time used. You can monitor your usage in the Cloudflare dashboard.
+Cloudflare Workers are billed based on the number of requests and the amount of
+CPU time used. You can monitor your usage in the Cloudflare dashboard.
 
-The Code Execution Service implements its own billing system on top of Cloudflare Workers, which allows you to pass costs on to clients based on their resource usage.
+The Code Execution Service implements its own billing system on top of
+Cloudflare Workers, which allows you to pass costs on to clients based on their
+resource usage.

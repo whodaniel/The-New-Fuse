@@ -1,5 +1,5 @@
-import React from 'react';
 import { render } from '@testing-library/react';
+import React from 'react';
 import { A2AProvider } from '../A2AProvider';
 
 // Mock WebSocket for testing
@@ -27,16 +27,18 @@ class MockWebSocket {
     setTimeout(() => {
       this.readyState = 1;
       this.onopen?.(new Event('open'));
-      
+
       // Send initial agents list
       setTimeout(() => {
         if (this.onmessage && this.readyState === 1) {
-          this.onmessage(new MessageEvent('message', {
-            data: JSON.stringify({
-              type: 'agents',
-              agents: []
+          this.onmessage(
+            new MessageEvent('message', {
+              data: JSON.stringify({
+                type: 'agents',
+                agents: [],
+              }),
             })
-          }));
+          );
         }
       }, 5);
     }, 1);
@@ -49,12 +51,14 @@ class MockWebSocket {
         // Echo the message back for testing
         setTimeout(() => {
           if (this.onmessage && this.readyState === 1) {
-            this.onmessage(new MessageEvent('message', {
-              data: JSON.stringify({
-                type: 'message',
-                message: parsed.message
+            this.onmessage(
+              new MessageEvent('message', {
+                data: JSON.stringify({
+                  type: 'message',
+                  message: parsed.message,
+                }),
               })
-            }));
+            );
           }
         }, 10);
       }
@@ -82,8 +86,6 @@ global.console = {
 
 export const renderWithProvider = (ui: React.ReactElement) => {
   return render(
-    <A2AProvider config={{ url: 'ws://test', agentId: 'test-agent' }}>
-      {ui}
-    </A2AProvider>
+    <A2AProvider config={{ url: 'ws://test', agentId: 'test-agent' }}>{ui}</A2AProvider>
   );
 };

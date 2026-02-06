@@ -5,16 +5,13 @@ const path = require('path');
 function fixStringLiterals(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Fix missing quotes around string literals
-    const fixedContent = content.replace(
-      /([a-zA-Z0-9_-]+)'/g,
-      "'$1'"
-    );
-    
+    const fixedContent = content.replace(/([a-zA-Z0-9_-]+)'/g, "'$1'");
+
     // Write the fixed content back to the file
     fs.writeFileSync(filePath, fixedContent);
-    
+
     console.log(`Fixed string literals in ${filePath}`);
     return true;
   } catch (error) {
@@ -26,7 +23,7 @@ function fixStringLiterals(filePath) {
 // Main function
 function main() {
   const filePath = './src/workflow/WorkflowTemplates.ts';
-  
+
   if (fs.existsSync(filePath)) {
     fixStringLiterals(filePath);
   } else {

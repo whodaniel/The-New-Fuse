@@ -3,21 +3,21 @@
  * Tests all 24 methods of the chat repository
  */
 
+import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository';
 import { drizzleChatRepository } from '../../src/drizzle/repositories/chat.repository';
 import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository';
-import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository';
-import { ChatFactory, MessageFactory, UserFactory, AgentFactory } from '../utils/factories';
 import {
-  expectDatabaseRow,
-  expectSoftDeleted,
-  expectNotNull,
   expectArrayLength,
+  expectDatabaseRow,
   expectEmptyArray,
   expectNonEmptyArray,
   expectNotDeleted,
+  expectNotNull,
+  expectSoftDeleted,
   expectTimestampInFuture,
 } from '../utils/assertions';
 import { futureTimestamp, pastTimestamp, sleep } from '../utils/database-helpers';
+import { AgentFactory, ChatFactory, MessageFactory, UserFactory } from '../utils/factories';
 
 describe('DrizzleChatRepository', () => {
   let testUserId: string;
@@ -105,9 +105,13 @@ describe('DrizzleChatRepository', () => {
       });
 
       it('should order chats by most recently updated', async () => {
-        const chat1 = await drizzleChatRepository.createChat(ChatFactory.build({ userId: testUserId }));
+        const chat1 = await drizzleChatRepository.createChat(
+          ChatFactory.build({ userId: testUserId })
+        );
         await sleep(10);
-        const chat2 = await drizzleChatRepository.createChat(ChatFactory.build({ userId: testUserId }));
+        const chat2 = await drizzleChatRepository.createChat(
+          ChatFactory.build({ userId: testUserId })
+        );
 
         const found = await drizzleChatRepository.findChatsByUserId(testUserId);
 
@@ -117,8 +121,12 @@ describe('DrizzleChatRepository', () => {
 
     describe('findChatsByAgentId', () => {
       it('should find all chats for an agent', async () => {
-        await drizzleChatRepository.createChat(ChatFactory.build({ userId: testUserId, agentId: testAgentId }));
-        await drizzleChatRepository.createChat(ChatFactory.build({ userId: testUserId, agentId: testAgentId }));
+        await drizzleChatRepository.createChat(
+          ChatFactory.build({ userId: testUserId, agentId: testAgentId })
+        );
+        await drizzleChatRepository.createChat(
+          ChatFactory.build({ userId: testUserId, agentId: testAgentId })
+        );
 
         const found = await drizzleChatRepository.findChatsByAgentId(testAgentId);
 
@@ -135,7 +143,9 @@ describe('DrizzleChatRepository', () => {
 
     describe('updateChat', () => {
       it('should update chat fields', async () => {
-        const created = await drizzleChatRepository.createChat(ChatFactory.build({ userId: testUserId }));
+        const created = await drizzleChatRepository.createChat(
+          ChatFactory.build({ userId: testUserId })
+        );
 
         const updated = await drizzleChatRepository.updateChat(created.id, {
           title: 'Updated Title',
@@ -157,7 +167,9 @@ describe('DrizzleChatRepository', () => {
 
     describe('softDeleteChat', () => {
       it('should soft delete chat', async () => {
-        const created = await drizzleChatRepository.createChat(ChatFactory.build({ userId: testUserId }));
+        const created = await drizzleChatRepository.createChat(
+          ChatFactory.build({ userId: testUserId })
+        );
 
         const deleted = await drizzleChatRepository.softDeleteChat(created.id);
 
@@ -178,7 +190,9 @@ describe('DrizzleChatRepository', () => {
     let testChatId: string;
 
     beforeEach(async () => {
-      const chat = await drizzleChatRepository.createChat(ChatFactory.build({ userId: testUserId }));
+      const chat = await drizzleChatRepository.createChat(
+        ChatFactory.build({ userId: testUserId })
+      );
       testChatId = chat.id;
     });
 
@@ -267,9 +281,13 @@ describe('DrizzleChatRepository', () => {
       });
 
       it('should order messages by timestamp descending', async () => {
-        const msg1 = await drizzleChatRepository.createMessage(MessageFactory.build({ chatId: testChatId }));
+        const msg1 = await drizzleChatRepository.createMessage(
+          MessageFactory.build({ chatId: testChatId })
+        );
         await sleep(10);
-        const msg2 = await drizzleChatRepository.createMessage(MessageFactory.build({ chatId: testChatId }));
+        const msg2 = await drizzleChatRepository.createMessage(
+          MessageFactory.build({ chatId: testChatId })
+        );
 
         const found = await drizzleChatRepository.findMessagesByChatId(testChatId);
 
@@ -363,7 +381,9 @@ describe('DrizzleChatRepository', () => {
       });
 
       it('should not count deleted messages', async () => {
-        const msg1 = await drizzleChatRepository.createMessage(MessageFactory.build({ chatId: testChatId }));
+        const msg1 = await drizzleChatRepository.createMessage(
+          MessageFactory.build({ chatId: testChatId })
+        );
         await drizzleChatRepository.createMessage(MessageFactory.build({ chatId: testChatId }));
         await drizzleChatRepository.softDeleteMessage(msg1.id);
 
@@ -810,7 +830,8 @@ describe('DrizzleChatRepository', () => {
       });
 
       it('should return empty array for room with no participants', async () => {
-        const participants = await drizzleChatRepository.findParticipantsByRoomId('non-existent-room');
+        const participants =
+          await drizzleChatRepository.findParticipantsByRoomId('non-existent-room');
 
         expect(participants).toEqual([]);
       });
@@ -832,7 +853,10 @@ describe('DrizzleChatRepository', () => {
       });
 
       it('should return null for non-existent participant', async () => {
-        const participant = await drizzleChatRepository.findParticipant(testRoomId, 'non-existent-user');
+        const participant = await drizzleChatRepository.findParticipant(
+          testRoomId,
+          'non-existent-user'
+        );
 
         expect(participant).toBeNull();
       });
@@ -855,9 +879,13 @@ describe('DrizzleChatRepository', () => {
       });
 
       it('should return null for non-existent participant', async () => {
-        const updated = await drizzleChatRepository.updateParticipant(testRoomId, 'non-existent-user', {
-          role: 'ADMIN' as const,
-        });
+        const updated = await drizzleChatRepository.updateParticipant(
+          testRoomId,
+          'non-existent-user',
+          {
+            role: 'ADMIN' as const,
+          }
+        );
 
         expect(updated).toBeNull();
       });
@@ -880,7 +908,10 @@ describe('DrizzleChatRepository', () => {
       });
 
       it('should return false for non-existent participant', async () => {
-        const result = await drizzleChatRepository.removeParticipant(testRoomId, 'non-existent-user');
+        const result = await drizzleChatRepository.removeParticipant(
+          testRoomId,
+          'non-existent-user'
+        );
 
         expect(result).toBe(false);
       });
@@ -1043,7 +1074,9 @@ describe('DrizzleChatRepository', () => {
     });
 
     it('should handle messages with very long content', async () => {
-      const chat = await drizzleChatRepository.createChat(ChatFactory.build({ userId: testUserId }));
+      const chat = await drizzleChatRepository.createChat(
+        ChatFactory.build({ userId: testUserId })
+      );
       const longContent = 'A'.repeat(10000);
 
       const message = await drizzleChatRepository.createMessage(
@@ -1054,10 +1087,14 @@ describe('DrizzleChatRepository', () => {
     });
 
     it('should handle concurrent message creates', async () => {
-      const chat = await drizzleChatRepository.createChat(ChatFactory.build({ userId: testUserId }));
+      const chat = await drizzleChatRepository.createChat(
+        ChatFactory.build({ userId: testUserId })
+      );
       const messages = MessageFactory.buildList(10, { chatId: chat.id });
 
-      const created = await Promise.all(messages.map((m) => drizzleChatRepository.createMessage(m)));
+      const created = await Promise.all(
+        messages.map((m) => drizzleChatRepository.createMessage(m))
+      );
 
       expectArrayLength(created, 10);
       const uniqueIds = new Set(created.map((m) => m.id));

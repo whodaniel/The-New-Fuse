@@ -91,7 +91,7 @@ Defines:
 
 **Examples:**
 
-- `database-verification` - Verify table/column names before Prisma queries
+- `database-verification` - Verify table/column names before Drizzle queries
 - `frontend-dev-guidelines` - Enforce React/TypeScript patterns
 
 **When to Use:**
@@ -276,7 +276,7 @@ documenting ✅ Iterate based on actual usage
 
 ```typescript
 // @skip-validation
-import { PrismaService } from './prisma';
+import { DatabaseService } from './drizzle';
 // This file has been manually verified
 ```
 

@@ -29,7 +29,7 @@ export class FileVisualizer {
         name: path.basename(rootPath),
         type: stats.isDirectory() ? 'directory' : 'file',
         path: rootPath,
-        size: stats.isFile() ? stats.size : undefined
+        size: stats.isFile() ? stats.size : undefined,
       };
 
       if (stats.isDirectory() && this.shouldIncludeDirectory(rootPath)) {
@@ -44,12 +44,14 @@ export class FileVisualizer {
     }
   }
 
-  async generateDependencyGraph(filePath: string): Promise<{ nodes: any[], edges: any[], message?: string }> {
+  async generateDependencyGraph(
+    filePath: string,
+  ): Promise<{ nodes: any[]; edges: any[]; message?: string }> {
     try {
       const content = await fs.promises.readFile(filePath, 'utf-8');
       const dependencies = this.parseDependencies(content);
       const nodes = [{ id: filePath, label: path.basename(filePath) }];
-      const edges = dependencies.map(dep => ({
+      const edges = dependencies.map((dep) => ({
         from: filePath,
         to: dep,
       }));
@@ -57,28 +59,30 @@ export class FileVisualizer {
       return {
         nodes,
         edges,
-        message: 'Dependency graph generated'
+        message: 'Dependency graph generated',
       };
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       return {
         nodes: [],
         edges: [],
-        message: `Dependency graph generation failed: ${errorMessage}`
+        message: `Dependency graph generation failed: ${errorMessage}`,
       };
     }
   }
 
-  async generateCodeMetrics(filePath: string): Promise<{ linesOfCode: number, complexity: number, dependencies: number, message?: string }> {
+  async generateCodeMetrics(
+    filePath: string,
+  ): Promise<{ linesOfCode: number; complexity: number; dependencies: number; message?: string }> {
     try {
       const content = await fs.promises.readFile(filePath, 'utf-8');
       const lines = content.split('\n');
-      
+
       return {
         linesOfCode: lines.length,
         complexity: this.calculateComplexity(content),
         dependencies: this.countDependencies(content),
-        message: 'Code metrics calculated'
+        message: 'Code metrics calculated',
       };
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -86,7 +90,7 @@ export class FileVisualizer {
         linesOfCode: 0,
         complexity: 0,
         dependencies: 0,
-        message: `Code metrics calculation failed: ${errorMessage}`
+        message: `Code metrics calculation failed: ${errorMessage}`,
       };
     }
   }
@@ -131,8 +135,8 @@ export class FileVisualizer {
   }
 
   private groupByType(nodes: FileNode[]): FileNode[] {
-    const directories = nodes.filter(node => node.type === 'directory');
-    const files = nodes.filter(node => node.type === 'file');
+    const directories = nodes.filter((node) => node.type === 'directory');
+    const files = nodes.filter((node) => node.type === 'file');
     return [...directories, ...files];
   }
 
@@ -159,7 +163,7 @@ export class FileVisualizer {
     const importRegex = /from\s+['"]([^'"]+)['"]/g;
     const requireRegex = /require\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
     const dependencies = new Set<string>();
-    
+
     let match;
     while ((match = importRegex.exec(content)) !== null) {
       dependencies.add(match[1]);
@@ -167,7 +171,7 @@ export class FileVisualizer {
     while ((match = requireRegex.exec(content)) !== null) {
       dependencies.add(match[1]);
     }
-    
+
     return Array.from(dependencies);
   }
 

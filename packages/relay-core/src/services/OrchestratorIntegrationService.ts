@@ -1,9 +1,9 @@
 /**
  * Orchestrator Integration Service
- * 
+ *
  * Integrates all orchestration components:
  * - Handoff template system
- * - Heartbeat monitoring 
+ * - Heartbeat monitoring
  * - Cleanup service
  * - Agent swarm coordination
  * - State preservation with Redis, NestJS, RAG, and Graph systems
@@ -124,7 +124,9 @@ export class OrchestratorIntegrationService extends EventEmitter {
 
       return true;
     } catch (error) {
-      this.logger.error(`Failed to initialize orchestrator: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Failed to initialize orchestrator: ${error instanceof Error ? error.message : String(error)}`
+      );
       this.emit('orchestrator_error', error);
       return false;
     }
@@ -196,13 +198,13 @@ export class OrchestratorIntegrationService extends EventEmitter {
   private async initializeStatePreservation(): Promise<void> {
     // Redis state preservation
     await this.initializeRedisStatePreservation();
-    
+
     // Todo/Task management integration
     await this.initializeTodoManagement();
-    
+
     // RAG system integration for context preservation
     await this.initializeRAGIntegration();
-    
+
     // Graph database integration for relationship mapping
     await this.initializeGraphIntegration();
   }
@@ -212,12 +214,12 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async initializeRedisStatePreservation(): Promise<void> {
     this.logger.info('Initializing Redis state preservation');
-    
+
     // Redis integration would connect to existing RedisTransport
     this.emit('redis_state_preservation_ready', {
       host: this.config.redis.host,
       port: this.config.redis.port,
-      features: ['task_state', 'agent_context', 'handoff_history', 'workflow_state']
+      features: ['task_state', 'agent_context', 'handoff_history', 'workflow_state'],
     });
   }
 
@@ -226,10 +228,10 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async initializeTodoManagement(): Promise<void> {
     this.logger.info('Initializing todo/task management integration');
-    
+
     // Integration with existing todo systems
     this.emit('todo_management_ready', {
-      features: ['task_tracking', 'progress_monitoring', 'state_persistence']
+      features: ['task_tracking', 'progress_monitoring', 'state_persistence'],
     });
   }
 
@@ -238,10 +240,10 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async initializeRAGIntegration(): Promise<void> {
     this.logger.info('Initializing RAG integration for context preservation');
-    
+
     // RAG system for maintaining conversational context across handoffs
     this.emit('rag_integration_ready', {
-      features: ['context_embedding', 'semantic_search', 'handoff_context_retrieval']
+      features: ['context_embedding', 'semantic_search', 'handoff_context_retrieval'],
     });
   }
 
@@ -250,10 +252,10 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async initializeGraphIntegration(): Promise<void> {
     this.logger.info('Initializing Graph database integration');
-    
+
     // Graph database for agent relationship mapping and workflow dependencies
     this.emit('graph_integration_ready', {
-      features: ['agent_relationships', 'task_dependencies', 'workflow_graphs']
+      features: ['agent_relationships', 'task_dependencies', 'workflow_graphs'],
     });
   }
 
@@ -262,7 +264,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async handleStagnationDetected(alert: any): Promise<void> {
     this.logger.warn(`Stagnation detected for agent ${alert.agentId}: ${alert.stagnationType}`);
-    
+
     // Update task state
     const taskState = this.taskStates.get(alert.taskId);
     if (taskState) {
@@ -273,12 +275,12 @@ export class OrchestratorIntegrationService extends EventEmitter {
 
     // Create anti-stagnation handoff prompt
     const handoffPrompt = await this.createAntiStagnationHandoff(alert);
-    
+
     this.emit('anti_stagnation_handoff_created', {
       agentId: alert.agentId,
       taskId: alert.taskId,
       handoffPrompt,
-      stagnationType: alert.stagnationType
+      stagnationType: alert.stagnationType,
     });
   }
 
@@ -287,21 +289,18 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async handleAgentPingRequired(data: any): Promise<void> {
     this.logger.info(`Ping required for agent ${data.agentId}`);
-    
+
     // Generate wake-up prompt using handoff template system
-    const wakeUpPrompt = await this.handoffService.createHandoffPrompt(
-      'agent-wake-up',
-      {
-        agentId: data.agentId,
-        taskId: data.taskId,
-        reason: data.reason,
-        timestamp: new Date().toISOString()
-      }
-    );
+    const wakeUpPrompt = await this.handoffService.createHandoffPrompt('agent-wake-up', {
+      agentId: data.agentId,
+      taskId: data.taskId,
+      reason: data.reason,
+      timestamp: new Date().toISOString(),
+    });
 
     this.emit('agent_wake_up_prompt_created', {
       agentId: data.agentId,
-      prompt: wakeUpPrompt
+      prompt: wakeUpPrompt,
     });
   }
 
@@ -310,7 +309,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async handleEscalationRequired(data: any): Promise<void> {
     this.logger.warn(`Escalation required for agent ${data.originalAgent}`);
-    
+
     // Create escalation handoff with full context preservation
     const escalationHandoff = await this.handoffService.createHandoffPrompt(
       'master-orchestrator-handoff',
@@ -320,14 +319,14 @@ export class OrchestratorIntegrationService extends EventEmitter {
         taskId: data.taskId,
         severity: data.severity,
         requiresDirectorIntervention: data.requiresDirectorIntervention,
-        preservedContext: await this.getTaskContext(data.taskId)
+        preservedContext: await this.getTaskContext(data.taskId),
       }
     );
 
     this.emit('director_broker_handoff_created', {
       originalAgent: data.originalAgent,
       escalationHandoff,
-      priority: 'high'
+      priority: 'high',
     });
   }
 
@@ -336,7 +335,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async handleHumanInterventionRequired(data: any): Promise<void> {
     this.logger.error(`Human intervention required for agent ${data.agentId}`);
-    
+
     // Create human notification with comprehensive context
     const humanNotification = {
       agentId: data.agentId,
@@ -345,7 +344,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
       message: data.message,
       recommendedActions: await this.generateHumanActionRecommendations(data.alert),
       taskContext: await this.getTaskContext(data.alert.taskId),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     this.emit('human_notification_ready', humanNotification);
@@ -356,24 +355,21 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async handleTaskReassignment(data: any): Promise<void> {
     this.logger.info(`Task reassignment required for ${data.originalAgent}`);
-    
+
     // Preserve task context and create reassignment handoff
     const taskContext = await this.getTaskContext(data.taskId);
-    const reassignmentHandoff = await this.handoffService.createHandoffPrompt(
-      'task-reassignment',
-      {
-        originalAgent: data.originalAgent,
-        taskId: data.taskId,
-        reason: data.reassignmentReason,
-        preservedContext: taskContext,
-        contextPreservationEnabled: data.preserveContext
-      }
-    );
+    const reassignmentHandoff = await this.handoffService.createHandoffPrompt('task-reassignment', {
+      originalAgent: data.originalAgent,
+      taskId: data.taskId,
+      reason: data.reassignmentReason,
+      preservedContext: taskContext,
+      contextPreservationEnabled: data.preserveContext,
+    });
 
     this.emit('task_reassignment_handoff_created', {
       originalAgent: data.originalAgent,
       reassignmentHandoff,
-      preservedContext: taskContext
+      preservedContext: taskContext,
     });
   }
 
@@ -390,7 +386,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
       detectedAt: alert.detectedAt.toISOString(),
       taskContext: await this.getTaskContext(alert.taskId),
       antiStagnationStrategies: this.getAntiStagnationStrategies(alert.stagnationType),
-      fallbackOptions: this.getFallbackOptions(alert.severity)
+      fallbackOptions: this.getFallbackOptions(alert.severity),
     };
 
     return await this.handoffService.createHandoffPrompt(
@@ -404,32 +400,34 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private getAntiStagnationStrategies(stagnationType: string): string[] {
     const strategies = {
-      'no_heartbeat': [
+      no_heartbeat: [
         'Send immediate ping/wake-up message',
         'Verify agent connectivity',
-        'Check for system resource constraints'
+        'Check for system resource constraints',
       ],
-      'no_progress': [
+      no_progress: [
         'Request detailed progress report',
         'Analyze task complexity',
         'Provide additional context or resources',
-        'Break task into smaller subtasks'
+        'Break task into smaller subtasks',
       ],
-      'circular_communication': [
+      circular_communication: [
         'Analyze communication loop',
         'Introduce external context',
         'Reset conversation state',
-        'Apply task reframing'
+        'Apply task reframing',
       ],
-      'timeout': [
+      timeout: [
         'Extend timeout parameters',
         'Simplify task requirements',
         'Provide step-by-step guidance',
-        'Consider task reassignment'
-      ]
+        'Consider task reassignment',
+      ],
     };
 
-    return strategies[stagnationType as keyof typeof strategies] || ['Apply generic recovery protocol'];
+    return (
+      strategies[stagnationType as keyof typeof strategies] || ['Apply generic recovery protocol']
+    );
   }
 
   /**
@@ -437,9 +435,13 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private getFallbackOptions(severity: string): string[] {
     const options = {
-      'warning': ['Retry with modified parameters', 'Provide additional guidance'],
-      'critical': ['Escalate to supervisor', 'Task reassignment', 'Human consultation'],
-      'emergency': ['Immediate human intervention', 'Emergency stop protocol', 'System failsafe activation']
+      warning: ['Retry with modified parameters', 'Provide additional guidance'],
+      critical: ['Escalate to supervisor', 'Task reassignment', 'Human consultation'],
+      emergency: [
+        'Immediate human intervention',
+        'Emergency stop protocol',
+        'System failsafe activation',
+      ],
     };
 
     return options[severity as keyof typeof options] || ['Standard recovery protocol'];
@@ -457,7 +459,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
       lastUpdate: new Date(),
       context: taskData.context || {},
       handoffHistory: [],
-      stagnationCount: 0
+      stagnationCount: 0,
     };
 
     this.taskStates.set(taskData.taskId, taskState);
@@ -472,13 +474,9 @@ export class OrchestratorIntegrationService extends EventEmitter {
     if (taskState) {
       taskState.lastUpdate = new Date();
       taskState.context = { ...taskState.context, ...taskData.progress };
-      
+
       // Record activity in heartbeat service
-      this.heartbeatService.recordActivity(
-        taskState.agentId,
-        'task_progress',
-        taskData.progress
-      );
+      this.heartbeatService.recordActivity(taskState.agentId, 'task_progress', taskData.progress);
     }
   }
 
@@ -490,13 +488,9 @@ export class OrchestratorIntegrationService extends EventEmitter {
     if (taskState) {
       taskState.status = 'completed';
       taskState.lastUpdate = new Date();
-      
+
       // Record final activity
-      this.heartbeatService.recordActivity(
-        taskState.agentId,
-        'task_completed',
-        taskData.result
-      );
+      this.heartbeatService.recordActivity(taskState.agentId, 'task_completed', taskData.result);
     }
   }
 
@@ -516,7 +510,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
       duration: Date.now() - taskState.startTime.getTime(),
       context: taskState.context,
       handoffHistory: taskState.handoffHistory,
-      stagnationCount: taskState.stagnationCount
+      stagnationCount: taskState.stagnationCount,
     };
   }
 
@@ -528,7 +522,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
       `Review agent ${alert.agentId} current state and logs`,
       `Analyze task ${alert.taskId} requirements and complexity`,
       `Consider manual intervention or task simplification`,
-      `Evaluate system resources and agent capabilities`
+      `Evaluate system resources and agent capabilities`,
     ];
 
     if (alert.severity === 'emergency') {
@@ -544,15 +538,17 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   private async performFinalCleanup(): Promise<void> {
     this.logger.info('Performing final orchestrator cleanup');
-    
+
     const cleanupResult = await this.cleanupService.executeCleanup({
       dryRun: this.config.cleanup.dryRun,
       createBackups: this.config.cleanup.createBackups,
       backupDirectory: this.config.cleanup.backupDirectory,
-      confirmationRequired: false
+      confirmationRequired: false,
     });
 
-    this.logger.info(`Final cleanup completed: ${cleanupResult.cleaned.length} files cleaned, ${cleanupResult.errors.length} errors`);
+    this.logger.info(
+      `Final cleanup completed: ${cleanupResult.cleaned.length} files cleaned, ${cleanupResult.errors.length} errors`
+    );
   }
 
   /**
@@ -560,22 +556,24 @@ export class OrchestratorIntegrationService extends EventEmitter {
    */
   getOrchestrationMetrics(): OrchestrationMetrics {
     const tasks = Array.from(this.taskStates.values());
-    const completedTasks = tasks.filter(t => t.status === 'completed');
-    const stalledTasks = tasks.filter(t => t.status === 'stalled');
-    
-    const avgDuration = completedTasks.length > 0 
-      ? completedTasks.reduce((sum, t) => sum + (Date.now() - t.startTime.getTime()), 0) / completedTasks.length
-      : 0;
+    const completedTasks = tasks.filter((t) => t.status === 'completed');
+    const stalledTasks = tasks.filter((t) => t.status === 'stalled');
+
+    const avgDuration =
+      completedTasks.length > 0
+        ? completedTasks.reduce((sum, t) => sum + (Date.now() - t.startTime.getTime()), 0) /
+          completedTasks.length
+        : 0;
 
     return {
       totalTasks: tasks.length,
-      activeTasks: tasks.filter(t => t.status === 'in_progress').length,
+      activeTasks: tasks.filter((t) => t.status === 'in_progress').length,
       stalledTasks: stalledTasks.length,
       completedTasks: completedTasks.length,
       averageTaskDuration: avgDuration,
       handoffSuccessRate: tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0,
       stagnationRate: tasks.length > 0 ? (stalledTasks.length / tasks.length) * 100 : 0,
-      cleanupEfficiency: this.cleanupService.getCleanupSummary().totalTargets
+      cleanupEfficiency: this.cleanupService.getCleanupSummary().totalTargets,
     };
   }
 
@@ -594,7 +592,7 @@ export class OrchestratorIntegrationService extends EventEmitter {
       heartbeatMonitoring: this.heartbeatService.getMonitoringStatus(),
       cleanup: this.cleanupService.getCleanupSummary(),
       taskStates: this.taskStates.size,
-      metrics: this.getOrchestrationMetrics()
+      metrics: this.getOrchestrationMetrics(),
     };
   }
 }

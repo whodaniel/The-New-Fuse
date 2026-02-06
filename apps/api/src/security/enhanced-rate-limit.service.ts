@@ -1,4 +1,4 @@
-import { Injectable, Logger, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SecurityLoggingService } from './security-logging.service';
 
@@ -22,7 +22,10 @@ export interface RateLimitTier {
 @Injectable()
 export class EnhancedRateLimitService {
   private readonly logger = new Logger(EnhancedRateLimitService.name);
-  private rateLimitStore = new Map<string, { count: number; resetTime: number; burstCount: number }>();
+  private rateLimitStore = new Map<
+    string,
+    { count: number; resetTime: number; burstCount: number }
+  >();
   private readonly BURST_WINDOW = 10000; // 10 seconds burst window
 
   // Define different rate limit tiers
@@ -95,7 +98,10 @@ export class EnhancedRateLimitService {
     }
 
     // Allow burst requests
-    if (now < rateLimitData.resetTime + this.BURST_WINDOW && rateLimitData.burstCount < (config.burstMultiplier || 1)) {
+    if (
+      now < rateLimitData.resetTime + this.BURST_WINDOW &&
+      rateLimitData.burstCount < (config.burstMultiplier || 1)
+    ) {
       rateLimitData.burstCount++;
       rateLimitData.count++;
       this.rateLimitStore.set(key, rateLimitData);
@@ -119,12 +125,15 @@ export class EnhancedRateLimitService {
         window: config.window,
       });
 
-      throw new HttpException({
-        message: 'Rate limit exceeded',
-        limit: config.requests,
-        remaining: 0,
-        resetTime: rateLimitData.resetTime,
-      }, HttpStatus.TOO_MANY_REQUESTS);
+      throw new HttpException(
+        {
+          message: 'Rate limit exceeded',
+          limit: config.requests,
+          remaining: 0,
+          resetTime: rateLimitData.resetTime,
+        },
+        HttpStatus.TOO_MANY_REQUESTS
+      );
     }
 
     // Increment counter
@@ -141,7 +150,9 @@ export class EnhancedRateLimitService {
   /**
    * Check rate limit with automatic tier detection
    */
-  async checkRateLimitAuto(request: any): Promise<{ allowed: boolean; remaining: number; resetTime: number }> {
+  async checkRateLimitAuto(
+    request: any
+  ): Promise<{ allowed: boolean; remaining: number; resetTime: number }> {
     const tier = this.detectTier(request);
     return this.checkRateLimit(request, tier);
   }
@@ -149,7 +160,8 @@ export class EnhancedRateLimitService {
   /**
    * Block an IP address temporarily
    */
-  blockIP(ip: string, duration: number = 300000): void { // 5 minutes default
+  blockIP(ip: string, duration: number = 300000): void {
+    // 5 minutes default
     const key = `blocked:${ip}`;
     const now = Date.now();
     const resetTime = now + duration;
@@ -184,7 +196,11 @@ export class EnhancedRateLimitService {
   getRateLimitStatus(request: any, tier?: keyof typeof this.rateLimitTiers): any {
     const config = this.rateLimitTiers[tier || this.detectTier(request)];
     const key = this.generateKey(request, config.keyGenerator);
-    const data = this.rateLimitStore.get(key) || { count: 0, resetTime: Date.now() + config.window, burstCount: 0 };
+    const data = this.rateLimitStore.get(key) || {
+      count: 0,
+      resetTime: Date.now() + config.window,
+      burstCount: 0,
+    };
 
     return {
       tier: tier || this.detectTier(request),
@@ -227,11 +243,13 @@ export class EnhancedRateLimitService {
    * Get client IP address
    */
   private getClientIP(request: any): string {
-    return (request.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
-           request.headers['x-real-ip'] as string ||
-           request.connection.remoteAddress ||
-           request.ip ||
-           'unknown';
+    return (
+      (request.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+      (request.headers['x-real-ip'] as string) ||
+      request.connection.remoteAddress ||
+      request.ip ||
+      'unknown'
+    );
   }
 
   /**

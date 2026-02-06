@@ -1,25 +1,22 @@
-import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
 import { cn } from '../../utils';
 
 /**
  * Pagination variants using class-variance-authority
  */
-export const paginationVariants = cva(
-  'flex flex-wrap items-center gap-1',
-  {
-    variants: {
-      variant: {
-        default: '',
-        outline: '',
-        ghost: '',
-      },
+export const paginationVariants = cva('flex flex-wrap items-center gap-1', {
+  variants: {
+    variant: {
+      default: '',
+      outline: '',
+      ghost: '',
     },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
 
 /**
  * Pagination item variants using class-variance-authority
@@ -47,12 +44,14 @@ export const paginationItemVariants = cva(
       {
         variant: 'outline',
         isActive: true,
-        className: 'border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground',
+        className:
+          'border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground',
       },
       {
         variant: 'ghost',
         isActive: true,
-        className: 'bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground',
+        className:
+          'bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground',
       },
     ],
     defaultVariants: {
@@ -66,8 +65,7 @@ export const paginationItemVariants = cva(
 /**
  * Pagination component props
  */
-export interface PaginationProps
-  extends React.HTMLAttributes<HTMLElement> {
+export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
   /**
    * Total number of pages
    */
@@ -115,7 +113,8 @@ export interface PaginationProps
  * Pagination item component props
  */
 export interface PaginationItemProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof paginationItemVariants> {
   /**
    * Whether this is the current/active page
@@ -155,18 +154,18 @@ const generatePaginationRange = (
   boundaryCount: number
 ): (number | 'ellipsis')[] => {
   const range: (number | 'ellipsis')[] = [];
-  
+
   // Add first page(s)
   for (let i = 1; i <= Math.min(boundaryCount, count); i++) {
     range.push(i);
   }
-  
+
   // Add ellipsis if needed
   const startEllipsis = Math.max(boundaryCount + 1, page - siblingCount);
   if (startEllipsis > boundaryCount + 1) {
     range.push('ellipsis');
   }
-  
+
   // Add sibling pages
   const startSibling = Math.max(boundaryCount + 1, page - siblingCount);
   const endSibling = Math.min(count - boundaryCount, page + siblingCount);
@@ -175,20 +174,20 @@ const generatePaginationRange = (
       range.push(i);
     }
   }
-  
+
   // Add ellipsis if needed
   const endEllipsis = Math.min(count - boundaryCount, page + siblingCount + 1);
   if (endEllipsis < count - boundaryCount + 1) {
     range.push('ellipsis');
   }
-  
+
   // Add last page(s)
   for (let i = Math.max(count - boundaryCount + 1, endSibling + 1); i <= count; i++) {
     if (!range.includes(i)) {
       range.push(i);
     }
   }
-  
+
   return range;
 };
 
@@ -212,26 +211,32 @@ const generatePaginationRange = (
  * <Pagination count={10} page={5} size="lg" />
  */
 const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
-  ({
-    className,
-    variant,
-    count,
-    page = 1,
-    onPageChange,
-    siblingCount = 1,
-    boundaryCount = 1,
-    showControls = true,
-    showFirstLast = false,
-    size,
-    ...props
-  }, ref) => {
-    const handlePageChange = React.useCallback((newPage: number) => {
-      if (newPage < 1 || newPage > count) return;
-      onPageChange?.(newPage);
-    }, [count, onPageChange]);
-    
+  (
+    {
+      className,
+      variant,
+      count,
+      page = 1,
+      onPageChange,
+      siblingCount = 1,
+      boundaryCount = 1,
+      showControls = true,
+      showFirstLast = false,
+      size,
+      ...props
+    },
+    ref
+  ) => {
+    const handlePageChange = React.useCallback(
+      (newPage: number) => {
+        if (newPage < 1 || newPage > count) return;
+        onPageChange?.(newPage);
+      },
+      [count, onPageChange]
+    );
+
     const range = generatePaginationRange(count, page, siblingCount, boundaryCount);
-    
+
     return (
       <PaginationContext.Provider
         value={{
@@ -274,7 +279,7 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
               </svg>
             </PaginationItem>
           )}
-          
+
           {showControls && (
             <PaginationItem
               variant={variant}
@@ -299,7 +304,7 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
               </svg>
             </PaginationItem>
           )}
-          
+
           {range.map((item, index) => (
             <React.Fragment key={index}>
               {item === 'ellipsis' ? (
@@ -318,7 +323,7 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
               )}
             </React.Fragment>
           ))}
-          
+
           {showControls && (
             <PaginationItem
               variant={variant}
@@ -343,7 +348,7 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
               </svg>
             </PaginationItem>
           )}
-          
+
           {showFirstLast && (
             <PaginationItem
               variant={variant}
@@ -381,16 +386,9 @@ Pagination.displayName = 'Pagination';
  * Pagination item component for displaying a pagination item
  */
 const PaginationItem = React.forwardRef<HTMLButtonElement, PaginationItemProps>(
-  ({
-    className,
-    variant,
-    size,
-    isActive,
-    children,
-    ...props
-  }, ref) => {
+  ({ className, variant, size, isActive, children, ...props }, ref) => {
     const { variant: contextVariant, size: contextSize } = usePagination();
-    
+
     return (
       <button
         ref={ref}

@@ -7,14 +7,14 @@ export enum SuggestionStatus {
   UNDER_REVIEW = 'under_review',
   ACCEPTED = 'accepted',
   REJECTED = 'rejected',
-  IMPLEMENTED = 'implemented'
+  IMPLEMENTED = 'implemented',
 }
 
 export enum SuggestionPriority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export enum FeatureStage {
@@ -22,5 +22,5 @@ export enum FeatureStage {
   DEVELOPMENT = 'development',
   TESTING = 'testing',
   REVIEW = 'review',
-  DEPLOYED = 'deployed'
+  DEPLOYED = 'deployed',
 }

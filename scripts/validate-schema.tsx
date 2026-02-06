@@ -2,7 +2,7 @@
  * Schema Validation Script
  * 
  * This script validates that the database schema is in sync with the application.
- * It compares the main Prisma schema with the one in the packages/database directory
+ * It compares the main Drizzle schema with the one in the packages/database directory
  * and identifies any discrepancies.
  */
 
@@ -15,12 +15,12 @@ const execAsync = promisify(exec);
 
 // Paths to schema files
 const ROOT_DIR = path.resolve(__dirname, '..');
-const MAIN_SCHEMA_PATH = path.join(ROOT_DIR, 'prisma/schema.prisma');
-const PACKAGE_SCHEMA_PATH = path.join(ROOT_DIR, 'packages/database/prisma/schema.prisma');
+const MAIN_SCHEMA_PATH = path.join(ROOT_DIR, 'drizzle/schema.drizzle');
+const PACKAGE_SCHEMA_PATH = path.join(ROOT_DIR, 'packages/database/drizzle/schema.drizzle');
 
 // Paths to migration directories
-const MAIN_MIGRATIONS_PATH = path.join(ROOT_DIR, 'prisma/migrations');
-const PACKAGE_MIGRATIONS_PATH = path.join(ROOT_DIR, 'packages/database/prisma/migrations');
+const MAIN_MIGRATIONS_PATH = path.join(ROOT_DIR, 'drizzle/migrations');
+const PACKAGE_MIGRATIONS_PATH = path.join(ROOT_DIR, 'packages/database/drizzle/migrations');
 
 // Function to read a schema file
 async function readSchemaFile(filePath: string): Promise<string> {
@@ -159,8 +159,8 @@ async function checkPendingMigrations(schemaPath: string, databaseUrl: string): 
     // Set the DATABASE_URL environment variable for this command
     const env = { ...process.env, DATABASE_URL: databaseUrl };
     
-    // Run prisma migrate status to check for pending migrations
-    const { stdout } = await execAsync('npx prisma migrate status --schema ' + schemaPath, { env });
+    // Run drizzle migrate status to check for pending migrations
+    const { stdout } = await execAsync('npx drizzle migrate status --schema ' + schemaPath, { env });
     
     // Check if there are pending migrations
     return stdout.includes('Database schema is not in sync with migrations');

@@ -1,10 +1,14 @@
 # Agent-to-Agent (A2A) Protocol Specification
 
-The Agent-to-Agent (A2A) protocol is a standardized communication protocol for direct communication between AI agents in the Fuse framework. This document outlines the specification, methods, and usage patterns.
+The Agent-to-Agent (A2A) protocol is a standardized communication protocol for
+direct communication between AI agents in the Fuse framework. This document
+outlines the specification, methods, and usage patterns.
 
 ## Overview
 
-A2A enables different AI agents to communicate directly with each other, share context, and coordinate on complex tasks. It supports multiple protocol versions and adapters for different agent types.
+A2A enables different AI agents to communicate directly with each other, share
+context, and coordinate on complex tasks. It supports multiple protocol versions
+and adapters for different agent types.
 
 ## Protocol Structure
 
@@ -14,18 +18,18 @@ A2A messages follow a structured format, with support for multiple versions:
 
 ```typescript
 interface A2AMessageV1 {
-    id: string;
-    type: string;
-    timestamp: number;
-    sender: string;
-    recipient?: string;
-    payload: any;
-    metadata: {
-        priority: 'low' | 'medium' | 'high';
-        timeout?: number;
-        retryCount?: number;
-        protocol_version: '1.0';
-    };
+  id: string;
+  type: string;
+  timestamp: number;
+  sender: string;
+  recipient?: string;
+  payload: any;
+  metadata: {
+    priority: 'low' | 'medium' | 'high';
+    timeout?: number;
+    retryCount?: number;
+    protocol_version: '1.0';
+  };
 }
 ```
 
@@ -33,23 +37,23 @@ interface A2AMessageV1 {
 
 ```typescript
 interface A2AMessageV2 {
-    header: {
-        id: string;
-        type: string;
-        version: string;
-        priority: 'low' | 'medium' | 'high';
-        source: string;
-        target?: string;
+  header: {
+    id: string;
+    type: string;
+    version: string;
+    priority: 'low' | 'medium' | 'high';
+    source: string;
+    target?: string;
+  };
+  body: {
+    content: any;
+    metadata: {
+      sent_at: number;
+      timeout?: number;
+      retries?: number;
+      trace_id?: string;
     };
-    body: {
-        content: any;
-        metadata: {
-            sent_at: number;
-            timeout?: number;
-            retries?: number;
-            trace_id?: string;
-        };
-    };
+  };
 }
 ```
 
@@ -59,28 +63,29 @@ A2A supports the following message types:
 
 ```typescript
 enum A2AMessageType {
-    TASK_REQUEST = 'TASK_REQUEST',
-    QUERY = 'QUERY',
-    RESPONSE = 'RESPONSE',
-    NOTIFICATION = 'NOTIFICATION',
-    ERROR = 'ERROR',
-    HEARTBEAT = 'HEARTBEAT',
-    CAPABILITY_DISCOVERY = 'CAPABILITY_DISCOVERY',
-    WORKFLOW_STEP = 'WORKFLOW_STEP'
+  TASK_REQUEST = 'TASK_REQUEST',
+  QUERY = 'QUERY',
+  RESPONSE = 'RESPONSE',
+  NOTIFICATION = 'NOTIFICATION',
+  ERROR = 'ERROR',
+  HEARTBEAT = 'HEARTBEAT',
+  CAPABILITY_DISCOVERY = 'CAPABILITY_DISCOVERY',
+  WORKFLOW_STEP = 'WORKFLOW_STEP',
 }
 ```
 
 ## Protocol Adapters
 
-A2A supports multiple protocol adapters to enable communication between different agent types:
+A2A supports multiple protocol adapters to enable communication between
+different agent types:
 
 ```typescript
 interface ProtocolAdapter {
-    name: string;
-    version: string;
-    supportedProtocols: string[];
-    canHandle(protocol: string): boolean;
-    adaptMessage(message: A2AMessage, targetProtocol: string): Promise<any>;
+  name: string;
+  version: string;
+  supportedProtocols: string[];
+  canHandle(protocol: string): boolean;
+  adaptMessage(message: A2AMessage, targetProtocol: string): Promise<any>;
 }
 ```
 
@@ -96,11 +101,16 @@ class GoogleA2AAdapter {
     return this.supportedProtocols.includes(protocol);
   }
 
-  async adaptMessage(message: A2AMessage, targetProtocol: string): Promise<GoogleA2AMessage> {
+  async adaptMessage(
+    message: A2AMessage,
+    targetProtocol: string
+  ): Promise<GoogleA2AMessage> {
     if (targetProtocol === 'google-a2a-v1.0') {
       return this.convertToGoogleFormat(message);
     } else if (targetProtocol === 'a2a-v2.0') {
-      return this.convertFromGoogleFormat(message as unknown as GoogleA2AMessage);
+      return this.convertFromGoogleFormat(
+        message as unknown as GoogleA2AMessage
+      );
     }
     throw new Error(`Unsupported target protocol: ${targetProtocol}`);
   }
@@ -119,7 +129,10 @@ class ACAProtocolAdapter {
     return this.supportedProtocols.includes(protocol);
   }
 
-  async adaptMessage(message: A2AMessage, targetProtocol: string): Promise<ACAMessage | A2AMessage> {
+  async adaptMessage(
+    message: A2AMessage,
+    targetProtocol: string
+  ): Promise<ACAMessage | A2AMessage> {
     if (targetProtocol === 'aca-v1.0') {
       return this.convertToACAFormat(message);
     } else if (targetProtocol === 'a2a-v2.0') {
@@ -152,7 +165,9 @@ class A2AProtocolHandler {
 
       // Check if target agent exists
       if (message.header.target) {
-        const targetAgent = this.agentCardService.getAgentById(message.header.target);
+        const targetAgent = this.agentCardService.getAgentById(
+          message.header.target
+        );
         if (!targetAgent) {
           throw new Error(`Target agent ${message.header.target} not found`);
         }
@@ -161,7 +176,9 @@ class A2AProtocolHandler {
       // Get handler for message type
       const handler = this.messageHandlers.get(message.header.type);
       if (!handler) {
-        throw new Error(`No handler registered for message type ${message.header.type}`);
+        throw new Error(
+          `No handler registered for message type ${message.header.type}`
+        );
       }
 
       // Handle message
@@ -217,7 +234,8 @@ class A2AWebSocketService {
 
 ## VS Code Integration
 
-The New Fuse VS Code extension integrates with A2A to provide a seamless experience for developers:
+The New Fuse VS Code extension integrates with A2A to provide a seamless
+experience for developers:
 
 ```typescript
 // Initialize the protocol registry
@@ -225,20 +243,23 @@ const protocolRegistry = new ProtocolRegistry(context);
 
 // Initialize the unified communication manager
 const communicationManager = new CommunicationManager(context, {
-    agentId: 'thefuse.main',
-    agentName: 'The New Fuse',
-    capabilities: ['orchestration', 'agent-discovery', 'workflow-execution'],
-    version: '1.0.0',
-    apiVersion: '1.0.0',
-    debug: false
+  agentId: 'thefuse.main',
+  agentName: 'The New Fuse',
+  capabilities: ['orchestration', 'agent-discovery', 'workflow-execution'],
+  version: '1.0.0',
+  apiVersion: '1.0.0',
+  debug: false,
 });
 
 // Initialize communication manager
-communicationManager.initialize(redisClient).then(() => {
+communicationManager
+  .initialize(redisClient)
+  .then(() => {
     log('Communication manager initialized');
-}).catch(error => {
+  })
+  .catch((error) => {
     log(`Error initializing communication manager: ${error.message}`);
-});
+  });
 ```
 
 ## Best Practices
@@ -253,4 +274,6 @@ communicationManager.initialize(redisClient).then(() => {
 
 ## Conclusion
 
-The Agent-to-Agent (A2A) protocol provides a standardized way for AI agents to communicate directly with each other. By following this specification, developers can create interoperable AI systems that work together seamlessly.
+The Agent-to-Agent (A2A) protocol provides a standardized way for AI agents to
+communicate directly with each other. By following this specification,
+developers can create interoperable AI systems that work together seamlessly.

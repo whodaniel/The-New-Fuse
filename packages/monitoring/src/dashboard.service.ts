@@ -3,10 +3,10 @@
 
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { OptimizedA2AService } from '../../a2a-enhanced/src/optimized-a2a.service';
 import { RedisCacheService } from '../../cache/src/redis-cache.service';
 import { OptimizedQueueService } from '../../job-queue/src/optimized-queue.service';
 import { OptimizedWebSocketService } from '../../websocket/src/optimized-websocket.service';
-import { OptimizedA2AService } from '../../a2a-enhanced/src/optimized-a2a.service';
 
 export interface SystemMetrics {
   timestamp: number;
@@ -95,11 +95,11 @@ export interface DashboardData {
 @Injectable()
 export class MonitoringDashboardService implements OnModuleInit {
   private readonly logger = new Logger(MonitoringDashboardService.name);
-  
+
   private metricsHistory: SystemMetrics[] = [];
   private alerts: PerformanceAlert[] = [];
   private isCollecting = false;
-  
+
   // Performance thresholds for alerting
   private readonly thresholds = {
     cpu: { warning: 70, critical: 90 },
@@ -121,7 +121,7 @@ export class MonitoringDashboardService implements OnModuleInit {
     private cacheService: RedisCacheService,
     private queueService: OptimizedQueueService,
     private websocketService: OptimizedWebSocketService,
-    private a2aService: OptimizedA2AService,
+    private a2aService: OptimizedA2AService
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -139,7 +139,7 @@ export class MonitoringDashboardService implements OnModuleInit {
       if (cachedMetrics) {
         this.metricsHistory = cachedMetrics;
       }
-      
+
       const cachedAlerts = await this.cacheService.get('monitoring:alerts');
       if (cachedAlerts) {
         this.alerts = cachedAlerts;
@@ -181,21 +181,15 @@ export class MonitoringDashboardService implements OnModuleInit {
   private async collectCurrentMetrics(): Promise<SystemMetrics> {
     const timestamp = Date.now();
 
-    const [
-      systemStats,
-      cacheStats,
-      queueMetrics,
-      websocketMetrics,
-      a2aMetrics,
-      databaseStats,
-    ] = await Promise.all([
-      this.getSystemStats(),
-      this.cacheService.getStats(),
-      this.queueService.getQueueMetrics(),
-      this.websocketService.getConnectionMetrics(),
-      this.a2aService.getMetrics(),
-      this.getDatabaseStats(),
-    ]);
+    const [systemStats, cacheStats, queueMetrics, websocketMetrics, a2aMetrics, databaseStats] =
+      await Promise.all([
+        this.getSystemStats(),
+        this.cacheService.getStats(),
+        this.queueService.getQueueMetrics(),
+        this.websocketService.getConnectionMetrics(),
+        this.a2aService.getMetrics(),
+        this.getDatabaseStats(),
+      ]);
 
     const metrics: SystemMetrics = {
       timestamp,
@@ -266,7 +260,7 @@ export class MonitoringDashboardService implements OnModuleInit {
   // Trend calculation for dashboard charts
   private async calculateTrends(): Promise<DashboardData['trends']> {
     const last24Hours = this.getRecentMetrics(24 * 60);
-    
+
     return {
       userGrowth: this.extractTrend(last24Hours, 'user_growth'),
       agentActivity: this.extractTrend(last24Hours, 'agent_activity'),
@@ -281,57 +275,153 @@ export class MonitoringDashboardService implements OnModuleInit {
 
     // CPU Alert
     if (metrics.system.cpu > this.thresholds.cpu.critical) {
-      newAlerts.push(this.createAlert('critical', 'system', 'cpu', metrics.system.cpu, this.thresholds.cpu.critical));
+      newAlerts.push(
+        this.createAlert(
+          'critical',
+          'system',
+          'cpu',
+          metrics.system.cpu,
+          this.thresholds.cpu.critical
+        )
+      );
     } else if (metrics.system.cpu > this.thresholds.cpu.warning) {
-      newAlerts.push(this.createAlert('warning', 'system', 'cpu', metrics.system.cpu, this.thresholds.cpu.warning));
+      newAlerts.push(
+        this.createAlert(
+          'warning',
+          'system',
+          'cpu',
+          metrics.system.cpu,
+          this.thresholds.cpu.warning
+        )
+      );
     }
 
     // Memory Alert
     if (metrics.system.memory > this.thresholds.memory.critical) {
-      newAlerts.push(this.createAlert('critical', 'system', 'memory', metrics.system.memory, this.thresholds.memory.critical));
+      newAlerts.push(
+        this.createAlert(
+          'critical',
+          'system',
+          'memory',
+          metrics.system.memory,
+          this.thresholds.memory.critical
+        )
+      );
     } else if (metrics.system.memory > this.thresholds.memory.warning) {
-      newAlerts.push(this.createAlert('warning', 'system', 'memory', metrics.system.memory, this.thresholds.memory.warning));
+      newAlerts.push(
+        this.createAlert(
+          'warning',
+          'system',
+          'memory',
+          metrics.system.memory,
+          this.thresholds.memory.warning
+        )
+      );
     }
 
     // Cache Hit Rate Alert
     if (metrics.cache.hitRate < this.thresholds.cacheHitRate.critical) {
-      newAlerts.push(this.createAlert('critical', 'cache', 'hitRate', metrics.cache.hitRate, this.thresholds.cacheHitRate.critical));
+      newAlerts.push(
+        this.createAlert(
+          'critical',
+          'cache',
+          'hitRate',
+          metrics.cache.hitRate,
+          this.thresholds.cacheHitRate.critical
+        )
+      );
     } else if (metrics.cache.hitRate < this.thresholds.cacheHitRate.warning) {
-      newAlerts.push(this.createAlert('warning', 'cache', 'hitRate', metrics.cache.hitRate, this.thresholds.cacheHitRate.warning));
+      newAlerts.push(
+        this.createAlert(
+          'warning',
+          'cache',
+          'hitRate',
+          metrics.cache.hitRate,
+          this.thresholds.cacheHitRate.warning
+        )
+      );
     }
 
     // WebSocket Latency Alert
     if (metrics.websocket.averageLatency > this.thresholds.websocketLatency.critical) {
-      newAlerts.push(this.createAlert('critical', 'websocket', 'latency', metrics.websocket.averageLatency, this.thresholds.websocketLatency.critical));
+      newAlerts.push(
+        this.createAlert(
+          'critical',
+          'websocket',
+          'latency',
+          metrics.websocket.averageLatency,
+          this.thresholds.websocketLatency.critical
+        )
+      );
     } else if (metrics.websocket.averageLatency > this.thresholds.websocketLatency.warning) {
-      newAlerts.push(this.createAlert('warning', 'websocket', 'latency', metrics.websocket.averageLatency, this.thresholds.websocketLatency.warning));
+      newAlerts.push(
+        this.createAlert(
+          'warning',
+          'websocket',
+          'latency',
+          metrics.websocket.averageLatency,
+          this.thresholds.websocketLatency.warning
+        )
+      );
     }
 
     // A2A Error Rate Alert
     if (metrics.a2a.errorRate > this.thresholds.a2aErrorRate.critical) {
-      newAlerts.push(this.createAlert('critical', 'a2a', 'errorRate', metrics.a2a.errorRate, this.thresholds.a2aErrorRate.critical));
+      newAlerts.push(
+        this.createAlert(
+          'critical',
+          'a2a',
+          'errorRate',
+          metrics.a2a.errorRate,
+          this.thresholds.a2aErrorRate.critical
+        )
+      );
     } else if (metrics.a2a.errorRate > this.thresholds.a2aErrorRate.warning) {
-      newAlerts.push(this.createAlert('warning', 'a2a', 'errorRate', metrics.a2a.errorRate, this.thresholds.a2aErrorRate.warning));
+      newAlerts.push(
+        this.createAlert(
+          'warning',
+          'a2a',
+          'errorRate',
+          metrics.a2a.errorRate,
+          this.thresholds.a2aErrorRate.warning
+        )
+      );
     }
 
     // Database Query Time Alert
     if (metrics.database.averageQueryTime > this.thresholds.dbQueryTime.critical) {
-      newAlerts.push(this.createAlert('critical', 'database', 'queryTime', metrics.database.averageQueryTime, this.thresholds.dbQueryTime.critical));
+      newAlerts.push(
+        this.createAlert(
+          'critical',
+          'database',
+          'queryTime',
+          metrics.database.averageQueryTime,
+          this.thresholds.dbQueryTime.critical
+        )
+      );
     } else if (metrics.database.averageQueryTime > this.thresholds.dbQueryTime.warning) {
-      newAlerts.push(this.createAlert('warning', 'database', 'queryTime', metrics.database.averageQueryTime, this.thresholds.dbQueryTime.warning));
+      newAlerts.push(
+        this.createAlert(
+          'warning',
+          'database',
+          'queryTime',
+          metrics.database.averageQueryTime,
+          this.thresholds.dbQueryTime.warning
+        )
+      );
     }
 
     // Add new alerts and resolve old ones
     for (const alert of newAlerts) {
-      const existingAlert = this.alerts.find(a => 
-        a.service === alert.service && 
-        a.metric === alert.metric && 
-        !a.resolved
+      const existingAlert = this.alerts.find(
+        (a) => a.service === alert.service && a.metric === alert.metric && !a.resolved
       );
 
       if (!existingAlert) {
         this.alerts.push(alert);
-        this.logger.warn(`New alert: ${alert.type} - ${alert.service}.${alert.metric} = ${alert.value} (threshold: ${alert.threshold})`);
+        this.logger.warn(
+          `New alert: ${alert.type} - ${alert.service}.${alert.metric} = ${alert.value} (threshold: ${alert.threshold})`
+        );
       }
     }
 
@@ -372,8 +462,10 @@ export class MonitoringDashboardService implements OnModuleInit {
       // Get current value for the alert metric
       switch (alert.service) {
         case 'system':
-          currentValue = alert.metric === 'cpu' ? currentMetrics.system.cpu : currentMetrics.system.memory;
-          threshold = alert.metric === 'cpu' ? this.thresholds.cpu.warning : this.thresholds.memory.warning;
+          currentValue =
+            alert.metric === 'cpu' ? currentMetrics.system.cpu : currentMetrics.system.memory;
+          threshold =
+            alert.metric === 'cpu' ? this.thresholds.cpu.warning : this.thresholds.memory.warning;
           break;
         case 'cache':
           currentValue = currentMetrics.cache.hitRate;
@@ -396,9 +488,8 @@ export class MonitoringDashboardService implements OnModuleInit {
       }
 
       // Auto-resolve if metric is back to normal
-      const isResolved = alert.metric === 'hitRate' ? 
-        currentValue > threshold : 
-        currentValue < threshold;
+      const isResolved =
+        alert.metric === 'hitRate' ? currentValue > threshold : currentValue < threshold;
 
       if (isResolved) {
         alert.resolved = true;
@@ -411,7 +502,7 @@ export class MonitoringDashboardService implements OnModuleInit {
   private startMetricsCollection(): void {
     this.metricsInterval = setInterval(async () => {
       if (this.isCollecting) return;
-      
+
       this.isCollecting = true;
       try {
         const metrics = await this.collectCurrentMetrics();
@@ -423,7 +514,9 @@ export class MonitoringDashboardService implements OnModuleInit {
         }
 
         // Cache metrics for persistence
-        await this.cacheService.set('monitoring:historical_metrics', this.metricsHistory, { ttl: 86400 });
+        await this.cacheService.set('monitoring:historical_metrics', this.metricsHistory, {
+          ttl: 86400,
+        });
       } catch (error) {
         this.logger.error('Error collecting metrics:', error);
       } finally {
@@ -455,12 +548,12 @@ export class MonitoringDashboardService implements OnModuleInit {
 
   // Utility methods
   private getRecentMetrics(minutes: number): SystemMetrics[] {
-    const cutoff = Date.now() - (minutes * 60 * 1000);
-    return this.metricsHistory.filter(m => m.timestamp > cutoff);
+    const cutoff = Date.now() - minutes * 60 * 1000;
+    return this.metricsHistory.filter((m) => m.timestamp > cutoff);
   }
 
   private getActiveAlerts(): PerformanceAlert[] {
-    return this.alerts.filter(a => !a.resolved).slice(-50); // Last 50 active alerts
+    return this.alerts.filter((a) => !a.resolved).slice(-50); // Last 50 active alerts
   }
 
   private calculateOverallStatus(
@@ -482,9 +575,9 @@ export class MonitoringDashboardService implements OnModuleInit {
       metrics.websocket.averageLatency > this.thresholds.websocketLatency.warning,
     ];
 
-    if (criticalConditions.some(condition => condition)) {
+    if (criticalConditions.some((condition) => condition)) {
       return 'critical';
-    } else if (warningConditions.some(condition => condition)) {
+    } else if (warningConditions.some((condition) => condition)) {
       return 'warning';
     }
 
@@ -493,13 +586,18 @@ export class MonitoringDashboardService implements OnModuleInit {
 
   private extractTrend(metrics: SystemMetrics[], type: string): number[] {
     // Simple trend extraction - implement based on your specific needs
-    return metrics.map(m => {
+    return metrics.map((m) => {
       switch (type) {
-        case 'user_growth': return m.websocket.activeConnections;
-        case 'agent_activity': return m.a2a.activeAgents;
-        case 'workflow_execution': return m.queue.completedJobs;
-        case 'system_performance': return 100 - m.system.cpu;
-        default: return 0;
+        case 'user_growth':
+          return m.websocket.activeConnections;
+        case 'agent_activity':
+          return m.a2a.activeAgents;
+        case 'workflow_execution':
+          return m.queue.completedJobs;
+        case 'system_performance':
+          return 100 - m.system.cpu;
+        default:
+          return 0;
       }
     });
   }
@@ -537,40 +635,51 @@ export class MonitoringDashboardService implements OnModuleInit {
 
   private calculateTotalJobs(queueMetrics: any): number {
     if (typeof queueMetrics === 'object' && queueMetrics instanceof Map) {
-      return Array.from(queueMetrics.values())
-        .reduce((total, metrics) => total + (metrics.pending + metrics.active + metrics.completed + metrics.failed), 0);
+      return Array.from(queueMetrics.values()).reduce(
+        (total, metrics) =>
+          total + (metrics.pending + metrics.active + metrics.completed + metrics.failed),
+        0
+      );
     }
     return 0;
   }
 
   private calculateActiveJobs(queueMetrics: any): number {
     if (typeof queueMetrics === 'object' && queueMetrics instanceof Map) {
-      return Array.from(queueMetrics.values())
-        .reduce((total, metrics) => total + metrics.active, 0);
+      return Array.from(queueMetrics.values()).reduce(
+        (total, metrics) => total + metrics.active,
+        0
+      );
     }
     return 0;
   }
 
   private calculateCompletedJobs(queueMetrics: any): number {
     if (typeof queueMetrics === 'object' && queueMetrics instanceof Map) {
-      return Array.from(queueMetrics.values())
-        .reduce((total, metrics) => total + metrics.completed, 0);
+      return Array.from(queueMetrics.values()).reduce(
+        (total, metrics) => total + metrics.completed,
+        0
+      );
     }
     return 0;
   }
 
   private calculateFailedJobs(queueMetrics: any): number {
     if (typeof queueMetrics === 'object' && queueMetrics instanceof Map) {
-      return Array.from(queueMetrics.values())
-        .reduce((total, metrics) => total + metrics.failed, 0);
+      return Array.from(queueMetrics.values()).reduce(
+        (total, metrics) => total + metrics.failed,
+        0
+      );
     }
     return 0;
   }
 
   private calculateQueueThroughput(queueMetrics: any): number {
     if (typeof queueMetrics === 'object' && queueMetrics instanceof Map) {
-      return Array.from(queueMetrics.values())
-        .reduce((total, metrics) => total + (metrics.throughput || 0), 0);
+      return Array.from(queueMetrics.values()).reduce(
+        (total, metrics) => total + (metrics.throughput || 0),
+        0
+      );
     }
     return 0;
   }
@@ -579,7 +688,7 @@ export class MonitoringDashboardService implements OnModuleInit {
     try {
       const queueMetrics = await this.queueService.getQueueMetrics();
       const pendingJobs = this.calculateActiveJobs(queueMetrics);
-      
+
       return {
         status: pendingJobs > 1000 ? 'warning' : 'healthy',
         pendingJobs,
@@ -600,7 +709,7 @@ export class MonitoringDashboardService implements OnModuleInit {
   }
 
   async resolveAlert(alertId: string): Promise<boolean> {
-    const alert = this.alerts.find(a => a.id === alertId);
+    const alert = this.alerts.find((a) => a.id === alertId);
     if (alert) {
       alert.resolved = true;
       await this.cacheService.set('monitoring:alerts', this.alerts, { ttl: 3600 });
@@ -613,11 +722,11 @@ export class MonitoringDashboardService implements OnModuleInit {
     if (this.metricsInterval) {
       clearInterval(this.metricsInterval);
     }
-    
+
     if (this.alertsInterval) {
       clearInterval(this.alertsInterval);
     }
-    
+
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
     }

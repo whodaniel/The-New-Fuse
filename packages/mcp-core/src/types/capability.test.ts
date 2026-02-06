@@ -2,19 +2,19 @@
  * Tests for MCP Capability types and validation
  */
 
-import {
-  CapabilityCategory,
-  CapabilityLifecycleState,
-  CapabilityCompatibilityLevel,
-  CapabilityDiscoveryResult,
-  CapabilityCompatibilityResult,
-  CapabilityNegotiation,
-  CapabilityAnnouncement,
-  CapabilitySearchCriteria,
-  CapabilityValidationResult,
-  CapabilityUsageTracking
-} from './capability';
 import { mcpValidator } from '../validation/validator';
+import {
+  CapabilityAnnouncement,
+  CapabilityCategory,
+  CapabilityCompatibilityLevel,
+  CapabilityCompatibilityResult,
+  CapabilityDiscoveryResult,
+  CapabilityLifecycleState,
+  CapabilityNegotiation,
+  CapabilitySearchCriteria,
+  CapabilityUsageTracking,
+  CapabilityValidationResult,
+} from './capability';
 
 describe('Capability Types', () => {
   describe('Enumerations', () => {
@@ -51,12 +51,12 @@ describe('Capability Types', () => {
             name: 'test-capability',
             version: '1.0.0',
             description: 'Test capability',
-            methods: ['test.method']
-          }
+            methods: ['test.method'],
+          },
         ],
         totalCount: 1,
         discoveredAt: new Date(),
-        source: 'test-source'
+        source: 'test-source',
       };
 
       expect(discoveryResult.capabilities).toHaveLength(1);
@@ -71,7 +71,7 @@ describe('Capability Types', () => {
         level: CapabilityCompatibilityLevel.FULL,
         compatibleVersion: '1.0.0',
         issues: [],
-        suggestions: ['Consider upgrading to version 2.0.0']
+        suggestions: ['Consider upgrading to version 2.0.0'],
       };
 
       expect(compatibilityResult.capabilityName).toBe('test-capability');
@@ -89,27 +89,27 @@ describe('Capability Types', () => {
             name: 'client-capability',
             version: '1.0.0',
             description: 'Client capability',
-            methods: ['client.method']
-          }
+            methods: ['client.method'],
+          },
         ],
         serverCapabilities: [
           {
             name: 'server-capability',
             version: '1.0.0',
             description: 'Server capability',
-            methods: ['server.method']
-          }
+            methods: ['server.method'],
+          },
         ],
         negotiatedCapabilities: [
           {
             name: 'common-capability',
             version: '1.0.0',
             description: 'Common capability',
-            methods: ['common.method']
-          }
+            methods: ['common.method'],
+          },
         ],
         status: 'completed',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       expect(negotiation.id).toBe('negotiation-123');
@@ -127,12 +127,12 @@ describe('Capability Types', () => {
           name: 'new-capability',
           version: '1.0.0',
           description: 'New capability',
-          methods: ['new.method']
+          methods: ['new.method'],
         },
         type: 'added',
         announcer: 'service-123',
         timestamp: new Date(),
-        message: 'New capability has been added'
+        message: 'New capability has been added',
       };
 
       expect(announcement.id).toBe('announcement-456');
@@ -151,7 +151,7 @@ describe('Capability Types', () => {
         methods: ['test.method'],
         tags: ['testing', 'utility'],
         lifecycleState: CapabilityLifecycleState.ACCEPTED,
-        experimental: false
+        experimental: false,
       };
 
       expect(searchCriteria.name).toBe('test-*');
@@ -172,8 +172,8 @@ describe('Capability Types', () => {
           name: 'normalized-capability',
           version: '1.0.0',
           description: 'Normalized capability',
-          methods: ['normalized.method']
-        }
+          methods: ['normalized.method'],
+        },
       };
 
       expect(validationResult.valid).toBe(true);
@@ -188,22 +188,22 @@ describe('Capability Types', () => {
         usageCount: 100,
         uniqueUsers: 25,
         methodUsage: {
-          'method1': 60,
-          'method2': 40
+          method1: 60,
+          method2: 40,
         },
         trends: [
           {
             period: new Date('2023-01-01'),
             count: 50,
-            uniqueUsers: 15
+            uniqueUsers: 15,
           },
           {
             period: new Date('2023-01-02'),
             count: 50,
-            uniqueUsers: 10
-          }
+            uniqueUsers: 10,
+          },
         ],
-        lastUsed: new Date()
+        lastUsed: new Date(),
       };
 
       expect(usageTracking.capabilityName).toBe('tracked-capability');
@@ -229,8 +229,8 @@ describe('Capability Types', () => {
           author: 'Test Author',
           documentation: 'https://example.com/docs',
           license: 'MIT',
-          tags: ['testing', 'validation']
-        }
+          tags: ['testing', 'validation'],
+        },
       };
 
       const result = mcpValidator.validateMCPCapability(capability);
@@ -254,12 +254,12 @@ describe('Capability Types', () => {
         name: 'test-capability',
         version: 'invalid-version',
         description: 'Test capability',
-        methods: ['test.method']
+        methods: ['test.method'],
       };
 
       const result = mcpValidator.validateMCPCapability(invalidCapability);
       expect(result.valid).toBe(false);
-      expect(result.errors.some(error => error.includes('version'))).toBe(true);
+      expect(result.errors.some((error) => error.includes('version'))).toBe(true);
     });
 
     it('should reject capability without methods', () => {
@@ -267,12 +267,12 @@ describe('Capability Types', () => {
         name: 'test-capability',
         version: '1.0.0',
         description: 'Test capability',
-        methods: [] // empty methods array
+        methods: [], // empty methods array
       };
 
       const result = mcpValidator.validateMCPCapability(invalidCapability);
       expect(result.valid).toBe(false);
-      expect(result.errors.some(error => error.includes('methods'))).toBe(true);
+      expect(result.errors.some((error) => error.includes('methods'))).toBe(true);
     });
 
     it('should accept capability with optional fields', () => {
@@ -280,7 +280,7 @@ describe('Capability Types', () => {
         name: 'minimal-capability',
         version: '1.0.0',
         description: 'Minimal capability',
-        methods: ['minimal.method']
+        methods: ['minimal.method'],
       };
 
       const result = mcpValidator.validateMCPCapability(capability);
@@ -299,8 +299,8 @@ describe('Capability Types', () => {
           author: 'Documentation Team',
           documentation: 'https://docs.example.com/capability',
           license: 'Apache-2.0',
-          tags: ['documentation', 'beta']
-        }
+          tags: ['documentation', 'beta'],
+        },
       };
 
       const result = mcpValidator.validateMCPCapability(capability);

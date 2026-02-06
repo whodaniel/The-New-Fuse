@@ -54,7 +54,7 @@ export class ProviderRegistry extends EventEmitter {
 
   findModelById(modelId: string): { provider: ProviderInfo; model: ModelInfo } | undefined {
     for (const provider of this.providers.values()) {
-      const model = provider.models.find(m => m.id === modelId);
+      const model = provider.models.find((m) => m.id === modelId);
       if (model) {
         return { provider, model };
       }
@@ -75,21 +75,21 @@ export class ProviderRegistry extends EventEmitter {
           id: 'gpt-4o',
           name: 'GPT-4o',
           description: 'Most advanced multimodal model',
-          contextLength: 128000
+          contextLength: 128000,
         },
         {
           id: 'gpt-4-turbo',
           name: 'GPT-4 Turbo',
           description: 'High performance GPT-4 model',
-          contextLength: 128000
+          contextLength: 128000,
         },
         {
           id: 'gpt-3.5-turbo',
           name: 'GPT-3.5 Turbo',
           description: 'Fast and cost-effective model',
-          contextLength: 16000
-        }
-      ]
+          contextLength: 16000,
+        },
+      ],
     });
     // Anthropic Provider
     this.registerProvider({
@@ -103,21 +103,21 @@ export class ProviderRegistry extends EventEmitter {
           id: 'claude-3-opus',
           name: 'Claude 3 Opus',
           description: 'Most powerful Claude model',
-          contextLength: 200000
+          contextLength: 200000,
         },
         {
           id: 'claude-3-sonnet',
           name: 'Claude 3 Sonnet',
           description: 'Balanced performance and speed',
-          contextLength: 200000
+          contextLength: 200000,
         },
         {
           id: 'claude-3-haiku',
           name: 'Claude 3 Haiku',
           description: 'Fastest Claude model',
-          contextLength: 200000
-        }
-      ]
+          contextLength: 200000,
+        },
+      ],
     });
     this.emit('default-providers-initialized');
   }

@@ -2,7 +2,7 @@
 # Railway API Service - Manual Migration Script
 # Run this to create the missing database tables
 
-echo "🔧 Running Prisma migrations on Railway API service..."
+echo "🔧 Running Drizzle migrations on Railway API service..."
 echo ""
 echo "📋 This will create the following tables:"
 echo "   - User (with verifierId)"
@@ -11,7 +11,7 @@ echo "   - Transaction (with tx_hash, from_address, to_address, value, status)"
 echo ""
 
 # The command to run in Railway's API service shell:
-MIGRATION_COMMAND="npx prisma migrate deploy --schema=/app/apps/api/prisma/schema.prisma"
+MIGRATION_COMMAND="npx drizzle migrate deploy --schema=/app/apps/api/drizzle/schema.drizzle"
 
 echo "🚀 Command to run in Railway API service shell:"
 echo ""
@@ -26,7 +26,7 @@ echo "   5. Press Enter"
 echo ""
 echo "✅ Expected output:"
 echo "   - 'Running migrations...'"
-echo "   - '1 migration found in prisma/migrations'"
+echo "   - '1 migration found in drizzle/migrations'"
 echo "   - 'Applying migration 20240101000000_add_wallet_system'"
 echo "   - 'Migration applied successfully'"
 echo ""

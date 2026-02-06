@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as path from 'path';
 import { promises as fs } from 'fs';
+import * as path from 'path';
 
 // Mock nodemailer types and functionality
 interface MailOptions {
@@ -29,7 +29,7 @@ const handlebars = {
         return context[key] || match;
       });
     };
-  }
+  },
 };
 
 @Injectable()
@@ -42,7 +42,7 @@ export class EmailService {
       sendMail: async (options: MailOptions) => {
         console.log('Mock email sent:', options);
         return { messageId: 'mock-' + Date.now() };
-      }
+      },
     };
   }
 
@@ -57,7 +57,7 @@ export class EmailService {
         to,
         subject,
         html,
-        text
+        text,
       });
 
       return true;

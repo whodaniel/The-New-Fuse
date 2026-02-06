@@ -5,19 +5,18 @@
 
 import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository';
 import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository';
-import { AgentFactory, UserFactory } from '../utils/factories';
 import {
-  expectDatabaseRow,
-  expectSoftDeleted,
-  expectNotNull,
   expectArrayLength,
+  expectDatabaseRow,
   expectEmptyArray,
   expectNonEmptyArray,
-  expectValidPagination,
   expectNotDeleted,
-  expectDeleted,
+  expectNotNull,
+  expectSoftDeleted,
+  expectValidPagination,
 } from '../utils/assertions';
-import { pastTimestamp, sleep } from '../utils/database-helpers';
+import { sleep } from '../utils/database-helpers';
+import { AgentFactory, UserFactory } from '../utils/factories';
 
 describe('DrizzleAgentRepository', () => {
   let testUserId: string;
@@ -141,9 +140,13 @@ describe('DrizzleAgentRepository', () => {
     });
 
     it('should order agents by creation date (newest first)', async () => {
-      const agent1 = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+      const agent1 = await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId })
+      );
       await sleep(10); // Ensure different timestamps
-      const agent2 = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+      const agent2 = await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId })
+      );
 
       const found = await drizzleAgentRepository.findByUserId(testUserId);
 
@@ -154,9 +157,15 @@ describe('DrizzleAgentRepository', () => {
 
   describe('findActive', () => {
     it('should find all active agents', async () => {
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, status: 'ACTIVE' }));
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, status: 'ACTIVE' }));
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, status: 'INACTIVE' }));
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, status: 'ACTIVE' })
+      );
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, status: 'ACTIVE' })
+      );
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, status: 'INACTIVE' })
+      );
 
       const found = await drizzleAgentRepository.findActive();
 
@@ -165,7 +174,9 @@ describe('DrizzleAgentRepository', () => {
     });
 
     it('should return empty array when no active agents exist', async () => {
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, status: 'INACTIVE' }));
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, status: 'INACTIVE' })
+      );
 
       const found = await drizzleAgentRepository.findActive();
 
@@ -175,7 +186,9 @@ describe('DrizzleAgentRepository', () => {
 
   describe('update', () => {
     it('should update agent fields', async () => {
-      const created = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+      const created = await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId })
+      );
 
       const updated = await drizzleAgentRepository.update(created.id, {
         name: 'Updated Name',
@@ -199,7 +212,9 @@ describe('DrizzleAgentRepository', () => {
 
   describe('softDelete', () => {
     it('should soft delete agent', async () => {
-      const created = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+      const created = await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId })
+      );
 
       const deleted = await drizzleAgentRepository.softDelete(created.id);
 
@@ -218,7 +233,9 @@ describe('DrizzleAgentRepository', () => {
 
   describe('hardDelete', () => {
     it('should permanently delete agent', async () => {
-      const created = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+      const created = await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId })
+      );
 
       const deleted = await drizzleAgentRepository.hardDelete(created.id);
 
@@ -237,8 +254,12 @@ describe('DrizzleAgentRepository', () => {
 
   describe('search', () => {
     it('should search agents by name', async () => {
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, name: 'SearchBot' }));
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, name: 'OtherAgent' }));
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, name: 'SearchBot' })
+      );
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, name: 'OtherAgent' })
+      );
 
       const found = await drizzleAgentRepository.search('SearchBot', testUserId);
 
@@ -247,7 +268,9 @@ describe('DrizzleAgentRepository', () => {
     });
 
     it('should search agents by description', async () => {
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, description: 'Unique Description' }));
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, description: 'Unique Description' })
+      );
 
       const found = await drizzleAgentRepository.search('Unique', testUserId);
 
@@ -267,8 +290,12 @@ describe('DrizzleAgentRepository', () => {
       const userData2 = await UserFactory.build();
       const user2 = await drizzleUserRepository.create(userData2);
 
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, name: 'GlobalSearch' }));
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: user2.id, name: 'GlobalSearch' }));
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, name: 'GlobalSearch' })
+      );
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: user2.id, name: 'GlobalSearch' })
+      );
 
       const found = await drizzleAgentRepository.search('GlobalSearch');
 
@@ -278,9 +305,15 @@ describe('DrizzleAgentRepository', () => {
 
   describe('countByStatus', () => {
     it('should count agents by status', async () => {
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, status: 'ACTIVE' }));
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, status: 'ACTIVE' }));
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, status: 'INACTIVE' }));
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, status: 'ACTIVE' })
+      );
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, status: 'ACTIVE' })
+      );
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, status: 'INACTIVE' })
+      );
 
       const counts = await drizzleAgentRepository.countByStatus();
 
@@ -294,7 +327,9 @@ describe('DrizzleAgentRepository', () => {
 
   describe('upsertMetadata', () => {
     it('should create metadata for agent without existing metadata', async () => {
-      const created = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+      const created = await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId })
+      );
 
       const metadata = await drizzleAgentRepository.upsertMetadata(created.id, {
         customFields: { setting: 'value' },
@@ -305,7 +340,9 @@ describe('DrizzleAgentRepository', () => {
     });
 
     it('should update metadata for agent with existing metadata', async () => {
-      const created = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+      const created = await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId })
+      );
       await drizzleAgentRepository.upsertMetadata(created.id, { customFields: { old: 'data' } });
 
       const updated = await drizzleAgentRepository.upsertMetadata(created.id, {
@@ -332,7 +369,9 @@ describe('DrizzleAgentRepository', () => {
     it('should return null when name exists for different user', async () => {
       const userData2 = await UserFactory.build();
       const user2 = await drizzleUserRepository.create(userData2);
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: user2.id, name: 'AgentName' }));
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: user2.id, name: 'AgentName' })
+      );
 
       const found = await drizzleAgentRepository.findByNameAndUserId('AgentName', testUserId);
 
@@ -371,9 +410,15 @@ describe('DrizzleAgentRepository', () => {
 
   describe('findByStatusAndUserId', () => {
     it('should find agents by status and userId', async () => {
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, status: 'ACTIVE' }));
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, status: 'ACTIVE' }));
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, status: 'INACTIVE' }));
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, status: 'ACTIVE' })
+      );
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, status: 'ACTIVE' })
+      );
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, status: 'INACTIVE' })
+      );
 
       const found = await drizzleAgentRepository.findByStatusAndUserId('ACTIVE', testUserId);
 
@@ -384,8 +429,12 @@ describe('DrizzleAgentRepository', () => {
 
   describe('searchAgents', () => {
     it('should search by name only', async () => {
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, name: 'TestAgent123' }));
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, name: 'OtherAgent' }));
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, name: 'TestAgent123' })
+      );
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, name: 'OtherAgent' })
+      );
 
       const found = await drizzleAgentRepository.searchAgents(testUserId, { name: 'Test' });
 
@@ -404,8 +453,12 @@ describe('DrizzleAgentRepository', () => {
     });
 
     it('should search by capability', async () => {
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, capabilities: ['search', 'analyze'] }));
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, capabilities: ['chat'] }));
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, capabilities: ['search', 'analyze'] })
+      );
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, capabilities: ['chat'] })
+      );
 
       const found = await drizzleAgentRepository.searchAgents(testUserId, { capability: 'search' });
 
@@ -415,10 +468,20 @@ describe('DrizzleAgentRepository', () => {
 
     it('should combine multiple search criteria', async () => {
       await drizzleAgentRepository.create(
-        AgentFactory.build({ userId: testUserId, name: 'SearchBot', type: 'CHAT', capabilities: ['search'] })
+        AgentFactory.build({
+          userId: testUserId,
+          name: 'SearchBot',
+          type: 'CHAT',
+          capabilities: ['search'],
+        })
       );
       await drizzleAgentRepository.create(
-        AgentFactory.build({ userId: testUserId, name: 'SearchBot', type: 'TASK', capabilities: ['analyze'] })
+        AgentFactory.build({
+          userId: testUserId,
+          name: 'SearchBot',
+          type: 'TASK',
+          capabilities: ['analyze'],
+        })
       );
 
       const found = await drizzleAgentRepository.searchAgents(testUserId, {
@@ -434,8 +497,12 @@ describe('DrizzleAgentRepository', () => {
 
   describe('findByCapability', () => {
     it('should find agents with specific capability', async () => {
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, capabilities: ['coding', 'debug'] }));
-      await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, capabilities: ['chat'] }));
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, capabilities: ['coding', 'debug'] })
+      );
+      await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, capabilities: ['chat'] })
+      );
 
       const found = await drizzleAgentRepository.findByCapability('coding', testUserId);
 
@@ -446,7 +513,9 @@ describe('DrizzleAgentRepository', () => {
 
   describe('updateStatus', () => {
     it('should update agent status', async () => {
-      const created = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, status: 'ACTIVE' }));
+      const created = await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, status: 'ACTIVE' })
+      );
 
       const updated = await drizzleAgentRepository.updateStatus(created.id, 'INACTIVE');
 
@@ -464,7 +533,9 @@ describe('DrizzleAgentRepository', () => {
   describe('Registration Methods', () => {
     describe('createRegistration', () => {
       it('should create agent registration', async () => {
-        const agent = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+        const agent = await drizzleAgentRepository.create(
+          AgentFactory.build({ userId: testUserId })
+        );
 
         const registration = await drizzleAgentRepository.createRegistration({
           agentId: agent.id,
@@ -486,7 +557,9 @@ describe('DrizzleAgentRepository', () => {
 
     describe('findRegistrationByToken', () => {
       it('should find registration by auth token', async () => {
-        const agent = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+        const agent = await drizzleAgentRepository.create(
+          AgentFactory.build({ userId: testUserId })
+        );
         const created = await drizzleAgentRepository.createRegistration({
           agentId: agent.id,
           authToken: 'find-me-token',
@@ -514,7 +587,9 @@ describe('DrizzleAgentRepository', () => {
 
     describe('findRegistrationById', () => {
       it('should find registration by ID', async () => {
-        const agent = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+        const agent = await drizzleAgentRepository.create(
+          AgentFactory.build({ userId: testUserId })
+        );
         const created = await drizzleAgentRepository.createRegistration({
           agentId: agent.id,
           authToken: 'token-123',
@@ -536,7 +611,9 @@ describe('DrizzleAgentRepository', () => {
 
     describe('updateRegistrationHeartbeat', () => {
       it('should update registration heartbeat', async () => {
-        const agent = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+        const agent = await drizzleAgentRepository.create(
+          AgentFactory.build({ userId: testUserId })
+        );
         const registration = await drizzleAgentRepository.createRegistration({
           agentId: agent.id,
           authToken: 'token-123',
@@ -562,7 +639,9 @@ describe('DrizzleAgentRepository', () => {
 
     describe('createCapability', () => {
       it('should create capability registry entry', async () => {
-        const agent = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+        const agent = await drizzleAgentRepository.create(
+          AgentFactory.build({ userId: testUserId })
+        );
         const registration = await drizzleAgentRepository.createRegistration({
           agentId: agent.id,
           authToken: 'token-123',
@@ -593,7 +672,9 @@ describe('DrizzleAgentRepository', () => {
 
     describe('createOnboardingEvent', () => {
       it('should create onboarding event', async () => {
-        const agent = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+        const agent = await drizzleAgentRepository.create(
+          AgentFactory.build({ userId: testUserId })
+        );
         const registration = await drizzleAgentRepository.createRegistration({
           agentId: agent.id,
           authToken: 'token-123',
@@ -621,7 +702,9 @@ describe('DrizzleAgentRepository', () => {
 
     describe('createDirectoryEntry', () => {
       it('should create directory entry for agent', async () => {
-        const agent = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId }));
+        const agent = await drizzleAgentRepository.create(
+          AgentFactory.build({ userId: testUserId })
+        );
 
         const entry = await drizzleAgentRepository.createDirectoryEntry({
           agentId: agent.id,
@@ -656,7 +739,9 @@ describe('DrizzleAgentRepository', () => {
 
     it('should handle very long agent names', async () => {
       const longName = 'A'.repeat(200);
-      const agent = await drizzleAgentRepository.create(AgentFactory.build({ userId: testUserId, name: longName }));
+      const agent = await drizzleAgentRepository.create(
+        AgentFactory.build({ userId: testUserId, name: longName })
+      );
 
       expect(agent.name).toBe(longName);
     });

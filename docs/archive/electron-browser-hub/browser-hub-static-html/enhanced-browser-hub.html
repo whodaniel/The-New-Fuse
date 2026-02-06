@@ -371,7 +371,10 @@
                 <span>TNF Dashboard</span>
                 <button
                   class="tab-close"
-                  onclick="event.stopPropagation(); closeTab('dashboard')"
+                  onclick="
+                    event.stopPropagation();
+                    closeTab('dashboard');
+                  "
                   aria-label="Close Dashboard Tab"
                 >
                   <i class="fas fa-times"></i>
@@ -711,7 +714,13 @@
         onclick="event.stopPropagation()"
       >
         <h3 style="margin-bottom: 20px">Create New Prompt</h3>
-        <form id="newPromptForm" onsubmit="event.preventDefault(); saveNewPrompt();">
+        <form
+          id="newPromptForm"
+          onsubmit="
+            event.preventDefault();
+            saveNewPrompt();
+          "
+        >
           <div class="settings-item">
             <label class="settings-item-label">Name</label>
             <input type="text" name="name" class="prompt-input" required />
@@ -753,7 +762,13 @@
         onclick="event.stopPropagation()"
       >
         <h3 style="margin-bottom: 20px">Run Prompt</h3>
-        <form id="runPromptForm" onsubmit="event.preventDefault(); executeRunPrompt();">
+        <form
+          id="runPromptForm"
+          onsubmit="
+            event.preventDefault();
+            executeRunPrompt();
+          "
+        >
           <div id="noVariablesMessage" style="display: none; color: #9ca3af; margin-bottom: 20px">
             No variables detected in this prompt.
           </div>
@@ -814,7 +829,13 @@
         onclick="event.stopPropagation()"
       >
         <h3 id="customInputTitle" style="margin-bottom: 20px">Input</h3>
-        <form id="customInputForm" onsubmit="event.preventDefault(); handleCustomInput();">
+        <form
+          id="customInputForm"
+          onsubmit="
+            event.preventDefault();
+            handleCustomInput();
+          "
+        >
           <div id="customInputFields"></div>
           <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px">
             <button

@@ -54,11 +54,11 @@ export class ConcurrentExecutionError extends Error {
 
 export function createExecutionContext(
   workflowId: string,
-  priority: 'high' | 'normal' | 'low' = 'normal'
+  priority: 'high' | 'normal' | 'low' = 'normal',
 ): WorkflowExecutionContext {
   return {
     workflowId,
     priority,
-    timestamp: new Date()
+    timestamp: new Date(),
   };
 }

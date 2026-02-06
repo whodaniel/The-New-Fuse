@@ -1,8 +1,8 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { EventEmitter } from 'events';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { EventEmitter } from 'events';
 import { SyncRedisConfig } from '../config/SyncRedisConfig';
-import { SyncMetrics, SyncHealth, SyncOperation, TenantSyncContext } from '../types';
+import { SyncHealth, SyncMetrics, SyncOperation } from '../types';
 
 /**
  * Interface for WebSocket service integration
@@ -38,7 +38,7 @@ export interface SystemAlert {
 /**
  * Dashboard update event types
  */
-export type DashboardUpdateType = 
+export type DashboardUpdateType =
   | 'sync_metrics'
   | 'sync_health'
   | 'agent_status'
@@ -78,13 +78,13 @@ export interface SyncDashboardConfig {
 @Injectable()
 export class SyncDashboardService extends EventEmitter implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(SyncDashboardService.name);
-  
+
   private readonly config: SyncDashboardConfig = {
     updateIntervalMs: 1000, // 1 second updates
     metricsRetentionMs: 24 * 60 * 60 * 1000, // 24 hours
     alertRetentionMs: 7 * 24 * 60 * 60 * 1000, // 7 days
     enableMultiSession: true,
-    enableCrossTenantupdates: false
+    enableCrossTenantupdates: false,
   };
 
   private metricsInterval?: NodeJS.Timeout;
@@ -125,13 +125,13 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
     try {
       // Subscribe to sync events from Redis
       await this.subscribeToSyncEvents();
-      
+
       // Start periodic metrics collection
       this.startMetricsCollection();
-      
+
       // Start health monitoring
       this.startHealthMonitoring();
-      
+
       this.isInitialized = true;
       this.logger.log('Dashboard service initialized successfully');
     } catch (error) {
@@ -150,7 +150,7 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
       this.redisConfig.getChannelName('sync', 'health'),
       this.redisConfig.getChannelName('agent', 'status'),
       this.redisConfig.getChannelName('task', 'updates'),
-      this.redisConfig.getChannelName('file', 'changes')
+      this.redisConfig.getChannelName('file', 'changes'),
     ];
 
     for (const channel of channels) {
@@ -168,7 +168,7 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
   private handleSyncEvent(channel: string, message: any): void {
     try {
       const eventData = typeof message === 'string' ? JSON.parse(message) : message;
-      
+
       // Determine update type based on channel
       let updateType: DashboardUpdateType;
       if (channel.includes('operations')) updateType = 'sync_operation';
@@ -186,7 +186,7 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
         userId: eventData.userId,
         data: eventData,
         timestamp: new Date(),
-        correlationId: eventData.correlationId
+        correlationId: eventData.correlationId,
       };
 
       // Process and broadcast update
@@ -203,13 +203,13 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
     try {
       // Update local cache
       await this.updateCache(update);
-      
+
       // Broadcast to appropriate audiences
       await this.broadcastUpdate(update);
-      
+
       // Record metrics
       await this.recordUpdateMetrics(update);
-      
+
       // Emit local event for other services
       this.emit('dashboard_update', update);
     } catch (error) {
@@ -222,16 +222,16 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
    */
   private async updateCache(update: DashboardUpdate): Promise<void> {
     const cacheKey = update.tenantId || 'global';
-    
+
     switch (update.type) {
       case 'sync_metrics':
         this.metricsCache.set(cacheKey, update.data);
         break;
-        
+
       case 'sync_health':
         this.healthCache.set(cacheKey, update.data);
         break;
-        
+
       case 'system_alert':
         const alerts = this.alertsCache.get(cacheKey) || [];
         alerts.unshift(update.data);
@@ -242,7 +242,7 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
         }
         this.alertsCache.set(cacheKey, alerts);
         break;
-        
+
       case 'sync_operation':
         const operations = this.activeOperations.get(cacheKey) || [];
         operations.unshift(update.data);
@@ -262,7 +262,7 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
   private async broadcastUpdate(update: DashboardUpdate): Promise<void> {
     const message = {
       type: 'sync_dashboard_update',
-      payload: update
+      payload: update,
     };
 
     if (update.userId) {
@@ -283,7 +283,7 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
   private async recordUpdateMetrics(update: DashboardUpdate): Promise<void> {
     const tags = {
       type: update.type,
-      tenant: update.tenantId || 'global'
+      tenant: update.tenantId || 'global',
     };
 
     await this.monitoringService.recordMetric('sync_dashboard_updates_total', 1, tags);
@@ -327,30 +327,30 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
     for (const key of metricsKeys) {
       const metricsData = await this.redisService.hgetall(key);
       const tenantId = this.extractTenantFromKey(key);
-      
+
       const metrics: SyncMetrics = {
         operations: {
           sync: parseInt(metricsData.sync_operations || '0'),
           conflicts: parseInt(metricsData.conflicts || '0'),
-          fileChanges: parseInt(metricsData.file_changes || '0')
+          fileChanges: parseInt(metricsData.file_changes || '0'),
         },
         performance: {
           avgSyncTime: parseFloat(metricsData.avg_sync_time || '0'),
           successRate: parseFloat(metricsData.success_rate || '100'),
-          throughput: parseFloat(metricsData.throughput || '0')
+          throughput: parseFloat(metricsData.throughput || '0'),
         },
         errors: {
           networkErrors: parseInt(metricsData.network_errors || '0'),
           conflictErrors: parseInt(metricsData.conflict_errors || '0'),
-          validationErrors: parseInt(metricsData.validation_errors || '0')
-        }
+          validationErrors: parseInt(metricsData.validation_errors || '0'),
+        },
       };
 
       const update: DashboardUpdate = {
         type: 'sync_metrics',
         tenantId,
         data: metrics,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       await this.processDashboardUpdate(update);
@@ -363,27 +363,27 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
   private async checkAndBroadcastHealth(): Promise<void> {
     try {
       const systemHealth = await this.monitoringService.getSystemHealth();
-      
+
       const health: SyncHealth = {
         status: systemHealth.overall || 'healthy',
         clockSync: {
           status: systemHealth.clockSync?.status || 'synced',
           lastSync: new Date(systemHealth.clockSync?.lastSync || Date.now()),
-          drift: systemHealth.clockSync?.drift || 0
+          drift: systemHealth.clockSync?.drift || 0,
         },
         services: {
           redis: systemHealth.redis || 'healthy',
           database: systemHealth.database || 'healthy',
           fileSystem: systemHealth.fileSystem || 'healthy',
-          webSocket: systemHealth.webSocket || 'healthy'
+          webSocket: systemHealth.webSocket || 'healthy',
         },
-        lastCheck: new Date()
+        lastCheck: new Date(),
       };
 
       const update: DashboardUpdate = {
         type: 'sync_health',
         data: health,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       await this.processDashboardUpdate(update);
@@ -399,7 +399,7 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
     const fullAlert: SystemAlert = {
       ...alert,
       id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     // Store in monitoring system
@@ -410,7 +410,7 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
       type: 'system_alert',
       tenantId: alert.tenantId,
       data: fullAlert,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     await this.processDashboardUpdate(update);
@@ -426,12 +426,12 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
     operations: SyncOperation[];
   }> {
     const cacheKey = tenantId || 'global';
-    
+
     return {
       metrics: this.metricsCache.get(cacheKey) || null,
       health: this.healthCache.get(cacheKey) || null,
       alerts: this.alertsCache.get(cacheKey) || [],
-      operations: this.activeOperations.get(cacheKey) || []
+      operations: this.activeOperations.get(cacheKey) || [],
     };
   }
 
@@ -441,7 +441,7 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
   async refreshDashboard(tenantId?: string): Promise<void> {
     await this.collectAndBroadcastMetrics();
     await this.checkAndBroadcastHealth();
-    
+
     this.logger.log(`Dashboard refreshed for tenant: ${tenantId || 'global'}`);
   }
 
@@ -450,10 +450,8 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
    */
   private extractTenantFromKey(key: string): string | undefined {
     const parts = key.split(':');
-    const tenantIndex = parts.findIndex(part => part === 'tenant');
-    return tenantIndex >= 0 && tenantIndex < parts.length - 1 
-      ? parts[tenantIndex + 1] 
-      : undefined;
+    const tenantIndex = parts.findIndex((part) => part === 'tenant');
+    return tenantIndex >= 0 && tenantIndex < parts.length - 1 ? parts[tenantIndex + 1] : undefined;
   }
 
   /**
@@ -463,7 +461,7 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
     if (this.metricsInterval) {
       clearInterval(this.metricsInterval);
     }
-    
+
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
     }
@@ -475,7 +473,7 @@ export class SyncDashboardService extends EventEmitter implements OnModuleInit, 
       this.redisConfig.getChannelName('sync', 'health'),
       this.redisConfig.getChannelName('agent', 'status'),
       this.redisConfig.getChannelName('task', 'updates'),
-      this.redisConfig.getChannelName('file', 'changes')
+      this.redisConfig.getChannelName('file', 'changes'),
     ];
 
     for (const channel of channels) {

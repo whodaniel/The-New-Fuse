@@ -1,13 +1,16 @@
 # The New Fuse - Safe Reset Procedures
 
 ## Overview
-This document provides safe reset procedures specifically designed for The New Fuse development environment.
+
+This document provides safe reset procedures specifically designed for The New
+Fuse development environment.
 
 **⚠️ WARNING**: Always backup important data before running reset operations.
 
 ## Quick Reset Commands
 
 ### Safe Development Reset
+
 ```bash
 #!/bin/bash
 # Safe reset for development environment
@@ -39,6 +42,7 @@ echo "✅ Development reset complete!"
 ```
 
 ### Selective Reset Options
+
 ```bash
 # Reset only build artifacts
 yarn clean
@@ -60,6 +64,7 @@ rm -rf .turbo node_modules/.cache packages/*/dist apps/*/dist
 ### 1. Workspace Dependencies Reset
 
 #### Clean Dependency Installation
+
 ```bash
 # Stop all processes
 pkill -f "turbo\|vite\|yarn dev" || true
@@ -79,6 +84,7 @@ yarn workspaces list
 ```
 
 #### Fix Dependency Conflicts
+
 ```bash
 # Reset yarn lock file
 rm -f yarn.lock
@@ -96,6 +102,7 @@ yarn workspaces foreach run npm audit --audit-level=moderate
 ### 2. Build System Reset
 
 #### Turbo Build Reset
+
 ```bash
 # Clear Turbo cache
 rm -rf .turbo
@@ -111,6 +118,7 @@ yarn workspaces foreach --parallel run build
 ```
 
 #### TypeScript Reset
+
 ```bash
 # Clear TypeScript build info
 find . -name "*.tsbuildinfo" -delete
@@ -127,6 +135,7 @@ yarn build
 ### 3. Chrome Extension Reset
 
 #### Extension Development Reset
+
 ```bash
 # Clean Chrome extension build
 yarn clean:chrome
@@ -139,6 +148,7 @@ yarn package:chrome
 ```
 
 #### Extension Storage Reset (Manual)
+
 ```bash
 # Instructions for manual browser reset
 echo "Chrome Extension Storage Reset:"
@@ -152,12 +162,13 @@ echo "6. Or go to DevTools > Application > Storage > Clear storage"
 
 ### 4. Database Reset (If Applicable)
 
-#### Prisma Database Reset
+#### Drizzle Database Reset
+
 ```bash
-# Reset Prisma database (if you have one)
+# Reset Drizzle database (if you have one)
 yarn db:reset
 
-# Regenerate Prisma client
+# Regenerate Drizzle client
 yarn db:generate
 
 # Run migrations
@@ -167,6 +178,7 @@ yarn db:migrate
 ### 5. Environment Configuration Reset
 
 #### Environment Variables Reset
+
 ```bash
 # Backup current .env files
 find . -name ".env*" -not -path "./node_modules/*" -exec cp {} {}.backup \;
@@ -184,6 +196,7 @@ echo "Remember to regenerate any API keys, JWT secrets, etc."
 ## Development Environment-Specific Resets
 
 ### Development Environment Reset
+
 ```bash
 #!/bin/bash
 echo "🔄 Resetting development environment..."
@@ -205,6 +218,7 @@ echo "✅ Development environment reset complete!"
 ```
 
 ### Test Environment Reset
+
 ```bash
 #!/bin/bash
 echo "🔄 Resetting test environment..."
@@ -227,6 +241,7 @@ echo "✅ Test environment reset complete!"
 ## Configuration Reset Templates
 
 ### Package.json Reset Scripts (Add to your package.json)
+
 ```json
 {
   "scripts": {
@@ -243,6 +258,7 @@ echo "✅ Test environment reset complete!"
 ## Reset Verification Procedures
 
 ### Post-Reset Health Checks
+
 ```bash
 #!/bin/bash
 echo "🔍 Running post-reset health checks..."
@@ -269,6 +285,7 @@ echo "🔍 Health checks complete!"
 ```
 
 ### Safe Recovery Script
+
 ```bash
 #!/bin/bash
 # Safe recovery if reset causes issues
@@ -279,7 +296,7 @@ echo "🔧 Starting safe recovery..."
 if git status &>/dev/null; then
     echo "Git repository detected, checking for changes..."
     git status --porcelain
-    
+
     # Offer to reset to last commit
     echo "Reset to last commit? (y/N)"
     read -n 1 response
@@ -299,6 +316,7 @@ echo "✅ Safe recovery complete!"
 ```
 
 ## Daily Maintenance Reset
+
 ```bash
 #!/bin/bash
 # Daily maintenance script (safe to run regularly)
@@ -322,6 +340,7 @@ echo "✅ Daily maintenance complete!"
 ---
 
 **✅ This script is safe for The New Fuse project because it:**
+
 - Uses correct Yarn commands instead of npm
 - References actual workspace names from your package.json
 - Uses Turbo commands that match your setup

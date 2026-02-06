@@ -7,19 +7,29 @@ import Joi from 'joi';
 // Node schema
 const nodeSchema = Joi.object({
   id: Joi.string().required(),
-  type: Joi.string().valid(
-    'agent', 'mcpTool', 'input', 'output', 'condition', 
-    'transform', 'notification', 'a2a', 'loop', 'subworkflow'
-  ).required(),
+  type: Joi.string()
+    .valid(
+      'agent',
+      'mcpTool',
+      'input',
+      'output',
+      'condition',
+      'transform',
+      'notification',
+      'a2a',
+      'loop',
+      'subworkflow'
+    )
+    .required(),
   position: Joi.object({
     x: Joi.number().required(),
-    y: Joi.number().required()
+    y: Joi.number().required(),
   }).required(),
   data: Joi.object({
     name: Joi.string().required(),
     type: Joi.string().required(),
-    config: Joi.object().default({})
-  }).required()
+    config: Joi.object().default({}),
+  }).required(),
 });
 
 // Edge schema
@@ -29,7 +39,7 @@ const edgeSchema = Joi.object({
   target: Joi.string().required(),
   sourceHandle: Joi.string().optional(),
   targetHandle: Joi.string().optional(),
-  data: Joi.object().optional()
+  data: Joi.object().optional(),
 });
 
 // Base workflow schema
@@ -40,7 +50,7 @@ const baseWorkflowSchema = Joi.object({
   edges: Joi.array().items(edgeSchema).required(),
   status: Joi.string().valid('draft', 'active', 'paused', 'archived').default('draft'),
   tags: Joi.array().items(Joi.string()).default([]),
-  metadata: Joi.object().optional()
+  metadata: Joi.object().optional(),
 });
 
 export const workflowValidationSchemas = {
@@ -48,31 +58,33 @@ export const workflowValidationSchemas = {
   create: {
     body: baseWorkflowSchema.keys({
       version: Joi.number().integer().min(1).default(1),
-      createdBy: Joi.string().optional() // Will be set from auth context
-    })
+      createdBy: Joi.string().optional(), // Will be set from auth context
+    }),
   },
 
   // Update workflow
   update: {
     params: Joi.object({
-      id: Joi.string().uuid().required()
+      id: Joi.string().uuid().required(),
     }),
-    body: baseWorkflowSchema.keys({
-      version: Joi.number().integer().min(1).optional()
-    }).fork(['name', 'nodes', 'edges'], (schema) => schema.optional())
+    body: baseWorkflowSchema
+      .keys({
+        version: Joi.number().integer().min(1).optional(),
+      })
+      .fork(['name', 'nodes', 'edges'], (schema) => schema.optional()),
   },
 
   // Execute workflow
   execute: {
     body: Joi.object({
       workflowId: Joi.string().uuid().required(),
-      input: Joi.object().default({})
-    })
+      input: Joi.object().default({}),
+    }),
   },
 
   // Validate workflow
   validate: {
-    body: baseWorkflowSchema
+    body: baseWorkflowSchema,
   },
 
   // Create from template
@@ -80,8 +92,8 @@ export const workflowValidationSchemas = {
     body: Joi.object({
       templateId: Joi.string().uuid().required(),
       name: Joi.string().min(1).max(255).required(),
-      description: Joi.string().max(1000).optional()
-    })
+      description: Joi.string().max(1000).optional(),
+    }),
   },
 
   // Query parameters for list endpoints
@@ -90,8 +102,8 @@ export const workflowValidationSchemas = {
       page: Joi.number().integer().min(1).default(1),
       limit: Joi.number().integer().min(1).max(100).default(20),
       status: Joi.string().valid('draft', 'active', 'paused', 'archived').optional(),
-      search: Joi.string().max(255).optional()
-    })
+      search: Joi.string().max(255).optional(),
+    }),
   },
 
   // Execution query parameters
@@ -99,7 +111,9 @@ export const workflowValidationSchemas = {
     query: Joi.object({
       page: Joi.number().integer().min(1).default(1),
       limit: Joi.number().integer().min(1).max(100).default(20),
-      status: Joi.string().valid('pending', 'running', 'completed', 'failed', 'cancelled').optional()
-    })
-  }
+      status: Joi.string()
+        .valid('pending', 'running', 'completed', 'failed', 'cancelled')
+        .optional(),
+    }),
+  },
 };

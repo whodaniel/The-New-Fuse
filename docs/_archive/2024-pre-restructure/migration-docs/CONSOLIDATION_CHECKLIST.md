@@ -1,8 +1,10 @@
 # Consolidation Implementation Checklist
 
-This is a practical, step-by-step checklist for implementing the consolidation plan.
+This is a practical, step-by-step checklist for implementing the consolidation
+plan.
 
-**Before you start:** Read [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md) completely.
+**Before you start:** Read [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md)
+completely.
 
 ---
 
@@ -204,7 +206,8 @@ This is a practical, step-by-step checklist for implementing the consolidation p
 
 ### Day 5: Archive Old MCP Docs
 
-- [ ] Add README to specifications/_archive/:
+- [ ] Add README to specifications/\_archive/:
+
   ```bash
   cat > docs/specifications/_archive/README.md << 'EOF'
   # MCP Specifications Archive
@@ -219,12 +222,13 @@ This is a practical, step-by-step checklist for implementing the consolidation p
   These files are kept for historical reference.
   EOF
   ```
+
 - [ ] Move root MCP docs:
   ```bash
   mkdir -p docs/_archive/2024-pre-restructure/mcp-docs
   git mv docs/MCP*.md docs/_archive/2024-pre-restructure/mcp-docs/
   ```
-- [ ] Keep protocols/_archive/ as-is (already archived)
+- [ ] Keep protocols/\_archive/ as-is (already archived)
 - [ ] Commit:
   ```bash
   git add -A
@@ -332,7 +336,8 @@ This is a practical, step-by-step checklist for implementing the consolidation p
 
 ### Day 5: Project Documentation
 
-- [ ] Review `docs/project/`, `docs/project-management/`, `docs/project-planning/`
+- [ ] Review `docs/project/`, `docs/project-management/`,
+      `docs/project-planning/`
 - [ ] Identify overlaps
 - [ ] Keep best content in `docs/project/`
 - [ ] Create subdirectories if needed:
@@ -402,6 +407,7 @@ This is a practical, step-by-step checklist for implementing the consolidation p
 ### Day 4: Archive READMEs
 
 - [ ] Create `docs/_archive/README.md`:
+
   ```markdown
   # Documentation Archive
 
@@ -417,6 +423,7 @@ This is a practical, step-by-step checklist for implementing the consolidation p
   ## Why Archived?
 
   Files are archived when:
+
   - Replaced by newer, consolidated docs
   - No longer relevant to current system
   - Kept for historical reference only
@@ -425,6 +432,7 @@ This is a practical, step-by-step checklist for implementing the consolidation p
 
   See the main [docs/README.md](../README.md) for current documentation.
   ```
+
 - [ ] Commit:
   ```bash
   git add docs/_archive/README.md
@@ -687,6 +695,7 @@ This is a practical, step-by-step checklist for implementing the consolidation p
   # EXCEPT fix-workspace-deps.sh (already in maintenance/)
   ```
 - [ ] Create README in fix-scripts/:
+
   ```bash
   cat > _deprecated/2024-q4/fix-scripts/README.md << 'EOF'
   # Archived Fix Scripts
@@ -709,6 +718,7 @@ This is a practical, step-by-step checklist for implementing the consolidation p
   [List each script with brief description of what it fixed]
   EOF
   ```
+
 - [ ] Commit:
   ```bash
   git add maintenance/ _deprecated/
@@ -779,6 +789,7 @@ This is a practical, step-by-step checklist for implementing the consolidation p
 ### Day 4: Create Migration Guide
 
 - [ ] Create `MIGRATION_GUIDE.md`:
+
   ```markdown
   # Consolidation Migration Guide
 
@@ -802,6 +813,7 @@ This is a practical, step-by-step checklist for implementing the consolidation p
 
   [Contact info]
   ```
+
 - [ ] Include all key mappings
 - [ ] Add examples
 - [ ] Commit:
@@ -968,7 +980,7 @@ Check these when done:
 - [ ] All build scripts consolidated to 4
 - [ ] All launch scripts consolidated to 4
 - [ ] scripts/README.md complete
-- [ ] _deprecated/README.md complete
+- [ ] \_deprecated/README.md complete
 
 ### Process
 
@@ -981,8 +993,9 @@ Check these when done:
 
 ---
 
-**You've got this!** Take it one week at a time, commit frequently, and don't hesitate to ask for help.
+**You've got this!** Take it one week at a time, commit frequently, and don't
+hesitate to ask for help.
 
-**Full Plan:** [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md)
-**Summary:** [CONSOLIDATION_SUMMARY.md](./CONSOLIDATION_SUMMARY.md)
-**Comparison:** [BEFORE_AFTER_COMPARISON.md](./BEFORE_AFTER_COMPARISON.md)
+**Full Plan:** [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md) **Summary:**
+[CONSOLIDATION_SUMMARY.md](./CONSOLIDATION_SUMMARY.md) **Comparison:**
+[BEFORE_AFTER_COMPARISON.md](./BEFORE_AFTER_COMPARISON.md)

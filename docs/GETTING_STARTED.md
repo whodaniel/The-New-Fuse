@@ -1,15 +1,19 @@
 # Getting Started with The New Fuse
 
-This comprehensive guide provides everything you need to get started with The New Fuse framework, from installation to running your first features.
+This comprehensive guide provides everything you need to get started with The
+New Fuse framework, from installation to running your first features.
 
 ## Overview
 
-The New Fuse is an innovative AI collaboration framework designed to enable seamless interaction between multiple AI agents, LLM providers, and development tools. It features:
+The New Fuse is an innovative AI collaboration framework designed to enable
+seamless interaction between multiple AI agents, LLM providers, and development
+tools. It features:
 
 - **Multi-LLM Support**: Work with multiple AI providers simultaneously
 - **Agent Collaboration**: Coordinate between different AI agents
 - **VS Code Integration**: Native extension for development workflows
-- **Model Context Protocol (MCP)**: Standardized communication between AI services
+- **Model Context Protocol (MCP)**: Standardized communication between AI
+  services
 - **Real-time Communication**: WebSocket-based inter-agent messaging
 
 ## Prerequisites
@@ -31,16 +35,19 @@ Before installing The New Fuse, ensure you have the following prerequisites:
 The fastest way to get started is using the VS Code extension:
 
 1. **Navigate to the project directory:**
+
    ```bash
    cd .
    ```
 
 2. **Launch VS Code with the extension:**
+
    ```bash
    ./start.sh
    ```
 
    If the script isn't executable, make it so first:
+
    ```bash
    chmod +x start.sh
    ```
@@ -55,24 +62,31 @@ The fastest way to get started is using the VS Code extension:
 For complete development access:
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/your-org/the-new-fuse.git
    cd the-new-fuse
    ```
 
 2. **Install dependencies:**
+
    ```bash
    pnpm install
    ```
 
 3. **Set up environment variables:**
+
    ```bash
    cp .env.example .env
    # Edit .env with your configuration
    ```
-   You can validate your environment variable setup by running `yarn validate:env` (or `pnpm run validate:env`) from the project root. This script checks for required `.env.example` files and critical variables.
+
+   You can validate your environment variable setup by running
+   `yarn validate:env` (or `pnpm run validate:env`) from the project root. This
+   script checks for required `.env.example` files and critical variables.
 
 4. **Initialize the database:**
+
    ```bash
    yarn db:migrate
    yarn db:seed
@@ -90,7 +104,7 @@ The project follows a monorepo structure using Yarn workspaces:
 ```
 /apps                    # Standalone applications
   /frontend             # React frontend application
-  /backend              # NestJS backend service  
+  /backend              # NestJS backend service
   /api                  # API gateway service
 /packages               # Shared packages
   /types                # TypeScript type definitions
@@ -111,9 +125,11 @@ The project follows a monorepo structure using Yarn workspaces:
 ### Development Mode
 
 1. **Start all services:**
+
    ```bash
    pnpm dev
    ```
+
    This starts frontend, backend, and all supporting services.
 
 2. **Start individual services:**
@@ -126,6 +142,7 @@ The project follows a monorepo structure using Yarn workspaces:
 ### Production Mode
 
 1. **Build the project:**
+
    ```bash
    pnpm build
    ```
@@ -138,6 +155,7 @@ The project follows a monorepo structure using Yarn workspaces:
 ### Docker Deployment
 
 1. **Build Docker images:**
+
    ```bash
    docker-compose build
    ```
@@ -212,11 +230,13 @@ After installation, try these features:
 ### 2. Test MCP Integration
 
 1. **Check MCP server health:**
+
    ```bash
    node scripts/mcp-health-check.js
    ```
 
 2. **Show available MCP tools:**
+
    ```bash
    node scripts/show-mcp-tools.js
    ```
@@ -253,13 +273,16 @@ After installation, try these features:
 
 3. **LLM provider errors:**
    - Verify API keys are set correctly
-   - Check provider health: Command Palette → "The New Fuse: Check LLM Provider Health"
-   - Try switching providers: Command Palette → "The New Fuse: Select LLM Provider"
+   - Check provider health: Command Palette → "The New Fuse: Check LLM Provider
+     Health"
+   - Try switching providers: Command Palette → "The New Fuse: Select LLM
+     Provider"
 
 ### Getting Help
 
 - **Documentation**: Check the `/docs` folder for detailed guides
-- **Troubleshooting**: See [MCP Troubleshooting Guide](../troubleshooting/MCP-TROUBLESHOOTING-COMPLETE.md)
+- **Troubleshooting**: See
+  [MCP Troubleshooting Guide](../troubleshooting/MCP-TROUBLESHOOTING-COMPLETE.md)
 - **Issues**: Report issues on the project GitHub repository
 
 ## Next Steps

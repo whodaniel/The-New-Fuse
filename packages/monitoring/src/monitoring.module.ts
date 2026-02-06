@@ -3,8 +3,8 @@
 
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { MonitoringDashboardService } from './dashboard.service';
 import { MonitoringDashboardController } from './dashboard.controller';
+import { MonitoringDashboardService } from './dashboard.service';
 
 // Import other service modules (these would need to be created as proper modules)
 // import { CacheModule } from '../../cache/src/cache.module';

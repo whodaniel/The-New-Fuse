@@ -60,15 +60,24 @@ export class TestDataGenerator {
     // From 'Current' (faker-based)
     if (schema.format) {
       switch (schema.format) {
-        case 'email': return faker.internet.email();
-        case 'uuid': return faker.string.uuid();
-        case 'firstName': return faker.person.firstName();
-        case 'lastName': return faker.person.lastName();
-        case 'fullName': return faker.person.fullName();
-        case 'url': return faker.internet.url();
-        case 'paragraph': return faker.lorem.paragraph();
-        case 'sentence': return faker.lorem.sentence();
-        case 'word': return faker.lorem.word();
+        case 'email':
+          return faker.internet.email();
+        case 'uuid':
+          return faker.string.uuid();
+        case 'firstName':
+          return faker.person.firstName();
+        case 'lastName':
+          return faker.person.lastName();
+        case 'fullName':
+          return faker.person.fullName();
+        case 'url':
+          return faker.internet.url();
+        case 'paragraph':
+          return faker.lorem.paragraph();
+        case 'sentence':
+          return faker.lorem.sentence();
+        case 'word':
+          return faker.lorem.word();
       }
     }
     return faker.lorem.word();

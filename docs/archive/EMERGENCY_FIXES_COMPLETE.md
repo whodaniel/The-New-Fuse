@@ -207,7 +207,7 @@ Based on the codebase audit, the next critical work:
 1. **User Management Controller** (High Priority)
    - Implement proper NestJS controller
    - Replace Express-style mock controller
-   - Integrate with Prisma for user CRUD
+   - Integrate with Drizzle for user CRUD
 
 2. **MCP Controller** (Critical - 20+ endpoints)
    - Convert mcpControllerExpress.ts to NestJS
@@ -221,7 +221,7 @@ Based on the codebase audit, the next critical work:
 
 4. **Continue Audit Cleanup**
    - Review 157 orphaned frontend components
-   - Complete TypeORM → Prisma migration (11 entity files)
+   - Complete TypeORM → Drizzle migration (11 entity files)
    - Remove orphaned packages (12 identified)
 
 ---

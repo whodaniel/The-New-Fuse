@@ -5,10 +5,10 @@ import {
   ListToolsRequestSchema,
   Tool,
 } from '@modelcontextprotocol/sdk/types.js';
-import { ResourceRegistryService } from '../services/resource-registry.service';
-import { ResourceAccessControlService } from '../services/resource-access-control.service';
 import { SearchResourceDto } from '../dto';
-import { ResourceCategory, ResourceType, ResourceVisibility, ResourceAction } from '../types';
+import { ResourceAccessControlService } from '../services/resource-access-control.service';
+import { ResourceRegistryService } from '../services/resource-registry.service';
+import { ResourceAction, ResourceCategory, ResourceType, ResourceVisibility } from '../types';
 
 /**
  * MCP Server for Resource Registry
@@ -29,7 +29,7 @@ export class ResourceRegistryMCPServer {
         capabilities: {
           tools: {},
         },
-      },
+      }
     );
 
     this.resourceService = new ResourceRegistryService();
@@ -269,7 +269,7 @@ export class ResourceRegistryMCPServer {
               total: filteredData.length,
             },
             null,
-            2,
+            2
           ),
         },
       ],

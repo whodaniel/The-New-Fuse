@@ -7,7 +7,7 @@
     "build": "rm -rf dist && nest build",
     "build:watch": "nest build --watch",
     "trigger:jules": "tsx scripts/trigger-jules-improvement.ts",
-    "dev": "cross-env PORT=3004 ts-node-dev --respawn --transpile-only src/simple-main.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/simple-main.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

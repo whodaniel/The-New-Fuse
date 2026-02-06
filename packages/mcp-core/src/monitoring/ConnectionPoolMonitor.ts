@@ -41,7 +41,7 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
   constructor(config: ConnectionPoolMonitorConfig, logger?: Logger) {
     this.config = config;
     this.logger = logger || new Logger('ConnectionPoolMonitor');
-    
+
     // Start periodic cleanup and metrics collection
     setInterval(() => this.cleanup(), 60000); // Every minute
   }
@@ -53,7 +53,7 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
     const event: ConnectionEvent = {
       type: 'created',
       timestamp: new Date(),
-      connectionId: this.generateConnectionId()
+      connectionId: this.generateConnectionId(),
     };
 
     this.eventHistory.push(event);
@@ -71,18 +71,18 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
     const event: ConnectionEvent = {
       type: 'destroyed',
       timestamp: new Date(),
-      lifetime
+      lifetime,
     };
 
     this.eventHistory.push(event);
     this.totalDestroyed++;
     this.poolSize = Math.max(0, this.poolSize - 1);
     this.idleConnections = Math.max(0, this.idleConnections - 1);
-    
+
     // Track lifetime
     this.connectionLifetimes.push(lifetime);
     this.totalLifetime += lifetime;
-    
+
     // Limit lifetime history
     if (this.connectionLifetimes.length > 1000) {
       this.connectionLifetimes.shift();
@@ -98,7 +98,7 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
     const event: ConnectionEvent = {
       type: 'acquired',
       timestamp: new Date(),
-      waitTime
+      waitTime,
     };
 
     this.eventHistory.push(event);
@@ -115,7 +115,7 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
   recordConnectionReleased(): void {
     const event: ConnectionEvent = {
       type: 'released',
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     this.eventHistory.push(event);
@@ -136,8 +136,11 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
    * Get pool metrics
    */
   getPoolMetrics(): ConnectionPoolMetrics {
-    const avgConnectionLifetime = this.connectionLifetimes.length > 0 ?
-      this.connectionLifetimes.reduce((sum, lifetime) => sum + lifetime, 0) / this.connectionLifetimes.length : 0;
+    const avgConnectionLifetime =
+      this.connectionLifetimes.length > 0
+        ? this.connectionLifetimes.reduce((sum, lifetime) => sum + lifetime, 0) /
+          this.connectionLifetimes.length
+        : 0;
 
     return {
       poolSize: this.poolSize,
@@ -146,7 +149,7 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
       pendingRequests: this.pendingRequests,
       createdConnections: this.totalCreated,
       destroyedConnections: this.totalDestroyed,
-      avgConnectionLifetime
+      avgConnectionLifetime,
     };
   }
 
@@ -156,8 +159,8 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
   getPoolStatistics(hours: number): ConnectionPoolMetrics[] {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
     return this.metricsHistory
-      .filter(entry => entry.timestamp >= cutoff)
-      .map(entry => entry.metrics);
+      .filter((entry) => entry.timestamp >= cutoff)
+      .map((entry) => entry.metrics);
   }
 
   /**
@@ -172,24 +175,31 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
     recommendations: string[];
   } {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
-    const recentEvents = this.eventHistory.filter(event => event.timestamp >= cutoff);
+    const recentEvents = this.eventHistory.filter((event) => event.timestamp >= cutoff);
     const recentMetrics = this.getPoolStatistics(hours);
 
     // Calculate utilization rate
     const utilizationRate = this.poolSize > 0 ? this.activeConnections / this.poolSize : 0;
 
     // Calculate average wait time
-    const acquisitionEvents = recentEvents.filter(e => e.type === 'acquired' && e.waitTime !== undefined);
-    const averageWaitTime = acquisitionEvents.length > 0 ?
-      acquisitionEvents.reduce((sum, e) => sum + (e.waitTime || 0), 0) / acquisitionEvents.length : 0;
+    const acquisitionEvents = recentEvents.filter(
+      (e) => e.type === 'acquired' && e.waitTime !== undefined
+    );
+    const averageWaitTime =
+      acquisitionEvents.length > 0
+        ? acquisitionEvents.reduce((sum, e) => sum + (e.waitTime || 0), 0) /
+          acquisitionEvents.length
+        : 0;
 
     // Calculate peak connections
-    const peakConnections = recentMetrics.length > 0 ?
-      Math.max(...recentMetrics.map(m => m.activeConnections)) : this.activeConnections;
+    const peakConnections =
+      recentMetrics.length > 0
+        ? Math.max(...recentMetrics.map((m) => m.activeConnections))
+        : this.activeConnections;
 
     // Calculate connection turnover
-    const createdEvents = recentEvents.filter(e => e.type === 'created').length;
-    const destroyedEvents = recentEvents.filter(e => e.type === 'destroyed').length;
+    const createdEvents = recentEvents.filter((e) => e.type === 'created').length;
+    const destroyedEvents = recentEvents.filter((e) => e.type === 'destroyed').length;
     const connectionTurnover = Math.max(createdEvents, destroyedEvents);
 
     // Calculate efficiency score
@@ -201,23 +211,25 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
 
     // Generate recommendations
     const recommendations: string[] = [];
-    
+
     if (utilizationRate > 0.8) {
       recommendations.push('Consider increasing pool size - high utilization detected');
     }
-    
+
     if (utilizationRate < 0.3 && this.poolSize > 5) {
       recommendations.push('Consider reducing pool size - low utilization detected');
     }
-    
+
     if (averageWaitTime > 100) {
-      recommendations.push('High average wait time - consider increasing pool size or optimizing connection creation');
+      recommendations.push(
+        'High average wait time - consider increasing pool size or optimizing connection creation'
+      );
     }
-    
+
     if (connectionTurnover > this.poolSize * 2) {
       recommendations.push('High connection turnover - review connection lifetime settings');
     }
-    
+
     if (this.pendingRequests > this.poolSize) {
       recommendations.push('Many pending requests - pool may be undersized for current load');
     }
@@ -228,7 +240,7 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
       peakConnections,
       connectionTurnover,
       efficiency,
-      recommendations
+      recommendations,
     };
   }
 
@@ -238,7 +250,7 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
   generatePoolReport(hours: number = 24): string {
     const metrics = this.getPoolMetrics();
     const analysis = this.getPoolAnalysis(hours);
-    
+
     const report = [
       `# Connection Pool Report`,
       '',
@@ -257,12 +269,12 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
       `- **Peak Connections**: ${analysis.peakConnections}`,
       `- **Connection Turnover**: ${analysis.connectionTurnover}`,
       `- **Efficiency Score**: ${analysis.efficiency.toFixed(2)}%`,
-      ''
+      '',
     ];
 
     if (analysis.recommendations.length > 0) {
       report.push(`## Recommendations`);
-      analysis.recommendations.forEach(rec => {
+      analysis.recommendations.forEach((rec) => {
         report.push(`- ${rec}`);
       });
       report.push('');
@@ -270,14 +282,14 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
 
     // Add connection lifecycle analysis
     const recentEvents = this.eventHistory.filter(
-      event => event.timestamp >= new Date(Date.now() - hours * 60 * 60 * 1000)
+      (event) => event.timestamp >= new Date(Date.now() - hours * 60 * 60 * 1000)
     );
 
     const eventCounts = {
-      created: recentEvents.filter(e => e.type === 'created').length,
-      destroyed: recentEvents.filter(e => e.type === 'destroyed').length,
-      acquired: recentEvents.filter(e => e.type === 'acquired').length,
-      released: recentEvents.filter(e => e.type === 'released').length
+      created: recentEvents.filter((e) => e.type === 'created').length,
+      destroyed: recentEvents.filter((e) => e.type === 'destroyed').length,
+      acquired: recentEvents.filter((e) => e.type === 'acquired').length,
+      released: recentEvents.filter((e) => e.type === 'released').length,
     };
 
     report.push(`## Connection Events (Last ${hours}h)`);
@@ -294,21 +306,24 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
    */
   private cleanup(): void {
     const cutoff = new Date(Date.now() - this.config.retentionPeriod);
-    
+
     // Clean up event history
     const initialLength = this.eventHistory.length;
-    this.eventHistory.splice(0, this.eventHistory.findIndex(
-      event => event.timestamp >= cutoff
-    ));
+    this.eventHistory.splice(
+      0,
+      this.eventHistory.findIndex((event) => event.timestamp >= cutoff)
+    );
 
     // Clean up metrics history
     const initialMetricsLength = this.metricsHistory.length;
-    this.metricsHistory.splice(0, this.metricsHistory.findIndex(
-      entry => entry.timestamp >= cutoff
-    ));
+    this.metricsHistory.splice(
+      0,
+      this.metricsHistory.findIndex((entry) => entry.timestamp >= cutoff)
+    );
 
-    const cleanedRecords = 
-      (initialLength - this.eventHistory.length) +
+    const cleanedRecords =
+      initialLength -
+      this.eventHistory.length +
       (initialMetricsLength - this.metricsHistory.length);
 
     if (cleanedRecords > 0) {
@@ -318,7 +333,7 @@ export class ConnectionPoolMonitor implements IConnectionPoolMonitor {
     // Store current metrics in history
     this.metricsHistory.push({
       metrics: this.getPoolMetrics(),
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 

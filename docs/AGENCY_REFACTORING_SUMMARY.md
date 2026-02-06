@@ -67,7 +67,8 @@ slug | | PUT | `/api/agencies/:agencyId` | Update agency config | | DELETE |
 `/api/agencies/:agencyId/providers/register` | Register providers | | GET |
 `/api/agencies/:agencyId/providers` | List providers | | GET |
 `/api/agencies/:agencyId/analytics` | Get analytics | | GET |
-`/api/agencies/:agencyId/stats` | Get quick stats |
+`/api/agencies/:agencyId/stats` | Get quick stats | | GET |
+`/api/agencies/:agencyId/registrations` | Get agent registrations for agency |
 
 #### `agent-swarm-orchestration.service.ts` - **Enhanced** ✅
 
@@ -149,7 +150,7 @@ model migration.
 
 ### Migration Preparation
 
-Created: `packages/database/prisma/migrations/organization_model_prepared.sql`
+Created: `packages/database/drizzle/migrations/organization_model_prepared.sql`
 
 This file contains:
 
@@ -190,7 +191,7 @@ This file contains:
 | `apps/api/src/controllers/self-improvement.controller.ts`                       | Fixed       |
 | `apps/api/package.json`                                                         | Updated     |
 | `apps/frontend/src/pages/Agency/AgencyDashboard.tsx`                            | Replaced    |
-| `packages/database/prisma/migrations/organization_model_prepared.sql`           | Created     |
+| `packages/database/drizzle/migrations/organization_model_prepared.sql`           | Created     |
 
 ---
 
@@ -259,7 +260,7 @@ curl http://localhost:3001/api/agencies/<agency-id>/swarm/status
 
 - `/docs/TNF_MASTER_MANIFESTO.md` - Master architecture document
 - `/.agent/TNF_IMPLEMENTATION_PLAN.md` - Implementation plan
-- `/packages/database/prisma/schema.enhanced.prisma.backup` - Enhanced schema
+- `/packages/database/drizzle/schema.enhanced.drizzle.backup` - Enhanced schema
   with Organization model
-- `/packages/database/prisma/migrations/organization_model_prepared.sql` -
+- `/packages/database/drizzle/migrations/organization_model_prepared.sql` -
   Migration SQL

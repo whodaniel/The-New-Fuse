@@ -1,6 +1,6 @@
 /**
  * Sync-Aware Monitoring Module
- * 
+ *
  * Extends existing HeartbeatMonitoringService with sync health metrics,
  * dashboard integration, and unified health reporting using existing MetricsService
  */
@@ -8,10 +8,10 @@
 // Core sync-aware monitoring service
 export { SyncAwareHeartbeatMonitoringService } from './SyncAwareHeartbeatMonitoringService';
 export type {
-  SyncHealthMetrics,
   SyncAwareAgentHeartbeat,
   SyncAwareStagnationAlert,
-  SyncHealthEscalation
+  SyncHealthEscalation,
+  SyncHealthMetrics,
 } from './SyncAwareHeartbeatMonitoringService';
 
 // Dashboard integration

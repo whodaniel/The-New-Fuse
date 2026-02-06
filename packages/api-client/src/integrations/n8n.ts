@@ -1,6 +1,6 @@
-import { ApiClient } from '../core/ApiClient';
 import { ApiConfig } from '../config/ApiConfig';
-import { Integration, IntegrationType, IntegrationConfig, AuthType } from './types';
+import { ApiClient } from '../core/ApiClient';
+import { AuthType, Integration, IntegrationConfig, IntegrationType } from './types';
 
 /**
  * n8n integration configuration
@@ -30,16 +30,16 @@ export class N8nIntegration implements Integration {
   isEnabled: boolean = true;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
-  
+
   private apiClient: ApiClient;
-  
+
   constructor(config: N8nConfig) {
     this.id = config.id;
     this.name = config.name;
     this.type = config.type;
     this.description = config.description;
     this.config = config;
-    
+
     // Default n8n capabilities
     this.capabilities = {
       actions: [
@@ -49,38 +49,34 @@ export class N8nIntegration implements Integration {
         'deactivate_workflow',
         'execute_workflow',
         'get_executions',
-        'list_credentials'
+        'list_credentials',
       ],
-      triggers: [
-        'workflow_started',
-        'workflow_completed',
-        'workflow_failed'
-      ],
+      triggers: ['workflow_started', 'workflow_completed', 'workflow_failed'],
       supportsWebhooks: true,
       supportsPolling: true,
-      supportsCustomFields: true
+      supportsCustomFields: true,
     };
-    
+
     // Create API client for n8n
     const apiConfig: ApiConfig = {
       baseURL: config.instanceUrl.endsWith('/') ? config.instanceUrl : `${config.instanceUrl}/`,
       headers: {
         ...config.defaultHeaders,
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     };
-    
+
     // Add API key if provided
     if (config.apiKey) {
       apiConfig.headers = {
         ...apiConfig.headers,
-        'X-N8N-API-KEY': config.apiKey
+        'X-N8N-API-KEY': config.apiKey,
       };
     }
-    
+
     this.apiClient = new ApiClient(apiConfig);
   }
-  
+
   /**
    * Connect to n8n API
    */
@@ -93,10 +89,12 @@ export class N8nIntegration implements Integration {
       return true;
     } catch (error) {
       this.isConnected = false;
-      throw new Error(`Failed to connect to n8n: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to connect to n8n: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Disconnect from n8n
    */
@@ -105,7 +103,7 @@ export class N8nIntegration implements Integration {
     this.updatedAt = new Date();
     return true;
   }
-  
+
   /**
    * Execute a n8n action
    */
@@ -113,7 +111,7 @@ export class N8nIntegration implements Integration {
     if (!this.isConnected) {
       throw new Error('Not connected to n8n. Call connect() first.');
     }
-    
+
     switch (action) {
       case 'list_workflows':
         return this.listWorkflows();
@@ -133,7 +131,7 @@ export class N8nIntegration implements Integration {
         throw new Error(`Unsupported n8n action: ${action}`);
     }
   }
-  
+
   /**
    * List workflows
    */
@@ -141,10 +139,12 @@ export class N8nIntegration implements Integration {
     try {
       return await this.apiClient.get('api/v1/workflows');
     } catch (error) {
-      throw new Error(`Failed to list workflows: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to list workflows: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get a specific workflow
    */
@@ -152,10 +152,12 @@ export class N8nIntegration implements Integration {
     try {
       return await this.apiClient.get(`api/v1/workflows/${workflowId}`);
     } catch (error) {
-      throw new Error(`Failed to get workflow: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get workflow: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Activate a workflow
    */
@@ -163,10 +165,12 @@ export class N8nIntegration implements Integration {
     try {
       return await this.apiClient.post(`api/v1/workflows/${workflowId}/activate`);
     } catch (error) {
-      throw new Error(`Failed to activate workflow: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to activate workflow: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Deactivate a workflow
    */
@@ -174,10 +178,12 @@ export class N8nIntegration implements Integration {
     try {
       return await this.apiClient.post(`api/v1/workflows/${workflowId}/deactivate`);
     } catch (error) {
-      throw new Error(`Failed to deactivate workflow: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to deactivate workflow: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Execute a workflow
    */
@@ -185,10 +191,12 @@ export class N8nIntegration implements Integration {
     try {
       return await this.apiClient.post(`api/v1/workflows/${workflowId}/execute`, data || {});
     } catch (error) {
-      throw new Error(`Failed to execute workflow: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to execute workflow: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get workflow executions
    */
@@ -196,10 +204,12 @@ export class N8nIntegration implements Integration {
     try {
       return await this.apiClient.get(`api/v1/executions?workflowId=${workflowId}`);
     } catch (error) {
-      throw new Error(`Failed to get executions: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get executions: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * List credentials
    */
@@ -207,10 +217,12 @@ export class N8nIntegration implements Integration {
     try {
       return await this.apiClient.get('api/v1/credentials');
     } catch (error) {
-      throw new Error(`Failed to list credentials: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to list credentials: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get metadata about this integration
    */
@@ -222,7 +234,7 @@ export class N8nIntegration implements Integration {
       capabilities: this.capabilities,
       isConnected: this.isConnected,
       isEnabled: this.isEnabled,
-      lastUpdated: this.updatedAt
+      lastUpdated: this.updatedAt,
     };
   }
 }
@@ -242,11 +254,11 @@ export function createN8nIntegration(config: Partial<N8nConfig> = {}): N8nIntegr
     webhookSupport: true,
     apiVersion: 'v1',
     docUrl: 'https://docs.n8n.io/api/',
-    logoUrl: 'https://n8n.io/favicon.ico'
+    logoUrl: 'https://n8n.io/favicon.ico',
   };
-  
+
   return new N8nIntegration({
     ...defaultConfig,
-    ...config
+    ...config,
   });
 }

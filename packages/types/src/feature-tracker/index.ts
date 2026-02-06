@@ -30,5 +30,5 @@ export enum FeatureStage {
   DEVELOPMENT = 'DEVELOPMENT',
   TESTING = 'TESTING',
   REVIEW = 'REVIEW',
-  DEPLOYED = 'DEPLOYED'
+  DEPLOYED = 'DEPLOYED',
 }

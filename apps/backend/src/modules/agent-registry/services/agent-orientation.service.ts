@@ -37,11 +37,24 @@ export class AgentOrientationService {
         interactiveDemo: true,
       },
       {
+        id: 'security',
+        name: 'Security, Federation, and Invitations',
+        description: 'Identity, invitation codes, and trust validation for agents',
+        content: this.getSecurityContent(),
+        order: 3,
+        estimatedDuration: 540,
+        resources: [
+          'https://docs.thenewfuse.com/security',
+          'https://docs.thenewfuse.com/agent-communication',
+        ],
+        interactiveDemo: false,
+      },
+      {
         id: 'apis',
         name: 'Available APIs and Tools',
         description: 'Explore the APIs, tools, and services available to agents',
         content: this.getAPIsContent(),
-        order: 3,
+        order: 4,
         estimatedDuration: 900,
         resources: [
           'https://docs.thenewfuse.com/api-reference',
@@ -54,7 +67,7 @@ export class AgentOrientationService {
         name: 'Agent Communication',
         description: 'Learn how to communicate with other agents and the system',
         content: this.getCommunicationContent(),
-        order: 4,
+        order: 5,
         estimatedDuration: 600,
         resources: [
           'https://docs.thenewfuse.com/agent-communication',
@@ -63,11 +76,37 @@ export class AgentOrientationService {
         interactiveDemo: true,
       },
       {
+        id: 'skills-mcp',
+        name: 'Skills and Dynamic MCP',
+        description: 'Progressive skill disclosure and dynamic MCP server loading',
+        content: this.getSkillsContent(),
+        order: 6,
+        estimatedDuration: 600,
+        resources: [
+          'https://docs.thenewfuse.com/tools/skills',
+          'https://docs.thenewfuse.com/mcp',
+        ],
+        interactiveDemo: true,
+      },
+      {
+        id: 'memory-handoff',
+        name: 'Memory and Prompt Handoff',
+        description: 'Persistent memory, handoff notes, and context hygiene',
+        content: this.getMemoryHandoffContent(),
+        order: 7,
+        estimatedDuration: 420,
+        resources: [
+          'https://docs.thenewfuse.com/memory',
+          'https://docs.thenewfuse.com/agent-communication',
+        ],
+        interactiveDemo: false,
+      },
+      {
         id: 'workflows',
         name: 'Workflows and Pipelines',
         description: 'Understanding and creating workflows and pipelines',
         content: this.getWorkflowsContent(),
-        order: 5,
+        order: 8,
         estimatedDuration: 720,
         resources: [
           'https://docs.thenewfuse.com/workflows',
@@ -80,7 +119,7 @@ export class AgentOrientationService {
         name: 'Best Practices',
         description: 'Best practices for agent development and integration',
         content: this.getBestPracticesContent(),
-        order: 6,
+        order: 9,
         estimatedDuration: 480,
         resources: [
           'https://docs.thenewfuse.com/best-practices',
@@ -190,6 +229,83 @@ RESTful API for all platform operations.
 3. Tasks are assigned based on capabilities
 4. Agents execute tasks and report results
 5. Metrics are collected and analyzed
+    `.trim();
+  }
+
+  private getSecurityContent(): string {
+    return `
+# Security, Federation, and Invitations
+
+## Identity Layers
+
+- **Long-term ID**: Persistent identity for reputation and trust.
+- **Ephemeral ID**: Session-scoped identity for federation and routing.
+- **Federation ID**: Cross-network identity for agent roaming.
+
+## Invitation Gate
+
+All agents must present a valid invitation code to register.
+This ensures new agents are vetted before joining the network.
+
+## Trust Model
+
+- **unverified**: New or untrusted agents
+- **verified**: Passed onboarding and capability checks
+- **certified**: Approved by admins or formal audits
+
+## Why This Matters
+
+Identity and trust layers prevent bad actors, enable audit trails, and allow
+multi-tenant isolation across agencies.
+    `.trim();
+  }
+
+  private getSkillsContent(): string {
+    return `
+# Skills and Dynamic MCP
+
+## Progressive Skill Disclosure
+
+Agents should load skills as needed instead of preloading all context.
+This keeps prompts concise and reduces leakage across tenants.
+
+## Dynamic MCP Servers
+
+Skills can declare required MCP servers and the system will load them
+on demand. This allows:
+
+- Lower context pressure
+- Faster startup
+- Reduced attack surface
+- Better isolation across agencies
+
+## Best Practices
+
+1. Declare only the tools needed for the task
+2. Use scoped MCP servers per agency or tenant
+3. Log tool activation for audit trails
+    `.trim();
+  }
+
+  private getMemoryHandoffContent(): string {
+    return `
+# Memory and Prompt Handoff
+
+## Persistent Memory
+
+Agents should write durable learnings to shared memory stores so that new
+sessions can pick up context without bloating prompts.
+
+## Handoff Notes
+
+Before finishing, update the handoff notes so other agents can resume work.
+This prevents duplication and keeps orchestration efficient.
+
+## Protocol Tips
+
+1. Keep handoff summaries brief and factual
+2. Record decisions, constraints, and next actions
+3. Link to sources of truth (files, IDs, or tasks)
     `.trim();
   }
 

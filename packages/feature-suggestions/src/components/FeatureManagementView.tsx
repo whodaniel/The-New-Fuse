@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import KanbanBoard from './KanbanBoard';
-import { FeatureSuggestionList } from './FeatureSuggestionList';
-import { useKanbanBoard } from '../hooks/useKanbanBoard';
 import { useFeatureSuggestions } from '../hooks/useFeatureSuggestions';
-import { SuggestionPriority, SuggestionStatus } from '../types';
+import { useKanbanBoard } from '../hooks/useKanbanBoard';
 import { SuggestionService } from '../services/types';
+import { SuggestionPriority } from '../types';
+import { FeatureSuggestionList } from './FeatureSuggestionList';
+import KanbanBoard from './KanbanBoard';
 
 interface FeatureManagementViewProps {
   suggestionService: SuggestionService;
@@ -18,30 +18,20 @@ const FeatureManagementView: React.FC<FeatureManagementViewProps> = ({
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
   const [showNewSuggestionForm, setShowNewSuggestionForm] = useState(false);
   const [newSuggestion, setNewSuggestion] = useState({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
     priority: SuggestionPriority.MEDIUM,
     tags: [] as string[],
   });
 
   // Get data from useKanbanBoard
-  const {
-    columns,
-    loading,
-    error,
-    moveItem,
-    refresh
-  } = useKanbanBoard({
+  const { columns, loading, error, moveItem, refresh } = useKanbanBoard({
     suggestionService,
   });
 
   // Use useFeatureSuggestions to get the remaining needed functions and data
-  const { 
-    suggestions,
-    submitSuggestion,
-    updateSuggestionStatus,
-    convertSuggestionToFeature
-  } = useFeatureSuggestions({ suggestionService });
+  const { suggestions, submitSuggestion, updateSuggestionStatus, convertSuggestionToFeature } =
+    useFeatureSuggestions({ suggestionService });
 
   // Define handleDragEnd manually since it's not returned from useKanbanBoard
   const handleDragEnd = (item: any, sourceColumnId: string, targetColumnId: string) => {
@@ -60,8 +50,8 @@ const FeatureManagementView: React.FC<FeatureManagementViewProps> = ({
       );
       setShowNewSuggestionForm(false);
       setNewSuggestion({
-        title: "",
-        description: "",
+        title: '',
+        description: '',
         priority: SuggestionPriority.MEDIUM,
         tags: [],
       });
@@ -79,11 +69,7 @@ const FeatureManagementView: React.FC<FeatureManagementViewProps> = ({
   }
 
   if (error) {
-    return (
-      <div className="text-red-500 p-4">
-        Error: {error.message}
-      </div>
-    );
+    return <div className="text-red-500 p-4">Error: {error.message}</div>;
   }
 
   return (
@@ -92,9 +78,7 @@ const FeatureManagementView: React.FC<FeatureManagementViewProps> = ({
         <div className="flex space-x-4">
           <button
             className={`px-4 py-2 rounded-lg ${
-              viewMode === 'list'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-700'
+              viewMode === 'list' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
             }`}
             onClick={() => setViewMode('list')}
           >
@@ -102,9 +86,7 @@ const FeatureManagementView: React.FC<FeatureManagementViewProps> = ({
           </button>
           <button
             className={`px-4 py-2 rounded-lg ${
-              viewMode === 'kanban'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-700'
+              viewMode === 'kanban' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
             }`}
             onClick={() => setViewMode('kanban')}
           >
@@ -126,9 +108,7 @@ const FeatureManagementView: React.FC<FeatureManagementViewProps> = ({
             <form onSubmit={handleSubmitNewSuggestion}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Title
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700">Title</label>
                   <input
                     type="text"
                     value={newSuggestion.title}
@@ -146,9 +126,7 @@ const FeatureManagementView: React.FC<FeatureManagementViewProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Description
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700">Description</label>
                   <textarea
                     value={newSuggestion.description}
                     onChange={(e) =>
@@ -166,9 +144,7 @@ const FeatureManagementView: React.FC<FeatureManagementViewProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Priority
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700">Priority</label>
                   <select
                     value={newSuggestion.priority}
                     onChange={(e) =>

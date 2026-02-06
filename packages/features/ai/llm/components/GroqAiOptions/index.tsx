@@ -1,9 +1,9 @@
+import { Preloader } from '@/components/Preloader';
+import { useProviderEndpointAutoDiscovery } from '@/hooks/useProviderEndpointAutoDiscovery';
+import system from '@/models/system';
+import { CaretDown, CaretUp } from '@phosphor-icons/react';
 import React, { useState } from 'react';
-import { CaretUp, CaretDown } from "@phosphor-icons/react";
-import { Preloader } from "@/components/Preloader";
-import { useProviderEndpointAutoDiscovery } from "@/hooks/useProviderEndpointAutoDiscovery";
 import { BaseLLMOptionsProps, ModelSelectionProps } from '../../types';
-import system from "@/models/system";
 
 interface GroqAiSettings extends BaseLLMOptionsProps {
   settings: {
@@ -14,17 +14,12 @@ interface GroqAiSettings extends BaseLLMOptionsProps {
   };
 }
 
-const GROQ_COMMON_URLS = [
-  "https://api.groq.com/v1"
-];
+const GROQ_COMMON_URLS = ['https://api.groq.com/v1'];
 
-const DEFAULT_MODELS = [
-  "llama2-70b-4096",
-  "mixtral-8x7b-32768"
-];
+const DEFAULT_MODELS = ['llama2-70b-4096', 'mixtral-8x7b-32768'];
 
 export default function GroqAiOptions({ settings }: GroqAiSettings): React.ReactElement {
-  const { 
+  const {
     autoDetecting,
     basePath,
     basePathValue,
@@ -32,22 +27,18 @@ export default function GroqAiOptions({ settings }: GroqAiSettings): React.React
     setShowAdvancedControls,
     handleAutoDetectClick,
   } = useProviderEndpointAutoDiscovery({
-    provider: "groq",
+    provider: 'groq',
     initialBasePath: settings?.GroqAiBasePath,
-    ENDPOINTS: GROQ_COMMON_URLS
+    ENDPOINTS: GROQ_COMMON_URLS,
   });
 
   const [tokenLimit, setTokenLimit] = useState<number>(settings?.GroqAiTokenLimit || 32768);
-  const [apiKey] = useState<string>(settings?.GroqAiApiKey || "");
+  const [apiKey] = useState<string>(settings?.GroqAiApiKey || '');
 
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
-        <GroqAiModelSelection 
-          settings={settings} 
-          basePath={basePath.value}
-          apiKey={apiKey}
-        />
+        <GroqAiModelSelection settings={settings} basePath={basePath.value} apiKey={apiKey} />
         <div className="flex flex-col w-60">
           <label className="text-white text-sm font-semibold block mb-2" id="token-limit-label">
             Token context window
@@ -73,7 +64,7 @@ export default function GroqAiOptions({ settings }: GroqAiSettings): React.React
           onClick={() => setShowAdvancedControls(!showAdvancedControls)}
           className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
-          {showAdvancedControls ? "Hide" : "Show"} Manual Endpoint Input
+          {showAdvancedControls ? 'Hide' : 'Show'} Manual Endpoint Input
           {showAdvancedControls ? (
             <CaretUp size={14} className="ml-1" />
           ) : (
@@ -122,13 +113,17 @@ export default function GroqAiOptions({ settings }: GroqAiSettings): React.React
   );
 }
 
-function GroqAiModelSelection({ settings, basePath = null, apiKey = null }: ModelSelectionProps): React.ReactElement {
+function GroqAiModelSelection({
+  settings,
+  basePath = null,
+  apiKey = null,
+}: ModelSelectionProps): React.ReactElement {
   const [customModels, setCustomModels] = useState<Array<{ id: string }>>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   React.useEffect(() => {
     async function findCustomModels() {
-      if (!basePath || !basePath.includes("/v1")) {
+      if (!basePath || !basePath.includes('/v1')) {
         setCustomModels([]);
         setLoading(false);
         return;
@@ -136,14 +131,14 @@ function GroqAiModelSelection({ settings, basePath = null, apiKey = null }: Mode
 
       setLoading(true);
       try {
-        const { models } = await system.customModels("groq", apiKey, basePath);
+        const { models } = await system.customModels('groq', apiKey, basePath);
         // Merge default models with any custom models that might be available
-        const allModels = [...DEFAULT_MODELS, ...(models || [])].map(id => ({ id }));
+        const allModels = [...DEFAULT_MODELS, ...(models || [])].map((id) => ({ id }));
         setCustomModels(allModels);
       } catch (error) {
-        console.error("Failed to fetch custom models:", error);
+        console.error('Failed to fetch custom models:', error);
         // Fall back to default models if API call fails
-        setCustomModels(DEFAULT_MODELS.map(id => ({ id })));
+        setCustomModels(DEFAULT_MODELS.map((id) => ({ id })));
       }
       setLoading(false);
     }
@@ -183,11 +178,7 @@ function GroqAiModelSelection({ settings, basePath = null, apiKey = null }: Mode
         className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
       >
         {customModels.map((model) => (
-          <option
-            key={model.id}
-            value={model.id}
-            selected={settings.GroqAiModelPref === model.id}
-          >
+          <option key={model.id} value={model.id} selected={settings.GroqAiModelPref === model.id}>
             {model.id}
           </option>
         ))}

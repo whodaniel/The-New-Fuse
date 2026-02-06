@@ -1,10 +1,11 @@
 ## 1. Codebase Structure Overview
-Total files scanned: 7261
-Total directories: 1460
+
+Total files scanned: 7261 Total directories: 1460
 
 ## 2. Potential Ghost Code
 
 ### Potentially Unused Files:
+
 - `.config/jest/jest.config.js`
 - `.config/jest/jest.setup.ts`
 - `NodeToolbar.tsx`
@@ -182,14 +183,14 @@ Total directories: 1460
 - `apps/backend/src/health/redis.health.tsx`
 - `apps/backend/src/lib/firebase-admin.d.ts`
 - `apps/backend/src/lib/firebase-admin.ts`
-- `apps/backend/src/lib/prisma/prisma.module.d.ts`
-- `apps/backend/src/lib/prisma/prisma.module.ts`
-- `apps/backend/src/lib/prisma/prisma.service.d.tsx`
-- `apps/backend/src/lib/prisma/prisma.service.ts`
-- `apps/backend/src/lib/prisma.d.tsx`
-- `apps/backend/src/lib/prisma.service.d.tsx`
-- `apps/backend/src/lib/prisma.service.ts`
-- `apps/backend/src/lib/prisma.ts`
+- `apps/backend/src/lib/drizzle/drizzle.module.d.ts`
+- `apps/backend/src/lib/drizzle/drizzle.module.ts`
+- `apps/backend/src/lib/drizzle/drizzle.service.d.tsx`
+- `apps/backend/src/lib/drizzle/drizzle.service.ts`
+- `apps/backend/src/lib/drizzle.d.tsx`
+- `apps/backend/src/lib/drizzle.service.d.tsx`
+- `apps/backend/src/lib/drizzle.service.ts`
+- `apps/backend/src/lib/drizzle.ts`
 - `apps/backend/src/middleware/auth.d.tsx`
 - `apps/backend/src/middleware/auth.ts`
 - `apps/backend/src/middleware/errorHandler.d.ts`
@@ -221,9 +222,9 @@ Total directories: 1460
 - `apps/backend/src/n8n/workflow.validator.d.ts`
 - `apps/backend/src/n8n/workflow.validator.tsx`
 - `apps/backend/src/notifications/notification.service.ts`
-- `apps/backend/src/prisma/database.module.ts`
-- `apps/backend/src/prisma/prisma.module.ts`
-- `apps/backend/src/prisma/prisma.service.ts`
+- `apps/backend/src/drizzle/database.module.ts`
+- `apps/backend/src/drizzle/drizzle.module.ts`
+- `apps/backend/src/drizzle/drizzle.service.ts`
 - `apps/backend/src/profile/profile.service.ts`
 - `apps/backend/src/routes/agent.d.ts`
 - `apps/backend/src/routes/agent.ts`
@@ -1815,7 +1816,7 @@ Total directories: 1460
 - `packages/api/src/services/base.service.ts`
 - `packages/api/src/services/event.service.ts`
 - `packages/api/src/services/health.service.ts`
-- `packages/api/src/services/prisma.service.ts`
+- `packages/api/src/services/drizzle.service.ts`
 - `packages/api/src/test-db.ts`
 - `packages/api/src/types/agent.ts`
 - `packages/api/src/types/api-response.types.ts`
@@ -1867,7 +1868,7 @@ Total directories: 1460
 - `packages/api-core/src/modules/services/agent.service.ts`
 - `packages/api-core/src/modules/services/base.service.ts`
 - `packages/api-core/src/modules/services/workflow.service.ts`
-- `packages/api-core/src/prisma/prisma.service.ts`
+- `packages/api-core/src/drizzle/drizzle.service.ts`
 - `packages/api-core/src/routes/agents.ts`
 - `packages/api-core/src/routes/export.ts`
 - `packages/api-core/src/routes/mcp.ts`
@@ -2299,8 +2300,8 @@ Total directories: 1460
 - `packages/core/src/database/migrations/createTables.tsx`
 - `packages/core/src/database/migrations/migration-runner.d.ts`
 - `packages/core/src/database/migrations/migration-runner.tsx`
-- `packages/core/src/database/prisma.service.d.ts`
-- `packages/core/src/database/prisma.service.tsx`
+- `packages/core/src/database/drizzle.service.d.ts`
+- `packages/core/src/database/drizzle.service.tsx`
 - `packages/core/src/database/query-performance-monitor.service.tsx`
 - `packages/core/src/database/repositories/BaseRepository.d.tsx`
 - `packages/core/src/database/repositories/BaseRepository.tsx`
@@ -2778,8 +2779,8 @@ Total directories: 1460
 - `packages/core/src/pipeline/PipelineManager.tsx`
 - `packages/core/src/pipeline/state.d.ts`
 - `packages/core/src/pipeline/state.ts`
-- `packages/core/src/prisma/prisma.service.d.ts`
-- `packages/core/src/prisma/prisma.service.tsx`
+- `packages/core/src/drizzle/drizzle.service.d.ts`
+- `packages/core/src/drizzle/drizzle.service.tsx`
 - `packages/core/src/processing/featureProcessor.d.ts`
 - `packages/core/src/processing/featureProcessor.tsx`
 - `packages/core/src/products/api_integration_handler.d.ts`
@@ -4692,7 +4693,7 @@ Total directories: 1460
 - `packages/utils/src/validation.tsx`
 - `packages/utils/src/validators.ts`
 - `playwright.config.ts`
-- `prisma/migrations/20240215_a2a_integration.ts`
+- `drizzle/migrations/20240215_a2a_integration.ts`
 - `run-agent-communication.js`
 - `scraper/extractTechStack.js`
 - `scripts/.eslintrc.js`
@@ -5223,9 +5224,9 @@ Total directories: 1460
 - `src/lib/errors.d.ts`
 - `src/lib/errors.ts`
 - `src/lib/firebase.js`
-- `src/lib/prisma.service.d.tsx`
-- `src/lib/prisma.service.tsx`
-- `src/lib/prisma.ts`
+- `src/lib/drizzle.service.d.tsx`
+- `src/lib/drizzle.service.tsx`
+- `src/lib/drizzle.ts`
 - `src/llm/providers/OpenAIProvider.d.tsx`
 - `src/llm/providers/OpenAIProvider.tsx`
 - `src/logger.ts`
@@ -5253,7 +5254,7 @@ Total directories: 1460
 - `src/mcp/src/db/agent-manager.ts`
 - `src/mcp/src/db/conversation-manager.ts`
 - `src/mcp/src/db/logger.ts`
-- `src/mcp/src/db/prisma-client.ts`
+- `src/mcp/src/db/drizzle-client.ts`
 - `src/mcp/src/db/tool-manager.ts`
 - `src/mcp/src/db/workflow-manager.ts`
 - `src/mcp/tools/anthropic-xml-tools.ts`
@@ -5805,8 +5806,8 @@ Total directories: 1460
 - `tests/global-setup.ts`
 - `tests/global-teardown.ts`
 - `tests/integration/service-integration.spec.tsx`
-- `tests/prisma/optimize-queries.tsx`
-- `tests/prisma/optimize-test.ts`
+- `tests/drizzle/optimize-queries.tsx`
+- `tests/drizzle/optimize-test.ts`
 - `tests/setup.ts`
 - `types/global.d.ts`
 - `types/typeorm.d.ts`
@@ -5821,9 +5822,11 @@ Total directories: 1460
 - `zapier-webhook.tsx`
 
 ## 3. Navigation Integrity
+
 All navigation paths appear to be valid and complete.
 
 ### Navigation Flow Map:
+
 ```
 Application Navigation Structure:
 
@@ -5891,22 +5894,31 @@ settings/* -> Component (src/routes/index.tsx)
 ```
 
 ## 4. Component Relationship Analysis
+
 ### Isolated Components (no usage and no dependencies)
+
 - None detected
 
 ## 5. Recommendations
+
 ### Recommendation 1: Clean up unused files
-Found 5814 potentially unused files. Consider removing these to improve codebase maintainability.
+
+Found 5814 potentially unused files. Consider removing these to improve codebase
+maintainability.
 
 Suggested actions:
+
 - Review each file to confirm it's truly unused
 - Archive valuable code snippets before deletion
 - Remove confirmed unused files and update build configurations
 
 ### Recommendation 2: Implement regular code auditing
-Set up automated processes to routinely check for code quality issues and navigation integrity.
+
+Set up automated processes to routinely check for code quality issues and
+navigation integrity.
 
 Suggested actions:
+
 - Configure a pre-commit hook to identify potential ghost code
 - Set up automated navigation testing as part of CI pipeline
 - Schedule quarterly code audits to maintain codebase health

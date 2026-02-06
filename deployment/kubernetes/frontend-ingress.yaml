@@ -7,17 +7,17 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   tls:
-  - hosts:
-    - fuse.example.com
-    secretName: fuse-tls
+    - hosts:
+        - fuse.example.com
+      secretName: fuse-tls
   rules:
-  - host: fuse.example.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: fuse-frontend
-            port:
-              number: 80
+    - host: fuse.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: fuse-frontend
+                port:
+                  number: 80

@@ -1,21 +1,26 @@
 # Gemini CLI Task Delegation - Restoration Roadmap
+
 ## Tasks to Delegate (Bottom-Up from Roadmap)
 
 ### CRITICAL: Terminal Setup Instructions
+
 Use these exact commands in sequence for proper Gemini CLI delegation:
 
 1. **Create Terminal with Focus**:
+
 ```bash
 osascript -e 'tell application "Visual Studio Code" to activate' -e 'delay 1' -e 'tell application "System Events" to tell process "Code" to keystroke "p" using {command down, shift down}'
 osascript -e 'delay 1' -e 'tell application "System Events" to keystroke "Terminal: Create New Terminal"' -e 'delay 0.5' -e 'tell application "System Events" to keystroke return'
 ```
 
 2. **Launch Gemini CLI**:
+
 ```bash
 osascript -e 'delay 2' -e 'tell application "System Events" to keystroke "gemini"' -e 'delay 0.5' -e 'tell application "System Events" to keystroke return'
 ```
 
 3. **Wait for Gemini to Load**:
+
 ```bash
 osascript -e 'delay 5'  # Wait for full Gemini startup
 ```
@@ -25,7 +30,9 @@ osascript -e 'delay 5'  # Wait for full Gemini startup
 ## TASK DELEGATION LIST (Bottom-Up Priority)
 
 ### 1. DEPLOYMENT & PRODUCTION READINESS (Section 18) - PRIORITY 1
+
 **Task for Gemini Terminal 1:**
+
 ```
 URGENT: Production Configuration Audit
 
@@ -42,7 +49,9 @@ Report back with concrete findings and deployment blockers.
 ```
 
 ### 2. PROMPT TEMPLATING & LLM INTEGRATION (Section 17) - PRIORITY 2
+
 **Task for Gemini Terminal 2:**
+
 ```
 URGENT: Prompt Templating System Analysis
 
@@ -59,13 +68,15 @@ Create comprehensive technical documentation of current capabilities and gaps.
 ```
 
 ### 3. FEATURE MANAGEMENT SYSTEM (Section 16) - PRIORITY 3
+
 **Task for Gemini Terminal 3:**
+
 ```
 URGENT: Feature Management Ecosystem Audit
 
 Comprehensive analysis of feature management packages:
 - packages/features/ (core feature management)
-- packages/feature-tracker/ (tracking system)  
+- packages/feature-tracker/ (tracking system)
 - packages/feature-suggestions/ (suggestion system)
 
 Tasks:
@@ -81,7 +92,9 @@ Provide detailed technical assessment and implementation gaps.
 ```
 
 ### 4. FAIRTABLE ECOSYSTEM (Section 15) - PRIORITY 4
+
 **Task for Gemini Terminal 4:**
+
 ```
 URGENT: FairTable System Comprehensive Review
 
@@ -105,7 +118,9 @@ Report performance benchmarks and functionality gaps.
 ```
 
 ### 5. INTEGRATION TESTS & VERIFICATION (Section 14) - PRIORITY 5
+
 **Task for Gemini Terminal 5:**
+
 ```
 URGENT: Integration Test Infrastructure Assessment
 
@@ -132,6 +147,7 @@ Document test results, failures, and infrastructure gaps.
 ## DELEGATION EXECUTION PROTOCOL
 
 For each terminal instance:
+
 1. **Create dedicated terminal** using VSCode API commands
 2. **Launch Gemini CLI** with proper timing delays
 3. **Wait for full Gemini startup** (5 second delay minimum)
@@ -140,6 +156,7 @@ For each terminal instance:
 6. **Track terminal PID** for each Gemini instance
 
 ### CRITICAL SAFETY CHECKS:
+
 - NEVER type into own input field instead of Gemini terminal
 - ALWAYS use osascript commands for text sending to terminals
 - NEVER use coordinate clicking (unreliable)
@@ -147,7 +164,9 @@ For each terminal instance:
 - Track each terminal's process ID individually
 
 ### EXPECTED DELIVERABLES:
+
 Each Gemini instance should provide:
+
 - Detailed technical analysis report
 - Specific implementation gaps identified
 - Concrete next steps with priority ranking
@@ -159,8 +178,9 @@ Each Gemini instance should provide:
 ## MONITORING DELEGATION PROGRESS
 
 Check status of each Gemini terminal:
+
 1. Terminal 1 (Production Readiness): [Status: Pending]
-2. Terminal 2 (Prompt Templating): [Status: Pending]  
+2. Terminal 2 (Prompt Templating): [Status: Pending]
 3. Terminal 3 (Feature Management): [Status: Pending]
 4. Terminal 4 (FairTable Ecosystem): [Status: Pending]
 5. Terminal 5 (Integration Tests): [Status: Pending]

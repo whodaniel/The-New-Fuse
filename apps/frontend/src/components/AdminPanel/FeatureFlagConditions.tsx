@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import { useState } from 'react';
 // Temporarily using local components instead of ui-consolidated
 // import { Card, Input, Switch, Button, DatePicker, Select } from '@the-new-fuse/ui-consolidated';
 import { FeatureFlagConditions } from '@the-new-fuse/types/featureFlags';
 // import { MonacoEditor } from '@the-new-fuse/ui-consolidated';
 
 // Temporary placeholder components
-const DatePicker = ({ value, onChange }: { value: Date | null, onChange: (date: Date | null) => void }) => (
+const DatePicker = ({
+  value,
+  onChange,
+}: {
+  value: Date | null;
+  onChange: (date: Date | null) => void;
+}) => (
   <input
     type="date"
     value={value ? value.toISOString().split('T')[0] : ''}
@@ -18,14 +24,24 @@ const DatePicker = ({ value, onChange }: { value: Date | null, onChange: (date: 
   />
 );
 
-const Select = ({ value, onChange, options }: { value: string, onChange: (value: string) => void, options: { label: string, value: string }[] }) => (
+const Select = ({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  options: { label: string; value: string }[];
+}) => (
   <select
     value={value}
     onChange={(e) => onChange(e.target.value)}
     className="px-3 py-2 border border-gray-300 rounded-md"
   >
-    {options.map(option => (
-      <option key={option.value} value={option.value}>{option.label}</option>
+    {options.map((option) => (
+      <option key={option.value} value={option.value}>
+        {option.label}
+      </option>
     ))}
   </select>
 );
@@ -37,14 +53,14 @@ interface FeatureFlagConditionsEditorProps {
 
 export function FeatureFlagConditionsEditor({
   conditions,
-  onChange
+  onChange,
 }: FeatureFlagConditionsEditorProps) {
   const [activeTab, setActiveTab] = useState('environments');
 
   const updateConditions = (key: string, value: any) => {
     onChange({
       ...conditions,
-      [key]: value
+      [key]: value,
     });
   };
 
@@ -93,7 +109,7 @@ export function FeatureFlagConditionsEditor({
         <Card className="p-4">
           <h3 className="text-lg font-medium mb-4">Environment Targeting</h3>
           <div className="space-y-2">
-            {['development', 'testing', 'staging', 'production'].map(env => (
+            {['development', 'testing', 'staging', 'production'].map((env) => (
               <div key={env} className="flex items-center space-x-2">
                 <Switch
                   checked={(conditions.environments || []).includes(env)}
@@ -177,7 +193,7 @@ export function FeatureFlagConditionsEditor({
                 onChange={(e) => {
                   updateConditions('percentage', {
                     ...(conditions.percentage || {}),
-                    value: Number(e.target.value)
+                    value: Number(e.target.value),
                   });
                 }}
               />
@@ -188,7 +204,7 @@ export function FeatureFlagConditionsEditor({
                 onCheckedChange={(checked) => {
                   updateConditions('percentage', {
                     ...(conditions.percentage || {}),
-                    sticky: checked
+                    sticky: checked,
                   });
                 }}
               />
@@ -205,11 +221,13 @@ export function FeatureFlagConditionsEditor({
             <div>
               <label className="block text-sm mb-1">Start Date</label>
               <DatePicker
-                value={conditions.dateRange?.startDate ? new Date(conditions.dateRange.startDate) : null}
+                value={
+                  conditions.dateRange?.startDate ? new Date(conditions.dateRange.startDate) : null
+                }
                 onChange={(date) => {
                   updateConditions('dateRange', {
                     ...(conditions.dateRange || {}),
-                    startDate: date
+                    startDate: date,
                   });
                 }}
               />
@@ -217,11 +235,13 @@ export function FeatureFlagConditionsEditor({
             <div>
               <label className="block text-sm mb-1">End Date</label>
               <DatePicker
-                value={conditions.dateRange?.endDate ? new Date(conditions.dateRange.endDate) : null}
+                value={
+                  conditions.dateRange?.endDate ? new Date(conditions.dateRange.endDate) : null
+                }
                 onChange={(date) => {
                   updateConditions('dateRange', {
                     ...(conditions.dateRange || {}),
-                    endDate: date
+                    endDate: date,
                   });
                 }}
               />
@@ -233,7 +253,7 @@ export function FeatureFlagConditionsEditor({
                 onChange={(value) => {
                   updateConditions('dateRange', {
                     ...(conditions.dateRange || {}),
-                    timezone: value
+                    timezone: value,
                   });
                 }}
                 options={[
@@ -313,7 +333,7 @@ export function FeatureFlagConditionsEditor({
                 const customRules = [...(conditions.customRules || [])];
                 customRules.push({
                   name: '',
-                  condition: '// Return true to enable the feature\nreturn true;'
+                  condition: '// Return true to enable the feature\nreturn true;',
                 });
                 updateConditions('customRules', customRules);
               }}

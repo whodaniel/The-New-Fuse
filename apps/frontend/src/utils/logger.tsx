@@ -21,10 +21,14 @@ export class Logger {
   }
 
   private log(level: LogLevel, message: string | Error, options?: LogOptions): void {
-    const formattedMessage = this.formatMessage(level, message instanceof Error ? message.message : message, {
-      timestamp: true,
-      ...options,
-    });
+    const formattedMessage = this.formatMessage(
+      level,
+      message instanceof Error ? message.message : message,
+      {
+        timestamp: true,
+        ...options,
+      }
+    );
 
     // Enhanced logging with production support
     const logData = {
@@ -33,7 +37,7 @@ export class Logger {
       context: this.context,
       timestamp: new Date().toISOString(),
       ...options?.context,
-      ...(message instanceof Error && { stack: message.stack, error: message.name })
+      ...(message instanceof Error && { stack: message.stack, error: message.name }),
     };
 
     // Development logging (detailed)
@@ -56,7 +60,7 @@ export class Logger {
       // Production logging (errors and warns only, structured)
       if (level === 'error' || level === 'warn') {
         console[level](JSON.stringify(logData));
-        
+
         // Send to monitoring service if available
         if (typeof window !== 'undefined' && (window as any).monitoring) {
           (window as any).monitoring.log(logData);

@@ -34,6 +34,11 @@ export interface ChannelService {
   createChannel(name: string, type: ChannelType, participants: string[]): Promise<Channel>;
   getChannel(id: string): Promise<Channel | null>;
   getUserChannels(userId: string): Promise<Channel[]>;
-  sendMessage(channelId: string, senderId: string, content: string, type?: MessageType): Promise<Message>;
+  sendMessage(
+    channelId: string,
+    senderId: string,
+    content: string,
+    type?: MessageType,
+  ): Promise<Message>;
   getMessages(channelId: string, limit?: number): Promise<Message[]>;
 }

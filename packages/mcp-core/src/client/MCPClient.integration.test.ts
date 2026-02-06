@@ -4,12 +4,12 @@
  * These tests verify client-server communication and end-to-end functionality
  */
 
-import { MCPClient } from './MCPClient';
+import { MCPResource, ResourceContent, ResourceHandler } from '../interfaces/IMCPResource';
+import { MCPTool, ToolHandler, ToolResult } from '../interfaces/IMCPTool';
 import { MCPServer } from '../server/MCPServer';
 import { MCPClientConfig } from '../types/client';
 import { MCPServerConfig } from '../types/server';
-import { ResourceHandler, MCPResource, ResourceContent } from '../interfaces/IMCPResource';
-import { ToolHandler, MCPTool, ToolResult } from '../interfaces/IMCPTool';
+import { MCPClient } from './MCPClient';
 
 // Test resource handler
 class TestResourceHandler implements ResourceHandler {
@@ -20,13 +20,13 @@ class TestResourceHandler implements ResourceHandler {
     this.resources.set('test://file1.txt', {
       uri: 'test://file1.txt',
       mimeType: 'text/plain',
-      content: 'Hello, World!'
+      content: 'Hello, World!',
     });
 
     this.resources.set('test://file2.json', {
       uri: 'test://file2.json',
       mimeType: 'application/json',
-      content: JSON.stringify({ message: 'Test JSON content' })
+      content: JSON.stringify({ message: 'Test JSON content' }),
     });
   }
 
@@ -48,7 +48,7 @@ class TestResourceHandler implements ResourceHandler {
           name: uri.split('/').pop() || uri,
           description: `Test resource: ${uri}`,
           mimeType: content.mimeType,
-          handler: this
+          handler: this,
         });
       }
     }
@@ -63,7 +63,7 @@ class TestToolHandler implements ToolHandler {
     if (params.action === 'echo') {
       return {
         success: true,
-        result: { echo: params.message || 'Hello from tool!' }
+        result: { echo: params.message || 'Hello from tool!' },
       };
     } else if (params.action === 'calculate') {
       const { a, b, operation } = params;
@@ -88,12 +88,12 @@ class TestToolHandler implements ToolHandler {
 
       return {
         success: true,
-        result: { calculation: result }
+        result: { calculation: result },
       };
     } else if (params.action === 'error') {
       return {
         success: false,
-        error: 'Simulated tool error'
+        error: 'Simulated tool error',
       };
     }
 
@@ -113,7 +113,7 @@ class TestToolHandler implements ToolHandler {
 
     return {
       valid: errors.length === 0,
-      errors: errors.length > 0 ? errors : undefined
+      errors: errors.length > 0 ? errors : undefined,
     };
   }
 }
@@ -138,7 +138,7 @@ describe('MCPClient Integration Tests', () => {
       timeout: 30000,
       enableAuth: false,
       enableTLS: false,
-      logLevel: 'info' as any
+      logLevel: 'info' as any,
     };
 
     clientConfig = {
@@ -148,12 +148,12 @@ describe('MCPClient Integration Tests', () => {
       retryPolicy: {
         maxAttempts: 3,
         baseDelay: 1000,
-        maxDelay: 5000
+        maxDelay: 5000,
       },
       options: {
         enableCaching: true,
-        cacheTTL: 60000
-      }
+        cacheTTL: 60000,
+      },
     };
   });
 
@@ -179,11 +179,11 @@ describe('MCPClient Integration Tests', () => {
         type: 'object',
         properties: {
           action: { type: 'string', const: 'echo' },
-          message: { type: 'string' }
+          message: { type: 'string' },
         },
-        required: ['action']
+        required: ['action'],
       },
-      handler: toolHandler
+      handler: toolHandler,
     };
 
     const calcTool: MCPTool = {
@@ -195,11 +195,11 @@ describe('MCPClient Integration Tests', () => {
           action: { type: 'string', const: 'calculate' },
           a: { type: 'number' },
           b: { type: 'number' },
-          operation: { type: 'string', enum: ['add', 'subtract', 'multiply', 'divide'] }
+          operation: { type: 'string', enum: ['add', 'subtract', 'multiply', 'divide'] },
         },
-        required: ['action', 'a', 'b', 'operation']
+        required: ['action', 'a', 'b', 'operation'],
       },
-      handler: toolHandler
+      handler: toolHandler,
     };
 
     server.registerTool(echoTool);
@@ -235,7 +235,7 @@ describe('MCPClient Integration Tests', () => {
       expect(capabilities.length).toBeGreaterThan(0);
 
       // Verify capabilities have the expected structure
-      capabilities.forEach(capability => {
+      capabilities.forEach((capability) => {
         expect(capability).toHaveProperty('name');
         expect(typeof capability.name).toBe('string');
       });
@@ -273,7 +273,7 @@ describe('MCPClient Integration Tests', () => {
       expect(Array.isArray(resources)).toBe(true);
       expect(resources.length).toBe(2);
 
-      const uris = resources.map(r => r.uri);
+      const uris = resources.map((r) => r.uri);
       expect(uris).toContain('test://file1.txt');
       expect(uris).toContain('test://file2.json');
     });
@@ -334,12 +334,12 @@ describe('MCPClient Integration Tests', () => {
     test('should call echo tool successfully', async () => {
       const result = await client.callTool('echo', {
         action: 'echo',
-        message: 'Hello from integration test!'
+        message: 'Hello from integration test!',
       });
 
       expect(result.success).toBe(true);
       expect(result.result).toEqual({
-        echo: 'Hello from integration test!'
+        echo: 'Hello from integration test!',
       });
     });
 
@@ -348,12 +348,12 @@ describe('MCPClient Integration Tests', () => {
         action: 'calculate',
         a: 10,
         b: 5,
-        operation: 'add'
+        operation: 'add',
       });
 
       expect(result.success).toBe(true);
       expect(result.result).toEqual({
-        calculation: 15
+        calculation: 15,
       });
     });
 
@@ -362,18 +362,18 @@ describe('MCPClient Integration Tests', () => {
         action: 'calculate',
         a: 20,
         b: 4,
-        operation: 'divide'
+        operation: 'divide',
       });
 
       expect(result.success).toBe(true);
       expect(result.result).toEqual({
-        calculation: 5
+        calculation: 5,
       });
     });
 
     test('should handle tool execution error', async () => {
       const result = await client.callTool('echo', {
-        action: 'error'
+        action: 'error',
       });
 
       expect(result.success).toBe(false);
@@ -390,7 +390,7 @@ describe('MCPClient Integration Tests', () => {
         action: 'calculate',
         a: 7,
         b: 3,
-        operation: 'multiply'
+        operation: 'multiply',
       };
 
       // First call
@@ -419,8 +419,8 @@ describe('MCPClient Integration Tests', () => {
         jsonrpc: '2.0' as const,
         method: 'client/notification',
         params: {
-          message: 'Test notification from client'
-        }
+          message: 'Test notification from client',
+        },
       };
 
       await expect(client.sendNotification(notification)).resolves.not.toThrow();
@@ -430,7 +430,7 @@ describe('MCPClient Integration Tests', () => {
       const callback = jest.fn((notification) => {
         expect(notification.method).toBe('server/notification');
         expect(notification.params).toEqual({
-          message: 'Test notification from server'
+          message: 'Test notification from server',
         });
         done();
       });
@@ -443,8 +443,8 @@ describe('MCPClient Integration Tests', () => {
         server.emit('notification', {
           method: 'server/notification',
           params: {
-            message: 'Test notification from server'
-          }
+            message: 'Test notification from server',
+          },
         });
       }, 100);
     });
@@ -462,7 +462,7 @@ describe('MCPClient Integration Tests', () => {
       await server.stop();
 
       // Wait a bit for the connection to be detected as closed
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Client should detect disconnection
       expect(client.isConnected()).toBe(false);
@@ -472,18 +472,20 @@ describe('MCPClient Integration Tests', () => {
       // Create a client with very short timeout
       const shortTimeoutClient = new MCPClient({
         ...clientConfig,
-        timeout: 100
+        timeout: 100,
       });
 
       await shortTimeoutClient.connect(`ws://localhost:${serverPort}`);
 
       // This request should timeout (assuming server takes longer than 100ms)
-      await expect(shortTimeoutClient.sendRequest({
-        jsonrpc: '2.0',
-        id: 'timeout-test',
-        method: 'slow-operation',
-        params: {}
-      })).rejects.toThrow();
+      await expect(
+        shortTimeoutClient.sendRequest({
+          jsonrpc: '2.0',
+          id: 'timeout-test',
+          method: 'slow-operation',
+          params: {},
+        })
+      ).rejects.toThrow();
 
       await shortTimeoutClient.cleanup();
     });
@@ -541,7 +543,7 @@ describe('MCPClient Integration Tests', () => {
         client.readResource('test://file1.txt'),
         client.readResource('test://file2.json'),
         client.readResource('test://file1.txt'), // Duplicate
-        client.readResource('test://file2.json')  // Duplicate
+        client.readResource('test://file2.json'), // Duplicate
       ];
 
       const results = await Promise.all(promises);
@@ -558,7 +560,7 @@ describe('MCPClient Integration Tests', () => {
         client.callTool('calculator', { action: 'calculate', a: 1, b: 2, operation: 'add' }),
         client.callTool('calculator', { action: 'calculate', a: 3, b: 4, operation: 'multiply' }),
         client.callTool('echo', { action: 'echo', message: 'concurrent test 1' }),
-        client.callTool('echo', { action: 'echo', message: 'concurrent test 2' })
+        client.callTool('echo', { action: 'echo', message: 'concurrent test 2' }),
       ];
 
       const results = await Promise.all(promises);

@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 
 export interface MessageClassification {
@@ -14,16 +13,16 @@ export class MessageClassifier {
     command: [/^\/\w+/, /^execute/, /^run/, /^start/, /^stop/],
     query: [/\?$/, /^what/, /^how/, /^when/, /^where/, /^why/],
     notification: [/alert/, /warning/, /error/, /info/],
-    response: [/^ok/, /^done/, /^completed/, /^failed/]
+    response: [/^ok/, /^done/, /^completed/, /^failed/],
   };
 
   classify(message: string): MessageClassification {
     const text = message.toLowerCase().trim();
-    
+
     // Determine type
     let type: MessageClassification['type'] = 'response';
     let confidence = 0.5;
-    
+
     for (const [messageType, patterns] of Object.entries(this.patterns)) {
       for (const pattern of patterns) {
         if (pattern.test(text)) {
@@ -34,18 +33,18 @@ export class MessageClassifier {
       }
       if (confidence > 0.5) break;
     }
-    
+
     // Determine priority
     const priority = this.determinePriority(text);
-    
+
     // Determine category
     const category = this.determineCategory(text);
-    
+
     return {
       type,
       priority,
       category,
-      confidence
+      confidence,
     };
   }
 

@@ -19,8 +19,8 @@ export class ToolUseService {
       parameters: {
         agentId,
         toolName: config.toolName,
-        parameters: config.parameters
-      }
+        parameters: config.parameters,
+      },
     };
 
     const result = await this.massBlocksService.executeBlock(agentId, input, toolUseConfig);
@@ -30,8 +30,8 @@ export class ToolUseService {
       executionMetrics: {
         agentId,
         toolName: config.toolName,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     };
   }
 }

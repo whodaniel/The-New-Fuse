@@ -3,21 +3,17 @@
  */
 
 // Import types from @the-new-fuse/types package
-import type { 
-  Agent, 
-  Workflow, 
-  WorkflowExecution
-} from '@the-new-fuse/types';
+import type { Agent, Workflow, WorkflowExecution } from '@the-new-fuse/types';
 import { RedisService } from './redis.service';
 // Import types from our own package to avoid duplication
-import type { ApiResponse, PaginationParams, PaginatedResponse } from '../types/index';
+import type { ApiResponse, PaginatedResponse, PaginationParams } from '../types/index';
 
 /**
  * Base API service with common functionality
  */
 export class BaseService {
   constructor(protected redisService?: RedisService) {}
-  
+
   /**
    * Format a success response
    */
@@ -25,19 +21,19 @@ export class BaseService {
     return {
       success: true,
       data,
-      ...(meta ? { meta } : {})
+      ...(meta ? { meta } : {}),
     };
   }
-  
+
   /**
    * Format an error response
    */
   protected formatError(error: Error | string): ApiResponse {
     const message = typeof error === 'string' ? error : error.message;
-    
+
     return {
       success: false,
-      error: message
+      error: message,
     };
   }
 }
@@ -54,7 +50,7 @@ export class AgentService extends BaseService {
       // This would be implemented with actual database calls
       const page = params.page || 1;
       const limit = params.limit || 10;
-      
+
       return {
         success: true,
         data: [],
@@ -62,8 +58,8 @@ export class AgentService extends BaseService {
           page,
           limit,
           total: 0,
-          totalPages: 0
-        }
+          totalPages: 0,
+        },
       };
     } catch (error) {
       return {
@@ -74,12 +70,12 @@ export class AgentService extends BaseService {
           page: 1,
           limit: 10,
           total: 0,
-          totalPages: 0
-        }
+          totalPages: 0,
+        },
       };
     }
   }
-  
+
   /**
    * Get an agent by ID
    */
@@ -105,7 +101,7 @@ export class WorkflowService extends BaseService {
       // This would be implemented with actual database calls
       const page = params.page || 1;
       const limit = params.limit || 10;
-      
+
       return {
         success: true,
         data: [],
@@ -113,8 +109,8 @@ export class WorkflowService extends BaseService {
           page,
           limit,
           total: 0,
-          totalPages: 0
-        }
+          totalPages: 0,
+        },
       };
     } catch (error) {
       return {
@@ -125,12 +121,12 @@ export class WorkflowService extends BaseService {
           page: 1,
           limit: 10,
           total: 0,
-          totalPages: 0
-        }
+          totalPages: 0,
+        },
       };
     }
   }
-  
+
   /**
    * Get a workflow execution by ID
    */
@@ -150,6 +146,6 @@ export class WorkflowService extends BaseService {
 export function createServices(redisService?: RedisService) {
   return {
     agentService: new AgentService(redisService),
-    workflowService: new WorkflowService(redisService)
+    workflowService: new WorkflowService(redisService),
   };
 }

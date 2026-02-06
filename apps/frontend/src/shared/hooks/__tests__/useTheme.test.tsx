@@ -1,6 +1,6 @@
-import { renderHook, act } from '@testing-library/react';
-import { useTheme } from '../useTheme';
+import { act, renderHook } from '@testing-library/react';
 import { vi } from 'vitest';
+import { useTheme } from '../useTheme';
 
 describe('useTheme', () => {
   const mockMatchMedia = vi.fn();
@@ -44,7 +44,7 @@ describe('useTheme', () => {
     });
 
     const { result } = renderHook(() => useTheme());
-    
+
     act(() => {
       result.current[1]('dark');
     });
@@ -66,12 +66,10 @@ describe('useTheme', () => {
     });
 
     const { result } = renderHook(() => useTheme());
-    
+
     // Simulate system theme change
     act(() => {
-      listeners.forEach(listener => 
-        listener({ matches: true })
-      );
+      listeners.forEach((listener) => listener({ matches: true }));
     });
 
     const root = window.document.documentElement;
@@ -86,7 +84,7 @@ describe('useTheme', () => {
     });
 
     const { result } = renderHook(() => useTheme('custom-theme-key'));
-    
+
     act(() => {
       result.current[1]('dark');
     });

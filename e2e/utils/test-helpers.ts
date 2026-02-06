@@ -20,11 +20,7 @@ export async function login(page: Page, email: string, password: string) {
 /**
  * Wait for API response
  */
-export async function waitForApiResponse(
-  page: Page,
-  url: string | RegExp,
-  timeout: number = 5000
-) {
+export async function waitForApiResponse(page: Page, url: string | RegExp, timeout: number = 5000) {
   return page.waitForResponse(url, { timeout });
 }
 

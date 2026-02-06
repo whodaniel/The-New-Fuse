@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import System from "@/models/system";
-import PreLoader from "@/components/Preloader";
-import { OLLAMA_COMMON_URLS } from "@/utils/constants";
-import { CaretDown, CaretUp, Info } from "@phosphor-icons/react";
-import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
-import { Tooltip } from "react-tooltip";
+import PreLoader from '@/components/Preloader';
+import useProviderEndpointAutoDiscovery from '@/hooks/useProviderEndpointAutoDiscovery';
+import System from '@/models/system';
+import { OLLAMA_COMMON_URLS } from '@/utils/constants';
+import { CaretDown, CaretUp, Info } from '@phosphor-icons/react';
+import { useEffect, useState } from 'react';
+import { Tooltip } from 'react-tooltip';
 
 export default function OllamaLLMOptions({ settings }) {
   const {
@@ -15,28 +15,21 @@ export default function OllamaLLMOptions({ settings }) {
     setShowAdvancedControls,
     handleAutoDetectClick,
   } = useProviderEndpointAutoDiscovery({
-    provider: "ollama",
+    provider: 'ollama',
     initialBasePath: settings?.OllamaLLMBasePath,
     ENDPOINTS: OLLAMA_COMMON_URLS,
   });
   const [performanceMode, setPerformanceMode] = useState(
-    settings?.OllamaLLMPerformanceMode || "base"
+    settings?.OllamaLLMPerformanceMode || 'base'
   );
-  const [maxTokens, setMaxTokens] = useState(
-    settings?.OllamaLLMTokenLimit || 4096
-  );
+  const [maxTokens, setMaxTokens] = useState(settings?.OllamaLLMTokenLimit || 4096);
 
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
-        <OllamaLLMModelSelection
-          settings={settings}
-          basePath={basePath.value}
-        />
+        <OllamaLLMModelSelection settings={settings} basePath={basePath.value} />
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-2">
-            Max Tokens
-          </label>
+          <label className="text-white text-sm font-semibold block mb-2">Max Tokens</label>
           <input
             type="number"
             name="OllamaLLMTokenLimit"
@@ -63,7 +56,7 @@ export default function OllamaLLMOptions({ settings }) {
           }}
           className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
-          {showAdvancedControls ? "Hide" : "Show"} advanced settings
+          {showAdvancedControls ? 'Hide' : 'Show'} advanced settings
           {showAdvancedControls ? (
             <CaretUp size={14} className="ml-1" />
           ) : (
@@ -76,9 +69,7 @@ export default function OllamaLLMOptions({ settings }) {
         <div className="w-full flex items-start gap-4">
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
-              <label className="text-white text-sm font-semibold">
-                Ollama Base URL
-              </label>
+              <label className="text-white text-sm font-semibold">Ollama Base URL</label>
               {loading ? (
                 <PreLoader size="6" />
               ) : (
@@ -112,14 +103,12 @@ export default function OllamaLLMOptions({ settings }) {
           </div>
 
           <div className="flex flex-col w-60">
-            <label className="text-white text-sm font-semibold block mb-2">
-              Ollama Keep Alive
-            </label>
+            <label className="text-white text-sm font-semibold block mb-2">Ollama Keep Alive</label>
             <select
               name="OllamaLLMKeepAliveSeconds"
               required={true}
               className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-              defaultValue={settings?.OllamaLLMKeepAliveSeconds ?? "300"}
+              defaultValue={settings?.OllamaLLMKeepAliveSeconds ?? '300'}
             >
               <option value="0">No cache</option>
               <option value="300">5 minutes</option>
@@ -127,15 +116,14 @@ export default function OllamaLLMOptions({ settings }) {
               <option value="-1">Forever</option>
             </select>
             <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
-              Choose how long Ollama should keep your model in memory before
-              unloading.
+              Choose how long Ollama should keep your model in memory before unloading.
               <a
                 className="underline text-blue-300"
                 href="https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-keep-a-model-loaded-in-memory-or-make-it-unload-immediately"
                 target="_blank"
                 rel="noreferrer"
               >
-                {" "}
+                {' '}
                 Learn more &rarr;
               </a>
             </p>
@@ -169,18 +157,18 @@ export default function OllamaLLMOptions({ settings }) {
               className="tooltip !text-xs max-w-xs"
             >
               <p className="text-red-500">
-                <strong>Note:</strong> Only change this setting if you
-                understand its implications on performance and resource usage.
+                <strong>Note:</strong> Only change this setting if you understand its implications
+                on performance and resource usage.
               </p>
               <br />
               <p>
-                <strong>Base:</strong> Ollama automatically limits the context
-                to 2048 tokens, reducing VRAM usage. Suitable for most users.
+                <strong>Base:</strong> Ollama automatically limits the context to 2048 tokens,
+                reducing VRAM usage. Suitable for most users.
               </p>
               <br />
               <p>
-                <strong>Maximum:</strong> Uses the full context window (up to
-                Max Tokens). May increase VRAM usage significantly.
+                <strong>Maximum:</strong> Uses the full context window (up to Max Tokens). May
+                increase VRAM usage significantly.
               </p>
             </Tooltip>
           </div>
@@ -203,10 +191,10 @@ function OllamaLLMModelSelection({ settings, basePath = null }) {
       }
       setLoading(true);
       try {
-        const { models } = await System.customModels("ollama", null, basePath);
+        const { models } = await System.customModels('ollama', null, basePath);
         setCustomModels(models || []);
       } catch (error) {
-        console.error("Failed to fetch custom models:", error);
+        console.error('Failed to fetch custom models:', error);
         setCustomModels([]);
       }
       setLoading(false);
@@ -217,23 +205,19 @@ function OllamaLLMModelSelection({ settings, basePath = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-2">
-          Ollama Model
-        </label>
+        <label className="text-white text-sm font-semibold block mb-2">Ollama Model</label>
         <select
           name="OllamaLLMModelPref"
           disabled={true}
           className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
         >
           <option disabled={true} selected={true}>
-            {!!basePath
-              ? "--loading available models--"
-              : "Enter Ollama URL first"}
+            {!!basePath ? '--loading available models--' : 'Enter Ollama URL first'}
           </option>
         </select>
         <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
-          Select the Ollama model you want to use. Models will load after
-          entering a valid Ollama URL.
+          Select the Ollama model you want to use. Models will load after entering a valid Ollama
+          URL.
         </p>
       </div>
     );
@@ -241,9 +225,7 @@ function OllamaLLMModelSelection({ settings, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-2">
-        Ollama Model
-      </label>
+      <label className="text-white text-sm font-semibold block mb-2">Ollama Model</label>
       <select
         name="OllamaLLMModelPref"
         required={true}

@@ -1,7 +1,7 @@
 /**
  * Agent-related type definitions
  */
-import { UUID, ISODateTime } from './common';
+import { ISODateTime, UUID } from './common';
 
 export enum AgentType {
   HUMAN = 'human',
@@ -9,7 +9,7 @@ export enum AgentType {
   ASSISTANT = 'assistant',
   WORKER = 'worker',
   SUPERVISOR = 'supervisor',
-  SPECIALIST = 'specialist'
+  SPECIALIST = 'specialist',
 }
 
 export enum IntegrationLevel {
@@ -27,7 +27,7 @@ export enum AgentStatus {
   LEARNING = 'learning',
   INACTIVE = 'inactive',
   SUSPENDED = 'suspended',
-  TRAINING = 'training'
+  TRAINING = 'training',
 }
 
 export type AgentCapability =

@@ -11,7 +11,7 @@ import { Logger, MasterAgentRegistry, HeartbeatMonitoringService } from '@the-ne
 // import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine'; // Removed workflow-engine dependency
 import { ExtensionSystemFactory } from '@the-new-fuse/extension-system';
 // import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
-import { PrismaClient } from '@prisma/client';
+import { DatabaseService } from '@db/client';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
@@ -23,7 +23,7 @@ import * as fs from 'fs-extra';
  */
 export class DataPipelineApp {
   private logger: Logger;
-  private prisma: PrismaClient;
+  private db: DatabaseService;
   private agentRegistry: MasterAgentRegistry;
   private heartbeatService: HeartbeatMonitoringService;
   private workflowEngine: any;
@@ -43,7 +43,7 @@ export class DataPipelineApp {
     this.logger.info('Initializing Data Pipeline Application...');
 
     // Setup database
-    this.prisma = new PrismaClient({
+    this.db = new DatabaseService({
       datasources: {
         db: {
           url: 'file:./data-pipeline.db'
@@ -64,7 +64,7 @@ export class DataPipelineApp {
       cleanupIntervalMs: 60000 // 1 minute
     };
 
-    this.agentRegistry = new MasterAgentRegistry(agentConfig, this.prisma, this.logger);
+    this.agentRegistry = new MasterAgentRegistry(agentConfig, this.db, this.logger);
 
     // Setup Heartbeat Monitoring
     const heartbeatConfig = {
@@ -78,7 +78,7 @@ export class DataPipelineApp {
 
     // Setup Workflow Engine
     this.workflowEngine = WorkflowEngineFactory.createDefault(
-      this.prisma,
+      this.db,
       this.agentRegistry,
       this.heartbeatService,
       this.logger
@@ -845,8 +845,8 @@ Henry Taylor,31,henry.taylor@company.com,57000,Sales`;
       await this.agentRegistry.shutdown();
     }
 
-    if (this.prisma) {
-      await this.prisma.$disconnect();
+    if (this.db) {
+      await this.db.$disconnect();
     }
 
     this.logger.info('Data Pipeline Application shut down successfully');

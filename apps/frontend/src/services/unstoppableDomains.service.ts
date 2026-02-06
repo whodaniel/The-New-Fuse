@@ -46,9 +46,7 @@ class UnstoppableDomainsService {
    */
   private ensureInitialized(): void {
     if (!this.uauth) {
-      throw new Error(
-        'UnstoppableDomainsService not initialized. Call initialize() first.'
-      );
+      throw new Error('UnstoppableDomainsService not initialized. Call initialize() first.');
     }
   }
 

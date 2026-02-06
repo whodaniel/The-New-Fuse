@@ -1,6 +1,11 @@
-export { FeatureStage, type FeatureProgress, type CodeMetrics, type QualitativeAssessment } from './types';
+export * from './components/FeatureProgress';
+export { FeatureProgress as FeatureProgressComponent } from './components/FeatureProgress';
+export * from './examples/FeatureTrackingExample';
 export { FeatureTracker } from './FeatureTracker';
 export { useFeatureTracker } from './hooks/useFeatureTracker';
-export { FeatureProgress as FeatureProgressComponent } from './components/FeatureProgress';
-export * from './components/FeatureProgress';
-export * from './examples/FeatureTrackingExample';
+export {
+  FeatureStage,
+  type CodeMetrics,
+  type FeatureProgress,
+  type QualitativeAssessment,
+} from './types';

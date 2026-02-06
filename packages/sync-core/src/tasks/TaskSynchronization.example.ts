@@ -1,17 +1,17 @@
 /**
  * Task Synchronization System Usage Examples
- * 
+ *
  * This file demonstrates how to use the enhanced task management system
  * with real-time synchronization capabilities.
  */
 
-import { 
-  TaskSynchronizationService,
+import {
+  EnhancedTaskData,
   EnhancedTaskManagementService,
+  TaskNotificationRule,
   TaskNotificationService,
   TaskSyncData,
-  EnhancedTaskData,
-  TaskNotificationRule
+  TaskSynchronizationService,
 } from './index';
 
 // Mock services for demonstration
@@ -40,9 +40,9 @@ export async function createAndManageTaskExample() {
       processingType: 'batch',
       requiredResources: {
         cpu: 4,
-        memory: '8GB'
-      }
-    }
+        memory: '8GB',
+      },
+    },
   };
 
   try {
@@ -59,9 +59,9 @@ export async function createAndManageTaskExample() {
     await mockTaskManagementService.updateTaskProgress(
       createdTask.id,
       25,
-      { 
+      {
         currentStep: 'data_validation',
-        processedRecords: 25000 
+        processedRecords: 25000,
       },
       'tenant-789'
     );
@@ -76,16 +76,15 @@ export async function createAndManageTaskExample() {
         result: {
           processedRecords: 100000,
           outputFiles: ['output1.csv', 'output2.json'],
-          executionTime: 280000
+          executionTime: 280000,
         },
-        progress: 100
+        progress: 100,
       },
       'user-456',
       'tenant-789'
     );
 
     console.log('Task completed successfully');
-
   } catch (error) {
     console.error('Error managing task:', error);
   }
@@ -108,19 +107,19 @@ export async function taskExecutionExample() {
         environment: {
           NODE_ENV: 'production',
           API_ENDPOINT: 'https://api.example.com',
-          BATCH_SIZE: 1000
+          BATCH_SIZE: 1000,
         },
         resources: {
           cpu: 2,
           memory: 4096, // 4GB in MB
-          storage: 10240 // 10GB in MB
+          storage: 10240, // 10GB in MB
         },
         timeout: 600000, // 10 minutes
         retryPolicy: {
           maxRetries: 3,
           backoffStrategy: 'exponential',
-          baseDelay: 2000
-        }
+          baseDelay: 2000,
+        },
       },
       tenantId
     );
@@ -132,7 +131,7 @@ export async function taskExecutionExample() {
       { progress: 10, step: 'initialization' },
       { progress: 30, step: 'data_loading' },
       { progress: 60, step: 'processing' },
-      { progress: 90, step: 'validation' }
+      { progress: 90, step: 'validation' },
     ];
 
     for (const update of progressUpdates) {
@@ -142,11 +141,11 @@ export async function taskExecutionExample() {
         { currentStep: update.step },
         tenantId
       );
-      
+
       console.log(`Progress: ${update.progress}% - ${update.step}`);
-      
+
       // Simulate processing time
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
     // Complete execution with results
@@ -159,21 +158,20 @@ export async function taskExecutionExample() {
         metrics: {
           avgProcessingTime: 120,
           errorRate: 0.001,
-          throughput: 416.67 // records per second
-        }
+          throughput: 416.67, // records per second
+        },
       },
       undefined, // No error
       tenantId
     );
 
     console.log('Task execution completed successfully');
-
   } catch (error) {
     console.error('Error during task execution:', error);
-    
+
     // Handle execution failure
     try {
-await mockTaskManagementService.completeTaskExecution(
+      await mockTaskManagementService.completeTaskExecution(
         'execution-id',
         undefined,
         error instanceof Error ? error.message : String(error),
@@ -199,44 +197,40 @@ export async function taskDependencyExample() {
       {
         id: 'extract-task',
         type: 'data_extraction',
-        dependencies: [] // No dependencies - can start immediately
+        dependencies: [], // No dependencies - can start immediately
       },
       {
         id: 'transform-task',
         type: 'data_transformation',
-        dependencies: ['extract-task'] // Depends on extraction
+        dependencies: ['extract-task'], // Depends on extraction
       },
       {
         id: 'load-task',
         type: 'data_loading',
-        dependencies: ['transform-task'] // Depends on transformation
+        dependencies: ['transform-task'], // Depends on transformation
       },
       {
         id: 'validate-task',
         type: 'data_validation',
-        dependencies: ['load-task'] // Depends on loading
-      }
+        dependencies: ['load-task'], // Depends on loading
+      },
     ];
 
     // Set up dependencies for each task
     for (const task of tasks) {
-      await mockTaskSyncService.updateTaskDependencies(
-        task.id,
-        task.dependencies,
-        tenantId
-      );
-      
+      await mockTaskSyncService.updateTaskDependencies(task.id, task.dependencies, tenantId);
+
       console.log(`Set dependencies for ${task.id}:`, task.dependencies);
     }
 
     // Get task relationships
     for (const task of tasks) {
       const relationships = await mockTaskManagementService.getTaskRelationships(task.id);
-      
+
       console.log(`Task ${task.id}:`);
       console.log('  Dependencies:', relationships.dependencies);
       console.log('  Dependents:', relationships.dependents);
-      
+
       if (relationships.workflowIntegration) {
         console.log('  Workflow Integration:', relationships.workflowIntegration);
       }
@@ -244,17 +238,17 @@ export async function taskDependencyExample() {
 
     // Simulate task completion chain
     console.log('\nSimulating task completion chain...');
-    
+
     for (const task of tasks) {
       // Check if dependencies are met
       const dependencies = await mockTaskSyncService.getTaskDependencies(task.id);
-      
+
       if (dependencies.length === 0) {
         console.log(`Starting ${task.id} (no dependencies)`);
       } else {
         console.log(`${task.id} waiting for dependencies:`, dependencies);
       }
-      
+
       // Simulate task completion
       const taskData: TaskSyncData = {
         id: task.id,
@@ -265,13 +259,12 @@ export async function taskDependencyExample() {
         userId: 'user-456',
         version: 1,
         lastModified: new Date(),
-        modifiedBy: 'system'
+        modifiedBy: 'system',
       };
-      
+
       await mockTaskSyncService.syncTaskData(taskData, tenantId);
       console.log(`Completed ${task.id}`);
     }
-
   } catch (error) {
     console.error('Error managing task dependencies:', error);
   }
@@ -299,8 +292,8 @@ export async function conflictResolutionExample() {
     modifiedBy: 'user-123',
     metadata: {
       analysisType: 'statistical',
-      parameters: { confidence: 0.95 }
-    }
+      parameters: { confidence: 0.95 },
+    },
   };
 
   const remoteVersion: TaskSyncData = {
@@ -315,8 +308,8 @@ export async function conflictResolutionExample() {
     modifiedBy: 'user-456', // Different user
     metadata: {
       analysisType: 'machine_learning', // Different analysis type
-      parameters: { algorithm: 'random_forest' }
-    }
+      parameters: { algorithm: 'random_forest' },
+    },
   };
 
   try {
@@ -330,11 +323,10 @@ export async function conflictResolutionExample() {
 
     console.log('Conflict resolved using strategy:', resolution.strategy);
     console.log('Resolved data:', JSON.stringify(resolution.resolvedData, null, 2));
-    
+
     if (resolution.metadata) {
       console.log('Resolution metadata:', resolution.metadata);
     }
-
   } catch (error) {
     console.error('Error resolving conflict:', error);
   }
@@ -357,20 +349,20 @@ export async function notificationExample() {
       eventTypes: ['task_created', 'task_updated', 'task_failed'],
       conditions: {
         priorities: ['URGENT'],
-        taskTypes: ['critical_analysis', 'emergency_processing']
+        taskTypes: ['critical_analysis', 'emergency_processing'],
       },
       channels: [
         {
           type: 'websocket',
-          config: { 
+          config: {
             realTime: true,
             persistent: true,
-            sound: true
+            sound: true,
           },
-          priority: 'urgent'
-        }
+          priority: 'urgent',
+        },
       ],
-      isActive: true
+      isActive: true,
     };
 
     const completionRule: Omit<TaskNotificationRule, 'id' | 'createdAt' | 'updatedAt'> = {
@@ -378,28 +370,29 @@ export async function notificationExample() {
       tenantId,
       eventTypes: ['task_completed'],
       conditions: {
-        priorities: ['HIGH', 'URGENT']
+        priorities: ['HIGH', 'URGENT'],
       },
       channels: [
         {
           type: 'websocket',
           config: { realTime: true },
-          priority: 'high'
-        }
+          priority: 'high',
+        },
       ],
-      isActive: true
+      isActive: true,
     };
 
     // Create notification rules
     const urgentRule = await mockNotificationService.createNotificationRule(urgentTaskRule);
-    const completionRuleCreated = await mockNotificationService.createNotificationRule(completionRule);
+    const completionRuleCreated =
+      await mockNotificationService.createNotificationRule(completionRule);
 
     console.log('Created notification rules:', urgentRule.id, completionRuleCreated.id);
 
     // Get notification history
     const history = await mockNotificationService.getNotificationHistory(userId, {
       startDate: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
-      limit: 10
+      limit: 10,
     });
 
     console.log(`Found ${history.length} notifications in the last 24 hours`);
@@ -410,13 +403,9 @@ export async function notificationExample() {
 
     // Acknowledge a notification
     if (history.length > 0) {
-      await mockNotificationService.acknowledgeNotification(
-        history[0].notificationId,
-        userId
-      );
+      await mockNotificationService.acknowledgeNotification(history[0].notificationId, userId);
       console.log('Acknowledged notification:', history[0].notificationId);
     }
-
   } catch (error) {
     console.error('Error managing notifications:', error);
   }
@@ -439,7 +428,7 @@ export async function monitoringExample() {
     const activeExecutions = await mockTaskManagementService.getActiveExecutions();
     console.log(`Active executions: ${activeExecutions.length}`);
 
-    activeExecutions.forEach(execution => {
+    activeExecutions.forEach((execution) => {
       console.log(`  Execution ${execution.id}:`);
       console.log(`    Task: ${execution.taskId}`);
       console.log(`    Timeout: ${execution.timeout}ms`);
@@ -450,12 +439,12 @@ export async function monitoringExample() {
     const userTasks = await mockTaskManagementService.getUserTasks(userId, {
       status: ['IN_PROGRESS', 'PENDING'],
       priority: ['HIGH', 'URGENT'],
-      limit: 20
+      limit: 20,
     });
 
     console.log(`Found ${userTasks.length} high-priority active tasks for user`);
 
-    userTasks.forEach(task => {
+    userTasks.forEach((task) => {
       console.log(`  Task ${task.id}:`);
       console.log(`    Type: ${task.type}`);
       console.log(`    Status: ${task.status}`);
@@ -469,7 +458,6 @@ export async function monitoringExample() {
       const taskSyncStatus = await mockTaskSyncService.getTaskSyncStatus(userTasks[0].id);
       console.log('Task sync status:', taskSyncStatus);
     }
-
   } catch (error) {
     console.error('Error getting monitoring data:', error);
   }
@@ -490,36 +478,39 @@ export async function bulkOperationsExample() {
       {
         type: 'data_ingestion',
         priority: 'HIGH' as const,
-        data: { source: 'database_1', table: 'users' }
+        data: { source: 'database_1', table: 'users' },
       },
       {
         type: 'data_ingestion',
         priority: 'HIGH' as const,
-        data: { source: 'database_1', table: 'orders' }
+        data: { source: 'database_1', table: 'orders' },
       },
       {
         type: 'data_ingestion',
         priority: 'HIGH' as const,
-        data: { source: 'database_1', table: 'products' }
-      }
+        data: { source: 'database_1', table: 'products' },
+      },
     ];
 
     const createdTasks: EnhancedTaskData[] = [];
 
     // Create tasks in batch
     for (const [index, taskData] of batchTasks.entries()) {
-      const task = await mockTaskManagementService.createTask({
-        ...taskData,
-        status: 'PENDING',
-        pipelineId: 'batch-ingestion-pipeline',
-        userId,
-        tags: ['batch', 'ingestion', `batch-${Date.now()}`],
-        metadata: {
-          batchId: `batch-${Date.now()}`,
-          batchIndex: index,
-          totalBatchSize: batchTasks.length
-        }
-      }, tenantId);
+      const task = await mockTaskManagementService.createTask(
+        {
+          ...taskData,
+          status: 'PENDING',
+          pipelineId: 'batch-ingestion-pipeline',
+          userId,
+          tags: ['batch', 'ingestion', `batch-${Date.now()}`],
+          metadata: {
+            batchId: `batch-${Date.now()}`,
+            batchIndex: index,
+            totalBatchSize: batchTasks.length,
+          },
+        },
+        tenantId
+      );
 
       createdTasks.push(task);
       console.log(`Created batch task ${index + 1}/${batchTasks.length}: ${task.id}`);
@@ -537,7 +528,7 @@ export async function bulkOperationsExample() {
 
     // Monitor batch progress
     console.log('\nMonitoring batch progress...');
-    
+
     let completedCount = 0;
     const totalTasks = createdTasks.length;
 
@@ -551,21 +542,21 @@ export async function bulkOperationsExample() {
           retryPolicy: {
             maxRetries: 2,
             backoffStrategy: 'linear',
-            baseDelay: 5000
-          }
+            baseDelay: 5000,
+          },
         },
         tenantId
       );
 
       // Simulate processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Complete task
       await mockTaskManagementService.completeTaskExecution(
         executionId,
         {
           recordsProcessed: Math.floor(Math.random() * 10000) + 1000,
-          processingTime: Math.floor(Math.random() * 60000) + 30000
+          processingTime: Math.floor(Math.random() * 60000) + 30000,
         },
         undefined,
         tenantId
@@ -577,7 +568,6 @@ export async function bulkOperationsExample() {
     }
 
     console.log('Batch processing completed successfully');
-
   } catch (error) {
     console.error('Error in bulk operations:', error);
   }
@@ -611,7 +601,6 @@ export async function runAllExamples() {
     await bulkOperationsExample();
 
     console.log('\n✅ All examples completed successfully!');
-
   } catch (error) {
     console.error('❌ Error running examples:', error);
   }

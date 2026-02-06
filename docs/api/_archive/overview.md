@@ -113,5 +113,3 @@ interface ErrorResponse {
   timestamp: string;
 }
 ```
-
-

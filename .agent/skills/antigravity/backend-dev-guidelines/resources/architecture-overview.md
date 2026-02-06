@@ -51,7 +51,7 @@ microservices.
 ┌─────────────────────────────────────┐
 │  Layer 4: REPOSITORIES              │
 │  - Data access abstraction          │
-│  - Prisma operations                │
+│  - Drizzle operations                │
 │  - Query optimization               │
 │  - Caching                          │
 └───────────────┬─────────────────────┘
@@ -116,7 +116,7 @@ microservices.
    - Return result
    ↓
 7. Repository performs database operation:
-   - PrismaService.main.user.create({ data })
+   - DatabaseService.main.user.create({ data })
    - Handle database errors
    - Return created user
    ↓
@@ -270,11 +270,11 @@ responseRoutes.ts, direct process.env
 
 **Responsibilities:**
 
-- Prisma query operations
+- Drizzle query operations
 - Query optimization
 - Database error handling
 - Caching layer
-- Hide Prisma implementation details
+- Hide Drizzle implementation details
 
 **Current Gap:** Only 1 repository exists (WorkflowRepository)
 
@@ -411,11 +411,11 @@ src/
 - ✅ Orchestration (multiple repos)
 - ✅ Transaction management
 - ❌ HTTP concerns (Request/Response)
-- ❌ Direct Prisma calls (use repositories)
+- ❌ Direct Drizzle calls (use repositories)
 
 **Repositories Layer:**
 
-- ✅ Prisma operations
+- ✅ Drizzle operations
 - ✅ Query construction
 - ✅ Database error handling
 - ✅ Caching
@@ -466,11 +466,11 @@ async create(data: CreateUserDTO): Promise<User> {
 
 ```typescript
 async create(data: CreateUserDTO): Promise<User> {
-    return PrismaService.main.user.create({ data });
+    return DatabaseService.main.user.create({ data });
 }
 
 async findByEmail(email: string): Promise<User | null> {
-    return PrismaService.main.user.findUnique({ where: { email } });
+    return DatabaseService.main.user.findUnique({ where: { email } });
 }
 ```
 

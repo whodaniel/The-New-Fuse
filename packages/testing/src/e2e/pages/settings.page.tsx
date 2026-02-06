@@ -7,7 +7,7 @@ export class SettingsPage extends BasePage {
   private readonly workflowTab = '[data-testid="workflow-settings-tab"]';
   private readonly securityTab = '[data-testid="security-settings-tab"]';
   private readonly notificationsTab = '[data-testid="notifications-settings-tab"]';
-  
+
   // Form elements
   private readonly displayNameInput = '[data-testid="display-name-input"]';
   private readonly emailInput = '[data-testid="email-input"]';
@@ -32,7 +32,7 @@ export class SettingsPage extends BasePage {
       profile: this.profileTab,
       workflow: this.workflowTab,
       security: this.securityTab,
-      notifications: this.notificationsTab
+      notifications: this.notificationsTab,
     };
     await this.waitAndClick(tabMap[tab]);
     await this.waitForLoad();
@@ -85,11 +85,11 @@ export class SettingsPage extends BasePage {
     const displayName = await this.page.inputValue(this.displayNameInput);
     const email = await this.page.inputValue(this.emailInput);
     const autoSaveEnabled = await this.page.isChecked(this.workflowAutoSaveToggle);
-    
+
     return {
       displayName,
       email,
-      autoSaveEnabled
+      autoSaveEnabled,
     };
   }
 }

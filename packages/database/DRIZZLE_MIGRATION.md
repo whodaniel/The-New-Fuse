@@ -2,20 +2,20 @@
 
 ## Overview
 
-This document outlines the completed migration from Prisma to Drizzle ORM for
+This document outlines the completed migration from Drizzle to Drizzle ORM for
 The New Fuse monorepo. The migration addressed TypeScript compilation issues
-caused by Prisma's deeply recursive type structures.
+caused by Drizzle's deeply recursive type structures.
 
 ## Why Drizzle ORM?
 
-### Benefits Over Prisma
+### Benefits Over Drizzle
 
-| Feature         | Prisma 7                                | Drizzle ORM                           |
+| Feature         | Drizzle 7                                | Drizzle ORM                           |
 | --------------- | --------------------------------------- | ------------------------------------- |
 | **Type Safety** | Generated types (can crash TS compiler) | Inferred types (no generation needed) |
 | **Bundle Size** | Heavy (~2MB query engine)               | Lightweight (~50KB)                   |
 | **Cold Start**  | Slower (engine initialization)          | Fast (direct SQL)                     |
-| **Flexibility** | Limited to Prisma's API                 | Full SQL control                      |
+| **Flexibility** | Limited to Drizzle's API                 | Full SQL control                      |
 | **Monorepo**    | TS2742 "ghost type" errors              | Native TypeScript exports             |
 | **Query Speed** | ~15-30ms overhead                       | Near-native SQL speed                 |
 
@@ -53,7 +53,7 @@ caused by Prisma's deeply recursive type structures.
       (`src/drizzle/repositories/agent.repository.ts`)
 - [x] Updated package.json with Drizzle scripts
 - [x] Updated main index.ts to export Drizzle
-- [x] Removed Prisma dependencies from root package.json
+- [x] Removed Drizzle dependencies from root package.json
 - [x] Updated all documentation to reference Drizzle
 - [x] Updated database commands in root package.json
 
@@ -179,18 +179,18 @@ packages/database/
 │   │   └── repositories/
 │   │       ├── index.ts
 │   │       └── agent.repository.ts
-│   ├── index.ts               # Main package exports (Prisma + Drizzle)
-│   ├── prisma.service.ts      # Prisma service (deprecated)
-│   └── repositories/          # Prisma repositories (deprecated)
-└── prisma/
-    └── schema.prisma          # Prisma schema (reference only)
+│   ├── index.ts               # Main package exports (Drizzle + Drizzle)
+│   ├── drizzle.service.ts      # Drizzle service (deprecated)
+│   └── repositories/          # Drizzle repositories (deprecated)
+└── drizzle/
+    └── schema.drizzle          # Drizzle schema (reference only)
 ```
 
 ## Coexistence Strategy
 
-During migration, both Prisma and Drizzle are available:
+During migration, both Drizzle and Drizzle are available:
 
-1. **Prisma exports** - Prefixed with standard names (`User`, `Agent`, etc.)
+1. **Drizzle exports** - Prefixed with standard names (`User`, `Agent`, etc.)
 2. **Drizzle exports** - Prefixed with `Drizzle` (`DrizzleUser`, `DrizzleAgent`)
 3. **Drizzle repositories** - Named with `Drizzle` prefix
 4. **Schema tables** - Available via `drizzleSchema` namespace

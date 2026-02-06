@@ -4,14 +4,14 @@
  */
 
 import {
-  InfrastructureTemplate,
-  InfrastructureState,
-  ResourceDefinition,
-  TemplateVariable,
-  TemplateOutput,
   CloudProvider,
+  InfrastructureState,
+  InfrastructureTemplate,
+  ResourceDefinition,
   ResourceType,
-  VariableType
+  TemplateOutput,
+  TemplateVariable,
+  VariableType,
 } from '../types/infrastructure';
 
 export interface ParsedTemplate {
@@ -52,11 +52,12 @@ export class TemplateParser {
         resources: parsedResources,
         variables: resolvedVariables,
         outputs: template.outputs,
-        dependencies
+        dependencies,
       };
-
     } catch (error) {
-      throw new Error(`Template parsing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Template parsing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -86,12 +87,13 @@ export class TemplateParser {
           tags: ['generated', 'export'],
           createdAt: new Date(),
           updatedAt: new Date(),
-          version: state.metadata.version
-        }
+          version: state.metadata.version,
+        },
       };
-
     } catch (error) {
-      throw new Error(`Template generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Template generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -107,10 +109,11 @@ export class TemplateParser {
 
         const value = await resolver.resolve(variable);
         resolved.set(variable.name, value);
-
       } catch (error) {
         if (variable.required) {
-          throw new Error(`Failed to resolve required variable ${variable.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          throw new Error(
+            `Failed to resolve required variable ${variable.name}: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
         }
 
         // Use default value for optional variables
@@ -138,9 +141,10 @@ export class TemplateParser {
 
         const parsedResource = await parser.parse(resource, variables);
         parsed.push(parsedResource);
-
       } catch (error) {
-        throw new Error(`Failed to parse resource ${resource.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        throw new Error(
+          `Failed to parse resource ${resource.name}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
       }
     }
 
@@ -207,7 +211,7 @@ export class TemplateParser {
 
   private async generateResourceDefinitions(resources: any[]): Promise<ResourceDefinition[]> {
     // Convert state resources back to resource definitions
-    return resources.map(resource => ({
+    return resources.map((resource) => ({
       type: resource.type,
       name: resource.name,
       properties: resource.properties,
@@ -216,9 +220,9 @@ export class TemplateParser {
         createBeforeDestroy: false,
         preventDestroy: false,
         ignoreChanges: [],
-        replaceTriggeredBy: []
+        replaceTriggeredBy: [],
       },
-      tags: {}
+      tags: {},
     }));
   }
 
@@ -231,7 +235,7 @@ export class TemplateParser {
         name: property,
         type: VariableType.STRING,
         description: `The ${property} for this infrastructure`,
-        required: true
+        required: true,
       });
     }
 
@@ -247,7 +251,7 @@ export class TemplateParser {
           outputs.push({
             name: `${resource.name}_${key}`,
             value: String(value),
-            description: `${key} output from ${resource.name}`
+            description: `${key} output from ${resource.name}`,
           });
         }
       }
@@ -367,7 +371,10 @@ interface ResourceParser {
 }
 
 class ComputeResourceParser implements ResourceParser {
-  async parse(resource: ResourceDefinition, _variables: Map<string, any>): Promise<ResourceDefinition> {
+  async parse(
+    resource: ResourceDefinition,
+    _variables: Map<string, any>
+  ): Promise<ResourceDefinition> {
     // Parse compute-specific properties
     const parsedResource = { ...resource };
 
@@ -394,25 +401,37 @@ class ComputeResourceParser implements ResourceParser {
 }
 
 class StorageResourceParser implements ResourceParser {
-  async parse(resource: ResourceDefinition, _variables: Map<string, any>): Promise<ResourceDefinition> {
+  async parse(
+    resource: ResourceDefinition,
+    _variables: Map<string, any>
+  ): Promise<ResourceDefinition> {
     return { ...resource };
   }
 }
 
 class NetworkResourceParser implements ResourceParser {
-  async parse(resource: ResourceDefinition, _variables: Map<string, any>): Promise<ResourceDefinition> {
+  async parse(
+    resource: ResourceDefinition,
+    _variables: Map<string, any>
+  ): Promise<ResourceDefinition> {
     return { ...resource };
   }
 }
 
 class DatabaseResourceParser implements ResourceParser {
-  async parse(resource: ResourceDefinition, _variables: Map<string, any>): Promise<ResourceDefinition> {
+  async parse(
+    resource: ResourceDefinition,
+    _variables: Map<string, any>
+  ): Promise<ResourceDefinition> {
     return { ...resource };
   }
 }
 
 class LoadBalancerResourceParser implements ResourceParser {
-  async parse(resource: ResourceDefinition, _variables: Map<string, any>): Promise<ResourceDefinition> {
+  async parse(
+    resource: ResourceDefinition,
+    _variables: Map<string, any>
+  ): Promise<ResourceDefinition> {
     return { ...resource };
   }
 }

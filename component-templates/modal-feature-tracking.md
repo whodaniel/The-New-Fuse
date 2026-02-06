@@ -8,33 +8,33 @@
 
 ## Feature Inventory
 
-| Feature ID | Feature Description | Implementation Details | Used By | Priority | Migration Status |
-|------------|---------------------|------------------------|---------|----------|------------------|
-| MDL-001 | Size variations (sm, md, lg, xl) | CSS classes for different modal sizes | Forms, Dialogs, Alerts | High | Not Started |
-| MDL-002 | Backdrop click to close | Event handler for clicks outside modal content | Throughout app | High | Not Started |
-| MDL-003 | Keyboard escape to close | Event listener for Escape key | All modal instances | High | Not Started |
-| MDL-004 | Animation on open/close | CSS transitions for smooth appearance/disappearance | All modal instances | Medium | Not Started |
-| MDL-005 | Focus trap within modal | Focus management for accessibility | Forms, Interactive modals | High | Not Started |
-| MDL-006 | Scrollable content | Overflow handling for large content | Data displays, Long forms | Medium | Not Started |
-| MDL-007 | Header/Footer sections | Predefined layout areas | Forms, Confirmation dialogs | Medium | Not Started |
-| MDL-008 | Close button | Standard UI element for closing | All modal instances | High | Not Started |
-| MDL-009 | Prevent body scroll | Locks main page scrolling when modal is open | All modal instances | Medium | Not Started |
-| MDL-010 | Custom positioning | Options for centering or specific placement | Tooltips, Contextual menus | Low | Not Started |
+| Feature ID | Feature Description              | Implementation Details                              | Used By                     | Priority | Migration Status |
+| ---------- | -------------------------------- | --------------------------------------------------- | --------------------------- | -------- | ---------------- |
+| MDL-001    | Size variations (sm, md, lg, xl) | CSS classes for different modal sizes               | Forms, Dialogs, Alerts      | High     | Not Started      |
+| MDL-002    | Backdrop click to close          | Event handler for clicks outside modal content      | Throughout app              | High     | Not Started      |
+| MDL-003    | Keyboard escape to close         | Event listener for Escape key                       | All modal instances         | High     | Not Started      |
+| MDL-004    | Animation on open/close          | CSS transitions for smooth appearance/disappearance | All modal instances         | Medium   | Not Started      |
+| MDL-005    | Focus trap within modal          | Focus management for accessibility                  | Forms, Interactive modals   | High     | Not Started      |
+| MDL-006    | Scrollable content               | Overflow handling for large content                 | Data displays, Long forms   | Medium   | Not Started      |
+| MDL-007    | Header/Footer sections           | Predefined layout areas                             | Forms, Confirmation dialogs | Medium   | Not Started      |
+| MDL-008    | Close button                     | Standard UI element for closing                     | All modal instances         | High     | Not Started      |
+| MDL-009    | Prevent body scroll              | Locks main page scrolling when modal is open        | All modal instances         | Medium   | Not Started      |
+| MDL-010    | Custom positioning               | Options for centering or specific placement         | Tooltips, Contextual menus  | Low      | Not Started      |
 
 ## Feature Comparison Matrix
 
-| Feature | UI Modal | Core Modal | Feature Modal | Target Implementation |
-|---------|----------|------------|--------------|----------------------|
-| Size variations | ✓ (4 sizes with rem units) | ✓ (3 sizes with px units) | ✓ (2 sizes) | UI Modal - more comprehensive sizing options |
-| Backdrop click | ✓ (configurable) | ✓ (always enabled) | ✓ (configurable) | UI Modal - better flexibility |
-| Escape key close | ✓ (configurable) | ✓ (always enabled) | ✓ (configurable) | UI Modal - better flexibility |
-| Animations | ✓ (fade + slide) | ✓ (fade only) | ✓ (complex animations) | Feature Modal - better UX |
-| Focus trap | ✓ (comprehensive) | ✗ | ✓ (basic) | UI Modal - better accessibility |
-| Scrollable content | ✓ (auto detection) | ✓ (manual setting) | ✓ (auto with max-height) | UI Modal - better implementation |
-| Header/Footer | ✓ (slot-based) | ✓ (prop-based) | ✓ (children-based) | UI Modal - more flexible |
-| Close button | ✓ (customizable) | ✓ (fixed design) | ✓ (customizable) | UI Modal - better customization |
-| Prevent body scroll | ✓ (uses body-scroll-lock) | ✓ (custom implementation) | ✗ | UI Modal - better implementation |
-| Custom positioning | ✗ | ✓ (limited) | ✓ (comprehensive) | Feature Modal - more flexible |
+| Feature             | UI Modal                   | Core Modal                | Feature Modal            | Target Implementation                        |
+| ------------------- | -------------------------- | ------------------------- | ------------------------ | -------------------------------------------- |
+| Size variations     | ✓ (4 sizes with rem units) | ✓ (3 sizes with px units) | ✓ (2 sizes)              | UI Modal - more comprehensive sizing options |
+| Backdrop click      | ✓ (configurable)           | ✓ (always enabled)        | ✓ (configurable)         | UI Modal - better flexibility                |
+| Escape key close    | ✓ (configurable)           | ✓ (always enabled)        | ✓ (configurable)         | UI Modal - better flexibility                |
+| Animations          | ✓ (fade + slide)           | ✓ (fade only)             | ✓ (complex animations)   | Feature Modal - better UX                    |
+| Focus trap          | ✓ (comprehensive)          | ✗                         | ✓ (basic)                | UI Modal - better accessibility              |
+| Scrollable content  | ✓ (auto detection)         | ✓ (manual setting)        | ✓ (auto with max-height) | UI Modal - better implementation             |
+| Header/Footer       | ✓ (slot-based)             | ✓ (prop-based)            | ✓ (children-based)       | UI Modal - more flexible                     |
+| Close button        | ✓ (customizable)           | ✓ (fixed design)          | ✓ (customizable)         | UI Modal - better customization              |
+| Prevent body scroll | ✓ (uses body-scroll-lock)  | ✓ (custom implementation) | ✗                        | UI Modal - better implementation             |
+| Custom positioning  | ✗                          | ✓ (limited)               | ✓ (comprehensive)        | Feature Modal - more flexible                |
 
 ## Usage Analysis
 
@@ -60,7 +60,8 @@
 
 ## Consolidation Decision
 
-Based on the feature comparison and usage analysis, we will create a consolidated Modal component that:
+Based on the feature comparison and usage analysis, we will create a
+consolidated Modal component that:
 
 1. Uses UI Modal as the base implementation
 2. Incorporates the complex animations from Feature Modal

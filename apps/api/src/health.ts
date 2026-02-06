@@ -14,10 +14,7 @@ async function checkRedisHealth() {
 
 router.get('/health', async (req, res) => {
   try {
-    const [dbStatus, redisStatus] = await Promise.all([
-      checkDatabaseHealth(),
-      checkRedisHealth()
-    ]);
+    const [dbStatus, redisStatus] = await Promise.all([checkDatabaseHealth(), checkRedisHealth()]);
 
     res.json({
       status: 'healthy',
@@ -25,13 +22,14 @@ router.get('/health', async (req, res) => {
       service: 'api',
       version: process.env.npm_package_version,
       database: dbStatus,
-      redis: redisStatus
+      redis: redisStatus,
     });
-  } catch (error) { // Add type annotation for error
+  } catch (error) {
+    // Add type annotation for error
     res.status(500).json({
       status: 'unhealthy',
       error: error instanceof Error ? error.message : 'Unknown error',
-      service: 'api'
+      service: 'api',
     });
   }
 });

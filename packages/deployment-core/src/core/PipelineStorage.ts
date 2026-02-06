@@ -1,11 +1,11 @@
+import { Logger } from 'winston';
 import {
-  PipelineConfig,
-  PipelineResult,
   BuildResult,
   DeploymentResult,
-  RollbackResult
+  PipelineConfig,
+  PipelineResult,
+  RollbackResult,
 } from '../types/pipeline';
-import { Logger } from 'winston';
 
 /**
  * Pipeline Storage handles persistence of pipeline configurations, results, and metrics
@@ -28,7 +28,7 @@ export class PipelineStorage {
   async storePipelineConfig(config: PipelineConfig): Promise<void> {
     this.logger.info(`Storing pipeline configuration: ${config.name}`, {
       configId: config.id,
-      version: config.version
+      version: config.version,
     });
 
     this.configs.set(config.id, config);
@@ -55,7 +55,7 @@ export class PipelineStorage {
     this.logger.info(`Storing pipeline result: ${result.id}`, {
       pipelineId: result.pipelineId,
       status: result.status,
-      duration: result.duration
+      duration: result.duration,
     });
 
     this.pipelineResults.set(result.id, result);
@@ -75,7 +75,7 @@ export class PipelineStorage {
     let results = Array.from(this.pipelineResults.values());
 
     if (pipelineId) {
-      results = results.filter(r => r.pipelineId === pipelineId);
+      results = results.filter((r) => r.pipelineId === pipelineId);
     }
 
     // Sort by start time (most recent first)
@@ -91,7 +91,7 @@ export class PipelineStorage {
     this.logger.info(`Storing build result: ${result.id}`, {
       triggerId: result.triggerId,
       status: result.status,
-      duration: result.duration
+      duration: result.duration,
     });
 
     this.buildResults.set(result.id, result);
@@ -112,7 +112,7 @@ export class PipelineStorage {
       deploymentId: result.deploymentId,
       environment: result.environment,
       status: result.status,
-      duration: result.duration
+      duration: result.duration,
     });
 
     this.deploymentResults.set(result.id, result);
@@ -132,7 +132,7 @@ export class PipelineStorage {
     this.logger.info(`Storing rollback result: ${result.id}`, {
       deploymentId: result.deploymentId,
       status: result.status,
-      duration: result.duration
+      duration: result.duration,
     });
 
     this.rollbackResults.set(result.id, result);
@@ -188,7 +188,7 @@ export class PipelineStorage {
 
     this.logger.info(`Cleaned up ${deletedCount} old results`, {
       retentionDays,
-      cutoffDate
+      cutoffDate,
     });
   }
 
@@ -207,7 +207,7 @@ export class PipelineStorage {
       pipelineResults: this.pipelineResults.size,
       buildResults: this.buildResults.size,
       deploymentResults: this.deploymentResults.size,
-      rollbackResults: this.rollbackResults.size
+      rollbackResults: this.rollbackResults.size,
     };
   }
 
@@ -228,7 +228,7 @@ export class PipelineStorage {
       buildResults: Array.from(this.buildResults.values()),
       deploymentResults: Array.from(this.deploymentResults.values()),
       rollbackResults: Array.from(this.rollbackResults.values()),
-      exportedAt: new Date()
+      exportedAt: new Date(),
     };
   }
 
@@ -243,31 +243,31 @@ export class PipelineStorage {
     rollbackResults?: RollbackResult[];
   }): Promise<void> {
     if (data.configs) {
-      data.configs.forEach(config => {
+      data.configs.forEach((config) => {
         this.configs.set(config.id, config);
       });
     }
 
     if (data.pipelineResults) {
-      data.pipelineResults.forEach(result => {
+      data.pipelineResults.forEach((result) => {
         this.pipelineResults.set(result.id, result);
       });
     }
 
     if (data.buildResults) {
-      data.buildResults.forEach(result => {
+      data.buildResults.forEach((result) => {
         this.buildResults.set(result.id, result);
       });
     }
 
     if (data.deploymentResults) {
-      data.deploymentResults.forEach(result => {
+      data.deploymentResults.forEach((result) => {
         this.deploymentResults.set(result.id, result);
       });
     }
 
     if (data.rollbackResults) {
-      data.rollbackResults.forEach(result => {
+      data.rollbackResults.forEach((result) => {
         this.rollbackResults.set(result.id, result);
       });
     }
@@ -277,7 +277,7 @@ export class PipelineStorage {
       pipelineResults: data.pipelineResults?.length || 0,
       buildResults: data.buildResults?.length || 0,
       deploymentResults: data.deploymentResults?.length || 0,
-      rollbackResults: data.rollbackResults?.length || 0
+      rollbackResults: data.rollbackResults?.length || 0,
     });
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { performanceMonitor } from '../../utils/performanceMonitor';
 
 interface PerformanceData {
@@ -18,14 +18,14 @@ interface PerformanceMonitorProps {
 const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
   isVisible = false,
   position = 'bottom-right',
-  compact = false
+  compact = false,
 }) => {
   const [data, setData] = useState<PerformanceData>({
     componentLoadTimes: {},
     routeLoadTimes: {},
     memoryUsage: 0,
     bundleSizes: {},
-    recommendations: []
+    recommendations: [],
   });
   const [isExpanded, setIsExpanded] = useState(false);
   const [updateCount, setUpdateCount] = useState(0);
@@ -35,16 +35,16 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
     const interval = setInterval(() => {
       const report = performanceMonitor.generateReport();
       const recommendations = performanceMonitor.getRecommendations();
-      
+
       setData({
         componentLoadTimes: report.componentLoadTime,
         routeLoadTimes: report.routeLoadTime,
         memoryUsage: report.memoryUsage,
         bundleSizes: report.bundleSize,
-        recommendations
+        recommendations,
       });
-      
-      setUpdateCount(prev => prev + 1);
+
+      setUpdateCount((prev) => prev + 1);
     }, 2000);
 
     return () => clearInterval(interval);
@@ -55,7 +55,7 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
     'top-right': 'top-4 right-4',
     'top-left': 'top-4 left-4',
     'bottom-right': 'bottom-4 right-4',
-    'bottom-left': 'bottom-4 left-4'
+    'bottom-left': 'bottom-4 left-4',
   };
 
   // Format utility functions
@@ -75,11 +75,20 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
   // Performance score calculation
   const getPerformanceScore = () => {
     const scores = {
-      loadTime: Math.max(0, 100 - (Object.values(data.routeLoadTimes).reduce((avg, time) => avg + time, 0) / Object.keys(data.routeLoadTimes).length || 0) / 10),
-      memory: Math.max(0, 100 - (data.memoryUsage / 1024 / 1024 / 100)), // Penalize for memory usage
-      bundle: Math.max(0, 100 - Object.values(data.bundleSizes).reduce((total, size) => total + size, 0) / 1024 / 100)
+      loadTime: Math.max(
+        0,
+        100 -
+          (Object.values(data.routeLoadTimes).reduce((avg, time) => avg + time, 0) /
+            Object.keys(data.routeLoadTimes).length || 0) /
+            10
+      ),
+      memory: Math.max(0, 100 - data.memoryUsage / 1024 / 1024 / 100), // Penalize for memory usage
+      bundle: Math.max(
+        0,
+        100 - Object.values(data.bundleSizes).reduce((total, size) => total + size, 0) / 1024 / 100
+      ),
     };
-    
+
     const average = (scores.loadTime + scores.memory + scores.bundle) / 3;
     return Math.round(average);
   };
@@ -97,10 +106,15 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
           onClick={() => setIsExpanded(true)}
         >
           <div className="flex items-center space-x-1">
-            <div className={`w-3 h-3 rounded-full ${
-              performanceScore >= 80 ? 'bg-green-500' :
-              performanceScore >= 60 ? 'bg-yellow-500' : 'bg-red-500'
-            }`}></div>
+            <div
+              className={`w-3 h-3 rounded-full ${
+                performanceScore >= 80
+                  ? 'bg-green-500'
+                  : performanceScore >= 60
+                    ? 'bg-yellow-500'
+                    : 'bg-red-500'
+              }`}
+            ></div>
             <span className="text-xs font-bold">{performanceScore}</span>
           </div>
         </div>
@@ -113,10 +127,15 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
           <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <div className={`w-3 h-3 rounded-full ${
-                  performanceScore >= 80 ? 'bg-green-500' :
-                  performanceScore >= 60 ? 'bg-yellow-500' : 'bg-red-500'
-                }`}></div>
+                <div
+                  className={`w-3 h-3 rounded-full ${
+                    performanceScore >= 80
+                      ? 'bg-green-500'
+                      : performanceScore >= 60
+                        ? 'bg-yellow-500'
+                        : 'bg-red-500'
+                  }`}
+                ></div>
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
                   Performance Monitor
                 </h3>
@@ -146,15 +165,33 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <div className="text-center">
                   <div className="text-gray-500">Load</div>
-                  <div className="font-bold">{Math.max(0, 100 - (Object.values(data.routeLoadTimes).reduce((avg, time) => avg + time, 0) / Object.keys(data.routeLoadTimes).length || 0) / 10)}</div>
+                  <div className="font-bold">
+                    {Math.max(
+                      0,
+                      100 -
+                        (Object.values(data.routeLoadTimes).reduce((avg, time) => avg + time, 0) /
+                          Object.keys(data.routeLoadTimes).length || 0) /
+                          10
+                    )}
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="text-gray-500">Memory</div>
-                  <div className="font-bold">{Math.max(0, 100 - (data.memoryUsage / 1024 / 1024 / 100))}</div>
+                  <div className="font-bold">
+                    {Math.max(0, 100 - data.memoryUsage / 1024 / 1024 / 100)}
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="text-gray-500">Bundle</div>
-                  <div className="font-bold">{Math.max(0, 100 - Object.values(data.bundleSizes).reduce((total, size) => total + size, 0) / 1024 / 100)}</div>
+                  <div className="font-bold">
+                    {Math.max(
+                      0,
+                      100 -
+                        Object.values(data.bundleSizes).reduce((total, size) => total + size, 0) /
+                          1024 /
+                          100
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -166,13 +203,16 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
                 <span className="font-medium">{formatBytes(data.memoryUsage)}</span>
               </div>
               <div className="mt-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div 
+                <div
                   className={`h-2 rounded-full transition-all duration-300 ${
-                    data.memoryUsage < 30 * 1024 * 1024 ? 'bg-green-500' :
-                    data.memoryUsage < 60 * 1024 * 1024 ? 'bg-yellow-500' : 'bg-red-500'
+                    data.memoryUsage < 30 * 1024 * 1024
+                      ? 'bg-green-500'
+                      : data.memoryUsage < 60 * 1024 * 1024
+                        ? 'bg-yellow-500'
+                        : 'bg-red-500'
                   }`}
-                  style={{ 
-                    width: `${Math.min(100, (data.memoryUsage / 100 * 1024 * 1024) * 100)}%` 
+                  style={{
+                    width: `${Math.min(100, (data.memoryUsage / 100) * 1024 * 1024 * 100)}%`,
                   }}
                 ></div>
               </div>
@@ -192,10 +232,15 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
                         <span className="text-gray-600 dark:text-gray-400 truncate">
                           {name.replace('Route: ', '')}
                         </span>
-                        <span className={`font-medium ${
-                          time < 200 ? 'text-green-600' :
-                          time < 500 ? 'text-yellow-600' : 'text-red-600'
-                        }`}>
+                        <span
+                          className={`font-medium ${
+                            time < 200
+                              ? 'text-green-600'
+                              : time < 500
+                                ? 'text-yellow-600'
+                                : 'text-red-600'
+                          }`}
+                        >
                           {formatTime(time)}
                         </span>
                       </div>
@@ -215,13 +260,16 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
                     .slice(-3)
                     .map(([name, size]) => (
                       <div key={name} className="flex justify-between text-xs">
-                        <span className="text-gray-600 dark:text-gray-400 truncate">
-                          {name}
-                        </span>
-                        <span className={`font-medium ${
-                          size < 100 * 1024 ? 'text-green-600' :
-                          size < 500 * 1024 ? 'text-yellow-600' : 'text-red-600'
-                        }`}>
+                        <span className="text-gray-600 dark:text-gray-400 truncate">{name}</span>
+                        <span
+                          className={`font-medium ${
+                            size < 100 * 1024
+                              ? 'text-green-600'
+                              : size < 500 * 1024
+                                ? 'text-yellow-600'
+                                : 'text-red-600'
+                          }`}
+                        >
                           {formatBytes(size)}
                         </span>
                       </div>
@@ -272,7 +320,7 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
                     routeLoadTimes: {},
                     memoryUsage: 0,
                     bundleSizes: {},
-                    recommendations: []
+                    recommendations: [],
                   });
                 }}
                 className="text-xs text-gray-500 hover:text-gray-700"
@@ -300,7 +348,7 @@ export const usePerformanceMonitor = () => {
     // Keyboard shortcut to toggle monitor (Ctrl+Shift+P)
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key === 'P') {
-        setShowMonitor(prev => !prev);
+        setShowMonitor((prev) => !prev);
       }
     };
 

@@ -11,7 +11,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
   ({ startDate, endDate, onRangeChange, className = '', ...props }, ref) => {
     const [start, setStart] = useState<Date | undefined>(startDate);
     const [end, setEnd] = useState<Date | undefined>(endDate);
-    
+
     const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const date = e.target.value ? new Date(e.target.value) : undefined;
       setStart(date);
@@ -19,7 +19,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
         onRangeChange(date, end);
       }
     };
-    
+
     const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const date = e.target.value ? new Date(e.target.value) : undefined;
       setEnd(date);
@@ -27,7 +27,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
         onRangeChange(start, date);
       }
     };
-    
+
     const formatDate = (date?: Date) => {
       if (!date) return '';
       const year = date.getFullYear();
@@ -35,9 +35,9 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
       const day = String(date.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
     };
-    
+
     return (
-      <div 
+      <div
         className={`flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4 ${className}`}
         ref={ref}
         {...props}
@@ -51,7 +51,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
             onChange={handleStartDateChange}
           />
         </div>
-        
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
           <input

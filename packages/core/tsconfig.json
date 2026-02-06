@@ -23,7 +23,7 @@
     "dist",
     "**/*.test.ts",
     "**/*.spec.ts",
-    "src/prisma/**/*",
+    "src/drizzle/**/*",
     "src/database/DatabaseModule.ts",
     "src/database/DatabaseMonitor.ts",
     "src/database/TransactionManager.ts",

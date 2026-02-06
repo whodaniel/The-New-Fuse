@@ -9,14 +9,9 @@ export interface LLMRegistry {
 export const LLM_REGISTRY = 'LLMRegistry';
 
 @Injectable()
-export class MockLLMRegistry implements LLMRegistry {
-  async registerProvider(id: string, config: any): Promise<void> {
-    // Mock implementation
-  }
-
-  async unregisterProvider(id: string): Promise<void> {
-    // Mock implementation
-  }
+export abstract class LLMRegistry {
+  abstract registerProvider(id: string, config: any): Promise<void>;
+  abstract unregisterProvider(id: string): Promise<void>;
 }
 
 export interface LLMProviderDTO {

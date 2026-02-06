@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface Node {
   id: string;
@@ -93,7 +93,7 @@ export function useGraphWebSocket({
 
       ws.onopen = () => {
         console.log('WebSocket connected');
-        setState(prev => ({ ...prev, loading: false, error: null }));
+        setState((prev) => ({ ...prev, loading: false, error: null }));
         reconnectAttemptsRef.current = 0;
       };
 
@@ -111,7 +111,7 @@ export function useGraphWebSocket({
 
       ws.onerror = (error) => {
         console.error('WebSocket error:', error);
-        setState(prev => ({ ...prev, error: new Error('WebSocket connection error') }));
+        setState((prev) => ({ ...prev, error: new Error('WebSocket connection error') }));
       };
 
       ws.onclose = () => {
@@ -122,34 +122,34 @@ export function useGraphWebSocket({
             connect();
           }, reconnectInterval);
         } else {
-          setState(prev => ({ 
-            ...prev, 
-            error: new Error('Max reconnection attempts reached') 
+          setState((prev) => ({
+            ...prev,
+            error: new Error('Max reconnection attempts reached'),
           }));
         }
       };
     } catch (error) {
       console.error('Connection error:', error);
-      setState(prev => ({ ...prev, error: error as Error }));
+      setState((prev) => ({ ...prev, error: error as Error }));
     }
   }, [url, reconnectInterval, maxReconnectAttempts]);
 
   useEffect(() => {
     // Set up message handlers
     messageHandlersRef.current.set('update', (payload) => {
-      setState(prev => ({ ...prev, data: payload }));
+      setState((prev) => ({ ...prev, data: payload }));
     });
 
     messageHandlersRef.current.set('select', (payload) => {
-      setState(prev => ({ ...prev, selectedNodes: payload.nodeIds }));
+      setState((prev) => ({ ...prev, selectedNodes: payload.nodeIds }));
     });
 
     messageHandlersRef.current.set('error', (payload) => {
-      setState(prev => ({ ...prev, error: new Error(payload) }));
+      setState((prev) => ({ ...prev, error: new Error(payload) }));
     });
 
     messageHandlersRef.current.set('config', (payload) => {
-      setState(prev => ({ ...prev, config: { ...prev.config, ...payload } }));
+      setState((prev) => ({ ...prev, config: { ...prev.config, ...payload } }));
     });
 
     if (autoConnect) {
@@ -171,27 +171,42 @@ export function useGraphWebSocket({
     }
   }, []);
 
-  const updateLayout = useCallback((type: string, options?: any) => {
-    sendMessage('layout', { type, options });
-  }, [sendMessage]);
+  const updateLayout = useCallback(
+    (type: string, options?: any) => {
+      sendMessage('layout', { type, options });
+    },
+    [sendMessage]
+  );
 
-  const updateNode = useCallback((nodeId: string, data: any) => {
-    sendMessage('update', {
-      nodes: [{ id: nodeId, ...data }],
-    });
-  }, [sendMessage]);
+  const updateNode = useCallback(
+    (nodeId: string, data: any) => {
+      sendMessage('update', {
+        nodes: [{ id: nodeId, ...data }],
+      });
+    },
+    [sendMessage]
+  );
 
-  const selectNodes = useCallback((nodeIds: string[]) => {
-    sendMessage('select', { nodeIds });
-  }, [sendMessage]);
+  const selectNodes = useCallback(
+    (nodeIds: string[]) => {
+      sendMessage('select', { nodeIds });
+    },
+    [sendMessage]
+  );
 
-  const expandNode = useCallback((nodeId: string, expanded: boolean) => {
-    sendMessage('expand', { nodeId, expanded });
-  }, [sendMessage]);
+  const expandNode = useCallback(
+    (nodeId: string, expanded: boolean) => {
+      sendMessage('expand', { nodeId, expanded });
+    },
+    [sendMessage]
+  );
 
-  const filterGraph = useCallback((filters: any) => {
-    sendMessage('filter', filters);
-  }, [sendMessage]);
+  const filterGraph = useCallback(
+    (filters: any) => {
+      sendMessage('filter', filters);
+    },
+    [sendMessage]
+  );
 
   return {
     ...state,

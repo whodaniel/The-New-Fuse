@@ -4,19 +4,19 @@
  * Real-time agent discovery and capability browsing interface
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Search,
-  Filter,
   Activity,
-  Cpu,
   CheckCircle,
+  Clock,
+  Cpu,
+  DollarSign,
+  Filter,
+  Search,
+  TrendingUp,
   XCircle,
   Zap,
-  TrendingUp,
-  Clock,
-  DollarSign,
 } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 interface AgentCapability {
   name: string;
@@ -233,9 +233,7 @@ export const AgentBrowser: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Sort By
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
                 <select
                   value={filters.sortBy}
                   onChange={(e) =>
@@ -281,9 +279,7 @@ export const AgentBrowser: React.FC = () => {
                         <h3 className="text-sm font-semibold text-gray-900 truncate">
                           {agent.registration.name}
                         </h3>
-                        <span
-                          className={`w-2 h-2 rounded-full ${getStatusColor(agent.status)}`}
-                        />
+                        <span className={`w-2 h-2 rounded-full ${getStatusColor(agent.status)}`} />
                       </div>
                       <p className="text-xs text-gray-500 mt-1 line-clamp-2">
                         {agent.registration.description || 'No description'}
@@ -341,9 +337,7 @@ export const AgentBrowser: React.FC = () => {
                   <h1 className="text-2xl font-bold text-gray-900">
                     {selectedAgent.registration.name}
                   </h1>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {selectedAgent.registration.agentId}
-                  </p>
+                  <p className="text-sm text-gray-500 mt-1">{selectedAgent.registration.agentId}</p>
                   {selectedAgent.registration.description && (
                     <p className="text-gray-700 mt-3">{selectedAgent.registration.description}</p>
                   )}
@@ -354,8 +348,8 @@ export const AgentBrowser: React.FC = () => {
                       selectedAgent.status === 'online'
                         ? 'bg-green-100 text-green-800'
                         : selectedAgent.status === 'busy'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-gray-100 text-gray-800'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-gray-100 text-gray-800'
                     }`}
                   >
                     {selectedAgent.status.toUpperCase()}
@@ -366,18 +360,19 @@ export const AgentBrowser: React.FC = () => {
                 </div>
               </div>
 
-              {selectedAgent.registration.groups && selectedAgent.registration.groups.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {selectedAgent.registration.groups.map((group, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium"
-                    >
-                      {group}
-                    </span>
-                  ))}
-                </div>
-              )}
+              {selectedAgent.registration.groups &&
+                selectedAgent.registration.groups.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {selectedAgent.registration.groups.map((group, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium"
+                      >
+                        {group}
+                      </span>
+                    ))}
+                  </div>
+                )}
             </div>
 
             {/* Health Metrics */}

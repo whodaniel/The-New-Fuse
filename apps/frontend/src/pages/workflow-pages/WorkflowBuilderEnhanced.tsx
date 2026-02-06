@@ -3,7 +3,26 @@
  * Full feature parity with N8N workflows
  */
 
+import { GlassCard } from '@/components/ui/design-system';
 import React, { DragEvent, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  FiAlertCircle,
+  FiCalendar,
+  FiCloud,
+  FiCode,
+  FiDatabase,
+  FiDownload,
+  FiFileText,
+  FiGitBranch,
+  FiMail,
+  FiMessageSquare,
+  FiPlay,
+  FiPlus,
+  FiRepeat,
+  FiSave,
+  FiUpload,
+  FiUser,
+} from 'react-icons/fi';
 import ReactFlow, {
   addEdge,
   Background,
@@ -19,37 +38,17 @@ import ReactFlow, {
   useNodesState,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import {
-  FiCalendar,
-  FiCloud,
-  FiCode,
-  FiDatabase,
-  FiGitBranch,
-  FiMail,
-  FiMessageSquare,
-  FiPlay,
-  FiPlus,
-  FiSave,
-  FiUser,
-  FiUpload,
-  FiDownload,
-  FiSettings,
-  FiAlertCircle,
-  FiRepeat,
-  FiFileText,
-} from 'react-icons/fi';
 import { WorkflowApiService } from '../../api/workflow';
 import { Badge, Button, Card, CardContent } from '../../components/ui';
-import { GlassCard } from '@/components/ui/design-system';
 import { FormLabel } from '../../components/ui/form';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
-import { useToast } from '../../hooks/useToast';
 import {
+  EnhancedReactFlowNode,
   n8nConverter,
   N8nWorkflow,
-  EnhancedReactFlowNode,
 } from '../../components/WorkflowEditor/converters/N8nWorkflowConverter';
+import { useToast } from '../../hooks/useToast';
 
 // Enhanced Custom Node Types with N8N features
 const nodeTypes = {
@@ -323,11 +322,10 @@ const WorkflowBuilderContent: React.FC = () => {
         return;
       }
 
-      const position =
-        reactFlowInstance?.screenToFlowPosition({
-          x: event.clientX,
-          y: event.clientY,
-        }) || { x: 0, y: 0 };
+      const position = reactFlowInstance?.screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      }) || { x: 0, y: 0 };
 
       const newNode: Node = {
         id: `${nodeTemplate.id}-${Date.now()}`,

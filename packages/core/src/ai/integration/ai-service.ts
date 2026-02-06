@@ -40,28 +40,28 @@ export class AIService {
       name: 'gpt-3.5-turbo',
       provider: 'openai',
       maxTokens: 4096,
-      temperature: 0.7
+      temperature: 0.7,
     });
 
     this.models.set('gpt-4', {
       name: 'gpt-4',
       provider: 'openai',
       maxTokens: 8192,
-      temperature: 0.7
+      temperature: 0.7,
     });
 
     this.models.set('claude-3-sonnet', {
       name: 'claude-3-sonnet',
       provider: 'anthropic',
       maxTokens: 4096,
-      temperature: 0.7
+      temperature: 0.7,
     });
 
     this.models.set('gemini-pro', {
       name: 'gemini-pro',
       provider: 'google',
       maxTokens: 2048,
-      temperature: 0.7
+      temperature: 0.7,
     });
   }
 
@@ -74,13 +74,12 @@ export class AIService {
   }
 
   public getModelsByProvider(provider: string): ModelConfig[] {
-    return Array.from(this.models.values())
-      .filter(model => model.provider === provider);
+    return Array.from(this.models.values()).filter((model) => model.provider === provider);
   }
 
   public async generateResponse(request: AIRequest): Promise<AIResponse> {
     const modelConfig = this.getModel(request.model || 'gpt-3.5-turbo');
-    
+
     if (!modelConfig) {
       throw new Error(`Model ${request.model} not found`);
     }
@@ -91,15 +90,15 @@ export class AIService {
       usage: {
         promptTokens: Math.floor(request.prompt.length / 4),
         completionTokens: 100,
-        totalTokens: Math.floor(request.prompt.length / 4) + 100
+        totalTokens: Math.floor(request.prompt.length / 4) + 100,
       },
-      model: modelConfig.name
+      model: modelConfig.name,
     };
   }
 
   public async generateStreamResponse(request: AIRequest): Promise<AsyncIterable<string>> {
     const modelConfig = this.getModel(request.model || 'gpt-3.5-turbo');
-    
+
     if (!modelConfig) {
       throw new Error(`Model ${request.model} not found`);
     }
@@ -109,7 +108,7 @@ export class AIService {
       const words = `Mock streaming response for: ${request.prompt}`.split(' ');
       for (const word of words) {
         yield word + ' ';
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
     }
 
@@ -137,7 +136,7 @@ export class AIService {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -177,12 +176,13 @@ export class AIService {
       providerDistribution[model.provider] = (providerDistribution[model.provider] || 0) + 1;
     }
 
-    const averageMaxTokens = models.reduce((sum, model) => sum + model.maxTokens, 0) / models.length;
+    const averageMaxTokens =
+      models.reduce((sum, model) => sum + model.maxTokens, 0) / models.length;
 
     return {
       totalModels: models.length,
       providerDistribution,
-      averageMaxTokens: Math.round(averageMaxTokens)
+      averageMaxTokens: Math.round(averageMaxTokens),
     };
   }
 }

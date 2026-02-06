@@ -261,10 +261,12 @@ export class BrowserControlHandler {
                   tabId: tab.id,
                   url: tab.url,
                   title: tab.title,
-                  web3: interceptionResult.wasWeb3 ? {
-                    protocol: interceptionResult.protocol,
-                    originalUrl: interceptionResult.originalUrl,
-                  } : undefined,
+                  web3: interceptionResult.wasWeb3
+                    ? {
+                        protocol: interceptionResult.protocol,
+                        originalUrl: interceptionResult.originalUrl,
+                      }
+                    : undefined,
                 });
               }
             });
@@ -273,10 +275,12 @@ export class BrowserControlHandler {
               success: true,
               tabId: tab.id,
               url: finalUrl,
-              web3: interceptionResult.wasWeb3 ? {
-                protocol: interceptionResult.protocol,
-                originalUrl: interceptionResult.originalUrl,
-              } : undefined,
+              web3: interceptionResult.wasWeb3
+                ? {
+                    protocol: interceptionResult.protocol,
+                    originalUrl: interceptionResult.originalUrl,
+                  }
+                : undefined,
             });
           }
         });
@@ -299,10 +303,12 @@ export class BrowserControlHandler {
                 tabId: targetTabId,
                 url: tab?.url,
                 title: tab?.title,
-                web3: interceptionResult.wasWeb3 ? {
-                  protocol: interceptionResult.protocol,
-                  originalUrl: interceptionResult.originalUrl,
-                } : undefined,
+                web3: interceptionResult.wasWeb3
+                  ? {
+                      protocol: interceptionResult.protocol,
+                      originalUrl: interceptionResult.originalUrl,
+                    }
+                  : undefined,
               });
             }
           });
@@ -311,10 +317,12 @@ export class BrowserControlHandler {
             success: true,
             tabId: targetTabId,
             url: finalUrl,
-            web3: interceptionResult.wasWeb3 ? {
-              protocol: interceptionResult.protocol,
-              originalUrl: interceptionResult.originalUrl,
-            } : undefined,
+            web3: interceptionResult.wasWeb3
+              ? {
+                  protocol: interceptionResult.protocol,
+                  originalUrl: interceptionResult.originalUrl,
+                }
+              : undefined,
           });
         }
       });

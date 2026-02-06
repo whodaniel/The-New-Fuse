@@ -1,20 +1,26 @@
 # MASS Framework Integration - Complete Implementation
 
-This document describes the complete implementation of the Multi-Agent System Search (MASS) framework into The New Fuse platform.
+This document describes the complete implementation of the Multi-Agent System
+Search (MASS) framework into The New Fuse platform.
 
 ## 🎯 Overview
 
-The MASS framework has been fully integrated into The New Fuse platform, transforming it from a manual workflow builder into an intelligent, self-optimizing multi-agent system. The implementation follows Google Research's MASS paper specification with all three optimization stages and five building blocks.
+The MASS framework has been fully integrated into The New Fuse platform,
+transforming it from a manual workflow builder into an intelligent,
+self-optimizing multi-agent system. The implementation follows Google Research's
+MASS paper specification with all three optimization stages and five building
+blocks.
 
 ## 🏗️ Architecture Overview
 
 ### Backend Components
 
 #### Database Schema Extensions
+
 ```sql
 -- New tables for MASS optimization
 AgentPromptVersion     - Stores optimized prompt versions
-OptimizationJob        - Tracks optimization processes  
+OptimizationJob        - Tracks optimization processes
 WorkflowTopology       - Stores optimized topologies
 ValidationDataset      - Test data for optimization
 MassBlock             - Building block configurations
@@ -24,8 +30,9 @@ MassBlock             - Building block configurations
 
 1. **MassOrchestrationService** - Main orchestrator for all MASS operations
 2. **PromptOptimizerService** - Stage 1: Block-level prompt optimization
-3. **TopologyOptimizerService** - Stage 2: Workflow topology optimization  
-4. **WorkflowPromptOptimizerService** - Stage 3: Workflow-level prompt optimization
+3. **TopologyOptimizerService** - Stage 2: Workflow topology optimization
+4. **WorkflowPromptOptimizerService** - Stage 3: Workflow-level prompt
+   optimization
 
 #### Building Block Services
 
@@ -45,58 +52,68 @@ MassBlock             - Building block configurations
 ## 🚀 MASS Optimization Stages
 
 ### Stage 1: Block-Level Prompt Optimization
+
 - **Purpose**: Optimize individual agent prompts locally
-- **Method**: Uses MIPRO-style optimization with candidate generation and evaluation
+- **Method**: Uses MIPRO-style optimization with candidate generation and
+  evaluation
 - **Output**: Optimized prompt versions for each agent
 - **API**: `POST /api/mass/optimize/agent/:agentId`
 
-### Stage 2: Topology Optimization  
+### Stage 2: Topology Optimization
+
 - **Purpose**: Find optimal workflow structures
 - **Method**: Influence-weighted topology sampling and evaluation
 - **Output**: Optimized workflow topology with performance metrics
 - **API**: `POST /api/mass/optimize/topology`
 
 ### Stage 3: Workflow-Level Prompt Optimization
+
 - **Purpose**: Fine-tune prompts within workflow context
-- **Method**: Context-aware prompt optimization considering agent interdependencies
+- **Method**: Context-aware prompt optimization considering agent
+  interdependencies
 - **Output**: Globally optimized workflow with refined prompts
 - **API**: `POST /api/mass/optimize/workflow/:topologyId`
 
 ## 🧩 MASS Building Blocks
 
 ### 1. Aggregate Block
+
 ```typescript
 // Parallel execution with result aggregation
 const result = await executeAggregate(agentIds, input, {
   aggregationStrategy: 'majority_vote' | 'weighted_average' | 'consensus',
-  parallelExecution: true
+  parallelExecution: true,
 });
 ```
 
 ### 2. Reflect Block
+
 ```typescript
 // Iterative predictor-reflector cycles
 const result = await executeReflect(predictorId, reflectorId, input, {
-  maxRounds: 3
+  maxRounds: 3,
 });
 ```
 
 ### 3. Debate Block
+
 ```typescript
 // Multi-agent debate for robust decisions
 const result = await executeDebate(debaterIds, input, {
   debateRounds: 3,
-  votingStrategy: 'majority'
+  votingStrategy: 'majority',
 });
 ```
 
 ### 4. Custom Agent Block
+
 ```typescript
 // Task-specific custom agents
 const result = await executeCustomAgent(agentId, input, config);
 ```
 
 ### 5. Tool Use Block
+
 ```typescript
 // External tool integration
 const result = await executeToolUse(agentId, toolName, input, config);
@@ -105,18 +122,22 @@ const result = await executeToolUse(agentId, toolName, input, config);
 ## 📊 Performance Monitoring
 
 ### Optimization Job Tracking
+
 - Real-time job status monitoring
 - Performance metrics collection
 - Historical optimization data
 - Improvement trend analysis
 
 ### Analytics Endpoints
+
 - `GET /api/mass/analytics/performance/:agentId` - Agent performance analytics
-- `GET /api/mass/analytics/topology/:topologyId` - Topology performance analytics
+- `GET /api/mass/analytics/topology/:topologyId` - Topology performance
+  analytics
 
 ## 🔧 Usage Examples
 
 ### 1. Optimizing a Single Agent
+
 ```typescript
 import { useMassOptimization } from '@/hooks/useMassOptimization';
 
@@ -126,13 +147,14 @@ const config = {
   validationDatasetId: 'dataset-123',
   maxCandidates: 10,
   optimizationRounds: 3,
-  llmConfig: { model: 'gpt-4', temperature: 0.7 }
+  llmConfig: { model: 'gpt-4', temperature: 0.7 },
 };
 
 const { job } = await optimizeAgent('agent-456', config);
 ```
 
 ### 2. Running Full MASS Pipeline
+
 ```typescript
 const { runFullOptimization } = useMassOptimization();
 
@@ -143,14 +165,15 @@ console.log('Final optimized topology:', result.finalTopologyId);
 ```
 
 ### 3. Executing MASS Building Blocks
+
 ```typescript
 import { useMassExecution } from '@/hooks/useMassExecution';
 
 const { executeAggregate } = useMassExecution();
 
 const result = await executeAggregate(
-  ['agent-1', 'agent-2'], 
-  'Analyze this data...', 
+  ['agent-1', 'agent-2'],
+  'Analyze this data...',
   { aggregationStrategy: 'majority_vote' }
 );
 ```
@@ -158,6 +181,7 @@ const result = await executeAggregate(
 ## 🎨 Frontend Integration
 
 ### MassOptimizationPanel Component
+
 ```tsx
 <MassOptimizationPanel
   agentIds={selectedAgentIds}
@@ -168,6 +192,7 @@ const result = await executeAggregate(
 ```
 
 ### MassBlockExecutor Component
+
 ```tsx
 <MassBlockExecutor
   availableAgents={agents}
@@ -180,12 +205,14 @@ const result = await executeAggregate(
 ## 🔄 Migration and Backwards Compatibility
 
 ### Zero-Breaking Integration
+
 - All existing agents and workflows remain fully functional
 - MASS features are opt-in enhancements
 - Original configurations are preserved
 - Users can compare optimized vs original performance
 
 ### Gradual Adoption
+
 1. **Phase 1**: Users can optimize individual agents
 2. **Phase 2**: Users can optimize workflow topologies
 3. **Phase 3**: Users can run full MASS pipelines
@@ -194,12 +221,14 @@ const result = await executeAggregate(
 ## 🛡️ Error Handling and Reliability
 
 ### Robust Error Handling
+
 - Comprehensive error logging and reporting
 - Graceful fallbacks for optimization failures
 - Job timeout and retry mechanisms
 - Validation of optimization inputs
 
 ### Performance Safeguards
+
 - Optimization budget controls
 - Sample size limitations for efficiency
 - Parallel processing with resource limits
@@ -208,12 +237,14 @@ const result = await executeAggregate(
 ## 📈 Expected Benefits
 
 ### Performance Improvements
+
 - **Stage 1**: Average 6% improvement in agent effectiveness
 - **Stage 2**: Additional 3% improvement from optimal topologies
 - **Stage 3**: Further 2% improvement from workflow-level optimization
 - **Total**: Up to 11% compound improvement in multi-agent performance
 
 ### Platform Differentiation
+
 - First-class MASS optimization capabilities
 - Automated multi-agent system design
 - Intelligent prompt optimization
@@ -222,12 +253,14 @@ const result = await executeAggregate(
 ## 🔮 Future Enhancements
 
 ### Advanced Optimization
+
 - Bayesian optimization for prompt search
 - Reinforcement learning for topology evolution
 - Multi-objective optimization (accuracy vs cost)
 - Continuous learning from production data
 
 ### Extended Building Blocks
+
 - Hierarchical agent structures
 - Sparse communication patterns
 - Dynamic topology adaptation
@@ -236,22 +269,24 @@ const result = await executeAggregate(
 ## 📝 Configuration Examples
 
 ### Validation Dataset Creation
+
 ```typescript
 const dataset = {
-  name: "Math Problems Validation",
-  description: "Sample mathematical reasoning problems",
+  name: 'Math Problems Validation',
+  description: 'Sample mathematical reasoning problems',
   items: [
     {
-      input: { question: "What is 2 + 2?" },
-      expectedOutput: { answer: "4" }
-    }
-  ]
+      input: { question: 'What is 2 + 2?' },
+      expectedOutput: { answer: '4' },
+    },
+  ],
 };
 
 await createValidationDataset(dataset);
 ```
 
 ### Advanced Optimization Configuration
+
 ```typescript
 const advancedConfig = {
   validationDatasetId: 'math-dataset',
@@ -260,22 +295,24 @@ const advancedConfig = {
   evaluationSampleSize: 50,
   llmConfig: {
     model: 'gpt-4',
-    temperature: 0.3
+    temperature: 0.3,
   },
   searchStrategy: 'bayesian',
-  earlyStoppingThreshold: 0.95
+  earlyStoppingThreshold: 0.95,
 };
 ```
 
 ## 🚨 Important Notes
 
 ### Resource Considerations
+
 - MASS optimization is computationally intensive
 - Costs scale with number of LLM API calls
 - Consider budget limits for optimization runs
 - Monitor token usage and API costs
 
 ### Best Practices
+
 - Start with small validation datasets
 - Use appropriate sample sizes for evaluation
 - Monitor optimization progress regularly
@@ -291,4 +328,6 @@ const advancedConfig = {
 5. **Monitor Results**: Track performance improvements and metrics
 6. **Iterate**: Continuously refine and re-optimize as needed
 
-The MASS framework integration transforms The New Fuse into a cutting-edge, self-optimizing multi-agent platform that can automatically discover and refine the most effective agent collaborations for any given task.
+The MASS framework integration transforms The New Fuse into a cutting-edge,
+self-optimizing multi-agent platform that can automatically discover and refine
+the most effective agent collaborations for any given task.

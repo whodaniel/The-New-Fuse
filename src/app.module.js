@@ -29,7 +29,7 @@ const WorkflowMonitoringService_js_1 = require("./services/WorkflowMonitoringSer
 const WorkflowMCPIntegrationService_js_1 = require("./services/WorkflowMCPIntegrationService.js");
 const AnalyticsIntegrationService_js_1 = require("./services/AnalyticsIntegrationService.js");
 const SchemaValidationService_js_1 = require("./services/SchemaValidationService.js");
-const prisma_service_js_1 = require("./prisma/prisma.service.js");
+const drizzle_service_js_1 = require("./drizzle/drizzle.service.js");
 const metrics_service_js_1 = require("./metrics/metrics.service.js");
 const redis_service_tsx_1 = require("./redis/redis.service.tsx");
 const logger_service_js_1 = require("./common/logger.service.js");
@@ -68,7 +68,7 @@ exports.AppModule = AppModule = __decorate([
             WorkflowMCPIntegrationService_js_1.WorkflowMCPIntegrationService,
             AnalyticsIntegrationService_js_1.AnalyticsIntegrationService,
             SchemaValidationService_js_1.SchemaValidationService,
-            prisma_service_js_1.PrismaService,
+            drizzle_service_js_1.DatabaseService,
             metrics_service_js_1.MetricsService,
             redis_service_tsx_1.RedisService,
             logger_service_js_1.Logger,

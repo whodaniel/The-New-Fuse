@@ -1,6 +1,9 @@
 # Sync Error Handling System
 
-The sync error handling system provides comprehensive error management, retry logic, and fallback mechanisms for the multi-tenant synchronization system. It integrates seamlessly with existing infrastructure including Redis, monitoring systems, and the core error handling framework.
+The sync error handling system provides comprehensive error management, retry
+logic, and fallback mechanisms for the multi-tenant synchronization system. It
+integrates seamlessly with existing infrastructure including Redis, monitoring
+systems, and the core error handling framework.
 
 ## Overview
 
@@ -19,31 +22,31 @@ graph TB
         SRM[SyncRetryManager]
         SFP[SyncFallbackProcessor]
     end
-    
+
     subgraph "Existing Infrastructure"
         Redis[UnifiedRedisService]
         Monitor[MonitoringSystem]
         Logger[Logger]
     end
-    
+
     subgraph "Sync Operations"
         FileSync[File Sync]
         AgentSync[Agent Sync]
         TemplateSync[Template Sync]
     end
-    
+
     FileSync --> SEH
     AgentSync --> SEH
     TemplateSync --> SEH
-    
+
     SEH --> SRM
     SEH --> SFP
     SEH --> Redis
     SEH --> Monitor
-    
+
     SRM --> Redis
     SFP --> Redis
-    
+
     SEH --> Logger
     SRM --> Logger
     SFP --> Logger
@@ -53,16 +56,21 @@ graph TB
 
 ### SyncErrorHandler
 
-The main error handler that processes sync errors and coordinates recovery efforts.
+The main error handler that processes sync errors and coordinates recovery
+efforts.
 
 #### Features
 
-- **Error Classification**: Automatically classifies errors by type, severity, and category
-- **Statistics Tracking**: Maintains comprehensive error statistics by tenant, resource type, and operation
+- **Error Classification**: Automatically classifies errors by type, severity,
+  and category
+- **Statistics Tracking**: Maintains comprehensive error statistics by tenant,
+  resource type, and operation
 - **Metrics Integration**: Records metrics in the existing monitoring system
-- **Fallback Queuing**: Queues failed operations for fallback processing using Redis
+- **Fallback Queuing**: Queues failed operations for fallback processing using
+  Redis
 - **Alert Management**: Triggers alerts when error thresholds are exceeded
-- **Critical Error Handling**: Special processing for critical errors requiring immediate attention
+- **Critical Error Handling**: Special processing for critical errors requiring
+  immediate attention
 
 #### Configuration
 
@@ -106,7 +114,8 @@ Manages retry logic with exponential backoff and circuit breaker patterns.
 #### Features
 
 - **Exponential Backoff**: Configurable backoff strategy with jitter
-- **Circuit Breaker**: Prevents cascading failures by temporarily stopping retries
+- **Circuit Breaker**: Prevents cascading failures by temporarily stopping
+  retries
 - **Persistent Queues**: Uses Redis for persistent retry queues
 - **Statistics**: Tracks retry success rates and performance metrics
 - **Batch Processing**: Processes retries in configurable batches
@@ -149,7 +158,8 @@ Provides fallback strategies and graceful degradation when retries fail.
 
 #### Features
 
-- **Multiple Strategies**: Supports multiple fallback strategies with priority ordering
+- **Multiple Strategies**: Supports multiple fallback strategies with priority
+  ordering
 - **Custom Strategies**: Allows registration of custom fallback strategies
 - **Alternative Actions**: Provides alternative actions when all strategies fail
 - **Graceful Degradation**: Enables graceful degradation as a last resort
@@ -197,8 +207,13 @@ fallbackProcessor.registerStrategy({
   enabled: true,
   execute: async (operation) => {
     // Custom fallback logic
-    return { success: true, strategy: 'customStrategy', executionTime: 100, shouldRetry: false };
-  }
+    return {
+      success: true,
+      strategy: 'customStrategy',
+      executionTime: 100,
+      shouldRetry: false,
+    };
+  },
 });
 
 // Process fallback operation
@@ -220,7 +235,8 @@ The error handling system uses the existing `UnifiedRedisService` for:
 
 Integrates with the existing monitoring system via `IMonitoringSystem`:
 
-- **Metrics Collection**: Records error metrics, retry rates, and fallback statistics
+- **Metrics Collection**: Records error metrics, retry rates, and fallback
+  statistics
 - **Performance Monitoring**: Tracks error handling performance
 - **Health Monitoring**: Provides health status for error handling components
 
@@ -292,15 +308,21 @@ Comprehensive statistics tracking:
 
 ### Error Handling
 
-1. **Classify Errors Properly**: Ensure errors are properly classified for appropriate handling
-2. **Use Appropriate Retry Logic**: Configure retry parameters based on error types
-3. **Monitor Circuit Breakers**: Keep track of circuit breaker states and reset when appropriate
-4. **Implement Custom Strategies**: Create custom fallback strategies for specific use cases
+1. **Classify Errors Properly**: Ensure errors are properly classified for
+   appropriate handling
+2. **Use Appropriate Retry Logic**: Configure retry parameters based on error
+   types
+3. **Monitor Circuit Breakers**: Keep track of circuit breaker states and reset
+   when appropriate
+4. **Implement Custom Strategies**: Create custom fallback strategies for
+   specific use cases
 
 ### Performance
 
-1. **Batch Processing**: Process retries and fallbacks in batches for better performance
-2. **Limit Queue Sizes**: Configure appropriate queue size limits to prevent memory issues
+1. **Batch Processing**: Process retries and fallbacks in batches for better
+   performance
+2. **Limit Queue Sizes**: Configure appropriate queue size limits to prevent
+   memory issues
 3. **Monitor Metrics**: Regularly monitor error handling metrics and performance
 4. **Optimize Timeouts**: Set appropriate timeouts for different operation types
 
@@ -309,7 +331,8 @@ Comprehensive statistics tracking:
 1. **Graceful Degradation**: Always enable graceful degradation as a last resort
 2. **Persistent Queues**: Use Redis for persistent retry and fallback queues
 3. **Health Monitoring**: Implement health checks for error handling components
-4. **Backup Strategies**: Have multiple fallback strategies for critical operations
+4. **Backup Strategies**: Have multiple fallback strategies for critical
+   operations
 
 ## Examples
 
@@ -324,7 +347,7 @@ const context: SyncContext = {
   operation: 'file-sync',
   tenantId: 'tenant-123',
   resourcePath: '/path/to/file.txt',
-  timestamp: new Date()
+  timestamp: new Date(),
 };
 
 try {
@@ -354,7 +377,7 @@ fallbackProcessor.registerStrategy({
         strategy: 'databaseSyncFallback',
         executionTime: 5000,
         shouldRetry: false,
-        data: { usedBackup: true }
+        data: { usedBackup: true },
       };
     } catch (error) {
       return {
@@ -362,10 +385,10 @@ fallbackProcessor.registerStrategy({
         strategy: 'databaseSyncFallback',
         executionTime: 5000,
         error,
-        shouldRetry: false
+        shouldRetry: false,
       };
     }
-  }
+  },
 });
 ```
 
@@ -376,16 +399,18 @@ fallbackProcessor.registerStrategy({
 const health = {
   errorHandler: {
     statistics: errorHandler.getSyncStatistics(),
-    isRunning: true
+    isRunning: true,
   },
   retryManager: {
     statistics: await retryManager.getStatistics(),
-    circuitBreakers: Array.from(retryManager.getCircuitBreakerStates().entries())
+    circuitBreakers: Array.from(
+      retryManager.getCircuitBreakerStates().entries()
+    ),
   },
   fallbackProcessor: {
     statistics: fallbackProcessor.getStatistics(),
-    strategies: fallbackProcessor.getStrategies()
-  }
+    strategies: fallbackProcessor.getStrategies(),
+  },
 };
 
 console.log('Error handling health:', health);

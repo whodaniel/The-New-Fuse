@@ -62,6 +62,7 @@ The New Fuse/
 ### TypeScript Configuration
 
 The project uses a unified TypeScript configuration:
+
 - **Base Config**: `tsconfig.base.json` - shared compiler options
 - **Package Configs**: Each package extends the base configuration
 - **Path Mappings**: Centralized import path resolution

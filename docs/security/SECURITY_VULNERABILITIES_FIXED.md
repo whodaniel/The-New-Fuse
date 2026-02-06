@@ -269,7 +269,7 @@ The following warnings are present but are **NOT security vulnerabilities**:
 
 3. **Build Warnings:**
    - Canvas module rebuild issues (development-only)
-   - Prisma checksum fetch issues (offline-tolerant)
+   - Drizzle checksum fetch issues (offline-tolerant)
 
 **None of these affect production security.**
 

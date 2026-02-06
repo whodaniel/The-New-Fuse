@@ -2,7 +2,9 @@
 
 ## Overview
 
-This document provides operational runbooks for managing the Multi-Tenant Chokidar Synchronization System using existing The New Fuse monitoring and alerting infrastructure.
+This document provides operational runbooks for managing the Multi-Tenant
+Chokidar Synchronization System using existing The New Fuse monitoring and
+alerting infrastructure.
 
 ## Runbook Index
 
@@ -22,6 +24,7 @@ This document provides operational runbooks for managing the Multi-Tenant Chokid
 ## Sync Service Down
 
 ### Alert Trigger
+
 ```yaml
 alert: SyncServiceDown
 expr: up{job="sync-service"} == 0
@@ -32,6 +35,7 @@ severity: critical
 ### Immediate Actions (0-5 minutes)
 
 #### Step 1: Verify Alert Accuracy
+
 ```bash
 # Check if sync service pods are actually down
 kubectl get pods -n tnf-production -l app=sync-service
@@ -44,6 +48,7 @@ curl http://prometheus:9090/api/v1/targets | jq '.data.activeTargets[] | select(
 ```
 
 #### Step 2: Check Service Health
+
 ```bash
 # If pods are running, check health endpoint directly
 kubectl exec -it $(kubectl get pods -n tnf-production -l app=sync-service -o jsonpath='{.items[0].metadata.name}') -- curl localhost:8080/health
@@ -53,6 +58,7 @@ kubectl logs -f deployment/sync-service -n tnf-production --tail=100
 ```
 
 #### Step 3: Immediate Recovery
+
 ```bash
 # Restart sync service deployment
 kubectl rollout restart deployment/sync-service -n tnf-production
@@ -64,6 +70,7 @@ kubectl rollout status deployment/sync-service -n tnf-production --timeout=300s
 ### Investigation Actions (5-15 minutes)
 
 #### Step 4: Root Cause Analysis
+
 ```bash
 # Check recent events
 kubectl get events -n tnf-production --sort-by='.lastTimestamp' | grep sync-service
@@ -77,12 +84,13 @@ kubectl describe node $(kubectl get pods -n tnf-production -l app=sync-service -
 ```
 
 #### Step 5: Dependency Check
+
 ```bash
 # Verify Redis connectivity using existing Redis monitoring
 redis-cli -h $REDIS_HOST ping
 
 # Check database connectivity using existing database monitoring
-npx prisma db pull --preview-feature
+npx drizzle db pull --preview-feature
 
 # Verify WebSocket service health using existing monitoring
 curl http://websocket-service:8080/health
@@ -91,6 +99,7 @@ curl http://websocket-service:8080/health
 ### Resolution Actions (15+ minutes)
 
 #### Step 6: Service Recovery
+
 ```bash
 # If restart didn't work, check configuration
 kubectl get configmap sync-config -n tnf-production -o yaml
@@ -103,6 +112,7 @@ kubectl scale deployment sync-service --replicas=3 -n tnf-production
 ```
 
 #### Step 7: Validate Recovery
+
 ```bash
 # Verify service is healthy
 curl http://sync-service:8080/health
@@ -115,12 +125,14 @@ curl -X POST http://sync-service:8080/test/health-check
 ```
 
 ### Escalation Criteria
+
 - Service doesn't recover after restart (15 minutes)
 - Multiple dependency failures detected
 - Resource exhaustion on multiple nodes
 - Database connectivity issues persist
 
 ### Post-Incident Actions
+
 - Review logs for root cause
 - Update monitoring thresholds if needed
 - Document lessons learned
@@ -131,6 +143,7 @@ curl -X POST http://sync-service:8080/test/health-check
 ## High Sync Latency
 
 ### Alert Trigger
+
 ```yaml
 alert: HighSyncLatency
 expr: histogram_quantile(0.95, sync_operation_duration_seconds) > 5
@@ -141,6 +154,7 @@ severity: warning
 ### Immediate Actions (0-5 minutes)
 
 #### Step 1: Assess Impact
+
 ```bash
 # Check current sync latency metrics using existing Prometheus
 curl "http://prometheus:9090/api/v1/query?query=histogram_quantile(0.95,sync_operation_duration_seconds)"
@@ -153,6 +167,7 @@ kubectl logs deployment/sync-service -n tnf-production | grep "slow operation" |
 ```
 
 #### Step 2: Check System Resources
+
 ```bash
 # Check sync service resource usage using existing monitoring
 kubectl top pods -n tnf-production -l app=sync-service
@@ -167,6 +182,7 @@ psql $DATABASE_URL -c "SELECT query, mean_exec_time FROM pg_stat_statements ORDE
 ### Investigation Actions (5-15 minutes)
 
 #### Step 3: Identify Bottlenecks
+
 ```bash
 # Check for Redis bottlenecks using existing Redis tools
 redis-cli info stats | grep -E "(instantaneous_ops_per_sec|used_memory_human)"
@@ -181,6 +197,7 @@ kubectl exec -it $(kubectl get pods -n tnf-production -l app=sync-service -o jso
 ### Resolution Actions (15+ minutes)
 
 #### Step 4: Performance Tuning
+
 ```bash
 # Increase batch size if operations are small
 kubectl patch configmap sync-config -n tnf-production --patch '{"data":{"sync.batchSize":"200"}}'
@@ -193,6 +210,7 @@ kubectl scale deployment sync-service --replicas=4 -n tnf-production
 ```
 
 ### Escalation Criteria
+
 - Latency continues to increase despite tuning
 - Resource exhaustion detected
 - Database performance degradation affects other services
@@ -203,18 +221,21 @@ kubectl scale deployment sync-service --replicas=4 -n tnf-production
 ## General Escalation Procedures
 
 ### Level 1: Automated Recovery (0-5 minutes)
+
 - Health checks trigger automatic restarts
 - Auto-scaling responds to resource pressure
 - Circuit breakers prevent cascade failures
 - Retry mechanisms handle transient issues
 
 ### Level 2: On-Call Response (5-15 minutes)
+
 - On-call engineer receives alert via existing PagerDuty/OpsGenie
 - Follow appropriate runbook based on alert type
 - Engage additional team members if needed
 - Document actions taken in incident management system
 
 ### Level 3: Expert Escalation (15+ minutes)
+
 - Engage sync system development team
 - Contact infrastructure team for cluster issues
 - Involve security team for security incidents
@@ -223,12 +244,14 @@ kubectl scale deployment sync-service --replicas=4 -n tnf-production
 ## Contact Information
 
 ### Primary Contacts
+
 - **Sync Team Lead**: sync-lead@tnf.com
 - **Infrastructure Team**: infrastructure@tnf.com
 - **Security Team**: security@tnf.com
 - **Database Team**: database@tnf.com
 
 ### Emergency Contacts
+
 - **On-Call Engineer**: Use existing PagerDuty escalation
 - **Engineering Manager**: Use existing escalation procedures
 - **CTO**: For critical business impact incidents

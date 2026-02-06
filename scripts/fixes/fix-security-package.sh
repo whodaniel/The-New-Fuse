@@ -68,11 +68,11 @@ export class AuditService {
 }
 EOFILE
 
-# Create the prisma service
-cat > "$SECURITY_DIR/src/prisma.service.ts" << 'EOFILE'
-import { PrismaClient } from '@prisma/client';
+# Create the drizzle service
+cat > "$SECURITY_DIR/src/drizzle.service.ts" << 'EOFILE'
+import { DrizzleClient } from '@drizzle/client';
 
-export class PrismaService extends PrismaClient {
+export class DatabaseService extends DrizzleClient {
   constructor() {
     super({
       datasources: {
@@ -115,7 +115,7 @@ EOFILE
 cat > "$SECURITY_DIR/src/auth/AuthService.tsx" << 'EOFILE'
 import * as jwt from 'jsonwebtoken';
 import { Request } from 'express';
-import { PrismaService } from '../prisma.service';
+import { DatabaseService } from '../drizzle.service';
 import { HashingService } from './hashing.service';
 
 export interface User {
@@ -133,7 +133,7 @@ export class AuthService {
   private readonly jwtSecret: string;
   
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly drizzle: DatabaseService,
     private readonly hashingService: HashingService
   ) {
     this.jwtSecret = process.env.JWT_SECRET || 'super-secret-key';
@@ -147,7 +147,7 @@ export class AuthService {
       const decoded = jwt.verify(token, this.jwtSecret) as { userId: string };
       if (!decoded.userId) return false;
       
-      const user = await this.prisma.user.findUnique({
+      const user = await this.drizzle.user.findUnique({
         where: { id: decoded.userId },
         include: { permissions: true }
       });
@@ -339,7 +339,7 @@ cat > "$SECURITY_DIR/package.json" << 'EOFILE'
     "jsonwebtoken": "^9.0.0",
     "uuid": "^9.0.0",
     "zod": "^3.21.4",
-    "@prisma/client": "^4.11.0"
+    "@drizzle/client": "^4.11.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

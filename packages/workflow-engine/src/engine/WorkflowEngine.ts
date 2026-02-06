@@ -7,7 +7,7 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '@the-new-fuse/relay-core';
-// import { PrismaClient } from '@prisma/client';
+// import { DatabaseService } from '@db/client';
 import {
   UnifiedWorkflow,
   WorkflowExecution,
@@ -48,7 +48,7 @@ export interface WorkflowEngineConfig {
 export class UnifiedWorkflowEngine extends EventEmitter {
   private logger: Logger;
   private config: WorkflowEngineConfig;
-  private prisma: any; // PrismaClient;
+  private db: any; // DatabaseService;
   private agentRegistry: MasterAgentRegistry;
   private heartbeatService: HeartbeatMonitoringService;
   // Removed handoffService - implementing handoff logic directly
@@ -69,14 +69,14 @@ export class UnifiedWorkflowEngine extends EventEmitter {
 
   constructor(
     config: WorkflowEngineConfig,
-    prisma: any /* PrismaClient */,
+    db: any /* DatabaseService */,
     agentRegistry: MasterAgentRegistry,
     heartbeatService: HeartbeatMonitoringService,
     logger: Logger
   ) {
     super();
     this.config = config;
-    this.prisma = prisma;
+    this.db = db;
     this.agentRegistry = agentRegistry;
     this.heartbeatService = heartbeatService;
     // Handoff service functionality implemented directly in methods
@@ -169,7 +169,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
    */
   private async loadWorkflow(workflowId: string): Promise<UnifiedWorkflow | null> {
     try {
-      const dbWorkflow = await this.prisma.workflow.findUnique({
+      const dbWorkflow = await this.db.workflow.findUnique({
         where: { id: workflowId },
         include: {
           steps: { orderBy: { order: 'asc' } },
@@ -232,7 +232,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     };
 
     // Store in database
-    await this.prisma.workflowExecution.create({
+    await this.db.workflowExecution.create({
       data: {
         id: executionId,
         workflowId: workflow.id,
@@ -732,7 +732,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
    */
   private async finalizeExecution(execution: WorkflowExecution): Promise<void> {
     // Update database
-    await this.prisma.workflowExecution.update({
+    await this.db.workflowExecution.update({
       where: { id: execution.id },
       data: {
         status: execution.status,
@@ -870,7 +870,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
 
   private async loadExecution(executionId: string): Promise<WorkflowExecution | null> {
     try {
-      const dbExecution = await this.prisma.workflowExecution.findUnique({
+      const dbExecution = await this.db.workflowExecution.findUnique({
         where: { id: executionId }
       });
 

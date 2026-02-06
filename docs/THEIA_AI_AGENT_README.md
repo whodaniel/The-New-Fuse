@@ -1,6 +1,7 @@
 # @fuse/ide-ai-agent
 
-Advanced AI Agent system for SkIDEancer IDE with memory, flow orchestration, and code analysis.
+Advanced AI Agent system for SkIDEancer IDE with memory, flow orchestration, and
+code analysis.
 
 **Ported from SkIDEancer's Windsurf-inspired AI platform.**
 
@@ -17,7 +18,8 @@ Advanced AI Agent system for SkIDEancer IDE with memory, flow orchestration, and
 
 - **Graph-based execution**: DAG-based workflow orchestration
 - **Topological sorting**: Automatic dependency resolution
-- **Built-in steps**: LLM query, code analysis, transform, conditional, loop, merge
+- **Built-in steps**: LLM query, code analysis, transform, conditional, loop,
+  merge
 - **Cancellation support**: Cancel running flows
 
 ### 📊 Code Analysis Capability
@@ -86,35 +88,35 @@ Command Palette > AI Agent: Clear Memory
 ### Using Agent Service
 
 ```typescript
-import { AgentService } from "@fuse/ide-ai-agent";
+import { AgentService } from '@fuse/ide-ai-agent';
 
 // Process user input
-const response = await agentService.process("analyze this code");
+const response = await agentService.process('analyze this code');
 
 // Remember something
-agentService.remember("userPreference", "dark-theme", "long");
+agentService.remember('userPreference', 'dark-theme', 'long');
 
 // Recall later
-const pref = agentService.recall("userPreference", "long");
+const pref = agentService.recall('userPreference', 'long');
 ```
 
 ### Using AI Flow Service
 
 ```typescript
-import { AIFlowService, IAIFlowGraph } from "@fuse/ide-ai-agent";
+import { AIFlowService, IAIFlowGraph } from '@fuse/ide-ai-agent';
 
 // Define a flow
 const flow: IAIFlowGraph = {
-  id: "code-review",
-  name: "Code Review Flow",
+  id: 'code-review',
+  name: 'Code Review Flow',
   nodes: [
-    { id: "analyze", type: "code-analysis", data: { code: "..." } },
-    { id: "llm", type: "llm-query", data: { prompt: "Review this..." } },
-    { id: "merge", type: "merge", data: {} },
+    { id: 'analyze', type: 'code-analysis', data: { code: '...' } },
+    { id: 'llm', type: 'llm-query', data: { prompt: 'Review this...' } },
+    { id: 'merge', type: 'merge', data: {} },
   ],
   edges: [
-    { id: "e1", source: "analyze", target: "merge" },
-    { id: "e2", source: "llm", target: "merge" },
+    { id: 'e1', source: 'analyze', target: 'merge' },
+    { id: 'e2', source: 'llm', target: 'merge' },
   ],
 };
 
@@ -125,17 +127,17 @@ const result = await flowService.executeGraph(flow);
 ### Registering Custom Capability
 
 ```typescript
-import { IAgentCapability } from "@fuse/ide-ai-agent";
+import { IAgentCapability } from '@fuse/ide-ai-agent';
 
 const myCapability: IAgentCapability = {
-  id: "myCustomCapability",
-  name: "My Custom",
-  description: "Does something custom",
-  version: "1.0.0",
-  provider: "MyCompany",
+  id: 'myCustomCapability',
+  name: 'My Custom',
+  description: 'Does something custom',
+  version: '1.0.0',
+  provider: 'MyCompany',
   execute: async (context) => {
     return {
-      content: "Custom response",
+      content: 'Custom response',
       confidence: 0.9,
     };
   },

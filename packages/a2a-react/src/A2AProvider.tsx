@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useA2A, A2AConnectionConfig, A2AHookReturn } from './useA2A';
-import { AgentRegistration, A2AMessage, AgentStatus } from '@the-new-fuse/a2a-core';
+import { AgentRegistration } from '@the-new-fuse/a2a-core';
+import React, { createContext, useContext, useEffect } from 'react';
+import { A2AConnectionConfig, A2AHookReturn, useA2A } from './useA2A';
 
 export interface A2AContextType extends A2AHookReturn {
   // Additional context-specific methods can be added here
@@ -21,7 +21,7 @@ export function A2AProvider({
   autoConnect = false,
   autoRegister = false,
   agentRegistration,
-  children
+  children,
 }: A2AProviderProps) {
   const a2aHook = useA2A(config);
 
@@ -35,17 +35,18 @@ export function A2AProvider({
     if (autoRegister && agentRegistration && a2aHook.connectionState.authenticated) {
       a2aHook.registerAgent(agentRegistration);
     }
-  }, [autoRegister, agentRegistration, a2aHook.connectionState.authenticated, a2aHook.registerAgent]);
+  }, [
+    autoRegister,
+    agentRegistration,
+    a2aHook.connectionState.authenticated,
+    a2aHook.registerAgent,
+  ]);
 
   const contextValue: A2AContextType = {
-    ...a2aHook
+    ...a2aHook,
   };
 
-  return (
-    <A2AContext.Provider value={contextValue}>
-      {children}
-    </A2AContext.Provider>
-  );
+  return <A2AContext.Provider value={contextValue}>{children}</A2AContext.Provider>;
 }
 
 export function useA2AContext(): A2AContextType {

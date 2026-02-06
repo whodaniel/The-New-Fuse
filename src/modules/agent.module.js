@@ -10,7 +10,7 @@ exports.AgentModule = void 0;
 const common_1 = require("@nestjs/common");
 const agentController_tsx_1 = require("../controllers/agentController.tsx");
 const agentService_js_1 = require("../services/agentService.js");
-const prisma_service_tsx_1 = require("../lib/prisma.service.tsx");
+const drizzle_service_tsx_1 = require("../lib/drizzle.service.tsx");
 const config_1 = require("@nestjs/config");
 let AgentModule = class AgentModule {
 };
@@ -19,7 +19,7 @@ exports.AgentModule = AgentModule = __decorate([
     (0, common_1.Module)({
         imports: [config_1.ConfigModule],
         controllers: [agentController_tsx_1.AgentController],
-        providers: [agentService_js_1.AgentService, prisma_service_tsx_1.PrismaService],
+        providers: [agentService_js_1.AgentService, drizzle_service_tsx_1.DatabaseService],
         exports: [agentService_js_1.AgentService],
     })
 ], AgentModule);

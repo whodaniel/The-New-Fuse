@@ -1,4 +1,3 @@
-
 export enum DataType {
   TEXT = 'TEXT',
   NUMBER = 'NUMBER',
@@ -53,16 +52,16 @@ export interface Row {
   updatedAt: string; // ISO date string
   order?: number; // For explicit ordering within groups (e.g., Kanban lanes)
   parentId: string | null; // For hierarchical rows (subtasks)
-  depth: number;          // Indentation level
-  isCollapsed: boolean;   // For parent rows to hide children
+  depth: number; // Indentation level
+  isCollapsed: boolean; // For parent rows to hide children
 }
 
 export enum ViewType {
   GRID = 'GRID',
-  KANBAN = 'KANBAN', 
+  KANBAN = 'KANBAN',
   CALENDAR = 'CALENDAR', // Placeholder
   GALLERY = 'GALLERY', // Placeholder
-  TIMELINE = 'TIMELINE', 
+  TIMELINE = 'TIMELINE',
 }
 
 export enum FilterOperator {
@@ -82,8 +81,8 @@ export interface Filter {
   id: string;
   columnId: string;
   operator: FilterOperator;
-  value?: any; 
-  conjunction: 'AND' | 'OR'; 
+  value?: any;
+  conjunction: 'AND' | 'OR';
 }
 
 export interface Sort {
@@ -102,7 +101,7 @@ export interface KanbanViewOptions {
 }
 export interface CalendarViewOptions {
   dateColumnId: string | null;
-  endDateColumnId?: string | null; 
+  endDateColumnId?: string | null;
 }
 export interface GalleryViewOptions {
   coverImageColumnId?: string | null;
@@ -110,13 +109,16 @@ export interface GalleryViewOptions {
 
 export interface TimelineViewOptions {
   startDateColumnId: string | null;
-  endDateColumnId?: string | null; 
-  labelColumnId?: string | null; 
+  endDateColumnId?: string | null;
+  labelColumnId?: string | null;
 }
 
-
-export type ViewSpecificOptions = KanbanViewOptions | CalendarViewOptions | GalleryViewOptions | TimelineViewOptions | {};
-
+export type ViewSpecificOptions =
+  | KanbanViewOptions
+  | CalendarViewOptions
+  | GalleryViewOptions
+  | TimelineViewOptions
+  | {};
 
 export interface View {
   id: string;
@@ -124,20 +126,19 @@ export interface View {
   type: ViewType;
   filters: Filter[];
   sorts: Sort[];
-  groupBy: GroupBy[]; 
-  columnOrder?: string[]; 
-  columnVisibility?: Record<string, boolean>; 
-  columnWidths?: Record<string, number>; 
-  viewSpecificOptions?: ViewSpecificOptions; 
+  groupBy: GroupBy[];
+  columnOrder?: string[];
+  columnVisibility?: Record<string, boolean>;
+  columnWidths?: Record<string, number>;
+  viewSpecificOptions?: ViewSpecificOptions;
 }
-
 
 export interface Table {
   id: string;
   name: string;
   columns: Column[];
   rows: Row[];
-  columnOrder: string[]; 
+  columnOrder: string[];
   views: View[];
   activeViewId: string | null;
 }

@@ -12,7 +12,7 @@ export interface UserData {
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private configService: ConfigService
+    private configService: ConfigService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<UserData | null> {

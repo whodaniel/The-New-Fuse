@@ -44,7 +44,7 @@ export enum BridgeEvent {
   DISCONNECT = 'disconnect',
   MESSAGE = 'message',
   ERROR = 'error',
-  RECONNECT = 'reconnect'
+  RECONNECT = 'reconnect',
 }
 
 export interface BridgeMetrics {

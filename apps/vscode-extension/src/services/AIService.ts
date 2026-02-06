@@ -124,6 +124,7 @@ export class AIService {
       'openai', // GPT-5.2
       'anthropic', // Claude Opus 4.5
       'gemini', // Gemini 3 Pro
+      'sambanova', // SambaNova Cloud (Llama 3.1 405B)
       'deepseek', // DeepSeek-V3.2-Speciale
       'qwen', // Qwen3-Coder
       'openrouter',
@@ -172,19 +173,56 @@ export class AIService {
   }
 
   /**
-   * Send a chat request to the active provider
+   * Send a chat request to the active provider with automatic failover redundancy
    */
   async chat(request: LLMRequest): Promise<LLMResponse> {
-    if (!this.activeProvider) {
-      throw new Error('No AI provider configured. Please set up an API key.');
+    const providersToTry: LLMProviderType[] = [this.activeProvider || 'openai'];
+
+    // Add logic to include fallback providers if configured
+    // This mirrors the redundancy system in the SaaS/Cloud environment
+    const globalSync = (await import('./GlobalSyncService.js')).GlobalSyncService.getInstance();
+    const globalConfig = await globalSync.loadGlobalConfig();
+
+    if (globalConfig?.config?.fallbackModelIds) {
+      for (const fallbackId of globalConfig.config.fallbackModelIds) {
+        const provider = fallbackId.split('/')[0] as LLMProviderType;
+        if (provider && !providersToTry.includes(provider)) {
+          providersToTry.push(provider);
+        }
+      }
+    }
+
+    let lastError: Error | null = null;
+
+    for (const provider of providersToTry) {
+      try {
+        if (!(await this.checkProvider(provider))) continue;
+
+        return await this.executeChat(provider, request);
+      } catch (error) {
+        log.warn(`Chat failed on provider ${provider}, attempting failover...`, error);
+        lastError = error as Error;
+        // Continue to next provider
+      }
+    }
+
+    throw lastError || new Error('All providers in the intelligence network failed.');
+  }
+
+  /**
+   * Internal execution of chat request
+   */
+  private async executeChat(provider: LLMProviderType, request: LLMRequest): Promise<LLMResponse> {
+    if (!provider) {
+      throw new Error('No AI provider specified.');
     }
 
     const config = ConfigManager.getInstance();
-    const providerConfig = config.getLLMConfig(this.activeProvider);
-    const apiKey = await config.getApiKey(this.activeProvider);
+    const providerConfig = config.getLLMConfig(provider);
+    const apiKey = await config.getApiKey(provider);
 
-    if (!apiKey && this.activeProvider !== 'copilot') {
-      throw new Error(`API key not configured for ${this.activeProvider}`);
+    if (!apiKey && provider !== 'copilot') {
+      throw new Error(`API key not configured for ${provider}`);
     }
 
     const requestId = generateId();
@@ -192,13 +230,13 @@ export class AIService {
     this.abortControllers.set(requestId, abortController);
 
     try {
-      log.debug(`Chat request to ${this.activeProvider}`, {
+      log.debug(`Chat request to ${provider}`, {
         model: request.model || providerConfig.model,
         messageCount: request.messages.length,
       });
 
       const response = await this.sendRequest(
-        this.activeProvider,
+        provider,
         { ...providerConfig, apiKey },
         request,
         abortController.signal
@@ -249,6 +287,7 @@ export class AIService {
       case 'openai':
       case 'openrouter':
       case 'litellm':
+      case 'sambanova':
       case 'deepseek': // DeepSeek uses OpenAI-compatible API
       case 'qwen': // Qwen/DashScope uses OpenAI-compatible API
         return this.sendOpenAICompatibleRequest(config, request, signal);

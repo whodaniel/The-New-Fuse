@@ -1,4 +1,3 @@
-import React from 'react';
 import { assertSnapshot } from '@/test/helpers/snapshot';
 import { Button } from '../Button';
 
@@ -56,9 +55,7 @@ describe('Button Snapshots', () => {
   });
 
   it('renders with start and end icons', () => {
-    const TestIcon = () => (
-      <svg data-testid="test-icon" viewBox="0 0 24 24" />
-    );
+    const TestIcon = () => <svg data-testid="test-icon" viewBox="0 0 24 24" />;
 
     assertSnapshot(
       <>

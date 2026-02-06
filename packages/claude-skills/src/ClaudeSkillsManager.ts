@@ -4,18 +4,18 @@
  * Main orchestrator for Claude Skills integration
  */
 
+import { SkillExecutor } from './executor';
+import { MCPSkillProvider } from './integration';
 import { SkillLoader } from './loader';
 import { SkillParser } from './parser';
-import { SkillExecutor } from './executor';
 import { SkillRegistry } from './registry';
-import { MCPSkillProvider } from './integration';
 import {
   ClaudeSkill,
-  SkillLoaderConfig,
-  SkillImportResult,
   SkillExecutionContext,
   SkillExecutionResult,
   SkillFilter,
+  SkillImportResult,
+  SkillLoaderConfig,
 } from './types';
 
 /**
@@ -46,7 +46,7 @@ export class ClaudeSkillsManager {
     this.mcpProvider = new MCPSkillProvider(this.registry, this.executor);
 
     if (config?.autoInitialize) {
-      this.initialize(config.prioritySkills).catch(error => {
+      this.initialize(config.prioritySkills).catch((error) => {
         console.error('Failed to auto-initialize Claude Skills:', error);
       });
     }
@@ -91,7 +91,7 @@ export class ClaudeSkillsManager {
 
       console.log(
         `Claude Skills Manager initialized: ${result.imported} skills loaded, ` +
-        `${result.failed} failed, ${result.skipped} skipped`
+          `${result.failed} failed, ${result.skipped} skipped`
       );
 
       if (result.errors.length > 0) {
@@ -258,9 +258,7 @@ let globalInstance: ClaudeSkillsManager | null = null;
 /**
  * Get the global Claude Skills Manager instance
  */
-export function getClaudeSkillsManager(
-  config?: ClaudeSkillsManagerConfig
-): ClaudeSkillsManager {
+export function getClaudeSkillsManager(config?: ClaudeSkillsManagerConfig): ClaudeSkillsManager {
   if (!globalInstance) {
     globalInstance = new ClaudeSkillsManager(config);
   }

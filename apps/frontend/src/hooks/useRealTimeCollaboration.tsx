@@ -1,7 +1,7 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { io, Socket } from 'socket.io-client';
-import type { WorkflowState, Collaborator } from '../types/workflow';
+import type { Collaborator, WorkflowState } from '../types/workflow';
 
 export const useRealTimeCollaboration = (): any => {
   const workflowId = useSelector((state: WorkflowState) => state.workflow.id);
@@ -18,16 +18,17 @@ export const useRealTimeCollaboration = (): any => {
     });
 
     newSocket.on('collaborator_left', (collaboratorId: string) => {
-      setCollaborators((prev: any) => prev.filter(c => c.id !== collaboratorId));
+      setCollaborators((prev: any) => prev.filter((c) => c.id !== collaboratorId));
     });
 
-    newSocket.on('collaborator_moved', (data: { id: string; position: { x: number; y: number } }) => {
-      setCollaborators((prev: any) =>
-        prev.map(c =>
-          c.id === data.id ? { ...c, position: data.position } : c
-        )
-      );
-    });
+    newSocket.on(
+      'collaborator_moved',
+      (data: { id: string; position: { x: number; y: number } }) => {
+        setCollaborators((prev: any) =>
+          prev.map((c) => (c.id === data.id ? { ...c, position: data.position } : c))
+        );
+      }
+    );
 
     setSocket(newSocket);
 

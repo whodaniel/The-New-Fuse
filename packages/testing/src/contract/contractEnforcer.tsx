@@ -4,7 +4,8 @@ import { SchemaValidator } from './schemaValidator';
 type ProtocolType = 'http' | 'websocket' | 'mcp' | 'grpc';
 import { SecurityScheme } from '@the-new-fuse/types';
 
-export interface ContractDefinition<T = any> { // Added default type for T
+export interface ContractDefinition<T = any> {
+  // Added default type for T
   method: string;
   path: string;
   requestSchema: Type<any>; // Consider using T here if appropriate
@@ -19,14 +20,18 @@ export class ContractEnforcer {
   /**
    * Register a new API contract
    */
-  registerContract(name: string, contract: ContractDefinition): void { // Removed <T> from ContractDefinition here
+  registerContract(name: string, contract: ContractDefinition): void {
+    // Removed <T> from ContractDefinition here
     this.contracts.set(name, contract);
   }
 
   /**
    * Validate request against contract at runtime
    */
-  async validateRequest(contractName: string, requestData: any): Promise<{ isValid: boolean; errors: string[] }> {
+  async validateRequest(
+    contractName: string,
+    requestData: any,
+  ): Promise<{ isValid: boolean; errors: string[] }> {
     const contract = this.contracts.get(contractName);
     if (!contract) {
       return { isValid: false, errors: [`Contract ${contractName} not found`] };
@@ -38,7 +43,10 @@ export class ContractEnforcer {
   /**
    * Validate response against contract at runtime
    */
-  async validateResponse(contractName: string, responseData: any): Promise<{ isValid: boolean; errors: string[] }> {
+  async validateResponse(
+    contractName: string,
+    responseData: any,
+  ): Promise<{ isValid: boolean; errors: string[] }> {
     const contract = this.contracts.get(contractName);
     if (!contract) {
       return { isValid: false, errors: [`Contract ${contractName} not found`] };
@@ -111,7 +119,7 @@ describe('${contractName} Contract Tests', () => {
       }
 
       // Return a mock response that matches the response schema
-      return {};  // TODO: Generate mock data based on responseSchema
+      return {}; // TODO: Generate mock data based on responseSchema
     });
   }
 }

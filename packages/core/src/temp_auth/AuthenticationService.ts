@@ -38,11 +38,7 @@ export class AuthenticationService extends EventEmitter {
   private sessions = new Map<string, AuthSession>(); // From Incoming
   private loginAttempts: LoginAttempt[] = []; // From Incoming
 
-  async login(
-    username: string,
-    password: string,
-    deviceInfo: any,
-  ): Promise<AuthSession | null> {
+  async login(username: string, password: string, deviceInfo: any): Promise<AuthSession | null> {
     this.logger.log(`Login attempt for ${username}`); // From Current
 
     // Stub implementation from Incoming

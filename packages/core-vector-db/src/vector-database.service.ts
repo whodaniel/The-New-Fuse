@@ -1,16 +1,16 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider';
+import { PgVectorDriver } from './drivers/pgvector.driver';
 import type {
-  IVectorDatabase,
+  CollectionConfig,
+  EmbeddingConfig,
   IEmbeddingProvider,
+  IVectorDatabase,
+  VectorDatabaseConfig,
   VectorDocument,
   VectorQuery,
   VectorSearchResult,
-  CollectionConfig,
-  VectorDatabaseConfig,
-  EmbeddingConfig,
 } from './interface/vector-database.interface';
-import { PgVectorDriver } from './drivers/pgvector.driver';
-import { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider';
 
 @Injectable()
 export class VectorDatabaseService implements OnModuleInit {
@@ -20,7 +20,7 @@ export class VectorDatabaseService implements OnModuleInit {
 
   constructor(
     private readonly dbConfig: VectorDatabaseConfig,
-    private readonly embeddingConfig: EmbeddingConfig,
+    private readonly embeddingConfig: EmbeddingConfig
   ) {}
 
   async onModuleInit() {
@@ -49,7 +49,9 @@ export class VectorDatabaseService implements OnModuleInit {
         break;
       case 'huggingface':
       case 'custom':
-        throw new Error(`Embedding provider "${this.embeddingConfig.provider}" not yet implemented`);
+        throw new Error(
+          `Embedding provider "${this.embeddingConfig.provider}" not yet implemented`
+        );
       default:
         throw new Error(`Unknown embedding provider: ${this.embeddingConfig.provider}`);
     }
@@ -86,7 +88,11 @@ export class VectorDatabaseService implements OnModuleInit {
     return this.vectorDb.addDocuments(collection, documentsWithEmbeddings);
   }
 
-  async updateDocument(collection: string, id: string, document: Partial<VectorDocument>): Promise<void> {
+  async updateDocument(
+    collection: string,
+    id: string,
+    document: Partial<VectorDocument>
+  ): Promise<void> {
     if (document.content && !document.embedding) {
       document.embedding = await this.embeddingProvider.generateEmbedding(document.content);
     }
@@ -108,7 +114,7 @@ export class VectorDatabaseService implements OnModuleInit {
     options: Partial<Omit<VectorQuery, 'query' | 'embedding'>> = {}
   ): Promise<VectorSearchResult[]> {
     const embedding = await this.embeddingProvider.generateEmbedding(query);
-    
+
     const vectorQuery: VectorQuery = {
       query,
       embedding,
@@ -120,7 +126,11 @@ export class VectorDatabaseService implements OnModuleInit {
     return this.vectorDb.similaritySearch(collection, vectorQuery);
   }
 
-  async searchByEmbedding(collection: string, embedding: number[], options: Partial<Omit<VectorQuery, 'embedding'>> = {}): Promise<VectorSearchResult[]> {
+  async searchByEmbedding(
+    collection: string,
+    embedding: number[],
+    options: Partial<Omit<VectorQuery, 'embedding'>> = {}
+  ): Promise<VectorSearchResult[]> {
     const vectorQuery: VectorQuery = {
       embedding,
       limit: 10,
@@ -142,14 +152,14 @@ export class VectorDatabaseService implements OnModuleInit {
   async batchAddDocuments(collection: string, documents: VectorDocument[]): Promise<void> {
     // Generate embeddings for documents that don't have them
     const textsToEmbed = documents
-      .filter(doc => !doc.embedding && doc.content)
-      .map(doc => doc.content);
+      .filter((doc) => !doc.embedding && doc.content)
+      .map((doc) => doc.content);
 
     if (textsToEmbed.length > 0) {
       const embeddings = await this.embeddingProvider.generateEmbeddings(textsToEmbed);
       let embeddingIndex = 0;
 
-      documents.forEach(doc => {
+      documents.forEach((doc) => {
         if (!doc.embedding && doc.content) {
           doc.embedding = embeddings[embeddingIndex++];
         }
@@ -195,7 +205,7 @@ export class VectorDatabaseService implements OnModuleInit {
 
   async getStats(collection?: string): Promise<Record<string, any>> {
     const dbStats = await this.vectorDb.getStats(collection);
-    
+
     return {
       ...dbStats,
       embedding_provider: {

@@ -17,7 +17,7 @@ export const STANDARD_PORTS = {
   // WebSocket server (Same as Backend API for NestJS)
   WEBSOCKET: 3004,
 
-  // Prisma Studio (database UI)
+  // Drizzle Studio (database UI)
   DATABASE_UI: 5555,
 
   // Additional services (reserved)

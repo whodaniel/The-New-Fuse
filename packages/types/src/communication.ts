@@ -11,7 +11,7 @@ export enum MessageType {
   LOG = 'LOG',
   METRIC = 'METRIC',
   ALERT = 'ALERT',
-  HEARTBEAT = 'HEARTBEAT'
+  HEARTBEAT = 'HEARTBEAT',
 }
 
 export interface Message {

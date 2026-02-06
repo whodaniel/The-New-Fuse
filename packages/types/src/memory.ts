@@ -11,7 +11,7 @@ export interface Memory {
 export enum MemoryType {
   EPISODIC = 'episodic',
   SEMANTIC = 'semantic',
-  PROCEDURAL = 'procedural'
+  PROCEDURAL = 'procedural',
 }
 
 export interface MemoryCluster {

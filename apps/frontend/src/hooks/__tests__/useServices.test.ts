@@ -1,15 +1,13 @@
-import { renderHook, act } from '@testing-library/react-hooks';
-import { useServices } from '../useServices';
+import { renderHook } from '@testing-library/react-hooks';
 import { api } from '../../services/api';
+import { useServices } from '../useServices';
 
 jest.mock('../../services/api');
 
 describe('useServices', () => {
   it('should load services', async () => {
-    const mockServices = [
-      { id: '1', name: 'Service 1', status: 'ACTIVE' }
-    ];
-    
+    const mockServices = [{ id: '1', name: 'Service 1', status: 'ACTIVE' }];
+
     (api.get as jest.Mock).mockResolvedValueOnce({ data: mockServices });
 
     const { result, waitForNextUpdate } = renderHook(() => useServices());

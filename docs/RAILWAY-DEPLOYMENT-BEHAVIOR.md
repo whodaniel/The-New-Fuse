@@ -24,7 +24,8 @@ GitHub Webhook → Railway
 
 ### Why It Failed Then Succeeded
 
-The deployment **failed due to a transient issue**, not because of code problems. Common causes:
+The deployment **failed due to a transient issue**, not because of code
+problems. Common causes:
 
 1. **Network timeout** during package download
 2. **Build server overload** at that moment
@@ -32,7 +33,8 @@ The deployment **failed due to a transient issue**, not because of code problems
 4. **Temporary Registry issues** (npm/pnpm registry hiccup)
 5. **Cache corruption** from concurrent builds
 
-**Important**: The exact same code that failed then succeeded on retry. This proves it was a temporary Railway platform issue, not a code issue.
+**Important**: The exact same code that failed then succeeded on retry. This
+proves it was a temporary Railway platform issue, not a code issue.
 
 ---
 
@@ -47,11 +49,13 @@ watchPaths = ["apps/frontend/**", "packages/**"]
 
 **What you might expect**: Only deploy when these paths change
 
-**What actually happens**: Railway deploys on **EVERY push to main branch**, regardless of `watchPaths`
+**What actually happens**: Railway deploys on **EVERY push to main branch**,
+regardless of `watchPaths`
 
 ### Why `watchPaths` Doesn't Prevent Deployments
 
 From Railway's perspective:
+
 - `watchPaths` is **advisory**, not **restrictive**
 - Railway still receives GitHub webhooks for all commits
 - Railway doesn't filter commits based on changed files
@@ -60,6 +64,7 @@ From Railway's perspective:
 ### The Documentation Commit Issue
 
 Our commit `79cfbf613` only changed:
+
 ```
 + docs/RAILWAY-DEPLOYMENT-GUIDE.md (new file)
 + docs/RAILWAY-QUICK-START.md (new file)
@@ -67,6 +72,7 @@ Our commit `79cfbf613` only changed:
 ```
 
 **No code changes!** But Railway still:
+
 1. Pulled the code
 2. Ran `pnpm install --no-frozen-lockfile`
 3. Built all workspace packages
@@ -85,11 +91,13 @@ Our commit `79cfbf613` only changed:
 4. Manually trigger deploys only when code changes
 
 **Pros:**
+
 - Complete control over when to deploy
 - No wasted builds on documentation changes
 - Good for cost management
 
 **Cons:**
+
 - Must remember to manually deploy code changes
 - Not fully automated
 
@@ -131,17 +139,20 @@ jobs:
 ```
 
 **How to set up:**
+
 1. Disable auto-deploy in Railway UI
 2. Get Railway API token from dashboard
 3. Add `RAILWAY_TOKEN` to GitHub secrets
 4. Push the workflow file
 
 **Pros:**
+
 - Only deploys when relevant files change
 - Fully automated
 - Explicit control over watched paths
 
 **Cons:**
+
 - Requires GitHub Actions setup
 - Need to manage Railway token
 
@@ -150,11 +161,13 @@ jobs:
 ### Solution 3: **Use Separate Git Branches**
 
 Strategy:
+
 - `main` → Development/documentation updates
 - `production` → Connect Railway to this branch only
 - Only merge to `production` when ready to deploy
 
 **Workflow:**
+
 ```bash
 # Make docs changes on main
 git checkout main
@@ -171,11 +184,13 @@ git push origin production
 ```
 
 **Pros:**
+
 - Clean separation of concerns
 - Full control over production deployments
 - Good for team workflows
 
 **Cons:**
+
 - More complex git workflow
 - Need to remember to merge to production
 
@@ -194,10 +209,12 @@ git commit -m "[deploy] fix: Critical bug fix"
 ```
 
 **Pros:**
+
 - Simple to implement
 - Flexible per-commit control
 
 **Cons:**
+
 - Railway doesn't natively support `[skip-deploy]`
 - Would need custom webhook handler
 
@@ -206,6 +223,7 @@ git commit -m "[deploy] fix: Critical bug fix"
 ### Solution 5: **Monorepo Strategy with Path Filters** (Future)
 
 Use tools like Turborepo or Nx with Railway integration:
+
 - Only build affected packages
 - Railway triggers only when dependencies change
 - Automatic dependency graph analysis
@@ -219,6 +237,7 @@ Use tools like Turborepo or Nx with Railway integration:
 ### For Now: **Manual Deploy for Docs Commits**
 
 When committing documentation only:
+
 ```bash
 git add docs/
 git commit -m "docs: Update guides [docs-only]"
@@ -237,6 +256,7 @@ Set up conditional deployment with GitHub Actions as shown in Solution 2.
 ## 📊 Understanding Railway Deployment Costs
 
 ### Each Deployment Uses:
+
 - **Build minutes** (charged)
 - **Build resources** (CPU/memory)
 - **Bandwidth** (downloading packages)
@@ -245,6 +265,7 @@ Set up conditional deployment with GitHub Actions as shown in Solution 2.
 ### Cost Optimization:
 
 1. **Batch documentation updates**
+
    ```bash
    # Instead of:
    git commit -m "docs: Add guide A"
@@ -259,6 +280,7 @@ Set up conditional deployment with GitHub Actions as shown in Solution 2.
    ```
 
 2. **Use separate docs branch**
+
    ```bash
    git checkout -b docs/railway-guides
    # Make all doc changes
@@ -319,22 +341,28 @@ cmds = [
 When a deployment fails without code changes:
 
 ### Step 1: Check Railway Status
+
 - Visit: https://status.railway.app
 - Look for ongoing incidents
 
 ### Step 2: Review Build Logs
+
 - Identify which phase failed (install/build/deploy)
 - Look for network timeouts, registry issues
 
 ### Step 3: Compare with Previous Successful Build
+
 - Same code should produce same result
 - If different outcome → transient issue
 
 ### Step 4: Retry
+
 - Click "Redeploy" in Railway dashboard
-- OR push an empty commit: `git commit --allow-empty -m "chore: Retry deployment"`
+- OR push an empty commit:
+  `git commit --allow-empty -m "chore: Retry deployment"`
 
 ### Step 5: Rollback if Needed
+
 - Railway keeps previous deployments
 - Can instantly rollback to last working version
 
@@ -349,4 +377,7 @@ When a deployment fails without code changes:
 
 ---
 
-**Key Takeaway**: The deployment failed due to a transient Railway platform issue, not your code. It succeeded on retry with identical code. To prevent unnecessary redeployments from documentation changes, consider disabling auto-deploy or using GitHub Actions with path filters.
+**Key Takeaway**: The deployment failed due to a transient Railway platform
+issue, not your code. It succeeded on retry with identical code. To prevent
+unnecessary redeployments from documentation changes, consider disabling
+auto-deploy or using GitHub Actions with path filters.

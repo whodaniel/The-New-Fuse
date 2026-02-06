@@ -20,7 +20,7 @@ export type { TestCoverageReport, TestFile, ComponentTestMapping } from './analy
 export { DocumentationAlignmentAnalyzer } from './analyzer/DocumentationAlignmentAnalyzer';
 export type { DocumentationAlignmentReport, DocumentationFile, DocumentationAlignment } from './analyzer/DocumentationAlignmentAnalyzer';
 export { DatabaseModelUsageAnalyzer } from './analyzer/DatabaseModelUsageAnalyzer';
-export type { DatabaseModelUsageReport, PrismaModel, ModelUsage, DatabaseAccessPattern, UnusedDatabaseElement } from './analyzer/DatabaseModelUsageAnalyzer';
+export type { DatabaseModelUsageReport, DrizzleModel, ModelUsage, DatabaseAccessPattern, UnusedDatabaseElement } from './analyzer/DatabaseModelUsageAnalyzer';
 export { DataFlowMapper } from './analyzer/DataFlowMapper';
 export type { DataFlowReport, DataFlowNode, DataFlowPath, DataFlowInefficiency, DataTransformation } from './analyzer/DataFlowMapper';
 

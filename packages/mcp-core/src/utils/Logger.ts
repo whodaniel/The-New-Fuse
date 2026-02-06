@@ -50,7 +50,7 @@ export class Logger {
       debug: 0,
       info: 1,
       warn: 2,
-      error: 3
+      error: 3,
     };
 
     return levels[level] >= levels[this.logLevel];
@@ -62,11 +62,11 @@ export class Logger {
       level,
       message,
       data,
-      component: this.component
+      component: this.component,
     };
 
     const logMessage = `[${entry.timestamp.toISOString()}] [${level.toUpperCase()}] [${this.component}] ${message}`;
-    
+
     if (data) {
       console.log(logMessage, data);
     } else {

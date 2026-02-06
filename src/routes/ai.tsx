@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
-import { PrismaClient } from "@the-new-fuse/database";
+import { DrizzleClient } from "@the-new-fuse/database";
 import OpenAI from "openai";
 
 const router = express.Router();
-const prisma = new PrismaClient();
+const drizzle = new DrizzleClient();
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -31,7 +31,7 @@ router.post(
       const userId = req.user.userId;
 
       // Verify chat ownership
-      const chat = await prisma.chat.findUnique({
+      const chat = await drizzle.chat.findUnique({
         where: { id: chatId },
         include: {
           messages: {
@@ -62,7 +62,7 @@ router.post(
       const aiResponse = completion.choices[0].message.content;
 
       // Save user prompt to database
-      await prisma.message.create({
+      await drizzle.message.create({
         data: {
           content: prompt,
           role: "user",
@@ -71,7 +71,7 @@ router.post(
       });
 
       // Save AI response to database
-      const aiMessage = await prisma.message.create({
+      const aiMessage = await drizzle.message.create({
         data: {
           content: aiResponse,
           role: "assistant",
@@ -80,7 +80,7 @@ router.post(
       });
 
       // Update chat's updatedAt timestamp
-      await prisma.chat.update({
+      await drizzle.chat.update({
         where: { id: chatId },
         data: { updatedAt: new Date() },
       });

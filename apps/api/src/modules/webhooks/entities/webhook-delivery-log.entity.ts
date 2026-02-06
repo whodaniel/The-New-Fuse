@@ -1,8 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('webhook_delivery_logs')
 @Index('idx_webhook_delivery_config', ['webhookConfigId'])
-@Index('idx_webhook_delivery_event', ['eventId']) 
+@Index('idx_webhook_delivery_event', ['eventId'])
 @Index('idx_webhook_delivery_status', ['deliveryStatus'])
 export class WebhookDeliveryLog {
   @PrimaryGeneratedColumn('uuid')

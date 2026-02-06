@@ -279,7 +279,7 @@
 ./src/mcp/src/db/conversation-manager.ts
 ./src/mcp/src/db/agent-manager.ts
 ./src/mcp/src/db/workflow-manager.ts
-./src/mcp/src/db/prisma-client.ts
+./src/mcp/src/db/drizzle-client.ts
 ./src/mcp/src/db/tool-manager.ts
 ./src/protocol/protocol-translator-tools.ts
 ./src/protocol/protocol-translation.module.ts

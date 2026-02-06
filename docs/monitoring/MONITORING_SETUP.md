@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document describes the comprehensive monitoring and observability setup for The New Fuse platform. The monitoring stack includes:
+This document describes the comprehensive monitoring and observability setup for
+The New Fuse platform. The monitoring stack includes:
 
 - **Error Tracking**: Sentry for error tracking and performance monitoring
 - **Logging**: Winston for structured JSON logging
@@ -52,7 +53,8 @@ This document describes the comprehensive monitoring and observability setup for
 
 ### 1. Install Core Monitoring Package
 
-The core monitoring package is already included in the monorepo at `/packages/core-monitoring`.
+The core monitoring package is already included in the monorepo at
+`/packages/core-monitoring`.
 
 ### 2. Install Peer Dependencies
 
@@ -149,7 +151,7 @@ import {
   SentryService,
   WinstonLogger,
   PrometheusMetrics,
-  HealthCheckService
+  HealthCheckService,
 } from '@tnf/core-monitoring';
 
 @Global()
@@ -185,7 +187,9 @@ import {
       provide: PrometheusMetrics,
       useFactory: async () => {
         if (monitoringConfig.metrics?.enabled) {
-          const metrics = new PrometheusMetrics(monitoringConfig.metrics as any);
+          const metrics = new PrometheusMetrics(
+            monitoringConfig.metrics as any
+          );
           await metrics.initialize();
           return metrics;
         }
@@ -202,12 +206,18 @@ import {
       },
     },
   ],
-  exports: [SentryService, WinstonLogger, PrometheusMetrics, HealthCheckService],
+  exports: [
+    SentryService,
+    WinstonLogger,
+    PrometheusMetrics,
+    HealthCheckService,
+  ],
 })
 export class MonitoringModule {}
 ```
 
-Create health check controller `/apps/api-gateway/src/health/health.controller.ts`:
+Create health check controller
+`/apps/api-gateway/src/health/health.controller.ts`:
 
 ```typescript
 import { Controller, Get } from '@nestjs/common';
@@ -224,7 +234,7 @@ export class HealthController {
     // Database health check
     // this.healthCheckService.register(
     //   'database',
-    //   CommonHealthChecks.database(prismaClient)
+    //   CommonHealthChecks.database(drizzleClient)
     // );
 
     // Redis health check
@@ -234,10 +244,7 @@ export class HealthController {
     // );
 
     // Memory health check
-    this.healthCheckService.register(
-      'memory',
-      CommonHealthChecks.memory(90)
-    );
+    this.healthCheckService.register('memory', CommonHealthChecks.memory(90));
   }
 
   @Get('live')
@@ -287,7 +294,8 @@ export class MetricsController {
 }
 ```
 
-Create monitoring interceptor `/apps/api-gateway/src/monitoring/monitoring.interceptor.ts`:
+Create monitoring interceptor
+`/apps/api-gateway/src/monitoring/monitoring.interceptor.ts`:
 
 ```typescript
 import {
@@ -298,14 +306,18 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
-import { WinstonLogger, PrometheusMetrics, SentryService } from '@tnf/core-monitoring';
+import {
+  WinstonLogger,
+  PrometheusMetrics,
+  SentryService,
+} from '@tnf/core-monitoring';
 
 @Injectable()
 export class MonitoringInterceptor implements NestInterceptor {
   constructor(
     private readonly logger: WinstonLogger,
     private readonly metrics: PrometheusMetrics,
-    private readonly sentry: SentryService,
+    private readonly sentry: SentryService
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -347,13 +359,17 @@ export class MonitoringInterceptor implements NestInterceptor {
         const duration = Date.now() - startTime;
 
         // Log error
-        this.logger?.error(`HTTP ${request.method} ${request.url} failed`, error, {
-          method: request.method,
-          url: request.url,
-          statusCode: response.statusCode,
-          duration,
-          requestId: request.id,
-        });
+        this.logger?.error(
+          `HTTP ${request.method} ${request.url} failed`,
+          error,
+          {
+            method: request.method,
+            url: request.url,
+            statusCode: response.statusCode,
+            duration,
+            requestId: request.id,
+          }
+        );
 
         // Record error metrics
         this.metrics?.recordHttpRequest(
@@ -390,7 +406,11 @@ Update `/apps/api-gateway/src/main.ts`:
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MonitoringInterceptor } from './monitoring/monitoring.interceptor';
-import { WinstonLogger, PrometheusMetrics, SentryService } from '@tnf/core-monitoring';
+import {
+  WinstonLogger,
+  PrometheusMetrics,
+  SentryService,
+} from '@tnf/core-monitoring';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -401,9 +421,7 @@ async function bootstrap() {
   const sentry = app.get(SentryService, { strict: false });
 
   // Apply global interceptor
-  app.useGlobalInterceptors(
-    new MonitoringInterceptor(logger, metrics, sentry)
-  );
+  app.useGlobalInterceptors(new MonitoringInterceptor(logger, metrics, sentry));
 
   // Enable shutdown hooks
   app.enableShutdownHooks();
@@ -445,7 +463,8 @@ export class AppModule {}
 
 ### Backend Service Integration
 
-Follow the same pattern as API Gateway integration. The configuration would be similar but with `serviceName: 'backend-service'`.
+Follow the same pattern as API Gateway integration. The configuration would be
+similar but with `serviceName: 'backend-service'`.
 
 ### Frontend Integration
 
@@ -465,10 +484,7 @@ export function initSentry() {
     Sentry.init({
       dsn: import.meta.env.VITE_SENTRY_DSN,
       environment: import.meta.env.MODE,
-      integrations: [
-        new Sentry.BrowserTracing(),
-        new Sentry.Replay(),
-      ],
+      integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
       tracesSampleRate: 0.1,
       replaysSessionSampleRate: 0.1,
       replaysOnErrorSampleRate: 1.0,
@@ -513,9 +529,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 All services expose the following health check endpoints:
 
 - `GET /health/live` - Liveness probe (returns 200 if service is running)
-- `GET /health/ready` - Readiness probe (returns 200 if service is ready to serve traffic)
+- `GET /health/ready` - Readiness probe (returns 200 if service is ready to
+  serve traffic)
 - `GET /health` - Detailed health information
-- `GET /health/startup` - Startup probe (returns 200 when initialization is complete)
+- `GET /health/startup` - Startup probe (returns 200 when initialization is
+  complete)
 
 ### Example Response
 
@@ -572,20 +590,24 @@ All services expose metrics at:
 ### Available Metrics
 
 #### HTTP Metrics
+
 - `tnf_http_request_duration_ms` - HTTP request duration histogram
 - `tnf_http_requests_total` - Total HTTP requests counter
 - `tnf_http_request_errors_total` - HTTP request errors counter
 - `tnf_active_connections` - Active connections gauge
 
 #### Database Metrics
+
 - `tnf_database_query_duration_ms` - Database query duration histogram
 - `tnf_database_connection_pool` - Connection pool metrics gauge
 
 #### Cache Metrics
+
 - `tnf_cache_hits_total` - Cache hits counter
 - `tnf_cache_misses_total` - Cache misses counter
 
 #### Application Metrics
+
 - `tnf_agents_total` - Total agents gauge
 - `tnf_workflow_executions_total` - Workflow executions counter
 - `tnf_websocket_connections` - WebSocket connections gauge
@@ -593,6 +615,7 @@ All services expose metrics at:
 - `tnf_job_processing_duration_ms` - Job processing duration histogram
 
 #### System Metrics (default)
+
 - `process_cpu_seconds_total` - CPU time
 - `process_resident_memory_bytes` - Memory usage
 - `nodejs_heap_size_total_bytes` - Heap size
@@ -605,7 +628,8 @@ All services use Winston for structured JSON logging.
 
 ### Log Levels
 
-- `error` - Error events that might still allow the application to continue running
+- `error` - Error events that might still allow the application to continue
+  running
 - `warn` - Warning events that might lead to errors
 - `info` - Informational messages about application progress
 - `http` - HTTP request logs
@@ -643,7 +667,8 @@ Logs are rotated daily and kept for 14 days by default.
 
 ## Alert Rules
 
-Alert rules are configured in `/packages/core-monitoring/src/config/alert-rules.json`.
+Alert rules are configured in
+`/packages/core-monitoring/src/config/alert-rules.json`.
 
 ### Available Alert Rules
 
@@ -675,7 +700,8 @@ Alerts can be sent to:
 
 ## Dashboards
 
-Grafana dashboards are available in `/packages/core-monitoring/src/dashboards/grafana-dashboards.json`.
+Grafana dashboards are available in
+`/packages/core-monitoring/src/dashboards/grafana-dashboards.json`.
 
 ### Available Dashboards
 
@@ -706,28 +732,28 @@ metadata:
   name: api-gateway
 spec:
   containers:
-  - name: api-gateway
-    image: your-registry/api-gateway:latest
-    ports:
-    - containerPort: 3001
-    livenessProbe:
-      httpGet:
-        path: /health/live
-        port: 3001
-      initialDelaySeconds: 10
-      periodSeconds: 10
-    readinessProbe:
-      httpGet:
-        path: /health/ready
-        port: 3001
-      initialDelaySeconds: 5
-      periodSeconds: 5
-    startupProbe:
-      httpGet:
-        path: /health/startup
-        port: 3001
-      failureThreshold: 30
-      periodSeconds: 10
+    - name: api-gateway
+      image: your-registry/api-gateway:latest
+      ports:
+        - containerPort: 3001
+      livenessProbe:
+        httpGet:
+          path: /health/live
+          port: 3001
+        initialDelaySeconds: 10
+        periodSeconds: 10
+      readinessProbe:
+        httpGet:
+          path: /health/ready
+          port: 3001
+        initialDelaySeconds: 5
+        periodSeconds: 5
+      startupProbe:
+        httpGet:
+          path: /health/startup
+          port: 3001
+        failureThreshold: 30
+        periodSeconds: 10
 ```
 
 ### Prometheus Configuration

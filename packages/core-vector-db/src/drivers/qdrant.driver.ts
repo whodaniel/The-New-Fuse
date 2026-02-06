@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { QdrantClient } from '@qdrant/js-client-rest';
 import type {
+  CollectionConfig,
   IVectorDatabase,
+  VectorDatabaseConfig,
   VectorDocument,
   VectorQuery,
   VectorSearchResult,
-  CollectionConfig,
-  VectorDatabaseConfig,
 } from '../interface/vector-database.interface';
 
 @Injectable()
@@ -73,7 +73,7 @@ export class QdrantDriver implements IVectorDatabase {
   async listCollections(): Promise<string[]> {
     try {
       const response = await this.client.getCollections();
-      return response.collections.map(collection => collection.name);
+      return response.collections.map((collection) => collection.name);
     } catch (error) {
       this.logger.error('Failed to list collections', error);
       throw error;
@@ -85,7 +85,12 @@ export class QdrantDriver implements IVectorDatabase {
       await this.client.getCollection(name);
       return true;
     } catch (error) {
-      if (typeof error === 'object' && error !== null && 'status' in error && (error as any).status === 404) {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'status' in error &&
+        (error as any).status === 404
+      ) {
         return false;
       }
       this.logger.error(`Failed to check if collection "${name}" exists`, error);
@@ -117,7 +122,11 @@ export class QdrantDriver implements IVectorDatabase {
     }
   }
 
-  async updateDocument(collection: string, id: string, document: Partial<VectorDocument>): Promise<void> {
+  async updateDocument(
+    collection: string,
+    id: string,
+    document: Partial<VectorDocument>
+  ): Promise<void> {
     try {
       // First, get the existing document
       const existing = await this.getDocument(collection, id);
@@ -129,7 +138,10 @@ export class QdrantDriver implements IVectorDatabase {
       const updatedDocument: VectorDocument = {
         id,
         content: document.content !== undefined ? document.content : existing.content,
-        metadata: document.metadata !== undefined ? { ...existing.metadata, ...document.metadata } : existing.metadata,
+        metadata:
+          document.metadata !== undefined
+            ? { ...existing.metadata, ...document.metadata }
+            : existing.metadata,
         embedding: document.embedding !== undefined ? document.embedding : existing.embedding,
       };
 
@@ -206,7 +218,7 @@ export class QdrantDriver implements IVectorDatabase {
 
       const response = await this.client.search(collection, searchParams);
 
-      return response.map(point => ({
+      return response.map((point) => ({
         id: point.id as string,
         content: point.payload?.content as string,
         metadata: point.payload?.metadata as Record<string, any>,
@@ -289,7 +301,7 @@ export class QdrantDriver implements IVectorDatabase {
     }
   }
 
-  private mapDistanceMetric(metric: string): "Cosine" | "Euclid" | "Dot" {
+  private mapDistanceMetric(metric: string): 'Cosine' | 'Euclid' | 'Dot' {
     switch (metric.toLowerCase()) {
       case 'cosine':
         return 'Cosine';

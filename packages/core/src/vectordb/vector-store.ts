@@ -6,12 +6,12 @@ export class VectorStore extends EventEmitter {
   private logger = new Logger(VectorStore.name);
   private provider: VectorStoreProvider;
   private namespace = 'default';
-  
+
   constructor(provider: VectorStoreProvider) {
     super();
     this.provider = provider;
   }
-  
+
   async search(query: VectorQuery): Promise<SearchResult[]> {
     try {
       const results = await this.provider.search([], query);
@@ -23,7 +23,7 @@ export class VectorStore extends EventEmitter {
       throw error;
     }
   }
-  
+
   async addDocuments(documents: VectorDocument[]): Promise<string[]> {
     try {
       const ids = await this.provider.storeVectors(documents, this.namespace);
@@ -35,7 +35,7 @@ export class VectorStore extends EventEmitter {
       throw error;
     }
   }
-  
+
   async deleteDocuments(ids: string[]): Promise<boolean> {
     try {
       const result = await this.provider.deleteVectors(ids, this.namespace);

@@ -1,9 +1,12 @@
 import { Logger } from '@the-new-fuse/core-monitoring';
-import { HorizontalScalingCoordinator, ScalingCoordinationConfig } from './HorizontalScalingCoordinator';
-import { FileChangeBatcher, BatchConfig, BatchedFileChange } from './FileChangeBatcher';
-import { SyncLRUCache, CacheConfig } from './SyncLRUCache';
-import { SyncPerformanceTelemetry, TelemetryConfig, SyncOperationMetrics } from './SyncPerformanceTelemetry';
 import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
+import { BatchConfig, BatchedFileChange, FileChangeBatcher } from './FileChangeBatcher';
+import {
+  HorizontalScalingCoordinator,
+  ScalingCoordinationConfig,
+} from './HorizontalScalingCoordinator';
+import { CacheConfig, SyncLRUCache } from './SyncLRUCache';
+import { SyncPerformanceTelemetry, TelemetryConfig } from './SyncPerformanceTelemetry';
 
 // Generic interfaces for compatibility with existing infrastructure
 interface RedisService {
@@ -61,12 +64,12 @@ export interface PerformanceMetrics {
  */
 export class PerformanceOptimizationService {
   private readonly logger = new Logger('PerformanceOptimizationService');
-  
+
   private scalingCoordinator?: HorizontalScalingCoordinator;
   private fileChangeBatcher?: FileChangeBatcher;
   private syncCache?: SyncLRUCache<any>;
   private telemetry?: SyncPerformanceTelemetry;
-  
+
   private isInitialized = false;
   private monitoringTimer?: NodeJS.Timeout;
   private processedBatchCount = 0;
@@ -85,10 +88,7 @@ export class PerformanceOptimizationService {
       this.logger.info('Initializing performance optimization service');
 
       // Initialize telemetry first for metrics collection
-      this.telemetry = new SyncPerformanceTelemetry(
-        this.metricsService,
-        this.config.telemetry
-      );
+      this.telemetry = new SyncPerformanceTelemetry(this.metricsService, this.config.telemetry);
 
       // Initialize horizontal scaling coordinator
       this.scalingCoordinator = new HorizontalScalingCoordinator(
@@ -111,7 +111,6 @@ export class PerformanceOptimizationService {
 
       this.isInitialized = true;
       this.logger.info('Performance optimization service initialized successfully');
-
     } catch (error) {
       this.logger.error('Failed to initialize performance optimization service', { error });
       throw error;
@@ -131,7 +130,7 @@ export class PerformanceOptimizationService {
 
     try {
       await this.fileChangeBatcher.addFileChange(event);
-      
+
       this.telemetry?.endOperation(
         operationId,
         'file_change_batching',
@@ -165,15 +164,8 @@ export class PerformanceOptimizationService {
 
     try {
       const result = this.syncCache.get(key, tenantId) as T | undefined;
-      
-      this.telemetry?.endOperation(
-        operationId,
-        'cache_get',
-        result !== undefined,
-        1,
-        0,
-        tenantId
-      );
+
+      this.telemetry?.endOperation(operationId, 'cache_get', result !== undefined, 1, 0, tenantId);
 
       return result;
     } catch (error) {
@@ -201,7 +193,7 @@ export class PerformanceOptimizationService {
 
     try {
       this.syncCache.set(key, value, tenantId);
-      
+
       this.telemetry?.endOperation(
         operationId,
         'cache_set',
@@ -236,7 +228,7 @@ export class PerformanceOptimizationService {
 
     try {
       const targetInstance = await this.scalingCoordinator.distributeWork(workType, workload);
-      
+
       this.telemetry?.endOperation(
         operationId,
         'work_distribution',
@@ -283,32 +275,52 @@ export class PerformanceOptimizationService {
    * Get comprehensive performance metrics
    */
   async getPerformanceMetrics(): Promise<PerformanceMetrics> {
-    const scalingInstances = await this.scalingCoordinator?.getActiveInstances() || [];
-    const batchStats = this.fileChangeBatcher?.getBatchStats() || { pendingChanges: 0, activeBatches: 0, activeTimers: 0 };
-    const cacheStats = this.syncCache?.getStats() || { hitRate: 0, memoryUsage: 0, evictionCount: 0, size: 0, missRate: 0, tenantStats: new Map() };
-    const telemetryStats = this.telemetry?.getPerformanceSummary() || { uptime: 0, totalOperations: 0, errorRate: 0, averageDuration: 0, peakMemoryUsage: 0, totalDataSynced: 0, operationsPerSecond: 0 };
+    const scalingInstances = (await this.scalingCoordinator?.getActiveInstances()) || [];
+    const batchStats = this.fileChangeBatcher?.getBatchStats() || {
+      pendingChanges: 0,
+      activeBatches: 0,
+      activeTimers: 0,
+    };
+    const cacheStats = this.syncCache?.getStats() || {
+      hitRate: 0,
+      memoryUsage: 0,
+      evictionCount: 0,
+      size: 0,
+      missRate: 0,
+      tenantStats: new Map(),
+    };
+    const telemetryStats = this.telemetry?.getPerformanceSummary() || {
+      uptime: 0,
+      totalOperations: 0,
+      errorRate: 0,
+      averageDuration: 0,
+      peakMemoryUsage: 0,
+      totalDataSynced: 0,
+      operationsPerSecond: 0,
+    };
 
     return {
       scaling: {
         instanceCount: scalingInstances.length,
-        currentLoad: scalingInstances.find(i => i.instanceId === this.config.scaling.instanceId)?.load || 0,
-        distributedWork: scalingInstances.reduce((sum, i) => sum + i.load, 0)
+        currentLoad:
+          scalingInstances.find((i) => i.instanceId === this.config.scaling.instanceId)?.load || 0,
+        distributedWork: scalingInstances.reduce((sum, i) => sum + i.load, 0),
       },
       batching: {
         pendingChanges: batchStats.pendingChanges,
         activeBatches: batchStats.activeBatches,
-        processedBatches: this.processedBatchCount
+        processedBatches: this.processedBatchCount,
       },
       caching: {
         hitRate: cacheStats.hitRate,
         memoryUsage: cacheStats.memoryUsage,
-        evictionCount: cacheStats.evictionCount
+        evictionCount: cacheStats.evictionCount,
       },
       system: {
         cpuUsage: process.cpuUsage().user / 1000000, // Convert to seconds
         memoryUsage: process.memoryUsage().heapUsed,
-        uptime: telemetryStats.uptime
-      }
+        uptime: telemetryStats.uptime,
+      },
     };
   }
 
@@ -357,7 +369,7 @@ export class PerformanceOptimizationService {
         batchId: batch.id,
         eventCount: batch.events.length,
         priority: batch.priority,
-        tenantId: batch.tenantId
+        tenantId: batch.tenantId,
       });
 
       this.processedBatchCount++;
@@ -370,7 +382,6 @@ export class PerformanceOptimizationService {
         batch.events.reduce((sum, e) => sum + (e.metadata?.size || 0), 0),
         batch.tenantId
       );
-
     } catch (error) {
       this.telemetry?.endOperation(
         operationId,
@@ -392,14 +403,14 @@ export class PerformanceOptimizationService {
     this.monitoringTimer = setInterval(async () => {
       try {
         const metrics = await this.getPerformanceMetrics();
-        
+
         // Record system metrics
         this.telemetry?.recordSystemMetrics({
           cpuUsage: metrics.system.cpuUsage,
           memoryUsage: metrics.system.memoryUsage,
           diskUsage: 0, // Would integrate with system monitoring
           networkLatency: 0, // Would integrate with network monitoring
-          activeConnections: metrics.scaling.instanceCount
+          activeConnections: metrics.scaling.instanceCount,
         });
 
         // Record cache metrics
@@ -411,11 +422,12 @@ export class PerformanceOptimizationService {
         );
 
         // Check if optimization is needed
-        if (metrics.system.memoryUsage > this.config.memoryThreshold ||
-            metrics.system.cpuUsage > this.config.cpuThreshold) {
+        if (
+          metrics.system.memoryUsage > this.config.memoryThreshold ||
+          metrics.system.cpuUsage > this.config.cpuThreshold
+        ) {
           await this.forceOptimization();
         }
-
       } catch (error) {
         this.logger.error('System monitoring failed', { error });
       }
@@ -453,7 +465,6 @@ export class PerformanceOptimizationService {
 
       this.isInitialized = false;
       this.logger.info('Performance optimization service shutdown complete');
-
     } catch (error) {
       this.logger.error('Error during performance optimization service shutdown', { error });
     }

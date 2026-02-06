@@ -42,7 +42,7 @@ export class PerformanceAnalyzer {
         metrics,
         issues,
         score,
-        summary
+        summary,
       };
     } catch (error) {
       console.error('Error analyzing performance:', error);
@@ -57,36 +57,36 @@ export class PerformanceAnalyzer {
         value: Math.random() * 1000,
         unit: 'ms',
         timestamp: new Date(),
-        threshold: 500
+        threshold: 500,
       },
       {
         name: 'memoryUsage',
         value: Math.random() * 100,
         unit: 'MB',
         timestamp: new Date(),
-        threshold: 512
+        threshold: 512,
       },
       {
         name: 'cpuUsage',
         value: Math.random() * 100,
         unit: '%',
         timestamp: new Date(),
-        threshold: 80
-      }
+        threshold: 80,
+      },
     ];
   }
 
   private async detectIssues(metrics: PerformanceMetric[]): Promise<PerformanceIssue[]> {
     const issues: PerformanceIssue[] = [];
 
-    metrics.forEach(metric => {
+    metrics.forEach((metric) => {
       if (metric.threshold && metric.value > metric.threshold) {
         issues.push({
           type: this.mapMetricToIssueType(metric.name),
           severity: 'high',
           description: `${metric.name} exceeded threshold`,
           metric,
-          suggestion: `Optimize to bring ${metric.name} below ${metric.threshold}${metric.unit}`
+          suggestion: `Optimize to bring ${metric.name} below ${metric.threshold}${metric.unit}`,
         });
       }
     });
@@ -106,7 +106,7 @@ export class PerformanceAnalyzer {
       low: 1,
       medium: 3,
       high: 7,
-      critical: 15
+      critical: 15,
     };
 
     const totalWeight = issues.reduce((sum, issue) => {
@@ -118,9 +118,9 @@ export class PerformanceAnalyzer {
 
   private calculateSummary(metrics: PerformanceMetric[]) {
     return {
-      avgResponseTime: metrics.find(m => m.name === 'responseTime')?.value || 0,
-      peakMemoryUsage: metrics.find(m => m.name === 'memoryUsage')?.value || 0,
-      cpuUtilization: metrics.find(m => m.name === 'cpuUsage')?.value || 0
+      avgResponseTime: metrics.find((m) => m.name === 'responseTime')?.value || 0,
+      peakMemoryUsage: metrics.find((m) => m.name === 'memoryUsage')?.value || 0,
+      cpuUtilization: metrics.find((m) => m.name === 'cpuUsage')?.value || 0,
     };
   }
 }

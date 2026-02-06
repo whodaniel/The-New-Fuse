@@ -1,6 +1,7 @@
 # Before & After: Visual Comparison
 
-This document provides a visual before/after comparison of the consolidation plan.
+This document provides a visual before/after comparison of the consolidation
+plan.
 
 ---
 
@@ -290,8 +291,8 @@ scripts/
 │
 ├── reset-database.sh ⚠️
 ├── reset-db-simple.sh ⚠️
-├── reset-prisma-db-with-password.sh ⚠️
-├── reset-prisma-db.sh ⚠️ 4 reset scripts!
+├── reset-drizzle-db-with-password.sh ⚠️
+├── reset-drizzle-db.sh ⚠️ 4 reset scripts!
 │
 ├── cleanup-deprecated.sh ⚠️
 ├── cleanup-dev-artifacts.sh ⚠️
@@ -460,6 +461,7 @@ Found in 30 seconds! ✅
 ```
 
 **Benefits:**
+
 - 75% reduction (8 → 2 files)
 - Clear separation: specs vs troubleshooting
 - All info consolidated, nothing lost
@@ -534,6 +536,7 @@ Complete guide in one place! ✅
 ```
 
 **Benefits:**
+
 - 79% reduction (14 → 3 files)
 - Clear organization: guide → spec → troubleshooting
 - Logical progression for learning
@@ -596,6 +599,7 @@ Developer: Builds successfully in 1 minute! ✅
 ```
 
 **Benefits:**
+
 - 90% reduction (40+ → 4 specialized scripts)
 - Clear purpose for each script
 - Standard `pnpm build` for most cases
@@ -663,6 +667,7 @@ Developer: App running in 2 minutes! ✅
 ```
 
 **Benefits:**
+
 - 89% reduction (35+ → 4 scripts)
 - Clear RECOMMENDED option
 - Each script has clear purpose
@@ -720,9 +725,10 @@ Developer: Problem solved! ✅
 ```
 
 **Benefits:**
+
 - 99% reduction (76 → 1 active)
 - Fix scripts are temporal - archive after use
-- History preserved in _deprecated/
+- History preserved in \_deprecated/
 - Keep only the essential fix
 
 ---
@@ -735,8 +741,8 @@ Developer: Problem solved! ✅
 scripts/
 ├── reset-database.sh ⚠️
 ├── reset-db-simple.sh ⚠️
-├── reset-prisma-db.sh ⚠️
-└── reset-prisma-db-with-password.sh ⚠️
+├── reset-drizzle-db.sh ⚠️
+└── reset-drizzle-db-with-password.sh ⚠️
 
 Developer: "Which reset script do I use?"
 Developer: *Tries each one until one works* 😵
@@ -760,6 +766,7 @@ Done in 10 seconds! ✅
 ```
 
 **Benefits:**
+
 - 75% reduction (4 → 1)
 - All functionality preserved
 - Flags for different modes
@@ -853,18 +860,20 @@ New Developer Task: "Start the application"
 
 1. Opens docs/getting-started/README.md
 2. Sees Quick Start section:
-   ```
-   # Quick Start
-   $ pnpm install
-   $ pnpm dev
-   ```
+```
+
+# Quick Start
+
+$ pnpm install $ pnpm dev
+
+```
 3. Runs commands
 4. App starts successfully!
 
 Alternative (if more control needed):
 1. Checks scripts/README.md
 2. Sees Launch Scripts section:
-   - unified.sh ⭐ RECOMMENDED
+- unified.sh ⭐ RECOMMENDED
 3. Runs ./scripts/launch/unified.sh
 4. App starts!
 
@@ -992,40 +1001,40 @@ Week 1:
 
 ### Documentation
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Total files | ~200 | ~100 | **50% reduction** |
-| Root-level docs | 23 | 1 | **96% reduction** |
-| Directories | 68 | 15-20 | **70% reduction** |
-| Port docs | 8 | 2 | **75% reduction** |
-| MCP docs | 14 | 3 | **79% reduction** |
-| Dev guides | 3 | 1 | **67% reduction** |
-| Time to find info | 30+ min | <5 min | **83% faster** |
-| Duplicate content | High | Zero | **100% reduction** |
+| Metric            | Before  | After  | Improvement        |
+| ----------------- | ------- | ------ | ------------------ |
+| Total files       | ~200    | ~100   | **50% reduction**  |
+| Root-level docs   | 23      | 1      | **96% reduction**  |
+| Directories       | 68      | 15-20  | **70% reduction**  |
+| Port docs         | 8       | 2      | **75% reduction**  |
+| MCP docs          | 14      | 3      | **79% reduction**  |
+| Dev guides        | 3       | 1      | **67% reduction**  |
+| Time to find info | 30+ min | <5 min | **83% faster**     |
+| Duplicate content | High    | Zero   | **100% reduction** |
 
 ### Scripts
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Total scripts | ~630 | 45 | **93% reduction** |
-| Root scripts | 200+ | 0-2 | **99% reduction** |
-| scripts/ dir | 431 | 45 | **90% reduction** |
-| Fix scripts | 76 | 1 | **99% reduction** |
-| Build scripts | 40+ | 4 | **90% reduction** |
-| Launch scripts | 35+ | 4 | **89% reduction** |
-| DB reset scripts | 4 | 1 | **75% reduction** |
-| Time to find script | 30+ min | <2 min | **93% faster** |
+| Metric              | Before  | After  | Improvement       |
+| ------------------- | ------- | ------ | ----------------- |
+| Total scripts       | ~630    | 45     | **93% reduction** |
+| Root scripts        | 200+    | 0-2    | **99% reduction** |
+| scripts/ dir        | 431     | 45     | **90% reduction** |
+| Fix scripts         | 76      | 1      | **99% reduction** |
+| Build scripts       | 40+     | 4      | **90% reduction** |
+| Launch scripts      | 35+     | 4      | **89% reduction** |
+| DB reset scripts    | 4       | 1      | **75% reduction** |
+| Time to find script | 30+ min | <2 min | **93% faster**    |
 
 ### Team Productivity
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Onboarding time | 1-2 weeks | 1-2 days | **80% faster** |
-| Doc navigation | 30+ min | <5 min | **83% faster** |
-| Script discovery | 30+ min | <2 min | **93% faster** |
-| Wrong script used | Often | Rare | **90% reduction** |
-| PR discussion time | High | Low | **50% reduction** |
-| Maintenance burden | High | Low | **85% reduction** |
+| Metric             | Before    | After    | Improvement       |
+| ------------------ | --------- | -------- | ----------------- |
+| Onboarding time    | 1-2 weeks | 1-2 days | **80% faster**    |
+| Doc navigation     | 30+ min   | <5 min   | **83% faster**    |
+| Script discovery   | 30+ min   | <2 min   | **93% faster**    |
+| Wrong script used  | Often     | Rare     | **90% reduction** |
+| PR discussion time | High      | Low      | **50% reduction** |
+| Maintenance burden | High      | Low      | **85% reduction** |
 
 ---
 
@@ -1081,9 +1090,12 @@ Week 1:
 
 ---
 
-**Conclusion:** This consolidation transforms The New Fuse from a chaotic codebase into a well-organized, maintainable project that developers will love to work with!
+**Conclusion:** This consolidation transforms The New Fuse from a chaotic
+codebase into a well-organized, maintainable project that developers will love
+to work with!
 
 **Next Steps:**
+
 1. Review full plan: [CONSOLIDATION_PLAN.md](./CONSOLIDATION_PLAN.md)
 2. Read summary: [CONSOLIDATION_SUMMARY.md](./CONSOLIDATION_SUMMARY.md)
 3. Get team approval

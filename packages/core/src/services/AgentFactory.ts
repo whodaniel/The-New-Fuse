@@ -9,7 +9,7 @@ export class AgentFactory {
     return {
       id: this.generateId(),
       ...config,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
   }
 

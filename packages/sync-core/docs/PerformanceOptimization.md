@@ -1,15 +1,22 @@
 # Performance Optimization and Scalability
 
-The Performance Optimization system provides comprehensive scalability features for the multi-tenant chokidar synchronization system, including horizontal scaling coordination, intelligent batching and debouncing, LRU caching with memory management, and detailed performance telemetry.
+The Performance Optimization system provides comprehensive scalability features
+for the multi-tenant chokidar synchronization system, including horizontal
+scaling coordination, intelligent batching and debouncing, LRU caching with
+memory management, and detailed performance telemetry.
 
 ## Overview
 
 The performance optimization system consists of four main components:
 
-1. **Horizontal Scaling Coordinator** - Distributes work across multiple instances using Redis clustering
-2. **File Change Batcher** - Batches and debounces file changes to prevent overwhelming downstream services
-3. **Sync LRU Cache** - Provides intelligent caching with memory management and tenant isolation
-4. **Performance Telemetry** - Collects detailed metrics and integrates with existing monitoring infrastructure
+1. **Horizontal Scaling Coordinator** - Distributes work across multiple
+   instances using Redis clustering
+2. **File Change Batcher** - Batches and debounces file changes to prevent
+   overwhelming downstream services
+3. **Sync LRU Cache** - Provides intelligent caching with memory management and
+   tenant isolation
+4. **Performance Telemetry** - Collects detailed metrics and integrates with
+   existing monitoring infrastructure
 
 ## Architecture
 
@@ -22,29 +29,29 @@ graph TB
         SLC[SyncLRUCache]
         SPT[SyncPerformanceTelemetry]
     end
-    
+
     subgraph "Existing Infrastructure"
         Redis[Redis Cluster]
         Metrics[MetricsService]
         Monitor[MonitoringService]
     end
-    
+
     subgraph "Application Layer"
         FS[FileSystemWatcher]
         Sync[SyncOrchestrator]
         UI[User Interfaces]
     end
-    
+
     POS --> HSC
     POS --> FCB
     POS --> SLC
     POS --> SPT
-    
+
     HSC --> Redis
     FCB --> Redis
     SPT --> Metrics
     SPT --> Monitor
-    
+
     FS --> POS
     Sync --> POS
     UI --> POS
@@ -57,25 +64,31 @@ graph TB
 Manages work distribution across multiple sync instances using Redis clustering.
 
 **Key Features:**
+
 - Instance registration and heartbeat monitoring
 - Load-based work distribution
 - Automatic failover and stale instance cleanup
 - Integration with existing Redis infrastructure
 
 **Configuration:**
+
 ```typescript
 const scalingConfig: ScalingCoordinationConfig = {
   instanceId: 'sync-instance-1',
   heartbeatInterval: 5000, // 5 seconds
   loadThreshold: 80, // 80% load threshold
   redistributionDelay: 30000, // 30 seconds
-  clusterKey: 'sync-cluster'
+  clusterKey: 'sync-cluster',
 };
 ```
 
 **Usage:**
+
 ```typescript
-const coordinator = new HorizontalScalingCoordinator(redisService, scalingConfig);
+const coordinator = new HorizontalScalingCoordinator(
+  redisService,
+  scalingConfig
+);
 await coordinator.initialize();
 
 // Distribute work
@@ -93,22 +106,25 @@ coordinator.updateLoad(75);
 Batches and debounces file changes to optimize processing performance.
 
 **Key Features:**
+
 - Intelligent batching based on file patterns and priority
 - Debouncing for rapid file changes
 - Priority-based processing (high/normal/low)
 - Tenant-aware batching
 
 **Configuration:**
+
 ```typescript
 const batchConfig: BatchConfig = {
   maxBatchSize: 50,
   batchTimeout: 2000, // 2 seconds
   debounceDelay: 200, // 200ms
-  priorityPatterns: ['config', 'template', '.env']
+  priorityPatterns: ['config', 'template', '.env'],
 };
 ```
 
 **Usage:**
+
 ```typescript
 const batcher = new FileChangeBatcher(batchConfig, handleBatch);
 
@@ -124,6 +140,7 @@ const stats = batcher.getBatchStats();
 Provides intelligent caching with memory management and tenant isolation.
 
 **Key Features:**
+
 - LRU eviction policy
 - Memory-based size limits
 - TTL-based expiration
@@ -131,17 +148,19 @@ Provides intelligent caching with memory management and tenant isolation.
 - Automatic cleanup
 
 **Configuration:**
+
 ```typescript
 const cacheConfig: CacheConfig = {
   maxSize: 10000, // 10k entries
   maxMemory: 100 * 1024 * 1024, // 100MB
   ttl: 1800000, // 30 minutes
   cleanupInterval: 300000, // 5 minutes
-  tenantIsolation: true
+  tenantIsolation: true,
 };
 ```
 
 **Usage:**
+
 ```typescript
 const cache = new SyncLRUCache<any>(cacheConfig);
 
@@ -161,6 +180,7 @@ const stats = cache.getStats();
 Collects detailed performance metrics and integrates with existing monitoring.
 
 **Key Features:**
+
 - Operation timing and metrics
 - System resource monitoring
 - Cache performance tracking
@@ -168,17 +188,19 @@ Collects detailed performance metrics and integrates with existing monitoring.
 - Integration with MetricsService
 
 **Configuration:**
+
 ```typescript
 const telemetryConfig: TelemetryConfig = {
   metricsInterval: 30000, // 30 seconds
   retentionPeriod: 86400000, // 24 hours
   aggregationWindow: 300000, // 5 minutes
   enableDetailedMetrics: true,
-  maxMetricsBuffer: 50000
+  maxMetricsBuffer: 50000,
 };
 ```
 
 **Usage:**
+
 ```typescript
 const telemetry = new SyncPerformanceTelemetry(metricsService, telemetryConfig);
 
@@ -189,7 +211,7 @@ telemetry.recordSyncOperation({
   success: true,
   resourceCount: 5,
   dataSize: 2048,
-  tenantId: 'tenant1'
+  tenantId: 'tenant1',
 });
 
 // Get performance summary
@@ -203,16 +225,27 @@ The main service that coordinates all performance optimization components.
 ### Initialization
 
 ```typescript
-import { PerformanceOptimizationService, PerformanceConfig } from '@/packages/sync-core';
+import {
+  PerformanceOptimizationService,
+  PerformanceConfig,
+} from '@/packages/sync-core';
 
 const config: PerformanceConfig = {
-  scaling: { /* scaling config */ },
-  batching: { /* batching config */ },
-  caching: { /* caching config */ },
-  telemetry: { /* telemetry config */ },
+  scaling: {
+    /* scaling config */
+  },
+  batching: {
+    /* batching config */
+  },
+  caching: {
+    /* caching config */
+  },
+  telemetry: {
+    /* telemetry config */
+  },
   enableOptimizations: true,
   memoryThreshold: 500 * 1024 * 1024, // 500MB
-  cpuThreshold: 85 // 85%
+  cpuThreshold: 85, // 85%
 };
 
 const service = new PerformanceOptimizationService(
@@ -234,7 +267,7 @@ await service.processFileChange({
   tenantId: 'tenant1',
   timestamp: new Date(),
   checksum: 'abc123',
-  metadata: { size: 2048 }
+  metadata: { size: 2048 },
 });
 ```
 
@@ -252,10 +285,14 @@ const cachedData = service.getCachedData('user:123', 'tenant1');
 
 ```typescript
 // Distribute work across cluster
-const targetInstance = await service.distributeWork('template-sync', {
-  templates: ['template1.md', 'template2.md'],
-  priority: 'high'
-}, 'tenant1');
+const targetInstance = await service.distributeWork(
+  'template-sync',
+  {
+    templates: ['template1.md', 'template2.md'],
+    priority: 'high',
+  },
+  'tenant1'
+);
 
 // Get work assigned to this instance
 const assignedWork = await service.getAssignedWork();
@@ -271,7 +308,7 @@ console.log('Performance Metrics:', {
   scaling: metrics.scaling,
   batching: metrics.batching,
   caching: metrics.caching,
-  system: metrics.system
+  system: metrics.system,
 });
 
 // Force optimization under load
@@ -282,7 +319,8 @@ await service.forceOptimization();
 
 ### Redis Integration
 
-The performance optimization system integrates seamlessly with existing Redis infrastructure:
+The performance optimization system integrates seamlessly with existing Redis
+infrastructure:
 
 - Uses existing Redis connections and clustering
 - Follows existing keyspace patterns with `sync:` prefix
@@ -302,7 +340,7 @@ Integrates with existing monitoring systems:
 
 Works with existing database patterns:
 
-- Uses existing Prisma connection pooling
+- Uses existing Drizzle connection pooling
 - Follows existing tenant isolation patterns
 - Maintains existing transaction and error handling
 - Integrates with existing audit logging
@@ -312,14 +350,16 @@ Works with existing database patterns:
 ### Scalability
 
 - **Horizontal Scaling**: Supports unlimited instances with Redis coordination
-- **Load Distribution**: Intelligent work distribution based on instance capacity
+- **Load Distribution**: Intelligent work distribution based on instance
+  capacity
 - **Failover**: Automatic failover and recovery from instance failures
 
 ### Throughput
 
 - **Batching**: Processes up to 1000+ file changes per second with batching
 - **Caching**: Sub-millisecond cache access with LRU optimization
-- **Coordination**: Minimal overhead for cluster coordination (< 1ms per operation)
+- **Coordination**: Minimal overhead for cluster coordination (< 1ms per
+  operation)
 
 ### Memory Management
 
@@ -344,31 +384,31 @@ const productionConfig: PerformanceConfig = {
     heartbeatInterval: 5000,
     loadThreshold: 80,
     redistributionDelay: 30000,
-    clusterKey: 'prod-sync-cluster'
+    clusterKey: 'prod-sync-cluster',
   },
   batching: {
     maxBatchSize: 100,
     batchTimeout: 2000,
     debounceDelay: 200,
-    priorityPatterns: ['config', 'template', '.env', 'schema']
+    priorityPatterns: ['config', 'template', '.env', 'schema'],
   },
   caching: {
     maxSize: 50000,
     maxMemory: 1024 * 1024 * 500, // 500MB
     ttl: 1800000, // 30 minutes
     cleanupInterval: 300000, // 5 minutes
-    tenantIsolation: true
+    tenantIsolation: true,
   },
   telemetry: {
     metricsInterval: 30000,
     retentionPeriod: 86400000, // 24 hours
     aggregationWindow: 300000,
     enableDetailedMetrics: true,
-    maxMetricsBuffer: 100000
+    maxMetricsBuffer: 100000,
   },
   enableOptimizations: true,
   memoryThreshold: 1024 * 1024 * 1000, // 1GB
-  cpuThreshold: 85
+  cpuThreshold: 85,
 };
 ```
 
@@ -381,31 +421,31 @@ const developmentConfig: PerformanceConfig = {
     heartbeatInterval: 2000,
     loadThreshold: 70,
     redistributionDelay: 10000,
-    clusterKey: 'dev-sync-cluster'
+    clusterKey: 'dev-sync-cluster',
   },
   batching: {
     maxBatchSize: 20,
     batchTimeout: 1000,
     debounceDelay: 100,
-    priorityPatterns: ['config', 'template']
+    priorityPatterns: ['config', 'template'],
   },
   caching: {
     maxSize: 1000,
     maxMemory: 1024 * 1024 * 50, // 50MB
     ttl: 300000, // 5 minutes
     cleanupInterval: 60000, // 1 minute
-    tenantIsolation: true
+    tenantIsolation: true,
   },
   telemetry: {
     metricsInterval: 10000,
     retentionPeriod: 3600000, // 1 hour
     aggregationWindow: 60000,
     enableDetailedMetrics: true,
-    maxMetricsBuffer: 10000
+    maxMetricsBuffer: 10000,
   },
   enableOptimizations: true,
   memoryThreshold: 1024 * 1024 * 100, // 100MB
-  cpuThreshold: 70
+  cpuThreshold: 70,
 };
 ```
 
@@ -456,20 +496,23 @@ await service.forceOptimization();
 ### From Basic Sync to Performance Optimized
 
 1. **Install Performance Components**
+
    ```typescript
    import { PerformanceOptimizationService } from '@/packages/sync-core';
    ```
 
 2. **Update Configuration**
+
    ```typescript
    // Add performance config to existing sync config
    const syncConfig = {
      ...existingConfig,
-     performance: performanceConfig
+     performance: performanceConfig,
    };
    ```
 
 3. **Initialize Service**
+
    ```typescript
    const performanceService = new PerformanceOptimizationService(
      redisService,
@@ -480,6 +523,7 @@ await service.forceOptimization();
    ```
 
 4. **Update File Processing**
+
    ```typescript
    // Replace direct processing with performance-optimized processing
    await performanceService.processFileChange(fileChangeEvent);

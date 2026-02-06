@@ -24,7 +24,7 @@ recent additions:
 - ✅ Well-organized directory structures in most packages
 - ✅ Good API documentation with Swagger/OpenAPI
 - ✅ Proper use of dependency injection in NestJS modules
-- ✅ Consistent database schema patterns with Prisma
+- ✅ Consistent database schema patterns with Drizzle
 
 **Critical Issues:**
 
@@ -415,11 +415,11 @@ export function SomeComponent({ prop1, prop2 }: Props) {}
 
 ## 5. Database Schema Patterns
 
-### 5.1 Prisma Schema Analysis
+### 5.1 Drizzle Schema Analysis
 
 **Strengths:**
 
-```prisma
+```drizzle
 model User {
   id             String     @id @default(uuid())
   email          String     @unique
@@ -446,7 +446,7 @@ model User {
 
 Some models have soft delete:
 
-```prisma
+```drizzle
 model Resource {
   id        String    @id @default(uuid())
   deletedAt DateTime?
@@ -455,7 +455,7 @@ model Resource {
 
 Others don't:
 
-```prisma
+```drizzle
 model Agent {
   id   String @id @default(uuid())
   // No deletedAt field

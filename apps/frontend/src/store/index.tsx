@@ -28,13 +28,18 @@ const useStoreImpl = create<AppState & AppActions>()(
       // Initial state
       system: {
         // Determine initial development mode (e.g., from env vars or hostname)
-        isDevelopment: process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost',
+        isDevelopment:
+          process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost',
       },
       // user: { currentUser: null, isLoading: false },
 
       // Actions implementation
       setDevelopmentMode: (isDev) =>
-        set((state) => ({ system: { ...state.system, isDevelopment: isDev } }), false, 'setDevelopmentMode'),
+        set(
+          (state) => ({ system: { ...state.system, isDevelopment: isDev } }),
+          false,
+          'setDevelopmentMode'
+        ),
 
       // Add other action implementations here
     }),

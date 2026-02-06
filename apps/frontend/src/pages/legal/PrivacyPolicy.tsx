@@ -1,7 +1,7 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 const PrivacyPolicy = () => {
-    return (<div className="container mx-auto py-8 px-4">
+  return (
+    <div className="container mx-auto py-8 px-4">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Privacy Policy</CardTitle>
@@ -10,10 +10,10 @@ const PrivacyPolicy = () => {
         <CardContent className="prose dark:prose-invert max-w-none">
           <h2>1. Introduction</h2>
           <p>
-            Welcome to The New Fuse ("we," "our," or "us"). We respect your privacy and are committed
-            to protecting your personal data. This privacy policy will inform you about how we handle
-            your personal data when you visit our website (https://thenewfuse.com) and tell you about
-            your privacy rights.
+            Welcome to The New Fuse ("we," "our," or "us"). We respect your privacy and are
+            committed to protecting your personal data. This privacy policy will inform you about
+            how we handle your personal data when you visit our website (https://thenewfuse.com) and
+            tell you about your privacy rights.
           </p>
 
           <h2>2. Data We Collect</h2>
@@ -23,7 +23,9 @@ const PrivacyPolicy = () => {
             <li>Contact Data (email address)</li>
             <li>Technical Data (IP address, browser type, device information)</li>
             <li>Usage Data (how you use our website and services)</li>
-            <li>Authentication Data (Google OAuth information if you choose to sign in with Google)</li>
+            <li>
+              Authentication Data (Google OAuth information if you choose to sign in with Google)
+            </li>
           </ul>
 
           <h2>3. How We Use Your Data</h2>
@@ -77,6 +79,7 @@ const PrivacyPolicy = () => {
           </p>
         </CardContent>
       </Card>
-    </div>);
+    </div>
+  );
 };
 export default PrivacyPolicy;

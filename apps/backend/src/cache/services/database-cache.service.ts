@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AdvancedCacheManager } from './advanced-cache.manager';
 import * as crypto from 'crypto';
+import { AdvancedCacheManager } from './advanced-cache.manager';
 
 export interface QueryCacheOptions {
   ttl?: number;
@@ -16,7 +16,7 @@ export class DatabaseCacheService {
 
   constructor(
     private readonly cacheManager: AdvancedCacheManager,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {
     const cacheConfig = this.configService.get('cache');
     this.defaultTTL = cacheConfig?.ttl?.medium || 1800; // 30 minutes default
@@ -31,21 +31,15 @@ export class DatabaseCacheService {
   async cachedQuery<T>(
     queryFn: () => Promise<T>,
     cacheKey: string | object,
-    options: QueryCacheOptions = {},
+    options: QueryCacheOptions = {}
   ): Promise<T> {
-    const key = typeof cacheKey === 'string'
-      ? cacheKey
-      : this.generateQueryKey(cacheKey);
+    const key = typeof cacheKey === 'string' ? cacheKey : this.generateQueryKey(cacheKey);
 
-    return this.cacheManager.getOrSet(
-      key,
-      queryFn,
-      {
-        ttl: options.ttl || this.defaultTTL,
-        prefix: 'db:',
-        tags: options.tags,
-      },
-    );
+    return this.cacheManager.getOrSet(key, queryFn, {
+      ttl: options.ttl || this.defaultTTL,
+      prefix: 'db:',
+      tags: options.tags,
+    });
   }
 
   /**
@@ -55,19 +49,15 @@ export class DatabaseCacheService {
     entityName: string,
     id: string | number,
     fetchFn: () => Promise<T>,
-    ttl?: number,
+    ttl?: number
   ): Promise<T> {
     const key = `${entityName}:${id}`;
 
-    return this.cacheManager.getOrSet(
-      key,
-      fetchFn,
-      {
-        ttl: ttl || this.defaultTTL,
-        prefix: 'entity:',
-        tags: [entityName, `${entityName}:${id}`],
-      },
-    );
+    return this.cacheManager.getOrSet(key, fetchFn, {
+      ttl: ttl || this.defaultTTL,
+      prefix: 'entity:',
+      tags: [entityName, `${entityName}:${id}`],
+    });
   }
 
   /**
@@ -77,19 +67,15 @@ export class DatabaseCacheService {
     entityName: string,
     listKey: string,
     fetchFn: () => Promise<T[]>,
-    ttl?: number,
+    ttl?: number
   ): Promise<T[]> {
     const key = `${entityName}:list:${listKey}`;
 
-    return this.cacheManager.getOrSet(
-      key,
-      fetchFn,
-      {
-        ttl: ttl || this.defaultTTL,
-        prefix: 'entity:',
-        tags: [entityName, `${entityName}:list`],
-      },
-    );
+    return this.cacheManager.getOrSet(key, fetchFn, {
+      ttl: ttl || this.defaultTTL,
+      prefix: 'entity:',
+      tags: [entityName, `${entityName}:list`],
+    });
   }
 
   /**
@@ -119,16 +105,12 @@ export class DatabaseCacheService {
   async cacheAggregation<T>(
     aggregationKey: string,
     fetchFn: () => Promise<T>,
-    ttl?: number,
+    ttl?: number
   ): Promise<T> {
-    return this.cacheManager.getOrSet(
-      aggregationKey,
-      fetchFn,
-      {
-        ttl: ttl || this.defaultTTL,
-        prefix: 'aggregation:',
-      },
-    );
+    return this.cacheManager.getOrSet(aggregationKey, fetchFn, {
+      ttl: ttl || this.defaultTTL,
+      prefix: 'aggregation:',
+    });
   }
 
   /**
@@ -137,16 +119,12 @@ export class DatabaseCacheService {
   async cacheCount(
     countKey: string,
     countFn: () => Promise<number>,
-    ttl?: number,
+    ttl?: number
   ): Promise<number> {
-    return this.cacheManager.getOrSet(
-      countKey,
-      countFn,
-      {
-        ttl: ttl || this.defaultTTL,
-        prefix: 'count:',
-      },
-    );
+    return this.cacheManager.getOrSet(countKey, countFn, {
+      ttl: ttl || this.defaultTTL,
+      prefix: 'count:',
+    });
   }
 
   /**
@@ -170,19 +148,15 @@ export class DatabaseCacheService {
     page: number,
     pageSize: number,
     fetchFn: () => Promise<{ data: T[]; total: number }>,
-    ttl?: number,
+    ttl?: number
   ): Promise<{ data: T[]; total: number }> {
     const key = `${baseKey}:page:${page}:size:${pageSize}`;
 
-    return this.cacheManager.getOrSet(
-      key,
-      fetchFn,
-      {
-        ttl: ttl || this.defaultTTL,
-        prefix: 'pagination:',
-        tags: [baseKey],
-      },
-    );
+    return this.cacheManager.getOrSet(key, fetchFn, {
+      ttl: ttl || this.defaultTTL,
+      prefix: 'pagination:',
+      tags: [baseKey],
+    });
   }
 
   /**
@@ -192,20 +166,16 @@ export class DatabaseCacheService {
     searchKey: string,
     searchParams: any,
     fetchFn: () => Promise<T[]>,
-    ttl?: number,
+    ttl?: number
   ): Promise<T[]> {
     const paramsHash = this.generateQueryKey(searchParams);
     const key = `${searchKey}:${paramsHash}`;
 
-    return this.cacheManager.getOrSet(
-      key,
-      fetchFn,
-      {
-        ttl: ttl || this.defaultTTL,
-        prefix: 'search:',
-        tags: [searchKey],
-      },
-    );
+    return this.cacheManager.getOrSet(key, fetchFn, {
+      ttl: ttl || this.defaultTTL,
+      prefix: 'search:',
+      tags: [searchKey],
+    });
   }
 
   /**
@@ -222,7 +192,7 @@ export class DatabaseCacheService {
   async batchCacheEntities<T>(
     entityName: string,
     entities: Array<{ id: string | number; data: T }>,
-    ttl?: number,
+    ttl?: number
   ): Promise<void> {
     const entries = entities.map((entity) => ({
       key: `${entityName}:${entity.id}`,
@@ -245,7 +215,7 @@ export class DatabaseCacheService {
     entityName: string,
     ids: Array<string | number>,
     fetchFn: (missingIds: Array<string | number>) => Promise<T[]>,
-    ttl?: number,
+    ttl?: number
   ): Promise<T[]> {
     // Try to get all from cache
     const keys = ids.map((id) => `${entityName}:${id}`);
@@ -293,7 +263,7 @@ export class DatabaseCacheService {
       ttl?: number;
       refreshInterval?: number;
       tags?: string[];
-    } = {},
+    } = {}
   ): Promise<T> {
     const ttl = options.ttl || this.defaultTTL;
     const refreshInterval = options.refreshInterval || ttl * 0.8; // Refresh at 80% of TTL
@@ -330,7 +300,7 @@ export class DatabaseCacheService {
     key: string,
     fetchFn: () => Promise<T>,
     ttl: number,
-    tags?: string[],
+    tags?: string[]
   ): Promise<void> {
     try {
       const value = await fetchFn();

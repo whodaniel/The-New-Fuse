@@ -7,21 +7,31 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
 import {
   AgentDirectoryResponseDto,
+  AgentInvitationResponseDto,
+  AgentRegistrationReportDto,
+  CreateAgentInvitationDto,
   AgentRegistrationResponseDto,
   RegisterAgentDto,
   SearchAgentsDto,
 } from './dto';
+import { drizzleAuditLogsRepository } from '@the-new-fuse/database';
 import {
   AgentDirectoryService,
+  AgentInvitationService,
   AgentOnboardingService,
   AgentOrientationService,
   AgentRegistrationService,
+  RateLimitService,
 } from './services';
 
 @ApiTags('Agent Registry')
@@ -33,7 +43,9 @@ export class AgentRegistryController {
     private readonly registrationService: AgentRegistrationService,
     private readonly onboardingService: AgentOnboardingService,
     private readonly orientationService: AgentOrientationService,
-    private readonly directoryService: AgentDirectoryService
+    private readonly directoryService: AgentDirectoryService,
+    private readonly invitationService: AgentInvitationService,
+    private readonly rateLimitService: RateLimitService
   ) {}
 
   // ============================================================================
@@ -53,7 +65,56 @@ export class AgentRegistryController {
     @CurrentUser() user: any
   ): Promise<AgentRegistrationResponseDto> {
     this.logger.log(`Agent registration request: ${data.name}`);
+    this.rateLimitService.consume(`agent-register:${data.invitationCode || 'none'}`, 15, 60_000);
     return this.registrationService.registerAgent(data, user?.id || 'system');
+  }
+
+  // ============================================================================
+  // INVITATION ENDPOINTS (ADMIN)
+  // ============================================================================
+
+  @Post('invitations')
+  @ApiOperation({ summary: 'Create an agent invitation code' })
+  @ApiResponse({ status: 201, type: AgentInvitationResponseDto })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  async createInvitation(
+    @Body() body: CreateAgentInvitationDto,
+    @CurrentUser() user: any
+  ): Promise<AgentInvitationResponseDto> {
+    const actorId = user?.id || 'system';
+    this.rateLimitService.consume(`agent-invite:${actorId}`, 10, 60_000);
+
+    const { invite, code } = await this.invitationService.createInvitation({
+      code: body.code,
+      maxUses: body.maxUses,
+      expiresAt: body.expiresAt,
+      tenantId: body.tenantId,
+      organizationId: body.organizationId,
+      agencyId: body.agencyId,
+      createdByUserId: user?.id,
+      metadata: body.metadata || {},
+    });
+
+    return {
+      id: invite.id,
+      code,
+      status: invite.status,
+      maxUses: invite.maxUses,
+      usedCount: invite.usedCount,
+      expiresAt: invite.expiresAt,
+    };
+  }
+
+  @Post('invitations/:inviteId/revoke')
+  @ApiOperation({ summary: 'Revoke an agent invitation code' })
+  @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  async revokeInvitation(@Param('inviteId') inviteId: string) {
+    this.rateLimitService.consume(`agent-invite-revoke:${inviteId}`, 5, 60_000);
+    const invite = await this.invitationService.revokeInvitation(inviteId);
+    return { id: invite.id, status: invite.status, usedCount: invite.usedCount };
   }
 
   @Get('registration/:id')
@@ -62,6 +123,58 @@ export class AgentRegistryController {
   async getRegistration(@Param('id') id: string, @Headers('x-agent-token') token: string) {
     await this.verifyAgentToken(token);
     return this.registrationService.getRegistration(id, 'system');
+  }
+
+  @Get('registrations/reporting')
+  @ApiOperation({ summary: 'Query registrations by protocol metadata (admin only)' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  async getRegistrationsByProtocol(
+    @Query('tenantId') tenantId?: string,
+    @Query('organizationId') organizationId?: string,
+    @Query('agencyId') agencyId?: string,
+    @Query('trustTier') trustTier?: string,
+    @Query('inviteId') inviteId?: string,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string
+  ): Promise<AgentRegistrationReportDto[]> {
+    this.rateLimitService.consume(`agent-reporting:${tenantId || 'all'}`, 30, 60_000);
+    const results = await this.registrationService.getRegistrationsByProtocol({
+      tenantId,
+      organizationId,
+      agencyId,
+      trustTier,
+      inviteId,
+      limit: limit ? Number(limit) : undefined,
+      offset: offset ? Number(offset) : undefined,
+    });
+    return results as AgentRegistrationReportDto[];
+  }
+
+  @Get('registrations/integrity')
+  @ApiOperation({ summary: 'Validate registration integrity (admin only)' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  async validateRegistrationIntegrity() {
+    this.rateLimitService.consume('agent-integrity-check', 10, 60_000);
+    try {
+      const result = await this.registrationService.validateRegistrationIntegrity();
+      await drizzleAuditLogsRepository.create({
+        action: 'agent.registration.integrity_checked',
+        resourceType: 'agent_registration',
+        status: 'success',
+        details: result,
+      });
+      return result;
+    } catch (error) {
+      await drizzleAuditLogsRepository.create({
+        action: 'agent.registration.integrity_checked',
+        resourceType: 'agent_registration',
+        status: 'failure',
+        errorMessage: (error as Error).message,
+      });
+      throw error;
+    }
   }
 
   @Post('heartbeat')
@@ -85,6 +198,7 @@ export class AgentRegistryController {
     @Headers('x-agent-token') token: string
   ) {
     await this.verifyAgentToken(token);
+    this.rateLimitService.consume(`agent-onboarding-start:${registrationId}`, 30, 60_000);
     return this.onboardingService.startOnboarding(registrationId);
   }
 
@@ -96,6 +210,7 @@ export class AgentRegistryController {
     @Headers('x-agent-token') token: string
   ) {
     await this.verifyAgentToken(token);
+    this.rateLimitService.consume(`agent-onboarding-test:${registrationId}`, 20, 60_000);
     return this.onboardingService.testCapabilities(registrationId);
   }
 
@@ -108,6 +223,7 @@ export class AgentRegistryController {
     @Headers('x-agent-token') token: string
   ) {
     await this.verifyAgentToken(token);
+    this.rateLimitService.consume(`agent-onboarding-step:${registrationId}:${body.stepId}`, 60, 60_000);
     return this.onboardingService.completeStep(registrationId, body.stepId, body.data);
   }
 

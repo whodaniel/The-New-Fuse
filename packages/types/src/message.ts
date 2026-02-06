@@ -8,7 +8,7 @@ export enum MessageType {
   STATUS = 'status',
   RESPONSE = 'response',
   NOTIFICATION = 'notification',
-  TASK_ASSIGNMENT = 'task_assignment'
+  TASK_ASSIGNMENT = 'task_assignment',
 }
 
 import { Priority } from './core/enums';

@@ -1,48 +1,44 @@
-import React, { forwardRef } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
+import React, { forwardRef } from 'react';
 import { cn } from '../../utils';
 
 /**
  * Card variants using class-variance-authority
  */
-export const cardVariants = cva(
-  'rounded-lg border bg-card text-card-foreground shadow-sm',
-  {
-    variants: {
-      variant: {
-        default: 'border-border',
-        ghost: 'border-transparent shadow-none',
-        outline: 'border-2',
-        elevated: 'border-none shadow-lg',
-        destructive: 'border-destructive',
-      },
-      size: {
-        default: 'p-6',
-        sm: 'p-4',
-        lg: 'p-8',
-      },
-      hoverable: {
-        true: 'transition-shadow duration-200 hover:shadow-md',
-      },
-      clickable: {
-        true: 'cursor-pointer transition-all duration-200 hover:translate-y-[-2px]',
-      },
+export const cardVariants = cva('rounded-lg border bg-card text-card-foreground shadow-sm', {
+  variants: {
+    variant: {
+      default: 'border-border',
+      ghost: 'border-transparent shadow-none',
+      outline: 'border-2',
+      elevated: 'border-none shadow-lg',
+      destructive: 'border-destructive',
     },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
-      hoverable: false,
-      clickable: false,
+    size: {
+      default: 'p-6',
+      sm: 'p-4',
+      lg: 'p-8',
     },
-  }
-);
+    hoverable: {
+      true: 'transition-shadow duration-200 hover:shadow-md',
+    },
+    clickable: {
+      true: 'cursor-pointer transition-all duration-200 hover:translate-y-[-2px]',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+    size: 'default',
+    hoverable: false,
+    clickable: false,
+  },
+});
 
 /**
  * Card component props
  */
 export interface CardProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof cardVariants> {}
+  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {}
 
 // Create compound component
 const Card = forwardRef<HTMLDivElement, CardProps>(
@@ -50,10 +46,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     return (
       <div
         ref={ref}
-        className={cn(
-          cardVariants({ variant, size, hoverable, clickable }),
-          className
-        )}
+        className={cn(cardVariants({ variant, size, hoverable, clickable }), className)}
         {...rest}
       >
         {children}
@@ -66,9 +59,7 @@ Card.displayName = 'Card';
 
 // Create subcomponents
 const Header = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('p-6', className)} {...props} />
-  )
+  ({ className, ...props }, ref) => <div ref={ref} className={cn('p-6', className)} {...props} />
 );
 Header.displayName = 'Card.Header';
 
@@ -117,9 +108,9 @@ type CardCompoundComponent = typeof Card & {
 
 export {
   Card,
+  Content as CardContent,
+  Description as CardDescription,
+  Footer as CardFooter,
   Header as CardHeader,
   Title as CardTitle,
-  Description as CardDescription,
-  Content as CardContent,
-  Footer as CardFooter,
 };

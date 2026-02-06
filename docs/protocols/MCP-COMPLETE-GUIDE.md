@@ -2,13 +2,18 @@
 
 ## Overview
 
-The Model Context Protocol (MCP) is a standardized communication protocol for inter-LLM communication in The New Fuse framework. It provides a unified interface for AI agents to access tools, resources, and capabilities through WebSocket and JSON-RPC communication.
+The Model Context Protocol (MCP) is a standardized communication protocol for
+inter-LLM communication in The New Fuse framework. It provides a unified
+interface for AI agents to access tools, resources, and capabilities through
+WebSocket and JSON-RPC communication.
 
 ## Understanding MCP Architecture
 
 ### What is MCP?
 
-The Model Context Protocol (MCP) is a standardized communication protocol that allows different AI models and agents to:
+The Model Context Protocol (MCP) is a standardized communication protocol that
+allows different AI models and agents to:
+
 - Share context across interactions
 - Execute specialized capabilities
 - Coordinate on complex tasks
@@ -17,12 +22,14 @@ The Model Context Protocol (MCP) is a standardized communication protocol that a
 ### MCP Capability Providers vs. Traditional Servers
 
 #### Traditional Servers
+
 - Run continuously as long-lived processes
 - Listen on specific ports
 - Accept connections from clients
 - Maintain state between connections
 
 #### MCP Capability Providers
+
 - Expose functionality through the MCP protocol
 - Are invoked on-demand when needed by an LLM
 - Execute specific commands when called
@@ -77,10 +84,11 @@ The MCP configuration follows a hierarchical structure:
 
 ### Using the MCP Configuration Manager
 
-The MCP Configuration Manager is a CLI tool that helps you manage MCP server configurations in JSON files. It can:
+The MCP Configuration Manager is a CLI tool that helps you manage MCP server
+configurations in JSON files. It can:
 
 - List existing MCP capability providers
-- Add new MCP capability providers 
+- Add new MCP capability providers
 - Update existing MCP capability providers
 - Remove MCP capability providers
 
@@ -93,6 +101,7 @@ For a user-friendly interface, run the wizard in interactive mode:
 ```
 
 This will guide you through:
+
 1. Selecting an action (add, list, remove)
 2. Choosing a configuration file
 3. Providing necessary details for the action
@@ -102,16 +111,19 @@ This will guide you through:
 For scripting or direct access by AI agents:
 
 **List MCP Servers:**
+
 ```bash
 ./scripts/run-mcp-wizard.sh list
 ```
 
 **Add MCP Server:**
+
 ```bash
 ./scripts/run-mcp-wizard.sh add --config path/to/config.json --name server-name --command node --args "server.js"
 ```
 
 **Remove MCP Server:**
+
 ```bash
 ./scripts/run-mcp-wizard.sh remove --config path/to/config.json --name server-name
 ```
@@ -158,6 +170,7 @@ The MCP UI provides several key interfaces:
 ### MCP Tools Dashboard
 
 #### Accessing the UI
+
 There are several ways to access the MCP Tools interface:
 
 1. **Command Palette:**
@@ -172,13 +185,14 @@ There are several ways to access the MCP Tools interface:
 #### Dashboard Features
 
 **Tool Management:**
+
 - **Tool List**: Browse available tools with descriptions
 - **Parameter Configuration**: User-friendly forms for tool parameters
 - **Direct Execution**: Execute tools with validated parameters
 - **Results View**: See tool execution results in a formatted view
 
-**Webhook Integration:**
-Each tool can have multiple webhooks configured to receive execution results:
+**Webhook Integration:** Each tool can have multiple webhooks configured to
+receive execution results:
 
 - **Adding Webhooks:**
   1. Select a tool from the list
@@ -200,6 +214,7 @@ Each tool can have multiple webhooks configured to receive execution results:
 ### Wizard Integration
 
 The Universal MCP Wizard provides:
+
 - Step-by-step server setup
 - Configuration validation
 - Automated testing
@@ -217,7 +232,7 @@ export class MCPService {
   async initializeServer(config: MCPServerConfig): Promise<MCPServer> {
     // Server initialization logic
   }
-  
+
   async executeCapability(request: MCPRequest): Promise<MCPResponse> {
     // Capability execution logic
   }
@@ -228,15 +243,17 @@ export class MCPService {
 
 ```typescript
 @Module({
-  imports: [MCPModule.forRoot({
-    servers: mcpServerConfigs,
-    websocket: {
-      port: 3000,
-      path: '/mcp'
-    }
-  })],
+  imports: [
+    MCPModule.forRoot({
+      servers: mcpServerConfigs,
+      websocket: {
+        port: 3000,
+        path: '/mcp',
+      },
+    }),
+  ],
   providers: [MCPService],
-  exports: [MCPService]
+  exports: [MCPService],
 })
 export class AppModule {}
 ```
@@ -253,18 +270,24 @@ export class AppModule {}
 ### Setting Up MCP Servers
 
 1. **Define Server Configuration**
+
    ```json
    {
      "mcpServers": {
        "filesystem": {
          "command": "npx",
-         "args": ["-y", "@modelcontextprotocol/server-filesystem", "/allowed/path"]
+         "args": [
+           "-y",
+           "@modelcontextprotocol/server-filesystem",
+           "/allowed/path"
+         ]
        }
      }
    }
    ```
 
 2. **Initialize in Application**
+
    ```typescript
    const mcpClient = new MCPClient();
    await mcpClient.connect(serverConfig);
@@ -286,6 +309,7 @@ export class AppModule {}
 ### Error Handling
 
 Implement robust error handling for:
+
 - Connection failures
 - Server timeouts
 - Invalid requests
@@ -297,22 +321,24 @@ Implement robust error handling for:
 ### Local Development
 
 1. **Setup Development Environment**
+
    ```bash
    # Install dependencies
    yarn install
-   
+
    # Configure MCP servers
    cp mcp-config.example.json mcp-config.json
-   
+
    # Start development server
    yarn dev
    ```
 
 2. **Testing MCP Integration**
+
    ```bash
    # Run MCP health check
    node scripts/mcp-health-check.js
-   
+
    # Test specific capabilities
    node scripts/test-mcp-tools.js
    ```
@@ -334,19 +360,25 @@ Implement robust error handling for:
 ### Core Methods
 
 #### MCPClient.connect(config)
+
 Establishes connection to MCP server
+
 - **Parameters**: Server configuration object
 - **Returns**: Promise<Connection>
 - **Throws**: ConnectionError on failure
 
 #### MCPClient.executeCapability(request)
+
 Executes a specific MCP capability
+
 - **Parameters**: MCPRequest object
 - **Returns**: Promise<MCPResponse>
 - **Throws**: CapabilityError on execution failure
 
 #### MCPClient.listCapabilities()
+
 Lists all available capabilities
+
 - **Returns**: Promise<Capability[]>
 - **Description**: Returns array of available capabilities
 
@@ -368,7 +400,8 @@ mcpClient.on('capability-added', (capability) => {
 
 ## Troubleshooting
 
-For troubleshooting MCP issues, see the [MCP Troubleshooting Guide](../troubleshooting/mcp-troubleshooting-complete.md).
+For troubleshooting MCP issues, see the
+[MCP Troubleshooting Guide](../troubleshooting/mcp-troubleshooting-complete.md).
 
 ## Version History
 

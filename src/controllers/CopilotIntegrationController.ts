@@ -43,7 +43,7 @@ import { TenantGuard } from '@the-new-fuse/core/guards/tenant.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '@the-new-fuse/core/decorators/roles.decorator';
 import { Tenant } from '../decorators/tenant.decorator';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '@drizzle/client';
 
 // DTOs for API documentation and validation
 export class CreateChatParticipantDto {

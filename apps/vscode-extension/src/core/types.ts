@@ -68,11 +68,14 @@ export type LLMProviderType =
   | 'openai' // GPT-5.2, GPT-5.1-Codex-Max
   | 'anthropic' // Claude Opus 4.5, Sonnet 4.5
   | 'gemini' // Gemini 3 Pro, Gemini 2.5 Flash
+  | 'sambanova' // SambaNova Cloud (Llama 3.1 405B)
   | 'openrouter' // Multi-provider access
   | 'litellm' // Self-hosted proxy
   | 'deepseek' // DeepSeek-V3.2-Speciale, DeepSeek-R1
   | 'qwen' // Qwen3-Coder, Qwen 2.5-Max
   | 'copilot' // VS Code Copilot
+  | 'google-antigravity' // Antigravity Cloud Code Assist
+  | 'kilocode' // Kilo Code free tier
   // CLI-based agents (local tools)
   | 'claude-cli' // Anthropic Claude CLI
   | 'gemini-cli' // Google Gemini CLI

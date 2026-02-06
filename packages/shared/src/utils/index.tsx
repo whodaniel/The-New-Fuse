@@ -10,14 +10,11 @@ export const truncate = (str: string, length: number): string => {
 };
 
 // Common object utilities
-export const deepMerge = <T extends Record<string, any>>(
-  target: T,
-  source: Partial<T>
-): T => {
+export const deepMerge = <T extends Record<string, any>>(target: T, source: Partial<T>): T => {
   const output = { ...target };
 
   if (isObject(target) && isObject(source)) {
-    Object.keys(source).forEach(key => {
+    Object.keys(source).forEach((key) => {
       const k = key as keyof T;
       if (isObject(source[k])) {
         if (!(k in target)) {
@@ -36,4 +33,4 @@ export const deepMerge = <T extends Record<string, any>>(
 
 const isObject = (item: unknown): item is Record<string, any> => {
   return Boolean(item && typeof item === 'object' && !Array.isArray(item));
-}
+};

@@ -73,8 +73,8 @@ export class AuctionRelayerService {
 
       if (result.status === 'success' || result.txHash) {
         // 5. Update DB (Debit credits)
-        // using raw update safely or prisma update if schema matches
-        // await this.prisma.user.update(...)
+        // using raw update safely or db update if schema matches
+        // await this.db.user.update(...)
 
         this.logger.log(`Bid relayed successfully: ${result.txHash}`);
         return result.txHash;

@@ -1,18 +1,18 @@
+import { ChildProcess, spawn } from 'child_process';
+import { EventEmitter } from 'events';
+import { Logger } from 'winston';
 import {
-  PipelineTask,
-  PipelineStage,
-  PipelineDefinition,
-  TaskResult,
-  PipelineStatus,
   DeploymentConfig,
   DeploymentResult,
+  HealthCheckResult,
+  PipelineDefinition,
+  PipelineStage,
+  PipelineStatus,
+  PipelineTask,
   RollbackResult,
   ServiceDeploymentResult,
-  HealthCheckResult
+  TaskResult,
 } from '../types/pipeline';
-import { Logger } from 'winston';
-import { spawn, ChildProcess } from 'child_process';
-import { EventEmitter } from 'events';
 
 /**
  * Pipeline Executor handles the actual execution of pipeline tasks and deployments
@@ -42,12 +42,12 @@ export class PipelineExecutor extends EventEmitter {
     this.logger.info(`Executing task: ${task.name}`, {
       taskId,
       type: task.type,
-      executionId
+      executionId,
     });
 
     try {
       // Check task conditions
-      if (!await this.evaluateTaskConditions(task, stage, pipeline)) {
+      if (!(await this.evaluateTaskConditions(task, stage, pipeline))) {
         return {
           id: taskId,
           taskId: task.id,
@@ -57,13 +57,13 @@ export class PipelineExecutor extends EventEmitter {
           endTime: new Date(),
           duration: 0,
           logs: ['Task skipped due to conditions'],
-          artifacts: []
+          artifacts: [],
         };
       }
 
       // Execute task based on type
       let result: TaskResult;
-      
+
       switch (task.type) {
         case 'shell':
           result = await this.executeShellTask(task, taskId, startTime);
@@ -95,11 +95,10 @@ export class PipelineExecutor extends EventEmitter {
       this.logger.info(`Task completed: ${task.name}`, {
         taskId,
         status: result.status,
-        duration: result.duration
+        duration: result.duration,
       });
 
       return result;
-
     } catch (error) {
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -107,7 +106,7 @@ export class PipelineExecutor extends EventEmitter {
       this.logger.error(`Task execution failed: ${task.name}`, {
         taskId,
         error: error.message,
-        stack: error.stack
+        stack: error.stack,
       });
 
       return {
@@ -120,7 +119,7 @@ export class PipelineExecutor extends EventEmitter {
         duration,
         logs: [error.message],
         artifacts: [],
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -134,7 +133,7 @@ export class PipelineExecutor extends EventEmitter {
 
     this.logger.info(`Executing deployment to ${deployment.environment}`, {
       deploymentId: deployment.id,
-      services: deployment.services.length
+      services: deployment.services.length,
     });
 
     try {
@@ -162,9 +161,11 @@ export class PipelineExecutor extends EventEmitter {
       const duration = endTime.getTime() - startTime.getTime();
 
       // Determine overall deployment status
-      const overallStatus = serviceResults.every(s => s.status === PipelineStatus.SUCCESS) &&
-                           healthCheckResults.every(h => h.status === 'healthy') ?
-                           PipelineStatus.SUCCESS : PipelineStatus.FAILED;
+      const overallStatus =
+        serviceResults.every((s) => s.status === PipelineStatus.SUCCESS) &&
+        healthCheckResults.every((h) => h.status === 'healthy')
+          ? PipelineStatus.SUCCESS
+          : PipelineStatus.FAILED;
 
       return {
         id: deploymentId,
@@ -176,9 +177,8 @@ export class PipelineExecutor extends EventEmitter {
         environment: deployment.environment,
         services: serviceResults,
         healthChecks: healthCheckResults,
-        logs: [`Deployment to ${deployment.environment} completed`]
+        logs: [`Deployment to ${deployment.environment} completed`],
       };
-
     } catch (error) {
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -186,7 +186,7 @@ export class PipelineExecutor extends EventEmitter {
       this.logger.error(`Deployment failed: ${error.message}`, {
         deploymentId: deployment.id,
         environment: deployment.environment,
-        error: error.stack
+        error: error.stack,
       });
 
       return {
@@ -200,7 +200,7 @@ export class PipelineExecutor extends EventEmitter {
         services: [],
         healthChecks: [],
         logs: [error.message],
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -217,7 +217,7 @@ export class PipelineExecutor extends EventEmitter {
     try {
       // Implementation would depend on the deployment strategy and platform
       // This is a simplified version
-      
+
       // For Kubernetes, this might involve:
       // 1. kubectl rollout undo deployment/service-name
       // 2. Wait for rollout to complete
@@ -237,11 +237,10 @@ export class PipelineExecutor extends EventEmitter {
         endTime,
         duration,
         previousVersion: 'v1.0.0', // TODO: Get actual version
-        currentVersion: 'v0.9.0',  // TODO: Get actual version
+        currentVersion: 'v0.9.0', // TODO: Get actual version
         reason: 'Manual rollback requested',
-        logs: [`Rollback completed for deployment ${deployment.deploymentId}`]
+        logs: [`Rollback completed for deployment ${deployment.deploymentId}`],
       };
-
     } catch (error) {
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -257,7 +256,7 @@ export class PipelineExecutor extends EventEmitter {
         currentVersion: 'unknown',
         reason: 'Manual rollback requested',
         logs: [error.message],
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -333,7 +332,7 @@ export class PipelineExecutor extends EventEmitter {
 
       const shellProcess = spawn('sh', ['-c', command], {
         stdio: ['pipe', 'pipe', 'pipe'],
-        env: { ...process.env, ...task.parameters }
+        env: { ...process.env, ...task.parameters },
       });
 
       this.runningTasks.set(taskId, shellProcess);
@@ -381,7 +380,7 @@ export class PipelineExecutor extends EventEmitter {
           exitCode,
           logs,
           artifacts: task.artifacts || [],
-          error: exitCode !== 0 ? `Process exited with code ${exitCode}` : undefined
+          error: exitCode !== 0 ? `Process exited with code ${exitCode}` : undefined,
         });
       });
 
@@ -404,7 +403,7 @@ export class PipelineExecutor extends EventEmitter {
           duration,
           logs: [...logs, _error.message],
           artifacts: [],
-          error: _error.message
+          error: _error.message,
         });
       });
     });
@@ -417,11 +416,7 @@ export class PipelineExecutor extends EventEmitter {
   ): Promise<TaskResult> {
     // Docker task execution logic
     const dockerCommand = this.buildDockerCommand(task);
-    return await this.executeShellTask(
-      { ...task, command: dockerCommand },
-      taskId,
-      startTime
-    );
+    return await this.executeShellTask({ ...task, command: dockerCommand }, taskId, startTime);
   }
 
   private async executeKubernetesTask(
@@ -431,11 +426,7 @@ export class PipelineExecutor extends EventEmitter {
   ): Promise<TaskResult> {
     // Kubernetes task execution logic
     const kubectlCommand = this.buildKubectlCommand(task);
-    return await this.executeShellTask(
-      { ...task, command: kubectlCommand },
-      taskId,
-      startTime
-    );
+    return await this.executeShellTask({ ...task, command: kubectlCommand }, taskId, startTime);
   }
 
   private async executeTestTask(
@@ -445,11 +436,7 @@ export class PipelineExecutor extends EventEmitter {
   ): Promise<TaskResult> {
     // Test execution logic
     const testCommand = task.parameters.testCommand || 'npm test';
-    return await this.executeShellTask(
-      { ...task, command: testCommand },
-      taskId,
-      startTime
-    );
+    return await this.executeShellTask({ ...task, command: testCommand }, taskId, startTime);
   }
 
   private async executeBuildTask(
@@ -459,11 +446,7 @@ export class PipelineExecutor extends EventEmitter {
   ): Promise<TaskResult> {
     // Build execution logic
     const buildCommand = task.parameters.buildCommand || 'npm run build';
-    return await this.executeShellTask(
-      { ...task, command: buildCommand },
-      taskId,
-      startTime
-    );
+    return await this.executeShellTask({ ...task, command: buildCommand }, taskId, startTime);
   }
 
   private async executeDeployTask(
@@ -473,11 +456,7 @@ export class PipelineExecutor extends EventEmitter {
   ): Promise<TaskResult> {
     // Deploy execution logic
     const deployCommand = this.buildDeployCommand(task);
-    return await this.executeShellTask(
-      { ...task, command: deployCommand },
-      taskId,
-      startTime
-    );
+    return await this.executeShellTask({ ...task, command: deployCommand }, taskId, startTime);
   }
 
   private async executeCustomTask(
@@ -503,7 +482,7 @@ export class PipelineExecutor extends EventEmitter {
       endTime,
       duration,
       logs: ['Custom task completed (no script provided)'],
-      artifacts: []
+      artifacts: [],
     };
   }
 
@@ -521,14 +500,17 @@ export class PipelineExecutor extends EventEmitter {
     while (attempt < retryPolicy.maxAttempts && result.status === PipelineStatus.FAILED) {
       // Calculate delay based on backoff strategy
       const delay = this.calculateRetryDelay(retryPolicy, attempt);
-      
-      this.logger.info(`Retrying task: ${task.name} (attempt ${attempt + 1}/${retryPolicy.maxAttempts})`, {
-        taskId: result.id,
-        delay
-      });
+
+      this.logger.info(
+        `Retrying task: ${task.name} (attempt ${attempt + 1}/${retryPolicy.maxAttempts})`,
+        {
+          taskId: result.id,
+          delay,
+        }
+      );
 
       // Wait for delay
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
 
       // Retry the task
       result = await this.executeTask(task, stage, pipeline, executionId);
@@ -552,51 +534,51 @@ export class PipelineExecutor extends EventEmitter {
 
   private buildDockerCommand(task: PipelineTask): string {
     const { image, tag = 'latest', command, volumes = [], environment = {} } = task.parameters;
-    
+
     let dockerCmd = `docker run --rm`;
-    
+
     // Add volumes
     volumes.forEach((volume: string) => {
       dockerCmd += ` -v ${volume}`;
     });
-    
+
     // Add environment variables
     Object.entries(environment).forEach(([key, value]) => {
       dockerCmd += ` -e ${key}="${value}"`;
     });
-    
+
     dockerCmd += ` ${image}:${tag}`;
-    
+
     if (command) {
       dockerCmd += ` ${command}`;
     }
-    
+
     return dockerCmd;
   }
 
   private buildKubectlCommand(task: PipelineTask): string {
     const { action, resource, name, namespace, manifest } = task.parameters;
-    
+
     let kubectlCmd = 'kubectl';
-    
+
     if (namespace) {
       kubectlCmd += ` -n ${namespace}`;
     }
-    
+
     kubectlCmd += ` ${action}`;
-    
+
     if (manifest) {
       kubectlCmd += ` -f ${manifest}`;
     } else if (resource && name) {
       kubectlCmd += ` ${resource} ${name}`;
     }
-    
+
     return kubectlCmd;
   }
 
   private buildDeployCommand(task: PipelineTask): string {
     const { platform = 'kubernetes', ...params } = task.parameters;
-    
+
     switch (platform) {
       case 'kubernetes':
         return this.buildKubectlCommand({ ...task, parameters: params });
@@ -614,13 +596,13 @@ export class PipelineExecutor extends EventEmitter {
     this.logger.info(`Deploying service: ${service.name}`, {
       image: service.image,
       tag: service.tag,
-      replicas: service.replicas
+      replicas: service.replicas,
     });
 
     try {
       // This would contain the actual deployment logic
       // For now, simulate a successful deployment
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       return {
         name: service.name,
@@ -628,13 +610,12 @@ export class PipelineExecutor extends EventEmitter {
         replicas: {
           desired: service.replicas,
           ready: service.replicas,
-          available: service.replicas
+          available: service.replicas,
         },
         image: service.image,
         version: service.tag,
-        endpoints: [`http://${service.name}.${deployment.environment}.svc.cluster.local`]
+        endpoints: [`http://${service.name}.${deployment.environment}.svc.cluster.local`],
       };
-
     } catch (error) {
       return {
         name: service.name,
@@ -642,22 +623,22 @@ export class PipelineExecutor extends EventEmitter {
         replicas: {
           desired: service.replicas,
           ready: 0,
-          available: 0
+          available: 0,
         },
         image: service.image,
         version: service.tag,
-        endpoints: []
+        endpoints: [],
       };
     }
   }
 
   private async executeHealthCheck(healthCheck: any): Promise<HealthCheckResult> {
     const startTime = new Date();
-    
+
     try {
       // This would contain actual health check logic
       // For now, simulate a health check
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -667,9 +648,8 @@ export class PipelineExecutor extends EventEmitter {
         status: 'healthy',
         message: 'Health check passed',
         timestamp: endTime,
-        duration
+        duration,
       };
-
     } catch (error) {
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -679,7 +659,7 @@ export class PipelineExecutor extends EventEmitter {
         status: 'unhealthy',
         message: error.message,
         timestamp: endTime,
-        duration
+        duration,
       };
     }
   }
@@ -687,6 +667,6 @@ export class PipelineExecutor extends EventEmitter {
   private async simulateRollback(deployment: DeploymentResult): Promise<void> {
     // Simulate rollback process
     this.logger.info(`Simulating rollback for deployment: ${deployment.deploymentId}`);
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   }
 }

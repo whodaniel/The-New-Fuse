@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 
 export interface QuotaConfig {
-  requests: number;        // Number of requests allowed
-  period: number;          // Period in seconds
-  renewalType: 'fixed' | 'rolling';  // Fixed window or rolling window
+  requests: number; // Number of requests allowed
+  period: number; // Period in seconds
+  renewalType: 'fixed' | 'rolling'; // Fixed window or rolling window
 }
 
 export interface QuotaTier {
@@ -43,25 +43,25 @@ export class QuotaManagementService {
       quotas: {
         hourly: { requests: 1000, period: 3600, renewalType: 'rolling' },
         daily: { requests: 10000, period: 86400, renewalType: 'fixed' },
-        monthly: { requests: 100000, period: 2592000, renewalType: 'fixed' }
-      }
+        monthly: { requests: 100000, period: 2592000, renewalType: 'fixed' },
+      },
     },
     pro: {
       name: 'pro',
       quotas: {
         hourly: { requests: 10000, period: 3600, renewalType: 'rolling' },
         daily: { requests: 100000, period: 86400, renewalType: 'fixed' },
-        monthly: { requests: 1000000, period: 2592000, renewalType: 'fixed' }
-      }
+        monthly: { requests: 1000000, period: 2592000, renewalType: 'fixed' },
+      },
     },
     enterprise: {
       name: 'enterprise',
       quotas: {
         hourly: { requests: 100000, period: 3600, renewalType: 'rolling' },
         daily: { requests: 1000000, period: 86400, renewalType: 'fixed' },
-        monthly: { requests: 10000000, period: 2592000, renewalType: 'fixed' }
-      }
-    }
+        monthly: { requests: 10000000, period: 2592000, renewalType: 'fixed' },
+      },
+    },
   };
 
   constructor(private configService: ConfigService) {
@@ -78,7 +78,7 @@ export class QuotaManagementService {
       port: redisPort,
       password: redisPassword,
       retryStrategy: (times) => Math.min(times * 50, 2000),
-      maxRetriesPerRequest: 3
+      maxRetriesPerRequest: 3,
     });
 
     this.redis.on('error', (error) => {
@@ -124,7 +124,7 @@ export class QuotaManagementService {
         limit: quota.requests,
         remaining: Math.max(0, quota.requests - currentUsage.used),
         resetTime: currentUsage.resetTime,
-        percentUsed: (currentUsage.used / quota.requests) * 100
+        percentUsed: (currentUsage.used / quota.requests) * 100,
       });
 
       // Check if quota exceeded
@@ -159,7 +159,7 @@ export class QuotaManagementService {
       this.logger.error(`Error getting quota usage for ${key}:`, error);
       return {
         used: 0,
-        resetTime: new Date(now + quota.period * 1000)
+        resetTime: new Date(now + quota.period * 1000),
       };
     }
   }
@@ -189,7 +189,7 @@ export class QuotaManagementService {
         limit: quota.requests,
         remaining: Math.max(0, quota.requests - currentUsage.used),
         resetTime: currentUsage.resetTime,
-        percentUsed: (currentUsage.used / quota.requests) * 100
+        percentUsed: (currentUsage.used / quota.requests) * 100,
       });
     }
 
@@ -199,8 +199,12 @@ export class QuotaManagementService {
   /**
    * Reset quota for a user
    */
-  async resetQuota(userId: string, tier: string, period?: 'hourly' | 'daily' | 'monthly'): Promise<void> {
-    const periods = period ? [period] : ['hourly', 'daily', 'monthly'] as const;
+  async resetQuota(
+    userId: string,
+    tier: string,
+    period?: 'hourly' | 'daily' | 'monthly'
+  ): Promise<void> {
+    const periods = period ? [period] : (['hourly', 'daily', 'monthly'] as const);
 
     const pipeline = this.redis.pipeline();
 
@@ -278,14 +282,14 @@ export class QuotaManagementService {
       return {
         totalUsers: userSet.size,
         tierDistribution: tierCounts,
-        topUsers: [] // Would require more complex analysis
+        topUsers: [], // Would require more complex analysis
       };
     } catch (error) {
       this.logger.error('Error getting quota stats:', error);
       return {
         totalUsers: 0,
         tierDistribution: {},
-        topUsers: []
+        topUsers: [],
       };
     }
   }
@@ -297,7 +301,7 @@ export class QuotaManagementService {
     quota: QuotaConfig,
     now: number
   ): Promise<{ used: number; resetTime: Date }> {
-    const windowStart = now - (quota.period * 1000);
+    const windowStart = now - quota.period * 1000;
 
     // Remove old entries
     await this.redis.zremrangebyscore(key, 0, windowStart);
@@ -307,7 +311,7 @@ export class QuotaManagementService {
 
     return {
       used: count,
-      resetTime: new Date(now + quota.period * 1000)
+      resetTime: new Date(now + quota.period * 1000),
     };
   }
 

@@ -1,18 +1,28 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/design-system';
 import { SystemHealth, SystemHealthService } from '@/services/SystemHealthService';
-import { Activity, RefreshCw, Server } from 'lucide-react';
+import { edgeService } from '@/services/EdgeService';
+import { Activity, RefreshCw, Server, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const SystemMonitoring = () => {
   const [health, setHealth] = useState<SystemHealth | null>(null);
+  const [edgeHealth, setEdgeHealth] = useState<{ status: string; latency: number } | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadHealth = async () => {
     setLoading(true);
+    const startTime = Date.now();
     try {
-      const data = await SystemHealthService.getSystemHealth();
+      const [data, edgeResponse] = await Promise.all([
+        SystemHealthService.getSystemHealth(),
+        edgeService.getHealth(),
+      ]);
       setHealth(data);
+      setEdgeHealth({
+        status: edgeResponse === 'Edge Offline' ? 'down' : 'healthy',
+        latency: Date.now() - startTime,
+      });
     } catch (e) {
       console.error(e);
     } finally {
@@ -106,6 +116,27 @@ const SystemMonitoring = () => {
           <h3 className="text-lg font-medium leading-6 text-gray-900">Services Status</h3>
         </div>
         <ul className="divide-y divide-gray-200">
+          {edgeHealth && (
+            <li className="px-6 py-4 flex items-center justify-between bg-blue-50/30">
+              <div className="flex items-center">
+                <Zap className="h-5 w-5 text-yellow-500 mr-3" />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Cloudflare Edge Worker</p>
+                  <p className="text-xs text-gray-500">Latency: {edgeHealth.latency}ms</p>
+                </div>
+              </div>
+              <span
+                className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize
+                                ${
+                                  edgeHealth.status === 'healthy'
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-red-100 text-red-800'
+                                }`}
+              >
+                {edgeHealth.status}
+              </span>
+            </li>
+          )}
           {health?.services.map((service, index) => (
             <li key={index} className="px-6 py-4 flex items-center justify-between">
               <div className="flex items-center">

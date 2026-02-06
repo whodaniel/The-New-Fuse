@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, Query, UseGuards } from '@nestjs/common';
-import { PromptTemplatesService } from '../services/prompt-templates.service';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { PromptTemplatesService } from '../services/prompt-templates.service';
 
 @Controller('prompt-templates')
 export class PromptTemplatesController {

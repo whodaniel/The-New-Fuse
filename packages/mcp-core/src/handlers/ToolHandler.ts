@@ -3,8 +3,14 @@
  */
 
 import { randomUUID } from 'crypto';
-import { ToolHandler as IToolHandler, ToolResult, ValidationResult, ToolUsageStats, JSONSchema } from '../interfaces/IMCPTool';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
+import {
+  ToolHandler as IToolHandler,
+  JSONSchema,
+  ToolResult,
+  ToolUsageStats,
+  ValidationResult,
+} from '../interfaces/IMCPTool';
+import { ErrorCategory, ErrorSeverity, MCPErrorClass, MCPErrorCode } from '../types/error';
 
 /**
  * Abstract base class for implementing tool handlers
@@ -31,7 +37,7 @@ export abstract class ToolHandler implements IToolHandler {
       totalExecutions: 0,
       successfulExecutions: 0,
       failedExecutions: 0,
-      averageExecutionTime: 0
+      averageExecutionTime: 0,
     };
   }
 
@@ -52,7 +58,7 @@ export abstract class ToolHandler implements IToolHandler {
     } catch (error) {
       return {
         valid: false,
-        errors: [error instanceof Error ? error.message : 'Validation failed']
+        errors: [error instanceof Error ? error.message : 'Validation failed'],
       };
     }
   }
@@ -78,7 +84,7 @@ export abstract class ToolHandler implements IToolHandler {
    */
   async executeWithValidation(params: any): Promise<ToolResult> {
     const startTime = Date.now();
-    
+
     try {
       // Validate parameters
       const validationResult = await this.validate(params);
@@ -91,18 +97,18 @@ export abstract class ToolHandler implements IToolHandler {
             executionId: randomUUID(),
             executionTime: Date.now() - startTime,
             toolVersion: '1.0.0',
-            warnings: ['Parameter validation failed']
-          }
+            warnings: ['Parameter validation failed'],
+          },
         };
       }
 
       // Execute the tool
       const result = await this.execute(validationResult.normalizedParams || params);
-      
+
       // Update statistics
       const executionTime = Date.now() - startTime;
       this.updateUsageStats(true, executionTime);
-      
+
       // Add execution metadata
       if (result.metadata) {
         result.metadata.executionTime = executionTime;
@@ -114,7 +120,7 @@ export abstract class ToolHandler implements IToolHandler {
     } catch (error) {
       const executionTime = Date.now() - startTime;
       this.updateUsageStats(false, executionTime);
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Tool execution failed',
@@ -122,8 +128,8 @@ export abstract class ToolHandler implements IToolHandler {
           executionId: randomUUID(),
           executionTime,
           toolVersion: '1.0.0',
-          context: { error: error instanceof Error ? error.stack : 'Unknown error' }
-        }
+          context: { error: error instanceof Error ? error.stack : 'Unknown error' },
+        },
       };
     }
   }
@@ -134,11 +140,11 @@ export abstract class ToolHandler implements IToolHandler {
   protected validateAgainstSchema(params: any, schema: JSONSchema): ValidationResult {
     // Basic validation - in a real implementation, you'd use a proper JSON Schema validator
     const errors: string[] = [];
-    
+
     if (schema.type === 'object' && typeof params !== 'object') {
       errors.push(`Expected object, got ${typeof params}`);
     }
-    
+
     if (schema.required) {
       for (const requiredField of schema.required) {
         if (!(requiredField in params)) {
@@ -146,13 +152,13 @@ export abstract class ToolHandler implements IToolHandler {
         }
       }
     }
-    
+
     if (schema.properties) {
       for (const [fieldName, fieldSchema] of Object.entries(schema.properties)) {
         if (fieldName in params) {
           const fieldValue = params[fieldName];
           const fieldType = (fieldSchema as any).type;
-          
+
           if (fieldType && typeof fieldValue !== fieldType) {
             errors.push(`Field ${fieldName}: expected ${fieldType}, got ${typeof fieldValue}`);
           }
@@ -163,7 +169,7 @@ export abstract class ToolHandler implements IToolHandler {
     return {
       valid: errors.length === 0,
       errors: errors.length > 0 ? errors : undefined,
-      normalizedParams: params
+      normalizedParams: params,
     };
   }
 
@@ -172,17 +178,18 @@ export abstract class ToolHandler implements IToolHandler {
    */
   protected updateUsageStats(success: boolean, executionTime: number): void {
     this.usageStats.totalExecutions++;
-    
+
     if (success) {
       this.usageStats.successfulExecutions++;
     } else {
       this.usageStats.failedExecutions++;
     }
-    
+
     // Update average execution time
-    const totalTime = this.usageStats.averageExecutionTime * (this.usageStats.totalExecutions - 1) + executionTime;
+    const totalTime =
+      this.usageStats.averageExecutionTime * (this.usageStats.totalExecutions - 1) + executionTime;
     this.usageStats.averageExecutionTime = totalTime / this.usageStats.totalExecutions;
-    
+
     this.usageStats.lastExecution = new Date();
   }
 
@@ -195,8 +202,8 @@ export abstract class ToolHandler implements IToolHandler {
       result,
       metadata: {
         toolVersion: '1.0.0',
-        ...metadata
-      }
+        ...metadata,
+      },
     };
   }
 
@@ -209,8 +216,8 @@ export abstract class ToolHandler implements IToolHandler {
       error,
       metadata: {
         toolVersion: '1.0.0',
-        ...metadata
-      }
+        ...metadata,
+      },
     };
   }
 
@@ -248,9 +255,9 @@ export abstract class ToolHandler implements IToolHandler {
           toolName: this.name,
           operation,
           originalError: error.message,
-          errorCode: error.code
+          errorCode: error.code,
         },
-        cause: error
+        cause: error,
       }
     );
   }
@@ -267,7 +274,7 @@ export abstract class ToolHandler implements IToolHandler {
     capabilities: string[];
   } {
     const capabilities: string[] = ['execute'];
-    
+
     if (typeof this.validate === 'function') capabilities.push('validate');
     if (typeof this.getUsageStats === 'function') capabilities.push('usage-stats');
     if (typeof this.cleanup === 'function') capabilities.push('cleanup');
@@ -278,7 +285,7 @@ export abstract class ToolHandler implements IToolHandler {
       type: this.constructor.name,
       inputSchema: this.inputSchema,
       outputSchema: this.outputSchema,
-      capabilities
+      capabilities,
     };
   }
 }
@@ -337,10 +344,10 @@ export class ScriptToolHandler extends ToolHandler {
     try {
       const { spawn } = await import('child_process');
       const { promisify } = await import('util');
-      
+
       return new Promise((resolve) => {
         const child = spawn(this.interpreter, [this.scriptPath], {
-          stdio: ['pipe', 'pipe', 'pipe']
+          stdio: ['pipe', 'pipe', 'pipe'],
         });
 
         let stdout = '';
@@ -363,18 +370,21 @@ export class ScriptToolHandler extends ToolHandler {
               resolve(this.createSuccessResult(stdout));
             }
           } else {
-            resolve(this.createErrorResult(
-              `Script execution failed with code ${code}: ${stderr}`,
-              { exitCode: code, stderr }
-            ));
+            resolve(
+              this.createErrorResult(`Script execution failed with code ${code}: ${stderr}`, {
+                exitCode: code,
+                stderr,
+              })
+            );
           }
         });
 
         child.on('error', (error) => {
-          resolve(this.createErrorResult(
-            `Script execution error: ${error.message}`,
-            { error: error.stack }
-          ));
+          resolve(
+            this.createErrorResult(`Script execution error: ${error.message}`, {
+              error: error.stack,
+            })
+          );
         });
 
         // Send parameters as JSON to stdin
@@ -416,30 +426,30 @@ export class ApiCallToolHandler extends ToolHandler {
     try {
       const { method = 'GET', path = '', headers = {}, body } = params;
       const url = new URL(path, this.baseUrl).toString();
-      
+
       const response = await fetch(url, {
         method,
         headers: {
           ...this.defaultHeaders,
-          ...headers
+          ...headers,
         },
-        body: body ? JSON.stringify(body) : undefined
+        body: body ? JSON.stringify(body) : undefined,
       });
 
       if (!response.ok) {
         return this.createErrorResult(
           `API call failed: ${response.status} ${response.statusText}`,
-          { 
-            status: response.status, 
+          {
+            status: response.status,
             statusText: response.statusText,
-            url 
+            url,
           }
         );
       }
 
       const contentType = response.headers.get('content-type');
       let result;
-      
+
       if (contentType?.includes('application/json')) {
         result = await response.json();
       } else {
@@ -449,13 +459,12 @@ export class ApiCallToolHandler extends ToolHandler {
       return this.createSuccessResult(result, {
         status: response.status,
         headers: Object.fromEntries(response.headers.entries()),
-        url
+        url,
       });
     } catch (error) {
-      return this.createErrorResult(
-        error instanceof Error ? error.message : 'API call failed',
-        { error: error instanceof Error ? error.stack : 'Unknown error' }
-      );
+      return this.createErrorResult(error instanceof Error ? error.message : 'API call failed', {
+        error: error instanceof Error ? error.stack : 'Unknown error',
+      });
     }
   }
 }

@@ -1,5 +1,9 @@
+import type {
+  VectorDocument,
+  VectorQuery,
+  VectorSearchResult,
+} from '../interface/vector-database.interface';
 import type { VectorDatabaseService } from '../vector-database.service';
-import type { VectorDocument, VectorQuery, VectorSearchResult } from '../interface/vector-database.interface';
 
 // Legacy types from packages/core
 interface LegacyVectorDocument {
@@ -36,13 +40,13 @@ interface LegacyVectorStoreProvider {
 
 /**
  * Legacy Adapter for Core Vector Database Service
- * 
+ *
  * This adapter provides backward compatibility with the existing vector database
  * implementations in packages/core while using the new core-vector-db service.
  */
 export class LegacyVectorAdapter implements LegacyVectorStoreProvider {
   public readonly name = 'CoreVectorDBAdapter';
-  
+
   constructor(
     private readonly vectorService: VectorDatabaseService,
     private readonly defaultCollection: string = 'default'
@@ -53,7 +57,7 @@ export class LegacyVectorAdapter implements LegacyVectorStoreProvider {
    */
   async storeVectors(documents: LegacyVectorDocument[], namespace: string): Promise<string[]> {
     const collectionName = namespace || this.defaultCollection;
-    
+
     // Ensure collection exists
     const exists = await this.vectorService.collectionExists(collectionName);
     if (!exists) {
@@ -61,45 +65,53 @@ export class LegacyVectorAdapter implements LegacyVectorStoreProvider {
         name: collectionName,
         dimension: 1536, // Default OpenAI embedding dimension
         metric: 'cosine',
-        description: `Legacy collection for namespace: ${namespace}`
+        description: `Legacy collection for namespace: ${namespace}`,
       });
     }
 
     // Convert legacy documents to new format
-    const convertedDocuments: VectorDocument[] = documents.map(doc => ({
+    const convertedDocuments: VectorDocument[] = documents.map((doc) => ({
       id: doc.id || this.generateId(),
       content: doc.content,
       metadata: doc.metadata,
-      embedding: doc.embedding
+      embedding: doc.embedding,
     }));
 
     await this.vectorService.addDocuments(collectionName, convertedDocuments);
-    
-    return convertedDocuments.map(doc => doc.id);
+
+    return convertedDocuments.map((doc) => doc.id);
   }
 
   /**
    * Search vectors using legacy interface
    */
-  async search(queryEmbedding: number[], options: LegacyVectorQuery): Promise<LegacySearchResult[]> {
+  async search(
+    queryEmbedding: number[],
+    options: LegacyVectorQuery
+  ): Promise<LegacySearchResult[]> {
     const collectionName = options.namespace || this.defaultCollection;
-    
+
     const query: VectorQuery = {
       embedding: queryEmbedding,
       limit: options.limit || 10,
       threshold: 0.7,
-      metadata_filter: options.filter
+      metadata_filter: options.filter,
     };
 
-    const results = await this.vectorService.searchByEmbedding(collectionName, queryEmbedding, query);
-    
+    const results = await this.vectorService.searchByEmbedding(
+      collectionName,
+      queryEmbedding,
+      query
+    );
+
     // Convert to legacy format
-    return results.map(result => ({
+    return results.map((result) => ({
       id: result.id,
       score: result.score,
       content: result.content,
       metadata: result.metadata || {},
-      embedding: options.includeVectors && 'embedding' in result ? (result as any).embedding : undefined
+      embedding:
+        options.includeVectors && 'embedding' in result ? (result as any).embedding : undefined,
     }));
   }
 
@@ -156,7 +168,7 @@ export class TypeConverter {
       id: legacy.id || TypeConverter.generateId(),
       content: legacy.content,
       metadata: legacy.metadata,
-      embedding: legacy.embedding
+      embedding: legacy.embedding,
     };
   }
 
@@ -168,7 +180,7 @@ export class TypeConverter {
       id: doc.id,
       content: doc.content,
       metadata: doc.metadata,
-      embedding: doc.embedding
+      embedding: doc.embedding,
     };
   }
 
@@ -181,7 +193,7 @@ export class TypeConverter {
       content: legacy.content,
       metadata: legacy.metadata,
       score: legacy.score,
-      distance: 1 - legacy.score // Convert score to distance
+      distance: 1 - legacy.score, // Convert score to distance
     };
   }
 
@@ -194,7 +206,7 @@ export class TypeConverter {
       content: result.content,
       metadata: result.metadata || {},
       score: result.score,
-      embedding: undefined // Legacy format doesn't include embeddings by default
+      embedding: undefined, // Legacy format doesn't include embeddings by default
     };
   }
 

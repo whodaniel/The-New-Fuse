@@ -41,6 +41,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<TheNew
     await initializeServices();
     log.info('✓ Services initialized');
 
+    // Sync with global Fuse configuration (~/.tnf/providers.json)
+    const globalSync = (
+      await import('./services/GlobalSyncService.js')
+    ).GlobalSyncService.getInstance();
+    await globalSync.sync();
+    log.info('✓ Global configuration synchronized');
+
     // Create and register chat view provider
     const chatViewProvider = new ChatViewProvider(context.extensionUri);
     context.subscriptions.push(

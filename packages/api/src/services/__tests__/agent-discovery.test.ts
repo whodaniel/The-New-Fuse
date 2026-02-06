@@ -2,14 +2,14 @@
  * Agent Discovery System Integration Tests
  */
 
-import { AgentDiscoveryRegistry } from '../agent-discovery-registry.service';
-import { CapabilityMatcher } from '../capability-matcher.service';
 import {
-  AgentRegistration,
   AgentHeartbeat,
+  AgentRegistration,
   AgentStatus,
   DiscoveryQuery,
 } from '../../types/agent-discovery.types';
+import { AgentDiscoveryRegistry } from '../agent-discovery-registry.service';
+import { CapabilityMatcher } from '../capability-matcher.service';
 
 describe('Agent Discovery System', () => {
   let registry: AgentDiscoveryRegistry;

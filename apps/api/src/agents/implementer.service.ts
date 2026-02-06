@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 import { exec } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
@@ -43,7 +43,7 @@ export class ImplementerAgentService {
   private readonly logger = new Logger(ImplementerAgentService.name);
   private readonly codebaseRoot = '/home/user/fuse';
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly db: DatabaseService) {}
 
   async implementImprovement(task: ImprovementTask): Promise<Implementation> {
     this.logger.log(`Starting implementation: ${task.title}`);
@@ -235,7 +235,7 @@ export class ImplementerAgentService {
   private generateServiceTemplate(feature: { name: string; description: string }): string {
     const className = feature.name.replace(/\s+/g, '');
     return `import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 
 /**
  * ${feature.description}
@@ -244,7 +244,7 @@ import { PrismaService } from '@the-new-fuse/database';
 export class ${className}Service {
   private readonly logger = new Logger(${className}Service.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly db: DatabaseService) {}
 
   async execute(): Promise<any> {
     this.logger.log('Executing ${feature.name}...');
@@ -284,25 +284,25 @@ export class ${className}Controller {
 
     const testContent = `import { Test, TestingModule } from '@nestjs/testing';
 import { ${className}Service } from './${serviceName}.service';
-import { PrismaService } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 
 describe('${className}Service', () => {
   let service: ${className}Service;
-  let prisma: PrismaService;
+  let db: DatabaseService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ${className}Service,
         {
-          provide: PrismaService,
+          provide: DatabaseService,
           useValue: {},
         },
       ],
     }).compile();
 
     service = module.get<${className}Service>(${className}Service);
-    prisma = module.get<PrismaService>(PrismaService);
+    db = module.get<DatabaseService>(DatabaseService);
   });
 
   it('should be defined', () => {

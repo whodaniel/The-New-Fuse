@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { GlassCard } from '../../ui/premium/GlassCard';
-import { Database, Search, ZoomIn, ZoomOut, Maximize, Share2 } from 'lucide-react';
+import { Database, Maximize, Share2, ZoomIn, ZoomOut } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
 
 interface ClusterItem {
   id: string;
@@ -26,15 +25,15 @@ interface MemoryVisualizerProps {
   height?: number;
 }
 
-export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({ 
-  clusters, 
-  onClusterSelect, 
-  onItemSelect, 
-  width = 800, 
-  height = 600 
+export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
+  clusters,
+  onClusterSelect,
+  onItemSelect,
+  width = 800,
+  height = 600,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
-  
+
   useEffect(() => {
     if (!clusters || (Array.isArray(clusters) && clusters.length === 0)) return;
 
@@ -50,7 +49,7 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
         value: cluster.items.length + 5,
         label: cluster.label,
         type: 'cluster',
-        data: cluster
+        data: cluster,
       });
 
       cluster.items.forEach((item, index) => {
@@ -61,13 +60,13 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
           value: 2,
           label: item.content.length > 20 ? item.content.substring(0, 20) + '...' : item.content,
           type: 'item',
-          data: item
+          data: item,
         });
 
         graphLinks.push({
           source: cluster.id,
           target: itemId,
-          value: item.metadata.confidence || 0.5
+          value: item.metadata.confidence || 0.5,
         });
       });
     });
@@ -77,7 +76,8 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
 
     const container = svg.append('g');
 
-    const zoom = d3.zoom<SVGSVGElement, unknown>()
+    const zoom = d3
+      .zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.1, 8])
       .on('zoom', (event) => {
         container.attr('transform', event.transform);
@@ -85,50 +85,58 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
 
     svg.call(zoom);
 
-    const simulation = d3.forceSimulation(graphNodes)
-      .force('link', d3.forceLink(graphLinks).id((d: any) => d.id).distance(50).strength(0.5))
+    const simulation = d3
+      .forceSimulation(graphNodes)
+      .force(
+        'link',
+        d3
+          .forceLink(graphLinks)
+          .id((d: any) => d.id)
+          .distance(50)
+          .strength(0.5)
+      )
       .force('charge', d3.forceManyBody().strength(-200))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius((d: any) => Math.sqrt(d.value) * 8 + 5));
+      .force(
+        'collision',
+        d3.forceCollide().radius((d: any) => Math.sqrt(d.value) * 8 + 5)
+      );
 
-    const link = container.append('g')
+    const link = container
+      .append('g')
       .selectAll('line')
       .data(graphLinks)
       .join('line')
       .attr('stroke', 'rgba(148, 163, 184, 0.2)')
       .attr('stroke-width', (d: any) => d.value * 2);
 
-    const node = container.append('g')
+    const node = container
+      .append('g')
       .selectAll('g')
       .data(graphNodes)
       .join('g')
       .attr('cursor', 'pointer')
-      .call(d3.drag<any, any>()
-        .on('start', dragstarted)
-        .on('drag', dragged)
-        .on('end', dragended));
+      .call(d3.drag<any, any>().on('start', dragstarted).on('drag', dragged).on('end', dragended));
 
     // Glow effect
-    const filter = svg.append('defs')
-      .append('filter')
-      .attr('id', 'glow');
-    filter.append('feGaussianBlur')
-      .attr('stdDeviation', '2.5')
-      .attr('result', 'coloredBlur');
+    const filter = svg.append('defs').append('filter').attr('id', 'glow');
+    filter.append('feGaussianBlur').attr('stdDeviation', '2.5').attr('result', 'coloredBlur');
     const feMerge = filter.append('feMerge');
     feMerge.append('feMergeNode').attr('in', 'coloredBlur');
     feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
 
-    node.append('circle')
+    node
+      .append('circle')
       .attr('r', (d: any) => Math.sqrt(d.value) * 6)
-      .attr('fill', (d: any) => d.type === 'cluster' 
-        ? 'rgba(96, 165, 250, 0.8)' 
-        : 'rgba(168, 85, 247, 0.6)')
-      .attr('stroke', (d: any) => d.type === 'cluster' ? '#60a5fa' : '#a855f7')
+      .attr('fill', (d: any) =>
+        d.type === 'cluster' ? 'rgba(96, 165, 250, 0.8)' : 'rgba(168, 85, 247, 0.6)'
+      )
+      .attr('stroke', (d: any) => (d.type === 'cluster' ? '#60a5fa' : '#a855f7'))
       .attr('stroke-width', 2)
       .style('filter', 'url(#glow)');
 
-    node.append('text')
+    node
+      .append('text')
       .text((d: any) => d.label)
       .attr('x', (d: any) => Math.sqrt(d.value) * 6 + 4)
       .attr('y', 3)
@@ -152,8 +160,7 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
         .attr('x2', (d: any) => d.target.x)
         .attr('y2', (d: any) => d.target.y);
 
-      node
-        .attr('transform', (d: any) => `translate(${d.x},${d.y})`);
+      node.attr('transform', (d: any) => `translate(${d.x},${d.y})`);
     });
 
     function dragstarted(event: any) {
@@ -186,7 +193,9 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
         </div>
         <div>
           <h3 className="text-sm font-bold text-white uppercase tracking-wider">Semantic Space</h3>
-          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-mono">Knowledge Topology</p>
+          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-mono">
+            Knowledge Topology
+          </p>
         </div>
       </div>
 
@@ -197,17 +206,13 @@ export const MemoryVisualizer: React.FC<MemoryVisualizerProps> = ({
         <VisualizerAction icon={<Share2 className="w-4 h-4" />} />
       </div>
 
-      <svg 
-        ref={svgRef} 
-        className="w-full h-full" 
-        style={{ background: 'transparent' }}
-      />
+      <svg ref={svgRef} className="w-full h-full" style={{ background: 'transparent' }} />
 
       <div className="absolute bottom-4 left-4 z-10 flex gap-4">
         <LegendItem color="#60a5fa" label="Active Clusters" />
         <LegendItem color="#a855f7" label="Semantic Units" />
       </div>
-      
+
       <div className="absolute bottom-4 right-4 z-10 text-[10px] text-gray-600 font-mono">
         ENGINE: TNF-D3-RELAY-V2
       </div>

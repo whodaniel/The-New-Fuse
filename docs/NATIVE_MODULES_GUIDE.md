@@ -2,17 +2,24 @@
 
 ## Overview
 
-This project uses Bun as the primary package manager and runtime, but some native modules (like `canvas`) have compatibility issues with Bun's installation process. This guide documents the hybrid approach we use to resolve these issues.
+This project uses Bun as the primary package manager and runtime, but some
+native modules (like `canvas`) have compatibility issues with Bun's installation
+process. This guide documents the hybrid approach we use to resolve these
+issues.
 
 ## The Problem
 
 Bun sometimes fails to properly install or compile native modules, particularly:
+
 - **Canvas** - HTML5 Canvas API for Node.js
 - **Native addons** - Packages that require compilation of C/C++ code
-- **Packages with complex build scripts** - Modules with custom installation procedures
+- **Packages with complex build scripts** - Modules with custom installation
+  procedures
 
 ### Symptoms
-- Package appears in `package.json` but `node_modules/[package]` directory is missing
+
+- Package appears in `package.json` but `node_modules/[package]` directory is
+  missing
 - Tests fail with "Cannot find module '[package].node'" errors
 - Silent installation failures during `pnpm install`
 - Native bindings not compiled properly
@@ -20,6 +27,7 @@ Bun sometimes fails to properly install or compile native modules, particularly:
 ## The Solution: Hybrid Package Manager Approach
 
 We use a hybrid approach that leverages the strengths of both package managers:
+
 - **Bun** for fast runtime and most package installations
 - **Node.js toolchain** for native module compilation when needed
 
@@ -28,6 +36,7 @@ We use a hybrid approach that leverages the strengths of both package managers:
 ### 1. Environment Setup
 
 Ensure you have a compatible Node.js version:
+
 ```bash
 # Check current version
 node --version
@@ -42,6 +51,7 @@ nvm list
 ### 2. Clean Installation
 
 Remove existing problematic installations:
+
 ```bash
 # Clean slate
 rm -rf node_modules bun.lockb
@@ -53,6 +63,7 @@ pnpm install --ignore-scripts
 ### 3. Manual Native Module Compilation
 
 For canvas specifically:
+
 ```bash
 # Navigate to the canvas package
 cd node_modules/canvas
@@ -67,6 +78,7 @@ cd ../..
 ### 4. Verification
 
 Test that the native module works with both runtimes:
+
 ```bash
 # Test with Node.js
 node -e "const { createCanvas } = require('canvas'); console.log('Canvas loaded successfully!'); const canvas = createCanvas(200, 200); console.log('Canvas created successfully!');"
@@ -78,17 +90,21 @@ bun -e "const { createCanvas } = require('canvas'); console.log('Canvas loaded s
 ## System Dependencies
 
 ### macOS
+
 Install required system libraries via Homebrew:
+
 ```bash
 brew install cairo pango libpng jpeg giflib librsvg
 ```
 
 ### Ubuntu/Debian
+
 ```bash
 sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 ```
 
 ### CentOS/RHEL/Fedora
+
 ```bash
 sudo yum install gcc-c++ cairo-devel pango-devel libjpeg-turbo-devel giflib-devel librsvg2-devel
 ```
@@ -96,6 +112,7 @@ sudo yum install gcc-c++ cairo-devel pango-devel libjpeg-turbo-devel giflib-deve
 ## Alternative Approaches
 
 ### Approach 1: Temporary npm Installation
+
 ```bash
 # Temporarily switch package manager
 # Edit package.json: "packageManager": "npm@10.8.2"
@@ -107,7 +124,9 @@ pnpm test  # Use Bun for runtime
 ```
 
 ### Approach 2: Docker Development Environment
+
 Use a containerized environment with pre-compiled native modules:
+
 ```dockerfile
 FROM node:18-alpine
 RUN apk add --no-cache cairo-dev pango-dev jpeg-dev giflib-dev librsvg-dev
@@ -117,6 +136,7 @@ RUN apk add --no-cache cairo-dev pango-dev jpeg-dev giflib-dev librsvg-dev
 ## Troubleshooting Common Issues
 
 ### Issue: node-gyp not found
+
 ```bash
 # Install node-gyp globally
 npm install -g node-gyp
@@ -126,6 +146,7 @@ npx node-gyp rebuild
 ```
 
 ### Issue: Python not found
+
 ```bash
 # macOS
 xcode-select --install
@@ -138,9 +159,12 @@ npm config set python python3
 ```
 
 ### Issue: Compilation warnings about macOS version
-This is usually safe to ignore. The warnings occur because system libraries were built for a newer macOS version, but the module will still work.
+
+This is usually safe to ignore. The warnings occur because system libraries were
+built for a newer macOS version, but the module will still work.
 
 ### Issue: Permission errors during compilation
+
 ```bash
 # Fix permissions
 sudo chown -R $(whoami) node_modules/
@@ -152,13 +176,17 @@ npm install --unsafe-perm
 ## Best Practices
 
 ### 1. Version Pinning
+
 Pin Node.js version in `.nvmrc`:
+
 ```bash
 echo "18.20.5" > .nvmrc
 ```
 
 ### 2. CI/CD Considerations
+
 In CI environments, use the hybrid approach:
+
 ```yaml
 # GitHub Actions example
 - name: Setup Node.js
@@ -173,7 +201,9 @@ In CI environments, use the hybrid approach:
 ```
 
 ### 3. Documentation
+
 Always document native module requirements in your README:
+
 - System dependencies
 - Node.js version requirements
 - Installation steps
@@ -181,6 +211,7 @@ Always document native module requirements in your README:
 ## Supported Native Modules
 
 This approach has been tested with:
+
 - ✅ **canvas** - HTML5 Canvas API
 - ✅ **sharp** - Image processing
 - ✅ **sqlite3** - SQLite bindings
@@ -190,22 +221,29 @@ This approach has been tested with:
 ## Automated Integration
 
 ### Built-in Solutions
+
 The project now includes automated native module handling:
 
-- **`postinstall` script** - Automatically runs after `pnpm install` to detect and fix native module issues
-- **`prebuild` checks** - Verifies native modules before building or testing  
-- **Smart install script** - `pnpm run install:smart` for complete automated setup
+- **`postinstall` script** - Automatically runs after `pnpm install` to detect
+  and fix native module issues
+- **`prebuild` checks** - Verifies native modules before building or testing
+- **Smart install script** - `pnpm run install:smart` for complete automated
+  setup
 - **Setup script** - `./scripts/setup-project.sh` for new developer onboarding
 
 ### Automatic Detection
+
 The system automatically:
+
 1. Detects when canvas or other native modules are missing or broken
 2. Attempts to compile native bindings using the Node.js toolchain
 3. Verifies functionality before proceeding with builds or tests
 4. Provides clear guidance when manual intervention is needed
 
 ### Developer Experience
+
 New developers can now simply run:
+
 ```bash
 ./scripts/setup-project.sh  # Complete automated setup
 # OR
@@ -215,11 +253,14 @@ pnpm install                  # Automatic postinstall fixes
 ## Future Considerations
 
 As Bun matures, native module support will improve. Monitor:
-- [Bun GitHub Issues](https://github.com/oven-sh/bun/issues) for native module fixes
+
+- [Bun GitHub Issues](https://github.com/oven-sh/bun/issues) for native module
+  fixes
 - Bun release notes for compatibility improvements
 - Package-specific Bun compatibility updates
 
 ### When Manual Intervention May Be Needed
+
 - System dependencies are missing (cairo, pango, etc.)
 - Major Bun version updates that change native module handling
 - New native modules are added to the project
@@ -243,4 +284,5 @@ When you discover new native module issues or solutions:
 3. **Update this guide** with the new information
 4. **Add verification commands** for the module
 
-This ensures the team has a reliable reference for handling native module compatibility issues.
+This ensures the team has a reliable reference for handling native module
+compatibility issues.

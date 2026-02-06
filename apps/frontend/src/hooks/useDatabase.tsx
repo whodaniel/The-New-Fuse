@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '../services/api';
 
 interface TableInfo {
@@ -38,7 +38,7 @@ export function useDatabase(): any {
       const [tablesData, migrationsData, backupsData] = await Promise.all([
         api.get('/admin/database/tables'),
         api.get('/admin/database/migrations'),
-        api.get('/admin/database/backups')
+        api.get('/admin/database/backups'),
       ]);
 
       setTables(tablesData.data);
@@ -88,6 +88,6 @@ export function useDatabase(): any {
     runMigration,
     createBackup,
     restoreBackup,
-    loading
+    loading,
   };
 }

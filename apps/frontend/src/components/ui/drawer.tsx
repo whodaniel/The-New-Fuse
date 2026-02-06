@@ -2,7 +2,7 @@
  * Drawer Component - Custom implementation for The New Fuse Design System
  * Replaces Chakra UI Drawer with Tailwind CSS
  */
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { cn } from '../../lib/utils';
 
 interface DrawerProps {
@@ -97,9 +97,7 @@ const Drawer = ({
           </button>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6">
-            {children}
-          </div>
+          <div className="flex-1 overflow-y-auto p-6">{children}</div>
         </div>
       </div>
     </div>

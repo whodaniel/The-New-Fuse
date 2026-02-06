@@ -3,11 +3,7 @@
  * Handles environment provisioning, configuration, and lifecycle management
  */
 
-import {
-  InfrastructureTemplate,
-  CloudProvider,
-  EnvironmentType
-} from '../types/infrastructure';
+import { CloudProvider, EnvironmentType, InfrastructureTemplate } from '../types/infrastructure';
 import { InfrastructureManager } from './InfrastructureManager';
 
 export interface Environment {
@@ -118,7 +114,7 @@ export enum EnvironmentStatus {
   UPDATING = 'updating',
   DELETING = 'deleting',
   DELETED = 'deleted',
-  ERROR = 'error'
+  ERROR = 'error',
 }
 
 export interface EnvironmentMetadata {
@@ -147,7 +143,7 @@ export interface EnvironmentPromotion {
 export enum PromotionType {
   BLUE_GREEN = 'blue_green',
   CANARY = 'canary',
-  ROLLING = 'rolling'
+  ROLLING = 'rolling',
 }
 
 export interface PromotionApproval {
@@ -192,7 +188,7 @@ export class EnvironmentManager {
     configuration: Partial<EnvironmentConfiguration> = {}
   ): Promise<Environment> {
     const environmentId = this.generateEnvironmentId(name, type);
-    
+
     const environment: Environment = {
       id: environmentId,
       name,
@@ -211,23 +207,23 @@ export class EnvironmentManager {
         costCenter: 'engineering',
         tags: {
           environment: type,
-          managed_by: 'environment_manager'
+          managed_by: 'environment_manager',
         },
         compliance: {
           dataClassification: type === EnvironmentType.PRODUCTION ? 'confidential' : 'internal',
           regulatoryRequirements: [],
-          retentionPolicy: '7years'
-        }
-      }
+          retentionPolicy: '7years',
+        },
+      },
     };
 
     try {
       // Create base infrastructure template for the environment
       const template = this.generateEnvironmentTemplate(environment);
-      
+
       // Provision the environment infrastructure
       const provisionResult = await this.infrastructureManager.provisionInfrastructure(template);
-      
+
       if (provisionResult.success) {
         environment.infrastructureIds.push(provisionResult.infrastructureId);
         environment.status = EnvironmentStatus.ACTIVE;
@@ -240,7 +236,6 @@ export class EnvironmentManager {
       this.environments.set(environmentId, environment);
 
       return environment;
-
     } catch (error) {
       environment.status = EnvironmentStatus.ERROR;
       environment.updatedAt = new Date();
@@ -269,13 +264,12 @@ export class EnvironmentManager {
           infrastructureId: infraId,
           reason: 'Environment configuration update',
           // Convert configuration changes to infrastructure changes
-          variableChanges: this.configurationToVariables(updates)
+          variableChanges: this.configurationToVariables(updates),
         });
       }
 
       environment.status = EnvironmentStatus.ACTIVE;
       return environment;
-
     } catch (error) {
       environment.status = EnvironmentStatus.ERROR;
       throw error;
@@ -299,7 +293,6 @@ export class EnvironmentManager {
 
       environment.status = EnvironmentStatus.DELETED;
       environment.updatedAt = new Date();
-
     } catch (error) {
       environment.status = EnvironmentStatus.ERROR;
       throw error;
@@ -315,9 +308,11 @@ export class EnvironmentManager {
     }
 
     // Check approvals
-    const requiredApprovals = promotion.approvals.filter(a => !a.approved);
+    const requiredApprovals = promotion.approvals.filter((a) => !a.approved);
     if (requiredApprovals.length > 0) {
-      throw new Error(`Missing approvals from: ${requiredApprovals.map(a => a.approver).join(', ')}`);
+      throw new Error(
+        `Missing approvals from: ${requiredApprovals.map((a) => a.approver).join(', ')}`
+      );
     }
 
     // Run validation checks
@@ -357,13 +352,13 @@ export class EnvironmentManager {
 
     if (filters) {
       if (filters.type) {
-        environments = environments.filter(e => e.type === filters.type);
+        environments = environments.filter((e) => e.type === filters.type);
       }
       if (filters.status) {
-        environments = environments.filter(e => e.status === filters.status);
+        environments = environments.filter((e) => e.status === filters.status);
       }
       if (filters.owner) {
-        environments = environments.filter(e => e.metadata.owner === filters.owner);
+        environments = environments.filter((e) => e.metadata.owner === filters.owner);
       }
     }
 
@@ -390,27 +385,27 @@ export class EnvironmentManager {
             priority: 1000,
             sourceRanges: ['0.0.0.0/0'],
             targetTags: ['ssh-allowed'],
-            allowed: [{ protocol: 'tcp', ports: ['22'] }]
-          }
-        ]
+            allowed: [{ protocol: 'tcp', ports: ['22'] }],
+          },
+        ],
       },
       security: {
         enableOSLogin: true,
         requireSSL: type === EnvironmentType.PRODUCTION,
         enableAuditLogs: type === EnvironmentType.PRODUCTION,
-        iamPolicies: []
+        iamPolicies: [],
       },
       monitoring: {
         enableStackdriverMonitoring: true,
         enableStackdriverLogging: true,
         alertPolicies: [],
-        dashboards: []
+        dashboards: [],
       },
       backup: {
         enableAutomaticBackups: type === EnvironmentType.PRODUCTION,
         retentionDays: type === EnvironmentType.PRODUCTION ? 30 : 7,
         backupSchedule: '0 2 * * *', // Daily at 2 AM
-        crossRegionBackup: type === EnvironmentType.PRODUCTION
+        crossRegionBackup: type === EnvironmentType.PRODUCTION,
       },
       scaling: {
         enableAutoScaling: true,
@@ -418,8 +413,8 @@ export class EnvironmentManager {
         maxInstances: type === EnvironmentType.PRODUCTION ? 10 : 3,
         targetCpuUtilization: 70,
         scaleInCooldown: 300,
-        scaleOutCooldown: 60
-      }
+        scaleOutCooldown: 60,
+      },
     };
 
     return { ...defaults, ...config };
@@ -437,20 +432,20 @@ export class EnvironmentManager {
           name: environment.configuration.networking.vpcName,
           properties: {
             autoCreateSubnetworks: false,
-            project: environment.projectId
+            project: environment.projectId,
           },
           dependencies: [],
           lifecycle: {
             createBeforeDestroy: false,
             preventDestroy: environment.type === EnvironmentType.PRODUCTION,
             ignoreChanges: [],
-            replaceTriggeredBy: []
+            replaceTriggeredBy: [],
           },
           tags: {
             environment: environment.type,
-            managed_by: 'environment_manager'
-          }
-        }
+            managed_by: 'environment_manager',
+          },
+        },
       ],
       variables: [
         {
@@ -458,22 +453,22 @@ export class EnvironmentManager {
           type: 'STRING' as any,
           description: 'GCP Project ID',
           defaultValue: environment.projectId,
-          required: true
+          required: true,
         },
         {
           name: 'region',
           type: 'STRING' as any,
           description: 'GCP Region',
           defaultValue: environment.region,
-          required: true
-        }
+          required: true,
+        },
       ],
       outputs: [
         {
           name: 'vpc_network_id',
           value: '${vpc_network.self_link}',
-          description: 'VPC Network self link'
-        }
+          description: 'VPC Network self link',
+        },
       ],
       dependencies: [],
       metadata: {
@@ -482,8 +477,8 @@ export class EnvironmentManager {
         tags: ['environment', environment.type],
         createdAt: new Date(),
         updatedAt: new Date(),
-        version: '1.0.0'
-      }
+        version: '1.0.0',
+      },
     };
   }
 
@@ -523,18 +518,18 @@ export class EnvironmentManager {
     }
   }
 
-  private async performBlueGreenPromotion(_source: Environment, _target: Environment): Promise<void> {
+  private async performBlueGreenPromotion(
+    _source: Environment,
+    _target: Environment
+  ): Promise<void> {
     // Mock blue-green promotion implementation
-    
   }
 
   private async performCanaryPromotion(_source: Environment, _target: Environment): Promise<void> {
     // Mock canary promotion implementation
-    
   }
 
   private async performRollingPromotion(_source: Environment, _target: Environment): Promise<void> {
     // Mock rolling promotion implementation
-    
   }
 }

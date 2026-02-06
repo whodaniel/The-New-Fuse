@@ -33,12 +33,12 @@ describe('Master Agent Workflow Integration', () => {
     test('should handle agent communication and task delegation', async () => {
       // Create coordinator agent
       const coordinator = await TestHelpers.createTestAgent('TaskCoordinator', 'COORDINATOR');
-      
+
       // Test basic agent profile retrieval
       const profile = await env.agentRegistry.getAgentProfile(coordinator.agentId);
       expect(profile).toBeDefined();
       expect(profile.name).toBe('TaskCoordinator');
-      
+
       // Test that the agent has basic capabilities structure
       expect(profile.capabilities).toBeDefined();
     });
@@ -47,8 +47,11 @@ describe('Master Agent Workflow Integration', () => {
   describe('Workflow Execution', () => {
     test('should execute multi-agent workflows', async () => {
       // Create a test workflow
-      const result = await TestHelpers.createTestWorkflow('MultiAgentWorkflow', 'Test workflow with multiple agents');
-      
+      const result = await TestHelpers.createTestWorkflow(
+        'MultiAgentWorkflow',
+        'Test workflow with multiple agents'
+      );
+
       // Verify workflow creation - the result contains workflow and builder
       expect(result.workflow).toBeDefined();
       expect(result.workflow.name).toBe('MultiAgentWorkflow');
@@ -72,22 +75,25 @@ describe('Master Agent Workflow Integration', () => {
     test('should handle agent failures gracefully', async () => {
       // Create test agents
       const resilientAgent = await TestHelpers.createTestAgent('ResilientAgent', 'RESILIENT');
-      
+
       // Test agent profile retrieval
       const profile = await env.agentRegistry.getAgentProfile(resilientAgent.agentId);
       expect(profile).toBeDefined();
-      
+
       // Test error scenarios don't crash the system
       expect(() => env.agentRegistry.getAgentProfile('non-existent-id')).not.toThrow();
     });
 
     test('should recover from workflow interruptions', async () => {
       // Create recovery test workflow
-      const result = await TestHelpers.createTestWorkflow('RecoveryWorkflow', 'Test workflow recovery');
-      
+      const result = await TestHelpers.createTestWorkflow(
+        'RecoveryWorkflow',
+        'Test workflow recovery'
+      );
+
       // Verify workflow can be created and retrieved
       expect(result.workflow).toBeDefined();
-      
+
       const savedWorkflow = await env.workflowEngine.repository.createWorkflow(result.workflow);
       expect(savedWorkflow.id).toBeDefined();
     });

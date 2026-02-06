@@ -1,15 +1,22 @@
 # Business Events Cloudflare Worker
 
-A serverless Cloudflare Worker implementation for processing business events, handling webhooks, and providing real-time SSE (Server-Sent Events) capabilities with MCP (Model Context Protocol) integration.
+A serverless Cloudflare Worker implementation for processing business events,
+handling webhooks, and providing real-time SSE (Server-Sent Events) capabilities
+with MCP (Model Context Protocol) integration.
 
 ## Features
 
-- **Multi-Platform Webhook Processing**: Handles webhooks from Stripe, PayPal, Salesforce, HubSpot, and NetSuite
-- **Business Intelligence**: Converts raw webhook data into enriched business events with AI-powered insights
-- **Real-time SSE Broadcasting**: Streams events to connected clients in real-time
-- **MCP Action Triggers**: Automatically triggers external actions based on business rules
+- **Multi-Platform Webhook Processing**: Handles webhooks from Stripe, PayPal,
+  Salesforce, HubSpot, and NetSuite
+- **Business Intelligence**: Converts raw webhook data into enriched business
+  events with AI-powered insights
+- **Real-time SSE Broadcasting**: Streams events to connected clients in
+  real-time
+- **MCP Action Triggers**: Automatically triggers external actions based on
+  business rules
 - **Comprehensive Logging**: Structured logging with multiple severity levels
-- **Type Safety**: Full TypeScript implementation with comprehensive type definitions
+- **Type Safety**: Full TypeScript implementation with comprehensive type
+  definitions
 
 ## Architecture
 
@@ -17,7 +24,7 @@ A serverless Cloudflare Worker implementation for processing business events, ha
 graph LR
     A[Webhooks<br/>Inbound] --> B[Business Event<br/>Processing]
     B --> C[SSE & MCP<br/>Outbound]
-    
+
     A1[• Stripe<br/>• PayPal<br/>• Salesforce<br/>• HubSpot<br/>• NetSuite] -.-> A
     B1[• Data Enrich<br/>• AI Insights<br/>• Business Context<br/>• Validation] -.-> B
     C1[• SSE Broadcast<br/>• MCP Actions<br/>• Notifications<br/>• Analytics<br/>• Workflows] -.-> C
@@ -73,7 +80,7 @@ cloudflare-worker/
    ```bash
    # Login to Cloudflare
    wrangler login
-   
+
    # Update wrangler.toml with your account details
    # Replace 'your-kv-namespace-id' with actual KV namespace ID
    ```
@@ -87,7 +94,7 @@ cloudflare-worker/
    wrangler secret put SALESFORCE_WEBHOOK_SECRET
    wrangler secret put HUBSPOT_WEBHOOK_SECRET
    wrangler secret put NETSUITE_WEBHOOK_SECRET
-   
+
    # API keys
    wrangler secret put SENDGRID_API_KEY
    wrangler secret put CRM_API_KEY
@@ -176,7 +183,8 @@ Each webhook source requires:
 2. Endpoint configuration in the source system
 3. Event type mapping in the processor
 
-Example webhook URL: `https://your-worker.your-subdomain.workers.dev/webhooks/stripe`
+Example webhook URL:
+`https://your-worker.your-subdomain.workers.dev/webhooks/stripe`
 
 ## Business Event Processing
 
@@ -243,9 +251,11 @@ Automated actions triggered by business events:
 
 ```javascript
 // Client-side SSE connection
-const eventSource = new EventSource('/sse/connect?org=123&subscriptions=payment_*,customer_*');
+const eventSource = new EventSource(
+  '/sse/connect?org=123&subscriptions=payment_*,customer_*'
+);
 
-eventSource.onmessage = function(event) {
+eventSource.onmessage = function (event) {
   const businessEvent = JSON.parse(event.data);
   console.log('Business event received:', businessEvent);
 };

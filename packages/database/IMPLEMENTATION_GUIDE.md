@@ -2,7 +2,9 @@
 
 ## Overview
 
-This guide provides step-by-step instructions for implementing the enhanced database schema with all security fixes, data integrity improvements, and advanced features while maintaining backwards compatibility.
+This guide provides step-by-step instructions for implementing the enhanced
+database schema with all security fixes, data integrity improvements, and
+advanced features while maintaining backwards compatibility.
 
 ---
 
@@ -26,7 +28,8 @@ This guide provides step-by-step instructions for implementing the enhanced data
 **Goal**: Migrate plaintext API keys to encrypted storage
 
 **Files to modify**:
-- Schema: Use `schema.enhanced.prisma`
+
+- Schema: Use `schema.enhanced.drizzle`
 - Migration: Create new migration
 
 **Steps**:
@@ -36,13 +39,14 @@ This guide provides step-by-step instructions for implementing the enhanced data
 cd packages/database
 mkdir -p migrations/20250120_encrypt_api_keys
 
-# 2. Generate Prisma migration
-npx prisma migrate dev --name encrypt_llm_config_api_keys --create-only
+# 2. Generate Drizzle migration
+npx drizzle migrate dev --name encrypt_llm_config_api_keys --create-only
 
 # 3. Edit the generated migration file
 ```
 
 **Migration SQL**:
+
 ```sql
 -- Add new encrypted fields
 ALTER TABLE "llm_configs"
@@ -53,16 +57,18 @@ ALTER TABLE "llm_configs"
   ADD COLUMN "key_expires_at" TIMESTAMP;
 ```
 
-**Data Migration Script** (`migrations/20250120_encrypt_api_keys/migrate-data.ts`):
+**Data Migration Script**
+(`migrations/20250120_encrypt_api_keys/migrate-data.ts`):
+
 ```typescript
-import { PrismaClient } from '../generated/prisma';
+import { DrizzleClient } from '../generated/drizzle';
 import { encryptApiKey, hashApiKey } from '../migrations/utils/encryption.util';
 
 async function migrateApiKeys() {
-  const prisma = new PrismaClient();
+  const drizzle = new DrizzleClient();
 
   try {
-    const configs = await prisma.lLMConfig.findMany({
+    const configs = await drizzle.lLMConfig.findMany({
       where: {
         apiKeyEncrypted: null,
       },
@@ -73,7 +79,7 @@ async function migrateApiKeys() {
     for (const config of configs) {
       const encrypted = encryptApiKey(config.apiKey, 'v1');
 
-      await prisma.lLMConfig.update({
+      await drizzle.lLMConfig.update({
         where: { id: config.id },
         data: {
           apiKeyEncrypted: JSON.stringify(encrypted),
@@ -91,7 +97,7 @@ async function migrateApiKeys() {
     console.error('❌ Migration failed:', error);
     throw error;
   } finally {
-    await prisma.$disconnect();
+    await drizzle.$disconnect();
   }
 }
 
@@ -99,9 +105,10 @@ migrateApiKeys();
 ```
 
 **Run migration**:
+
 ```bash
 # Apply schema changes
-npx prisma migrate deploy
+npx drizzle migrate deploy
 
 # Run data migration
 ts-node migrations/20250120_encrypt_api_keys/migrate-data.ts
@@ -110,10 +117,11 @@ ts-node migrations/20250120_encrypt_api_keys/migrate-data.ts
 psql $DATABASE_URL -c "SELECT id, name, encryption_key_id FROM llm_configs;"
 
 # After verification, remove old apiKey column (optional - for security)
-npx prisma migrate dev --name remove_plaintext_api_key
+npx drizzle migrate dev --name remove_plaintext_api_key
 ```
 
 **Update LLMConfig Service**:
+
 ```typescript
 // packages/api/src/services/llm-config.service.ts
 
@@ -122,7 +130,7 @@ import { decryptApiKey } from '@the-new-fuse/database/migrations/utils/encryptio
 @Injectable()
 export class LLMConfigService {
   async getDecryptedApiKey(configId: string): Promise<string> {
-    const config = await this.prisma.lLMConfig.findUnique({
+    const config = await this.drizzle.lLMConfig.findUnique({
       where: { id: configId },
     });
 
@@ -143,10 +151,11 @@ export class LLMConfigService {
 **Steps**:
 
 ```bash
-npx prisma migrate dev --name add_code_session_owner_fk --create-only
+npx drizzle migrate dev --name add_code_session_owner_fk --create-only
 ```
 
 **Migration SQL**:
+
 ```sql
 -- Add foreign key constraint
 ALTER TABLE "code_execution_sessions"
@@ -159,6 +168,7 @@ CREATE INDEX "code_execution_sessions_owner_id_idx" ON "code_execution_sessions"
 ```
 
 **Verification**:
+
 ```sql
 -- Check for orphaned records before migration
 SELECT COUNT(*)
@@ -177,17 +187,17 @@ WHERE u.id IS NULL;
 
 **Steps**:
 
-1. **Update PrismaService**:
+1. **Update DatabaseService**:
 
 ```typescript
-// packages/database/src/prisma.service.ts
+// packages/database/src/drizzle.service.ts
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '../generated/prisma';
+import { DrizzleClient } from '../generated/drizzle';
 import { softDeleteMiddleware } from './middleware/soft-delete.middleware';
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit {
+export class DatabaseService extends DrizzleClient implements OnModuleInit {
   async onModuleInit() {
     await this.$connect();
 
@@ -205,19 +215,19 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 describe('Soft Delete Middleware', () => {
   it('should exclude deleted records from queries', async () => {
     // Create user
-    const user = await prisma.user.create({
+    const user = await drizzle.user.create({
       data: { email: 'test@example.com', hashedPassword: 'hash' },
     });
 
     // Delete user (soft delete)
-    await prisma.user.delete({ where: { id: user.id } });
+    await drizzle.user.delete({ where: { id: user.id } });
 
     // Should not find deleted user
-    const found = await prisma.user.findUnique({ where: { id: user.id } });
+    const found = await drizzle.user.findUnique({ where: { id: user.id } });
     expect(found).toBeNull();
 
     // Should find with includeDeleted
-    const deletedUser = await prisma.user.findMany({
+    const deletedUser = await drizzle.user.findMany({
       where: { id: user.id, deletedAt: { not: null } },
     });
     expect(deletedUser).not.toBeNull();
@@ -232,18 +242,18 @@ describe('Soft Delete Middleware', () => {
 
 @Controller('admin')
 export class AdminController {
-  constructor(private prisma: PrismaService) {}
+  constructor(private drizzle: DatabaseService) {}
 
   @Get('deleted/users')
   async getDeletedUsers() {
-    return this.prisma.user.findMany({
+    return this.drizzle.user.findMany({
       where: { deletedAt: { not: null } },
     });
   }
 
   @Post('restore/user/:id')
   async restoreUser(@Param('id') id: string) {
-    return this.prisma.user.update({
+    return this.drizzle.user.update({
       where: { id },
       data: { deletedAt: null },
     });
@@ -268,10 +278,11 @@ export class AdminController {
 2. **Migration script**:
 
 ```bash
-npx prisma migrate dev --name consolidate_chat_message --create-only
+npx drizzle migrate dev --name consolidate_chat_message --create-only
 ```
 
 **Migration SQL**:
+
 ```sql
 -- Add new fields to messages table
 ALTER TABLE "messages"
@@ -308,15 +319,15 @@ SELECT COUNT(*) as migrated_count FROM "messages" WHERE is_ephemeral = true;
 
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { PrismaService } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 
 @Injectable()
 export class CleanupEphemeralMessagesJob {
-  constructor(private prisma: PrismaService) {}
+  constructor(private drizzle: DatabaseService) {}
 
   @Cron(CronExpression.EVERY_HOUR)
   async cleanupExpiredMessages() {
-    const result = await this.prisma.message.deleteMany({
+    const result = await this.drizzle.message.deleteMany({
       where: {
         isEphemeral: true,
         expiresAt: {
@@ -359,10 +370,11 @@ export class AppModule {}
 2. **Migration**:
 
 ```bash
-npx prisma migrate dev --name create_workflow_step_edges --create-only
+npx drizzle migrate dev --name create_workflow_step_edges --create-only
 ```
 
 **Migration SQL**:
+
 ```sql
 -- Create workflow_step_edges table
 CREATE TABLE "workflow_step_edges" (
@@ -399,14 +411,14 @@ WHERE ws.next_steps IS NOT NULL AND array_length(ws.next_steps, 1) > 0;
 // packages/api/src/services/workflow-validation.service.ts
 
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 
 @Injectable()
 export class WorkflowValidationService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private drizzle: DatabaseService) {}
 
   async detectCycles(workflowId: string): Promise<boolean> {
-    const steps = await this.prisma.workflowStep.findMany({
+    const steps = await this.drizzle.workflowStep.findMany({
       where: { workflowId },
       include: { nextStepEdges: true },
     });
@@ -452,7 +464,7 @@ export class WorkflowValidationService {
     }
 
     // Check for orphaned steps
-    const steps = await this.prisma.workflowStep.findMany({
+    const steps = await this.drizzle.workflowStep.findMany({
       where: { workflowId },
       include: { nextStepEdges: true, previousStepEdges: true },
     });
@@ -485,13 +497,14 @@ export class WorkflowValidationService {
 **Steps**:
 
 ```bash
-npx prisma migrate dev --name create_organizations --create-only
+npx drizzle migrate dev --name create_organizations --create-only
 ```
 
 **Migration SQL** (tables already in enhanced schema):
+
 ```sql
 -- Organizations, OrganizationMember, OrganizationInvitation tables
--- See schema.enhanced.prisma for full definitions
+-- See schema.enhanced.drizzle for full definitions
 ```
 
 ### Step 3.2: Migrate Personal Agents to Organizations
@@ -499,15 +512,16 @@ npx prisma migrate dev --name create_organizations --create-only
 **Goal**: Create personal organizations for existing users
 
 **Migration script**:
+
 ```typescript
 async function migrateToOrganizations() {
-  const users = await prisma.user.findMany({
+  const users = await drizzle.user.findMany({
     include: { createdAgents: true },
   });
 
   for (const user of users) {
     // Create personal organization
-    const org = await prisma.organization.create({
+    const org = await drizzle.organization.create({
       data: {
         name: `${user.name || user.email}'s Workspace`,
         slug: `user-${user.id.slice(0, 8)}`,
@@ -522,7 +536,7 @@ async function migrateToOrganizations() {
     });
 
     // Migrate user's agents to organization
-    await prisma.agent.updateMany({
+    await drizzle.agent.updateMany({
       where: { creatorId: user.id },
       data: { organizationId: org.id },
     });
@@ -552,6 +566,7 @@ Already implemented in enhanced schema. Create service:
 **Goal**: Validate JSON fields at application layer
 
 Create validation decorators:
+
 ```typescript
 // packages/api/src/decorators/validate-json.decorator.ts
 // See SCHEMA_DESIGN_SOLUTIONS.md for implementation
@@ -596,7 +611,7 @@ Each phase includes rollback scripts:
 
 ```bash
 # Rollback last migration
-npx prisma migrate rollback --name <migration-name>
+npx drizzle migrate rollback --name <migration-name>
 
 # Restore from backup
 pg_restore -d $DATABASE_URL backup.dump
@@ -626,9 +641,12 @@ FROM pg_tables WHERE schemaname = 'public' ORDER BY pg_total_relation_size(schem
 
 ### Common Issues
 
-1. **Encryption key not set**: Ensure `ENCRYPTION_KEY` environment variable is set
-2. **Orphaned records**: Run cleanup scripts before applying foreign key constraints
-3. **Circular workflows**: Use validation service before allowing workflow activation
+1. **Encryption key not set**: Ensure `ENCRYPTION_KEY` environment variable is
+   set
+2. **Orphaned records**: Run cleanup scripts before applying foreign key
+   constraints
+3. **Circular workflows**: Use validation service before allowing workflow
+   activation
 
 ### Getting Help
 
@@ -640,13 +658,13 @@ FROM pg_tables WHERE schemaname = 'public' ORDER BY pg_total_relation_size(schem
 
 ## Conclusion
 
-This implementation preserves ALL of The New Fuse's unique features while adding:
+This implementation preserves ALL of The New Fuse's unique features while
+adding:
 
-✅ Enterprise-grade security (encrypted credentials)
-✅ Data integrity (proper relationships, soft deletes)
-✅ Multi-tenancy support (organizations)
-✅ Advanced features (VCs, validation)
-✅ Performance optimization (strategic indexes)
-✅ Backwards compatibility (gradual migration)
+✅ Enterprise-grade security (encrypted credentials) ✅ Data integrity (proper
+relationships, soft deletes) ✅ Multi-tenancy support (organizations) ✅
+Advanced features (VCs, validation) ✅ Performance optimization (strategic
+indexes) ✅ Backwards compatibility (gradual migration)
 
-Estimated total implementation time: **8 weeks** with proper testing and validation.
+Estimated total implementation time: **8 weeks** with proper testing and
+validation.

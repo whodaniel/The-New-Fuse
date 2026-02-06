@@ -2,12 +2,12 @@
  * Unit tests for AuditLogger
  */
 
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { AuditLogger, FileAuditStorage, AuditSeverity, AuditCategory } from './AuditLogger';
-import { MCPOperation } from './PermissionValidator';
+import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
+import { rmSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { rmSync } from 'fs';
+import { AuditCategory, AuditLogger, AuditSeverity, FileAuditStorage } from './AuditLogger';
+import { MCPOperation } from './PermissionValidator';
 
 describe('AuditLogger', () => {
   let auditLogger: AuditLogger;
@@ -16,20 +16,20 @@ describe('AuditLogger', () => {
   beforeEach(() => {
     testLogDir = join(tmpdir(), `audit-test-${Date.now()}`);
     const storage = new FileAuditStorage(testLogDir);
-    
+
     auditLogger = new AuditLogger({
       enabled: true,
       storageBackend: storage,
       enableAlerting: true,
       enableEnrichment: true,
       batchSize: 1, // Flush after every event for testing
-      flushInterval: 100 // Short interval for testing
+      flushInterval: 100, // Short interval for testing
     });
   });
 
   afterEach(async () => {
     await auditLogger.destroy();
-    
+
     // Clean up test directory
     try {
       rmSync(testLogDir, { recursive: true, force: true });
@@ -50,7 +50,7 @@ describe('AuditLogger', () => {
 
       const events = await auditLogger.queryEvents({
         userId: 'testuser',
-        category: AuditCategory.AUTHENTICATION
+        category: AuditCategory.AUTHENTICATION,
       });
 
       expect(events).toHaveLength(1);
@@ -73,7 +73,7 @@ describe('AuditLogger', () => {
 
       const events = await auditLogger.queryEvents({
         userId: 'testuser',
-        success: false
+        success: false,
       });
 
       expect(events).toHaveLength(1);
@@ -97,7 +97,7 @@ describe('AuditLogger', () => {
 
       const events = await auditLogger.queryEvents({
         userId: 'testuser',
-        category: AuditCategory.AUTHORIZATION
+        category: AuditCategory.AUTHORIZATION,
       });
 
       expect(events).toHaveLength(1);
@@ -119,7 +119,7 @@ describe('AuditLogger', () => {
       const events = await auditLogger.queryEvents({
         userId: 'testuser',
         success: false,
-        category: AuditCategory.AUTHORIZATION
+        category: AuditCategory.AUTHORIZATION,
       });
 
       expect(events).toHaveLength(1);
@@ -138,12 +138,12 @@ describe('AuditLogger', () => {
         true,
         150, // duration
         1024, // request size
-        2048  // response size
+        2048 // response size
       );
 
       const events = await auditLogger.queryEvents({
         userId: 'testuser',
-        category: AuditCategory.RESOURCE_ACCESS
+        category: AuditCategory.RESOURCE_ACCESS,
       });
 
       expect(events).toHaveLength(1);
@@ -154,17 +154,12 @@ describe('AuditLogger', () => {
     });
 
     it('should log failed resource access', async () => {
-      await auditLogger.logResourceAccess(
-        'testuser',
-        'file:nonexistent.txt',
-        'read',
-        false
-      );
+      await auditLogger.logResourceAccess('testuser', 'file:nonexistent.txt', 'read', false);
 
       const events = await auditLogger.queryEvents({
         userId: 'testuser',
         success: false,
-        category: AuditCategory.RESOURCE_ACCESS
+        category: AuditCategory.RESOURCE_ACCESS,
       });
 
       expect(events).toHaveLength(1);
@@ -185,7 +180,7 @@ describe('AuditLogger', () => {
 
       const events = await auditLogger.queryEvents({
         userId: 'testuser',
-        category: AuditCategory.TOOL_EXECUTION
+        category: AuditCategory.TOOL_EXECUTION,
       });
 
       expect(events).toHaveLength(1);
@@ -209,7 +204,7 @@ describe('AuditLogger', () => {
       const events = await auditLogger.queryEvents({
         userId: 'testuser',
         success: false,
-        category: AuditCategory.TOOL_EXECUTION
+        category: AuditCategory.TOOL_EXECUTION,
       });
 
       expect(events).toHaveLength(1);
@@ -231,13 +226,13 @@ describe('AuditLogger', () => {
         {
           attemptedOperation: 'user.create',
           userRole: 'basic',
-          requiredRole: 'admin'
+          requiredRole: 'admin',
         }
       );
 
       const events = await auditLogger.queryEvents({
         userId: 'malicioususer',
-        category: AuditCategory.SECURITY_VIOLATION
+        category: AuditCategory.SECURITY_VIOLATION,
       });
 
       expect(events).toHaveLength(1);
@@ -259,7 +254,7 @@ describe('AuditLogger', () => {
       );
 
       const events = await auditLogger.queryEvents({
-        severity: AuditSeverity.CRITICAL
+        severity: AuditSeverity.CRITICAL,
       });
 
       expect(events).toHaveLength(1);
@@ -270,21 +265,15 @@ describe('AuditLogger', () => {
 
   describe('System Administration Logging', () => {
     it('should log system administration events', async () => {
-      await auditLogger.logSystemAdmin(
-        'admin',
-        'user.create',
-        'user:newuser',
-        true,
-        {
-          username: 'newuser',
-          roles: ['basic'],
-          permissions: ['read']
-        }
-      );
+      await auditLogger.logSystemAdmin('admin', 'user.create', 'user:newuser', true, {
+        username: 'newuser',
+        roles: ['basic'],
+        permissions: ['read'],
+      });
 
       const events = await auditLogger.queryEvents({
         userId: 'admin',
-        category: AuditCategory.SYSTEM_ADMIN
+        category: AuditCategory.SYSTEM_ADMIN,
       });
 
       expect(events).toHaveLength(1);
@@ -307,7 +296,7 @@ describe('AuditLogger', () => {
       const events = await auditLogger.queryEvents({
         userId: 'admin',
         success: false,
-        category: AuditCategory.SYSTEM_ADMIN
+        category: AuditCategory.SYSTEM_ADMIN,
       });
 
       expect(events).toHaveLength(1);
@@ -320,10 +309,22 @@ describe('AuditLogger', () => {
     beforeEach(async () => {
       // Set up test data
       await auditLogger.logAuthentication('user1', true, 'basic');
-      await auditLogger.logAuthentication('user2', false, 'oauth', '192.168.1.100', 'Browser', 'Invalid token');
+      await auditLogger.logAuthentication(
+        'user2',
+        false,
+        'oauth',
+        '192.168.1.100',
+        'Browser',
+        'Invalid token'
+      );
       await auditLogger.logResourceAccess('user1', 'file:doc1.txt', 'read', true);
       await auditLogger.logToolExecution('user1', 'processor', true, 100);
-      await auditLogger.logSecurityViolation('user2', 'brute_force', 'Multiple failed attempts', AuditSeverity.HIGH);
+      await auditLogger.logSecurityViolation(
+        'user2',
+        'brute_force',
+        'Multiple failed attempts',
+        AuditSeverity.HIGH
+      );
     });
 
     it('should query events by user', async () => {
@@ -336,11 +337,11 @@ describe('AuditLogger', () => {
 
     it('should query events by category', async () => {
       const authEvents = await auditLogger.queryEvents({
-        category: AuditCategory.AUTHENTICATION
+        category: AuditCategory.AUTHENTICATION,
       });
 
       const securityEvents = await auditLogger.queryEvents({
-        category: AuditCategory.SECURITY_VIOLATION
+        category: AuditCategory.SECURITY_VIOLATION,
       });
 
       expect(authEvents).toHaveLength(2);
@@ -357,7 +358,7 @@ describe('AuditLogger', () => {
 
     it('should query events by severity', async () => {
       const highSeverityEvents = await auditLogger.queryEvents({
-        severity: AuditSeverity.HIGH
+        severity: AuditSeverity.HIGH,
       });
 
       expect(highSeverityEvents).toHaveLength(1);
@@ -370,14 +371,14 @@ describe('AuditLogger', () => {
 
       expect(firstPage).toHaveLength(2);
       expect(secondPage).toHaveLength(2);
-      
+
       // Events should be different
       expect(firstPage[0].id).not.toBe(secondPage[0].id);
     });
 
     it('should query events by risk score', async () => {
       const highRiskEvents = await auditLogger.queryEvents({
-        minRiskScore: 70
+        minRiskScore: 70,
       });
 
       expect(highRiskEvents).toHaveLength(1);
@@ -386,7 +387,7 @@ describe('AuditLogger', () => {
 
     it('should query events by tags', async () => {
       const securityTaggedEvents = await auditLogger.queryEvents({
-        tags: ['security']
+        tags: ['security'],
       });
 
       expect(securityTaggedEvents).toHaveLength(1);
@@ -401,7 +402,12 @@ describe('AuditLogger', () => {
       await auditLogger.logAuthentication('user2', false, 'oauth');
       await auditLogger.logResourceAccess('user1', 'file:doc.txt', 'read', true);
       await auditLogger.logToolExecution('user1', 'tool1', true, 100);
-      await auditLogger.logSecurityViolation('user2', 'violation', 'Test violation', AuditSeverity.HIGH);
+      await auditLogger.logSecurityViolation(
+        'user2',
+        'violation',
+        'Test violation',
+        AuditSeverity.HIGH
+      );
       await auditLogger.logSystemAdmin('admin', 'config.update', 'system', true);
     });
 
@@ -436,7 +442,7 @@ describe('AuditLogger', () => {
 
       const events = await auditLogger.queryEvents({
         userId: 'testuser',
-        category: AuditCategory.SECURITY_VIOLATION
+        category: AuditCategory.SECURITY_VIOLATION,
       });
 
       expect(events).toHaveLength(1);
@@ -454,7 +460,7 @@ describe('AuditLogger', () => {
       );
 
       const events = await auditLogger.queryEvents({
-        userId: 'testuser'
+        userId: 'testuser',
       });
 
       expect(events).toHaveLength(1);
@@ -560,7 +566,14 @@ describe('AuditLogger', () => {
         done();
       });
 
-      auditLogger.logAuthentication('testuser', false, 'basic', '192.168.1.100', 'Browser', 'Invalid password');
+      auditLogger.logAuthentication(
+        'testuser',
+        false,
+        'basic',
+        '192.168.1.100',
+        'Browser',
+        'Invalid password'
+      );
     });
   });
 
@@ -568,7 +581,7 @@ describe('AuditLogger', () => {
     it('should respect enabled/disabled configuration', async () => {
       const disabledLogger = new AuditLogger({
         enabled: false,
-        storageBackend: new FileAuditStorage(testLogDir)
+        storageBackend: new FileAuditStorage(testLogDir),
       });
 
       await disabledLogger.logAuthentication('testuser', true, 'basic');
@@ -581,7 +594,7 @@ describe('AuditLogger', () => {
 
     it('should clean up resources on destroy', async () => {
       await auditLogger.logAuthentication('testuser', true, 'basic');
-      
+
       // Destroy should flush remaining events
       await auditLogger.destroy();
 

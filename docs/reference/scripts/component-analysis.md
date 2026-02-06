@@ -2,7 +2,9 @@
 
 ## Overview
 
-The component analysis scripts help identify potentially unused or "lost" components in the codebase. These tools are essential for maintaining a clean codebase, reducing technical debt, and improving application performance.
+The component analysis scripts help identify potentially unused or "lost"
+components in the codebase. These tools are essential for maintaining a clean
+codebase, reducing technical debt, and improving application performance.
 
 ## Available Scripts
 
@@ -20,7 +22,8 @@ yarn analyze:components
 
 ### find-lost-components-esm.js
 
-The ES Modules version of the component analysis script, which is compatible with modern JavaScript environments.
+The ES Modules version of the component analysis script, which is compatible
+with modern JavaScript environments.
 
 ```bash
 # Run directly
@@ -47,11 +50,13 @@ yarn analyze:components:report
 The component analysis scripts generate the following output files:
 
 - `component-analysis-results.json`: Detailed JSON results of the analysis
-- `component-analysis-log.txt`: Human-readable log of the analysis process and results
+- `component-analysis-log.txt`: Human-readable log of the analysis process and
+  results
 
 ## Configuration
 
-The component analysis scripts can be configured by modifying the `config` object in the script files:
+The component analysis scripts can be configured by modifying the `config`
+object in the script files:
 
 ```javascript
 const config = {
@@ -63,16 +68,10 @@ const config = {
     'packages/layout',
     'packages/shared/components',
     'packages/ui-components',
-    'packages/ui'
+    'packages/ui',
   ],
   // Directories to exclude from search
-  excludeDirs: [
-    'node_modules',
-    'dist',
-    'build',
-    '.git',
-    'backups'
-  ],
+  excludeDirs: ['node_modules', 'dist', 'build', '.git', 'backups'],
   // File extensions to consider as UI components or pages
   componentExtensions: ['.tsx', '.jsx'],
   // Patterns that indicate a file is a component or page
@@ -82,12 +81,12 @@ const config = {
     /extends\s+Component/,
     /<[A-Z][A-Za-z0-9]*\s+/,
     /React\.createElement/,
-    /import\s+.*?\s+from\s+['"]react['"]/ // Files importing React are likely components
+    /import\s+.*?\s+from\s+['"]react['"]/, // Files importing React are likely components
   ],
   // Output file for results
   outputFile: 'component-analysis-results.json',
   // Log file for detailed results
-  logFile: 'component-analysis-log.txt'
+  logFile: 'component-analysis-log.txt',
 };
 ```
 
@@ -121,19 +120,26 @@ node scripts/compare-component-analysis.js component-analysis-results-2025-03-28
 
 ## Integration with VS Code
 
-The component analysis functionality is also available as VS Code commands and MCP tools. See the following documentation for more details:
+The component analysis functionality is also available as VS Code commands and
+MCP tools. See the following documentation for more details:
 
 - [Component Analysis Commands](../COMMAND-REFERENCE.md#component-analysis-commands)
 - [Component Analysis MCP Tools](../../guides/MCP-INTEGRATION-GUIDE.md#component-analysis-tools)
 
 ## Best Practices
 
-1. **Regular Analysis**: Run component analysis regularly (weekly or bi-weekly) to track progress on reducing unused components.
+1. **Regular Analysis**: Run component analysis regularly (weekly or bi-weekly)
+   to track progress on reducing unused components.
 
-2. **Version Control**: Keep historical analysis results to track progress over time.
+2. **Version Control**: Keep historical analysis results to track progress over
+   time.
 
-3. **Review Before Removal**: Always review potentially unused components before removal to ensure they're not dynamically loaded or used in ways the static analysis can't detect.
+3. **Review Before Removal**: Always review potentially unused components before
+   removal to ensure they're not dynamically loaded or used in ways the static
+   analysis can't detect.
 
-4. **Component Consolidation**: Use the analysis results to identify opportunities for component consolidation.
+4. **Component Consolidation**: Use the analysis results to identify
+   opportunities for component consolidation.
 
-5. **Documentation**: Document decisions about component retention or removal based on analysis results.
+5. **Documentation**: Document decisions about component retention or removal
+   based on analysis results.

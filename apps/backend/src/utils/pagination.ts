@@ -4,6 +4,6 @@ export const paginate = (totalItems: number, currentPage: number, perPage: numbe
     currentPage,
     perPage,
     totalPages,
-    hasMore: currentPage < totalPages
+    hasMore: currentPage < totalPages,
   };
 };

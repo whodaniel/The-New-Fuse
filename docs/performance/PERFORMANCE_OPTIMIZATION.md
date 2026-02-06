@@ -15,7 +15,9 @@ Complete guide for optimizing performance across the entire stack.
 
 ## Overview
 
-Performance optimization is a continuous process that requires monitoring, measurement, and iteration. This guide provides comprehensive workflows for identifying and resolving performance issues.
+Performance optimization is a continuous process that requires monitoring,
+measurement, and iteration. This guide provides comprehensive workflows for
+identifying and resolving performance issues.
 
 ### Performance Goals
 
@@ -241,7 +243,7 @@ class UserLoader {
       where: { id: { in: ids } },
     });
 
-    return ids.map(id => users.find(u => u.id === id));
+    return ids.map((id) => users.find((u) => u.id === id));
   });
 
   async load(id: string) {
@@ -256,15 +258,17 @@ class UserLoader {
 import compression from 'compression';
 
 // Enable gzip/brotli compression
-app.use(compression({
-  filter: (req, res) => {
-    if (req.headers['x-no-compression']) {
-      return false;
-    }
-    return compression.filter(req, res);
-  },
-  level: 6, // Compression level (0-9)
-}));
+app.use(
+  compression({
+    filter: (req, res) => {
+      if (req.headers['x-no-compression']) {
+        return false;
+      }
+      return compression.filter(req, res);
+    },
+    level: 6, // Compression level (0-9)
+  })
+);
 ```
 
 ### 2. APM Integration
@@ -396,8 +400,8 @@ console.log('Top 10 slow queries:', slowQueries);
 ### 3. Connection Pool Management
 
 ```typescript
-// Prisma connection pool configuration
-const prisma = new PrismaClient({
+// Drizzle connection pool configuration
+const drizzle = new DrizzleClient({
   datasources: {
     db: {
       url: process.env.DATABASE_URL,
@@ -461,7 +465,8 @@ console.log('Critical alerts:', summary.criticalAlerts);
 
 ### 2. Alerts Configuration
 
-Performance alerts are automatically generated based on thresholds defined in `performance-budgets.json`.
+Performance alerts are automatically generated based on thresholds defined in
+`performance-budgets.json`.
 
 ## Performance Budgets
 

@@ -3,10 +3,6 @@
  * Real-time performance monitoring dashboard data provider
  */
 
-import type { WebVitalsMetric } from '../performance/web-vitals';
-import type { QueryMetric, ConnectionPoolMetric } from '../performance/db-monitoring';
-import type { Transaction } from '../performance/apm';
-
 export interface DashboardMetrics {
   timestamp: number;
   frontend: FrontendMetrics;
@@ -158,7 +154,7 @@ export class PerformanceDashboard {
     const now = Date.now();
     const cutoff = now - duration;
 
-    return this.metricsHistory.filter(m => m.timestamp > cutoff);
+    return this.metricsHistory.filter((m) => m.timestamp > cutoff);
   }
 
   /**
@@ -171,7 +167,7 @@ export class PerformanceDashboard {
   ): Array<{ timestamp: number; value: number }> {
     const history = this.getMetricsHistory(duration);
 
-    return history.map(m => ({
+    return history.map((m) => ({
       timestamp: m.timestamp,
       value: this.getNestedValue(m[category], metric),
     }));
@@ -184,7 +180,7 @@ export class PerformanceDashboard {
     let alerts = this.alerts;
 
     if (severity) {
-      alerts = alerts.filter(a => a.severity === severity);
+      alerts = alerts.filter((a) => a.severity === severity);
     }
 
     return alerts.sort((a, b) => b.timestamp - a.timestamp);
@@ -213,8 +209,8 @@ export class PerformanceDashboard {
       };
     }
 
-    const criticalAlerts = this.alerts.filter(a => a.severity === 'critical').length;
-    const warningAlerts = this.alerts.filter(a => a.severity === 'warning').length;
+    const criticalAlerts = this.alerts.filter((a) => a.severity === 'critical').length;
+    const warningAlerts = this.alerts.filter((a) => a.severity === 'warning').length;
 
     // Determine component health
     const frontend = this.evaluateFrontendHealth(current.frontend);
@@ -252,7 +248,7 @@ export class PerformanceDashboard {
 
     // Remove old alerts (older than 1 hour)
     const cutoff = Date.now() - 3600000;
-    this.alerts = this.alerts.filter(a => a.timestamp > cutoff);
+    this.alerts = this.alerts.filter((a) => a.timestamp > cutoff);
   }
 
   /**
@@ -342,9 +338,8 @@ export class PerformanceDashboard {
     }
 
     // Many slow queries
-    const slowQueryRate = database.queries.total > 0
-      ? database.queries.slow / database.queries.total
-      : 0;
+    const slowQueryRate =
+      database.queries.total > 0 ? database.queries.slow / database.queries.total : 0;
 
     if (slowQueryRate > 0.1) {
       this.addAlert({
@@ -399,7 +394,7 @@ export class PerformanceDashboard {
   private addAlert(alert: Omit<PerformanceAlert, 'id'>): void {
     // Check if similar alert already exists
     const exists = this.alerts.some(
-      a =>
+      (a) =>
         a.metric === alert.metric &&
         a.category === alert.category &&
         a.timestamp > Date.now() - 300000 // Within 5 minutes
@@ -418,8 +413,8 @@ export class PerformanceDashboard {
    */
   private evaluateFrontendHealth(frontend: FrontendMetrics): 'good' | 'degraded' | 'poor' {
     const vitals = Object.values(frontend.webVitals);
-    const poorCount = vitals.filter(v => v.rating === 'poor').length;
-    const needsImprovementCount = vitals.filter(v => v.rating === 'needs-improvement').length;
+    const poorCount = vitals.filter((v) => v.rating === 'poor').length;
+    const needsImprovementCount = vitals.filter((v) => v.rating === 'needs-improvement').length;
 
     if (poorCount > 2) return 'poor';
     if (poorCount > 0 || needsImprovementCount > 3) return 'degraded';
@@ -440,9 +435,8 @@ export class PerformanceDashboard {
    */
   private evaluateDatabaseHealth(database: DatabaseMetrics): 'good' | 'degraded' | 'poor' {
     const poolUtil = database.connectionPool.utilization;
-    const slowQueryRate = database.queries.total > 0
-      ? database.queries.slow / database.queries.total
-      : 0;
+    const slowQueryRate =
+      database.queries.total > 0 ? database.queries.slow / database.queries.total : 0;
 
     if (poolUtil > 90 || slowQueryRate > 0.2) return 'poor';
     if (poolUtil > 75 || slowQueryRate > 0.1) return 'degraded';

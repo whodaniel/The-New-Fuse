@@ -1,21 +1,18 @@
 /**
  * CrewAI Protocol Adapter
- * 
+ *
  * Handles CrewAI's multi-agent framework format
  * Converts between CrewAI crew/agent messages and The New Fuse's A2A protocol
  */
 
-import { ProtocolAdapter } from './ProtocolAdapter.js';
-import { RelayMessage, ProtocolType } from '../types/index.js';
+import { ProtocolType, RelayMessage } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
+import { ProtocolAdapter } from './ProtocolAdapter.js';
 
 export class CrewAIAdapter implements ProtocolAdapter {
   public readonly name = 'crewai';
   public readonly version = '1.0.0';
-  public readonly supportedProtocols: ProtocolType[] = [
-    'crewai-v1.0',
-    'a2a-v2.0'
-  ];
+  public readonly supportedProtocols: ProtocolType[] = ['crewai-v1.0', 'a2a-v2.0'];
 
   private logger: Logger;
 
@@ -27,8 +24,11 @@ export class CrewAIAdapter implements ProtocolAdapter {
     return this.supportedProtocols.includes(from) && this.supportedProtocols.includes(to);
   }
 
-  async translate(message: RelayMessage, sourceProtocol: ProtocolType, targetProtocol: ProtocolType): Promise<RelayMessage> {
-
+  async translate(
+    message: RelayMessage,
+    sourceProtocol: ProtocolType,
+    targetProtocol: ProtocolType
+  ): Promise<RelayMessage> {
     if (sourceProtocol === 'crewai-v1.0' && targetProtocol === 'a2a-v2.0') {
       return this.crewaiToA2A(message);
     } else if (sourceProtocol === 'a2a-v2.0' && targetProtocol === 'crewai-v1.0') {
@@ -52,24 +52,24 @@ export class CrewAIAdapter implements ProtocolAdapter {
             description: payload.task?.description || payload.description,
             expectedOutput: payload.task?.expected_output,
             agentRole: payload.agent?.role || payload.agent_role,
-            tools: payload.task?.tools || payload.tools || []
+            tools: payload.task?.tools || payload.tools || [],
           },
           agent: {
             role: payload.agent?.role,
             goal: payload.agent?.goal,
             backstory: payload.agent?.backstory,
-            capabilities: payload.agent?.tools || []
+            capabilities: payload.agent?.tools || [],
           },
           result: payload.result || payload.output,
           status: payload.status || 'completed',
-          executionTime: payload.execution_time
+          executionTime: payload.execution_time,
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'crewai-v1.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -84,22 +84,22 @@ export class CrewAIAdapter implements ProtocolAdapter {
             name: payload.crew_name,
             agents: payload.agents || [],
             tasks: payload.tasks || [],
-            process: payload.process || 'sequential'
+            process: payload.process || 'sequential',
           },
           coordination: {
             type: payload.coordination_type || 'task_assignment',
             agentAssignments: payload.agent_assignments || {},
             taskDependencies: payload.task_dependencies || [],
-            status: payload.status || 'active'
+            status: payload.status || 'active',
           },
-          progress: payload.progress || {}
+          progress: payload.progress || {},
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'crewai-v1.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -114,18 +114,18 @@ export class CrewAIAdapter implements ProtocolAdapter {
             requestingAgent: payload.requesting_agent,
             targetAgent: payload.target_agent,
             request: payload.request || payload.delegation_request,
-            context: payload.context || {}
+            context: payload.context || {},
           },
           result: payload.result,
           feedback: payload.feedback || payload.review,
-          status: payload.status || 'pending'
+          status: payload.status || 'pending',
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'crewai-v1.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -138,20 +138,20 @@ export class CrewAIAdapter implements ProtocolAdapter {
           tool: {
             name: payload.tool_name || payload.tool?.name,
             description: payload.tool?.description,
-            parameters: payload.tool_parameters || payload.parameters
+            parameters: payload.tool_parameters || payload.parameters,
           },
           agent: payload.agent_role || payload.agent?.role,
           input: payload.input,
           output: payload.output,
           success: !payload.error,
-          error: payload.error
+          error: payload.error,
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'crewai-v1.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -165,18 +165,18 @@ export class CrewAIAdapter implements ProtocolAdapter {
             type: payload.memory_type || 'shared',
             content: payload.memory_content || payload.content,
             scope: payload.scope || 'crew', // crew, agent, task
-            permissions: payload.permissions || ['read', 'write']
+            permissions: payload.permissions || ['read', 'write'],
           },
           sharingAgent: payload.sharing_agent,
           accessingAgents: payload.accessing_agents || [],
-          timestamp: payload.timestamp || new Date().toISOString()
+          timestamp: payload.timestamp || new Date().toISOString(),
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'crewai-v1.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -187,14 +187,14 @@ export class CrewAIAdapter implements ProtocolAdapter {
         content: this.extractCrewAIContent(payload),
         agent: payload.agent || payload.agent_role,
         crew: payload.crew || payload.crew_id,
-        metadata: this.extractCrewAIMetadata(payload)
+        metadata: this.extractCrewAIMetadata(payload),
       },
       metadata: {
         ...message.metadata,
         protocol: 'a2a-v2.0',
         originalProtocol: 'crewai-v1.0',
-        translatedAt: new Date().toISOString()
-      }
+        translatedAt: new Date().toISOString(),
+      },
     };
   }
 
@@ -210,8 +210,8 @@ export class CrewAIAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'crewai-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -224,8 +224,8 @@ export class CrewAIAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'crewai-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -238,8 +238,8 @@ export class CrewAIAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'crewai-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -252,8 +252,8 @@ export class CrewAIAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'crewai-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -266,8 +266,8 @@ export class CrewAIAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'crewai-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -279,8 +279,8 @@ export class CrewAIAdapter implements ProtocolAdapter {
         ...message.metadata,
         protocol: 'crewai-v1.0',
         originalProtocol: 'a2a-v2.0',
-        translatedAt: new Date().toISOString()
-      }
+        translatedAt: new Date().toISOString(),
+      },
     };
   }
 
@@ -294,7 +294,7 @@ export class CrewAIAdapter implements ProtocolAdapter {
   }
 
   private isCrewAIAgentCollaboration(payload: any): boolean {
-    return !!(payload.requesting_agent && payload.target_agent) || !!(payload.delegation_request);
+    return !!(payload.requesting_agent && payload.target_agent) || !!payload.delegation_request;
   }
 
   private isCrewAIToolUsage(payload: any): boolean {
@@ -307,7 +307,13 @@ export class CrewAIAdapter implements ProtocolAdapter {
 
   // CrewAI parsing helpers
   private extractCrewAIContent(payload: any): string {
-    return payload.content || payload.output || payload.result || payload.message || JSON.stringify(payload);
+    return (
+      payload.content ||
+      payload.output ||
+      payload.result ||
+      payload.message ||
+      JSON.stringify(payload)
+    );
   }
 
   private extractCrewAIMetadata(payload: any): any {
@@ -318,7 +324,7 @@ export class CrewAIAdapter implements ProtocolAdapter {
       process: payload.process,
       executionTime: payload.execution_time,
       tools: payload.tools?.map((tool: any) => tool.name || tool),
-      status: payload.status
+      status: payload.status,
     };
   }
 
@@ -330,17 +336,17 @@ export class CrewAIAdapter implements ProtocolAdapter {
         id: payload.task?.id,
         description: payload.task?.description,
         expected_output: payload.task?.expectedOutput,
-        tools: payload.task?.tools || []
+        tools: payload.task?.tools || [],
       },
       agent: {
         role: payload.agent?.role || payload.task?.agentRole,
         goal: payload.agent?.goal,
         backstory: payload.agent?.backstory,
-        tools: payload.agent?.capabilities || []
+        tools: payload.agent?.capabilities || [],
       },
       result: payload.result,
       status: payload.status || 'completed',
-      execution_time: payload.executionTime
+      execution_time: payload.executionTime,
     };
   }
 
@@ -355,7 +361,7 @@ export class CrewAIAdapter implements ProtocolAdapter {
       agent_assignments: payload.coordination?.agentAssignments || {},
       task_dependencies: payload.coordination?.taskDependencies || [],
       status: payload.coordination?.status || 'active',
-      progress: payload.progress || {}
+      progress: payload.progress || {},
     };
   }
 
@@ -368,7 +374,7 @@ export class CrewAIAdapter implements ProtocolAdapter {
       context: payload.collaboration?.context || {},
       result: payload.result,
       feedback: payload.feedback,
-      status: payload.status || 'pending'
+      status: payload.status || 'pending',
     };
   }
 
@@ -377,13 +383,13 @@ export class CrewAIAdapter implements ProtocolAdapter {
       tool_name: payload.tool?.name,
       tool: {
         name: payload.tool?.name,
-        description: payload.tool?.description
+        description: payload.tool?.description,
       },
       tool_parameters: payload.tool?.parameters,
       agent_role: payload.agent,
       input: payload.input,
       output: payload.output,
-      error: payload.success === false ? payload.error : undefined
+      error: payload.success === false ? payload.error : undefined,
     };
   }
 
@@ -395,7 +401,7 @@ export class CrewAIAdapter implements ProtocolAdapter {
       permissions: payload.memory?.permissions || ['read', 'write'],
       sharing_agent: payload.sharingAgent,
       accessing_agents: payload.accessingAgents || [],
-      timestamp: payload.timestamp || new Date().toISOString()
+      timestamp: payload.timestamp || new Date().toISOString(),
     };
   }
 
@@ -404,7 +410,7 @@ export class CrewAIAdapter implements ProtocolAdapter {
       content: payload.content || payload.message,
       agent_role: payload.agent,
       crew_id: payload.crew,
-      metadata: payload.metadata || {}
+      metadata: payload.metadata || {},
     };
   }
 }

@@ -1,6 +1,7 @@
 # Automated Deployment Guide
 
-Complete guide for The New Fuse automated deployment system with zero-downtime capabilities.
+Complete guide for The New Fuse automated deployment system with zero-downtime
+capabilities.
 
 ## Table of Contents
 
@@ -17,14 +18,19 @@ Complete guide for The New Fuse automated deployment system with zero-downtime c
 
 ## Overview
 
-The automated deployment system provides multiple deployment strategies with built-in health checks, smoke tests, and automatic rollback capabilities.
+The automated deployment system provides multiple deployment strategies with
+built-in health checks, smoke tests, and automatic rollback capabilities.
 
 ### Key Features
 
-- **Multiple Deployment Strategies**: Rolling updates, blue-green, and canary deployments
-- **Zero-Downtime Deployments**: Seamless transitions with no service interruption
-- **Automated Health Checks**: Comprehensive service and infrastructure validation
-- **Database Migration Management**: Safe migrations with automatic backup and rollback
+- **Multiple Deployment Strategies**: Rolling updates, blue-green, and canary
+  deployments
+- **Zero-Downtime Deployments**: Seamless transitions with no service
+  interruption
+- **Automated Health Checks**: Comprehensive service and infrastructure
+  validation
+- **Database Migration Management**: Safe migrations with automatic backup and
+  rollback
 - **Notification System**: Real-time updates via Slack, Discord, and Email
 - **Rollback Automation**: Instant rollback on failure detection
 - **Deployment Monitoring**: Detailed logging and state tracking
@@ -40,16 +46,19 @@ Deploy services one at a time, minimizing risk while maintaining availability.
 ```
 
 **Best for:**
+
 - Quick updates
 - Low-risk changes
 - Resource-constrained environments
 
 **Pros:**
+
 - Minimal resource usage
 - Gradual rollout
 - Easy to understand
 
 **Cons:**
+
 - Slower than parallel deployments
 - Mixed versions during deployment
 
@@ -62,17 +71,20 @@ Deploy to an inactive environment, then switch traffic instantly.
 ```
 
 **Best for:**
+
 - Critical updates
 - Need for instant rollback
 - Full environment testing
 
 **Pros:**
+
 - Zero downtime
 - Instant rollback capability
 - Full environment testing before switch
 - Clean version separation
 
 **Cons:**
+
 - Requires double resources
 - Database migration complexity
 - Manual traffic switching (in some setups)
@@ -86,17 +98,20 @@ Gradually increase traffic to new version while monitoring metrics.
 ```
 
 **Best for:**
+
 - High-risk changes
 - Production testing with real traffic
 - Gradual confidence building
 
 **Pros:**
+
 - Real production traffic testing
 - Automatic rollback on issues
 - Minimal blast radius
 - Performance validation
 
 **Cons:**
+
 - Longest deployment time
 - Complex traffic management
 - Requires monitoring infrastructure
@@ -519,6 +534,7 @@ cat .deployment-state/deploy-*-state.json | jq .
 ### Automatic Rollback
 
 Rollback happens automatically on:
+
 - Failed health checks
 - Failed smoke tests
 - High error rates (canary)
@@ -557,7 +573,7 @@ ls -lh backups/database/
 psql $DATABASE_URL < backups/database/backup-<deployment-id>.sql
 
 # 3. Verify
-pnpm prisma migrate status
+pnpm drizzle migrate status
 ```
 
 ## Best Practices
@@ -565,11 +581,13 @@ pnpm prisma migrate status
 ### Pre-Deployment
 
 1. **Always run validation first**
+
    ```bash
    ./scripts/deployment/validate-deployment.sh
    ```
 
 2. **Create manual backup for critical deployments**
+
    ```bash
    ./scripts/deployment/db-backup.sh
    ```
@@ -582,11 +600,13 @@ pnpm prisma migrate status
 ### During Deployment
 
 1. **Monitor deployment logs**
+
    ```bash
    tail -f logs/deployment/deploy-*.log
    ```
 
 2. **Watch deployment dashboard**
+
    ```bash
    ./scripts/deployment/deployment-dashboard.sh --watch
    ```
@@ -596,11 +616,13 @@ pnpm prisma migrate status
 ### Post-Deployment
 
 1. **Verify all services**
+
    ```bash
    ./scripts/deployment/health-check.sh --deep
    ```
 
 2. **Monitor application logs**
+
    ```bash
    railway logs --service api-gateway
    ```
@@ -648,7 +670,7 @@ railway variables
 
 ```bash
 # Check migration status
-pnpm prisma migrate status
+pnpm drizzle migrate status
 
 # Review migration logs
 cat logs/deployment/migration-*.log
@@ -693,17 +715,17 @@ export DEBUG=true
 
 ## Summary
 
-The automated deployment system provides enterprise-grade deployment capabilities with:
+The automated deployment system provides enterprise-grade deployment
+capabilities with:
 
-✅ **Multiple deployment strategies** for different use cases
-✅ **Zero-downtime deployments** with automatic rollback
-✅ **Comprehensive health checks** and validation
-✅ **Database migration management** with backup
-✅ **Real-time notifications** via multiple channels
-✅ **Detailed logging and monitoring**
-✅ **Production-ready** deployment automation
+✅ **Multiple deployment strategies** for different use cases ✅ **Zero-downtime
+deployments** with automatic rollback ✅ **Comprehensive health checks** and
+validation ✅ **Database migration management** with backup ✅ **Real-time
+notifications** via multiple channels ✅ **Detailed logging and monitoring** ✅
+**Production-ready** deployment automation
 
 For additional help, refer to:
+
 - [Emergency Procedures](EMERGENCY_PROCEDURES.md)
 - [Rollback Procedures](ROLLBACK_PROCEDURES.md)
 - [Troubleshooting Guide](TROUBLESHOOTING.md)

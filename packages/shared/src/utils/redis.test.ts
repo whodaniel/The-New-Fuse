@@ -11,7 +11,7 @@ jest.mock('./redis.js', () => ({
       return Promise.resolve('Hello Redis Cloud!');
     }),
     delete: jest.fn().mockResolvedValue(1),
-  }
+  },
 }));
 
 describe('Redis Client', () => {
@@ -38,7 +38,7 @@ describe('Redis Client', () => {
 
   it('should delete keys correctly', async () => {
     const testKey = 'test_key_to_delete';
-    
+
     await redisClient.delete(testKey);
     expect(redisClient.delete).toHaveBeenCalledWith(testKey);
   });

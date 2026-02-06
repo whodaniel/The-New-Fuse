@@ -129,11 +129,7 @@ export type SyncResourceType =
   | 'agent_capability'
   | 'template_integration';
 
-export type ConflictResolutionStrategy = 
-  | 'latest_wins' 
-  | 'manual' 
-  | 'merge' 
-  | 'rollback';
+export type ConflictResolutionStrategy = 'latest_wins' | 'manual' | 'merge' | 'rollback';
 
 export interface ConflictResolution {
   strategy: ConflictResolutionStrategy;

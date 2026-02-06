@@ -1,11 +1,11 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const GeneralSettings = () => {
-    return (<div className="container mx-auto py-6">
+  return (
+    <div className="container mx-auto py-6">
       <Card>
         <CardHeader>
           <CardTitle>General Settings</CardTitle>
@@ -22,24 +22,18 @@ const GeneralSettings = () => {
             <TabsContent value="general" className="space-y-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <div className="text-sm font-medium">
-                    Workspace Name
-                  </div>
-                  <Input placeholder="My Workspace"/>
+                  <div className="text-sm font-medium">Workspace Name</div>
+                  <Input placeholder="My Workspace" />
                 </div>
-                
+
                 <div className="space-y-2">
-                  <div className="text-sm font-medium">
-                    Default Language
-                  </div>
-                  <Input placeholder="English"/>
+                  <div className="text-sm font-medium">Default Language</div>
+                  <Input placeholder="English" />
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <Switch id="auto-save"/>
-                  <div className="text-sm font-medium">
-                    Enable Auto-save
-                  </div>
+                  <Switch id="auto-save" />
+                  <div className="text-sm font-medium">Enable Auto-save</div>
                 </div>
               </div>
             </TabsContent>
@@ -47,9 +41,7 @@ const GeneralSettings = () => {
             <TabsContent value="appearance" className="space-y-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <div className="text-sm font-medium">
-                    Theme
-                  </div>
+                  <div className="text-sm font-medium">Theme</div>
                   <div className="flex space-x-4">
                     <Button variant="outline">Light</Button>
                     <Button variant="outline">Dark</Button>
@@ -58,9 +50,7 @@ const GeneralSettings = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <div className="text-sm font-medium">
-                    Font Size
-                  </div>
+                  <div className="text-sm font-medium">Font Size</div>
                   <div className="flex space-x-4">
                     <Button variant="outline">Small</Button>
                     <Button variant="outline">Medium</Button>
@@ -73,24 +63,18 @@ const GeneralSettings = () => {
             <TabsContent value="embedding" className="space-y-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <div className="text-sm font-medium">
-                    Embedding Model
-                  </div>
-                  <Input placeholder="text-embedding-ada-002"/>
+                  <div className="text-sm font-medium">Embedding Model</div>
+                  <Input placeholder="text-embedding-ada-002" />
                 </div>
 
                 <div className="space-y-2">
-                  <div className="text-sm font-medium">
-                    Embedding Dimensions
-                  </div>
-                  <Input type="number" placeholder="1536"/>
+                  <div className="text-sm font-medium">Embedding Dimensions</div>
+                  <Input type="number" placeholder="1536" />
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <Switch id="cache-embeddings"/>
-                  <div className="text-sm font-medium">
-                    Cache Embeddings
-                  </div>
+                  <Switch id="cache-embeddings" />
+                  <div className="text-sm font-medium">Cache Embeddings</div>
                 </div>
               </div>
             </TabsContent>
@@ -98,24 +82,18 @@ const GeneralSettings = () => {
             <TabsContent value="notifications" className="space-y-4">
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
-                  <Switch id="email-notifications"/>
-                  <div className="text-sm font-medium">
-                    Email Notifications
-                  </div>
+                  <Switch id="email-notifications" />
+                  <div className="text-sm font-medium">Email Notifications</div>
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <Switch id="desktop-notifications"/>
-                  <div className="text-sm font-medium">
-                    Desktop Notifications
-                  </div>
+                  <Switch id="desktop-notifications" />
+                  <div className="text-sm font-medium">Desktop Notifications</div>
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <Switch id="sound-notifications"/>
-                  <div className="text-sm font-medium">
-                    Sound Notifications
-                  </div>
+                  <Switch id="sound-notifications" />
+                  <div className="text-sm font-medium">Sound Notifications</div>
                 </div>
               </div>
             </TabsContent>
@@ -127,6 +105,7 @@ const GeneralSettings = () => {
           </div>
         </CardContent>
       </Card>
-    </div>);
+    </div>
+  );
 };
 export default GeneralSettings;

@@ -12,12 +12,12 @@ export class AgentController {
       // This is a placeholder implementation
       res.json({
         success: true,
-        agents: []
+        agents: [],
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -30,12 +30,12 @@ export class AgentController {
       // This is a placeholder implementation
       res.status(201).json({
         success: true,
-        agent: { id: 'new-agent-id', ...req.body }
+        agent: { id: 'new-agent-id', ...req.body },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -49,12 +49,12 @@ export class AgentController {
       // This is a placeholder implementation
       res.json({
         success: true,
-        agent: { id, name: 'Agent ' + id, type: 'default' }
+        agent: { id, name: 'Agent ' + id, type: 'default' },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -68,12 +68,12 @@ export class AgentController {
       // This is a placeholder implementation
       res.json({
         success: true,
-        agent: { id, ...req.body }
+        agent: { id, ...req.body },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -87,12 +87,12 @@ export class AgentController {
       // This is a placeholder implementation
       res.json({
         success: true,
-        message: `Agent ${id} deleted successfully`
+        message: `Agent ${id} deleted successfully`,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -106,12 +106,12 @@ export class AgentController {
       // This is a placeholder implementation
       res.json({
         success: true,
-        message: `Agent ${id} started successfully`
+        message: `Agent ${id} started successfully`,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -125,12 +125,12 @@ export class AgentController {
       // This is a placeholder implementation
       res.json({
         success: true,
-        message: `Agent ${id} stopped successfully`
+        message: `Agent ${id} stopped successfully`,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }
@@ -145,12 +145,12 @@ export class AgentController {
       res.json({
         success: true,
         status: 'running',
-        agentId: id
+        agentId: id,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: (error as Error).message
+        message: (error as Error).message,
       });
     }
   }

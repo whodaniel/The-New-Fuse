@@ -1,28 +1,36 @@
 # Agent Registry System
 
-A comprehensive agent registration, onboarding, and orientation system for The New Fuse platform.
+A comprehensive agent registration, onboarding, and orientation system for The
+New Fuse platform.
 
 ## Features
 
 ### 1. Agent Registration
+
 - **Auto-discovery**: Agents automatically register when they come online
-- **Capability Declaration**: Agents declare their capabilities during registration
-- **Metadata Collection**: Capture agent name, version, author, and custom metadata
+- **Capability Declaration**: Agents declare their capabilities during
+  registration
+- **Metadata Collection**: Capture agent name, version, author, and custom
+  metadata
+- **Invitation Gate**: Agents must present a valid invitation code to register
 - **Authentication**: Generate secure authentication tokens for each agent
 
 ### 2. Onboarding Process
+
 - **Welcome Messages**: Personalized welcome messages with system overview
 - **Capability Verification**: Automated testing of declared capabilities
 - **Integration Testing**: Verify integration with existing agents and services
 - **Task Assignment**: Assign initial tasks to verify agent functionality
 
 ### 3. Orientation System
+
 - **Framework Tour**: Interactive tour of The New Fuse platform
 - **Documentation**: Access to comprehensive API and tool documentation
 - **Best Practices**: Learn development and security best practices
 - **Step-by-step Guidance**: Progressive orientation with tracked progress
 
 ### 4. Agent Directory
+
 - **Searchable Registry**: Find agents by name, capability, category, or tags
 - **Capability Discovery**: Browse agents by their declared capabilities
 - **Real-time Status**: Track online/offline status of all agents
@@ -33,6 +41,7 @@ A comprehensive agent registration, onboarding, and orientation system for The N
 ### Registration
 
 #### Register New Agent
+
 ```http
 POST /api/agent-registry/register
 Content-Type: application/json
@@ -42,6 +51,28 @@ Content-Type: application/json
   "version": "1.0.0",
   "author": "Your Name",
   "description": "An AI-powered code assistant",
+  "invitationCode": "tnf_invite_xxxxx",
+  "tenantId": "tenant-123",
+  "organizationId": "org-123",
+  "agencyId": "workspace-123",
+  "identity": {
+    "longTermId": "agent-123",
+    "ephemeralId": "inst-456",
+    "protocolVersion": "tnf-1"
+  },
+  "trust": {
+    "tier": "unverified"
+  },
+  "protocols": {
+    "openclaw": true,
+    "skills": {
+      "progressiveDisclosure": true,
+      "dynamicMcpLoading": true
+    },
+    "mcp": {
+      "allowDynamicLoading": true
+    }
+  },
   "capabilities": [
     {
       "name": "code_generation",
@@ -57,7 +88,11 @@ Content-Type: application/json
 }
 ```
 
+Tenant scope requirement:
+- When `AGENT_INVITE_REQUIRED=true` or `A2A_REQUIRE_TENANT_SCOPE=true`, at least one of `tenantId`, `organizationId`, or `agencyId` is required.
+
 Response:
+
 ```json
 {
   "registrationId": "reg-uuid",
@@ -77,12 +112,14 @@ Response:
 ```
 
 #### Send Heartbeat
+
 ```http
 POST /api/agent-registry/heartbeat
 X-Agent-Token: tnf_agent_xxxxx
 ```
 
 Response:
+
 ```json
 {
   "status": "ok",
@@ -90,21 +127,34 @@ Response:
 }
 ```
 
+## Rate Limits
+
+- Register agent: 15/min per invitation code
+- Start onboarding: 30/min per registration
+- Test capabilities: 20/min per registration
+- Complete step: 60/min per registration/step
+- Create invitation: 10/min per admin
+- Reporting: 30/min per tenant filter
+- Integrity check: 10/min
+
 ### Onboarding
 
 #### Start Onboarding
+
 ```http
 POST /api/agent-registry/onboarding/{registrationId}/start
 X-Agent-Token: tnf_agent_xxxxx
 ```
 
 #### Test Capabilities
+
 ```http
 POST /api/agent-registry/onboarding/{registrationId}/test-capabilities
 X-Agent-Token: tnf_agent_xxxxx
 ```
 
 Response:
+
 ```json
 [
   {
@@ -118,6 +168,7 @@ Response:
 ```
 
 #### Complete Onboarding Step
+
 ```http
 POST /api/agent-registry/onboarding/{registrationId}/complete-step
 X-Agent-Token: tnf_agent_xxxxx
@@ -131,7 +182,17 @@ Content-Type: application/json
 }
 ```
 
+Step payload requirements:
+- `identity_assigned`: `data.identity.longTermId` and `data.identity.ephemeralId`
+- `protocol_alignment`: `data.protocols` object
+- `skills_discovered`: `data.skills.skillIds` array
+- `mcp_configured`: `data.mcp.servers` array or `data.mcp.allowDynamicLoading: true`
+- `integration_test`: `data.result.passed` boolean
+- `handoff_verified`: `data.handoff.protocolVersion`
+- `memory_configured`: `data.memory.provider` or `data.memory.namespace`
+
 #### Get Onboarding Progress
+
 ```http
 GET /api/agent-registry/onboarding/{registrationId}/progress
 X-Agent-Token: tnf_agent_xxxxx
@@ -140,16 +201,19 @@ X-Agent-Token: tnf_agent_xxxxx
 ### Orientation
 
 #### Get All Orientation Steps
+
 ```http
 GET /api/agent-registry/orientation/steps
 ```
 
 #### Get Specific Orientation Step
+
 ```http
 GET /api/agent-registry/orientation/steps/{stepId}
 ```
 
 #### Get Orientation Summary
+
 ```http
 GET /api/agent-registry/orientation/summary
 ```
@@ -157,11 +221,13 @@ GET /api/agent-registry/orientation/summary
 ### Directory
 
 #### Search Agents
+
 ```http
 GET /api/agent-registry/directory?query=code&category=development&verifiedOnly=true&page=1&limit=20
 ```
 
 Response:
+
 ```json
 {
   "data": [
@@ -190,16 +256,47 @@ Response:
 ```
 
 #### Get Featured Agents
+
 ```http
 GET /api/agent-registry/directory/featured?limit=10
 ```
 
 #### Get Directory Statistics
+
 ```http
 GET /api/agent-registry/directory/stats
 ```
 
+### Integrity Checks (Admin)
+
+#### Validate Registration Integrity
+
+```http
+GET /api/agent-registry/registrations/integrity
+Authorization: Bearer <admin-jwt>
+```
+
+Response (200 OK):
+
+```json
+{
+  "status": "passed",
+  "missingTenantCount": 0
+}
+```
+
+Response (400 Bad Request):
+
+```json
+{
+  "status": "failed",
+  "missingTenantCount": 3,
+  "registrations": ["reg-1", "reg-2", "reg-3"]
+}
+```
+
 Response:
+
 ```json
 {
   "totalAgents": 150,
@@ -215,11 +312,13 @@ Response:
 ```
 
 #### Get Agent Details
+
 ```http
 GET /api/agent-registry/directory/{agentId}
 ```
 
 #### Get Agent Capabilities
+
 ```http
 GET /api/agent-registry/directory/{agentId}/capabilities
 ```
@@ -227,6 +326,7 @@ GET /api/agent-registry/directory/{agentId}/capabilities
 ### Metrics
 
 #### Record Metric
+
 ```http
 POST /api/agent-registry/metrics
 X-Agent-Token: tnf_agent_xxxxx
@@ -244,6 +344,7 @@ Content-Type: application/json
 ```
 
 #### Get Agent Metrics
+
 ```http
 GET /api/agent-registry/metrics/{registrationId}?type=task_completion&startDate=2025-01-01&endDate=2025-01-31
 X-Agent-Token: tnf_agent_xxxxx
@@ -252,6 +353,7 @@ X-Agent-Token: tnf_agent_xxxxx
 ## Database Schema
 
 ### AgentRegistration
+
 - `id`: Unique registration ID
 - `agentId`: Associated agent ID
 - `authToken`: Authentication token
@@ -262,28 +364,33 @@ X-Agent-Token: tnf_agent_xxxxx
 - `lastHeartbeat`: Last heartbeat timestamp
 
 ### AgentCapabilityRegistry
+
 - Stores declared capabilities for each agent
 - Tracks verification status and test results
 - Links to AgentRegistration
 
 ### AgentMetrics
+
 - Time-series metrics data
 - Supports different metric types
 - Configurable tags for filtering
 
 ### AgentOnboardingEvent
+
 - Audit trail of onboarding events
 - Tracks progress through onboarding steps
 - Stores event data and messages
 
 ### AgentDirectoryEntry
+
 - Public-facing agent information
 - Searchable and indexed
 - Includes rating and usage statistics
 
 ## Usage Example
 
-See `/examples/sample-agent.ts` for a complete working example of a self-registering agent.
+See `/examples/sample-agent.ts` for a complete working example of a
+self-registering agent.
 
 ### Quick Start
 
@@ -338,15 +445,17 @@ npm test apps/backend/src/modules/agent-registry
                      └────────┬────────┘
                               │
                      ┌────────▼────────┐
-                     │  Prisma/DB      │
+                     │  Drizzle/DB      │
                      └─────────────────┘
 ```
 
 ## Security Considerations
 
-1. **Token Security**: Auth tokens should be stored securely and never exposed in logs
+1. **Token Security**: Auth tokens should be stored securely and never exposed
+   in logs
 2. **Rate Limiting**: Implement rate limiting on registration endpoints
-3. **Verification**: All capabilities should be verified before marking agents as READY
+3. **Verification**: All capabilities should be verified before marking agents
+   as READY
 4. **Heartbeat Monitoring**: Monitor heartbeats to detect offline agents
 5. **Access Control**: Restrict access to sensitive agent data
 

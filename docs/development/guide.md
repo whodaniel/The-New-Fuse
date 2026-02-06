@@ -1,6 +1,7 @@
 # The New Fuse Development Guide
 
-This guide provides detailed instructions for setting up, developing, and deploying The New Fuse project.
+This guide provides detailed instructions for setting up, developing, and
+deploying The New Fuse project.
 
 ## Table of Contents
 
@@ -31,7 +32,7 @@ fuse/
 │   ├── ui-components/    # UI component library
 │   ├── utils/            # Utility functions
 │   └── vscode-extension/ # VS Code extension integration
-├── prisma/               # Prisma schema and migrations
+├── drizzle/               # Drizzle schema and migrations
 ├── scripts/              # Utility scripts
 └── src/                  # Main source code
     ├── agent/            # Agent implementation
@@ -73,7 +74,8 @@ cd fuse
 bun dev
 ```
 
-This will start the frontend at http://localhost:3000 and the API at http://localhost:3001.
+This will start the frontend at http://localhost:3000 and the API at
+http://localhost:3001.
 
 ### Option 2: Docker Development
 
@@ -89,7 +91,8 @@ This will start all services in Docker containers.
 
 ### Package Development Order
 
-When developing new features or making changes, follow this order to ensure dependencies are properly built:
+When developing new features or making changes, follow this order to ensure
+dependencies are properly built:
 
 1. `@the-new-fuse/types` - TypeScript type definitions
 2. `@the-new-fuse/utils` - Utility functions
@@ -199,13 +202,16 @@ pnpm run test:coverage
 ## Deployment
 
 ### CI/CD Pipeline
-This project uses GitHub Actions (`.github/workflows/ci-cd.yml`) to automate testing, building, and deployment on pushes and pull requests to `main` and `staging`. Sample workflow:
+
+This project uses GitHub Actions (`.github/workflows/ci-cd.yml`) to automate
+testing, building, and deployment on pushes and pull requests to `main` and
+`staging`. Sample workflow:
 
 ```yaml
 name: Dev-to-Prod CI/CD
 on:
   push:
-    branches: [ main, staging ]
+    branches: [main, staging]
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -287,7 +293,8 @@ If you encounter dependency issues, try cleaning the project and reinstalling:
 
 2. **Port Conflicts**
 
-If you have port conflicts, ensure no other services are running on ports 3000, 3001, 5432, or 6379.
+If you have port conflicts, ensure no other services are running on ports 3000,
+3001, 5432, or 6379.
 
 3. **Database Connection Issues**
 
@@ -299,7 +306,8 @@ docker-compose exec postgres psql -U postgres -d fuse -c "SELECT 1"
 
 4. **TypeScript Declaration Errors**
 
-If you encounter TypeScript declaration errors with syntax like `: any:`, run the fix-declarations.mjs script:
+If you encounter TypeScript declaration errors with syntax like `: any:`, run
+the fix-declarations.mjs script:
 
 ```bash
 node fix-declarations.mjs

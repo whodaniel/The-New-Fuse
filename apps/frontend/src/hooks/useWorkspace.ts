@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { WorkspaceApiService } from '../api/workspace';
 
 interface WorkspaceState {
@@ -11,7 +11,7 @@ export const useWorkspace = (): WorkspaceState => {
   const [state, setState] = useState<WorkspaceState>({
     loading: true,
     error: null,
-    workspace: null
+    workspace: null,
   });
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export const useWorkspace = (): WorkspaceState => {
           setState({
             loading: false,
             error: null,
-            workspace: response.data
+            workspace: response.data,
           });
         } else {
           throw new Error(response.error || 'Failed to load workspace');
@@ -33,7 +33,7 @@ export const useWorkspace = (): WorkspaceState => {
         setState({
           loading: false,
           error: error instanceof Error ? error : new Error('Failed to load workspace'),
-          workspace: null
+          workspace: null,
         });
       }
     };

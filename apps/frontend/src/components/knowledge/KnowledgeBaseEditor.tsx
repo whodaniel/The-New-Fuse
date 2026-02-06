@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { Editor } from '@/components/ui/editor';
 import { TreeView } from '@/components/ui/tree-view';
-import { Button } from '@/components/ui/button';
+import React, { useState } from 'react';
 
 interface KnowledgeNode {
   id: string;
@@ -22,30 +22,22 @@ export const KnowledgeBaseEditor: React.FC = () => {
   return (
     <div className="flex h-full">
       <div className="w-1/4 border-r">
-        <TreeView
-          data={knowledgeTree}
-          onNodeSelect={setSelectedNode}
-        />
+        <TreeView data={knowledgeTree} onNodeSelect={setSelectedNode} />
         <Button
           className="mt-4"
-          onClick={() => {/* Add new node logic */}}
+          onClick={() => {
+            /* Add new node logic */
+          }}
         >
           Add New Entry
         </Button>
       </div>
-      
+
       <div className="w-3/4 p-4">
         {selectedNode ? (
-          <Editor
-            value={selectedNode.content}
-            onChange={handleSave}
-            supportMarkdown
-            autoSave
-          />
+          <Editor value={selectedNode.content} onChange={handleSave} supportMarkdown autoSave />
         ) : (
-          <div className="text-center text-gray-500">
-            Select a knowledge base entry to edit
-          </div>
+          <div className="text-center text-gray-500">Select a knowledge base entry to edit</div>
         )}
       </div>
     </div>

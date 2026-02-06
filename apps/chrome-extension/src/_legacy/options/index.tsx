@@ -104,7 +104,8 @@ const Options: React.FC = () => {
       <div className="option-group web3-settings-group">
         <h2>Web3 URL Support</h2>
         <p className="description">
-          Automatically resolve decentralized web URLs (IPFS, IPNS, ENS, Arweave, Swarm) to HTTP gateways.
+          Automatically resolve decentralized web URLs (IPFS, IPNS, ENS, Arweave, Swarm) to HTTP
+          gateways.
         </p>
 
         <div className="option-group">
@@ -191,11 +192,21 @@ const Options: React.FC = () => {
             <div className="web3-info">
               <h3>Supported Protocols:</h3>
               <ul>
-                <li><code>ipfs://</code> - InterPlanetary File System</li>
-                <li><code>ipns://</code> - IPFS Name System</li>
-                <li><code>ens://</code> - Ethereum Name Service (.eth domains)</li>
-                <li><code>ar://</code> - Arweave Permanent Storage</li>
-                <li><code>bzz://</code> - Swarm Distributed Storage</li>
+                <li>
+                  <code>ipfs://</code> - InterPlanetary File System
+                </li>
+                <li>
+                  <code>ipns://</code> - IPFS Name System
+                </li>
+                <li>
+                  <code>ens://</code> - Ethereum Name Service (.eth domains)
+                </li>
+                <li>
+                  <code>ar://</code> - Arweave Permanent Storage
+                </li>
+                <li>
+                  <code>bzz://</code> - Swarm Distributed Storage
+                </li>
               </ul>
             </div>
           </>
@@ -222,7 +233,9 @@ const Options: React.FC = () => {
               </a>
             </li>
             <li>Create a new application and get your Client ID</li>
-            <li>Set the redirect URI to: <code>{settings.udAuthConfig.redirectUri}</code></li>
+            <li>
+              Set the redirect URI to: <code>{settings.udAuthConfig.redirectUri}</code>
+            </li>
             <li>Copy your credentials below and save</li>
           </ol>
         </div>
@@ -310,7 +323,8 @@ const Options: React.FC = () => {
             />
           </label>
           <small>
-            Permissions requested: openid (required), wallet, email:optional, humanity_check:optional
+            Permissions requested: openid (required), wallet, email:optional,
+            humanity_check:optional
           </small>
         </div>
 

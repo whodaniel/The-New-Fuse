@@ -1,6 +1,6 @@
-import { ApiClient } from '../../core/ApiClient';
 import { ApiConfig } from '../../config/ApiConfig';
-import { Integration, IntegrationType, IntegrationConfig, AuthType } from '../types';
+import { ApiClient } from '../../core/ApiClient';
+import { AuthType, Integration, IntegrationConfig, IntegrationType } from '../types';
 
 /**
  * Anthropic API configuration
@@ -61,7 +61,7 @@ export class AnthropicIntegration implements Integration {
         ...config.defaultHeaders,
         'Content-Type': 'application/json',
         'anthropic-version': config.anthropicVersion || '2023-06-01', // Use configured or default version
-      }
+      },
     };
 
     // Add API key header if provided
@@ -84,15 +84,17 @@ export class AnthropicIntegration implements Integration {
       // Anthropic doesn't have a simple /models endpoint like OpenAI.
       // We can try a minimal message request to a known cheap/fast model.
       await this.apiClient.post('/messages', {
-          model: this.config.model || 'claude-3-haiku-20240307', // Use a fast model for testing
-          messages: [{ role: 'user', content: 'Test connection' }],
-          max_tokens: 1,
+        model: this.config.model || 'claude-3-haiku-20240307', // Use a fast model for testing
+        messages: [{ role: 'user', content: 'Test connection' }],
+        max_tokens: 1,
       });
       this.isConnected = true;
       this.updatedAt = new Date();
       return true;
     } catch (error) {
-      throw new Error(`Anthropic connection error: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Anthropic connection error: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -110,8 +112,8 @@ export class AnthropicIntegration implements Integration {
    */
   async execute(action: string, params: Record<string, any> = {}): Promise<any> {
     if (!this.isConnected) {
-       // Allow connection attempt if not connected
-       if (action === 'connect') {
+      // Allow connection attempt if not connected
+      if (action === 'connect') {
         return this.connect();
       }
       throw new Error('Not connected to Anthropic. Call connect() first.');
@@ -143,11 +145,11 @@ export class AnthropicIntegration implements Integration {
    * Create a chat completion using the Messages API
    */
   private async createChatCompletion(
-      model: string,
-      messages: Array<{ role: 'user' | 'assistant'; content: string | any[] }>, // Content can be complex for vision
-      system?: string,
-      options?: Record<string, any>
-    ): Promise<any> {
+    model: string,
+    messages: Array<{ role: 'user' | 'assistant'; content: string | any[] }>, // Content can be complex for vision
+    system?: string,
+    options?: Record<string, any>
+  ): Promise<any> {
     if (!model) {
       throw new Error('Model must be provided for chat completion.');
     }
@@ -156,19 +158,22 @@ export class AnthropicIntegration implements Integration {
     }
 
     // Basic validation for message format
-    if (!messages.every(msg => ['user', 'assistant'].includes(msg.role) && msg.content)) {
-        throw new Error('Invalid message format. Each message must have a role ("user" or "assistant") and content.');
+    if (!messages.every((msg) => ['user', 'assistant'].includes(msg.role) && msg.content)) {
+      throw new Error(
+        'Invalid message format. Each message must have a role ("user" or "assistant") and content.'
+      );
     }
     // Anthropic requires alternating user/assistant messages, starting with user
     if (messages[0].role !== 'user') {
-        throw new Error('First message must be from the "user" role.');
+      throw new Error('First message must be from the "user" role.');
     }
     for (let i = 1; i < messages.length; i++) {
-        if (messages[i].role === messages[i-1].role) {
-            throw new Error(`Messages must alternate between "user" and "assistant" roles. Found consecutive ${messages[i].role} roles.`);
-        }
+      if (messages[i].role === messages[i - 1].role) {
+        throw new Error(
+          `Messages must alternate between "user" and "assistant" roles. Found consecutive ${messages[i].role} roles.`
+        );
+      }
     }
-
 
     const payload: Record<string, any> = {
       model,
@@ -186,35 +191,76 @@ export class AnthropicIntegration implements Integration {
     }
 
     // Remove undefined values to avoid sending them in the payload
-    Object.keys(payload).forEach(key => payload[key] === undefined && delete payload[key]);
+    Object.keys(payload).forEach((key) => payload[key] === undefined && delete payload[key]);
 
     try {
       // Note: If streaming is enabled, the response handling will differ.
       // ApiClient might need adjustments to handle streaming responses.
       return await this.apiClient.post('/messages', payload);
     } catch (error) {
-      console.error(`Anthropic chat completion error for model ${model}: ${error instanceof Error ? error.message : String(error)}`, (error as any)?.response?.data);
+      console.error(
+        `Anthropic chat completion error for model ${model}: ${error instanceof Error ? error.message : String(error)}`,
+        (error as any)?.response?.data
+      );
       const errorDetails = (error as any)?.response?.data?.error;
-      const errorMessage = errorDetails ? `${errorDetails.type}: ${errorDetails.message}` : (error instanceof Error ? error.message : String(error));
+      const errorMessage = errorDetails
+        ? `${errorDetails.type}: ${errorDetails.message}`
+        : error instanceof Error
+          ? error.message
+          : String(error);
       throw new Error(`Failed to create Anthropic chat completion: ${errorMessage}`);
     }
   }
 
-   /**
+  /**
    * List known Anthropic models (as there's no API endpoint)
    */
-  private listKnownModels(): Array<{ id: string; name: string; description: string; context_length?: number }> {
-      // This list should be updated periodically based on Anthropic's documentation
-      return [
-          { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus', description: 'Most powerful model for complex tasks.', context_length: 200000 },
-          { id: 'claude-3-sonnet-20240229', name: 'Claude 3 Sonnet', description: 'Balanced model for performance and speed.', context_length: 200000 },
-          { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku', description: 'Fastest and most compact model.', context_length: 200000 },
-          { id: 'claude-2.1', name: 'Claude 2.1', description: 'Previous generation model with 200K context.', context_length: 200000 },
-          { id: 'claude-2.0', name: 'Claude 2.0', description: 'Previous generation model with 100K context.', context_length: 100000 },
-          { id: 'claude-instant-1.2', name: 'Claude Instant 1.2', description: 'Faster, lower-priced previous generation model.', context_length: 100000 },
-      ];
+  private listKnownModels(): Array<{
+    id: string;
+    name: string;
+    description: string;
+    context_length?: number;
+  }> {
+    // This list should be updated periodically based on Anthropic's documentation
+    return [
+      {
+        id: 'claude-3-opus-20240229',
+        name: 'Claude 3 Opus',
+        description: 'Most powerful model for complex tasks.',
+        context_length: 200000,
+      },
+      {
+        id: 'claude-3-sonnet-20240229',
+        name: 'Claude 3 Sonnet',
+        description: 'Balanced model for performance and speed.',
+        context_length: 200000,
+      },
+      {
+        id: 'claude-3-haiku-20240307',
+        name: 'Claude 3 Haiku',
+        description: 'Fastest and most compact model.',
+        context_length: 200000,
+      },
+      {
+        id: 'claude-2.1',
+        name: 'Claude 2.1',
+        description: 'Previous generation model with 200K context.',
+        context_length: 200000,
+      },
+      {
+        id: 'claude-2.0',
+        name: 'Claude 2.0',
+        description: 'Previous generation model with 100K context.',
+        context_length: 100000,
+      },
+      {
+        id: 'claude-instant-1.2',
+        name: 'Claude Instant 1.2',
+        description: 'Faster, lower-priced previous generation model.',
+        context_length: 100000,
+      },
+    ];
   }
-
 
   /**
    * Get metadata about this integration
@@ -246,12 +292,14 @@ export class AnthropicIntegration implements Integration {
 /**
  * Create a new Anthropic integration
  */
-export function createAnthropicIntegration(config: Partial<AnthropicConfig> = {}): AnthropicIntegration {
+export function createAnthropicIntegration(
+  config: Partial<AnthropicConfig> = {}
+): AnthropicIntegration {
   const defaultConfig: AnthropicConfig = {
     id: 'anthropic',
     name: 'Anthropic',
     type: IntegrationType.AI,
-    description: 'Access Anthropic\'s Claude family of AI models.',
+    description: "Access Anthropic's Claude family of AI models.",
     baseUrl: 'https://api.anthropic.com/v1',
     authType: AuthType.API_KEY, // Uses x-api-key header
     apiVersion: 'v1', // API base path version
@@ -269,25 +317,24 @@ export function createAnthropicIntegration(config: Partial<AnthropicConfig> = {}
     id: config.id || defaultConfig.id, // Ensure id is always set
     // Ensure headers in config don't overwrite essential ones unless intended
     defaultHeaders: {
-        ...defaultConfig.defaultHeaders,
-        ...config.defaultHeaders,
-    }
+      ...defaultConfig.defaultHeaders,
+      ...config.defaultHeaders,
+    },
   };
 
   // Ensure API key isn't accidentally placed in defaultHeaders
   if (finalConfig.defaultHeaders && finalConfig.defaultHeaders['x-api-key']) {
-      if (!finalConfig.apiKey) {
-          finalConfig.apiKey = finalConfig.defaultHeaders['x-api-key'];
-      }
-      delete finalConfig.defaultHeaders['x-api-key'];
+    if (!finalConfig.apiKey) {
+      finalConfig.apiKey = finalConfig.defaultHeaders['x-api-key'];
+    }
+    delete finalConfig.defaultHeaders['x-api-key'];
   }
-   if (finalConfig.defaultHeaders && finalConfig.defaultHeaders['anthropic-version']) {
-      if (!finalConfig.anthropicVersion) {
-          finalConfig.anthropicVersion = finalConfig.defaultHeaders['anthropic-version'];
-      }
-      delete finalConfig.defaultHeaders['anthropic-version'];
+  if (finalConfig.defaultHeaders && finalConfig.defaultHeaders['anthropic-version']) {
+    if (!finalConfig.anthropicVersion) {
+      finalConfig.anthropicVersion = finalConfig.defaultHeaders['anthropic-version'];
+    }
+    delete finalConfig.defaultHeaders['anthropic-version'];
   }
-
 
   return new AnthropicIntegration(finalConfig);
 }

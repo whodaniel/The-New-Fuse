@@ -6,7 +6,7 @@
 import {
   BaseMetricsCollector,
   BaseMetricsCollectorConfig,
-  Logger
+  Logger,
 } from '@the-new-fuse/core-monitoring';
 import { PerformanceMetrics } from '../types/monitoring';
 
@@ -14,7 +14,6 @@ import { PerformanceMetrics } from '../types/monitoring';
  * MCP metrics collector implementation
  */
 export class MCPMetricsCollector extends BaseMetricsCollector<PerformanceMetrics> {
-
   // MCP-specific tracking
   private readonly requestTimes = new Map<string, number>();
   private requestCount = 0;
@@ -45,20 +44,24 @@ export class MCPMetricsCollector extends BaseMetricsCollector<PerformanceMetrics
     const responseTimes = Array.from(this.requestTimes.values());
     const p95ResponseTime = this.calculatePercentile(responseTimes, 0.95);
     const p99ResponseTime = this.calculatePercentile(responseTimes, 0.99);
-    const avgResponseTime = responseTimes.length > 0 ?
-      responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length : 0;
+    const avgResponseTime =
+      responseTimes.length > 0
+        ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
+        : 0;
 
     // Calculate rates
     const rps = uptimeSeconds > 0 ? this.requestCount / uptimeSeconds : 0;
-    const cacheHitRate = (this.cacheHits + this.cacheMisses) > 0 ?
-      this.cacheHits / (this.cacheHits + this.cacheMisses) : 0;
-    const toolSuccessRate = this.toolExecutionCount > 0 ?
-      this.toolSuccessCount / this.toolExecutionCount : 0;
+    const cacheHitRate =
+      this.cacheHits + this.cacheMisses > 0
+        ? this.cacheHits / (this.cacheHits + this.cacheMisses)
+        : 0;
+    const toolSuccessRate =
+      this.toolExecutionCount > 0 ? this.toolSuccessCount / this.toolExecutionCount : 0;
 
     // Get system metrics
     const memoryUsage = process.memoryUsage().heapUsed;
     const cpuUsage = process.cpuUsage();
-    const cpuPercent = (cpuUsage.user + cpuUsage.system) / 1000000 / uptimeSeconds * 100;
+    const cpuPercent = ((cpuUsage.user + cpuUsage.system) / 1000000 / uptimeSeconds) * 100;
 
     return {
       requests: {
@@ -68,32 +71,32 @@ export class MCPMetricsCollector extends BaseMetricsCollector<PerformanceMetrics
         rps,
         avgResponseTime,
         p95ResponseTime,
-        p99ResponseTime
+        p99ResponseTime,
       },
       connections: {
         active: this.activeConnections,
         total: this.connectionCount,
         failed: this.connectionCount - this.activeConnections,
-        avgConnectionTime: 0 // TODO: Track connection times
+        avgConnectionTime: 0, // TODO: Track connection times
       },
       resources: {
         total: this.getResourceCount(),
         accessCount: this.resourceAccessCount,
         cacheHitRate,
-        avgReadTime: 0 // TODO: Track resource read times
+        avgReadTime: 0, // TODO: Track resource read times
       },
       tools: {
         total: this.getToolCount(),
         executionCount: this.toolExecutionCount,
         avgExecutionTime: 0, // TODO: Track tool execution times
-        successRate: toolSuccessRate
+        successRate: toolSuccessRate,
       },
       system: {
         memoryUsage,
         cpuUsage: Math.min(cpuPercent, 100),
         uptime,
-        healthScore: this.calculateHealthScore()
-      }
+        healthScore: this.calculateHealthScore(),
+      },
     };
   }
 
@@ -184,9 +187,11 @@ export class MCPMetricsCollector extends BaseMetricsCollector<PerformanceMetrics
       this.incrementCounter('resource_cache_misses');
     }
 
-    this.recordGauge('resource_cache_hit_rate',
-      (this.cacheHits + this.cacheMisses) > 0 ?
-        this.cacheHits / (this.cacheHits + this.cacheMisses) : 0
+    this.recordGauge(
+      'resource_cache_hit_rate',
+      this.cacheHits + this.cacheMisses > 0
+        ? this.cacheHits / (this.cacheHits + this.cacheMisses)
+        : 0
     );
   }
 
@@ -205,7 +210,8 @@ export class MCPMetricsCollector extends BaseMetricsCollector<PerformanceMetrics
       this.incrementCounter('tool_executions_failed', { tool: name });
     }
 
-    this.recordGauge('tool_success_rate',
+    this.recordGauge(
+      'tool_success_rate',
       this.toolExecutionCount > 0 ? this.toolSuccessCount / this.toolExecutionCount : 0
     );
   }

@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Param, Query, Logger } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Post, Query } from '@nestjs/common';
+import { MCPA2ABridge } from './mcp-a2a-bridge.service';
 import { MCPServerService } from './mcp-server.service';
 import { MCPToolRegistry } from './mcp-tool-registry.service';
-import { MCPA2ABridge } from './mcp-a2a-bridge.service';
 
 /**
  * MCP Controller
@@ -15,7 +15,7 @@ export class MCPController {
   constructor(
     private readonly mcpServer: MCPServerService,
     private readonly toolRegistry: MCPToolRegistry,
-    private readonly bridge: MCPA2ABridge,
+    private readonly bridge: MCPA2ABridge
   ) {}
 
   /**

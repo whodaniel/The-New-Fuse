@@ -11,7 +11,7 @@ export class WorkflowValidator {
     // Validate each node
     nodes.forEach((node) => {
       const nodeTypeData = nodeTypes.find((nt) => nt.name === node.type);
-      
+
       if (!nodeTypeData) {
         errors.push(`Unknown node type: ${node.type}`);
         return;
@@ -39,9 +39,7 @@ export class WorkflowValidator {
 
   private validateNodeParameters(node: any, nodeTypeData: any): string[] {
     const errors: string[] = [];
-    const requiredParams = nodeTypeData.properties.properties.filter(
-      (prop: any) => prop.required
-    );
+    const requiredParams = nodeTypeData.properties.properties.filter((prop: any) => prop.required);
 
     requiredParams.forEach((param: any) => {
       if (!node.parameters || node.parameters[param.name] === undefined) {
@@ -75,9 +73,7 @@ export class WorkflowValidator {
     const orphanedNodes = nodes.filter((node) => !connectedNodeIds.has(node.id));
 
     if (orphanedNodes.length > 0) {
-      errors.push(
-        `Orphaned nodes found: ${orphanedNodes.map((n) => n.name || n.id).join(', ')}`
-      );
+      errors.push(`Orphaned nodes found: ${orphanedNodes.map((n) => n.name || n.id).join(', ')}`);
     }
 
     // Validate connection compatibility
@@ -147,7 +143,9 @@ export class WorkflowValidator {
 
     nodes.forEach((node) => {
       if (hasCircularDependency(node.id)) {
-        errors.push(`Circular dependency detected in workflow involving node ${node.name || node.id}`);
+        errors.push(
+          `Circular dependency detected in workflow involving node ${node.name || node.id}`
+        );
       }
     });
 

@@ -37,7 +37,7 @@ function convertCommonJSToESM(content) {
   }
 
   // Add export keyword to declarations
-  exportedNames.forEach(name => {
+  exportedNames.forEach((name) => {
     fixed = fixed.replace(
       new RegExp(`^(class|function|const|let|var) ${name}\\b`, 'gm'),
       `export $1 ${name}`

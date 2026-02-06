@@ -3,7 +3,7 @@
  * and providing deprecation warnings for smooth transitions.
  */
 
-import { Table, Column, Row, DataType, View, ViewType } from '@the-new-fuse/fairtable-core';
+import { Column, DataType, Row, Table, View, ViewType } from '@the-new-fuse/fairtable-core';
 
 // Migration warning system
 interface MigrationWarning {
@@ -17,9 +17,10 @@ const migrationWarnings: MigrationWarning[] = [];
 
 export const addMigrationWarning = (warning: MigrationWarning) => {
   migrationWarnings.push(warning);
-  
+
   if (process.env.NODE_ENV === 'development') {
-    const emoji = warning.severity === 'error' ? '❌' : warning.severity === 'warning' ? '⚠️' : 'ℹ️';
+    const emoji =
+      warning.severity === 'error' ? '❌' : warning.severity === 'warning' ? '⚠️' : 'ℹ️';
     console.warn(`${emoji} [MIGRATION] ${warning.component}: ${warning.message}`);
     console.warn(`📖 Migration guide: ${warning.migrationPath}`);
   }
@@ -68,13 +69,13 @@ export const convertLegacyKanbanToAirtable = (
       id: 'title',
       name: 'Title',
       type: DataType.TEXT,
-      width: 200
+      width: 200,
     },
     {
       id: 'description',
-      name: 'Description', 
+      name: 'Description',
       type: DataType.LONG_TEXT,
-      width: 300
+      width: 300,
     },
     {
       id: 'priority',
@@ -85,37 +86,37 @@ export const convertLegacyKanbanToAirtable = (
         { id: 'LOW', name: 'Low', colorClass: 'bg-blue-100 text-blue-800' },
         { id: 'MEDIUM', name: 'Medium', colorClass: 'bg-yellow-100 text-yellow-800' },
         { id: 'HIGH', name: 'High', colorClass: 'bg-orange-100 text-orange-800' },
-        { id: 'CRITICAL', name: 'Critical', colorClass: 'bg-red-100 text-red-800' }
-      ]
+        { id: 'CRITICAL', name: 'Critical', colorClass: 'bg-red-100 text-red-800' },
+      ],
     },
     {
       id: 'status',
       name: 'Status',
       type: DataType.SINGLE_SELECT,
       width: 150,
-      options: legacyData.columns.map(col => ({
+      options: legacyData.columns.map((col) => ({
         id: col.id,
         name: col.title,
-        colorClass: 'bg-gray-100 text-gray-800'
-      }))
-    }
+        colorClass: 'bg-gray-100 text-gray-800',
+      })),
+    },
   ];
 
   // Convert items to rows
   const rows: Row[] = [];
   const extraProperties = new Set<string>();
 
-  legacyData.columns.forEach(column => {
-    column.items.forEach(item => {
+  legacyData.columns.forEach((column) => {
+    column.items.forEach((item) => {
       // Track any extra properties for potential new columns
-      Object.keys(item).forEach(key => {
+      Object.keys(item).forEach((key) => {
         if (!['id', 'title', 'description', 'priority'].includes(key)) {
           extraProperties.add(key);
         }
       });
 
       const { id, title, description, priority, ...otherProps } = item;
-      
+
       rows.push({
         id: id,
         data: {
@@ -123,13 +124,13 @@ export const convertLegacyKanbanToAirtable = (
           description: description || '',
           priority: priority || 'MEDIUM',
           status: column.id,
-          ...otherProps
+          ...otherProps,
         },
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         parentId: null,
         depth: 0,
-        isCollapsed: false
+        isCollapsed: false,
       });
     });
   });
@@ -140,7 +141,7 @@ export const convertLegacyKanbanToAirtable = (
       component: 'LegacyKanbanConverter',
       message: `Found additional properties that may need column mapping: ${Array.from(extraProperties).join(', ')}`,
       migrationPath: 'docs/migration/data-mapping.md',
-      severity: 'warning'
+      severity: 'warning',
     });
   }
 
@@ -151,7 +152,7 @@ export const convertLegacyKanbanToAirtable = (
     rows,
     columnOrder: ['title', 'description', 'priority', 'status'],
     views: [],
-    activeViewId: 'kanban-view'
+    activeViewId: 'kanban-view',
   };
 
   const view: View = {
@@ -166,11 +167,11 @@ export const convertLegacyKanbanToAirtable = (
       title: true,
       description: true,
       priority: true,
-      status: false
+      status: false,
     },
     viewSpecificOptions: {
-      groupByColumnId: 'status'
-    }
+      groupByColumnId: 'status',
+    },
   };
 
   table.views = [view];
@@ -178,7 +179,7 @@ export const convertLegacyKanbanToAirtable = (
   return {
     table,
     view,
-    warnings: conversionWarnings
+    warnings: conversionWarnings,
   };
 };
 
@@ -196,7 +197,7 @@ export const validateDataCompatibility = (data: any): MigrationWarning[] => {
           component: 'DataValidator',
           message: `Column at index ${index} missing required 'id' field`,
           migrationPath: 'docs/migration/data-validation.md',
-          severity: 'error'
+          severity: 'error',
         });
       }
 
@@ -205,7 +206,7 @@ export const validateDataCompatibility = (data: any): MigrationWarning[] => {
           component: 'DataValidator',
           message: `Column at index ${index} missing title/name field`,
           migrationPath: 'docs/migration/data-validation.md',
-          severity: 'error'
+          severity: 'error',
         });
       }
 
@@ -216,7 +217,7 @@ export const validateDataCompatibility = (data: any): MigrationWarning[] => {
               component: 'DataValidator',
               message: `Item at column ${index}, item ${itemIndex} missing required 'id' field`,
               migrationPath: 'docs/migration/data-validation.md',
-              severity: 'error'
+              severity: 'error',
             });
           }
         });
@@ -236,7 +237,7 @@ export const createEventHandlerAdapter = <T extends Record<string, any>>(
 ): T => {
   const adaptedHandlers = {} as T;
 
-  Object.keys(legacyHandlers).forEach(handlerKey => {
+  Object.keys(legacyHandlers).forEach((handlerKey) => {
     const originalHandler = legacyHandlers[handlerKey];
     const translator = translationMap[handlerKey];
 
@@ -265,7 +266,7 @@ export const createDeprecationNotice = (
   return {
     message: `${componentName} is deprecated and will be removed in version ${version}. Use ${replacementComponent} instead.`,
     migrationGuide,
-    showWarning: process.env.NODE_ENV === 'development'
+    showWarning: process.env.NODE_ENV === 'development',
   };
 };
 
@@ -278,15 +279,18 @@ export const generateMigrationReport = () => {
     timestamp: new Date().toISOString(),
     totalWarnings: warnings.length,
     warningsBySeverity: {
-      info: warnings.filter(w => w.severity === 'info').length,
-      warning: warnings.filter(w => w.severity === 'warning').length,
-      error: warnings.filter(w => w.severity === 'error').length
+      info: warnings.filter((w) => w.severity === 'info').length,
+      warning: warnings.filter((w) => w.severity === 'warning').length,
+      error: warnings.filter((w) => w.severity === 'error').length,
     },
-    warningsByComponent: warnings.reduce((acc, warning) => {
-      acc[warning.component] = (acc[warning.component] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>),
-    warnings
+    warningsByComponent: warnings.reduce(
+      (acc, warning) => {
+        acc[warning.component] = (acc[warning.component] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    ),
+    warnings,
   };
 
   return report;
@@ -300,5 +304,5 @@ export default {
   validateDataCompatibility,
   createEventHandlerAdapter,
   createDeprecationNotice,
-  generateMigrationReport
+  generateMigrationReport,
 };

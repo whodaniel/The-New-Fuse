@@ -93,7 +93,7 @@ export enum MassBlockType {
   REFLECT = 'reflect',
   DEBATE = 'debate',
   CUSTOM = 'custom',
-  TOOL_USE = 'tool-use'
+  TOOL_USE = 'tool-use',
 }
 
 export interface MassBlockExecution {

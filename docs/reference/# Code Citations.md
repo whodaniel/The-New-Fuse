@@ -1,6 +1,7 @@
 # Code Citations
 
 ## License: unknown
+
 https://github.com/fortrainees2020/CTS-HTMLCSSJSTS/blob/64d221b86a2cf36be8df4798bfbb8700736b5442/NestJS/readme
 
 ```
@@ -10,8 +11,8 @@ https://github.com/fortrainees2020/CTS-HTMLCSSJSTS/blob/64d221b86a2cf36be8df4798
         "@nestjs/platform-express":
 ```
 
-
 ## License: unknown
+
 https://github.com/fortrainees2020/CTS-HTMLCSSJSTS/blob/64d221b86a2cf36be8df4798bfbb8700736b5442/NestJS/readme
 
 ```
@@ -22,8 +23,8 @@ https://github.com/fortrainees2020/CTS-HTMLCSSJSTS/blob/64d221b86a2cf36be8df4798
         "@nestjs/
 ```
 
-
 ## License: unknown
+
 https://github.com/jhannes/openapi-generator-typescript-fetch-api/blob/6d09c44a1a2188f3e128c88847bbabaf9b0c27b1/src/main/resources/typescript-fetch-api/package.handlebars
 
 ```
@@ -36,8 +37,8 @@ https://github.com/jhannes/openapi-generator-typescript-fetch-api/blob/6d09c44a1
 
 ```
 
-
 ## License: GPL-3.0
+
 https://github.com/vNerve/NeuronWire/blob/12baf7bb335a8498c988a181222f03150ed7b5c5/.eslintrc
 
 ```
@@ -50,8 +51,8 @@ https://github.com/vNerve/NeuronWire/blob/12baf7bb335a8498c988a181222f03150ed7b5
 
 ```
 
-
 ## License: unknown
+
 https://github.com/lachiejames/code-review-leaderboard/blob/29f4ca0a316af2a46c79b8f28596df9a30203f46/.eslintrc
 
 ```
@@ -64,8 +65,8 @@ https://github.com/lachiejames/code-review-leaderboard/blob/29f4ca0a316af2a46c79
 
 ```
 
-
 ## License: unknown
+
 https://github.com/jhannes/openapi-generator-typescript-fetch-api/blob/6d09c44a1a2188f3e128c88847bbabaf9b0c27b1/src/main/resources/typescript-fetch-api/package.handlebars
 
 ```
@@ -83,8 +84,8 @@ https://github.com/jhannes/openapi-generator-typescript-fetch-api/blob/6d09c44a1
           "browser":
 ```
 
-
 ## License: GPL-3.0
+
 https://github.com/vNerve/NeuronWire/blob/12baf7bb335a8498c988a181222f03150ed7b5c5/.eslintrc
 
 ```
@@ -102,8 +103,8 @@ https://github.com/vNerve/NeuronWire/blob/12baf7bb335a8498c988a181222f03150ed7b5
           "browser":
 ```
 
-
 ## License: unknown
+
 https://github.com/lachiejames/code-review-leaderboard/blob/29f4ca0a316af2a46c79b8f28596df9a30203f46/.eslintrc
 
 ```
@@ -120,4 +121,3 @@ https://github.com/lachiejames/code-review-leaderboard/blob/29f4ca0a316af2a46c79
         "env": {
           "browser":
 ```
-

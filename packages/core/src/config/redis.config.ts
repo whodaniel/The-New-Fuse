@@ -5,7 +5,7 @@ export const REDIS_CHANNELS = {
   USER_EVENTS: 'myapp:user:events',
   SYSTEM_NOTIFICATIONS: 'myapp:system:notifications',
   AGENT_COMMUNICATION: 'myapp:agent:communication',
-  WORKFLOW_EVENTS: 'myapp:workflow:events'
+  WORKFLOW_EVENTS: 'myapp:workflow:events',
 };
 
 export const REDIS_QUEUES = {
@@ -13,7 +13,7 @@ export const REDIS_QUEUES = {
   EMAIL_QUEUE: 'myapp:email:queue',
   PROCESSING_QUEUE: 'myapp:processing:queue',
   AGENT_QUEUE: 'myapp:agent:queue',
-  NOTIFICATION_QUEUE: 'myapp:notification:queue'
+  NOTIFICATION_QUEUE: 'myapp:notification:queue',
 };
 
 export const redisConfig = registerAs('redis', () => ({
@@ -30,18 +30,22 @@ export const redisConfig = registerAs('redis', () => ({
   family: 4,
   cluster: {
     enabled: process.env.REDIS_CLUSTER_ENABLED === 'true',
-    nodes: process.env.REDIS_CLUSTER_NODES?.split(',').map(node => {
-      const [host, port] = node.split(':');
-      return { host, port: parseInt(port) };
-    }) || []
+    nodes:
+      process.env.REDIS_CLUSTER_NODES?.split(',').map((node) => {
+        const [host, port] = node.split(':');
+        return { host, port: parseInt(port) };
+      }) || [],
   },
-  tls: process.env.REDIS_TLS === 'true' ? {
-    rejectUnauthorized: false
-  } : undefined,
+  tls:
+    process.env.REDIS_TLS === 'true'
+      ? {
+          rejectUnauthorized: false,
+        }
+      : undefined,
   connectTimeout: 10000,
   commandTimeout: 5000,
   channels: REDIS_CHANNELS,
-  queues: REDIS_QUEUES
+  queues: REDIS_QUEUES,
 }));
 
 export interface RedisConfigType {

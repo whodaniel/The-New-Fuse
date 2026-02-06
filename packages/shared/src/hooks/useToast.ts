@@ -6,7 +6,13 @@ import toast from 'react-hot-toast';
 
 export interface ToastOptions {
   duration?: number;
-  position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
+  position?:
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right';
 }
 
 /**
@@ -93,7 +99,7 @@ export function useToast() {
     }
   };
 
-  const asyncToast = async <T,>(
+  const asyncToast = async <T>(
     promise: Promise<T>,
     messages: {
       loading: string;

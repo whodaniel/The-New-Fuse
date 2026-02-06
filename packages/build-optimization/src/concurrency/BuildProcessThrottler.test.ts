@@ -2,9 +2,9 @@
  * Integration tests for BuildProcessThrottler
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { BuildProcessThrottler, BuildTask, BuildTaskResult } from './BuildProcessThrottler.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { MemoryUsage } from '../types/index.js';
+import { BuildProcessThrottler, BuildTask } from './BuildProcessThrottler.js';
 
 describe('BuildProcessThrottler', () => {
   let throttler: BuildProcessThrottler;
@@ -15,7 +15,7 @@ describe('BuildProcessThrottler', () => {
       memoryThreshold: 1024,
       defaultTimeout: 5000,
       processMemoryLimit: 256,
-      queueTimeout: 10000
+      queueTimeout: 10000,
     });
   });
 
@@ -44,14 +44,14 @@ describe('BuildProcessThrottler', () => {
       const task: BuildTask = {
         id: 'test-1',
         command: 'echo',
-        args: ['hello']
+        args: ['hello'],
       };
 
       await throttler.addTask(task);
-      
+
       // Wait a moment to allow task processing
-      await new Promise(resolve => setTimeout(resolve, 10));
-      
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
       const status = throttler.getStatus();
       // Task should either be running or completed by now
       expect(status.runningCount + status.completedCount).toBeGreaterThan(0);
@@ -62,14 +62,14 @@ describe('BuildProcessThrottler', () => {
         id: 'low',
         command: 'sleep',
         args: ['0.1'],
-        priority: 1
+        priority: 1,
       };
 
       const highPriorityTask: BuildTask = {
         id: 'high',
         command: 'sleep',
         args: ['0.1'],
-        priority: 10
+        priority: 10,
       };
 
       // Add low priority first
@@ -77,11 +77,11 @@ describe('BuildProcessThrottler', () => {
       await throttler.addTask(highPriorityTask);
 
       // Wait a bit for processing
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       const queuedIds = throttler.getQueuedTaskIds();
       const runningIds = throttler.getRunningTaskIds();
-      
+
       // High priority task should be processed first or be in front of queue
       if (queuedIds.length > 0) {
         expect(queuedIds[0]).toBe('high');
@@ -93,11 +93,11 @@ describe('BuildProcessThrottler', () => {
 
     it('should reject tasks when shutting down', async () => {
       throttler.shutdown();
-      
+
       const task: BuildTask = {
         id: 'test-shutdown',
         command: 'echo',
-        args: ['test']
+        args: ['test'],
       };
 
       await expect(throttler.addTask(task)).rejects.toThrow('shutting down');
@@ -109,7 +109,7 @@ describe('BuildProcessThrottler', () => {
       const task: BuildTask = {
         id: 'echo-test',
         command: 'echo',
-        args: ['hello world']
+        args: ['hello world'],
       };
 
       await throttler.addTask(task);
@@ -125,7 +125,7 @@ describe('BuildProcessThrottler', () => {
       const task: BuildTask = {
         id: 'fail-test',
         command: 'false', // Command that always fails
-        args: []
+        args: [],
       };
 
       await throttler.addTask(task);
@@ -140,7 +140,7 @@ describe('BuildProcessThrottler', () => {
         id: 'timeout-test',
         command: 'sleep',
         args: ['2'],
-        timeout: 500 // 500ms timeout for 2 second sleep
+        timeout: 500, // 500ms timeout for 2 second sleep
       };
 
       await throttler.addTask(task);
@@ -154,7 +154,7 @@ describe('BuildProcessThrottler', () => {
       const task: BuildTask = {
         id: 'invalid-test',
         command: 'nonexistent-command-12345',
-        args: []
+        args: [],
       };
 
       await throttler.addTask(task);
@@ -172,7 +172,7 @@ describe('BuildProcessThrottler', () => {
         tasks.push({
           id: `concurrent-${i}`,
           command: 'sleep',
-          args: ['0.5']
+          args: ['0.5'],
         });
       }
 
@@ -182,7 +182,7 @@ describe('BuildProcessThrottler', () => {
       }
 
       // Wait a bit for processing to start
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const status = throttler.getStatus();
       expect(status.runningCount).toBeLessThanOrEqual(2); // Max concurrency is 2
@@ -195,7 +195,7 @@ describe('BuildProcessThrottler', () => {
         tasks.push({
           id: `queue-${i}`,
           command: 'echo',
-          args: [`task-${i}`]
+          args: [`task-${i}`],
         });
       }
 
@@ -205,12 +205,10 @@ describe('BuildProcessThrottler', () => {
       }
 
       // Wait for all tasks to complete
-      const results = await Promise.all(
-        tasks.map(task => throttler.waitForTask(task.id, 5000))
-      );
+      const results = await Promise.all(tasks.map((task) => throttler.waitForTask(task.id, 5000)));
 
       expect(results).toHaveLength(4);
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.success).toBe(true);
       });
     });
@@ -225,23 +223,23 @@ describe('BuildProcessThrottler', () => {
         tasks.push({
           id: `dynamic-${i}`,
           command: 'sleep',
-          args: ['1']
+          args: ['1'],
         });
         await throttler.addTask(tasks[i]);
       }
 
       // Wait for initial processing
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       let status = throttler.getStatus();
       expect(status.runningCount).toBeLessThanOrEqual(2);
 
       // Increase concurrency
       throttler.setMaxConcurrency(4);
-      
+
       // Wait for adjustment
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       status = throttler.getStatus();
       expect(status.maxConcurrency).toBe(4);
     });
@@ -253,14 +251,14 @@ describe('BuildProcessThrottler', () => {
         total: 2048,
         used: 512,
         free: 1536,
-        percentage: 25
+        percentage: 25,
       };
 
       const highMemoryUsage: MemoryUsage = {
         total: 2048,
         used: 1800,
         free: 248,
-        percentage: 87.9
+        percentage: 87.9,
       };
 
       expect(throttler.hasAvailableMemory(lowMemoryUsage, 256)).toBe(true);
@@ -274,7 +272,7 @@ describe('BuildProcessThrottler', () => {
         total: 2048,
         used: 1500, // Above threshold
         free: 548,
-        percentage: 73.2
+        percentage: 73.2,
       };
 
       expect(throttler.hasAvailableMemory(memoryUsage, 256)).toBe(false);
@@ -286,7 +284,7 @@ describe('BuildProcessThrottler', () => {
       // Fill up the concurrency slots first
       const blockingTasks: BuildTask[] = [
         { id: 'block-1', command: 'sleep', args: ['1'] },
-        { id: 'block-2', command: 'sleep', args: ['1'] }
+        { id: 'block-2', command: 'sleep', args: ['1'] },
       ];
 
       for (const task of blockingTasks) {
@@ -294,20 +292,20 @@ describe('BuildProcessThrottler', () => {
       }
 
       // Wait for blocking tasks to start
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       // Now add a task that should be queued
       const task: BuildTask = {
         id: 'cancel-test',
         command: 'sleep',
-        args: ['10']
+        args: ['10'],
       };
 
       await throttler.addTask(task);
-      
+
       // Verify it's queued
       expect(throttler.getQueuedTaskIds()).toContain('cancel-test');
-      
+
       // Cancel the queued task
       const cancelled = throttler.cancelTask('cancel-test');
       expect(cancelled).toBe(true);
@@ -320,20 +318,20 @@ describe('BuildProcessThrottler', () => {
       const task: BuildTask = {
         id: 'cancel-running',
         command: 'sleep',
-        args: ['5']
+        args: ['5'],
       };
 
       await throttler.addTask(task);
-      
+
       // Wait for task to start
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       const cancelled = throttler.cancelTask('cancel-running');
       expect(cancelled).toBe(true);
 
       // Wait for cancellation to complete
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       const status = throttler.getStatus();
       expect(status.runningCount).toBe(0);
     });
@@ -347,7 +345,7 @@ describe('BuildProcessThrottler', () => {
       const task: BuildTask = {
         id: 'result-test',
         command: 'echo',
-        args: ['result']
+        args: ['result'],
       };
 
       await throttler.addTask(task);
@@ -363,14 +361,12 @@ describe('BuildProcessThrottler', () => {
       const task: BuildTask = {
         id: 'wait-timeout',
         command: 'sleep',
-        args: ['2']
+        args: ['2'],
       };
 
       await throttler.addTask(task);
-      
-      await expect(
-        throttler.waitForTask('wait-timeout', 500)
-      ).rejects.toThrow('timed out');
+
+      await expect(throttler.waitForTask('wait-timeout', 500)).rejects.toThrow('timed out');
     });
   });
 
@@ -384,7 +380,7 @@ describe('BuildProcessThrottler', () => {
       const task: BuildTask = {
         id: 'status-test',
         command: 'echo',
-        args: ['status']
+        args: ['status'],
       };
 
       await throttler.addTask(task);
@@ -398,14 +394,14 @@ describe('BuildProcessThrottler', () => {
       const tasks: BuildTask[] = [
         { id: 'track-1', command: 'sleep', args: ['1'] },
         { id: 'track-2', command: 'sleep', args: ['1'] },
-        { id: 'track-3', command: 'sleep', args: ['1'] }
+        { id: 'track-3', command: 'sleep', args: ['1'] },
       ];
 
       for (const task of tasks) {
         await throttler.addTask(task);
       }
 
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const runningIds = throttler.getRunningTaskIds();
       const queuedIds = throttler.getQueuedTaskIds();
@@ -420,14 +416,14 @@ describe('BuildProcessThrottler', () => {
       const task: BuildTask = {
         id: 'clear-test',
         command: 'echo',
-        args: ['clear']
+        args: ['clear'],
       };
 
       await throttler.addTask(task);
       await throttler.waitForTask('clear-test', 5000);
 
       expect(throttler.getStatus().completedCount).toBe(1);
-      
+
       throttler.clearResults();
       expect(throttler.getStatus().completedCount).toBe(0);
     });
@@ -435,22 +431,18 @@ describe('BuildProcessThrottler', () => {
     it('should get all results', async () => {
       const tasks: BuildTask[] = [
         { id: 'all-1', command: 'echo', args: ['1'] },
-        { id: 'all-2', command: 'echo', args: ['2'] }
+        { id: 'all-2', command: 'echo', args: ['2'] },
       ];
 
       for (const task of tasks) {
         await throttler.addTask(task);
       }
 
-      await Promise.all(
-        tasks.map(task => throttler.waitForTask(task.id, 5000))
-      );
+      await Promise.all(tasks.map((task) => throttler.waitForTask(task.id, 5000)));
 
       const allResults = throttler.getAllResults();
       expect(allResults).toHaveLength(2);
-      expect(allResults.map(r => r.id)).toEqual(
-        expect.arrayContaining(['all-1', 'all-2'])
-      );
+      expect(allResults.map((r) => r.id)).toEqual(expect.arrayContaining(['all-1', 'all-2']));
     });
   });
 
@@ -458,14 +450,14 @@ describe('BuildProcessThrottler', () => {
     it('should shutdown gracefully', async () => {
       const tasks: BuildTask[] = [
         { id: 'shutdown-1', command: 'sleep', args: ['2'] },
-        { id: 'shutdown-2', command: 'sleep', args: ['2'] }
+        { id: 'shutdown-2', command: 'sleep', args: ['2'] },
       ];
 
       for (const task of tasks) {
         await throttler.addTask(task);
       }
 
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const shutdownPromise = throttler.shutdown(1000);
       await expect(shutdownPromise).resolves.toBeUndefined();
@@ -480,11 +472,11 @@ describe('BuildProcessThrottler', () => {
       const task: BuildTask = {
         id: 'force-kill',
         command: 'sleep',
-        args: ['10'] // Long running task
+        args: ['10'], // Long running task
       };
 
       await throttler.addTask(task);
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Shutdown with very short timeout to force kill
       const startTime = Date.now();
@@ -507,7 +499,7 @@ describe('BuildProcessThrottler', () => {
       const task: BuildTask = {
         id: 'event-test',
         command: 'echo',
-        args: ['events']
+        args: ['events'],
       };
 
       await throttler.addTask(task);
@@ -526,27 +518,27 @@ describe('BuildProcessThrottler', () => {
       // Fill up concurrency slots first
       const blockingTasks: BuildTask[] = [
         { id: 'block-event-1', command: 'sleep', args: ['1'] },
-        { id: 'block-event-2', command: 'sleep', args: ['1'] }
+        { id: 'block-event-2', command: 'sleep', args: ['1'] },
       ];
 
       for (const task of blockingTasks) {
         await throttler.addTask(task);
       }
 
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       // Add task that will be queued
       const task: BuildTask = {
         id: 'cancel-event',
         command: 'sleep',
-        args: ['5']
+        args: ['5'],
       };
 
       await throttler.addTask(task);
-      
+
       // Verify it's queued
       expect(throttler.getQueuedTaskIds()).toContain('cancel-event');
-      
+
       // Cancel the queued task
       throttler.cancelTask('cancel-event');
 

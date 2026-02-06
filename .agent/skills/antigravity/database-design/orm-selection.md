@@ -11,7 +11,7 @@ What's the context?
 │   └── Drizzle (smallest, SQL-like)
 │
 ├── Best DX / Schema-first
-│   └── Prisma (migrations, studio)
+│   └── Drizzle (migrations, studio)
 │
 ├── Maximum control
 │   └── Raw SQL with query builder
@@ -25,6 +25,6 @@ What's the context?
 | ORM         | Best For                 | Trade-offs              |
 | ----------- | ------------------------ | ----------------------- |
 | **Drizzle** | Edge, TypeScript         | Newer, less examples    |
-| **Prisma**  | DX, schema management    | Heavier, not edge-ready |
+| **Drizzle**  | DX, schema management    | Heavier, not edge-ready |
 | **Kysely**  | Type-safe SQL builder    | Manual migrations       |
 | **Raw SQL** | Complex queries, control | Manual type safety      |

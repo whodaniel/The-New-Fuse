@@ -5,20 +5,20 @@ import {
   AgentStatus,
 } from "@the-new-fuse/types";
 import { Injectable, Logger } from "@nestjs/common";
-import { PrismaService } from '../lib/prisma.service.tsx';
+import { DatabaseService } from '../lib/drizzle.service.tsx';
 import { ConfigService } from "@nestjs/config";
-import { Prisma, Agent as PrismaAgent } from "@the-new-fuse/database";
+import { Drizzle, Agent as DrizzleAgent } from "@the-new-fuse/database";
 
 @Injectable()
 export class AgentService {
   private readonly logger = new Logger(AgentService.name);
 
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly drizzle: DatabaseService,
     private readonly config: ConfigService,
   ) {}
 
-  private transformPrismaAgent(agent: PrismaAgent): Agent {
+  private transformDrizzleAgent(agent: DrizzleAgent): Agent {
     // Explicit type conversion with schema validation
     const transformed: Agent = {
       id: agent.id,
@@ -41,7 +41,7 @@ export class AgentService {
   async createAgent(data: CreateAgentDto, userId: string): Promise<Agent> {
     try {
       // Use transaction to ensure data consistency
-      return await this.prisma.client.$transaction(async (tx) => {
+      return await this.drizzle.client.$transaction(async (tx) => {
         // Check for existing agent with same name
         const existingAgent = await tx.agent.findFirst({
           where: { name: data.name },
@@ -64,7 +64,7 @@ export class AgentService {
         });
 
         this.logger.log(`Created agent ${agent.id} (${agent.name})`);
-        return this.transformPrismaAgent(agent);
+        return this.transformDrizzleAgent(agent);
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -75,11 +75,11 @@ export class AgentService {
 
   async getAgents(userId: string): Promise<Agent[]> {
     try {
-      const agents = await this.prisma.client.agent.findMany({
+      const agents = await this.drizzle.client.agent.findMany({
         where: { userId, deletedAt: null },
       });
 
-      return agents.map((agent) => this.transformPrismaAgent(agent));
+      return agents.map((agent) => this.transformDrizzleAgent(agent));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to get agents: ${errorMessage}`);
@@ -89,7 +89,7 @@ export class AgentService {
 
   async getAgent(id: string, userId: string): Promise<Agent> {
     try {
-      const agent = await this.prisma.client.agent.findFirst({
+      const agent = await this.drizzle.client.agent.findFirst({
         where: { id, userId, deletedAt: null },
       });
 
@@ -97,7 +97,7 @@ export class AgentService {
         throw new Error(`Agent with id "${id}" not found`);
       }
 
-      return this.transformPrismaAgent(agent);
+      return this.transformDrizzleAgent(agent);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to get agent: ${errorMessage}`);
@@ -111,7 +111,7 @@ export class AgentService {
     userId: string,
   ): Promise<Agent> {
     try {
-      return await this.prisma.client.$transaction(async (tx) => {
+      return await this.drizzle.client.$transaction(async (tx) => {
         // Check if agent exists
         const existingAgent = await tx.agent.findFirst({
           where: { id, userId, deletedAt: null },
@@ -145,7 +145,7 @@ export class AgentService {
         });
 
         this.logger.log(`Updated agent ${id}`);
-        return this.transformPrismaAgent(agent);
+        return this.transformDrizzleAgent(agent);
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -156,7 +156,7 @@ export class AgentService {
 
   async deleteAgent(id: string, userId: string): Promise<void> {
     try {
-      await this.prisma.client.agent.update({
+      await this.drizzle.client.agent.update({
         where: { id },
         data: { deletedAt: new Date() },
       });
@@ -174,7 +174,7 @@ export class AgentService {
     userId: string,
   ): Promise<Agent[]> {
     try {
-      const agents = await this.prisma.client.agent.findMany({
+      const agents = await this.drizzle.client.agent.findMany({
         where: {
           userId,
           deletedAt: null,
@@ -184,7 +184,7 @@ export class AgentService {
         },
       });
 
-      return agents.map((agent) => this.transformPrismaAgent(agent));
+      return agents.map((agent) => this.transformDrizzleAgent(agent));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to get agents by capability: ${errorMessage}`);
@@ -194,7 +194,7 @@ export class AgentService {
 
   async getActiveAgents(userId: string): Promise<Agent[]> {
     try {
-      const agents = await this.prisma.client.agent.findMany({
+      const agents = await this.drizzle.client.agent.findMany({
         where: {
           userId,
           deletedAt: null,
@@ -202,7 +202,7 @@ export class AgentService {
         },
       });
 
-      return agents.map((agent) => this.transformPrismaAgent(agent));
+      return agents.map((agent) => this.transformDrizzleAgent(agent));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to get active agents: ${errorMessage}`);
@@ -216,13 +216,13 @@ export class AgentService {
     userId: string,
   ): Promise<Agent> {
     try {
-      const agent = await this.prisma.client.agent.update({
+      const agent = await this.drizzle.client.agent.update({
         where: { id },
         data: { status },
       });
 
       this.logger.log(`Updated agent status ${id} -> ${status}`);
-      return this.transformPrismaAgent(agent);
+      return this.transformDrizzleAgent(agent);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to update agent status: ${errorMessage}`);

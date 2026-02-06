@@ -1,18 +1,24 @@
 # Advanced Caching System
 
-A comprehensive, production-ready caching infrastructure for The New Fuse backend built with NestJS and Redis.
+A comprehensive, production-ready caching infrastructure for The New Fuse
+backend built with NestJS and Redis.
 
 ## Features
 
-- **Cache-Aside Pattern**: Automatic cache management with fallback to data source
-- **Multiple Caching Layers**: API, database, computed results, and session caching
-- **Declarative Decorators**: `@Cacheable`, `@CacheEvict`, `@CacheInvalidate` for easy integration
+- **Cache-Aside Pattern**: Automatic cache management with fallback to data
+  source
+- **Multiple Caching Layers**: API, database, computed results, and session
+  caching
+- **Declarative Decorators**: `@Cacheable`, `@CacheEvict`, `@CacheInvalidate`
+  for easy integration
 - **HTTP Response Caching**: Automatic caching with proper Cache-Control headers
 - **Cache Monitoring**: Real-time hit/miss rate tracking and performance metrics
 - **Cache Warming**: Proactive cache population for critical data
-- **Event-Based Invalidation**: Automatic cache invalidation based on domain events
+- **Event-Based Invalidation**: Automatic cache invalidation based on domain
+  events
 - **Tag-Based Invalidation**: Group and invalidate related cache entries
-- **Session Management**: High-performance session storage with sliding expiration
+- **Session Management**: High-performance session storage with sliding
+  expiration
 - **Batch Operations**: Efficient multi-key operations
 - **Flexible TTL Configuration**: Multiple TTL presets for different use cases
 
@@ -28,7 +34,8 @@ A comprehensive, production-ready caching infrastructure for The New Fuse backen
 
 ## Installation
 
-The cache module is already integrated into the application. Required dependencies:
+The cache module is already integrated into the application. Required
+dependencies:
 
 ```bash
 npm install @nestjs/config @nestjs/event-emitter @nestjs/schedule ioredis
@@ -160,6 +167,7 @@ async getProducts() {
 ```
 
 **Headers Set:**
+
 - `Cache-Control: public, max-age=600`
 - `X-Cache: HIT|MISS`
 - `Vary: Accept-Language`
@@ -246,6 +254,7 @@ await this.warmingService.executeAllTasksParallel();
 ```
 
 **Automatic Scheduling:**
+
 - Critical tasks (priority >= 100) warm on startup
 - All tasks warm every 6 hours automatically
 - Custom schedules supported via cron expressions
@@ -346,14 +355,14 @@ getStats(): Promise<CacheStats>
 
 ```typescript
 interface CacheOptions {
-  ttl?: number;           // Time to live in seconds
-  prefix?: string;        // Key prefix
-  tags?: string[];        // Tags for invalidation
+  ttl?: number; // Time to live in seconds
+  prefix?: string; // Key prefix
+  tags?: string[]; // Tags for invalidation
 }
 
 interface CacheableOptions extends CacheOptions {
-  key?: string | ((...args) => string);  // Cache key or generator
-  condition?: (...args) => boolean;       // Conditional caching
+  key?: string | ((...args) => string); // Cache key or generator
+  condition?: (...args) => boolean; // Conditional caching
 }
 ```
 

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Bot, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Bot, ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface AgentMenuProps {
   selectedAgent?: string;
@@ -11,7 +11,7 @@ interface AgentMenuProps {
 const AgentMenu: React.FC<AgentMenuProps> = ({
   selectedAgent = 'default',
   onAgentChange,
-  className
+  className,
 }) => {
   const agents = [
     { id: 'default', name: 'Default Agent', icon: Bot },
@@ -20,7 +20,7 @@ const AgentMenu: React.FC<AgentMenuProps> = ({
   ];
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn('relative', className)}>
       <button
         className="flex items-center gap-2 px-3 py-2 text-sm bg-slate-100 hover:bg-slate-200 rounded-md transition-colors"
         onClick={() => {
@@ -32,7 +32,7 @@ const AgentMenu: React.FC<AgentMenuProps> = ({
         }}
       >
         <Bot className="w-4 h-4" />
-        <span>{agents.find(a => a.id === selectedAgent)?.name || 'Select Agent'}</span>
+        <span>{agents.find((a) => a.id === selectedAgent)?.name || 'Select Agent'}</span>
         <ChevronDown className="w-3 h-3" />
       </button>
     </div>

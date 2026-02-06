@@ -81,6 +81,7 @@ export class Service {
 ## Testing
 
 ### Unit Tests
+
 - **Framework**: Jest
 - **Coverage Target**: 80%
 - **Focus Areas**:
@@ -103,6 +104,7 @@ describe('Component', () => {
 ```
 
 ### Integration Tests
+
 - **Framework**: Cypress
 - **Coverage Target**: 70%
 - **Focus Areas**:
@@ -134,6 +136,7 @@ describe('Service Integration', () => {
 ```
 
 ### End-to-End Testing
+
 - **Framework**: Selenium
 - **Coverage Target**: 50%
 - **Focus Areas**:
@@ -146,6 +149,7 @@ describe('Service Integration', () => {
 ## Code Style
 
 ### TypeScript
+
 - Use strict mode
 - Implement interfaces
 - Document with TSDoc
@@ -153,6 +157,7 @@ describe('Service Integration', () => {
 - Handle errors properly
 
 ### React
+
 - Use functional components
 - Implement hooks correctly
 - Follow component structure
@@ -160,6 +165,7 @@ describe('Service Integration', () => {
 - Manage state properly
 
 ### NestJS
+
 - Use decorators appropriately
 - Implement dependency injection
 - Follow module structure
@@ -169,6 +175,7 @@ describe('Service Integration', () => {
 ## Deployment
 
 ### Development
+
 ```bash
 # Start development server
 yarn dev
@@ -181,6 +188,7 @@ yarn build
 ```
 
 ### Production
+
 ```bash
 # Build for production
 yarn build
@@ -216,10 +224,13 @@ yarn start:prod
 
 ### Development Environment (SQLite)
 
-SQLite handles persistent storage of conversation history, metadata, and system state:
+SQLite handles persistent storage of conversation history, metadata, and system
+state:
 
 #### Resources Table
+
 Stores shared resources within workspaces.
+
 ```sql
 CREATE TABLE resources (
   id TEXT PRIMARY KEY,
@@ -236,7 +247,9 @@ CREATE INDEX idx_resources_workspace ON resources(workspace_id);
 ```
 
 #### Shared Context Table
+
 Stores context information shared between agents.
+
 ```sql
 CREATE TABLE shared_context (
   id TEXT PRIMARY KEY,
@@ -253,7 +266,9 @@ CREATE INDEX idx_context_workspace ON shared_context(workspace_id);
 ```
 
 #### Active Agents Table
+
 Tracks currently active agents in workspaces.
+
 ```sql
 CREATE TABLE active_agents (
   workspace_id TEXT NOT NULL,
@@ -264,6 +279,7 @@ CREATE TABLE active_agents (
 ```
 
 #### Conversations Table
+
 ```sql
 CREATE TABLE IF NOT EXISTS conversations (
     conversation_id TEXT PRIMARY KEY,
@@ -274,6 +290,7 @@ CREATE TABLE IF NOT EXISTS conversations (
 ```
 
 #### Messages Table
+
 ```sql
 CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -290,6 +307,7 @@ CREATE TABLE IF NOT EXISTS messages (
 ```
 
 #### Metadata Versions Table
+
 ```sql
 CREATE TABLE IF NOT EXISTS metadata_versions (
     version_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -300,6 +318,7 @@ CREATE TABLE IF NOT EXISTS metadata_versions (
 ```
 
 #### Metadata Changes Table
+
 ```sql
 CREATE TABLE IF NOT EXISTS metadata_changes (
     change_id TEXT PRIMARY KEY,
@@ -315,6 +334,7 @@ CREATE TABLE IF NOT EXISTS metadata_changes (
 ```
 
 #### Character Arcs Table
+
 ```sql
 CREATE TABLE IF NOT EXISTS character_arcs (
     arc_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -330,6 +350,7 @@ CREATE TABLE IF NOT EXISTS character_arcs (
 ```
 
 #### Agent Metadata Table
+
 ```sql
 CREATE TABLE IF NOT EXISTS agent_metadata (
     agent_id TEXT PRIMARY KEY,
@@ -345,7 +366,8 @@ CREATE TABLE IF NOT EXISTS agent_metadata (
 
 ### Production Environment (PostgreSQL)
 
-For production deployment, we will migrate to PostgreSQL with the following changes:
+For production deployment, we will migrate to PostgreSQL with the following
+changes:
 
 1. Use UUID type for ID fields instead of TEXT
 2. Add proper foreign key constraints
@@ -354,18 +376,21 @@ For production deployment, we will migrate to PostgreSQL with the following chan
 5. Implement proper connection pooling
 6. Set up replication for high availability
 
-The schema will be updated with specific PostgreSQL implementation details when we move to production.
+The schema will be updated with specific PostgreSQL implementation details when
+we move to production.
 
 ### Redis (Temporary State & Agent Communication)
 
 Redis is used for real-time agent communication and temporary state storage:
 
 #### Agent Communication Channels
+
 - `AI_COORDINATION_CHANNEL`: For agent coordination messages
 - `AI_TASK_CHANNEL`: For task-related messages
 - `AI_RESULT_CHANNEL`: For task results
 
 #### Temporary State Keys
+
 - `agent:{agentId}:heartbeat`: Agent heartbeat timestamps
 - `agent:{agentId}:status`: Current agent status
 - `monitor:response_time`: Agent response time metrics
@@ -379,6 +404,7 @@ Redis is used for real-time agent communication and temporary state storage:
 ### Testing Framework Stack
 
 #### Unit Testing
+
 - **Framework**: Jest
 - **Coverage Target**: 80%
 - **Focus Areas**:
@@ -389,6 +415,7 @@ Redis is used for real-time agent communication and temporary state storage:
   - WebSocket message handling
 
 #### Integration Testing
+
 - **Framework**: Cypress
 - **Coverage Target**: 70%
 - **Focus Areas**:
@@ -399,6 +426,7 @@ Redis is used for real-time agent communication and temporary state storage:
   - External service integrations
 
 #### End-to-End Testing
+
 - **Framework**: Selenium
 - **Coverage Target**: 50%
 - **Focus Areas**:
@@ -411,6 +439,7 @@ Redis is used for real-time agent communication and temporary state storage:
 ### Test Categories
 
 #### Smoke Tests (Priority 1)
+
 - User registration and login
 - Agent creation and configuration
 - Pipeline creation and execution
@@ -418,6 +447,7 @@ Redis is used for real-time agent communication and temporary state storage:
 - Core API endpoints
 
 #### Critical Path Tests (Priority 2)
+
 - Complete user authentication flow
 - Agent interaction scenarios
 - Pipeline stage transitions
@@ -425,6 +455,7 @@ Redis is used for real-time agent communication and temporary state storage:
 - Error handling and recovery
 
 #### Neural Memory Tests (Priority 2)
+
 - Vector embedding generation and storage
 - Similarity search performance
 - Pattern recognition accuracy
@@ -433,6 +464,7 @@ Redis is used for real-time agent communication and temporary state storage:
 - Memory cleanup and garbage collection
 
 #### WebSocket Tests (Priority 2)
+
 - Connection stability under load
 - Reconnection behavior
 - Message ordering and delivery
@@ -442,6 +474,7 @@ Redis is used for real-time agent communication and temporary state storage:
 - Load balancing behavior
 
 #### Performance Tests (Priority 3)
+
 - Load testing (Artillery)
 - Stress testing
 - Memory leak detection
@@ -451,18 +484,21 @@ Redis is used for real-time agent communication and temporary state storage:
 ### Testing Environment
 
 #### Development
+
 - Local development environment
 - SQLite database for rapid testing
 - Mock external services
 - Instant feedback loop
 
 #### Staging
+
 - Production-like environment
 - PostgreSQL database
 - Limited external service integration
 - Performance monitoring
 
 #### Production
+
 - Smoke tests only
 - Synthetic monitoring
 - Error tracking
@@ -471,12 +507,14 @@ Redis is used for real-time agent communication and temporary state storage:
 ### Continuous Integration
 
 #### Pre-commit Hooks
+
 - Linting (ESLint)
 - Type checking (TypeScript)
 - Unit test execution
 - Code formatting (Prettier)
 
 #### CI Pipeline
+
 - Automated test execution
 - Coverage reporting
 - Performance benchmarking
@@ -485,12 +523,14 @@ Redis is used for real-time agent communication and temporary state storage:
 ### Test Data Management
 
 #### Test Data Generation
+
 - Faker.js for realistic data
 - Seeding scripts for consistent state
 - Clean up procedures
 - Data versioning
 
 #### Test Isolation
+
 - Independent test databases
 - Transaction rollback
 - Container isolation
@@ -499,6 +539,7 @@ Redis is used for real-time agent communication and temporary state storage:
 ### Error Testing
 
 #### Error Scenarios
+
 - Network failures
 - Database errors
 - Invalid input handling
@@ -506,6 +547,7 @@ Redis is used for real-time agent communication and temporary state storage:
 - WebSocket disconnections
 
 #### Recovery Testing
+
 - Auto-reconnection logic
 - Data consistency checks
 - State recovery procedures
@@ -514,12 +556,14 @@ Redis is used for real-time agent communication and temporary state storage:
 ### Security Testing
 
 #### Security Scans
+
 - OWASP dependency check
 - Static code analysis
 - Penetration testing
 - API security testing
 
 #### Authentication Testing
+
 - Token validation
 - Session management
 - Permission checks
@@ -528,12 +572,14 @@ Redis is used for real-time agent communication and temporary state storage:
 ### Mobile Testing
 
 #### Responsive Design
+
 - Multiple viewport sizes
 - Touch interaction
 - Gesture support
 - Orientation changes
 
 #### Platform Specific
+
 - iOS Safari
 - Android Chrome
 - PWA functionality
@@ -542,6 +588,7 @@ Redis is used for real-time agent communication and temporary state storage:
 ### Documentation
 
 #### Test Documentation
+
 - Test case descriptions
 - Setup procedures
 - Expected results
@@ -549,6 +596,7 @@ Redis is used for real-time agent communication and temporary state storage:
 - Known limitations
 
 #### Coverage Reports
+
 - Jest coverage reports
 - Cypress dashboard
 - Selenium test results
@@ -557,12 +605,14 @@ Redis is used for real-time agent communication and temporary state storage:
 ### Monitoring & Alerts
 
 #### Test Monitoring
+
 - Test execution time
 - Failure rates
 - Coverage trends
 - Performance regression
 
 #### Alert Configuration
+
 - Critical test failures
 - Coverage drops
 - Performance degradation

@@ -1,6 +1,7 @@
 # Complete Implementation Guide
 
-This comprehensive guide consolidates all implementation plans, strategies, and procedures for The New Fuse platform.
+This comprehensive guide consolidates all implementation plans, strategies, and
+procedures for The New Fuse platform.
 
 ## Table of Contents
 
@@ -16,10 +17,12 @@ This comprehensive guide consolidates all implementation plans, strategies, and 
 
 ### Overview
 
-The New Fuse integrates multiple VS Code extensions into a comprehensive platform:
+The New Fuse integrates multiple VS Code extensions into a comprehensive
+platform:
 
 1. **The New Fuse** - AI Agent Orchestration with MCP integration
-2. **VSCode AI Coder Connector** - Chrome extension connectivity and Roo output monitoring
+2. **VSCode AI Coder Connector** - Chrome extension connectivity and Roo output
+   monitoring
 
 ### Integration Architecture
 
@@ -60,7 +63,7 @@ The New Fuse integrates multiple VS Code extensions into a comprehensive platfor
         "title": "Start Roo Monitoring"
       },
       {
-        "command": "thefuse.ai.stopMonitoring", 
+        "command": "thefuse.ai.stopMonitoring",
         "title": "Stop Roo Monitoring"
       }
     ],
@@ -72,7 +75,7 @@ The New Fuse integrates multiple VS Code extensions into a comprehensive platfor
           "description": "WebSocket server port"
         },
         "thefuse.ports.roo": {
-          "type": "number", 
+          "type": "number",
           "default": 3711,
           "description": "Roo output broadcast port"
         }
@@ -92,6 +95,7 @@ The New Fuse integrates multiple VS Code extensions into a comprehensive platfor
 ### Testing Integration
 
 #### Method 1: Integration Script
+
 ```bash
 # Run the automated integration script
 chmod +x ./integrate-extensions.sh
@@ -99,6 +103,7 @@ chmod +x ./integrate-extensions.sh
 ```
 
 The script performs:
+
 - Development directory backup
 - File presence verification
 - Package.json validation
@@ -107,6 +112,7 @@ The script performs:
 - Extension building
 
 #### Method 2: Manual Testing
+
 ```bash
 # Navigate to extension directory
 cd /path/to/vscode-extension
@@ -122,6 +128,7 @@ cd /path/to/vscode-extension
 ```
 
 #### Method 3: VS Code Tasks
+
 1. Open Command Palette (Cmd+Shift+P)
 2. Select "Tasks: Run Task"
 3. Choose "Launch VS Code with Extension"
@@ -129,8 +136,9 @@ cd /path/to/vscode-extension
 ### Known Issues and Solutions
 
 #### Port Conflicts
-**Issue**: WebSocket ports 3710/3711 already in use
-**Solution**: 
+
+**Issue**: WebSocket ports 3710/3711 already in use **Solution**:
+
 ```typescript
 class PortManager {
   async findAvailablePort(preferredPort: number): Promise<number> {
@@ -140,7 +148,7 @@ class PortManager {
     }
     return port;
   }
-  
+
   private async isPortInUse(port: number): Promise<boolean> {
     return new Promise((resolve) => {
       const server = net.createServer();
@@ -154,18 +162,21 @@ class PortManager {
 ```
 
 #### Roo Output Channel Dependencies
-**Issue**: Roo not installed or output channel missing
-**Solution**:
+
+**Issue**: Roo not installed or output channel missing **Solution**:
+
 ```typescript
 class RooMonitor {
   async validateRooAvailability(): Promise<boolean> {
-    const outputChannels = vscode.window.visibleTextEditors
-      .map(editor => editor.document.uri.scheme);
-    
-    return outputChannels.includes('output') || 
-           await this.checkRooExtension();
+    const outputChannels = vscode.window.visibleTextEditors.map(
+      (editor) => editor.document.uri.scheme
+    );
+
+    return (
+      outputChannels.includes('output') || (await this.checkRooExtension())
+    );
   }
-  
+
   private async checkRooExtension(): Promise<boolean> {
     const extension = vscode.extensions.getExtension('roo.extension-id');
     return extension !== undefined && extension.isActive;
@@ -181,7 +192,7 @@ class RooMonitor {
 
 1. **Core Features**
    - Authentication and Authorization
-   - User Management  
+   - User Management
    - Workspace Management
    - Analytics and Monitoring
 
@@ -200,6 +211,7 @@ class RooMonitor {
 ### Consolidation Implementation
 
 #### Standard Feature Module Structure
+
 ```typescript
 // Standardized feature organization
 feature/
@@ -228,6 +240,7 @@ feature/
 ```
 
 #### Feature Configuration System
+
 ```typescript
 interface FeatureConfig {
   name: string;
@@ -252,26 +265,26 @@ interface FeatureConfig {
 
 class FeatureManager {
   private features: Map<string, FeatureConfig> = new Map();
-  
+
   registerFeature(config: FeatureConfig): void {
     this.validateFeatureConfig(config);
     this.features.set(config.name, config);
   }
-  
+
   isFeatureEnabled(featureName: string): boolean {
     const feature = this.features.get(featureName);
     return feature?.enabled ?? false;
   }
-  
+
   getFeatureConfig<T = any>(featureName: string): T | undefined {
     return this.features.get(featureName)?.config as T;
   }
-  
+
   private validateFeatureConfig(config: FeatureConfig): void {
     if (!config.name || !config.version) {
       throw new Error('Feature must have name and version');
     }
-    
+
     // Validate dependencies exist
     for (const dep of config.dependencies) {
       if (!this.features.has(dep)) {
@@ -285,6 +298,7 @@ class FeatureManager {
 ### Migration Strategy
 
 #### Phase 1: Feature Audit
+
 ```typescript
 // Feature discovery and documentation
 class FeatureAuditor {
@@ -292,22 +306,24 @@ class FeatureAuditor {
     const features = await this.discoverFeatures();
     const dependencies = await this.analyzeDependencies(features);
     const overlaps = await this.findOverlaps(features);
-    
+
     return {
       features,
       dependencies,
       overlaps,
-      recommendations: this.generateRecommendations(overlaps)
+      recommendations: this.generateRecommendations(overlaps),
     };
   }
-  
+
   private async discoverFeatures(): Promise<FeatureInfo[]> {
     // Scan codebase for feature modules
     // Analyze package.json dependencies
     // Document current implementations
   }
-  
-  private async analyzeDependencies(features: FeatureInfo[]): Promise<DependencyGraph> {
+
+  private async analyzeDependencies(
+    features: FeatureInfo[]
+  ): Promise<DependencyGraph> {
     // Map feature dependencies
     // Identify circular dependencies
     // Calculate consolidation impact
@@ -316,17 +332,17 @@ class FeatureAuditor {
 ```
 
 #### Phase 2: Feature Migration
+
 ```typescript
 // Automated feature migration
 class FeatureMigrator {
   async migrateFeature(
-    source: string, 
-    target: string, 
+    source: string,
+    target: string,
     strategy: MigrationStrategy
   ): Promise<MigrationResult> {
-    
     const backup = await this.createBackup(source);
-    
+
     try {
       switch (strategy) {
         case 'merge':
@@ -341,8 +357,11 @@ class FeatureMigrator {
       throw error;
     }
   }
-  
-  private async mergeFeatures(source: string, target: string): Promise<MigrationResult> {
+
+  private async mergeFeatures(
+    source: string,
+    target: string
+  ): Promise<MigrationResult> {
     // Merge components and services
     // Update import statements
     // Resolve naming conflicts
@@ -352,6 +371,7 @@ class FeatureMigrator {
 ```
 
 #### Phase 3: Testing and Validation
+
 ```typescript
 // Comprehensive testing suite
 describe('Feature Consolidation', () => {
@@ -359,20 +379,20 @@ describe('Feature Consolidation', () => {
     test('should load consolidated features correctly', async () => {
       const featureManager = new FeatureManager();
       await featureManager.loadFeatures();
-      
+
       expect(featureManager.getLoadedFeatures()).toHaveLength(
         EXPECTED_FEATURE_COUNT
       );
     });
-    
+
     test('should respect feature dependencies', async () => {
       const featureManager = new FeatureManager();
       const feature = await featureManager.loadFeature('dependent-feature');
-      
+
       expect(feature.dependencies).toBeResolved();
     });
   });
-  
+
   describe('Feature Functionality', () => {
     test('should preserve original functionality', async () => {
       // Test each consolidated feature
@@ -413,19 +433,19 @@ describe('Feature Consolidation', () => {
 // Component registry for unified access
 class ComponentRegistry {
   private components: Map<string, ComponentDefinition> = new Map();
-  
+
   registerComponent(definition: ComponentDefinition): void {
     this.validateComponent(definition);
     this.components.set(definition.name, definition);
   }
-  
+
   getComponent<T extends ComponentProps>(
     name: string
   ): React.ComponentType<T> | undefined {
     const definition = this.components.get(name);
     return definition?.component as React.ComponentType<T>;
   }
-  
+
   getComponentVariants(name: string): string[] {
     const definition = this.components.get(name);
     return definition?.variants || [];
@@ -449,25 +469,27 @@ interface ComponentDefinition {
 
 ```typescript
 // Base component with common functionality
-abstract class BaseComponent<T extends ComponentProps> extends React.Component<T> {
+abstract class BaseComponent<
+  T extends ComponentProps,
+> extends React.Component<T> {
   protected logger = new ComponentLogger(this.constructor.name);
   protected errorBoundary = new ComponentErrorBoundary();
-  
+
   componentDidMount(): void {
     this.logger.debug('Component mounted', { props: this.props });
     this.trackComponentUsage();
   }
-  
+
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     this.logger.error('Component error', { error, errorInfo });
     this.errorBoundary.handleError(error, errorInfo);
   }
-  
+
   private trackComponentUsage(): void {
     // Analytics tracking for component usage
     analytics.track('component.mounted', {
       component: this.constructor.name,
-      props: Object.keys(this.props)
+      props: Object.keys(this.props),
     });
   }
 }
@@ -497,11 +519,11 @@ interface ThemeConfig {
 class ThemeManager {
   private themes: Map<string, ThemeConfig> = new Map();
   private currentTheme = 'default';
-  
+
   registerTheme(name: string, config: ThemeConfig): void {
     this.themes.set(name, config);
   }
-  
+
   setTheme(name: string): void {
     if (!this.themes.has(name)) {
       throw new Error(`Theme not found: ${name}`);
@@ -509,11 +531,11 @@ class ThemeManager {
     this.currentTheme = name;
     this.applyTheme(name);
   }
-  
+
   private applyTheme(name: string): void {
     const theme = this.themes.get(name);
     if (!theme) return;
-    
+
     // Apply CSS custom properties
     const root = document.documentElement;
     Object.entries(theme.colors).forEach(([key, value]) => {
@@ -528,6 +550,7 @@ class ThemeManager {
 ### Command Implementation Analysis
 
 #### Current Command Structure
+
 ```typescript
 // Analysis of existing command implementations
 interface CommandAnalysis {
@@ -542,53 +565,55 @@ interface CommandAnalysis {
 class CommandAnalyzer {
   async analyzeCommands(): Promise<CommandAnalysis[]> {
     const commands = await this.discoverCommands();
-    
-    return Promise.all(
-      commands.map(command => this.analyzeCommand(command))
-    );
+
+    return Promise.all(commands.map((command) => this.analyzeCommand(command)));
   }
-  
+
   private async analyzeCommand(command: string): Promise<CommandAnalysis> {
     const implementation = await this.getImplementation(command);
     const dependencies = await this.analyzeDependencies(implementation);
     const complexity = this.assessComplexity(implementation);
     const issues = await this.identifyIssues(implementation);
-    
+
     return {
       command,
       implementation,
       dependencies,
       complexity,
       issues,
-      recommendations: this.generateRecommendations(issues, complexity)
+      recommendations: this.generateRecommendations(issues, complexity),
     };
   }
 }
 ```
 
 #### Component Analysis Comparison
+
 ```typescript
 // Compare component implementations across modules
 class ComponentAnalyzer {
   async compareComponents(): Promise<ComponentComparisonReport> {
     const components = await this.getAllComponents();
     const comparisons = this.performComparisons(components);
-    
+
     return {
       duplicates: this.findDuplicates(comparisons),
       similarities: this.findSimilarities(comparisons),
-      consolidationOpportunities: this.identifyConsolidationOpportunities(comparisons)
+      consolidationOpportunities:
+        this.identifyConsolidationOpportunities(comparisons),
     };
   }
-  
-  private findDuplicates(comparisons: ComponentComparison[]): DuplicateReport[] {
+
+  private findDuplicates(
+    comparisons: ComponentComparison[]
+  ): DuplicateReport[] {
     return comparisons
-      .filter(comp => comp.similarity > 0.9)
-      .map(comp => ({
+      .filter((comp) => comp.similarity > 0.9)
+      .map((comp) => ({
         components: [comp.componentA, comp.componentB],
         similarity: comp.similarity,
         differences: comp.differences,
-        consolidationStrategy: this.suggestConsolidationStrategy(comp)
+        consolidationStrategy: this.suggestConsolidationStrategy(comp),
       }));
   }
 }
@@ -599,116 +624,106 @@ class ComponentAnalyzer {
 ### System Integration Checklist
 
 #### Core System Components
+
 - ✅ **GDesigner Adapter**
   - Configuration validated
   - API endpoints tested
   - Error handling verified
-  
 - ✅ **Message Queue Configuration**
   - Redis connection established
   - Queue processing verified
   - Dead letter queues configured
-  
-- ✅ **Monitoring Setup** 
+- ✅ **Monitoring Setup**
   - Health checks implemented
   - Metrics collection active
   - Alerting rules configured
-  
 - ✅ **Database Migrations**
   - Schema updates applied
   - Data integrity verified
   - Rollback procedures tested
-  
 - ✅ **Cache Configuration**
   - Cache layers optimized
   - Invalidation strategies tested
   - Performance benchmarks met
 
 #### Documentation Status
+
 - ✅ **Integration Guide**
   - API documentation complete
   - Code examples provided
   - Best practices documented
-  
 - ✅ **Monitoring Guide**
   - Dashboard setup instructions
   - Alert configuration guide
   - Troubleshooting procedures
-  
 - ✅ **Troubleshooting Guide**
   - Common issues documented
   - Resolution procedures tested
   - Escalation paths defined
 
 #### Performance Validation
+
 - ✅ **Load Testing**
   - Target RPS achieved: 1000 req/sec
   - Response times within SLA: <200ms p95
   - Resource utilization optimized
-  
 - ✅ **Stress Testing**
   - Breaking point identified: 2500 req/sec
   - Graceful degradation verified
   - Recovery procedures tested
-  
 - ✅ **Error Handling**
   - Circuit breakers configured
   - Retry mechanisms tested
   - Fallback procedures verified
 
 #### Security Validation
+
 - ✅ **API Key Rotation**
   - Automated rotation configured
   - Zero-downtime rotation tested
   - Backup key management active
-  
 - ✅ **Rate Limiting**
   - Per-client limits configured
   - Burst handling implemented
   - Bypass mechanisms for internal services
-  
 - ✅ **Access Controls**
   - RBAC system implemented
   - Permission auditing active
   - Privilege escalation monitoring
-  
 - ✅ **Audit Logging**
   - All API calls logged
   - Security events tracked
   - Log retention policies active
 
 #### Deployment Readiness
+
 - ✅ **Production Configuration**
   - Environment variables secured
   - Configuration management automated
   - Secrets management implemented
-  
 - ✅ **Backup Strategy**
   - Automated backups scheduled
   - Recovery procedures tested
   - Cross-region replication active
-  
 - ✅ **Rollback Planning**
   - Blue-green deployment ready
   - Database rollback procedures
   - Feature flag systems active
-  
 - ✅ **Monitoring and Alerting**
   - Key metrics monitored
   - Alert thresholds configured
   - On-call procedures established
 
 #### Knowledge Transfer
+
 - ✅ **System Architecture**
   - Architecture diagrams updated
   - Component interactions documented
   - Technology stack documented
-  
 - ✅ **Operational Procedures**
   - Deployment procedures documented
   - Maintenance windows scheduled
   - Emergency procedures defined
-  
 - ✅ **Emergency Contacts**
   - On-call rotation established
   - Escalation procedures documented
@@ -723,19 +738,19 @@ class HandoverValidator {
     const securityChecks = await this.runSecurityChecks();
     const performanceChecks = await this.runPerformanceChecks();
     const documentationChecks = await this.validateDocumentation();
-    
+
     return {
       overall: this.calculateOverallScore([
         systemChecks,
-        securityChecks, 
+        securityChecks,
         performanceChecks,
-        documentationChecks
+        documentationChecks,
       ]),
       systemHealth: systemChecks,
       security: securityChecks,
       performance: performanceChecks,
       documentation: documentationChecks,
-      readyForProduction: this.assessProductionReadiness()
+      readyForProduction: this.assessProductionReadiness(),
     };
   }
 }
@@ -749,24 +764,24 @@ class HandoverValidator {
 class PortManager {
   private portRegistry: Map<string, PortInfo> = new Map();
   private reservedPorts: Set<number> = new Set([3710, 3711, 8080, 9000]);
-  
+
   async allocatePort(service: string, preferredPort?: number): Promise<number> {
-    const port = preferredPort || await this.findAvailablePort();
-    
+    const port = preferredPort || (await this.findAvailablePort());
+
     if (await this.isPortInUse(port)) {
       throw new Error(`Port ${port} is already in use`);
     }
-    
+
     this.portRegistry.set(service, {
       port,
       service,
       allocatedAt: new Date(),
-      status: 'allocated'
+      status: 'allocated',
     });
-    
+
     return port;
   }
-  
+
   async releasePort(service: string): Promise<void> {
     const portInfo = this.portRegistry.get(service);
     if (portInfo) {
@@ -774,7 +789,7 @@ class PortManager {
       portInfo.releasedAt = new Date();
     }
   }
-  
+
   private async findAvailablePort(startPort = 3000): Promise<number> {
     for (let port = startPort; port < 65535; port++) {
       if (!this.reservedPorts.has(port) && !(await this.isPortInUse(port))) {
@@ -783,15 +798,15 @@ class PortManager {
     }
     throw new Error('No available ports found');
   }
-  
+
   private async isPortInUse(port: number): Promise<boolean> {
     return new Promise((resolve) => {
       const server = require('net').createServer();
-      
+
       server.listen(port, () => {
         server.close(() => resolve(false));
       });
-      
+
       server.on('error', () => resolve(true));
     });
   }
@@ -805,32 +820,36 @@ class ConflictResolver {
   async resolvePortConflicts(): Promise<ConflictResolution[]> {
     const conflicts = await this.detectConflicts();
     const resolutions: ConflictResolution[] = [];
-    
+
     for (const conflict of conflicts) {
       const resolution = await this.resolveConflict(conflict);
       resolutions.push(resolution);
     }
-    
+
     return resolutions;
   }
-  
-  private async resolveConflict(conflict: PortConflict): Promise<ConflictResolution> {
+
+  private async resolveConflict(
+    conflict: PortConflict
+  ): Promise<ConflictResolution> {
     // Strategy 1: Kill conflicting process
     if (conflict.process.killable) {
       await this.killProcess(conflict.process.pid);
       return {
         strategy: 'process_killed',
         success: true,
-        newPort: conflict.requestedPort
+        newPort: conflict.requestedPort,
       };
     }
-    
+
     // Strategy 2: Find alternative port
-    const alternativePort = await this.findAlternativePort(conflict.requestedPort);
+    const alternativePort = await this.findAlternativePort(
+      conflict.requestedPort
+    );
     return {
       strategy: 'alternative_port',
       success: true,
-      newPort: alternativePort
+      newPort: alternativePort,
     };
   }
 }
@@ -849,40 +868,40 @@ class ConsolidationTester {
       integration: await this.runIntegrationTests(),
       e2e: await this.runE2ETests(),
       performance: await this.runPerformanceTests(),
-      security: await this.runSecurityTests()
+      security: await this.runSecurityTests(),
     };
-    
+
     return {
       ...results,
       overall: this.calculateOverallScore(results),
-      recommendations: this.generateRecommendations(results)
+      recommendations: this.generateRecommendations(results),
     };
   }
-  
+
   private async runUnitTests(): Promise<TestSuiteResult> {
     // Test individual components and functions
     // Verify feature functionality in isolation
     // Check error handling and edge cases
   }
-  
+
   private async runIntegrationTests(): Promise<TestSuiteResult> {
     // Test feature interactions
     // Verify API integrations
     // Check data flow between components
   }
-  
+
   private async runE2ETests(): Promise<TestSuiteResult> {
     // Test complete user workflows
     // Verify UI functionality
     // Check cross-browser compatibility
   }
-  
+
   private async runPerformanceTests(): Promise<TestSuiteResult> {
     // Load testing for consolidated features
     // Memory usage analysis
     // Response time verification
   }
-  
+
   private async runSecurityTests(): Promise<TestSuiteResult> {
     // Authentication and authorization tests
     // Input validation verification
@@ -894,13 +913,15 @@ class ConsolidationTester {
 ### Validation Checklist
 
 #### Feature Validation
+
 - [ ] All original functionality preserved
 - [ ] No performance regression
 - [ ] Error handling maintained
 - [ ] Tests updated and passing
 - [ ] Documentation updated
 
-#### Integration Validation  
+#### Integration Validation
+
 - [ ] API compatibility maintained
 - [ ] Database migrations successful
 - [ ] External service integrations working
@@ -908,6 +929,7 @@ class ConsolidationTester {
 - [ ] Event handling functional
 
 #### Performance Validation
+
 - [ ] Load testing passed
 - [ ] Memory usage optimized
 - [ ] Response times within SLA
@@ -915,6 +937,7 @@ class ConsolidationTester {
 - [ ] Scaling behavior verified
 
 #### Security Validation
+
 - [ ] Authentication systems working
 - [ ] Authorization rules enforced
 - [ ] Input validation active
@@ -923,4 +946,7 @@ class ConsolidationTester {
 
 ---
 
-This comprehensive implementation guide consolidates all implementation documentation, providing a single source of truth for development teams working on The New Fuse platform. Follow the procedures and strategies outlined here to ensure successful feature consolidation and system integration.
+This comprehensive implementation guide consolidates all implementation
+documentation, providing a single source of truth for development teams working
+on The New Fuse platform. Follow the procedures and strategies outlined here to
+ensure successful feature consolidation and system integration.

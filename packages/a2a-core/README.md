@@ -2,11 +2,15 @@
 
 **Agent-to-Agent (A2A) Protocol v0.3.0 Implementation for The New Fuse**
 
-This package provides a complete TypeScript implementation of the [A2A Protocol v0.3.0](https://github.com/a2aproject/A2A) specification from the Linux Foundation. The A2A protocol enables standardized communication and interoperability between independent AI agent systems.
+This package provides a complete TypeScript implementation of the
+[A2A Protocol v0.3.0](https://github.com/a2aproject/A2A) specification from the
+Linux Foundation. The A2A protocol enables standardized communication and
+interoperability between independent AI agent systems.
 
 ## Features
 
 ### Protocol Compliance
+
 - ✅ **A2A Protocol v0.3.0** - Fully compliant with the latest specification
 - ✅ **JSON-RPC 2.0 Transport** - Primary transport protocol
 - ✅ **Task-Based Interaction Model** - Stateful conversations and operations
@@ -16,6 +20,7 @@ This package provides a complete TypeScript implementation of the [A2A Protocol 
 - ✅ **Push Notifications** - Asynchronous task updates via webhooks
 
 ### Core Capabilities
+
 - Message exchange with text, files, and structured data
 - Task lifecycle management (submitted → working → completed/failed)
 - Conversation history and context tracking
@@ -117,7 +122,7 @@ const response = await fetch(agentCard.url, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer YOUR_TOKEN',
+    Authorization: 'Bearer YOUR_TOKEN',
   },
   body: JSON.stringify(request),
 });
@@ -147,7 +152,7 @@ const response = await fetch(agentCard.url, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer YOUR_TOKEN',
+    Authorization: 'Bearer YOUR_TOKEN',
   },
   body: JSON.stringify(streamRequest),
 });
@@ -185,6 +190,7 @@ while (true) {
 A2A v0.3.0 supports three types of message parts:
 
 ### Text Part
+
 ```typescript
 const textPart: TextPart = {
   kind: 'text',
@@ -193,6 +199,7 @@ const textPart: TextPart = {
 ```
 
 ### File Part (with URI)
+
 ```typescript
 const filePart: FilePart = {
   kind: 'file',
@@ -205,6 +212,7 @@ const filePart: FilePart = {
 ```
 
 ### File Part (with bytes)
+
 ```typescript
 const filePart: FilePart = {
   kind: 'file',
@@ -217,6 +225,7 @@ const filePart: FilePart = {
 ```
 
 ### Data Part (structured data)
+
 ```typescript
 const dataPart: DataPart = {
   kind: 'data',
@@ -236,15 +245,15 @@ Tasks progress through defined states:
 
 ```typescript
 enum TaskState {
-  Submitted = 'submitted',      // Task received, queued
-  Working = 'working',          // Agent actively processing
-  InputRequired = 'input-required',  // Waiting for user input
-  Completed = 'completed',      // Successfully finished
-  Canceled = 'canceled',        // User canceled
-  Failed = 'failed',            // Error occurred
-  Rejected = 'rejected',        // Agent rejected the task
-  AuthRequired = 'auth-required',    // Additional auth needed
-  Unknown = 'unknown',          // Indeterminate state
+  Submitted = 'submitted', // Task received, queued
+  Working = 'working', // Agent actively processing
+  InputRequired = 'input-required', // Waiting for user input
+  Completed = 'completed', // Successfully finished
+  Canceled = 'canceled', // User canceled
+  Failed = 'failed', // Error occurred
+  Rejected = 'rejected', // Agent rejected the task
+  AuthRequired = 'auth-required', // Additional auth needed
+  Unknown = 'unknown', // Indeterminate state
 }
 ```
 
@@ -276,6 +285,7 @@ const cancelRequest: CancelTaskRequest = {
 A2A v0.3.0 supports multiple security schemes based on OpenAPI 3.0:
 
 ### OAuth2
+
 ```typescript
 const oauth2Scheme: OAuth2SecurityScheme = {
   type: 'oauth2',
@@ -284,16 +294,18 @@ const oauth2Scheme: OAuth2SecurityScheme = {
       authorizationUrl: 'https://auth.example.com/oauth/authorize',
       tokenUrl: 'https://auth.example.com/oauth/token',
       scopes: {
-        'read': 'Read access',
-        'write': 'Write access',
+        read: 'Read access',
+        write: 'Write access',
       },
     },
   },
-  oauth2MetadataUrl: 'https://auth.example.com/.well-known/oauth-authorization-server',
+  oauth2MetadataUrl:
+    'https://auth.example.com/.well-known/oauth-authorization-server',
 };
 ```
 
 ### mTLS (Mutual TLS)
+
 ```typescript
 const mtlsScheme: MutualTLSSecurityScheme = {
   type: 'mutualTLS',
@@ -302,6 +314,7 @@ const mtlsScheme: MutualTLSSecurityScheme = {
 ```
 
 ### API Key
+
 ```typescript
 const apiKeyScheme: APIKeySecurityScheme = {
   type: 'apiKey',
@@ -311,6 +324,7 @@ const apiKeyScheme: APIKeySecurityScheme = {
 ```
 
 ### HTTP Bearer
+
 ```typescript
 const bearerScheme: HTTPAuthSecurityScheme = {
   type: 'http',
@@ -366,6 +380,7 @@ try {
 ### Error Codes
 
 **JSON-RPC 2.0 Standard**:
+
 - `-32700` - Parse error
 - `-32600` - Invalid request
 - `-32601` - Method not found
@@ -373,6 +388,7 @@ try {
 - `-32603` - Internal error
 
 **A2A-Specific** (-32000 to -32099):
+
 - `-32001` - Task not found
 - `-32002` - Task already canceled
 - `-32003` - Task not cancelable
@@ -439,7 +455,8 @@ const validatedCard = AgentCardSchema.parse(cardData);
 
 ## Migration from Custom A2A
 
-If you're migrating from The New Fuse's custom A2A implementation, see the [Migration Guide](./MIGRATION_GUIDE_V0.3.0.md) for detailed instructions.
+If you're migrating from The New Fuse's custom A2A implementation, see the
+[Migration Guide](./MIGRATION_GUIDE_V0.3.0.md) for detailed instructions.
 
 ### Key Changes
 
@@ -481,29 +498,35 @@ If you're migrating from The New Fuse's custom A2A implementation, see the [Migr
 ## Best Practices
 
 ### 1. AgentCard Hosting
+
 Serve your AgentCard at the well-known URI:
+
 ```
 https://yourdomain.com/.well-known/agent-card.json
 ```
 
 ### 2. Task Management
+
 - Generate unique task IDs (use UUIDs)
 - Track task state transitions
 - Store conversation history
 - Clean up completed tasks periodically
 
 ### 3. Security
+
 - Always use HTTPS in production
 - Implement proper authentication and authorization
 - Validate all incoming requests
 - Use TLS 1.3+ with strong cipher suites
 
 ### 4. Streaming
+
 - Send status updates promptly
 - Close SSE streams when tasks complete
 - Handle client disconnections gracefully
 
 ### 5. Error Handling
+
 - Use appropriate error codes
 - Include helpful error messages
 - Provide actionable error data
@@ -534,6 +557,7 @@ MIT
 ## Contributing
 
 Contributions are welcome! Please ensure:
+
 - All changes maintain v0.3.0 specification compliance
 - TypeScript types are properly defined
 - Zod schemas are provided for runtime validation
@@ -542,6 +566,7 @@ Contributions are welcome! Please ensure:
 ## Support
 
 For issues or questions:
+
 1. Check the [official A2A documentation](https://a2aproject.github.io/A2A/)
 2. Review the [migration guide](./MIGRATION_GUIDE_V0.3.0.md)
 3. Open an issue in this repository

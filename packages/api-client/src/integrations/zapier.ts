@@ -1,6 +1,6 @@
-import { ApiClient } from '../core/ApiClient';
 import { ApiConfig } from '../config/ApiConfig';
-import { Integration, IntegrationType, IntegrationConfig, AuthType } from './types';
+import { ApiClient } from '../core/ApiClient';
+import { AuthType, Integration, IntegrationConfig, IntegrationType } from './types';
 
 /**
  * Zapier integration configuration
@@ -30,16 +30,16 @@ export class ZapierIntegration implements Integration {
   isEnabled: boolean = true;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
-  
+
   private apiClient: ApiClient;
-  
+
   constructor(config: ZapierConfig) {
     this.id = config.id;
     this.name = config.name;
     this.type = config.type;
     this.description = config.description;
     this.config = config;
-    
+
     // Default Zapier capabilities
     this.capabilities = {
       actions: [
@@ -49,37 +49,33 @@ export class ZapierIntegration implements Integration {
         'get_zap_history',
         'list_apps',
         'list_triggers',
-        'list_actions'
+        'list_actions',
       ],
-      triggers: [
-        'zap_ran',
-        'zap_succeeded',
-        'zap_failed'
-      ],
+      triggers: ['zap_ran', 'zap_succeeded', 'zap_failed'],
       supportsWebhooks: true,
       supportsPolling: true,
-      supportsCustomFields: true
+      supportsCustomFields: true,
     };
-    
+
     // Create API client for Zapier
     const apiConfig: ApiConfig = {
       baseURL: config.baseUrl || '',
       headers: {
-        ...config.defaultHeaders
-      }
+        ...config.defaultHeaders,
+      },
     };
-    
+
     // Add API key if provided
     if (config.apiKey) {
       apiConfig.headers = {
         ...apiConfig.headers,
-        'X-API-Key': config.apiKey
+        'X-API-Key': config.apiKey,
       };
     }
-    
+
     this.apiClient = new ApiClient(apiConfig);
   }
-  
+
   /**
    * Connect to Zapier API
    */
@@ -91,10 +87,12 @@ export class ZapierIntegration implements Integration {
       this.updatedAt = new Date();
       return true;
     } catch (error) {
-      throw new Error(`Failed to connect to Zapier: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to connect to Zapier: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Disconnect from Zapier
    */
@@ -103,7 +101,7 @@ export class ZapierIntegration implements Integration {
     this.updatedAt = new Date();
     return true;
   }
-  
+
   /**
    * Execute a Zapier action
    */
@@ -111,7 +109,7 @@ export class ZapierIntegration implements Integration {
     if (!this.isConnected) {
       throw new Error('Not connected to Zapier. Call connect() first.');
     }
-    
+
     switch (action) {
       case 'list_apps':
         return this.listApps();
@@ -127,7 +125,7 @@ export class ZapierIntegration implements Integration {
         throw new Error(`Unsupported Zapier action: ${action}`);
     }
   }
-  
+
   /**
    * List Zapier apps
    */
@@ -135,10 +133,12 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.get('/api/v1/apps');
     } catch (error) {
-      throw new Error(`Failed to list Zapier apps: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to list Zapier apps: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * List user's Zaps
    */
@@ -146,10 +146,12 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.get('/api/v1/zaps');
     } catch (error) {
-      throw new Error(`Failed to list Zaps: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to list Zaps: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Run a specific Zap
    */
@@ -157,42 +159,52 @@ export class ZapierIntegration implements Integration {
     try {
       return await this.apiClient.post(`/api/v1/zaps/${zapId}/run`, inputData);
     } catch (error) {
-      throw new Error(`Failed to run Zap: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to run Zap: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Create a webhook for a Zap
    */
   private async createWebhook(zapId: string, targetUrl: string): Promise<any> {
     try {
       return await this.apiClient.post(`/api/v1/zaps/${zapId}/webhooks`, {
-        targetUrl
+        targetUrl,
       });
     } catch (error) {
-      throw new Error(`Failed to create webhook: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to create webhook: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Execute a Natural Language Actions (NLA) action
    * This is available if the integration has NLA enabled
    */
-  private async executeNLAAction(actionId: string, instructions: string, inputData?: any): Promise<any> {
+  private async executeNLAAction(
+    actionId: string,
+    instructions: string,
+    inputData?: any
+  ): Promise<any> {
     if (!this.config.nlaEnabled) {
       throw new Error('Zapier NLA is not enabled for this integration');
     }
-    
+
     try {
       return await this.apiClient.post(`/v1/nla/actions/${actionId}/execute`, {
         instructions,
-        data: inputData
+        data: inputData,
       });
     } catch (error) {
-      throw new Error(`Failed to execute NLA action: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to execute NLA action: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
-  
+
   /**
    * Get metadata about this integration
    */
@@ -204,7 +216,7 @@ export class ZapierIntegration implements Integration {
       capabilities: this.capabilities,
       isConnected: this.isConnected,
       isEnabled: this.isEnabled,
-      lastUpdated: this.updatedAt
+      lastUpdated: this.updatedAt,
     };
   }
 }
@@ -224,11 +236,11 @@ export function createZapierIntegration(config: Partial<ZapierConfig> = {}): Zap
     apiVersion: 'v1',
     docUrl: 'https://platform.zapier.com/docs/api',
     logoUrl: 'https://cdn.zapier.com/zapier/images/logos/zapier-logo.png',
-    nlaEnabled: false
+    nlaEnabled: false,
   };
-  
+
   return new ZapierIntegration({
     ...defaultConfig,
-    ...config
+    ...config,
   });
 }

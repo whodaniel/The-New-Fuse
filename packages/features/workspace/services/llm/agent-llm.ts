@@ -1,4 +1,4 @@
-import { UnifiedMessage, Agent } from '../../types/unified';
+import { Agent, UnifiedMessage } from '../../types/unified';
 
 export class AgentLLMService {
   private static instance: AgentLLMService;
@@ -16,8 +16,8 @@ export class AgentLLMService {
     return {
       content: `[Mock Response] Processed by ${agent.name}: ${message.content}`,
       metadata: {
-        model: agent.llmConfig.provider
-      }
+        model: agent.llmConfig.provider,
+      },
     };
   }
 }

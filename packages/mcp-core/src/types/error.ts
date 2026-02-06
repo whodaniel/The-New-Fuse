@@ -13,7 +13,7 @@ export enum JSONRPCErrorCode {
   INVALID_REQUEST = -32600,
   METHOD_NOT_FOUND = -32601,
   INVALID_PARAMS = -32602,
-  INTERNAL_ERROR = -32603
+  INTERNAL_ERROR = -32603,
 }
 
 /**
@@ -78,7 +78,7 @@ export enum MCPErrorCode {
   SYSTEM_DEPENDENCY_UNAVAILABLE = -32704,
   INTERNAL_ERROR = -32603,
   TIMEOUT = -32408,
-  INVALID_PARAMS = -32602
+  INVALID_PARAMS = -32602,
 }
 
 /**
@@ -88,7 +88,7 @@ export enum ErrorSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 /**
@@ -102,7 +102,7 @@ export enum ErrorCategory {
   CONNECTION = 'connection',
   SYSTEM = 'system',
   VALIDATION = 'validation',
-  CONFIGURATION = 'configuration'
+  CONFIGURATION = 'configuration',
 }
 
 /**
@@ -156,8 +156,8 @@ export class MCPErrorClass extends Error {
         category: this.category as 'protocol' | 'resource' | 'tool' | 'auth' | 'system',
         retryable: this.retryable,
         retryAfter: this.retryAfter,
-        ...this.details
-      }
+        ...this.details,
+      },
     };
   }
 
@@ -199,7 +199,7 @@ export class MCPErrorClass extends Error {
       MCPErrorCode.AUTHORIZATION_FAILED,
       MCPErrorCode.INSUFFICIENT_PERMISSIONS,
       MCPErrorCode.PROTOCOL_VERSION_MISMATCH,
-      MCPErrorCode.PROTOCOL_VIOLATION
+      MCPErrorCode.PROTOCOL_VIOLATION,
     ];
 
     return !nonRetryableErrors.includes(code);

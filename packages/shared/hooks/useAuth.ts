@@ -4,7 +4,7 @@ import { AuthContextType } from '../types/auth';
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  
+
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
@@ -17,6 +17,6 @@ export const useAuth = (): AuthContextType => {
     setToken: context.setToken,
     signIn: context.signIn,
     signOut: context.signOut,
-    signUp: context.signUp
+    signUp: context.signUp,
   };
 };

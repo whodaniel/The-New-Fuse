@@ -3,14 +3,13 @@
  * Extends the base monitoring system with build-specific functionality
  */
 
-import { 
-  BaseMonitoringSystem, 
+import {
   BaseMonitoringConfig,
+  BaseMonitoringSystem,
   IMetricsCollector,
-  Logger
+  Logger,
 } from '@the-new-fuse/core-monitoring';
-import { BuildMetricsCollector } from './BuildMetricsCollector.js';
-import { DetailedBuildMetrics } from './BuildMetricsCollector.js';
+import { BuildMetricsCollector, DetailedBuildMetrics } from './BuildMetricsCollector.js';
 
 /**
  * Build monitoring configuration
@@ -26,8 +25,10 @@ export interface BuildMonitoringConfig extends BaseMonitoringConfig {
 /**
  * Build monitoring system implementation
  */
-export class BuildMonitoringSystem extends BaseMonitoringSystem<DetailedBuildMetrics, BuildMonitoringConfig> {
-  
+export class BuildMonitoringSystem extends BaseMonitoringSystem<
+  DetailedBuildMetrics,
+  BuildMonitoringConfig
+> {
   private buildMetricsCollector?: BuildMetricsCollector;
 
   constructor(logger?: Logger) {
@@ -56,8 +57,11 @@ export class BuildMonitoringSystem extends BaseMonitoringSystem<DetailedBuildMet
 
     // Helper function to add metric
     const addMetric = (name: string, value: number, labels?: Record<string, string>) => {
-      const labelStr = labels ? 
-        `{${Object.entries(labels).map(([k, v]) => `${k}="${v}"`).join(',')}}` : '';
+      const labelStr = labels
+        ? `{${Object.entries(labels)
+            .map(([k, v]) => `${k}="${v}"`)
+            .join(',')}}`
+        : '';
       lines.push(`build_${name}${labelStr} ${value}`);
     };
 
@@ -100,15 +104,17 @@ export class BuildMonitoringSystem extends BaseMonitoringSystem<DetailedBuildMet
     if (!this.buildMetricsCollector) {
       throw new Error('Build metrics collector not initialized');
     }
-    
+
     const metrics = this.buildMetricsCollector.getMetrics();
-    
+
     return {
       isBuilding: this.buildMetricsCollector['isCollecting'] || false,
       currentStage: this.buildMetricsCollector['currentStage']?.stageId,
-      progress: metrics.stagesExecuted > 0 ? 
-        (metrics.successfulBuilds / (metrics.successfulBuilds + metrics.failedBuilds)) * 100 : 0,
-      memoryUsage: metrics.peakMemoryUsage
+      progress:
+        metrics.stagesExecuted > 0
+          ? (metrics.successfulBuilds / (metrics.successfulBuilds + metrics.failedBuilds)) * 100
+          : 0,
+      memoryUsage: metrics.peakMemoryUsage,
     };
   }
 

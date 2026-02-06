@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Redis } from 'ioredis';
-import { Logger } from '@nestjs/common';
 
 interface CacheOptions {
   ttl?: number;
@@ -13,9 +12,7 @@ export class CacheService {
   private readonly logger: Logger;
   private readonly defaultTTL: number = 3600; // 1 hour
 
-  constructor(
-    redisUrl: string = process.env.REDIS_URL || 'redis://localhost:6379'
-  ) {
+  constructor(redisUrl: string = process.env.REDIS_URL || 'redis://localhost:6379') {
     this.redis = new (Redis as any)(redisUrl);
     this.logger = new Logger(CacheService.name);
 
@@ -28,11 +25,7 @@ export class CacheService {
     return namespace ? `${namespace}:${key}` : key;
   }
 
-  async set<T>(
-    key: string,
-    value: T,
-    options: CacheOptions = {}
-  ): Promise<void> {
+  async set<T>(key: string, value: T, options: CacheOptions = {}): Promise<void> {
     try {
       const finalKey = this.getKey(key, options.namespace);
       const serializedValue = JSON.stringify(value);
@@ -69,7 +62,7 @@ export class CacheService {
   async has(key: string, namespace?: string): Promise<boolean> {
     try {
       const finalKey = this.getKey(key, namespace);
-      return await this.redis.exists(finalKey) === 1;
+      return (await this.redis.exists(finalKey)) === 1;
     } catch (error) {
       this.logger.error(`Cache has error: ${(error as Error).message}`);
       throw error;
@@ -92,14 +85,11 @@ export class CacheService {
     }
   }
 
-  async getMultiple<T>(
-    keys: string[],
-    namespace?: string
-  ): Promise<(T | null)[]> {
+  async getMultiple<T>(keys: string[], namespace?: string): Promise<(T | null)[]> {
     try {
-      const finalKeys = keys.map(key => this.getKey(key, namespace));
+      const finalKeys = keys.map((key) => this.getKey(key, namespace));
       const values = await this.redis.mget(...finalKeys);
-      return values.map(value => (value ? JSON.parse(value) : null));
+      return values.map((value) => (value ? JSON.parse(value) : null));
     } catch (error) {
       this.logger.error(`Cache getMultiple error: ${(error as Error).message}`);
       throw error;

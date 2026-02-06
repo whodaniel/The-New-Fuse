@@ -1,16 +1,16 @@
 /**
  * Prompt Handoff Flywheel System
- * 
+ *
  * Implements a seamless prompt handoff system that maintains context and execution state
  * as prompts move between agents, integrating with existing template and orchestration systems.
- * 
+ *
  * Requirements: 4.1, 4.2, 4.3, 4.4, 4.5
  */
 
 import { EventEmitter } from 'events';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { MasterClockService } from '../services/MasterClockService';
 import { ConflictManager } from '../services/ConflictManager';
+import { MasterClockService } from '../services/MasterClockService';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
 
 export interface HandoffContext {
   id: string;
@@ -127,7 +127,7 @@ export class PromptHandoffFlywheel extends EventEmitter {
   ): Promise<string> {
     const contextId = this.generateId();
     const now = await this.masterClock.now();
-    
+
     const template = this.handoffTemplates.get(templateId);
     if (!template) {
       throw new Error(`Handoff template not found: ${templateId}`);
@@ -145,7 +145,7 @@ export class PromptHandoffFlywheel extends EventEmitter {
       metadata: {
         initiatedBy: sourceAgentId,
         templateName: template.name,
-        contextRequirements: template.contextRequirements
+        contextRequirements: template.contextRequirements,
       },
       priority: options.priority || 'normal',
       timeout: options.timeout || 300000, // 5 minutes default
@@ -153,22 +153,22 @@ export class PromptHandoffFlywheel extends EventEmitter {
       maxRetries: options.maxRetries || 3,
       createdAt: now,
       updatedAt: now,
-      status: 'pending'
+      status: 'pending',
     };
 
     this.handoffContexts.set(contextId, context);
-    
+
     // Sync context across all instances
     await this.syncOrchestrator.syncGlobalData('handoff_context', {
       action: 'create',
-      context
+      context,
     });
 
     this.emit('handoffInitiated', context);
-    
+
     // Start handoff processing
     await this.processHandoff(context);
-    
+
     return contextId;
   }
 
@@ -188,7 +188,7 @@ export class PromptHandoffFlywheel extends EventEmitter {
       ...template,
       ...updates,
       version: this.incrementVersion(template.version),
-      updatedAt: await this.masterClock.now()
+      updatedAt: await this.masterClock.now(),
     };
 
     this.handoffTemplates.set(templateId, updatedTemplate);
@@ -196,7 +196,7 @@ export class PromptHandoffFlywheel extends EventEmitter {
     // Sync template update across all instances
     await this.syncOrchestrator.syncGlobalData('handoff_template', {
       action: 'update',
-      template: updatedTemplate
+      template: updatedTemplate,
     });
 
     // Update all active handoffs using this template
@@ -205,7 +205,7 @@ export class PromptHandoffFlywheel extends EventEmitter {
         context.templateVersion = updatedTemplate.version;
         await this.syncOrchestrator.syncGlobalData('handoff_context', {
           action: 'update',
-          context
+          context,
         });
       }
     }
@@ -247,7 +247,6 @@ export class PromptHandoffFlywheel extends EventEmitter {
 
       // Execute handoff
       await this.executeHandoff(context);
-
     } catch (error) {
       await this.handleHandoffFailure(context, error);
     }
@@ -256,18 +255,15 @@ export class PromptHandoffFlywheel extends EventEmitter {
   /**
    * Requirement 4.4: Exponential backoff and escalation
    */
-  private async handleHandoffFailure(
-    context: HandoffContext,
-    error: any
-  ): Promise<void> {
+  private async handleHandoffFailure(context: HandoffContext, error: any): Promise<void> {
     context.retryCount++;
-    
+
     if (context.retryCount <= context.maxRetries) {
       // Exponential backoff
       const delay = Math.min(1000 * Math.pow(2, context.retryCount), 30000);
-      
+
       this.emit('handoffRetry', context, error, delay);
-      
+
       setTimeout(async () => {
         await this.processHandoff(context);
       }, delay);
@@ -275,11 +271,11 @@ export class PromptHandoffFlywheel extends EventEmitter {
       // Escalate to human intervention
       context.status = 'failed';
       context.updatedAt = await this.masterClock.now();
-      
+
       await this.syncOrchestrator.syncGlobalData('handoff_context', {
         action: 'failed',
         context,
-        error: error.message
+        error: error.message,
       });
 
       this.emit('handoffEscalated', context, error);
@@ -297,7 +293,7 @@ export class PromptHandoffFlywheel extends EventEmitter {
     try {
       // Compile template with current context
       const compiledPrompt = await this.compileHandoffTemplate(template, context);
-      
+
       // Create execution record
       const execution: HandoffExecution = {
         id: this.generateId(),
@@ -306,38 +302,32 @@ export class PromptHandoffFlywheel extends EventEmitter {
         input: {
           prompt: compiledPrompt,
           context: context.variables,
-          metadata: context.metadata
+          metadata: context.metadata,
         },
         metrics: {
           processingTime: 0,
           tokenUsage: 0,
-          memoryUsage: 0
+          memoryUsage: 0,
         },
-        contextPreservation: 100 // Will be calculated based on output
+        contextPreservation: 100, // Will be calculated based on output
       };
 
       // Send to target agent via sync orchestrator
-      const result = await this.syncOrchestrator.syncAgentState(
-        context.targetAgentId!,
-        {
-          type: 'handoff_execution',
-          contextId: context.id,
-          execution,
-          template: compiledPrompt
-        }
-      );
+      const result = await this.syncOrchestrator.syncAgentState(context.targetAgentId!, {
+        type: 'handoff_execution',
+        contextId: context.id,
+        execution,
+        template: compiledPrompt,
+      });
 
       // Record completion
       execution.endTime = await this.masterClock.now();
       execution.output = result;
-      execution.metrics.processingTime = 
+      execution.metrics.processingTime =
         execution.endTime.getTime() - execution.startTime.getTime();
-      
+
       // Calculate context preservation score
-      execution.contextPreservation = await this.calculateContextPreservation(
-        context,
-        execution
-      );
+      execution.contextPreservation = await this.calculateContextPreservation(context, execution);
 
       context.executionHistory.push(execution);
       context.status = 'completed';
@@ -349,12 +339,11 @@ export class PromptHandoffFlywheel extends EventEmitter {
       // Sync completion
       await this.syncOrchestrator.syncGlobalData('handoff_context', {
         action: 'complete',
-        context
+        context,
       });
 
       this.emit('handoffCompleted', context, execution);
       this.activeHandoffs.delete(context.id);
-
     } catch (error) {
       throw error;
     }
@@ -367,12 +356,12 @@ export class PromptHandoffFlywheel extends EventEmitter {
     requiredCapabilities: string[],
     priority: string
   ): Promise<string | null> {
-    const availableAgents = Array.from(this.agentCapabilities.values())
-      .filter(agent => 
+    const availableAgents = Array.from(this.agentCapabilities.values()).filter(
+      (agent) =>
         agent.status === 'available' &&
-        requiredCapabilities.every(cap => agent.capabilities.includes(cap)) &&
+        requiredCapabilities.every((cap) => agent.capabilities.includes(cap)) &&
         agent.currentLoad < agent.maxLoad
-      );
+    );
 
     if (availableAgents.length === 0) {
       return null;
@@ -403,12 +392,9 @@ export class PromptHandoffFlywheel extends EventEmitter {
     return queue.currentSize >= template.backpressureThreshold;
   }
 
-  private async handleBackpressure(
-    context: HandoffContext,
-    queue: HandoffQueue
-  ): Promise<void> {
+  private async handleBackpressure(context: HandoffContext, queue: HandoffQueue): Promise<void> {
     queue.metrics.backpressureEvents++;
-    
+
     // Try to find alternative agent
     const template = this.handoffTemplates.get(context.templateId)!;
     const alternativeAgent = await this.selectOptimalAgent(
@@ -448,24 +434,18 @@ export class PromptHandoffFlywheel extends EventEmitter {
     // Add execution history context
     if (context.executionHistory.length > 0) {
       const historyContext = context.executionHistory
-        .map(exec => `Previous execution by ${exec.agentId}: ${exec.output}`)
+        .map((exec) => `Previous execution by ${exec.agentId}: ${exec.output}`)
         .join('\n\n');
-      
-      compiled = compiled.replace(
-        '{{execution_history}}',
-        historyContext
-      );
+
+      compiled = compiled.replace('{{execution_history}}', historyContext);
     }
 
     // Add metadata context
     const metadataContext = Object.entries(context.metadata)
       .map(([key, value]) => `${key}: ${value}`)
       .join('\n');
-    
-    compiled = compiled.replace(
-      '{{metadata_context}}',
-      metadataContext
-    );
+
+    compiled = compiled.replace('{{metadata_context}}', metadataContext);
 
     return compiled;
   }
@@ -509,25 +489,24 @@ export class PromptHandoffFlywheel extends EventEmitter {
     // Update agent metrics
     const agent = this.agentCapabilities.get(context.targetAgentId!);
     if (agent) {
-      agent.averageProcessingTime = 
+      agent.averageProcessingTime =
         (agent.averageProcessingTime + execution.metrics.processingTime) / 2;
-      
+
       // Update success rate (simple moving average)
       const success = execution.error ? 0 : 1;
-      agent.successRate = (agent.successRate * 0.9) + (success * 0.1);
+      agent.successRate = agent.successRate * 0.9 + success * 0.1;
     }
 
     // Update queue metrics
     const queue = this.handoffQueues.get(context.targetAgentId!);
     if (queue) {
       queue.metrics.totalProcessed++;
-      queue.metrics.averageProcessingTime = 
+      queue.metrics.averageProcessingTime =
         (queue.metrics.averageProcessingTime + execution.metrics.processingTime) / 2;
-      
+
       const success = execution.error ? 0 : 1;
-      queue.metrics.successRate = 
-        (queue.metrics.successRate * 0.9) + (success * 0.1);
-      
+      queue.metrics.successRate = queue.metrics.successRate * 0.9 + success * 0.1;
+
       queue.currentSize--;
     }
 
@@ -536,7 +515,7 @@ export class PromptHandoffFlywheel extends EventEmitter {
       contextId: context.id,
       execution,
       agentMetrics: agent,
-      queueMetrics: queue?.metrics
+      queueMetrics: queue?.metrics,
     });
   }
 
@@ -545,7 +524,7 @@ export class PromptHandoffFlywheel extends EventEmitter {
    */
   private async getOrCreateQueue(agentId: string): Promise<HandoffQueue> {
     let queue = this.handoffQueues.get(agentId);
-    
+
     if (!queue) {
       queue = {
         id: this.generateId(),
@@ -561,13 +540,13 @@ export class PromptHandoffFlywheel extends EventEmitter {
           totalProcessed: 0,
           averageProcessingTime: 0,
           successRate: 100,
-          backpressureEvents: 0
-        }
+          backpressureEvents: 0,
+        },
       };
-      
+
       this.handoffQueues.set(agentId, queue);
     }
-    
+
     return queue;
   }
 
@@ -591,22 +570,24 @@ export class PromptHandoffFlywheel extends EventEmitter {
   }
 
   private async rebalanceQueues(): Promise<void> {
-    const overloadedQueues = Array.from(this.handoffQueues.values())
-      .filter(q => q.currentSize > q.maxSize * 0.7);
-    
-    const underloadedQueues = Array.from(this.handoffQueues.values())
-      .filter(q => q.currentSize < q.maxSize * 0.3);
+    const overloadedQueues = Array.from(this.handoffQueues.values()).filter(
+      (q) => q.currentSize > q.maxSize * 0.7
+    );
+
+    const underloadedQueues = Array.from(this.handoffQueues.values()).filter(
+      (q) => q.currentSize < q.maxSize * 0.3
+    );
 
     for (const overloaded of overloadedQueues) {
       const contexts = overloaded.contexts.splice(0, 5); // Move 5 contexts
-      
+
       for (const context of contexts) {
         const template = this.handoffTemplates.get(context.templateId)!;
         const newAgent = await this.selectOptimalAgent(
           template.agentCapabilities,
           context.priority
         );
-        
+
         if (newAgent && newAgent !== context.targetAgentId) {
           context.targetAgentId = newAgent;
           await this.processHandoff(context);
@@ -645,7 +626,7 @@ Please continue the task with full context preservation.`,
       variables: {
         task_description: 'Continue the current task',
         required_capabilities: 'General assistance',
-        success_criteria: 'Task completion with context preservation'
+        success_criteria: 'Task completion with context preservation',
       },
       contextRequirements: ['task_description', 'execution_history'],
       agentCapabilities: ['general'],
@@ -653,7 +634,7 @@ Please continue the task with full context preservation.`,
       backpressureThreshold: 10,
       loadBalancingWeight: 1.0,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.handoffTemplates.set(defaultTemplate.id, defaultTemplate);
@@ -700,14 +681,14 @@ Please continue the task with full context preservation.`,
       averageProcessingTime: 0,
       successRate: 100,
       lastSeen: await this.masterClock.now(),
-      status: 'available'
+      status: 'available',
     };
 
     this.agentCapabilities.set(agentId, capability);
-    
+
     await this.syncOrchestrator.syncGlobalData('agent_capability', {
       action: 'register',
-      capability
+      capability,
     });
 
     this.emit('agentRegistered', capability);
@@ -728,7 +709,7 @@ Please continue the task with full context preservation.`,
 
       await this.syncOrchestrator.syncGlobalData('agent_capability', {
         action: 'update',
-        capability
+        capability,
       });
 
       this.emit('agentStatusUpdated', capability);

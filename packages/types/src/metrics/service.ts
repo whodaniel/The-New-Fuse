@@ -1,17 +1,25 @@
 export interface MetricsService {
   recordMetric(name: string, value: number, tags?: Record<string, string>): Promise<void>;
   getMetric(name: string, timeRange?: { start: Date; end: Date }): Promise<number[]>;
-  getMetrics(query: { names: string[]; timeRange?: { start: Date; end: Date } }): Promise<Record<string, number[]>>;
+  getMetrics(query: {
+    names: string[];
+    timeRange?: { start: Date; end: Date };
+  }): Promise<Record<string, number[]>>;
   calculateAggregates(name: string, aggregation: 'avg' | 'sum' | 'min' | 'max'): Promise<number>;
-  setThreshold(name: string, threshold: { min?: number; max?: number; warning?: number; critical?: number }): void;
+  setThreshold(
+    name: string,
+    threshold: { min?: number; max?: number; warning?: number; critical?: number }
+  ): void;
   clearThreshold(name: string): void;
-  getAlerts(): Promise<Array< {
-    id: string;
-    metric: string;
-    threshold: number;
-    value: number;
-    timestamp: Date;
-  }>>;
+  getAlerts(): Promise<
+    Array<{
+      id: string;
+      metric: string;
+      threshold: number;
+      value: number;
+      timestamp: Date;
+    }>
+  >;
 }
 
 export enum MetricUnits {
@@ -23,5 +31,5 @@ export enum MetricUnits {
   GIGABYTES = 'gb',
   COUNT = 'count',
   PERCENTAGE = '%',
-  REQUESTS_PER_SECOND = 'req/s'
+  REQUESTS_PER_SECOND = 'req/s',
 }

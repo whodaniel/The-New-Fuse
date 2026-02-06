@@ -1,26 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Handle, Position } from 'reactflow';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LLMSelector } from '@/components/LLMSelection/LLMSelector';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from '@/components/ui/tabs';
-import { 
-  Bot, 
-  Settings, 
-  Sparkles,
-  Code,
-  FileText
-} from 'lucide-react';
-import { apiService } from '@/services/api';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/toast';
+import { apiService } from '@/services/api';
+import { Bot, Code, Settings, Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { Handle, Position } from 'reactflow';
 
 interface LLMNodeProps {
   id: string;
@@ -40,11 +29,7 @@ interface LLMNodeProps {
   isConnectable: boolean;
 }
 
-export const LLMNode: React.FC<LLMNodeProps> = ({ 
-  id, 
-  data, 
-  isConnectable 
-}) => {
+export const LLMNode: React.FC<LLMNodeProps> = ({ id, data, isConnectable }) => {
   const [testing, setTesting] = useState(false);
   const [testInput, setTestInput] = useState('');
   const [testResult, setTestResult] = useState('');
@@ -66,7 +51,7 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
         prompt: testInput ? data.prompt.replace('{{input}}', testInput) : data.prompt,
         systemPrompt: data.systemPrompt,
         maxTokens: data.maxTokens,
-        temperature: data.temperature
+        temperature: data.temperature,
       });
 
       setTestResult(response.data.result || 'No result returned');
@@ -102,10 +87,12 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
               Test
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="prompt" className="mt-3 space-y-3">
             <div className="space-y-2">
-              <Label htmlFor="prompt" className="text-xs">Prompt</Label>
+              <Label htmlFor="prompt" className="text-xs">
+                Prompt
+              </Label>
               <Textarea
                 id="prompt"
                 value={data.prompt}
@@ -114,9 +101,11 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
                 className="resize-none h-20 text-xs"
               />
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="systemPrompt" className="text-xs">System Prompt (Optional)</Label>
+              <Label htmlFor="systemPrompt" className="text-xs">
+                System Prompt (Optional)
+              </Label>
               <Textarea
                 id="systemPrompt"
                 value={data.systemPrompt || ''}
@@ -126,7 +115,7 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
               />
             </div>
           </TabsContent>
-          
+
           <TabsContent value="settings" className="mt-3 space-y-3">
             <div className="space-y-2">
               <Label className="text-xs">LLM Provider</Label>
@@ -136,10 +125,12 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
                 description="Select the LLM provider for this node"
               />
             </div>
-            
+
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <Label htmlFor="maxTokens" className="text-xs">Max Tokens</Label>
+                <Label htmlFor="maxTokens" className="text-xs">
+                  Max Tokens
+                </Label>
                 <Input
                   id="maxTokens"
                   type="number"
@@ -150,9 +141,11 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
                   max={4096}
                 />
               </div>
-              
+
               <div className="space-y-1">
-                <Label htmlFor="temperature" className="text-xs">Temperature</Label>
+                <Label htmlFor="temperature" className="text-xs">
+                  Temperature
+                </Label>
                 <Input
                   id="temperature"
                   type="number"
@@ -166,10 +159,12 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="test" className="mt-3 space-y-3">
             <div className="space-y-2">
-              <Label htmlFor="testInput" className="text-xs">Test Input (Optional)</Label>
+              <Label htmlFor="testInput" className="text-xs">
+                Test Input (Optional)
+              </Label>
               <Input
                 id="testInput"
                 value={testInput}
@@ -178,16 +173,16 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
                 className="text-xs"
               />
             </div>
-            
-            <Button 
-              size="sm" 
-              onClick={handleTestNode} 
+
+            <Button
+              size="sm"
+              onClick={handleTestNode}
               disabled={testing}
               className="w-full text-xs"
             >
               {testing ? 'Testing...' : 'Test Node'}
             </Button>
-            
+
             {testResult && (
               <div className="space-y-1 mt-2">
                 <Label className="text-xs">Result:</Label>
@@ -199,7 +194,7 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
           </TabsContent>
         </Tabs>
       </CardContent>
-      
+
       {/* Input handle */}
       <Handle
         type="target"
@@ -208,7 +203,7 @@ export const LLMNode: React.FC<LLMNodeProps> = ({
         className="w-2 h-2 -ml-1 bg-primary"
         isConnectable={isConnectable}
       />
-      
+
       {/* Output handle */}
       <Handle
         type="source"

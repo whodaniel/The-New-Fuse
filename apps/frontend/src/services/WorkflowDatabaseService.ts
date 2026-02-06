@@ -1,15 +1,15 @@
-import { Workflow, WorkflowExecution, validateWorkflow, validateWorkflowExecution } from '@/utils/workflow-schema-validator';
+import { Workflow, WorkflowExecution } from '@/utils/workflow-schema-validator';
 
 /**
  * Service for interacting with the workflow database
  */
 export class WorkflowDatabaseService {
   private apiBaseUrl: string;
-  
+
   constructor() {
     this.apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
   }
-  
+
   /**
    * Fetches all workflows
    * @returns A list of workflows
@@ -17,23 +17,23 @@ export class WorkflowDatabaseService {
   async getWorkflows(): Promise<Workflow[]> {
     try {
       const response = await fetch(`${this.apiBaseUrl}/workflows`);
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch workflows: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       return data.map((workflow: any) => ({
         ...workflow,
         createdAt: workflow.createdAt ? new Date(workflow.createdAt) : undefined,
-        updatedAt: workflow.updatedAt ? new Date(workflow.updatedAt) : undefined
+        updatedAt: workflow.updatedAt ? new Date(workflow.updatedAt) : undefined,
       }));
     } catch (error) {
       console.error('Error fetching workflows:', error);
       throw error;
     }
   }
-  
+
   /**
    * Fetches a workflow by ID
    * @param id The workflow ID
@@ -42,23 +42,23 @@ export class WorkflowDatabaseService {
   async getWorkflow(id: string): Promise<Workflow> {
     try {
       const response = await fetch(`${this.apiBaseUrl}/workflows/${id}`);
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch workflow: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       return {
         ...data,
         createdAt: data.createdAt ? new Date(data.createdAt) : undefined,
-        updatedAt: data.updatedAt ? new Date(data.updatedAt) : undefined
+        updatedAt: data.updatedAt ? new Date(data.updatedAt) : undefined,
       };
     } catch (error) {
       console.error(`Error fetching workflow ${id}:`, error);
       throw error;
     }
   }
-  
+
   /**
    * Creates a new workflow
    * @param workflow The workflow to create
@@ -68,31 +68,31 @@ export class WorkflowDatabaseService {
     try {
       // Validate workflow
       const { id, ...workflowData } = workflow as any;
-      
+
       const response = await fetch(`${this.apiBaseUrl}/workflows`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(workflowData)
+        body: JSON.stringify(workflowData),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to create workflow: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       return {
         ...data,
         createdAt: data.createdAt ? new Date(data.createdAt) : undefined,
-        updatedAt: data.updatedAt ? new Date(data.updatedAt) : undefined
+        updatedAt: data.updatedAt ? new Date(data.updatedAt) : undefined,
       };
     } catch (error) {
       console.error('Error creating workflow:', error);
       throw error;
     }
   }
-  
+
   /**
    * Updates a workflow
    * @param id The workflow ID
@@ -103,31 +103,31 @@ export class WorkflowDatabaseService {
     try {
       // Remove id from workflow data
       const { id: _, ...workflowData } = workflow;
-      
+
       const response = await fetch(`${this.apiBaseUrl}/workflows/${id}`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(workflowData)
+        body: JSON.stringify(workflowData),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to update workflow: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       return {
         ...data,
         createdAt: data.createdAt ? new Date(data.createdAt) : undefined,
-        updatedAt: data.updatedAt ? new Date(data.updatedAt) : undefined
+        updatedAt: data.updatedAt ? new Date(data.updatedAt) : undefined,
       };
     } catch (error) {
       console.error(`Error updating workflow ${id}:`, error);
       throw error;
     }
   }
-  
+
   /**
    * Deletes a workflow
    * @param id The workflow ID
@@ -135,9 +135,9 @@ export class WorkflowDatabaseService {
   async deleteWorkflow(id: string): Promise<void> {
     try {
       const response = await fetch(`${this.apiBaseUrl}/workflows/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to delete workflow: ${response.statusText}`);
       }
@@ -146,7 +146,7 @@ export class WorkflowDatabaseService {
       throw error;
     }
   }
-  
+
   /**
    * Fetches workflow executions
    * @param workflowId The workflow ID
@@ -155,18 +155,18 @@ export class WorkflowDatabaseService {
   async getWorkflowExecutions(workflowId: string): Promise<WorkflowExecution[]> {
     try {
       const response = await fetch(`${this.apiBaseUrl}/workflows/${workflowId}/executions`);
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch workflow executions: ${response.statusText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error(`Error fetching executions for workflow ${workflowId}:`, error);
       throw error;
     }
   }
-  
+
   /**
    * Fetches a workflow execution
    * @param workflowId The workflow ID
@@ -175,46 +175,51 @@ export class WorkflowDatabaseService {
    */
   async getWorkflowExecution(workflowId: string, executionId: string): Promise<WorkflowExecution> {
     try {
-      const response = await fetch(`${this.apiBaseUrl}/workflows/${workflowId}/executions/${executionId}`);
-      
+      const response = await fetch(
+        `${this.apiBaseUrl}/workflows/${workflowId}/executions/${executionId}`
+      );
+
       if (!response.ok) {
         throw new Error(`Failed to fetch workflow execution: ${response.statusText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error(`Error fetching execution ${executionId} for workflow ${workflowId}:`, error);
       throw error;
     }
   }
-  
+
   /**
    * Creates a workflow execution
    * @param workflowId The workflow ID
    * @param input The input data for the execution
    * @returns The created workflow execution
    */
-  async createWorkflowExecution(workflowId: string, input: Record<string, any> = {}): Promise<WorkflowExecution> {
+  async createWorkflowExecution(
+    workflowId: string,
+    input: Record<string, any> = {}
+  ): Promise<WorkflowExecution> {
     try {
       const response = await fetch(`${this.apiBaseUrl}/workflows/${workflowId}/executions`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ input })
+        body: JSON.stringify({ input }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to create workflow execution: ${response.statusText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error(`Error creating execution for workflow ${workflowId}:`, error);
       throw error;
     }
   }
-  
+
   /**
    * Aborts a workflow execution
    * @param workflowId The workflow ID
@@ -222,10 +227,13 @@ export class WorkflowDatabaseService {
    */
   async abortWorkflowExecution(workflowId: string, executionId: string): Promise<void> {
     try {
-      const response = await fetch(`${this.apiBaseUrl}/workflows/${workflowId}/executions/${executionId}/abort`, {
-        method: 'POST'
-      });
-      
+      const response = await fetch(
+        `${this.apiBaseUrl}/workflows/${workflowId}/executions/${executionId}/abort`,
+        {
+          method: 'POST',
+        }
+      );
+
       if (!response.ok) {
         throw new Error(`Failed to abort workflow execution: ${response.statusText}`);
       }

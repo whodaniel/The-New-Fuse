@@ -1,5 +1,5 @@
 <!-- AI Studio Video Intelligence Tab -->
-<div id="ai-studio-tab" class="tab-content" style="display: none;">
+<div id="ai-studio-tab" class="tab-content" style="display: none">
   <div class="ai-studio-container">
     <h2>🎬 AI Video Intelligence</h2>
     <p class="subtitle">Transform YouTube videos into AI knowledge</p>
@@ -10,11 +10,11 @@
         <span class="icon">🔐</span>
         Sign in with Google
       </button>
-      <span id="ai-studio-user-info" style="display: none;"></span>
+      <span id="ai-studio-user-info" style="display: none"></span>
     </div>
 
     <!-- YouTube Playlist Section -->
-    <div class="youtube-section" style="display: none;">
+    <div class="youtube-section" style="display: none">
       <h3>📺 YouTube Playlists</h3>
       <select id="playlist-select" class="form-control">
         <option value="">Select a playlist...</option>
@@ -23,7 +23,7 @@
     </div>
 
     <!-- Video Queue Section -->
-    <div class="queue-section" style="display: none;">
+    <div class="queue-section" style="display: none">
       <h3>📋 Video Queue (<span id="queue-count">0</span>)</h3>
       <div id="video-list" class="video-list"></div>
 
@@ -32,11 +32,11 @@
           <span class="icon">▶️</span>
           Start Processing
         </button>
-        <button id="pause-processing-btn" class="btn btn-warning" style="display: none;">
+        <button id="pause-processing-btn" class="btn btn-warning" style="display: none">
           <span class="icon">⏸️</span>
           Pause
         </button>
-        <button id="stop-processing-btn" class="btn btn-danger" style="display: none;">
+        <button id="stop-processing-btn" class="btn btn-danger" style="display: none">
           <span class="icon">⏹️</span>
           Stop
         </button>
@@ -44,7 +44,7 @@
     </div>
 
     <!-- Processing Tier Selection -->
-    <div class="tier-selection" style="display: none;">
+    <div class="tier-selection" style="display: none">
       <h3>🎯 Processing Options</h3>
       <select id="processing-tier" class="form-control">
         <option value="metadata">Metadata Only (FREE)</option>
@@ -57,10 +57,10 @@
     </div>
 
     <!-- Progress Section -->
-    <div class="progress-section" style="display: none;">
+    <div class="progress-section" style="display: none">
       <h3>⚡ Progress</h3>
       <div class="progress-bar">
-        <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
+        <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
       </div>
       <div class="progress-stats">
         <span id="progress-current">0</span> / <span id="progress-total">0</span> videos
@@ -69,14 +69,14 @@
     </div>
 
     <!-- Logs Section -->
-    <div class="logs-section" style="display: none;">
+    <div class="logs-section" style="display: none">
       <h3>📝 Activity Log</h3>
       <div id="activity-log" class="log-container"></div>
       <button id="clear-log-btn" class="btn btn-link">Clear Log</button>
     </div>
 
     <!-- Knowledge Base Section -->
-    <div class="knowledge-base-section" style="display: none;">
+    <div class="knowledge-base-section" style="display: none">
       <h3>🧠 Knowledge Base</h3>
       <div class="kb-stats">
         <div class="stat-item">
@@ -95,7 +95,7 @@
     </div>
 
     <!-- NotebookLM Section -->
-    <div class="notebooklm-section" style="display: none;">
+    <div class="notebooklm-section" style="display: none">
       <h3>🎙️ Podcast Creation</h3>
       <p class="subtitle">Generate audio overviews from your knowledge base</p>
       <button id="create-podcast-btn" class="btn btn-primary">
@@ -106,7 +106,7 @@
     </div>
 
     <!-- Cost Tracking -->
-    <div class="cost-tracking" style="display: none;">
+    <div class="cost-tracking" style="display: none">
       <h3>💰 Cost Summary</h3>
       <div class="cost-stats">
         <div class="cost-item">
@@ -126,16 +126,16 @@
         <summary>⚙️ Settings</summary>
         <div class="settings-content">
           <label>
-            <input type="checkbox" id="auto-download" checked>
+            <input type="checkbox" id="auto-download" checked />
             Auto-download reports
           </label>
           <label>
-            <input type="checkbox" id="auto-consolidate" checked>
+            <input type="checkbox" id="auto-consolidate" checked />
             Auto-consolidate knowledge base
           </label>
           <label>
             Segment Duration (seconds):
-            <input type="number" id="segment-duration" value="45" min="30" max="300">
+            <input type="number" id="segment-duration" value="45" min="30" max="300" />
           </label>
         </div>
       </details>
@@ -144,183 +144,192 @@
 </div>
 
 <style>
-.ai-studio-container {
-  padding: 20px;
-  max-width: 600px;
-}
+  .ai-studio-container {
+    padding: 20px;
+    max-width: 600px;
+  }
 
-.subtitle {
-  color: #666;
-  font-size: 14px;
-  margin-top: -10px;
-  margin-bottom: 20px;
-}
+  .subtitle {
+    color: #666;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 20px;
+  }
 
-.auth-section, .youtube-section, .queue-section,
-.tier-selection, .progress-section, .logs-section,
-.knowledge-base-section, .notebooklm-section, .cost-tracking {
-  margin-bottom: 24px;
-  padding: 16px;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
+  .auth-section,
+  .youtube-section,
+  .queue-section,
+  .tier-selection,
+  .progress-section,
+  .logs-section,
+  .knowledge-base-section,
+  .notebooklm-section,
+  .cost-tracking {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+  }
 
-.btn {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s;
-}
+  .btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
 
-.btn-primary {
-  background: #4285f4;
-  color: white;
-}
+  .btn-primary {
+    background: #4285f4;
+    color: white;
+  }
 
-.btn-primary:hover {
-  background: #3367d6;
-}
+  .btn-primary:hover {
+    background: #3367d6;
+  }
 
-.btn-secondary {
-  background: #5f6368;
-  color: white;
-}
+  .btn-secondary {
+    background: #5f6368;
+    color: white;
+  }
 
-.btn-success {
-  background: #34a853;
-  color: white;
-}
+  .btn-success {
+    background: #34a853;
+    color: white;
+  }
 
-.btn-warning {
-  background: #fbbc04;
-  color: #333;
-}
+  .btn-warning {
+    background: #fbbc04;
+    color: #333;
+  }
 
-.btn-danger {
-  background: #ea4335;
-  color: white;
-}
+  .btn-danger {
+    background: #ea4335;
+    color: white;
+  }
 
-.btn-link {
-  background: transparent;
-  color: #4285f4;
-  text-decoration: underline;
-}
+  .btn-link {
+    background: transparent;
+    color: #4285f4;
+    text-decoration: underline;
+  }
 
-.form-control {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
-  font-size: 14px;
-}
+  .form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    font-size: 14px;
+  }
 
-.video-list {
-  max-height: 300px;
-  overflow-y: auto;
-  margin: 12px 0;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
-  background: white;
-}
+  .video-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 12px 0;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    background: white;
+  }
 
-.queue-controls {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
+  .queue-controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
 
-.progress-bar {
-  width: 100%;
-  height: 24px;
-  background: #e0e0e0;
-  border-radius: 12px;
-  overflow: hidden;
-  margin: 12px 0;
-}
+  .progress-bar {
+    width: 100%;
+    height: 24px;
+    background: #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
 
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #4285f4, #34a853);
-  transition: width 0.3s ease;
-}
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4285f4, #34a853);
+    transition: width 0.3s ease;
+  }
 
-.progress-stats {
-  text-align: center;
-  font-size: 14px;
-  color: #5f6368;
-}
+  .progress-stats {
+    text-align: center;
+    font-size: 14px;
+    color: #5f6368;
+  }
 
-.status-text {
-  margin-top: 8px;
-  font-size: 13px;
-  color: #5f6368;
-  font-style: italic;
-}
+  .status-text {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #5f6368;
+    font-style: italic;
+  }
 
-.log-container {
-  max-height: 200px;
-  overflow-y: auto;
-  padding: 12px;
-  background: white;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
-  font-family: monospace;
-  font-size: 12px;
-}
+  .log-container {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 12px;
+    background: white;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+  }
 
-.kb-stats, .cost-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin: 12px 0;
-}
+  .kb-stats,
+  .cost-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 12px 0;
+  }
 
-.stat-item, .cost-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 12px;
-  background: white;
-  border-radius: 4px;
-}
+  .stat-item,
+  .cost-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 4px;
+  }
 
-.stat-value, .cost-value {
-  font-weight: 600;
-  color: #4285f4;
-}
+  .stat-value,
+  .cost-value {
+    font-weight: 600;
+    color: #4285f4;
+  }
 
-.kb-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
+  .kb-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
 
-.settings-content {
-  padding: 12px 0;
-}
+  .settings-content {
+    padding: 12px 0;
+  }
 
-.settings-content label {
-  display: block;
-  margin: 8px 0;
-  font-size: 14px;
-}
+  .settings-content label {
+    display: block;
+    margin: 8px 0;
+    font-size: 14px;
+  }
 
-.settings-content input[type="checkbox"] {
-  margin-right: 8px;
-}
+  .settings-content input[type='checkbox'] {
+    margin-right: 8px;
+  }
 
-.settings-content input[type="number"] {
-  width: 80px;
-  margin-left: 8px;
-  padding: 4px 8px;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
-}
+  .settings-content input[type='number'] {
+    width: 80px;
+    margin-left: 8px;
+    padding: 4px 8px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+  }
 
-.icon {
-  margin-right: 6px;
-}
+  .icon {
+    margin-right: 6px;
+  }
 </style>

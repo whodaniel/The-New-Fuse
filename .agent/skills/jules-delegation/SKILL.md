@@ -424,7 +424,7 @@ Current templates:
 | 02  | Drizzle Workflow Repo   | Database   |
 | 03  | Drizzle Task Repository | Database   |
 | 04  | Drizzle Chat Repository | Database   |
-| 05  | Core Prisma Migration   | Migration  |
+| 05  | Core Drizzle Migration   | Migration  |
 | 06  | Core Messaging Service  | Migration  |
 | 07  | TypeScript Strict Audit | Validation |
 | 08  | Agent Dashboard         | Frontend   |

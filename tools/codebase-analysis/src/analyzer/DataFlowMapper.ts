@@ -224,7 +224,7 @@ export class DataFlowMapper {
     }
 
     // Check for database operations in any file
-    if (content.includes('prisma') || content.includes('findMany') || content.includes('create') || content.includes('update')) {
+    if (content.includes('drizzle') || content.includes('findMany') || content.includes('create') || content.includes('update')) {
       return 'repository';
     }
 
@@ -234,7 +234,7 @@ export class DataFlowMapper {
     }
 
     // Database models
-    if (filePath.includes('prisma') || filePath.includes('schema')) {
+    if (filePath.includes('drizzle') || filePath.includes('schema')) {
       return 'database';
     }
 
@@ -476,13 +476,13 @@ export class DataFlowMapper {
     for (let i = startIndex; i < Math.min(startIndex + 20, lines.length); i++) {
       const line = lines[i].trim();
 
-      // Prisma operations
-      const prismaPattern = /prisma\.(\w+)\.(create|findMany|findUnique|update|delete|upsert)/;
-      const prismaMatch = line.match(prismaPattern);
-      if (prismaMatch) {
+      // Drizzle operations
+      const drizzlePattern = /drizzle\.(\w+)\.(create|findMany|findUnique|update|delete|upsert)/;
+      const drizzleMatch = line.match(drizzlePattern);
+      if (drizzleMatch) {
         operations.push({
           type: 'query',
-          model: prismaMatch[1], // This captures the model name (e.g., "user" from "prisma.user.findMany")
+          model: drizzleMatch[1], // This captures the model name (e.g., "user" from "drizzle.user.findMany")
           fields: this.extractFieldsFromQuery(line),
           performance: this.assessQueryPerformance(line)
         });

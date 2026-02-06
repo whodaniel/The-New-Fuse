@@ -2,23 +2,31 @@
 
 ## Overview
 
-The feature flags system provides a comprehensive way to manage feature rollouts, A/B testing, and conditional feature activation. The system supports various conditions and targeting options, with real-time metrics tracking.
+The feature flags system provides a comprehensive way to manage feature
+rollouts, A/B testing, and conditional feature activation. The system supports
+various conditions and targeting options, with real-time metrics tracking.
 
 ## Key Features
 
-- **Environment-based targeting**: Control feature availability across different environments (development, testing, staging, production)
+- **Environment-based targeting**: Control feature availability across different
+  environments (development, testing, staging, production)
 - **User group targeting**: Enable features for specific user groups or roles
-- **Percentage-based rollouts**: Gradually roll out features to a percentage of users
-- **Date-based activation**: Schedule feature activation within specific date ranges
-- **Device type targeting**: Target specific device types (desktop, mobile, tablet)
-- **Custom rule support**: Create custom JavaScript conditions for complex targeting scenarios
+- **Percentage-based rollouts**: Gradually roll out features to a percentage of
+  users
+- **Date-based activation**: Schedule feature activation within specific date
+  ranges
+- **Device type targeting**: Target specific device types (desktop, mobile,
+  tablet)
+- **Custom rule support**: Create custom JavaScript conditions for complex
+  targeting scenarios
 - **Real-time metrics**: Track usage, errors, and effectiveness of feature flags
 
 ## Managing Feature Flags
 
 ### Access
 
-Navigate to Admin Panel > Feature Flags to access the feature flag management interface.
+Navigate to Admin Panel > Feature Flags to access the feature flag management
+interface.
 
 ### Creating Feature Flags
 
@@ -39,29 +47,35 @@ Navigate to Admin Panel > Feature Flags to access the feature flag management in
 ### Conditions Configuration
 
 #### Environment Targeting
+
 - Select one or more environments where the feature should be active
 - Feature will only be enabled in selected environments
 
 #### User Groups
+
 - Add specific user groups that should have access to the feature
 - Users must belong to at least one of the specified groups
 
 #### Percentage Rollout
+
 - Set a percentage of users who should see the feature
 - Enable "sticky" option to ensure consistent user experience
 - Percentage is calculated based on user ID or session ID
 
 #### Date Range
+
 - Set start and end dates for feature availability
 - Timezone support for accurate scheduling
 - Feature automatically enables/disables based on schedule
 
 #### Device Types
+
 - Target specific device types (desktop, mobile, tablet)
 - Multiple device types can be selected
 - Uses User-Agent detection for identification
 
 #### Custom Rules
+
 - Write custom JavaScript conditions
 - Access to user context object
 - Support for complex business logic

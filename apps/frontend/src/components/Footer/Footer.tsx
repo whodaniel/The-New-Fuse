@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Tooltip } from "react-tooltip";
-import { isMobile } from "react-device-detect";
+import System from '@/models/system';
+import paths from '@/utils/paths';
 import {
   BookOpen,
-  DiscordLogo,
-  GithubLogo,
   Briefcase,
+  DiscordLogo,
   Envelope,
+  GithubLogo,
   Globe,
   HouseLine,
+  Icon,
   Info,
   LinkSimple,
-  Icon,
-} from "@phosphor-icons/react";
-import System from "@/models/system";
-import paths from "@/utils/paths";
+} from '@phosphor-icons/react';
+import { useEffect, useState } from 'react';
+import { isMobile } from 'react-device-detect';
+import { Link } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
 import { SettingsButton } from '../SettingsButton';
 
 export const MAX_ICONS = 3;

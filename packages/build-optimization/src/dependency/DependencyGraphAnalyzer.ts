@@ -1,15 +1,15 @@
 /**
  * Dependency Graph Analyzer for build optimization
- * 
+ *
  * This class analyzes package dependencies across a workspace to determine
  * optimal build order and create memory-efficient build stages.
  */
 
 import { readFile } from 'fs/promises';
-import { join, resolve } from 'path';
 import { glob } from 'glob';
+import { resolve } from 'path';
 import { IDependencyGraphAnalyzer } from '../interfaces/index.js';
-import { PackageDependency, BuildStage } from '../types/index.js';
+import { BuildStage, PackageDependency } from '../types/index.js';
 
 /**
  * Node in the dependency graph
@@ -66,7 +66,7 @@ export class DependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
             path: packagePath,
             dependencies: Object.keys(packageInfo.dependencies || {}),
             devDependencies: Object.keys(packageInfo.devDependencies || {}),
-            estimatedMemoryUsage: this.estimatePackageMemoryUsage(packageInfo)
+            estimatedMemoryUsage: this.estimatePackageMemoryUsage(packageInfo),
           };
           packages.push(dependency);
         }
@@ -87,10 +87,10 @@ export class DependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
   createBuildStages(dependencies: PackageDependency[], stageSize: number = 5): BuildStage[] {
     // Build dependency graph first
     this.buildDependencyGraph(dependencies);
-    
+
     // Group packages by dependency level
     const packagesByLevel = new Map<number, string[]>();
-    
+
     for (const [packageName, node] of this.dependencyGraph) {
       const level = node.level;
       if (!packagesByLevel.has(level)) {
@@ -102,17 +102,17 @@ export class DependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
     // Create stages from levels
     const stages: BuildStage[] = [];
     const sortedLevels = Array.from(packagesByLevel.keys()).sort((a, b) => a - b);
-    
+
     for (const level of sortedLevels) {
       const packagesAtLevel = packagesByLevel.get(level) || [];
-      
+
       // Split packages at this level into multiple stages if needed
       let currentStage: string[] = [];
       let currentMemoryUsage = 0;
       let stageId = stages.length + 1;
 
       for (const packageName of packagesAtLevel) {
-        const pkg = dependencies.find(d => d.name === packageName);
+        const pkg = dependencies.find((d) => d.name === packageName);
         if (!pkg) continue;
 
         // Check if adding this package would exceed stage size or memory limits
@@ -127,7 +127,7 @@ export class DependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
               packages: [...currentStage],
               estimatedMemoryUsage: currentMemoryUsage,
               dependencies: this.getPreviousStageDependencies(stages),
-              parallelizable: this.canRunInParallel(currentStage, dependencies)
+              parallelizable: this.canRunInParallel(currentStage, dependencies),
             });
             stageId = stages.length + 1;
           }
@@ -149,7 +149,7 @@ export class DependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
           packages: [...currentStage],
           estimatedMemoryUsage: currentMemoryUsage,
           dependencies: this.getPreviousStageDependencies(stages),
-          parallelizable: this.canRunInParallel(currentStage, dependencies)
+          parallelizable: this.canRunInParallel(currentStage, dependencies),
         });
       }
     }
@@ -221,14 +221,14 @@ export class DependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
       'packages/*/package.json',
       'apps/*/package.json',
       'libs/*/package.json',
-      'tools/*/package.json'
+      'tools/*/package.json',
     ];
 
     const files: string[] = [];
     for (const pattern of patterns) {
-      const matches = await glob(pattern, { 
+      const matches = await glob(pattern, {
         cwd: this.workspaceRoot,
-        absolute: true 
+        absolute: true,
       });
       files.push(...matches);
     }
@@ -243,7 +243,7 @@ export class DependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
     try {
       const content = await readFile(packagePath, 'utf-8');
       const packageJson: PackageJson = JSON.parse(content);
-      
+
       if (!packageJson.name) {
         return null; // Skip packages without names
       }
@@ -269,7 +269,7 @@ export class DependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
         dependencies: new Set(),
         dependents: new Set(),
         level: 0,
-        estimatedMemoryUsage: pkg.estimatedMemoryUsage
+        estimatedMemoryUsage: pkg.estimatedMemoryUsage,
       });
     }
 
@@ -299,7 +299,7 @@ export class DependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
    */
   private calculateDependencyLevels(): void {
     const visited = new Set<string>();
-    
+
     const calculateLevel = (nodeName: string): number => {
       if (visited.has(nodeName)) {
         return this.dependencyGraph.get(nodeName)?.level || 0;
@@ -368,12 +368,12 @@ export class DependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
   private canRunInParallel(packages: string[], dependencies: PackageDependency[]): boolean {
     // Check if any package in the stage depends on another package in the same stage
     for (const pkg1 of packages) {
-      const pkg1Info = dependencies.find(d => d.name === pkg1);
+      const pkg1Info = dependencies.find((d) => d.name === pkg1);
       if (!pkg1Info) continue;
 
       for (const pkg2 of packages) {
         if (pkg1 === pkg2) continue;
-        
+
         // Check if pkg1 depends on pkg2
         if (pkg1Info.dependencies.includes(pkg2)) {
           return false;
@@ -391,7 +391,7 @@ export class DependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
     if (existingStages.length === 0) {
       return [];
     }
-    
+
     // For simplicity, depend on the last stage
     // In a more complex implementation, we could analyze actual dependencies
     const lastStage = existingStages[existingStages.length - 1];
@@ -405,17 +405,18 @@ export class DependencyGraphAnalyzer implements IDependencyGraphAnalyzer {
     let baseMemory = 128; // Base memory in MB
 
     // Increase memory estimate based on dependencies
-    const totalDeps = Object.keys(packageJson.dependencies || {}).length +
-                     Object.keys(packageJson.devDependencies || {}).length;
-    
+    const totalDeps =
+      Object.keys(packageJson.dependencies || {}).length +
+      Object.keys(packageJson.devDependencies || {}).length;
+
     baseMemory += totalDeps * 2; // 2MB per dependency
 
     // Special handling for known heavy packages
     const heavyPackages = ['typescript', 'webpack', 'rollup', 'vite', 'next', 'react'];
     const deps = Object.keys(packageJson.dependencies || {});
-    
+
     for (const heavyPkg of heavyPackages) {
-      if (deps.some(dep => dep.includes(heavyPkg))) {
+      if (deps.some((dep) => dep.includes(heavyPkg))) {
         baseMemory += 256; // Add 256MB for heavy packages
       }
     }

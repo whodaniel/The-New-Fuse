@@ -1,8 +1,16 @@
-import { Controller, Post, Body, Get, Param, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Logger,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
-import { Logger } from '@nestjs/common';
 import { N8nMetadataService } from './n8n-metadata.service';
 import { WorkflowValidator } from './workflow.validator';
 
@@ -14,7 +22,7 @@ export class N8nIntegrationController {
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
-    private readonly metadataService: N8nMetadataService,
+    private readonly metadataService: N8nMetadataService
   ) {
     this.logger = new Logger(N8nIntegrationController.name);
     this.validator = new WorkflowValidator();
@@ -25,14 +33,21 @@ export class N8nIntegrationController {
     try {
       // Validate workflow structure
       const nodeTypes = await this.metadataService.getAllNodeTypes();
-      const validationErrors = this.validator.validate(workflowData.nodes, workflowData.edges, nodeTypes);
-      
+      const validationErrors = this.validator.validate(
+        workflowData.nodes,
+        workflowData.edges,
+        nodeTypes
+      );
+
       if (validationErrors.length > 0) {
-        throw new HttpException({
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Invalid workflow',
-          details: validationErrors,
-        }, HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Invalid workflow',
+            details: validationErrors,
+          },
+          HttpStatus.BAD_REQUEST
+        );
       }
 
       const n8nUrl = this.configService.get<string>('N8N_URL');
@@ -61,13 +76,15 @@ export class N8nIntegrationController {
             headers: {
               'X-N8N-API-KEY': n8nApiKey,
             },
-          },
-        ),
+          }
+        )
       );
 
       return response.data;
     } catch (error) {
-      this.logger.error(`Failed to create workflow: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      this.logger.error(
+        `Failed to create workflow: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
       throw error;
     }
   }
@@ -77,7 +94,9 @@ export class N8nIntegrationController {
     try {
       return await this.metadataService.getAllNodeTypes();
     } catch (error) {
-      this.logger.error(`Failed to fetch node types: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      this.logger.error(
+        `Failed to fetch node types: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
       throw error;
     }
   }
@@ -87,7 +106,9 @@ export class N8nIntegrationController {
     try {
       return await this.metadataService.getNodeTypeDescription(type);
     } catch (error) {
-      this.logger.error(`Failed to fetch node type description for ${type}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      this.logger.error(
+        `Failed to fetch node type description for ${type}: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
       throw error;
     }
   }
@@ -103,19 +124,18 @@ export class N8nIntegrationController {
       }
 
       const response = await firstValueFrom(
-        this.httpService.get(
-          `${n8nUrl}/api/v1/credentials?type=${type}`,
-          {
-            headers: {
-              'X-N8N-API-KEY': n8nApiKey,
-            },
+        this.httpService.get(`${n8nUrl}/api/v1/credentials?type=${type}`, {
+          headers: {
+            'X-N8N-API-KEY': n8nApiKey,
           },
-        ),
+        })
       );
 
       return response.data;
     } catch (error) {
-      this.logger.error(`Failed to fetch credentials for type ${type}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      this.logger.error(
+        `Failed to fetch credentials for type ${type}: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
       throw error;
     }
   }
@@ -143,13 +163,15 @@ export class N8nIntegrationController {
             headers: {
               'X-N8N-API-KEY': n8nApiKey,
             },
-          },
-        ),
+          }
+        )
       );
 
       return response.data;
     } catch (error) {
-      this.logger.error(`Failed to test workflow: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      this.logger.error(
+        `Failed to test workflow: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
       throw error;
     }
   }

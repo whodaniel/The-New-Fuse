@@ -70,13 +70,13 @@ export class AgentInbox {
     this.redis = redis;
     this.eventEmitter = eventEmitter;
     this.options = options || {};
-    
+
     this.logger.log(`AgentInbox created for agent: ${agentId}`);
   }
 
   async create(): Promise<void> {
     this.logger.log(`Creating inbox for agent: ${this.agentId}`);
-    
+
     const keys = [
       `agent:${this.agentId}:inbox:tasks:pending`,
       `agent:${this.agentId}:inbox:tasks:in-progress`,
@@ -110,11 +110,7 @@ export class AgentInbox {
   }
 
   async getPendingTasks(): Promise<AgentTask[]> {
-    const tasks = await this.redis.lrange(
-      `agent:${this.agentId}:inbox:tasks:pending`,
-      0,
-      -1
-    );
+    const tasks = await this.redis.lrange(`agent:${this.agentId}:inbox:tasks:pending`, 0, -1);
     return tasks.map((t) => JSON.parse(t));
   }
 
@@ -123,11 +119,7 @@ export class AgentInbox {
   }
 
   async getInProgressTasks(): Promise<AgentTask[]> {
-    const tasks = await this.redis.lrange(
-      `agent:${this.agentId}:inbox:tasks:in-progress`,
-      0,
-      -1
-    );
+    const tasks = await this.redis.lrange(`agent:${this.agentId}:inbox:tasks:in-progress`, 0, -1);
     return tasks.map((t) => JSON.parse(t));
   }
 
@@ -152,10 +144,7 @@ export class AgentInbox {
       `Agent ${this.agentId} receiving task: ${agentTask.id} (type: ${agentTask.type})`
     );
 
-    await this.redis.lpush(
-      `agent:${this.agentId}:inbox:tasks:pending`,
-      JSON.stringify(agentTask)
-    );
+    await this.redis.lpush(`agent:${this.agentId}:inbox:tasks:pending`, JSON.stringify(agentTask));
 
     this.eventEmitter.emit('agent.task_received', {
       agentId: this.agentId,
@@ -178,11 +167,7 @@ export class AgentInbox {
       throw new Error(`Task ${taskId} not found in pending queue for agent ${this.agentId}`);
     }
 
-    await this.redis.lrem(
-      `agent:${this.agentId}:inbox:tasks:pending`,
-      1,
-      JSON.stringify(task)
-    );
+    await this.redis.lrem(`agent:${this.agentId}:inbox:tasks:pending`, 1, JSON.stringify(task));
 
     const inProgressTask = {
       ...task,
@@ -209,16 +194,10 @@ export class AgentInbox {
     const task = inProgress.find((t) => t.id === taskId);
 
     if (!task) {
-      throw new Error(
-        `Task ${taskId} not found in in-progress queue for agent ${this.agentId}`
-      );
+      throw new Error(`Task ${taskId} not found in in-progress queue for agent ${this.agentId}`);
     }
 
-    await this.redis.lrem(
-      `agent:${this.agentId}:inbox:tasks:in-progress`,
-      1,
-      JSON.stringify(task)
-    );
+    await this.redis.lrem(`agent:${this.agentId}:inbox:tasks:in-progress`, 1, JSON.stringify(task));
 
     const completedTask = {
       ...task,
@@ -242,9 +221,7 @@ export class AgentInbox {
 
     await this.recordActivity('task_completed', { taskId, result });
 
-    const completedCount = await this.redis.llen(
-      `agent:${this.agentId}:inbox:tasks:completed`
-    );
+    const completedCount = await this.redis.llen(`agent:${this.agentId}:inbox:tasks:completed`);
     if (completedCount > 100) {
       await this.redis.ltrim(`agent:${this.agentId}:inbox:tasks:completed`, 0, 99);
     }
@@ -255,16 +232,10 @@ export class AgentInbox {
     const task = inProgress.find((t) => t.id === taskId);
 
     if (!task) {
-      throw new Error(
-        `Task ${taskId} not found in in-progress queue for agent ${this.agentId}`
-      );
+      throw new Error(`Task ${taskId} not found in in-progress queue for agent ${this.agentId}`);
     }
 
-    await this.redis.lrem(
-      `agent:${this.agentId}:inbox:tasks:in-progress`,
-      1,
-      JSON.stringify(task)
-    );
+    await this.redis.lrem(`agent:${this.agentId}:inbox:tasks:in-progress`, 1, JSON.stringify(task));
 
     const failedTask = {
       ...task,
@@ -273,10 +244,7 @@ export class AgentInbox {
       error: error instanceof Error ? error.message : error,
     };
 
-    await this.redis.lpush(
-      `agent:${this.agentId}:inbox:tasks:failed`,
-      JSON.stringify(failedTask)
-    );
+    await this.redis.lpush(`agent:${this.agentId}:inbox:tasks:failed`, JSON.stringify(failedTask));
 
     this.eventEmitter.emit('agent.task_failed', {
       agentId: this.agentId,
@@ -289,9 +257,7 @@ export class AgentInbox {
   }
 
   async delegateTask(taskId: string, targetAgentId: string): Promise<void> {
-    this.logger.log(
-      `Agent ${this.agentId} delegating task ${taskId} to ${targetAgentId}`
-    );
+    this.logger.log(`Agent ${this.agentId} delegating task ${taskId} to ${targetAgentId}`);
 
     const pending = await this.getPendingTasks();
     const task = pending.find((t) => t.id === taskId);
@@ -310,23 +276,11 @@ export class AgentInbox {
       },
     };
 
-    await this.redis.lrem(
-      `agent:${this.agentId}:inbox:tasks:pending`,
-      1,
-      JSON.stringify(task)
-    );
+    await this.redis.lrem(`agent:${this.agentId}:inbox:tasks:pending`, 1, JSON.stringify(task));
 
-    await this.redis.lpush(
-      `agent:${this.agentId}:outbox:delegated`,
-      JSON.stringify(delegatedTask)
-    );
+    await this.redis.lpush(`agent:${this.agentId}:outbox:delegated`, JSON.stringify(delegatedTask));
 
-    const targetInbox = new AgentInbox(
-      targetAgentId,
-      this.redis,
-      this.eventEmitter,
-      this.options
-    );
+    const targetInbox = new AgentInbox(targetAgentId, this.redis, this.eventEmitter, this.options);
     await targetInbox.receiveTask(delegatedTask);
 
     this.eventEmitter.emit('agent.task_delegated', {
@@ -375,11 +329,7 @@ export class AgentInbox {
   }
 
   async getUnreadMessages(): Promise<AgentMessage[]> {
-    const messages = await this.redis.lrange(
-      `agent:${this.agentId}:inbox:messages:unread`,
-      0,
-      -1
-    );
+    const messages = await this.redis.lrange(`agent:${this.agentId}:inbox:messages:unread`, 0, -1);
     return messages.map((m) => JSON.parse(m));
   }
 
@@ -403,9 +353,7 @@ export class AgentInbox {
     }
   }
 
-  async sendNotification(
-    notification: Partial<AgentNotification>
-  ): Promise<AgentNotification> {
+  async sendNotification(notification: Partial<AgentNotification>): Promise<AgentNotification> {
     const agentNotification: AgentNotification = {
       id: notification.id || uuid(),
       type: notification.type || 'info',

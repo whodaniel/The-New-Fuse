@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from 'react';
 import { Mic, MicOff, Video, VideoOff } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const VideoChat: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -35,7 +35,7 @@ const VideoChat: React.FC = () => {
       }
     };
     updateMediaStream();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCameraOn, isAudioOn]);
 
   return (
@@ -50,7 +50,7 @@ const VideoChat: React.FC = () => {
                 ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                 : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50'
             }`}
-            title={isAudioOn ? "Mute Microphone" : "Unmute Microphone"}
+            title={isAudioOn ? 'Mute Microphone' : 'Unmute Microphone'}
           >
             {isAudioOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
           </button>
@@ -62,7 +62,7 @@ const VideoChat: React.FC = () => {
                 ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                 : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50'
             }`}
-             title={isCameraOn ? "Turn Off Camera" : "Turn On Camera"}
+            title={isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'}
           >
             {isCameraOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
           </button>
@@ -93,9 +93,13 @@ const VideoChat: React.FC = () => {
 
             {/* Status indicators overlaid */}
             {(isCameraOn || isAudioOn) && (
-                 <div className="absolute bottom-4 right-4 flex gap-2">
-                    {!isAudioOn && <div className="bg-red-600 text-white p-1.5 rounded-full"><MicOff className="w-4 h-4" /></div>}
-                 </div>
+              <div className="absolute bottom-4 right-4 flex gap-2">
+                {!isAudioOn && (
+                  <div className="bg-red-600 text-white p-1.5 rounded-full">
+                    <MicOff className="w-4 h-4" />
+                  </div>
+                )}
+              </div>
             )}
           </div>
         )}

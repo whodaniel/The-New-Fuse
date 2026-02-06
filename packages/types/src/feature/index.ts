@@ -7,7 +7,7 @@ export enum SuggestionStatus {
   REJECTED = 'rejected',
   DEFERRED = 'deferred',
   SUBMITTED = 'submitted',
-  UNDER_REVIEW = 'under_review'
+  UNDER_REVIEW = 'under_review',
 }
 
 export interface FeatureSuggestion {
@@ -55,7 +55,9 @@ export interface SuggestionService {
   getSuggestions(): Promise<FeatureSuggestion[]>;
   getSuggestion(id: string): Promise<FeatureSuggestion>;
   getSuggestionsByStatus(status: SuggestionStatus): Promise<FeatureSuggestion[]>;
-  createSuggestion(suggestion: Omit<FeatureSuggestion, 'id' | 'createdAt' | 'updatedAt' | 'votes'>): Promise<FeatureSuggestion>;
+  createSuggestion(
+    suggestion: Omit<FeatureSuggestion, 'id' | 'createdAt' | 'updatedAt' | 'votes'>
+  ): Promise<FeatureSuggestion>;
   updateSuggestion(id: string, suggestion: Partial<FeatureSuggestion>): Promise<FeatureSuggestion>;
   updateSuggestionStatus(id: string, status: SuggestionStatus): Promise<FeatureSuggestion>;
   deleteSuggestion(id: string): Promise<any>;

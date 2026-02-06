@@ -30,18 +30,18 @@ export class AgentCommunicationBridge {
   async sendMessage(message: AgentMessage): Promise<void> {
     try {
       this.logger.debug(`Sending message from ${message.sender} to ${message.recipient}`);
-      
+
       // Get or create channel for recipient
       const channel = this.getOrCreateChannel(message.recipient);
-      
+
       // Add timestamp if not provided
       if (!message.timestamp) {
         message.timestamp = new Date().toISOString();
       }
-      
+
       // Emit message to channel
       channel.next(message);
-      
+
       this.logger.debug(`Message sent successfully: ${message.id}`);
     } catch (error) {
       this.logger.error(`Failed to send message: ${message.id}`, error);
@@ -63,7 +63,7 @@ export class AgentCommunicationBridge {
     const broadcastMessage: AgentMessage = {
       ...message,
       recipient: 'all',
-      type: 'broadcast'
+      type: 'broadcast',
     };
 
     return this.sendMessage(broadcastMessage);
@@ -75,7 +75,12 @@ export class AgentCommunicationBridge {
       return false;
     }
 
-    if (!message.type || !['direct', 'broadcast', 'task_request', 'task_response', 'status_update', 'error'].includes(message.type)) {
+    if (
+      !message.type ||
+      !['direct', 'broadcast', 'task_request', 'task_response', 'status_update', 'error'].includes(
+        message.type,
+      )
+    ) {
       return false;
     }
 
@@ -91,7 +96,7 @@ export class AgentCommunicationBridge {
       this.channels.set(agentId, new Subject<AgentMessage>());
       this.logger.debug(`Created new channel for agent: ${agentId}`);
     }
-    
+
     return this.channels.get(agentId)!;
   }
 
@@ -110,13 +115,13 @@ export class AgentCommunicationBridge {
 
   async shutdown(): Promise<void> {
     this.logger.log('Shutting down AgentCommunicationBridge...');
-    
+
     // Close all channels
     for (const [agentId, channel] of this.channels) {
       channel.complete();
       this.logger.debug(`Closed channel for agent: ${agentId}`);
     }
-    
+
     this.channels.clear();
     this.logger.log('AgentCommunicationBridge shutdown complete');
   }

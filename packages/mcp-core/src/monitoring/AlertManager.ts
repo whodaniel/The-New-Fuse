@@ -3,9 +3,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { IAlertManager, AlertRule } from '../interfaces/IMonitoring';
-import { Alert, AlertSeverity, AlertStatus } from '../types/monitoring';
+import { AlertRule, IAlertManager } from '../interfaces/IMonitoring';
 import { ErrorStatistics } from '../types/error';
+import { Alert, AlertSeverity, AlertStatus } from '../types/monitoring';
 import { Logger } from '../utils/Logger';
 
 export interface AlertManagerConfig {
@@ -44,7 +44,7 @@ export class AlertManager extends EventEmitter implements IAlertManager {
     }
 
     this.logger.info('Starting alert manager', {
-      checkInterval: this.config.checkInterval
+      checkInterval: this.config.checkInterval,
     });
 
     this.running = true;
@@ -82,7 +82,7 @@ export class AlertManager extends EventEmitter implements IAlertManager {
     this.alertRules.set(rule.name, rule);
     this.logger.debug(`Registered alert rule: ${rule.name}`, {
       severity: rule.severity,
-      enabled: rule.enabled
+      enabled: rule.enabled,
     });
   }
 
@@ -108,9 +108,7 @@ export class AlertManager extends EventEmitter implements IAlertManager {
    * Get active alerts
    */
   getActiveAlerts(): Alert[] {
-    return Array.from(this.alerts.values()).filter(
-      alert => alert.status === AlertStatus.ACTIVE
-    );
+    return Array.from(this.alerts.values()).filter((alert) => alert.status === AlertStatus.ACTIVE);
   }
 
   /**
@@ -118,7 +116,7 @@ export class AlertManager extends EventEmitter implements IAlertManager {
    */
   getAlertHistory(hours: number): Alert[] {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
-    return this.alertHistory.filter(alert => alert.timestamp >= cutoff);
+    return this.alertHistory.filter((alert) => alert.timestamp >= cutoff);
   }
 
   /**
@@ -137,7 +135,7 @@ export class AlertManager extends EventEmitter implements IAlertManager {
     this.logger.info(`Alert acknowledged: ${alert.name}`, {
       alertId,
       user,
-      severity: alert.severity
+      severity: alert.severity,
     });
 
     this.emit('alertAcknowledged', alert);
@@ -162,7 +160,7 @@ export class AlertManager extends EventEmitter implements IAlertManager {
     this.logger.info(`Alert resolved: ${alert.name}`, {
       alertId,
       severity: alert.severity,
-      duration: alert.resolvedAt.getTime() - alert.timestamp.getTime()
+      duration: alert.resolvedAt.getTime() - alert.timestamp.getTime(),
     });
 
     this.emit('alertResolved', alert);
@@ -178,7 +176,7 @@ export class AlertManager extends EventEmitter implements IAlertManager {
     }
 
     alert.status = AlertStatus.SUPPRESSED;
-    
+
     // Auto-resolve after suppression duration
     setTimeout(() => {
       if (this.alerts.has(alertId)) {
@@ -189,7 +187,7 @@ export class AlertManager extends EventEmitter implements IAlertManager {
     this.logger.info(`Alert suppressed: ${alert.name}`, {
       alertId,
       duration,
-      severity: alert.severity
+      severity: alert.severity,
     });
 
     this.emit('alertSuppressed', alert);
@@ -214,15 +212,15 @@ export class AlertManager extends EventEmitter implements IAlertManager {
       category: 'system',
       source: 'AlertManager',
       timestamp: new Date(),
-      data
+      data,
     };
 
     this.alerts.set(alertId, alert);
-    
+
     this.logger.warn(`Alert triggered: ${ruleName}`, {
       alertId,
       severity,
-      description
+      description,
     });
 
     this.emit('alertTriggered', alert);
@@ -245,21 +243,18 @@ export class AlertManager extends EventEmitter implements IAlertManager {
 
         try {
           // Check cooldown
-          if (rule.lastTriggered && 
-              (Date.now() - rule.lastTriggered.getTime()) < rule.cooldown) {
+          if (rule.lastTriggered && Date.now() - rule.lastTriggered.getTime() < rule.cooldown) {
             continue;
           }
 
           // Check condition
           if (rule.condition(metrics, statistics)) {
             rule.lastTriggered = new Date();
-            
-            const alert = this.triggerAlert(
-              rule.name,
-              rule.description,
-              rule.severity,
-              { metrics, statistics }
-            );
+
+            const alert = this.triggerAlert(rule.name, rule.description, rule.severity, {
+              metrics,
+              statistics,
+            });
 
             // Execute alert action
             await rule.action(alert);
@@ -282,10 +277,11 @@ export class AlertManager extends EventEmitter implements IAlertManager {
   private cleanupAlerts(): void {
     const cutoff = new Date(Date.now() - this.config.retentionPeriod);
     const initialLength = this.alertHistory.length;
-    
-    this.alertHistory.splice(0, this.alertHistory.findIndex(
-      alert => alert.timestamp >= cutoff
-    ));
+
+    this.alertHistory.splice(
+      0,
+      this.alertHistory.findIndex((alert) => alert.timestamp >= cutoff)
+    );
 
     if (this.alertHistory.length < initialLength) {
       this.logger.debug(`Cleaned up ${initialLength - this.alertHistory.length} old alerts`);
@@ -304,13 +300,13 @@ export class AlertManager extends EventEmitter implements IAlertManager {
       cooldown: 5 * 60 * 1000, // 5 minutes
       enabled: true,
       condition: (metrics) => {
-        const errorRate = metrics.requests.total > 0 ? 
-          metrics.requests.failed / metrics.requests.total : 0;
+        const errorRate =
+          metrics.requests.total > 0 ? metrics.requests.failed / metrics.requests.total : 0;
         return errorRate > 0.1;
       },
       action: async (alert) => {
         this.logger.error(`HIGH ERROR RATE: ${alert.description}`, alert.data);
-      }
+      },
     });
 
     // High response time alert
@@ -323,7 +319,7 @@ export class AlertManager extends EventEmitter implements IAlertManager {
       condition: (metrics) => metrics.requests.avgResponseTime > 1000,
       action: async (alert) => {
         this.logger.warn(`HIGH RESPONSE TIME: ${alert.description}`, alert.data);
-      }
+      },
     });
 
     // High memory usage alert
@@ -339,7 +335,7 @@ export class AlertManager extends EventEmitter implements IAlertManager {
       },
       action: async (alert) => {
         this.logger.warn(`HIGH MEMORY USAGE: ${alert.description}`, alert.data);
-      }
+      },
     });
 
     // Low health score alert
@@ -352,7 +348,7 @@ export class AlertManager extends EventEmitter implements IAlertManager {
       condition: (metrics) => metrics.system.healthScore < 70,
       action: async (alert) => {
         this.logger.warn(`LOW HEALTH SCORE: ${alert.description}`, alert.data);
-      }
+      },
     });
 
     // No active connections alert
@@ -365,7 +361,7 @@ export class AlertManager extends EventEmitter implements IAlertManager {
       condition: (metrics) => metrics.connections.active === 0 && metrics.system.uptime > 60000,
       action: async (alert) => {
         this.logger.info(`NO ACTIVE CONNECTIONS: ${alert.description}`, alert.data);
-      }
+      },
     });
 
     // Critical system alert
@@ -376,13 +372,15 @@ export class AlertManager extends EventEmitter implements IAlertManager {
       cooldown: 2 * 60 * 1000, // 2 minutes
       enabled: true,
       condition: (metrics, statistics) => {
-        return metrics.system.healthScore < 30 || 
-               (statistics.errorRate > 50 && metrics.requests.total > 100);
+        return (
+          metrics.system.healthScore < 30 ||
+          (statistics.errorRate > 50 && metrics.requests.total > 100)
+        );
       },
       action: async (alert) => {
         this.logger.error(`CRITICAL SYSTEM ALERT: ${alert.description}`, alert.data);
         // In a real implementation, this might send notifications, page on-call, etc.
-      }
+      },
     });
 
     this.logger.info(`Initialized ${this.alertRules.size} default alert rules`);
@@ -401,32 +399,32 @@ export class AlertManager extends EventEmitter implements IAlertManager {
         rps: 0,
         avgResponseTime: 0,
         p95ResponseTime: 0,
-        p99ResponseTime: 0
+        p99ResponseTime: 0,
       },
       connections: {
         active: 0,
         total: 0,
         failed: 0,
-        avgConnectionTime: 0
+        avgConnectionTime: 0,
       },
       resources: {
         total: 0,
         accessCount: 0,
         cacheHitRate: 0,
-        avgReadTime: 0
+        avgReadTime: 0,
       },
       tools: {
         total: 0,
         executionCount: 0,
         avgExecutionTime: 0,
-        successRate: 0
+        successRate: 0,
       },
       system: {
         memoryUsage: process.memoryUsage().heapUsed,
         cpuUsage: 0,
         uptime: Date.now(),
-        healthScore: 100
-      }
+        healthScore: 100,
+      },
     };
   }
 
@@ -440,7 +438,7 @@ export class AlertManager extends EventEmitter implements IAlertManager {
       errorsByCategory: {} as any,
       errorsBySeverity: {} as any,
       errorsByCode: {},
-      errorRate: 0
+      errorRate: 0,
     };
   }
 }

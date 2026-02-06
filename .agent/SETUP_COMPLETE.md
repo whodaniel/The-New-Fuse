@@ -86,7 +86,7 @@
 - ✅ unified-config-server
 - ✅ jules
 - ✅ filesystem, gdrive, skills
-- ✅ prisma-mcp-server, redis
+- ✅ drizzle-mcp-server, redis
 - ✅ youtube-curator, tnf-relay
 - ✅ context7, sequential-thinking, puppeteer
 

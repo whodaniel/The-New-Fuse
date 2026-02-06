@@ -5,11 +5,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint/eslint-plugin', 'playwright'],
-  extends: [
-    'plugin:@typescript-eslint/recommended',
-    'plugin:playwright/recommended',
-    'prettier'
-  ],
+  extends: ['plugin:@typescript-eslint/recommended', 'plugin:playwright/recommended', 'prettier'],
   root: true,
   env: {
     node: true,
@@ -28,12 +24,12 @@ module.exports = {
     'playwright/expect-expect': [
       'error',
       {
-        'assertFunctionNames': ['expect', 'expectLoaded', 'expectVisible']
-      }
+        assertFunctionNames: ['expect', 'expectLoaded', 'expectVisible'],
+      },
     ],
     'playwright/prefer-web-first-assertions': 'warn',
     'playwright/no-force-option': 'warn',
     'playwright/no-wait-for-timeout': 'warn',
-    'playwright/require-top-level-describe': 'error'
+    'playwright/require-top-level-describe': 'error',
   },
 };

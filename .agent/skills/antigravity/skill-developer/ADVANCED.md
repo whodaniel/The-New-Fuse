@@ -188,11 +188,11 @@ skill-rules.json
 
 ```typescript
 describe('database-verification', () => {
-  it('triggers on Prisma imports', () => {
+  it('triggers on Drizzle imports', () => {
     const result = testSkill({
       prompt: 'add user tracking',
       file: 'services/user.ts',
-      content: "import { PrismaService } from './prisma'",
+      content: "import { DatabaseService } from './drizzle'",
     });
 
     expect(result.triggered).toBe(true);

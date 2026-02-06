@@ -10,57 +10,50 @@
 export {
   ApiClient,
   type ApiClientOptions,
+  type ApiError,
   type ApiResponse,
-  type ApiError
 } from './client/ApiClient';
 
 // Token storage exports
-export {
-  TokenStorage,
-  type TokenStorage as TokenStorageInterface
-} from './auth/TokenStorage';
+export { TokenStorage, type TokenStorage as TokenStorageInterface } from './auth/TokenStorage';
 
 // Base service exports
-export {
-  BaseService
-} from './services/BaseService';
+export { BaseService } from './services/BaseService';
 
 // Configuration exports
-export {
-  type ApiConfig
-} from './config/ApiConfig';
+export { type ApiConfig } from './config/ApiConfig';
 
 // Authentication service exports
 export {
   AuthService,
   createAuthService,
   type AuthResponse,
-  type UserData
+  type UserData,
 } from './services/auth.service';
 
 // Workflow service exports
 export {
+  WorkflowExecutionStatus,
   WorkflowService,
   createWorkflowService,
   type Workflow,
-  type WorkflowStep,
-  type WorkflowExecution,
-  type WorkflowStepExecution,
   type WorkflowCreateData,
+  type WorkflowExecution,
+  type WorkflowStep,
+  type WorkflowStepExecution,
   type WorkflowUpdateData,
-  WorkflowExecutionStatus
 } from './services/workflow.service';
 
 // Agent service exports
 export {
   AgentService,
+  AgentStatus,
   createAgentService,
   type Agent,
   type AgentCapability,
   type AgentCreateData,
-  type AgentUpdateData,
   type AgentExecutionResult,
-  AgentStatus
+  type AgentUpdateData,
 } from './services/agent.service';
 
 // User service exports
@@ -69,7 +62,7 @@ export {
   createUserService,
   type User,
   type UserProfile,
-  type UserUpdateData
+  type UserUpdateData,
 } from './services/user.service';
 
 /**
@@ -101,6 +94,6 @@ export async function createApiClient(config: {
     timeout,
     headers,
     tokenStorage,
-    ...options
+    ...options,
   });
 }

@@ -1,6 +1,7 @@
 # Workflow Builder
 
-A powerful visual editor for creating, editing, and executing workflows that orchestrate agent-to-agent communication and tool interactions.
+A powerful visual editor for creating, editing, and executing workflows that
+orchestrate agent-to-agent communication and tool interactions.
 
 ## Features
 
@@ -52,7 +53,11 @@ A powerful visual editor for creating, editing, and executing workflows that orc
 ### Basic Usage
 
 ```tsx
-import { WorkflowCanvas, NodeToolbox, NodeProperties } from '@/components/workflow';
+import {
+  WorkflowCanvas,
+  NodeToolbox,
+  NodeProperties,
+} from '@/components/workflow';
 
 const WorkflowEditor = () => {
   return (
@@ -118,7 +123,7 @@ workflowExecutionService.setDebugOptions({
   enabled: true,
   stepByStep: true,
   breakpoints: ['node-1', 'node-2'],
-  logLevel: 'debug'
+  logLevel: 'debug',
 });
 
 // Continue execution
@@ -163,4 +168,5 @@ pnpm test --coverage
 
 ## Documentation
 
-For more detailed documentation, see the [Workflow Builder Documentation](../../../docs/workflow-builder.md).
+For more detailed documentation, see the
+[Workflow Builder Documentation](../../../docs/workflow-builder.md).

@@ -3,7 +3,13 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { MemoryContent, MemoryQuery, MemoryQueryResult, MemoryStorageConfig, MemoryStats } from '../types/memory';
+import {
+  MemoryContent,
+  MemoryQuery,
+  MemoryQueryResult,
+  MemoryStorageConfig,
+  MemoryStats,
+} from '../types/memory';
 import { ServiceState } from '../constants/types';
 import { BaseError } from '../utils/errors';
 
@@ -44,7 +50,7 @@ export class MemorySystem {
 
       // Start cleanup interval
       setInterval(() => {
-        this.performCleanup().catch(error => {
+        this.performCleanup().catch((error) => {
           this.logger.error('Memory cleanup failed', error as Error);
         });
       }, this.config.retentionPolicy.cleanupInterval * 1000);
@@ -81,7 +87,9 @@ export class MemorySystem {
     return this.state;
   }
 
-  async store(content: Omit<MemoryContent, 'id' | 'createdAt' | 'updatedAt' | 'accessCount' | 'lastAccessed'>): Promise<string> {
+  async store(
+    content: Omit<MemoryContent, 'id' | 'createdAt' | 'updatedAt' | 'accessCount' | 'lastAccessed'>,
+  ): Promise<string> {
     const id = `memory_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const now = new Date();
 
@@ -95,7 +103,7 @@ export class MemorySystem {
     };
 
     this.memories.set(id, memoryContent);
-    
+
     // Index the content for search
     await this.indexContent(memoryContent);
 
@@ -125,7 +133,10 @@ export class MemorySystem {
     return memory;
   }
 
-  async update(id: string, updates: Partial<Omit<MemoryContent, 'id' | 'createdAt' | 'accessCount' | 'lastAccessed'>>): Promise<MemoryContent | null> {
+  async update(
+    id: string,
+    updates: Partial<Omit<MemoryContent, 'id' | 'createdAt' | 'accessCount' | 'lastAccessed'>>,
+  ): Promise<MemoryContent | null> {
     const memory = this.memories.get(id);
     if (!memory) {
       return null;
@@ -170,30 +181,30 @@ export class MemorySystem {
 
     // Filter by type
     if (query.type) {
-      candidateMemories = candidateMemories.filter(m => m.type === query.type);
+      candidateMemories = candidateMemories.filter((m) => m.type === query.type);
     }
 
     // Filter by agent ID
     if (query.agentId) {
-      candidateMemories = candidateMemories.filter(m => m.metadata.agentId === query.agentId);
+      candidateMemories = candidateMemories.filter((m) => m.metadata.agentId === query.agentId);
     }
 
     // Filter by tags
     if (query.tags && query.tags.length > 0) {
-      candidateMemories = candidateMemories.filter(m =>
-        query.tags!.some(tag => m.metadata.tags.includes(tag))
+      candidateMemories = candidateMemories.filter((m) =>
+        query.tags!.some((tag) => m.metadata.tags.includes(tag)),
       );
     }
 
     // Filter by time range
     if (query.timeRange) {
-      candidateMemories = candidateMemories.filter(m =>
-        m.createdAt >= query.timeRange!.start && m.createdAt <= query.timeRange!.end
+      candidateMemories = candidateMemories.filter(
+        (m) => m.createdAt >= query.timeRange!.start && m.createdAt <= query.timeRange!.end,
       );
     }
 
     // Perform text search and calculate relevance scores
-    const searchResults = candidateMemories.map(memory => {
+    const searchResults = candidateMemories.map((memory) => {
       const relevanceScore = this.calculateRelevanceScore(memory, query.query);
       return {
         content: memory,
@@ -203,8 +214,8 @@ export class MemorySystem {
     });
 
     // Filter by minimum relevance
-    const filteredResults = searchResults.filter(result =>
-      result.relevanceScore >= (query.minRelevance || 0)
+    const filteredResults = searchResults.filter(
+      (result) => result.relevanceScore >= (query.minRelevance || 0),
     );
 
     // Sort by relevance score
@@ -233,10 +244,10 @@ export class MemorySystem {
   async getStats(): Promise<MemoryStats> {
     const memories = Array.from(this.memories.values());
     const totalSize = memories.reduce((size, memory) => size + memory.content.length, 0);
-    const averageRelevance = memories.reduce((sum, memory) => sum + (memory.metadata.relevanceScore || 0), 0) / memories.length;
-    const mostAccessedItems = memories
-      .sort((a, b) => b.accessCount - a.accessCount)
-      .slice(0, 10);
+    const averageRelevance =
+      memories.reduce((sum, memory) => sum + (memory.metadata.relevanceScore || 0), 0) /
+      memories.length;
+    const mostAccessedItems = memories.sort((a, b) => b.accessCount - a.accessCount).slice(0, 10);
 
     return {
       totalItems: memories.length,
@@ -251,7 +262,7 @@ export class MemorySystem {
 
   private async indexContent(memory: MemoryContent): Promise<void> {
     const keywords = this.extractKeywords(memory.content);
-    
+
     for (const keyword of keywords) {
       if (!this.memoryIndex.has(keyword)) {
         this.memoryIndex.set(keyword, new Set());
@@ -275,7 +286,7 @@ export class MemorySystem {
 
   private async removeFromIndex(memory: MemoryContent): Promise<void> {
     const keywords = this.extractKeywords(memory.content);
-    
+
     for (const keyword of keywords) {
       const memorySet = this.memoryIndex.get(keyword);
       if (memorySet) {
@@ -304,15 +315,50 @@ export class MemorySystem {
       .toLowerCase()
       .replace(/[^\w\s]/g, ' ')
       .split(/\s+/)
-      .filter(word => word.length > 2)
-      .filter(word => !this.isStopWord(word));
+      .filter((word) => word.length > 2)
+      .filter((word) => !this.isStopWord(word));
   }
 
   private isStopWord(word: string): boolean {
     const stopWords = new Set([
-      'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by',
-      'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did',
-      'will', 'would', 'could', 'should', 'may', 'might', 'can', 'this', 'that', 'these', 'those',
+      'the',
+      'a',
+      'an',
+      'and',
+      'or',
+      'but',
+      'in',
+      'on',
+      'at',
+      'to',
+      'for',
+      'of',
+      'with',
+      'by',
+      'is',
+      'are',
+      'was',
+      'were',
+      'be',
+      'been',
+      'being',
+      'have',
+      'has',
+      'had',
+      'do',
+      'does',
+      'did',
+      'will',
+      'would',
+      'could',
+      'should',
+      'may',
+      'might',
+      'can',
+      'this',
+      'that',
+      'these',
+      'those',
     ]);
     return stopWords.has(word);
   }
@@ -320,7 +366,7 @@ export class MemorySystem {
   private calculateRelevanceScore(memory: MemoryContent, query: string): number {
     const queryTerms = this.extractKeywords(query);
     const contentTerms = this.extractKeywords(memory.content);
-    
+
     if (queryTerms.length === 0) return 0;
 
     let matchCount = 0;
@@ -331,40 +377,42 @@ export class MemorySystem {
     }
 
     const baseScore = matchCount / queryTerms.length;
-    
+
     // Boost score based on importance and access count
     const importanceBoost = memory.metadata.importance || 0.5;
     const accessBoost = Math.min(memory.accessCount / 10, 0.2); // Max 20% boost
-    
+
     return Math.min(baseScore + importanceBoost * 0.3 + accessBoost, 1.0);
   }
 
   private getMatchedTerms(memory: MemoryContent, query: string): string[] {
     const queryTerms = this.extractKeywords(query);
     const contentTerms = this.extractKeywords(memory.content);
-    
-    return queryTerms.filter(term => contentTerms.includes(term));
+
+    return queryTerms.filter((term) => contentTerms.includes(term));
   }
 
   private generateSearchSuggestions(query: string): string[] {
     // Simple suggestion generation based on indexed keywords
     const queryTerms = this.extractKeywords(query);
     const suggestions: string[] = [];
-    
+
     for (const [keyword, memoryIds] of this.memoryIndex) {
       if (memoryIds.size > 0 && !queryTerms.includes(keyword)) {
         // Check if this keyword appears with query terms
-        const relatedMemories = Array.from(memoryIds).map(id => this.memories.get(id)).filter(Boolean);
-        const hasRelation = relatedMemories.some(memory => 
-          queryTerms.some(term => memory!.content.toLowerCase().includes(term))
+        const relatedMemories = Array.from(memoryIds)
+          .map((id) => this.memories.get(id))
+          .filter(Boolean);
+        const hasRelation = relatedMemories.some((memory) =>
+          queryTerms.some((term) => memory!.content.toLowerCase().includes(term)),
         );
-        
+
         if (hasRelation) {
           suggestions.push(keyword);
         }
       }
     }
-    
+
     return suggestions.slice(0, 5); // Return top 5 suggestions
   }
 
@@ -372,13 +420,13 @@ export class MemorySystem {
     const now = Date.now();
     const memories = Array.from(this.memories.values());
     const policy = this.config.retentionPolicy;
-    
+
     let deletedCount = 0;
 
     // Remove expired memories
     for (const memory of memories) {
       const age = (now - memory.createdAt.getTime()) / 1000;
-      const ttl = memory.metadata.expiresAt 
+      const ttl = memory.metadata.expiresAt
         ? (memory.metadata.expiresAt.getTime() - memory.createdAt.getTime()) / 1000
         : policy.defaultTTL;
 
@@ -390,18 +438,17 @@ export class MemorySystem {
 
     // Remove excess memories if over limit
     if (this.memories.size > policy.maxItems) {
-      const sortedMemories = Array.from(this.memories.values())
-        .sort((a, b) => {
-          if (policy.priorityBased) {
-            // Sort by importance and access count
-            const scoreA = (a.metadata.importance || 0) + (a.accessCount / 100);
-            const scoreB = (b.metadata.importance || 0) + (b.accessCount / 100);
-            return scoreA - scoreB; // Ascending (least important first)
-          } else {
-            // Sort by age (oldest first)
-            return a.createdAt.getTime() - b.createdAt.getTime();
-          }
-        });
+      const sortedMemories = Array.from(this.memories.values()).sort((a, b) => {
+        if (policy.priorityBased) {
+          // Sort by importance and access count
+          const scoreA = (a.metadata.importance || 0) + a.accessCount / 100;
+          const scoreB = (b.metadata.importance || 0) + b.accessCount / 100;
+          return scoreA - scoreB; // Ascending (least important first)
+        } else {
+          // Sort by age (oldest first)
+          return a.createdAt.getTime() - b.createdAt.getTime();
+        }
+      });
 
       const excessCount = this.memories.size - policy.maxItems;
       for (let i = 0; i < excessCount; i++) {

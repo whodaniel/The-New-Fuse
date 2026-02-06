@@ -45,6 +45,7 @@ const SettingsAppearance = lazy(() => import('./pages/settings/Appearance'));
 const SettingsNotifications = lazy(() => import('./pages/settings/Notifications'));
 const SettingsSecurity = lazy(() => import('./pages/settings/Security'));
 const SettingsAPI = lazy(() => import('./pages/settings/API'));
+const AdvancedLLMProviders = lazy(() => import('./pages/settings/AdvancedLLMProviders'));
 const WorkspaceOverview = lazy(() => import('./pages/workspace/Overview'));
 const WorkspaceMembers = lazy(() => import('./pages/workspace/Members'));
 const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat/index'));
@@ -531,6 +532,7 @@ export default function ComprehensiveRouter() {
             <Route path="/settings/notifications" element={<SettingsNotifications />} />
             <Route path="/settings/security" element={<SettingsSecurity />} />
             <Route path="/settings/api" element={<SettingsAPI />} />
+            <Route path="/settings/llm-providers" element={<AdvancedLLMProviders />} />
             <Route path="/general-settings" element={<GeneralSettings />} />
             <Route path="/general-settings/embedding" element={<GeneralSettingsEmbeddingPage />} />
 

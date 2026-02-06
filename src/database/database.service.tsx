@@ -1,9 +1,9 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from "@nestjs/common";
-import { PrismaClient } from "@the-new-fuse/database";
+import { DrizzleClient } from "@the-new-fuse/database";
 
 @Injectable()
 export class DatabaseService
-  extends PrismaClient
+  extends DrizzleClient
   implements OnModuleInit, OnModuleDestroy
 {
   constructor() {

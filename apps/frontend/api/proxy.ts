@@ -1,6 +1,6 @@
 /**
  * Vercel Serverless Function: Web Proxy
- * 
+ *
  * Provides CORS-free web access for AI agents
  */
 
@@ -12,22 +12,19 @@ const proxyService = new ProxyService({
   maxFileSize: 5 * 1024 * 1024, // 5MB limit for serverless
   rateLimit: {
     requests: 30,
-    windowMs: 60000 // 1 minute
+    windowMs: 60000, // 1 minute
   },
   allowedContentTypes: [
     'text/html',
     'text/plain',
     'application/json',
     'application/xml',
-    'text/xml'
+    'text/xml',
   ],
-  contentFiltering: true
+  contentFiltering: true,
 });
 
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
-) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -41,7 +38,12 @@ export default async function handler(
 
   try {
     // Extract parameters
-    const { url, method = 'GET', headers = {}, body } = req.method === 'GET' 
+    const {
+      url,
+      method = 'GET',
+      headers = {},
+      body,
+    } = req.method === 'GET'
       ? { url: req.query.url as string, method: 'GET', headers: {}, body: undefined }
       : req.body;
 
@@ -49,7 +51,7 @@ export default async function handler(
     if (!url) {
       return res.status(400).json({
         success: false,
-        error: 'URL parameter is required'
+        error: 'URL parameter is required',
       });
     }
 
@@ -60,23 +62,22 @@ export default async function handler(
       headers,
       body,
       config: {
-        timeout: 10000 // 10 second timeout for serverless
-      }
+        timeout: 10000, // 10 second timeout for serverless
+      },
     });
 
     // Return result
     res.status(result.statusCode).json(result);
-
   } catch (error) {
     console.error('Proxy error:', error);
-    
+
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Internal server error',
       metadata: {
         timestamp: new Date().toISOString(),
-        function: 'proxy'
-      }
+        function: 'proxy',
+      },
     });
   }
 }

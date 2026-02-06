@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SyncDashboardService, IAgentWebSocketService, IMonitoringService, SystemAlert } from './SyncDashboardService';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { SyncRedisConfig } from '../config/SyncRedisConfig';
+import {
+  IAgentWebSocketService,
+  IMonitoringService,
+  SyncDashboardService,
+} from './SyncDashboardService';
 
 describe('SyncDashboardService', () => {
   let service: SyncDashboardService;
@@ -22,7 +26,7 @@ describe('SyncDashboardService', () => {
       set: jest.fn(),
       del: jest.fn(),
       exists: jest.fn(),
-      expire: jest.fn()
+      expire: jest.fn(),
     } as any;
 
     // Mock Redis config
@@ -30,35 +34,36 @@ describe('SyncDashboardService', () => {
       getChannelName: jest.fn(),
       getKeyPattern: jest.fn(),
       getTenantKey: jest.fn(),
-      getGlobalKey: jest.fn()
+      getGlobalKey: jest.fn(),
     } as any;
 
     // Mock WebSocket service
     mockWsService = {
       broadcastToTenant: jest.fn(),
       broadcastToAll: jest.fn(),
-      sendToUser: jest.fn()
+      sendToUser: jest.fn(),
     };
 
     // Mock monitoring service
     mockMonitoringService = {
       recordMetric: jest.fn(),
       getSystemHealth: jest.fn(),
-      createAlert: jest.fn()
+      createAlert: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
           provide: SyncDashboardService,
-          useFactory: () => new SyncDashboardService(
-            mockRedisService,
-            mockRedisConfig,
-            mockWsService,
-            mockMonitoringService
-          )
-        }
-      ]
+          useFactory: () =>
+            new SyncDashboardService(
+              mockRedisService,
+              mockRedisConfig,
+              mockWsService,
+              mockMonitoringService
+            ),
+        },
+      ],
     }).compile();
 
     service = module.get<SyncDashboardService>(SyncDashboardService);
@@ -77,7 +82,7 @@ describe('SyncDashboardService', () => {
   describe('initialization', () => {
     it('should initialize successfully', async () => {
       await service.onModuleInit();
-      
+
       // Verify Redis subscriptions
       expect(mockRedisService.subscribe).toHaveBeenCalledTimes(6);
       expect(mockRedisService.subscribe).toHaveBeenCalledWith(
@@ -92,7 +97,7 @@ describe('SyncDashboardService', () => {
 
     it('should handle initialization errors gracefully', async () => {
       mockRedisService.subscribe.mockRejectedValue(new Error('Redis connection failed'));
-      
+
       await expect(service.onModuleInit()).rejects.toThrow('Redis connection failed');
     });
   });
@@ -109,9 +114,9 @@ describe('SyncDashboardService', () => {
         data: {
           operations: { sync: 10, conflicts: 2, fileChanges: 5 },
           performance: { avgSyncTime: 150, successRate: 95, throughput: 10.5 },
-          errors: { networkErrors: 1, conflictErrors: 2, validationErrors: 0 }
+          errors: { networkErrors: 1, conflictErrors: 2, validationErrors: 0 },
         },
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       // Simulate receiving update
@@ -122,7 +127,7 @@ describe('SyncDashboardService', () => {
         'tenant-1',
         expect.objectContaining({
           type: 'sync_dashboard_update',
-          payload: metricsUpdate
+          payload: metricsUpdate,
         })
       );
 
@@ -143,9 +148,9 @@ describe('SyncDashboardService', () => {
           level: 'warning' as const,
           message: 'High CPU usage detected',
           component: 'system_monitor',
-          timestamp: new Date()
+          timestamp: new Date(),
         },
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       service['processDashboardUpdate'](alertUpdate);
@@ -162,10 +167,15 @@ describe('SyncDashboardService', () => {
         data: {
           status: 'healthy',
           clockSync: { status: 'synced', lastSync: new Date(), drift: 0 },
-          services: { redis: 'healthy', database: 'healthy', fileSystem: 'healthy', webSocket: 'healthy' },
-          lastCheck: new Date()
+          services: {
+            redis: 'healthy',
+            database: 'healthy',
+            fileSystem: 'healthy',
+            webSocket: 'healthy',
+          },
+          lastCheck: new Date(),
         },
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       service['processDashboardUpdate'](globalUpdate);
@@ -173,7 +183,7 @@ describe('SyncDashboardService', () => {
       expect(mockWsService.broadcastToAll).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'sync_dashboard_update',
-          payload: globalUpdate
+          payload: globalUpdate,
         })
       );
     });
@@ -183,7 +193,7 @@ describe('SyncDashboardService', () => {
         type: 'task_progress' as const,
         userId: 'user-1',
         data: { taskId: 'task-1', progress: 75 },
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       service['processDashboardUpdate'](userUpdate);
@@ -192,7 +202,7 @@ describe('SyncDashboardService', () => {
         'user-1',
         expect.objectContaining({
           type: 'sync_dashboard_update',
-          payload: userUpdate
+          payload: userUpdate,
         })
       );
     });
@@ -207,7 +217,7 @@ describe('SyncDashboardService', () => {
       // Mock Redis keys and data
       mockRedisService.keys.mockResolvedValue([
         'sync:metrics:tenant:tenant-1',
-        'sync:metrics:global'
+        'sync:metrics:global',
       ]);
 
       mockRedisService.hgetall.mockImplementation((key) => {
@@ -218,7 +228,7 @@ describe('SyncDashboardService', () => {
             file_changes: '8',
             avg_sync_time: '200',
             success_rate: '92',
-            throughput: '12.5'
+            throughput: '12.5',
           });
         }
         return Promise.resolve({});
@@ -234,9 +244,9 @@ describe('SyncDashboardService', () => {
             type: 'sync_metrics',
             data: expect.objectContaining({
               operations: { sync: 15, conflicts: 3, fileChanges: 8 },
-              performance: { avgSyncTime: 200, successRate: 92, throughput: 12.5 }
-            })
-          })
+              performance: { avgSyncTime: 200, successRate: 92, throughput: 12.5 },
+            }),
+          }),
         })
       );
     });
@@ -254,7 +264,7 @@ describe('SyncDashboardService', () => {
         redis: 'healthy',
         database: 'healthy',
         fileSystem: 'healthy',
-        webSocket: 'healthy'
+        webSocket: 'healthy',
       };
 
       mockMonitoringService.getSystemHealth.mockResolvedValue(mockHealth);
@@ -270,10 +280,10 @@ describe('SyncDashboardService', () => {
               status: 'healthy',
               clockSync: expect.objectContaining({
                 status: 'synced',
-                drift: 5
-              })
-            })
-          })
+                drift: 5,
+              }),
+            }),
+          }),
         })
       );
     });
@@ -297,7 +307,7 @@ describe('SyncDashboardService', () => {
         message: 'Database connection lost',
         component: 'database_monitor',
         tenantId: 'tenant-1',
-        metadata: { connectionId: 'conn-123' }
+        metadata: { connectionId: 'conn-123' },
       };
 
       await service.createAlert(alertData);
@@ -306,7 +316,7 @@ describe('SyncDashboardService', () => {
         expect.objectContaining({
           ...alertData,
           id: expect.any(String),
-          timestamp: expect.any(Date)
+          timestamp: expect.any(Date),
         })
       );
 
@@ -315,8 +325,8 @@ describe('SyncDashboardService', () => {
         expect.objectContaining({
           payload: expect.objectContaining({
             type: 'system_alert',
-            data: expect.objectContaining(alertData)
-          })
+            data: expect.objectContaining(alertData),
+          }),
         })
       );
     });
@@ -332,7 +342,7 @@ describe('SyncDashboardService', () => {
       const testMetrics = {
         operations: { sync: 5, conflicts: 1, fileChanges: 3 },
         performance: { avgSyncTime: 100, successRate: 98, throughput: 8.5 },
-        errors: { networkErrors: 0, conflictErrors: 1, validationErrors: 0 }
+        errors: { networkErrors: 0, conflictErrors: 1, validationErrors: 0 },
       };
 
       service['metricsCache'].set('tenant-1', testMetrics);
@@ -349,8 +359,13 @@ describe('SyncDashboardService', () => {
       const globalHealth = {
         status: 'healthy' as const,
         clockSync: { status: 'synced' as const, lastSync: new Date(), drift: 0 },
-        services: { redis: 'healthy', database: 'healthy', fileSystem: 'healthy', webSocket: 'healthy' },
-        lastCheck: new Date()
+        services: {
+          redis: 'healthy',
+          database: 'healthy',
+          fileSystem: 'healthy',
+          webSocket: 'healthy',
+        },
+        lastCheck: new Date(),
       };
 
       service['healthCache'].set('global', globalHealth);
@@ -389,7 +404,7 @@ describe('SyncDashboardService', () => {
   describe('tenant key extraction', () => {
     it('should extract tenant ID from Redis key', () => {
       const extractTenant = service['extractTenantFromKey'].bind(service);
-      
+
       expect(extractTenant('sync:metrics:tenant:tenant-123:data')).toBe('tenant-123');
       expect(extractTenant('sync:health:tenant:abc-def:status')).toBe('abc-def');
       expect(extractTenant('sync:global:data')).toBeUndefined();

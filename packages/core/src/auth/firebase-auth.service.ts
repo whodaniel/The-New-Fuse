@@ -61,7 +61,10 @@ export class FirebaseAuthService {
     }
   }
 
-  async updateUser(uid: string, userData: admin.auth.UpdateRequest): Promise<admin.auth.UserRecord> {
+  async updateUser(
+    uid: string,
+    userData: admin.auth.UpdateRequest,
+  ): Promise<admin.auth.UserRecord> {
     try {
       const user = await this.firebaseApp.auth().updateUser(uid, userData);
       this.logger.log('User updated successfully');
@@ -146,9 +149,14 @@ export class FirebaseAuthService {
     }
   }
 
-  async verifySessionCookie(sessionCookie: string, checkRevoked?: boolean): Promise<admin.auth.DecodedIdToken> {
+  async verifySessionCookie(
+    sessionCookie: string,
+    checkRevoked?: boolean,
+  ): Promise<admin.auth.DecodedIdToken> {
     try {
-      const decodedToken = await this.firebaseApp.auth().verifySessionCookie(sessionCookie, checkRevoked);
+      const decodedToken = await this.firebaseApp
+        .auth()
+        .verifySessionCookie(sessionCookie, checkRevoked);
       this.logger.debug('Session cookie verified successfully');
       return decodedToken;
     } catch (error) {
@@ -159,7 +167,9 @@ export class FirebaseAuthService {
 
   async createSessionCookie(idToken: string, expiresIn: number): Promise<string> {
     try {
-      const sessionCookie = await this.firebaseApp.auth().createSessionCookie(idToken, { expiresIn });
+      const sessionCookie = await this.firebaseApp
+        .auth()
+        .createSessionCookie(idToken, { expiresIn });
       this.logger.debug('Session cookie created successfully');
       return sessionCookie;
     } catch (error) {

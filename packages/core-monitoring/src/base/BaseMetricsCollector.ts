@@ -4,11 +4,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { 
-  IMetricsCollector, 
-  TimeSeries, 
-  MetricDataPoint 
-} from '../interfaces/IMonitoring';
+import { IMetricsCollector, MetricDataPoint, TimeSeries } from '../interfaces/IMonitoring';
 import { Logger } from '../utils/Logger';
 
 /**
@@ -26,9 +22,10 @@ export interface BaseMetricsCollectorConfig {
 /**
  * Base metrics collector that can be extended
  */
-export abstract class BaseMetricsCollector<TMetrics = any> 
-  extends EventEmitter implements IMetricsCollector<TMetrics> {
-  
+export abstract class BaseMetricsCollector<TMetrics = any>
+  extends EventEmitter
+  implements IMetricsCollector<TMetrics>
+{
   protected readonly config: BaseMetricsCollectorConfig;
   protected readonly logger: Logger;
   protected running = false;
@@ -57,7 +54,7 @@ export abstract class BaseMetricsCollector<TMetrics = any>
 
     this.logger.info('Starting metrics collector', {
       interval: this.config.interval,
-      retentionPeriod: this.config.retentionPeriod
+      retentionPeriod: this.config.retentionPeriod,
     });
 
     this.running = true;
@@ -104,14 +101,14 @@ export abstract class BaseMetricsCollector<TMetrics = any>
     const dataPoint: MetricDataPoint = {
       timestamp,
       value,
-      labels
+      labels,
     };
 
     if (!this.metrics.has(name)) {
       this.metrics.set(name, {
         name,
         dataPoints: [],
-        metadata: { labels }
+        metadata: { labels },
       });
     }
 
@@ -142,12 +139,13 @@ export abstract class BaseMetricsCollector<TMetrics = any>
     if (!this.histograms.has(key)) {
       this.histograms.set(key, []);
     }
-    
+
     const histogram = this.histograms.get(key)!;
     histogram.push(value);
 
     // Keep only recent values
-    while (histogram.length > 1000) { // Limit histogram size
+    while (histogram.length > 1000) {
+      // Limit histogram size
       histogram.shift();
     }
 
@@ -171,15 +169,13 @@ export abstract class BaseMetricsCollector<TMetrics = any>
     const history: TimeSeries[] = [];
 
     for (const [name, timeSeries] of this.metrics) {
-      const filteredDataPoints = timeSeries.dataPoints.filter(
-        point => point.timestamp >= cutoff
-      );
+      const filteredDataPoints = timeSeries.dataPoints.filter((point) => point.timestamp >= cutoff);
 
       if (filteredDataPoints.length > 0) {
         history.push({
           name,
           dataPoints: filteredDataPoints,
-          metadata: timeSeries.metadata
+          metadata: timeSeries.metadata,
         });
       }
     }
@@ -211,7 +207,7 @@ export abstract class BaseMetricsCollector<TMetrics = any>
    */
   protected calculatePercentile(values: number[], percentile: number): number {
     if (values.length === 0) return 0;
-    
+
     const sorted = [...values].sort((a, b) => a - b);
     const index = Math.ceil(sorted.length * percentile) - 1;
     return sorted[Math.max(0, index)];
@@ -223,13 +219,13 @@ export abstract class BaseMetricsCollector<TMetrics = any>
   protected cleanupTimeSeries(timeSeries: TimeSeries): void {
     const cutoff = new Date(Date.now() - this.config.retentionPeriod);
     const initialLength = timeSeries.dataPoints.length;
-    
-    timeSeries.dataPoints = timeSeries.dataPoints.filter(
-      point => point.timestamp >= cutoff
-    );
+
+    timeSeries.dataPoints = timeSeries.dataPoints.filter((point) => point.timestamp >= cutoff);
 
     if (timeSeries.dataPoints.length < initialLength) {
-      this.logger.debug(`Cleaned up ${initialLength - timeSeries.dataPoints.length} old data points for ${timeSeries.name}`);
+      this.logger.debug(
+        `Cleaned up ${initialLength - timeSeries.dataPoints.length} old data points for ${timeSeries.name}`
+      );
     }
   }
 
@@ -240,12 +236,12 @@ export abstract class BaseMetricsCollector<TMetrics = any>
     if (!labels || Object.keys(labels).length === 0) {
       return name;
     }
-    
+
     const labelStr = Object.entries(labels)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([k, v]) => `${k}=${v}`)
       .join(',');
-    
+
     return `${name}{${labelStr}}`;
   }
 

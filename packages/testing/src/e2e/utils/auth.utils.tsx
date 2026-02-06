@@ -23,7 +23,7 @@ export class AuthUtils {
   }
 
   async setAuthToken(token: string): Promise<void> {
-    await this.page.evaluate((t) => {
+    await this.page.evaluate(t => {
       localStorage.setItem('authToken', t);
     }, token);
   }

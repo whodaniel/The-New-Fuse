@@ -25,7 +25,7 @@ export enum ContentType {
   COMPUTE_RESOURCE = 'compute_resource',
   STORAGE_RESOURCE = 'storage_resource',
   NETWORK_RESOURCE = 'network_resource',
-  API_RESOURCE = 'api_resource'
+  API_RESOURCE = 'api_resource',
 }
 
 export enum Platform {
@@ -45,7 +45,7 @@ export enum Platform {
   BLOG = 'blog',
   ZOOM = 'zoom',
   TEAMS = 'teams',
-  MEET = 'meet'
+  MEET = 'meet',
 }
 
 export enum Blockchain {
@@ -57,7 +57,7 @@ export enum Blockchain {
   OPTIMISM = 'optimism',
   AVALANCHE = 'avalanche',
   COSMOS = 'cosmos',
-  CARDANO = 'cardano'
+  CARDANO = 'cardano',
 }
 
 export enum DeFiProtocol {
@@ -65,7 +65,7 @@ export enum DeFiProtocol {
   AAVE = 'aave',
   COMPOUND = 'compound',
   CURVE = 'curve',
-  BALANCER = 'balancer'
+  BALANCER = 'balancer',
 }
 
 export enum NFTMarketplace {
@@ -73,7 +73,7 @@ export enum NFTMarketplace {
   RARIBLE = 'rarible',
   FOUNDATION = 'foundation',
   BLUR = 'blur',
-  X2Y2 = 'x2y2'
+  X2Y2 = 'x2y2',
 }
 
 export enum LLMProvider {
@@ -85,7 +85,7 @@ export enum LLMProvider {
   STABILITY_AI = 'stability_ai',
   CUSTOM_MODEL = 'custom_model',
   API = 'api',
-  CUSTOM = 'custom'
+  CUSTOM = 'custom',
 }
 
 export interface CommunicationMessage {

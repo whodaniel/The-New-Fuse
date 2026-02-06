@@ -51,9 +51,9 @@
 `build-ide-final.sh` | 2KB | Final production build script | |
 `build-ide-ultimate-v2.sh` | 1.5KB | Ultimate build v2 | |
 `build-ide-ultimate.sh` | 2.2KB | Ultimate build v1 | |
-`build-ide-yarn-ultimate.sh` | 2.6KB | Yarn-based build | |
-`test-ide-server.sh` | 1.8KB | Server testing script | |
-`verify-ide-build.cjs` | 2.4KB | Build verification |
+`build-ide-yarn-ultimate.sh` | 2.6KB | Yarn-based build | | `test-ide-server.sh`
+| 1.8KB | Server testing script | | `verify-ide-build.cjs` | 2.4KB | Build
+verification |
 
 ---
 
@@ -162,7 +162,7 @@ rm -rf "non-saas Nov-15-25/"
 
 | Category            | Items Migrated                  |
 | ------------------- | ------------------------------- |
-| SkIDEancer IDE           | Full application (531+ files)   |
+| SkIDEancer IDE      | Full application (531+ files)   |
 | Build Scripts       | 6 scripts                       |
 | AI Agent Configs    | 2 configs                       |
 | Documentation       | 1 comprehensive doc (846 lines) |

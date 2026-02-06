@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Tooltip } from './Tooltip';
+import { useState } from 'react';
 import { Button } from '../Button';
+import { Tooltip } from './Tooltip';
 
 const meta: Meta<typeof Tooltip> = {
   title: 'Components/Tooltip',
@@ -89,7 +89,7 @@ export const Disabled: Story = {
 export const Controlled: Story = {
   render: () => {
     const [open, setOpen] = useState(false);
-    
+
     return (
       <div className="flex flex-col items-center gap-4">
         <Tooltip content="Controlled tooltip" open={open} onOpenChange={setOpen}>

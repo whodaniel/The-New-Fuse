@@ -1,9 +1,9 @@
+import { Preloader } from '@/components/Preloader';
+import { useProviderEndpointAutoDiscovery } from '@/hooks/useProviderEndpointAutoDiscovery';
+import system from '@/models/system';
+import { CaretDown, CaretUp } from '@phosphor-icons/react';
 import React, { useState } from 'react';
-import { CaretUp, CaretDown } from "@phosphor-icons/react";
-import { Preloader } from "@/components/Preloader";
-import { useProviderEndpointAutoDiscovery } from "@/hooks/useProviderEndpointAutoDiscovery";
 import { BaseLLMOptionsProps, ModelSelectionProps } from '../../types';
-import system from "@/models/system";
 
 interface OpenAiSettings extends BaseLLMOptionsProps {
   settings: {
@@ -14,13 +14,10 @@ interface OpenAiSettings extends BaseLLMOptionsProps {
   };
 }
 
-const OPENAI_COMMON_URLS = [
-  "https://api.openai.com/v1",
-  "https://openai.azure.com/v1"
-];
+const OPENAI_COMMON_URLS = ['https://api.openai.com/v1', 'https://openai.azure.com/v1'];
 
 export default function OpenAiOptions({ settings }: OpenAiSettings): React.ReactElement {
-  const { 
+  const {
     autoDetecting,
     basePath,
     basePathValue,
@@ -28,22 +25,18 @@ export default function OpenAiOptions({ settings }: OpenAiSettings): React.React
     setShowAdvancedControls,
     handleAutoDetectClick,
   } = useProviderEndpointAutoDiscovery({
-    provider: "openai",
+    provider: 'openai',
     initialBasePath: settings?.OpenAiBasePath,
-    ENDPOINTS: OPENAI_COMMON_URLS
+    ENDPOINTS: OPENAI_COMMON_URLS,
   });
 
   const [tokenLimit, setTokenLimit] = useState<number>(settings?.OpenAiTokenLimit || 4096);
-  const [apiKey] = useState<string>(settings?.OpenAiApiKey || "");
+  const [apiKey] = useState<string>(settings?.OpenAiApiKey || '');
 
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
-        <OpenAiModelSelection 
-          settings={settings} 
-          basePath={basePath.value}
-          apiKey={apiKey}
-        />
+        <OpenAiModelSelection settings={settings} basePath={basePath.value} apiKey={apiKey} />
         <div className="flex flex-col w-60">
           <label className="text-white text-sm font-semibold block mb-2" id="token-limit-label">
             Token context window
@@ -68,7 +61,7 @@ export default function OpenAiOptions({ settings }: OpenAiSettings): React.React
           onClick={() => setShowAdvancedControls(!showAdvancedControls)}
           className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
-          {showAdvancedControls ? "Hide" : "Show"} Manual Endpoint Input
+          {showAdvancedControls ? 'Hide' : 'Show'} Manual Endpoint Input
           {showAdvancedControls ? (
             <CaretUp size={14} className="ml-1" />
           ) : (
@@ -117,13 +110,17 @@ export default function OpenAiOptions({ settings }: OpenAiSettings): React.React
   );
 }
 
-function OpenAiModelSelection({ settings, basePath = null, apiKey = null }: ModelSelectionProps): React.ReactElement {
+function OpenAiModelSelection({
+  settings,
+  basePath = null,
+  apiKey = null,
+}: ModelSelectionProps): React.ReactElement {
   const [customModels, setCustomModels] = useState<Array<{ id: string }>>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   React.useEffect(() => {
     async function findCustomModels() {
-      if (!basePath || !basePath.includes("/v1")) {
+      if (!basePath || !basePath.includes('/v1')) {
         setCustomModels([]);
         setLoading(false);
         return;
@@ -131,10 +128,10 @@ function OpenAiModelSelection({ settings, basePath = null, apiKey = null }: Mode
 
       setLoading(true);
       try {
-        const { models } = await system.customModels("openai", apiKey, basePath);
+        const { models } = await system.customModels('openai', apiKey, basePath);
         setCustomModels(models || []);
       } catch (error) {
-        console.error("Failed to fetch custom models:", error);
+        console.error('Failed to fetch custom models:', error);
         setCustomModels([]);
       }
       setLoading(false);
@@ -156,9 +153,7 @@ function OpenAiModelSelection({ settings, basePath = null, apiKey = null }: Mode
           className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
         >
           <option disabled selected>
-            {basePath?.includes("/v1")
-              ? "--loading available models--"
-              : "Enter OpenAI URL first"}
+            {basePath?.includes('/v1') ? '--loading available models--' : 'Enter OpenAI URL first'}
           </option>
         </select>
       </div>
@@ -177,11 +172,7 @@ function OpenAiModelSelection({ settings, basePath = null, apiKey = null }: Mode
         className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
       >
         {customModels.map((model) => (
-          <option
-            key={model.id}
-            value={model.id}
-            selected={settings.OpenAiModelPref === model.id}
-          >
+          <option key={model.id} value={model.id} selected={settings.OpenAiModelPref === model.id}>
             {model.id}
           </option>
         ))}

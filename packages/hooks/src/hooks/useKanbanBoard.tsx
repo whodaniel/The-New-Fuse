@@ -1,10 +1,10 @@
-import { useCallback, useState, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   FeatureSuggestion,
-  TodoItem,
-  SuggestionStatus,
   SuggestionService,
-  TaskStatus
+  SuggestionStatus,
+  TaskStatus,
+  TodoItem,
 } from '../types/index';
 import { useUndoRedo } from './useUndoRedo';
 // Temporarily commented out to fix build
@@ -27,27 +27,27 @@ enum DataType {
   date = 'date',
   TEXT = 'TEXT',
   LONG_TEXT = 'LONG_TEXT',
-  SINGLE_SELECT = 'SINGLE_SELECT'
+  SINGLE_SELECT = 'SINGLE_SELECT',
 }
 
 enum ViewType {
   table = 'table',
   kanban = 'kanban',
   calendar = 'calendar',
-  KANBAN = 'KANBAN'
+  KANBAN = 'KANBAN',
 }
 
-interface Column { 
-  id: string; 
-  name: string; 
+interface Column {
+  id: string;
+  name: string;
   type: DataType;
   width?: number;
   options?: Array<{ id: string; name: string; colorClass: string }>;
 }
 
-interface Table { 
-  id: string; 
-  name: string; 
+interface Table {
+  id: string;
+  name: string;
   columns?: Column[];
   views?: View[];
   rows?: any[];
@@ -55,9 +55,9 @@ interface Table {
   activeViewId?: string;
 }
 
-interface View { 
-  id: string; 
-  name: string; 
+interface View {
+  id: string;
+  name: string;
   type?: ViewType;
   filters?: any[];
   sorts?: any[];
@@ -67,9 +67,16 @@ interface View {
   columnVisibility?: Record<string, boolean>;
 }
 
-interface Row { id: string; [key: string]: any; }
-interface AppState { [key: string]: any; }
-interface KanbanViewOptions { [key: string]: any; }
+interface Row {
+  id: string;
+  [key: string]: any;
+}
+interface AppState {
+  [key: string]: any;
+}
+interface KanbanViewOptions {
+  [key: string]: any;
+}
 
 interface DraggableLocation {
   droppableId: string;
@@ -112,55 +119,58 @@ interface KanbanState {
   todos: TodoItem[];
 }
 
-export const useKanbanBoard = ({ 
-  suggestionService, 
-  initialSuggestions = [], 
+export const useKanbanBoard = ({
+  suggestionService,
+  initialSuggestions = [],
   initialTodos = [],
-  retryAttempts = 3
+  retryAttempts = 3,
 }: UseKanbanBoardProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [filters, setFilters] = useState<FilterCriteria>({
     searchTerm: '',
     priorities: [],
-    tags: []
+    tags: [],
   });
 
-  const { 
+  const {
     state: { suggestions, todos },
     canUndo,
     canRedo,
     undo,
     redo,
     set,
-    reset
+    reset,
   } = useUndoRedo<KanbanState>({
     suggestions: initialSuggestions,
-    todos: initialTodos
+    todos: initialTodos,
   });
 
-  const retryConfig: RetryConfig = useMemo(() => ({
-    maxAttempts: retryAttempts,
-    delayMs: 1000,
-  }), [retryAttempts]);
+  const retryConfig: RetryConfig = useMemo(
+    () => ({
+      maxAttempts: retryAttempts,
+      delayMs: 1000,
+    }),
+    [retryAttempts]
+  );
 
-  const retryOperation = useCallback(async <T,>(
-    operation: () => Promise<T>,
-    config: RetryConfig
-  ): Promise<T> => {
-    let lastError: Error | null = null;
-    for (let attempt = 0; attempt < config.maxAttempts; attempt++) {
-      try {
-        return await operation();
-      } catch (err) {
-        lastError = err instanceof Error ? err : new Error(String(err));
-        if (attempt < config.maxAttempts - 1) {
-          await new Promise(resolve => setTimeout(resolve, config.delayMs));
+  const retryOperation = useCallback(
+    async <T,>(operation: () => Promise<T>, config: RetryConfig): Promise<T> => {
+      let lastError: Error | null = null;
+      for (let attempt = 0; attempt < config.maxAttempts; attempt++) {
+        try {
+          return await operation();
+        } catch (err) {
+          lastError = err instanceof Error ? err : new Error(String(err));
+          if (attempt < config.maxAttempts - 1) {
+            await new Promise((resolve) => setTimeout(resolve, config.delayMs));
+          }
         }
       }
-    }
-    throw lastError;
-  }, []);
+      throw lastError;
+    },
+    []
+  );
 
   const loadData = useCallback(async () => {
     try {
@@ -171,14 +181,11 @@ export const useKanbanBoard = ({
           () => suggestionService.getSuggestionsByStatus(SuggestionStatus.SUBMITTED),
           retryConfig
         ),
-        retryOperation(
-          () => suggestionService.getAllTodos(),
-          retryConfig
-        )
+        retryOperation(() => suggestionService.getAllTodos(), retryConfig),
       ]);
       reset({
         suggestions: suggestionsData as FeatureSuggestion[],
-        todos: todosData as TodoItem[]
+        todos: todosData as TodoItem[],
       });
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to load kanban data'));
@@ -191,127 +198,139 @@ export const useKanbanBoard = ({
     loadData();
   }, [loadData]);
 
-  const updateSuggestionStatus = useCallback(async (
-    id: string,
-    status: SuggestionStatus
-  ): Promise<void> => {
-    try {
-      setError(null);
-      const updatedSuggestion = await retryOperation(
-        () => suggestionService.updateSuggestionStatus(id, status),
-        retryConfig
-      );
-      set({
-        suggestions: suggestions.map(s => s.id === id ? updatedSuggestion : s),
-        todos
+  const updateSuggestionStatus = useCallback(
+    async (id: string, status: SuggestionStatus): Promise<void> => {
+      try {
+        setError(null);
+        const updatedSuggestion = await retryOperation(
+          () => suggestionService.updateSuggestionStatus(id, status),
+          retryConfig
+        );
+        set({
+          suggestions: suggestions.map((s) => (s.id === id ? updatedSuggestion : s)),
+          todos,
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to update suggestion status'));
+        throw err;
+      }
+    },
+    [suggestionService, retryOperation, retryConfig, set, suggestions, todos]
+  );
+
+  const updateTodoStatus = useCallback(
+    async (id: string, status: TaskStatus): Promise<void> => {
+      try {
+        setError(null);
+        const updatedTodo = await retryOperation(
+          () => suggestionService.updateTodoStatus(id, status),
+          retryConfig
+        );
+        set({
+          suggestions,
+          todos: todos.map((t) => (t.id === id ? updatedTodo : t)),
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to update todo status'));
+        throw err;
+      }
+    },
+    [suggestionService, retryOperation, retryConfig, set, suggestions, todos]
+  );
+
+  const convertSuggestionToFeature = useCallback(
+    async (suggestionId: string): Promise<FeatureSuggestion> => {
+      try {
+        setError(null);
+        const convertedSuggestion = await retryOperation(
+          () => suggestionService.convertToFeature(suggestionId),
+          retryConfig
+        );
+        set({
+          suggestions: suggestions.filter((s) => s.id !== suggestionId),
+          todos,
+        });
+        return convertedSuggestion;
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to convert suggestion to feature'));
+        throw err;
+      }
+    },
+    [suggestionService, retryOperation, retryConfig, set, suggestions, todos]
+  );
+
+  const filterItems = useCallback(
+    <T extends FeatureSuggestion | TodoItem>(items: T[], criteria: FilterCriteria) => {
+      return items.filter((item) => {
+        // Search term filter
+        const matchesSearchTerm =
+          !criteria.searchTerm ||
+          item.title.toLowerCase().includes(criteria.searchTerm.toLowerCase()) ||
+          ('description' in item &&
+            item.description &&
+            item.description.toLowerCase().includes(criteria.searchTerm.toLowerCase()));
+
+        // Priority filter
+        const matchesPriority =
+          criteria.priorities.length === 0 ||
+          (item.priority && criteria.priorities.includes(item.priority.toLowerCase()));
+
+        // Tags filter (only for FeatureSuggestion)
+        const matchesTags =
+          criteria.tags.length === 0 ||
+          ('tags' in item && item.tags && criteria.tags.every((tag) => item.tags!.includes(tag)));
+
+        return matchesSearchTerm && matchesPriority && matchesTags;
       });
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to update suggestion status'));
-      throw err;
-    }
-  }, [suggestionService, retryOperation, retryConfig, set, suggestions, todos]);
-
-  const updateTodoStatus = useCallback(async (
-    id: string,
-    status: TaskStatus
-  ): Promise<void> => {
-    try {
-      setError(null);
-      const updatedTodo = await retryOperation(
-        () => suggestionService.updateTodoStatus(id, status),
-        retryConfig
-      );
-      set({
-        suggestions,
-        todos: todos.map(t => t.id === id ? updatedTodo : t)
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to update todo status'));
-      throw err;
-    }
-  }, [suggestionService, retryOperation, retryConfig, set, suggestions, todos]);
-
-  const convertSuggestionToFeature = useCallback(async (
-    suggestionId: string
-  ): Promise<FeatureSuggestion> => {
-    try {
-      setError(null);
-      const convertedSuggestion = await retryOperation(
-        () => suggestionService.convertToFeature(suggestionId),
-        retryConfig
-      );
-      set({
-        suggestions: suggestions.filter(s => s.id !== suggestionId),
-        todos
-      });
-      return convertedSuggestion;
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to convert suggestion to feature'));
-      throw err;
-    }
-  }, [suggestionService, retryOperation, retryConfig, set, suggestions, todos]);
-
-  const filterItems = useCallback(<T extends FeatureSuggestion | TodoItem>(items: T[], criteria: FilterCriteria) => {
-    return items.filter(item => {
-      // Search term filter
-      const matchesSearchTerm = !criteria.searchTerm || 
-        item.title.toLowerCase().includes(criteria.searchTerm.toLowerCase()) || 
-        ('description' in item && item.description && item.description.toLowerCase().includes(criteria.searchTerm.toLowerCase()));
-      
-      // Priority filter
-      const matchesPriority = criteria.priorities.length === 0 || 
-        (item.priority && criteria.priorities.includes(item.priority.toLowerCase()));
-      
-      // Tags filter (only for FeatureSuggestion)
-      const matchesTags = criteria.tags.length === 0 || 
-        ('tags' in item && item.tags && criteria.tags.every(tag => item.tags!.includes(tag)));
-      
-      return matchesSearchTerm && matchesPriority && matchesTags;
-    });
-  }, []);
-
-  const filteredColumns = useMemo((): KanbanColumn[] => [
-    {
-      id: 'suggestions',
-      title: 'Feature Suggestions',
-      items: filterItems(
-        suggestions.filter(s => s.status === SuggestionStatus.SUBMITTED),
-        filters
-      ),
     },
-    {
-      id: 'under-review',
-      title: 'Under Review',
-      items: filterItems(
-        suggestions.filter(s => s.status === SuggestionStatus.UNDER_REVIEW),
-        filters
-      ),
-    },
-    {
-      id: 'todo',
-      title: 'To Do',
-      items: filterItems(
-        todos.filter(t => t.status === TaskStatus.PENDING),
-        filters
-      ),
-    },
-    {
-      id: 'in-progress',
-      title: 'In Progress',
-      items: filterItems(
-        todos.filter(t => t.status === TaskStatus.IN_PROGRESS),
-        filters
-      ),
-    },
-    {
-      id: 'done',
-      title: 'Done',
-      items: filterItems(
-        todos.filter(t => t.status === TaskStatus.COMPLETED),
-        filters
-      ),
-    }
-  ], [suggestions, todos, filters, filterItems]);
+    []
+  );
+
+  const filteredColumns = useMemo(
+    (): KanbanColumn[] => [
+      {
+        id: 'suggestions',
+        title: 'Feature Suggestions',
+        items: filterItems(
+          suggestions.filter((s) => s.status === SuggestionStatus.SUBMITTED),
+          filters
+        ),
+      },
+      {
+        id: 'under-review',
+        title: 'Under Review',
+        items: filterItems(
+          suggestions.filter((s) => s.status === SuggestionStatus.UNDER_REVIEW),
+          filters
+        ),
+      },
+      {
+        id: 'todo',
+        title: 'To Do',
+        items: filterItems(
+          todos.filter((t) => t.status === TaskStatus.PENDING),
+          filters
+        ),
+      },
+      {
+        id: 'in-progress',
+        title: 'In Progress',
+        items: filterItems(
+          todos.filter((t) => t.status === TaskStatus.IN_PROGRESS),
+          filters
+        ),
+      },
+      {
+        id: 'done',
+        title: 'Done',
+        items: filterItems(
+          todos.filter((t) => t.status === TaskStatus.COMPLETED),
+          filters
+        ),
+      },
+    ],
+    [suggestions, todos, filters, filterItems]
+  );
 
   const availableTags = useMemo(() => {
     const allTags = new Set<string>();
@@ -324,113 +343,115 @@ export const useKanbanBoard = ({
   }, [suggestions]);
 
   const updateSearchTerm = useCallback((term: string) => {
-    setFilters(prev => ({ ...prev, searchTerm: term }));
+    setFilters((prev) => ({ ...prev, searchTerm: term }));
   }, []);
 
   const updatePriorityFilter = useCallback((priorities: string[]) => {
-    setFilters(prev => ({ ...prev, priorities }));
+    setFilters((prev) => ({ ...prev, priorities }));
   }, []);
 
   const updateTagsFilter = useCallback((tags: string[]) => {
-    setFilters(prev => ({ ...prev, tags }));
+    setFilters((prev) => ({ ...prev, tags }));
   }, []);
 
-  const handleDragEnd = useCallback(async (result: DragResult): Promise<void> => {
-    if (!result.destination) return;
+  const handleDragEnd = useCallback(
+    async (result: DragResult): Promise<void> => {
+      if (!result.destination) return;
 
-    const { source, destination, draggableId } = result;
-    
-    if (source.droppableId === destination.droppableId) {
-      return; // Same column, no status change needed
-    }
+      const { source, destination, draggableId } = result;
 
-    try {
-      setError(null);
-      if (source.droppableId === 'suggestions' || destination.droppableId === 'under-review') {
-        const newStatus = destination.droppableId === 'under-review' 
-          ? SuggestionStatus.UNDER_REVIEW 
-          : SuggestionStatus.SUBMITTED;
-        await updateSuggestionStatus(draggableId, newStatus);
-      } else {
-        const newStatus = destination.droppableId === 'in-progress' 
-          ? TaskStatus.IN_PROGRESS 
-          : destination.droppableId === 'done'
-            ? TaskStatus.COMPLETED
-            : TaskStatus.PENDING;
-        await updateTodoStatus(draggableId, newStatus);
+      if (source.droppableId === destination.droppableId) {
+        return; // Same column, no status change needed
       }
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to update item status'));
-      throw err;
-    }
-  }, [updateSuggestionStatus, updateTodoStatus]);
 
-  const handleBatchOperation = useCallback(async (
-    operation: 'move' | 'delete' | 'duplicate',
-    itemIds: string[],
-    newStatus?: SuggestionStatus | TaskStatus
-  ): Promise<void> => {
-    try {
-      setError(null);
-      const isSuggestion = (id: string) => suggestions.some(s => s.id === id);
-      
-      const updates = await Promise.all(
-        itemIds.map(async (id) => {
-          if (operation === 'move' && newStatus) {
-            return isSuggestion(id)
-              ? suggestionService.updateSuggestionStatus(id, newStatus as SuggestionStatus)
-              : suggestionService.updateTodoStatus(id, newStatus as TaskStatus);
-          } else if (operation === 'delete') {
-            return isSuggestion(id)
-              ? suggestionService.deleteSuggestion(id)
-              : suggestionService.deleteTodo(id);
-          } else if (operation === 'duplicate') {
-            return isSuggestion(id)
-              ? suggestionService.duplicateSuggestion(id)
-              : suggestionService.duplicateTodo(id);
-          }
-        })
-      );
-
-      const newState = { suggestions, todos };
-      updates.forEach((update: any) => {
-        if (!update) return;
-        
-        if ('status' in update) {
-          if (isSuggestion(update.id)) {
-            newState.suggestions = newState.suggestions.map(s => 
-              s.id === update.id ? update : s
-            );
-          } else {
-            newState.todos = newState.todos.map(t => 
-              t.id === update.id ? update : t
-            );
-          }
-        } else if (operation === 'delete') {
-          if (isSuggestion(update.id)) {
-            newState.suggestions = newState.suggestions.filter(s => 
-              s.id !== update.id
-            );
-          } else {
-            newState.todos = newState.todos.filter(t => 
-              t.id !== update.id
-            );
-          }
-        } else if (operation === 'duplicate') {
-          if (isSuggestion(update.id)) {
-            newState.suggestions = [...newState.suggestions, update];
-          } else {
-            newState.todos = [...newState.todos, update];
-          }
+      try {
+        setError(null);
+        if (source.droppableId === 'suggestions' || destination.droppableId === 'under-review') {
+          const newStatus =
+            destination.droppableId === 'under-review'
+              ? SuggestionStatus.UNDER_REVIEW
+              : SuggestionStatus.SUBMITTED;
+          await updateSuggestionStatus(draggableId, newStatus);
+        } else {
+          const newStatus =
+            destination.droppableId === 'in-progress'
+              ? TaskStatus.IN_PROGRESS
+              : destination.droppableId === 'done'
+                ? TaskStatus.COMPLETED
+                : TaskStatus.PENDING;
+          await updateTodoStatus(draggableId, newStatus);
         }
-      });
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to update item status'));
+        throw err;
+      }
+    },
+    [updateSuggestionStatus, updateTodoStatus]
+  );
 
-      set(newState);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error(`Failed to perform batch ${operation}`));
-      throw err;
-    }
-  }, [suggestionService, set, suggestions, todos]);
+  const handleBatchOperation = useCallback(
+    async (
+      operation: 'move' | 'delete' | 'duplicate',
+      itemIds: string[],
+      newStatus?: SuggestionStatus | TaskStatus
+    ): Promise<void> => {
+      try {
+        setError(null);
+        const isSuggestion = (id: string) => suggestions.some((s) => s.id === id);
+
+        const updates = await Promise.all(
+          itemIds.map(async (id) => {
+            if (operation === 'move' && newStatus) {
+              return isSuggestion(id)
+                ? suggestionService.updateSuggestionStatus(id, newStatus as SuggestionStatus)
+                : suggestionService.updateTodoStatus(id, newStatus as TaskStatus);
+            } else if (operation === 'delete') {
+              return isSuggestion(id)
+                ? suggestionService.deleteSuggestion(id)
+                : suggestionService.deleteTodo(id);
+            } else if (operation === 'duplicate') {
+              return isSuggestion(id)
+                ? suggestionService.duplicateSuggestion(id)
+                : suggestionService.duplicateTodo(id);
+            }
+          })
+        );
+
+        const newState = { suggestions, todos };
+        updates.forEach((update: any) => {
+          if (!update) return;
+
+          if ('status' in update) {
+            if (isSuggestion(update.id)) {
+              newState.suggestions = newState.suggestions.map((s) =>
+                s.id === update.id ? update : s
+              );
+            } else {
+              newState.todos = newState.todos.map((t) => (t.id === update.id ? update : t));
+            }
+          } else if (operation === 'delete') {
+            if (isSuggestion(update.id)) {
+              newState.suggestions = newState.suggestions.filter((s) => s.id !== update.id);
+            } else {
+              newState.todos = newState.todos.filter((t) => t.id !== update.id);
+            }
+          } else if (operation === 'duplicate') {
+            if (isSuggestion(update.id)) {
+              newState.suggestions = [...newState.suggestions, update];
+            } else {
+              newState.todos = [...newState.todos, update];
+            }
+          }
+        });
+
+        set(newState);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error(`Failed to perform batch ${operation}`));
+        throw err;
+      }
+    },
+    [suggestionService, set, suggestions, todos]
+  );
 
   // Add airtable-compatible data structures for gradual migration
   const airtableData = useMemo(() => {
@@ -439,14 +460,14 @@ export const useKanbanBoard = ({
       id: 'title',
       name: 'Title',
       type: DataType.TEXT,
-      width: 200
+      width: 200,
     };
 
     const descriptionColumn: Column = {
       id: 'description',
       name: 'Description',
       type: DataType.LONG_TEXT,
-      width: 300
+      width: 300,
     };
 
     const priorityColumn: Column = {
@@ -458,8 +479,8 @@ export const useKanbanBoard = ({
         { id: 'LOW', name: 'Low', colorClass: 'bg-blue-100 text-blue-800' },
         { id: 'MEDIUM', name: 'Medium', colorClass: 'bg-yellow-100 text-yellow-800' },
         { id: 'HIGH', name: 'High', colorClass: 'bg-orange-100 text-orange-800' },
-        { id: 'CRITICAL', name: 'Critical', colorClass: 'bg-red-100 text-red-800' }
-      ]
+        { id: 'CRITICAL', name: 'Critical', colorClass: 'bg-red-100 text-red-800' },
+      ],
     };
 
     const statusColumn: Column = {
@@ -467,22 +488,22 @@ export const useKanbanBoard = ({
       name: 'Status',
       type: DataType.SINGLE_SELECT,
       width: 150,
-      options: filteredColumns.map(col => ({
+      options: filteredColumns.map((col) => ({
         id: col.id,
         name: col.title,
-        colorClass: 'bg-gray-100 text-gray-800'
-      }))
+        colorClass: 'bg-gray-100 text-gray-800',
+      })),
     };
 
     const tableColumns = [titleColumn, descriptionColumn, priorityColumn, statusColumn];
 
     // Convert legacy items to rows
     const rows: Row[] = [];
-    filteredColumns.forEach(column => {
-      column.items.forEach(item => {
+    filteredColumns.forEach((column) => {
+      column.items.forEach((item) => {
         const suggestion = item as FeatureSuggestion;
         const todo = item as TodoItem;
-        
+
         rows.push({
           id: item.id,
           data: {
@@ -492,20 +513,32 @@ export const useKanbanBoard = ({
             status: column.id,
             // Preserve additional properties
             ...Object.fromEntries(
-              Object.entries(item).filter(([key]) =>
-                !['id', 'title', 'description', 'priority'].includes(key)
+              Object.entries(item).filter(
+                ([key]) => !['id', 'title', 'description', 'priority'].includes(key)
               )
-            )
+            ),
           },
-          createdAt: suggestion.createdAt ? (suggestion.createdAt instanceof Date ? suggestion.createdAt.toISOString() : suggestion.createdAt) :
-                     todo.createdAt ? (todo.createdAt instanceof Date ? todo.createdAt.toISOString() : todo.createdAt) :
-                     new Date().toISOString(),
-          updatedAt: suggestion.updatedAt ? (suggestion.updatedAt instanceof Date ? suggestion.updatedAt.toISOString() : suggestion.updatedAt) :
-                     todo.updatedAt ? (todo.updatedAt instanceof Date ? todo.updatedAt.toISOString() : todo.updatedAt) :
-                     new Date().toISOString(),
+          createdAt: suggestion.createdAt
+            ? suggestion.createdAt instanceof Date
+              ? suggestion.createdAt.toISOString()
+              : suggestion.createdAt
+            : todo.createdAt
+              ? todo.createdAt instanceof Date
+                ? todo.createdAt.toISOString()
+                : todo.createdAt
+              : new Date().toISOString(),
+          updatedAt: suggestion.updatedAt
+            ? suggestion.updatedAt instanceof Date
+              ? suggestion.updatedAt.toISOString()
+              : suggestion.updatedAt
+            : todo.updatedAt
+              ? todo.updatedAt instanceof Date
+                ? todo.updatedAt.toISOString()
+                : todo.updatedAt
+              : new Date().toISOString(),
           parentId: null,
           depth: 0,
-          isCollapsed: false
+          isCollapsed: false,
         });
       });
     });
@@ -518,12 +551,12 @@ export const useKanbanBoard = ({
       rows,
       columnOrder: ['title', 'description', 'priority', 'status'],
       views: [],
-      activeViewId: 'kanban-view'
+      activeViewId: 'kanban-view',
     };
 
     // Create kanban view
     const kanbanViewOptions: KanbanViewOptions = {
-      groupByColumnId: 'status'
+      groupByColumnId: 'status',
     };
 
     const view: View = {
@@ -538,16 +571,16 @@ export const useKanbanBoard = ({
         title: true,
         description: true,
         priority: true,
-        status: false // Hidden since it's used for grouping
+        status: false, // Hidden since it's used for grouping
       },
-      options: kanbanViewOptions
+      options: kanbanViewOptions,
     };
 
     table.views = [view];
 
     const appState: AppState = {
       tables: [table],
-      activeTableId: table.id
+      activeTableId: table.id,
     };
 
     return {
@@ -555,7 +588,7 @@ export const useKanbanBoard = ({
       view,
       appState,
       columnsToDisplay: [titleColumn, descriptionColumn, priorityColumn],
-      rowsToDisplay: rows
+      rowsToDisplay: rows,
     };
   }, [filteredColumns, suggestions, todos]);
 
@@ -564,8 +597,8 @@ export const useKanbanBoard = ({
     if (process.env.NODE_ENV === 'development') {
       console.info(
         '🔄 [MIGRATION] useKanbanBoard now provides airtable-compatible data via .airtableData property. ' +
-        'Consider migrating to direct airtable integration for better performance. ' +
-        'See migration guide: docs/migration/kanban-board.md'
+          'Consider migrating to direct airtable integration for better performance. ' +
+          'See migration guide: docs/migration/kanban-board.md'
       );
     }
   }, []);
@@ -593,6 +626,6 @@ export const useKanbanBoard = ({
     undo,
     redo,
     // New airtable-compatible API
-    airtableData
+    airtableData,
   };
 };

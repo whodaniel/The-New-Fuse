@@ -11,7 +11,7 @@ export const TraeMonitor: React.FC = () => {
     responseTime: 0,
     memoryUsage: 0,
     activeTasks: 0,
-    successRate: 1
+    successRate: 1,
   });
 
   const [recentActions, setRecentActions] = useState<any[]>([]);
@@ -22,7 +22,7 @@ export const TraeMonitor: React.FC = () => {
         responseTime: data.duration,
         memoryUsage: data.memoryUsage,
         activeTasks: data.activeTasks,
-        successRate: data.success ? 1 : prev.successRate * 0.9
+        successRate: data.success ? 1 : prev.successRate * 0.9,
       }));
 
       setRecentActions((prev: any) => [data, ...prev].slice(0, 10));
@@ -36,7 +36,7 @@ export const TraeMonitor: React.FC = () => {
   return (
     <div className="trae-monitor p-4">
       <h2 className="text-xl font-bold mb-4">Trae AI Monitor</h2>
-      
+
       <div className="grid grid-cols-2 gap-4">
         <div className="metric-card">
           <h3>Response Time</h3>
@@ -61,8 +61,7 @@ export const TraeMonitor: React.FC = () => {
         <ul className="mt-2">
           {recentActions.map((action, i) => (
             <li key={i} className="text-sm">
-              {action.type} - {action.context.action} 
-              ({action.success ? '✓' : '✗'})
+              {action.type} - {action.context.action}({action.success ? '✓' : '✗'})
             </li>
           ))}
         </ul>

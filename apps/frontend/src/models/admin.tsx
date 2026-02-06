@@ -24,7 +24,9 @@ class AdminModel {
   }
 
   async updateSystemPreferences(settings: Record<string, any>): Promise<SystemPreferences> {
-    const response: AxiosResponse<SystemPreferences> = await api.patch('/api/admin/preferences', { settings });
+    const response: AxiosResponse<SystemPreferences> = await api.patch('/api/admin/preferences', {
+      settings,
+    });
     return response.data;
   }
 }

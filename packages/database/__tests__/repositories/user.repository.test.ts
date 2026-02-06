@@ -4,18 +4,17 @@
  */
 
 import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository';
-import { UserFactory, SessionFactory } from '../utils/factories';
 import {
   expectDatabaseRow,
-  expectSoftDeleted,
+  expectDeleted,
+  expectNotDeleted,
   expectNotNull,
-  expectTimestampValid,
+  expectSoftDeleted,
   expectTimestampInFuture,
   expectValidEmail,
-  expectNotDeleted,
-  expectDeleted,
 } from '../utils/assertions';
-import { pastTimestamp, futureTimestamp } from '../utils/database-helpers';
+import { futureTimestamp, pastTimestamp } from '../utils/database-helpers';
+import { UserFactory } from '../utils/factories';
 
 describe('DrizzleUserRepository', () => {
   describe('create', () => {
@@ -242,7 +241,11 @@ describe('DrizzleUserRepository', () => {
         const user = await drizzleUserRepository.create(userData);
         const expiresAt = futureTimestamp(3600); // 1 hour from now
 
-        const session = await drizzleUserRepository.createSession(user.id, 'test-token-123', expiresAt);
+        const session = await drizzleUserRepository.createSession(
+          user.id,
+          'test-token-123',
+          expiresAt
+        );
 
         expectDatabaseRow(session, {
           userId: user.id,
@@ -270,7 +273,11 @@ describe('DrizzleUserRepository', () => {
         const userData = await UserFactory.build();
         const user = await drizzleUserRepository.create(userData);
         const expiresAt = futureTimestamp(3600);
-        const created = await drizzleUserRepository.createSession(user.id, 'find-me-token', expiresAt);
+        const created = await drizzleUserRepository.createSession(
+          user.id,
+          'find-me-token',
+          expiresAt
+        );
 
         const found = await drizzleUserRepository.findSessionByToken('find-me-token');
 
@@ -311,7 +318,9 @@ describe('DrizzleUserRepository', () => {
       });
 
       it('should not throw error deleting non-existent session', async () => {
-        await expect(drizzleUserRepository.deleteSession('non-existent-token')).resolves.not.toThrow();
+        await expect(
+          drizzleUserRepository.deleteSession('non-existent-token')
+        ).resolves.not.toThrow();
       });
     });
 
@@ -427,7 +436,9 @@ describe('DrizzleUserRepository', () => {
     it('should maintain data integrity across concurrent creates', async () => {
       const users = await UserFactory.buildList(5);
 
-      const created = await Promise.all(users.map((userData) => drizzleUserRepository.create(userData)));
+      const created = await Promise.all(
+        users.map((userData) => drizzleUserRepository.create(userData))
+      );
 
       expect(created).toHaveLength(5);
       const uniqueIds = new Set(created.map((u) => u.id));

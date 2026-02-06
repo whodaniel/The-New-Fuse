@@ -1,6 +1,6 @@
-import React from 'react';
 import { Console } from '@/components/ui/console';
 import { Timeline } from '@/components/ui/timeline';
+import React from 'react';
 
 export const AgentDebugConsole: React.FC = () => {
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
@@ -9,14 +9,8 @@ export const AgentDebugConsole: React.FC = () => {
   return (
     <div className="h-full flex flex-col">
       <div className="flex justify-between p-4">
-        <AgentSelector
-          value={selectedAgent}
-          onChange={setSelectedAgent}
-        />
-        <TimeRangeSelector
-          value={timeRange}
-          onChange={setTimeRange}
-        />
+        <AgentSelector value={selectedAgent} onChange={setSelectedAgent} />
+        <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
       </div>
 
       <div className="flex-1 grid grid-cols-2">
@@ -24,20 +18,17 @@ export const AgentDebugConsole: React.FC = () => {
           agentId={selectedAgent}
           filters={{
             level: ['error', 'warn', 'info', 'debug'],
-            timeRange
+            timeRange,
           }}
-          onCommand={(cmd) => {/* Execute debug command */}}
+          onCommand={(cmd) => {
+            /* Execute debug command */
+          }}
         />
-        
+
         <Timeline
           agentId={selectedAgent}
           timeRange={timeRange}
-          events={[
-            'decisions',
-            'actions',
-            'state_changes',
-            'errors'
-          ]}
+          events={['decisions', 'actions', 'state_changes', 'errors']}
         />
       </div>
     </div>

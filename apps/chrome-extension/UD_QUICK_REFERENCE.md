@@ -8,11 +8,13 @@ Copy and paste these values into your dashboard at:
 ## Application Information
 
 **Application Name:**
+
 ```
 The New Fuse
 ```
 
 **Application Tagline/Description:**
+
 ```
 AI-powered browser extension with Web3 authentication
 ```
@@ -22,21 +24,25 @@ AI-powered browser extension with Web3 authentication
 ## Visual Branding
 
 **Primary Brand Color:**
+
 ```
 #4C47F7
 ```
 
 **Secondary/Background Color:**
+
 ```
 #F8F9FF
 ```
 
 **Button Text Color:**
+
 ```
 #FFFFFF
 ```
 
 **Button Background Color:**
+
 ```
 #4C47F7
 ```
@@ -46,6 +52,7 @@ AI-powered browser extension with Web3 authentication
 ## Logo
 
 Upload the extension icon from:
+
 ```
 apps/chrome-extension/icons/icon128.png
 ```
@@ -57,6 +64,7 @@ Or leave blank to use default Unstoppable Domains branding.
 ## Privacy & Legal
 
 **Support Email:**
+
 ```
 support@thenewfuse.com
 ```
@@ -81,18 +89,21 @@ support@thenewfuse.com
 Go to the **Settings** tab (not Branding tab) and add:
 
 **Redirect URIs:**
+
 ```
 chrome-extension://[YOUR-EXTENSION-ID]/popup.html
 chrome-extension://[YOUR-EXTENSION-ID]/options.html
 ```
 
 **Example:** If your extension ID is `abcdefghijklmnop`:
+
 ```
 chrome-extension://abcdefghijklmnop/popup.html
 chrome-extension://abcdefghijklmnop/options.html
 ```
 
 **Allowed Origins:**
+
 ```
 chrome-extension://[YOUR-EXTENSION-ID]
 ```
@@ -102,6 +113,7 @@ chrome-extension://[YOUR-EXTENSION-ID]
 ## Scopes Required (Settings Tab)
 
 Make sure these scopes are enabled:
+
 - ✅ `openid` (required)
 - ✅ `wallet`
 - ✅ `email:optional`
@@ -129,5 +141,6 @@ Make sure these scopes are enabled:
 ---
 
 **Need Help?**
+
 - Full documentation: [UNSTOPPABLE_DOMAINS.md](./UNSTOPPABLE_DOMAINS.md)
 - Setup guide: [UNSTOPPABLE_SETUP_GUIDE.md](./UNSTOPPABLE_SETUP_GUIDE.md)

@@ -2,23 +2,23 @@
  * Unit tests for MCP Service Mesh Integration
  */
 
-import { MCPServiceMesh, ServiceMeshProvider } from './MCPServiceMesh';
 import {
-  ServiceMeshRegistration,
-  ServiceMeshQuery,
-  ServiceMeshMetrics,
-  ServiceScalingConfig,
   AutoDiscoveryConfig,
-  ScalingEvent
+  ScalingEvent,
+  ServiceMeshMetrics,
+  ServiceMeshQuery,
+  ServiceMeshRegistration,
+  ServiceScalingConfig,
 } from '../interfaces/IMCPServiceMesh';
 import { MCPServiceInfo, ServiceHealth } from '../types/broker';
 import { ServiceStatus } from '../types/common';
+import { MCPServiceMesh, ServiceMeshProvider } from './MCPServiceMesh';
 
 // Mock service mesh provider
 class MockServiceMeshProvider implements ServiceMeshProvider {
   name = 'mock';
   version = '1.0.0';
-  
+
   private services = new Map<string, ServiceMeshRegistration>();
   private available = true;
 
@@ -39,17 +39,15 @@ class MockServiceMeshProvider implements ServiceMeshProvider {
 
   async discoverServices(query: ServiceMeshQuery): Promise<ServiceMeshRegistration[]> {
     const services = Array.from(this.services.values());
-    
+
     if (query.serviceName) {
-      return services.filter(s => s.serviceName.includes(query.serviceName!));
+      return services.filter((s) => s.serviceName.includes(query.serviceName!));
     }
-    
+
     if (query.tags) {
-      return services.filter(s => 
-        query.tags!.some(tag => s.tags.includes(tag))
-      );
+      return services.filter((s) => query.tags!.some((tag) => s.tags.includes(tag)));
     }
-    
+
     return services;
   }
 
@@ -57,7 +55,7 @@ class MockServiceMeshProvider implements ServiceMeshProvider {
     if (!this.services.has(serviceId)) {
       throw new Error('Service not found');
     }
-    
+
     return {
       serviceId,
       status: ServiceStatus.ONLINE,
@@ -65,7 +63,7 @@ class MockServiceMeshProvider implements ServiceMeshProvider {
       responseTime: 50,
       errorRate: 0.01,
       lastCheck: new Date(),
-      score: 0.95
+      score: 0.95,
     };
   }
 
@@ -80,32 +78,32 @@ class MockServiceMeshProvider implements ServiceMeshProvider {
     if (!this.services.has(serviceId)) {
       throw new Error('Service not found');
     }
-    
+
     return {
       serviceId,
       requests: {
         total: 1000,
         successful: 950,
         failed: 50,
-        rps: 10
+        rps: 10,
       },
       responseTime: {
         average: 100,
         p50: 80,
         p95: 200,
-        p99: 500
+        p99: 500,
       },
       connections: {
         active: 5,
         total: 100,
-        errors: 2
+        errors: 2,
       },
       resources: {
         cpu: 0.5,
         memory: 0.6,
-        networkIO: 1024
+        networkIO: 1024,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
@@ -124,11 +122,11 @@ class MockServiceMeshProvider implements ServiceMeshProvider {
     if (!this.services.has(serviceId)) {
       throw new Error('Service not found');
     }
-    
+
     return {
       currentInstances: 2,
       desiredInstances: 2,
-      scalingEvents: []
+      scalingEvents: [],
     };
   }
 
@@ -161,21 +159,21 @@ describe('MCPServiceMesh', () => {
       provider: mockProvider,
       autoDiscovery: {
         autoRegister: false,
-        autoDeregister: false
+        autoDeregister: false,
       },
       healthMonitoring: {
         enabled: false,
         interval: 30,
-        timeout: 5000
+        timeout: 5000,
       },
       metricsCollection: {
         enabled: false,
         interval: 60,
-        retention: 3600
+        retention: 3600,
       },
       scaling: {
-        enabled: false
-      }
+        enabled: false,
+      },
     });
 
     mockMCPService = {
@@ -189,21 +187,21 @@ describe('MCPServiceMesh', () => {
           name: 'test-resource',
           uri: 'test://resource',
           description: 'Test resource',
-          handler: {} as any
-        }
+          handler: {} as any,
+        },
       ],
       tools: [
         {
           name: 'test-tool',
           description: 'Test tool',
           inputSchema: { type: 'object' },
-          handler: {} as any
-        }
+          handler: {} as any,
+        },
       ],
       status: ServiceStatus.ONLINE,
       metadata: { test: 'value' },
       registeredAt: new Date(),
-      lastHeartbeat: new Date()
+      lastHeartbeat: new Date(),
     };
 
     mockMeshRegistration = {
@@ -214,8 +212,8 @@ describe('MCPServiceMesh', () => {
         {
           address: 'localhost',
           port: 8080,
-          protocol: 'http'
-        }
+          protocol: 'http',
+        },
       ],
       metadata: { test: 'value' },
       healthCheck: {
@@ -223,13 +221,13 @@ describe('MCPServiceMesh', () => {
         interval: 30,
         timeout: 5000,
         failureThreshold: 3,
-        successThreshold: 1
+        successThreshold: 1,
       },
       loadBalancing: {
         algorithm: 'round_robin',
-        healthCheckEnabled: true
+        healthCheckEnabled: true,
       },
-      tags: ['mcp-service', 'test']
+      tags: ['mcp-service', 'test'],
     };
   });
 
@@ -325,7 +323,7 @@ describe('MCPServiceMesh', () => {
 
     it('should discover services with MCP-specific filters', async () => {
       const query: ServiceMeshQuery = {
-        serviceName: 'test-service'
+        serviceName: 'test-service',
       };
 
       const services = await serviceMesh.discoverServices(query);
@@ -336,7 +334,7 @@ describe('MCPServiceMesh', () => {
 
     it('should discover services by tags', async () => {
       const query: ServiceMeshQuery = {
-        tags: ['mcp-service']
+        tags: ['mcp-service'],
       };
 
       const services = await serviceMesh.discoverServices(query);
@@ -347,7 +345,7 @@ describe('MCPServiceMesh', () => {
 
     it('should return empty array when no services match query', async () => {
       const query: ServiceMeshQuery = {
-        serviceName: 'non-existent-service'
+        serviceName: 'non-existent-service',
       };
 
       const services = await serviceMesh.discoverServices(query);
@@ -370,8 +368,9 @@ describe('MCPServiceMesh', () => {
     });
 
     it('should throw error for non-existent service', async () => {
-      await expect(serviceMesh.getServiceHealth('non-existent-service'))
-        .rejects.toThrow('Failed to get health');
+      await expect(serviceMesh.getServiceHealth('non-existent-service')).rejects.toThrow(
+        'Failed to get health'
+      );
     });
   });
 
@@ -388,7 +387,7 @@ describe('MCPServiceMesh', () => {
         responseTime: 100,
         errorRate: 0.05,
         lastCheck: new Date(),
-        score: 0.8
+        score: 0.8,
       };
 
       const result = await serviceMesh.updateServiceHealth('test-service-1', health);
@@ -417,8 +416,9 @@ describe('MCPServiceMesh', () => {
     });
 
     it('should throw error for non-existent service', async () => {
-      await expect(serviceMesh.getServiceMetrics('non-existent-service'))
-        .rejects.toThrow('Failed to get metrics');
+      await expect(serviceMesh.getServiceMetrics('non-existent-service')).rejects.toThrow(
+        'Failed to get metrics'
+      );
     });
   });
 
@@ -441,9 +441,9 @@ describe('MCPServiceMesh', () => {
             metric: 'cpu',
             targetValue: 0.7,
             scaleUpThreshold: 0.8,
-            scaleDownThreshold: 0.5
-          }
-        ]
+            scaleDownThreshold: 0.5,
+          },
+        ],
       };
 
       const result = await serviceMesh.configureScaling('test-service-1', scalingConfig);
@@ -470,8 +470,9 @@ describe('MCPServiceMesh', () => {
     });
 
     it('should throw error for non-existent service', async () => {
-      await expect(serviceMesh.getScalingStatus('non-existent-service'))
-        .rejects.toThrow('Failed to get scaling status');
+      await expect(serviceMesh.getScalingStatus('non-existent-service')).rejects.toThrow(
+        'Failed to get scaling status'
+      );
     });
   });
 
@@ -482,7 +483,7 @@ describe('MCPServiceMesh', () => {
         autoDeregister: true,
         serviceNamePrefix: 'mcp-',
         defaultTags: ['auto-discovered'],
-        defaultMetadata: { source: 'auto-discovery' }
+        defaultMetadata: { source: 'auto-discovery' },
       };
 
       const result = await serviceMesh.enableAutoDiscovery(config);
@@ -502,7 +503,7 @@ describe('MCPServiceMesh', () => {
       // First enable auto-discovery
       await serviceMesh.enableAutoDiscovery({
         autoRegister: true,
-        autoDeregister: true
+        autoDeregister: true,
       });
 
       const result = await serviceMesh.disableAutoDiscovery();
@@ -567,7 +568,7 @@ describe('MCPServiceMesh', () => {
         responseTime: 50,
         errorRate: 0.01,
         lastCheck: new Date(),
-        score: 0.95
+        score: 0.95,
       });
 
       expect(healthCheckSpy).toHaveBeenCalledWith('test-service-1', expect.any(Object));
@@ -586,8 +587,8 @@ describe('MCPServiceMesh', () => {
         triggerMetric: {
           name: 'cpu',
           value: 0.85,
-          threshold: 0.8
-        }
+          threshold: 0.8,
+        },
       };
 
       serviceMesh.emit('scaling-event', scalingEvent);

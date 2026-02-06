@@ -1,21 +1,18 @@
 /**
  * Langchain Protocol Adapter
- * 
+ *
  * Handles Langchain's agent framework format
  * Converts between Langchain agent messages and The New Fuse's A2A protocol
  */
 
-import { ProtocolAdapter } from './ProtocolAdapter.js';
-import { RelayMessage, ProtocolType } from '../types/index.js';
+import { ProtocolType, RelayMessage } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
+import { ProtocolAdapter } from './ProtocolAdapter.js';
 
 export class LangchainAdapter implements ProtocolAdapter {
   public readonly name = 'langchain';
   public readonly version = '1.0.0';
-  public readonly supportedProtocols: ProtocolType[] = [
-    'langchain-v1.0',
-    'a2a-v2.0'
-  ];
+  public readonly supportedProtocols: ProtocolType[] = ['langchain-v1.0', 'a2a-v2.0'];
 
   private logger: Logger;
 
@@ -27,8 +24,11 @@ export class LangchainAdapter implements ProtocolAdapter {
     return this.supportedProtocols.includes(from) && this.supportedProtocols.includes(to);
   }
 
-  async translate(message: RelayMessage, sourceProtocol: ProtocolType, targetProtocol: ProtocolType): Promise<RelayMessage> {
-
+  async translate(
+    message: RelayMessage,
+    sourceProtocol: ProtocolType,
+    targetProtocol: ProtocolType
+  ): Promise<RelayMessage> {
     if (sourceProtocol === 'langchain-v1.0' && targetProtocol === 'a2a-v2.0') {
       return this.langchainToA2A(message);
     } else if (sourceProtocol === 'a2a-v2.0' && targetProtocol === 'langchain-v1.0') {
@@ -52,14 +52,14 @@ export class LangchainAdapter implements ProtocolAdapter {
           log: payload.log,
           reasoning: this.extractLangchainReasoning(payload),
           agentType: payload.agent_type || 'langchain',
-          intermediateSteps: payload.intermediate_steps || []
+          intermediateSteps: payload.intermediate_steps || [],
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'langchain-v1.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -72,14 +72,14 @@ export class LangchainAdapter implements ProtocolAdapter {
           result: payload.return_values?.output || payload.output,
           returnValues: payload.return_values,
           log: payload.log,
-          reasoning: this.extractLangchainReasoning(payload)
+          reasoning: this.extractLangchainReasoning(payload),
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'langchain-v1.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -94,14 +94,14 @@ export class LangchainAdapter implements ProtocolAdapter {
           output: payload.output,
           success: !payload.error,
           error: payload.error,
-          executionTime: payload.execution_time
+          executionTime: payload.execution_time,
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'langchain-v1.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -114,14 +114,14 @@ export class LangchainAdapter implements ProtocolAdapter {
           messages: payload.messages || payload.chat_memory?.messages || [],
           memory: payload.memory || payload.buffer,
           memoryType: payload.memory_type || 'conversation',
-          context: payload.context
+          context: payload.context,
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'langchain-v1.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -135,14 +135,14 @@ export class LangchainAdapter implements ProtocolAdapter {
           input: payload.input,
           output: payload.output,
           intermediateSteps: payload.intermediate_steps || [],
-          chainConfig: payload.chain_config || payload.config
+          chainConfig: payload.chain_config || payload.config,
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'langchain-v1.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -152,14 +152,14 @@ export class LangchainAdapter implements ProtocolAdapter {
       payload: {
         content: this.extractLangchainContent(payload),
         type: payload._type || payload.type || 'unknown',
-        metadata: this.extractLangchainMetadata(payload)
+        metadata: this.extractLangchainMetadata(payload),
       },
       metadata: {
         ...message.metadata,
         protocol: 'a2a-v2.0',
         originalProtocol: 'langchain-v1.0',
-        translatedAt: new Date().toISOString()
-      }
+        translatedAt: new Date().toISOString(),
+      },
     };
   }
 
@@ -175,8 +175,8 @@ export class LangchainAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'langchain-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -189,8 +189,8 @@ export class LangchainAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'langchain-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -203,8 +203,8 @@ export class LangchainAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'langchain-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -217,8 +217,8 @@ export class LangchainAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'langchain-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -231,8 +231,8 @@ export class LangchainAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'langchain-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString()
-        }
+          translatedAt: new Date().toISOString(),
+        },
       };
     }
 
@@ -244,8 +244,8 @@ export class LangchainAdapter implements ProtocolAdapter {
         ...message.metadata,
         protocol: 'langchain-v1.0',
         originalProtocol: 'a2a-v2.0',
-        translatedAt: new Date().toISOString()
-      }
+        translatedAt: new Date().toISOString(),
+      },
     };
   }
 
@@ -276,7 +276,13 @@ export class LangchainAdapter implements ProtocolAdapter {
   }
 
   private extractLangchainContent(payload: any): string {
-    return payload.content || payload.text || payload.output || payload.message || JSON.stringify(payload);
+    return (
+      payload.content ||
+      payload.text ||
+      payload.output ||
+      payload.message ||
+      JSON.stringify(payload)
+    );
   }
 
   private extractLangchainMetadata(payload: any): any {
@@ -288,7 +294,7 @@ export class LangchainAdapter implements ProtocolAdapter {
       temperature: payload.temperature,
       maxTokens: payload.max_tokens,
       tools: payload.tools?.map((tool: any) => tool.name || tool),
-      memory: payload.memory_type
+      memory: payload.memory_type,
     };
   }
 
@@ -299,16 +305,16 @@ export class LangchainAdapter implements ProtocolAdapter {
       tool_input: payload.toolInput,
       log: payload.reasoning || payload.log || '',
       agent_type: payload.agentType || 'tnf_agent',
-      intermediate_steps: payload.intermediateSteps || []
+      intermediate_steps: payload.intermediateSteps || [],
     };
   }
 
   private createLangchainAgentFinish(payload: any): any {
     return {
       return_values: {
-        output: payload.result
+        output: payload.result,
       },
-      log: payload.reasoning || payload.log || ''
+      log: payload.reasoning || payload.log || '',
     };
   }
 
@@ -318,7 +324,7 @@ export class LangchainAdapter implements ProtocolAdapter {
       input: payload.input,
       output: payload.output,
       error: payload.success === false ? payload.error : undefined,
-      execution_time: payload.executionTime
+      execution_time: payload.executionTime,
     };
   }
 
@@ -326,11 +332,11 @@ export class LangchainAdapter implements ProtocolAdapter {
     return {
       messages: payload.messages || [],
       chat_memory: {
-        messages: payload.messages || []
+        messages: payload.messages || [],
       },
       memory: payload.memory,
       memory_type: payload.memoryType || 'conversation',
-      context: payload.context
+      context: payload.context,
     };
   }
 
@@ -341,7 +347,7 @@ export class LangchainAdapter implements ProtocolAdapter {
       input: payload.input,
       output: payload.output,
       intermediate_steps: payload.intermediateSteps || [],
-      chain_config: payload.chainConfig || {}
+      chain_config: payload.chainConfig || {},
     };
   }
 
@@ -349,7 +355,7 @@ export class LangchainAdapter implements ProtocolAdapter {
     return {
       content: payload.content || payload.message,
       _type: 'tnf_message',
-      metadata: payload.metadata || {}
+      metadata: payload.metadata || {},
     };
   }
 }

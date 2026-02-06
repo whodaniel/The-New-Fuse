@@ -10,10 +10,25 @@ export class AgentRegistrationResponseDto {
   @ApiProperty({ description: 'Authentication token for agent' })
   authToken: string;
 
-  @ApiProperty({ description: 'Verification status', enum: ['PENDING', 'IN_PROGRESS', 'VERIFIED', 'FAILED', 'REJECTED'] })
+  @ApiProperty({
+    description: 'Verification status',
+    enum: ['INVITED', 'PENDING', 'IN_PROGRESS', 'VERIFIED', 'FAILED', 'REJECTED'],
+  })
   verificationStatus: string;
 
-  @ApiProperty({ description: 'Onboarding status', enum: ['INITIALIZED', 'WELCOME_SENT', 'CAPABILITIES_TESTED', 'ORIENTATION_IN_PROGRESS', 'ORIENTATION_COMPLETED', 'INTEGRATION_TESTING', 'READY', 'FAILED'] })
+  @ApiProperty({
+    description: 'Onboarding status',
+    enum: [
+      'INITIALIZED',
+      'WELCOME_SENT',
+      'CAPABILITIES_TESTED',
+      'ORIENTATION_IN_PROGRESS',
+      'ORIENTATION_COMPLETED',
+      'INTEGRATION_TESTING',
+      'READY',
+      'FAILED',
+    ],
+  })
   onboardingStatus: string;
 
   @ApiProperty({ description: 'Welcome message for the agent' })
@@ -27,6 +42,47 @@ export class AgentRegistrationResponseDto {
 
   @ApiProperty({ description: 'Registration timestamp' })
   createdAt: Date;
+}
+
+export class AgentRegistrationReportDto {
+  @ApiProperty({ description: 'Registration ID' })
+  id: string;
+
+  @ApiProperty({ description: 'Agent ID' })
+  agentId: string;
+
+  @ApiPropertyOptional({ description: 'Tenant ID' })
+  tenantId?: string;
+
+  @ApiPropertyOptional({ description: 'Organization ID' })
+  organizationId?: string;
+
+  @ApiPropertyOptional({ description: 'Agency ID' })
+  agencyId?: string;
+
+  @ApiPropertyOptional({ description: 'Long-term identity ID' })
+  identityLongTermId?: string;
+
+  @ApiPropertyOptional({ description: 'Ephemeral identity ID' })
+  identityEphemeralId?: string;
+
+  @ApiPropertyOptional({ description: 'Federation identity ID' })
+  identityFederationId?: string;
+
+  @ApiPropertyOptional({ description: 'Protocol version' })
+  protocolVersion?: string;
+
+  @ApiPropertyOptional({ description: 'Trust tier' })
+  trustTier?: string;
+
+  @ApiPropertyOptional({ description: 'Invite ID' })
+  inviteId?: string;
+
+  @ApiProperty({ description: 'Verification status' })
+  verificationStatus: string;
+
+  @ApiProperty({ description: 'Onboarding status' })
+  onboardingStatus: string;
 }
 
 export class WelcomeMessageDto {

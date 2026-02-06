@@ -13,9 +13,5 @@ interface DraggableProps {
  * which is not currently implemented here.
  */
 export const Draggable: React.FC<DraggableProps> = ({ children }) => {
-  return (
-    <div className="draggable-item">
-      {children}
-    </div>
-  );
+  return <div className="draggable-item">{children}</div>;
 };

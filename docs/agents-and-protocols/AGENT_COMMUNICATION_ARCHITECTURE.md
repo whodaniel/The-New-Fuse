@@ -2,11 +2,12 @@
 
 ## Executive Summary
 
-The New Fuse implements a comprehensive AI agent communication infrastructure that enables robust agent-to-agent (A2A) communication across multiple protocols and platforms. This document provides a complete overview of the architecture, implementation details, and integration patterns.
+The New Fuse implements a comprehensive AI agent communication infrastructure
+that enables robust agent-to-agent (A2A) communication across multiple protocols
+and platforms. This document provides a complete overview of the architecture,
+implementation details, and integration patterns.
 
-**Last Updated:** 2025-11-18
-**Status:** Production Ready
-**Version:** 1.0.0
+**Last Updated:** 2025-11-18 **Status:** Production Ready **Version:** 1.0.0
 
 ## Table of Contents
 
@@ -86,9 +87,11 @@ The New Fuse implements a comprehensive AI agent communication infrastructure th
 
 **Location**: `/home/user/fuse/packages/core/src/mcp/MCPAgentServer.ts`
 
-**Purpose**: Implements Model Context Protocol for standardized AI agent communication
+**Purpose**: Implements Model Context Protocol for standardized AI agent
+communication
 
 **Capabilities**:
+
 - Header-body message structure
 - Streaming support
 - Encryption
@@ -97,6 +100,7 @@ The New Fuse implements a comprehensive AI agent communication infrastructure th
 - Resource access
 
 **Key Methods**:
+
 ```typescript
 - handleMessage(message: MCPMessage): Promise<MCPMessage>
 - handleInitialize(message: MCPMessage): MCPMessage
@@ -114,11 +118,13 @@ The New Fuse implements a comprehensive AI agent communication infrastructure th
 
 ### 2. MCP Registry Service
 
-**Location**: `/home/user/fuse/packages/api/src/modules/mcp/mcp-registry.service.ts`
+**Location**:
+`/home/user/fuse/packages/api/src/modules/mcp/mcp-registry.service.ts`
 
 **Purpose**: Central registry for agent management and discovery
 
 **Features**:
+
 - Agent registration (registerAgent)
 - Agent profile updates (updateAgentProfile)
 - Agent discovery (findAgents, findAgentsByCapability)
@@ -126,6 +132,7 @@ The New Fuse implements a comprehensive AI agent communication infrastructure th
 - Status management (updateAgentStatus)
 
 **MCP Tools Exposed**:
+
 1. `registerAgent` - Register new agent with the system
 2. `updateAgentProfile` - Update existing agent information
 3. `getAgentProfile` - Retrieve agent details
@@ -146,27 +153,32 @@ The New Fuse implements a comprehensive AI agent communication infrastructure th
 
 ### 3. Agent Communication Gateway
 
-**Location**: `/home/user/fuse/apps/backend/src/gateways/agent-communication.gateway.ts`
+**Location**:
+`/home/user/fuse/apps/backend/src/gateways/agent-communication.gateway.ts`
 
 **Purpose**: WebSocket gateway for real-time agent communication
 
 **Features**:
+
 - Real-time bidirectional communication
 - Redis integration for pub/sub
 - Auto-reconnection handling
 - Broadcast capabilities
 
 **Channels**:
+
 - `agent:trae` - Trae agent channel
 - `agent:augment` - Augment agent channel
 - `agent:broadcast` - Broadcast to all agents
 
 **Events**:
+
 - `connection` - Client connected
 - `disconnect` - Client disconnected
 - `agent:broadcast` - Message broadcast
 
 **Configuration**:
+
 ```typescript
 CORS: Enabled for all origins (*)
 Redis URL: process.env.REDIS_URL || 'redis://localhost:6379'
@@ -178,11 +190,13 @@ Redis URL: process.env.REDIS_URL || 'redis://localhost:6379'
 
 ### 4. Inter-Agent Chat Service
 
-**Location**: `/home/user/fuse/apps/backend/src/agent/services/InterAgentChatService.ts`
+**Location**:
+`/home/user/fuse/apps/backend/src/agent/services/InterAgentChatService.ts`
 
 **Purpose**: Dedicated service for agent-to-agent messaging
 
 **Features**:
+
 - Direct agent messaging
 - Broadcast messaging
 - Redis pub/sub integration
@@ -190,6 +204,7 @@ Redis URL: process.env.REDIS_URL || 'redis://localhost:6379'
 - Health check capabilities
 
 **Key Methods**:
+
 ```typescript
 sendMessage(toAgentId: string, content: string, metadata?: Record<string, any>): Promise<string>
 broadcastMessage(content: string, metadata?: Record<string, any>): Promise<string>
@@ -204,21 +219,25 @@ checkHealth(): Promise<{ status: string; details?: any }>
 
 ### 5. MCP Broker Service
 
-**Location**: `/home/user/fuse/packages/api/src/mcp/services/mcp-broker.service.ts`
+**Location**:
+`/home/user/fuse/packages/api/src/mcp/services/mcp-broker.service.ts`
 
 **Purpose**: Broker for MCP server-client communication
 
 **Features**:
+
 - Server registration
 - Capability management
 - Tool execution
 - Directive routing
 
 **Registered Servers** (Development):
+
 - `mock-server` - Text generation, image analysis
 - `code-assistant` - Code completion, code explanation
 
 **Key Methods**:
+
 ```typescript
 initialize(): Promise<void>
 registerServer(name: string, server: any): void
@@ -239,15 +258,18 @@ getServerStatus(): Promise<Record<string, any>>
 **Purpose**: Secure agent authentication for protected routes
 
 **Authentication Methods**:
+
 1. **JWT Tokens** - Bearer token via Authorization header
 2. **API Keys** - Via X-Agent-API-Key or X-API-Key header
 
 **Token Validation**:
+
 - Verifies `agentId` and `type: 'agent'` in JWT payload
 - Extracts agent capabilities and permissions
 - Attaches agent info to request object
 
 **Security Features**:
+
 - Token expiration validation
 - API key format validation (minimum 32 characters)
 - Request context enrichment
@@ -265,6 +287,7 @@ getServerStatus(): Promise<Record<string, any>>
 **Use Case**: Real-time, bidirectional communication
 
 **Message Format**:
+
 ```typescript
 interface AgentMessage {
   version: string;
@@ -294,6 +317,7 @@ interface AgentMessage {
 ```
 
 **Connection Flow**:
+
 1. Client connects to WebSocket server
 2. Agent sends registration message
 3. Server acknowledges registration
@@ -311,23 +335,30 @@ interface AgentMessage {
 **Use Case**: Scalable message broadcasting and queueing
 
 **Channel Naming**:
+
 - `agent:{agentId}` - Agent-specific messages
 - `broadcast:all` - Broadcast to all agents
 - `system:events` - System-level events
 - `agent-chat:{agentId}` - Inter-agent chat
 
 **Message Structure**:
+
 ```typescript
 {
   messageId: string;
   timestamp: number;
-  source: { agentId: string };
-  target: { agentId: string };
+  source: {
+    agentId: string;
+  }
+  target: {
+    agentId: string;
+  }
   content: any;
 }
 ```
 
 **Features**:
+
 - Persistent messages with TTL
 - Pattern-based subscriptions
 - Agent registry with heartbeats
@@ -341,6 +372,7 @@ interface AgentMessage {
 **Use Case**: Standardized AI model and tool interaction
 
 **Message Format**:
+
 ```typescript
 {
   jsonrpc: '2.0',
@@ -357,6 +389,7 @@ interface AgentMessage {
 ```
 
 **Methods**:
+
 - `initialize` - Initialize MCP session
 - `ping` - Health check
 - `listCapabilities` - Query available capabilities
@@ -364,6 +397,7 @@ interface AgentMessage {
 - `accessResource` - Access registered resource
 
 **Capabilities**:
+
 - header-body-structure
 - streaming
 - encryption
@@ -381,6 +415,7 @@ interface AgentMessage {
 **Endpoints**:
 
 **Agent Management**:
+
 - `POST /agents` - Register new agent
 - `GET /agents/:id` - Get agent profile
 - `PUT /agents/:id` - Update agent profile
@@ -389,6 +424,7 @@ interface AgentMessage {
 - `GET /agents?status=&capability=&name=&role=&type=` - Find agents
 
 **Entity Management**:
+
 - `POST /entities` - Register entity (upsert)
 - `GET /entities/:id` - Get entity details
 - `PATCH /entities/:id` - Update entity
@@ -403,6 +439,7 @@ interface AgentMessage {
 **Use Case**: Cross-platform communication when network unavailable
 
 **Directory Structure**:
+
 ```
 ~/.tnf-messages/
   ├── incoming/     # Messages for this agent
@@ -422,6 +459,7 @@ interface AgentMessage {
 ### Agent Registration Process
 
 **Flow**:
+
 1. Agent creates registration payload
 2. Submits to Agency Hub via POST /agents
 3. Hub validates and stores agent data
@@ -429,6 +467,7 @@ interface AgentMessage {
 5. Agent begins heartbeat sequence
 
 **Registration Data**:
+
 ```typescript
 {
   name: string;              // Display name
@@ -444,6 +483,7 @@ interface AgentMessage {
 ```
 
 **Agent Types**:
+
 - `developer` - Development assistance
 - `filesystem` - File operations
 - `assistant` - General assistance
@@ -456,31 +496,36 @@ interface AgentMessage {
 ### Discovery Mechanisms
 
 **1. By Capability**:
+
 ```typescript
 const agents = await mcpRegistry.findAgents({ capability: 'code-generation' });
 ```
 
 **2. By Status**:
+
 ```typescript
 const agents = await mcpRegistry.findAgents({ status: AgentStatus.ACTIVE });
 ```
 
 **3. By Type**:
+
 ```typescript
 const agents = await mcpRegistry.findAgents({ type: 'developer' });
 ```
 
 **4. By Name**:
+
 ```typescript
 const agent = await mcpRegistry.getAgentProfile(agentId);
 ```
 
 **5. Combined Criteria**:
+
 ```typescript
 const agents = await mcpRegistry.findAgents({
   type: 'developer',
   status: AgentStatus.ACTIVE,
-  capability: 'debugging'
+  capability: 'debugging',
 });
 ```
 
@@ -491,6 +536,7 @@ const agents = await mcpRegistry.findAgents({
 ### Authentication Methods
 
 **1. JWT Authentication**:
+
 ```typescript
 Authorization: Bearer <jwt-token>
 
@@ -507,6 +553,7 @@ Authorization: Bearer <jwt-token>
 ```
 
 **2. API Key Authentication**:
+
 ```typescript
 X-Agent-API-Key: agent_<unique-key>
 // or
@@ -521,19 +568,23 @@ X-API-Key: <api-key>
 ### Security Features
 
 **Message Signing**:
+
 ```typescript
 // Sign message with private key
-const signature = crypto.createSign('RSA-SHA256')
+const signature = crypto
+  .createSign('RSA-SHA256')
   .update(JSON.stringify(message))
   .sign(privateKey, 'base64');
 
 // Verify signature with public key
-const isValid = crypto.createVerify('RSA-SHA256')
+const isValid = crypto
+  .createVerify('RSA-SHA256')
   .update(JSON.stringify(message))
   .verify(publicKey, signature, 'base64');
 ```
 
 **Message Encryption**:
+
 ```typescript
 // Encrypt with recipient's public key
 const encrypted = crypto.publicEncrypt(
@@ -553,6 +604,7 @@ const decrypted = crypto.privateDecrypt(
 ### Rate Limiting
 
 **Configuration**:
+
 ```typescript
 {
   rateLimitEnabled: true,
@@ -569,6 +621,7 @@ const decrypted = crypto.privateDecrypt(
 ### Router Architecture
 
 **Components**:
+
 1. **Message Validator** - Validates message format and schema
 2. **Auth Validator** - Verifies sender authentication
 3. **Route Resolver** - Determines target agent/service
@@ -576,6 +629,7 @@ const decrypted = crypto.privateDecrypt(
 5. **Delivery Handler** - Handles actual message delivery
 
 **Routing Logic**:
+
 ```typescript
 async function routeMessage(message: AgentMessage): Promise<void> {
   // 1. Validate message structure
@@ -606,12 +660,14 @@ async function routeMessage(message: AgentMessage): Promise<void> {
 ### Message Priority
 
 **Priority Levels**:
+
 - `critical` - Immediate delivery, bypass queues
 - `high` - Prioritized delivery
 - `medium` - Normal queue processing
 - `low` - Deferred delivery when idle
 
 **Queue Management**:
+
 - Separate queues per priority level
 - Weighted fair queuing algorithm
 - Backpressure handling
@@ -623,6 +679,7 @@ async function routeMessage(message: AgentMessage): Promise<void> {
 ### Health Check Endpoints
 
 **Agent Health**:
+
 ```bash
 GET /api/agents/:agentId/health
 
@@ -641,6 +698,7 @@ Response:
 ```
 
 **System Health**:
+
 ```bash
 GET /api/health
 
@@ -666,6 +724,7 @@ Response:
 ### Metrics Collection
 
 **Metrics Tracked**:
+
 - Message latency (p50, p95, p99)
 - Message throughput (messages/second)
 - Error rates by type
@@ -674,6 +733,7 @@ Response:
 - Protocol usage distribution
 
 **Monitoring Services**:
+
 - AlertService - Alert management
 - MonitoringService - Metric collection
 - EventEmitter - Event tracking
@@ -683,12 +743,14 @@ Response:
 ### Logging
 
 **Log Levels**:
+
 - `debug` - Detailed debugging information
 - `info` - General informational messages
 - `warn` - Warning messages
 - `error` - Error messages with stack traces
 
 **Log Structure**:
+
 ```typescript
 {
   timestamp: string;
@@ -713,10 +775,11 @@ Response:
 
 ### Existing Tests
 
-**1. Agent Workflow Integration Tests**
-**Location**: `/home/user/fuse/test-suite/integration/agent-workflow.test.ts`
+**1. Agent Workflow Integration Tests** **Location**:
+`/home/user/fuse/test-suite/integration/agent-workflow.test.ts`
 
 **Coverage**:
+
 - End-to-end agent workflow execution
 - Multi-agent workflows
 - Conditional routing
@@ -725,6 +788,7 @@ Response:
 - Data consistency
 
 **Test Scenarios**:
+
 - Single agent customer service workflow
 - Multi-agent content creation pipeline
 - Conditional support ticket routing
@@ -733,10 +797,11 @@ Response:
 - Agent failure recovery
 - Execution timeouts
 
-**2. Agent Registry Tests**
-**Location**: `/home/user/fuse/src/tests/AgentRegistry.test.ts`
+**2. Agent Registry Tests** **Location**:
+`/home/user/fuse/src/tests/AgentRegistry.test.ts`
 
 **Coverage**:
+
 - Agent registration
 - Agent updates
 - Agent removal
@@ -749,6 +814,7 @@ Response:
 ### Test Coverage Summary
 
 **Current Coverage**:
+
 - ✅ Agent registration and lifecycle
 - ✅ Agent discovery and search
 - ✅ Workflow execution with agents
@@ -766,12 +832,14 @@ Response:
 ### Prerequisites
 
 **Software Requirements**:
+
 - Node.js 22.16.0+
 - Bun 1.1.38+
 - PostgreSQL (for agent registry)
 - Redis (for pub/sub communication)
 
 **Environment Variables**:
+
 ```bash
 # API Configuration
 API_URL=http://localhost:3000/api
@@ -797,28 +865,33 @@ METRICS_ENABLED=true
 ### Deployment Steps
 
 **1. Install Dependencies**:
+
 ```bash
 pnpm install
 ```
 
 **2. Configure Environment**:
+
 ```bash
 cp .env.example .env.local
 # Edit .env.local with your configuration
 ```
 
 **3. Initialize Database**:
+
 ```bash
-pnpm prisma migrate deploy
-pnpm prisma generate
+pnpm drizzle migrate deploy
+pnpm drizzle generate
 ```
 
 **4. Start Redis**:
+
 ```bash
 redis-server
 ```
 
 **5. Start Services**:
+
 ```bash
 # Start backend API
 pnpm --filter @the-new-fuse/backend dev
@@ -831,6 +904,7 @@ pnpm --filter @the-new-fuse/api-gateway dev
 ```
 
 **6. Verify Deployment**:
+
 ```bash
 curl http://localhost:3000/api/health
 ```
@@ -840,16 +914,19 @@ curl http://localhost:3000/api/health
 ### Production Deployment
 
 **1. Build All Packages**:
+
 ```bash
 pnpm run build:all
 ```
 
 **2. Environment Configuration**:
+
 - Set production environment variables
 - Configure SSL certificates
 - Set up monitoring and alerting
 
 **3. Process Management**:
+
 ```bash
 # Using PM2
 pm2 start ecosystem.config.js
@@ -859,6 +936,7 @@ docker-compose up -d
 ```
 
 **4. Health Monitoring**:
+
 - Configure health check endpoints
 - Set up uptime monitoring
 - Configure log aggregation
@@ -870,31 +948,35 @@ docker-compose up -d
 ### MCP Registry Service
 
 **registerAgent**:
+
 ```typescript
 await mcpRegistry.registerAgent({
   name: 'My Agent',
   type: 'developer',
-  metadata: { version: '1.0.0' }
+  metadata: { version: '1.0.0' },
 });
 ```
 
 **updateAgentProfile**:
+
 ```typescript
 await mcpRegistry.updateAgentProfile(agentId, {
   name: 'Updated Name',
-  metadata: { version: '1.0.1' }
+  metadata: { version: '1.0.1' },
 });
 ```
 
 **findAgents**:
+
 ```typescript
 const agents = await mcpRegistry.findAgents({
   status: AgentStatus.ACTIVE,
-  capability: 'code-generation'
+  capability: 'code-generation',
 });
 ```
 
 **updateAgentStatus**:
+
 ```typescript
 await mcpRegistry.updateAgentStatus(agentId, AgentStatus.BUSY);
 ```
@@ -904,6 +986,7 @@ await mcpRegistry.updateAgentStatus(agentId, AgentStatus.BUSY);
 ### Inter-Agent Chat Service
 
 **sendMessage**:
+
 ```typescript
 const messageId = await interAgentChat.sendMessage(
   'target-agent-id',
@@ -913,6 +996,7 @@ const messageId = await interAgentChat.sendMessage(
 ```
 
 **broadcastMessage**:
+
 ```typescript
 const messageId = await interAgentChat.broadcastMessage(
   'Important announcement',
@@ -921,6 +1005,7 @@ const messageId = await interAgentChat.broadcastMessage(
 ```
 
 **checkHealth**:
+
 ```typescript
 const health = await interAgentChat.checkHealth();
 // { status: 'healthy' | 'unhealthy', details?: any }
@@ -933,19 +1018,21 @@ const health = await interAgentChat.checkHealth();
 **WebSocket Events**:
 
 **Client → Server**:
+
 ```typescript
 socket.emit('agent:register', {
   agentId: 'my-agent',
-  capabilities: ['coding', 'debugging']
+  capabilities: ['coding', 'debugging'],
 });
 
 socket.emit('agent:message', {
   targetAgentId: 'other-agent',
-  content: { action: 'help', data: {} }
+  content: { action: 'help', data: {} },
 });
 ```
 
 **Server → Client**:
+
 ```typescript
 socket.on('agent:broadcast', (message) => {
   console.log('Broadcast:', message);
@@ -963,24 +1050,28 @@ socket.on('agent:message', (message) => {
 ### Common Issues
 
 **1. Agent Registration Fails**:
+
 - Verify API_URL is correct
 - Check MCP_REGISTRY_API_KEY is set
 - Ensure backend API is running
 - Verify network connectivity
 
 **2. Messages Not Delivered**:
+
 - Check target agent is online
 - Verify Redis connection
 - Check WebSocket connection status
 - Review authentication credentials
 
 **3. WebSocket Connection Drops**:
+
 - Implement auto-reconnection
 - Check firewall settings
 - Verify CORS configuration
 - Monitor network stability
 
 **4. Authentication Errors**:
+
 - Verify JWT token is not expired
 - Check API key format and validity
 - Ensure agent is registered
@@ -990,7 +1081,10 @@ socket.on('agent:message', (message) => {
 
 ## Conclusion
 
-The New Fuse agent communication infrastructure provides a robust, scalable, and secure foundation for AI agent collaboration. With support for multiple protocols, comprehensive monitoring, and extensive testing, the system is production-ready and designed for extensibility.
+The New Fuse agent communication infrastructure provides a robust, scalable, and
+secure foundation for AI agent collaboration. With support for multiple
+protocols, comprehensive monitoring, and extensive testing, the system is
+production-ready and designed for extensibility.
 
 ### Next Steps
 
@@ -1011,7 +1105,5 @@ The New Fuse agent communication infrastructure provides a robust, scalable, and
 
 ---
 
-**Document Version**: 1.0.0
-**Author**: AI Agent Infrastructure Team
-**Date**: 2025-11-18
-**Status**: Production Ready
+**Document Version**: 1.0.0 **Author**: AI Agent Infrastructure Team **Date**:
+2025-11-18 **Status**: Production Ready

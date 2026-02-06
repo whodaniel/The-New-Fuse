@@ -1,6 +1,6 @@
-import { useState, useCallback, useEffect } from 'react';
-import { KanbanColumn, DraggableItem, FeatureSuggestion, SuggestionStatus } from '../types';
+import { useCallback, useEffect, useState } from 'react';
 import { SuggestionService } from '../services/types';
+import { DraggableItem, KanbanColumn, SuggestionStatus } from '../types';
 
 interface UseKanbanBoardProps {
   suggestionService: SuggestionService;
@@ -20,7 +20,7 @@ export const useKanbanBoard = ({ suggestionService }: UseKanbanBoardProps) => {
       const [submitted, inReview, approved] = await Promise.all([
         suggestionService.getSuggestionsByStatus(SuggestionStatus.SUBMITTED),
         suggestionService.getSuggestionsByStatus(SuggestionStatus.UNDER_REVIEW),
-        suggestionService.getSuggestionsByStatus(SuggestionStatus.APPROVED)
+        suggestionService.getSuggestionsByStatus(SuggestionStatus.APPROVED),
       ]);
 
       // Create columns
@@ -28,18 +28,18 @@ export const useKanbanBoard = ({ suggestionService }: UseKanbanBoardProps) => {
         {
           id: 'pending',
           title: 'Pending',
-          items: submitted as DraggableItem[] // Use type assertion to ensure compatibility
+          items: submitted as DraggableItem[], // Use type assertion to ensure compatibility
         },
         {
           id: 'in-review',
           title: 'In Review',
-          items: inReview as DraggableItem[]
+          items: inReview as DraggableItem[],
         },
         {
           id: 'approved',
           title: 'Approved',
-          items: approved as DraggableItem[]
-        }
+          items: approved as DraggableItem[],
+        },
       ]);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to load kanban items'));
@@ -52,68 +52,67 @@ export const useKanbanBoard = ({ suggestionService }: UseKanbanBoardProps) => {
     loadItems();
   }, [loadItems]);
 
-  const moveItem = useCallback(async (
-    itemId: string,
-    sourceColumnId: string,
-    targetColumnId: string
-  ) => {
-    try {
-      // Map column IDs to status 
-      const statusMap: Record<string, SuggestionStatus> = {
-        'pending': SuggestionStatus.SUBMITTED,
-        'in-review': SuggestionStatus.UNDER_REVIEW,
-        'approved': SuggestionStatus.APPROVED
-      };
+  const moveItem = useCallback(
+    async (itemId: string, sourceColumnId: string, targetColumnId: string) => {
+      try {
+        // Map column IDs to status
+        const statusMap: Record<string, SuggestionStatus> = {
+          pending: SuggestionStatus.SUBMITTED,
+          'in-review': SuggestionStatus.UNDER_REVIEW,
+          approved: SuggestionStatus.APPROVED,
+        };
 
-      const newStatus = statusMap[targetColumnId];
-      if (!newStatus) {
-        throw new Error(`Invalid target column: ${targetColumnId}`);
-      }
-
-      // Update item status in backend
-      await suggestionService.updateSuggestionStatus(itemId, newStatus);
-
-      // Update local state
-      setColumns(prevColumns => {
-        const sourceColumn = prevColumns.find(c => c.id === sourceColumnId);
-        const targetColumn = prevColumns.find(c => c.id === targetColumnId);
-        const item = sourceColumn?.items.find((i: { id: string }) => i.id === itemId);
-
-        if (!sourceColumn || !targetColumn || !item) {
-          return prevColumns;
+        const newStatus = statusMap[targetColumnId];
+        if (!newStatus) {
+          throw new Error(`Invalid target column: ${targetColumnId}`);
         }
 
-        // Create a copy with the modified item that includes the new status
-        const updatedItem = { ...item, status: newStatus } as DraggableItem;
+        // Update item status in backend
+        await suggestionService.updateSuggestionStatus(itemId, newStatus);
 
-        // Ensure we're returning properly typed columns
-        return prevColumns.map(column => {
-          if (column.id === sourceColumnId) {
-            return {
-              ...column,
-              items: column.items.filter((i: { id: string }) => i.id !== itemId)
-            };
+        // Update local state
+        setColumns((prevColumns) => {
+          const sourceColumn = prevColumns.find((c) => c.id === sourceColumnId);
+          const targetColumn = prevColumns.find((c) => c.id === targetColumnId);
+          const item = sourceColumn?.items.find((i: { id: string }) => i.id === itemId);
+
+          if (!sourceColumn || !targetColumn || !item) {
+            return prevColumns;
           }
-          if (column.id === targetColumnId) {
-            return {
-              ...column,
-              items: [...column.items, updatedItem]
-            };
-          }
-          return column;
-        }) as KanbanColumn[]; // Explicitly cast to KanbanColumn[]
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to move item'));
-      throw err;
-    }
-  }, [suggestionService]);
+
+          // Create a copy with the modified item that includes the new status
+          const updatedItem = { ...item, status: newStatus } as DraggableItem;
+
+          // Ensure we're returning properly typed columns
+          return prevColumns.map((column) => {
+            if (column.id === sourceColumnId) {
+              return {
+                ...column,
+                items: column.items.filter((i: { id: string }) => i.id !== itemId),
+              };
+            }
+            if (column.id === targetColumnId) {
+              return {
+                ...column,
+                items: [...column.items, updatedItem],
+              };
+            }
+            return column;
+          }) as KanbanColumn[]; // Explicitly cast to KanbanColumn[]
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to move item'));
+        throw err;
+      }
+    },
+    [suggestionService]
+  );
 
   return {
     columns,
     loading,
     error,
     moveItem,
-    refresh: loadItems
+    refresh: loadItems,
   };
 };

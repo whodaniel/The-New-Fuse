@@ -33,8 +33,8 @@ export interface InitializationOptions {
 }
 
 export const createInitializationMessage = (
-  source: string, 
-  options: InitializationOptions = {}
+  source: string,
+  options: InitializationOptions = {},
 ): InitializationMessage => ({
   type: 'initialization',
   source,
@@ -48,12 +48,12 @@ export const createInitializationMessage = (
       'code_review',
       'architecture_design',
       'type_safety',
-      'documentation'
+      'documentation',
     ],
     workspace: options.workspace || 'vscode',
-    status: 'active'
+    status: 'active',
   },
-  priority: options.priority || 'medium'
+  priority: options.priority || 'medium',
 });
 
 export const createShutdownMessage = (source: string): InitializationMessage => ({
@@ -65,9 +65,9 @@ export const createShutdownMessage = (source: string): InitializationMessage => 
     action: 'agent_shutdown',
     capabilities: [],
     workspace: '',
-    status: 'inactive'
+    status: 'inactive',
   },
-  priority: 'medium'
+  priority: 'medium',
 });
 
 export class AgentInitializationService {
@@ -75,8 +75,8 @@ export class AgentInitializationService {
   private static agents = new Map<string, InitializationMessage>();
 
   static async initializeAgent(
-    agentId: string, 
-    options: InitializationOptions = {}
+    agentId: string,
+    options: InitializationOptions = {},
   ): Promise<boolean> {
     try {
       if (this.initialized.has(agentId)) {
@@ -86,16 +86,16 @@ export class AgentInitializationService {
 
       const initMessage = createInitializationMessage(agentId, options);
       console.log('Broadcasting initialization message:', initMessage);
-      
+
       // Store agent information
       this.agents.set(agentId, initMessage);
-      
+
       // Mock broadcast - in real implementation would use message bus
       await this.broadcastMessage(initMessage);
-      
+
       this.initialized.add(agentId);
       console.log(`Agent ${agentId} initialized successfully`);
-      
+
       return true;
     } catch (error) {
       console.error(`Failed to initialize agent ${agentId}:`, error);
@@ -121,40 +121,40 @@ export class AgentInitializationService {
 
   static getAgentsByCapability(capability: string): string[] {
     const agents: string[] = [];
-    
+
     for (const [agentId, message] of this.agents.entries()) {
       if (message.payload.capabilities.includes(capability)) {
         agents.push(agentId);
       }
     }
-    
+
     return agents;
   }
 
   static updateAgentCapabilities(agentId: string, capabilities: string[]): boolean {
     const agentInfo = this.agents.get(agentId);
-    
+
     if (!agentInfo || !this.initialized.has(agentId)) {
       return false;
     }
 
     agentInfo.payload.capabilities = capabilities;
     agentInfo.timestamp = new Date().toISOString();
-    
+
     console.log(`Updated capabilities for agent ${agentId}:`, capabilities);
     return true;
   }
 
   static updateAgentStatus(agentId: string, status: string): boolean {
     const agentInfo = this.agents.get(agentId);
-    
+
     if (!agentInfo || !this.initialized.has(agentId)) {
       return false;
     }
 
     agentInfo.payload.status = status;
     agentInfo.timestamp = new Date().toISOString();
-    
+
     console.log(`Updated status for agent ${agentId}: ${status}`);
     return true;
   }
@@ -162,9 +162,9 @@ export class AgentInitializationService {
   private static async broadcastMessage(message: InitializationMessage): Promise<void> {
     // Mock implementation - would integrate with actual message bus
     console.log(`Broadcasting to ${message.target}:`, message);
-    
+
     // Simulate async operation
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
   static async shutdown(agentId: string): Promise<boolean> {
@@ -214,15 +214,16 @@ export class AgentInitializationService {
   } {
     const stats = {
       totalAgents: this.agents.size,
-      activeAgents: Array.from(this.agents.values())
-        .filter(agent => agent.payload.status === 'active').length,
-      capabilitiesDistribution: {} as Record<string, number>
+      activeAgents: Array.from(this.agents.values()).filter(
+        (agent) => agent.payload.status === 'active',
+      ).length,
+      capabilitiesDistribution: {} as Record<string, number>,
     };
 
     // Calculate capability distribution
     for (const agent of this.agents.values()) {
       for (const capability of agent.payload.capabilities) {
-        stats.capabilitiesDistribution[capability] = 
+        stats.capabilitiesDistribution[capability] =
           (stats.capabilitiesDistribution[capability] || 0) + 1;
       }
     }

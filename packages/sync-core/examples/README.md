@@ -1,23 +1,27 @@
 # Sync-Core Integration Examples
 
-This directory contains comprehensive examples for integrating sync-core into your services and applications.
+This directory contains comprehensive examples for integrating sync-core into
+your services and applications.
 
 ## Available Examples
 
 ### 1. Basic Integration (`basic-integration.ts`)
 
 **What it covers**:
+
 - Basic synchronization operations
 - Subscribing to sync events
 - Bulk updates with batching
 - Cache management integration
 
 **Best for**:
+
 - Getting started with sync-core
 - Simple CRUD operations with sync
 - Single-resource synchronization
 
 **Key features**:
+
 ```typescript
 // Update with automatic sync
 await userService.updateUser(userId, data, tenantId);
@@ -32,18 +36,21 @@ await userService.bulkUpdateUsers(updates, tenantId);
 ### 2. Agent State Synchronization (`agent-state-sync.ts`)
 
 **What it covers**:
+
 - Real-time agent state tracking
 - Task assignment and progress updates
 - Agent health monitoring with heartbeat
 - Error handling and recovery
 
 **Best for**:
+
 - Distributed agent coordination
 - Task execution tracking
 - Multi-agent workflows
 - Real-time monitoring dashboards
 
 **Key features**:
+
 ```typescript
 // Update agent status
 await agentService.updateAgentStatus(agentId, 'PROCESSING', metadata);
@@ -58,24 +65,32 @@ await agentService.monitorAgentHealth(agentId);
 ### 3. Conflict Resolution (`conflict-resolution.ts`)
 
 **What it covers**:
+
 - Conflict detection strategies
 - Multiple resolution strategies (latest-wins, smart-merge, manual)
 - Content merging algorithms
 - Conflict audit trail
 
 **Best for**:
+
 - Collaborative editing
 - Multi-user document management
 - Concurrent data modifications
 - Version control systems
 
 **Key features**:
+
 ```typescript
 // Register custom resolvers
 conflictManager.registerResolver('document', 'smart_merge', smartMergeFunc);
 
 // Handle conflicts automatically
-const resolved = await documentService.updateDocument(docId, updates, userId, tenantId);
+const resolved = await documentService.updateDocument(
+  docId,
+  updates,
+  userId,
+  tenantId
+);
 
 // Get conflict statistics
 const stats = await documentService.getConflictStats(tenantId);
@@ -84,6 +99,7 @@ const stats = await documentService.getConflictStats(tenantId);
 ### 4. Real-Time Notifications (`real-time-notifications.ts`)
 
 **What it covers**:
+
 - Multi-channel notification delivery (WebSocket, email, SMS, push)
 - Priority-based routing
 - System-wide broadcasts
@@ -91,12 +107,14 @@ const stats = await documentService.getConflictStats(tenantId);
 - Notification streams
 
 **Best for**:
+
 - Real-time alerts and updates
 - User engagement
 - System status notifications
 - Critical error alerts
 
 **Key features**:
+
 ```typescript
 // Send notification to user
 await notificationService.notifyUser(userId, tenantId, 'Title', 'Message');
@@ -111,6 +129,7 @@ const stream = await notificationService.streamNotifications(userId, tenantId);
 ### 5. File Watching & CMS Sync (`file-watching-cms-sync.ts`)
 
 **What it covers**:
+
 - File system monitoring
 - Automatic content synchronization
 - Configuration hot-reloading
@@ -118,12 +137,14 @@ const stream = await notificationService.streamNotifications(userId, tenantId);
 - Checksum-based change detection
 
 **Best for**:
+
 - Content Management Systems
 - Configuration management
 - Documentation sites
 - Static site generators
 
 **Key features**:
+
 ```typescript
 // Watch content directory
 await fileWatcher.watchPath('./content', handleContentChange);
@@ -138,6 +159,7 @@ await cmsService.triggerReload(configPath);
 ### 6. Advanced Multi-Service Orchestration (`advanced-multi-service.ts`)
 
 **What it covers**:
+
 - Distributed workflow execution
 - Multi-step task orchestration
 - Dependency management
@@ -146,12 +168,14 @@ await cmsService.triggerReload(configPath);
 - Cross-service coordination
 
 **Best for**:
+
 - Complex business processes
 - Multi-stage pipelines
 - Distributed transactions
 - Service orchestration
 
 **Key features**:
+
 ```typescript
 // Execute distributed workflow
 const workflow = await workflowService.executeWorkflow(workflowDef, tenantId);
@@ -168,7 +192,8 @@ const status = await workflowService.getWorkflowStatus(workflowId);
 
 ### Pattern 1: Single Resource Sync
 
-Use when you need to synchronize a specific resource type (e.g., users, documents).
+Use when you need to synchronize a specific resource type (e.g., users,
+documents).
 
 ```typescript
 // Update local database
@@ -214,12 +239,9 @@ Use when concurrent modifications are expected.
 
 ```typescript
 try {
-  await syncOrchestrator.syncTenantData(
-    tenantId,
-    resourceType,
-    data,
-    { expectedVersion: currentVersion }
-  );
+  await syncOrchestrator.syncTenantData(tenantId, resourceType, data, {
+    expectedVersion: currentVersion,
+  });
 } catch (error) {
   if (error.code === 'VERSION_CONFLICT') {
     // Handle conflict
@@ -260,12 +282,14 @@ When integrating sync-core into your service:
 ### When to Use Batching
 
 ✅ **Use batching for**:
+
 - Bulk operations (> 10 items)
 - Background sync jobs
 - Data imports
 - Batch notifications
 
 ❌ **Don't use batching for**:
+
 - Real-time user interactions
 - Critical updates
 - High-priority notifications
@@ -273,12 +297,14 @@ When integrating sync-core into your service:
 ### When to Use Global vs Tenant Sync
 
 **Global Sync** (`syncGlobalData`):
+
 - Configuration changes
 - System-wide announcements
 - Feature flags
 - Prompt templates (shared across tenants)
 
 **Tenant Sync** (`syncTenantData`):
+
 - User data
 - Tenant-specific resources
 - Documents and content
@@ -288,10 +314,10 @@ When integrating sync-core into your service:
 
 ```typescript
 // High-frequency reads, infrequent writes
-await cache.set(key, value, ttl = 3600); // 1 hour
+await cache.set(key, value, (ttl = 3600)); // 1 hour
 
 // Low-frequency reads, frequent writes
-await cache.set(key, value, ttl = 60); // 1 minute
+await cache.set(key, value, (ttl = 60)); // 1 minute
 
 // Critical real-time data
 // Don't cache, always sync
@@ -345,14 +371,12 @@ describe('SyncIntegration E2E', () => {
     });
 
     // Publish from another instance
-    await syncOrchestrator.syncTenantData(
-      'tenant-123',
-      'test',
-      { data: 'test' }
-    );
+    await syncOrchestrator.syncTenantData('tenant-123', 'test', {
+      data: 'test',
+    });
 
     // Wait for sync
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(received).toHaveLength(1);
   });
@@ -364,6 +388,7 @@ describe('SyncIntegration E2E', () => {
 ### Common Issues
 
 **Issue**: Sync operations are slow
+
 ```typescript
 // Check metrics
 const metrics = syncOrchestrator.getMetrics();
@@ -373,6 +398,7 @@ console.log('Avg latency:', metrics.performance.avgSyncLatency);
 ```
 
 **Issue**: High conflict rate
+
 ```typescript
 // Check conflict stats
 const stats = conflictManager.getStats();
@@ -382,9 +408,12 @@ console.log('Conflict rate:', stats.conflictRate);
 ```
 
 **Issue**: Memory leaks from subscriptions
+
 ```typescript
 // Always unsubscribe when done
-const handler = (event) => { /* ... */ };
+const handler = (event) => {
+  /* ... */
+};
 syncOrchestrator.subscribe('resource', handler);
 
 // Later...
@@ -393,9 +422,11 @@ syncOrchestrator.unsubscribe('resource', handler);
 
 ## Best Practices
 
-1. **Always sync after database updates** - Keep sync-core in sync with database state
+1. **Always sync after database updates** - Keep sync-core in sync with database
+   state
 2. **Use appropriate TTLs for caching** - Balance freshness vs performance
-3. **Implement proper error handling** - Sync failures shouldn't break your service
+3. **Implement proper error handling** - Sync failures shouldn't break your
+   service
 4. **Monitor sync metrics** - Track latency and success rates
 5. **Test conflict scenarios** - Ensure your conflict resolution works correctly
 6. **Use tenant isolation** - Don't mix tenant data in global sync

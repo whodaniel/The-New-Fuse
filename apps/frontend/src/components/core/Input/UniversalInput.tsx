@@ -1,29 +1,32 @@
 // UniversalInput.tsx
-import React, { ChangeEvent, forwardRef } from "react";
+import React, { ChangeEvent, forwardRef } from 'react';
 
 export type InputSource =
-  | "user"
-  | "ai"
-  | "web"
-  | "chrome-extension"
-  | "relay"
-  | "vscode-extension"
-  | "terminal"
+  | 'user'
+  | 'ai'
+  | 'web'
+  | 'chrome-extension'
+  | 'relay'
+  | 'vscode-extension'
+  | 'terminal'
   | string;
 
 export type InputDestination =
-  | "ai"
-  | "user"
-  | "web"
-  | "chrome-extension"
-  | "relay"
-  | "vscode-extension"
-  | "terminal"
+  | 'ai'
+  | 'user'
+  | 'web'
+  | 'chrome-extension'
+  | 'relay'
+  | 'vscode-extension'
+  | 'terminal'
   | string;
 
 export interface UniversalInputProps {
   value: string;
-  onChange: (value: string, meta?: { source?: InputSource; destination?: InputDestination }) => void;
+  onChange: (
+    value: string,
+    meta?: { source?: InputSource; destination?: InputDestination }
+  ) => void;
   source?: InputSource;
   destination?: InputDestination;
   type?: React.HTMLInputTypeAttribute;
@@ -46,13 +49,13 @@ export const UniversalInput = forwardRef<HTMLInputElement, UniversalInputProps>(
     {
       value,
       onChange,
-      source = "user",
-      destination = "ai",
-      type = "text",
-      placeholder = "",
+      source = 'user',
+      destination = 'ai',
+      type = 'text',
+      placeholder = '',
       disabled = false,
       autoFocus = false,
-      className = "",
+      className = '',
       style = {},
       ...rest
     },
@@ -82,4 +85,4 @@ export const UniversalInput = forwardRef<HTMLInputElement, UniversalInputProps>(
   }
 );
 
-UniversalInput.displayName = "UniversalInput";
+UniversalInput.displayName = 'UniversalInput';

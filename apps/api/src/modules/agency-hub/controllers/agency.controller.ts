@@ -19,6 +19,8 @@ import {
   Post,
   Put,
   Query,
+  UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
@@ -29,7 +31,14 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { DatabaseService } from '@the-new-fuse/database';
+import { DatabaseService, drizzleAgentRepository, drizzleAuditLogsRepository } from '@the-new-fuse/database';
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../../guards/roles.guard';
+import { Roles } from '../../../decorators/roles.decorator';
+import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
+import { UserRole } from '../../../types/user.types';
+import { AgencyRegistrationReportDto } from './dto/agency-registrations.dto';
+import { EnhancedRateLimitService } from '../../../security/enhanced-rate-limit.service';
 
 // Local services
 import { AgentSwarmOrchestrationService } from '../services/agent-swarm-orchestration.service';
@@ -322,7 +331,8 @@ export class AgencyController {
   constructor(
     private readonly db: DatabaseService,
     private readonly eventEmitter: EventEmitter2,
-    private readonly swarmService: AgentSwarmOrchestrationService
+    private readonly swarmService: AgentSwarmOrchestrationService,
+    private readonly rateLimitService: EnhancedRateLimitService
   ) {
     this.agencyService = new AgencyServiceLocal(db, eventEmitter);
   }
@@ -393,6 +403,63 @@ export class AgencyController {
     } catch (error) {
       throw new HttpException((error as Error).message || 'Agency not found', HttpStatus.NOT_FOUND);
     }
+  }
+
+  @Get(':agencyId/registrations')
+  @ApiOperation({ summary: 'Get agent registrations for an agency (agency owner/admin)' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, type: AgencyRegistrationReportDto, isArray: true })
+  @ApiQuery({ name: 'tenantId', required: false, description: 'Filter by tenant ID' })
+  @ApiQuery({ name: 'trustTier', required: false, description: 'Filter by trust tier' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.AGENCY_OWNER, UserRole.AGENCY_ADMIN, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async getAgencyRegistrations(
+    @Param('agencyId') agencyId: string,
+    @CurrentUser() user: any,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
+    @Query('tenantId') tenantId?: string,
+    @Query('trustTier') trustTier?: string
+  ) {
+    await this.rateLimitService.checkRateLimit(
+      { path: '/agency/registrations', method: 'GET', headers: {}, ip: user?.ip },
+      'admin'
+    );
+    const agency = await this.agencyService.getAgency(agencyId);
+
+    const isAdmin =
+      user?.role === UserRole.ADMIN ||
+      user?.role === UserRole.SUPER_ADMIN ||
+      user?.role === UserRole.AGENCY_ADMIN ||
+      user?.role === UserRole.AGENCY_OWNER;
+
+    if (!isAdmin && user?.id !== agency.ownerId) {
+      throw new UnauthorizedException('Not authorized to access agency registrations');
+    }
+
+    const results = await drizzleAgentRepository.findRegistrationsByProtocol({
+      agencyId: agency.id,
+      tenantId,
+      trustTier,
+      limit: limit ? Number(limit) : undefined,
+      offset: offset ? Number(offset) : undefined,
+    });
+
+    await drizzleAuditLogsRepository.create({
+      action: 'agency.registrations.report',
+      resourceType: 'agency',
+      resourceId: agency.id,
+      status: 'success',
+      details: {
+        agencyId: agency.id,
+        requesterId: user?.id,
+        limit: limit ? Number(limit) : undefined,
+        offset: offset ? Number(offset) : undefined,
+        resultCount: results.length,
+      },
+    });
+
+    return results as AgencyRegistrationReportDto[];
   }
 
   @Put(':agencyId')

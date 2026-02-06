@@ -1,19 +1,10 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Progress } from '../ui/progress';
-import { 
-  Coins, 
-  Share, 
-  TrendingUp, 
-  Users, 
-  ExternalLink,
-  Wallet,
-  Settings,
-  Eye
-} from 'lucide-react';
 import { formatEther } from 'ethers';
+import { Coins, ExternalLink, Eye, Settings, Share, TrendingUp, Users, Wallet } from 'lucide-react';
+import React, { useState } from 'react';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
+import { Progress } from '../ui/progress';
 
 export interface AgentNFT {
   id: string;
@@ -76,26 +67,29 @@ export const AgentNFTCard: React.FC<AgentNFTCardProps> = ({
   onFractionalize,
   onViewDetails,
   onBuyShares,
-  onManageRevenue
+  onManageRevenue,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Calculate user's ownership percentage
   const userShares = agentNft.fractionalShares
-    .filter(share => share.ownerAddress.toLowerCase() === userAddress?.toLowerCase())
+    .filter((share) => share.ownerAddress.toLowerCase() === userAddress?.toLowerCase())
     .reduce((total, share) => total + share.shareAmount, 0);
-  
-  const ownershipPercentage = agentNft.isFractionalized 
-    ? (userShares / agentNft.totalShares) * 100 
+
+  const ownershipPercentage = agentNft.isFractionalized
+    ? (userShares / agentNft.totalShares) * 100
     : 0;
 
   // Calculate total revenue
-  const totalRevenue = agentNft.revenueStreams
-    .reduce((total, stream) => total + parseFloat(formatEther(stream.totalRevenue || '0')), 0);
+  const totalRevenue = agentNft.revenueStreams.reduce(
+    (total, stream) => total + parseFloat(formatEther(stream.totalRevenue || '0')),
+    0
+  );
 
   // Find active listings
-  const activeListings = agentNft.marketplaceListings
-    .filter(listing => listing.status === 'ACTIVE');
+  const activeListings = agentNft.marketplaceListings.filter(
+    (listing) => listing.status === 'ACTIVE'
+  );
 
   return (
     <Card className="w-full max-w-md hover:shadow-lg transition-shadow duration-200">
@@ -120,19 +114,13 @@ export const AgentNFTCard: React.FC<AgentNFTCardProps> = ({
               </Badge>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => setIsExpanded(!isExpanded)}>
             <Eye className="w-4 h-4" />
           </Button>
         </div>
-        
+
         {agentNft.agent.description && (
-          <p className="text-sm text-muted-foreground mt-2">
-            {agentNft.agent.description}
-          </p>
+          <p className="text-sm text-muted-foreground mt-2">{agentNft.agent.description}</p>
         )}
       </CardHeader>
 
@@ -217,7 +205,7 @@ export const AgentNFTCard: React.FC<AgentNFTCardProps> = ({
 
       <CardFooter className="flex flex-wrap gap-2">
         {agentNft && !agentNft.isFractionalized && onFractionalize && (
-          <Button 
+          <Button
             onClick={() => onFractionalize(agentNft.id)}
             size="sm"
             variant="outline"
@@ -229,7 +217,7 @@ export const AgentNFTCard: React.FC<AgentNFTCardProps> = ({
         )}
 
         {activeListings.length > 0 && onBuyShares && (
-          <Button 
+          <Button
             onClick={() => onBuyShares(activeListings[0].id)}
             size="sm"
             variant="outline"
@@ -241,22 +229,14 @@ export const AgentNFTCard: React.FC<AgentNFTCardProps> = ({
         )}
 
         {agentNft.revenueStreams.length > 0 && onManageRevenue && (
-          <Button 
-            onClick={() => onManageRevenue(agentNft.id)}
-            size="sm"
-            variant="outline"
-          >
+          <Button onClick={() => onManageRevenue(agentNft.id)} size="sm" variant="outline">
             <Settings className="w-4 h-4 mr-2" />
             Manage
           </Button>
         )}
 
         {onViewDetails && (
-          <Button 
-            onClick={() => onViewDetails(agentNft)}
-            size="sm"
-            variant="ghost"
-          >
+          <Button onClick={() => onViewDetails(agentNft)} size="sm" variant="ghost">
             <ExternalLink className="w-4 h-4 mr-2" />
             Details
           </Button>

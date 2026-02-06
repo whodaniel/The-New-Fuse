@@ -2,7 +2,7 @@
  * Loading State Hook
  * Simplifies loading state management for async operations
  */
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 /**
  * Simple loading state hook with loading wrapper function
@@ -10,20 +10,17 @@ import { useState, useCallback } from 'react';
 export function useLoading(initialState = false) {
   const [isLoading, setIsLoading] = useState(initialState);
 
-  const withLoading = useCallback(
-    async <T,>(asyncFn: () => Promise<T>): Promise<T | undefined> => {
-      setIsLoading(true);
-      try {
-        const result = await asyncFn();
-        return result;
-      } catch (error) {
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    []
-  );
+  const withLoading = useCallback(async <T>(asyncFn: () => Promise<T>): Promise<T | undefined> => {
+    setIsLoading(true);
+    try {
+      const result = await asyncFn();
+      return result;
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const startLoading = useCallback(() => setIsLoading(true), []);
   const stopLoading = useCallback(() => setIsLoading(false), []);

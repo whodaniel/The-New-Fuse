@@ -1,27 +1,31 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, Button, Input, } from '@/components/core';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Search, Users, Brain } from 'lucide-react';
+import { Button, Card, CardContent, CardHeader, CardTitle, Input } from '@/components/core';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Brain, MoreHorizontal, Search, Users } from 'lucide-react';
+import { useState } from 'react';
 const Workspaces = () => {
-    const [searchQuery, setSearchQuery] = useState('');
-    const workspaces = [
-        {
-            id: '1',
-            name: 'Research Lab',
-            owner: 'John Doe',
-            members: 12,
-            neuralNetworks: 5,
-            storageUsed: '45.2 GB',
-            status: 'active',
-            lastActive: '2 hours ago',
-        },
-    ];
-    return (<div className="space-y-6">
+  const [searchQuery, setSearchQuery] = useState('');
+  const workspaces = [
+    {
+      id: '1',
+      name: 'Research Lab',
+      owner: 'John Doe',
+      members: 12,
+      neuralNetworks: 5,
+      storageUsed: '45.2 GB',
+      status: 'active',
+      lastActive: '2 hours ago',
+    },
+  ];
+  return (
+    <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Workspaces</h1>
-        <p className="text-muted-foreground mt-2">
-          Monitor and manage all workspaces
-        </p>
+        <p className="text-muted-foreground mt-2">Monitor and manage all workspaces</p>
       </div>
 
       <Card>
@@ -30,8 +34,13 @@ const Workspaces = () => {
             <CardTitle>All Workspaces</CardTitle>
             <div className="flex items-center space-x-2">
               <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"/>
-                <Input placeholder="Search workspaces..." className="pl-8" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}/>
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search workspaces..."
+                  className="pl-8"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
             </div>
           </div>
@@ -47,33 +56,36 @@ const Workspaces = () => {
               <div>Status</div>
               <div>Last Active</div>
             </div>
-            {workspaces.map((workspace) => (<div key={workspace.id} className="grid grid-cols-7 gap-4 p-4 border-t items-center">
+            {workspaces.map((workspace) => (
+              <div key={workspace.id} className="grid grid-cols-7 gap-4 p-4 border-t items-center">
                 <div className="font-medium">{workspace.name}</div>
                 <div className="text-muted-foreground">{workspace.owner}</div>
                 <div className="flex items-center space-x-1">
-                  <Users className="h-4 w-4"/>
+                  <Users className="h-4 w-4" />
                   <span>{workspace.members}</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <Brain className="h-4 w-4"/>
+                  <Brain className="h-4 w-4" />
                   <span>{workspace.neuralNetworks}</span>
                 </div>
                 <div>{workspace.storageUsed}</div>
                 <div>
-                  <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${workspace.status === 'active'
-                ? 'bg-green-50 text-green-700'
-                : 'bg-red-50 text-red-700'}`}>
+                  <span
+                    className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                      workspace.status === 'active'
+                        ? 'bg-green-50 text-green-700'
+                        : 'bg-red-50 text-red-700'
+                    }`}
+                  >
                     {workspace.status}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">
-                    {workspace.lastActive}
-                  </span>
+                  <span className="text-muted-foreground">{workspace.lastActive}</span>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm">
-                        <MoreHorizontal className="h-4 w-4"/>
+                        <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -86,7 +98,8 @@ const Workspaces = () => {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-              </div>))}
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -114,6 +127,7 @@ const Workspaces = () => {
           </CardContent>
         </Card>
       </div>
-    </div>);
+    </div>
+  );
 };
 export default Workspaces;

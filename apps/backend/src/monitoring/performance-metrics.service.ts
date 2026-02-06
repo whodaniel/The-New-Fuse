@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Counter, Histogram, Gauge, Registry } from 'prom-client';
+import { Counter, Gauge, Histogram, Registry } from 'prom-client';
 
 /**
  * Performance Metrics Service
@@ -141,19 +141,10 @@ export class PerformanceMetricsService {
   }
 
   // HTTP Metrics Methods
-  recordHttpRequest(
-    method: string,
-    route: string,
-    statusCode: number,
-    duration: number,
-  ): void {
-    this.httpRequestDuration
-      .labels(method, route, statusCode.toString())
-      .observe(duration / 1000); // Convert to seconds
+  recordHttpRequest(method: string, route: string, statusCode: number, duration: number): void {
+    this.httpRequestDuration.labels(method, route, statusCode.toString()).observe(duration / 1000); // Convert to seconds
 
-    this.httpRequestTotal
-      .labels(method, route, statusCode.toString())
-      .inc();
+    this.httpRequestTotal.labels(method, route, statusCode.toString()).inc();
   }
 
   recordHttpError(method: string, route: string, errorType: string): void {
@@ -170,9 +161,7 @@ export class PerformanceMetricsService {
 
   // Database Metrics Methods
   recordDbQuery(operation: string, table: string, duration: number): void {
-    this.dbQueryDuration
-      .labels(operation, table)
-      .observe(duration / 1000); // Convert to seconds
+    this.dbQueryDuration.labels(operation, table).observe(duration / 1000); // Convert to seconds
   }
 
   recordDbError(operation: string, table: string, errorType: string): void {
@@ -196,14 +185,8 @@ export class PerformanceMetricsService {
     this.cacheMisses.labels(cacheType).inc();
   }
 
-  recordCacheOperation(
-    operation: string,
-    cacheType: string,
-    duration: number,
-  ): void {
-    this.cacheOperationDuration
-      .labels(operation, cacheType)
-      .observe(duration / 1000); // Convert to seconds
+  recordCacheOperation(operation: string, cacheType: string, duration: number): void {
+    this.cacheOperationDuration.labels(operation, cacheType).observe(duration / 1000); // Convert to seconds
   }
 
   // Business Metrics Methods

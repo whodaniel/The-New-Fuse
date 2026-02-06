@@ -253,26 +253,78 @@ export const PremiumLayout: React.FC<PremiumLayoutProps> = ({
         {showSidebar && layout.sidebarOpen && (
           <aside className="hidden md:block w-64 fixed left-0 top-16 bottom-0 backdrop-blur-xl bg-white/5 border-r border-white/10 shadow-2xl overflow-y-auto">
             <nav className="p-4 space-y-2">
-              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-4">Core</div>
-              <SidebarLink to="/dashboard" icon={<Home className="w-5 h-5" />} label="Command Center" />
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-4">
+                Core
+              </div>
+              <SidebarLink
+                to="/dashboard"
+                icon={<Home className="w-5 h-5" />}
+                label="Command Center"
+              />
               <SidebarLink to="/ai-portal" icon={<User className="w-5 h-5" />} label="AI Agents" />
-              <SidebarLink to="/multi-agent-chat" icon={<Bell className="w-5 h-5" />} label="Multi-Agent Chat" />
-              
-              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mt-6 mb-2 px-4">Automation</div>
-              <SidebarLink to="/workflows" icon={<Settings className="w-5 h-5" />} label="Workflow Engine" />
-              <SidebarLink to="/workflows/builder" icon={<PlusCircle className="w-5 h-5" />} label="Pipeline Builder" />
-              <SidebarLink to="/workflows/console" icon={<Activity className="w-5 h-5" />} label="Workflow Runtime" />
-              
-              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mt-6 mb-2 px-4">Orchestration</div>
+              <SidebarLink
+                to="/multi-agent-chat"
+                icon={<Bell className="w-5 h-5" />}
+                label="Multi-Agent Chat"
+              />
+
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mt-6 mb-2 px-4">
+                Automation
+              </div>
+              <SidebarLink
+                to="/workflows"
+                icon={<Settings className="w-5 h-5" />}
+                label="Workflow Engine"
+              />
+              <SidebarLink
+                to="/workflows/builder"
+                icon={<PlusCircle className="w-5 h-5" />}
+                label="Pipeline Builder"
+              />
+              <SidebarLink
+                to="/workflows/console"
+                icon={<Activity className="w-5 h-5" />}
+                label="Workflow Runtime"
+              />
+
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mt-6 mb-2 px-4">
+                Orchestration
+              </div>
               <SidebarLink to="/mcp-hub" icon={<Zap className="w-5 h-5" />} label="MCP Hub" />
-              <SidebarLink to="/knowledge-hub" icon={<Database className="w-5 h-5" />} label="Knowledge Studio" />
-              <SidebarLink to="/a2a-control" icon={<Share2 className="w-5 h-5" />} label="A2A Coordination" />
-              <SidebarLink to="/live-view" icon={<Activity className="w-5 h-5" />} label="Direct Live View" />
-              
-              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mt-6 mb-2 px-4">Infrastructure</div>
-              <SidebarLink to="/admin/system-health" icon={<Activity className="w-5 h-5" />} label="System Metrics" />
-              <SidebarLink to="/admin/port-management" icon={<Shield className="w-5 h-5" />} label="Port Firewall" />
-              <SidebarLink to="/build-info" icon={<Settings className="w-5 h-5" />} label="System Config" />
+              <SidebarLink
+                to="/knowledge-hub"
+                icon={<Database className="w-5 h-5" />}
+                label="Knowledge Studio"
+              />
+              <SidebarLink
+                to="/a2a-control"
+                icon={<Share2 className="w-5 h-5" />}
+                label="A2A Coordination"
+              />
+              <SidebarLink
+                to="/live-view"
+                icon={<Activity className="w-5 h-5" />}
+                label="Direct Live View"
+              />
+
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mt-6 mb-2 px-4">
+                Infrastructure
+              </div>
+              <SidebarLink
+                to="/admin/system-health"
+                icon={<Activity className="w-5 h-5" />}
+                label="System Metrics"
+              />
+              <SidebarLink
+                to="/admin/port-management"
+                icon={<Shield className="w-5 h-5" />}
+                label="Port Firewall"
+              />
+              <SidebarLink
+                to="/build-info"
+                icon={<Settings className="w-5 h-5" />}
+                label="System Config"
+              />
             </nav>
           </aside>
         )}

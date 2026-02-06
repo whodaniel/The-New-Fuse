@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -9,19 +9,32 @@
     <script>
       (function () {
         console.log('[The New Fuse] Custom Element Guard (V4-SIMPLIFIED) - Initializing...');
-        window.addEventListener('error', function(event) {
-          if (event.message && (event.message.includes('mce-autosize-textarea') || event.message.includes('already been defined'))) {
-            event.preventDefault(); event.stopImmediatePropagation(); return true;
-          }
-        }, true);
+        window.addEventListener(
+          'error',
+          function (event) {
+            if (
+              event.message &&
+              (event.message.includes('mce-autosize-textarea') ||
+                event.message.includes('already been defined'))
+            ) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              return true;
+            }
+          },
+          true
+        );
         try {
           const originalDefine = customElements.define.bind(customElements);
           Object.defineProperty(customElements, 'define', {
             value: function (name, constructor, options) {
               if (customElements.get(name)) return;
-              try { originalDefine(name, constructor, options); } catch (e) {}
+              try {
+                originalDefine(name, constructor, options);
+              } catch (e) {}
             },
-            configurable: false, writable: false,
+            configurable: false,
+            writable: false,
           });
           console.log('[The New Fuse] Guard Activated (Simplified)');
         } catch (e) {}

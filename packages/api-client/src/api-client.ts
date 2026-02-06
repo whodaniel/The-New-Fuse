@@ -3,7 +3,7 @@
  * Provides a centralized way to make API requests with proper error handling and authentication
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 /**
  * API response interface
@@ -108,7 +108,7 @@ export class ApiClient {
       (response) => response,
       async (error: AxiosError) => {
         const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
-        
+
         // Handle token refresh
         if (
           error.response?.status === 401 &&
@@ -191,10 +191,7 @@ export class ApiClient {
    * @param config Axios request config
    * @returns Promise with response data
    */
-  public async get<T = any>(
-    url: string,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> {
+  public async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     try {
       const response: AxiosResponse<ApiResponse<T>> = await this.axios.get(url, config);
       return response.data;
@@ -269,10 +266,7 @@ export class ApiClient {
    * @param config Axios request config
    * @returns Promise with response data
    */
-  public async delete<T = any>(
-    url: string,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> {
+  public async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     try {
       const response: AxiosResponse<ApiResponse<T>> = await this.axios.delete(url, config);
       return response.data;
@@ -286,7 +280,7 @@ export class ApiClient {
  * Create a new API client instance
  * @param config API client configuration
  * @returns API client instance
- * 
+ *
  * @example
  * // Create a new API client
  * const api = createApiClient({
@@ -297,7 +291,7 @@ export class ApiClient {
  *     window.location.href = '/login';
  *   }
  * });
- * 
+ *
  * // Make API requests
  * const { data } = await api.get('/users');
  * const { data: user } = await api.post('/users', { name: 'John Doe' });

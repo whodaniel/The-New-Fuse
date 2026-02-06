@@ -1,4 +1,3 @@
-
 import { Injectable, Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { Task } from './TaskTypes';
@@ -25,10 +24,7 @@ export class TaskService {
     return this.tasks.find((task) => task.id === taskId);
   }
 
-  async updateTask(
-    taskId: string,
-    updates: Partial<Task>,
-  ): Promise<Task | undefined> {
+  async updateTask(taskId: string, updates: Partial<Task>): Promise<Task | undefined> {
     const taskIndex = this.tasks.findIndex((task) => task.id === taskId);
     if (taskIndex === -1) {
       return undefined;

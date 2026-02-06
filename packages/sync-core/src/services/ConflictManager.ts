@@ -1,14 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { BaseErrorHandler, ErrorCategory, ErrorSeverity } from '@the-new-fuse/core-error-handling';
+import { DatabaseService, SyncConflict } from '@the-new-fuse/database/generated/db';
 import { EventEmitter } from 'events';
-import { PrismaClient, SyncConflict, AuthEvent } from '@the-new-fuse/database/generated/prisma';
-import { BaseErrorHandler, ErrorSeverity, ErrorCategory } from '@the-new-fuse/core-error-handling';
 import { SyncDatabaseService } from '../database/SyncDatabaseService';
-import { 
-  SyncConflictData, 
-  ConflictResolution, 
+import {
+  ConflictResolution,
   ConflictResolutionStrategy,
   SyncResourceType,
-  TenantSyncContext 
+  TenantSyncContext,
 } from '../types';
 
 /**
@@ -45,7 +44,7 @@ interface ConflictResolutionContext {
 
 /**
  * ConflictManager handles synchronization conflicts using existing database transaction patterns
- * Integrates with existing Prisma database infrastructure and audit logging
+ * Integrates with existing Drizzle database infrastructure and audit logging
  */
 @Injectable()
 export class ConflictManager extends EventEmitter {
@@ -53,7 +52,7 @@ export class ConflictManager extends EventEmitter {
   private errorHandler: BaseErrorHandler<ConflictError, ConflictResolutionContext>;
 
   constructor(
-    private readonly prisma: PrismaClient,
+    private readonly db: DatabaseService,
     private readonly syncDb: SyncDatabaseService
   ) {
     super();
@@ -62,15 +61,19 @@ export class ConflictManager extends EventEmitter {
       maxRecoveryAttempts: 3,
       statisticsInterval: 60000,
       enableLogging: true,
-      logLevel: 'error'
+      logLevel: 'error',
     });
     this.initializeErrorHandling();
   }
 
   private initializeErrorHandling() {
     // We need to bind the methods to the errorHandler instance
-    this.initializeDefaultRecoveryStrategies = this.initializeDefaultRecoveryStrategies.bind(this.errorHandler);
-    this.initializeDefaultErrorHandlers = this.initializeDefaultErrorHandlers.bind(this.errorHandler);
+    this.initializeDefaultRecoveryStrategies = this.initializeDefaultRecoveryStrategies.bind(
+      this.errorHandler
+    );
+    this.initializeDefaultErrorHandlers = this.initializeDefaultErrorHandlers.bind(
+      this.errorHandler
+    );
 
     this.initializeDefaultRecoveryStrategies();
     this.initializeDefaultErrorHandlers();
@@ -89,7 +92,7 @@ export class ConflictManager extends EventEmitter {
     try {
       // Get current sync state
       const currentState = await this.syncDb.getSyncState(resourceType, resourceId, tenantId);
-      
+
       if (!currentState) {
         // No existing state, no conflict
         return null;
@@ -97,14 +100,14 @@ export class ConflictManager extends EventEmitter {
 
       // Detect conflict types
       const conflictType = this.determineConflictType(currentState, localVersion, remoteVersion);
-      
+
       if (!conflictType) {
         // No conflict detected
         return null;
       }
 
       // Create conflict record using database transaction
-      return await this.prisma.$transaction(async (tx) => {
+      return await this.db.$transaction(async (tx) => {
         const conflict = await tx.syncConflict.create({
           data: {
             resourceType,
@@ -143,7 +146,6 @@ export class ConflictManager extends EventEmitter {
 
         return conflict;
       });
-
     } catch (error) {
       const conflictError: ConflictError = {
         code: 5001,
@@ -156,14 +158,14 @@ export class ConflictManager extends EventEmitter {
         resourceId,
         tenantId,
         conflictType: 'detection_error',
-        metadata: { originalError: error }
+        metadata: { originalError: error },
       };
 
       await this.errorHandler.handleError(conflictError, {
         component: 'ConflictManager',
         operation: 'detectConflict',
         tenantId,
-        metadata: { resourceType, resourceId }
+        metadata: { resourceType, resourceId },
       });
 
       throw error;
@@ -180,7 +182,7 @@ export class ConflictManager extends EventEmitter {
     context?: TenantSyncContext
   ): Promise<ConflictResolution> {
     try {
-      return await this.prisma.$transaction(async (tx) => {
+      return await this.db.$transaction(async (tx) => {
         // Get the conflict
         const conflict = await tx.syncConflict.findUnique({
           where: { id: conflictId },
@@ -195,11 +197,7 @@ export class ConflictManager extends EventEmitter {
         }
 
         // Apply resolution strategy
-        const resolution = await this.applyResolutionStrategy(
-          strategy,
-          conflict,
-          context
-        );
+        const resolution = await this.applyResolutionStrategy(strategy, conflict, context);
 
         // Update conflict record
         const resolvedConflict = await tx.syncConflict.update({
@@ -254,7 +252,6 @@ export class ConflictManager extends EventEmitter {
 
         return resolution;
       });
-
     } catch (error) {
       const conflictError: ConflictError = {
         code: 5002,
@@ -266,13 +263,13 @@ export class ConflictManager extends EventEmitter {
         resourceType: 'unknown',
         resourceId: 'unknown',
         conflictType: 'resolution_error',
-        metadata: { conflictId, strategy, originalError: error }
+        metadata: { conflictId, strategy, originalError: error },
       };
 
       await this.errorHandler.handleError(conflictError, {
         component: 'ConflictManager',
         operation: 'resolveConflict',
-        metadata: { conflictId, strategy }
+        metadata: { conflictId, strategy },
       });
 
       throw error;
@@ -302,11 +299,11 @@ export class ConflictManager extends EventEmitter {
     try {
       return await this.syncDb.getResourceConflicts(resourceType, resourceId, tenantId);
     } catch (error) {
-      this.logger.error('Failed to get resource conflicts', { 
-        resourceType, 
-        resourceId, 
-        tenantId, 
-        error 
+      this.logger.error('Failed to get resource conflicts', {
+        resourceType,
+        resourceId,
+        tenantId,
+        error,
       });
       throw error;
     }
@@ -324,7 +321,7 @@ export class ConflictManager extends EventEmitter {
       for (const conflict of pendingConflicts) {
         try {
           const autoStrategy = this.determineAutoResolutionStrategy(conflict);
-          
+
           if (autoStrategy) {
             await this.resolveConflict(
               conflict.id,
@@ -341,7 +338,6 @@ export class ConflictManager extends EventEmitter {
 
       this.logger.log(`Auto-resolved ${resolvedCount} conflicts`, { tenantId });
       return resolvedCount;
-
     } catch (error) {
       this.logger.error('Failed to auto-resolve conflicts', { tenantId, error });
       throw error;
@@ -386,7 +382,7 @@ export class ConflictManager extends EventEmitter {
         this.logger.debug(`Retrying database operation for error ${error.code}`);
         // Simple retry - the operation will be retried by the caller
         return true;
-      }
+      },
     });
 
     // Conflict resolution fallback strategy
@@ -399,7 +395,7 @@ export class ConflictManager extends EventEmitter {
         this.logger.warn(`Applying fallback resolution for conflict error`);
         // Could implement a safe fallback resolution here
         return false; // Let manual intervention handle it
-      }
+      },
     });
   }
 
@@ -414,10 +410,10 @@ export class ConflictManager extends EventEmitter {
       handle: async (error, context) => {
         this.logger.error('Database connection error in conflict detection', {
           error: error.message,
-          context
+          context,
         });
         // Could implement database health check here
-      }
+      },
     });
 
     // Conflict resolution error handler
@@ -427,10 +423,10 @@ export class ConflictManager extends EventEmitter {
       handle: async (error, context) => {
         this.logger.error('Conflict resolution error', {
           error: error.message,
-          context
+          context,
         });
         // Could implement escalation to manual resolution here
-      }
+      },
     });
   }
 
@@ -478,33 +474,33 @@ export class ConflictManager extends EventEmitter {
         return {
           strategy,
           resolvedData: conflict.remoteVersion,
-          metadata: { 
+          metadata: {
             resolvedAt: new Date(),
             strategy: 'latest_wins',
-            reason: 'Remote version selected as latest'
-          }
+            reason: 'Remote version selected as latest',
+          },
         };
 
       case 'merge':
         return {
           strategy,
           resolvedData: this.mergeVersions(conflict.localVersion, conflict.remoteVersion),
-          metadata: { 
+          metadata: {
             resolvedAt: new Date(),
             strategy: 'merge',
-            reason: 'Versions merged automatically'
-          }
+            reason: 'Versions merged automatically',
+          },
         };
 
       case 'rollback':
         return {
           strategy,
           resolvedData: conflict.localVersion,
-          metadata: { 
+          metadata: {
             resolvedAt: new Date(),
             strategy: 'rollback',
-            reason: 'Rolled back to local version'
-          }
+            reason: 'Rolled back to local version',
+          },
         };
 
       case 'manual':
@@ -518,21 +514,23 @@ export class ConflictManager extends EventEmitter {
   /**
    * Determine auto-resolution strategy for a conflict
    */
-  private determineAutoResolutionStrategy(conflict: SyncConflict): ConflictResolutionStrategy | null {
+  private determineAutoResolutionStrategy(
+    conflict: SyncConflict
+  ): ConflictResolutionStrategy | null {
     // Simple rules for auto-resolution
     switch (conflict.conflictType) {
       case 'version':
         // For version conflicts, prefer latest
         return 'latest_wins';
-      
+
       case 'checksum':
         // For checksum conflicts, try merge if possible
         return this.canMerge(conflict.localVersion, conflict.remoteVersion) ? 'merge' : null;
-      
+
       case 'concurrent':
         // Concurrent modifications require manual intervention
         return null;
-      
+
       default:
         return null;
     }
@@ -551,15 +549,15 @@ export class ConflictManager extends EventEmitter {
     if (typeof localVersion === 'object' && typeof remoteVersion === 'object') {
       const localKeys = Object.keys(localVersion);
       const remoteKeys = Object.keys(remoteVersion);
-      const commonKeys = localKeys.filter(key => remoteKeys.includes(key));
-      
+      const commonKeys = localKeys.filter((key) => remoteKeys.includes(key));
+
       // Check if common keys have different values
       for (const key of commonKeys) {
         if (JSON.stringify(localVersion[key]) !== JSON.stringify(remoteVersion[key])) {
           return false; // Conflicting values, can't auto-merge
         }
       }
-      
+
       return true; // No conflicts, can merge
     }
 
@@ -578,7 +576,7 @@ export class ConflictManager extends EventEmitter {
         ...localVersion,
         ...remoteVersion,
         _mergedAt: new Date(),
-        _mergeStrategy: 'auto'
+        _mergeStrategy: 'auto',
       };
     }
 
@@ -610,10 +608,10 @@ export class ConflictManager extends EventEmitter {
       // For system events, we'll use a system user ID or create a system event
       // Since we need a userId for AuthEvent, we'll use a system identifier
       const systemUserId = 'system-sync-manager';
-      
+
       // Try to find or create a system user for audit logging
       let systemUser = await tx.user.findFirst({
-        where: { username: systemUserId }
+        where: { username: systemUserId },
       });
 
       if (!systemUser) {
@@ -626,7 +624,7 @@ export class ConflictManager extends EventEmitter {
             hashedPassword: 'system-account-no-login',
             role: 'ADMIN',
             isActive: false, // System account, not for login
-          }
+          },
         });
       }
 
@@ -638,9 +636,9 @@ export class ConflictManager extends EventEmitter {
             ...event.details,
             tenantId: event.tenantId,
             timestamp: new Date(),
-            source: 'ConflictManager'
-          }
-        }
+            source: 'ConflictManager',
+          },
+        },
       });
     } catch (error) {
       // Don't fail the main operation if audit logging fails

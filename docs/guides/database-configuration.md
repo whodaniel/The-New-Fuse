@@ -2,7 +2,9 @@
 
 ## Overview
 
-The New Fuse uses PostgreSQL as the primary database and Redis for caching/messaging. Both services can run locally or in Docker containers for development, with production deployment supporting various cloud providers.
+The New Fuse uses PostgreSQL as the primary database and Redis for
+caching/messaging. Both services can run locally or in Docker containers for
+development, with production deployment supporting various cloud providers.
 
 ## Architecture
 
@@ -29,12 +31,14 @@ The New Fuse uses PostgreSQL as the primary database and Redis for caching/messa
 ### Docker Development Setup
 
 **Container Details:**
+
 - Image: `postgres:14-alpine`
 - Container: `tnf-postgres-dev`
 - Host Port: `5433`
 - Internal Port: `5432`
 
 **Database Configuration:**
+
 ```yaml
 Database: the_new_fuse_dev
 Username: newfuse
@@ -44,6 +48,7 @@ Port: 5433
 ```
 
 **Connection String:**
+
 ```
 postgresql://newfuse:secretpass123@localhost:5433/the_new_fuse_dev
 ```
@@ -110,12 +115,14 @@ docker exec tnf-postgres-dev pg_dump -U newfuse -d the_new_fuse_dev | gzip > bac
 ### Docker Development Setup
 
 **Container Details:**
+
 - Image: `redis:6`
 - Container: `tnf-redis-dev`
 - Host Port: `6380`
 - Internal Port: `6379`
 
 **Redis Configuration:**
+
 ```yaml
 Host: localhost
 Port: 6380
@@ -124,6 +131,7 @@ Persistence: AOF enabled
 ```
 
 **Connection String:**
+
 ```
 redis://localhost:6380
 ```
@@ -222,8 +230,9 @@ Frontend connects to backend which manages database connections:
 
 ```typescript
 // Service status API call
-const services = await fetch('http://localhost:3004/api/services/status')
-  .then(response => response.json());
+const services = await fetch('http://localhost:3004/api/services/status').then(
+  (response) => response.json()
+);
 ```
 
 ### Electron Integration
@@ -242,7 +251,7 @@ ipcMain.handle('services:list', async () => {
 
 ### Schema Management
 
-Currently using direct SQL. Future integration with Prisma ORM:
+Currently using direct SQL. Future integration with Drizzle ORM:
 
 ```sql
 -- Example schema
@@ -266,7 +275,7 @@ CREATE TABLE agents (
 ```bash
 # Connect and insert test data
 docker exec -i tnf-postgres-dev psql -U newfuse -d the_new_fuse_dev << EOF
-INSERT INTO agents (name, type, status) VALUES 
+INSERT INTO agents (name, type, status) VALUES
   ('Test Agent 1', 'general', 'active'),
   ('Test Agent 2', 'specialized', 'idle');
 EOF
@@ -274,7 +283,7 @@ EOF
 
 ### Migrations (Future)
 
-When Prisma is integrated:
+When Drizzle is integrated:
 
 ```bash
 # Generate migration
@@ -299,11 +308,11 @@ SELECT * FROM pg_stat_activity;
 SELECT pg_size_pretty(pg_database_size('the_new_fuse_dev'));
 
 -- View table sizes
-SELECT 
+SELECT
   schemaname,
   tablename,
   pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
-FROM pg_tables 
+FROM pg_tables
 ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 ```
 
@@ -440,6 +449,7 @@ REDIS_TLS=true
 ### Common Issues
 
 **1. Connection Refused**
+
 ```bash
 # Check if Docker containers are running
 docker ps | grep -E "postgres|redis"
@@ -450,6 +460,7 @@ pnpm run docker:start
 ```
 
 **2. Port Conflicts**
+
 ```bash
 # Check port usage
 lsof -i :5433
@@ -460,6 +471,7 @@ kill -9 $(lsof -ti :5433)
 ```
 
 **3. Data Persistence Issues**
+
 ```bash
 # Check Docker volumes
 docker volume ls | grep postgres
@@ -470,6 +482,7 @@ docker volume inspect the-new-fuse_postgres_dev_data
 ```
 
 **4. Performance Issues**
+
 ```bash
 # Check PostgreSQL performance
 docker exec tnf-postgres-dev psql -U newfuse -d the_new_fuse_dev -c "SELECT * FROM pg_stat_activity WHERE state = 'active';"
@@ -509,13 +522,15 @@ pnpm run docker:start
 ### Cloud Providers
 
 **PostgreSQL Options:**
+
 - AWS RDS PostgreSQL
-- Google Cloud SQL for PostgreSQL  
+- Google Cloud SQL for PostgreSQL
 - DigitalOcean Managed Databases
 - Supabase
 - Neon
 
 **Redis Options:**
+
 - AWS ElastiCache
 - Google Cloud Memorystore
 - DigitalOcean Managed Redis
@@ -540,7 +555,7 @@ DATABASE_URL=postgresql://prod-user:prod-pass@prod-host:5432/prod-db
 
 ## Future Enhancements
 
-1. **Prisma Integration**: ORM for type-safe database operations
+1. **Drizzle Integration**: ORM for type-safe database operations
 2. **Database Migrations**: Automated schema management
 3. **Connection Pooling**: Optimize database connections
 4. **Read Replicas**: Scale read operations
@@ -551,6 +566,7 @@ DATABASE_URL=postgresql://prod-user:prod-pass@prod-host:5432/prod-db
 ## Support
 
 For database-related issues:
+
 1. Check container status: `pnpm run docker:status`
 2. View logs: `pnpm run docker:logs`
 3. Test connectivity: `pnpm run docker:test`

@@ -1,6 +1,7 @@
 # Current Structure Analysis
 
 ## Main Page Locations
+
 1. /apps/frontend/src/pages/
    - dashboard/
    - auth/
@@ -8,7 +9,7 @@
    - error/
    - workspace/
 
-2. /packages/features/*/pages/
+2. /packages/features/\*/pages/
    - analytics/
    - agents/
    - auth/

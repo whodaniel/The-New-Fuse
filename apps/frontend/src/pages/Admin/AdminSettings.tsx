@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { AlertCircle, Save, RefreshCw, Shield, Database, Server, Users } from 'lucide-react';
+import { AlertCircle, Database, RefreshCw, Save, Server, Shield } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 interface AdminSettings {
   system: {
@@ -139,7 +145,7 @@ const AdminSettings: React.FC = () => {
   };
 
   const updateSystemSettings = (key: string, value: any) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       system: {
         ...prev.system,
@@ -149,7 +155,7 @@ const AdminSettings: React.FC = () => {
   };
 
   const updateSecuritySettings = (key: string, value: any) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       security: {
         ...prev.security,
@@ -159,7 +165,7 @@ const AdminSettings: React.FC = () => {
   };
 
   const updatePasswordPolicy = (key: string, value: any) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       security: {
         ...prev.security,
@@ -172,7 +178,7 @@ const AdminSettings: React.FC = () => {
   };
 
   const updateDatabaseSettings = (key: string, value: any) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       database: {
         ...prev.database,
@@ -182,7 +188,7 @@ const AdminSettings: React.FC = () => {
   };
 
   const updateNotificationSettings = (key: string, value: any) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       notifications: {
         ...prev.notifications,
@@ -192,7 +198,7 @@ const AdminSettings: React.FC = () => {
   };
 
   const updateAlertThresholds = (key: string, value: number) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       notifications: {
         ...prev.notifications,
@@ -209,14 +215,12 @@ const AdminSettings: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Admin Settings</h1>
-          <p className="text-gray-600 mt-2">Manage system-wide configuration and security settings</p>
+          <p className="text-gray-600 mt-2">
+            Manage system-wide configuration and security settings
+          </p>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={fetchSettings}
-            disabled={loading}
-          >
+          <Button variant="outline" onClick={fetchSettings} disabled={loading}>
             <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
@@ -264,7 +268,9 @@ const AdminSettings: React.FC = () => {
                     <Switch
                       id="maintenance-mode"
                       checked={settings.system.maintenanceMode}
-                      onCheckedChange={(checked) => updateSystemSettings('maintenanceMode', checked)}
+                      onCheckedChange={(checked) =>
+                        updateSystemSettings('maintenanceMode', checked)
+                      }
                     />
                     <span className="text-sm text-gray-600">
                       {settings.system.maintenanceMode ? 'Enabled' : 'Disabled'}
@@ -328,7 +334,9 @@ const AdminSettings: React.FC = () => {
                     id="max-users"
                     type="number"
                     value={settings.system.maxConcurrentUsers}
-                    onChange={(e) => updateSystemSettings('maxConcurrentUsers', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      updateSystemSettings('maxConcurrentUsers', parseInt(e.target.value))
+                    }
                   />
                 </div>
 
@@ -338,7 +346,9 @@ const AdminSettings: React.FC = () => {
                     id="session-timeout"
                     type="number"
                     value={settings.system.sessionTimeout}
-                    onChange={(e) => updateSystemSettings('sessionTimeout', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      updateSystemSettings('sessionTimeout', parseInt(e.target.value))
+                    }
                   />
                 </div>
               </div>
@@ -400,7 +410,9 @@ const AdminSettings: React.FC = () => {
                     <Switch
                       id="require-special"
                       checked={settings.security.passwordPolicy.requireSpecialChars}
-                      onCheckedChange={(checked) => updatePasswordPolicy('requireSpecialChars', checked)}
+                      onCheckedChange={(checked) =>
+                        updatePasswordPolicy('requireSpecialChars', checked)
+                      }
                     />
                   </div>
 
@@ -418,7 +430,9 @@ const AdminSettings: React.FC = () => {
                     <Switch
                       id="require-uppercase"
                       checked={settings.security.passwordPolicy.requireUppercase}
-                      onCheckedChange={(checked) => updatePasswordPolicy('requireUppercase', checked)}
+                      onCheckedChange={(checked) =>
+                        updatePasswordPolicy('requireUppercase', checked)
+                      }
                     />
                   </div>
                 </div>
@@ -440,7 +454,9 @@ const AdminSettings: React.FC = () => {
                     id="pool-size"
                     type="number"
                     value={settings.database.connectionPoolSize}
-                    onChange={(e) => updateDatabaseSettings('connectionPoolSize', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      updateDatabaseSettings('connectionPoolSize', parseInt(e.target.value))
+                    }
                   />
                 </div>
 
@@ -450,7 +466,9 @@ const AdminSettings: React.FC = () => {
                     id="query-timeout"
                     type="number"
                     value={settings.database.queryTimeout}
-                    onChange={(e) => updateDatabaseSettings('queryTimeout', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      updateDatabaseSettings('queryTimeout', parseInt(e.target.value))
+                    }
                   />
                 </div>
 
@@ -459,7 +477,9 @@ const AdminSettings: React.FC = () => {
                   <Switch
                     id="query-logging"
                     checked={settings.database.enableQueryLogging}
-                    onCheckedChange={(checked) => updateDatabaseSettings('enableQueryLogging', checked)}
+                    onCheckedChange={(checked) =>
+                      updateDatabaseSettings('enableQueryLogging', checked)
+                    }
                   />
                 </div>
 
@@ -478,7 +498,9 @@ const AdminSettings: React.FC = () => {
                     id="retention-days"
                     type="number"
                     value={settings.database.retentionDays}
-                    onChange={(e) => updateDatabaseSettings('retentionDays', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      updateDatabaseSettings('retentionDays', parseInt(e.target.value))
+                    }
                   />
                 </div>
               </div>
@@ -498,7 +520,9 @@ const AdminSettings: React.FC = () => {
                   <Switch
                     id="email-notifications"
                     checked={settings.notifications.emailNotifications}
-                    onCheckedChange={(checked) => updateNotificationSettings('emailNotifications', checked)}
+                    onCheckedChange={(checked) =>
+                      updateNotificationSettings('emailNotifications', checked)
+                    }
                   />
                 </div>
 
@@ -507,7 +531,9 @@ const AdminSettings: React.FC = () => {
                   <Switch
                     id="slack-integration"
                     checked={settings.notifications.slackIntegration}
-                    onCheckedChange={(checked) => updateNotificationSettings('slackIntegration', checked)}
+                    onCheckedChange={(checked) =>
+                      updateNotificationSettings('slackIntegration', checked)
+                    }
                   />
                 </div>
 
@@ -546,7 +572,9 @@ const AdminSettings: React.FC = () => {
                       min="0"
                       max="100"
                       value={settings.notifications.alertThresholds.memoryUsage}
-                      onChange={(e) => updateAlertThresholds('memoryUsage', parseInt(e.target.value))}
+                      onChange={(e) =>
+                        updateAlertThresholds('memoryUsage', parseInt(e.target.value))
+                      }
                     />
                   </div>
 

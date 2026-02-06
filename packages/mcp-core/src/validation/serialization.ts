@@ -2,8 +2,8 @@
  * Message serialization utilities for MCP protocol
  */
 
-import { MCPMessage, MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
+import { MCPMessage } from '../interfaces/IMCPMessage';
+import { ErrorCategory, ErrorSeverity, MCPErrorClass, MCPErrorCode } from '../types/error';
 import { MessageValidator } from './messageValidator';
 
 /**
@@ -107,7 +107,7 @@ export class MessageSerializer {
       const serialized = JSON.stringify(
         messageToSerialize,
         replacer,
-        options.prettyPrint ? (options.space || 2) : undefined
+        options.prettyPrint ? options.space || 2 : undefined
       );
 
       const endTime = Date.now();
@@ -119,8 +119,8 @@ export class MessageSerializer {
         metadata: {
           originalSize,
           serializedSize,
-          serializationTime: endTime - startTime
-        }
+          serializationTime: endTime - startTime,
+        },
       };
     } catch (error) {
       const endTime = Date.now();
@@ -136,10 +136,10 @@ export class MessageSerializer {
             retryable: false,
             details: {
               originalMessage: message,
-              serializationTime: endTime - startTime
-            }
+              serializationTime: endTime - startTime,
+            },
           }
-        )
+        ),
       };
     }
   }
@@ -175,8 +175,8 @@ export class MessageSerializer {
         metadata: {
           serializedSize,
           deserializedSize,
-          deserializationTime: endTime - startTime
-        }
+          deserializationTime: endTime - startTime,
+        },
       };
     } catch (error) {
       const endTime = Date.now();
@@ -192,10 +192,10 @@ export class MessageSerializer {
             retryable: false,
             details: {
               originalData: data,
-              deserializationTime: endTime - startTime
-            }
+              deserializationTime: endTime - startTime,
+            },
           }
-        )
+        ),
       };
     }
   }
@@ -203,9 +203,15 @@ export class MessageSerializer {
   /**
    * Serialize multiple messages as a batch
    */
-  static serializeBatch(messages: MCPMessage[], options: SerializationOptions = {}): SerializationResult {
+  static serializeBatch(
+    messages: MCPMessage[],
+    options: SerializationOptions = {}
+  ): SerializationResult {
     const startTime = Date.now();
-    const originalSize = messages.reduce((total, msg) => total + (msg ? this.calculateObjectSize(msg) : 0), 0);
+    const originalSize = messages.reduce(
+      (total, msg) => total + (msg ? this.calculateObjectSize(msg) : 0),
+      0
+    );
 
     try {
       const serializedMessages = messages.map((message, index) => {
@@ -219,7 +225,11 @@ export class MessageSerializer {
         return result.data;
       });
 
-      const batchData = JSON.stringify(serializedMessages, undefined, options.prettyPrint ? (options.space || 2) : undefined);
+      const batchData = JSON.stringify(
+        serializedMessages,
+        undefined,
+        options.prettyPrint ? options.space || 2 : undefined
+      );
       const endTime = Date.now();
       const serializedSize = Buffer.byteLength(batchData, 'utf8');
 
@@ -229,27 +239,30 @@ export class MessageSerializer {
         metadata: {
           originalSize,
           serializedSize,
-          serializationTime: endTime - startTime
-        }
+          serializationTime: endTime - startTime,
+        },
       };
     } catch (error) {
       const endTime = Date.now();
 
       return {
         success: false,
-        error: error instanceof MCPErrorClass ? error : new MCPErrorClass(
-          MCPErrorCode.MESSAGE_INVALID_FORMAT,
-          `Batch serialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-          {
-            category: ErrorCategory.PROTOCOL,
-            severity: ErrorSeverity.MEDIUM,
-            retryable: false,
-            details: {
-              messageCount: messages.length,
-              serializationTime: endTime - startTime
-            }
-          }
-        )
+        error:
+          error instanceof MCPErrorClass
+            ? error
+            : new MCPErrorClass(
+                MCPErrorCode.MESSAGE_INVALID_FORMAT,
+                `Batch serialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                {
+                  category: ErrorCategory.PROTOCOL,
+                  severity: ErrorSeverity.MEDIUM,
+                  retryable: false,
+                  details: {
+                    messageCount: messages.length,
+                    serializationTime: endTime - startTime,
+                  },
+                }
+              ),
       };
     }
   }
@@ -257,7 +270,10 @@ export class MessageSerializer {
   /**
    * Deserialize batch of messages
    */
-  static deserializeBatch(data: string, options: DeserializationOptions = {}): DeserializationResult[] {
+  static deserializeBatch(
+    data: string,
+    options: DeserializationOptions = {}
+  ): DeserializationResult[] {
     const startTime = Date.now();
 
     try {
@@ -283,10 +299,10 @@ export class MessageSerializer {
             retryable: false,
             details: {
               originalData: data,
-              deserializationTime: endTime - startTime
-            }
+              deserializationTime: endTime - startTime,
+            },
           }
-        )
+        ),
       };
 
       return [errorResult];
@@ -433,7 +449,7 @@ export class SerializationUtils {
       return { totalSize: 0, averageSize: 0, minSize: 0, maxSize: 0, count: 0 };
     }
 
-    const sizes = messages.map(msg => MessageSerializer['calculateObjectSize'](msg));
+    const sizes = messages.map((msg) => MessageSerializer['calculateObjectSize'](msg));
     const totalSize = sizes.reduce((sum, size) => sum + size, 0);
 
     return {
@@ -441,7 +457,7 @@ export class SerializationUtils {
       averageSize: totalSize / messages.length,
       minSize: Math.min(...sizes),
       maxSize: Math.max(...sizes),
-      count: messages.length
+      count: messages.length,
     };
   }
 }

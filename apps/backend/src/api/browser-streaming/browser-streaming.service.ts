@@ -292,7 +292,7 @@ export class BrowserStreamingService implements OnModuleDestroy {
                 'input[type="text"]',
                 '[role="textbox"]',
                 '[contenteditable="true"]',
-                '.input-area'
+                '.input-area',
               ];
 
               let filled = false;
@@ -311,7 +311,9 @@ export class BrowserStreamingService implements OnModuleDestroy {
               }
 
               if (!filled) {
-                this.logger.warn(`Could not find input element for broadcast in session ${sessionId}`);
+                this.logger.warn(
+                  `Could not find input element for broadcast in session ${sessionId}`
+                );
               }
             } catch (error) {
               this.logger.error(`Failed to broadcast to ${sessionId}:`, error);

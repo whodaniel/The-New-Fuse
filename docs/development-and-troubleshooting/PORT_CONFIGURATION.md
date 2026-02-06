@@ -2,7 +2,8 @@
 
 ## Port Allocation Strategy
 
-To avoid conflicts and ensure consistent development, we use the following port allocation:
+To avoid conflicts and ensure consistent development, we use the following port
+allocation:
 
 ### Primary Services
 

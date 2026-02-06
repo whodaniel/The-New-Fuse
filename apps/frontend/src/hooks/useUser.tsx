@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import { userFromStorage } from '@/utils/request';
+import { useEffect, useState } from 'react';
 
 interface User {
   uid: string;
@@ -45,6 +45,6 @@ export default function useUser(): UseUserReturn {
     user,
     setUser,
     clearUser,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
   };
 }

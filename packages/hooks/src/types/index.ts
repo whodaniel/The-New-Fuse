@@ -14,7 +14,7 @@ export enum SuggestionStatus {
   REJECTED = 'rejected',
   DEFERRED = 'deferred',
   SUBMITTED = 'submitted',
-  UNDER_REVIEW = 'under_review'
+  UNDER_REVIEW = 'under_review',
 }
 
 // Task related enums
@@ -22,14 +22,14 @@ export enum TaskStatus {
   PENDING = 'pending',
   IN_PROGRESS = 'in_progress',
   COMPLETED = 'completed',
-  BLOCKED = 'blocked'
+  BLOCKED = 'blocked',
 }
 
 export enum TaskPriority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  URGENT = 'urgent'
+  URGENT = 'urgent',
 }
 
 export enum TaskType {
@@ -37,7 +37,7 @@ export enum TaskType {
   BUG = 'bug',
   IMPROVEMENT = 'improvement',
   DOCUMENTATION = 'documentation',
-  OTHER = 'other'
+  OTHER = 'other',
 }
 
 // Feature suggestion related interfaces

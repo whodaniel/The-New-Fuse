@@ -1,13 +1,15 @@
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 export function setupSwagger(app: INestApplication): any {
   const config = new DocumentBuilder()
     .setTitle('The New Fuse API')
-    .setDescription(`
+    .setDescription(
+      `
       The New Fuse is a cutting-edge AI Agent builder and task workflow builder SaaS platform.
       This API provides endpoints for managing agents, workflows, and real-time communication.
-    `)
+    `
+    )
     .setVersion('1.0')
     .addTag('auth', 'Authentication endpoints')
     .addTag('agents', 'Agent management endpoints')
@@ -30,7 +32,7 @@ export function setupSwagger(app: INestApplication): any {
         type: 'apiKey',
         name: 'x-api-key',
         in: 'header',
-        description: 'API key for service-to-service communication'
+        description: 'API key for service-to-service communication',
       },
       'api-key'
     )
@@ -38,10 +40,7 @@ export function setupSwagger(app: INestApplication): any {
 
   const document = SwaggerModule.createDocument(app, config, {
     deepScanRoutes: true,
-    operationIdFactory: (
-      controllerKey: string,
-      methodKey: string
-    ) => methodKey
+    operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
   });
 
   SwaggerModule.setup('api/docs', app, document, {
@@ -53,8 +52,8 @@ export function setupSwagger(app: INestApplication): any {
       filter: true,
       showRequestDuration: true,
       syntaxHighlight: {
-        theme: 'monokai'
-      }
+        theme: 'monokai',
+      },
     },
     customCss: `
       .swagger-ui .topbar { display: none }
@@ -63,6 +62,6 @@ export function setupSwagger(app: INestApplication): any {
       .swagger-ui .info .title { font-size: 32px }
       .swagger-ui .info .description { font-size: 16px }
     `,
-    customSiteTitle: 'The New Fuse API Documentation'
+    customSiteTitle: 'The New Fuse API Documentation',
   });
-} 
+}

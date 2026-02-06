@@ -1,6 +1,6 @@
 /**
  * Verifiable Credential Issuance Service
- * 
+ *
  * Implements W3C Verifiable Credentials standard for agent skill verification.
  * Enables trusted issuance, verification, and revocation of credentials that
  * attest to agent capabilities and achievements.
@@ -8,9 +8,6 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger.js';
-import type { AgentType } from '@the-new-fuse/database';
-import type { DrizzleClient } from '@the-new-fuse/database';
-import { ethers, BigNumberish } from 'ethers';
 import { BlockchainService } from './shared/BlockchainService.js';
 
 // W3C Verifiable Credentials data model interfaces
@@ -131,7 +128,7 @@ export enum CapabilityCategory {
   WORKFLOW_AUTOMATION = 'workflow_automation',
   COLLABORATION = 'collaboration',
   PROBLEM_SOLVING = 'problem_solving',
-  CREATIVITY = 'creativity'
+  CREATIVITY = 'creativity',
 }
 
 export enum ProficiencyLevel {
@@ -139,7 +136,7 @@ export enum ProficiencyLevel {
   INTERMEDIATE = 'intermediate',
   ADVANCED = 'advanced',
   EXPERT = 'expert',
-  MASTER = 'master'
+  MASTER = 'master',
 }
 
 export enum VerificationMethod {
@@ -147,7 +144,7 @@ export enum VerificationMethod {
   PEER_REVIEW = 'peer_review',
   HUMAN_EVALUATION = 'human_evaluation',
   BENCHMARK_TESTING = 'benchmark_testing',
-  REAL_WORLD_PERFORMANCE = 'real_world_performance'
+  REAL_WORLD_PERFORMANCE = 'real_world_performance',
 }
 
 export interface VCIssuanceRequest {
@@ -184,35 +181,31 @@ export interface TrustedIssuer {
  * VCIssuanceService - Handles Verifiable Credential lifecycle
  */
 export class VCIssuanceService extends EventEmitter {
-  private prisma: any;
+  private db: any;
   private logger: Logger;
   private blockchainService: BlockchainService | null = null;
   private trustedIssuers: Map<string, TrustedIssuer> = new Map();
   private revokedCredentials: Set<string> = new Set();
-  
+
   // Service configuration
   private readonly config = {
     issuerDID: 'did:web:tnf.network:issuers:main',
     issuerName: 'The New Fuse Credential Authority',
     baseContext: [
       'https://www.w3.org/2018/credentials/v1',
-      'https://tnf.network/credentials/agent/v1'
+      'https://tnf.network/credentials/agent/v1',
     ],
     defaultExpirationDays: 365,
     enableRevocation: true,
     requireMultipleVerifiers: true,
-    minTrustLevel: 7
+    minTrustLevel: 7,
   };
 
-  constructor(
-    prisma: any,
-    logger: Logger,
-    privateKey?: string
-  ) {
+  constructor(db: any, logger: Logger, privateKey?: string) {
     super();
-    this.prisma = prisma;
+    this.db = db;
     this.logger = logger;
-    
+
     // Initialize blockchain service for cryptographic operations
     if (privateKey) {
       const blockchainConfig = {
@@ -222,11 +215,11 @@ export class VCIssuanceService extends EventEmitter {
         privateKey,
         chainId: 42161,
         gasLimit: 2000000,
-        maxGasPrice: '50'
+        maxGasPrice: '50',
       };
       this.blockchainService = new BlockchainService(blockchainConfig, logger);
     }
-    
+
     this.initializeTrustedIssuers();
   }
 
@@ -238,13 +231,13 @@ export class VCIssuanceService extends EventEmitter {
   async issueCredential(request: VCIssuanceRequest): Promise<VerifiableCredential> {
     try {
       this.logger.info(`Issuing credential for agent: ${request.agentId}`);
-      
+
       // Verify the agent exists
-      const agent = await this.prisma.agent.findUnique({
+      const agent = await this.db.agent.findUnique({
         where: { id: request.agentId },
-        include: { metadata: true }
+        include: { metadata: true },
       });
-      
+
       if (!agent) {
         throw new Error('Agent not found');
       }
@@ -266,12 +259,12 @@ export class VCIssuanceService extends EventEmitter {
         capabilities,
         achievements: await this.getAgentAchievements(request.agentId),
         verifiedSkills: await this.getVerifiedSkills(request.agentId),
-        performanceMetrics
+        performanceMetrics,
       };
 
       // Generate credential ID
       const credentialId = `urn:tnf:credential:${Date.now()}:${request.agentId}`;
-      
+
       // Create the credential
       const credential: VerifiableCredential = {
         '@context': this.config.baseContext,
@@ -280,7 +273,7 @@ export class VCIssuanceService extends EventEmitter {
         issuer: {
           id: this.config.issuerDID,
           name: this.config.issuerName,
-          description: 'Trusted authority for agent capability verification'
+          description: 'Trusted authority for agent capability verification',
         },
         issuanceDate: new Date().toISOString(),
         expirationDate: new Date(
@@ -288,10 +281,12 @@ export class VCIssuanceService extends EventEmitter {
         ).toISOString(),
         credentialSubject,
         proof: await this.generateProof(credentialSubject),
-        credentialStatus: this.config.enableRevocation ? {
-          id: `${this.config.issuerDID}/revocation/${credentialId}`,
-          type: 'RevocationList2020Status'
-        } : undefined
+        credentialStatus: this.config.enableRevocation
+          ? {
+              id: `${this.config.issuerDID}/revocation/${credentialId}`,
+              type: 'RevocationList2020Status',
+            }
+          : undefined,
       };
 
       // Store credential
@@ -300,12 +295,11 @@ export class VCIssuanceService extends EventEmitter {
       this.emit('credentialIssued', {
         agentId: request.agentId,
         credentialId,
-        capabilities: capabilities.length
+        capabilities: capabilities.length,
       });
 
       this.logger.info(`Credential issued successfully: ${credentialId}`);
       return credential;
-
     } catch (error) {
       this.logger.error(`Failed to issue credential: ${error}`);
       throw error;
@@ -325,9 +319,9 @@ export class VCIssuanceService extends EventEmitter {
           issuerTrusted: false,
           notExpired: false,
           notRevoked: false,
-          credentialIntact: false
+          credentialIntact: false,
         },
-        errors: []
+        errors: [],
       };
 
       // Check if credential is structurally valid
@@ -364,10 +358,9 @@ export class VCIssuanceService extends EventEmitter {
       }
 
       // Check issuer trust
-      const issuerId = typeof credential.issuer === 'string' 
-        ? credential.issuer 
-        : credential.issuer.id;
-      
+      const issuerId =
+        typeof credential.issuer === 'string' ? credential.issuer : credential.issuer.id;
+
       if (this.isTrustedIssuer(issuerId)) {
         result.verificationDetails.issuerTrusted = true;
       } else {
@@ -375,11 +368,10 @@ export class VCIssuanceService extends EventEmitter {
       }
 
       // Determine overall validity
-      result.isValid = Object.values(result.verificationDetails).every(v => v === true);
+      result.isValid = Object.values(result.verificationDetails).every((v) => v === true);
       result.credential = result.isValid ? credential : null;
 
       return result;
-
     } catch (error) {
       this.logger.error(`Failed to verify credential: ${error}`);
       return {
@@ -390,9 +382,9 @@ export class VCIssuanceService extends EventEmitter {
           issuerTrusted: false,
           notExpired: false,
           notRevoked: false,
-          credentialIntact: false
+          credentialIntact: false,
         },
-        errors: ['Verification process failed']
+        errors: ['Verification process failed'],
       };
     }
   }
@@ -403,16 +395,15 @@ export class VCIssuanceService extends EventEmitter {
   async revokeCredential(credentialId: string, reason: string): Promise<boolean> {
     try {
       this.revokedCredentials.add(credentialId);
-      
+
       this.emit('credentialRevoked', {
         credentialId,
         reason,
-        revokedAt: new Date().toISOString()
+        revokedAt: new Date().toISOString(),
       });
 
       this.logger.info(`Credential revoked: ${credentialId}, reason: ${reason}`);
       return true;
-
     } catch (error) {
       this.logger.error(`Failed to revoke credential: ${error}`);
       return false;
@@ -434,10 +425,10 @@ export class VCIssuanceService extends EventEmitter {
       try {
         // Get agent's historical performance in this capability
         const performance = await this.assessCapabilityPerformance(agentId, capabilityName);
-        
+
         // Determine proficiency level
         const proficiencyLevel = this.determineProficiencyLevel(performance);
-        
+
         // Find appropriate category
         const category = this.categorizeCapability(capabilityName);
 
@@ -448,13 +439,14 @@ export class VCIssuanceService extends EventEmitter {
           proficiencyLevel,
           verificationMethod: VerificationMethod.REAL_WORLD_PERFORMANCE,
           verifiedAt: new Date().toISOString(),
-          verifier: this.config.issuerDID
+          verifier: this.config.issuerDID,
         };
 
         capabilities.push(capability);
-
       } catch (error) {
-        this.logger.warn(`Failed to assess capability ${capabilityName} for agent ${agentId}: ${error}`);
+        this.logger.warn(
+          `Failed to assess capability ${capabilityName} for agent ${agentId}: ${error}`
+        );
       }
     }
 
@@ -466,17 +458,17 @@ export class VCIssuanceService extends EventEmitter {
    */
   private async assessCapabilityPerformance(agentId: string, capability: string): Promise<number> {
     // Query task history for capability-related tasks
-    const tasks = await this.prisma.task.findMany({
+    const tasks = await this.db.task.findMany({
       where: {
         agentId: agentId,
         status: 'COMPLETED',
         type: {
           contains: capability,
-          mode: 'insensitive'
-        }
+          mode: 'insensitive',
+        },
       },
       orderBy: { createdAt: 'desc' },
-      take: 50
+      take: 50,
     });
 
     if (tasks.length === 0) {
@@ -485,18 +477,19 @@ export class VCIssuanceService extends EventEmitter {
 
     // Calculate success rate and efficiency
     const completedTasks = tasks.length;
-    const averageCompletionTime = tasks.reduce((sum: number, task: any) => {
-      if (task.completedAt && task.createdAt) {
-        return sum + (task.completedAt.getTime() - task.createdAt.getTime());
-      }
-      return sum;
-    }, 0) / completedTasks;
+    const averageCompletionTime =
+      tasks.reduce((sum: number, task: any) => {
+        if (task.completedAt && task.createdAt) {
+          return sum + (task.completedAt.getTime() - task.createdAt.getTime());
+        }
+        return sum;
+      }, 0) / completedTasks;
 
     // Normalize to 0-1 scale based on task complexity and completion time
     const efficiencyScore = Math.min(1, 86400000 / averageCompletionTime); // 1 day baseline
     const volumeScore = Math.min(1, completedTasks / 20); // 20 tasks for full score
 
-    return (efficiencyScore * 0.6) + (volumeScore * 0.4);
+    return efficiencyScore * 0.6 + volumeScore * 0.4;
   }
 
   /**
@@ -515,7 +508,7 @@ export class VCIssuanceService extends EventEmitter {
    */
   private categorizeCapability(capabilityName: string): CapabilityCategory {
     const name = capabilityName.toLowerCase();
-    
+
     if (name.includes('code') || name.includes('programming')) {
       return CapabilityCategory.CODE_GENERATION;
     }
@@ -543,7 +536,7 @@ export class VCIssuanceService extends EventEmitter {
     if (name.includes('problem') || name.includes('solving')) {
       return CapabilityCategory.PROBLEM_SOLVING;
     }
-    
+
     return CapabilityCategory.NATURAL_LANGUAGE; // Default
   }
 
@@ -553,51 +546,52 @@ export class VCIssuanceService extends EventEmitter {
    * Generate comprehensive performance metrics for an agent
    */
   private async generatePerformanceMetrics(agentId: string): Promise<PerformanceMetrics> {
-    const tasks = await this.prisma.task.findMany({
+    const tasks = await this.db.task.findMany({
       where: { agentId: agentId },
       orderBy: { createdAt: 'desc' },
-      take: 1000 // Last 1000 tasks for comprehensive analysis
+      take: 1000, // Last 1000 tasks for comprehensive analysis
     });
 
     const completedTasks = tasks.filter((t: any) => t.status === 'COMPLETED');
     const totalTasks = tasks.length;
     const successRate = totalTasks > 0 ? completedTasks.length / totalTasks : 0;
 
-    const averageTaskDuration = completedTasks.reduce((sum: number, task: any) => {
-      if (task.completedAt && task.createdAt) {
-        return sum + (task.completedAt.getTime() - task.createdAt.getTime());
-      }
-      return sum;
-    }, 0) / (completedTasks.length || 1);
+    const averageTaskDuration =
+      completedTasks.reduce((sum: number, task: any) => {
+        if (task.completedAt && task.createdAt) {
+          return sum + (task.completedAt.getTime() - task.createdAt.getTime());
+        }
+        return sum;
+      }, 0) / (completedTasks.length || 1);
 
     // Calculate collaboration score (based on multi-agent tasks)
-    const collaborativeTasks = tasks.filter((t: any) => 
-      t.description?.includes('collaboration') || 
-      t.description?.includes('team') ||
-      t.description?.includes('handoff')
+    const collaborativeTasks = tasks.filter(
+      (t: any) =>
+        t.description?.includes('collaboration') ||
+        t.description?.includes('team') ||
+        t.description?.includes('handoff')
     );
-    const collaborationScore = tasks.length > 0 
-      ? (collaborativeTasks.length / tasks.length) * 100 
-      : 0;
+    const collaborationScore =
+      tasks.length > 0 ? (collaborativeTasks.length / tasks.length) * 100 : 0;
 
     // Innovation index (based on creative/novel task completion)
-    const innovativeTasks = tasks.filter((t: any) =>
-      t.description?.includes('innovative') ||
-      t.description?.includes('creative') ||
-      t.description?.includes('novel')
+    const innovativeTasks = tasks.filter(
+      (t: any) =>
+        t.description?.includes('innovative') ||
+        t.description?.includes('creative') ||
+        t.description?.includes('novel')
     );
-    const innovationIndex = tasks.length > 0
-      ? (innovativeTasks.length / tasks.length) * 100
-      : 0;
+    const innovationIndex = tasks.length > 0 ? (innovativeTasks.length / tasks.length) * 100 : 0;
 
     // Reliability score (consistency over time)
-    const recentTasks = tasks.filter((t: any) => 
-      t.createdAt > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    const recentTasks = tasks.filter(
+      (t: any) => t.createdAt > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
     );
-    const recentSuccessRate = recentTasks.length > 0
-      ? recentTasks.filter((t: any) => t.status === 'COMPLETED').length / recentTasks.length
-      : 0;
-    const reliabilityScore = (successRate * 0.7) + (recentSuccessRate * 0.3);
+    const recentSuccessRate =
+      recentTasks.length > 0
+        ? recentTasks.filter((t: any) => t.status === 'COMPLETED').length / recentTasks.length
+        : 0;
+    const reliabilityScore = successRate * 0.7 + recentSuccessRate * 0.3;
 
     return {
       totalTasks,
@@ -607,7 +601,7 @@ export class VCIssuanceService extends EventEmitter {
       collaborationScore: Math.round(collaborationScore),
       innovationIndex: Math.round(innovationIndex),
       reliabilityScore: Math.round(reliabilityScore * 100),
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
   }
 
@@ -619,11 +613,11 @@ export class VCIssuanceService extends EventEmitter {
   private async getAgentAchievements(agentId: string): Promise<AgentAchievement[]> {
     // In a real implementation, this would query an achievements database
     // For now, we'll generate sample achievements based on task history
-    
+
     const achievements: AgentAchievement[] = [];
-    
-    const taskCount = await this.prisma.task.count({
-      where: { agentId: agentId, status: 'COMPLETED' }
+
+    const taskCount = await this.db.task.count({
+      where: { agentId: agentId, status: 'COMPLETED' },
     });
 
     if (taskCount >= 100) {
@@ -634,7 +628,7 @@ export class VCIssuanceService extends EventEmitter {
         achievedAt: new Date().toISOString(),
         evidenceURI: `tnf://achievements/centurion/${agentId}`,
         issuer: this.config.issuerDID,
-        value: 100
+        value: 100,
       });
     }
 
@@ -646,7 +640,7 @@ export class VCIssuanceService extends EventEmitter {
         achievedAt: new Date().toISOString(),
         evidenceURI: `tnf://achievements/veteran/${agentId}`,
         issuer: this.config.issuerDID,
-        value: 1000
+        value: 1000,
       });
     }
 
@@ -659,10 +653,10 @@ export class VCIssuanceService extends EventEmitter {
   private async getVerifiedSkills(agentId: string): Promise<VerifiedSkill[]> {
     // This would typically integrate with skill assessment systems
     // For now, return basic skills based on agent metadata
-    
-    const agent = await this.prisma.agent.findUnique({
+
+    const agent = await this.db.agent.findUnique({
       where: { id: agentId },
-      select: { capabilities: true, metadata: true }
+      select: { capabilities: true, metadata: true },
     });
 
     if (!agent?.metadata) {
@@ -670,7 +664,7 @@ export class VCIssuanceService extends EventEmitter {
     }
 
     const skills: VerifiedSkill[] = [];
-    
+
     // Extract skills from agent capabilities
     const capabilities = agent.capabilities as any;
     if (capabilities) {
@@ -680,7 +674,7 @@ export class VCIssuanceService extends EventEmitter {
             skillName: skill,
             skillCategory: this.categorizeCapability(skill),
             proficiencyScore: Math.floor(Math.random() * 30) + 70, // 70-100 for enabled skills
-            verificationDate: new Date().toISOString()
+            verificationDate: new Date().toISOString(),
           });
         }
       });
@@ -701,7 +695,7 @@ export class VCIssuanceService extends EventEmitter {
 
     const message = JSON.stringify(credentialSubject);
     const signature = await this.blockchainService.signMessage(message);
-    
+
     if (!signature) {
       throw new Error('Failed to sign credential');
     }
@@ -711,7 +705,7 @@ export class VCIssuanceService extends EventEmitter {
       created: new Date().toISOString(),
       verificationMethod: `${this.config.issuerDID}#key-1`,
       proofPurpose: 'assertionMethod',
-      proofValue: signature
+      proofValue: signature,
     };
   }
 
@@ -722,14 +716,14 @@ export class VCIssuanceService extends EventEmitter {
     try {
       const message = JSON.stringify(credential.credentialSubject);
       const signature = credential.proof.proofValue;
-      
+
       // Use shared blockchain service for verification
-      const recoveredAddress = this.blockchainService?.verifyMessage(message, signature) || 
-                               BlockchainService.verifyMessage(message, signature);
-      
+      const recoveredAddress =
+        this.blockchainService?.verifyMessage(message, signature) ||
+        BlockchainService.verifyMessage(message, signature);
+
       // For now, just check if signature is valid format
       return signature.length > 0 && !!recoveredAddress;
-
     } catch (error) {
       this.logger.error(`Signature verification failed: ${error}`);
       return false;
@@ -760,7 +754,7 @@ export class VCIssuanceService extends EventEmitter {
     if (issuerId === this.config.issuerDID) {
       return true; // Self-issued credentials
     }
-    
+
     const issuer = this.trustedIssuers.get(issuerId);
     return issuer ? issuer.isActive && issuer.trustLevel >= this.config.minTrustLevel : false;
   }
@@ -777,7 +771,7 @@ export class VCIssuanceService extends EventEmitter {
       authorizedCapabilities: Object.values(CapabilityCategory),
       trustLevel: 10,
       isActive: true,
-      addedAt: new Date()
+      addedAt: new Date(),
     });
   }
 

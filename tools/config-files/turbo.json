@@ -251,12 +251,12 @@
       "cache": false
     },
     "db:generate": {
-      "inputs": ["prisma/schema.prisma"],
-      "outputs": ["node_modules/.prisma/**", "prisma/generated/**", "generated/**"],
+      "inputs": ["drizzle/schema.drizzle"],
+      "outputs": ["node_modules/.drizzle/**", "drizzle/generated/**", "generated/**"],
       "cache": true
     },
     "db:migrate": {
-      "inputs": ["prisma/migrations/**", "prisma/schema.prisma"],
+      "inputs": ["drizzle/migrations/**", "drizzle/schema.drizzle"],
       "cache": false
     },
     "db:studio": {

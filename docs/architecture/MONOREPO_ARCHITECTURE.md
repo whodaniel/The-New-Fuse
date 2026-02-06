@@ -55,7 +55,7 @@ deployed applications:
 // In apps/backend/src/some-file.ts
 import { SomeUtility } from '@the-new-fuse/utils';
 import { Agent } from '@the-new-fuse/types';
-import { PrismaService } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 ```
 
 ## Package Categories
@@ -66,7 +66,7 @@ import { PrismaService } from '@the-new-fuse/database';
 @the-new-fuse/core              - Core utilities and base classes
 @the-new-fuse/types             - TypeScript type definitions
 @the-new-fuse/utils             - Shared utilities
-@the-new-fuse/database          - Prisma client and schema
+@the-new-fuse/database          - Drizzle client and schema
 @the-new-fuse/shared            - Shared constants and configs
 @the-new-fuse/security          - Security utilities
 @the-new-fuse/api-types         - API DTOs and interfaces
@@ -275,29 +275,38 @@ individual packages.
 ## Related Documentation
 
 ### Architecture & Standards
-- [Architecture Standards](./ARCHITECTURE_STANDARDS.md) - Coding standards and templates
-- [Architecture Analysis](./ARCHITECTURE_ANALYSIS_SUMMARY.md) - System architecture analysis
+
+- [Architecture Standards](./ARCHITECTURE_STANDARDS.md) - Coding standards and
+  templates
+- [Architecture Analysis](./ARCHITECTURE_ANALYSIS_SUMMARY.md) - System
+  architecture analysis
 - [Monorepo Audit](./MONOREPO-AUDIT-INDEX.md) - Comprehensive monorepo audit
-- [Architectural Consistency](./ARCHITECTURAL_CONSISTENCY_REPORT.md) - Consistency analysis
+- [Architectural Consistency](./ARCHITECTURAL_CONSISTENCY_REPORT.md) -
+  Consistency analysis
 
 ### Development & Build
+
 - [README.md](../../README.md) - Project overview
-- [Build Guide](../development/BUILD_GUIDE.md) - Build system comprehensive guide
+- [Build Guide](../development/BUILD_GUIDE.md) - Build system comprehensive
+  guide
 - [Build System](../development/BUILD_SYSTEM.md) - Build system overview
 - [Dependency Map](../development/DEPENDENCY-MAP.md) - Package dependencies
 
 ### Code Quality
+
 - [Code Duplication Report](./CODE_DUPLICATION_REPORT.md)
 - [Refactoring Opportunities](./REFACTORING_OPPORTUNITIES.md)
 - [Code Quality](../CODE_QUALITY.md)
 
 ### Application Documentation
+
 - [Backend Application](../../apps/backend/README.md)
 - [Frontend Application](../../apps/frontend/README.md)
 - [API Server](../../apps/api/README.md)
 - [API Gateway](../../apps/api-gateway/README.md) (if exists)
 
 ### Deployment
+
 - [Deployment Guide](../deployment/DEPLOYMENT_GUIDE.md)
 - [Railway Deployment](../deployment/RAILWAY_DEPLOYMENT_GUIDE.md)
 - [Docker Optimization](../deployment/DOCKER_OPTIMIZATION_SUMMARY.md)

@@ -1,69 +1,55 @@
 import { useState, useEffect, useCallback } from 'react';
 import { AnalyticsManager } from '../analytics/AnalyticsManager';
-import {
-  UserAction,
-  DashboardMetrics,
-  PerformanceMetrics,
-  UserMetrics,
-} from '../analytics/types';
+import { UserAction, DashboardMetrics, PerformanceMetrics, UserMetrics } from '../analytics/types';
 import { User } from '../collaboration/types';
 
 export function useAnalytics(currentUser: User): any {
   const [manager] = useState(() => new AnalyticsManager());
 
   const trackAction = useCallback(
-    (
-      type: UserAction['type'],
-      metadata: Record<string, unknown> = {}
-    ): void => {
+    (type: UserAction['type'], metadata: Record<string, unknown> = {}): void => {
       manager.trackAction({
         type,
         userId: currentUser.id,
         metadata,
       });
     },
-    [manager, currentUser]
+    [manager, currentUser],
   );
 
   const trackPerformance = useCallback(
     (metrics: Omit<PerformanceMetrics, 'id'>): void => {
       manager.trackPerformance(metrics);
     },
-    [manager]
+    [manager],
   );
 
   const getDashboardMetrics = useCallback(
-    (
-      dashboardId: string,
-      period: { start: Date; end: Date }
-    ): DashboardMetrics => {
+    (dashboardId: string, period: { start: Date; end: Date }): DashboardMetrics => {
       return manager.getDashboardMetrics(dashboardId, period);
     },
-    [manager]
+    [manager],
   );
 
   const getUserMetrics = useCallback(
-    (
-      userId: string,
-      period: { start: Date; end: Date }
-    ): UserMetrics => {
+    (userId: string, period: { start: Date; end: Date }): UserMetrics => {
       return manager.getUserMetrics(userId, period);
     },
-    [manager]
+    [manager],
   );
 
   const generateDashboardReport = useCallback(
     (dashboardId: string, period: { start: Date; end: Date }) => {
       return manager.generateDashboardReport(dashboardId, period);
     },
-    [manager]
+    [manager],
   );
 
   const generateUserReport = useCallback(
     (userId: string, period: { start: Date; end: Date }) => {
       return manager.generateUserReport(userId, period);
     },
-    [manager]
+    [manager],
   );
 
   // Track page views and performance automatically
@@ -80,13 +66,17 @@ export function useAnalytics(currentUser: User): any {
     const observer = new PerformanceObserver((list) => {
       const entries = list.getEntries();
       entries.forEach((entry) => {
-        if (entry.entryType === 'navigation'){
+        if (entry.entryType === 'navigation') {
           trackPerformance({
             dashboardId: window.location.pathname,
             timestamp: new Date(),
             loadTime: (entry as PerformanceNavigationTiming).duration,
-            renderTime: (entry as PerformanceNavigationTiming).domComplete - (entry as PerformanceNavigationTiming).domInteractive,
-            dataFetchTime: (entry as PerformanceNavigationTiming).responseEnd - (entry as PerformanceNavigationTiming).requestStart,
+            renderTime:
+              (entry as PerformanceNavigationTiming).domComplete -
+              (entry as PerformanceNavigationTiming).domInteractive,
+            dataFetchTime:
+              (entry as PerformanceNavigationTiming).responseEnd -
+              (entry as PerformanceNavigationTiming).requestStart,
             memoryUsage: (performance as any).memory?.usedJSHeapSize || 0,
             errorCount: 0,
             warnings: 0,

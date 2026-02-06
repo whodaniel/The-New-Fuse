@@ -1,4 +1,3 @@
-import { setupTests } from '@the-new-fuse/utils';
 import { createRedisClient } from '@the-new-fuse/database';
 
 describe('Redis Integration', () => {

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { UpdateProfileDto } from './dto/profile.dto';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { UpdateProfileDto } from './dto/profile.dto';
 
 describe('UsersController', () => {
   let controller: UsersController;

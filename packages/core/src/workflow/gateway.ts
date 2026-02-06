@@ -29,7 +29,7 @@ export interface APIResponse {
 export class WorkflowGateway {
   constructor(
     private apiManager: APIManager,
-    private integrationRegistry: IntegrationRegistry
+    private integrationRegistry: IntegrationRegistry,
   ) {}
 
   async registerExternalService(service: ExternalService): Promise<void> {
@@ -45,7 +45,9 @@ export class WorkflowGateway {
       // Register with integration registry
       await this.integrationRegistry.registerIntegration(integration);
     } catch (error) {
-      throw new Error(`Failed to register service ${service.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to register service ${service.name}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
@@ -54,16 +56,16 @@ export class WorkflowGateway {
       // Implementation would make actual API call
       return {
         status: 200,
-        headers: { "Content-Type": "application/json" },
-        body: { success: true }
+        headers: { 'Content-Type': 'application/json' },
+        body: { success: true },
       };
     } catch (error) {
       return {
         status: 500,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: {
-          error: error instanceof Error ? error.message : 'Unknown error'
-        }
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
       };
     }
   }
@@ -73,25 +75,27 @@ export class WorkflowGateway {
       // Implementation would process webhook
       return {
         status: 200,
-        headers: { "Content-Type": "application/json" },
-        body: { received: true }
+        headers: { 'Content-Type': 'application/json' },
+        body: { received: true },
       };
     } catch (error) {
       return {
         status: 500,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: {
-          error: error instanceof Error ? error.message : 'Unknown error'
-        }
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
       };
     }
   }
 
-  async getServiceStatus(serviceId: string): Promise<{ status: 'active' | 'inactive' | 'error'; lastCheck: Date }> {
+  async getServiceStatus(
+    serviceId: string,
+  ): Promise<{ status: 'active' | 'inactive' | 'error'; lastCheck: Date }> {
     // Implementation would check service health
     return {
       status: 'active',
-      lastCheck: new Date()
+      lastCheck: new Date(),
     };
   }
 }

@@ -7,11 +7,11 @@
 import { z } from 'zod';
 import {
   ClaudeSkill,
+  ISkillExecutor,
   SkillExecutionContext,
   SkillExecutionResult,
-  ISkillExecutor,
+  SkillParameter,
   ValidationResult,
-  SkillParameter
 } from '../types';
 
 /**

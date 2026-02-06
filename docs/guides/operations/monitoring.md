@@ -3,33 +3,41 @@
 ## Available Dashboards
 
 ### Service Health Dashboard
+
 Monitors overall service health:
+
 - Service availability
 - Response times
 - Error rates
 - Resource utilization
 
 ### Workflow Dashboard
+
 Tracks workflow execution:
+
 - Active workflows
 - Completion rates
 - Error distribution
 - Performance metrics
 
 ### Resource Dashboard
+
 Monitors system resources:
+
 - CPU usage
 - Memory utilization
 - Network throughput
 - Disk usage
 
 ## Metrics Collection
+
 - Prometheus endpoints
 - Custom metrics
 - Alert configurations
 - Retention policies
 
 ## Alert Configuration
+
 - Service degradation
 - Resource exhaustion
 - Error thresholds
@@ -63,6 +71,7 @@ curl http://localhost:9090/metrics
 ### Capacity Planning
 
 Monitor these thresholds:
+
 - CPU: 80% utilization
 - Memory: 85% usage
 - Disk: 90% full
@@ -73,6 +82,7 @@ Monitor these thresholds:
 ### Critical Alerts
 
 1. High Error Rate
+
 ```bash
 # Check error logs
 ./scripts/error-analysis.sh
@@ -82,6 +92,7 @@ docker-compose restart api
 ```
 
 2. Database Issues
+
 ```bash
 # Check database health
 ./scripts/db-health.sh
@@ -91,6 +102,7 @@ docker-compose restart api
 ```
 
 3. Memory Issues
+
 ```bash
 # Check memory usage
 ./scripts/memory-analysis.sh
@@ -98,4 +110,3 @@ docker-compose restart api
 # Clear caches if needed
 ./scripts/clear-caches.sh
 ```
-

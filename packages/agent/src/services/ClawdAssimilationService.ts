@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import * as crypto from 'crypto';
 
 /**
  * Clawdbot Skill Interface
@@ -13,6 +14,9 @@ export interface ClawdSkill {
   implementation: string; // The executable code/script
   path: string;
   source: 'local' | 'assimilated';
+  signature?: string;
+  publisher?: string;
+  verified?: boolean;
 }
 
 /**
@@ -76,7 +80,13 @@ export class ClawdAssimilationService {
       const content = await fs.promises.readFile(filePath, 'utf-8');
       const skill = this.parseSkillContent(content, filePath);
       if (skill) {
-        this.assimilatedSkills.set(skill.name, skill);
+        if (this.verifySkillSignature(skill, content)) {
+          this.assimilatedSkills.set(skill.name, { ...skill, verified: true });
+        } else if (process.env.OPENCLAW_SKILL_SIGNATURE_REQUIRED === 'true') {
+          console.warn(`Skill signature verification failed: ${skill.name}`);
+        } else {
+          this.assimilatedSkills.set(skill.name, { ...skill, verified: false });
+        }
       }
     } catch (error) {
       console.warn(`Failed to assimilate skill at ${filePath}:`, error);
@@ -107,6 +117,8 @@ export class ClawdAssimilationService {
     const yaml = match[1];
     const nameMatch = yaml.match(/name:\s*(.*)/);
     const descMatch = yaml.match(/description:\s*(.*)/);
+    const signatureMatch = yaml.match(/signature:\s*(.*)/);
+    const publisherMatch = yaml.match(/publisher:\s*(.*)/);
 
     if (!nameMatch) {
       return null;
@@ -140,6 +152,8 @@ export class ClawdAssimilationService {
       implementation: codeMatch[1],
       path: filePath,
       source: filePath.startsWith(this.localSkillsPath) ? 'local' : 'assimilated',
+      signature: signatureMatch ? signatureMatch[1].trim() : undefined,
+      publisher: publisherMatch ? publisherMatch[1].trim() : undefined,
     };
   }
 
@@ -149,5 +163,26 @@ export class ClawdAssimilationService {
 
   public listSkills(): ClawdSkill[] {
     return Array.from(this.assimilatedSkills.values());
+  }
+
+  private verifySkillSignature(skill: ClawdSkill, content: string): boolean {
+    const requireSignature = process.env.OPENCLAW_SKILL_SIGNATURE_REQUIRED === 'true';
+    if (!requireSignature) return true;
+
+    const secret = process.env.OPENCLAW_SKILL_SIGNING_KEY || '';
+    if (!secret) {
+      console.warn('OPENCLAW_SKILL_SIGNING_KEY is not set; cannot verify skills');
+      return false;
+    }
+
+    if (!skill.signature) {
+      return false;
+    }
+
+    // Remove signature line to avoid circular hashing.
+    const normalized = content.replace(/^signature:\s*.*$/m, '').trim();
+    const computed = crypto.createHmac('sha256', secret).update(normalized).digest('hex');
+
+    return computed === skill.signature;
   }
 }

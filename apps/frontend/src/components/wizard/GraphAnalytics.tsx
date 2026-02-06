@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import {
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-  Tooltip,
-  ResponsiveContainer,
+  Bar,
   BarChart,
   CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Bar,
-  LineChart,
-  Line
 } from 'recharts';
 import { useWizard } from './WizardProvider';
 import { useWizardWebSocket } from './WizardWebSocket';
-import { Loader2 } from 'lucide-react';
 
 export function GraphAnalytics() {
   const { state } = useWizard();
@@ -37,15 +37,17 @@ export function GraphAnalytics() {
       setMetrics(data.metrics);
       setNodeDistribution(data.nodeDistribution);
       setEdgeAnalytics(data.edgeAnalytics);
-      setTimeseriesData((prev: any) => [
-        ...prev,
-        {
-          timestamp: Date.now(),
-          nodeCount: data.metrics.nodeCount,
-          edgeCount: data.metrics.edgeCount,
-          avgDegree: data.metrics.avgDegree
-        }
-      ].slice(-100));
+      setTimeseriesData((prev: any) =>
+        [
+          ...prev,
+          {
+            timestamp: Date.now(),
+            nodeCount: data.metrics.nodeCount,
+            edgeCount: data.metrics.edgeCount,
+            avgDegree: data.metrics.avgDegree,
+          },
+        ].slice(-100)
+      );
     };
 
     subscribeToEvent('graph_metrics', handleMetricsUpdate);
@@ -66,20 +68,56 @@ export function GraphAnalytics() {
         <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Graph Overview</h3>
         {metrics && (
           <div className="space-y-2 text-gray-700 dark:text-gray-300">
-            <p>Nodes: <span className="font-medium text-gray-900 dark:text-white">{metrics.nodeCount}</span></p>
-            <p>Edges: <span className="font-medium text-gray-900 dark:text-white">{metrics.edgeCount}</span></p>
-            <p>Density: <span className="font-medium text-gray-900 dark:text-white">{metrics.density.toFixed(3)}</span></p>
-            <p>Average Degree: <span className="font-medium text-gray-900 dark:text-white">{metrics.avgDegree.toFixed(2)}</span></p>
-            <p>Clustering Coefficient: <span className="font-medium text-gray-900 dark:text-white">{metrics.clustering.toFixed(3)}</span></p>
-            <p>Connected Components: <span className="font-medium text-gray-900 dark:text-white">{metrics.componentCount}</span></p>
-            <p>Graph Diameter: <span className="font-medium text-gray-900 dark:text-white">{metrics.diameter}</span></p>
-            <p>Avg Path Length: <span className="font-medium text-gray-900 dark:text-white">{metrics.avgPathLength.toFixed(2)}</span></p>
+            <p>
+              Nodes:{' '}
+              <span className="font-medium text-gray-900 dark:text-white">{metrics.nodeCount}</span>
+            </p>
+            <p>
+              Edges:{' '}
+              <span className="font-medium text-gray-900 dark:text-white">{metrics.edgeCount}</span>
+            </p>
+            <p>
+              Density:{' '}
+              <span className="font-medium text-gray-900 dark:text-white">
+                {metrics.density.toFixed(3)}
+              </span>
+            </p>
+            <p>
+              Average Degree:{' '}
+              <span className="font-medium text-gray-900 dark:text-white">
+                {metrics.avgDegree.toFixed(2)}
+              </span>
+            </p>
+            <p>
+              Clustering Coefficient:{' '}
+              <span className="font-medium text-gray-900 dark:text-white">
+                {metrics.clustering.toFixed(3)}
+              </span>
+            </p>
+            <p>
+              Connected Components:{' '}
+              <span className="font-medium text-gray-900 dark:text-white">
+                {metrics.componentCount}
+              </span>
+            </p>
+            <p>
+              Graph Diameter:{' '}
+              <span className="font-medium text-gray-900 dark:text-white">{metrics.diameter}</span>
+            </p>
+            <p>
+              Avg Path Length:{' '}
+              <span className="font-medium text-gray-900 dark:text-white">
+                {metrics.avgPathLength.toFixed(2)}
+              </span>
+            </p>
           </div>
         )}
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Node Distribution</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+          Node Distribution
+        </h3>
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -128,7 +166,9 @@ export function GraphAnalytics() {
   const renderTimeseries = () => (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Time Series Analysis</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          Time Series Analysis
+        </h3>
         <div className="flex gap-4">
           <div className="flex flex-col">
             <label className="text-xs text-gray-500 dark:text-gray-400 mb-1">Time Range</label>
@@ -161,11 +201,20 @@ export function GraphAnalytics() {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={timeseriesData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="timestamp" tickFormatter={(timestamp) => new Date(timestamp).toLocaleTimeString()} />
+            <XAxis
+              dataKey="timestamp"
+              tickFormatter={(timestamp) => new Date(timestamp).toLocaleTimeString()}
+            />
             <YAxis />
             <Tooltip labelFormatter={(timestamp) => new Date(timestamp).toLocaleString()} />
             <Legend />
-            <Line type="monotone" dataKey={selectedMetric} stroke="#8884d8" dot={false} name={selectedMetric} />
+            <Line
+              type="monotone"
+              dataKey={selectedMetric}
+              stroke="#8884d8"
+              dot={false}
+              name={selectedMetric}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -225,4 +274,3 @@ export function GraphAnalytics() {
     </div>
   );
 }
-

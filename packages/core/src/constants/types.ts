@@ -8,29 +8,29 @@ export const TYPES = {
   MetricsCollector: Symbol.for('MetricsCollector'),
   PerformanceMonitor: Symbol.for('PerformanceMonitor'),
   UnifiedMonitoringService: Symbol.for('UnifiedMonitoringService'),
-  
+
   // Agent Services
   AgentOrchestrator: Symbol.for('AgentOrchestrator'),
   AgentSwarmOrchestrationService: Symbol.for('AgentSwarmOrchestrationService'),
   AgentProcessor: Symbol.for('AgentProcessor'),
   AgentLLMService: Symbol.for('AgentLLMService'),
-  
+
   // Memory Services
   MemorySystem: Symbol.for('MemorySystem'),
   MemoryManager: Symbol.for('MemoryManager'),
-  
+
   // Workflow Services
   WorkflowEngine: Symbol.for('WorkflowEngine'),
   WorkflowExecutor: Symbol.for('WorkflowExecutor'),
-  
+
   // AI Services
   LocalAIDetectionService: Symbol.for('LocalAIDetectionService'),
   PromptService: Symbol.for('PromptService'),
-  
+
   // Configuration and Database
   ConfigService: Symbol.for('ConfigService'),
   DatabaseService: Symbol.for('DatabaseService'),
-  
+
   // Utilities
   Logger: Symbol.for('Logger'),
   ErrorHandler: Symbol.for('ErrorHandler'),
@@ -66,43 +66,43 @@ export const ERROR_CODES = {
   SYSTEM_INITIALIZATION_FAILED: 'SYSTEM_INITIALIZATION_FAILED',
   SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
   CONFIGURATION_ERROR: 'CONFIGURATION_ERROR',
-  
+
   // Agent Errors
   AGENT_NOT_FOUND: 'AGENT_NOT_FOUND',
   AGENT_INITIALIZATION_FAILED: 'AGENT_INITIALIZATION_FAILED',
   AGENT_EXECUTION_FAILED: 'AGENT_EXECUTION_FAILED',
   AGENT_TIMEOUT: 'AGENT_TIMEOUT',
-  
+
   // Task Errors
   TASK_NOT_FOUND: 'TASK_NOT_FOUND',
   TASK_EXECUTION_FAILED: 'TASK_EXECUTION_FAILED',
   TASK_VALIDATION_FAILED: 'TASK_VALIDATION_FAILED',
-  
+
   // Workflow Errors
   WORKFLOW_NOT_FOUND: 'WORKFLOW_NOT_FOUND',
   WORKFLOW_EXECUTION_FAILED: 'WORKFLOW_EXECUTION_FAILED',
   WORKFLOW_VALIDATION_FAILED: 'WORKFLOW_VALIDATION_FAILED',
-  
+
   // Memory Errors
   MEMORY_STORAGE_FAILED: 'MEMORY_STORAGE_FAILED',
   MEMORY_RETRIEVAL_FAILED: 'MEMORY_RETRIEVAL_FAILED',
   MEMORY_QUERY_FAILED: 'MEMORY_QUERY_FAILED',
-  
+
   // Database Errors
   DATABASE_CONNECTION_FAILED: 'DATABASE_CONNECTION_FAILED',
   DATABASE_QUERY_FAILED: 'DATABASE_QUERY_FAILED',
   DATABASE_TRANSACTION_FAILED: 'DATABASE_TRANSACTION_FAILED',
-  
+
   // Validation Errors
   INVALID_INPUT: 'INVALID_INPUT',
   MISSING_REQUIRED_FIELD: 'MISSING_REQUIRED_FIELD',
   INVALID_FORMAT: 'INVALID_FORMAT',
-  
+
   // Authentication/Authorization Errors
   UNAUTHORIZED: 'UNAUTHORIZED',
   FORBIDDEN: 'FORBIDDEN',
   TOKEN_EXPIRED: 'TOKEN_EXPIRED',
-  
+
   // Network Errors
   NETWORK_ERROR: 'NETWORK_ERROR',
   TIMEOUT_ERROR: 'TIMEOUT_ERROR',

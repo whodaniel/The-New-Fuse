@@ -36,7 +36,7 @@ export class SyncLRUCache<T> {
   private readonly cache = new Map<string, CacheEntry<T>>();
   private readonly accessOrder: string[] = [];
   private readonly tenantCaches = new Map<string, Set<string>>();
-  
+
   private currentMemoryUsage = 0;
   private hitCount = 0;
   private missCount = 0;
@@ -70,7 +70,7 @@ export class SyncLRUCache<T> {
     entry.accessCount++;
     entry.lastAccessed = new Date();
     this.updateAccessOrder(fullKey);
-    
+
     this.hitCount++;
     return entry.value;
   }
@@ -93,7 +93,7 @@ export class SyncLRUCache<T> {
       lastAccessed: new Date(),
       createdAt: new Date(),
       size,
-      tenantId
+      tenantId,
     };
 
     // Remove existing entry if it exists
@@ -118,7 +118,7 @@ export class SyncLRUCache<T> {
       key: fullKey,
       size,
       totalSize: this.cache.size,
-      memoryUsage: this.currentMemoryUsage
+      memoryUsage: this.currentMemoryUsage,
     });
   }
 
@@ -147,10 +147,10 @@ export class SyncLRUCache<T> {
     }
 
     this.tenantCaches.delete(tenantId);
-    
+
     this.logger.info('Tenant cache cleared', {
       tenantId,
-      clearedCount: tenantKeys.size
+      clearedCount: tenantKeys.size,
     });
   }
 
@@ -162,7 +162,7 @@ export class SyncLRUCache<T> {
     this.accessOrder.length = 0;
     this.tenantCaches.clear();
     this.currentMemoryUsage = 0;
-    
+
     this.logger.info('Cache cleared completely');
   }
 
@@ -189,14 +189,14 @@ export class SyncLRUCache<T> {
     }
 
     const totalRequests = this.hitCount + this.missCount;
-    
+
     return {
       size: this.cache.size,
       memoryUsage: this.currentMemoryUsage,
       hitRate: totalRequests > 0 ? this.hitCount / totalRequests : 0,
       missRate: totalRequests > 0 ? this.missCount / totalRequests : 0,
       evictionCount: this.evictionCount,
-      tenantStats
+      tenantStats,
     };
   }
 
@@ -246,7 +246,7 @@ export class SyncLRUCache<T> {
     // Remove from tenant cache
     if (entry.tenantId && this.tenantCaches.has(entry.tenantId)) {
       this.tenantCaches.get(entry.tenantId)!.delete(key);
-      
+
       // Clean up empty tenant cache
       if (this.tenantCaches.get(entry.tenantId)!.size === 0) {
         this.tenantCaches.delete(entry.tenantId);
@@ -328,7 +328,7 @@ export class SyncLRUCache<T> {
     if (expiredKeys.length > 0) {
       this.logger.debug('Cleaned up expired cache entries', {
         expiredCount: expiredKeys.length,
-        remainingSize: this.cache.size
+        remainingSize: this.cache.size,
       });
     }
   }
@@ -346,7 +346,7 @@ export class SyncLRUCache<T> {
     this.logger.info('Force cleanup completed', {
       targetMemory: target,
       currentMemory: this.currentMemoryUsage,
-      evictedCount: this.evictionCount
+      evictedCount: this.evictionCount,
     });
   }
 
@@ -357,7 +357,7 @@ export class SyncLRUCache<T> {
     if (this.cleanupTimer) {
       clearInterval(this.cleanupTimer);
     }
-    
+
     this.clear();
     this.logger.info('Cache shutdown complete');
   }

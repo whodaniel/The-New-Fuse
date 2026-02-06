@@ -5,14 +5,14 @@
 
 import * as bcrypt from 'bcrypt';
 import type {
-  NewUser,
   NewAgent,
   NewChat,
   NewMessage,
-  NewTask,
-  NewWorkflow,
   NewPipeline,
+  NewTask,
   NewTaskExecution,
+  NewUser,
+  NewWorkflow,
 } from '../../src/drizzle/types';
 
 /**

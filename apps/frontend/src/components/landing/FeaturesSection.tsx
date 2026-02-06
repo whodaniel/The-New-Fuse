@@ -1,5 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
+import React from 'react';
 
 export interface FeaturesSectionProps {
   title: string;
@@ -45,9 +45,7 @@ export const FeaturesSection: React.FC<FeaturesSectionProps> = ({
         </motion.div>
 
         {/* Features Grid */}
-        <div className={`grid ${columnClasses[columns]} gap-6 lg:gap-8`}>
-          {children}
-        </div>
+        <div className={`grid ${columnClasses[columns]} gap-6 lg:gap-8`}>{children}</div>
       </div>
     </section>
   );

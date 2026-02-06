@@ -3,6 +3,7 @@
 ## Current Structure Analysis
 
 ### Packages to Merge
+
 - `ui`: Primary UI components
 - `ui-components`: Additional UI components
 - `shared/components`: Shared component library
@@ -10,6 +11,7 @@
 ## Consolidation Strategy
 
 ### 1. Package Merge
+
 - Create unified package under `@the-new-fuse/ui`
 - Maintain component functionality
 - Ensure backward compatibility
@@ -17,22 +19,26 @@
 ### 2. Component Organization
 
 #### Core Components
+
 - Basic UI elements (Button, Input, etc.)
 - Layout components
 - Typography components
 - Form elements
 
 #### Feature Components
+
 - Complex UI components
 - Business-specific components
 - Composite components
 
 #### Shared Components
+
 - Common patterns
 - Utility components
 - HOCs and providers
 
 ### 3. Styling Strategy
+
 - Implement consistent theming
 - Standardize style system
 - Create design tokens
@@ -63,6 +69,7 @@
 ## Migration Guide
 
 ### Component Usage
+
 ```typescript
 // Old way
 import { Button } from '@the-new-fuse/ui-components';
@@ -73,6 +80,7 @@ import { Button, Card } from '@the-new-fuse/ui';
 ```
 
 ### Theming
+
 ```typescript
 interface ThemeConfig {
   colors: {

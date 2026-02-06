@@ -62,11 +62,11 @@ export interface CacheStats {
  * Cache eviction strategy
  */
 export enum EvictionStrategy {
-  LRU = 'lru',           // Least Recently Used
-  LFU = 'lfu',           // Least Frequently Used
-  FIFO = 'fifo',         // First In, First Out
-  TTL = 'ttl',           // Time To Live based
-  SIZE = 'size'          // Size based
+  LRU = 'lru', // Least Recently Used
+  LFU = 'lfu', // Least Frequently Used
+  FIFO = 'fifo', // First In, First Out
+  TTL = 'ttl', // Time To Live based
+  SIZE = 'size', // Size based
 }
 
 /**
@@ -75,22 +75,22 @@ export enum EvictionStrategy {
 export interface ICache<K, V> {
   /** Get value from cache */
   get(key: K): V | undefined;
-  
+
   /** Set value in cache */
   set(key: K, value: V, ttl?: number): void;
-  
+
   /** Check if key exists */
   has(key: K): boolean;
-  
+
   /** Delete key from cache */
   delete(key: K): boolean;
-  
+
   /** Clear all entries */
   clear(): void;
-  
+
   /** Get cache size */
   size(): number;
-  
+
   /** Get cache statistics */
   getStats(): CacheStats;
 }
@@ -103,20 +103,20 @@ export class LRUCache<K, V> implements ICache<K, V> {
   private readonly config: CacheConfig;
   private readonly logger: Logger;
   private cleanupTimer?: NodeJS.Timeout;
-  
+
   // Statistics
   private stats = {
     hits: 0,
     misses: 0,
     evictions: 0,
     totalAccessTime: 0,
-    accessCount: 0
+    accessCount: 0,
   };
 
   constructor(config: CacheConfig, logger?: Logger) {
     this.config = config;
     this.logger = logger || new Logger('LRUCache');
-    
+
     if (config.cleanupInterval > 0) {
       this.startCleanup();
     }
@@ -127,7 +127,7 @@ export class LRUCache<K, V> implements ICache<K, V> {
    */
   get(key: K): V | undefined {
     const startTime = Date.now();
-    
+
     const entry = this.cache.get(key);
     if (!entry) {
       this.stats.misses++;
@@ -146,14 +146,14 @@ export class LRUCache<K, V> implements ICache<K, V> {
     // Update access info
     entry.accessCount++;
     entry.lastAccess = new Date();
-    
+
     // Move to end (most recently used)
     this.cache.delete(key);
     this.cache.set(key, entry);
-    
+
     this.stats.hits++;
     this.recordAccessTime(Date.now() - startTime);
-    
+
     return entry.value;
   }
 
@@ -164,14 +164,14 @@ export class LRUCache<K, V> implements ICache<K, V> {
     const now = new Date();
     const entryTTL = ttl || this.config.defaultTTL;
     const size = this.estimateSize(value);
-    
+
     const entry: CacheEntry<V> = {
       value,
       timestamp: now,
       ttl: entryTTL,
       accessCount: 0,
       lastAccess: now,
-      size
+      size,
     };
 
     // Remove existing entry if present
@@ -181,7 +181,7 @@ export class LRUCache<K, V> implements ICache<K, V> {
 
     // Check if we need to evict entries
     this.evictIfNeeded();
-    
+
     // Add new entry
     this.cache.set(key, entry);
   }
@@ -192,12 +192,12 @@ export class LRUCache<K, V> implements ICache<K, V> {
   has(key: K): boolean {
     const entry = this.cache.get(key);
     if (!entry) return false;
-    
+
     if (this.isExpired(entry)) {
       this.cache.delete(key);
       return false;
     }
-    
+
     return true;
   }
 
@@ -228,11 +228,13 @@ export class LRUCache<K, V> implements ICache<K, V> {
   getStats(): CacheStats {
     const totalAccesses = this.stats.hits + this.stats.misses;
     const hitRate = totalAccesses > 0 ? this.stats.hits / totalAccesses : 0;
-    const avgAccessTime = this.stats.accessCount > 0 ? 
-      this.stats.totalAccessTime / this.stats.accessCount : 0;
-    
-    const memoryUsage = Array.from(this.cache.values())
-      .reduce((total, entry) => total + entry.size, 0);
+    const avgAccessTime =
+      this.stats.accessCount > 0 ? this.stats.totalAccessTime / this.stats.accessCount : 0;
+
+    const memoryUsage = Array.from(this.cache.values()).reduce(
+      (total, entry) => total + entry.size,
+      0
+    );
 
     return {
       hits: this.stats.hits,
@@ -241,7 +243,7 @@ export class LRUCache<K, V> implements ICache<K, V> {
       size: this.cache.size,
       memoryUsage,
       evictions: this.stats.evictions,
-      avgAccessTime
+      avgAccessTime,
     };
   }
 
@@ -262,7 +264,7 @@ export class LRUCache<K, V> implements ICache<K, V> {
   private isExpired(entry: CacheEntry<V>): boolean {
     const now = Date.now();
     const entryTime = entry.timestamp.getTime();
-    return (now - entryTime) > entry.ttl;
+    return now - entryTime > entry.ttl;
   }
 
   /**
@@ -282,18 +284,21 @@ export class LRUCache<K, V> implements ICache<K, V> {
 
     // Memory-based eviction
     if (this.config.maxMemory) {
-      const currentMemory = Array.from(this.cache.values())
-        .reduce((total, entry) => total + entry.size, 0);
-      
+      const currentMemory = Array.from(this.cache.values()).reduce(
+        (total, entry) => total + entry.size,
+        0
+      );
+
       if (currentMemory > this.config.maxMemory) {
         // Evict least recently used entries
-        const entries = Array.from(this.cache.entries())
-          .sort(([, a], [, b]) => a.lastAccess.getTime() - b.lastAccess.getTime());
-        
+        const entries = Array.from(this.cache.entries()).sort(
+          ([, a], [, b]) => a.lastAccess.getTime() - b.lastAccess.getTime()
+        );
+
         let memoryToFree = currentMemory - this.config.maxMemory;
         for (const [key, entry] of entries) {
           if (memoryToFree <= 0) break;
-          
+
           this.cache.delete(key);
           this.stats.evictions++;
           memoryToFree -= entry.size;
@@ -317,14 +322,14 @@ export class LRUCache<K, V> implements ICache<K, V> {
   private cleanup(): void {
     const now = Date.now();
     let cleanedCount = 0;
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (this.isExpired(entry)) {
         this.cache.delete(key);
         cleanedCount++;
       }
     }
-    
+
     if (cleanedCount > 0) {
       this.logger.debug(`Cleaned up ${cleanedCount} expired cache entries`);
     }
@@ -337,7 +342,7 @@ export class LRUCache<K, V> implements ICache<K, V> {
     if (typeof value === 'string') {
       return value.length * 2; // Rough estimate for UTF-16
     }
-    
+
     if (typeof value === 'object' && value !== null) {
       try {
         return JSON.stringify(value).length * 2;
@@ -345,7 +350,7 @@ export class LRUCache<K, V> implements ICache<K, V> {
         return 1024; // Default estimate
       }
     }
-    
+
     return 64; // Default for primitives
   }
 
@@ -402,7 +407,7 @@ export class MultiLevelCache<K, V> implements ICache<K, V> {
    * Check if key exists in any level
    */
   has(key: K): boolean {
-    return this.levels.some(level => level.has(key));
+    return this.levels.some((level) => level.has(key));
   }
 
   /**
@@ -438,8 +443,8 @@ export class MultiLevelCache<K, V> implements ICache<K, V> {
    * Get aggregated statistics
    */
   getStats(): CacheStats {
-    const allStats = this.levels.map(level => level.getStats());
-    
+    const allStats = this.levels.map((level) => level.getStats());
+
     return {
       hits: allStats.reduce((sum, stats) => sum + stats.hits, 0),
       misses: allStats.reduce((sum, stats) => sum + stats.misses, 0),
@@ -447,7 +452,8 @@ export class MultiLevelCache<K, V> implements ICache<K, V> {
       size: allStats.reduce((sum, stats) => sum + stats.size, 0),
       memoryUsage: allStats.reduce((sum, stats) => sum + stats.memoryUsage, 0),
       evictions: allStats.reduce((sum, stats) => sum + stats.evictions, 0),
-      avgAccessTime: allStats.reduce((sum, stats) => sum + stats.avgAccessTime, 0) / allStats.length
+      avgAccessTime:
+        allStats.reduce((sum, stats) => sum + stats.avgAccessTime, 0) / allStats.length,
     };
   }
 }
@@ -464,7 +470,7 @@ export class CacheFactory {
       maxSize: 1000,
       defaultTTL: 60 * 60 * 1000, // 1 hour
       cleanupInterval: 5 * 60 * 1000, // 5 minutes
-      enableStats: true
+      enableStats: true,
     };
 
     return new LRUCache({ ...defaultConfig, ...config });
@@ -473,10 +479,8 @@ export class CacheFactory {
   /**
    * Create multi-level cache
    */
-  static createMultiLevelCache<K, V>(
-    configs: Partial<CacheConfig>[]
-  ): MultiLevelCache<K, V> {
-    const levels = configs.map(config => this.createLRUCache<K, V>(config));
+  static createMultiLevelCache<K, V>(configs: Partial<CacheConfig>[]): MultiLevelCache<K, V> {
+    const levels = configs.map((config) => this.createLRUCache<K, V>(config));
     return new MultiLevelCache(levels);
   }
 
@@ -489,7 +493,7 @@ export class CacheFactory {
       defaultTTL: 30 * 60 * 1000, // 30 minutes
       maxMemory: 50 * 1024 * 1024, // 50MB
       cleanupInterval: 2 * 60 * 1000, // 2 minutes
-      enableStats: true
+      enableStats: true,
     });
   }
 
@@ -502,7 +506,7 @@ export class CacheFactory {
       defaultTTL: 15 * 60 * 1000, // 15 minutes
       maxMemory: 20 * 1024 * 1024, // 20MB
       cleanupInterval: 60 * 1000, // 1 minute
-      enableStats: true
+      enableStats: true,
     });
   }
 }

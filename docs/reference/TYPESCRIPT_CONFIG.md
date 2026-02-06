@@ -1,6 +1,7 @@
 # TypeScript Configuration Guide
 
 ## Base Configuration (`tsconfig.base.json`)
+
 ```json
 {
   "compilerOptions": {
@@ -22,6 +23,7 @@
 ## Environment-Specific Configurations
 
 ### UI Package (`packages/ui/tsconfig.json`)
+
 ```json
 {
   "extends": "../../tsconfig.base.json",
@@ -34,6 +36,7 @@
 ```
 
 ### API Package (`packages/api/tsconfig.json`)
+
 ```json
 {
   "extends": "../../tsconfig.base.json",
@@ -46,6 +49,7 @@
 ```
 
 ### Shared Library (`packages/shared/tsconfig.json`)
+
 ```json
 {
   "extends": "../../tsconfig.base.json",
@@ -58,8 +62,11 @@
 ```
 
 ## Migration Notes
+
 1. Always extend from `tsconfig.base.json`
 2. Use path aliases for cross-package imports
 3. Environment-specific types should be declared in package-level configs
 
-> **Deprecation Notice**: Previous TypeScript configuration documents (TYPESCRIPT-FIX.md, TYPESCRIPT_FIX_GUIDE.md) have been consolidated into this reference.
+> **Deprecation Notice**: Previous TypeScript configuration documents
+> (TYPESCRIPT-FIX.md, TYPESCRIPT_FIX_GUIDE.md) have been consolidated into this
+> reference.

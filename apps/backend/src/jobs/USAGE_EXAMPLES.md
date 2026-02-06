@@ -1,6 +1,7 @@
 # Job System Usage Examples
 
-This document provides practical examples of how to use the background job processing system in your services and controllers.
+This document provides practical examples of how to use the background job
+processing system in your services and controllers.
 
 ## Table of Contents
 
@@ -38,7 +39,7 @@ export class UsersService {
         name: user.name,
         timestamp: Date.now(),
       },
-      JobPriority.HIGH,
+      JobPriority.HIGH
     );
 
     return user;
@@ -58,7 +59,11 @@ import { JobPriority } from '../jobs/constants/queue-names';
 export class NotificationsService {
   constructor(private readonly jobQueue: JobQueueService) {}
 
-  async notifyUserAboutAgentCompletion(userId: string, agentId: string, result: any) {
+  async notifyUserAboutAgentCompletion(
+    userId: string,
+    agentId: string,
+    result: any
+  ) {
     const user = await this.getUserById(userId);
 
     await this.jobQueue.sendNotificationEmail(
@@ -73,7 +78,7 @@ export class NotificationsService {
         },
         timestamp: Date.now(),
       },
-      JobPriority.NORMAL,
+      JobPriority.NORMAL
     );
   }
 }
@@ -93,7 +98,7 @@ await this.jobQueue.sendEmail(
     `,
     timestamp: Date.now(),
   },
-  JobPriority.HIGH,
+  JobPriority.HIGH
 );
 ```
 
@@ -123,7 +128,7 @@ export class AgentsController {
         timeout: 300000, // 5 minutes
         timestamp: Date.now(),
       },
-      JobPriority.NORMAL,
+      JobPriority.NORMAL
     );
 
     return {
@@ -185,7 +190,7 @@ await this.jobQueue.executeAgent(
     },
     priority: JobPriority.CRITICAL,
   },
-  JobPriority.CRITICAL,
+  JobPriority.CRITICAL
 );
 ```
 
@@ -218,7 +223,7 @@ export class ReportsService {
         email: await this.getUserEmail(userId),
         timestamp: Date.now(),
       },
-      JobPriority.NORMAL,
+      JobPriority.NORMAL
     );
 
     return {
@@ -306,7 +311,7 @@ export class DeploymentService implements OnModuleInit {
         syncType: 'full',
         timestamp: Date.now(),
       },
-      JobPriority.HIGH,
+      JobPriority.HIGH
     );
   }
 }
@@ -414,7 +419,7 @@ await this.jobQueue.addDelayedJob(
     html: reminderEmailTemplate,
   },
   24 * 60 * 60 * 1000, // 24 hours in milliseconds
-  JobPriority.NORMAL,
+  JobPriority.NORMAL
 );
 ```
 
@@ -433,7 +438,7 @@ const job = await this.jobQueue.executeAgent({
 const checkJobStatus = async () => {
   const jobStatus = await this.jobQueue.getJob(
     QueueName.AGENT_EXECUTION,
-    job.id.toString(),
+    job.id.toString()
   );
 
   if (jobStatus) {
@@ -613,16 +618,16 @@ async processOrder(orderId: string) {
 
 ```typescript
 // Critical: Security-related, fraud detection, payment processing
-JobPriority.CRITICAL
+JobPriority.CRITICAL;
 
 // High: Welcome emails, important notifications, user-facing operations
-JobPriority.HIGH
+JobPriority.HIGH;
 
 // Normal: Regular notifications, reports, standard operations
-JobPriority.NORMAL
+JobPriority.NORMAL;
 
 // Low: Cleanup tasks, analytics, non-urgent operations
-JobPriority.LOW
+JobPriority.LOW;
 ```
 
 ## Testing
@@ -662,7 +667,7 @@ describe('UsersService', () => {
         email: 'test@example.com',
         name: 'Test User',
       }),
-      expect.any(Number),
+      expect.any(Number)
     );
   });
 });

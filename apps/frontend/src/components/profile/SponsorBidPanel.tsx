@@ -6,10 +6,10 @@ interface SponsorBidPanelProps {
   onPlaceBid?: (amount: number) => Promise<void>;
 }
 
-const SponsorBidPanel: React.FC<SponsorBidPanelProps> = ({ 
-  agentId, 
+const SponsorBidPanel: React.FC<SponsorBidPanelProps> = ({
+  agentId,
   currentBid = 0,
-  onPlaceBid 
+  onPlaceBid,
 }) => {
   const [bidAmount, setBidAmount] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -41,16 +41,16 @@ const SponsorBidPanel: React.FC<SponsorBidPanelProps> = ({
           <label className="block text-xs uppercase text-slate-500 font-bold mb-1">
             Your Bid (MATIC)
           </label>
-          <input 
-            type="number" 
+          <input
+            type="number"
             value={bidAmount}
-            onChange={e => setBidAmount(e.target.value)} 
+            onChange={(e) => setBidAmount(e.target.value)}
             placeholder={`Min. ${(currentBid * 1.05).toFixed(2)}`}
             className="w-full bg-slate-800 text-white rounded-lg p-3 border border-slate-700 focus:border-blue-500 outline-none transition-colors"
           />
         </div>
 
-        <button 
+        <button
           onClick={handleBid}
           disabled={loading || !bidAmount || parseFloat(bidAmount) <= currentBid}
           className={`w-full py-3 rounded-lg font-bold text-lg transition-all ${

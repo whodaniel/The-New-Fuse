@@ -88,7 +88,7 @@ export class DashboardManager implements IDashboardManager {
 
     // Generate mock data for each panel
     const data: Record<string, any> = {};
-    
+
     for (const panel of dashboard.panels) {
       data[panel.id] = await this.generatePanelData(panel);
     }
@@ -96,7 +96,7 @@ export class DashboardManager implements IDashboardManager {
     return {
       dashboard,
       data,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
@@ -147,9 +147,9 @@ export class DashboardManager implements IDashboardManager {
             thresholds: [
               { value: 70, color: 'red', label: 'Critical' },
               { value: 85, color: 'yellow', label: 'Warning' },
-              { value: 100, color: 'green', label: 'Healthy' }
-            ]
-          }
+              { value: 100, color: 'green', label: 'Healthy' },
+            ],
+          },
         },
         {
           id: 'requests-per-second',
@@ -158,8 +158,8 @@ export class DashboardManager implements IDashboardManager {
           position: { x: 6, y: 0, width: 6, height: 4 },
           config: {
             metrics: ['requests.rps'],
-            timeRange: '1h'
-          }
+            timeRange: '1h',
+          },
         },
         {
           id: 'response-time',
@@ -168,8 +168,8 @@ export class DashboardManager implements IDashboardManager {
           position: { x: 0, y: 4, width: 6, height: 4 },
           config: {
             metrics: ['requests.avgResponseTime', 'requests.p95ResponseTime'],
-            timeRange: '1h'
-          }
+            timeRange: '1h',
+          },
         },
         {
           id: 'error-rate',
@@ -181,11 +181,11 @@ export class DashboardManager implements IDashboardManager {
             timeRange: '1h',
             thresholds: [
               { value: 0.05, color: 'yellow', label: 'Warning' },
-              { value: 0.1, color: 'red', label: 'Critical' }
-            ]
-          }
-        }
-      ]
+              { value: 0.1, color: 'red', label: 'Critical' },
+            ],
+          },
+        },
+      ],
     };
 
     // Performance Dashboard
@@ -203,8 +203,8 @@ export class DashboardManager implements IDashboardManager {
           position: { x: 0, y: 0, width: 12, height: 4 },
           config: {
             metrics: ['requests.responseTimeHistogram'],
-            timeRange: '1h'
-          }
+            timeRange: '1h',
+          },
         },
         {
           id: 'throughput-stats',
@@ -213,8 +213,8 @@ export class DashboardManager implements IDashboardManager {
           position: { x: 0, y: 4, width: 3, height: 2 },
           config: {
             metrics: ['requests.rps'],
-            timeRange: '1h'
-          }
+            timeRange: '1h',
+          },
         },
         {
           id: 'connection-stats',
@@ -223,8 +223,8 @@ export class DashboardManager implements IDashboardManager {
           position: { x: 3, y: 4, width: 3, height: 2 },
           config: {
             metrics: ['connections.active'],
-            timeRange: '1h'
-          }
+            timeRange: '1h',
+          },
         },
         {
           id: 'cache-hit-rate',
@@ -233,8 +233,8 @@ export class DashboardManager implements IDashboardManager {
           position: { x: 6, y: 4, width: 3, height: 2 },
           config: {
             metrics: ['resources.cacheHitRate'],
-            timeRange: '1h'
-          }
+            timeRange: '1h',
+          },
         },
         {
           id: 'tool-success-rate',
@@ -243,10 +243,10 @@ export class DashboardManager implements IDashboardManager {
           position: { x: 9, y: 4, width: 3, height: 2 },
           config: {
             metrics: ['tools.successRate'],
-            timeRange: '1h'
-          }
-        }
-      ]
+            timeRange: '1h',
+          },
+        },
+      ],
     };
 
     // System Resources Dashboard
@@ -264,8 +264,8 @@ export class DashboardManager implements IDashboardManager {
           position: { x: 0, y: 0, width: 6, height: 4 },
           config: {
             metrics: ['system.memoryUsage'],
-            timeRange: '1h'
-          }
+            timeRange: '1h',
+          },
         },
         {
           id: 'cpu-usage',
@@ -274,8 +274,8 @@ export class DashboardManager implements IDashboardManager {
           position: { x: 6, y: 0, width: 6, height: 4 },
           config: {
             metrics: ['system.cpuUsage'],
-            timeRange: '1h'
-          }
+            timeRange: '1h',
+          },
         },
         {
           id: 'uptime',
@@ -284,8 +284,8 @@ export class DashboardManager implements IDashboardManager {
           position: { x: 0, y: 4, width: 4, height: 2 },
           config: {
             metrics: ['system.uptime'],
-            timeRange: '1h'
-          }
+            timeRange: '1h',
+          },
         },
         {
           id: 'resource-counts',
@@ -294,10 +294,10 @@ export class DashboardManager implements IDashboardManager {
           position: { x: 4, y: 4, width: 8, height: 4 },
           config: {
             metrics: ['resources.total', 'tools.total', 'connections.total'],
-            timeRange: '1h'
-          }
-        }
-      ]
+            timeRange: '1h',
+          },
+        },
+      ],
     };
 
     // Add dashboards
@@ -314,7 +314,7 @@ export class DashboardManager implements IDashboardManager {
   private async generatePanelData(panel: any): Promise<any> {
     const now = Date.now();
     const timeRange = this.parseTimeRange(panel.config.timeRange || '1h');
-    
+
     switch (panel.type) {
       case 'line':
         return this.generateTimeSeriesData(panel.config.metrics, timeRange);
@@ -340,13 +340,13 @@ export class DashboardManager implements IDashboardManager {
     const now = Date.now();
     const points = 50;
     const interval = timeRange / points;
-    
-    const series = metrics.map(metric => ({
+
+    const series = metrics.map((metric) => ({
       name: metric,
       data: Array.from({ length: points }, (_, i) => ({
         timestamp: new Date(now - (points - i) * interval),
-        value: this.generateMetricValue(metric, i)
-      }))
+        value: this.generateMetricValue(metric, i),
+      })),
     }));
 
     return { series };
@@ -360,7 +360,7 @@ export class DashboardManager implements IDashboardManager {
       value: this.generateMetricValue(metric),
       min: 0,
       max: 100,
-      unit: this.getMetricUnit(metric)
+      unit: this.getMetricUnit(metric),
     };
   }
 
@@ -375,7 +375,7 @@ export class DashboardManager implements IDashboardManager {
     return {
       value: current,
       change: change,
-      unit: this.getMetricUnit(metric)
+      unit: this.getMetricUnit(metric),
     };
   }
 
@@ -383,15 +383,15 @@ export class DashboardManager implements IDashboardManager {
    * Generate table data
    */
   private generateTableData(metrics: string[]): any {
-    const rows = metrics.map(metric => ({
+    const rows = metrics.map((metric) => ({
       metric,
       value: this.generateMetricValue(metric),
-      unit: this.getMetricUnit(metric)
+      unit: this.getMetricUnit(metric),
     }));
 
     return {
       columns: ['Metric', 'Value', 'Unit'],
-      rows
+      rows,
     };
   }
 
@@ -404,11 +404,11 @@ export class DashboardManager implements IDashboardManager {
     const now = Date.now();
     const interval = timeRange / timePoints;
 
-    const data = Array.from({ length: timePoints }, (_, t) => 
+    const data = Array.from({ length: timePoints }, (_, t) =>
       Array.from({ length: buckets }, (_, b) => ({
         x: new Date(now - (timePoints - t) * interval),
         y: b * 50, // Response time buckets
-        value: Math.random() * 100
+        value: Math.random() * 100,
       }))
     ).flat();
 
@@ -419,9 +419,9 @@ export class DashboardManager implements IDashboardManager {
    * Generate bar data
    */
   private generateBarData(metrics: string[]): any {
-    const data = metrics.map(metric => ({
+    const data = metrics.map((metric) => ({
       name: metric,
-      value: this.generateMetricValue(metric)
+      value: this.generateMetricValue(metric),
     }));
 
     return { data };
@@ -432,7 +432,7 @@ export class DashboardManager implements IDashboardManager {
    */
   private generateMetricValue(metric: string, index?: number): number {
     const base = index !== undefined ? index : 0;
-    
+
     switch (metric) {
       case 'system.healthScore':
         return 85 + Math.random() * 15;
@@ -455,7 +455,7 @@ export class DashboardManager implements IDashboardManager {
       case 'system.cpuUsage':
         return 20 + Math.random() * 60;
       case 'system.uptime':
-        return Date.now() - (24 * 60 * 60 * 1000); // 24 hours ago
+        return Date.now() - 24 * 60 * 60 * 1000; // 24 hours ago
       case 'resources.total':
         return Math.floor(100 + Math.random() * 50);
       case 'tools.total':
@@ -490,11 +490,16 @@ export class DashboardManager implements IDashboardManager {
     const unit = match[2];
 
     switch (unit) {
-      case 's': return value * 1000;
-      case 'm': return value * 60 * 1000;
-      case 'h': return value * 60 * 60 * 1000;
-      case 'd': return value * 24 * 60 * 60 * 1000;
-      default: return 60 * 60 * 1000;
+      case 's':
+        return value * 1000;
+      case 'm':
+        return value * 60 * 1000;
+      case 'h':
+        return value * 60 * 60 * 1000;
+      case 'd':
+        return value * 24 * 60 * 60 * 1000;
+      default:
+        return 60 * 60 * 1000;
     }
   }
 }

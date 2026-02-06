@@ -4,12 +4,12 @@
 
 // Re-export capability interfaces from the interfaces module
 export type {
-  MCPCapability,
-  CapabilityMetadata,
   CapabilityDependency,
-  CapabilityStatus,
+  CapabilityMetadata,
   CapabilityMetrics,
-  CapabilityRegistry
+  CapabilityRegistry,
+  CapabilityStatus,
+  MCPCapability,
 } from '../interfaces/IMCPCapability';
 
 /**
@@ -22,7 +22,7 @@ export enum CapabilityCategory {
   COMMUNICATION = 'communication',
   SECURITY = 'security',
   MONITORING = 'monitoring',
-  EXTENSION = 'extension'
+  EXTENSION = 'extension',
 }
 
 /**
@@ -33,7 +33,7 @@ export enum CapabilityLifecycleState {
   PROPOSED = 'proposed',
   ACCEPTED = 'accepted',
   DEPRECATED = 'deprecated',
-  RETIRED = 'retired'
+  RETIRED = 'retired',
 }
 
 /**
@@ -42,7 +42,7 @@ export enum CapabilityLifecycleState {
 export enum CapabilityCompatibilityLevel {
   FULL = 'full',
   PARTIAL = 'partial',
-  NONE = 'none'
+  NONE = 'none',
 }
 
 /**

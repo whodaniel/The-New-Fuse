@@ -1,11 +1,11 @@
 // Export types
 export enum ExportFormat {
-  JSON = "JSON",
-  CSV = "CSV",
-  XML = "XML",
-  PDF = "PDF",
-  MARKDOWN = "MARKDOWN",
-  HTML = "HTML"
+  JSON = 'JSON',
+  CSV = 'CSV',
+  XML = 'XML',
+  PDF = 'PDF',
+  MARKDOWN = 'MARKDOWN',
+  HTML = 'HTML',
 }
 
 export interface ExportOptions {

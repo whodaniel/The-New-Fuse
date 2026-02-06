@@ -1,4 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
 import { InputSanitizationService } from '../security/input-sanitization.service';
@@ -18,7 +24,7 @@ export class SecurityGuard implements CanActivate {
 
     // Get security requirements from decorators
     const securityOptions = this.getSecurityOptions(context);
-    
+
     // Rate limiting check
     await this.checkRateLimit(request);
 
@@ -42,7 +48,10 @@ export class SecurityGuard implements CanActivate {
       requireAuth: this.reflector.get<boolean>('requireAuth', context.getHandler()) || false,
       roles: this.reflector.get<string[]>('roles', context.getHandler()) || [],
       permissions: this.reflector.get<string[]>('permissions', context.getHandler()) || [],
-      rateLimit: this.reflector.get<any>('rateLimit', context.getHandler()) || { requests: 100, window: 60000 },
+      rateLimit: this.reflector.get<any>('rateLimit', context.getHandler()) || {
+        requests: 100,
+        window: 60000,
+      },
       sanitizeInput: this.reflector.get<boolean>('sanitizeInput', context.getHandler()) || true,
       validateCSRF: this.reflector.get<boolean>('validateCSRF', context.getHandler()) || false,
       strictMode: this.reflector.get<boolean>('strictMode', context.getHandler()) || false,
@@ -54,28 +63,29 @@ export class SecurityGuard implements CanActivate {
     const clientIP = this.getClientIP(request);
     const userAgent = request.headers['user-agent'] || 'unknown';
     const key = `${clientIP}:${userAgent}`;
-    
+
     // This is a simplified implementation - use a proper rate limiter in production
     const now = Date.now();
     const windowStart = now - 60000; // 1 minute window
-    
+
     // Store rate limit data in memory (use Redis in production)
     if (!request.app.locals.rateLimit) {
       request.app.locals.rateLimit = new Map();
     }
-    
+
     const rateLimitData = request.app.locals.rateLimit;
     const userData = rateLimitData.get(key) || { count: 0, resetTime: now + 60000 };
-    
+
     if (now > userData.resetTime) {
       userData.count = 0;
       userData.resetTime = now + 60000;
     }
-    
+
     userData.count++;
     rateLimitData.set(key, userData);
-    
-    if (userData.count > 100) { // 100 requests per minute
+
+    if (userData.count > 100) {
+      // 100 requests per minute
       throw new UnauthorizedException('Rate limit exceeded. Please try again later.');
     }
   }
@@ -85,9 +95,11 @@ export class SecurityGuard implements CanActivate {
     if (options.sanitizeInput) {
       // Sanitize query parameters
       if (request.query && typeof request.query === 'object') {
-        Object.keys(request.query).forEach(key => {
+        Object.keys(request.query).forEach((key) => {
           if (typeof request.query[key] === 'string') {
-            (request.query as any)[key] = this.sanitizationService.sanitizeText(request.query[key] as string);
+            (request.query as any)[key] = this.sanitizationService.sanitizeText(
+              request.query[key] as string
+            );
           }
         });
       }
@@ -99,7 +111,7 @@ export class SecurityGuard implements CanActivate {
 
       // Sanitize params
       if (request.params && typeof request.params === 'object') {
-        Object.keys(request.params).forEach(key => {
+        Object.keys(request.params).forEach((key) => {
           if (typeof request.params[key] === 'string') {
             request.params[key] = this.sanitizationService.sanitizeText(request.params[key]);
           }
@@ -127,12 +139,13 @@ export class SecurityGuard implements CanActivate {
     // Security headers are already added by the middleware
     // This is a backup to ensure they're set
     if (!response.getHeader('Content-Security-Policy')) {
-      response.setHeader('Content-Security-Policy',
+      response.setHeader(
+        'Content-Security-Policy',
         "default-src 'self'; " +
-        "script-src 'self' 'unsafe-inline'; " +
-        "style-src 'self' 'unsafe-inline'; " +
-        "img-src 'self' data: https:; " +
-        "frame-ancestors 'none';"
+          "script-src 'self' 'unsafe-inline'; " +
+          "style-src 'self' 'unsafe-inline'; " +
+          "img-src 'self' data: https:; " +
+          "frame-ancestors 'none';"
       );
     }
 
@@ -199,7 +212,7 @@ export class SecurityGuard implements CanActivate {
       // Decode and validate the payload
       const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
       const now = Math.floor(Date.now() / 1000);
-      
+
       return payload.exp > now; // Check if token is not expired
     } catch {
       return false;
@@ -222,7 +235,7 @@ export class SecurityGuard implements CanActivate {
 
     // Validate permissions
     if (options.permissions.length > 0) {
-      const hasPermission = options.permissions.some((permission: string) => 
+      const hasPermission = options.permissions.some((permission: string) =>
         user.permissions?.includes(permission)
       );
       if (!hasPermission) {
@@ -249,10 +262,12 @@ export class SecurityGuard implements CanActivate {
   }
 
   private getClientIP(request: Request): string {
-    return (request.headers['x-forwarded-for'] as string)?.split(',')[0] ||
-           request.headers['x-real-ip'] as string ||
-           request.connection.remoteAddress ||
-           'unknown';
+    return (
+      (request.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+      (request.headers['x-real-ip'] as string) ||
+      request.connection.remoteAddress ||
+      'unknown'
+    );
   }
 
   private generateRequestId(): string {

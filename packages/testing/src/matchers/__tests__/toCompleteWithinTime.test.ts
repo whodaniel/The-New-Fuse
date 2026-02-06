@@ -17,9 +17,9 @@ describe('toCompleteWithinTime', () => {
 
   it('should handle errors in the operation', async () => {
     const operation = Promise.reject(new Error('Operation failed'));
-    await expect(toCompleteWithinTime.call({} as any, operation, 100))
-      .rejects
-      .toThrow('Operation failed');
+    await expect(toCompleteWithinTime.call({} as any, operation, 100)).rejects.toThrow(
+      'Operation failed',
+    );
   });
 
   it('should handle immediate resolution', async () => {

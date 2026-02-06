@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
 
 interface Command {
   id: string;
@@ -38,49 +38,49 @@ export const CommandPalette: React.FC = () => {
         name: 'Go to Home',
         shortcut: '⌘H',
         action: () => router.push('/'),
-        category: 'navigation'
+        category: 'navigation',
       },
       {
         id: 'agents',
         name: 'View Agents',
         shortcut: '⌘A',
         action: () => router.push('/agents'),
-        category: 'navigation'
+        category: 'navigation',
       },
       {
         id: 'workflow',
         name: 'Open Workflow Editor',
         shortcut: '⌘W',
         action: () => router.push('/workflow'),
-        category: 'tool'
+        category: 'tool',
       },
       {
         id: 'settings',
         name: 'Open Settings',
         shortcut: '⌘,',
         action: () => router.push('/settings'),
-        category: 'navigation'
+        category: 'navigation',
       },
       {
         id: 'new-agent',
         name: 'Create New Agent',
         shortcut: '⌘N',
         action: () => router.push('/agents/new'),
-        category: 'action'
+        category: 'action',
       },
       {
         id: 'marketplace',
         name: 'Browse Marketplace',
         shortcut: '⌘M',
         action: () => router.push('/marketplace'),
-        category: 'navigation'
-      }
+        category: 'navigation',
+      },
     ];
     setCommands(allCommands);
   }, [router]);
 
   useEffect(() => {
-    const filtered = commands.filter(command =>
+    const filtered = commands.filter((command) =>
       command.name.toLowerCase().includes(search.toLowerCase())
     );
     setFilteredCommands(filtered);
@@ -120,9 +120,7 @@ export const CommandPalette: React.FC = () => {
               >
                 <div>
                   <span className="text-gray-900 dark:text-white">{command.name}</span>
-                  <span className="ml-2 text-sm text-gray-500">
-                    {command.category}
-                  </span>
+                  <span className="ml-2 text-sm text-gray-500">{command.category}</span>
                 </div>
                 {command.shortcut && (
                   <span className="text-sm text-gray-500">{command.shortcut}</span>

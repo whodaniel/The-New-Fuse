@@ -1,12 +1,11 @@
-
 const WebSocket = require('ws');
 
 const wss = new WebSocket.Server({ port: 3712 });
 
-wss.on('connection', ws => {
+wss.on('connection', (ws) => {
   console.log('Claude MCP Server: Client connected');
 
-  ws.on('message', message => {
+  ws.on('message', (message) => {
     console.log('received: %s', message);
     // Placeholder for message processing logic
     ws.send(`Echo: ${message}`);

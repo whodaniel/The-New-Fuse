@@ -32,16 +32,19 @@ export class CommunicationTracker {
     await this.redis.expire(this.recordsKey, 86400); // 24 hours
   }
 
-  async getCommunicationHistory(agentId: string, limit: number = 100): Promise<CommunicationRecord[]> {
+  async getCommunicationHistory(
+    agentId: string,
+    limit: number = 100,
+  ): Promise<CommunicationRecord[]> {
     const records = await this.redis.lrange(this.recordsKey, 0, limit - 1);
     return records
-      .map(r => JSON.parse(r) as CommunicationRecord)
-      .filter(r => r.fromAgent === agentId || r.toAgent === agentId);
+      .map((r) => JSON.parse(r) as CommunicationRecord)
+      .filter((r) => r.fromAgent === agentId || r.toAgent === agentId);
   }
 
   async getRecentCommunications(limit: number = 50): Promise<CommunicationRecord[]> {
     const records = await this.redis.lrange(this.recordsKey, 0, limit - 1);
-    return records.map(r => JSON.parse(r) as CommunicationRecord);
+    return records.map((r) => JSON.parse(r) as CommunicationRecord);
   }
 
   async clearHistory(): Promise<void> {
@@ -54,14 +57,14 @@ export class CommunicationTracker {
     successRate: number;
   }> {
     const history = await this.getCommunicationHistory(agentId);
-    const sent = history.filter(r => r.fromAgent === agentId);
-    const received = history.filter(r => r.toAgent === agentId);
-    const successful = history.filter(r => r.status === 'received');
+    const sent = history.filter((r) => r.fromAgent === agentId);
+    const received = history.filter((r) => r.toAgent === agentId);
+    const successful = history.filter((r) => r.status === 'received');
 
     return {
       totalSent: sent.length,
       totalReceived: received.length,
-      successRate: history.length > 0 ? successful.length / history.length : 0
+      successRate: history.length > 0 ? successful.length / history.length : 0,
     };
   }
 }

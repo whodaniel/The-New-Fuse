@@ -1,6 +1,6 @@
 /**
  * Heartbeat Monitoring and Anti-Stagnation Service
- * 
+ *
  * Implements robust monitoring of agent communications and workflow progress
  * Provides fallback mechanisms for stalled communications and automatic recovery
  */
@@ -75,7 +75,7 @@ export class HeartbeatMonitoringService extends EventEmitter {
    */
   start(): void {
     this.logger.info('Starting heartbeat monitoring service');
-    
+
     this.monitoringInterval = setInterval(() => {
       this.performHealthCheck();
     }, this.config.intervalMs);
@@ -91,7 +91,7 @@ export class HeartbeatMonitoringService extends EventEmitter {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = undefined;
     }
-    
+
     this.logger.info('Heartbeat monitoring service stopped');
     this.emit('monitoring_stopped');
   }
@@ -106,7 +106,7 @@ export class HeartbeatMonitoringService extends EventEmitter {
       lastActivity: new Date(),
       status: 'active',
       consecutiveFailures: 0,
-      expectedResponseTime
+      expectedResponseTime,
     };
 
     this.agentHeartbeats.set(agentId, heartbeat);
@@ -128,7 +128,7 @@ export class HeartbeatMonitoringService extends EventEmitter {
     heartbeat.lastActivity = new Date();
     heartbeat.status = 'active';
     heartbeat.consecutiveFailures = 0;
-    
+
     if (taskId) {
       heartbeat.currentTask = taskId;
     }
@@ -152,7 +152,7 @@ export class HeartbeatMonitoringService extends EventEmitter {
 
     heartbeat.lastActivity = new Date();
     heartbeat.status = 'active';
-    
+
     this.logger.debug(`Activity recorded for agent ${agentId}: ${activityType}`);
     this.emit('activity_recorded', { agentId, activityType, metadata });
   }
@@ -189,16 +189,20 @@ export class HeartbeatMonitoringService extends EventEmitter {
   /**
    * Handle heartbeat timeout
    */
-  private handleHeartbeatTimeout(agentId: string, heartbeat: AgentHeartbeat, duration: number): void {
+  private handleHeartbeatTimeout(
+    agentId: string,
+    heartbeat: AgentHeartbeat,
+    duration: number
+  ): void {
     heartbeat.consecutiveFailures++;
-    
+
     const alert: StagnationAlert = {
       agentId,
       taskId: heartbeat.currentTask || 'unknown',
       stagnationType: 'no_heartbeat',
       detectedAt: new Date(),
       duration,
-      severity: this.calculateSeverity(duration, heartbeat.consecutiveFailures)
+      severity: this.calculateSeverity(duration, heartbeat.consecutiveFailures),
     };
 
     this.createStagnationAlert(agentId, alert);
@@ -208,14 +212,18 @@ export class HeartbeatMonitoringService extends EventEmitter {
   /**
    * Handle activity stagnation
    */
-  private handleActivityStagnation(agentId: string, heartbeat: AgentHeartbeat, duration: number): void {
+  private handleActivityStagnation(
+    agentId: string,
+    heartbeat: AgentHeartbeat,
+    duration: number
+  ): void {
     const alert: StagnationAlert = {
       agentId,
       taskId: heartbeat.currentTask || 'unknown',
       stagnationType: 'no_progress',
       detectedAt: new Date(),
       duration,
-      severity: this.calculateSeverity(duration, 0)
+      severity: this.calculateSeverity(duration, 0),
     };
 
     this.createStagnationAlert(agentId, alert);
@@ -227,7 +235,9 @@ export class HeartbeatMonitoringService extends EventEmitter {
    */
   private createStagnationAlert(agentId: string, alert: StagnationAlert): void {
     this.stagnationAlerts.set(agentId, alert);
-    this.logger.warn(`Stagnation detected: ${alert.stagnationType} for agent ${agentId} (${alert.duration}ms)`);
+    this.logger.warn(
+      `Stagnation detected: ${alert.stagnationType} for agent ${agentId} (${alert.duration}ms)`
+    );
     this.emit('stagnation_detected', alert);
   }
 
@@ -247,9 +257,9 @@ export class HeartbeatMonitoringService extends EventEmitter {
    */
   private async triggerFallbackMechanism(agentId: string, alert: StagnationAlert): Promise<void> {
     const existingActions = this.fallbackActions.get(agentId) || [];
-    
+
     let actionType: FallbackAction['type'];
-    
+
     switch (alert.severity) {
       case 'warning':
         actionType = existingActions.length === 0 ? 'retry' : 'escalate';
@@ -264,12 +274,12 @@ export class HeartbeatMonitoringService extends EventEmitter {
 
     const action: FallbackAction = {
       type: actionType,
-      retryCount: existingActions.filter(a => a.type === actionType).length + 1,
-      executedAt: new Date()
+      retryCount: existingActions.filter((a) => a.type === actionType).length + 1,
+      executedAt: new Date(),
     };
 
     await this.executeFallbackAction(agentId, alert, action);
-    
+
     existingActions.push(action);
     this.fallbackActions.set(agentId, existingActions);
   }
@@ -277,7 +287,11 @@ export class HeartbeatMonitoringService extends EventEmitter {
   /**
    * Execute specific fallback action
    */
-  private async executeFallbackAction(agentId: string, alert: StagnationAlert, action: FallbackAction): Promise<void> {
+  private async executeFallbackAction(
+    agentId: string,
+    alert: StagnationAlert,
+    action: FallbackAction
+  ): Promise<void> {
     this.logger.warn(`Executing fallback action: ${action.type} for agent ${agentId}`);
 
     switch (action.type) {
@@ -309,7 +323,7 @@ export class HeartbeatMonitoringService extends EventEmitter {
     this.emit('agent_ping_required', {
       agentId,
       taskId: alert.taskId,
-      reason: 'heartbeat_timeout_retry'
+      reason: 'heartbeat_timeout_retry',
     });
 
     // Create reprompt using handoff template system
@@ -318,7 +332,8 @@ export class HeartbeatMonitoringService extends EventEmitter {
       alertType: alert.stagnationType,
       taskId: alert.taskId,
       stagnationDuration: alert.duration,
-      retryAttempt: this.fallbackActions.get(agentId)?.filter(a => a.type === 'retry').length || 1
+      retryAttempt:
+        this.fallbackActions.get(agentId)?.filter((a) => a.type === 'retry').length || 1,
     };
 
     this.emit('agent_reprompt_required', repromptData);
@@ -334,7 +349,7 @@ export class HeartbeatMonitoringService extends EventEmitter {
       taskId: alert.taskId,
       escalationReason: alert.stagnationType,
       severity: alert.severity,
-      requiresDirectorIntervention: true
+      requiresDirectorIntervention: true,
     });
 
     // Generate escalation handoff using template system
@@ -351,7 +366,7 @@ export class HeartbeatMonitoringService extends EventEmitter {
 
     this.emit('escalation_handoff_created', {
       agentId,
-      handoffPrompt: escalationHandoff
+      handoffPrompt: escalationHandoff,
     });
   }
 
@@ -364,22 +379,25 @@ export class HeartbeatMonitoringService extends EventEmitter {
       originalAgent: agentId,
       taskId: alert.taskId,
       reassignmentReason: 'stagnation_timeout',
-      preserveContext: true
+      preserveContext: true,
     });
   }
 
   /**
    * Execute human notification action
    */
-  private async executeHumanNotificationAction(agentId: string, alert: StagnationAlert): Promise<void> {
+  private async executeHumanNotificationAction(
+    agentId: string,
+    alert: StagnationAlert
+  ): Promise<void> {
     this.humanNotificationQueue.push(alert);
-    
+
     // Emit immediate notification
     this.emit('human_intervention_required', {
       agentId,
       alert,
       urgency: 'high',
-      message: `Agent ${agentId} has been stalled for ${Math.round(alert.duration / 60000)} minutes`
+      message: `Agent ${agentId} has been stalled for ${Math.round(alert.duration / 60000)} minutes`,
     });
   }
 
@@ -392,7 +410,7 @@ export class HeartbeatMonitoringService extends EventEmitter {
       agentId,
       taskId: alert.taskId,
       reason: 'critical_stagnation',
-      preserveState: true
+      preserveState: true,
     });
   }
 
@@ -403,13 +421,15 @@ export class HeartbeatMonitoringService extends EventEmitter {
     if (this.humanNotificationQueue.length === 0) return;
 
     // Group notifications by severity and send batch notifications
-    const criticalAlerts = this.humanNotificationQueue.filter(a => a.severity === 'critical' || a.severity === 'emergency');
-    
+    const criticalAlerts = this.humanNotificationQueue.filter(
+      (a) => a.severity === 'critical' || a.severity === 'emergency'
+    );
+
     if (criticalAlerts.length > 0) {
       this.emit('batch_human_notification', {
         alerts: criticalAlerts,
         priority: 'critical',
-        consolidatedMessage: this.createConsolidatedNotification(criticalAlerts)
+        consolidatedMessage: this.createConsolidatedNotification(criticalAlerts),
       });
     }
 
@@ -421,9 +441,11 @@ export class HeartbeatMonitoringService extends EventEmitter {
    * Create consolidated notification message
    */
   private createConsolidatedNotification(alerts: StagnationAlert[]): string {
-    const agentList = alerts.map(a => a.agentId).join(', ');
-    const avgDuration = Math.round(alerts.reduce((sum, a) => sum + a.duration, 0) / alerts.length / 60000);
-    
+    const agentList = alerts.map((a) => a.agentId).join(', ');
+    const avgDuration = Math.round(
+      alerts.reduce((sum, a) => sum + a.duration, 0) / alerts.length / 60000
+    );
+
     return `Multiple agents require intervention: ${agentList}. Average stagnation: ${avgDuration} minutes. Immediate attention needed.`;
   }
 
@@ -431,9 +453,9 @@ export class HeartbeatMonitoringService extends EventEmitter {
    * Update agent status based on timing thresholds
    */
   private updateAgentStatus(
-    agentId: string, 
-    heartbeat: AgentHeartbeat, 
-    timeSinceHeartbeat: number, 
+    agentId: string,
+    heartbeat: AgentHeartbeat,
+    timeSinceHeartbeat: number,
     timeSinceActivity: number
   ): void {
     let newStatus: AgentHeartbeat['status'] = 'active';
@@ -455,9 +477,12 @@ export class HeartbeatMonitoringService extends EventEmitter {
   /**
    * Calculate severity based on duration and failure count
    */
-  private calculateSeverity(duration: number, consecutiveFailures: number): StagnationAlert['severity'] {
+  private calculateSeverity(
+    duration: number,
+    consecutiveFailures: number
+  ): StagnationAlert['severity'] {
     const minutes = duration / 60000;
-    
+
     if (minutes > 30 || consecutiveFailures > 5) {
       return 'emergency';
     } else if (minutes > 15 || consecutiveFailures > 3) {
@@ -478,13 +503,13 @@ export class HeartbeatMonitoringService extends EventEmitter {
     humanNotificationsPending: number;
   } {
     const agents = Array.from(this.agentHeartbeats.values());
-    
+
     return {
-      activeAgents: agents.filter(a => a.status === 'active').length,
-      stalledAgents: agents.filter(a => a.status === 'stalled').length,
-      failedAgents: agents.filter(a => a.status === 'failed').length,
+      activeAgents: agents.filter((a) => a.status === 'active').length,
+      stalledAgents: agents.filter((a) => a.status === 'stalled').length,
+      failedAgents: agents.filter((a) => a.status === 'failed').length,
       activeAlerts: this.stagnationAlerts.size,
-      humanNotificationsPending: this.humanNotificationQueue.length
+      humanNotificationsPending: this.humanNotificationQueue.length,
     };
   }
 
@@ -523,7 +548,7 @@ export class HeartbeatMonitoringService extends EventEmitter {
     const now = new Date();
     const timeSinceLastHeartbeat = now.getTime() - heartbeat.lastHeartbeat.getTime();
     const timeSinceLastActivity = now.getTime() - heartbeat.lastActivity.getTime();
-    
+
     return {
       agentId,
       status: heartbeat.status,
@@ -532,7 +557,7 @@ export class HeartbeatMonitoringService extends EventEmitter {
       consecutiveFailures: heartbeat.consecutiveFailures,
       isHealthy: heartbeat.status === 'active' && timeSinceLastHeartbeat < this.config.timeoutMs,
       timeSinceLastHeartbeat,
-      timeSinceLastActivity
+      timeSinceLastActivity,
     };
   }
 
@@ -551,25 +576,26 @@ export class HeartbeatMonitoringService extends EventEmitter {
   }> {
     const agents = Array.from(this.agentHeartbeats.values());
     const alerts = Array.from(this.stagnationAlerts.values());
-    
+
     const now = new Date();
     const responseTimes = agents
-      .filter(a => a.status === 'active')
-      .map(a => now.getTime() - a.lastHeartbeat.getTime());
-    
-    const averageResponseTime = responseTimes.length > 0 
-      ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length 
-      : 0;
+      .filter((a) => a.status === 'active')
+      .map((a) => now.getTime() - a.lastHeartbeat.getTime());
+
+    const averageResponseTime =
+      responseTimes.length > 0
+        ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
+        : 0;
 
     return {
       totalAgents: agents.length,
-      activeAgents: agents.filter(a => a.status === 'active').length,
-      stalledAgents: agents.filter(a => a.status === 'stalled').length,
-      failedAgents: agents.filter(a => a.status === 'failed').length,
+      activeAgents: agents.filter((a) => a.status === 'active').length,
+      stalledAgents: agents.filter((a) => a.status === 'stalled').length,
+      failedAgents: agents.filter((a) => a.status === 'failed').length,
       activeAlerts: alerts,
-      criticalAlerts: alerts.filter(a => a.severity === 'critical').length,
-      emergencyAlerts: alerts.filter(a => a.severity === 'emergency').length,
-      averageResponseTime
+      criticalAlerts: alerts.filter((a) => a.severity === 'critical').length,
+      emergencyAlerts: alerts.filter((a) => a.severity === 'emergency').length,
+      averageResponseTime,
     };
   }
 }

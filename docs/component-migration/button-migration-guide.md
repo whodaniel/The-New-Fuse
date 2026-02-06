@@ -2,18 +2,22 @@
 
 ## Overview
 
-We have consolidated multiple Button implementations across the codebase into a single, feature-rich Button component. This guide will help you migrate from the old Button implementations to the new consolidated Button component.
+We have consolidated multiple Button implementations across the codebase into a
+single, feature-rich Button component. This guide will help you migrate from the
+old Button implementations to the new consolidated Button component.
 
 ## New Consolidated Button Component
 
 The new Button component is located at:
+
 ```
 @the-new-fuse/ui-components/src/core/button
 ```
 
 It combines the best features from all previous Button implementations:
 
-- Various visual variants (default, destructive, outline, secondary, ghost, link)
+- Various visual variants (default, destructive, outline, secondary, ghost,
+  link)
 - Multiple sizes (default, sm, lg, icon)
 - Loading state support
 - Icon support with positioning (start/end)
@@ -41,7 +45,8 @@ import { Button } from '@the-new-fuse/ui-components/src/core/button';
 
 ### 2. Update Props
 
-The new Button component has a slightly different API. Here's how to migrate from each previous implementation:
+The new Button component has a slightly different API. Here's how to migrate
+from each previous implementation:
 
 #### From packages/ui/src/components/Button.tsx
 
@@ -125,7 +130,8 @@ The new Button component has a slightly different API. Here's how to migrate fro
 
 ### 3. New Features
 
-The consolidated Button component offers several new features you can take advantage of:
+The consolidated Button component offers several new features you can take
+advantage of:
 
 #### Loading State
 
@@ -151,12 +157,17 @@ The consolidated Button component offers several new features you can take advan
 
 ## Backward Compatibility
 
-For backward compatibility, we've kept the old Button component files, but they now re-export the consolidated Button component. This means your existing code should continue to work, but we recommend migrating to the new import path for consistency.
+For backward compatibility, we've kept the old Button component files, but they
+now re-export the consolidated Button component. This means your existing code
+should continue to work, but we recommend migrating to the new import path for
+consistency.
 
 ## Testing
 
-After migrating to the new Button component, make sure to test your application thoroughly to ensure everything works as expected.
+After migrating to the new Button component, make sure to test your application
+thoroughly to ensure everything works as expected.
 
 ## Need Help?
 
-If you encounter any issues during migration, please reach out to the development team for assistance.
+If you encounter any issues during migration, please reach out to the
+development team for assistance.

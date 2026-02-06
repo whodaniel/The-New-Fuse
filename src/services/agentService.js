@@ -14,17 +14,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgentService = void 0;
 const types_1 = require("@the-new-fuse/types");
 const common_1 = require("@nestjs/common");
-const prisma_service_tsx_1 = require("../lib/prisma.service.tsx");
+const drizzle_service_tsx_1 = require("../lib/drizzle.service.tsx");
 const config_1 = require("@nestjs/config");
 let AgentService = AgentService_1 = class AgentService {
-    prisma;
+    drizzle;
     config;
     logger = new common_1.Logger(AgentService_1.name);
-    constructor(prisma, config) {
-        this.prisma = prisma;
+    constructor(drizzle, config) {
+        this.drizzle = drizzle;
         this.config = config;
     }
-    transformPrismaAgent(agent) {
+    transformDrizzleAgent(agent) {
         // Explicit type conversion with schema validation
         const transformed = {
             id: agent.id,
@@ -45,7 +45,7 @@ let AgentService = AgentService_1 = class AgentService {
     async createAgent(data, userId) {
         try {
             // Use transaction to ensure data consistency
-            return await this.prisma.client.$transaction(async (tx) => {
+            return await this.drizzle.client.$transaction(async (tx) => {
                 // Check for existing agent with same name
                 const existingAgent = await tx.agent.findFirst({
                     where: { name: data.name },
@@ -65,7 +65,7 @@ let AgentService = AgentService_1 = class AgentService {
                     },
                 });
                 this.logger.log(`Created agent ${agent.id} (${agent.name})`);
-                return this.transformPrismaAgent(agent);
+                return this.transformDrizzleAgent(agent);
             });
         }
         catch (error) {
@@ -76,10 +76,10 @@ let AgentService = AgentService_1 = class AgentService {
     }
     async getAgents(userId) {
         try {
-            const agents = await this.prisma.client.agent.findMany({
+            const agents = await this.drizzle.client.agent.findMany({
                 where: { userId, deletedAt: null },
             });
-            return agents.map((agent) => this.transformPrismaAgent(agent));
+            return agents.map((agent) => this.transformDrizzleAgent(agent));
         }
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -89,13 +89,13 @@ let AgentService = AgentService_1 = class AgentService {
     }
     async getAgent(id, userId) {
         try {
-            const agent = await this.prisma.client.agent.findFirst({
+            const agent = await this.drizzle.client.agent.findFirst({
                 where: { id, userId, deletedAt: null },
             });
             if (!agent) {
                 throw new Error(`Agent with id "${id}" not found`);
             }
-            return this.transformPrismaAgent(agent);
+            return this.transformDrizzleAgent(agent);
         }
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -105,7 +105,7 @@ let AgentService = AgentService_1 = class AgentService {
     }
     async updateAgent(id, updates, userId) {
         try {
-            return await this.prisma.client.$transaction(async (tx) => {
+            return await this.drizzle.client.$transaction(async (tx) => {
                 // Check if agent exists
                 const existingAgent = await tx.agent.findFirst({
                     where: { id, userId, deletedAt: null },
@@ -134,7 +134,7 @@ let AgentService = AgentService_1 = class AgentService {
                     },
                 });
                 this.logger.log(`Updated agent ${id}`);
-                return this.transformPrismaAgent(agent);
+                return this.transformDrizzleAgent(agent);
             });
         }
         catch (error) {
@@ -145,7 +145,7 @@ let AgentService = AgentService_1 = class AgentService {
     }
     async deleteAgent(id, userId) {
         try {
-            await this.prisma.client.agent.update({
+            await this.drizzle.client.agent.update({
                 where: { id },
                 data: { deletedAt: new Date() },
             });
@@ -159,7 +159,7 @@ let AgentService = AgentService_1 = class AgentService {
     }
     async getAgentsByCapability(capability, userId) {
         try {
-            const agents = await this.prisma.client.agent.findMany({
+            const agents = await this.drizzle.client.agent.findMany({
                 where: {
                     userId,
                     deletedAt: null,
@@ -168,7 +168,7 @@ let AgentService = AgentService_1 = class AgentService {
                     },
                 },
             });
-            return agents.map((agent) => this.transformPrismaAgent(agent));
+            return agents.map((agent) => this.transformDrizzleAgent(agent));
         }
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -178,14 +178,14 @@ let AgentService = AgentService_1 = class AgentService {
     }
     async getActiveAgents(userId) {
         try {
-            const agents = await this.prisma.client.agent.findMany({
+            const agents = await this.drizzle.client.agent.findMany({
                 where: {
                     userId,
                     deletedAt: null,
                     status: types_1.AgentStatus.ACTIVE,
                 },
             });
-            return agents.map((agent) => this.transformPrismaAgent(agent));
+            return agents.map((agent) => this.transformDrizzleAgent(agent));
         }
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -195,12 +195,12 @@ let AgentService = AgentService_1 = class AgentService {
     }
     async updateAgentStatus(id, status, userId) {
         try {
-            const agent = await this.prisma.client.agent.update({
+            const agent = await this.drizzle.client.agent.update({
                 where: { id },
                 data: { status },
             });
             this.logger.log(`Updated agent status ${id} -> ${status}`);
-            return this.transformPrismaAgent(agent);
+            return this.transformDrizzleAgent(agent);
         }
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -212,6 +212,6 @@ let AgentService = AgentService_1 = class AgentService {
 exports.AgentService = AgentService;
 exports.AgentService = AgentService = AgentService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof prisma_service_tsx_1.PrismaService !== "undefined" && prisma_service_tsx_1.PrismaService) === "function" ? _a : Object, config_1.ConfigService])
+    __metadata("design:paramtypes", [typeof (_a = typeof drizzle_service_tsx_1.DatabaseService !== "undefined" && drizzle_service_tsx_1.DatabaseService) === "function" ? _a : Object, config_1.ConfigService])
 ], AgentService);
 //# sourceMappingURL=agentService.js.map

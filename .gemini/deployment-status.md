@@ -45,7 +45,7 @@ Railway deployment.
 Run this command in the Railway API service shell:
 
 ```bash
-npx prisma migrate deploy --schema=/app/apps/api/prisma/schema.prisma
+npx drizzle migrate deploy --schema=/app/apps/api/drizzle/schema.drizzle
 ```
 
 **How to run:**
@@ -63,7 +63,7 @@ trigger:
 1. Go to Railway Dashboard → API Service → Deployments
 2. Click the three-dot menu on the latest deployment
 3. Click "Redeploy"
-4. Monitor the Deploy Logs for "Running Prisma migrations..."
+4. Monitor the Deploy Logs for "Running Drizzle migrations..."
 
 ---
 

@@ -76,6 +76,10 @@ export class ConfigManager {
       openai: { model: 'gpt-5.2', baseUrl: 'https://api.openai.com/v1' },
       anthropic: { model: 'claude-opus-4.5-20251124', baseUrl: 'https://api.anthropic.com/v1' },
       gemini: { model: 'gemini-3-pro', baseUrl: 'https://generativelanguage.googleapis.com/v1' },
+      sambanova: {
+        model: 'llama3-405b-instruct',
+        baseUrl: 'https://api.sambanova.ai/v1',
+      },
       openrouter: { model: 'anthropic/claude-opus-4.5', baseUrl: 'https://openrouter.ai/api/v1' },
       litellm: { model: 'gpt-5.2', baseUrl: 'http://localhost:4000' },
       deepseek: { model: 'deepseek-v3.2-speciale', baseUrl: 'https://api.deepseek.com/v1' },
@@ -84,6 +88,14 @@ export class ConfigManager {
         baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
       },
       copilot: { model: 'gpt-5.2' },
+      'google-antigravity': {
+        model: 'claude-opus-4-5-thinking',
+        baseUrl: 'https://cloudcode-pa.googleapis.com',
+      },
+      kilocode: {
+        model: 'glm-4.7-free',
+        baseUrl: 'http://localhost:18790/v1',
+      },
       // CLI-based agents (local tools)
       'claude-cli': { model: 'claude-cli' },
       'gemini-cli': { model: 'gemini-cli' },

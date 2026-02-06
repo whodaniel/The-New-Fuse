@@ -35,6 +35,6 @@ Composer
   metadata: {
     version: '1.0.0',
     timestamp: new Date().toISOString(),
-    priority: 'high'
-  }
-}; 
+    priority: 'high',
+  },
+};

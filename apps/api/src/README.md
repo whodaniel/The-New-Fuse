@@ -5,17 +5,20 @@ This directory contains the API implementation for the AI Communication System.
 ## Directory Structure
 
 ### Routes
+
 - API endpoints
 - Request handling
 - Response formatting
 
 ### Middleware
+
 - Authentication
 - Rate limiting
 - Request validation
 - Error handling
 
 ### Schemas
+
 - Request schemas
 - Response schemas
 - Validation rules

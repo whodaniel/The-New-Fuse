@@ -52,8 +52,8 @@ yarn workspace @the-new-fuse/database build >> "$LOGS_DIR/build.log" 2>&1
 
 # Step 3: Database setup
 echo "📊 Step 3: Setting up database..."
-yarn prisma:generate > "$LOGS_DIR/database.log" 2>&1
-yarn prisma:migrate >> "$LOGS_DIR/database.log" 2>&1
+yarn drizzle:generate > "$LOGS_DIR/database.log" 2>&1
+yarn drizzle:migrate >> "$LOGS_DIR/database.log" 2>&1
 
 # Step 4: Start services
 echo "🚀 Step 4: Starting services..."

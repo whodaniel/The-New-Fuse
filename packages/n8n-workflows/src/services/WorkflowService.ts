@@ -3,21 +3,21 @@
  * High-level service for managing n8n workflows
  */
 
+import axios from 'axios';
+import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer';
 import { WorkflowFetcher } from '../fetcher/WorkflowFetcher';
 import { WorkflowParser } from '../parser/WorkflowParser';
-import { WorkflowCategorizer } from '../categorizer/WorkflowCategorizer';
-import { WorkflowRegistry, RegistryConfig } from '../registry/WorkflowRegistry';
+import { RegistryConfig, WorkflowRegistry } from '../registry/WorkflowRegistry';
 import {
   N8nWorkflow,
-  WorkflowSearchQuery,
-  WorkflowSearchResult,
-  WorkflowStats,
-  WorkflowSource,
   WorkflowCategory,
   WorkflowImportRequest,
   WorkflowImportResponse,
+  WorkflowSearchQuery,
+  WorkflowSearchResult,
+  WorkflowSource,
+  WorkflowStats,
 } from '../types';
-import axios from 'axios';
 
 export class WorkflowService {
   private fetcher: WorkflowFetcher;
@@ -171,9 +171,7 @@ export class WorkflowService {
   /**
    * Import workflow to n8n instance
    */
-  public async importToN8n(
-    request: WorkflowImportRequest
-  ): Promise<WorkflowImportResponse> {
+  public async importToN8n(request: WorkflowImportRequest): Promise<WorkflowImportResponse> {
     await this.initialize();
 
     // TODO: Re-enable URL validation once @the-new-fuse/utils/validators.server export is fixed
@@ -220,10 +218,7 @@ export class WorkflowService {
       console.error('Error importing workflow to n8n:', error);
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to import workflow',
+        error: error instanceof Error ? error.message : 'Failed to import workflow',
       };
     }
   }
@@ -231,10 +226,7 @@ export class WorkflowService {
   /**
    * Get similar workflows
    */
-  public async getSimilarWorkflows(
-    workflowId: string,
-    limit?: number
-  ): Promise<N8nWorkflow[]> {
+  public async getSimilarWorkflows(workflowId: string, limit?: number): Promise<N8nWorkflow[]> {
     await this.initialize();
     return this.registry.getSimilarWorkflows(workflowId, limit);
   }

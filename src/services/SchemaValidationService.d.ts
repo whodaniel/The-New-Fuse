@@ -1,9 +1,9 @@
-import { PrismaService } from '../prisma/prisma.service.js';
+import { DatabaseService } from '../drizzle/drizzle.service.js';
 import { Logger } from '../common/logger.service.js';
 export declare class SchemaValidationService {
-    private readonly prisma;
+    private readonly drizzle;
     private readonly logger;
-    constructor(prisma: PrismaService, logger: Logger);
+    constructor(drizzle: DatabaseService, logger: Logger);
     validateWorkflow(workflow: unknown): Promise<{
         valid: boolean;
         errors?: string[];

@@ -1,5 +1,5 @@
-import React from 'react';
 import { useOnboarding } from '@/hooks/useOnboarding';
+import React from 'react';
 import { FeatureTour } from './FeatureTour';
 import { GettingStartedGuide } from './GettingStartedGuide';
 
@@ -8,14 +8,8 @@ export const UserOnboarding: React.FC = () => {
 
   return (
     <>
-      <FeatureTour
-        currentStep={step}
-        onComplete={complete}
-      />
-      <GettingStartedGuide
-        progress={progress}
-        interactive
-      />
+      <FeatureTour currentStep={step} onComplete={complete} />
+      <GettingStartedGuide progress={progress} interactive />
     </>
   );
 };

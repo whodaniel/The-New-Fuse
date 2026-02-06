@@ -36,13 +36,13 @@ export const ThemeCustomizer: React.FC = () => {
       colors: {
         light: {
           ...theme.colors.light,
-          primary: color
+          primary: color,
         },
         dark: {
           ...theme.colors.dark,
-          primary: color
-        }
-      }
+          primary: color,
+        },
+      },
     });
   };
 
@@ -70,9 +70,7 @@ export const ThemeCustomizer: React.FC = () => {
 
       {/* Primary Color */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-          Primary Color
-        </h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Primary Color</h3>
         <div className="grid grid-cols-7 gap-3">
           {colorOptions.map((option) => (
             <button
@@ -88,7 +86,10 @@ export const ThemeCustomizer: React.FC = () => {
 
       {/* Font Size */}
       <div>
-        <label htmlFor="font-size" className="block text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+        <label
+          htmlFor="font-size"
+          className="block text-lg font-medium text-gray-900 dark:text-gray-100 mb-4"
+        >
           Font Size
         </label>
         <select
@@ -108,7 +109,10 @@ export const ThemeCustomizer: React.FC = () => {
 
       {/* Spacing */}
       <div>
-        <label htmlFor="spacing" className="block text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+        <label
+          htmlFor="spacing"
+          className="block text-lg font-medium text-gray-900 dark:text-gray-100 mb-4"
+        >
           Element Spacing
         </label>
         <select

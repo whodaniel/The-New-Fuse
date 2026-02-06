@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AggregateBlock } from './mass-blocks.service';
-import { AgentExecutorService } from './mass-blocks.service';
+import { AgentExecutorService, AggregateBlock } from './mass-blocks.service';
 
 @Injectable()
 export class AggregateService {
@@ -25,8 +24,8 @@ export class AggregateService {
         agentId,
         aggregationMethod: config.aggregationMethod,
         weights: config.weights,
-        threshold: config.threshold
-      }
+        threshold: config.threshold,
+      },
     };
 
     const result = await this.aggregateBlock.execute(inputs, aggregateConfig);
@@ -37,8 +36,8 @@ export class AggregateService {
         agentId,
         aggregationMethod: config.aggregationMethod,
         inputCount: inputs.length,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     };
   }
 }

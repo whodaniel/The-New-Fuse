@@ -8,7 +8,7 @@ const config: PlaywrightTestConfig = {
   timeout: 60000,
   reportSlowTests: {
     max: 0,
-    threshold: 60000
+    threshold: 60000,
   },
   use: {
     ...(baseConfig as PlaywrightTestConfig).use, // Cast baseConfig here too
@@ -18,12 +18,12 @@ const config: PlaywrightTestConfig = {
     trace: 'retain-on-failure',
     video: {
       mode: 'retain-on-failure',
-      size: { width: 1920, height: 1080 }
-    }
+      size: { width: 1920, height: 1080 },
+    },
   },
   reporter: [
     ['html', { outputFolder: '../../../playwright-report/performance' }],
-    ['json', { outputFile: '../../../test-results/performance.json' }]
+    ['json', { outputFile: '../../../test-results/performance.json' }],
   ],
   projects: [
     {
@@ -37,12 +37,12 @@ const config: PlaywrightTestConfig = {
             '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-gpu',
-            '--disable-extensions'
-          ]
-        }
-      }
-    }
-  ]
+            '--disable-extensions',
+          ],
+        },
+      },
+    },
+  ],
 };
 
 export default config;

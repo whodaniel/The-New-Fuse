@@ -1,961 +1,1085 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TNF Browser Hub - Complete Enterprise Platform with MCP Integration</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta name="description" content="TNF Browser Hub - Unified platform for AI services, development tools, MCP services, and enterprise applications">
-    <meta name="keywords" content="AI, development, enterprise, browser, platform, MCP, Model Context Protocol">
-    <meta name="robots" content="noindex, nofollow">
-    
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <meta
+      name="description"
+      content="TNF Browser Hub - Unified platform for AI services, development tools, MCP services, and enterprise applications"
+    />
+    <meta
+      name="keywords"
+      content="AI, development, enterprise, browser, platform, MCP, Model Context Protocol"
+    />
+    <meta name="robots" content="noindex, nofollow" />
+
     <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' http://localhost:* https://localhost:* http://127.0.0.1:* https://127.0.0.1:*; connect-src 'self' ws://localhost:* wss://localhost:* http://localhost:* https://localhost:*;">
-    
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' http://localhost:* https://localhost:* http://127.0.0.1:* https://127.0.0.1:*; connect-src 'self' ws://localhost:* wss://localhost:* http://localhost:* https://localhost:*;"
+    />
+
     <style>
-        :root {
-            --bg-primary: #1a1d29;
-            --bg-secondary: #252836;
-            --bg-tertiary: #2d3142;
-            --text-primary: #ffffff;
-            --text-secondary: #9ca3af;
-            --text-muted: #6b7280;
-            --accent-primary: #4f46e5;
-            --accent-secondary: #06b6d4;
-            --accent-success: #10b981;
-            --accent-warning: #f59e0b;
-            --accent-error: #ef4444;
-            --border-color: #2d3142;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --transition: all 0.2s ease;
-        }
+      :root {
+        --bg-primary: #1a1d29;
+        --bg-secondary: #252836;
+        --bg-tertiary: #2d3142;
+        --text-primary: #ffffff;
+        --text-secondary: #9ca3af;
+        --text-muted: #6b7280;
+        --accent-primary: #4f46e5;
+        --accent-secondary: #06b6d4;
+        --accent-success: #10b981;
+        --accent-warning: #f59e0b;
+        --accent-error: #ef4444;
+        --border-color: #2d3142;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --transition: all 0.2s ease;
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.5;
-            overflow: hidden;
-        }
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.5;
+        overflow: hidden;
+      }
 
-        .app-container {
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
+      .app-container {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
 
-        /* Sidebar Styles */
-        .sidebar {
-            width: 300px;
-            background-color: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            transition: var(--transition);
-            overflow: hidden;
-        }
+      /* Sidebar Styles */
+      .sidebar {
+        width: 300px;
+        background-color: var(--bg-secondary);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        transition: var(--transition);
+        overflow: hidden;
+      }
 
-        .sidebar.collapsed {
-            width: 60px;
-        }
+      .sidebar.collapsed {
+        width: 60px;
+      }
 
-        .sidebar-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
+      .sidebar-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
 
-        .logo {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 14px;
-        }
+      .logo {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+        font-size: 14px;
+      }
 
-        .logo-text {
-            font-weight: 600;
-            font-size: 1.125rem;
-            color: var(--text-primary);
-        }
+      .logo-text {
+        font-weight: 600;
+        font-size: 1.125rem;
+        color: var(--text-primary);
+      }
 
-        .sidebar.collapsed .logo-text {
-            display: none;
-        }
+      .sidebar.collapsed .logo-text {
+        display: none;
+      }
 
-        .nav-section {
-            border-bottom: 1px solid var(--border-color);
-        }
+      .nav-section {
+        border-bottom: 1px solid var(--border-color);
+      }
 
-        .nav-section-header {
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            transition: var(--transition);
-            user-select: none;
-        }
+      .nav-section-header {
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: var(--transition);
+        user-select: none;
+      }
 
-        .nav-section-header:hover {
-            background-color: var(--bg-tertiary);
-        }
+      .nav-section-header:hover {
+        background-color: var(--bg-tertiary);
+      }
 
-        .nav-section-title {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+      .nav-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
 
-        .nav-section-content {
-            padding: 0.5rem 0;
-        }
+      .nav-section-content {
+        padding: 0.5rem 0;
+      }
 
-        .nav-section-content.collapsed {
-            display: none;
-        }
+      .nav-section-content.collapsed {
+        display: none;
+      }
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1.5rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: var(--transition);
-            font-size: 0.875rem;
-            position: relative;
-        }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: var(--transition);
+        font-size: 0.875rem;
+        position: relative;
+      }
 
-        .nav-item:hover {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
+      .nav-item:hover {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+      }
 
-        .nav-item.active {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
+      .nav-item.active {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+      }
 
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background-color: var(--accent-primary);
-        }
+      .nav-item.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background-color: var(--accent-primary);
+      }
 
-        .sidebar.collapsed .nav-item {
-            justify-content: center;
-            padding: 0.75rem;
-        }
+      .sidebar.collapsed .nav-item {
+        justify-content: center;
+        padding: 0.75rem;
+      }
 
-        .sidebar.collapsed .nav-item span {
-            display: none;
-        }
+      .sidebar.collapsed .nav-item span {
+        display: none;
+      }
 
-        /* Main Content Styles */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+      /* Main Content Styles */
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
 
-        .tab-bar {
-            display: flex;
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            overflow-x: auto;
-            min-height: 48px;
-        }
+      .tab-bar {
+        display: flex;
+        background-color: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-color);
+        overflow-x: auto;
+        min-height: 48px;
+      }
 
-        .tab {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: var(--transition);
-            white-space: nowrap;
-            position: relative;
-            min-width: 120px;
-        }
+      .tab {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: var(--transition);
+        white-space: nowrap;
+        position: relative;
+        min-width: 120px;
+      }
 
-        .tab:hover {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
+      .tab:hover {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+      }
 
-        .tab.active {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-        }
+      .tab.active {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+      }
 
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: var(--accent-primary);
-        }
+      .tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: var(--accent-primary);
+      }
 
-        .tab-close {
-            margin-left: auto;
-            padding: 0.125rem;
-            border-radius: 2px;
-            transition: var(--transition);
-        }
+      .tab-close {
+        margin-left: auto;
+        padding: 0.125rem;
+        border-radius: 2px;
+        transition: var(--transition);
+      }
 
-        .tab-close:hover {
-            background-color: var(--bg-tertiary);
-        }
+      .tab-close:hover {
+        background-color: var(--bg-tertiary);
+      }
 
-        .content-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+      .content-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
 
-        .content-view {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
+      .content-view {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+      }
 
-        .tab-content {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: none;
-            background-color: var(--bg-primary);
-        }
+      .tab-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: none;
+        background-color: var(--bg-primary);
+      }
 
-        .tab-content.active {
-            display: block;
-        }
+      .tab-content.active {
+        display: block;
+      }
 
-        .loading-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: var(--text-secondary);
-        }
+      .loading-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: var(--text-secondary);
+      }
 
-        .loading-spinner {
-            width: 48px;
-            height: 48px;
-            border: 3px solid var(--border-color);
-            border-top-color: var(--accent-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
-        }
+      .loading-spinner {
+        width: 48px;
+        height: 48px;
+        border: 3px solid var(--border-color);
+        border-top-color: var(--accent-primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+      }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
         }
+      }
 
-        /* Toast Notifications */
-        .toast-container {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
+      /* Toast Notifications */
+      .toast-container {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
 
-        .toast {
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            color: white;
-            font-size: 0.875rem;
-            box-shadow: var(--shadow-lg);
-            animation: slideIn 0.3s ease;
-            max-width: 400px;
-            word-wrap: break-word;
-        }
+      .toast {
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        color: white;
+        font-size: 0.875rem;
+        box-shadow: var(--shadow-lg);
+        animation: slideIn 0.3s ease;
+        max-width: 400px;
+        word-wrap: break-word;
+      }
 
-        .toast.success {
-            background-color: var(--accent-success);
-        }
+      .toast.success {
+        background-color: var(--accent-success);
+      }
 
-        .toast.error {
-            background-color: var(--accent-error);
-        }
+      .toast.error {
+        background-color: var(--accent-error);
+      }
 
-        .toast.warning {
-            background-color: var(--accent-warning);
-        }
+      .toast.warning {
+        background-color: var(--accent-warning);
+      }
 
-        .toast.info {
-            background-color: var(--accent-primary);
-        }
+      .toast.info {
+        background-color: var(--accent-primary);
+      }
 
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
         }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
 
-        /* Keyboard Shortcuts */
-        .keyboard-shortcuts {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 2rem;
-            box-shadow: var(--shadow-lg);
-            z-index: 1001;
-            max-width: 500px;
-            width: 90%;
-        }
+      /* Keyboard Shortcuts */
+      .keyboard-shortcuts {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: var(--shadow-lg);
+        z-index: 1001;
+        max-width: 500px;
+        width: 90%;
+      }
 
-        .keyboard-shortcuts h3 {
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
+      .keyboard-shortcuts h3 {
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
 
-        .keyboard-shortcuts ul {
-            list-style: none;
-        }
+      .keyboard-shortcuts ul {
+        list-style: none;
+      }
 
-        .keyboard-shortcuts li {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--border-color);
-        }
+      .keyboard-shortcuts li {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-color);
+      }
 
-        .keyboard-shortcuts li:last-child {
-            border-bottom: none;
-        }
+      .keyboard-shortcuts li:last-child {
+        border-bottom: none;
+      }
 
-        .keyboard-shortcuts kbd {
-            background-color: var(--bg-tertiary);
-            padding: 0.25rem 0.5rem;
-            border-radius: 3px;
-            font-size: 0.875rem;
-            font-family: monospace;
-        }
+      .keyboard-shortcuts kbd {
+        background-color: var(--bg-tertiary);
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        font-size: 0.875rem;
+        font-family: monospace;
+      }
 
-        /* MCP Service Styles */
-        .mcp-service-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            transition: var(--transition);
-        }
+      /* MCP Service Styles */
+      .mcp-service-card {
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transition: var(--transition);
+      }
 
-        .mcp-service-card:hover {
-            border-color: var(--accent-primary);
-            box-shadow: var(--shadow-md);
-        }
+      .mcp-service-card:hover {
+        border-color: var(--accent-primary);
+        box-shadow: var(--shadow-md);
+      }
 
-        .mcp-service-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
+      .mcp-service-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
 
-        .mcp-service-name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
+      .mcp-service-name {
+        font-weight: 600;
+        color: var(--text-primary);
+      }
 
-        .mcp-service-status {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            font-size: 0.875rem;
-        }
+      .mcp-service-status {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+      }
 
-        .mcp-service-status.online {
-            color: var(--accent-success);
-        }
+      .mcp-service-status.online {
+        color: var(--accent-success);
+      }
 
-        .mcp-service-status.offline {
-            color: var(--accent-error);
-        }
+      .mcp-service-status.offline {
+        color: var(--accent-error);
+      }
 
-        .mcp-service-status.connecting {
-            color: var(--accent-warning);
-        }
+      .mcp-service-status.connecting {
+        color: var(--accent-warning);
+      }
 
-        .mcp-service-description {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-        }
+      .mcp-service-description {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+      }
 
-        .mcp-service-tools {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.25rem;
-        }
+      .mcp-service-tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+      }
 
-        .mcp-tool-tag {
-            background-color: var(--bg-tertiary);
-            color: var(--text-secondary);
-            padding: 0.25rem 0.5rem;
-            border-radius: 3px;
-            font-size: 0.75rem;
-            font-family: monospace;
-        }
+      .mcp-tool-tag {
+        background-color: var(--bg-tertiary);
+        color: var(--text-secondary);
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        font-size: 0.75rem;
+        font-family: monospace;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="app-container">
-        <!-- Sidebar -->
-        <nav class="sidebar" id="sidebar" aria-label="Main navigation">
-            <div class="sidebar-header">
-                <div class="logo">TNF</div>
-                <div class="logo-text">Browser Hub</div>
-            </div>
+      <!-- Sidebar -->
+      <nav class="sidebar" id="sidebar" aria-label="Main navigation">
+        <div class="sidebar-header">
+          <div class="logo">TNF</div>
+          <div class="logo-text">Browser Hub</div>
+        </div>
 
-            <!-- AI Services -->
-            <div class="nav-section">
-                <div class="nav-section-header" onclick="toggleSection('ai')" role="button" aria-expanded="true" aria-controls="ai">
-                    <div class="nav-section-title">
-                        <i class="fas fa-robot"></i>
-                        <span>AI Services</span>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="nav-section-content" id="ai">
-                    <a href="#" class="nav-item" data-service="chat" role="menuitem" tabindex="0">
-                        <i class="fas fa-comments"></i>
-                        <span>AI Chat</span>
-                    </a>
-                    <a href="#" class="nav-item" data-service="code" role="menuitem" tabindex="0">
-                        <i class="fas fa-code"></i>
-                        <span>Code Assistant</span>
-                    </a>
-                    <a href="#" class="nav-item" data-service="image" role="menuitem" tabindex="0">
-                        <i class="fas fa-image"></i>
-                        <span>Image Generation</span>
-                    </a>
-                    <a href="#" class="nav-item" data-service="voice" role="menuitem" tabindex="0">
-                        <i class="fas fa-microphone"></i>
-                        <span>Voice Assistant</span>
-                    </a>
-                </div>
+        <!-- AI Services -->
+        <div class="nav-section">
+          <div
+            class="nav-section-header"
+            onclick="toggleSection('ai')"
+            role="button"
+            aria-expanded="true"
+            aria-controls="ai"
+          >
+            <div class="nav-section-title">
+              <i class="fas fa-robot"></i>
+              <span>AI Services</span>
             </div>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="nav-section-content" id="ai">
+            <a href="#" class="nav-item" data-service="chat" role="menuitem" tabindex="0">
+              <i class="fas fa-comments"></i>
+              <span>AI Chat</span>
+            </a>
+            <a href="#" class="nav-item" data-service="code" role="menuitem" tabindex="0">
+              <i class="fas fa-code"></i>
+              <span>Code Assistant</span>
+            </a>
+            <a href="#" class="nav-item" data-service="image" role="menuitem" tabindex="0">
+              <i class="fas fa-image"></i>
+              <span>Image Generation</span>
+            </a>
+            <a href="#" class="nav-item" data-service="voice" role="menuitem" tabindex="0">
+              <i class="fas fa-microphone"></i>
+              <span>Voice Assistant</span>
+            </a>
+          </div>
+        </div>
 
-            <!-- Development Tools -->
-            <div class="nav-section">
-                <div class="nav-section-header" onclick="toggleSection('dev')" role="button" aria-expanded="true" aria-controls="dev">
-                    <div class="nav-section-title">
-                        <i class="fas fa-tools"></i>
-                        <span>Development Tools</span>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="nav-section-content" id="dev">
-                    <a href="#" class="nav-item" data-service="ide" role="menuitem" tabindex="0">
-                        <i class="fas fa-laptop-code"></i>
-                        <span>Web IDE</span>
-                    </a>
-                    <a href="#" class="nav-item" data-service="git" role="menuitem" tabindex="0">
-                        <i class="fab fa-git-alt"></i>
-                        <span>Git Manager</span>
-                    </a>
-                    <a href="#" class="nav-item" data-service="docker" role="menuitem" tabindex="0">
-                        <i class="fab fa-docker"></i>
-                        <span>Docker Manager</span>
-                    </a>
-                    <a href="#" class="nav-item" data-service="extensions" role="menuitem" tabindex="0">
-                        <i class="fas fa-puzzle-piece"></i>
-                        <span>Extension Manager</span>
-                    </a>
-                </div>
+        <!-- Development Tools -->
+        <div class="nav-section">
+          <div
+            class="nav-section-header"
+            onclick="toggleSection('dev')"
+            role="button"
+            aria-expanded="true"
+            aria-controls="dev"
+          >
+            <div class="nav-section-title">
+              <i class="fas fa-tools"></i>
+              <span>Development Tools</span>
             </div>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="nav-section-content" id="dev">
+            <a href="#" class="nav-item" data-service="ide" role="menuitem" tabindex="0">
+              <i class="fas fa-laptop-code"></i>
+              <span>Web IDE</span>
+            </a>
+            <a href="#" class="nav-item" data-service="git" role="menuitem" tabindex="0">
+              <i class="fab fa-git-alt"></i>
+              <span>Git Manager</span>
+            </a>
+            <a href="#" class="nav-item" data-service="docker" role="menuitem" tabindex="0">
+              <i class="fab fa-docker"></i>
+              <span>Docker Manager</span>
+            </a>
+            <a href="#" class="nav-item" data-service="extensions" role="menuitem" tabindex="0">
+              <i class="fas fa-puzzle-piece"></i>
+              <span>Extension Manager</span>
+            </a>
+          </div>
+        </div>
 
-            <!-- MCP Services -->
-            <div class="nav-section">
-                <div class="nav-section-header" onclick="toggleSection('mcp')" role="button" aria-expanded="true" aria-controls="mcp">
-                    <div class="nav-section-title">
-                        <i class="fas fa-network-wired"></i>
-                        <span>MCP Services</span>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="nav-section-content" id="mcp">
-                    <a href="#" class="nav-item" data-service="mcp-discovery" role="menuitem" tabindex="0">
-                        <i class="fas fa-search"></i>
-                        <span>Service Discovery</span>
-                    </a>
-                    <a href="#" class="nav-item" data-service="mcp-registry" role="menuitem" tabindex="0">
-                        <i class="fas fa-database"></i>
-                        <span>Service Registry</span>
-                    </a>
-                    <a href="#" class="nav-item" data-service="mcp-monitor" role="menuitem" tabindex="0">
-                        <i class="fas fa-heartbeat"></i>
-                        <span>Health Monitor</span>
-                    </a>
-                    <a href="#" class="nav-item" data-service="mcp-config" role="menuitem" tabindex="0">
-                        <i class="fas fa-cog"></i>
-                        <span>Configuration</span>
-                    </a>
-                </div>
+        <!-- MCP Services -->
+        <div class="nav-section">
+          <div
+            class="nav-section-header"
+            onclick="toggleSection('mcp')"
+            role="button"
+            aria-expanded="true"
+            aria-controls="mcp"
+          >
+            <div class="nav-section-title">
+              <i class="fas fa-network-wired"></i>
+              <span>MCP Services</span>
             </div>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="nav-section-content" id="mcp">
+            <a href="#" class="nav-item" data-service="mcp-discovery" role="menuitem" tabindex="0">
+              <i class="fas fa-search"></i>
+              <span>Service Discovery</span>
+            </a>
+            <a href="#" class="nav-item" data-service="mcp-registry" role="menuitem" tabindex="0">
+              <i class="fas fa-database"></i>
+              <span>Service Registry</span>
+            </a>
+            <a href="#" class="nav-item" data-service="mcp-monitor" role="menuitem" tabindex="0">
+              <i class="fas fa-heartbeat"></i>
+              <span>Health Monitor</span>
+            </a>
+            <a href="#" class="nav-item" data-service="mcp-config" role="menuitem" tabindex="0">
+              <i class="fas fa-cog"></i>
+              <span>Configuration</span>
+            </a>
+          </div>
+        </div>
 
-            <!-- Data & Analytics -->
-            <div class="nav-section">
-                <div class="nav-section-header" onclick="toggleSection('data')" role="button" aria-expanded="true" aria-controls="data">
-                    <div class="nav-section-title">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Data & Analytics</span>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="nav-section-content" id="data">
-                    <a href="#" class="nav-item" data-service="database" role="menuitem" tabindex="0">
-                        <i class="fas fa-database"></i>
-                        <span>Database Explorer</span>
-                    </a>
-                    <a href="#" class="nav-item" data-service="analytics" role="menuitem" tabindex="0">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Analytics Dashboard</span>
-                    </a>
-                    <a href="#" class="nav-item" data-service="pipeline" role="menuitem" tabindex="0">
-                        <i class="fas fa-stream"></i>
-                        <span>Data Pipeline</span>
-                    </a>
-                </div>
+        <!-- Data & Analytics -->
+        <div class="nav-section">
+          <div
+            class="nav-section-header"
+            onclick="toggleSection('data')"
+            role="button"
+            aria-expanded="true"
+            aria-controls="data"
+          >
+            <div class="nav-section-title">
+              <i class="fas fa-chart-bar"></i>
+              <span>Data & Analytics</span>
             </div>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="nav-section-content" id="data">
+            <a href="#" class="nav-item" data-service="database" role="menuitem" tabindex="0">
+              <i class="fas fa-database"></i>
+              <span>Database Explorer</span>
+            </a>
+            <a href="#" class="nav-item" data-service="analytics" role="menuitem" tabindex="0">
+              <i class="fas fa-chart-line"></i>
+              <span>Analytics Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-service="pipeline" role="menuitem" tabindex="0">
+              <i class="fas fa-stream"></i>
+              <span>Data Pipeline</span>
+            </a>
+          </div>
+        </div>
 
-            <!-- Administration -->
-            <div class="nav-section">
-                <div class="nav-section-header" onclick="toggleSection('admin')" role="button" aria-expanded="true" aria-controls="admin">
-                    <div class="nav-section-title">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Administration</span>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="nav-section-content" id="admin">
-                    <a href="#" class="nav-item" data-service="users" role="menuitem" tabindex="0">
-                        <i class="fas fa-users"></i>
-                        <span>User Management</span>
-                    </a>
-                    <a href="#" class="nav-item" data-service="security" role="menuitem" tabindex="0">
-                        <i class="fas fa-lock"></i>
-                        <span>Security Dashboard</span>
-                    </a>
-                    <a href="#" class="nav-item" data-service="monitoring" role="menuitem" tabindex="0">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>System Monitoring</span>
-                    </a>
-                </div>
+        <!-- Administration -->
+        <div class="nav-section">
+          <div
+            class="nav-section-header"
+            onclick="toggleSection('admin')"
+            role="button"
+            aria-expanded="true"
+            aria-controls="admin"
+          >
+            <div class="nav-section-title">
+              <i class="fas fa-shield-alt"></i>
+              <span>Administration</span>
             </div>
-        </nav>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="nav-section-content" id="admin">
+            <a href="#" class="nav-item" data-service="users" role="menuitem" tabindex="0">
+              <i class="fas fa-users"></i>
+              <span>User Management</span>
+            </a>
+            <a href="#" class="nav-item" data-service="security" role="menuitem" tabindex="0">
+              <i class="fas fa-lock"></i>
+              <span>Security Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-service="monitoring" role="menuitem" tabindex="0">
+              <i class="fas fa-tachometer-alt"></i>
+              <span>System Monitoring</span>
+            </a>
+          </div>
+        </div>
+      </nav>
 
-        <!-- Main Content Area -->
-        <main class="main-content" id="main-content">
-            <!-- Tab Bar -->
-            <div class="tab-bar" role="tablist" aria-label="Service tabs">
-                <div class="tab active" id="tab-dashboard" role="tab" aria-selected="true" aria-controls="content-dashboard" tabindex="0">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                    <button class="tab-close" onclick="closeTab('dashboard')" aria-label="Close tab">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
+      <!-- Main Content Area -->
+      <main class="main-content" id="main-content">
+        <!-- Tab Bar -->
+        <div class="tab-bar" role="tablist" aria-label="Service tabs">
+          <div
+            class="tab active"
+            id="tab-dashboard"
+            role="tab"
+            aria-selected="true"
+            aria-controls="content-dashboard"
+            tabindex="0"
+          >
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+            <button class="tab-close" onclick="closeTab('dashboard')" aria-label="Close tab">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
 
-            <!-- Content Area -->
-            <div class="content-area">
-                <div class="content-view">
-                    <div class="tab-content active" id="content-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
-                        <div class="loading-screen">
-                            <div class="loading-spinner"></div>
-                            <h2>Welcome to TNF Browser Hub</h2>
-                            <p>Select a service from the sidebar to get started</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- Content Area -->
+        <div class="content-area">
+          <div class="content-view">
+            <div
+              class="tab-content active"
+              id="content-dashboard"
+              role="tabpanel"
+              aria-labelledby="tab-dashboard"
+            >
+              <div class="loading-screen">
+                <div class="loading-spinner"></div>
+                <h2>Welcome to TNF Browser Hub</h2>
+                <p>Select a service from the sidebar to get started</p>
+              </div>
             </div>
-        </main>
+          </div>
+        </div>
+      </main>
     </div>
 
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Keyboard Shortcuts Modal -->
-    <div class="keyboard-shortcuts" id="keyboardShortcuts" style="display: none;">
-        <h3>Keyboard Shortcuts</h3>
-        <ul>
-            <li>
-                <span>Toggle Sidebar</span>
-                <kbd>Ctrl</kbd> + <kbd>B</kbd>
-            </li>
-            <li>
-                <span>Quick Switch Tab</span>
-                <kbd>Ctrl</kbd> + <kbd>Tab</kbd>
-            </li>
-            <li>
-                <span>Close Tab</span>
-                <kbd>Ctrl</kbd> + <kbd>W</kbd>
-            </li>
-            <li>
-                <span>New Tab</span>
-                <kbd>Ctrl</kbd> + <kbd>T</kbd>
-            </li>
-            <li>
-                <span>Search Services</span>
-                <kbd>Ctrl</kbd> + <kbd>K</kbd>
-            </li>
-        </ul>
+    <div class="keyboard-shortcuts" id="keyboardShortcuts" style="display: none">
+      <h3>Keyboard Shortcuts</h3>
+      <ul>
+        <li>
+          <span>Toggle Sidebar</span>
+          <kbd>Ctrl</kbd> + <kbd>B</kbd>
+        </li>
+        <li>
+          <span>Quick Switch Tab</span>
+          <kbd>Ctrl</kbd> + <kbd>Tab</kbd>
+        </li>
+        <li>
+          <span>Close Tab</span>
+          <kbd>Ctrl</kbd> + <kbd>W</kbd>
+        </li>
+        <li>
+          <span>New Tab</span>
+          <kbd>Ctrl</kbd> + <kbd>T</kbd>
+        </li>
+        <li>
+          <span>Search Services</span>
+          <kbd>Ctrl</kbd> + <kbd>K</kbd>
+        </li>
+      </ul>
     </div>
 
     <script>
-        // Enhanced Application State with MCP Integration
-        const appState = {
-            services: {
-                // AI Services
-                chat: { url: '/ai/chat', name: 'AI Chat', description: 'Conversational AI assistant' },
-                code: { url: '/ai/code', name: 'Code Assistant', description: 'AI-powered code completion and review' },
-                image: { url: '/ai/image', name: 'Image Generation', description: 'Generate images from text prompts' },
-                voice: { url: '/ai/voice', name: 'Voice Assistant', description: 'Voice-controlled AI assistant' },
-                
-                // Development Tools
-                ide: { url: '/dev/ide', name: 'Web IDE', description: 'Full-featured web-based IDE' },
-                git: { url: '/dev/git', name: 'Git Manager', description: 'Git repository management' },
-                docker: { url: '/dev/docker', name: 'Docker Manager', description: 'Container management interface' },
-                extensions: { url: '/dev/extensions', name: 'Extension Manager', description: 'IDE extensions and plugins' },
-                
-                // MCP Services
-                'mcp-discovery': { url: '/mcp/discovery', name: 'MCP Discovery', description: 'Discover and register MCP services' },
-                'mcp-registry': { url: '/mcp/registry', name: 'MCP Registry', description: 'Manage MCP service registry' },
-                'mcp-monitor': { url: '/mcp/monitor', name: 'MCP Monitor', description: 'Monitor MCP service health' },
-                'mcp-config': { url: '/mcp/config', name: 'MCP Config', description: 'Configure MCP services' },
-                
-                // Data & Analytics
-                database: { url: '/data/explorer', name: 'Database Explorer', description: 'Database management and querying' },
-                analytics: { url: '/analytics/dashboard', name: 'Analytics Dashboard', description: 'Business intelligence and analytics' },
-                pipeline: { url: '/data/pipeline', name: 'Data Pipeline', description: 'ETL and data processing workflows' },
-                
-                // Administration
-                users: { url: '/admin/users', name: 'User Management', description: 'User account and permission management' },
-                security: { url: '/admin/security', name: 'Security Dashboard', description: 'Security monitoring and alerts' },
-                monitoring: { url: '/admin/monitoring', name: 'System Monitoring', description: 'System health and performance monitoring' }
-            },
-            mcpServices: {},
-            openTabs: ['dashboard'],
-            activeTab: 'dashboard',
-            sidebarCollapsed: false,
-            serviceHealth: {},
-            mcpConnections: new Map(),
-            settings: {
-                autoSave: true,
-                notifications: true,
-                theme: 'dark',
-                sidebarWidth: 300,
-                mcpAutoDiscovery: true,
-                mcpHealthCheckInterval: 30000
-            }
-        };
+      // Enhanced Application State with MCP Integration
+      const appState = {
+        services: {
+          // AI Services
+          chat: { url: '/ai/chat', name: 'AI Chat', description: 'Conversational AI assistant' },
+          code: {
+            url: '/ai/code',
+            name: 'Code Assistant',
+            description: 'AI-powered code completion and review',
+          },
+          image: {
+            url: '/ai/image',
+            name: 'Image Generation',
+            description: 'Generate images from text prompts',
+          },
+          voice: {
+            url: '/ai/voice',
+            name: 'Voice Assistant',
+            description: 'Voice-controlled AI assistant',
+          },
 
-        // MCP Service Management
-        class MCPServiceManager {
-            constructor() {
-                this.services = new Map();
-                this.connections = new Map();
-                this.healthCheckInterval = null;
-            }
+          // Development Tools
+          ide: { url: '/dev/ide', name: 'Web IDE', description: 'Full-featured web-based IDE' },
+          git: { url: '/dev/git', name: 'Git Manager', description: 'Git repository management' },
+          docker: {
+            url: '/dev/docker',
+            name: 'Docker Manager',
+            description: 'Container management interface',
+          },
+          extensions: {
+            url: '/dev/extensions',
+            name: 'Extension Manager',
+            description: 'IDE extensions and plugins',
+          },
 
-            async discoverServices() {
-                try {
-                    // In a real implementation, this would scan for MCP servers
-                    const mockServices = [
-                        {
-                            id: 'mcp-github',
-                            name: 'GitHub MCP',
-                            description: 'GitHub repository management and automation',
-                            endpoint: 'ws://localhost:8080/mcp/github',
-                            tools: ['create_repo', 'list_repos', 'create_issue', 'merge_pr'],
-                            status: 'online'
-                        },
-                        {
-                            id: 'mcp-postgres',
-                            name: 'PostgreSQL MCP',
-                            description: 'Database management and querying',
-                            endpoint: 'ws://localhost:8080/mcp/postgres',
-                            tools: ['query', 'create_table', 'backup', 'restore'],
-                            status: 'online'
-                        },
-                        {
-                            id: 'mcp-filesystem',
-                            name: 'File System MCP',
-                            description: 'File system operations and management',
-                            endpoint: 'ws://localhost:8080/mcp/filesystem',
-                            tools: ['read_file', 'write_file', 'list_dir', 'create_dir'],
-                            status: 'connecting'
-                        }
-                    ];
+          // MCP Services
+          'mcp-discovery': {
+            url: '/mcp/discovery',
+            name: 'MCP Discovery',
+            description: 'Discover and register MCP services',
+          },
+          'mcp-registry': {
+            url: '/mcp/registry',
+            name: 'MCP Registry',
+            description: 'Manage MCP service registry',
+          },
+          'mcp-monitor': {
+            url: '/mcp/monitor',
+            name: 'MCP Monitor',
+            description: 'Monitor MCP service health',
+          },
+          'mcp-config': {
+            url: '/mcp/config',
+            name: 'MCP Config',
+            description: 'Configure MCP services',
+          },
 
-                    mockServices.forEach(service => {
-                        this.services.set(service.id, service);
-                    });
+          // Data & Analytics
+          database: {
+            url: '/data/explorer',
+            name: 'Database Explorer',
+            description: 'Database management and querying',
+          },
+          analytics: {
+            url: '/analytics/dashboard',
+            name: 'Analytics Dashboard',
+            description: 'Business intelligence and analytics',
+          },
+          pipeline: {
+            url: '/data/pipeline',
+            name: 'Data Pipeline',
+            description: 'ETL and data processing workflows',
+          },
 
-                    return Array.from(this.services.values());
-                } catch (error) {
-                    console.error('MCP service discovery failed:', error);
-                    throw error;
-                }
-            }
+          // Administration
+          users: {
+            url: '/admin/users',
+            name: 'User Management',
+            description: 'User account and permission management',
+          },
+          security: {
+            url: '/admin/security',
+            name: 'Security Dashboard',
+            description: 'Security monitoring and alerts',
+          },
+          monitoring: {
+            url: '/admin/monitoring',
+            name: 'System Monitoring',
+            description: 'System health and performance monitoring',
+          },
+        },
+        mcpServices: {},
+        openTabs: ['dashboard'],
+        activeTab: 'dashboard',
+        sidebarCollapsed: false,
+        serviceHealth: {},
+        mcpConnections: new Map(),
+        settings: {
+          autoSave: true,
+          notifications: true,
+          theme: 'dark',
+          sidebarWidth: 300,
+          mcpAutoDiscovery: true,
+          mcpHealthCheckInterval: 30000,
+        },
+      };
 
-            async connectToService(serviceId) {
-                try {
-                    const service = this.services.get(serviceId);
-                    if (!service) {
-                        throw new Error(`Service ${serviceId} not found`);
-                    }
-
-                    // Simulate WebSocket connection
-                    const ws = new WebSocket(service.endpoint);
-                    
-                    ws.onopen = () => {
-                        console.log(`Connected to MCP service: ${serviceId}`);
-                        this.connections.set(serviceId, ws);
-                        service.status = 'online';
-                        updateMCPServiceStatus(serviceId, 'online');
-                    };
-
-                    ws.onclose = () => {
-                        console.log(`Disconnected from MCP service: ${serviceId}`);
-                        this.connections.delete(serviceId);
-                        service.status = 'offline';
-                        updateMCPServiceStatus(serviceId, 'offline');
-                    };
-
-                    ws.onerror = (error) => {
-                        console.error(`MCP service error: ${serviceId}`, error);
-                        service.status = 'error';
-                        updateMCPServiceStatus(serviceId, 'error');
-                    };
-
-                    ws.onmessage = (event) => {
-                        this.handleMCPMessage(serviceId, JSON.parse(event.data));
-                    };
-
-                    return ws;
-                } catch (error) {
-                    console.error('MCP connection failed:', error);
-                    throw error;
-                }
-            }
-
-            async disconnectFromService(serviceId) {
-                const ws = this.connections.get(serviceId);
-                if (ws) {
-                    ws.close();
-                    this.connections.delete(serviceId);
-                }
-            }
-
-            handleMCPMessage(serviceId, message) {
-                console.log(`MCP message from ${serviceId}:`, message);
-                // Handle MCP protocol messages
-                if (message.type === 'tools/list') {
-                    updateMCPTools(serviceId, message.tools);
-                } else if (message.type === 'service/status') {
-                    updateMCPServiceStatus(serviceId, message.status);
-                }
-            }
-
-            startHealthChecks() {
-                if (this.healthCheckInterval) {
-                    clearInterval(this.healthCheckInterval);
-                }
-
-                this.healthCheckInterval = setInterval(() => {
-                    this.checkServiceHealth();
-                }, appState.settings.mcpHealthCheckInterval);
-            }
-
-            async checkServiceHealth() {
-                for (const [serviceId, service] of this.services) {
-                    try {
-                        // Simulate health check
-                        const isHealthy = Math.random() > 0.1; // 90% success rate
-                        service.status = isHealthy ? 'online' : 'offline';
-                        updateMCPServiceStatus(serviceId, service.status);
-                    } catch (error) {
-                        service.status = 'error';
-                        updateMCPServiceStatus(serviceId, 'error');
-                    }
-                }
-            }
-
-            getService(serviceId) {
-                return this.services.get(serviceId);
-            }
+      // MCP Service Management
+      class MCPServiceManager {
+        constructor() {
+          this.services = new Map();
+          this.connections = new Map();
+          this.healthCheckInterval = null;
         }
 
-        // Initialize MCP Service Manager
-        const mcpManager = new MCPServiceManager();
+        async discoverServices() {
+          try {
+            // In a real implementation, this would scan for MCP servers
+            const mockServices = [
+              {
+                id: 'mcp-github',
+                name: 'GitHub MCP',
+                description: 'GitHub repository management and automation',
+                endpoint: 'ws://localhost:8080/mcp/github',
+                tools: ['create_repo', 'list_repos', 'create_issue', 'merge_pr'],
+                status: 'online',
+              },
+              {
+                id: 'mcp-postgres',
+                name: 'PostgreSQL MCP',
+                description: 'Database management and querying',
+                endpoint: 'ws://localhost:8080/mcp/postgres',
+                tools: ['query', 'create_table', 'backup', 'restore'],
+                status: 'online',
+              },
+              {
+                id: 'mcp-filesystem',
+                name: 'File System MCP',
+                description: 'File system operations and management',
+                endpoint: 'ws://localhost:8080/mcp/filesystem',
+                tools: ['read_file', 'write_file', 'list_dir', 'create_dir'],
+                status: 'connecting',
+              },
+            ];
 
-        // Core Application Functions
-        function toggleSection(sectionId) {
-            const content = document.getElementById(sectionId);
-            const header = content.previousElementSibling;
-            const icon = header.querySelector('.fas.fa-chevron-down');
-            
-            content.classList.toggle('collapsed');
-            icon.style.transform = content.classList.contains('collapsed') ? 'rotate(-90deg)' : 'rotate(0deg)';
+            mockServices.forEach((service) => {
+              this.services.set(service.id, service);
+            });
+
+            return Array.from(this.services.values());
+          } catch (error) {
+            console.error('MCP service discovery failed:', error);
+            throw error;
+          }
         }
 
-        function openTab(serviceId) {
-            if (!appState.services[serviceId]) {
-                console.error(`Service ${serviceId} not found.`);
-                return;
+        async connectToService(serviceId) {
+          try {
+            const service = this.services.get(serviceId);
+            if (!service) {
+              throw new Error(`Service ${serviceId} not found`);
             }
 
-            if (appState.openTabs.includes(serviceId)) {
-                // Tab is already open, just switch to it
-                appState.activeTab = serviceId;
-                renderUI();
-                return;
+            // Simulate WebSocket connection
+            const ws = new WebSocket(service.endpoint);
+
+            ws.onopen = () => {
+              console.log(`Connected to MCP service: ${serviceId}`);
+              this.connections.set(serviceId, ws);
+              service.status = 'online';
+              updateMCPServiceStatus(serviceId, 'online');
+            };
+
+            ws.onclose = () => {
+              console.log(`Disconnected from MCP service: ${serviceId}`);
+              this.connections.delete(serviceId);
+              service.status = 'offline';
+              updateMCPServiceStatus(serviceId, 'offline');
+            };
+
+            ws.onerror = (error) => {
+              console.error(`MCP service error: ${serviceId}`, error);
+              service.status = 'error';
+              updateMCPServiceStatus(serviceId, 'error');
+            };
+
+            ws.onmessage = (event) => {
+              this.handleMCPMessage(serviceId, JSON.parse(event.data));
+            };
+
+            return ws;
+          } catch (error) {
+            console.error('MCP connection failed:', error);
+            throw error;
+          }
+        }
+
+        async disconnectFromService(serviceId) {
+          const ws = this.connections.get(serviceId);
+          if (ws) {
+            ws.close();
+            this.connections.delete(serviceId);
+          }
+        }
+
+        handleMCPMessage(serviceId, message) {
+          console.log(`MCP message from ${serviceId}:`, message);
+          // Handle MCP protocol messages
+          if (message.type === 'tools/list') {
+            updateMCPTools(serviceId, message.tools);
+          } else if (message.type === 'service/status') {
+            updateMCPServiceStatus(serviceId, message.status);
+          }
+        }
+
+        startHealthChecks() {
+          if (this.healthCheckInterval) {
+            clearInterval(this.healthCheckInterval);
+          }
+
+          this.healthCheckInterval = setInterval(() => {
+            this.checkServiceHealth();
+          }, appState.settings.mcpHealthCheckInterval);
+        }
+
+        async checkServiceHealth() {
+          for (const [serviceId, service] of this.services) {
+            try {
+              // Simulate health check
+              const isHealthy = Math.random() > 0.1; // 90% success rate
+              service.status = isHealthy ? 'online' : 'offline';
+              updateMCPServiceStatus(serviceId, service.status);
+            } catch (error) {
+              service.status = 'error';
+              updateMCPServiceStatus(serviceId, 'error');
             }
+          }
+        }
 
-            appState.openTabs.push(serviceId);
-            appState.activeTab = serviceId;
+        getService(serviceId) {
+          return this.services.get(serviceId);
+        }
+      }
 
-            const service = appState.services[serviceId];
-            const tabBar = document.querySelector('.tab-bar');
-            const contentArea = document.querySelector('.content-view');
+      // Initialize MCP Service Manager
+      const mcpManager = new MCPServiceManager();
 
-            // Create new tab
-            const tab = document.createElement('div');
-            tab.className = 'tab';
-            tab.id = `tab-${serviceId}`;
-            tab.setAttribute('role', 'tab');
-            tab.innerHTML = `
+      // Core Application Functions
+      function toggleSection(sectionId) {
+        const content = document.getElementById(sectionId);
+        const header = content.previousElementSibling;
+        const icon = header.querySelector('.fas.fa-chevron-down');
+
+        content.classList.toggle('collapsed');
+        icon.style.transform = content.classList.contains('collapsed')
+          ? 'rotate(-90deg)'
+          : 'rotate(0deg)';
+      }
+
+      function openTab(serviceId) {
+        if (!appState.services[serviceId]) {
+          console.error(`Service ${serviceId} not found.`);
+          return;
+        }
+
+        if (appState.openTabs.includes(serviceId)) {
+          // Tab is already open, just switch to it
+          appState.activeTab = serviceId;
+          renderUI();
+          return;
+        }
+
+        appState.openTabs.push(serviceId);
+        appState.activeTab = serviceId;
+
+        const service = appState.services[serviceId];
+        const tabBar = document.querySelector('.tab-bar');
+        const contentArea = document.querySelector('.content-view');
+
+        // Create new tab
+        const tab = document.createElement('div');
+        tab.className = 'tab';
+        tab.id = `tab-${serviceId}`;
+        tab.setAttribute('role', 'tab');
+        tab.innerHTML = `
                 <i class="fas fa-window-maximize"></i>
                 <span>${service.name}</span>
                 <button class="tab-close" onclick="closeTab('${serviceId}')" aria-label="Close tab">
                     <i class="fas fa-times"></i>
                 </button>
             `;
-            tabBar.appendChild(tab);
+        tabBar.appendChild(tab);
 
-            // Create new content pane
-            const content = document.createElement('div');
-            content.className = 'tab-content';
-            content.id = `content-${serviceId}`;
-            content.setAttribute('role', 'tabpanel');
-            content.innerHTML = `<iframe src="${service.url}" style="width:100%; height:100%; border:0;"></iframe>`;
-            contentArea.appendChild(content);
+        // Create new content pane
+        const content = document.createElement('div');
+        content.className = 'tab-content';
+        content.id = `content-${serviceId}`;
+        content.setAttribute('role', 'tabpanel');
+        content.innerHTML = `<iframe src="${service.url}" style="width:100%; height:100%; border:0;"></iframe>`;
+        contentArea.appendChild(content);
 
-            renderUI();
+        renderUI();
+      }
+
+      function closeTab(serviceId) {
+        if (serviceId === 'dashboard') {
+          // Cannot close dashboard
+          return;
         }
 
-        function closeTab(serviceId) {
-            if (serviceId === 'dashboard') {
-                // Cannot close dashboard
-                return;
-            }
-
-            const tabIndex = appState.openTabs.indexOf(serviceId);
-            if (tabIndex > -1) {
-                appState.openTabs.splice(tabIndex, 1);
-            }
-
-            if (appState.activeTab === serviceId) {
-                appState.activeTab = appState.openTabs[appState.openTabs.length - 1] || 'dashboard';
-            }
-
-            const tab = document.getElementById(`tab-${serviceId}`);
-            const content = document.getElementById(`content-${serviceId}`);
-            if (tab) tab.remove();
-            if (content) content.remove();
-
-            renderUI();
+        const tabIndex = appState.openTabs.indexOf(serviceId);
+        if (tabIndex > -1) {
+          appState.openTabs.splice(tabIndex, 1);
         }
 
-        function renderUI() {
-            // Update active tab
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            const activeTabElement = document.getElementById(`tab-${appState.activeTab}`);
-            if (activeTabElement) {
-                activeTabElement.classList.add('active');
-            }
-
-
-            // Update active content
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            const activeContentElement = document.getElementById(`content-${appState.activeTab}`);
-            if (activeContentElement) {
-                activeContentElement.classList.add('active');
-            }
+        if (appState.activeTab === serviceId) {
+          appState.activeTab = appState.openTabs[appState.openTabs.length - 1] || 'dashboard';
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Attach event listeners to nav items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const serviceId = item.dataset.service;
-                    if (serviceId) {
-                        openTab(serviceId);
-                    }
-                });
-            });
+        const tab = document.getElementById(`tab-${serviceId}`);
+        const content = document.getElementById(`content-${serviceId}`);
+        if (tab) tab.remove();
+        if (content) content.remove();
 
-            // Discover MCP services
-            mcpManager.discoverServices().then(services => {
-                console.log('Discovered MCP services:', services);
-                // Here you would render the discovered services in the UI
-            });
+        renderUI();
+      }
+
+      function renderUI() {
+        // Update active tab
+        document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+        const activeTabElement = document.getElementById(`tab-${appState.activeTab}`);
+        if (activeTabElement) {
+          activeTabElement.classList.add('active');
+        }
+
+        // Update active content
+        document.querySelectorAll('.tab-content').forEach((c) => c.classList.remove('active'));
+        const activeContentElement = document.getElementById(`content-${appState.activeTab}`);
+        if (activeContentElement) {
+          activeContentElement.classList.add('active');
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        // Attach event listeners to nav items
+        document.querySelectorAll('.nav-item').forEach((item) => {
+          item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const serviceId = item.dataset.service;
+            if (serviceId) {
+              openTab(serviceId);
+            }
+          });
         });
+
+        // Discover MCP services
+        mcpManager.discoverServices().then((services) => {
+          console.log('Discovered MCP services:', services);
+          // Here you would render the discovered services in the UI
+        });
+      });
     </script>
-</body>
+  </body>
 </html>

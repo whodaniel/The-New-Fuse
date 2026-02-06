@@ -1,24 +1,24 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
   Body,
-  UseGuards,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
   HttpStatus,
-  Req
+  Param,
+  Post,
+  Put,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { WorkflowTemplatesService } from './workflow-templates.service';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import {
   CreateWorkflowTemplateDto,
   UpdateWorkflowTemplateDto,
-  WorkflowTemplateResponseDto
+  WorkflowTemplateResponseDto,
 } from './dto/workflow-template.dto';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { WorkflowTemplatesService } from './workflow-templates.service';
 
 @ApiTags('workflows')
 @Controller('workflows/templates')
@@ -30,12 +30,12 @@ export class WorkflowTemplatesController {
   @Get()
   @ApiOperation({
     summary: 'Get all workflow templates',
-    description: 'Retrieve a list of all available workflow templates'
+    description: 'Retrieve a list of all available workflow templates',
   })
   @ApiResponse({
     status: 200,
     description: 'Templates retrieved successfully',
-    type: [WorkflowTemplateResponseDto]
+    type: [WorkflowTemplateResponseDto],
   })
   async findAll(): Promise<WorkflowTemplateResponseDto[]> {
     return this.workflowTemplatesService.findAll();
@@ -44,12 +44,12 @@ export class WorkflowTemplatesController {
   @Get(':id')
   @ApiOperation({
     summary: 'Get workflow template by ID',
-    description: 'Retrieve a specific workflow template by its ID'
+    description: 'Retrieve a specific workflow template by its ID',
   })
   @ApiResponse({
     status: 200,
     description: 'Template retrieved successfully',
-    type: WorkflowTemplateResponseDto
+    type: WorkflowTemplateResponseDto,
   })
   @ApiResponse({ status: 404, description: 'Template not found' })
   async findOne(@Param('id') id: string): Promise<WorkflowTemplateResponseDto> {
@@ -59,12 +59,12 @@ export class WorkflowTemplatesController {
   @Post()
   @ApiOperation({
     summary: 'Create workflow template',
-    description: 'Create a new workflow template'
+    description: 'Create a new workflow template',
   })
   @ApiResponse({
     status: 201,
     description: 'Template created successfully',
-    type: WorkflowTemplateResponseDto
+    type: WorkflowTemplateResponseDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   async create(
@@ -78,12 +78,12 @@ export class WorkflowTemplatesController {
   @Put(':id')
   @ApiOperation({
     summary: 'Update workflow template',
-    description: 'Update an existing workflow template'
+    description: 'Update an existing workflow template',
   })
   @ApiResponse({
     status: 200,
     description: 'Template updated successfully',
-    type: WorkflowTemplateResponseDto
+    type: WorkflowTemplateResponseDto,
   })
   @ApiResponse({ status: 404, description: 'Template not found' })
   async update(
@@ -97,7 +97,7 @@ export class WorkflowTemplatesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Delete workflow template',
-    description: 'Delete a workflow template by ID'
+    description: 'Delete a workflow template by ID',
   })
   @ApiResponse({ status: 204, description: 'Template deleted successfully' })
   @ApiResponse({ status: 404, description: 'Template not found' })

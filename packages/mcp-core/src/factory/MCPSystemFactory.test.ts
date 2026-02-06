@@ -2,8 +2,8 @@
  * MCPSystemFactory Unit Tests
  */
 
-import { MCPSystemFactory, MCPSystemConfig } from './MCPSystemFactory';
 import { LogLevel } from '../types';
+import { MCPSystemConfig, MCPSystemFactory } from './MCPSystemFactory';
 
 describe('MCPSystemFactory', () => {
   let system: any;
@@ -65,19 +65,19 @@ describe('MCPSystemFactory', () => {
           timeout: 45000,
           enableAuth: true,
           enableTLS: true,
-          logLevel: LogLevel.WARN
+          logLevel: LogLevel.WARN,
         },
         relay: {
-          enabled: false
+          enabled: false,
         },
         workflow: {
-          enabled: false
+          enabled: false,
         },
         development: {
           hotReload: false,
           debugMode: false,
-          mockServices: true
-        }
+          mockServices: true,
+        },
       };
 
       system = MCPSystemFactory.createCustomSystem(customConfig);
@@ -93,11 +93,11 @@ describe('MCPSystemFactory', () => {
       const customConfig = {
         server: {
           name: 'merged-server',
-          port: 4000
+          port: 4000,
         },
         relay: {
-          enabled: false
-        }
+          enabled: false,
+        },
       };
 
       system = MCPSystemFactory.createProductionSystem(customConfig);
@@ -122,8 +122,8 @@ describe('MCPSystemFactory', () => {
           timeout: 5000,
           enableAuth: false,
           enableTLS: false,
-          logLevel: LogLevel.ERROR
-        }
+          logLevel: LogLevel.ERROR,
+        },
       });
     });
 
@@ -197,12 +197,13 @@ describe('MCPSystemFactory', () => {
         uri: 'test://resource',
         name: 'Test Resource',
         handler: {
-          read: () => Promise.resolve({
-            uri: 'test://resource',
-            mimeType: 'text/plain',
-            content: 'test content'
-          })
-        }
+          read: () =>
+            Promise.resolve({
+              uri: 'test://resource',
+              mimeType: 'text/plain',
+              content: 'test content',
+            }),
+        },
       };
 
       await system.registerResource(resource);
@@ -218,8 +219,8 @@ describe('MCPSystemFactory', () => {
         description: 'A test tool',
         inputSchema: { type: 'object' },
         handler: {
-          execute: () => Promise.resolve({ success: true, result: 'test result' })
-        }
+          execute: () => Promise.resolve({ success: true, result: 'test result' }),
+        },
       };
 
       await system.registerTool(tool);
@@ -245,7 +246,7 @@ describe('MCPSystemFactory', () => {
     });
 
     it('should include database component when configured', () => {
-      // This would be tested with actual Prisma client
+      // This would be tested with actual database client
       const components = system.getComponents();
 
       // For now, database is not configured in test system
@@ -278,7 +279,7 @@ describe('MCPSystemFactory', () => {
         jsonrpc: '2.0',
         id: 1,
         method: 'tools/call',
-        params: { name: 'system-health', arguments: {} }
+        params: { name: 'system-health', arguments: {} },
       });
 
       expect(response.result?.success).toBe(true);

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import System from "@/models/system";
+import System from '@/models/system';
+import { useEffect, useState } from 'react';
 
 export default function XAILLMOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.XAIApiKey);
@@ -8,15 +8,13 @@ export default function XAILLMOptions({ settings }) {
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
-          xAI API Key
-        </label>
+        <label className="text-white text-sm font-semibold block mb-3">xAI API Key</label>
         <input
           type="password"
           name="XAIApiKey"
           className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="xAI API Key"
-          defaultValue={settings?.XAIApiKey ? "*".repeat(20) : ""}
+          defaultValue={settings?.XAIApiKey ? '*'.repeat(20) : ''}
           required={true}
           autoComplete="off"
           spellCheck={false}
@@ -25,9 +23,7 @@ export default function XAILLMOptions({ settings }) {
         />
       </div>
 
-      {!settings?.credentialsOnly && (
-        <XAIModelSelection settings={settings} apiKey={apiKey} />
-      )}
+      {!settings?.credentialsOnly && <XAIModelSelection settings={settings} apiKey={apiKey} />}
     </div>
   );
 }
@@ -46,10 +42,10 @@ function XAIModelSelection({ apiKey, settings }) {
 
       try {
         setLoading(true);
-        const { models } = await System.customModels("xai", apiKey);
+        const { models } = await System.customModels('xai', apiKey);
         setCustomModels(models || []);
       } catch (error) {
-        console.error("Failed to fetch custom models:", error);
+        console.error('Failed to fetch custom models:', error);
         setCustomModels([]);
       } finally {
         setLoading(false);

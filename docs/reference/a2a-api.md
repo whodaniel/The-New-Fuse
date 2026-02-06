@@ -2,7 +2,9 @@
 
 ## Overview
 
-The Agent-to-Agent (A2A) API provides endpoints for agent communication, message handling, and workflow integration. This document provides a comprehensive reference for all A2A API endpoints.
+The Agent-to-Agent (A2A) API provides endpoints for agent communication, message
+handling, and workflow integration. This document provides a comprehensive
+reference for all A2A API endpoints.
 
 ## Base URL
 
@@ -12,7 +14,8 @@ https://a2a.protocol.local
 
 ## Authentication
 
-All API requests require authentication using an API key. Include the API key in the `Authorization` header:
+All API requests require authentication using an API key. Include the API key in
+the `Authorization` header:
 
 ```
 Authorization: Bearer <api_key>
@@ -477,16 +480,16 @@ wss://a2a.protocol.local/ws?api_key=<api_key>
 
 ## Error Codes
 
-| Code | Description |
-| ---- | ----------- |
-| 400  | Bad Request |
-| 401  | Unauthorized |
-| 403  | Forbidden |
-| 404  | Not Found |
-| 408  | Request Timeout |
-| 429  | Too Many Requests |
+| Code | Description           |
+| ---- | --------------------- |
+| 400  | Bad Request           |
+| 401  | Unauthorized          |
+| 403  | Forbidden             |
+| 404  | Not Found             |
+| 408  | Request Timeout       |
+| 429  | Too Many Requests     |
 | 500  | Internal Server Error |
-| 503  | Service Unavailable |
+| 503  | Service Unavailable   |
 
 ## Rate Limits
 

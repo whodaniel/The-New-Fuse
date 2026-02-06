@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { mcpService, MCPServer, MCPTool } from '@/services/MCPService';
+import { MCPServer, mcpService, MCPTool } from '@/services/MCPService';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useMcpTools = () => {
   const [servers, setServers] = useState<MCPServer[]>([]);
@@ -17,7 +17,7 @@ export const useMcpTools = () => {
       setServers(fetchedServers);
 
       // Flatten tools from all servers
-      const allTools = fetchedServers.flatMap(server => server.tools);
+      const allTools = fetchedServers.flatMap((server) => server.tools);
       setTools(allTools);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to load MCP servers'));
@@ -32,27 +32,27 @@ export const useMcpTools = () => {
   }, [loadServers]);
 
   // Execute a tool on an MCP server
-  const executeTool = useCallback(async (
-    toolId: string,
-    parameters: Record<string, any>
-  ) => {
-    setLoading(true);
-    setError(null);
+  const executeTool = useCallback(
+    async (toolId: string, parameters: Record<string, any>) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      // Find the server that contains the tool
-      const server = servers.find(s => s.tools.some(t => t.id === toolId));
-      const serverId = server?.id;
+      try {
+        // Find the server that contains the tool
+        const server = servers.find((s) => s.tools.some((t) => t.id === toolId));
+        const serverId = server?.id;
 
-      const result = await mcpService.executeTool(toolId, parameters, serverId);
-      return result;
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to execute tool'));
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [servers]);
+        const result = await mcpService.executeTool(toolId, parameters, serverId);
+        return result;
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to execute tool'));
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [servers]
+  );
 
   return {
     servers,
@@ -60,7 +60,7 @@ export const useMcpTools = () => {
     loading,
     error,
     loadServers,
-    executeTool
+    executeTool,
   };
 };
 

@@ -95,8 +95,8 @@ export class CodeSandbox extends EventEmitter {
           timeout: this.options.timeout,
           displayErrors: true,
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Execution timeout')), this.options.timeout)
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Execution timeout')), this.options.timeout),
         ),
       ]);
     } catch (e) {

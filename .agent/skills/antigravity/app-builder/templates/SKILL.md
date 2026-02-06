@@ -18,7 +18,7 @@ allowed-tools: Read, Glob, Grep
 
 | Template                                             | Tech Stack          | When to Use        |
 | ---------------------------------------------------- | ------------------- | ------------------ |
-| [nextjs-fullstack](nextjs-fullstack/TEMPLATE.md)     | Next.js + Prisma    | Full-stack web app |
+| [nextjs-fullstack](nextjs-fullstack/TEMPLATE.md)     | Next.js + Drizzle    | Full-stack web app |
 | [nextjs-saas](nextjs-saas/TEMPLATE.md)               | Next.js + Stripe    | SaaS product       |
 | [nextjs-static](nextjs-static/TEMPLATE.md)           | Next.js + Framer    | Landing page       |
 | [express-api](express-api/TEMPLATE.md)               | Express + JWT       | REST API           |

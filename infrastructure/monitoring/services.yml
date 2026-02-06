@@ -20,7 +20,7 @@ spec:
   selector:
     app: grafana
   ports:
-    - port: 3003      # Changed from 3000 to match monitoring port in launch.sh
+    - port: 3003 # Changed from 3000 to match monitoring port in launch.sh
       targetPort: 3000
   type: ClusterIP
 ---

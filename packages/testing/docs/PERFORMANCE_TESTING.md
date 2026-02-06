@@ -2,7 +2,8 @@
 
 ## Overview
 
-This guide covers performance testing practices for The New Fuse platform using our custom performance testing infrastructure built on top of Playwright.
+This guide covers performance testing practices for The New Fuse platform using our custom
+performance testing infrastructure built on top of Playwright.
 
 ## Performance Testing Strategy
 
@@ -51,18 +52,15 @@ import { test } from '../../fixtures/custom-test';
 import { performance } from 'perf_hooks';
 
 test.describe('Performance - Feature Name', () => {
-  test('operation should complete within threshold', async ({
-    testReporter,
-    dashboardPage
-  }) => {
+  test('operation should complete within threshold', async ({ testReporter, dashboardPage }) => {
     const startTime = performance.now();
-    
+
     // Perform operation
     await dashboardPage.someOperation();
-    
+
     const duration = performance.now() - startTime;
     const metrics = await testReporter.capturePerformanceMetrics();
-    
+
     // Assert performance
     expect(duration).toBeLessThan(THRESHOLDS.someOperation);
     expect(metrics.resourceCount).toBeLessThan(50);
@@ -105,6 +103,7 @@ Maintain thresholds in `.github/performance-thresholds.json`:
 ### 3. Monitoring and Metrics
 
 Collect:
+
 - Navigation timing
 - Resource timing
 - Paint timing
@@ -114,6 +113,7 @@ Collect:
 ### 4. Test Stability
 
 Ensure:
+
 - Multiple test runs
 - Consistent baselines
 - Error handling
@@ -125,12 +125,14 @@ Ensure:
 ### Built-in Utilities
 
 1. **TestReporter**
+
    ```typescript
    const metrics = await testReporter.capturePerformanceMetrics();
    console.log('Performance Metrics:', metrics);
    ```
 
 2. **Performance Monitoring**
+
    ```typescript
    await testReporter.startPerformanceMonitoring();
    // Test actions
@@ -162,6 +164,7 @@ Ensure:
 ### Performance Budgets
 
 Define in CI:
+
 ```yaml
 performance:
   thresholds:
@@ -197,6 +200,7 @@ performance:
 ### Performance Reports
 
 Generate reports including:
+
 - Test results summary
 - Performance metrics
 - Trend analysis
@@ -205,6 +209,7 @@ Generate reports including:
 ### Continuous Monitoring
 
 Track:
+
 - Performance trends
 - Regression points
 - Resource usage

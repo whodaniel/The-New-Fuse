@@ -1,7 +1,7 @@
 // Import required API client and types
-import { ApiClient } from '../../core/ApiClient';
 import { ApiConfig } from '../../config/ApiConfig';
-import { Integration, IntegrationType, IntegrationConfig, AuthType } from '../types';
+import { ApiClient } from '../../core/ApiClient';
+import { AuthType, Integration, IntegrationConfig, IntegrationType } from '../types';
 
 /**
  * Hugging Face integration configuration
@@ -64,7 +64,7 @@ export class HuggingFaceIntegration implements Integration {
     if (config.apiKey) {
       apiConfig.headers = {
         ...apiConfig.headers,
-        'Authorization': `Bearer ${config.apiKey}`,
+        Authorization: `Bearer ${config.apiKey}`,
       };
     }
 
@@ -88,8 +88,12 @@ export class HuggingFaceIntegration implements Integration {
     } catch (error) {
       this.isConnected = false;
       // Log the specific error for debugging
-      console.error(`Hugging Face connection error: ${error instanceof Error ? error.message : String(error)}`);
-      throw new Error(`Failed to connect to Hugging Face: ${error instanceof Error ? error.message : String(error)}`);
+      console.error(
+        `Hugging Face connection error: ${error instanceof Error ? error.message : String(error)}`
+      );
+      throw new Error(
+        `Failed to connect to Hugging Face: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -119,10 +123,14 @@ export class HuggingFaceIntegration implements Integration {
         return this.runInference(params.model || this.config.model, params.inputs, params.options);
       case 'list_models':
         // Note: Hugging Face Hub API for listing models might require a different endpoint/client setup
-        throw new Error('Listing models via API is not directly supported by the inference client. Use Hugging Face Hub libraries or website.');
+        throw new Error(
+          'Listing models via API is not directly supported by the inference client. Use Hugging Face Hub libraries or website.'
+        );
       case 'get_model_details':
         // Note: Similar to listing models, requires Hub interaction.
-        throw new Error('Getting model details via API is not directly supported by the inference client. Use Hugging Face Hub libraries or website.');
+        throw new Error(
+          'Getting model details via API is not directly supported by the inference client. Use Hugging Face Hub libraries or website.'
+        );
       default:
         throw new Error(`Unsupported Hugging Face action: ${action}`);
     }
@@ -131,7 +139,11 @@ export class HuggingFaceIntegration implements Integration {
   /**
    * Run inference on a specified model
    */
-  private async runInference(model: string, inputs: any, options?: Record<string, any>): Promise<any> {
+  private async runInference(
+    model: string,
+    inputs: any,
+    options?: Record<string, any>
+  ): Promise<any> {
     if (!model) {
       throw new Error('Model ID must be provided for inference.');
     }
@@ -145,8 +157,13 @@ export class HuggingFaceIntegration implements Integration {
     try {
       return await this.apiClient.post(endpoint, payload);
     } catch (error) {
-      console.error(`Hugging Face inference error for model ${model}: ${error instanceof Error ? error.message : String(error)}`, (error as any)?.response?.data);
-      throw new Error(`Failed to run inference on model ${model}: ${error instanceof Error ? error.message : String(error)}`);
+      console.error(
+        `Hugging Face inference error for model ${model}: ${error instanceof Error ? error.message : String(error)}`,
+        (error as any)?.response?.data
+      );
+      throw new Error(
+        `Failed to run inference on model ${model}: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -175,12 +192,15 @@ export class HuggingFaceIntegration implements Integration {
 /**
  * Create a new Hugging Face integration
  */
-export function createHuggingFaceIntegration(config: Partial<HuggingFaceConfig> = {}): HuggingFaceIntegration {
+export function createHuggingFaceIntegration(
+  config: Partial<HuggingFaceConfig> = {}
+): HuggingFaceIntegration {
   const defaultConfig: HuggingFaceConfig = {
     id: 'huggingface',
     name: 'Hugging Face',
     type: IntegrationType.AI,
-    description: 'Access a vast collection of AI models for various tasks via the Hugging Face Inference API.',
+    description:
+      'Access a vast collection of AI models for various tasks via the Hugging Face Inference API.',
     baseUrl: 'https://api-inference.huggingface.co',
     authType: AuthType.API_KEY,
     apiVersion: 'v1', // Inference API doesn't have explicit versioning like this, but good for consistency

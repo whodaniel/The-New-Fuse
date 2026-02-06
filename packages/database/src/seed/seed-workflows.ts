@@ -77,6 +77,7 @@ async function seedWorkflows() {
       const [newAgent] = await db
         .insert(agents)
         .values({
+          id: uuidv4(),
           name: def.name,
           type: def.type as any,
           description: def.description,

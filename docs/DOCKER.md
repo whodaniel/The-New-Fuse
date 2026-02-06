@@ -1,6 +1,7 @@
 # Docker Guide for The New Fuse
 
-Comprehensive guide for building, running, and optimizing Docker containers for The New Fuse platform.
+Comprehensive guide for building, running, and optimizing Docker containers for
+The New Fuse platform.
 
 ## Table of Contents
 
@@ -45,7 +46,8 @@ docker-compose -f docker-compose.local.yml up --build
 
 ### Enable BuildKit (Recommended)
 
-BuildKit provides significant performance improvements and is required for the optimizations in our Dockerfiles.
+BuildKit provides significant performance improvements and is required for the
+optimizations in our Dockerfiles.
 
 ```bash
 # Enable BuildKit for current session
@@ -226,11 +228,13 @@ docker-compose -f docker-compose.local.yml --env-file .env.docker up
 
 ## Optimization Features
 
-Our Dockerfiles implement numerous optimizations for faster builds, smaller images, and better caching.
+Our Dockerfiles implement numerous optimizations for faster builds, smaller
+images, and better caching.
 
 ### BuildKit Cache Mounts
 
-Cache mounts persist between builds, dramatically speeding up dependency installation:
+Cache mounts persist between builds, dramatically speeding up dependency
+installation:
 
 ```dockerfile
 # Cache pnpm store

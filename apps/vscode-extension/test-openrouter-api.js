@@ -21,9 +21,9 @@ function testListModels() {
       path: '/api/v1/models',
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${API_KEY}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json',
+      },
     };
 
     const req = https.request(options, (res) => {
@@ -71,11 +71,11 @@ function testChatCompletion(modelId = 'x-ai/grok-4-fast:free') {
       messages: [
         {
           role: 'user',
-          content: 'Hello! Please respond with a brief greeting to confirm you are working.'
-        }
+          content: 'Hello! Please respond with a brief greeting to confirm you are working.',
+        },
       ],
       max_tokens: 100,
-      temperature: 0.7
+      temperature: 0.7,
     });
 
     const options = {
@@ -84,12 +84,12 @@ function testChatCompletion(modelId = 'x-ai/grok-4-fast:free') {
       path: '/api/v1/chat/completions',
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${API_KEY}`,
+        Authorization: `Bearer ${API_KEY}`,
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(payload),
         'HTTP-Referer': 'https://github.com/the-new-fuse',
-        'X-Title': 'The New Fuse VSCode Extension'
-      }
+        'X-Title': 'The New Fuse VSCode Extension',
+      },
     };
 
     const req = https.request(options, (res) => {
@@ -139,11 +139,11 @@ function testStreamingCompletion(modelId = 'x-ai/grok-4-fast:free') {
       messages: [
         {
           role: 'user',
-          content: 'Count from 1 to 5 slowly.'
-        }
+          content: 'Count from 1 to 5 slowly.',
+        },
       ],
       max_tokens: 50,
-      stream: true
+      stream: true,
     });
 
     const options = {
@@ -152,12 +152,12 @@ function testStreamingCompletion(modelId = 'x-ai/grok-4-fast:free') {
       path: '/api/v1/chat/completions',
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${API_KEY}`,
+        Authorization: `Bearer ${API_KEY}`,
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(payload),
         'HTTP-Referer': 'https://github.com/the-new-fuse',
-        'X-Title': 'The New Fuse VSCode Extension'
-      }
+        'X-Title': 'The New Fuse VSCode Extension',
+      },
     };
 
     const req = https.request(options, (res) => {
@@ -168,7 +168,7 @@ function testStreamingCompletion(modelId = 'x-ai/grok-4-fast:free') {
 
       res.on('data', (chunk) => {
         const lines = chunk.toString().split('\n');
-        lines.forEach(line => {
+        lines.forEach((line) => {
           if (line.startsWith('data: ')) {
             const data = line.substring(6);
             if (data === '[DONE]') {
@@ -225,7 +225,6 @@ async function runTests() {
     console.log('   • API Key: ✅ Valid');
     console.log('\n🎯 The VSCode extension is now configured and ready!');
     console.log('   Open VSCode → The New Fuse panel → Start chatting\n');
-
   } catch (error) {
     console.error('\n❌ Test Failed:', error.message);
     process.exit(1);

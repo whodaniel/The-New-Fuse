@@ -225,7 +225,7 @@ export const Features = () => {
                   <li className="flex items-center space-x-3">
                     <CheckCircle className="h-5 w-5 text-green-500 shrink-0" aria-hidden="true" />
                     <span className="text-gray-700">
-                      Prisma ORM with PostgreSQL for Data Management
+                      Drizzle ORM with PostgreSQL for Data Management
                     </span>
                   </li>
                   <li className="flex items-center space-x-3">

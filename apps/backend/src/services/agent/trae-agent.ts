@@ -1,6 +1,6 @@
-import { Redis } from 'ioredis';
 import { Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
+import { Redis } from 'ioredis';
 
 interface AgentMessage {
   type: string;
@@ -24,7 +24,7 @@ export class TraeAgent extends EventEmitter {
     augment: 'agent:augment',
     heartbeat: 'agent:heartbeat',
     metrics: 'monitoring:metrics',
-    alerts: 'monitoring:alerts'
+    alerts: 'monitoring:alerts',
   };
 
   constructor() {
@@ -32,7 +32,7 @@ export class TraeAgent extends EventEmitter {
     const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
     this.redis = new (Redis as any)(redisUrl);
     this.subscriber = new (Redis as any)(redisUrl);
-    
+
     this.setupSubscriptions();
     this.setupErrorHandling();
   }
@@ -72,13 +72,13 @@ export class TraeAgent extends EventEmitter {
         metadata: {
           version: '1.0.0',
           priority: 'high',
-          source: 'trae'
+          source: 'trae',
         },
         details: {
           action: 'pong',
           originalTimestamp: message.timestamp,
-          status: 'success'
-        }
+          status: 'success',
+        },
       };
 
       await this.publishMessage(this.channels.primary, response);

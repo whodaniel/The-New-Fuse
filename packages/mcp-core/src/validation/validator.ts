@@ -2,9 +2,9 @@
  * MCP Protocol Validator using AJV
  */
 
-import Ajv, { JSONSchemaType, ValidateFunction } from 'ajv';
+import Ajv, { ValidateFunction } from 'ajv';
+import { ErrorCategory, ErrorSeverity, MCPErrorClass, MCPErrorCode } from '../types/error';
 import { schemas } from './schemas';
-import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
 
 /**
  * Validation result interface
@@ -31,7 +31,7 @@ export class MCPValidator {
       removeAdditional: true,
       useDefaults: true,
       coerceTypes: false, // Disable type coercion to preserve original types
-      strict: false
+      strict: false,
     });
 
     // Add basic format validation manually
@@ -138,7 +138,7 @@ export class MCPValidator {
     if (!validator) {
       return {
         valid: false,
-        errors: [`Unknown schema: ${schemaName}`]
+        errors: [`Unknown schema: ${schemaName}`],
       };
     }
 
@@ -150,11 +150,11 @@ export class MCPValidator {
       return {
         valid: true,
         errors: [],
-        data: dataCopy
+        data: dataCopy,
       };
     }
 
-    const errors = validator.errors?.map(error => {
+    const errors = validator.errors?.map((error) => {
       const path = error.instancePath || 'root';
       const message = error.message || 'validation failed';
       return `${path}: ${message}`;
@@ -162,7 +162,7 @@ export class MCPValidator {
 
     return {
       valid: false,
-      errors
+      errors,
     };
   }
 
@@ -215,7 +215,7 @@ export class MCPValidator {
         {
           category: ErrorCategory.VALIDATION,
           severity: ErrorSeverity.MEDIUM,
-          details: { errors: result.errors, schema: schemaName }
+          details: { errors: result.errors, schema: schemaName },
         }
       );
     }

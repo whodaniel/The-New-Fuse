@@ -154,7 +154,7 @@ PORT=3003
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 REDIS_URL=${{Redis.REDIS_URL}}
 
-# Prisma
+# Drizzle
 PRISMA_HIDE_UPDATE_MESSAGE=true
 
 # API Gateway

@@ -13,19 +13,19 @@ test.describe('Workflow Editor', () => {
     // Add source and target nodes
     await workflowEditor.addNode('source');
     await workflowEditor.addNode('target');
-    
+
     // Verify nodes were added
     expect(await workflowEditor.getNodeCount()).toBe(2);
-    
+
     // Connect nodes
     await workflowEditor.connectNodes('node-1', 'node-2');
-    
+
     // Verify edge was created
     expect(await workflowEditor.getEdgeCount()).toBe(1);
-    
+
     // Save workflow
     await workflowEditor.saveWorkflow();
-    
+
     // Verify workflow is valid
     expect(await workflowEditor.isWorkflowValid()).toBeTruthy();
   });
@@ -36,10 +36,10 @@ test.describe('Workflow Editor', () => {
     await workflowEditor.addNode('processor');
     await workflowEditor.connectNodes('node-1', 'node-2');
     await workflowEditor.saveWorkflow();
-    
+
     // Run the workflow
     await workflowEditor.runWorkflow();
-    
+
     // Wait for execution to complete and verify
     await expect(async () => {
       const isValid = await workflowEditor.isWorkflowValid();
@@ -51,10 +51,10 @@ test.describe('Workflow Editor', () => {
     // Add disconnected nodes
     await workflowEditor.addNode('source');
     await workflowEditor.addNode('target');
-    
+
     // Try to save (should show validation errors)
     await workflowEditor.saveWorkflow();
-    
+
     // Verify workflow is invalid
     expect(await workflowEditor.isWorkflowValid()).toBeFalsy();
   });

@@ -1,10 +1,6 @@
 import { SetMetadata } from '@nestjs/common';
+import { RATE_LIMIT_KEY, RATE_LIMIT_TIER_KEY, SKIP_RATE_LIMIT_KEY } from './rate-limit.guard';
 import { RateLimitConfig } from './redis-rate-limiter.service';
-import {
-  RATE_LIMIT_KEY,
-  RATE_LIMIT_TIER_KEY,
-  SKIP_RATE_LIMIT_KEY
-} from './rate-limit.guard';
 
 /**
  * Set custom rate limit configuration for an endpoint
@@ -13,8 +9,7 @@ import {
  * @RateLimit({ points: 100, duration: 60 })
  * async myEndpoint() { ... }
  */
-export const RateLimit = (config: RateLimitConfig) =>
-  SetMetadata(RATE_LIMIT_KEY, config);
+export const RateLimit = (config: RateLimitConfig) => SetMetadata(RATE_LIMIT_KEY, config);
 
 /**
  * Use a predefined rate limit tier
@@ -23,8 +18,7 @@ export const RateLimit = (config: RateLimitConfig) =>
  * @RateLimitTier('pro')
  * async myEndpoint() { ... }
  */
-export const RateLimitTier = (tier: string) =>
-  SetMetadata(RATE_LIMIT_TIER_KEY, tier);
+export const RateLimitTier = (tier: string) => SetMetadata(RATE_LIMIT_TIER_KEY, tier);
 
 /**
  * Skip rate limiting for an endpoint
@@ -91,5 +85,5 @@ export const RateLimitPresets = {
    * Webhook endpoints
    * 100 requests per minute
    */
-  WEBHOOK: { points: 100, duration: 60, blockDuration: 300 }
+  WEBHOOK: { points: 100, duration: 60, blockDuration: 300 },
 };

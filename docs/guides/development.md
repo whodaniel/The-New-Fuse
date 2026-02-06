@@ -3,6 +3,7 @@
 ## Development Environment Setup
 
 ### Prerequisites
+
 ```bash
 # Verify Node.js version
 node --version  # Should be 18+
@@ -16,6 +17,7 @@ docker-compose --version  # Should be 2.20+
 ```
 
 ### Initial Setup
+
 ```bash
 # Clone repository
 git clone [repository-url]
@@ -34,6 +36,7 @@ pnpm dev
 ## Project Structure
 
 ### Core Components
+
 ```
 apps/backend/
 ├── src/
@@ -44,6 +47,7 @@ apps/backend/
 ```
 
 ### Agent Communication System
+
 - Redis-based messaging system
 - Channels:
   - `agent:composer`
@@ -52,10 +56,16 @@ apps/backend/
   - `agent:broadcast`
 
 ### Message Types
+
 ```typescript
 interface AgentMessage {
-  type: 'initialization' | 'acknowledgment' | 'task_request' | 
-        'task_update' | 'code_review' | 'suggestion';
+  type:
+    | 'initialization'
+    | 'acknowledgment'
+    | 'task_request'
+    | 'task_update'
+    | 'code_review'
+    | 'suggestion';
   timestamp: string;
   message?: string;
   metadata: {
@@ -68,11 +78,13 @@ interface AgentMessage {
 ## Development Workflow
 
 ### 1. Code Organization
+
 - Follow TypeScript guidelines
 - Use feature-based organization
 - Maintain clear separation of concerns
 
 ### 2. Version Control
+
 ```bash
 # Create feature branch
 git checkout -b feature/your-feature
@@ -86,6 +98,7 @@ git push origin feature/your-feature
 ```
 
 ### 3. Testing
+
 ```bash
 # Run all tests
 pnpm test
@@ -96,6 +109,7 @@ pnpm test:integration
 ```
 
 ### 4. Code Quality
+
 ```bash
 # Format code
 yarn format
@@ -110,17 +124,19 @@ yarn type-check
 ## Agent Development
 
 ### Setting Up a New Agent
+
 1. Create agent channel
 2. Implement message handlers
 3. Add integration tests
 4. Document capabilities
 
 ### Example Agent Integration
+
 ```typescript
 const agentConfig = {
   id: 'new-agent',
   channel: 'agent:new-agent',
-  capabilities: ['code_analysis', 'task_coordination']
+  capabilities: ['code_analysis', 'task_coordination'],
 };
 
 await registerAgent(agentConfig);
@@ -129,19 +145,23 @@ await registerAgent(agentConfig);
 ## Troubleshooting
 
 ### Common Issues
+
 1. Redis Connection
+
 ```bash
 # Verify Redis
 redis-cli ping
 ```
 
 2. Database Issues
+
 ```bash
 # Reset database
 yarn db:reset
 ```
 
 3. Cache Issues
+
 ```bash
 # Clear cache
 yarn clean:cache
@@ -150,18 +170,21 @@ yarn clean:cache
 ## Best Practices
 
 ### Code Style
+
 - Use TypeScript strict mode
 - Write comprehensive tests
 - Document public APIs
 - Follow SOLID principles
 
 ### Performance
+
 - Implement proper error handling
 - Use connection pooling
 - Cache expensive operations
 - Monitor memory usage
 
 ### Security
+
 - Validate all inputs
 - Use environment variables
 - Implement rate limiting

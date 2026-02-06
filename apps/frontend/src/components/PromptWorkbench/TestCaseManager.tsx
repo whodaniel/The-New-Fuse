@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaEdit, FaPlus, FaTrash, FaChevronDown } from 'react-icons/fa';
+import { FaChevronDown, FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 import { Button } from '../ui/design-system';
 
 interface TestCase {
@@ -106,9 +106,7 @@ export const TestCaseManager: React.FC<TestCaseManagerProps> = ({ testCases, onC
     <div className="flex flex-col gap-6">
       <div className="p-4 border border-gray-200 rounded-md">
         <div className="flex flex-col gap-4">
-          <p className="font-bold text-lg">
-            {isEditing ? 'Edit Test Case' : 'New Test Case'}
-          </p>
+          <p className="font-bold text-lg">{isEditing ? 'Edit Test Case' : 'New Test Case'}</p>
 
           <input
             type="text"
@@ -190,9 +188,7 @@ export const TestCaseManager: React.FC<TestCaseManagerProps> = ({ testCases, onC
       </div>
 
       <div>
-        <p className="font-bold text-lg mb-4">
-          Test Cases ({testCases.length})
-        </p>
+        <p className="font-bold text-lg mb-4">Test Cases ({testCases.length})</p>
 
         <div className="flex flex-col gap-2">
           {testCases.map((testCase) => (

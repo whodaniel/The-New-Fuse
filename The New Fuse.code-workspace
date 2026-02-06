@@ -224,8 +224,8 @@
 			"path": "packages/database"
 		},
 		{
-			"name": "prisma-generated",
-			"path": "packages/database/generated/prisma"
+			"name": "drizzle-generated",
+			"path": "packages/database/generated/drizzle"
 		},
 		{
 			"name": "codebase-analysis",
@@ -308,7 +308,7 @@
 			"test-utils",
 			"fairtable-adapters",
 			"workflow-engine",
-			"prisma-generated",
+			"drizzle-generated",
 			"codebase-analysis",
 			"vscode-lm-bridge",
 			"port-manager"

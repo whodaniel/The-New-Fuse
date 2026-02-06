@@ -37,7 +37,7 @@ settings['theNewFuse.llmProviders'].openrouter = {
   enabled: true,
   apiKey: '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',
   baseURL: 'https://openrouter.ai/api/v1',
-  models: []
+  models: [],
 };
 
 settings['theNewFuse.selectedProvider'] = 'openrouter';

@@ -1,10 +1,12 @@
 # pnpm Workspace Optimization Guide
 
-This guide covers the comprehensive pnpm optimization setup for The New Fuse monorepo, designed to maximize development efficiency and testing performance.
+This guide covers the comprehensive pnpm optimization setup for The New Fuse
+monorepo, designed to maximize development efficiency and testing performance.
 
 ## Overview
 
 Our pnpm optimization includes:
+
 - **Advanced workspace filtering** for targeted operations
 - **Turbo integration** for intelligent caching and orchestration
 - **Performance-optimized configurations** for CI/CD and development
@@ -105,11 +107,13 @@ npm run test:affected all
 ### 3. Performance Optimization
 
 #### Memory Management
+
 - **Optimized worker allocation**: 50-75% of available cores
 - **Memory limits**: 256-512MB per worker
 - **Intelligent caching**: Turbo + Jest cache integration
 
 #### Parallel Execution
+
 - **Package-level parallelism**: Multiple packages tested simultaneously
 - **Test-level parallelism**: Within-package test parallelization
 - **Resource optimization**: CPU and memory usage balancing
@@ -259,28 +263,31 @@ module.exports = {
 ### Common Issues
 
 1. **Memory Issues**
+
    ```bash
    # Use memory-optimized configuration
    pnpm run test:turo:memory
-   
+
    # Clean caches
    npm run clean:cache
    ```
 
 2. **Dependency Conflicts**
+
    ```bash
    # Analyze dependencies
    npm run workspace:deps
-   
+
    # Clean and reinstall
    npm run clean:deps
    ```
 
 3. **Performance Issues**
+
    ```bash
    # Check workspace health
    npm run workspace:health
-   
+
    # Optimize configuration
    npm run workspace:optimize
    ```
@@ -301,16 +308,19 @@ pnpm run test:turbo:deug
 ## Best Practices
 
 ### 1. Development
+
 - Use `npm run orchestrate:smart` for regular testing
 - Use `npm run test:changed` during active development
 - Use `npm run dev:frontend` or `pnpm run dev:ackend` for focused development
 
 ### 2. CI/CD
+
 - Use `npm run orchestrate:ci` for comprehensive CI testing
 - Use `pnpm run test:turo:coverage` for coverage reporting
 - Use `npm run workspace:health` for environment validation
 
 ### 3. Maintenance
+
 - Run `npm run workspace:optimize` regularly
 - Monitor `npm run workspace:deps` for dependency health
 - Use `npm run clean:cache` when experiencing cache issues
@@ -318,6 +328,7 @@ pnpm run test:turbo:deug
 ## Performance Metrics
 
 Our optimization typically provides:
+
 - **50-70% faster** test execution through parallelization
 - **30-50% reduction** in CI time through intelligent caching
 - **60-80% faster** dependency installation through pnpm store
@@ -326,6 +337,7 @@ Our optimization typically provides:
 ## Integration with IDEs
 
 ### VS Code
+
 Add to your `.vscode/tasks.json`:
 
 ```json
@@ -349,7 +361,9 @@ Add to your `.vscode/tasks.json`:
 ```
 
 ### JetBrains IDEs
+
 Configure run configurations for:
+
 - `npm run orchestrate:smart unit`
 - `npm run test:changed unit`
 - `npm run dev:frontend`
@@ -357,6 +371,7 @@ Configure run configurations for:
 ## Monitoring and Analytics
 
 Track performance with:
+
 - Turbo analytics: `turbo login` and enable telemetry
 - Jest performance: Built-in timing reports
 - pnpm metrics: Store and cache statistics
@@ -364,6 +379,7 @@ Track performance with:
 ## Future Enhancements
 
 Planned improvements:
+
 - **Remote caching**: Turbo remote cache integration
 - **Distributed testing**: Multi-machine test execution
 - **AI-powered optimization**: Machine learning for test prioritization
@@ -372,6 +388,7 @@ Planned improvements:
 ---
 
 For more information, see:
+
 - [pnpm Documentation](https://pnpm.io/)
 - [Turbo Documentation](https://turbo.build/)
 - [Jest Documentation](https://jestjs.io/)

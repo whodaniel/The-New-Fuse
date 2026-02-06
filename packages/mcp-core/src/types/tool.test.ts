@@ -2,19 +2,17 @@
  * Tests for MCP Tool types and validation
  */
 
+import { mcpValidator } from '../validation/validator';
 import {
-  ToolType,
-  ToolExecutionStatus,
+  NetworkAccessConfig,
+  QueueStatistics,
   ToolExecutionContext,
   ToolExecutionLog,
-  ToolRegistry,
-  ToolSearchCriteria,
-  ToolExecutionQueue,
-  QueueStatistics,
+  ToolExecutionStatus,
   ToolSandboxConfig,
-  NetworkAccessConfig
+  ToolSearchCriteria,
+  ToolType,
 } from './tool';
-import { mcpValidator } from '../validation/validator';
 
 describe('Tool Types', () => {
   describe('Enumerations', () => {
@@ -48,9 +46,9 @@ describe('Tool Types', () => {
         timeout: 30000,
         metadata: {
           priority: 'high',
-          retryCount: 0
+          retryCount: 0,
         },
-        parentExecutionId: 'parent-exec-789'
+        parentExecutionId: 'parent-exec-789',
       };
 
       expect(context.executionId).toBe('exec-123');
@@ -72,8 +70,8 @@ describe('Tool Types', () => {
         timestamp: new Date(),
         data: {
           step: 'initialization',
-          progress: 0
-        }
+          progress: 0,
+        },
       };
 
       expect(log.id).toBe('log-456');
@@ -90,7 +88,7 @@ describe('Tool Types', () => {
         type: ToolType.FUNCTION,
         description: 'testing',
         capabilities: ['validation', 'execution'],
-        tags: ['utility', 'test']
+        tags: ['utility', 'test'],
       };
 
       expect(criteria.name).toBe('test-*');
@@ -107,7 +105,7 @@ describe('Tool Types', () => {
         totalDequeued: 95,
         averageWaitTime: 250.5,
         peakSize: 15,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       expect(stats.currentSize).toBe(5);
@@ -126,21 +124,21 @@ describe('Tool Types', () => {
           cpuTime: 10000,
           memory: 512 * 1024 * 1024,
           fileOperations: 100,
-          networkOperations: 50
+          networkOperations: 50,
         },
         allowedPaths: ['/tmp', '/var/tmp'],
         blockedPaths: ['/etc', '/root'],
         environment: {
           NODE_ENV: 'sandbox',
-          PATH: '/usr/local/bin:/usr/bin:/bin'
+          PATH: '/usr/local/bin:/usr/bin:/bin',
         },
         networkAccess: {
           enabled: true,
           allowedDomains: ['api.example.com'],
           blockedDomains: ['malicious.com'],
           allowedPorts: [80, 443],
-          blockedPorts: [22, 23]
-        }
+          blockedPorts: [22, 23],
+        },
       };
 
       expect(sandboxConfig.enabled).toBe(true);
@@ -159,7 +157,7 @@ describe('Tool Types', () => {
         allowedDomains: ['trusted.com', '*.api.example.com'],
         blockedDomains: ['malware.com', 'phishing.net'],
         allowedPorts: [80, 443, 8080],
-        blockedPorts: [22, 23, 3389]
+        blockedPorts: [22, 23, 3389],
       };
 
       expect(networkConfig.enabled).toBe(true);
@@ -181,29 +179,29 @@ describe('Tool Types', () => {
           properties: {
             operation: {
               type: 'string',
-              enum: ['add', 'subtract', 'multiply', 'divide']
+              enum: ['add', 'subtract', 'multiply', 'divide'],
             },
             operands: {
               type: 'array',
               items: { type: 'number' },
               minItems: 2,
-              maxItems: 2
-            }
+              maxItems: 2,
+            },
           },
-          required: ['operation', 'operands']
+          required: ['operation', 'operands'],
         },
         outputSchema: {
           type: 'object',
           properties: {
             result: { type: 'number' },
-            operation: { type: 'string' }
-          }
+            operation: { type: 'string' },
+          },
         },
         config: {
           timeout: 5000,
           maxMemory: 1024 * 1024,
-          sandboxed: true
-        }
+          sandboxed: true,
+        },
       };
 
       const result = mcpValidator.validateMCPTool(tool);
@@ -213,15 +211,15 @@ describe('Tool Types', () => {
 
     it('should reject tool without required fields', () => {
       const invalidTool = {
-        name: 'incomplete-tool'
+        name: 'incomplete-tool',
         // missing description and inputSchema
       };
 
       const result = mcpValidator.validateMCPTool(invalidTool);
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
-      expect(result.errors.some(error => error.includes('description'))).toBe(true);
-      expect(result.errors.some(error => error.includes('inputSchema'))).toBe(true);
+      expect(result.errors.some((error) => error.includes('description'))).toBe(true);
+      expect(result.errors.some((error) => error.includes('inputSchema'))).toBe(true);
     });
 
     it('should reject tool with invalid input schema', () => {
@@ -231,14 +229,14 @@ describe('Tool Types', () => {
         inputSchema: {
           // missing required 'type' field
           properties: {
-            input: { type: 'string' }
-          }
-        }
+            input: { type: 'string' },
+          },
+        },
       };
 
       const result = mcpValidator.validateMCPTool(invalidTool);
       expect(result.valid).toBe(false);
-      expect(result.errors.some(error => error.includes('type'))).toBe(true);
+      expect(result.errors.some((error) => error.includes('type'))).toBe(true);
     });
 
     it('should accept tool with minimal required fields', () => {
@@ -246,8 +244,8 @@ describe('Tool Types', () => {
         name: 'minimal-tool',
         description: 'A minimal tool',
         inputSchema: {
-          type: 'object'
-        }
+          type: 'object',
+        },
       };
 
       const result = mcpValidator.validateMCPTool(minimalTool);
@@ -262,15 +260,15 @@ describe('Tool Types', () => {
         inputSchema: {
           type: 'object',
           properties: {
-            data: { type: 'string' }
+            data: { type: 'string' },
           },
-          required: ['data']
+          required: ['data'],
         },
         outputSchema: {
           type: 'object',
           properties: {
-            processed: { type: 'string' }
-          }
+            processed: { type: 'string' },
+          },
         },
         config: {
           timeout: 30000,
@@ -278,15 +276,15 @@ describe('Tool Types', () => {
           sandboxed: true,
           environment: {
             TOOL_MODE: 'production',
-            LOG_LEVEL: 'info'
+            LOG_LEVEL: 'info',
           },
           resourceLimits: {
             cpuTime: 15000,
             memory: 256 * 1024 * 1024,
             fileOperations: 200,
-            networkOperations: 100
-          }
-        }
+            networkOperations: 100,
+          },
+        },
       };
 
       const result = mcpValidator.validateMCPTool(tool);
@@ -305,8 +303,8 @@ describe('Tool Types', () => {
           memoryUsage: 1024,
           toolVersion: '1.2.0',
           context: { step: 'final' },
-          warnings: ['Minor issue detected']
-        }
+          warnings: ['Minor issue detected'],
+        },
       };
 
       expect(successResult.success).toBe(true);
@@ -320,8 +318,8 @@ describe('Tool Types', () => {
         metadata: {
           executionTime: 75,
           toolVersion: '1.2.0',
-          context: { error: 'Invalid input format' }
-        }
+          context: { error: 'Invalid input format' },
+        },
       };
 
       expect(errorResult.success).toBe(false);
@@ -334,8 +332,8 @@ describe('Tool Types', () => {
         valid: true,
         normalizedParams: {
           input: 'normalized input',
-          options: { format: 'json' }
-        }
+          options: { format: 'json' },
+        },
       };
 
       expect(validationResult.valid).toBe(true);
@@ -343,10 +341,7 @@ describe('Tool Types', () => {
 
       const invalidResult = {
         valid: false,
-        errors: [
-          'Missing required field: input',
-          'Invalid format for field: options'
-        ]
+        errors: ['Missing required field: input', 'Invalid format for field: options'],
       };
 
       expect(invalidResult.valid).toBe(false);
@@ -360,7 +355,7 @@ describe('Tool Types', () => {
         successfulExecutions: 950,
         failedExecutions: 50,
         averageExecutionTime: 125.5,
-        lastExecution: new Date()
+        lastExecution: new Date(),
       };
 
       expect(usageStats.totalExecutions).toBe(1000);
@@ -368,7 +363,9 @@ describe('Tool Types', () => {
       expect(usageStats.failedExecutions).toBe(50);
       expect(usageStats.averageExecutionTime).toBe(125.5);
       expect(usageStats.lastExecution).toBeInstanceOf(Date);
-      expect(usageStats.successfulExecutions + usageStats.failedExecutions).toBe(usageStats.totalExecutions);
+      expect(usageStats.successfulExecutions + usageStats.failedExecutions).toBe(
+        usageStats.totalExecutions
+      );
     });
 
     it('should validate tool permissions structure', () => {
@@ -379,19 +376,19 @@ describe('Tool Types', () => {
           {
             principal: 'user:alice',
             permissions: ['execute'],
-            type: 'allow' as const
+            type: 'allow' as const,
           },
           {
             principal: 'role:guest',
             permissions: ['execute'],
-            type: 'deny' as const
-          }
+            type: 'deny' as const,
+          },
         ],
         rateLimit: {
           maxRequests: 100,
           windowSeconds: 3600,
-          burstSize: 10
-        }
+          burstSize: 10,
+        },
       };
 
       expect(permissions.execute).toBe(true);
@@ -412,30 +409,30 @@ describe('Tool Types', () => {
           name: {
             type: 'string',
             minLength: 1,
-            maxLength: 100
+            maxLength: 100,
           },
           age: {
             type: 'number',
             minimum: 0,
-            maximum: 150
+            maximum: 150,
           },
           email: {
             type: 'string',
-            format: 'email'
+            format: 'email',
           },
           preferences: {
             type: 'object',
             properties: {
               theme: {
                 type: 'string',
-                enum: ['light', 'dark']
-              }
+                enum: ['light', 'dark'],
+              },
             },
-            additionalProperties: false
-          }
+            additionalProperties: false,
+          },
         },
         required: ['name', 'email'],
-        additionalProperties: false
+        additionalProperties: false,
       };
 
       expect(schema.type).toBe('object');
@@ -458,17 +455,17 @@ describe('Tool Types', () => {
                 type: 'object',
                 properties: {
                   bio: { type: 'string' },
-                  avatar: { type: 'string', format: 'uri' }
-                }
-              }
-            }
+                  avatar: { type: 'string', format: 'uri' },
+                },
+              },
+            },
           },
           tags: {
             type: 'array',
             items: { type: 'string' },
-            uniqueItems: true
-          }
-        }
+            uniqueItems: true,
+          },
+        },
       };
 
       expect(nestedSchema.properties?.user?.type).toBe('object');

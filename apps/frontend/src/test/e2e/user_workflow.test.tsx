@@ -1,7 +1,7 @@
+import { ChildProcess, spawn } from 'child_process';
+import * as http from 'http';
 import { Builder, By, until, WebDriver } from 'selenium-webdriver';
 import { Options as ChromeOptions } from 'selenium-webdriver/chrome';
-import { spawn, ChildProcess } from 'child_process';
-import * as http from 'http';
 
 describe('User Workflow E2E Tests', () => {
   let driver: WebDriver;
@@ -12,13 +12,15 @@ describe('User Workflow E2E Tests', () => {
       const startTime = Date.now();
 
       const checkServer = (): any => {
-        http.get(url, (res) => {
-          if (res.statusCode === 200) {
-            resolve();
-          } else {
-            retry();
-          }
-        }).on('error', retry);
+        http
+          .get(url, (res) => {
+            if (res.statusCode === 200) {
+              resolve();
+            } else {
+              retry();
+            }
+          })
+          .on('error', retry);
 
         function retry(): any {
           const elapsed = Date.now() - startTime;
@@ -42,7 +44,7 @@ describe('User Workflow E2E Tests', () => {
         kill.on('close', resolve);
       });
     } catch (error) {
-       // Ignore errors if no process is running
+      // Ignore errors if no process is running
     }
 
     // Start the dev server
@@ -52,8 +54,8 @@ describe('User Workflow E2E Tests', () => {
       cwd: process.cwd(),
       env: {
         ...process.env,
-        PORT: '5173'
-      }
+        PORT: '5173',
+      },
     });
 
     // Wait for server to be ready
@@ -69,10 +71,7 @@ describe('User Workflow E2E Tests', () => {
     chromeOptions.addArguments('--no-sandbox');
     chromeOptions.addArguments('--disable-dev-shm-usage');
 
-    driver = await new Builder()
-      .forBrowser('chrome')
-      .setChromeOptions(chromeOptions)
-      .build();
+    driver = await new Builder().forBrowser('chrome').setChromeOptions(chromeOptions).build();
   }, 90000);
 
   afterAll(async () => {
@@ -88,7 +87,7 @@ describe('User Workflow E2E Tests', () => {
           kill.on('close', resolve);
         });
       } catch (error) {
-         // Ignore errors if no process is running
+        // Ignore errors if no process is running
       }
     }
   });
@@ -102,7 +101,6 @@ describe('User Workflow E2E Tests', () => {
         30000,
         'App root element not found'
       );
-
     } catch (error) {
       console.error('Error loading page:', error);
       const screenshot = await driver.takeScreenshot();
@@ -178,21 +176,18 @@ describe('User Workflow E2E Tests', () => {
       await driver.sleep(2000);
 
       const emailInput = await driver.wait(
-        until.elementLocated(By.css([
-          '[data-testid="email-input"]',
-          'input[type="email"]',
-          '#email',
-          '.email-input'
-        ].join(','))),
+        until.elementLocated(
+          By.css(
+            ['[data-testid="email-input"]', 'input[type="email"]', '#email', '.email-input'].join(
+              ','
+            )
+          )
+        ),
         30000,
         'Email input not found after 30 seconds'
       );
 
-      await driver.wait(
-        until.elementIsVisible(emailInput),
-        10000,
-        'Email input is not visible'
-      );
+      await driver.wait(until.elementIsVisible(emailInput), 10000, 'Email input is not visible');
 
       await emailInput.sendKeys('test@example.com');
     } catch (error) {
@@ -208,21 +203,18 @@ describe('User Workflow E2E Tests', () => {
       await driver.sleep(2000);
 
       const emailInput = await driver.wait(
-        until.elementLocated(By.css([
-          '[data-testid="email-input"]',
-          'input[type="email"]',
-          '#email',
-          '.email-input'
-        ].join(','))),
+        until.elementLocated(
+          By.css(
+            ['[data-testid="email-input"]', 'input[type="email"]', '#email', '.email-input'].join(
+              ','
+            )
+          )
+        ),
         30000,
         'Email input not found after 30 seconds'
       );
 
-      await driver.wait(
-        until.elementIsVisible(emailInput),
-        10000,
-        'Email input is not visible'
-      );
+      await driver.wait(until.elementIsVisible(emailInput), 10000, 'Email input is not visible');
 
       await emailInput.sendKeys('test@example.com');
     } catch (error) {

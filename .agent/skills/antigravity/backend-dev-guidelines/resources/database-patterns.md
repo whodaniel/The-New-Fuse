@@ -1,11 +1,11 @@
-# Database Patterns - Prisma Best Practices
+# Database Patterns - Drizzle Best Practices
 
-Complete guide to database access patterns using Prisma in backend
+Complete guide to database access patterns using Drizzle in backend
 microservices.
 
 ## Table of Contents
 
-- [PrismaService Usage](#prismaservice-usage)
+- [DatabaseService Usage](#drizzleservice-usage)
 - [Repository Pattern](#repository-pattern)
 - [Transaction Patterns](#transaction-patterns)
 - [Query Optimization](#query-optimization)
@@ -14,25 +14,25 @@ microservices.
 
 ---
 
-## PrismaService Usage
+## DatabaseService Usage
 
 ### Basic Pattern
 
 ```typescript
-import { PrismaService } from '@project-lifecycle-portal/database';
+import { DatabaseService } from '@project-lifecycle-portal/database';
 
-// Always use PrismaService.main
-const users = await PrismaService.main.user.findMany();
+// Always use DatabaseService.main
+const users = await DatabaseService.main.user.findMany();
 ```
 
 ### Check Availability
 
 ```typescript
-if (!PrismaService.isAvailable) {
-  throw new Error('Prisma client not initialized');
+if (!DatabaseService.isAvailable) {
+  throw new Error('Drizzle client not initialized');
 }
 
-const user = await PrismaService.main.user.findUnique({ where: { id } });
+const user = await DatabaseService.main.user.findUnique({ where: { id } });
 ```
 
 ---
@@ -58,21 +58,21 @@ const user = await PrismaService.main.user.findUnique({ where: { id } });
 ```typescript
 export class UserRepository {
   async findById(id: string): Promise<User | null> {
-    return PrismaService.main.user.findUnique({
+    return DatabaseService.main.user.findUnique({
       where: { id },
       include: { profile: true },
     });
   }
 
   async findActive(): Promise<User[]> {
-    return PrismaService.main.user.findMany({
+    return DatabaseService.main.user.findMany({
       where: { isActive: true },
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  async create(data: Prisma.UserCreateInput): Promise<User> {
-    return PrismaService.main.user.create({ data });
+  async create(data: Drizzle.UserCreateInput): Promise<User> {
+    return DatabaseService.main.user.create({ data });
   }
 }
 ```
@@ -84,7 +84,7 @@ export class UserRepository {
 ### Simple Transaction
 
 ```typescript
-const result = await PrismaService.main.$transaction(async (tx) => {
+const result = await DatabaseService.main.$transaction(async (tx) => {
   const user = await tx.user.create({ data: userData });
   const profile = await tx.userProfile.create({ data: { userId: user.id } });
   return { user, profile };
@@ -94,7 +94,7 @@ const result = await PrismaService.main.$transaction(async (tx) => {
 ### Interactive Transaction
 
 ```typescript
-const result = await PrismaService.main.$transaction(
+const result = await DatabaseService.main.$transaction(
   async (tx) => {
     const user = await tx.user.findUnique({ where: { id } });
     if (!user) throw new Error('User not found');
@@ -119,10 +119,10 @@ const result = await PrismaService.main.$transaction(
 
 ```typescript
 // ❌ Fetches all fields
-const users = await PrismaService.main.user.findMany();
+const users = await DatabaseService.main.user.findMany();
 
 // ✅ Only fetch needed fields
-const users = await PrismaService.main.user.findMany({
+const users = await DatabaseService.main.user.findMany({
   select: {
     id: true,
     email: true,
@@ -135,7 +135,7 @@ const users = await PrismaService.main.user.findMany({
 
 ```typescript
 // ❌ Excessive includes
-const user = await PrismaService.main.user.findUnique({
+const user = await DatabaseService.main.user.findUnique({
   where: { id },
   include: {
     profile: true,
@@ -145,7 +145,7 @@ const user = await PrismaService.main.user.findUnique({
 });
 
 // ✅ Only include what you need
-const user = await PrismaService.main.user.findUnique({
+const user = await DatabaseService.main.user.findUnique({
   where: { id },
   include: { profile: true },
 });
@@ -159,11 +159,11 @@ const user = await PrismaService.main.user.findUnique({
 
 ```typescript
 // ❌ N+1 Query Problem
-const users = await PrismaService.main.user.findMany(); // 1 query
+const users = await DatabaseService.main.user.findMany(); // 1 query
 
 for (const user of users) {
   // N queries (one per user)
-  const profile = await PrismaService.main.userProfile.findUnique({
+  const profile = await DatabaseService.main.userProfile.findUnique({
     where: { userId: user.id },
   });
 }
@@ -173,13 +173,13 @@ for (const user of users) {
 
 ```typescript
 // ✅ Single query with include
-const users = await PrismaService.main.user.findMany({
+const users = await DatabaseService.main.user.findMany({
   include: { profile: true },
 });
 
 // ✅ Or batch query
 const userIds = users.map((u) => u.id);
-const profiles = await PrismaService.main.userProfile.findMany({
+const profiles = await DatabaseService.main.userProfile.findMany({
   where: { userId: { in: userIds } },
 });
 ```
@@ -188,15 +188,15 @@ const profiles = await PrismaService.main.userProfile.findMany({
 
 ## Error Handling
 
-### Prisma Error Types
+### Drizzle Error Types
 
 ```typescript
-import { Prisma } from '@prisma/client';
+import { Drizzle } from '@drizzle/client';
 
 try {
-  await PrismaService.main.user.create({ data });
+  await DatabaseService.main.user.create({ data });
 } catch (error) {
-  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+  if (error instanceof Drizzle.DrizzleClientKnownRequestError) {
     // Unique constraint violation
     if (error.code === 'P2002') {
       throw new ConflictError('Email already exists');

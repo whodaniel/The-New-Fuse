@@ -8,13 +8,13 @@
     // Simple mock implementation for jest.mock
     const mockExport = factory();
     require.cache[require.resolve(moduleName)] = {
-      exports: mockExport
+      exports: mockExport,
     } as any;
-  }
+  },
 };
 
 (global as any).jest.mock('uuid', () => ({
-  v4: jest.fn(() => 'mocked-uuid')
+  v4: jest.fn(() => 'mocked-uuid'),
 }));
 
 jest.mock('@nestjs/common', () => ({
@@ -23,8 +23,8 @@ jest.mock('@nestjs/common', () => ({
     log: jest.fn(),
     error: jest.fn(),
     warn: jest.fn(),
-    debug: jest.fn()
-  }))
+    debug: jest.fn(),
+  })),
 }));
 
 describe('Core Package', () => {

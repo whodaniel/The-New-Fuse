@@ -161,9 +161,7 @@ export class UnstoppableDomainsAuth {
    */
   isAuthenticated(): boolean {
     return (
-      this.authorization !== null &&
-      this.user !== null &&
-      this.authorization.expiresAt > Date.now()
+      this.authorization !== null && this.user !== null && this.authorization.expiresAt > Date.now()
     );
   }
 

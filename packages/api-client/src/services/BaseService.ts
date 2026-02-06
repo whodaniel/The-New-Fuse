@@ -1,5 +1,5 @@
-import { ApiClient } from '../client/ApiClient';
 import type { AxiosRequestConfig } from 'axios';
+import { ApiClient } from '../client/ApiClient';
 
 /**
  * Base service class for API services
@@ -50,7 +50,11 @@ export abstract class BaseService {
    * @param config Optional request configuration
    * @returns Promise resolving to the response data
    */
-  protected async post<T = any>(path: string = '', data?: any, config?: AxiosRequestConfig): Promise<T> {
+  protected async post<T = any>(
+    path: string = '',
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
     return this.apiClient.post<T>(this.getPath(path), data, config);
   }
 
@@ -61,7 +65,11 @@ export abstract class BaseService {
    * @param config Optional request configuration
    * @returns Promise resolving to the response data
    */
-  protected async put<T = any>(path: string = '', data?: any, config?: AxiosRequestConfig): Promise<T> {
+  protected async put<T = any>(
+    path: string = '',
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
     return this.apiClient.put<T>(this.getPath(path), data, config);
   }
 
@@ -72,7 +80,11 @@ export abstract class BaseService {
    * @param config Optional request configuration
    * @returns Promise resolving to the response data
    */
-  protected async patch<T = any>(path: string = '', data?: any, config?: AxiosRequestConfig): Promise<T> {
+  protected async patch<T = any>(
+    path: string = '',
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
     return this.apiClient.patch<T>(this.getPath(path), data, config);
   }
 
@@ -93,10 +105,10 @@ export abstract class BaseService {
    * @throws Error if any required parameters are missing
    */
   protected validateRequired(params: Record<string, any>, required: string[]): void {
-    const missing = required.filter(key => 
-      params[key] === undefined || params[key] === null || params[key] === ''
+    const missing = required.filter(
+      (key) => params[key] === undefined || params[key] === null || params[key] === ''
     );
-    
+
     if (missing.length > 0) {
       throw new Error(`Missing required parameters: ${missing.join(', ')}`);
     }
@@ -109,13 +121,13 @@ export abstract class BaseService {
    */
   protected buildQueryString(params: Record<string, any>): string {
     const searchParams = new URLSearchParams();
-    
+
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         searchParams.append(key, String(value));
       }
     });
-    
+
     const queryString = searchParams.toString();
     return queryString ? `?${queryString}` : '';
   }

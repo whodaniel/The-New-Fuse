@@ -107,7 +107,7 @@ Before I coordinate the agents, I need to understand your requirements better:
 | `frontend-specialist`   | Frontend & UI     | React, Next.js, Tailwind, components      |
 | `test-engineer`         | Testing & QA      | Unit tests, E2E, coverage, TDD            |
 | `devops-engineer`       | DevOps & Infra    | Deployment, CI/CD, PM2, monitoring        |
-| `database-architect`    | Database & Schema | Prisma, migrations, optimization          |
+| `database-architect`    | Database & Schema | Schema, migrations, optimization          |
 | `mobile-developer`      | Mobile Apps       | React Native, Flutter, Expo               |
 | `api-designer`          | API Design        | REST, GraphQL, OpenAPI                    |
 | `debugger`              | Debugging         | Root cause analysis, systematic debugging |
@@ -153,7 +153,7 @@ Before I coordinate the agents, I need to understand your requirements better:
 | `**/__tests__/**`               | `test-engineer`       | ❌ All others    |
 | `**/components/**`              | `frontend-specialist` | ❌ backend, test |
 | `**/api/**`, `**/server/**`     | `backend-specialist`  | ❌ frontend      |
-| `**/prisma/**`, `**/drizzle/**` | `database-architect`  | ❌ frontend      |
+| `**/drizzle/**` | `database-architect`  | ❌ frontend      |
 
 ### Enforcement Protocol
 

@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-const vi = jest;
-import { FileChangeBatcher, BatchConfig, BatchedFileChange } from './FileChangeBatcher';
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
+import { BatchConfig, BatchedFileChange, FileChangeBatcher } from './FileChangeBatcher';
+const vi = jest;
 
 describe('FileChangeBatcher', () => {
   let batcher: FileChangeBatcher;
@@ -17,7 +17,7 @@ describe('FileChangeBatcher', () => {
       maxBatchSize: 5,
       batchTimeout: 100,
       debounceDelay: 50,
-      priorityPatterns: ['config', 'template']
+      priorityPatterns: ['config', 'template'],
     };
 
     processedBatches = [];
@@ -31,7 +31,7 @@ describe('FileChangeBatcher', () => {
   describe('batching behavior', () => {
     it('should batch file changes by size', async () => {
       const changes: FileChangeEvent[] = [];
-      
+
       // Create 6 changes (exceeds maxBatchSize of 5)
       for (let i = 0; i < 6; i++) {
         changes.push({
@@ -40,7 +40,7 @@ describe('FileChangeBatcher', () => {
           tenantId: 'tenant1',
           timestamp: new Date(),
           checksum: `hash${i}`,
-          metadata: { size: 1024 }
+          metadata: { size: 1024 },
         });
       }
 
@@ -50,10 +50,10 @@ describe('FileChangeBatcher', () => {
       }
 
       // Wait for processing
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       expect(processedBatches.length).toBeGreaterThan(0);
-      
+
       // Should have processed at least one batch
       const totalProcessed = processedBatches.reduce((sum, batch) => sum + batch.events.length, 0);
       expect(totalProcessed).toBe(6);
@@ -66,13 +66,13 @@ describe('FileChangeBatcher', () => {
         tenantId: 'tenant1',
         timestamp: new Date(),
         checksum: 'hash1',
-        metadata: { size: 1024 }
+        metadata: { size: 1024 },
       };
 
       await batcher.addFileChange(change);
 
       // Wait for debounce + timeout
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       expect(processedBatches.length).toBe(1);
       expect(processedBatches[0].events.length).toBe(1);
@@ -85,7 +85,7 @@ describe('FileChangeBatcher', () => {
         tenantId: 'tenant1',
         timestamp: new Date(),
         checksum: 'hash1',
-        metadata: { size: 1024 }
+        metadata: { size: 1024 },
       };
 
       // Add same file multiple times rapidly
@@ -94,7 +94,7 @@ describe('FileChangeBatcher', () => {
       await batcher.addFileChange({ ...change, checksum: 'hash3' });
 
       // Wait for debounce and processing
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       expect(processedBatches.length).toBe(1);
       expect(processedBatches[0].events.length).toBe(1);
@@ -110,7 +110,7 @@ describe('FileChangeBatcher', () => {
         tenantId: 'tenant1',
         timestamp: new Date(),
         checksum: 'hash1',
-        metadata: { size: 1024 }
+        metadata: { size: 1024 },
       };
 
       const normalChange: FileChangeEvent = {
@@ -119,19 +119,19 @@ describe('FileChangeBatcher', () => {
         tenantId: 'tenant1',
         timestamp: new Date(),
         checksum: 'hash2',
-        metadata: { size: 1024 }
+        metadata: { size: 1024 },
       };
 
       await batcher.addFileChange(normalChange);
       await batcher.addFileChange(highPriorityChange);
 
       // Wait for processing
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       expect(processedBatches.length).toBeGreaterThan(0);
-      
+
       // High priority should be processed first or separately
-      const highPriorityBatch = processedBatches.find(batch => batch.priority === 'high');
+      const highPriorityBatch = processedBatches.find((batch) => batch.priority === 'high');
       expect(highPriorityBatch).toBeDefined();
     });
   });
@@ -144,7 +144,7 @@ describe('FileChangeBatcher', () => {
         tenantId: 'tenant1',
         timestamp: new Date(),
         checksum: 'hash1',
-        metadata: { size: 1024 }
+        metadata: { size: 1024 },
       };
 
       const tenant2Change: FileChangeEvent = {
@@ -153,20 +153,20 @@ describe('FileChangeBatcher', () => {
         tenantId: 'tenant2',
         timestamp: new Date(),
         checksum: 'hash2',
-        metadata: { size: 1024 }
+        metadata: { size: 1024 },
       };
 
       await batcher.addFileChange(tenant1Change);
       await batcher.addFileChange(tenant2Change);
 
       // Wait for processing
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       expect(processedBatches.length).toBeGreaterThanOrEqual(2);
-      
-      const tenant1Batches = processedBatches.filter(batch => batch.tenantId === 'tenant1');
-      const tenant2Batches = processedBatches.filter(batch => batch.tenantId === 'tenant2');
-      
+
+      const tenant1Batches = processedBatches.filter((batch) => batch.tenantId === 'tenant1');
+      const tenant2Batches = processedBatches.filter((batch) => batch.tenantId === 'tenant2');
+
       expect(tenant1Batches.length).toBeGreaterThan(0);
       expect(tenant2Batches.length).toBeGreaterThan(0);
     });
@@ -175,11 +175,11 @@ describe('FileChangeBatcher', () => {
   describe('statistics and monitoring', () => {
     it('should provide batch statistics', () => {
       const stats = batcher.getBatchStats();
-      
+
       expect(stats).toHaveProperty('pendingChanges');
       expect(stats).toHaveProperty('activeBatches');
       expect(stats).toHaveProperty('activeTimers');
-      
+
       expect(typeof stats.pendingChanges).toBe('number');
       expect(typeof stats.activeBatches).toBe('number');
       expect(typeof stats.activeTimers).toBe('number');
@@ -187,7 +187,7 @@ describe('FileChangeBatcher', () => {
 
     it('should flush all pending batches', async () => {
       const changes: FileChangeEvent[] = [];
-      
+
       for (let i = 0; i < 3; i++) {
         changes.push({
           type: 'update',
@@ -195,7 +195,7 @@ describe('FileChangeBatcher', () => {
           tenantId: 'tenant1',
           timestamp: new Date(),
           checksum: `hash${i}`,
-          metadata: { size: 1024 }
+          metadata: { size: 1024 },
         });
       }
 
@@ -208,7 +208,7 @@ describe('FileChangeBatcher', () => {
       await batcher.flushAll();
 
       expect(processedBatches.length).toBeGreaterThan(0);
-      
+
       const totalProcessed = processedBatches.reduce((sum, batch) => sum + batch.events.length, 0);
       expect(totalProcessed).toBe(3);
     });
@@ -226,15 +226,15 @@ describe('FileChangeBatcher', () => {
         tenantId: 'tenant1',
         timestamp: new Date(),
         checksum: 'hash1',
-        metadata: { size: 1024 }
+        metadata: { size: 1024 },
       };
 
       // Should not throw during add
       await errorBatcher.addFileChange(change);
-      
+
       // Wait for processing attempt
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
       // Should complete without throwing
       expect(true).toBe(true);
 

@@ -2,8 +2,14 @@
  * MCP Broker type definitions
  */
 
-import { ServiceStatus, LoadBalancingStrategy, FilterConfig, SortConfig, Pagination } from './common';
-import { MCPResource, MCPTool, MCPCapability } from '../interfaces';
+import { MCPResource, MCPTool } from '../interfaces';
+import {
+  FilterConfig,
+  LoadBalancingStrategy,
+  Pagination,
+  ServiceStatus,
+  SortConfig,
+} from './common';
 import { Skill } from './skill';
 
 /**

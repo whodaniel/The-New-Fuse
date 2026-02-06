@@ -13,6 +13,13 @@ export interface IRegistrationData {
   description?: string;
   capabilities: IAgentCapability[];
   metadata?: Record<string, any>;
+  invitationCode: string;
+  tenantId?: string;
+  organizationId?: string;
+  agencyId?: string;
+  identity?: Record<string, any>;
+  trust?: Record<string, any>;
+  protocols?: Record<string, any>;
   heartbeatInterval?: number;
 }
 

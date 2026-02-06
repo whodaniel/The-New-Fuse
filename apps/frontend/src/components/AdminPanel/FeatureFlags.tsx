@@ -1,7 +1,7 @@
-import React from 'react';
 import { Badge, Button } from '@/components/ui/design-system';
-import { useFeatureFlags } from '../../hooks/useFeatureFlags';
 import { useToast } from '@/hooks/useToast';
+import React from 'react';
+import { useFeatureFlags } from '../../hooks/useFeatureFlags';
 
 export const FeatureFlags: React.FC = () => {
   const { flags, updateFlag, loading } = useFeatureFlags();
@@ -87,4 +87,3 @@ export const FeatureFlags: React.FC = () => {
     </div>
   );
 };
-

@@ -1,7 +1,7 @@
-import React from 'react';
 import { Card } from '@/components/ui/card';
 import { SearchInput } from '@/components/ui/search';
 import { useAgentMarketplace } from '@/hooks/useAgentMarketplace';
+import React from 'react';
 
 interface AgentTemplate {
   id: string;
@@ -19,19 +19,15 @@ export const AgentMarketplace: React.FC = () => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
-        <SearchInput
-          value={filter}
-          onChange={setFilter}
-          placeholder="Search agents..."
-        />
-        
+        <SearchInput value={filter} onChange={setFilter} placeholder="Search agents..." />
+
         <Select
           value={sortBy}
           onChange={setSortBy}
           options={[
             { label: 'Most Popular', value: 'downloads' },
             { label: 'Highest Rated', value: 'rating' },
-            { label: 'Newest', value: 'created' }
+            { label: 'Newest', value: 'created' },
           ]}
         />
       </div>
@@ -52,7 +48,9 @@ export const AgentMarketplace: React.FC = () => {
             </div>
             <Button
               className="mt-4 w-full"
-              onClick={() => {/* Install agent */}}
+              onClick={() => {
+                /* Install agent */
+              }}
             >
               Install Agent
             </Button>

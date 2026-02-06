@@ -1,6 +1,7 @@
 # The New Fuse Tasks Reference
 
-This document provides a reference for all tasks available in The New Fuse workspace. These tasks can be executed using VS Code's task runner.
+This document provides a reference for all tasks available in The New Fuse
+workspace. These tasks can be executed using VS Code's task runner.
 
 ## Core Commands
 
@@ -31,7 +32,8 @@ This document provides a reference for all tasks available in The New Fuse works
   - Description: Initializes the MCP integration with the system.
 
 - **Setup MCP**
-  - Command: `bash ${workspaceFolder}/fix-permissions.sh && bash ${workspaceFolder}/setup-extension.sh`
+  - Command:
+    `bash ${workspaceFolder}/fix-permissions.sh && bash ${workspaceFolder}/setup-extension.sh`
   - Description: Sets up MCP by fixing permissions and setting up the extension.
 
 - **MCP Complete Setup**
@@ -46,11 +48,13 @@ This document provides a reference for all tasks available in The New Fuse works
 
 - **Show MCP Tools Direct**
   - Command: `node ${workspaceFolder}/scripts/show-mcp-tools.js`
-  - Description: Directly shows available MCP tools using direct script execution.
+  - Description: Directly shows available MCP tools using direct script
+    execution.
 
 - **Show MCP Tools**
   - Command: `${command:thefuse.mcp.showTools}`
-  - Description: Shows available MCP tools through the VS Code command interface.
+  - Description: Shows available MCP tools through the VS Code command
+    interface.
 
 - **Test MCP Tool**
   - Command: `${command:thefuse.mcp.testTool}`
@@ -64,25 +68,32 @@ This document provides a reference for all tasks available in The New Fuse works
 
 - **Run MCP Health Check**
   - Command: `node ${workspaceFolder}/scripts/mcp-health-check.js`
-  - Description: Runs a health check on the MCP system to verify proper functioning.
+  - Description: Runs a health check on the MCP system to verify proper
+    functioning.
 
 ## MCP Launch Tasks
 
 - **Launch Universal MCP Wizard**
   - Command: `bash ${workspaceFolder}/scripts/launch-mcp-wizard.sh`
-  - Description: Launches the universal MCP wizard for configuring and managing MCP features.
+  - Description: Launches the universal MCP wizard for configuring and managing
+    MCP features.
 
 - **Launch VS Code with Extension**
   - Command: `cd ${workspaceFolder}/src/vscode-extension && ./launch-vscode.sh`
-  - Description: Launches a new VS Code instance with The New Fuse extension preloaded.
+  - Description: Launches a new VS Code instance with The New Fuse extension
+    preloaded.
 
 - **Launch Integrated Extension**
-  - Command: `cd ${workspaceFolder}/src/vscode-extension && ./launch-integrated-extension.sh`
-  - Description: Launches the integrated MCP extension in the current VS Code window.
+  - Command:
+    `cd ${workspaceFolder}/src/vscode-extension && ./launch-integrated-extension.sh`
+  - Description: Launches the integrated MCP extension in the current VS Code
+    window.
 
 - **MCP Quick Start (All Steps)**
-  - Dependencies: Setup MCP → Create Sample Files → Launch VS Code with Extension
-  - Description: Performs a complete MCP setup and launches VS Code with the extension.
+  - Dependencies: Setup MCP → Create Sample Files → Launch VS Code with
+    Extension
+  - Description: Performs a complete MCP setup and launches VS Code with the
+    extension.
 
 ## LLM Orchestrator Tasks
 
@@ -149,7 +160,8 @@ This document provides a reference for all tasks available in The New Fuse works
 ## Combined Workflow Tasks
 
 - **Start Complete AI Collaboration**
-  - Dependencies: Show AI Agents → Start AI Collaboration Workflow → Open Communication Hub
+  - Dependencies: Show AI Agents → Start AI Collaboration Workflow → Open
+    Communication Hub
   - Description: Complete end-to-end setup for AI collaboration.
 
 - **Start Code Analysis Pipeline**
@@ -157,11 +169,13 @@ This document provides a reference for all tasks available in The New Fuse works
   - Description: Full code analysis workflow with AI assistance.
 
 - **MCP Message Communication Pipeline**
-  - Dependencies: Register MCP Handler → Start MCP Auto-Discovery → Send MCP Message
+  - Dependencies: Register MCP Handler → Start MCP Auto-Discovery → Send MCP
+    Message
   - Description: Complete setup for MCP-based agent communication.
 
 - **Full LLM Integration Setup**
-  - Dependencies: Initialize MCP Integration → Show MCP Tools → Generate Text with LM
+  - Dependencies: Initialize MCP Integration → Show MCP Tools → Generate Text
+    with LM
   - Description: Full setup of language model integration with MCP tools.
 
 ## Additional Utility Tasks
@@ -186,7 +200,8 @@ To run any of these tasks, you can:
 2. Type "Tasks: Run Task" and select it
 3. Select the task you want to run from the list
 
-Alternatively, you can use the Terminal menu and select "Run Task..." to access the same list.
+Alternatively, you can use the Terminal menu and select "Run Task..." to access
+the same list.
 
 ## Task Categories
 

@@ -1,6 +1,6 @@
 import { OnModuleInit, OnModuleDestroy } from "@nestjs/common";
-import { PrismaClient } from "@the-new-fuse/database";
-export declare class DatabaseService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+import { DrizzleClient } from "@the-new-fuse/database";
+export declare class DatabaseService extends DrizzleClient implements OnModuleInit, OnModuleDestroy {
     constructor();
     onModuleInit(): Promise<void>;
     onModuleDestroy(): Promise<void>;

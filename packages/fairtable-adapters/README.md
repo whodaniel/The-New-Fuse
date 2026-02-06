@@ -1,15 +1,20 @@
 # @the-new-fuse/airtable-adapters
 
-Migration adapters for transitioning from legacy components to airtable-based implementations while maintaining backward compatibility.
+Migration adapters for transitioning from legacy components to airtable-based
+implementations while maintaining backward compatibility.
 
 ## Overview
 
-This package provides seamless migration adapters that allow existing codebases to benefit from the new airtable architecture without requiring immediate code changes. The adapters serve as a bridge between legacy component APIs and the new airtable-based components.
+This package provides seamless migration adapters that allow existing codebases
+to benefit from the new airtable architecture without requiring immediate code
+changes. The adapters serve as a bridge between legacy component APIs and the
+new airtable-based components.
 
 ## Features
 
 - 🔄 **Zero Breaking Changes**: Drop-in replacements for legacy components
-- ⚠️ **Migration Guidance**: Development-time warnings with clear migration paths
+- ⚠️ **Migration Guidance**: Development-time warnings with clear migration
+  paths
 - 🔍 **Data Validation**: Ensures data integrity during transitions
 - 📊 **Migration Reporting**: Comprehensive tracking of migration status
 - 🎯 **Type Safety**: Full TypeScript support with legacy API preservation
@@ -36,7 +41,7 @@ import { KanbanBoardAdapter as KanbanBoard } from '@the-new-fuse/airtable-adapte
 // Your existing code works unchanged
 function MyComponent() {
   return (
-    <KanbanBoard 
+    <KanbanBoard
       columns={legacyColumns}
       onDragEnd={handleDragEnd}
       onItemClick={handleItemClick}
@@ -68,11 +73,16 @@ A drop-in replacement for the legacy KanbanBoard component that:
 - ✅ Shows migration guidance in development
 
 **Props (Legacy Compatible):**
+
 ```typescript
 interface LegacyKanbanBoardProps {
   columns: LegacyKanbanColumn[];
   onDragStart?: (item: LegacyDraggableItem, sourceColumnId: string) => void;
-  onDragEnd?: (item: LegacyDraggableItem, sourceColumnId: string, targetColumnId: string) => void;
+  onDragEnd?: (
+    item: LegacyDraggableItem,
+    sourceColumnId: string,
+    targetColumnId: string
+  ) => void;
   onItemClick?: (item: LegacyDraggableItem) => void;
 }
 ```
@@ -116,12 +126,16 @@ if (warnings.length > 0) {
 ## Migration Strategies
 
 ### Strategy 1: Immediate Adapter (Recommended)
-Use adapters as drop-in replacements for immediate benefits with zero code changes.
 
-### Strategy 2: Gradual Migration  
+Use adapters as drop-in replacements for immediate benefits with zero code
+changes.
+
+### Strategy 2: Gradual Migration
+
 Gradually convert data and migrate to native airtable components over time.
 
 ### Strategy 3: Full Native Migration
+
 Complete migration to native airtable components for full feature access.
 
 ## Example Usage
@@ -140,21 +154,20 @@ const MyKanbanComponent = () => {
           id: 'task-1',
           title: 'Implement feature',
           description: 'Add new functionality',
-          priority: 'HIGH'
-        }
-      ]
-    }
+          priority: 'HIGH',
+        },
+      ],
+    },
   ];
 
   const handleDragEnd = (item, sourceColumnId, targetColumnId) => {
-    console.log(`Moved ${item.title} from ${sourceColumnId} to ${targetColumnId}`);
+    console.log(
+      `Moved ${item.title} from ${sourceColumnId} to ${targetColumnId}`
+    );
   };
 
   return (
-    <KanbanBoardAdapter
-      columns={legacyColumns}
-      onDragEnd={handleDragEnd}
-    />
+    <KanbanBoardAdapter columns={legacyColumns} onDragEnd={handleDragEnd} />
   );
 };
 
@@ -164,12 +177,14 @@ export default MyKanbanComponent;
 ## Benefits
 
 ### Immediate Benefits
+
 - ✅ Performance improvements from airtable optimizations
 - ✅ Better type safety with maintained API compatibility
 - ✅ Future-proof architecture without code changes
 - ✅ Development guidance for planned migration
 
 ### Future Benefits (After Full Migration)
+
 - 🎯 Multiple view types (Grid, Calendar, Timeline, Gallery)
 - 🔍 Advanced filtering and sorting capabilities
 - 📊 Rich column types and data validation
@@ -185,6 +200,7 @@ export default MyKanbanComponent;
 ## Support
 
 For migration assistance:
+
 - 📖 Check the migration guides in `/docs/migration/`
 - 🐛 Report issues with the `migration` label
 - 💬 Ask questions in discussions
@@ -197,4 +213,5 @@ For migration assistance:
 
 ---
 
-**Migration made simple.** Start with adapters, migrate at your own pace, and unlock powerful airtable features when you're ready.
+**Migration made simple.** Start with adapters, migrate at your own pace, and
+unlock powerful airtable features when you're ready.

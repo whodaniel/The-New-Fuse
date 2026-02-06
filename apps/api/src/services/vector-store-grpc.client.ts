@@ -1,7 +1,7 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { credentials } from '@grpc/grpc-js';
-import { promisify } from 'util';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { join } from 'path';
+import { promisify } from 'util';
 
 // Import generated proto types (these will be generated from the proto files)
 // gRPC service client interface with callback-style methods
@@ -34,9 +34,9 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
       // Dynamic import of gRPC client (will be generated from proto)
       const grpc = require('@grpc/grpc-js');
       const protoLoader = require('@grpc/proto-loader');
-      
+
       const protoPath = join(__dirname, '../../../proto-definitions/proto/vector_store.proto');
-      
+
       const packageDefinition = protoLoader.loadSync(protoPath, {
         keepCase: true,
         longs: String,
@@ -44,9 +44,9 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
         defaults: true,
         oneofs: true,
       });
-      
+
       const vectorStoreProto = grpc.loadPackageDefinition(packageDefinition).vectorstore.v1;
-      
+
       this.client = new vectorStoreProto.VectorStoreService(
         this.grpcUrl,
         credentials.createInsecure(), // Use SSL in production
@@ -81,8 +81,10 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
     metric?: string;
     config?: { [key: string]: string };
   }): Promise<{ success: boolean; message: string }> {
-    const createCollection = promisify(this.client.createCollection.bind(this.client)) as (request: any) => Promise<{ success: boolean; message: string }>;
-    
+    const createCollection = promisify(this.client.createCollection.bind(this.client)) as (
+      request: any
+    ) => Promise<{ success: boolean; message: string }>;
+
     try {
       const response = await createCollection({
         name: request.name,
@@ -90,7 +92,7 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
         metric: request.metric || 'cosine',
         config: request.config || {},
       });
-      
+
       return response;
     } catch (error) {
       this.logger.error(`Failed to create collection ${request.name}:`, error);
@@ -99,8 +101,10 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
   }
 
   async deleteCollection(name: string): Promise<{ success: boolean; message: string }> {
-    const deleteCollection = promisify(this.client.deleteCollection.bind(this.client)) as (request: any) => Promise<{ success: boolean; message: string }>;
-    
+    const deleteCollection = promisify(this.client.deleteCollection.bind(this.client)) as (
+      request: any
+    ) => Promise<{ success: boolean; message: string }>;
+
     try {
       const response = await deleteCollection({ name });
       return response;
@@ -111,8 +115,10 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
   }
 
   async listCollections(): Promise<{ collections: string[] }> {
-    const listCollections = promisify(this.client.listCollections.bind(this.client)) as (request: any) => Promise<{ collections: string[] }>;
-    
+    const listCollections = promisify(this.client.listCollections.bind(this.client)) as (
+      request: any
+    ) => Promise<{ collections: string[] }>;
+
     try {
       const response = await listCollections({});
       return response;
@@ -133,15 +139,17 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
     }>;
     generateEmbeddings?: boolean;
   }): Promise<{ success: boolean; message: string; documentsProcessed: number }> {
-    const upsertDocuments = promisify(this.client.upsertDocuments.bind(this.client)) as (request: any) => Promise<{ success: boolean; message: string; documentsProcessed: number }>;
-    
+    const upsertDocuments = promisify(this.client.upsertDocuments.bind(this.client)) as (
+      request: any
+    ) => Promise<{ success: boolean; message: string; documentsProcessed: number }>;
+
     try {
       const response = await upsertDocuments({
         collection: request.collection,
         documents: request.documents,
         generateEmbeddings: request.generateEmbeddings || false,
       });
-      
+
       return response;
     } catch (error) {
       this.logger.error(`Failed to upsert documents in collection ${request.collection}:`, error);
@@ -149,7 +157,10 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async getDocument(collection: string, id: string): Promise<{
+  async getDocument(
+    collection: string,
+    id: string
+  ): Promise<{
     document?: {
       id: string;
       content: string;
@@ -158,8 +169,13 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
     };
     found: boolean;
   }> {
-    const getDocument = promisify(this.client.getDocument.bind(this.client)) as (request: any) => Promise<{ document?: { id: string; content: string; metadata?: any; embedding?: number[] }; found: boolean }>;
-    
+    const getDocument = promisify(this.client.getDocument.bind(this.client)) as (
+      request: any
+    ) => Promise<{
+      document?: { id: string; content: string; metadata?: any; embedding?: number[] };
+      found: boolean;
+    }>;
+
     try {
       const response = await getDocument({ collection, id });
       return response;
@@ -186,8 +202,18 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
       distance: number;
     }>;
   }> {
-    const similaritySearch = promisify(this.client.similaritySearch.bind(this.client)) as (request: any) => Promise<{ results: Array<{ id: string; content: string; metadata?: any; score: number; distance: number }> }>;
-    
+    const similaritySearch = promisify(this.client.similaritySearch.bind(this.client)) as (
+      request: any
+    ) => Promise<{
+      results: Array<{
+        id: string;
+        content: string;
+        metadata?: any;
+        score: number;
+        distance: number;
+      }>;
+    }>;
+
     try {
       const response = await similaritySearch({
         collection: request.collection,
@@ -197,10 +223,13 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
         threshold: request.threshold || 0.0,
         metadataFilter: request.metadataFilter,
       });
-      
+
       return response;
     } catch (error) {
-      this.logger.error(`Failed to perform similarity search in collection ${request.collection}:`, error);
+      this.logger.error(
+        `Failed to perform similarity search in collection ${request.collection}:`,
+        error
+      );
       throw error;
     }
   }
@@ -211,8 +240,10 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
     status: string;
     details: { [key: string]: string };
   }> {
-    const healthCheck = promisify(this.client.healthCheck.bind(this.client)) as (request: any) => Promise<{ healthy: boolean; status: string; details: { [key: string]: string } }>;
-    
+    const healthCheck = promisify(this.client.healthCheck.bind(this.client)) as (
+      request: any
+    ) => Promise<{ healthy: boolean; status: string; details: { [key: string]: string } }>;
+
     try {
       const response = await healthCheck({});
       return response;
@@ -223,8 +254,10 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
   }
 
   async getStats(collection?: string): Promise<{ stats: any }> {
-    const getStats = promisify(this.client.getStats.bind(this.client)) as (request: any) => Promise<{ stats: any }>;
-    
+    const getStats = promisify(this.client.getStats.bind(this.client)) as (
+      request: any
+    ) => Promise<{ stats: any }>;
+
     try {
       const response = await getStats({ collection });
       return response;
@@ -243,12 +276,14 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
       threshold?: number;
       metadataFilter?: any;
     } = {}
-  ): Promise<Array<{
-    id: string;
-    content: string;
-    metadata?: any;
-    score: number;
-  }>> {
+  ): Promise<
+    Array<{
+      id: string;
+      content: string;
+      metadata?: any;
+      score: number;
+    }>
+  > {
     const response = await this.similaritySearch({
       collection,
       text,
@@ -256,7 +291,7 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
       threshold: options.threshold || 0.0,
       metadataFilter: options.metadataFilter,
     });
-    
+
     return response.results;
   }
 
@@ -268,12 +303,14 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
       threshold?: number;
       metadataFilter?: any;
     } = {}
-  ): Promise<Array<{
-    id: string;
-    content: string;
-    metadata?: any;
-    score: number;
-  }>> {
+  ): Promise<
+    Array<{
+      id: string;
+      content: string;
+      metadata?: any;
+      score: number;
+    }>
+  > {
     const response = await this.similaritySearch({
       collection,
       embedding,
@@ -281,7 +318,7 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
       threshold: options.threshold || 0.0,
       metadataFilter: options.metadataFilter,
     });
-    
+
     return response.results;
   }
 
@@ -300,11 +337,11 @@ export class VectorStoreGrpcClient implements OnModuleInit, OnModuleDestroy {
       documents,
       generateEmbeddings,
     });
-    
+
     if (!response.success) {
       throw new Error(`Failed to add documents: ${response.message}`);
     }
-    
+
     return response.documentsProcessed;
   }
 }

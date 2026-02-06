@@ -1,5 +1,5 @@
-import http from 'k6/http';
 import { check, sleep } from 'k6';
+import http from 'k6/http';
 
 /**
  * Stress Test Configuration
@@ -8,12 +8,12 @@ import { check, sleep } from 'k6';
  */
 export const options = {
   stages: [
-    { duration: '2m', target: 100 },   // Below normal load
-    { duration: '5m', target: 200 },   // Normal load
-    { duration: '2m', target: 300 },   // Around the breaking point
-    { duration: '5m', target: 400 },   // Beyond the breaking point
-    { duration: '5m', target: 500 },   // Well beyond capacity
-    { duration: '10m', target: 0 },    // Scale down (recovery)
+    { duration: '2m', target: 100 }, // Below normal load
+    { duration: '5m', target: 200 }, // Normal load
+    { duration: '2m', target: 300 }, // Around the breaking point
+    { duration: '5m', target: 400 }, // Beyond the breaking point
+    { duration: '5m', target: 500 }, // Well beyond capacity
+    { duration: '10m', target: 0 }, // Scale down (recovery)
   ],
   thresholds: {
     http_req_duration: ['p(99)<3000'], // 99% of requests should be below 3s (stressed)
@@ -37,7 +37,7 @@ export function setup() {
 
 export default function (data) {
   const headers = {
-    'Authorization': `Bearer ${data.authToken}`,
+    Authorization: `Bearer ${data.authToken}`,
   };
 
   // Heavy database query

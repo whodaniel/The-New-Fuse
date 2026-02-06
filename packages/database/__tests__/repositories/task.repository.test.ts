@@ -3,19 +3,23 @@
  * Tests all 24 methods of the task repository
  */
 
+import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository';
 import { drizzleTaskRepository } from '../../src/drizzle/repositories/task.repository';
 import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository';
-import { drizzleAgentRepository } from '../../src/drizzle/repositories/agent.repository';
-import { UserFactory, AgentFactory, TaskFactory, PipelineFactory, TaskExecutionFactory } from '../utils/factories';
 import {
-  expectDatabaseRow,
-  expectSoftDeleted,
-  expectNotNull,
-  expectTimestampValid,
   expectArrayLength,
+  expectDatabaseRow,
   expectNotDeleted,
-  expectDeleted,
+  expectNotNull,
+  expectSoftDeleted,
 } from '../utils/assertions';
+import {
+  AgentFactory,
+  PipelineFactory,
+  TaskExecutionFactory,
+  TaskFactory,
+  UserFactory,
+} from '../utils/factories';
 
 describe('DrizzleTaskRepository', () => {
   let testUserId: string;
@@ -91,8 +95,12 @@ describe('DrizzleTaskRepository', () => {
 
     describe('findTasksByUserId', () => {
       it('should find all tasks for user', async () => {
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, title: 'Task 1' }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, title: 'Task 2' }));
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, title: 'Task 1' })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, title: 'Task 2' })
+        );
 
         const tasks = await drizzleTaskRepository.findTasksByUserId(testUserId);
 
@@ -107,7 +115,9 @@ describe('DrizzleTaskRepository', () => {
       });
 
       it('should not return soft-deleted tasks', async () => {
-        const task = await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId }));
+        const task = await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId })
+        );
         await drizzleTaskRepository.softDeleteTask(task.id);
 
         const tasks = await drizzleTaskRepository.findTasksByUserId(testUserId);
@@ -121,8 +131,12 @@ describe('DrizzleTaskRepository', () => {
         const pipelineData = PipelineFactory.build({ userId: testUserId });
         const pipeline = await drizzleTaskRepository.createPipeline(pipelineData);
 
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, pipelineId: pipeline.id }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, pipelineId: pipeline.id }));
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, pipelineId: pipeline.id })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, pipelineId: pipeline.id })
+        );
 
         const tasks = await drizzleTaskRepository.findTasksByPipelineId(pipeline.id);
 
@@ -139,9 +153,15 @@ describe('DrizzleTaskRepository', () => {
 
     describe('findTasksByStatus', () => {
       it('should find tasks by status', async () => {
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, status: 'PENDING' }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, status: 'IN_PROGRESS' }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, status: 'PENDING' }));
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, status: 'PENDING' })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, status: 'IN_PROGRESS' })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, status: 'PENDING' })
+        );
 
         const pending = await drizzleTaskRepository.findTasksByStatus('PENDING');
 
@@ -153,8 +173,12 @@ describe('DrizzleTaskRepository', () => {
         const otherUserData = await UserFactory.build();
         const otherUser = await drizzleUserRepository.create(otherUserData);
 
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, status: 'PENDING' }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: otherUser.id, status: 'PENDING' }));
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, status: 'PENDING' })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: otherUser.id, status: 'PENDING' })
+        );
 
         const tasks = await drizzleTaskRepository.findTasksByStatus('PENDING', testUserId);
 
@@ -171,9 +195,15 @@ describe('DrizzleTaskRepository', () => {
 
     describe('findTasksByStatuses', () => {
       it('should find tasks by multiple statuses', async () => {
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, status: 'PENDING' }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, status: 'IN_PROGRESS' }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, status: 'COMPLETED' }));
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, status: 'PENDING' })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, status: 'IN_PROGRESS' })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, status: 'COMPLETED' })
+        );
 
         const tasks = await drizzleTaskRepository.findTasksByStatuses(['PENDING', 'IN_PROGRESS']);
 
@@ -185,8 +215,12 @@ describe('DrizzleTaskRepository', () => {
         const otherUserData = await UserFactory.build();
         const otherUser = await drizzleUserRepository.create(otherUserData);
 
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, status: 'PENDING' }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: otherUser.id, status: 'PENDING' }));
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, status: 'PENDING' })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: otherUser.id, status: 'PENDING' })
+        );
 
         const tasks = await drizzleTaskRepository.findTasksByStatuses(['PENDING'], testUserId);
 
@@ -219,9 +253,15 @@ describe('DrizzleTaskRepository', () => {
 
     describe('findTasksByPriority', () => {
       it('should find tasks by priority', async () => {
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, priority: 'HIGH' }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, priority: 'LOW' }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, priority: 'HIGH' }));
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, priority: 'HIGH' })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, priority: 'LOW' })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, priority: 'HIGH' })
+        );
 
         const highPriority = await drizzleTaskRepository.findTasksByPriority('HIGH');
 
@@ -233,8 +273,12 @@ describe('DrizzleTaskRepository', () => {
         const otherUserData = await UserFactory.build();
         const otherUser = await drizzleUserRepository.create(otherUserData);
 
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, priority: 'HIGH' }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: otherUser.id, priority: 'HIGH' }));
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, priority: 'HIGH' })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: otherUser.id, priority: 'HIGH' })
+        );
 
         const tasks = await drizzleTaskRepository.findTasksByPriority('HIGH', testUserId);
 
@@ -260,7 +304,9 @@ describe('DrizzleTaskRepository', () => {
       });
 
       it('should return null for non-existent task', async () => {
-        const updated = await drizzleTaskRepository.updateTask('non-existent-id', { title: 'New Title' });
+        const updated = await drizzleTaskRepository.updateTask('non-existent-id', {
+          title: 'New Title',
+        });
 
         expect(updated).toBeNull();
       });
@@ -301,7 +347,10 @@ describe('DrizzleTaskRepository', () => {
       });
 
       it('should return null for non-existent task', async () => {
-        const updated = await drizzleTaskRepository.updateTaskStatus('non-existent-id', 'COMPLETED');
+        const updated = await drizzleTaskRepository.updateTaskStatus(
+          'non-existent-id',
+          'COMPLETED'
+        );
 
         expect(updated).toBeNull();
       });
@@ -369,9 +418,15 @@ describe('DrizzleTaskRepository', () => {
 
     describe('countTasksByStatus', () => {
       it('should count tasks by status', async () => {
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, status: 'PENDING' }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, status: 'PENDING' }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, status: 'IN_PROGRESS' }));
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, status: 'PENDING' })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, status: 'PENDING' })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, status: 'IN_PROGRESS' })
+        );
 
         const counts = await drizzleTaskRepository.countTasksByStatus();
 
@@ -383,8 +438,12 @@ describe('DrizzleTaskRepository', () => {
         const otherUserData = await UserFactory.build();
         const otherUser = await drizzleUserRepository.create(otherUserData);
 
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: testUserId, status: 'PENDING' }));
-        await drizzleTaskRepository.createTask(TaskFactory.build({ userId: otherUser.id, status: 'PENDING' }));
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: testUserId, status: 'PENDING' })
+        );
+        await drizzleTaskRepository.createTask(
+          TaskFactory.build({ userId: otherUser.id, status: 'PENDING' })
+        );
 
         const counts = await drizzleTaskRepository.countTasksByStatus(testUserId);
 
@@ -488,7 +547,9 @@ describe('DrizzleTaskRepository', () => {
       });
 
       it('should return null for non-existent pipeline', async () => {
-        const updated = await drizzleTaskRepository.updatePipeline('non-existent-id', { name: 'New Name' });
+        const updated = await drizzleTaskRepository.updatePipeline('non-existent-id', {
+          name: 'New Name',
+        });
 
         expect(updated).toBeNull();
       });
@@ -550,8 +611,12 @@ describe('DrizzleTaskRepository', () => {
 
     describe('findExecutionsByTaskId', () => {
       it('should find all executions for task', async () => {
-        await drizzleTaskRepository.createExecution(TaskExecutionFactory.build({ taskId: testTaskId }));
-        await drizzleTaskRepository.createExecution(TaskExecutionFactory.build({ taskId: testTaskId }));
+        await drizzleTaskRepository.createExecution(
+          TaskExecutionFactory.build({ taskId: testTaskId })
+        );
+        await drizzleTaskRepository.createExecution(
+          TaskExecutionFactory.build({ taskId: testTaskId })
+        );
 
         const executions = await drizzleTaskRepository.findExecutionsByTaskId(testTaskId);
 
@@ -599,7 +664,9 @@ describe('DrizzleTaskRepository', () => {
       });
 
       it('should return null for non-existent execution', async () => {
-        const updated = await drizzleTaskRepository.updateExecution('non-existent-id', { status: 'RUNNING' });
+        const updated = await drizzleTaskRepository.updateExecution('non-existent-id', {
+          status: 'RUNNING',
+        });
 
         expect(updated).toBeNull();
       });
@@ -620,7 +687,9 @@ describe('DrizzleTaskRepository', () => {
       });
 
       it('should return null for non-existent execution', async () => {
-        const completed = await drizzleTaskRepository.completeExecution('non-existent-id', { result: 'done' });
+        const completed = await drizzleTaskRepository.completeExecution('non-existent-id', {
+          result: 'done',
+        });
 
         expect(completed).toBeNull();
       });

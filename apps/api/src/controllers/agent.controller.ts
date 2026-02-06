@@ -185,6 +185,19 @@ export class AgentController {
     return await this.syncService.syncPydanticDefinitions();
   }
 
+  @Get('tools/pydantic')
+  @ApiOperation({ summary: 'Get Pydantic agent tool definitions for tool calling' })
+  @ApiResponse({ status: HttpStatus.OK })
+  async getPydanticTools(
+    @Query('includeOutputSchema') includeOutputSchema?: string,
+    @Query('capability') capability?: string
+  ) {
+    return this.syncService.getPydanticToolDefinitions({
+      includeOutputSchema: includeOutputSchema === 'true',
+      capability,
+    });
+  }
+
   /**
    * Get agents with optional filtering
    *

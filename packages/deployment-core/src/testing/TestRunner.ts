@@ -1,8 +1,8 @@
-import { Logger } from 'winston';
-import { spawn, ChildProcess } from 'child_process';
+import { ChildProcess, spawn } from 'child_process';
 import { EventEmitter } from 'events';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { Logger } from 'winston';
 
 /**
  * Test execution result interface
@@ -75,7 +75,7 @@ export enum TestType {
   E2E = 'e2e',
   PERFORMANCE = 'performance',
   SECURITY = 'security',
-  ACCESSIBILITY = 'accessibility'
+  ACCESSIBILITY = 'accessibility',
 }
 
 export enum TestStatus {
@@ -84,7 +84,7 @@ export enum TestStatus {
   PASSED = 'passed',
   FAILED = 'failed',
   SKIPPED = 'skipped',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
 }
 
 export interface TestConfiguration {
@@ -130,7 +130,7 @@ export enum TestFramework {
   PLAYWRIGHT = 'playwright',
   CYPRESS = 'cypress',
   PUPPETEER = 'puppeteer',
-  SELENIUM = 'selenium'
+  SELENIUM = 'selenium',
 }
 
 export enum ReportFormat {
@@ -139,7 +139,7 @@ export enum ReportFormat {
   HTML = 'html',
   LCOV = 'lcov',
   COBERTURA = 'cobertura',
-  ALLURE = 'allure'
+  ALLURE = 'allure',
 }
 
 /**
@@ -165,7 +165,7 @@ export class TestRunner extends EventEmitter {
     this.logger.info(`Starting ${config.type} tests`, {
       testId,
       framework: config.framework,
-      command: config.command
+      command: config.command,
     });
 
     try {
@@ -198,11 +198,10 @@ export class TestRunner extends EventEmitter {
         duration: result.duration,
         totalTests: result.totalTests,
         passedTests: result.passedTests,
-        failedTests: result.failedTests
+        failedTests: result.failedTests,
       });
 
       return result;
-
     } catch (error) {
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -218,15 +217,17 @@ export class TestRunner extends EventEmitter {
         passedTests: 0,
         failedTests: 0,
         skippedTests: 0,
-        failures: [{
-          testName: 'Test Execution',
-          testFile: 'unknown',
-          error: error.message,
-          stackTrace: error.stack
-        }],
+        failures: [
+          {
+            testName: 'Test Execution',
+            testFile: 'unknown',
+            error: error.message,
+            stackTrace: error.stack,
+          },
+        ],
         logs: [error.message],
         artifacts: [],
-        metadata: { error: error.message }
+        metadata: { error: error.message },
       };
 
       this.testResults.set(testId, failedResult);
@@ -235,7 +236,7 @@ export class TestRunner extends EventEmitter {
       this.logger.error(`${config.type} tests failed`, {
         testId,
         error: error.message,
-        stack: error.stack
+        stack: error.stack,
       });
 
       return failedResult;
@@ -265,10 +266,9 @@ export class TestRunner extends EventEmitter {
 
       this.logger.info(`Tests cancelled: ${testId}`);
       return true;
-
     } catch (error) {
       this.logger.error(`Failed to cancel tests: ${testId}`, {
-        error: error.message
+        error: error.message,
       });
       return false;
     }
@@ -302,10 +302,10 @@ export class TestRunner extends EventEmitter {
       successRate: 0,
       coverage: null,
       byType: {},
-      trends: this.calculateTestTrends(results)
+      trends: this.calculateTestTrends(results),
     };
 
-    results.forEach(result => {
+    results.forEach((result) => {
       summary.totalTests += result.totalTests;
       summary.passedTests += result.passedTests;
       summary.failedTests += result.failedTests;
@@ -320,7 +320,7 @@ export class TestRunner extends EventEmitter {
           failedTests: 0,
           skippedTests: 0,
           duration: 0,
-          successRate: 0
+          successRate: 0,
         };
       }
 
@@ -333,18 +333,17 @@ export class TestRunner extends EventEmitter {
     });
 
     // Calculate success rates
-    summary.successRate = summary.totalTests > 0 ? 
-      summary.passedTests / summary.totalTests : 0;
+    summary.successRate = summary.totalTests > 0 ? summary.passedTests / summary.totalTests : 0;
 
-    Object.values(summary.byType).forEach(typeStats => {
-      typeStats.successRate = typeStats.totalTests > 0 ? 
-        typeStats.passedTests / typeStats.totalTests : 0;
+    Object.values(summary.byType).forEach((typeStats) => {
+      typeStats.successRate =
+        typeStats.totalTests > 0 ? typeStats.passedTests / typeStats.totalTests : 0;
     });
 
     // Aggregate coverage if available
-    const coverageResults = results.filter(r => r.coverage);
+    const coverageResults = results.filter((r) => r.coverage);
     if (coverageResults.length > 0) {
-      summary.coverage = this.aggregateCoverage(coverageResults.map(r => r.coverage!));
+      summary.coverage = this.aggregateCoverage(coverageResults.map((r) => r.coverage!));
     }
 
     return summary;
@@ -369,8 +368,8 @@ export class TestRunner extends EventEmitter {
   }
 
   private async runTestFramework(
-    testId: string, 
-    config: TestConfiguration, 
+    testId: string,
+    config: TestConfiguration,
     startTime: Date
   ): Promise<TestResult> {
     switch (config.framework) {
@@ -388,15 +387,12 @@ export class TestRunner extends EventEmitter {
   }
 
   private async runJestTests(
-    testId: string, 
-    config: TestConfiguration, 
+    testId: string,
+    config: TestConfiguration,
     startTime: Date
   ): Promise<TestResult> {
     return new Promise((resolve, reject) => {
-      const args = [
-        '--json',
-        '--outputFile=test-results.json'
-      ];
+      const args = ['--json', '--outputFile=test-results.json'];
 
       if (config.coverage) {
         args.push('--coverage', '--coverageReporters=json', '--coverageReporters=lcov');
@@ -409,7 +405,7 @@ export class TestRunner extends EventEmitter {
       const jestProcess = spawn('npx', ['jest', ...args], {
         cwd: config.workingDirectory,
         stdio: ['pipe', 'pipe', 'pipe'],
-        env: { ...process.env, ...config.environment }
+        env: { ...process.env, ...config.environment },
       });
 
       this.runningTests.set(testId, jestProcess);
@@ -447,28 +443,31 @@ export class TestRunner extends EventEmitter {
             passedTests: jestResults.numPassedTests,
             failedTests: jestResults.numFailedTests,
             skippedTests: jestResults.numPendingTests,
-            failures: jestResults.testResults.flatMap((suite: any) => 
+            failures: jestResults.testResults.flatMap((suite: any) =>
               suite.assertionResults
                 .filter((test: any) => test.status === 'failed')
                 .map((test: any) => ({
                   testName: test.title,
                   testFile: suite.name,
                   error: test.failureMessages.join('\n'),
-                  stackTrace: test.failureMessages.join('\n')
+                  stackTrace: test.failureMessages.join('\n'),
                 }))
             ),
             logs,
             artifacts: [],
             metadata: {
               exitCode: code,
-              jestVersion: jestResults.jestVersion
-            }
+              jestVersion: jestResults.jestVersion,
+            },
           };
 
           resolve(result);
-
         } catch (error) {
-          reject(new Error(`Failed to parse Jest results: ${error instanceof Error ? error.message : String(error)}`));
+          reject(
+            new Error(
+              `Failed to parse Jest results: ${error instanceof Error ? error.message : String(error)}`
+            )
+          );
         }
       });
 
@@ -488,16 +487,12 @@ export class TestRunner extends EventEmitter {
   }
 
   private async runVitestTests(
-    testId: string, 
-    config: TestConfiguration, 
+    testId: string,
+    config: TestConfiguration,
     startTime: Date
   ): Promise<TestResult> {
     return new Promise((resolve, reject) => {
-      const args = [
-        'run',
-        '--reporter=json',
-        '--outputFile=test-results.json'
-      ];
+      const args = ['run', '--reporter=json', '--outputFile=test-results.json'];
 
       if (config.coverage) {
         args.push('--coverage');
@@ -506,7 +501,7 @@ export class TestRunner extends EventEmitter {
       const childProcess = spawn('npx', ['vitest', ...args], {
         cwd: config.workingDirectory,
         stdio: ['pipe', 'pipe', 'pipe'],
-        env: { ...process.env, ...config.environment }
+        env: { ...process.env, ...config.environment },
       });
 
       this.runningTests.set(testId, childProcess);
@@ -549,12 +544,11 @@ export class TestRunner extends EventEmitter {
             artifacts: [],
             metadata: {
               exitCode: code,
-              vitestVersion: vitestResults.version
-            }
+              vitestVersion: vitestResults.version,
+            },
           };
 
           resolve(result);
-
         } catch (error) {
           // If parsing fails, create a basic result
           const result: TestResult = {
@@ -568,14 +562,19 @@ export class TestRunner extends EventEmitter {
             passedTests: code === 0 ? 1 : 0,
             failedTests: code === 0 ? 0 : 1,
             skippedTests: 0,
-            failures: code !== 0 ? [{
-              testName: 'Test execution',
-              testFile: 'unknown',
-              error: `Process exited with code ${code}`
-            }] : [],
+            failures:
+              code !== 0
+                ? [
+                    {
+                      testName: 'Test execution',
+                      testFile: 'unknown',
+                      error: `Process exited with code ${code}`,
+                    },
+                  ]
+                : [],
             logs,
             artifacts: [],
-            metadata: { exitCode: code }
+            metadata: { exitCode: code },
           };
 
           resolve(result);
@@ -598,20 +597,17 @@ export class TestRunner extends EventEmitter {
   }
 
   private async runPlaywrightTests(
-    testId: string, 
-    config: TestConfiguration, 
+    testId: string,
+    config: TestConfiguration,
     startTime: Date
   ): Promise<TestResult> {
     return new Promise((resolve, reject) => {
-      const args = [
-        'test',
-        '--reporter=json'
-      ];
+      const args = ['test', '--reporter=json'];
 
       const playwrightProcess = spawn('npx', ['playwright', ...args], {
         cwd: config.workingDirectory,
         stdio: ['pipe', 'pipe', 'pipe'],
-        env: { ...process.env, ...config.environment }
+        env: { ...process.env, ...config.environment },
       });
 
       this.runningTests.set(testId, playwrightProcess);
@@ -655,14 +651,17 @@ export class TestRunner extends EventEmitter {
             artifacts: [],
             metadata: {
               exitCode: code,
-              browser: config.environment.BROWSER || 'chromium'
-            }
+              browser: config.environment.BROWSER || 'chromium',
+            },
           };
 
           resolve(result);
-
         } catch (error) {
-          reject(new Error(`Failed to parse Playwright results: ${error instanceof Error ? error.message : String(error)}`));
+          reject(
+            new Error(
+              `Failed to parse Playwright results: ${error instanceof Error ? error.message : String(error)}`
+            )
+          );
         }
       });
 
@@ -682,8 +681,8 @@ export class TestRunner extends EventEmitter {
   }
 
   private async runCypressTests(
-    testId: string, 
-    config: TestConfiguration, 
+    testId: string,
+    config: TestConfiguration,
     startTime: Date
   ): Promise<TestResult> {
     // Similar implementation for Cypress
@@ -691,8 +690,8 @@ export class TestRunner extends EventEmitter {
   }
 
   private async runGenericTests(
-    testId: string, 
-    config: TestConfiguration, 
+    testId: string,
+    config: TestConfiguration,
     startTime: Date
   ): Promise<TestResult> {
     return new Promise((resolve, reject) => {
@@ -701,7 +700,7 @@ export class TestRunner extends EventEmitter {
       const cypressProcess = spawn(command, args, {
         cwd: config.workingDirectory,
         stdio: ['pipe', 'pipe', 'pipe'],
-        env: { ...process.env, ...config.environment }
+        env: { ...process.env, ...config.environment },
       });
 
       this.runningTests.set(testId, cypressProcess);
@@ -734,14 +733,19 @@ export class TestRunner extends EventEmitter {
           passedTests: code === 0 ? 1 : 0,
           failedTests: code === 0 ? 0 : 1,
           skippedTests: 0,
-          failures: code !== 0 ? [{
-            testName: 'Generic test execution',
-            testFile: 'unknown',
-            error: `Process exited with code ${code}`
-          }] : [],
+          failures:
+            code !== 0
+              ? [
+                  {
+                    testName: 'Generic test execution',
+                    testFile: 'unknown',
+                    error: `Process exited with code ${code}`,
+                  },
+                ]
+              : [],
           logs,
           artifacts: [],
-          metadata: { exitCode: code }
+          metadata: { exitCode: code },
         };
 
         resolve(result);
@@ -777,21 +781,22 @@ export class TestRunner extends EventEmitter {
         result.failures.push({
           testName: 'Coverage Threshold',
           testFile: 'coverage',
-          error: `Line coverage ${coverage.percentage}% is below threshold ${threshold.lines}%`
+          error: `Line coverage ${coverage.percentage}% is below threshold ${threshold.lines}%`,
         });
         result.status = TestStatus.FAILED;
       }
     }
   }
 
-  private async generateCoverageReport(config: TestConfiguration): Promise<CoverageReport | undefined> {
+  private async generateCoverageReport(
+    config: TestConfiguration
+  ): Promise<CoverageReport | undefined> {
     try {
       const coveragePath = path.join(config.workingDirectory, 'coverage/coverage-final.json');
       const coverageData = await fs.readFile(coveragePath, 'utf-8');
       const coverage = JSON.parse(coverageData);
 
       return this.parseCoverageData(coverage);
-
     } catch (error) {
       this.logger.warn(`Failed to generate coverage report: ${error.message}`);
       return undefined;
@@ -813,9 +818,8 @@ export class TestRunner extends EventEmitter {
           path: artifactPath,
           type: artifactConfig.type,
           size: stats.size,
-          mimeType: this.getMimeType(artifactConfig.type)
+          mimeType: this.getMimeType(artifactConfig.type),
         });
-
       } catch (error) {
         this.logger.warn(`Failed to collect artifact ${artifactConfig.name}: ${error.message}`);
       }
@@ -843,7 +847,7 @@ export class TestRunner extends EventEmitter {
     let skippedTests = 0;
     const failures: TestFailure[] = [];
 
-    lines.forEach(line => {
+    lines.forEach((line) => {
       if (line.includes('passed')) {
         const match = line.match(/(\d+) passed/);
         if (match) passedTests = parseInt(match[1]);
@@ -865,7 +869,7 @@ export class TestRunner extends EventEmitter {
       passedTests,
       failedTests,
       skippedTests,
-      failures
+      failures,
     };
   }
 
@@ -891,13 +895,17 @@ export class TestRunner extends EventEmitter {
       const fileLines = Object.keys(lineCoverage).length;
       const fileCoveredLines = Object.values(lineCoverage).filter((count: any) => count > 0).length;
       const fileFunctions = Object.keys(functionCoverage).length;
-      const fileCoveredFunctions = Object.values(functionCoverage).filter((count: any) => count > 0).length;
+      const fileCoveredFunctions = Object.values(functionCoverage).filter(
+        (count: any) => count > 0
+      ).length;
       const fileBranches = Object.keys(branchCoverage).length;
-      const fileCoveredBranches = Object.values(branchCoverage).filter((branches: any) => 
+      const fileCoveredBranches = Object.values(branchCoverage).filter((branches: any) =>
         branches.some((count: number) => count > 0)
       ).length;
       const fileStatements = Object.keys(statementCoverage).length;
-      const fileCoveredStatements = Object.values(statementCoverage).filter((count: any) => count > 0).length;
+      const fileCoveredStatements = Object.values(statementCoverage).filter(
+        (count: any) => count > 0
+      ).length;
 
       totalLines += fileLines;
       coveredLines += fileCoveredLines;
@@ -913,23 +921,23 @@ export class TestRunner extends EventEmitter {
         lines: {
           total: fileLines,
           covered: fileCoveredLines,
-          percentage: fileLines > 0 ? (fileCoveredLines / fileLines) * 100 : 0
+          percentage: fileLines > 0 ? (fileCoveredLines / fileLines) * 100 : 0,
         },
         functions: {
           total: fileFunctions,
           covered: fileCoveredFunctions,
-          percentage: fileFunctions > 0 ? (fileCoveredFunctions / fileFunctions) * 100 : 0
+          percentage: fileFunctions > 0 ? (fileCoveredFunctions / fileFunctions) * 100 : 0,
         },
         branches: {
           total: fileBranches,
           covered: fileCoveredBranches,
-          percentage: fileBranches > 0 ? (fileCoveredBranches / fileBranches) * 100 : 0
+          percentage: fileBranches > 0 ? (fileCoveredBranches / fileBranches) * 100 : 0,
         },
         statements: {
           total: fileStatements,
           covered: fileCoveredStatements,
-          percentage: fileStatements > 0 ? (fileCoveredStatements / fileStatements) * 100 : 0
-        }
+          percentage: fileStatements > 0 ? (fileCoveredStatements / fileStatements) * 100 : 0,
+        },
       });
     });
 
@@ -937,29 +945,29 @@ export class TestRunner extends EventEmitter {
       lines: {
         total: totalLines,
         covered: coveredLines,
-        percentage: totalLines > 0 ? (coveredLines / totalLines) * 100 : 0
+        percentage: totalLines > 0 ? (coveredLines / totalLines) * 100 : 0,
       },
       functions: {
         total: totalFunctions,
         covered: coveredFunctions,
-        percentage: totalFunctions > 0 ? (coveredFunctions / totalFunctions) * 100 : 0
+        percentage: totalFunctions > 0 ? (coveredFunctions / totalFunctions) * 100 : 0,
       },
       branches: {
         total: totalBranches,
         covered: coveredBranches,
-        percentage: totalBranches > 0 ? (coveredBranches / totalBranches) * 100 : 0
+        percentage: totalBranches > 0 ? (coveredBranches / totalBranches) * 100 : 0,
       },
       statements: {
         total: totalStatements,
         covered: coveredStatements,
-        percentage: totalStatements > 0 ? (coveredStatements / totalStatements) * 100 : 0
+        percentage: totalStatements > 0 ? (coveredStatements / totalStatements) * 100 : 0,
       },
       files,
       summary: {
         total: totalLines + totalFunctions + totalBranches + totalStatements,
         covered: coveredLines + coveredFunctions + coveredBranches + coveredStatements,
-        percentage: 0 // Will be calculated below
-      }
+        percentage: 0, // Will be calculated below
+      },
     };
   }
 
@@ -968,29 +976,41 @@ export class TestRunner extends EventEmitter {
       return {
         successRate: 'stable',
         duration: 'stable',
-        coverage: 'stable'
+        coverage: 'stable',
       };
     }
 
     const recent = results.slice(-5);
     const older = results.slice(-10, -5);
 
-    const recentSuccessRate = recent.reduce((sum, r) => sum + (r.passedTests / Math.max(r.totalTests, 1)), 0) / recent.length;
-    const olderSuccessRate = older.length > 0 ? 
-      older.reduce((sum, r) => sum + (r.passedTests / Math.max(r.totalTests, 1)), 0) / older.length : 
-      recentSuccessRate;
+    const recentSuccessRate =
+      recent.reduce((sum, r) => sum + r.passedTests / Math.max(r.totalTests, 1), 0) / recent.length;
+    const olderSuccessRate =
+      older.length > 0
+        ? older.reduce((sum, r) => sum + r.passedTests / Math.max(r.totalTests, 1), 0) /
+          older.length
+        : recentSuccessRate;
 
     const recentDuration = recent.reduce((sum, r) => sum + r.duration, 0) / recent.length;
-    const olderDuration = older.length > 0 ? 
-      older.reduce((sum, r) => sum + r.duration, 0) / older.length : 
-      recentDuration;
+    const olderDuration =
+      older.length > 0
+        ? older.reduce((sum, r) => sum + r.duration, 0) / older.length
+        : recentDuration;
 
     return {
-      successRate: recentSuccessRate > olderSuccessRate * 1.05 ? 'improving' : 
-                   recentSuccessRate < olderSuccessRate * 0.95 ? 'declining' : 'stable',
-      duration: recentDuration < olderDuration * 0.95 ? 'improving' : 
-                recentDuration > olderDuration * 1.05 ? 'declining' : 'stable',
-      coverage: 'stable' // Would need coverage data to calculate
+      successRate:
+        recentSuccessRate > olderSuccessRate * 1.05
+          ? 'improving'
+          : recentSuccessRate < olderSuccessRate * 0.95
+            ? 'declining'
+            : 'stable',
+      duration:
+        recentDuration < olderDuration * 0.95
+          ? 'improving'
+          : recentDuration > olderDuration * 1.05
+            ? 'declining'
+            : 'stable',
+      coverage: 'stable', // Would need coverage data to calculate
     };
   }
 
@@ -1003,8 +1023,8 @@ export class TestRunner extends EventEmitter {
       summary: {
         total: coverageReports.reduce((sum, c) => sum + c.summary.total, 0),
         covered: coverageReports.reduce((sum, c) => sum + c.summary.covered, 0),
-        percentage: 0 // Would be calculated based on aggregated data
-      }
+        percentage: 0, // Would be calculated based on aggregated data
+      },
     };
   }
 

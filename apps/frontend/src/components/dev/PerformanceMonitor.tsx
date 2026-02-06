@@ -13,7 +13,7 @@ export const PerformanceMonitor: React.FC = () => {
       frameCount++;
 
       if (now - lastTime > 1000) {
-        setFps(Math.round(frameCount * 1000 / (now - lastTime)));
+        setFps(Math.round((frameCount * 1000) / (now - lastTime)));
         frameCount = 0;
         lastTime = now;
 
@@ -37,9 +37,7 @@ export const PerformanceMonitor: React.FC = () => {
     <div className="performance-monitor space-y-1 text-sm">
       <div className="flex justify-between">
         <span>FPS:</span>
-        <span className={fps < 30 ? 'text-red-500' : 'text-green-500'}>
-          {fps}
-        </span>
+        <span className={fps < 30 ? 'text-red-500' : 'text-green-500'}>{fps}</span>
       </div>
       {memory > 0 && (
         <div className="flex justify-between">

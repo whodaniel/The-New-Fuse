@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 import { SystemConfig, DatabaseConfig, RedisConfig, MonitoringConfig, AIConfig } from '../types';
 import { ServiceState } from '../types';
@@ -16,12 +15,7 @@ export const ENVIRONMENTS = {
 export class ConfigService {
   private state: ServiceState = ServiceState.UNINITIALIZED;
   private config: SystemConfig;
-  private readonly requiredEnvVars = [
-    'NODE_ENV',
-    'DATABASE_URL',
-    'REDIS_HOST',
-    'REDIS_PORT',
-  ];
+  private readonly requiredEnvVars = ['NODE_ENV', 'DATABASE_URL', 'REDIS_HOST', 'REDIS_PORT'];
 
   constructor() {
     logger.setContext('ConfigService');
@@ -42,8 +36,8 @@ export class ConfigService {
       this.validateConfiguration();
 
       this.state = ServiceState.RUNNING;
-      logger.info('ConfigService started successfully', { 
-        environment: this.config.environment 
+      logger.info('ConfigService started successfully', {
+        environment: this.config.environment,
       });
     } catch (error) {
       this.state = ServiceState.ERROR;
@@ -151,28 +145,31 @@ export class ConfigService {
   getEnvNumber(key: string, defaultValue?: number): number {
     const value = process.env[key];
     if (!value) return defaultValue || 0;
-    
+
     const parsed = parseInt(value, 10);
     if (isNaN(parsed)) {
       logger.warn('Invalid number in environment variable', { key, value });
       return defaultValue || 0;
     }
-    
+
     return parsed;
   }
 
   getEnvBoolean(key: string, defaultValue?: boolean): boolean {
     const value = process.env[key];
     if (!value) return defaultValue || false;
-    
+
     return value.toLowerCase() === 'true' || value === '1';
   }
 
   getEnvArray(key: string, separator: string = ',', defaultValue?: string[]): string[] {
     const value = process.env[key];
     if (!value) return defaultValue || [];
-    
-    return value.split(separator).map(item => item.trim()).filter(Boolean);
+
+    return value
+      .split(separator)
+      .map((item) => item.trim())
+      .filter(Boolean);
   }
 
   // Configuration validation
@@ -180,11 +177,11 @@ export class ConfigService {
     logger.info('Validating configuration');
 
     // Check required environment variables
-    const missing = this.requiredEnvVars.filter(key => !process.env[key]);
+    const missing = this.requiredEnvVars.filter((key) => !process.env[key]);
     if (missing.length > 0) {
       throw new ConfigurationError(
         `Missing required environment variables: ${missing.join(', ')}`,
-        { missing }
+        { missing },
       );
     }
 
@@ -193,24 +190,23 @@ export class ConfigService {
     if (!validEnvironments.includes(this.config.environment as any)) {
       throw new ConfigurationError(
         `Invalid environment: ${this.config.environment}. Must be one of: ${validEnvironments.join(', ')}`,
-        { environment: this.config.environment, validEnvironments }
+        { environment: this.config.environment, validEnvironments },
       );
     }
 
     // Validate database URL
     if (!this.isValidUrl(this.config.database.url)) {
-      throw new ConfigurationError(
-        'Invalid database URL format',
-        { url: this.config.database.url }
-      );
+      throw new ConfigurationError('Invalid database URL format', {
+        url: this.config.database.url,
+      });
     }
 
     // Validate Redis configuration
     if (!this.config.redis.host || this.config.redis.port <= 0 || this.config.redis.port > 65535) {
-      throw new ConfigurationError(
-        'Invalid Redis configuration',
-        { host: this.config.redis.host, port: this.config.redis.port }
-      );
+      throw new ConfigurationError('Invalid Redis configuration', {
+        host: this.config.redis.host,
+        port: this.config.redis.port,
+      });
     }
 
     logger.info('Configuration validation completed successfully');
@@ -219,7 +215,8 @@ export class ConfigService {
   private loadConfiguration(): SystemConfig {
     logger.info('Loading configuration from environment');
 
-    const environment = (process.env.NODE_ENV || ENVIRONMENTS.DEVELOPMENT) as SystemConfig['environment'];
+    const environment = (process.env.NODE_ENV ||
+      ENVIRONMENTS.DEVELOPMENT) as SystemConfig['environment'];
 
     const config: SystemConfig = {
       environment,
@@ -229,7 +226,7 @@ export class ConfigService {
       ai: this.loadAIConfig(),
     };
 
-    logger.info('Configuration loaded', { 
+    logger.info('Configuration loaded', {
       environment: config.environment,
       databaseConfigured: !!config.database.url,
       redisConfigured: !!config.redis.host,
@@ -263,19 +260,22 @@ export class ConfigService {
     return {
       enabled: this.getEnvBoolean('MONITORING_ENABLED', true),
       metricsInterval: this.getEnvNumber('METRICS_INTERVAL', 30000),
-      logLevel: (this.getEnv('LOG_LEVEL', 'info') as MonitoringConfig['logLevel']),
+      logLevel: this.getEnv('LOG_LEVEL', 'info') as MonitoringConfig['logLevel'],
       enablePerformanceTracking: this.getEnvBoolean('ENABLE_PERFORMANCE_TRACKING', true),
     };
   }
 
   private loadAIConfig(): AIConfig {
     const providers = this.getEnvArray('AI_PROVIDERS', ',', ['ollama', 'lmstudio']);
-    
+
     return {
-      providers: providers.map(name => ({
+      providers: providers.map((name) => ({
         name,
         type: name as any,
-        endpoint: this.getEnv(`${name.toUpperCase()}_ENDPOINT`, `http://localhost:${this.getDefaultPort(name)}`),
+        endpoint: this.getEnv(
+          `${name.toUpperCase()}_ENDPOINT`,
+          `http://localhost:${this.getDefaultPort(name)}`,
+        ),
         command: this.getEnv(`${name.toUpperCase()}_COMMAND`, name),
         checkCommand: this.getEnv(`${name.toUpperCase()}_CHECK_COMMAND`),
         models: this.getEnvArray(`${name.toUpperCase()}_MODELS`, ',', []),
@@ -292,7 +292,7 @@ export class ConfigService {
       lmstudio: 1234,
       localai: 8080,
     };
-    
+
     return defaultPorts[providerName] || 8080;
   }
 
@@ -322,10 +322,10 @@ export class ConfigService {
     const oldValue = target[finalKey];
     target[finalKey] = value;
 
-    logger.info('Configuration updated', { 
-      path, 
-      oldValue, 
-      newValue: value 
+    logger.info('Configuration updated', {
+      path,
+      oldValue,
+      newValue: value,
     });
   }
 
@@ -364,12 +364,13 @@ export class ConfigService {
         state: this.state,
         environment: this.config.environment,
         configurationValid: true,
-        requiredEnvVarsPresent: this.requiredEnvVars.every(key => !!process.env[key]),
+        requiredEnvVarsPresent: this.requiredEnvVars.every((key) => !!process.env[key]),
       };
 
-      const status = this.state === ServiceState.RUNNING && details.requiredEnvVarsPresent 
-        ? 'healthy' 
-        : 'unhealthy';
+      const status =
+        this.state === ServiceState.RUNNING && details.requiredEnvVarsPresent
+          ? 'healthy'
+          : 'unhealthy';
 
       return { status, details };
     } catch (error) {

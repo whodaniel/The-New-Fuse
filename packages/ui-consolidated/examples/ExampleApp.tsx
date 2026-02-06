@@ -1,7 +1,7 @@
+import { Eye, EyeOff, Mail } from 'lucide-react';
 import React, { useState } from 'react';
 import { Button, Card, Input, Select } from '../src';
 import { ConversationExportDemo } from '../src/components/ConversationExportDemo';
-import { Mail, Eye, EyeOff } from 'lucide-react';
 
 /**
  * Example application demonstrating the consolidated UI components
@@ -20,7 +20,7 @@ export const ExampleApp: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    
+
     // Clear error when field is changed
     if (errors[name]) {
       setErrors((prev) => {
@@ -33,37 +33,37 @@ export const ExampleApp: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.name) {
       newErrors.name = 'Name is required';
     }
-    
+
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Email is invalid';
     }
-    
+
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters';
     }
-    
+
     if (!formData.country) {
       newErrors.country = 'Country is required';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       setIsSubmitting(true);
-      
+
       // Simulate API call
       setTimeout(() => {
         alert(JSON.stringify(formData, null, 2));
@@ -79,7 +79,7 @@ export const ExampleApp: React.FC = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 gap-8">
       <ConversationExportDemo />
-      <Card 
+      <Card
         className="w-full max-w-md"
         title="Registration Form"
         header={
@@ -90,11 +90,7 @@ export const ExampleApp: React.FC = () => {
         footer={
           <div className="flex justify-between w-full">
             <Button variant="ghost">Cancel</Button>
-            <Button 
-              variant="default" 
-              isLoading={isSubmitting}
-              onClick={handleSubmit}
-            >
+            <Button variant="default" isLoading={isSubmitting} onClick={handleSubmit}>
               Register
             </Button>
           </div>
@@ -109,7 +105,7 @@ export const ExampleApp: React.FC = () => {
             onChange={handleChange}
             error={errors.name}
           />
-          
+
           <Input
             label="Email"
             name="email"
@@ -120,7 +116,7 @@ export const ExampleApp: React.FC = () => {
             error={errors.email}
             startIcon={<Mail size={16} />}
           />
-          
+
           <Input
             label="Password"
             name="password"
@@ -130,8 +126,8 @@ export const ExampleApp: React.FC = () => {
             onChange={handleChange}
             error={errors.password}
             endIcon={
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={togglePasswordVisibility}
                 className="focus:outline-none"
               >
@@ -140,7 +136,7 @@ export const ExampleApp: React.FC = () => {
             }
             helperText="Password must be at least 8 characters"
           />
-          
+
           <Select
             label="Country"
             name="country"

@@ -1,3 +1,4 @@
+import { WorkflowApiService, WorkflowTemplate } from '@/api/workflow';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -18,9 +19,8 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowRight, FileTemplate, Plus, Loader2 } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
-import { WorkflowApiService, WorkflowTemplate } from '@/api/workflow';
+import { ArrowRight, FileTemplate, Loader2, Plus } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 // Template categories
 const TEMPLATE_CATEGORIES = [
@@ -68,9 +68,7 @@ export const WorkflowTemplates: React.FC<WorkflowTemplatesProps> = ({ onApplyTem
   };
 
   // Filter templates by category
-  const filteredTemplates = templates.filter(
-    (template) => template.category === selectedCategory
-  );
+  const filteredTemplates = templates.filter((template) => template.category === selectedCategory);
 
   // Apply template and close dialog
   const applyTemplate = (template: WorkflowTemplate) => {
@@ -79,7 +77,7 @@ export const WorkflowTemplates: React.FC<WorkflowTemplatesProps> = ({ onApplyTem
     const builderTemplate = {
       ...template,
       nodes: template.definition.nodes,
-      edges: template.definition.edges
+      edges: template.definition.edges,
     };
     onApplyTemplate(builderTemplate);
     setIsOpen(false);
@@ -117,9 +115,7 @@ export const WorkflowTemplates: React.FC<WorkflowTemplatesProps> = ({ onApplyTem
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                   </div>
                 ) : error ? (
-                   <div className="text-center text-red-500 py-8">
-                    {error}
-                  </div>
+                  <div className="text-center text-red-500 py-8">{error}</div>
                 ) : filteredTemplates.length === 0 ? (
                   <div className="text-center text-muted-foreground py-8">
                     No templates found in this category.
@@ -137,7 +133,8 @@ export const WorkflowTemplates: React.FC<WorkflowTemplatesProps> = ({ onApplyTem
                           <div className="bg-muted rounded-md p-2 h-32 flex items-center justify-center text-muted-foreground text-sm">
                             <div className="text-center">
                               <div className="font-mono text-xs mb-1">
-                                {template.definition.nodes.length} nodes, {template.definition.edges.length} connections
+                                {template.definition.nodes.length} nodes,{' '}
+                                {template.definition.edges.length} connections
                               </div>
                               <div className="flex items-center justify-center space-x-2">
                                 <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">

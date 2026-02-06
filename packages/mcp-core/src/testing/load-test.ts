@@ -1,6 +1,6 @@
 /**
  * Load Testing Utilities for MCP System
- * 
+ *
  * These utilities provide comprehensive load testing capabilities
  * for MCP servers, clients, and the overall system performance
  * under various stress conditions.
@@ -9,7 +9,7 @@
 import { EventEmitter } from 'events';
 import { performance } from 'perf_hooks';
 import { MCPServer } from '../server/MCPServer';
-import { MCPRequest, MCPResponse, MCPNotification } from '../types/message';
+import { MCPRequest } from '../types/message';
 
 export interface LoadTestConfig {
   duration: number; // Test duration in milliseconds
@@ -77,7 +77,7 @@ export class LoadTestRunner extends EventEmitter {
 
   async runLoadTest(config: LoadTestConfig): Promise<LoadTestResult> {
     this.emit('testStarted', { config });
-    
+
     try {
       const result = await this.executeLoadTest(config);
       this.emit('testCompleted', { result });
@@ -106,14 +106,14 @@ export class LoadTestRunner extends EventEmitter {
       memoryUsage: {
         initial: initialMemory,
         final: initialMemory,
-        peak: initialMemory
+        peak: initialMemory,
       },
       cpuUsage: {
         initial: initialCpu,
-        final: initialCpu
+        final: initialCpu,
       },
       errorBreakdown: new Map(),
-      latencyDistribution: []
+      latencyDistribution: [],
     };
 
     // Start memory monitoring
@@ -154,8 +154,8 @@ export class LoadTestRunner extends EventEmitter {
         jsonrpc: '2.0',
         id: Date.now(),
         method: 'resources/list',
-        params: {}
-      })
+        params: {},
+      }),
     };
 
     const warmupPromises: Promise<void>[] = [];
@@ -164,26 +164,27 @@ export class LoadTestRunner extends EventEmitter {
     }
 
     await Promise.all(warmupPromises);
-    
+
     // Reset metrics after warmup
     this.resetMetrics();
-    
+
     this.emit('warmupCompleted');
   }
 
   private async executeMainLoadTest(config: LoadTestConfig, startTime: number): Promise<void> {
     const clients = await this.createClients(config);
-    
+
     // Ramp up phase
     if (config.rampUpTime && config.rampUpTime > 0) {
       await this.rampUpClients(clients, config.rampUpTime);
     } else {
       // Start all clients immediately
-      await Promise.all(clients.map(client => client.start()));
+      await Promise.all(clients.map((client) => client.start()));
     }
 
     // Main load phase
-    const mainLoadDuration = config.duration - (config.rampUpTime || 0) - (config.rampDownTime || 0);
+    const mainLoadDuration =
+      config.duration - (config.rampUpTime || 0) - (config.rampDownTime || 0);
     await this.waitForDuration(mainLoadDuration);
 
     // Ramp down phase
@@ -191,7 +192,7 @@ export class LoadTestRunner extends EventEmitter {
       await this.rampDownClients(clients, config.rampDownTime);
     } else {
       // Stop all clients immediately
-      await Promise.all(clients.map(client => client.stop()));
+      await Promise.all(clients.map((client) => client.stop()));
     }
   }
 
@@ -224,8 +225,8 @@ export class LoadTestRunner extends EventEmitter {
           jsonrpc: '2.0',
           id: `list-${Date.now()}-${Math.random()}`,
           method: 'resources/list',
-          params: {}
-        })
+          params: {},
+        }),
       },
       {
         name: 'read-resource',
@@ -234,8 +235,8 @@ export class LoadTestRunner extends EventEmitter {
           jsonrpc: '2.0',
           id: `read-${Date.now()}-${Math.random()}`,
           method: 'resources/read',
-          params: { uri: 'file:///test/document.txt' }
-        })
+          params: { uri: 'file:///test/document.txt' },
+        }),
       },
       {
         name: 'call-tool',
@@ -246,10 +247,12 @@ export class LoadTestRunner extends EventEmitter {
           method: 'tools/call',
           params: {
             name: 'calculator',
-            arguments: { expression: `${Math.floor(Math.random() * 100)} + ${Math.floor(Math.random() * 100)}` }
-          }
-        })
-      }
+            arguments: {
+              expression: `${Math.floor(Math.random() * 100)} + ${Math.floor(Math.random() * 100)}`,
+            },
+          },
+        }),
+      },
     ];
   }
 
@@ -257,15 +260,15 @@ export class LoadTestRunner extends EventEmitter {
     this.emit('rampUpStarted', { duration: rampUpTime });
 
     const interval = rampUpTime / clients.length;
-    
+
     for (let i = 0; i < clients.length; i++) {
-      await new Promise(resolve => setTimeout(resolve, interval));
+      await new Promise((resolve) => setTimeout(resolve, interval));
       await clients[i].start();
-      
-      this.emit('clientStarted', { 
-        clientIndex: i, 
+
+      this.emit('clientStarted', {
+        clientIndex: i,
         totalClients: clients.length,
-        progress: (i + 1) / clients.length 
+        progress: (i + 1) / clients.length,
       });
     }
 
@@ -276,15 +279,15 @@ export class LoadTestRunner extends EventEmitter {
     this.emit('rampDownStarted', { duration: rampDownTime });
 
     const interval = rampDownTime / clients.length;
-    
+
     for (let i = 0; i < clients.length; i++) {
       await clients[i].stop();
-      await new Promise(resolve => setTimeout(resolve, interval));
-      
-      this.emit('clientStopped', { 
-        clientIndex: i, 
+      await new Promise((resolve) => setTimeout(resolve, interval));
+
+      this.emit('clientStopped', {
+        clientIndex: i,
         totalClients: clients.length,
-        progress: (i + 1) / clients.length 
+        progress: (i + 1) / clients.length,
       });
     }
 
@@ -292,17 +295,17 @@ export class LoadTestRunner extends EventEmitter {
   }
 
   private async waitForDuration(duration: number): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const startTime = Date.now();
       const progressInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
         const progress = elapsed / duration;
-        
+
         this.emit('progress', {
           elapsed,
           remaining: duration - elapsed,
           progress: Math.min(progress, 1),
-          metrics: this.getCurrentMetrics()
+          metrics: this.getCurrentMetrics(),
         });
 
         if (elapsed >= duration) {
@@ -317,9 +320,12 @@ export class LoadTestRunner extends EventEmitter {
     return setInterval(() => {
       const currentMemory = process.memoryUsage();
       this.memorySnapshots.push(currentMemory);
-      
+
       // Update peak memory usage
-      if (this.metrics.memoryUsage && currentMemory.heapUsed > this.metrics.memoryUsage.peak.heapUsed) {
+      if (
+        this.metrics.memoryUsage &&
+        currentMemory.heapUsed > this.metrics.memoryUsage.peak.heapUsed
+      ) {
         this.metrics.memoryUsage.peak = currentMemory;
       }
     }, 1000);
@@ -331,7 +337,7 @@ export class LoadTestRunner extends EventEmitter {
 
     if (error) {
       this.metrics.failedRequests = (this.metrics.failedRequests || 0) + 1;
-      
+
       const errorType = error.name || 'UnknownError';
       const currentCount = this.errorCounts.get(errorType) || 0;
       this.errorCounts.set(errorType, currentCount + 1);
@@ -343,15 +349,20 @@ export class LoadTestRunner extends EventEmitter {
       responseTime,
       error,
       totalRequests: this.metrics.totalRequests,
-      successRate: (this.metrics.successfulRequests || 0) / this.metrics.totalRequests
+      successRate: (this.metrics.successfulRequests || 0) / this.metrics.totalRequests,
     });
   }
 
-  private calculateFinalMetrics(totalDuration: number, finalMemory: NodeJS.MemoryUsage, finalCpu: NodeJS.CpuUsage): void {
+  private calculateFinalMetrics(
+    totalDuration: number,
+    finalMemory: NodeJS.MemoryUsage,
+    finalCpu: NodeJS.CpuUsage
+  ): void {
     this.responseTimes.sort((a, b) => a - b);
-    
+
     this.metrics.totalDuration = totalDuration;
-    this.metrics.avgResponseTime = this.responseTimes.reduce((sum, time) => sum + time, 0) / this.responseTimes.length || 0;
+    this.metrics.avgResponseTime =
+      this.responseTimes.reduce((sum, time) => sum + time, 0) / this.responseTimes.length || 0;
     this.metrics.minResponseTime = this.responseTimes[0] || 0;
     this.metrics.maxResponseTime = this.responseTimes[this.responseTimes.length - 1] || 0;
     this.metrics.p50ResponseTime = this.calculatePercentile(this.responseTimes, 0.5);
@@ -361,11 +372,11 @@ export class LoadTestRunner extends EventEmitter {
     this.metrics.errorsPerSecond = (this.metrics.failedRequests || 0) / (totalDuration / 1000);
     this.metrics.errorBreakdown = this.errorCounts;
     this.metrics.latencyDistribution = this.responseTimes;
-    
+
     if (this.metrics.memoryUsage) {
       this.metrics.memoryUsage.final = finalMemory;
     }
-    
+
     if (this.metrics.cpuUsage) {
       this.metrics.cpuUsage.final = finalCpu;
     }
@@ -373,7 +384,7 @@ export class LoadTestRunner extends EventEmitter {
 
   private calculatePercentile(sortedArray: number[], percentile: number): number {
     if (sortedArray.length === 0) return 0;
-    
+
     const index = Math.ceil(sortedArray.length * percentile) - 1;
     return sortedArray[Math.max(0, Math.min(index, sortedArray.length - 1))];
   }
@@ -384,9 +395,10 @@ export class LoadTestRunner extends EventEmitter {
       totalRequests: this.metrics.totalRequests,
       successfulRequests: this.metrics.successfulRequests,
       failedRequests: this.metrics.failedRequests,
-      avgResponseTime: this.responseTimes.length > 0 
-        ? this.responseTimes.reduce((sum, time) => sum + time, 0) / this.responseTimes.length 
-        : 0
+      avgResponseTime:
+        this.responseTimes.length > 0
+          ? this.responseTimes.reduce((sum, time) => sum + time, 0) / this.responseTimes.length
+          : 0,
     };
   }
 
@@ -402,23 +414,30 @@ export class LoadTestRunner extends EventEmitter {
     }
 
     if ((this.metrics.avgResponseTime || 0) > 1000) {
-      recommendations.push('Average response time is high - consider optimizing request processing');
+      recommendations.push(
+        'Average response time is high - consider optimizing request processing'
+      );
     }
 
     if ((this.metrics.p95ResponseTime || 0) > 5000) {
-      recommendations.push('95th percentile response time is very high - investigate performance bottlenecks');
+      recommendations.push(
+        '95th percentile response time is very high - investigate performance bottlenecks'
+      );
     }
 
-    const memoryIncrease = this.metrics.memoryUsage 
+    const memoryIncrease = this.metrics.memoryUsage
       ? this.metrics.memoryUsage.final.heapUsed - this.metrics.memoryUsage.initial.heapUsed
       : 0;
-    
-    if (memoryIncrease > 100 * 1024 * 1024) { // 100MB
+
+    if (memoryIncrease > 100 * 1024 * 1024) {
+      // 100MB
       recommendations.push('Significant memory usage increase detected - check for memory leaks');
     }
 
     if ((this.metrics.requestsPerSecond || 0) < config.requestsPerSecond! * 0.8) {
-      recommendations.push('Actual throughput is significantly lower than target - system may be overloaded');
+      recommendations.push(
+        'Actual throughput is significantly lower than target - system may be overloaded'
+      );
     }
 
     return {
@@ -426,7 +445,7 @@ export class LoadTestRunner extends EventEmitter {
       metrics: this.metrics as LoadTestMetrics,
       success: errors.length === 0 && successRate >= 0.95,
       errors,
-      recommendations
+      recommendations,
     };
   }
 
@@ -438,7 +457,7 @@ export class LoadTestRunner extends EventEmitter {
 
   private cleanup(): void {
     this.isRunning = false;
-    
+
     // Stop all active clients
     for (const client of this.activeClients) {
       client.stop().catch(() => {}); // Ignore errors during cleanup
@@ -448,17 +467,17 @@ export class LoadTestRunner extends EventEmitter {
 
   private async executeRequest(request: MCPRequest, recordMetrics = true): Promise<void> {
     const startTime = performance.now();
-    
+
     try {
       await this.server.handleRequest(request);
       const responseTime = performance.now() - startTime;
-      
+
       if (recordMetrics) {
         this.recordResponse(responseTime, null);
       }
     } catch (error) {
       const responseTime = performance.now() - startTime;
-      
+
       if (recordMetrics) {
         this.recordResponse(responseTime, error as Error);
       }
@@ -482,7 +501,7 @@ class LoadTestClient extends EventEmitter {
 
   async start(): Promise<void> {
     this.isRunning = true;
-    
+
     if (this.targetRps) {
       // Fixed rate execution
       const intervalMs = 1000 / this.targetRps;
@@ -499,7 +518,7 @@ class LoadTestClient extends EventEmitter {
 
   async stop(): Promise<void> {
     this.isRunning = false;
-    
+
     if (this.requestInterval) {
       clearInterval(this.requestInterval);
     }
@@ -508,9 +527,9 @@ class LoadTestClient extends EventEmitter {
   private async continuousExecution(): Promise<void> {
     while (this.isRunning) {
       await this.executeRandomRequest();
-      
+
       // Small delay to prevent overwhelming the system
-      await new Promise(resolve => setTimeout(resolve, 1));
+      await new Promise((resolve) => setTimeout(resolve, 1));
     }
   }
 
@@ -555,8 +574,8 @@ export class LoadTestScenarios {
           jsonrpc: '2.0',
           id: `list-${Date.now()}-${Math.random()}`,
           method: 'resources/list',
-          params: {}
-        })
+          params: {},
+        }),
       },
       {
         name: 'read-specific-resources',
@@ -567,9 +586,9 @@ export class LoadTestScenarios {
             jsonrpc: '2.0',
             id: `read-${Date.now()}-${Math.random()}`,
             method: 'resources/read',
-            params: { uri }
+            params: { uri },
           };
-        }
+        },
       },
       {
         name: 'subscribe-to-resources',
@@ -580,9 +599,9 @@ export class LoadTestScenarios {
             jsonrpc: '2.0',
             id: `subscribe-${Date.now()}-${Math.random()}`,
             method: 'resources/subscribe',
-            params: { uri }
+            params: { uri },
           };
-        }
+        },
       },
       {
         name: 'filter-resources',
@@ -591,14 +610,16 @@ export class LoadTestScenarios {
           jsonrpc: '2.0',
           id: `filter-${Date.now()}-${Math.random()}`,
           method: 'resources/list',
-          params: { pattern: '*.txt' }
-        })
-      }
+          params: { pattern: '*.txt' },
+        }),
+      },
     ];
   }
 
-  static createToolLoadScenarios(tools: Array<{name: string; testParams: any}>): LoadTestScenario[] {
-    return tools.map(tool => ({
+  static createToolLoadScenarios(
+    tools: Array<{ name: string; testParams: any }>
+  ): LoadTestScenario[] {
+    return tools.map((tool) => ({
       name: `call-${tool.name}`,
       weight: 1 / tools.length,
       requestGenerator: () => ({
@@ -607,20 +628,23 @@ export class LoadTestScenarios {
         method: 'tools/call',
         params: {
           name: tool.name,
-          arguments: tool.testParams
-        }
-      })
+          arguments: tool.testParams,
+        },
+      }),
     }));
   }
 
-  static createMixedLoadScenarios(resourceUris: string[], tools: Array<{name: string; testParams: any}>): LoadTestScenario[] {
+  static createMixedLoadScenarios(
+    resourceUris: string[],
+    tools: Array<{ name: string; testParams: any }>
+  ): LoadTestScenario[] {
     const resourceScenarios = this.createResourceLoadScenarios(resourceUris);
     const toolScenarios = this.createToolLoadScenarios(tools);
-    
+
     // Reweight to balance resources and tools
-    resourceScenarios.forEach(scenario => scenario.weight *= 0.5);
-    toolScenarios.forEach(scenario => scenario.weight *= 0.5);
-    
+    resourceScenarios.forEach((scenario) => (scenario.weight *= 0.5));
+    toolScenarios.forEach((scenario) => (scenario.weight *= 0.5));
+
     return [...resourceScenarios, ...toolScenarios];
   }
 }
@@ -629,7 +653,7 @@ export class LoadTestScenarios {
 export class LoadTestReporter {
   static generateReport(result: LoadTestResult): string {
     const { config, metrics, success, errors, recommendations } = result;
-    
+
     let report = '';
     report += '═══════════════════════════════════════════════════════════════\n';
     report += '                      LOAD TEST REPORT                        \n';
@@ -681,7 +705,7 @@ export class LoadTestReporter {
     // Issues
     if (errors.length > 0) {
       report += 'ISSUES DETECTED:\n';
-      errors.forEach(error => {
+      errors.forEach((error) => {
         report += `  ❌ ${error}\n`;
       });
       report += '\n';
@@ -690,7 +714,7 @@ export class LoadTestReporter {
     // Recommendations
     if (recommendations.length > 0) {
       report += 'RECOMMENDATIONS:\n';
-      recommendations.forEach(recommendation => {
+      recommendations.forEach((recommendation) => {
         report += `  💡 ${recommendation}\n`;
       });
       report += '\n';
@@ -704,7 +728,7 @@ export class LoadTestReporter {
   static generateCSVReport(result: LoadTestResult): string {
     let csv = 'metric,value,unit\n';
     const m = result.metrics;
-    
+
     csv += `total_requests,${m.totalRequests},count\n`;
     csv += `successful_requests,${m.successfulRequests},count\n`;
     csv += `failed_requests,${m.failedRequests},count\n`;
@@ -718,7 +742,7 @@ export class LoadTestReporter {
     csv += `initial_heap_mb,${(m.memoryUsage.initial.heapUsed / 1024 / 1024).toFixed(2)},MB\n`;
     csv += `final_heap_mb,${(m.memoryUsage.final.heapUsed / 1024 / 1024).toFixed(2)},MB\n`;
     csv += `peak_heap_mb,${(m.memoryUsage.peak.heapUsed / 1024 / 1024).toFixed(2)},MB\n`;
-    
+
     return csv;
   }
 }

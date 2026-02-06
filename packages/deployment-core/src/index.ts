@@ -1,10 +1,10 @@
 // Core CI/CD Pipeline exports
 export { CICDPipeline } from './core/CICDPipeline';
-export { PipelineExecutor } from './core/PipelineExecutor';
-export { PipelineValidator } from './core/PipelineValidator';
-export { PipelineStorage } from './core/PipelineStorage';
-export { NotificationService } from './core/NotificationService';
 export { MetricsCollector } from './core/MetricsCollector';
+export { NotificationService } from './core/NotificationService';
+export { PipelineExecutor } from './core/PipelineExecutor';
+export { PipelineStorage } from './core/PipelineStorage';
+export { PipelineValidator } from './core/PipelineValidator';
 
 // Infrastructure components
 // export * from './infrastructure'; // Temporarily disabled due to export conflicts
@@ -17,30 +17,34 @@ export type { IInfrastructureManager } from './interfaces/IInfrastructureManager
 // export * from './types/pipeline'; // Temporarily disabled due to export conflicts
 
 // Testing components
-export { TestRunner, TestType, TestFramework, TestStatus } from './testing/TestRunner';
-export { TestOrchestrator, TestPlanStatus, TestStageStatus } from './testing/TestOrchestrator';
 export { QualityGateEvaluator } from './testing/QualityGateEvaluator';
+export { TestOrchestrator, TestPlanStatus, TestStageStatus } from './testing/TestOrchestrator';
+export { TestFramework, TestRunner, TestStatus, TestType } from './testing/TestRunner';
 // export type * from './testing/TestRunner'; // Temporarily disabled due to export conflicts
 // export type * from './testing/TestOrchestrator'; // Temporarily disabled due to export conflicts
 // export type * from './testing/QualityGateEvaluator'; // Temporarily disabled due to export conflicts
 
 // Deployment components
-export { DeploymentOrchestrator, ApprovalStatus } from './deployment/DeploymentOrchestrator';
-export { BaseDeploymentStrategy, DeploymentPhase, ServiceDeploymentStatus } from './deployment/DeploymentStrategy';
-export { RollingUpdateStrategy } from './deployment/RollingUpdateStrategy';
 export { BlueGreenStrategy } from './deployment/BlueGreenStrategy';
 export { CanaryStrategy } from './deployment/CanaryStrategy';
+export { ApprovalStatus, DeploymentOrchestrator } from './deployment/DeploymentOrchestrator';
+export {
+  BaseDeploymentStrategy,
+  DeploymentPhase,
+  ServiceDeploymentStatus,
+} from './deployment/DeploymentStrategy';
+export { RollingUpdateStrategy } from './deployment/RollingUpdateStrategy';
 // export type * from './deployment/DeploymentStrategy'; // Temporarily disabled due to export conflicts
 // export type * from './deployment/DeploymentOrchestrator'; // Temporarily disabled due to export conflicts
 
 // Factory function for creating a complete CI/CD pipeline instance
-import { CICDPipeline } from './core/CICDPipeline';
-import { PipelineExecutor } from './core/PipelineExecutor';
-import { PipelineValidator } from './core/PipelineValidator';
-import { PipelineStorage } from './core/PipelineStorage';
-import { NotificationService } from './core/NotificationService';
-import { MetricsCollector } from './core/MetricsCollector';
 import { Logger } from 'winston';
+import { CICDPipeline } from './core/CICDPipeline';
+import { MetricsCollector } from './core/MetricsCollector';
+import { NotificationService } from './core/NotificationService';
+import { PipelineExecutor } from './core/PipelineExecutor';
+import { PipelineStorage } from './core/PipelineStorage';
+import { PipelineValidator } from './core/PipelineValidator';
 
 /**
  * Factory function to create a fully configured CI/CD Pipeline instance
@@ -232,17 +236,17 @@ export const PipelineUtils = {
         {
           type: 'push',
           configuration: {
-            branches: ['main', 'develop']
+            branches: ['main', 'develop'],
           },
           filters: [
             {
               type: 'branch',
               pattern: '^(main|develop)$',
-              exclude: false
-            }
+              exclude: false,
+            },
           ],
-          enabled: true
-        }
+          enabled: true,
+        },
       ],
       environment: {
         name: 'default',
@@ -252,14 +256,14 @@ export const PipelineUtils = {
         resources: {
           cpu: '500m',
           memory: '1Gi',
-          storage: '10Gi'
+          storage: '10Gi',
         },
         constraints: {
           allowedBranches: ['main', 'develop'],
           requiredApprovals: 0,
           deploymentWindows: [],
-          maxConcurrentDeployments: 1
-        }
+          maxConcurrentDeployments: 1,
+        },
       },
       qualityGates: [
         {
@@ -269,8 +273,8 @@ export const PipelineUtils = {
           threshold: 80,
           operator: 'greater_than',
           required: true,
-          failureBehavior: 'fail'
-        }
+          failureBehavior: 'fail',
+        },
       ],
       notifications: [
         {
@@ -280,18 +284,18 @@ export const PipelineUtils = {
               type: 'slack',
               configuration: {
                 webhookUrl: '${SLACK_WEBHOOK_URL}',
-                channel: '#ci-cd'
+                channel: '#ci-cd',
               },
-              recipients: []
-            }
+              recipients: [],
+            },
           ],
           events: [
             { type: 'pipeline_start', enabled: true },
             { type: 'pipeline_complete', enabled: true },
-            { type: 'pipeline_failed', enabled: true }
+            { type: 'pipeline_failed', enabled: true },
           ],
-          conditions: []
-        }
+          conditions: [],
+        },
       ],
       timeout: 3600000, // 1 hour
       retryPolicy: {
@@ -300,14 +304,14 @@ export const PipelineUtils = {
         backoffStrategy: 'exponential',
         initialDelay: 1000,
         maxDelay: 30000,
-        retryConditions: ['infrastructure_error', 'timeout']
+        retryConditions: ['infrastructure_error', 'timeout'],
       },
       variables: {},
       metadata: {
         createdAt: new Date().toISOString(),
         createdBy: 'system',
-        type
-      }
+        type,
+      },
     };
 
     // Add type-specific stages
@@ -333,18 +337,18 @@ export const PipelineUtils = {
                   backoffStrategy: 'linear',
                   initialDelay: 5000,
                   maxDelay: 10000,
-                  retryConditions: ['network_error']
+                  retryConditions: ['network_error'],
                 },
                 conditions: [],
-                artifacts: []
-              }
+                artifacts: [],
+              },
             ],
             conditions: [],
             timeout: 600000,
             retryPolicy: baseTemplate.retryPolicy,
             parallel: false,
             continueOnError: false,
-            environment: {}
+            environment: {},
           },
           {
             id: 'test',
@@ -358,7 +362,7 @@ export const PipelineUtils = {
                 type: 'test',
                 command: 'npm test',
                 parameters: {
-                  testCommand: 'npm test -- --coverage'
+                  testCommand: 'npm test -- --coverage',
                 },
                 timeout: 600000,
                 retryPolicy: {
@@ -367,7 +371,7 @@ export const PipelineUtils = {
                   backoffStrategy: 'fixed',
                   initialDelay: 0,
                   maxDelay: 0,
-                  retryConditions: []
+                  retryConditions: [],
                 },
                 conditions: [],
                 artifacts: [
@@ -375,23 +379,23 @@ export const PipelineUtils = {
                     name: 'test-results',
                     path: 'test-results/',
                     type: 'directory',
-                    retention: 30
+                    retention: 30,
                   },
                   {
                     name: 'coverage-report',
                     path: 'coverage/',
                     type: 'directory',
-                    retention: 30
-                  }
-                ]
-              }
+                    retention: 30,
+                  },
+                ],
+              },
             ],
             conditions: [],
             timeout: 900000,
             retryPolicy: baseTemplate.retryPolicy,
             parallel: false,
             continueOnError: false,
-            environment: {}
+            environment: {},
           },
           {
             id: 'build',
@@ -405,7 +409,7 @@ export const PipelineUtils = {
                 type: 'build',
                 command: 'npm run build',
                 parameters: {
-                  buildCommand: 'npm run build'
+                  buildCommand: 'npm run build',
                 },
                 timeout: 600000,
                 retryPolicy: {
@@ -414,7 +418,7 @@ export const PipelineUtils = {
                   backoffStrategy: 'linear',
                   initialDelay: 5000,
                   maxDelay: 10000,
-                  retryConditions: ['build_error']
+                  retryConditions: ['build_error'],
                 },
                 conditions: [],
                 artifacts: [
@@ -422,18 +426,18 @@ export const PipelineUtils = {
                     name: 'build-output',
                     path: 'dist/',
                     type: 'directory',
-                    retention: 90
-                  }
-                ]
-              }
+                    retention: 90,
+                  },
+                ],
+              },
             ],
             conditions: [],
             timeout: 900000,
             retryPolicy: baseTemplate.retryPolicy,
             parallel: false,
             continueOnError: false,
-            environment: {}
-          }
+            environment: {},
+          },
         ];
         break;
 
@@ -458,18 +462,18 @@ export const PipelineUtils = {
                   backoffStrategy: 'linear',
                   initialDelay: 5000,
                   maxDelay: 10000,
-                  retryConditions: ['network_error']
+                  retryConditions: ['network_error'],
                 },
                 conditions: [],
-                artifacts: []
-              }
+                artifacts: [],
+              },
             ],
             conditions: [],
             timeout: 600000,
             retryPolicy: baseTemplate.retryPolicy,
             parallel: false,
             continueOnError: false,
-            environment: {}
+            environment: {},
           },
           {
             id: 'test',
@@ -490,10 +494,10 @@ export const PipelineUtils = {
                   backoffStrategy: 'fixed',
                   initialDelay: 0,
                   maxDelay: 0,
-                  retryConditions: []
+                  retryConditions: [],
                 },
                 conditions: [],
-                artifacts: []
+                artifacts: [],
               },
               {
                 id: 'integration-tests',
@@ -508,18 +512,18 @@ export const PipelineUtils = {
                   backoffStrategy: 'linear',
                   initialDelay: 10000,
                   maxDelay: 20000,
-                  retryConditions: ['database_error', 'network_error']
+                  retryConditions: ['database_error', 'network_error'],
                 },
                 conditions: [],
-                artifacts: []
-              }
+                artifacts: [],
+              },
             ],
             conditions: [],
             timeout: 1200000,
             retryPolicy: baseTemplate.retryPolicy,
             parallel: true,
             continueOnError: false,
-            environment: {}
+            environment: {},
           },
           {
             id: 'build',
@@ -540,7 +544,7 @@ export const PipelineUtils = {
                   backoffStrategy: 'linear',
                   initialDelay: 5000,
                   maxDelay: 10000,
-                  retryConditions: ['build_error']
+                  retryConditions: ['build_error'],
                 },
                 conditions: [],
                 artifacts: [
@@ -548,9 +552,9 @@ export const PipelineUtils = {
                     name: 'api-build',
                     path: 'dist/',
                     type: 'directory',
-                    retention: 90
-                  }
-                ]
+                    retention: 90,
+                  },
+                ],
               },
               {
                 id: 'docker-build',
@@ -559,7 +563,7 @@ export const PipelineUtils = {
                 parameters: {
                   image: name,
                   tag: '${BUILD_NUMBER}',
-                  dockerfile: 'Dockerfile'
+                  dockerfile: 'Dockerfile',
                 },
                 timeout: 900000,
                 retryPolicy: {
@@ -568,19 +572,19 @@ export const PipelineUtils = {
                   backoffStrategy: 'linear',
                   initialDelay: 10000,
                   maxDelay: 20000,
-                  retryConditions: ['docker_error']
+                  retryConditions: ['docker_error'],
                 },
                 conditions: [],
-                artifacts: []
-              }
+                artifacts: [],
+              },
             ],
             conditions: [],
             timeout: 1200000,
             retryPolicy: baseTemplate.retryPolicy,
             parallel: false,
             continueOnError: false,
-            environment: {}
-          }
+            environment: {},
+          },
         ];
         break;
 
@@ -605,18 +609,18 @@ export const PipelineUtils = {
                   backoffStrategy: 'linear',
                   initialDelay: 5000,
                   maxDelay: 10000,
-                  retryConditions: ['network_error']
+                  retryConditions: ['network_error'],
                 },
                 conditions: [],
-                artifacts: []
-              }
+                artifacts: [],
+              },
             ],
             conditions: [],
             timeout: 600000,
             retryPolicy: baseTemplate.retryPolicy,
             parallel: false,
             continueOnError: false,
-            environment: {}
+            environment: {},
           },
           {
             id: 'test',
@@ -637,18 +641,18 @@ export const PipelineUtils = {
                   backoffStrategy: 'fixed',
                   initialDelay: 0,
                   maxDelay: 0,
-                  retryConditions: []
+                  retryConditions: [],
                 },
                 conditions: [],
-                artifacts: []
-              }
+                artifacts: [],
+              },
             ],
             conditions: [],
             timeout: 900000,
             retryPolicy: baseTemplate.retryPolicy,
             parallel: false,
             continueOnError: false,
-            environment: {}
+            environment: {},
           },
           {
             id: 'build',
@@ -669,7 +673,7 @@ export const PipelineUtils = {
                   backoffStrategy: 'linear',
                   initialDelay: 5000,
                   maxDelay: 10000,
-                  retryConditions: ['build_error']
+                  retryConditions: ['build_error'],
                 },
                 conditions: [],
                 artifacts: [
@@ -677,17 +681,17 @@ export const PipelineUtils = {
                     name: 'library-build',
                     path: 'lib/',
                     type: 'directory',
-                    retention: 90
-                  }
-                ]
-              }
+                    retention: 90,
+                  },
+                ],
+              },
             ],
             conditions: [],
             timeout: 900000,
             retryPolicy: baseTemplate.retryPolicy,
             parallel: false,
             continueOnError: false,
-            environment: {}
+            environment: {},
           },
           {
             id: 'publish',
@@ -708,29 +712,29 @@ export const PipelineUtils = {
                   backoffStrategy: 'linear',
                   initialDelay: 5000,
                   maxDelay: 10000,
-                  retryConditions: ['network_error']
+                  retryConditions: ['network_error'],
                 },
                 conditions: [
                   {
                     type: 'branch',
                     operator: 'equals',
-                    value: 'main'
-                  }
+                    value: 'main',
+                  },
                 ],
-                artifacts: []
-              }
+                artifacts: [],
+              },
             ],
             conditions: [],
             timeout: 600000,
             retryPolicy: baseTemplate.retryPolicy,
             parallel: false,
             continueOnError: false,
-            environment: {}
-          }
+            environment: {},
+          },
         ];
         break;
     }
 
     return baseTemplate;
-  }
+  },
 };

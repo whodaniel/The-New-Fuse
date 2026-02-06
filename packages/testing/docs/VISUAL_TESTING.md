@@ -2,7 +2,8 @@
 
 ## Overview
 
-This guide covers visual regression testing practices for The New Fuse platform using Playwright and our custom VisualTesting utility.
+This guide covers visual regression testing practices for The New Fuse platform using Playwright and
+our custom VisualTesting utility.
 
 ## Visual Testing Strategy
 
@@ -43,10 +44,7 @@ test.describe('Component Visual Tests', () => {
   });
 
   test('component states', async () => {
-    await visualTesting.captureInteractionStates(
-      '[data-testid="component"]',
-      'component-name'
-    );
+    await visualTesting.captureInteractionStates('[data-testid="component"]', 'component-name');
   });
 });
 ```
@@ -71,16 +69,19 @@ pnpm run test:e2e:review component-name
 ### 2. Selector Strategy
 
 Prefer in order:
+
 1. `data-testid` attributes
 2. ARIA attributes
 3. Semantic HTML elements
 4. CSS classes (only if stable)
 
 Example:
+
 ```html
 <button data-testid="save-workflow">Save</button>
 <nav aria-label="Main navigation">
-<main>
+  <main></main>
+</nav>
 ```
 
 ### 3. Handling Dynamic Content
@@ -91,16 +92,18 @@ Example:
 - Handle animations and transitions
 
 Example configuration:
+
 ```typescript
 await visualTesting.compareElement('[data-testid="component"]', 'name', {
   mask: ['[data-dynamic]'],
-  animation: 'disabled'
+  animation: 'disabled',
 });
 ```
 
 ### 4. Test Environment Setup
 
 Required configuration:
+
 - Consistent viewport sizes
 - System fonts
 - Color schemes
@@ -110,6 +113,7 @@ Required configuration:
 ### 5. CI/CD Integration
 
 The visual testing pipeline:
+
 1. Generate new screenshots
 2. Compare with baselines
 3. Generate difference images
@@ -124,12 +128,12 @@ The visual testing pipeline:
 test('theme appearances', async ({ page }) => {
   // Test light theme
   await visualTesting.compareFullPage('component-light');
-  
+
   // Switch to dark theme
   await page.evaluate(() => {
     document.documentElement.setAttribute('data-theme', 'dark');
   });
-  
+
   // Test dark theme
   await visualTesting.compareFullPage('component-dark');
 });
@@ -141,7 +145,7 @@ test('theme appearances', async ({ page }) => {
 test('responsive layouts', async () => {
   await visualTesting.compareResponsive('component', [
     { width: 1920, height: 1080 },
-    { width: 375, height: 812 }
+    { width: 375, height: 812 },
   ]);
 });
 ```
@@ -150,11 +154,12 @@ test('responsive layouts', async () => {
 
 ```typescript
 test('interactive states', async () => {
-  await visualTesting.captureInteractionStates(
-    '[data-testid="button"]',
-    'primary-button',
-    ['hover', 'focus', 'active', 'disabled']
-  );
+  await visualTesting.captureInteractionStates('[data-testid="button"]', 'primary-button', [
+    'hover',
+    'focus',
+    'active',
+    'disabled',
+  ]);
 });
 ```
 

@@ -9,8 +9,8 @@ import { WorkflowTemplatesService } from '../services/workflow-templates.service
     DatabaseModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'development-secret',
-      signOptions: { expiresIn: '24h' }
-    })
+      signOptions: { expiresIn: '24h' },
+    }),
   ],
   controllers: [WorkflowTemplatesController],
   providers: [WorkflowTemplatesService],

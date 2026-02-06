@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { RedisLockService } from './redis-lock.service';
+import { Test, TestingModule } from '@nestjs/testing';
 import Redis from 'ioredis';
+import { RedisLockService } from './redis-lock.service';
 
 // Mock ioredis
 jest.mock('ioredis', () => require('ioredis-mock'));
@@ -80,18 +80,18 @@ describe('RedisLockService', () => {
 
   describe('extendLock', () => {
     it('should extend the TTL of a held lock', async () => {
-        const lockId = await service.acquireLock('test-key', 1);
-        await new Promise(resolve => setTimeout(resolve, 500));
-        const result = await service.extendLock('test-key', lockId, 10);
-        expect(result).toBe(true);
-        const ttl = await redis.ttl('lock:test-key');
-        expect(ttl).toBeGreaterThan(5);
+      const lockId = await service.acquireLock('test-key', 1);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const result = await service.extendLock('test-key', lockId, 10);
+      expect(result).toBe(true);
+      const ttl = await redis.ttl('lock:test-key');
+      expect(ttl).toBeGreaterThan(5);
     });
 
     it('should fail to extend a lock with the wrong lock ID', async () => {
-        await service.acquireLock('test-key', 10);
-        const result = await service.extendLock('test-key', 'wrong-id', 10);
-        expect(result).toBe(false);
+      await service.acquireLock('test-key', 10);
+      const result = await service.extendLock('test-key', 'wrong-id', 10);
+      expect(result).toBe(false);
     });
   });
 });

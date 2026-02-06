@@ -66,11 +66,11 @@ class ClaudeDevTemplateRegistry {
   }
 
   static getTemplatesByCategory(category: string): ClaudeDevTemplate[] {
-    return Array.from(this.templates.values()).filter(t => t.category === category);
+    return Array.from(this.templates.values()).filter((t) => t.category === category);
   }
 
   static getTemplatesByTag(tag: string): ClaudeDevTemplate[] {
-    return Array.from(this.templates.values()).filter(t => t.tags.includes(tag));
+    return Array.from(this.templates.values()).filter((t) => t.tags.includes(tag));
   }
 }
 
@@ -78,7 +78,8 @@ class ClaudeDevTemplateRegistry {
 const SENIOR_CODE_REVIEWER_TEMPLATE: ClaudeDevTemplate = {
   id: 'senior-code-reviewer',
   name: 'Senior Code Reviewer',
-  description: 'Comprehensive code review with security analysis, performance optimization, and architectural insights',
+  description:
+    'Comprehensive code review with security analysis, performance optimization, and architectural insights',
   category: 'development',
   version: '1.0.0',
   author: 'The New Fuse Platform',
@@ -419,11 +420,14 @@ Create migration plan and setup tools.`,
 
 // Export templates registry and utility functions
 class ClaudeDevTemplateUtils {
-  static createAgentFromTemplate(templateId: string, customizations?: {
-    configuration?: Partial<ClaudeDevConfiguration>;
-    permissions?: Partial<ClaudeDevPermissions>;
-    metadata?: Record<string, any>;
-  }) {
+  static createAgentFromTemplate(
+    templateId: string,
+    customizations?: {
+      configuration?: Partial<ClaudeDevConfiguration>;
+      permissions?: Partial<ClaudeDevPermissions>;
+      metadata?: Record<string, any>;
+    }
+  ) {
     const template = ClaudeDevTemplateRegistry.getTemplate(templateId);
     if (!template) {
       throw new Error(`Template ${templateId} not found`);
@@ -449,26 +453,30 @@ class ClaudeDevTemplateUtils {
   }
 
   static getTemplatesByCapability(capability: string): ClaudeDevTemplate[] {
-    return ClaudeDevTemplateRegistry.getAllTemplates()
-      .filter(template => template.capabilities.includes(capability));
+    return ClaudeDevTemplateRegistry.getAllTemplates().filter((template) =>
+      template.capabilities.includes(capability)
+    );
   }
 
-  static getRecommendedTemplate(taskType: string, requirements: string[]): ClaudeDevTemplate | null {
+  static getRecommendedTemplate(
+    taskType: string,
+    requirements: string[]
+  ): ClaudeDevTemplate | null {
     const templates = ClaudeDevTemplateRegistry.getAllTemplates();
-    
+
     // Simple recommendation algorithm based on task type and requirements
     const scoreMap = new Map<string, number>();
-    
-    templates.forEach(template => {
+
+    templates.forEach((template) => {
       let score = 0;
-      
+
       // Score based on task type alignment
       if (template.tags.includes(taskType)) {
         score += 10;
       }
-      
+
       // Score based on capability matching
-      requirements.forEach(req => {
+      requirements.forEach((req) => {
         if (template.capabilities.includes(req)) {
           score += 5;
         }
@@ -476,21 +484,21 @@ class ClaudeDevTemplateUtils {
           score += 3;
         }
       });
-      
+
       scoreMap.set(template.id, score);
     });
-    
+
     // Return template with highest score
     let bestTemplate: ClaudeDevTemplate | null = null;
     let highestScore = 0;
-    
+
     scoreMap.forEach((score, templateId) => {
       if (score > highestScore) {
         highestScore = score;
         bestTemplate = ClaudeDevTemplateRegistry.getTemplate(templateId) || null;
       }
     });
-    
+
     return bestTemplate;
   }
 
@@ -511,19 +519,23 @@ class ClaudeDevTemplateUtils {
 ${template.description}
 
 ## Capabilities
-${template.capabilities.map(cap => `- ${cap}`).join('\n')}
+${template.capabilities.map((cap) => `- ${cap}`).join('\n')}
 
 ## Tags
-${template.tags.map(tag => `\`${tag}\``).join(', ')}
+${template.tags.map((tag) => `\`${tag}\``).join(', ')}
 
 ## Workflows
-${template.workflows.map(workflow => `
+${template.workflows
+  .map(
+    (workflow) => `
 ### ${workflow.name}
 ${workflow.description}
 
 **Steps:**
-${workflow.steps.map(step => `1. **${step.name}** (${step.type}): ${step.description}`).join('\n')}
-`).join('\n')}
+${workflow.steps.map((step) => `1. **${step.name}** (${step.type}): ${step.description}`).join('\n')}
+`
+  )
+  .join('\n')}
     `.trim();
   }
 }
@@ -536,6 +548,6 @@ ClaudeDevTemplateRegistry.registerTemplate(FULLSTACK_PROJECT_SETUP_TEMPLATE);
 export {
   ClaudeDevTemplateRegistry,
   ClaudeDevTemplateUtils,
-  SENIOR_CODE_REVIEWER_TEMPLATE,
   FULLSTACK_PROJECT_SETUP_TEMPLATE,
+  SENIOR_CODE_REVIEWER_TEMPLATE,
 };

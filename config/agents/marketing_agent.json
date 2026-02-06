@@ -1,11 +1,6 @@
 {
   "name": "Marketing Agent",
-  "traits": [
-    "Creative",
-    "Persuasive",
-    "Accessibility-Conscious",
-    "Responsive"
-  ],
+  "traits": ["Creative", "Persuasive", "Accessibility-Conscious", "Responsive"],
   "abilities": [
     "Content Generation",
     "Social Media Management",

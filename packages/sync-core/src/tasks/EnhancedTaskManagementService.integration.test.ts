@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { EnhancedTaskManagementService, EnhancedTaskData } from './EnhancedTaskManagementService';
-import { TaskSynchronizationService } from './TaskSynchronizationService';
+import { DatabaseService } from '@the-new-fuse/database';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { PrismaService } from '@the-new-fuse/database';
+import { EnhancedTaskData, EnhancedTaskManagementService } from './EnhancedTaskManagementService';
+import { TaskSynchronizationService } from './TaskSynchronizationService';
 
 describe('EnhancedTaskManagementService Integration', () => {
   let service: EnhancedTaskManagementService;
   let taskSyncService: jest.Mocked<TaskSynchronizationService>;
   let syncOrchestrator: jest.Mocked<SyncOrchestrator>;
-  let dbService: jest.Mocked<PrismaService>;
+  let dbService: jest.Mocked<DatabaseService>;
 
   beforeEach(async () => {
     // Create mocks
@@ -21,7 +21,7 @@ describe('EnhancedTaskManagementService Integration', () => {
       resolveTaskConflict: jest.fn(),
       getTaskSyncStatus: jest.fn(),
       onModuleInit: jest.fn(),
-      onModuleDestroy: jest.fn()
+      onModuleDestroy: jest.fn(),
     } as any;
 
     syncOrchestrator = {
@@ -29,7 +29,7 @@ describe('EnhancedTaskManagementService Integration', () => {
       syncGlobalData: jest.fn(),
       syncAgentState: jest.fn(),
       syncPromptTemplates: jest.fn(),
-      resolveConflict: jest.fn()
+      resolveConflict: jest.fn(),
     } as any;
 
     dbService = {
@@ -37,19 +37,19 @@ describe('EnhancedTaskManagementService Integration', () => {
         findMany: jest.fn(),
         findUnique: jest.fn(),
         create: jest.fn(),
-        update: jest.fn()
+        update: jest.fn(),
       },
       taskExecution: {
         create: jest.fn(),
-        update: jest.fn()
+        update: jest.fn(),
       },
       workflow: {
         findMany: jest.fn(),
-        findUnique: jest.fn()
+        findUnique: jest.fn(),
       },
       workflowStep: {
-        update: jest.fn()
-      }
+        update: jest.fn(),
+      },
     } as any;
 
     const module: TestingModule = await Test.createTestingModule({
@@ -57,17 +57,17 @@ describe('EnhancedTaskManagementService Integration', () => {
         EnhancedTaskManagementService,
         {
           provide: TaskSynchronizationService,
-          useValue: taskSyncService
+          useValue: taskSyncService,
         },
         {
           provide: SyncOrchestrator,
-          useValue: syncOrchestrator
+          useValue: syncOrchestrator,
         },
         {
-          provide: PrismaService,
-          useValue: dbService
-        }
-      ]
+          provide: DatabaseService,
+          useValue: dbService,
+        },
+      ],
     }).compile();
 
     service = module.get<EnhancedTaskManagementService>(EnhancedTaskManagementService);
@@ -88,14 +88,14 @@ describe('EnhancedTaskManagementService Integration', () => {
         pipelineId: 'pipeline1',
         userId: 'user1',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       const mockTaskExecution = {
         id: 'exec1',
         taskId: 'task1',
         status: 'RUNNING',
-        startedAt: new Date()
+        startedAt: new Date(),
       };
 
       dbService.task.create.mockResolvedValue(mockCreatedTask);
@@ -103,7 +103,7 @@ describe('EnhancedTaskManagementService Integration', () => {
       dbService.taskExecution.update.mockResolvedValue({
         ...mockTaskExecution,
         status: 'COMPLETED',
-        completedAt: new Date()
+        completedAt: new Date(),
       });
 
       // Step 1: Create task
@@ -115,7 +115,7 @@ describe('EnhancedTaskManagementService Integration', () => {
         userId: 'user1',
         dependencies: ['dep1'],
         estimatedDuration: 60000,
-        tags: ['integration', 'test']
+        tags: ['integration', 'test'],
       };
 
       const createdTask = await service.createTask(taskData, 'tenant1');
@@ -126,7 +126,7 @@ describe('EnhancedTaskManagementService Integration', () => {
         expect.objectContaining({
           id: 'task1',
           type: 'integration_test',
-          status: 'PENDING'
+          status: 'PENDING',
         }),
         'tenant1'
       );
@@ -137,14 +137,18 @@ describe('EnhancedTaskManagementService Integration', () => {
       );
 
       // Step 2: Execute task
-      const executionId = await service.executeTask('task1', {
-        timeout: 120000,
-        retryPolicy: {
-          maxRetries: 2,
-          backoffStrategy: 'exponential',
-          baseDelay: 2000
-        }
-      }, 'tenant1');
+      const executionId = await service.executeTask(
+        'task1',
+        {
+          timeout: 120000,
+          retryPolicy: {
+            maxRetries: 2,
+            backoffStrategy: 'exponential',
+            baseDelay: 2000,
+          },
+        },
+        'tenant1'
+      );
 
       expect(executionId).toBe('exec1');
       expect(dbService.taskExecution.create).toHaveBeenCalledWith({
@@ -152,8 +156,8 @@ describe('EnhancedTaskManagementService Integration', () => {
           id: expect.any(String),
           task: { connect: { id: 'task1' } },
           status: 'RUNNING',
-          startedAt: expect.any(Date)
-        }
+          startedAt: expect.any(Date),
+        },
       });
       expect(taskSyncService.syncTaskExecution).toHaveBeenCalled();
 
@@ -167,8 +171,8 @@ describe('EnhancedTaskManagementService Integration', () => {
           status: 'COMPLETED',
           output: JSON.stringify(result),
           error: undefined,
-          completedAt: expect.any(Date)
-        }
+          completedAt: expect.any(Date),
+        },
       });
 
       // Verify final sync calls
@@ -189,7 +193,7 @@ describe('EnhancedTaskManagementService Integration', () => {
         lastModified: new Date(),
         modifiedBy: 'user1',
         syncStatus: 'synced',
-        startTime: new Date()
+        startTime: new Date(),
       };
 
       // Mock service state
@@ -197,14 +201,14 @@ describe('EnhancedTaskManagementService Integration', () => {
       (service as any).executionContexts.set('exec1', {
         id: 'exec1',
         taskId: 'task1',
-        timeout: 60000
+        timeout: 60000,
       });
 
       dbService.taskExecution.update.mockResolvedValue({
         id: 'exec1',
         status: 'FAILED',
         error: 'Task execution failed',
-        completedAt: new Date()
+        completedAt: new Date(),
       });
 
       // Complete with error
@@ -216,7 +220,7 @@ describe('EnhancedTaskManagementService Integration', () => {
           id: 'task1',
           status: 'FAILED',
           error: 'Task execution failed',
-          progress: expect.any(Number)
+          progress: expect.any(Number),
         }),
         'tenant1'
       );
@@ -225,7 +229,7 @@ describe('EnhancedTaskManagementService Integration', () => {
         expect.objectContaining({
           id: 'exec1',
           status: 'FAILED',
-          error: 'Task execution failed'
+          error: 'Task execution failed',
         }),
         'tenant1'
       );
@@ -240,8 +244,8 @@ describe('EnhancedTaskManagementService Integration', () => {
         steps: [
           { id: 'step1', order: 1 },
           { id: 'step2', order: 2 },
-          { id: 'step3', order: 3 }
-        ]
+          { id: 'step3', order: 3 },
+        ],
       };
 
       dbService.workflow.findMany.mockResolvedValue([mockWorkflow]);
@@ -262,7 +266,7 @@ describe('EnhancedTaskManagementService Integration', () => {
         version: 1,
         lastModified: new Date(),
         modifiedBy: 'user1',
-        syncStatus: 'synced'
+        syncStatus: 'synced',
       };
 
       const task2: EnhancedTaskData = {
@@ -275,7 +279,7 @@ describe('EnhancedTaskManagementService Integration', () => {
         version: 1,
         lastModified: new Date(),
         modifiedBy: 'user1',
-        syncStatus: 'synced'
+        syncStatus: 'synced',
       };
 
       (service as any).taskCache.set('step1', task1);
@@ -292,16 +296,16 @@ describe('EnhancedTaskManagementService Integration', () => {
           statistics: {
             lastStatus: 'COMPLETED',
             lastExecution: expect.any(Date),
-            previousStatus: 'IN_PROGRESS'
-          }
-        }
+            previousStatus: 'IN_PROGRESS',
+          },
+        },
       });
 
       // Verify next task was triggered
       expect(taskSyncService.syncTaskData).toHaveBeenCalledWith(
         expect.objectContaining({
           id: 'step2',
-          status: 'PENDING' // Should remain pending but be marked as ready
+          status: 'PENDING', // Should remain pending but be marked as ready
         }),
         'tenant1'
       );
@@ -329,7 +333,7 @@ describe('EnhancedTaskManagementService Integration', () => {
         version: 1,
         lastModified: new Date(),
         modifiedBy: 'user1',
-        syncStatus: 'synced'
+        syncStatus: 'synced',
       };
 
       const task2: EnhancedTaskData = {
@@ -343,7 +347,7 @@ describe('EnhancedTaskManagementService Integration', () => {
         lastModified: new Date(),
         modifiedBy: 'user1',
         syncStatus: 'synced',
-        dependencies: ['task1']
+        dependencies: ['task1'],
       };
 
       (service as any).taskCache.set('task1', task1);
@@ -368,7 +372,7 @@ describe('EnhancedTaskManagementService Integration', () => {
         version: 1,
         lastModified: new Date(),
         modifiedBy: 'user1',
-        syncStatus: 'synced'
+        syncStatus: 'synced',
       };
 
       (service as any).taskCache.set('task1', task);
@@ -404,7 +408,7 @@ describe('EnhancedTaskManagementService Integration', () => {
         lastModified: new Date(),
         modifiedBy: 'user1',
         syncStatus: 'synced',
-        progress: 0
+        progress: 0,
       };
 
       (service as any).taskCache.set('task1', task);
@@ -418,8 +422,8 @@ describe('EnhancedTaskManagementService Integration', () => {
           progress: 50,
           metadata: expect.objectContaining({
             checkpoint: 'halfway',
-            lastProgressUpdate: expect.any(Date)
-          })
+            lastProgressUpdate: expect.any(Date),
+          }),
         }),
         'tenant1'
       );
@@ -437,7 +441,7 @@ describe('EnhancedTaskManagementService Integration', () => {
         lastModified: new Date(),
         modifiedBy: 'user1',
         syncStatus: 'synced',
-        progress: 50
+        progress: 50,
       };
 
       (service as any).taskCache.set('task1', task);
@@ -467,10 +471,12 @@ describe('EnhancedTaskManagementService Integration', () => {
         status: 'PENDING',
         priority: 'LOW',
         pipelineId: 'pipeline1',
-        userId: 'user1'
+        userId: 'user1',
       };
 
-      await expect(service.createTask(taskData, 'tenant1')).rejects.toThrow('Database connection failed');
+      await expect(service.createTask(taskData, 'tenant1')).rejects.toThrow(
+        'Database connection failed'
+      );
     });
 
     it('should handle sync service errors gracefully', async () => {
@@ -486,7 +492,7 @@ describe('EnhancedTaskManagementService Integration', () => {
         version: 1,
         lastModified: new Date(),
         modifiedBy: 'user1',
-        syncStatus: 'synced'
+        syncStatus: 'synced',
       };
 
       (service as any).taskCache.set('task1', task);
@@ -511,7 +517,7 @@ describe('EnhancedTaskManagementService Integration', () => {
           version: 1,
           lastModified: new Date(),
           modifiedBy: 'user1',
-          syncStatus: 'synced'
+          syncStatus: 'synced',
         },
         {
           id: 'task2',
@@ -523,11 +529,11 @@ describe('EnhancedTaskManagementService Integration', () => {
           version: 1,
           lastModified: new Date(),
           modifiedBy: 'user1',
-          syncStatus: 'pending'
-        }
+          syncStatus: 'pending',
+        },
       ];
 
-      tasks.forEach(task => (service as any).taskCache.set(task.id, task));
+      tasks.forEach((task) => (service as any).taskCache.set(task.id, task));
 
       const metrics = await service.getTaskSyncMetrics();
 
@@ -538,8 +544,8 @@ describe('EnhancedTaskManagementService Integration', () => {
         syncStatuses: {
           synced: 1,
           pending: 1,
-          conflict: 0
-        }
+          conflict: 0,
+        },
       });
     });
   });

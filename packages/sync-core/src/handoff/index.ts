@@ -1,31 +1,28 @@
 /**
  * Prompt Handoff Flywheel System
- * 
+ *
  * Exports all components of the prompt handoff flywheel system that integrates
  * with existing template and orchestration systems.
  */
 
-export * from './PromptHandoffFlywheel';
 export * from './EnhancedAgentHandoffTemplateService';
+export * from './PromptHandoffFlywheel';
 export * from './PromptTemplateIntegration';
 
 // Re-export key types for convenience
 export type {
+  AgentCapability,
   HandoffContext,
   HandoffExecution,
-  HandoffTemplate,
   HandoffQueue,
-  AgentCapability
+  HandoffTemplate,
 } from './PromptHandoffFlywheel';
 
 export type {
   EnhancedHandoffTemplate,
-  TemplateVersion,
+  HandoffSession,
   TemplateAnalytics,
-  HandoffSession
+  TemplateVersion,
 } from './EnhancedAgentHandoffTemplateService';
 
-export type {
-  IntegratedTemplate,
-  TemplateExecutionResult
-} from './PromptTemplateIntegration';
+export type { IntegratedTemplate, TemplateExecutionResult } from './PromptTemplateIntegration';

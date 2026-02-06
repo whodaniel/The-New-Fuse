@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Task, TaskPriority, TaskStatus, TaskDependency } from '../core/types';
+import { Task, TaskDependency, TaskStatus } from '../core/types';
 
 /**
  * Decomposition strategy
@@ -269,11 +269,7 @@ export class TaskDecomposer {
   /**
    * Dynamic decomposition based on data size
    */
-  decomposeByDataSize(
-    task: Task,
-    dataSize: number,
-    chunkSize: number
-  ): Task[] {
+  decomposeByDataSize(task: Task, dataSize: number, chunkSize: number): Task[] {
     const chunks = Math.ceil(dataSize / chunkSize);
     const tasks: Task[] = [];
 

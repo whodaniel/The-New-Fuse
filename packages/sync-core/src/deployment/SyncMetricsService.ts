@@ -4,8 +4,8 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { EventEmitter } from 'events';
 import { IMetricsCollector } from '@the-new-fuse/core-monitoring';
+import { EventEmitter } from 'events';
 
 export interface SyncMetrics {
   // Operation metrics
@@ -18,7 +18,7 @@ export interface SyncMetrics {
     p95Duration: number;
     p99Duration: number;
   };
-  
+
   // Queue metrics
   queue: {
     size: number;
@@ -26,7 +26,7 @@ export interface SyncMetrics {
     throughput: number;
     backlog: number;
   };
-  
+
   // Conflict metrics
   conflicts: {
     total: number;
@@ -35,7 +35,7 @@ export interface SyncMetrics {
     rate: number;
     avgResolutionTime: number;
   };
-  
+
   // File watcher metrics
   fileWatcher: {
     watchedPaths: number;
@@ -43,7 +43,7 @@ export interface SyncMetrics {
     errorRate: number;
     batchSize: number;
   };
-  
+
   // Master clock metrics
   masterClock: {
     drift: number;
@@ -51,7 +51,7 @@ export interface SyncMetrics {
     lastSync: Date;
     instances: number;
   };
-  
+
   // Performance metrics
   performance: {
     memoryUsage: number;
@@ -59,7 +59,7 @@ export interface SyncMetrics {
     cacheHitRate: number;
     cacheSize: number;
   };
-  
+
   // Database metrics
   database: {
     activeConnections: number;
@@ -67,7 +67,7 @@ export interface SyncMetrics {
     errorRate: number;
     transactionRate: number;
   };
-  
+
   // Redis metrics
   redis: {
     activeConnections: number;
@@ -168,7 +168,7 @@ export class SyncMetricsService extends EventEmitter implements IMetricsCollecto
 
     this.isRunning = true;
     const interval = parseInt(process.env.SYNC_METRICS_INTERVAL || '10000');
-    
+
     this.metricsInterval = setInterval(async () => {
       try {
         await this.collectMetrics();
@@ -190,7 +190,7 @@ export class SyncMetricsService extends EventEmitter implements IMetricsCollecto
     }
 
     this.isRunning = false;
-    
+
     if (this.metricsInterval) {
       clearInterval(this.metricsInterval);
       this.metricsInterval = undefined;
@@ -204,34 +204,34 @@ export class SyncMetricsService extends EventEmitter implements IMetricsCollecto
    */
   private async collectMetrics(): Promise<void> {
     const timestamp = new Date();
-    
+
     // Collect metrics from various sources
     // Note: In a real implementation, these would call actual service methods
-    
+
     // Update operations metrics
     this.updateOperationMetrics();
-    
+
     // Update queue metrics
     this.updateQueueMetrics();
-    
+
     // Update conflict metrics
     this.updateConflictMetrics();
-    
+
     // Update file watcher metrics
     this.updateFileWatcherMetrics();
-    
+
     // Update master clock metrics
     this.updateMasterClockMetrics();
-    
+
     // Update performance metrics
     this.updatePerformanceMetrics();
-    
+
     // Update database metrics
     this.updateDatabaseMetrics();
-    
+
     // Update Redis metrics
     this.updateRedisMetrics();
-    
+
     // Add to history
     this.addToHistory(timestamp, { ...this.metrics });
   }
@@ -311,7 +311,7 @@ export class SyncMetricsService extends EventEmitter implements IMetricsCollecto
    */
   getMetricsHistory(hours: number): Array<{ timestamp: Date; metrics: SyncMetrics }> {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
-    return this.metricsHistory.filter(entry => entry.timestamp >= cutoff);
+    return this.metricsHistory.filter((entry) => entry.timestamp >= cutoff);
   }
 
   /**
@@ -320,7 +320,7 @@ export class SyncMetricsService extends EventEmitter implements IMetricsCollecto
   getMetric(name: string): any {
     const parts = name.split('.');
     let current: any = this.metrics;
-    
+
     for (const part of parts) {
       if (current && typeof current === 'object' && part in current) {
         current = current[part];
@@ -328,7 +328,7 @@ export class SyncMetricsService extends EventEmitter implements IMetricsCollecto
         return null;
       }
     }
-    
+
     return current;
   }
 
@@ -337,57 +337,57 @@ export class SyncMetricsService extends EventEmitter implements IMetricsCollecto
    */
   async getPrometheusMetrics(): Promise<string> {
     const lines: string[] = [];
-    
+
     // Operations metrics
     lines.push(`# HELP sync_operations_total Total number of sync operations`);
     lines.push(`# TYPE sync_operations_total counter`);
     lines.push(`sync_operations_total ${this.metrics.operations.total}`);
-    
+
     lines.push(`# HELP sync_operations_successful Number of successful sync operations`);
     lines.push(`# TYPE sync_operations_successful counter`);
     lines.push(`sync_operations_successful ${this.metrics.operations.successful}`);
-    
+
     lines.push(`# HELP sync_operations_failed Number of failed sync operations`);
     lines.push(`# TYPE sync_operations_failed counter`);
     lines.push(`sync_operations_failed ${this.metrics.operations.failed}`);
-    
+
     // Queue metrics
     lines.push(`# HELP sync_queue_size Current sync queue size`);
     lines.push(`# TYPE sync_queue_size gauge`);
     lines.push(`sync_queue_size ${this.metrics.queue.size}`);
-    
+
     // Conflict metrics
     lines.push(`# HELP sync_conflicts_total Total number of sync conflicts`);
     lines.push(`# TYPE sync_conflicts_total counter`);
     lines.push(`sync_conflicts_total ${this.metrics.conflicts.total}`);
-    
+
     lines.push(`# HELP sync_unresolved_conflicts Number of unresolved conflicts`);
     lines.push(`# TYPE sync_unresolved_conflicts gauge`);
     lines.push(`sync_unresolved_conflicts ${this.metrics.conflicts.unresolved}`);
-    
+
     // File watcher metrics
     lines.push(`# HELP file_watcher_events_per_second File watcher events per second`);
     lines.push(`# TYPE file_watcher_events_per_second gauge`);
     lines.push(`file_watcher_events_per_second ${this.metrics.fileWatcher.eventsPerSecond}`);
-    
+
     lines.push(`# HELP file_watcher_watched_paths Number of watched paths`);
     lines.push(`# TYPE file_watcher_watched_paths gauge`);
     lines.push(`file_watcher_watched_paths ${this.metrics.fileWatcher.watchedPaths}`);
-    
+
     // Master clock metrics
     lines.push(`# HELP master_clock_drift_ms Master clock drift in milliseconds`);
     lines.push(`# TYPE master_clock_drift_ms gauge`);
     lines.push(`master_clock_drift_ms ${this.metrics.masterClock.drift}`);
-    
+
     // Performance metrics
     lines.push(`# HELP sync_memory_usage_ratio Memory usage ratio (0-1)`);
     lines.push(`# TYPE sync_memory_usage_ratio gauge`);
     lines.push(`sync_memory_usage_ratio ${this.metrics.performance.memoryUsage}`);
-    
+
     lines.push(`# HELP sync_cpu_usage_ratio CPU usage ratio (0-1)`);
     lines.push(`# TYPE sync_cpu_usage_ratio gauge`);
     lines.push(`sync_cpu_usage_ratio ${this.metrics.performance.cpuUsage}`);
-    
+
     return lines.join('\n') + '\n';
   }
 
@@ -421,20 +421,24 @@ export class SyncMetricsService extends EventEmitter implements IMetricsCollecto
     if (this.metrics.queue.size > this.metrics.queue.maxSize) {
       this.metrics.queue.maxSize = this.metrics.queue.size;
     }
-    
+
     // Calculate throughput
     this.metrics.queue.throughput = this.metrics.operations.rate;
-    
+
     // Calculate backlog (simplified)
-    this.metrics.queue.backlog = Math.max(0, this.metrics.queue.size - this.metrics.queue.throughput);
+    this.metrics.queue.backlog = Math.max(
+      0,
+      this.metrics.queue.size - this.metrics.queue.throughput
+    );
   }
 
   /**
    * Update conflict metrics
    */
   private updateConflictMetrics(): void {
-    this.metrics.conflicts.unresolved = this.metrics.conflicts.total - this.metrics.conflicts.resolved;
-    
+    this.metrics.conflicts.unresolved =
+      this.metrics.conflicts.total - this.metrics.conflicts.resolved;
+
     // Calculate conflict rate
     const recentHistory = this.getMetricsHistory(0.25);
     if (recentHistory.length > 1) {
@@ -469,7 +473,7 @@ export class SyncMetricsService extends EventEmitter implements IMetricsCollecto
     // Get system metrics
     const memUsage = process.memoryUsage();
     this.metrics.performance.memoryUsage = memUsage.heapUsed / memUsage.heapTotal;
-    
+
     // CPU usage would require additional monitoring
     // For now, we'll use a placeholder
   }
@@ -495,7 +499,7 @@ export class SyncMetricsService extends EventEmitter implements IMetricsCollecto
    */
   private addToHistory(timestamp: Date, metrics: SyncMetrics): void {
     this.metricsHistory.push({ timestamp, metrics });
-    
+
     if (this.metricsHistory.length > this.maxHistorySize) {
       this.metricsHistory.shift();
     }

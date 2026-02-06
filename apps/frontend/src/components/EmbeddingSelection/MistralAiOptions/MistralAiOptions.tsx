@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { MistralAiEmbeddingSettings, COMMON_STYLES } from "@/types/embedding";
+import { COMMON_STYLES, MistralAiEmbeddingSettings } from '@/types/embedding';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 
 interface MistralAiOptionsProps {
   settings: MistralAiEmbeddingSettings;

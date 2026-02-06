@@ -3,9 +3,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { ResourceManager, AccessContext } from './ResourceManager';
+import { MCPResource, ResourceContent, ResourceHandler } from '../interfaces/IMCPResource';
 import { DatabaseResourceHandler } from './ResourceHandler';
-import { MCPResource, ResourceHandler, ResourceContent } from '../interfaces/IMCPResource';
+import { AccessContext, ResourceManager } from './ResourceManager';
 
 // Mock resource handler for integration testing
 class MockIntegrationResourceHandler implements ResourceHandler {
@@ -31,9 +31,9 @@ class MockIntegrationResourceHandler implements ResourceHandler {
     const url = new URL(uri);
     // For mock:// scheme, use hostname as filename
     const filename = url.hostname;
-    
+
     const content = this.content.get(filename);
-    
+
     if (!content) {
       throw new Error(`File not found: ${filename}`);
     }
@@ -44,7 +44,7 @@ class MockIntegrationResourceHandler implements ResourceHandler {
       content,
       size: Buffer.byteLength(content, 'utf8'),
       lastModified: new Date(),
-      encoding: 'utf8'
+      encoding: 'utf8',
     };
   }
 
@@ -80,8 +80,8 @@ describe('ResourceManager Integration Tests', () => {
         permissions: {
           read: true,
           write: false,
-          subscribe: false
-        }
+          subscribe: false,
+        },
       });
 
       manager.registerResource({
@@ -94,8 +94,8 @@ describe('ResourceManager Integration Tests', () => {
           read: true,
           write: false,
           subscribe: false,
-          requiredRoles: ['user']
-        }
+          requiredRoles: ['user'],
+        },
       });
 
       manager.registerResource({
@@ -108,8 +108,8 @@ describe('ResourceManager Integration Tests', () => {
           read: true,
           write: true,
           subscribe: false,
-          requiredRoles: ['admin']
-        }
+          requiredRoles: ['admin'],
+        },
       });
 
       manager.registerResource({
@@ -126,20 +126,20 @@ describe('ResourceManager Integration Tests', () => {
             {
               principal: 'user123',
               permissions: ['read'],
-              type: 'allow'
+              type: 'allow',
             },
             {
               principal: 'role:admin',
               permissions: ['*'],
-              type: 'allow'
+              type: 'allow',
             },
             {
               principal: '*',
               permissions: ['read'],
-              type: 'deny'
-            }
-          ]
-        }
+              type: 'deny',
+            },
+          ],
+        },
       });
     });
 
@@ -148,7 +148,7 @@ describe('ResourceManager Integration Tests', () => {
       const guestContext: AccessContext = {
         principal: 'guest123',
         roles: ['guest'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       const guestResources = await manager.discoverResources({}, guestContext);
@@ -159,38 +159,38 @@ describe('ResourceManager Integration Tests', () => {
       const userContext: AccessContext = {
         principal: 'user123',
         roles: ['user'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       const userResources = await manager.discoverResources({}, userContext);
       expect(userResources).toHaveLength(3); // public, private, and ACL-allowed profile
-      expect(userResources.map(r => r.name)).toContain('Private File');
-      expect(userResources.map(r => r.name)).toContain('User Profile');
+      expect(userResources.map((r) => r.name)).toContain('Private File');
+      expect(userResources.map((r) => r.name)).toContain('User Profile');
 
       // Admin user - should see all resources
       const adminContext: AccessContext = {
         principal: 'admin123',
         roles: ['admin', 'user'], // Admin should have user role too
-        permissions: ['read', 'write']
+        permissions: ['read', 'write'],
       };
 
       const adminResources = await manager.discoverResources({}, adminContext);
 
       expect(adminResources).toHaveLength(4); // All resources (public, private, admin, db profile)
-      expect(adminResources.map(r => r.name)).toContain('Admin Config');
+      expect(adminResources.map((r) => r.name)).toContain('Admin Config');
     });
 
     it('should enforce access control during resource reading', async () => {
       const userContext: AccessContext = {
         principal: 'user123',
         roles: ['user'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       const guestContext: AccessContext = {
         principal: 'guest123',
         roles: ['guest'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       // User should be able to read private file
@@ -198,37 +198,37 @@ describe('ResourceManager Integration Tests', () => {
       expect(privateContent.content).toBe('Private content');
 
       // Guest should not be able to read private file
-      await expect(
-        manager.readResource('mock://private.txt', guestContext)
-      ).rejects.toThrow('Access denied');
+      await expect(manager.readResource('mock://private.txt', guestContext)).rejects.toThrow(
+        'Access denied'
+      );
 
       // Neither should be able to read admin file
-      await expect(
-        manager.readResource('mock://admin.json', userContext)
-      ).rejects.toThrow('Access denied');
+      await expect(manager.readResource('mock://admin.json', userContext)).rejects.toThrow(
+        'Access denied'
+      );
 
-      await expect(
-        manager.readResource('mock://admin.json', guestContext)
-      ).rejects.toThrow('Access denied');
+      await expect(manager.readResource('mock://admin.json', guestContext)).rejects.toThrow(
+        'Access denied'
+      );
     });
 
     it('should handle ACL-based access control correctly', async () => {
       const user123Context: AccessContext = {
         principal: 'user123',
         roles: ['user'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       const user456Context: AccessContext = {
         principal: 'user456',
         roles: ['user'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       const adminContext: AccessContext = {
         principal: 'admin123',
         roles: ['admin'],
-        permissions: ['read', 'write']
+        permissions: ['read', 'write'],
       };
 
       // user123 should have access (explicit allow in ACL)
@@ -236,9 +236,9 @@ describe('ResourceManager Integration Tests', () => {
       expect(profileContent.content).toContain('Sample database content');
 
       // user456 should be denied (wildcard deny in ACL)
-      await expect(
-        manager.readResource('db://users/profile', user456Context)
-      ).rejects.toThrow('Access denied');
+      await expect(manager.readResource('db://users/profile', user456Context)).rejects.toThrow(
+        'Access denied'
+      );
 
       // admin should have access (role-based allow in ACL)
       const adminProfileContent = await manager.readResource('db://users/profile', adminContext);
@@ -254,12 +254,12 @@ describe('ResourceManager Integration Tests', () => {
         handler: mockHandler,
         permissions: {
           read: true,
-          requiredRoles: ['user']
+          requiredRoles: ['user'],
         },
         caching: {
           enabled: true,
-          ttl: 60 // 1 minute
-        }
+          ttl: 60, // 1 minute
+        },
       });
     });
 
@@ -267,13 +267,13 @@ describe('ResourceManager Integration Tests', () => {
       const user1Context: AccessContext = {
         principal: 'user1',
         roles: ['user'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       const user2Context: AccessContext = {
         principal: 'user2',
         roles: ['user'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       // Set initial content in mock handler
@@ -299,13 +299,13 @@ describe('ResourceManager Integration Tests', () => {
       const guestContext: AccessContext = {
         principal: 'guest',
         roles: ['guest'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       // Guest should not be able to access the resource at all
-      await expect(
-        manager.readResource('mock://cached.txt', guestContext)
-      ).rejects.toThrow('Access denied');
+      await expect(manager.readResource('mock://cached.txt', guestContext)).rejects.toThrow(
+        'Access denied'
+      );
 
       // Cache should remain empty
       const cacheStats = manager.getCacheStatistics();
@@ -321,7 +321,7 @@ describe('ResourceManager Integration Tests', () => {
         name: 'January Logs',
         handler: mockHandler,
         metadata: { type: 'log', month: 'january', year: 2024 },
-        permissions: { read: true, requiredRoles: ['user'] }
+        permissions: { read: true, requiredRoles: ['user'] },
       });
 
       manager.registerResource({
@@ -329,7 +329,7 @@ describe('ResourceManager Integration Tests', () => {
         name: 'February Logs',
         handler: mockHandler,
         metadata: { type: 'log', month: 'february', year: 2024 },
-        permissions: { read: true, requiredRoles: ['user'] }
+        permissions: { read: true, requiredRoles: ['user'] },
       });
 
       manager.registerResource({
@@ -337,7 +337,7 @@ describe('ResourceManager Integration Tests', () => {
         name: 'Production Config',
         handler: mockHandler,
         metadata: { type: 'config', environment: 'production' },
-        permissions: { read: true, requiredRoles: ['admin'] }
+        permissions: { read: true, requiredRoles: ['admin'] },
       });
 
       manager.registerResource({
@@ -345,7 +345,7 @@ describe('ResourceManager Integration Tests', () => {
         name: 'Secret Key',
         handler: mockHandler,
         metadata: { type: 'secret', classification: 'confidential' },
-        permissions: { read: true, requiredRoles: ['admin'] }
+        permissions: { read: true, requiredRoles: ['admin'] },
       });
     });
 
@@ -353,26 +353,35 @@ describe('ResourceManager Integration Tests', () => {
       const userContext: AccessContext = {
         principal: 'user123',
         roles: ['user'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       // Find all log files
-      const logResources = await manager.discoverResources({
-        metadata: { type: 'log' }
-      }, userContext);
+      const logResources = await manager.discoverResources(
+        {
+          metadata: { type: 'log' },
+        },
+        userContext
+      );
       expect(logResources).toHaveLength(2);
-      expect(logResources.every(r => r.metadata?.type === 'log')).toBe(true);
+      expect(logResources.every((r) => r.metadata?.type === 'log')).toBe(true);
 
       // Find resources from 2024
-      const yearResources = await manager.discoverResources({
-        metadata: { year: 2024 }
-      }, userContext);
+      const yearResources = await manager.discoverResources(
+        {
+          metadata: { year: 2024 },
+        },
+        userContext
+      );
       expect(yearResources).toHaveLength(2);
 
       // Find January logs specifically
-      const januaryResources = await manager.discoverResources({
-        metadata: { type: 'log', month: 'january' }
-      }, userContext);
+      const januaryResources = await manager.discoverResources(
+        {
+          metadata: { type: 'log', month: 'january' },
+        },
+        userContext
+      );
       expect(januaryResources).toHaveLength(1);
       expect(januaryResources[0].name).toBe('January Logs');
     });
@@ -381,61 +390,76 @@ describe('ResourceManager Integration Tests', () => {
       const adminContext: AccessContext = {
         principal: 'admin123',
         roles: ['admin', 'user'], // Admin should have user role too
-        permissions: ['read', 'write']
+        permissions: ['read', 'write'],
       };
 
       // Find all resources with URIs containing "2024" and type "log"
-      const filteredResources = await manager.discoverResources({
-        uriPattern: '*2024*',
-        metadata: { type: 'log' }
-      }, adminContext);
+      const filteredResources = await manager.discoverResources(
+        {
+          uriPattern: '*2024*',
+          metadata: { type: 'log' },
+        },
+        adminContext
+      );
 
       expect(filteredResources).toHaveLength(2);
-      expect(filteredResources.every(r => r.uri.includes('2024'))).toBe(true);
-      expect(filteredResources.every(r => r.metadata?.type === 'log')).toBe(true);
+      expect(filteredResources.every((r) => r.uri.includes('2024'))).toBe(true);
+      expect(filteredResources.every((r) => r.metadata?.type === 'log')).toBe(true);
     });
 
     it('should handle pagination with access control', async () => {
       const userContext: AccessContext = {
         principal: 'user123',
         roles: ['user'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       const adminContext: AccessContext = {
         principal: 'admin123',
         roles: ['admin', 'user'], // Admin should have user role too
-        permissions: ['read', 'write']
+        permissions: ['read', 'write'],
       };
 
       // User should see 2 resources (logs only)
-      const userPage1 = await manager.discoverResources({
-        limit: 1,
-        offset: 0,
-        sortBy: 'name'
-      }, userContext);
+      const userPage1 = await manager.discoverResources(
+        {
+          limit: 1,
+          offset: 0,
+          sortBy: 'name',
+        },
+        userContext
+      );
       expect(userPage1).toHaveLength(1);
 
-      const userPage2 = await manager.discoverResources({
-        limit: 1,
-        offset: 1,
-        sortBy: 'name'
-      }, userContext);
+      const userPage2 = await manager.discoverResources(
+        {
+          limit: 1,
+          offset: 1,
+          sortBy: 'name',
+        },
+        userContext
+      );
       expect(userPage2).toHaveLength(1);
 
       // Admin should see all 4 resources
-      const adminPage1 = await manager.discoverResources({
-        limit: 2,
-        offset: 0,
-        sortBy: 'name'
-      }, adminContext);
+      const adminPage1 = await manager.discoverResources(
+        {
+          limit: 2,
+          offset: 0,
+          sortBy: 'name',
+        },
+        adminContext
+      );
       expect(adminPage1).toHaveLength(2);
 
-      const adminPage2 = await manager.discoverResources({
-        limit: 2,
-        offset: 2,
-        sortBy: 'name'
-      }, adminContext);
+      const adminPage2 = await manager.discoverResources(
+        {
+          limit: 2,
+          offset: 2,
+          sortBy: 'name',
+        },
+        adminContext
+      );
       expect(adminPage2).toHaveLength(2);
     });
   });
@@ -446,14 +470,14 @@ describe('ResourceManager Integration Tests', () => {
         uri: 'mock://monitored.txt',
         name: 'Monitored File',
         handler: mockHandler,
-        permissions: { read: true }
+        permissions: { read: true },
       });
 
       manager.registerResource({
         uri: 'mock://restricted.txt',
         name: 'Restricted File',
         handler: mockHandler,
-        permissions: { read: true, requiredRoles: ['admin'] }
+        permissions: { read: true, requiredRoles: ['admin'] },
       });
     });
 
@@ -461,19 +485,19 @@ describe('ResourceManager Integration Tests', () => {
       const user1Context: AccessContext = {
         principal: 'user1',
         roles: ['user'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       const user2Context: AccessContext = {
         principal: 'user2',
         roles: ['user'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       const adminContext: AccessContext = {
         principal: 'admin',
         roles: ['admin'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       // Multiple successful accesses
@@ -524,8 +548,8 @@ describe('ResourceManager Integration Tests', () => {
         permissions: { read: true },
         caching: {
           enabled: true,
-          ttl: 30
-        }
+          ttl: 30,
+        },
       });
     });
 
@@ -533,7 +557,7 @@ describe('ResourceManager Integration Tests', () => {
       const userContext: AccessContext = {
         principal: 'user123',
         roles: ['user'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       // First read - should be slower (from disk)
@@ -561,7 +585,7 @@ describe('ResourceManager Integration Tests', () => {
       const userContext: AccessContext = {
         principal: 'user123',
         roles: ['user'],
-        permissions: ['read']
+        permissions: ['read'],
       };
 
       // Register resource with very short TTL
@@ -572,8 +596,8 @@ describe('ResourceManager Integration Tests', () => {
         permissions: { read: true },
         caching: {
           enabled: true,
-          ttl: 0.1 // 100ms
-        }
+          ttl: 0.1, // 100ms
+        },
       });
 
       // First read
@@ -581,7 +605,7 @@ describe('ResourceManager Integration Tests', () => {
       expect(content1.content).toBe('Original');
 
       // Wait for cache to expire
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
 
       // Modify content in mock handler
       mockHandler.updateContent('short-ttl.txt', 'Modified');

@@ -3,7 +3,7 @@
  */
 
 export interface ModelCost {
-  input: number;  // Cost per 1K tokens for input
+  input: number; // Cost per 1K tokens for input
   output: number; // Cost per 1K tokens for output
 }
 

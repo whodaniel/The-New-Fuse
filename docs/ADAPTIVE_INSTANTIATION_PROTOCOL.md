@@ -681,7 +681,7 @@ Service_Instantiation:
   Discovery_Phase:
     - Identify framework: NestJS
     - Scan modules, controllers, services
-    - Check database models (TypeORM/Prisma)
+    - Check database models (TypeORM/Drizzle)
     - Analyze API routes
 
   Property_Provisioning:

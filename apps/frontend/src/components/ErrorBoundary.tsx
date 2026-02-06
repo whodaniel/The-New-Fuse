@@ -1,34 +1,34 @@
 /**
  * Error Boundary Component
- * 
+ *
  * @description
  * Catches JavaScript errors in component tree, logs them to error reporting service,
  * and displays a fallback UI instead of crashing the entire React application.
- * 
+ *
  * This component provides comprehensive error handling with:
  * - Automatic error recovery
  * - Detailed error logging
  * - Customizable fallback UI
  * - Error reporting integration
  * - DevTools support for debugging
- * 
+ *
  * @example
  * ```tsx
  * <ErrorBoundary fallback={CustomErrorFallback}>
  *   <MyComponent />
  * </ErrorBoundary>
  * ```
- * 
+ *
  * @since 1.0.0
  * @author Frontend Team
  * @see {@link https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary}
  */
 
+import { AlertCircle, Bug, Home, RefreshCw } from 'lucide-react';
 import React, { Component, ErrorInfo, ReactNode, isValidElement } from 'react';
 import { reportError } from '../services/error-tracking.service';
 import { logger } from '../utils/logger';
 import { Button } from './ui/Button';
-import { AlertCircle, RefreshCw, Home, Bug } from 'lucide-react';
 
 // ============================================================================
 // Types and Interfaces
@@ -37,23 +37,23 @@ import { AlertCircle, RefreshCw, Home, Bug } from 'lucide-react';
 export interface ErrorBoundaryProps {
   /** Child components to wrap with error boundary */
   children: ReactNode;
-  
+
   /** Custom fallback component to display on error */
   fallback?: React.ComponentType<ErrorFallbackProps>;
-  
+
   /** Error reporting service configuration */
   errorReporting?: {
     enabled: boolean;
     level?: 'error' | 'warning' | 'info';
     context?: Record<string, any>;
   };
-  
+
   /** Enable detailed error information for development */
   showDetails?: boolean;
-  
+
   /** CSS class name for styling */
   className?: string;
-  
+
   /** Additional props passed to fallback component */
   fallbackProps?: Record<string, any>;
 }
@@ -61,16 +61,16 @@ export interface ErrorBoundaryProps {
 export interface ErrorBoundaryState {
   /** Whether an error has occurred */
   hasError: boolean;
-  
+
   /** The error that was caught */
   error?: Error;
-  
+
   /** Additional error information */
   errorInfo?: ErrorInfo;
-  
+
   /** Error timestamp for tracking */
   errorTime?: Date;
-  
+
   /** Error ID for tracking in logs */
   errorId?: string;
 }
@@ -78,19 +78,19 @@ export interface ErrorBoundaryState {
 export interface ErrorFallbackProps {
   /** The error that was caught */
   error: Error;
-  
+
   /** Additional error information */
   errorInfo?: ErrorInfo;
-  
+
   /** Function to reset error state and retry */
   resetError: () => void;
-  
+
   /** Function to navigate to home page */
   goHome: () => void;
-  
+
   /** Function to report error for debugging */
   reportError: () => void;
-  
+
   /** Additional props passed from parent */
   [key: string]: any;
 }
@@ -134,7 +134,7 @@ export const DefaultErrorFallback: React.FC<ErrorFallbackProps> = ({
         <div className="error-fallback__icon">
           <AlertCircle size={48} color="var(--color-error)" />
         </div>
-        
+
         <div className="error-fallback__header">
           <h1 className="error-fallback__title">Oops! Something went wrong</h1>
           <p className="error-fallback__subtitle">
@@ -143,24 +143,16 @@ export const DefaultErrorFallback: React.FC<ErrorFallbackProps> = ({
         </div>
 
         <div className="error-fallback__actions">
-          <Button
-            variant="primary"
-            onClick={resetError}
-            className="error-fallback__action"
-          >
+          <Button variant="primary" onClick={resetError} className="error-fallback__action">
             <RefreshCw size={16} />
             Try Again
           </Button>
-          
-          <Button
-            variant="secondary"
-            onClick={goHome}
-            className="error-fallback__action"
-          >
+
+          <Button variant="secondary" onClick={goHome} className="error-fallback__action">
             <Home size={16} />
             Go Home
           </Button>
-          
+
           <Button
             variant="tertiary"
             onClick={handleReportError}
@@ -174,27 +166,24 @@ export const DefaultErrorFallback: React.FC<ErrorFallbackProps> = ({
 
         {showDetails && process.env.NODE_ENV === 'development' && (
           <div className="error-fallback__details">
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="error-fallback__toggle"
-            >
+            <button onClick={() => setIsExpanded(!isExpanded)} className="error-fallback__toggle">
               {isExpanded ? 'Hide' : 'Show'} Error Details
             </button>
-            
+
             {isExpanded && (
               <div className="error-fallback__stack">
                 <div className="error-fallback__error">
                   <h3>Error Message:</h3>
                   <pre>{error.message}</pre>
                 </div>
-                
+
                 {error.stack && (
                   <div className="error-fallback__stack-trace">
                     <h3>Stack Trace:</h3>
                     <pre>{error.stack}</pre>
                   </div>
                 )}
-                
+
                 {errorInfo?.componentStack && (
                   <div className="error-fallback__component-stack">
                     <h3>Component Stack:</h3>
@@ -216,11 +205,11 @@ export const DefaultErrorFallback: React.FC<ErrorFallbackProps> = ({
 
 /**
  * Comprehensive error boundary for React components
- * 
+ *
  * @description
  * Provides robust error handling for React component trees with automatic
  * error reporting, customizable fallbacks, and development tooling support.
- * 
+ *
  * @features
  * - Automatic error catching and handling
  * - Error reporting integration
@@ -228,16 +217,16 @@ export const DefaultErrorFallback: React.FC<ErrorFallbackProps> = ({
  * - Error recovery mechanisms
  * - Development debugging support
  * - Accessibility considerations
- * 
+ *
  * @example
  * ```tsx
  * // Basic usage
  * <ErrorBoundary>
  *   <MyComponent />
  * </ErrorBoundary>
- * 
+ *
  * // With custom fallback
- * <ErrorBoundary 
+ * <ErrorBoundary
  *   fallback={CustomErrorComponent}
  *   errorReporting={{ enabled: true, level: 'error' }}
  * >
@@ -263,12 +252,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   /**
    * Constructor
-   * 
+   *
    * @param props - Component props
    */
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    
+
     this.state = {
       hasError: false,
     };
@@ -281,18 +270,18 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   /**
    * Update state when an error occurs
-   * 
+   *
    * @description
    * Static method called by React when an error occurs. Creates a new error ID
    * for tracking and logs the error for debugging purposes.
-   * 
+   *
    * @param error - The error that occurred
    * @returns New state with error information
    */
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     // Generate unique error ID for tracking
     const errorId = `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     logger.error('Error Boundary caught an error', {
       errorId,
       message: error.message,
@@ -309,11 +298,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   /**
    * Log error details to external services
-   * 
+   *
    * @description
    * Called by React when an error occurs and after getDerivedStateFromError.
    * Provides access to error information and component stack for debugging.
-   * 
+   *
    * @param error - The error that occurred
    * @param errorInfo - Additional error information including component stack
    */
@@ -353,7 +342,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   /**
    * Reset error state and retry rendering
-   * 
+   *
    * @description
    * Resets the error boundary state, clearing the error and allowing
    * the component tree to re-render. Useful for retry mechanisms.
@@ -370,7 +359,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   /**
    * Navigate to home page
-   * 
+   *
    * @description
    * Navigate user to the home page, clearing the current error state.
    * Typically used in error fallbacks to provide a recovery path.
@@ -382,11 +371,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   /**
    * Report error to monitoring service
-   * 
+   *
    * @description
    * Manually report an error to the error reporting service. Can be called
    * from fallback UI or programmatically for additional error logging.
-   * 
+   *
    * @param error - Error to report
    * @param context - Additional context information
    */
@@ -410,13 +399,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   /**
    * Internal method to report errors
-   * 
+   *
    * @private
    */
-  private async reportError(
-    error: Error,
-    context: Record<string, any>
-  ): Promise<void> {
+  private async reportError(error: Error, context: Record<string, any>): Promise<void> {
     await reportError(error, {
       ...context,
       errorBoundary: true,
@@ -426,7 +412,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   /**
    * Render the error boundary
-   * 
+   *
    * @returns Component tree or error fallback
    */
   render(): ReactNode {
@@ -438,13 +424,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       fallbackProps,
     } = this.props;
 
-    const {
-      hasError,
-      error,
-      errorInfo,
-      errorTime,
-      errorId,
-    } = this.state;
+    const { hasError, error, errorInfo, errorTime, errorId } = this.state;
 
     // If no error, render children normally
     if (!hasError) {
@@ -485,22 +465,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   /**
    * Get props to pass to fallback component
-   * 
+   *
    * @private
    * @returns Props for fallback component
    */
   private getFallbackProps(): ErrorFallbackProps & { showDetails?: boolean } {
-    const {
-      error,
-      errorInfo,
-      errorTime,
-      errorId,
-    } = this.state;
+    const { error, errorInfo, errorTime, errorId } = this.state;
 
-    const {
-      showDetails,
-      fallbackProps = {},
-    } = this.props;
+    const { showDetails, fallbackProps = {} } = this.props;
 
     return {
       error: error!,

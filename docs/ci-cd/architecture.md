@@ -2,7 +2,8 @@
 
 ## Overview
 
-The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with Railway for deployment. The architecture is designed for:
+The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with
+Railway for deployment. The architecture is designed for:
 
 - **Speed**: Parallel execution and intelligent caching
 - **Reliability**: Comprehensive testing and health checks
@@ -106,6 +107,7 @@ The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with Railw
 **Triggers**: PR creation, commits to PR, push to main/develop
 
 **Jobs**:
+
 - **Setup**: Install dependencies, cache node_modules
 - **Lint**: ESLint and Prettier checks
 - **Type Check**: TypeScript compilation
@@ -118,6 +120,7 @@ The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with Railw
 **Parallelization**: 4 unit test shards run simultaneously
 
 **Caching**:
+
 - pnpm store cache
 - Turbo build cache
 - node_modules cache
@@ -127,9 +130,11 @@ The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with Railw
 **Triggers**: PR creation, commits to PR, push to main/develop
 
 **Jobs**:
+
 - **Setup**: Dependencies and caching
 - **Build Packages**: Build all packages in dependency order
-- **Build Apps**: Build each app in parallel (api-gateway, api, backend, frontend)
+- **Build Apps**: Build each app in parallel (api-gateway, api, backend,
+  frontend)
 - **Bundle Analysis**: Analyze and report bundle sizes on PRs
 - **Production Smoke Test**: Verify builds start correctly
 
@@ -138,11 +143,13 @@ The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with Railw
 ### 3. Deploy Workflow (`deploy.yml`)
 
 **Triggers**:
+
 - Push to main
-- Git tags (v*.*.*)
+- Git tags (v*.*.\*)
 - Manual dispatch with environment selection
 
 **Jobs**:
+
 - **Pre-Deploy Checks**: Determine environment and services to deploy
 - **Build and Test**: Runs full test suite
 - **Build Images**: Build Docker images for each service
@@ -160,6 +167,7 @@ The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with Railw
 **Triggers**: PRs, pushes to main, weekly schedule
 
 **Jobs**:
+
 - **Coverage Check**: Enforce minimum 70% coverage
 - **Bundle Size Check**: Compare bundle sizes, fail if >10% increase
 - **Lighthouse CI**: Performance, accessibility, SEO checks
@@ -168,6 +176,7 @@ The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with Railw
 - **Circular Dependencies**: Detect circular imports
 
 **Thresholds**:
+
 - Coverage: 70% minimum
 - Bundle size: <10% increase
 - Performance: >80 Lighthouse score
@@ -178,6 +187,7 @@ The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with Railw
 **Triggers**: PR events, reviews, comments
 
 **Jobs**:
+
 - **Auto-Label**: Label based on changed files and PR size
 - **Auto-Assign Reviewers**: Based on code ownership
 - **PR Title Check**: Enforce conventional commits
@@ -189,16 +199,15 @@ The New Fuse CI/CD pipeline is built on GitHub Actions and integrates with Railw
 ## Caching Strategy
 
 ### pnpm Cache
+
 ```yaml
-~/.cache/pnpm
-node_modules
-apps/*/node_modules
-packages/*/node_modules
+~/.cache/pnpm node_modules apps/*/node_modules packages/*/node_modules
 ```
 
 **Key**: `${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}`
 
 ### Turbo Cache
+
 ```yaml
 .turbo
 ```
@@ -206,6 +215,7 @@ packages/*/node_modules
 **Key**: Per-job, includes job name and git SHA
 
 ### Build Artifacts
+
 - Packages: 7-day retention
 - Apps: 7-day retention
 - Test reports: 7-day retention
@@ -213,11 +223,13 @@ packages/*/node_modules
 ## Resource Optimization
 
 ### Memory Management
+
 - Build jobs: 4GB Node heap (`--max-old-space-size=4096`)
 - Test jobs: 4GB Node heap
 - Build concurrency: Limited to 2 concurrent builds
 
 ### Parallel Execution
+
 - Unit tests: 4 parallel shards
 - App builds: All apps build in parallel
 - Deployments: All services deploy in parallel
@@ -226,7 +238,9 @@ packages/*/node_modules
 ## Security
 
 ### Secrets Management
+
 All secrets stored in GitHub Secrets:
+
 - `RAILWAY_TOKEN`: Railway API token
 - `CODECOV_TOKEN`: Codecov upload token
 - `DOCKER_USERNAME`: Docker Hub username
@@ -236,6 +250,7 @@ All secrets stored in GitHub Secrets:
 - `TURBO_TOKEN`: Turborepo remote cache token
 
 ### Security Scanning
+
 - **Trivy**: Container and filesystem scanning
 - **npm audit**: Dependency vulnerability scanning
 - **SonarCloud**: Code quality and security analysis
@@ -244,18 +259,21 @@ All secrets stored in GitHub Secrets:
 ## Monitoring & Observability
 
 ### Build Metrics
+
 - Build duration
 - Test duration
 - Cache hit rates
 - Artifact sizes
 
 ### Deployment Metrics
+
 - Deployment frequency
 - Deployment success rate
 - Rollback frequency
 - Health check response times
 
 ### Quality Metrics
+
 - Test coverage trends
 - Bundle size trends
 - Lighthouse score trends
@@ -264,11 +282,13 @@ All secrets stored in GitHub Secrets:
 ## Disaster Recovery
 
 ### Rollback Procedures
+
 1. Automatic rollback on health check failure
 2. Manual rollback via Railway CLI
 3. Deploy previous tag/commit
 
 ### Backup Strategies
+
 - Git history provides code backup
 - Docker images tagged with commit SHA
 - Build artifacts retained for 7 days
@@ -276,12 +296,14 @@ All secrets stored in GitHub Secrets:
 ## Continuous Improvement
 
 ### Metrics to Monitor
+
 - CI/CD execution time
 - Test flakiness
 - Deployment success rate
 - Quality gate pass rate
 
 ### Optimization Opportunities
+
 - Further parallelize test execution
 - Optimize cache strategies
 - Reduce Docker image sizes

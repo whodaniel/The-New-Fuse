@@ -1,18 +1,15 @@
 import { Command } from 'commander';
 import * as inquirer from 'inquirer';
-import * as fs from 'fs';
-import * as path from 'path';
-import { DevelopmentLogger, FileChangeTracker } from '../../core/src/utils/LoggingUtils';
 import { FileSystemWatcher } from '../../core/src/utils/FileSystemWatcher';
+import { DevelopmentLogger, FileChangeTracker } from '../../core/src/utils/LoggingUtils';
 
 /**
  * Create the log command
- * 
+ *
  * @returns The log command
  */
 export function createLogCommand(): Command {
-  const logCommand = new Command('log')
-    .description('Manage development logs');
+  const logCommand = new Command('log').description('Manage development logs');
 
   // Add subcommand to create a new log entry
   logCommand
@@ -24,38 +21,38 @@ export function createLogCommand(): Command {
           type: 'input',
           name: 'title',
           message: 'Enter a title for the log entry:',
-          validate: (input) => input.trim().length > 0 || 'Title is required'
+          validate: (input) => input.trim().length > 0 || 'Title is required',
         },
         {
           type: 'input',
           name: 'agent',
           message: 'Enter your agent identifier:',
-          default: process.env.USER || 'Unknown Agent'
+          default: process.env.USER || 'Unknown Agent',
         },
         {
           type: 'input',
           name: 'description',
           message: 'Enter a description of the changes:',
-          validate: (input) => input.trim().length > 0 || 'Description is required'
+          validate: (input) => input.trim().length > 0 || 'Description is required',
         },
         {
           type: 'confirm',
           name: 'addDecisions',
           message: 'Do you want to add design decisions?',
-          default: false
+          default: false,
         },
         {
           type: 'confirm',
           name: 'addChallenges',
           message: 'Do you want to add challenges encountered?',
-          default: false
+          default: false,
         },
         {
           type: 'confirm',
           name: 'addNextSteps',
           message: 'Do you want to add next steps?',
-          default: false
-        }
+          default: false,
+        },
       ]);
 
       const decisions = [];
@@ -67,25 +64,25 @@ export function createLogCommand(): Command {
               type: 'input',
               name: 'decision',
               message: 'Enter a design decision:',
-              validate: (input) => input.trim().length > 0 || 'Decision is required'
+              validate: (input) => input.trim().length > 0 || 'Decision is required',
             },
             {
               type: 'input',
               name: 'rationale',
               message: 'Enter the rationale for this decision:',
-              validate: (input) => input.trim().length > 0 || 'Rationale is required'
+              validate: (input) => input.trim().length > 0 || 'Rationale is required',
             },
             {
               type: 'confirm',
               name: 'addAnother',
               message: 'Add another decision?',
-              default: false
-            }
+              default: false,
+            },
           ]);
 
           decisions.push({
             decision: decisionAnswers.decision,
-            rationale: decisionAnswers.rationale
+            rationale: decisionAnswers.rationale,
           });
 
           addMore = decisionAnswers.addAnother;
@@ -101,25 +98,25 @@ export function createLogCommand(): Command {
               type: 'input',
               name: 'challenge',
               message: 'Enter a challenge encountered:',
-              validate: (input) => input.trim().length > 0 || 'Challenge is required'
+              validate: (input) => input.trim().length > 0 || 'Challenge is required',
             },
             {
               type: 'input',
               name: 'solution',
               message: 'Enter how this challenge was addressed:',
-              validate: (input) => input.trim().length > 0 || 'Solution is required'
+              validate: (input) => input.trim().length > 0 || 'Solution is required',
             },
             {
               type: 'confirm',
               name: 'addAnother',
               message: 'Add another challenge?',
-              default: false
-            }
+              default: false,
+            },
           ]);
 
           challenges.push({
             challenge: challengeAnswers.challenge,
-            solution: challengeAnswers.solution
+            solution: challengeAnswers.solution,
           });
 
           addMore = challengeAnswers.addAnother;
@@ -135,14 +132,14 @@ export function createLogCommand(): Command {
               type: 'input',
               name: 'nextStep',
               message: 'Enter a next step:',
-              validate: (input) => input.trim().length > 0 || 'Next step is required'
+              validate: (input) => input.trim().length > 0 || 'Next step is required',
             },
             {
               type: 'confirm',
               name: 'addAnother',
               message: 'Add another next step?',
-              default: false
-            }
+              default: false,
+            },
           ]);
 
           nextSteps.push(nextStepAnswers.nextStep);
@@ -157,8 +154,8 @@ export function createLogCommand(): Command {
           type: 'confirm',
           name: 'addFileChanges',
           message: 'Do you want to add file changes?',
-          default: true
-        }
+          default: true,
+        },
       ]);
 
       const filesChanged = [];
@@ -170,32 +167,32 @@ export function createLogCommand(): Command {
               type: 'input',
               name: 'filePath',
               message: 'Enter the file path:',
-              validate: (input) => input.trim().length > 0 || 'File path is required'
+              validate: (input) => input.trim().length > 0 || 'File path is required',
             },
             {
               type: 'list',
               name: 'changeType',
               message: 'Select the type of change:',
-              choices: ['create', 'modify', 'delete', 'move']
+              choices: ['create', 'modify', 'delete', 'move'],
             },
             {
               type: 'input',
               name: 'description',
               message: 'Enter a description of the change:',
-              validate: (input) => input.trim().length > 0 || 'Description is required'
+              validate: (input) => input.trim().length > 0 || 'Description is required',
             },
             {
               type: 'confirm',
               name: 'addAnother',
               message: 'Add another file change?',
-              default: false
-            }
+              default: false,
+            },
           ]);
 
           filesChanged.push({
             filePath: fileChangeAnswers.filePath,
             changeType: fileChangeAnswers.changeType,
-            description: fileChangeAnswers.description
+            description: fileChangeAnswers.description,
           });
 
           addMore = fileChangeAnswers.addAnother;
@@ -211,7 +208,7 @@ export function createLogCommand(): Command {
         description: answers.description,
         decisions: decisions.length > 0 ? decisions : undefined,
         challenges: challenges.length > 0 ? challenges : undefined,
-        nextSteps: nextSteps.length > 0 ? nextSteps : undefined
+        nextSteps: nextSteps.length > 0 ? nextSteps : undefined,
       };
 
       // Add the entry to the log
@@ -230,7 +227,7 @@ export function createLogCommand(): Command {
     .description('View the development log')
     .action(async () => {
       const logContent = await DevelopmentLogger.getLogContent();
-      
+
       if (logContent) {
         console.log(logContent);
       } else {
@@ -243,7 +240,11 @@ export function createLogCommand(): Command {
     .command('watch')
     .description('Watch for file changes and track them')
     .option('-d, --directories <directories>', 'Comma-separated list of directories to watch', '.')
-    .option('-i, --ignore <patterns>', 'Comma-separated list of patterns to ignore', '**/node_modules/**,**/dist/**,**/build/**,**/.git/**')
+    .option(
+      '-i, --ignore <patterns>',
+      'Comma-separated list of patterns to ignore',
+      '**/node_modules/**,**/dist/**,**/build/**,**/.git/**'
+    )
     .action(async (options) => {
       const directories = options.directories.split(',');
       const ignored = options.ignore.split(',');
@@ -251,7 +252,7 @@ export function createLogCommand(): Command {
       const watcher = new FileSystemWatcher({
         directories,
         ignored,
-        autoTrack: true
+        autoTrack: true,
       });
 
       console.log(`Watching directories: ${directories.join(', ')}`);
@@ -263,53 +264,53 @@ export function createLogCommand(): Command {
       // Handle process termination
       process.on('SIGINT', async () => {
         await watcher.stop();
-        
+
         const changes = FileChangeTracker.getChanges();
-        
+
         if (changes.length > 0) {
           console.log(`\nDetected ${changes.length} file changes:`);
-          
+
           for (const change of changes) {
             console.log(`- ${change.changeType}: ${change.filePath}`);
           }
-          
+
           const answers = await inquirer.prompt([
             {
               type: 'confirm',
               name: 'commitChanges',
               message: 'Do you want to commit these changes to the development log?',
-              default: true
-            }
+              default: true,
+            },
           ]);
-          
+
           if (answers.commitChanges) {
             const logAnswers = await inquirer.prompt([
               {
                 type: 'input',
                 name: 'title',
                 message: 'Enter a title for the log entry:',
-                validate: (input) => input.trim().length > 0 || 'Title is required'
+                validate: (input) => input.trim().length > 0 || 'Title is required',
               },
               {
                 type: 'input',
                 name: 'agent',
                 message: 'Enter your agent identifier:',
-                default: process.env.USER || 'Unknown Agent'
+                default: process.env.USER || 'Unknown Agent',
               },
               {
                 type: 'input',
                 name: 'description',
                 message: 'Enter a description of the changes:',
-                validate: (input) => input.trim().length > 0 || 'Description is required'
-              }
+                validate: (input) => input.trim().length > 0 || 'Description is required',
+              },
             ]);
-            
+
             const success = await FileChangeTracker.commitChanges(
               logAnswers.agent,
               logAnswers.title,
               logAnswers.description
             );
-            
+
             if (success) {
               console.log('Changes committed to development log');
             } else {
@@ -319,7 +320,7 @@ export function createLogCommand(): Command {
         } else {
           console.log('\nNo file changes detected');
         }
-        
+
         process.exit(0);
       });
     });

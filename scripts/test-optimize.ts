@@ -1,10 +1,10 @@
-import { PrismaClient } from '@the-new-fuse/database';
+import { DrizzleClient } from '@the-new-fuse/database';
 import { TaskService } from '../packages/core/src/task/task.service.tsx';
 import { TaskStatus, TaskType, TaskPriority } from '../packages/types/src.js';
 
 async function testQueries(): any {
-  const prisma = new PrismaClient();
-  const taskService = new TaskService(prisma);
+  const drizzle = new DrizzleClient();
+  const taskService = new TaskService(drizzle);
 
   try {
     // Create a test task
@@ -14,7 +14,7 @@ async function testQueries(): any {
       status: 'PENDING',
       priority: 'NORMAL',
       title: 'Test Task',
-      description: 'Testing Prisma Optimize',
+      description: 'Testing Drizzle Optimize',
       metadata: {
         creator: 'test-user',
         tags: ['test', 'optimize']
@@ -38,7 +38,7 @@ async function testQueries(): any {
   } catch (error) {
     console.error('Error:', error);
   } finally {
-    await prisma.$disconnect();
+    await drizzle.$disconnect();
   }
 }
 

@@ -17,7 +17,7 @@ export class RateLimiter {
   isRateLimited(clientId: string): boolean {
     const now = Date.now();
     const timestamps = this.clients.get(clientId) || [];
-    const recentTimestamps = timestamps.filter(ts => now - ts < this.windowMs);
+    const recentTimestamps = timestamps.filter((ts) => now - ts < this.windowMs);
 
     if (recentTimestamps.length >= this.maxRequests) {
       return true;

@@ -113,7 +113,7 @@ class SelfImprovementSwarm {
     console.log('='.repeat(80) + '\n');
 
     console.log('📋 Agent Composition:');
-    this.agents.forEach(agent => {
+    this.agents.forEach((agent) => {
       console.log(`  • ${agent.name}: ${agent.role}`);
     });
 
@@ -155,7 +155,11 @@ class SelfImprovementSwarm {
 
     await this.sleep(500);
 
-    this.sendMessage('Coordinator', 'ALL', 'Self-improvement cycle initiated. All agents report status.');
+    this.sendMessage(
+      'Coordinator',
+      'ALL',
+      'Self-improvement cycle initiated. All agents report status.'
+    );
     this.sendMessage('Analyzer', 'Coordinator', 'Standing by, ready to scan codebase.');
     this.sendMessage('Architect', 'Coordinator', 'Ready to review architecture.');
     this.sendMessage('Implementer', 'Coordinator', 'Ready to implement improvements.');
@@ -222,11 +226,13 @@ class SelfImprovementSwarm {
     this.log(`   Found ${foundIssues.length} issues across codebase`);
     this.log(`   Critical: 1, High: 1, Medium: 2, Low: 1`);
 
-    this.sendMessage('Analyzer', 'Coordinator',
-      `Analysis complete. Found ${foundIssues.length} issues. Technical debt score: 68/100`);
+    this.sendMessage(
+      'Analyzer',
+      'Coordinator',
+      `Analysis complete. Found ${foundIssues.length} issues. Technical debt score: 68/100`
+    );
 
-    this.sendMessage('Coordinator', 'Architect',
-      'Analyze top issues and design solutions');
+    this.sendMessage('Coordinator', 'Architect', 'Analyze top issues and design solutions');
 
     this.setAgentStatus('Analyzer', 'completed');
     console.log();
@@ -245,14 +251,23 @@ class SelfImprovementSwarm {
       this.log(`   ${i + 1}. ${issue.description} [${issue.severity}]`);
     });
 
-    this.sendMessage('Architect', 'Coordinator',
-      'Architecture review complete. Proposing: 1) Add request validation middleware, 2) Implement query optimization, 3) Add comprehensive error handling');
+    this.sendMessage(
+      'Architect',
+      'Coordinator',
+      'Architecture review complete. Proposing: 1) Add request validation middleware, 2) Implement query optimization, 3) Add comprehensive error handling'
+    );
 
-    this.sendMessage('Architect', 'Implementer',
-      'Implementation plans ready. Prioritized by impact and effort.');
+    this.sendMessage(
+      'Architect',
+      'Implementer',
+      'Implementation plans ready. Prioritized by impact and effort.'
+    );
 
-    this.sendMessage('Coordinator', 'Implementer',
-      'Proceed with top 3 implementations. Create tests for each.');
+    this.sendMessage(
+      'Coordinator',
+      'Implementer',
+      'Proceed with top 3 implementations. Create tests for each.'
+    );
 
     this.setAgentStatus('Architect', 'completed');
     console.log();
@@ -289,15 +304,24 @@ class SelfImprovementSwarm {
       improvement.status = 'completed';
       improvement.endTime = new Date();
 
-      this.sendMessage('Implementer', 'Reviewer',
-        `Implementation ready for review: ${issue.description}`);
+      this.sendMessage(
+        'Implementer',
+        'Reviewer',
+        `Implementation ready for review: ${issue.description}`
+      );
     }
 
-    this.sendMessage('Implementer', 'Coordinator',
-      'All implementations complete. 3 improvements, 9 files modified, 6 tests created.');
+    this.sendMessage(
+      'Implementer',
+      'Coordinator',
+      'All implementations complete. 3 improvements, 9 files modified, 6 tests created.'
+    );
 
-    this.sendMessage('Coordinator', 'Reviewer',
-      'Review all implementations for quality and security.');
+    this.sendMessage(
+      'Coordinator',
+      'Reviewer',
+      'Review all implementations for quality and security.'
+    );
 
     this.setAgentStatus('Implementer', 'completed');
     console.log();
@@ -328,17 +352,26 @@ class SelfImprovementSwarm {
 
       imp.status = 'approved';
 
-      this.sendMessage('Reviewer', 'Coordinator',
-        `Approved: ${imp.title.substring(0, 40)}... (score: ${score}/100)`);
+      this.sendMessage(
+        'Reviewer',
+        'Coordinator',
+        `Approved: ${imp.title.substring(0, 40)}... (score: ${score}/100)`
+      );
     }
 
     const avgScore = Math.round(totalScore / this.improvements.length);
 
-    this.sendMessage('Reviewer', 'Coordinator',
-      `All reviews complete. Average quality score: ${avgScore}/100. All implementations approved.`);
+    this.sendMessage(
+      'Reviewer',
+      'Coordinator',
+      `All reviews complete. Average quality score: ${avgScore}/100. All implementations approved.`
+    );
 
-    this.sendMessage('Coordinator', 'ALL',
-      'All implementations approved. Proceeding to deployment.');
+    this.sendMessage(
+      'Coordinator',
+      'ALL',
+      'All implementations approved. Proceeding to deployment.'
+    );
 
     this.setAgentStatus('Reviewer', 'completed');
     console.log();
@@ -356,8 +389,7 @@ class SelfImprovementSwarm {
     this.log('   ✅ PR #124: Optimize database queries');
     this.log('   ✅ PR #125: Enhance error handling');
 
-    this.sendMessage('Coordinator', 'ALL',
-      '3 pull requests created and ready for human review.');
+    this.sendMessage('Coordinator', 'ALL', '3 pull requests created and ready for human review.');
 
     this.log('\n   🎉 Self-improvement cycle complete!');
     this.setAgentStatus('Coordinator', 'completed');
@@ -389,12 +421,12 @@ class SelfImprovementSwarm {
     console.log(`   Chat Room Entries: ${this.chatRoom.length}`);
 
     console.log('\n📝 Recent Chat Messages:');
-    this.chatRoom.slice(-10).forEach(msg => {
+    this.chatRoom.slice(-10).forEach((msg) => {
       console.log(`   • ${msg}`);
     });
 
     console.log('\n🤖 Agent Status:');
-    this.agents.forEach(agent => {
+    this.agents.forEach((agent) => {
       const emoji = agent.status === 'completed' ? '✅' : '⏳';
       console.log(`   ${emoji} ${agent.name}: ${agent.status}`);
     });
@@ -414,7 +446,7 @@ class SelfImprovementSwarm {
   }
 
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 
@@ -424,7 +456,7 @@ async function main() {
   await swarm.runCycle();
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error('Error:', error);
   process.exit(1);
 });

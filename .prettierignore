@@ -21,7 +21,7 @@ coverage/
 
 # Generated files
 generated/
-prisma/migrations/
+drizzle/migrations/
 *.generated.*
 
 # Logs

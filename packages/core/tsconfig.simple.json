@@ -23,11 +23,11 @@
   },
   "include": [
     "src/app.module.ts",
-    "src/app.service.ts", 
+    "src/app.service.ts",
     "src/app.controller.ts",
     "src/main.ts",
     "src/services/AgentLLMService.ts",
-    "src/services/PromptService.ts", 
+    "src/services/PromptService.ts",
     "src/services/LoggingService.ts",
     "src/memory/MemoryManager.ts",
     "src/types/interfaces.ts",

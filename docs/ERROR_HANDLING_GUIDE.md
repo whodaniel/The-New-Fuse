@@ -72,13 +72,17 @@ The comprehensive error handling system provides:
 #### Network Errors (1000-1999)
 
 ```typescript
-import { NetworkError, TimeoutError, HttpError } from '@tnf/core-error-handling';
+import {
+  NetworkError,
+  TimeoutError,
+  HttpError,
+} from '@tnf/core-error-handling';
 
 // Generic network error
 throw new NetworkError('Failed to fetch data', 1000, {
   endpoint: '/api/users',
   method: 'GET',
-  statusCode: 500
+  statusCode: 500,
 });
 
 // Timeout error
@@ -94,7 +98,7 @@ throw new HttpError(404, 'User not found', '/api/users/123');
 import {
   AuthenticationError,
   TokenExpiredError,
-  InvalidCredentialsError
+  InvalidCredentialsError,
 } from '@tnf/core-error-handling';
 
 // Token expired
@@ -113,7 +117,7 @@ throw new AuthenticationError('MFA verification failed');
 import {
   ValidationError,
   RequiredFieldError,
-  InvalidFormatError
+  InvalidFormatError,
 } from '@tnf/core-error-handling';
 
 // Required field
@@ -125,7 +129,7 @@ throw new InvalidFormatError('email', 'email address', 'notanemail');
 // Multiple validation errors
 throw new ValidationError('Validation failed', undefined, [
   { field: 'email', message: 'Invalid email format' },
-  { field: 'password', message: 'Password too weak' }
+  { field: 'password', message: 'Password too weak' },
 ]);
 ```
 
@@ -135,7 +139,7 @@ throw new ValidationError('Validation failed', undefined, [
 import {
   NotFoundError,
   ConflictError,
-  RateLimitError
+  RateLimitError,
 } from '@tnf/core-error-handling';
 
 // Not found
@@ -154,7 +158,7 @@ throw new RateLimitError(60); // Retry after 60 seconds
 import {
   DatabaseError,
   ServiceUnavailableError,
-  ExternalServiceError
+  ExternalServiceError,
 } from '@tnf/core-error-handling';
 
 // Database error
@@ -180,7 +184,7 @@ import { ErrorFactory } from '@tnf/core-error-handling';
 const error = ErrorFactory.fromHttpResponse(404, {
   message: 'Resource not found',
   resourceType: 'User',
-  resourceId: '123'
+  resourceId: '123',
 });
 
 // From generic Error
@@ -190,7 +194,7 @@ try {
   const appError = ErrorFactory.fromError(err as Error, {
     component: 'UserService',
     operation: 'fetchUser',
-    metadata: { userId: '123' }
+    metadata: { userId: '123' },
   });
   throw appError;
 }
@@ -219,7 +223,7 @@ const result = await retry(
     maxAttempts: 3,
     initialDelay: 1000,
     backoffMultiplier: 2,
-    jitter: true
+    jitter: true,
   },
   'fetchUserData'
 );
@@ -228,8 +232,8 @@ const result = await retry(
 const handler = new RetryHandler();
 const data = await handler.withExponentialBackoff(
   async () => fetchData(),
-  3,  // max attempts
-  1000  // initial delay
+  3, // max attempts
+  1000 // initial delay
 );
 ```
 
@@ -238,15 +242,12 @@ const data = await handler.withExponentialBackoff(
 ```typescript
 import { CircuitBreaker } from '@tnf/core-error-handling';
 
-const breaker = new CircuitBreaker(
-  async () => fetchExternalData(),
-  {
-    failureThreshold: 5,
-    resetTimeout: 60000,
-    halfOpenRequests: 2,
-    operationName: 'fetchExternalData'
-  }
-);
+const breaker = new CircuitBreaker(async () => fetchExternalData(), {
+  failureThreshold: 5,
+  resetTimeout: 60000,
+  halfOpenRequests: 2,
+  operationName: 'fetchExternalData',
+});
 
 try {
   const result = await breaker.execute();
@@ -279,7 +280,7 @@ import {
   NetworkReconnectionStrategy,
   TokenRefreshStrategy,
   CacheFallbackStrategy,
-  ServiceFailoverStrategy
+  ServiceFailoverStrategy,
 } from '@tnf/core-error-handling';
 
 // Network reconnection
@@ -301,7 +302,7 @@ const cacheStrategy = new CacheFallbackStrategy(async (key: string) => {
 const failoverStrategy = new ServiceFailoverStrategy();
 failoverStrategy.registerBackupService('api', [
   'https://api-backup1.example.com',
-  'https://api-backup2.example.com'
+  'https://api-backup2.example.com',
 ]);
 ```
 
@@ -337,7 +338,7 @@ await handler.handleError(error, context);
 ```typescript
 import {
   errorMessageFormatter,
-  getUserFriendlyMessage
+  getUserFriendlyMessage,
 } from '@tnf/core-error-handling';
 
 // Set language
@@ -345,9 +346,9 @@ errorMessageFormatter.setLanguage('en');
 
 // Get message for error
 const message = getUserFriendlyMessage(error);
-console.log(message.title);       // "Session Expired"
-console.log(message.message);     // "Your session has expired..."
-console.log(message.suggestion);  // "Please log in again..."
+console.log(message.title); // "Session Expired"
+console.log(message.message); // "Your session has expired..."
+console.log(message.suggestion); // "Please log in again..."
 
 // Multilingual support
 const spanishMessage = getUserFriendlyMessage(error, 'es');
@@ -369,13 +370,13 @@ errorMessageFormatter.addCustomMessage(8000, {
   en: {
     title: 'Custom Error',
     message: 'This is a custom error message',
-    suggestion: 'Try this solution'
+    suggestion: 'Try this solution',
   },
   es: {
     title: 'Error Personalizado',
     message: 'Este es un mensaje de error personalizado',
-    suggestion: 'Prueba esta solución'
-  }
+    suggestion: 'Prueba esta solución',
+  },
 });
 ```
 
@@ -483,7 +484,7 @@ import { errorRecorder } from '@tnf/core-error-handling';
 // Add breadcrumbs
 errorRecorder.addBreadcrumb('user', 'User clicked login button');
 errorRecorder.addBreadcrumb('api', 'Called login API', 'info', {
-  endpoint: '/api/auth/login'
+  endpoint: '/api/auth/login',
 });
 
 // Record error with full context
@@ -495,12 +496,12 @@ try {
     {
       component: 'LoginForm',
       operation: 'login',
-      userId: currentUser?.id
+      userId: currentUser?.id,
     },
     {
       method: 'POST',
       url: '/api/auth/login',
-      body: { username: 'user@example.com' }
+      body: { username: 'user@example.com' },
     }
   );
 
@@ -563,7 +564,7 @@ throw new NetworkError('Request failed', 1000, {
   endpoint: '/api/users',
   method: 'GET',
   statusCode: 500,
-  requestId: 'req-123'
+  requestId: 'req-123',
 });
 ```
 
@@ -593,13 +594,10 @@ if (!response.ok) {
 const data = await fetch('/api/data');
 
 // ✅ Good
-const data = await retry(
-  async () => fetch('/api/data'),
-  {
-    maxAttempts: 3,
-    retryableErrors: [NetworkError, TimeoutError]
-  }
-);
+const data = await retry(async () => fetch('/api/data'), {
+  maxAttempts: 3,
+  retryableErrors: [NetworkError, TimeoutError],
+});
 ```
 
 ### 5. Use Error Boundaries Strategically
@@ -636,8 +634,8 @@ logger.error('Operation failed', {
   stack: error.stack,
   context: {
     userId,
-    operation: 'updateProfile'
-  }
+    operation: 'updateProfile',
+  },
 });
 ```
 
@@ -651,7 +649,7 @@ alert(error.message); // Technical error message
 const friendly = getUserFriendlyMessage(error);
 toast.error(friendly.title, {
   description: friendly.message,
-  action: friendly.suggestion
+  action: friendly.suggestion,
 });
 ```
 
@@ -661,7 +659,7 @@ toast.error(friendly.title, {
 // ✅ Good
 const handler = new MyErrorHandler({
   enableAutoRecovery: true,
-  maxRecoveryAttempts: 3
+  maxRecoveryAttempts: 3,
 });
 
 handler.registerRecoveryStrategy(new TokenRefreshStrategy());
@@ -681,7 +679,7 @@ import {
   ErrorFactory,
   retry,
   errorRecorder,
-  getUserFriendlyMessage
+  getUserFriendlyMessage,
 } from '@tnf/core-error-handling';
 
 class UserService {
@@ -709,17 +707,17 @@ class UserService {
           initialDelay: 1000,
           onRetry: (error, attempt) => {
             console.log(`Retry attempt ${attempt} after error:`, error.message);
-          }
+          },
         },
         'fetchUser'
       );
 
       return data;
-
     } catch (error) {
-      const appError = error instanceof ApplicationError
-        ? error
-        : ErrorFactory.fromError(error as Error);
+      const appError =
+        error instanceof ApplicationError
+          ? error
+          : ErrorFactory.fromError(error as Error);
 
       // Record for reproduction
       errorRecorder.record(
@@ -727,18 +725,18 @@ class UserService {
         {
           component: 'UserService',
           operation: 'fetchUser',
-          userId: id
+          userId: id,
         },
         {
           method: 'GET',
-          url: `/api/users/${id}`
+          url: `/api/users/${id}`,
         }
       );
 
       // Show user-friendly message
       const message = getUserFriendlyMessage(appError);
       toast.error(message.title, {
-        description: message.message
+        description: message.message,
       });
 
       throw appError;
@@ -807,7 +805,7 @@ import { errorTracker } from '@/services/error-tracking.service';
 errorTracker.setUser({
   id: currentUser.id,
   email: currentUser.email,
-  role: currentUser.role
+  role: currentUser.role,
 });
 
 // Add breadcrumbs
@@ -820,7 +818,7 @@ try {
   errorTracker.trackError(error, {
     category: ErrorCategory.SYSTEM,
     priority: ErrorPriority.HIGH,
-    metadata: { operation: 'riskyOperation' }
+    metadata: { operation: 'riskyOperation' },
   });
 }
 ```
@@ -855,7 +853,7 @@ describe('Error Handling', () => {
   it('should convert HTTP errors correctly', () => {
     const error = ErrorFactory.fromHttpResponse(404, {
       message: 'User not found',
-      resourceType: 'User'
+      resourceType: 'User',
     });
 
     expect(error).toBeInstanceOf(NotFoundError);
@@ -870,13 +868,11 @@ describe('Error Handling', () => {
 
 This comprehensive error handling system provides:
 
-✅ **Type-safe errors** with rich metadata
-✅ **Automatic retry** with exponential backoff
-✅ **Smart recovery** with multiple strategies
-✅ **User-friendly messages** in multiple languages
-✅ **React error boundaries** for component isolation
-✅ **Real-time monitoring** dashboard
-✅ **Error reproduction** tools for debugging
-✅ **Sentry integration** for production monitoring
+✅ **Type-safe errors** with rich metadata ✅ **Automatic retry** with
+exponential backoff ✅ **Smart recovery** with multiple strategies ✅
+**User-friendly messages** in multiple languages ✅ **React error boundaries**
+for component isolation ✅ **Real-time monitoring** dashboard ✅ **Error
+reproduction** tools for debugging ✅ **Sentry integration** for production
+monitoring
 
 For more information, see the API documentation in each module.

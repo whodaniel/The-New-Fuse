@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 // import { encrypt, decrypt } from '../../../../../src/utils/cryptoUtils'; // Commented out as cryptoUtils.ts is not found
 
-
 @Injectable()
 export class EncryptionService {
   private algorithm = 'aes-256-cbc';

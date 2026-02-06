@@ -1,6 +1,16 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, HttpException, HttpStatus } from '@nestjs/common';
-import { LLMProviderService, CreateLLMProviderDTO, LLMProviderDTO } from './llm-provider.service';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateLLMProviderDTO, LLMProviderDTO, LLMProviderService } from './llm-provider.service';
 
 @ApiTags('llm')
 @Controller('api/llm/providers')
@@ -101,21 +111,26 @@ export class LLMProviderController {
   @ApiOperation({ summary: 'Register Claude Code CLI as local LLM provider' })
   @ApiResponse({ status: 201, description: 'Claude Code CLI has been successfully registered' })
   @ApiResponse({ status: 404, description: 'Claude Code CLI not available on this system' })
-  async registerClaudeCodeCLI(): Promise<{ success: boolean; provider?: LLMProviderDTO; message: string }> {
+  async registerClaudeCodeCLI(): Promise<{
+    success: boolean;
+    provider?: LLMProviderDTO;
+    message: string;
+  }> {
     try {
       const provider = await this.llmProviderService.registerClaudeCodeCLI();
-      
+
       if (!provider) {
         return {
           success: false,
-          message: 'Claude Code CLI is not available on this system. Please ensure it is installed and accessible.'
+          message:
+            'Claude Code CLI is not available on this system. Please ensure it is installed and accessible.',
         };
       }
 
       return {
         success: true,
         provider,
-        message: 'Claude Code CLI has been successfully registered as a local LLM provider'
+        message: 'Claude Code CLI has been successfully registered as a local LLM provider',
       };
     } catch (error) {
       throw new HttpException(
@@ -129,21 +144,26 @@ export class LLMProviderController {
   @ApiOperation({ summary: 'Register Gemini CLI as local LLM provider' })
   @ApiResponse({ status: 201, description: 'Gemini CLI has been successfully registered' })
   @ApiResponse({ status: 404, description: 'Gemini CLI not available on this system' })
-  async registerGeminiCLI(): Promise<{ success: boolean; provider?: LLMProviderDTO; message: string }> {
+  async registerGeminiCLI(): Promise<{
+    success: boolean;
+    provider?: LLMProviderDTO;
+    message: string;
+  }> {
     try {
       const provider = await this.llmProviderService.registerGeminiCLI();
-      
+
       if (!provider) {
         return {
           success: false,
-          message: 'Gemini CLI is not available on this system. Please ensure it is installed and accessible.'
+          message:
+            'Gemini CLI is not available on this system. Please ensure it is installed and accessible.',
         };
       }
 
       return {
         success: true,
         provider,
-        message: 'Gemini CLI has been successfully registered as a local LLM provider'
+        message: 'Gemini CLI has been successfully registered as a local LLM provider',
       };
     } catch (error) {
       throw new HttpException(

@@ -251,7 +251,7 @@ export class PromptOptimizerService {
 
     try {
       // Get the agent and its current prompt
-      // const agent = await this.prisma.agent.findUnique({
+      // const agent = await this.db.agent.findUnique({
       //   where: { id: agentId },
       //   include: { promptVersions: true },
       // });
@@ -500,7 +500,7 @@ Return as JSON array of strings.
     massStage: string
   ): Promise<AgentPromptVersion> {
     // Get next version number
-    // const latestVersion = await this.prisma.agentPromptVersion.findFirst({
+    // const latestVersion = await this.db.agentPromptVersion.findFirst({
     //   where: { agentId },
     //   orderBy: { versionNumber: 'desc' },
     // });
@@ -508,7 +508,7 @@ Return as JSON array of strings.
 
     const nextVersion = (latestVersion?.versionNumber || 0) + 1;
 
-    // return this.prisma.agentPromptVersion.create({
+    // return this.db.agentPromptVersion.create({
     return agentPromptVersionRepository.create({
       agentId,
       versionNumber: nextVersion,

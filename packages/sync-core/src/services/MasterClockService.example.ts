@@ -3,20 +3,20 @@
  * This demonstrates how to set up and use the MasterClockService in a real application
  */
 
-import { MasterClockService, MasterClockConfig } from './MasterClockService.js';
+import { MasterClockConfig, MasterClockService } from './MasterClockService.js';
 
 // Example configuration for production use
 const createMasterClockConfig = (): MasterClockConfig => ({
-  syncIntervalMs: 5000,        // Sync every 5 seconds
-  driftThresholdMs: 100,       // Alert if drift > 100ms
-  maxDriftMs: 1000,           // Critical if drift > 1000ms
+  syncIntervalMs: 5000, // Sync every 5 seconds
+  driftThresholdMs: 100, // Alert if drift > 100ms
+  maxDriftMs: 1000, // Critical if drift > 1000ms
   correctionIntervalMs: 30000, // Check for corrections every 30 seconds
   instanceId: `master-clock-${process.env.NODE_ENV || 'development'}-${Date.now()}`,
   redisChannels: {
     clockSync: 'sync:master-clock:sync',
     driftAlert: 'sync:master-clock:drift-alert',
-    correction: 'sync:master-clock:correction'
-  }
+    correction: 'sync:master-clock:correction',
+  },
 });
 
 // Mock services for demonstration (in real app, these would be injected)
@@ -34,7 +34,7 @@ const createMockServices = () => {
     },
     async hset(key: string, field: string, value: string): Promise<void> {
       console.log(`Redis HSET: ${key}.${field} = ${value.substring(0, 50)}...`);
-    }
+    },
   };
 
   const mockHeartbeatService = {
@@ -44,7 +44,7 @@ const createMockServices = () => {
     emit(event: string, ...args: any[]): boolean {
       console.log(`Heartbeat event emitted: ${event}`);
       return true;
-    }
+    },
   };
 
   const mockMetricsService = {
@@ -53,7 +53,7 @@ const createMockServices = () => {
     },
     async getMetrics(): Promise<any> {
       return { clockSync: { operations: 100, errors: 0 } };
-    }
+    },
   };
 
   return { mockRedisService, mockHeartbeatService, mockMetricsService };
@@ -68,7 +68,7 @@ export async function demonstrateMasterClockService(): Promise<void> {
   console.log('Configuration created:', {
     instanceId: config.instanceId,
     syncInterval: `${config.syncIntervalMs}ms`,
-    driftThreshold: `${config.driftThresholdMs}ms`
+    driftThreshold: `${config.driftThresholdMs}ms`,
   });
 
   // 2. Create mock services (in real app, these would be dependency injected)
@@ -91,7 +91,7 @@ export async function demonstrateMasterClockService(): Promise<void> {
     console.log('⚠️  Clock drift detected:', {
       maxDrift: `${report.maxDrift}ms`,
       instanceCount: report.instances.length,
-      requiresCorrection: report.requiresCorrection
+      requiresCorrection: report.requiresCorrection,
     });
   });
 
@@ -103,7 +103,7 @@ export async function demonstrateMasterClockService(): Promise<void> {
     console.log('📊 Health status changed:', {
       from: data.oldStatus,
       to: data.newStatus,
-      maxDrift: `${data.maxDrift}ms`
+      maxDrift: `${data.maxDrift}ms`,
     });
   });
 
@@ -127,7 +127,7 @@ export async function demonstrateMasterClockService(): Promise<void> {
     console.log('Drift report:', {
       instanceCount: driftReport.instances.length,
       maxDrift: `${driftReport.maxDrift}ms`,
-      requiresCorrection: driftReport.requiresCorrection
+      requiresCorrection: driftReport.requiresCorrection,
     });
 
     // 9. Show metrics
@@ -137,7 +137,7 @@ export async function demonstrateMasterClockService(): Promise<void> {
       syncOperations: metrics.syncOperations,
       driftCorrections: metrics.driftCorrections,
       healthStatus: metrics.healthStatus,
-      instanceCount: metrics.instanceCount
+      instanceCount: metrics.instanceCount,
     });
 
     // 10. Force synchronization
@@ -149,7 +149,6 @@ export async function demonstrateMasterClockService(): Promise<void> {
     console.log('\n--- Shutdown ---');
     await masterClock.shutdown();
     console.log('✅ MasterClockService shutdown completed');
-
   } catch (error) {
     console.error('❌ Error during demonstration:', error);
   }
@@ -168,13 +167,8 @@ export class MasterClockServiceFactory {
   ): MasterClockService {
     const defaultConfig = createMasterClockConfig();
     const config = { ...defaultConfig, ...options };
-    
-    return new MasterClockService(
-      config,
-      redisService,
-      heartbeatService,
-      metricsService
-    );
+
+    return new MasterClockService(config, redisService, heartbeatService, metricsService);
   }
 
   /**
@@ -186,9 +180,9 @@ export class MasterClockServiceFactory {
     metricsService: any
   ): MasterClockService {
     return this.create(redisService, heartbeatService, metricsService, {
-      syncIntervalMs: 2000,      // More frequent sync for development
-      driftThresholdMs: 50,      // Lower threshold for testing
-      correctionIntervalMs: 10000 // More frequent corrections
+      syncIntervalMs: 2000, // More frequent sync for development
+      driftThresholdMs: 50, // Lower threshold for testing
+      correctionIntervalMs: 10000, // More frequent corrections
     });
   }
 
@@ -201,10 +195,10 @@ export class MasterClockServiceFactory {
     metricsService: any
   ): MasterClockService {
     return this.create(redisService, heartbeatService, metricsService, {
-      syncIntervalMs: 10000,     // Less frequent sync for production
-      driftThresholdMs: 200,     // Higher threshold for stability
-      maxDriftMs: 2000,         // Higher critical threshold
-      correctionIntervalMs: 60000 // Less frequent corrections
+      syncIntervalMs: 10000, // Less frequent sync for production
+      driftThresholdMs: 200, // Higher threshold for stability
+      maxDriftMs: 2000, // Higher critical threshold
+      correctionIntervalMs: 60000, // Less frequent corrections
     });
   }
 }
@@ -221,7 +215,7 @@ export class ApplicationWithMasterClock {
 
   async start(): Promise<void> {
     console.log('Starting application with MasterClockService...');
-    
+
     // Create and initialize master clock
     this.masterClock = MasterClockServiceFactory.createForProduction(
       this.redisService,
@@ -234,17 +228,17 @@ export class ApplicationWithMasterClock {
 
     // Initialize
     await this.masterClock.initialize();
-    
+
     console.log('Application started with synchronized clock');
   }
 
   async stop(): Promise<void> {
     console.log('Stopping application...');
-    
+
     if (this.masterClock) {
       await this.masterClock.shutdown();
     }
-    
+
     console.log('Application stopped');
   }
 
@@ -253,7 +247,8 @@ export class ApplicationWithMasterClock {
 
     // Monitor for critical drift
     this.masterClock.on('drift_detected', (report) => {
-      if (report.maxDrift > 1000) { // Critical drift
+      if (report.maxDrift > 1000) {
+        // Critical drift
         console.error('CRITICAL: Clock drift exceeds 1 second!', report);
         // Could trigger alerts, notifications, etc.
       }

@@ -1,20 +1,20 @@
 /**
  * Service Mesh Scaler
- * 
+ *
  * Provides automatic scaling capabilities for MCP services in a service mesh
  * based on metrics, load, and custom scaling policies.
  */
 
 import { EventEmitter } from 'events';
+import { MCPErrorClass as MCPError, MCPErrorCode } from '../types/error';
 import {
-  ServiceMeshProvider,
-  ServiceMeshMetrics,
-  ServiceScalingConfig,
   ScalingEvent,
   ScalingPolicy,
-  ServiceMeshIntegrationResult
+  ServiceMeshIntegrationResult,
+  ServiceMeshMetrics,
+  ServiceMeshProvider,
+  ServiceScalingConfig,
 } from './MCPServiceMesh';
-import { MCPErrorClass as MCPError, MCPErrorCode } from '../types/error';
 
 /**
  * Scaler configuration
@@ -160,7 +160,7 @@ export class ServiceMeshScaler extends EventEmitter {
       failedOperations: 0,
       averageConfidence: 0,
       commonScalingReasons: [],
-      lastUpdate: new Date()
+      lastUpdate: new Date(),
     };
   }
 
@@ -172,7 +172,7 @@ export class ServiceMeshScaler extends EventEmitter {
       if (this.isRunning) {
         return {
           success: false,
-          message: 'Scaling is already running'
+          message: 'Scaling is already running',
         };
       }
 
@@ -190,10 +190,9 @@ export class ServiceMeshScaler extends EventEmitter {
         message: 'Service mesh scaling started successfully',
         metadata: {
           evaluationInterval: this.config.evaluationInterval,
-          startTime: new Date().toISOString()
-        }
+          startTime: new Date().toISOString(),
+        },
       };
-
     } catch (error) {
       return {
         success: false,
@@ -201,8 +200,8 @@ export class ServiceMeshScaler extends EventEmitter {
         error: {
           code: 'SCALING_START_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error
-        }
+          details: error,
+        },
       };
     }
   }
@@ -215,7 +214,7 @@ export class ServiceMeshScaler extends EventEmitter {
       if (!this.isRunning) {
         return {
           success: false,
-          message: 'Scaling is not running'
+          message: 'Scaling is not running',
         };
       }
 
@@ -232,10 +231,9 @@ export class ServiceMeshScaler extends EventEmitter {
         success: true,
         message: 'Service mesh scaling stopped successfully',
         metadata: {
-          stopTime: new Date().toISOString()
-        }
+          stopTime: new Date().toISOString(),
+        },
       };
-
     } catch (error) {
       return {
         success: false,
@@ -243,8 +241,8 @@ export class ServiceMeshScaler extends EventEmitter {
         error: {
           code: 'SCALING_STOP_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error
-        }
+          details: error,
+        },
       };
     }
   }
@@ -252,12 +250,15 @@ export class ServiceMeshScaler extends EventEmitter {
   /**
    * Add service to scaling management
    */
-  async addService(serviceId: string, scalingConfig?: ServiceScalingConfig): Promise<ServiceMeshIntegrationResult> {
+  async addService(
+    serviceId: string,
+    scalingConfig?: ServiceScalingConfig
+  ): Promise<ServiceMeshIntegrationResult> {
     try {
       if (this.scalingStates.has(serviceId)) {
         return {
           success: false,
-          message: `Service ${serviceId} is already under scaling management`
+          message: `Service ${serviceId} is already under scaling management`,
         };
       }
 
@@ -265,10 +266,16 @@ export class ServiceMeshScaler extends EventEmitter {
       const config: ServiceScalingConfig = {
         ...this.config.defaultScalingConfig,
         ...scalingConfig,
-        minInstances: scalingConfig?.minInstances ?? this.config.defaultScalingConfig.minInstances ?? 1,
-        maxInstances: scalingConfig?.maxInstances ?? this.config.defaultScalingConfig.maxInstances ?? 10,
-        scaleUpCooldown: scalingConfig?.scaleUpCooldown ?? this.config.defaultScalingConfig.scaleUpCooldown ?? 300,
-        scaleDownCooldown: scalingConfig?.scaleDownCooldown ?? this.config.defaultScalingConfig.scaleDownCooldown ?? 600
+        minInstances:
+          scalingConfig?.minInstances ?? this.config.defaultScalingConfig.minInstances ?? 1,
+        maxInstances:
+          scalingConfig?.maxInstances ?? this.config.defaultScalingConfig.maxInstances ?? 10,
+        scaleUpCooldown:
+          scalingConfig?.scaleUpCooldown ?? this.config.defaultScalingConfig.scaleUpCooldown ?? 300,
+        scaleDownCooldown:
+          scalingConfig?.scaleDownCooldown ??
+          this.config.defaultScalingConfig.scaleDownCooldown ??
+          600,
       };
 
       // Configure scaling with provider
@@ -284,12 +291,12 @@ export class ServiceMeshScaler extends EventEmitter {
         status: {
           currentInstances: scalingStatus.currentInstances,
           desiredInstances: scalingStatus.desiredInstances,
-          isScaling: false
+          isScaling: false,
         },
         history: [],
         operationsThisHour: 0,
         lastEvaluation: new Date(),
-        metricsHistory: []
+        metricsHistory: [],
       };
 
       this.scalingStates.set(serviceId, scalingState);
@@ -302,10 +309,9 @@ export class ServiceMeshScaler extends EventEmitter {
         metadata: {
           serviceId,
           minInstances: config.minInstances,
-          maxInstances: config.maxInstances
-        }
+          maxInstances: config.maxInstances,
+        },
       };
-
     } catch (error) {
       return {
         success: false,
@@ -313,8 +319,8 @@ export class ServiceMeshScaler extends EventEmitter {
         error: {
           code: 'SERVICE_ADD_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error
-        }
+          details: error,
+        },
       };
     }
   }
@@ -327,7 +333,7 @@ export class ServiceMeshScaler extends EventEmitter {
       if (!this.scalingStates.has(serviceId)) {
         return {
           success: false,
-          message: `Service ${serviceId} is not under scaling management`
+          message: `Service ${serviceId} is not under scaling management`,
         };
       }
 
@@ -340,10 +346,9 @@ export class ServiceMeshScaler extends EventEmitter {
         message: `Service ${serviceId} removed from scaling management`,
         metadata: {
           serviceId,
-          removedAt: new Date().toISOString()
-        }
+          removedAt: new Date().toISOString(),
+        },
       };
-
     } catch (error) {
       return {
         success: false,
@@ -351,8 +356,8 @@ export class ServiceMeshScaler extends EventEmitter {
         error: {
           code: 'SERVICE_REMOVE_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error
-        }
+          details: error,
+        },
       };
     }
   }
@@ -386,13 +391,11 @@ export class ServiceMeshScaler extends EventEmitter {
     const scalingState = this.scalingStates.get(serviceId);
     if (!scalingState) return [];
 
-    const history = [...scalingState.history].sort(
-      (a, b) => {
-        const aTime = a.event?.timestamp.getTime() || 0;
-        const bTime = b.event?.timestamp.getTime() || 0;
-        return bTime - aTime;
-      }
-    );
+    const history = [...scalingState.history].sort((a, b) => {
+      const aTime = a.event?.timestamp.getTime() || 0;
+      const bTime = b.event?.timestamp.getTime() || 0;
+      return bTime - aTime;
+    });
 
     return limit ? history.slice(0, limit) : history;
   }
@@ -415,7 +418,11 @@ export class ServiceMeshScaler extends EventEmitter {
   /**
    * Manually scale a service
    */
-  async scaleService(serviceId: string, targetInstances: number, reason: string): Promise<ServiceMeshIntegrationResult> {
+  async scaleService(
+    serviceId: string,
+    targetInstances: number,
+    reason: string
+  ): Promise<ServiceMeshIntegrationResult> {
     try {
       const scalingState = this.scalingStates.get(serviceId);
       if (!scalingState) {
@@ -426,8 +433,10 @@ export class ServiceMeshScaler extends EventEmitter {
       }
 
       // Validate target instances
-      if (targetInstances < scalingState.config.minInstances || 
-          targetInstances > scalingState.config.maxInstances) {
+      if (
+        targetInstances < scalingState.config.minInstances ||
+        targetInstances > scalingState.config.maxInstances
+      ) {
         throw new MCPError(
           MCPErrorCode.INVALID_PARAMS,
           `Target instances ${targetInstances} is outside allowed range [${scalingState.config.minInstances}, ${scalingState.config.maxInstances}]`
@@ -438,7 +447,7 @@ export class ServiceMeshScaler extends EventEmitter {
       if (scalingState.status.currentInstances === targetInstances) {
         return {
           success: true,
-          message: `Service ${serviceId} is already at ${targetInstances} instances`
+          message: `Service ${serviceId} is already at ${targetInstances} instances`,
         };
       }
 
@@ -451,7 +460,7 @@ export class ServiceMeshScaler extends EventEmitter {
         reason: `Manual scaling: ${reason}`,
         influencingMetrics: [],
         confidence: 1.0,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       // Execute scaling
@@ -459,18 +468,18 @@ export class ServiceMeshScaler extends EventEmitter {
 
       return {
         success: result.result === 'success',
-        message: result.result === 'success' 
-          ? `Service ${serviceId} successfully scaled to ${targetInstances} instances`
-          : `Failed to scale service ${serviceId}: ${result.error}`,
+        message:
+          result.result === 'success'
+            ? `Service ${serviceId} successfully scaled to ${targetInstances} instances`
+            : `Failed to scale service ${serviceId}: ${result.error}`,
         metadata: {
           serviceId,
           previousInstances: decision.currentInstances,
           newInstances: targetInstances,
           scalingType: decision.type,
-          duration: result.duration
-        }
+          duration: result.duration,
+        },
       };
-
     } catch (error) {
       return {
         success: false,
@@ -478,8 +487,8 @@ export class ServiceMeshScaler extends EventEmitter {
         error: {
           code: error instanceof MCPError ? error.code.toString() : 'SCALING_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error
-        }
+          details: error,
+        },
       };
     }
   }
@@ -488,8 +497,8 @@ export class ServiceMeshScaler extends EventEmitter {
    * Evaluate scaling for all managed services
    */
   private async evaluateScaling(): Promise<void> {
-    const evaluationPromises = Array.from(this.scalingStates.values()).map(
-      scalingState => this.evaluateAndExecuteScaling(scalingState)
+    const evaluationPromises = Array.from(this.scalingStates.values()).map((scalingState) =>
+      this.evaluateAndExecuteScaling(scalingState)
     );
 
     await Promise.allSettled(evaluationPromises);
@@ -525,7 +534,6 @@ export class ServiceMeshScaler extends EventEmitter {
       }
 
       scalingState.lastEvaluation = new Date();
-
     } catch (error) {
       this.emit('scaling-evaluation-failed', scalingState.serviceId, error);
     }
@@ -534,17 +542,19 @@ export class ServiceMeshScaler extends EventEmitter {
   /**
    * Evaluate scaling decision for a service
    */
-  private async evaluateServiceScaling(scalingState: ServiceScalingState): Promise<ScalingDecision> {
+  private async evaluateServiceScaling(
+    scalingState: ServiceScalingState
+  ): Promise<ScalingDecision> {
     // Get current metrics
     const metrics = await this.provider.getServiceMetrics(scalingState.serviceId);
-    
+
     // Add to metrics history
     scalingState.metricsHistory.push(metrics);
-    
+
     // Trim history
-    const retentionCutoff = Date.now() - (this.config.historyRetention * 1000);
+    const retentionCutoff = Date.now() - this.config.historyRetention * 1000;
     scalingState.metricsHistory = scalingState.metricsHistory.filter(
-      m => m.timestamp.getTime() > retentionCutoff
+      (m) => m.timestamp.getTime() > retentionCutoff
     );
 
     // Get current scaling status
@@ -553,13 +563,16 @@ export class ServiceMeshScaler extends EventEmitter {
     scalingState.status.desiredInstances = scalingStatus.desiredInstances;
 
     // Evaluate scaling policies
-    const policyResults = scalingState.config.policies?.map((policy: any) => 
-      this.evaluateScalingPolicy(policy, metrics, scalingState)
-    ) || [];
+    const policyResults =
+      scalingState.config.policies?.map((policy: any) =>
+        this.evaluateScalingPolicy(policy, metrics, scalingState)
+      ) || [];
 
     // Calculate scaling recommendation
     const scaleUpVotes = policyResults.filter((r: any) => r.recommendation === 'scale_up').length;
-    const scaleDownVotes = policyResults.filter((r: any) => r.recommendation === 'scale_down').length;
+    const scaleDownVotes = policyResults.filter(
+      (r: any) => r.recommendation === 'scale_down'
+    ).length;
     const noActionVotes = policyResults.filter((r: any) => r.recommendation === 'no_action').length;
 
     let decision: ScalingDecision;
@@ -570,18 +583,20 @@ export class ServiceMeshScaler extends EventEmitter {
         scalingState.status.currentInstances + 1,
         scalingState.config.maxInstances
       );
-      
+
       decision = {
         serviceId: scalingState.serviceId,
         type: 'scale_up',
         currentInstances: scalingState.status.currentInstances,
         recommendedInstances: targetInstances,
-        reason: this.buildScalingReason(policyResults.filter((r: any) => r.recommendation === 'scale_up')),
+        reason: this.buildScalingReason(
+          policyResults.filter((r: any) => r.recommendation === 'scale_up')
+        ),
         influencingMetrics: policyResults
-          .filter(r => r.recommendation === 'scale_up')
-          .map(r => r.metric),
+          .filter((r) => r.recommendation === 'scale_up')
+          .map((r) => r.metric),
         confidence: scaleUpVotes / policyResults.length,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } else if (scaleDownVotes > scaleUpVotes && scaleDownVotes > noActionVotes) {
       // Scale down
@@ -589,18 +604,20 @@ export class ServiceMeshScaler extends EventEmitter {
         scalingState.status.currentInstances - 1,
         scalingState.config.minInstances
       );
-      
+
       decision = {
         serviceId: scalingState.serviceId,
         type: 'scale_down',
         currentInstances: scalingState.status.currentInstances,
         recommendedInstances: targetInstances,
-        reason: this.buildScalingReason(policyResults.filter((r: any) => r.recommendation === 'scale_down')),
+        reason: this.buildScalingReason(
+          policyResults.filter((r: any) => r.recommendation === 'scale_down')
+        ),
         influencingMetrics: policyResults
-          .filter(r => r.recommendation === 'scale_down')
-          .map(r => r.metric),
+          .filter((r) => r.recommendation === 'scale_down')
+          .map((r) => r.metric),
         confidence: scaleDownVotes / policyResults.length,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } else {
       // No action
@@ -612,7 +629,7 @@ export class ServiceMeshScaler extends EventEmitter {
         reason: 'No scaling action needed based on current metrics',
         influencingMetrics: [],
         confidence: noActionVotes / policyResults.length,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
 
@@ -624,8 +641,8 @@ export class ServiceMeshScaler extends EventEmitter {
    * Evaluate a scaling policy
    */
   private evaluateScalingPolicy(
-    policy: ScalingPolicy, 
-    metrics: ServiceMeshMetrics, 
+    policy: ScalingPolicy,
+    metrics: ServiceMeshMetrics,
     scalingState: ServiceScalingState
   ): { recommendation: 'scale_up' | 'scale_down' | 'no_action'; metric: any } {
     let metricValue: number;
@@ -656,7 +673,7 @@ export class ServiceMeshScaler extends EventEmitter {
       name: policy.metric,
       value: metricValue,
       threshold: policy.targetValue,
-      weight: 1.0
+      weight: 1.0,
     };
 
     // Determine recommendation
@@ -672,7 +689,10 @@ export class ServiceMeshScaler extends EventEmitter {
   /**
    * Execute scaling decision
    */
-  private async executeScaling(scalingState: ServiceScalingState, decision: ScalingDecision): Promise<ScalingHistoryEntry> {
+  private async executeScaling(
+    scalingState: ServiceScalingState,
+    decision: ScalingDecision
+  ): Promise<ScalingHistoryEntry> {
     const startTime = Date.now();
     scalingState.status.isScaling = true;
 
@@ -686,7 +706,7 @@ export class ServiceMeshScaler extends EventEmitter {
           previousInstances: decision.currentInstances,
           newInstances: decision.recommendedInstances,
           reason: decision.reason,
-          triggerMetric: decision.influencingMetrics[0]
+          triggerMetric: decision.influencingMetrics[0],
         };
       }
 
@@ -695,7 +715,7 @@ export class ServiceMeshScaler extends EventEmitter {
 
       // In a real implementation, we would wait for the scaling to complete
       // For now, we'll simulate it
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Update current instances
       scalingState.status.currentInstances = decision.recommendedInstances;
@@ -703,9 +723,10 @@ export class ServiceMeshScaler extends EventEmitter {
       scalingState.status.isScaling = false;
 
       // Set cooldown
-      const cooldownDuration = decision.type === 'scale_up' 
-        ? scalingState.config.scaleUpCooldown 
-        : scalingState.config.scaleDownCooldown;
+      const cooldownDuration =
+        decision.type === 'scale_up'
+          ? scalingState.config.scaleUpCooldown
+          : scalingState.config.scaleDownCooldown;
       scalingState.status.cooldownUntil = new Date(Date.now() + cooldownDuration * 1000);
 
       // Update operations count
@@ -717,7 +738,7 @@ export class ServiceMeshScaler extends EventEmitter {
         event: scalingEvent,
         decision,
         result: 'success',
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
 
       scalingState.history.push(historyEntry);
@@ -728,23 +749,25 @@ export class ServiceMeshScaler extends EventEmitter {
         this.emit('scaling-completed', scalingState.serviceId, scalingEvent);
       }
       return historyEntry;
-
     } catch (error) {
       scalingState.status.isScaling = false;
 
       const historyEntry: ScalingHistoryEntry = {
         serviceId: scalingState.serviceId,
-        event: decision.type !== 'no_action' ? {
-          timestamp: new Date(),
-          type: decision.type as 'scale_up' | 'scale_down',
-          previousInstances: decision.currentInstances,
-          newInstances: decision.recommendedInstances,
-          reason: decision.reason
-        } : undefined,
+        event:
+          decision.type !== 'no_action'
+            ? {
+                timestamp: new Date(),
+                type: decision.type as 'scale_up' | 'scale_down',
+                previousInstances: decision.currentInstances,
+                newInstances: decision.recommendedInstances,
+                reason: decision.reason,
+              }
+            : undefined,
         decision,
         result: 'failed',
         error: error instanceof Error ? error.message : 'Unknown error',
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
 
       scalingState.history.push(historyEntry);
@@ -760,17 +783,19 @@ export class ServiceMeshScaler extends EventEmitter {
    * Check if service is in cooldown
    */
   private isInCooldown(scalingState: ServiceScalingState): boolean {
-    return scalingState.status.cooldownUntil ? 
-      scalingState.status.cooldownUntil > new Date() : 
-      false;
+    return scalingState.status.cooldownUntil
+      ? scalingState.status.cooldownUntil > new Date()
+      : false;
   }
 
   /**
    * Build scaling reason from policy results
    */
-  private buildScalingReason(policyResults: Array<{ recommendation: string; metric: any }>): string {
-    const reasons = policyResults.map(r => 
-      `${r.metric.name}: ${r.metric.value} (threshold: ${r.metric.threshold})`
+  private buildScalingReason(
+    policyResults: Array<{ recommendation: string; metric: any }>
+  ): string {
+    const reasons = policyResults.map(
+      (r) => `${r.metric.name}: ${r.metric.value} (threshold: ${r.metric.threshold})`
     );
     return reasons.join(', ');
   }
@@ -780,23 +805,26 @@ export class ServiceMeshScaler extends EventEmitter {
    */
   private updateStatistics(): void {
     this.statistics.totalServices = this.scalingStates.size;
-    this.statistics.servicesScaling = Array.from(this.scalingStates.values())
-      .filter(state => state.status.isScaling).length;
-    this.statistics.servicesInCooldown = Array.from(this.scalingStates.values())
-      .filter(state => this.isInCooldown(state)).length;
+    this.statistics.servicesScaling = Array.from(this.scalingStates.values()).filter(
+      (state) => state.status.isScaling
+    ).length;
+    this.statistics.servicesInCooldown = Array.from(this.scalingStates.values()).filter((state) =>
+      this.isInCooldown(state)
+    ).length;
 
     // Calculate average confidence
-    const allDecisions = Array.from(this.scalingStates.values())
-      .flatMap(state => state.history.map(h => h.decision));
-    
+    const allDecisions = Array.from(this.scalingStates.values()).flatMap((state) =>
+      state.history.map((h) => h.decision)
+    );
+
     if (allDecisions.length > 0) {
-      this.statistics.averageConfidence = allDecisions
-        .reduce((sum, decision) => sum + decision.confidence, 0) / allDecisions.length;
+      this.statistics.averageConfidence =
+        allDecisions.reduce((sum, decision) => sum + decision.confidence, 0) / allDecisions.length;
     }
 
     // Calculate common scaling reasons
     const reasonCounts = new Map<string, number>();
-    allDecisions.forEach(decision => {
+    allDecisions.forEach((decision) => {
       const count = reasonCounts.get(decision.reason) || 0;
       reasonCounts.set(decision.reason, count + 1);
     });

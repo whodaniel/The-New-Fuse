@@ -1,11 +1,12 @@
 # Complete API Guide
 
-This comprehensive guide consolidates all API documentation including endpoints, authentication, WebSocket protocols, and middleware configurations.
+This comprehensive guide consolidates all API documentation including endpoints,
+authentication, WebSocket protocols, and middleware configurations.
 
 ## Table of Contents
 
 1. [Base Configuration](#base-configuration)
-2. [Authentication](#authentication) 
+2. [Authentication](#authentication)
 3. [REST API Endpoints](#rest-api-endpoints)
 4. [WebSocket Protocol](#websocket-protocol)
 5. [Middleware](#middleware)
@@ -18,11 +19,13 @@ This comprehensive guide consolidates all API documentation including endpoints,
 All API endpoints are prefixed with `/api` and require proper authentication.
 
 **Base URL Structure:**
+
 ```
 https://your-domain.com/api/v1/{endpoint}
 ```
 
 **Required Headers:**
+
 ```http
 Content-Type: application/json
 Authorization: Bearer <access_token>
@@ -33,9 +36,11 @@ Authorization: Bearer <access_token>
 ### Authentication Endpoints
 
 #### POST /api/auth/login
+
 Authenticate a user and receive access tokens.
 
 **Request Body:**
+
 ```json
 {
   "username": "string",
@@ -44,6 +49,7 @@ Authenticate a user and receive access tokens.
 ```
 
 **Response:**
+
 ```json
 {
   "userId": "number",
@@ -54,12 +60,15 @@ Authenticate a user and receive access tokens.
 ```
 
 **Cookies Set:**
+
 - `refreshToken`: HTTP-only secure cookie for token refresh
 
 #### POST /api/auth/register
+
 Register a new user account.
 
 **Request Body:**
+
 ```json
 {
   "username": "string",
@@ -69,6 +78,7 @@ Register a new user account.
 ```
 
 **Response:**
+
 ```json
 {
   "userId": "number",
@@ -79,9 +89,11 @@ Register a new user account.
 ```
 
 #### POST /api/auth/refresh
+
 Refresh access token using refresh token from cookie.
 
 **Response:**
+
 ```json
 {
   "accessToken": "string",
@@ -90,9 +102,11 @@ Refresh access token using refresh token from cookie.
 ```
 
 #### POST /api/auth/logout
+
 Logout user and invalidate tokens.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -104,19 +118,72 @@ Logout user and invalidate tokens.
 
 ```typescript
 interface JWTPayload {
-    userId: number;
-    username: string;
-    email: string;
-    exp: number;
-    iat: number;
+  userId: number;
+  username: string;
+  email: string;
+  exp: number;
+  iat: number;
 }
 ```
 
 ## REST API Endpoints
 
+### Agencies
+
+#### List Agencies
+
+```http
+GET /api/agencies?ownerId={ownerId}
+Authorization: Bearer <token>
+```
+
+#### Get Agency Registrations (Agency Owner/Admin)
+
+```http
+GET /api/agencies/{agencyId}/registrations?tenantId={tenantId}&trustTier={trustTier}&limit=50&offset=0
+Authorization: Bearer <token>
+```
+
+**Rate Limit**: admin tier
+
+**Response:**
+
+```json
+[
+  {
+    "id": "reg-uuid",
+    "agentId": "agent-uuid",
+    "tenantId": "tenant-123",
+    "organizationId": "org-123",
+    "agencyId": "workspace-123",
+    "protocolVersion": "tnf-1",
+    "trustTier": "verified",
+    "verificationStatus": "VERIFIED",
+    "onboardingStatus": "READY"
+  }
+]
+```
+
+### Agent Registry
+
+#### Registrations Reporting (Admin)
+
+```http
+GET /api/agent-registry/registrations/reporting?tenantId={tenantId}&trustTier={trustTier}&limit=50
+Authorization: Bearer <token>
+```
+
+#### Registration Integrity (Admin)
+
+```http
+GET /api/agent-registry/registrations/integrity
+Authorization: Bearer <token>
+```
+
 ### Agents
 
 #### Create Agent
+
 ```http
 POST /api/v1/agents
 Content-Type: application/json
@@ -134,6 +201,7 @@ Authorization: Bearer <token>
 ```
 
 **Response:**
+
 ```json
 {
   "id": "string",
@@ -146,24 +214,28 @@ Authorization: Bearer <token>
 ```
 
 #### List Agents
+
 ```http
 GET /api/v1/agents
 Authorization: Bearer <token>
 ```
 
 **Query Parameters:**
+
 - `limit`: number (default: 10)
 - `offset`: number (default: 0)
 - `type`: string (filter by agent type)
 - `status`: string (filter by status)
 
 #### Get Agent
+
 ```http
 GET /api/v1/agents/{agentId}
 Authorization: Bearer <token>
 ```
 
 #### Update Agent
+
 ```http
 PUT /api/v1/agents/{agentId}
 Content-Type: application/json
@@ -177,6 +249,7 @@ Authorization: Bearer <token>
 ```
 
 #### Delete Agent
+
 ```http
 DELETE /api/v1/agents/{agentId}
 Authorization: Bearer <token>
@@ -185,6 +258,7 @@ Authorization: Bearer <token>
 ### Communication
 
 #### Send Message to Agent
+
 ```http
 POST /api/v1/agents/{agentId}/messages
 Content-Type: application/json
@@ -199,6 +273,7 @@ Authorization: Bearer <token>
 ```
 
 #### Get Agent Messages
+
 ```http
 GET /api/v1/agents/{agentId}/messages
 Authorization: Bearer <token>
@@ -207,9 +282,11 @@ Authorization: Bearer <token>
 ### Monitoring Endpoints
 
 #### GET /api/monitoring/memory
+
 Fetch memory store items and overall statistics.
 
 **Response:**
+
 ```json
 {
   "items": [
@@ -229,9 +306,11 @@ Fetch memory store items and overall statistics.
 ```
 
 #### GET /api/monitoring/metrics
+
 Fetch custom metrics including step execution timings and memory metrics.
 
 **Response:**
+
 ```json
 {
   "stepMetrics": [
@@ -251,12 +330,14 @@ Fetch custom metrics including step execution timings and memory metrics.
 ### Configuration
 
 #### Get System Configuration
+
 ```http
 GET /api/v1/config
 Authorization: Bearer <token>
 ```
 
 #### Update Configuration
+
 ```http
 PUT /api/v1/config
 Content-Type: application/json
@@ -272,9 +353,11 @@ Authorization: Bearer <token>
 
 ### Connection
 
-WebSocket connections are established at `/api/ws` with required authentication parameters.
+WebSocket connections are established at `/api/ws` with required authentication
+parameters.
 
 **Connection URL:**
+
 ```
 ws://localhost:3711/api/ws?token=<access_token>
 ```
@@ -298,6 +381,7 @@ interface WebSocketMessage {
 #### 1. Room Management
 
 **Join Room:**
+
 ```json
 {
   "type": "joinRoom",
@@ -308,6 +392,7 @@ interface WebSocketMessage {
 ```
 
 **Leave Room:**
+
 ```json
 {
   "type": "leaveRoom",
@@ -320,6 +405,7 @@ interface WebSocketMessage {
 #### 2. Chat Messages
 
 **Send Message:**
+
 ```json
 {
   "type": "message",
@@ -333,6 +419,7 @@ interface WebSocketMessage {
 ```
 
 **Message Received:**
+
 ```json
 {
   "type": "messageReceived",
@@ -350,6 +437,7 @@ interface WebSocketMessage {
 #### 3. Agent Communication
 
 **Agent-to-Agent Message:**
+
 ```json
 {
   "type": "a2aMessage",
@@ -364,6 +452,7 @@ interface WebSocketMessage {
 ```
 
 **Agent Status Update:**
+
 ```json
 {
   "type": "agentStatus",
@@ -379,6 +468,7 @@ interface WebSocketMessage {
 #### 4. System Events
 
 **System Notification:**
+
 ```json
 {
   "type": "systemNotification",
@@ -392,6 +482,7 @@ interface WebSocketMessage {
 ```
 
 **Connection Status:**
+
 ```json
 {
   "type": "connectionStatus",
@@ -406,6 +497,7 @@ interface WebSocketMessage {
 ### Error Handling
 
 **WebSocket Error Message:**
+
 ```json
 {
   "type": "error",
@@ -422,7 +514,8 @@ interface WebSocketMessage {
 
 ### Session Middleware
 
-The session middleware handles user authentication, session management, and security for API requests.
+The session middleware handles user authentication, session management, and
+security for API requests.
 
 #### Configuration
 
@@ -453,6 +546,7 @@ interface SessionData {
 #### Middleware Functions
 
 **Authentication Middleware:**
+
 ```typescript
 const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
   // Verify JWT token
@@ -462,6 +556,7 @@ const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
 ```
 
 **Authorization Middleware:**
+
 ```typescript
 const authorizeRole = (roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -472,11 +567,12 @@ const authorizeRole = (roles: string[]) => {
 ```
 
 **Rate Limiting Middleware:**
+
 ```typescript
 const rateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP'
+  message: 'Too many requests from this IP',
 });
 ```
 
@@ -626,9 +722,9 @@ class APIClient {
     const response = await fetch(`${this.baseURL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, password }),
     });
-    
+
     const data = await response.json();
     this.accessToken = data.accessToken;
     return data;
@@ -643,9 +739,9 @@ class APIClient {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.accessToken}`
+        Authorization: `Bearer ${this.accessToken}`,
       },
-      body: body ? JSON.stringify(body) : undefined
+      body: body ? JSON.stringify(body) : undefined,
     });
 
     return await response.json();
@@ -662,7 +758,7 @@ class WebSocketClient {
 
   connect(url: string, token: string) {
     this.ws = new WebSocket(`${url}?token=${token}`);
-    
+
     this.ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
       this.handleMessage(message);
@@ -677,18 +773,23 @@ class WebSocketClient {
   }
 
   send(message: any) {
-    this.ws.send(JSON.stringify({
-      ...message,
-      timestamp: Date.now(),
-      messageId: `msg_${Date.now()}_${Math.random()}`
-    }));
+    this.ws.send(
+      JSON.stringify({
+        ...message,
+        timestamp: Date.now(),
+        messageId: `msg_${Date.now()}_${Math.random()}`,
+      })
+    );
   }
 
   private handleMessage(message: any) {
     const handlers = this.messageHandlers.get(message.type) || [];
-    handlers.forEach(handler => handler(message));
+    handlers.forEach((handler) => handler(message));
   }
 }
 ```
 
-This complete API guide consolidates all API documentation including endpoints, authentication, WebSocket protocols, middleware, security guidelines, and integration examples. All technical details have been preserved and enhanced with additional context and best practices.
+This complete API guide consolidates all API documentation including endpoints,
+authentication, WebSocket protocols, middleware, security guidelines, and
+integration examples. All technical details have been preserved and enhanced
+with additional context and best practices.

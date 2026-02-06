@@ -23,7 +23,7 @@ export class Logger {
     debug: 0,
     info: 1,
     warn: 2,
-    error: 3
+    error: 3,
   };
 
   constructor(component: string, minLevel: LogLevel = 'info') {
@@ -57,7 +57,7 @@ export class Logger {
       level,
       component: this.component,
       message,
-      data
+      data,
     };
 
     const logMessage = this.formatLogEntry(entry);
@@ -82,13 +82,13 @@ export class Logger {
     const timestamp = entry.timestamp.toISOString();
     const level = entry.level.toUpperCase().padEnd(5);
     const component = entry.component.padEnd(20);
-    
+
     let message = `${timestamp} [${level}] ${component} ${entry.message}`;
-    
+
     if (entry.data) {
       message += ` ${JSON.stringify(entry.data)}`;
     }
-    
+
     return message;
   }
 }

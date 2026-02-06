@@ -4,7 +4,7 @@ import {
   generateEnum,
   generateBoolean,
   generateEmail,
-  type TimestampOptions
+  type TimestampOptions,
 } from './utils';
 
 export type UserRole = 'admin' | 'user' | 'viewer' | 'manager';
@@ -48,7 +48,7 @@ const LANGUAGES = ['en', 'es', 'fr', 'de', 'it'];
 export const generateUserPreferences = (): UserPreferences => ({
   theme: generateEnum(['light', 'dark', 'system']),
   notifications: generateBoolean(),
-  language: generateEnum(LANGUAGES)
+  language: generateEnum(LANGUAGES),
 });
 
 export const generateUser = (options: GenerateUserOptions = {}): GeneratedUser => {
@@ -60,8 +60,8 @@ export const generateUser = (options: GenerateUserOptions = {}): GeneratedUser =
     createdAt: generateTimestamp({ past: true, daysRange: 365 }),
     updatedAt: generateTimestamp({ past: true, daysRange: 30 }),
     ...(generateBoolean(0.8) && {
-      lastLoginAt: generateTimestamp({ past: true, daysRange: 7 })
-    })
+      lastLoginAt: generateTimestamp({ past: true, daysRange: 7 }),
+    }),
   };
 
   return {
@@ -78,12 +78,15 @@ export const generateUser = (options: GenerateUserOptions = {}): GeneratedUser =
       metadata: {
         loginCount: Math.floor(Math.random() * 100),
         verified: generateBoolean(),
-        lastIp: '192.168.1.' + Math.floor(Math.random() * 255)
-      }
-    })
+        lastIp: '192.168.1.' + Math.floor(Math.random() * 255),
+      },
+    }),
   };
 };
 
-export const generateUsers = (count: number, options: GenerateUserOptions = {}): GeneratedUser[] => {
+export const generateUsers = (
+  count: number,
+  options: GenerateUserOptions = {},
+): GeneratedUser[] => {
   return Array.from({ length: count }, () => generateUser(options));
 };

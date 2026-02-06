@@ -4,10 +4,14 @@ Welcome to The New Fuse deployment documentation.
 
 ## Quick Links
 
-- **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Complete deployment instructions
-- **[Deployment Checklist](./DEPLOYMENT_CHECKLIST.md)** - Pre/post deployment checklist
-- **[Rollback Procedures](./ROLLBACK_PROCEDURES.md)** - How to rollback failed deployments
-- **[Emergency Procedures](./EMERGENCY_PROCEDURES.md)** - Critical incident response
+- **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Complete deployment
+  instructions
+- **[Deployment Checklist](./DEPLOYMENT_CHECKLIST.md)** - Pre/post deployment
+  checklist
+- **[Rollback Procedures](./ROLLBACK_PROCEDURES.md)** - How to rollback failed
+  deployments
+- **[Emergency Procedures](./EMERGENCY_PROCEDURES.md)** - Critical incident
+  response
 - **[Troubleshooting](./TROUBLESHOOTING.md)** - Common issues and solutions
 
 ## Quick Start
@@ -59,6 +63,7 @@ Edit `.deployment-config` to customize deployment behavior.
 ## Support
 
 For issues:
+
 1. Check [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
 2. Review deployment logs in `logs/deployment/`
 3. Contact DevOps team

@@ -1,7 +1,11 @@
-import { Injectable, Logger, OnModuleInit, Inject } from '@nestjs/common';
-import { PrismaService } from '@the-new-fuse/database';
-import { TaskSynchronizationService, TaskSyncData, TaskExecutionSyncData } from './TaskSynchronizationService';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { DatabaseService } from '@the-new-fuse/database';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
+import {
+  TaskExecutionSyncData,
+  TaskSyncData,
+  TaskSynchronizationService,
+} from './TaskSynchronizationService';
 
 export interface EnhancedTaskData {
   id: string;
@@ -16,7 +20,7 @@ export interface EnhancedTaskData {
   pipelineId: string;
   agentId?: string;
   userId: string;
-  
+
   // Enhanced fields for real-time sync
   dependencies?: string[];
   dependents?: string[];
@@ -25,7 +29,7 @@ export interface EnhancedTaskData {
   progress?: number;
   tags?: string[];
   metadata?: Record<string, any>;
-  
+
   // Sync tracking
   version: number;
   lastModified: Date;
@@ -62,13 +66,13 @@ export interface WorkflowTaskIntegration {
 @Injectable()
 export class EnhancedTaskManagementService implements OnModuleInit {
   private readonly logger = new Logger(EnhancedTaskManagementService.name);
-  
+
   private taskCache: Map<string, EnhancedTaskData> = new Map();
   private executionContexts: Map<string, TaskExecutionContext> = new Map();
   private workflowIntegrations: Map<string, WorkflowTaskIntegration> = new Map();
 
   constructor(
-    private readonly dbService: PrismaService,
+    private readonly dbService: DatabaseService,
     private readonly taskSyncService: TaskSynchronizationService,
     private readonly syncOrchestrator: SyncOrchestrator
   ) {}
@@ -86,14 +90,14 @@ export class EnhancedTaskManagementService implements OnModuleInit {
     try {
       const tasks = await this.dbService.task.findMany({
         where: {
-          deletedAt: null
+          deletedAt: null,
         },
         include: {
           taskExecutions: {
             orderBy: { startedAt: 'desc' },
-            take: 1
-          }
-        }
+            take: 1,
+          },
+        },
       });
 
       for (const task of tasks) {
@@ -113,7 +117,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
           version: 1, // Initialize version
           lastModified: task.updatedAt,
           modifiedBy: 'system',
-          syncStatus: 'synced'
+          syncStatus: 'synced',
         };
 
         this.taskCache.set(task.id, enhancedTask);
@@ -132,8 +136,8 @@ export class EnhancedTaskManagementService implements OnModuleInit {
     try {
       const workflows = await this.dbService.workflow.findMany({
         include: {
-          steps: true
-        }
+          steps: true,
+        },
       });
 
       for (const workflow of workflows) {
@@ -144,7 +148,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
             workflowStepId: step.id,
             stepOrder: step.order,
             conditions: step.conditions as any,
-            transformations: step.transformations as any
+            transformations: step.transformations as any,
           };
 
           this.workflowIntegrations.set(step.id, integration);
@@ -176,8 +180,8 @@ export class EnhancedTaskManagementService implements OnModuleInit {
           agent: taskData.agentId ? { connect: { id: taskData.agentId } } : undefined,
           user: { connect: { id: taskData.userId } },
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       });
 
       // Create enhanced task data
@@ -187,7 +191,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
         version: 1,
         lastModified: new Date(),
         modifiedBy: taskData.userId,
-        syncStatus: 'pending'
+        syncStatus: 'pending',
       };
 
       // Add to cache
@@ -236,7 +240,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
         version: existingTask.version + 1,
         lastModified: new Date(),
         modifiedBy: userId,
-        syncStatus: 'pending'
+        syncStatus: 'pending',
       };
 
       // Update in cache
@@ -247,11 +251,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
 
       // Handle dependency updates
       if (updates.dependencies !== undefined) {
-        await this.taskSyncService.updateTaskDependencies(
-          taskId,
-          updates.dependencies,
-          tenantId
-        );
+        await this.taskSyncService.updateTaskDependencies(taskId, updates.dependencies, tenantId);
       }
 
       // Handle status changes that affect workflow
@@ -296,8 +296,8 @@ export class EnhancedTaskManagementService implements OnModuleInit {
         retryPolicy: executionContext?.retryPolicy || {
           maxRetries: 3,
           backoffStrategy: 'exponential',
-          baseDelay: 1000
-        }
+          baseDelay: 1000,
+        },
       };
 
       // Store execution context
@@ -309,17 +309,17 @@ export class EnhancedTaskManagementService implements OnModuleInit {
           id: execContext.id,
           task: { connect: { id: taskId } },
           status: 'RUNNING',
-          startedAt: new Date()
-        }
+          startedAt: new Date(),
+        },
       });
 
       // Update task status to IN_PROGRESS
       await this.updateTask(
         taskId,
-        { 
+        {
           status: 'IN_PROGRESS',
           startTime: new Date(),
-          progress: 0
+          progress: 0,
         },
         task.userId,
         tenantId
@@ -333,7 +333,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
         startedAt: new Date(),
         executionContext: execContext,
         version: 1,
-        lastModified: new Date()
+        lastModified: new Date(),
       };
 
       await this.taskSyncService.syncTaskExecution(executionSyncData, tenantId);
@@ -367,9 +367,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
       }
 
       const completedAt = new Date();
-      const duration = task.startTime 
-        ? completedAt.getTime() - task.startTime.getTime()
-        : 0;
+      const duration = task.startTime ? completedAt.getTime() - task.startTime.getTime() : 0;
 
       // Update task execution in database
       await this.dbService.taskExecution.update({
@@ -378,8 +376,8 @@ export class EnhancedTaskManagementService implements OnModuleInit {
           status: error ? 'FAILED' : 'COMPLETED',
           output: result ? JSON.stringify(result) : null,
           error,
-          completedAt
-        }
+          completedAt,
+        },
       });
 
       // Update task status
@@ -392,7 +390,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
           error,
           endTime: completedAt,
           actualDuration: duration,
-          progress: error ? task.progress : 100
+          progress: error ? task.progress : 100,
         },
         task.userId,
         tenantId
@@ -409,7 +407,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
         completedAt,
         executionContext: execContext,
         version: 2,
-        lastModified: new Date()
+        lastModified: new Date(),
       };
 
       await this.taskSyncService.syncTaskExecution(executionSyncData, tenantId);
@@ -447,8 +445,8 @@ export class EnhancedTaskManagementService implements OnModuleInit {
           metadata: {
             ...task.metadata,
             ...metadata,
-            lastProgressUpdate: new Date()
-          }
+            lastProgressUpdate: new Date(),
+          },
         },
         task.userId,
         tenantId
@@ -474,9 +472,9 @@ export class EnhancedTaskManagementService implements OnModuleInit {
           include: {
             taskExecutions: {
               orderBy: { startedAt: 'desc' },
-              take: 1
-            }
-          }
+              take: 1,
+            },
+          },
         });
 
         if (dbTask) {
@@ -496,7 +494,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
             version: 1,
             lastModified: dbTask.updatedAt,
             modifiedBy: 'system',
-            syncStatus: 'synced'
+            syncStatus: 'synced',
           };
 
           this.taskCache.set(taskId, enhancedTask);
@@ -527,7 +525,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
     try {
       const whereClause: any = {
         userId,
-        deletedAt: null
+        deletedAt: null,
       };
 
       if (filters?.status) {
@@ -554,16 +552,16 @@ export class EnhancedTaskManagementService implements OnModuleInit {
         include: {
           taskExecutions: {
             orderBy: { startedAt: 'desc' },
-            take: 1
-          }
-        }
+            take: 1,
+          },
+        },
       });
 
       const enhancedTasks: EnhancedTaskData[] = [];
 
       for (const task of tasks) {
         let enhancedTask = this.taskCache.get(task.id);
-        
+
         if (!enhancedTask) {
           enhancedTask = {
             id: task.id,
@@ -581,7 +579,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
             version: 1,
             lastModified: task.updatedAt,
             modifiedBy: 'system',
-            syncStatus: 'synced'
+            syncStatus: 'synced',
           };
 
           this.taskCache.set(task.id, enhancedTask);
@@ -612,7 +610,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
     return {
       dependencies,
       dependents,
-      workflowIntegration
+      workflowIntegration,
     };
   }
 
@@ -639,15 +637,15 @@ export class EnhancedTaskManagementService implements OnModuleInit {
         progress: task.progress,
         estimatedDuration: task.estimatedDuration,
         actualDuration: task.actualDuration,
-        tags: task.tags
+        tags: task.tags,
       },
       version: task.version,
       lastModified: task.lastModified,
-      modifiedBy: task.modifiedBy
+      modifiedBy: task.modifiedBy,
     };
 
     await this.taskSyncService.syncTaskData(syncData, tenantId);
-    
+
     // Update sync status
     task.syncStatus = 'synced';
   }
@@ -659,7 +657,7 @@ export class EnhancedTaskManagementService implements OnModuleInit {
   ): Promise<void> {
     // Handle workflow integration when task status changes
     const workflowIntegration = this.workflowIntegrations.get(updatedTask.id);
-    
+
     if (workflowIntegration) {
       // Update workflow step status
       try {
@@ -670,9 +668,9 @@ export class EnhancedTaskManagementService implements OnModuleInit {
             statistics: {
               lastStatus: updatedTask.status,
               lastExecution: new Date(),
-              previousStatus
-            }
-          }
+              previousStatus,
+            },
+          },
         });
 
         // If task completed, check if workflow can proceed
@@ -696,21 +694,21 @@ export class EnhancedTaskManagementService implements OnModuleInit {
         where: { id: integration.workflowId },
         include: {
           steps: {
-            orderBy: { order: 'asc' }
-          }
-        }
+            orderBy: { order: 'asc' },
+          },
+        },
       });
 
       if (!workflow) return;
 
       // Find next steps that can be executed
       const currentStepIndex = workflow.steps.findIndex(
-        step => step.id === integration.workflowStepId
+        (step) => step.id === integration.workflowStepId
       );
 
       if (currentStepIndex >= 0 && currentStepIndex < workflow.steps.length - 1) {
         const nextStep = workflow.steps[currentStepIndex + 1];
-        
+
         // Check if next step has a corresponding task
         const nextTask = this.taskCache.get(nextStep.id);
         if (nextTask && nextTask.status === 'PENDING') {
@@ -741,10 +739,12 @@ export class EnhancedTaskManagementService implements OnModuleInit {
       activeExecutions: this.executionContexts.size,
       workflowIntegrations: this.workflowIntegrations.size,
       syncStatuses: {
-        synced: Array.from(this.taskCache.values()).filter(t => t.syncStatus === 'synced').length,
-        pending: Array.from(this.taskCache.values()).filter(t => t.syncStatus === 'pending').length,
-        conflict: Array.from(this.taskCache.values()).filter(t => t.syncStatus === 'conflict').length
-      }
+        synced: Array.from(this.taskCache.values()).filter((t) => t.syncStatus === 'synced').length,
+        pending: Array.from(this.taskCache.values()).filter((t) => t.syncStatus === 'pending')
+          .length,
+        conflict: Array.from(this.taskCache.values()).filter((t) => t.syncStatus === 'conflict')
+          .length,
+      },
     };
   }
 

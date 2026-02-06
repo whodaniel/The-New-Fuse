@@ -1,6 +1,7 @@
 # Testing Best Practices
 
-Guidelines and best practices for writing effective tests in The New Fuse monorepo.
+Guidelines and best practices for writing effective tests in The New Fuse
+monorepo.
 
 ## Table of Contents
 
@@ -19,6 +20,7 @@ Guidelines and best practices for writing effective tests in The New Fuse monore
 ### 1. Write Testable Code
 
 **Good Example:**
+
 ```typescript
 // ✅ Dependency injection makes testing easy
 class UserService {
@@ -35,6 +37,7 @@ const service = new UserService(mockRepo);
 ```
 
 **Bad Example:**
+
 ```typescript
 // ❌ Hard-coded dependency makes testing difficult
 class UserService {
@@ -47,9 +50,8 @@ class UserService {
 
 ### 2. Follow the AAA Pattern
 
-**Arrange** - Set up test data and conditions
-**Act** - Execute the code being tested
-**Assert** - Verify the results
+**Arrange** - Set up test data and conditions **Act** - Execute the code being
+tested **Assert** - Verify the results
 
 ```typescript
 it('should create a new user', async () => {
@@ -229,7 +231,9 @@ describe('UserService', () => {
 
       mockRepo.save.mockRejectedValue(new Error('Duplicate email'));
 
-      await expect(service.createUser(userData)).rejects.toThrow('Duplicate email');
+      await expect(service.createUser(userData)).rejects.toThrow(
+        'Duplicate email'
+      );
     });
   });
 });
@@ -271,9 +275,7 @@ describe('Users API (e2e)', () => {
 
   describe('GET /users', () => {
     it('should return 401 without auth token', () => {
-      return request(app.getHttpServer())
-        .get('/users')
-        .expect(401);
+      return request(app.getHttpServer()).get('/users').expect(401);
     });
 
     it('should return users with auth token', () => {
@@ -513,7 +515,8 @@ const mockFn = vi.fn().mockResolvedValue({ data: 'result' });
 const mockFn = vi.fn((x) => x * 2);
 
 // Mock different return values
-const mockFn = vi.fn()
+const mockFn = vi
+  .fn()
   .mockReturnValueOnce('first')
   .mockReturnValueOnce('second')
   .mockReturnValue('default');
@@ -639,17 +642,15 @@ it('should fetch user', () => {
 
 ```typescript
 it('should throw error for invalid input', async () => {
-  await expect(service.createUser({ email: 'invalid' }))
-    .rejects
-    .toThrow('Invalid email');
+  await expect(service.createUser({ email: 'invalid' })).rejects.toThrow(
+    'Invalid email'
+  );
 });
 
 it('should handle network errors', async () => {
   mockApi.fetchUser.mockRejectedValue(new Error('Network error'));
 
-  await expect(service.getUser('1'))
-    .rejects
-    .toThrow('Network error');
+  await expect(service.getUser('1')).rejects.toThrow('Network error');
 });
 ```
 

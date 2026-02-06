@@ -1,19 +1,11 @@
-import React, { useState } from "react";
-import { decode as HTMLDecode } from "he";
-import truncate from "truncate";
-import { ModalWrapper } from "@/components/ModalWrapper";
-import { middleTruncate } from "@/utils/directories";
-import {
-  FileText,
-  Info,
-  ExternalLink,
-  Github,
-  Link as LinkIcon,
-  XCircle,
-  Youtube,
-} from "lucide-react";
-import ConfluenceLogo from "@/media/dataConnectors/confluence.png";
-import { toPercentString } from "@/utils/numbers";
+import { ModalWrapper } from '@/components/ModalWrapper';
+import ConfluenceLogo from '@/media/dataConnectors/confluence.png';
+import { middleTruncate } from '@/utils/directories';
+import { toPercentString } from '@/utils/numbers';
+import { decode as HTMLDecode } from 'he';
+import { FileText, Info, Link as LinkIcon, XCircle } from 'lucide-react';
+import { useState } from 'react';
+import truncate from 'truncate';
 
 interface Source {
   title: string;
@@ -60,10 +52,10 @@ const ICONS = {
 
 function combineLikeSources(sources: Source[]): CombinedSource[] {
   const combined: { [key: string]: CombinedSource } = {};
-  
+
   sources.forEach((source) => {
-    const { title, text = "", chunkSource = "", score = null } = source;
-    
+    const { title, text = '', chunkSource = '', score = null } = source;
+
     if (combined[title]) {
       combined[title].chunks.push({ text, chunkSource, score });
       combined[title].references += 1;
@@ -75,7 +67,7 @@ function combineLikeSources(sources: Source[]): CombinedSource[] {
       };
     }
   });
-  
+
   return Object.values(combined);
 }
 
@@ -84,39 +76,41 @@ function parseChunkSource(source: CombinedSource): ChunkSourceInfo {
     isUrl: false,
     text: null,
     href: null,
-    icon: "file",
+    icon: 'file',
   };
 
-  if (!source.chunks?.[0]?.chunkSource?.startsWith("link://") &&
-      !source.chunks?.[0]?.chunkSource?.startsWith("confluence://") &&
-      !source.chunks?.[0]?.chunkSource?.startsWith("github://")) {
+  if (
+    !source.chunks?.[0]?.chunkSource?.startsWith('link://') &&
+    !source.chunks?.[0]?.chunkSource?.startsWith('confluence://') &&
+    !source.chunks?.[0]?.chunkSource?.startsWith('github://')
+  ) {
     return nullResponse;
   }
 
   try {
     const chunkSource = source.chunks[0].chunkSource;
     const url = new URL(
-      chunkSource.split("link://")[1] ||
-      chunkSource.split("confluence://")[1] ||
-      chunkSource.split("github://")[1]
+      chunkSource.split('link://')[1] ||
+        chunkSource.split('confluence://')[1] ||
+        chunkSource.split('github://')[1]
     );
-    
+
     let text = url.host + url.pathname;
-    let icon: keyof typeof ICONS = "link";
+    let icon: keyof typeof ICONS = 'link';
 
-    if (url.host.includes("youtube.com")) {
+    if (url.host.includes('youtube.com')) {
       text = source.title;
-      icon = "youtube";
+      icon = 'youtube';
     }
 
-    if (url.host.includes("github.com")) {
+    if (url.host.includes('github.com')) {
       text = source.title;
-      icon = "github";
+      icon = 'github';
     }
 
-    if (url.host.includes("atlassian.net")) {
+    if (url.host.includes('atlassian.net')) {
       text = source.title;
-      icon = "confluence";
+      icon = 'confluence';
     }
 
     return {
@@ -130,13 +124,19 @@ function parseChunkSource(source: CombinedSource): ChunkSourceInfo {
   }
 }
 
-function Citation({ source, onClick }: { source: CombinedSource; onClick: () => void }): JSX.Element | null {
+function Citation({
+  source,
+  onClick,
+}: {
+  source: CombinedSource;
+  onClick: () => void;
+}): JSX.Element | null {
   const { title } = source;
   if (!title) return null;
-  
+
   const chunkSourceInfo = parseChunkSource(source);
   const truncatedTitle = chunkSourceInfo?.text ?? middleTruncate(title, 25);
-  const CitationIcon = ICONS[chunkSourceInfo?.icon ?? "file"];
+  const CitationIcon = ICONS[chunkSourceInfo?.icon ?? 'file'];
 
   return (
     <div
@@ -183,9 +183,7 @@ function CitationDetailModal({
             )}
           </div>
           {references > 1 && (
-            <p className="text-xs text-gray-400 mt-2">
-              Referenced {references} times.
-            </p>
+            <p className="text-xs text-gray-400 mt-2">Referenced {references} times.</p>
           )}
           <button
             onClick={onClose}
@@ -195,17 +193,14 @@ function CitationDetailModal({
             <XCircle size={24} weight="bold" className="text-white" />
           </button>
         </div>
-        <div
-          className="h-full w-full overflow-y-auto"
-          style={{ maxHeight: "calc(100vh - 200px)" }}
-        >
+        <div className="h-full w-full overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
           <div className="py-7 px-9 space-y-2 flex-col">
             {chunks.map(({ text, score }, idx) => (
               <div key={idx}>
                 <div className="pt-6 text-white">
                   <div className="flex flex-col w-full justify-start pb-6 gap-y-1">
                     <p className="text-white whitespace-pre-line">
-                      {HTMLDecode(omitChunkHeader(text || ""))}
+                      {HTMLDecode(omitChunkHeader(text || ''))}
                     </p>
 
                     {!!score && (
@@ -222,9 +217,7 @@ function CitationDetailModal({
                     )}
                   </div>
                 </div>
-                {idx !== chunks.length - 1 && (
-                  <hr className="border-theme-modal-border" />
-                )}
+                {idx !== chunks.length - 1 && <hr className="border-theme-modal-border" />}
               </div>
             ))}
             <div className="mb-6"></div>
@@ -236,13 +229,13 @@ function CitationDetailModal({
 }
 
 function omitChunkHeader(text: string): string {
-  if (!text.startsWith("<document_metadata>")) return text;
-  return text.split("</document_metadata>")[1].trim();
+  if (!text.startsWith('<document_metadata>')) return text;
+  return text.split('</document_metadata>')[1].trim();
 }
 
 export default function Citations({ sources = [] }: CitationsProps): JSX.Element | null {
   if (sources.length === 0) return null;
-  
+
   const [open, setOpen] = useState<boolean>(false);
   const [selectedSource, setSelectedSource] = useState<CombinedSource | null>(null);
   const combinedSources = combineLikeSources(sources);
@@ -252,10 +245,10 @@ export default function Citations({ sources = [] }: CitationsProps): JSX.Element
       <button
         onClick={() => setOpen(!open)}
         className={`border-none text-white/50 light:text-black/50 font-medium italic text-sm text-left ml-14 pt-2 ${
-          open ? "pb-2" : ""
+          open ? 'pb-2' : ''
         } hover:text-white/75 hover:light:text-black/75 transition-all duration-300`}
       >
-        {open ? "Hide Citations" : "Show Citations"}
+        {open ? 'Hide Citations' : 'Show Citations'}
       </button>
       {open && (
         <div className="flex flex-wrap md:flex-row md:items-center gap-4 overflow-x-scroll mt-1 doc__source ml-14">
@@ -269,10 +262,7 @@ export default function Citations({ sources = [] }: CitationsProps): JSX.Element
         </div>
       )}
       {selectedSource && (
-        <CitationDetailModal
-          source={selectedSource}
-          onClose={() => setSelectedSource(null)}
-        />
+        <CitationDetailModal source={selectedSource} onClose={() => setSelectedSource(null)} />
       )}
     </div>
   );

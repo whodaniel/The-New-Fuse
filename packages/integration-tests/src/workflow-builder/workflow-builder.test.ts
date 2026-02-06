@@ -1,6 +1,6 @@
 /**
  * Comprehensive Drag and Drop Workflow Builder Tests
- * 
+ *
  * Tests the complete workflow builder functionality including:
  * - Drag and drop operations
  * - Node creation and management
@@ -23,7 +23,7 @@ enum WorkflowNodeType {
   CONDITION = 'CONDITION',
   PARALLEL = 'PARALLEL',
   DATA_TRANSFORM = 'DATA_TRANSFORM',
-  CUSTOM = 'CUSTOM'
+  CUSTOM = 'CUSTOM',
 }
 
 // Mock WorkflowBuilder class since dependency was removed
@@ -56,11 +56,13 @@ class WorkflowBuilder {
   private saveState() {
     this.lastSavedState = {
       nodes: [...this.nodes],
-      connections: [...this.connections]
+      connections: [...this.connections],
     };
   }
 
-  async initialize() { return Promise.resolve(); }
+  async initialize() {
+    return Promise.resolve();
+  }
   async cleanup() {
     if (this.autoSaveTimer) {
       clearInterval(this.autoSaveTimer);
@@ -76,19 +78,33 @@ class WorkflowBuilder {
       this.config.name = workflow.name;
     }
   }
-  
+
   getWorkflow() {
     const name = this.config.name || 'Test Workflow';
     // Getting workflow name
     return { name, definition: { nodes: this.nodes, edges: this.connections } };
   }
-  getNodes() { return this.nodes; }
-  getConnections() { return this.connections; }
-  getConfiguration() { return this.config; }
-  setConfiguration(config: any) { Object.assign(this.config, config); }
-  
+  getNodes() {
+    return this.nodes;
+  }
+  getConnections() {
+    return this.connections;
+  }
+  getConfiguration() {
+    return this.config;
+  }
+  setConfiguration(config: any) {
+    Object.assign(this.config, config);
+  }
+
   addNode(type: WorkflowNodeType, name: string, position: any, config?: any) {
-    const node = { id: `node_${Date.now()}_${Math.random()}`, type, name, position: this.snapToGrid(position), config: config || {} };
+    const node = {
+      id: `node_${Date.now()}_${Math.random()}`,
+      type,
+      name,
+      position: this.snapToGrid(position),
+      config: config || {},
+    };
     // Adding node
     this.nodes.push(node);
     this.addToUndoStack('ADD_NODE', { node });
@@ -97,44 +113,61 @@ class WorkflowBuilder {
     }
     return node;
   }
-  
+
   updateNode(id: string, updates: any) {
-    const node = this.nodes.find(n => n.id === id);
+    const node = this.nodes.find((n) => n.id === id);
     if (node) {
       Object.assign(node, updates);
       if (updates.position) node.position = this.snapToGrid(updates.position);
     }
     return node;
   }
-  
+
   removeNode(id: string) {
-    const index = this.nodes.findIndex(n => n.id === id);
+    const index = this.nodes.findIndex((n) => n.id === id);
     if (index >= 0) {
       this.nodes.splice(index, 1);
-      this.connections = this.connections.filter(c => c.source !== id && c.target !== id);
+      this.connections = this.connections.filter((c) => c.source !== id && c.target !== id);
       return true;
     }
     return false;
   }
-  
+
   duplicateNode(id: string, position: any) {
-    const original = this.nodes.find(n => n.id === id);
+    const original = this.nodes.find((n) => n.id === id);
     if (original) {
-      return this.addNode(original.type, original.name + ' (Copy)', position, { ...original.config });
+      return this.addNode(original.type, original.name + ' (Copy)', position, {
+        ...original.config,
+      });
     }
     return null;
   }
-  
+
   addConnection(sourceId: string, sourceHandle: string, targetId: string, targetHandle: string) {
     if (this.wouldCreateCircularDependency(sourceId, targetId)) return null;
-    
+
     // Validate handles
-    const validHandles = ['output', 'input', 'true', 'false', 'branch1', 'branch2', 'data_output', 'condition_input'];
+    const validHandles = [
+      'output',
+      'input',
+      'true',
+      'false',
+      'branch1',
+      'branch2',
+      'data_output',
+      'condition_input',
+    ];
     if (!validHandles.includes(sourceHandle) || !validHandles.includes(targetHandle)) {
       return null;
     }
-    
-    const connection = { id: `conn_${Date.now()}_${Math.random()}`, source: sourceId, sourceHandle, target: targetId, targetHandle };
+
+    const connection = {
+      id: `conn_${Date.now()}_${Math.random()}`,
+      source: sourceId,
+      sourceHandle,
+      target: targetId,
+      targetHandle,
+    };
     this.connections.push(connection);
     this.addToUndoStack('ADD_CONNECTION', { connection });
     if (this.config.enableAutoSave) {
@@ -142,22 +175,22 @@ class WorkflowBuilder {
     }
     return connection;
   }
-  
+
   updateConnection(id: string, updates: any) {
-    const connection = this.connections.find(c => c.id === id);
+    const connection = this.connections.find((c) => c.id === id);
     if (connection) Object.assign(connection, updates);
     return connection;
   }
-  
+
   removeConnection(id: string) {
-    const index = this.connections.findIndex(c => c.id === id);
+    const index = this.connections.findIndex((c) => c.id === id);
     if (index >= 0) {
       this.connections.splice(index, 1);
       return true;
     }
     return false;
   }
-  
+
   validateWorkflow() {
     // Validating workflow
     const errors: { message: string }[] = [];
@@ -165,12 +198,14 @@ class WorkflowBuilder {
 
     // Check for disconnected nodes
     const connectedNodes = new Set();
-    this.connections.forEach(c => {
+    this.connections.forEach((c) => {
       connectedNodes.add(c.source);
       connectedNodes.add(c.target);
     });
 
-    const disconnectedNodes = this.nodes.filter(n => !connectedNodes.has(n.id) && this.nodes.length > 1);
+    const disconnectedNodes = this.nodes.filter(
+      (n) => !connectedNodes.has(n.id) && this.nodes.length > 1
+    );
     // Connected and disconnected nodes analysis
     if (disconnectedNodes.length > 0) {
       errors.push({ message: `Found ${disconnectedNodes.length} disconnected nodes` });
@@ -180,11 +215,11 @@ class WorkflowBuilder {
     // Validation result
     return result;
   }
-  
+
   validateNode(id: string) {
-    const node = this.nodes.find(n => n.id === id);
+    const node = this.nodes.find((n) => n.id === id);
     const errors = [];
-    
+
     if (node && node.type === WorkflowNodeType.AGENT_TASK) {
       if (!node.config.agentId) errors.push({ message: 'Agent ID is required' });
       if (!node.config.task) errors.push({ message: 'Task is required' });
@@ -192,27 +227,33 @@ class WorkflowBuilder {
         errors.push({ message: 'Referenced agent not found' });
       }
     }
-    
+
     return { isValid: errors.length === 0, errors };
   }
-  
+
   setGridSnap(enabled: boolean, options?: any) {
     this.gridSnap = { enabled, ...options };
   }
-  
+
   snapToGrid(position: any) {
     if (!this.gridSnap.enabled) return position;
     const size = this.gridSnap.size || 20;
     return {
       x: Math.round(position.x / size) * size,
-      y: Math.round(position.y / size) * size
+      y: Math.round(position.y / size) * size,
     };
   }
-  
-  setViewport(viewport: any) { this.viewport = viewport; }
-  getViewport() { return this.viewport; }
-  zoomToFit() { this.viewport = { x: 0, y: 0, zoom: 0.8 }; }
-  
+
+  setViewport(viewport: any) {
+    this.viewport = viewport;
+  }
+  getViewport() {
+    return this.viewport;
+  }
+  zoomToFit() {
+    this.viewport = { x: 0, y: 0, zoom: 0.8 };
+  }
+
   selectNode(id: string, options?: any) {
     if (options?.addToSelection) {
       if (!this.selectedNodes.includes(id)) this.selectedNodes.push(id);
@@ -220,49 +261,66 @@ class WorkflowBuilder {
       this.selectedNodes = [id];
     }
   }
-  
+
   selectArea(area: any) {
     this.selectedNodes = this.nodes
-      .filter(n => n.position.x >= area.x && n.position.x <= area.x + area.width &&
-                   n.position.y >= area.y && n.position.y <= area.y + area.height)
-      .map(n => n.id);
+      .filter(
+        (n) =>
+          n.position.x >= area.x &&
+          n.position.x <= area.x + area.width &&
+          n.position.y >= area.y &&
+          n.position.y <= area.y + area.height
+      )
+      .map((n) => n.id);
   }
-  
-  getSelectedNodes() { return this.selectedNodes; }
-  clearSelection() { this.selectedNodes = []; }
-  
+
+  getSelectedNodes() {
+    return this.selectedNodes;
+  }
+  clearSelection() {
+    this.selectedNodes = [];
+  }
+
   copySelection() {
-    const selectedNodeObjs = this.nodes.filter(n => this.selectedNodes.includes(n.id));
-    const selectedConnections = this.connections.filter(c => 
-      this.selectedNodes.includes(c.source) && this.selectedNodes.includes(c.target)
+    const selectedNodeObjs = this.nodes.filter((n) => this.selectedNodes.includes(n.id));
+    const selectedConnections = this.connections.filter(
+      (c) => this.selectedNodes.includes(c.source) && this.selectedNodes.includes(c.target)
     );
     return { nodes: selectedNodeObjs, connections: selectedConnections };
   }
-  
+
   paste(copied: any, offset: any) {
     const nodeIdMap = new Map();
     const pastedNodes = copied.nodes.map((node: any) => {
-      const newNode = this.addNode(node.type, node.name, 
-        { x: node.position.x + offset.x, y: node.position.y + offset.y }, 
+      const newNode = this.addNode(
+        node.type,
+        node.name,
+        { x: node.position.x + offset.x, y: node.position.y + offset.y },
         { ...node.config }
       );
       nodeIdMap.set(node.id, newNode.id);
       return newNode;
     });
-    
+
     const pastedConnections = copied.connections.map((conn: any) => {
       return this.addConnection(
-        nodeIdMap.get(conn.source), conn.sourceHandle,
-        nodeIdMap.get(conn.target), conn.targetHandle
+        nodeIdMap.get(conn.source),
+        conn.sourceHandle,
+        nodeIdMap.get(conn.target),
+        conn.targetHandle
       );
     });
-    
+
     return { nodes: pastedNodes, connections: pastedConnections };
   }
-  
-  canUndo() { return this.undoStack.length > 0; }
-  canRedo() { return this.redoStack.length > 0; }
-  
+
+  canUndo() {
+    return this.undoStack.length > 0;
+  }
+  canRedo() {
+    return this.redoStack.length > 0;
+  }
+
   undo() {
     if (this.undoStack.length > 0) {
       const action = this.undoStack.pop();
@@ -270,7 +328,7 @@ class WorkflowBuilder {
       this.applyUndoAction(action);
     }
   }
-  
+
   redo() {
     if (this.redoStack.length > 0) {
       const action = this.redoStack.pop();
@@ -278,12 +336,12 @@ class WorkflowBuilder {
       this.applyRedoAction(action);
     }
   }
-  
+
   exportWorkflow(_format: string) {
     const data = { nodes: this.nodes, connections: this.connections, metadata: { version: '1.0' } };
     return JSON.stringify(data);
   }
-  
+
   importWorkflow(data: string, format: string) {
     try {
       const parsed = JSON.parse(data);
@@ -294,34 +352,36 @@ class WorkflowBuilder {
       return { success: false, error };
     }
   }
-  
+
   createTemplate(options: any) {
     return {
       name: options.name,
       description: options.description,
       category: options.category,
       parameters: options.parameters || [],
-      workflow: { nodes: this.nodes, connections: this.connections }
+      workflow: { nodes: this.nodes, connections: this.connections },
     };
   }
-  
+
   instantiateTemplate(template: any, parameters: any) {
     try {
       const nodes = template.workflow.nodes.map((node: any) => ({
         ...node,
         id: `node_${Date.now()}_${Math.random()}`,
         name: this.replaceTemplateVars(node.name, parameters),
-        config: this.replaceTemplateVars(node.config, parameters)
+        config: this.replaceTemplateVars(node.config, parameters),
       }));
-      
+
       this.nodes = nodes;
       return { success: true };
     } catch (error) {
       return { success: false, error };
     }
   }
-  
-  getLastSavedState() { return this.lastSavedState; }
+
+  getLastSavedState() {
+    return this.lastSavedState;
+  }
   recoverFromAutoSave(state: any) {
     try {
       this.nodes = state.nodes || [];
@@ -331,24 +391,24 @@ class WorkflowBuilder {
       return { success: false, error };
     }
   }
-  
+
   private wouldCreateCircularDependency(sourceId: string, targetId: string): boolean {
     const visited = new Set();
     const stack = [targetId];
-    
+
     while (stack.length > 0) {
       const current = stack.pop()!;
       if (current === sourceId) return true;
       if (visited.has(current)) continue;
       visited.add(current);
-      
-      const outgoing = this.connections.filter(c => c.source === current);
-      stack.push(...outgoing.map(c => c.target));
+
+      const outgoing = this.connections.filter((c) => c.source === current);
+      stack.push(...outgoing.map((c) => c.target));
     }
-    
+
     return false;
   }
-  
+
   private addToUndoStack(type: string, data: any) {
     this.undoStack.push({ type, data });
     if (this.undoStack.length > this.config.maxUndoSteps) {
@@ -356,15 +416,15 @@ class WorkflowBuilder {
     }
     this.redoStack = [];
   }
-  
+
   private applyUndoAction(action: any) {
     if (action.type === 'ADD_NODE') {
-      this.nodes = this.nodes.filter(n => n.id !== action.data.node.id);
+      this.nodes = this.nodes.filter((n) => n.id !== action.data.node.id);
     } else if (action.type === 'ADD_CONNECTION') {
-      this.connections = this.connections.filter(c => c.id !== action.data.connection.id);
+      this.connections = this.connections.filter((c) => c.id !== action.data.connection.id);
     }
   }
-  
+
   private applyRedoAction(action: any) {
     if (action.type === 'ADD_NODE') {
       this.nodes.push(action.data.node);
@@ -372,7 +432,7 @@ class WorkflowBuilder {
       this.connections.push(action.data.connection);
     }
   }
-  
+
   private replaceTemplateVars(obj: any, parameters: any): any {
     if (typeof obj === 'string') {
       return obj.replace(/\{\{(\w+)\}\}/g, (match, key) => parameters[key] || match);
@@ -423,14 +483,14 @@ describe('Drag and Drop Workflow Builder Tests', () => {
         autoSaveInterval: 5000,
         maxUndoSteps: 50,
         enableValidation: true,
-        strictMode: true
+        strictMode: true,
       });
 
       await customBuilder.initialize();
 
       expect(customBuilder.getConfiguration().enableAutoSave).toBe(true);
       expect(customBuilder.getConfiguration().maxUndoSteps).toBe(50);
-      
+
       await customBuilder.cleanup();
     });
 
@@ -438,7 +498,7 @@ describe('Drag and Drop Workflow Builder Tests', () => {
       // Create a workflow with some nodes
       const { workflow } = await TestHelpers.createTestWorkflow('Load Test Workflow');
       // Created workflow
-      
+
       const loadBuilder = new WorkflowBuilder();
       await loadBuilder.initialize();
       await loadBuilder.loadWorkflow(workflow);
@@ -447,7 +507,7 @@ describe('Drag and Drop Workflow Builder Tests', () => {
       // Loaded workflow name
       expect(loadedWorkflow.name).toBe('Load Test Workflow');
       expect(loadBuilder.getNodes().length).toBeGreaterThan(0);
-      
+
       await loadBuilder.cleanup();
     });
   });
@@ -455,11 +515,7 @@ describe('Drag and Drop Workflow Builder Tests', () => {
   describe('Node Creation and Management', () => {
     test('should create basic workflow nodes', async () => {
       // Add start node
-      const startNode = builder.addNode(
-        WorkflowNodeType.START,
-        'Start Node',
-        { x: 100, y: 100 }
-      );
+      const startNode = builder.addNode(WorkflowNodeType.START, 'Start Node', { x: 100, y: 100 });
 
       expect(startNode).toBeDefined();
       expect(startNode.type).toBe(WorkflowNodeType.START);
@@ -481,7 +537,7 @@ describe('Drag and Drop Workflow Builder Tests', () => {
           task: 'Process the input data',
           priority: 'high',
           expectedDuration: 10,
-          timeout: 60000
+          timeout: 60000,
         }
       );
 
@@ -500,7 +556,7 @@ describe('Drag and Drop Workflow Builder Tests', () => {
           condition: 'input.value > 100',
           conditionType: 'javascript',
           trueLabel: 'High Value',
-          falseLabel: 'Low Value'
+          falseLabel: 'Low Value',
         }
       );
 
@@ -517,10 +573,10 @@ describe('Drag and Drop Workflow Builder Tests', () => {
         {
           branches: [
             { name: 'Branch A', maxConcurrency: 2 },
-            { name: 'Branch B', maxConcurrency: 3 }
+            { name: 'Branch B', maxConcurrency: 3 },
           ],
           waitForAll: true,
-          timeout: 300000
+          timeout: 300000,
         }
       );
 
@@ -530,16 +586,12 @@ describe('Drag and Drop Workflow Builder Tests', () => {
     });
 
     test('should update node properties', async () => {
-      const node = builder.addNode(
-        WorkflowNodeType.START,
-        'Original Name',
-        { x: 100, y: 100 }
-      );
+      const node = builder.addNode(WorkflowNodeType.START, 'Original Name', { x: 100, y: 100 });
 
       const updatedNode = builder.updateNode(node.id, {
         name: 'Updated Name',
         position: { x: 150, y: 120 },
-        config: { newProperty: 'test value' }
+        config: { newProperty: 'test value' },
       });
 
       expect(updatedNode.name).toBe('Updated Name');
@@ -552,15 +604,15 @@ describe('Drag and Drop Workflow Builder Tests', () => {
       // Create nodes and connection
       const node1 = builder.addNode(WorkflowNodeType.START, 'Node 1', { x: 100, y: 100 });
       const node2 = builder.addNode(WorkflowNodeType.END, 'Node 2', { x: 200, y: 100 });
-      
+
       builder.addConnection(node1.id, 'output', node2.id, 'input');
-      
+
       expect(builder.getNodes()).toHaveLength(2);
       expect(builder.getConnections()).toHaveLength(1);
 
       // Remove node1
       const removed = builder.removeNode(node1.id);
-      
+
       expect(removed).toBe(true);
       expect(builder.getNodes()).toHaveLength(1);
       expect(builder.getConnections()).toHaveLength(0); // Connection should be removed
@@ -603,29 +655,31 @@ describe('Drag and Drop Workflow Builder Tests', () => {
     });
 
     test('should validate connection compatibility', async () => {
-      const dataNode = builder.addNode(
-        WorkflowNodeType.DATA_TRANSFORM,
-        'Transform Data',
-        { x: 100, y: 100 }
-      );
-      
-      const conditionNode = builder.addNode(
-        WorkflowNodeType.CONDITION,
-        'Check Condition',
-        { x: 300, y: 100 }
-      );
+      const dataNode = builder.addNode(WorkflowNodeType.DATA_TRANSFORM, 'Transform Data', {
+        x: 100,
+        y: 100,
+      });
+
+      const conditionNode = builder.addNode(WorkflowNodeType.CONDITION, 'Check Condition', {
+        x: 300,
+        y: 100,
+      });
 
       // Valid connection
       const validConnection = builder.addConnection(
-        dataNode.id, 'data_output', 
-        conditionNode.id, 'condition_input'
+        dataNode.id,
+        'data_output',
+        conditionNode.id,
+        'condition_input'
       );
       expect(validConnection).toBeDefined();
 
       // Invalid connection (wrong handle types)
       const invalidConnection = builder.addConnection(
-        dataNode.id, 'invalid_output',
-        conditionNode.id, 'invalid_input'
+        dataNode.id,
+        'invalid_output',
+        conditionNode.id,
+        'invalid_input'
       );
       expect(invalidConnection).toBeNull();
     });
@@ -651,11 +705,11 @@ describe('Drag and Drop Workflow Builder Tests', () => {
       const node2 = builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 });
 
       const connection = builder.addConnection(node1.id, 'output', node2.id, 'input');
-      
+
       const updatedConnection = builder.updateConnection(connection!.id, {
         label: 'Main Flow',
         style: { stroke: '#ff0000', strokeWidth: 2 },
-        animated: true
+        animated: true,
       });
 
       expect(updatedConnection!.label).toBe('Main Flow');
@@ -692,7 +746,7 @@ describe('Drag and Drop Workflow Builder Tests', () => {
   describe('Canvas Operations', () => {
     test('should handle drag and drop positioning', async () => {
       const startTime = performance.now();
-      
+
       // Simulate drag and drop by creating multiple nodes with positions
       const nodes = [];
       for (let i = 0; i < 10; i++) {
@@ -710,7 +764,7 @@ describe('Drag and Drop Workflow Builder Tests', () => {
 
       expect(nodes).toHaveLength(10);
       expect(operationTime).toBeLessThan(100); // Should be fast
-      
+
       // Verify positions are correctly set
       nodes.forEach((node, index) => {
         expect(node.position.x).toBe(index * 150);
@@ -748,7 +802,7 @@ describe('Drag and Drop Workflow Builder Tests', () => {
       // Zoom to fit all nodes
       builder.zoomToFit();
       const fittedViewport = builder.getViewport();
-      
+
       expect(fittedViewport.zoom).toBeGreaterThan(0);
       expect(fittedViewport.zoom).toBeLessThanOrEqual(1);
     });
@@ -832,9 +886,11 @@ describe('Drag and Drop Workflow Builder Tests', () => {
 
       expect(validation.isValid).toBe(false);
       expect(validation.errors.length).toBeGreaterThan(0);
-      expect(validation.errors.some(error => 
-        error.message.includes('disconnected') || error.message.includes('isolated')
-      )).toBe(true);
+      expect(
+        validation.errors.some(
+          (error) => error.message.includes('disconnected') || error.message.includes('isolated')
+        )
+      ).toBe(true);
     });
 
     test('should validate node configurations', async () => {
@@ -854,20 +910,27 @@ describe('Drag and Drop Workflow Builder Tests', () => {
 
     test('should validate connections between incompatible nodes', async () => {
       const startNode = builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 });
-      const conditionNode = builder.addNode(WorkflowNodeType.CONDITION, 'Condition', { x: 200, y: 100 });
+      const conditionNode = builder.addNode(WorkflowNodeType.CONDITION, 'Condition', {
+        x: 200,
+        y: 100,
+      });
 
       // Try invalid connection
       const invalidConnection = builder.addConnection(
-        startNode.id, 'invalid_handle',
-        conditionNode.id, 'invalid_input'
+        startNode.id,
+        'invalid_handle',
+        conditionNode.id,
+        'invalid_input'
       );
 
       expect(invalidConnection).toBeNull();
 
       // Create valid connection
       const validConnection = builder.addConnection(
-        startNode.id, 'output',
-        conditionNode.id, 'input'
+        startNode.id,
+        'output',
+        conditionNode.id,
+        'input'
       );
 
       expect(validConnection).toBeDefined();
@@ -880,16 +943,18 @@ describe('Drag and Drop Workflow Builder Tests', () => {
         { x: 100, y: 100 },
         {
           agentId: 'non-existent-agent-id',
-          task: 'Do something'
+          task: 'Do something',
         }
       );
 
       const validation = builder.validateNode(taskNode.id);
 
       expect(validation.isValid).toBe(false);
-      expect(validation.errors.some(error => 
-        error.message.includes('agent') && error.message.includes('not found')
-      )).toBe(true);
+      expect(
+        validation.errors.some(
+          (error) => error.message.includes('agent') && error.message.includes('not found')
+        )
+      ).toBe(true);
     });
 
     test('should detect circular dependencies in complex workflows', async () => {
@@ -913,7 +978,7 @@ describe('Drag and Drop Workflow Builder Tests', () => {
       const circularConnection = builder.addConnection(node4.id, 'output', node2.id, 'input');
 
       expect(circularConnection).toBeNull();
-      
+
       const validation = builder.validateWorkflow();
       expect(validation.isValid).toBe(true); // Should be valid without circular connection
     });
@@ -963,7 +1028,7 @@ describe('Drag and Drop Workflow Builder Tests', () => {
       const node1 = builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 });
       const node2 = builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task', { x: 200, y: 100 });
       const node3 = builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 });
-      
+
       builder.addConnection(node1.id, 'output', node2.id, 'input');
       builder.addConnection(node2.id, 'output', node3.id, 'input');
 
@@ -1017,7 +1082,7 @@ describe('Drag and Drop Workflow Builder Tests', () => {
   describe('Performance and Scalability', () => {
     test('should handle large workflows efficiently', async () => {
       const startTime = performance.now();
-      
+
       // Create large workflow (100 nodes)
       const nodes = [];
       for (let i = 0; i < 100; i++) {
@@ -1077,11 +1142,10 @@ describe('Drag and Drop Workflow Builder Tests', () => {
 
       // Rapidly create and delete nodes
       for (let i = 0; i < operationCount; i++) {
-        const node = builder.addNode(
-          WorkflowNodeType.AGENT_TASK,
-          `Temp Task ${i}`,
-          { x: i * 10, y: 100 }
-        );
+        const node = builder.addNode(WorkflowNodeType.AGENT_TASK, `Temp Task ${i}`, {
+          x: i * 10,
+          y: 100,
+        });
 
         // Delete every other node immediately
         if (i % 2 === 1) {
@@ -1103,11 +1167,10 @@ describe('Drag and Drop Workflow Builder Tests', () => {
 
       for (let x = 0; x < gridSize; x++) {
         for (let y = 0; y < gridSize; y++) {
-          const node = builder.addNode(
-            WorkflowNodeType.AGENT_TASK,
-            `Task ${x}-${y}`,
-            { x: x * 150, y: y * 100 }
-          );
+          const node = builder.addNode(WorkflowNodeType.AGENT_TASK, `Task ${x}-${y}`, {
+            x: x * 150,
+            y: y * 100,
+          });
           nodes.push(node);
         }
       }
@@ -1122,9 +1185,9 @@ describe('Drag and Drop Workflow Builder Tests', () => {
           x: i * 50,
           y: i * 50,
           width: 300,
-          height: 200
+          height: 200,
         });
-        
+
         builder.clearSelection();
       }
 
@@ -1138,8 +1201,8 @@ describe('Drag and Drop Workflow Builder Tests', () => {
       // Create sample workflow
       const node1 = builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 });
       const node2 = builder.addNode(
-        WorkflowNodeType.AGENT_TASK, 
-        'Process Data', 
+        WorkflowNodeType.AGENT_TASK,
+        'Process Data',
         { x: 200, y: 100 },
         { task: 'Process input data', priority: 'high' }
       );
@@ -1196,7 +1259,7 @@ describe('Drag and Drop Workflow Builder Tests', () => {
         {
           task: 'Process {{dataType}} data using {{algorithm}}',
           priority: '{{priority}}',
-          timeout: '{{timeout}}'
+          timeout: '{{timeout}}',
         }
       );
       const endNode = builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 });
@@ -1212,8 +1275,8 @@ describe('Drag and Drop Workflow Builder Tests', () => {
           { name: 'dataType', type: 'string', required: true },
           { name: 'algorithm', type: 'string', default: 'standard' },
           { name: 'priority', type: 'string', default: 'medium' },
-          { name: 'timeout', type: 'number', default: 60000 }
-        ]
+          { name: 'timeout', type: 'number', default: 60000 },
+        ],
       });
 
       expect(template).toBeDefined();
@@ -1238,8 +1301,8 @@ describe('Drag and Drop Workflow Builder Tests', () => {
         name: 'Test Template',
         parameters: [
           { name: 'dataType', type: 'string' },
-          { name: 'priority', type: 'string' }
-        ]
+          { name: 'priority', type: 'string' },
+        ],
       });
 
       // Create new builder and instantiate template
@@ -1248,13 +1311,13 @@ describe('Drag and Drop Workflow Builder Tests', () => {
 
       const instantiated = newBuilder.instantiateTemplate(template, {
         dataType: 'customer',
-        priority: 'high'
+        priority: 'high',
       });
 
       expect(instantiated.success).toBe(true);
       expect(newBuilder.getNodes()).toHaveLength(2);
 
-      const processNode = newBuilder.getNodes().find(n => n.name.includes('customer'));
+      const processNode = newBuilder.getNodes().find((n) => n.name.includes('customer'));
       expect(processNode).toBeDefined();
       expect(processNode.name).toBe('Process customer');
       expect(processNode.config.task).toBe('Process customer data');
@@ -1266,15 +1329,15 @@ describe('Drag and Drop Workflow Builder Tests', () => {
 
   describe('Auto-save and Recovery', () => {
     test('should auto-save workflow changes', async () => {
-      builder.setConfiguration({ 
-        enableAutoSave: true, 
-        autoSaveInterval: 100 // 100ms for testing
+      builder.setConfiguration({
+        enableAutoSave: true,
+        autoSaveInterval: 100, // 100ms for testing
       });
 
       const node = builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 });
 
       // Wait for auto-save
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
 
       const savedWorkflow = builder.getLastSavedState();
       expect(savedWorkflow).toBeDefined();
@@ -1290,7 +1353,7 @@ describe('Drag and Drop Workflow Builder Tests', () => {
       builder.addConnection(node1.id, 'output', node2.id, 'input');
 
       // Wait for auto-save
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
 
       // Create new builder and recover
       const recoveryBuilder = new WorkflowBuilder();
@@ -1306,18 +1369,18 @@ describe('Drag and Drop Workflow Builder Tests', () => {
     });
 
     test('should handle auto-save failures gracefully', async () => {
-      builder.setConfiguration({ 
-        enableAutoSave: true, 
+      builder.setConfiguration({
+        enableAutoSave: true,
         autoSaveInterval: 50,
         autoSaveCallback: () => {
           throw new Error('Save failed');
-        }
+        },
       });
 
       const node = builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 });
 
       // Wait for auto-save attempt
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Builder should continue working despite save failure
       const node2 = builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 });

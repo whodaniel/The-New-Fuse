@@ -1,13 +1,19 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FeatureTracker } from '../FeatureTracker';
-import type { FeatureProgress, FeatureStage, CodeMetrics, QualitativeAssessment } from '../types';
+import type { CodeMetrics, FeatureProgress, FeatureStage, QualitativeAssessment } from '../types';
 
 interface UseFeatureTrackerResult {
   feature: FeatureProgress | null;
-  initializeFeature: (name: string, description: string, dependencies?: string[]) => FeatureProgress;
+  initializeFeature: (
+    name: string,
+    description: string,
+    dependencies?: string[]
+  ) => FeatureProgress;
   updateStage: (newStage: FeatureStage) => FeatureProgress | undefined;
   updateMetrics: (metrics: Partial<CodeMetrics>) => FeatureProgress | undefined;
-  updateQualitativeAssessment: (assessment: Partial<QualitativeAssessment>) => FeatureProgress | undefined;
+  updateQualitativeAssessment: (
+    assessment: Partial<QualitativeAssessment>
+  ) => FeatureProgress | undefined;
   getProgressSummary: () => string;
 }
 
@@ -35,7 +41,7 @@ export const useFeatureTracker = (featureId: string): UseFeatureTrackerResult =>
 
   const updateStage = useCallback(
     (newStage: FeatureStage) => {
-      if(!feature) return;
+      if (!feature) return;
       const updated = tracker.updateStage(featureId, newStage);
       setFeature(updated);
       return updated;
@@ -45,7 +51,7 @@ export const useFeatureTracker = (featureId: string): UseFeatureTrackerResult =>
 
   const updateMetrics = useCallback(
     (metrics: Partial<CodeMetrics>) => {
-      if(!feature) return;
+      if (!feature) return;
       const updated = tracker.updateMetrics(featureId, metrics);
       setFeature(updated);
       return updated;

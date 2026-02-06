@@ -2,18 +2,18 @@
 
 ## Overview
 
-This document provides detailed runbooks for each alert rule configured in the monitoring system. Follow these procedures when alerts are triggered.
+This document provides detailed runbooks for each alert rule configured in the
+monitoring system. Follow these procedures when alerts are triggered.
 
 ---
 
 ## High Error Rate
 
-**Alert ID**: `high-error-rate`
-**Severity**: Critical
-**Threshold**: Error rate > 5%
-**Duration**: 5 minutes
+**Alert ID**: `high-error-rate` **Severity**: Critical **Threshold**: Error
+rate > 5% **Duration**: 5 minutes
 
 ### Symptoms
+
 - Alert: "High error rate detected"
 - Error rate exceeds 5% of total requests
 - Multiple error traces in Sentry
@@ -21,6 +21,7 @@ This document provides detailed runbooks for each alert rule configured in the m
 ### Investigation
 
 1. **Check Error Dashboard**
+
    ```bash
    # Open Grafana
    # Navigate to "API Performance Metrics" dashboard
@@ -28,6 +29,7 @@ This document provides detailed runbooks for each alert rule configured in the m
    ```
 
 2. **Review Error Logs**
+
    ```bash
    # Check recent errors
    kubectl logs -f deployment/api-gateway -n production | grep ERROR | tail -50
@@ -43,6 +45,7 @@ This document provides detailed runbooks for each alert rule configured in the m
    - Check affected endpoints
 
 4. **Review Recent Deployments**
+
    ```bash
    # Check deployment history
    kubectl rollout history deployment/api-gateway -n production
@@ -76,6 +79,7 @@ This document provides detailed runbooks for each alert rule configured in the m
 ### Resolution
 
 **If caused by recent deployment:**
+
 ```bash
 # Rollback to previous version
 kubectl rollout undo deployment/api-gateway -n production
@@ -88,6 +92,7 @@ curl https://api.example.com/metrics | grep http_request_errors_total
 ```
 
 **If caused by database issues:**
+
 ```bash
 # Check database connections
 psql -h $DB_HOST -U $DB_USER -c "SELECT count(*) FROM pg_stat_activity WHERE state = 'active';"
@@ -100,6 +105,7 @@ kubectl set env deployment/api-gateway DB_POOL_SIZE=30 -n production
 ```
 
 **If caused by external API:**
+
 ```bash
 # Check external API status
 curl -I https://external-api.example.com/health
@@ -120,12 +126,11 @@ kubectl set env deployment/api-gateway CIRCUIT_BREAKER_ENABLED=true -n productio
 
 ## Slow Response Time
 
-**Alert ID**: `slow-response-time`
-**Severity**: Warning
-**Threshold**: P95 response time > 2s
-**Duration**: 5 minutes
+**Alert ID**: `slow-response-time` **Severity**: Warning **Threshold**: P95
+response time > 2s **Duration**: 5 minutes
 
 ### Symptoms
+
 - Alert: "Slow response time detected"
 - P95 latency exceeds 2 seconds
 - User complaints about slow page loads
@@ -133,6 +138,7 @@ kubectl set env deployment/api-gateway CIRCUIT_BREAKER_ENABLED=true -n productio
 ### Investigation
 
 1. **Check Latency Dashboard**
+
    ```bash
    # Open Grafana
    # Navigate to "API Performance Metrics" dashboard
@@ -140,24 +146,28 @@ kubectl set env deployment/api-gateway CIRCUIT_BREAKER_ENABLED=true -n productio
    ```
 
 2. **Identify Slow Endpoints**
+
    ```bash
    # Query Prometheus for slowest endpoints
    curl 'http://prometheus:9090/api/v1/query?query=topk(5, histogram_quantile(0.95, rate(http_request_duration_ms_bucket[5m])))'
    ```
 
 3. **Check Database Performance**
+
    ```bash
    # Check slow queries
    psql -h $DB_HOST -U $DB_USER -c "SELECT query, mean_exec_time, calls FROM pg_stat_statements ORDER BY mean_exec_time DESC LIMIT 10;"
    ```
 
 4. **Review Slow Query Logs**
+
    ```bash
    # Check application logs for slow queries
    kubectl logs -f deployment/api-gateway -n production | grep "Slow query detected"
    ```
 
 5. **Check System Resources**
+
    ```bash
    # CPU usage
    kubectl top nodes
@@ -193,6 +203,7 @@ kubectl set env deployment/api-gateway CIRCUIT_BREAKER_ENABLED=true -n productio
 ### Resolution
 
 **If caused by slow queries:**
+
 ```sql
 -- Add missing indexes
 CREATE INDEX idx_users_email ON users(email);
@@ -203,6 +214,7 @@ EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'user@example.com';
 ```
 
 **If caused by cache misses:**
+
 ```bash
 # Check cache hit rate
 redis-cli -h $REDIS_HOST info stats | grep hit_rate
@@ -215,6 +227,7 @@ curl -X POST https://api.example.com/admin/cache/warm
 ```
 
 **If caused by high load:**
+
 ```bash
 # Scale up replicas
 kubectl scale deployment/api-gateway --replicas=5 -n production
@@ -236,12 +249,11 @@ kubectl set resources deployment/api-gateway -c api-gateway --limits=cpu=2000m,m
 
 ## High Memory Usage
 
-**Alert ID**: `high-memory-usage`
-**Severity**: Critical
-**Threshold**: Memory usage > 90%
-**Duration**: 5 minutes
+**Alert ID**: `high-memory-usage` **Severity**: Critical **Threshold**: Memory
+usage > 90% **Duration**: 5 minutes
 
 ### Symptoms
+
 - Alert: "High memory usage detected"
 - Memory usage exceeds 90%
 - Potential OOM kills
@@ -249,12 +261,14 @@ kubectl set resources deployment/api-gateway -c api-gateway --limits=cpu=2000m,m
 ### Investigation
 
 1. **Check Memory Dashboard**
+
    ```bash
    # Check current memory usage
    kubectl top pods -n production
    ```
 
 2. **Get Heap Dump** (Node.js)
+
    ```bash
    # Generate heap snapshot
    kubectl exec -it deployment/api-gateway -n production -- node --expose-gc --heapsnapshot-signal=SIGUSR2 dist/main.js &
@@ -265,6 +279,7 @@ kubectl set resources deployment/api-gateway -c api-gateway --limits=cpu=2000m,m
    ```
 
 3. **Check Memory Metrics**
+
    ```bash
    # Query Prometheus
    curl 'http://prometheus:9090/api/v1/query?query=process_resident_memory_bytes'
@@ -301,6 +316,7 @@ kubectl set resources deployment/api-gateway -c api-gateway --limits=cpu=2000m,m
 ### Resolution
 
 **Immediate:**
+
 ```bash
 # Restart pods (rolling restart)
 kubectl rollout restart deployment/api-gateway -n production
@@ -310,6 +326,7 @@ kubectl delete pod api-gateway-xxx -n production
 ```
 
 **Short-term:**
+
 ```bash
 # Increase memory limits
 kubectl set resources deployment/api-gateway -c api-gateway --limits=memory=4Gi -n production
@@ -319,6 +336,7 @@ kubectl scale deployment/api-gateway --replicas=5 -n production
 ```
 
 **Long-term:**
+
 - Fix memory leaks
 - Implement streaming for large responses
 - Add cache size limits
@@ -338,12 +356,11 @@ kubectl scale deployment/api-gateway --replicas=5 -n production
 
 ## Database Connection Pool Exhausted
 
-**Alert ID**: `database-connection-pool-exhausted`
-**Severity**: Critical
-**Threshold**: Pool utilization > 90%
-**Duration**: 1 minute
+**Alert ID**: `database-connection-pool-exhausted` **Severity**: Critical
+**Threshold**: Pool utilization > 90% **Duration**: 1 minute
 
 ### Symptoms
+
 - Alert: "Database connection pool near exhaustion"
 - Connection pool utilization > 90%
 - Database timeout errors
@@ -351,11 +368,13 @@ kubectl scale deployment/api-gateway --replicas=5 -n production
 ### Investigation
 
 1. **Check Connection Pool Metrics**
+
    ```bash
    curl https://api.example.com/metrics | grep database_connection_pool
    ```
 
 2. **Check Active Connections**
+
    ```bash
    # PostgreSQL
    psql -h $DB_HOST -U $DB_USER -c "SELECT count(*) as active FROM pg_stat_activity WHERE state = 'active';"
@@ -363,6 +382,7 @@ kubectl scale deployment/api-gateway --replicas=5 -n production
    ```
 
 3. **Check Long-Running Queries**
+
    ```bash
    psql -h $DB_HOST -U $DB_USER -c "SELECT pid, now() - query_start as duration, query FROM pg_stat_activity WHERE state = 'active' ORDER BY duration DESC LIMIT 10;"
    ```
@@ -392,6 +412,7 @@ kubectl scale deployment/api-gateway --replicas=5 -n production
 ### Resolution
 
 **Immediate:**
+
 ```bash
 # Kill long-running queries
 psql -h $DB_HOST -U $DB_USER -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE state = 'active' AND query_start < NOW() - INTERVAL '5 minutes';"
@@ -402,6 +423,7 @@ kubectl rollout restart deployment/api-gateway -n production
 ```
 
 **Long-term:**
+
 - Fix connection leaks
 - Add query timeouts
 - Optimize slow queries
@@ -421,12 +443,11 @@ kubectl rollout restart deployment/api-gateway -n production
 
 ## Service Down
 
-**Alert ID**: `service-down`
-**Severity**: Critical
-**Threshold**: Service health check fails
-**Duration**: 1 minute
+**Alert ID**: `service-down` **Severity**: Critical **Threshold**: Service
+health check fails **Duration**: 1 minute
 
 ### Symptoms
+
 - Alert: "Service is down"
 - Health checks failing
 - 503 errors
@@ -434,6 +455,7 @@ kubectl rollout restart deployment/api-gateway -n production
 ### Investigation
 
 1. **Check Service Status**
+
    ```bash
    # Kubernetes
    kubectl get pods -n production
@@ -444,6 +466,7 @@ kubectl rollout restart deployment/api-gateway -n production
    ```
 
 2. **Check Logs**
+
    ```bash
    # Recent logs
    kubectl logs deployment/api-gateway -n production --tail=100
@@ -453,11 +476,13 @@ kubectl rollout restart deployment/api-gateway -n production
    ```
 
 3. **Check Health Endpoint**
+
    ```bash
    curl https://api.example.com/health
    ```
 
 4. **Check Dependencies**
+
    ```bash
    # Database
    psql -h $DB_HOST -U $DB_USER -c "SELECT 1;"
@@ -520,7 +545,8 @@ kubectl rollout status deployment/api-gateway -n production
 
 ## General Tips
 
-1. **Always check recent deployments first** - Most issues are caused by recent changes
+1. **Always check recent deployments first** - Most issues are caused by recent
+   changes
 2. **Use correlation IDs** - Track requests across services
 3. **Check dependencies** - Database, Redis, external APIs
 4. **Monitor trends** - Look for gradual degradation

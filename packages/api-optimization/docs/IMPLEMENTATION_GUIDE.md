@@ -1,6 +1,7 @@
 # API Optimization - Implementation Guide
 
-Complete guide to implementing API optimization features in The New Fuse platform.
+Complete guide to implementing API optimization features in The New Fuse
+platform.
 
 ## Table of Contents
 
@@ -106,7 +107,7 @@ import { AppModule } from './app.module';
 import {
   RateLimitMiddleware,
   CacheHeadersMiddleware,
-  BackpressureMiddleware
+  BackpressureMiddleware,
 } from '@the-new-fuse/api-optimization';
 
 async function bootstrap() {
@@ -154,7 +155,7 @@ import { Controller, Get, UseGuards } from '@nestjs/common';
 import {
   RateLimitGuard,
   RateLimit,
-  RateLimitPresets
+  RateLimitPresets,
 } from '@the-new-fuse/api-optimization';
 
 @Controller('users')
@@ -201,7 +202,7 @@ import { Controller, Get, UseInterceptors } from '@nestjs/common';
 import {
   CacheInterceptor,
   CacheResponse,
-  CachePresets
+  CachePresets,
 } from '@the-new-fuse/api-optimization';
 
 @Controller('dashboard')
@@ -221,14 +222,12 @@ export class DashboardController {
 import { Injectable } from '@nestjs/common';
 import {
   CacheInvalidationService,
-  InvalidateCache
+  InvalidateCache,
 } from '@the-new-fuse/api-optimization';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private invalidationService: CacheInvalidationService
-  ) {}
+  constructor(private invalidationService: CacheInvalidationService) {}
 
   @InvalidateCache(['users', 'dashboard'])
   async updateUser(userId: string, data: UpdateUserDto) {
@@ -262,7 +261,7 @@ export class ApiService {
     if (!result.allowed) {
       throw new ForbiddenException({
         message: 'Quota exceeded',
-        quotas: result.usage
+        quotas: result.usage,
       });
     }
 
@@ -289,7 +288,7 @@ export class AppService implements OnModuleInit {
       enabled: true,
       priority: 1,
       tags: ['agents', 'popular'],
-      urls: ['/api/agents/popular', '/api/agents/trending']
+      urls: ['/api/agents/popular', '/api/agents/trending'],
     });
 
     // Warm on startup (already happens automatically)
@@ -304,7 +303,7 @@ export class AppService implements OnModuleInit {
         name: 'critical-data',
         enabled: true,
         priority: 1,
-        tags: ['critical', 'dashboard']
+        tags: ['critical', 'dashboard'],
       },
       600000
     );
@@ -318,14 +317,12 @@ export class AppService implements OnModuleInit {
 import { Controller, Get } from '@nestjs/common';
 import {
   OptimizationMonitoringService,
-  SkipRateLimit
+  SkipRateLimit,
 } from '@the-new-fuse/api-optimization';
 
 @Controller('monitoring')
 export class MonitoringController {
-  constructor(
-    private monitoringService: OptimizationMonitoringService
-  ) {}
+  constructor(private monitoringService: OptimizationMonitoringService) {}
 
   @Get('metrics')
   @SkipRateLimit()
@@ -369,7 +366,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import {
   BackpressureMiddleware,
-  CacheHeadersMiddleware
+  CacheHeadersMiddleware,
 } from '@the-new-fuse/api-optimization';
 
 async function bootstrap() {
@@ -396,7 +393,7 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import {
   ApiOptimizationModule,
   RateLimitGuard,
-  CacheInterceptor
+  CacheInterceptor,
 } from '@the-new-fuse/api-optimization';
 
 @Module({
@@ -494,15 +491,11 @@ describe('Rate Limiting (e2e)', () => {
   it('should rate limit requests', async () => {
     // Make 100 requests (should succeed)
     for (let i = 0; i < 100; i++) {
-      await request(app.getHttpServer())
-        .get('/api/users')
-        .expect(200);
+      await request(app.getHttpServer()).get('/api/users').expect(200);
     }
 
     // 101st request should be rate limited
-    await request(app.getHttpServer())
-      .get('/api/users')
-      .expect(429);
+    await request(app.getHttpServer()).get('/api/users').expect(429);
   });
 
   afterAll(async () => {
@@ -570,7 +563,7 @@ services:
     image: redis:7-alpine
     command: redis-server --requirepass ${REDIS_PASSWORD}
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis-data:/data
     environment:
@@ -579,7 +572,7 @@ services:
   api:
     build: ./apps/api
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=production
       - REDIS_HOST=redis
@@ -611,16 +604,16 @@ spec:
         app: redis
     spec:
       containers:
-      - name: redis
-        image: redis:7-alpine
-        ports:
-        - containerPort: 6379
-        env:
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: redis-secret
-              key: password
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: password
 
 ---
 # k8s/api-deployment.yaml
@@ -639,20 +632,20 @@ spec:
         app: api
     spec:
       containers:
-      - name: api
-        image: your-registry/api:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: REDIS_HOST
-          value: redis-service
-        - name: REDIS_PORT
-          value: "6379"
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: redis-secret
-              key: password
+        - name: api
+          image: your-registry/api:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REDIS_HOST
+              value: redis-service
+            - name: REDIS_PORT
+              value: '6379'
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: password
 ```
 
 ## Monitoring
@@ -664,14 +657,12 @@ spec:
 import { Controller, Get } from '@nestjs/common';
 import {
   OptimizationMonitoringService,
-  SkipRateLimit
+  SkipRateLimit,
 } from '@the-new-fuse/api-optimization';
 
 @Controller('metrics')
 export class MetricsController {
-  constructor(
-    private monitoring: OptimizationMonitoringService
-  ) {}
+  constructor(private monitoring: OptimizationMonitoringService) {}
 
   @Get()
   @SkipRateLimit()
@@ -711,10 +702,12 @@ Import the included Grafana dashboard JSON or create custom panels:
 ### Issue: Rate Limiting Not Working
 
 **Symptoms:**
+
 - No rate limiting applied
 - All requests allowed
 
 **Solutions:**
+
 1. Check Redis connection
 2. Verify middleware is applied
 3. Check environment variables
@@ -729,10 +722,12 @@ console.log('Redis health:', health);
 ### Issue: Cache Not Working
 
 **Symptoms:**
+
 - Low hit rate
 - No cached responses
 
 **Solutions:**
+
 1. Check Redis connection
 2. Verify interceptor is applied
 3. Check cache keys
@@ -747,10 +742,12 @@ console.log('Cache stats:', stats);
 ### Issue: High Memory Usage
 
 **Symptoms:**
+
 - Memory keeps growing
 - Redis memory full
 
 **Solutions:**
+
 1. Reduce cache TTL
 2. Implement eviction policies
 3. Review cache size limits
@@ -764,10 +761,12 @@ redis-cli INFO memory
 ### Issue: Performance Degradation
 
 **Symptoms:**
+
 - Slow responses
 - High latency
 
 **Solutions:**
+
 1. Check Redis latency
 2. Review cache hit rate
 3. Monitor backpressure
@@ -790,6 +789,7 @@ redis-cli --latency
 ## Support
 
 For issues or questions:
+
 - Check documentation
 - Review logs
 - Contact development team

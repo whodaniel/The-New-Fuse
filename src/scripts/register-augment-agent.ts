@@ -1,8 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import { DrizzleClient } from '@drizzle/client';
 import { MCPBrokerService } from '../mcp/services/mcp-broker.service.tsx';
 import { AgentCapabilityDiscoveryService } from '../services/AgentCapabilityDiscoveryService.js';
 import { Logger } from '../common/logger.service.js';
-import { AgentType, AgentStatus } from '@prisma/client';
+import { AgentType, AgentStatus } from '@drizzle/client';
 
 /**
  * Script to register Augment as an AI Agent in the database
@@ -11,21 +11,21 @@ import { AgentType, AgentStatus } from '@prisma/client';
  * This serves as the standard discovery protocol for all new agents.
  */
 async function registerAugmentAgent(): Promise<void> {
-  const prisma = new PrismaClient();
+  const drizzle = new DrizzleClient();
   const logger = new Logger('register-augment');
 
   try {
     // Initialize services
-    const mcpBroker = new MCPBrokerService(prisma, logger);
+    const mcpBroker = new MCPBrokerService(drizzle, logger);
     const capabilityDiscovery = new AgentCapabilityDiscoveryService(
       mcpBroker,
-      prisma,
+      drizzle,
       null as any, // EventEmitter not needed for registration
       logger
     );
 
     // Register core agent
-    const agent = await prisma.agent.create({
+    const agent = await drizzle.agent.create({
       data: {
         name: 'Augment',
         type: AgentType.AUGMENT,
@@ -84,7 +84,7 @@ async function registerAugmentAgent(): Promise<void> {
     logger.error('Failed to register Augment agent:', error);
     throw error;
   } finally {
-    await prisma.$disconnect();
+    await drizzle.$disconnect();
   }
 }
 
