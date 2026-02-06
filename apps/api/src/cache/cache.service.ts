@@ -56,13 +56,23 @@ export class CacheService {
         // and to extract information for logging
         const url = new URL(redisUrl);
 
-        this.client = new Redis(redisUrl);
+        // CRITICAL: Use lazyConnect to prevent connection errors before handlers are attached
+        this.client = new Redis(redisUrl, { lazyConnect: true });
+
+        // Attach error handler IMMEDIATELY after client creation to prevent unhandled error events
+        this.client.on('error', (err: any) => this.logger.error('Redis error', err));
+        this.client.on('connect', () => this.logger.log('Redis connected successfully'));
 
         this.logger.log(
           `[CacheService] Connecting to Redis at ${url.hostname}:${url.port || 6379}${
             url.pathname && url.pathname.length > 1 ? ` (db: ${url.pathname.slice(1)})` : ''
           }`
         );
+
+        // Now connect after handlers are attached
+        this.client.connect().catch((err: any) => {
+          this.logger.error(`[CacheService] Redis connection failed: ${err.message}`);
+        });
       } catch (error) {
         this.logger.error(`[CacheService] Failed to parse REDIS_URL: ${(error as Error).message}`);
         throw error;
@@ -81,17 +91,26 @@ export class CacheService {
         db = !isNaN(parsed) && parsed >= 0 ? parsed : 0;
       }
 
+      // CRITICAL: Use lazyConnect to prevent connection errors before handlers are attached
       this.client = new Redis({
         host,
         port: typeof port === 'string' ? parseInt(port, 10) : port,
         password,
         db,
+        lazyConnect: true,
       });
-      this.logger.log(`[CacheService] Connecting to Redis at ${host}:${port} (db: ${db})`);
-    }
 
-    this.client.on('error', (err: any) => this.logger.error('Redis error', err));
-    this.client.on('connect', () => this.logger.log('Redis connected successfully'));
+      // Attach error handler IMMEDIATELY after client creation
+      this.client.on('error', (err: any) => this.logger.error('Redis error', err));
+      this.client.on('connect', () => this.logger.log('Redis connected successfully'));
+
+      this.logger.log(`[CacheService] Connecting to Redis at ${host}:${port} (db: ${db})`);
+
+      // Now connect after handlers are attached
+      this.client.connect().catch((err: any) => {
+        this.logger.error(`[CacheService] Redis connection failed: ${err.message}`);
+      });
+    }
   }
 
   async get(key: string): Promise<string | null> {
