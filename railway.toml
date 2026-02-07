@@ -2,7 +2,6 @@
 # NOTE: Do NOT set global [build] section - each service specifies its own builder
 
 # API Gateway Service (uses Docker)
-# API Gateway Service (uses Docker)
 [services.api-gateway]
 builder = "DOCKERFILE"
 [services.api-gateway.build]
@@ -104,4 +103,15 @@ dockerBuildArgs = { SERVICE_PATH = "core-vector-db", SERVICE_NAME = "@the-new-fu
 watchPaths = ["packages/core-vector-db/**", "packages/core/**"]
 [services.core-vector-db.deploy]
 healthcheckPath = "/health"
+restartPolicyType = "ON_FAILURE"
+
+# AI Arcade Service
+[services.ai-arcade]
+builder = "DOCKERFILE"
+[services.ai-arcade.build]
+dockerfilePath = "Dockerfile.railway"
+dockerBuildArgs = { SERVICE_PATH = "ai-arcade", SERVICE_NAME = "ai-arcade" }
+watchPaths = ["apps/ai-arcade/**", "packages/**"]
+[services.ai-arcade.deploy]
+healthcheckPath = "/"
 restartPolicyType = "ON_FAILURE"
