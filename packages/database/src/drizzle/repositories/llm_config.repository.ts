@@ -14,7 +14,9 @@ const IV_LENGTH = 16;
 const KEY_LENGTH = 32;
 
 function encrypt(text: string): string {
-  if (!process.env.ENCRYPTION_KEY) return text;
+  if (!process.env.ENCRYPTION_KEY) {
+    throw new Error('ENCRYPTION_KEY is not defined. Cannot securely store API key.');
+  }
 
   try {
     // Generate key from secret (ensure correct length)

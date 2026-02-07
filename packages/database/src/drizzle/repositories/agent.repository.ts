@@ -18,7 +18,9 @@ import type { Agent, AgentMetadata, NewAgent, NewAgentMetadata } from '../types'
 
 // HMAC-SHA256 Hashing for Auth Tokens (Deterministic)
 function hashToken(token: string): string {
-  if (!process.env.ENCRYPTION_KEY) return token;
+  if (!process.env.ENCRYPTION_KEY) {
+    throw new Error('ENCRYPTION_KEY is not defined. Cannot securely hash auth token.');
+  }
 
   try {
     const hmac = crypto.createHmac('sha256', process.env.ENCRYPTION_KEY);
