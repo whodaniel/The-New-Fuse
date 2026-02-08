@@ -5,7 +5,7 @@
 
 const https = require('https');
 
-const API_KEY = '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';
+const API_KEY = process.env.OPENROUTER_API_KEY || 'REPLACE_WITH_YOUR_OPENROUTER_API_KEY';
 const BASE_URL = 'https://openrouter.ai/api/v1';
 
 console.log('🚀 Testing OpenRouter API Integration\n');
