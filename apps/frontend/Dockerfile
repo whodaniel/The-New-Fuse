@@ -6,8 +6,8 @@
 # Stage 1: Build stage
 FROM node:22-alpine AS builder
 
-# Install pnpm and bash (required for openclaw build scripts)
-RUN apk add --no-cache bash && \
+# Install pnpm, bash, and git (required for openclaw and libsignal build scripts)
+RUN apk add --no-cache bash git && \
     corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
@@ -37,9 +37,9 @@ COPY package.json ./
 # Copy all source files
 COPY . ./frontend-source/
 
-# Install dependencies
+# Install dependencies using pnpm (monorepo aware)
 WORKDIR /app/frontend-source
-RUN npm install --legacy-peer-deps || pnpm install --no-frozen-lockfile --ignore-scripts
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
 # Build the application
 ENV NODE_ENV=production
@@ -64,8 +64,8 @@ RUN pnpm --filter @the-new-fuse/core build || true
 RUN rm -rf .turbo node_modules/.cache/turbo
 ENV TURBO_FORCE=true
 
-# Build frontend with exclusions for packages that aren't needed and have issues
-RUN npm run build || pnpm run build
+# Build frontend
+RUN pnpm run build
 
 # Normalize dist directory location
 # If running from monorepo root, build output is in apps/frontend/dist
