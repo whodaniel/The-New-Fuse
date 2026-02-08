@@ -1,0 +1,168 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: #16161d;
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  border-radius: 32px;
+  width: 90%;
+  max-width: 500px;
+  padding: 3rem;
+  position: relative;
+  box-shadow: 0 0 100px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 242, 255, 0.1);
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.close-button {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  padding: 0;
+  box-shadow: none;
+  margin: 0;
+}
+
+.close-button:hover {
+  opacity: 1;
+  transform: none;
+  box-shadow: none;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.agent-avatar-placeholder.large {
+  width: 80px;
+  height: 80px;
+  font-size: 2rem;
+  background: linear-gradient(135deg, var(--accent-neon), var(--accent-purple));
+  color: #000;
+  border: none;
+}
+
+.header-text h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.type-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--accent-neon);
+  letter-spacing: 0.1em;
+}
+
+.modal-body {
+  text-align: left;
+  margin-bottom: 2.5rem;
+}
+
+.description-long {
+  color: #a0aec0;
+  line-height: 1.6;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.capabilities-list h4 {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  margin-bottom: 1rem;
+}
+
+.capabilities-list ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.capabilities-list li {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+.pricing-box {
+  background: rgba(0, 242, 255, 0.03);
+  border: 1px solid rgba(0, 242, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.price-tag {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.price-detail {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 2rem;
+}
+
+.unlock-title {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--accent-neon);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.paypal-button-container {
+  width: 100%;
+}
+
+.error-text {
+  color: #ff4d4d;
+  font-size: 0.8rem;
+  margin-top: 1rem;
+}

@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import AgentCard from './components/AgentCard'
+import AgentDetailModal from './components/AgentDetailModal'
 import { ArcadeService, AgentListing } from './services/ArcadeService'
 import { config } from './config'
 
 function App() {
   const [count, setCount] = useState(0)
   const [agents, setAgents] = useState<AgentListing[]>([])
+  const [selectedAgent, setSelectedAgent] = useState<AgentListing | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   const arcadeService = new ArcadeService(config.apiUrl)
@@ -22,8 +24,14 @@ function App() {
   }, [])
 
   const handleSelectAgent = (agent: AgentListing) => {
-    console.log(`Selected agent: ${agent.name}`)
-    setCount(prev => prev + 1)
+    setSelectedAgent(agent)
+  }
+
+  const handlePaymentSuccess = (subscriptionId: string) => {
+    console.log(`Successfully subscribed to ${selectedAgent?.name}. ID: ${subscriptionId}`)
+    setCount(prev => prev + 100) // Reward with 100 session tokens
+    setSelectedAgent(null)
+    // Here we would ideally trigger a backend update to the user's credits
   }
 
   return (
@@ -68,9 +76,17 @@ function App() {
         </section>
       </main>
 
+      {selectedAgent && (
+        <AgentDetailModal 
+          agent={selectedAgent} 
+          onClose={() => setSelectedAgent(null)}
+          onSuccess={handlePaymentSuccess}
+        />
+      )}
+
       <footer className="arcade-footer">
         <p className="protocol-tag">PROTOCOL: FUSE-AIP-V1.0</p>
-      </header>
+      </footer>
     </div>
   )
 }
