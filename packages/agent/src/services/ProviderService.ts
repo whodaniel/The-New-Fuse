@@ -1,11 +1,7 @@
+import { AuthProfile, ProviderConfig, ProviderDefinition } from '@the-new-fuse/types';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import {
-  ProviderDefinition,
-  AuthProfile,
-  ProviderConfig
-} from '@the-new-fuse/types';
 
 export class ProviderService {
   private configPath: string;
@@ -50,8 +46,8 @@ export class ProviderService {
           capabilities: ['text'],
           contextWindow: 128000,
           maxTokens: 32768,
-        }
-      ]
+        },
+      ],
     },
     {
       id: 'anthropic',
@@ -80,8 +76,8 @@ export class ProviderService {
           capabilities: ['text', 'image'],
           contextWindow: 200000,
           maxTokens: 4096,
-        }
-      ]
+        },
+      ],
     },
     {
       id: 'google',
@@ -110,109 +106,179 @@ export class ProviderService {
           capabilities: ['text', 'image', 'audio', 'video'],
           contextWindow: 1000000,
           maxTokens: 8192,
-        }
-      ]
+        },
+      ],
     },
-     {
-       id: 'sambanova',
-       name: 'SambaNova Cloud',
-       baseUrl: 'https://api.sambanova.ai/v1',
-       authMode: 'api_key',
-       apiFormat: 'openai',
-       enabled: true,
-       models: [
-         {
-           id: 'llama3-405b-instruct',
-           name: 'Llama 3.1 405B',
-           providerId: 'sambanova',
-           apiFormat: 'openai',
-           reasoning: false,
-           capabilities: ['text'],
-           contextWindow: 128000,
-           maxTokens: 4096,
-         },
-         {
-           id: 'llama3-70b-instruct',
-           name: 'Llama 3.1 70B',
-           providerId: 'sambanova',
-           apiFormat: 'openai',
-           reasoning: false,
-           capabilities: ['text'],
-           contextWindow: 128000,
-           maxTokens: 4096,
-         },
-         {
-           id: 'llama3-8b-instruct',
-           name: 'Llama 3.1 8B',
-           providerId: 'sambanova',
-           apiFormat: 'openai',
-           reasoning: false,
-           capabilities: ['text'],
-           contextWindow: 128000,
-           maxTokens: 4096,
-         },
-         {
-           id: 'allama-7b-instruct-preview',
-           name: 'ALLaM-7B-Instruct-preview',
-           providerId: 'sambanova',
-           apiFormat: 'openai',
-           reasoning: false,
-           capabilities: ['text'],
-           contextWindow: 128000,
-           maxTokens: 8192,
-         },
-         {
-           id: 'deepseek-r1',
-           name: 'DeepSeek-R1',
-           providerId: 'sambanova',
-           apiFormat: 'openai',
-           reasoning: true,
-           capabilities: ['text'],
-           contextWindow: 64000,
-           maxTokens: 4096,
-         },
-         {
-           id: 'deepseek-r1-distill-llama-70b',
-           name: 'DeepSeek-R1-Distill-Llama-70B',
-           providerId: 'sambanova',
-           apiFormat: 'openai',
-           reasoning: true,
-           capabilities: ['text'],
-           contextWindow: 64000,
-           maxTokens: 4096,
-         },
-         {
-           id: 'deepseek-v3-1-cb',
-           name: 'DeepSeek-V3.1-cb',
-           providerId: 'sambanova',
-           apiFormat: 'openai',
-           reasoning: true,
-           capabilities: ['text'],
-           contextWindow: 128000,
-           maxTokens: 8192,
-         },
-         {
-           id: 'deepseek-v3-2',
-           name: 'DeepSeek-V3.2',
-           providerId: 'sambanova',
-           apiFormat: 'openai',
-           reasoning: true,
-           capabilities: ['text'],
-           contextWindow: 128000,
-           maxTokens: 8192,
-         },
-         {
-           id: 'e5-mistral-7b-instruct',
-           name: 'E5-Mistral-7B-Instruct',
-           providerId: 'sambanova',
-           apiFormat: 'openai',
-           reasoning: false,
-           capabilities: ['text'],
-           contextWindow: 32000,
-           maxTokens: 4096,
-         }
-       ]
-     },
+    {
+      id: 'sambanova',
+      name: 'SambaNova Cloud',
+      baseUrl: 'https://api.sambanova.ai/v1',
+      authMode: 'api_key',
+      apiFormat: 'openai',
+      enabled: true,
+      models: [
+        {
+          id: 'llama3-405b-instruct',
+          name: 'Llama 3.1 405B',
+          providerId: 'sambanova',
+          apiFormat: 'openai',
+          reasoning: false,
+          capabilities: ['text'],
+          contextWindow: 128000,
+          maxTokens: 4096,
+        },
+        {
+          id: 'llama3-70b-instruct',
+          name: 'Llama 3.1 70B',
+          providerId: 'sambanova',
+          apiFormat: 'openai',
+          reasoning: false,
+          capabilities: ['text'],
+          contextWindow: 128000,
+          maxTokens: 4096,
+        },
+        {
+          id: 'llama3-8b-instruct',
+          name: 'Llama 3.1 8B',
+          providerId: 'sambanova',
+          apiFormat: 'openai',
+          reasoning: false,
+          capabilities: ['text'],
+          contextWindow: 128000,
+          maxTokens: 4096,
+        },
+        {
+          id: 'allama-7b-instruct-preview',
+          name: 'ALLaM-7B-Instruct-preview',
+          providerId: 'sambanova',
+          apiFormat: 'openai',
+          reasoning: false,
+          capabilities: ['text'],
+          contextWindow: 128000,
+          maxTokens: 8192,
+        },
+        {
+          id: 'deepseek-r1',
+          name: 'DeepSeek-R1',
+          providerId: 'sambanova',
+          apiFormat: 'openai',
+          reasoning: true,
+          capabilities: ['text'],
+          contextWindow: 64000,
+          maxTokens: 4096,
+        },
+        {
+          id: 'deepseek-r1-distill-llama-70b',
+          name: 'DeepSeek-R1-Distill-Llama-70B',
+          providerId: 'sambanova',
+          apiFormat: 'openai',
+          reasoning: true,
+          capabilities: ['text'],
+          contextWindow: 64000,
+          maxTokens: 4096,
+        },
+        {
+          id: 'deepseek-v3-1-cb',
+          name: 'DeepSeek-V3.1-cb',
+          providerId: 'sambanova',
+          apiFormat: 'openai',
+          reasoning: true,
+          capabilities: ['text'],
+          contextWindow: 128000,
+          maxTokens: 8192,
+        },
+        {
+          id: 'deepseek-v3-2',
+          name: 'DeepSeek-V3.2',
+          providerId: 'sambanova',
+          apiFormat: 'openai',
+          reasoning: true,
+          capabilities: ['text'],
+          contextWindow: 128000,
+          maxTokens: 8192,
+        },
+        {
+          id: 'e5-mistral-7b-instruct',
+          name: 'E5-Mistral-7B-Instruct',
+          providerId: 'sambanova',
+          apiFormat: 'openai',
+          reasoning: false,
+          capabilities: ['text'],
+          contextWindow: 32000,
+          maxTokens: 4096,
+        },
+      ],
+    },
+    {
+      id: 'openrouter',
+      name: 'OpenRouter',
+      baseUrl: 'https://openrouter.ai/api/v1',
+      authMode: 'api_key',
+      apiFormat: 'openai',
+      enabled: true,
+      models: [
+        {
+          id: 'qwen/qwen3-coder-next',
+          name: 'Qwen3 Coder Next',
+          providerId: 'openrouter',
+          apiFormat: 'openai',
+          reasoning: false,
+          capabilities: ['text'],
+          contextWindow: 262144,
+          maxTokens: 4096,
+        },
+        {
+          id: 'qwen/qwen3-coder',
+          name: 'Qwen3 Coder 480B',
+          providerId: 'openrouter',
+          apiFormat: 'openai',
+          reasoning: true,
+          capabilities: ['text'],
+          contextWindow: 262144,
+          maxTokens: 4096,
+        },
+        {
+          id: 'anthropic/claude-3.5-sonnet',
+          name: 'Claude 3.5 Sonnet',
+          providerId: 'openrouter',
+          apiFormat: 'openai',
+          reasoning: false,
+          capabilities: ['text', 'image'],
+          contextWindow: 200000,
+          maxTokens: 8192,
+        },
+      ],
+    },
+    {
+      id: 'siliconflow',
+      name: 'SiliconFlow',
+      baseUrl: 'https://api.siliconflow.cn/v1',
+      authMode: 'api_key',
+      apiFormat: 'openai',
+      enabled: true,
+      models: [
+        {
+          id: 'deepseek-ai/DeepSeek-V3',
+          name: 'DeepSeek V3',
+          providerId: 'siliconflow',
+          apiFormat: 'openai',
+          reasoning: false,
+          capabilities: ['text'],
+          contextWindow: 64000,
+          maxTokens: 4096,
+        },
+        {
+          id: 'deepseek-ai/DeepSeek-R1',
+          name: 'DeepSeek R1',
+          providerId: 'siliconflow',
+          apiFormat: 'openai',
+          reasoning: true,
+          capabilities: ['text'],
+          contextWindow: 64000,
+          maxTokens: 4096,
+        },
+      ],
+    },
     {
       id: 'google-antigravity',
       name: 'Google Antigravity',
@@ -250,9 +316,9 @@ export class ProviderService {
           capabilities: ['text', 'image', 'audio', 'video'],
           contextWindow: 1000000,
           maxTokens: 8192,
-        }
-      ]
-    }
+        },
+      ],
+    },
   ];
 
   constructor(rootPath?: string) {
@@ -269,11 +335,18 @@ export class ProviderService {
 
   private ensureFiles() {
     if (!fs.existsSync(this.configPath)) {
-      fs.writeFileSync(this.configPath, JSON.stringify({
-        primaryModelId: 'openai/gpt-4o',
-        fallbackModelIds: ['anthropic/claude-3-5-sonnet-20240620'],
-        preferredProfiles: {}
-      }, null, 2));
+      fs.writeFileSync(
+        this.configPath,
+        JSON.stringify(
+          {
+            primaryModelId: 'openai/gpt-4o',
+            fallbackModelIds: ['anthropic/claude-3-5-sonnet-20240620'],
+            preferredProfiles: {},
+          },
+          null,
+          2
+        )
+      );
     }
     if (!fs.existsSync(this.providersPath)) {
       fs.writeFileSync(this.providersPath, JSON.stringify([], null, 2));
@@ -284,17 +357,21 @@ export class ProviderService {
   }
 
   public listProviders(): ProviderDefinition[] {
-    const customProviders = JSON.parse(fs.readFileSync(this.providersPath, 'utf8')) as ProviderDefinition[];
+    const customProviders = JSON.parse(
+      fs.readFileSync(this.providersPath, 'utf8')
+    ) as ProviderDefinition[];
     return [...this.builtInProviders, ...customProviders];
   }
 
   public getProvider(id: string): ProviderDefinition | undefined {
-    return this.listProviders().find(p => p.id === id);
+    return this.listProviders().find((p) => p.id === id);
   }
 
   public addCustomProvider(provider: ProviderDefinition): void {
-    const customProviders = JSON.parse(fs.readFileSync(this.providersPath, 'utf8')) as ProviderDefinition[];
-    const index = customProviders.findIndex(p => p.id === provider.id);
+    const customProviders = JSON.parse(
+      fs.readFileSync(this.providersPath, 'utf8')
+    ) as ProviderDefinition[];
+    const index = customProviders.findIndex((p) => p.id === provider.id);
     if (index !== -1) {
       customProviders[index] = { ...provider, isCustom: true };
     } else {
@@ -309,7 +386,7 @@ export class ProviderService {
 
   public addAuthProfile(profile: AuthProfile): void {
     const profiles = this.getAuthProfiles();
-    const index = profiles.findIndex(p => p.id === profile.id);
+    const index = profiles.findIndex((p) => p.id === profile.id);
     if (index !== -1) {
       profiles[index] = profile;
     } else {
@@ -320,7 +397,7 @@ export class ProviderService {
 
   public removeAuthProfile(id: string): void {
     const profiles = this.getAuthProfiles();
-    const filtered = profiles.filter(p => p.id !== id);
+    const filtered = profiles.filter((p) => p.id !== id);
     fs.writeFileSync(this.authProfilesPath, JSON.stringify(filtered, null, 2));
   }
 
