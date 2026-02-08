@@ -7,6 +7,7 @@ set -e
 
 echo "Current directory: $(pwd)"
 echo "SERVICE_PATH: ${SERVICE_PATH}"
+echo "PORT: ${PORT}"
 echo "Listing current directory:"
 ls -la
 
