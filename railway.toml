@@ -115,6 +115,7 @@ watchPaths = ["apps/ai-arcade/**", "packages/**"]
 [services.ai-arcade.deploy]
 healthcheckPath = "/"
 restartPolicyType = "ON_FAILURE"
+startCommand = "/bin/sh ./run-service.sh"
 # Specify a unique port to avoid conflicts
 [services.ai-arcade.variables]
 PORT = "3005"
