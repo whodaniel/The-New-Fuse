@@ -50,8 +50,8 @@ async function bootstrap(): Promise<void> {
   // await monitoringService.onModuleInit();
 
   const port = configService.get('PORT') || 3001;
-  await app.listen(port);
-  console.log(`🚀 Backend application is running on port ${port}`);
+  await app.listen(port, '0.0.0.0');
+  console.log(`🚀 Backend application is running on port ${port} and host 0.0.0.0`);
 }
 
 bootstrap().catch((error) => {
