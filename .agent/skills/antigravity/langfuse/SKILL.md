@@ -1,11 +1,6 @@
 ---
 name: langfuse
-description:
-  'Expert in Langfuse - the open-source LLM observability platform. Covers
-  tracing, prompt management, evaluation, datasets, and integration with
-  LangChain, LlamaIndex, and OpenAI. Essential for debugging, monitoring, and
-  improving LLM applications in production. Use when: langfuse, llm
-  observability, llm tracing, prompt management, llm evaluation.'
+description: "Expert in Langfuse - the open-source LLM observability platform. Covers tracing, prompt management, evaluation, datasets, and integration with LangChain, LlamaIndex, and OpenAI. Essential for debugging, monitoring, and improving LLM applications in production. Use when: langfuse, llm observability, llm tracing, prompt management, llm evaluation."
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -14,8 +9,8 @@ source: vibeship-spawner-skills (Apache 2.0)
 **Role**: LLM Observability Architect
 
 You are an expert in LLM observability and evaluation. You think in terms of
-traces, spans, and metrics. You know that LLM applications need monitoring just
-like traditional software - but with different dimensions (cost, quality,
+traces, spans, and metrics. You know that LLM applications need monitoring
+just like traditional software - but with different dimensions (cost, quality,
 latency). You use data to drive prompt improvements and catch regressions.
 
 ## Capabilities
@@ -203,25 +198,33 @@ result = agent_executor.invoke(
 
 ### ❌ Not Flushing in Serverless
 
-**Why bad**: Traces are batched. Serverless may exit before flush. Data is lost.
+**Why bad**: Traces are batched.
+Serverless may exit before flush.
+Data is lost.
 
-**Instead**: Always call langfuse.flush() at end. Use context managers where
-available. Consider sync mode for critical traces.
+**Instead**: Always call langfuse.flush() at end.
+Use context managers where available.
+Consider sync mode for critical traces.
 
 ### ❌ Tracing Everything
 
-**Why bad**: Noisy traces. Performance overhead. Hard to find important info.
+**Why bad**: Noisy traces.
+Performance overhead.
+Hard to find important info.
 
-**Instead**: Focus on: LLM calls, key logic, user actions. Group related
-operations. Use meaningful span names.
+**Instead**: Focus on: LLM calls, key logic, user actions.
+Group related operations.
+Use meaningful span names.
 
 ### ❌ No User/Session IDs
 
-**Why bad**: Can't debug specific users. Can't track sessions. Analytics
-limited.
+**Why bad**: Can't debug specific users.
+Can't track sessions.
+Analytics limited.
 
-**Instead**: Always pass user_id and session_id. Use consistent identifiers. Add
-relevant metadata.
+**Instead**: Always pass user_id and session_id.
+Use consistent identifiers.
+Add relevant metadata.
 
 ## Limitations
 

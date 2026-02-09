@@ -1,12 +1,10 @@
 # WebSocket Rate Limiting in The New Fuse
 
-The New Fuse includes rate limiting for WebSocket connections to prevent abuse
-and ensure fair resource allocation among clients.
+The New Fuse includes rate limiting for WebSocket connections to prevent abuse and ensure fair resource allocation among clients.
 
 ## Overview
 
-Rate limiting restricts the number of messages a client can send within a
-specific time window. This helps prevent:
+Rate limiting restricts the number of messages a client can send within a specific time window. This helps prevent:
 
 - Denial of service attacks
 - Resource exhaustion
@@ -21,34 +19,28 @@ WebSocket rate limiting can be configured through VS Code settings:
 2. Search for "The New Fuse"
 3. Find the WebSocket rate limiting settings:
 
-| Setting                                      | Description                                                 | Default            |
-| -------------------------------------------- | ----------------------------------------------------------- | ------------------ |
-| `thefuse.enableWebSocketRateLimit`           | Enable rate limiting for WebSocket connections              | `true`             |
-| `thefuse.webSocketRateLimitMaxMessages`      | Maximum number of messages allowed in the time window       | `100`              |
-| `thefuse.webSocketRateLimitWindowMs`         | Time window in milliseconds                                 | `60000` (1 minute) |
-| `thefuse.webSocketRateLimitEmitWarnings`     | Emit warnings when approaching the limit                    | `true`             |
-| `thefuse.webSocketRateLimitWarningThreshold` | Percentage of the limit at which to emit warnings (0.0-1.0) | `0.8` (80%)        |
+| Setting | Description | Default |
+|---------|-------------|---------|
+| `thefuse.enableWebSocketRateLimit` | Enable rate limiting for WebSocket connections | `true` |
+| `thefuse.webSocketRateLimitMaxMessages` | Maximum number of messages allowed in the time window | `100` |
+| `thefuse.webSocketRateLimitWindowMs` | Time window in milliseconds | `60000` (1 minute) |
+| `thefuse.webSocketRateLimitEmitWarnings` | Emit warnings when approaching the limit | `true` |
+| `thefuse.webSocketRateLimitWarningThreshold` | Percentage of the limit at which to emit warnings (0.0-1.0) | `0.8` (80%) |
 
 ## Commands
 
 The New Fuse provides commands to manage WebSocket rate limiting:
 
-- **Toggle WebSocket Rate Limiting**: Enable or disable WebSocket rate limiting
-  (Command Palette: `The New Fuse: Toggle WebSocket Rate Limiting`)
-- **Show Connected Chrome Extension Clients**: View connected clients and rate
-  limit status (Command Palette:
-  `The New Fuse: Show Connected Chrome Extension Clients`)
+- **Toggle WebSocket Rate Limiting**: Enable or disable WebSocket rate limiting (Command Palette: `The New Fuse: Toggle WebSocket Rate Limiting`)
+- **Show Connected Chrome Extension Clients**: View connected clients and rate limit status (Command Palette: `The New Fuse: Show Connected Chrome Extension Clients`)
 
 ## Client Experience
 
 When rate limiting is enabled:
 
-1. **Welcome Message**: Clients receive rate limit information in the welcome
-   message
-2. **Warning Messages**: Clients receive warnings when approaching the rate
-   limit
-3. **Error Messages**: Clients receive error messages when the rate limit is
-   exceeded
+1. **Welcome Message**: Clients receive rate limit information in the welcome message
+2. **Warning Messages**: Clients receive warnings when approaching the rate limit
+3. **Error Messages**: Clients receive error messages when the rate limit is exceeded
 4. **Reset Time**: Error messages include the time until the rate limit resets
 
 ## Implementation Details
@@ -64,8 +56,7 @@ The rate limiting system:
 
 ## Chrome Extension Support
 
-The Chrome extension automatically detects if the VS Code extension has rate
-limiting enabled and will:
+The Chrome extension automatically detects if the VS Code extension has rate limiting enabled and will:
 
 1. Display rate limit information in the status panel
 2. Show warnings when approaching the rate limit
@@ -76,12 +67,10 @@ limiting enabled and will:
 
 If you experience issues with WebSocket rate limiting:
 
-1. Check the VS Code output panel (View > Output > The New Fuse) for rate
-   limiting logs
+1. Check the VS Code output panel (View > Output > The New Fuse) for rate limiting logs
 2. Adjust the rate limit settings to match your usage patterns
 3. Disable rate limiting temporarily for debugging
-4. Restart the WebSocket server after changing rate limit settings (Command
-   Palette: `The New Fuse: Restart Chrome WebSocket Server`)
+4. Restart the WebSocket server after changing rate limit settings (Command Palette: `The New Fuse: Restart Chrome WebSocket Server`)
 
 ## Best Practices
 

@@ -2,25 +2,25 @@
  * Workflow Repository - The New Fuse
  *
  * This class handles all database interactions for workflow definitions,
- * abstracting the database queries from the WorkflowEngine.
+ * abstracting the Prisma queries from the WorkflowEngine.
  */
 
-// import { DatabaseService } from '@db/client';
+// import { PrismaClient } from '@prisma/client';
 import { Logger } from '@the-new-fuse/relay-core';
 import { WorkflowDefinition } from './WorkflowTypes';
 
 export class WorkflowRepository {
-  private db: any; // DatabaseService;
+  private prisma: any; // PrismaClient;
   private logger: Logger;
 
-  constructor(db: any /* DatabaseService */, logger: Logger) {
-    this.db = db;
+  constructor(prisma: any /* PrismaClient */, logger: Logger) {
+    this.prisma = prisma;
     this.logger = logger;
   }
 
   async createWorkflow(definition: WorkflowDefinition): Promise<WorkflowDefinition> {
     this.logger.info(`Creating workflow in DB: ${definition.name}`);
-    const created = await this.db.workflow.create({
+    const created = await this.prisma.workflow.create({
       data: {
         id: definition.id,
         name: definition.name,
@@ -36,17 +36,17 @@ export class WorkflowRepository {
   }
 
   async getWorkflowById(id: string): Promise<WorkflowDefinition | null> {
-    const workflow = await this.db.workflow.findUnique({ where: { id } });
+    const workflow = await this.prisma.workflow.findUnique({ where: { id } });
     return workflow ? this.mapToWorkflowDefinition(workflow) : null;
   }
 
   async getAllWorkflows(): Promise<WorkflowDefinition[]> {
-    const workflows = await this.db.workflow.findMany();
+    const workflows = await this.prisma.workflow.findMany();
     return workflows.map(this.mapToWorkflowDefinition);
   }
 
   async updateWorkflow(id: string, updates: Partial<WorkflowDefinition>): Promise<WorkflowDefinition | null> {
-    const updated = await this.db.workflow.update({
+    const updated = await this.prisma.workflow.update({
       where: { id },
       data: {
         name: updates.name,
@@ -61,7 +61,7 @@ export class WorkflowRepository {
 
   async deleteWorkflow(id: string): Promise<boolean> {
     try {
-      await this.db.workflow.delete({ where: { id } });
+      await this.prisma.workflow.delete({ where: { id } });
       return true;
     } catch (error) {
       this.logger.error(`Failed to delete workflow ${id}: ${error instanceof Error ? error.message : String(error)}`);

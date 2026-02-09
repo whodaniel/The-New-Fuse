@@ -8,7 +8,11 @@ export interface ListProps {
 export const List = forwardRef<HTMLUListElement, ListProps>(
   ({ children, className = '', ...props }, ref) => {
     return (
-      <ul className={`list-none p-0 m-0 ${className}`} ref={ref} {...props}>
+      <ul 
+        className={`list-none p-0 m-0 ${className}`} 
+        ref={ref} 
+        {...props}
+      >
         {children}
       </ul>
     );
@@ -25,7 +29,11 @@ export interface ListItemProps {
 export const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
   ({ children, className = '', ...props }, ref) => {
     return (
-      <li className={`py-2 ${className}`} ref={ref} {...props}>
+      <li 
+        className={`py-2 ${className}`} 
+        ref={ref} 
+        {...props}
+      >
         {children}
       </li>
     );

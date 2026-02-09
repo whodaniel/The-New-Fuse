@@ -9,19 +9,30 @@ import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
-    // Enable CORS with streamlined configuration
+    // Enable CORS with strict configuration
     cors: {
-      origin: [
-        'https://thenewfuse.com',
-        'https://www.thenewfuse.com',
-        'https://api-production-48f1.up.railway.app',
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://localhost:5173',
-      ],
+      origin:
+        process.env.NODE_ENV === 'production'
+          ? [
+              ...(process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com']),
+              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
+            ]
+          : [
+              'http://localhost:3000',
+              'http://localhost:3001',
+              'http://localhost:5173',
+              'chrome-extension://kddfgejmbblgadkdmalfnagbiefbcdmi',
+            ],
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-      allowedHeaders: '*', // Be permissive with headers to resolve production issues
+      allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'X-Requested-With',
+        'X-CSRF-Token',
+        'X-Request-ID',
+        'X-Client-IP',
+      ],
     },
   });
 
@@ -45,7 +56,7 @@ async function bootstrap(): Promise<void> {
   // These are NestJS providers, not Express middleware functions
   // They should be applied via MiddlewareConsumer in AppModule
 
-  // Global Prefix
+  // Set global prefix for API routes
   app.setGlobalPrefix('api');
 
   // Swagger API Documentation Setup
@@ -92,8 +103,8 @@ async function bootstrap(): Promise<void> {
         console.log('📚 Generated OpenAPI specification from code decorators');
       }
 
-      // Setup Swagger UI at 'docs' path (results in /api/docs with global prefix)
-      SwaggerModule.setup('docs', app, document, {
+      // Setup Swagger UI
+      SwaggerModule.setup('api-docs', app, document, {
         swaggerOptions: {
           persistAuthorization: true,
           tagsSorter: 'alpha',
@@ -107,11 +118,41 @@ async function bootstrap(): Promise<void> {
         customCss: '.swagger-ui .topbar { display: none }',
       });
 
-      console.log('📖 API Documentation available at: http://localhost:3001/api/docs');
+      console.log('📖 API Documentation available at: http://localhost:3001/api-docs');
     } catch (error) {
       console.error('⚠️  Failed to setup API documentation:', error);
     }
   }
+
+  // Enhanced security headers
+  app.use((req: any, res: any, next: any) => {
+    // Content Security Policy
+    res.setHeader(
+      'Content-Security-Policy',
+      "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+        "style-src 'self' 'unsafe-inline'; " +
+        "img-src 'self' data: https:; " +
+        "font-src 'self'; " +
+        "connect-src 'self' wss: https:; " +
+        "frame-src 'none'; " +
+        "object-src 'none'; " +
+        "base-uri 'self'; " +
+        "form-action 'self';"
+    );
+
+    // Additional security headers
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=()');
+
+    // Remove server information
+    res.removeHeader('X-Powered-By');
+
+    next();
+  });
 
   const port = process.env.PORT || 3001;
   await app.listen(port);

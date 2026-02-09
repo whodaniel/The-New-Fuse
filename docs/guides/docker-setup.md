@@ -2,9 +2,7 @@
 
 ## Overview
 
-The New Fuse uses Docker for production-ready database infrastructure including
-PostgreSQL and Redis. This provides reliable data persistence, caching, and
-scalability for production deployments.
+The New Fuse uses Docker for production-ready database infrastructure including PostgreSQL and Redis. This provides reliable data persistence, caching, and scalability for production deployments.
 
 ## Architecture
 
@@ -74,7 +72,6 @@ pnpm run dev:hub
 - **Volume**: `postgres_dev_data` (persistent storage)
 
 **Connection String:**
-
 ```
 postgresql://newfuse:secretpass123@localhost:5433/the_new_fuse_dev
 ```
@@ -88,7 +85,6 @@ postgresql://newfuse:secretpass123@localhost:5433/the_new_fuse_dev
 - **Volume**: `redis_dev_data` (persistent storage)
 
 **Connection String:**
-
 ```
 redis://localhost:6380
 ```
@@ -182,7 +178,6 @@ curl http://localhost:3004/api/services/status
 ```
 
 **Response:**
-
 ```json
 [
   {
@@ -193,7 +188,7 @@ curl http://localhost:3004/api/services/status
     "health": "healthy"
   },
   {
-    "name": "Redis Cache",
+    "name": "Redis Cache", 
     "status": "running",
     "port": 6380,
     "type": "cache",
@@ -271,7 +266,6 @@ docker exec tnf-redis-dev redis-cli INFO
 ### Common Issues
 
 **1. Port Conflicts**
-
 ```bash
 # Check what's using ports
 lsof -i :5433
@@ -281,7 +275,6 @@ lsof -i :6380
 ```
 
 **2. Docker Not Running**
-
 ```bash
 # Check Docker status
 docker info
@@ -291,7 +284,6 @@ open -a Docker
 ```
 
 **3. Container Health Issues**
-
 ```bash
 # Check container logs
 docker logs tnf-postgres-dev
@@ -303,7 +295,6 @@ pnpm run docker:start
 ```
 
 **4. Permission Issues**
-
 ```bash
 # Fix Docker permissions (macOS)
 sudo chown -R $(whoami) ~/.docker
@@ -315,7 +306,7 @@ sudo chown -R $(whoami) ~/.docker
 # Test PostgreSQL connection
 docker exec tnf-postgres-dev pg_isready -U newfuse
 
-# Test Redis connection
+# Test Redis connection  
 docker exec tnf-redis-dev redis-cli ping
 
 # Run comprehensive test
@@ -342,7 +333,6 @@ JWT_SECRET=your-production-jwt-secret
 ### Docker Compose Production
 
 Use `docker-compose.yml` for production deployment with:
-
 - SSL/TLS encryption
 - Resource limits
 - Health checks
@@ -380,7 +370,7 @@ Frontend receives real-time service status:
 
 ```typescript
 // Service status updates
-const services = await fetch('/api/services/status').then((r) => r.json());
+const services = await fetch('/api/services/status').then(r => r.json());
 ```
 
 ### Electron Integration
@@ -392,15 +382,14 @@ Electron app connects to Docker services seamlessly:
 const connection = {
   host: 'localhost',
   port: 5433,
-  database: 'the_new_fuse_dev',
+  database: 'the_new_fuse_dev'
 };
 ```
 
 ## Next Steps
 
-1. **Database Migrations**: Set up Drizzle migrations for schema management
-2. **Redis Configuration**: Configure Redis for specific use cases (caching,
-   sessions, queues)
+1. **Database Migrations**: Set up Prisma migrations for schema management
+2. **Redis Configuration**: Configure Redis for specific use cases (caching, sessions, queues)
 3. **Monitoring**: Add Grafana/Prometheus for production monitoring
 4. **Backup Strategy**: Implement automated backup workflows
 5. **CI/CD Integration**: Add Docker builds to GitHub Actions
@@ -408,7 +397,6 @@ const connection = {
 ## Support
 
 For Docker-related issues:
-
 1. Check the troubleshooting section above
 2. Review Docker container logs
 3. Ensure Docker Desktop is running

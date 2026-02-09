@@ -1,12 +1,13 @@
 /**
  * Permission Validator for MCP operations
- *
+ * 
  * Provides validation of permissions for specific MCP operations,
  * including resource access, tool execution, and server administration.
  */
 
+import { MCPErrorClass, MCPErrorCode } from '../types/error';
 import { AuthContext } from './AuthenticationManager';
-import { AccessControlResult, RBACManager } from './RBACManager';
+import { RBACManager, AccessControlResult } from './RBACManager';
 
 /**
  * MCP operation types
@@ -41,7 +42,7 @@ export enum MCPOperation {
   ADMIN_USER_MANAGE = 'admin.user.manage',
   ADMIN_ROLE_MANAGE = 'admin.role.manage',
   ADMIN_POLICY_MANAGE = 'admin.policy.manage',
-  ADMIN_AUDIT_VIEW = 'admin.audit.view',
+  ADMIN_AUDIT_VIEW = 'admin.audit.view'
 }
 
 /**
@@ -68,7 +69,7 @@ export enum MCPResourceType {
   SERVICE = 'service',
   TOOL = 'tool',
   WORKFLOW = 'workflow',
-  AGENT = 'agent',
+  AGENT = 'agent'
 }
 
 /**
@@ -107,7 +108,7 @@ export class PermissionValidator {
     try {
       // Get required permissions for the operation
       const requiredPermissions = this.getRequiredPermissions(context.operation);
-
+      
       if (requiredPermissions.length === 0) {
         // No specific permissions required, allow operation
         return { valid: true };
@@ -125,7 +126,7 @@ export class PermissionValidator {
         return {
           valid: false,
           error: `Missing required permissions: ${missingPermissions.join(', ')}`,
-          missingPermissions,
+          missingPermissions
         };
       }
 
@@ -142,21 +143,22 @@ export class PermissionValidator {
           return {
             valid: false,
             error: accessResult.reason,
-            accessResult,
+            accessResult
           };
         }
 
         return {
           valid: true,
-          accessResult,
+          accessResult
         };
       }
 
       return { valid: true };
+
     } catch (error) {
       return {
         valid: false,
-        error: `Permission validation failed: ${(error as Error).message}`,
+        error: `Permission validation failed: ${(error as Error).message}`
       };
     }
   }
@@ -172,7 +174,7 @@ export class PermissionValidator {
     const validationContext: ValidationContext = {
       ...context,
       operation,
-      resourceUri,
+      resourceUri
     };
 
     return this.validateOperation(validationContext);
@@ -191,7 +193,7 @@ export class PermissionValidator {
       operation: MCPOperation.TOOL_EXECUTE,
       toolName,
       parameters,
-      resourceUri: `tool:${toolName}`,
+      resourceUri: `tool:${toolName}`
     };
 
     return this.validateOperation(validationContext);
@@ -207,14 +209,14 @@ export class PermissionValidator {
     if (!this.isServerOperation(operation)) {
       return {
         valid: false,
-        error: `Invalid server operation: ${operation}`,
+        error: `Invalid server operation: ${operation}`
       };
     }
 
     const validationContext: ValidationContext = {
       ...context,
       operation,
-      resourceUri: 'server:admin',
+      resourceUri: 'server:admin'
     };
 
     return this.validateOperation(validationContext);
@@ -231,14 +233,14 @@ export class PermissionValidator {
     if (!this.isBrokerOperation(operation)) {
       return {
         valid: false,
-        error: `Invalid broker operation: ${operation}`,
+        error: `Invalid broker operation: ${operation}`
       };
     }
 
     const validationContext: ValidationContext = {
       ...context,
       operation,
-      resourceUri: serviceId ? `broker:service:${serviceId}` : 'broker:*',
+      resourceUri: serviceId ? `broker:service:${serviceId}` : 'broker:*'
     };
 
     return this.validateOperation(validationContext);
@@ -253,7 +255,7 @@ export class PermissionValidator {
     resourceType?: MCPResourceType
   ): Promise<boolean> {
     const requiredPermissions = this.getRequiredPermissions(operation);
-
+    
     for (const permission of requiredPermissions) {
       if (!this.rbacManager.hasPermission(userId, permission)) {
         return false;
@@ -268,13 +270,13 @@ export class PermissionValidator {
    */
   getUserAllowedOperations(userId: string): MCPOperation[] {
     const allowedOperations: MCPOperation[] = [];
-
+    
     for (const operation of Object.values(MCPOperation)) {
       const requiredPermissions = this.getRequiredPermissions(operation);
-      const hasAllPermissions = requiredPermissions.every((permission) =>
+      const hasAllPermissions = requiredPermissions.every(permission =>
         this.rbacManager.hasPermission(userId, permission)
       );
-
+      
       if (hasAllPermissions) {
         allowedOperations.push(operation);
       }
@@ -367,7 +369,7 @@ export class PermissionValidator {
       [MCPOperation.ADMIN_USER_MANAGE]: 'manage',
       [MCPOperation.ADMIN_ROLE_MANAGE]: 'manage',
       [MCPOperation.ADMIN_POLICY_MANAGE]: 'manage',
-      [MCPOperation.ADMIN_AUDIT_VIEW]: 'view',
+      [MCPOperation.ADMIN_AUDIT_VIEW]: 'view'
     };
 
     return actionMap[operation] || 'access';

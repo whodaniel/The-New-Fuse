@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { WorkflowTemplatesService } from '../../workflow-templates/workflow-templates.service';
 import { MCPServerService } from '../mcp-server.service';
 import { MCPToolRegistry } from '../mcp-tool-registry.service';
+import { WorkflowTemplatesService } from '../../workflow-templates/workflow-templates.service';
 
 describe('MCPServerService', () => {
   let service: MCPServerService;
@@ -78,7 +78,7 @@ describe('MCPServerService', () => {
     it('should retrieve tools by group', () => {
       const systemTools = toolRegistry.getToolsByGroup('system');
       expect(systemTools.length).toBeGreaterThan(0);
-      expect(systemTools.every((t) => t.name.startsWith('system.'))).toBe(true);
+      expect(systemTools.every(t => t.name.startsWith('system.'))).toBe(true);
     });
   });
 });

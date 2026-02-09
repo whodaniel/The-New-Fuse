@@ -21,7 +21,7 @@ export class PerformanceMonitor {
 
   constructor(
     private readonly metricsCollector: MetricsCollector,
-    private readonly systemMonitor: SystemMonitor,
+    private readonly systemMonitor: SystemMonitor
   ) {
     logger.setContext('PerformanceMonitor');
   }
@@ -106,7 +106,7 @@ export class PerformanceMonitor {
   recordRequest(responseTime: number, isError: boolean = false): void {
     this.requestCount++;
     this.responseTimes.push(responseTime);
-
+    
     if (isError) {
       this.errorCount++;
     }
@@ -136,7 +136,7 @@ export class PerformanceMonitor {
   // Memory tracking
   recordMemoryUsage(): void {
     const memoryUsage = process.memoryUsage();
-
+    
     this.metricsCollector.recordGauge('memory_heap_used', memoryUsage.heapUsed, 'bytes');
     this.metricsCollector.recordGauge('memory_heap_total', memoryUsage.heapTotal, 'bytes');
     this.metricsCollector.recordGauge('memory_external', memoryUsage.external, 'bytes');
@@ -156,13 +156,13 @@ export class PerformanceMonitor {
     try {
       // Collect memory metrics
       this.recordMemoryUsage();
-
+      
       // Collect event loop lag
       this.recordEventLoopLag();
-
+      
       // Collect full performance metrics
       await this.monitor();
-
+      
       logger.debug('Performance metrics collected successfully');
     } catch (error) {
       logger.error('Failed to collect performance metrics', error as Error);
@@ -181,8 +181,8 @@ export class PerformanceMonitor {
       activeConnections: this.activeConnections,
       databaseConnections: {
         active: 0, // Will be updated by database service
-        idle: 0, // Will be updated by database service
-        total: 0, // Will be updated by database service
+        idle: 0,   // Will be updated by database service
+        total: 0,  // Will be updated by database service
       },
     };
   }
@@ -217,18 +217,18 @@ export class PerformanceMonitor {
     // CPU metrics
     this.metricsCollector.recordGauge('cpu_usage_percent', metrics.cpu.usage, '%');
     this.metricsCollector.recordGauge('cpu_cores', metrics.cpu.cores);
-
+    
     // Memory metrics
     this.metricsCollector.recordGauge('system_memory_used', metrics.memory.used, 'bytes');
     this.metricsCollector.recordGauge('system_memory_total', metrics.memory.total, 'bytes');
     this.metricsCollector.recordGauge('system_memory_usage_percent', metrics.memory.usage, '%');
-
+    
     // Disk metrics
     this.metricsCollector.recordGauge('disk_used', metrics.disk.used, 'bytes');
     this.metricsCollector.recordGauge('disk_total', metrics.disk.total, 'bytes');
     this.metricsCollector.recordGauge('disk_usage_percent', metrics.disk.usage, '%');
     this.metricsCollector.recordGauge('disk_iops', metrics.disk.iops);
-
+    
     // Network metrics
     this.metricsCollector.recordGauge('network_bytes_in', metrics.network.bytesIn, 'bytes');
     this.metricsCollector.recordGauge('network_bytes_out', metrics.network.bytesOut, 'bytes');
@@ -252,35 +252,35 @@ export class PerformanceMonitor {
   async trackOperation<T>(
     operationName: string,
     operation: () => Promise<T>,
-    tags?: Record<string, string>,
+    tags?: Record<string, string>
   ): Promise<T> {
     const startTime = Date.now();
-
+    
     try {
       const result = await operation();
       const duration = Date.now() - startTime;
-
+      
       this.metricsCollector.recordTimer(`operation_duration`, duration, {
         operation: operationName,
         success: 'true',
         ...tags,
       });
-
+      
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
-
+      
       this.metricsCollector.recordTimer(`operation_duration`, duration, {
         operation: operationName,
         success: 'false',
         ...tags,
       });
-
+      
       this.metricsCollector.recordCounter(`operation_errors`, 1, {
         operation: operationName,
         ...tags,
       });
-
+      
       throw error;
     }
   }
@@ -288,35 +288,35 @@ export class PerformanceMonitor {
   trackOperationSync<T>(
     operationName: string,
     operation: () => T,
-    tags?: Record<string, string>,
+    tags?: Record<string, string>
   ): T {
     const startTime = Date.now();
-
+    
     try {
       const result = operation();
       const duration = Date.now() - startTime;
-
+      
       this.metricsCollector.recordTimer(`operation_duration`, duration, {
         operation: operationName,
         success: 'true',
         ...tags,
       });
-
+      
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
-
+      
       this.metricsCollector.recordTimer(`operation_duration`, duration, {
         operation: operationName,
         success: 'false',
         ...tags,
       });
-
+      
       this.metricsCollector.recordCounter(`operation_errors`, 1, {
         operation: operationName,
         ...tags,
       });
-
+      
       throw error;
     }
   }

@@ -1,15 +1,15 @@
 /**
  * SecureStorageService - Secure API Key Storage using Electron's safeStorage
- *
+ * 
  * Uses OS-level encryption:
  * - macOS: Keychain
  * - Windows: DPAPI (Data Protection API)
  * - Linux: libsecret or kwallet
  */
 
-import { app, safeStorage } from 'electron';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { safeStorage, app } from 'electron';
 import { join } from 'path';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 
 export interface StoredCredential {
   id: string;
@@ -27,14 +27,14 @@ export interface CredentialMetadata {
   version: number;
 }
 
-export type CredentialCategory =
-  | 'ai'
-  | 'google'
-  | 'mcp'
-  | 'blockchain'
-  | 'database'
-  | 'messaging'
-  | 'devtools'
+export type CredentialCategory = 
+  | 'ai' 
+  | 'google' 
+  | 'mcp' 
+  | 'blockchain' 
+  | 'database' 
+  | 'messaging' 
+  | 'devtools' 
   | 'custom';
 
 export interface ProviderInfo {
@@ -50,10 +50,7 @@ export interface ProviderInfo {
 }
 
 // Category metadata for UI display
-export const CREDENTIAL_CATEGORIES: Record<
-  CredentialCategory,
-  { name: string; icon: string; description: string }
-> = {
+export const CREDENTIAL_CATEGORIES: Record<CredentialCategory, { name: string; icon: string; description: string }> = {
   ai: {
     name: 'AI & LLM Providers',
     icon: 'brain',
@@ -497,7 +494,7 @@ export const CREDENTIAL_PROVIDERS: Record<string, ProviderInfo> = {
     description: 'Railway API token',
     docsUrl: 'https://railway.app/account/tokens',
   },
-
+  
   // Catch-all custom
   custom: {
     id: 'custom',
@@ -535,11 +532,9 @@ export class SecureStorageService {
 
       // Check if encryption is available
       const encryptionAvailable = safeStorage.isEncryptionAvailable();
-
+      
       if (!encryptionAvailable) {
-        console.warn(
-          '[SecureStorage] OS-level encryption not available. Keys will still be stored but with reduced security.'
-        );
+        console.warn('[SecureStorage] OS-level encryption not available. Keys will still be stored but with reduced security.');
       }
 
       // Initialize metadata file if it doesn't exist
@@ -554,7 +549,7 @@ export class SecureStorageService {
 
       this.initialized = true;
       console.log('[SecureStorage] Initialized successfully');
-
+      
       return { success: true, encryptionAvailable };
     } catch (error) {
       console.error('[SecureStorage] Initialization failed:', error);
@@ -587,8 +582,8 @@ export class SecureStorageService {
       const encryptedKeys = this.loadEncryptedKeys();
 
       // Check for existing key with same provider
-      const existingIndex = metadataStore.credentials.findIndex((c) => c.provider === provider);
-
+      const existingIndex = metadataStore.credentials.findIndex(c => c.provider === provider);
+      
       // Encrypt the API key
       const encryptedKey = this.encryptString(apiKey);
 
@@ -602,15 +597,15 @@ export class SecureStorageService {
           metadata,
         };
         encryptedKeys[existingId] = encryptedKey;
-
+        
         this.saveMetadata(metadataStore);
         this.saveEncryptedKeys(encryptedKeys);
-
+        
         // Also set environment variable for current session
         if (providerInfo?.envKey) {
           process.env[providerInfo.envKey] = apiKey;
         }
-
+        
         return { success: true, id: existingId };
       } else {
         // Add new credential
@@ -629,7 +624,7 @@ export class SecureStorageService {
 
         this.saveMetadata(metadataStore);
         this.saveEncryptedKeys(encryptedKeys);
-
+        
         // Also set environment variable for current session
         if (providerInfo?.envKey) {
           process.env[providerInfo.envKey] = apiKey;
@@ -646,16 +641,14 @@ export class SecureStorageService {
   /**
    * Retrieve an API key by provider
    */
-  async getApiKey(
-    provider: string
-  ): Promise<{ success: boolean; apiKey?: string; error?: string }> {
+  async getApiKey(provider: string): Promise<{ success: boolean; apiKey?: string; error?: string }> {
     try {
       if (!this.initialized) {
         await this.initialize();
       }
 
       const metadataStore = this.loadMetadata();
-      const credential = metadataStore.credentials.find((c) => c.provider === provider);
+      const credential = metadataStore.credentials.find(c => c.provider === provider);
 
       if (!credential) {
         // Fall back to environment variable
@@ -691,7 +684,7 @@ export class SecureStorageService {
       }
 
       const metadataStore = this.loadMetadata();
-      const credentialIndex = metadataStore.credentials.findIndex((c) => c.provider === provider);
+      const credentialIndex = metadataStore.credentials.findIndex(c => c.provider === provider);
 
       if (credentialIndex === -1) {
         return { success: false, error: `No API key found for provider: ${provider}` };
@@ -702,7 +695,7 @@ export class SecureStorageService {
 
       // Remove from metadata
       metadataStore.credentials.splice(credentialIndex, 1);
-
+      
       // Remove encrypted key
       delete encryptedKeys[credential.id];
 
@@ -725,11 +718,7 @@ export class SecureStorageService {
   /**
    * List all stored credentials (without the actual keys)
    */
-  async listCredentials(): Promise<{
-    success: boolean;
-    credentials: StoredCredential[];
-    error?: string;
-  }> {
+  async listCredentials(): Promise<{ success: boolean; credentials: StoredCredential[]; error?: string }> {
     try {
       if (!this.initialized) {
         await this.initialize();
@@ -753,8 +742,8 @@ export class SecureStorageService {
       }
 
       const metadataStore = this.loadMetadata();
-      const hasStored = metadataStore.credentials.some((c) => c.provider === provider);
-
+      const hasStored = metadataStore.credentials.some(c => c.provider === provider);
+      
       if (hasStored) return true;
 
       // Also check environment variables
@@ -789,10 +778,7 @@ export class SecureStorageService {
               loaded++;
             }
           } catch (error) {
-            console.error(
-              `[SecureStorage] Failed to decrypt key for ${credential.provider}:`,
-              error
-            );
+            console.error(`[SecureStorage] Failed to decrypt key for ${credential.provider}:`, error);
           }
         }
       }
@@ -815,12 +801,9 @@ export class SecureStorageService {
       }
 
       const metadataStore = this.loadMetadata();
-
+      
       // Check if provider already exists
-      if (
-        CREDENTIAL_PROVIDERS[provider.id] ||
-        metadataStore.customProviders?.find((p) => p.id === provider.id)
-      ) {
+      if (CREDENTIAL_PROVIDERS[provider.id] || metadataStore.customProviders?.find(p => p.id === provider.id)) {
         return { success: false, error: `Provider ${provider.id} already exists` };
       }
 
@@ -851,18 +834,18 @@ export class SecureStorageService {
       }
 
       const metadataStore = this.loadMetadata();
-
+      
       if (!metadataStore.customProviders) {
         return { success: false, error: 'No custom providers found' };
       }
 
-      const index = metadataStore.customProviders.findIndex((p) => p.id === providerId);
+      const index = metadataStore.customProviders.findIndex(p => p.id === providerId);
       if (index === -1) {
         return { success: false, error: `Custom provider ${providerId} not found` };
       }
 
       metadataStore.customProviders.splice(index, 1);
-
+      
       // Also delete any stored credential for this provider
       await this.deleteApiKey(providerId);
 
@@ -880,13 +863,13 @@ export class SecureStorageService {
   getAllProviders(): Record<string, ProviderInfo> {
     const metadataStore = this.loadMetadata();
     const allProviders = { ...CREDENTIAL_PROVIDERS };
-
+    
     if (metadataStore.customProviders) {
       for (const custom of metadataStore.customProviders) {
         allProviders[custom.id] = custom;
       }
     }
-
+    
     return allProviders;
   }
 
@@ -899,7 +882,7 @@ export class SecureStorageService {
     }
 
     const metadataStore = this.loadMetadata();
-    return metadataStore.customProviders?.find((p) => p.id === providerId);
+    return metadataStore.customProviders?.find(p => p.id === providerId);
   }
 
   /**
@@ -921,7 +904,7 @@ export class SecureStorageService {
    */
   getProvidersByCategory(category: CredentialCategory): ProviderInfo[] {
     const allProviders = this.getAllProviders();
-    return Object.values(allProviders).filter((p) => p.category === category);
+    return Object.values(allProviders).filter(p => p.category === category);
   }
 
   /**
@@ -1008,3 +991,4 @@ export function getSecureStorage(): SecureStorageService {
   }
   return secureStorageInstance;
 }
+

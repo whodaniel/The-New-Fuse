@@ -2,8 +2,7 @@
 
 ## Entity Relationship Summary
 
-This document provides a comprehensive overview of the database schema,
-including all models, their relationships, and key design decisions.
+This document provides a comprehensive overview of the database schema, including all models, their relationships, and key design decisions.
 
 ## Table of Contents
 
@@ -24,7 +23,7 @@ including all models, their relationships, and key design decisions.
 - **Indexes**: 60+ (including unique constraints)
 - **Soft Delete Support**: 11 models
 - **Database**: PostgreSQL 13+
-- **ORM**: Drizzle 6.19.0
+- **ORM**: Prisma 6.19.0
 
 ---
 
@@ -48,7 +47,6 @@ User (Core Identity)
 ```
 
 **Key Fields**:
-
 - `email` (unique): User email
 - `username` (unique): Optional username
 - `roles[]`: Array of UserRole enums
@@ -57,7 +55,6 @@ User (Core Identity)
 - `deletedAt`: Soft delete timestamp
 
 **Security Features**:
-
 - Password hashing (bcrypt recommended)
 - Session management via AuthSession
 - Login attempt tracking
@@ -82,7 +79,6 @@ Agent (AI Agent Entity)
 ```
 
 **Key Fields**:
-
 - `type`: AgentType enum (BASIC, CHAT, WORKFLOW, etc.)
 - `status`: AgentStatus enum (ACTIVE, INACTIVE, etc.)
 - `capabilities[]`: AgentCapability enum array
@@ -90,7 +86,6 @@ Agent (AI Agent Entity)
 - `config`: JSON configuration
 
 **Agent Types**:
-
 - BASIC: General-purpose agent
 - CHAT: Conversational agent
 - WORKFLOW: Workflow execution agent
@@ -124,7 +119,6 @@ Message (Universal Message)
 ```
 
 **Message Types**:
-
 - USER: Human message
 - AGENT: AI agent message
 - SYSTEM: System notification
@@ -132,7 +126,6 @@ Message (Universal Message)
 - TOOL: Tool execution result
 
 **Design Notes**:
-
 - Message can belong to EITHER Chat OR ChatRoom (XOR constraint recommended)
 - Message sender can be EITHER User OR Agent
 - Supports threaded conversations via parent-child relationships
@@ -163,7 +156,6 @@ WorkflowExecution (Execution Instance)
 ```
 
 **Workflow Statuses**:
-
 - DRAFT: Being designed
 - PUBLISHED: Ready for execution
 - ARCHIVED: No longer active
@@ -173,7 +165,6 @@ WorkflowExecution (Execution Instance)
 - FAILED: Execution failed
 
 **Design Features**:
-
 - Steps ordered by `order` field
 - `nextSteps[]` array for conditional branching
 - `conditions` and `transformations` as JSON
@@ -203,14 +194,12 @@ TaskExecution (Execution Record)
 ```
 
 **Task Priorities**:
-
 - LOW: Can be delayed
 - MEDIUM: Normal priority
 - HIGH: Important
 - URGENT: Immediate attention
 
 **Task Statuses**:
-
 - PENDING: Waiting to start
 - IN_PROGRESS: Currently executing
 - COMPLETED: Successfully finished
@@ -238,7 +227,6 @@ CodeExecutionSession (Collaborative Session)
 ```
 
 **Supported Languages**:
-
 - JAVASCRIPT
 - TYPESCRIPT
 - PYTHON
@@ -248,7 +236,6 @@ CodeExecutionSession (Collaborative Session)
 - CSS
 
 **Execution Tiers**:
-
 - BASIC: Limited resources
 - STANDARD: Normal resources
 - PREMIUM: Enhanced resources
@@ -256,8 +243,7 @@ CodeExecutionSession (Collaborative Session)
 
 ### 7. NFT & Marketplace System
 
-**Models**: `AgentNFT`, `FractionalShare`, `RevenueStream`,
-`RevenueDistribution`, `MarketplaceListing`, `MarketplaceOffer`
+**Models**: `AgentNFT`, `FractionalShare`, `RevenueStream`, `RevenueDistribution`, `MarketplaceListing`, `MarketplaceOffer`
 
 ```
 AgentNFT (NFT Representation)
@@ -287,7 +273,6 @@ MarketplaceOffer (Purchase Offer)
 ```
 
 **Marketplace Features**:
-
 - Fractional ownership support
 - Revenue sharing among shareholders
 - On-chain transaction tracking
@@ -311,13 +296,11 @@ Transaction (Blockchain Transaction)
 ```
 
 **Wallet Types**:
-
 - SMART_ACCOUNT: Smart contract wallet
 - EOA: Externally Owned Account
 - MULTI_SIG: Multi-signature wallet
 
 **Transaction Types**:
-
 - TRANSFER: Token transfer
 - CONTRACT_CALL: Smart contract interaction
 - CONTRACT_DEPLOYMENT: Deploy contract
@@ -326,8 +309,7 @@ Transaction (Blockchain Transaction)
 
 ### 9. System & Configuration
 
-**Models**: `RegisteredEntity`, `LLMConfig`, `BusinessMetric`, `ErrorLog`,
-`SyncState`, `SyncConflict`
+**Models**: `RegisteredEntity`, `LLMConfig`, `BusinessMetric`, `ErrorLog`, `SyncState`, `SyncConflict`
 
 ```
 RegisteredEntity (Service Registry)
@@ -384,9 +366,7 @@ SyncConflict (Conflict Resolution)
 None directly modeled (using join tables or arrays where needed)
 
 **Potential M:N**:
-
-- CodeExecutionSession.collaborators (currently String array, should be join
-  table)
+- CodeExecutionSession.collaborators (currently String array, should be join table)
 - Message threads (currently self-referential 1:N)
 
 ---
@@ -395,8 +375,8 @@ None directly modeled (using join tables or arrays where needed)
 
 ### Existing Indexes
 
-**Primary Keys**: All models have UUID primary key **Unique Constraints**:
-
+**Primary Keys**: All models have UUID primary key
+**Unique Constraints**:
 - User.email
 - User.username
 - AuthSession.token
@@ -407,7 +387,6 @@ None directly modeled (using join tables or arrays where needed)
 - Wallet.address
 
 **Explicit Indexes**:
-
 - CodeExecutionUsage: agentId, clientId, createdAt, language, tier, status
 - Transaction: walletId, hash, status, createdAt
 - SyncState: (resourceType, resourceId, tenantId) composite unique
@@ -429,7 +408,6 @@ See `migrations/add_production_indexes_and_constraints.sql` for complete list:
 ### Soft Delete Implementation
 
 **Models with Soft Delete**:
-
 - User
 - Agent
 - Chat
@@ -441,7 +419,6 @@ See `migrations/add_production_indexes_and_constraints.sql` for complete list:
 - ChatRoom
 
 **Middleware**: `soft-delete.middleware.ts` automatically:
-
 - Filters out deleted records
 - Converts DELETE to UPDATE
 - Provides restore functionality
@@ -449,7 +426,6 @@ See `migrations/add_production_indexes_and_constraints.sql` for complete list:
 ### Cascade Delete Configurations
 
 **Current State**:
-
 - ✅ User → AuthSession: CASCADE
 - ✅ User → LoginAttempt: CASCADE
 - ✅ User → AuthEvent: CASCADE
@@ -457,8 +433,7 @@ See `migrations/add_production_indexes_and_constraints.sql` for complete list:
 - ⚠️ Many relations lack onDelete specification
 
 **Recommended Configuration**:
-
-```drizzle
+```prisma
 // Audit data - keep on parent delete
 onDelete: Restrict
 
@@ -471,12 +446,12 @@ onDelete: SetNull
 
 ### Data Validation
 
-**Enum Constraints**: 12 enums enforce valid values **Unique Constraints**:
-Prevent duplicates **Required Fields**: Non-nullable fields enforce data
-presence **Default Values**: Sensible defaults for optional fields
+**Enum Constraints**: 12 enums enforce valid values
+**Unique Constraints**: Prevent duplicates
+**Required Fields**: Non-nullable fields enforce data presence
+**Default Values**: Sensible defaults for optional fields
 
 **Missing Validations**:
-
 - Message: XOR constraint (Chat XOR ChatRoom)
 - Message: Sender XOR constraint (User XOR Agent)
 - Decimal precision for crypto amounts
@@ -489,13 +464,11 @@ presence **Default Values**: Sensible defaults for optional fields
 ### Sensitive Data
 
 **Encrypted Fields Needed**:
-
 - ✅ User.hashedPassword (application-level)
 - ❌ User.refreshToken (plain text - should hash)
 - ❌ LLMConfig.apiKey (plain text - should encrypt)
 
 **Recommendations**:
-
 1. Encrypt LLMConfig.apiKey with AES-256-GCM
 2. Hash or encrypt User.refreshToken
 3. Implement key rotation for encrypted fields
@@ -504,13 +477,11 @@ presence **Default Values**: Sensible defaults for optional fields
 ### Access Control
 
 **Role-Based Access**:
-
 - User.roles[] array supports multiple roles
 - 7 role types (USER, ADMIN, SUPER_ADMIN, etc.)
 - Application-level enforcement
 
 **Recommended Enhancements**:
-
 - Row-Level Security (RLS) in PostgreSQL
 - Organization-based multi-tenancy
 - Audit logging for sensitive operations
@@ -518,14 +489,12 @@ presence **Default Values**: Sensible defaults for optional fields
 ### Audit Trail
 
 **Current Audit Models**:
-
 - AuthEvent: Authentication events
 - LoginAttempt: Login tracking
 - ErrorLog: Error tracking
 - SyncConflict: Data sync issues
 
 **Recommendations**:
-
 - Add created_by/updated_by fields
 - Implement change tracking
 - Add audit log for sensitive operations
@@ -537,7 +506,7 @@ presence **Default Values**: Sensible defaults for optional fields
 ### Active Agents by User
 
 ```typescript
-const agents = await drizzle.agent.findMany({
+const agents = await prisma.agent.findMany({
   where: {
     userId: currentUserId,
     status: AgentStatus.ACTIVE,
@@ -553,7 +522,7 @@ const agents = await drizzle.agent.findMany({
 ### Recent Messages in Chat
 
 ```typescript
-const messages = await drizzle.message.findMany({
+const messages = await prisma.message.findMany({
   where: {
     chatId: chatId,
     isDeleted: false,
@@ -572,7 +541,7 @@ const messages = await drizzle.message.findMany({
 ### Pending Tasks for Agent
 
 ```typescript
-const tasks = await drizzle.task.findMany({
+const tasks = await prisma.task.findMany({
   where: {
     assignedToId: agentId,
     status: {
@@ -580,17 +549,23 @@ const tasks = await drizzle.task.findMany({
     },
     deletedAt: null,
   },
-  orderBy: [{ priority: 'desc' }, { createdAt: 'asc' }],
+  orderBy: [
+    { priority: 'desc' },
+    { createdAt: 'asc' },
+  ],
 });
 ```
 
 ### Active Marketplace Listings
 
 ```typescript
-const listings = await drizzle.marketplaceListing.findMany({
+const listings = await prisma.marketplaceListing.findMany({
   where: {
     status: MarketplaceStatus.ACTIVE,
-    OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+    OR: [
+      { expiresAt: null },
+      { expiresAt: { gt: new Date() } },
+    ],
   },
   include: {
     agentNFT: {
@@ -642,35 +617,35 @@ From `SCHEMA_DESIGN_SOLUTIONS.md`:
 
 ### Model Count by Domain
 
-| Domain          | Models | Key Features                   |
-| --------------- | ------ | ------------------------------ |
-| User Management | 4      | Auth, sessions, audit          |
-| Agent System    | 3      | AI agents, metadata, NFT       |
-| Chat System     | 4      | Conversations, rooms, messages |
-| Workflow System | 3      | Workflows, steps, executions   |
-| Task System     | 3      | Pipelines, tasks, executions   |
-| Code Execution  | 2      | Usage tracking, sessions       |
-| NFT/Marketplace | 6      | NFTs, shares, marketplace      |
-| Blockchain      | 2      | Wallets, transactions          |
-| System/Config   | 6      | Registry, LLM, monitoring      |
-| **Total**       | **28** |                                |
+| Domain | Models | Key Features |
+|--------|--------|--------------|
+| User Management | 4 | Auth, sessions, audit |
+| Agent System | 3 | AI agents, metadata, NFT |
+| Chat System | 4 | Conversations, rooms, messages |
+| Workflow System | 3 | Workflows, steps, executions |
+| Task System | 3 | Pipelines, tasks, executions |
+| Code Execution | 2 | Usage tracking, sessions |
+| NFT/Marketplace | 6 | NFTs, shares, marketplace |
+| Blockchain | 2 | Wallets, transactions |
+| System/Config | 6 | Registry, LLM, monitoring |
+| **Total** | **28** | |
 
 ### Enum Summary
 
-| Enum                    | Values | Usage                 |
-| ----------------------- | ------ | --------------------- |
-| UserRole                | 7      | User permissions      |
-| AgentType               | 9      | Agent classifications |
-| AgentStatus             | 9      | Agent states          |
-| AgentCapability         | 22     | Agent abilities       |
-| MessageRole             | 5      | Message types         |
-| WorkflowStatus          | 7      | Workflow states       |
-| WorkflowExecutionStatus | 5      | Execution states      |
-| PipelineStatus          | 5      | Pipeline states       |
-| TaskStatus              | 5      | Task states           |
-| TaskPriority            | 4      | Task priorities       |
-| CodeExecutionLanguage   | 7      | Programming languages |
-| CodeExecutionTier       | 4      | Resource tiers        |
+| Enum | Values | Usage |
+|------|--------|-------|
+| UserRole | 7 | User permissions |
+| AgentType | 9 | Agent classifications |
+| AgentStatus | 9 | Agent states |
+| AgentCapability | 22 | Agent abilities |
+| MessageRole | 5 | Message types |
+| WorkflowStatus | 7 | Workflow states |
+| WorkflowExecutionStatus | 5 | Execution states |
+| PipelineStatus | 5 | Pipeline states |
+| TaskStatus | 5 | Task states |
+| TaskPriority | 4 | Task priorities |
+| CodeExecutionLanguage | 7 | Programming languages |
+| CodeExecutionTier | 4 | Resource tiers |
 
 ---
 
@@ -686,5 +661,6 @@ For more detailed information:
 
 ---
 
-**Last Updated**: 2025-11-18 **Schema Version**: 1.0.0 **Drizzle Version**:
-6.19.0
+**Last Updated**: 2025-11-18
+**Schema Version**: 1.0.0
+**Prisma Version**: 6.19.0

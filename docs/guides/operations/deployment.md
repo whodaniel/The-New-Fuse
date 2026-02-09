@@ -3,7 +3,6 @@
 ## Prerequisites
 
 Ensure your environment meets these requirements:
-
 - Node.js 18+
 - Bun 1.1.38+
 - Docker 24.0+
@@ -48,7 +47,7 @@ yarn workspace @the-new-fuse/utils build
 yarn workspace @the-new-fuse/core build
 yarn workspace @the-new-fuse/database build
 
-# Generate Drizzle client
+# Generate Prisma client
 yarn workspace @the-new-fuse/database generate
 
 # Run migrations
@@ -58,7 +57,6 @@ yarn workspace @the-new-fuse/database migrate:deploy
 ## Health Checks
 
 Monitor these endpoints after deployment:
-
 - `/health` - Basic health check
 - `/metrics` - Prometheus metrics
 - `/status` - Detailed status
@@ -95,7 +93,6 @@ helm rollback fuse <revision>
 Common issues and solutions:
 
 1. Database Connection Issues
-
    ```bash
    # Check database status
    docker-compose -f docker/production.yml ps database
@@ -112,35 +109,30 @@ Common issues and solutions:
    ```
 
 ## Kubernetes Deployment
-
 - Service configurations
 - Resource requirements
 - Scaling policies
 - Network policies
 
 ## Configuration Management
-
 - ConfigMaps
 - Secrets
 - Environment variables
 - Service discovery
 
 ## Monitoring Setup
-
 - Prometheus deployment
 - Grafana configuration
 - Alert manager setup
 - Log aggregation
 
 ## Security Considerations
-
 - Network security
 - Service authentication
 - Data encryption
 - Access control
 
 ## Maintenance Procedures
-
 - Backup procedures
 - Update strategies
 - Rollback procedures

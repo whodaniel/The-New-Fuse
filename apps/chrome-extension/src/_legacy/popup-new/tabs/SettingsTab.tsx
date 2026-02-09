@@ -2,7 +2,7 @@
  * Settings Tab - Extension Configuration
  */
 
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Props {
   status: any;

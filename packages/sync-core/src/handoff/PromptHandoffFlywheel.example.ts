@@ -1,20 +1,20 @@
 /**
  * Example Usage of Prompt Handoff Flywheel System
- *
+ * 
  * Demonstrates how to use the flywheel system for seamless agent handoffs
  * with context preservation, load balancing, and analytics.
- *
+ * 
  * Requirements: 4.1, 4.2, 4.3, 4.4, 4.5
  */
 
-import { ConflictManager } from '../services/ConflictManager';
-import { MasterClockService } from '../services/MasterClockService';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import {
-  EnhancedAgentHandoffTemplateService,
+import { 
   PromptHandoffFlywheel,
-  PromptTemplateIntegration,
+  EnhancedAgentHandoffTemplateService,
+  PromptTemplateIntegration
 } from './index';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
+import { MasterClockService } from '../services/MasterClockService';
+import { ConflictManager } from '../services/ConflictManager';
 
 /**
  * Example 1: Basic Handoff Setup and Execution
@@ -28,7 +28,11 @@ async function basicHandoffExample() {
   const conflictManager = new ConflictManager({} as any, {} as any);
 
   // Create flywheel instance
-  const flywheel = new PromptHandoffFlywheel(syncOrchestrator, masterClock, conflictManager);
+  const flywheel = new PromptHandoffFlywheel(
+    syncOrchestrator,
+    masterClock,
+    conflictManager
+  );
 
   // Create enhanced handoff service
   const handoffService = new EnhancedAgentHandoffTemplateService(
@@ -78,7 +82,7 @@ Please provide a comprehensive code review maintaining full context from previou
     variables: {
       code_changes: 'No code changes specified',
       review_focus: 'General review',
-      source_agent: 'Unknown',
+      source_agent: 'Unknown'
     },
     contextRequirements: ['code_changes', 'execution_history'],
     agentCapabilities: ['coding', 'review'],
@@ -86,14 +90,14 @@ Please provide a comprehensive code review maintaining full context from previou
       'code_reviewed',
       'issues_documented',
       'recommendations_provided',
-      'context_preserved',
+      'context_preserved'
     ],
     backpressureThreshold: 5,
     loadBalancingWeight: 1.0,
     integrationMetadata: {
       syncEnabled: true,
-      conflictResolution: 'merge',
-    },
+      conflictResolution: 'merge'
+    }
   });
 
   console.log(`✓ Created handoff template: ${templateId}`);
@@ -113,12 +117,12 @@ Please provide a comprehensive code review maintaining full context from previou
         }
       `,
       review_focus: 'Performance and error handling',
-      source_agent: 'analysis-agent',
+      source_agent: 'analysis-agent'
     },
     {
       preserveContext: true,
       memoryIntegration: true,
-      targetAgentId: 'code-agent',
+      targetAgentId: 'code-agent'
     }
   );
 
@@ -160,7 +164,7 @@ async function loadBalancingExample() {
     content: 'Task: {{task_description}}\nAgent Load: {{agent_load}}',
     variables: {
       task_description: 'General task',
-      agent_load: 'Unknown',
+      agent_load: 'Unknown'
     },
     contextRequirements: ['task_description'],
     agentCapabilities: ['general'],
@@ -169,8 +173,8 @@ async function loadBalancingExample() {
     loadBalancingWeight: 2.0, // Higher weight for load consideration
     integrationMetadata: {
       syncEnabled: true,
-      conflictResolution: 'latest',
-    },
+      conflictResolution: 'latest'
+    }
   });
 
   // Get optimal handoff target (should select agent-1 with lowest load)
@@ -180,7 +184,7 @@ async function loadBalancingExample() {
     {
       'agent-1': ['general'],
       'agent-2': ['general'],
-      'agent-3': ['general'],
+      'agent-3': ['general']
     }
   );
 
@@ -195,7 +199,7 @@ async function loadBalancingExample() {
     {
       'agent-1': ['general'],
       'agent-2': ['general'],
-      'agent-3': ['general'],
+      'agent-3': ['general']
     }
   );
 
@@ -218,27 +222,27 @@ async function templateIntegrationExample() {
       currentVersion: 'v1.0.0',
       versions: [],
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     }),
     getTemplate: async (id: string) => ({
       id,
       name: 'Base Template',
       content: 'Base template content',
       variables: { base_var: 'base_value' },
-      updatedAt: new Date(),
+      updatedAt: new Date()
     }),
     updateTemplate: async (id: string, updates: any) => ({ id, ...updates }),
     getTemplateAnalytics: async (id: string) => ({
       totalRuns: 50,
       successRate: 92.5,
-      averageResponseTime: 1200,
+      averageResponseTime: 1200
     }),
     recordExecution: async (result: any) => {},
     createVersion: async (templateId: string, version: any) => ({
       id: `version_${Date.now()}`,
-      ...version,
+      ...version
     }),
-    setActiveVersion: async (templateId: string, versionId: string) => ({}),
+    setActiveVersion: async (templateId: string, versionId: string) => ({})
   };
 
   // Create integration service
@@ -257,7 +261,7 @@ async function templateIntegrationExample() {
     content: 'Integrated task: {{task}} with base data: {{base_data}}',
     variables: {
       task: 'integration test',
-      base_data: 'from base service',
+      base_data: 'from base service'
     },
     contextRequirements: ['task'],
     agentCapabilities: ['general'],
@@ -266,8 +270,8 @@ async function templateIntegrationExample() {
     loadBalancingWeight: 1.0,
     integrationMetadata: {
       syncEnabled: true,
-      conflictResolution: 'merge',
-    },
+      conflictResolution: 'merge'
+    }
   });
 
   console.log(`✓ Created handoff template: ${templateId}`);
@@ -276,7 +280,7 @@ async function templateIntegrationExample() {
   await integration.integrateTemplate(templateId, {
     createBaseTemplate: true,
     autoSync: true,
-    conflictResolution: 'merge',
+    conflictResolution: 'merge'
   });
 
   console.log('✓ Integrated with base template service');
@@ -327,8 +331,8 @@ async function errorHandlingExample() {
     loadBalancingWeight: 1.0,
     integrationMetadata: {
       syncEnabled: true,
-      conflictResolution: 'latest',
-    },
+      conflictResolution: 'latest'
+    }
   });
 
   // Register agents
@@ -350,10 +354,11 @@ async function errorHandlingExample() {
     );
 
     console.log(`✓ Session created despite agent error: ${sessionId}`);
-
+    
     // The system should either retry or reassign to another agent
     const session = await handoffService.getSession(sessionId);
     console.log(`✓ Session status: ${session?.status}`);
+
   } catch (error) {
     console.log(`✓ Error handled gracefully: ${error.message}`);
   }
@@ -370,11 +375,15 @@ async function analyticsExample() {
   // Create multiple sessions to generate data
   const sessionIds = [];
   for (let i = 0; i < 3; i++) {
-    const sessionId = await handoffService.initiateHandoffSession('analysis-agent', templateId, {
-      code_changes: `function test${i}() { return ${i}; }`,
-      review_focus: `Test function ${i}`,
-      source_agent: 'analysis-agent',
-    });
+    const sessionId = await handoffService.initiateHandoffSession(
+      'analysis-agent',
+      templateId,
+      {
+        code_changes: `function test${i}() { return ${i}; }`,
+        review_focus: `Test function ${i}`,
+        source_agent: 'analysis-agent'
+      }
+    );
     sessionIds.push(sessionId);
   }
 
@@ -394,15 +403,18 @@ async function analyticsExample() {
       totalHandoffs: metrics?.totalHandoffs || 0,
       successfulHandoffs: metrics?.successfulHandoffs || 0,
       averageHandoffTime: metrics?.averageHandoffTime || 0,
-      contextPreservationScore: metrics?.contextPreservationScore || 0,
+      contextPreservationScore: metrics?.contextPreservationScore || 0
     });
   }
 
   // Generate comprehensive report
-  const report = await handoffService.generateHandoffReport(templateId, {
-    start: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
-    end: new Date(),
-  });
+  const report = await handoffService.generateHandoffReport(
+    templateId,
+    {
+      start: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
+      end: new Date()
+    }
+  );
 
   console.log('✓ Generated handoff report:');
   console.log(`  - Template: ${report.template.name}`);
@@ -443,15 +455,11 @@ async function monitoringExample() {
   });
 
   flywheel.on('agentRegistered', (capability) => {
-    console.log(
-      `👤 Agent registered: ${capability.agentId} with capabilities: ${capability.capabilities.join(', ')}`
-    );
+    console.log(`👤 Agent registered: ${capability.agentId} with capabilities: ${capability.capabilities.join(', ')}`);
   });
 
   flywheel.on('agentStatusUpdated', (capability) => {
-    console.log(
-      `📊 Agent status updated: ${capability.agentId} - ${capability.status} (load: ${capability.currentLoad}%)`
-    );
+    console.log(`📊 Agent status updated: ${capability.agentId} - ${capability.status} (load: ${capability.currentLoad}%)`);
   });
 
   console.log('✓ Event listeners configured for real-time monitoring');
@@ -485,6 +493,7 @@ async function runAllExamples() {
     console.log('✓ Error handling and recovery');
     console.log('✓ Comprehensive analytics and reporting');
     console.log('✓ Real-time monitoring and events');
+
   } catch (error) {
     console.error('❌ Example failed:', error);
   }
@@ -492,13 +501,13 @@ async function runAllExamples() {
 
 // Export for use in other modules
 export {
-  analyticsExample,
   basicHandoffExample,
-  errorHandlingExample,
   loadBalancingExample,
-  monitoringExample,
-  runAllExamples,
   templateIntegrationExample,
+  errorHandlingExample,
+  analyticsExample,
+  monitoringExample,
+  runAllExamples
 };
 
 // Run examples if this file is executed directly

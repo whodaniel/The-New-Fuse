@@ -1,6 +1,12 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, CheckCircle2, Cpu, MessageSquare, Sparkles } from 'lucide-react';
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  MessageSquare,
+  Cpu,
+  CheckCircle2,
+  ArrowRight,
+  Sparkles,
+} from 'lucide-react';
 
 interface DemoStep {
   id: string;
@@ -96,8 +102,8 @@ export const InteractiveDemo: React.FC = () => {
                       isActive
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg'
                         : isCompleted
-                          ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300'
+                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300'
                     }
                   `}
                 >
@@ -110,8 +116,8 @@ export const InteractiveDemo: React.FC = () => {
                         isActive
                           ? 'bg-blue-500 text-white'
                           : isCompleted
-                            ? 'bg-green-500 text-white'
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+                          ? 'bg-green-500 text-white'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
                       }
                     `}
                     >
@@ -123,7 +129,9 @@ export const InteractiveDemo: React.FC = () => {
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                         {step.title}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">{step.description}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                        {step.description}
+                      </p>
                     </div>
 
                     {/* Active Indicator */}
@@ -252,9 +260,7 @@ export const InteractiveDemo: React.FC = () => {
                               className="flex items-center gap-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3"
                             >
                               <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-                              <span className="text-sm text-gray-700 dark:text-gray-300">
-                                {agent}
-                              </span>
+                              <span className="text-sm text-gray-700 dark:text-gray-300">{agent}</span>
                             </motion.div>
                           ))}
                         </motion.div>

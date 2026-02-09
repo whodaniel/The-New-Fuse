@@ -44,30 +44,35 @@ export class AgentLLMService {
     // Mock implementation - replace with actual LLM API call
     const model = request.model || this.defaultModel;
     const content = `Response to: ${request.prompt}`;
-
+    
     return {
       content,
       model,
       usage: {
         promptTokens: request.prompt.length / 4,
         completionTokens: content.length / 4,
-        totalTokens: (request.prompt.length + content.length) / 4,
-      },
+        totalTokens: (request.prompt.length + content.length) / 4
+      }
     };
   }
 
-  private async *createStreamResponse(request: LLMRequest): AsyncIterable<string> {
+  private async* createStreamResponse(request: LLMRequest): AsyncIterable<string> {
     const words = `Response to: ${request.prompt}`.split(' ');
-
+    
     for (const word of words) {
       yield word + ' ';
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
   }
 
   async validateModel(model: string): Promise<boolean> {
-    const supportedModels = ['gpt-3.5-turbo', 'gpt-4', 'claude-3-sonnet', 'claude-3-haiku'];
-
+    const supportedModels = [
+      'gpt-3.5-turbo',
+      'gpt-4',
+      'claude-3-sonnet',
+      'claude-3-haiku'
+    ];
+    
     return supportedModels.includes(model);
   }
 
@@ -76,6 +81,11 @@ export class AgentLLMService {
   }
 
   getSupportedModels(): string[] {
-    return ['gpt-3.5-turbo', 'gpt-4', 'claude-3-sonnet', 'claude-3-haiku'];
+    return [
+      'gpt-3.5-turbo',
+      'gpt-4',
+      'claude-3-sonnet',
+      'claude-3-haiku'
+    ];
   }
 }

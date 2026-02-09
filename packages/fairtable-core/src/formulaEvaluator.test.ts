@@ -1,5 +1,5 @@
 import { evaluateFormula } from './formulaEvaluator.js';
-import { Column, DataType, Row, Table } from './types.js';
+import { Column, Row, DataType, Table } from './types.js';
 
 describe('evaluateFormula', () => {
   it('should evaluate a simple formula', () => {

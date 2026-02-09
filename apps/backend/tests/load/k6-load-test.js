@@ -1,6 +1,6 @@
-import { check, sleep } from 'k6';
 import http from 'k6/http';
-import { Counter, Rate, Trend } from 'k6/metrics';
+import { check, sleep } from 'k6';
+import { Rate, Trend, Counter } from 'k6/metrics';
 
 // Custom metrics
 const errorRate = new Rate('errors');
@@ -10,18 +10,18 @@ const requestCounter = new Counter('requests');
 // Test configuration
 export const options = {
   stages: [
-    { duration: '2m', target: 50 }, // Ramp up to 50 users
-    { duration: '5m', target: 50 }, // Stay at 50 users
-    { duration: '2m', target: 100 }, // Ramp up to 100 users
-    { duration: '5m', target: 100 }, // Stay at 100 users
-    { duration: '2m', target: 200 }, // Ramp up to 200 users
-    { duration: '5m', target: 200 }, // Stay at 200 users
-    { duration: '2m', target: 0 }, // Ramp down to 0 users
+    { duration: '2m', target: 50 },   // Ramp up to 50 users
+    { duration: '5m', target: 50 },   // Stay at 50 users
+    { duration: '2m', target: 100 },  // Ramp up to 100 users
+    { duration: '5m', target: 100 },  // Stay at 100 users
+    { duration: '2m', target: 200 },  // Ramp up to 200 users
+    { duration: '5m', target: 200 },  // Stay at 200 users
+    { duration: '2m', target: 0 },    // Ramp down to 0 users
   ],
   thresholds: {
     http_req_duration: ['p(95)<500', 'p(99)<1000'], // 95% of requests should be below 500ms
-    http_req_failed: ['rate<0.01'], // Error rate should be less than 1%
-    errors: ['rate<0.1'], // Custom error rate
+    http_req_failed: ['rate<0.01'],                  // Error rate should be less than 1%
+    errors: ['rate<0.1'],                            // Custom error rate
   },
 };
 
@@ -54,7 +54,7 @@ export function setup() {
 export default function (data) {
   const headers = {
     'Content-Type': 'application/json',
-    Authorization: data.authToken ? `Bearer ${data.authToken}` : '',
+    'Authorization': data.authToken ? `Bearer ${data.authToken}` : '',
   };
 
   // Test scenarios with weighted distribution

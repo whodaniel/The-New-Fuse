@@ -1,16 +1,17 @@
 import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
-import { AgentPool } from '../core/AgentPool';
-import { TaskAssigner } from '../core/TaskAssigner';
-import { TaskQueue } from '../core/TaskQueue';
 import {
-  AgentInfo,
-  CoordinationConfig,
   Task,
+  TaskStatus,
   TaskPriority,
   TaskResult,
-  TaskStatus,
+  AgentInfo,
+  ExecutionMode,
+  CoordinationConfig,
 } from '../core/types';
+import { TaskQueue } from '../core/TaskQueue';
+import { TaskAssigner } from '../core/TaskAssigner';
+import { AgentPool } from '../core/AgentPool';
 
 /**
  * Master coordinator for multi-agent task execution
@@ -24,7 +25,11 @@ export class Coordinator extends EventEmitter {
   private isRunning: boolean = false;
   private processingInterval?: NodeJS.Timeout;
 
-  constructor(redisUrl: string, agentPoolConfig: any, coordinationConfig?: CoordinationConfig) {
+  constructor(
+    redisUrl: string,
+    agentPoolConfig: any,
+    coordinationConfig?: CoordinationConfig
+  ) {
     super();
 
     this.taskQueue = new TaskQueue(redisUrl);
@@ -74,7 +79,10 @@ export class Coordinator extends EventEmitter {
     this.emit('coordinator:started');
 
     // Start processing loop
-    this.processingInterval = setInterval(() => this.processNextTask(), 1000);
+    this.processingInterval = setInterval(
+      () => this.processNextTask(),
+      1000
+    );
   }
 
   /**

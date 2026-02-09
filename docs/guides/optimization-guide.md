@@ -1,22 +1,16 @@
 # Optimization and Tree-Shaking Guide for The New Fuse
 
-This document provides guidelines for optimizing The New Fuse codebase and
-effectively leveraging tree-shaking to eliminate dead code.
+This document provides guidelines for optimizing The New Fuse codebase and effectively leveraging tree-shaking to eliminate dead code.
 
 ## What is Tree-Shaking?
 
-Tree-shaking is a term commonly used in the JavaScript context for dead-code
-elimination. It relies on the static structure of ES2015 module syntax
-(import/export) to detect which exports are not being used and exclude them from
-the bundle.
+Tree-shaking is a term commonly used in the JavaScript context for dead-code elimination. It relies on the static structure of ES2015 module syntax (import/export) to detect which exports are not being used and exclude them from the bundle.
 
 ## Prerequisites for Effective Tree-Shaking
 
-1. **Use ES Modules:** Ensure all code uses `import`/`export` syntax rather than
-   CommonJS `require`/`module.exports`.
+1. **Use ES Modules:** Ensure all code uses `import`/`export` syntax rather than CommonJS `require`/`module.exports`.
 2. **Side-Effect Free Code:** Mark modules as side-effect free when appropriate.
-3. **Proper Build Configuration:** Ensure bundlers are configured to perform
-   tree-shaking.
+3. **Proper Build Configuration:** Ensure bundlers are configured to perform tree-shaking.
 
 ## Implementation Steps
 
@@ -27,7 +21,11 @@ Add the `"sideEffects"` property to mark which files may have side effects:
 ```json
 {
   "name": "the-new-fuse",
-  "sideEffects": ["*.css", "*.scss", "./src/polyfills.js"]
+  "sideEffects": [
+    "*.css",
+    "*.scss",
+    "./src/polyfills.js"
+  ],
   // other package.json properties
 }
 ```
@@ -38,21 +36,13 @@ Add the `"sideEffects"` property to mark which files may have side effects:
 
 ```typescript
 // Good - easier to tree-shake
-export const Component1 = () => {
-  /* ... */
-};
-export const Component2 = () => {
-  /* ... */
-};
+export const Component1 = () => { /* ... */ };
+export const Component2 = () => { /* ... */ };
 
 // Less optimal for tree-shaking
 export default {
-  Component1: () => {
-    /* ... */
-  },
-  Component2: () => {
-    /* ... */
-  },
+  Component1: () => { /* ... */ },
+  Component2: () => { /* ... */ }
 };
 ```
 
@@ -107,7 +97,7 @@ export default {
   input: 'src/index.js',
   output: {
     file: 'bundle.js',
-    format: 'esm',
+    format: 'esm'
   },
   plugins: [
     terser({
@@ -121,8 +111,7 @@ export default {
 
 ### 5. Analyze Bundle Size
 
-Use tools to analyze your bundle composition and identify opportunities for
-improvement:
+Use tools to analyze your bundle composition and identify opportunities for improvement:
 
 - webpack-bundle-analyzer
 - rollup-plugin-visualizer

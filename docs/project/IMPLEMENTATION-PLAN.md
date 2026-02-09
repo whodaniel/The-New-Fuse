@@ -2,19 +2,16 @@
 
 ## Overview
 
-This document outlines the detailed implementation plan for the remaining
-components of "The New Fuse" architectural refactoring. It provides a
-step-by-step guide for implementing the remaining features, testing them, and
-ensuring a smooth transition from the old architecture to the new one.
+This document outlines the detailed implementation plan for the remaining components of "The New Fuse" architectural refactoring. It provides a step-by-step guide for implementing the remaining features, testing them, and ensuring a smooth transition from the old architecture to the new one.
 
 ## Implementation Schedule
 
-| Week | Focus Area              | Tasks                                                 | Estimated LOC |
-| ---- | ----------------------- | ----------------------------------------------------- | ------------- |
-| 1    | Protocol Implementation | Complete WebSocket Protocol, Implement Zod Validation | 800           |
-| 2    | Component Cleanup       | Remove Duplicated Code, Consolidate Utilities         | 600 (removed) |
-| 3    | Integration             | Build Integration Layer, Update Existing Consumers    | 1200          |
-| 4    | Testing                 | Integration Tests, Performance Tests, Documentation   | 1000          |
+| Week | Focus Area | Tasks | Estimated LOC |
+|------|------------|-------|---------------|
+| 1 | Protocol Implementation | Complete WebSocket Protocol, Implement Zod Validation | 800 |
+| 2 | Component Cleanup | Remove Duplicated Code, Consolidate Utilities | 600 (removed) |
+| 3 | Integration | Build Integration Layer, Update Existing Consumers | 1200 |
+| 4 | Testing | Integration Tests, Performance Tests, Documentation | 1000 |
 
 ## Detailed Tasks
 
@@ -22,8 +19,7 @@ ensuring a smooth transition from the old architecture to the new one.
 
 #### 1.1 WebSocket Protocol Implementation
 
-- Create WebSocketCommunicationProtocol class implementing
-  ICommunicationProtocol
+- Create WebSocketCommunicationProtocol class implementing ICommunicationProtocol
 - Implement initialization, connection management, and reconnection logic
 - Add event handlers for WebSocket events
 - Implement message serialization/deserialization
@@ -144,13 +140,13 @@ ensuring a smooth transition from the old architecture to the new one.
 
 ## Risk Management
 
-| Risk                                  | Probability | Impact | Mitigation                                      |
-| ------------------------------------- | ----------- | ------ | ----------------------------------------------- |
-| Integration issues with existing code | High        | High   | Comprehensive integration tests, staged rollout |
-| Performance regression                | Medium      | High   | Performance benchmarks, A/B testing             |
-| Backward compatibility breaks         | Medium      | High   | Adapter layer, extensive testing                |
-| Knowledge gap for developers          | Medium      | Medium | Documentation, brown bags, pair programming     |
-| Scope creep                           | High        | Medium | Clear prioritization, MVP focus                 |
+| Risk | Probability | Impact | Mitigation |
+|------|------------|--------|------------|
+| Integration issues with existing code | High | High | Comprehensive integration tests, staged rollout |
+| Performance regression | Medium | High | Performance benchmarks, A/B testing |
+| Backward compatibility breaks | Medium | High | Adapter layer, extensive testing |
+| Knowledge gap for developers | Medium | Medium | Documentation, brown bags, pair programming |
+| Scope creep | High | Medium | Clear prioritization, MVP focus |
 
 ## Resources Required
 
@@ -164,18 +160,18 @@ ensuring a smooth transition from the old architecture to the new one.
 
 ### A1: Protocol Performance Targets
 
-| Protocol  | Max Latency | Throughput | Reconnection Time |
-| --------- | ----------- | ---------- | ----------------- |
-| File      | 100ms       | 100 msg/s  | N/A               |
-| Redis     | 20ms        | 5000 msg/s | 2s                |
-| WebSocket | 50ms        | 1000 msg/s | 3s                |
+| Protocol | Max Latency | Throughput | Reconnection Time |
+|----------|-------------|------------|-------------------|
+| File     | 100ms       | 100 msg/s  | N/A               |
+| Redis    | 20ms        | 5000 msg/s | 2s                |
+| WebSocket| 50ms        | 1000 msg/s | 3s                |
 
 ### A2: Memory Usage Targets
 
-| Component     | Max Memory | GC Pressure |
-| ------------- | ---------- | ----------- |
-| AgentRegistry | 50MB       | Low         |
-| A2AService    | 100MB      | Medium      |
-| MCPService    | 150MB      | Medium      |
-| MessageRouter | 30MB       | Low         |
-| All Protocols | 80MB       | Medium      |
+| Component | Max Memory | GC Pressure |
+|-----------|------------|-------------|
+| AgentRegistry | 50MB | Low |
+| A2AService | 100MB | Medium |
+| MCPService | 150MB | Medium |
+| MessageRouter | 30MB | Low |
+| All Protocols | 80MB | Medium |

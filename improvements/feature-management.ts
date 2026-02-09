@@ -5,14 +5,14 @@ interface FeatureEnhancements {
     expiryDate?: Date;
     rolloutPercentage?: number;
   };
-
+  
   // Add analytics tracking
   analytics: {
     usageMetrics: boolean;
     performanceMetrics: boolean;
     errorTracking: boolean;
   };
-
+  
   // Add granular permissions
   permissions: {
     roles: string[];

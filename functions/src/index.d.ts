@@ -1,1 +1,1 @@
-export declare const helloWorld: import('firebase-functions/v2/https').HttpsFunction;
+export declare const helloWorld: import("firebase-functions/v2/https").HttpsFunction;

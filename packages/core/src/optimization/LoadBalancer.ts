@@ -9,11 +9,7 @@ export interface Node {
   responseTime?: number;
 }
 
-export type BalancingStrategy =
-  | 'round-robin'
-  | 'least-connections'
-  | 'weighted-random'
-  | 'fastest-response';
+export type BalancingStrategy = 'round-robin' | 'least-connections' | 'weighted-random' | 'fastest-response';
 
 @Injectable()
 export class LoadBalancer {
@@ -32,7 +28,7 @@ export class LoadBalancer {
   }
 
   removeNode(id: string): boolean {
-    const index = this.nodes.findIndex((n) => n.id === id);
+    const index = this.nodes.findIndex(n => n.id === id);
     if (index !== -1) {
       this.nodes.splice(index, 1);
       this.logger.log(`Removed node: ${id}`);
@@ -48,7 +44,7 @@ export class LoadBalancer {
   }
 
   async getNextNode(): Promise<Node | null> {
-    const healthyNodes = this.nodes.filter((n) => n.healthy);
+    const healthyNodes = this.nodes.filter(n => n.healthy);
     if (healthyNodes.length === 0) {
       this.logger.warn('No healthy nodes available.');
       return null;
@@ -63,9 +59,7 @@ export class LoadBalancer {
         selectedNode = this.getWeightedRandomNode(healthyNodes);
         break;
       case 'fastest-response':
-        selectedNode = healthyNodes.sort(
-          (a, b) => (a.responseTime ?? Infinity) - (b.responseTime ?? Infinity),
-        )[0];
+        selectedNode = healthyNodes.sort((a, b) => (a.responseTime ?? Infinity) - (b.responseTime ?? Infinity))[0];
         break;
       case 'round-robin':
       default:
@@ -80,7 +74,7 @@ export class LoadBalancer {
   }
 
   releaseNode(nodeId: string): void {
-    const node = this.nodes.find((n) => n.id === nodeId);
+    const node = this.nodes.find(n => n.id === nodeId);
     if (node && node.connections > 0) {
       node.connections--;
       this.logger.debug(`Released node: ${nodeId}. Current connections: ${node.connections}`);
@@ -88,12 +82,10 @@ export class LoadBalancer {
   }
 
   updateNodeHealth(nodeId: string, healthy: boolean): void {
-    const node = this.nodes.find((n) => n.id === nodeId);
+    const node = this.nodes.find(n => n.id === nodeId);
     if (node) {
       node.healthy = healthy;
-      this.logger.log(
-        `Node ${nodeId} health status updated to: ${healthy ? 'healthy' : 'unhealthy'}`,
-      );
+      this.logger.log(`Node ${nodeId} health status updated to: ${healthy ? 'healthy' : 'unhealthy'}`);
     }
   }
 
@@ -102,7 +94,7 @@ export class LoadBalancer {
     let random = Math.random() * totalWeight;
 
     for (const node of nodes) {
-      random -= node.weight ?? 1;
+      random -= (node.weight ?? 1);
       if (random <= 0) {
         return node;
       }

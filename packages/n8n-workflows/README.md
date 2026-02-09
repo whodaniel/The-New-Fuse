@@ -1,12 +1,10 @@
 # @the-new-fuse/n8n-workflows
 
-N8N workflow integration system for The New Fuse - fetches, categorizes, and
-manages thousands of community n8n workflows.
+N8N workflow integration system for The New Fuse - fetches, categorizes, and manages thousands of community n8n workflows.
 
 ## Features
 
-- 🚀 **Automated Fetching**: Automatically fetch workflows from 3 major GitHub
-  repositories
+- 🚀 **Automated Fetching**: Automatically fetch workflows from 3 major GitHub repositories
 - 🏷️ **Smart Categorization**: AI-powered categorization into 14+ categories
 - 🔍 **Advanced Search**: Full-text search with filtering
 - 🌐 **REST API**: Complete REST API integration
@@ -93,8 +91,7 @@ pnpm run sync:workflows
 
 ## API Reference
 
-See [/docs/N8N_WORKFLOWS.md](/docs/N8N_WORKFLOWS.md) for complete API
-documentation.
+See [/docs/N8N_WORKFLOWS.md](/docs/N8N_WORKFLOWS.md) for complete API documentation.
 
 ## Architecture
 

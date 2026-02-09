@@ -1,11 +1,13 @@
 /**
  * Event Subscription Manager
- *
+ * 
  * Manages event subscriptions and pattern matching for selective routing
  * of notifications and events to interested services.
  */
 
 import { EventEmitter } from 'events';
+import { MCPServiceInfo } from '../types';
+import { MCPNotification } from '../interfaces/IMCPMessage';
 import { MCPErrorClass, MCPErrorCode } from '../types/error';
 
 /**
@@ -16,7 +18,7 @@ export enum PatternType {
   WILDCARD = 'wildcard',
   REGEX = 'regex',
   PREFIX = 'prefix',
-  SUFFIX = 'suffix',
+  SUFFIX = 'suffix'
 }
 
 /**
@@ -123,7 +125,7 @@ export class EventSubscriptionManager extends EventEmitter {
       metadata,
       createdAt: new Date(),
       matchCount: 0,
-      active: true,
+      active: true
     };
 
     // Validate pattern based on type
@@ -141,14 +143,18 @@ export class EventSubscriptionManager extends EventEmitter {
     // Pre-compile regex patterns for performance
     if (patternType === PatternType.REGEX || patternType === PatternType.WILDCARD) {
       try {
-        const regexPattern =
-          patternType === PatternType.WILDCARD ? this.wildcardToRegex(pattern) : pattern;
+        const regexPattern = patternType === PatternType.WILDCARD
+          ? this.wildcardToRegex(pattern)
+          : pattern;
         this.patternCache.set(subscriptionId, new RegExp(regexPattern, 'i'));
       } catch (error) {
         // Remove invalid subscription
         this.subscriptions.delete(subscriptionId);
         this.serviceSubscriptions.get(serviceId)!.delete(subscriptionId);
-        throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, `Invalid regex pattern: ${pattern}`);
+        throw new MCPErrorClass(
+          MCPErrorCode.INVALID_PARAMS,
+          `Invalid regex pattern: ${pattern}`
+        );
       }
     }
 
@@ -241,7 +247,7 @@ export class EventSubscriptionManager extends EventEmitter {
       const matchResult = this.matchSubscription(subscription, eventMethod, eventParams);
       if (matchResult.matches) {
         results.push(matchResult);
-
+        
         // Update subscription match statistics
         subscription.matchCount++;
         subscription.lastMatch = new Date();
@@ -264,8 +270,8 @@ export class EventSubscriptionManager extends EventEmitter {
     }
 
     return Array.from(subscriptionIds)
-      .map((id) => this.subscriptions.get(id))
-      .filter((sub) => sub !== undefined) as EventSubscription[];
+      .map(id => this.subscriptions.get(id))
+      .filter(sub => sub !== undefined) as EventSubscription[];
   }
 
   /**
@@ -279,7 +285,7 @@ export class EventSubscriptionManager extends EventEmitter {
    * Get all active subscriptions
    */
   getActiveSubscriptions(): EventSubscription[] {
-    return Array.from(this.subscriptions.values()).filter((sub) => sub.active);
+    return Array.from(this.subscriptions.values()).filter(sub => sub.active);
   }
 
   /**
@@ -304,32 +310,27 @@ export class EventSubscriptionManager extends EventEmitter {
    */
   getStatistics(): SubscriptionStats {
     const subscriptions = Array.from(this.subscriptions.values());
-    const activeSubscriptions = subscriptions.filter((sub) => sub.active);
+    const activeSubscriptions = subscriptions.filter(sub => sub.active);
+    
+    const subscriptionsByService = subscriptions.reduce((acc, sub) => {
+      acc[sub.serviceId] = (acc[sub.serviceId] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
-    const subscriptionsByService = subscriptions.reduce(
-      (acc, sub) => {
-        acc[sub.serviceId] = (acc[sub.serviceId] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    const subscriptionsByPattern = subscriptions.reduce(
-      (acc, sub) => {
-        acc[sub.patternType] = (acc[sub.patternType] || 0) + 1;
-        return acc;
-      },
-      {} as Record<PatternType, number>
-    );
+    const subscriptionsByPattern = subscriptions.reduce((acc, sub) => {
+      acc[sub.patternType] = (acc[sub.patternType] || 0) + 1;
+      return acc;
+    }, {} as Record<PatternType, number>);
 
     const totalMatches = subscriptions.reduce((sum, sub) => sum + sub.matchCount, 0);
-    const averageMatchesPerSubscription =
-      subscriptions.length > 0 ? totalMatches / subscriptions.length : 0;
+    const averageMatchesPerSubscription = subscriptions.length > 0 
+      ? totalMatches / subscriptions.length 
+      : 0;
 
     const topMatchingPatterns = subscriptions
       .sort((a, b) => b.matchCount - a.matchCount)
       .slice(0, 10)
-      .map((sub) => ({ pattern: sub.pattern, matches: sub.matchCount }));
+      .map(sub => ({ pattern: sub.pattern, matches: sub.matchCount }));
 
     return {
       totalSubscriptions: subscriptions.length,
@@ -338,7 +339,7 @@ export class EventSubscriptionManager extends EventEmitter {
       subscriptionsByPattern,
       totalMatches,
       averageMatchesPerSubscription,
-      topMatchingPatterns,
+      topMatchingPatterns
     };
   }
 
@@ -354,7 +355,7 @@ export class EventSubscriptionManager extends EventEmitter {
       subscription,
       matches: false,
       matchedFields: [],
-      score: 0,
+      score: 0
     };
 
     // Match against method name
@@ -380,7 +381,7 @@ export class EventSubscriptionManager extends EventEmitter {
         result.matches = false;
         return result;
       }
-
+      
       result.matchedFields.push(...filterResult.matchedFields);
       result.score += filterResult.score;
     }
@@ -429,7 +430,7 @@ export class EventSubscriptionManager extends EventEmitter {
 
     for (const [key, expectedValue] of Object.entries(filters)) {
       const actualValue = params[key];
-
+      
       if (actualValue === undefined) {
         return { matches: false, matchedFields: [], score: 0 };
       }
@@ -478,8 +479,8 @@ export class EventSubscriptionManager extends EventEmitter {
   private wildcardToRegex(pattern: string): string {
     return pattern
       .replace(/[.+^${}()|[\]\\]/g, '\\$&') // Escape regex special chars except * and ?
-      .replace(/\*/g, '.*') // * matches any sequence
-      .replace(/\?/g, '.'); // ? matches any single character
+      .replace(/\*/g, '.*')                 // * matches any sequence
+      .replace(/\?/g, '.');                 // ? matches any single character
   }
 
   /**
@@ -495,7 +496,10 @@ export class EventSubscriptionManager extends EventEmitter {
         try {
           new RegExp(pattern);
         } catch (error) {
-          throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, `Invalid regex pattern: ${pattern}`);
+          throw new MCPErrorClass(
+            MCPErrorCode.INVALID_PARAMS,
+            `Invalid regex pattern: ${pattern}`
+          );
         }
         break;
 

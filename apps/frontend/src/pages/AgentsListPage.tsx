@@ -22,7 +22,6 @@ interface Agent {
   lastActive: string;
   description: string;
   capabilities: string[];
-  avatarUrl?: string;
 }
 
 export default function AgentsPage() {
@@ -45,7 +44,6 @@ export default function AgentsPage() {
         lastActive: a.updatedAt ? new Date(a.updatedAt).toLocaleDateString() : 'Unknown', // Using date string for now
         description: a.description || 'No description provided.',
         capabilities: a.capabilities || [],
-        avatarUrl: (a as any).avatarUrl,
       }));
       setAgents(uiAgents);
     } catch (error) {
@@ -163,16 +161,8 @@ export default function AgentsPage() {
               {/* Agent Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 overflow-hidden">
-                    {agent.avatarUrl ? (
-                      <img
-                        src={agent.avatarUrl}
-                        alt={agent.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <Bot className="w-6 h-6 text-white" />
-                    )}
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <Bot className="w-6 h-6 text-white" />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition-colors">

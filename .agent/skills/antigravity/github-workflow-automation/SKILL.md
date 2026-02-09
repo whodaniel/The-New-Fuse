@@ -1,17 +1,11 @@
 ---
 name: github-workflow-automation
-description:
-  'Automate GitHub workflows with AI assistance. Includes PR reviews, issue
-  triage, CI/CD integration, and Git operations. Use when automating GitHub
-  workflows, setting up PR review automation, creating GitHub Actions, or
-  triaging issues.'
+description: "Automate GitHub workflows with AI assistance. Includes PR reviews, issue triage, CI/CD integration, and Git operations. Use when automating GitHub workflows, setting up PR review automation, creating GitHub Actions, or triaging issues."
 ---
 
 # 🔧 GitHub Workflow Automation
 
-> Patterns for automating GitHub workflows with AI assistance, inspired by
-> [Gemini CLI](https://github.com/google-gemini/gemini-cli) and modern DevOps
-> practices.
+> Patterns for automating GitHub workflows with AI assistance, inspired by [Gemini CLI](https://github.com/google-gemini/gemini-cli) and modern DevOps practices.
 
 ## When to Use This Skill
 
@@ -127,7 +121,7 @@ Brief description of what this PR does.
    // Current
    user.profile.name;
    // Suggested
-   user?.profile?.name ?? 'Unknown';
+   user?.profile?.name ?? "Unknown";
    ```
 ````
 
@@ -275,7 +269,7 @@ name: Manage Stale Issues
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Daily
+    - cron: "0 0 * * *" # Daily
 
 jobs:
   stale:
@@ -299,10 +293,10 @@ jobs:
 
           days-before-stale: 60
           days-before-close: 14
-          stale-issue-label: 'stale'
-          stale-pr-label: 'stale'
-          exempt-issue-labels: 'pinned,security,in-progress'
-          exempt-pr-labels: 'pinned,security'
+          stale-issue-label: "stale"
+          stale-pr-label: "stale"
+          exempt-issue-labels: "pinned,security,in-progress"
+          exempt-pr-labels: "pinned,security"
 ```
 
 ---
@@ -458,7 +452,7 @@ on:
   workflow_dispatch:
     inputs:
       reason:
-        description: 'Reason for rollback'
+        description: "Reason for rollback"
         required: true
 
 jobs:
@@ -516,9 +510,7 @@ on:
 
 jobs:
   rebase:
-    if:
-      github.event.issue.pull_request && contains(github.event.comment.body,
-      '/rebase')
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/rebase')
     runs-on: ubuntu-latest
 
     steps:

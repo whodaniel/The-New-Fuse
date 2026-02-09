@@ -1,18 +1,10 @@
-import { EventEmitter } from 'events';
 import { Logger } from 'winston';
+import { EventEmitter } from 'events';
+import { TestRunner, TestConfiguration, TestResult, TestType, TestFramework, TestSummaryReport, TestStatus } from './TestRunner';
 import { QualityGateEvaluator, QualityGateResult } from './QualityGateEvaluator';
-import {
-  TestConfiguration,
-  TestFramework,
-  TestResult,
-  TestRunner,
-  TestStatus,
-  TestSummaryReport,
-  TestType,
-} from './TestRunner';
 
 // Re-export commonly used types from TestRunner for convenience
-export { TestFramework, TestStatus, TestType } from './TestRunner';
+export { TestType, TestFramework, TestStatus } from './TestRunner';
 
 /**
  * Test execution plan interface
@@ -89,13 +81,7 @@ export interface TestNotificationConfig {
 }
 
 export interface TestNotificationEvent {
-  type:
-    | 'plan_start'
-    | 'plan_complete'
-    | 'plan_failed'
-    | 'stage_complete'
-    | 'stage_failed'
-    | 'quality_gate_failed';
+  type: 'plan_start' | 'plan_complete' | 'plan_failed' | 'stage_complete' | 'stage_failed' | 'quality_gate_failed';
   enabled: boolean;
 }
 
@@ -148,7 +134,7 @@ export enum TestPlanStatus {
   RUNNING = 'running',
   COMPLETED = 'completed',
   FAILED = 'failed',
-  CANCELLED = 'cancelled',
+  CANCELLED = 'cancelled'
 }
 
 export enum TestStageStatus {
@@ -157,7 +143,7 @@ export enum TestStageStatus {
   COMPLETED = 'completed',
   FAILED = 'failed',
   SKIPPED = 'skipped',
-  CANCELLED = 'cancelled',
+  CANCELLED = 'cancelled'
 }
 
 /**
@@ -189,7 +175,7 @@ export class TestOrchestrator extends EventEmitter {
     this.logger.info(`Starting test plan execution: ${plan.name}`, {
       planId: plan.id,
       executionId,
-      stages: plan.stages.length,
+      stages: plan.stages.length
     });
 
     const execution: TestPlanExecution = {
@@ -198,7 +184,7 @@ export class TestOrchestrator extends EventEmitter {
       status: TestPlanStatus.RUNNING,
       startTime,
       stages: [],
-      currentStageIndex: 0,
+      currentStageIndex: 0
     };
 
     this.runningPlans.set(executionId, execution);
@@ -218,15 +204,15 @@ export class TestOrchestrator extends EventEmitter {
           planId: plan.id,
           executionId,
           stageId: stage.id,
-          stageIndex: i,
+          stageIndex: i
         });
 
         // Check stage conditions
-        if (!(await this.evaluateStageConditions(stage, stageResults, plan))) {
+        if (!await this.evaluateStageConditions(stage, stageResults, plan)) {
           this.logger.info(`Stage ${stage.name} skipped due to conditions`, {
             planId: plan.id,
             executionId,
-            stageId: stage.id,
+            stageId: stage.id
           });
 
           const skippedResult: TestStageResult = {
@@ -239,7 +225,7 @@ export class TestOrchestrator extends EventEmitter {
             duration: 0,
             tests: [],
             summary: this.createEmptyTestSummary(),
-            logs: ['Stage skipped due to conditions'],
+            logs: ['Stage skipped due to conditions']
           };
 
           stageResults.push(skippedResult);
@@ -252,16 +238,12 @@ export class TestOrchestrator extends EventEmitter {
         execution.stages.push(stageResult);
 
         // Evaluate quality gates for this stage
-        const stageQualityGates = plan.qualityGates.filter(
-          (qg) =>
-            qg.scope === 'stage' && this.matchesQualityGateConditions(qg, { stage: stage.name })
+        const stageQualityGates = plan.qualityGates.filter(qg =>
+          qg.scope === 'stage' && this.matchesQualityGateConditions(qg, { stage: stage.name })
         );
 
         for (const qualityGate of stageQualityGates) {
-          const gateResult = await this.qualityGateEvaluator.evaluate(
-            qualityGate,
-            stageResult.summary
-          );
+          const gateResult = await this.qualityGateEvaluator.evaluate(qualityGate, stageResult.summary);
 
           if (!gateResult.passed && qualityGate.required) {
             this.logger.error(`Quality gate failed: ${qualityGate.name}`, {
@@ -270,7 +252,7 @@ export class TestOrchestrator extends EventEmitter {
               stageId: stage.id,
               gate: qualityGate.name,
               threshold: qualityGate.threshold,
-              actualValue: gateResult.actualValue,
+              actualValue: gateResult.actualValue
             });
 
             if (qualityGate.failureBehavior === 'fail') {
@@ -282,14 +264,11 @@ export class TestOrchestrator extends EventEmitter {
         // Check if stage failed and should stop execution
         if (stageResult.status === TestStageStatus.FAILED) {
           if (plan.failFast && !stage.continueOnFailure) {
-            this.logger.error(
-              `Stage ${stage.name} failed, stopping execution (fail fast enabled)`,
-              {
-                planId: plan.id,
-                executionId,
-                stageId: stage.id,
-              }
-            );
+            this.logger.error(`Stage ${stage.name} failed, stopping execution (fail fast enabled)`, {
+              planId: plan.id,
+              executionId,
+              stageId: stage.id
+            });
             break;
           }
         }
@@ -299,10 +278,10 @@ export class TestOrchestrator extends EventEmitter {
       const duration = endTime.getTime() - startTime.getTime();
 
       // Create overall summary
-      const overallSummary = this.aggregateTestSummaries(stageResults.map((s) => s.summary));
+      const overallSummary = this.aggregateTestSummaries(stageResults.map(s => s.summary));
 
       // Evaluate plan-level quality gates
-      const planQualityGates = plan.qualityGates.filter((qg) => qg.scope === 'plan');
+      const planQualityGates = plan.qualityGates.filter(qg => qg.scope === 'plan');
       const qualityGateResults: QualityGateResult[] = [];
 
       for (const qualityGate of planQualityGates) {
@@ -331,10 +310,10 @@ export class TestOrchestrator extends EventEmitter {
         logs: this.collectStageLogs(stageResults),
         metadata: {
           totalStages: plan.stages.length,
-          executedStages: stageResults.filter((s) => s.status !== TestStageStatus.SKIPPED).length,
+          executedStages: stageResults.filter(s => s.status !== TestStageStatus.SKIPPED).length,
           parallelExecution: plan.parallelExecution,
-          failFast: plan.failFast,
-        },
+          failFast: plan.failFast
+        }
       };
 
       // Store result
@@ -350,10 +329,11 @@ export class TestOrchestrator extends EventEmitter {
         duration,
         totalTests: overallSummary.totalTests,
         passedTests: overallSummary.passedTests,
-        failedTests: overallSummary.failedTests,
+        failedTests: overallSummary.failedTests
       });
 
       return planResult;
+
     } catch (error) {
       const endTime = new Date();
       const duration = endTime.getTime() - startTime.getTime();
@@ -364,7 +344,7 @@ export class TestOrchestrator extends EventEmitter {
         planId: plan.id,
         executionId,
         error: error.message,
-        stack: error.stack,
+        stack: error.stack
       });
 
       const failedResult: TestPlanResult = {
@@ -379,13 +359,14 @@ export class TestOrchestrator extends EventEmitter {
         qualityGates: [],
         logs: [error.message],
         metadata: { error: error.message },
-        error: error.message,
+        error: error.message
       };
 
       this.planResults.set(executionId, failedResult);
       this.emit('plan:failed', { executionId, plan, result: failedResult, error });
 
       return failedResult;
+
     } finally {
       this.runningPlans.delete(executionId);
     }
@@ -410,9 +391,10 @@ export class TestOrchestrator extends EventEmitter {
       this.emit('plan:cancelled', { executionId });
 
       return true;
+
     } catch (error) {
       this.logger.error(`Failed to cancel test plan: ${executionId}`, {
-        error: error.message,
+        error: error.message
       });
       return false;
     }
@@ -445,7 +427,7 @@ export class TestOrchestrator extends EventEmitter {
       parallel: false,
       continueOnFailure: testType !== TestType.UNIT, // Fail fast on unit tests
       timeout: this.getDefaultTimeout(testType),
-      conditions: [],
+      conditions: []
     }));
 
     return {
@@ -459,10 +441,13 @@ export class TestOrchestrator extends EventEmitter {
       retryPolicy: {
         enabled: true,
         maxAttempts: 2,
-        retryOn: [{ type: 'infrastructure_error' }, { type: 'flaky_test' }],
+        retryOn: [
+          { type: 'infrastructure_error' },
+          { type: 'flaky_test' }
+        ],
         backoffStrategy: 'exponential',
         initialDelay: 5000,
-        maxDelay: 30000,
+        maxDelay: 30000
       },
       qualityGates: [
         {
@@ -474,7 +459,7 @@ export class TestOrchestrator extends EventEmitter {
           required: true,
           failureBehavior: 'fail',
           scope: 'plan',
-          conditions: [],
+          conditions: []
         },
         {
           id: 'success-rate-gate',
@@ -485,8 +470,8 @@ export class TestOrchestrator extends EventEmitter {
           required: true,
           failureBehavior: 'fail',
           scope: 'plan',
-          conditions: [],
-        },
+          conditions: []
+        }
       ],
       notifications: [
         {
@@ -495,26 +480,26 @@ export class TestOrchestrator extends EventEmitter {
             { type: 'plan_start', enabled: true },
             { type: 'plan_complete', enabled: true },
             { type: 'plan_failed', enabled: true },
-            { type: 'quality_gate_failed', enabled: true },
+            { type: 'quality_gate_failed', enabled: true }
           ],
           channels: [
             {
               type: 'slack',
               configuration: {
                 webhookUrl: '${SLACK_WEBHOOK_URL}',
-                channel: '#testing',
+                channel: '#testing'
               },
-              recipients: [],
-            },
+              recipients: []
+            }
           ],
-          conditions: [],
-        },
+          conditions: []
+        }
       ],
       environment: {},
       metadata: {
         createdAt: new Date().toISOString(),
-        testTypes,
-      },
+        testTypes
+      }
     };
   }
 
@@ -541,7 +526,7 @@ export class TestOrchestrator extends EventEmitter {
     this.logger.info(`Executing test stage: ${stage.name}`, {
       stageId,
       tests: stage.tests.length,
-      parallel: stage.parallel,
+      parallel: stage.parallel
     });
 
     try {
@@ -549,7 +534,7 @@ export class TestOrchestrator extends EventEmitter {
 
       if (stage.parallel) {
         // Execute tests in parallel
-        const testPromises = stage.tests.map((testConfig) =>
+        const testPromises = stage.tests.map(testConfig =>
           this.executeTestWithRetry(testConfig, plan.retryPolicy)
         );
 
@@ -560,11 +545,13 @@ export class TestOrchestrator extends EventEmitter {
             testResults.push(result.value);
           } else {
             // Create a failed test result
-            testResults.push(
-              this.createFailedTestResult(stage.tests[index], result.reason.message)
-            );
+            testResults.push(this.createFailedTestResult(
+              stage.tests[index],
+              result.reason.message
+            ));
           }
         });
+
       } else {
         // Execute tests sequentially
         for (const testConfig of stage.tests) {
@@ -576,6 +563,7 @@ export class TestOrchestrator extends EventEmitter {
             if (testResult.status === 'failed' && !stage.continueOnFailure) {
               break;
             }
+
           } catch (error) {
             const failedResult = this.createFailedTestResult(testConfig, error.message);
             testResults.push(failedResult);
@@ -606,8 +594,9 @@ export class TestOrchestrator extends EventEmitter {
         duration: stageDuration,
         tests: testResults,
         summary: stageSummary,
-        logs: this.collectTestLogs(testResults),
+        logs: this.collectTestLogs(testResults)
       };
+
     } catch (error) {
       const stageEndTime = new Date();
       const stageDuration = stageEndTime.getTime() - stageStartTime.getTime();
@@ -623,7 +612,7 @@ export class TestOrchestrator extends EventEmitter {
         tests: [],
         summary: this.createEmptyTestSummary(),
         logs: [error.message],
-        error: error.message,
+        error: error.message
       };
     }
   }
@@ -648,25 +637,23 @@ export class TestOrchestrator extends EventEmitter {
 
         if (attempt < retryPolicy.maxAttempts) {
           const delay = this.calculateRetryDelay(retryPolicy, attempt);
-          this.logger.info(
-            `Retrying test after failure (attempt ${attempt + 1}/${retryPolicy.maxAttempts})`,
-            {
-              testType: testConfig.type,
-              delay,
-            }
-          );
+          this.logger.info(`Retrying test after failure (attempt ${attempt + 1}/${retryPolicy.maxAttempts})`, {
+            testType: testConfig.type,
+            delay
+          });
 
-          await new Promise((resolve) => setTimeout(resolve, delay));
+          await new Promise(resolve => setTimeout(resolve, delay));
         }
 
         attempt++;
+
       } catch (error) {
         if (attempt >= retryPolicy.maxAttempts) {
           throw error;
         }
 
         const delay = this.calculateRetryDelay(retryPolicy, attempt);
-        await new Promise((resolve) => setTimeout(resolve, delay));
+        await new Promise(resolve => setTimeout(resolve, delay));
         attempt++;
       }
     }
@@ -679,22 +666,22 @@ export class TestOrchestrator extends EventEmitter {
       return false;
     }
 
-    return retryPolicy.retryOn.some((condition) => {
+    return retryPolicy.retryOn.some(condition => {
       switch (condition.type) {
         case 'failure':
           return result.status === 'failed';
         case 'timeout':
-          return result.logs.some((log) => log.includes('timeout'));
+          return result.logs.some(log => log.includes('timeout'));
         case 'infrastructure_error':
-          return result.logs.some(
-            (log) =>
-              log.includes('ECONNREFUSED') ||
-              log.includes('network') ||
-              log.includes('infrastructure')
+          return result.logs.some(log =>
+            log.includes('ECONNREFUSED') ||
+            log.includes('network') ||
+            log.includes('infrastructure')
           );
         case 'flaky_test':
-          return result.failures.some(
-            (failure) => failure.error.includes('flaky') || failure.error.includes('intermittent')
+          return result.failures.some(failure =>
+            failure.error.includes('flaky') ||
+            failure.error.includes('intermittent')
           );
         default:
           return false;
@@ -738,14 +725,14 @@ export class TestOrchestrator extends EventEmitter {
         return condition.operator === 'equals' ? !!envValue : !envValue;
 
       case 'previous_stage':
-        const previousStage = context.previousStages.find((s) => s.name === condition.value);
+        const previousStage = context.previousStages.find(s => s.name === condition.value);
         return previousStage?.status === TestStageStatus.COMPLETED;
 
       case 'branch':
         const currentBranch = process.env.GIT_BRANCH || 'main';
-        return condition.operator === 'equals'
-          ? currentBranch === condition.value
-          : currentBranch !== condition.value;
+        return condition.operator === 'equals' ?
+          currentBranch === condition.value :
+          currentBranch !== condition.value;
 
       default:
         return true;
@@ -756,7 +743,7 @@ export class TestOrchestrator extends EventEmitter {
     qualityGate: QualityGateConfig,
     context: { stage?: string; testType?: string }
   ): boolean {
-    return qualityGate.conditions.every((condition) => {
+    return qualityGate.conditions.every(condition => {
       switch (condition.type) {
         case 'stage':
           return context.stage === condition.value;
@@ -772,15 +759,15 @@ export class TestOrchestrator extends EventEmitter {
     stageResults: TestStageResult[],
     qualityGateResults: QualityGateResult[]
   ): TestPlanStatus {
-    const hasFailedStages = stageResults.some((s) => s.status === TestStageStatus.FAILED);
-    const hasFailedQualityGates = qualityGateResults.some((qg) => !qg.passed && qg.required);
+    const hasFailedStages = stageResults.some(s => s.status === TestStageStatus.FAILED);
+    const hasFailedQualityGates = qualityGateResults.some(qg => !qg.passed && qg.required);
 
     if (hasFailedStages || hasFailedQualityGates) {
       return TestPlanStatus.FAILED;
     }
 
-    const allCompleted = stageResults.every(
-      (s) => s.status === TestStageStatus.COMPLETED || s.status === TestStageStatus.SKIPPED
+    const allCompleted = stageResults.every(s =>
+      s.status === TestStageStatus.COMPLETED || s.status === TestStageStatus.SKIPPED
     );
 
     return allCompleted ? TestPlanStatus.COMPLETED : TestPlanStatus.RUNNING;
@@ -791,8 +778,8 @@ export class TestOrchestrator extends EventEmitter {
       return TestStageStatus.COMPLETED;
     }
 
-    const hasFailures = testResults.some((t) => t.status === 'failed');
-    const hasCancelled = testResults.some((t) => t.status === 'cancelled');
+    const hasFailures = testResults.some(t => t.status === 'failed');
+    const hasCancelled = testResults.some(t => t.status === 'cancelled');
 
     if (hasCancelled) {
       return TestStageStatus.CANCELLED;
@@ -818,16 +805,14 @@ export class TestOrchestrator extends EventEmitter {
       passedTests: 0,
       failedTests: 1,
       skippedTests: 0,
-      failures: [
-        {
-          testName: 'Test Execution',
-          testFile: 'unknown',
-          error,
-        },
-      ],
+      failures: [{
+        testName: 'Test Execution',
+        testFile: 'unknown',
+        error
+      }],
       logs: [error],
       artifacts: [],
-      metadata: { error },
+      metadata: { error }
     };
   }
 
@@ -845,15 +830,15 @@ export class TestOrchestrator extends EventEmitter {
       trends: {
         successRate: 'stable',
         duration: 'stable',
-        coverage: 'stable',
-      },
+        coverage: 'stable'
+      }
     };
   }
 
   private aggregateTestSummaries(summaries: TestSummaryReport[]): TestSummaryReport {
     const aggregated = this.createEmptyTestSummary();
 
-    summaries.forEach((summary) => {
+    summaries.forEach(summary => {
       aggregated.totalSuites += summary.totalSuites;
       aggregated.totalTests += summary.totalTests;
       aggregated.passedTests += summary.passedTests;
@@ -870,7 +855,7 @@ export class TestOrchestrator extends EventEmitter {
             failedTests: 0,
             skippedTests: 0,
             duration: 0,
-            successRate: 0,
+            successRate: 0
           };
         }
 
@@ -884,13 +869,13 @@ export class TestOrchestrator extends EventEmitter {
     });
 
     // Calculate success rate
-    aggregated.successRate =
-      aggregated.totalTests > 0 ? aggregated.passedTests / aggregated.totalTests : 0;
+    aggregated.successRate = aggregated.totalTests > 0 ?
+      aggregated.passedTests / aggregated.totalTests : 0;
 
     // Calculate success rates by type
-    Object.values(aggregated.byType).forEach((typeStats) => {
-      typeStats.successRate =
-        typeStats.totalTests > 0 ? typeStats.passedTests / typeStats.totalTests : 0;
+    Object.values(aggregated.byType).forEach(typeStats => {
+      typeStats.successRate = typeStats.totalTests > 0 ?
+        typeStats.passedTests / typeStats.totalTests : 0;
     });
 
     return aggregated;
@@ -898,7 +883,7 @@ export class TestOrchestrator extends EventEmitter {
 
   private collectStageLogs(stageResults: TestStageResult[]): string[] {
     const logs: string[] = [];
-    stageResults.forEach((stage) => {
+    stageResults.forEach(stage => {
       logs.push(...stage.logs);
     });
     return logs;
@@ -906,7 +891,7 @@ export class TestOrchestrator extends EventEmitter {
 
   private collectTestLogs(testResults: TestResult[]): string[] {
     const logs: string[] = [];
-    testResults.forEach((test) => {
+    testResults.forEach(test => {
       logs.push(...test.logs);
     });
     return logs;
@@ -927,9 +912,9 @@ export class TestOrchestrator extends EventEmitter {
           name: 'test-results',
           path: 'test-results/',
           type: 'report' as const,
-          enabled: true,
-        },
-      ],
+          enabled: true
+        }
+      ]
     };
 
     switch (testType) {
@@ -942,8 +927,8 @@ export class TestOrchestrator extends EventEmitter {
             lines: 80,
             functions: 80,
             branches: 70,
-            statements: 80,
-          },
+            statements: 80
+          }
         };
 
       case TestType.INTEGRATION:
@@ -951,7 +936,7 @@ export class TestOrchestrator extends EventEmitter {
           ...baseConfig,
           framework: TestFramework.VITEST,
           command: 'npm run test:integration',
-          timeout: 300000, // 5 minutes
+          timeout: 300000 // 5 minutes
         };
 
       case TestType.E2E:
@@ -966,22 +951,22 @@ export class TestOrchestrator extends EventEmitter {
               name: 'screenshots',
               path: 'test-results/screenshots/',
               type: 'screenshot' as const,
-              enabled: true,
+              enabled: true
             },
             {
               name: 'videos',
               path: 'test-results/videos/',
               type: 'video' as const,
-              enabled: true,
-            },
-          ],
+              enabled: true
+            }
+          ]
         };
 
       default:
         return {
           ...baseConfig,
           framework: TestFramework.JEST,
-          command: 'npm test',
+          command: 'npm test'
         };
     }
   }

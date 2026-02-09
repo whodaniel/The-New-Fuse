@@ -13,4 +13,5 @@ export * from './dtos';
 export * from './services';
 
 // Export agent types separately to avoid conflicts
-export type { AgentConfig, AgentMessage, AgentCapability as CoreAgentCapability } from './agent';
+export type { AgentCapability as CoreAgentCapability } from './agent';
+export type { AgentMessage, AgentConfig } from './agent';

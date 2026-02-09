@@ -9,7 +9,7 @@ import { toError } from '../../utils/error'; // Import the helper
 
 export abstract class BaseController {
   protected readonly logger: Logger;
-
+  
   constructor(controllerName: string) {
     this.logger = new Logger(controllerName);
   }
@@ -21,7 +21,7 @@ export abstract class BaseController {
    * @returns Standardized API response
    */
   protected async handleAsync<T>(
-    operation: () => Promise<T>,
+    operation: () => Promise<T>, 
     errorMessage: string
   ): Promise<ApiResponse<T>> {
     try {
@@ -41,7 +41,7 @@ export abstract class BaseController {
     return {
       success: true,
       data,
-      error: undefined,
+      error: undefined
     };
   }
 

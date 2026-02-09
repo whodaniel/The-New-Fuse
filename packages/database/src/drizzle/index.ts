@@ -24,11 +24,12 @@ export * from './types';
 // Export all repositories
 export * from './repositories';
 
-// Export compatibility layer for legacy ORM migration
+// Export compatibility layer for Prisma migration
 export * from './compatibility';
 
 // Export DatabaseService (unified database access layer)
-export { DatabaseService } from './database.service';
+// PrismaService is an alias for backwards compatibility
+export { DatabaseService, PrismaService } from './database.service';
 
 // Re-export useful Drizzle utilities
 export {

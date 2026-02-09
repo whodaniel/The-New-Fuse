@@ -4,25 +4,25 @@
 
 import { EventEmitter } from 'events';
 import {
+  IMonitoringSystem,
+  IMetricsCollector,
   IAlertManager,
+  IDashboardManager,
+  IPerformanceMonitor,
+  ILoadTester,
   ICacheMonitor,
   IConnectionPoolMonitor,
-  IDashboardManager,
-  ILoadTester,
-  IMetricsCollector,
-  IMonitoringSystem,
-  IPerformanceMonitor,
-  ISystemHealthMonitor,
+  ISystemHealthMonitor
 } from '../interfaces/IMonitoring';
 import { MonitoringConfig } from '../types/monitoring';
 import { Logger } from '../utils/Logger';
+import { MetricsCollector } from './MetricsCollector';
 import { AlertManager } from './AlertManager';
+import { DashboardManager } from './DashboardManager';
+import { PerformanceMonitor } from './PerformanceMonitor';
+import { LoadTester } from './LoadTester';
 import { CacheMonitor } from './CacheMonitor';
 import { ConnectionPoolMonitor } from './ConnectionPoolMonitor';
-import { DashboardManager } from './DashboardManager';
-import { LoadTester } from './LoadTester';
-import { MetricsCollector } from './MetricsCollector';
-import { PerformanceMonitor } from './PerformanceMonitor';
 import { SystemHealthMonitor } from './SystemHealthMonitor';
 
 /**
@@ -224,13 +224,13 @@ export class MonitoringSystem extends EventEmitter implements IMonitoringSystem 
       loadTester: !!this.loadTester,
       cacheMonitor: !!this.cacheMonitor,
       connectionPoolMonitor: !!this.connectionPoolMonitor,
-      systemHealthMonitor: !!this.systemHealthMonitor,
+      systemHealthMonitor: !!this.systemHealthMonitor
     };
 
     return {
       running: this.running,
       uptime,
-      components,
+      components
     };
   }
 
@@ -243,73 +243,52 @@ export class MonitoringSystem extends EventEmitter implements IMonitoringSystem 
     }
 
     // Initialize metrics collector
-    this.metricsCollector = new MetricsCollector(
-      {
-        interval: this.config.metricsInterval,
-        retentionPeriod: this.config.retentionPeriod,
-        storage: this.config.storage,
-      },
-      this.logger
-    );
+    this.metricsCollector = new MetricsCollector({
+      interval: this.config.metricsInterval,
+      retentionPeriod: this.config.retentionPeriod,
+      storage: this.config.storage
+    }, this.logger);
 
     // Initialize alert manager
     if (this.config.enableAlerting) {
-      this.alertManager = new AlertManager(
-        {
-          checkInterval: this.config.alertInterval,
-          retentionPeriod: this.config.retentionPeriod,
-        },
-        this.logger
-      );
+      this.alertManager = new AlertManager({
+        checkInterval: this.config.alertInterval,
+        retentionPeriod: this.config.retentionPeriod
+      }, this.logger);
     }
 
     // Initialize dashboard manager
     if (this.config.enableDashboards) {
-      this.dashboardManager = new DashboardManager(
-        {
-          refreshInterval: this.config.dashboardRefreshInterval,
-          storage: this.config.storage,
-        },
-        this.logger
-      );
+      this.dashboardManager = new DashboardManager({
+        refreshInterval: this.config.dashboardRefreshInterval,
+        storage: this.config.storage
+      }, this.logger);
     }
 
     // Initialize performance monitor
-    this.performanceMonitor = new PerformanceMonitor(
-      {
-        metricsInterval: this.config.metricsInterval,
-        retentionPeriod: this.config.retentionPeriod,
-      },
-      this.logger
-    );
+    this.performanceMonitor = new PerformanceMonitor({
+      metricsInterval: this.config.metricsInterval,
+      retentionPeriod: this.config.retentionPeriod
+    }, this.logger);
 
     // Initialize load tester
     this.loadTester = new LoadTester(this.logger);
 
     // Initialize cache monitor
-    this.cacheMonitor = new CacheMonitor(
-      {
-        retentionPeriod: this.config.retentionPeriod,
-      },
-      this.logger
-    );
+    this.cacheMonitor = new CacheMonitor({
+      retentionPeriod: this.config.retentionPeriod
+    }, this.logger);
 
     // Initialize connection pool monitor
-    this.connectionPoolMonitor = new ConnectionPoolMonitor(
-      {
-        retentionPeriod: this.config.retentionPeriod,
-      },
-      this.logger
-    );
+    this.connectionPoolMonitor = new ConnectionPoolMonitor({
+      retentionPeriod: this.config.retentionPeriod
+    }, this.logger);
 
     // Initialize system health monitor
-    this.systemHealthMonitor = new SystemHealthMonitor(
-      {
-        checkInterval: 30000, // 30 seconds
-        timeout: 5000, // 5 seconds
-      },
-      this.logger
-    );
+    this.systemHealthMonitor = new SystemHealthMonitor({
+      checkInterval: 30000, // 30 seconds
+      timeout: 5000 // 5 seconds
+    }, this.logger);
 
     this.logger.debug('All monitoring components initialized');
   }
@@ -404,11 +383,8 @@ export class MonitoringSystem extends EventEmitter implements IMonitoringSystem 
 
     // Helper function to add metric
     const addMetric = (name: string, value: number, labels?: Record<string, string>) => {
-      const labelStr = labels
-        ? `{${Object.entries(labels)
-            .map(([k, v]) => `${k}="${v}"`)
-            .join(',')}}`
-        : '';
+      const labelStr = labels ? 
+        `{${Object.entries(labels).map(([k, v]) => `${k}="${v}"`).join(',')}}` : '';
       lines.push(`mcp_${name}${labelStr} ${value}`);
     };
 

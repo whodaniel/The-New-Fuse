@@ -245,8 +245,7 @@ Become the broker for the current conversation.
 ### Phase 1: CLI Agent Base (✅ COMPLETED)
 
 1. Create `scripts/tnf-agent-cli.ts` -> Now `@the-new-fuse/tnf-cli` package
-2. Create `packages/agent/src/redis-agent.ts` -> Integrated into
-   `RedisAgentClient`
+2. Create `packages/agent/src/redis-agent.ts` -> Integrated into `RedisAgentClient`
 3. Test direct conversation between Antigravity and Gemini -> Verified
 
 ### Phase 2: Orchestration (IN PROGRESS)

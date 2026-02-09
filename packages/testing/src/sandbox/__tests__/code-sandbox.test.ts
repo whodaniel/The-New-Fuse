@@ -24,7 +24,7 @@ describe('CodeSandbox', () => {
         console.error('test error');
         console.warn('test warning');
       `);
-
+      
       expect(result.success).toBe(true);
       expect(result.output).toHaveLength(3);
       expect(result.output[0]).toContain('test log');
@@ -51,7 +51,7 @@ describe('CodeSandbox', () => {
       const result = await sandbox.execute(`
         while(true) {}
       `);
-
+      
       expect(result.success).toBe(false);
       expect(result.error?.message).toContain('timeout');
     });
@@ -61,7 +61,7 @@ describe('CodeSandbox', () => {
       const result = await sandbox.execute(`
         const arr = new Array(1000000).fill('x'.repeat(1000));
       `);
-
+      
       expect(result.success).toBe(false);
       expect(result.error?.message).toContain('Memory limit exceeded');
     });
@@ -70,7 +70,7 @@ describe('CodeSandbox', () => {
       const result = await sandbox.execute(`
         const arr = new Array(1000).fill('test');
       `);
-
+      
       expect(result.memoryUsage).toBeDefined();
       expect(typeof result.memoryUsage).toBe('number');
       expect(result.memoryUsage).toBeGreaterThan(0);
@@ -81,7 +81,7 @@ describe('CodeSandbox', () => {
         let x = 0;
         for(let i = 0; i < 1000000; i++) x++;
       `);
-
+      
       expect(result.executionTime).toBeDefined();
       expect(typeof result.executionTime).toBe('number');
       expect(result.executionTime).toBeGreaterThan(0);
@@ -101,14 +101,14 @@ describe('CodeSandbox', () => {
 
     it('should allow specified modules only', async () => {
       const sandbox = new CodeSandbox({
-        allowedModules: ['path'],
+        allowedModules: ['path']
       });
 
       const result = await sandbox.execute(`
         const path = require('path');
         path.join('/test', 'file.txt');
       `);
-
+      
       expect(result.success).toBe(true);
     });
   });
@@ -118,14 +118,14 @@ describe('CodeSandbox', () => {
       const sandbox = new CodeSandbox({
         context: {
           customVar: 123,
-          customFunc: (x: number) => x * 2,
-        },
+          customFunc: (x: number) => x * 2
+        }
       });
 
       const result = await sandbox.execute(`
         customFunc(customVar)
       `);
-
+      
       expect(result.success).toBe(true);
       expect(result.result).toBe(246);
     });
@@ -133,7 +133,7 @@ describe('CodeSandbox', () => {
     it('should reset context between executions', async () => {
       await sandbox.execute('let x = 10');
       const result = await sandbox.execute('typeof x');
-
+      
       expect(result.success).toBe(true);
       expect(result.result).toBe('undefined');
     });

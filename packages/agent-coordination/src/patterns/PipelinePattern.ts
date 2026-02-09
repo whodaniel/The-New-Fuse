@@ -56,7 +56,12 @@ export class PipelinePattern extends EventEmitter {
       });
 
       try {
-        const stageOutput = await this.executeStage(stage, currentInput, i, options);
+        const stageOutput = await this.executeStage(
+          stage,
+          currentInput,
+          i,
+          options
+        );
 
         this.stageResults.set(`${stage.name}:${i}`, stageOutput);
 
@@ -113,12 +118,9 @@ export class PipelinePattern extends EventEmitter {
 
     // Wait for task completion
     return new Promise<TOutput>((resolve, reject) => {
-      const timeout = setTimeout(
-        () => {
-          reject(new Error(`Stage ${stage.name} timeout`));
-        },
-        stage.timeout || options.timeout || 60000
-      );
+      const timeout = setTimeout(() => {
+        reject(new Error(`Stage ${stage.name} timeout`));
+      }, stage.timeout || options.timeout || 60000);
 
       this.coordinator.on('task:completed', (completedTask: Task) => {
         if (completedTask.id === task.id) {
@@ -159,10 +161,20 @@ export class PipelinePattern extends EventEmitter {
 
       if (group.length === 1) {
         // Sequential stage
-        currentInput = await this.executeStage(group[0], currentInput, i, options);
+        currentInput = await this.executeStage(
+          group[0],
+          currentInput,
+          i,
+          options
+        );
       } else {
         // Parallel stages
-        const results = await this.executeParallelStages(group, currentInput, i, options);
+        const results = await this.executeParallelStages(
+          group,
+          currentInput,
+          i,
+          options
+        );
 
         // Combine results (simple concatenation for arrays)
         if (Array.isArray(results[0])) {

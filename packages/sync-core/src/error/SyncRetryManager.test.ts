@@ -2,12 +2,17 @@
  * Tests for SyncRetryManager
  */
 
-import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ErrorCategory, ErrorSeverity } from '@the-new-fuse/core-error-handling';
+import { Logger } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { SyncContext, SyncError } from './SyncErrorHandler.js';
-import { RetryAttempt, RetryConfig, SyncRetryManager } from './SyncRetryManager.js';
+import { 
+  SyncRetryManager, 
+  RetryConfig, 
+  RetryAttempt, 
+  CircuitBreakerState 
+} from './SyncRetryManager.js';
+import { SyncError, SyncContext } from './SyncErrorHandler.js';
+import { ErrorSeverity, ErrorCategory } from '@the-new-fuse/core-error-handling';
 
 describe('SyncRetryManager', () => {
   let retryManager: SyncRetryManager;
@@ -22,7 +27,7 @@ describe('SyncRetryManager', () => {
     jitterEnabled: false, // Disable for predictable testing
     circuitBreakerEnabled: true,
     circuitBreakerThreshold: 3,
-    circuitBreakerTimeout: 5000,
+    circuitBreakerTimeout: 5000
   };
 
   const mockSyncContext: SyncContext = {
@@ -32,7 +37,7 @@ describe('SyncRetryManager', () => {
     operation: 'sync-operation',
     tenantId: 'tenant-123',
     resourcePath: '/test/path',
-    timestamp: new Date(),
+    timestamp: new Date()
   };
 
   const mockSyncError: SyncError = {
@@ -47,7 +52,7 @@ describe('SyncRetryManager', () => {
     resourceId: 'file-123',
     syncOperation: 'sync',
     tenantId: 'tenant-123',
-    metadata: {},
+    metadata: {}
   };
 
   beforeEach(async () => {
@@ -59,7 +64,7 @@ describe('SyncRetryManager', () => {
       get: jest.fn(),
       set: jest.fn(),
       keys: jest.fn(),
-      del: jest.fn(),
+      del: jest.fn()
     } as any;
 
     // Mock logger
@@ -68,16 +73,16 @@ describe('SyncRetryManager', () => {
       info: jest.fn(),
       warn: jest.fn(),
       error: jest.fn(),
-      log: jest.fn(),
+      log: jest.fn()
     } as any;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
           provide: SyncRetryManager,
-          useFactory: () => new SyncRetryManager(redisService, mockConfig, logger),
-        },
-      ],
+          useFactory: () => new SyncRetryManager(redisService, mockConfig, logger)
+        }
+      ]
     }).compile();
 
     retryManager = module.get<SyncRetryManager>(SyncRetryManager);
@@ -114,11 +119,11 @@ describe('SyncRetryManager', () => {
 
       const [[, score, retryData]] = (redisService.zadd as jest.Mock).mock.calls;
       const retry: RetryAttempt = JSON.parse(retryData);
-
+      
       // First attempt should have base delay (1000ms)
       const expectedTime = Date.now() + 1000;
       const actualTime = retry.nextRetryAt.getTime();
-
+      
       expect(actualTime).toBeGreaterThanOrEqual(expectedTime - 100);
       expect(actualTime).toBeLessThanOrEqual(expectedTime + 100);
     });
@@ -138,7 +143,7 @@ describe('SyncRetryManager', () => {
 
         const [[, score, retryData]] = (redisService.zadd as jest.Mock).mock.calls;
         const retry: RetryAttempt = JSON.parse(retryData);
-
+        
         // Should not exceed maxDelay
         const delay = retry.nextRetryAt.getTime() - Date.now();
         expect(delay).toBeLessThanOrEqual(2000);
@@ -150,7 +155,7 @@ describe('SyncRetryManager', () => {
     it('should throw error when circuit breaker is open', async () => {
       // First, trigger circuit breaker by failing multiple times
       const operation = 'failing-operation';
-
+      
       for (let i = 0; i < 3; i++) {
         try {
           await retryManager.scheduleRetry(operation, {}, mockSyncContext, mockSyncError);
@@ -178,7 +183,7 @@ describe('SyncRetryManager', () => {
         maxAttempts: 3,
         nextRetryAt: pastTime,
         createdAt: new Date(),
-        updatedAt: new Date(),
+        updatedAt: new Date()
       };
 
       redisService.zrange.mockResolvedValue([JSON.stringify(mockRetry)]);
@@ -205,7 +210,7 @@ describe('SyncRetryManager', () => {
         maxAttempts: 3,
         nextRetryAt: futureTime,
         createdAt: new Date(),
-        updatedAt: new Date(),
+        updatedAt: new Date()
       };
 
       redisService.zrange.mockResolvedValue([JSON.stringify(mockRetry)]);
@@ -225,7 +230,7 @@ describe('SyncRetryManager', () => {
         maxAttempts: 3,
         nextRetryAt: new Date(Date.now() - 1000),
         createdAt: new Date(),
-        updatedAt: new Date(),
+        updatedAt: new Date()
       };
 
       redisService.zrange.mockResolvedValue([JSON.stringify(mockRetry)]);
@@ -254,7 +259,7 @@ describe('SyncRetryManager', () => {
         maxAttempts: 3,
         nextRetryAt: new Date(Date.now() - 1000),
         createdAt: new Date(),
-        updatedAt: new Date(),
+        updatedAt: new Date()
       };
 
       redisService.zrange.mockResolvedValue([JSON.stringify(mockRetry)]);
@@ -284,7 +289,7 @@ describe('SyncRetryManager', () => {
         maxAttempts: 3,
         nextRetryAt: new Date(Date.now() - 1000),
         createdAt: new Date(),
-        updatedAt: new Date(),
+        updatedAt: new Date()
       };
 
       redisService.zrange.mockResolvedValue([JSON.stringify(mockRetry)]);
@@ -307,7 +312,7 @@ describe('SyncRetryManager', () => {
   describe('Circuit Breaker', () => {
     it('should open circuit breaker after threshold failures', async () => {
       const operation = 'failing-operation';
-
+      
       const openedEventSpy = jest.fn();
       retryManager.on('circuitBreakerOpened', openedEventSpy);
 
@@ -322,7 +327,7 @@ describe('SyncRetryManager', () => {
           maxAttempts: 3,
           nextRetryAt: new Date(Date.now() - 1000),
           createdAt: new Date(),
-          updatedAt: new Date(),
+          updatedAt: new Date()
         };
 
         redisService.zrange.mockResolvedValueOnce([JSON.stringify(mockRetry)]);
@@ -341,14 +346,14 @@ describe('SyncRetryManager', () => {
 
     it('should transition circuit breaker from half-open to closed on success', async () => {
       const operation = 'recovering-operation';
-
+      
       // First open the circuit breaker
       const states = retryManager.getCircuitBreakerStates();
       states.set(operation, {
         operation,
         state: 'half-open',
         failureCount: 3,
-        successCount: 0,
+        successCount: 0
       });
 
       const closedEventSpy = jest.fn();
@@ -363,7 +368,7 @@ describe('SyncRetryManager', () => {
         maxAttempts: 3,
         nextRetryAt: new Date(Date.now() - 1000),
         createdAt: new Date(),
-        updatedAt: new Date(),
+        updatedAt: new Date()
       };
 
       redisService.zrange.mockResolvedValue([JSON.stringify(mockRetry)]);
@@ -381,7 +386,7 @@ describe('SyncRetryManager', () => {
 
     it('should reset circuit breaker manually', async () => {
       const operation = 'test-operation';
-
+      
       // Set up an open circuit breaker
       const states = retryManager.getCircuitBreakerStates();
       states.set(operation, {
@@ -390,7 +395,7 @@ describe('SyncRetryManager', () => {
         failureCount: 5,
         successCount: 0,
         lastFailureAt: new Date(),
-        nextAttemptAt: new Date(Date.now() + 10000),
+        nextAttemptAt: new Date(Date.now() + 10000)
       });
 
       const resetEventSpy = jest.fn();
@@ -416,7 +421,7 @@ describe('SyncRetryManager', () => {
       );
 
       const stats = await retryManager.getStatistics();
-
+      
       expect(stats.totalRetries).toBeGreaterThan(0);
       expect(stats.operationStats['test-operation']).toBeDefined();
     });
@@ -430,20 +435,24 @@ describe('SyncRetryManager', () => {
       );
 
       // Statistics should be persisted
-      expect(redisService.set).toHaveBeenCalledWith('sync:retry:stats', expect.any(String), 3600);
+      expect(redisService.set).toHaveBeenCalledWith(
+        'sync:retry:stats',
+        expect.any(String),
+        3600
+      );
     });
 
     it('should load statistics from Redis', async () => {
       const mockStats = {
         totalRetries: 10,
         successfulRetries: 8,
-        failedRetries: 2,
+        failedRetries: 2
       };
 
       redisService.get.mockResolvedValue(JSON.stringify(mockStats));
 
       const stats = await retryManager.getStatistics();
-
+      
       expect(stats.totalRetries).toBe(10);
       expect(stats.successfulRetries).toBe(8);
       expect(stats.failedRetries).toBe(2);
@@ -462,21 +471,17 @@ describe('SyncRetryManager', () => {
     });
 
     it('should process retries in batches', async () => {
-      const mockRetries = Array(5)
-        .fill(null)
-        .map((_, i) =>
-          JSON.stringify({
-            id: `retry-${i}`,
-            operation: 'sync',
-            data: {},
-            context: mockSyncContext,
-            attemptNumber: 1,
-            maxAttempts: 3,
-            nextRetryAt: new Date(Date.now() - 1000),
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          })
-        );
+      const mockRetries = Array(5).fill(null).map((_, i) => JSON.stringify({
+        id: `retry-${i}`,
+        operation: 'sync',
+        data: {},
+        context: mockSyncContext,
+        attemptNumber: 1,
+        maxAttempts: 3,
+        nextRetryAt: new Date(Date.now() - 1000),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }));
 
       redisService.zrange.mockResolvedValue(mockRetries);
       redisService.zrem.mockResolvedValue(1);
@@ -490,18 +495,18 @@ describe('SyncRetryManager', () => {
   describe('Configuration', () => {
     it('should use default configuration when none provided', () => {
       const defaultManager = new SyncRetryManager(redisService);
-
+      
       expect(defaultManager).toBeDefined();
     });
 
     it('should merge custom configuration with defaults', () => {
       const customConfig = {
         maxAttempts: 10,
-        circuitBreakerEnabled: false,
+        circuitBreakerEnabled: false
       };
-
+      
       const customManager = new SyncRetryManager(redisService, customConfig);
-
+      
       expect(customManager).toBeDefined();
     });
   });
@@ -530,7 +535,7 @@ describe('SyncRetryManager', () => {
         maxAttempts: 3,
         nextRetryAt: new Date(Date.now() - 1000),
         createdAt: new Date(),
-        updatedAt: new Date(),
+        updatedAt: new Date()
       };
 
       const invalidRetry = 'invalid-json';
@@ -563,9 +568,9 @@ describe('SyncRetryManager', () => {
       expect(eventSpy).toHaveBeenCalledWith({
         retryAttempt: expect.objectContaining({
           operation: 'test-operation',
-          attemptNumber: 1,
+          attemptNumber: 1
         }),
-        error: mockSyncError,
+        error: mockSyncError
       });
     });
 

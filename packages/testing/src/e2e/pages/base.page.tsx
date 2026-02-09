@@ -24,7 +24,7 @@ export class BasePage {
   async takeScreenshot(name: string) {
     await this.page.screenshot({
       path: `./screenshots/${name}.png`,
-      fullPage: true,
+      fullPage: true
     });
   }
 

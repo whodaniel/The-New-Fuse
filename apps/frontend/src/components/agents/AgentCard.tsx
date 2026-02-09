@@ -34,8 +34,7 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Type: {agent.type}</p>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Last Heartbeat: {new Date(agent.lastHeartbeat).toLocaleDateString()}{' '}
-          {new Date(agent.lastHeartbeat).toLocaleTimeString()}
+          Last Heartbeat: {new Date(agent.lastHeartbeat).toLocaleDateString()} {new Date(agent.lastHeartbeat).toLocaleTimeString()}
         </p>
       </div>
       <div className="mt-4">

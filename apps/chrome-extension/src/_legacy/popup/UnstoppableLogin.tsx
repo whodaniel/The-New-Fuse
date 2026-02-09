@@ -3,7 +3,7 @@
  * UI for authentication with Unstoppable Domains
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { unstoppableAuth, UnstoppableUser } from '../auth/unstoppable-domains-auth';
 
 interface UnstoppableLoginProps {
@@ -82,7 +82,9 @@ export const UnstoppableLogin: React.FC<UnstoppableLoginProps> = ({
     return (
       <div className="ud-login-container authenticated">
         <div className="ud-user-info">
-          {user.picture && <img src={user.picture} alt={user.sub} className="ud-user-avatar" />}
+          {user.picture && (
+            <img src={user.picture} alt={user.sub} className="ud-user-avatar" />
+          )}
           <div className="ud-user-details">
             <h3 className="ud-domain-name">{user.sub}</h3>
             {user.wallet_address && (
@@ -132,7 +134,9 @@ export const UnstoppableLogin: React.FC<UnstoppableLoginProps> = ({
           </svg>
         </div>
         <h2>Sign in with Unstoppable</h2>
-        <p className="ud-description">Use your Web3 domain to authenticate</p>
+        <p className="ud-description">
+          Use your Web3 domain to authenticate
+        </p>
       </div>
 
       {error && (
@@ -166,7 +170,11 @@ export const UnstoppableLogin: React.FC<UnstoppableLoginProps> = ({
       <div className="ud-footer">
         <p>
           Don't have a domain?{' '}
-          <a href="https://unstoppabledomains.com" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://unstoppabledomains.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Get one now
           </a>
         </p>

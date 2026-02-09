@@ -1,11 +1,5 @@
 import { ResourceAccessControlService } from '../../src/services/resource-access-control.service';
-import {
-  Resource,
-  ResourceCategory,
-  ResourceStatus,
-  ResourceType,
-  ResourceVisibility,
-} from '../../src/types';
+import { Resource, ResourceVisibility, ResourceCategory, ResourceType, ResourceStatus } from '../../src/types';
 
 describe('ResourceAccessControlService', () => {
   let service: ResourceAccessControlService;

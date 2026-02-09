@@ -22,10 +22,7 @@ export class ConnectionError extends DatabaseError {
 }
 
 export class QueryError extends DatabaseError {
-  constructor(
-    message: string,
-    public originalError?: any,
-  ) {
+  constructor(message: string, public originalError?: any) {
     super(message);
     this.name = 'QueryError';
   }
@@ -43,7 +40,7 @@ export interface DatabaseMetrics {
 export class DatabaseService extends EventEmitter {
   private redisClient: Redis;
   private metrics: Map<string, DatabaseMetrics> = new Map();
-
+  
   constructor() {
     super();
     this.redisClient = new Redis();
@@ -59,14 +56,7 @@ export class DatabaseService extends EventEmitter {
   async initialize(): Promise<void> {
     logger.info('Initializing DatabaseService...');
     // Simulate database pool initialization
-    this.metrics.set('default', {
-      connections: 0,
-      activeConnections: 0,
-      idleConnections: 0,
-      queries: 0,
-      errors: 0,
-      latency: 0,
-    });
+    this.metrics.set('default', { connections: 0, activeConnections: 0, idleConnections: 0, queries: 0, errors: 0, latency: 0 });
     logger.info('DatabaseService initialized.');
   }
 
@@ -77,10 +67,10 @@ export class DatabaseService extends EventEmitter {
     const currentMetrics = this.metrics.get(shardName)!;
     currentMetrics.queries++;
     currentMetrics.activeConnections++;
-
+    
     try {
       // Simulate a delay for query execution
-      await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
+      await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
       currentMetrics.latency = Math.random() * 50; // Simulate latency
       return [] as T[]; // Return empty array for simulation
     } catch (error) {
@@ -102,11 +92,7 @@ export class DatabaseService extends EventEmitter {
     return this.metrics.get(shardName);
   }
 
-  private updateRedisMetrics(
-    shard: string,
-    metric: keyof Omit<DatabaseMetrics, 'latency'>,
-    value: number = 1,
-  ): void {
+  private updateRedisMetrics(shard: string, metric: keyof Omit<DatabaseMetrics, 'latency'>, value: number = 1): void {
     // Placeholder for updating metrics in Redis
     // In a real scenario, this would interact with Redis to store and update metrics
     logger.info(`Updating Redis metric for shard ${shard}: ${metric} by ${value}`);

@@ -1,14 +1,14 @@
 import {
+  Injectable,
   CanActivate,
   ExecutionContext,
   HttpException,
   HttpStatus,
-  Injectable,
-  Logger,
+  Logger
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
-import { RateLimitConfig, RedisRateLimiterService } from './redis-rate-limiter.service';
+import { RedisRateLimiterService, RateLimitConfig } from './redis-rate-limiter.service';
 
 export const RATE_LIMIT_KEY = 'rateLimit';
 export const RATE_LIMIT_TIER_KEY = 'rateLimitTier';
@@ -33,10 +33,10 @@ export class RateLimitGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // Check if rate limiting is skipped for this route
-    const skipRateLimit = this.reflector.getAllAndOverride<boolean>(SKIP_RATE_LIMIT_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const skipRateLimit = this.reflector.getAllAndOverride<boolean>(
+      SKIP_RATE_LIMIT_KEY,
+      [context.getHandler(), context.getClass()]
+    );
 
     if (skipRateLimit) {
       return true;
@@ -46,16 +46,16 @@ export class RateLimitGuard implements CanActivate {
     const response = context.switchToHttp().getResponse<Response>();
 
     // Get rate limit configuration from decorator
-    const rateLimitConfig = this.reflector.getAllAndOverride<RateLimitConfig>(RATE_LIMIT_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const rateLimitConfig = this.reflector.getAllAndOverride<RateLimitConfig>(
+      RATE_LIMIT_KEY,
+      [context.getHandler(), context.getClass()]
+    );
 
     // Get tier from decorator
-    const tier = this.reflector.getAllAndOverride<string>(RATE_LIMIT_TIER_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const tier = this.reflector.getAllAndOverride<string>(
+      RATE_LIMIT_TIER_KEY,
+      [context.getHandler(), context.getClass()]
+    );
 
     // Determine the configuration to use
     let config: RateLimitConfig;
@@ -78,14 +78,14 @@ export class RateLimitGuard implements CanActivate {
         allowed: false,
         remaining: 0,
         resetTime: new Date(Date.now() + 60000), // 1 minute default
-        totalHits: config.points + 1,
+        totalHits: config.points + 1
       });
 
       throw new HttpException(
         {
           statusCode: HttpStatus.TOO_MANY_REQUESTS,
           message: 'Rate limit exceeded. You are temporarily blocked.',
-          error: 'Too Many Requests',
+          error: 'Too Many Requests'
         },
         HttpStatus.TOO_MANY_REQUESTS
       );
@@ -96,7 +96,7 @@ export class RateLimitGuard implements CanActivate {
     if (penalty > 0) {
       config = {
         ...config,
-        points: Math.max(1, config.points - penalty),
+        points: Math.max(1, config.points - penalty)
       };
     }
 
@@ -107,14 +107,16 @@ export class RateLimitGuard implements CanActivate {
     this.setRateLimitHeaders(response, result);
 
     if (!result.allowed) {
-      this.logger.warn(`Rate limit exceeded for key: ${key}, endpoint: ${request.path}`);
+      this.logger.warn(
+        `Rate limit exceeded for key: ${key}, endpoint: ${request.path}`
+      );
 
       throw new HttpException(
         {
           statusCode: HttpStatus.TOO_MANY_REQUESTS,
           message: 'Rate limit exceeded. Please try again later.',
           error: 'Too Many Requests',
-          retryAfter: result.retryAfter,
+          retryAfter: result.retryAfter
         },
         HttpStatus.TOO_MANY_REQUESTS
       );
@@ -122,7 +124,9 @@ export class RateLimitGuard implements CanActivate {
 
     // Log if approaching limit (80% consumed)
     if (result.remaining < config.points * 0.2) {
-      this.logger.warn(`Rate limit approaching for key: ${key}, remaining: ${result.remaining}`);
+      this.logger.warn(
+        `Rate limit approaching for key: ${key}, remaining: ${result.remaining}`
+      );
     }
 
     return true;
@@ -141,11 +145,10 @@ export class RateLimitGuard implements CanActivate {
       return `apikey:${apiKey}`;
     }
 
-    const ip =
-      request.ip ||
-      (request.headers['x-forwarded-for'] as string) ||
-      request.connection.remoteAddress ||
-      'unknown';
+    const ip = request.ip ||
+                request.headers['x-forwarded-for'] as string ||
+                request.connection.remoteAddress ||
+                'unknown';
 
     return `ip:${ip}`;
   }

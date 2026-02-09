@@ -1,7 +1,6 @@
 # Forest Canopy
 
-A natural and grounded theme featuring earth tones inspired by dense forest
-environments.
+A natural and grounded theme featuring earth tones inspired by dense forest environments.
 
 ## Color Palette
 
@@ -17,5 +16,4 @@ environments.
 
 ## Best Used For
 
-Environmental presentations, sustainability reports, outdoor brands, wellness
-content, organic products.
+Environmental presentations, sustainability reports, outdoor brands, wellness content, organic products.

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 
 interface FeatureFlag {
@@ -34,9 +34,9 @@ export function useFeatureFlags(): any {
     setLoading(true);
     try {
       await api.put(`/admin/feature-flags/${flagName}`, { enabled });
-      setFlags((prev: any) =>
-        prev.map((flag) => (flag.name === flagName ? { ...flag, enabled } : flag))
-      );
+      setFlags((prev: any) => prev.map(flag => 
+        flag.name === flagName ? { ...flag, enabled } : flag
+      ));
     } finally {
       setLoading(false);
     }

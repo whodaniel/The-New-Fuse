@@ -1,12 +1,10 @@
 # Enhanced Debugging Tools for Multi-Agent Communication
 
-Comprehensive debugging and analysis toolkit for A2A (Agent-to-Agent) protocol
-communication in The New Fuse platform.
+Comprehensive debugging and analysis toolkit for A2A (Agent-to-Agent) protocol communication in The New Fuse platform.
 
 ## Overview
 
-This package provides advanced debugging capabilities for multi-agent
-communication systems, including:
+This package provides advanced debugging capabilities for multi-agent communication systems, including:
 
 - **Real-time message tracing** with comprehensive capture and analysis
 - **Conversation flow visualization** and performance analysis
@@ -18,7 +16,6 @@ communication systems, including:
 ## Features
 
 ### 🔍 **Message Tracing & Capture**
-
 - Real-time message interception and logging
 - Configurable capture filters (agent, message type, priority, keywords)
 - Payload capture with optional compression
@@ -26,7 +23,6 @@ communication systems, including:
 - Performance metrics collection (latency, bandwidth, processing time)
 
 ### 📊 **Conversation Analysis**
-
 - Multi-agent conversation tracing
 - Flow diagram generation
 - Bottleneck identification
@@ -34,7 +30,6 @@ communication systems, including:
 - Efficiency scoring and recommendations
 
 ### 🎯 **Agent Debugging**
-
 - Individual agent performance monitoring
 - Message statistics (sent, received, processed, failed)
 - Response time analysis
@@ -42,7 +37,6 @@ communication systems, including:
 - Activity tracking and status monitoring
 
 ### 🚀 **Real-Time Debugging**
-
 - Live message streaming via Server-Sent Events
 - Interactive debugging interface
 - Configurable debug sessions
@@ -92,7 +86,6 @@ REDIS_DB=0
 ### Creating Debug Sessions
 
 #### Via API
-
 ```bash
 curl -X POST http://localhost:3000/api/debugging/sessions \
   -H "Content-Type: application/json" \
@@ -110,7 +103,6 @@ curl -X POST http://localhost:3000/api/debugging/sessions \
 ```
 
 #### Programmatic Usage
-
 ```typescript
 import { A2ADebuggerService } from '@packages/debugging';
 
@@ -134,7 +126,6 @@ await debuggerService.setActiveSession(sessionId);
 ### Message Capture and Analysis
 
 #### Manual Message Capture
-
 ```typescript
 // Capture a specific message
 await debuggerService.captureMessage({
@@ -154,7 +145,6 @@ console.log('Recommendations:', analysis.analysis.suggestions);
 ```
 
 #### Conversation Tracing
-
 ```typescript
 // Start conversation trace
 const conversationId = await debuggerService.startConversationTrace([
@@ -164,8 +154,7 @@ const conversationId = await debuggerService.startConversationTrace([
 ]);
 
 // Analyze conversation
-const conversationAnalysis =
-  await debuggerService.analyzeConversation(conversationId);
+const conversationAnalysis = await debuggerService.analyzeConversation(conversationId);
 console.log('Efficiency:', conversationAnalysis.analysis.efficiency);
 console.log('Bottlenecks:', conversationAnalysis.analysis.bottlenecks);
 ```
@@ -173,16 +162,13 @@ console.log('Bottlenecks:', conversationAnalysis.analysis.bottlenecks);
 ### Real-Time Debugging
 
 #### Server-Sent Events Stream
-
 ```javascript
 // Connect to real-time debug stream
-const eventSource = new EventSource(
-  '/api/debugging/sessions/session_123/stream'
-);
+const eventSource = new EventSource('/api/debugging/sessions/session_123/stream');
 
 eventSource.onmessage = (event) => {
   const data = JSON.parse(event.data);
-
+  
   switch (data.type) {
     case 'messageCapture':
       console.log('New message captured:', data.message);
@@ -198,7 +184,6 @@ eventSource.onmessage = (event) => {
 ```
 
 #### WebSocket Integration
-
 ```typescript
 // In your A2A service, integrate with debugger
 import { A2ADebuggerService } from '@packages/debugging';
@@ -206,16 +191,16 @@ import { A2ADebuggerService } from '@packages/debugging';
 @Injectable()
 export class MyA2AService {
   constructor(private debuggerService: A2ADebuggerService) {}
-
+  
   async sendMessage(message: A2AMessage): Promise<A2AResponse> {
     // Capture message for debugging
     await this.debuggerService.captureMessage(message);
-
+    
     const response = await this.actualSendMessage(message);
-
+    
     // Capture response
     await this.debuggerService.captureMessageResponse(message.id, response);
-
+    
     return response;
   }
 }
@@ -224,7 +209,6 @@ export class MyA2AService {
 ## API Endpoints
 
 ### Debug Session Management
-
 - `POST /api/debugging/sessions` - Create new debug session
 - `GET /api/debugging/sessions` - Get all debug sessions
 - `GET /api/debugging/sessions/:id` - Get specific debug session
@@ -233,26 +217,22 @@ export class MyA2AService {
 - `DELETE /api/debugging/sessions/:id` - Delete debug session
 
 ### Message Capture & Analysis
-
 - `GET /api/debugging/sessions/:id/messages` - Get captured messages
 - `POST /api/debugging/messages/:id/analyze` - Analyze specific message
 - `POST /api/debugging/capture/manual` - Manually capture message
 
 ### Conversation Tracing
-
 - `POST /api/debugging/conversations/trace` - Start conversation trace
 - `GET /api/debugging/conversations/:id` - Get conversation trace
 - `POST /api/debugging/conversations/:id/analyze` - Analyze conversation
 - `PUT /api/debugging/conversations/:id/end` - End conversation trace
 
 ### Agent Debugging
-
 - `GET /api/debugging/agents` - Get monitored agents
 - `GET /api/debugging/agents/:id` - Get agent debug info
 - `GET /api/debugging/agents/:id/messages` - Get agent message history
 
 ### Real-Time & Utilities
-
 - `GET /api/debugging/sessions/:id/stream` - Real-time debug stream
 - `GET /api/debugging/dashboard` - Debug dashboard data
 - `GET /api/debugging/sessions/:id/export` - Export session data
@@ -261,7 +241,6 @@ export class MyA2AService {
 ## Debug Filters
 
 ### Available Filter Types
-
 ```typescript
 interface DebugFilter {
   type: 'agent' | 'messageType' | 'priority' | 'keyword' | 'timeRange';
@@ -272,7 +251,6 @@ interface DebugFilter {
 ```
 
 ### Example Filters
-
 ```typescript
 const filters: DebugFilter[] = [
   {
@@ -305,19 +283,17 @@ const filters: DebugFilter[] = [
 ## Message Analysis
 
 ### Performance Metrics
-
 - **Routing Efficiency**: Measures optimal vs actual routing path
 - **Latency Analysis**: Categorizes response times and identifies bottlenecks
 - **Error Analysis**: Tracks error types and recoverability
 - **Performance Score**: Overall performance rating (0-100)
 
 ### Analysis Categories
-
 ```typescript
 interface MessageAnalysis {
   messageId: string;
   analysis: {
-    routingEfficiency: number; // 0-100%
+    routingEfficiency: number;           // 0-100%
     latencyAnalysis: {
       category: 'excellent' | 'good' | 'acceptable' | 'slow' | 'critical';
       bottlenecks: string[];
@@ -328,7 +304,7 @@ interface MessageAnalysis {
       errorTypes: string[];
       recoverability: 'automatic' | 'manual' | 'critical';
     };
-    performanceScore: number; // 0-100
+    performanceScore: number;            // 0-100
     suggestions: string[];
   };
 }
@@ -337,7 +313,6 @@ interface MessageAnalysis {
 ## Frontend Integration
 
 ### React Component Usage
-
 ```typescript
 import A2ADebugger from '@packages/debugging/A2ADebugger';
 
@@ -351,7 +326,6 @@ function App() {
 ```
 
 ### Features of the React Interface
-
 - **Real-time message tracking** with live updates
 - **Interactive message table** with filtering and sorting
 - **Conversation flow visualization** with timeline view
@@ -363,21 +337,19 @@ function App() {
 ## Advanced Features
 
 ### Debug Session Settings
-
 ```typescript
 interface DebugSettings {
-  capturePayloads: boolean; // Include message payloads
-  captureStackTraces: boolean; // Include error stack traces
-  maxMessages: number; // Maximum messages per session
-  maxConversations: number; // Maximum conversations per session
-  retentionTime: number; // How long to keep data (ms)
-  realTimeUpdates: boolean; // Enable real-time streaming
-  verboseLogging: boolean; // Detailed logging
+  capturePayloads: boolean;      // Include message payloads
+  captureStackTraces: boolean;   // Include error stack traces
+  maxMessages: number;           // Maximum messages per session
+  maxConversations: number;      // Maximum conversations per session
+  retentionTime: number;         // How long to keep data (ms)
+  realTimeUpdates: boolean;      // Enable real-time streaming
+  verboseLogging: boolean;       // Detailed logging
 }
 ```
 
 ### Performance Optimization
-
 - **Message buffering** for high-throughput scenarios
 - **Intelligent filtering** to reduce noise
 - **Automatic cleanup** of old sessions and data
@@ -385,7 +357,6 @@ interface DebugSettings {
 - **Real-time throttling** to prevent UI overload
 
 ### Export Formats
-
 - **JSON**: Complete session data with all metadata
 - **CSV**: Tabular format for spreadsheet analysis
 - **XLSX**: Excel format with multiple sheets
@@ -395,7 +366,6 @@ interface DebugSettings {
 ### Common Issues
 
 #### Messages Not Being Captured
-
 ```bash
 # Check if debug session is active
 curl -X GET http://localhost:3000/api/debugging/sessions
@@ -408,7 +378,6 @@ curl -X GET http://localhost:3000/api/debugging/sessions/{sessionId}/filters
 ```
 
 #### High Memory Usage
-
 ```env
 # Reduce message buffer size
 DEBUG_MESSAGE_BUFFER_SIZE=1000
@@ -421,7 +390,6 @@ DEBUG_ENABLE_COMPRESSION=true
 ```
 
 #### Real-Time Updates Not Working
-
 ```bash
 # Check Server-Sent Events connection
 curl -H "Accept: text/event-stream" \
@@ -432,7 +400,6 @@ curl -H "Accept: text/event-stream" \
 ```
 
 ### Debug Mode
-
 ```env
 # Enable verbose logging
 DEBUG_VERBOSE_LOGGING=true
@@ -447,7 +414,6 @@ LOG_LEVEL=debug
 ## Contributing
 
 ### Adding Custom Analysis
-
 ```typescript
 // Extend message analysis
 class CustomMessageAnalyzer {
@@ -462,7 +428,6 @@ class CustomMessageAnalyzer {
 ```
 
 ### Custom Debug Filters
-
 ```typescript
 // Add custom filter type
 interface CustomDebugFilter extends DebugFilter {
@@ -474,14 +439,12 @@ interface CustomDebugFilter extends DebugFilter {
 ## Performance Considerations
 
 ### Resource Usage
-
 - **Memory**: ~100MB for 10K messages with payloads
 - **CPU**: Minimal overhead during normal operation
 - **Network**: Real-time updates use ~1KB/s per active session
 - **Storage**: Redis storage for session persistence
 
 ### Optimization Tips
-
 1. **Use targeted filters** to capture only relevant messages
 2. **Disable payload capture** for high-volume scenarios
 3. **Set appropriate retention times** to prevent memory leaks

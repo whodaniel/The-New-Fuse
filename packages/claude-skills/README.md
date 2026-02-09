@@ -4,16 +4,13 @@ Integration layer for Anthropic's Claude Skills into The New Fuse ecosystem.
 
 ## Overview
 
-This package provides a complete integration of Anthropic's official Claude
-Skills repository, enabling The New Fuse agents and users to leverage
-battle-tested skills for document processing, development, design, and more.
+This package provides a complete integration of Anthropic's official Claude Skills repository, enabling The New Fuse agents and users to leverage battle-tested skills for document processing, development, design, and more.
 
 ## Features
 
 - **Skill Loader**: Auto-sync with Anthropic's skills repository
 - **Skill Parser**: Parse SKILL.md files with YAML frontmatter validation
-- **Skill Executor**: Execute skills with parameter validation and error
-  handling
+- **Skill Executor**: Execute skills with parameter validation and error handling
 - **Skill Registry**: Fast in-memory storage with indexing and search
 - **MCP Integration**: Expose skills as MCP resources and tools
 - **Slash Commands**: Ready-to-use Claude Code commands
@@ -26,7 +23,7 @@ import { ClaudeSkillsManager } from '@the-new-fuse/claude-skills';
 // Create manager instance
 const manager = new ClaudeSkillsManager({
   autoInitialize: true,
-  prioritySkills: ['pdf', 'xlsx', 'mcp-builder'],
+  prioritySkills: ['pdf', 'xlsx', 'mcp-builder']
 });
 
 // Wait for initialization
@@ -41,40 +38,35 @@ const result = await manager.executeSkill({
   skillId: 'anthropic.skill.pdf',
   parameters: {
     action: 'extract-text',
-    file: '/path/to/document.pdf',
-  },
+    file: '/path/to/document.pdf'
+  }
 });
 ```
 
 ## Available Skills
 
 ### Document Processing (4)
-
 - **pdf** - PDF manipulation and processing
 - **xlsx** - Excel spreadsheet creation and analysis
 - **pptx** - PowerPoint presentation creation
 - **docx** - Word document processing
 
 ### Development & Technical (3)
-
 - **mcp-builder** - MCP server development guide
 - **webapp-testing** - Automated web testing with Playwright
 - **web-artifacts-builder** - Build HTML artifacts with React
 
 ### Creative & Design (4)
-
 - **algorithmic-art** - Generative art with p5.js
 - **canvas-design** - Visual art design
 - **theme-factory** - Artifact styling and themes
 - **slack-gif-creator** - Animated GIF creation
 
 ### Enterprise & Communication (2)
-
 - **brand-guidelines** - Anthropic brand application
 - **internal-comms** - Internal communications writing
 
 ### Meta Skills (2)
-
 - **skill-creator** - Create custom skills
 - **template-skill** - Basic skill template
 
@@ -142,7 +134,11 @@ interface SkillExecutionResult {
 ### Load Specific Skills
 
 ```typescript
-const result = await manager.loadSkills(['pdf', 'xlsx', 'mcp-builder']);
+const result = await manager.loadSkills([
+  'pdf',
+  'xlsx',
+  'mcp-builder'
+]);
 
 console.log(`Loaded: ${result.imported}`);
 console.log(`Failed: ${result.failed}`);
@@ -173,10 +169,10 @@ const resources = await mcpProvider.getSkillResources();
 const tools = await mcpProvider.getSkillTools();
 
 // Execute via MCP
-const output = await mcpProvider.executeSkillTool('skill_pdf', {
-  action: 'extract',
-  file: 'doc.pdf',
-});
+const output = await mcpProvider.executeSkillTool(
+  'skill_pdf',
+  { action: 'extract', file: 'doc.pdf' }
+);
 ```
 
 ### Statistics
@@ -284,7 +280,7 @@ for (const skill of skills) {
     id: skill.id,
     type: 'skill',
     name: skill.name,
-    description: skill.description,
+    description: skill.description
   });
 }
 ```

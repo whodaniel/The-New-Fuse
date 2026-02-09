@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ResourceRegistryController } from './controllers/resource-registry.controller';
-import { ResourceAccessControlService } from './services/resource-access-control.service';
 import { ResourceRegistryService } from './services/resource-registry.service';
+import { ResourceAccessControlService } from './services/resource-access-control.service';
+import { ResourceRegistryController } from './controllers/resource-registry.controller';
 
 @Module({
   imports: [
@@ -11,7 +11,13 @@ import { ResourceRegistryService } from './services/resource-registry.service';
     }),
   ],
   controllers: [ResourceRegistryController],
-  providers: [ResourceRegistryService, ResourceAccessControlService],
-  exports: [ResourceRegistryService, ResourceAccessControlService],
+  providers: [
+    ResourceRegistryService,
+    ResourceAccessControlService,
+  ],
+  exports: [
+    ResourceRegistryService,
+    ResourceAccessControlService,
+  ],
 })
 export class ResourceRegistryModule {}

@@ -99,11 +99,7 @@ export class SentryService extends EventEmitter {
   /**
    * Capture a message
    */
-  captureMessage(
-    message: string,
-    level: ErrorContext['level'] = 'info',
-    context?: ErrorContext
-  ): string | undefined {
+  captureMessage(message: string, level: ErrorContext['level'] = 'info', context?: ErrorContext): string | undefined {
     if (!this.initialized || !this.sentry) {
       console.log(`Sentry not initialized, logging message [${level}]:`, message);
       return undefined;

@@ -2,8 +2,8 @@
 
 # Initialize database
 echo "Initializing A2A database..."
-npx drizzle migrate deploy
-npx drizzle generate
+npx prisma migrate deploy
+npx prisma generate
 
 # Set up configuration
 echo "Setting up A2A configuration..."

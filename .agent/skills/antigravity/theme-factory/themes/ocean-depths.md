@@ -1,7 +1,6 @@
 # Ocean Depths
 
-A professional and calming maritime theme that evokes the serenity of deep ocean
-waters.
+A professional and calming maritime theme that evokes the serenity of deep ocean waters.
 
 ## Color Palette
 
@@ -17,5 +16,4 @@ waters.
 
 ## Best Used For
 
-Corporate presentations, financial reports, professional consulting decks,
-trust-building content.
+Corporate presentations, financial reports, professional consulting decks, trust-building content.

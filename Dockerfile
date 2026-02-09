@@ -17,16 +17,8 @@ ARG VITE_FIREBASE_STORAGE_BUCKET
 ARG VITE_FIREBASE_MESSAGING_SENDER_ID
 ARG VITE_FIREBASE_APP_ID
 
-# Expose build args as environment variables for the build process
-ENV VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY
-ENV VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN
-ENV VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID
-ENV VITE_FIREBASE_STORAGE_BUCKET=$VITE_FIREBASE_STORAGE_BUCKET
-ENV VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID
-ENV VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
-
-# Install pnpm and git
-RUN apk add --no-cache git && corepack enable && corepack prepare pnpm@latest --activate
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
@@ -92,4 +84,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # -s enables SPA mode (serves index.html for all routes)
 # -n disables clipboard notifications
 CMD ["sh", "-c", "serve ./dist -p ${PORT:-3000} -s -n"]
-# Force rebuild Sat Feb 01 00:00:00 EST 2026 - Cache bust for Railway
+# Force rebuild Thu Jan 23 06:30:00 EST 2026

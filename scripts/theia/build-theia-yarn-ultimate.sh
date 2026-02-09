@@ -62,11 +62,11 @@ else
 fi
 echo "✅ Ripgrep is ready."
 
-# 4. Generate Drizzle Client
+# 4. Generate Prisma Client
 echo "
---- Step 4: Generating Drizzle Client ---"
-yarn drizzle generate --schema packages/database/drizzle/schema.drizzle
-echo "✅ Drizzle Client generated."
+--- Step 4: Generating Prisma Client ---"
+yarn prisma generate --schema packages/database/prisma/schema.prisma
+echo "✅ Prisma Client generated."
 
 # 5. Build SkIDEancer IDE
 echo "

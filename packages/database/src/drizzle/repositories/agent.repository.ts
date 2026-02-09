@@ -1,6 +1,6 @@
 /**
  * Agent Repository - Drizzle ORM Implementation
- * Example of migrating from a legacy ORM to Drizzle using the Repository Pattern
+ * Example of migrating from Prisma to Drizzle using the Repository Pattern
  */
 import * as crypto from 'crypto';
 import { and, desc, eq, isNull, like, or, sql } from 'drizzle-orm';
@@ -8,7 +8,6 @@ import { db } from '../client';
 import {
   agentCapabilityRegistry,
   agentDirectoryEntries,
-  agentInvitationCodes,
   agentMetadata,
   agentOnboardingEvents,
   agentRegistrations,
@@ -18,9 +17,7 @@ import type { Agent, AgentMetadata, NewAgent, NewAgentMetadata } from '../types'
 
 // HMAC-SHA256 Hashing for Auth Tokens (Deterministic)
 function hashToken(token: string): string {
-  if (!process.env.ENCRYPTION_KEY) {
-    throw new Error('ENCRYPTION_KEY is not defined. Cannot securely hash auth token.');
-  }
+  if (!process.env.ENCRYPTION_KEY) return token;
 
   try {
     const hmac = crypto.createHmac('sha256', process.env.ENCRYPTION_KEY);
@@ -36,7 +33,7 @@ function hashToken(token: string): string {
  * Agent Repository - provides data access for Agent entities
  *
  * This repository abstracts the database access layer, allowing for
- * easy migration from a legacy ORM to Drizzle without changing service code.
+ * easy migration from Prisma to Drizzle without changing service code.
  */
 export class DrizzleAgentRepository {
   /**
@@ -104,23 +101,13 @@ export class DrizzleAgentRepository {
   }
 
   /**
-   * Find all active agents (User Specific)
+   * Find all active agents
    */
   async findActive(userId: string): Promise<Agent[]> {
     return db
       .select()
       .from(agents)
       .where(and(eq(agents.status, 'ACTIVE'), eq(agents.userId, userId), isNull(agents.deletedAt)));
-  }
-
-  /**
-   * Find all active agents (System: no userId filter)
-   */
-  async findActiveSystem(): Promise<Agent[]> {
-    return db
-      .select()
-      .from(agents)
-      .where(and(eq(agents.status, 'ACTIVE'), isNull(agents.deletedAt)));
   }
 
   /**
@@ -454,15 +441,6 @@ export class DrizzleAgentRepository {
     heartbeatInterval: number;
     isOnline: boolean;
     metadata: any;
-    tenantId?: string | null;
-    organizationId?: string | null;
-    agencyId?: string | null;
-    identityLongTermId?: string | null;
-    identityEphemeralId?: string | null;
-    identityFederationId?: string | null;
-    protocolVersion?: string | null;
-    trustTier?: string | null;
-    inviteId?: string | null;
   }) {
     // Hash auth token before storage
     const hashedData = {
@@ -476,97 +454,6 @@ export class DrizzleAgentRepository {
       ...registration,
       authToken: data.authToken,
     };
-  }
-
-  /**
-   * Create an agent invitation code entry
-   */
-  async createInvitationCode(data: {
-    codeHash: string;
-    status: string;
-    maxUses: number;
-    expiresAt?: Date | null;
-    tenantId?: string | null;
-    organizationId?: string | null;
-    agencyId?: string | null;
-    createdByUserId?: string | null;
-    metadata?: Record<string, any>;
-  }) {
-    const [invite] = await db
-      .insert(agentInvitationCodes)
-      .values({
-        codeHash: data.codeHash,
-        status: data.status,
-        maxUses: data.maxUses,
-        expiresAt: data.expiresAt || null,
-        tenantId: data.tenantId || null,
-        organizationId: data.organizationId || null,
-        agencyId: data.agencyId || null,
-        createdByUserId: data.createdByUserId || null,
-        metadata: data.metadata || {},
-      })
-      .returning();
-
-    return invite;
-  }
-
-  /**
-   * Find invitation code by hash
-   */
-  async findInvitationCodeByHash(codeHash: string) {
-    const [invite] = await db
-      .select()
-      .from(agentInvitationCodes)
-      .where(eq(agentInvitationCodes.codeHash, codeHash));
-    return invite ?? null;
-  }
-
-  /**
-   * Update invitation usage after redemption
-   */
-  async redeemInvitationCode(data: {
-    id: string;
-    agentId?: string | null;
-    registrationId?: string | null;
-    incrementBy?: number;
-    markExhausted?: boolean;
-  }) {
-    const incrementBy = data.incrementBy ?? 1;
-    const updates: any = {
-      usedCount: sql`${agentInvitationCodes.usedCount} + ${incrementBy}`,
-      lastUsedAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    if (data.agentId) {
-      updates.lastUsedByAgentId = data.agentId;
-    }
-    if (data.registrationId) {
-      updates.lastUsedByRegistrationId = data.registrationId;
-    }
-    if (data.markExhausted) {
-      updates.status = 'EXHAUSTED';
-    }
-
-    const [invite] = await db
-      .update(agentInvitationCodes)
-      .set(updates)
-      .where(eq(agentInvitationCodes.id, data.id))
-      .returning();
-
-    return invite ?? null;
-  }
-
-  /**
-   * Update invitation status explicitly
-   */
-  async updateInvitationStatus(id: string, status: string) {
-    const [invite] = await db
-      .update(agentInvitationCodes)
-      .set({ status, updatedAt: new Date() })
-      .where(eq(agentInvitationCodes.id, id))
-      .returning();
-    return invite ?? null;
   }
 
   /**
@@ -715,64 +602,6 @@ export class DrizzleAgentRepository {
       capabilities,
       onboardingEvents,
     };
-  }
-
-  /**
-   * Find registrations by protocol fields for reporting
-   */
-  async findRegistrationsByProtocol(query: {
-    tenantId?: string;
-    organizationId?: string;
-    agencyId?: string;
-    trustTier?: string;
-    inviteId?: string;
-    limit?: number;
-    offset?: number;
-  }) {
-    const conditions = [];
-
-    if (query.tenantId) {
-      conditions.push(eq(agentRegistrations.tenantId, query.tenantId));
-    }
-    if (query.organizationId) {
-      conditions.push(eq(agentRegistrations.organizationId, query.organizationId));
-    }
-    if (query.agencyId) {
-      conditions.push(eq(agentRegistrations.agencyId, query.agencyId));
-    }
-    if (query.trustTier) {
-      conditions.push(eq(agentRegistrations.trustTier, query.trustTier));
-    }
-    if (query.inviteId) {
-      conditions.push(eq(agentRegistrations.inviteId, query.inviteId));
-    }
-
-    let dbQuery = db.select().from(agentRegistrations);
-
-    if (conditions.length > 0) {
-      dbQuery = dbQuery.where(and(...conditions)) as any;
-    }
-
-    if (query.offset !== undefined) {
-      dbQuery = dbQuery.offset(query.offset) as any;
-    }
-
-    if (query.limit !== undefined) {
-      dbQuery = dbQuery.limit(query.limit) as any;
-    }
-
-    return dbQuery;
-  }
-
-  /**
-   * Find registrations missing tenant ID (integrity check)
-   */
-  async findRegistrationsMissingTenant(limit: number = 100) {
-    return db
-      .select()
-      .from(agentRegistrations)
-      .where(isNull(agentRegistrations.tenantId))
-      .limit(limit);
   }
 
   /**

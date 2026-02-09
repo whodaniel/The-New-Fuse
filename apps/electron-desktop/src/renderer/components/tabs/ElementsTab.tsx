@@ -1,39 +1,37 @@
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
 import {
-  Alert,
-  AlertIcon,
-  Badge,
+  VStack,
+  HStack,
   Box,
+  Text,
   Button,
   Card,
   CardBody,
+  Badge,
   Divider,
+  useToast,
+  Alert,
+  AlertIcon,
   Grid,
   GridItem,
-  HStack,
-  Icon,
-  IconButton,
   Progress,
-  Text,
   Textarea,
+  IconButton,
   Tooltip,
-  useToast,
-  VStack,
-} from '@chakra-ui/react';
-import React, { useState } from 'react';
-import { FiEye, FiRefreshCw, FiTarget } from 'react-icons/fi';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../store/store';
+  Icon
+} from '@chakra-ui/react'
+import { FiTarget, FiRefreshCw, FiEye } from 'react-icons/fi'
+import type { RootState } from '../../store/store'
 
 export const ElementsTab: React.FC = () => {
-  const toast = useToast();
-
-  const { mapping, selectedElement } = useSelector((state: RootState) => state.elements);
-  const { tnfRelay } = useSelector((state: RootState) => state.connections);
-
-  const [autoDetecting, setAutoDetecting] = useState(false);
-  const [selectedElementType, setSelectedElementType] = useState<
-    'input' | 'button' | 'output' | null
-  >(null);
+  const toast = useToast()
+  
+  const { mapping, selectedElement } = useSelector((state: RootState) => state.elements)
+  const { tnfRelay } = useSelector((state: RootState) => state.connections)
+  
+  const [autoDetecting, setAutoDetecting] = useState(false)
+  const [selectedElementType, setSelectedElementType] = useState<'input' | 'button' | 'output' | null>(null)
 
   const handleAutoDetect = async () => {
     if (!tnfRelay.connected) {
@@ -43,15 +41,15 @@ export const ElementsTab: React.FC = () => {
         status: 'warning',
         duration: 3000,
         isClosable: true,
-      });
-      return;
+      })
+      return
     }
 
-    setAutoDetecting(true);
+    setAutoDetecting(true)
     try {
       if (window.api) {
         // This would trigger auto-detection in the connected Chrome extension
-        const response = await window.api.chromeSendMessage({ type: 'AUTO_DETECT_ELEMENTS' });
+        const response = await window.api.chromeSendMessage({ type: 'AUTO_DETECT_ELEMENTS' })
         if (response.success) {
           toast({
             title: 'Auto-Detection Started',
@@ -59,7 +57,7 @@ export const ElementsTab: React.FC = () => {
             status: 'info',
             duration: 3000,
             isClosable: true,
-          });
+          })
         }
       }
     } catch {
@@ -69,11 +67,11 @@ export const ElementsTab: React.FC = () => {
         status: 'error',
         duration: 3000,
         isClosable: true,
-      });
+      })
     } finally {
-      setTimeout(() => setAutoDetecting(false), 3000);
+      setTimeout(() => setAutoDetecting(false), 3000)
     }
-  };
+  }
 
   const handleManualSelect = async (elementType: 'input' | 'button' | 'output') => {
     if (!tnfRelay.connected) {
@@ -83,17 +81,17 @@ export const ElementsTab: React.FC = () => {
         status: 'warning',
         duration: 3000,
         isClosable: true,
-      });
-      return;
+      })
+      return
     }
 
-    setSelectedElementType(elementType);
+    setSelectedElementType(elementType)
     try {
       if (window.api) {
-        const response = await window.api.chromeSendMessage({
+        const response = await window.api.chromeSendMessage({ 
           type: 'ENTER_SELECTION_MODE',
-          elementType,
-        });
+          elementType 
+        })
         if (response.success) {
           toast({
             title: 'Selection Mode Active',
@@ -101,7 +99,7 @@ export const ElementsTab: React.FC = () => {
             status: 'info',
             duration: 5000,
             isClosable: true,
-          });
+          })
         }
       }
     } catch {
@@ -111,63 +109,53 @@ export const ElementsTab: React.FC = () => {
         status: 'error',
         duration: 3000,
         isClosable: true,
-      });
-      setSelectedElementType(null);
+      })
+      setSelectedElementType(null)
     }
-  };
+  }
 
   const getElementStatus = (elementType: 'input' | 'button' | 'output') => {
-    if (!mapping) return { detected: false, confidence: 0 };
-
-    const element =
-      mapping[
-        elementType === 'input'
-          ? 'chatInput'
-          : elementType === 'button'
-            ? 'sendButton'
-            : 'chatOutput'
-      ];
-
+    if (!mapping) return { detected: false, confidence: 0 }
+    
+    const element = mapping[elementType === 'input' ? 'chatInput' : 
+                            elementType === 'button' ? 'sendButton' : 'chatOutput']
+    
     return {
       detected: !!element,
-      confidence: element?.confidence || 0,
-    };
-  };
+      confidence: element?.confidence || 0
+    }
+  }
 
   const getElementInfo = (elementType: 'input' | 'button' | 'output') => {
-    if (!mapping) return null;
+    if (!mapping) return null
+    
+    return mapping[elementType === 'input' ? 'chatInput' : 
+                   elementType === 'button' ? 'sendButton' : 'chatOutput']
+  }
 
-    return mapping[
-      elementType === 'input' ? 'chatInput' : elementType === 'button' ? 'sendButton' : 'chatOutput'
-    ];
-  };
-
-  const renderElementCard = (
-    elementType: 'input' | 'button' | 'output',
-    title: string,
-    description: string
-  ) => {
-    const status = getElementStatus(elementType);
-    const elementInfo = getElementInfo(elementType);
-    const isSelecting = selectedElementType === elementType;
+  const renderElementCard = (elementType: 'input' | 'button' | 'output', title: string, description: string) => {
+    const status = getElementStatus(elementType)
+    const elementInfo = getElementInfo(elementType)
+    const isSelecting = selectedElementType === elementType
 
     return (
-      <Card
-        bg="whiteAlpha.100"
-        borderColor={status.detected ? 'green.400' : 'whiteAlpha.200'}
-        borderWidth={status.detected ? '2px' : '1px'}
+      <Card 
+        bg="whiteAlpha.100" 
+        borderColor={status.detected ? "green.400" : "whiteAlpha.200"}
+        borderWidth={status.detected ? "2px" : "1px"}
       >
         <CardBody>
           <VStack spacing={3} align="stretch">
             <HStack justify="space-between">
-              <Text fontSize="md" fontWeight="bold">
-                {title}
-              </Text>
-              <Badge colorScheme={status.detected ? 'green' : 'gray'} variant="solid">
+              <Text fontSize="md" fontWeight="bold">{title}</Text>
+              <Badge 
+                colorScheme={status.detected ? 'green' : 'gray'} 
+                variant="solid"
+              >
                 {status.detected ? 'Detected' : 'Not Detected'}
               </Badge>
             </HStack>
-
+            
             <Text fontSize="sm" color="gray.400">
               {description}
             </Text>
@@ -175,20 +163,19 @@ export const ElementsTab: React.FC = () => {
             {status.detected && (
               <VStack spacing={2} align="stretch">
                 <HStack>
-                  <Text fontSize="xs" color="gray.500">
-                    Confidence:
-                  </Text>
-                  <Progress value={status.confidence} size="sm" colorScheme="green" flex={1} />
-                  <Text fontSize="xs" color="gray.500">
-                    {status.confidence}%
-                  </Text>
+                  <Text fontSize="xs" color="gray.500">Confidence:</Text>
+                  <Progress 
+                    value={status.confidence} 
+                    size="sm" 
+                    colorScheme="green" 
+                    flex={1}
+                  />
+                  <Text fontSize="xs" color="gray.500">{status.confidence}%</Text>
                 </HStack>
-
+                
                 {elementInfo && (
                   <Box bg="whiteAlpha.50" p={2} borderRadius="md">
-                    <Text fontSize="xs" color="gray.400" mb={1}>
-                      Selector:
-                    </Text>
+                    <Text fontSize="xs" color="gray.400" mb={1}>Selector:</Text>
                     <Text fontSize="xs" fontFamily="mono" color="blue.300">
                       {elementInfo.selector}
                     </Text>
@@ -209,7 +196,7 @@ export const ElementsTab: React.FC = () => {
               >
                 Select Manually
               </Button>
-
+              
               {status.detected && (
                 <Tooltip label="View element details">
                   <IconButton
@@ -224,8 +211,8 @@ export const ElementsTab: React.FC = () => {
           </VStack>
         </CardBody>
       </Card>
-    );
-  };
+    )
+  }
 
   return (
     <VStack spacing={6} align="stretch">
@@ -235,8 +222,8 @@ export const ElementsTab: React.FC = () => {
           <AlertIcon />
           <Box>
             <Text fontSize="sm">
-              TNF Relay connection required for element detection. Please connect in the Connections
-              tab first.
+              TNF Relay connection required for element detection. 
+              Please connect in the Connections tab first.
             </Text>
           </Box>
         </Alert>
@@ -248,9 +235,7 @@ export const ElementsTab: React.FC = () => {
           <CardBody>
             <VStack spacing={2} align="stretch">
               <HStack justify="space-between">
-                <Text fontSize="md" fontWeight="bold">
-                  Current Page
-                </Text>
+                <Text fontSize="md" fontWeight="bold">Current Page</Text>
                 <Badge colorScheme="blue" variant="subtle">
                   {mapping.domain}
                 </Badge>
@@ -271,9 +256,7 @@ export const ElementsTab: React.FC = () => {
         <CardBody>
           <VStack spacing={4} align="stretch">
             <HStack justify="space-between">
-              <Text fontSize="lg" fontWeight="bold">
-                Auto Detection
-              </Text>
+              <Text fontSize="lg" fontWeight="bold">Auto Detection</Text>
               <Button
                 onClick={handleAutoDetect}
                 colorScheme="green"
@@ -285,10 +268,9 @@ export const ElementsTab: React.FC = () => {
                 Scan Active Tab
               </Button>
             </HStack>
-
+            
             <Text fontSize="sm" color="gray.400">
-              Automatically detect chat input, send button, and output elements on the active
-              browser tab.
+              Automatically detect chat input, send button, and output elements on the active browser tab.
             </Text>
           </VStack>
         </CardBody>
@@ -315,45 +297,33 @@ export const ElementsTab: React.FC = () => {
           <CardBody>
             <VStack spacing={4} align="stretch">
               <HStack justify="space-between">
-                <Text fontSize="lg" fontWeight="bold">
-                  Selected Element Details
-                </Text>
+                <Text fontSize="lg" fontWeight="bold">Selected Element Details</Text>
                 <Badge colorScheme="blue" variant="solid">
                   {selectedElement.elementType}
                 </Badge>
               </HStack>
-
+              
               <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                 <GridItem>
-                  <Text fontSize="sm" color="gray.400">
-                    Tag:
-                  </Text>
+                  <Text fontSize="sm" color="gray.400">Tag:</Text>
                   <Text fontSize="sm">{selectedElement.tag}</Text>
                 </GridItem>
                 <GridItem>
-                  <Text fontSize="sm" color="gray.400">
-                    Confidence:
-                  </Text>
+                  <Text fontSize="sm" color="gray.400">Confidence:</Text>
                   <Text fontSize="sm">{selectedElement.confidence}%</Text>
                 </GridItem>
                 <GridItem>
-                  <Text fontSize="sm" color="gray.400">
-                    Visible:
-                  </Text>
+                  <Text fontSize="sm" color="gray.400">Visible:</Text>
                   <Text fontSize="sm">{selectedElement.isVisible ? 'Yes' : 'No'}</Text>
                 </GridItem>
                 <GridItem>
-                  <Text fontSize="sm" color="gray.400">
-                    Interactable:
-                  </Text>
+                  <Text fontSize="sm" color="gray.400">Interactable:</Text>
                   <Text fontSize="sm">{selectedElement.isInteractable ? 'Yes' : 'No'}</Text>
                 </GridItem>
               </Grid>
 
               <VStack spacing={2} align="stretch">
-                <Text fontSize="sm" color="gray.400">
-                  CSS Selector:
-                </Text>
+                <Text fontSize="sm" color="gray.400">CSS Selector:</Text>
                 <Textarea
                   value={selectedElement.selector}
                   isReadOnly
@@ -366,9 +336,7 @@ export const ElementsTab: React.FC = () => {
               </VStack>
 
               <VStack spacing={2} align="stretch">
-                <Text fontSize="sm" color="gray.400">
-                  XPath:
-                </Text>
+                <Text fontSize="sm" color="gray.400">XPath:</Text>
                 <Textarea
                   value={selectedElement.xpath}
                   isReadOnly
@@ -384,5 +352,5 @@ export const ElementsTab: React.FC = () => {
         </Card>
       )}
     </VStack>
-  );
-};
+  )
+}

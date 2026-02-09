@@ -3,8 +3,11 @@
  * Handles infrastructure state persistence and management
  */
 
+import {
+  InfrastructureState,
+  InfrastructureStatus
+} from '../types/infrastructure';
 import { InfrastructureFilters } from '../interfaces/IInfrastructureManager';
-import { InfrastructureState, InfrastructureStatus } from '../types/infrastructure';
 
 export interface StateStorage {
   save(state: InfrastructureState): Promise<void>;
@@ -21,8 +24,7 @@ export class StateManager {
   private stateCache: Map<string, InfrastructureState>;
   private lockTimeout: number;
 
-  constructor(storage: StateStorage, lockTimeout: number = 300000) {
-    // 5 minutes default
+  constructor(storage: StateStorage, lockTimeout: number = 300000) { // 5 minutes default
     this.storage = storage;
     this.stateCache = new Map();
     this.lockTimeout = lockTimeout;
@@ -39,10 +41,9 @@ export class StateManager {
 
       // Update cache
       this.stateCache.set(state.id, { ...state });
+
     } catch (error) {
-      throw new Error(
-        `Failed to save state for ${state.id}: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      throw new Error(`Failed to save state for ${state.id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -54,8 +55,7 @@ export class StateManager {
 
         // Verify cache is still valid (not too old)
         const cacheAge = Date.now() - cachedState.updatedAt.getTime();
-        if (cacheAge < 60000) {
-          // 1 minute cache validity
+        if (cacheAge < 60000) { // 1 minute cache validity
           return cachedState;
         }
       }
@@ -67,10 +67,9 @@ export class StateManager {
       }
 
       return state;
+
     } catch (error) {
-      throw new Error(
-        `Failed to get state for ${id}: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      throw new Error(`Failed to get state for ${id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -78,9 +77,7 @@ export class StateManager {
     try {
       return await this.storage.list(filters);
     } catch (error) {
-      throw new Error(
-        `Failed to list states: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      throw new Error(`Failed to list states: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -96,10 +93,9 @@ export class StateManager {
 
       // Remove from cache
       this.stateCache.delete(id);
+
     } catch (error) {
-      throw new Error(
-        `Failed to delete state for ${id}: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      throw new Error(`Failed to delete state for ${id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -125,12 +121,12 @@ export class StateManager {
       setTimeout(async () => {
         try {
           await this.unlockState(id);
-        } catch (error) {}
+        } catch (error) {
+        }
       }, this.lockTimeout);
+
     } catch (_error: any) {
-      throw new Error(
-        `Failed to lock state for ${id}: ${_error instanceof Error ? _error.message : 'Unknown error'}`
-      );
+      throw new Error(`Failed to lock state for ${id}: ${_error instanceof Error ? _error.message : 'Unknown error'}`);
     }
   }
 
@@ -146,10 +142,9 @@ export class StateManager {
         cachedState.metadata.lockedBy = undefined;
         cachedState.metadata.lockedAt = undefined;
       }
+
     } catch (_error: any) {
-      throw new Error(
-        `Failed to unlock state for ${id}: ${_error instanceof Error ? _error.message : 'Unknown error'}`
-      );
+      throw new Error(`Failed to unlock state for ${id}: ${_error instanceof Error ? _error.message : 'Unknown error'}`);
     }
   }
 
@@ -157,9 +152,7 @@ export class StateManager {
     try {
       return await this.storage.isLocked(id);
     } catch (_error) {
-      throw new Error(
-        `Failed to check lock status for ${id}: ${_error instanceof Error ? _error.message : 'Unknown error'}`
-      );
+      throw new Error(`Failed to check lock status for ${id}: ${_error instanceof Error ? _error.message : 'Unknown error'}`);
     }
   }
 
@@ -170,7 +163,7 @@ export class StateManager {
         return {
           valid: false,
           errors: [`State ${id} not found`],
-          warnings: [],
+          warnings: []
         };
       }
 
@@ -214,21 +207,19 @@ export class StateManager {
       return {
         valid: errors.length === 0,
         errors,
-        warnings,
+        warnings
       };
+
     } catch (_error) {
       return {
         valid: false,
-        errors: [
-          `Failed to validate state integrity: ${_error instanceof Error ? _error.message : 'Unknown error'}`,
-        ],
-        warnings: [],
+        errors: [`Failed to validate state integrity: ${_error instanceof Error ? _error.message : 'Unknown error'}`],
+        warnings: []
       };
     }
   }
 
-  async cleanupStaleStates(maxAge: number = 86400000): Promise<CleanupResult> {
-    // 24 hours default
+  async cleanupStaleStates(maxAge: number = 86400000): Promise<CleanupResult> { // 24 hours default
     try {
       const allStates = await this.listStates();
       const staleStates: string[] = [];
@@ -238,31 +229,27 @@ export class StateManager {
         try {
           const age = Date.now() - state.updatedAt.getTime();
 
-          if (
-            age > maxAge &&
-            (state.status === InfrastructureStatus.ERROR ||
-              state.status === InfrastructureStatus.DESTROYED)
-          ) {
+          if (age > maxAge && (
+            state.status === InfrastructureStatus.ERROR ||
+            state.status === InfrastructureStatus.DESTROYED
+          )) {
             await this.deleteState(state.id);
             staleStates.push(state.id);
           }
         } catch (_error) {
-          errors.push(
-            `Failed to cleanup state ${state.id}: ${_error instanceof Error ? _error.message : 'Unknown error'}`
-          );
+          errors.push(`Failed to cleanup state ${state.id}: ${_error instanceof Error ? _error.message : 'Unknown error'}`);
         }
       }
 
       return {
         cleanedStates: staleStates,
-        errors,
+        errors
       };
+
     } catch (_error) {
       return {
         cleanedStates: [],
-        errors: [
-          `Failed to cleanup stale states: ${_error instanceof Error ? _error.message : 'Unknown error'}`,
-        ],
+        errors: [`Failed to cleanup stale states: ${_error instanceof Error ? _error.message : 'Unknown error'}`]
       };
     }
   }
@@ -276,8 +263,8 @@ export class StateManager {
         checksum: '', // Exclude current checksum
         locked: false, // Exclude lock status
         lockedBy: undefined,
-        lockedAt: undefined,
-      },
+        lockedAt: undefined
+      }
     };
 
     // Simple checksum calculation - in production, use a proper hash function
@@ -324,16 +311,16 @@ export class InMemoryStateStorage implements StateStorage {
 
     if (filters) {
       if (filters.environment) {
-        states = states.filter((s) => s.environment === filters.environment);
+        states = states.filter(s => s.environment === filters.environment);
       }
       if (filters.status && filters.status.length > 0) {
-        states = states.filter((s) => filters.status!.includes(s.status));
+        states = states.filter(s => filters.status!.includes(s.status));
       }
       if (filters.createdAfter) {
-        states = states.filter((s) => s.createdAt >= filters.createdAfter!);
+        states = states.filter(s => s.createdAt >= filters.createdAfter!);
       }
       if (filters.createdBefore) {
-        states = states.filter((s) => s.createdAt <= filters.createdBefore!);
+        states = states.filter(s => s.createdAt <= filters.createdBefore!);
       }
       // Note: provider and tags filtering would require loading the template
       // For now, we skip those filters in the in-memory implementation

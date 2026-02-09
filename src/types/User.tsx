@@ -1,6 +1,6 @@
-import { User as DrizzleUser } from "@the-new-fuse/database";
+import { User as PrismaUser } from "@the-new-fuse/database";
 
-export interface User extends DrizzleUser {
+export interface User extends PrismaUser {
   id: string;
   email: string;
   name: string;

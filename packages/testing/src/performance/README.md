@@ -1,7 +1,6 @@
 # Performance Testing Framework
 
-A comprehensive framework for measuring, analyzing, and tracking performance metrics in The New Fuse
-platform.
+A comprehensive framework for measuring, analyzing, and tracking performance metrics in The New Fuse platform.
 
 ## Features
 
@@ -48,36 +47,30 @@ const suite = new PerformanceSuite({
   baselinePath: './performance-baselines',
   reportOptions: {
     format: 'html',
-    includeCharts: true,
-  },
+    includeCharts: true
+  }
 });
 
 // Test a synchronous function
-await suite.test(
-  () => {
-    // Your code here
-  },
-  {
-    name: 'My Performance Test',
-    iterations: 100,
-    warmupIterations: 5,
-  },
-);
+await suite.test(() => {
+  // Your code here
+}, {
+  name: 'My Performance Test',
+  iterations: 100,
+  warmupIterations: 5
+});
 
 // Test an async function
-await suite.test(
-  async () => {
-    await someAsyncOperation();
-  },
-  {
-    name: 'Async Operation Test',
-    iterations: 50,
-    performanceThresholds: {
-      maxDuration: 1000, // 1 second
-      maxMemoryUsage: 1024 * 1024, // 1MB
-    },
-  },
-);
+await suite.test(async () => {
+  await someAsyncOperation();
+}, {
+  name: 'Async Operation Test',
+  iterations: 50,
+  performanceThresholds: {
+    maxDuration: 1000,    // 1 second
+    maxMemoryUsage: 1024 * 1024  // 1MB
+  }
+});
 
 // Generate a report
 const reportPath = await suite.generateReport();
@@ -93,44 +86,41 @@ const suite = new PerformanceSuite({
     format: 'html',
     outputDir: './reports',
     includeCharts: true,
-    includeRawData: true,
+    includeRawData: true
   },
   defaultThresholds: {
     performance: {
       maxDuration: 500,
-      maxMemoryUsage: 512 * 1024,
+      maxMemoryUsage: 512 * 1024
     },
     regression: {
-      maxDurationIncrease: 10, // 10% increase
-      maxMemoryIncrease: 15, // 15% increase
-      minSignificantChange: 5, // 5% minimum change
+      maxDurationIncrease: 10,  // 10% increase
+      maxMemoryIncrease: 15,    // 15% increase
+      minSignificantChange: 5   // 5% minimum change
     },
     leakDetection: {
-      duration: 10000, // 10 seconds
-      measureInterval: 100, // 100ms
+      duration: 10000,         // 10 seconds
+      measureInterval: 100,    // 100ms
       allowedGrowthRate: 1024, // 1KB/s
-      minConfidence: 0.8,
-    },
-  },
+      minConfidence: 0.8
+    }
+  }
 });
 ```
 
 ### Memory Leak Detection
 
 ```typescript
-const result = await suite.test(
-  () => {
-    // Code that might leak memory
-  },
-  {
-    name: 'Memory Leak Test',
-    leakDetectionOptions: {
-      duration: 30000, // Monitor for 30 seconds
-      measureInterval: 100, // Take measurements every 100ms
-      iterations: 1000, // Run the operation 1000 times
-    },
-  },
-);
+const result = await suite.test(() => {
+  // Code that might leak memory
+}, {
+  name: 'Memory Leak Test',
+  leakDetectionOptions: {
+    duration: 30000,      // Monitor for 30 seconds
+    measureInterval: 100, // Take measurements every 100ms
+    iterations: 1000      // Run the operation 1000 times
+  }
+});
 
 if (result.leakDetection?.isLeaking) {
   console.error(`Memory leak detected! Growth rate: ${result.leakDetection.leakRate} bytes/second`);
@@ -147,38 +137,25 @@ async function runPerformanceTests() {
     baselinePath: './performance-baselines',
     reportOptions: {
       format: process.env.CI ? 'markdown' : 'html',
-      outputDir: './performance-reports',
-    },
+      outputDir: './performance-reports'
+    }
   });
 
   try {
     // Run your tests
     const results = await Promise.all([
-      suite.test(
-        () => {
-          /* test 1 */
-        },
-        { name: 'API Response Time' },
-      ),
-      suite.test(
-        () => {
-          /* test 2 */
-        },
-        { name: 'Data Processing' },
-      ),
-      suite.test(
-        () => {
-          /* test 3 */
-        },
-        { name: 'UI Rendering' },
-      ),
+      suite.test(() => { /* test 1 */ }, { name: 'API Response Time' }),
+      suite.test(() => { /* test 2 */ }, { name: 'Data Processing' }),
+      suite.test(() => { /* test 3 */ }, { name: 'UI Rendering' })
     ]);
 
     // Generate report
     const reportPath = await suite.generateReport();
 
     // Check for regressions
-    const hasRegressions = results.some(result => result.regressionAnalysis?.hasRegression);
+    const hasRegressions = results.some(
+      result => result.regressionAnalysis?.hasRegression
+    );
 
     if (hasRegressions) {
       console.error('Performance regressions detected!');
@@ -235,7 +212,7 @@ describe('API Performance', () => {
 
   beforeAll(() => {
     suite = new PerformanceSuite({
-      baselinePath: './performance-baselines/api',
+      baselinePath: './performance-baselines/api'
     });
   });
 
@@ -244,20 +221,17 @@ describe('API Performance', () => {
   });
 
   it('should handle large data sets efficiently', async () => {
-    const result = await suite.test(
-      async () => {
-        const data = generateLargeDataSet();
-        await processData(data);
-      },
-      {
-        name: 'large-data-processing',
-        iterations: 50,
-        performanceThresholds: {
-          maxDuration: 2000,
-          maxMemoryUsage: 100 * 1024 * 1024, // 100MB
-        },
-      },
-    );
+    const result = await suite.test(async () => {
+      const data = generateLargeDataSet();
+      await processData(data);
+    }, {
+      name: 'large-data-processing',
+      iterations: 50,
+      performanceThresholds: {
+        maxDuration: 2000,
+        maxMemoryUsage: 100 * 1024 * 1024 // 100MB
+      }
+    });
 
     expect(result.leakDetection?.isLeaking).toBe(false);
     expect(result.regressionAnalysis?.hasRegression).toBe(false);

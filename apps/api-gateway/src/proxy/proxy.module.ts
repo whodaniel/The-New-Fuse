@@ -3,10 +3,10 @@
  * Routes requests to appropriate backend services
  */
 
-import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { ProxyController } from './proxy.controller';
+import { HttpModule } from '@nestjs/axios';
 import { ProxyService } from './proxy.service';
+import { ProxyController } from './proxy.controller';
 
 @Module({
   imports: [

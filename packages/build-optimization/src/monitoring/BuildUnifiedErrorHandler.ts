@@ -4,13 +4,15 @@
  */
 
 import {
-  BaseError,
   BaseErrorHandler,
   BaseErrorHandlerConfig,
-  ErrorCategory,
+  BaseError,
   ErrorContext,
+  ErrorHandler,
+  RecoveryStrategy,
   ErrorSeverity,
-  Logger,
+  ErrorCategory,
+  Logger
 } from '@the-new-fuse/core-error-handling';
 
 /**
@@ -57,7 +59,7 @@ export interface BuildErrorHandlerConfig {
  */
 export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, BuildErrorContext> {
   private readonly buildConfig: BuildErrorHandlerConfig;
-
+  
   constructor(config?: Partial<BuildErrorHandlerConfig>, logger?: Logger) {
     // Pass only base configuration to parent
     const baseConfig: Partial<BaseErrorHandlerConfig> = {};
@@ -69,7 +71,7 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
       enableDependencyTracking: config?.enableDependencyTracking ?? true,
       buildTimeoutMs: config?.buildTimeoutMs ?? 300000,
       memoryThresholdMB: config?.memoryThresholdMB ?? 2048,
-      maxConcurrentBuilds: config?.maxConcurrentBuilds ?? 4,
+      maxConcurrentBuilds: config?.maxConcurrentBuilds ?? 4
     };
 
     this.initializeDefaultRecoveryStrategies();
@@ -89,11 +91,11 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
         this.logger.debug('Attempting build memory recovery', {
           packageName: error.packageName,
           memoryUsage: error.memoryUsage,
-          memoryLimit: context.memoryLimit,
+          memoryLimit: context.memoryLimit
         });
-
+        
         return this.attemptMemoryRecovery(error, context);
-      },
+      }
     });
 
     // Compilation error retry strategy
@@ -105,11 +107,11 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
       recover: async (error: BuildError, context: BuildErrorContext) => {
         this.logger.debug('Attempting build compilation retry', {
           packageName: error.packageName,
-          compilationTarget: error.compilationTarget,
+          compilationTarget: error.compilationTarget
         });
-
+        
         return this.attemptCompilationRetry(error, context);
-      },
+      }
     });
 
     // Dependency resolution retry strategy
@@ -121,11 +123,11 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
       recover: async (error: BuildError, context: BuildErrorContext) => {
         this.logger.debug('Attempting build dependency retry', {
           packageName: error.packageName,
-          buildStage: error.buildStage,
+          buildStage: error.buildStage
         });
-
+        
         return this.attemptDependencyRetry(error, context);
-      },
+      }
     });
 
     // Build timeout recovery strategy
@@ -137,11 +139,11 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
       recover: async (error: BuildError, context: BuildErrorContext) => {
         this.logger.debug('Attempting build timeout recovery', {
           packageName: error.packageName,
-          buildDuration: error.buildDuration,
+          buildDuration: error.buildDuration
         });
-
+        
         return this.attemptTimeoutRecovery(error, context);
-      },
+      }
     });
   }
 
@@ -152,18 +154,17 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
     // Memory exhaustion error handler
     this.registerErrorHandler(1001, {
       name: 'build-memory-handler',
-      canHandle: (error: BuildError) =>
-        error.category === ErrorCategory.SYSTEM && !!error.memoryUsage,
+      canHandle: (error: BuildError) => error.category === ErrorCategory.SYSTEM && !!error.memoryUsage,
       handle: async (error: BuildError, context: BuildErrorContext) => {
         this.logger.error(`Build memory exhaustion: ${error.message}`, {
           packageName: error.packageName,
           memoryUsage: error.memoryUsage,
-          memoryLimit: context.memoryLimit,
+          memoryLimit: context.memoryLimit
         });
-
+        
         // Emit specific memory error event
         this.emit('memoryError', error, context);
-      },
+      }
     });
 
     // Compilation error handler
@@ -174,12 +175,12 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
         this.logger.error(`Build compilation error: ${error.message}`, {
           packageName: error.packageName,
           compilationTarget: error.compilationTarget,
-          buildStage: error.buildStage,
+          buildStage: error.buildStage
         });
-
+        
         // Emit specific compilation error event
         this.emit('compilationError', error, context);
-      },
+      }
     });
 
     // Dependency error handler
@@ -189,12 +190,12 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
       handle: async (error: BuildError, context: BuildErrorContext) => {
         this.logger.error(`Build dependency error: ${error.message}`, {
           packageName: error.packageName,
-          buildStage: error.buildStage,
+          buildStage: error.buildStage
         });
-
+        
         // Emit specific dependency error event
         this.emit('dependencyError', error, context);
-      },
+      }
     });
 
     // Timeout error handler
@@ -205,12 +206,12 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
         this.logger.error(`Build timeout error: ${error.message}`, {
           packageName: error.packageName,
           buildDuration: error.buildDuration,
-          buildStage: error.buildStage,
+          buildStage: error.buildStage
         });
-
+        
         // Emit specific timeout error event
         this.emit('timeoutError', error, context);
-      },
+      }
     });
 
     // Generic build error handler
@@ -219,10 +220,10 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
       canHandle: () => true,
       handle: async (error: BuildError, context: BuildErrorContext) => {
         this.logger.debug(`Generic build handler processing error: ${error.code}`);
-
+        
         // Default build error handling logic
         this.emit('buildError', error, context);
-      },
+      }
     });
   }
 
@@ -258,7 +259,7 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
       buildDuration: options.buildDuration,
       compilationTarget: options.compilationTarget,
       correlationId: options.correlationId,
-      metadata: options.metadata,
+      metadata: options.metadata
     };
   }
 
@@ -279,7 +280,7 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
         category: ErrorCategory.SYSTEM,
         packageName,
         memoryUsage,
-        retryable: true,
+        retryable: true
       }
     );
 
@@ -287,7 +288,7 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
       component: 'build-system',
       operation: 'compile',
       packageName,
-      ...context,
+      ...context
     };
 
     await this.handleError(buildError, buildContext);
@@ -310,7 +311,7 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
         category: ErrorCategory.BUSINESS,
         packageName,
         compilationTarget,
-        retryable: true,
+        retryable: true
       }
     );
 
@@ -318,7 +319,7 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
       component: 'build-compiler',
       operation: 'compile',
       packageName,
-      ...context,
+      ...context
     };
 
     await this.handleError(buildError, buildContext);
@@ -339,7 +340,7 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
         severity: ErrorSeverity.HIGH,
         category: ErrorCategory.SYSTEM,
         packageName,
-        retryable: true,
+        retryable: true
       }
     );
 
@@ -347,7 +348,7 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
       component: 'build-dependency',
       operation: 'resolve',
       packageName,
-      ...context,
+      ...context
     };
 
     await this.handleError(buildError, buildContext);
@@ -356,17 +357,14 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
   /**
    * Attempt memory recovery
    */
-  private async attemptMemoryRecovery(
-    error: BuildError,
-    context: BuildErrorContext
-  ): Promise<boolean> {
+  private async attemptMemoryRecovery(error: BuildError, context: BuildErrorContext): Promise<boolean> {
     this.logger.info('Attempting memory recovery by reducing concurrency');
-
+    
     // This would integrate with the build system to:
     // 1. Reduce concurrency level
     // 2. Enable memory cleanup
     // 3. Use memory-optimized build strategy
-
+    
     // For now, return true to simulate successful recovery
     // In real implementation, this would call the build orchestrator
     return true;
@@ -375,51 +373,42 @@ export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, Build
   /**
    * Attempt compilation retry
    */
-  private async attemptCompilationRetry(
-    error: BuildError,
-    context: BuildErrorContext
-  ): Promise<boolean> {
+  private async attemptCompilationRetry(error: BuildError, context: BuildErrorContext): Promise<boolean> {
     this.logger.info('Attempting compilation retry with different settings');
-
+    
     // This would integrate with the TypeScript compiler to:
     // 1. Clear compilation cache
     // 2. Use incremental compilation
     // 3. Adjust compiler options
-
+    
     return false; // Placeholder - would depend on actual compilation retry logic
   }
 
   /**
    * Attempt dependency retry
    */
-  private async attemptDependencyRetry(
-    error: BuildError,
-    context: BuildErrorContext
-  ): Promise<boolean> {
+  private async attemptDependencyRetry(error: BuildError, context: BuildErrorContext): Promise<boolean> {
     this.logger.info('Attempting dependency resolution retry');
-
+    
     // This would integrate with the package manager to:
     // 1. Clear dependency cache
     // 2. Retry package resolution
     // 3. Use alternative dependency sources
-
+    
     return false; // Placeholder - would depend on actual dependency retry logic
   }
 
   /**
    * Attempt timeout recovery
    */
-  private async attemptTimeoutRecovery(
-    error: BuildError,
-    context: BuildErrorContext
-  ): Promise<boolean> {
+  private async attemptTimeoutRecovery(error: BuildError, context: BuildErrorContext): Promise<boolean> {
     this.logger.info('Attempting timeout recovery by adjusting build strategy');
-
+    
     // This would integrate with the build orchestrator to:
     // 1. Switch to sequential builds
     // 2. Increase timeout limits
     // 3. Use staged build approach
-
+    
     return true; // Placeholder - would depend on actual timeout recovery logic
   }
 }

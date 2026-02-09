@@ -2,22 +2,16 @@
 
 ## Overview
 
-This document consolidates essential protocols and procedures for AI agents
-working within The New Fuse framework, including handoff procedures, startup
-checklists, and session continuity protocols.
+This document consolidates essential protocols and procedures for AI agents working within The New Fuse framework, including handoff procedures, startup checklists, and session continuity protocols.
 
 ## Master Orchestrator Handoff Protocol
 
 ### Core Handoff Principles
 
-1. **Context Preservation**: Maintain complete understanding of project state,
-   current objectives, and technical constraints
-2. **Status Verification**: Confirm all systems are operational and identify any
-   blocking issues
-3. **Priority Assessment**: Understand immediate tasks and long-term project
-   goals
-4. **Framework Adherence**: Follow established patterns and architectural
-   decisions
+1. **Context Preservation**: Maintain complete understanding of project state, current objectives, and technical constraints
+2. **Status Verification**: Confirm all systems are operational and identify any blocking issues
+3. **Priority Assessment**: Understand immediate tasks and long-term project goals
+4. **Framework Adherence**: Follow established patterns and architectural decisions
 
 ### Handoff Checklist
 
@@ -97,31 +91,26 @@ When transferring between AI agents or starting a new session, provide:
 ## Session Handoff - [Date/Time]
 
 ### Completed This Session
-
 - [List completed tasks]
 - [Note any architectural improvements]
 - [Document any new patterns established]
 
 ### Current Status
-
 - Build Status: [Working/Broken/Partial]
 - Active Development: [Current focus area]
 - Blocking Issues: [Any impediments]
 
 ### Next Priority Actions
-
 1. [Immediate next task]
 2. [Secondary priorities]
 3. [Long-term objectives]
 
 ### Technical Notes
-
 - [Recent architectural decisions]
 - [Patterns being followed]
 - [Any temporary solutions that need cleanup]
 
 ### Agent Recommendations
-
 - [Suggestions for next agent]
 - [Areas requiring specific attention]
 - [Preferred approaches for current objectives]
@@ -140,7 +129,7 @@ When transferring between AI agents or starting a new session, provide:
 
 1. **Separation of Concerns**: Maintain clear boundaries between packages
 2. **API Design**: Follow RESTful principles and OpenAPI specifications
-3. **Database**: Use proper ORM patterns with Drizzle
+3. **Database**: Use proper ORM patterns with Prisma
 4. **State Management**: Follow established patterns for frontend state
 
 ### Communication Protocols
@@ -214,7 +203,7 @@ When transferring between AI agents or starting a new session, provide:
 
 - **MCP Servers**: Model Context Protocol for AI coordination
 - **API Gateways**: RESTful service interfaces
-- **Database Layer**: Drizzle ORM with PostgreSQL
+- **Database Layer**: Prisma ORM with PostgreSQL
 - **Frontend State**: React with proper state management
 - **Build System**: Bun-based monorepo with TypeScript
 
@@ -225,5 +214,4 @@ When transferring between AI agents or starting a new session, provide:
 - **Monitoring**: Health checks and performance monitoring
 - **Documentation**: Markdown-based with automated generation
 
-This framework ensures continuity, quality, and effective collaboration between
-AI agents working on The New Fuse project.
+This framework ensures continuity, quality, and effective collaboration between AI agents working on The New Fuse project.

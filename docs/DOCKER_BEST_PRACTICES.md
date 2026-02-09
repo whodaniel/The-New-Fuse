@@ -1,8 +1,6 @@
 # Docker Best Practices for The New Fuse
 
-This guide documents the best practices implemented in our Docker configuration
-and provides guidelines for maintaining and improving our containerization
-strategy.
+This guide documents the best practices implemented in our Docker configuration and provides guidelines for maintaining and improving our containerization strategy.
 
 ## Table of Contents
 
@@ -19,8 +17,7 @@ strategy.
 
 ### 1. Use BuildKit
 
-**Why**: BuildKit provides better caching, parallelization, and modern features
-like cache mounts.
+**Why**: BuildKit provides better caching, parallelization, and modern features like cache mounts.
 
 ```bash
 # Enable BuildKit
@@ -35,15 +32,13 @@ export DOCKER_BUILDKIT=1
 ```
 
 **In Dockerfile**:
-
 ```dockerfile
 # syntax=docker/dockerfile:1.4
 ```
 
 ### 2. Use Alpine Images
 
-**Why**: Alpine Linux is significantly smaller than Debian/Ubuntu, reducing
-image size by 50-70%.
+**Why**: Alpine Linux is significantly smaller than Debian/Ubuntu, reducing image size by 50-70%.
 
 ```dockerfile
 # ✅ Good
@@ -54,15 +49,13 @@ FROM node:22
 ```
 
 **Trade-offs**:
-
 - Alpine uses musl libc instead of glibc (99% compatible)
 - Some native modules may need build dependencies
 - Smaller attack surface
 
 ### 3. Multi-Stage Builds
 
-**Why**: Separates build-time dependencies from runtime, dramatically reducing
-final image size.
+**Why**: Separates build-time dependencies from runtime, dramatically reducing final image size.
 
 ```dockerfile
 # Build stage
@@ -78,7 +71,6 @@ CMD ["node", "dist/main.js"]
 ```
 
 **Benefits**:
-
 - Final image doesn't include build tools
 - Cleaner separation of concerns
 - Better layer caching
@@ -118,15 +110,13 @@ COPY package.json ./
 ```
 
 **Benefits**:
-
 - Better parallelization
 - Improved cache reuse
 - Independent layer invalidation
 
 ### 3. Cache Mounts
 
-**Why**: Persist caches between builds, dramatically speeding up dependency
-installation.
+**Why**: Persist caches between builds, dramatically speeding up dependency installation.
 
 ```dockerfile
 # ✅ Cache pnpm store
@@ -165,8 +155,7 @@ RUN rm -rf /var/cache/apk/*
 
 ### 5. Use .dockerignore
 
-**Why**: Reduces build context size, speeding up builds and reducing memory
-usage.
+**Why**: Reduces build context size, speeding up builds and reducing memory usage.
 
 ```bash
 # .dockerignore
@@ -179,7 +168,6 @@ coverage
 ```
 
 **Impact**:
-
 - Without: ~2.5GB context
 - With: ~50-100MB context
 - 25x faster context transfer
@@ -359,7 +347,6 @@ docker run --read-only \
 ```
 
 **Docker Compose**:
-
 ```yaml
 services:
   api:
@@ -406,7 +393,6 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 ```
 
 **Components**:
-
 - `interval`: How often to check
 - `timeout`: Max time for check
 - `start-period`: Grace period on startup
@@ -424,7 +410,6 @@ CMD ["node", "server.js"]
 ```
 
 **In Application Code**:
-
 ```javascript
 // Handle SIGTERM gracefully
 process.on('SIGTERM', async () => {
@@ -447,15 +432,14 @@ CMD ["node", "server.js"]
 ```
 
 **Docker Compose**:
-
 ```yaml
 services:
   api:
     logging:
-      driver: 'json-file'
+      driver: "json-file"
       options:
-        max-size: '10m'
-        max-file: '3'
+        max-size: "10m"
+        max-file: "3"
 ```
 
 ### 4. Resource Limits
@@ -470,7 +454,6 @@ docker run -d \
 ```
 
 **Docker Compose**:
-
 ```yaml
 services:
   api:

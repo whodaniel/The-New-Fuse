@@ -4,15 +4,14 @@ import { getFirestore } from 'firebase/firestore';
 import { GoogleAuthProvider } from 'firebase/auth';
 import { signInWithPopup } from 'firebase/auth';
 
-// Fallback Firebase configuration for development
-
+// Firebase configuration sourced from environment variables
 const firebaseConfig = {
-  apiKey: 'AIzaSyC4h4qMlMj0kSrvIlwdooJ9uiZn0XqoA8o',
-  authDomain: 'the-new-fuse-2025.firebaseapp.com',
-  projectId: 'the-new-fuse-2025',
-  storageBucket: 'the-new-fuse-2025.firebasestorage.app',
-  messagingSenderId: '241337102384',
-  appId: '1:241337102384:web:232e153c82083f9e00fdf5'
+  apiKey: '',
+  authDomain: '',
+  projectId: '',
+  storageBucket: '',
+  messagingSenderId: '',
+  appId: ''
 };
 
 // Try to override with environment variables if available

@@ -1,11 +1,11 @@
 /**
  * MCP Service Mesh Integration Interface
- *
+ * 
  * This interface defines the contract for integrating MCP services with service mesh
  * infrastructure for service discovery, load balancing, health monitoring, and scaling.
  */
 
-import { MCPServiceInfo, ServiceHealth } from '../types/broker';
+import { MCPServiceInfo, ServiceHealth, RoutingMetrics } from '../types/broker';
 
 /**
  * Service mesh registration information

@@ -19,8 +19,8 @@ export class CustomAgentService {
       parameters: {
         agentId,
         customLogic: config.customLogic,
-        parameters: config.parameters,
-      },
+        parameters: config.parameters
+      }
     };
 
     const result = await this.massBlocksService.executeBlock(agentId, input, customConfig);
@@ -30,8 +30,8 @@ export class CustomAgentService {
       executionMetrics: {
         agentId,
         customLogic: config.customLogic,
-        timestamp: new Date().toISOString(),
-      },
+        timestamp: new Date().toISOString()
+      }
     };
   }
 }

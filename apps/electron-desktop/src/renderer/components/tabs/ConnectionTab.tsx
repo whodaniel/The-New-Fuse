@@ -1,55 +1,55 @@
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Badge,
-  Box,
+  VStack,
+  HStack,
+  Text,
   Button,
-  Card,
-  CardBody,
-  Divider,
+  Input,
   FormControl,
   FormLabel,
-  HStack,
-  Input,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
+  Card,
+  CardBody,
+  Badge,
+  Divider,
+  useToast,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  Switch,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  Switch,
-  Text,
-  useToast,
-  VStack,
-} from '@chakra-ui/react';
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../store/store';
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  Box
+} from '@chakra-ui/react'
+import type { RootState } from '../../store/store'
 
 export const ConnectionTab: React.FC = () => {
-  const toast = useToast();
-
-  const { tnfRelay, mcp, systemStatus } = useSelector((state: RootState) => state.connections);
-
+  const toast = useToast()
+  
+  const { tnfRelay, mcp, systemStatus } = useSelector((state: RootState) => state.connections)
+  
   // Local state for configuration
   const [tnfConfig, setTnfConfig] = useState({
     url: 'ws://localhost:3001',
     port: 3001,
     autoReconnect: true,
-    maxReconnectAttempts: 5,
-  });
-
+    maxReconnectAttempts: 5
+  })
+  
   const [mcpConfig, setMcpConfig] = useState({
     host: 'localhost',
     port: 3000,
-    protocol: 'ws' as 'http' | 'ws',
-  });
+    protocol: 'ws' as 'http' | 'ws'
+  })
 
   const handleTNFConnect = async () => {
     try {
       if (window.api) {
-        const response = await window.api.tnfConnect(tnfConfig);
+        const response = await window.api.tnfConnect(tnfConfig)
         if (response.success) {
           toast({
             title: 'TNF Relay Connected',
@@ -57,7 +57,7 @@ export const ConnectionTab: React.FC = () => {
             status: 'success',
             duration: 3000,
             isClosable: true,
-          });
+          })
         } else {
           toast({
             title: 'Connection Failed',
@@ -65,7 +65,7 @@ export const ConnectionTab: React.FC = () => {
             status: 'error',
             duration: 5000,
             isClosable: true,
-          });
+          })
         }
       }
     } catch {
@@ -75,14 +75,14 @@ export const ConnectionTab: React.FC = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
-      });
+      })
     }
-  };
+  }
 
   const handleTNFDisconnect = async () => {
     try {
       if (window.api) {
-        const response = await window.api.tnfDisconnect();
+        const response = await window.api.tnfDisconnect()
         if (response.success) {
           toast({
             title: 'TNF Relay Disconnected',
@@ -90,7 +90,7 @@ export const ConnectionTab: React.FC = () => {
             status: 'info',
             duration: 3000,
             isClosable: true,
-          });
+          })
         }
       }
     } catch {
@@ -100,14 +100,14 @@ export const ConnectionTab: React.FC = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
-      });
+      })
     }
-  };
+  }
 
   const handleMCPConnect = async () => {
     try {
       if (window.api) {
-        const response = await window.api.mcpConnect(mcpConfig);
+        const response = await window.api.mcpConnect(mcpConfig)
         if (response.success) {
           toast({
             title: 'MCP Connected',
@@ -115,7 +115,7 @@ export const ConnectionTab: React.FC = () => {
             status: 'success',
             duration: 3000,
             isClosable: true,
-          });
+          })
         } else {
           toast({
             title: 'MCP Connection Failed',
@@ -123,7 +123,7 @@ export const ConnectionTab: React.FC = () => {
             status: 'error',
             duration: 5000,
             isClosable: true,
-          });
+          })
         }
       }
     } catch {
@@ -133,14 +133,14 @@ export const ConnectionTab: React.FC = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
-      });
+      })
     }
-  };
+  }
 
   const handleMCPDisconnect = async () => {
     try {
       if (window.api) {
-        const response = await window.api.mcpDisconnect();
+        const response = await window.api.mcpDisconnect()
         if (response.success) {
           toast({
             title: 'MCP Disconnected',
@@ -148,7 +148,7 @@ export const ConnectionTab: React.FC = () => {
             status: 'info',
             duration: 3000,
             isClosable: true,
-          });
+          })
         }
       }
     } catch {
@@ -158,12 +158,12 @@ export const ConnectionTab: React.FC = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
-      });
+      })
     }
-  };
+  }
 
-  const getStatusColor = (connected: boolean) => (connected ? 'green' : 'red');
-  const getStatusText = (connected: boolean) => (connected ? 'Connected' : 'Disconnected');
+  const getStatusColor = (connected: boolean) => connected ? 'green' : 'red'
+  const getStatusText = (connected: boolean) => connected ? 'Connected' : 'Disconnected'
 
   return (
     <VStack spacing={6} align="stretch">
@@ -185,14 +185,12 @@ export const ConnectionTab: React.FC = () => {
         <CardBody>
           <VStack spacing={4} align="stretch">
             <HStack justify="space-between">
-              <Text fontSize="lg" fontWeight="bold">
-                TNF Relay
-              </Text>
+              <Text fontSize="lg" fontWeight="bold">TNF Relay</Text>
               <Badge colorScheme={getStatusColor(tnfRelay.connected)} variant="solid">
                 {getStatusText(tnfRelay.connected)}
               </Badge>
             </HStack>
-
+            
             <Text fontSize="sm" color="gray.400">
               Connect to the TNF Relay system for AI-powered browser automation
             </Text>
@@ -202,19 +200,17 @@ export const ConnectionTab: React.FC = () => {
                 <FormLabel fontSize="sm">WebSocket URL</FormLabel>
                 <Input
                   value={tnfConfig.url}
-                  onChange={(e) => setTnfConfig((prev) => ({ ...prev, url: e.target.value }))}
+                  onChange={(e) => setTnfConfig(prev => ({ ...prev, url: e.target.value }))}
                   placeholder="ws://localhost:3001"
                   size="sm"
                 />
               </FormControl>
-
+              
               <FormControl flex={1}>
                 <FormLabel fontSize="sm">Port</FormLabel>
                 <NumberInput
                   value={tnfConfig.port}
-                  onChange={(_, value) =>
-                    setTnfConfig((prev) => ({ ...prev, port: value || 3001 }))
-                  }
+                  onChange={(_, value) => setTnfConfig(prev => ({ ...prev, port: value || 3001 }))}
                   min={1000}
                   max={65535}
                   size="sm"
@@ -233,9 +229,7 @@ export const ConnectionTab: React.FC = () => {
                 <HStack>
                   <Switch
                     isChecked={tnfConfig.autoReconnect}
-                    onChange={(e) =>
-                      setTnfConfig((prev) => ({ ...prev, autoReconnect: e.target.checked }))
-                    }
+                    onChange={(e) => setTnfConfig(prev => ({ ...prev, autoReconnect: e.target.checked }))}
                     size="sm"
                   />
                   <Text fontSize="sm">Auto-reconnect</Text>
@@ -270,14 +264,12 @@ export const ConnectionTab: React.FC = () => {
         <CardBody>
           <VStack spacing={4} align="stretch">
             <HStack justify="space-between">
-              <Text fontSize="lg" fontWeight="bold">
-                Model Context Protocol (MCP)
-              </Text>
+              <Text fontSize="lg" fontWeight="bold">Model Context Protocol (MCP)</Text>
               <Badge colorScheme={getStatusColor(mcp.connected)} variant="solid">
                 {getStatusText(mcp.connected)}
               </Badge>
             </HStack>
-
+            
             <Text fontSize="sm" color="gray.400">
               Connect to MCP servers for enhanced AI capabilities and tool integration
             </Text>
@@ -287,19 +279,17 @@ export const ConnectionTab: React.FC = () => {
                 <FormLabel fontSize="sm">Host</FormLabel>
                 <Input
                   value={mcpConfig.host}
-                  onChange={(e) => setMcpConfig((prev) => ({ ...prev, host: e.target.value }))}
+                  onChange={(e) => setMcpConfig(prev => ({ ...prev, host: e.target.value }))}
                   placeholder="localhost"
                   size="sm"
                 />
               </FormControl>
-
+              
               <FormControl flex={1}>
                 <FormLabel fontSize="sm">Port</FormLabel>
                 <NumberInput
                   value={mcpConfig.port}
-                  onChange={(_, value) =>
-                    setMcpConfig((prev) => ({ ...prev, port: value || 3000 }))
-                  }
+                  onChange={(_, value) => setMcpConfig(prev => ({ ...prev, port: value || 3000 }))}
                   min={1000}
                   max={65535}
                   size="sm"
@@ -337,14 +327,12 @@ export const ConnectionTab: React.FC = () => {
         <CardBody>
           <VStack spacing={4} align="stretch">
             <HStack justify="space-between">
-              <Text fontSize="lg" fontWeight="bold">
-                Native Host
-              </Text>
+              <Text fontSize="lg" fontWeight="bold">Native Host</Text>
               <Badge colorScheme={getStatusColor(systemStatus.nativeHost)} variant="solid">
                 {getStatusText(systemStatus.nativeHost)}
               </Badge>
             </HStack>
-
+            
             <Text fontSize="sm" color="gray.400">
               Python native host for system-level automation and file operations
             </Text>
@@ -353,8 +341,8 @@ export const ConnectionTab: React.FC = () => {
               <Alert status="info" size="sm" borderRadius="md">
                 <AlertIcon />
                 <Text fontSize="sm">
-                  Native host provides system-level automation capabilities. Ensure Python 3 is
-                  installed and the host script is available.
+                  Native host provides system-level automation capabilities. 
+                  Ensure Python 3 is installed and the host script is available.
                 </Text>
               </Alert>
             )}
@@ -362,5 +350,5 @@ export const ConnectionTab: React.FC = () => {
         </CardBody>
       </Card>
     </VStack>
-  );
-};
+  )
+}

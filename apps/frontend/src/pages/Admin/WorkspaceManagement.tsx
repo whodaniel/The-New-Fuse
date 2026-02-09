@@ -1,19 +1,26 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, Lock, Plus, Search, Unlock, Users } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { 
+  Search, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Users, 
+  Settings, 
+  Activity, 
+  Calendar,
+  MoreHorizontal,
+  Eye,
+  Lock,
+  Unlock
+} from 'lucide-react';
 
 interface Workspace {
   id: string;
@@ -67,7 +74,7 @@ const WorkspaceManagement: React.FC = () => {
             owner: {
               id: '1',
               name: 'John Doe',
-              email: 'john@acme.com',
+              email: 'john@acme.com'
             },
             members: 25,
             status: 'active',
@@ -76,10 +83,10 @@ const WorkspaceManagement: React.FC = () => {
             lastActivity: '2024-01-20T14:30:00Z',
             storage: {
               used: 2.5,
-              limit: 10,
+              limit: 10
             },
             agents: 12,
-            workflows: 8,
+            workflows: 8
           },
           {
             id: '2',
@@ -88,7 +95,7 @@ const WorkspaceManagement: React.FC = () => {
             owner: {
               id: '2',
               name: 'Jane Smith',
-              email: 'jane@startupxyz.com',
+              email: 'jane@startupxyz.com'
             },
             members: 8,
             status: 'active',
@@ -97,10 +104,10 @@ const WorkspaceManagement: React.FC = () => {
             lastActivity: '2024-01-20T16:45:00Z',
             storage: {
               used: 1.2,
-              limit: 5,
+              limit: 5
             },
             agents: 5,
-            workflows: 3,
+            workflows: 3
           },
           {
             id: '3',
@@ -109,7 +116,7 @@ const WorkspaceManagement: React.FC = () => {
             owner: {
               id: '3',
               name: 'Mike Johnson',
-              email: 'mike@freelancer.com',
+              email: 'mike@freelancer.com'
             },
             members: 1,
             status: 'inactive',
@@ -118,11 +125,11 @@ const WorkspaceManagement: React.FC = () => {
             lastActivity: '2024-01-18T10:15:00Z',
             storage: {
               used: 0.3,
-              limit: 1,
+              limit: 1
             },
             agents: 2,
-            workflows: 1,
-          },
+            workflows: 1
+          }
         ]);
       }
     } catch (error) {
@@ -132,14 +139,13 @@ const WorkspaceManagement: React.FC = () => {
     }
   };
 
-  const filteredWorkspaces = workspaces.filter((workspace) => {
-    const matchesSearch =
-      workspace.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      workspace.owner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      workspace.owner.email.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredWorkspaces = workspaces.filter(workspace => {
+    const matchesSearch = workspace.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         workspace.owner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         workspace.owner.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || workspace.status === statusFilter;
     const matchesPlan = planFilter === 'all' || workspace.plan === planFilter;
-
+    
     return matchesSearch && matchesStatus && matchesPlan;
   });
 
@@ -147,7 +153,7 @@ const WorkspaceManagement: React.FC = () => {
     const variants = {
       active: 'default',
       inactive: 'secondary',
-      suspended: 'destructive',
+      suspended: 'destructive'
     };
     return <Badge variant={variants[status as keyof typeof variants]}>{status}</Badge>;
   };
@@ -156,7 +162,7 @@ const WorkspaceManagement: React.FC = () => {
     const variants = {
       free: 'outline',
       pro: 'default',
-      enterprise: 'secondary',
+      enterprise: 'secondary'
     };
     return <Badge variant={variants[plan as keyof typeof variants]}>{plan}</Badge>;
   };
@@ -165,7 +171,7 @@ const WorkspaceManagement: React.FC = () => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric',
+      day: 'numeric'
     });
   };
 
@@ -180,7 +186,7 @@ const WorkspaceManagement: React.FC = () => {
   const suspendWorkspace = async (workspaceId: string) => {
     try {
       const response = await fetch(`/api/admin/workspaces/${workspaceId}/suspend`, {
-        method: 'POST',
+        method: 'POST'
       });
       if (response.ok) {
         fetchWorkspaces();
@@ -193,7 +199,7 @@ const WorkspaceManagement: React.FC = () => {
   const activateWorkspace = async (workspaceId: string) => {
     try {
       const response = await fetch(`/api/admin/workspaces/${workspaceId}/activate`, {
-        method: 'POST',
+        method: 'POST'
       });
       if (response.ok) {
         fetchWorkspaces();
@@ -259,108 +265,106 @@ const WorkspaceManagement: React.FC = () => {
 
       {/* Workspace Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {loading
-          ? Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i} className="animate-pulse">
-                <CardContent className="p-6">
-                  <div className="h-4 bg-gray-200 rounded mb-4"></div>
-                  <div className="h-3 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded mb-4"></div>
-                  <div className="flex justify-between">
-                    <div className="h-6 bg-gray-200 rounded w-16"></div>
-                    <div className="h-6 bg-gray-200 rounded w-12"></div>
+        {loading ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardContent className="p-6">
+                <div className="h-4 bg-gray-200 rounded mb-4"></div>
+                <div className="h-3 bg-gray-200 rounded mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded mb-4"></div>
+                <div className="flex justify-between">
+                  <div className="h-6 bg-gray-200 rounded w-16"></div>
+                  <div className="h-6 bg-gray-200 rounded w-12"></div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          filteredWorkspaces.map((workspace) => (
+            <Card key={workspace.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="text-lg">{workspace.name}</CardTitle>
+                    <p className="text-sm text-gray-600 mt-1">{workspace.description}</p>
                   </div>
-                </CardContent>
-              </Card>
-            ))
-          : filteredWorkspaces.map((workspace) => (
-              <Card key={workspace.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{workspace.name}</CardTitle>
-                      <p className="text-sm text-gray-600 mt-1">{workspace.description}</p>
-                    </div>
-                    <div className="flex gap-1">
-                      {getStatusBadge(workspace.status)}
-                      {getPlanBadge(workspace.plan)}
-                    </div>
+                  <div className="flex gap-1">
+                    {getStatusBadge(workspace.status)}
+                    {getPlanBadge(workspace.plan)}
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Users className="w-4 h-4" />
-                    <span>Owner: {workspace.owner.name}</span>
-                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Users className="w-4 h-4" />
+                  <span>Owner: {workspace.owner.name}</span>
+                </div>
 
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">Members:</span>
-                      <span className="ml-1 font-medium">{workspace.members}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Agents:</span>
-                      <span className="ml-1 font-medium">{workspace.agents}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Workflows:</span>
-                      <span className="ml-1 font-medium">{workspace.workflows}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Created:</span>
-                      <span className="ml-1 font-medium">{formatDate(workspace.createdAt)}</span>
-                    </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-600">Members:</span>
+                    <span className="ml-1 font-medium">{workspace.members}</span>
                   </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Storage:</span>
-                      <span className="font-medium">
-                        {formatStorage(workspace.storage.used, workspace.storage.limit)}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-blue-600 h-2 rounded-full"
-                        style={{
-                          width: `${Math.min(getStoragePercentage(workspace.storage.used, workspace.storage.limit), 100)}%`,
-                        }}
-                      ></div>
-                    </div>
+                  <div>
+                    <span className="text-gray-600">Agents:</span>
+                    <span className="ml-1 font-medium">{workspace.agents}</span>
                   </div>
+                  <div>
+                    <span className="text-gray-600">Workflows:</span>
+                    <span className="ml-1 font-medium">{workspace.workflows}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Created:</span>
+                    <span className="ml-1 font-medium">{formatDate(workspace.createdAt)}</span>
+                  </div>
+                </div>
 
-                  <div className="flex gap-2 pt-2">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Storage:</span>
+                    <span className="font-medium">{formatStorage(workspace.storage.used, workspace.storage.limit)}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full"
+                      style={{ width: `${Math.min(getStoragePercentage(workspace.storage.used, workspace.storage.limit), 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedWorkspace(workspace)}
+                  >
+                    <Eye className="w-4 h-4 mr-1" />
+                    View
+                  </Button>
+                  {workspace.status === 'active' ? (
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setSelectedWorkspace(workspace)}
+                      onClick={() => suspendWorkspace(workspace.id)}
                     >
-                      <Eye className="w-4 h-4 mr-1" />
-                      View
+                      <Lock className="w-4 h-4 mr-1" />
+                      Suspend
                     </Button>
-                    {workspace.status === 'active' ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => suspendWorkspace(workspace.id)}
-                      >
-                        <Lock className="w-4 h-4 mr-1" />
-                        Suspend
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => activateWorkspace(workspace.id)}
-                      >
-                        <Unlock className="w-4 h-4 mr-1" />
-                        Activate
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => activateWorkspace(workspace.id)}
+                    >
+                      <Unlock className="w-4 h-4 mr-1" />
+                      Activate
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
 
       {/* Workspace Detail Dialog */}
@@ -374,7 +378,7 @@ const WorkspaceManagement: React.FC = () => {
                 {getPlanBadge(selectedWorkspace.plan)}
               </DialogTitle>
             </DialogHeader>
-
+            
             <Tabs defaultValue="overview" className="mt-4">
               <TabsList>
                 <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -396,9 +400,7 @@ const WorkspaceManagement: React.FC = () => {
                       </div>
                       <div>
                         <Label>Owner</Label>
-                        <p className="text-sm">
-                          {selectedWorkspace.owner.name} ({selectedWorkspace.owner.email})
-                        </p>
+                        <p className="text-sm">{selectedWorkspace.owner.name} ({selectedWorkspace.owner.email})</p>
                       </div>
                       <div>
                         <Label>Created</Label>
@@ -431,19 +433,12 @@ const WorkspaceManagement: React.FC = () => {
                       <div>
                         <div className="flex justify-between mb-1">
                           <span>Storage:</span>
-                          <span className="font-medium">
-                            {formatStorage(
-                              selectedWorkspace.storage.used,
-                              selectedWorkspace.storage.limit
-                            )}
-                          </span>
+                          <span className="font-medium">{formatStorage(selectedWorkspace.storage.used, selectedWorkspace.storage.limit)}</span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
                             className="bg-blue-600 h-2 rounded-full"
-                            style={{
-                              width: `${Math.min(getStoragePercentage(selectedWorkspace.storage.used, selectedWorkspace.storage.limit), 100)}%`,
-                            }}
+                            style={{ width: `${Math.min(getStoragePercentage(selectedWorkspace.storage.used, selectedWorkspace.storage.limit), 100)}%` }}
                           ></div>
                         </div>
                       </div>
@@ -458,9 +453,7 @@ const WorkspaceManagement: React.FC = () => {
                     <CardTitle>Workspace Members</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600">
-                      Member management functionality would be implemented here.
-                    </p>
+                    <p className="text-gray-600">Member management functionality would be implemented here.</p>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -471,9 +464,7 @@ const WorkspaceManagement: React.FC = () => {
                     <CardTitle>Recent Activity</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600">
-                      Activity logs and analytics would be displayed here.
-                    </p>
+                    <p className="text-gray-600">Activity logs and analytics would be displayed here.</p>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -484,9 +475,7 @@ const WorkspaceManagement: React.FC = () => {
                     <CardTitle>Workspace Settings</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600">
-                      Workspace configuration options would be available here.
-                    </p>
+                    <p className="text-gray-600">Workspace configuration options would be available here.</p>
                   </CardContent>
                 </Card>
               </TabsContent>

@@ -228,7 +228,7 @@ show_health_summary() {
 
   # Check database connection
   if [[ -n "${DATABASE_URL:-}" ]]; then
-    if pnpm drizzle db execute --stdin <<< "SELECT 1;" &>/dev/null; then
+    if pnpm prisma db execute --stdin <<< "SELECT 1;" &>/dev/null; then
       echo -e "  ${GREEN}✓${NC} Database Connection"
     else
       echo -e "  ${RED}✗${NC} Database Connection ${RED}(failed)${NC}"

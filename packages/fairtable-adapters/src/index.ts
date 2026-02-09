@@ -1,6 +1,6 @@
 /**
  * @the-new-fuse/fairtable-adapters
- *
+ * 
  * Migration adapters for transitioning from legacy components to fairtable-based implementations.
  * Provides backward compatibility while enabling gradual migration to new fairtable architecture.
  */
@@ -13,15 +13,15 @@ export * from './migration-utils';
 
 // Re-export types from airtable-core for convenience
 export type {
-  AppState,
-  CellValue,
-  Column,
-  DataType,
-  KanbanViewOptions,
-  Row,
   Table,
   View,
+  Row,
+  Column,
+  CellValue,
+  AppState,
+  DataType,
   ViewType,
+  KanbanViewOptions
 } from '@the-new-fuse/fairtable-core';
 
 // Adapter-specific types
@@ -48,7 +48,7 @@ export const createMigrationStatus = (
   component,
   status,
   warnings,
-  migrationGuide,
+  migrationGuide
 });
 
 // Version information
@@ -61,5 +61,5 @@ export const DEFAULT_ADAPTER_CONFIG = {
   enableDeprecationWarnings: process.env.NODE_ENV === 'development',
   showMigrationTips: true,
   logMigrationEvents: false,
-  validateDataIntegrity: true,
+  validateDataIntegrity: true
 };

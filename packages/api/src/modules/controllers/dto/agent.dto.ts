@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AgentStatus } from '@the-new-fuse/types';
 
+
 /**
  * DTO class for Agent model to be used with Swagger
  */

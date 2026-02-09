@@ -1,19 +1,14 @@
 # Automated Component Analysis
 
 ## Overview
-
-The automated component analysis runs daily to track changes in component usage
-across the codebase. It helps identify trends in component usage and potential
-areas for cleanup or consolidation.
+The automated component analysis runs daily to track changes in component usage across the codebase. It helps identify trends in component usage and potential areas for cleanup or consolidation.
 
 ## Schedule
-
 - Runs daily at midnight
 - Keeps 90 days of historical data
 - Stores results in Redis for fast retrieval
 
 ## Results and Metrics
-
 The analysis tracks several key metrics:
 
 - Total component count
@@ -22,7 +17,6 @@ The analysis tracks several key metrics:
 - Day-over-day changes in these metrics
 
 ## Trends Analysis
-
 The system automatically calculates trends over time:
 
 - Component growth/reduction rate
@@ -32,7 +26,6 @@ The system automatically calculates trends over time:
 ## Accessing Results
 
 ### Via API
-
 ```typescript
 // Get latest results
 const latest = await componentAnalysisStorage.getLatestResults();
@@ -45,34 +38,28 @@ const trends = await componentAnalysisStorage.getTrends();
 ```
 
 ### Via Task System
-
 ```typescript
 const task = await taskService.createTask({
   type: 'component-analysis',
   name: 'Manual Component Analysis',
-  priority: 'medium',
+  priority: 'medium'
 });
 
 const results = await taskService.executeTask(task.id);
 ```
 
 ## Configuration
-
-The analysis schedule can be modified in
-`packages/core/src/task/config/component-analysis-schedule.ts`.
+The analysis schedule can be modified in `packages/core/src/task/config/component-analysis-schedule.ts`.
 
 Default schedule:
-
 ```typescript
 timing: {
-  cron: '0 0 * * *'; // Daily at midnight
+  cron: '0 0 * * *' // Daily at midnight
 }
 ```
 
 ## Storage
-
 Results are stored in Redis using a sorted set:
-
 - Key: `component-analysis:history`
 - Score: Timestamp
 - Value: JSON-encoded analysis results

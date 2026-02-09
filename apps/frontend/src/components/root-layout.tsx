@@ -1,8 +1,9 @@
+import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { NavMenu } from './nav-menu';
-import { useRoute } from './route-context';
 import { ThemeToggle } from './theme-toggle';
 import { ScrollArea } from './ui/scroll-area';
+import { NavMenu } from './nav-menu';
+import { useRoute } from './route-context';
 
 export function RootLayout() {
   const { pageTitle } = useRoute();
@@ -11,9 +12,7 @@ export function RootLayout() {
     <div className="flex h-screen bg-white dark:bg-neutral-950">
       <aside className="w-64 border-r border-neutral-200 dark:border-neutral-800">
         <div className="flex h-16 items-center justify-between px-4 border-b border-neutral-200 dark:border-neutral-800">
-          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
-            Agent Factory
-          </h2>
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">Agent Factory</h2>
           <ThemeToggle />
         </div>
         <ScrollArea className="h-[calc(100vh-4rem)]">

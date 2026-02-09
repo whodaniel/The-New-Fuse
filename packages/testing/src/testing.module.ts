@@ -23,7 +23,15 @@ import { ArtifactGenerationService } from './artifacts/artifact-generation.servi
     // A2AModule,
   ],
   controllers: [TestRunnerController],
-  providers: [TestRunnerService, LoadTestingService, ArtifactGenerationService],
-  exports: [TestRunnerService, LoadTestingService, ArtifactGenerationService],
+  providers: [
+    TestRunnerService,
+    LoadTestingService,
+    ArtifactGenerationService,
+  ],
+  exports: [
+    TestRunnerService,
+    LoadTestingService,
+    ArtifactGenerationService,
+  ],
 })
 export class TestingModule {}

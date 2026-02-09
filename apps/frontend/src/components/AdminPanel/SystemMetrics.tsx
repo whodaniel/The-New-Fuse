@@ -1,5 +1,5 @@
-import { LoadingSpinner, StatCard } from '@/components/ui/design-system';
 import React from 'react';
+import { StatCard, LoadingSpinner } from '@/components/ui/design-system';
 import { useSystemMetrics } from '../../hooks/useSystemMetrics';
 
 export const SystemMetrics: React.FC = () => {

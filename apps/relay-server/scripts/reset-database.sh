@@ -15,12 +15,12 @@ echo "Database 'fuse' has been reset."
 # Navigate to database package
 cd packages/database
 
-# Generate Drizzle client
-echo "Generating Drizzle client..."
-npx drizzle generate
+# Generate Prisma client
+echo "Generating Prisma client..."
+npx prisma generate
 
 # Run migrations
-echo "Running Drizzle migrations..."
-npx drizzle migrate dev --name init
+echo "Running Prisma migrations..."
+npx prisma migrate dev --name init
 
 echo "Database setup complete!"

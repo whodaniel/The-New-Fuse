@@ -8,7 +8,7 @@ export enum PipelineStatus {
   SUCCESS = 'success',
   FAILED = 'failed',
   CANCELLED = 'cancelled',
-  SKIPPED = 'skipped',
+  SKIPPED = 'skipped'
 }
 
 export enum StageType {
@@ -18,7 +18,7 @@ export enum StageType {
   QUALITY_CHECK = 'quality_check',
   DEPLOY = 'deploy',
   NOTIFY = 'notify',
-  CUSTOM = 'custom',
+  CUSTOM = 'custom'
 }
 
 export enum TriggerType {
@@ -27,21 +27,21 @@ export enum TriggerType {
   SCHEDULE = 'schedule',
   MANUAL = 'manual',
   WEBHOOK = 'webhook',
-  API = 'api',
+  API = 'api'
 }
 
 export enum DeploymentStrategy {
   ROLLING_UPDATE = 'rolling_update',
   BLUE_GREEN = 'blue_green',
   CANARY = 'canary',
-  RECREATE = 'recreate',
+  RECREATE = 'recreate'
 }
 
 export enum EnvironmentType {
   DEVELOPMENT = 'development',
   STAGING = 'staging',
   PRODUCTION = 'production',
-  TEST = 'test',
+  TEST = 'test'
 }
 
 // Build and Trigger Types
@@ -213,7 +213,7 @@ export interface EnvironmentConstraints {
 
 export interface DeploymentWindow {
   start: string; // HH:MM format
-  end: string; // HH:MM format
+  end: string;   // HH:MM format
   timezone: string;
   days: string[]; // ['monday', 'tuesday', ...]
 }
@@ -367,14 +367,7 @@ export interface NotificationChannel {
 }
 
 export interface NotificationEvent {
-  type:
-    | 'pipeline_start'
-    | 'pipeline_complete'
-    | 'pipeline_failed'
-    | 'deployment_start'
-    | 'deployment_complete'
-    | 'deployment_failed'
-    | 'approval_required';
+  type: 'pipeline_start' | 'pipeline_complete' | 'pipeline_failed' | 'deployment_start' | 'deployment_complete' | 'deployment_failed' | 'approval_required';
   enabled: boolean;
 }
 

@@ -52,11 +52,7 @@ export class MonitoringService implements OnModuleDestroy {
   /**
    * Records a timing measurement for a function.
    */
-  async recordTime<T>(
-    key: string,
-    fn: () => Promise<T>,
-    labels: Record<string, string> = {},
-  ): Promise<T> {
+  async recordTime<T>(key: string, fn: () => Promise<T>, labels: Record<string, string> = {}): Promise<T> {
     const start = performance.now();
     try {
       return await fn();
@@ -97,9 +93,7 @@ export class MonitoringService implements OnModuleDestroy {
     return { avg, p95, p99 };
   }
 
-  private async getCounterStats(
-    keyPrefix: string,
-  ): Promise<{ total: number; byType: Record<string, number> }> {
+  private async getCounterStats(keyPrefix: string): Promise<{ total: number; byType: Record<string, number> }> {
     const counters = await this.redis.hgetall('counters');
     let total = 0;
     const byType: Record<string, number> = {};
@@ -128,8 +122,6 @@ export class MonitoringService implements OnModuleDestroy {
   }
 
   private serializeLabels(labels: Record<string, string>): string {
-    return Object.entries(labels)
-      .map(([k, v]) => `${k}=${v}`)
-      .join(',');
+    return Object.entries(labels).map(([k, v]) => `${k}=${v}`).join(',');
   }
 }

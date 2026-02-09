@@ -88,7 +88,7 @@ export function beforeSendFilter(event: any, hint: any): any | null {
   // Remove sensitive query params
   if (event.request?.query_string) {
     const sensitiveParams = ['token', 'apiKey', 'password', 'secret'];
-    sensitiveParams.forEach((param) => {
+    sensitiveParams.forEach(param => {
       if (event.request.query_string.includes(param)) {
         event.request.query_string = event.request.query_string.replace(
           new RegExp(`${param}=[^&]*`, 'gi'),

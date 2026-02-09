@@ -159,7 +159,9 @@ export function validateJson<T = any>(
   if (!valid) {
     return {
       valid: false,
-      errors: validate.errors?.map((err) => `${err.instancePath} ${err.message}`),
+      errors: validate.errors?.map(
+        (err) => `${err.instancePath} ${err.message}`
+      ),
     };
   }
 
@@ -232,10 +234,10 @@ export function validateEthereumAddress(address: string): boolean {
  * Validate workflow graph for cycles
  */
 export async function detectWorkflowCycles(
-  db: any,
+  prisma: any,
   workflowId: string
 ): Promise<{ hasCycle: boolean; cyclePath?: string[] }> {
-  const steps = await db.workflowStep.findMany({
+  const steps = await prisma.workflowStep.findMany({
     where: { workflowId },
     include: { nextStepEdges: true },
   });
@@ -281,7 +283,7 @@ export async function detectWorkflowCycles(
  * Validate data integrity for migration
  */
 export async function validateMigration(
-  db: any,
+  prisma: any,
   checks: {
     name: string;
     query: () => Promise<any>;
@@ -298,7 +300,9 @@ export async function validateMigration(
         errors.push(`${check.name}: ${check.errorMessage}`);
       }
     } catch (error) {
-      errors.push(`${check.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      errors.push(
+        `${check.name}: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 

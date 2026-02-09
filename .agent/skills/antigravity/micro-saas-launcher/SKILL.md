@@ -1,11 +1,6 @@
 ---
 name: micro-saas-launcher
-description:
-  'Expert in launching small, focused SaaS products fast - the indie hacker
-  approach to building profitable software. Covers idea validation, MVP
-  development, pricing, launch strategies, and growing to sustainable revenue.
-  Ship in weeks, not months. Use when: micro saas, indie hacker, small saas,
-  side project, saas mvp.'
+description: "Expert in launching small, focused SaaS products fast - the indie hacker approach to building profitable software. Covers idea validation, MVP development, pricing, launch strategies, and growing to sustainable revenue. Ship in weeks, not months. Use when: micro saas, indie hacker, small saas, side project, saas mvp."
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -13,10 +8,10 @@ source: vibeship-spawner-skills (Apache 2.0)
 
 **Role**: Micro-SaaS Launch Architect
 
-You ship fast and iterate. You know the difference between a side project and a
-business. You've seen what works in the indie hacker community. You help people
-go from idea to paying customers in weeks, not years. You focus on sustainable,
-profitable businesses - not unicorn hunting.
+You ship fast and iterate. You know the difference between a side project
+and a business. You've seen what works in the indie hacker community. You
+help people go from idea to paying customers in weeks, not years. You
+focus on sustainable, profitable businesses - not unicorn hunting.
 
 ## Capabilities
 
@@ -99,18 +94,19 @@ Ship MVP in 2 weeks
 
 ### Week 1: Core
 ```
-
-Day 1-2: Auth + basic UI Day 3-4: Core feature (one thing) Day 5-6: Stripe
-integration Day 7: Polish and bug fixes
-
+Day 1-2: Auth + basic UI
+Day 3-4: Core feature (one thing)
+Day 5-6: Stripe integration
+Day 7: Polish and bug fixes
 ```
 
 ### Week 2: Launch Ready
 ```
-
-Day 1-2: Landing page Day 3: Email flows (welcome, etc.) Day 4: Legal (privacy,
-terms) Day 5: Final testing Day 6-7: Soft launch
-
+Day 1-2: Landing page
+Day 3: Email flows (welcome, etc.)
+Day 4: Legal (privacy, terms)
+Day 5: Final testing
+Day 6-7: Soft launch
 ```
 
 ### What to Skip in MVP
@@ -140,16 +136,13 @@ Pricing your micro-SaaS
 
 ### Starting Price Framework
 ```
-
-What's the alternative cost? (Competitor or manual work) Your price = 20-50% of
-alternative cost
+What's the alternative cost? (Competitor or manual work)
+Your price = 20-50% of alternative cost
 
 Example:
-
 - Manual work takes 10 hours/month
 - 10 hours × $50/hour = $500 value
 - Price: $49-99/month
-
 ```
 
 ### Common Micro-SaaS Prices
@@ -171,35 +164,48 @@ Example:
 
 ### ❌ Building in Secret
 
-**Why bad**: No feedback loop. Building wrong thing. Wasted time. Fear of
-shipping.
+**Why bad**: No feedback loop.
+Building wrong thing.
+Wasted time.
+Fear of shipping.
 
-**Instead**: Launch ugly MVP. Get feedback early. Build in public. Iterate based
-on users.
+**Instead**: Launch ugly MVP.
+Get feedback early.
+Build in public.
+Iterate based on users.
 
 ### ❌ Feature Creep
 
-**Why bad**: Never ships. Dilutes focus. Confuses users. Delays revenue.
+**Why bad**: Never ships.
+Dilutes focus.
+Confuses users.
+Delays revenue.
 
-**Instead**: One core feature first. Ship, then iterate. Let users tell you
-what's missing. Say no to most requests.
+**Instead**: One core feature first.
+Ship, then iterate.
+Let users tell you what's missing.
+Say no to most requests.
 
 ### ❌ Pricing Too Low
 
-**Why bad**: Undervalues your work. Attracts price-sensitive customers. Hard to
-run a business. Can't afford growth.
+**Why bad**: Undervalues your work.
+Attracts price-sensitive customers.
+Hard to run a business.
+Can't afford growth.
 
-**Instead**: Price for value, not time. Start higher, discount if needed. B2B
-can pay more. Your time has value.
+**Instead**: Price for value, not time.
+Start higher, discount if needed.
+B2B can pay more.
+Your time has value.
 
 ## ⚠️ Sharp Edges
 
-| Issue                                     | Severity | Solution              |
-| ----------------------------------------- | -------- | --------------------- |
-| Great product, no way to reach customers  | high     | ## Distribution First |
-| Building for market that can't/won't pay  | high     | ## Market Selection   |
-| New signups leaving as fast as they come  | high     | ## Fixing Churn       |
-| Pricing page confuses potential customers | medium   | ## Simple Pricing     |
+| Issue | Severity | Solution |
+|-------|----------|----------|
+| Great product, no way to reach customers | high | ## Distribution First |
+| Building for market that can't/won't pay | high | ## Market Selection |
+| New signups leaving as fast as they come | high | ## Fixing Churn |
+| Pricing page confuses potential customers | medium | ## Simple Pricing |
 
 ## Related Skills
 

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DatabaseService } from '@the-new-fuse/database';
+import { PrismaService } from '@the-new-fuse/database';
 
 export interface SecurityEvent {
   eventType: string;
@@ -26,19 +26,13 @@ export class SecurityLoggingService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly db: DatabaseService
+    private readonly prisma: PrismaService,
   ) {
-    const securityConfig =
-      this.configService.get<Record<string, unknown>>('security.logging') || {};
+    const securityConfig = this.configService.get<Record<string, unknown>>('security.logging') || {};
     this.enabled = securityConfig.enabled !== false;
     this.logToConsole = securityConfig.logToConsole !== false;
     this.sensitiveFields = securityConfig.sensitiveFields || [
-      'password',
-      'token',
-      'secret',
-      'apiKey',
-      'key',
-      'credential',
+      'password', 'token', 'secret', 'apiKey', 'key', 'credential'
     ];
     this.logger.log('Security logging service initialized');
   }
@@ -52,7 +46,7 @@ export class SecurityLoggingService {
     try {
       const normalizedEvent = this.normalizeEvent(event);
 
-      await this.db.securityEvent.create({
+      await this.prisma.securityEvent.create({
         data: {
           eventType: normalizedEvent.eventType,
           userId: normalizedEvent.userId,
@@ -61,9 +55,7 @@ export class SecurityLoggingService {
           resource: normalizedEvent.resource,
           action: normalizedEvent.action,
           status: normalizedEvent.status,
-          details: normalizedEvent.details
-            ? JSON.stringify(this.sanitizeDetails(normalizedEvent.details))
-            : null,
+          details: normalizedEvent.details ? JSON.stringify(this.sanitizeDetails(normalizedEvent.details)) : null,
           timestamp: normalizedEvent.timestamp,
           severity: normalizedEvent.severity || 'info',
           sessionId: normalizedEvent.sessionId,
@@ -77,11 +69,9 @@ export class SecurityLoggingService {
           `Security Event: ${normalizedEvent.eventType} - ${normalizedEvent.action} - ${normalizedEvent.status}`,
           {
             ...normalizedEvent,
-            details: normalizedEvent.details
-              ? this.sanitizeDetails(normalizedEvent.details)
-              : undefined,
+            details: normalizedEvent.details ? this.sanitizeDetails(normalizedEvent.details) : undefined,
             timestamp: normalizedEvent.timestamp?.toISOString(),
-          }
+          },
         );
       }
     } catch (error) {
@@ -242,16 +232,16 @@ export class SecurityLoggingService {
       }
 
       const [events, total] = await Promise.all([
-        this.db.securityEvent.findMany({
+        this.prisma.securityEvent.findMany({
           where,
           orderBy: { timestamp: 'desc' },
           skip: (page - 1) * limit,
           take: limit,
         }),
-        this.db.securityEvent.count({ where }),
+        this.prisma.securityEvent.count({ where }),
       ]);
 
-      const parsedEvents = events.map((event) => ({
+      const parsedEvents = events.map(event => ({
         ...event,
         details: event.details ? JSON.parse(event.details) : null,
       })) as SecurityEvent[];
@@ -282,7 +272,7 @@ export class SecurityLoggingService {
     for (const key in details) {
       if (Object.prototype.hasOwnProperty.call(details, key)) {
         const value = details[key];
-        if (this.sensitiveFields.some((field) => key.toLowerCase().includes(field.toLowerCase()))) {
+        if (this.sensitiveFields.some(field => key.toLowerCase().includes(field.toLowerCase()))) {
           sanitized[key] = '[REDACTED]';
         } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
           sanitized[key] = this.sanitizeDetails(value as Record<string, unknown>);

@@ -208,7 +208,7 @@ Native Rust commands for computer-use automation in Tauri.
 | ---------------- | ----------------------------------------------------------------- |
 | AI Agents        | Join Network, View Agents, Start Conversation, Orchestration Demo |
 | Analysis & Tools | TypeScript Check, Lint, Test, Build                               |
-| External Tools   | Open SkIDEancer, Open Website, Open GitHub, Railway Dashboard     |
+| External Tools   | Open SkIDEancer, Open Website, Open GitHub, Railway Dashboard          |
 | Development      | Start Dev, Start Redis, Check Services, Clean Node Modules        |
 | Settings         | Edit Environment, View Modes, View Config                         |
 

@@ -14,8 +14,6 @@ import { AppConfigModule } from './config/app-config.module';
 import { EventBus } from './events/event-bus.service';
 // import { JobsModule } from './jobs/jobs.module'; // Temporarily disabled - requires Redis
 import { AgentExecutionsModule } from './modules/agent-executions/agent-executions.module';
-import { AgentRegistryModule } from './modules/agent-registry/agent-registry.module';
-import { AgentModule } from './modules/agent/agent.module';
 import { FilesModule } from './modules/files/files.module';
 import { MassModule } from './modules/mass/mass.module';
 import { MCPModule } from './modules/mcp/mcp.module';
@@ -24,8 +22,7 @@ import { RelayModule } from './modules/relay/relay.module';
 import { SelfImprovementModule } from './modules/self-improvement/self-improvement.module';
 import { SystemMetricsModule } from './modules/system-metrics/system-metrics.module';
 import { WorkflowTemplatesModule } from './modules/workflow-templates/workflow-templates.module';
-// Legacy ORM module removed - migrated to DrizzleModule
-import { MetricsModule } from './metrics/metrics.module';
+// PrismaModule removed - migrated to DrizzleModule
 import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
 import { AdminModule } from './modules/admin/admin.module';
 import { LoggingService } from './services/logging.service';
@@ -58,7 +55,7 @@ import { UsersModule } from './users/users.module';
         secret:
           configService.get<string>('JWT_SECRET') || 'development-jwt-secret-change-in-production',
         signOptions: {
-          expiresIn: (configService.get<string>('JWT_EXPIRES_IN') || '7d') as any,
+          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '7d',
           issuer: configService.get<string>('JWT_ISSUER') || 'the-new-fuse',
         },
       }),
@@ -75,15 +72,12 @@ import { UsersModule } from './users/users.module';
     WorkflowTemplatesModule,
     FilesModule,
     SystemMetricsModule,
-    MetricsModule,
     CacheModule,
     MCPModule, // MCP Integration for agent communication
     OrchestratorModule, // TNF Orchestration - Heartbeat, Coordination, Handoffs
     RelayModule, // Relay Core - Agent-to-Agent communication relay
     SelfImprovementModule, // Autonomous improvement loop
     AGUIModule, // AG-UI Protocol - Real-time agent visualization pipeline
-    AgentModule,
-    AgentRegistryModule,
   ],
   controllers: [AppController, CacheController],
   providers: [AppService, EventBus, LoggingService],

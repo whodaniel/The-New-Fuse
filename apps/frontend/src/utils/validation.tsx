@@ -13,7 +13,9 @@ export interface ValidationOptions {
 }
 
 export function validateRequired(value: any): boolean | string {
-  return value !== undefined && value !== null && value !== '' ? true : 'This field is required';
+  return value !== undefined && value !== null && value !== '' 
+    ? true 
+    : 'This field is required';
 }
 
 export function validateEmail(email: string): boolean | string {
@@ -102,10 +104,7 @@ export function validate(value: any, options: ValidationOptions): string[] {
   return errors;
 }
 
-export function validateForm(
-  values: Record<string, any>,
-  rules: Record<string, ValidationOptions>
-): Record<string, string[]> {
+export function validateForm(values: Record<string, any>, rules: Record<string, ValidationOptions>): Record<string, string[]> {
   const errors: Record<string, string[]> = {};
 
   Object.entries(rules).forEach(([field, options]) => {
@@ -136,14 +135,17 @@ export interface ValidationResult {
   errors: string[];
 }
 
-export function validate<T>(value: T, rules: ValidationRule<T>[]): ValidationResult {
+export function validate<T>(
+  value: T,
+  rules: ValidationRule<T>[]
+): ValidationResult {
   const errors = rules
     .filter((rule: ValidationRule<T>) => !rule.validate(value))
     .map((rule: ValidationRule<T>) => rule.message);
 
   return {
     isValid: errors.length === 0,
-    errors,
+    errors
   };
 }
 
@@ -155,17 +157,17 @@ export const required = (message = 'This field is required'): ValidationRule<any
     if (Array.isArray(value)) return value.length > 0;
     return true;
   },
-  message,
+  message
 });
 
 export const minLength = (min: number, message?: string): ValidationRule<string> => ({
   validate: (value: string) => value.length >= min,
-  message: message || `Must be at least ${min} characters`,
+  message: message || `Must be at least ${min} characters`
 });
 
 export const maxLength = (max: number, message?: string): ValidationRule<string> => ({
   validate: (value: string) => value.length <= max,
-  message: message || `Must be no more than ${max} characters`,
+  message: message || `Must be no more than ${max} characters`
 });
 
 export const email = (message = 'Must be a valid email address'): ValidationRule<string> => ({
@@ -173,7 +175,7 @@ export const email = (message = 'Must be a valid email address'): ValidationRule
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(value);
   },
-  message,
+  message
 });
 
 export const url = (message = 'Must be a valid URL'): ValidationRule<string> => ({
@@ -185,12 +187,12 @@ export const url = (message = 'Must be a valid URL'): ValidationRule<string> => 
       return false;
     }
   },
-  message,
+  message
 });
 
 export const numeric = (message = 'Must be a number'): ValidationRule<string> => ({
   validate: (value: string) => !isNaN(Number(value)),
-  message,
+  message
 });
 
 export const integer = (message = 'Must be an integer'): ValidationRule<string | number> => ({
@@ -198,27 +200,27 @@ export const integer = (message = 'Must be an integer'): ValidationRule<string |
     const num = typeof value === 'string' ? Number(value) : value;
     return Number.isInteger(num);
   },
-  message,
+  message
 });
 
 export const min = (min: number, message?: string): ValidationRule<number> => ({
   validate: (value: number) => value >= min,
-  message: message || `Must be at least ${min}`,
+  message: message || `Must be at least ${min}`
 });
 
 export const max = (max: number, message?: string): ValidationRule<number> => ({
   validate: (value: number) => value <= max,
-  message: message || `Must be no more than ${max}`,
+  message: message || `Must be no more than ${max}`
 });
 
 export const pattern = (regex: RegExp, message: string): ValidationRule<string> => ({
   validate: (value: string) => regex.test(value),
-  message,
+  message
 });
 
 export const matchValue = (matchTo: any, message?: string): ValidationRule<any> => ({
   validate: (value: any) => value === matchTo,
-  message: message || 'Values must match',
+  message: message || 'Values must match'
 });
 
 // Form validation
@@ -263,14 +265,16 @@ export async function validateAsync<T>(
   const results = await Promise.all(
     rules.map(async (rule: any) => ({
       isValid: await rule.validate(value),
-      message: rule.message,
+      message: rule.message
     }))
   );
 
-  const errors = results.filter((result) => !result.isValid).map((result) => result.message);
+  const errors = results
+    .filter(result => !result.isValid)
+    .map(result => result.message);
 
   return {
     isValid: errors.length === 0,
-    errors,
+    errors
   };
 }

@@ -3,8 +3,8 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { JSONSchema, ToolHandler, ToolResult } from '../interfaces/IMCPTool';
 import { ToolExecutionEngine, ToolExecutionOptions } from './ToolExecutionEngine';
+import { ToolHandler, ToolResult, JSONSchema } from '../interfaces/IMCPTool';
 
 // Mock tool handler for testing
 class MockToolHandler implements ToolHandler {
@@ -17,8 +17,8 @@ class MockToolHandler implements ToolHandler {
 
   async execute(params: any): Promise<ToolResult> {
     // Simulate execution time
-    await new Promise((resolve) => setTimeout(resolve, this.executionTime));
-
+    await new Promise(resolve => setTimeout(resolve, this.executionTime));
+    
     if (this.shouldFail) {
       throw new Error('Mock tool execution failed');
     }
@@ -28,8 +28,8 @@ class MockToolHandler implements ToolHandler {
       result: { processed: params, timestamp: new Date().toISOString() },
       metadata: {
         executionTime: this.executionTime,
-        memoryUsage: this.memoryUsage,
-      },
+        memoryUsage: this.memoryUsage
+      }
     };
   }
 
@@ -41,14 +41,14 @@ class MockToolHandler implements ToolHandler {
 // Long-running tool handler for timeout tests
 class LongRunningToolHandler implements ToolHandler {
   public name = 'LongRunningToolHandler';
-
+  
   constructor(private duration: number = 5000) {}
 
   async execute(_params: any): Promise<ToolResult> {
-    await new Promise((resolve) => setTimeout(resolve, this.duration));
+    await new Promise(resolve => setTimeout(resolve, this.duration));
     return {
       success: true,
-      result: { completed: true },
+      result: { completed: true }
     };
   }
 }
@@ -56,17 +56,17 @@ class LongRunningToolHandler implements ToolHandler {
 // Memory-intensive tool handler for resource limit tests
 class MemoryIntensiveToolHandler implements ToolHandler {
   public name = 'MemoryIntensiveToolHandler';
-
+  
   async execute(params: any): Promise<ToolResult> {
     // Simulate memory usage (this is just for testing, real implementation would track actual usage)
     const largeArray = new Array(params.size || 1000000).fill('data');
-
+    
     return {
       success: true,
       result: { arraySize: largeArray.length },
       metadata: {
-        memoryUsage: largeArray.length * 4, // Approximate memory usage
-      },
+        memoryUsage: largeArray.length * 4 // Approximate memory usage
+      }
     };
   }
 }
@@ -81,7 +81,7 @@ describe('ToolExecutionEngine', () => {
         cpuTime: 10000,
         memory: 64 * 1024 * 1024, // 64MB
         fileOperations: 100,
-        networkOperations: 50,
+        networkOperations: 50
       }
     );
   });
@@ -98,13 +98,13 @@ describe('ToolExecutionEngine', () => {
     it('should execute tool successfully with basic parameters', async () => {
       const handler = new MockToolHandler('test-tool');
       const params = { message: 'hello', count: 5 };
-
+      
       const result = await engine.executeToolWithLimits(handler, params);
-
+      
       expect(result.success).toBe(true);
       expect(result.result).toEqual({
         processed: params,
-        timestamp: expect.any(String),
+        timestamp: expect.any(String)
       });
       expect(result.executionContext).toBeDefined();
       expect(result.executionContext?.toolName).toBe('test-tool');
@@ -117,33 +117,33 @@ describe('ToolExecutionEngine', () => {
     it('should handle tool execution failures gracefully', async () => {
       const handler = new MockToolHandler('failing-tool', 100, true);
       const params = { test: 'data' };
-
+      
       const result = await engine.executeToolWithLimits(handler, params);
-
+      
       expect(result.success).toBe(false);
       expect(result.error).toContain('Mock tool execution failed');
       expect(result.executionContext).toBeDefined();
       expect(result.logs).toBeDefined();
-      expect(result.logs?.some((log) => log.level === 'error')).toBe(true);
+      expect(result.logs?.some(log => log.level === 'error')).toBe(true);
       expect(result.resourceUsage).toBeDefined();
     });
 
     it('should track execution in active executions during execution', async () => {
       const handler = new MockToolHandler('slow-tool', 1000);
       const params = { test: 'data' };
-
+      
       const executionPromise = engine.executeToolWithLimits(handler, params);
-
+      
       // Check that execution is tracked as active
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
       const activeExecutions = engine.getActiveExecutions();
       expect(activeExecutions.length).toBe(1);
       expect(activeExecutions[0].toolName).toBe('slow-tool');
-
+      
       // Wait for completion
       const result = await executionPromise;
       expect(result).toBeDefined();
-
+      
       // Check that execution is no longer active
       const finalActiveExecutions = engine.getActiveExecutions();
       expect(finalActiveExecutions.length).toBe(0);
@@ -155,25 +155,25 @@ describe('ToolExecutionEngine', () => {
       const handler = new LongRunningToolHandler(10000); // 10 seconds
       const params = { test: 'data' };
       const options: ToolExecutionOptions = {
-        timeout: 1000, // 1 second timeout
+        timeout: 1000 // 1 second timeout
       };
-
+      
       const result = await engine.executeToolWithLimits(handler, params, options);
-
+      
       expect(result.success).toBe(false);
       expect(result.error).toContain('timed out');
-      expect(result.logs?.some((log) => log.message.includes('timed out'))).toBe(true);
+      expect(result.logs?.some(log => log.message.includes('timed out'))).toBe(true);
       expect(result.metadata?.executionTime).toBeLessThan(2000); // Should be close to timeout
     });
 
     it('should use default timeout when not specified', async () => {
       const handler = new LongRunningToolHandler(10000); // 10 seconds
       const params = { test: 'data' };
-
+      
       const startTime = Date.now();
       const result = await engine.executeToolWithLimits(handler, params);
       const executionTime = Date.now() - startTime;
-
+      
       expect(result.success).toBe(false);
       expect(result.error).toContain('timed out');
       expect(executionTime).toBeLessThan(5500); // Should timeout around 5 seconds (default)
@@ -184,11 +184,11 @@ describe('ToolExecutionEngine', () => {
       const handler = new MockToolHandler('fast-tool', 500); // 500ms execution
       const params = { test: 'data' };
       const options: ToolExecutionOptions = {
-        timeout: 2000, // 2 second timeout
+        timeout: 2000 // 2 second timeout
       };
-
+      
       const result = await engine.executeToolWithLimits(handler, params, options);
-
+      
       expect(result.success).toBe(true);
       expect(result.metadata?.executionTime).toBeLessThan(1000);
     });
@@ -200,14 +200,14 @@ describe('ToolExecutionEngine', () => {
       const params = { size: 1000000 }; // Large array
       const options: ToolExecutionOptions = {
         resourceLimits: {
-          memory: 1024 * 1024, // 1MB limit
-        },
+          memory: 1024 * 1024 // 1MB limit
+        }
       };
-
+      
       // Note: This test simulates memory limit enforcement
       // In a real implementation, you would need actual memory monitoring
       const result = await engine.executeToolWithLimits(handler, params, options);
-
+      
       // For this mock, the tool will complete successfully
       // In a real implementation with actual memory monitoring, it would fail
       expect(result).toBeDefined();
@@ -217,9 +217,9 @@ describe('ToolExecutionEngine', () => {
     it('should track resource usage statistics', async () => {
       const handler = new MockToolHandler('resource-tool', 1000);
       const params = { test: 'data' };
-
+      
       const result = await engine.executeToolWithLimits(handler, params);
-
+      
       expect(result.resourceUsage).toBeDefined();
       expect(result.resourceUsage?.cpuTime).toBeGreaterThan(0);
       expect(result.resourceUsage?.startTime).toBeInstanceOf(Date);
@@ -232,14 +232,14 @@ describe('ToolExecutionEngine', () => {
     it('should use default resource limits when not specified', async () => {
       const handler = new MockToolHandler('default-limits-tool');
       const params = { test: 'data' };
-
+      
       const result = await engine.executeToolWithLimits(handler, params);
-
+      
       expect(result.success).toBe(true);
       expect(result.resourceUsage).toBeDefined();
-      expect(
-        result.logs?.some((log) => log.data?.resourceLimits?.memory === 64 * 1024 * 1024)
-      ).toBe(true);
+      expect(result.logs?.some(log => 
+        log.data?.resourceLimits?.memory === 64 * 1024 * 1024
+      )).toBe(true);
     });
   });
 
@@ -249,14 +249,14 @@ describe('ToolExecutionEngine', () => {
         type: 'object',
         properties: {
           name: { type: 'string' },
-          age: { type: 'number', minimum: 0, maximum: 150 },
+          age: { type: 'number', minimum: 0, maximum: 150 }
         },
-        required: ['name'],
+        required: ['name']
       };
-
+      
       const validParams = { name: 'John', age: 30 };
       const result = await engine.validateToolParameters(schema, validParams);
-
+      
       expect(result.valid).toBe(true);
       expect(result.errors).toBeUndefined();
       expect(result.normalizedParams).toEqual(validParams);
@@ -267,14 +267,14 @@ describe('ToolExecutionEngine', () => {
         type: 'object',
         properties: {
           name: { type: 'string' },
-          age: { type: 'number', minimum: 0, maximum: 150 },
+          age: { type: 'number', minimum: 0, maximum: 150 }
         },
-        required: ['name'],
+        required: ['name']
       };
-
+      
       const invalidParams = { age: 30 }; // missing required 'name'
       const result = await engine.validateToolParameters(schema, invalidParams);
-
+      
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('Missing required property: name');
     });
@@ -293,25 +293,27 @@ describe('ToolExecutionEngine', () => {
                   type: 'object',
                   properties: {
                     type: { type: 'string' },
-                    value: { type: 'string', format: 'email' },
+                    value: { type: 'string', format: 'email' }
                   },
-                  required: ['type', 'value'],
-                },
-              },
+                  required: ['type', 'value']
+                }
+              }
             },
-            required: ['name'],
-          },
+            required: ['name']
+          }
         },
-        required: ['user'],
+        required: ['user']
       };
-
+      
       const validParams = {
         user: {
           name: 'John Doe',
-          contacts: [{ type: 'email', value: 'john@example.com' }],
-        },
+          contacts: [
+            { type: 'email', value: 'john@example.com' }
+          ]
+        }
       };
-
+      
       const result = await engine.validateToolParameters(schema, validParams);
       expect(result.valid).toBe(true);
     });
@@ -322,18 +324,18 @@ describe('ToolExecutionEngine', () => {
         properties: {
           email: { type: 'string', format: 'email' },
           website: { type: 'string', format: 'uri' },
-          id: { type: 'string', format: 'uuid' },
-        },
+          id: { type: 'string', format: 'uuid' }
+        }
       };
-
+      
       const invalidParams = {
         email: 'not-an-email',
         website: 'not-a-uri',
-        id: 'not-a-uuid',
+        id: 'not-a-uuid'
       };
-
+      
       const result = await engine.validateToolParameters(schema, invalidParams);
-
+      
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('Property email: Invalid email format');
       expect(result.errors).toContain('Property website: Invalid URI format');
@@ -344,21 +346,18 @@ describe('ToolExecutionEngine', () => {
       const schema: JSONSchema = {
         type: 'object',
         properties: {
-          code: { type: 'string', pattern: '^[A-Z]{3}-\\d{3}$' },
-        },
+          code: { type: 'string', pattern: '^[A-Z]{3}-\\d{3}$' }        }
       };
-
+      
       const validParams = { code: 'ABC-123' };
       const invalidParams = { code: 'invalid-code' };
-
+      
       const validResult = await engine.validateToolParameters(schema, validParams);
       expect(validResult.valid).toBe(true);
-
+      
       const invalidResult = await engine.validateToolParameters(schema, invalidParams);
       expect(invalidResult.valid).toBe(false);
-      expect(invalidResult.errors).toContain(
-        'Property code: Value does not match pattern: ^[A-Z]{3}-\\d{3}$'
-      );
+      expect(invalidResult.errors).toContain('Property code: Value does not match pattern: ^[A-Z]{3}-\\d{3}$');
     });
 
     it('should validate numeric constraints', async () => {
@@ -366,17 +365,17 @@ describe('ToolExecutionEngine', () => {
         type: 'object',
         properties: {
           score: { type: 'number', minimum: 0, maximum: 100 },
-          name: { type: 'string', minLength: 2, maxLength: 50 },
-        },
+          name: { type: 'string', minLength: 2, maxLength: 50 }
+        }
       };
-
+      
       const invalidParams = {
         score: 150, // exceeds maximum
-        name: 'A', // too short
+        name: 'A' // too short
       };
-
+      
       const result = await engine.validateToolParameters(schema, invalidParams);
-
+      
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('Property score: Value 150 is greater than maximum 100');
       expect(result.errors).toContain('Property name: String length 1 is less than minimum 2');
@@ -387,11 +386,11 @@ describe('ToolExecutionEngine', () => {
     it('should track execution history', async () => {
       const handler = new MockToolHandler('history-tool');
       const params = { test: 'data' };
-
+      
       // Execute multiple tools
       await engine.executeToolWithLimits(handler, params);
       await engine.executeToolWithLimits(handler, { test: 'data2' });
-
+      
       const history = engine.getExecutionHistory();
       expect(history.length).toBe(2);
       expect(history[0].executionContext?.toolName).toBe('history-tool');
@@ -401,12 +400,12 @@ describe('ToolExecutionEngine', () => {
     it('should limit execution history size', async () => {
       const handler = new MockToolHandler('history-tool');
       const params = { test: 'data' };
-
+      
       // Execute multiple tools
       for (let i = 0; i < 5; i++) {
         await engine.executeToolWithLimits(handler, { test: `data${i}` });
       }
-
+      
       const limitedHistory = engine.getExecutionHistory(3);
       expect(limitedHistory.length).toBe(3);
     });
@@ -414,18 +413,18 @@ describe('ToolExecutionEngine', () => {
     it('should cancel active executions', async () => {
       const handler = new LongRunningToolHandler(5000);
       const params = { test: 'data' };
-
+      
       // Start execution but don't await it
       engine.executeToolWithLimits(handler, params);
-
+      
       // Wait a bit then cancel
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
       const activeExecutions = engine.getActiveExecutions();
       expect(activeExecutions.length).toBe(1);
-
+      
       const cancelled = await engine.cancelExecution(activeExecutions[0].executionId);
       expect(cancelled).toBe(true);
-
+      
       // Check that execution is no longer active
       const finalActiveExecutions = engine.getActiveExecutions();
       expect(finalActiveExecutions.length).toBe(0);
@@ -434,12 +433,12 @@ describe('ToolExecutionEngine', () => {
     it('should provide execution statistics', async () => {
       const successHandler = new MockToolHandler('success-tool');
       const failHandler = new MockToolHandler('fail-tool', 100, true);
-
+      
       // Execute some successful and failed tools
       await engine.executeToolWithLimits(successHandler, { test: 'data1' });
       await engine.executeToolWithLimits(successHandler, { test: 'data2' });
       await engine.executeToolWithLimits(failHandler, { test: 'data3' });
-
+      
       const stats = engine.getExecutionStatistics();
       expect(stats.totalExecutions).toBe(3);
       expect(stats.successfulExecutions).toBe(2);
@@ -453,14 +452,14 @@ describe('ToolExecutionEngine', () => {
     it('should emit execution events', async () => {
       const handler = new MockToolHandler('event-tool');
       const params = { test: 'data' };
-
+      
       let completionEvent: any = null;
       engine.on('executionComplete', (context, result) => {
         completionEvent = { context, result };
       });
-
+      
       await engine.executeToolWithLimits(handler, params);
-
+      
       expect(completionEvent).not.toBeNull();
       expect(completionEvent.context.toolName).toBe('event-tool');
       expect(completionEvent.result.success).toBe(true);
@@ -469,14 +468,14 @@ describe('ToolExecutionEngine', () => {
     it('should emit error events', async () => {
       const handler = new MockToolHandler('error-tool', 100, true);
       const params = { test: 'data' };
-
+      
       let errorEvent: any = null;
       engine.on('executionError', (context, error) => {
         errorEvent = { context, error };
       });
-
+      
       await engine.executeToolWithLimits(handler, params);
-
+      
       expect(errorEvent).not.toBeNull();
       expect(errorEvent.context.toolName).toBe('error-tool');
       expect(errorEvent.error).toBeInstanceOf(Error);
@@ -485,19 +484,19 @@ describe('ToolExecutionEngine', () => {
     it('should emit cancellation events', async () => {
       const handler = new LongRunningToolHandler(5000);
       const params = { test: 'data' };
-
+      
       let cancellationEvent: any = null;
       engine.on('executionCancelled', (context) => {
         cancellationEvent = context;
       });
-
+      
       // Start execution but don't await it
       engine.executeToolWithLimits(handler, params);
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      
+      await new Promise(resolve => setTimeout(resolve, 100));
       const activeExecutions = engine.getActiveExecutions();
       await engine.cancelExecution(activeExecutions[0].executionId);
-
+      
       expect(cancellationEvent).not.toBeNull();
       expect(cancellationEvent.toolName).toBe('LongRunningToolHandler');
     });
@@ -507,13 +506,13 @@ describe('ToolExecutionEngine', () => {
     it('should generate comprehensive execution logs', async () => {
       const handler = new MockToolHandler('logged-tool');
       const params = { test: 'data' };
-
+      
       const result = await engine.executeToolWithLimits(handler, params);
-
+      
       expect(result.logs).toBeDefined();
       expect(result.logs?.length).toBeGreaterThan(0);
-
-      const logMessages = result.logs?.map((log) => log.message) || [];
+      
+      const logMessages = result.logs?.map(log => log.message) || [];
       expect(logMessages).toContain('Tool execution started');
       expect(logMessages).toContain('Starting tool execution');
       expect(logMessages).toContain('Tool execution completed');
@@ -523,23 +522,23 @@ describe('ToolExecutionEngine', () => {
     it('should log errors with appropriate detail', async () => {
       const handler = new MockToolHandler('error-tool', 100, true);
       const params = { test: 'data' };
-
+      
       const result = await engine.executeToolWithLimits(handler, params);
-
+      
       expect(result.logs).toBeDefined();
-      const errorLogs = result.logs?.filter((log) => log.level === 'error') || [];
+      const errorLogs = result.logs?.filter(log => log.level === 'error') || [];
       expect(errorLogs.length).toBeGreaterThan(0);
-      expect(errorLogs.some((log) => log.message.includes('execution threw error'))).toBe(true);
+      expect(errorLogs.some(log => log.message.includes('execution threw error'))).toBe(true);
     });
 
     it('should include execution context in logs', async () => {
       const handler = new MockToolHandler('context-tool');
       const params = { test: 'data' };
-
+      
       const result = await engine.executeToolWithLimits(handler, params);
-
+      
       expect(result.logs).toBeDefined();
-      const startLog = result.logs?.find((log) => log.message === 'Tool execution started');
+      const startLog = result.logs?.find(log => log.message === 'Tool execution started');
       expect(startLog?.data).toBeDefined();
       expect(startLog?.data?.toolName).toBe('context-tool');
       expect(startLog?.data?.timeout).toBeDefined();
@@ -555,27 +554,20 @@ describe('ToolExecutionEngine', () => {
         const permissions = {
           execute: true,
           requiredRoles: ['user'],
-          acl: [],
+          acl: []
         };
         const securityContext = {
           principal: 'test-user',
           roles: ['user'],
-          sessionId: 'session-123',
+          sessionId: 'session-123'
         };
 
-        const result = await engine.executeToolSecurely(
-          handler,
-          params,
-          permissions,
-          securityContext
-        );
+        const result = await engine.executeToolSecurely(handler, params, permissions, securityContext);
 
         expect(result.success).toBe(true);
         expect(result.metadata?.securityEnforced).toBe(true);
         expect(result.executionContext?.executor).toBe('test-user');
-        expect(result.logs?.some((log) => log.message.includes('Security checks passed'))).toBe(
-          true
-        );
+        expect(result.logs?.some(log => log.message.includes('Security checks passed'))).toBe(true);
       });
 
       it('should deny execution when execute permission is false', async () => {
@@ -584,25 +576,18 @@ describe('ToolExecutionEngine', () => {
         const permissions = {
           execute: false,
           requiredRoles: [],
-          acl: [],
+          acl: []
         };
         const securityContext = {
           principal: 'test-user',
-          roles: ['user'],
+          roles: ['user']
         };
 
-        const result = await engine.executeToolSecurely(
-          handler,
-          params,
-          permissions,
-          securityContext
-        );
+        const result = await engine.executeToolSecurely(handler, params, permissions, securityContext);
 
         expect(result.success).toBe(false);
         expect(result.error).toContain('Tool execution not permitted');
-        expect(
-          result.logs?.some((log) => log.message.includes('Tool execution not permitted'))
-        ).toBe(true);
+        expect(result.logs?.some(log => log.message.includes('Tool execution not permitted'))).toBe(true);
       });
 
       it('should deny execution when user lacks required roles', async () => {
@@ -611,23 +596,18 @@ describe('ToolExecutionEngine', () => {
         const permissions = {
           execute: true,
           requiredRoles: ['admin'],
-          acl: [],
+          acl: []
         };
         const securityContext = {
           principal: 'test-user',
-          roles: ['user'], // Missing 'admin' role
+          roles: ['user'] // Missing 'admin' role
         };
 
-        const result = await engine.executeToolSecurely(
-          handler,
-          params,
-          permissions,
-          securityContext
-        );
+        const result = await engine.executeToolSecurely(handler, params, permissions, securityContext);
 
         expect(result.success).toBe(false);
         expect(result.error).toContain('Insufficient roles');
-        expect(result.logs?.some((log) => log.message.includes('Insufficient roles'))).toBe(true);
+        expect(result.logs?.some(log => log.message.includes('Insufficient roles'))).toBe(true);
       });
 
       it('should enforce ACL permissions', async () => {
@@ -638,20 +618,15 @@ describe('ToolExecutionEngine', () => {
           requiredRoles: [],
           acl: [
             { principal: 'admin', permissions: ['execute'], type: 'allow' as const },
-            { principal: 'test-user', permissions: ['execute'], type: 'deny' as const },
-          ],
+            { principal: 'test-user', permissions: ['execute'], type: 'deny' as const }
+          ]
         };
         const securityContext = {
           principal: 'test-user',
-          roles: ['user'],
+          roles: ['user']
         };
 
-        const result = await engine.executeToolSecurely(
-          handler,
-          params,
-          permissions,
-          securityContext
-        );
+        const result = await engine.executeToolSecurely(handler, params, permissions, securityContext);
 
         expect(result.success).toBe(false);
         expect(result.error).toContain('ACL permission denied');
@@ -666,38 +641,23 @@ describe('ToolExecutionEngine', () => {
           acl: [],
           rateLimit: {
             maxRequests: 2,
-            windowSeconds: 60,
-          },
+            windowSeconds: 60
+          }
         };
         const securityContext = {
           principal: 'test-user',
-          roles: ['user'],
+          roles: ['user']
         };
 
         // First two executions should succeed
-        const result1 = await engine.executeToolSecurely(
-          handler,
-          params,
-          permissions,
-          securityContext
-        );
+        const result1 = await engine.executeToolSecurely(handler, params, permissions, securityContext);
         expect(result1.success).toBe(true);
 
-        const result2 = await engine.executeToolSecurely(
-          handler,
-          params,
-          permissions,
-          securityContext
-        );
+        const result2 = await engine.executeToolSecurely(handler, params, permissions, securityContext);
         expect(result2.success).toBe(true);
 
         // Third execution should be rate limited
-        const result3 = await engine.executeToolSecurely(
-          handler,
-          params,
-          permissions,
-          securityContext
-        );
+        const result3 = await engine.executeToolSecurely(handler, params, permissions, securityContext);
         expect(result3.success).toBe(false);
         expect(result3.error).toContain('Rate limit exceeded');
       });
@@ -708,11 +668,11 @@ describe('ToolExecutionEngine', () => {
         const permissions = {
           execute: true,
           requiredRoles: [],
-          acl: [],
+          acl: []
         };
         const securityContext = {
           principal: 'test-user',
-          roles: ['user'],
+          roles: ['user']
         };
         const options = {
           sandbox: {
@@ -720,32 +680,20 @@ describe('ToolExecutionEngine', () => {
             type: 'process' as const,
             resourceLimits: {
               memory: 64 * 1024 * 1024,
-              cpuTime: 5000,
+              cpuTime: 5000
             },
             allowedPaths: ['/tmp'],
             blockedPaths: ['/etc', '/var'],
-            environment: { SANDBOX_MODE: 'true' },
-          },
+            environment: { SANDBOX_MODE: 'true' }
+          }
         };
 
-        const result = await engine.executeToolSecurely(
-          handler,
-          params,
-          permissions,
-          securityContext,
-          options
-        );
+        const result = await engine.executeToolSecurely(handler, params, permissions, securityContext, options);
 
         expect(result.success).toBe(true);
         expect(result.metadata?.sandboxed).toBe(true);
-        expect(result.logs?.some((log) => log.message.includes('Executing tool in sandbox'))).toBe(
-          true
-        );
-        expect(
-          result.logs?.some((log) =>
-            log.message.includes('Sandbox execution completed successfully')
-          )
-        ).toBe(true);
+        expect(result.logs?.some(log => log.message.includes('Executing tool in sandbox'))).toBe(true);
+        expect(result.logs?.some(log => log.message.includes('Sandbox execution completed successfully'))).toBe(true);
       });
     });
 
@@ -757,12 +705,8 @@ describe('ToolExecutionEngine', () => {
         const result = await engine.executeToolWithLimits(handler, params);
 
         expect(result.success).toBe(true);
-        expect(
-          result.logs?.some((log) => log.message.includes('Validating tool execution result'))
-        ).toBe(true);
-        expect(
-          result.logs?.some((log) => log.message.includes('Tool result validation completed'))
-        ).toBe(true);
+        expect(result.logs?.some(log => log.message.includes('Validating tool execution result'))).toBe(true);
+        expect(result.logs?.some(log => log.message.includes('Tool result validation completed'))).toBe(true);
       });
 
       it('should reject invalid result format', async () => {
@@ -770,7 +714,7 @@ describe('ToolExecutionEngine', () => {
           name: 'invalid-tool',
           async execute(_params: any): Promise<any> {
             return 'invalid result'; // Should be an object
-          },
+          }
         };
 
         const result = await engine.executeToolWithLimits(invalidHandler as any, {});
@@ -789,10 +733,10 @@ describe('ToolExecutionEngine', () => {
               metadata: {
                 credentials: 'secret-key',
                 systemInfo: '/etc/passwd',
-                publicInfo: 'safe data',
-              },
+                publicInfo: 'safe data'
+              }
             };
-          },
+          }
         };
 
         const result = await engine.executeToolWithLimits(sensitiveHandler as any, {});
@@ -857,11 +801,11 @@ describe('ToolExecutionEngine', () => {
         const permissions = {
           execute: false, // This will cause a security violation
           requiredRoles: [],
-          acl: [],
+          acl: []
         };
         const securityContext = {
           principal: 'test-user',
-          roles: ['user'],
+          roles: ['user']
         };
 
         await engine.executeToolSecurely(handler, params, permissions, securityContext);
@@ -876,11 +820,11 @@ describe('ToolExecutionEngine', () => {
         const permissions = {
           execute: true,
           requiredRoles: [],
-          acl: [],
+          acl: []
         };
         const securityContext = {
           principal: 'test-user',
-          roles: ['user'],
+          roles: ['user']
         };
         const options = {
           sandbox: {
@@ -888,9 +832,9 @@ describe('ToolExecutionEngine', () => {
             type: 'process' as const,
             resourceLimits: {
               memory: 1024, // Very low limit to trigger violation
-              cpuTime: 100,
-            },
-          },
+              cpuTime: 100
+            }
+          }
         };
 
         let violationEvent: any = null;

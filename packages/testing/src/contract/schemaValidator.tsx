@@ -8,21 +8,20 @@ export class SchemaValidator {
    * @param schema The class/interface to validate against
    * @param data The data to validate
    */
-  static async validateSchema<T extends object>(
-    schema: Type<T>,
-    data: any,
-  ): Promise<{ isValid: boolean; errors: string[] }> {
+  static async validateSchema<T extends object>(schema: Type<T>, data: any): Promise<{ isValid: boolean; errors: string[] }> {
     try {
       // Convert plain object to class instance
       const instance = plainToClass(schema, data);
-
+      
       // Validate the instance
       const errors = await validate(instance);
-
+      
       if (errors.length > 0) {
         return {
           isValid: false,
-          errors: errors.map(error => Object.values(error.constraints || {}).join(', ')),
+          errors: errors.map(error => 
+            Object.values(error.constraints || {}).join(', ')
+          )
         };
       }
 
@@ -30,7 +29,7 @@ export class SchemaValidator {
     } catch (error) {
       return {
         isValid: false,
-        errors: [(error as Error).message],
+        errors: [(error as Error).message]
       };
     }
   }
@@ -40,12 +39,9 @@ export class SchemaValidator {
    * @param schema The schema to validate against
    * @param data The data to validate
    */
-  static async validateNested<T extends object>(
-    schema: Type<T>,
-    data: any,
-  ): Promise<{ isValid: boolean; errors: string[] }> {
+  static async validateNested<T extends object>(schema: Type<T>, data: any): Promise<{ isValid: boolean; errors: string[] }> {
     const errors: string[] = [];
-
+    
     if (Array.isArray(data)) {
       for (const item of data) {
         const result = await this.validateSchema(schema, item);
@@ -58,7 +54,7 @@ export class SchemaValidator {
 
     return {
       isValid: errors.length === 0,
-      errors,
+      errors
     };
   }
 }

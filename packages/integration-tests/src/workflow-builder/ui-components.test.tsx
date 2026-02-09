@@ -1,6 +1,6 @@
 /**
  * Workflow Builder UI Components Tests
- *
+ * 
  * Tests the React Flow-based UI components for drag and drop functionality:
  * - WorkflowCanvas component
  * - DynamicNode components
@@ -13,16 +13,16 @@
 jest.mock('react-dnd', () => ({
   DndProvider: ({ children }: { children: React.ReactNode }) => children,
   useDrag: () => [{ isDragging: false }, jest.fn(), jest.fn()],
-  useDrop: () => [{ isOver: false }, jest.fn()],
+  useDrop: () => [{ isOver: false }, jest.fn()]
 }));
 
 jest.mock('react-dnd-html5-backend', () => ({
-  HTML5Backend: {},
+  HTML5Backend: {}
 }));
 
-import '@testing-library/jest-dom';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -41,15 +41,11 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 jest.mock('reactflow', () => ({
   __esModule: true,
   default: ({ children, nodes, edges, _onNodesChange, _onEdgesChange, _onConnect }: any) => {
-    return React.createElement(
-      'div',
-      {
-        'data-testid': 'react-flow',
-        'data-nodes-count': nodes?.length || 0,
-        'data-edges-count': edges?.length || 0,
-      },
-      React.createElement('div', { 'data-testid': 'react-flow-viewport' }, children)
-    );
+    return React.createElement('div', {
+      'data-testid': 'react-flow',
+      'data-nodes-count': nodes?.length || 0,
+      'data-edges-count': edges?.length || 0
+    }, React.createElement('div', { 'data-testid': 'react-flow-viewport' }, children));
   },
   Controls: () => React.createElement('div', { 'data-testid': 'react-flow-controls' }),
   Background: () => React.createElement('div', { 'data-testid': 'react-flow-background' }),
@@ -59,15 +55,15 @@ jest.mock('reactflow', () => ({
   Handle: ({ type, position, id }: any) => {
     return React.createElement('div', {
       'data-testid': `handle-${type}-${position}`,
-      'data-handle-id': id,
+      'data-handle-id': id
     });
   },
   Position: {
     Top: 'top',
     Right: 'right',
     Bottom: 'bottom',
-    Left: 'left',
-  },
+    Left: 'left'
+  }
 }));
 
 // Mock the workflow builder components
@@ -91,18 +87,19 @@ const MockWorkflowCanvas: React.FC<{
   );
 };
 
+
 const MockNodeLibrary = ({ onNodeDragStart }: { onNodeDragStart?: (nodeType: string) => void }) => {
   const nodeTypes = [
     { type: 'start', label: 'Start Node', category: 'control' },
     { type: 'agent_task', label: 'Agent Task', category: 'agents' },
     { type: 'condition', label: 'Condition', category: 'logic' },
     { type: 'parallel', label: 'Parallel', category: 'control' },
-    { type: 'end', label: 'End Node', category: 'control' },
+    { type: 'end', label: 'End Node', category: 'control' }
   ];
 
   return (
     <div data-testid="node-library">
-      {nodeTypes.map((nodeType) => (
+      {nodeTypes.map(nodeType => (
         <div
           key={nodeType.type}
           data-testid={`node-type-${nodeType.type}`}
@@ -134,7 +131,11 @@ const MockDynamicNode = ({ data, id, type }: any) => {
 
 // Test wrapper component
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <DndProvider backend={HTML5Backend}>{children}</DndProvider>
+  
+    <DndProvider backend={HTML5Backend}>
+      {children}
+    </DndProvider>
+  
 );
 
 describe('UI Components Integration Tests', () => {
@@ -142,17 +143,12 @@ describe('UI Components Integration Tests', () => {
     // Test environment is set up in test-setup.ts
   });
 
+
   describe('WorkflowCanvas Component', () => {
     test('should render empty canvas correctly', () => {
       render(
         <TestWrapper>
-          <MockWorkflowCanvas
-            nodes={[]}
-            edges={[]}
-            _onNodesChange={undefined}
-            _onEdgesChange={undefined}
-            _onConnect={undefined}
-          />
+          <MockWorkflowCanvas nodes={[]} edges={[]} _onNodesChange={undefined} _onEdgesChange={undefined} _onConnect={undefined} />
         </TestWrapper>
       );
 
@@ -168,25 +164,19 @@ describe('UI Components Integration Tests', () => {
           id: 'node-1',
           type: 'start',
           position: { x: 100, y: 100 },
-          data: { label: 'Start Node' },
+          data: { label: 'Start Node' }
         },
         {
           id: 'node-2',
           type: 'agent_task',
           position: { x: 300, y: 100 },
-          data: { label: 'Process Data', task: 'Process input data', priority: 'high' },
-        },
+          data: { label: 'Process Data', task: 'Process input data', priority: 'high' }
+        }
       ];
 
       render(
         <TestWrapper>
-          <MockWorkflowCanvas
-            nodes={nodes}
-            edges={[]}
-            _onNodesChange={undefined}
-            _onEdgesChange={undefined}
-            _onConnect={undefined}
-          />
+          <MockWorkflowCanvas nodes={nodes} edges={[]} _onNodesChange={undefined} _onEdgesChange={undefined} _onConnect={undefined} />
         </TestWrapper>
       );
 
@@ -200,7 +190,7 @@ describe('UI Components Integration Tests', () => {
     test('should render connections between nodes', () => {
       const nodes = [
         { id: 'node-1', type: 'start', position: { x: 100, y: 100 }, data: { label: 'Start' } },
-        { id: 'node-2', type: 'end', position: { x: 300, y: 100 }, data: { label: 'End' } },
+        { id: 'node-2', type: 'end', position: { x: 300, y: 100 }, data: { label: 'End' } }
       ];
 
       const edges = [
@@ -209,19 +199,13 @@ describe('UI Components Integration Tests', () => {
           source: 'node-1',
           target: 'node-2',
           sourceHandle: 'output',
-          targetHandle: 'input',
-        },
+          targetHandle: 'input'
+        }
       ];
 
       render(
         <TestWrapper>
-          <MockWorkflowCanvas
-            nodes={nodes}
-            edges={edges}
-            _onNodesChange={undefined}
-            _onEdgesChange={undefined}
-            _onConnect={undefined}
-          />
+          <MockWorkflowCanvas nodes={nodes} edges={edges} _onNodesChange={undefined} _onEdgesChange={undefined} _onConnect={undefined} />
         </TestWrapper>
       );
 
@@ -231,18 +215,12 @@ describe('UI Components Integration Tests', () => {
     test('should handle node position changes', async () => {
       const onNodesChange = jest.fn();
       const nodes = [
-        { id: 'node-1', type: 'start', position: { x: 100, y: 100 }, data: { label: 'Start' } },
+        { id: 'node-1', type: 'start', position: { x: 100, y: 100 }, data: { label: 'Start' } }
       ];
 
       render(
         <TestWrapper>
-          <MockWorkflowCanvas
-            nodes={nodes}
-            edges={[]}
-            _onNodesChange={onNodesChange}
-            _onEdgesChange={undefined}
-            _onConnect={undefined}
-          />
+          <MockWorkflowCanvas nodes={nodes} edges={[]} _onNodesChange={onNodesChange} _onEdgesChange={undefined} _onConnect={undefined} />
         </TestWrapper>
       );
 
@@ -260,18 +238,12 @@ describe('UI Components Integration Tests', () => {
       const onConnect = jest.fn();
       const nodes = [
         { id: 'node-1', type: 'start', position: { x: 100, y: 100 }, data: { label: 'Start' } },
-        { id: 'node-2', type: 'end', position: { x: 300, y: 100 }, data: { label: 'End' } },
+        { id: 'node-2', type: 'end', position: { x: 300, y: 100 }, data: { label: 'End' } }
       ];
 
       render(
         <TestWrapper>
-          <MockWorkflowCanvas
-            nodes={nodes}
-            edges={[]}
-            _onNodesChange={undefined}
-            _onEdgesChange={undefined}
-            _onConnect={onConnect}
-          />
+          <MockWorkflowCanvas nodes={nodes} edges={[]} _onNodesChange={undefined} _onEdgesChange={undefined} _onConnect={onConnect} />
         </TestWrapper>
       );
 
@@ -322,8 +294,8 @@ describe('UI Components Integration Tests', () => {
       );
 
       const nodeTypes = ['start', 'agent_task', 'condition', 'parallel', 'end'];
-
-      nodeTypes.forEach((nodeType) => {
+      
+      nodeTypes.forEach(nodeType => {
         const element = screen.getByTestId(`node-type-${nodeType}`);
         expect(element).toHaveAttribute('draggable', 'true');
       });
@@ -349,8 +321,8 @@ describe('UI Components Integration Tests', () => {
         data: {
           label: 'Test Task',
           task: 'Process test data',
-          priority: 'high',
-        },
+          priority: 'high'
+        }
       };
 
       render(
@@ -369,7 +341,7 @@ describe('UI Components Integration Tests', () => {
       const nodeData = {
         id: 'test-node',
         type: 'agent_task',
-        data: { label: 'Test Task' },
+        data: { label: 'Test Task' }
       };
 
       render(
@@ -388,7 +360,7 @@ describe('UI Components Integration Tests', () => {
         { id: 'start-node', type: 'start', data: { label: 'Start' } },
         { id: 'task-node', type: 'agent_task', data: { label: 'Task' } },
         { id: 'condition-node', type: 'condition', data: { label: 'Condition' } },
-        { id: 'end-node', type: 'end', data: { label: 'End' } },
+        { id: 'end-node', type: 'end', data: { label: 'End' } }
       ];
 
       const { rerender } = render(
@@ -397,7 +369,7 @@ describe('UI Components Integration Tests', () => {
         </TestWrapper>
       );
 
-      nodeTypes.forEach((nodeType) => {
+      nodeTypes.forEach(nodeType => {
         rerender(
           <TestWrapper>
             <MockDynamicNode {...nodeType} />
@@ -405,10 +377,7 @@ describe('UI Components Integration Tests', () => {
         );
 
         expect(screen.getByTestId(`dynamic-node-${nodeType.id}`)).toBeInTheDocument();
-        expect(screen.getByTestId(`dynamic-node-${nodeType.id}`)).toHaveAttribute(
-          'data-node-type',
-          nodeType.type
-        );
+        expect(screen.getByTestId(`dynamic-node-${nodeType.id}`)).toHaveAttribute('data-node-type', nodeType.type);
       });
     });
 
@@ -416,7 +385,7 @@ describe('UI Components Integration Tests', () => {
       const nodeData = {
         id: 'minimal-node',
         type: 'agent_task',
-        data: {},
+        data: {}
       };
 
       render(
@@ -447,13 +416,13 @@ describe('UI Components Integration Tests', () => {
 
         const handleCanvasDrop = (event: React.DragEvent) => {
           event.preventDefault();
-
+          
           // In real implementation, would get drop position and node type
           const newNode = {
             id: `node-${Date.now()}`,
             type: 'agent_task',
             position: { x: 200, y: 150 },
-            data: { label: 'New Task' },
+            data: { label: 'New Task' }
           };
 
           setCurrentNodes([...currentNodes, newNode]);
@@ -461,19 +430,13 @@ describe('UI Components Integration Tests', () => {
         };
 
         return (
-          <div
+          <div 
             data-testid="workflow-builder"
             onDrop={handleCanvasDrop}
             onDragOver={(e) => e.preventDefault()}
           >
             <MockNodeLibrary onNodeDragStart={handleNodeDragStart} />
-            <MockWorkflowCanvas
-              nodes={currentNodes}
-              edges={edges}
-              _onNodesChange={undefined}
-              _onEdgesChange={undefined}
-              _onConnect={undefined}
-            />
+            <MockWorkflowCanvas nodes={currentNodes} edges={edges} _onNodesChange={undefined} _onEdgesChange={undefined} _onConnect={undefined} />
           </div>
         );
       };
@@ -505,17 +468,19 @@ describe('UI Components Integration Tests', () => {
           id: 'movable-node',
           type: 'agent_task',
           position: { x: 100, y: 100 },
-          data: { label: 'Movable Task' },
-        },
+          data: { label: 'Movable Task' }
+        }
       ];
 
       const RepositionTest = () => {
         const [nodes, setNodes] = React.useState(initialNodes);
 
         const handleNodeDrag = (nodeId: string, newPosition: { x: number; y: number }) => {
-          setNodes((prevNodes) =>
-            prevNodes.map((node) =>
-              node.id === nodeId ? { ...node, position: newPosition } : node
+          setNodes(prevNodes => 
+            prevNodes.map(node => 
+              node.id === nodeId 
+                ? { ...node, position: newPosition }
+                : node
             )
           );
           mockOnNodeChange(nodeId, newPosition);
@@ -523,14 +488,8 @@ describe('UI Components Integration Tests', () => {
 
         return (
           <div data-testid="reposition-test">
-            <MockWorkflowCanvas
-              nodes={nodes}
-              edges={[]}
-              _onNodesChange={undefined}
-              _onEdgesChange={undefined}
-              _onConnect={undefined}
-            />
-            <button
+            <MockWorkflowCanvas nodes={nodes} edges={[]} _onNodesChange={undefined} _onEdgesChange={undefined} _onConnect={undefined} />
+            <button 
               data-testid="move-node-button"
               onClick={() => handleNodeDrag('movable-node', { x: 300, y: 200 })}
             >
@@ -561,14 +520,14 @@ describe('UI Components Integration Tests', () => {
           id: 'source-node',
           type: 'start',
           position: { x: 100, y: 100 },
-          data: { label: 'Source' },
+          data: { label: 'Source' }
         },
         {
           id: 'target-node',
           type: 'end',
           position: { x: 300, y: 100 },
-          data: { label: 'Target' },
-        },
+          data: { label: 'Target' }
+        }
       ];
 
       const ConnectionTest = () => {
@@ -580,32 +539,30 @@ describe('UI Components Integration Tests', () => {
             source: connection.source,
             target: connection.target,
             sourceHandle: connection.sourceHandle,
-            targetHandle: connection.targetHandle,
+            targetHandle: connection.targetHandle
           };
-
-          setEdges((prevEdges) => [...prevEdges, newEdge]);
+          
+          setEdges(prevEdges => [...prevEdges, newEdge]);
           mockOnConnect(connection);
         };
 
         return (
           <div data-testid="connection-test">
-            <MockWorkflowCanvas
-              nodes={testNodes}
-              edges={edges}
+            <MockWorkflowCanvas 
+              nodes={testNodes} 
+              edges={edges} 
               _onNodesChange={undefined}
               _onEdgesChange={undefined}
               _onConnect={handleConnect}
             />
             <button
               data-testid="create-connection-button"
-              onClick={() =>
-                handleConnect({
-                  source: 'source-node',
-                  target: 'target-node',
-                  sourceHandle: 'output',
-                  targetHandle: 'input',
-                })
-              }
+              onClick={() => handleConnect({
+                source: 'source-node',
+                target: 'target-node',
+                sourceHandle: 'output',
+                targetHandle: 'input'
+              })}
             >
               Create Connection
             </button>
@@ -627,7 +584,7 @@ describe('UI Components Integration Tests', () => {
           source: 'source-node',
           target: 'target-node',
           sourceHandle: 'output',
-          targetHandle: 'input',
+          targetHandle: 'input'
         });
       });
     });
@@ -641,30 +598,19 @@ describe('UI Components Integration Tests', () => {
         const [viewport, setViewport] = React.useState({ x: 0, y: 0, zoom: 1 });
 
         const handleZoom = (delta: number) => {
-          const newViewport = {
-            ...viewport,
-            zoom: Math.max(0.1, Math.min(2, viewport.zoom + delta)),
-          };
+          const newViewport = { ...viewport, zoom: Math.max(0.1, Math.min(2, viewport.zoom + delta)) };
           setViewport(newViewport);
           mockOnViewportChange(newViewport);
         };
 
         return (
           <div data-testid="zoom-test">
-            <div data-testid="viewport-info">Zoom: {viewport.zoom.toFixed(2)}</div>
-            <button data-testid="zoom-in" onClick={() => handleZoom(0.1)}>
-              Zoom In
-            </button>
-            <button data-testid="zoom-out" onClick={() => handleZoom(-0.1)}>
-              Zoom Out
-            </button>
-            <MockWorkflowCanvas
-              nodes={[]}
-              edges={[]}
-              _onNodesChange={undefined}
-              _onEdgesChange={undefined}
-              _onConnect={undefined}
-            />
+            <div data-testid="viewport-info">
+              Zoom: {viewport.zoom.toFixed(2)}
+            </div>
+            <button data-testid="zoom-in" onClick={() => handleZoom(0.1)}>Zoom In</button>
+            <button data-testid="zoom-out" onClick={() => handleZoom(-0.1)}>Zoom Out</button>
+            <MockWorkflowCanvas nodes={[]} edges={[]} _onNodesChange={undefined} _onEdgesChange={undefined} _onConnect={undefined} />
           </div>
         );
       };
@@ -691,10 +637,10 @@ describe('UI Components Integration Tests', () => {
         const [viewport, setViewport] = React.useState({ x: 0, y: 0, zoom: 1 });
 
         const handlePan = (deltaX: number, deltaY: number) => {
-          const newViewport = {
-            ...viewport,
-            x: viewport.x + deltaX,
-            y: viewport.y + deltaY,
+          const newViewport = { 
+            ...viewport, 
+            x: viewport.x + deltaX, 
+            y: viewport.y + deltaY 
           };
           setViewport(newViewport);
           mockOnViewportChange(newViewport);
@@ -705,25 +651,11 @@ describe('UI Components Integration Tests', () => {
             <div data-testid="viewport-position">
               Position: ({viewport.x}, {viewport.y})
             </div>
-            <button data-testid="pan-left" onClick={() => handlePan(-50, 0)}>
-              Pan Left
-            </button>
-            <button data-testid="pan-right" onClick={() => handlePan(50, 0)}>
-              Pan Right
-            </button>
-            <button data-testid="pan-up" onClick={() => handlePan(0, -50)}>
-              Pan Up
-            </button>
-            <button data-testid="pan-down" onClick={() => handlePan(0, 50)}>
-              Pan Down
-            </button>
-            <MockWorkflowCanvas
-              nodes={[]}
-              edges={[]}
-              _onNodesChange={undefined}
-              _onEdgesChange={undefined}
-              _onConnect={undefined}
-            />
+            <button data-testid="pan-left" onClick={() => handlePan(-50, 0)}>Pan Left</button>
+            <button data-testid="pan-right" onClick={() => handlePan(50, 0)}>Pan Right</button>
+            <button data-testid="pan-up" onClick={() => handlePan(0, -50)}>Pan Up</button>
+            <button data-testid="pan-down" onClick={() => handlePan(0, 50)}>Pan Down</button>
+            <MockWorkflowCanvas nodes={[]} edges={[]} _onNodesChange={undefined} _onEdgesChange={undefined} _onConnect={undefined} />
           </div>
         );
       };
@@ -747,7 +679,7 @@ describe('UI Components Integration Tests', () => {
       const mockOnSelectionChange = jest.fn();
       const testNodes = [
         { id: 'node-1', type: 'start', position: { x: 100, y: 100 }, data: { label: 'Node 1' } },
-        { id: 'node-2', type: 'end', position: { x: 300, y: 100 }, data: { label: 'Node 2' } },
+        { id: 'node-2', type: 'end', position: { x: 300, y: 100 }, data: { label: 'Node 2' } }
       ];
 
       const SelectionTest = () => {
@@ -757,38 +689,34 @@ describe('UI Components Integration Tests', () => {
           let newSelection;
           if (isMultiSelect) {
             newSelection = selectedNodes.includes(nodeId)
-              ? selectedNodes.filter((id) => id !== nodeId)
+              ? selectedNodes.filter(id => id !== nodeId)
               : [...selectedNodes, nodeId];
           } else {
             newSelection = [nodeId];
           }
-
+          
           setSelectedNodes(newSelection);
           mockOnSelectionChange(newSelection);
         };
 
         return (
           <div data-testid="selection-test">
-            <div data-testid="selected-count">Selected: {selectedNodes.length}</div>
-            {testNodes.map((node) => (
+            <div data-testid="selected-count">
+              Selected: {selectedNodes.length}
+            </div>
+            {testNodes.map(node => (
               <button
                 key={node.id}
                 data-testid={`select-${node.id}`}
                 onClick={(e) => handleNodeClick(node.id, e.ctrlKey)}
-                style={{
-                  backgroundColor: selectedNodes.includes(node.id) ? 'blue' : 'white',
+                style={{ 
+                  backgroundColor: selectedNodes.includes(node.id) ? 'blue' : 'white' 
                 }}
               >
                 {node.data.label}
               </button>
             ))}
-            <MockWorkflowCanvas
-              nodes={testNodes}
-              edges={[]}
-              _onNodesChange={undefined}
-              _onEdgesChange={undefined}
-              _onConnect={undefined}
-            />
+            <MockWorkflowCanvas nodes={testNodes} edges={[]} _onNodesChange={undefined} _onEdgesChange={undefined} _onConnect={undefined} />
           </div>
         );
       };
@@ -814,7 +742,7 @@ describe('UI Components Integration Tests', () => {
       const emptyNode = {
         id: 'empty-node',
         type: 'agent_task',
-        data: null,
+        data: null
       };
 
       render(
@@ -830,23 +758,12 @@ describe('UI Components Integration Tests', () => {
     test('should handle invalid node positions', () => {
       const invalidNodes = [
         { id: 'node-1', type: 'start', position: { x: NaN, y: 100 }, data: { label: 'Invalid X' } },
-        {
-          id: 'node-2',
-          type: 'end',
-          position: { x: 100, y: undefined },
-          data: { label: 'Invalid Y' },
-        },
+        { id: 'node-2', type: 'end', position: { x: 100, y: undefined }, data: { label: 'Invalid Y' } }
       ];
 
       render(
         <TestWrapper>
-          <MockWorkflowCanvas
-            nodes={invalidNodes}
-            edges={[]}
-            _onNodesChange={undefined}
-            _onEdgesChange={undefined}
-            _onConnect={undefined}
-          />
+          <MockWorkflowCanvas nodes={invalidNodes} edges={[]} _onNodesChange={undefined} _onEdgesChange={undefined} _onConnect={undefined} />
         </TestWrapper>
       );
 
@@ -856,23 +773,17 @@ describe('UI Components Integration Tests', () => {
 
     test('should handle missing node connections gracefully', () => {
       const nodes = [
-        { id: 'node-1', type: 'start', position: { x: 100, y: 100 }, data: { label: 'Start' } },
+        { id: 'node-1', type: 'start', position: { x: 100, y: 100 }, data: { label: 'Start' } }
       ];
 
       const invalidEdges = [
         { id: 'edge-1', source: 'node-1', target: 'non-existent-node' },
-        { id: 'edge-2', source: 'another-missing-node', target: 'node-1' },
+        { id: 'edge-2', source: 'another-missing-node', target: 'node-1' }
       ];
 
       render(
         <TestWrapper>
-          <MockWorkflowCanvas
-            nodes={nodes}
-            edges={invalidEdges}
-            _onNodesChange={undefined}
-            _onEdgesChange={undefined}
-            _onConnect={undefined}
-          />
+          <MockWorkflowCanvas nodes={nodes} edges={invalidEdges} _onNodesChange={undefined} _onEdgesChange={undefined} _onConnect={undefined} />
         </TestWrapper>
       );
 
@@ -890,33 +801,23 @@ describe('UI Components Integration Tests', () => {
             id: `node-${nodeCount}`,
             type: 'agent_task',
             position: { x: nodeCount * 100, y: 100 },
-            data: { label: `Task ${nodeCount}` },
+            data: { label: `Task ${nodeCount}` }
           };
-          setNodes((prev) => [...prev, newNode]);
-          setNodeCount((prev) => prev + 1);
+          setNodes(prev => [...prev, newNode]);
+          setNodeCount(prev => prev + 1);
         };
 
         const removeNode = () => {
-          setNodes((prev) => prev.slice(0, -1));
-          setNodeCount((prev) => Math.max(0, prev - 1));
+          setNodes(prev => prev.slice(0, -1));
+          setNodeCount(prev => Math.max(0, prev - 1));
         };
 
         return (
           <div data-testid="rapid-update-test">
-            <button data-testid="add-node" onClick={addNode}>
-              Add Node
-            </button>
-            <button data-testid="remove-node" onClick={removeNode}>
-              Remove Node
-            </button>
+            <button data-testid="add-node" onClick={addNode}>Add Node</button>
+            <button data-testid="remove-node" onClick={removeNode}>Remove Node</button>
             <div data-testid="node-count">Nodes: {nodes.length}</div>
-            <MockWorkflowCanvas
-              nodes={nodes}
-              edges={[]}
-              _onNodesChange={undefined}
-              _onEdgesChange={undefined}
-              _onConnect={undefined}
-            />
+            <MockWorkflowCanvas nodes={nodes} edges={[]} _onNodesChange={undefined} _onEdgesChange={undefined} _onConnect={undefined} />
           </div>
         );
       };

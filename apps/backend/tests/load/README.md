@@ -1,7 +1,6 @@
 # Load Testing Suite
 
-This directory contains comprehensive load testing scripts for the Fuse backend
-API.
+This directory contains comprehensive load testing scripts for the Fuse backend API.
 
 ## Prerequisites
 
@@ -31,11 +30,9 @@ npm install -g artillery
 ## Test Types
 
 ### 1. Load Test (k6-load-test.js)
-
 Simulates realistic user traffic with gradual load increase.
 
 **Run:**
-
 ```bash
 k6 run k6-load-test.js
 
@@ -47,7 +44,6 @@ k6 run k6-load-test.js
 ```
 
 **Stages:**
-
 - Ramp up to 50 users (2 min)
 - Sustained 50 users (5 min)
 - Ramp up to 100 users (2 min)
@@ -57,17 +53,14 @@ k6 run k6-load-test.js
 - Ramp down (2 min)
 
 ### 2. Stress Test (stress-test.js)
-
 Pushes the system beyond normal capacity to find breaking points.
 
 **Run:**
-
 ```bash
 k6 run stress-test.js
 ```
 
 **Stages:**
-
 - 100 users (2 min)
 - 200 users (5 min)
 - 300 users (2 min)
@@ -76,17 +69,14 @@ k6 run stress-test.js
 - Recovery (10 min)
 
 ### 3. Spike Test (spike-test.js)
-
 Tests system behavior during sudden traffic spikes.
 
 **Run:**
-
 ```bash
 k6 run spike-test.js
 ```
 
 **Stages:**
-
 - Normal: 50 users (1 min)
 - Spike: 1000 users (30 sec)
 - Sustained spike: 1000 users (3 min)
@@ -94,11 +84,9 @@ k6 run spike-test.js
 - Recovery: 50 users (2 min)
 
 ### 4. Artillery Test (artillery-config.yml)
-
 Comprehensive scenario-based load testing.
 
 **Run:**
-
 ```bash
 artillery run artillery-config.yml
 
@@ -110,19 +98,16 @@ artillery report report.json
 ## Performance Thresholds
 
 ### Response Time Targets
-
 - **p95 (95th percentile)**: < 500ms
 - **p99 (99th percentile)**: < 1000ms
 - **Average**: < 300ms
 
 ### Error Rate Targets
-
 - **Normal load**: < 1%
 - **Stress test**: < 5%
 - **Spike test**: < 5%
 
 ### Throughput Targets
-
 - **Minimum**: 100 requests/second
 - **Target**: 500 requests/second
 - **Maximum capacity**: 1000+ requests/second
@@ -130,7 +115,6 @@ artillery report report.json
 ## Test Scenarios
 
 ### User Scenarios (Weighted)
-
 1. **Get Users List** (40%) - Read-heavy operation
 2. **Get Agents List** (30%) - Read with filtering
 3. **Get Chat History** (15%) - Paginated read
@@ -156,20 +140,17 @@ artillery report report.json
 ### Success Criteria
 
 ✅ **Pass**: All thresholds met
-
 - p95 < 500ms
 - p99 < 1000ms
 - Error rate < 1%
 - No timeouts
 
 ⚠️ **Warning**: Some thresholds exceeded
-
 - p95 < 1000ms
 - Error rate < 5%
 - Occasional timeouts
 
 ❌ **Fail**: Critical thresholds exceeded
-
 - p95 > 1000ms
 - Error rate > 5%
 - Frequent errors/timeouts

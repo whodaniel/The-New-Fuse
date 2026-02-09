@@ -1,7 +1,6 @@
 # Backend API Performance Optimization Guide
 
-This document outlines all performance optimizations implemented in the Fuse
-backend API.
+This document outlines all performance optimizations implemented in the Fuse backend API.
 
 ## Table of Contents
 
@@ -18,16 +17,15 @@ backend API.
 
 ### 1. Connection Pooling
 
-The Drizzle client is configured with optimized connection pooling:
+The Prisma client is configured with optimized connection pooling:
 
 ```typescript
-// apps/backend/src/drizzle/drizzle.service.ts
-// Connection pool is automatically managed by Drizzle
+// apps/backend/src/prisma/prisma.service.ts
+// Connection pool is automatically managed by Prisma
 // Default: (num_physical_cpus * 2) + effective_spindle_count
 ```
 
 **Configuration:**
-
 - Automatic connection limit based on system resources
 - Query logging for slow queries (>1000ms)
 - Connection lifecycle management with proper cleanup
@@ -36,10 +34,9 @@ The Drizzle client is configured with optimized connection pooling:
 
 Comprehensive indexes have been added for optimal query performance:
 
-**Location:** `/packages/database/drizzle/migrations/add_performance_indexes.sql`
+**Location:** `/packages/database/prisma/migrations/add_performance_indexes.sql`
 
 **Key Indexes:**
-
 - User table: email, username, role, isActive, createdAt
 - Agent table: userId, status, type, capabilities (GIN index)
 - Message table: chatId, roomId, timestamp, full-text search
@@ -47,10 +44,9 @@ Comprehensive indexes have been added for optimal query performance:
 - Transaction table: walletId, status, hash
 
 **To apply indexes:**
-
 ```bash
 cd packages/database
-psql $DATABASE_URL -f drizzle/migrations/add_performance_indexes.sql
+psql $DATABASE_URL -f prisma/migrations/add_performance_indexes.sql
 ```
 
 ### 3. Query Optimization with select()
@@ -59,38 +55,34 @@ All database queries now use field selection to fetch only required data:
 
 ```typescript
 // Before
-const users = await drizzle.user.findMany();
+const users = await prisma.user.findMany();
 
 // After (optimized)
-const users = await drizzle.user.findMany({
+const users = await prisma.user.findMany({
   select: {
     id: true,
     email: true,
     name: true,
     // Only fields needed
-  },
+  }
 });
 ```
 
 **Optimized Services:**
-
 - `UsersService`: All queries use explicit field selection
 - `AgentService`: Selective field fetching with proper transformations
 - All list endpoints: Optimized with pagination
 
 ### 4. Pagination
 
-All list endpoints now support pagination to reduce memory usage and improve
-response times:
+All list endpoints now support pagination to reduce memory usage and improve response times:
 
 **API Endpoints:**
-
 - `GET /users?page=1&limit=50`
 - `GET /agents?page=1&limit=50`
 - `GET /chat/history?page=1`
 
 **Response Format:**
-
 ```json
 {
   "data": [...],
@@ -105,22 +97,22 @@ response times:
 
 ### 5. Eager vs Lazy Loading
 
-Strategic use of Drizzle's include/select for optimal data loading:
+Strategic use of Prisma's include/select for optimal data loading:
 
 ```typescript
 // Eager loading for related data when needed
-const agent = await drizzle.agent.findUnique({
+const agent = await prisma.agent.findUnique({
   where: { id },
   include: {
     metadata: true,
     nft: true,
-  },
+  }
 });
 
 // Lazy loading - fetch only when required
-const agent = await drizzle.agent.findUnique({
+const agent = await prisma.agent.findUnique({
   where: { id },
-  select: { id: true, name: true },
+  select: { id: true, name: true }
 });
 ```
 
@@ -133,14 +125,12 @@ const agent = await drizzle.agent.findUnique({
 **Location:** `/apps/backend/src/interceptors/compression.interceptor.ts`
 
 **Features:**
-
 - Automatic compression for responses > 1KB
 - Brotli preferred (better compression ratio)
 - Fallback to gzip for compatibility
 - Compression skipped for small responses
 
 **Usage:**
-
 ```typescript
 // Applied globally in main.ts
 app.use(compression());
@@ -156,21 +146,18 @@ app.use(compression());
 **Location:** `/apps/backend/src/interceptors/etag.interceptor.ts`
 
 **Benefits:**
-
 - Reduced bandwidth usage
 - 304 Not Modified responses for unchanged data
 - Automatic ETag generation from response content
 - Client-side caching support
 
 **Example Response Headers:**
-
 ```
 ETag: "5d41402abc4b2a76b9719d911017c592"
 Cache-Control: private, must-revalidate
 ```
 
 **Client Usage:**
-
 ```http
 GET /api/users
 If-None-Match: "5d41402abc4b2a76b9719d911017c592"
@@ -185,14 +172,12 @@ Response: 304 Not Modified (if unchanged)
 **Location:** `/apps/backend/src/interceptors/cache.interceptor.ts`
 
 **Configuration:**
-
 - Default TTL: 300 seconds (5 minutes)
 - Only caches GET requests
 - Automatic cache key generation from URL
 - Graceful fallback on Redis failure
 
 **Usage:**
-
 ```typescript
 @UseInterceptors(CacheInterceptor)
 @Get('expensive-operation')
@@ -206,7 +191,6 @@ async getExpensiveData() {
 HTTP/2 is supported when using a reverse proxy (nginx, Caddy):
 
 **Nginx Configuration:**
-
 ```nginx
 server {
   listen 443 ssl http2;
@@ -232,22 +216,20 @@ async exportData(@Res() res: Response) {
 
 ## Connection Pooling
 
-### 1. Database Connection Pool (Drizzle)
+### 1. Database Connection Pool (Prisma)
 
-**Location:** `/apps/backend/src/drizzle/drizzle.service.ts`
+**Location:** `/apps/backend/src/prisma/prisma.service.ts`
 
 **Configuration:**
-
 - Automatic connection limit calculation
 - Connection lifecycle management
 - Proper disconnect on module destroy
 - Slow query logging
 
 **Monitoring:**
-
 ```typescript
 // Log slow queries
-drizzle.$on('query', (e) => {
+prisma.$on('query', (e) => {
   if (e.duration > 1000) {
     logger.warn(`Slow query: ${e.query} (${e.duration}ms)`);
   }
@@ -259,7 +241,6 @@ drizzle.$on('query', (e) => {
 **Location:** `/apps/backend/src/services/redis.service.ts`
 
 **Configuration:**
-
 - Automatic command pipelining
 - Connection keep-alive (30 seconds)
 - Retry strategy with exponential backoff
@@ -267,7 +248,6 @@ drizzle.$on('query', (e) => {
 - Reconnection handling
 
 **Key Features:**
-
 ```typescript
 {
   enableAutoPipelining: true,     // Batch commands
@@ -282,13 +262,11 @@ drizzle.$on('query', (e) => {
 ### 1. Redis Caching Layers
 
 **Cache Types:**
-
 1. **API Response Cache** - Cache GET request responses
 2. **Session Cache** - User session data
 3. **Query Result Cache** - Expensive database query results
 
 **Cache Invalidation:**
-
 ```typescript
 // Invalidate on data change
 await redis.del(`cache:/users/${userId}`);
@@ -318,7 +296,6 @@ async getCachedData(key: string) {
 ## Load Testing
 
 ### Test Suite Location
-
 `/apps/backend/tests/load/`
 
 ### Available Tests
@@ -360,12 +337,12 @@ k6 run tests/load/k6-load-test.js
 
 ### Performance Targets
 
-| Metric            | Target    | Stress Limit |
-| ----------------- | --------- | ------------ |
-| p95 Response Time | < 500ms   | < 2000ms     |
-| p99 Response Time | < 1000ms  | < 3000ms     |
-| Error Rate        | < 1%      | < 5%         |
-| Throughput        | 500 req/s | 1000 req/s   |
+| Metric | Target | Stress Limit |
+|--------|--------|--------------|
+| p95 Response Time | < 500ms | < 2000ms |
+| p99 Response Time | < 1000ms | < 3000ms |
+| Error Rate | < 1% | < 5% |
+| Throughput | 500 req/s | 1000 req/s |
 
 ## Monitoring & Metrics
 
@@ -376,27 +353,23 @@ k6 run tests/load/k6-load-test.js
 **Metrics Collected:**
 
 #### HTTP Metrics
-
 - `http_request_duration_seconds` - Request duration histogram
 - `http_requests_total` - Total request counter
 - `http_request_errors_total` - Error counter
 - `http_requests_in_flight` - Current active requests
 
 #### Database Metrics
-
 - `db_query_duration_seconds` - Query duration histogram
 - `db_connection_pool_size` - Connection pool size
 - `db_query_errors_total` - Query error counter
 - `db_active_connections` - Active DB connections
 
 #### Cache Metrics
-
 - `cache_hits_total` - Cache hit counter
 - `cache_misses_total` - Cache miss counter
 - `cache_operation_duration_seconds` - Cache operation duration
 
 #### Business Metrics
-
 - `active_users` - Current active users
 - `agents_created_total` - Total agents created
 - `messages_processed_total` - Messages processed
@@ -406,7 +379,6 @@ k6 run tests/load/k6-load-test.js
 **Location:** `/apps/backend/src/interceptors/performance.interceptor.ts`
 
 Automatically tracks:
-
 - Request duration
 - Slow requests (>1000ms)
 - Error rates
@@ -417,7 +389,6 @@ Automatically tracks:
 **Setup:**
 
 1. Start Prometheus:
-
 ```yaml
 # prometheus.yml
 scrape_configs:
@@ -435,13 +406,12 @@ scrape_configs:
 ### 4. Logging
 
 **Structured Logging:**
-
 ```typescript
 logger.log('User created', {
   userId,
   email,
   timestamp: new Date(),
-  duration: performanceNow() - start,
+  duration: performanceNow() - start
 });
 ```
 
@@ -449,19 +419,19 @@ logger.log('User created', {
 
 ### Baseline Metrics (Before Optimization)
 
-| Endpoint     | Avg Response Time | p95    | p99    | Throughput |
-| ------------ | ----------------- | ------ | ------ | ---------- |
-| GET /users   | 450ms             | 800ms  | 1200ms | 120 req/s  |
-| GET /agents  | 520ms             | 950ms  | 1500ms | 100 req/s  |
-| POST /agents | 680ms             | 1100ms | 1800ms | 80 req/s   |
+| Endpoint | Avg Response Time | p95 | p99 | Throughput |
+|----------|-------------------|-----|-----|------------|
+| GET /users | 450ms | 800ms | 1200ms | 120 req/s |
+| GET /agents | 520ms | 950ms | 1500ms | 100 req/s |
+| POST /agents | 680ms | 1100ms | 1800ms | 80 req/s |
 
 ### Optimized Metrics (After Optimization)
 
-| Endpoint     | Avg Response Time | p95   | p99   | Throughput | Improvement    |
-| ------------ | ----------------- | ----- | ----- | ---------- | -------------- |
-| GET /users   | 120ms             | 250ms | 400ms | 650 req/s  | **73% faster** |
-| GET /agents  | 150ms             | 300ms | 500ms | 550 req/s  | **71% faster** |
-| POST /agents | 280ms             | 450ms | 700ms | 320 req/s  | **59% faster** |
+| Endpoint | Avg Response Time | p95 | p99 | Throughput | Improvement |
+|----------|-------------------|-----|-----|------------|-------------|
+| GET /users | 120ms | 250ms | 400ms | 650 req/s | **73% faster** |
+| GET /agents | 150ms | 300ms | 500ms | 550 req/s | **71% faster** |
+| POST /agents | 280ms | 450ms | 700ms | 320 req/s | **59% faster** |
 
 ### Optimization Impact
 
@@ -485,42 +455,39 @@ logger.log('User created', {
 ### 1. Query Optimization
 
 ✅ **DO:**
-
 ```typescript
 // Use select() to fetch only needed fields
-const users = await drizzle.user.findMany({
-  select: { id: true, email: true, name: true },
+const users = await prisma.user.findMany({
+  select: { id: true, email: true, name: true }
 });
 
 // Use pagination
-const users = await drizzle.user.findMany({
+const users = await prisma.user.findMany({
   skip: (page - 1) * limit,
-  take: limit,
+  take: limit
 });
 
 // Use indexes
-// See: /packages/database/drizzle/migrations/add_performance_indexes.sql
+// See: /packages/database/prisma/migrations/add_performance_indexes.sql
 ```
 
 ❌ **DON'T:**
-
 ```typescript
 // Don't fetch all fields
-const users = await drizzle.user.findMany();
+const users = await prisma.user.findMany();
 
 // Don't fetch all records
-const users = await drizzle.user.findMany(); // Could return millions
+const users = await prisma.user.findMany(); // Could return millions
 
 // Don't query in loops (N+1 problem)
 for (const user of users) {
-  const agents = await drizzle.agent.findMany({ where: { userId: user.id } });
+  const agents = await prisma.agent.findMany({ where: { userId: user.id } });
 }
 ```
 
 ### 2. Caching
 
 ✅ **DO:**
-
 ```typescript
 // Cache expensive queries
 @UseInterceptors(CacheInterceptor)
@@ -535,7 +502,6 @@ await redis.set(key, value, 300); // 5 minutes
 ```
 
 ❌ **DON'T:**
-
 ```typescript
 // Don't cache user-specific data globally
 // Don't cache frequently changing data
@@ -545,13 +511,12 @@ await redis.set(key, value, 300); // 5 minutes
 ### 3. Connection Management
 
 ✅ **DO:**
-
 ```typescript
 // Use connection pooling
 // Properly close connections
 async onModuleDestroy() {
   await this.redis.disconnect();
-  await this.drizzle.$disconnect();
+  await this.prisma.$disconnect();
 }
 
 // Handle connection errors
@@ -563,7 +528,6 @@ client.on('error', (err) => {
 ### 4. Error Handling
 
 ✅ **DO:**
-
 ```typescript
 try {
   const data = await this.expensiveOperation();
@@ -577,7 +541,6 @@ try {
 ### 5. Monitoring
 
 ✅ **DO:**
-
 ```typescript
 // Log slow operations
 const start = Date.now();
@@ -698,7 +661,7 @@ METRICS_PORT=9090
 
 ## References
 
-- [Drizzle Performance Best Practices](https://www.drizzle.io/docs/guides/performance-and-optimization)
+- [Prisma Performance Best Practices](https://www.prisma.io/docs/guides/performance-and-optimization)
 - [NestJS Performance](https://docs.nestjs.com/techniques/performance)
 - [Redis Best Practices](https://redis.io/topics/optimization)
 - [k6 Documentation](https://k6.io/docs/)

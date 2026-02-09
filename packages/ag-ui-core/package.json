@@ -21,8 +21,6 @@
   "author": "The New Fuse Team",
   "license": "MIT",
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^5.2.1",
     "ws": "^8.14.0"
   },
   "devDependencies": {

@@ -19,9 +19,7 @@ type Agent {
   updatedAt: DateTime!
 }
 
-"""
-The status of an agent
-"""
+"""The status of an agent"""
 enum AgentStatus {
   ACTIVE
   ERROR
@@ -122,9 +120,7 @@ type WorkflowStatistics {
   successRate: Float
 }
 
-"""
-The execution status of a workflow
-"""
+"""The execution status of a workflow"""
 enum WorkflowStatus {
   COMPLETED
   FAILED

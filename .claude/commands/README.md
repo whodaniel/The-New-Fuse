@@ -1,32 +1,25 @@
 # The New Fuse - Claude Code Slash Commands
 
-This directory contains custom slash commands that expose The New Fuse's
-multi-agent capabilities through Claude Code's slash command interface.
+This directory contains custom slash commands that expose The New Fuse's multi-agent capabilities through Claude Code's slash command interface.
 
 ## Available Commands
 
 ### Agent Management
 
 #### `/agent-register` - Register New Agent
-
 Register a new AI agent with The New Fuse agent registry.
-
 ```
 /agent-register "agent-name" "capability1,capability2" "description"
 ```
 
 #### `/agent-status` - Check Agent Status
-
 Get comprehensive status and performance metrics for an agent.
-
 ```
 /agent-status "agent-id"
 ```
 
 #### `/agent-discover` - Find Agents by Capability
-
 Search for agents using semantic matching and capability filters.
-
 ```
 /agent-discover "code review and security"
 /agent-discover capability:data-analysis
@@ -35,15 +28,12 @@ Search for agents using semantic matching and capability filters.
 ### Workflow & Coordination
 
 #### `/workflow-create` - Create Multi-Agent Workflow
-
 Create a new workflow with drag-and-drop builder and real-time monitoring.
-
 ```
 /workflow-create "workflow-name" "workflow-type" "agent1,agent2,agent3"
 ```
 
 Available workflow types:
-
 - `code-review` - Automated code review pipeline
 - `research` - Multi-agent research and analysis
 - `deployment` - Deployment orchestration
@@ -52,15 +42,12 @@ Available workflow types:
 ### Collaboration
 
 #### `/chat-room-create` - Create Collaboration Room
-
 Set up a chat room for agent-to-agent or agent-to-human collaboration.
-
 ```
 /chat-room-create "room-name" "room-type" "participant1,participant2"
 ```
 
 Room types:
-
 - `public` - Anyone can join
 - `private` - Invite-only
 - `agent-only` - AI agents only
@@ -69,16 +56,12 @@ Room types:
 ### Self-Improvement
 
 #### `/self-improve` - Run Improvement Cycle
-
-Execute a self-improvement cycle where 5 specialized agents analyze and improve
-The New Fuse.
-
+Execute a self-improvement cycle where 5 specialized agents analyze and improve The New Fuse.
 ```
 /self-improve "scope" "auto-deploy"
 ```
 
 Scopes:
-
 - `full` - Complete system analysis
 - `security` - Security-focused improvements
 - `performance` - Performance optimizations
@@ -87,9 +70,7 @@ Scopes:
 ### Claude Skills (Anthropic)
 
 #### `/skill-load` - Load Claude Skills
-
 Load skills from Anthropic's official skills repository.
-
 ```
 /skill-load all
 /skill-load pdf xlsx mcp-builder
@@ -97,9 +78,7 @@ Load skills from Anthropic's official skills repository.
 ```
 
 #### `/skill-search` - Search Available Skills
-
 Search and discover Claude skills by name, category, or capability.
-
 ```
 /skill-search pdf
 /skill-search category:document-processing
@@ -107,9 +86,7 @@ Search and discover Claude skills by name, category, or capability.
 ```
 
 #### `/skill-stats` - View Skill Statistics
-
 Display loaded skills and usage statistics.
-
 ```
 /skill-stats
 /skill-stats detailed
@@ -123,7 +100,6 @@ Display loaded skills and usage statistics.
 - `/skill-webapp-testing` - Automated web testing with Playwright
 
 **Available Skill Categories**:
-
 - Creative & Design (algorithmic-art, canvas-design, theme-factory)
 - Document Processing (pdf, xlsx, pptx, docx)
 - Development & Technical (mcp-builder, webapp-testing)
@@ -132,8 +108,7 @@ Display loaded skills and usage statistics.
 
 ## Integration with MCP
 
-These slash commands integrate with The New Fuse MCP server running on
-port 3100. The MCP server exposes 16 tools across 6 categories:
+These slash commands integrate with The New Fuse MCP server running on port 3100. The MCP server exposes 16 tools across 6 categories:
 
 - **Workflow Tools**: create, execute, status, cancel
 - **Task Tools**: create, assign, complete, list
@@ -174,7 +149,6 @@ All commands map to production-ready backend endpoints:
 ## Production Readiness
 
 All slash commands interface with fully functional production code:
-
 - ✅ NO mock code or placeholders
 - ✅ Complete backend implementations
 - ✅ Full database schemas
@@ -184,16 +158,14 @@ All slash commands interface with fully functional production code:
 
 ## Features Delivered by 10-Agent Sprint
 
-These slash commands expose capabilities from the massive production readiness
-sprint:
+These slash commands expose capabilities from the massive production readiness sprint:
 
 1. **A2A Protocol v0.3.0** - Linux Foundation agent-to-agent communication
 2. **Redis Coordination** - 10K+ msgs/sec, <10ms latency
 3. **Agent Registry** - Auto-discovery, onboarding, heartbeat system
 4. **Workflow Builder** - 5 node types, real-time monitoring
 5. **Chat Rooms** - 8 message types, AI summarization
-6. **Coordination Framework** - 4 patterns (MapReduce, Pipeline, Consensus,
-   Swarm)
+6. **Coordination Framework** - 4 patterns (MapReduce, Pipeline, Consensus, Swarm)
 7. **Self-Improvement Swarm** - 5 autonomous agents
 8. **Agent Discovery** - Semantic search, capability matching
 9. **MCP Server** - 16 tools, 96.8% test coverage
@@ -202,7 +174,6 @@ sprint:
 ## OAuth Integration
 
 Slash commands can be used in conjunction with OAuth-authenticated sessions:
-
 - Google OAuth login
 - GitHub OAuth login
 - JWT token-based authentication
@@ -211,7 +182,6 @@ Slash commands can be used in conjunction with OAuth-authenticated sessions:
 ## Next Steps
 
 To add new slash commands:
-
 1. Create a new `.md` file in `.claude/commands/`
 2. Follow the template in `custom-slash-command-agent.md`
 3. Include description, category, parameters, and examples
@@ -221,8 +191,6 @@ To add new slash commands:
 ## Support
 
 For issues or feature requests, see:
-
 - MCP Server README: `/apps/backend/src/modules/mcp/README.md`
-- Agent Registry API:
-  `/apps/backend/src/modules/agent-registry/API_DOCUMENTATION.md`
+- Agent Registry API: `/apps/backend/src/modules/agent-registry/API_DOCUMENTATION.md`
 - Workflow Guide: `/docs/WORKFLOW_BUILDER_GUIDE.md`

@@ -1,19 +1,13 @@
-import RecoveryCodeModal from '@/components/Modals/DisplayRecoveryCodeModal';
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { useModal } from '@/hooks/useModal';
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import System from '../../../models/system';
-import { AUTH_TOKEN } from '../../../utils/constants';
-import paths from '../../../utils/paths';
+import React, { useEffect, useState } from "react";
+import System from "../../../models/system";
+import { AUTH_TOKEN } from "../../../utils/constants";
+import paths from "../../../utils/paths";
+import { useModal } from "@/hooks/useModal";
+import RecoveryCodeModal from "@/components/Modals/DisplayRecoveryCodeModal";
+import { useTranslation } from "react-i18next";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface LoginResponse {
   valid: boolean;
@@ -63,7 +57,7 @@ export function SingleUserAuth() {
         window.location.href = paths.home();
       }
     } else {
-      setError(message || 'An error occurred during login');
+      setError(message || "An error occurred during login");
       setLoading(false);
     }
     setLoading(false);
@@ -83,7 +77,7 @@ export function SingleUserAuth() {
   useEffect(() => {
     const fetchCustomAppName = async () => {
       const { appName }: CustomAppNameResponse = await System.fetchCustomAppName();
-      setCustomAppName(appName || '');
+      setCustomAppName(appName || "");
       setLoading(false);
     };
     fetchCustomAppName();
@@ -96,14 +90,15 @@ export function SingleUserAuth() {
           <DialogTitle className="flex items-center flex-col gap-y-4">
             <div className="flex gap-x-1">
               <h3 className="text-md md:text-2xl font-bold text-white text-center whitespace-nowrap hidden md:block">
-                {t('login.multi-user.welcome')}
+                {t("login.multi-user.welcome")}
               </h3>
               <p className="text-4xl md:text-2xl font-bold bg-gradient-to-r from-[#75D6FF] via-[#FFFFFF] light:via-[#75D6FF] to-[#FFFFFF] light:to-[#75D6FF] bg-clip-text text-transparent">
-                {customAppName || 'AnythingLLM'}
+                {customAppName || "AnythingLLM"}
               </p>
             </div>
             <p className="text-sm text-theme-text-secondary text-center">
-              {t('login.sign-in.start')} {customAppName || 'AnythingLLM'} {t('login.sign-in.end')}
+              {t("login.sign-in.start")} {customAppName || "AnythingLLM"}{" "}
+              {t("login.sign-in.end")}
             </p>
           </DialogTitle>
         </DialogHeader>
@@ -120,7 +115,9 @@ export function SingleUserAuth() {
           {error && <p className="text-sm text-red-500">Error: {error}</p>}
           <DialogFooter>
             <Button disabled={loading} type="submit" className="w-full">
-              {loading ? t('login.multi-user.validating') : t('login.multi-user.login')}
+              {loading
+                ? t("login.multi-user.validating")
+                : t("login.multi-user.login")}
             </Button>
           </DialogFooter>
         </form>

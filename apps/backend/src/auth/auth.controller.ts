@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Controller, Post, Body, UseGuards, Get, Req, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { IsEmail, IsString, MinLength } from 'class-validator';
-import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { FirebaseAuthGuard } from './firebase-auth.guard';
+import { Request, Response } from 'express';
+import { IsEmail, IsString, MinLength } from 'class-validator';
+import { JwtService } from '@nestjs/jwt';
 
 class RegisterDto {
   @IsEmail()
@@ -30,16 +30,8 @@ class LoginDto {
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
-
-  @Get('me')
-  @UseGuards(FirebaseAuthGuard)
-  async getMe(@Req() req: Request) {
-    // Return the authenticated user attached to the request by the guard
-    // The frontend expects { role: string, roles: string[], ... }
-    return req.user;
-  }
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
@@ -118,9 +110,7 @@ export class AuthController {
   }
 
   @Post('unstoppable-domains')
-  async unstoppableDomainsAuth(
-    @Body() body: { domain: string; walletAddress: string; walletType?: string }
-  ) {
+  async unstoppableDomainsAuth(@Body() body: { domain: string; walletAddress: string; walletType?: string }) {
     const { domain, walletAddress, walletType } = body;
 
     // Validate input
@@ -132,7 +122,7 @@ export class AuthController {
     const user = await this.authService.findOrCreateUnstoppableDomainsUser(
       domain,
       walletAddress,
-      walletType
+      walletType,
     );
 
     // Generate JWT token
@@ -149,6 +139,7 @@ export class AuthController {
         email: user.email || domain,
         name: user.name || domain,
         role: user.role || 'user',
+        photoURL: user.photoURL,
       },
     };
   }

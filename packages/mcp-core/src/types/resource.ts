@@ -4,13 +4,13 @@
 
 // Re-export resource interfaces from the interfaces module
 export type {
-  AccessControlEntry,
-  MCPResource,
-  ResourceCaching,
-  ResourceCallback,
-  ResourceContent,
   ResourceHandler,
+  MCPResource,
+  ResourceContent,
   ResourcePermissions,
+AccessControlEntry,
+  ResourceCaching,
+  ResourceCallback
 } from '../interfaces/IMCPResource';
 
 /**
@@ -22,7 +22,7 @@ export enum ResourceType {
   API = 'api',
   MEMORY = 'memory',
   STREAM = 'stream',
-  CUSTOM = 'custom',
+  CUSTOM = 'custom'
 }
 
 /**
@@ -32,7 +32,7 @@ export enum ResourceAccessMode {
   READ_ONLY = 'read_only',
   WRITE_ONLY = 'write_only',
   READ_WRITE = 'read_write',
-  APPEND_ONLY = 'append_only',
+  APPEND_ONLY = 'append_only'
 }
 
 /**
@@ -42,7 +42,7 @@ export enum ResourceStatus {
   AVAILABLE = 'available',
   UNAVAILABLE = 'unavailable',
   LOCKED = 'locked',
-  ERROR = 'error',
+  ERROR = 'error'
 }
 
 /**

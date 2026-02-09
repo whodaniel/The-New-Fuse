@@ -2,11 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export abstract class BaseRecoveryStrategy {
-  protected readonly logger = new Logger(this.constructor.name);
+    protected readonly logger = new Logger(this.constructor.name);
 
-  constructor() {}
+    constructor() {}
 
-  abstract canHandle(error: Error): boolean;
+    abstract canHandle(error: Error): boolean;
 
-  abstract handle(error: Error, context: Record<string, any>): Promise<void>;
+    abstract handle(error: Error, context: Record<string, any>): Promise<void>;
 }

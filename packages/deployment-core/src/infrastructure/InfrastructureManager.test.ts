@@ -3,21 +3,21 @@
  * Tests for the core infrastructure management functionality
  */
 
-import { createLogger } from 'winston';
+import { InfrastructureManager } from './InfrastructureManager';
+import { TemplateParser } from './TemplateParser';
+import { StateManager, InMemoryStateStorage } from './StateManager';
+import { ResourceProvisioner } from './ResourceProvisioner';
+import { TemplateValidator } from './TemplateValidator';
+import { ChangeAnalyzer } from './ChangeAnalyzer';
 import { MetricsCollector } from '../core/MetricsCollector';
 import {
-  CloudProvider,
   InfrastructureTemplate,
-  InfrastructureUpdate,
+  CloudProvider,
   ResourceType,
   VariableType,
+  InfrastructureUpdate
 } from '../types/infrastructure';
-import { ChangeAnalyzer } from './ChangeAnalyzer';
-import { InfrastructureManager } from './InfrastructureManager';
-import { ResourceProvisioner } from './ResourceProvisioner';
-import { InMemoryStateStorage, StateManager } from './StateManager';
-import { TemplateParser } from './TemplateParser';
-import { TemplateValidator } from './TemplateValidator';
+import { createLogger } from 'winston';
 
 describe('InfrastructureManager', () => {
   let infrastructureManager: InfrastructureManager;
@@ -57,20 +57,20 @@ describe('InfrastructureManager', () => {
             properties: {
               cpu: '500m',
               memory: '1Gi',
-              replicas: 2,
+              replicas: 2
             },
             dependencies: [],
             lifecycle: {
               createBeforeDestroy: false,
               preventDestroy: false,
               ignoreChanges: [],
-              replaceTriggeredBy: [],
+              replaceTriggeredBy: []
             },
             tags: {
               environment: 'test',
-              component: 'web',
-            },
-          },
+              component: 'web'
+            }
+          }
         ],
         variables: [
           {
@@ -78,15 +78,15 @@ describe('InfrastructureManager', () => {
             type: VariableType.STRING,
             description: 'Environment name',
             defaultValue: 'test',
-            required: true,
-          },
+            required: true
+          }
         ],
         outputs: [
           {
             name: 'web_server_endpoint',
             value: '${web-server.endpoint}',
-            description: 'Web server endpoint URL',
-          },
+            description: 'Web server endpoint URL'
+          }
         ],
         dependencies: [],
         metadata: {
@@ -95,8 +95,8 @@ describe('InfrastructureManager', () => {
           tags: ['test'],
           createdAt: new Date(),
           updatedAt: new Date(),
-          version: '1.0.0',
-        },
+          version: '1.0.0'
+        }
       };
 
       const result = await infrastructureManager.provisionInfrastructure(template);
@@ -125,8 +125,8 @@ describe('InfrastructureManager', () => {
           tags: [],
           createdAt: new Date(),
           updatedAt: new Date(),
-          version: '',
-        },
+          version: ''
+        }
       };
 
       const result = await infrastructureManager.provisionInfrastructure(invalidTemplate);
@@ -153,12 +153,12 @@ describe('InfrastructureManager', () => {
               createBeforeDestroy: false,
               preventDestroy: false,
               ignoreChanges: [],
-              replaceTriggeredBy: [],
+              replaceTriggeredBy: []
             },
             tags: {
-              environment: 'test',
-            },
-          },
+              environment: 'test'
+            }
+          }
         ],
         variables: [],
         outputs: [],
@@ -169,8 +169,8 @@ describe('InfrastructureManager', () => {
           tags: ['test'],
           createdAt: new Date(),
           updatedAt: new Date(),
-          version: '1.0.0',
-        },
+          version: '1.0.0'
+        }
       };
 
       const result = await infrastructureManager.validateTemplate(template);
@@ -195,10 +195,10 @@ describe('InfrastructureManager', () => {
               createBeforeDestroy: false,
               preventDestroy: false,
               ignoreChanges: [],
-              replaceTriggeredBy: [],
+              replaceTriggeredBy: []
             },
-            tags: {},
-          },
+            tags: {}
+          }
         ],
         variables: [],
         outputs: [],
@@ -209,8 +209,8 @@ describe('InfrastructureManager', () => {
           tags: [],
           createdAt: new Date(),
           updatedAt: new Date(),
-          version: '',
-        },
+          version: ''
+        }
       };
 
       const result = await infrastructureManager.validateTemplate(invalidTemplate);
@@ -234,19 +234,19 @@ describe('InfrastructureManager', () => {
             name: 'web-server',
             properties: {
               machineType: 'e2-medium',
-              diskSize: 20,
+              diskSize: 20
             },
             dependencies: [],
             lifecycle: {
               createBeforeDestroy: false,
               preventDestroy: false,
               ignoreChanges: [],
-              replaceTriggeredBy: [],
+              replaceTriggeredBy: []
             },
             tags: {
-              environment: 'test',
-            },
-          },
+              environment: 'test'
+            }
+          }
         ],
         variables: [],
         outputs: [],
@@ -257,8 +257,8 @@ describe('InfrastructureManager', () => {
           tags: ['test'],
           createdAt: new Date(),
           updatedAt: new Date(),
-          version: '1.0.0',
-        },
+          version: '1.0.0'
+        }
       };
 
       const provisionResult = await infrastructureManager.provisionInfrastructure(template);
@@ -268,9 +268,9 @@ describe('InfrastructureManager', () => {
       const update: InfrastructureUpdate = {
         infrastructureId: provisionResult.infrastructureId,
         variableChanges: {
-          replicas: 2,
+          replicas: 2
         },
-        reason: 'Scale up replicas',
+        reason: 'Scale up replicas'
       };
 
       const updateResult = await infrastructureManager.updateInfrastructure(update);
@@ -296,17 +296,17 @@ describe('InfrastructureManager', () => {
             type: ResourceType.COMPUTE_ENGINE,
             name: 'web-server',
             properties: {
-              machineType: 'e2-medium',
+              machineType: 'e2-medium'
             },
             dependencies: [],
             lifecycle: {
               createBeforeDestroy: false,
               preventDestroy: false,
               ignoreChanges: [],
-              replaceTriggeredBy: [],
+              replaceTriggeredBy: []
             },
-            tags: {},
-          },
+            tags: {}
+          }
         ],
         variables: [],
         outputs: [],
@@ -317,8 +317,8 @@ describe('InfrastructureManager', () => {
           tags: ['test'],
           createdAt: new Date(),
           updatedAt: new Date(),
-          version: '1.0.0',
-        },
+          version: '1.0.0'
+        }
       };
 
       const provisionResult = await infrastructureManager.provisionInfrastructure(template);
@@ -353,10 +353,10 @@ describe('InfrastructureManager', () => {
               createBeforeDestroy: false,
               preventDestroy: false,
               ignoreChanges: [],
-              replaceTriggeredBy: [],
+              replaceTriggeredBy: []
             },
-            tags: {},
-          },
+            tags: {}
+          }
         ],
         variables: [],
         outputs: [],
@@ -367,8 +367,8 @@ describe('InfrastructureManager', () => {
           tags: ['test'],
           createdAt: new Date(),
           updatedAt: new Date(),
-          version: '1.0.0',
-        },
+          version: '1.0.0'
+        }
       };
 
       const provisionResult = await infrastructureManager.provisionInfrastructure(template);
@@ -386,9 +386,9 @@ describe('InfrastructureManager', () => {
     });
 
     it('should throw error for non-existent infrastructure', async () => {
-      await expect(infrastructureManager.getInfrastructureState('non-existent-id')).rejects.toThrow(
-        'Infrastructure non-existent-id not found'
-      );
+      await expect(
+        infrastructureManager.getInfrastructureState('non-existent-id')
+      ).rejects.toThrow('Infrastructure non-existent-id not found');
     });
   });
 
@@ -410,8 +410,8 @@ describe('InfrastructureManager', () => {
           tags: ['test'],
           createdAt: new Date(),
           updatedAt: new Date(),
-          version: '1.0.0',
-        },
+          version: '1.0.0'
+        }
       };
 
       const template2: InfrastructureTemplate = {
@@ -429,8 +429,8 @@ describe('InfrastructureManager', () => {
           tags: ['test'],
           createdAt: new Date(),
           updatedAt: new Date(),
-          version: '1.0.0',
-        },
+          version: '1.0.0'
+        }
       };
 
       await infrastructureManager.provisionInfrastructure(template1);
@@ -441,7 +441,7 @@ describe('InfrastructureManager', () => {
 
       // Test filtering by provider
       const gcpInfrastructure = await infrastructureManager.listInfrastructure({
-        provider: CloudProvider.GCP,
+        provider: CloudProvider.GCP
       });
       expect(gcpInfrastructure.length).toBeGreaterThanOrEqual(2);
     });

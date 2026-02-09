@@ -10,11 +10,6 @@ import type { ChatMessage, MCPTool, ToolDefinition, ToolUse } from '../core/type
 import { log } from '../utils/logger';
 import { getAIService } from './AIService';
 import { getMCPService } from './MCPService';
-import {
-  getToolSearchService,
-  TOOL_SEARCH_BM25_DEFINITION,
-  TOOL_SEARCH_REGEX_DEFINITION,
-} from './ToolSearchService';
 
 /**
  * Configuration for tool orchestration loop
@@ -23,9 +18,6 @@ interface OrchestrationConfig {
   maxIterations: number; // Maximum tool calling iterations
   timeout: number; // Total timeout in milliseconds
   enableDebugLogging: boolean;
-  // Tool Discovery Protocol options
-  enableToolSearch: boolean; // Enable dynamic tool search
-  deferToolsAboveCount: number; // Defer tools if total count exceeds this
 }
 
 /**
@@ -61,9 +53,6 @@ export class ToolOrchestrationService {
     maxIterations: 10,
     timeout: 30000, // 30 seconds
     enableDebugLogging: false,
-    // Tool Discovery Protocol defaults
-    enableToolSearch: true, // Enable by default
-    deferToolsAboveCount: 10, // Defer if more than 10 tools
   };
 
   private constructor() {
@@ -102,39 +91,15 @@ export class ToolOrchestrationService {
       log.info('Starting tool orchestration loop');
 
       // Get available tools from MCP
-      const mcpService = getMCPService();
-      const activeTools = mcpService.getAllTools();
-      const deferredTools = mcpService.getAllDeferredTools();
-      const totalToolCount = activeTools.length + deferredTools.length;
-
-      log.info(
-        `Tools: ${activeTools.length} active, ${deferredTools.length} deferred, ${totalToolCount} total`
-      );
-
-      // Tool Discovery Protocol: Determine if we should use tool search
-      const shouldUseToolSearch =
-        this.config.enableToolSearch && totalToolCount > this.config.deferToolsAboveCount;
-
-      // Index deferred tools for search if enabled
-      if (shouldUseToolSearch && deferredTools.length > 0) {
-        const searchService = getToolSearchService();
-        searchService.indexTools(deferredTools);
-        log.info(`Indexed ${deferredTools.length} deferred tools for search`);
-      }
+      const availableTools = await this.getAvailableTools();
+      log.info(`Available tools: ${availableTools.length}`);
 
       if (this.config.enableDebugLogging) {
-        log.info(`Active tools: ${activeTools.map((t) => t.name).join(', ')}`);
+        log.info(`Tools: ${availableTools.map((t) => t.name).join(', ')}`);
       }
 
-      // Convert MCP tools to LLM format with defer_loading
-      let toolDefinitions = this.convertMCPToolsToLLMFormat(activeTools);
-
-      // Add tool search tools if we have deferred tools
-      if (shouldUseToolSearch && deferredTools.length > 0) {
-        toolDefinitions.push(TOOL_SEARCH_REGEX_DEFINITION);
-        toolDefinitions.push(TOOL_SEARCH_BM25_DEFINITION);
-        log.info('Added tool_search tools for deferred tool discovery');
-      }
+      // Convert MCP tools to LLM format
+      const toolDefinitions = this.convertMCPToolsToLLMFormat(availableTools);
 
       let currentMessages = [...messages];
       const aiService = getAIService();
@@ -150,13 +115,12 @@ export class ToolOrchestrationService {
 
         log.info(`Orchestration iteration ${iterations}`);
 
-        // Call LLM with tools (enable tool search beta headers if using deferred tools)
+        // Call LLM with tools
         const response = await aiService.chat({
           messages: currentMessages,
           systemPrompt,
           tools: toolDefinitions,
           onChunk: iterations === 1 ? onChunk : undefined, // Only stream first response
-          enableToolSearch: shouldUseToolSearch, // Tool Discovery Protocol
         });
 
         // Parse response for tool uses
@@ -259,19 +223,16 @@ export class ToolOrchestrationService {
   /**
    * Convert MCP tools to LLM tool definition format
    * Works for both Anthropic and OpenAI formats
-   * Includes defer_loading for Tool Discovery Protocol
    */
   private convertMCPToolsToLLMFormat(mcpTools: MCPTool[]): ToolDefinition[] {
     return mcpTools.map((tool) => ({
       name: tool.name,
       description: tool.description,
-      input_schema: (tool.inputSchema as ToolDefinition['input_schema']) || {
+      input_schema: tool.inputSchema || {
         type: 'object',
         properties: {},
         required: [],
       },
-      // Tool Discovery Protocol: Include defer_loading flag
-      defer_loading: tool.defer_loading,
     }));
   }
 
@@ -331,12 +292,9 @@ export class ToolOrchestrationService {
 
   /**
    * Execute multiple tools and return results
-   * Includes handling for Tool Discovery Protocol tool_search_tool
    */
   private async executeTools(toolUses: ToolUse[]): Promise<ToolCallRecord[]> {
     const results: ToolCallRecord[] = [];
-    const mcpService = getMCPService();
-    const searchService = getToolSearchService();
 
     for (const toolUse of toolUses) {
       const startTime = Date.now();
@@ -346,33 +304,8 @@ export class ToolOrchestrationService {
 
       try {
         log.info(`Executing tool: ${toolUse.name}`);
-
-        // Tool Discovery Protocol: Handle tool_search_tool calls
-        if (toolUse.name === 'tool_search_tool_regex_20251119') {
-          const pattern = toolUse.input.pattern as string;
-          const searchResult = searchService.searchByRegex(pattern);
-          output = searchResult;
-
-          // Load discovered tools into active tools
-          const toolNames = searchResult.tools.map((t) => t.name);
-          await mcpService.loadDeferredTools(toolNames);
-          log.info(`Tool search (regex) found ${toolNames.length} tools: ${toolNames.join(', ')}`);
-          success = true;
-        } else if (toolUse.name === 'tool_search_tool_bm25_20251119') {
-          const query = toolUse.input.query as string;
-          const searchResult = searchService.searchByBM25(query);
-          output = searchResult;
-
-          // Load discovered tools into active tools
-          const toolNames = searchResult.tools.map((t) => t.name);
-          await mcpService.loadDeferredTools(toolNames);
-          log.info(`Tool search (BM25) found ${toolNames.length} tools: ${toolNames.join(', ')}`);
-          success = true;
-        } else {
-          // Regular tool execution via MCP
-          output = await this.executeSingleTool(toolUse.name, toolUse.input);
-          success = true;
-        }
+        output = await this.executeSingleTool(toolUse.name, toolUse.input);
+        success = true;
       } catch (err) {
         error = (err as Error).message;
         log.error(`Tool execution failed: ${toolUse.name}`, err);

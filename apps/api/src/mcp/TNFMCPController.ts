@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
+import { Controller, Get, Post, Body, Logger } from '@nestjs/common';
 import { TNFMCPService } from './TNFMCPService';
 
 @Controller('mcp')
@@ -15,7 +15,7 @@ export class TNFMCPController {
   @Post('start-remote')
   async startRemoteServer(@Body() body: { port?: number }) {
     const port = body.port || 3001;
-
+    
     try {
       await this.mcpService.startRemoteServer(port);
       return {
@@ -35,7 +35,7 @@ export class TNFMCPController {
   @Get('health')
   async getHealth() {
     const status = await this.mcpService.getServerStatus();
-
+    
     return {
       status: status.initialized ? 'healthy' : 'unhealthy',
       details: status,

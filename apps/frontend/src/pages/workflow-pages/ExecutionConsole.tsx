@@ -1,9 +1,11 @@
 import {
   Activity,
   AlertTriangle,
+  ArrowRight,
   CheckCircle,
   Clock,
   History,
+  Play,
   PlayCircle,
   RotateCcw,
   Search,
@@ -58,9 +60,7 @@ export const ExecutionConsole: React.FC = () => {
           <h1 className="text-4xl font-bold text-white bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
             Workflow Execution Console
           </h1>
-          <p className="text-gray-400 mt-2">
-            Active runtime monitoring for autonomous pipelines and agent swarms.
-          </p>
+          <p className="text-gray-400 mt-2">Active runtime monitoring for autonomous pipelines and agent swarms.</p>
         </div>
         <div className="flex gap-2">
           <PremiumButton variant="secondary" onClick={fetchExecutions}>
@@ -70,40 +70,28 @@ export const ExecutionConsole: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatusSummary
-          label="Running"
-          value={executions.filter((e) => e.status === 'running').length.toString()}
-          color="blue"
-        />
-        <StatusSummary
-          label="Completed"
-          value={executions.filter((e) => e.status === 'completed').length.toString()}
-          color="emerald"
-        />
-        <StatusSummary
-          label="Failed"
-          value={executions.filter((e) => e.status === 'failed').length.toString()}
-          color="rose"
-        />
+        <StatusSummary label="Running" value={executions.filter(e => e.status === 'running').length.toString()} color="blue" />
+        <StatusSummary label="Completed" value={executions.filter(e => e.status === 'completed').length.toString()} color="emerald" />
+        <StatusSummary label="Failed" value={executions.filter(e => e.status === 'failed').length.toString()} color="rose" />
         <StatusSummary label="Queue Depth" value="0" color="gray" />
       </div>
 
       <GlassCard className="overflow-hidden">
         <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/5">
-          <div className="flex items-center gap-2">
-            <PlayCircle className="w-5 h-5 text-blue-400" />
-            <h2 className="text-lg font-bold text-white">Live Runtimes</h2>
-          </div>
-          <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-            <input
-              type="text"
-              placeholder="Search by ID or workflow..."
-              className="w-full bg-black/40 border border-white/10 rounded-lg pl-10 pr-4 py-1.5 text-xs text-white"
-            />
-          </div>
+            <div className="flex items-center gap-2">
+                <PlayCircle className="w-5 h-5 text-blue-400" />
+                <h2 className="text-lg font-bold text-white">Live Runtimes</h2>
+            </div>
+            <div className="relative w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <input 
+                    type="text" 
+                    placeholder="Search by ID or workflow..." 
+                    className="w-full bg-black/40 border border-white/10 rounded-lg pl-10 pr-4 py-1.5 text-xs text-white"
+                />
+            </div>
         </div>
-
+        
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-white/5 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-white/10">
@@ -125,51 +113,45 @@ export const ExecutionConsole: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div
-                      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase ${
-                        exec.status === 'running'
-                          ? 'bg-blue-500/10 border-blue-500/50 text-blue-400'
-                          : exec.status === 'completed'
-                            ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-                            : exec.status === 'failed'
-                              ? 'bg-rose-500/10 border-rose-500/50 text-rose-400'
-                              : 'bg-gray-500/10 border-gray-500/50 text-gray-400'
-                      }`}
-                    >
+                    <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase ${
+                      exec.status === 'running' ? 'bg-blue-500/10 border-blue-500/50 text-blue-400' :
+                      exec.status === 'completed' ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400' :
+                      exec.status === 'failed' ? 'bg-rose-500/10 border-rose-500/50 text-rose-400' : 'bg-gray-500/10 border-gray-500/50 text-gray-400'
+                    }`}>
                       {exec.status === 'running' && <Activity className="w-3 h-3 animate-pulse" />}
                       {exec.status}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="w-48 space-y-1.5">
-                      <div className="flex justify-between text-[10px] text-gray-500">
-                        <span>Step Progress</span>
-                        <span>{exec.progress}%</span>
-                      </div>
-                      <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden border border-white/5">
-                        <div
-                          className={`h-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-1000`}
-                          style={{ width: `${exec.progress}%` }}
-                        />
-                      </div>
+                        <div className="flex justify-between text-[10px] text-gray-500">
+                            <span>Step Progress</span>
+                            <span>{exec.progress}%</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden border border-white/5">
+                            <div 
+                                className={`h-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-1000`}
+                                style={{ width: `${exec.progress}%` }}
+                            />
+                        </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 text-xs text-gray-400">
-                      <Clock className="w-3.5 h-3.5" />
-                      {exec.duration}
+                        <Clock className="w-3.5 h-3.5" />
+                        {exec.duration}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white transition-all">
-                        <History className="w-4 h-4" />
-                      </button>
-                      {exec.status === 'running' && (
-                        <button className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-all">
-                          <StopCircle className="w-4 h-4" />
+                        <button className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white transition-all">
+                            <History className="w-4 h-4" />
                         </button>
-                      )}
+                        {exec.status === 'running' && (
+                            <button className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-all">
+                                <StopCircle className="w-4 h-4" />
+                            </button>
+                        )}
                     </div>
                   </td>
                 </tr>
@@ -182,67 +164,25 @@ export const ExecutionConsole: React.FC = () => {
   );
 };
 
-const StatusSummary: React.FC<{ label: string; value: string; color: string }> = ({
-  label,
-  value,
-  color,
-}) => (
+const StatusSummary: React.FC<{ label: string; value: string; color: string }> = ({ label, value, color }) => (
   <GlassCard className="p-4 flex items-center justify-between border-white/5">
     <div>
       <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{label}</div>
       <div className={`text-2xl font-bold text-${color}-400`}>{value}</div>
     </div>
     <div className={`p-2 rounded-lg bg-${color}-500/10 text-${color}-400`}>
-      {label === 'Running' ? (
-        <Activity className="w-5 h-5 animate-pulse" />
-      ) : label === 'Completed' ? (
-        <CheckCircle className="w-5 h-5" />
-      ) : label === 'Failed' ? (
-        <AlertTriangle className="w-5 h-5" />
-      ) : (
-        <Clock className="w-5 h-5" />
-      )}
+        {label === 'Running' ? <Activity className="w-5 h-5 animate-pulse" /> : 
+         label === 'Completed' ? <CheckCircle className="w-5 h-5" /> : 
+         label === 'Failed' ? <AlertTriangle className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
     </div>
   </GlassCard>
 );
 
 const MOCK_EXECUTIONS: Execution[] = [
-  {
-    id: 'run-8xJ29',
-    workflowId: 'wf-1',
-    workflowName: 'Market Analysis Swarm',
-    status: 'running',
-    startedAt: new Date().toISOString(),
-    duration: '12m 45s',
-    progress: 65,
-  },
-  {
-    id: 'run-9kL01',
-    workflowId: 'wf-2',
-    workflowName: 'Content Generation Bridge',
-    status: 'completed',
-    startedAt: new Date().toISOString(),
-    duration: '4m 12s',
-    progress: 100,
-  },
-  {
-    id: 'run-3aB52',
-    workflowId: 'wf-3',
-    workflowName: 'Recursive Code Refactor',
-    status: 'failed',
-    startedAt: new Date().toISOString(),
-    duration: '1m 05s',
-    progress: 22,
-  },
-  {
-    id: 'run-4vM77',
-    workflowId: 'wf-4',
-    workflowName: 'AIAgent Onboarding Flow',
-    status: 'running',
-    startedAt: new Date().toISOString(),
-    duration: '08m 15s',
-    progress: 42,
-  },
+  { id: 'run-8xJ29', workflowId: 'wf-1', workflowName: 'Market Analysis Swarm', status: 'running', startedAt: new Date().toISOString(), duration: '12m 45s', progress: 65 },
+  { id: 'run-9kL01', workflowId: 'wf-2', workflowName: 'Content Generation Bridge', status: 'completed', startedAt: new Date().toISOString(), duration: '4m 12s', progress: 100 },
+  { id: 'run-3aB52', workflowId: 'wf-3', workflowName: 'Recursive Code Refactor', status: 'failed', startedAt: new Date().toISOString(), duration: '1m 05s', progress: 22 },
+  { id: 'run-4vM77', workflowId: 'wf-4', workflowName: 'AIAgent Onboarding Flow', status: 'running', startedAt: new Date().toISOString(), duration: '08m 15s', progress: 42 },
 ];
 
 export default ExecutionConsole;

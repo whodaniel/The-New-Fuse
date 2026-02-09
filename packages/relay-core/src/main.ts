@@ -48,12 +48,8 @@ async function bootstrap() {
   // Handle server events
   relayServer.on('started', () => {
     console.log('✅ Relay server started successfully');
-    console.log(
-      `📡 HTTP Transport: ${config.transports.http ? 'Enabled on port ' + config.ports.http : 'Disabled'}`
-    );
-    console.log(
-      `🔌 WebSocket Transport: ${config.transports.websocket ? 'Enabled on port ' + config.ports.websocket : 'Disabled'}`
-    );
+    console.log(`📡 HTTP Transport: ${config.transports.http ? 'Enabled on port ' + config.ports.http : 'Disabled'}`);
+    console.log(`🔌 WebSocket Transport: ${config.transports.websocket ? 'Enabled on port ' + config.ports.websocket : 'Disabled'}`);
     console.log(`🔗 Redis Transport: ${config.transports.redis ? 'Enabled' : 'Disabled'}`);
     console.log(`📋 MCP Transport: ${config.transports.mcp ? 'Enabled' : 'Disabled'}`);
   });
@@ -72,13 +68,11 @@ async function bootstrap() {
     if (req.url === '/health' || req.url === '/') {
       const status = relayServer.getSystemStatus();
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(
-        JSON.stringify({
-          status: 'healthy',
-          ...status,
-          timestamp: new Date().toISOString(),
-        })
-      );
+      res.end(JSON.stringify({
+        status: 'healthy',
+        ...status,
+        timestamp: new Date().toISOString(),
+      }));
     } else if (req.url === '/agents') {
       const agents = relayServer.getAgents();
       res.writeHead(200, { 'Content-Type': 'application/json' });

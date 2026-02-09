@@ -1,13 +1,10 @@
 # ACA Protocol Usage Examples
 
-This document provides examples of how to use the consolidated ACA (Agent
-Communication Abstraction) protocol adapter within The New Fuse.
+This document provides examples of how to use the consolidated ACA (Agent Communication Abstraction) protocol adapter within The New Fuse.
 
 ## Overview
 
-The `ACAProtocolAdapter` is now the primary adapter for agent-to-agent
-communication, registered by default in the `A2AModule`. It provides a
-standardized way for agents to interact.
+The `ACAProtocolAdapter` is now the primary adapter for agent-to-agent communication, registered by default in the `A2AModule`. It provides a standardized way for agents to interact.
 
 ## Sending a Message via ACA
 
@@ -16,11 +13,7 @@ standardized way for agents to interact.
 
 import { ProtocolAdapterService } from '@the-new-fuse/core'; // Adjust import path as needed
 
-async function sendMessageToAgent(
-  adapterService: ProtocolAdapterService,
-  targetAgentId: string,
-  messagePayload: any
-) {
+async function sendMessageToAgent(adapterService: ProtocolAdapterService, targetAgentId: string, messagePayload: any) {
   try {
     // The service will automatically use the registered ACA adapter if appropriate
     const response = await adapterService.sendMessage({
@@ -40,8 +33,7 @@ async function sendMessageToAgent(
 
 ## Handling Incoming ACA Messages (Agent Implementation Example)
 
-Within an agent implementation, you would typically register handlers for
-specific message types or actions expected via ACA.
+Within an agent implementation, you would typically register handlers for specific message types or actions expected via ACA.
 
 ```typescript
 // Example within an Agent class or service
@@ -49,10 +41,7 @@ specific message types or actions expected via ACA.
 class MyAgent {
   constructor(private protocolAdapterService: ProtocolAdapterService) {
     // Register message handlers upon initialization
-    this.protocolAdapterService.registerMessageHandler(
-      'ACA',
-      this.handleIncomingACAMessage.bind(this)
-    );
+    this.protocolAdapterService.registerMessageHandler('ACA', this.handleIncomingACAMessage.bind(this));
   }
 
   async handleIncomingACAMessage(message: any): Promise<any> {
@@ -74,5 +63,4 @@ class MyAgent {
 }
 ```
 
-_Note: The exact implementation details for message handling might vary based on
-the agent framework structure._
+*Note: The exact implementation details for message handling might vary based on the agent framework structure.*

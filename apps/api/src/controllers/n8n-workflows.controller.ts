@@ -3,24 +3,15 @@
  * REST API endpoints for n8n workflow management
  */
 
-import {
-  Body,
-  Controller,
-  Get,
-  HttpException,
-  HttpStatus,
-  Param,
-  Post,
-  Query,
-} from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import type {
-  WorkflowCategory,
-  WorkflowImportRequest,
-  WorkflowSearchQuery,
-  WorkflowSource,
-} from '@the-new-fuse/n8n-workflows';
+import { Controller, Get, Post, Body, Param, Query, HttpException, HttpStatus } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { WorkflowService } from '@the-new-fuse/n8n-workflows';
+import type {
+  WorkflowSearchQuery,
+  WorkflowCategory,
+  WorkflowSource,
+  WorkflowImportRequest,
+} from '@the-new-fuse/n8n-workflows';
 
 @ApiTags('n8n-workflows')
 @Controller('api/workflows/n8n')
@@ -205,13 +196,12 @@ export class N8nWorkflowsController {
   @Get(':id/similar')
   @ApiOperation({ summary: 'Get similar workflows' })
   @ApiParam({ name: 'id', description: 'Workflow ID' })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    description: 'Number of similar workflows to return',
-  })
+  @ApiQuery({ name: 'limit', required: false, description: 'Number of similar workflows to return' })
   @ApiResponse({ status: 200, description: 'Similar workflows retrieved successfully' })
-  async getSimilarWorkflows(@Param('id') id: string, @Query('limit') limit?: string) {
+  async getSimilarWorkflows(
+    @Param('id') id: string,
+    @Query('limit') limit?: string
+  ) {
     try {
       const similarWorkflows = await this.workflowService.getSimilarWorkflows(
         id,

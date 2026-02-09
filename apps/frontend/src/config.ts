@@ -1,7 +1,7 @@
-import { getApiUrl, getFrontendUrl, getWebSocketUrl } from './config/ports';
+import { getApiUrl, getWebSocketUrl, getFrontendUrl } from './config/ports';
 
 export const config = {
-  apiUrl: getApiUrl(),
-  webSocketUrl: getWebSocketUrl(),
-  frontendUrl: getFrontendUrl(),
+    apiUrl: getApiUrl(),
+    webSocketUrl: getWebSocketUrl(),
+    frontendUrl: getFrontendUrl(),
 };

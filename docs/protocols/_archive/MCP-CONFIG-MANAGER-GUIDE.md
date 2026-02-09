@@ -1,27 +1,23 @@
 # MCP Configuration Manager
 
-This document explains how to use the MCP Configuration Manager tool to manage
-MCP capability providers in The New Fuse and Claude Desktop.
+This document explains how to use the MCP Configuration Manager tool to manage MCP capability providers in The New Fuse and Claude Desktop.
 
 ## Overview
 
-The MCP Configuration Manager is a CLI tool that helps you manage MCP server
-configurations in JSON files. It can:
+The MCP Configuration Manager is a CLI tool that helps you manage MCP server configurations in JSON files. It can:
 
 - List existing MCP capability providers
-- Add new MCP capability providers
+- Add new MCP capability providers 
 - Update existing MCP capability providers
 - Remove MCP capability providers
 
 ## Understanding MCP Capability Providers
 
-MCP (Model Context Protocol) capability providers expose functionality to LLMs
-through a standardized protocol. They:
+MCP (Model Context Protocol) capability providers expose functionality to LLMs through a standardized protocol. They:
 
 - Are **not** traditional servers that need to be started or run continuously
 - Are accessed on-demand when an LLM needs to use their capabilities
-- Expose specific functionalities like file access, web search, or AppleScript
-  execution
+- Expose specific functionalities like file access, web search, or AppleScript execution
 - Are defined in configuration files that specify how to invoke them
 
 ## Using the MCP Configuration Manager
@@ -35,7 +31,6 @@ For a user-friendly interface, run the wizard in interactive mode:
 ```
 
 This will guide you through:
-
 1. Selecting an action (add, list, remove)
 2. Choosing a configuration file
 3. Providing necessary details for the action
@@ -80,20 +75,19 @@ Example - adding a web search capability:
 
 The tool works with the following default configuration files:
 
-- **Claude Desktop**:
-  `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Claude Desktop**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **The New Fuse**: `~/Desktop/A1-Inter-LLM-Com/The New Fuse/mcp_config.json`
 
 You can specify a custom file path with the `--file` option.
 
 ## Common MCP Capability Providers
 
-| Name                  | Command  | Args                                                             | Description                      |
-| --------------------- | -------- | ---------------------------------------------------------------- | -------------------------------- |
-| `web-search`          | `npx`    | `@modelcontextprotocol/server-websearch`                         | Allows searching the web         |
-| `filesystem`          | `npx`    | `-y @modelcontextprotocol/server-filesystem --allow-dir ./data`  | Provides file system access      |
-| `applescript_execute` | `npx`    | `@peakmojo/applescript-mcp`                                      | Enables AppleScript execution    |
-| `brave-search`        | `docker` | `run --rm -i -e BRAVE_API_KEY modelcontextprotocol/brave-search` | Provides Brave search capability |
+| Name | Command | Args | Description |
+|------|---------|------|-------------|
+| `web-search` | `npx` | `@modelcontextprotocol/server-websearch` | Allows searching the web |
+| `filesystem` | `npx` | `-y @modelcontextprotocol/server-filesystem --allow-dir ./data` | Provides file system access |
+| `applescript_execute` | `npx` | `@peakmojo/applescript-mcp` | Enables AppleScript execution |
+| `brave-search` | `docker` | `run --rm -i -e BRAVE_API_KEY modelcontextprotocol/brave-search` | Provides Brave search capability |
 
 ## Adding Custom MCP Capability Providers
 
@@ -116,6 +110,5 @@ If you encounter issues:
 
 - Ensure Node.js is installed
 - Check if configuration files exist and are valid JSON
-- Verify that the command specified in the configuration is available on the
-  system
+- Verify that the command specified in the configuration is available on the system
 - Check permissions on configuration files

@@ -1,16 +1,15 @@
-import { ethers } from 'ethers';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ethers } from 'ethers';
 import { useAuth } from '../../hooks/useAuth';
 
 // Placeholder ABI for the functions we need
 const REGISTRY_ABI = [
-  'function mintAgencyLicense(string memory _name, uint256 _duration) external payable',
+  "function mintAgencyLicense(string memory _name, uint256 _duration) external payable"
 ];
 
 // Placeholder Address - UPDATE FROM DEPLOY SCRIPT
-const REGISTRY_ADDRESS =
-  import.meta.env.VITE_AGENCY_REGISTRY_ADDRESS || '0x5FbDB2315678afecb367f032d93F642f64180aa3'; // Localhost default
+const REGISTRY_ADDRESS = import.meta.env.VITE_AGENCY_REGISTRY_ADDRESS || "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Localhost default
 
 const AgencyOnboarding: React.FC = () => {
   const { user } = useAuth();
@@ -25,8 +24,8 @@ const AgencyOnboarding: React.FC = () => {
     setError('');
 
     try {
-      if (!window.ethereum) throw new Error('No crypto wallet found');
-
+      if (!window.ethereum) throw new Error("No crypto wallet found");
+      
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
 
@@ -35,20 +34,21 @@ const AgencyOnboarding: React.FC = () => {
       // Price: 2500 MATIC (Mocked as 0.1 ETH for dev)
       // Duration: 1 year (365 days)
       const duration = 365 * 24 * 60 * 60;
-      const price = ethers.parseEther('0.1'); // Dev price
+      const price = ethers.parseEther("0.1"); // Dev price
 
       const tx = await contract.mintAgencyLicense(agencyName, duration, { value: price });
-      console.log('Transaction sent:', tx.hash);
-
+      console.log("Transaction sent:", tx.hash);
+      
       await tx.wait();
-
+      
       // Success!
       // In a real app, we'd wait for indexing or force a redirect to the new subdomain.
       // For now, go to the dashboard generic route.
       navigate('/agency/dashboard');
+
     } catch (err: any) {
       console.error(err);
-      setError(err.message || 'Transaction failed');
+      setError(err.message || "Transaction failed");
     } finally {
       setLoading(false);
     }
@@ -61,22 +61,17 @@ const AgencyOnboarding: React.FC = () => {
           Become a Sovereign Agency
         </h1>
         <p className="text-slate-400 text-lg mb-8">
-          Mint your dedicated <strong>.hub</strong> license to launch your own white-label AI Agent
-          platform.
+          Mint your dedicated <strong>.hub</strong> license to launch your own white-label AI Agent platform.
         </p>
 
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-bold uppercase text-slate-500 mb-2">
-              Agency Name
-            </label>
+            <label className="block text-sm font-bold uppercase text-slate-500 mb-2">Agency Name</label>
             <div className="flex">
-              <input
-                type="text"
+              <input 
+                type="text" 
                 value={agencyName}
-                onChange={(e) =>
-                  setAgencyName(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))
-                }
+                onChange={e => setAgencyName(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                 placeholder="my-agency"
                 className="flex-1 bg-slate-800 text-white p-4 rounded-l-xl border border-slate-700 focus:border-blue-500 outline-none text-xl"
               />
@@ -85,9 +80,7 @@ const AgencyOnboarding: React.FC = () => {
               </span>
             </div>
             {agencyName && (
-              <p className="text-green-500 text-sm mt-2">
-                ✓ {agencyName}.thenewfuse.hub is available
-              </p>
+              <p className="text-green-500 text-sm mt-2">✓ {agencyName}.thenewfuse.hub is available</p>
             )}
           </div>
 

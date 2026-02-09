@@ -25,7 +25,7 @@ import {
 // Mock guard and decorators since api-core services are not available
 class JwtAuthGuard {}
 
-// Mock database User type
+// Mock Prisma User type
 interface User {
   id: string;
   email?: string;
@@ -71,55 +71,47 @@ class TestRunnerService {
   async runAgentWorkflowTests(config?: Partial<TestConfiguration>): Promise<TestRunResult> {
     return { id: 'mock-run', name: 'Mock Test Run', status: 'running', startTime: Date.now() };
   }
-
+  
   async runSingleTest(name: string, config?: Partial<TestConfiguration>): Promise<TestCaseResult> {
     return { name, status: 'passed' };
   }
-
+  
   async getAllTestRuns(limit?: number): Promise<TestRunResult[]> {
     return [];
   }
-
+  
   async getTestRunsByStatus(status: string): Promise<TestRunResult[]> {
     return [];
   }
-
+  
   async getTestRun(id: string): Promise<TestRunResult | null> {
     return null;
   }
-
-  async generateTestReport(
-    id: string,
-  ): Promise<{ summary: string; details: string; recommendations: string[] }> {
+  
+  async generateTestReport(id: string): Promise<{ summary: string; details: string; recommendations: string[] }> {
     return { summary: '', details: '', recommendations: [] };
   }
-
+  
   async scheduleTests(request: any): Promise<string> {
     return 'mock-schedule-id';
   }
-
+  
   async getTestSchedules(): Promise<TestSchedule[]> {
     return [];
   }
-
+  
   async updateSchedule(id: string, request: any): Promise<boolean> {
     return true;
   }
-
+  
   async deleteSchedule(id: string): Promise<boolean> {
     return true;
   }
-
+  
   async getTestAnalytics(days: number): Promise<any> {
-    return {
-      totalRuns: 0,
-      successRate: 0,
-      averageDuration: 0,
-      trends: { daily: [], testCases: [] },
-      topFailures: [],
-    };
+    return { totalRuns: 0, successRate: 0, averageDuration: 0, trends: { daily: [], testCases: [] }, topFailures: [] };
   }
-
+  
   async getHealthStatus(): Promise<any> {
     return { status: 'healthy', runningTests: 0, totalRuns: 0 };
   }
@@ -170,15 +162,9 @@ export class TestRunnerController {
           type: 'object',
           properties: {
             timeout: { type: 'number', description: 'Test timeout in milliseconds' },
-            retryAttempts: {
-              type: 'number',
-              description: 'Number of retry attempts for failed tests',
-            },
+            retryAttempts: { type: 'number', description: 'Number of retry attempts for failed tests' },
             parallel: { type: 'boolean', description: 'Run tests in parallel' },
-            maxConcurrentTests: {
-              type: 'number',
-              description: 'Maximum concurrent test executions',
-            },
+            maxConcurrentTests: { type: 'number', description: 'Maximum concurrent test executions' },
             environment: { type: 'string', enum: ['development', 'staging', 'production'] },
             cleanup: { type: 'boolean', description: 'Clean up test data after execution' },
             verbose: { type: 'boolean', description: 'Enable verbose logging' },
@@ -318,7 +304,9 @@ export class TestRunnerController {
     status: 200,
     description: 'Test report generated successfully',
   })
-  async getTestReport(@Param('runId') runId: string): Promise<{
+  async getTestReport(
+    @Param('runId') runId: string,
+  ): Promise<{
     summary: string;
     details: string;
     recommendations: string[];
@@ -454,7 +442,9 @@ export class TestRunnerController {
     status: 200,
     description: 'Test analytics retrieved successfully',
   })
-  async getTestAnalytics(@Query('days') days: number = 30): Promise<{
+  async getTestAnalytics(
+    @Query('days') days: number = 30,
+  ): Promise<{
     totalRuns: number;
     successRate: number;
     averageDuration: number;
@@ -576,7 +566,9 @@ export class TestRunnerController {
     status: 200,
     description: 'Configuration validation result',
   })
-  async validateConfig(@Body() request: { config: Partial<TestConfiguration> }): Promise<{
+  async validateConfig(
+    @Body() request: { config: Partial<TestConfiguration> },
+  ): Promise<{
     valid: boolean;
     errors: string[];
     warnings: string[];

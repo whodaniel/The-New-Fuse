@@ -2,8 +2,8 @@
 
 ## Decision: Separate Repository
 
-**Rationale**: SkIDEancer requires Yarn while the main monorepo uses pnpm.
-Mixing package managers in a monorepo causes:
+**Rationale**: SkIDEancer requires Yarn while the main monorepo uses pnpm. Mixing
+package managers in a monorepo causes:
 
 - Lockfile conflicts
 - Build script confusion

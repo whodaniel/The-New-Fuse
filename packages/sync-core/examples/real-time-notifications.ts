@@ -6,8 +6,8 @@
  */
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { NotificationService } from '../src/services/NotificationService';
 import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
+import { NotificationService } from '../src/services/NotificationService';
 
 interface Notification {
   id: string;
@@ -26,7 +26,7 @@ interface Notification {
 export class RealTimeNotificationService implements OnModuleInit {
   constructor(
     private readonly syncOrchestrator: SyncOrchestrator,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
   ) {}
 
   async onModuleInit() {
@@ -115,18 +115,24 @@ export class RealTimeNotificationService implements OnModuleInit {
   private async deliverNotification(notification: Notification) {
     // Real-time WebSocket delivery
     if (notification.userId) {
-      await this.notificationService.sendToUser(notification.userId, {
-        type: 'notification',
-        data: notification,
-      });
+      await this.notificationService.sendToUser(
+        notification.userId,
+        {
+          type: 'notification',
+          data: notification,
+        }
+      );
     }
 
     // Broadcast to tenant
     if (notification.tenantId && !notification.userId) {
-      await this.notificationService.sendToTenant(notification.tenantId, {
-        type: 'notification',
-        data: notification,
-      });
+      await this.notificationService.sendToTenant(
+        notification.tenantId,
+        {
+          type: 'notification',
+          data: notification,
+        }
+      );
     }
 
     // Email for HIGH/URGENT priority
@@ -161,7 +167,10 @@ export class RealTimeNotificationService implements OnModuleInit {
     };
 
     // Sync globally (all tenants)
-    await this.syncOrchestrator.syncGlobalData('system_notification', notification);
+    await this.syncOrchestrator.syncGlobalData(
+      'system_notification',
+      notification
+    );
 
     // Broadcast via WebSocket to all connected clients
     await this.notificationService.broadcast({
@@ -239,12 +248,16 @@ export class RealTimeNotificationService implements OnModuleInit {
     await this.updateNotificationStatus(notificationId, 'READ');
 
     // Sync status update
-    await this.syncOrchestrator.syncTenantData(tenantId, 'notification', {
-      id: notificationId,
-      userId,
-      status: 'READ',
-      readAt: new Date(),
-    });
+    await this.syncOrchestrator.syncTenantData(
+      tenantId,
+      'notification',
+      {
+        id: notificationId,
+        userId,
+        status: 'READ',
+        readAt: new Date(),
+      }
+    );
   }
 
   /**
@@ -254,12 +267,16 @@ export class RealTimeNotificationService implements OnModuleInit {
     await this.removeNotification(notificationId);
 
     // Sync deletion
-    await this.syncOrchestrator.syncTenantData(tenantId, 'notification', {
-      id: notificationId,
-      userId,
-      deleted: true,
-      deletedAt: new Date(),
-    });
+    await this.syncOrchestrator.syncTenantData(
+      tenantId,
+      'notification',
+      {
+        id: notificationId,
+        userId,
+        deleted: true,
+        deletedAt: new Date(),
+      }
+    );
   }
 
   /**

@@ -1,19 +1,19 @@
 /**
  * Agent Repository - Drizzle ORM Implementation
- *
+ * 
  * This repository provides data access for Agent entities using Drizzle ORM.
- * It replaces the legacy legacy ORM-based repository.
+ * It replaces the legacy Prisma-based repository.
  */
 
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  and,
-  desc,
-  DRIZZLE_CLIENT,
+import { 
+  DRIZZLE_CLIENT, 
   type DrizzleClient,
   drizzleSchema,
   eq,
+  and,
   isNull,
+  desc,
   like,
   or,
   sql,
@@ -28,7 +28,7 @@ type Agent = typeof agents.$inferSelect;
 // Custom insert type that includes all optional fields
 interface AgentInsert {
   name: string;
-  type: (typeof agents.$inferInsert)['type'];
+  type: typeof agents.$inferInsert['type'];
   userId: string;
   status?: string | null;
   description?: string | null;
@@ -54,16 +54,15 @@ export interface IAgentRepository {
 
 @Injectable()
 export class AgentRepository implements IAgentRepository {
-  constructor(@Inject(DRIZZLE_CLIENT) private readonly db: DrizzleClient) {}
+  constructor(
+    @Inject(DRIZZLE_CLIENT) private readonly db: DrizzleClient
+  ) {}
 
   /**
    * Create a new agent
    */
   async create(data: AgentInsert): Promise<Agent> {
-    const [agent] = await this.db
-      .insert(agents)
-      .values(data as any)
-      .returning();
+    const [agent] = await this.db.insert(agents).values(data as any).returning();
     return agent;
   }
 
@@ -228,7 +227,13 @@ export class AgentRepository implements IAgentRepository {
     return this.db
       .select()
       .from(agents)
-      .where(and(eq(agents.userId, userId), eq(agents.status, 'ACTIVE'), isNull(agents.deletedAt)))
+      .where(
+        and(
+          eq(agents.userId, userId),
+          eq(agents.status, 'ACTIVE'),
+          isNull(agents.deletedAt)
+        )
+      )
       .orderBy(desc(agents.createdAt));
   }
 }

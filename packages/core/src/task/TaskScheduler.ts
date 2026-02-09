@@ -12,5 +12,6 @@ export class TaskScheduler {
   @Cron(CronExpression.EVERY_MINUTE)
   async handleCron() {
     this.logger.debug('Called when the current second is 1');
+    
   }
 }

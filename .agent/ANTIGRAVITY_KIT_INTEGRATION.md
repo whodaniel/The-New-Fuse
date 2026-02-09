@@ -57,7 +57,7 @@ agents, 40 skills, and 11 workflows to our existing agent ecosystem.
 │   ├── performance-profiling/
 │   ├── plan-writing/
 │   ├── powershell-windows/
-│   ├── drizzle-expert/
+│   ├── prisma-expert/
 │   ├── python-patterns/
 │   ├── react-patterns/
 │   ├── red-team-tactics/
@@ -92,7 +92,7 @@ agents, 40 skills, and 11 workflows to our existing agent ecosystem.
 
 - **frontend-specialist** - React, UI/UX, modern web frameworks
 - **backend-specialist** - APIs, business logic, server architecture
-- **database-architect** - Schema design, SQL, Drizzle ORM
+- **database-architect** - Schema design, SQL, Prisma ORM
 - **mobile-developer** - iOS, Android, React Native
 - **game-developer** - Game logic, mechanics, development
 
@@ -142,7 +142,7 @@ agents, 40 skills, and 11 workflows to our existing agent ecosystem.
 ### Database
 
 - `database-design` - Schema design, optimization
-- `drizzle-expert` - Drizzle ORM, migrations (Aligns with TNF stack!)
+- `prisma-expert` - Prisma ORM, migrations (Aligns with TNF stack!)
 
 ### TypeScript/JavaScript
 
@@ -226,7 +226,7 @@ decorators.
 
 ### 2. **Database Expertise**
 
-`drizzle-expert` and `database-design` skills complement our PostgreSQL + Drizzle
+`prisma-expert` and `database-design` skills complement our PostgreSQL + Prisma
 ORM stack.
 
 ### 3. **React & Frontend**

@@ -1,5 +1,5 @@
+import { IsString, IsOptional, IsNumber, Min, IsEnum } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsNumber, IsOptional, Min } from 'class-validator';
 
 export enum FileCategory {
   DOCUMENT = 'DOCUMENT',
@@ -7,62 +7,62 @@ export enum FileCategory {
   VIDEO = 'VIDEO',
   AUDIO = 'AUDIO',
   ARCHIVE = 'ARCHIVE',
-  OTHER = 'OTHER',
+  OTHER = 'OTHER'
 }
 
 export class FileUploadResponseDto {
   @ApiProperty({
     description: 'File ID',
-    example: 'file_123456',
+    example: 'file_123456'
   })
   id!: string;
 
   @ApiProperty({
     description: 'Original filename',
-    example: 'document.pdf',
+    example: 'document.pdf'
   })
   filename!: string;
 
   @ApiProperty({
     description: 'File MIME type',
-    example: 'application/pdf',
+    example: 'application/pdf'
   })
   mimeType!: string;
 
   @ApiProperty({
     description: 'File size in bytes',
-    example: 1024000,
+    example: 1024000
   })
   size!: number;
 
   @ApiProperty({
     description: 'File category',
     enum: FileCategory,
-    example: FileCategory.DOCUMENT,
+    example: FileCategory.DOCUMENT
   })
   category!: FileCategory;
 
   @ApiProperty({
     description: 'File URL for download',
-    example: 'https://storage.example.com/files/file_123456',
+    example: 'https://storage.example.com/files/file_123456'
   })
   url!: string;
 
   @ApiProperty({
     description: 'User ID who uploaded the file',
-    example: 'usr_123',
+    example: 'usr_123'
   })
   uploadedBy!: string;
 
   @ApiProperty({
     description: 'Upload timestamp',
-    example: '2024-01-01T00:00:00.000Z',
+    example: '2024-01-01T00:00:00.000Z'
   })
   uploadedAt!: Date;
 
   @ApiPropertyOptional({
     description: 'File metadata',
-    example: { pages: 10, author: 'John Doe' },
+    example: { pages: 10, author: 'John Doe' }
   })
   metadata?: Record<string, any>;
 }
@@ -70,7 +70,7 @@ export class FileUploadResponseDto {
 export class FileListQueryDto {
   @ApiPropertyOptional({
     description: 'Filter by category',
-    enum: FileCategory,
+    enum: FileCategory
   })
   @IsOptional()
   @IsEnum(FileCategory)
@@ -79,7 +79,7 @@ export class FileListQueryDto {
   @ApiPropertyOptional({
     description: 'Page number',
     example: 1,
-    minimum: 1,
+    minimum: 1
   })
   @IsOptional()
   @IsNumber()
@@ -89,7 +89,7 @@ export class FileListQueryDto {
   @ApiPropertyOptional({
     description: 'Items per page',
     example: 20,
-    minimum: 1,
+    minimum: 1
   })
   @IsOptional()
   @IsNumber()
@@ -100,7 +100,7 @@ export class FileListQueryDto {
 export class FileListResponseDto {
   @ApiProperty({
     type: [FileUploadResponseDto],
-    description: 'List of files',
+    description: 'List of files'
   })
   files!: FileUploadResponseDto[];
 
@@ -110,8 +110,8 @@ export class FileListResponseDto {
       total: 100,
       page: 1,
       limit: 20,
-      totalPages: 5,
-    },
+      totalPages: 5
+    }
   })
   pagination!: {
     total: number;

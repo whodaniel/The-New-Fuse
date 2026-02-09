@@ -33,7 +33,7 @@ export {
  * 
  * Provides a convenient way to create and configure the workflow engine
  */
-// import { DatabaseService } from '@db/client';
+// import { PrismaClient } from '@prisma/client';
 import { Logger } from '@the-new-fuse/relay-core';
 
 // Import actual types from relay-core
@@ -46,7 +46,7 @@ import { WorkflowExecutor } from './executor/WorkflowExecutor';
 
 export interface WorkflowEngineFactoryConfig {
   // Database configuration
-  db: any; // DatabaseService;
+  prisma: any; // PrismaClient;
   
   // Core services
   agentRegistry: MasterAgentRegistry;
@@ -109,7 +109,7 @@ export class WorkflowEngineFactory {
   static create(config: WorkflowEngineFactoryConfig) {
     // Create repository
     const repository = new WorkflowRepository(
-      config.db,
+      config.prisma,
       config.repository,
       config.logger
     );
@@ -136,7 +136,7 @@ export class WorkflowEngineFactory {
     // Create main engine
     const engine = new UnifiedWorkflowEngine(
       config.engine,
-      config.db,
+      config.prisma,
       config.agentRegistry,
       config.heartbeatService,
       config.logger
@@ -152,13 +152,13 @@ export class WorkflowEngineFactory {
   }
   
   static createDefault(
-    db: any, // DatabaseService,
+    prisma: any, // PrismaClient,
     agentRegistry: MasterAgentRegistry,
     heartbeatService: HeartbeatMonitoringService,
     logger: Logger
   ) {
     const config: WorkflowEngineFactoryConfig = {
-      db,
+      prisma,
       agentRegistry,
       heartbeatService,
       logger,

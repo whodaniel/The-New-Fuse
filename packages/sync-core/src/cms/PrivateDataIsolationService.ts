@@ -6,19 +6,19 @@
  * to maintain privacy boundaries and security compliance.
  */
 
-import { DatabaseService, UserRole } from '@the-new-fuse/database/generated/db';
+import { PrismaClient, UserRole } from '@the-new-fuse/database/generated/prisma';
 import { createHash } from 'crypto';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { ContentItem, PrivacyBoundary, PrivacyLevel, Restriction, RestrictionType } from './types';
 
 export class PrivateDataIsolationService {
-  private db: DatabaseService;
+  private prisma: PrismaClient;
   private redis: RedisService;
   private syncOrchestrator: SyncOrchestrator;
 
-  constructor(db: DatabaseService, redis: RedisService, syncOrchestrator: SyncOrchestrator) {
-    this.db = db;
+  constructor(prisma: PrismaClient, redis: RedisService, syncOrchestrator: SyncOrchestrator) {
+    this.prisma = prisma;
     this.redis = redis;
     this.syncOrchestrator = syncOrchestrator;
   }
@@ -259,7 +259,7 @@ export class PrivateDataIsolationService {
 
   private async verifyPrivacyBoundaryPermission(userId: string, tenantId: string): Promise<void> {
     // Check if user is owner of tenant or has admin rights
-    const user = await this.db.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: { role: true, roles: true },
     });
@@ -304,7 +304,7 @@ export class PrivateDataIsolationService {
   }
 
   private async storePrivacyBoundary(boundary: PrivacyBoundary): Promise<void> {
-    await this.db.$executeRaw`
+    await this.prisma.$executeRaw`
       INSERT INTO privacy_boundaries (
         tenant_id, user_id, data_types, restrictions, audit_required, created_at
       ) VALUES (
@@ -335,7 +335,7 @@ export class PrivateDataIsolationService {
       return JSON.parse(cached);
     }
 
-    const result = await this.db.$queryRaw<any[]>`
+    const result = await this.prisma.$queryRaw<any[]>`
       SELECT * FROM privacy_boundaries WHERE tenant_id = ${tenantId}
     `;
 
@@ -403,7 +403,7 @@ export class PrivateDataIsolationService {
   }
 
   private async validateRoleRestriction(userId: string, allowedRole: string): Promise<boolean> {
-    const user = await this.db.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: { role: true, roles: true },
     });
@@ -457,7 +457,7 @@ export class PrivateDataIsolationService {
   }
 
   private async getContentDetails(contentId: string): Promise<ContentItem | null> {
-    const result = await this.db.$queryRaw<any[]>`
+    const result = await this.prisma.$queryRaw<any[]>`
       SELECT * FROM personal_content WHERE id = ${contentId}
     `;
 
@@ -484,7 +484,7 @@ export class PrivateDataIsolationService {
   }
 
   private async isUserAdmin(userId: string): Promise<boolean> {
-    const user = await this.db.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: { role: true, roles: true },
     });
@@ -502,7 +502,7 @@ export class PrivateDataIsolationService {
   }
 
   private async updateContentPrivacy(contentId: string, privacy: PrivacyLevel): Promise<void> {
-    await this.db.$executeRaw`
+    await this.prisma.$executeRaw`
       UPDATE personal_content 
       SET privacy = ${privacy}, updated_at = NOW()
       WHERE id = ${contentId}
@@ -518,7 +518,7 @@ export class PrivateDataIsolationService {
   }
 
   private async updateTenantIsolation(contentId: string, userId: string): Promise<void> {
-    await this.db.$executeRaw`
+    await this.prisma.$executeRaw`
       UPDATE personal_content 
       SET tenant_id = ${userId}
       WHERE id = ${contentId}
@@ -526,11 +526,11 @@ export class PrivateDataIsolationService {
   }
 
   private async revokeAllSharingPermissions(contentId: string): Promise<void> {
-    await this.db.$executeRaw`
+    await this.prisma.$executeRaw`
       DELETE FROM content_sharing_permissions WHERE content_id = ${contentId}
     `;
 
-    await this.db.$executeRaw`
+    await this.prisma.$executeRaw`
       UPDATE personal_content 
       SET sharing_settings = '{"isPublic": false, "allowedUsers": [], "allowedRoles": [], "permissions": []}'
       WHERE id = ${contentId}
@@ -544,7 +544,7 @@ export class PrivateDataIsolationService {
     const violations: string[] = [];
 
     // Check for unauthorized access attempts
-    const unauthorizedAccess = await this.db.$queryRaw<any[]>`
+    const unauthorizedAccess = await this.prisma.$queryRaw<any[]>`
       SELECT COUNT(*) as count FROM auth_events 
       WHERE JSON_EXTRACT(details, '$.tenantId') = ${tenantId}
       AND type LIKE '%ACCESS%'
@@ -568,7 +568,7 @@ export class PrivateDataIsolationService {
     const violations: string[] = [];
 
     // Check for content shared outside privacy boundaries
-    const sharedContent = await this.db.$queryRaw<any[]>`
+    const sharedContent = await this.prisma.$queryRaw<any[]>`
       SELECT COUNT(*) as count FROM personal_content pc
       JOIN content_sharing_permissions csp ON pc.id = csp.content_id
       WHERE pc.tenant_id = ${tenantId}
@@ -589,7 +589,7 @@ export class PrivateDataIsolationService {
     const violations: string[] = [];
 
     // Check sync state for privacy violations
-    const syncViolations = await this.db.$queryRaw<any[]>`
+    const syncViolations = await this.prisma.$queryRaw<any[]>`
       SELECT COUNT(*) as count FROM sync_states 
       WHERE tenant_id = ${tenantId}
       AND resource_type IN (${boundary.dataTypes.map((dt) => `'${dt}'`).join(',')})
@@ -607,7 +607,7 @@ export class PrivateDataIsolationService {
 
   private async findOrphanedData(tenantId: string): Promise<string[]> {
     // Find data without proper tenant association
-    const orphaned = await this.db.$queryRaw<any[]>`
+    const orphaned = await this.prisma.$queryRaw<any[]>`
       SELECT id FROM personal_content 
       WHERE tenant_id = ${tenantId}
       AND owner_id NOT IN (SELECT id FROM users WHERE id = owner_id)
@@ -618,7 +618,7 @@ export class PrivateDataIsolationService {
 
   private async findWeakPrivacySettings(tenantId: string): Promise<string[]> {
     // Find content with weak privacy settings
-    const weak = await this.db.$queryRaw<any[]>`
+    const weak = await this.prisma.$queryRaw<any[]>`
       SELECT id FROM personal_content 
       WHERE tenant_id = ${tenantId}
       AND privacy IN ('public', 'shared')
@@ -686,7 +686,7 @@ export class PrivateDataIsolationService {
     operation: string,
     allowed: boolean
   ): Promise<void> {
-    await this.db.authEvent.create({
+    await this.prisma.authEvent.create({
       data: {
         userId,
         type: 'DATA_ACCESS_ATTEMPT',
@@ -707,7 +707,7 @@ export class PrivateDataIsolationService {
     violations: string[],
     recommendations: string[]
   ): Promise<void> {
-    await this.db.authEvent.create({
+    await this.prisma.authEvent.create({
       data: {
         userId: 'system',
         type: 'PRIVACY_AUDIT',
@@ -723,7 +723,7 @@ export class PrivateDataIsolationService {
   }
 
   private async logSensitiveDataAccess(userId: string, tenantId: string): Promise<void> {
-    await this.db.authEvent.create({
+    await this.prisma.authEvent.create({
       data: {
         userId,
         type: 'SENSITIVE_DATA_ACCESS',
@@ -749,7 +749,7 @@ export class PrivateDataIsolationService {
       })
     );
 
-    await this.db.authEvent.create({
+    await this.prisma.authEvent.create({
       data: {
         userId: event.userId,
         type: event.type,

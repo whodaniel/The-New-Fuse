@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AgentModule } from '../agent/agent.module';
-import { WorkflowTemplatesModule } from '../workflow-templates/workflow-templates.module';
-import { MCPA2ABridge } from './mcp-a2a-bridge.service';
 import { MCPServerService } from './mcp-server.service';
 import { MCPToolRegistry } from './mcp-tool-registry.service';
+import { MCPA2ABridge } from './mcp-a2a-bridge.service';
 import { MCPController } from './mcp.controller';
+import { WorkflowTemplatesModule } from '../workflow-templates/workflow-templates.module';
+import { AgentModule } from '../agent/agent.module';
 
 /**
  * MCP Module
@@ -13,9 +13,20 @@ import { MCPController } from './mcp.controller';
  * enabling standardized agent communication and tool execution.
  */
 @Module({
-  imports: [WorkflowTemplatesModule, AgentModule],
+  imports: [
+    WorkflowTemplatesModule,
+    AgentModule,
+  ],
   controllers: [MCPController],
-  providers: [MCPServerService, MCPToolRegistry, MCPA2ABridge],
-  exports: [MCPServerService, MCPToolRegistry, MCPA2ABridge],
+  providers: [
+    MCPServerService,
+    MCPToolRegistry,
+    MCPA2ABridge,
+  ],
+  exports: [
+    MCPServerService,
+    MCPToolRegistry,
+    MCPA2ABridge,
+  ],
 })
 export class MCPModule {}

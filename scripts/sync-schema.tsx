@@ -1,7 +1,7 @@
 /**
  * Schema Synchronization Script
  * 
- * This script synchronizes the database schemas between the main drizzle directory
+ * This script synchronizes the database schemas between the main prisma directory
  * and the packages/database directory to ensure they are in sync.
  */
 
@@ -14,8 +14,8 @@ const execAsync = promisify(exec);
 
 // Paths to schema files
 const ROOT_DIR = path.resolve(__dirname, '..');
-const MAIN_SCHEMA_PATH = path.join(ROOT_DIR, 'drizzle/schema.drizzle');
-const PACKAGE_SCHEMA_PATH = path.join(ROOT_DIR, 'packages/database/drizzle/schema.drizzle');
+const MAIN_SCHEMA_PATH = path.join(ROOT_DIR, 'prisma/schema.prisma');
+const PACKAGE_SCHEMA_PATH = path.join(ROOT_DIR, 'packages/database/prisma/schema.prisma');
 
 // Function to read a schema file
 async function readSchemaFile(filePath: string): Promise<string> {
@@ -40,7 +40,7 @@ async function writeSchemaFile(filePath: string, content: string): Promise<void>
 
 // Function to backup a schema file
 async function backupSchemaFile(filePath: string): Promise<string> {
-  const backupDir = path.join(ROOT_DIR, 'backups/drizzle_schemas_' + new Date().toISOString().replace(/[:.]/g, '').slice(0, 14));
+  const backupDir = path.join(ROOT_DIR, 'backups/prisma_schemas_' + new Date().toISOString().replace(/[:.]/g, '').slice(0, 14));
   const fileName = path.basename(filePath);
   const backupPath = path.join(backupDir, fileName);
   
@@ -60,8 +60,8 @@ async function backupSchemaFile(filePath: string): Promise<string> {
   }
 }
 
-// Function to run Drizzle commands
-async function runDrizzleCommand(command: string, schemaPath: string): Promise<string> {
+// Function to run Prisma commands
+async function runPrismaCommand(command: string, schemaPath: string): Promise<string> {
   try {
     // Get database URL from .env file
     const envPath = path.join(ROOT_DIR, '.env');
@@ -77,11 +77,11 @@ async function runDrizzleCommand(command: string, schemaPath: string): Promise<s
     // Set the DATABASE_URL environment variable for this command
     const env = { ...process.env, DATABASE_URL: databaseUrl };
     
-    // Run the Drizzle command
-    const { stdout } = await execAsync(`npx drizzle ${command} --schema ${schemaPath}`, { env });
+    // Run the Prisma command
+    const { stdout } = await execAsync(`npx prisma ${command} --schema ${schemaPath}`, { env });
     return stdout;
   } catch (error) {
-    console.error(`Error running Drizzle command '${command}' on schema ${schemaPath}:`, error);
+    console.error(`Error running Prisma command '${command}' on schema ${schemaPath}:`, error);
     throw error;
   }
 }
@@ -115,7 +115,7 @@ async function syncSchemas(direction: 'main-to-package' | 'package-to-main'): Pr
 async function applyMigrations(schemaPath: string): Promise<void> {
   try {
     
-    const output = await runDrizzleCommand('migrate deploy', schemaPath);
+    const output = await runPrismaCommand('migrate deploy', schemaPath);
 
   } catch (error) {
     console.error('Error applying migrations:', error instanceof Error ? error.message : String(error));

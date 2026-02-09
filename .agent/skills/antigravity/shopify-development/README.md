@@ -1,14 +1,11 @@
 # Shopify Development Skill
 
-Comprehensive skill for building on Shopify platform: apps, extensions, themes,
-and API integrations.
+Comprehensive skill for building on Shopify platform: apps, extensions, themes, and API integrations.
 
 ## Features
 
-- **App Development** - OAuth authentication, GraphQL Admin API, webhooks,
-  billing integration
-- **UI Extensions** - Checkout, Admin, POS customizations with Polaris
-  components
+- **App Development** - OAuth authentication, GraphQL Admin API, webhooks, billing integration
+- **UI Extensions** - Checkout, Admin, POS customizations with Polaris components
 - **Theme Development** - Liquid templating, sections, snippets
 - **Shopify Functions** - Custom discounts, payment, delivery rules
 
@@ -30,8 +27,7 @@ shopify-development/
 
 ## Validated GraphQL
 
-All GraphQL queries and mutations in this skill have been validated against
-Shopify Admin API 2026-01 schema using the official Shopify MCP.
+All GraphQL queries and mutations in this skill have been validated against Shopify Admin API 2026-01 schema using the official Shopify MCP.
 
 ## Quick Start
 

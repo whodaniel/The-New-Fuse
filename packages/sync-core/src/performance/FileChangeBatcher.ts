@@ -60,7 +60,7 @@ export class FileChangeBatcher {
       filePath: event.filePath,
       type: event.type,
       priority,
-      pendingCount: this.pendingChanges.size,
+      pendingCount: this.pendingChanges.size
     });
   }
 
@@ -83,11 +83,7 @@ export class FileChangeBatcher {
   /**
    * Add event to batch and manage batch lifecycle
    */
-  private async addToBatch(
-    batchKey: string,
-    event: FileChangeEvent,
-    priority: 'high' | 'normal' | 'low'
-  ): Promise<void> {
+  private async addToBatch(batchKey: string, event: FileChangeEvent, priority: 'high' | 'normal' | 'low'): Promise<void> {
     // Initialize batch if it doesn't exist
     if (!this.batches.has(batchKey)) {
       this.batches.set(batchKey, []);
@@ -97,7 +93,9 @@ export class FileChangeBatcher {
     batch.push(event);
 
     // Check if batch should be processed immediately
-    const shouldProcessNow = priority === 'high' || batch.length >= this.config.maxBatchSize;
+    const shouldProcessNow = 
+      priority === 'high' || 
+      batch.length >= this.config.maxBatchSize;
 
     if (shouldProcessNow) {
       await this.processBatch(batchKey, priority);
@@ -137,25 +135,25 @@ export class FileChangeBatcher {
       events: [...events], // Clone array
       batchedAt: new Date(),
       priority,
-      tenantId: events[0]?.tenantId,
+      tenantId: events[0]?.tenantId
     };
 
     try {
       await this.onBatchReady(batchedChange);
-
+      
       this.logger.info('Batch processed successfully', {
         batchId: batchedChange.id,
         eventCount: events.length,
         priority,
-        tenantId: batchedChange.tenantId,
+        tenantId: batchedChange.tenantId
       });
     } catch (error) {
       this.logger.error('Failed to process batch', {
         batchId: batchedChange.id,
         eventCount: events.length,
-        error,
+        error
       });
-
+      
       // Re-queue individual events for retry
       for (const event of events) {
         setTimeout(() => {
@@ -193,20 +191,16 @@ export class FileChangeBatcher {
     }
 
     // High priority for certain file types
-    if (
-      event.filePath.endsWith('.env') ||
-      event.filePath.includes('config') ||
-      event.filePath.includes('template')
-    ) {
+    if (event.filePath.endsWith('.env') || 
+        event.filePath.includes('config') ||
+        event.filePath.includes('template')) {
       return 'high';
     }
 
     // Low priority for temporary/cache files
-    if (
-      event.filePath.includes('.tmp') ||
-      event.filePath.includes('.cache') ||
-      event.filePath.includes('node_modules')
-    ) {
+    if (event.filePath.includes('.tmp') ||
+        event.filePath.includes('.cache') ||
+        event.filePath.includes('node_modules')) {
       return 'low';
     }
 
@@ -237,7 +231,7 @@ export class FileChangeBatcher {
     return {
       pendingChanges: this.pendingChanges.size,
       activeBatches: this.batches.size,
-      activeTimers: this.debounceTimers.size + this.batchTimers.size,
+      activeTimers: this.debounceTimers.size + this.batchTimers.size
     };
   }
 

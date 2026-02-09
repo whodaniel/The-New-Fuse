@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { useServices } from '../../../hooks/useServices';
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { ServiceMonitor } from '../ServiceMonitor';
+import { useServices } from '../../../hooks/useServices';
 
 jest.mock('../../../hooks/useServices');
 
@@ -11,8 +12,8 @@ describe('ServiceMonitor', () => {
       name: 'API Service',
       status: 'ACTIVE',
       uptime: '24h',
-      lastError: null,
-    },
+      lastError: null
+    }
   ];
 
   const mockRestartService = jest.fn();
@@ -20,7 +21,7 @@ describe('ServiceMonitor', () => {
   beforeEach(() => {
     (useServices as jest.Mock).mockReturnValue({
       services: mockServices,
-      restartService: mockRestartService,
+      restartService: mockRestartService
     });
   });
 

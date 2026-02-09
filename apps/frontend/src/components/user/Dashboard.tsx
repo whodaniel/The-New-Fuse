@@ -1,11 +1,11 @@
-import { Card } from '@/components/ui/card';
-import { useEffect } from 'react';
-import { AgentCollaborationDashboard } from '../agent-collaboration-dashboard';
-import { AgentNetwork } from '../agent-network';
-import { PerformanceMetrics } from '../performance-metrics';
+import React, { useEffect } from 'react';
 import { useRoute } from '../route-context';
+import { Card } from '@/components/ui/card';
+import { AgentCollaborationDashboard } from '../agent-collaboration-dashboard';
 import { SystemMetrics } from '../system-metrics';
+import { PerformanceMetrics } from '../performance-metrics';
 import { TaskBoard } from '../task-board';
+import { AgentNetwork } from '../agent-network';
 
 export default function Dashboard() {
   const { setPageTitle } = useRoute();

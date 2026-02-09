@@ -14,7 +14,11 @@
     "timeout": 30000
   },
   "build": {
-    "requiredFiles": ["dist/index.html", "dist/assets", "dist/static"]
+    "requiredFiles": [
+      "dist/index.html",
+      "dist/assets",
+      "dist/static"
+    ]
   },
   "e2e": {
     "baseUrl": "http://localhost:3000",

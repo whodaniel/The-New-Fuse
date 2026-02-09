@@ -61,8 +61,8 @@ The New Fuse codebase.
 │   │   └── <name>.service.spec.ts
 │   └── integration/
 │       └── <name>.controller.spec.ts
-├── drizzle/                        # If package has its own DB
-│   └── schema.drizzle
+├── prisma/                        # If package has its own DB
+│   └── schema.prisma
 ├── docs/                          # Additional documentation
 │   └── api.md
 ├── package.json
@@ -308,7 +308,7 @@ export class <Name>Controller {
 
 ```typescript
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
-import { DrizzleClient } from '@drizzle/client';
+import { PrismaClient } from '@prisma/client';
 import { Create<Name>Dto, Update<Name>Dto, Search<Name>Dto } from '../dto';
 import { <Name>, SearchResult } from '../types';
 
@@ -321,10 +321,10 @@ import { <Name>, SearchResult } from '../types';
 @Injectable()
 export class <Name>Service {
   private readonly logger = new Logger(<Name>Service.name);
-  private readonly drizzle: DrizzleClient;
+  private readonly prisma: PrismaClient;
 
   constructor() {
-    this.drizzle = new DrizzleClient();
+    this.prisma = new PrismaClient();
   }
 
   /**
@@ -334,7 +334,7 @@ export class <Name>Service {
     this.logger.debug(`Creating <resource> with data: ${JSON.stringify(createDto)}`);
 
     try {
-      const <name> = await this.drizzle.<name>.create({
+      const <name> = await this.prisma.<name>.create({
         data: {
           ...createDto,
           createdBy: userId,
@@ -367,13 +367,13 @@ export class <Name>Service {
     };
 
     const [data, total] = await Promise.all([
-      this.drizzle.<name>.findMany({
+      this.prisma.<name>.findMany({
         where,
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
       }),
-      this.drizzle.<name>.count({ where }),
+      this.prisma.<name>.count({ where }),
     ]);
 
     return {
@@ -390,7 +390,7 @@ export class <Name>Service {
   async findById(id: string): Promise<<Name>> {
     this.logger.debug(`Finding <resource> by ID: ${id}`);
 
-    const <name> = await this.drizzle.<name>.findUnique({
+    const <name> = await this.prisma.<name>.findUnique({
       where: { id },
     });
 
@@ -409,7 +409,7 @@ export class <Name>Service {
 
     await this.findById(id); // Verify exists
 
-    const updated = await this.drizzle.<name>.update({
+    const updated = await this.prisma.<name>.update({
       where: { id },
       data: updateDto,
     });
@@ -425,7 +425,7 @@ export class <Name>Service {
 
     await this.findById(id); // Verify exists
 
-    await this.drizzle.<name>.update({
+    await this.prisma.<name>.update({
       where: { id },
       data: { deletedAt: new Date() },
     });
@@ -715,9 +715,9 @@ GET /api/resources?page=1&limit=20
 
 ## 4. Database Model Standards
 
-### 4.1 Drizzle Schema Template
+### 4.1 Prisma Schema Template
 
-````drizzle
+````prisma
 // ============================================================================
 // <Model Name>
 // ============================================================================
@@ -726,7 +726,7 @@ GET /api/resources?page=1&limit=20
 ///
 /// @example
 /// ```typescript
-/// const <model> = await drizzle.<model>.create({
+/// const <model> = await prisma.<model>.create({
 ///   data: { name: 'Example' }
 /// });
 /// ```
@@ -775,7 +775,7 @@ model <Model> {
 
 **Models:** PascalCase, singular
 
-```drizzle
+```prisma
 model User {}        ✅
 model Users {}       ❌
 model user {}        ❌
@@ -783,7 +783,7 @@ model user {}        ❌
 
 **Fields:** camelCase
 
-```drizzle
+```prisma
 createdAt            ✅
 created_at           ❌
 CreatedAt            ❌
@@ -791,7 +791,7 @@ CreatedAt            ❌
 
 **Relations:** camelCase, descriptive
 
-```drizzle
+```prisma
 user          User   @relation(...)  ✅
 User          User   @relation(...)  ❌
 owner         User   @relation(...)  ✅
@@ -801,7 +801,7 @@ owner         User   @relation(...)  ✅
 
 **One-to-Many:**
 
-```drizzle
+```prisma
 model User {
   id     String  @id @default(uuid())
   posts  Post[]
@@ -818,7 +818,7 @@ model Post {
 
 **Many-to-Many:**
 
-```drizzle
+```prisma
 model User {
   id     String  @id @default(uuid())
   roles  UserRole[]
@@ -1721,37 +1721,26 @@ Before submitting PR:
 ## Related Documentation
 
 ### Core Architecture
-
-- [Monorepo Architecture](./MONOREPO_ARCHITECTURE.md) - Workspace and package
-  structure
-- [Architecture Analysis](./ARCHITECTURE_ANALYSIS_SUMMARY.md) - System analysis
-  and patterns
-- [Architectural Consistency Report](./ARCHITECTURAL_CONSISTENCY_REPORT.md) -
-  Consistency audit
+- [Monorepo Architecture](./MONOREPO_ARCHITECTURE.md) - Workspace and package structure
+- [Architecture Analysis](./ARCHITECTURE_ANALYSIS_SUMMARY.md) - System analysis and patterns
+- [Architectural Consistency Report](./ARCHITECTURAL_CONSISTENCY_REPORT.md) - Consistency audit
 
 ### Code Quality
-
 - [Code Duplication Report](./CODE_DUPLICATION_REPORT.md) - Duplication analysis
-- [Refactoring Opportunities](./REFACTORING_OPPORTUNITIES.md) - Improvement
-  recommendations
-- [Feature Recreation Analysis](./FEATURE_RECREATION_ANALYSIS.md) - Feature
-  analysis
+- [Refactoring Opportunities](./REFACTORING_OPPORTUNITIES.md) - Improvement recommendations
+- [Feature Recreation Analysis](./FEATURE_RECREATION_ANALYSIS.md) - Feature analysis
 
 ### Development
-
 - [README.md](../../README.md) - Project overview
 - [Getting Started](../development/GETTING_STARTED.md) - Development setup
 - [Build Guide](../development/BUILD_GUIDE.md) - Build system documentation
 - [Testing Best Practices](../testing/BEST_PRACTICES.md) - Testing standards
 
 ### Design & UI
-
-- [Design System Documentation](../DESIGN_SYSTEM_DOCUMENTATION.md) - UI/UX
-  standards
+- [Design System Documentation](../DESIGN_SYSTEM_DOCUMENTATION.md) - UI/UX standards
 - [Design System Implementation Plan](../DESIGN_SYSTEM_IMPLEMENTATION_PLAN.md)
 
 ### Backend & API
-
 - [Backend README](../../apps/backend/README.md) - Backend architecture
 - [API Examples](../../apps/backend/API_EXAMPLES.md) - API usage patterns
 - [GraphQL Guide](../../apps/api/src/graphql/README.md) - GraphQL architecture

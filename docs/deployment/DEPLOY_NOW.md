@@ -5,7 +5,6 @@
 ## Quick Deploy (Follow These Steps)
 
 ### Step 1: Navigate to Your Project
-
 ```bash
 cd .
 ```
@@ -13,13 +12,11 @@ cd .
 ### Step 2: Create Railway Project
 
 **Option A: Use Railway Dashboard (Recommended)**
-
 1. Go to https://railway.app/new
 2. Click "Deploy from GitHub repo" or "Empty Project"
 3. Name it "the-new-fuse"
 
 **Option B: Use CLI**
-
 ```bash
 railway init
 # Follow prompts to create new project
@@ -66,7 +63,6 @@ cd ../..
 In Railway Dashboard (https://railway.app/dashboard):
 
 **For API Service:**
-
 1. Click on the API service
 2. Go to "Variables" tab
 3. Add these:
@@ -78,7 +74,6 @@ In Railway Dashboard (https://railway.app/dashboard):
    ```
 
 **For Frontend Service:**
-
 1. Click on the Frontend service
 2. Go to "Variables" tab
 3. Add these:
@@ -102,12 +97,10 @@ Visit the Frontend URL to see your app!
 If you want the absolute minimum to get started:
 
 **Deploy only these 2 services:**
-
 1. API Service (backend)
 2. Frontend (UI)
 
 **Plus:**
-
 - PostgreSQL database (from Railway)
 
 This gives you a working application with less complexity.
@@ -115,20 +108,17 @@ This gives you a working application with less complexity.
 ## If Something Goes Wrong
 
 ### Check Build Logs
-
 ```bash
 railway logs --service api
 railway logs --service frontend
 ```
 
 ### Check Service Status
-
 ```bash
 railway status
 ```
 
 ### Redeploy if needed
-
 ```bash
 cd apps/api
 railway up --detach
@@ -143,7 +133,6 @@ I've created a script for you. Run this:
 ```
 
 This script will:
-
 1. Create the project if needed
 2. Deploy API service
 3. Deploy Frontend
@@ -151,8 +140,10 @@ This script will:
 
 ## What's Already Done
 
-✅ Dockerfiles created and optimized ✅ Railway configuration files updated ✅
-All services configured for production ✅ You're logged into Railway
+✅ Dockerfiles created and optimized
+✅ Railway configuration files updated
+✅ All services configured for production
+✅ You're logged into Railway
 
 ## What You Need to Do
 
@@ -178,10 +169,10 @@ All services configured for production ✅ You're logged into Railway
 - **Pro Plan**: $20/month (for production)
 
 Your current setup will likely use:
-
 - API Service: ~512MB RAM
 - Frontend: ~256MB RAM
-- PostgreSQL: ~256MB RAM **Total: ~1GB RAM** (fits in Hobby plan)
+- PostgreSQL: ~256MB RAM
+**Total: ~1GB RAM** (fits in Hobby plan)
 
 ## Need Help?
 

@@ -12,10 +12,10 @@ declare module "passport-jwt" {
 
 // Database modules
 declare module "@the-new-fuse/database" {
-  export class DrizzleClient {}
+  export class PrismaClient {}
 }
 
-declare module "@drizzle/extension-accelerate" {
+declare module "@prisma/extension-accelerate" {
   export function withAccelerate(): unknown;
 }
 

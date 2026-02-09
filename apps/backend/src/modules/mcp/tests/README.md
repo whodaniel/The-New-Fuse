@@ -10,7 +10,7 @@
 
 - Deep architectural issues with mcp-core package (mixing .ts and .js files)
 - Complex import resolution problems with .js extensions in TypeScript source
-- Missing module dependencies (DrizzleModule paths)
+- Missing module dependencies (PrismaModule paths)
 - Type mismatches between interfaces requiring extensive refactoring
 - Jest configuration becoming increasingly fragile with workarounds
 
@@ -21,7 +21,7 @@
    - Update package.json exports to point to dist/ not src/
    - Ensure TypeScript references don't include .js extensions
 2. Resolve module dependencies:
-   - Fix DrizzleModule import paths
+   - Fix PrismaModule import paths
    - Verify all MCP type exports are consistent
 3. Write unit tests first:
    - Test MCPServer in isolation

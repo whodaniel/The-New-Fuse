@@ -1,6 +1,6 @@
-import { A2APriority } from '@the-new-fuse/a2a-core';
-import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { RedisCoordinator } from '../src/redis-coordinator';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { AgentStatus, A2APriority } from '@the-new-fuse/a2a-core';
 import { TaskStatus } from '../src/types/coordination.types';
 
 describe('RedisCoordinator', () => {
@@ -81,7 +81,7 @@ describe('RedisCoordinator', () => {
       };
 
       mockRedisService.publish.mockResolvedValue(1);
-
+      
       const createdTask = await coordinator.createTask(task);
 
       expect(createdTask).toBeDefined();

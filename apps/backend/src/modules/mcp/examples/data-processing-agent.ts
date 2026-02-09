@@ -9,8 +9,8 @@
  * - Result sharing
  */
 
-import { Logger } from '@nestjs/common';
 import { MCPClient } from '@the-new-fuse/mcp-core/client';
+import { Logger } from '@nestjs/common';
 
 export class DataProcessingAgent {
   private readonly logger = new Logger(DataProcessingAgent.name);
@@ -70,9 +70,12 @@ export class DataProcessingAgent {
       this.currentTask = null;
     } catch (error) {
       this.logger.error(`Task failed: ${task.taskId}`, error);
-      await this.updateTaskStatus(task.taskId, 'failed', 0, {
-        error: error instanceof Error ? error.message : 'Unknown error',
-      });
+      await this.updateTaskStatus(
+        task.taskId,
+        'failed',
+        0,
+        { error: error instanceof Error ? error.message : 'Unknown error' }
+      );
       this.currentTask = null;
     }
   }
@@ -206,7 +209,11 @@ export class DataProcessingAgent {
   /**
    * Request collaboration with another agent
    */
-  async collaborateWith(targetAgent: string, purpose: string, data: any): Promise<any> {
+  async collaborateWith(
+    targetAgent: string,
+    purpose: string,
+    data: any
+  ): Promise<any> {
     this.logger.log(`Requesting collaboration with ${targetAgent}`);
 
     const response = await this.client.callTool('agent.message', {
@@ -266,7 +273,10 @@ export class DataProcessingAgent {
  * Example usage
  */
 export async function runDataProcessingExample(): Promise<void> {
-  const agent = new DataProcessingAgent('data_processor_001', 'ws://localhost:3100');
+  const agent = new DataProcessingAgent(
+    'data_processor_001',
+    'ws://localhost:3100'
+  );
 
   try {
     // Simulate receiving a task

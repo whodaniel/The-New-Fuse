@@ -20,25 +20,25 @@ export class DeploymentPipelineService {
 
   async deployServices(config: DeploymentConfig): Promise<DeploymentResult> {
     this.logger.log(`Starting deployment for environment: ${config.environment}`);
-
+    
     try {
       const deploymentId = this.generateDeploymentId();
-
+      
       // Validate configuration
       await this.validateConfig(config);
-
+      
       // Deploy services
       for (const service of config.services) {
         await this.deployService(service, config);
       }
-
+      
       // Run health checks
       await this.runHealthChecks(config.healthChecks);
-
+      
       return {
         success: true,
         deploymentId,
-        timestamp: new Date(),
+        timestamp: new Date()
       };
     } catch (error) {
       this.logger.error('Deployment failed', error);
@@ -46,7 +46,7 @@ export class DeploymentPipelineService {
         success: false,
         deploymentId: this.generateDeploymentId(),
         timestamp: new Date(),
-        errors: [error instanceof Error ? error.message : 'Unknown error'],
+        errors: [error instanceof Error ? error.message : 'Unknown error']
       };
     }
   }
@@ -66,14 +66,14 @@ export class DeploymentPipelineService {
   private async deployService(service: string, _config: DeploymentConfig): Promise<void> {
     this.logger.log(`Deploying service: ${service}`);
     // Simulate deployment process
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
 
   private async runHealthChecks(healthChecks: string[]): Promise<void> {
     for (const check of healthChecks) {
       this.logger.log(`Running health check: ${check}`);
       // Simulate health check
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
   }
 

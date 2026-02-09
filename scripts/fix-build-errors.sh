@@ -25,12 +25,12 @@ cd ../..
 echo -e "${GREEN}✓${NC} Tailwind PostCSS installed"
 echo ""
 
-# Fix 2: Database - Generate Drizzle client
-echo -e "${BLUE}Fix 2: Generating Drizzle client...${NC}"
+# Fix 2: Database - Generate Prisma client
+echo -e "${BLUE}Fix 2: Generating Prisma client...${NC}"
 cd packages/database
-pnpm exec drizzle generate || echo -e "${YELLOW}⚠${NC} Drizzle generation needs DATABASE_URL"
+pnpm exec prisma generate || echo -e "${YELLOW}⚠${NC} Prisma generation needs DATABASE_URL"
 cd ../..
-echo -e "${GREEN}✓${NC} Drizzle client generation attempted"
+echo -e "${GREEN}✓${NC} Prisma client generation attempted"
 echo ""
 
 # Fix 3: Clean and reinstall dependencies

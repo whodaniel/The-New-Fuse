@@ -3,7 +3,6 @@
 ## ✅ What's Ready
 
 All services are prepared and ready to deploy:
-
 - ✅ Dockerfiles configured for all services
 - ✅ railway.toml files configured
 - ✅ Project linked to TNF (041cee9d-8648-4074-b5a6-0eae436de1d1)
@@ -14,12 +13,10 @@ All services are prepared and ready to deploy:
 
 ### Step 1: Create Services in Railway Dashboard (5 minutes)
 
-Since Railway CLI requires interactive input for service creation, you need to
-create empty services through the web dashboard first.
+Since Railway CLI requires interactive input for service creation, you need to create empty services through the web dashboard first.
 
 1. **Open Your Railway Project**
-   - Visit:
-     https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
+   - Visit: https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
    - You should see your TNF project dashboard
 
 2. **Create API Service**
@@ -48,8 +45,7 @@ create empty services through the web dashboard first.
    - Click "+ New" → "Database" → "PostgreSQL" → Wait for provisioning
    - Click "+ New" → "Database" → "Redis" → Wait for provisioning
 
-After this step, you should have 4 services + 2 databases in your Railway
-dashboard.
+After this step, you should have 4 services + 2 databases in your Railway dashboard.
 
 ### Step 2: Deploy All Services (15 minutes)
 
@@ -107,7 +103,6 @@ JWT_SECRET=<paste-the-secret-generated-below>
 ```
 
 Generate JWT Secret:
-
 ```bash
 openssl rand -base64 32
 ```
@@ -147,8 +142,7 @@ PORT=3000
 VITE_API_URL=https://${{api-gateway.RAILWAY_PUBLIC_DOMAIN}}
 ```
 
-**Note**: After adding variables, click "Deploy" to restart each service with
-the new configuration.
+**Note**: After adding variables, click "Deploy" to restart each service with the new configuration.
 
 ### Step 4: Monitor Deployments (ongoing)
 
@@ -173,7 +167,6 @@ railway logs --service frontend
 Once all builds complete:
 
 1. **Check Service Health**
-
    ```bash
    # Get API URL
    railway service --service api
@@ -199,41 +192,37 @@ Once all builds complete:
 
 ## 🚀 Automated Deployment Script
 
-I've created `deploy-to-services.sh` for you. After creating services in the
-dashboard, run:
+I've created `deploy-to-services.sh` for you. After creating services in the dashboard, run:
 
 ```bash
 ./deploy-to-services.sh
 ```
 
 This will:
-
 - Link each service directory to its Railway service
 - Deploy all services in sequence
 - Show deployment URLs and status
 
 ## ⏱️ Expected Timeline
 
-| Step                            | Duration          |
-| ------------------------------- | ----------------- |
-| Create services in dashboard    | 5 min             |
-| Deploy all services (builds)    | 40-60 min         |
-| Configure environment variables | 10 min            |
-| Verify deployments              | 5 min             |
-| **Total**                       | **60-80 minutes** |
+| Step | Duration |
+|------|----------|
+| Create services in dashboard | 5 min |
+| Deploy all services (builds) | 40-60 min |
+| Configure environment variables | 10 min |
+| Verify deployments | 5 min |
+| **Total** | **60-80 minutes** |
 
 ## 🐛 Troubleshooting
 
 ### Build Fails
 
 **Check logs:**
-
 ```bash
 railway logs --service <service-name>
 ```
 
 **Common issues:**
-
 - Missing dependencies: Check package.json
 - Build timeout: Railway has 15-minute limit (should be fine)
 - Out of memory: Services use ~512MB each
@@ -241,7 +230,6 @@ railway logs --service <service-name>
 ### Service Won't Start
 
 **Check:**
-
 - Environment variables are set correctly
 - DATABASE_URL uses Railway template syntax
 - Port matches the service configuration
@@ -249,7 +237,6 @@ railway logs --service <service-name>
 ### Cannot Link Service
 
 **If `railway link --service <name>` fails:**
-
 - Verify service exists in dashboard
 - Use exact service name (case-sensitive)
 - Make sure you're in the correct project
@@ -292,7 +279,6 @@ Save these URLs - you'll need them for testing and integration.
 ## 💰 Cost Estimate
 
 **Railway Hobby Plan ($5/month):**
-
 - 4 services × ~512MB RAM = ~2GB
 - PostgreSQL: ~256MB
 - Redis: ~128MB
@@ -322,8 +308,7 @@ Save these URLs - you'll need them for testing and integration.
 
 ## 📚 Additional Resources
 
-- **Project Dashboard**:
-  https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+- **Project Dashboard**: https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 - **Railway Docs**: https://docs.railway.app
 - **Support**: https://discord.gg/railway
 - **Local Guide**: See `RAILWAY_DEPLOYMENT_INSTRUCTIONS.md`
@@ -340,7 +325,6 @@ Save these URLs - you'll need them for testing and integration.
 **Questions or Issues?**
 
 Check the logs:
-
 ```bash
 railway logs --service <service-name>
 ```

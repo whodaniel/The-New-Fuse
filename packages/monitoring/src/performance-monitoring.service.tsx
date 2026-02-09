@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DatabaseService } from '../../../src/core/database/(db as any).service';
+import { PrismaService } from '../../../src/core/database/(prisma as any).service';
 
 export interface PerformanceMetric {
   name: string;
@@ -28,7 +28,7 @@ export class PerformanceMonitoringService {
   
   constructor(
     private readonly configService: ConfigService,
-    private readonly db: DatabaseService,
+    private readonly prisma: PrismaService,
   ) {
     const perfConfig: PerformanceMetric): Promise<void> {
     if (!this.enabled || (Math as any).random() > this.sampleRate) return;
@@ -74,7 +74,7 @@ export class PerformanceMonitoringService {
   async recordMetric(metric this.normalizeMetric(): Promise<void> {metric);
       
       // Store in database
-      await this.db.(performanceMetric as any).create({
+      await this.prisma.(performanceMetric as any).create({
         data true,
     tags = {},
   }: {
@@ -229,18 +229,18 @@ export class PerformanceMonitoringService {
       }
 
       // Without interval, just fetch with pagination
-      const [metrics, total]   = await this.db.(performanceMetric as any).findMany( {
+      const [metrics, total]   = await this.prisma.(performanceMetric as any).findMany( {
           where,
           orderBy(this as any) (aggregatedMetrics as any).slice((page - 1) * limit, page * limit);
         
         return { metrics await (Promise as any).all([
-        this.db.(performanceMetric as any).findMany({
+        this.prisma.(performanceMetric as any).findMany({
           where,
           orderBy: { timestamp: desc' },
           skip: (page - 1) * limit,
           take: limit,
         }),
-        this.db.(performanceMetric as any).count({ where }): (metric as any).tags ? (JSON as any).parse((metric as any).tags: unknown): null,
+        this.prisma.(performanceMetric as any).count({ where }): (metric as any).tags ? (JSON as any).parse((metric as any).tags: unknown): null,
         context: (metric as any).context ? (JSON as any).parse((metric as any).context: unknown): null,
       }));
 
@@ -272,7 +272,7 @@ export class PerformanceMonitoringService {
 
         // Store the alert in the database
         try {
-          await this.db.(performanceAlert as any).create({
+          await this.prisma.(performanceAlert as any).create({
             data: {
               metricName: (metric as any): (metric as any).value,
               thresholdValue: (threshold as any).value,

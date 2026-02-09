@@ -1,12 +1,10 @@
 # Sandbox Testing Module
 
-This module provides a secure testing environment for The New Fuse platform with two main
-components:
+This module provides a secure testing environment for The New Fuse platform with two main components:
 
 ## Virtual File System
 
-A virtual file system wrapper that allows tests to work with files without touching the real file
-system.
+A virtual file system wrapper that allows tests to work with files without touching the real file system.
 
 ```typescript
 import { VirtualFileSystem } from '@the-new-fuse/testing/sandbox';
@@ -15,8 +13,8 @@ const vfs = new VirtualFileSystem({
   root: '/test',
   initialFiles: {
     '/config.json': '{"setting": "value"}',
-    '/data/test.txt': 'Hello World',
-  },
+    '/data/test.txt': 'Hello World'
+  }
 });
 
 // Write and read files
@@ -41,8 +39,8 @@ const sandbox = new CodeSandbox({
   allowedModules: ['path'], // Allowed Node.js modules
   context: {
     // Custom context variables/functions
-    helper: (x: number) => x * 2,
-  },
+    helper: (x: number) => x * 2
+  }
 });
 
 // Execute code safely
@@ -61,7 +59,6 @@ console.log(result.executionTime); // Time taken in ms
 ## Features
 
 ### Virtual File System
-
 - Completely isolated from real file system
 - Supports all common file operations
 - Directory creation and navigation
@@ -69,7 +66,6 @@ console.log(result.executionTime); // Time taken in ms
 - Automatic cleanup between tests
 
 ### Code Sandbox
-
 - Secure code execution in isolated context
 - Memory usage limits and tracking
 - Execution timeout protection
@@ -82,7 +78,6 @@ console.log(result.executionTime); // Time taken in ms
 ## Security
 
 The sandbox environment implements several security measures:
-
 - No access to Node.js `process` object
 - No arbitrary require/import
 - Memory limit enforcement

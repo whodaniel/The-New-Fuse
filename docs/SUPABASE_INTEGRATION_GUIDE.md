@@ -2,9 +2,7 @@
 
 ## Overview
 
-This guide covers the complete Supabase integration in The New Fuse framework,
-including setup, configuration, and usage patterns for both vector database
-operations and general database/storage operations.
+This guide covers the complete Supabase integration in The New Fuse framework, including setup, configuration, and usage patterns for both vector database operations and general database/storage operations.
 
 ## Table of Contents
 
@@ -22,8 +20,7 @@ operations and general database/storage operations.
 
 ### Environment Variables
 
-Add the following variables to your `.env` file (see `.env.example` for
-reference):
+Add the following variables to your `.env` file (see `.env.example` for reference):
 
 ```bash
 # Supabase Configuration
@@ -35,7 +32,6 @@ SUPABASE_PROJECT_REF=your-project-ref
 ```
 
 **Where to find these values:**
-
 1. Go to your Supabase project dashboard
 2. Navigate to Settings → API
 3. Copy the values:
@@ -63,8 +59,7 @@ pnpm install
 
 ### 1. Enable pgvector Extension
 
-The integration uses Supabase's `pgvector` extension for vector similarity
-search.
+The integration uses Supabase's `pgvector` extension for vector similarity search.
 
 **To enable in your Supabase project:**
 
@@ -75,7 +70,6 @@ search.
 ### 2. Run Migrations
 
 Execute the SQL migration file located at:
-
 ```
 /supabase/migrations/001_create_vector_embeddings.sql
 ```
@@ -83,14 +77,12 @@ Execute the SQL migration file located at:
 **How to run:**
 
 #### Option A: Using Supabase Dashboard (SQL Editor)
-
 1. Go to SQL Editor in your Supabase dashboard
 2. Create a new query
 3. Copy and paste the contents of `001_create_vector_embeddings.sql`
 4. Click "Run"
 
 #### Option B: Using Supabase CLI
-
 ```bash
 # If you have Supabase CLI installed
 supabase db push
@@ -115,18 +107,15 @@ SELECT * FROM vector_embeddings LIMIT 1;
 
 **Location:** `packages/core/src/rag/VectorDatabaseService.ts`
 
-**Purpose:** Handles vector embeddings for RAG (Retrieval-Augmented Generation)
-and semantic search operations.
+**Purpose:** Handles vector embeddings for RAG (Retrieval-Augmented Generation) and semantic search operations.
 
 **Features:**
-
 - Store vector embeddings with metadata
 - Similarity search using cosine distance
 - Namespace support for multi-tenant data
 - Support for multiple vector DB providers (Supabase, Pinecone, Chroma, etc.)
 
 **Key Methods:**
-
 - `storeEmbedding(id, embedding, content, metadata)` - Store a vector embedding
 - `similaritySearch(queryEmbedding, limit, threshold)` - Find similar vectors
 - `deleteEmbedding(id)` - Delete an embedding
@@ -136,11 +125,9 @@ and semantic search operations.
 
 **Location:** `packages/core/src/services/SupabaseService.ts`
 
-**Purpose:** General-purpose Supabase client for CRUD operations, real-time
-subscriptions, and storage.
+**Purpose:** General-purpose Supabase client for CRUD operations, real-time subscriptions, and storage.
 
 **Features:**
-
 - Full CRUD operations (Create, Read, Update, Delete)
 - Query builder with filtering, ordering, and pagination
 - Real-time subscriptions
@@ -148,7 +135,6 @@ subscriptions, and storage.
 - RPC function execution
 
 **Key Methods:**
-
 - `query(table, options)` - Query data with filters
 - `insert(table, data)` - Insert data
 - `update(table, data, filter)` - Update data
@@ -237,8 +223,8 @@ const unsubscribe = this.supabase.subscribeToTable(
 ```typescript
 // Upload a file
 const { data, error } = await this.supabase.uploadFile(
-  'documents', // bucket name
-  'folder/file.pdf', // path
+  'documents',  // bucket name
+  'folder/file.pdf',  // path
   fileBuffer,
   { contentType: 'application/pdf', upsert: true }
 );
@@ -264,8 +250,14 @@ Agents can be configured to use Supabase through the agent metadata system:
 ```json
 {
   "name": "Data Analysis Agent",
-  "capabilities": ["API_INTEGRATION", "SUPABASE_INTEGRATION", "DATA_ANALYSIS"],
-  "tools": ["SUPABASE"],
+  "capabilities": [
+    "API_INTEGRATION",
+    "SUPABASE_INTEGRATION",
+    "DATA_ANALYSIS"
+  ],
+  "tools": [
+    "SUPABASE"
+  ],
   "configuration": {
     "supabase": {
       "enabled": true,
@@ -279,13 +271,11 @@ Agents can be configured to use Supabase through the agent metadata system:
 ### Agent Tool Types
 
 The Supabase integration is available as:
-
 - **Capability:** `AgentCapability.SUPABASE_INTEGRATION`
 - **Tool:** `AgentToolType.SUPABASE`
 
-**UI Integration:** Agents can be configured with Supabase access through the
-AgentToolsForm component located at:
-
+**UI Integration:**
+Agents can be configured with Supabase access through the AgentToolsForm component located at:
 ```
 apps/frontend/src/components/forms/AgentToolsForm.tsx
 ```
@@ -301,9 +291,7 @@ apps/frontend/src/components/forms/AgentToolsForm.tsx
 **Cause:** Missing or invalid environment variables.
 
 **Solution:**
-
-- Verify `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (or `SUPABASE_ANON_KEY`)
-  are set in your `.env` file
+- Verify `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (or `SUPABASE_ANON_KEY`) are set in your `.env` file
 - Restart your application after adding environment variables
 
 #### 2. "Failed to store embedding: relation 'vector_embeddings' does not exist"
@@ -311,9 +299,7 @@ apps/frontend/src/components/forms/AgentToolsForm.tsx
 **Cause:** Database migration not run.
 
 **Solution:**
-
-- Run the SQL migration file `001_create_vector_embeddings.sql` in your Supabase
-  SQL Editor
+- Run the SQL migration file `001_create_vector_embeddings.sql` in your Supabase SQL Editor
 - Verify the table exists: `SELECT * FROM vector_embeddings LIMIT 1;`
 
 #### 3. "pgvector extension not found"
@@ -321,7 +307,6 @@ apps/frontend/src/components/forms/AgentToolsForm.tsx
 **Cause:** The vector extension is not enabled in your Supabase project.
 
 **Solution:**
-
 - Go to Database → Extensions in Supabase dashboard
 - Enable the `vector` extension
 
@@ -330,26 +315,20 @@ apps/frontend/src/components/forms/AgentToolsForm.tsx
 **Cause:** Row Level Security (RLS) policies may be blocking access.
 
 **Solution:**
-
-- Use `SUPABASE_SERVICE_ROLE_KEY` instead of `SUPABASE_ANON_KEY` for backend
-  operations
-- Or adjust RLS policies in the migration file to match your authentication
-  setup
+- Use `SUPABASE_SERVICE_ROLE_KEY` instead of `SUPABASE_ANON_KEY` for backend operations
+- Or adjust RLS policies in the migration file to match your authentication setup
 
 #### 5. Vector similarity search returns no results
 
 **Cause:**
-
 - Incorrect embedding dimensions
 - Threshold too high
 - No embeddings in the namespace
 
 **Solution:**
-
 - Verify embeddings are 1536 dimensions (for OpenAI models)
 - Lower the similarity threshold (try 0.5 instead of 0.7)
-- Check namespace:
-  `SELECT COUNT(*) FROM vector_embeddings WHERE namespace = 'your-namespace';`
+- Check namespace: `SELECT COUNT(*) FROM vector_embeddings WHERE namespace = 'your-namespace';`
 
 ---
 
@@ -357,8 +336,7 @@ apps/frontend/src/components/forms/AgentToolsForm.tsx
 
 ### Custom Embedding Dimensions
 
-If using a different embedding model, adjust the dimension in the migration
-file:
+If using a different embedding model, adjust the dimension in the migration file:
 
 ```sql
 -- Change from 1536 to your model's dimension
@@ -377,7 +355,7 @@ Namespaces allow multi-tenant data isolation:
 
 ```typescript
 // In your .env
-VECTOR_DB_NAMESPACE = my - custom - namespace;
+VECTOR_DB_NAMESPACE=my-custom-namespace
 
 // Or set per-operation
 await vectorDb.storeEmbedding(id, embedding, content, metadata);
@@ -396,16 +374,14 @@ For large datasets, consider:
 
 ## Migration from Bun to PNPM
 
-The project has been migrated from Bun to PNPM. All references to `bun` commands
-have been replaced with `pnpm` equivalents:
+The project has been migrated from Bun to PNPM. All references to `bun` commands have been replaced with `pnpm` equivalents:
 
 - `bun install` → `pnpm install`
 - `bun run` → `pnpm run`
 - `bun add` → `pnpm add`
 - `bunx` → `pnpm dlx`
 
-The `pnpm-workspace.yaml` file has been created to support the monorepo
-structure.
+The `pnpm-workspace.yaml` file has been created to support the monorepo structure.
 
 ---
 
@@ -428,5 +404,4 @@ structure.
 
 ---
 
-**For questions or issues, please check the troubleshooting section or consult
-the team.**
+**For questions or issues, please check the troubleshooting section or consult the team.**

@@ -5,23 +5,23 @@
  */
 
 import { EventEmitter } from 'events';
-import { IMCPBroker } from '../interfaces/IMCPBroker';
-import { IMCPClient } from '../interfaces/IMCPClient';
-import { MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
-import {
-  ErrorRecoveryConfig,
-  MCPCallback,
-  MonitoringConfig,
-  Task,
-  TaskExecutionStatus,
-  WorkflowContext,
-  WorkflowStep,
-} from '../interfaces/IMCPWorkflowIntegration';
-import { MCPServiceInfo } from '../types/broker';
-import { RetryPolicy } from '../types/common';
-import { CallbackHandlerConfig, MCPCallbackHandler } from './MCPCallbackHandler';
 import { MCPWorkflowIntegration, MCPWorkflowIntegrationConfig } from './MCPWorkflowIntegration';
 import { WorkflowExecutionMonitor } from './WorkflowExecutionMonitor';
+import { MCPCallbackHandler, CallbackHandlerConfig } from './MCPCallbackHandler';
+import {
+  WorkflowStep,
+  WorkflowContext,
+  Task,
+  MCPCallback,
+  TaskExecutionStatus,
+  ErrorRecoveryConfig,
+  MonitoringConfig
+} from '../interfaces/IMCPWorkflowIntegration';
+import { IMCPClient } from '../interfaces/IMCPClient';
+import { IMCPBroker } from '../interfaces/IMCPBroker';
+import { MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
+import { RetryPolicy } from '../types/common';
+import { MCPServiceInfo } from '../types/broker';
 
 // Enhanced mock implementations for integration testing
 class IntegrationMockMCPClient extends EventEmitter implements IMCPClient {
@@ -64,7 +64,7 @@ class IntegrationMockMCPClient extends EventEmitter implements IMCPClient {
     const response = this.responses.get(request.method) || {
       jsonrpc: '2.0',
       id: request.id,
-      result: { success: true, data: `Mock response for ${request.method}` },
+      result: { success: true, data: `Mock response for ${request.method}` }
     };
 
     return { ...response, id: request.id };
@@ -94,23 +94,15 @@ class IntegrationMockMCPClient extends EventEmitter implements IMCPClient {
   }
 
   private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   // Other required methods (simplified)
   async subscribeToNotifications(): Promise<void> {}
-  async listResources(): Promise<any[]> {
-    return [];
-  }
-  async readResource(): Promise<any> {
-    return {};
-  }
-  async callTool(): Promise<any> {
-    return {};
-  }
-  async getServerCapabilities(): Promise<any[]> {
-    return [];
-  }
+  async listResources(): Promise<any[]> { return []; }
+  async readResource(): Promise<any> { return {}; }
+  async callTool(): Promise<any> { return {}; }
+  async getServerCapabilities(): Promise<any[]> { return []; }
 }
 
 class IntegrationMockMCPBroker extends EventEmitter implements IMCPBroker {
@@ -122,7 +114,7 @@ class IntegrationMockMCPBroker extends EventEmitter implements IMCPBroker {
 
   async discoverServices(query: any): Promise<MCPServiceInfo[]> {
     if (this.discoveryDelay > 0) {
-      await new Promise((resolve) => setTimeout(resolve, this.discoveryDelay));
+      await new Promise(resolve => setTimeout(resolve, this.discoveryDelay));
     }
 
     if (query.name) {
@@ -164,7 +156,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
     maxAttempts: 3,
     baseDelay: 100,
     maxDelay: 1000,
-    strategy: 'exponential',
+    strategy: 'exponential'
   };
 
   const defaultErrorRecovery: ErrorRecoveryConfig = {
@@ -173,7 +165,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
     baseDelay: 100,
     maxDelay: 5000,
     enableFallback: true,
-    fallbackServices: ['fallback-service'],
+    fallbackServices: ['fallback-service']
   };
 
   const defaultMonitoring: MonitoringConfig = {
@@ -181,7 +173,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
     enableMetrics: true,
     enableDetailedLogging: false,
     metricsInterval: 100, // Faster for testing
-    logLevel: 'info',
+    logLevel: 'info'
   };
 
   const defaultCallbackConfig: CallbackHandlerConfig = {
@@ -193,7 +185,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
     maxQueueSize: 100,
     enablePersistence: false,
     batchSize: 10,
-    processingInterval: 50,
+    processingInterval: 50
   };
 
   beforeEach(async () => {
@@ -209,7 +201,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       defaultRetryPolicy,
       errorRecovery: defaultErrorRecovery,
       monitoring: defaultMonitoring,
-      debug: false,
+      debug: false
     };
 
     integration = new MCPWorkflowIntegration(config);
@@ -226,7 +218,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       status: 'online' as any,
       metadata: {},
       registeredAt: new Date(),
-      lastHeartbeat: new Date(),
+      lastHeartbeat: new Date()
     });
 
     mockBroker.addMockService('compute-service', {
@@ -240,7 +232,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       status: 'online' as any,
       metadata: {},
       registeredAt: new Date(),
-      lastHeartbeat: new Date(),
+      lastHeartbeat: new Date()
     });
 
     await integration.initialize();
@@ -261,13 +253,13 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       mockClient.setResponse('resources/read', {
         jsonrpc: '2.0',
         id: 'step1',
-        result: { content: 'raw,data,values\n1,2,3\n4,5,6' },
+        result: { content: 'raw,data,values\n1,2,3\n4,5,6' }
       });
 
       mockClient.setResponse('tools/call', {
         jsonrpc: '2.0',
         id: 'step2',
-        result: { processedData: [{ sum: 6 }, { sum: 15 }] },
+        result: { processedData: [{ sum: 6 }, { sum: 15 }] }
       });
 
       // Define workflow steps
@@ -277,7 +269,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
           type: 'mcp_resource',
           mcpService: 'data-service',
           mcpMethod: 'get-csv',
-          parameters: { uri: 'file://data.csv' },
+          parameters: { uri: 'file://data.csv' }
         },
         {
           id: 'process-data',
@@ -286,9 +278,9 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
           mcpMethod: 'process-csv',
           parameters: {
             data: '${stepResults.load-data.content}',
-            operation: 'sum_rows',
-          },
-        },
+            operation: 'sum_rows'
+          }
+        }
       ];
 
       const context: WorkflowContext = {
@@ -297,7 +289,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
         currentStepId: 'load-data',
         input: { source: 'data.csv' },
         stepResults: {},
-        variables: { operation: 'sum_rows' },
+        variables: { operation: 'sum_rows' }
       };
 
       // Execute first step
@@ -333,7 +325,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       mockClient.setResponse('tools/call', {
         jsonrpc: '2.0',
         id: 'retry-test',
-        result: { success: true, attempt: 3 },
+        result: { success: true, attempt: 3 }
       });
 
       const step: WorkflowStep = {
@@ -346,8 +338,8 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
           maxAttempts: 3,
           baseDelay: 50,
           maxDelay: 200,
-          strategy: 'exponential',
-        },
+          strategy: 'exponential'
+        }
       };
 
       const context: WorkflowContext = {
@@ -356,7 +348,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
         currentStepId: 'retry-step',
         input: {},
         stepResults: {},
-        variables: {},
+        variables: {}
       };
 
       const startTime = Date.now();
@@ -377,7 +369,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       mockClient.setResponse('tools/call', {
         jsonrpc: '2.0',
         id: 'concurrent',
-        result: { executionId: 'dynamic' },
+        result: { executionId: 'dynamic' }
       });
 
       const createWorkflowExecution = (executionId: string) => {
@@ -386,7 +378,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
           type: 'mcp_tool',
           mcpService: 'compute-service',
           mcpMethod: 'concurrent-operation',
-          parameters: { executionId },
+          parameters: { executionId }
         };
 
         const context: WorkflowContext = {
@@ -395,7 +387,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
           currentStepId: 'concurrent-step',
           input: { executionId },
           stepResults: {},
-          variables: {},
+          variables: {}
         };
 
         return integration.executeWorkflowStep(step, context);
@@ -407,7 +399,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
         createWorkflowExecution('exec-2'),
         createWorkflowExecution('exec-3'),
         createWorkflowExecution('exec-4'),
-        createWorkflowExecution('exec-5'),
+        createWorkflowExecution('exec-5')
       ]);
 
       // All should succeed
@@ -427,7 +419,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       const task: Task = {
         id: 'monitored-task',
         type: 'data-analysis',
-        parameters: { dataset: 'large-dataset.csv', algorithm: 'ml-analysis' },
+        parameters: { dataset: 'large-dataset.csv', algorithm: 'ml-analysis' }
       };
 
       // Set up response with delay to simulate long-running task
@@ -437,8 +429,8 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
         id: 'monitored',
         result: {
           analysisResults: { accuracy: 0.95, features: 42 },
-          processingTime: 200,
-        },
+          processingTime: 200
+        }
       });
 
       // Track execution events
@@ -467,7 +459,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       const task: Task = {
         id: 'failing-task',
         type: 'impossible-operation',
-        parameters: { data: 'invalid' },
+        parameters: { data: 'invalid' }
       };
 
       // Configure service to return error
@@ -477,8 +469,8 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
         error: {
           code: -32603,
           message: 'Operation failed: Invalid data format',
-          data: { errorType: 'ValidationError' },
-        },
+          data: { errorType: 'ValidationError' }
+        }
       });
 
       // Track failure events
@@ -507,14 +499,14 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       const task: Task = {
         id: 'async-task',
         type: 'long-running-analysis',
-        parameters: { complexity: 'high' },
+        parameters: { complexity: 'high' }
       };
 
       // Set up initial response
       mockClient.setResponse('tools/call', {
         jsonrpc: '2.0',
         id: 'async',
-        result: { taskId: 'async-task-123', status: 'started' },
+        result: { taskId: 'async-task-123', status: 'started' }
       });
 
       // Delegate task
@@ -533,7 +525,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
         executionId: taskResult.executionId,
         payload: { progress: 25, message: 'Processing data...' },
         timestamp: new Date(),
-        source: 'compute-service',
+        source: 'compute-service'
       };
 
       await integration.handleMCPCallback(progressCallback);
@@ -544,10 +536,10 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
         executionId: taskResult.executionId,
         payload: {
           finalResults: { accuracy: 0.98, insights: ['pattern1', 'pattern2'] },
-          totalProcessingTime: 5000,
+          totalProcessingTime: 5000
         },
         timestamp: new Date(),
-        source: 'compute-service',
+        source: 'compute-service'
       };
 
       await integration.handleMCPCallback(completionCallback);
@@ -581,14 +573,14 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
         executionId,
         payload: { progress: 50 },
         timestamp: new Date(),
-        source: 'test-service',
+        source: 'test-service'
       };
 
       // This should trigger retries
       await integration.handleMCPCallback(callback);
 
       // Wait for retries to complete
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Handler should have been called multiple times
       expect(handlerCallCount).toBeGreaterThan(1);
@@ -602,7 +594,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
         type: 'mcp_tool',
         mcpService: 'unreliable-service',
         mcpMethod: 'test-operation',
-        parameters: { data: 'test' },
+        parameters: { data: 'test' }
       };
 
       const context: WorkflowContext = {
@@ -611,7 +603,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
         currentStepId: 'resilience-test',
         input: {},
         stepResults: {},
-        variables: {},
+        variables: {}
       };
 
       // Initially no service available
@@ -631,13 +623,13 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
         status: 'online' as any,
         metadata: {},
         registeredAt: new Date(),
-        lastHeartbeat: new Date(),
+        lastHeartbeat: new Date()
       });
 
       mockClient.setResponse('tools/call', {
         jsonrpc: '2.0',
         id: 'resilience',
-        result: { recovered: true },
+        result: { recovered: true }
       });
 
       const result2 = await integration.executeWorkflowStep(step, context);
@@ -652,7 +644,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
         mcpService: 'compute-service',
         mcpMethod: 'slow-operation',
         parameters: { data: 'test' },
-        timeout: 100, // Very short timeout
+        timeout: 100 // Very short timeout
       };
 
       const context: WorkflowContext = {
@@ -661,7 +653,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
         currentStepId: 'timeout-test',
         input: {},
         stepResults: {},
-        variables: {},
+        variables: {}
       };
 
       // Set a long delay to trigger timeout
@@ -684,7 +676,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       mockClient.setResponse('tools/call', {
         jsonrpc: '2.0',
         id: 'throughput',
-        result: { processed: true },
+        result: { processed: true }
       });
 
       const startTime = Date.now();
@@ -696,7 +688,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
           type: 'mcp_tool',
           mcpService: 'compute-service',
           mcpMethod: 'fast-operation',
-          parameters: { index: i },
+          parameters: { index: i }
         };
 
         const context: WorkflowContext = {
@@ -705,7 +697,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
           currentStepId: `throughput-step-${i}`,
           input: { index: i },
           stepResults: {},
-          variables: {},
+          variables: {}
         };
 
         workflows.push(integration.executeWorkflowStep(step, context));
@@ -727,9 +719,7 @@ describe('MCP Workflow Integration - End-to-End Tests', () => {
       const throughput = numWorkflows / (duration / 1000);
       expect(throughput).toBeGreaterThan(10); // At least 10 workflows per second
 
-      console.log(
-        `Processed ${numWorkflows} workflows in ${duration}ms (${throughput.toFixed(2)} workflows/sec)`
-      );
+      console.log(`Processed ${numWorkflows} workflows in ${duration}ms (${throughput.toFixed(2)} workflows/sec)`);
     }, 15000);
   });
 });

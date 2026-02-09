@@ -47,7 +47,10 @@ export class ChatService {
   async findOne(id: string, userId: string) {
     try {
       const chat = await this.db.client.query.chats.findFirst({
-        where: (chats, { eq, and }) => and(eq(chats.id, id), eq(chats.userId, userId)),
+        where: (chats, { eq, and }) => and(
+          eq(chats.id, id),
+          eq(chats.userId, userId)
+        ),
         with: {
           messages: {
             orderBy: (messages, { asc }) => [asc(messages.timestamp)],
@@ -74,7 +77,7 @@ export class ChatService {
     try {
       // Verify the agent belongs to the user
       const agent = await this.db.client.query.agents.findFirst({
-        where: (agents, { eq, and }) => and(eq(agents.id, agentId), eq(agents.userId, userId)),
+        where: (agents, { eq, and }) => and(eq(agents.id, agentId), eq(agents.userId, userId))
       });
 
       if (!agent) {
@@ -92,7 +95,7 @@ export class ChatService {
       // Re-fetch to return with relations
       const fullChat = await this.findOne(chat.id, userId);
       if (!fullChat) throw new Error('Failed to retrieve created chat');
-
+      
       return fullChat;
     } catch (error) {
       this.logger.error('Error creating chat:', error);
@@ -126,16 +129,16 @@ export class ChatService {
         timestamp: new Date(),
         isDeleted: false,
         isEphemeral: false,
-        isEdited: false,
+        isEdited: false
       } as any);
 
       // Re-fetch with relations
       const fullMessage = await this.db.client.query.messages.findFirst({
-        where: (m, { eq }) => eq(m.id, message.id),
-        with: {
-          agent: true,
-          sender: true,
-        },
+          where: (m, { eq }) => eq(m.id, message.id),
+          with: {
+              agent: true,
+              sender: true
+          }
       });
 
       return fullMessage;
@@ -155,14 +158,14 @@ export class ChatService {
       // But we can use limit.
       const messages = await this.db.client.query.messages.findMany({
         where: (msg, { eq, and, lt }) => {
-          const conditions = [eq(msg.chatId, chatId)];
-          // If cursor provided, assuming cursor is an ID ?? Or timestamp based?
-          // Cursor pagination example: { id: cursor }, skip: 1
-          // Drizzle doesn't support 'cursor' + 'skip' directly in findMany options (it has offset).
-          // Emulating cursor requires knowing the sort column value of the cursor.
-          // For now, ignoring cursor logic for simplicity or falling back to simple limit.
-          // TODO: Implement proper cursor pagination if critical.
-          return and(...conditions);
+            const conditions = [eq(msg.chatId, chatId)];
+            // If cursor provided, assuming cursor is an ID ?? Or timestamp based?
+            // Prisma cursor: { id: cursor }, skip: 1
+            // Drizzle doesn't support 'cursor' + 'skip' directly in findMany options (it has offset).
+            // Emulating cursor requires knowing the sort column value of the cursor.
+            // For now, ignoring cursor logic for simplicity or falling back to simple limit.
+            // TODO: Implement proper cursor pagination if critical.
+            return and(...conditions);
         },
         limit: options?.limit || 50,
         orderBy: (msg, { desc }) => [desc(msg.timestamp)],
@@ -186,26 +189,20 @@ export class ChatService {
     try {
       // Get the agent details
       const agent = await this.db.client.query.agents.findFirst({
-        where: (agents, { eq, and }) => and(eq(agents.id, agentId), eq(agents.userId, userId)),
+        where: (agents, { eq, and }) => and(eq(agents.id, agentId), eq(agents.userId, userId))
       });
 
       if (!agent) {
         throw new Error('Agent not found');
       }
 
-      // Get the agent's LLM provider configuration
-      const llmProvider = await this.db.llmConfigs.findById(agent.llmProviderId || agent.defaultLLMProviderId);
-
-      if (!llmProvider || !llmProvider.enabled) {
-        throw new Error('LLM provider not found or disabled');
-      }
-
+      // TODO: Replace with actual AI service integration
       const systemPrompt =
         ((agent.config as Record<string, unknown>)?.systemPrompt as string) ||
         agent.systemPrompt ||
         'You are a helpful assistant.';
 
-      const response = await this.generateAIResponse(prompt, systemPrompt, llmProvider);
+      const response = await this.mockAIResponse(prompt, systemPrompt);
 
       return response;
     } catch (error) {
@@ -215,59 +212,21 @@ export class ChatService {
   }
 
   /**
-   * Generate AI response using configured LLM provider
+   * Mock AI response - to be replaced with actual AI integration
    */
-  private async generateAIResponse(prompt: string, systemPrompt: string, llmProvider: any): Promise<string> {
-    try {
-      // Import the LLM provider service dynamically
-      const { LLMProviderService } = await import('../llm/llm-provider.service');
-      
-      // Select appropriate LLM service based on provider type
-      const providerConfig = {
-        provider: llmProvider.provider,
-        model: llmProvider.modelName,
-        apiKey: llmProvider.apiKey,
-        apiEndpoint: llmProvider.apiEndpoint,
-      };
+  private async mockAIResponse(prompt: string, _systemPrompt: string): Promise<string> {
+    // Simulate AI processing time
+    await new Promise((resolve) => setTimeout(resolve, 500 + Math.random() * 1000));
 
-      // Make the API call
-      const response = await this.callLLMAPI(prompt, systemPrompt, providerConfig);
-      
-      return response;
-    } catch (error) {
-      this.logger.error('Error calling LLM API:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Call LLM API (OpenAI-compatible format for most providers)
-   */
-  private async callLLMAPI(prompt: string, systemPrompt: string, config: any): Promise<string> {
-    const { default: axios } = await import('axios');
-    
-    const messages = [
-      ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
-      { role: 'user', content: prompt },
+    // Return a mock response based on the prompt
+    const responses = [
+      `Based on your message about "${prompt.substring(0, 30)}...", I can help you with that.`,
+      `I understand you're asking about: ${prompt.substring(0, 50)}. Let me provide some insights.`,
+      `That's an interesting question about "${prompt.substring(0, 40)}...". Here's my perspective:`,
+      `Regarding your inquiry, I'd like to share some thoughts.`,
     ];
 
-    const response = await axios.post(
-      `${config.apiEndpoint}/chat/completions`,
-      {
-        model: config.model,
-        messages,
-        temperature: 0.7,
-        max_tokens: 2000,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${config.apiKey}`,
-        },
-      }
-    );
-
-    return response.data.choices[0].message.content;
+    return responses[Math.floor(Math.random() * responses.length)];
   }
 
   /**

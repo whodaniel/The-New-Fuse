@@ -14,7 +14,10 @@
     "composite": true
   },
   "compileOnSave": true,
-  "references": [{ "path": "../packages/types" }],
+  "references": [
+    { "path": "../packages/types" },
+    
+  ],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

@@ -1,5 +1,5 @@
-import { MetricsData } from '@the-new-fuse/api-types/src/metrics';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { MetricsData, Metric } from '@the-new-fuse/api-types/src/metrics';
 
 export function useMetrics(): {
   data: MetricsData | null;

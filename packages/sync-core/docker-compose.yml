@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   sync-core:
@@ -9,7 +9,7 @@ services:
     restart: unless-stopped
     ports:
       - "3001:3001"
-      - "9090:9090" # Metrics port
+      - "9090:9090"  # Metrics port
     environment:
       - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}

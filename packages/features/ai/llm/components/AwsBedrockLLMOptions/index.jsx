@@ -1,10 +1,10 @@
-import { ArrowSquareOut, Info } from '@phosphor-icons/react';
-import { useState } from 'react';
+import { ArrowSquareOut, Info } from "@phosphor-icons/react";
 import { AWS_REGIONS } from './regions.js';
+import { useState } from "react";
 
 export default function AwsBedrockLLMOptions({ settings }) {
   const [useSessionToken, setUseSessionToken] = useState(
-    settings?.AwsBedrockLLMConnectionMethod === 'sessionToken'
+    settings?.AwsBedrockLLMConnectionMethod === "sessionToken"
   );
 
   return (
@@ -33,7 +33,7 @@ export default function AwsBedrockLLMOptions({ settings }) {
         <input
           type="hidden"
           name="AwsBedrockLLMConnectionMethod"
-          value={useSessionToken ? 'sessionToken' : 'iam'}
+          value={useSessionToken ? "sessionToken" : "iam"}
         />
         <div className="flex flex-col w-full">
           <label className="text-theme-text-primary text-sm font-semibold block mb-3">
@@ -46,7 +46,9 @@ export default function AwsBedrockLLMOptions({ settings }) {
         <div className="flex items-center justify-start gap-x-4 bg-theme-settings-input-bg p-2.5 rounded-lg w-fit">
           <span
             className={`text-sm ${
-              !useSessionToken ? 'text-theme-text-primary' : 'text-theme-text-secondary'
+              !useSessionToken
+                ? "text-theme-text-primary"
+                : "text-theme-text-secondary"
             }`}
           >
             IAM
@@ -62,7 +64,9 @@ export default function AwsBedrockLLMOptions({ settings }) {
           </label>
           <span
             className={`text-sm ${
-              useSessionToken ? 'text-theme-text-primary' : 'text-theme-text-secondary'
+              useSessionToken
+                ? "text-theme-text-primary"
+                : "text-theme-text-secondary"
             }`}
           >
             Session Token
@@ -80,7 +84,9 @@ export default function AwsBedrockLLMOptions({ settings }) {
             name="AwsBedrockLLMAccessKeyId"
             className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="AWS Bedrock IAM User Access ID"
-            defaultValue={settings?.AwsBedrockLLMAccessKeyId ? '*'.repeat(20) : ''}
+            defaultValue={
+              settings?.AwsBedrockLLMAccessKeyId ? "*".repeat(20) : ""
+            }
             required={true}
             autoComplete="off"
             spellCheck={false}
@@ -95,7 +101,9 @@ export default function AwsBedrockLLMOptions({ settings }) {
             name="AwsBedrockLLMAccessKey"
             className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="AWS Bedrock IAM User Access Key"
-            defaultValue={settings?.AwsBedrockLLMAccessKey ? '*'.repeat(20) : ''}
+            defaultValue={
+              settings?.AwsBedrockLLMAccessKey ? "*".repeat(20) : ""
+            }
             required={true}
             autoComplete="off"
             spellCheck={false}
@@ -111,7 +119,9 @@ export default function AwsBedrockLLMOptions({ settings }) {
               name="AwsBedrockLLMSessionToken"
               className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="AWS Bedrock Session Token"
-              defaultValue={settings?.AwsBedrockLLMSessionToken ? '*'.repeat(20) : ''}
+              defaultValue={
+                settings?.AwsBedrockLLMSessionToken ? "*".repeat(20) : ""
+              }
               required={true}
               autoComplete="off"
               spellCheck={false}
@@ -119,10 +129,12 @@ export default function AwsBedrockLLMOptions({ settings }) {
           </div>
         )}
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">AWS region</label>
+          <label className="text-white text-sm font-semibold block mb-3">
+            AWS region
+          </label>
           <select
             name="AwsBedrockLLMRegion"
-            defaultValue={settings?.AwsBedrockLLMRegion || 'us-west-2'}
+            defaultValue={settings?.AwsBedrockLLMRegion || "us-west-2"}
             required={true}
             className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           >
@@ -141,7 +153,9 @@ export default function AwsBedrockLLMOptions({ settings }) {
         {!settings?.credentialsOnly && (
           <>
             <div className="flex flex-col w-60">
-              <label className="text-white text-sm font-semibold block mb-3">Model ID</label>
+              <label className="text-white text-sm font-semibold block mb-3">
+                Model ID
+              </label>
               <input
                 type="text"
                 name="AwsBedrockLLMModel"

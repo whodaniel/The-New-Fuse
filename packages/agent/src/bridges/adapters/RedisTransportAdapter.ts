@@ -8,11 +8,8 @@
  */
 
 import { EventEmitter } from 'events';
-
-import Redis from 'ioredis';
-
-import type { Redis as RedisClient } from 'ioredis';
-import type { TransportAdapter, TransportType, UniversalMessage } from '../universal_bridge.js';
+import Redis, { Redis as RedisClient } from 'ioredis';
+import { TransportAdapter, TransportType, UniversalMessage } from '../universal_bridge.js';
 
 export interface RedisTransportConfig {
   redisUrl?: string;
@@ -78,9 +75,7 @@ export class RedisTransportAdapter extends EventEmitter implements TransportAdap
   private createRedisClient(role: 'publisher' | 'subscriber'): RedisClient {
     const client = new Redis(this.config.redisUrl, {
       retryStrategy: (times) => {
-        if (!this.config.reconnectOnError) {
-          return null;
-        }
+        if (!this.config.reconnectOnError) return null;
         if (times > this.config.maxReconnectAttempts) {
           console.error(`[RedisTransport:${role}] Max reconnect attempts reached`);
           return null;

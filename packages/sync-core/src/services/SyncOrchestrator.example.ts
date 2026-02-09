@@ -1,19 +1,24 @@
 /**
  * SyncOrchestrator Usage Examples
- *
+ * 
  * This file demonstrates how to use the SyncOrchestrator service
  * for multi-tenant synchronization across The New Fuse platform.
  */
 
-import { AgentState, SyncOrchestrator } from './SyncOrchestrator';
+import { SyncOrchestrator, AgentState } from './SyncOrchestrator';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { PrismaService } from '@the-new-fuse/database';
+import { PromptTemplateServiceImpl } from '@the-new-fuse/prompt-templating';
 
 // Example: Setting up SyncOrchestrator in a NestJS module
 export class SyncOrchestratorExamples {
-  constructor(private readonly syncOrchestrator: SyncOrchestrator) {}
+  constructor(
+    private readonly syncOrchestrator: SyncOrchestrator
+  ) {}
 
   /**
    * Example 1: Syncing Agent State Changes
-   *
+   * 
    * When an agent's status or configuration changes, sync it across
    * all instances and notify relevant users via WebSocket.
    */
@@ -24,9 +29,9 @@ export class SyncOrchestratorExamples {
       metadata: {
         currentTask: 'analyzing-document',
         progress: 45,
-        estimatedCompletion: new Date(Date.now() + 300000), // 5 minutes
+        estimatedCompletion: new Date(Date.now() + 300000) // 5 minutes
       },
-      lastUpdate: new Date(),
+      lastUpdate: new Date()
     };
 
     try {
@@ -39,7 +44,7 @@ export class SyncOrchestratorExamples {
 
   /**
    * Example 2: Syncing Tenant-Specific Configuration
-   *
+   * 
    * When a user updates their workspace configuration, sync it
    * across all their active sessions.
    */
@@ -52,18 +57,22 @@ export class SyncOrchestratorExamples {
       notifications: {
         email: true,
         push: false,
-        desktop: true,
+        desktop: true
       },
       preferences: {
         autoSave: true,
         collaborativeMode: true,
-        aiAssistance: 'enhanced',
+        aiAssistance: 'enhanced'
       },
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
 
     try {
-      await this.syncOrchestrator.syncTenantData(tenantId, 'config', configData);
+      await this.syncOrchestrator.syncTenantData(
+        tenantId,
+        'config',
+        configData
+      );
       console.log('Tenant configuration synchronized');
     } catch (error) {
       console.error('Failed to sync tenant configuration:', error);
@@ -72,7 +81,7 @@ export class SyncOrchestratorExamples {
 
   /**
    * Example 3: Syncing Global Prompt Templates
-   *
+   * 
    * When system-wide prompt templates are updated, sync them
    * across all tenants and instances.
    */
@@ -104,12 +113,12 @@ Provide structured feedback with:
 3. Recommendations for improvement`,
         variables: {
           code_content: '',
-          context_information: '',
+          context_information: ''
         },
         category: 'Development',
         tags: ['code-review', 'development', 'quality'],
         isPublic: true,
-        updatedAt: new Date(),
+        updatedAt: new Date()
       },
       {
         id: 'template-2',
@@ -133,13 +142,13 @@ Create a comprehensive summary of the following document:
         variables: {
           document_content: '',
           max_length: '500',
-          focus_areas: 'Key findings, recommendations, conclusions',
+          focus_areas: 'Key findings, recommendations, conclusions'
         },
         category: 'Content',
         tags: ['summarization', 'content', 'analysis'],
         isPublic: true,
-        updatedAt: new Date(),
-      },
+        updatedAt: new Date()
+      }
     ];
 
     try {
@@ -152,7 +161,7 @@ Create a comprehensive summary of the following document:
 
   /**
    * Example 4: Syncing Task Updates
-   *
+   * 
    * When tasks are created, updated, or completed, sync the changes
    * across all relevant users and systems.
    */
@@ -171,9 +180,9 @@ Create a comprehensive summary of the following document:
         estimatedHours: 16,
         actualHours: 10,
         blockers: [],
-        dependencies: ['task-788'],
+        dependencies: ['task-788']
       },
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
 
     try {
@@ -191,7 +200,7 @@ Create a comprehensive summary of the following document:
 
   /**
    * Example 5: Syncing Workflow State Changes
-   *
+   * 
    * When workflows are executed or their state changes, sync the
    * updates across all monitoring systems.
    */
@@ -211,10 +220,10 @@ Create a comprehensive summary of the following document:
         resourceUsage: {
           cpu: 45,
           memory: 512,
-          storage: 1024,
-        },
+          storage: 1024
+        }
       },
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
 
     try {
@@ -227,14 +236,14 @@ Create a comprehensive summary of the following document:
 
   /**
    * Example 6: Handling Sync Conflicts
-   *
+   * 
    * Demonstrate how to handle and resolve synchronization conflicts
    * when multiple instances modify the same resource simultaneously.
    */
   async handleSyncConflicts(): Promise<void> {
     // This would typically be called automatically by the sync system
     // when conflicts are detected, but can also be triggered manually
-
+    
     const conflict = {
       id: 'conflict-123',
       resourceType: 'agent',
@@ -244,19 +253,19 @@ Create a comprehensive summary of the following document:
       localVersion: {
         status: 'IDLE',
         lastUpdate: '2024-01-15T10:30:00Z',
-        metadata: { currentTask: null },
+        metadata: { currentTask: null }
       },
       remoteVersion: {
         status: 'PROCESSING',
         lastUpdate: '2024-01-15T10:30:05Z',
-        metadata: { currentTask: 'document-analysis' },
+        metadata: { currentTask: 'document-analysis' }
       },
-      createdAt: new Date(),
+      createdAt: new Date()
     };
 
     try {
       const resolution = await this.syncOrchestrator.resolveConflict(conflict);
-
+      
       if (resolution.strategy === 'manual') {
         console.log('Conflict queued for manual resolution');
         // Notify administrators or relevant users
@@ -271,7 +280,7 @@ Create a comprehensive summary of the following document:
 
   /**
    * Example 7: Monitoring Sync Operations
-   *
+   * 
    * Demonstrate how to monitor sync operations and system health.
    */
   async monitorSyncOperations(): Promise<void> {
@@ -284,7 +293,7 @@ Create a comprehensive summary of the following document:
         averageLatency: `${metrics.performance.avgSyncLatency}ms`,
         successRate: `${metrics.performance.successRate}%`,
         activeTenants: metrics.resources.activeTenants,
-        pendingOperations: metrics.resources.pendingOperations,
+        pendingOperations: metrics.resources.pendingOperations
       });
 
       // Get active tenants
@@ -307,23 +316,23 @@ Create a comprehensive summary of the following document:
 
   /**
    * Example 8: Bulk Synchronization
-   *
+   * 
    * Demonstrate how to perform bulk synchronization operations
    * efficiently.
    */
   async performBulkSync(): Promise<void> {
     const tenantId = 'tenant-bulk-123';
-
+    
     // Bulk sync multiple agents
     const agents = [
       { id: 'agent-1', status: 'ACTIVE', metadata: { type: 'chat' } },
       { id: 'agent-2', status: 'IDLE', metadata: { type: 'analysis' } },
-      { id: 'agent-3', status: 'PROCESSING', metadata: { type: 'generation' } },
+      { id: 'agent-3', status: 'PROCESSING', metadata: { type: 'generation' } }
     ];
 
     try {
       // Sync agents in parallel
-      const syncPromises = agents.map((agent) =>
+      const syncPromises = agents.map(agent =>
         this.syncOrchestrator.syncTenantData(tenantId, 'agent', agent)
       );
 
@@ -336,7 +345,7 @@ Create a comprehensive summary of the following document:
 
   /**
    * Example 9: Cross-Tenant Data Sharing
-   *
+   * 
    * Demonstrate controlled cross-tenant data sharing while
    * maintaining security and isolation.
    */
@@ -357,13 +366,13 @@ Include:
 - Example requests/responses
 - Error codes`,
       variables: {
-        api_code: '',
+        api_code: ''
       },
       category: 'Documentation',
       tags: ['api', 'documentation', 'public'],
       isPublic: true,
       sharedWith: ['tenant-1', 'tenant-2', 'tenant-3'],
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
 
     try {
@@ -377,7 +386,7 @@ Include:
 
   /**
    * Example 10: Real-time Collaboration Sync
-   *
+   * 
    * Demonstrate real-time collaboration features with immediate
    * synchronization across all participants.
    */
@@ -392,21 +401,21 @@ Include:
         content: 'Updated content with collaborative changes...',
         version: 15,
         lastModifiedBy: 'user-2',
-        lastModified: new Date(),
+        lastModified: new Date()
       },
       cursors: {
         'user-1': { line: 10, column: 25 },
         'user-2': { line: 15, column: 8 },
-        'user-3': { line: 22, column: 12 },
+        'user-3': { line: 22, column: 12 }
       },
       selections: {
-        'user-1': { start: { line: 10, column: 20 }, end: { line: 10, column: 35 } },
+        'user-1': { start: { line: 10, column: 20 }, end: { line: 10, column: 35 } }
       },
       metadata: {
         sessionStarted: new Date(Date.now() - 1800000), // 30 minutes ago
         activeUsers: 3,
-        totalChanges: 47,
-      },
+        totalChanges: 47
+      }
     };
 
     try {
@@ -429,7 +438,9 @@ Include:
  * Integration Example: Using SyncOrchestrator in a Service
  */
 export class DocumentService {
-  constructor(private readonly syncOrchestrator: SyncOrchestrator) {}
+  constructor(
+    private readonly syncOrchestrator: SyncOrchestrator
+  ) {}
 
   async updateDocument(documentId: string, userId: string, changes: any): Promise<void> {
     // Update document in database
@@ -440,7 +451,7 @@ export class DocumentService {
       id: documentId,
       ...changes,
       lastModifiedBy: userId,
-      lastModified: new Date(),
+      lastModified: new Date()
     };
 
     // Sync to the user's tenant
@@ -449,7 +460,11 @@ export class DocumentService {
     // If document is shared, sync to collaborators
     if (changes.collaborators) {
       for (const collaboratorId of changes.collaborators) {
-        await this.syncOrchestrator.syncTenantData(collaboratorId, 'file', documentData);
+        await this.syncOrchestrator.syncTenantData(
+          collaboratorId,
+          'file',
+          documentData
+        );
       }
     }
   }
@@ -459,26 +474,31 @@ export class DocumentService {
  * Error Handling Example
  */
 export class SyncErrorHandler {
-  constructor(private readonly syncOrchestrator: SyncOrchestrator) {}
+  constructor(
+    private readonly syncOrchestrator: SyncOrchestrator
+  ) {}
 
-  async handleSyncWithRetry<T>(operation: () => Promise<T>, maxRetries: number = 3): Promise<T> {
+  async handleSyncWithRetry<T>(
+    operation: () => Promise<T>,
+    maxRetries: number = 3
+  ): Promise<T> {
     let lastError: Error;
-
+    
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         return await operation();
       } catch (error) {
         lastError = error as Error;
         console.warn(`Sync attempt ${attempt} failed:`, error);
-
+        
         if (attempt < maxRetries) {
           // Exponential backoff
           const delay = Math.pow(2, attempt) * 1000;
-          await new Promise((resolve) => setTimeout(resolve, delay));
+          await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
     }
-
+    
     throw new Error(`Sync failed after ${maxRetries} attempts: ${lastError.message}`);
   }
 }

@@ -106,26 +106,13 @@ export class SecureAuthGuard implements CanActivate {
     const handler = context.getHandler();
     const className = context.getClass().name;
 
-    // Get security requirements from both handler and class
-    const authLevel =
-      this.reflector.getAllAndOverride<AuthLevel>(AUTH_LEVEL_KEY, [handler, context.getClass()]) ||
-      AuthLevel.PUBLIC;
+    // Get security requirements
+    const authLevel = this.reflector.get<AuthLevel>(AUTH_LEVEL_KEY, handler) || AuthLevel.PUBLIC;
     const securityLevel =
-      this.reflector.getAllAndOverride<SecurityLevelEnum>(SECURITY_LEVEL_KEY, [
-        handler,
-        context.getClass(),
-      ]) || SecurityLevelEnum.LOW;
-    const requireSSL =
-      this.reflector.getAllAndOverride<boolean>(REQUIRE_SSL_KEY, [handler, context.getClass()]) ||
-      false;
-    const auditLog =
-      this.reflector.getAllAndOverride<boolean>(AUDIT_LOG_KEY, [handler, context.getClass()]) ||
-      false;
-    const sensitiveData =
-      this.reflector.getAllAndOverride<boolean>(SENSITIVE_DATA_KEY, [
-        handler,
-        context.getClass(),
-      ]) || false;
+      this.reflector.get<SecurityLevelEnum>(SECURITY_LEVEL_KEY, handler) || SecurityLevelEnum.LOW;
+    const requireSSL = this.reflector.get<boolean>(REQUIRE_SSL_KEY, handler) || false;
+    const auditLog = this.reflector.get<boolean>(AUDIT_LOG_KEY, handler) || false;
+    const sensitiveData = this.reflector.get<boolean>(SENSITIVE_DATA_KEY, handler) || false;
 
     // Check SSL requirement
     if (requireSSL && !this.isSecure(request)) {

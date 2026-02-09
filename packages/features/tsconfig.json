@@ -2,12 +2,15 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "outDir": "./dist",
     "rootDir": ".",
     "types": [],
     "jsx": "react-jsx"
   },
-  "include": ["index.ts", "ui/**/*"],
+  "include": ["ui/**/*.ts", "ui/**/*.tsx"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "references": [{ "path": "../types" }]
 }

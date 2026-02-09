@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 export function useTheme(storageKey = 'ui-theme'): any {
   const [state, setState] = useState({
     theme: 'system',

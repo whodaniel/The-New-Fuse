@@ -38,7 +38,7 @@ export class CDNConfigService {
       apiKey: this.configService.get('CDN_API_KEY'),
       zoneId: this.configService.get('CDN_ZONE_ID'),
       distributionId: this.configService.get('CDN_DISTRIBUTION_ID'),
-      purgeEndpoint: this.configService.get('CDN_PURGE_ENDPOINT'),
+      purgeEndpoint: this.configService.get('CDN_PURGE_ENDPOINT')
     };
 
     this.logger.log(
@@ -67,7 +67,7 @@ export class CDNConfigService {
     if (!this.config.enabled) {
       return {
         success: false,
-        message: 'CDN not enabled',
+        message: 'CDN not enabled'
       };
     }
 
@@ -82,14 +82,14 @@ export class CDNConfigService {
         default:
           return {
             success: false,
-            message: `Unsupported CDN provider: ${this.config.provider}`,
+            message: `Unsupported CDN provider: ${this.config.provider}`
           };
       }
     } catch (error) {
       this.logger.error('CDN purge error:', error);
       return {
         success: false,
-        message: `Purge failed: ${(error as Error).message}`,
+        message: `Purge failed: ${(error as Error).message}`
       };
     }
   }
@@ -101,7 +101,7 @@ export class CDNConfigService {
     if (!this.config.enabled) {
       return {
         success: false,
-        message: 'CDN not enabled',
+        message: 'CDN not enabled'
       };
     }
 
@@ -116,14 +116,14 @@ export class CDNConfigService {
         default:
           return {
             success: false,
-            message: `Unsupported CDN provider: ${this.config.provider}`,
+            message: `Unsupported CDN provider: ${this.config.provider}`
           };
       }
     } catch (error) {
       this.logger.error('CDN purge all error:', error);
       return {
         success: false,
-        message: `Purge all failed: ${(error as Error).message}`,
+        message: `Purge all failed: ${(error as Error).message}`
       };
     }
   }
@@ -141,10 +141,10 @@ export class CDNConfigService {
       {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${this.config.apiKey}`,
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.config.apiKey}`,
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ files: urls }),
+        body: JSON.stringify({ files: urls })
       }
     );
 
@@ -155,7 +155,7 @@ export class CDNConfigService {
       return {
         success: true,
         message: 'Cache purged successfully',
-        purgedUrls: urls,
+        purgedUrls: urls
       };
     }
 
@@ -175,10 +175,10 @@ export class CDNConfigService {
       {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${this.config.apiKey}`,
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.config.apiKey}`,
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ purge_everything: true }),
+        body: JSON.stringify({ purge_everything: true })
       }
     );
 
@@ -188,7 +188,7 @@ export class CDNConfigService {
       this.logger.log('Cloudflare cache purged (all)');
       return {
         success: true,
-        message: 'All cache purged successfully',
+        message: 'All cache purged successfully'
       };
     }
 
@@ -202,7 +202,7 @@ export class CDNConfigService {
     this.logger.warn('CloudFront purge requires AWS SDK - implement as needed');
     return {
       success: false,
-      message: 'CloudFront purge not implemented - use AWS SDK',
+      message: 'CloudFront purge not implemented - use AWS SDK'
     };
   }
 
@@ -213,7 +213,7 @@ export class CDNConfigService {
     this.logger.warn('CloudFront purge all requires AWS SDK - implement as needed');
     return {
       success: false,
-      message: 'CloudFront purge all not implemented - use AWS SDK',
+      message: 'CloudFront purge all not implemented - use AWS SDK'
     };
   }
 
@@ -224,7 +224,7 @@ export class CDNConfigService {
     this.logger.warn('Fastly purge not implemented');
     return {
       success: false,
-      message: 'Fastly purge not implemented',
+      message: 'Fastly purge not implemented'
     };
   }
 
@@ -235,7 +235,7 @@ export class CDNConfigService {
     this.logger.warn('Fastly purge all not implemented');
     return {
       success: false,
-      message: 'Fastly purge all not implemented',
+      message: 'Fastly purge all not implemented'
     };
   }
 

@@ -1,11 +1,11 @@
+import { IsString, IsOptional, IsUrl, MaxLength, IsObject } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsObject, IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
 
 export class UpdateProfileDto {
   @ApiPropertyOptional({
     description: 'User display name',
     example: 'John Doe',
-    maxLength: 100,
+    maxLength: 100
   })
   @IsOptional()
   @IsString()
@@ -15,7 +15,7 @@ export class UpdateProfileDto {
   @ApiPropertyOptional({
     description: 'User bio/description',
     example: 'Software developer and AI enthusiast',
-    maxLength: 500,
+    maxLength: 500
   })
   @IsOptional()
   @IsString()
@@ -24,7 +24,7 @@ export class UpdateProfileDto {
 
   @ApiPropertyOptional({
     description: 'Avatar URL',
-    example: 'https://example.com/avatar.jpg',
+    example: 'https://example.com/avatar.jpg'
   })
   @IsOptional()
   @IsUrl()
@@ -32,7 +32,7 @@ export class UpdateProfileDto {
 
   @ApiPropertyOptional({
     description: 'User location',
-    example: 'San Francisco, CA',
+    example: 'San Francisco, CA'
   })
   @IsOptional()
   @IsString()
@@ -41,7 +41,7 @@ export class UpdateProfileDto {
 
   @ApiPropertyOptional({
     description: 'Company/Organization',
-    example: 'Acme Inc.',
+    example: 'Acme Inc.'
   })
   @IsOptional()
   @IsString()
@@ -50,7 +50,7 @@ export class UpdateProfileDto {
 
   @ApiPropertyOptional({
     description: 'Website URL',
-    example: 'https://example.com',
+    example: 'https://example.com'
   })
   @IsOptional()
   @IsUrl()
@@ -58,7 +58,7 @@ export class UpdateProfileDto {
 
   @ApiPropertyOptional({
     description: 'Additional user preferences',
-    example: { theme: 'dark', notifications: true },
+    example: { theme: 'dark', notifications: true }
   })
   @IsOptional()
   @IsObject()

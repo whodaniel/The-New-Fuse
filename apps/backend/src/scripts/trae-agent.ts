@@ -1,6 +1,7 @@
-import { Logger } from '@nestjs/common';
-import axios from 'axios';
 import { Redis } from 'ioredis';
+import axios from 'axios';
+import { Logger } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Interface for agent messages as specified in the onboarding instructions
@@ -46,19 +47,19 @@ class TraeAgent {
   async initialize(): Promise<void> {
     try {
       this.logger.log('Initializing Trae Agent...');
-
+      
       // Step 1: System Verification
       await this.verifySystemRequirements();
-
+      
       // Step 2: Agent Registration
       await this.registerAgent();
-
+      
       // Step 3: Communication Setup
       await this.setupCommunication();
-
+      
       // Step 4: Send initial handshake
       await this.sendInitialHandshake();
-
+      
       this.logger.log('Trae Agent initialized successfully');
     } catch (error) {
       this.logger.error('Failed to initialize Trae Agent:', error);
@@ -72,23 +73,23 @@ class TraeAgent {
   private async verifySystemRequirements(): Promise<void> {
     try {
       this.logger.log('Verifying system requirements...');
-
+      
       // Check Redis connection
       const pingResult = await this.redis.ping();
       if (pingResult !== 'PONG') {
         throw new Error('Redis ping failed');
       }
-
+      
       // Check Redis info
       const info = await this.redis.info();
       if (!info.includes('tcp_port:6379')) {
         this.logger.warn('Redis may not be running on default port 6379');
       }
-
+      
       // Verify environment
       const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
       this.logger.log(`Using Redis URL: ${redisUrl}`);
-
+      
       this.logger.log('System requirements verified');
     } catch (error) {
       this.logger.error('System verification failed:', error);
@@ -102,7 +103,7 @@ class TraeAgent {
   private async registerAgent(): Promise<void> {
     try {
       this.logger.log('Registering Trae Agent...');
-
+      
       const registrationPayload = {
         type: 'INTRODUCTION',
         source: 'trae',
@@ -113,19 +114,19 @@ class TraeAgent {
             'code_analysis',
             'task_coordination',
             'system_integration',
-            'code_generation',
+            'code_generation'
           ],
           metadata: {
             version: '1.0',
             priority: 'high',
-            agent_type: 'implementation_specialist',
-          },
+            agent_type: 'implementation_specialist'
+          }
         },
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
-
+      
       const response = await axios.post(this.apiEndpoint, registrationPayload);
-
+      
       if (response.status === 200 || response.status === 201) {
         this.logger.log('Registration successful:', response.data);
         this.isRegistered = true;
@@ -144,13 +145,13 @@ class TraeAgent {
   private async setupCommunication(): Promise<void> {
     try {
       this.logger.log('Setting up communication channels...');
-
+      
       // Subscribe to required channels
       await this.subClient.subscribe('agent:trae', 'agent:broadcast', 'agent:augment');
-
+      
       // Set up message handler
       this.subClient.on('message', this.handleMessage.bind(this));
-
+      
       this.isConnected = true;
       this.logger.log('Communication channels established');
     } catch (error) {
@@ -165,21 +166,21 @@ class TraeAgent {
   private async sendInitialHandshake(): Promise<void> {
     try {
       this.logger.log('Sending initial handshake...');
-
+      
       const handshakeMessage: AgentMessage = {
         type: 'system',
         timestamp: new Date().toISOString(),
         metadata: {
           version: '1.1.0',
           priority: 'high',
-          source: 'Trae',
+          source: 'Trae'
         },
         details: {
           action: 'initialize',
-          capabilities: ['code_analysis', 'task_coordination'],
-        },
+          capabilities: ['code_analysis', 'task_coordination']
+        }
       };
-
+      
       await this.pubClient.publish('agent:augment', JSON.stringify(handshakeMessage));
       this.logger.log('Initial handshake sent');
     } catch (error) {
@@ -198,7 +199,7 @@ class TraeAgent {
       this.logger.log(`Type: ${data.type}`);
       this.logger.log(`Source: ${data.metadata.source}`);
       this.logger.log(`Priority: ${data.metadata.priority}`);
-
+      
       switch (data.type) {
         case 'acknowledgment':
           this.logger.log('Received acknowledgment');
@@ -268,7 +269,7 @@ class TraeAgent {
   getStatus(): { registered: boolean; connected: boolean } {
     return {
       registered: this.isRegistered,
-      connected: this.isConnected,
+      connected: this.isConnected
     };
   }
 }
@@ -280,6 +281,7 @@ async function main(): Promise<void> {
 
     // Keep the process running to monitor channels
     process.on('SIGINT', async () => {
+      
       await traeAgent.cleanup();
       process.exit(0);
     });

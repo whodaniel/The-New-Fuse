@@ -51,11 +51,14 @@ export class QualityGateEvaluator {
   /**
    * Evaluate a quality gate against test summary
    */
-  async evaluate(gate: QualityGateConfig, summary: TestSummaryReport): Promise<QualityGateResult> {
+  async evaluate(
+    gate: QualityGateConfig, 
+    summary: TestSummaryReport
+  ): Promise<QualityGateResult> {
     this.logger.debug(`Evaluating quality gate: ${gate.name}`, {
       gateId: gate.id,
       type: gate.type,
-      threshold: gate.threshold,
+      threshold: gate.threshold
     });
 
     const actualValue = this.extractValue(gate.type, summary);
@@ -74,15 +77,15 @@ export class QualityGateEvaluator {
       timestamp: new Date(),
       metadata: {
         scope: gate.scope,
-        failureBehavior: gate.failureBehavior,
-      },
+        failureBehavior: gate.failureBehavior
+      }
     };
 
     this.logger.info(`Quality gate evaluation completed: ${gate.name}`, {
       gateId: gate.id,
       passed,
       actualValue,
-      threshold: gate.threshold,
+      threshold: gate.threshold
     });
 
     return result;
@@ -92,7 +95,7 @@ export class QualityGateEvaluator {
    * Evaluate multiple quality gates
    */
   async evaluateAll(
-    gates: QualityGateConfig[],
+    gates: QualityGateConfig[], 
     summary: TestSummaryReport
   ): Promise<QualityGateResult[]> {
     const results: QualityGateResult[] = [];
@@ -120,7 +123,11 @@ export class QualityGateEvaluator {
     }
   }
 
-  private evaluateCondition(actualValue: number, threshold: number, operator: string): boolean {
+  private evaluateCondition(
+    actualValue: number, 
+    threshold: number, 
+    operator: string
+  ): boolean {
     switch (operator) {
       case 'greater_than':
         return actualValue > threshold;
@@ -133,7 +140,11 @@ export class QualityGateEvaluator {
     }
   }
 
-  private generateMessage(gate: QualityGateConfig, actualValue: number, passed: boolean): string {
+  private generateMessage(
+    gate: QualityGateConfig, 
+    actualValue: number, 
+    passed: boolean
+  ): string {
     const status = passed ? 'PASSED' : 'FAILED';
     return `${gate.name} ${status}: ${actualValue} ${gate.operator.replace('_', ' ')} ${gate.threshold}`;
   }

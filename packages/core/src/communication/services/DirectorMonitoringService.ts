@@ -51,7 +51,7 @@ export class DirectorMonitoringService {
         healthy: false,
         issues: ['Director not found'],
         uptime: 0,
-        responseTime: 0,
+        responseTime: 0
       };
     }
 
@@ -69,7 +69,7 @@ export class DirectorMonitoringService {
       healthy: issues.length === 0,
       issues,
       uptime: Date.now() - status.lastHeartbeat.getTime(),
-      responseTime: Math.random() * 100,
+      responseTime: Math.random() * 100
     };
   }
 }

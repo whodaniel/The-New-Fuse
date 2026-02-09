@@ -30,18 +30,18 @@ echo "✅ Backup created at ${BACKUP_DIR}/database_backup.sql"
 echo "🔄 Applying migration recovery SQL..."
 psql $DB_URL -f ./scripts/migration-recovery.sql
 
-# 3. Reset Drizzle migration state
-echo "🗑️ Resetting Drizzle migration state..."
+# 3. Reset Prisma migration state
+echo "🗑️ Resetting Prisma migration state..."
 
-# First, check which drizzle schema is being used
-if [ -f "packages/database/drizzle/schema.drizzle" ]; then
-  echo "Using consolidated schema at packages/database/drizzle/schema.drizzle"
-  SCHEMA_PATH="packages/database/drizzle/schema.drizzle"
-  yarn workspace @the-new-fuse/database drizzle migrate reset --force
+# First, check which prisma schema is being used
+if [ -f "packages/database/prisma/schema.prisma" ]; then
+  echo "Using consolidated schema at packages/database/prisma/schema.prisma"
+  SCHEMA_PATH="packages/database/prisma/schema.prisma"
+  yarn workspace @the-new-fuse/database prisma migrate reset --force
 else
-  echo "Using root schema at drizzle/schema.drizzle"
-  SCHEMA_PATH="drizzle/schema.drizzle"
-  yarn drizzle migrate reset --force
+  echo "Using root schema at prisma/schema.prisma"
+  SCHEMA_PATH="prisma/schema.prisma"
+  yarn prisma migrate reset --force
 fi
 
 # 4. Verify the Role enum is correctly defined
@@ -71,18 +71,18 @@ fi
 echo "🆕 Creating a new migration with the correct Role enum..."
 
 if [[ $SCHEMA_PATH == *"packages/database"* ]]; then
-  yarn workspace @the-new-fuse/database drizzle migrate dev --name fix_role_enum
+  yarn workspace @the-new-fuse/database prisma migrate dev --name fix_role_enum
 else
-  yarn drizzle migrate dev --name fix_role_enum
+  yarn prisma migrate dev --name fix_role_enum
 fi
 
 # 6. Verify the database connection
 echo "🔌 Testing database connection..."
 
 if [[ $SCHEMA_PATH == *"packages/database"* ]]; then
-  yarn workspace @the-new-fuse/database drizzle db pull
+  yarn workspace @the-new-fuse/database prisma db pull
 else
-  yarn drizzle db pull
+  yarn prisma db pull
 fi
 
 echo "✅ Role enum migration fix complete!"

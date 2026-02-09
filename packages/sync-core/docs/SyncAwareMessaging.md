@@ -2,43 +2,29 @@
 
 ## Overview
 
-The Sync-Aware Messaging System enhances The New Fuse's existing agent
-communication infrastructure with advanced synchronization capabilities,
-cross-tenant messaging, message queue synchronization, and failover mechanisms.
-This system integrates seamlessly with the existing `AgentWebSocketService` and
-Redis infrastructure while providing enterprise-grade reliability and
-scalability.
+The Sync-Aware Messaging System enhances The New Fuse's existing agent communication infrastructure with advanced synchronization capabilities, cross-tenant messaging, message queue synchronization, and failover mechanisms. This system integrates seamlessly with the existing `AgentWebSocketService` and Redis infrastructure while providing enterprise-grade reliability and scalability.
 
 ## Key Features
 
 ### 1. Enhanced A2A Message Protocols
-
-- **Sync Metadata**: Every message includes comprehensive synchronization
-  information
-- **Tenant Isolation**: Built-in tenant boundaries with controlled cross-tenant
-  communication
-- **Conflict Resolution**: Automatic handling of message conflicts with
-  configurable strategies
-- **Delivery Tracking**: Complete message lifecycle tracking with
-  acknowledgments
+- **Sync Metadata**: Every message includes comprehensive synchronization information
+- **Tenant Isolation**: Built-in tenant boundaries with controlled cross-tenant communication
+- **Conflict Resolution**: Automatic handling of message conflicts with configurable strategies
+- **Delivery Tracking**: Complete message lifecycle tracking with acknowledgments
 
 ### 2. Cross-Tenant Messaging
-
 - **Secure Routing**: Policy-based routing with security validation
 - **Rate Limiting**: Configurable rate limits per tenant and message type
 - **Encryption Support**: Optional message encryption for sensitive data
 - **Audit Logging**: Complete audit trail for cross-tenant communications
 
 ### 3. Message Queue Synchronization
-
 - **Multiple Sync Modes**: Immediate, batch, and scheduled synchronization
 - **Conflict Detection**: Automatic detection and resolution of queue conflicts
 - **Retention Policies**: Configurable message retention and cleanup
-- **Performance Optimization**: Batching and debouncing for high-volume
-  scenarios
+- **Performance Optimization**: Batching and debouncing for high-volume scenarios
 
 ### 4. Failover Mechanisms
-
 - **Circuit Breakers**: Automatic failure detection and recovery
 - **Health Monitoring**: Continuous health checks for communication nodes
 - **Load Balancing**: Intelligent routing based on node capacity and health
@@ -53,33 +39,33 @@ graph TB
         T[Task Management]
         W[Workflow Engine]
     end
-
+    
     subgraph "Sync-Aware Messaging Layer"
         SMS[SyncAwareMessagingService]
         SAWS[SyncAwareAgentWebSocketService]
         MQS[MessageQueueSynchronizer]
         CHF[CommunicationHubFailover]
     end
-
+    
     subgraph "Existing Infrastructure"
         AWS[AgentWebSocketService]
         Redis[Redis Pub/Sub]
-        DB[(Drizzle Database)]
+        DB[(Prisma Database)]
     end
-
+    
     A --> SMS
     T --> SMS
     W --> SMS
-
+    
     SMS --> SAWS
     SMS --> MQS
     SMS --> CHF
-
+    
     SAWS --> AWS
     SAWS --> Redis
     MQS --> Redis
     CHF --> Redis
-
+    
     SMS --> DB
 ```
 
@@ -100,7 +86,7 @@ const syncStatus = await messagingService.sendMessage(
     tenantId: 'tenant-1',
     priority: 'high',
     requiresAck: true,
-    enableFailover: true,
+    enableFailover: true
   }
 );
 ```
@@ -116,7 +102,7 @@ const results = await syncAwareWebSocket.broadcastCrossTenant(
   message,
   {
     sourceTenantId: 'tenant-source',
-    priority: 'medium',
+    priority: 'medium'
   }
 );
 ```
@@ -130,7 +116,7 @@ Handles message queue synchronization across Redis instances.
 await queueSynchronizer.configureQueueSync({
   queueName: 'high-priority-tasks',
   syncMode: 'immediate',
-  conflictResolution: 'latest_wins',
+  conflictResolution: 'latest_wins'
 });
 ```
 
@@ -145,8 +131,8 @@ await failoverManager.configureFailover('tenant-1', {
   fallbackNodes: ['node-3', 'node-4'],
   circuitBreakerConfig: {
     enabled: true,
-    failureThreshold: 5,
-  },
+    failureThreshold: 5
+  }
 });
 ```
 
@@ -196,12 +182,12 @@ const crossTenantConfig: CrossTenantRoutingConfig = {
   routingRules: [
     {
       condition: 'message.type === "URGENT_ALERT"',
-      action: 'allow',
+      action: 'allow'
     },
     {
       condition: 'message.payload.confidential === true',
-      action: 'deny',
-    },
+      action: 'deny'
+    }
   ],
   securityPolicy: {
     requireEncryption: true,
@@ -209,9 +195,9 @@ const crossTenantConfig: CrossTenantRoutingConfig = {
     maxMessageSize: 1024 * 1024,
     rateLimiting: {
       maxMessagesPerSecond: 10,
-      maxMessagesPerMinute: 100,
-    },
-  },
+      maxMessagesPerMinute: 100
+    }
+  }
 };
 ```
 
@@ -228,8 +214,8 @@ const queueConfig: MessageQueueSyncConfig = {
   retentionPolicy: {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     maxSize: 1000,
-    cleanupInterval: 60 * 60 * 1000, // 1 hour
-  },
+    cleanupInterval: 60 * 60 * 1000 // 1 hour
+  }
 };
 ```
 
@@ -246,8 +232,8 @@ const failoverConfig: MessageFailoverConfig = {
     enabled: true,
     failureThreshold: 5,
     recoveryTimeout: 60000,
-    halfOpenMaxCalls: 3,
-  },
+    halfOpenMaxCalls: 3
+  }
 };
 ```
 
@@ -256,9 +242,9 @@ const failoverConfig: MessageFailoverConfig = {
 ### Basic Message Sending
 
 ```typescript
-import {
+import { 
   SyncAwareMessagingService,
-  SyncAwareMessageUtils,
+  SyncAwareMessageUtils 
 } from '@the-new-fuse/sync-core';
 
 // Create sync-aware message
@@ -270,7 +256,7 @@ const message = {
   recipient: 'worker-agent',
   payload: {
     taskId: 'process-document',
-    documentId: 'doc-123',
+    documentId: 'doc-123'
   },
   metadata: {
     priority: 'high',
@@ -278,18 +264,22 @@ const message = {
     sync: SyncAwareMessageUtils.createSyncMetadata({
       tenantId: 'tenant-1',
       priority: 'high',
-      requiresAck: true,
-    }),
-  },
+      requiresAck: true
+    })
+  }
 };
 
 // Send message
-const syncStatus = await messagingService.sendMessage('worker-agent', message, {
-  tenantId: 'tenant-1',
-  priority: 'high',
-  requiresAck: true,
-  timeout: 30000,
-});
+const syncStatus = await messagingService.sendMessage(
+  'worker-agent',
+  message,
+  {
+    tenantId: 'tenant-1',
+    priority: 'high',
+    requiresAck: true,
+    timeout: 30000
+  }
+);
 
 console.log('Message status:', syncStatus.status);
 ```
@@ -308,9 +298,9 @@ await messagingService.configureCrossTenantMessaging({
     maxMessageSize: 1024,
     rateLimiting: {
       maxMessagesPerSecond: 5,
-      maxMessagesPerMinute: 50,
-    },
-  },
+      maxMessagesPerMinute: 50
+    }
+  }
 });
 
 // Broadcast system announcement
@@ -319,22 +309,22 @@ const announcement = {
   type: 'SYSTEM_ANNOUNCEMENT',
   payload: {
     title: 'Maintenance Window',
-    message: 'System maintenance tonight 2-4 AM UTC',
+    message: 'System maintenance tonight 2-4 AM UTC'
   },
   metadata: {
     priority: 'medium',
     protocol_version: '1.0',
     sync: SyncAwareMessageUtils.createSyncMetadata({
       crossTenantAllowed: true,
-      deliveryMode: 'broadcast',
-    }),
-  },
+      deliveryMode: 'broadcast'
+    })
+  }
 };
 
 const results = await messagingService.broadcastMessage(announcement, {
   tenantIds: ['tenant-1', 'tenant-2', 'tenant-3'],
   crossTenant: true,
-  priority: 'medium',
+  priority: 'medium'
 });
 ```
 
@@ -350,8 +340,8 @@ await messagingService.configureQueueSynchronization({
   retentionPolicy: {
     maxAge: 24 * 60 * 60 * 1000,
     maxSize: 1000,
-    cleanupInterval: 60 * 60 * 1000,
-  },
+    cleanupInterval: 60 * 60 * 1000
+  }
 });
 
 // Trigger synchronization
@@ -376,8 +366,8 @@ await messagingService.configureFailover('tenant-1', {
     enabled: true,
     failureThreshold: 5,
     recoveryTimeout: 60000,
-    halfOpenMaxCalls: 3,
-  },
+    halfOpenMaxCalls: 3
+  }
 });
 
 // Send message with failover protection
@@ -391,9 +381,9 @@ const criticalMessage = {
     sync: SyncAwareMessageUtils.createSyncMetadata({
       priority: 'critical',
       maxRetries: 5,
-      failoverNodes: ['node-3', 'node-4'],
-    }),
-  },
+      failoverNodes: ['node-3', 'node-4']
+    })
+  }
 };
 
 const syncStatus = await messagingService.sendMessage(
@@ -402,7 +392,7 @@ const syncStatus = await messagingService.sendMessage(
   {
     tenantId: 'tenant-1',
     enableFailover: true,
-    priority: 'critical',
+    priority: 'critical'
   }
 );
 ```
@@ -416,11 +406,9 @@ const syncStatus = await messagingService.sendMessage(
 const metrics = messagingService.getMessagingMetrics();
 console.log('Messaging Metrics:', {
   totalMessages: metrics.totalMessages,
-  successRate:
-    ((metrics.successfulDeliveries / metrics.totalMessages) * 100).toFixed(2) +
-    '%',
+  successRate: (metrics.successfulDeliveries / metrics.totalMessages * 100).toFixed(2) + '%',
   averageDeliveryTime: metrics.averageDeliveryTime + 'ms',
-  crossTenantMessages: metrics.crossTenantMessages,
+  crossTenantMessages: metrics.crossTenantMessages
 });
 
 // Get specific message metrics
@@ -436,7 +424,7 @@ console.log('Failover Stats:', {
   totalNodes: failoverStats.totalNodes,
   healthyNodes: failoverStats.healthyNodes,
   failedNodes: failoverStats.failedNodes,
-  circuitBreakersOpen: failoverStats.circuitBreakersOpen,
+  circuitBreakersOpen: failoverStats.circuitBreakersOpen
 });
 ```
 
@@ -448,7 +436,7 @@ console.log('Queue Metrics:', {
   totalQueues: queueMetrics.totalQueues,
   syncedMessages: queueMetrics.syncedMessages,
   conflictCount: queueMetrics.conflictCount,
-  averageSyncTime: queueMetrics.averageSyncTime,
+  averageSyncTime: queueMetrics.averageSyncTime
 });
 ```
 
@@ -465,7 +453,7 @@ try {
   );
 } catch (error) {
   console.error('Message delivery failed:', error.message);
-
+  
   // Check if it's a timeout error
   if (error.message.includes('timeout')) {
     // Handle timeout scenario
@@ -500,7 +488,7 @@ if (conflicts.conflictCount > 0) {
 const failoverStats = messagingService.getFailoverStats();
 if (failoverStats.circuitBreakersOpen > 0) {
   console.log('Some circuit breakers are open, checking node health...');
-
+  
   // Trigger manual failover if needed
   await messagingService.triggerFailover(
     'tenant-1',
@@ -514,8 +502,7 @@ if (failoverStats.circuitBreakersOpen > 0) {
 
 ### AgentWebSocketService Integration
 
-The sync-aware messaging system seamlessly integrates with the existing
-`AgentWebSocketService`:
+The sync-aware messaging system seamlessly integrates with the existing `AgentWebSocketService`:
 
 ```typescript
 // The SyncAwareAgentWebSocketService wraps the existing service
@@ -525,11 +512,7 @@ The sync-aware messaging system seamlessly integrates with the existing
 await wsService.sendMessage(agentId, message);
 
 // New sync-aware features are available:
-await syncAwareWebSocket.sendSyncAwareMessage(
-  agentId,
-  syncAwareMessage,
-  options
-);
+await syncAwareWebSocket.sendSyncAwareMessage(agentId, syncAwareMessage, options);
 ```
 
 ### Redis Infrastructure Integration
@@ -547,7 +530,7 @@ const conflictKey = keyPatterns.globalSync.conflicts;
 
 ### Database Integration
 
-Integrates with existing Drizzle database models:
+Integrates with existing Prisma database models:
 
 ```typescript
 // Uses existing Agent, Task, Workflow models
@@ -556,7 +539,7 @@ Integrates with existing Drizzle database models:
 // Example: Update agent state with sync tracking
 await dbService.agent.update({
   where: { id: agentId },
-  data: { status: newStatus },
+  data: { status: newStatus }
 });
 
 // Sync state is automatically tracked
@@ -573,7 +556,7 @@ const batchConfig = {
   queueName: 'high-volume-queue',
   syncMode: 'batch',
   batchSize: 100,
-  batchTimeout: 2000,
+  batchTimeout: 2000
 };
 ```
 
@@ -606,7 +589,7 @@ const batchConfig = {
 const securityPolicy = {
   requireEncryption: true,
   allowedMessageTypes: ['SENSITIVE_DATA'],
-  maxMessageSize: 1024 * 1024,
+  maxMessageSize: 1024 * 1024
 };
 ```
 
@@ -646,7 +629,7 @@ const securityPolicy = {
 // Enable detailed logging
 const config = {
   enableMetrics: true,
-  enableTracing: true,
+  enableTracing: true
 };
 
 // Get detailed message status
@@ -665,13 +648,13 @@ console.log('Debug Info:', { status, metrics });
 const oldMessage = {
   type: 'TASK_REQUEST',
   payload: { taskId: '123' },
-  metadata: { sender: 'agent-1' },
+  metadata: { sender: 'agent-1' }
 };
 
 // New way - convert existing message
 const syncAwareMessage = SyncAwareMessageUtils.toSyncAware(oldMessage, {
   tenantId: 'tenant-1',
-  priority: 'medium',
+  priority: 'medium'
 });
 ```
 

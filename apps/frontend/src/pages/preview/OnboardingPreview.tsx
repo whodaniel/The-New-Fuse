@@ -4,34 +4,32 @@ import { OnboardingWizard } from '../../components/wizard/OnboardingWizard';
 
 /**
  * Onboarding Preview Page
- *
+ * 
  * This page provides a preview of the onboarding wizard for administrators
  * to test and validate the onboarding experience.
  */
 const OnboardingPreview: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
-
+  
   // Get user type from URL params, default to 'human'
   const userType = searchParams.get('userType') || 'human';
-
+  
   useEffect(() => {
     // Simulate loading configuration
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1000);
-
+    
     return () => clearTimeout(timer);
   }, []);
-
+  
   const handleComplete = (data: any) => {
     console.log('Onboarding completed with data:', data);
     // In a preview, we don't need to do anything with the data
-    alert(
-      'Onboarding completed successfully! In a real environment, the user would be redirected to the dashboard.'
-    );
+    alert('Onboarding completed successfully! In a real environment, the user would be redirected to the dashboard.');
   };
-
+  
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -42,10 +40,13 @@ const OnboardingPreview: React.FC = () => {
       </div>
     );
   }
-
+  
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <OnboardingWizard userType={userType as 'human' | 'ai_agent'} onComplete={handleComplete} />
+      <OnboardingWizard 
+        userType={userType as 'human' | 'ai_agent'} 
+        onComplete={handleComplete}
+      />
     </div>
   );
 };

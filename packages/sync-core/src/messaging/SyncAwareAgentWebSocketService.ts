@@ -1,12 +1,13 @@
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { SyncRedisConfig } from '../config/SyncRedisConfig';
 import {
+  SyncAwareA2AMessage,
+  SyncMetadata,
+  MessageSyncStatus,
   CrossTenantRoutingConfig,
   MessageDeliveryMetrics,
-  MessageSyncStatus,
-  SyncAwareA2AMessage,
-  SyncAwareMessageUtils,
+  SyncAwareMessageUtils
 } from './SyncAwareA2AMessage';
 
 export interface IAgentWebSocketService {
@@ -34,7 +35,7 @@ export interface SyncAwareWebSocketConfig {
 @Injectable()
 export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(SyncAwareAgentWebSocketService.name);
-
+  
   private readonly config: SyncAwareWebSocketConfig = {
     enableCrossTenantMessaging: true,
     maxConcurrentDeliveries: 100,
@@ -42,7 +43,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
     retryDelay: 1000,
     maxQueueSize: 10000,
     enableMetrics: true,
-    enableTracing: true,
+    enableTracing: true
   };
 
   private messageQueue: Map<string, SyncAwareA2AMessage[]> = new Map();
@@ -84,7 +85,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
   ): Promise<MessageSyncStatus> {
     const startTime = Date.now();
     const syncMetadata = SyncAwareMessageUtils.extractSyncMetadata(message);
-
+    
     try {
       // Validate message
       if (!SyncAwareMessageUtils.validateMessage(message)) {
@@ -121,9 +122,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
         acknowledgedBy: [],
         createdAt: Date.now(),
         updatedAt: Date.now(),
-        expiresAt: options.maxRetries
-          ? Date.now() + options.maxRetries * this.config.retryDelay * 2
-          : undefined,
+        expiresAt: options.maxRetries ? Date.now() + (options.maxRetries * this.config.retryDelay * 2) : undefined
       };
 
       // Store sync status in Redis
@@ -137,10 +136,9 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
         this.initializeDeliveryMetrics(message, startTime);
       }
 
-      this.logger.debug(
-        `Queued sync-aware message ${syncStatus.messageId} for agent ${targetAgentId}`
-      );
+      this.logger.debug(`Queued sync-aware message ${syncStatus.messageId} for agent ${targetAgentId}`);
       return syncStatus;
+
     } catch (error) {
       this.logger.error(`Failed to send sync-aware message:`, error);
       throw error;
@@ -178,7 +176,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
           const syncStatus = await this.sendSyncAwareMessage(agentId, message, {
             allowCrossTenant: false, // Same tenant
             priority: options.priority,
-            requiresAck: options.requiresAck,
+            requiresAck: options.requiresAck
           });
           syncStatuses.push(syncStatus);
         } catch (error) {
@@ -186,10 +184,9 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
         }
       }
 
-      this.logger.debug(
-        `Broadcasted sync-aware message to ${syncStatuses.length} agents in tenant ${tenantId}`
-      );
+      this.logger.debug(`Broadcasted sync-aware message to ${syncStatuses.length} agents in tenant ${tenantId}`);
       return syncStatuses;
+
     } catch (error) {
       this.logger.error(`Failed to broadcast to tenant:`, error);
       throw error;
@@ -227,7 +224,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
         try {
           const syncStatuses = await this.broadcastToTenantSync(tenantId, message, {
             priority: options.priority,
-            requiresAck: options.requiresAck,
+            requiresAck: options.requiresAck
           });
           results[tenantId] = syncStatuses;
         } catch (error) {
@@ -238,6 +235,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
 
       this.logger.debug(`Cross-tenant broadcast completed for ${targetTenantIds.length} tenants`);
       return results;
+
     } catch (error) {
       this.logger.error(`Failed to broadcast cross-tenant:`, error);
       throw error;
@@ -250,13 +248,13 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
   async synchronizeMessageQueues(tenantId?: string): Promise<void> {
     try {
       const keyPatterns = this.redisConfig.getKeyspatterns();
-      const queueKey = tenantId
+      const queueKey = tenantId 
         ? keyPatterns.queues.syncOperations(tenantId)
         : keyPatterns.queues.syncOperations();
 
       // Get all queued messages
       const queuedMessages = await this.redisService.lrange(queueKey, 0, -1);
-
+      
       for (const messageData of queuedMessages) {
         try {
           const queuedMessage = JSON.parse(messageData);
@@ -293,12 +291,12 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
       for (const failoverNode of syncMetadata.failoverNodes) {
         try {
           await this.deliverToFailoverNode(failoverNode, message);
-
+          
           // Update sync status
           await this.updateSyncStatus(messageId, {
             status: 'delivered',
             deliveredTo: [failoverNode],
-            updatedAt: Date.now(),
+            updatedAt: Date.now()
           });
 
           this.logger.debug(`Message ${messageId} delivered via failover node ${failoverNode}`);
@@ -316,14 +314,15 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
       // Update sync status as failed
       await this.updateSyncStatus(messageId, {
         status: 'failed',
-        failedDeliveries: failedTargets.map((target) => ({
+        failedDeliveries: failedTargets.map(target => ({
           target,
           error: error.message,
           timestamp: Date.now(),
-          retryCount: syncMetadata.retryCount,
+          retryCount: syncMetadata.retryCount
         })),
-        updatedAt: Date.now(),
+        updatedAt: Date.now()
       });
+
     } catch (error) {
       this.logger.error('Failed to handle delivery failover:', error);
     }
@@ -336,7 +335,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
     try {
       const keyPatterns = this.redisConfig.getKeyspatterns();
       const statusKey = `${keyPatterns.globalSync.state('message', messageId)}:status`;
-
+      
       const statusData = await this.redisService.get(statusKey);
       return statusData ? JSON.parse(statusData) : null;
     } catch (error) {
@@ -358,7 +357,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
   async configureCrossTenantRouting(config: CrossTenantRoutingConfig): Promise<void> {
     try {
       this.crossTenantConfigs.set(config.sourceTenantId, config);
-
+      
       // Store in Redis for persistence
       const keyPatterns = this.redisConfig.getKeyspatterns();
       const configKey = `${keyPatterns.tenantSync.state(config.sourceTenantId, 'routing', 'config')}`;
@@ -377,17 +376,20 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
   private async initializeMessageQueues(): Promise<void> {
     // Subscribe to Redis channels for message synchronization
     const keyPatterns = this.redisConfig.getKeyspatterns();
-
-    await this.redisService.psubscribe(keyPatterns.patterns.channelAll, async (message) => {
-      await this.handleRedisMessage(message);
-    });
+    
+    await this.redisService.psubscribe(
+      keyPatterns.patterns.channelAll,
+      async (message) => {
+        await this.handleRedisMessage(message);
+      }
+    );
   }
 
   private async loadCrossTenantConfigs(): Promise<void> {
     try {
       const keyPatterns = this.redisConfig.getKeyspatterns();
       const configPattern = `${keyPatterns.patterns.tenantAll('*')}:routing:config`;
-
+      
       const configKeys = await this.redisService.keys(configPattern);
       for (const key of configKeys) {
         try {
@@ -401,9 +403,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
         }
       }
 
-      this.logger.debug(
-        `Loaded ${this.crossTenantConfigs.size} cross-tenant routing configurations`
-      );
+      this.logger.debug(`Loaded ${this.crossTenantConfigs.size} cross-tenant routing configurations`);
     } catch (error) {
       this.logger.error('Failed to load cross-tenant configs:', error);
     }
@@ -459,16 +459,13 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
     const keyPatterns = this.redisConfig.getKeyspatterns();
     const syncMetadata = SyncAwareMessageUtils.extractSyncMetadata(message);
     const queueKey = keyPatterns.queues.syncOperations(syncMetadata.tenantId);
-
-    await this.redisService.lpush(
-      queueKey,
-      JSON.stringify({
-        targetAgentId,
-        message,
-        options,
-        queuedAt: Date.now(),
-      })
-    );
+    
+    await this.redisService.lpush(queueKey, JSON.stringify({
+      targetAgentId,
+      message,
+      options,
+      queuedAt: Date.now()
+    }));
   }
 
   private async deliverMessage(agentId: string, message: SyncAwareA2AMessage): Promise<void> {
@@ -478,15 +475,15 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
     try {
       // Convert sync-aware message to format expected by existing WebSocket service
       const wsMessage = this.convertToWebSocketMessage(message);
-
+      
       // Deliver via existing WebSocket service
       const delivered = await this.wsService.sendMessage(agentId, wsMessage);
-
+      
       if (delivered) {
         await this.updateSyncStatus(messageId, {
           status: 'delivered',
           deliveredTo: [agentId],
-          updatedAt: Date.now(),
+          updatedAt: Date.now()
         });
 
         // Update metrics
@@ -543,7 +540,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
   private async storeSyncStatus(status: MessageSyncStatus): Promise<void> {
     const keyPatterns = this.redisConfig.getKeyspatterns();
     const statusKey = `${keyPatterns.globalSync.state('message', status.messageId)}:status`;
-
+    
     await this.redisService.set(
       statusKey,
       JSON.stringify(status),
@@ -566,7 +563,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
   private initializeDeliveryMetrics(message: SyncAwareA2AMessage, startTime: number): void {
     const messageId = this.getMessageId(message);
     const syncMetadata = SyncAwareMessageUtils.extractSyncMetadata(message);
-
+    
     const metrics: MessageDeliveryMetrics = {
       messageId,
       syncId: syncMetadata.syncId,
@@ -580,7 +577,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
       minDeliveryTime: Number.MAX_SAFE_INTEGER,
       deliveryStartTime: startTime,
       errorCodes: {},
-      routingPath: [],
+      routingPath: []
     };
 
     this.deliveryMetrics.set(messageId, metrics);
@@ -591,7 +588,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
     if (!metrics) return;
 
     const deliveryTime = Date.now() - metrics.deliveryStartTime;
-
+    
     metrics.deliveryAttempts++;
     if (success) {
       metrics.successfulDeliveries++;
@@ -601,9 +598,8 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
 
     metrics.maxDeliveryTime = Math.max(metrics.maxDeliveryTime, deliveryTime);
     metrics.minDeliveryTime = Math.min(metrics.minDeliveryTime, deliveryTime);
-    metrics.averageDeliveryTime =
-      (metrics.averageDeliveryTime * (metrics.deliveryAttempts - 1) + deliveryTime) /
-      metrics.deliveryAttempts;
+    metrics.averageDeliveryTime = 
+      (metrics.averageDeliveryTime * (metrics.deliveryAttempts - 1) + deliveryTime) / metrics.deliveryAttempts;
     metrics.deliveryEndTime = Date.now();
   }
 
@@ -614,14 +610,14 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
         id: message.header.id,
         type: message.header.type,
         payload: message.body.content,
-        metadata: message.body.metadata,
+        metadata: message.body.metadata
       };
     } else {
       return {
         id: message.id,
         type: message.type,
         payload: message.payload,
-        metadata: message.metadata,
+        metadata: message.metadata
       };
     }
   }
@@ -643,11 +639,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
           await this.synchronizeMessageQueues(data.tenantId);
           break;
         case 'failover_trigger':
-          await this.handleDeliveryFailover(
-            data.message,
-            data.failedTargets,
-            new Error(data.error)
-          );
+          await this.handleDeliveryFailover(data.message, data.failedTargets, new Error(data.error));
           break;
         default:
           this.logger.debug(`Unknown Redis message type: ${data.type}`);
@@ -659,7 +651,7 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
 
   private async processQueuedMessage(queuedMessage: any): Promise<void> {
     const { targetAgentId, message, options } = queuedMessage;
-
+    
     try {
       await this.deliverMessage(targetAgentId, message);
     } catch (error) {
@@ -673,12 +665,12 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
     error: Error
   ): Promise<void> {
     const syncMetadata = SyncAwareMessageUtils.extractSyncMetadata(message);
-
+    
     if (syncMetadata.retryCount < syncMetadata.maxRetries) {
       // Increment retry count and re-queue
       syncMetadata.retryCount++;
       syncMetadata.lastSyncAttempt = Date.now();
-
+      
       setTimeout(async () => {
         await this.queueMessageForDelivery(agentId, message, {});
       }, this.config.retryDelay * syncMetadata.retryCount);
@@ -697,31 +689,24 @@ export class SyncAwareAgentWebSocketService implements OnModuleInit, OnModuleDes
   private async sendToDeadLetterQueue(message: SyncAwareA2AMessage, error: Error): Promise<void> {
     const keyPatterns = this.redisConfig.getKeyspatterns();
     const deadLetterKey = keyPatterns.queues.deadLetter;
-
-    await this.redisService.lpush(
-      deadLetterKey,
-      JSON.stringify({
-        message,
-        error: error.message,
-        timestamp: Date.now(),
-      })
-    );
+    
+    await this.redisService.lpush(deadLetterKey, JSON.stringify({
+      message,
+      error: error.message,
+      timestamp: Date.now()
+    }));
   }
 
   private collectAndReportMetrics(): void {
     const totalMetrics = Array.from(this.deliveryMetrics.values());
-
+    
     const summary = {
       totalMessages: totalMetrics.length,
       successfulDeliveries: totalMetrics.reduce((sum, m) => sum + m.successfulDeliveries, 0),
       failedDeliveries: totalMetrics.reduce((sum, m) => sum + m.failedDeliveries, 0),
-      averageDeliveryTime:
-        totalMetrics.reduce((sum, m) => sum + m.averageDeliveryTime, 0) / totalMetrics.length,
+      averageDeliveryTime: totalMetrics.reduce((sum, m) => sum + m.averageDeliveryTime, 0) / totalMetrics.length,
       activeDeliveries: this.activeDeliveries.size,
-      queuedMessages: Array.from(this.messageQueue.values()).reduce(
-        (sum, queue) => sum + queue.length,
-        0
-      ),
+      queuedMessages: Array.from(this.messageQueue.values()).reduce((sum, queue) => sum + queue.length, 0)
     };
 
     this.logger.debug('Message delivery metrics:', summary);

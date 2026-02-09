@@ -3,7 +3,10 @@
     "id": null,
     "title": "Infrastructure Metrics",
     "description": "Infrastructure and resource utilization metrics",
-    "tags": ["monitoring", "production"],
+    "tags": [
+      "monitoring",
+      "production"
+    ],
     "timezone": "browser",
     "panels": [
       {

@@ -1,11 +1,11 @@
 /**
  * Build Stage Optimizer
- *
+ * 
  * Optimizes build stages for memory efficiency by analyzing package characteristics,
  * memory usage patterns, and dependency relationships to create optimal build stages.
  */
 
-import { BuildStage, PackageDependency, SystemResources } from '../types/index.js';
+import { PackageDependency, BuildStage, SystemResources } from '../types/index.js';
 
 /**
  * Configuration for stage optimization
@@ -42,11 +42,11 @@ export interface StageOptimizationMetrics {
 /**
  * Package grouping strategy
  */
-export type PackageGroupingStrategy =
-  | 'memory-first' // Prioritize memory efficiency
-  | 'dependency-first' // Prioritize dependency order
-  | 'balanced' // Balance memory and dependencies
-  | 'size-first'; // Group by package size
+export type PackageGroupingStrategy = 
+  | 'memory-first'      // Prioritize memory efficiency
+  | 'dependency-first'  // Prioritize dependency order
+  | 'balanced'          // Balance memory and dependencies
+  | 'size-first';       // Group by package size
 
 /**
  * Optimizes build stages for memory efficiency and performance
@@ -60,7 +60,7 @@ export class BuildStageOptimizer {
       maxPackagesPerStage: 8,
       targetMemoryUtilization: 75,
       prioritizeMemoryEfficiency: true,
-      ...config,
+      ...config
     };
   }
 
@@ -98,7 +98,7 @@ export class BuildStageOptimizer {
    */
   estimateStageMemoryUsage(packages: string[], dependencies: PackageDependency[]): number {
     let totalMemory = 0;
-    const packageMap = new Map(dependencies.map((dep) => [dep.name, dep]));
+    const packageMap = new Map(dependencies.map(dep => [dep.name, dep]));
 
     for (const packageName of packages) {
       const pkg = packageMap.get(packageName);
@@ -109,7 +109,7 @@ export class BuildStageOptimizer {
 
     // Add overhead for parallel execution
     const parallelOverhead = packages.length > 1 ? packages.length * 50 : 0; // 50MB overhead per parallel package
-
+    
     return totalMemory + parallelOverhead;
   }
 
@@ -118,7 +118,7 @@ export class BuildStageOptimizer {
    */
   optimizeStageMemoryUsage(stages: BuildStage[]): BuildStage[] {
     const optimizedStages: BuildStage[] = [];
-
+    
     for (const stage of stages) {
       if (stage.estimatedMemoryUsage <= this.config.maxMemoryPerStage) {
         optimizedStages.push(stage);
@@ -142,27 +142,23 @@ export class BuildStageOptimizer {
   ): StageOptimizationMetrics {
     const totalMemory = stages.reduce((sum, stage) => sum + stage.estimatedMemoryUsage, 0);
     const averageMemory = totalMemory / stages.length;
-    const peakMemory = Math.max(...stages.map((stage) => stage.estimatedMemoryUsage));
-
+    const peakMemory = Math.max(...stages.map(stage => stage.estimatedMemoryUsage));
+    
     // Calculate memory utilization efficiency
-    const targetMemory =
-      this.config.maxMemoryPerStage * (this.config.targetMemoryUtilization / 100);
+    const targetMemory = this.config.maxMemoryPerStage * (this.config.targetMemoryUtilization / 100);
     const memoryEfficiency = Math.min(100, (averageMemory / targetMemory) * 100);
 
     // Estimate build time reduction (simplified calculation)
     const originalBuildTime = originalDependencies.length * 60; // Assume 60s per package sequentially
     const optimizedBuildTime = stages.length * 120; // Assume 120s per stage with parallelization
-    const buildTimeReduction = Math.max(
-      0,
-      ((originalBuildTime - optimizedBuildTime) / originalBuildTime) * 100
-    );
+    const buildTimeReduction = Math.max(0, ((originalBuildTime - optimizedBuildTime) / originalBuildTime) * 100);
 
     return {
       totalStages: stages.length,
       averageMemoryPerStage: averageMemory,
       peakMemoryUsage: peakMemory,
       memoryUtilizationEfficiency: memoryEfficiency,
-      estimatedBuildTimeReduction: buildTimeReduction,
+      estimatedBuildTimeReduction: buildTimeReduction
     };
   }
 
@@ -172,13 +168,12 @@ export class BuildStageOptimizer {
   private detectCircularDependencies(dependencies: PackageDependency[]): string[][] {
     const graph = new Map<string, Set<string>>();
     const cycles: string[][] = [];
-
+    
     // Build adjacency list
     for (const pkg of dependencies) {
-      graph.set(
-        pkg.name,
-        new Set(pkg.dependencies.filter((dep) => dependencies.some((d) => d.name === dep)))
-      );
+      graph.set(pkg.name, new Set(pkg.dependencies.filter(dep => 
+        dependencies.some(d => d.name === dep)
+      )));
     }
 
     const visited = new Set<string>();
@@ -224,21 +219,18 @@ export class BuildStageOptimizer {
     dependencies: PackageDependency[],
     cycles: string[][]
   ): PackageDependency[] {
-    const modifiedDeps = dependencies.map((dep) => ({
-      ...dep,
-      dependencies: [...dep.dependencies],
-    }));
-
+    const modifiedDeps = dependencies.map(dep => ({ ...dep, dependencies: [...dep.dependencies] }));
+    
     for (const cycle of cycles) {
       if (cycle.length < 2) continue;
-
+      
       // Remove the edge from the last package to the first in the cycle
       const lastPkg = cycle[cycle.length - 2]; // Second to last (since last is duplicate of first)
       const firstPkg = cycle[0];
-
-      const pkg = modifiedDeps.find((d) => d.name === lastPkg);
+      
+      const pkg = modifiedDeps.find(d => d.name === lastPkg);
       if (pkg) {
-        pkg.dependencies = pkg.dependencies.filter((dep) => dep !== firstPkg);
+        pkg.dependencies = pkg.dependencies.filter(dep => dep !== firstPkg);
         console.warn(`Broke circular dependency: ${lastPkg} -> ${firstPkg}`);
       }
     }
@@ -251,8 +243,8 @@ export class BuildStageOptimizer {
    */
   private optimizeForMemory(dependencies: PackageDependency[]): BuildStage[] {
     // Sort packages by memory usage (ascending)
-    const sortedPackages = [...dependencies].sort(
-      (a, b) => a.estimatedMemoryUsage - b.estimatedMemoryUsage
+    const sortedPackages = [...dependencies].sort((a, b) => 
+      a.estimatedMemoryUsage - b.estimatedMemoryUsage
     );
 
     const stages: BuildStage[] = [];
@@ -261,14 +253,13 @@ export class BuildStageOptimizer {
     let stageId = 1;
 
     for (const pkg of sortedPackages) {
-      if (
-        currentMemory + pkg.estimatedMemoryUsage > this.config.maxMemoryPerStage ||
-        currentStage.length >= this.config.maxPackagesPerStage
-      ) {
+      if (currentMemory + pkg.estimatedMemoryUsage > this.config.maxMemoryPerStage ||
+          currentStage.length >= this.config.maxPackagesPerStage) {
+        
         if (currentStage.length > 0) {
           stages.push(this.createStage(stageId++, currentStage, currentMemory, dependencies));
         }
-
+        
         currentStage = [pkg.name];
         currentMemory = pkg.estimatedMemoryUsage;
       } else {
@@ -290,33 +281,32 @@ export class BuildStageOptimizer {
   private optimizeForDependencies(dependencies: PackageDependency[]): BuildStage[] {
     const dependencyLevels = this.calculateDependencyLevels(dependencies);
     const stages: BuildStage[] = [];
-
+    
     const maxLevel = Math.max(...Array.from(dependencyLevels.values()));
-
+    
     for (let level = 0; level <= maxLevel; level++) {
       const packagesAtLevel = Array.from(dependencyLevels.entries())
         .filter(([_, pkgLevel]) => pkgLevel === level)
         .map(([pkgName]) => pkgName);
-
+      
       if (packagesAtLevel.length === 0) continue;
-
+      
       // Group packages at this level into stages
       let currentStage: string[] = [];
       let currentMemory = 0;
       let stageId = stages.length + 1;
 
       for (const packageName of packagesAtLevel) {
-        const pkg = dependencies.find((d) => d.name === packageName);
+        const pkg = dependencies.find(d => d.name === packageName);
         if (!pkg) continue;
 
-        if (
-          currentMemory + pkg.estimatedMemoryUsage > this.config.maxMemoryPerStage ||
-          currentStage.length >= this.config.maxPackagesPerStage
-        ) {
+        if (currentMemory + pkg.estimatedMemoryUsage > this.config.maxMemoryPerStage ||
+            currentStage.length >= this.config.maxPackagesPerStage) {
+          
           if (currentStage.length > 0) {
             stages.push(this.createStage(stageId++, currentStage, currentMemory, dependencies));
           }
-
+          
           currentStage = [packageName];
           currentMemory = pkg.estimatedMemoryUsage;
         } else {
@@ -338,11 +328,9 @@ export class BuildStageOptimizer {
    */
   private optimizeForSize(dependencies: PackageDependency[]): BuildStage[] {
     // Group packages by size categories
-    const smallPackages = dependencies.filter((d) => d.estimatedMemoryUsage < 256);
-    const mediumPackages = dependencies.filter(
-      (d) => d.estimatedMemoryUsage >= 256 && d.estimatedMemoryUsage < 512
-    );
-    const largePackages = dependencies.filter((d) => d.estimatedMemoryUsage >= 512);
+    const smallPackages = dependencies.filter(d => d.estimatedMemoryUsage < 256);
+    const mediumPackages = dependencies.filter(d => d.estimatedMemoryUsage >= 256 && d.estimatedMemoryUsage < 512);
+    const largePackages = dependencies.filter(d => d.estimatedMemoryUsage >= 512);
 
     const stages: BuildStage[] = [];
     let stageId = 1;
@@ -373,22 +361,22 @@ export class BuildStageOptimizer {
   private optimizeBalanced(dependencies: PackageDependency[]): BuildStage[] {
     const dependencyLevels = this.calculateDependencyLevels(dependencies);
     const stages: BuildStage[] = [];
-
+    
     const maxLevel = Math.max(...Array.from(dependencyLevels.values()));
-
+    
     for (let level = 0; level <= maxLevel; level++) {
       const packagesAtLevel = Array.from(dependencyLevels.entries())
         .filter(([_, pkgLevel]) => pkgLevel === level)
         .map(([pkgName]) => pkgName);
-
+      
       if (packagesAtLevel.length === 0) continue;
-
+      
       // Sort packages at this level by memory usage for better packing
       const sortedPackages = packagesAtLevel
-        .map((name) => dependencies.find((d) => d.name === name)!)
+        .map(name => dependencies.find(d => d.name === name)!)
         .filter(Boolean)
         .sort((a, b) => a.estimatedMemoryUsage - b.estimatedMemoryUsage);
-
+      
       stages.push(...this.createStagesForPackageGroup(sortedPackages, stages.length + 1));
     }
 
@@ -401,36 +389,36 @@ export class BuildStageOptimizer {
   private calculateDependencyLevels(dependencies: PackageDependency[]): Map<string, number> {
     const levels = new Map<string, number>();
     const visited = new Set<string>();
-
+    
     const calculateLevel = (packageName: string): number => {
       if (visited.has(packageName)) {
         return levels.get(packageName) || 0;
       }
-
+      
       visited.add(packageName);
-      const pkg = dependencies.find((d) => d.name === packageName);
+      const pkg = dependencies.find(d => d.name === packageName);
       if (!pkg) {
         levels.set(packageName, 0);
         return 0;
       }
-
+      
       let maxDepLevel = -1;
       for (const depName of pkg.dependencies) {
-        if (dependencies.some((d) => d.name === depName)) {
+        if (dependencies.some(d => d.name === depName)) {
           const depLevel = calculateLevel(depName);
           maxDepLevel = Math.max(maxDepLevel, depLevel);
         }
       }
-
+      
       const level = maxDepLevel + 1;
       levels.set(packageName, level);
       return level;
     };
-
+    
     for (const pkg of dependencies) {
       calculateLevel(pkg.name);
     }
-
+    
     return levels;
   }
 
@@ -447,14 +435,13 @@ export class BuildStageOptimizer {
     let stageId = startingStageId;
 
     for (const pkg of packages) {
-      if (
-        currentMemory + pkg.estimatedMemoryUsage > this.config.maxMemoryPerStage ||
-        currentStage.length >= this.config.maxPackagesPerStage
-      ) {
+      if (currentMemory + pkg.estimatedMemoryUsage > this.config.maxMemoryPerStage ||
+          currentStage.length >= this.config.maxPackagesPerStage) {
+        
         if (currentStage.length > 0) {
           stages.push(this.createStage(stageId++, currentStage, currentMemory, packages));
         }
-
+        
         currentStage = [pkg.name];
         currentMemory = pkg.estimatedMemoryUsage;
       } else {
@@ -484,19 +471,16 @@ export class BuildStageOptimizer {
       packages: [...packages],
       estimatedMemoryUsage: memoryUsage,
       dependencies: [], // Will be set by addStageDependencies
-      parallelizable: this.canRunInParallel(packages, allDependencies),
+      parallelizable: this.canRunInParallel(packages, allDependencies)
     };
   }
 
   /**
    * Add stage dependencies based on package dependencies
    */
-  private addStageDependencies(
-    stages: BuildStage[],
-    dependencies: PackageDependency[]
-  ): BuildStage[] {
+  private addStageDependencies(stages: BuildStage[], dependencies: PackageDependency[]): BuildStage[] {
     const packageToStage = new Map<string, string>();
-
+    
     // Map packages to their stages
     for (const stage of stages) {
       for (const packageName of stage.packages) {
@@ -507,11 +491,11 @@ export class BuildStageOptimizer {
     // Calculate stage dependencies
     for (const stage of stages) {
       const stageDeps = new Set<string>();
-
+      
       for (const packageName of stage.packages) {
-        const pkg = dependencies.find((d) => d.name === packageName);
+        const pkg = dependencies.find(d => d.name === packageName);
         if (!pkg) continue;
-
+        
         for (const depName of pkg.dependencies) {
           const depStage = packageToStage.get(depName);
           if (depStage && depStage !== stage.id) {
@@ -519,7 +503,7 @@ export class BuildStageOptimizer {
           }
         }
       }
-
+      
       stage.dependencies = Array.from(stageDeps);
     }
 
@@ -532,11 +516,11 @@ export class BuildStageOptimizer {
   private canRunInParallel(packages: string[], dependencies: PackageDependency[]): boolean {
     for (let i = 0; i < packages.length; i++) {
       for (let j = i + 1; j < packages.length; j++) {
-        const pkg1 = dependencies.find((d) => d.name === packages[i]);
-        const pkg2 = dependencies.find((d) => d.name === packages[j]);
-
+        const pkg1 = dependencies.find(d => d.name === packages[i]);
+        const pkg2 = dependencies.find(d => d.name === packages[j]);
+        
         if (!pkg1 || !pkg2) continue;
-
+        
         // Check if either package depends on the other
         if (pkg1.dependencies.includes(packages[j]) || pkg2.dependencies.includes(packages[i])) {
           return false;
@@ -560,20 +544,19 @@ export class BuildStageOptimizer {
     const avgMemoryPerPackage = stage.estimatedMemoryUsage / stage.packages.length;
 
     for (const packageName of packages) {
-      if (
-        currentMemory + avgMemoryPerPackage > this.config.maxMemoryPerStage ||
-        currentStage.length >= this.config.maxPackagesPerStage
-      ) {
+      if (currentMemory + avgMemoryPerPackage > this.config.maxMemoryPerStage ||
+          currentStage.length >= this.config.maxPackagesPerStage) {
+        
         if (currentStage.length > 0) {
           stages.push({
             id: `${stage.id}-split-${stageId++}`,
             packages: [...currentStage],
             estimatedMemoryUsage: currentMemory,
             dependencies: [...stage.dependencies],
-            parallelizable: stage.parallelizable,
+            parallelizable: stage.parallelizable
           });
         }
-
+        
         currentStage = [packageName];
         currentMemory = avgMemoryPerPackage;
       } else {
@@ -588,7 +571,7 @@ export class BuildStageOptimizer {
         packages: [...currentStage],
         estimatedMemoryUsage: currentMemory,
         dependencies: [...stage.dependencies],
-        parallelizable: stage.parallelizable,
+        parallelizable: stage.parallelizable
       });
     }
 

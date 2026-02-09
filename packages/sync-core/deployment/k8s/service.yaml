@@ -21,7 +21,7 @@ spec:
   sessionAffinity: ClientIP
   sessionAffinityConfig:
     clientIP:
-      timeoutSeconds: 10800 # 3 hours
+      timeoutSeconds: 10800  # 3 hours
 
 ---
 apiVersion: v1

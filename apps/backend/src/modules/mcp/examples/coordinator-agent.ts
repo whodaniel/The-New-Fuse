@@ -9,8 +9,8 @@
  * - Agent-to-agent communication
  */
 
-import { Logger } from '@nestjs/common';
 import { MCPClient } from '@the-new-fuse/mcp-core/client';
+import { Logger } from '@nestjs/common';
 
 export class CoordinatorAgent {
   private readonly logger = new Logger(CoordinatorAgent.name);
@@ -141,7 +141,10 @@ export class CoordinatorAgent {
   /**
    * Start collaboration
    */
-  private async startCollaboration(agentIds: string[], purpose: string): Promise<any> {
+  private async startCollaboration(
+    agentIds: string[],
+    purpose: string
+  ): Promise<any> {
     const response = await this.client.callTool('communication.broadcast', {
       message: `Starting collaboration: ${purpose}`,
       targets: agentIds,
@@ -220,7 +223,10 @@ export class CoordinatorAgent {
  * Example usage
  */
 export async function runCoordinatorExample(): Promise<void> {
-  const agent = new CoordinatorAgent('coordinator_001', 'ws://localhost:3100');
+  const agent = new CoordinatorAgent(
+    'coordinator_001',
+    'ws://localhost:3100'
+  );
 
   try {
     const result = await agent.coordinateWorkflow('Data Processing Pipeline', {

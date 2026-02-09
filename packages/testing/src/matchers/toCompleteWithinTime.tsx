@@ -20,7 +20,6 @@ export const toCompleteWithinTime = createMatcher(
       throw error;
     }
   },
-  (_, timeLimit) =>
-    `Expected promise to complete within ${timeLimit}ms, but it exceeded the time limit`,
-  (_, timeLimit) => `Expected promise not to complete within ${timeLimit}ms, but it did`,
+  (_, timeLimit) => `Expected promise to complete within ${timeLimit}ms, but it exceeded the time limit`,
+  (_, timeLimit) => `Expected promise not to complete within ${timeLimit}ms, but it did`
 );

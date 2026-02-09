@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
-import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
 export class CsrfProtectionMiddleware implements NestMiddleware {
@@ -9,8 +9,7 @@ export class CsrfProtectionMiddleware implements NestMiddleware {
   private tokenStore: Map<string, { token: string; expires: number }> = new Map();
 
   constructor(private configService: ConfigService) {
-    this.csrfToken =
-      this.configService.get<string>('CSRF_SECRET') || crypto.randomBytes(32).toString('hex');
+    this.csrfToken = this.configService.get<string>('CSRF_SECRET') || crypto.randomBytes(32).toString('hex');
   }
 
   use(req: Request, res: Response, next: NextFunction): void {
@@ -32,12 +31,12 @@ export class CsrfProtectionMiddleware implements NestMiddleware {
       const newToken = this.generateCsrfToken();
       this.tokenStore.set(sessionId, {
         token: newToken,
-        expires: Date.now() + 30 * 60 * 1000, // 30 minutes
+        expires: Date.now() + (30 * 60 * 1000) // 30 minutes
       });
 
       // Set token in response cookie
       this.setCsrfCookie(res, newToken);
-
+      
       if (req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS') {
         throw new UnauthorizedException('CSRF token required');
       }
@@ -63,7 +62,7 @@ export class CsrfProtectionMiddleware implements NestMiddleware {
       '/api/health',
       '/api/docs',
       '/api/auth/refresh',
-      '/api/auth/login',
+      '/api/auth/login'
     ];
 
     // Skip for safe methods
@@ -73,7 +72,7 @@ export class CsrfProtectionMiddleware implements NestMiddleware {
     }
 
     // Skip for specified paths
-    return skipPaths.some((path) => req.path.startsWith(path));
+    return skipPaths.some(path => req.path.startsWith(path));
   }
 
   private isStateChangingRequest(req: Request): boolean {
@@ -86,7 +85,7 @@ export class CsrfProtectionMiddleware implements NestMiddleware {
     return (
       req.sessionID ||
       req.cookies?.sessionId ||
-      (req.headers['x-session-id'] as string) ||
+      req.headers['x-session-id'] as string ||
       this.extractSessionFromAuthHeader(req.headers.authorization)
     );
   }
@@ -122,7 +121,7 @@ export class CsrfProtectionMiddleware implements NestMiddleware {
       const newToken = this.generateCsrfToken();
       this.tokenStore.set(sessionId, {
         token: newToken,
-        expires: Date.now() + 30 * 60 * 1000, // 30 minutes
+        expires: Date.now() + (30 * 60 * 1000) // 30 minutes
       });
       // Note: Can't update cookie here as we don't have access to Response object
       // The new token will be set in addCsrfTokenToResponse
@@ -145,7 +144,7 @@ export class CsrfProtectionMiddleware implements NestMiddleware {
 
     // Try to get token from query
     if (req.query && (req.query.csrfToken || req.query._csrf)) {
-      return (req.query.csrfToken as string) || (req.query._csrf as string);
+      return req.query.csrfToken as string || req.query._csrf as string;
     }
 
     return null;
@@ -157,7 +156,7 @@ export class CsrfProtectionMiddleware implements NestMiddleware {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 30 * 60 * 1000, // 30 minutes
-      path: '/',
+      path: '/'
     });
   }
 

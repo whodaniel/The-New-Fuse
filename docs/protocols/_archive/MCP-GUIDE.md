@@ -2,10 +2,7 @@
 
 ## Overview
 
-The Model Context Protocol (MCP) is a standardized communication protocol for
-inter-LLM communication in The New Fuse framework. It provides a unified
-interface for AI agents to access tools, resources, and capabilities through
-WebSocket and JSON-RPC communication.
+The Model Context Protocol (MCP) is a standardized communication protocol for inter-LLM communication in The New Fuse framework. It provides a unified interface for AI agents to access tools, resources, and capabilities through WebSocket and JSON-RPC communication.
 
 ## Core Components
 
@@ -43,93 +40,63 @@ WebSocket and JSON-RPC communication.
 
 ### Agent Context Management (VS Code Extension)
 
-To provide agents (MCP servers) with persistent instructions and state across
-tool calls, the VS Code extension implements a context loading and update
-mechanism:
+To provide agents (MCP servers) with persistent instructions and state across tool calls, the VS Code extension implements a context loading and update mechanism:
 
 **1. Context Loading:**
 
-- Before the extension calls an agent's tool (`call_tool` via MCP), it attempts
-  to load context specific to that agent.
+- Before the extension calls an agent's tool (`call_tool` via MCP), it attempts to load context specific to that agent.
 - The agent is identified by its server name configured in `mcp_config.json`.
-- The extension looks for files in the workspace directory:
-  `.vscode/fuse-agent-context/<agent-id>/`
+- The extension looks for files in the workspace directory: `.vscode/fuse-agent-context/<agent-id>/`
   - **Instructions:** Reads content from `instructions.md`.
-  - **Memory Bank:** Reads content from all `.md` files within the
-    `memory-bank/` subdirectory (e.g., `activeContext.md`, `progress.md`).
-- If context is found, it's injected into the `arguments` object of the
-  `call_tool` JSON-RPC request under the key `_agent_context`.
-- **Agent-Side Responsibility:** The agent implementation must check for the
-  `_agent_context` field in the received arguments and utilize the provided
-  `instructions` (string) and `memoryBank` (object mapping filenames to content)
-  as needed.
+  - **Memory Bank:** Reads content from all `.md` files within the `memory-bank/` subdirectory (e.g., `activeContext.md`, `progress.md`).
+- If context is found, it's injected into the `arguments` object of the `call_tool` JSON-RPC request under the key `_agent_context`.
+- **Agent-Side Responsibility:** The agent implementation must check for the `_agent_context` field in the received arguments and utilize the provided `instructions` (string) and `memoryBank` (object mapping filenames to content) as needed.
 
 **2. Memory Update:**
 
-- Agents can request updates to their memory bank files using a dedicated VS
-  Code command.
+- Agents can request updates to their memory bank files using a dedicated VS Code command.
 - **Command:** `theFuse.updateAgentMemory`
-- **Arguments:** An object
-  `{ agentId: string, fileName: string, content: string }`
+- **Arguments:** An object `{ agentId: string, fileName: string, content: string }`
   - `agentId`: The ID of the agent (must match the server name).
-  - `fileName`: The target `.md` file name within the `memory-bank` directory
-    (e.g., `progress.md`). Path traversal is prevented.
+  - `fileName`: The target `.md` file name within the `memory-bank` directory (e.g., `progress.md`). Path traversal is prevented.
   - `content`: The new string content for the file.
-- The command handler in the VS Code extension verifies the request, ensures the
-  target directory exists (creating it if necessary), and writes the content to
-  the specified file within
-  `.vscode/fuse-agent-context/<agent-id>/memory-bank/`.
-- **Agent-Side Responsibility:** The agent needs the capability to execute VS
-  Code commands (e.g., via specific tools or environment integration) to use
-  this update mechanism.
+- The command handler in the VS Code extension verifies the request, ensures the target directory exists (creating it if necessary), and writes the content to the specified file within `.vscode/fuse-agent-context/<agent-id>/memory-bank/`.
+- **Agent-Side Responsibility:** The agent needs the capability to execute VS Code commands (e.g., via specific tools or environment integration) to use this update mechanism.
 
 **Setup:**
 
-- Users need to create the `.vscode/fuse-agent-context/<agent-id>/` directories
-  for each agent requiring persistent context.
-- Inside, create `instructions.md` (optional) and a `memory-bank/` subdirectory
-  containing relevant `.md` files (e.g., `activeContext.md`, `progress.md`,
-  `techContext.md`, etc.).
+- Users need to create the `.vscode/fuse-agent-context/<agent-id>/` directories for each agent requiring persistent context.
+- Inside, create `instructions.md` (optional) and a `memory-bank/` subdirectory containing relevant `.md` files (e.g., `activeContext.md`, `progress.md`, `techContext.md`, etc.).
 
 ## Agent Self-Registration and Management (via MCP Registry Service)
 
-Agents running as MCP Servers are expected to manage their lifecycle state
-within the central system by interacting with the **MCP Registry Service**
-(typically running alongside the backend API, e.g., at `ws://localhost:3002`).
-This service exposes specific MCP tools for registration and updates.
+Agents running as MCP Servers are expected to manage their lifecycle state within the central system by interacting with the **MCP Registry Service** (typically running alongside the backend API, e.g., at `ws://localhost:3002`). This service exposes specific MCP tools for registration and updates.
 
 **Required Agent Behavior:**
 
 1. **Configuration:**
-   - Obtain the WebSocket URL of the MCP Registry Service (e.g., from
-     `MCP_REGISTRY_URL` env var).
-   - Know its own `name` (unique identifier recommended) and `type`.
+    - Obtain the WebSocket URL of the MCP Registry Service (e.g., from `MCP_REGISTRY_URL` env var).
+    - Know its own `name` (unique identifier recommended) and `type`.
 2. **Startup Sequence:**
-   - Connect to the MCP Registry Service WebSocket URL.
-   - Execute the `registerAgent` tool with parameters:
-     - `name`: string (agent's name)
-     - `type`: string (agent's type)
-     - `metadata`: object (optional, any relevant static/dynamic info)
-   - **Store the returned `agentId` securely.** This is essential for all future
-     updates.
-   - If registration succeeds, execute the `updateAgentStatus` tool with:
-     - `agentId`: The stored agent ID.
-     - `status`: `AgentStatus.ACTIVE` (import from `@the-new-fuse/types`).
-   - _(Error Handling):_ Log errors. Consider retry logic. If registration fails
-     potentially due to prior registration, attempt `findAgents` (e.g., using
-     `name` and `type` filters) to retrieve the existing `agentId`.
+    - Connect to the MCP Registry Service WebSocket URL.
+    - Execute the `registerAgent` tool with parameters:
+        - `name`: string (agent's name)
+        - `type`: string (agent's type)
+        - `metadata`: object (optional, any relevant static/dynamic info)
+    - **Store the returned `agentId` securely.** This is essential for all future updates.
+    - If registration succeeds, execute the `updateAgentStatus` tool with:
+        - `agentId`: The stored agent ID.
+        - `status`: `AgentStatus.ACTIVE` (import from `@the-new-fuse/types`).
+    - *(Error Handling):* Log errors. Consider retry logic. If registration fails potentially due to prior registration, attempt `findAgents` (e.g., using `name` and `type` filters) to retrieve the existing `agentId`.
 3. **Runtime Updates:**
-   - If configuration/metadata changes, execute `updateAgentProfile` with:
-     - `agentId`: The stored agent ID.
-     - _(optional)_ `name`, `type`, `metadata` fields containing the new values.
+    - If configuration/metadata changes, execute `updateAgentProfile` with:
+        - `agentId`: The stored agent ID.
+        - *(optional)* `name`, `type`, `metadata` fields containing the new values.
 4. **Status Changes:**
-   - On significant state changes (errors, recovery, becoming busy), execute
-     `updateAgentStatus` with the stored `agentId` and the appropriate `status`
-     (`AgentStatus.ERROR`, `AgentStatus.BUSY`, `AgentStatus.ACTIVE`, etc.).
+    - On significant state changes (errors, recovery, becoming busy), execute `updateAgentStatus` with the stored `agentId` and the appropriate `status` (`AgentStatus.ERROR`, `AgentStatus.BUSY`, `AgentStatus.ACTIVE`, etc.).
 5. **Shutdown:**
-   - On graceful shutdown, attempt to execute `updateAgentStatus` with the
-     stored `agentId` and `status: AgentStatus.INACTIVE`.
-   - Disconnect from the MCP Registry Service.
+    - On graceful shutdown, attempt to execute `updateAgentStatus` with the stored `agentId` and `status: AgentStatus.INACTIVE`.
+    - Disconnect from the MCP Registry Service.
 
 **MCP Registry Service Tools:**
 
@@ -137,27 +104,17 @@ This service exposes specific MCP tools for registration and updates.
 - `updateAgentProfile(agentId: string, updates: { name?: string, type?: string, metadata?: object }) => Agent`
 - `getAgentProfile(agentId: string) => Agent`
 - `findAgents(filters: { status?: AgentStatus, capability?: string, name?: string, role?: string, type?: string }) => Agent[]`
-- `updateAgentStatus(agentId: string, status: AgentStatus) => Agent` Copilot - I
-  need you to provide specific, actionable tasks for The New Fuse extension.
-  Please tell me exactly: *(See
-  `packages/api/src/modules/mcp/mcp-registry.service.ts` for detailed
-  schemas)*TASK 1: [Specific action to take]TASK 2: [Next specific action] ##
-  ArchitectureTASK 3: [And so on...] ### Communication FlowFor example:- Create
-  file X with content Y 1. Client sends request through VS Code command or API-
-  Modify function Z in file A 2. Request routed through MCP Broker Service- Test
-  command B 3. Director Agent assigns to appropriate handler- Add feature C 4.
-  Results returned through WebSocket connection 5. Status updates provided via
-  progress APII will execute each task you specify and report back. What should
-  I do first?
+- `updateAgentStatus(agentId: string, status: AgentStatus) => Agent`
+Copilot - I need you to provide specific, actionable tasks for The New Fuse extension. Please tell me exactly: *(See `packages/api/src/modules/mcp/mcp-registry.service.ts` for detailed schemas)*TASK 1: [Specific action to take]TASK 2: [Next specific action] ## ArchitectureTASK 3: [And so on...] ### Communication FlowFor example:- Create file X with content Y 1. Client sends request through VS Code command or API- Modify function Z in file A 2. Request routed through MCP Broker Service- Test command B 3. Director Agent assigns to appropriate handler- Add feature C 4. Results returned through WebSocket connection 5. Status updates provided via progress APII will execute each task you specify and report back. What should I do first?
 
 ### WebSocket Protocol
 
 ```typescript
 interface MCPMessage {
-  type: string;
-  data?: any;
-  timestamp?: number;
-  metadata?: Record<string, any>;
+    type: string;
+    data?: any;
+    timestamp?: number;
+    metadata?: Record<string, any>;
 }
 ```
 
@@ -165,13 +122,13 @@ interface MCPMessage {
 
 ```typescript
 interface MCPTool {
-  name: string;
-  description: string;
-  parameters: {
-    type: string;
-    properties: Record<string, any>;
-    required?: string[];
-  };
+    name: string;
+    description: string;
+    parameters: {
+        type: string;
+        properties: Record<string, any>;
+        required?: string[];
+    };
 }
 ```
 
@@ -188,17 +145,16 @@ interface MCPTool {
 
 ```json
 {
-  "mcpServers": {
-    "filesystem": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "--allow-dir",
-        "./data"
-      ]
+    "mcpServers": {
+        "filesystem": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                "--allow-dir", "./data"
+            ]
+        }
     }
-  }
 }
 ```
 
@@ -351,8 +307,7 @@ interface MCPTool {
 
 ## API Reference
 
-See TypeScript definitions and interfaces in the codebase for detailed API
-documentation.
+See TypeScript definitions and interfaces in the codebase for detailed API documentation.
 
 ## Future Development
 

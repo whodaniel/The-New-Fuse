@@ -10,7 +10,7 @@ export interface ValidationResult {
 export class WorkflowValidator {
   validateTemplate(template: WorkflowTemplate): ValidationResult {
     const errors: string[] = [];
-
+    
     if (!template.id) {
       errors.push('Template ID is required');
     }
@@ -49,7 +49,7 @@ export class WorkflowValidator {
 
   validateStep(step: WorkflowStep): ValidationResult {
     const errors: string[] = [];
-
+    
     if (!step.id) {
       errors.push('Step ID is required');
     }
@@ -59,9 +59,7 @@ export class WorkflowValidator {
     }
 
     if (!step.config) {
-      errors.push(
-        `Step ${step.id || 'unknown'} of type ${step.type || 'unknown'} is missing required 'config'`,
-      );
+      errors.push(`Step ${step.id || 'unknown'} of type ${step.type || 'unknown'} is missing required 'config'`);
     }
 
     // Validate step-specific requirements
@@ -76,9 +74,7 @@ export class WorkflowValidator {
         break;
       case WorkflowStepType.DATA_TRANSFORM:
         if (!step.config?.transform) {
-          errors.push(
-            `Data transform step ${step.id || 'unknown'} is missing required 'transform'`,
-          );
+          errors.push(`Data transform step ${step.id || 'unknown'} is missing required 'transform'`);
         }
         break;
       case WorkflowStepType.CONDITION:
@@ -100,9 +96,9 @@ export class WorkflowValidator {
   }
 
   private validateDependencies(steps: WorkflowStep[]): ValidationResult {
-    const stepIds = new Set(steps.map((step) => step.id));
+    const stepIds = new Set(steps.map(step => step.id));
     const errors: string[] = [];
-
+    
     for (const step of steps) {
       if (step.dependencies) {
         for (const depId of step.dependencies) {
@@ -117,7 +113,7 @@ export class WorkflowValidator {
     const graph = new Map<string, string[]>();
     const visited = new Set<string>();
     const recursionStack = new Set<string>();
-
+    
     for (const step of steps) {
       graph.set(step.id, step.dependencies || []);
     }
@@ -125,10 +121,10 @@ export class WorkflowValidator {
     const hasCycle = (node: string): boolean => {
       if (recursionStack.has(node)) return true;
       if (visited.has(node)) return false;
-
+      
       visited.add(node);
       recursionStack.add(node);
-
+      
       for (const neighbor of graph.get(node) || []) {
         if (hasCycle(neighbor)) return true;
       }

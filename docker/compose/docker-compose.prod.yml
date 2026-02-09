@@ -1,5 +1,5 @@
 services:
-  # PostgreSQL service is commented out as we're using Drizzle Accelerate
+  # PostgreSQL service is commented out as we're using Prisma Accelerate
   # postgres:
   #   image: postgres:15
   #   environment:

@@ -1,11 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Task } from './Task';
 
 @Entity()
@@ -22,7 +15,7 @@ export class TaskExecution {
   @Column({ nullable: true })
   error!: string;
 
-  @ManyToOne(() => Task, (task) => task.taskExecutions)
+  @ManyToOne(() => Task, task => task.taskExecutions)
   task!: Task;
 
   @Column()

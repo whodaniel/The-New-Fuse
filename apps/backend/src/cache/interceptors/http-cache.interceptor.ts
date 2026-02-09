@@ -1,9 +1,15 @@
-import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { Request, Response } from 'express';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+  Logger,
+} from '@nestjs/common';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Request, Response } from 'express';
 import { AdvancedCacheManager } from '../services/advanced-cache.manager';
+import { Reflector } from '@nestjs/core';
 
 export const HTTP_CACHE_KEY = 'http_cache';
 export const HTTP_CACHE_TTL_KEY = 'http_cache_ttl';
@@ -43,7 +49,7 @@ export class HttpCacheInterceptor implements NestInterceptor {
 
   constructor(
     private readonly cacheManager: AdvancedCacheManager,
-    private readonly reflector: Reflector
+    private readonly reflector: Reflector,
   ) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
@@ -109,7 +115,7 @@ export class HttpCacheInterceptor implements NestInterceptor {
           } catch (error) {
             this.logger.error(`Failed to cache response for ${request.url}:`, error);
           }
-        })
+        }),
       );
     } catch (error) {
       this.logger.error(`HTTP caching error for ${request.url}:`, error);
@@ -122,12 +128,12 @@ export class HttpCacheInterceptor implements NestInterceptor {
       return options.keyGenerator(request);
     }
 
-    const url = options?.excludeQuery ? request.path : request.url;
+    const url = options?.excludeQuery
+      ? request.path
+      : request.url;
 
     const varyHeaders = options?.varyBy
-      ? options.varyBy
-          .map((header) => `${header}:${request.headers[header.toLowerCase()] || ''}`)
-          .join('|')
+      ? options.varyBy.map((header) => `${header}:${request.headers[header.toLowerCase()] || ''}`).join('|')
       : '';
 
     return `${request.method}:${url}${varyHeaders ? `:${varyHeaders}` : ''}`;
@@ -137,7 +143,7 @@ export class HttpCacheInterceptor implements NestInterceptor {
     response: Response,
     ttl: number,
     isHit: boolean,
-    options?: HttpCacheOptions
+    options?: HttpCacheOptions,
   ): void {
     // Set Cache-Control header
     let cacheControl: string;

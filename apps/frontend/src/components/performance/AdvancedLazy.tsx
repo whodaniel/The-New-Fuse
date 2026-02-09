@@ -1,13 +1,13 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 
 // Enhanced loading component with skeleton UI
-const AdvancedLoadingFallback = ({
-  name,
+const AdvancedLoadingFallback = ({ 
+  name, 
   height = '400px',
-  showProgress = false,
-}: {
-  name: string;
-  height?: string;
+  showProgress = false 
+}: { 
+  name: string; 
+  height?: string; 
   showProgress?: boolean;
 }) => {
   const [progress, setProgress] = useState(0);
@@ -15,14 +15,14 @@ const AdvancedLoadingFallback = ({
   useEffect(() => {
     if (showProgress) {
       const interval = setInterval(() => {
-        setProgress((prev) => (prev >= 90 ? 90 : prev + Math.random() * 10));
+        setProgress(prev => (prev >= 90 ? 90 : prev + Math.random() * 10));
       }, 100);
       return () => clearInterval(interval);
     }
   }, [showProgress]);
 
   return (
-    <div
+    <div 
       className="flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900"
       style={{ height }}
     >
@@ -33,23 +33,25 @@ const AdvancedLoadingFallback = ({
           <div className="w-full h-full border-2 border-transparent border-t-white rounded-full"></div>
         </div>
       </div>
-
+      
       <div className="text-center space-y-2">
-        <p className="text-lg font-medium text-gray-700 dark:text-gray-300">{name}</p>
+        <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
+          {name}
+        </p>
         <p className="text-sm text-gray-500 dark:text-gray-400">
           Loading high-performance components...
         </p>
-
+        
         {showProgress && (
           <div className="w-48 bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-3">
-            <div
+            <div 
               className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
         )}
       </div>
-
+      
       {/* Skeleton content lines */}
       <div className="mt-6 w-3/4 space-y-3">
         <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
@@ -66,8 +68,8 @@ const withLazyLoading = <P extends object>(
   fallbackName: string,
   showProgress = false
 ) => {
-  return React.lazy(() =>
-    importFunc().then((module) => {
+  return React.lazy(() => 
+    importFunc().then(module => {
       // Preload any heavy dependencies if needed
       if (module.default?.preload) {
         module.default.preload();
@@ -98,9 +100,7 @@ const ConditionalLazyComponent = <P extends object>({
   const LazyComponent = withLazyLoading(importFunc, fallbackName, showProgress);
 
   return (
-    <Suspense
-      fallback={<AdvancedLoadingFallback name={fallbackName} showProgress={showProgress} />}
-    >
+    <Suspense fallback={<AdvancedLoadingFallback name={fallbackName} showProgress={showProgress} />}>
       <LazyComponent {...props} />
     </Suspense>
   );
@@ -138,7 +138,7 @@ class LazyErrorBoundary extends React.Component<
           <p className="text-gray-600 mb-4">
             Failed to load {this.props.fallbackName}. Please refresh the page.
           </p>
-          <button
+          <button 
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
@@ -173,7 +173,7 @@ const AdvancedLazyComponent = <P extends object>({
   useEffect(() => {
     // Track load time for performance monitoring
     const startTime = performance.now();
-
+    
     return () => {
       if (onLoad) {
         const endTime = performance.now();
@@ -184,9 +184,7 @@ const AdvancedLazyComponent = <P extends object>({
 
   return (
     <LazyErrorBoundary fallbackName={fallbackName}>
-      <Suspense
-        fallback={<AdvancedLoadingFallback name={fallbackName} showProgress={showProgress} />}
-      >
+      <Suspense fallback={<AdvancedLoadingFallback name={fallbackName} showProgress={showProgress} />}>
         <LazyComponent {...props} />
       </Suspense>
     </LazyErrorBoundary>
@@ -194,9 +192,9 @@ const AdvancedLazyComponent = <P extends object>({
 };
 
 export {
-  AdvancedLoadingFallback,
-  ConditionalLazyComponent,
   AdvancedLazyComponent as Lazy,
-  preloadCriticalComponent,
   withLazyLoading,
+  ConditionalLazyComponent,
+  AdvancedLoadingFallback,
+  preloadCriticalComponent,
 };

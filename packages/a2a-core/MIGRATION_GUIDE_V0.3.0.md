@@ -2,11 +2,11 @@
 
 ## Overview
 
-This guide helps you migrate from The New Fuse's custom A2A implementation to
-the official A2A Protocol v0.3.0 specification from the Linux Foundation.
+This guide helps you migrate from The New Fuse's custom A2A implementation to the official A2A Protocol v0.3.0 specification from the Linux Foundation.
 
-**Migration Date**: November 2025 **Protocol Version**: v0.3.0 **Source**:
-https://github.com/a2aproject/A2A
+**Migration Date**: November 2025
+**Protocol Version**: v0.3.0
+**Source**: https://github.com/a2aproject/A2A
 
 ---
 
@@ -15,13 +15,11 @@ https://github.com/a2aproject/A2A
 ### 1. Protocol Version Update
 
 **Before (v1.0.0)**:
-
 ```typescript
 export const A2A_PROTOCOL_VERSION = '1.0.0';
 ```
 
 **After (v0.3.0)**:
-
 ```typescript
 export const A2A_PROTOCOL_VERSION = '0.3.0';
 ```
@@ -32,11 +30,9 @@ export const A2A_PROTOCOL_VERSION = '0.3.0';
 
 ### 2. Agent Card Structure
 
-The AgentCard is now a **required**, structured manifest following the official
-specification.
+The AgentCard is now a **required**, structured manifest following the official specification.
 
 **Before**:
-
 ```typescript
 interface AgentRegistration {
   agentId: string;
@@ -48,37 +44,32 @@ interface AgentRegistration {
 ```
 
 **After**:
-
 ```typescript
 interface AgentCard {
-  protocolVersion: string; // REQUIRED: "0.3.0"
-  name: string; // Human-readable agent name
-  description: string; // Agent description
-  url: string; // Primary endpoint URL
-  preferredTransport?: TransportProtocol; // JSONRPC, GRPC, or HTTP+JSON
+  protocolVersion: string;        // REQUIRED: "0.3.0"
+  name: string;                   // Human-readable agent name
+  description: string;            // Agent description
+  url: string;                    // Primary endpoint URL
+  preferredTransport?: TransportProtocol;  // JSONRPC, GRPC, or HTTP+JSON
   additionalInterfaces?: AgentInterface[]; // Alternative transports
   capabilities: AgentCapabilities;
   securitySchemes?: { [scheme: string]: SecurityScheme };
   security?: { [scheme: string]: string[] }[];
-  defaultInputModes: string[]; // MIME types
-  defaultOutputModes: string[]; // MIME types
-  skills: AgentSkill[]; // Agent capabilities
+  defaultInputModes: string[];    // MIME types
+  defaultOutputModes: string[];   // MIME types
+  skills: AgentSkill[];           // Agent capabilities
   // ... additional fields
 }
 ```
 
 **Migration Steps**:
-
 1. Add `protocolVersion: '0.3.0'` to all agent cards
 2. Convert agent capabilities to the `skills` array format
-3. Add `defaultInputModes` and `defaultOutputModes` (e.g.,
-   `['text/plain', 'application/json']`)
-4. Specify transport protocols using `preferredTransport` and
-   `additionalInterfaces`
+3. Add `defaultInputModes` and `defaultOutputModes` (e.g., `['text/plain', 'application/json']`)
+4. Specify transport protocols using `preferredTransport` and `additionalInterfaces`
 5. Define security schemes if authentication is required
 
 **Well-Known URI Change**:
-
 - **Old**: `/.well-known/agent.json`
 - **New**: `/.well-known/agent-card.json`
 
@@ -86,11 +77,9 @@ interface AgentCard {
 
 ### 3. Message Structure
 
-Messages now follow a structured format with **role**, **parts**, and **kind**
-discriminator.
+Messages now follow a structured format with **role**, **parts**, and **kind** discriminator.
 
 **Before**:
-
 ```typescript
 interface A2AMessage {
   id: string;
@@ -104,14 +93,13 @@ interface A2AMessage {
 ```
 
 **After**:
-
 ```typescript
 interface Message {
   readonly role: 'user' | 'agent';
-  parts: Part[]; // Array of TextPart, FilePart, or DataPart
+  parts: Part[];                    // Array of TextPart, FilePart, or DataPart
   messageId: string;
-  taskId?: string; // Links message to a task
-  contextId?: string; // Groups related tasks
+  taskId?: string;                  // Links message to a task
+  contextId?: string;               // Groups related tasks
   readonly kind: 'message';
   metadata?: { [key: string]: any };
   extensions?: string[];
@@ -120,7 +108,6 @@ interface Message {
 ```
 
 **Part Types**:
-
 ```typescript
 // Text content
 interface TextPart {
@@ -142,10 +129,8 @@ interface DataPart {
 ```
 
 **Migration Steps**:
-
 1. Replace `payload` with `parts` array
-2. Convert simple text payloads to `TextPart`:
-   `{ kind: 'text', text: 'content' }`
+2. Convert simple text payloads to `TextPart`: `{ kind: 'text', text: 'content' }`
 3. Convert JSON payloads to `DataPart`: `{ kind: 'data', data: {...} }`
 4. Set appropriate `role` ('user' or 'agent')
 5. Add `messageId` (UUID recommended)
@@ -155,11 +140,9 @@ interface DataPart {
 
 ### 4. Task-Based Interaction Model
 
-V0.3.0 introduces a **stateful task model** for managing conversations and
-long-running operations.
+V0.3.0 introduces a **stateful task model** for managing conversations and long-running operations.
 
 **Key Concepts**:
-
 ```typescript
 interface Task {
   id: string;
@@ -190,7 +173,6 @@ enum TaskState {
 ```
 
 **Migration Steps**:
-
 1. Implement task lifecycle management
 2. Track task states (submitted → working → completed/failed)
 3. Store conversation history in task.history
@@ -204,17 +186,15 @@ enum TaskState {
 V0.3.0 supports multiple transport protocols, not just custom messaging.
 
 **Supported Transports**:
-
 ```typescript
 enum TransportProtocol {
-  JSONRPC = 'JSONRPC', // JSON-RPC 2.0 over HTTP (primary)
-  GRPC = 'GRPC', // gRPC over HTTP/2
-  HTTP_JSON = 'HTTP+JSON', // REST-style HTTP+JSON
+  JSONRPC = 'JSONRPC',      // JSON-RPC 2.0 over HTTP (primary)
+  GRPC = 'GRPC',            // gRPC over HTTP/2
+  HTTP_JSON = 'HTTP+JSON',  // REST-style HTTP+JSON
 }
 ```
 
 **JSON-RPC 2.0 Methods**:
-
 - `message/send` - Send a message to an agent
 - `message/stream` - Send a message with streaming response (SSE)
 - `tasks/get` - Get task status
@@ -227,7 +207,6 @@ enum TransportProtocol {
 - `agent/getAuthenticatedExtendedCard` - Get extended agent card
 
 **Migration Steps**:
-
 1. Implement JSON-RPC 2.0 request/response format
 2. Support `message/send` and `message/stream` methods
 3. Implement task management methods (`tasks/*`)
@@ -241,7 +220,6 @@ enum TransportProtocol {
 V0.3.0 uses **OpenAPI 3.0-style security schemes** instead of custom auth.
 
 **Supported Schemes**:
-
 ```typescript
 type SecurityScheme =
   | APIKeySecurityScheme
@@ -252,7 +230,6 @@ type SecurityScheme =
 ```
 
 **Example - OAuth2**:
-
 ```typescript
 {
   "securitySchemes": {
@@ -278,7 +255,6 @@ type SecurityScheme =
 ```
 
 **Example - mTLS** (new in v0.3.0):
-
 ```typescript
 {
   "securitySchemes": {
@@ -294,7 +270,6 @@ type SecurityScheme =
 ```
 
 **Migration Steps**:
-
 1. Define security schemes in AgentCard.securitySchemes
 2. Specify required security in AgentCard.security
 3. Skills can override security requirements
@@ -307,7 +282,6 @@ type SecurityScheme =
 V0.3.0 uses **JSON-RPC 2.0 error codes** with A2A-specific extensions.
 
 **Standard JSON-RPC Errors**:
-
 ```typescript
 enum A2AErrorCode {
   PARSE_ERROR = -32700,
@@ -319,7 +293,6 @@ enum A2AErrorCode {
 ```
 
 **A2A-Specific Errors** (-32000 to -32099):
-
 ```typescript
 enum A2AErrorCode {
   TASK_NOT_FOUND = -32001,
@@ -338,7 +311,6 @@ enum A2AErrorCode {
 ```
 
 **Error Response Format**:
-
 ```typescript
 {
   "jsonrpc": "2.0",
@@ -352,7 +324,6 @@ enum A2AErrorCode {
 ```
 
 **Migration Steps**:
-
 1. Use JSON-RPC 2.0 error format in responses
 2. Map existing errors to appropriate error codes
 3. Include helpful error data for debugging
@@ -362,7 +333,6 @@ enum A2AErrorCode {
 ### 8. Streaming and Push Notifications
 
 **Server-Sent Events (SSE)**:
-
 ```typescript
 // Streaming response via message/stream
 Content-Type: text/event-stream
@@ -375,12 +345,11 @@ data: {"jsonrpc":"2.0","id":"1","result":{"kind":"artifact-update",...}}
 ```
 
 **Push Notifications**:
-
 ```typescript
 interface PushNotificationConfig {
   id?: string;
-  url: string; // Client webhook URL
-  token?: string; // Validation token
+  url: string;                    // Client webhook URL
+  token?: string;                 // Validation token
   authentication?: {
     schemes: string[];
     credentials?: string;
@@ -389,7 +358,6 @@ interface PushNotificationConfig {
 ```
 
 **Migration Steps**:
-
 1. Implement SSE streaming for `message/stream`
 2. Support push notification configuration
 3. Send HTTP POST to client webhook for async updates
@@ -402,7 +370,6 @@ interface PushNotificationConfig {
 The following features from the custom implementation are deprecated:
 
 ### 1. Legacy Message Types
-
 ```typescript
 // ❌ DEPRECATED
 enum A2AMessageType {
@@ -416,7 +383,6 @@ enum A2AMessageType {
 ```
 
 ### 2. Legacy Priority Enum
-
 ```typescript
 // ❌ DEPRECATED
 enum A2APriority {
@@ -430,7 +396,6 @@ message.metadata = { priority: 'high' };
 ```
 
 ### 3. Legacy Agent Status
-
 ```typescript
 // ❌ DEPRECATED
 enum AgentStatus {
@@ -448,34 +413,29 @@ enum AgentStatus {
 ## Step-by-Step Migration
 
 ### Phase 1: Type Updates
-
 1. ✅ Update `A2A_PROTOCOL_VERSION` to '0.3.0'
 2. ✅ Import new type definitions
 3. ✅ Update existing types to match v0.3.0 spec
 4. ✅ Add backward compatibility layer if needed
 
 ### Phase 2: Message Format
-
 1. Convert message payloads to Part[] format
 2. Add role, kind, and messageId to messages
 3. Update message handlers to parse new format
 
 ### Phase 3: Task Management
-
 1. Implement Task storage and lifecycle
 2. Add TaskState transitions
 3. Track conversation history
 4. Generate artifacts for outputs
 
 ### Phase 4: Transport Layer
-
 1. Implement JSON-RPC 2.0 request/response format
 2. Add `message/send` and `message/stream` handlers
 3. Implement task management endpoints
 4. Add SSE streaming support
 
 ### Phase 5: Agent Card
-
 1. Create AgentCard following v0.3.0 schema
 2. Define skills and capabilities
 3. Specify security schemes
@@ -483,14 +443,12 @@ enum AgentStatus {
 5. Implement `agent/getAuthenticatedExtendedCard` if needed
 
 ### Phase 6: Security
-
 1. Migrate auth to OpenAPI-style security schemes
 2. Implement mTLS support if required
 3. Add OAuth2 metadata URL if using OAuth
 4. Move authentication to HTTP layer
 
 ### Phase 7: Testing
-
 1. Test message/send and message/stream methods
 2. Verify task lifecycle management
 3. Test streaming with SSE
@@ -503,7 +461,6 @@ enum AgentStatus {
 ## Code Examples
 
 ### Before: Sending a Message (Custom)
-
 ```typescript
 const message: A2AMessage = {
   id: 'msg-123',
@@ -519,12 +476,13 @@ await a2aService.sendMessage(message);
 ```
 
 ### After: Sending a Message (v0.3.0)
-
 ```typescript
 // Create message
 const message: Message = {
   role: 'user',
-  parts: [{ kind: 'text', text: 'Hello, agent!' }],
+  parts: [
+    { kind: 'text', text: 'Hello, agent!' }
+  ],
   messageId: uuidv4(),
   kind: 'message',
 };
@@ -547,7 +505,7 @@ const response = await fetch(agentCard.url, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    Authorization: 'Bearer token',
+    'Authorization': 'Bearer token',
   },
   body: JSON.stringify(request),
 });
@@ -562,7 +520,6 @@ if ('error' in result) {
 ```
 
 ### Creating an Agent Card
-
 ```typescript
 const agentCard: AgentCard = {
   protocolVersion: '0.3.0',
@@ -594,7 +551,9 @@ const agentCard: AgentCard = {
       bearerFormat: 'JWT',
     },
   },
-  security: [{ bearer: [] }],
+  security: [
+    { bearer: [] },
+  ],
 };
 ```
 
@@ -613,7 +572,6 @@ const agentCard: AgentCard = {
 ## Support
 
 For questions or issues during migration:
-
 1. Check the official A2A documentation
 2. Review the TypeScript types in `types.ts`
 3. Examine the examples in this guide
@@ -625,19 +583,17 @@ For questions or issues during migration:
 
 Key differences between custom A2A and v0.3.0:
 
-| Feature            | Custom (v1.0.0)     | Official (v0.3.0)                          |
-| ------------------ | ------------------- | ------------------------------------------ |
-| Protocol Version   | 1.0.0               | 0.3.0                                      |
-| Message Format     | Custom payload      | Parts-based (TextPart, FilePart, DataPart) |
-| Interaction Model  | Direct messaging    | Task-based with lifecycle                  |
-| Transport          | Custom              | JSON-RPC 2.0 / gRPC / HTTP+JSON            |
-| Security           | Custom              | OpenAPI 3.0 security schemes               |
-| Discovery          | Custom registration | AgentCard with skills                      |
-| Streaming          | Custom              | Server-Sent Events (SSE)                   |
-| Push Notifications | Custom              | Standardized webhook config                |
-| Well-Known URI     | /agent.json         | /agent-card.json                           |
-| Error Handling     | Custom              | JSON-RPC 2.0 error codes                   |
+| Feature | Custom (v1.0.0) | Official (v0.3.0) |
+|---------|----------------|-------------------|
+| Protocol Version | 1.0.0 | 0.3.0 |
+| Message Format | Custom payload | Parts-based (TextPart, FilePart, DataPart) |
+| Interaction Model | Direct messaging | Task-based with lifecycle |
+| Transport | Custom | JSON-RPC 2.0 / gRPC / HTTP+JSON |
+| Security | Custom | OpenAPI 3.0 security schemes |
+| Discovery | Custom registration | AgentCard with skills |
+| Streaming | Custom | Server-Sent Events (SSE) |
+| Push Notifications | Custom | Standardized webhook config |
+| Well-Known URI | /agent.json | /agent-card.json |
+| Error Handling | Custom | JSON-RPC 2.0 error codes |
 
-This migration brings The New Fuse's A2A implementation into full compliance
-with the Linux Foundation's official specification, enabling broader
-interoperability with other A2A-compliant agents and systems.
+This migration brings The New Fuse's A2A implementation into full compliance with the Linux Foundation's official specification, enabling broader interoperability with other A2A-compliant agents and systems.

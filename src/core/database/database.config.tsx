@@ -10,7 +10,7 @@ export class DatabaseConfig {
       'postgresql://postgres:postgres@localhost:5432/the_new_fuse';
   }
 
-  getDrizzleConfig() {
+  getPrismaConfig() {
     return {
       datasources: {
         db: {

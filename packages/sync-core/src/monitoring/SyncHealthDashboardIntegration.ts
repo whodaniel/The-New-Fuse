@@ -1,15 +1,8 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import {
-  DashboardMonitoringIntegration,
-  IExistingMetricsService,
-  IExistingMonitoringService,
-} from '../dashboard/DashboardMonitoringIntegration';
+import { SyncAwareHeartbeatMonitoringService, SyncHealthMetrics, SyncHealthEscalation } from './SyncAwareHeartbeatMonitoringService';
+import { DashboardMonitoringIntegration, IExistingMonitoringService, IExistingMetricsService } from '../dashboard/DashboardMonitoringIntegration';
 import { SyncDashboardService } from '../dashboard/SyncDashboardService';
-import {
-  SyncAwareHeartbeatMonitoringService,
-  SyncHealthEscalation,
-} from './SyncAwareHeartbeatMonitoringService';
 
 /**
  * Sync health dashboard data structure
@@ -37,15 +30,12 @@ export interface SyncHealthDashboardData {
     byType: Record<string, number>;
     bySeverity: Record<string, number>;
   };
-  tenantMetrics: Record<
-    string,
-    {
-      agentCount: number;
-      errorRate: number;
-      conflictRate: number;
-      lastSync: Date;
-    }
-  >;
+  tenantMetrics: Record<string, {
+    agentCount: number;
+    errorRate: number;
+    conflictRate: number;
+    lastSync: Date;
+  }>;
 }
 
 /**
@@ -86,21 +76,21 @@ export interface SyncHealthWidget {
 @Injectable()
 export class SyncHealthDashboardIntegration extends EventEmitter implements OnModuleInit {
   private readonly logger = new Logger(SyncHealthDashboardIntegration.name);
-
+  
   private syncHealthService: SyncAwareHeartbeatMonitoringService;
   private dashboardService: SyncDashboardService;
   private monitoringIntegration: DashboardMonitoringIntegration;
   private monitoringService?: IExistingMonitoringService;
   private metricsService?: IExistingMetricsService;
-
+  
   private dashboardData: SyncHealthDashboardData;
   private alertConfigs = new Map<string, SyncHealthAlert>();
   private widgetConfigs = new Map<string, SyncHealthWidget>();
   private metricsHistory = new Map<string, Array<{ timestamp: Date; value: number }>>();
-
+  
   private updateInterval?: NodeJS.Timeout;
   private alertCheckInterval?: NodeJS.Timeout;
-
+  
   constructor(
     syncHealthService: SyncAwareHeartbeatMonitoringService,
     dashboardService: SyncDashboardService,
@@ -114,7 +104,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
     this.monitoringIntegration = monitoringIntegration;
     this.monitoringService = monitoringService;
     this.metricsService = metricsService;
-
+    
     this.dashboardData = this.createDefaultDashboardData();
   }
 
@@ -136,12 +126,9 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
       this.handleSyncHeartbeat(data);
     });
 
-    this.syncHealthService.on(
-      'sync_health_escalation_created',
-      (escalation: SyncHealthEscalation) => {
-        this.handleSyncEscalation(escalation);
-      }
-    );
+    this.syncHealthService.on('sync_health_escalation_created', (escalation: SyncHealthEscalation) => {
+      this.handleSyncEscalation(escalation);
+    });
 
     this.syncHealthService.on('sync_operation_health_updated', (data) => {
       this.handleSyncOperationUpdate(data);
@@ -187,7 +174,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
         duration: 300, // 5 minutes
         severity: 'warning',
         message: 'Sync error rate exceeded 10%',
-        enabled: true,
+        enabled: true
       },
       {
         id: 'sync_error_rate_critical',
@@ -196,7 +183,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
         duration: 60, // 1 minute
         severity: 'critical',
         message: 'Sync error rate exceeded 25%',
-        enabled: true,
+        enabled: true
       },
       {
         id: 'sync_latency_warning',
@@ -205,7 +192,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
         duration: 180, // 3 minutes
         severity: 'warning',
         message: 'Sync latency exceeded 5 seconds',
-        enabled: true,
+        enabled: true
       },
       {
         id: 'conflict_rate_warning',
@@ -214,7 +201,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
         duration: 600, // 10 minutes
         severity: 'warning',
         message: 'Conflict rate exceeded 5%',
-        enabled: true,
+        enabled: true
       },
       {
         id: 'agent_health_critical',
@@ -223,8 +210,8 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
         duration: 120, // 2 minutes
         severity: 'critical',
         message: 'More than 50% of agents are unhealthy',
-        enabled: true,
-      },
+        enabled: true
+      }
     ];
 
     for (const alert of defaultAlerts) {
@@ -248,10 +235,10 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
           thresholds: [
             { value: 0, color: '#22c55e', label: 'Healthy' },
             { value: 1, color: '#f59e0b', label: 'Degraded' },
-            { value: 2, color: '#ef4444', label: 'Critical' },
-          ],
+            { value: 2, color: '#ef4444', label: 'Critical' }
+          ]
         },
-        position: { x: 0, y: 0, width: 4, height: 2 },
+        position: { x: 0, y: 0, width: 4, height: 2 }
       },
       {
         id: 'sync_error_rate_chart',
@@ -264,10 +251,10 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
           refreshInterval: 30,
           thresholds: [
             { value: 0.1, color: '#f59e0b', label: 'Warning' },
-            { value: 0.25, color: '#ef4444', label: 'Critical' },
-          ],
+            { value: 0.25, color: '#ef4444', label: 'Critical' }
+          ]
         },
-        position: { x: 4, y: 0, width: 8, height: 4 },
+        position: { x: 4, y: 0, width: 8, height: 4 }
       },
       {
         id: 'sync_latency_gauge',
@@ -279,10 +266,10 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
           thresholds: [
             { value: 1000, color: '#22c55e', label: 'Good' },
             { value: 5000, color: '#f59e0b', label: 'Warning' },
-            { value: 10000, color: '#ef4444', label: 'Critical' },
-          ],
+            { value: 10000, color: '#ef4444', label: 'Critical' }
+          ]
         },
-        position: { x: 0, y: 2, width: 4, height: 3 },
+        position: { x: 0, y: 2, width: 4, height: 3 }
       },
       {
         id: 'agent_health_pie',
@@ -291,9 +278,9 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
         config: {
           metric: 'agent_health',
           chartType: 'pie',
-          refreshInterval: 60,
+          refreshInterval: 60
         },
-        position: { x: 4, y: 4, width: 4, height: 3 },
+        position: { x: 4, y: 4, width: 4, height: 3 }
       },
       {
         id: 'conflict_rate_chart',
@@ -303,9 +290,9 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
           metric: 'conflict_rate',
           chartType: 'line',
           timeRange: 120, // 2 hours
-          refreshInterval: 60,
+          refreshInterval: 60
         },
-        position: { x: 8, y: 4, width: 4, height: 3 },
+        position: { x: 8, y: 4, width: 4, height: 3 }
       },
       {
         id: 'active_escalations',
@@ -313,10 +300,10 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
         title: 'Active Escalations',
         config: {
           metric: 'escalations',
-          refreshInterval: 30,
+          refreshInterval: 30
         },
-        position: { x: 0, y: 5, width: 12, height: 2 },
-      },
+        position: { x: 0, y: 5, width: 12, height: 2 }
+      }
     ];
 
     for (const widget of defaultWidgets) {
@@ -351,11 +338,11 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
    */
   private handleSyncHeartbeat(data: any): void {
     const { agentId, syncMetrics, syncState, tenantId } = data;
-
+    
     // Update metrics history
     this.updateMetricsHistory('agent_heartbeats', 1);
     this.updateMetricsHistory(`sync_state_${syncState}`, 1);
-
+    
     if (syncMetrics) {
       this.updateMetricsHistory('sync_error_rate', syncMetrics.syncErrorRate);
       this.updateMetricsHistory('sync_latency', syncMetrics.syncLatencyMs);
@@ -365,7 +352,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
     this.recordMetric('sync_heartbeat_received', 1, {
       agentId,
       syncState,
-      tenantId: tenantId || 'global',
+      tenantId: tenantId || 'global'
     });
   }
 
@@ -388,8 +375,8 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
         escalationType: escalation.type,
         agentId: escalation.agentId,
         syncMetrics: escalation.syncMetrics,
-        recommendedActions: escalation.recommendedActions,
-      },
+        recommendedActions: escalation.recommendedActions
+      }
     });
 
     // Record to existing monitoring
@@ -397,7 +384,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
       type: escalation.type,
       severity: escalation.severity,
       agentId: escalation.agentId || 'system',
-      tenantId: escalation.tenantId || 'global',
+      tenantId: escalation.tenantId || 'global'
     });
 
     this.emit('sync_escalation_dashboard_updated', escalation);
@@ -408,10 +395,10 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
    */
   private handleSyncOperationUpdate(data: any): void {
     const { agentId, success, duration, error, tenantId } = data;
-
+    
     // Update operation metrics
     this.updateMetricsHistory('sync_operations_total', 1);
-
+    
     if (success) {
       this.updateMetricsHistory('sync_operations_success', 1);
       if (duration) {
@@ -425,7 +412,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
     this.recordMetric('sync_operation_completed', 1, {
       agentId,
       success: success.toString(),
-      tenantId: tenantId || 'global',
+      tenantId: tenantId || 'global'
     });
   }
 
@@ -434,7 +421,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
    */
   private handleSyncConflictUpdate(data: any): void {
     const { agentId, conflict, resolved, tenantId } = data;
-
+    
     if (resolved) {
       this.updateMetricsHistory('conflicts_resolved', 1);
     } else {
@@ -445,7 +432,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
     this.recordMetric('sync_conflict_event', 1, {
       agentId,
       resolved: resolved ? 'true' : 'false',
-      tenantId: tenantId || 'global',
+      tenantId: tenantId || 'global'
     });
   }
 
@@ -454,7 +441,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
    */
   private handleSystemHealthUpdate(data: any): void {
     const { totalAgents, systemErrorRate, avgLatency, totalOperations } = data;
-
+    
     // Update system metrics
     this.updateMetricsHistory('total_agents', totalAgents);
     this.updateMetricsHistory('system_error_rate', systemErrorRate);
@@ -465,7 +452,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
     this.recordMetric('system_health_check', 1, {
       totalAgents: totalAgents.toString(),
       errorRate: systemErrorRate.toString(),
-      avgLatency: avgLatency.toString(),
+      avgLatency: avgLatency.toString()
     });
   }
 
@@ -496,7 +483,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
     try {
       const healthReport = this.syncHealthService.getUnifiedHealthReport();
       const now = new Date();
-
+      
       // Update dashboard data structure
       this.dashboardData = {
         timestamp: now,
@@ -506,29 +493,30 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
           healthy: this.getAgentCountByHealth('healthy'),
           degraded: this.getAgentCountByHealth('degraded'),
           critical: this.getAgentCountByHealth('critical'),
-          offline: this.getAgentCountByHealth('offline'),
+          offline: this.getAgentCountByHealth('offline')
         },
         syncMetrics: {
           operationsPerMinute: this.calculateOperationsPerMinute(),
           errorRate: healthReport.syncMetrics.errorRate,
           avgLatency: healthReport.syncMetrics.avgLatency,
           conflictRate: healthReport.syncMetrics.conflictRate,
-          throughput: this.calculateThroughput(),
+          throughput: this.calculateThroughput()
         },
         escalations: {
           active: healthReport.activeEscalations,
           resolved: this.getResolvedEscalationsCount(),
           byType: this.getEscalationsByType(),
-          bySeverity: this.getEscalationsBySeverity(),
+          bySeverity: this.getEscalationsBySeverity()
         },
-        tenantMetrics: this.getTenantMetrics(),
+        tenantMetrics: this.getTenantMetrics()
       };
 
       // Send update to dashboard
       await this.sendSyncHealthUpdate();
-
+      
       // Record dashboard update metric
       this.recordMetric('dashboard_update_sent', 1);
+      
     } catch (error) {
       this.logger.error('Error updating dashboard data:', error);
     }
@@ -541,17 +529,18 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
     try {
       // Send to sync dashboard service
       await this.dashboardService.updateDashboard('sync_health', this.dashboardData);
-
+      
       // Send to existing monitoring service
       if (this.monitoringService) {
         await this.monitoringService.recordMetric('sync_health_dashboard_update', 1, {
           systemHealth: this.dashboardData.systemHealth,
           agentCount: this.dashboardData.agentMetrics.total.toString(),
-          errorRate: this.dashboardData.syncMetrics.errorRate.toString(),
+          errorRate: this.dashboardData.syncMetrics.errorRate.toString()
         });
       }
 
       this.emit('sync_health_dashboard_updated', this.dashboardData);
+      
     } catch (error) {
       this.logger.error('Error sending sync health update:', error);
     }
@@ -563,7 +552,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
   private checkAlerts(): void {
     for (const [alertId, alert] of this.alertConfigs) {
       if (!alert.enabled) continue;
-
+      
       try {
         this.checkAlert(alertId, alert);
       } catch (error) {
@@ -578,9 +567,9 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
   private checkAlert(alertId: string, alert: SyncHealthAlert): void {
     const now = new Date();
     const windowStart = new Date(now.getTime() - alert.duration * 1000);
-
+    
     let currentValue: number;
-
+    
     switch (alert.type) {
       case 'sync_error_rate':
         currentValue = this.getAverageMetricValue('sync_error_rate', windowStart);
@@ -610,11 +599,7 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
   /**
    * Trigger alert
    */
-  private async triggerAlert(
-    alertId: string,
-    alert: SyncHealthAlert,
-    currentValue: number
-  ): Promise<void> {
+  private async triggerAlert(alertId: string, alert: SyncHealthAlert, currentValue: number): Promise<void> {
     const alertData = {
       id: alertId,
       level: alert.severity,
@@ -625,19 +610,19 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
         alertType: alert.type,
         currentValue,
         threshold: alert.threshold,
-        duration: alert.duration,
-      },
+        duration: alert.duration
+      }
     };
 
     // Create alert in dashboard
     await this.dashboardService.createAlert(alertData);
-
+    
     // Record alert metric
     this.recordMetric('sync_health_alert_triggered', 1, {
       alertId,
       type: alert.type,
       severity: alert.severity,
-      tenantId: alert.tenantId || 'global',
+      tenantId: alert.tenantId || 'global'
     });
 
     this.emit('sync_health_alert_triggered', { alertId, alert, currentValue });
@@ -650,22 +635,22 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
     if (!this.metricsHistory.has(metric)) {
       this.metricsHistory.set(metric, []);
     }
-
+    
     const history = this.metricsHistory.get(metric)!;
     history.push({ timestamp: new Date(), value });
-
+    
     // Keep only last 2 hours of data
     const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
-    const filtered = history.filter((entry) => entry.timestamp > twoHoursAgo);
+    const filtered = history.filter(entry => entry.timestamp > twoHoursAgo);
     this.metricsHistory.set(metric, filtered);
   }
 
   private getAverageMetricValue(metric: string, since: Date): number {
     const history = this.metricsHistory.get(metric) || [];
-    const filtered = history.filter((entry) => entry.timestamp > since);
-
+    const filtered = history.filter(entry => entry.timestamp > since);
+    
     if (filtered.length === 0) return 0;
-
+    
     return filtered.reduce((sum, entry) => sum + entry.value, 0) / filtered.length;
   }
 
@@ -678,13 +663,13 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
   private calculateOperationsPerMinute(): number {
     const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
     const operations = this.metricsHistory.get('sync_operations_total') || [];
-    return operations.filter((entry) => entry.timestamp > oneMinuteAgo).length;
+    return operations.filter(entry => entry.timestamp > oneMinuteAgo).length;
   }
 
   private calculateThroughput(): number {
     const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
     const successful = this.metricsHistory.get('sync_operations_success') || [];
-    return successful.filter((entry) => entry.timestamp > oneMinuteAgo).length;
+    return successful.filter(entry => entry.timestamp > oneMinuteAgo).length;
   }
 
   private getResolvedEscalationsCount(): number {
@@ -714,14 +699,10 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
 
   private getEscalationRate(since: Date): number {
     const escalations = this.metricsHistory.get('escalations_total') || [];
-    return escalations.filter((entry) => entry.timestamp > since).length;
+    return escalations.filter(entry => entry.timestamp > since).length;
   }
 
-  private async recordMetric(
-    name: string,
-    value: number,
-    tags?: Record<string, string>
-  ): Promise<void> {
+  private async recordMetric(name: string, value: number, tags?: Record<string, string>): Promise<void> {
     try {
       if (this.metricsService) {
         await this.metricsService.collectMetric(name, value, tags);
@@ -740,22 +721,22 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
         healthy: 0,
         degraded: 0,
         critical: 0,
-        offline: 0,
+        offline: 0
       },
       syncMetrics: {
         operationsPerMinute: 0,
         errorRate: 0,
         avgLatency: 0,
         conflictRate: 0,
-        throughput: 0,
+        throughput: 0
       },
       escalations: {
         active: 0,
         resolved: 0,
         byType: {},
-        bySeverity: {},
+        bySeverity: {}
       },
-      tenantMetrics: {},
+      tenantMetrics: {}
     };
   }
 
@@ -811,12 +792,12 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
    */
   getMetricsHistory(metric: string, timeRange?: number): Array<{ timestamp: Date; value: number }> {
     const history = this.metricsHistory.get(metric) || [];
-
+    
     if (timeRange) {
       const since = new Date(Date.now() - timeRange * 60 * 1000);
-      return history.filter((entry) => entry.timestamp > since);
+      return history.filter(entry => entry.timestamp > since);
     }
-
+    
     return [...history];
   }
 
@@ -827,11 +808,11 @@ export class SyncHealthDashboardIntegration extends EventEmitter implements OnMo
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
     }
-
+    
     if (this.alertCheckInterval) {
       clearInterval(this.alertCheckInterval);
     }
-
+    
     this.logger.log('SyncHealthDashboardIntegration destroyed');
   }
 }

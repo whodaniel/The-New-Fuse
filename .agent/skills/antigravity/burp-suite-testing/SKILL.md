@@ -1,56 +1,43 @@
 ---
 name: Burp Suite Web Application Testing
-description:
-  This skill should be used when the user asks to "intercept HTTP traffic",
-  "modify web requests", "use Burp Suite for testing", "perform web
-  vulnerability scanning", "test with Burp Repeater", "analyze HTTP history", or
-  "configure proxy for web testing". It provides comprehensive guidance for
-  using Burp Suite's core features for web application security testing.
+description: This skill should be used when the user asks to "intercept HTTP traffic", "modify web requests", "use Burp Suite for testing", "perform web vulnerability scanning", "test with Burp Repeater", "analyze HTTP history", or "configure proxy for web testing". It provides comprehensive guidance for using Burp Suite's core features for web application security testing.
 metadata:
   author: zebbern
-  version: '1.1'
+  version: "1.1"
 ---
 
 # Burp Suite Web Application Testing
 
 ## Purpose
 
-Execute comprehensive web application security testing using Burp Suite's
-integrated toolset, including HTTP traffic interception and modification,
-request analysis and replay, automated vulnerability scanning, and manual
-testing workflows. This skill enables systematic discovery and exploitation of
-web application vulnerabilities through proxy-based testing methodology.
+Execute comprehensive web application security testing using Burp Suite's integrated toolset, including HTTP traffic interception and modification, request analysis and replay, automated vulnerability scanning, and manual testing workflows. This skill enables systematic discovery and exploitation of web application vulnerabilities through proxy-based testing methodology.
 
 ## Inputs / Prerequisites
 
 ### Required Tools
-
 - Burp Suite Community or Professional Edition installed
 - Burp's embedded browser or configured external browser
 - Target web application URL
 - Valid credentials for authenticated testing (if applicable)
 
 ### Environment Setup
-
 - Burp Suite launched with temporary or named project
 - Proxy listener active on 127.0.0.1:8080 (default)
 - Browser configured to use Burp proxy (or use Burp's browser)
 - CA certificate installed for HTTPS interception
 
 ### Editions Comparison
-
-| Feature    | Community | Professional |
-| ---------- | --------- | ------------ |
-| Proxy      | ✓         | ✓            |
-| Repeater   | ✓         | ✓            |
-| Intruder   | Limited   | Full         |
-| Scanner    | ✗         | ✓            |
-| Extensions | ✓         | ✓            |
+| Feature | Community | Professional |
+|---------|-----------|--------------|
+| Proxy | ✓ | ✓ |
+| Repeater | ✓ | ✓ |
+| Intruder | Limited | Full |
+| Scanner | ✗ | ✓ |
+| Extensions | ✓ | ✓ |
 
 ## Outputs / Deliverables
 
 ### Primary Outputs
-
 - Intercepted and modified HTTP requests/responses
 - Vulnerability scan reports with remediation advice
 - HTTP history and site map documentation
@@ -61,7 +48,6 @@ web application vulnerabilities through proxy-based testing methodology.
 ### Phase 1: Intercepting HTTP Traffic
 
 #### Launch Burp's Browser
-
 Navigate to integrated browser for seamless proxy integration:
 
 1. Open Burp Suite and create/open project
@@ -70,7 +56,6 @@ Navigate to integrated browser for seamless proxy integration:
 4. Position windows to view both Burp and browser simultaneously
 
 #### Configure Interception
-
 Control which requests are captured:
 
 ```
@@ -81,7 +66,6 @@ When OFF: Requests pass through, logged to history
 ```
 
 #### Intercept and Forward Requests
-
 Process intercepted traffic:
 
 1. Set intercept toggle to **Intercept on**
@@ -92,7 +76,6 @@ Process intercepted traffic:
 6. Continue forwarding subsequent requests until page loads
 
 #### View HTTP History
-
 Access complete traffic log:
 
 1. Go to **Proxy > HTTP history** tab
@@ -103,7 +86,6 @@ Access complete traffic log:
 ### Phase 2: Modifying Requests
 
 #### Intercept and Modify
-
 Change request parameters before forwarding:
 
 1. Enable interception: **Intercept on**
@@ -113,13 +95,12 @@ Change request parameters before forwarding:
 5. Click **Forward** to send modified request
 
 #### Common Modification Targets
-
-| Target           | Example        | Purpose                   |
-| ---------------- | -------------- | ------------------------- |
-| Price parameters | `price=1`      | Test business logic       |
-| User IDs         | `userId=admin` | Test access control       |
-| Quantity values  | `qty=-1`       | Test input validation     |
-| Hidden fields    | `isAdmin=true` | Test privilege escalation |
+| Target | Example | Purpose |
+|--------|---------|---------|
+| Price parameters | `price=1` | Test business logic |
+| User IDs | `userId=admin` | Test access control |
+| Quantity values | `qty=-1` | Test input validation |
+| Hidden fields | `isAdmin=true` | Test privilege escalation |
 
 #### Example: Price Manipulation
 
@@ -139,7 +120,6 @@ Result: Item added to cart at modified price.
 ### Phase 3: Setting Target Scope
 
 #### Define Scope
-
 Focus testing on specific target:
 
 1. Go to **Target > Site map**
@@ -148,7 +128,6 @@ Focus testing on specific target:
 4. When prompted, click **Yes** to exclude out-of-scope traffic
 
 #### Filter by Scope
-
 Remove noise from HTTP history:
 
 1. Click display filter above HTTP history
@@ -156,7 +135,6 @@ Remove noise from HTTP history:
 3. History now shows only target site traffic
 
 #### Scope Benefits
-
 - Reduces clutter from third-party requests
 - Prevents accidental testing of out-of-scope sites
 - Improves scanning efficiency
@@ -165,7 +143,6 @@ Remove noise from HTTP history:
 ### Phase 4: Using Burp Repeater
 
 #### Send Request to Repeater
-
 Prepare request for manual testing:
 
 1. Identify interesting request in HTTP history
@@ -173,7 +150,6 @@ Prepare request for manual testing:
 3. Go to **Repeater** tab to access request
 
 #### Modify and Resend
-
 Test different inputs efficiently:
 
 ```
@@ -191,13 +167,12 @@ Original Request:
 GET /product?productId=1 HTTP/1.1
 
 Test 1: productId=2    → Valid product response
-Test 2: productId=999  → Not Found response
+Test 2: productId=999  → Not Found response  
 Test 3: productId='    → Error/exception response
 Test 4: productId=1 OR 1=1 → SQL injection test
 ```
 
 #### Analyze Responses
-
 Look for indicators of vulnerabilities:
 
 - Error messages revealing stack traces
@@ -209,7 +184,6 @@ Look for indicators of vulnerabilities:
 ### Phase 5: Running Automated Scans
 
 #### Launch New Scan
-
 Initiate vulnerability scanning (Professional only):
 
 1. Go to **Dashboard** tab
@@ -219,15 +193,14 @@ Initiate vulnerability scanning (Professional only):
 
 #### Scan Configuration Options
 
-| Mode        | Description                 | Duration      |
-| ----------- | --------------------------- | ------------- |
-| Lightweight | High-level overview         | ~15 minutes   |
-| Fast        | Quick vulnerability check   | ~30 minutes   |
-| Balanced    | Standard comprehensive scan | ~1-2 hours    |
-| Deep        | Thorough testing            | Several hours |
+| Mode | Description | Duration |
+|------|-------------|----------|
+| Lightweight | High-level overview | ~15 minutes |
+| Fast | Quick vulnerability check | ~30 minutes |
+| Balanced | Standard comprehensive scan | ~1-2 hours |
+| Deep | Thorough testing | Several hours |
 
 #### Monitor Scan Progress
-
 Track scanning activity:
 
 1. View task status in **Dashboard**
@@ -235,7 +208,6 @@ Track scanning activity:
 3. Check **Issues** tab for discovered vulnerabilities
 
 #### Review Identified Issues
-
 Analyze scan findings:
 
 1. Select scan task in Dashboard
@@ -248,7 +220,6 @@ Analyze scan findings:
 ### Phase 6: Intruder Attacks
 
 #### Configure Intruder
-
 Set up automated attack:
 
 1. Send request to Intruder (right-click > Send to Intruder)
@@ -258,12 +229,12 @@ Set up automated attack:
 
 #### Attack Types
 
-| Type          | Description                       | Use Case                |
-| ------------- | --------------------------------- | ----------------------- |
-| Sniper        | Single position, iterate payloads | Fuzzing one parameter   |
-| Battering ram | Same payload all positions        | Credential testing      |
-| Pitchfork     | Parallel payload iteration        | Username:password pairs |
-| Cluster bomb  | All payload combinations          | Full brute force        |
+| Type | Description | Use Case |
+|------|-------------|----------|
+| Sniper | Single position, iterate payloads | Fuzzing one parameter |
+| Battering ram | Same payload all positions | Credential testing |
+| Pitchfork | Parallel payload iteration | Username:password pairs |
+| Cluster bomb | All payload combinations | Full brute force |
 
 #### Configure Payloads
 
@@ -279,7 +250,6 @@ Set 2: password, 123456, admin, letmein
 ```
 
 #### Analyze Results
-
 Review attack output:
 
 - Sort by response length to find anomalies
@@ -290,14 +260,13 @@ Review attack output:
 ## Quick Reference
 
 ### Keyboard Shortcuts
-
-| Action           | Windows/Linux | macOS |
-| ---------------- | ------------- | ----- |
-| Forward request  | Ctrl+F        | Cmd+F |
-| Drop request     | Ctrl+D        | Cmd+D |
-| Send to Repeater | Ctrl+R        | Cmd+R |
-| Send to Intruder | Ctrl+I        | Cmd+I |
-| Toggle intercept | Ctrl+T        | Cmd+T |
+| Action | Windows/Linux | macOS |
+|--------|---------------|-------|
+| Forward request | Ctrl+F | Cmd+F |
+| Drop request | Ctrl+D | Cmd+D |
+| Send to Repeater | Ctrl+R | Cmd+R |
+| Send to Intruder | Ctrl+I | Cmd+I |
+| Toggle intercept | Ctrl+T | Cmd+T |
 
 ### Common Testing Payloads
 
@@ -323,7 +292,6 @@ javascript:alert(1)
 ```
 
 ### Request Modification Tips
-
 - Right-click for context menu options
 - Use decoder for encoding/decoding
 - Compare requests using Comparer tool
@@ -332,21 +300,18 @@ javascript:alert(1)
 ## Constraints and Guardrails
 
 ### Operational Boundaries
-
 - Test only authorized applications
 - Configure scope to prevent accidental out-of-scope testing
 - Rate-limit scans to avoid denial of service
 - Document all findings and actions
 
 ### Technical Limitations
-
 - Community Edition lacks automated scanner
 - Some sites may block proxy traffic
 - HSTS/certificate pinning may require additional configuration
 - Heavy scanning may trigger WAF blocks
 
 ### Best Practices
-
 - Always set target scope before extensive testing
 - Use Burp's browser for reliable interception
 - Save project regularly to preserve work
@@ -391,28 +356,24 @@ javascript:alert(1)
 ## Troubleshooting
 
 ### Browser Not Connecting Through Proxy
-
 - Verify proxy listener is active (Proxy > Options)
 - Check browser proxy settings point to 127.0.0.1:8080
 - Ensure no firewall blocking local connections
 - Use Burp's embedded browser for reliable setup
 
 ### HTTPS Interception Failing
-
 - Install Burp CA certificate in browser/system
 - Navigate to http://burp to download certificate
 - Add certificate to trusted roots
 - Restart browser after installation
 
 ### Slow Performance
-
 - Limit scope to reduce processing
 - Disable unnecessary extensions
 - Increase Java heap size in startup options
 - Close unused Burp tabs and features
 
 ### Requests Not Being Intercepted
-
 - Verify "Intercept on" is enabled
 - Check intercept rules aren't filtering target
 - Ensure browser is using Burp proxy

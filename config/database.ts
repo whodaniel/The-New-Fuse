@@ -1,8 +1,8 @@
-import { EventEmitter } from 'events';
-import { Pool, PoolClient } from 'pg';
 import { createClient, RedisClientType } from 'redis';
+import { Pool, Client, PoolClient } from 'pg';
 import { Logger } from 'winston';
 import { setupLogging } from './logging_config.js';
+import { EventEmitter } from 'events';
 
 const logger: Logger = setupLogging('database');
 
@@ -45,7 +45,7 @@ export class DatabaseConfig extends EventEmitter {
     connections: {},
     queries: {},
     errors: {},
-    latency: {},
+    latency: {}
   };
 
   private readonly defaultPoolSize: number;
@@ -72,8 +72,8 @@ export class DatabaseConfig extends EventEmitter {
           reconnectStrategy: (retries: number) => {
             if (retries > 10) return new Error('Max reconnection attempts reached');
             return Math.min(retries * 100, 3000);
-          },
-        },
+          }
+        }
       });
 
       await this.redisClient.connect();
@@ -96,7 +96,7 @@ export class DatabaseConfig extends EventEmitter {
         connectionString: config.uri,
         max: config.poolSize || this.defaultPoolSize,
         idleTimeoutMillis: (config.poolTimeout || this.defaultPoolTimeout) * 1000,
-        connectionTimeoutMillis: 5000,
+        connectionTimeoutMillis: 5000
       });
 
       // Initialize metrics for this shard
@@ -127,7 +127,7 @@ export class DatabaseConfig extends EventEmitter {
       this.shardMap[shardName] = {
         uri: config.uri,
         config,
-        pool,
+        pool
       };
 
       logger.info(`Successfully added shard: ${shardName}`);
@@ -153,7 +153,7 @@ export class DatabaseConfig extends EventEmitter {
         await Promise.all([
           this.redisClient.hIncrBy(`db:metrics:${shardName}`, 'queries', 1),
           this.redisClient.lPush(`db:latency:${shardName}`, duration.toString()),
-          this.redisClient.lTrim(`db:latency:${shardName}`, 0, 999),
+          this.redisClient.lTrim(`db:latency:${shardName}`, 0, 999)
         ]);
       }
 
@@ -185,13 +185,13 @@ export class DatabaseConfig extends EventEmitter {
             connections: this.metrics.connections[shardName] || 0,
             queries: this.metrics.queries[shardName] || 0,
             errors: this.metrics.errors[shardName] || 0,
-            avgLatency,
-          },
+            avgLatency
+          }
         };
       } catch (err) {
         status[shardName] = {
           status: 'unhealthy',
-          error: err instanceof Error ? err.message : String(err),
+          error: err instanceof Error ? err.message : String(err)
         };
       }
     }
@@ -218,8 +218,8 @@ export class DatabaseConfig extends EventEmitter {
 
   public async dispose(): Promise<void> {
     await Promise.all([
-      ...Object.values(this.shardMap).map((shard) => shard.pool.end()),
-      this.redisClient?.quit(),
+      ...Object.values(this.shardMap).map(shard => shard.pool.end()),
+      this.redisClient?.quit()
     ]);
   }
 }
@@ -233,13 +233,13 @@ export async function initDb(): Promise<void> {
     default: {
       uri: process.env.DATABASE_URL || 'postgres://localhost:5432/dashboard',
       poolSize: 20,
-      maxOverflow: 10,
+      maxOverflow: 10
     },
     analytics: {
       uri: process.env.ANALYTICS_DATABASE_URL || 'postgres://localhost:5432/analytics',
       poolSize: 10,
-      maxOverflow: 5,
-    },
+      maxOverflow: 5
+    }
   };
 
   await dbConfig.initShards(shardConfigs);

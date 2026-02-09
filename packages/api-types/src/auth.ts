@@ -1,7 +1,7 @@
 /**
  * Authentication-related type definitions
  */
-import { UUID } from './common';
+import { UUID, ISODateTime } from './common';
 import { UserRole } from './user';
 
 export interface LoginDto {

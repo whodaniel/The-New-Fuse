@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { AlertService } from './alerts/alert.service';
-import { ErrorTrackingService } from './error-tracking.service';
 import { PerformanceMonitoringService } from './performance-monitoring.service';
+import { ErrorTrackingService } from './error-tracking.service';
 import { SecurityLoggingService } from './security-logging.service';
 
 @Injectable()
 export class MonitoringService {
   private readonly logger = new Logger(MonitoringService.name);
-
+  
   constructor(
     private readonly alertService: AlertService,
     private readonly performanceService: PerformanceMonitoringService,
@@ -20,7 +20,7 @@ export class MonitoringService {
       this.alertService.initialize(),
       this.performanceService.initialize(),
       this.errorTracking.initialize(),
-      this.securityLogging.initialize(),
+      this.securityLogging.initialize()
     ]);
     this.logger.log('Monitoring service initialized');
   }
@@ -37,11 +37,7 @@ export class MonitoringService {
     await this.securityLogging.logEvent(event, data);
   }
 
-  async createAlert(
-    type: string,
-    message: string,
-    severity: 'low' | 'medium' | 'high'
-  ): Promise<void> {
+  async createAlert(type: string, message: string, severity: 'low' | 'medium' | 'high'): Promise<void> {
     await this.alertService.createAlert(type, message, severity);
   }
 }

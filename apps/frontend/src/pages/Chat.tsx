@@ -1,5 +1,6 @@
 // Chat.tsx
-import ChatInterface from '../components/features/ChatInterface';
+import React from "react";
+import ChatInterface from "../components/features/ChatInterface";
 
 export default function Chat() {
   return (

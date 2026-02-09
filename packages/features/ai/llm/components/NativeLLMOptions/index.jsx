@@ -1,6 +1,6 @@
-import System from '@/models/system';
-import { Flask } from '@phosphor-icons/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import { Flask } from "@phosphor-icons/react";
+import System from "@/models/system";
 
 export default function NativeLLMOptions({ settings }) {
   return (
@@ -27,7 +27,7 @@ function NativeModelSelection({ settings }) {
   useEffect(() => {
     async function findCustomModels() {
       setLoading(true);
-      const { models } = await System.customModels('native-llm', null, null);
+      const { models } = await System.customModels("native-llm", null, null);
       setCustomModels(models || []);
       setLoading(false);
     }
@@ -37,7 +37,9 @@ function NativeModelSelection({ settings }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">Model Selection</label>
+        <label className="text-white text-sm font-semibold block mb-3">
+          Model Selection
+        </label>
         <select
           name="NativeLLMModelPref"
           disabled={true}
@@ -54,7 +56,9 @@ function NativeModelSelection({ settings }) {
   return (
     <>
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">Model Selection</label>
+        <label className="text-white text-sm font-semibold block mb-3">
+          Model Selection
+        </label>
         <select
           name="NativeLLMModelPref"
           required={true}
@@ -78,7 +82,9 @@ function NativeModelSelection({ settings }) {
         </select>
       </div>
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">Token context window</label>
+        <label className="text-white text-sm font-semibold block mb-3">
+          Token context window
+        </label>
         <input
           type="number"
           name="NativeLLMTokenLimit"

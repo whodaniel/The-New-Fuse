@@ -1,7 +1,7 @@
-import { webSocketService } from '@/services/websocket';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/shared/ui/core/Card';
 import { ChartComponent } from 'packages/features/dashboard/components/visualization/ChartComponent';
-import { useEffect, useState } from 'react';
+import { webSocketService } from '@/services/websocket';
 
 interface PerformanceMetric {
   timestamp: number;
@@ -17,7 +17,7 @@ export function PerformanceMetrics() {
 
   useEffect(() => {
     const handlePerformanceUpdate = (data: PerformanceMetric) => {
-      setPerformanceData((prevData) => [...prevData.slice(-19), data]);
+      setPerformanceData(prevData => [...prevData.slice(-19), data]);
     };
 
     webSocketService.on('performanceUpdate', handlePerformanceUpdate);
@@ -34,7 +34,7 @@ export function PerformanceMetrics() {
   return (
     <Card className="w-full p-4">
       <h2 className="text-xl font-semibold mb-4">Performance Metrics</h2>
-
+      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="h-[300px]">
           <h3 className="text-lg mb-2">Resource Usage</h3>

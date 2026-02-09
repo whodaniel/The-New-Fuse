@@ -1,3 +1,4 @@
+import React from 'react';
 import { WorkspaceData } from '@/types/workspace';
 
 interface ChartableProps {

@@ -1,5 +1,5 @@
-import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils';
 
 /**
@@ -42,7 +42,8 @@ export const textareaVariants = cva(
  * Textarea component props
  */
 export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement>, VariantProps<typeof textareaVariants> {
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    VariantProps<typeof textareaVariants> {
   /**
    * Error message to display
    */
@@ -89,21 +90,21 @@ export interface TextareaProps
  * <Textarea placeholder="Enter your message" />
  *
  * // With label and helper text
- * <Textarea
- *   label="Message"
- *   placeholder="Enter your message"
+ * <Textarea 
+ *   label="Message" 
+ *   placeholder="Enter your message" 
  *   helperText="Maximum 500 characters"
  * />
  *
  * // With error state
- * <Textarea
- *   label="Bio"
+ * <Textarea 
+ *   label="Bio" 
  *   error="Bio is required"
  * />
  *
  * // With auto-resize
- * <Textarea
- *   autoResize
+ * <Textarea 
+ *   autoResize 
  *   placeholder="This will grow as you type..."
  * />
  *
@@ -112,26 +113,23 @@ export interface TextareaProps
  * <Textarea variant="outline" placeholder="Outlined textarea" />
  */
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  (
-    {
-      className,
-      variant,
-      state,
-      width,
-      label,
-      helperText,
-      error,
-      success,
-      containerClassName,
-      labelClassName,
-      helperTextClassName,
-      autoResize,
-      maxHeight,
-      style: _style, // extract style to prevent inline usage, prefix with _ as it's unused
-      ...props
-    },
-    ref
-  ) => {
+  ({
+    className,
+    variant,
+    state,
+    width,
+    label,
+    helperText,
+    error,
+    success,
+    containerClassName,
+    labelClassName,
+    helperTextClassName,
+    autoResize,
+    maxHeight,
+    style: _style, // extract style to prevent inline usage, prefix with _ as it's unused
+    ...props
+  }, ref) => {
     const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
     const combinedRef = React.useMemo(() => {
       return (node: HTMLTextAreaElement) => {
@@ -151,13 +149,13 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       if (autoResize && textareaRef.current) {
         // Reset height to auto to get the correct scrollHeight
         textareaRef.current.style.height = 'auto';
-
+        
         // Calculate new height
         const newHeight = Math.min(
           textareaRef.current.scrollHeight,
           maxHeight || Number.MAX_SAFE_INTEGER
         );
-
+        
         // Set the new height
         textareaRef.current.style.height = `${newHeight}px`;
       }
@@ -167,16 +165,16 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     React.useEffect(() => {
       if (autoResize) {
         handleAutoResize();
-
+        
         // Add resize observer to handle content changes
         const resizeObserver = new ResizeObserver(() => {
           handleAutoResize();
         });
-
+        
         if (textareaRef.current) {
           resizeObserver.observe(textareaRef.current);
         }
-
+        
         return () => {
           resizeObserver.disconnect();
         };

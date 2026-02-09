@@ -1,20 +1,20 @@
 /**
  * Example: Integrating Sync Dashboard with Existing AdminDashboard
- *
+ * 
  * This example demonstrates how to integrate the sync-aware dashboard
  * with existing AdminDashboard and AgentWebSocketService infrastructure.
  */
 
-import { Injectable, Module } from '@nestjs/common';
+import { Module, Injectable } from '@nestjs/common';
+import { 
+  SyncDashboardService, 
+  DashboardWebSocketIntegration,
+  DashboardMonitoringIntegration,
+  IAgentWebSocketService,
+  IMonitoringService 
+} from './index';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { SyncRedisConfig } from '../config/SyncRedisConfig';
-import {
-  DashboardMonitoringIntegration,
-  DashboardWebSocketIntegration,
-  IAgentWebSocketService,
-  IMonitoringService,
-  SyncDashboardService,
-} from './index';
 
 // Example: Existing AgentWebSocketService adapter
 @Injectable()
@@ -25,7 +25,7 @@ class ExistingAgentWebSocketServiceAdapter implements IAgentWebSocketService {
     // Integrate with existing WebSocket service
     const clients = await this.existingWsService.getClientsByTenant(tenantId);
     let sentCount = 0;
-
+    
     for (const client of clients) {
       try {
         client.emit('dashboard_update', message);
@@ -34,7 +34,7 @@ class ExistingAgentWebSocketServiceAdapter implements IAgentWebSocketService {
         console.error('Failed to send to client:', error);
       }
     }
-
+    
     return sentCount;
   }
 
@@ -78,17 +78,21 @@ class ExistingMonitoringServiceAdapter implements IMonitoringService {
     DashboardMonitoringIntegration,
     {
       provide: 'IAgentWebSocketService',
-      useClass: ExistingAgentWebSocketServiceAdapter,
+      useClass: ExistingAgentWebSocketServiceAdapter
     },
     {
       provide: 'IMonitoringService',
-      useClass: ExistingMonitoringServiceAdapter,
+      useClass: ExistingMonitoringServiceAdapter
     },
     // Existing services
     UnifiedRedisService,
-    SyncRedisConfig,
+    SyncRedisConfig
   ],
-  exports: [SyncDashboardService, DashboardWebSocketIntegration, DashboardMonitoringIntegration],
+  exports: [
+    SyncDashboardService,
+    DashboardWebSocketIntegration,
+    DashboardMonitoringIntegration
+  ]
 })
 export class SyncDashboardModule {}
 
@@ -183,26 +187,21 @@ export class ExampleBackendIntegration {
       type: 'agent_status' as const,
       tenantId,
       data: { agentId, status, timestamp: new Date() },
-      timestamp: new Date(),
+      timestamp: new Date()
     };
 
     // This will automatically broadcast to relevant dashboard clients
     await this.dashboardService['processDashboardUpdate'](update);
   }
 
-  async handleTaskProgress(
-    taskId: string,
-    progress: number,
-    userId?: string,
-    tenantId?: string
-  ): Promise<void> {
+  async handleTaskProgress(taskId: string, progress: number, userId?: string, tenantId?: string): Promise<void> {
     // When task progress updates, notify user dashboards
     const update = {
       type: 'task_progress' as const,
       userId,
       tenantId,
       data: { taskId, progress, timestamp: new Date() },
-      timestamp: new Date(),
+      timestamp: new Date()
     };
 
     await this.dashboardService['processDashboardUpdate'](update);
@@ -214,25 +213,20 @@ export class ExampleBackendIntegration {
       type: 'file_change' as const,
       tenantId,
       data: { filePath, changeType, timestamp: new Date() },
-      timestamp: new Date(),
+      timestamp: new Date()
     };
 
     await this.dashboardService['processDashboardUpdate'](update);
   }
 
-  async createSystemAlert(
-    level: 'info' | 'warning' | 'error' | 'critical',
-    message: string,
-    component: string,
-    tenantId?: string
-  ): Promise<void> {
+  async createSystemAlert(level: 'info' | 'warning' | 'error' | 'critical', message: string, component: string, tenantId?: string): Promise<void> {
     // Create system alert that will appear in dashboards
     await this.dashboardService.createAlert({
       level,
       message,
       component,
       tenantId,
-      metadata: { source: 'backend_service' },
+      metadata: { source: 'backend_service' }
     });
   }
 }
@@ -381,10 +375,8 @@ export const ExampleConfiguration = {
   // Monitoring thresholds
   ALERT_THRESHOLD_SYNC_ERROR_RATE: '0.1', // 10%
   ALERT_THRESHOLD_SYNC_LATENCY: '5000', // 5 seconds
-  ALERT_THRESHOLD_AGENT_DISCONNECT_RATE: '0.2', // 20%
+  ALERT_THRESHOLD_AGENT_DISCONNECT_RATE: '0.2' // 20%
 };
 
 console.log('Sync Dashboard integration examples loaded');
-console.log(
-  'Use these examples to integrate with your existing AdminDashboard and monitoring systems'
-);
+console.log('Use these examples to integrate with your existing AdminDashboard and monitoring systems');

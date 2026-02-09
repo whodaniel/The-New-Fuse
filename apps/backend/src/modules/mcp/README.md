@@ -1,18 +1,14 @@
 # MCP (Model Context Protocol) Integration for The New Fuse
 
-Complete MCP integration enabling standardized agent communication and tool
-execution in The New Fuse platform.
+Complete MCP integration enabling standardized agent communication and tool execution in The New Fuse platform.
 
 ## Overview
 
 The MCP integration provides:
 
-- **MCP Server**: Full-featured server implementation with tool and resource
-  registration
-- **Tool Registry**: 15+ tools organized into functional groups (workflow, task,
-  agent, resource, communication, system)
-- **MCP-A2A Bridge**: Seamless integration between MCP and Agent-to-Agent
-  protocols
+- **MCP Server**: Full-featured server implementation with tool and resource registration
+- **Tool Registry**: 15+ tools organized into functional groups (workflow, task, agent, resource, communication, system)
+- **MCP-A2A Bridge**: Seamless integration between MCP and Agent-to-Agent protocols
 - **Client Examples**: Sample agents demonstrating coordination patterns
 - **Integration Tests**: Comprehensive test suite covering all features
 
@@ -62,36 +58,30 @@ The MCP server provides:
 ### 2. Tool Registry
 
 **Workflow Tools** (4 tools):
-
 - `workflow.create` - Create new workflows
 - `workflow.execute` - Execute workflows
 - `workflow.list` - List available workflows
 - `workflow.status` - Get workflow execution status
 
 **Task Tools** (3 tools):
-
 - `task.create` - Create and assign tasks
 - `task.status` - Get task status
 - `task.update` - Update task progress/status
 
 **Agent Tools** (3 tools):
-
 - `agent.message` - Send messages between agents
 - `agent.discover` - Discover agents by capability
 - `agent.register_capability` - Register agent capabilities
 
 **Resource Tools** (2 tools):
-
 - `resource.read` - Read resources by URI
 - `resource.list` - List available resources
 
 **Communication Tools** (2 tools):
-
 - `communication.broadcast` - Broadcast to multiple agents
 - `communication.subscribe` - Subscribe to event streams
 
 **System Tools** (2 tools):
-
 - `system.health` - Get system health status
 - `system.metrics` - Get system metrics
 
@@ -160,7 +150,7 @@ export class MyService {
   constructor(
     private readonly mcpServer: MCPServerService,
     private readonly toolRegistry: MCPToolRegistry,
-    private readonly bridge: MCPA2ABridge
+    private readonly bridge: MCPA2ABridge,
   ) {}
 
   async registerCustomTool() {
@@ -451,8 +441,7 @@ await customBridge.registerA2AAgent({
 
 ## Performance Considerations
 
-- **Connection Pooling**: Server supports up to 100 concurrent connections
-  (configurable)
+- **Connection Pooling**: Server supports up to 100 concurrent connections (configurable)
 - **Tool Caching**: Tool definitions are cached for fast lookup
 - **Async Execution**: All tool handlers are async
 - **Retry Logic**: Built-in retry with exponential backoff
@@ -463,7 +452,6 @@ await customBridge.registerA2AAgent({
 ### Server Won't Start
 
 Check:
-
 1. Port 3100 is not already in use
 2. Environment variables are set correctly
 3. Dependencies are installed (`npm install`)
@@ -471,7 +459,6 @@ Check:
 ### Agent Can't Connect
 
 Check:
-
 1. Server is running
 2. Endpoint URL is correct (`ws://localhost:3100`)
 3. Firewall allows WebSocket connections
@@ -479,7 +466,6 @@ Check:
 ### Tool Execution Fails
 
 Check:
-
 1. Tool name is correct
 2. Required parameters are provided
 3. Parameter types match schema
@@ -488,7 +474,6 @@ Check:
 ### Memory Issues
 
 For high-load scenarios:
-
 1. Increase Node.js heap size: `NODE_OPTIONS=--max-old-space-size=4096`
 2. Reduce `MCP_MAX_CONNECTIONS`
 3. Implement tool result caching
@@ -496,7 +481,6 @@ For high-load scenarios:
 ## API Reference
 
 See:
-
 - [MCP Server API](./docs/server-api.md)
 - [Tool Registry API](./docs/tool-registry-api.md)
 - [Bridge API](./docs/bridge-api.md)
@@ -517,7 +501,5 @@ MIT
 ## Support
 
 For issues and questions:
-
-- GitHub Issues:
-  [https://github.com/the-new-fuse/issues](https://github.com/the-new-fuse/issues)
+- GitHub Issues: [https://github.com/the-new-fuse/issues](https://github.com/the-new-fuse/issues)
 - Documentation: [https://docs.thenewfuse.com](https://docs.thenewfuse.com)

@@ -2,9 +2,7 @@
 
 ## Overview
 
-**Sync-Core** is The New Fuse's central real-time synchronization and
-coordination infrastructure. It serves as the "nervous system" of the entire
-platform, providing:
+**Sync-Core** is The New Fuse's central real-time synchronization and coordination infrastructure. It serves as the "nervous system" of the entire platform, providing:
 
 - ✅ **Multi-tenant real-time synchronization**
 - ✅ **Agent state management and coordination**
@@ -17,12 +15,11 @@ platform, providing:
 
 ## Status: **Production-Ready** 🚀
 
-The sync-core is **fully implemented** with all core features operational. It's
-currently integrated with:
+The sync-core is **fully implemented** with all core features operational. It's currently integrated with:
 
 - ✅ Redis Pub/Sub for event distribution
 - ✅ WebSocket Service for real-time client updates
-- ✅ Drizzle Database for state persistence
+- ✅ Prisma Database for state persistence
 - ✅ Prompt Template Service for template synchronization
 - ✅ Agent Management System
 - ✅ Task Execution System
@@ -53,7 +50,9 @@ import { SyncOrchestrator } from '@the-new-fuse/sync-core';
 
 @Injectable()
 export class MyService {
-  constructor(private readonly syncOrchestrator: SyncOrchestrator) {}
+  constructor(
+    private readonly syncOrchestrator: SyncOrchestrator
+  ) {}
 
   async updateAgentStatus(agentId: string, status: string) {
     // Update agent state and sync across all instances
@@ -61,16 +60,17 @@ export class MyService {
       id: agentId,
       status,
       metadata: { updatedAt: new Date() },
-      lastUpdate: new Date(),
+      lastUpdate: new Date()
     });
   }
 
   async syncTaskUpdate(taskId: string, taskData: any, tenantId: string) {
     // Sync task data to specific tenant
-    await this.syncOrchestrator.syncTenantData(tenantId, 'task', {
-      id: taskId,
-      ...taskData,
-    });
+    await this.syncOrchestrator.syncTenantData(
+      tenantId,
+      'task',
+      { id: taskId, ...taskData }
+    );
   }
 }
 ```
@@ -79,30 +79,28 @@ export class MyService {
 
 ### 1. Multi-Tenant Synchronization
 
-**Purpose**: Coordinate data across all system components while maintaining
-strict tenant isolation.
+**Purpose**: Coordinate data across all system components while maintaining strict tenant isolation.
 
 **How it works**:
-
 - Each tenant gets isolated sync channels
 - Tenant contexts loaded on startup
 - Permission-based access control
 - Automatic version tracking
 
 **Example**:
-
 ```typescript
 // Sync tenant-specific data
-await syncOrchestrator.syncTenantData('tenant-123', 'agent', {
-  id: 'agent-1',
-  status: 'ACTIVE',
-});
+await syncOrchestrator.syncTenantData(
+  'tenant-123',
+  'agent',
+  { id: 'agent-1', status: 'ACTIVE' }
+);
 
 // Sync global data
-await syncOrchestrator.syncGlobalData('template', {
-  id: 'template-1',
-  name: 'Global Template',
-});
+await syncOrchestrator.syncGlobalData(
+  'template',
+  { id: 'template-1', name: 'Global Template' }
+);
 ```
 
 ### 2. Agent State Management
@@ -110,20 +108,18 @@ await syncOrchestrator.syncGlobalData('template', {
 **Purpose**: Track and synchronize agent states across distributed systems.
 
 **Features**:
-
 - Real-time status updates
 - Metadata synchronization
 - Health monitoring
 - Automatic failover support
 
 **Example**:
-
 ```typescript
 await syncOrchestrator.syncAgentState('agent-123', {
   id: 'agent-123',
   status: 'PROCESSING',
   metadata: { currentTask: 'analysis', progress: 45 },
-  lastUpdate: new Date(),
+  lastUpdate: new Date()
 });
 ```
 
@@ -132,14 +128,12 @@ await syncOrchestrator.syncAgentState('agent-123', {
 **Purpose**: Handle concurrent updates intelligently.
 
 **Strategies**:
-
 1. **Latest Wins** - Timestamp-based (default)
 2. **Merge** - Combine non-conflicting fields
 3. **Manual** - Queue for admin review
 4. **Rollback** - Revert to previous state
 
 **Example**:
-
 ```typescript
 const resolution = await syncOrchestrator.resolveConflict({
   id: 'conflict-1',
@@ -148,7 +142,7 @@ const resolution = await syncOrchestrator.resolveConflict({
   conflictType: 'concurrent',
   localVersion: { status: 'IDLE' },
   remoteVersion: { status: 'PROCESSING' },
-  createdAt: new Date(),
+  createdAt: new Date()
 });
 ```
 
@@ -157,14 +151,12 @@ const resolution = await syncOrchestrator.resolveConflict({
 **Purpose**: Deliver events to clients via WebSocket.
 
 **Features**:
-
 - Priority-based routing
 - Multi-channel support
 - Delivery tracking
 - Acknowledgment system
 
 **How it works**:
-
 - SyncOrchestrator publishes to Redis
 - WebSocket gateway broadcasts to connected clients
 - Automatic retry on failure
@@ -175,7 +167,6 @@ const resolution = await syncOrchestrator.resolveConflict({
 **Purpose**: Track sync health and performance metrics.
 
 **Metrics Collected**:
-
 ```typescript
 {
   operations: {
@@ -199,7 +190,6 @@ const resolution = await syncOrchestrator.resolveConflict({
 ```
 
 **Access metrics**:
-
 ```typescript
 const metrics = syncOrchestrator.getMetrics();
 console.log(`Success rate: ${metrics.performance.successRate}%`);
@@ -244,13 +234,15 @@ import { SyncOrchestrator } from '@the-new-fuse/sync-core';
 
 @Injectable()
 export class AgentService {
-  constructor(private readonly syncOrchestrator: SyncOrchestrator) {}
+  constructor(
+    private readonly syncOrchestrator: SyncOrchestrator
+  ) {}
 
   async updateAgent(agentId: string, updates: Partial<Agent>) {
     // Update in database
-    const updatedAgent = await this.drizzle.agent.update({
+    const updatedAgent = await this.prisma.agent.update({
       where: { id: agentId },
-      data: updates,
+      data: updates
     });
 
     // Sync across all instances
@@ -258,7 +250,7 @@ export class AgentService {
       id: agentId,
       status: updatedAgent.status,
       metadata: updatedAgent.metadata,
-      lastUpdate: new Date(),
+      lastUpdate: new Date()
     });
 
     return updatedAgent;
@@ -274,23 +266,22 @@ import { TaskSynchronizationService } from '@the-new-fuse/sync-core';
 
 @Injectable()
 export class TaskService {
-  constructor(private readonly taskSync: TaskSynchronizationService) {}
+  constructor(
+    private readonly taskSync: TaskSynchronizationService
+  ) {}
 
   async executeTask(taskId: string, tenantId: string) {
-    const execution = await this.drizzle.taskExecution.create({
-      data: { taskId, status: 'RUNNING' },
+    const execution = await this.prisma.taskExecution.create({
+      data: { taskId, status: 'RUNNING' }
     });
 
     // Sync task execution state
-    await this.taskSync.syncTaskExecution(
-      {
-        id: execution.id,
-        taskId,
-        status: 'RUNNING',
-        startedAt: new Date(),
-      },
-      tenantId
-    );
+    await this.taskSync.syncTaskExecution({
+      id: execution.id,
+      taskId,
+      status: 'RUNNING',
+      startedAt: new Date()
+    }, tenantId);
 
     return execution;
   }
@@ -299,8 +290,7 @@ export class TaskService {
 
 #### 3. WebSocket Integration
 
-The sync-core automatically integrates with your WebSocket service via
-dependency injection:
+The sync-core automatically integrates with your WebSocket service via dependency injection:
 
 ```typescript
 // The IWebSocketService interface is injected
@@ -309,7 +299,6 @@ private readonly wsService: IWebSocketService
 ```
 
 Your WebSocket service should implement:
-
 ```typescript
 interface IWebSocketService {
   sendMessage(userId: string, message: WebSocketMessage): Promise<boolean>;
@@ -400,13 +389,13 @@ const redisConfig = {
     nodes: [
       { host: 'redis-1', port: 6379 },
       { host: 'redis-2', port: 6379 },
-      { host: 'redis-3', port: 6379 },
+      { host: 'redis-3', port: 6379 }
     ],
     options: {
       maxRedirections: 16,
-      retryDelayOnFailover: 100,
-    },
-  },
+      retryDelayOnFailover: 100
+    }
+  }
 };
 ```
 
@@ -443,14 +432,14 @@ const syncCounter = new Counter({
   name: 'sync_operations_total',
   help: 'Total sync operations',
   labelNames: ['type', 'status'],
-  registers: [register],
+  registers: [register]
 });
 
 const syncLatency = new Histogram({
   name: 'sync_latency_seconds',
   help: 'Sync operation latency',
   buckets: [0.01, 0.05, 0.1, 0.5, 1, 2, 5],
-  registers: [register],
+  registers: [register]
 });
 ```
 
@@ -517,28 +506,28 @@ spec:
         app: sync-core
     spec:
       containers:
-        - name: sync-core
-          image: tnf-sync-core:latest
-          ports:
-            - containerPort: 3000
-          env:
-            - name: REDIS_URL
-              valueFrom:
-                secretKeyRef:
-                  name: redis-credentials
-                  key: url
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: url
-          resources:
-            requests:
-              memory: '256Mi'
-              cpu: '250m'
-            limits:
-              memory: '512Mi'
-              cpu: '500m'
+      - name: sync-core
+        image: tnf-sync-core:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: redis-credentials
+              key: url
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: url
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
 ```
 
 ```bash
@@ -574,7 +563,6 @@ async healthCheck() {
 ### Metrics Dashboard
 
 Access metrics via:
-
 ```typescript
 const metrics = syncOrchestrator.getMetrics();
 const tenants = syncOrchestrator.getActiveTenants();
@@ -584,7 +572,6 @@ const operations = await syncOrchestrator.getActiveOperations();
 ### Alerting
 
 Set up alerts for:
-
 - High conflict rate (> 5%)
 - Low success rate (< 95%)
 - High sync latency (> 500ms)
@@ -633,7 +620,6 @@ cd deployment/load-testing
 **Symptoms**: Slow synchronization across instances
 
 **Solutions**:
-
 - Check Redis connectivity and latency
 - Monitor network latency between services
 - Review batch size configuration
@@ -645,7 +631,6 @@ cd deployment/load-testing
 **Symptoms**: High conflict rate in metrics
 
 **Solutions**:
-
 - Review concurrent access patterns
 - Implement application-level locking
 - Adjust debouncing settings
@@ -657,7 +642,6 @@ cd deployment/load-testing
 **Symptoms**: High memory consumption
 
 **Solutions**:
-
 - Adjust cache size limits
 - Monitor cache hit rates
 - Review resource cleanup
@@ -669,7 +653,6 @@ cd deployment/load-testing
 **Symptoms**: Clients not receiving updates
 
 **Solutions**:
-
 - Check WebSocket service health
 - Verify client connections
 - Review error logs

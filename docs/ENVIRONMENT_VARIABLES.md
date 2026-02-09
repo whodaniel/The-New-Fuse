@@ -198,28 +198,6 @@ JWT_REFRESH_SECRET=<64-character-random-string>
 
 Access token expiration time.
 
-#### Agent Security & Federation
-
-##### A2A_REQUIRE_TENANT_SCOPE
-
-**Type:** Boolean **Required:** No **Default:** `true`
-
-Require tenant/org/agency scope on A2A subscriptions outside system/broadcast channels.
-
-```bash
-A2A_REQUIRE_TENANT_SCOPE=true
-```
-
-##### AGENT_INVITE_REQUIRED
-
-**Type:** Boolean **Required:** No **Default:** `true`
-
-Require invitation codes for agent registration and orchestrator onboarding.
-
-```bash
-AGENT_INVITE_REQUIRED=true
-```
-
 **Format:** `<number><unit>` where unit is `s` (seconds), `m` (minutes), `h`
 (hours), `d` (days)
 
@@ -528,28 +506,6 @@ Backend service port.
 PORT=5000
 ```
 
-#### OpenClaw / Skill Security
-
-##### OPENCLAW_SKILL_SIGNATURE_REQUIRED
-
-**Type:** Boolean **Required:** No **Default:** `false`
-
-Require skill signature verification before execution.
-
-```bash
-OPENCLAW_SKILL_SIGNATURE_REQUIRED=true
-```
-
-##### OPENCLAW_SKILL_SIGNING_KEY
-
-**Type:** String **Required:** Conditional (if signature required) **Security:** SECRET
-
-HMAC secret used to verify OpenClaw skill signatures.
-
-```bash
-OPENCLAW_SKILL_SIGNING_KEY=your-hmac-secret
-```
-
 #### Authentication
 
 ##### GOOGLE_CLIENT_ID
@@ -592,7 +548,7 @@ GOOGLE_CALLBACK_URL=https://app.thenewfuse.com/auth/google/callback
 AWS access key for S3 operations.
 
 ```bash
-AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
 ```
 
 ##### AWS_SECRET_ACCESS_KEY

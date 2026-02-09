@@ -4,7 +4,10 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/__tests__'],
   testMatch: ['**/__tests__/**/*.test.ts'],
-  collectCoverageFrom: ['src/drizzle/repositories/**/*.ts', '!src/drizzle/repositories/index.ts'],
+  collectCoverageFrom: [
+    'src/drizzle/repositories/**/*.ts',
+    '!src/drizzle/repositories/index.ts',
+  ],
   coverageThresholds: {
     global: {
       lines: 90,

@@ -1,81 +1,58 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  and,
-  DatabaseService,
-  desc,
-  eq,
-  gte,
-  isNotNull,
-  isNull,
-  lt,
-  sql,
-  syncConflicts,
-  syncStates,
-  type SyncConflict,
-  type SyncState,
-} from '@the-new-fuse/database';
-import { SyncConflictData, SyncResourceType, SyncStateData } from '../types';
+import { Prisma, PrismaClient, SyncState, SyncConflict } from '@the-new-fuse/database/generated/prisma';
+import { SyncStateData, SyncConflictData, SyncResourceType } from '../types';
 
 /**
  * Database service for sync operations
- * Integrates with the Drizzle database layer
+ * Integrates with existing Prisma database infrastructure
  */
 @Injectable()
 export class SyncDatabaseService {
   private readonly logger = new Logger(SyncDatabaseService.name);
 
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly prisma: PrismaClient) {}
 
   /**
    * Create or update sync state for a resource
    */
   async upsertSyncState(data: Omit<SyncStateData, 'id'>): Promise<SyncState> {
     try {
-      const tenantClause = data.tenantId
-        ? eq(syncStates.tenantId, data.tenantId)
-        : isNull(syncStates.tenantId);
-
-      const [existing] = await this.db.client
-        .select()
-        .from(syncStates)
-        .where(
-          and(
-            eq(syncStates.resourceType, data.resourceType),
-            eq(syncStates.resourceId, data.resourceId),
-            tenantClause
-          )
-        )
-        .limit(1);
+      // First try to find existing record
+      const existing = await this.prisma.syncState.findFirst({
+        where: {
+          resourceType: data.resourceType,
+          resourceId: data.resourceId,
+          tenantId: data.tenantId || null,
+        },
+      });
 
       if (existing) {
-        const [updated] = await this.db.client
-          .update(syncStates)
-          .set({
+        // Update existing record
+        return await this.prisma.syncState.update({
+          where: { id: existing.id },
+          data: {
             version: data.version,
             checksum: data.checksum,
             lastSync: data.lastSync,
             syncedBy: data.syncedBy,
-            metadata: (data.metadata ?? {}) as any,
-          })
-          .where(eq(syncStates.id, existing.id))
-          .returning();
-        return updated;
+            metadata: (data.metadata ?? Prisma.DbNull) as any,
+          },
+        });
+      } else {
+        // Create new record
+        return await this.prisma.syncState.create({
+          data: {
+            resourceType: data.resourceType,
+            resourceId: data.resourceId,
+            tenantId: data.tenantId || null,
+            version: data.version,
+            checksum: data.checksum,
+            lastSync: data.lastSync,
+            syncedBy: data.syncedBy,
+            metadata: (data.metadata ?? Prisma.DbNull) as any,
+          },
+        });
       }
-
-      const [created] = await this.db.client
-        .insert(syncStates)
-        .values({
-          resourceType: data.resourceType,
-          resourceId: data.resourceId,
-          tenantId: data.tenantId || null,
-          version: data.version,
-          checksum: data.checksum,
-          lastSync: data.lastSync,
-          syncedBy: data.syncedBy,
-          metadata: (data.metadata ?? {}) as any,
-        })
-        .returning();
-      return created;
     } catch (error) {
       this.logger.error('Failed to upsert sync state', { data, error });
       throw error;
@@ -91,13 +68,13 @@ export class SyncDatabaseService {
     tenantId?: string
   ): Promise<SyncState | null> {
     try {
-      const tenantClause = tenantId ? eq(syncStates.tenantId, tenantId) : isNull(syncStates.tenantId);
-      const [state] = await this.db.client
-        .select()
-        .from(syncStates)
-        .where(and(eq(syncStates.resourceType, resourceType), eq(syncStates.resourceId, resourceId), tenantClause))
-        .limit(1);
-      return state ?? null;
+      return await this.prisma.syncState.findFirst({
+        where: {
+          resourceType,
+          resourceId,
+          tenantId: tenantId || null,
+        },
+      });
     } catch (error) {
       this.logger.error('Failed to get sync state', { resourceType, resourceId, tenantId, error });
       throw error;
@@ -109,11 +86,10 @@ export class SyncDatabaseService {
    */
   async getTenantSyncStates(tenantId: string): Promise<SyncState[]> {
     try {
-      return await this.db.client
-        .select()
-        .from(syncStates)
-        .where(eq(syncStates.tenantId, tenantId))
-        .orderBy(desc(syncStates.lastSync));
+      return await this.prisma.syncState.findMany({
+        where: { tenantId },
+        orderBy: { lastSync: 'desc' },
+      });
     } catch (error) {
       this.logger.error('Failed to get tenant sync states', { tenantId, error });
       throw error;
@@ -128,11 +104,13 @@ export class SyncDatabaseService {
     tenantId?: string
   ): Promise<SyncState[]> {
     try {
-      const whereClause = tenantId
-        ? and(eq(syncStates.resourceType, resourceType), eq(syncStates.tenantId, tenantId))
-        : eq(syncStates.resourceType, resourceType);
-
-      return await this.db.client.select().from(syncStates).where(whereClause).orderBy(desc(syncStates.lastSync));
+      return await this.prisma.syncState.findMany({
+        where: {
+          resourceType,
+          ...(tenantId && { tenantId }),
+        },
+        orderBy: { lastSync: 'desc' },
+      });
     } catch (error) {
       this.logger.error('Failed to get sync states by type', { resourceType, tenantId, error });
       throw error;
@@ -148,17 +126,21 @@ export class SyncDatabaseService {
     tenantId?: string
   ): Promise<void> {
     try {
-      const tenantClause = tenantId ? eq(syncStates.tenantId, tenantId) : isNull(syncStates.tenantId);
-      await this.db.client
-        .delete(syncStates)
-        .where(and(eq(syncStates.resourceType, resourceType), eq(syncStates.resourceId, resourceId), tenantClause));
-    } catch (error) {
-      this.logger.error('Failed to delete sync state', {
-        resourceType,
-        resourceId,
-        tenantId,
-        error,
+      const existing = await this.prisma.syncState.findFirst({
+        where: {
+          resourceType,
+          resourceId,
+          tenantId: tenantId || null,
+        },
       });
+
+      if (existing) {
+        await this.prisma.syncState.delete({
+          where: { id: existing.id },
+        });
+      }
+    } catch (error) {
+      this.logger.error('Failed to delete sync state', { resourceType, resourceId, tenantId, error });
       throw error;
     }
   }
@@ -166,13 +148,10 @@ export class SyncDatabaseService {
   /**
    * Create a sync conflict record
    */
-  async createSyncConflict(
-    data: Omit<SyncConflictData, 'id' | 'createdAt'>
-  ): Promise<SyncConflict> {
+  async createSyncConflict(data: Omit<SyncConflictData, 'id' | 'createdAt'>): Promise<SyncConflict> {
     try {
-      const [created] = await this.db.client
-        .insert(syncConflicts)
-        .values({
+      return await this.prisma.syncConflict.create({
+        data: {
           resourceType: data.resourceType,
           resourceId: data.resourceId,
           tenantId: data.tenantId || null,
@@ -182,9 +161,8 @@ export class SyncDatabaseService {
           resolvedAt: data.resolvedAt || null,
           resolvedBy: data.resolvedBy || null,
           resolution: data.resolution || null,
-        })
-        .returning();
-      return created;
+        },
+      });
     } catch (error) {
       this.logger.error('Failed to create sync conflict', { data, error });
       throw error;
@@ -200,16 +178,14 @@ export class SyncDatabaseService {
     resolution: any
   ): Promise<SyncConflict> {
     try {
-      const [updated] = await this.db.client
-        .update(syncConflicts)
-        .set({
+      return await this.prisma.syncConflict.update({
+        where: { id: conflictId },
+        data: {
           resolvedAt: new Date(),
           resolvedBy,
           resolution,
-        })
-        .where(eq(syncConflicts.id, conflictId))
-        .returning();
-      return updated;
+        },
+      });
     } catch (error) {
       this.logger.error('Failed to resolve sync conflict', { conflictId, resolvedBy, error });
       throw error;
@@ -221,15 +197,13 @@ export class SyncDatabaseService {
    */
   async getPendingConflicts(tenantId?: string): Promise<SyncConflict[]> {
     try {
-      const whereClause = tenantId
-        ? and(isNull(syncConflicts.resolvedAt), eq(syncConflicts.tenantId, tenantId))
-        : isNull(syncConflicts.resolvedAt);
-
-      return await this.db.client
-        .select()
-        .from(syncConflicts)
-        .where(whereClause)
-        .orderBy(desc(syncConflicts.createdAt));
+      return await this.prisma.syncConflict.findMany({
+        where: {
+          resolvedAt: null,
+          ...(tenantId && { tenantId }),
+        },
+        orderBy: { createdAt: 'desc' },
+      });
     } catch (error) {
       this.logger.error('Failed to get pending conflicts', { tenantId, error });
       throw error;
@@ -245,26 +219,16 @@ export class SyncDatabaseService {
     tenantId?: string
   ): Promise<SyncConflict[]> {
     try {
-      const whereClause = tenantId
-        ? and(
-            eq(syncConflicts.resourceType, resourceType),
-            eq(syncConflicts.resourceId, resourceId),
-            eq(syncConflicts.tenantId, tenantId)
-          )
-        : and(eq(syncConflicts.resourceType, resourceType), eq(syncConflicts.resourceId, resourceId));
-
-      return await this.db.client
-        .select()
-        .from(syncConflicts)
-        .where(whereClause)
-        .orderBy(desc(syncConflicts.createdAt));
-    } catch (error) {
-      this.logger.error('Failed to get resource conflicts', {
-        resourceType,
-        resourceId,
-        tenantId,
-        error,
+      return await this.prisma.syncConflict.findMany({
+        where: {
+          resourceType,
+          resourceId,
+          ...(tenantId && { tenantId }),
+        },
+        orderBy: { createdAt: 'desc' },
       });
+    } catch (error) {
+      this.logger.error('Failed to get resource conflicts', { resourceType, resourceId, tenantId, error });
       throw error;
     }
   }
@@ -277,14 +241,17 @@ export class SyncDatabaseService {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
 
-      const deleted = await this.db.client
-        .delete(syncConflicts)
-        .where(and(isNotNull(syncConflicts.resolvedAt), lt(syncConflicts.resolvedAt, cutoffDate)))
-        .returning({ id: syncConflicts.id });
+      const result = await this.prisma.syncConflict.deleteMany({
+        where: {
+          resolvedAt: {
+            not: null,
+            lt: cutoffDate,
+          },
+        },
+      });
 
-      const deletedCount = deleted.length;
-      this.logger.log(`Cleaned up ${deletedCount} resolved conflicts older than ${olderThanDays} days`);
-      return deletedCount;
+      this.logger.log(`Cleaned up ${result.count} resolved conflicts older than ${olderThanDays} days`);
+      return result.count;
     } catch (error) {
       this.logger.error('Failed to cleanup resolved conflicts', { olderThanDays, error });
       throw error;
@@ -296,34 +263,35 @@ export class SyncDatabaseService {
    */
   async getSyncStatistics(tenantId?: string) {
     try {
-      const syncStateWhere = tenantId ? eq(syncStates.tenantId, tenantId) : undefined;
-      const conflictTenantWhere = tenantId ? eq(syncConflicts.tenantId, tenantId) : undefined;
-
-      const [totalSyncStates, pendingConflicts, resolvedConflicts, recentSyncs] = await Promise.all([
-        this.db.client
-          .select({ count: sql<number>`cast(count(*) as integer)` })
-          .from(syncStates)
-          .where(syncStateWhere)
-          .then((rows) => rows[0]?.count ?? 0),
-        this.db.client
-          .select({ count: sql<number>`cast(count(*) as integer)` })
-          .from(syncConflicts)
-          .where(conflictTenantWhere ? and(isNull(syncConflicts.resolvedAt), conflictTenantWhere) : isNull(syncConflicts.resolvedAt))
-          .then((rows) => rows[0]?.count ?? 0),
-        this.db.client
-          .select({ count: sql<number>`cast(count(*) as integer)` })
-          .from(syncConflicts)
-          .where(conflictTenantWhere ? and(isNotNull(syncConflicts.resolvedAt), conflictTenantWhere) : isNotNull(syncConflicts.resolvedAt))
-          .then((rows) => rows[0]?.count ?? 0),
-        this.db.client
-          .select({ count: sql<number>`cast(count(*) as integer)` })
-          .from(syncStates)
-          .where(
-            syncStateWhere
-              ? and(syncStateWhere, gte(syncStates.lastSync, new Date(Date.now() - 24 * 60 * 60 * 1000)))
-              : gte(syncStates.lastSync, new Date(Date.now() - 24 * 60 * 60 * 1000))
-          )
-          .then((rows) => rows[0]?.count ?? 0),
+      const [
+        totalSyncStates,
+        pendingConflicts,
+        resolvedConflicts,
+        recentSyncs,
+      ] = await Promise.all([
+        this.prisma.syncState.count({
+          where: tenantId ? { tenantId } : {},
+        }),
+        this.prisma.syncConflict.count({
+          where: {
+            resolvedAt: null,
+            ...(tenantId && { tenantId }),
+          },
+        }),
+        this.prisma.syncConflict.count({
+          where: {
+            resolvedAt: { not: null },
+            ...(tenantId && { tenantId }),
+          },
+        }),
+        this.prisma.syncState.count({
+          where: {
+            lastSync: {
+              gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
+            },
+            ...(tenantId && { tenantId }),
+          },
+        }),
       ]);
 
       return {
@@ -331,8 +299,7 @@ export class SyncDatabaseService {
         pendingConflicts,
         resolvedConflicts,
         recentSyncs,
-        conflictRate:
-          totalSyncStates > 0 ? (pendingConflicts + resolvedConflicts) / totalSyncStates : 0,
+        conflictRate: totalSyncStates > 0 ? (pendingConflicts + resolvedConflicts) / totalSyncStates : 0,
       };
     } catch (error) {
       this.logger.error('Failed to get sync statistics', { tenantId, error });
@@ -346,7 +313,7 @@ export class SyncDatabaseService {
   async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy'; latency: number }> {
     const startTime = Date.now();
     try {
-      await this.db.client.execute(sql`SELECT 1`);
+      await this.prisma.$queryRaw`SELECT 1`;
       const latency = Date.now() - startTime;
       return { status: 'healthy', latency };
     } catch (error) {

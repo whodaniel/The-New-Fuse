@@ -23,7 +23,6 @@ export class Logger {
 
 // Stub decorators (return identity function)
 export const Injectable = () => (target: unknown) => target;
-export const Global = () => (target: unknown) => target;
 export const Module = () => (target: unknown) => target;
 export const Controller = () => (target: unknown) => target;
 export const Get = () => (_target: unknown, _key?: string) => {};

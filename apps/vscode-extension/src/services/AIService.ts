@@ -124,7 +124,6 @@ export class AIService {
       'openai', // GPT-5.2
       'anthropic', // Claude Opus 4.5
       'gemini', // Gemini 3 Pro
-      'sambanova', // SambaNova Cloud (Llama 3.1 405B)
       'deepseek', // DeepSeek-V3.2-Speciale
       'qwen', // Qwen3-Coder
       'openrouter',
@@ -173,56 +172,19 @@ export class AIService {
   }
 
   /**
-   * Send a chat request to the active provider with automatic failover redundancy
+   * Send a chat request to the active provider
    */
   async chat(request: LLMRequest): Promise<LLMResponse> {
-    const providersToTry: LLMProviderType[] = [this.activeProvider || 'openai'];
-
-    // Add logic to include fallback providers if configured
-    // This mirrors the redundancy system in the SaaS/Cloud environment
-    const globalSync = (await import('./GlobalSyncService.js')).GlobalSyncService.getInstance();
-    const globalConfig = await globalSync.loadGlobalConfig();
-
-    if (globalConfig?.config?.fallbackModelIds) {
-      for (const fallbackId of globalConfig.config.fallbackModelIds) {
-        const provider = fallbackId.split('/')[0] as LLMProviderType;
-        if (provider && !providersToTry.includes(provider)) {
-          providersToTry.push(provider);
-        }
-      }
-    }
-
-    let lastError: Error | null = null;
-
-    for (const provider of providersToTry) {
-      try {
-        if (!(await this.checkProvider(provider))) continue;
-
-        return await this.executeChat(provider, request);
-      } catch (error) {
-        log.warn(`Chat failed on provider ${provider}, attempting failover...`, error);
-        lastError = error as Error;
-        // Continue to next provider
-      }
-    }
-
-    throw lastError || new Error('All providers in the intelligence network failed.');
-  }
-
-  /**
-   * Internal execution of chat request
-   */
-  private async executeChat(provider: LLMProviderType, request: LLMRequest): Promise<LLMResponse> {
-    if (!provider) {
-      throw new Error('No AI provider specified.');
+    if (!this.activeProvider) {
+      throw new Error('No AI provider configured. Please set up an API key.');
     }
 
     const config = ConfigManager.getInstance();
-    const providerConfig = config.getLLMConfig(provider);
-    const apiKey = await config.getApiKey(provider);
+    const providerConfig = config.getLLMConfig(this.activeProvider);
+    const apiKey = await config.getApiKey(this.activeProvider);
 
-    if (!apiKey && provider !== 'copilot') {
-      throw new Error(`API key not configured for ${provider}`);
+    if (!apiKey && this.activeProvider !== 'copilot') {
+      throw new Error(`API key not configured for ${this.activeProvider}`);
     }
 
     const requestId = generateId();
@@ -230,13 +192,13 @@ export class AIService {
     this.abortControllers.set(requestId, abortController);
 
     try {
-      log.debug(`Chat request to ${provider}`, {
+      log.debug(`Chat request to ${this.activeProvider}`, {
         model: request.model || providerConfig.model,
         messageCount: request.messages.length,
       });
 
       const response = await this.sendRequest(
-        provider,
+        this.activeProvider,
         { ...providerConfig, apiKey },
         request,
         abortController.signal
@@ -287,7 +249,6 @@ export class AIService {
       case 'openai':
       case 'openrouter':
       case 'litellm':
-      case 'sambanova':
       case 'deepseek': // DeepSeek uses OpenAI-compatible API
       case 'qwen': // Qwen/DashScope uses OpenAI-compatible API
         return this.sendOpenAICompatibleRequest(config, request, signal);
@@ -459,13 +420,9 @@ export class AIService {
       stream: enableStreaming,
     };
 
-    // Add tools if provided, with defer_loading support
+    // Add tools if provided
     if (request.tools && request.tools.length > 0) {
-      requestBody.tools = request.tools.map((tool) => ({
-        ...tool,
-        // Include defer_loading flag for Tool Discovery Protocol
-        defer_loading: tool.defer_loading ?? false,
-      }));
+      requestBody.tools = request.tools;
     }
 
     // Add extended thinking if enabled (Claude 3.7+)
@@ -476,22 +433,13 @@ export class AIService {
       };
     }
 
-    // Build headers with optional beta features
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'x-api-key': config.apiKey || '',
-      'anthropic-version': '2023-06-01',
-    };
-
-    // Add beta headers when Tool Search Protocol is enabled
-    // See: https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool
-    if (request.enableToolSearch) {
-      headers['anthropic-beta'] = 'advanced-tool-use-2025-11-20,mcp-client-2025-11-20';
-    }
-
     const response = await fetch(`${config.baseUrl}/messages`, {
       method: 'POST',
-      headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': config.apiKey || '',
+        'anthropic-version': '2023-06-01',
+      },
       body: JSON.stringify(requestBody),
       signal,
     });
@@ -508,47 +456,23 @@ export class AIService {
 
     // Handle non-streaming response
     const data = (await response.json()) as {
-      content: Array<{
-        type: string;
-        text?: string;
-        name?: string;
-        input?: any;
-        id?: string;
-        tool_use_id?: string;
-        content?: any;
-      }>;
+      content: Array<{ type: string; text?: string; name?: string; input?: any; id?: string }>;
       model: string;
-      usage?: { input_tokens: number; output_tokens: number; server_tool_use?: any };
+      usage?: { input_tokens: number; output_tokens: number };
     };
 
-    // Extract text content, tool uses, and tool search results
+    // Extract text content and tool uses
     let textContent = '';
     const toolUses: any[] = [];
-    const toolSearchResults: any[] = [];
 
     for (const block of data.content) {
       if (block.type === 'text' && block.text) {
         textContent += block.text;
       } else if (block.type === 'tool_use') {
-        // Standard tool use
         toolUses.push({
           id: block.id,
           name: block.name,
           input: block.input,
-        });
-      } else if (block.type === 'server_tool_use') {
-        // Tool Discovery Protocol: server-side tool search invocation
-        toolUses.push({
-          id: block.id,
-          name: block.name,
-          input: block.input,
-          isServerToolUse: true,
-        });
-      } else if (block.type === 'tool_search_tool_result') {
-        // Tool Discovery Protocol: search results with tool references
-        toolSearchResults.push({
-          tool_use_id: block.tool_use_id,
-          content: block.content,
         });
       }
     }
@@ -564,8 +488,6 @@ export class AIService {
           }
         : undefined,
       toolCalls: toolUses.length > 0 ? toolUses : undefined,
-      // Tool Discovery Protocol: include search results for tool_reference expansion
-      toolSearchResults: toolSearchResults.length > 0 ? toolSearchResults : undefined,
     };
   }
 

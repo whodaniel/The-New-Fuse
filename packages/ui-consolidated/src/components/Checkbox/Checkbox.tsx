@@ -1,5 +1,5 @@
-import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils';
 
 // Generate unique IDs for checkbox components
@@ -29,8 +29,7 @@ export const checkboxVariants = cva(
  * Checkbox component props
  */
 export interface CheckboxProps
-  extends
-    Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
     VariantProps<typeof checkboxVariants> {
   /**
    * Label for the checkbox
@@ -69,14 +68,14 @@ export interface CheckboxProps
  * <Checkbox label="Accept terms and conditions" />
  *
  * // With helper text
- * <Checkbox
- *   label="Subscribe to newsletter"
+ * <Checkbox 
+ *   label="Subscribe to newsletter" 
  *   helperText="We'll send you weekly updates"
  * />
  *
  * // With error
- * <Checkbox
- *   label="Accept terms"
+ * <Checkbox 
+ *   label="Accept terms" 
  *   error="You must accept the terms to continue"
  * />
  *
@@ -84,22 +83,19 @@ export interface CheckboxProps
  * <Checkbox size="lg" label="Large checkbox" />
  */
 const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
-  (
-    {
-      className,
-      size,
-      label,
-      helperText,
-      error,
-      containerClassName,
-      labelClassName,
-      helperTextClassName,
-      ...props
-    },
-    ref
-  ) => {
+  ({
+    className,
+    size,
+    label,
+    helperText,
+    error,
+    containerClassName,
+    labelClassName,
+    helperTextClassName,
+    ...props
+  }, ref) => {
     const id = React.useMemo(() => generateId(), []);
-
+    
     return (
       <div className={cn('flex flex-col space-y-2', containerClassName)}>
         <div className="flex items-center space-x-2">

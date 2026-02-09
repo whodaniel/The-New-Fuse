@@ -20,15 +20,12 @@
   overflow: hidden;
   border-right: 2px solid;
   white-space: nowrap;
-  animation:
-    typing 3.5s steps(40, end),
-    blink 0.75s step-end infinite;
+  animation: typing 3.5s steps(40, end), blink 0.75s step-end infinite;
 }
 
 /* Gradient animation for backgrounds */
 @keyframes gradient-shift {
-  0%,
-  100% {
+  0%, 100% {
     background-position: 0% 50%;
   }
   50% {
@@ -43,8 +40,7 @@
 
 /* Pulse glow effect */
 @keyframes pulse-glow {
-  0%,
-  100% {
+  0%, 100% {
     box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
   }
   50% {
@@ -58,8 +54,7 @@
 
 /* Floating animation */
 @keyframes float {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0px);
   }
   50% {
@@ -82,14 +77,26 @@
 }
 
 .animate-shimmer {
-  background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+  background: linear-gradient(
+    to right,
+    #f6f7f8 0%,
+    #edeef1 20%,
+    #f6f7f8 40%,
+    #f6f7f8 100%
+  );
   background-size: 1000px 100%;
   animation: shimmer 2s linear infinite;
 }
 
 /* Dark mode shimmer */
 .dark .animate-shimmer {
-  background: linear-gradient(to right, #1f2937 0%, #374151 20%, #1f2937 40%, #1f2937 100%);
+  background: linear-gradient(
+    to right,
+    #1f2937 0%,
+    #374151 20%,
+    #1f2937 40%,
+    #1f2937 100%
+  );
 }
 
 /* Scale up on hover */
@@ -104,8 +111,7 @@
 
 /* Bounce effect */
 @keyframes bounce-subtle {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0);
   }
   50% {

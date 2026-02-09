@@ -12,7 +12,7 @@ import {
 import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
 import { CreateAgentDto, UpdateAgentDto } from "@the-new-fuse/types";
 import { AgentService } from '../services/agentService.js';
-import { DatabaseService } from '../lib/drizzle.service.tsx';
+import { PrismaService } from '../lib/prisma.service.tsx';
 import { ConfigService } from "@nestjs/config";
 import { Request } from 'express';
 
@@ -22,10 +22,10 @@ export class AgentController {
   private readonly agentService: AgentService;
 
   constructor(
-    private readonly drizzleService: DatabaseService,
+    private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
   ) {
-    this.agentService = new AgentService(drizzleService, configService);
+    this.agentService = new AgentService(prismaService, configService);
   }
 
   @Post()

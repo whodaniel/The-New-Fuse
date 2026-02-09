@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
-import { A2APriority } from '@the-new-fuse/a2a-core';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { v4 as uuidv4 } from 'uuid';
-import { MessageSerializer } from '../serializers/message-serializer';
+import { A2APriority } from '@the-new-fuse/a2a-core';
 import { BroadcastMessage, CoordinationChannel, MessageHandler } from '../types/coordination.types';
+import { MessageSerializer } from '../serializers/message-serializer';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Broadcast manager for multi-agent coordination
@@ -54,9 +54,7 @@ export class BroadcastManager {
     await this.redisService.publish(fullChannel, this.serializer.serialize(message));
 
     const topicSuffix = message.topic ? ':' + message.topic : '';
-    this.logger.debug(
-      'Broadcast sent from ' + fromAgent + ' on channel ' + message.channel + topicSuffix
-    );
+    this.logger.debug('Broadcast sent from ' + fromAgent + ' on channel ' + message.channel + topicSuffix);
   }
 
   /**
@@ -67,7 +65,9 @@ export class BroadcastManager {
     handler: MessageHandler,
     topic?: string
   ): Promise<void> {
-    const fullChannel = topic ? this.keyPrefix + channel + ':' + topic : this.keyPrefix + channel;
+    const fullChannel = topic 
+      ? this.keyPrefix + channel + ':' + topic
+      : this.keyPrefix + channel;
 
     if (!this.handlers.has(fullChannel)) {
       this.handlers.set(fullChannel, new Set());
@@ -76,11 +76,12 @@ export class BroadcastManager {
 
     if (!this.subscriptions.has(fullChannel)) {
       await this.redisService.subscribe(fullChannel, async (message) => {
-        const msgContent =
-          typeof message.message === 'string' ? message.message : JSON.stringify(message.message);
+        const msgContent = typeof message.message === 'string' 
+          ? message.message 
+          : JSON.stringify(message.message);
         await this.handleMessage(fullChannel, msgContent);
       });
-
+      
       this.subscriptions.add(fullChannel);
       this.logger.log('Subscribed to channel: ' + fullChannel);
     }
@@ -89,7 +90,10 @@ export class BroadcastManager {
   /**
    * Subscribe to pattern-based channels
    */
-  async subscribePattern(channelPattern: string, handler: MessageHandler): Promise<void> {
+  async subscribePattern(
+    channelPattern: string,
+    handler: MessageHandler
+  ): Promise<void> {
     const fullPattern = this.keyPrefix + channelPattern;
 
     if (!this.handlers.has(fullPattern)) {
@@ -99,24 +103,27 @@ export class BroadcastManager {
 
     if (!this.subscriptions.has(fullPattern)) {
       await this.redisService.psubscribe(fullPattern, async (message) => {
-        const msgContent =
-          typeof message.message === 'string' ? message.message : JSON.stringify(message.message);
+        const msgContent = typeof message.message === 'string' 
+          ? message.message 
+          : JSON.stringify(message.message);
         await this.handleMessage(message.channel, msgContent);
       });
-
+      
       this.subscriptions.add(fullPattern);
       this.logger.log('Subscribed to pattern: ' + fullPattern);
     }
   }
 
   async unsubscribe(channel: CoordinationChannel, topic?: string): Promise<void> {
-    const fullChannel = topic ? this.keyPrefix + channel + ':' + topic : this.keyPrefix + channel;
+    const fullChannel = topic 
+      ? this.keyPrefix + channel + ':' + topic
+      : this.keyPrefix + channel;
 
     if (this.subscriptions.has(fullChannel)) {
       await this.redisService.unsubscribe(fullChannel);
       this.subscriptions.delete(fullChannel);
       this.handlers.delete(fullChannel);
-
+      
       this.logger.log('Unsubscribed from channel: ' + fullChannel);
     }
   }
@@ -128,7 +135,7 @@ export class BroadcastManager {
       await this.redisService.punsubscribe(fullPattern);
       this.subscriptions.delete(fullPattern);
       this.handlers.delete(fullPattern);
-
+      
       this.logger.log('Unsubscribed from pattern: ' + fullPattern);
     }
   }
@@ -148,7 +155,7 @@ export class BroadcastManager {
 
     this.subscriptions.clear();
     this.handlers.clear();
-
+    
     this.logger.log('All subscriptions cleared');
   }
 

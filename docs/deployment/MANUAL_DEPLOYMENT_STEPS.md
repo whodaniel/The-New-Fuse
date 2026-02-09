@@ -3,7 +3,6 @@
 ## Current Status
 
 ✅ **Completed**:
-
 - Railway project created: `the-new-fuse`
 - PostgreSQL database provisioned
 - API service created with environment variables
@@ -11,9 +10,7 @@
 - Code uploaded to Railway
 - Dockerfiles are ready
 
-⚠️ **Issue**: Railway's CLI doesn't trigger builds automatically when using
-`railway.toml` for multiple services in a monorepo. We need to configure each
-service in the Railway dashboard.
+⚠️ **Issue**: Railway's CLI doesn't trigger builds automatically when using `railway.toml` for multiple services in a monorepo. We need to configure each service in the Railway dashboard.
 
 ---
 
@@ -22,13 +19,11 @@ service in the Railway dashboard.
 ### Step 1: Open Your Railway Dashboard
 
 Open this URL in your browser:
-
 ```
 https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 ```
 
 You should see three services:
-
 - **Postgres** (running)
 - **api** (not deployed yet)
 - **frontend** (not deployed yet)
@@ -78,7 +73,6 @@ You should see three services:
 ### Step 4: Verify Environment Variables
 
 #### For API Service:
-
 1. Click on **api** service
 2. Go to **Variables** tab
 3. Verify these variables exist:
@@ -90,7 +84,6 @@ You should see three services:
    ```
 
 #### For Frontend Service:
-
 1. Click on **frontend** service
 2. Go to **Variables** tab
 3. Verify these variables exist:
@@ -111,7 +104,6 @@ After configuring both services:
 3. **Builds should take 10-15 minutes** for first deployment
 
 You'll see:
-
 - Dockerfile build stages
 - Dependencies installing
 - TypeScript compilation
@@ -126,8 +118,7 @@ You'll see:
 2. **Go to "Settings" tab**
 3. **Scroll to "Domains" section**
 4. **Click "Generate Domain"** if no domain exists
-5. **Copy the generated URL** (e.g.,
-   `https://api-production-xxxx.up.railway.app`)
+5. **Copy the generated URL** (e.g., `https://api-production-xxxx.up.railway.app`)
 
 ---
 
@@ -158,11 +149,9 @@ This will trigger a **redeploy** of the frontend with the API URL.
 ### Step 9: Test Your Deployment
 
 1. **Open the API URL** in your browser:
-
    ```
    https://your-api-url.railway.app/health
    ```
-
    You should see a health check response.
 
 2. **Open the Frontend URL** in your browser:
@@ -224,19 +213,16 @@ railway up --service frontend
 ## 🔍 Troubleshooting
 
 ### If builds don't start:
-
 1. Check that Dockerfile paths are correct in service settings
 2. Verify the root directory is `/` (not `apps/api` or `apps/frontend`)
 3. Try clicking "Deploy" manually in the dashboard
 
 ### If builds fail:
-
 1. Check build logs for specific errors
 2. Verify Dockerfiles are valid
 3. Check that all dependencies are in `pnpm-lock.yaml`
 
 ### If services won't start:
-
 1. Check deployment logs for runtime errors
 2. Verify environment variables are set correctly
 3. Check that DATABASE_URL points to the Postgres service
@@ -245,14 +231,14 @@ railway up --service frontend
 
 ## 📊 Expected Timeline
 
-| Step                            | Time           |
-| ------------------------------- | -------------- |
-| Configure services in dashboard | 5 min          |
-| API build                       | 10-15 min      |
-| Frontend build                  | 5-10 min       |
-| Configure frontend with API URL | 2 min          |
-| Frontend redeploy               | 5 min          |
-| **Total**                       | **~30-40 min** |
+| Step | Time |
+|------|------|
+| Configure services in dashboard | 5 min |
+| API build | 10-15 min |
+| Frontend build | 5-10 min |
+| Configure frontend with API URL | 2 min |
+| Frontend redeploy | 5 min |
+| **Total** | **~30-40 min** |
 
 ---
 
@@ -270,12 +256,9 @@ Your deployment is successful when:
 
 ## 🎉 Summary
 
-The Railway CLI uploaded your code successfully, but multi-service monorepo
-deployments in Railway work best when configured through the dashboard UI.
-Follow the steps above to complete your deployment!
+The Railway CLI uploaded your code successfully, but multi-service monorepo deployments in Railway work best when configured through the dashboard UI. Follow the steps above to complete your deployment!
 
-**Dashboard URL**:
-https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
+**Dashboard URL**: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 
 ---
 
@@ -287,5 +270,4 @@ https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 
 ---
 
-_The code is ready, Docker configuration is perfect, environment variables are
-set. You just need to configure the build settings in the Railway dashboard!_
+*The code is ready, Docker configuration is perfect, environment variables are set. You just need to configure the build settings in the Railway dashboard!*

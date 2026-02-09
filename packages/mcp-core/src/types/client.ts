@@ -2,7 +2,7 @@
  * MCP Client type definitions
  */
 
-import { AuthConfig, ConnectionStatus, TLSConfig } from '../interfaces/IMCPConnection';
+import { AuthConfig, TLSConfig, ConnectionStatus } from '../interfaces/IMCPConnection';
 import { RetryPolicy, TimeoutConfig } from './common';
 
 /**

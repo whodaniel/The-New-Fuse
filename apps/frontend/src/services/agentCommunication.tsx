@@ -14,7 +14,7 @@ interface AgentMessage {
 
 class AgentCommunicationService {
   private currentAgentId: string = 'composer';
-
+  
   constructor() {
     this.setupListeners();
   }
@@ -23,7 +23,7 @@ class AgentCommunicationService {
     // Listen for messages from the WebSocket and process them
     webSocketService.on('redis_message', (data) => {
       const { channel, message } = data;
-
+      
       // Forward the message to the appropriate event listeners
       if (channel === 'agent:broadcast') {
         webSocketService.emit('agent:broadcast', message);
@@ -48,12 +48,12 @@ class AgentCommunicationService {
     const fullMessage: AgentMessage = {
       ...message,
       senderId: this.currentAgentId,
-      timestamp: message.timestamp || new Date().toISOString(),
+      timestamp: message.timestamp || new Date().toISOString()
     };
-
+    
     webSocketService.send('redis_publish', {
       channel: 'agent:broadcast',
-      message: fullMessage,
+      message: fullMessage
     });
   }
 
@@ -65,12 +65,12 @@ class AgentCommunicationService {
       ...message,
       senderId: this.currentAgentId,
       targetAgent,
-      timestamp: message.timestamp || new Date().toISOString(),
+      timestamp: message.timestamp || new Date().toISOString()
     };
-
+    
     webSocketService.send('redis_publish', {
       channel: `agent:direct:${targetAgent}`,
-      message: fullMessage,
+      message: fullMessage
     });
   }
 
@@ -79,7 +79,7 @@ class AgentCommunicationService {
    */
   subscribeToDirectChannel() {
     webSocketService.send('redis_subscribe', {
-      channel: `agent:direct:${this.currentAgentId}`,
+      channel: `agent:direct:${this.currentAgentId}`
     });
   }
 
@@ -88,7 +88,7 @@ class AgentCommunicationService {
    */
   subscribeToBroadcastChannel() {
     webSocketService.send('redis_subscribe', {
-      channel: 'agent:broadcast',
+      channel: 'agent:broadcast'
     });
   }
 }

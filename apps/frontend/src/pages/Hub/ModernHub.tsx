@@ -3,7 +3,7 @@
  * Integrated React component for The New Fuse Browser Hub
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ModernHub.css';
 
@@ -63,10 +63,10 @@ export const ModernHub: React.FC = () => {
   useEffect(() => {
     // Check service status
     checkServiceStatus();
-
+    
     // Update metrics periodically
     const metricsInterval = setInterval(updateMetrics, 5000);
-
+    
     return () => clearInterval(metricsInterval);
   }, []);
 
@@ -89,7 +89,7 @@ export const ModernHub: React.FC = () => {
   };
 
   const updateMetrics = () => {
-    setMetrics((prev) => ({
+    setMetrics(prev => ({
       ...prev,
       activeWorkflows: prev.activeWorkflows + Math.floor(Math.random() * 3) - 1,
       completedTasks: prev.completedTasks + Math.floor(Math.random() * 5),
@@ -97,9 +97,9 @@ export const ModernHub: React.FC = () => {
   };
 
   const toggleService = (category: string, serviceName: string) => {
-    setServices((prev) => ({
+    setServices(prev => ({
       ...prev,
-      [category]: prev[category].map((service) =>
+      [category]: prev[category].map(service =>
         service.name === serviceName
           ? { ...service, status: service.status === 'active' ? 'inactive' : 'active' }
           : service
@@ -126,10 +126,10 @@ export const ModernHub: React.FC = () => {
   const openService = (serviceName: string, port?: number) => {
     const serviceUrls: Record<string, string> = {
       'Theia IDE': `http://localhost:${port || 3000}`,
-      Terminal: `http://localhost:${port || 3000}/terminal`,
+      'Terminal': `http://localhost:${port || 3000}/terminal`,
       'My Workflows': '/workflows',
-      Builder: '/workflows/builder',
-      Analytics: '/analytics',
+      'Builder': '/workflows/builder',
+      'Analytics': '/analytics',
     };
 
     const url = serviceUrls[serviceName];
@@ -144,9 +144,9 @@ export const ModernHub: React.FC = () => {
 
   const getServiceCategoryStatus = (category: string) => {
     const categoryServices = services[category];
-    const activeCount = categoryServices.filter((s) => s.status === 'active').length;
+    const activeCount = categoryServices.filter(s => s.status === 'active').length;
     const totalCount = categoryServices.length;
-
+    
     if (activeCount === totalCount) return 'active';
     if (activeCount > 0) return 'warning';
     return 'error';
@@ -226,14 +226,15 @@ export const ModernHub: React.FC = () => {
             <div key={category} className={`service-category ${category}`}>
               <div className="category-header">
                 <div className="category-title">
-                  <div className="category-icon">{getServiceCategoryIcon(category)}</div>
+                  <div className="category-icon">
+                    {getServiceCategoryIcon(category)}
+                  </div>
                   <span>{getServiceCategoryTitle(category)}</span>
                 </div>
                 <div className="category-status">
                   <div className={`status-dot ${getServiceCategoryStatus(category)}`}></div>
                   <span>
-                    {categoryServices.filter((s) => s.status === 'active').length}/
-                    {categoryServices.length} Active
+                    {categoryServices.filter(s => s.status === 'active').length}/{categoryServices.length} Active
                   </span>
                 </div>
               </div>
@@ -281,24 +282,21 @@ export const ModernHub: React.FC = () => {
               <div className="template-icon research">🔍</div>
               <h3 className="template-title">AI Research Assistant</h3>
               <p className="template-description">
-                Automated research workflow that gathers information, analyzes data, and generates
-                comprehensive reports.
+                Automated research workflow that gathers information, analyzes data, and generates comprehensive reports.
               </p>
             </div>
             <div className="template-card" onClick={() => useTemplate('content-creation')}>
               <div className="template-icon content">✍️</div>
               <h3 className="template-title">Content Creation Pipeline</h3>
               <p className="template-description">
-                End-to-end content creation from ideation to publication with AI-powered writing and
-                editing.
+                End-to-end content creation from ideation to publication with AI-powered writing and editing.
               </p>
             </div>
             <div className="template-card" onClick={() => useTemplate('data-processing')}>
               <div className="template-icon data">📊</div>
               <h3 className="template-title">Data Processing Workflow</h3>
               <p className="template-description">
-                Automated data ingestion, cleaning, analysis, and visualization with intelligent
-                insights.
+                Automated data ingestion, cleaning, analysis, and visualization with intelligent insights.
               </p>
             </div>
           </div>

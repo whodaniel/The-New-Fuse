@@ -1,11 +1,9 @@
 # Complete Railway Deployment Instructions
 
 ## Current Status
-
 - **Project ID**: `041cee9d-8648-4074-b5a6-0eae436de1d1`
 - **Environment ID**: `f706eaae-de9e-4a9b-a970-944dd4a6be41`
-- **Project URL**:
-  https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
+- **Project URL**: https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
 
 ## Services to Deploy
 
@@ -15,7 +13,6 @@
 4. **API Gateway** (`apps/api-gateway`) - Port 3002
 
 All services have:
-
 - ✅ Dockerfile configured
 - ✅ railway.toml configured
 - ✅ Health checks configured
@@ -71,7 +68,6 @@ cd ../..
 ```
 
 Or use the automated script:
-
 ```bash
 ./deploy-all-services.sh
 ```
@@ -106,7 +102,6 @@ If you want Railway to auto-detect and deploy all services at once:
 After deployment, configure these variables in the Railway Dashboard:
 
 ### API Service
-
 ```env
 NODE_ENV=production
 PORT=3001
@@ -116,7 +111,6 @@ JWT_SECRET=<generate with: openssl rand -base64 32>
 ```
 
 ### Backend Service
-
 ```env
 NODE_ENV=production
 PORT=3004
@@ -125,7 +119,6 @@ REDIS_URL=${{Redis.REDIS_URL}}
 ```
 
 ### API Gateway Service
-
 ```env
 NODE_ENV=production
 PORT=3002
@@ -134,7 +127,6 @@ BACKEND_URL=${{backend.RAILWAY_PRIVATE_DOMAIN}}:3004
 ```
 
 ### Frontend Service
-
 ```env
 NODE_ENV=production
 PORT=3000
@@ -158,7 +150,6 @@ If not already added:
 ## Deployment Monitoring
 
 ### Check Build Status
-
 ```bash
 # View API logs
 railway logs --service api
@@ -174,7 +165,6 @@ railway logs --service frontend
 ```
 
 ### Open Services
-
 ```bash
 # Open Railway dashboard
 railway open
@@ -187,7 +177,6 @@ railway service --service frontend
 ### Health Checks
 
 All services have health endpoints:
-
 - API: `https://<api-url>/health`
 - Backend: `https://<backend-url>/health`
 - API Gateway: `https://<api-gateway-url>/health`
@@ -195,15 +184,15 @@ All services have health endpoints:
 
 ## Expected Timeline
 
-| Task                            | Duration          |
-| ------------------------------- | ----------------- |
-| Create services in dashboard    | 5 minutes         |
-| Deploy API service              | 10-15 minutes     |
-| Deploy Backend service          | 10-15 minutes     |
-| Deploy API Gateway service      | 8-12 minutes      |
-| Deploy Frontend service         | 8-12 minutes      |
-| Configure environment variables | 10 minutes        |
-| **Total**                       | **50-70 minutes** |
+| Task | Duration |
+|------|----------|
+| Create services in dashboard | 5 minutes |
+| Deploy API service | 10-15 minutes |
+| Deploy Backend service | 10-15 minutes |
+| Deploy API Gateway service | 8-12 minutes |
+| Deploy Frontend service | 8-12 minutes |
+| Configure environment variables | 10 minutes |
+| **Total** | **50-70 minutes** |
 
 ## Troubleshooting
 
@@ -212,7 +201,6 @@ All services have health endpoints:
 **Symptom**: Build fails with dependency errors
 
 **Solution**:
-
 ```bash
 # Check if pnpm-lock.yaml is committed
 git ls-files | grep pnpm-lock.yaml
@@ -226,7 +214,6 @@ find . -name "package.json" | grep -E "(apps|packages)"
 **Symptom**: Build succeeds but service crashes
 
 **Solution**:
-
 1. Check environment variables are set
 2. Verify DATABASE_URL format
 3. Check Railway logs for specific errors
@@ -235,15 +222,13 @@ find . -name "package.json" | grep -E "(apps|packages)"
 
 **Symptom**: Port already in use errors
 
-**Solution**: Railway automatically assigns ports. Ensure your app reads from
-`process.env.PORT`
+**Solution**: Railway automatically assigns ports. Ensure your app reads from `process.env.PORT`
 
 ### Database Connection Issues
 
 **Symptom**: Cannot connect to Postgres/Redis
 
 **Solution**:
-
 1. Verify database services are running
 2. Use Railway template variables: `${{Postgres.DATABASE_URL}}`
 3. Check internal networking is enabled
@@ -251,7 +236,6 @@ find . -name "package.json" | grep -E "(apps|packages)"
 ## Cost Estimate
 
 ### Hobby Plan ($5/month)
-
 - 4 services × ~512MB RAM = ~2GB total
 - PostgreSQL: ~256MB
 - Redis: ~128MB
@@ -259,7 +243,6 @@ find . -name "package.json" | grep -E "(apps|packages)"
 - Estimated cost: $5-10/month
 
 ### Pro Plan ($20/month)
-
 - Higher limits and priority builds
 - Recommended for production
 
@@ -297,8 +280,7 @@ railway service restart api
 
 ## Support Resources
 
-- Railway Dashboard:
-  https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+- Railway Dashboard: https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 - Railway Docs: https://docs.railway.app
 - Railway Discord: https://discord.gg/railway
 - GitHub Repo: https://github.com/whodaniel/fuse

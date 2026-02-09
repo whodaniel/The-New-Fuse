@@ -62,32 +62,30 @@ export class WorkflowTestFramework {
   private readonly mockRegistry: MockRegistry;
   private readonly testCaseGenerator: TestCaseGenerator;
 
-  constructor(
-    testRunner: TestRunner,
-    mockRegistry: MockRegistry,
-    testCaseGenerator: TestCaseGenerator,
-  ) {
+  constructor(testRunner: TestRunner, mockRegistry: MockRegistry, testCaseGenerator: TestCaseGenerator) {
     this.testRunner = testRunner;
     this.mockRegistry = mockRegistry;
     this.testCaseGenerator = testCaseGenerator;
   }
-  async testWorkflow(
-    workflow: WorkflowTemplate,
-    testCases: WorkflowTestCase[],
+  async testWorkflow(workflow: WorkflowTemplate,
+    testCases: WorkflowTestCase[]
   ): Promise<TestResults> {
     const testEnvironment = await this.setupTestEnvironment(workflow);
     const results = await Promise.all(
-      testCases.map((testCase) => this.runTestCase(workflow, testCase, testEnvironment)),
+      testCases.map(testCase =>
+        this.runTestCase(workflow, testCase, testEnvironment)
+      )
     );
     return {
       summary: this.generateTestSummary(results),
       coverage: await this.calculateCoverage(workflow, results),
       performance: this.analyzePerformance(results),
-      recommendations: this.generateTestRecommendations(results),
+      recommendations: this.generateTestRecommendations(results)
     };
   }
 
-  async generateTestCases(workflow: WorkflowTemplate): Promise<WorkflowTestCase[]> {
+  async generateTestCases(workflow: WorkflowTemplate
+  ): Promise<WorkflowTestCase[]> {
     return this.testCaseGenerator.generate(workflow);
   }
 
@@ -96,24 +94,17 @@ export class WorkflowTestFramework {
     return { mocks: [], stubs: [] };
   }
 
-  private async runTestCase(
-    _workflow: WorkflowTemplate,
-    _testCase: WorkflowTestCase,
-    _environment: TestEnvironment,
-  ): Promise<TestResult> {
+  private async runTestCase(_workflow: WorkflowTemplate, _testCase: WorkflowTestCase, _environment: TestEnvironment): Promise<TestResult> {
     // Implementation for running a test case
     return { passed: true, duration: 100, result: {} };
   }
 
   private generateTestSummary(results: TestResult[]): TestSummary {
     // Implementation for generating test summary
-    return { total: results.length, passed: results.filter((r) => r.passed).length };
+    return { total: results.length, passed: results.filter(r => r.passed).length };
   }
 
-  private async calculateCoverage(
-    _workflow: WorkflowTemplate,
-    _results: TestResult[],
-  ): Promise<TestCoverage> {
+  private async calculateCoverage(_workflow: WorkflowTemplate, _results: TestResult[]): Promise<TestCoverage> {
     // Implementation for calculating coverage
     return { percentage: 80, coveredSteps: [] };
   }

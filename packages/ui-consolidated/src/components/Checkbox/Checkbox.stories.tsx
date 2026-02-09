@@ -35,7 +35,7 @@ export const Default: Story = {
 export const WithHelperText: Story = {
   args: {
     label: 'Subscribe to newsletter',
-    helperText: "We'll send you weekly updates",
+    helperText: 'We\'ll send you weekly updates',
   },
 };
 

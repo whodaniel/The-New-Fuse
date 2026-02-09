@@ -6,7 +6,7 @@ export enum VerificationType {
   SCHEMA = 'schema',
   CONTENT = 'content',
   SECURITY = 'security',
-  HARMLESSNESS = 'harmlessness',
+  HARMLESSNESS = 'harmlessness'
 }
 
 export interface VerificationResult {
@@ -18,7 +18,7 @@ export interface VerificationResult {
 export class VerificationService {
   private sensitivePatterns: string[] = ['password', 'secret', 'token', 'key', 'credential'];
   private harmfulPatterns: string[] = ['malware', 'exploit', 'attack', 'vulnerability'];
-
+  
   async verifyOutput(output: any, type: VerificationType): Promise<VerificationResult> {
     switch (type) {
       case VerificationType.SCHEMA:
@@ -46,40 +46,40 @@ export class VerificationService {
     // Mock implementation
     const requiredMetadata = new Set(['timestamp', 'source_id']);
     const outputMetadata = new Set(Object.keys(output.metadata || {}));
-    const hasRequiredFields = [...requiredMetadata].every((field) => outputMetadata.has(field));
-
+    const hasRequiredFields = [...requiredMetadata].every(field => outputMetadata.has(field));
+    
     if (!hasRequiredFields) {
       return { success: false, message: 'Missing required metadata fields' };
     }
-
+    
     return { success: true, message: 'Content verification passed' };
   }
 
   private async verifySecurity(output: any): Promise<VerificationResult> {
     // Mock implementation
     const contentStr = String(output.content ?? '');
-    const hasSensitiveData = this.sensitivePatterns.some((pattern) =>
-      contentStr.toLowerCase().includes(pattern),
+    const hasSensitiveData = this.sensitivePatterns.some(pattern => 
+      contentStr.toLowerCase().includes(pattern)
     );
-
+    
     if (hasSensitiveData) {
       return { success: false, message: 'Found potentially sensitive data' };
     }
-
+    
     return { success: true, message: 'Security verification passed' };
   }
 
   private async verifyHarmlessness(output: any): Promise<VerificationResult> {
     // Mock implementation
     const contentStr = String(output.content ?? '');
-    const hasHarmfulContent = this.harmfulPatterns.some((pattern) =>
-      contentStr.toLowerCase().includes(pattern),
+    const hasHarmfulContent = this.harmfulPatterns.some(pattern => 
+      contentStr.toLowerCase().includes(pattern)
     );
-
+    
     if (hasHarmfulContent) {
       return { success: false, message: 'Found potentially harmful content' };
     }
-
+    
     return { success: true, message: 'Harmlessness verification passed' };
   }
 }

@@ -25,9 +25,9 @@ bun --filter @the-new-fuse/utils run build
 bun --filter @the-new-fuse/core run build
 bun --filter @the-new-fuse/database run build
 
-# Generate Drizzle client
-echo "Generating Drizzle client..."
-bun --filter @the-new-fuse/api run drizzle generate
+# Generate Prisma client
+echo "Generating Prisma client..."
+bun --filter @the-new-fuse/api run prisma generate
 
 # Start development environment
 echo "Starting development environment..."

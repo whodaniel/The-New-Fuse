@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 export const useNewWorkspaceModal = () => {
   const [showing, setShowing] = useState(false);

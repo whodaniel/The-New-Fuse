@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { LoggingService } from '../services/logging.service';
 import { RedisService } from '../services/redis.service';
+import { LoggingService } from '../services/logging.service';
 
 @Injectable()
 export class CacheService {
@@ -39,7 +39,7 @@ export class CacheService {
     try {
       const value = await this.redisService.getSubClient().get(key);
       if (!value) return null;
-
+      
       return JSON.parse(value) as T;
     } catch (error) {
       this.logger.error(`Failed to get cache for key: ${key}. Error: ${error}`);
@@ -103,7 +103,7 @@ export class CacheService {
     try {
       const value = await this.redisService.getSubClient().hget(key, field);
       if (!value) return null;
-
+      
       return JSON.parse(value) as T;
     } catch (error) {
       this.logger.error(`Failed to get hash cache for key: ${key}.${field}. Error: ${error}`);

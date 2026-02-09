@@ -1,17 +1,14 @@
 # Performance Monitoring & Optimization
 
-Complete performance monitoring and optimization suite for The New Fuse
-platform.
+Complete performance monitoring and optimization suite for The New Fuse platform.
 
 ## Overview
 
 This directory contains comprehensive documentation and tools for:
 
-- **Performance Monitoring**: Real-time tracking of frontend, backend, and
-  database performance
+- **Performance Monitoring**: Real-time tracking of frontend, backend, and database performance
 - **Web Vitals**: Core Web Vitals monitoring for user experience metrics
-- **APM (Application Performance Monitoring)**: Backend request and transaction
-  tracking
+- **APM (Application Performance Monitoring)**: Backend request and transaction tracking
 - **Database Monitoring**: Query performance and connection pool monitoring
 - **Performance Budgets**: Enforced limits on bundle size and metrics
 - **Lighthouse CI**: Automated performance testing in CI/CD
@@ -22,34 +19,26 @@ This directory contains comprehensive documentation and tools for:
 
 ### Documentation
 
-- [Performance Monitoring Setup](./PERFORMANCE_MONITORING_SETUP.md) - Complete
-  setup guide
-- [Performance Optimization](./PERFORMANCE_OPTIMIZATION.md) - Optimization
-  workflows and best practices
+- [Performance Monitoring Setup](./PERFORMANCE_MONITORING_SETUP.md) - Complete setup guide
+- [Performance Optimization](./PERFORMANCE_OPTIMIZATION.md) - Optimization workflows and best practices
 
 ### Configuration Files
 
-- [Lighthouse CI Config](../../.github/lighthouse/lighthouserc.json) -
-  Lighthouse CI configuration
-- [Performance Budgets](../../.github/lighthouse/budget.json) - Resource budgets
-  for Lighthouse
-- [Global Budgets](../../performance-budgets.json) - Comprehensive performance
-  budgets
+- [Lighthouse CI Config](../../.github/lighthouse/lighthouserc.json) - Lighthouse CI configuration
+- [Performance Budgets](../../.github/lighthouse/budget.json) - Resource budgets for Lighthouse
+- [Global Budgets](../../performance-budgets.json) - Comprehensive performance budgets
 
 ### Scripts
 
-- [Performance Testing](../../scripts/performance/performance-test.ts) -
-  Automated performance tests
+- [Performance Testing](../../scripts/performance/performance-test.ts) - Automated performance tests
 - [Load Testing](../../scripts/performance/load-test.sh) - API load testing
-- [Bundle Analyzer](../../scripts/performance/bundle-analyzer.js) - Bundle size
-  analysis
+- [Bundle Analyzer](../../scripts/performance/bundle-analyzer.js) - Bundle size analysis
 
 ## Features
 
 ### 1. Frontend Performance Monitoring
 
 ✅ **Web Vitals Tracking**
-
 - First Contentful Paint (FCP)
 - Largest Contentful Paint (LCP)
 - First Input Delay (FID)
@@ -58,14 +47,12 @@ This directory contains comprehensive documentation and tools for:
 - Interaction to Next Paint (INP)
 
 ✅ **Custom Metrics**
-
 - Bundle size monitoring
 - Load time tracking
 - Resource timing
 - Navigation timing
 
 ✅ **Real User Monitoring (RUM)**
-
 - Session tracking
 - User journey monitoring
 - Performance by geography
@@ -74,21 +61,18 @@ This directory contains comprehensive documentation and tools for:
 ### 2. Backend Performance Monitoring
 
 ✅ **APM (Application Performance Monitoring)**
-
 - Request/response tracking
 - Transaction tracing
 - Span creation for operations
 - Distributed tracing ready
 
 ✅ **API Metrics**
-
 - Response time percentiles (P50, P95, P99)
 - Request rate
 - Error rate
 - Throughput
 
 ✅ **Custom Instrumentation**
-
 - Service calls tracking
 - External API monitoring
 - Background job performance
@@ -96,21 +80,18 @@ This directory contains comprehensive documentation and tools for:
 ### 3. Database Performance Monitoring
 
 ✅ **Query Monitoring**
-
 - Slow query detection
 - Query pattern analysis
 - Execution time tracking
 - Error tracking
 
 ✅ **Connection Pool Metrics**
-
 - Pool utilization
 - Active connections
 - Idle connections
 - Wait time tracking
 
 ✅ **Performance Analysis**
-
 - N+1 query detection
 - Index usage analysis
 - Query optimization suggestions
@@ -118,7 +99,6 @@ This directory contains comprehensive documentation and tools for:
 ### 4. Performance Budgets
 
 ✅ **Bundle Size Budgets**
-
 - Total bundle size: 500KB
 - JavaScript: 250KB
 - CSS: 50KB
@@ -126,7 +106,6 @@ This directory contains comprehensive documentation and tools for:
 - Fonts: 150KB
 
 ✅ **Timing Budgets**
-
 - FCP: < 1.8s
 - LCP: < 2.5s
 - FID: < 100ms
@@ -134,7 +113,6 @@ This directory contains comprehensive documentation and tools for:
 - TTFB: < 800ms
 
 ✅ **API Budgets**
-
 - Average response: < 100ms
 - P95 response: < 200ms
 - P99 response: < 500ms
@@ -143,14 +121,12 @@ This directory contains comprehensive documentation and tools for:
 ### 5. Lighthouse CI
 
 ✅ **Automated Testing**
-
 - Performance score: ≥ 85
 - Accessibility score: ≥ 90
 - Best Practices score: ≥ 90
 - SEO score: ≥ 85
 
 ✅ **Budget Enforcement**
-
 - Resource size limits
 - Resource count limits
 - Timing budgets
@@ -159,14 +135,12 @@ This directory contains comprehensive documentation and tools for:
 ### 6. Load Testing
 
 ✅ **API Load Tests**
-
 - Concurrent user simulation
 - Sustained load testing
 - Spike testing
 - Stress testing
 
 ✅ **Reporting**
-
 - Response time distribution
 - Error rate tracking
 - Throughput analysis
@@ -175,14 +149,12 @@ This directory contains comprehensive documentation and tools for:
 ### 7. Performance Dashboard
 
 ✅ **Real-time Monitoring**
-
 - Current metrics display
 - Historical data
 - Time series charts
 - Alert notifications
 
 ✅ **Health Status**
-
 - Overall system health
 - Component-level status
 - Performance trends
@@ -246,8 +218,7 @@ const dbMonitor = createDatabaseMonitorFromEnv();
 await dbMonitor.initialize();
 ```
 
-See [Performance Monitoring Setup](./PERFORMANCE_MONITORING_SETUP.md) for
-detailed instructions.
+See [Performance Monitoring Setup](./PERFORMANCE_MONITORING_SETUP.md) for detailed instructions.
 
 ## Running Performance Tests
 
@@ -323,7 +294,6 @@ http://localhost:8080/monitoring/dashboard
 ```
 
 Features:
-
 - Real-time metrics
 - Performance trends
 - Alert management
@@ -337,13 +307,11 @@ Features:
 #### Slow Page Load
 
 1. **Check bundle size**
-
    ```bash
    pnpm run build:analyze
    ```
 
 2. **Implement code splitting**
-
    ```typescript
    const Component = lazy(() => import('./Component'));
    ```
@@ -356,13 +324,11 @@ Features:
 #### High API Latency
 
 1. **Check slow queries**
-
    ```bash
    curl http://localhost:8080/api/monitoring/database/slow-queries
    ```
 
 2. **Add caching**
-
    ```typescript
    @Cacheable('users', 3600)
    async getUser(id: string) { }
@@ -376,7 +342,6 @@ Features:
 #### Poor Web Vitals
 
 1. **Analyze Web Vitals reports**
-
    ```
    http://localhost:8080/api/analytics/vitals
    ```
@@ -391,8 +356,7 @@ Features:
    - Reserve space for dynamic content
    - Avoid layout shifts
 
-See [Performance Optimization](./PERFORMANCE_OPTIMIZATION.md) for detailed
-guides.
+See [Performance Optimization](./PERFORMANCE_OPTIMIZATION.md) for detailed guides.
 
 ## Best Practices
 
@@ -437,7 +401,6 @@ Performance alerts are automatically triggered when:
 - Resource utilization is high
 
 Configure alerts in:
-
 - [Alert Configuration](../monitoring/ALERT_RUNBOOKS.md)
 - [Performance Budgets](../../performance-budgets.json)
 
@@ -459,13 +422,12 @@ Configure alerts in:
 
 ### Database Monitoring Issues
 
-1. Check Drizzle middleware
+1. Check Prisma middleware
 2. Verify monitoring is enabled
 3. Review error logs
 4. Test with manual tracking
 
-See [Troubleshooting Guide](./PERFORMANCE_MONITORING_SETUP.md#troubleshooting)
-for more details.
+See [Troubleshooting Guide](./PERFORMANCE_MONITORING_SETUP.md#troubleshooting) for more details.
 
 ## Resources
 

@@ -79,7 +79,6 @@
     "db:pull": "pnpm --filter @the-new-fuse/database drizzle:pull",
     "db:studio": "pnpm --filter @the-new-fuse/database drizzle:studio",
     "db:check": "pnpm --filter @the-new-fuse/database drizzle:check",
-    "jules:process": "npx tsx packages/database/scripts/process-jules-queue.ts",
     "docker:start": "docker-compose -f docker-compose.dev-simple.yml up -d",
     "docker:stop": "docker-compose -f docker-compose.dev-simple.yml down",
     "docker:status": "docker-compose -f docker-compose.dev-simple.yml ps",
@@ -102,8 +101,6 @@
     "health-check:full": "pnpm run validate:clean-scripts && pnpm run type-check && pnpm run test && pnpm run validate:build",
     "git:sync-check": "bash scripts/git-sync-check.sh",
     "git:status": "git status && echo '' && bash scripts/git-sync-check.sh",
-    "agents:pydantic:generate": "node tools/generate-pydantic-agents.js",
-    "agents:pydantic:check": "node tools/generate-pydantic-agents.js --check",
     "git:push-check": "bash -c 'UNPUSHED=$(git log @{u}.. --oneline 2>/dev/null | wc -l | tr -d \" \"); if [ \"$UNPUSHED\" -gt 0 ]; then echo \"⚠️  WARNING: $UNPUSHED unpushed commits\"; git log @{u}.. --oneline; exit 1; else echo \"✅ All commits pushed\"; fi'"
   },
   "devDependencies": {
@@ -132,7 +129,6 @@
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.3.0",
     "rimraf": "^5.0.10",
-    "sharp": "^0.34.5",
     "ts-jest": "^29.4.6",
     "ts-loader": "^9.5.4",
     "turbo": "^2.7.5",
@@ -162,7 +158,7 @@
     "cheerio": "^1.0.0-rc.12",
     "chokidar": "^4.0.3",
     "css-minimizer-webpack-plugin": "^7.0.4",
-    "diff": "^8.0.3",
+    "diff": "^8.0.2",
     "mime-types": "^2.1.35",
     "mini-css-extract-plugin": "^2.9.4",
     "moment": "^2.30.1",
@@ -215,15 +211,7 @@
       "brace-expansion@>=2.0.0 <=2.0.1": ">=2.0.2",
       "electron@<28.3.2": ">=28.3.2",
       "electron@<35.7.5": ">=35.7.5",
-      "zustand": "4.5.5",
-      "minimist": ">=1.2.8",
-      "d3-color": ">=3.1.0",
-      "minimatch": ">=3.0.5",
-      "tar": ">=7.5.7",
-      "fast-xml-parser": ">=5.3.4",
-      "lodash": ">=4.17.23",
-      "lodash-es": ">=4.17.23",
-      "eslint": ">=9.26.0"
+      "zustand": "4.5.5"
     }
   }
 }

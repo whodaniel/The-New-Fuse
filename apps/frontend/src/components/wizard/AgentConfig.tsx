@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { FaPlay, FaPlus, FaStop, FaTrash } from 'react-icons/fa';
-import { AgentState } from '../../domain/core/wizards/types/agent_types';
+import React, { useState, useEffect } from 'react';
+import { FaPlus, FaPlay, FaStop, FaTrash } from 'react-icons/fa';
 import { Button } from '../../ui/design-system';
 import { useWizard } from './WizardProvider';
+import { AgentState } from '../../domain/core/wizards/types/agent_types';
 
 interface AgentConfigProps {
   onUpdate: (agents: Map<string, any>) => void;
@@ -32,8 +32,8 @@ export const AgentConfig: React.FC<AgentConfigProps> = ({ onUpdate }) => {
       performance: {
         cpu_usage: 0,
         memory_usage: 0,
-        task_completion_rate: 0,
-      },
+        task_completion_rate: 0
+      }
     };
 
     const updatedAgents = new Map(agents);
@@ -99,9 +99,7 @@ export const AgentConfig: React.FC<AgentConfigProps> = ({ onUpdate }) => {
               onChange={(e) => setNewAgentType(e.target.value)}
               className="input w-full"
             >
-              <option value="" disabled>
-                Select Type
-              </option>
+              <option value="" disabled>Select Type</option>
               <option value="task_executor">Task Executor</option>
               <option value="knowledge_worker">Knowledge Worker</option>
               <option value="optimization_agent">Optimization Agent</option>
@@ -123,16 +121,11 @@ export const AgentConfig: React.FC<AgentConfigProps> = ({ onUpdate }) => {
         <h3 className="text-lg font-semibold mb-3">Active Agents</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {Array.from(agents.values()).map((agent) => (
-            <div
-              key={agent.id}
-              className="border border-gray-200 rounded-lg shadow-sm p-4 bg-white"
-            >
+            <div key={agent.id} className="border border-gray-200 rounded-lg shadow-sm p-4 bg-white">
               <div className="flex justify-between items-center mb-4">
                 <h4 className="font-semibold text-lg">{agent.name}</h4>
                 <div className="flex items-center gap-2">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${getStateColor(agent.state)}`}
-                  >
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStateColor(agent.state)}`}>
                     {agent.state}
                   </span>
 
@@ -158,7 +151,9 @@ export const AgentConfig: React.FC<AgentConfigProps> = ({ onUpdate }) => {
                 </div>
               </div>
 
-              <div className="text-sm text-gray-600 mb-4">Type: {agent.type}</div>
+              <div className="text-sm text-gray-600 mb-4">
+                Type: {agent.type}
+              </div>
 
               <div>
                 <h5 className="text-sm font-medium mb-2">Performance Metrics</h5>

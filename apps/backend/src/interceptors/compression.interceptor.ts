@@ -1,9 +1,14 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { Response } from 'express';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { promisify } from 'util';
+import { Response } from 'express';
 import * as zlib from 'zlib';
+import { promisify } from 'util';
 
 const gzip = promisify(zlib.gzip);
 const brotliCompress = promisify(zlib.brotliCompress);
@@ -52,7 +57,7 @@ export class CompressionInterceptor implements NestInterceptor {
           console.error('Compression error:', error);
           // If compression fails, return uncompressed data
         }
-      })
+      }),
     );
   }
 }

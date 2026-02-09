@@ -1,18 +1,21 @@
 /**
  * OpenAI Protocol Adapter
- *
+ * 
  * Handles OpenAI's Assistant API and function calling format
  * Converts between OpenAI format and The New Fuse's A2A protocol
  */
 
-import { ProtocolType, RelayMessage } from '../types/index.js';
-import { Logger } from '../utils/Logger.js';
 import { ProtocolAdapter } from './ProtocolAdapter.js';
+import { RelayMessage, ProtocolType } from '../types/index.js';
+import { Logger } from '../utils/Logger.js';
 
 export class OpenAIAdapter implements ProtocolAdapter {
   public readonly name = 'openai-assistant';
   public readonly version = '1.0.0';
-  public readonly supportedProtocols: ProtocolType[] = ['openai-assistant-v1.0', 'a2a-v2.0'];
+  public readonly supportedProtocols: ProtocolType[] = [
+    'openai-assistant-v1.0',
+    'a2a-v2.0'
+  ];
 
   private logger: Logger;
 
@@ -24,11 +27,8 @@ export class OpenAIAdapter implements ProtocolAdapter {
     return this.supportedProtocols.includes(from) && this.supportedProtocols.includes(to);
   }
 
-  async translate(
-    message: RelayMessage,
-    sourceProtocol: ProtocolType,
-    targetProtocol: ProtocolType
-  ): Promise<RelayMessage> {
+  async translate(message: RelayMessage, sourceProtocol: ProtocolType, targetProtocol: ProtocolType): Promise<RelayMessage> {
+
     if (sourceProtocol === 'openai-assistant-v1.0' && targetProtocol === 'a2a-v2.0') {
       return this.openaiToA2A(message);
     } else if (sourceProtocol === 'a2a-v2.0' && targetProtocol === 'openai-assistant-v1.0') {
@@ -50,14 +50,14 @@ export class OpenAIAdapter implements ProtocolAdapter {
           function: payload.function_call?.name || payload.tool_calls?.[0]?.function?.name,
           parameters: this.parseOpenAIFunctionParameters(payload),
           reasoning: payload.reasoning || '',
-          toolCallId: payload.tool_calls?.[0]?.id,
+          toolCallId: payload.tool_calls?.[0]?.id
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'openai-assistant-v1.0',
-          translatedAt: new Date().toISOString(),
-        },
+          translatedAt: new Date().toISOString()
+        }
       };
     }
 
@@ -72,14 +72,14 @@ export class OpenAIAdapter implements ProtocolAdapter {
           assistantId: payload.assistant_id,
           threadId: payload.thread_id,
           runId: payload.run_id,
-          annotations: payload.annotations || [],
+          annotations: payload.annotations || []
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'openai-assistant-v1.0',
-          translatedAt: new Date().toISOString(),
-        },
+          translatedAt: new Date().toISOString()
+        }
       };
     }
 
@@ -94,15 +94,15 @@ export class OpenAIAdapter implements ProtocolAdapter {
           toolCallId: payload.tool_call_id,
           metadata: {
             runId: payload.run_id,
-            threadId: payload.thread_id,
-          },
+            threadId: payload.thread_id
+          }
         },
         metadata: {
           ...message.metadata,
           protocol: 'a2a-v2.0',
           originalProtocol: 'openai-assistant-v1.0',
-          translatedAt: new Date().toISOString(),
-        },
+          translatedAt: new Date().toISOString()
+        }
       };
     }
 
@@ -112,14 +112,14 @@ export class OpenAIAdapter implements ProtocolAdapter {
       payload: {
         content: payload.content || payload.message || payload,
         role: payload.role || 'user',
-        metadata: this.extractOpenAIMetadata(payload),
+        metadata: this.extractOpenAIMetadata(payload)
       },
       metadata: {
         ...message.metadata,
         protocol: 'a2a-v2.0',
         originalProtocol: 'openai-assistant-v1.0',
-        translatedAt: new Date().toISOString(),
-      },
+        translatedAt: new Date().toISOString()
+      }
     };
   }
 
@@ -135,8 +135,8 @@ export class OpenAIAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'openai-assistant-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString(),
-        },
+          translatedAt: new Date().toISOString()
+        }
       };
     }
 
@@ -149,8 +149,8 @@ export class OpenAIAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'openai-assistant-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString(),
-        },
+          translatedAt: new Date().toISOString()
+        }
       };
     }
 
@@ -163,8 +163,8 @@ export class OpenAIAdapter implements ProtocolAdapter {
           ...message.metadata,
           protocol: 'openai-assistant-v1.0',
           originalProtocol: 'a2a-v2.0',
-          translatedAt: new Date().toISOString(),
-        },
+          translatedAt: new Date().toISOString()
+        }
       };
     }
 
@@ -176,8 +176,8 @@ export class OpenAIAdapter implements ProtocolAdapter {
         ...message.metadata,
         protocol: 'openai-assistant-v1.0',
         originalProtocol: 'a2a-v2.0',
-        translatedAt: new Date().toISOString(),
-      },
+        translatedAt: new Date().toISOString()
+      }
     };
   }
 
@@ -191,7 +191,7 @@ export class OpenAIAdapter implements ProtocolAdapter {
   }
 
   private isOpenAIToolOutput(payload: any): boolean {
-    return !!(payload.tool_call_id && payload.output !== undefined);
+    return !!(payload.tool_call_id && (payload.output !== undefined));
   }
 
   // OpenAI parsing helpers
@@ -221,7 +221,9 @@ export class OpenAIAdapter implements ProtocolAdapter {
     }
 
     if (Array.isArray(payload.content)) {
-      return payload.content.map((item: any) => item.text?.value || item.text || item).join('\n');
+      return payload.content
+        .map((item: any) => item.text?.value || item.text || item)
+        .join('\n');
     }
 
     return payload.message || payload.text || '';
@@ -236,7 +238,7 @@ export class OpenAIAdapter implements ProtocolAdapter {
       messageId: payload.id,
       createdAt: payload.created_at,
       role: payload.role,
-      usage: payload.usage,
+      usage: payload.usage
     };
   }
 
@@ -251,10 +253,10 @@ export class OpenAIAdapter implements ProtocolAdapter {
           type: 'function',
           function: {
             name: payload.function,
-            arguments: JSON.stringify(payload.parameters || {}),
-          },
-        },
-      ],
+            arguments: JSON.stringify(payload.parameters || {})
+          }
+        }
+      ]
     };
 
     if (payload.reasoning) {
@@ -267,10 +269,12 @@ export class OpenAIAdapter implements ProtocolAdapter {
   private createOpenAIToolOutput(payload: any): any {
     return {
       tool_call_id: payload.toolCallId,
-      output: typeof payload.result === 'object' ? JSON.stringify(payload.result) : payload.result,
+      output: typeof payload.result === 'object' 
+        ? JSON.stringify(payload.result) 
+        : payload.result,
       run_id: payload.metadata?.runId,
       thread_id: payload.metadata?.threadId,
-      error: payload.success === false ? 'Tool execution failed' : undefined,
+      error: payload.success === false ? 'Tool execution failed' : undefined
     };
   }
 
@@ -282,7 +286,7 @@ export class OpenAIAdapter implements ProtocolAdapter {
       thread_id: payload.threadId,
       run_id: payload.runId,
       annotations: payload.annotations || [],
-      metadata: payload.metadata || {},
+      metadata: payload.metadata || {}
     };
   }
 
@@ -290,7 +294,7 @@ export class OpenAIAdapter implements ProtocolAdapter {
     return {
       role: payload.role || 'user',
       content: payload.content || payload.message || payload,
-      metadata: payload.metadata || {},
+      metadata: payload.metadata || {}
     };
   }
 }

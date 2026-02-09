@@ -1,22 +1,16 @@
 # 4-Layer Decentralized AI Agent Framework 🚀
 
-A comprehensive, modular autonomous AI agent orchestration system for crypto
-operations, designed for The New Fuse ecosystem.
+A comprehensive, modular autonomous AI agent orchestration system for crypto operations, designed for The New Fuse ecosystem.
 
-This framework separates an agent's "brain" from its "actions," "work," and
-"memory" using a 4-layer architecture with best-in-class decentralized
-protocols.
+This framework separates an agent's "brain" from its "actions," "work," and "memory" using a 4-layer architecture with best-in-class decentralized protocols.
 
 ## ✨ Integration Status
 
 **✅ Fully Integrated with The New Fuse Pydantic Agent System**
 
-This framework is now **natively integrated** with TNF's existing Pydantic agent
-infrastructure. All crypto agents follow TNF's established patterns and work
-seamlessly with the orchestrator.
+This framework is now **natively integrated** with TNF's existing Pydantic agent infrastructure. All crypto agents follow TNF's established patterns and work seamlessly with the orchestrator.
 
-📘 **See [PYDANTIC_INTEGRATION_GUIDE.md](./PYDANTIC_INTEGRATION_GUIDE.md) for
-complete integration documentation.**
+📘 **See [PYDANTIC_INTEGRATION_GUIDE.md](./PYDANTIC_INTEGRATION_GUIDE.md) for complete integration documentation.**
 
 ## 🏗️ Architecture Overview
 
@@ -155,8 +149,7 @@ python agent_host_fetch.py
 
 ### Integration with The New Fuse Backend (Pydantic Agents)
 
-The crypto agents are integrated with TNF's Pydantic agent system. Here's how to
-use them:
+The crypto agents are integrated with TNF's Pydantic agent system. Here's how to use them:
 
 #### From TypeScript/NestJS
 
@@ -244,8 +237,7 @@ project = ProjectPlan(
 )
 ```
 
-📘 **For complete integration examples, see
-[PYDANTIC_INTEGRATION_GUIDE.md](./PYDANTIC_INTEGRATION_GUIDE.md)**
+📘 **For complete integration examples, see [PYDANTIC_INTEGRATION_GUIDE.md](./PYDANTIC_INTEGRATION_GUIDE.md)**
 
 ## 📝 Usage Examples
 
@@ -262,7 +254,11 @@ agent.add_task(
 
 ```typescript
 // TypeScript
-await cryptoAgent.generateAndMintNFT('red sports car', 'base', '100 USDC');
+await cryptoAgent.generateAndMintNFT(
+  "red sports car",
+  "base",
+  "100 USDC"
+);
 ```
 
 ### Example 2: DeFi Operations
@@ -306,14 +302,12 @@ agent.add_task(
 ### Layer-Specific Configuration
 
 #### L2: ENSO (Actions)
-
 ```bash
 ENSO_API_KEY=your_key
 ENSO_API_URL=https://api.enso.finance/api/v1
 ```
 
 #### L3: Compute
-
 ```bash
 # Akash Network
 AKASH_API_KEY=your_key
@@ -325,7 +319,6 @@ RENDER_API_URL=https://api.rendernetwork.com/v1
 ```
 
 #### L4: Memory
-
 ```bash
 # Arweave
 ARWEAVE_KEYFILE_PATH=./arweave-keyfile.json
@@ -353,7 +346,6 @@ ENABLE_ENSO=true              # Enable ENSO for DeFi operations
 When integrated with The New Fuse backend:
 
 #### Submit Task
-
 ```http
 POST /api/crypto-agent/tasks
 Content-Type: application/json
@@ -366,19 +358,16 @@ Content-Type: application/json
 ```
 
 #### Get Status
-
 ```http
 GET /api/crypto-agent/status
 ```
 
 #### Get Task Result
-
 ```http
 GET /api/crypto-agent/tasks/{taskId}
 ```
 
 #### NFT Operations
-
 ```http
 POST /api/crypto-agent/nft/generate-and-mint
 Content-Type: application/json
@@ -391,7 +380,6 @@ Content-Type: application/json
 ```
 
 #### DeFi Operations
-
 ```http
 POST /api/crypto-agent/defi/swap
 POST /api/crypto-agent/defi/stake
@@ -532,19 +520,16 @@ export class HybridCryptoService {
 ### Common Issues
 
 **Issue: "Could not connect to Crypto Agent API"**
-
 - Ensure Python service is running
 - Check `CRYPTO_AGENT_API_URL` environment variable
 - Verify firewall/network settings
 
 **Issue: "Arweave transaction failed"**
-
 - Check wallet balance
 - Verify keyfile path
 - Ensure network connectivity
 
 **Issue: "ENSO route not found"**
-
 - Verify API key
 - Check token liquidity
 - Try with different slippage tolerance

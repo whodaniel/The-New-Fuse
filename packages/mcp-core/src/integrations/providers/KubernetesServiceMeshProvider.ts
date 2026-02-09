@@ -1,21 +1,21 @@
 /**
  * Kubernetes Service Mesh Provider
- *
+ * 
  * Implementation of ServiceMeshProvider for Kubernetes-based service meshes
  * (Istio, Linkerd, Consul Connect, etc.)
  */
 
+import {
+  ServiceMeshProvider,
+  ServiceMeshRegistration,
+  ServiceMeshQuery,
+  ServiceMeshMetrics,
+  ServiceScalingConfig,
+  ScalingEvent
+} from '../MCPServiceMesh';
 import { ServiceHealth } from '../../types/broker';
 import { ServiceStatus } from '../../types/common';
 import { MCPErrorClass as MCPError, MCPErrorCode } from '../../types/error';
-import {
-  ScalingEvent,
-  ServiceMeshMetrics,
-  ServiceMeshProvider,
-  ServiceMeshQuery,
-  ServiceMeshRegistration,
-  ServiceScalingConfig,
-} from '../MCPServiceMesh';
 
 /**
  * Kubernetes configuration
@@ -63,19 +63,15 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
       createService: async (definition: any) => ({ metadata: { name: definition.metadata.name } }),
       deleteService: async (name: string) => ({}),
       getService: async (name: string) => this.mockKubernetesService(name),
-      listServices: async (selector: string) => ({
-        items: Array.from(this.registeredServices.values())
-          .map((serviceInfo) =>
-            this.createMockKubernetesServiceFromRegistration(serviceInfo.registration)
-          )
-          .filter((service) => this.matchesSelector(service, selector)),
+      listServices: async (selector: string) => ({ 
+        items: Array.from(this.registeredServices.values()).map(serviceInfo => 
+          this.createMockKubernetesServiceFromRegistration(serviceInfo.registration)
+        ).filter(service => this.matchesSelector(service, selector))
       }),
-      createDeployment: async (definition: any) => ({
-        metadata: { name: definition.metadata.name },
-      }),
+      createDeployment: async (definition: any) => ({ metadata: { name: definition.metadata.name } }),
       updateDeployment: async (name: string, definition: any) => ({}),
       getDeployment: async (name: string) => this.mockKubernetesDeployment(name),
-      getMetrics: async (name: string) => this.mockKubernetesMetrics(name),
+      getMetrics: async (name: string) => this.mockKubernetesMetrics(name)
     };
   }
 
@@ -101,10 +97,11 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
         registration,
         serviceDefinition,
         deploymentDefinition,
-        createdAt: new Date(),
+        createdAt: new Date()
       });
 
       return `${this.config.namespace}/${registration.serviceName}`;
+
     } catch (error) {
       throw new MCPError(
         MCPErrorCode.INTERNAL_ERROR,
@@ -134,6 +131,7 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
 
       // Remove from registry
       this.registeredServices.delete(serviceId);
+
     } catch (error) {
       throw new MCPError(
         MCPErrorCode.INTERNAL_ERROR,
@@ -149,14 +147,13 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
     try {
       // Build label selector from query
       const labelSelector = this.buildLabelSelector(query);
-
+      
       // Query Kubernetes services
       const services = await this.kubeClient.listServices(labelSelector);
-
+      
       // Convert Kubernetes services to ServiceMeshRegistration
-      return services.items.map((service: any) =>
-        this.convertKubernetesServiceToRegistration(service)
-      );
+      return services.items.map((service: any) => this.convertKubernetesServiceToRegistration(service));
+
     } catch (error) {
       throw new MCPError(
         MCPErrorCode.INTERNAL_ERROR,
@@ -172,7 +169,10 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
     try {
       const serviceInfo = this.registeredServices.get(serviceId);
       if (!serviceInfo) {
-        throw new MCPError(MCPErrorCode.RESOURCE_NOT_FOUND, `Service ${serviceId} not found`);
+        throw new MCPError(
+          MCPErrorCode.RESOURCE_NOT_FOUND,
+          `Service ${serviceId} not found`
+        );
       }
 
       const serviceName = serviceInfo.registration.serviceName;
@@ -185,12 +185,7 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
 
       return {
         serviceId,
-        status:
-          healthScore >= 0.8
-            ? ServiceStatus.ONLINE
-            : healthScore > 0
-              ? ServiceStatus.DEGRADED
-              : ServiceStatus.OFFLINE,
+        status: healthScore >= 0.8 ? ServiceStatus.ONLINE : healthScore > 0 ? ServiceStatus.DEGRADED : ServiceStatus.OFFLINE,
         uptime: Date.now() - serviceInfo.createdAt.getTime(),
         responseTime: 50, // Mock value
         errorRate: 0.01, // Mock value
@@ -199,9 +194,10 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
         details: {
           readyReplicas,
           desiredReplicas,
-          conditions: deployment.status?.conditions || [],
-        },
+          conditions: deployment.status?.conditions || []
+        }
       };
+
     } catch (error) {
       throw new MCPError(
         MCPErrorCode.INTERNAL_ERROR,
@@ -217,12 +213,16 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
     try {
       const serviceInfo = this.registeredServices.get(serviceId);
       if (!serviceInfo) {
-        throw new MCPError(MCPErrorCode.RESOURCE_NOT_FOUND, `Service ${serviceId} not found`);
+        throw new MCPError(
+          MCPErrorCode.RESOURCE_NOT_FOUND,
+          `Service ${serviceId} not found`
+        );
       }
 
       // In a real implementation, this would update service annotations or status
       // For now, we'll just log the health update
       console.log(`Health updated for service ${serviceId}:`, health);
+
     } catch (error) {
       throw new MCPError(
         MCPErrorCode.INTERNAL_ERROR,
@@ -238,7 +238,10 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
     try {
       const serviceInfo = this.registeredServices.get(serviceId);
       if (!serviceInfo) {
-        throw new MCPError(MCPErrorCode.RESOURCE_NOT_FOUND, `Service ${serviceId} not found`);
+        throw new MCPError(
+          MCPErrorCode.RESOURCE_NOT_FOUND,
+          `Service ${serviceId} not found`
+        );
       }
 
       const serviceName = serviceInfo.registration.serviceName;
@@ -250,26 +253,27 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
           total: metrics.requests?.total || 0,
           successful: metrics.requests?.successful || 0,
           failed: metrics.requests?.failed || 0,
-          rps: metrics.requests?.rps || 0,
+          rps: metrics.requests?.rps || 0
         },
         responseTime: {
           average: metrics.responseTime?.average || 0,
           p50: metrics.responseTime?.p50 || 0,
           p95: metrics.responseTime?.p95 || 0,
-          p99: metrics.responseTime?.p99 || 0,
+          p99: metrics.responseTime?.p99 || 0
         },
         connections: {
           active: metrics.connections?.active || 0,
           total: metrics.connections?.total || 0,
-          errors: metrics.connections?.errors || 0,
+          errors: metrics.connections?.errors || 0
         },
         resources: {
           cpu: metrics.resources?.cpu || 0,
           memory: metrics.resources?.memory || 0,
-          networkIO: metrics.resources?.networkIO || 0,
+          networkIO: metrics.resources?.networkIO || 0
         },
-        timestamp: new Date(),
+        timestamp: new Date()
       };
+
     } catch (error) {
       throw new MCPError(
         MCPErrorCode.INTERNAL_ERROR,
@@ -285,16 +289,20 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
     try {
       const serviceInfo = this.registeredServices.get(serviceId);
       if (!serviceInfo) {
-        throw new MCPError(MCPErrorCode.RESOURCE_NOT_FOUND, `Service ${serviceId} not found`);
+        throw new MCPError(
+          MCPErrorCode.RESOURCE_NOT_FOUND,
+          `Service ${serviceId} not found`
+        );
       }
 
       const serviceName = serviceInfo.registration.serviceName;
-
+      
       // Create HorizontalPodAutoscaler
       const hpaDefinition = this.createHPADefinition(serviceName, config);
-
+      
       // In a real implementation, this would create/update the HPA
       console.log(`Scaling configured for service ${serviceName}:`, hpaDefinition);
+
     } catch (error) {
       throw new MCPError(
         MCPErrorCode.INTERNAL_ERROR,
@@ -314,7 +322,10 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
     try {
       const serviceInfo = this.registeredServices.get(serviceId);
       if (!serviceInfo) {
-        throw new MCPError(MCPErrorCode.RESOURCE_NOT_FOUND, `Service ${serviceId} not found`);
+        throw new MCPError(
+          MCPErrorCode.RESOURCE_NOT_FOUND,
+          `Service ${serviceId} not found`
+        );
       }
 
       const serviceName = serviceInfo.registration.serviceName;
@@ -323,8 +334,9 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
       return {
         currentInstances: deployment.status?.readyReplicas || 0,
         desiredInstances: deployment.spec?.replicas || 1,
-        scalingEvents: [], // Would fetch from Kubernetes events in real implementation
+        scalingEvents: [] // Would fetch from Kubernetes events in real implementation
       };
+
     } catch (error) {
       throw new MCPError(
         MCPErrorCode.INTERNAL_ERROR,
@@ -360,30 +372,27 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
           version: registration.version,
           'mcp-service': 'true',
           ...this.config.defaultLabels,
-          ...registration.tags.reduce(
-            (acc: Record<string, string>, tag: string) => ({ ...acc, [tag]: 'true' }),
-            {}
-          ),
+          ...registration.tags.reduce((acc: Record<string, string>, tag: string) => ({ ...acc, [tag]: 'true' }), {})
         },
         annotations: {
           'mcp/service-id': registration.serviceId,
           'mcp/capabilities': registration.metadata.mcpCapabilities?.join(',') || '',
           ...this.config.defaultAnnotations,
-          ...this.getServiceMeshAnnotations(registration),
-        },
+          ...this.getServiceMeshAnnotations(registration)
+        }
       },
       spec: {
         selector: {
-          app: registration.serviceName,
+          app: registration.serviceName
         },
         ports: registration.endpoints.map((endpoint: any) => ({
           name: endpoint.protocol,
           port: endpoint.port,
           targetPort: endpoint.port,
-          protocol: endpoint.protocol.toUpperCase(),
+          protocol: endpoint.protocol.toUpperCase()
         })),
-        type: 'ClusterIP',
-      },
+        type: 'ClusterIP'
+      }
     };
   }
 
@@ -400,60 +409,58 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
         labels: {
           app: registration.serviceName,
           version: registration.version,
-          'mcp-service': 'true',
-        },
+          'mcp-service': 'true'
+        }
       },
       spec: {
         replicas: 1,
         selector: {
           matchLabels: {
-            app: registration.serviceName,
-          },
+            app: registration.serviceName
+          }
         },
         template: {
           metadata: {
             labels: {
               app: registration.serviceName,
               version: registration.version,
-              'mcp-service': 'true',
+              'mcp-service': 'true'
             },
-            annotations: this.getServiceMeshAnnotations(registration),
+            annotations: this.getServiceMeshAnnotations(registration)
           },
           spec: {
-            containers: [
-              {
-                name: registration.serviceName,
-                image: `mcp-service:${registration.version}`,
-                ports: registration.endpoints.map((endpoint: any) => ({
-                  containerPort: endpoint.port,
-                  protocol: endpoint.protocol.toUpperCase(),
-                })),
-                env: [
-                  { name: 'MCP_SERVICE_ID', value: registration.serviceId },
-                  { name: 'MCP_SERVICE_NAME', value: registration.serviceName },
-                  { name: 'MCP_SERVICE_VERSION', value: registration.version },
-                ],
-                livenessProbe: {
-                  httpGet: {
-                    path: registration.healthCheck.path,
-                    port: registration.endpoints[0]?.port || 8080,
-                  },
-                  initialDelaySeconds: 30,
-                  periodSeconds: registration.healthCheck.interval,
+            containers: [{
+              name: registration.serviceName,
+              image: `mcp-service:${registration.version}`,
+              ports: registration.endpoints.map((endpoint: any) => ({
+                containerPort: endpoint.port,
+                protocol: endpoint.protocol.toUpperCase()
+              })),
+              env: [
+                { name: 'MCP_SERVICE_ID', value: registration.serviceId },
+                { name: 'MCP_SERVICE_NAME', value: registration.serviceName },
+                { name: 'MCP_SERVICE_VERSION', value: registration.version }
+              ],
+              livenessProbe: {
+                httpGet: {
+                  path: registration.healthCheck.path,
+                  port: registration.endpoints[0]?.port || 8080
                 },
-                readinessProbe: {
-                  httpGet: {
-                    path: registration.healthCheck.path,
-                    port: registration.endpoints[0]?.port || 8080,
-                  },
-                  initialDelaySeconds: 5,
-                  periodSeconds: registration.healthCheck.interval,
-                },
+                initialDelaySeconds: 30,
+                periodSeconds: registration.healthCheck.interval
               },
-            ],
-          },
-        },
-      },
+              readinessProbe: {
+                httpGet: {
+                  path: registration.healthCheck.path,
+                  port: registration.endpoints[0]?.port || 8080
+                },
+                initialDelaySeconds: 5,
+                periodSeconds: registration.healthCheck.interval
+              }
+            }]
+          }
+        }
+      }
     };
   }
 
@@ -467,16 +474,15 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
       case 'istio':
         annotations['sidecar.istio.io/inject'] = 'true';
         if (registration.loadBalancing.algorithm) {
-          annotations['traffic.sidecar.istio.io/includeInboundPorts'] = registration.endpoints
-            .map((e: any) => e.port.toString())
-            .join(',');
+          annotations['traffic.sidecar.istio.io/includeInboundPorts'] = 
+            registration.endpoints.map((e: any) => e.port.toString()).join(',');
         }
         break;
-
+      
       case 'linkerd':
         annotations['linkerd.io/inject'] = 'enabled';
         break;
-
+      
       case 'consul':
         annotations['consul.hashicorp.com/connect-inject'] = 'true';
         annotations['consul.hashicorp.com/service-name'] = registration.serviceName;
@@ -506,55 +512,47 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
       kind: 'HorizontalPodAutoscaler',
       metadata: {
         name: `${serviceName}-hpa`,
-        namespace: this.config.namespace,
+        namespace: this.config.namespace
       },
       spec: {
         scaleTargetRef: {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
-          name: serviceName,
+          name: serviceName
         },
         minReplicas: config.minInstances,
         maxReplicas: config.maxInstances,
         metrics: [
-          ...(config.targetCPU
-            ? [
-                {
-                  type: 'Resource',
-                  resource: {
-                    name: 'cpu',
-                    target: {
-                      type: 'Utilization',
-                      averageUtilization: Math.round(config.targetCPU * 100),
-                    },
-                  },
-                },
-              ]
-            : []),
-          ...(config.targetMemory
-            ? [
-                {
-                  type: 'Resource',
-                  resource: {
-                    name: 'memory',
-                    target: {
-                      type: 'Utilization',
-                      averageUtilization: Math.round(config.targetMemory * 100),
-                    },
-                  },
-                },
-              ]
-            : []),
+          ...(config.targetCPU ? [{
+            type: 'Resource',
+            resource: {
+              name: 'cpu',
+              target: {
+                type: 'Utilization',
+                averageUtilization: Math.round(config.targetCPU * 100)
+              }
+            }
+          }] : []),
+          ...(config.targetMemory ? [{
+            type: 'Resource',
+            resource: {
+              name: 'memory',
+              target: {
+                type: 'Utilization',
+                averageUtilization: Math.round(config.targetMemory * 100)
+              }
+            }
+          }] : [])
         ],
         behavior: {
           scaleUp: {
-            stabilizationWindowSeconds: config.scaleUpCooldown,
+            stabilizationWindowSeconds: config.scaleUpCooldown
           },
           scaleDown: {
-            stabilizationWindowSeconds: config.scaleDownCooldown,
-          },
-        },
-      },
+            stabilizationWindowSeconds: config.scaleDownCooldown
+          }
+        }
+      }
     };
   }
 
@@ -590,7 +588,7 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
       endpoints: kubeService.spec.ports.map((port: any) => ({
         address: kubeService.spec.clusterIP,
         port: port.port,
-        protocol: port.protocol.toLowerCase(),
+        protocol: port.protocol.toLowerCase()
       })),
       metadata: kubeService.metadata.annotations || {},
       healthCheck: {
@@ -598,15 +596,15 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
         interval: 30,
         timeout: 5000,
         failureThreshold: 3,
-        successThreshold: 1,
+        successThreshold: 1
       },
       loadBalancing: {
         algorithm: 'round_robin',
-        healthCheckEnabled: true,
+        healthCheckEnabled: true
       },
-      tags: Object.keys(kubeService.metadata.labels || {}).filter(
-        (key) => kubeService.metadata.labels[key] === 'true'
-      ),
+      tags: Object.keys(kubeService.metadata.labels || {}).filter(key => 
+        kubeService.metadata.labels[key] === 'true'
+      )
     };
   }
 
@@ -619,12 +617,12 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
         name,
         namespace: this.config.namespace,
         labels: { app: name, 'mcp-service': 'true' },
-        annotations: { 'mcp/service-id': name },
+        annotations: { 'mcp/service-id': name }
       },
       spec: {
         clusterIP: '10.0.0.1',
-        ports: [{ port: 8080, protocol: 'TCP' }],
-      },
+        ports: [{ port: 8080, protocol: 'TCP' }]
+      }
     };
   }
 
@@ -635,7 +633,7 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
     return {
       metadata: { name },
       spec: { replicas: 1 },
-      status: { readyReplicas: 1 },
+      status: { readyReplicas: 1 }
     };
   }
 
@@ -647,7 +645,7 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
       requests: { total: 1000, successful: 950, failed: 50, rps: 10 },
       responseTime: { average: 100, p50: 80, p95: 200, p99: 500 },
       connections: { active: 5, total: 100, errors: 2 },
-      resources: { cpu: 0.5, memory: 0.6, networkIO: 1024 },
+      resources: { cpu: 0.5, memory: 0.6, networkIO: 1024 }
     };
   }
 
@@ -663,23 +661,20 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
           app: registration.serviceName,
           version: registration.version,
           'mcp-service': 'true',
-          ...registration.tags.reduce(
-            (acc: Record<string, string>, tag: string) => ({ ...acc, [tag]: 'true' }),
-            {}
-          ),
+          ...registration.tags.reduce((acc: Record<string, string>, tag: string) => ({ ...acc, [tag]: 'true' }), {})
         },
         annotations: {
           'mcp/service-id': registration.serviceId,
-          'mcp/capabilities': registration.metadata.mcpCapabilities?.join(',') || '',
-        },
+          'mcp/capabilities': registration.metadata.mcpCapabilities?.join(',') || ''
+        }
       },
       spec: {
         clusterIP: '10.0.0.1',
         ports: registration.endpoints.map((endpoint: any) => ({
           port: endpoint.port,
-          protocol: endpoint.protocol.toUpperCase(),
-        })),
-      },
+          protocol: endpoint.protocol.toUpperCase()
+        }))
+      }
     };
   }
 
@@ -688,9 +683,9 @@ export class KubernetesServiceMeshProvider implements ServiceMeshProvider {
    */
   private matchesSelector(service: any, selector: string): boolean {
     if (!selector) return true;
-
+    
     const selectors = selector.split(',');
-    return selectors.every((sel) => {
+    return selectors.every(sel => {
       const [key, value] = sel.split('=');
       if (key && value) {
         return service.metadata.labels?.[key] === value;

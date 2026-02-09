@@ -1,6 +1,6 @@
 /**
  * Role-Based Access Control (RBAC) Manager for MCP resources
- *
+ * 
  * Provides comprehensive role and permission management for MCP resources,
  * including role definitions, permission assignments, and access control
  * policy enforcement.
@@ -8,7 +8,7 @@
 
 import { EventEmitter } from 'events';
 import { MCPErrorClass, MCPErrorCode } from '../types/error';
-import { AuthAuditEvent, AuthContext } from './AuthenticationManager';
+import { AuthContext, AuthAuditEvent } from './AuthenticationManager';
 
 /**
  * Permission interface
@@ -136,14 +136,14 @@ export class RBACManager extends EventEmitter {
 
   constructor(config: Partial<RBACConfig> = {}) {
     super();
-
+    
     this.config = {
       enableRoleHierarchy: true,
       defaultDeny: false,
       enableAuditLogging: true,
       cacheTTL: 300, // 5 minutes
       maxHierarchyDepth: 10,
-      ...config,
+      ...config
     };
 
     // Initialize default permissions and roles
@@ -173,7 +173,10 @@ export class RBACManager extends EventEmitter {
    */
   createRole(role: Omit<Role, 'createdAt' | 'updatedAt'> & { name: string }): void {
     if (this.roles.has(role.name)) {
-      throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, `Role '${role.name}' already exists`);
+      throw new MCPErrorClass(
+        MCPErrorCode.INVALID_PARAMS,
+        `Role '${role.name}' already exists`
+      );
     }
 
     // Validate permissions exist
@@ -199,7 +202,10 @@ export class RBACManager extends EventEmitter {
 
       // Check for circular dependencies
       if (this.hasCircularDependency(role.name, role.parentRoles)) {
-        throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, 'Circular role dependency detected');
+        throw new MCPErrorClass(
+          MCPErrorCode.INVALID_PARAMS,
+          'Circular role dependency detected'
+        );
       }
     }
 
@@ -207,7 +213,7 @@ export class RBACManager extends EventEmitter {
     const fullRole: Role = {
       ...role,
       createdAt: now,
-      updatedAt: now,
+      updatedAt: now
     };
 
     this.roles.set(role.name, fullRole);
@@ -219,7 +225,10 @@ export class RBACManager extends EventEmitter {
    */
   createPolicy(policy: ResourceAccessPolicy): void {
     if (this.policies.has(policy.id)) {
-      throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, `Policy '${policy.id}' already exists`);
+      throw new MCPErrorClass(
+        MCPErrorCode.INVALID_PARAMS,
+        `Policy '${policy.id}' already exists`
+      );
     }
 
     // Validate required permissions exist
@@ -238,7 +247,10 @@ export class RBACManager extends EventEmitter {
     if (policy.requiredRoles) {
       for (const roleName of policy.requiredRoles) {
         if (!this.roles.has(roleName)) {
-          throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, `Role '${roleName}' does not exist`);
+          throw new MCPErrorClass(
+            MCPErrorCode.INVALID_PARAMS,
+            `Role '${roleName}' does not exist`
+          );
         }
       }
     }
@@ -254,7 +266,10 @@ export class RBACManager extends EventEmitter {
     // Validate roles exist
     for (const roleName of roleNames) {
       if (!this.roles.has(roleName)) {
-        throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, `Role '${roleName}' does not exist`);
+        throw new MCPErrorClass(
+          MCPErrorCode.INVALID_PARAMS,
+          `Role '${roleName}' does not exist`
+        );
       }
     }
 
@@ -268,7 +283,7 @@ export class RBACManager extends EventEmitter {
    */
   getUserRoles(userId: string): string[] {
     const directRoles = this.userRoles.get(userId) || [];
-
+    
     if (!this.config.enableRoleHierarchy) {
       return directRoles;
     }
@@ -326,7 +341,7 @@ export class RBACManager extends EventEmitter {
    */
   hasPermission(userId: string, permissionName: string): boolean {
     const userPermissions = this.getUserPermissions(userId);
-    return userPermissions.some((p) => p.name === permissionName);
+    return userPermissions.some(p => p.name === permissionName);
   }
 
   /**
@@ -347,17 +362,17 @@ export class RBACManager extends EventEmitter {
   ): Promise<AccessControlResult> {
     const cacheKey = `${context.userId}:${resource}:${operation}`;
     const cached = this.accessCache.get(cacheKey);
-
+    
     if (cached && cached.expiresAt > new Date()) {
       return cached.result;
     }
 
     const result = await this.evaluateAccess(context, resource, operation);
-
+    
     // Cache the result
     this.accessCache.set(cacheKey, {
       result,
-      expiresAt: new Date(Date.now() + this.config.cacheTTL * 1000),
+      expiresAt: new Date(Date.now() + this.config.cacheTTL * 1000)
     });
 
     // Audit the access check
@@ -418,7 +433,10 @@ export class RBACManager extends EventEmitter {
    */
   deleteRole(roleName: string): void {
     if (!this.roles.has(roleName)) {
-      throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, `Role '${roleName}' does not exist`);
+      throw new MCPErrorClass(
+        MCPErrorCode.INVALID_PARAMS,
+        `Role '${roleName}' does not exist`
+      );
     }
 
     // Check if role is used by any user
@@ -451,7 +469,10 @@ export class RBACManager extends EventEmitter {
    */
   deletePolicy(policyId: string): void {
     if (!this.policies.has(policyId)) {
-      throw new MCPErrorClass(MCPErrorCode.INVALID_PARAMS, `Policy '${policyId}' does not exist`);
+      throw new MCPErrorClass(
+        MCPErrorCode.INVALID_PARAMS,
+        `Policy '${policyId}' does not exist`
+      );
     }
 
     this.policies.delete(policyId);
@@ -469,7 +490,7 @@ export class RBACManager extends EventEmitter {
       policies: this.policies.size,
       users: this.userRoles.size,
       cacheSize: this.accessCache.size,
-      auditEvents: this.auditEvents.length,
+      auditEvents: this.auditEvents.length
     };
   }
 
@@ -477,9 +498,7 @@ export class RBACManager extends EventEmitter {
    * Get audit events
    */
   getAuditEvents(limit?: number): AuthAuditEvent[] {
-    const events = [...this.auditEvents].sort(
-      (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
-    );
+    const events = [...this.auditEvents].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
     return limit ? events.slice(0, limit) : events;
   }
 
@@ -493,26 +512,26 @@ export class RBACManager extends EventEmitter {
         name: 'mcp.resource.read',
         description: 'Read MCP resources',
         resourceType: 'resource',
-        operations: ['read', 'list'],
+        operations: ['read', 'list']
       },
       {
         name: 'mcp.resource.write',
         description: 'Write MCP resources',
         resourceType: 'resource',
-        operations: ['create', 'update', 'delete'],
+        operations: ['create', 'update', 'delete']
       },
       {
         name: 'mcp.tool.execute',
         description: 'Execute MCP tools',
         resourceType: 'tool',
-        operations: ['execute'],
+        operations: ['execute']
       },
       {
         name: 'mcp.server.admin',
         description: 'Administer MCP server',
         resourceType: 'server',
-        operations: ['configure', 'monitor', 'restart'],
-      },
+        operations: ['configure', 'monitor', 'restart']
+      }
     ];
 
     for (const permission of defaultPermissions) {
@@ -527,27 +546,22 @@ export class RBACManager extends EventEmitter {
         description: 'Basic MCP user',
         permissions: ['mcp.resource.read'],
         createdAt: now,
-        updatedAt: now,
+        updatedAt: now
       },
       {
         name: 'mcp.developer',
         description: 'MCP developer',
         permissions: ['mcp.resource.read', 'mcp.resource.write', 'mcp.tool.execute'],
         createdAt: now,
-        updatedAt: now,
+        updatedAt: now
       },
       {
         name: 'mcp.admin',
         description: 'MCP administrator',
-        permissions: [
-          'mcp.resource.read',
-          'mcp.resource.write',
-          'mcp.tool.execute',
-          'mcp.server.admin',
-        ],
+        permissions: ['mcp.resource.read', 'mcp.resource.write', 'mcp.tool.execute', 'mcp.server.admin'],
         createdAt: now,
-        updatedAt: now,
-      },
+        updatedAt: now
+      }
     ];
 
     for (const role of defaultRoles) {
@@ -570,7 +584,7 @@ export class RBACManager extends EventEmitter {
 
     // Get applicable policies sorted by priority (highest first)
     const applicablePolicies = Array.from(this.policies.values())
-      .filter((policy) => this.isResourceMatched(resource, policy.resourcePattern))
+      .filter(policy => this.isResourceMatched(resource, policy.resourcePattern))
       .sort((a, b) => b.priority - a.priority);
 
     let finalDecision = !this.config.defaultDeny; // Default allow if defaultDeny is false
@@ -585,17 +599,14 @@ export class RBACManager extends EventEmitter {
       }
 
       // Check required permissions
-      const hasRequiredPermissions =
-        !policy.requiredPermissions ||
-        policy.requiredPermissions.length === 0 ||
-        policy.requiredPermissions.every((permissionName) =>
-          userPermissions.some((p) => p.name === permissionName && p.operations.includes(operation))
+      const hasRequiredPermissions = !policy.requiredPermissions || policy.requiredPermissions.length === 0 ||
+        policy.requiredPermissions.every(permissionName =>
+          userPermissions.some(p => p.name === permissionName && p.operations.includes(operation))
         );
 
       // Check required roles
-      const hasRequiredRoles =
-        !policy.requiredRoles ||
-        policy.requiredRoles.some((roleName) => userRoles.includes(roleName));
+      const hasRequiredRoles = !policy.requiredRoles || 
+        policy.requiredRoles.some(roleName => userRoles.includes(roleName));
 
       if (hasRequiredPermissions && hasRequiredRoles) {
         if (policy.effect === 'allow') {
@@ -610,25 +621,18 @@ export class RBACManager extends EventEmitter {
           // If deny policy requirements are not met, it doesn't apply
           continue;
         }
-
+        
         // Track missing requirements for allow policies
-        if (
-          !hasRequiredPermissions &&
-          policy.requiredPermissions &&
-          policy.requiredPermissions.length > 0
-        ) {
-          const missingPerms = policy.requiredPermissions.filter(
-            (permissionName) =>
-              !userPermissions.some(
-                (p) => p.name === permissionName && p.operations.includes(operation)
-              )
+        if (!hasRequiredPermissions && policy.requiredPermissions && policy.requiredPermissions.length > 0) {
+          const missingPerms = policy.requiredPermissions.filter(permissionName =>
+            !userPermissions.some(p => p.name === permissionName && p.operations.includes(operation))
           );
           violations.push(`Missing permissions: ${missingPerms.join(', ')}`);
         }
 
         if (!hasRequiredRoles && policy.requiredRoles) {
-          const missingRoles = policy.requiredRoles.filter(
-            (roleName) => !userRoles.includes(roleName)
+          const missingRoles = policy.requiredRoles.filter(roleName => 
+            !userRoles.includes(roleName)
           );
           violations.push(`Missing roles: ${missingRoles.join(', ')}`);
         }
@@ -637,13 +641,13 @@ export class RBACManager extends EventEmitter {
 
     const result: AccessControlResult = {
       granted: finalDecision,
-      reason: finalDecision
+      reason: finalDecision 
         ? 'Access granted by policy evaluation'
-        : violations.length > 0
+        : violations.length > 0 
           ? violations.join('; ')
           : 'Access denied by default policy',
       appliedPolicies,
-      violations: violations.length > 0 ? violations : undefined,
+      violations: violations.length > 0 ? violations : undefined
     };
 
     return result;
@@ -654,8 +658,10 @@ export class RBACManager extends EventEmitter {
    */
   private isResourceMatched(resource: string, pattern: string): boolean {
     // Convert glob pattern to regex
-    const regexPattern = pattern.replace(/\*/g, '.*').replace(/\?/g, '.');
-
+    const regexPattern = pattern
+      .replace(/\*/g, '.*')
+      .replace(/\?/g, '.');
+    
     return new RegExp(`^${regexPattern}$`).test(resource);
   }
 
@@ -720,11 +726,7 @@ export class RBACManager extends EventEmitter {
   /**
    * Evaluate condition operator
    */
-  private evaluateConditionOperator(
-    operator: string,
-    fieldValue: any,
-    conditionValue: any
-  ): boolean {
+  private evaluateConditionOperator(operator: string, fieldValue: any, conditionValue: any): boolean {
     switch (operator) {
       case 'equals':
         return fieldValue === conditionValue;
@@ -748,11 +750,7 @@ export class RBACManager extends EventEmitter {
   /**
    * Check for circular role dependencies
    */
-  private hasCircularDependency(
-    roleName: string,
-    parentRoles: string[],
-    visited = new Set<string>()
-  ): boolean {
+  private hasCircularDependency(roleName: string, parentRoles: string[], visited = new Set<string>()): boolean {
     if (visited.has(roleName)) {
       return true;
     }
@@ -776,7 +774,7 @@ export class RBACManager extends EventEmitter {
    */
   private clearUserCache(userId: string): void {
     const keysToDelete: string[] = [];
-
+    
     for (const key of this.accessCache.keys()) {
       if (key.startsWith(`${userId}:`)) {
         keysToDelete.push(key);
@@ -836,12 +834,12 @@ export class RBACManager extends EventEmitter {
       timestamp: new Date(),
       metadata: {
         appliedPolicies: result.appliedPolicies,
-        violations: result.violations,
-      },
+        violations: result.violations
+      }
     };
 
     this.auditEvents.push(auditEvent);
-
+    
     // Keep only last 10000 events to prevent memory issues
     if (this.auditEvents.length > 10000) {
       this.auditEvents = this.auditEvents.slice(-5000);

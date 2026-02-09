@@ -9,11 +9,12 @@ import { PromptTemplatesService } from '../services/prompt-templates.service';
     DatabaseModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'development-secret',
-      signOptions: { expiresIn: '24h' },
-    }),
+      signOptions: { expiresIn: '24h' }
+    })
   ],
   controllers: [PromptTemplatesController],
   providers: [PromptTemplatesService],
   exports: [PromptTemplatesService],
 })
 export class PromptTemplatesModule {}
+

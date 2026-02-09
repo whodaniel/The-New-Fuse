@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-import axios from 'axios';
-import { format } from 'date-fns';
+
 import {
-  CartesianGrid,
-  Line,
-  LineChart,
   ResponsiveContainer,
-  Tooltip,
+  LineChart,
+  CartesianGrid,
   XAxis,
   YAxis,
+  Tooltip,
+  Line
 } from 'recharts';
+import { format } from 'date-fns';
+import axios from 'axios';
 
 interface ModerationAction {
   id: string;
@@ -65,7 +66,7 @@ const ModerationDashboard: React.FC = () => {
         axios.get<ModerationAction[]>('/api/moderation/actions'),
         axios.get<ModerationRule[]>('/api/moderation/rules'),
         axios.get<DashboardStats>('/api/moderation/stats'),
-        axios.get<ActionTrend[]>('/api/moderation/trends'),
+        axios.get<ActionTrend[]>('/api/moderation/trends')
       ]);
 
       setRecentActions(actionsRes.data);
@@ -129,7 +130,9 @@ const ModerationDashboard: React.FC = () => {
                 <Text color="textSecondary" gutterBottom>
                   Total Actions
                 </Text>
-                <Text variant="h4">{stats?.totalActions || 0}</Text>
+                <Text variant="h4">
+                  {stats?.totalActions || 0}
+                </Text>
               </CardBody>
             </Card>
           </SimpleGrid>
@@ -139,7 +142,9 @@ const ModerationDashboard: React.FC = () => {
                 <Text color="textSecondary" gutterBottom>
                   Active Rules
                 </Text>
-                <Text variant="h4">{stats?.activeRules || 0}</Text>
+                <Text variant="h4">
+                  {stats?.activeRules || 0}
+                </Text>
               </CardBody>
             </Card>
           </SimpleGrid>
@@ -149,7 +154,9 @@ const ModerationDashboard: React.FC = () => {
                 <Text color="textSecondary" gutterBottom>
                   Banned Users
                 </Text>
-                <Text variant="h4">{stats?.bannedUsers || 0}</Text>
+                <Text variant="h4">
+                  {stats?.bannedUsers || 0}
+                </Text>
               </CardBody>
             </Card>
           </SimpleGrid>
@@ -159,7 +166,9 @@ const ModerationDashboard: React.FC = () => {
                 <Text color="textSecondary" gutterBottom>
                   Muted Users
                 </Text>
-                <Text variant="h4">{stats?.mutedUsers || 0}</Text>
+                <Text variant="h4">
+                  {stats?.mutedUsers || 0}
+                </Text>
               </CardBody>
             </Card>
           </SimpleGrid>
@@ -185,7 +194,9 @@ const ModerationDashboard: React.FC = () => {
                 {action.type === 'ban' && <Block color="error" />}
                 {action.type === 'mute' && <VolumeOff color="warning" />}
                 {action.type === 'warn' && <Warning color="info" />}
-                <Text>{`${action.type.toUpperCase()} - User: ${action.userId}`}</Text>
+                <Text>
+                  {`${action.type.toUpperCase()} - User: ${action.userId}`}
+                </Text>
               </Box>
             }
             secondary={
@@ -194,7 +205,10 @@ const ModerationDashboard: React.FC = () => {
                   {`Reason: ${action.reason}`}
                 </Text>
                 <Text variant="caption" color="text.secondary">
-                  {`By: ${action.moderatorId} at ${format(new Date(action.timestamp), 'PPpp')}`}
+                  {`By: ${action.moderatorId} at ${format(
+                    new Date(action.timestamp),
+                    'PPpp'
+                  )}`}
                 </Text>
               </Box>
             }
@@ -239,8 +253,8 @@ const ModerationDashboard: React.FC = () => {
                       rule.action === 'ban'
                         ? 'error'
                         : rule.action === 'mute'
-                          ? 'warning'
-                          : 'default'
+                        ? 'warning'
+                        : 'default'
                     }
                   />
                   <Tag
@@ -252,11 +266,19 @@ const ModerationDashboard: React.FC = () => {
               }
               secondary={
                 <Box>
-                  {rule.pattern && <Text variant="body2">Pattern: {rule.pattern}</Text>}
-                  {rule.keywords && (
-                    <Text variant="body2">Keywords: {rule.keywords.join(', ')}</Text>
+                  {rule.pattern && (
+                    <Text variant="body2">
+                      Pattern: {rule.pattern}
+                    </Text>
                   )}
-                  <Text variant="body2">Threshold: {rule.threshold}</Text>
+                  {rule.keywords && (
+                    <Text variant="body2">
+                      Keywords: {rule.keywords.join(', ')}
+                    </Text>
+                  )}
+                  <Text variant="body2">
+                    Threshold: {rule.threshold}
+                  </Text>
                 </Box>
               }
             />
@@ -289,7 +311,9 @@ const ModerationDashboard: React.FC = () => {
         maxWidth="sm"
         fullWidth
       >
-        <ModalHeader>{selectedRule ? 'Edit Rule' : 'Create Rule'}</ModalHeader>
+        <ModalHeader>
+          {selectedRule ? 'Edit Rule' : 'Create Rule'}
+        </ModalHeader>
         <ModalBody>
           <Box component="form" sx={{ mt: 2 }}>
             <FormControl fullWidth sx={{ mb: 2 }}>
@@ -298,7 +322,9 @@ const ModerationDashboard: React.FC = () => {
                 value={selectedRule?.type || ''}
                 label="Type"
                 onChange={(e) =>
-                  setSelectedRule((prev) => (prev ? { ...prev, type: e.target.value } : null))
+                  setSelectedRule((prev) =>
+                    prev ? { ...prev, type: e.target.value } : null
+                  )
                 }
               >
                 <Option value="spam">Spam</Option>
@@ -314,7 +340,9 @@ const ModerationDashboard: React.FC = () => {
               sx={{ mb: 2 }}
               value={selectedRule?.pattern || ''}
               onChange={(e) =>
-                setSelectedRule((prev) => (prev ? { ...prev, pattern: e.target.value } : null))
+                setSelectedRule((prev) =>
+                  prev ? { ...prev, pattern: e.target.value } : null
+                )
               }
             />
 
@@ -328,7 +356,9 @@ const ModerationDashboard: React.FC = () => {
                   prev
                     ? {
                         ...prev,
-                        keywords: e.target.value.split(',').map((k) => k.trim()),
+                        keywords: e.target.value
+                          .split(',')
+                          .map((k) => k.trim())
                       }
                     : null
                 )
@@ -341,7 +371,9 @@ const ModerationDashboard: React.FC = () => {
                 value={selectedRule?.action || ''}
                 label="Action"
                 onChange={(e) =>
-                  setSelectedRule((prev) => (prev ? { ...prev, action: e.target.value } : null))
+                  setSelectedRule((prev) =>
+                    prev ? { ...prev, action: e.target.value } : null
+                  )
                 }
               >
                 <Option value="warn">Warn</Option>
@@ -354,7 +386,10 @@ const ModerationDashboard: React.FC = () => {
         </ModalBody>
         <ModalFooter>
           <Button onClick={() => setIsRuleDialogOpen(false)}>Cancel</Button>
-          <Button onClick={() => selectedRule && handleRuleSave(selectedRule)} variant="contained">
+          <Button
+            onClick={() => selectedRule && handleRuleSave(selectedRule)}
+            variant="contained"
+          >
             Save
           </Button>
         </ModalFooter>

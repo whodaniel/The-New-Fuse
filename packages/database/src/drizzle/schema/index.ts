@@ -20,8 +20,6 @@ export * from './mass';
 export * from './prompt-templates';
 export * from './system';
 export * from './tasks';
-export * from './thoughts';
-export * from './unified_marketplace';
 export * from './users';
 export * from './wallets';
 export * from './webhooks';

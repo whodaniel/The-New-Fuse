@@ -1,22 +1,18 @@
 # Secrets Setup Guide
 
-This guide covers all required secrets and environment variables for the CI/CD
-pipeline.
+This guide covers all required secrets and environment variables for the CI/CD pipeline.
 
 ## Required Secrets
 
-All secrets should be configured in GitHub Settings → Secrets and variables →
-Actions.
+All secrets should be configured in GitHub Settings → Secrets and variables → Actions.
 
 ### Core Secrets
 
 #### `RAILWAY_TOKEN`
-
 - **Purpose**: Deploy to Railway
 - **Type**: Railway API token
 - **Required for**: deploy.yml
 - **How to obtain**:
-
   ```bash
   # Install Railway CLI
   npm install -g @railway/cli
@@ -25,11 +21,9 @@ Actions.
   railway login
   railway token
   ```
-
 - **Scopes**: Deploy, read project status
 
 #### `GITHUB_TOKEN`
-
 - **Purpose**: GitHub API access
 - **Type**: Automatically provided by GitHub Actions
 - **Required for**: All workflows
@@ -38,7 +32,6 @@ Actions.
 ### Optional but Recommended
 
 #### `CODECOV_TOKEN`
-
 - **Purpose**: Upload test coverage to Codecov
 - **Type**: Codecov project token
 - **Required for**: test.yml, quality.yml
@@ -49,7 +42,6 @@ Actions.
 - **Without this**: Coverage uploads will fail but tests will pass
 
 #### `TURBO_TOKEN`
-
 - **Purpose**: Remote caching for Turborepo
 - **Type**: Vercel token
 - **Required for**: All workflows (optional)
@@ -61,7 +53,6 @@ Actions.
 - **Benefits**: Speeds up builds by caching across CI runs
 
 #### `TURBO_TEAM`
-
 - **Purpose**: Turborepo team ID
 - **Type**: Team identifier
 - **Required for**: Works with TURBO_TOKEN
@@ -70,14 +61,12 @@ Actions.
 ### Docker Registry (if using Docker Hub)
 
 #### `DOCKER_USERNAME`
-
 - **Purpose**: Docker Hub login
 - **Type**: Docker Hub username
 - **Required for**: deploy.yml
 - **How to obtain**: Your Docker Hub username
 
 #### `DOCKER_PASSWORD`
-
 - **Purpose**: Docker Hub authentication
 - **Type**: Docker Hub access token (recommended) or password
 - **Required for**: deploy.yml
@@ -89,7 +78,6 @@ Actions.
 ### Monitoring & Notifications
 
 #### `SLACK_WEBHOOK`
-
 - **Purpose**: Deployment notifications
 - **Type**: Slack Incoming Webhook URL
 - **Required for**: deploy.yml notifications
@@ -103,7 +91,6 @@ Actions.
 ### Code Quality
 
 #### `SONAR_TOKEN`
-
 - **Purpose**: SonarCloud code quality analysis
 - **Type**: SonarCloud token
 - **Required for**: quality.yml
@@ -121,13 +108,11 @@ Actions.
 Create an environment named `production` in GitHub Settings → Environments.
 
 **Required secrets**:
-
 - All Railway-related secrets
 - Production database credentials (if needed)
 - Production API keys
 
 **Protection rules**:
-
 - Require reviewers before deployment
 - Only allow deployments from `main` branch
 
@@ -136,7 +121,6 @@ Create an environment named `production` in GitHub Settings → Environments.
 Create an environment named `staging` in GitHub Settings → Environments.
 
 **Required secrets**:
-
 - Staging Railway token (if separate project)
 - Staging database credentials
 - Staging API keys
@@ -272,7 +256,6 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 **Error**: `Error: Secret RAILWAY_TOKEN not found`
 
 **Solution**:
-
 1. Verify secret name matches exactly (case-sensitive)
 2. Check secret is set at repository level (not organization)
 3. For environment secrets, ensure environment name matches
@@ -282,7 +265,6 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 **Error**: `Error: Authentication failed`
 
 **Solution**:
-
 1. Verify token hasn't expired
 2. Check token has required scopes
 3. Generate new token
@@ -293,7 +275,6 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 **Note**: Secrets are not available in fork PRs for security.
 
 **Solution**: For external contributors:
-
 1. Maintainer must run workflows
 2. Or: Use `pull_request_target` (carefully!)
 3. Or: Use Dependabot secrets (for Dependabot PRs)

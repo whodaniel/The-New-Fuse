@@ -3,10 +3,11 @@
  * with Railway environment variables
  */
 import { ConfigService } from '@nestjs/config';
-import { DatabaseConfigOptions, getDatabaseConfig } from './database.config.js';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { getDatabaseConfig } from './database.config.js';
 
 // Type assertion for the database config that includes connection properties
-type DatabaseConfigWithConnection = DatabaseConfigOptions & {
+type DatabaseConfigWithConnection = TypeOrmModuleOptions & {
   host: string;
   port: number;
   username: string;

@@ -1,13 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { Agent } from './Agent';
 import { Task } from './Task';
 import { User } from './User';
@@ -26,19 +17,19 @@ export class Pipeline {
   @Column({ type: 'jsonb', nullable: true })
   configuration!: Record<string, any>;
 
-  @ManyToOne(() => User, (user) => user.pipelines)
+  @ManyToOne(() => User, user => user.pipelines)
   user!: User;
 
   @Column()
   userId!: string;
 
-  @ManyToOne(() => Agent, (agent) => agent.pipelines)
+  @ManyToOne(() => Agent, agent => agent.pipelines)
   agent!: Agent;
 
   @Column()
   agentId!: string;
 
-  @OneToMany(() => Task, (task) => task.pipeline)
+  @OneToMany(() => Task, task => task.pipeline)
   tasks!: Task[];
 
   @CreateDateColumn()

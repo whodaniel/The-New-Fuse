@@ -51,10 +51,7 @@ export class CascadeBridge {
       const parsedMessage = JSON.parse(message);
       logger.info('Received cascade message:', parsedMessage);
       // Process the message and publish to cascade-out
-      this.redisClient.publish(
-        'cascade-out',
-        JSON.stringify({ processed: true, ...parsedMessage }),
-      );
+      this.redisClient.publish('cascade-out', JSON.stringify({ processed: true, ...parsedMessage }));
     } catch (err) {
       logger.error('Error handling cascade message', err);
     }

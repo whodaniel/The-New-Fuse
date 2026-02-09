@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
   BusinessEvent,
+  IntegrationSource,
   BusinessEventType,
   EventPriority,
-  IntegrationSource,
 } from '@the-new-fuse/types';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class IntegrationService {
   async transformToBusinessEvent(
     source: IntegrationSource,
     payload: any,
-    organizationId: string
+    organizationId: string,
   ): Promise<Omit<BusinessEvent, 'id' | 'timestamp'>> {
     this.logger.debug(`Transforming payload from ${source}`);
 
@@ -47,12 +47,9 @@ export class IntegrationService {
     }
   }
 
-  private transformStripeEvent(
-    payload: any,
-    organizationId: string
-  ): Omit<BusinessEvent, 'id' | 'timestamp'> {
+  private transformStripeEvent(payload: any, organizationId: string): Omit<BusinessEvent, 'id' | 'timestamp'> {
     const eventType = this.mapStripeEventType(payload.type);
-
+    
     return {
       type: eventType,
       source: IntegrationSource.STRIPE,
@@ -79,12 +76,9 @@ export class IntegrationService {
     };
   }
 
-  private transformPayPalEvent(
-    payload: any,
-    organizationId: string
-  ): Omit<BusinessEvent, 'id' | 'timestamp'> {
+  private transformPayPalEvent(payload: any, organizationId: string): Omit<BusinessEvent, 'id' | 'timestamp'> {
     const eventType = this.mapPayPalEventType(payload.event_type);
-
+    
     return {
       type: eventType,
       source: IntegrationSource.PAYPAL,
@@ -110,12 +104,9 @@ export class IntegrationService {
     };
   }
 
-  private transformSalesforceEvent(
-    payload: any,
-    organizationId: string
-  ): Omit<BusinessEvent, 'id' | 'timestamp'> {
+  private transformSalesforceEvent(payload: any, organizationId: string): Omit<BusinessEvent, 'id' | 'timestamp'> {
     const eventType = this.mapSalesforceEventType(payload.sobject);
-
+    
     return {
       type: eventType,
       source: IntegrationSource.SALESFORCE,
@@ -142,12 +133,9 @@ export class IntegrationService {
     };
   }
 
-  private transformHubSpotEvent(
-    payload: any,
-    organizationId: string
-  ): Omit<BusinessEvent, 'id' | 'timestamp'> {
+  private transformHubSpotEvent(payload: any, organizationId: string): Omit<BusinessEvent, 'id' | 'timestamp'> {
     const eventType = this.mapHubSpotEventType(payload.subscriptionType, payload.changeType);
-
+    
     return {
       type: eventType,
       source: IntegrationSource.HUBSPOT,
@@ -175,12 +163,9 @@ export class IntegrationService {
     };
   }
 
-  private transformPipedriveEvent(
-    payload: any,
-    organizationId: string
-  ): Omit<BusinessEvent, 'id' | 'timestamp'> {
+  private transformPipedriveEvent(payload: any, organizationId: string): Omit<BusinessEvent, 'id' | 'timestamp'> {
     const eventType = this.mapPipedriveEventType(payload.event, payload.meta?.object);
-
+    
     return {
       type: eventType,
       source: IntegrationSource.PIPEDRIVE,
@@ -193,8 +178,7 @@ export class IntegrationService {
       },
       metadata: {
         organization_id: organizationId,
-        user_id:
-          payload.current?.user_id?.toString() || payload.current?.owner_id?.toString() || '',
+        user_id: payload.current?.user_id?.toString() || payload.current?.owner_id?.toString() || '',
         correlation_id: payload.current?.id?.toString(),
         priority: this.determinePriority(eventType),
         retry_count: 0,
@@ -209,12 +193,9 @@ export class IntegrationService {
     };
   }
 
-  private transformSquareEvent(
-    payload: any,
-    organizationId: string
-  ): Omit<BusinessEvent, 'id' | 'timestamp'> {
+  private transformSquareEvent(payload: any, organizationId: string): Omit<BusinessEvent, 'id' | 'timestamp'> {
     const eventType = this.mapSquareEventType(payload.type);
-
+    
     return {
       type: eventType,
       source: IntegrationSource.SQUARE,
@@ -241,12 +222,9 @@ export class IntegrationService {
     };
   }
 
-  private transformNetSuiteEvent(
-    payload: any,
-    organizationId: string
-  ): Omit<BusinessEvent, 'id' | 'timestamp'> {
+  private transformNetSuiteEvent(payload: any, organizationId: string): Omit<BusinessEvent, 'id' | 'timestamp'> {
     const eventType = this.mapNetSuiteEventType(payload.eventType);
-
+    
     return {
       type: eventType,
       source: IntegrationSource.NETSUITE,
@@ -272,12 +250,9 @@ export class IntegrationService {
     };
   }
 
-  private transformSAPEvent(
-    payload: any,
-    organizationId: string
-  ): Omit<BusinessEvent, 'id' | 'timestamp'> {
+  private transformSAPEvent(payload: any, organizationId: string): Omit<BusinessEvent, 'id' | 'timestamp'> {
     const eventType = this.mapSAPEventType(payload.eventType);
-
+    
     return {
       type: eventType,
       source: IntegrationSource.SAP,
@@ -303,16 +278,11 @@ export class IntegrationService {
     };
   }
 
-  private transformQuickBooksEvent(
-    payload: any,
-    organizationId: string
-  ): Omit<BusinessEvent, 'id' | 'timestamp'> {
-    const eventType = this.mapQuickBooksEventType(
-      payload.eventNotifications?.[0]?.dataChangeEvent?.entities?.[0]?.name
-    );
-
+  private transformQuickBooksEvent(payload: any, organizationId: string): Omit<BusinessEvent, 'id' | 'timestamp'> {
+    const eventType = this.mapQuickBooksEventType(payload.eventNotifications?.[0]?.dataChangeEvent?.entities?.[0]?.name);
+    
     const entity = payload.eventNotifications?.[0]?.dataChangeEvent?.entities?.[0];
-
+    
     return {
       type: eventType,
       source: IntegrationSource.QUICKBOOKS,
@@ -339,10 +309,7 @@ export class IntegrationService {
     };
   }
 
-  private transformZapierEvent(
-    payload: any,
-    organizationId: string
-  ): Omit<BusinessEvent, 'id' | 'timestamp'> {
+  private transformZapierEvent(payload: any, organizationId: string): Omit<BusinessEvent, 'id' | 'timestamp'> {
     return {
       type: BusinessEventType.WORKFLOW_TRIGGERED,
       source: IntegrationSource.ZAPIER,
@@ -367,10 +334,7 @@ export class IntegrationService {
     };
   }
 
-  private transformWorkatoEvent(
-    payload: any,
-    organizationId: string
-  ): Omit<BusinessEvent, 'id' | 'timestamp'> {
+  private transformWorkatoEvent(payload: any, organizationId: string): Omit<BusinessEvent, 'id' | 'timestamp'> {
     return {
       type: BusinessEventType.WORKFLOW_TRIGGERED,
       source: IntegrationSource.WORKATO,
@@ -395,10 +359,7 @@ export class IntegrationService {
     };
   }
 
-  private transformPowerAutomateEvent(
-    payload: any,
-    organizationId: string
-  ): Omit<BusinessEvent, 'id' | 'timestamp'> {
+  private transformPowerAutomateEvent(payload: any, organizationId: string): Omit<BusinessEvent, 'id' | 'timestamp'> {
     return {
       type: BusinessEventType.WORKFLOW_TRIGGERED,
       source: IntegrationSource.POWER_AUTOMATE,
@@ -437,7 +398,7 @@ export class IntegrationService {
       'customer.subscription.updated': BusinessEventType.SUBSCRIPTION_CHANGED,
       'customer.subscription.deleted': BusinessEventType.SUBSCRIPTION_CHANGED,
     };
-
+    
     return eventMap[stripeEventType] || BusinessEventType.WORKFLOW_TRIGGERED;
   }
 
@@ -449,7 +410,7 @@ export class IntegrationService {
       'BILLING.SUBSCRIPTION.UPDATED': BusinessEventType.SUBSCRIPTION_CHANGED,
       'BILLING.SUBSCRIPTION.CANCELLED': BusinessEventType.SUBSCRIPTION_CHANGED,
     };
-
+    
     return eventMap[paypalEventType] || BusinessEventType.WORKFLOW_TRIGGERED;
   }
 
@@ -457,15 +418,15 @@ export class IntegrationService {
     if (!sobjectType?.attributes?.type) {
       return BusinessEventType.WORKFLOW_TRIGGERED;
     }
-
+    
     const eventMap: Record<string, BusinessEventType> = {
-      Lead: BusinessEventType.LEAD_CREATED,
-      Contact: BusinessEventType.CUSTOMER_UPDATED,
-      Account: BusinessEventType.CUSTOMER_UPDATED,
-      Opportunity: BusinessEventType.LEAD_CREATED,
-      Order: BusinessEventType.PRODUCT_SOLD,
+      'Lead': BusinessEventType.LEAD_CREATED,
+      'Contact': BusinessEventType.CUSTOMER_UPDATED,
+      'Account': BusinessEventType.CUSTOMER_UPDATED,
+      'Opportunity': BusinessEventType.LEAD_CREATED,
+      'Order': BusinessEventType.PRODUCT_SOLD,
     };
-
+    
     return eventMap[sobjectType.attributes.type] || BusinessEventType.WORKFLOW_TRIGGERED;
   }
 
@@ -478,7 +439,7 @@ export class IntegrationService {
       'company.creation': BusinessEventType.CUSTOMER_UPDATED,
       'company.propertyChange': BusinessEventType.CUSTOMER_UPDATED,
     };
-
+    
     const key = `${subscriptionType}.${changeType}`;
     return eventMap[key] || BusinessEventType.WORKFLOW_TRIGGERED;
   }
@@ -492,7 +453,7 @@ export class IntegrationService {
       'added.organization': BusinessEventType.CUSTOMER_UPDATED,
       'updated.organization': BusinessEventType.CUSTOMER_UPDATED,
     };
-
+    
     const key = `${event}.${objectType}`;
     return eventMap[key] || BusinessEventType.WORKFLOW_TRIGGERED;
   }
@@ -507,43 +468,43 @@ export class IntegrationService {
       'customer.created': BusinessEventType.LEAD_CREATED,
       'customer.updated': BusinessEventType.CUSTOMER_UPDATED,
     };
-
+    
     return eventMap[squareEventType] || BusinessEventType.WORKFLOW_TRIGGERED;
   }
 
   private mapNetSuiteEventType(eventType: string): BusinessEventType {
     const eventMap: Record<string, BusinessEventType> = {
-      customer_created: BusinessEventType.LEAD_CREATED,
-      customer_updated: BusinessEventType.CUSTOMER_UPDATED,
-      sales_order_created: BusinessEventType.PRODUCT_SOLD,
-      invoice_created: BusinessEventType.INVOICE_GENERATED,
-      payment_received: BusinessEventType.PAYMENT_RECEIVED,
+      'customer_created': BusinessEventType.LEAD_CREATED,
+      'customer_updated': BusinessEventType.CUSTOMER_UPDATED,
+      'sales_order_created': BusinessEventType.PRODUCT_SOLD,
+      'invoice_created': BusinessEventType.INVOICE_GENERATED,
+      'payment_received': BusinessEventType.PAYMENT_RECEIVED,
     };
-
+    
     return eventMap[eventType] || BusinessEventType.WORKFLOW_TRIGGERED;
   }
 
   private mapSAPEventType(eventType: string): BusinessEventType {
     const eventMap: Record<string, BusinessEventType> = {
-      business_partner_created: BusinessEventType.LEAD_CREATED,
-      business_partner_changed: BusinessEventType.CUSTOMER_UPDATED,
-      sales_order_created: BusinessEventType.PRODUCT_SOLD,
-      invoice_created: BusinessEventType.INVOICE_GENERATED,
-      payment_received: BusinessEventType.PAYMENT_RECEIVED,
+      'business_partner_created': BusinessEventType.LEAD_CREATED,
+      'business_partner_changed': BusinessEventType.CUSTOMER_UPDATED,
+      'sales_order_created': BusinessEventType.PRODUCT_SOLD,
+      'invoice_created': BusinessEventType.INVOICE_GENERATED,
+      'payment_received': BusinessEventType.PAYMENT_RECEIVED,
     };
-
+    
     return eventMap[eventType] || BusinessEventType.WORKFLOW_TRIGGERED;
   }
 
   private mapQuickBooksEventType(entityName: string): BusinessEventType {
     const eventMap: Record<string, BusinessEventType> = {
-      Customer: BusinessEventType.CUSTOMER_UPDATED,
-      Invoice: BusinessEventType.INVOICE_GENERATED,
-      Payment: BusinessEventType.PAYMENT_RECEIVED,
-      SalesReceipt: BusinessEventType.PRODUCT_SOLD,
-      Estimate: BusinessEventType.LEAD_CREATED,
+      'Customer': BusinessEventType.CUSTOMER_UPDATED,
+      'Invoice': BusinessEventType.INVOICE_GENERATED,
+      'Payment': BusinessEventType.PAYMENT_RECEIVED,
+      'SalesReceipt': BusinessEventType.PRODUCT_SOLD,
+      'Estimate': BusinessEventType.LEAD_CREATED,
     };
-
+    
     return eventMap[entityName] || BusinessEventType.WORKFLOW_TRIGGERED;
   }
 
@@ -552,17 +513,19 @@ export class IntegrationService {
       BusinessEventType.PAYMENT_RECEIVED,
       BusinessEventType.SUBSCRIPTION_CHANGED,
     ];
-
-    const lowPriorityEvents = [BusinessEventType.CUSTOMER_UPDATED];
-
+    
+    const lowPriorityEvents = [
+      BusinessEventType.CUSTOMER_UPDATED,
+    ];
+    
     if (highPriorityEvents.includes(eventType)) {
       return EventPriority.HIGH;
     }
-
+    
     if (lowPriorityEvents.includes(eventType)) {
       return EventPriority.LOW;
     }
-
+    
     return EventPriority.MEDIUM;
   }
 }

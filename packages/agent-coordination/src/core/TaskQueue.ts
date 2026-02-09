@@ -1,6 +1,6 @@
-import Bull, { Job, JobOptions, Queue } from 'bull';
+import Bull, { Queue, Job, JobOptions } from 'bull';
 import { EventEmitter } from 'events';
-import { QueueStats, Task, TaskPriority, TaskStatus } from './types';
+import { Task, TaskPriority, TaskStatus, QueueStats } from './types';
 
 /**
  * Priority-based task queue using Bull
@@ -27,7 +27,10 @@ export class TaskQueue extends EventEmitter {
     Object.values(TaskPriority)
       .filter((value) => typeof value === 'number')
       .forEach((priority) => {
-        const queue = new Bull<Task>(`tasks:priority:${priority}`, this.redisConfig);
+        const queue = new Bull<Task>(
+          `tasks:priority:${priority}`,
+          this.redisConfig
+        );
 
         queue.on('completed', (job: Job<Task>) => {
           this.emit('task:completed', job.data);
@@ -147,15 +150,13 @@ export class TaskQueue extends EventEmitter {
   /**
    * Get queue statistics
    */
-  async getStatistics(): Promise<
-    {
-      priority: TaskPriority;
-      waiting: number;
-      active: number;
-      completed: number;
-      failed: number;
-    }[]
-  > {
+  async getStatistics(): Promise<{
+    priority: TaskPriority;
+    waiting: number;
+    active: number;
+    completed: number;
+    failed: number;
+  }[]> {
     const stats: QueueStats[] = [];
 
     for (const [priority, queue] of this.queues.entries()) {
@@ -193,7 +194,9 @@ export class TaskQueue extends EventEmitter {
    * Pause all queues
    */
   async pauseAll(): Promise<void> {
-    await Promise.all(Array.from(this.queues.values()).map((queue) => queue.pause()));
+    await Promise.all(
+      Array.from(this.queues.values()).map((queue) => queue.pause())
+    );
     this.emit('queues:paused');
   }
 
@@ -201,7 +204,9 @@ export class TaskQueue extends EventEmitter {
    * Resume all queues
    */
   async resumeAll(): Promise<void> {
-    await Promise.all(Array.from(this.queues.values()).map((queue) => queue.resume()));
+    await Promise.all(
+      Array.from(this.queues.values()).map((queue) => queue.resume())
+    );
     this.emit('queues:resumed');
   }
 
@@ -219,7 +224,9 @@ export class TaskQueue extends EventEmitter {
    * Close all queues
    */
   async close(): Promise<void> {
-    await Promise.all(Array.from(this.queues.values()).map((queue) => queue.close()));
+    await Promise.all(
+      Array.from(this.queues.values()).map((queue) => queue.close())
+    );
     this.removeAllListeners();
   }
 }

@@ -1,14 +1,10 @@
 # Onboarding Analytics Guide
 
-This guide explains how to use the onboarding analytics features in The New Fuse
-platform's Admin Control Panel.
+This guide explains how to use the onboarding analytics features in The New Fuse platform's Admin Control Panel.
 
 ## Overview
 
-The onboarding analytics dashboard provides insights into how users are
-experiencing your onboarding process. You can track completion rates, identify
-drop-off points, and understand user behavior to optimize the onboarding
-experience.
+The onboarding analytics dashboard provides insights into how users are experiencing your onboarding process. You can track completion rates, identify drop-off points, and understand user behavior to optimize the onboarding experience.
 
 ## Accessing Onboarding Analytics
 
@@ -22,8 +18,7 @@ experience.
 
 ### Completion Metrics
 
-- **Completion Rate**: Percentage of users who complete the entire onboarding
-  process
+- **Completion Rate**: Percentage of users who complete the entire onboarding process
 - **Total Onboardings Started**: Number of users who began onboarding
 - **Completed Onboardings**: Number of users who finished onboarding
 - **Average Completion Time**: Average time users spend completing onboarding
@@ -31,10 +26,8 @@ experience.
 ### User Engagement
 
 - **Average Time per Step**: How long users spend on each step
-- **Step Interaction Rate**: Percentage of users who interact with optional
-  elements
-- **Feedback Scores**: User ratings of the onboarding experience (if feedback
-  collection is enabled)
+- **Step Interaction Rate**: Percentage of users who interact with optional elements
+- **Feedback Scores**: User ratings of the onboarding experience (if feedback collection is enabled)
 
 ### Drop-off Analysis
 
@@ -96,9 +89,7 @@ experience.
 
 ## Troubleshooting
 
-- **No data showing**: Ensure analytics collection is enabled in General
-  Settings
+- **No data showing**: Ensure analytics collection is enabled in General Settings
 - **Incomplete data**: Check that all steps have analytics tracking enabled
-- **Discrepancies in metrics**: Verify that all users are being tracked
-  correctly
+- **Discrepancies in metrics**: Verify that all users are being tracked correctly
 - **Export failures**: Try a smaller date range or different export format

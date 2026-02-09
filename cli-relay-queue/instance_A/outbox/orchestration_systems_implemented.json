@@ -18,7 +18,7 @@
       "anti_stagnation_features": {
         "heartbeat_monitoring": [
           "30-second heartbeat intervals",
-          "2-minute timeout thresholds",
+          "2-minute timeout thresholds", 
           "15-minute stagnation detection",
           "Automatic escalation protocols"
         ],
@@ -31,7 +31,7 @@
         "stagnation_detection": [
           "No heartbeat detection",
           "No progress monitoring",
-          "Circular communication detection",
+          "Circular communication detection", 
           "Timeout-based stagnation alerts"
         ],
         "recovery_protocols": [
@@ -50,7 +50,7 @@
         ],
         "consolidation_targets": [
           "Old relay tributary files",
-          "Scattered transport components",
+          "Scattered transport components", 
           "Legacy bridge implementations",
           "Duplicate protocol adapters"
         ],
@@ -135,7 +135,7 @@
           "claude_instance_3": {
             "task": "Create workflow builder and persistence",
             "files": [
-              "packages/workflow-engine/src/builder/WorkflowBuilder.ts",
+              "packages/workflow-engine/src/builder/WorkflowBuilder.ts", 
               "packages/workflow-engine/src/persistence/WorkflowRepository.ts",
               "packages/workflow-engine/src/validation/WorkflowValidator.ts"
             ],

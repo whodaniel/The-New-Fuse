@@ -11,19 +11,19 @@ test.describe('Visual Regression Tests - UI Components', () => {
   test('dashboard layout should match baseline', async ({ dashboardPage }) => {
     await dashboardPage.navigateToDashboard();
     await visualTesting.compareFullPage('dashboard');
-
+    
     // Test responsive layouts
     await visualTesting.compareResponsive('dashboard-responsive');
   });
 
   test('workflow editor components should match baseline', async ({ workflowEditorPage }) => {
     await workflowEditorPage.navigateToEditor();
-
+    
     // Test main editor components
     await visualTesting.compareElement('[data-testid="workflow-canvas"]', 'workflow-canvas');
     await visualTesting.compareElement('[data-testid="node-list"]', 'node-list');
     await visualTesting.compareElement('[data-testid="workflow-toolbar"]', 'workflow-toolbar');
-
+    
     // Test node interactions
     await workflowEditorPage.addNode('source');
     await visualTesting.compareElement('[data-node-type="source"]', 'source-node');
@@ -31,10 +31,10 @@ test.describe('Visual Regression Tests - UI Components', () => {
 
   test('settings panel components should match baseline', async ({ settingsPage }) => {
     await settingsPage.navigateToSettings();
-
+    
     // Test each settings tab
     const tabs = ['profile', 'workflow', 'security', 'notifications'] as const;
-
+    
     for (const tab of tabs) {
       await settingsPage.switchToTab(tab);
       await visualTesting.compareFullPage(`settings-${tab}`);
@@ -43,17 +43,17 @@ test.describe('Visual Regression Tests - UI Components', () => {
 
   test('interactive elements should maintain visual consistency', async ({ dashboardPage }) => {
     await dashboardPage.navigateToDashboard();
-
+    
     // Test button states
     await visualTesting.captureInteractionStates(
       '[data-testid="create-workflow-btn"]',
-      'create-workflow-button',
+      'create-workflow-button'
     );
-
+    
     // Test navigation menu items
     await visualTesting.captureInteractionStates(
       '[data-testid="nav-menu"] [data-section="workflows"]',
-      'nav-menu-item',
+      'nav-menu-item'
     );
   });
 
@@ -62,9 +62,9 @@ test.describe('Visual Regression Tests - UI Components', () => {
     await testHelpers.createTestWorkflowData({ status: 'active' });
     await testHelpers.createTestWorkflowData({ status: 'completed' });
     await testHelpers.createTestWorkflowData({ status: 'failed' });
-
+    
     await dashboardPage.navigateToDashboard();
-
+    
     // Test workflow list items in different states
     await visualTesting.compareElement('[data-testid="workflow-list"]', 'workflow-list');
     await visualTesting.compareElement('[data-status="active"]', 'workflow-active');
@@ -74,11 +74,11 @@ test.describe('Visual Regression Tests - UI Components', () => {
 
   test('modal dialogs should match baseline', async ({ workflowEditorPage }) => {
     await workflowEditorPage.navigateToEditor();
-
+    
     // Open and test save dialog
     await workflowEditorPage.saveWorkflow();
     await visualTesting.compareElement('[data-testid="save-dialog"]', 'save-dialog');
-
+    
     // Test dialog responsive behavior
     await visualTesting.compareResponsive('save-dialog-responsive');
   });

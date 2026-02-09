@@ -1,16 +1,16 @@
-import { Badge, Button, LoadingSpinner } from '@/components/ui/design-system';
+import React, { useEffect, useState } from 'react';
+import { Button, Badge, LoadingSpinner } from '@/components/ui/design-system';
 import {
   Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
   ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
 } from '@/components/ui/modal';
 import { useToast } from '@/hooks/useToast';
 import { format } from 'date-fns';
-import React, { useEffect, useState } from 'react';
 import { PromptTemplateVersion, usePromptTemplates } from '../../hooks/usePromptTemplates';
 
 interface VersionHistoryProps {
@@ -146,18 +146,12 @@ export const VersionHistory: React.FC<VersionHistoryProps> = ({ templateId }) =>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">{version.createdBy}</td>
                   <td className="px-6 py-4 text-sm">
                     <div className="max-w-xs truncate">
-                      {version.comment || (
-                        <span className="italic text-neutral-500">No comment</span>
-                      )}
+                      {version.comment || <span className="italic text-neutral-500">No comment</span>}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <div className="flex gap-2">
-                      <Button
-                        size="xs"
-                        variant="outline"
-                        onClick={() => handleViewVersion(version)}
-                      >
+                      <Button size="xs" variant="outline" onClick={() => handleViewVersion(version)}>
                         View
                       </Button>
                       {index > 0 && (
@@ -212,10 +206,7 @@ export const VersionHistory: React.FC<VersionHistoryProps> = ({ templateId }) =>
                     </thead>
                     <tbody>
                       {Object.entries(selectedVersion.variables).map(([key, value]) => (
-                        <tr
-                          key={key}
-                          className="border-b border-neutral-200 dark:border-neutral-700"
-                        >
+                        <tr key={key} className="border-b border-neutral-200 dark:border-neutral-700">
                           <td className="py-2">{key}</td>
                           <td className="py-2">{value}</td>
                         </tr>

@@ -8,12 +8,17 @@ export default defineConfig({
     setupFiles: [],
     coverage: {
       reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'dist/', '**/*.d.ts', '**/*.test.ts'],
-    },
+      exclude: [
+        'node_modules/',
+        'dist/',
+        '**/*.d.ts',
+        '**/*.test.ts'
+      ]
+    }
   },
   resolve: {
     alias: {
-      '@': './src',
-    },
-  },
+      '@': './src'
+    }
+  }
 });

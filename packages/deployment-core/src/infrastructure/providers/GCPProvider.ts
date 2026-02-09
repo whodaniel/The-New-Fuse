@@ -4,17 +4,17 @@
  */
 
 import {
-  InfrastructureChange,
+  ResourceProvider,
+  ResourceImportConfig,
+  ResourceStatus,
+  ResourceHealth
+} from '../ResourceProvisioner';
+import {
   ResourceDefinition,
   ResourceProvisionResult,
-  ResourceType,
+  InfrastructureChange,
+  ResourceType
 } from '../../types/infrastructure';
-import {
-  ResourceHealth,
-  ResourceImportConfig,
-  ResourceProvider,
-  ResourceStatus,
-} from '../ResourceProvisioner';
 
 export class GCPProvider implements ResourceProvider {
   private projectId: string;
@@ -27,10 +27,7 @@ export class GCPProvider implements ResourceProvider {
     this.zone = zone;
   }
 
-  async provision(
-    resource: ResourceDefinition,
-    infrastructureId: string
-  ): Promise<ResourceProvisionResult> {
+  async provision(resource: ResourceDefinition, infrastructureId: string): Promise<ResourceProvisionResult> {
     try {
       switch (resource.type) {
         case ResourceType.COMPUTE_ENGINE:
@@ -55,34 +52,27 @@ export class GCPProvider implements ResourceProvider {
         resourceName: resource.name,
         resourceType: resource.type,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       };
     }
   }
 
-  async update(
-    resource: ResourceDefinition,
-    _change: InfrastructureChange,
-    _infrastructureId: string
-  ): Promise<ResourceProvisionResult> {
+  async update(resource: ResourceDefinition, _change: InfrastructureChange, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock implementation - in production, this would call GCP APIs
     return {
       resourceName: resource.name,
       resourceType: resource.type,
       success: true,
-      resourceId: `gcp-${resource.name}-updated`,
+      resourceId: `gcp-${resource.name}-updated`
     };
   }
 
-  async destroy(
-    resource: ResourceDefinition,
-    _infrastructureId: string
-  ): Promise<ResourceProvisionResult> {
+  async destroy(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock implementation - in production, this would call GCP APIs
     return {
       resourceName: resource.name,
       resourceType: resource.type,
-      success: true,
+      success: true
     };
   }
 
@@ -92,7 +82,7 @@ export class GCPProvider implements ResourceProvider {
       resourceName: importConfig.resourceId,
       resourceType: importConfig.resourceType,
       success: true,
-      resourceId: importConfig.resourceId,
+      resourceId: importConfig.resourceId
     };
   }
 
@@ -104,7 +94,7 @@ export class GCPProvider implements ResourceProvider {
       health: ResourceHealth.HEALTHY,
       properties: {},
       outputs: {},
-      lastUpdated: new Date(),
+      lastUpdated: new Date()
     };
   }
 
@@ -113,18 +103,15 @@ export class GCPProvider implements ResourceProvider {
     return resource;
   }
 
-  private async provisionComputeEngine(
-    resource: ResourceDefinition,
-    _infrastructureId: string
-  ): Promise<ResourceProvisionResult> {
+  private async provisionComputeEngine(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP Compute Engine provisioning
     const instanceName = resource.name;
     const machineType = resource.properties.machineType || 'e2-medium';
     void machineType;
-
+    
     // In production, this would use the GCP Compute Engine API
     const resourceId = `projects/${this.projectId}/zones/${this.zone}/instances/${instanceName}`;
-
+    
     return {
       resourceName: resource.name,
       resourceType: resource.type,
@@ -135,22 +122,19 @@ export class GCPProvider implements ResourceProvider {
         externalIp: '34.123.45.67', // Mock IP
         internalIp: '10.0.0.2',
         machineType,
-        zone: this.zone,
-      },
+        zone: this.zone
+      }
     };
   }
 
-  private async provisionCloudStorage(
-    resource: ResourceDefinition,
-    _infrastructureId: string
-  ): Promise<ResourceProvisionResult> {
+  private async provisionCloudStorage(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP Cloud Storage provisioning
     const bucketName = resource.name;
     const location = resource.properties.location || this.region;
     const storageClass = resource.properties.storageClass || 'STANDARD';
-
+    
     const resourceId = `gs://${bucketName}`;
-
+    
     return {
       resourceName: resource.name,
       resourceType: resource.type,
@@ -160,21 +144,18 @@ export class GCPProvider implements ResourceProvider {
         bucketName,
         bucketUrl: resourceId,
         location,
-        storageClass,
-      },
+        storageClass
+      }
     };
   }
 
-  private async provisionVPCNetwork(
-    resource: ResourceDefinition,
-    _infrastructureId: string
-  ): Promise<ResourceProvisionResult> {
+  private async provisionVPCNetwork(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP VPC Network provisioning
     const networkName = resource.name;
     const autoCreateSubnetworks = resource.properties.autoCreateSubnetworks || false;
-
+    
     const resourceId = `projects/${this.projectId}/global/networks/${networkName}`;
-
+    
     return {
       resourceName: resource.name,
       resourceType: resource.type,
@@ -184,22 +165,19 @@ export class GCPProvider implements ResourceProvider {
         networkId: resourceId,
         networkName,
         autoCreateSubnetworks,
-        selfLink: `https://www.googleapis.com/compute/v1/${resourceId}`,
-      },
+        selfLink: `https://www.googleapis.com/compute/v1/${resourceId}`
+      }
     };
   }
 
-  private async provisionCloudSQL(
-    resource: ResourceDefinition,
-    _infrastructureId: string
-  ): Promise<ResourceProvisionResult> {
+  private async provisionCloudSQL(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP Cloud SQL provisioning
     const instanceName = resource.name;
     const databaseVersion = resource.properties.databaseVersion || 'POSTGRES_13';
     const tier = resource.properties.tier || 'db-f1-micro';
-
+    
     const resourceId = `projects/${this.projectId}/instances/${instanceName}`;
-
+    
     return {
       resourceName: resource.name,
       resourceType: resource.type,
@@ -210,21 +188,18 @@ export class GCPProvider implements ResourceProvider {
         connectionName: `${this.projectId}:${this.region}:${instanceName}`,
         ipAddress: '10.0.0.3',
         databaseVersion,
-        tier,
-      },
+        tier
+      }
     };
   }
 
-  private async provisionLoadBalancer(
-    resource: ResourceDefinition,
-    _infrastructureId: string
-  ): Promise<ResourceProvisionResult> {
+  private async provisionLoadBalancer(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP Load Balancer provisioning
     const lbName = resource.name;
     const loadBalancingScheme = resource.properties.loadBalancingScheme || 'EXTERNAL';
-
+    
     const resourceId = `projects/${this.projectId}/global/urlMaps/${lbName}`;
-
+    
     return {
       resourceName: resource.name,
       resourceType: resource.type,
@@ -234,22 +209,19 @@ export class GCPProvider implements ResourceProvider {
         urlMapId: resourceId,
         ipAddress: '34.102.136.180',
         loadBalancingScheme,
-        selfLink: `https://www.googleapis.com/compute/v1/${resourceId}`,
-      },
+        selfLink: `https://www.googleapis.com/compute/v1/${resourceId}`
+      }
     };
   }
 
-  private async provisionGKECluster(
-    resource: ResourceDefinition,
-    _infrastructureId: string
-  ): Promise<ResourceProvisionResult> {
+  private async provisionGKECluster(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP GKE Cluster provisioning
     const clusterName = resource.name;
     const nodeCount = resource.properties.nodeCount || 3;
     const machineType = resource.properties.machineType || 'e2-medium';
-
+    
     const resourceId = `projects/${this.projectId}/locations/${this.zone}/clusters/${clusterName}`;
-
+    
     return {
       resourceName: resource.name,
       resourceType: resource.type,
@@ -261,22 +233,19 @@ export class GCPProvider implements ResourceProvider {
         masterVersion: '1.27.3-gke.100',
         nodeCount,
         machineType,
-        zone: this.zone,
-      },
+        zone: this.zone
+      }
     };
   }
 
-  private async provisionCloudFunction(
-    resource: ResourceDefinition,
-    _infrastructureId: string
-  ): Promise<ResourceProvisionResult> {
+  private async provisionCloudFunction(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP Cloud Function provisioning
     const functionName = resource.name;
     const runtime = resource.properties.runtime || 'nodejs18';
     const trigger = resource.properties.trigger || 'HTTP';
-
+    
     const resourceId = `projects/${this.projectId}/locations/${this.region}/functions/${functionName}`;
-
+    
     return {
       resourceName: resource.name,
       resourceType: resource.type,
@@ -286,8 +255,8 @@ export class GCPProvider implements ResourceProvider {
         functionId: resourceId,
         httpsTriggerUrl: `https://${this.region}-${this.projectId}.cloudfunctions.net/${functionName}`,
         runtime,
-        trigger,
-      },
+        trigger
+      }
     };
   }
 }

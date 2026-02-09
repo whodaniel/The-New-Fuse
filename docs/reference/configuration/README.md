@@ -1,11 +1,9 @@
 # Configuration Guide
 
 ## Service Configuration
-
 Each service requires specific configuration for optimal operation:
 
 ### Service Registry
-
 ```yaml
 discovery:
   heartbeat_interval: 30s
@@ -14,7 +12,6 @@ discovery:
 ```
 
 ### Workflow Orchestrator
-
 ```yaml
 orchestration:
   max_concurrent_workflows: 100
@@ -23,25 +20,21 @@ orchestration:
 ```
 
 ### State Manager
-
 ```yaml
 state:
   sync_interval: 15s
-  consistency_level: 'strong'
+  consistency_level: "strong"
   cache_ttl: 300s
 ```
 
 ## Environment Variables
-
 Required environment variables for each service:
-
 - `REDIS_URL`: Redis connection string
 - `DATABASE_URL`: Database connection string
 - `SERVICE_PORT`: Service port number
 - `LOG_LEVEL`: Logging level
 
 ## Security Configuration
-
 - TLS certificate configuration
 - Authentication settings
 - Authorization policies

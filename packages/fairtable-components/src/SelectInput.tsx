@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDownIcon } from './Icons';
 
 export interface SelectOptionItem {
@@ -16,18 +17,11 @@ interface SelectInputProps {
   disabled?: boolean;
 }
 
-const SelectInput: React.FC<SelectInputProps> = ({
-  options,
-  value,
-  onChange,
-  placeholder = 'Select...',
-  className = '',
-  disabled = false,
-}) => {
+const SelectInput: React.FC<SelectInputProps> = ({ options, value, onChange, placeholder = "Select...", className = '', disabled = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const selectedOption = options.find((opt) => opt.value === value);
+  const selectedOption = options.find(opt => opt.value === value);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -35,9 +29,9 @@ const SelectInput: React.FC<SelectInputProps> = ({
         setIsOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [wrapperRef]);
 
@@ -56,15 +50,9 @@ const SelectInput: React.FC<SelectInputProps> = ({
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="truncate">
-          {selectedOption ? (
-            selectedOption.label
-          ) : (
-            <span className="text-slate-400">{placeholder}</span>
-          )}
+            {selectedOption ? selectedOption.label : <span className="text-slate-400">{placeholder}</span>}
         </span>
-        <ChevronDownIcon
-          className={`w-4 h-4 ml-2 text-slate-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`}
-        />
+        <ChevronDownIcon className={`w-4 h-4 ml-2 text-slate-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
       </button>
       {isOpen && !disabled && (
         <ul className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm custom-scrollbar">
@@ -74,9 +62,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
               className={`cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-sky-100 hover:text-sky-900 text-slate-800 ${option.colorClass || ''}`}
               onClick={() => handleSelect(option.value)}
             >
-              <span
-                className={`block truncate ${selectedOption?.value === option.value ? 'font-semibold' : 'font-normal'}`}
-              >
+              <span className={`block truncate ${selectedOption?.value === option.value ? 'font-semibold' : 'font-normal'}`}>
                 {option.label}
               </span>
             </li>
@@ -93,3 +79,4 @@ const SelectInput: React.FC<SelectInputProps> = ({
 };
 
 export default SelectInput;
+

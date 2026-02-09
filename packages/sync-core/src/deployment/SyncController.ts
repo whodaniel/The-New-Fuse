@@ -3,11 +3,11 @@
  * REST API endpoints for sync system management
  */
 
-import { Body, Controller, Get, Logger, Param, Post, Put, Query } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, Logger } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { ConflictManager } from '../services/ConflictManager';
 import { MasterClockService } from '../services/MasterClockService';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
 import { SyncConfigService } from './SyncConfigService';
 
@@ -29,11 +29,16 @@ export class SyncController {
   @ApiResponse({ status: 200, description: 'Sync system status' })
   async getStatus() {
     try {
-      const [orchestratorMetrics, clockDrift, watcherMetrics, config] = await Promise.all([
+      const [
+        orchestratorMetrics,
+        clockDrift,
+        watcherMetrics,
+        config
+      ] = await Promise.all([
         this.orchestrator.getMetrics(),
         this.masterClock.detectDrift(),
         this.fileWatcher.getMetrics(),
-        this.configService.getConfig(),
+        this.configService.getConfig()
       ]);
 
       return {
@@ -43,24 +48,24 @@ export class SyncController {
           orchestrator: {
             activeSyncs: orchestratorMetrics.activeSyncs,
             queueSize: orchestratorMetrics.queueSize,
-            throughput: orchestratorMetrics.throughput,
+            throughput: orchestratorMetrics.throughput
           },
           masterClock: {
             drift: clockDrift.maxDrift,
             instances: clockDrift.instances.length,
-            requiresCorrection: clockDrift.requiresCorrection,
+            requiresCorrection: clockDrift.requiresCorrection
           },
           fileWatcher: {
             watchedPaths: watcherMetrics.watchedPaths,
             eventsPerSecond: watcherMetrics.eventsPerSecond,
-            errorRate: watcherMetrics.errorRate,
-          },
+            errorRate: watcherMetrics.errorRate
+          }
         },
         configuration: {
           masterClockEnabled: config.masterClock.enabled,
           fileWatcherEnabled: config.fileWatcher.enabled,
-          tenantIsolation: config.security.tenantIsolation,
-        },
+          tenantIsolation: config.security.tenantIsolation
+        }
       };
     } catch (error) {
       this.logger.error('Failed to get sync status', error);
@@ -86,7 +91,7 @@ export class SyncController {
       return {
         success: true,
         operationId: result.operationId,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error(`Failed to trigger sync for tenant ${tenantId}`, error);
@@ -104,7 +109,7 @@ export class SyncController {
       return {
         operations,
         count: operations.length,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to get active operations', error);
@@ -117,17 +122,20 @@ export class SyncController {
   @ApiQuery({ name: 'tenantId', required: false, description: 'Filter by tenant ID' })
   @ApiQuery({ name: 'status', required: false, description: 'Filter by status' })
   @ApiResponse({ status: 200, description: 'List of sync conflicts' })
-  async getConflicts(@Query('tenantId') tenantId?: string, @Query('status') status?: string) {
+  async getConflicts(
+    @Query('tenantId') tenantId?: string,
+    @Query('status') status?: string
+  ) {
     try {
       const conflicts = await this.conflictManager.getConflicts({
         tenantId,
-        status: status as any,
+        status: status as any
       });
 
       return {
         conflicts,
         count: conflicts.length,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to get conflicts', error);
@@ -148,14 +156,14 @@ export class SyncController {
         strategy: resolution.strategy as any,
         resolvedData: resolution.data,
         resolvedBy: 'api-user', // In real implementation, get from auth context
-        resolvedAt: new Date(),
+        resolvedAt: new Date()
       });
 
       return {
         success: true,
         conflictId,
         resolution: result,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error(`Failed to resolve conflict ${conflictId}`, error);
@@ -169,16 +177,16 @@ export class SyncController {
   async forceClockSync() {
     try {
       const drift = await this.masterClock.detectDrift();
-
+      
       if (drift.requiresCorrection) {
-        await this.masterClock.correctDrift(drift.instances.map((i) => i.instanceId));
+        await this.masterClock.correctDrift(drift.instances.map(i => i.instanceId));
       }
 
       return {
         success: true,
         drift: drift.maxDrift,
         corrected: drift.requiresCorrection,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to force clock sync', error);
@@ -199,7 +207,7 @@ export class SyncController {
         instances: drift.instances.length,
         requiresCorrection: drift.requiresCorrection,
         metrics,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to get clock status', error);
@@ -222,7 +230,7 @@ export class SyncController {
         success: true,
         patterns: request.patterns,
         tenantId: request.tenantId,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to add watch paths', error);
@@ -242,7 +250,7 @@ export class SyncController {
         eventsPerSecond: metrics.eventsPerSecond,
         errorRate: metrics.errorRate,
         batchSize: metrics.batchSize,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to get watcher status', error);
@@ -261,7 +269,7 @@ export class SyncController {
       return {
         success: true,
         config: newConfig,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to update config', error);
@@ -280,7 +288,7 @@ export class SyncController {
       return {
         config,
         validation,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to get config', error);

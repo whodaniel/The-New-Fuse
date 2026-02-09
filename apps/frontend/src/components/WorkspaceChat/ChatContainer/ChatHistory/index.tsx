@@ -1,24 +1,25 @@
-import useTextSize from '@/hooks/useTextSize';
-import useUser from '@/hooks/useUser';
-import Appearance from '@/models/appearance';
-import Workspace from '@/models/workspace';
-import { WorkspaceData } from '@/types/workspace';
-import paths from '@/utils/paths';
-import { ArrowDown } from '@phosphor-icons/react';
-import debounce from 'lodash.debounce';
-import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import ManageWorkspace, { useManageWorkspaceModal } from '../../../Modals/ManageWorkspace';
-import Chartable from './Chartable';
+import React, { useEffect, useRef, useState } from "react";
 import HistoricalMessage from './HistoricalMessage';
 import PromptReply from './PromptReply';
+import { useManageWorkspaceModal } from '../../../Modals/ManageWorkspace';
+import ManageWorkspace from '../../../Modals/ManageWorkspace';
+import { ArrowDown } from "@phosphor-icons/react";
+import debounce from "lodash.debounce";
+import useUser from "@/hooks/useUser";
+import Chartable from './Chartable';
+import Workspace from "@/models/workspace";
+import { useParams } from "react-router-dom";
+import paths from "@/utils/paths";
+import Appearance from "@/models/appearance";
+import useTextSize from "@/hooks/useTextSize";
+import { WorkspaceData } from "@/types/workspace";
 
 interface ChatHistoryProps {
   history: Array<{
     uuid?: string;
-    type?: 'statusResponse' | 'rechartVisualize';
+    type?: "statusResponse" | "rechartVisualize";
     content: string;
-    role: 'user' | 'assistant' | 'system';
+    role: "user" | "assistant" | "system";
     pending?: boolean;
     sources?: any[];
     error?: string | null;
@@ -94,8 +95,9 @@ export default function ChatHistory({
   useEffect(() => {
     const chatHistoryElement = chatHistoryRef.current;
     if (chatHistoryElement) {
-      chatHistoryElement.addEventListener('scroll', debouncedScroll as any);
-      return () => chatHistoryElement.removeEventListener('scroll', debouncedScroll as any);
+      chatHistoryElement.addEventListener("scroll", debouncedScroll as any);
+      return () =>
+        chatHistoryElement.removeEventListener("scroll", debouncedScroll as any);
     }
   }, []);
 
@@ -103,7 +105,7 @@ export default function ChatHistory({
     if (chatHistoryRef.current) {
       chatHistoryRef.current.scrollTo({
         top: chatHistoryRef.current.scrollHeight,
-        ...(smooth ? { behavior: 'smooth' as const } : {}),
+        ...(smooth ? { behavior: "smooth" as const } : {}),
       });
     }
   };
@@ -120,12 +122,12 @@ export default function ChatHistory({
   }: {
     editedMessage: string;
     chatId: string;
-    role: 'user' | 'assistant';
+    role: "user" | "assistant";
     attachments?: File[];
   }) => {
     if (!editedMessage || !workspace?.slug) return;
 
-    if (role === 'user') {
+    if (role === "user") {
       const updatedHistory = history.slice(
         0,
         history.findIndex((msg) => msg.chatId === chatId) + 1
@@ -137,32 +139,51 @@ export default function ChatHistory({
       return;
     }
 
-    if (role === 'assistant') {
+    if (role === "assistant") {
       const updatedHistory = [...history];
-      const targetIdx = history.findIndex((msg) => msg.chatId === chatId && msg.role === role);
+      const targetIdx = history.findIndex(
+        (msg) => msg.chatId === chatId && msg.role === role
+      );
       if (targetIdx < 0) return;
       updatedHistory[targetIdx].content = editedMessage;
       updateHistory(updatedHistory);
-      await Workspace.updateChatResponse(workspace.slug, threadSlug, chatId, editedMessage);
+      await Workspace.updateChatResponse(
+        workspace.slug,
+        threadSlug,
+        chatId,
+        editedMessage
+      );
       return;
     }
   };
 
   const forkThread = async (chatId: string) => {
     if (!workspace?.slug) return;
-    const newThreadSlug = await Workspace.forkThread(workspace.slug, threadSlug, chatId);
-    window.location.href = paths.workspace.thread(workspace.slug, newThreadSlug);
+    const newThreadSlug = await Workspace.forkThread(
+      workspace.slug,
+      threadSlug,
+      chatId
+    );
+    window.location.href = paths.workspace.thread(
+      workspace.slug,
+      newThreadSlug
+    );
   };
 
   if (history.length === 0 && !hasAttachments) {
     return (
       <div className="flex flex-col h-full md:mt-0 pb-44 md:pb-40 w-full justify-end items-center">
         <div className="flex flex-col items-center md:items-start md:max-w-[600px] w-full px-4">
-          <p className="text-white/60 text-lg font-base py-4">Welcome to your new workspace.</p>
-          {!user || user.role !== 'default' ? (
+          <p className="text-white/60 text-lg font-base py-4">
+            Welcome to your new workspace.
+          </p>
+          {!user || user.role !== "default" ? (
             <p className="w-full items-center text-white/60 text-lg font-base flex flex-col md:flex-row gap-x-1">
-              To get started either{' '}
-              <span className="underline font-medium cursor-pointer" onClick={showModal}>
+              To get started either{" "}
+              <span
+                className="underline font-medium cursor-pointer"
+                onClick={showModal}
+              >
                 upload a document
               </span>
               or <b className="font-medium italic">send a chat.</b>
@@ -177,7 +198,12 @@ export default function ChatHistory({
             sendSuggestion={handleSendSuggestedMessage}
           />
         </div>
-        {showing && <ManageWorkspace hideModal={hideModal} providedSlug={workspace?.slug} />}
+        {showing && (
+          <ManageWorkspace
+            hideModal={hideModal}
+            providedSlug={workspace?.slug}
+          />
+        )}
       </div>
     );
   }
@@ -185,21 +211,24 @@ export default function ChatHistory({
   return (
     <div
       className={`markdown text-white/80 light:text-theme-text-primary font-light ${textSizeClass} h-full md:h-[83%] pb-[100px] pt-6 md:pt-0 md:pb-20 md:mx-0 overflow-y-scroll flex flex-col justify-start ${
-        showScrollbar ? 'show-scrollbar' : 'no-scroll'
+        showScrollbar ? "show-scrollbar" : "no-scroll"
       }`}
       id="chat-history"
       ref={chatHistoryRef}
       onScroll={handleScroll}
     >
       {history.map((props, index) => {
-        const isLastBotReply = index === history.length - 1 && props.role === 'assistant';
+        const isLastBotReply =
+          index === history.length - 1 && props.role === "assistant";
 
-        if (props?.type === 'statusResponse' && !!props.content) {
+        if (props?.type === "statusResponse" && !!props.content) {
           return <StatusResponse key={props.uuid} props={props} />;
         }
 
-        if (props.type === 'rechartVisualize' && !!props.content) {
-          return <Chartable key={props.uuid} workspace={workspace} props={props} />;
+        if (props.type === "rechartVisualize" && !!props.content) {
+          return (
+            <Chartable key={props.uuid} workspace={workspace} props={props} />
+          );
         }
 
         if (isLastBotReply && props.animate) {
@@ -235,7 +264,9 @@ export default function ChatHistory({
           />
         );
       })}
-      {showing && <ManageWorkspace hideModal={hideModal} providedSlug={workspace?.slug} />}
+      {showing && (
+        <ManageWorkspace hideModal={hideModal} providedSlug={workspace?.slug} />
+      )}
       {!isAtBottom && (
         <div className="fixed bottom-40 right-10 md:right-20 z-50 cursor-pointer animate-pulse">
           <div className="flex flex-col items-center">
@@ -271,10 +302,7 @@ function StatusResponse({ props }: StatusResponseProps): JSX.Element {
   );
 }
 
-function WorkspaceChatSuggestions({
-  suggestions = [],
-  sendSuggestion,
-}: WorkspaceChatSuggestionsProps): JSX.Element | null {
+function WorkspaceChatSuggestions({ suggestions = [], sendSuggestion }: WorkspaceChatSuggestionsProps): JSX.Element | null {
   if (suggestions.length === 0) return null;
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-theme-text-primary text-xs mt-10 w-full justify-center">

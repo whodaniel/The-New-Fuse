@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';
+import { ConfigService } from '@nestjs/config';
 
 interface CacheOptions {
   ttl?: number;
@@ -39,7 +39,7 @@ export class CacheService {
       const ttl = options.ttl || this.defaultTTL;
       const serialized = JSON.stringify(value);
       await this.redis.setex(key, ttl, serialized);
-
+      
       if (options.tags) {
         await this.tagKey(key, options.tags);
       }

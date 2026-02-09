@@ -1,9 +1,9 @@
-import { Preloader } from '@/components/Preloader';
-import { useProviderEndpointAutoDiscovery } from '@/hooks/useProviderEndpointAutoDiscovery';
-import system from '@/models/system';
-import { CaretDown, CaretUp } from '@phosphor-icons/react';
 import React, { useState } from 'react';
+import { CaretUp, CaretDown } from "@phosphor-icons/react";
+import { Preloader } from "@/components/Preloader";
+import { useProviderEndpointAutoDiscovery } from "@/hooks/useProviderEndpointAutoDiscovery";
 import { BaseLLMOptionsProps, ModelSelectionProps } from '../../types';
+import system from "@/models/system";
 
 interface CohereAiSettings extends BaseLLMOptionsProps {
   settings: {
@@ -15,7 +15,7 @@ interface CohereAiSettings extends BaseLLMOptionsProps {
 }
 
 export default function CohereAiOptions({ settings }: CohereAiSettings): React.ReactElement {
-  const {
+  const { 
     autoDetecting,
     basePath,
     basePathValue,
@@ -23,18 +23,22 @@ export default function CohereAiOptions({ settings }: CohereAiSettings): React.R
     setShowAdvancedControls,
     handleAutoDetectClick,
   } = useProviderEndpointAutoDiscovery({
-    provider: 'cohereai',
+    provider: "cohereai",
     initialBasePath: settings?.CohereAiBasePath,
-    ENDPOINTS: [],
+    ENDPOINTS: []
   });
 
   const [tokenLimit, setTokenLimit] = useState<number>(settings?.CohereAiTokenLimit || 4096);
-  const [apiKey] = useState<string>(settings?.CohereAiApiKey || '');
+  const [apiKey] = useState<string>(settings?.CohereAiApiKey || "");
 
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
-        <CohereAiModelSelection settings={settings} basePath={basePath.value} apiKey={apiKey} />
+        <CohereAiModelSelection 
+          settings={settings} 
+          basePath={basePath.value}
+          apiKey={apiKey}
+        />
         <div className="flex flex-col w-60">
           <label className="text-white text-sm font-semibold block mb-2" id="token-limit-label">
             Token context window
@@ -59,7 +63,7 @@ export default function CohereAiOptions({ settings }: CohereAiSettings): React.R
           onClick={() => setShowAdvancedControls(!showAdvancedControls)}
           className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
-          {showAdvancedControls ? 'Hide' : 'Show'} Manual Endpoint Input
+          {showAdvancedControls ? "Hide" : "Show"} Manual Endpoint Input
           {showAdvancedControls ? (
             <CaretUp size={14} className="ml-1" />
           ) : (
@@ -108,17 +112,13 @@ export default function CohereAiOptions({ settings }: CohereAiSettings): React.R
   );
 }
 
-function CohereAiModelSelection({
-  settings,
-  basePath = null,
-  apiKey = null,
-}: ModelSelectionProps): React.ReactElement {
+function CohereAiModelSelection({ settings, basePath = null, apiKey = null }: ModelSelectionProps): React.ReactElement {
   const [customModels, setCustomModels] = useState<Array<{ id: string }>>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   React.useEffect(() => {
     async function findCustomModels() {
-      if (!basePath || !basePath.includes('/v1')) {
+      if (!basePath || !basePath.includes("/v1")) {
         setCustomModels([]);
         setLoading(false);
         return;
@@ -126,10 +126,10 @@ function CohereAiModelSelection({
 
       setLoading(true);
       try {
-        const { models } = await system.customModels('cohereai', apiKey, basePath);
+        const { models } = await system.customModels("cohereai", apiKey, basePath);
         setCustomModels(models || []);
       } catch (error) {
-        console.error('Failed to fetch custom models:', error);
+        console.error("Failed to fetch custom models:", error);
         setCustomModels([]);
       }
       setLoading(false);
@@ -151,9 +151,9 @@ function CohereAiModelSelection({
           className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
         >
           <option disabled selected>
-            {basePath?.includes('/v1')
-              ? '--loading available models--'
-              : 'Enter Cohere AI URL first'}
+            {basePath?.includes("/v1")
+              ? "--loading available models--"
+              : "Enter Cohere AI URL first"}
           </option>
         </select>
       </div>

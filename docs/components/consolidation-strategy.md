@@ -2,21 +2,14 @@
 
 ## Overview
 
-This document outlines our strategy for consolidating duplicate components while
-ensuring we retain the best features and functionality from each implementation.
-The goal is to create a more maintainable codebase without losing valuable
-functionality.
+This document outlines our strategy for consolidating duplicate components while ensuring we retain the best features and functionality from each implementation. The goal is to create a more maintainable codebase without losing valuable functionality.
 
 ## Guiding Principles
 
-1. **Preserve All Valuable Features**: No functionality should be lost during
-   consolidation
-2. **Understand Before Removing**: Thoroughly analyze each component before
-   making consolidation decisions
-3. **Test-Driven Consolidation**: Ensure comprehensive test coverage before and
-   after consolidation
-4. **Staged Implementation**: Consolidate components in batches, starting with
-   high-priority components
+1. **Preserve All Valuable Features**: No functionality should be lost during consolidation
+2. **Understand Before Removing**: Thoroughly analyze each component before making consolidation decisions
+3. **Test-Driven Consolidation**: Ensure comprehensive test coverage before and after consolidation
+4. **Staged Implementation**: Consolidate components in batches, starting with high-priority components
 5. **Documentation First**: Document all features before making changes
 
 ## Pre-Consolidation Process
@@ -25,9 +18,7 @@ functionality.
 
 Before consolidating any components:
 
-1. Run the component analysis scripts to identify duplicate and potentially
-   unused components
-
+1. Run the component analysis scripts to identify duplicate and potentially unused components
    ```bash
    ./scripts/run-component-cleanup.sh
    ```
@@ -160,7 +151,4 @@ If issues are discovered after consolidation:
 
 ## Conclusion
 
-By following this systematic approach to component consolidation, we can ensure
-that we retain all valuable features while reducing code duplication and
-improving maintainability. The key is to thoroughly understand each component
-before making consolidation decisions and to test extensively after each change.
+By following this systematic approach to component consolidation, we can ensure that we retain all valuable features while reducing code duplication and improving maintainability. The key is to thoroughly understand each component before making consolidation decisions and to test extensively after each change.

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import Redis from 'ioredis';
 import { AgentInbox } from '../../shared/agent-inbox';
-import { HeartbeatMonitoringService } from './orchestrator.service';
+import { HeartbeatMonitoringService } from '../orchestrator.service';
 
 export interface AgentRegistration {
   agentId: string;
@@ -21,7 +21,7 @@ export interface AgentSpawnConfig {
 
 /**
  * AgentLifecycleManager
- *
+ * 
  * Manages the complete lifecycle of agents:
  * - Registration & onboarding
  * - Inbox creation
@@ -29,7 +29,7 @@ export interface AgentSpawnConfig {
  * - Health checks
  * - Auto-recovery from failures
  * - Graceful shutdown
- *
+ * 
  * Integrates with:
  * - HeartbeatMonitoringService
  * - AgentInbox
@@ -69,32 +69,21 @@ export class AgentLifecycleManager {
    */
   async registerAgent(registration: AgentRegistration): Promise<void> {
     const { agentId, role, capabilities, expectedResponseTime, metadata } = registration;
-    const identity = (metadata?.identity as Record<string, any>) || {
-      longTermId: `agent-${agentId}`,
-      ephemeralId: `inst-${Date.now()}`,
-      protocolVersion: 'tnf-1',
-    };
-    const tenancy = (metadata?.tenancy as Record<string, any>) || {
-      tenantId: metadata?.tenantId,
-      organizationId: metadata?.organizationId,
-      agencyId: metadata?.agencyId,
-    };
 
     this.logger.log(`Registering agent: ${agentId} (role: ${role})`);
 
     // 1. Store agent registration
     this.agents.set(agentId, registration);
-    await this.redis.hset(`agent:${agentId}:registration`, {
-      agentId,
-      role,
-      capabilities: JSON.stringify(capabilities),
-      registeredAt: new Date().toISOString(),
-      metadata: JSON.stringify({
-        ...(metadata || {}),
-        identity,
-        tenancy,
-      }),
-    });
+    await this.redis.hset(
+      `agent:${agentId}:registration`,
+      {
+        agentId,
+        role,
+        capabilities: JSON.stringify(capabilities),
+        registeredAt: new Date().toISOString(),
+        metadata: JSON.stringify(metadata || {}),
+      }
+    );
 
     // 2. Store capabilities for routing
     await this.redis.sadd(`agent:${agentId}:capabilities`, ...capabilities);
@@ -219,7 +208,9 @@ export class AgentLifecycleManager {
 
     // Alert if inbox is overflowing
     if (stats.pending > 50) {
-      this.logger.warn(`Agent ${agentId} inbox overflowing: ${stats.pending} pending tasks`);
+      this.logger.warn(
+        `Agent ${agentId} inbox overflowing: ${stats.pending} pending tasks`
+      );
 
       await inbox.sendNotification({
         type: 'inbox_overflow',
@@ -238,7 +229,9 @@ export class AgentLifecycleManager {
     if (stats.inProgress > 0) {
       const status = this.heartbeatService.getAgentStatus(agentId);
       if (status && status.status === 'stalled') {
-        this.logger.warn(`Agent ${agentId} is stalled with ${stats.inProgress} in-progress tasks`);
+        this.logger.warn(
+          `Agent ${agentId} is stalled with ${stats.inProgress} in-progress tasks`
+        );
         await this.handleAgentFailure(agentId, { reason: 'stalled_with_tasks' });
       }
     }
@@ -310,7 +303,11 @@ export class AgentLifecycleManager {
       this.logger.log(`Redistributing task ${task.id} from agent ${agentId}`);
 
       // Remove from current inbox
-      await this.redis.lrem(`agent:${agentId}:inbox:tasks:pending`, 1, JSON.stringify(task));
+      await this.redis.lrem(
+        `agent:${agentId}:inbox:tasks:pending`,
+        1,
+        JSON.stringify(task)
+      );
 
       // Add back to global task queue for re-routing
       await this.redis.lpush('task:queue', JSON.stringify(task));
@@ -434,7 +431,10 @@ export class AgentLifecycleManager {
     const agents: string[] = [];
 
     for (const [agentId] of this.agents) {
-      const hasCapability = await this.redis.sismember(`agent:${agentId}:capabilities`, capability);
+      const hasCapability = await this.redis.sismember(
+        `agent:${agentId}:capabilities`,
+        capability
+      );
       if (hasCapability) {
         agents.push(agentId);
       }

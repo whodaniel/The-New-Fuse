@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useCallback, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
 
 // Define types for the wizard state
 export interface WizardSession {
@@ -25,10 +25,7 @@ type WizardAction =
   | { type: 'INITIALIZE_SESSION'; payload: WizardSession }
   | { type: 'SET_STEP'; payload: number }
   | { type: 'UPDATE_AGENTS'; payload: Map<string, boolean> }
-  | {
-      type: 'ADD_CONVERSATION';
-      payload: { role: 'user' | 'assistant' | 'system'; content: string; timestamp: Date };
-    }
+  | { type: 'ADD_CONVERSATION'; payload: { role: 'user' | 'assistant' | 'system'; content: string; timestamp: Date } }
   | { type: 'UPDATE_SESSION_DATA'; payload: Record<string, any> }
   | { type: 'SET_ERROR'; payload: string }
   | { type: 'CLEAR_ERROR' };
@@ -40,10 +37,7 @@ interface WizardContextType {
   initializeSession: (session: WizardSession) => void;
   setStep: (step: number) => void;
   updateAgents: (agents: Map<string, boolean>) => void;
-  addConversation: (conversation: {
-    role: 'user' | 'assistant' | 'system';
-    content: string;
-  }) => void;
+  addConversation: (conversation: { role: 'user' | 'assistant' | 'system'; content: string }) => void;
   updateSessionData: (data: Record<string, any>) => void;
   clearError: () => void;
 }
@@ -55,7 +49,7 @@ const initialState: WizardState = {
   session: null,
   activeAgents: new Map(),
   conversationHistory: [],
-  error: null,
+  error: null
 };
 
 // Reducer function
@@ -66,45 +60,43 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
         ...state,
         isInitialized: true,
         session: action.payload,
-        error: null,
+        error: null
       };
     case 'SET_STEP':
       return {
         ...state,
-        currentStep: action.payload,
+        currentStep: action.payload
       };
     case 'UPDATE_AGENTS':
       return {
         ...state,
-        activeAgents: action.payload,
+        activeAgents: action.payload
       };
     case 'ADD_CONVERSATION':
       return {
         ...state,
-        conversationHistory: [...state.conversationHistory, action.payload],
+        conversationHistory: [...state.conversationHistory, action.payload]
       };
     case 'UPDATE_SESSION_DATA':
       return {
         ...state,
-        session: state.session
-          ? {
-              ...state.session,
-              data: {
-                ...state.session.data,
-                ...action.payload,
-              },
-            }
-          : null,
+        session: state.session ? {
+          ...state.session,
+          data: {
+            ...state.session.data,
+            ...action.payload
+          }
+        } : null
       };
     case 'SET_ERROR':
       return {
         ...state,
-        error: action.payload,
+        error: action.payload
       };
     case 'CLEAR_ERROR':
       return {
         ...state,
-        error: null,
+        error: null
       };
     default:
       return state;
@@ -134,18 +126,15 @@ export function WizardProvider({ children }: WizardProviderProps): JSX.Element {
     dispatch({ type: 'UPDATE_AGENTS', payload: agents });
   }, []);
 
-  const addConversation = useCallback(
-    (conversation: { role: 'user' | 'assistant' | 'system'; content: string }) => {
-      dispatch({
-        type: 'ADD_CONVERSATION',
-        payload: {
-          ...conversation,
-          timestamp: new Date(),
-        },
-      });
-    },
-    []
-  );
+  const addConversation = useCallback((conversation: { role: 'user' | 'assistant' | 'system'; content: string }) => {
+    dispatch({
+      type: 'ADD_CONVERSATION',
+      payload: {
+        ...conversation,
+        timestamp: new Date()
+      }
+    });
+  }, []);
 
   const updateSessionData = useCallback((data: Record<string, any>) => {
     dispatch({ type: 'UPDATE_SESSION_DATA', payload: data });
@@ -165,7 +154,7 @@ export function WizardProvider({ children }: WizardProviderProps): JSX.Element {
         updateAgents,
         addConversation,
         updateSessionData,
-        clearError,
+        clearError
       }}
     >
       {children}

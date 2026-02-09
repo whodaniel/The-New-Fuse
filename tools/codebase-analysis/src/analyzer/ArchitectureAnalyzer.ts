@@ -563,7 +563,7 @@ export class ArchitectureAnalyzer {
     const dbPackages = this.packages.filter(pkg => 
       pkg.name.includes('database') || 
       pkg.name.includes('db') || 
-      pkg.name.includes('drizzle')
+      pkg.name.includes('prisma')
     );
 
     for (const pkg of dbPackages) {

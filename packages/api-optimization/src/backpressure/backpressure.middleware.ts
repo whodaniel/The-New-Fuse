@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus, Injectable, Logger, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { NextFunction, Request, Response } from 'express';
 
 export interface BackpressureConfig {
   enabled: boolean;
@@ -40,7 +40,7 @@ export class BackpressureMiddleware implements NestMiddleware {
     queuedRequests: 0,
     totalProcessed: 0,
     totalRejected: 0,
-    averageResponseTime: 0,
+    averageResponseTime: 0
   };
 
   private responseTimes: number[] = [];
@@ -57,13 +57,13 @@ export class BackpressureMiddleware implements NestMiddleware {
       maxConcurrentRequests: this.configService.get('BACKPRESSURE_MAX_CONCURRENT', 100),
       maxQueueSize: this.configService.get('BACKPRESSURE_MAX_QUEUE', 50),
       requestTimeout: this.configService.get('BACKPRESSURE_TIMEOUT', 30000),
-      slowdownThreshold: this.configService.get('BACKPRESSURE_SLOWDOWN_THRESHOLD', 80),
+      slowdownThreshold: this.configService.get('BACKPRESSURE_SLOWDOWN_THRESHOLD', 80)
     };
 
     this.logger.log(
       `Backpressure configured: enabled=${this.config.enabled}, ` +
-        `maxConcurrent=${this.config.maxConcurrentRequests}, ` +
-        `maxQueue=${this.config.maxQueueSize}`
+      `maxConcurrent=${this.config.maxConcurrentRequests}, ` +
+      `maxQueue=${this.config.maxQueueSize}`
     );
   }
 
@@ -91,7 +91,7 @@ export class BackpressureMiddleware implements NestMiddleware {
             statusCode: HttpStatus.SERVICE_UNAVAILABLE,
             message: 'Server is currently overloaded. Please try again later.',
             error: 'Service Unavailable',
-            retryAfter: this.estimateRetryAfter(),
+            retryAfter: this.estimateRetryAfter()
           },
           HttpStatus.SERVICE_UNAVAILABLE
         );
@@ -106,7 +106,7 @@ export class BackpressureMiddleware implements NestMiddleware {
         req,
         res,
         next,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       this.stats.queuedRequests = this.requestQueue.length;
@@ -114,7 +114,9 @@ export class BackpressureMiddleware implements NestMiddleware {
 
       // Set timeout for queued request
       setTimeout(() => {
-        const index = this.requestQueue.findIndex((item) => item.req === req && item.res === res);
+        const index = this.requestQueue.findIndex(
+          item => item.req === req && item.res === res
+        );
         if (index !== -1) {
           this.requestQueue.splice(index, 1);
           this.stats.queuedRequests = this.requestQueue.length;
@@ -124,7 +126,7 @@ export class BackpressureMiddleware implements NestMiddleware {
             res.status(HttpStatus.REQUEST_TIMEOUT).json({
               statusCode: HttpStatus.REQUEST_TIMEOUT,
               message: 'Request timed out while waiting in queue',
-              error: 'Request Timeout',
+              error: 'Request Timeout'
             });
           }
         }
@@ -198,7 +200,7 @@ export class BackpressureMiddleware implements NestMiddleware {
 
   private shouldSkip(req: Request): boolean {
     const skipPaths = ['/health', '/metrics', '/readiness', '/liveness'];
-    return skipPaths.some((path) => req.path.startsWith(path));
+    return skipPaths.some(path => req.path.startsWith(path));
   }
 
   private setBackpressureHeaders(res: Response, rejected: boolean): void {

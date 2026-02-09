@@ -1,8 +1,8 @@
-import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
 import { AgentSwarmOrchestrationService } from '../modules/agency-hub/services/agent-swarm-orchestration.service';
 import { PromptTemplatesService } from '../services/prompt-templates.service';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const logger = new Logger('SelfImprovementVerification');
@@ -29,13 +29,13 @@ async function bootstrap() {
       currentLoad: 0,
       maxLoad: 5,
       qualityScore: 1.0,
-      status: 'active',
+      status: 'active'
     });
     logger.log(`Agent Registered: ${agentId}`);
 
     logger.log('--- Step 3: Agent Creates Its Own Prompt ---');
-    const initialPrompt = 'You are a helpful assistant.';
-    // Note: The createTemplate signature in PromptTemplatesService expects data structure matching database input
+    const initialPrompt = "You are a helpful assistant.";
+    // Note: The createTemplate signature in PromptTemplatesService expects data structure matching Prisma Input
     // We need to match what we wrote in the service:
     /*
       name: data.name,
@@ -54,27 +54,25 @@ async function bootstrap() {
       category: 'System',
       isPublic: false,
       tags: ['agent-core', 'evolutionary'],
-      versions: [
-        {
-          version: 1,
-          content: initialPrompt,
-          label: 'Genesis',
-          variables: {},
-          changelog: 'Initial birth',
-          isActive: true,
-        },
-      ],
+      versions: [{
+        version: 1,
+        content: initialPrompt,
+        label: 'Genesis',
+        variables: {},
+        changelog: 'Initial birth',
+        isActive: true
+      }]
     });
     logger.log(`Prompt Template Created: ${template.id}`);
 
     logger.log('--- Step 4: Agent Improves Its Own Prompt ---');
-    const improvedPrompt = 'You are a highly advanced AI assistant capable of self-correction.';
+    const improvedPrompt = "You are a highly advanced AI assistant capable of self-correction.";
     const version = await promptService.createVersion(template.id, {
       content: improvedPrompt,
       label: 'Iteration 1',
       changelog: 'Self-optimization applied',
       variables: {},
-      isActive: true,
+      isActive: true
     });
     logger.log(`Prompt Updated to Version: ${version.version}`);
     logger.log(`New Content: ${version.content}`);

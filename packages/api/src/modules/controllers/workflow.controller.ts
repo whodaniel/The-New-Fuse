@@ -3,32 +3,22 @@
  * Provides standardized REST API endpoints for workflow operations
  */
 
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-  Put,
+import { 
+  Controller, 
+  Get, 
+  Post, 
+  Put, 
+  Delete, 
+  Body, 
+  Param, 
   UseGuards,
+  HttpStatus,
+  HttpCode
 } from '@nestjs/common';
-import {
-  ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiTags,
-  ApiResponse as SwaggerResponse,
-} from '@nestjs/swagger';
 import { WorkflowService } from '../../services/workflow.service';
-import { CurrentUser } from '../decorators/current-user.decorator';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { BaseController } from './base.controller';
-import { CreateWorkflowDto } from './dto/create-workflow.dto';
-import { UpdateWorkflowDto } from './dto/update-workflow.dto';
-import { WorkflowDto, WorkflowExecutionDto } from './dto/workflow.dto'; // Updated import path
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { CurrentUser } from '../decorators/current-user.decorator';
 // Local type definitions to avoid cross-package import issues
 interface WorkflowModel {
   id: string;
@@ -51,6 +41,16 @@ interface ApiResponse<T> {
   error?: string;
   meta?: Record<string, unknown>;
 }
+import { CreateWorkflowDto } from './dto/create-workflow.dto';
+import { UpdateWorkflowDto } from './dto/update-workflow.dto';
+import { WorkflowDto, WorkflowExecutionDto } from './dto/workflow.dto'; // Updated import path
+import { 
+  ApiTags, 
+  ApiOperation, 
+  ApiResponse as SwaggerResponse, 
+  ApiParam, 
+  ApiBody 
+} from '@nestjs/swagger';
 
 @ApiTags('Workflows')
 @Controller('workflows')
@@ -68,7 +68,9 @@ export class WorkflowController extends BaseController {
   @Get()
   @ApiOperation({ summary: 'Get all workflows for the current user' })
   @SwaggerResponse({ status: 200, description: 'List of workflows', type: [WorkflowDto] })
-  async getWorkflows(@CurrentUser() user: any): Promise<ApiResponse<WorkflowModel[]>> {
+  async getWorkflows(
+    @CurrentUser() user: any
+  ): Promise<ApiResponse<WorkflowModel[]>> {
     return this.handleAsync(
       () => this.workflowService.getWorkflows(user.id),
       'Failed to get workflows'
@@ -195,11 +197,7 @@ export class WorkflowController extends BaseController {
   @Get(':id/executions')
   @ApiOperation({ summary: 'Get workflow executions' })
   @ApiParam({ name: 'id', description: 'Workflow ID' })
-  @SwaggerResponse({
-    status: 200,
-    description: 'List of workflow executions',
-    type: [WorkflowExecutionDto],
-  })
+  @SwaggerResponse({ status: 200, description: 'List of workflow executions', type: [WorkflowExecutionDto] })
   async getWorkflowExecutions(
     @Param('id') id: string,
     @CurrentUser() user: any
@@ -221,11 +219,7 @@ export class WorkflowController extends BaseController {
   @ApiOperation({ summary: 'Get workflow execution by ID' })
   @ApiParam({ name: 'id', description: 'Workflow ID' })
   @ApiParam({ name: 'executionId', description: 'Execution ID' })
-  @SwaggerResponse({
-    status: 200,
-    description: 'Workflow execution details',
-    type: WorkflowExecutionDto,
-  })
+  @SwaggerResponse({ status: 200, description: 'Workflow execution details', type: WorkflowExecutionDto })
   @SwaggerResponse({ status: 404, description: 'Execution not found' })
   async getExecution(
     @Param('id') id: string,

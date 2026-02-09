@@ -143,9 +143,9 @@ const mockPlugins: Plugin[] = [
     ],
   },
   {
-    id: 'drizzle',
-    name: 'Drizzle',
-    description: 'Interact with Drizzle ORM for database operations.',
+    id: 'prisma',
+    name: 'Prisma',
+    description: 'Interact with Prisma ORM for database operations.',
     version: '1.0.0',
     category: 'database',
     author: 'TNF Core',
@@ -153,8 +153,8 @@ const mockPlugins: Plugin[] = [
     enabled: false,
     type: 'mcp',
     tools: [
-      { name: 'read_model', description: 'Read data using Drizzle model', inputSchema: {} },
-      { name: 'update_model', description: 'Update data using Drizzle model', inputSchema: {} },
+      { name: 'read_model', description: 'Read data using Prisma model', inputSchema: {} },
+      { name: 'update_model', description: 'Update data using Prisma model', inputSchema: {} },
     ],
   },
 ];

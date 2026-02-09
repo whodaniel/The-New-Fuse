@@ -1,4 +1,3 @@
-u
 # Dependencies
 node_modules/
 **/client_secret.json
@@ -29,6 +28,7 @@ out/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
 
 # IDE
 .vscode/*
@@ -68,8 +68,17 @@ lerna-debug.log*
 # Temporary files
 *.tmp
 *.temp
+.env.bak
+.env.bak2
+.mcp.json
+.kilocode/mcp.json
 .performance-monitoring-files.txt
 secrets-to-remove.txt
+api_vars.json
+api_vars_check.json
+temp_mcp_config.json
+packages/gemini-browser-skill/data/library_import/library_dump.html
+packages/gemini-browser-skill/ai_studio_dump.html
 
 # Generated files
 packages/database/generated/
@@ -111,3 +120,9 @@ ai_video_library.html
 *.md.backup
 *-state.json
 packages/testing/performance-reports/
+
+# Google MCP Server Credentials
+packages/google-docs-mcp-server/credentials.json
+packages/google-docs-mcp-server/token.json
+packages/google-drive-mcp-server/credentials/
+packages/google-sheets-mcp-server/credentials.json

@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   # The New Fuse MCP Server
@@ -30,8 +30,8 @@ services:
       sh -c "
         echo 'Waiting for PostgreSQL to start...' &&
         sleep 5 &&
-        npx drizzle migrate deploy &&
-        npx drizzle generate &&
+        npx prisma migrate deploy &&
+        npx prisma generate &&
         npm run dev
       "
 

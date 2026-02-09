@@ -7,8 +7,16 @@ export interface RetryOptions {
   timeout?: number;
 }
 
-export async function retry<T>(fn: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
-  const { maxAttempts = 3, backoff = 1000, maxBackoff = 10000, timeout = 30000 } = options;
+export async function retry<T>(
+  fn: () => Promise<T>,
+  options: RetryOptions = {}
+): Promise<T> {
+  const {
+    maxAttempts = 3,
+    backoff = 1000,
+    maxBackoff = 10000,
+    timeout = 30000
+  } = options;
 
   let attempt = 0;
   const startTime = Date.now();

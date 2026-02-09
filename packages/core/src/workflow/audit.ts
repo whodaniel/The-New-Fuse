@@ -38,8 +38,8 @@ class AuditLogger {
         workflowId: workflowId,
         timestamp: new Date(),
         actor: 'system',
-        context: { initiator: 'user_123' },
-      },
+        context: { initiator: 'user_123' }
+      }
     ];
   }
 }
@@ -52,8 +52,8 @@ class ComplianceRuleEngine {
         rule: 'data_retention_policy',
         violation: false,
         severity: 'low',
-        description: 'All data retention requirements met',
-      },
+        description: 'All data retention requirements met'
+      }
     ];
   }
 }
@@ -73,16 +73,13 @@ export class WorkflowAuditSystem {
       timestamp: new Date(),
       actor: await this.getCurrentActor(),
       context: await this.getAuditContext(),
-      signatures: await this.generateEventSignatures(event),
+      signatures: await this.generateEventSignatures(event)
     };
     await this.auditLogger.log(enrichedEvent);
     await this.checkComplianceViolations(enrichedEvent);
   }
 
-  async generateComplianceReport(
-    workflowId: string,
-    timeRange: DateRange,
-  ): Promise<ComplianceReport> {
+  async generateComplianceReport(workflowId: string, timeRange: DateRange): Promise<ComplianceReport> {
     const events = await this.auditLogger.getEvents(workflowId, timeRange);
     const violations = await this.complianceRules.analyzeEvents(events);
     return {
@@ -90,7 +87,7 @@ export class WorkflowAuditSystem {
       timeRange,
       events,
       violations,
-      recommendations: this.generateRecommendations(violations),
+      recommendations: this.generateRecommendations(violations)
     };
   }
 
@@ -104,7 +101,7 @@ export class WorkflowAuditSystem {
     return {
       environment: 'production',
       version: '1.0.0',
-      requestId: `req_${Date.now()}`,
+      requestId: `req_${Date.now()}`
     };
   }
 
@@ -126,14 +123,14 @@ export class WorkflowAuditSystem {
     return [
       'Review identified violations and implement corrective measures',
       'Update compliance procedures to prevent future violations',
-      'Conduct additional training for involved personnel',
+      'Conduct additional training for involved personnel'
     ];
   }
 
   async exportAuditTrail(workflowId: string, format: string): Promise<string> {
     const events = await this.auditLogger.getEvents(workflowId, {
       startDate: new Date(0),
-      endDate: new Date(),
+      endDate: new Date()
     });
 
     switch (format) {
@@ -150,15 +147,15 @@ export class WorkflowAuditSystem {
 
   private convertToCsv(events: WorkflowAuditEvent[]): string {
     const headers = ['id', 'type', 'workflowId', 'stepId', 'timestamp', 'actor'];
-    const rows = events.map((event) => [
+    const rows = events.map(event => [
       event.id,
       event.type,
       event.workflowId,
       event.stepId || '',
       event.timestamp?.toISOString() || '',
-      event.actor || '',
+      event.actor || ''
     ]);
-    return [headers, ...rows].map((row) => row.join(',')).join('\n');
+    return [headers, ...rows].map(row => row.join(',')).join('\n');
   }
 
   private generatePdfReport(events: WorkflowAuditEvent[]): string {

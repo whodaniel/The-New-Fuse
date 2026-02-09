@@ -1,13 +1,11 @@
 ---
-description:
-  "Search and discover available Claude skills from Anthropic's repository"
-category: 'claude-skills'
+description: "Search and discover available Claude skills from Anthropic's repository"
+category: "claude-skills"
 ---
 
 Search for available Claude skills and get information about their capabilities.
 
 **Categories Available**:
-
 - Creative & Design (algorithmic-art, canvas-design, theme-factory)
 - Document Processing (pdf, xlsx, pptx, docx)
 - Development & Technical (mcp-builder, webapp-testing)
@@ -15,7 +13,6 @@ Search for available Claude skills and get information about their capabilities.
 - Meta Skills (skill-creator, template-skill)
 
 **Example Usage**:
-
 ```
 /skill-search pdf
 /skill-search category:document-processing
@@ -26,7 +23,6 @@ Search for available Claude skills and get information about their capabilities.
 **Parameters**: $ARGUMENTS (search query or filter)
 
 **Available Skills**:
-
 - **pdf**: PDF manipulation and processing
 - **xlsx**: Excel spreadsheet creation and analysis
 - **pptx**: PowerPoint presentation creation
@@ -40,5 +36,4 @@ Search for available Claude skills and get information about their capabilities.
 - **skill-creator**: Create custom skills
 - And more...
 
-Use `/skill-<name>` to activate a specific skill (e.g., `/skill-pdf`,
-`/skill-xlsx`).
+Use `/skill-<name>` to activate a specific skill (e.g., `/skill-pdf`, `/skill-xlsx`).

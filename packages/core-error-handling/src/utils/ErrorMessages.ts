@@ -6,7 +6,8 @@
  * for better user experience when errors occur.
  */
 
-import { ApplicationError, ErrorCodes } from '../errors/CustomErrors.js';
+import { ErrorCodes } from '../errors/CustomErrors.js';
+import { ApplicationError } from '../errors/CustomErrors.js';
 
 /**
  * Error message templates
@@ -65,26 +66,22 @@ const ERROR_MESSAGES: Record<number, Record<Language, ErrorMessageTemplate>> = {
     en: {
       title: 'Request Timeout',
       message: 'The request took too long to complete.',
-      suggestion:
-        'Please try again. If the problem persists, the service may be experiencing high load.',
+      suggestion: 'Please try again. If the problem persists, the service may be experiencing high load.',
     },
     es: {
       title: 'Tiempo de Espera Agotado',
       message: 'La solicitud tardó demasiado en completarse.',
-      suggestion:
-        'Por favor, intenta de nuevo. Si el problema persiste, el servicio puede estar experimentando alta carga.',
+      suggestion: 'Por favor, intenta de nuevo. Si el problema persiste, el servicio puede estar experimentando alta carga.',
     },
     fr: {
-      title: "Délai d'attente dépassé",
+      title: 'Délai d\'attente dépassé',
       message: 'La requête a pris trop de temps pour se terminer.',
-      suggestion:
-        'Veuillez réessayer. Si le problème persiste, le service peut être sous forte charge.',
+      suggestion: 'Veuillez réessayer. Si le problème persiste, le service peut être sous forte charge.',
     },
     de: {
       title: 'Zeitüberschreitung',
       message: 'Die Anfrage hat zu lange gedauert.',
-      suggestion:
-        'Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, ist der Dienst möglicherweise stark ausgelastet.',
+      suggestion: 'Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, ist der Dienst möglicherweise stark ausgelastet.',
     },
     zh: {
       title: '请求超时',
@@ -94,8 +91,7 @@ const ERROR_MESSAGES: Record<number, Record<Language, ErrorMessageTemplate>> = {
     ja: {
       title: 'リクエストタイムアウト',
       message: 'リクエストの完了に時間がかかりすぎました。',
-      suggestion:
-        'もう一度お試しください。問題が解決しない場合、サービスが高負荷になっている可能性があります。',
+      suggestion: 'もう一度お試しください。問題が解決しない場合、サービスが高負荷になっている可能性があります。',
     },
   },
 
@@ -137,26 +133,22 @@ const ERROR_MESSAGES: Record<number, Record<Language, ErrorMessageTemplate>> = {
     en: {
       title: 'Login Failed',
       message: 'The username or password you entered is incorrect.',
-      suggestion:
-        'Please check your credentials and try again. If you forgot your password, you can reset it.',
+      suggestion: 'Please check your credentials and try again. If you forgot your password, you can reset it.',
     },
     es: {
       title: 'Inicio de Sesión Fallido',
       message: 'El nombre de usuario o contraseña que ingresaste es incorrecto.',
-      suggestion:
-        'Por favor, verifica tus credenciales e intenta de nuevo. Si olvidaste tu contraseña, puedes restablecerla.',
+      suggestion: 'Por favor, verifica tus credenciales e intenta de nuevo. Si olvidaste tu contraseña, puedes restablecerla.',
     },
     fr: {
       title: 'Échec de la Connexion',
-      message: "Le nom d'utilisateur ou le mot de passe que vous avez saisi est incorrect.",
-      suggestion:
-        'Veuillez vérifier vos identifiants et réessayer. Si vous avez oublié votre mot de passe, vous pouvez le réinitialiser.',
+      message: 'Le nom d\'utilisateur ou le mot de passe que vous avez saisi est incorrect.',
+      suggestion: 'Veuillez vérifier vos identifiants et réessayer. Si vous avez oublié votre mot de passe, vous pouvez le réinitialiser.',
     },
     de: {
       title: 'Anmeldung fehlgeschlagen',
       message: 'Der eingegebene Benutzername oder das Passwort ist falsch.',
-      suggestion:
-        'Bitte überprüfen Sie Ihre Anmeldedaten und versuchen Sie es erneut. Wenn Sie Ihr Passwort vergessen haben, können Sie es zurücksetzen.',
+      suggestion: 'Bitte überprüfen Sie Ihre Anmeldedaten und versuchen Sie es erneut. Wenn Sie Ihr Passwort vergessen haben, können Sie es zurücksetzen.',
     },
     zh: {
       title: '登录失败',
@@ -166,15 +158,14 @@ const ERROR_MESSAGES: Record<number, Record<Language, ErrorMessageTemplate>> = {
     ja: {
       title: 'ログイン失敗',
       message: '入力されたユーザー名またはパスワードが正しくありません。',
-      suggestion:
-        '認証情報を確認して、もう一度お試しください。パスワードを忘れた場合は、リセットできます。',
+      suggestion: '認証情報を確認して、もう一度お試しください。パスワードを忘れた場合は、リセットできます。',
     },
   },
 
   [ErrorCodes.AUTHORIZATION_ERROR]: {
     en: {
       title: 'Access Denied',
-      message: "You don't have permission to access this resource.",
+      message: 'You don\'t have permission to access this resource.',
       suggestion: 'Please contact your administrator if you believe you should have access.',
     },
     es: {
@@ -184,15 +175,13 @@ const ERROR_MESSAGES: Record<number, Record<Language, ErrorMessageTemplate>> = {
     },
     fr: {
       title: 'Accès Refusé',
-      message: "Vous n'avez pas la permission d'accéder à cette ressource.",
-      suggestion:
-        'Veuillez contacter votre administrateur si vous pensez que vous devriez y avoir accès.',
+      message: 'Vous n\'avez pas la permission d\'accéder à cette ressource.',
+      suggestion: 'Veuillez contacter votre administrateur si vous pensez que vous devriez y avoir accès.',
     },
     de: {
       title: 'Zugriff verweigert',
       message: 'Sie haben keine Berechtigung, auf diese Ressource zuzugreifen.',
-      suggestion:
-        'Bitte wenden Sie sich an Ihren Administrator, wenn Sie glauben, dass Sie Zugriff haben sollten.',
+      suggestion: 'Bitte wenden Sie sich an Ihren Administrator, wenn Sie glauben, dass Sie Zugriff haben sollten.',
     },
     zh: {
       title: '访问被拒绝',
@@ -210,7 +199,7 @@ const ERROR_MESSAGES: Record<number, Record<Language, ErrorMessageTemplate>> = {
   [ErrorCodes.NOT_FOUND]: {
     en: {
       title: 'Not Found',
-      message: "The resource you're looking for could not be found.",
+      message: 'The resource you\'re looking for could not be found.',
       suggestion: 'Please check the URL or go back to the previous page.',
     },
     es: {
@@ -221,7 +210,7 @@ const ERROR_MESSAGES: Record<number, Record<Language, ErrorMessageTemplate>> = {
     fr: {
       title: 'Non Trouvé',
       message: 'La ressource que vous recherchez est introuvable.',
-      suggestion: "Veuillez vérifier l'URL ou revenir à la page précédente.",
+      suggestion: 'Veuillez vérifier l\'URL ou revenir à la page précédente.',
     },
     de: {
       title: 'Nicht gefunden',
@@ -243,7 +232,7 @@ const ERROR_MESSAGES: Record<number, Record<Language, ErrorMessageTemplate>> = {
   [ErrorCodes.RATE_LIMIT]: {
     en: {
       title: 'Too Many Requests',
-      message: "You've made too many requests in a short period.",
+      message: 'You\'ve made too many requests in a short period.',
       suggestion: 'Please wait a moment before trying again.',
     },
     es: {
@@ -278,7 +267,7 @@ const ERROR_MESSAGES: Record<number, Record<Language, ErrorMessageTemplate>> = {
     en: {
       title: 'System Error',
       message: 'An unexpected error occurred on our servers.',
-      suggestion: "We're working to fix this. Please try again later.",
+      suggestion: 'We\'re working to fix this. Please try again later.',
     },
     es: {
       title: 'Error del Sistema',
@@ -287,7 +276,7 @@ const ERROR_MESSAGES: Record<number, Record<Language, ErrorMessageTemplate>> = {
     },
     fr: {
       title: 'Erreur Système',
-      message: "Une erreur inattendue s'est produite sur nos serveurs.",
+      message: 'Une erreur inattendue s\'est produite sur nos serveurs.',
       suggestion: 'Nous travaillons à la résoudre. Veuillez réessayer plus tard.',
     },
     de: {
@@ -311,26 +300,22 @@ const ERROR_MESSAGES: Record<number, Record<Language, ErrorMessageTemplate>> = {
     en: {
       title: 'Service Unavailable',
       message: 'The service is temporarily unavailable.',
-      suggestion:
-        "We're performing maintenance or experiencing high traffic. Please try again in a few minutes.",
+      suggestion: 'We\'re performing maintenance or experiencing high traffic. Please try again in a few minutes.',
     },
     es: {
       title: 'Servicio No Disponible',
       message: 'El servicio no está disponible temporalmente.',
-      suggestion:
-        'Estamos realizando mantenimiento o experimentando mucho tráfico. Por favor, intenta de nuevo en unos minutos.',
+      suggestion: 'Estamos realizando mantenimiento o experimentando mucho tráfico. Por favor, intenta de nuevo en unos minutos.',
     },
     fr: {
       title: 'Service Indisponible',
       message: 'Le service est temporairement indisponible.',
-      suggestion:
-        'Nous effectuons une maintenance ou connaissons un trafic élevé. Veuillez réessayer dans quelques minutes.',
+      suggestion: 'Nous effectuons une maintenance ou connaissons un trafic élevé. Veuillez réessayer dans quelques minutes.',
     },
     de: {
       title: 'Service nicht verfügbar',
       message: 'Der Dienst ist vorübergehend nicht verfügbar.',
-      suggestion:
-        'Wir führen Wartungsarbeiten durch oder haben einen hohen Datenverkehr. Bitte versuchen Sie es in ein paar Minuten erneut.',
+      suggestion: 'Wir führen Wartungsarbeiten durch oder haben einen hohen Datenverkehr. Bitte versuchen Sie es in ein paar Minuten erneut.',
     },
     zh: {
       title: '服务不可用',
@@ -340,8 +325,7 @@ const ERROR_MESSAGES: Record<number, Record<Language, ErrorMessageTemplate>> = {
     ja: {
       title: 'サービス利用不可',
       message: 'サービスが一時的に利用できません。',
-      suggestion:
-        'メンテナンス中またはトラフィックが高くなっています。数分後にもう一度お試しください。',
+      suggestion: 'メンテナンス中またはトラフィックが高くなっています。数分後にもう一度お試しください。',
     },
   },
 };
@@ -362,14 +346,13 @@ const DEFAULT_ERROR_MESSAGE: Record<Language, ErrorMessageTemplate> = {
   },
   fr: {
     title: 'Une Erreur est Survenue',
-    message: "Une erreur inattendue s'est produite.",
+    message: 'Une erreur inattendue s\'est produite.',
     suggestion: 'Veuillez réessayer. Si le problème persiste, contactez le support.',
   },
   de: {
     title: 'Etwas ist schief gelaufen',
     message: 'Ein unerwarteter Fehler ist aufgetreten.',
-    suggestion:
-      'Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, wenden Sie sich an den Support.',
+    suggestion: 'Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, wenden Sie sich an den Support.',
   },
   zh: {
     title: '出了点问题',

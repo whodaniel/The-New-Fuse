@@ -2,20 +2,20 @@
  * Tests for MCP Resource types and validation
  */
 
-import { mcpValidator } from '../validation/validator';
 import {
-  ResourceAccessLog,
+  ResourceType,
   ResourceAccessMode,
-  ResourceBackupConfig,
-  ResourceConfig,
-  ResourceDiscoveryResult,
-  ResourceMetrics,
   ResourceStatus,
+  ResourceDiscoveryResult,
+  ResourceAccessLog,
+  ResourceMetrics,
   ResourceSubscription,
   ResourceSubscriptionFilter,
-  ResourceType,
-  ResourceValidationConfig,
+  ResourceConfig,
+  ResourceBackupConfig,
+  ResourceValidationConfig
 } from './resource';
+import { mcpValidator } from '../validation/validator';
 
 describe('Resource Types', () => {
   describe('Enumerations', () => {
@@ -56,16 +56,16 @@ describe('Resource Types', () => {
             permissions: {
               read: true,
               write: false,
-              subscribe: false,
-            },
-          },
+              subscribe: false
+            }
+          }
         ],
         totalCount: 1,
         discoveredAt: new Date(),
         metadata: {
           source: 'file-system',
-          scanDuration: 150,
-        },
+          scanDuration: 150
+        }
       };
 
       expect(discoveryResult.resources).toHaveLength(1);
@@ -84,8 +84,8 @@ describe('Resource Types', () => {
         result: 'success',
         metadata: {
           userAgent: 'MCP-Client/1.0',
-          duration: 25,
-        },
+          duration: 25
+        }
       };
 
       expect(accessLog.id).toBe('log-123');
@@ -107,7 +107,7 @@ describe('Resource Types', () => {
         averageAccessTime: 45.5,
         cacheHitRate: 0.85,
         lastAccess: new Date(),
-        errorCount: 3,
+        errorCount: 3
       };
 
       expect(metrics.resourceUri).toBe('db://localhost/users');
@@ -132,13 +132,13 @@ describe('Resource Types', () => {
           {
             type: 'content',
             operator: 'contains',
-            value: 'error',
-          },
+            value: 'error'
+          }
         ],
         metadata: {
           priority: 'high',
-          batchSize: 10,
-        },
+          batchSize: 10
+        }
       };
 
       expect(subscription.id).toBe('sub-789');
@@ -155,7 +155,7 @@ describe('Resource Types', () => {
       const filter: ResourceSubscriptionFilter = {
         type: 'metadata',
         operator: 'eq',
-        value: 'important',
+        value: 'important'
       };
 
       expect(filter.type).toBe('metadata');
@@ -174,18 +174,18 @@ describe('Resource Types', () => {
           enabled: true,
           interval: 3600,
           retentionCount: 7,
-          location: '/backups',
+          location: '/backups'
         },
         validation: {
           enabled: true,
           schema: {
             type: 'object',
             properties: {
-              name: { type: 'string' },
-            },
+              name: { type: 'string' }
+            }
           },
-          customValidator: (content) => content !== null,
-        },
+          customValidator: (content) => content !== null
+        }
       };
 
       expect(config.type).toBe(ResourceType.FILE);
@@ -204,7 +204,7 @@ describe('Resource Types', () => {
         enabled: true,
         interval: 1800,
         retentionCount: 14,
-        location: '/var/backups/resources',
+        location: '/var/backups/resources'
       };
 
       expect(backupConfig.enabled).toBe(true);
@@ -221,12 +221,12 @@ describe('Resource Types', () => {
           required: ['id', 'name'],
           properties: {
             id: { type: 'number' },
-            name: { type: 'string' },
-          },
+            name: { type: 'string' }
+          }
         },
         customValidator: (content) => {
           return content && typeof content === 'object' && 'id' in content;
-        },
+        }
       };
 
       expect(validationConfig.enabled).toBe(true);
@@ -248,14 +248,14 @@ describe('Resource Types', () => {
         metadata: {
           size: 1024,
           created: '2023-01-01T00:00:00Z',
-          modified: '2023-01-02T00:00:00Z',
+          modified: '2023-01-02T00:00:00Z'
         },
         permissions: {
           read: true,
           write: false,
           subscribe: false,
-          requiredRoles: ['reader'],
-        },
+          requiredRoles: ['reader']
+        }
       };
 
       const result = mcpValidator.validateMCPResource(resource);
@@ -265,25 +265,25 @@ describe('Resource Types', () => {
 
     it('should reject resource without required fields', () => {
       const invalidResource = {
-        name: 'Test Resource',
+        name: 'Test Resource'
         // missing uri
       };
 
       const result = mcpValidator.validateMCPResource(invalidResource);
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
-      expect(result.errors.some((error) => error.includes('uri'))).toBe(true);
+      expect(result.errors.some(error => error.includes('uri'))).toBe(true);
     });
 
     it('should reject resource with invalid URI format', () => {
       const invalidResource = {
         uri: 'not-a-valid-uri',
-        name: 'Test Resource',
+        name: 'Test Resource'
       };
 
       const result = mcpValidator.validateMCPResource(invalidResource);
       expect(result.valid).toBe(false);
-      expect(result.errors.some((error) => error.includes('uri'))).toBe(true);
+      expect(result.errors.some(error => error.includes('uri'))).toBe(true);
     });
 
     it('should require read permission in permissions', () => {
@@ -291,20 +291,20 @@ describe('Resource Types', () => {
         uri: 'file:///test.txt',
         name: 'Test Resource',
         permissions: {
-          write: true,
+          write: true
           // missing required read permission
-        },
+        }
       };
 
       const result = mcpValidator.validateMCPResource(invalidResource);
       expect(result.valid).toBe(false);
-      expect(result.errors.some((error) => error.includes('read'))).toBe(true);
+      expect(result.errors.some(error => error.includes('read'))).toBe(true);
     });
 
     it('should accept resource with minimal required fields', () => {
       const minimalResource = {
         uri: 'memory://cache/item1',
-        name: 'Cache Item',
+        name: 'Cache Item'
       };
 
       const result = mcpValidator.validateMCPResource(minimalResource);
@@ -326,15 +326,15 @@ describe('Resource Types', () => {
             {
               principal: 'user:john',
               permissions: ['read', 'write'],
-              type: 'allow',
+              type: 'allow'
             },
             {
               principal: 'role:guest',
               permissions: ['read'],
-              type: 'deny',
-            },
-          ],
-        },
+              type: 'deny'
+            }
+          ]
+        }
       };
 
       const result = mcpValidator.validateMCPResource(resource);
@@ -347,14 +347,14 @@ describe('Resource Types', () => {
         uri: 'db://localhost/products',
         name: 'Product Database',
         permissions: {
-          read: true,
+          read: true
         },
         caching: {
           enabled: true,
           ttl: 300,
           keyStrategy: 'uri',
-          customKeyFn: (uri: string) => `cache:${uri}`,
-        },
+          customKeyFn: (uri: string) => `cache:${uri}`
+        }
       };
 
       const result = mcpValidator.validateMCPResource(resource);
@@ -374,8 +374,8 @@ describe('Resource Types', () => {
         encoding: 'utf8',
         metadata: {
           checksum: 'abc123',
-          version: '1.0',
-        },
+          version: '1.0'
+        }
       };
 
       expect(content.uri).toBe('file:///test.json');
@@ -388,14 +388,14 @@ describe('Resource Types', () => {
     });
 
     it('should handle binary content', () => {
-      const binaryContent = Buffer.from([0x89, 0x50, 0x4e, 0x47]); // PNG header
+      const binaryContent = Buffer.from([0x89, 0x50, 0x4E, 0x47]); // PNG header
       const content = {
         uri: 'file:///image.png',
         mimeType: 'image/png',
         content: binaryContent,
         size: binaryContent.length,
         lastModified: new Date(),
-        encoding: 'binary',
+        encoding: 'binary'
       };
 
       expect(content.content).toBeInstanceOf(Buffer);

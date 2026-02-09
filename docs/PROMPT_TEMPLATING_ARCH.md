@@ -11,7 +11,7 @@ manage prompt templates programmatically.
 
 ### 1. Database Layer (PostgreSQL)
 
-The system is backed by the following Drizzle models:
+The system is backed by the following Prisma models:
 
 - **PromptTemplate**: The core entity representing a specific prompt (e.g.,
   "General Assistant").

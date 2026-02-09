@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 export const LandingFooter = () => {
@@ -10,8 +11,7 @@ export const LandingFooter = () => {
           <div>
             <h3 className="font-semibold text-foreground mb-4">The New Fuse</h3>
             <p className="text-sm">
-              AI Collaboration Platform for next-generation workflow automation and agent
-              orchestration.
+              AI Collaboration Platform for next-generation workflow automation and agent orchestration.
             </p>
           </div>
 
@@ -21,26 +21,17 @@ export const LandingFooter = () => {
             <nav aria-label="Product links">
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link
-                    to="/features"
-                    className="hover:text-foreground transition-colors focus:outline-none focus:underline"
-                  >
+                  <Link to="/features" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
                     Features
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/pricing"
-                    className="hover:text-foreground transition-colors focus:outline-none focus:underline"
-                  >
+                  <Link to="/pricing" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
                     Pricing
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/integrations"
-                    className="hover:text-foreground transition-colors focus:outline-none focus:underline"
-                  >
+                  <Link to="/integrations" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
                     Integrations
                   </Link>
                 </li>
@@ -54,26 +45,17 @@ export const LandingFooter = () => {
             <nav aria-label="Resource links">
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link
-                    to="/docs"
-                    className="hover:text-foreground transition-colors focus:outline-none focus:underline"
-                  >
+                  <Link to="/docs" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
                     Documentation
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/blog"
-                    className="hover:text-foreground transition-colors focus:outline-none focus:underline"
-                  >
+                  <Link to="/blog" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
                     Blog
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/support"
-                    className="hover:text-foreground transition-colors focus:outline-none focus:underline"
-                  >
+                  <Link to="/support" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
                     Support
                   </Link>
                 </li>
@@ -87,26 +69,17 @@ export const LandingFooter = () => {
             <nav aria-label="Legal links">
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link
-                    to="/legal/privacy-policy"
-                    className="hover:text-foreground transition-colors focus:outline-none focus:underline"
-                  >
+                  <Link to="/legal/privacy-policy" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/legal/terms-of-service"
-                    className="hover:text-foreground transition-colors focus:outline-none focus:underline"
-                  >
+                  <Link to="/legal/terms-of-service" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
                     Terms of Service
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/legal/cookies"
-                    className="hover:text-foreground transition-colors focus:outline-none focus:underline"
-                  >
+                  <Link to="/legal/cookies" className="hover:text-foreground transition-colors focus:outline-none focus:underline">
                     Cookie Policy
                   </Link>
                 </li>

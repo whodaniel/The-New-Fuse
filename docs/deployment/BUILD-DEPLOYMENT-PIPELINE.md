@@ -1,28 +1,24 @@
 # Build and Deployment Pipeline for The New Fuse
 
-This document outlines the enhanced build and deployment processes for The New
-Fuse project, focusing on port management, Docker integration, and production
-deployment.
+This document outlines the enhanced build and deployment processes for The New Fuse project, focusing on port management, Docker integration, and production deployment.
 
 ## Port Configuration
 
 ### Development Environment
-
-| Service     | Port | Environment Variable |
-| ----------- | ---- | -------------------- |
-| Frontend    | 3000 | `PORT=3000`          |
-| API Server  | 3003 | `PORT=3003`          |
-| Backend App | 3004 | `PORT=3004`          |
+| Service | Port | Environment Variable |
+|---------|------|---------------------|
+| Frontend | 3000 | `PORT=3000` |
+| API Server | 3003 | `PORT=3003` |
+| Backend App | 3004 | `PORT=3004` |
 
 ### Docker/Production Environment
-
-| Service     | Port | Environment Variable |
-| ----------- | ---- | -------------------- |
-| Frontend    | 3000 | `PORT=3000`          |
-| API Server  | 3003 | `PORT=3003`          |
-| Backend App | 3004 | `PORT=3004`          |
-| Redis       | 6379 | N/A                  |
-| PostgreSQL  | 5432 | N/A                  |
+| Service | Port | Environment Variable |
+|---------|------|---------------------|
+| Frontend | 3000 | `PORT=3000` |
+| API Server | 3003 | `PORT=3003` |
+| Backend App | 3004 | `PORT=3004` |
+| Redis | 6379 | N/A |
+| PostgreSQL | 5432 | N/A |
 
 ## Build Commands
 
@@ -71,6 +67,7 @@ bash ./scripts/test-build-workflow.sh
    - Automatically runs before `yarn dev`
    - Automatically runs before `yarn build` via the `prebuild` script
    - Checks ports 3001-3004
+   
 2. **`check-docker-ports.js`** - Checks for Docker port conflicts
    - Runs before Docker builds
    - Checks for conflicts on ports 3000-3004, 5432, 6379
@@ -78,7 +75,7 @@ bash ./scripts/test-build-workflow.sh
 
 ### Usage in Build Process
 
-1. **Development**:
+1. **Development**: 
    - Ports are automatically cleared before starting services
    - Each service uses a defined port from environment variables
 

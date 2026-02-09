@@ -1,4 +1,4 @@
-import { Request, Response, Router } from 'express';
+import { Router, Request, Response } from 'express';
 import db from '../db/db';
 import { ApiResponse, Todo } from '../types/index';
 
@@ -40,7 +40,7 @@ router.post('/todos', (req: Request, res: Response): void => {
   db.run(
     'INSERT INTO todos (title, completed, createdAt, updatedAt) VALUES (?, ?, ?, ?)',
     [trimmedTitle, 0, now, now],
-    function (this: any, err: Error | null) {
+    function(this: any, err: Error | null) {
       if (err) {
         res.status(500).json({ error: 'Database error', details: err.message });
         return;
@@ -91,7 +91,7 @@ router.patch('/todos/:id', (req: Request, res: Response): void => {
     db.run(
       'UPDATE todos SET completed = ?, updatedAt = ? WHERE id = ?',
       [completed ? 1 : 0, now, id],
-      function (err: Error | null) {
+      function(err: Error | null) {
         if (err) {
           res.status(500).json({ error: 'Database error', details: err.message });
           return;
@@ -137,14 +137,18 @@ router.delete('/todos/:id', (req: Request, res: Response): void => {
     }
 
     // Delete todo
-    db.run('DELETE FROM todos WHERE id = ?', [id], function (err: Error | null) {
-      if (err) {
-        res.status(500).json({ error: 'Database error', details: err.message });
-        return;
-      }
+    db.run(
+      'DELETE FROM todos WHERE id = ?',
+      [id],
+      function(err: Error | null) {
+        if (err) {
+          res.status(500).json({ error: 'Database error', details: err.message });
+          return;
+        }
 
-      res.json({ message: 'Todo deleted successfully' });
-    });
+        res.json({ message: 'Todo deleted successfully' });
+      }
+    );
   });
 });
 

@@ -73,8 +73,8 @@ check_database_connection() {
 
   log INFO "Testing database connectivity..."
 
-  # Try to connect using Drizzle
-  if pnpm drizzle db execute --stdin <<< "SELECT 1 as connected;" &>/dev/null; then
+  # Try to connect using Prisma
+  if pnpm prisma db execute --stdin <<< "SELECT 1 as connected;" &>/dev/null; then
     log SUCCESS "Database is accessible"
     return 0
   else
@@ -94,7 +94,7 @@ get_database_size() {
     SELECT pg_size_pretty(pg_database_size(current_database())) as size;
   "
 
-  local db_size=$(pnpm drizzle db execute --stdin <<< "$size_query" 2>/dev/null | tail -1 || echo "unknown")
+  local db_size=$(pnpm prisma db execute --stdin <<< "$size_query" 2>/dev/null | tail -1 || echo "unknown")
 
   log INFO "Current database size: $db_size"
   echo "$db_size"
@@ -137,8 +137,8 @@ backup_database() {
 
         log SUCCESS "PostgreSQL backup created successfully"
       else
-        log WARNING "pg_dump not found, using Drizzle schema dump"
-        backup_with_drizzle "$backup_file"
+        log WARNING "pg_dump not found, using Prisma schema dump"
+        backup_with_prisma "$backup_file"
       fi
       ;;
 
@@ -151,10 +151,10 @@ backup_database() {
         # Extract connection details and use mysqldump
         # This is simplified - production should handle credentials properly
         log WARNING "MySQL backup not fully implemented"
-        backup_with_drizzle "$backup_file"
+        backup_with_prisma "$backup_file"
       else
-        log WARNING "mysqldump not found, using Drizzle schema dump"
-        backup_with_drizzle "$backup_file"
+        log WARNING "mysqldump not found, using Prisma schema dump"
+        backup_with_prisma "$backup_file"
       fi
       ;;
 
@@ -175,7 +175,7 @@ backup_database() {
 
     *)
       log WARNING "Unknown database type: $db_type"
-      backup_with_drizzle "$backup_file"
+      backup_with_prisma "$backup_file"
       ;;
   esac
 
@@ -208,13 +208,13 @@ EOF
   return 0
 }
 
-backup_with_drizzle() {
+backup_with_prisma() {
   local backup_file=$1
 
-  log STEP "Creating schema-based backup with Drizzle..."
+  log STEP "Creating schema-based backup with Prisma..."
 
   # Export current schema
-  pnpm drizzle db pull --print > "$backup_file.schema.drizzle" 2>>"$MIGRATION_LOG" || {
+  pnpm prisma db pull --print > "$backup_file.schema.prisma" 2>>"$MIGRATION_LOG" || {
     log ERROR "Failed to export schema"
     return 1
   }
@@ -223,7 +223,7 @@ backup_with_drizzle() {
   log WARNING "Schema-only backup created (data not included)"
   log WARNING "For production, use database-specific backup tools"
 
-  mv "$backup_file.schema.drizzle" "$backup_file"
+  mv "$backup_file.schema.prisma" "$backup_file"
   return 0
 }
 
@@ -232,8 +232,8 @@ check_pending_migrations() {
 
   log STEP "Analyzing migration status..."
 
-  # Get Drizzle migration status
-  local migration_status=$(pnpm drizzle migrate status 2>&1 || true)
+  # Get Prisma migration status
+  local migration_status=$(pnpm prisma migrate status 2>&1 || true)
 
   echo "$migration_status" | tee -a "$MIGRATION_LOG"
 
@@ -258,11 +258,11 @@ preview_migrations() {
   log INFO "Pending migrations:"
 
   # Find migration files that haven't been applied
-  local migrations_dir="$PROJECT_ROOT/drizzle/migrations"
+  local migrations_dir="$PROJECT_ROOT/prisma/migrations"
 
   if [[ -d "$migrations_dir" ]]; then
     # Get list of applied migrations from database
-    local applied_migrations=$(pnpm drizzle migrate status 2>&1 | grep "migration" | grep -v "pending" | awk '{print $1}' || true)
+    local applied_migrations=$(pnpm prisma migrate status 2>&1 | grep "migration" | grep -v "pending" | awk '{print $1}' || true)
 
     # Show pending migrations
     while IFS= read -r migration_dir; do
@@ -319,8 +319,8 @@ apply_migrations() {
 
   log STEP "Applying database migrations..."
 
-  # Apply migrations using Drizzle
-  if pnpm drizzle migrate deploy 2>&1 | tee -a "$MIGRATION_LOG"; then
+  # Apply migrations using Prisma
+  if pnpm prisma migrate deploy 2>&1 | tee -a "$MIGRATION_LOG"; then
     log SUCCESS "Migrations applied successfully"
     return 0
   else
@@ -335,7 +335,7 @@ verify_migrations() {
   log STEP "Verifying database schema..."
 
   # Check migration status again
-  local migration_status=$(pnpm drizzle migrate status 2>&1 || true)
+  local migration_status=$(pnpm prisma migrate status 2>&1 || true)
 
   if echo "$migration_status" | grep -q "Database schema is up to date"; then
     log SUCCESS "Database schema is up to date"
@@ -350,7 +350,7 @@ verify_migrations() {
 run_post_migration_scripts() {
   print_section "Post-Migration Scripts"
 
-  local post_migration_dir="$PROJECT_ROOT/drizzle/post-migration"
+  local post_migration_dir="$PROJECT_ROOT/prisma/post-migration"
 
   if [[ ! -d "$post_migration_dir" ]]; then
     log INFO "No post-migration scripts found"
@@ -375,16 +375,16 @@ run_post_migration_scripts() {
   log SUCCESS "All post-migration scripts completed"
 }
 
-generate_drizzle_client() {
-  print_section "Generating Drizzle Client"
+generate_prisma_client() {
+  print_section "Generating Prisma Client"
 
-  log STEP "Regenerating Drizzle client..."
+  log STEP "Regenerating Prisma client..."
 
-  if pnpm drizzle generate 2>&1 | tee -a "$MIGRATION_LOG"; then
-    log SUCCESS "Drizzle client generated successfully"
+  if pnpm prisma generate 2>&1 | tee -a "$MIGRATION_LOG"; then
+    log SUCCESS "Prisma client generated successfully"
     return 0
   else
-    log ERROR "Drizzle client generation failed"
+    log ERROR "Prisma client generation failed"
     return 1
   fi
 }
@@ -465,9 +465,9 @@ main() {
     log WARNING "Migration verification failed"
   }
 
-  # Generate Drizzle client
-  generate_drizzle_client || {
-    log WARNING "Drizzle client generation failed"
+  # Generate Prisma client
+  generate_prisma_client || {
+    log WARNING "Prisma client generation failed"
   }
 
   # Run post-migration scripts

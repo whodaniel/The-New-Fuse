@@ -2,8 +2,9 @@
  * Unit tests for AuthenticationManager
  */
 
+import { AuthenticationManager, AuthResult, AuthContext, AuthPolicy } from './AuthenticationManager';
 import { AuthConfig } from '../interfaces/IMCPConnection';
-import { AuthContext, AuthenticationManager, AuthPolicy } from './AuthenticationManager';
+import { MCPErrorClass, MCPErrorCode } from '../types/error';
 
 describe('AuthenticationManager', () => {
   let authManager: AuthenticationManager;
@@ -14,7 +15,7 @@ describe('AuthenticationManager', () => {
       refreshTokenExpirationTime: 86400,
       maxFailedAttempts: 3,
       lockoutDuration: 300,
-      enableAuditLogging: true,
+      enableAuditLogging: true
     });
   });
 
@@ -26,12 +27,12 @@ describe('AuthenticationManager', () => {
   describe('Bearer Token Authentication', () => {
     it('should reject authentication with missing bearer token', async () => {
       const credentials: AuthConfig = {
-        type: 'bearer',
+        type: 'bearer'
         // No token provided
       };
 
       const result = await authManager.authenticateConnection(credentials);
-
+      
       expect(result.success).toBe(false);
       expect(result.error).toBe('Bearer token is required');
     });
@@ -39,11 +40,11 @@ describe('AuthenticationManager', () => {
     it('should reject authentication with invalid bearer token', async () => {
       const credentials: AuthConfig = {
         type: 'bearer',
-        token: 'invalid_token',
+        token: 'invalid_token'
       };
 
       const result = await authManager.authenticateConnection(credentials);
-
+      
       expect(result.success).toBe(false);
       expect(result.error).toBe('Invalid bearer token');
     });
@@ -53,7 +54,7 @@ describe('AuthenticationManager', () => {
       const basicCredentials: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass',
+        password: 'testpass'
       };
 
       const basicResult = await authManager.authenticateConnection(basicCredentials);
@@ -63,11 +64,11 @@ describe('AuthenticationManager', () => {
       // Now use the bearer token
       const bearerCredentials: AuthConfig = {
         type: 'bearer',
-        token: basicResult.accessToken!,
+        token: basicResult.accessToken!
       };
 
       const bearerResult = await authManager.authenticateConnection(bearerCredentials);
-
+      
       expect(bearerResult.success).toBe(true);
       expect(bearerResult.userId).toBe('testuser');
     });
@@ -76,12 +77,12 @@ describe('AuthenticationManager', () => {
   describe('Basic Authentication', () => {
     it('should reject authentication with missing credentials', async () => {
       const credentials: AuthConfig = {
-        type: 'basic',
+        type: 'basic'
         // No username/password provided
       };
 
       const result = await authManager.authenticateConnection(credentials);
-
+      
       expect(result.success).toBe(false);
       expect(result.error).toBe('Username and password are required');
     });
@@ -90,11 +91,11 @@ describe('AuthenticationManager', () => {
       const credentials: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass',
+        password: 'testpass'
       };
 
       const result = await authManager.authenticateConnection(credentials);
-
+      
       expect(result.success).toBe(true);
       expect(result.userId).toBe('testuser');
       expect(result.accessToken).toBeDefined();
@@ -107,11 +108,11 @@ describe('AuthenticationManager', () => {
       const credentials: AuthConfig = {
         type: 'basic',
         username: '',
-        password: '',
+        password: ''
       };
 
       const result = await authManager.authenticateConnection(credentials);
-
+      
       expect(result.success).toBe(false);
       expect(result.error).toBe('Invalid username or password');
     });
@@ -120,12 +121,12 @@ describe('AuthenticationManager', () => {
   describe('OAuth Authentication', () => {
     it('should reject authentication with missing OAuth token', async () => {
       const credentials: AuthConfig = {
-        type: 'oauth',
+        type: 'oauth'
         // No token provided
       };
 
       const result = await authManager.authenticateConnection(credentials);
-
+      
       expect(result.success).toBe(false);
       expect(result.error).toBe('OAuth token is required');
     });
@@ -133,11 +134,11 @@ describe('AuthenticationManager', () => {
     it('should authenticate successfully with valid OAuth token', async () => {
       const credentials: AuthConfig = {
         type: 'oauth',
-        token: 'oauth_valid_token',
+        token: 'oauth_valid_token'
       };
 
       const result = await authManager.authenticateConnection(credentials);
-
+      
       expect(result.success).toBe(true);
       expect(result.userId).toBe('oauth_user');
       expect(result.roles).toEqual(['user']);
@@ -147,11 +148,11 @@ describe('AuthenticationManager', () => {
     it('should reject authentication with invalid OAuth token', async () => {
       const credentials: AuthConfig = {
         type: 'oauth',
-        token: 'invalid_oauth_token',
+        token: 'invalid_oauth_token'
       };
 
       const result = await authManager.authenticateConnection(credentials);
-
+      
       expect(result.success).toBe(false);
       expect(result.error).toBe('Invalid OAuth token');
     });
@@ -160,12 +161,12 @@ describe('AuthenticationManager', () => {
   describe('API Key Authentication', () => {
     it('should reject authentication with missing API key', async () => {
       const credentials: AuthConfig = {
-        type: 'api_key',
+        type: 'api_key'
         // No apiKey provided
       };
 
       const result = await authManager.authenticateConnection(credentials);
-
+      
       expect(result.success).toBe(false);
       expect(result.error).toBe('API key is required');
     });
@@ -173,11 +174,11 @@ describe('AuthenticationManager', () => {
     it('should reject authentication with invalid API key', async () => {
       const credentials: AuthConfig = {
         type: 'api_key',
-        apiKey: 'invalid_api_key',
+        apiKey: 'invalid_api_key'
       };
 
       const result = await authManager.authenticateConnection(credentials);
-
+      
       expect(result.success).toBe(false);
       expect(result.error).toBe('Invalid API key');
     });
@@ -189,7 +190,7 @@ describe('AuthenticationManager', () => {
       const credentials: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass',
+        password: 'testpass'
       };
 
       const authResult = await authManager.authenticateConnection(credentials);
@@ -198,7 +199,7 @@ describe('AuthenticationManager', () => {
 
       // Refresh the token
       const refreshResult = await authManager.refreshToken(authResult.refreshToken!);
-
+      
       expect(refreshResult.success).toBe(true);
       expect(refreshResult.userId).toBe('testuser');
       expect(refreshResult.accessToken).toBeDefined();
@@ -206,9 +207,9 @@ describe('AuthenticationManager', () => {
     });
 
     it('should reject refresh with invalid refresh token', async () => {
-      await expect(authManager.refreshToken('invalid_refresh_token')).rejects.toThrow(
-        'Invalid refresh token'
-      );
+      await expect(
+        authManager.refreshToken('invalid_refresh_token')
+      ).rejects.toThrow('Invalid refresh token');
     });
 
     it('should revoke token successfully', async () => {
@@ -216,7 +217,7 @@ describe('AuthenticationManager', () => {
       const credentials: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass',
+        password: 'testpass'
       };
 
       const authResult = await authManager.authenticateConnection(credentials);
@@ -228,7 +229,7 @@ describe('AuthenticationManager', () => {
       // Try to use the revoked token
       const bearerCredentials: AuthConfig = {
         type: 'bearer',
-        token: authResult.accessToken!,
+        token: authResult.accessToken!
       };
 
       const result = await authManager.authenticateConnection(bearerCredentials);
@@ -241,11 +242,11 @@ describe('AuthenticationManager', () => {
       const context: AuthContext = {
         userId: 'testuser',
         roles: ['user'],
-        permissions: ['read'],
+        permissions: ['read']
       };
 
       const authorized = await authManager.authorizeRequest(context, '/test/resource', 'read');
-
+      
       expect(authorized).toBe(true);
     });
 
@@ -253,7 +254,7 @@ describe('AuthenticationManager', () => {
       const policy: AuthPolicy = {
         name: 'admin_only',
         requiredRoles: ['admin'],
-        resourcePatterns: ['/admin/.*'],
+        resourcePatterns: ['/admin/.*']
       };
 
       authManager.addPolicy(policy);
@@ -261,11 +262,11 @@ describe('AuthenticationManager', () => {
       const context: AuthContext = {
         userId: 'adminuser',
         roles: ['admin'],
-        permissions: ['read', 'write'],
+        permissions: ['read', 'write']
       };
 
       const authorized = await authManager.authorizeRequest(context, '/admin/settings', 'read');
-
+      
       expect(authorized).toBe(true);
     });
 
@@ -273,7 +274,7 @@ describe('AuthenticationManager', () => {
       const policy: AuthPolicy = {
         name: 'admin_only',
         requiredRoles: ['admin'],
-        resourcePatterns: ['/admin/.*'],
+        resourcePatterns: ['/admin/.*']
       };
 
       authManager.addPolicy(policy);
@@ -281,11 +282,11 @@ describe('AuthenticationManager', () => {
       const context: AuthContext = {
         userId: 'regularuser',
         roles: ['user'],
-        permissions: ['read'],
+        permissions: ['read']
       };
 
       const authorized = await authManager.authorizeRequest(context, '/admin/settings', 'read');
-
+      
       expect(authorized).toBe(false);
     });
 
@@ -293,7 +294,7 @@ describe('AuthenticationManager', () => {
       const policy: AuthPolicy = {
         name: 'write_access',
         requiredPermissions: ['write'],
-        operations: ['create', 'update', 'delete'],
+        operations: ['create', 'update', 'delete']
       };
 
       authManager.addPolicy(policy);
@@ -301,11 +302,11 @@ describe('AuthenticationManager', () => {
       const context: AuthContext = {
         userId: 'testuser',
         roles: ['user'],
-        permissions: ['read', 'write'],
+        permissions: ['read', 'write']
       };
 
       const authorized = await authManager.authorizeRequest(context, '/data', 'create');
-
+      
       expect(authorized).toBe(true);
     });
 
@@ -313,7 +314,7 @@ describe('AuthenticationManager', () => {
       const policy: AuthPolicy = {
         name: 'write_access',
         requiredPermissions: ['write'],
-        operations: ['create', 'update', 'delete'],
+        operations: ['create', 'update', 'delete']
       };
 
       authManager.addPolicy(policy);
@@ -321,11 +322,11 @@ describe('AuthenticationManager', () => {
       const context: AuthContext = {
         userId: 'testuser',
         roles: ['user'],
-        permissions: ['read'],
+        permissions: ['read']
       };
 
       const authorized = await authManager.authorizeRequest(context, '/data', 'create');
-
+      
       expect(authorized).toBe(false);
     });
 
@@ -334,7 +335,7 @@ describe('AuthenticationManager', () => {
         name: 'custom_policy',
         evaluate: async (context: AuthContext) => {
           return context.userId === 'special_user';
-        },
+        }
       };
 
       authManager.addPolicy(policy);
@@ -342,18 +343,18 @@ describe('AuthenticationManager', () => {
       const authorizedContext: AuthContext = {
         userId: 'special_user',
         roles: ['user'],
-        permissions: ['read'],
+        permissions: ['read']
       };
 
       const unauthorizedContext: AuthContext = {
         userId: 'regular_user',
         roles: ['user'],
-        permissions: ['read'],
+        permissions: ['read']
       };
 
       const authorized1 = await authManager.authorizeRequest(authorizedContext, '/test', 'read');
       const authorized2 = await authManager.authorizeRequest(unauthorizedContext, '/test', 'read');
-
+      
       expect(authorized1).toBe(true);
       expect(authorized2).toBe(false);
     });
@@ -361,7 +362,7 @@ describe('AuthenticationManager', () => {
     it('should remove policy successfully', async () => {
       const policy: AuthPolicy = {
         name: 'test_policy',
-        requiredRoles: ['admin'],
+        requiredRoles: ['admin']
       };
 
       authManager.addPolicy(policy);
@@ -370,12 +371,12 @@ describe('AuthenticationManager', () => {
       const context: AuthContext = {
         userId: 'testuser',
         roles: ['user'],
-        permissions: ['read'],
+        permissions: ['read']
       };
 
       // Should be authorized since policy was removed
       const authorized = await authManager.authorizeRequest(context, '/test', 'read');
-
+      
       expect(authorized).toBe(true);
     });
   });
@@ -385,7 +386,7 @@ describe('AuthenticationManager', () => {
       const credentials: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'wrongpass',
+        password: 'wrongpass'
       };
 
       // Make failed attempts up to the limit
@@ -395,9 +396,9 @@ describe('AuthenticationManager', () => {
       }
 
       // Next attempt should be blocked due to lockout
-      await expect(authManager.authenticateConnection(credentials)).rejects.toThrow(
-        'Account is locked due to too many failed attempts'
-      );
+      await expect(
+        authManager.authenticateConnection(credentials)
+      ).rejects.toThrow('Account is locked due to too many failed attempts');
     });
 
     it('should reset failed attempts after successful authentication', async () => {
@@ -405,7 +406,7 @@ describe('AuthenticationManager', () => {
       const wrongCredentials: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'wrongpass',
+        password: 'wrongpass'
       };
 
       for (let i = 0; i < 2; i++) {
@@ -417,7 +418,7 @@ describe('AuthenticationManager', () => {
       const correctCredentials: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass',
+        password: 'testpass'
       };
 
       const result = await authManager.authenticateConnection(correctCredentials);
@@ -434,13 +435,13 @@ describe('AuthenticationManager', () => {
       const credentials: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass',
+        password: 'testpass'
       };
 
       await authManager.authenticateConnection(credentials);
 
       const auditEvents = authManager.getAuditEvents(1);
-
+      
       expect(auditEvents).toHaveLength(1);
       expect(auditEvents[0].type).toBe('login');
       expect(auditEvents[0].userId).toBe('testuser');
@@ -451,13 +452,13 @@ describe('AuthenticationManager', () => {
       const credentials: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'wrongpass',
+        password: 'wrongpass'
       };
 
       await authManager.authenticateConnection(credentials);
 
       const auditEvents = authManager.getAuditEvents(1);
-
+      
       expect(auditEvents).toHaveLength(1);
       expect(auditEvents[0].type).toBe('access_denied');
       expect(auditEvents[0].userId).toBe('testuser');
@@ -469,11 +470,11 @@ describe('AuthenticationManager', () => {
       const credentials: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass',
+        password: 'testpass'
       };
 
       const authResult = await authManager.authenticateConnection(credentials);
-
+      
       // Clear previous events
       authManager.getAuditEvents(); // This doesn't clear, but we'll check the latest
 
@@ -481,7 +482,7 @@ describe('AuthenticationManager', () => {
       await authManager.refreshToken(authResult.refreshToken!);
 
       const auditEvents = authManager.getAuditEvents(1);
-
+      
       expect(auditEvents[0].type).toBe('token_refresh');
       expect(auditEvents[0].userId).toBe('testuser');
       expect(auditEvents[0].success).toBe(true);
@@ -490,7 +491,7 @@ describe('AuthenticationManager', () => {
     it('should record policy violation events', async () => {
       const policy: AuthPolicy = {
         name: 'admin_only',
-        requiredRoles: ['admin'],
+        requiredRoles: ['admin']
       };
 
       authManager.addPolicy(policy);
@@ -498,13 +499,13 @@ describe('AuthenticationManager', () => {
       const context: AuthContext = {
         userId: 'testuser',
         roles: ['user'],
-        permissions: ['read'],
+        permissions: ['read']
       };
 
       await authManager.authorizeRequest(context, '/admin', 'read');
 
       const auditEvents = authManager.getAuditEvents(1);
-
+      
       expect(auditEvents[0].type).toBe('policy_violation');
       expect(auditEvents[0].userId).toBe('testuser');
       expect(auditEvents[0].success).toBe(false);
@@ -518,13 +519,13 @@ describe('AuthenticationManager', () => {
       const credentials: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass',
+        password: 'testpass'
       };
 
       await authManager.authenticateConnection(credentials);
 
       const stats = authManager.getAuthStatistics();
-
+      
       expect(stats.activeTokens).toBeGreaterThan(0);
       expect(stats.successfulLogins24h).toBe(1);
       expect(stats.totalAuditEvents).toBeGreaterThan(0);
@@ -536,12 +537,12 @@ describe('AuthenticationManager', () => {
   describe('Error Handling', () => {
     it('should throw error for unsupported authentication type', async () => {
       const credentials = {
-        type: 'unsupported' as any,
+        type: 'unsupported' as any
       };
 
-      await expect(authManager.authenticateConnection(credentials)).rejects.toThrow(
-        'Unsupported authentication type: unsupported'
-      );
+      await expect(
+        authManager.authenticateConnection(credentials)
+      ).rejects.toThrow('Unsupported authentication type: unsupported');
     });
 
     it('should handle authorization errors gracefully', async () => {
@@ -549,7 +550,7 @@ describe('AuthenticationManager', () => {
         name: 'error_policy',
         evaluate: async () => {
           throw new Error('Policy evaluation error');
-        },
+        }
       };
 
       authManager.addPolicy(policy);
@@ -557,11 +558,11 @@ describe('AuthenticationManager', () => {
       const context: AuthContext = {
         userId: 'testuser',
         roles: ['user'],
-        permissions: ['read'],
+        permissions: ['read']
       };
 
       const authorized = await authManager.authorizeRequest(context, '/test', 'read');
-
+      
       expect(authorized).toBe(false);
     });
   });
@@ -571,7 +572,7 @@ describe('AuthenticationManager', () => {
       // Create auth manager with very short token expiration
       const shortExpiryAuthManager = new AuthenticationManager({
         tokenExpirationTime: 1, // 1 second
-        enableAuditLogging: false,
+        enableAuditLogging: false
       });
 
       shortExpiryAuthManager.on('tokensExpired', (count) => {
@@ -584,7 +585,7 @@ describe('AuthenticationManager', () => {
       const credentials: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass',
+        password: 'testpass'
       };
 
       shortExpiryAuthManager.authenticateConnection(credentials);

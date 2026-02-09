@@ -3,17 +3,12 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import * as fs from 'fs/promises';
-import * as os from 'os';
-import * as path from 'path';
-import { JSONSchema, ToolResult } from '../interfaces/IMCPTool';
+import { ToolHandler, FunctionToolHandler, ScriptToolHandler, ApiCallToolHandler } from './ToolHandler';
+import { ToolResult, JSONSchema } from '../interfaces/IMCPTool';
 import { MCPErrorCode } from '../types/error';
-import {
-  ApiCallToolHandler,
-  FunctionToolHandler,
-  ScriptToolHandler,
-  ToolHandler,
-} from './ToolHandler';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import * as os from 'os';
 
 // Mock tool handler for testing abstract class
 class MockToolHandler extends ToolHandler {
@@ -47,9 +42,9 @@ describe('ToolHandler', () => {
       type: 'object',
       properties: {
         message: { type: 'string' },
-        count: { type: 'number' },
+        count: { type: 'number' }
       },
-      required: ['message'],
+      required: ['message']
     };
 
     beforeEach(() => {
@@ -70,7 +65,7 @@ describe('ToolHandler', () => {
     it('should execute tool successfully', async () => {
       const params = { message: 'hello', count: 5 };
       const result = await handler.executeWithValidation(params);
-
+      
       expect(result.success).toBe(true);
       expect(result.result).toEqual({ success: true });
       expect(result.metadata?.executionTime).toBeGreaterThanOrEqual(0);
@@ -79,7 +74,7 @@ describe('ToolHandler', () => {
     it('should validate parameters against schema', async () => {
       const validParams = { message: 'hello', count: 5 };
       const validationResult = await handler.validate(validParams);
-
+      
       expect(validationResult.valid).toBe(true);
       expect(validationResult.errors).toBeUndefined();
     });
@@ -87,7 +82,7 @@ describe('ToolHandler', () => {
     it('should reject invalid parameters', async () => {
       const invalidParams = { count: 5 }; // missing required 'message'
       const validationResult = await handler.validate(invalidParams);
-
+      
       expect(validationResult.valid).toBe(false);
       expect(validationResult.errors).toContain('Missing required field: message');
     });
@@ -95,21 +90,15 @@ describe('ToolHandler', () => {
     it('should reject parameters with wrong types', async () => {
       const invalidParams = { message: 123 }; // message should be string
       const validationResult = await handler.validate(invalidParams);
-
+      
       expect(validationResult.valid).toBe(false);
       expect(validationResult.errors).toContain('Field message: expected string, got number');
     });
 
     it('should handle execution failures gracefully', async () => {
-      const failingHandler = new MockToolHandler(
-        'failing-tool',
-        'Failing Tool',
-        inputSchema,
-        null,
-        true
-      );
+      const failingHandler = new MockToolHandler('failing-tool', 'Failing Tool', inputSchema, null, true);
       const params = { message: 'hello' };
-
+      
       const result = await failingHandler.executeWithValidation(params);
       expect(result.success).toBe(false);
       expect(result.error).toContain('Mock execution failure');
@@ -118,27 +107,21 @@ describe('ToolHandler', () => {
 
     it('should track usage statistics', async () => {
       const params = { message: 'hello' };
-
+      
       // Execute successfully
       await handler.executeWithValidation(params);
       await handler.executeWithValidation(params);
-
+      
       // Execute with failure
-      const failingHandler = new MockToolHandler(
-        'failing-tool',
-        'Failing Tool',
-        inputSchema,
-        null,
-        true
-      );
+      const failingHandler = new MockToolHandler('failing-tool', 'Failing Tool', inputSchema, null, true);
       await failingHandler.executeWithValidation(params);
-
+      
       const successStats = await handler.getUsageStats();
       expect(successStats.totalExecutions).toBe(2);
       expect(successStats.successfulExecutions).toBe(2);
       expect(successStats.failedExecutions).toBe(0);
       expect(successStats.averageExecutionTime).toBeGreaterThanOrEqual(0);
-
+      
       const failStats = await failingHandler.getUsageStats();
       expect(failStats.totalExecutions).toBe(1);
       expect(failStats.successfulExecutions).toBe(0);
@@ -148,17 +131,14 @@ describe('ToolHandler', () => {
     it('should handle validation failures in executeWithValidation', async () => {
       const invalidParams = {}; // missing required 'message'
       const result = await handler.executeWithValidation(invalidParams);
-
+      
       expect(result.success).toBe(false);
       expect(result.error).toContain('Parameter validation failed');
       expect(result.metadata?.warnings).toContain('Parameter validation failed');
     });
 
     it('should create success and error results properly', () => {
-      const successResult = (handler as any).createSuccessResult(
-        { data: 'test' },
-        { custom: 'meta' }
-      );
+      const successResult = (handler as any).createSuccessResult({ data: 'test' }, { custom: 'meta' });
       expect(successResult.success).toBe(true);
       expect(successResult.result).toEqual({ data: 'test' });
       expect(successResult.metadata?.toolVersion).toBe('1.0.0');
@@ -178,43 +158,48 @@ describe('ToolHandler', () => {
       type: 'object',
       properties: {
         x: { type: 'number' },
-        y: { type: 'number' },
+        y: { type: 'number' }
       },
-      required: ['x', 'y'],
+      required: ['x', 'y']
     };
 
     beforeEach(() => {
       const addFunction = (params: any) => {
         return { sum: params.x + params.y };
       };
-
-      handler = new FunctionToolHandler('add-numbers', 'Add two numbers', inputSchema, addFunction);
+      
+      handler = new FunctionToolHandler(
+        'add-numbers',
+        'Add two numbers',
+        inputSchema,
+        addFunction
+      );
     });
 
     it('should execute function successfully', async () => {
       const params = { x: 5, y: 3 };
       const result = await handler.execute(params);
-
+      
       expect(result.success).toBe(true);
       expect(result.result).toEqual({ sum: 8 });
     });
 
     it('should handle async functions', async () => {
       const asyncFunction = async (params: any) => {
-        await new Promise((resolve) => setTimeout(resolve, 10));
+        await new Promise(resolve => setTimeout(resolve, 10));
         return { result: params.x * params.y };
       };
-
+      
       const asyncHandler = new FunctionToolHandler(
         'multiply-numbers',
         'Multiply two numbers',
         inputSchema,
         asyncFunction
       );
-
+      
       const params = { x: 4, y: 6 };
       const result = await asyncHandler.execute(params);
-
+      
       expect(result.success).toBe(true);
       expect(result.result).toEqual({ result: 24 });
     });
@@ -223,17 +208,17 @@ describe('ToolHandler', () => {
       const errorFunction = () => {
         throw new Error('Function error');
       };
-
+      
       const errorHandler = new FunctionToolHandler(
         'error-function',
         'Function that throws error',
         inputSchema,
         errorFunction
       );
-
+      
       const params = { x: 1, y: 2 };
       const result = await errorHandler.execute(params);
-
+      
       expect(result.success).toBe(false);
       expect(result.error).toContain('Function error');
     });
@@ -247,24 +232,24 @@ describe('ToolHandler', () => {
     beforeEach(async () => {
       tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'mcp-script-test-'));
       scriptPath = path.join(tempDir, 'test-script.js');
-
+      
       // Create a simple test script
       const scriptContent = `
         const input = JSON.parse(require('fs').readFileSync(0, 'utf8'));
         const result = { doubled: input.number * 2 };
         console.log(JSON.stringify(result));
       `;
-
+      
       await fs.writeFile(scriptPath, scriptContent);
-
+      
       const inputSchema: JSONSchema = {
         type: 'object',
         properties: {
-          number: { type: 'number' },
+          number: { type: 'number' }
         },
-        required: ['number'],
+        required: ['number']
       };
-
+      
       handler = new ScriptToolHandler(
         'double-number',
         'Double a number using script',
@@ -285,7 +270,7 @@ describe('ToolHandler', () => {
     it('should execute script successfully', async () => {
       const params = { number: 21 };
       const result = await handler.execute(params);
-
+      
       expect(result.success).toBe(true);
       expect(result.result).toEqual({ doubled: 42 });
     });
@@ -295,9 +280,9 @@ describe('ToolHandler', () => {
       const errorScriptContent = `
         throw new Error('Script error');
       `;
-
+      
       await fs.writeFile(errorScriptPath, errorScriptContent);
-
+      
       const errorHandler = new ScriptToolHandler(
         'error-script',
         'Script that throws error',
@@ -305,7 +290,7 @@ describe('ToolHandler', () => {
         errorScriptPath,
         'node'
       );
-
+      
       const result = await errorHandler.execute({});
       expect(result.success).toBe(false);
       expect(result.error).toContain('Script execution failed');
@@ -316,9 +301,9 @@ describe('ToolHandler', () => {
       const textScriptContent = `
         console.log('Hello, World!');
       `;
-
+      
       await fs.writeFile(textScriptPath, textScriptContent);
-
+      
       const textHandler = new ScriptToolHandler(
         'text-script',
         'Script that outputs text',
@@ -326,7 +311,7 @@ describe('ToolHandler', () => {
         textScriptPath,
         'node'
       );
-
+      
       const result = await textHandler.execute({});
       expect(result.success).toBe(true);
       expect(result.result).toBe('Hello, World!\n');
@@ -340,8 +325,8 @@ describe('ToolHandler', () => {
       properties: {
         method: { type: 'string' },
         path: { type: 'string' },
-        body: { type: 'object' },
-      },
+        body: { type: 'object' }
+      }
     };
 
     beforeEach(() => {
@@ -357,9 +342,9 @@ describe('ToolHandler', () => {
     it('should make successful API call', async () => {
       const params = {
         method: 'GET',
-        path: '/posts/1',
+        path: '/posts/1'
       };
-
+      
       const result = await handler.execute(params);
       expect(result.success).toBe(true);
       expect(result.result).toHaveProperty('id');
@@ -369,9 +354,9 @@ describe('ToolHandler', () => {
     it('should handle API errors', async () => {
       const params = {
         method: 'GET',
-        path: '/nonexistent',
+        path: '/nonexistent'
       };
-
+      
       const result = await handler.execute(params);
       expect(result.success).toBe(false);
       expect(result.error).toContain('API call failed');
@@ -385,10 +370,10 @@ describe('ToolHandler', () => {
         body: {
           title: 'Test Post',
           body: 'This is a test post',
-          userId: 1,
-        },
+          userId: 1
+        }
       };
-
+      
       const result = await handler.execute(params);
       expect(result.success).toBe(true);
       expect(result.result).toHaveProperty('id');
@@ -402,12 +387,12 @@ describe('ToolHandler', () => {
         inputSchema,
         'https://nonexistent-domain-12345.com'
       );
-
+      
       const params = {
         method: 'GET',
-        path: '/test',
+        path: '/test'
       };
-
+      
       const result = await badHandler.execute(params);
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();

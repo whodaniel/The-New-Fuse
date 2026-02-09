@@ -3,7 +3,7 @@
  */
 
 import { IMemoryMonitor } from '../interfaces/index.js';
-import { MemoryCallback, MemoryUsage } from '../types/index.js';
+import { MemoryUsage, MemoryCallback } from '../types/index.js';
 import { SystemResourceDetector } from './SystemResourceDetector.js';
 
 /**
@@ -157,7 +157,7 @@ export class MemoryMonitor implements IMemoryMonitor {
       average: this.getAverageMemoryUsage(),
       threshold: this.memoryThreshold,
       historyCount: this.memoryHistory.length,
-      isMonitoring: this.isMonitoring,
+      isMonitoring: this.isMonitoring
     };
   }
 
@@ -224,7 +224,7 @@ export class MemoryMonitor implements IMemoryMonitor {
    */
   private checkMemoryUsage(): void {
     const usage = this.getCurrentUsage();
-
+    
     // Update peak memory usage
     if (usage.current > this.peakMemoryUsage) {
       this.peakMemoryUsage = usage.current;
@@ -232,7 +232,7 @@ export class MemoryMonitor implements IMemoryMonitor {
 
     // Add to history
     this.memoryHistory.push(usage);
-
+    
     // Trim history if too large
     if (this.memoryHistory.length > this.maxHistorySize) {
       this.memoryHistory.shift();
@@ -252,7 +252,7 @@ export class MemoryMonitor implements IMemoryMonitor {
    * Trigger threshold exceeded callbacks
    */
   private triggerThresholdCallbacks(usage: MemoryUsage): void {
-    this.thresholdCallbacks.forEach((callback) => {
+    this.thresholdCallbacks.forEach(callback => {
       try {
         callback(usage);
       } catch (error) {
@@ -269,7 +269,7 @@ export class MemoryMonitor implements IMemoryMonitor {
       throw new Error('Max history size must be at least 1');
     }
     this.maxHistorySize = size;
-
+    
     // Trim current history if needed
     if (this.memoryHistory.length > size) {
       this.memoryHistory = this.memoryHistory.slice(-size);
@@ -311,7 +311,7 @@ export class MemoryMonitor implements IMemoryMonitor {
       threshold: this.memoryThreshold,
       maxHistorySize: this.maxHistorySize,
       cooldownMs: this.thresholdCooldownMs,
-      callbackCount: this.thresholdCallbacks.length,
+      callbackCount: this.thresholdCallbacks.length
     };
   }
 }

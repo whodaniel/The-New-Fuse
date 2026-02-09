@@ -44,7 +44,7 @@ export class WorkflowSecurityManager {
   constructor(
     rbacManager: RBACManager,
     encryptionService: EncryptionService,
-    tokenManager: TokenManager,
+    tokenManager: TokenManager
   ) {
     this.rbacManager = rbacManager;
     this.encryptionService = encryptionService;
@@ -54,7 +54,7 @@ export class WorkflowSecurityManager {
   async authorizeWorkflowAccess(
     user: User,
     workflowId: string,
-    action: WorkflowAction,
+    action: WorkflowAction
   ): Promise<AuthorizationResult> {
     const permissions = await this.rbacManager.getUserPermissions(user);
     return {

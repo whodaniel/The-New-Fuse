@@ -1,15 +1,15 @@
 import {
+  Entity,
+  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  Entity,
+  UpdateDateColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { AgentType } from '../dtos/agent.dto';
-import { Message } from './message.entity';
 import { User } from './user.entity';
+import { Message } from './message.entity';
 import { WorkflowStep } from './workflow-step.entity';
 
 @Entity('agents')

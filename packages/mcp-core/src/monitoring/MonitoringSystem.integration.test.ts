@@ -3,9 +3,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { AlertSeverity, MonitoringConfig } from '../types/monitoring';
-import { Logger } from '../utils/Logger';
 import { MonitoringSystem } from './MonitoringSystem';
+import { MonitoringConfig, AlertSeverity } from '../types/monitoring';
+import { Logger } from '../utils/Logger';
 
 describe('MonitoringSystem Integration', () => {
   let monitoringSystem: MonitoringSystem;
@@ -32,7 +32,7 @@ describe('MonitoringSystem Integration', () => {
         alertInterval: 500, // Fast for testing
         enableDashboards: true,
         dashboardRefreshInterval: 1000,
-        storage: { type: 'memory' },
+        storage: { type: 'memory' }
       };
 
       await monitoringSystem.initialize(config);
@@ -51,7 +51,7 @@ describe('MonitoringSystem Integration', () => {
       performanceMonitor.recordToolExecution('test-tool', 100, true);
 
       // Wait for metrics collection
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      await new Promise(resolve => setTimeout(resolve, 600));
 
       // Check metrics
       const metrics = metricsCollector.getCurrentMetrics();
@@ -62,7 +62,7 @@ describe('MonitoringSystem Integration', () => {
       const dashboards = await dashboardManager.listDashboards();
       expect(dashboards.length).toBeGreaterThan(0);
 
-      const systemDashboard = dashboards.find((d) => d.id === 'system-overview');
+      const systemDashboard = dashboards.find(d => d.id === 'system-overview');
       expect(systemDashboard).toBeDefined();
 
       const dashboardData = await dashboardManager.getDashboardData('system-overview');
@@ -79,7 +79,7 @@ describe('MonitoringSystem Integration', () => {
         alertInterval: 200,
         enableDashboards: true,
         dashboardRefreshInterval: 500,
-        storage: { type: 'memory' },
+        storage: { type: 'memory' }
       };
 
       await monitoringSystem.initialize(config);
@@ -92,23 +92,21 @@ describe('MonitoringSystem Integration', () => {
       const promises: Promise<void>[] = [];
 
       for (let i = 0; i < requestCount; i++) {
-        promises.push(
-          new Promise((resolve) => {
-            const requestId = `req-${i}`;
-            performanceMonitor.recordRequestStart(requestId);
-
-            setTimeout(() => {
-              performanceMonitor.recordRequestEnd(requestId, Math.random() > 0.1); // 90% success rate
-              resolve();
-            }, Math.random() * 50); // Random response time up to 50ms
-          })
-        );
+        promises.push(new Promise(resolve => {
+          const requestId = `req-${i}`;
+          performanceMonitor.recordRequestStart(requestId);
+          
+          setTimeout(() => {
+            performanceMonitor.recordRequestEnd(requestId, Math.random() > 0.1); // 90% success rate
+            resolve();
+          }, Math.random() * 50); // Random response time up to 50ms
+        }));
       }
 
       await Promise.all(promises);
 
       // Wait for metrics collection
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 300));
 
       const metrics = metricsCollector.getCurrentMetrics();
       expect(metrics.requests.total).toBe(requestCount);
@@ -125,7 +123,7 @@ describe('MonitoringSystem Integration', () => {
         alertInterval: 300,
         enableDashboards: true,
         dashboardRefreshInterval: 1000,
-        storage: { type: 'memory' },
+        storage: { type: 'memory' }
       };
 
       await monitoringSystem.initialize(config);
@@ -144,7 +142,7 @@ describe('MonitoringSystem Integration', () => {
         condition: (metrics) => metrics.requests.total > 10,
         action: async () => {
           alertTriggered = true;
-        },
+        }
       });
 
       // Generate enough requests to trigger the alert
@@ -155,12 +153,12 @@ describe('MonitoringSystem Integration', () => {
       }
 
       // Wait for alert checking
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       expect(alertTriggered).toBe(true);
 
       const activeAlerts = alertManager.getActiveAlerts();
-      expect(activeAlerts.find((a) => a.name === 'test-high-requests')).toBeDefined();
+      expect(activeAlerts.find(a => a.name === 'test-high-requests')).toBeDefined();
     });
   });
 
@@ -174,7 +172,7 @@ describe('MonitoringSystem Integration', () => {
         alertInterval: 1000,
         enableDashboards: false,
         dashboardRefreshInterval: 1000,
-        storage: { type: 'memory' },
+        storage: { type: 'memory' }
       };
 
       await monitoringSystem.initialize(config);
@@ -189,14 +187,14 @@ describe('MonitoringSystem Integration', () => {
         duration: 2000, // 2 seconds
         request: {
           method: 'GET',
-          params: {},
+          params: {}
         },
         thresholds: {
           maxAvgResponseTime: 1000,
           maxP95ResponseTime: 2000,
           minSuccessRate: 0.8,
-          maxErrorRate: 0.2,
-        },
+          maxErrorRate: 0.2
+        }
       };
 
       const result = await loadTester.runLoadTest(loadTestConfig);
@@ -225,7 +223,7 @@ describe('MonitoringSystem Integration', () => {
         alertInterval: 1000,
         enableDashboards: false,
         dashboardRefreshInterval: 1000,
-        storage: { type: 'memory' },
+        storage: { type: 'memory' }
       };
 
       await monitoringSystem.initialize(config);
@@ -259,7 +257,7 @@ describe('MonitoringSystem Integration', () => {
         alertInterval: 1000,
         enableDashboards: false,
         dashboardRefreshInterval: 1000,
-        storage: { type: 'memory' },
+        storage: { type: 'memory' }
       };
 
       await monitoringSystem.initialize(config);
@@ -296,7 +294,7 @@ describe('MonitoringSystem Integration', () => {
         alertInterval: 1000,
         enableDashboards: false,
         dashboardRefreshInterval: 1000,
-        storage: { type: 'memory' },
+        storage: { type: 'memory' }
       };
 
       await monitoringSystem.initialize(config);
@@ -307,7 +305,7 @@ describe('MonitoringSystem Integration', () => {
       systemHealthMonitor.start();
 
       // Wait for health checks to run
-      await new Promise((resolve) => setTimeout(resolve, 1100));
+      await new Promise(resolve => setTimeout(resolve, 1100));
 
       const healthStatus = await systemHealthMonitor.getHealthStatus();
       expect(healthStatus).toBeDefined();
@@ -321,7 +319,7 @@ describe('MonitoringSystem Integration', () => {
       expect(healthChecks.length).toBeGreaterThan(0);
 
       // Check for default health checks
-      const memoryCheck = healthChecks.find((c) => c.name === 'memory-usage');
+      const memoryCheck = healthChecks.find(c => c.name === 'memory-usage');
       expect(memoryCheck).toBeDefined();
       expect(typeof memoryCheck!.healthy).toBe('boolean');
 
@@ -339,7 +337,7 @@ describe('MonitoringSystem Integration', () => {
         alertInterval: 1000,
         enableDashboards: true,
         dashboardRefreshInterval: 1000,
-        storage: { type: 'memory' },
+        storage: { type: 'memory' }
       };
 
       await monitoringSystem.initialize(config);
@@ -352,7 +350,7 @@ describe('MonitoringSystem Integration', () => {
       }
 
       // Wait for metrics collection
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      await new Promise(resolve => setTimeout(resolve, 600));
 
       // Test JSON export
       const jsonMetrics = await monitoringSystem.exportMetrics('json');
@@ -366,7 +364,7 @@ describe('MonitoringSystem Integration', () => {
 
       // Verify Prometheus format
       const lines = prometheusMetrics.split('\n');
-      const requestsLine = lines.find((line) => line.startsWith('mcp_requests_total'));
+      const requestsLine = lines.find(line => line.startsWith('mcp_requests_total'));
       expect(requestsLine).toBeDefined();
       expect(requestsLine).toMatch(/mcp_requests_total \d+/);
     });
@@ -382,7 +380,7 @@ describe('MonitoringSystem Integration', () => {
         alertInterval: 200,
         enableDashboards: true,
         dashboardRefreshInterval: 500,
-        storage: { type: 'memory' },
+        storage: { type: 'memory' }
       };
 
       await monitoringSystem.initialize(config);
@@ -401,7 +399,7 @@ describe('MonitoringSystem Integration', () => {
 
         const requestId = `load-req-${requestCount++}`;
         performanceMonitor.recordRequestStart(requestId);
-
+        
         setTimeout(() => {
           performanceMonitor.recordRequestEnd(requestId, Math.random() > 0.05);
         }, Math.random() * 20);
@@ -409,26 +407,18 @@ describe('MonitoringSystem Integration', () => {
         // Also simulate other activities
         if (requestCount % 10 === 0) {
           performanceMonitor.recordConnection('connect');
-          performanceMonitor.recordResourceAccess(
-            `resource-${requestCount}`,
-            Math.random() * 100,
-            Math.random() > 0.3
-          );
-          performanceMonitor.recordToolExecution(
-            `tool-${requestCount % 5}`,
-            Math.random() * 200,
-            Math.random() > 0.1
-          );
+          performanceMonitor.recordResourceAccess(`resource-${requestCount}`, Math.random() * 100, Math.random() > 0.3);
+          performanceMonitor.recordToolExecution(`tool-${requestCount % 5}`, Math.random() * 200, Math.random() > 0.1);
         }
       }, 10); // Every 10ms
 
       // Wait for load test to complete
-      await new Promise((resolve) => setTimeout(resolve, testDuration + 500));
+      await new Promise(resolve => setTimeout(resolve, testDuration + 500));
 
       // Verify system handled the load
       const metricsCollector = monitoringSystem.getMetricsCollector();
       const finalMetrics = metricsCollector.getCurrentMetrics();
-
+      
       expect(finalMetrics.requests.total).toBeGreaterThan(100);
       expect(finalMetrics.requests.rps).toBeGreaterThan(10);
       expect(finalMetrics.system.healthScore).toBeGreaterThan(50); // Should maintain reasonable health

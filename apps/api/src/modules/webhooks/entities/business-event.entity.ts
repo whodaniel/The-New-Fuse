@@ -1,11 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 
 @Entity('business_events')
 @Index('idx_business_events_org_type', ['organizationId', 'type'])
@@ -41,7 +34,7 @@ export class BusinessEvent {
     name: 'processing_status',
     type: 'varchar',
     length: 20,
-    default: 'pending',
+    default: 'pending'
   })
   processingStatus!: string;
 

@@ -10,11 +10,7 @@ export class PrometheusService {
   /**
    * Register a new metric
    */
-  registerMetric(
-    name: string,
-    help: string,
-    type: 'counter' | 'gauge' | 'histogram' = 'counter'
-  ): void {
+  registerMetric(name: string, help: string, type: 'counter' | 'gauge' | 'histogram' = 'counter'): void {
     this.metrics.set(name, {
       name,
       help,
@@ -34,7 +30,7 @@ export class PrometheusService {
     }
 
     metric.value += value;
-
+    
     // Store labeled values
     const labelKey = this.getLabelKey(labels);
     if (labelKey) {
@@ -56,7 +52,7 @@ export class PrometheusService {
     }
 
     metric.value = value;
-
+    
     // Store labeled values
     const labelKey = this.getLabelKey(labels);
     if (labelKey) {
@@ -79,18 +75,18 @@ export class PrometheusService {
       metric.values = [];
     }
     metric.values.push(value);
-
+    
     // Store labeled values
     const labelKey = this.getLabelKey(labels);
     if (labelKey) {
       if (!metric.labeledValues) {
         metric.labeledValues = new Map();
       }
-
+      
       if (!metric.labeledValues.has(labelKey)) {
         metric.labeledValues.set(labelKey, []);
       }
-
+      
       metric.labeledValues.get(labelKey).push(value);
     }
   }
@@ -100,14 +96,14 @@ export class PrometheusService {
    */
   getMetrics(): string {
     let output = '';
-
+    
     for (const [name, metric] of this.metrics.entries()) {
       output += `# HELP ${name} ${metric.help}\n`;
       output += `# TYPE ${name} ${metric.type}\n`;
-
+      
       if (metric.type === 'counter' || metric.type === 'gauge') {
         output += `${name} ${metric.value}\n`;
-
+        
         // Add labeled metrics
         for (const [labelKey, labelValue] of metric.labels.entries()) {
           output += `${name}{${labelKey}} ${labelValue}\n`;
@@ -117,15 +113,15 @@ export class PrometheusService {
         if (metric.values && metric.values.length > 0) {
           const sum = metric.values.reduce((a: number, b: number) => a + b, 0);
           const count = metric.values.length;
-
+          
           output += `${name}_sum ${sum}\n`;
           output += `${name}_count ${count}\n`;
         }
       }
-
+      
       output += '\n';
     }
-
+    
     return output;
   }
 
@@ -141,7 +137,7 @@ export class PrometheusService {
       } else if (metric.type === 'histogram') {
         metric.values = [];
       }
-
+      
       metric.labels = new Map();
       if (metric.labeledValues) {
         metric.labeledValues = new Map();
@@ -156,7 +152,7 @@ export class PrometheusService {
     if (Object.keys(labels).length === 0) {
       return '';
     }
-
+    
     return Object.entries(labels)
       .map(([k, v]) => `${k}="${v}"`)
       .join(',');

@@ -26,7 +26,7 @@ class Appearance {
 
   private loadSettings(): AppearanceSettings {
     if (typeof window === 'undefined') return DEFAULT_SETTINGS;
-
+    
     const savedSettings = localStorage.getItem(SETTINGS_KEY);
     if (!savedSettings) return DEFAULT_SETTINGS;
 

@@ -18,6 +18,6 @@ export function setupTestMatchers() {
     toHavePermission,
     toMatchAPIContract,
     toBeValidComponent,
-    toCompleteWithinTime,
+    toCompleteWithinTime
   });
 }

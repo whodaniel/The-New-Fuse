@@ -1,9 +1,7 @@
-import type { QueueTask, UnifiedRedisService } from '@the-new-fuse/infrastructure';
-
 import { BaseService } from '../core/BaseService';
 import { Logger } from '../types/core';
-
-import type { ConfigService } from './ConfigService';
+import { UnifiedRedisService, QueueTask } from '@the-new-fuse/infrastructure';
+import { ConfigService } from './ConfigService';
 
 /**
  * Service for interacting with Redis via UnifiedRedisService.
@@ -18,7 +16,7 @@ export class RedisService extends BaseService {
   ) {
     super({ name: 'RedisService' });
     this.logger = new Logger('RedisService');
-
+    
     this.logger.info('Agent Redis Service initialized with UnifiedRedisService');
   }
 
@@ -90,10 +88,9 @@ export class RedisService extends BaseService {
 
   async subscribe(channel: string, callback: (message: string) => void): Promise<void> {
     await this.unifiedRedis.subscribe(channel, (pubSubMessage) => {
-      const messageStr =
-        typeof pubSubMessage.message === 'string'
-          ? pubSubMessage.message
-          : JSON.stringify(pubSubMessage.message);
+      const messageStr = typeof pubSubMessage.message === 'string' 
+        ? pubSubMessage.message 
+        : JSON.stringify(pubSubMessage.message);
       callback(messageStr);
     });
   }
@@ -105,11 +102,7 @@ export class RedisService extends BaseService {
   // Hash operations
   async hset(key: string, field: string, value: string): Promise<void>;
   async hset(key: string, data: Record<string, string>): Promise<void>;
-  async hset(
-    key: string,
-    fieldOrData: string | Record<string, string>,
-    value?: string
-  ): Promise<void> {
+  async hset(key: string, fieldOrData: string | Record<string, string>, value?: string): Promise<void> {
     if (typeof fieldOrData === 'string' && value !== undefined) {
       await this.unifiedRedis.hset(key, fieldOrData, value);
     } else if (typeof fieldOrData === 'object') {
@@ -193,7 +186,7 @@ export class RedisService extends BaseService {
     return this.unifiedRedis.cache(key, factory, options);
   }
 
-  async enqueue<T>(queueName: string, task: any, priority: number = 1): Promise<void> {
+    async enqueue<T>(queueName: string, task: any, priority: number = 1): Promise<void> {
     await this.unifiedRedis.enqueue(queueName, task, priority);
   }
 

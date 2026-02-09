@@ -1,22 +1,22 @@
 /**
  * ConflictManager Usage Examples
- *
+ * 
  * This file demonstrates how to use the ConflictManager service
  * for handling synchronization conflicts in a multi-tenant environment.
  */
 
-import { DatabaseService } from '@the-new-fuse/database/generated/db';
-import { SyncDatabaseService } from '../database/SyncDatabaseService';
-import { TenantSyncContext } from '../types';
 import { ConflictManager } from './ConflictManager';
+import { SyncDatabaseService } from '../database/SyncDatabaseService';
+import { PrismaClient } from '@the-new-fuse/database/generated/prisma';
+import { TenantSyncContext } from '../types';
 
 // Example setup
 async function setupConflictManager() {
-  const db = new DatabaseService();
-  const syncDb = new SyncDatabaseService(db);
-  const conflictManager = new ConflictManager(db, syncDb);
+  const prisma = new PrismaClient();
+  const syncDb = new SyncDatabaseService(prisma);
+  const conflictManager = new ConflictManager(prisma, syncDb);
 
-  return { conflictManager, db, syncDb };
+  return { conflictManager, prisma, syncDb };
 }
 
 /**
@@ -97,7 +97,7 @@ async function manualConflictResolutionExample() {
   try {
     // Get pending conflicts for the tenant
     const pendingConflicts = await conflictManager.getPendingConflicts('tenant-789');
-
+    
     console.log(`Found ${pendingConflicts.length} pending conflicts`);
 
     for (const conflict of pendingConflicts) {
@@ -199,6 +199,7 @@ async function monitoringAndMaintenanceExample() {
       'tenant-456'
     );
     console.log(`Found ${agentConflicts.length} conflicts for specific agent`);
+
   } catch (error) {
     console.error('Error in monitoring and maintenance:', error);
   }
@@ -241,7 +242,12 @@ async function errorHandlingExample() {
   // Simulate error scenarios
   try {
     // This might fail due to database connectivity issues
-    await conflictManager.detectConflict('agent', 'test-agent', { version: 1 }, { version: 2 });
+    await conflictManager.detectConflict(
+      'agent',
+      'test-agent',
+      { version: 1 },
+      { version: 2 }
+    );
   } catch (error) {
     console.log('Handled error gracefully:', error.message);
   }
@@ -277,25 +283,26 @@ async function workflowIntegrationExample() {
 
       // Step 2: Attempt auto-resolution
       console.log(`Conflict detected: ${conflict.conflictType}`);
-
+      
       if (conflict.conflictType === 'version') {
         const resolution = await conflictManager.resolveConflict(
           conflict.id,
           'latest_wins',
           'sync-service'
         );
-
+        
         console.log('Auto-resolved conflict');
         return { success: true, data: resolution.resolvedData };
       }
 
       // Step 3: Escalate to manual resolution
       console.log('Conflict requires manual resolution');
-      return {
-        success: false,
+      return { 
+        success: false, 
         conflict: conflict.id,
-        message: 'Manual resolution required',
+        message: 'Manual resolution required'
       };
+
     } catch (error) {
       console.error('Sync workflow error:', error);
       return { success: false, error: error.message };
@@ -324,7 +331,7 @@ async function customResolutionExample() {
     try {
       // Get the conflict details
       const conflicts = await conflictManager.getResourceConflicts('template', 'template-123');
-      const conflict = conflicts.find((c) => c.id === conflictId);
+      const conflict = conflicts.find(c => c.id === conflictId);
 
       if (!conflict) {
         throw new Error('Conflict not found');
@@ -339,9 +346,9 @@ async function customResolutionExample() {
       if (localVersion.structure === remoteVersion.structure) {
         const localTime = new Date(localVersion.lastModified);
         const remoteTime = new Date(remoteVersion.lastModified);
-
+        
         const strategy = remoteTime > localTime ? 'latest_wins' : 'rollback';
-
+        
         const resolution = await conflictManager.resolveConflict(
           conflictId,
           strategy,
@@ -355,6 +362,7 @@ async function customResolutionExample() {
       // For structural changes, require manual resolution
       console.log('Template structure conflict requires manual resolution');
       throw new Error('Manual resolution required for structural changes');
+
     } catch (error) {
       console.error('Custom resolution failed:', error);
       throw error;
@@ -371,13 +379,13 @@ async function customResolutionExample() {
 
 // Export examples for testing and documentation
 export {
-  batchAutoResolutionExample,
-  customResolutionExample,
   detectAgentConflictExample,
-  errorHandlingExample,
   manualConflictResolutionExample,
+  batchAutoResolutionExample,
   monitoringAndMaintenanceExample,
+  errorHandlingExample,
   workflowIntegrationExample,
+  customResolutionExample,
 };
 
 // Run examples if this file is executed directly

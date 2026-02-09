@@ -1,6 +1,12 @@
-import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+  Logger,
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { tap } from "rxjs/operators";
 
 @Injectable()
 export class PerformanceInterceptor implements NestInterceptor {
@@ -23,11 +29,11 @@ export class PerformanceInterceptor implements NestInterceptor {
         }
 
         // In production, you might want to send this to a monitoring service
-        if (process.env.NODE_ENV === 'production' && duration > 2000) {
+        if (process.env.NODE_ENV === "production" && duration > 2000) {
           // Send alert for very slow requests
           this.logger.error(`Very slow request: ${message}`);
         }
-      })
+      }),
     );
   }
 }

@@ -1,5 +1,5 @@
-import { Award, CheckCircle2, Quote, Star, TrendingUp, Users } from 'lucide-react';
 import React from 'react';
+import { Star, Quote, TrendingUp, Users, Award, CheckCircle2 } from 'lucide-react';
 
 export interface Testimonial {
   id: string;
@@ -48,7 +48,9 @@ export const Testimonials: React.FC<TestimonialsProps> = ({
           <Star
             key={i}
             className={`w-4 h-4 ${
-              i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
+              i < rating
+                ? 'text-yellow-400 fill-yellow-400'
+                : 'text-gray-300'
             }`}
           />
         ))}
@@ -70,7 +72,11 @@ export const Testimonials: React.FC<TestimonialsProps> = ({
       </p>
 
       {/* Rating */}
-      {testimonial.rating && <div className="mb-4">{renderStars(testimonial.rating)}</div>}
+      {testimonial.rating && (
+        <div className="mb-4">
+          {renderStars(testimonial.rating)}
+        </div>
+      )}
 
       {/* Author */}
       <div className="flex items-center gap-3">
@@ -86,7 +92,9 @@ export const Testimonials: React.FC<TestimonialsProps> = ({
           </div>
         )}
         <div>
-          <p className="font-semibold text-gray-900 dark:text-white">{testimonial.name}</p>
+          <p className="font-semibold text-gray-900 dark:text-white">
+            {testimonial.name}
+          </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             {testimonial.role} at {testimonial.company}
           </p>
@@ -118,11 +126,17 @@ export const Testimonials: React.FC<TestimonialsProps> = ({
               </div>
             )}
             <div>
-              <p className="font-semibold text-lg text-gray-900 dark:text-white">{featured.name}</p>
+              <p className="font-semibold text-lg text-gray-900 dark:text-white">
+                {featured.name}
+              </p>
               <p className="text-gray-600 dark:text-gray-400">
                 {featured.role} at {featured.company}
               </p>
-              {featured.rating && <div className="mt-2">{renderStars(featured.rating)}</div>}
+              {featured.rating && (
+                <div className="mt-2">
+                  {renderStars(featured.rating)}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -144,7 +158,11 @@ export const Testimonials: React.FC<TestimonialsProps> = ({
  * Displays key metrics and statistics
  * Supports multiple visual variants
  */
-export const Stats: React.FC<StatsProps> = ({ stats, className = '', variant = 'default' }) => {
+export const Stats: React.FC<StatsProps> = ({
+  stats,
+  className = '',
+  variant = 'default',
+}) => {
   if (variant === 'compact') {
     // Compact inline layout
     return (
@@ -154,7 +172,9 @@ export const Stats: React.FC<StatsProps> = ({ stats, className = '', variant = '
             <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-1">
               {stat.value}
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              {stat.label}
+            </div>
           </div>
         ))}
       </div>
@@ -183,8 +203,12 @@ export const Stats: React.FC<StatsProps> = ({ stats, className = '', variant = '
                 </div>
               )}
             </div>
-            <div className="text-4xl font-bold mb-2">{stat.value}</div>
-            <div className="text-blue-100">{stat.label}</div>
+            <div className="text-4xl font-bold mb-2">
+              {stat.value}
+            </div>
+            <div className="text-blue-100">
+              {stat.label}
+            </div>
           </div>
         ))}
       </div>
@@ -199,11 +223,17 @@ export const Stats: React.FC<StatsProps> = ({ stats, className = '', variant = '
           key={index}
           className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-100 dark:border-gray-700"
         >
-          {stat.icon && <div className="mb-4">{stat.icon}</div>}
+          {stat.icon && (
+            <div className="mb-4">
+              {stat.icon}
+            </div>
+          )}
           <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
             {stat.value}
           </div>
-          <div className="text-gray-600 dark:text-gray-400">{stat.label}</div>
+          <div className="text-gray-600 dark:text-gray-400">
+            {stat.label}
+          </div>
           {stat.trend && (
             <div className="flex items-center gap-1 mt-3 text-sm text-green-600">
               <TrendingUp className="w-4 h-4" />
@@ -233,7 +263,10 @@ export interface TrustBadgesProps {
   className?: string;
 }
 
-export const TrustBadges: React.FC<TrustBadgesProps> = ({ badges, className = '' }) => {
+export const TrustBadges: React.FC<TrustBadgesProps> = ({
+  badges,
+  className = '',
+}) => {
   return (
     <div className={`flex flex-wrap justify-center items-center gap-8 ${className}`}>
       {badges.map((badge) => (
@@ -242,8 +275,14 @@ export const TrustBadges: React.FC<TrustBadgesProps> = ({ badges, className = ''
           className="flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
           title={badge.description}
         >
-          {badge.icon && <div className="text-blue-600 dark:text-blue-400">{badge.icon}</div>}
-          <span className="font-medium text-gray-700 dark:text-gray-300">{badge.name}</span>
+          {badge.icon && (
+            <div className="text-blue-600 dark:text-blue-400">
+              {badge.icon}
+            </div>
+          )}
+          <span className="font-medium text-gray-700 dark:text-gray-300">
+            {badge.name}
+          </span>
         </div>
       ))}
     </div>
@@ -283,7 +322,11 @@ export const LogoCloud: React.FC<LogoCloudProps> = ({
             key={logo.id}
             className="flex items-center justify-center grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
           >
-            <img src={logo.src} alt={logo.name} className="max-h-12 w-auto" />
+            <img
+              src={logo.src}
+              alt={logo.name}
+              className="max-h-12 w-auto"
+            />
           </div>
         ))}
       </div>
@@ -374,8 +417,7 @@ export const defaultTestimonials: Testimonial[] = [
     name: 'Sarah Chen',
     role: 'CTO',
     company: 'TechCorp',
-    content:
-      "The New Fuse has completely transformed how our team collaborates. We've seen a 40% increase in productivity since implementing it.",
+    content: 'The New Fuse has completely transformed how our team collaborates. We\'ve seen a 40% increase in productivity since implementing it.',
     rating: 5,
   },
   {
@@ -383,8 +425,7 @@ export const defaultTestimonials: Testimonial[] = [
     name: 'Michael Rodriguez',
     role: 'Engineering Manager',
     company: 'StartupXYZ',
-    content:
-      'The agent-to-agent collaboration features are game-changing. Setup was incredibly easy, and the support team is fantastic.',
+    content: 'The agent-to-agent collaboration features are game-changing. Setup was incredibly easy, and the support team is fantastic.',
     rating: 5,
   },
   {
@@ -392,8 +433,7 @@ export const defaultTestimonials: Testimonial[] = [
     name: 'Emily Watson',
     role: 'Product Lead',
     company: 'Innovation Labs',
-    content:
-      'We tried several solutions, but The New Fuse is the only one that delivered on its promises. Highly recommended!',
+    content: 'We tried several solutions, but The New Fuse is the only one that delivered on its promises. Highly recommended!',
     rating: 5,
   },
 ];

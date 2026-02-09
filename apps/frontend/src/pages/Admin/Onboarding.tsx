@@ -3,7 +3,7 @@ import { OnboardingAdmin } from '../../components/admin/onboarding/OnboardingAdm
 
 /**
  * Onboarding Admin Page
- *
+ * 
  * This page provides access to the onboarding configuration settings
  * for administrators to customize the onboarding experience.
  */

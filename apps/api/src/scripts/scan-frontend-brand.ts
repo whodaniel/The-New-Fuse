@@ -40,7 +40,7 @@ async function scanComponents(): Promise<ComponentFile[]> {
     'apps/frontend/src/components/AgentMarketplace.tsx',
     'apps/frontend/src/pages/dashboard.tsx',
     'apps/frontend/src/pages/login.tsx',
-    'apps/frontend/src/pages/register.tsx',
+    'apps/frontend/src/pages/register.tsx'
   ];
 
   for (const filePath of targetFiles) {
@@ -50,7 +50,7 @@ async function scanComponents(): Promise<ComponentFile[]> {
       const code = fs.readFileSync(fullPath, 'utf-8');
       components.push({
         path: filePath,
-        code: code.substring(0, 10000), // Limit to first 10KB
+        code: code.substring(0, 10000) // Limit to first 10KB
       });
     }
   }
@@ -65,8 +65,8 @@ async function analyzeComponent(component: ComponentFile): Promise<AnalysisResul
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         componentPath: component.path,
-        componentCode: component.code,
-      }),
+        componentCode: component.code
+      })
     });
 
     if (!response.ok) {
@@ -74,7 +74,7 @@ async function analyzeComponent(component: ComponentFile): Promise<AnalysisResul
       return null;
     }
 
-    return (await response.json()) as AnalysisResult;
+    return await response.json() as AnalysisResult;
   } catch (error) {
     console.error(`  ❌ Error: ${error}`);
     return null;
@@ -98,7 +98,7 @@ async function main() {
       console.error('❌ API not available. Start with: cd apps/api && node dist/main.js');
       process.exit(1);
     }
-    const info = (await infoResponse.json()) as any;
+    const info = await infoResponse.json() as any;
     console.log(`✅ Connected to ${info.name} v${info.version}\n`);
   } catch {
     console.error('❌ Cannot connect to API at http://localhost:3001');
@@ -127,15 +127,15 @@ async function main() {
     if (analysis) {
       results.push(analysis);
 
-      const emoji =
-        analysis.consistencyScore >= 90 ? '✅' : analysis.consistencyScore >= 70 ? '⚠️' : '❌';
+      const emoji = analysis.consistencyScore >= 90 ? '✅' :
+                    analysis.consistencyScore >= 70 ? '⚠️' : '❌';
       console.log(`   ${emoji} Score: ${analysis.consistencyScore}%`);
 
       if (analysis.issues.length > 0) {
         console.log(`   📍 Issues: ${analysis.issues.length}`);
         for (const issue of analysis.issues.slice(0, 3)) {
-          const severityIcon =
-            issue.severity === 'critical' ? '🔴' : issue.severity === 'major' ? '🟠' : '🟡';
+          const severityIcon = issue.severity === 'critical' ? '🔴' :
+                               issue.severity === 'major' ? '🟠' : '🟡';
           console.log(`      ${severityIcon} ${issue.description.substring(0, 50)}`);
         }
         if (analysis.issues.length > 3) {
@@ -156,14 +156,10 @@ async function main() {
   if (results.length > 0) {
     const avgScore = results.reduce((sum, r) => sum + r.consistencyScore, 0) / results.length;
     const totalIssues = results.reduce((sum, r) => sum + r.issues.length, 0);
-    const criticalIssues = results.reduce(
-      (sum, r) => sum + r.issues.filter((i) => i.severity === 'critical').length,
-      0
-    );
-    const majorIssues = results.reduce(
-      (sum, r) => sum + r.issues.filter((i) => i.severity === 'major').length,
-      0
-    );
+    const criticalIssues = results.reduce((sum, r) =>
+      sum + r.issues.filter(i => i.severity === 'critical').length, 0);
+    const majorIssues = results.reduce((sum, r) =>
+      sum + r.issues.filter(i => i.severity === 'major').length, 0);
 
     console.log(`📊 Components Analyzed: ${results.length}`);
     console.log(`📈 Average Consistency: ${avgScore.toFixed(1)}%`);

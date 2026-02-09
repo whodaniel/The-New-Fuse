@@ -10,10 +10,10 @@ yarn why @nestjs/platform-express
 yarn why reflect-metadata
 yarn why rxjs
 
-# Check Drizzle versions
-echo "Checking Drizzle versions..."
-yarn why @drizzle/client
-yarn why drizzle
+# Check Prisma versions
+echo "Checking Prisma versions..."
+yarn why @prisma/client
+yarn why prisma
 
 # Check Firebase dependencies
 echo "Checking Firebase dependencies..."

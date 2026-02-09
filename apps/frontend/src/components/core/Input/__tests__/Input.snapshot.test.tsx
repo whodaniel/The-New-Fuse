@@ -1,3 +1,4 @@
+import React from 'react';
 import { assertSnapshot } from '@/test/helpers/snapshot';
 import { Input } from '../Input';
 

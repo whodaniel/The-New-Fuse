@@ -34,7 +34,7 @@ mission is to:
 │   ├── api-gateway/       # API Gateway service
 │   └── electron-desktop/  # Desktop application
 ├── packages/
-│   ├── database/          # Drizzle ORM + Generated types
+│   ├── database/          # Prisma ORM + Generated types
 │   ├── core/              # Shared core utilities
 │   ├── types/             # Shared TypeScript types
 │   ├── ui-consolidated/   # Shared UI components
@@ -263,7 +263,7 @@ These should NOT be converted to dark theme:
 1. `apps/frontend/src/providers/` - Context providers
 2. `apps/frontend/src/contexts/` - React contexts
 3. `apps/api/src/modules/` - NestJS modules
-4. `packages/database/` - Drizzle schema and migrations
+4. `packages/database/` - Prisma schema and migrations
 
 ### Lower Priority (Utilities)
 

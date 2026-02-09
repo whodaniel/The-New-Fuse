@@ -4,8 +4,9 @@
  * Tests for the health check endpoint
  */
 
-import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
 
 describe('Health Controller (e2e)', () => {
   let app: INestApplication;

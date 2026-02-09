@@ -23,7 +23,7 @@ export enum ModelType {
   STABLE_DIFFUSION = 'stable_diffusion',
   // Generic
   CUSTOM = 'custom',
-  UNKNOWN = 'unknown',
+  UNKNOWN = 'unknown'
 }
 
 // Token Types
@@ -33,7 +33,7 @@ export enum TokenType {
   ERC721 = 'erc721',
   ERC1155 = 'erc1155',
   CUSTOM = 'custom',
-  UNKNOWN = 'unknown',
+  UNKNOWN = 'unknown'
 }
 
 // Wallet Types
@@ -46,7 +46,7 @@ export enum WalletType {
   SAFE = 'safe',
   ARGENT = 'argent',
   CUSTOM = 'custom',
-  UNKNOWN = 'unknown',
+  UNKNOWN = 'unknown'
 }
 
 // Resource Types
@@ -60,7 +60,7 @@ export enum ResourceType {
   BANDWIDTH = 'bandwidth',
   LATENCY = 'latency',
   CUSTOM = 'custom',
-  UNKNOWN = 'unknown',
+  UNKNOWN = 'unknown'
 }
 
 // Communication Patterns
@@ -74,7 +74,7 @@ export enum CommunicationPattern {
   STREAM = 'stream',
   EVENT_DRIVEN = 'event_driven',
   CUSTOM = 'custom',
-  UNKNOWN = 'unknown',
+  UNKNOWN = 'unknown'
 }
 
 export {};

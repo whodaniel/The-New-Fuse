@@ -86,10 +86,6 @@ interface UnifiedAgentMetrics {
   averageDuration: number;
 }
 
-import { ClawdEngine } from './ClawdEngine';
-
-// ... (previous imports)
-
 export class UnifiedAgent extends EventEmitter {
   private config: UnifiedAgentConfig;
   private state: AgentState;
@@ -98,7 +94,6 @@ export class UnifiedAgent extends EventEmitter {
   private startTime: Date;
   private heartbeatInterval: ReturnType<typeof setInterval> | null = null;
   private metrics: UnifiedAgentMetrics;
-  private clawdEngine: ClawdEngine;
 
   constructor(config: UnifiedAgentConfig) {
     super();
@@ -116,7 +111,6 @@ export class UnifiedAgent extends EventEmitter {
       totalDuration: 0,
       averageDuration: 0,
     };
-    this.clawdEngine = new ClawdEngine();
   }
 
   // ============================================================
@@ -269,8 +263,6 @@ export class UnifiedAgent extends EventEmitter {
         return this.handleSearch(task);
       case 'execute':
         return this.handleExecute(task);
-      case 'clawd':
-        return this.handleClawd(task);
       default:
         return this.handleCustom(task);
     }
@@ -281,26 +273,6 @@ export class UnifiedAgent extends EventEmitter {
     // Simulate analysis
     await this.delay(100);
     return { analysis: 'completed', input: task.payload };
-  }
-
-  private async handleClawd(task: TaskRequest): Promise<unknown> {
-    // Payload should look like { method: 'node.invoke', params: { ... } }
-    // Or simplified: { skill: 'name', args: {} }
-    const payload = task.payload as any;
-
-    // Auto-wrap into Protocol Request
-    const req = {
-      type: 'req' as const,
-      id: task.id,
-      method: payload.method || 'node.invoke',
-      params: payload.params || { skillName: payload.skill, args: payload.args },
-    };
-
-    const res = await this.clawdEngine.handleRequest(req);
-    if (!res.ok) {
-      throw new Error(res.error?.message || 'Clawd Engine Error');
-    }
-    return res.payload;
   }
 
   private async handleGenerate(task: TaskRequest): Promise<unknown> {
@@ -454,9 +426,7 @@ export class UnifiedAgent extends EventEmitter {
    * Start heartbeat
    */
   private startHeartbeat(): void {
-    if (this.heartbeatInterval) {
-      return;
-    }
+    if (this.heartbeatInterval) return;
 
     this.heartbeatInterval = setInterval(() => {
       this.emit('heartbeat', {

@@ -1,3 +1,4 @@
+
 import { jest } from '@jest/globals';
 import { ConversationMemory, ConversationTurn } from '../ConversationMemory';
 import { VectorMemoryStore } from '../VectorMemoryStore';
@@ -65,12 +66,7 @@ describe('ConversationMemory', () => {
             type: 'conversation',
             embedding: [],
             importance: 0.8,
-            metadata: {
-              sessionId,
-              agentId: 'agent-2',
-              timestamp: '2023-01-01T12:01:00.000Z',
-              role: 'agent',
-            },
+            metadata: { sessionId, agentId: 'agent-2', timestamp: '2023-01-01T12:01:00.000Z', role: 'agent' },
             timestamp: new Date('2023-01-01T12:01:00.000Z').getTime(),
           },
           similarity: 0.9,
@@ -82,12 +78,7 @@ describe('ConversationMemory', () => {
             type: 'conversation',
             embedding: [],
             importance: 0.7,
-            metadata: {
-              sessionId,
-              agentId: 'agent-2',
-              timestamp: '2023-01-01T12:00:00.000Z',
-              role: 'user',
-            },
+            metadata: { sessionId, agentId: 'agent-2', timestamp: '2023-01-01T12:00:00.000Z', role: 'user' },
             timestamp: new Date('2023-01-01T12:00:00.000Z').getTime(),
           },
           similarity: 0.8,
@@ -99,12 +90,7 @@ describe('ConversationMemory', () => {
             type: 'conversation',
             embedding: [],
             importance: 0.5,
-            metadata: {
-              sessionId,
-              agentId: 'agent-2',
-              timestamp: '2023-01-01T12:02:00.000Z',
-              role: 'user',
-            },
+            metadata: { sessionId, agentId: 'agent-2', timestamp: '2023-01-01T12:02:00.000Z', role: 'user' },
             timestamp: new Date('2023-01-01T12:02:00.000Z').getTime(),
           },
           similarity: 0.5, // Below the 0.6 threshold

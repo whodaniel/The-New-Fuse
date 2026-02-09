@@ -6,14 +6,15 @@
  */
 
 import {
-  Body,
   Controller,
+  Post,
   Get,
+  Body,
+  Param,
   HttpException,
   HttpStatus,
   Logger,
-  Param,
-  Post,
+  UseGuards
 } from '@nestjs/common';
 import { CryptoAgentService, CryptoAgentTask } from './crypto-agent.service';
 
@@ -96,7 +97,11 @@ export class CryptoAgentController {
    */
   @Post('nft/generate-and-mint')
   async generateAndMintNFT(
-    @Body() body: { description: string; chain?: string; listingPrice?: string }
+    @Body() body: {
+      description: string;
+      chain?: string;
+      listingPrice?: string;
+    }
   ) {
     try {
       return await this.cryptoAgentService.generateAndMintNFT(
@@ -118,9 +123,19 @@ export class CryptoAgentController {
    * POST /api/crypto-agent/defi/swap
    */
   @Post('defi/swap')
-  async swapTokens(@Body() body: { amount: number; fromToken: string; toToken: string }) {
+  async swapTokens(
+    @Body() body: {
+      amount: number;
+      fromToken: string;
+      toToken: string;
+    }
+  ) {
     try {
-      return await this.cryptoAgentService.swapTokens(body.amount, body.fromToken, body.toToken);
+      return await this.cryptoAgentService.swapTokens(
+        body.amount,
+        body.fromToken,
+        body.toToken
+      );
     } catch (error) {
       this.logger.error(`Error swapping tokens: ${error.message}`);
       throw new HttpException(
@@ -135,9 +150,17 @@ export class CryptoAgentController {
    * POST /api/crypto-agent/defi/stake
    */
   @Post('defi/stake')
-  async stakeTokens(@Body() body: { amount: number; token: string }) {
+  async stakeTokens(
+    @Body() body: {
+      amount: number;
+      token: string;
+    }
+  ) {
     try {
-      return await this.cryptoAgentService.stakeForYield(body.amount, body.token);
+      return await this.cryptoAgentService.stakeForYield(
+        body.amount,
+        body.token
+      );
     } catch (error) {
       this.logger.error(`Error staking tokens: ${error.message}`);
       throw new HttpException(
@@ -153,7 +176,12 @@ export class CryptoAgentController {
    */
   @Post('bridge')
   async bridgeTokens(
-    @Body() body: { amount: number; token: string; fromChain: string; toChain: string }
+    @Body() body: {
+      amount: number;
+      token: string;
+      fromChain: string;
+      toChain: string;
+    }
   ) {
     try {
       return await this.cryptoAgentService.bridgeTokens(

@@ -106,7 +106,7 @@ export class CloudSandboxAuthGuard {
           return { authenticated: false, error: 'Agent not found' };
         }
 
-        if (agent.status !== 'ACTIVE') {
+        if (agent.status === 'INACTIVE' || agent.status === 'TERMINATED') {
           return { authenticated: false, error: 'Agent is not active' };
         }
 
@@ -188,7 +188,7 @@ export class CloudSandboxAuthGuard {
         return { authenticated: false, error: 'Agent not found' };
       }
 
-      if (agent.status !== 'ACTIVE') {
+      if (agent.status === 'INACTIVE' || agent.status === 'TERMINATED') {
         return { authenticated: false, error: 'Agent is not active' };
       }
 

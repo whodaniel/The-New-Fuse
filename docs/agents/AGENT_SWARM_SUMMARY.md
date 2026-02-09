@@ -433,7 +433,7 @@ The Architect Agent identified these enhancements:
 
 - **Framework:** NestJS
 - **Language:** TypeScript
-- **Database:** Drizzle + PostgreSQL
+- **Database:** Prisma + PostgreSQL
 - **Communication:** Event-driven messaging
 - **Testing:** Jest
 - **API:** RESTful

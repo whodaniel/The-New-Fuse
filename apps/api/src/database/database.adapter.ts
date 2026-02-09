@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DrizzleModule } from '@the-new-fuse/database';
-import { Db, MongoClient } from 'mongodb';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongoClient, Db } from 'mongodb';
 
 export interface DatabaseAdapter {
   connect(): Promise<void>;
@@ -14,15 +14,15 @@ export class PostgresAdapter implements DatabaseAdapter {
   constructor(private configService: ConfigService) {}
 
   async connect(): Promise<void> {
-    // PostgreSQL connection is handled by Drizzle
+    // PostgreSQL connection is handled by TypeORM
   }
 
   async disconnect(): Promise<void> {
-    // PostgreSQL disconnection is handled by Drizzle
+    // PostgreSQL disconnection is handled by TypeORM
   }
 
   getClient() {
-    return DrizzleModule;
+    return TypeOrmModule;
   }
 }
 
@@ -54,10 +54,13 @@ export class MongoAdapter implements DatabaseAdapter {
 export class DatabaseService {
   private adapter!: DatabaseAdapter;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+  ) {
     const dbType = this.configService.get<string>('DATABASE_TYPE');
-    this.adapter =
-      dbType === 'mongodb' ? new MongoAdapter(configService) : new PostgresAdapter(configService);
+    this.adapter = dbType === 'mongodb' 
+      ? new MongoAdapter(configService)
+      : new PostgresAdapter(configService);
   }
 
   async onModuleInit() {

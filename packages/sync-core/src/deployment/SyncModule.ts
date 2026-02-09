@@ -8,33 +8,33 @@ import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 // Sync Core Services
-import { ConflictManager } from '../services/ConflictManager';
 import { MasterClockService } from '../services/MasterClockService';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
+import { ConflictManager } from '../services/ConflictManager';
 
 // Watchers
 import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
 
 // Performance
-import { FileChangeBatcher } from '../performance/FileChangeBatcher';
-import { HorizontalScalingCoordinator } from '../performance/HorizontalScalingCoordinator';
 import { PerformanceOptimizationService } from '../performance/PerformanceOptimizationService';
+import { HorizontalScalingCoordinator } from '../performance/HorizontalScalingCoordinator';
+import { FileChangeBatcher } from '../performance/FileChangeBatcher';
 import { SyncLRUCache } from '../performance/SyncLRUCache';
 
 // Error Handling
 import { SyncErrorHandler } from '../error/SyncErrorHandler';
-import { SyncFallbackProcessor } from '../error/SyncFallbackProcessor';
 import { SyncRetryManager } from '../error/SyncRetryManager';
+import { SyncFallbackProcessor } from '../error/SyncFallbackProcessor';
 
 // Deployment Services
-import { SyncConfigService } from './SyncConfigService';
 import { SyncHealthService } from './SyncHealthService';
+import { SyncConfigService } from './SyncConfigService';
 import { SyncMetricsService } from './SyncMetricsService';
 
 // Controllers
+import { SyncController } from './SyncController';
 import { HealthController } from './HealthController';
 import { MetricsController } from './MetricsController';
-import { SyncController } from './SyncController';
 
 @Module({
   imports: [
@@ -43,7 +43,7 @@ import { SyncController } from './SyncController';
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
     }),
-
+    
     // Event system for real-time updates
     EventEmitterModule.forRoot({
       wildcard: false,
@@ -55,34 +55,38 @@ import { SyncController } from './SyncController';
       ignoreErrors: false,
     }),
   ],
-
-  controllers: [SyncController, HealthController, MetricsController],
-
+  
+  controllers: [
+    SyncController,
+    HealthController,
+    MetricsController,
+  ],
+  
   providers: [
     // Configuration and deployment services
     SyncConfigService,
     SyncHealthService,
     SyncMetricsService,
-
+    
     // Core sync services
     MasterClockService,
     SyncOrchestrator,
     ConflictManager,
-
+    
     // File system monitoring
     EnhancedFileSystemWatcher,
-
+    
     // Performance optimization
     PerformanceOptimizationService,
     HorizontalScalingCoordinator,
     FileChangeBatcher,
     SyncLRUCache,
-
+    
     // Error handling
     SyncErrorHandler,
     SyncRetryManager,
     SyncFallbackProcessor,
-
+    
     // Factory for creating service instances
     {
       provide: 'SYNC_SERVICES_FACTORY',
@@ -113,7 +117,7 @@ import { SyncController } from './SyncController';
       ],
     },
   ],
-
+  
   exports: [
     // Export services for use in other modules
     SyncConfigService,

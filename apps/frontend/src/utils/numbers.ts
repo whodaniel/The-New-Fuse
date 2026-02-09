@@ -1,5 +1,5 @@
 export function toPercentString(num: number | null | undefined): string {
-  if (num === null || num === undefined) return '0%';
+  if (num === null || num === undefined) return "0%";
   return `${Math.round(num * 100)}%`;
 }
 
@@ -17,7 +17,7 @@ export function formatPrice(price: number): string {
 export function formatCompactNumber(num: number): string {
   return new Intl.NumberFormat('en-US', {
     notation: 'compact',
-    maximumFractionDigits: 1,
+    maximumFractionDigits: 1
   }).format(num);
 }
 

@@ -1,17 +1,7 @@
+import { IsString, IsOptional, IsEnum, IsArray, IsBoolean, IsInt, Min, Max, IsDateString } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsBoolean,
-  IsDateString,
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator';
-import { ResourceCategory, ResourceStatus, ResourceType, ResourceVisibility } from '../types';
+import { ResourceCategory, ResourceType, ResourceVisibility, ResourceStatus } from '../types';
 
 export class SearchResourceDto {
   @ApiPropertyOptional({ description: 'Search query (searches name, description, tags, keywords)' })
@@ -19,11 +9,7 @@ export class SearchResourceDto {
   @IsOptional()
   query?: string;
 
-  @ApiPropertyOptional({
-    enum: ResourceCategory,
-    isArray: true,
-    description: 'Filter by categories',
-  })
+  @ApiPropertyOptional({ enum: ResourceCategory, isArray: true, description: 'Filter by categories' })
   @IsOptional()
   @IsArray()
   @IsEnum(ResourceCategory, { each: true })
@@ -35,11 +21,7 @@ export class SearchResourceDto {
   @IsEnum(ResourceType, { each: true })
   type?: ResourceType[];
 
-  @ApiPropertyOptional({
-    enum: ResourceVisibility,
-    isArray: true,
-    description: 'Filter by visibility',
-  })
+  @ApiPropertyOptional({ enum: ResourceVisibility, isArray: true, description: 'Filter by visibility' })
   @IsOptional()
   @IsArray()
   @IsEnum(ResourceVisibility, { each: true })
@@ -105,11 +87,7 @@ export class SearchResourceDto {
   @IsOptional()
   createdBefore?: string;
 
-  @ApiPropertyOptional({
-    description: 'Sort field',
-    enum: ['name', 'createdAt', 'updatedAt', 'usageCount', 'downloadCount', 'favoriteCount'],
-    default: 'createdAt',
-  })
+  @ApiPropertyOptional({ description: 'Sort field', enum: ['name', 'createdAt', 'updatedAt', 'usageCount', 'downloadCount', 'favoriteCount'], default: 'createdAt' })
   @IsString()
   @IsOptional()
   sortBy?: 'name' | 'createdAt' | 'updatedAt' | 'usageCount' | 'downloadCount' | 'favoriteCount';

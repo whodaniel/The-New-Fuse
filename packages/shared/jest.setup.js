@@ -19,7 +19,7 @@ jest.mock('./src/utils/redis.js', () => ({
     set: jest.fn().mockResolvedValue(undefined),
     get: jest.fn().mockResolvedValue(null),
     delete: jest.fn().mockResolvedValue(1),
-  },
+  }
 }));
 
 // Set up test environment

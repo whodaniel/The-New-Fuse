@@ -39,7 +39,7 @@ cp apps/frontend/.env.example apps/frontend/.env
 # Install all dependencies
 pnpm install
 
-# Generate Drizzle client
+# Generate Prisma client
 pnpm run --filter @the-new-fuse/database generate
 ```
 
@@ -124,7 +124,6 @@ pnpm run test:frontend
 ### Common Issues
 
 1. Database Connection
-
 ```bash
 # Check database logs
 docker-compose logs postgres
@@ -134,7 +133,6 @@ psql -h localhost -U postgres -d fuse
 ```
 
 2. Redis Connection
-
 ```bash
 # Check Redis logs
 docker-compose logs redis
@@ -144,7 +142,6 @@ redis-cli ping
 ```
 
 3. Build Issues
-
 ```bash
 # Clean and rebuild
 yarn clean

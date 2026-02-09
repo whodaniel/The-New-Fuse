@@ -1,10 +1,7 @@
+import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
-import React, { useEffect, useRef, useState } from 'react';
 
-export interface OptimizedImageProps extends Omit<
-  React.ImgHTMLAttributes<HTMLImageElement>,
-  'src' | 'srcSet'
-> {
+export interface OptimizedImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'srcSet'> {
   src: string;
   alt: string;
   webpSrc?: string;
@@ -120,10 +117,21 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       {isInView && !hasError && (
         <picture>
           {/* WebP sources with srcSet */}
-          {webpSrc && <source type="image/webp" srcSet={webpSrcSet || webpSrc} sizes={sizes} />}
+          {webpSrc && (
+            <source
+              type="image/webp"
+              srcSet={webpSrcSet || webpSrc}
+              sizes={sizes}
+            />
+          )}
 
           {/* Fallback sources with srcSet */}
-          {srcSet && <source srcSet={srcSet} sizes={sizes} />}
+          {srcSet && (
+            <source
+              srcSet={srcSet}
+              sizes={sizes}
+            />
+          )}
 
           {/* Fallback img tag */}
           <img
@@ -168,7 +176,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
 // Helper function to generate responsive image srcSet
 export const generateSrcSet = (basePath: string, sizes: number[], extension = 'jpg'): string => {
-  return sizes.map((size) => `${basePath}-${size}w.${extension} ${size}w`).join(', ');
+  return sizes.map(size => `${basePath}-${size}w.${extension} ${size}w`).join(', ');
 };
 
 // Helper function to generate WebP srcSet

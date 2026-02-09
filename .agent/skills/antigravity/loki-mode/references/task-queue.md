@@ -42,8 +42,7 @@ Distributed task queue system, dead letter handling, and circuit breakers.
 }
 ```
 
-**Decision Report is REQUIRED for completed tasks.** Tasks without proper
-decision documentation will be marked as incomplete.
+**Decision Report is REQUIRED for completed tasks.** Tasks without proper decision documentation will be marked as incomplete.
 
 ---
 
@@ -239,11 +238,11 @@ def cancel_task(task_id, reason):
 
 ### States
 
-| State         | Description       | Behavior                     |
-| ------------- | ----------------- | ---------------------------- |
-| **closed**    | Normal operation  | Tasks flow normally          |
-| **open**      | Too many failures | Block all tasks of this type |
-| **half-open** | Testing recovery  | Allow 1 test task            |
+| State | Description | Behavior |
+|-------|-------------|----------|
+| **closed** | Normal operation | Tasks flow normally |
+| **open** | Too many failures | Block all tasks of this type |
+| **half-open** | Testing recovery | Allow 1 test task |
 
 ### Configuration
 
@@ -256,9 +255,9 @@ defaults:
 
 overrides:
   ops-security:
-    failureThreshold: 3 # More sensitive for security
+    failureThreshold: 3  # More sensitive for security
   biz-marketing:
-    failureThreshold: 10 # More tolerant for non-critical
+    failureThreshold: 10  # More tolerant for non-critical
 ```
 
 ### Implementation
@@ -351,12 +350,12 @@ def calculate_exponential_backoff(attempt=1, base=60, max_wait=3600):
 
 ## Priority System
 
-| Priority | Use Case          | Example                     |
-| -------- | ----------------- | --------------------------- |
-| 10       | Critical blockers | Security vulnerability fix  |
-| 8-9      | High priority     | Core feature implementation |
-| 5-7      | Normal            | Standard tasks              |
-| 3-4      | Low priority      | Documentation, cleanup      |
-| 1-2      | Background        | Nice-to-have improvements   |
+| Priority | Use Case | Example |
+|----------|----------|---------|
+| 10 | Critical blockers | Security vulnerability fix |
+| 8-9 | High priority | Core feature implementation |
+| 5-7 | Normal | Standard tasks |
+| 3-4 | Low priority | Documentation, cleanup |
+| 1-2 | Background | Nice-to-have improvements |
 
 Tasks are always processed in priority order within their type.

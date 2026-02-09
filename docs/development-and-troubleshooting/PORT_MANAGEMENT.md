@@ -1,7 +1,6 @@
 # Port Management System
 
-The New Fuse includes a comprehensive port management system to prevent
-conflicts and provide visibility into service port allocation.
+The New Fuse includes a comprehensive port management system to prevent conflicts and provide visibility into service port allocation.
 
 ## Quick Start
 
@@ -24,8 +23,7 @@ tnf-ports health
 - **Real-time conflict detection** and automatic resolution
 - **Dynamic port allocation** with preferred/fallback ports
 - **Health monitoring** for all registered services
-- **Configuration auto-update** (vite.config.ts, package.json,
-  docker-compose.yml)
+- **Configuration auto-update** (vite.config.ts, package.json, docker-compose.yml)
 - **VS Code integration** with updated launch configurations
 - **CLI tools** for development workflow
 
@@ -40,7 +38,6 @@ tnf-ports health
 ## Integration
 
 The port management system is integrated into:
-
 - Frontend development server (Vite)
 - API development scripts
 - Docker Compose configurations

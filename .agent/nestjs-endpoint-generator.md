@@ -9,7 +9,7 @@ This agent specializes in:
 
 - Creating RESTful API endpoints
 - Following NestJS best practices
-- Integrating with Drizzle ORM
+- Integrating with Prisma ORM
 - Implementing proper validation
 - Adding authentication guards
 - Writing comprehensive tests
@@ -81,26 +81,26 @@ export class WorkflowTemplatesController {
 
 ```typescript
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DatabaseService } from '../drizzle/drizzle.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateTemplateDto, UpdateTemplateDto } from './dto';
 
 @Injectable()
 export class WorkflowTemplatesService {
-  constructor(private drizzle: DatabaseService) {}
+  constructor(private prisma: PrismaService) {}
 
   async findAll() {
-    return this.drizzle.workflowTemplate.findMany();
+    return this.prisma.workflowTemplate.findMany();
   }
 
   async create(createDto: CreateTemplateDto) {
-    return this.drizzle.workflowTemplate.create({
+    return this.prisma.workflowTemplate.create({
       data: createDto,
     });
   }
 
   async update(id: string, updateDto: UpdateTemplateDto) {
     await this.findOne(id); // Validate exists
-    return this.drizzle.workflowTemplate.update({
+    return this.prisma.workflowTemplate.update({
       where: { id },
       data: updateDto,
     });
@@ -108,13 +108,13 @@ export class WorkflowTemplatesService {
 
   async remove(id: string) {
     await this.findOne(id); // Validate exists
-    return this.drizzle.workflowTemplate.delete({
+    return this.prisma.workflowTemplate.delete({
       where: { id },
     });
   }
 
   private async findOne(id: string) {
-    const template = await this.drizzle.workflowTemplate.findUnique({
+    const template = await this.prisma.workflowTemplate.findUnique({
       where: { id },
     });
     if (!template) {
@@ -221,7 +221,7 @@ Before completing, ensure:
 
 ## Integration Points
 
-- **Drizzle:** All database operations
+- **Prisma:** All database operations
 - **JWT Auth:** Authentication guards
 - **Validation:** class-validator decorators
 - **Testing:** Jest + @nestjs/testing

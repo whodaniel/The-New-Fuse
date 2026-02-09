@@ -25,9 +25,9 @@ yarn workspace @the-new-fuse/utils build
 yarn workspace @the-new-fuse/core build
 yarn workspace @the-new-fuse/database build
 
-# Generate Drizzle client
-echo "Generating Drizzle client..."
-yarn workspace @the-new-fuse/api drizzle generate
+# Generate Prisma client
+echo "Generating Prisma client..."
+yarn workspace @the-new-fuse/api prisma generate
 
 # Start development environment
 echo "Starting development environment..."

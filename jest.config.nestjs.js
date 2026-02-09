@@ -4,7 +4,7 @@
  * Extends the base configuration with NestJS-specific settings.
  */
 
-const baseConfig = require('./jest.preset.cjs');
+const baseConfig = require('./jest.config.base');
 
 module.exports = {
   ...baseConfig,
@@ -32,15 +32,13 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@test/(.*)$': '<rootDir>/test/$1',
     '^@app/(.*)$': '<rootDir>/src/$1',
-    '^@the-new-fuse/(.*)$': '<rootDir>/packages/$1/src',
-    '^@tnf/(.*)$': '<rootDir>/packages/$1/src',
   },
 
   // Setup files for NestJS
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
 
   // Coverage thresholds for backend services
-  coverageThreshold: {
+  coverageThresholds: {
     global: {
       branches: 60,
       functions: 60,

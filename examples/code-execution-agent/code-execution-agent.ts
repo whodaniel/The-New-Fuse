@@ -1,11 +1,11 @@
 /**
  * Example Code Execution Agent
- *
+ * 
  * This agent demonstrates how to use the code execution capability.
  */
 
-import { CodeExecutionLanguage } from '../../packages/core/src/services/code-execution/types.js';
 import { AgentCapability } from '../../packages/types/src/core/enums.js';
+import { CodeExecutionLanguage } from '../../packages/core/src/services/code-execution/types.js';
 
 /**
  * Code Execution Agent
@@ -29,7 +29,10 @@ export class CodeExecutionAgent {
     await this.mcpClient.registerAgent({
       id: this.agentId,
       name: 'Code Execution Agent',
-      capabilities: [AgentCapability.CODE_EXECUTION, AgentCapability.CODE_GENERATION],
+      capabilities: [
+        AgentCapability.CODE_EXECUTION,
+        AgentCapability.CODE_GENERATION,
+      ],
     });
 
     console.log('Agent registered successfully');

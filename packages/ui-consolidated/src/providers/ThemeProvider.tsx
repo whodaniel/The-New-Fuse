@@ -22,18 +22,18 @@ const ThemeProviderContext = React.createContext<ThemeProviderState>(initialStat
 
 /**
  * Theme provider component for managing light/dark mode
- *
+ * 
  * @example
  * // Basic usage
  * <ThemeProvider>
  *   <App />
  * </ThemeProvider>
- *
+ * 
  * // With default theme
  * <ThemeProvider defaultTheme="dark">
  *   <App />
  * </ThemeProvider>
- *
+ * 
  * // With custom storage key
  * <ThemeProvider storageKey="my-app-theme">
  *   <App />
@@ -55,7 +55,8 @@ export function ThemeProvider({
     root.classList.remove('light', 'dark');
 
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
+        .matches
         ? 'dark'
         : 'light';
 
@@ -86,11 +87,11 @@ export function ThemeProvider({
 
 /**
  * Hook for accessing the theme context
- *
+ * 
  * @example
  * // Usage in a component
  * const { theme, setTheme } = useTheme();
- *
+ * 
  * // Toggle between light and dark
  * const toggleTheme = () => {
  *   setTheme(theme === 'light' ? 'dark' : 'light');
@@ -99,18 +100,19 @@ export function ThemeProvider({
 export const useTheme = () => {
   const context = React.useContext(ThemeProviderContext);
 
-  if (context === undefined) throw new Error('useTheme must be used within a ThemeProvider');
+  if (context === undefined)
+    throw new Error('useTheme must be used within a ThemeProvider');
 
   return context;
 };
 
 /**
  * Theme toggle component for switching between light and dark mode
- *
+ * 
  * @example
  * // Basic usage
  * <ThemeToggle />
- *
+ * 
  * // With custom className
  * <ThemeToggle className="my-custom-class" />
  */

@@ -6,7 +6,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { DatabaseService } from '../../src/db/db.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
 import { InputSanitizationService } from '../../src/security/input-sanitization.service';
 import { AppModule } from '../../src/app.module';
 
@@ -53,7 +53,7 @@ const SQL_INJECTION_PAYLOADS = {
 
 describe('SQL Injection Prevention Tests', () => {
   let app: INestApplication;
-  let db: DatabaseService;
+  let prisma: PrismaService;
   let inputSanitization: InputSanitizationService;
   let authToken: string;
   let testUser: any;
@@ -66,11 +66,11 @@ describe('SQL Injection Prevention Tests', () => {
     app = moduleRef.createNestApplication();
     await app.init();
 
-    db = app.get(DatabaseService);
+    prisma = app.get(PrismaService);
     inputSanitization = app.get(InputSanitizationService);
 
     // Setup test user and authentication
-    testUser = await db.user.create({
+    testUser = await prisma.user.create({
       data: {
         email: 'sqli.test@example.com',
         password: 'TestPassword123!',
@@ -90,10 +90,10 @@ describe('SQL Injection Prevention Tests', () => {
 
   afterAll(async () => {
     // Clean up test data
-    await db.agent.deleteMany({
+    await prisma.agent.deleteMany({
       where: { userId: testUser.id },
     });
-    await db.user.delete({
+    await prisma.user.delete({
       where: { id: testUser.id },
     });
 
@@ -348,9 +348,9 @@ describe('SQL Injection Prevention Tests', () => {
     });
   });
 
-  describe('Drizzle ORM Protection', () => {
-    it('should verify Drizzle is properly configured with type safety', async () => {
-      // Test that Drizzle client is used correctly
+  describe('Prisma ORM Protection', () => {
+    it('should verify Prisma is properly configured with type safety', async () => {
+      // Test that Prisma client is used correctly
       const response = await request(app.getHttpServer())
         .get('/agents')
         .set('Authorization', `Bearer ${authToken}`);
@@ -358,7 +358,7 @@ describe('SQL Injection Prevention Tests', () => {
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
 
-      // Verify that response contains expected Drizzle types
+      // Verify that response contains expected Prisma types
       response.body.forEach((agent: any) => {
         expect(agent).toHaveProperty('id');
         expect(agent).toHaveProperty('name');
@@ -368,15 +368,15 @@ describe('SQL Injection Prevention Tests', () => {
       });
     });
 
-    it('should prevent Drizzle-specific injection attacks', async () => {
-      // Test Drizzle-specific injection patterns
-      const dbPayloads = [
-        '; return await db.user.findMany(); --',
+    it('should prevent Prisma-specific injection attacks', async () => {
+      // Test Prisma-specific injection patterns
+      const prismaPayloads = [
+        '; return await prisma.user.findMany(); --',
         '{$ne: null}',
         '{$where: "true"}',
       ];
 
-      for (const payload of dbPayloads) {
+      for (const payload of prismaPayloads) {
         const response = await request(app.getHttpServer())
           .post('/agents/search')
           .send({ query: payload })

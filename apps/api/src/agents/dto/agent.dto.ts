@@ -1,5 +1,5 @@
-import { AgentStatus, AgentType } from '@the-new-fuse/types';
-import { IsArray, IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
+import { IsString, IsOptional, IsArray, IsObject, IsEnum } from 'class-validator';
+import { AgentType, AgentStatus } from '@the-new-fuse/types';
 
 export class CreateAgentDto {
   @IsString()

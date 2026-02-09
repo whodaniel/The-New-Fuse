@@ -4,24 +4,19 @@
 
 **Category**: Browser Debugging & Analysis
 
-**Compatible With**: Claude Code, Gemini Antigravity, Any MCP-enabled AI
-assistant
+**Compatible With**: Claude Code, Gemini Antigravity, Any MCP-enabled AI assistant
 
 ---
 
 ## Purpose
 
-Provides direct access to Chrome DevTools Console for real-time debugging, error
-analysis, and JavaScript evaluation. This skill gives AI agents "vision" into
-the browser's console logs, errors, warnings, and the ability to execute
-JavaScript directly in the page context.
+Provides direct access to Chrome DevTools Console for real-time debugging, error analysis, and JavaScript evaluation. This skill gives AI agents "vision" into the browser's console logs, errors, warnings, and the ability to execute JavaScript directly in the page context.
 
 ## Prerequisites
 
 ### MCP Server Configuration
 
-Add to your MCP config file (`~/.gemini/antigravity/mcp_config.json` or Claude
-Desktop config):
+Add to your MCP config file (`~/.gemini/antigravity/mcp_config.json` or Claude Desktop config):
 
 ```json
 {
@@ -36,8 +31,7 @@ Desktop config):
 
 ### Browser Extension (for Antigravity)
 
-Install the [Antigravity Browser Extension](https://chrome.google.com/webstore)
-to enable agent interaction with Chrome.
+Install the [Antigravity Browser Extension](https://chrome.google.com/webstore) to enable agent interaction with Chrome.
 
 ---
 
@@ -50,26 +44,26 @@ to enable agent interaction with Chrome.
 **Purpose**: Retrieve complete history of console logs, errors, and warnings
 
 **Parameters**:
-
-- `includePreservedMessages` (optional, boolean): Include messages from previous
-  page loads
+- `includePreservedMessages` (optional, boolean): Include messages from previous page loads
 - `pageIdx` (optional, integer): Page index for pagination (default: 0)
 - `pageSize` (optional, integer): Number of messages per page (default: 100)
-- `types` (optional, array): Filter by message types:
-  `["log", "info", "warning", "error", "debug", "trace"]`
+- `types` (optional, array): Filter by message types: `["log", "info", "warning", "error", "debug", "trace"]`
 
 **Example Usage**:
-
 ```markdown
-Agent: "Use the Chrome DevTools MCP to list all console errors on the current
-page"
+Agent: "Use the Chrome DevTools MCP to list all console errors on the current page"
 
-Tool Call: { "name": "list_console_messages", "arguments": { "types": ["error"],
-"pageSize": 50 } }
+Tool Call:
+{
+  "name": "list_console_messages",
+  "arguments": {
+    "types": ["error"],
+    "pageSize": 50
+  }
+}
 ```
 
 **Use Cases**:
-
 - Debug JavaScript errors after page interaction
 - Monitor real-time logging during automated testing
 - Capture error stack traces for analysis
@@ -84,19 +78,22 @@ Tool Call: { "name": "list_console_messages", "arguments": { "types": ["error"],
 **Purpose**: Deep-dive analysis of a specific console message by its ID
 
 **Parameters**:
-
 - `msgid` (required, number): The message ID from `list_console_messages`
 
 **Example Usage**:
-
 ```markdown
 Agent: "Get the full details of console message #42 including stack trace"
 
-Tool Call: { "name": "get_console_message", "arguments": { "msgid": 42 } }
+Tool Call:
+{
+  "name": "get_console_message",
+  "arguments": {
+    "msgid": 42
+  }
+}
 ```
 
 **Use Cases**:
-
 - Extract complete stack traces for debugging
 - Analyze error context and source locations
 - Deep-dive into warning details
@@ -111,28 +108,35 @@ Tool Call: { "name": "get_console_message", "arguments": { "msgid": 42 } }
 **Purpose**: Execute JavaScript code in the browser console and retrieve results
 
 **Parameters**:
-
 - `function` (required, string): JavaScript code to execute
 - `args` (optional, array): Arguments to pass to the function
 
 **Example Usage**:
-
 ```markdown
 Agent: "Check if jQuery is loaded on this page"
 
-Tool Call: { "name": "evaluate_script", "arguments": { "function": "typeof
-jQuery !== 'undefined' ? jQuery.fn.jquery : 'not loaded'" } }
+Tool Call:
+{
+  "name": "evaluate_script",
+  "arguments": {
+    "function": "typeof jQuery !== 'undefined' ? jQuery.fn.jquery : 'not loaded'"
+  }
+}
 ```
 
 ```markdown
 Agent: "Get all event listeners attached to the submit button"
 
-Tool Call: { "name": "evaluate_script", "arguments": { "function":
-"getEventListeners(document.querySelector('#submit-btn'))" } }
+Tool Call:
+{
+  "name": "evaluate_script",
+  "arguments": {
+    "function": "getEventListeners(document.querySelector('#submit-btn'))"
+  }
+}
 ```
 
 **Advanced Use Cases**:
-
 - Inject debugging code into running applications
 - Extract data from the DOM programmatically
 - Test JavaScript functions in real-time
@@ -146,8 +150,7 @@ Tool Call: { "name": "evaluate_script", "arguments": { "function":
 ### Example 1: Debug Console Errors
 
 ```markdown
-**User Request**: "The login button isn't working. Check the console for
-errors."
+**User Request**: "The login button isn't working. Check the console for errors."
 
 **Agent Workflow**:
 
@@ -169,9 +172,9 @@ errors."
    - Tool: `evaluate_script` to check if required libraries are loaded
    - Tool: `evaluate_script` to verify form validation logic
 
-**Agent Response**: "I found a JavaScript error:
-`Uncaught TypeError: Cannot read property 'validate' of undefined` at
-login.js:45. The issue is that the validation library failed to load. The script
+**Agent Response**:
+"I found a JavaScript error: `Uncaught TypeError: Cannot read property 'validate' of undefined`
+at login.js:45. The issue is that the validation library failed to load. The script
 tag in the HTML has a 404 error for `validator.min.js`."
 ```
 
@@ -198,18 +201,16 @@ tag in the HTML has a 404 error for `validator.min.js`."
    - Tool: `get_console_message` for each warning
 
 6. Run diagnostic scripts:
-   - Tool: `evaluate_script`: "performance.getEntriesByType('resource').filter(r
-     => r.duration > 1000)"
+   - Tool: `evaluate_script`: "performance.getEntriesByType('resource').filter(r => r.duration > 1000)"
    - Tool: `evaluate_script`: "document.querySelectorAll('img').length"
 
-**Agent Response**: "The page has 3 performance issues:
-
+**Agent Response**:
+"The page has 3 performance issues:
 1. 47 unoptimized images are being loaded (found via console warning)
 2. A 3.2MB JavaScript bundle is blocking render (found via network trace)
 3. 12 third-party analytics scripts are running (found via evaluate_script)
 
-Console shows: 'Layout shift detected: CLS score 0.42' which is above
-recommended 0.1."
+Console shows: 'Layout shift detected: CLS score 0.42' which is above recommended 0.1."
 ```
 
 ### Example 3: Verify Bug Fix
@@ -238,9 +239,8 @@ recommended 0.1."
 6. Check for any errors:
    - Tool: `list_console_messages` with types: ["error"]
 
-**Agent Response**: "✅ Bug fix verified! No console errors detected. Cart
-calculation is correct:
-
+**Agent Response**:
+"✅ Bug fix verified! No console errors detected. Cart calculation is correct:
 - Added 3 items: $25.99, $12.50, $8.75
 - Subtotal: $47.24 (correct)
 - Tax (8%): $3.78 (correct)
@@ -255,25 +255,21 @@ calculation is correct:
 ### For Claude Code Users
 
 ```markdown
-"Open the browser agent and check console logs for 404 errors on the dashboard
-page"
+"Open the browser agent and check console logs for 404 errors on the dashboard page"
 
 "Use DevTools to evaluate if React is loaded and what version"
 
 "List all console warnings and errors from the last page navigation"
 
-"Debug why the submit button shows 'undefined' - check console and run
-diagnostic scripts"
+"Debug why the submit button shows 'undefined' - check console and run diagnostic scripts"
 ```
 
 ### For Gemini Antigravity Users
 
 ```markdown
-"Launch browser surface, navigate to localhost:3000, and show me all console
-errors"
+"Launch browser surface, navigate to localhost:3000, and show me all console errors"
 
-"Use the Chrome DevTools MCP to evaluate:
-document.querySelectorAll('[data-testid]')"
+"Use the Chrome DevTools MCP to evaluate: document.querySelectorAll('[data-testid]')"
 
 "Check the console messages and tell me if there are any CORS errors"
 
@@ -290,7 +286,6 @@ document.querySelectorAll('[data-testid]')"
 "Check both console errors AND network 404s to find why images aren't loading"
 
 Uses:
-
 1. list_console_messages (for client-side errors)
 2. list_network_requests (for HTTP errors)
 ```
@@ -301,7 +296,6 @@ Uses:
 "Start a performance trace, check console warnings, and identify slow scripts"
 
 Uses:
-
 1. performance_start_trace
 2. list_console_messages (types: ["warning"])
 3. performance_stop_trace
@@ -311,11 +305,9 @@ Uses:
 ### Combined with DOM Inspection
 
 ```markdown
-"Take a page snapshot, check console, and verify all data-testid attributes
-exist"
+"Take a page snapshot, check console, and verify all data-testid attributes exist"
 
 Uses:
-
 1. take_snapshot
 2. list_console_messages
 3. evaluate_script (to query DOM)
@@ -340,8 +332,8 @@ evaluate_script({
         stack: error?.stack
       });
     }
-  `,
-});
+  `
+})
 ```
 
 ### Pattern 2: Monitor XHR/Fetch Requests
@@ -356,13 +348,13 @@ evaluate_script({
       window.fetchLog.push({url: args[0], time: Date.now()});
       return originalFetch.apply(this, args);
     }
-  `,
-});
+  `
+})
 
 // Later, retrieve logs
 evaluate_script({
-  function: 'window.fetchLog',
-});
+  function: "window.fetchLog"
+})
 ```
 
 ### Pattern 3: Check for Memory Leaks
@@ -375,8 +367,8 @@ evaluate_script({
       totalJSHeapSize: performance.memory.totalJSHeapSize,
       jsHeapSizeLimit: performance.memory.jsHeapSizeLimit
     } : 'Memory API not available'
-  `,
-});
+  `
+})
 ```
 
 ### Pattern 4: Verify Feature Flags
@@ -389,8 +381,8 @@ evaluate_script({
       key.includes('flag') ||
       key.includes('config')
     )
-  `,
-});
+  `
+})
 ```
 
 ---
@@ -400,7 +392,7 @@ evaluate_script({
 ### 1. Clear Console Before Testing
 
 ```javascript
-evaluate_script({ function: 'console.clear()' });
+evaluate_script({ function: "console.clear()" })
 ```
 
 ### 2. Use Pagination for Large Logs
@@ -408,13 +400,13 @@ evaluate_script({ function: 'console.clear()' });
 ```javascript
 list_console_messages({
   pageSize: 50,
-  pageIdx: 0, // First 50
-});
+  pageIdx: 0  // First 50
+})
 
 list_console_messages({
   pageSize: 50,
-  pageIdx: 1, // Next 50
-});
+  pageIdx: 1  // Next 50
+})
 ```
 
 ### 3. Filter by Error Types
@@ -422,21 +414,21 @@ list_console_messages({
 ```javascript
 // Only critical errors
 list_console_messages({
-  types: ['error'],
-});
+  types: ["error"]
+})
 
 // Development warnings
 list_console_messages({
-  types: ['warning', 'debug'],
-});
+  types: ["warning", "debug"]
+})
 ```
 
 ### 4. Preserve Messages Across Navigation
 
 ```javascript
 list_console_messages({
-  includePreservedMessages: true,
-});
+  includePreservedMessages: true
+})
 ```
 
 ---
@@ -457,15 +449,14 @@ npx chrome-devtools-mcp@latest --version
 
 ### Issue: "evaluate_script returns undefined"
 
-**Solution**: The script may be executing before the page is ready. Use
-`wait_for` first:
+**Solution**: The script may be executing before the page is ready. Use `wait_for` first:
 
 ```javascript
 // Wait for page element
-wait_for({ text: 'Dashboard' });
+wait_for({ text: "Dashboard" })
 
 // Then evaluate
-evaluate_script({ function: 'window.myGlobalVar' });
+evaluate_script({ function: "window.myGlobalVar" })
 ```
 
 ### Issue: "Too many console messages"
@@ -474,9 +465,9 @@ evaluate_script({ function: 'window.myGlobalVar' });
 
 ```javascript
 list_console_messages({
-  types: ['error'], // Only errors
-  pageSize: 20, // Limit results
-});
+  types: ["error"],  // Only errors
+  pageSize: 20       // Limit results
+})
 ```
 
 ---
@@ -495,13 +486,13 @@ list_console_messages({
 ```javascript
 // SAFE: Extract data without executing user code
 evaluate_script({
-  function: 'JSON.stringify(document.title)',
-});
+  function: "JSON.stringify(document.title)"
+})
 
 // UNSAFE: Don't do this
 evaluate_script({
-  function: userProvidedCode, // ❌ Security risk
-});
+  function: userProvidedCode  // ❌ Security risk
+})
 ```
 
 ---

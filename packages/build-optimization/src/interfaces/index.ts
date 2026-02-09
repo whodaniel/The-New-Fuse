@@ -3,15 +3,16 @@
  */
 
 import {
-  BuildEventCallback,
-  BuildEventData,
+  SystemResources,
+  MemoryUsage,
+  BuildStrategy,
+  BuildConfiguration,
   BuildResult,
   BuildStage,
-  BuildStrategy,
-  MemoryCallback,
-  MemoryUsage,
   PackageDependency,
-  SystemResources,
+  BuildEventData,
+  MemoryCallback,
+  BuildEventCallback
 } from '../types/index.js';
 
 /**

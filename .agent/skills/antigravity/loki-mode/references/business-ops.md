@@ -5,7 +5,6 @@ Workflows and procedures for business swarm agents.
 ## Marketing Operations
 
 ### Landing Page Checklist
-
 ```
 [ ] Hero section with clear value proposition
 [ ] Problem/solution narrative
@@ -18,7 +17,6 @@ Workflows and procedures for business swarm agents.
 ```
 
 ### SEO Optimization
-
 ```yaml
 Technical SEO:
   - meta title: 50-60 characters, include primary keyword
@@ -45,22 +43,18 @@ Content:
 ```
 
 ### Content Calendar Template
-
 ```markdown
 # Week of [DATE]
 
 ## Monday
-
 - [ ] Blog post: [TITLE]
 - [ ] Social: LinkedIn announcement
 
-## Wednesday
-
+## Wednesday  
 - [ ] Email newsletter
 - [ ] Social: Twitter thread
 
 ## Friday
-
 - [ ] Case study update
 - [ ] Social: Feature highlight
 ```
@@ -68,7 +62,6 @@ Content:
 ### Email Sequences
 
 **Onboarding Sequence:**
-
 ```
 Day 0: Welcome email (immediate)
   - Thank you for signing up
@@ -93,7 +86,6 @@ Day 14: Advanced features
 ```
 
 **Abandoned Cart/Trial:**
-
 ```
 Hour 1: Reminder
 Day 1: Benefits recap
@@ -106,7 +98,6 @@ Day 7: Final offer
 ## Sales Operations
 
 ### CRM Pipeline Stages
-
 ```
 1. Lead (new contact)
 2. Qualified (fits ICP, has need)
@@ -118,27 +109,25 @@ Day 7: Final offer
 ```
 
 ### Qualification Framework (BANT)
-
 ```yaml
 Budget:
   - What's the allocated budget?
   - Who controls the budget?
-
+  
 Authority:
   - Who makes the final decision?
   - Who else is involved?
-
+  
 Need:
   - What problem are you solving?
   - What's the impact of not solving it?
-
+  
 Timeline:
   - When do you need a solution?
   - What's driving that timeline?
 ```
 
 ### Outreach Template
-
 ```markdown
 Subject: [Specific pain point] at [Company]
 
@@ -146,19 +135,17 @@ Hi [Name],
 
 I noticed [Company] is [specific observation about their business].
 
-Many [similar role/company type] struggle with [problem], which leads to
-[negative outcome].
+Many [similar role/company type] struggle with [problem], which leads to [negative outcome].
 
-[Product] helps by [specific solution], resulting in [specific benefit with
-metric].
+[Product] helps by [specific solution], resulting in [specific benefit with metric].
 
 Would you be open to a 15-minute call to see if this could help [Company]?
 
-Best, [Name]
+Best,
+[Name]
 ```
 
 ### Demo Script Structure
-
 ```
 1. Rapport (2 min)
    - Confirm attendees and roles
@@ -189,7 +176,6 @@ Best, [Name]
 ## Finance Operations
 
 ### Billing Setup Checklist (Stripe)
-
 ```bash
 # Initialize Stripe
 npm install stripe
@@ -205,23 +191,21 @@ npm install stripe
 ```
 
 ### Webhook Events to Handle
-
 ```javascript
 const relevantEvents = [
   'customer.subscription.created',
-  'customer.subscription.updated',
+  'customer.subscription.updated', 
   'customer.subscription.deleted',
   'invoice.paid',
   'invoice.payment_failed',
   'payment_intent.succeeded',
   'payment_intent.payment_failed',
   'customer.updated',
-  'charge.refunded',
+  'charge.refunded'
 ];
 ```
 
 ### Key Metrics Dashboard
-
 ```yaml
 Revenue Metrics:
   - MRR (Monthly Recurring Revenue)
@@ -244,7 +228,6 @@ Product Metrics:
 ```
 
 ### Runway Calculation
-
 ```
 Monthly Burn = Total Monthly Expenses - Monthly Revenue
 Runway (months) = Cash Balance / Monthly Burn
@@ -259,7 +242,6 @@ Critical: < 6 months
 ## Legal Operations
 
 ### Terms of Service Template Sections
-
 ```
 1. Acceptance of Terms
 2. Description of Service
@@ -276,7 +258,6 @@ Critical: < 6 months
 ```
 
 ### Privacy Policy Requirements (GDPR)
-
 ```
 Required Disclosures:
 - [ ] Data controller identity
@@ -293,7 +274,6 @@ Required Disclosures:
 ```
 
 ### GDPR Compliance Checklist
-
 ```
 Data Collection:
 - [ ] Consent mechanism implemented
@@ -315,14 +295,13 @@ Technical:
 ```
 
 ### Cookie Consent Implementation
-
 ```javascript
 // Cookie categories
 const cookieCategories = {
-  necessary: true, // Always enabled
-  functional: false, // User preference
-  analytics: false, // Tracking/analytics
-  marketing: false, // Advertising
+  necessary: true,      // Always enabled
+  functional: false,    // User preference
+  analytics: false,     // Tracking/analytics
+  marketing: false      // Advertising
 };
 
 // Required: Show banner before non-necessary cookies
@@ -336,18 +315,16 @@ const cookieCategories = {
 ## Customer Support Operations
 
 ### Ticket Priority Matrix
-
-| Priority      | Description             | Response SLA | Resolution SLA |
-| ------------- | ----------------------- | ------------ | -------------- |
-| P1 - Critical | Service down, data loss | 15 min       | 4 hours        |
-| P2 - High     | Major feature broken    | 1 hour       | 8 hours        |
-| P3 - Medium   | Feature impaired        | 4 hours      | 24 hours       |
-| P4 - Low      | General questions       | 24 hours     | 72 hours       |
+| Priority | Description | Response SLA | Resolution SLA |
+|----------|-------------|--------------|----------------|
+| P1 - Critical | Service down, data loss | 15 min | 4 hours |
+| P2 - High | Major feature broken | 1 hour | 8 hours |
+| P3 - Medium | Feature impaired | 4 hours | 24 hours |
+| P4 - Low | General questions | 24 hours | 72 hours |
 
 ### Response Templates
 
 **Acknowledgment:**
-
 ```
 Hi [Name],
 
@@ -362,7 +339,6 @@ Best,
 ```
 
 **Resolution:**
-
 ```
 Hi [Name],
 
@@ -381,7 +357,6 @@ Best,
 ```
 
 ### Knowledge Base Structure
-
 ```
 /help
 ├── /getting-started
@@ -413,7 +388,6 @@ Best,
 ## Analytics Operations
 
 ### Event Tracking Plan
-
 ```yaml
 User Lifecycle:
   - user_signed_up:
@@ -443,15 +417,13 @@ Engagement:
 ```
 
 ### A/B Testing Framework
-
 ```yaml
 Test Structure:
-  name: 'Homepage CTA Test'
-  hypothesis:
-    "Changing CTA from 'Sign Up' to 'Start Free' will increase conversions"
+  name: "Homepage CTA Test"
+  hypothesis: "Changing CTA from 'Sign Up' to 'Start Free' will increase conversions"
   primary_metric: signup_rate
   secondary_metrics: [time_on_page, bounce_rate]
-
+  
   variants:
     control:
       description: "Original 'Sign Up' button"
@@ -459,7 +431,7 @@ Test Structure:
     variant_a:
       description: "'Start Free' button"
       allocation: 50%
-
+  
   sample_size: 1000_per_variant
   duration: 14_days
   significance_level: 0.95
@@ -473,7 +445,6 @@ Analysis:
 ```
 
 ### Funnel Analysis
-
 ```
 Signup Funnel:
   1. Landing Page Visit    → 100% (baseline)
@@ -489,35 +460,29 @@ Optimization Targets:
 ```
 
 ### Weekly Metrics Report Template
-
 ```markdown
 # Weekly Metrics Report: [Date Range]
 
 ## Key Metrics Summary
-
-| Metric          | This Week | Last Week | Change |
-| --------------- | --------- | --------- | ------ |
-| New Users       | X         | Y         | +Z%    |
-| Activated Users | X         | Y         | +Z%    |
-| Revenue         | $X        | $Y        | +Z%    |
-| Churn           | X%        | Y%        | -Z%    |
+| Metric | This Week | Last Week | Change |
+|--------|-----------|-----------|--------|
+| New Users | X | Y | +Z% |
+| Activated Users | X | Y | +Z% |
+| Revenue | $X | $Y | +Z% |
+| Churn | X% | Y% | -Z% |
 
 ## Highlights
-
 - [Positive trend 1]
 - [Positive trend 2]
 
 ## Concerns
-
 - [Issue 1 and action plan]
 - [Issue 2 and action plan]
 
 ## Experiments Running
-
 - [Test name]: [current results]
 
 ## Next Week Focus
-
 - [Priority 1]
 - [Priority 2]
 ```
@@ -527,7 +492,6 @@ Optimization Targets:
 ## Cross-Functional Workflows
 
 ### Feature Launch Checklist
-
 ```
 Pre-Launch:
 [ ] Feature complete and tested
@@ -556,14 +520,12 @@ Post-Launch:
 ```
 
 ### Incident Communication Template
-
 ```markdown
 # [Incident Type] - [Brief Description]
 
 ## Status: [Investigating | Identified | Monitoring | Resolved]
 
 ## Timeline
-
 - [HH:MM] Issue reported
 - [HH:MM] Team engaged
 - [HH:MM] Root cause identified
@@ -571,23 +533,18 @@ Post-Launch:
 - [HH:MM] Monitoring
 
 ## Impact
-
 - Affected: [% of users, specific features]
 - Duration: [X hours/minutes]
 
 ## Root Cause
-
 [Brief explanation]
 
 ## Resolution
-
 [What was done to fix]
 
 ## Prevention
-
 [What changes will prevent recurrence]
 
 ## Next Update
-
 [Time of next update or "Resolved"]
 ```

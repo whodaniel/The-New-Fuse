@@ -1,6 +1,6 @@
+import { getDatabase } from './database';
 import fs from 'fs';
 import path from 'path';
-import { getDatabase } from './database';
 
 const schemaPath = path.join(__dirname, './schema.sql');
 
@@ -28,3 +28,4 @@ export function initializeDatabase(): void {
     throw error;
   }
 }
+

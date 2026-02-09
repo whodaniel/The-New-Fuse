@@ -13,7 +13,6 @@
 import { EventEmitter } from 'events';
 
 import { RedisTransportAdapter } from './adapters/RedisTransportAdapter';
-
 import { BaseBridge, MessageType, Priority } from './index';
 
 // Universal Message Format

@@ -25,7 +25,7 @@
 - `/packages/api/` - Main API package
 - `/packages/core-auth/` - Authentication strategies
 - `/packages/ui-consolidated/` - Frontend components
-- Database schemas (Drizzle)
+- Database schemas (Prisma)
 - 85+ total packages examined
 
 ✅ **Patterns Analyzed:**
@@ -59,7 +59,7 @@
    - Good type safety overall
 
 3. **Database Schema Quality**
-   - Consistent Drizzle schema patterns
+   - Consistent Prisma schema patterns
    - Proper use of camelCase
    - Good relationship definitions
 
@@ -269,7 +269,7 @@
 6. **Test Templates** - Unit and Integration
 7. **Component Template** - React function component
 8. **Hook Template** - Custom React hooks
-9. **Database Model** - Drizzle schema template
+9. **Database Model** - Prisma schema template
 10. **README Template** - Package documentation
 
 ---

@@ -1,34 +1,36 @@
 /**
  * MCP Service Mesh Integration Implementation
- *
+ * 
  * This class provides integration between MCP services and service mesh infrastructure
  * for service discovery, load balancing, health monitoring, and automatic scaling.
  */
 
 import { EventEmitter } from 'events';
 import {
-  AutoDiscoveryConfig,
   IMCPServiceMesh,
-  ScalingEvent,
-  ServiceMeshIntegrationResult,
-  ServiceMeshIntegrationStatus,
-  ServiceMeshMetrics,
-  ServiceMeshQuery,
   ServiceMeshRegistration,
+  ServiceMeshQuery,
+  ServiceMeshMetrics,
   ServiceScalingConfig,
+  ServiceMeshIntegrationResult,
+  AutoDiscoveryConfig,
+  ServiceMeshIntegrationStatus,
+  ScalingEvent,
+  ServiceMeshHealthCheck,
+  ServiceMeshLoadBalancing
 } from '../interfaces/IMCPServiceMesh';
 import { MCPServiceInfo, ServiceHealth } from '../types/broker';
 import { MCPErrorClass as MCPError, MCPErrorCode } from '../types/error';
 
 // Re-export types for other modules
 export type {
-  ScalingEvent,
-  ScalingPolicy,
-  ServiceMeshIntegrationResult,
-  ServiceMeshMetrics,
-  ServiceMeshQuery,
   ServiceMeshRegistration,
+  ServiceMeshQuery,
+  ServiceMeshMetrics,
   ServiceScalingConfig,
+  ServiceMeshIntegrationResult,
+  ScalingEvent,
+  ScalingPolicy
 } from '../interfaces/IMCPServiceMesh';
 
 /**
@@ -124,13 +126,13 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
         totalRegistrations: 0,
         failedRegistrations: 0,
         activeHealthChecks: 0,
-        recentScalingEvents: 0,
+        recentScalingEvents: 0
       },
       config: {
         autoDiscoveryEnabled: this.config.autoDiscovery?.autoRegister ?? false,
         healthMonitoringEnabled: this.config.healthMonitoring?.enabled ?? false,
-        scalingEnabled: this.config.scaling?.enabled ?? false,
-      },
+        scalingEnabled: this.config.scaling?.enabled ?? false
+      }
     };
   }
 
@@ -184,18 +186,18 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
         metadata: {
           ...meshConfig.metadata,
           mcpCapabilities: mcpService.capabilities,
-          mcpResources: mcpService.resources.map((r) => r.name),
-          mcpTools: mcpService.tools.map((t) => t.name),
+          mcpResources: mcpService.resources.map(r => r.name),
+          mcpTools: mcpService.tools.map(t => t.name),
           mcpStatus: mcpService.status,
           registeredAt: mcpService.registeredAt.toISOString(),
-          lastHeartbeat: mcpService.lastHeartbeat.toISOString(),
+          lastHeartbeat: mcpService.lastHeartbeat.toISOString()
         },
         tags: [
           ...meshConfig.tags,
           'mcp-service',
           `mcp-version-${mcpService.version}`,
-          ...mcpService.capabilities.map((cap) => `capability-${cap}`),
-        ],
+          ...mcpService.capabilities.map(cap => `capability-${cap}`)
+        ]
       };
 
       // Register with the service mesh provider
@@ -216,7 +218,7 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
           maxInstances: 10,
           scaleUpCooldown: 300,
           scaleDownCooldown: 600,
-          ...this.config.scaling.defaultConfig,
+          ...this.config.scaling.defaultConfig
         });
       }
 
@@ -229,20 +231,21 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
         metadata: {
           meshServiceId,
           registrationTime: new Date().toISOString(),
-          providerName: this.provider.name,
-        },
+          providerName: this.provider.name
+        }
       };
+
     } catch (error) {
       this.emit('registration-failed', error);
-
+      
       return {
         success: false,
         message: `Failed to register service ${mcpService.name} with service mesh`,
         error: {
           code: error instanceof MCPError ? error.code.toString() : 'REGISTRATION_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error,
-        },
+          details: error
+        }
       };
     }
   }
@@ -277,9 +280,10 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
         message: `Service ${registration?.serviceName || serviceId} successfully unregistered from service mesh`,
         metadata: {
           unregistrationTime: new Date().toISOString(),
-          providerName: this.provider.name,
-        },
+          providerName: this.provider.name
+        }
       };
+
     } catch (error) {
       return {
         success: false,
@@ -287,8 +291,8 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
         error: {
           code: error instanceof MCPError ? error.code.toString() : 'UNREGISTRATION_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error,
-        },
+          details: error
+        }
       };
     }
   }
@@ -301,7 +305,10 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
       // Add MCP-specific filters
       const enhancedQuery: ServiceMeshQuery = {
         ...query,
-        tags: [...(query.tags || []), 'mcp-service'],
+        tags: [
+          ...(query.tags || []),
+          'mcp-service'
+        ]
       };
 
       return await this.provider.discoverServices(enhancedQuery);
@@ -343,8 +350,8 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
         metadata: {
           updateTime: new Date().toISOString(),
           healthStatus: health.status,
-          healthScore: health.score,
-        },
+          healthScore: health.score
+        }
       };
     } catch (error) {
       return {
@@ -353,8 +360,8 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
         error: {
           code: 'HEALTH_UPDATE_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error,
-        },
+          details: error
+        }
       };
     }
   }
@@ -390,8 +397,8 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
           configurationTime: new Date().toISOString(),
           minInstances: scalingConfig.minInstances,
           maxInstances: scalingConfig.maxInstances,
-          policies: scalingConfig.policies?.length || 0,
-        },
+          policies: scalingConfig.policies?.length || 0
+        }
       };
     } catch (error) {
       return {
@@ -400,8 +407,8 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
         error: {
           code: 'SCALING_CONFIG_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error,
-        },
+          details: error
+        }
       };
     }
   }
@@ -444,8 +451,8 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
         metadata: {
           enabledTime: new Date().toISOString(),
           autoRegister: config.autoRegister,
-          autoDeregister: config.autoDeregister,
-        },
+          autoDeregister: config.autoDeregister
+        }
       };
     } catch (error) {
       return {
@@ -454,8 +461,8 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
         error: {
           code: 'AUTO_DISCOVERY_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error,
-        },
+          details: error
+        }
       };
     }
   }
@@ -473,8 +480,8 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
         success: true,
         message: 'Auto-discovery disabled successfully',
         metadata: {
-          disabledTime: new Date().toISOString(),
-        },
+          disabledTime: new Date().toISOString()
+        }
       };
     } catch (error) {
       return {
@@ -483,8 +490,8 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
         error: {
           code: 'AUTO_DISCOVERY_ERROR',
           message: error instanceof Error ? error.message : 'Unknown error',
-          details: error,
-        },
+          details: error
+        }
       };
     }
   }
@@ -515,12 +522,12 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
     if (!this.config.healthMonitoring?.enabled) return;
 
     const interval = this.config.healthMonitoring.interval * 1000;
-
+    
     const monitor = setInterval(async () => {
       try {
         const health = await this.provider.getServiceHealth(serviceId);
         this.emit('health-check', serviceId, health);
-
+        
         // Update integration status
         this.integrationStatus.metrics.activeHealthChecks++;
       } catch (error) {
@@ -571,8 +578,8 @@ export class MCPServiceMesh extends EventEmitter implements IMCPServiceMesh {
     }
 
     // Unregister all services
-    const unregistrationPromises = Array.from(this.registeredServices.keys()).map((serviceId) =>
-      this.unregisterService(serviceId)
+    const unregistrationPromises = Array.from(this.registeredServices.keys()).map(
+      serviceId => this.unregisterService(serviceId)
     );
 
     await Promise.allSettled(unregistrationPromises);

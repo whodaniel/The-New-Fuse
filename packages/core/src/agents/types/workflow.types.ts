@@ -86,10 +86,7 @@ export interface WorkflowStep {
 }
 
 export interface WorkflowEngine {
-  executeWorkflow(
-    workflow: AgentWorkflow,
-    context?: Record<string, unknown>,
-  ): Promise<WorkflowExecutionContext>;
+  executeWorkflow(workflow: AgentWorkflow, context?: Record<string, unknown>): Promise<WorkflowExecutionContext>;
   pauseWorkflow(executionId: string): Promise<void>;
   resumeWorkflow(executionId: string): Promise<void>;
   cancelWorkflow(executionId: string): Promise<void>;

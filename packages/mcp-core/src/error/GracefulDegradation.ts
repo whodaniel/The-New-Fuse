@@ -4,14 +4,14 @@
  */
 
 import { EventEmitter } from 'events';
-import { ErrorCategory, MCPErrorClass } from '../types/error';
 import { Logger } from '../utils/Logger';
+import { MCPErrorClass, ErrorCategory } from '../types/error';
 
 export enum ServiceLevel {
   FULL = 'full',
   DEGRADED = 'degraded',
   MINIMAL = 'minimal',
-  OFFLINE = 'offline',
+  OFFLINE = 'offline'
 }
 
 export interface DegradationConfig {
@@ -109,10 +109,10 @@ export class GracefulDegradationManager extends EventEmitter {
 
   constructor(config: DegradationConfig, logger?: Logger) {
     super();
-
+    
     this.config = config;
     this.logger = logger || new Logger(`GracefulDegradation:${config.serviceName}`);
-
+    
     this.serviceStatus = {
       serviceName: config.serviceName,
       currentLevel: ServiceLevel.FULL,
@@ -121,11 +121,11 @@ export class GracefulDegradationManager extends EventEmitter {
       lastHealthCheck: new Date(),
       healthy: true,
       errorCount: 0,
-      recoveryAttempts: 0,
+      recoveryAttempts: 0
     };
 
     this.startHealthChecking();
-
+    
     if (config.enableAutoRecovery) {
       this.startRecoveryChecking();
     }
@@ -152,7 +152,7 @@ export class GracefulDegradationManager extends EventEmitter {
 
       // Execute primary handler
       const result = await primaryHandler();
-
+      
       // Reset error count on success
       if (this.serviceStatus.errorCount > 0) {
         this.serviceStatus.errorCount = 0;
@@ -161,13 +161,12 @@ export class GracefulDegradationManager extends EventEmitter {
 
       return result;
     } catch (error) {
-      const mcpError =
-        error instanceof MCPErrorClass
-          ? error
-          : new MCPErrorClass(-32603, error instanceof Error ? error.message : String(error));
+      const mcpError = error instanceof MCPErrorClass ? 
+        error : 
+        new MCPErrorClass(-32603, error instanceof Error ? error.message : String(error));
 
       await this.handleOperationError(mcpError, operation);
-
+      
       // Try fallback
       return await this.executeFallback(operation, params);
     }
@@ -176,12 +175,16 @@ export class GracefulDegradationManager extends EventEmitter {
   /**
    * Register a fallback handler
    */
-  registerFallbackHandler(level: ServiceLevel, operation: string, handler: FallbackHandler): void {
+  registerFallbackHandler(
+    level: ServiceLevel,
+    operation: string,
+    handler: FallbackHandler
+  ): void {
     const levelConfig = this.config.levels[level];
     if (!levelConfig.fallbackHandlers) {
       levelConfig.fallbackHandlers = new Map();
     }
-
+    
     levelConfig.fallbackHandlers.set(operation, handler);
     this.logger.debug(`Registered fallback handler for ${operation} at level ${level}`);
   }
@@ -205,14 +208,12 @@ export class GracefulDegradationManager extends EventEmitter {
     this.currentLevel = level;
     this.serviceStatus.currentLevel = level;
     this.serviceStatus.degradationReason = reason;
-
+    
     const levelConfig = this.config.levels[level];
     this.serviceStatus.availableFeatures = levelConfig.availableFeatures;
     this.serviceStatus.disabledFeatures = levelConfig.disabledFeatures;
 
-    this.logger.warn(
-      `Service ${this.config.serviceName} degraded from ${oldLevel} to ${level}: ${reason}`
-    );
+    this.logger.warn(`Service ${this.config.serviceName} degraded from ${oldLevel} to ${level}: ${reason}`);
     this.emit('serviceDegraded', this.config.serviceName, oldLevel, level, reason);
   }
 
@@ -236,23 +237,21 @@ export class GracefulDegradationManager extends EventEmitter {
 
       // Perform health check for target level
       const healthy = await this.performHealthCheck(targetLevel);
-
+      
       if (healthy) {
         const oldLevel = this.currentLevel;
         this.currentLevel = targetLevel;
         this.serviceStatus.currentLevel = targetLevel;
         this.serviceStatus.healthy = true;
         this.serviceStatus.degradationReason = undefined;
-
+        
         const levelConfig = this.config.levels[targetLevel];
         this.serviceStatus.availableFeatures = levelConfig.availableFeatures;
         this.serviceStatus.disabledFeatures = levelConfig.disabledFeatures;
 
-        this.logger.info(
-          `Service ${this.config.serviceName} recovered from ${oldLevel} to ${targetLevel}`
-        );
+        this.logger.info(`Service ${this.config.serviceName} recovered from ${oldLevel} to ${targetLevel}`);
         this.emit('serviceRecovered', this.config.serviceName, oldLevel, targetLevel);
-
+        
         return true;
       }
 
@@ -273,14 +272,12 @@ export class GracefulDegradationManager extends EventEmitter {
     this.serviceStatus.healthy = true;
     this.serviceStatus.errorCount = 0;
     this.serviceStatus.degradationReason = undefined;
-
+    
     const levelConfig = this.config.levels[ServiceLevel.FULL];
     this.serviceStatus.availableFeatures = levelConfig.availableFeatures;
     this.serviceStatus.disabledFeatures = levelConfig.disabledFeatures;
 
-    this.logger.info(
-      `Service ${this.config.serviceName} manually restored to full service from ${oldLevel}`
-    );
+    this.logger.info(`Service ${this.config.serviceName} manually restored to full service from ${oldLevel}`);
     this.emit('serviceForceRecovered', this.config.serviceName, oldLevel);
   }
 
@@ -313,12 +310,12 @@ export class GracefulDegradationManager extends EventEmitter {
       clearInterval(this.healthCheckTimer);
       this.healthCheckTimer = undefined;
     }
-
+    
     if (this.recoveryTimer) {
       clearInterval(this.recoveryTimer);
       this.recoveryTimer = undefined;
     }
-
+    
     this.removeAllListeners();
     this.logger.debug(`Graceful degradation manager for ${this.config.serviceName} shutdown`);
   }
@@ -330,12 +327,10 @@ export class GracefulDegradationManager extends EventEmitter {
     // Find fallback handler for current level
     const levelConfig = this.config.levels[this.currentLevel];
     const fallbackHandler = levelConfig.fallbackHandlers?.get(operation);
-
+    
     if (fallbackHandler && fallbackHandler.available) {
       try {
-        this.logger.debug(
-          `Executing fallback handler for ${operation} at level ${this.currentLevel}`
-        );
+        this.logger.debug(`Executing fallback handler for ${operation} at level ${this.currentLevel}`);
         const result = await fallbackHandler.handler(operation, params);
         this.emit('fallbackExecuted', this.config.serviceName, operation, this.currentLevel);
         return result;
@@ -349,12 +344,10 @@ export class GracefulDegradationManager extends EventEmitter {
     for (const level of lowerLevels) {
       const lowerLevelConfig = this.config.levels[level];
       const lowerFallbackHandler = lowerLevelConfig.fallbackHandlers?.get(operation);
-
+      
       if (lowerFallbackHandler && lowerFallbackHandler.available) {
         try {
-          this.logger.debug(
-            `Executing lower-level fallback handler for ${operation} at level ${level}`
-          );
+          this.logger.debug(`Executing lower-level fallback handler for ${operation} at level ${level}`);
           const result = await lowerFallbackHandler.handler(operation, params);
           this.emit('fallbackExecuted', this.config.serviceName, operation, level);
           return result;
@@ -365,9 +358,7 @@ export class GracefulDegradationManager extends EventEmitter {
     }
 
     // No fallback available
-    throw new Error(
-      `No fallback available for operation ${operation} at service level ${this.currentLevel}`
-    );
+    throw new Error(`No fallback available for operation ${operation} at service level ${this.currentLevel}`);
   }
 
   /**
@@ -381,7 +372,7 @@ export class GracefulDegradationManager extends EventEmitter {
 
     // Determine if we should degrade based on error type and count
     const shouldDegrade = this.shouldDegradeService(error);
-
+    
     if (shouldDegrade) {
       const targetLevel = this.getNextLowerLevel(this.currentLevel);
       if (targetLevel) {
@@ -395,7 +386,8 @@ export class GracefulDegradationManager extends EventEmitter {
    */
   private shouldDegradeService(error: MCPErrorClass): boolean {
     // Immediate degradation for certain error types
-    if (error.category === ErrorCategory.CONNECTION || error.category === ErrorCategory.SYSTEM) {
+    if (error.category === ErrorCategory.CONNECTION || 
+        error.category === ErrorCategory.SYSTEM) {
       return true;
     }
 
@@ -428,16 +420,13 @@ export class GracefulDegradationManager extends EventEmitter {
   private checkPerformanceLimits(): boolean {
     const levelConfig = this.config.levels[this.currentLevel];
     const limits = levelConfig.performanceLimits;
-
+    
     if (!limits) {
       return true;
     }
 
     // Check concurrent requests (simplified - would need actual tracking)
-    if (
-      limits.maxConcurrentRequests &&
-      this.operationQueue.length >= limits.maxConcurrentRequests
-    ) {
+    if (limits.maxConcurrentRequests && this.operationQueue.length >= limits.maxConcurrentRequests) {
       return false;
     }
 
@@ -487,12 +476,12 @@ export class GracefulDegradationManager extends EventEmitter {
   private getLowerLevels(currentLevel: ServiceLevel): ServiceLevel[] {
     const levels: ServiceLevel[] = [];
     let level = this.getNextLowerLevel(currentLevel);
-
+    
     while (level) {
       levels.push(level);
       level = this.getNextLowerLevel(level);
     }
-
+    
     return levels;
   }
 
@@ -518,7 +507,7 @@ export class GracefulDegradationManager extends EventEmitter {
     this.healthCheckTimer = setInterval(async () => {
       const healthy = await this.performHealthCheck(this.currentLevel);
       this.serviceStatus.healthy = healthy;
-
+      
       if (!healthy && this.currentLevel !== ServiceLevel.OFFLINE) {
         const targetLevel = this.getNextLowerLevel(this.currentLevel);
         if (targetLevel) {

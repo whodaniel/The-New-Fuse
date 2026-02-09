@@ -58,7 +58,7 @@ export class WorkflowExecutor {
         status: errors.length > 0 ? 'failure' : 'success',
         results,
         errors: errors.length > 0 ? errors : undefined,
-        duration,
+        duration
       };
 
       this.eventEmitter.emit('workflow.completed', executionResult);
@@ -72,7 +72,7 @@ export class WorkflowExecutor {
         status: 'failure',
         results,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
-        duration,
+        duration
       };
     }
   }
@@ -84,7 +84,7 @@ export class WorkflowExecutor {
     return {
       stepId: step.id,
       completed: true,
-      timestamp: new Date(),
+      timestamp: new Date()
     };
   }
 
@@ -100,10 +100,10 @@ export class WorkflowExecutor {
     }
 
     // Check for circular dependencies
-    const stepIds = new Set(workflow.steps.map((s) => s.id));
-    workflow.steps.forEach((step) => {
+    const stepIds = new Set(workflow.steps.map(s => s.id));
+    workflow.steps.forEach(step => {
       if (step.dependencies) {
-        step.dependencies.forEach((dep) => {
+        step.dependencies.forEach(dep => {
           if (!stepIds.has(dep)) {
             errors.push(`Step ${step.id} depends on non-existent step: ${dep}`);
           }
@@ -113,7 +113,7 @@ export class WorkflowExecutor {
 
     return {
       valid: errors.length === 0,
-      errors,
+      errors
     };
   }
 }

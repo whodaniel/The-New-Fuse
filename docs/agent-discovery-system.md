@@ -1,14 +1,10 @@
 # Agent Discovery System
 
-A comprehensive live agent discovery system with dynamic capability
-registration, semantic search, and real-time health monitoring.
+A comprehensive live agent discovery system with dynamic capability registration, semantic search, and real-time health monitoring.
 
 ## Overview
 
-The Agent Discovery System enables dynamic discovery and querying of distributed
-agents in the FUSE platform. Agents can register their capabilities, send
-heartbeats, and be discovered by clients based on various criteria including
-semantic search, resource usage, and performance metrics.
+The Agent Discovery System enables dynamic discovery and querying of distributed agents in the FUSE platform. Agents can register their capabilities, send heartbeats, and be discovered by clients based on various criteria including semantic search, resource usage, and performance metrics.
 
 ## Architecture
 
@@ -35,8 +31,7 @@ semantic search, resource usage, and performance metrics.
 
 ### Prerequisites
 
-- Redis server running on localhost:6379 (or configure with environment
-  variables)
+- Redis server running on localhost:6379 (or configure with environment variables)
 - Node.js 16+
 - TypeScript 4.5+
 
@@ -93,10 +88,7 @@ const registration: AgentRegistration = {
   ],
 };
 
-await axios.post(
-  'http://localhost:3000/api/agents/discovery/register',
-  registration
-);
+await axios.post('http://localhost:3000/api/agents/discovery/register', registration);
 ```
 
 ### 2. Sending Heartbeats
@@ -104,10 +96,7 @@ await axios.post(
 Agents send periodic heartbeats with current metrics:
 
 ```typescript
-import {
-  AgentHeartbeat,
-  AgentStatus,
-} from '@fuse/api/types/agent-discovery.types';
+import { AgentHeartbeat, AgentStatus } from '@fuse/api/types/agent-discovery.types';
 
 const heartbeat: AgentHeartbeat = {
   agentId: 'code-reviewer-01',
@@ -128,10 +117,7 @@ const heartbeat: AgentHeartbeat = {
 
 // Send heartbeat every 30 seconds
 setInterval(async () => {
-  await axios.post(
-    'http://localhost:3000/api/agents/discovery/heartbeat',
-    heartbeat
-  );
+  await axios.post('http://localhost:3000/api/agents/discovery/heartbeat', heartbeat);
 }, 30000);
 ```
 
@@ -153,10 +139,7 @@ const query: DiscoveryQuery = {
   limit: 5,
 };
 
-const response = await axios.post(
-  'http://localhost:3000/api/agents/discover',
-  query
-);
+const response = await axios.post('http://localhost:3000/api/agents/discover', query);
 console.log(response.data.agents);
 ```
 
@@ -169,24 +152,18 @@ const query: DiscoveryQuery = {
   sortBy: 'load',
 };
 
-const response = await axios.post(
-  'http://localhost:3000/api/agents/discover',
-  query
-);
+const response = await axios.post('http://localhost:3000/api/agents/discover', query);
 ```
 
 #### Example: Semantic Search
 
 ```typescript
-const response = await axios.post(
-  'http://localhost:3000/api/agents/discovery/match',
-  {
-    query: 'analyze statistical data',
-    minScore: 0.5,
-    maxResults: 5,
-    preferLowLoad: true,
-  }
-);
+const response = await axios.post('http://localhost:3000/api/agents/discovery/match', {
+  query: 'analyze statistical data',
+  minScore: 0.5,
+  maxResults: 5,
+  preferLowLoad: true,
+});
 
 console.log(response.data.matches);
 ```
@@ -196,19 +173,12 @@ console.log(response.data.matches);
 Chain multiple agents for complex workflows:
 
 ```typescript
-const response = await axios.post(
-  'http://localhost:3000/api/agents/discovery/compose',
-  {
-    capabilities: [
-      'data-cleaning',
-      'statistical-analysis',
-      'data-visualization',
-    ],
-    maxChainLength: 5,
-    preferReliable: true,
-    maxCost: 0.5,
-  }
-);
+const response = await axios.post('http://localhost:3000/api/agents/discovery/compose', {
+  capabilities: ['data-cleaning', 'statistical-analysis', 'data-visualization'],
+  maxChainLength: 5,
+  preferReliable: true,
+  maxCost: 0.5,
+});
 
 console.log(response.data.compositions);
 ```
@@ -217,23 +187,23 @@ console.log(response.data.compositions);
 
 ### Registration & Heartbeat
 
-| Endpoint                           | Method | Description                 |
-| ---------------------------------- | ------ | --------------------------- |
-| `/api/agents/discovery/register`   | POST   | Register or update an agent |
-| `/api/agents/discovery/heartbeat`  | POST   | Send agent heartbeat        |
-| `/api/agents/discovery/deregister` | POST   | Deregister an agent         |
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/agents/discovery/register` | POST | Register or update an agent |
+| `/api/agents/discovery/heartbeat` | POST | Send agent heartbeat |
+| `/api/agents/discovery/deregister` | POST | Deregister an agent |
 
 ### Discovery & Querying
 
-| Endpoint                               | Method | Description                  |
-| -------------------------------------- | ------ | ---------------------------- |
-| `/api/agents/discover`                 | POST   | Discover agents with query   |
-| `/api/agents/discovery`                | GET    | Get all registered agents    |
-| `/api/agents/discovery/:agentId`       | GET    | Get specific agent details   |
-| `/api/agents/discovery/match`          | POST   | Semantic capability matching |
-| `/api/agents/discovery/compose`        | POST   | Compose capability chains    |
-| `/api/agents/discovery/query/advanced` | POST   | Advanced query with filters  |
-| `/api/agents/discovery/system/health`  | GET    | System health status         |
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/agents/discover` | POST | Discover agents with query |
+| `/api/agents/discovery` | GET | Get all registered agents |
+| `/api/agents/discovery/:agentId` | GET | Get specific agent details |
+| `/api/agents/discovery/match` | POST | Semantic capability matching |
+| `/api/agents/discovery/compose` | POST | Compose capability chains |
+| `/api/agents/discovery/query/advanced` | POST | Advanced query with filters |
+| `/api/agents/discovery/system/health` | GET | System health status |
 
 ## Query Parameters
 
@@ -242,28 +212,28 @@ console.log(response.data.compositions);
 ```typescript
 interface DiscoveryQuery {
   // Capability search
-  capability?: string; // Semantic search term
+  capability?: string;               // Semantic search term
 
   // Filters
-  languages?: string[]; // Required languages
-  frameworks?: string[]; // Required frameworks
-  groups?: string[]; // Agent groups
-  types?: string[]; // Agent types
-  status?: AgentStatus[]; // Agent status filter
+  languages?: string[];              // Required languages
+  frameworks?: string[];             // Required frameworks
+  groups?: string[];                 // Agent groups
+  types?: string[];                  // Agent types
+  status?: AgentStatus[];            // Agent status filter
 
   // Performance filters
-  maxCpuUsage?: number; // Max CPU % (0-100)
-  maxMemoryUsage?: number; // Max memory % (0-100)
-  maxLoad?: number; // Max load (0-1)
-  minConfidence?: number; // Min capability confidence (0-1)
-  minSuccessRate?: number; // Min success rate (0-1)
-  maxCost?: number; // Max cost per invocation
+  maxCpuUsage?: number;              // Max CPU % (0-100)
+  maxMemoryUsage?: number;           // Max memory % (0-100)
+  maxLoad?: number;                  // Max load (0-1)
+  minConfidence?: number;            // Min capability confidence (0-1)
+  minSuccessRate?: number;           // Min success rate (0-1)
+  maxCost?: number;                  // Max cost per invocation
 
   // Search options
-  semanticSearch?: boolean; // Enable semantic search
+  semanticSearch?: boolean;          // Enable semantic search
   sortBy?: 'relevance' | 'load' | 'successRate' | 'responseTime' | 'uptime';
   sortDirection?: 'asc' | 'desc';
-  limit?: number; // Max results
+  limit?: number;                    // Max results
 }
 ```
 
@@ -274,7 +244,6 @@ interface DiscoveryQuery {
 Located at: `/examples/agent-discovery/code-review-agent.ts`
 
 Features:
-
 - Code review capability for Python, TypeScript, JavaScript
 - Security scanning
 - Refactoring suggestions
@@ -282,7 +251,6 @@ Features:
 - Graceful shutdown
 
 Run:
-
 ```bash
 cd examples/agent-discovery
 ts-node code-review-agent.ts
@@ -293,7 +261,6 @@ ts-node code-review-agent.ts
 Located at: `/examples/agent-discovery/data-analysis-agent.ts`
 
 Features:
-
 - Statistical analysis
 - Data visualization
 - Data cleaning
@@ -301,7 +268,6 @@ Features:
 - Report generation
 
 Run:
-
 ```bash
 cd examples/agent-discovery
 ts-node data-analysis-agent.ts
@@ -314,7 +280,6 @@ Located at: `/examples/agent-discovery/discovery-client-example.ts`
 Demonstrates all query types and discovery patterns.
 
 Run:
-
 ```bash
 cd examples/agent-discovery
 ts-node discovery-client-example.ts
@@ -327,7 +292,6 @@ A real-time React component for browsing and monitoring agents.
 Location: `/apps/frontend/src/components/AgentDiscovery/AgentBrowser.tsx`
 
 Features:
-
 - Live agent list with search
 - Semantic capability search
 - Advanced filtering (CPU, load, success rate)
@@ -336,7 +300,6 @@ Features:
 - Load balancing recommendations
 
 Usage in React:
-
 ```tsx
 import { AgentBrowser } from '@/components/AgentDiscovery/AgentBrowser';
 
@@ -355,7 +318,6 @@ The system automatically generates load balancing recommendations based on:
 4. **Health Status** - Overall agent health
 
 Example recommendation:
-
 ```json
 {
   "agentId": "code-reviewer-01",
@@ -401,7 +363,6 @@ The capability matcher uses multiple algorithms for semantic search:
 5. **Language/Framework Boost** - Boosts scores for matching tech stack
 
 Example queries:
-
 - "review Python code" → finds code-review capability with Python support
 - "analyze statistical data" → finds statistical-analysis capability
 - "clean and prepare data" → finds data-cleaning capability
@@ -412,17 +373,17 @@ Example queries:
 
 ```typescript
 interface AgentHealthMetrics {
-  isHealthy: boolean; // Overall health status
-  uptime: number; // Uptime in seconds
-  successRate: number; // Task success rate (0-1)
-  avgResponseTime: number; // Avg response time in ms
-  cpuUsage: number; // CPU usage % (0-100)
-  memoryUsage: number; // Memory usage % (0-100)
-  activeTasks: number; // Current active tasks
-  totalTasks: number; // Total tasks completed
-  failedTasks: number; // Total failed tasks
-  lastError?: string; // Last error message
-  lastErrorTime?: Date; // Last error timestamp
+  isHealthy: boolean;           // Overall health status
+  uptime: number;               // Uptime in seconds
+  successRate: number;          // Task success rate (0-1)
+  avgResponseTime: number;      // Avg response time in ms
+  cpuUsage: number;             // CPU usage % (0-100)
+  memoryUsage: number;          // Memory usage % (0-100)
+  activeTasks: number;          // Current active tasks
+  totalTasks: number;           // Total tasks completed
+  failedTasks: number;          // Total failed tasks
+  lastError?: string;           // Last error message
+  lastErrorTime?: Date;         // Last error timestamp
 }
 ```
 
@@ -433,7 +394,6 @@ GET /api/agents/discovery/system/health
 ```
 
 Returns:
-
 ```json
 {
   "system": {
@@ -459,7 +419,6 @@ npm test -- agent-discovery.test.ts
 ```
 
 Tests cover:
-
 - Agent registration and deregistration
 - Heartbeat management
 - Discovery queries with various filters
@@ -492,8 +451,7 @@ const registry = new AgentDiscoveryRegistry({
 2. **Pub/Sub** - Use separate Redis instance for pub/sub to avoid blocking
 3. **Heartbeat Cleanup** - Runs every 30s, ensure Redis can handle the load
 4. **Index Size** - Monitor capability index size, cleanup stale entries
-5. **WebSocket Updates** - Consider using Socket.IO or SSE for real-time
-   frontend updates
+5. **WebSocket Updates** - Consider using Socket.IO or SSE for real-time frontend updates
 
 ### Security
 
@@ -552,7 +510,6 @@ See CONTRIBUTING.md for guidelines.
 ## Support
 
 For issues and questions:
-
 - GitHub Issues: https://github.com/your-org/fuse/issues
 - Discord: https://discord.gg/fuse
 - Email: support@fuse.ai

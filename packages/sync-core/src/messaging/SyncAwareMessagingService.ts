@@ -1,21 +1,18 @@
-import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { SyncRedisConfig } from '../config/SyncRedisConfig';
-import { CommunicationHubFailover } from './CommunicationHubFailover';
+import { SyncAwareAgentWebSocketService, IAgentWebSocketService } from './SyncAwareAgentWebSocketService';
 import { MessageQueueSynchronizer } from './MessageQueueSynchronizer';
+import { CommunicationHubFailover } from './CommunicationHubFailover';
 import {
-  CrossTenantRoutingConfig,
-  MessageDeliveryMetrics,
-  MessageFailoverConfig,
-  MessageQueueSyncConfig,
-  MessageSyncStatus,
   SyncAwareA2AMessage,
-  SyncAwareMessageUtils,
+  MessageSyncStatus,
+  CrossTenantRoutingConfig,
+  MessageQueueSyncConfig,
+  MessageFailoverConfig,
+  MessageDeliveryMetrics,
+  SyncAwareMessageUtils
 } from './SyncAwareA2AMessage';
-import {
-  IAgentWebSocketService,
-  SyncAwareAgentWebSocketService,
-} from './SyncAwareAgentWebSocketService';
 
 export interface MessagingServiceConfig {
   enableSyncAwareMessaging: boolean;
@@ -47,7 +44,7 @@ export interface MessagingMetrics {
 @Injectable()
 export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(SyncAwareMessagingService.name);
-
+  
   private readonly config: MessagingServiceConfig = {
     enableSyncAwareMessaging: true,
     enableCrossTenantMessaging: true,
@@ -57,7 +54,7 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
     messageTimeout: 30000,
     retryAttempts: 3,
     enableMetrics: true,
-    enableTracing: true,
+    enableTracing: true
   };
 
   private metrics: MessagingMetrics = {
@@ -68,7 +65,7 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
     queueSyncOperations: 0,
     failoverEvents: 0,
     averageDeliveryTime: 0,
-    activeConnections: 0,
+    activeConnections: 0
   };
 
   private activeMessages: Map<string, SyncAwareA2AMessage> = new Map();
@@ -112,14 +109,14 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
   ): Promise<MessageSyncStatus> {
     const startTime = Date.now();
     const messageId = 'header' in message ? message.header.id : message.id;
-
+    
     try {
       // Validate and enhance message
       const enhancedMessage = await this.enhanceMessage(message, options);
-
+      
       // Track active message
       this.activeMessages.set(messageId, enhancedMessage);
-
+      
       // Set timeout if specified
       if (options.timeout) {
         const timer = setTimeout(() => {
@@ -130,7 +127,7 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
 
       // Determine delivery strategy
       let syncStatus: MessageSyncStatus;
-
+      
       if (options.enableFailover && options.tenantId) {
         // Use failover-enabled delivery
         const delivered = await this.failoverManager.deliverWithFailover(
@@ -138,25 +135,21 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
           enhancedMessage,
           targetAgentId
         );
-
+        
         syncStatus = {
           messageId,
           syncId: SyncAwareMessageUtils.extractSyncMetadata(enhancedMessage).syncId,
           status: delivered ? 'delivered' : 'failed',
           deliveredTo: delivered ? [targetAgentId] : [],
-          failedDeliveries: delivered
-            ? []
-            : [
-                {
-                  target: targetAgentId,
-                  error: 'Failover delivery failed',
-                  timestamp: Date.now(),
-                  retryCount: 0,
-                },
-              ],
+          failedDeliveries: delivered ? [] : [{
+            target: targetAgentId,
+            error: 'Failover delivery failed',
+            timestamp: Date.now(),
+            retryCount: 0
+          }],
           acknowledgedBy: [],
           createdAt: startTime,
-          updatedAt: Date.now(),
+          updatedAt: Date.now()
         };
       } else {
         // Use standard sync-aware delivery
@@ -167,14 +160,14 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
             allowCrossTenant: options.allowCrossTenant,
             priority: options.priority,
             requiresAck: options.requiresAck,
-            maxRetries: this.config.retryAttempts,
+            maxRetries: this.config.retryAttempts
           }
         );
       }
 
       // Update metrics
       this.updateDeliveryMetrics(startTime, syncStatus.status === 'delivered');
-
+      
       // Track cross-tenant messages
       const syncMetadata = SyncAwareMessageUtils.extractSyncMetadata(enhancedMessage);
       if (syncMetadata.crossTenantAllowed) {
@@ -183,6 +176,7 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
 
       this.logger.debug(`Sent sync-aware message ${messageId} to agent ${targetAgentId}`);
       return syncStatus;
+
     } catch (error) {
       this.updateDeliveryMetrics(startTime, false);
       this.logger.error(`Failed to send sync-aware message ${messageId}:`, error);
@@ -218,17 +212,17 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
         // Cross-tenant broadcast
         const syncMetadata = SyncAwareMessageUtils.extractSyncMetadata(message);
         const sourceTenantId = syncMetadata.tenantId || 'global';
-
+        
         const crossTenantResults = await this.syncAwareWebSocket.broadcastCrossTenant(
           options.tenantIds,
           message,
           {
             sourceTenantId,
             priority: options.priority,
-            requiresAck: options.requiresAck,
+            requiresAck: options.requiresAck
           }
         );
-
+        
         Object.assign(results, crossTenantResults);
         this.metrics.crossTenantMessages += options.tenantIds.length;
       } else if (options.tenantIds) {
@@ -240,7 +234,7 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
             {
               excludeAgents: options.excludeAgents,
               priority: options.priority,
-              requiresAck: options.requiresAck,
+              requiresAck: options.requiresAck
             }
           );
           results[tenantId] = syncStatuses;
@@ -248,16 +242,16 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
       } else {
         // Global broadcast (all connected agents)
         const connectedAgents = await this.wsService.getConnectedAgents();
-        const filteredAgents = connectedAgents.filter(
-          (agentId) => !options.excludeAgents?.includes(agentId)
+        const filteredAgents = connectedAgents.filter(agentId => 
+          !options.excludeAgents?.includes(agentId)
         );
-
+        
         const syncStatuses: MessageSyncStatus[] = [];
         for (const agentId of filteredAgents) {
           try {
             const syncStatus = await this.sendMessage(agentId, message, {
               priority: options.priority,
-              requiresAck: options.requiresAck,
+              requiresAck: options.requiresAck
             });
             syncStatuses.push(syncStatus);
           } catch (error) {
@@ -269,6 +263,7 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
 
       this.logger.debug(`Broadcasted message to ${Object.keys(results).length} tenant(s)`);
       return results;
+
     } catch (error) {
       this.logger.error('Failed to broadcast message:', error);
       throw error;
@@ -324,7 +319,7 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
       } else {
         await this.queueSynchronizer.synchronizeAllQueues();
       }
-
+      
       this.metrics.queueSyncOperations++;
       this.logger.debug(`Synchronized message queues for ${tenantId || 'all tenants'}`);
     } catch (error) {
@@ -388,10 +383,13 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
   private async initializeMessagingInfrastructure(): Promise<void> {
     // Subscribe to Redis channels for coordination
     const keyPatterns = this.redisConfig.getKeyspatterns();
-
-    await this.redisService.psubscribe(keyPatterns.patterns.channelAll, async (message) => {
-      await this.handleCoordinationMessage(message);
-    });
+    
+    await this.redisService.psubscribe(
+      keyPatterns.patterns.channelAll,
+      async (message) => {
+        await this.handleCoordinationMessage(message);
+      }
+    );
 
     // Initialize components if enabled
     if (this.config.enableSyncAwareMessaging) {
@@ -414,7 +412,7 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
     options: any
   ): Promise<SyncAwareA2AMessage> {
     const syncMetadata = SyncAwareMessageUtils.extractSyncMetadata(message);
-
+    
     // Enhance sync metadata with options
     const enhancedSyncMetadata = {
       ...syncMetadata,
@@ -423,7 +421,7 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
       priority: options.priority || syncMetadata.priority,
       requiresAck: options.requiresAck || syncMetadata.requiresAck,
       maxRetries: this.config.retryAttempts,
-      traceId: this.config.enableTracing ? SyncAwareMessageUtils.generateTraceId() : undefined,
+      traceId: this.config.enableTracing ? SyncAwareMessageUtils.generateTraceId() : undefined
     };
 
     return SyncAwareMessageUtils.toSyncAware(message, enhancedSyncMetadata);
@@ -434,7 +432,7 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
     if (message) {
       this.logger.warn(`Message ${messageId} timed out`);
       this.metrics.failedDeliveries++;
-
+      
       // Clean up
       this.activeMessages.delete(messageId);
       this.messageTimers.delete(messageId);
@@ -443,7 +441,7 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
 
   private updateDeliveryMetrics(startTime: number, success: boolean): void {
     const deliveryTime = Date.now() - startTime;
-
+    
     this.metrics.totalMessages++;
     if (success) {
       this.metrics.successfulDeliveries++;
@@ -453,14 +451,14 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
 
     // Update average delivery time
     const totalDeliveries = this.metrics.successfulDeliveries + this.metrics.failedDeliveries;
-    this.metrics.averageDeliveryTime =
+    this.metrics.averageDeliveryTime = 
       (this.metrics.averageDeliveryTime * (totalDeliveries - 1) + deliveryTime) / totalDeliveries;
   }
 
   private async handleCoordinationMessage(message: any): Promise<void> {
     try {
       const data = JSON.parse(message.message);
-
+      
       switch (data.type) {
         case 'sync_request':
           await this.synchronizeQueues(data.tenantId);
@@ -481,12 +479,12 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
 
   private async publishMetrics(): Promise<void> {
     const keyPatterns = this.redisConfig.getKeyspatterns();
-
+    
     const allMetrics = {
       messaging: this.metrics,
       failover: this.failoverManager.getFailoverStats(),
       queueSync: this.queueSynchronizer.getQueueSyncMetrics(),
-      timestamp: Date.now(),
+      timestamp: Date.now()
     };
 
     await this.redisService.publish(keyPatterns.channels.metrics, JSON.stringify(allMetrics));
@@ -508,7 +506,7 @@ export class SyncAwareMessagingService implements OnModuleInit, OnModuleDestroy 
 
       // Publish metrics
       await this.publishMetrics();
-
+      
       this.logger.debug('Collected messaging metrics:', this.metrics);
     } catch (error) {
       this.logger.warn('Failed to collect metrics:', error);

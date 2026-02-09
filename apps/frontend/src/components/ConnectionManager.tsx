@@ -1,14 +1,14 @@
-import { useSession } from '@your-org/security/react';
-import { format } from 'date-fns';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useWebSocket } from '../hooks/useWebSocket';
-import { Alert } from './ui/alert';
-import { Badge } from './ui/badge';
+import { Card, CardHeader, CardContent } from './ui/card';
 import { Button } from './ui/button';
-import { Card, CardContent, CardHeader } from './ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Alert } from './ui/alert';
 import { Tooltip } from './ui/tooltip';
+import { useSession } from '@your-org/security/react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
+import { Badge } from './ui/badge';
+import { format } from 'date-fns';
 
 interface Connection {
   id: string;
@@ -53,7 +53,7 @@ export function ConnectionManager() {
 
   const handleBatchDisconnect = async () => {
     try {
-      const promises = Array.from(selectedConnections).map((id) =>
+      const promises = Array.from(selectedConnections).map(id =>
         send('terminate_connection', { connectionId: id })
       );
       await Promise.all(promises);
@@ -97,16 +97,20 @@ export function ConnectionManager() {
     });
   };
 
-  const filteredConnections = connections.filter((connection) => {
+  const filteredConnections = connections.filter(connection => {
     const matchesStatus = statusFilter === 'all' || connection.status === statusFilter;
     const matchesType = typeFilter === 'all' || connection.type === typeFilter;
     return matchesStatus && matchesType;
   });
 
-  const connectionTypes = Array.from(new Set(connections.map((c) => c.type)));
+  const connectionTypes = Array.from(new Set(connections.map(c => c.type)));
 
   if (!session) {
-    return <Alert variant="warning">Please log in to manage connections</Alert>;
+    return (
+      <Alert variant="warning">
+        Please log in to manage connections
+      </Alert>
+    );
   }
 
   return (
@@ -134,15 +138,16 @@ export function ConnectionManager() {
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
                 {connectionTypes.map((type: any) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
+                  <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
 
             {selectedConnections.size > 0 && (
-              <Button variant="destructive" onClick={() => setShowDisconnectDialog(true)}>
+              <Button
+                variant="destructive"
+                onClick={() => setShowDisconnectDialog(true)}
+              >
                 Disconnect Selected ({selectedConnections.size})
               </Button>
             )}
@@ -165,7 +170,9 @@ export function ConnectionManager() {
                     onChange={() => toggleConnectionSelection(connection.id)}
                     className="h-4 w-4 rounded border-gray-300"
                   />
-                  <div className={`w-3 h-3 rounded-full ${getStatusColor(connection.status)}`} />
+                  <div
+                    className={`w-3 h-3 rounded-full ${getStatusColor(connection.status)}`}
+                  />
                   <div>
                     <span className="font-medium">{connection.type}</span>
                     <div className="flex items-center space-x-2 mt-1">
@@ -176,7 +183,7 @@ export function ConnectionManager() {
                     </div>
                   </div>
                 </div>
-
+                
                 <div className="space-x-2">
                   {connection.status === 'disconnected' ? (
                     <Tooltip content="Attempt to reconnect">
@@ -202,11 +209,7 @@ export function ConnectionManager() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() =>
-                      setSelectedConnection(
-                        connection.id === selectedConnection ? null : connection.id
-                      )
-                    }
+                    onClick={() => setSelectedConnection(connection.id === selectedConnection ? null : connection.id)}
                   >
                     {connection.id === selectedConnection ? 'Hide Details' : 'Show Details'}
                   </Button>
@@ -225,9 +228,7 @@ export function ConnectionManager() {
 
           {filteredConnections.length === 0 && (
             <div className="text-center text-gray-500 py-8">
-              {connections.length === 0
-                ? 'No active connections'
-                : 'No connections match the current filters'}
+              {connections.length === 0 ? 'No active connections' : 'No connections match the current filters'}
             </div>
           )}
         </div>
@@ -238,11 +239,9 @@ export function ConnectionManager() {
           <DialogHeader>
             <DialogTitle>Confirm Disconnect</DialogTitle>
             <DialogDescription>
-              Are you sure you want to disconnect{' '}
-              {selectedConnections.size > 0
-                ? `${selectedConnections.size} selected connections`
-                : 'this connection'}
-              ?
+              Are you sure you want to disconnect {selectedConnections.size > 0 
+                ? `${selectedConnections.size} selected connections` 
+                : 'this connection'}?
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end space-x-2">
@@ -251,11 +250,9 @@ export function ConnectionManager() {
             </Button>
             <Button
               variant="destructive"
-              onClick={() =>
-                selectedConnections.size > 0
-                  ? handleBatchDisconnect()
-                  : handleDisconnect(selectedConnection!)
-              }
+              onClick={() => selectedConnections.size > 0 
+                ? handleBatchDisconnect()
+                : handleDisconnect(selectedConnection!)}
             >
               Disconnect
             </Button>

@@ -1,17 +1,11 @@
 ---
 name: javascript-mastery
-description:
-  'Comprehensive JavaScript reference covering 33+ essential concepts every
-  developer should know. From fundamentals like primitives and closures to
-  advanced patterns like async/await and functional programming. Use when
-  explaining JS concepts, debugging JavaScript issues, or teaching JavaScript
-  fundamentals.'
+description: "Comprehensive JavaScript reference covering 33+ essential concepts every developer should know. From fundamentals like primitives and closures to advanced patterns like async/await and functional programming. Use when explaining JS concepts, debugging JavaScript issues, or teaching JavaScript fundamentals."
 ---
 
 # 🧠 JavaScript Mastery
 
-> 33+ essential JavaScript concepts every developer should know, inspired by
-> [33-js-concepts](https://github.com/leonardomso/33-js-concepts).
+> 33+ essential JavaScript concepts every developer should know, inspired by [33-js-concepts](https://github.com/leonardomso/33-js-concepts).
 
 ## When to Use This Skill
 
@@ -33,7 +27,7 @@ JavaScript has 7 primitive types:
 
 ```javascript
 // String
-const str = 'hello';
+const str = "hello";
 
 // Number (integers and floats)
 const num = 42;
@@ -52,7 +46,7 @@ let undef; // undefined
 const empty = null;
 
 // Symbol (unique identifiers)
-const sym = Symbol('description');
+const sym = Symbol("description");
 ```
 
 **Key points**:
@@ -67,33 +61,33 @@ JavaScript implicitly converts types:
 
 ```javascript
 // String coercion
-'5' + 3; // "53" (number → string)
-'5' - 3; // 2    (string → number)
+"5" + 3; // "53" (number → string)
+"5" - 3; // 2    (string → number)
 
 // Boolean coercion
-Boolean(''); // false
-Boolean('hello'); // true
+Boolean(""); // false
+Boolean("hello"); // true
 Boolean(0); // false
 Boolean([]); // true (!)
 
 // Equality coercion
-'5' == 5; // true  (coerces)
-'5' === 5; // false (strict)
+"5" == 5; // true  (coerces)
+"5" === 5; // false (strict)
 ```
 
-**Falsy values** (8 total): `false`, `0`, `-0`, `0n`, `""`, `null`, `undefined`,
-`NaN`
+**Falsy values** (8 total):
+`false`, `0`, `-0`, `0n`, `""`, `null`, `undefined`, `NaN`
 
 ### 1.3 Equality Operators
 
 ```javascript
 // == (loose equality) - coerces types
 null == undefined; // true
-'1' == 1; // true
+"1" == 1; // true
 
 // === (strict equality) - no coercion
 null === undefined; // false
-'1' === 1; // false
+"1" === 1; // false
 
 // Object.is() - handles edge cases
 Object.is(NaN, NaN); // true (NaN === NaN is false!)
@@ -110,17 +104,17 @@ Object.is(-0, 0); // false (0 === -0 is true!)
 
 ```javascript
 // Global scope
-var globalVar = 'global';
+var globalVar = "global";
 
 function outer() {
   // Function scope
-  var functionVar = 'function';
+  var functionVar = "function";
 
   if (true) {
     // Block scope (let/const only)
-    let blockVar = 'block';
-    const alsoBlock = 'block';
-    var notBlock = 'function'; // var ignores blocks!
+    let blockVar = "block";
+    const alsoBlock = "block";
+    var notBlock = "function"; // var ignores blocks!
   }
 }
 ```
@@ -188,13 +182,13 @@ obj.b = 3; // OK
 
 ```javascript
 function first() {
-  console.log('first start');
+  console.log("first start");
   second();
-  console.log('first end');
+  console.log("first end");
 }
 
 function second() {
-  console.log('second');
+  console.log("second");
 }
 
 first();
@@ -226,13 +220,13 @@ let b = 5;
 // Function hoisting
 sayHi(); // Works!
 function sayHi() {
-  console.log('Hi!');
+  console.log("Hi!");
 }
 
 // Function expressions don't hoist
 sayBye(); // TypeError
 var sayBye = function () {
-  console.log('Bye!');
+  console.log("Bye!");
 };
 ```
 
@@ -244,7 +238,7 @@ console.log(this); // window (browser) or global (Node)
 
 // Object method
 const obj = {
-  name: 'Alice',
+  name: "Alice",
   greet() {
     console.log(this.name); // "Alice"
   },
@@ -252,7 +246,7 @@ const obj = {
 
 // Arrow functions (lexical this)
 const obj2 = {
-  name: 'Bob',
+  name: "Bob",
   greet: () => {
     console.log(this.name); // undefined (inherits outer this)
   },
@@ -262,9 +256,9 @@ const obj2 = {
 function greet() {
   console.log(this.name);
 }
-greet.call({ name: 'Charlie' }); // "Charlie"
-greet.apply({ name: 'Diana' }); // "Diana"
-const bound = greet.bind({ name: 'Eve' });
+greet.call({ name: "Charlie" }); // "Charlie"
+greet.apply({ name: "Diana" }); // "Diana"
+const bound = greet.bind({ name: "Eve" });
 bound(); // "Eve"
 ```
 
@@ -275,13 +269,13 @@ bound(); // "Eve"
 ### 4.1 Event Loop
 
 ```javascript
-console.log('1');
+console.log("1");
 
-setTimeout(() => console.log('2'), 0);
+setTimeout(() => console.log("2"), 0);
 
-Promise.resolve().then(() => console.log('3'));
+Promise.resolve().then(() => console.log("3"));
 
-console.log('4');
+console.log("4");
 
 // Output: 1, 4, 3, 2
 // Why? Microtasks (Promises) run before macrotasks (setTimeout)
@@ -299,7 +293,7 @@ console.log('4');
 // Callback pattern
 function fetchData(callback) {
   setTimeout(() => {
-    callback(null, { data: 'result' });
+    callback(null, { data: "result" });
   }, 1000);
 }
 
@@ -330,7 +324,7 @@ getData((data) => {
 // Creating a Promise
 const promise = new Promise((resolve, reject) => {
   setTimeout(() => {
-    resolve('Success!');
+    resolve("Success!");
     // or: reject(new Error("Failed!"));
   }, 1000);
 });
@@ -339,7 +333,7 @@ const promise = new Promise((resolve, reject) => {
 promise
   .then((result) => console.log(result))
   .catch((error) => console.error(error))
-  .finally(() => console.log('Done'));
+  .finally(() => console.log("Done"));
 
 // Promise combinators
 Promise.all([p1, p2, p3]); // All must succeed
@@ -354,11 +348,11 @@ Promise.any([p1, p2]); // First to succeed
 async function fetchUserData(userId) {
   try {
     const response = await fetch(`/api/users/${userId}`);
-    if (!response.ok) throw new Error('Failed to fetch');
+    if (!response.ok) throw new Error("Failed to fetch");
     const user = await response.json();
     return user;
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     throw error; // Re-throw for caller to handle
   }
 }
@@ -366,8 +360,8 @@ async function fetchUserData(userId) {
 // Parallel execution
 async function fetchAll() {
   const [users, posts] = await Promise.all([
-    fetch('/api/users'),
-    fetch('/api/posts'),
+    fetch("/api/users"),
+    fetch("/api/posts"),
   ]);
   return { users, posts };
 }
@@ -421,9 +415,9 @@ function getDiscount(price) {
 
 ```javascript
 const users = [
-  { name: 'Alice', age: 25 },
-  { name: 'Bob', age: 30 },
-  { name: 'Charlie', age: 35 },
+  { name: "Alice", age: 25 },
+  { name: "Bob", age: 30 },
+  { name: "Charlie", age: 35 },
 ];
 
 // map: transform each element
@@ -442,7 +436,7 @@ const totalAge = users.reduce((sum, u) => sum + u.age, 0);
 const result = users
   .filter((u) => u.age >= 30)
   .map((u) => u.name)
-  .join(', ');
+  .join(", ");
 // "Bob, Charlie"
 ```
 
@@ -495,13 +489,13 @@ doubleThenAdd(5); // 11 = (5 * 2) + 1
 // Prototype chain
 const animal = {
   speak() {
-    console.log('Some sound');
+    console.log("Some sound");
   },
 };
 
 const dog = Object.create(animal);
 dog.bark = function () {
-  console.log('Woof!');
+  console.log("Woof!");
 };
 
 dog.speak(); // "Some sound" (inherited)
@@ -510,13 +504,13 @@ dog.bark(); // "Woof!" (own method)
 // ES6 Classes (syntactic sugar)
 class Animal {
   speak() {
-    console.log('Some sound');
+    console.log("Some sound");
   }
 }
 
 class Dog extends Animal {
   bark() {
-    console.log('Woof!');
+    console.log("Woof!");
   }
 }
 ```
@@ -558,17 +552,17 @@ const [first, second, ...rest] = [1, 2, 3, 4, 5];
 // first = 1, second = 2, rest = [3, 4, 5]
 
 // Object destructuring
-const { name, age, city = 'Unknown' } = { name: 'Alice', age: 25 };
+const { name, age, city = "Unknown" } = { name: "Alice", age: 25 };
 // name = "Alice", age = 25, city = "Unknown"
 
 // Renaming
-const { name: userName } = { name: 'Bob' };
+const { name: userName } = { name: "Bob" };
 // userName = "Bob"
 
 // Nested
 const {
   address: { street },
-} = { address: { street: '123 Main' } };
+} = { address: { street: "123 Main" } };
 ```
 
 ### 7.2 Spread & Rest
@@ -601,29 +595,29 @@ export function square(x) {
 export default class Calculator {}
 
 // Importing
-import Calculator, { PI, square } from './math.js';
-import * as math from './math.js';
+import Calculator, { PI, square } from "./math.js";
+import * as math from "./math.js";
 
 // Dynamic import
-const module = await import('./dynamic.js');
+const module = await import("./dynamic.js");
 ```
 
 ### 7.4 Optional Chaining & Nullish Coalescing
 
 ```javascript
 // Optional chaining (?.)
-const user = { address: { city: 'NYC' } };
+const user = { address: { city: "NYC" } };
 const city = user?.address?.city; // "NYC"
 const zip = user?.address?.zip; // undefined (no error)
 const fn = user?.getName?.(); // undefined if no method
 
 // Nullish coalescing (??)
-const value = null ?? 'default'; // "default"
-const zero = 0 ?? 'default'; // 0 (not nullish!)
-const empty = '' ?? 'default'; // "" (not nullish!)
+const value = null ?? "default"; // "default"
+const zero = 0 ?? "default"; // 0 (not nullish!)
+const empty = "" ?? "default"; // "" (not nullish!)
 
 // Compare with ||
-const value2 = 0 || 'default'; // "default" (0 is falsy)
+const value2 = 0 || "default"; // "default" (0 is falsy)
 ```
 
 ---

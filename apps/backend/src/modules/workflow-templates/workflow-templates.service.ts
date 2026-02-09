@@ -1,9 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import {
-  CreateWorkflowTemplateDto,
-  UpdateWorkflowTemplateDto,
-  WorkflowTemplateResponseDto,
-} from './dto/workflow-template.dto';
+import { CreateWorkflowTemplateDto, UpdateWorkflowTemplateDto, WorkflowTemplateResponseDto } from './dto/workflow-template.dto';
 
 @Injectable()
 export class WorkflowTemplatesService {
@@ -25,19 +21,19 @@ export class WorkflowTemplatesService {
         nodes: [
           { id: 'node1', type: 'input', label: 'Data Source' },
           { id: 'node2', type: 'transform', label: 'Transform Data' },
-          { id: 'node3', type: 'output', label: 'Save Results' },
+          { id: 'node3', type: 'output', label: 'Save Results' }
         ],
         edges: [
           { from: 'node1', to: 'node2' },
-          { from: 'node2', to: 'node3' },
-        ],
+          { from: 'node2', to: 'node3' }
+        ]
       },
       tags: ['data', 'etl', 'pipeline'],
       createdBy: 'usr_admin',
       isPublic: true,
       usageCount: 42,
       createdAt: new Date('2024-01-01T00:00:00Z'),
-      updatedAt: new Date('2024-01-01T00:00:00Z'),
+      updatedAt: new Date('2024-01-01T00:00:00Z')
     };
 
     this.templates.set(mockTemplate.id, mockTemplate);
@@ -59,10 +55,7 @@ export class WorkflowTemplatesService {
     return template;
   }
 
-  async create(
-    createDto: CreateWorkflowTemplateDto,
-    userId: string
-  ): Promise<WorkflowTemplateResponseDto> {
+  async create(createDto: CreateWorkflowTemplateDto, userId: string): Promise<WorkflowTemplateResponseDto> {
     this.logger.log('Creating new workflow template');
 
     const id = `tmpl_${Date.now()}`;
@@ -73,17 +66,14 @@ export class WorkflowTemplatesService {
       isPublic: createDto.isPublic ?? false,
       usageCount: 0,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
 
     this.templates.set(id, template);
     return template;
   }
 
-  async update(
-    id: string,
-    updateDto: UpdateWorkflowTemplateDto
-  ): Promise<WorkflowTemplateResponseDto> {
+  async update(id: string, updateDto: UpdateWorkflowTemplateDto): Promise<WorkflowTemplateResponseDto> {
     this.logger.log(`Updating workflow template: ${id}`);
 
     const existingTemplate = this.templates.get(id);
@@ -94,7 +84,7 @@ export class WorkflowTemplatesService {
     const updatedTemplate: WorkflowTemplateResponseDto = {
       ...existingTemplate,
       ...updateDto,
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
 
     this.templates.set(id, updatedTemplate);

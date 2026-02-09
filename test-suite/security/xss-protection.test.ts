@@ -6,7 +6,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { DatabaseService } from '../../src/db/db.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
 import { InputSanitizationService } from '../../src/security/input-sanitization.service';
 import { AppModule } from '../../src/app.module';
 
@@ -87,7 +87,7 @@ const XSS_PAYLOADS = {
 
 describe('XSS Protection Security Tests', () => {
   let app: INestApplication;
-  let db: DatabaseService;
+  let prisma: PrismaService;
   let inputSanitization: InputSanitizationService;
   let authToken: string;
   let testUser: any;
@@ -100,11 +100,11 @@ describe('XSS Protection Security Tests', () => {
     app = moduleRef.createNestApplication();
     await app.init();
 
-    db = app.get(DatabaseService);
+    prisma = app.get(PrismaService);
     inputSanitization = app.get(InputSanitizationService);
 
     // Setup test user and authentication
-    testUser = await db.user.create({
+    testUser = await prisma.user.create({
       data: {
         email: 'xss.test@example.com',
         password: 'TestPassword123!',
@@ -124,10 +124,10 @@ describe('XSS Protection Security Tests', () => {
 
   afterAll(async () => {
     // Clean up test data
-    await db.agent.deleteMany({
+    await prisma.agent.deleteMany({
       where: { userId: testUser.id },
     });
-    await db.user.delete({
+    await prisma.user.delete({
       where: { id: testUser.id },
     });
 

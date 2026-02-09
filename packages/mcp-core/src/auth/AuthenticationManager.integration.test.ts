@@ -5,8 +5,9 @@
 
 import { EventEmitter } from 'events';
 import { ConnectionManager } from '../client/ConnectionManager';
-import { AuthConfig, ConnectionOptions, TLSConfig } from '../interfaces/IMCPConnection';
-import { AuthContext, AuthenticationManager, AuthPolicy } from './AuthenticationManager';
+import { AuthenticationManager, AuthContext, AuthPolicy } from './AuthenticationManager';
+import { ConnectionOptions, AuthConfig, TLSConfig } from '../interfaces/IMCPConnection';
+import { MCPErrorClass, MCPErrorCode } from '../types/error';
 
 // Mock WebSocket for testing
 class MockAuthWebSocket extends EventEmitter {
@@ -19,23 +20,19 @@ class MockAuthWebSocket extends EventEmitter {
   private authHeaders?: Record<string, string>;
   private authManager: AuthenticationManager;
 
-  constructor(
-    public url: string,
-    options?: any,
-    authManager?: AuthenticationManager
-  ) {
+  constructor(public url: string, options?: any, authManager?: AuthenticationManager) {
     super();
-
+    
     this.authHeaders = options?.headers;
     this.authManager = authManager || new AuthenticationManager();
-
+    
     // Simulate authentication validation
     setTimeout(async () => {
       try {
         if (this.url.includes('auth-required')) {
           await this.validateAuthentication();
         }
-
+        
         this.readyState = WebSocket.OPEN;
         this.emit('open');
       } catch (error) {
@@ -56,7 +53,7 @@ class MockAuthWebSocket extends EventEmitter {
     if (authHeader.startsWith('Bearer ')) {
       authConfig = {
         type: 'bearer',
-        token: authHeader.substring(7),
+        token: authHeader.substring(7)
       };
     } else if (authHeader.startsWith('Basic ')) {
       const credentials = Buffer.from(authHeader.substring(6), 'base64').toString();
@@ -64,7 +61,7 @@ class MockAuthWebSocket extends EventEmitter {
       authConfig = {
         type: 'basic',
         username,
-        password,
+        password
       };
     } else {
       throw new Error('Unsupported authentication type');
@@ -80,17 +77,17 @@ class MockAuthWebSocket extends EventEmitter {
     if (this.readyState !== WebSocket.OPEN) {
       throw new Error('WebSocket is not open');
     }
-
+    
     // Echo back for ping responses
     if (data.includes('"method":"ping"')) {
       const message = JSON.parse(data);
       setTimeout(() => {
-        this.emit('message', {
+        this.emit('message', { 
           data: JSON.stringify({
             jsonrpc: '2.0',
             id: message.id,
-            result: 'pong',
-          }),
+            result: 'pong'
+          })
         });
       }, 10);
     }
@@ -126,7 +123,7 @@ describe('AuthenticationManager Integration Tests', () => {
       refreshTokenExpirationTime: 86400,
       maxFailedAttempts: 3,
       lockoutDuration: 300,
-      enableAuditLogging: true,
+      enableAuditLogging: true
     });
 
     globalAuthManager = authManager;
@@ -136,7 +133,7 @@ describe('AuthenticationManager Integration Tests', () => {
       maxIdleTime: 5000,
       healthCheckInterval: 1000,
       reconnectInterval: 100,
-      maxReconnectAttempts: 3,
+      maxReconnectAttempts: 3
     });
   });
 
@@ -151,7 +148,7 @@ describe('AuthenticationManager Integration Tests', () => {
       const basicAuth: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass',
+        password: 'testpass'
       };
 
       const authResult = await authManager.authenticateConnection(basicAuth);
@@ -166,8 +163,8 @@ describe('AuthenticationManager Integration Tests', () => {
         keepAlive: true,
         auth: {
           type: 'bearer',
-          token: authResult.accessToken!,
-        },
+          token: authResult.accessToken!
+        }
       };
 
       const connection = await connectionManager.createConnection(
@@ -176,7 +173,7 @@ describe('AuthenticationManager Integration Tests', () => {
       );
 
       expect(connection.status).toBe('connected');
-
+      
       // Verify auth headers were set correctly
       const ws = (connection as any).ws as MockAuthWebSocket;
       const headers = ws.getAuthHeaders();
@@ -191,8 +188,8 @@ describe('AuthenticationManager Integration Tests', () => {
         keepAlive: true,
         auth: {
           type: 'bearer',
-          token: 'invalid_token',
-        },
+          token: 'invalid_token'
+        }
       };
 
       await expect(
@@ -209,8 +206,8 @@ describe('AuthenticationManager Integration Tests', () => {
         auth: {
           type: 'basic',
           username: 'testuser',
-          password: 'testpass',
-        },
+          password: 'testpass'
+        }
       };
 
       const connection = await connectionManager.createConnection(
@@ -219,7 +216,7 @@ describe('AuthenticationManager Integration Tests', () => {
       );
 
       expect(connection.status).toBe('connected');
-
+      
       // Verify basic auth header was set correctly
       const ws = (connection as any).ws as MockAuthWebSocket;
       const headers = ws.getAuthHeaders();
@@ -234,7 +231,7 @@ describe('AuthenticationManager Integration Tests', () => {
       const adminPolicy: AuthPolicy = {
         name: 'admin_resources',
         requiredRoles: ['admin'],
-        resourcePatterns: ['/admin/.*'],
+        resourcePatterns: ['/admin/.*']
       };
 
       authManager.addPolicy(adminPolicy);
@@ -243,13 +240,13 @@ describe('AuthenticationManager Integration Tests', () => {
       const userContext: AuthContext = {
         userId: 'regularuser',
         roles: ['user'],
-        permissions: ['read'],
+        permissions: ['read']
       };
 
       const adminContext: AuthContext = {
         userId: 'adminuser',
         roles: ['admin'],
-        permissions: ['read', 'write', 'admin'],
+        permissions: ['read', 'write', 'admin']
       };
 
       // Test authorization
@@ -274,7 +271,7 @@ describe('AuthenticationManager Integration Tests', () => {
       const writePolicy: AuthPolicy = {
         name: 'write_operations',
         requiredPermissions: ['write'],
-        operations: ['create', 'update', 'delete'],
+        operations: ['create', 'update', 'delete']
       };
 
       authManager.addPolicy(writePolicy);
@@ -282,21 +279,33 @@ describe('AuthenticationManager Integration Tests', () => {
       const readOnlyContext: AuthContext = {
         userId: 'readonly',
         roles: ['user'],
-        permissions: ['read'],
+        permissions: ['read']
       };
 
       const writeContext: AuthContext = {
         userId: 'writer',
         roles: ['user'],
-        permissions: ['read', 'write'],
+        permissions: ['read', 'write']
       };
 
       // Test authorization for different operations
-      const readOnlyCreate = await authManager.authorizeRequest(readOnlyContext, '/data', 'create');
+      const readOnlyCreate = await authManager.authorizeRequest(
+        readOnlyContext,
+        '/data',
+        'create'
+      );
 
-      const writeCreate = await authManager.authorizeRequest(writeContext, '/data', 'create');
+      const writeCreate = await authManager.authorizeRequest(
+        writeContext,
+        '/data',
+        'create'
+      );
 
-      const readOnlyRead = await authManager.authorizeRequest(readOnlyContext, '/data', 'read');
+      const readOnlyRead = await authManager.authorizeRequest(
+        readOnlyContext,
+        '/data',
+        'read'
+      );
 
       expect(readOnlyCreate).toBe(false);
       expect(writeCreate).toBe(true);
@@ -310,7 +319,7 @@ describe('AuthenticationManager Integration Tests', () => {
       const basicAuth: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass',
+        password: 'testpass'
       };
 
       const authResult = await authManager.authenticateConnection(basicAuth);
@@ -331,8 +340,8 @@ describe('AuthenticationManager Integration Tests', () => {
         keepAlive: true,
         auth: {
           type: 'bearer',
-          token: refreshResult.accessToken!,
-        },
+          token: refreshResult.accessToken!
+        }
       };
 
       const connection = await connectionManager.createConnection(
@@ -348,7 +357,7 @@ describe('AuthenticationManager Integration Tests', () => {
       const basicAuth: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass',
+        password: 'testpass'
       };
 
       const authResult = await authManager.authenticateConnection(basicAuth);
@@ -365,8 +374,8 @@ describe('AuthenticationManager Integration Tests', () => {
         keepAlive: true,
         auth: {
           type: 'bearer',
-          token: authResult.accessToken!,
-        },
+          token: authResult.accessToken!
+        }
       };
 
       await expect(
@@ -385,7 +394,7 @@ describe('AuthenticationManager Integration Tests', () => {
         const basicAuth: AuthConfig = {
           type: 'basic',
           username,
-          password: 'testpass',
+          password: 'testpass'
         };
 
         const authResult = await authManager.authenticateConnection(basicAuth);
@@ -398,8 +407,8 @@ describe('AuthenticationManager Integration Tests', () => {
           keepAlive: true,
           auth: {
             type: 'bearer',
-            token: authResult.accessToken!,
-          },
+            token: authResult.accessToken!
+          }
         };
 
         const connection = await connectionManager.createConnection(
@@ -424,7 +433,7 @@ describe('AuthenticationManager Integration Tests', () => {
     it('should track failed authentication attempts', async () => {
       // Make some failed authentication attempts
       const failedAttempts = 3;
-
+      
       for (let i = 0; i < failedAttempts; i++) {
         const options: ConnectionOptions = {
           timeout: 5000,
@@ -433,12 +442,15 @@ describe('AuthenticationManager Integration Tests', () => {
           keepAlive: true,
           auth: {
             type: 'bearer',
-            token: `invalid_token_${i}`,
-          },
+            token: `invalid_token_${i}`
+          }
         };
 
         try {
-          await connectionManager.createConnection(`ws://localhost:8080/auth-required`, options);
+          await connectionManager.createConnection(
+            `ws://localhost:8080/auth-required`,
+            options
+          );
         } catch (error) {
           // Expected to fail
         }
@@ -450,8 +462,8 @@ describe('AuthenticationManager Integration Tests', () => {
 
       // Check audit events
       const auditEvents = authManager.getAuditEvents(failedAttempts);
-      const failedEvents = auditEvents.filter(
-        (event) => event.type === 'access_denied' && !event.success
+      const failedEvents = auditEvents.filter(event => 
+        event.type === 'access_denied' && !event.success
       );
       expect(failedEvents.length).toBe(failedAttempts);
     });
@@ -463,7 +475,7 @@ describe('AuthenticationManager Integration Tests', () => {
       const basicAuth: AuthConfig = {
         type: 'basic',
         username: 'secureuser',
-        password: 'securepass',
+        password: 'securepass'
       };
 
       const authResult = await authManager.authenticateConnection(basicAuth);
@@ -472,7 +484,7 @@ describe('AuthenticationManager Integration Tests', () => {
       // Create secure connection with authentication
       const tlsConfig: TLSConfig = {
         enabled: true,
-        rejectUnauthorized: false,
+        rejectUnauthorized: false
       };
 
       const options: ConnectionOptions = {
@@ -482,12 +494,12 @@ describe('AuthenticationManager Integration Tests', () => {
         keepAlive: true,
         auth: {
           type: 'bearer',
-          token: authResult.accessToken!,
+          token: authResult.accessToken!
         },
         tls: tlsConfig,
         headers: {
-          'X-Client-Version': '1.0.0',
-        },
+          'X-Client-Version': '1.0.0'
+        }
       };
 
       const connection = await connectionManager.createConnection(
@@ -496,11 +508,11 @@ describe('AuthenticationManager Integration Tests', () => {
       );
 
       expect(connection.status).toBe('connected');
-
+      
       // Verify both TLS and auth were configured
       const ws = (connection as any).ws as MockAuthWebSocket;
       expect(ws.url).toBe('wss://secure.example.com/auth-required');
-
+      
       const headers = ws.getAuthHeaders();
       expect(headers?.['Authorization']).toBe(`Bearer ${authResult.accessToken}`);
       expect(headers?.['X-Client-Version']).toBe('1.0.0');
@@ -513,7 +525,7 @@ describe('AuthenticationManager Integration Tests', () => {
       const basicAuth: AuthConfig = {
         type: 'basic',
         username: 'testuser',
-        password: 'testpass',
+        password: 'testpass'
       };
 
       const authResult = await authManager.authenticateConnection(basicAuth);
@@ -526,8 +538,8 @@ describe('AuthenticationManager Integration Tests', () => {
         keepAlive: true,
         auth: {
           type: 'bearer',
-          token: authResult.accessToken!,
-        },
+          token: authResult.accessToken!
+        }
       };
 
       const connection = await connectionManager.createConnection(
@@ -541,13 +553,13 @@ describe('AuthenticationManager Integration Tests', () => {
       return new Promise<void>((resolve) => {
         connectionManager.on('connectionReconnected', (endpoint) => {
           expect(endpoint).toBe('ws://localhost:8080/auth-required');
-
+          
           // Verify authentication is maintained after reconnection
           const reconnectedConnection = connectionManager.getConnection(endpoint);
           const ws = (reconnectedConnection as any).ws as MockAuthWebSocket;
           const headers = ws.getAuthHeaders();
           expect(headers?.['Authorization']).toBe(`Bearer ${authResult.accessToken}`);
-
+          
           resolve();
         });
 
@@ -566,7 +578,7 @@ describe('AuthenticationManager Integration Tests', () => {
       const basicAuth: AuthConfig = {
         type: 'basic',
         username: 'audituser',
-        password: 'auditpass',
+        password: 'auditpass'
       };
 
       const authResult = await authManager.authenticateConnection(basicAuth);
@@ -580,8 +592,8 @@ describe('AuthenticationManager Integration Tests', () => {
         keepAlive: true,
         auth: {
           type: 'bearer',
-          token: authResult.accessToken!,
-        },
+          token: authResult.accessToken!
+        }
       };
 
       const connection = await connectionManager.createConnection(
@@ -596,7 +608,7 @@ describe('AuthenticationManager Integration Tests', () => {
       const context: AuthContext = {
         userId: 'audituser',
         roles: ['user'],
-        permissions: ['read'],
+        permissions: ['read']
       };
 
       await authManager.authorizeRequest(context, '/test/resource', 'read');
@@ -606,17 +618,17 @@ describe('AuthenticationManager Integration Tests', () => {
 
       // Check audit trail
       const auditEvents = authManager.getAuditEvents();
-
-      const loginEvents = auditEvents.filter((e) => e.type === 'login');
-      const refreshEvents = auditEvents.filter((e) => e.type === 'token_refresh');
-      const logoutEvents = auditEvents.filter((e) => e.type === 'logout');
+      
+      const loginEvents = auditEvents.filter(e => e.type === 'login');
+      const refreshEvents = auditEvents.filter(e => e.type === 'token_refresh');
+      const logoutEvents = auditEvents.filter(e => e.type === 'logout');
 
       expect(loginEvents.length).toBeGreaterThan(0);
       expect(refreshEvents.length).toBeGreaterThan(0);
       expect(logoutEvents.length).toBeGreaterThan(0);
 
       // Verify event details
-      const loginEvent = loginEvents.find((e) => e.userId === 'audituser');
+      const loginEvent = loginEvents.find(e => e.userId === 'audituser');
       expect(loginEvent).toBeDefined();
       expect(loginEvent!.success).toBe(true);
     });

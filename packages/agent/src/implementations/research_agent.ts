@@ -3,7 +3,7 @@
  * An AI agent specialized in web research, data gathering, and information synthesis
  */
 
-import type { IAgent } from '../interfaces/IAgent';
+import { IAgent } from '../interfaces/IAgent';
 
 export interface ResearchConfig {
   agentId: string;
@@ -222,9 +222,7 @@ export class ResearchAgent implements IAgent {
   }
 
   private calculateConfidence(sources: Source[]): number {
-    if (sources.length === 0) {
-      return 0;
-    }
+    if (sources.length === 0) return 0;
     const avgRelevance = sources.reduce((sum, s) => sum + s.relevanceScore, 0) / sources.length;
     return Math.round(avgRelevance * 100) / 100;
   }

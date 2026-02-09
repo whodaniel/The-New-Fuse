@@ -5,7 +5,10 @@ import { createLogCommand } from './commands/log';
 import { createPortCommand } from './commands/port';
 
 // Create the main program
-const program = new Command().name('fuse').description('The New Fuse CLI').version('0.1.0');
+const program = new Command()
+  .name('fuse')
+  .description('The New Fuse CLI')
+  .version('0.1.0');
 
 // Add commands
 program.addCommand(createLogCommand());

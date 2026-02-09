@@ -1,18 +1,22 @@
-import { IntegrationSource, WebhookRegistrationRequest } from '@the-new-fuse/types';
-import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Input,
-  Select,
-  Textarea,
-} from '@the-new-fuse/ui-consolidated';
-import { AlertCircle, CheckCircle, Eye, EyeOff, Loader2, Save, TestTube, X } from 'lucide-react';
 import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@the-new-fuse/ui-consolidated';
+import { Button } from '@the-new-fuse/ui-consolidated';
+import { Input } from '@the-new-fuse/ui-consolidated';
+import { Select } from '@the-new-fuse/ui-consolidated';
+import { Textarea } from '@the-new-fuse/ui-consolidated';
+import { Alert } from '@the-new-fuse/ui-consolidated';
+import { Badge } from '@the-new-fuse/ui-consolidated';
+import { 
+  Save, 
+  X, 
+  TestTube, 
+  Eye, 
+  EyeOff, 
+  AlertCircle,
+  CheckCircle,
+  Loader2,
+} from 'lucide-react';
+import { IntegrationSource, WebhookRegistrationRequest } from '@the-new-fuse/types';
 import { useWebhookManagement } from './hooks/useWebhookManagement';
 
 export interface WebhookConfigurationFormProps {
@@ -40,11 +44,7 @@ const INTEGRATION_SOURCES = [
   { value: IntegrationSource.QUICKBOOKS, label: 'QuickBooks', description: 'Accounting' },
   { value: IntegrationSource.ZAPIER, label: 'Zapier', description: 'Automation platform' },
   { value: IntegrationSource.WORKATO, label: 'Workato', description: 'Integration platform' },
-  {
-    value: IntegrationSource.POWER_AUTOMATE,
-    label: 'Power Automate',
-    description: 'Microsoft automation',
-  },
+  { value: IntegrationSource.POWER_AUTOMATE, label: 'Power Automate', description: 'Microsoft automation' },
 ];
 
 export function WebhookConfigurationForm({
@@ -54,7 +54,7 @@ export function WebhookConfigurationForm({
   className,
 }: WebhookConfigurationFormProps) {
   const { registerWebhook, updateWebhook, testWebhook, loading } = useWebhookManagement();
-
+  
   const [formData, setFormData] = useState({
     source: editingWebhook?.source || IntegrationSource.STRIPE,
     endpoint_url: editingWebhook?.endpoint_url || '',
@@ -72,7 +72,7 @@ export function WebhookConfigurationForm({
   } | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const selectedSource = INTEGRATION_SOURCES.find((s) => s.value === formData.source);
+  const selectedSource = INTEGRATION_SOURCES.find(s => s.value === formData.source);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -105,7 +105,7 @@ export function WebhookConfigurationForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     if (!validateForm()) {
       return;
     }
@@ -148,7 +148,9 @@ export function WebhookConfigurationForm({
 
       setTestResult({
         success: result.success,
-        message: result.success ? 'Webhook test successful!' : result.error || 'Test failed',
+        message: result.success 
+          ? 'Webhook test successful!'
+          : result.error || 'Test failed',
       });
     } catch (error) {
       console.error('Test webhook error:', error);
@@ -168,7 +170,9 @@ export function WebhookConfigurationForm({
     <Card className={className}>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <span>{editingWebhook ? 'Edit' : 'Add'} Webhook Integration</span>
+          <span>
+            {editingWebhook ? 'Edit' : 'Add'} Webhook Integration
+          </span>
           <div className="flex items-center space-x-2">
             {editingWebhook && (
               <Button
@@ -182,7 +186,12 @@ export function WebhookConfigurationForm({
                 Test
               </Button>
             )}
-            <Button type="button" variant="outline" size="sm" onClick={onCancel}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onCancel}
+            >
               <X className="w-4 h-4" />
             </Button>
           </div>
@@ -217,8 +226,14 @@ export function WebhookConfigurationForm({
           <div className="space-y-2">
             <label className="text-sm font-medium">Webhook URL</label>
             <div className="relative">
-              <Input value={generateWebhookUrl()} readOnly className="bg-gray-50 pr-16" />
-              <Badge className="absolute right-2 top-2 text-xs">Auto-generated</Badge>
+              <Input
+                value={generateWebhookUrl()}
+                readOnly
+                className="bg-gray-50 pr-16"
+              />
+              <Badge className="absolute right-2 top-2 text-xs">
+                Auto-generated
+              </Badge>
             </div>
             <p className="text-xs text-muted-foreground">
               Use this URL in your {selectedSource?.label} webhook configuration
@@ -231,10 +246,14 @@ export function WebhookConfigurationForm({
             <Input
               placeholder="https://your-app.com/webhook-handler"
               value={formData.endpoint_url}
-              onChange={(e) => setFormData({ ...formData, endpoint_url: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, endpoint_url: e.target.value })
+              }
               className={errors.endpoint_url ? 'border-red-500' : ''}
             />
-            {errors.endpoint_url && <p className="text-xs text-red-600">{errors.endpoint_url}</p>}
+            {errors.endpoint_url && (
+              <p className="text-xs text-red-600">{errors.endpoint_url}</p>
+            )}
             <p className="text-xs text-muted-foreground">
               Where we&apos;ll forward the webhook events
             </p>
@@ -248,7 +267,9 @@ export function WebhookConfigurationForm({
                 type={showSecret ? 'text' : 'password'}
                 placeholder="Enter a secure secret key"
                 value={formData.secret_key}
-                onChange={(e) => setFormData({ ...formData, secret_key: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, secret_key: e.target.value })
+                }
                 className={errors.secret_key ? 'border-red-500' : ''}
               />
               <Button
@@ -258,11 +279,19 @@ export function WebhookConfigurationForm({
                 className="absolute right-2 top-1 h-8 w-8 p-0"
                 onClick={() => setShowSecret(!showSecret)}
               >
-                {showSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showSecret ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </Button>
             </div>
-            {errors.secret_key && <p className="text-xs text-red-600">{errors.secret_key}</p>}
-            <p className="text-xs text-muted-foreground">Used to verify webhook authenticity</p>
+            {errors.secret_key && (
+              <p className="text-xs text-red-600">{errors.secret_key}</p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              Used to verify webhook authenticity
+            </p>
           </div>
 
           {/* Configuration JSON */}
@@ -275,7 +304,9 @@ export function WebhookConfigurationForm({
               rows={6}
               className={`font-mono text-sm ${errors.configuration ? 'border-red-500' : ''}`}
             />
-            {errors.configuration && <p className="text-xs text-red-600">{errors.configuration}</p>}
+            {errors.configuration && (
+              <p className="text-xs text-red-600">{errors.configuration}</p>
+            )}
             <p className="text-xs text-muted-foreground">
               Additional configuration options (optional)
             </p>
@@ -283,11 +314,7 @@ export function WebhookConfigurationForm({
 
           {/* Test Result */}
           {testResult && (
-            <Alert
-              className={
-                testResult.success ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'
-              }
-            >
+            <Alert className={testResult.success ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}>
               <div className="flex items-center">
                 {testResult.success ? (
                   <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
@@ -303,10 +330,19 @@ export function WebhookConfigurationForm({
 
           {/* Submit Buttons */}
           <div className="flex items-center justify-end space-x-3 pt-4">
-            <Button type="button" variant="outline" onClick={onCancel} disabled={loading}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={loading}
+            >
               Cancel
             </Button>
-            <Button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
               {loading ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : (

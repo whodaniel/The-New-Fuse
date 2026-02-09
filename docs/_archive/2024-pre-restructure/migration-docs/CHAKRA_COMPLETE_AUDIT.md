@@ -1,7 +1,7 @@
 # Complete Chakra UI Audit Report
 
-**Generated:** 2025-10-17 **Total References:** 241 occurrences of "chakra"
-across the project
+**Generated:** 2025-10-17
+**Total References:** 241 occurrences of "chakra" across the project
 
 ---
 
@@ -24,8 +24,7 @@ across the project
 
 ### Audit Artifact (Can Ignore)
 
-- **ui-audit-results/dependency-analysis.json** - Old audit file showing 101
-  @chakra-ui/react and 10 @chakra-ui/icons usages
+- **ui-audit-results/dependency-analysis.json** - Old audit file showing 101 @chakra-ui/react and 10 @chakra-ui/icons usages
 
 ---
 
@@ -34,13 +33,11 @@ across the project
 ### Theme Configuration Files
 
 1. **apps/frontend/src/shared/theme/themes.ts**
-
    ```typescript
    import { extendTheme, ThemeConfig } from "@chakra-ui/react";
    export const baseTheme = extendTheme({...});
    export const darkTheme = extendTheme({...});
    ```
-
    - ⚠️ **MUST MIGRATE:** Create Tailwind theme config
 
 2. **apps/electron-desktop/src/renderer/main.tsx**
@@ -48,20 +45,17 @@ across the project
    import { ChakraProvider, extendTheme } from '@chakra-ui/react'
    const theme = extendTheme({...});
    ```
-
    - ⚠️ **MUST MIGRATE:** Replace with Tailwind setup
 
 ### Provider/Context Files
 
 1. **src/App.tsx**
-
    ```typescript
    import { ChakraProvider } from '@chakra-ui/react';
    <ChakraProvider theme={theme}>...</ChakraProvider>
    ```
 
 2. **src/contexts/ThemeContext.tsx**
-
    ```typescript
    import { ChakraProvider } from '@chakra-ui/react';
    <ChakraProvider theme={theme}>...</ChakraProvider>
@@ -75,9 +69,9 @@ across the project
 All test files wrap components in ChakraProvider - these need updating:
 
 1. **packages/integration-tests/src/workflow-builder/ui-components.test.ts**
-2. **apps/frontend/src/components/admin/onboarding/**tests**/OnboardingWizardPreview.test.tsx**
-3. **apps/frontend/src/components/admin/onboarding/**tests**/OnboardingStepsConfig.test.tsx**
-4. **apps/frontend/src/components/admin/onboarding/**tests**/OnboardingAISettings.test.tsx**
+2. **apps/frontend/src/components/admin/onboarding/__tests__/OnboardingWizardPreview.test.tsx**
+3. **apps/frontend/src/components/admin/onboarding/__tests__/OnboardingStepsConfig.test.tsx**
+4. **apps/frontend/src/components/admin/onboarding/__tests__/OnboardingAISettings.test.tsx**
 
 ---
 
@@ -86,25 +80,21 @@ All test files wrap components in ChakraProvider - these need updating:
 ### useToast Hook
 
 **Found in 25+ locations across:**
-
 - Electron desktop components
 - Frontend components
 - Auth feature components
 
 **Good News:** ✅ ui-consolidated already has `useToast` implementation!
-
 - Location: `packages/ui-consolidated/src/components/Toast/use-toast.tsx`
 - Export: Available from `@the-new-fuse/ui-consolidated`
 
 **Action Required:**
-
 - Replace Chakra's `import { useToast } from '@chakra-ui/react'`
 - With: `import { useToast } from '@the-new-fuse/ui-consolidated'`
 
 ### useDisclosure Hook
 
 **Pattern to Replace:**
-
 ```typescript
 // OLD (Chakra)
 import { useDisclosure } from '@chakra-ui/react';
@@ -119,8 +109,8 @@ const onClose = () => setIsOpen(false);
 
 ### useColorMode Hook
 
-**Found in:** Theme components **Pattern to Replace:**
-
+**Found in:** Theme components
+**Pattern to Replace:**
 ```typescript
 // OLD (Chakra)
 import { useColorMode } from '@chakra-ui/react';
@@ -136,7 +126,6 @@ const { theme, setTheme } = useTheme();
 ## Component Files Needing Migration
 
 ### Electron Desktop (6 files)
-
 - apps/electron-desktop/src/renderer/components/CommandCenter.tsx
 - apps/electron-desktop/src/renderer/components/tabs/ChatTab.tsx
 - apps/electron-desktop/src/renderer/components/tabs/ConnectionTab.tsx
@@ -147,7 +136,6 @@ const { theme, setTheme } = useTheme();
 ### Frontend Components (62 total - see CHAKRA_MIGRATION_STATUS.md for complete list)
 
 Priority groups:
-
 1. **Admin Panel:** 11 files
 2. **Onboarding:** 10 files
 3. **Workflow Builder:** 4 files
@@ -159,11 +147,9 @@ Priority groups:
 ## Migration Checklist
 
 ### Phase 1: Infrastructure ⚠️ CRITICAL
-
 - [ ] Remove `@chakra-ui/react` from `apps/frontend/package.json`
 - [ ] Remove `@chakra-ui/react` from `apps/electron-desktop/package.json`
-- [ ] Remove `@chakra-ui/styled-system` from
-      `apps/electron-desktop/package.json`
+- [ ] Remove `@chakra-ui/styled-system` from `apps/electron-desktop/package.json`
 - [ ] Remove `@chakra-ui/react` from `packages/feature-tracker/package.json`
 - [ ] Remove `@chakra-ui/react` from `packages/integration-tests/package.json`
 - [ ] Replace `ChakraProvider` in `src/App.tsx`
@@ -172,26 +158,21 @@ Priority groups:
 - [ ] Migrate theme files (themes.ts)
 
 ### Phase 2: Hooks Migration
-
 - [ ] Update all `useToast` imports to ui-consolidated version
 - [ ] Replace all `useDisclosure` with useState pattern
 - [ ] Replace all `useColorMode` with theme solution
 
 ### Phase 3: Test File Updates
-
 - [ ] Update 4 test files to remove ChakraProvider wrappers
 - [ ] Add proper Tailwind/ui-consolidated test setup
 
 ### Phase 4: Component Migration
-
 - [ ] Complete remaining 62 component files (see CHAKRA_MIGRATION_STATUS.md)
 
 ### Phase 5: Cleanup
-
 - [ ] Remove `ui-audit-results/dependency-analysis.json` (old audit artifact)
 - [ ] Run `ppnpm install` to remove Chakra from lockfile
-- [ ] Verify no Chakra imports remain:
-      `grep -r "@chakra-ui" . --include="*.tsx" --include="*.ts"`
+- [ ] Verify no Chakra imports remain: `grep -r "@chakra-ui" . --include="*.tsx" --include="*.ts"`
 
 ---
 
@@ -216,7 +197,6 @@ grep -r "@chakra-ui" . --include="*.json" | grep -v node_modules | grep -v ui-au
 ## Replacement Patterns
 
 ### Layout Components
-
 ```typescript
 // Chakra → Tailwind
 <Box> → <div className="...">
@@ -230,14 +210,12 @@ grep -r "@chakra-ui" . --include="*.json" | grep -v node_modules | grep -v ui-au
 ```
 
 ### Typography
-
 ```typescript
 <Heading> → <h1> / <h2> etc with Tailwind
 <Text> → <p> / <span> with Tailwind
 ```
 
 ### Form Components
-
 ```typescript
 <Input> → <Input> from ui-consolidated
 <Textarea> → <Textarea> from ui-consolidated
@@ -248,7 +226,6 @@ grep -r "@chakra-ui" . --include="*.json" | grep -v node_modules | grep -v ui-au
 ```
 
 ### Feedback
-
 ```typescript
 <Alert> → <Alert> from ui-consolidated
 <Badge> → <Badge> from ui-consolidated
@@ -257,7 +234,6 @@ grep -r "@chakra-ui" . --include="*.json" | grep -v node_modules | grep -v ui-au
 ```
 
 ### Navigation
-
 ```typescript
 <Tabs> → <Tabs> from ui-consolidated
 <Accordion> → <Accordion> from ui-consolidated
@@ -268,8 +244,7 @@ grep -r "@chakra-ui" . --include="*.json" | grep -v node_modules | grep -v ui-au
 
 ## Critical Next Steps
 
-1. **Remove package dependencies** (breaks everything until components are
-   migrated)
+1. **Remove package dependencies** (breaks everything until components are migrated)
 2. **Migrate theme infrastructure** (themes.ts, providers)
 3. **Update hooks** (useToast already exists in ui-consolidated!)
 4. **Migrate components** (62 files remaining)
@@ -280,8 +255,7 @@ grep -r "@chakra-ui" . --include="*.json" | grep -v node_modules | grep -v ui-au
 
 ## Notes
 
-- The `packageManager` field keeps reappearing in package.json - it may be
-  auto-generated by pnpm or a hook
+- The `packageManager` field keeps reappearing in package.json - it may be auto-generated by pnpm or a hook
 - ui-consolidated package is well-structured and ready to use
 - Most common Chakra patterns have direct Tailwind equivalents
 - useToast hook already exists in ui-consolidated - easy win!

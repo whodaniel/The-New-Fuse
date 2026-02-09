@@ -11,7 +11,7 @@
 ```bash
 cd /home/user/fuse/packages/sync-core
 
-# Issue: Missing Drizzle models + improper imports
+# Issue: Missing Prisma models + improper imports
 # Fix: Add SyncConflict, AuthEvent, SyncState, TaskExecution to schema
 #      Change relative imports to package imports
 #      Export FileChangeEvent interface
@@ -21,21 +21,21 @@ cd /home/user/fuse/packages/sync-core
 
 ---
 
-### 🟠 Day 3-4: Fix Drizzle [CRITICAL]
+### 🟠 Day 3-4: Fix Prisma [CRITICAL]
 
 ```bash
 cd /home/user/fuse/packages/database
 
 # Option A: Skip checksum
 export PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1
-pnpm exec drizzle generate
+pnpm exec prisma generate
 
 # Option B: Docker approach
-docker run --rm -v $(pwd):/app -w /app node:20 npx drizzle generate
+docker run --rm -v $(pwd):/app -w /app node:20 npx prisma generate
 
 # Option C: Upgrade
-pnpm add drizzle@latest @drizzle/client@latest
-pnpm exec drizzle generate
+pnpm add prisma@latest @prisma/client@latest
+pnpm exec prisma generate
 ```
 
 **Impact**: Real database operations work
@@ -84,8 +84,8 @@ git push origin main
 
 ### ⚠️ What Needs Fixing
 
-1. **sync-core package** (5 Drizzle models, import paths)
-2. **Drizzle binary download** (using placeholder)
+1. **sync-core package** (5 Prisma models, import paths)
+2. **Prisma binary download** (using placeholder)
 3. **Railway deployment** (not yet live)
 4. **integration-tests** (syntax errors)
 5. **web-scraping** (electron types)
@@ -97,7 +97,7 @@ git push origin main
 ### Must Have for MVP
 
 - [ ] sync-core building
-- [ ] Real Drizzle client working
+- [ ] Real Prisma client working
 - [ ] User auth (register/login)
 - [ ] Services deployed to Railway
 - [ ] www.thenewfuse.com live with SSL
@@ -136,8 +136,8 @@ pnpm build 2>&1 | grep -E "(successful|Failed)"
 # Fix native modules (if needed)
 pnpm run setup:native-modules
 
-# Generate Drizzle client
-pnpm --filter @the-new-fuse/database exec drizzle generate
+# Generate Prisma client
+pnpm --filter @the-new-fuse/database exec prisma generate
 
 # Development mode (after fixes)
 pnpm run dev:no-ide  # Fastest startup
@@ -187,10 +187,10 @@ pnpm run dev:no-ide  # Fastest startup
 
 ### "sync-core won't build"
 
-→ Missing Drizzle models in schema.drizzle → See Task 1 in
+→ Missing Prisma models in schema.prisma → See Task 1 in
 PUBLIC_LAUNCH_ROADMAP.md
 
-### "Drizzle generate fails"
+### "Prisma generate fails"
 
 → Binary download blocked (403 error) → Try Docker approach or
 PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1
@@ -222,7 +222,7 @@ CORS_ORIGIN includes frontend URL
 Based on current branch: `claude/fix-monorepo-builds-019rTq29GyFPBTHdttUkdE9w`
 
 1. **Immediate**: Start fixing sync-core package
-2. **Next**: Resolve Drizzle binary issue
+2. **Next**: Resolve Prisma binary issue
 3. **Then**: Run full build verification
 4. **Finally**: Deploy to Railway
 

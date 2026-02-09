@@ -82,7 +82,7 @@ Add to your `.env` file:
 ```bash
 # Stripe Configuration
 STRIPE_WEBHOOK_SECRET=whsec_your_stripe_webhook_secret_here
-STRIPE_API_KEY=sk_live_your_stripe_api_key  # Optional: for API calls back to Stripe
+STRIPE_API_KEY=<STRIPE_API_KEY>  # Optional: for API calls back to Stripe
 ```
 
 #### Register Webhook Configuration

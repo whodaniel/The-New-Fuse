@@ -35,17 +35,13 @@
  * // Request system restart
  * POST /api/system/restart
  */
-import { Body, Controller, Logger, Post } from '@nestjs/common';
 import { Request, Response } from 'express';
-import * as fs from 'fs';
+import { Controller, Logger, Post, Body, Get } from '@nestjs/common';
 import * as os from 'os';
+import * as fs from 'fs';
 import * as path from 'path';
-import {
-  A2AMessageBrokerService,
-  A2AMessageType,
-  A2APriority,
-} from '../modules/agency-hub/services/a2a-message-broker.service';
 import { AgentSwarmOrchestrationService } from '../modules/agency-hub/services/agent-swarm-orchestration.service';
+import { A2AMessageBrokerService, A2AMessageType, A2APriority } from '../modules/agency-hub/services/a2a-message-broker.service';
 import { PromptTemplatesService } from '../services/prompt-templates.service';
 
 @Controller('system')
@@ -91,39 +87,37 @@ export class SystemController {
         currentLoad: 0,
         maxLoad: 5,
         qualityScore: 1.0,
-        status: 'active',
+        status: 'active'
       });
       log(`Agent Registered: ${agentId}`);
 
       log('--- Step 3: Agent Creates Its Own Prompt ---');
-      const initialPrompt = 'You are a helpful assistant.';
+      const initialPrompt = "You are a helpful assistant.";
       const template = await this.promptService.createTemplate({
         name: `${agentName}-Core-Prompt-${Date.now()}`,
         description: 'The core system prompt for the Evolutionary Agent',
         category: 'System',
         isPublic: false,
         tags: ['agent-core', 'evolutionary'],
-        versions: [
-          {
-            version: 1,
-            content: initialPrompt,
-            label: 'Genesis',
-            variables: {},
-            changelog: 'Initial birth',
-            isActive: true,
-          },
-        ],
+        versions: [{
+          version: 1,
+          content: initialPrompt,
+          label: 'Genesis',
+          variables: {},
+          changelog: 'Initial birth',
+          isActive: true
+        }]
       });
       log(`Prompt Template Created: ${template.id}`);
 
       log('--- Step 4: Agent Improves Its Own Prompt ---');
-      const improvedPrompt = 'You are a highly advanced AI assistant capable of self-correction.';
+      const improvedPrompt = "You are a highly advanced AI assistant capable of self-correction.";
       const version = await this.promptService.createVersion(template.id, {
         content: improvedPrompt,
         label: 'Iteration 1',
         changelog: 'Self-optimization applied',
         variables: {},
-        isActive: true,
+        isActive: true
       });
       log(`Prompt Updated to Version: ${version.version}`);
       log(`New Content: ${version.content}`);
@@ -132,14 +126,15 @@ export class SystemController {
 
       return {
         success: true,
-        logs,
+        logs
       };
+
     } catch (error) {
       this.logger.error('Verification Failed', error);
       return {
         success: false,
         error: (error as Error).message,
-        logs,
+        logs
       };
     }
   }
@@ -179,7 +174,7 @@ export class SystemController {
         currentLoad: 0,
         maxLoad: 10,
         qualityScore: 0.95,
-        status: 'active',
+        status: 'active'
       });
       log(`✓ Agent registered: ${agent1Id} (TaskMaster)`);
 
@@ -189,8 +184,8 @@ export class SystemController {
         capabilities: ['code-analysis', 'optimization'],
         currentLoad: 0,
         maxLoad: 5,
-        qualityScore: 0.9,
-        status: 'active',
+        qualityScore: 0.90,
+        status: 'active'
       });
       log(`✓ Agent registered: ${agent2Id} (Worker-Alpha)`);
 
@@ -198,9 +193,7 @@ export class SystemController {
       const swarmStatus = await this.swarmService.getSwarmStatus(agencyId);
       log(`✓ Swarm Status: ${swarmStatus.healthMetrics.overallHealth}`);
       log(`  - Active Providers: ${swarmStatus.activeProviders}/${swarmStatus.totalProviders}`);
-      log(
-        `  - Heartbeat Connectivity: ${(swarmStatus.healthMetrics.agentConnectivity * 100).toFixed(0)}%`
-      );
+      log(`  - Heartbeat Connectivity: ${(swarmStatus.healthMetrics.agentConnectivity * 100).toFixed(0)}%`);
       log('');
 
       // ==================== PILLAR 2: HEARTBEAT ====================
@@ -219,10 +212,7 @@ export class SystemController {
       log('✓ Agents registered with message broker');
 
       // Create a conversation channel
-      const channel = await this.brokerService.createChannel('agent-coordination', [
-        agent1Id,
-        agent2Id,
-      ]);
+      const channel = await this.brokerService.createChannel('agent-coordination', [agent1Id, agent2Id]);
       log(`✓ Channel created: ${channel.name}`);
 
       // Send a direct message
@@ -231,7 +221,7 @@ export class SystemController {
         from: agent1Id,
         to: agent2Id,
         payload: { task: 'Analyze codebase for optimization opportunities' },
-        priority: A2APriority.HIGH,
+        priority: A2APriority.HIGH
       });
       log(`✓ Direct message sent: ${msg1Id}`);
 
@@ -241,7 +231,7 @@ export class SystemController {
         from: agent1Id,
         to: 'broadcast',
         payload: { capabilities: ['task-coordination', 'delegation'], version: '1.0' },
-        priority: A2APriority.LOW,
+        priority: A2APriority.LOW
       });
       log(`✓ Broadcast message sent: ${msg2Id}`);
 
@@ -257,7 +247,7 @@ export class SystemController {
       await this.brokerService.sendConversationMessage(
         conversationId,
         agent1Id,
-        "Let's discuss the optimization strategy for the workflow engine."
+        'Let\'s discuss the optimization strategy for the workflow engine.'
       );
       log('✓ Conversation message sent');
 
@@ -278,7 +268,7 @@ export class SystemController {
         priority: 'high',
         payload: { target: 'workflow-engine', scope: 'performance' },
         requirements: ['code-analysis', 'optimization'],
-        assignedAgents: [], // Will be assigned by orchestrator
+        assignedAgents: [],  // Will be assigned by orchestrator
       });
       log(`✓ Task submitted to orchestrator: ${taskId}`);
 
@@ -287,7 +277,7 @@ export class SystemController {
         type: A2AMessageType.TASK_ASSIGNED,
         from: 'orchestrator',
         payload: { taskId, assignedTo: agent2Id },
-        priority: A2APriority.HIGH,
+        priority: A2APriority.HIGH
       });
       log('✓ Task assignment broadcasted via message broker');
 
@@ -304,26 +294,27 @@ export class SystemController {
         pillars: {
           orchestrator: {
             status: 'operational',
-            swarmStatus: swarmStatus,
+            swarmStatus: swarmStatus
           },
           heartbeat: {
             status: 'operational',
             interval: '30s',
-            timeout: '60s',
+            timeout: '60s'
           },
           messageBroker: {
             status: 'operational',
-            metrics: brokerMetrics,
-          },
+            metrics: brokerMetrics
+          }
         },
-        logs,
+        logs
       };
+
     } catch (error) {
       this.logger.error('Three Pillars Verification Failed', error);
       return {
         success: false,
         error: (error as Error).message,
-        logs,
+        logs
       };
     }
   }
@@ -379,8 +370,8 @@ export class SystemController {
           api: 'online',
           database: await this.checkDatabaseHealth(),
           filesystem: await this.checkFilesystemHealth(),
-          memory: this.getMemoryStatus(),
-        },
+          memory: this.getMemoryStatus()
+        }
       };
 
       res.json(health);
@@ -388,7 +379,7 @@ export class SystemController {
       this.logger.error('Health check failed:', error);
       res.status(500).json({
         status: 'unhealthy',
-        error: 'Health check failed',
+        error: 'Health check failed'
       });
     }
   }
@@ -464,27 +455,27 @@ export class SystemController {
           arch: os.arch(),
           hostname: os.hostname(),
           uptime: os.uptime(),
-          loadavg: os.loadavg(),
+          loadavg: os.loadavg()
         },
         process: {
           pid: process.pid,
           uptime: process.uptime(),
           version: process.version,
           memoryUsage: process.memoryUsage(),
-          cpuUsage: process.cpuUsage(),
+          cpuUsage: process.cpuUsage()
         },
         memory: {
           total: os.totalmem(),
           free: os.freemem(),
           used: os.totalmem() - os.freemem(),
-          usage: Math.round(((os.totalmem() - os.freemem()) / os.totalmem()) * 100),
+          usage: Math.round(((os.totalmem() - os.freemem()) / os.totalmem()) * 100)
         },
         cpu: {
           count: os.cpus().length,
           model: os.cpus()[0]?.model || 'Unknown',
-          usage: await this.getCPUUsage(),
+          usage: await this.getCPUUsage()
         },
-        disk: await this.getDiskUsage(),
+        disk: await this.getDiskUsage()
       };
 
       res.json(metrics);
@@ -531,7 +522,7 @@ export class SystemController {
         workflows: await this.checkWorkflowEngineHealth(),
         agents: await this.checkAgentSystemHealth(),
         mcp: await this.checkMCPHealth(),
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
 
       res.json(status);
@@ -573,7 +564,7 @@ export class SystemController {
 
       res.json({
         message: 'System restart initiated',
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       });
 
       // Graceful shutdown and restart
@@ -636,21 +627,21 @@ export class SystemController {
             timestamp: new Date().toISOString(),
             level: 'info',
             message: 'System health check completed',
-            service: 'system',
+            service: 'system'
           },
           {
             timestamp: new Date(Date.now() - 60000).toISOString(),
             level: 'info',
             message: 'Workflow engine started',
-            service: 'workflow',
+            service: 'workflow'
           },
           {
             timestamp: new Date(Date.now() - 120000).toISOString(),
             level: 'info',
             message: 'API server started',
-            service: 'api',
-          },
-        ],
+            service: 'api'
+          }
+        ]
       };
 
       res.json(logs);
@@ -792,11 +783,11 @@ export class SystemController {
         path: process.cwd(),
         available: 'unknown', // Would need platform-specific implementation
         used: 'unknown',
-        total: 'unknown',
+        total: 'unknown'
       };
     } catch (error) {
       return {
-        error: 'Unable to get disk usage',
+        error: 'Unable to get disk usage'
       };
     }
   }

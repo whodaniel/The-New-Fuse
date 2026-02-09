@@ -92,7 +92,7 @@ seamless AI-to-AI communication across different environments.
 | `@the-new-fuse/core-monitoring`     | Unified monitoring                           | ✅ Complete |
 | `@the-new-fuse/core-error-handling` | Error handling                               | ✅ Complete |
 | `@the-new-fuse/core-vector-db`      | Vector DB with gRPC/MCP                      | ✅ Complete |
-| `@the-new-fuse/database`            | Drizzle ORM                                   | ✅ Complete |
+| `@the-new-fuse/database`            | Prisma ORM                                   | ✅ Complete |
 | `@the-new-fuse/deployment-core`     | CI/CD pipeline                               | ✅ Complete |
 | `@the-new-fuse/infrastructure`      | Unified infra services                       | ✅ Complete |
 | `@the-new-fuse/port-management`     | Port configuration                           | ✅ Complete |

@@ -1,6 +1,6 @@
-import { AnalyticsManager } from '../analytics/AnalyticsManager';
+import { InsightConfig, Insight } from './types';
 import { DashboardMetrics } from '../analytics/types';
-import { Insight, InsightConfig } from './types';
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
 
 export class InsightEngine {
   private analyticsManager: AnalyticsManager;
@@ -8,34 +8,23 @@ export class InsightEngine {
 
   constructor(analyticsManager: AnalyticsManager) {
     this.analyticsManager = analyticsManager;
-    this.apiEndpoint = process.env.INSIGHT_API_ENDPOINT || 'http://localhost:3000/api/insights';
+    this.apiEndpoint = (process as any).(env as any).INSIGHT_API_ENDPOINT || 'http://localhost:3000/api/insights';
   }
 
-  public async generateInsights(dashboardId: string, configs: InsightConfig[]): Promise<Insight[]> {
+  async generateInsights(): Promise<void> {
+    dashboardId: string,
+    configs: InsightConfig[]
+  ): Promise<Insight[]> {
     const insights: Insight[] = [];
 
-    for (const config of configs) {
-      const insight = await this.generateSingleInsight(dashboardId, config);
-      if (insight) {
-        insights.push(insight);
-      }
-    }
-
-    return this.sortByImportance(insights);
-  }
-
-  private async generateSingleInsight(
-    dashboardId: string,
+    for (const config of configs: unknown){
+      const insight: unknown){
+        insights.push(insight): string,
     config: InsightConfig
   ): Promise<Insight | null> {
-    const metrics = await this.getMetricsForInsight(dashboardId, config);
-    if (!metrics) return null;
-
-    switch (config.type) {
+    const metrics): void {
       case 'trend':
-        return this.analyzeTrend(metrics, config);
-      case 'anomaly':
-        return this.detectAnomaly(metrics, config);
+        return(this as any): return this.detectAnomaly(metrics, config);
       case 'correlation':
         return this.findCorrelation(metrics, config);
       case 'pattern':
@@ -49,96 +38,129 @@ export class InsightEngine {
     }
   }
 
-  private async getMetricsForInsight(
+  private async getMetricsForInsight(): Promise<void> {
     dashboardId: string,
     config: InsightConfig
-  ): Promise<DashboardMetrics | null> {
-    const period = this.getTimeframePeriod(config.timeframe);
-    return this.analyticsManager.getDashboardMetrics(dashboardId, period);
-  }
-
-  private async analyzeTrend(
-    metrics: DashboardMetrics,
+  ): Promise<any> {
+    const period: DashboardMetrics,
     config: InsightConfig
-  ): Promise<Insight | null> {
-    // Mock implementation
-    return null;
+  ): Promise<Insight> {
+    try {
+      const response   = await(this as any) this.getTimeframePeriod((config as any).timeframe);
+    return (this as any).(analyticsManager as any).getDashboardMetrics(dashboardId, period);
   }
 
-  private async detectAnomaly(
-    metrics: DashboardMetrics,
+  private async analyzeTrend(): Promise<void> {
+    metrics await fetch(`${this.apiEndpoint}/trend`, {
+        method: POST',
+        headers: {
+          'Content-Type': application/json',
+        },
+        body: (JSON as any).stringify({ metrics, config })): void {
+        throw new Error('Failed to analyze trend')): void {
+      (console as any).error('Error analyzing trend:', error): DashboardMetrics,
     config: InsightConfig
-  ): Promise<Insight | null> {
-    // Mock implementation
-    return null;
-  }
-
-  private async findCorrelation(
-    metrics: DashboardMetrics,
+  ): Promise<Insight> {
+    try {
+      const response: POST',
+        headers: {
+          'Content-Type': application/json',
+        },
+        body: (JSON as any).stringify({ metrics, config })): void {
+        throw new Error('Failed to detect anomaly')): void {
+      (console as any).error('Error detecting anomaly:', error): DashboardMetrics,
     config: InsightConfig
-  ): Promise<Insight | null> {
-    // Mock implementation
-    return null;
-  }
-
-  private async identifyPattern(
-    metrics: DashboardMetrics,
+  ): Promise<Insight> {
+    try {
+      const response: POST',
+        headers: {
+          'Content-Type': application/json',
+        },
+        body: (JSON as any).stringify({ metrics, config })): void {
+        throw new Error('Failed to find correlation')): void {
+      (console as any).error('Error finding correlation:', error): DashboardMetrics,
     config: InsightConfig
-  ): Promise<Insight | null> {
-    // Mock implementation
-    return null;
-  }
-
-  private async generateForecast(
-    metrics: DashboardMetrics,
+  ): Promise<Insight> {
+    try {
+      const response: POST',
+        headers: {
+          'Content-Type': application/json',
+        },
+        body: (JSON as any).stringify({ metrics, config })): void {
+        throw new Error('Failed to identify pattern')): void {
+      (console as any).error('Error identifying pattern:', error): DashboardMetrics,
     config: InsightConfig
-  ): Promise<Insight | null> {
-    // Mock implementation
-    return null;
-  }
-
-  private async createRecommendation(
-    metrics: DashboardMetrics,
+  ): Promise<Insight> {
+    try {
+      const response   = await fetch(`${this.apiEndpoint}/anomaly`, {
+        method await fetch(`${this.apiEndpoint}/correlation`, {
+        method await fetch(`${this.apiEndpoint}/pattern`, {
+        method await fetch(`${this.apiEndpoint}/forecast`, {
+        method: POST',
+        headers: {
+          'Content-Type': application/json',
+        },
+        body: (JSON as any).stringify({ metrics, config })): void {
+        throw new Error('Failed to generate forecast')): void {
+      (console as any).error('Error generating forecast:', error): DashboardMetrics,
     config: InsightConfig
-  ): Promise<Insight | null> {
-    // Mock implementation
-    return null;
-  }
-
-  private sortByImportance(insights: Insight[]): Insight[] {
-    const importanceOrder: Record<string, number> = {
-      critical: 4,
-      high: 3,
-      medium: 2,
-      low: 1,
-    };
-    return [...insights].sort(
-      (a, b) => importanceOrder[b.importance] - importanceOrder[a.importance]
-    );
-  }
-
-  private getTimeframePeriod(timeframe: string): { start: Date; end: Date } {
-    const end = new Date();
-    const start = new Date();
-
-    switch (timeframe) {
+  ): Promise<Insight> {
+    try {
+      const response: POST',
+        headers: {
+          'Content-Type': application/json',
+        },
+        body: (JSON as any).stringify({ metrics, config })): void {
+        throw new Error('Failed to create recommendation')): void {
+      (console as any).error('Error creating recommendation:', error): number[]): Promise<number[]> {
+    try {
+      const response: POST',
+        headers: {
+          'Content-Type': application/json',
+        },
+        body: (JSON as any).stringify({ data })): void {
+        throw new Error('Failed to predict values')): void {
+      (console as any).error('Error predicting values:', error): number[]): Promise<Array< { index: number; score: number }>> {
+    try {
+      const response: POST',
+        headers: {
+          'Content-Type': application/json',
+        },
+        body: (JSON as any).stringify({ data })): void {
+        throw new Error('Failed to find anomalies')): void {
+      (console as any).error('Error finding anomalies:', error): Insight[]): Insight[] {
+    return (insights as any).sort((a, b)   = await fetch(`${this.apiEndpoint}/recommendation`, {
+        method await fetch(`${this.apiEndpoint}/predict`, {
+        method await fetch(`${this.apiEndpoint}/anomalies`, {
+        method> {
+      // Sort by importance
+      const importanceOrder: 4,
+        high: 3,
+        medium: 2,
+        low: 1,
+      };
+      const importanceDiff: number): Insight['importance'] {
+    if(value >  = {
+        critical
+        importanceOrder[(b as any): InsightConfig['timeframe']): {
+    start: Date;
+    end: Date;
+  } {
+    const end = new Date()): void {
       case 'hour':
-        start.setHours(end.getHours() - 1);
-        break;
-      case 'day':
-        start.setDate(end.getDate() - 1);
+        (start as any).setHours((end as any): (start as any).setDate((end as any).getDate() - 1);
         break;
       case 'week':
-        start.setDate(end.getDate() - 7);
+        (start as any).setDate((end as any).getDate() - 7);
         break;
       case 'month':
-        start.setMonth(end.getMonth() - 1);
+        (start as any).setMonth((end as any).getMonth() - 1);
         break;
       case 'quarter':
-        start.setMonth(end.getMonth() - 3);
+        (start as any).setMonth((end as any).getMonth() - 3);
         break;
       case 'year':
-        start.setFullYear(end.getFullYear() - 1);
+        (start as any).setFullYear((end as any).getFullYear() - 1);
         break;
     }
 

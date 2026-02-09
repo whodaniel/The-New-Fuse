@@ -4,13 +4,13 @@
  */
 
 import {
-  BaseMonitoringConfig,
   BaseMonitoringSystem,
+  BaseMonitoringConfig,
   IMetricsCollector,
-  Logger,
+  Logger
 } from '@the-new-fuse/core-monitoring';
-import { PerformanceMetrics } from '../types/monitoring';
 import { MCPMetricsCollector } from './MCPMetricsCollector';
+import { PerformanceMetrics } from '../types/monitoring';
 
 /**
  * MCP monitoring configuration
@@ -26,10 +26,8 @@ export interface MCPMonitoringConfig extends BaseMonitoringConfig {
 /**
  * MCP monitoring system implementation
  */
-export class MCPMonitoringSystem extends BaseMonitoringSystem<
-  PerformanceMetrics,
-  MCPMonitoringConfig
-> {
+export class MCPMonitoringSystem extends BaseMonitoringSystem<PerformanceMetrics, MCPMonitoringConfig> {
+
   constructor(logger?: Logger) {
     super(logger || new Logger('MCPMonitoringSystem'));
   }
@@ -42,14 +40,11 @@ export class MCPMonitoringSystem extends BaseMonitoringSystem<
       throw new Error('Configuration not set');
     }
 
-    return new MCPMetricsCollector(
-      {
-        interval: this.config.metricsInterval,
-        retentionPeriod: this.config.retentionPeriod,
-        storage: this.config.storage || { type: 'memory' },
-      },
-      this.logger
-    );
+    return new MCPMetricsCollector({
+      interval: this.config.metricsInterval,
+      retentionPeriod: this.config.retentionPeriod,
+      storage: this.config.storage || { type: 'memory' }
+    }, this.logger);
   }
 
   /**
@@ -60,11 +55,8 @@ export class MCPMonitoringSystem extends BaseMonitoringSystem<
 
     // Helper function to add metric
     const addMetric = (name: string, value: number, labels?: Record<string, string>) => {
-      const labelStr = labels
-        ? `{${Object.entries(labels)
-            .map(([k, v]) => `${k}="${v}"`)
-            .join(',')}}`
-        : '';
+      const labelStr = labels ?
+        `{${Object.entries(labels).map(([k, v]) => `${k}="${v}"`).join(',')}}` : '';
       lines.push(`mcp_${name}${labelStr} ${value}`);
     };
 
@@ -119,7 +111,7 @@ export class MCPMonitoringSystem extends BaseMonitoringSystem<
       connections: metrics.connections.active,
       resources: metrics.resources.total,
       tools: metrics.tools.total,
-      requests: metrics.requests.total,
+      requests: metrics.requests.total
     };
   }
 

@@ -50,10 +50,10 @@ export class HealthController {
   /**
    * Constructor for HealthController
    *
-   * @param db - Database service for connectivity testing
+   * @param prisma - Prisma service for database connectivity testing
    *
    * @example
-   * const controller = new HealthController(db);
+   * const controller = new HealthController(prisma);
    */
   constructor(private readonly db: DatabaseService) {}
 

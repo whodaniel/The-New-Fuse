@@ -1,18 +1,19 @@
-import {
-  ChartBarIcon,
-  CheckIcon,
-  ClipboardDocumentIcon,
-  CodeBracketIcon,
-  CogIcon,
-  DocumentTextIcon,
+import React, { useState } from 'react';
+import { 
+  Squares2X2Icon,
+  ViewColumnsIcon,
+  RectangleStackIcon,
+  TableCellsIcon,
   ListBulletIcon,
   PhotoIcon,
-  RectangleStackIcon,
-  Squares2X2Icon,
-  TableCellsIcon,
-  ViewColumnsIcon,
+  ChartBarIcon,
+  DocumentTextIcon,
+  CogIcon,
+  EyeIcon,
+  CodeBracketIcon,
+  ClipboardDocumentIcon,
+  CheckIcon
 } from '@heroicons/react/24/outline';
-import React, { useState } from 'react';
 
 interface LayoutExample {
   id: string;
@@ -41,7 +42,7 @@ const LayoutExamples: React.FC = () => {
     { id: 'navigation', name: 'Navigation', icon: ListBulletIcon },
     { id: 'content', name: 'Content', icon: PhotoIcon },
     { id: 'data', name: 'Data Display', icon: TableCellsIcon },
-    { id: 'admin', name: 'Admin', icon: CogIcon },
+    { id: 'admin', name: 'Admin', icon: CogIcon }
   ];
 
   const layouts: LayoutExample[] = [
@@ -68,7 +69,7 @@ const LayoutExamples: React.FC = () => {
       tags: ['grid', 'responsive', 'cards'],
       complexity: 'beginner',
       responsive: true,
-      darkMode: true,
+      darkMode: true
     },
     {
       id: 'sidebar-layout',
@@ -98,7 +99,7 @@ const LayoutExamples: React.FC = () => {
       tags: ['sidebar', 'navigation', 'responsive'],
       complexity: 'intermediate',
       responsive: true,
-      darkMode: true,
+      darkMode: true
     },
     {
       id: 'form-layout',
@@ -138,7 +139,7 @@ const LayoutExamples: React.FC = () => {
       tags: ['form', 'steps', 'validation'],
       complexity: 'intermediate',
       responsive: true,
-      darkMode: true,
+      darkMode: true
     },
     {
       id: 'data-table',
@@ -198,7 +199,7 @@ const LayoutExamples: React.FC = () => {
       tags: ['table', 'data', 'sorting', 'pagination'],
       complexity: 'advanced',
       responsive: true,
-      darkMode: true,
+      darkMode: true
     },
     {
       id: 'card-grid',
@@ -225,7 +226,7 @@ const LayoutExamples: React.FC = () => {
       tags: ['cards', 'grid', 'responsive'],
       complexity: 'beginner',
       responsive: true,
-      darkMode: true,
+      darkMode: true
     },
     {
       id: 'admin-panel',
@@ -282,14 +283,13 @@ const LayoutExamples: React.FC = () => {
       tags: ['admin', 'header', 'sidebar', 'layout'],
       complexity: 'advanced',
       responsive: true,
-      darkMode: true,
-    },
+      darkMode: true
+    }
   ];
 
-  const filteredLayouts =
-    selectedCategory === 'all'
-      ? layouts
-      : layouts.filter((layout) => layout.category === selectedCategory);
+  const filteredLayouts = selectedCategory === 'all' 
+    ? layouts 
+    : layouts.filter(layout => layout.category === selectedCategory);
 
   const copyToClipboard = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -315,7 +315,9 @@ const LayoutExamples: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Layout Examples</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+            Layout Examples
+          </h1>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             Explore different layout patterns and components for your applications
           </p>
@@ -395,9 +397,7 @@ const LayoutExamples: React.FC = () => {
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                           {layout.name}
                         </h3>
-                        <span
-                          className={`px-2 py-1 text-xs font-medium rounded-full ${getComplexityColor(layout.complexity)}`}
-                        >
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getComplexityColor(layout.complexity)}`}>
                           {layout.complexity}
                         </span>
                       </div>
@@ -427,10 +427,7 @@ const LayoutExamples: React.FC = () => {
                             </span>
                           )}
                           {layout.darkMode && (
-                            <span
-                              className="text-purple-600 dark:text-purple-400"
-                              title="Dark mode support"
-                            >
+                            <span className="text-purple-600 dark:text-purple-400" title="Dark mode support">
                               <RectangleStackIcon className="w-4 h-4" />
                             </span>
                           )}
@@ -468,9 +465,7 @@ const LayoutExamples: React.FC = () => {
                           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                             {layout.name}
                           </h3>
-                          <span
-                            className={`px-2 py-1 text-xs font-medium rounded-full ${getComplexityColor(layout.complexity)}`}
-                          >
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getComplexityColor(layout.complexity)}`}>
                             {layout.complexity}
                           </span>
                         </div>
@@ -491,18 +486,12 @@ const LayoutExamples: React.FC = () => {
                           <div className="flex items-center space-x-4">
                             <div className="flex items-center space-x-2">
                               {layout.responsive && (
-                                <span
-                                  className="text-green-600 dark:text-green-400"
-                                  title="Responsive"
-                                >
+                                <span className="text-green-600 dark:text-green-400" title="Responsive">
                                   <ViewColumnsIcon className="w-4 h-4" />
                                 </span>
                               )}
                               {layout.darkMode && (
-                                <span
-                                  className="text-purple-600 dark:text-purple-400"
-                                  title="Dark mode support"
-                                >
+                                <span className="text-purple-600 dark:text-purple-400" title="Dark mode support">
                                   <RectangleStackIcon className="w-4 h-4" />
                                 </span>
                               )}
@@ -565,11 +554,7 @@ const LayoutExamples: React.FC = () => {
                     title="Close"
                   >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        fillRule="evenodd"
-                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   </button>
                 </div>

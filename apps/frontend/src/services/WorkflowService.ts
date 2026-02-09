@@ -77,42 +77,12 @@ const MOCK_CODE_REVIEW_WORKFLOW: Workflow = {
   createdBy: 'ai-seeder',
   tags: ['ci-cd', 'security'],
   nodes: [
-    {
-      id: 'node-start',
-      type: 'input',
-      position: { x: 50, y: 50 },
-      data: { label: 'GitHub PR Open', type: 'input' },
-    },
-    {
-      id: 'node-lint',
-      type: 'agent',
-      position: { x: 50, y: 150 },
-      data: { label: 'Lint Bot', type: 'agent', status: 'idle' },
-    },
-    {
-      id: 'node-condition',
-      type: 'condition',
-      position: { x: 50, y: 280 },
-      data: { label: 'Is Clean?', type: 'condition' },
-    },
-    {
-      id: 'node-review',
-      type: 'agent',
-      position: { x: -100, y: 400 },
-      data: { label: 'Senior Reviewer', type: 'agent', status: 'idle' },
-    },
-    {
-      id: 'node-security',
-      type: 'agent',
-      position: { x: 200, y: 400 },
-      data: { label: 'Security Scan', type: 'agent', status: 'idle' },
-    },
-    {
-      id: 'node-end',
-      type: 'output',
-      position: { x: 50, y: 550 },
-      data: { label: 'Merge Report', type: 'output' },
-    },
+    { id: 'node-start', type: 'input', position: { x: 50, y: 50 }, data: { label: 'GitHub PR Open', type: 'input' } },
+    { id: 'node-lint', type: 'agent', position: { x: 50, y: 150 }, data: { label: 'Lint Bot', type: 'agent', status: 'idle' } },
+    { id: 'node-condition', type: 'condition', position: { x: 50, y: 280 }, data: { label: 'Is Clean?', type: 'condition' } },
+    { id: 'node-review', type: 'agent', position: { x: -100, y: 400 }, data: { label: 'Senior Reviewer', type: 'agent', status: 'idle' } },
+    { id: 'node-security', type: 'agent', position: { x: 200, y: 400 }, data: { label: 'Security Scan', type: 'agent', status: 'idle' } },
+    { id: 'node-end', type: 'output', position: { x: 50, y: 550 }, data: { label: 'Merge Report', type: 'output' } },
   ],
   edges: [
     { id: 'e1', source: 'node-start', target: 'node-lint' },
@@ -121,7 +91,7 @@ const MOCK_CODE_REVIEW_WORKFLOW: Workflow = {
     { id: 'e4', source: 'node-condition', target: 'node-security', label: 'No' },
     { id: 'e5', source: 'node-review', target: 'node-end' },
     { id: 'e6', source: 'node-security', target: 'node-end' },
-  ],
+  ]
 };
 
 class WorkflowService {
@@ -172,10 +142,10 @@ class WorkflowService {
       const workflow = await this.request<any>(`/workflows/${id}`);
       return this.transformWorkflow(workflow);
     } catch (error) {
-      // If ID matches mock, return mock
-      if (id === MOCK_CODE_REVIEW_WORKFLOW.id) {
-        return MOCK_CODE_REVIEW_WORKFLOW;
-      }
+       // If ID matches mock, return mock
+       if (id === MOCK_CODE_REVIEW_WORKFLOW.id) {
+         return MOCK_CODE_REVIEW_WORKFLOW;
+       }
       console.error(`Failed to fetch workflow ${id}:`, error);
       throw error;
     }

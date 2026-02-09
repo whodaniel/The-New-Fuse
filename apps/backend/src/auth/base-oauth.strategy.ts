@@ -63,7 +63,7 @@ export abstract class BaseOAuthStrategy {
           emailVerified: true,
           role: 'USER',
           isActive: true,
-        } as any);
+        });
       }
 
       done(null, user);

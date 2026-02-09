@@ -1,7 +1,6 @@
 # Agent Registration Protocol
 
-This document describes the standard protocol for registering AI agents in The
-New Fuse platform and making their tools available to other agents.
+This document describes the standard protocol for registering AI agents in The New Fuse platform and making their tools available to other agents.
 
 ## Overview
 
@@ -12,8 +11,7 @@ The agent registration protocol provides a standardized way for AI agents to:
 3. Make these tools available to other agents
 4. Discover other agents and their capabilities
 
-This protocol ensures that all agents in the system can be properly discovered,
-monitored, and utilized.
+This protocol ensures that all agents in the system can be properly discovered, monitored, and utilized.
 
 ## Registration Process
 
@@ -48,8 +46,7 @@ Agents discover available tools through the MCP Broker:
 const mcpTools = await agentDiscoveryService.discoverMCPTools();
 ```
 
-This returns a structured list of all available MCP tools, categorized by
-server.
+This returns a structured list of all available MCP tools, categorized by server.
 
 ### 3. Tool Registration
 
@@ -71,7 +68,7 @@ const agents = await agentDiscoveryService.discoverAgents();
 
 Agents are stored in the database with the following schema:
 
-```drizzle
+```prisma
 model Agent {
   id          String       @id @default(uuid())
   name        String
@@ -126,7 +123,7 @@ const augmentAgent = await agentDiscoveryService.registerAgent(
     'documentation',
     'refactoring',
     'debugging',
-    'testing',
+    'testing'
   ],
   mcpTools
 );
@@ -134,7 +131,4 @@ const augmentAgent = await agentDiscoveryService.registerAgent(
 
 ## Conclusion
 
-This standardized registration protocol ensures that all agents in The New Fuse
-platform can be properly discovered, monitored, and utilized. By following this
-protocol, agents can seamlessly integrate with the platform and make their
-capabilities available to other agents.
+This standardized registration protocol ensures that all agents in The New Fuse platform can be properly discovered, monitored, and utilized. By following this protocol, agents can seamlessly integrate with the platform and make their capabilities available to other agents.

@@ -1,6 +1,6 @@
 export interface DataFetcherConfig {
   url: string;
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: GET' | 'POST' | 'PUT' | 'DELETE';
   headers?: Record<string, string>;
   body?: unknown;
   queryParams?: Record<string, string>;
@@ -19,7 +19,40 @@ export interface DataFetcherResponse<T = any> {
 
 export interface WebSocketConfig {
   url: string;
-  protocols?: string[];
-  reconnectInterval?: number;
-  maxRetries?: number;
+  protocols?: string | string[];
+  reconnect?: boolean;
+  reconnectAttempts?: number;
+  reconnectDelay?: number;
+  onMessage?: (data: unknown) => void;
+  onError?: (error: Error) => void;
+  onClose?: () => void;
+}
+
+export interface CacheConfig {
+  key: string;
+  ttl?: number; // Time to live in milliseconds
+  staleWhileRevalidate?: boolean;
+  maxAge?: number;
+}
+
+export interface CacheEntry<T = any> {
+  data: T;
+  timestamp: number;
+  expiresAt: number;
+}
+
+export type DataTransformer<T = any, R = any> = (data: T) => R | Promise<R>;
+
+export interface SubscriptionConfig {
+  key: string;
+  callback: (data: unknown) => void;
+  errorCallback?: (error: Error) => void;
+  filter?: (data: unknown) => boolean;
+}
+
+export interface DataSourceState {
+  loading: boolean;
+  error?: Error;
+  lastUpdated?: number;
+  nextUpdate?: number;
 }

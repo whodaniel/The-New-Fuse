@@ -52,8 +52,8 @@ bun --filter @the-new-fuse/database run build >> "$LOGS_DIR/build.log" 2>&1
 
 # Step 3: Database setup
 echo "📊 Step 3: Setting up database..."
-bun drizzle:generate > "$LOGS_DIR/database.log" 2>&1
-bun drizzle:migrate >> "$LOGS_DIR/database.log" 2>&1
+bun prisma:generate > "$LOGS_DIR/database.log" 2>&1
+bun prisma:migrate >> "$LOGS_DIR/database.log" 2>&1
 
 # Step 4: Start services
 echo "🚀 Step 4: Starting services..."

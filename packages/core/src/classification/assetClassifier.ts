@@ -40,23 +40,9 @@ export interface ClassificationResult {
 
 export class AssetClassifier {
   private categoryKeywords: Record<AssetCategory, string[]> = {
-    [AssetCategory.ALGORITHM]: [
-      'complexity',
-      'optimization',
-      'computation',
-      'algorithm',
-      'sort',
-      'search',
-    ],
+    [AssetCategory.ALGORITHM]: ['complexity', 'optimization', 'computation', 'algorithm', 'sort', 'search'],
     [AssetCategory.PROTOCOL]: ['communication', 'handshake', 'exchange', 'protocol', 'tcp', 'udp'],
-    [AssetCategory.FRAMEWORK]: [
-      'extensible',
-      'configurable',
-      'plugin',
-      'framework',
-      'mvc',
-      'architecture',
-    ],
+    [AssetCategory.FRAMEWORK]: ['extensible', 'configurable', 'plugin', 'framework', 'mvc', 'architecture'],
     [AssetCategory.TOOL]: ['utility', 'cli', 'standalone', 'tool', 'helper'],
     [AssetCategory.MODEL]: ['training', 'inference', 'prediction', 'model', 'ml', 'ai'],
     [AssetCategory.LIBRARY]: ['reusable', 'import', 'module', 'library', 'package', 'dependency'],
@@ -65,24 +51,12 @@ export class AssetClassifier {
   };
 
   private qualityKeywords: Record<AssetQuality, string[]> = {
-    [AssetQuality.INNOVATIVE]: [
-      'novel',
-      'innovative',
-      'breakthrough',
-      'cutting-edge',
-      'pioneering',
-    ],
+    [AssetQuality.INNOVATIVE]: ['novel', 'innovative', 'breakthrough', 'cutting-edge', 'pioneering'],
     [AssetQuality.EFFICIENT]: ['efficient', 'optimized', 'fast', 'performance', 'speed'],
     [AssetQuality.SCALABLE]: ['scalable', 'distributed', 'horizontal', 'vertical', 'growth'],
     [AssetQuality.MAINTAINABLE]: ['maintainable', 'clean', 'readable', 'testable', 'modular'],
     [AssetQuality.SECURE]: ['secure', 'encryption', 'authentication', 'authorization', 'safe'],
-    [AssetQuality.PERFORMANT]: [
-      'performant',
-      'fast',
-      'responsive',
-      'low-latency',
-      'high-throughput',
-    ],
+    [AssetQuality.PERFORMANT]: ['performant', 'fast', 'responsive', 'low-latency', 'high-throughput'],
     [AssetQuality.REUSABLE]: ['reusable', 'modular', 'component', 'library', 'generic'],
     [AssetQuality.DOCUMENTED]: ['documented', 'readme', 'docs', 'comments', 'examples'],
   };
@@ -108,7 +82,7 @@ export class AssetClassifier {
     // Determine quality attributes
     const qualities: AssetQuality[] = [];
     for (const [quality, keywords] of Object.entries(this.qualityKeywords)) {
-      const hasQuality = keywords.some((keyword) => content.includes(keyword));
+      const hasQuality = keywords.some(keyword => content.includes(keyword));
       if (hasQuality) {
         qualities.push(quality as AssetQuality);
       }
@@ -125,21 +99,17 @@ export class AssetClassifier {
       quality: qualities,
       confidence,
       tags,
-      summary: this.generateSummary(assetData, bestCategory, qualities),
+      summary: this.generateSummary(assetData, bestCategory, qualities)
     };
   }
 
   private extractTags(content: string): string[] {
     // Simple tag extraction based on common technical terms
     const commonTags = ['typescript', 'javascript', 'react', 'node', 'api', 'database', 'testing'];
-    return commonTags.filter((tag) => content.includes(tag));
+    return commonTags.filter(tag => content.includes(tag));
   }
 
-  private generateSummary(
-    assetData: AssetData,
-    category: AssetCategory,
-    qualities: AssetQuality[],
-  ): string {
+  private generateSummary(assetData: AssetData, category: AssetCategory, qualities: AssetQuality[]): string {
     return `${assetData.name} is classified as a ${category} with ${qualities.length} quality attributes: ${qualities.join(', ')}`;
   }
 }

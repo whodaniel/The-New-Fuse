@@ -12,32 +12,32 @@ export class AgentProcessor {
   }> {
     try {
       this.logger.log('Processing agent', { agentId: agent.config.id });
-
+      
       // Validate agent configuration
       if (!this.validateAgentConfig(agent.config)) {
         return {
           success: false,
-          message: 'Invalid agent configuration',
+          message: 'Invalid agent configuration'
         };
       }
 
       // Process agent tasks
       const result = await this.executeAgentTasks(agent);
-
+      
       // Update agent state
       await this.updateAgentStatus(agent.config.id, 'busy');
-
+      
       return {
         success: true,
         message: 'Agent processed successfully',
-        result,
+        result
       };
     } catch (error) {
       this.logger.error('Failed to process agent', { error, agentId: agent.config.id });
       await this.updateAgentStatus(agent.config.id, 'error');
       return {
         success: false,
-        message: 'Agent processing failed',
+        message: 'Agent processing failed'
       };
     }
   }
@@ -60,7 +60,7 @@ export class AgentProcessor {
   private async executeAgentTasks(agent: Agent): Promise<unknown> {
     // Implementation for executing agent tasks
     this.logger.log('Executing agent tasks', { agentId: agent.config.id });
-
+    
     // Process pending tasks
     const results: Array<{ taskId: string; status: string }> = [];
     for (const task of agent.tasks) {
@@ -69,7 +69,7 @@ export class AgentProcessor {
         results.push({ taskId: task.id, status: 'completed' });
       }
     }
-
+    
     return results;
   }
 }

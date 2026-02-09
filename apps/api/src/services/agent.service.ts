@@ -35,7 +35,6 @@ export class AgentService {
         capabilities: createAgentDto.capabilities as any,
         config: createAgentDto.configuration as any,
         provider: createAgentDto.provider,
-        avatarUrl: (createAgentDto as any).avatarUrl,
         status: AgentStatus.INACTIVE as any,
         userId: userId,
       };
@@ -66,9 +65,7 @@ export class AgentService {
           limit,
         };
       } else {
-        // Use system-level access for admin operations
-        const result = await this.agentRepository.findAllSystem(page, limit);
-        agents = result.data;
+        agents = await this.agentRepository.findAll(limit);
       }
 
       return {
@@ -83,11 +80,9 @@ export class AgentService {
     }
   }
 
-  async findAgentById(id: string, userId?: string): Promise<AgentResponseDto> {
+  async findAgentById(id: string): Promise<AgentResponseDto> {
     try {
-      const agent = userId
-        ? await this.agentRepository.findById(id, userId)
-        : await this.agentRepository.findByIdSystem(id);
+      const agent = await this.agentRepository.findById(id);
       if (!agent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
@@ -102,13 +97,9 @@ export class AgentService {
     }
   }
 
-  async updateAgent(
-    id: string,
-    updateAgentDto: UpdateAgentDto,
-    userId?: string
-  ): Promise<AgentResponseDto> {
+  async updateAgent(id: string, updateAgentDto: UpdateAgentDto): Promise<AgentResponseDto> {
     try {
-      const existingAgent = await this.agentRepository.findByIdSystem(id);
+      const existingAgent = await this.agentRepository.findById(id);
       if (!existingAgent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
@@ -126,9 +117,7 @@ export class AgentService {
       if (updateAgentDto.capabilities !== undefined)
         updateData.capabilities = updateAgentDto.capabilities;
 
-      // Use the existing agent's userId if not provided
-      const effectiveUserId = userId || existingAgent.userId;
-      const agent = await this.agentRepository.update(id, effectiveUserId, updateData);
+      const agent = await this.agentRepository.update(id, updateData);
       if (!agent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
@@ -142,16 +131,14 @@ export class AgentService {
     }
   }
 
-  async deleteAgent(id: string, userId?: string): Promise<void> {
+  async deleteAgent(id: string): Promise<void> {
     try {
-      const existingAgent = await this.agentRepository.findByIdSystem(id);
+      const existingAgent = await this.agentRepository.findById(id);
       if (!existingAgent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
 
-      // Use the existing agent's userId if not provided
-      const effectiveUserId = userId || existingAgent.userId;
-      await this.agentRepository.softDelete(id, effectiveUserId);
+      await this.agentRepository.softDelete(id);
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -167,9 +154,9 @@ export class AgentService {
     _limit: number = 50
   ): Promise<{ data: AgentResponseDto[]; total: number }> {
     try {
-      // Use system-level access to filter by type since there's no direct findByType
-      const result = await this.agentRepository.findAllSystem(1, 100);
-      const filteredAgents = result.data.filter((a: any) => a.type === type);
+      // Use search to filter by type since there's no direct findByType
+      const agents = await this.agentRepository.findAll(100);
+      const filteredAgents = agents.filter((a: any) => a.type === type);
 
       return {
         data: filteredAgents.map((agent: any) => this.mapAgentToResponse(agent)),
@@ -183,9 +170,9 @@ export class AgentService {
 
   async findAgentsByStatus(status: AgentStatus): Promise<AgentResponseDto[]> {
     try {
-      // Use system-level access to filter by status
-      const result = await this.agentRepository.findAllSystem(1, 100);
-      const filteredAgents = result.data.filter((a: any) => a.status === status);
+      // Filter by status from all agents
+      const agents = await this.agentRepository.findAll(100);
+      const filteredAgents = agents.filter((a: any) => a.status === status);
 
       return filteredAgents.map((agent: any) => this.mapAgentToResponse(agent));
     } catch (error: unknown) {
@@ -214,7 +201,7 @@ export class AgentService {
 
   async updateAgentStatus(id: string, status: AgentStatus): Promise<AgentResponseDto> {
     try {
-      const existingAgent = await this.agentRepository.findByIdSystem(id);
+      const existingAgent = await this.agentRepository.findById(id);
       if (!existingAgent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
@@ -233,32 +220,14 @@ export class AgentService {
     }
   }
 
-  async getActiveAgents(userId?: string): Promise<AgentResponseDto[]> {
-    // If userId is provided, use findActiveByUser, otherwise filter from system-level
-    if (userId) {
-      const agents = await this.agentRepository.findActive(userId);
-      return agents.map((agent: any) => this.mapAgentToResponse(agent));
-    }
-    // For system-level, get all active from findAllSystem and filter
-    const result = await this.agentRepository.findAllSystem(1, 100);
-    const activeAgents = result.data.filter((a: any) => a.status === 'ACTIVE');
-    return activeAgents.map((agent: any) => this.mapAgentToResponse(agent));
-  }
-
-  async getAgentRegistry(): Promise<AgentResponseDto[]> {
-    try {
-      // Fetch all agents to create a registry/catalog view using system-level access
-      const result = await this.agentRepository.findAllSystem(1, 1000);
-      return result.data.map((agent: any) => this.mapAgentToResponse(agent));
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      throw new BadRequestException(`Failed to fetch agent registry: ${errorMessage}`);
-    }
+  async getActiveAgents(): Promise<AgentResponseDto[]> {
+    const agents = await this.agentRepository.findActive();
+    return agents.map((agent: any) => this.mapAgentToResponse(agent));
   }
 
   async getAgentStats(id: string): Promise<any> {
     try {
-      const agent = await this.agentRepository.findByIdSystem(id);
+      const agent = await this.agentRepository.findById(id);
       if (!agent) {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
@@ -342,7 +311,6 @@ export class AgentService {
       capabilities: agent.capabilities
         ? agent.capabilities.map((cap: any) => cap as AgentCapability)
         : [],
-      avatarUrl: agent.avatarUrl,
       lastActive: agent.lastActiveAt || new Date(),
     } as AgentResponseDto;
   }

@@ -9,8 +9,8 @@
  * - Error handling and retry logic
  */
 
-import { Logger } from '@nestjs/common';
 import { MCPClient } from '@the-new-fuse/mcp-core/client';
+import { Logger } from '@nestjs/common';
 
 export class APIIntegrationAgent {
   private readonly logger = new Logger(APIIntegrationAgent.name);
@@ -157,7 +157,10 @@ export class APIIntegrationAgent {
   /**
    * Wait for task completion
    */
-  private async waitForTaskCompletion(taskId: string, maxAttempts = 30): Promise<any> {
+  private async waitForTaskCompletion(
+    taskId: string,
+    maxAttempts = 30
+  ): Promise<any> {
     let attempts = 0;
 
     while (attempts < maxAttempts) {
@@ -235,7 +238,11 @@ export class APIIntegrationAgent {
   /**
    * Handle API errors with retry logic
    */
-  async fetchWithRetry(apiUrl: string, maxRetries = 3, backoffMs = 1000): Promise<any> {
+  async fetchWithRetry(
+    apiUrl: string,
+    maxRetries = 3,
+    backoffMs = 1000
+  ): Promise<any> {
     let lastError: any;
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -247,7 +254,9 @@ export class APIIntegrationAgent {
 
         if (attempt < maxRetries) {
           // Exponential backoff
-          await new Promise((resolve) => setTimeout(resolve, backoffMs * Math.pow(2, attempt)));
+          await new Promise((resolve) =>
+            setTimeout(resolve, backoffMs * Math.pow(2, attempt))
+          );
         }
       }
     }
@@ -291,7 +300,10 @@ export class APIIntegrationAgent {
  * Example usage
  */
 export async function runAPIIntegrationExample(): Promise<void> {
-  const agent = new APIIntegrationAgent('api_integrator_001', 'ws://localhost:3100');
+  const agent = new APIIntegrationAgent(
+    'api_integrator_001',
+    'ws://localhost:3100'
+  );
 
   try {
     // Fetch and process data

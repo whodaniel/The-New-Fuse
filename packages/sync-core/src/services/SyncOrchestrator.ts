@@ -1,17 +1,17 @@
-import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { DatabaseService } from '@the-new-fuse/database';
-import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { PromptTemplateServiceImpl } from '@the-new-fuse/prompt-templating';
+import { Injectable, Logger, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
 import { EventEmitter } from 'events';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { PrismaService } from '@the-new-fuse/database';
+import { PromptTemplateServiceImpl } from '@the-new-fuse/prompt-templating';
 import {
-  ConflictResolution,
-  ConflictResolutionStrategy,
-  SyncConflictData,
-  SyncMetrics,
-  SyncOperation,
-  SyncResourceType,
   SyncStateData,
+  SyncConflictData,
+  SyncOperation,
   TenantSyncContext,
+  SyncMetrics,
+  SyncResourceType,
+  ConflictResolution,
+  ConflictResolutionStrategy
 } from '../types';
 
 export interface AgentState {
@@ -49,14 +49,14 @@ export interface SyncOrchestratorConfig {
 @Injectable()
 export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(SyncOrchestrator.name);
-
+  
   private readonly config: SyncOrchestratorConfig = {
     syncChannelPrefix: 'sync:',
     conflictChannelPrefix: 'conflict:',
     batchSize: 50,
     syncTimeout: 30000,
     retryAttempts: 3,
-    tenantIsolationEnabled: true,
+    tenantIsolationEnabled: true
   };
 
   private metrics: SyncMetrics = {
@@ -64,20 +64,20 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
       sync: 0,
       conflicts: 0,
       fileChanges: 0,
-      clockSync: 0,
+      clockSync: 0
     },
     performance: {
       avgSyncLatency: 0,
       maxSyncLatency: 0,
       conflictRate: 0,
-      successRate: 0,
+      successRate: 0
     },
     resources: {
       activeTenants: 0,
       watchedFiles: 0,
       syncedResources: 0,
-      pendingOperations: 0,
-    },
+      pendingOperations: 0
+    }
   };
 
   private activeSyncOperations: Map<string, SyncOperation> = new Map();
@@ -86,7 +86,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
   constructor(
     private readonly redisService: UnifiedRedisService,
     @Inject('IWebSocketService') private readonly wsService: IWebSocketService,
-    private readonly dbService: DatabaseService,
+    private readonly dbService: PrismaService,
     private readonly promptTemplateService: PromptTemplateServiceImpl
   ) {
     super();
@@ -109,14 +109,20 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
    */
   private async initializeChannelSubscriptions(): Promise<void> {
     // Subscribe to sync events
-    await this.redisService.psubscribe(`${this.config.syncChannelPrefix}*`, async (message) => {
-      await this.handleSyncMessage(message);
-    });
+    await this.redisService.psubscribe(
+      `${this.config.syncChannelPrefix}*`,
+      async (message) => {
+        await this.handleSyncMessage(message);
+      }
+    );
 
     // Subscribe to conflict events
-    await this.redisService.psubscribe(`${this.config.conflictChannelPrefix}*`, async (message) => {
-      await this.handleConflictMessage(message);
-    });
+    await this.redisService.psubscribe(
+      `${this.config.conflictChannelPrefix}*`,
+      async (message) => {
+        await this.handleConflictMessage(message);
+      }
+    );
 
     this.logger.log('Channel subscriptions initialized');
   }
@@ -132,7 +138,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
           id: true,
           role: true,
           // Add tenant-related fields as they exist in your schema
-        },
+        }
       });
 
       for (const user of users) {
@@ -141,7 +147,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
           tenantId,
           userId: user.id,
           permissions: this.getUserPermissions(user.role),
-          isolationLevel: 'strict',
+          isolationLevel: 'strict'
         };
         this.tenantContexts.set(tenantId, context);
       }
@@ -156,9 +162,13 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
   /**
    * Sync tenant-specific data across all instances
    */
-  async syncTenantData(tenantId: string, dataType: SyncResourceType, data: any): Promise<void> {
+  async syncTenantData(
+    tenantId: string,
+    dataType: SyncResourceType,
+    data: any
+  ): Promise<void> {
     const startTime = Date.now();
-
+    
     try {
       // Validate tenant context
       const context = this.tenantContexts.get(tenantId);
@@ -177,7 +187,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
         priority: this.getSyncPriority(dataType),
         retryCount: 0,
         maxRetries: this.config.retryAttempts,
-        createdAt: new Date(),
+        createdAt: new Date()
       };
 
       // Store operation state
@@ -190,7 +200,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
       const channel = `${this.config.syncChannelPrefix}${tenantId}:${dataType}`;
       await this.redisService.publish(channel, {
         operation,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       // Send real-time updates via WebSocket
@@ -224,7 +234,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
    */
   async syncGlobalData(dataType: SyncResourceType, data: any): Promise<void> {
     const startTime = Date.now();
-
+    
     try {
       const operation: SyncOperation = {
         id: this.generateOperationId(),
@@ -235,7 +245,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
         priority: this.getSyncPriority(dataType),
         retryCount: 0,
         maxRetries: this.config.retryAttempts,
-        createdAt: new Date(),
+        createdAt: new Date()
       };
 
       // Store operation state
@@ -248,7 +258,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
       const channel = `${this.config.syncChannelPrefix}global:${dataType}`;
       await this.redisService.publish(channel, {
         operation,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       // Broadcast to all connected users
@@ -259,10 +269,10 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
           payload: {
             operation,
             dataType,
-            global: true,
+            global: true
           },
           timestamp: Date.now(),
-          priority: 2, // HIGH priority
+          priority: 2 // HIGH priority
         });
       } catch (error) {
         // Log WebSocket errors but don't fail the sync operation
@@ -291,8 +301,8 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
         data: {
           status: state.status as any, // Cast to match your AgentStatus enum
           metadata: state.metadata as any,
-          updatedAt: new Date(),
-        },
+          updatedAt: new Date()
+        }
       });
 
       // Determine tenant ID from agent (assuming agent has user relationship)
@@ -302,7 +312,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
       const { id, ...restOfState } = state;
       await this.syncTenantData(tenantId, 'agent', {
         ...restOfState,
-        updatedAgent,
+        updatedAgent
       });
 
       this.logger.debug(`Synced agent state for agent ${agentId}`);
@@ -366,7 +376,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
       await this.updateConflictResolution(conflict.id, {
         resolution: resolvedData,
         resolvedAt: new Date(),
-        resolvedBy: 'system',
+        resolvedBy: 'system'
       });
 
       // Sync resolved data
@@ -377,7 +387,10 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
           resolvedData
         );
       } else {
-        await this.syncGlobalData(conflict.resourceType as SyncResourceType, resolvedData);
+        await this.syncGlobalData(
+          conflict.resourceType as SyncResourceType,
+          resolvedData
+        );
       }
 
       this.metrics.operations.conflicts++;
@@ -396,7 +409,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
   private async handleSyncMessage(message: any): Promise<void> {
     try {
       const { operation } = JSON.parse(message.message);
-
+      
       // Process sync operation
       await this.processSyncOperation(operation);
     } catch (error) {
@@ -410,7 +423,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
   private async handleConflictMessage(message: any): Promise<void> {
     try {
       const conflict = JSON.parse(message.message);
-
+      
       // Auto-resolve if possible, otherwise queue for manual resolution
       await this.resolveConflict(conflict);
     } catch (error) {
@@ -437,7 +450,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
 
       // Apply sync operation
       await this.applySyncOperation(operation);
-
+      
       // Clean up
       this.activeSyncOperations.delete(operation.id);
     } catch (error) {
@@ -505,7 +518,10 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
   /**
    * Broadcast sync update via WebSocket
    */
-  private async broadcastSyncUpdate(tenantId: string, operation: SyncOperation): Promise<void> {
+  private async broadcastSyncUpdate(
+    tenantId: string,
+    operation: SyncOperation
+  ): Promise<void> {
     try {
       const context = this.tenantContexts.get(tenantId);
       if (!context) return;
@@ -518,10 +534,10 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
           payload: {
             operation,
             tenantId,
-            resourceType: operation.resourceType,
+            resourceType: operation.resourceType
           },
           timestamp: Date.now(),
-          priority: 2, // HIGH priority
+          priority: 2 // HIGH priority
         });
       }
     } catch (error) {
@@ -538,21 +554,21 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
     const rolePermissions: Record<string, string[]> = {
       ADMIN: ['read', 'write', 'delete', 'sync'],
       USER: ['read', 'write', 'sync'],
-      VIEWER: ['read'],
+      VIEWER: ['read']
     };
-
+    
     return rolePermissions[role] || ['read'];
   }
 
   private getSyncPriority(dataType: SyncResourceType): number {
     const priorities: Partial<Record<SyncResourceType, number>> = {
-      agent: 1, // Highest priority
+      agent: 1,      // Highest priority
       task: 2,
       workflow: 2,
       template: 3,
       config: 3,
       user: 4,
-      file: 5, // Lowest priority
+      file: 5        // Lowest priority
       // CMS and other resource types default to priority 10
     };
 
@@ -577,7 +593,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
     // Return the version with the latest timestamp
     const localTime = new Date(conflict.localVersion.timestamp || 0);
     const remoteTime = new Date(conflict.remoteVersion.timestamp || 0);
-
+    
     return localTime > remoteTime ? conflict.localVersion : conflict.remoteVersion;
   }
 
@@ -587,7 +603,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
       ...conflict.localVersion,
       ...conflict.remoteVersion,
       mergedAt: new Date(),
-      mergeStrategy: 'simple_merge',
+      mergeStrategy: 'simple_merge'
     };
   }
 
@@ -598,13 +614,16 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
       conflict.resourceId,
       conflict.tenantId
     );
-
+    
     return syncState?.metadata || conflict.localVersion;
   }
 
   private async queueManualResolution(conflict: SyncConflictData): Promise<void> {
     // Queue conflict for manual resolution
-    await this.redisService.lpush('manual_conflicts', JSON.stringify(conflict));
+    await this.redisService.lpush(
+      'manual_conflicts',
+      JSON.stringify(conflict)
+    );
   }
 
   private async updateConflictResolution(
@@ -638,7 +657,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
       conflictType: 'checksum',
       localVersion: existingState.metadata,
       remoteVersion: operation.data,
-      createdAt: new Date(),
+      createdAt: new Date()
     };
 
     // Store conflict in database
@@ -656,7 +675,8 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
     });
 
     // Publish conflict event
-    const channel = `${this.config.conflictChannelPrefix}${operation.tenantId || 'global'}`;
+    const channel = `${this.config.conflictChannelPrefix}${operation.tenantId ||
+      'global'}`;
     await this.redisService.publish(channel, conflict);
   }
 
@@ -686,14 +706,14 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
       where: { id: operation.resourceId },
       update: {
         ...operation.data,
-        updatedAt: new Date(),
+        updatedAt: new Date()
       },
       create: {
         id: operation.resourceId,
         ...operation.data,
         createdAt: new Date(),
-        updatedAt: new Date(),
-      },
+        updatedAt: new Date()
+      }
     });
   }
 
@@ -712,14 +732,14 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
       where: { id: operation.resourceId },
       update: {
         ...operation.data,
-        updatedAt: new Date(),
+        updatedAt: new Date()
       },
       create: {
         id: operation.resourceId,
         ...operation.data,
         createdAt: new Date(),
-        updatedAt: new Date(),
-      },
+        updatedAt: new Date()
+      }
     });
   }
 
@@ -729,14 +749,14 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
       where: { id: operation.resourceId },
       update: {
         ...operation.data,
-        updatedAt: new Date(),
+        updatedAt: new Date()
       },
       create: {
         id: operation.resourceId,
         ...operation.data,
         createdAt: new Date(),
-        updatedAt: new Date(),
-      },
+        updatedAt: new Date()
+      }
     });
   }
 
@@ -748,8 +768,8 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
     }
 
     operation.retryCount++;
-    operation.scheduledAt = new Date(Date.now() + operation.retryCount * 1000);
-
+    operation.scheduledAt = new Date(Date.now() + (operation.retryCount * 1000));
+    
     // Re-queue operation
     setTimeout(async () => {
       await this.processSyncOperation(operation);
@@ -762,7 +782,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
+      hash = ((hash << 5) - hash) + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return hash.toString(16);
@@ -782,25 +802,24 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
 
   private updateSyncMetrics(startTime: number, success: boolean): void {
     const latency = Date.now() - startTime;
-
+    
     this.metrics.performance.maxSyncLatency = Math.max(
       this.metrics.performance.maxSyncLatency,
       latency
     );
-
+    
     // Update average latency
     const totalOps = this.metrics.operations.sync + this.metrics.operations.conflicts;
-    this.metrics.performance.avgSyncLatency =
-      totalOps > 0
-        ? (this.metrics.performance.avgSyncLatency * (totalOps - 1) + latency) / totalOps
-        : latency;
-
+    this.metrics.performance.avgSyncLatency = totalOps > 0
+      ? (this.metrics.performance.avgSyncLatency * (totalOps - 1) + latency) / totalOps
+      : latency;
+    
     // Update success rate
     if (success) {
-      this.metrics.performance.successRate =
+      this.metrics.performance.successRate = 
         (this.metrics.performance.successRate * (totalOps - 1) + 100) / totalOps;
     } else {
-      this.metrics.performance.successRate =
+      this.metrics.performance.successRate = 
         (this.metrics.performance.successRate * (totalOps - 1)) / totalOps;
     }
   }
@@ -814,7 +833,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
   private collectMetrics(): void {
     this.metrics.resources.pendingOperations = this.activeSyncOperations.size;
     this.metrics.resources.syncedResources = this.activeSyncOperations.size;
-
+    
     // Log metrics periodically
     this.logger.debug('Sync metrics:', this.metrics);
   }
@@ -822,7 +841,7 @@ export class SyncOrchestrator extends EventEmitter implements OnModuleInit, OnMo
   private async cleanup(): Promise<void> {
     // Clean up active operations
     this.activeSyncOperations.clear();
-
+    
     // Unsubscribe from Redis channels
     await this.redisService.punsubscribe(`${this.config.syncChannelPrefix}*`);
     await this.redisService.punsubscribe(`${this.config.conflictChannelPrefix}*`);

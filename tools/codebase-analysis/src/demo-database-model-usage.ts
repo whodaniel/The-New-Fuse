@@ -42,9 +42,9 @@ async function runDatabaseModelUsageDemo() {
     console.log(`  Usage Efficiency: ${report.summary.usageEfficiency}%\n`);
 
     // Schemas found
-    console.log('📋 Drizzle Schemas Found:');
+    console.log('📋 Prisma Schemas Found:');
     if (report.schemas.length === 0) {
-      console.log('  No Drizzle schemas found in the codebase\n');
+      console.log('  No Prisma schemas found in the codebase\n');
     } else {
       report.schemas.forEach(schema => {
         console.log(`  📄 ${schema.name} (${schema.location})`);

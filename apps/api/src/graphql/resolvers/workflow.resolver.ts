@@ -48,8 +48,8 @@ export class WorkflowResolver {
     if (userId) {
       return this.db.workflows.findWorkflowsByCreatorId(userId);
     }
-    // Use system-level method to find all active workflows
-    return this.db.workflows.findActiveWorkflowsSystem();
+    // Use findActiveWorkflows as a fallback for finding all workflows
+    return this.db.workflows.findActiveWorkflows();
   }
 
   @Mutation(() => WorkflowType)

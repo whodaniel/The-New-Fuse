@@ -1,7 +1,13 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { Request } from 'express';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+  Inject,
+} from '@nestjs/common';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Request } from 'express';
 import { RedisService } from '../services/redis.service';
 
 /**
@@ -13,7 +19,10 @@ import { RedisService } from '../services/redis.service';
 export class CacheInterceptor implements NestInterceptor {
   constructor(private readonly redisService: RedisService) {}
 
-  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+  async intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest<Request>();
 
     // Only cache GET requests
@@ -40,7 +49,7 @@ export class CacheInterceptor implements NestInterceptor {
           // This can be configured per endpoint using custom decorators
           const ttl = 300;
           await this.redisService.set(cacheKey, JSON.stringify(data), ttl);
-        })
+        }),
       );
     } catch (error) {
       // If Redis fails, proceed without caching

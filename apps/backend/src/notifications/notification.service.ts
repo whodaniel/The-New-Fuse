@@ -60,7 +60,7 @@ export class NotificationService {
 
   async sendSlackNotification(config: { channelId: string }, message: string) {
     // Mock implementation or use a Slack client
-    this.logger.log(`[MOCK] Sending Slack message to ${config.channelId}: ${message}`);
+    this.logger.info(`[MOCK] Sending Slack message to ${config.channelId}: ${message}`);
     // In real impl: await this.slackClient.chat.postMessage({ channel: config.channelId, text: message });
   }
 
@@ -98,7 +98,7 @@ export class NotificationService {
   async markAsRead(userId: string, notificationId: string) {
     const [updated] = await db
       .update(notifications)
-      .set({ read: true, updatedAt: new Date() } as any)
+      .set({ read: true, updatedAt: new Date() })
       .where(eq(notifications.id, notificationId))
       .returning();
 

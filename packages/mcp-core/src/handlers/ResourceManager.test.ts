@@ -3,8 +3,9 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MCPResource, ResourceContent, ResourceHandler } from '../interfaces/IMCPResource';
-import { AccessContext, ResourceManager, ResourceQuery } from './ResourceManager';
+import { ResourceManager, ResourceQuery, AccessContext } from './ResourceManager';
+import { MCPResource, ResourceHandler, ResourceContent } from '../interfaces/IMCPResource';
+import { MCPErrorCode } from '../types/error';
 
 // Mock resource handler for testing
 class MockResourceHandler implements ResourceHandler {
@@ -21,7 +22,7 @@ class MockResourceHandler implements ResourceHandler {
       content: this.content,
       size: Buffer.byteLength(this.content, 'utf8'),
       lastModified: new Date(),
-      encoding: 'utf8',
+      encoding: 'utf8'
     };
   }
 
@@ -48,13 +49,13 @@ describe('ResourceManager', () => {
       permissions: {
         read: true,
         write: false,
-        subscribe: false,
-      },
+        subscribe: false
+      }
     };
     testContext = {
       principal: 'user123',
       roles: ['user'],
-      permissions: ['read'],
+      permissions: ['read']
     };
   });
 
@@ -67,7 +68,7 @@ describe('ResourceManager', () => {
       const invalidResource = {
         uri: '',
         name: '',
-        handler: mockHandler,
+        handler: mockHandler
       } as MCPResource;
 
       expect(() => manager.registerResource(invalidResource)).toThrow();
@@ -97,8 +98,8 @@ describe('ResourceManager', () => {
         permissions: {
           read: true,
           write: true,
-          subscribe: false,
-        },
+          subscribe: false
+        }
       });
     });
 
@@ -109,7 +110,7 @@ describe('ResourceManager', () => {
 
     it('should filter resources by URI pattern', async () => {
       const query: ResourceQuery = {
-        uriPattern: '*resource1',
+        uriPattern: '*resource1'
       };
       const resources = await manager.discoverResources(query);
       expect(resources).toHaveLength(1);
@@ -118,7 +119,7 @@ describe('ResourceManager', () => {
 
     it('should filter resources by name pattern', async () => {
       const query: ResourceQuery = {
-        namePattern: '*Resource 2',
+        namePattern: '*Resource 2'
       };
       const resources = await manager.discoverResources(query);
       expect(resources).toHaveLength(1);
@@ -127,7 +128,7 @@ describe('ResourceManager', () => {
 
     it('should filter resources by MIME type', async () => {
       const query: ResourceQuery = {
-        mimeType: 'application/json',
+        mimeType: 'application/json'
       };
       const resources = await manager.discoverResources(query);
       expect(resources).toHaveLength(1);
@@ -137,7 +138,7 @@ describe('ResourceManager', () => {
     it('should apply pagination', async () => {
       const query: ResourceQuery = {
         limit: 1,
-        offset: 0,
+        offset: 0
       };
       const resources = await manager.discoverResources(query);
       expect(resources).toHaveLength(1);
@@ -146,7 +147,7 @@ describe('ResourceManager', () => {
     it('should sort resources by name', async () => {
       const query: ResourceQuery = {
         sortBy: 'name',
-        sortOrder: 'asc',
+        sortOrder: 'asc'
       };
       const resources = await manager.discoverResources(query);
       expect(resources[0].name).toBe('Test Resource 1');
@@ -157,9 +158,9 @@ describe('ResourceManager', () => {
       const restrictedContext: AccessContext = {
         principal: 'user123',
         roles: ['guest'],
-        permissions: [],
+        permissions: []
       };
-
+      
       // Add a resource that requires admin role
       manager.registerResource({
         uri: 'test://admin/resource',
@@ -167,13 +168,13 @@ describe('ResourceManager', () => {
         handler: mockHandler,
         permissions: {
           read: true,
-          requiredRoles: ['admin'],
-        },
+          requiredRoles: ['admin']
+        }
       });
 
       const resources = await manager.discoverResources({}, restrictedContext);
       expect(resources).toHaveLength(2); // Should not include admin resource
-      expect(resources.find((r) => r.name === 'Admin Resource')).toBeUndefined();
+      expect(resources.find(r => r.name === 'Admin Resource')).toBeUndefined();
     });
   });
 
@@ -191,15 +192,15 @@ describe('ResourceManager', () => {
       const restrictedContext: AccessContext = {
         principal: 'user123',
         roles: ['guest'],
-        permissions: [],
+        permissions: []
       };
-
+      
       const restrictedResource: MCPResource = {
         ...testResource,
         permissions: {
           read: true,
-          requiredRoles: ['admin'],
-        },
+          requiredRoles: ['admin']
+        }
       };
 
       const hasAccess = manager.checkResourceAccess(restrictedResource, 'read', restrictedContext);
@@ -215,15 +216,15 @@ describe('ResourceManager', () => {
             {
               principal: 'user123',
               permissions: ['read'],
-              type: 'allow',
+              type: 'allow'
             },
             {
               principal: 'user456',
               permissions: ['read'],
-              type: 'deny',
-            },
-          ],
-        },
+              type: 'deny'
+            }
+          ]
+        }
       };
 
       const hasAccess = manager.checkResourceAccess(aclResource, 'read', testContext);
@@ -232,7 +233,7 @@ describe('ResourceManager', () => {
       const deniedContext: AccessContext = {
         principal: 'user456',
         roles: ['user'],
-        permissions: ['read'],
+        permissions: ['read']
       };
       const deniedAccess = manager.checkResourceAccess(aclResource, 'read', deniedContext);
       expect(deniedAccess).toBe(false);
@@ -247,16 +248,16 @@ describe('ResourceManager', () => {
             {
               principal: 'role:admin',
               permissions: ['*'],
-              type: 'allow',
-            },
-          ],
-        },
+              type: 'allow'
+            }
+          ]
+        }
       };
 
       const adminContext: AccessContext = {
         principal: 'admin123',
         roles: ['admin'],
-        permissions: ['read', 'write'],
+        permissions: ['read', 'write']
       };
 
       const hasAccess = manager.checkResourceAccess(roleBasedResource, 'read', adminContext);
@@ -276,22 +277,24 @@ describe('ResourceManager', () => {
     });
 
     it('should throw error for non-existent resource', async () => {
-      await expect(manager.readResource('non-existent://resource', testContext)).rejects.toThrow();
+      await expect(
+        manager.readResource('non-existent://resource', testContext)
+      ).rejects.toThrow();
     });
 
     it('should throw error for access denied', async () => {
       const restrictedContext: AccessContext = {
         principal: 'user123',
         roles: ['guest'],
-        permissions: [],
+        permissions: []
       };
 
       const restrictedResource: MCPResource = {
         ...testResource,
         permissions: {
           read: true,
-          requiredRoles: ['admin'],
-        },
+          requiredRoles: ['admin']
+        }
       };
 
       manager.registerResource(restrictedResource);
@@ -306,18 +309,18 @@ describe('ResourceManager', () => {
         ...testResource,
         caching: {
           enabled: true,
-          ttl: 300,
-        },
+          ttl: 300
+        }
       };
 
       manager.registerResource(cachedResource);
 
       // First read - should cache
       const content1 = await manager.readResource(cachedResource.uri, testContext);
-
+      
       // Second read - should use cache
       const content2 = await manager.readResource(cachedResource.uri, testContext);
-
+      
       expect(content1.content).toBe(content2.content);
     });
 
@@ -325,8 +328,8 @@ describe('ResourceManager', () => {
       const nonCachedResource: MCPResource = {
         ...testResource,
         caching: {
-          enabled: false,
-        },
+          enabled: false
+        }
       };
 
       manager.registerResource(nonCachedResource);
@@ -343,7 +346,7 @@ describe('ResourceManager', () => {
 
     it('should track access statistics', async () => {
       await manager.readResource(testResource.uri, testContext);
-
+      
       const stats = manager.getAccessStatistics(testResource.uri);
       expect(stats.totalAccesses).toBe(1);
       expect(stats.successfulAccesses).toBe(1);
@@ -357,7 +360,7 @@ describe('ResourceManager', () => {
       } catch {
         // Expected to fail
       }
-
+      
       const stats = manager.getAccessStatistics();
       expect(stats.totalAccesses).toBe(1);
       expect(stats.successfulAccesses).toBe(0);
@@ -373,7 +376,7 @@ describe('ResourceManager', () => {
           // Expected to fail
         }
       }
-
+      
       const stats = manager.getAccessStatistics();
       expect(stats.mostCommonError).toBe('Resource not found');
     });
@@ -385,15 +388,15 @@ describe('ResourceManager', () => {
         ...testResource,
         caching: {
           enabled: true,
-          ttl: 300,
-        },
+          ttl: 300
+        }
       };
       manager.registerResource(cachedResource);
     });
 
     it('should provide cache statistics', async () => {
       await manager.readResource(testResource.uri, testContext);
-
+      
       const stats = manager.getCacheStatistics();
       expect(stats.totalEntries).toBe(1);
       expect(stats.totalSize).toBeGreaterThan(0);
@@ -401,18 +404,18 @@ describe('ResourceManager', () => {
 
     it('should clear cache for specific resource', async () => {
       await manager.readResource(testResource.uri, testContext);
-
+      
       manager.clearCache(testResource.uri);
-
+      
       const stats = manager.getCacheStatistics();
       expect(stats.totalEntries).toBe(0);
     });
 
     it('should clear all cache entries', async () => {
       await manager.readResource(testResource.uri, testContext);
-
+      
       manager.clearCache();
-
+      
       const stats = manager.getCacheStatistics();
       expect(stats.totalEntries).toBe(0);
     });
@@ -426,8 +429,8 @@ describe('ResourceManager', () => {
         name: 'Test Resource 2',
         handler: mockHandler,
         permissions: {
-          read: true,
-        },
+          read: true
+        }
       });
     });
 
@@ -446,7 +449,7 @@ describe('ResourceManager', () => {
       const restrictedContext: AccessContext = {
         principal: 'guest',
         roles: ['guest'],
-        permissions: [],
+        permissions: []
       };
 
       // Add a restricted resource
@@ -456,13 +459,13 @@ describe('ResourceManager', () => {
         handler: mockHandler,
         permissions: {
           read: true,
-          requiredRoles: ['admin'],
-        },
+          requiredRoles: ['admin']
+        }
       });
 
       const resources = await manager.listResources(undefined, restrictedContext);
       expect(resources).toHaveLength(2); // Should not include secret resource
-      expect(resources.find((r) => r.name === 'Secret Resource')).toBeUndefined();
+      expect(resources.find(r => r.name === 'Secret Resource')).toBeUndefined();
     });
   });
 
@@ -473,7 +476,7 @@ describe('ResourceManager', () => {
       manager.discoverResources = jest.fn().mockRejectedValue(new Error('Discovery failed'));
 
       await expect(manager.discoverResources({})).rejects.toThrow('Discovery failed');
-
+      
       // Restore original method
       manager.discoverResources = originalMethod;
     });
@@ -482,21 +485,21 @@ describe('ResourceManager', () => {
       const errorHandler = {
         async read() {
           throw new Error('Handler error');
-        },
+        }
       } as ResourceHandler;
 
       const errorResource: MCPResource = {
         uri: 'test://error/resource',
         name: 'Error Resource',
         handler: errorHandler,
-        permissions: { read: true },
+        permissions: { read: true }
       };
 
       manager.registerResource(errorResource);
 
-      await expect(manager.readResource(errorResource.uri, testContext)).rejects.toThrow(
-        'Handler error'
-      );
+      await expect(
+        manager.readResource(errorResource.uri, testContext)
+      ).rejects.toThrow('Handler error');
     });
   });
 });

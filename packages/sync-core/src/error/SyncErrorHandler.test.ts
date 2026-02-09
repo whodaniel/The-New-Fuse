@@ -2,16 +2,17 @@
  * Tests for SyncErrorHandler
  */
 
-import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ErrorCategory, ErrorSeverity } from '@the-new-fuse/core-error-handling';
-import { IMetricsCollector, IMonitoringSystem } from '@the-new-fuse/core-monitoring';
+import { Logger } from '@nestjs/common';
+import { EventEmitter } from 'events';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import {
-  SyncContext,
-  SyncError,
-  SyncErrorHandler,
-  SyncErrorHandlerConfig,
+import { IMonitoringSystem, IMetricsCollector } from '@the-new-fuse/core-monitoring';
+import { ErrorSeverity, ErrorCategory } from '@the-new-fuse/core-error-handling';
+import { 
+  SyncErrorHandler, 
+  SyncError, 
+  SyncContext, 
+  SyncErrorHandlerConfig 
 } from './SyncErrorHandler.js';
 
 describe('SyncErrorHandler', () => {
@@ -27,7 +28,7 @@ describe('SyncErrorHandler', () => {
     redisQueuePrefix: 'test:sync:error',
     fallbackQueueName: 'test:sync:fallback',
     enableMetricsCollection: true,
-    enableAlerts: true,
+    enableAlerts: true
   };
 
   const mockSyncContext: SyncContext = {
@@ -39,7 +40,7 @@ describe('SyncErrorHandler', () => {
     resourcePath: '/test/path',
     version: 1,
     checksum: 'abc123',
-    timestamp: new Date(),
+    timestamp: new Date()
   };
 
   beforeEach(async () => {
@@ -52,7 +53,7 @@ describe('SyncErrorHandler', () => {
       set: jest.fn(),
       keys: jest.fn(),
       lpush: jest.fn(),
-      publish: jest.fn(),
+      publish: jest.fn()
     } as any;
 
     // Mock metrics collector
@@ -60,12 +61,12 @@ describe('SyncErrorHandler', () => {
       incrementCounter: jest.fn(),
       recordGauge: jest.fn(),
       recordHistogram: jest.fn(),
-      recordMetric: jest.fn(),
+      recordMetric: jest.fn()
     } as any;
 
     // Mock monitoring system
     monitoringSystem = {
-      getMetricsCollector: jest.fn().mockReturnValue(metricsCollector),
+      getMetricsCollector: jest.fn().mockReturnValue(metricsCollector)
     } as any;
 
     // Mock logger
@@ -74,17 +75,21 @@ describe('SyncErrorHandler', () => {
       info: jest.fn(),
       warn: jest.fn(),
       error: jest.fn(),
-      log: jest.fn(),
+      log: jest.fn()
     } as any;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
           provide: SyncErrorHandler,
-          useFactory: () =>
-            new SyncErrorHandler(redisService, mockConfig, monitoringSystem, logger),
-        },
-      ],
+          useFactory: () => new SyncErrorHandler(
+            redisService,
+            mockConfig,
+            monitoringSystem,
+            logger
+          )
+        }
+      ]
     }).compile();
 
     errorHandler = module.get<SyncErrorHandler>(SyncErrorHandler);
@@ -97,11 +102,11 @@ describe('SyncErrorHandler', () => {
   describe('Error Handling', () => {
     it('should handle sync errors and update statistics', async () => {
       const error = new Error('Test sync error');
-
+      
       const result = await errorHandler.handleSyncError(error, mockSyncContext, 'test-operation');
-
+      
       expect(result).toBeDefined();
-
+      
       const stats = errorHandler.getSyncStatistics();
       expect(stats.totalErrors).toBe(1);
       expect(stats.errorsByOperation['test-operation']).toBe(1);
@@ -109,12 +114,12 @@ describe('SyncErrorHandler', () => {
 
     it('should normalize regular errors to SyncError format', async () => {
       const error = new Error('Network connection failed');
-
+      
       await errorHandler.handleSyncError(error, mockSyncContext);
-
+      
       const history = errorHandler.getErrorHistory(1);
       expect(history).toHaveLength(1);
-
+      
       const syncError = history[0] as SyncError;
       expect(syncError.type).toBe('network');
       expect(syncError.resourceType).toBe('file');
@@ -134,7 +139,7 @@ describe('SyncErrorHandler', () => {
         resourceId: 'agent-123',
         tenantId: 'tenant-123',
         syncOperation: 'master_clock_sync',
-        metadata: {},
+        metadata: {}
       };
 
       const criticalEventSpy = jest.fn();
@@ -144,7 +149,7 @@ describe('SyncErrorHandler', () => {
 
       expect(criticalEventSpy).toHaveBeenCalledWith({
         error: criticalError,
-        context: mockSyncContext,
+        context: mockSyncContext
       });
 
       const stats = errorHandler.getSyncStatistics();
@@ -153,15 +158,15 @@ describe('SyncErrorHandler', () => {
 
     it('should record metrics when metrics collector is available', async () => {
       const error = new Error('Test error');
-
+      
       await errorHandler.handleSyncError(error, mockSyncContext);
-
+      
       expect(metricsCollector.incrementCounter).toHaveBeenCalledWith(
         'sync_errors_total',
         expect.objectContaining({
           type: expect.any(String),
           resourceType: 'file',
-          tenantId: 'tenant-123',
+          tenantId: 'tenant-123'
         })
       );
     });
@@ -180,7 +185,7 @@ describe('SyncErrorHandler', () => {
         resourceType: 'file',
         resourceId: 'file-123',
         syncOperation: 'file-sync',
-        metadata: {},
+        metadata: {}
       };
 
       await errorHandler.queueFallbackOperation(error, mockSyncContext);
@@ -202,7 +207,7 @@ describe('SyncErrorHandler', () => {
         maxRetries: 3,
         retryCount: 0,
         nextRetryAt: new Date(Date.now() - 1000), // Past time
-        createdAt: new Date(),
+        createdAt: new Date()
       };
 
       redisService.zrange.mockResolvedValue([JSON.stringify(mockOperation)]);
@@ -214,10 +219,7 @@ describe('SyncErrorHandler', () => {
       await errorHandler.processFallbackQueue(1);
 
       expect(redisService.zrange).toHaveBeenCalledWith('test:sync:fallback', 0, 0);
-      expect(redisService.zrem).toHaveBeenCalledWith(
-        'test:sync:fallback',
-        JSON.stringify(mockOperation)
-      );
+      expect(redisService.zrem).toHaveBeenCalledWith('test:sync:fallback', JSON.stringify(mockOperation));
     });
 
     it('should limit fallback queue size', async () => {
@@ -232,7 +234,7 @@ describe('SyncErrorHandler', () => {
         resourceType: 'file',
         resourceId: 'file-123',
         syncOperation: 'sync',
-        metadata: {},
+        metadata: {}
       };
 
       // Mock queue at max capacity
@@ -258,7 +260,7 @@ describe('SyncErrorHandler', () => {
         resourceType: 'file',
         resourceId: 'file-123',
         syncOperation: 'sync',
-        metadata: {},
+        metadata: {}
       };
 
       const result = await errorHandler.handleSyncError(retryableError, mockSyncContext);
@@ -279,7 +281,7 @@ describe('SyncErrorHandler', () => {
         resourceType: 'file',
         resourceId: 'file-123',
         syncOperation: 'sync',
-        metadata: {},
+        metadata: {}
       };
 
       const result = await errorHandler.handleSyncError(nonRetryableError, mockSyncContext);
@@ -297,11 +299,11 @@ describe('SyncErrorHandler', () => {
       await errorHandler.handleSyncError(conflictError, {
         ...mockSyncContext,
         syncType: 'agent',
-        tenantId: 'tenant-456',
+        tenantId: 'tenant-456'
       });
 
       const stats = errorHandler.getSyncStatistics();
-
+      
       expect(stats.totalErrors).toBe(2);
       expect(stats.errorsByResource['file']).toBe(1);
       expect(stats.errorsByResource['agent']).toBe(1);
@@ -319,7 +321,7 @@ describe('SyncErrorHandler', () => {
       const stats = errorHandler.getSyncStatistics();
       expect(stats.totalErrors).toBe(0);
       expect(Object.keys(stats.errorsByType)).toHaveLength(0);
-
+      
       const history = errorHandler.getErrorHistory();
       expect(history).toHaveLength(0);
     });
@@ -336,12 +338,12 @@ describe('SyncErrorHandler', () => {
   describe('Error Classification', () => {
     it('should correctly classify network errors', async () => {
       const networkError = new Error('Connection timeout');
-
+      
       await errorHandler.handleSyncError(networkError, mockSyncContext);
-
+      
       const history = errorHandler.getErrorHistory(1);
       const syncError = history[0] as SyncError;
-
+      
       expect(syncError.type).toBe('network');
       expect(syncError.category).toBe(ErrorCategory.NETWORK);
       expect(syncError.retryable).toBe(true);
@@ -349,24 +351,24 @@ describe('SyncErrorHandler', () => {
 
     it('should correctly classify permission errors', async () => {
       const permissionError = new Error('Unauthorized access');
-
+      
       await errorHandler.handleSyncError(permissionError, mockSyncContext);
-
+      
       const history = errorHandler.getErrorHistory(1);
       const syncError = history[0] as SyncError;
-
+      
       expect(syncError.type).toBe('permission');
       expect(syncError.category).toBe(ErrorCategory.AUTHORIZATION);
     });
 
     it('should correctly classify validation errors', async () => {
       const validationError = new Error('Invalid data format');
-
+      
       await errorHandler.handleSyncError(validationError, mockSyncContext);
-
+      
       const history = errorHandler.getErrorHistory(1);
       const syncError = history[0] as SyncError;
-
+      
       expect(syncError.type).toBe('validation');
       expect(syncError.category).toBe(ErrorCategory.VALIDATION);
     });
@@ -385,7 +387,7 @@ describe('SyncErrorHandler', () => {
         resourceType: 'file',
         resourceId: 'file-123',
         syncOperation: 'sync',
-        metadata: {},
+        metadata: {}
       };
 
       const eventSpy = jest.fn();
@@ -396,10 +398,10 @@ describe('SyncErrorHandler', () => {
       expect(eventSpy).toHaveBeenCalledWith({
         operation: expect.objectContaining({
           operation: 'sync',
-          context: mockSyncContext,
+          context: mockSyncContext
         }),
         error,
-        context: mockSyncContext,
+        context: mockSyncContext
       });
     });
 
@@ -412,7 +414,7 @@ describe('SyncErrorHandler', () => {
   describe('Configuration', () => {
     it('should use default configuration when none provided', () => {
       const defaultHandler = new SyncErrorHandler(redisService);
-
+      
       expect(defaultHandler).toBeDefined();
       // Configuration testing would verify default values are applied
     });
@@ -420,11 +422,11 @@ describe('SyncErrorHandler', () => {
     it('should merge custom configuration with defaults', () => {
       const customConfig = {
         maxRecoveryAttempts: 10,
-        enableAlerts: false,
+        enableAlerts: false
       };
-
+      
       const customHandler = new SyncErrorHandler(redisService, customConfig);
-
+      
       expect(customHandler).toBeDefined();
       // Would verify that custom config overrides defaults
     });
@@ -433,27 +435,27 @@ describe('SyncErrorHandler', () => {
   describe('Integration with Existing Systems', () => {
     it('should integrate with Redis for queuing', async () => {
       const error = new Error('Test error');
-
+      
       await errorHandler.handleSyncError(error, mockSyncContext);
-
+      
       // Verify Redis operations were called
       expect(redisService.zadd).toHaveBeenCalled();
     });
 
     it('should integrate with monitoring system for metrics', async () => {
       const error = new Error('Test error');
-
+      
       await errorHandler.handleSyncError(error, mockSyncContext);
-
+      
       expect(monitoringSystem.getMetricsCollector).toHaveBeenCalled();
       expect(metricsCollector.incrementCounter).toHaveBeenCalled();
     });
 
     it('should use provided logger for all logging', async () => {
       const error = new Error('Test error');
-
+      
       await errorHandler.handleSyncError(error, mockSyncContext);
-
+      
       expect(logger.debug).toHaveBeenCalled();
     });
   });

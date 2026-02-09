@@ -2,9 +2,7 @@
 
 ## Overview
 
-The WebSocket infrastructure is designed for production-ready, scalable
-real-time communication with support for horizontal scaling, reliability, and
-comprehensive monitoring.
+The WebSocket infrastructure is designed for production-ready, scalable real-time communication with support for horizontal scaling, reliability, and comprehensive monitoring.
 
 ## System Architecture
 
@@ -39,7 +37,6 @@ comprehensive monitoring.
 ### 1. Connection Management Layer
 
 #### Connection Pool
-
 - **Purpose**: Efficient management of WebSocket connections
 - **Features**:
   - Configurable maximum connections
@@ -49,7 +46,6 @@ comprehensive monitoring.
   - Cleanup tasks
 
 #### Connection Manager
-
 - **Purpose**: Handle connection lifecycle and events
 - **Features**:
   - Connection/disconnection handling
@@ -61,7 +57,6 @@ comprehensive monitoring.
 ### 2. Scaling Layer
 
 #### Redis Adapter
-
 - **Purpose**: Enable horizontal scaling across multiple servers
 - **Features**:
   - Pub/Sub for message distribution
@@ -71,7 +66,6 @@ comprehensive monitoring.
   - Automatic failover
 
 #### Load Balancer
-
 - **Purpose**: Distribute connections across servers
 - **Features**:
   - Sticky sessions (IP hash)
@@ -82,7 +76,6 @@ comprehensive monitoring.
 ### 3. Reliability Layer
 
 #### Message Queue
-
 - **Purpose**: Ensure reliable message delivery
 - **Features**:
   - Priority queue
@@ -92,7 +85,6 @@ comprehensive monitoring.
   - Dead letter queue
 
 #### Reconnection Strategies
-
 - **Purpose**: Handle client reconnections gracefully
 - **Strategies**:
   - Exponential Backoff
@@ -106,7 +98,6 @@ comprehensive monitoring.
 ### 4. Optimization Layer
 
 #### Compression
-
 - **Purpose**: Reduce bandwidth usage for large messages
 - **Features**:
   - Automatic compression for messages > threshold
@@ -115,7 +106,6 @@ comprehensive monitoring.
   - Adaptive compression
 
 #### Binary Protocol
-
 - **Purpose**: Efficient data serialization
 - **Features**:
   - MessagePack support
@@ -126,7 +116,6 @@ comprehensive monitoring.
 ### 5. Monitoring Layer
 
 #### Metrics Collection
-
 - **Purpose**: Track system performance
 - **Metrics**:
   - Connection count (total, active, failed)
@@ -137,7 +126,6 @@ comprehensive monitoring.
   - Reconnection count
 
 #### Health Checks
-
 - **Purpose**: Monitor system health
 - **Checks**:
   - Connection pool status
@@ -250,21 +238,18 @@ Max attempts reached?
 ## Scaling Patterns
 
 ### Vertical Scaling
-
 - Increase server resources
 - Tune connection pool size
 - Optimize event loop
 - Use binary protocol
 
 ### Horizontal Scaling
-
 - Add more WebSocket servers
 - Use Redis for coordination
 - Configure sticky sessions
 - Monitor distribution
 
 ### Database Scaling
-
 - Use Redis for session storage
 - Cache frequently accessed data
 - Implement read replicas
@@ -273,19 +258,16 @@ Max attempts reached?
 ## Security Considerations
 
 ### Authentication
-
 - JWT tokens in handshake
 - Session validation
 - Rate limiting per user
 
 ### Authorization
-
 - Room-based access control
 - User-to-user messaging validation
 - Admin privilege checks
 
 ### Data Protection
-
 - TLS/SSL encryption
 - Message validation
 - Input sanitization
@@ -294,21 +276,18 @@ Max attempts reached?
 ## Performance Optimization
 
 ### Client-Side
-
 - Use binary protocol for large data
 - Enable compression
 - Batch messages when possible
 - Implement backpressure
 
 ### Server-Side
-
 - Connection pooling
 - Message queuing
 - Lazy loading
 - Resource limits
 
 ### Network
-
 - CDN for static assets
 - Geographic distribution
 - Keep-alive connections
@@ -317,14 +296,12 @@ Max attempts reached?
 ## Monitoring Strategy
 
 ### Key Metrics
-
 1. **Availability**: Uptime, health checks
 2. **Performance**: Latency, throughput
 3. **Capacity**: Connection count, memory usage
 4. **Errors**: Error rate, failed connections
 
 ### Alerting Rules
-
 - Connection count > 80% of max
 - Error rate > 1%
 - Average latency > 500ms
@@ -332,7 +309,6 @@ Max attempts reached?
 - Redis connection down
 
 ### Dashboards
-
 - Real-time connection count
 - Message throughput graph
 - Latency percentiles
@@ -344,28 +320,24 @@ Max attempts reached?
 ### Failure Scenarios
 
 #### Single Server Failure
-
 - Load balancer redirects traffic
 - Redis maintains state
 - Clients reconnect automatically
 - No data loss (queued messages)
 
 #### Redis Failure
-
 - Switch to backup Redis
 - Fall back to local mode
 - Buffer messages locally
 - Sync when Redis recovers
 
 #### Complete Outage
-
 - Clients retry with backoff
 - Queue messages locally
 - Health checks fail
 - Alert operations team
 
 ### Recovery Procedures
-
 1. Identify failure point
 2. Check health endpoints
 3. Review error logs
@@ -376,28 +348,24 @@ Max attempts reached?
 ## Testing Strategy
 
 ### Unit Tests
-
 - Connection pool logic
 - Message queue operations
 - Compression utilities
 - Protocol serialization
 
 ### Integration Tests
-
 - Client-server communication
 - Redis pub/sub
 - Reconnection logic
 - Load balancing
 
 ### Load Tests
-
 - Concurrent connections
 - Message throughput
 - Peak load handling
 - Sustained load
 
 ### Chaos Tests
-
 - Random disconnections
 - Network partitions
 - Server failures

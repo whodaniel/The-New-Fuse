@@ -2,8 +2,7 @@
 
 ## Overview
 
-This document provides a summary of the comprehensive monitoring and
-observability implementation for The New Fuse platform.
+This document provides a summary of the comprehensive monitoring and observability implementation for The New Fuse platform.
 
 ## Implementation Date
 
@@ -13,8 +12,7 @@ November 18, 2025
 
 ### 1. Core Monitoring Package (`/packages/core-monitoring`)
 
-A centralized monitoring package that provides all monitoring capabilities
-across the platform.
+A centralized monitoring package that provides all monitoring capabilities across the platform.
 
 #### Package Structure
 
@@ -56,8 +54,7 @@ packages/core-monitoring/
 
 ### 2. Documentation (`/docs/monitoring`)
 
-Comprehensive documentation for monitoring setup, incident response, and alert
-runbooks.
+Comprehensive documentation for monitoring setup, incident response, and alert runbooks.
 
 #### Documentation Files
 
@@ -82,7 +79,6 @@ docs/monitoring/
 **Location**: `/packages/core-monitoring/src/sentry/`
 
 **Features**:
-
 - Centralized error tracking across all services
 - Automatic error categorization and grouping
 - Performance monitoring with transaction tracking
@@ -93,7 +89,6 @@ docs/monitoring/
 - Release tracking for deployment correlation
 
 **Key Classes**:
-
 - `SentryService`: Main service for error tracking
 - `getSentryConfigFromEnv()`: Environment-based configuration
 - `beforeSendFilter()`: Sensitive data filtering
@@ -103,7 +98,6 @@ docs/monitoring/
 **Location**: `/packages/core-monitoring/src/logging/`
 
 **Features**:
-
 - Structured JSON logging for easy parsing
 - Multiple log levels (error, warn, info, http, debug)
 - Multiple transports (console, file, rotating files)
@@ -114,7 +108,6 @@ docs/monitoring/
 - Child loggers with additional context
 
 **Key Classes**:
-
 - `WinstonLogger`: Main logging service
 - `LogEntry`: TypeScript interface for log entries
 
@@ -123,7 +116,6 @@ docs/monitoring/
 **Location**: `/packages/core-monitoring/src/metrics/`
 
 **Features**:
-
 - Prometheus-compatible metrics format
 - Pre-built metrics for common use cases:
   - HTTP request duration and count
@@ -139,7 +131,6 @@ docs/monitoring/
 - Metrics endpoint for Prometheus scraping
 
 **Key Classes**:
-
 - `PrometheusMetrics`: Main metrics service
 - Pre-initialized metrics for HTTP, database, cache, jobs, etc.
 
@@ -148,7 +139,6 @@ docs/monitoring/
 **Location**: `/packages/core-monitoring/src/health/`
 
 **Features**:
-
 - Comprehensive health check system
 - Multiple health check types:
   - Liveness probes (is service running?)
@@ -165,7 +155,6 @@ docs/monitoring/
 - Detailed health reports with response times
 
 **Key Classes**:
-
 - `HealthCheckService`: Main health check service
 - `CommonHealthChecks`: Pre-built health checks for common dependencies
 
@@ -174,7 +163,6 @@ docs/monitoring/
 **Location**: `/packages/core-monitoring/src/alerts/`
 
 **Features**:
-
 - Configurable alert rules with thresholds
 - Multiple severity levels (info, warning, error, critical)
 - Alert lifecycle management (pending, firing, resolved)
@@ -189,12 +177,10 @@ docs/monitoring/
 - Pre-configured alert rules for common scenarios
 
 **Key Classes**:
-
 - `AlertManager`: Main alert management service
 - `defaultAlertRules`: Pre-configured alert rules
 
 **Default Alert Rules**:
-
 1. High Error Rate (> 5%)
 2. Slow Response Time (> 2s)
 3. High Memory Usage (> 90%)
@@ -210,7 +196,6 @@ docs/monitoring/
 **Location**: `/packages/core-monitoring/src/nestjs/`
 
 **Features**:
-
 - Ready-to-use NestJS module
 - Global interceptor for automatic request/response logging
 - Controller templates for health and metrics endpoints
@@ -219,7 +204,6 @@ docs/monitoring/
 - Performance tracking
 
 **Key Components**:
-
 - `MonitoringModule`: NestJS module for easy integration
 - `MonitoringInterceptor`: Automatic request/response monitoring
 - `HealthController`: Health check endpoints
@@ -230,7 +214,6 @@ docs/monitoring/
 **Location**: `/packages/core-monitoring/src/dashboards/`
 
 **Features**:
-
 - Pre-built Grafana dashboards
 - Service health overview
 - Agent activity monitoring
@@ -239,7 +222,6 @@ docs/monitoring/
 - System resource usage
 
 **Dashboards**:
-
 1. Service Health Overview
 2. Agent Activity Dashboard
 3. Database Performance
@@ -402,13 +384,11 @@ scrape_configs:
 
 ### Grafana
 
-Pre-built dashboards can be imported from
-`/packages/core-monitoring/src/dashboards/grafana-dashboards.json`
+Pre-built dashboards can be imported from `/packages/core-monitoring/src/dashboards/grafana-dashboards.json`
 
 ## Environment Variables
 
-All monitoring configuration is managed via environment variables. See
-`.env.monitoring.example` for a complete list of available options.
+All monitoring configuration is managed via environment variables. See `.env.monitoring.example` for a complete list of available options.
 
 ### Required Variables
 
@@ -426,13 +406,11 @@ All monitoring configuration is managed via environment variables. See
 ## Installation Steps
 
 1. **Install peer dependencies**:
-
    ```bash
    pnpm add @sentry/node winston winston-daily-rotate-file prom-client
    ```
 
 2. **Configure environment variables**:
-
    ```bash
    cp .env.monitoring.example .env.monitoring
    # Edit .env.monitoring with your values
@@ -509,8 +487,7 @@ alertManager.triggerAlert('high-error-rate', 10, { test: true });
 
 ## Troubleshooting
 
-See [ALERT_RUNBOOKS.md](./ALERT_RUNBOOKS.md) for detailed troubleshooting
-procedures for each alert type.
+See [ALERT_RUNBOOKS.md](./ALERT_RUNBOOKS.md) for detailed troubleshooting procedures for each alert type.
 
 ## Resources
 
@@ -572,5 +549,6 @@ For questions or issues with monitoring:
 
 ---
 
-**Last Updated**: November 18, 2025 **Author**: Claude (AI Assistant)
+**Last Updated**: November 18, 2025
+**Author**: Claude (AI Assistant)
 **Status**: Ready for Production

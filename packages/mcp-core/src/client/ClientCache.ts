@@ -1,13 +1,13 @@
 /**
  * Client Cache for MCP Client
- *
+ * 
  * Provides caching functionality for frequently accessed resources,
  * server capabilities, and other MCP data to improve performance.
  */
 
 import { EventEmitter } from 'events';
+import { MCPResource, ResourceContent } from '../interfaces/IMCPResource';
 import { MCPCapability } from '../interfaces/IMCPCapability';
-import { ResourceContent } from '../interfaces/IMCPResource';
 import { ToolResult } from '../interfaces/IMCPTool';
 
 /**
@@ -53,25 +53,23 @@ export class ClientCache extends EventEmitter {
   private capabilityCache = new Map<string, CacheEntry<MCPCapability[]>>();
   private toolResultCache = new Map<string, CacheEntry<ToolResult>>();
   private genericCache = new Map<string, CacheEntry<any>>();
-
+  
   private statistics: CacheStatistics = {
     totalEntries: 0,
     hitCount: 0,
     missCount: 0,
     hitRate: 0,
-    totalSize: 0,
+    totalSize: 0
   };
 
   private cleanupTimer: NodeJS.Timeout | null = null;
 
-  constructor(
-    private config: CacheConfig = {
-      maxSize: 1000,
-      defaultTTL: 300000, // 5 minutes
-      cleanupInterval: 60000, // 1 minute
-      enableStatistics: true,
-    }
-  ) {
+  constructor(private config: CacheConfig = {
+    maxSize: 1000,
+    defaultTTL: 300000, // 5 minutes
+    cleanupInterval: 60000, // 1 minute
+    enableStatistics: true
+  }) {
     super();
     this.startCleanupTimer();
   }
@@ -86,7 +84,7 @@ export class ClientCache extends EventEmitter {
       timestamp: new Date(),
       ttl: ttl || this.config.defaultTTL,
       accessCount: 0,
-      lastAccessed: new Date(),
+      lastAccessed: new Date()
     };
 
     this.resourceCache.set(uri, entry);
@@ -100,7 +98,7 @@ export class ClientCache extends EventEmitter {
    */
   getResource(uri: string): ResourceContent | null {
     const entry = this.resourceCache.get(uri);
-
+    
     if (!entry) {
       this.recordMiss();
       return null;
@@ -131,7 +129,7 @@ export class ClientCache extends EventEmitter {
       timestamp: new Date(),
       ttl: ttl || this.config.defaultTTL,
       accessCount: 0,
-      lastAccessed: new Date(),
+      lastAccessed: new Date()
     };
 
     this.capabilityCache.set(endpoint, entry);
@@ -145,7 +143,7 @@ export class ClientCache extends EventEmitter {
    */
   getCapabilities(endpoint: string): MCPCapability[] | null {
     const entry = this.capabilityCache.get(endpoint);
-
+    
     if (!entry) {
       this.recordMiss();
       return null;
@@ -171,14 +169,14 @@ export class ClientCache extends EventEmitter {
    */
   cacheToolResult(toolName: string, params: any, result: ToolResult, ttl?: number): void {
     const key = this.generateToolCacheKey(toolName, params);
-
+    
     const entry: CacheEntry<ToolResult> = {
       key,
       value: result,
       timestamp: new Date(),
       ttl: ttl || this.config.defaultTTL,
       accessCount: 0,
-      lastAccessed: new Date(),
+      lastAccessed: new Date()
     };
 
     this.toolResultCache.set(key, entry);
@@ -193,7 +191,7 @@ export class ClientCache extends EventEmitter {
   getToolResult(toolName: string, params: any): ToolResult | null {
     const key = this.generateToolCacheKey(toolName, params);
     const entry = this.toolResultCache.get(key);
-
+    
     if (!entry) {
       this.recordMiss();
       return null;
@@ -224,7 +222,7 @@ export class ClientCache extends EventEmitter {
       timestamp: new Date(),
       ttl: ttl || this.config.defaultTTL,
       accessCount: 0,
-      lastAccessed: new Date(),
+      lastAccessed: new Date()
     };
 
     this.genericCache.set(key, entry);
@@ -238,7 +236,7 @@ export class ClientCache extends EventEmitter {
    */
   get<T>(key: string): T | null {
     const entry = this.genericCache.get(key);
-
+    
     if (!entry) {
       this.recordMiss();
       return null;
@@ -265,7 +263,7 @@ export class ClientCache extends EventEmitter {
   private isExpired(entry: CacheEntry<any>): boolean {
     const now = Date.now();
     const entryTime = entry.timestamp.getTime();
-    return now - entryTime > entry.ttl;
+    return (now - entryTime) > entry.ttl;
   }
 
   /**
@@ -314,14 +312,14 @@ export class ClientCache extends EventEmitter {
       ...this.resourceCache.values(),
       ...this.capabilityCache.values(),
       ...this.toolResultCache.values(),
-      ...this.genericCache.values(),
+      ...this.genericCache.values()
     ];
 
     this.statistics.totalEntries = allEntries.length;
     this.statistics.totalSize = this.calculateTotalSize(allEntries);
 
     if (allEntries.length > 0) {
-      const timestamps = allEntries.map((e) => e.timestamp.getTime());
+      const timestamps = allEntries.map(e => e.timestamp.getTime());
       this.statistics.oldestEntry = new Date(Math.min(...timestamps));
       this.statistics.newestEntry = new Date(Math.max(...timestamps));
     }
@@ -344,16 +342,15 @@ export class ClientCache extends EventEmitter {
    * Enforce maximum cache size
    */
   private enforceMaxSize(): void {
-    const totalEntries =
-      this.resourceCache.size +
-      this.capabilityCache.size +
-      this.toolResultCache.size +
-      this.genericCache.size;
+    const totalEntries = this.resourceCache.size + 
+                        this.capabilityCache.size + 
+                        this.toolResultCache.size + 
+                        this.genericCache.size;
 
     if (totalEntries <= this.config.maxSize) return;
 
     // Collect all entries with their last access time
-    const allEntries: Array<{ cache: Map<string, any>; key: string; lastAccessed: Date }> = [];
+    const allEntries: Array<{ cache: Map<string, any>, key: string, lastAccessed: Date }> = [];
 
     for (const [key, entry] of this.resourceCache) {
       allEntries.push({ cache: this.resourceCache, key, lastAccessed: entry.lastAccessed });
@@ -444,12 +441,12 @@ export class ClientCache extends EventEmitter {
    */
   clear(): void {
     const totalEntries = this.statistics.totalEntries;
-
+    
     this.resourceCache.clear();
     this.capabilityCache.clear();
     this.toolResultCache.clear();
     this.genericCache.clear();
-
+    
     this.updateStatistics();
     this.emit('cacheCleared', totalEntries);
   }
@@ -498,7 +495,7 @@ export class ClientCache extends EventEmitter {
    */
   updateConfig(newConfig: Partial<CacheConfig>): void {
     this.config = { ...this.config, ...newConfig };
-
+    
     // Restart cleanup timer if interval changed
     if (newConfig.cleanupInterval && this.cleanupTimer) {
       clearInterval(this.cleanupTimer);

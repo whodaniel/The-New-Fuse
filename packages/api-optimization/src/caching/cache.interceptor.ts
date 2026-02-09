@@ -1,8 +1,8 @@
-import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Request, Response } from 'express';
 import { Observable, of, tap } from 'rxjs';
-import { CacheOptions, ResponseCacheService } from './response-cache.service';
+import { Request, Response } from 'express';
+import { ResponseCacheService, CacheOptions } from './response-cache.service';
 
 export const CACHE_KEY_METADATA = 'cache:key';
 export const CACHE_OPTIONS_METADATA = 'cache:options';
@@ -25,12 +25,15 @@ export class CacheInterceptor implements NestInterceptor {
     private reflector: Reflector
   ) {}
 
-  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+  async intercept(
+    context: ExecutionContext,
+    next: CallHandler
+  ): Promise<Observable<any>> {
     // Check if caching should be skipped
-    const skipCache = this.reflector.getAllAndOverride<boolean>(SKIP_CACHE_METADATA, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const skipCache = this.reflector.getAllAndOverride<boolean>(
+      SKIP_CACHE_METADATA,
+      [context.getHandler(), context.getClass()]
+    );
 
     if (skipCache) {
       return next.handle();
@@ -45,11 +48,10 @@ export class CacheInterceptor implements NestInterceptor {
     }
 
     // Get cache configuration
-    const cacheOptions =
-      this.reflector.getAllAndOverride<CacheOptions>(CACHE_OPTIONS_METADATA, [
-        context.getHandler(),
-        context.getClass(),
-      ]) || {};
+    const cacheOptions = this.reflector.getAllAndOverride<CacheOptions>(
+      CACHE_OPTIONS_METADATA,
+      [context.getHandler(), context.getClass()]
+    ) || {};
 
     const cacheKey = this.getCacheKey(context, request);
 
@@ -90,10 +92,10 @@ export class CacheInterceptor implements NestInterceptor {
 
   private getCacheKey(context: ExecutionContext, request: Request): string {
     // Get custom cache key from metadata
-    const customKey = this.reflector.getAllAndOverride<string>(CACHE_KEY_METADATA, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const customKey = this.reflector.getAllAndOverride<string>(
+      CACHE_KEY_METADATA,
+      [context.getHandler(), context.getClass()]
+    );
 
     if (customKey) {
       return customKey;
@@ -106,7 +108,7 @@ export class CacheInterceptor implements NestInterceptor {
       request.method,
       url.split('?')[0], // Base URL without query string
       JSON.stringify(query || {}),
-      JSON.stringify(params || {}),
+      JSON.stringify(params || {})
     ];
 
     // Include user ID if authenticated
@@ -135,7 +137,7 @@ export class CacheInterceptor implements NestInterceptor {
     let hash = 0;
     for (let i = 0; i < input.length; i++) {
       const char = input.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
+      hash = ((hash << 5) - hash) + char;
       hash = hash & hash;
     }
     return Math.abs(hash).toString(36);

@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Observable } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
 import { WsException } from '@nestjs/websockets';
-import { Observable } from 'rxjs';
 import { Socket } from 'socket.io';
 import { LoggingService } from '../services/logging.service';
 
@@ -12,15 +12,17 @@ export class WsAuthGuard implements CanActivate {
     private logger: LoggingService
   ) {}
 
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
     const client: Socket = context.switchToWs().getClient<Socket>();
     const token = this.extractTokenFromHeader(client);
-
+    
     if (!token) {
       this.logger.warn('WebSocket connection attempt without token');
       throw new WsException('Unauthorized');
     }
-
+    
     try {
       const payload = this.jwtService.verify(token);
       // Attach user to socket

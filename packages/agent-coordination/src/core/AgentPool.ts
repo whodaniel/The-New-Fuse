@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
-import { AgentInfo, AgentPoolConfig, AgentStatus } from './types';
+import { AgentInfo, AgentStatus, AgentPoolConfig } from './types';
 
 /**
  * Agent pool management
@@ -89,7 +89,8 @@ export class AgentPool extends EventEmitter {
   getAvailableAgents(): AgentInfo[] {
     return this.getAllAgents().filter(
       (agent) =>
-        (agent.status === AgentStatus.IDLE || agent.status === AgentStatus.BUSY) &&
+        (agent.status === AgentStatus.IDLE ||
+          agent.status === AgentStatus.BUSY) &&
         agent.currentLoad < agent.maxConcurrentTasks
     );
   }
@@ -190,7 +191,8 @@ export class AgentPool extends EventEmitter {
     const agent = this.agents.get(agentId);
     if (!agent) return;
 
-    const timeSinceLastHeartbeat = Date.now() - agent.lastHeartbeat.getTime();
+    const timeSinceLastHeartbeat =
+      Date.now() - agent.lastHeartbeat.getTime();
 
     if (timeSinceLastHeartbeat > this.config.heartbeatTimeout) {
       this.updateAgentStatus(agentId, AgentStatus.OFFLINE);
@@ -211,8 +213,14 @@ export class AgentPool extends EventEmitter {
     utilizationRate: number;
   } {
     const agents = this.getAllAgents();
-    const totalCapacity = agents.reduce((sum, agent) => sum + agent.maxConcurrentTasks, 0);
-    const usedCapacity = agents.reduce((sum, agent) => sum + agent.currentLoad, 0);
+    const totalCapacity = agents.reduce(
+      (sum, agent) => sum + agent.maxConcurrentTasks,
+      0
+    );
+    const usedCapacity = agents.reduce(
+      (sum, agent) => sum + agent.currentLoad,
+      0
+    );
 
     return {
       totalAgents: agents.length,

@@ -1,23 +1,27 @@
-import System from '@/models/system';
-import { useEffect, useState } from 'react';
+import System from "@/models/system";
+import { useState, useEffect } from "react";
 
 export default function TogetherAiOptions({ settings }) {
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">Together AI API Key</label>
+        <label className="text-white text-sm font-semibold block mb-3">
+          Together AI API Key
+        </label>
         <input
           type="password"
           name="TogetherAiApiKey"
           className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="Together AI API Key"
-          defaultValue={settings?.TogetherAiApiKey ? '*'.repeat(20) : ''}
+          defaultValue={settings?.TogetherAiApiKey ? "*".repeat(20) : ""}
           required={true}
           autoComplete="off"
           spellCheck={false}
         />
       </div>
-      {!settings?.credentialsOnly && <TogetherAiModelSelection settings={settings} />}
+      {!settings?.credentialsOnly && (
+        <TogetherAiModelSelection settings={settings} />
+      )}
     </div>
   );
 }
@@ -28,7 +32,7 @@ function TogetherAiModelSelection({ settings }) {
   useEffect(() => {
     async function findCustomModels() {
       setLoading(true);
-      const { models } = await System.customModels('togetherai');
+      const { models } = await System.customModels("togetherai");
 
       if (models?.length > 0) {
         const modelsByOrganization = models.reduce((acc, model) => {
@@ -48,7 +52,9 @@ function TogetherAiModelSelection({ settings }) {
   if (loading || Object.keys(groupedModels).length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">Chat Model Selection</label>
+        <label className="text-white text-sm font-semibold block mb-3">
+          Chat Model Selection
+        </label>
         <select
           name="TogetherAiModelPref"
           disabled={true}
@@ -64,7 +70,9 @@ function TogetherAiModelSelection({ settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">Chat Model Selection</label>
+      <label className="text-white text-sm font-semibold block mb-3">
+        Chat Model Selection
+      </label>
       <select
         name="TogetherAiModelPref"
         required={true}

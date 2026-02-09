@@ -3,7 +3,7 @@
  * An agent that orchestrates and executes multi-step workflows
  */
 
-import type { IAgent } from '../interfaces/IAgent';
+import { IAgent } from '../interfaces/IAgent';
 
 export interface WorkflowConfig {
   agentId: string;
@@ -371,15 +371,11 @@ export class WorkflowAgent implements IAgent {
     const stepMap = new Map(steps.map((s) => [s.id, s]));
 
     const visit = (step: WorkflowStep) => {
-      if (visited.has(step.id)) {
-        return;
-      }
+      if (visited.has(step.id)) return;
 
       for (const depId of step.dependsOn || []) {
         const dep = stepMap.get(depId);
-        if (dep) {
-          visit(dep);
-        }
+        if (dep) visit(dep);
       }
 
       visited.add(step.id);

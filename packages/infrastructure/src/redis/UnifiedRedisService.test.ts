@@ -1,7 +1,7 @@
-import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { RedisConfig } from './RedisConfig';
+import { ConfigService } from '@nestjs/config';
 import { UnifiedRedisService } from './UnifiedRedisService';
+import { RedisConfig } from './RedisConfig';
 
 describe('UnifiedRedisService', () => {
   let service: UnifiedRedisService;
@@ -10,15 +10,15 @@ describe('UnifiedRedisService', () => {
   const mockConfigService = {
     get: jest.fn((key: string, defaultValue?: any) => {
       const config = {
-        REDIS_HOST: 'localhost',
-        REDIS_PORT: 6379,
-        REDIS_PASSWORD: '',
-        REDIS_DB: 0,
-        REDIS_POOL_SIZE: 10,
-        REDIS_RETRY_ATTEMPTS: 3,
-        REDIS_RETRY_DELAY: 1000,
-        REDIS_CONNECT_TIMEOUT: 10000,
-        REDIS_LAZY_CONNECT: true,
+        'REDIS_HOST': 'localhost',
+        'REDIS_PORT': 6379,
+        'REDIS_PASSWORD': '',
+        'REDIS_DB': 0,
+        'REDIS_POOL_SIZE': 10,
+        'REDIS_RETRY_ATTEMPTS': 3,
+        'REDIS_RETRY_DELAY': 1000,
+        'REDIS_CONNECT_TIMEOUT': 10000,
+        'REDIS_LAZY_CONNECT': true,
       };
       return config[key] ?? defaultValue;
     }),

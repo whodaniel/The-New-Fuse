@@ -7,11 +7,11 @@ identified in the Performance Optimization Report.
 
 ### 1. Database Indexes Added ✅
 
-**File**: `/home/user/fuse/drizzle/schema.drizzle`
+**File**: `/home/user/fuse/prisma/schema.prisma`
 
 Added performance indexes to key models:
 
-```drizzle
+```prisma
 // User model
 @@index([email, isActive])
 @@index([role, isActive])
@@ -47,7 +47,7 @@ Added performance indexes to key models:
 **Next Step**: Run migration
 
 ```bash
-npx drizzle migrate dev --name add_performance_indexes
+npx prisma migrate dev --name add_performance_indexes
 ```
 
 **Expected Impact**: 70-90% improvement in query performance
@@ -321,8 +321,8 @@ await fs.promises.writeFile(outputPath, data);
 
 ```bash
 # After running migration, verify indexes are created
-npx drizzle studio
-# Check each model's indexes in Drizzle Studio
+npx prisma studio
+# Check each model's indexes in Prisma Studio
 ```
 
 ### 2. Test Pagination
@@ -384,7 +384,7 @@ console.log('Cache hit rate:', stats.hits / (stats.hits + stats.misses));
 - [ ] 6. Split large components
 - [ ] 7. Add memoization
 - [ ] 8. Replace sync file operations
-- [ ] 9. Run Drizzle migration
+- [ ] 9. Run Prisma migration
 - [ ] 10. Performance testing
 - [ ] 11. Monitor production metrics
 
@@ -394,13 +394,13 @@ console.log('Cache hit rate:', stats.hits / (stats.hits + stats.misses));
 
 ```bash
 # 1. Generate migration for new indexes
-npx drizzle migrate dev --name add_performance_indexes
+npx prisma migrate dev --name add_performance_indexes
 
 # 2. Apply migration to production
-npx drizzle migrate deploy
+npx prisma migrate deploy
 
 # 3. Verify migration
-npx drizzle migrate status
+npx prisma migrate status
 ```
 
 ---

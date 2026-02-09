@@ -22,9 +22,9 @@
 export interface ResourceRequirement {
   type: 'HARDWARE' | 'SOFTWARE' | 'NETWORK' | 'DATA' | 'CREDENTIAL';
   subtype?: string; // e.g., 'GPU', 'CPU', 'LIBRARY', 'API_KEY'
-  name?: string; // e.g., 'NVIDIA_RTX_4090', 'tensorflow', 'STRIPE_API_KEY'
+  name?: string;    // e.g., 'NVIDIA_RTX_4090', 'tensorflow', 'STRIPE_API_KEY'
   version?: string; // For software dependencies
-  count: number; // The number of resources required
+  count: number;    // The number of resources required
   optional?: boolean; // Whether this resource is optional
 }
 

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { WebhookSecurityConfig } from '@the-new-fuse/types';
 import * as crypto from 'crypto';
+import { WebhookSecurityConfig } from '@the-new-fuse/types';
 
 @Injectable()
 export class WebhookSecurityService {
@@ -9,11 +9,11 @@ export class WebhookSecurityService {
   async validateSignature(
     payload: string,
     signature: string,
-    config: WebhookSecurityConfig
+    config: WebhookSecurityConfig,
   ): Promise<boolean> {
     try {
       const expectedSignature = this.generateSignature(payload, config.secret, config.algorithm);
-
+      
       // Handle different signature formats
       const normalizedSignature = this.normalizeSignature(signature, config.algorithm);
       const normalizedExpected = this.normalizeSignature(expectedSignature, config.algorithm);
@@ -56,16 +56,11 @@ export class WebhookSecurityService {
     return result === 0;
   }
 
-  validateStripeSignature(
-    payload: string,
-    signature: string,
-    secret: string,
-    tolerance: number = 300
-  ): boolean {
+  validateStripeSignature(payload: string, signature: string, secret: string, tolerance: number = 300): boolean {
     try {
       const elements = signature.split(',');
-      const signatureHash = elements.find((element) => element.startsWith('v1='))?.substring(3);
-      const timestamp = elements.find((element) => element.startsWith('t='))?.substring(2);
+      const signatureHash = elements.find(element => element.startsWith('v1='))?.substring(3);
+      const timestamp = elements.find(element => element.startsWith('t='))?.substring(2);
 
       if (!signatureHash || !timestamp) {
         return false;
@@ -74,7 +69,7 @@ export class WebhookSecurityService {
       // Check timestamp tolerance
       const timestampNum = parseInt(timestamp, 10);
       const now = Math.floor(Date.now() / 1000);
-
+      
       if (Math.abs(now - timestampNum) > tolerance) {
         this.logger.warn('Stripe webhook timestamp outside tolerance');
         return false;
@@ -99,18 +94,10 @@ export class WebhookSecurityService {
     }
   }
 
-  validateSalesforceSignature(
-    payload: string,
-    signature: string,
-    secret: string,
-    url: string
-  ): boolean {
+  validateSalesforceSignature(payload: string, signature: string, secret: string, url: string): boolean {
     try {
       const data = payload + url;
-      const expectedSignature = crypto
-        .createHmac('sha256', secret)
-        .update(data, 'utf8')
-        .digest('base64');
+      const expectedSignature = crypto.createHmac('sha256', secret).update(data, 'utf8').digest('base64');
       return this.timingSafeEqual(signature, expectedSignature);
     } catch (error) {
       this.logger.error('Failed to validate Salesforce signature', error);
@@ -122,7 +109,7 @@ export class WebhookSecurityService {
     payload: string,
     headers: Record<string, string>,
     webhookId: string,
-    secret: string
+    secret: string,
   ): boolean {
     try {
       const authAlgo = headers['paypal-auth-algo'] || 'SHA256withRSA';
@@ -138,11 +125,8 @@ export class WebhookSecurityService {
       // For simplified validation, we'll use HMAC approach
       // In production, you'd want to use PayPal's SDK for proper RSA validation
       const expectedData = `${authAlgo}|${transmission}|${certId}|${timestamp}|${webhookId}|${crypto.createHash('sha256').update(payload).digest('base64')}`;
-      const expectedSignature = crypto
-        .createHmac('sha256', secret)
-        .update(expectedData, 'utf8')
-        .digest('base64');
-
+      const expectedSignature = crypto.createHmac('sha256', secret).update(expectedData, 'utf8').digest('base64');
+      
       return this.timingSafeEqual(transmissionSig, expectedSignature);
     } catch (error) {
       this.logger.error('Failed to validate PayPal signature', error);
@@ -150,18 +134,10 @@ export class WebhookSecurityService {
     }
   }
 
-  validateSquareSignature(
-    payload: string,
-    signature: string,
-    secret: string,
-    url: string
-  ): boolean {
+  validateSquareSignature(payload: string, signature: string, secret: string, url: string): boolean {
     try {
       const data = url + payload;
-      const expectedSignature = crypto
-        .createHmac('sha1', secret)
-        .update(data, 'utf8')
-        .digest('base64');
+      const expectedSignature = crypto.createHmac('sha1', secret).update(data, 'utf8').digest('base64');
       return this.timingSafeEqual(signature, expectedSignature);
     } catch (error) {
       this.logger.error('Failed to validate Square signature', error);
@@ -171,10 +147,7 @@ export class WebhookSecurityService {
 
   validatePipedriveSignature(payload: string, signature: string, secret: string): boolean {
     try {
-      const expectedSignature = crypto
-        .createHmac('sha1', secret)
-        .update(payload, 'utf8')
-        .digest('hex');
+      const expectedSignature = crypto.createHmac('sha1', secret).update(payload, 'utf8').digest('hex');
       return this.timingSafeEqual(signature, expectedSignature);
     } catch (error) {
       this.logger.error('Failed to validate Pipedrive signature', error);
@@ -184,10 +157,7 @@ export class WebhookSecurityService {
 
   validateQuickBooksSignature(payload: string, signature: string, secret: string): boolean {
     try {
-      const expectedSignature = crypto
-        .createHmac('sha256', secret)
-        .update(payload, 'utf8')
-        .digest('base64');
+      const expectedSignature = crypto.createHmac('sha256', secret).update(payload, 'utf8').digest('base64');
       return this.timingSafeEqual(signature, expectedSignature);
     } catch (error) {
       this.logger.error('Failed to validate QuickBooks signature', error);
@@ -197,10 +167,7 @@ export class WebhookSecurityService {
 
   validateZapierSignature(payload: string, signature: string, secret: string): boolean {
     try {
-      const expectedSignature = crypto
-        .createHmac('sha256', secret)
-        .update(payload, 'utf8')
-        .digest('hex');
+      const expectedSignature = crypto.createHmac('sha256', secret).update(payload, 'utf8').digest('hex');
       return this.timingSafeEqual(signature, expectedSignature);
     } catch (error) {
       this.logger.error('Failed to validate Zapier signature', error);
@@ -208,18 +175,10 @@ export class WebhookSecurityService {
     }
   }
 
-  validateWorkatoSignature(
-    payload: string,
-    signature: string,
-    secret: string,
-    timestamp: string
-  ): boolean {
+  validateWorkatoSignature(payload: string, signature: string, secret: string, timestamp: string): boolean {
     try {
       const data = `${timestamp}.${payload}`;
-      const expectedSignature = crypto
-        .createHmac('sha256', secret)
-        .update(data, 'utf8')
-        .digest('hex');
+      const expectedSignature = crypto.createHmac('sha256', secret).update(data, 'utf8').digest('hex');
       const formattedSignature = `v1=${expectedSignature}`;
       return this.timingSafeEqual(signature, formattedSignature);
     } catch (error) {
@@ -230,10 +189,7 @@ export class WebhookSecurityService {
 
   validatePowerAutomateSignature(payload: string, signature: string, secret: string): boolean {
     try {
-      const expectedSignature = crypto
-        .createHmac('sha256', secret)
-        .update(payload, 'utf8')
-        .digest('base64');
+      const expectedSignature = crypto.createHmac('sha256', secret).update(payload, 'utf8').digest('base64');
       return this.timingSafeEqual(signature, expectedSignature);
     } catch (error) {
       this.logger.error('Failed to validate Power Automate signature', error);
@@ -290,12 +246,12 @@ export class WebhookSecurityService {
   sanitizePayload(payload: any): any {
     // Remove potentially dangerous properties
     const sanitized = JSON.parse(JSON.stringify(payload));
-
+    
     // Remove common XSS vectors
     if (typeof sanitized === 'object' && sanitized !== null) {
       this.recursiveSanitize(sanitized);
     }
-
+    
     return sanitized;
   }
 
@@ -324,7 +280,7 @@ export class WebhookSecurityService {
     // In production, use Redis or similar distributed cache
     const now = Date.now();
     const key = `webhook_rate_limit_${identifier}`;
-
+    
     // This would be implemented with a proper rate limiting solution
     // For now, return true to allow all requests
     return true;

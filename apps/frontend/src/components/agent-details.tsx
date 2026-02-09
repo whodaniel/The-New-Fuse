@@ -1,12 +1,12 @@
 import React from 'react';
 
 interface AgentDetailsProps {
-  name: string;
-  status: string;
-  avatar?: string;
-  performance: number;
-  capabilities: string[];
-  model: string;
+    name: string;
+    status: string;
+    avatar?: string;
+    performance: number;
+    capabilities: string[];
+    model: string;
 }
 
 const AgentDetails: React.FC<AgentDetailsProps> = ({
@@ -40,20 +40,26 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({
     <div className="flex flex-col gap-4">
       <div className="flex gap-4 items-center">
         {avatar ? (
-          <img src={avatar} alt={name} className="w-12 h-12 rounded-full object-cover" />
+             <img src={avatar} alt={name} className="w-12 h-12 rounded-full object-cover" />
         ) : (
-          <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xl font-bold text-gray-500 dark:text-gray-400">
-            {name.charAt(0).toUpperCase()}
-          </div>
+            <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xl font-bold text-gray-500 dark:text-gray-400">
+                {name.charAt(0).toUpperCase()}
+            </div>
         )}
         <div className="flex flex-col items-start gap-1">
-          <p className="font-bold text-lg text-gray-900 dark:text-gray-100">{name}</p>
-          <p className={`text-sm ${getStatusColor(status)} font-medium`}>{status}</p>
+          <p className="font-bold text-lg text-gray-900 dark:text-gray-100">
+            {name}
+          </p>
+          <p className={`text-sm ${getStatusColor(status)} font-medium`}>
+            {status}
+          </p>
         </div>
       </div>
 
       <div>
-        <p className="text-sm mb-1 text-gray-700 dark:text-gray-300">Performance</p>
+        <p className="text-sm mb-1 text-gray-700 dark:text-gray-300">
+          Performance
+        </p>
         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
           <div
             className={`h-2 rounded-full ${getPerformanceColor(performance)}`}
@@ -63,7 +69,9 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({
       </div>
 
       <div>
-        <p className="text-sm mb-2 text-gray-700 dark:text-gray-300">Capabilities</p>
+        <p className="text-sm mb-2 text-gray-700 dark:text-gray-300">
+          Capabilities
+        </p>
         <div className="flex flex-wrap gap-2">
           {capabilities.map((capability) => (
             <span
@@ -77,8 +85,12 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({
       </div>
 
       <div>
-        <p className="text-sm mb-1 text-gray-700 dark:text-gray-300">Model</p>
-        <p className="text-xs text-gray-600 dark:text-gray-400">{model}</p>
+        <p className="text-sm mb-1 text-gray-700 dark:text-gray-300">
+          Model
+        </p>
+        <p className="text-xs text-gray-600 dark:text-gray-400">
+          {model}
+        </p>
       </div>
     </div>
   );

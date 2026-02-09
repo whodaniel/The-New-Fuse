@@ -11,47 +11,39 @@ async function autoFillUDDashboard() {
 
   const browser = await chromium.launch({
     headless: false,
-    args: ['--start-maximized'],
+    args: ['--start-maximized']
   });
 
   try {
     const context = await browser.newContext({
-      viewport: null,
+      viewport: null
     });
 
     const page = await context.newPage();
 
     console.log('📍 Navigating to Unstoppable Domains dashboard...');
-    const targetUrl =
-      'https://dashboard.auth.unstoppabledomains.com/clients/4d85fd51-b1a8-4e26-b97c-e67a5338a9da/branding';
+    const targetUrl = 'https://dashboard.auth.unstoppabledomains.com/clients/4d85fd51-b1a8-4e26-b97c-e67a5338a9da/branding';
 
     await page.goto(targetUrl, {
       waitUntil: 'networkidle',
-      timeout: 30000,
+      timeout: 30000
     });
 
     await page.waitForTimeout(3000);
 
     // Check if we need to sign in
     const bodyText = await page.textContent('body');
-    if (
-      bodyText.includes('500') ||
-      bodyText.includes('Something went wrong') ||
-      bodyText.includes('Sign in')
-    ) {
+    if (bodyText.includes('500') || bodyText.includes('Something went wrong') || bodyText.includes('Sign in')) {
       console.log('\n⚠️  Authentication required!\n');
       console.log('Please sign in to Unstoppable Domains in the browser window.');
       console.log('Once signed in, I will automatically fill in the form.\n');
       console.log('Waiting for you to sign in...\n');
 
       // Wait for navigation away from error/login page
-      await page.waitForURL(
-        (url) => {
-          const urlString = url.toString();
-          return !urlString.includes('500') && !urlString.includes('sign');
-        },
-        { timeout: 300000 }
-      );
+      await page.waitForURL((url) => {
+        const urlString = url.toString();
+        return !urlString.includes('500') && !urlString.includes('sign');
+      }, { timeout: 300000 });
 
       console.log('✅ Detected successful sign in!\n');
 
@@ -74,7 +66,7 @@ async function autoFillUDDashboard() {
       backgroundColor: '#F8F9FF',
       buttonColor: '#4C47F7',
       textColor: '#FFFFFF',
-      supportEmail: 'support@thenewfuse.com',
+      supportEmail: 'support@thenewfuse.com'
     };
 
     // Try to find and fill form fields by common selectors
@@ -85,11 +77,8 @@ async function autoFillUDDashboard() {
 
         // Application Name
         try {
-          const nameInput = page
-            .locator('input')
-            .filter({ has: page.locator('text=/Application Name|App Name|Name/i') })
-            .first();
-          if ((await nameInput.count()) > 0) {
+          const nameInput = page.locator('input').filter({ has: page.locator('text=/Application Name|App Name|Name/i') }).first();
+          if (await nameInput.count() > 0) {
             await nameInput.fill(config.appName);
             console.log('✓ Filled Application Name');
           }
@@ -97,11 +86,8 @@ async function autoFillUDDashboard() {
 
         // Description
         try {
-          const descInput = page
-            .locator('input, textarea')
-            .filter({ has: page.locator('text=/Description|Tagline/i') })
-            .first();
-          if ((await descInput.count()) > 0) {
+          const descInput = page.locator('input, textarea').filter({ has: page.locator('text=/Description|Tagline/i') }).first();
+          if (await descInput.count() > 0) {
             await descInput.fill(config.description);
             console.log('✓ Filled Description');
           }
@@ -109,33 +95,24 @@ async function autoFillUDDashboard() {
 
         // Colors
         try {
-          const primaryColorInput = page
-            .locator('input[type="text"], input[type="color"]')
-            .filter({ has: page.locator('text=/Primary.*Color|Brand Color/i') })
-            .first();
-          if ((await primaryColorInput.count()) > 0) {
+          const primaryColorInput = page.locator('input[type="text"], input[type="color"]').filter({ has: page.locator('text=/Primary.*Color|Brand Color/i') }).first();
+          if (await primaryColorInput.count() > 0) {
             await primaryColorInput.fill(config.primaryColor);
             console.log('✓ Filled Primary Color');
           }
         } catch (e) {}
 
         try {
-          const bgColorInput = page
-            .locator('input[type="text"], input[type="color"]')
-            .filter({ has: page.locator('text=/Background.*Color|Secondary.*Color/i') })
-            .first();
-          if ((await bgColorInput.count()) > 0) {
+          const bgColorInput = page.locator('input[type="text"], input[type="color"]').filter({ has: page.locator('text=/Background.*Color|Secondary.*Color/i') }).first();
+          if (await bgColorInput.count() > 0) {
             await bgColorInput.fill(config.backgroundColor);
             console.log('✓ Filled Background Color');
           }
         } catch (e) {}
 
         try {
-          const buttonColorInput = page
-            .locator('input[type="text"], input[type="color"]')
-            .filter({ has: page.locator('text=/Button.*Color/i') })
-            .first();
-          if ((await buttonColorInput.count()) > 0) {
+          const buttonColorInput = page.locator('input[type="text"], input[type="color"]').filter({ has: page.locator('text=/Button.*Color/i') }).first();
+          if (await buttonColorInput.count() > 0) {
             await buttonColorInput.fill(config.buttonColor);
             console.log('✓ Filled Button Color');
           }
@@ -143,11 +120,8 @@ async function autoFillUDDashboard() {
 
         // Email
         try {
-          const emailInput = page
-            .locator('input[type="email"], input[type="text"]')
-            .filter({ has: page.locator('text=/Support.*Email|Contact.*Email/i') })
-            .first();
-          if ((await emailInput.count()) > 0) {
+          const emailInput = page.locator('input[type="email"], input[type="text"]').filter({ has: page.locator('text=/Support.*Email|Contact.*Email/i') }).first();
+          if (await emailInput.count() > 0) {
             await emailInput.fill(config.supportEmail);
             console.log('✓ Filled Support Email');
           }
@@ -163,16 +137,10 @@ async function autoFillUDDashboard() {
           const placeholder = await input.getAttribute('placeholder');
           if (!placeholder) continue;
 
-          if (
-            placeholder.toLowerCase().includes('name') &&
-            !placeholder.toLowerCase().includes('email')
-          ) {
+          if (placeholder.toLowerCase().includes('name') && !placeholder.toLowerCase().includes('email')) {
             await input.fill(config.appName);
             console.log('✓ Filled name field by placeholder');
-          } else if (
-            placeholder.toLowerCase().includes('description') ||
-            placeholder.toLowerCase().includes('tagline')
-          ) {
+          } else if (placeholder.toLowerCase().includes('description') || placeholder.toLowerCase().includes('tagline')) {
             await input.fill(config.description);
             console.log('✓ Filled description by placeholder');
           } else if (placeholder.toLowerCase().includes('email')) {
@@ -197,10 +165,7 @@ async function autoFillUDDashboard() {
         const descPatterns = ['description', 'tagline', 'desc', 'app_description'];
         for (const pattern of descPatterns) {
           try {
-            await page.fill(
-              `input[name="${pattern}"], textarea[name="${pattern}"], input[id="${pattern}"]`,
-              config.description
-            );
+            await page.fill(`input[name="${pattern}"], textarea[name="${pattern}"], input[id="${pattern}"]`, config.description);
             console.log(`✓ Filled description using ${pattern}`);
           } catch (e) {}
         }
@@ -208,10 +173,7 @@ async function autoFillUDDashboard() {
         const emailPatterns = ['email', 'supportEmail', 'support_email', 'contactEmail'];
         for (const pattern of emailPatterns) {
           try {
-            await page.fill(
-              `input[name="${pattern}"], input[id="${pattern}"]`,
-              config.supportEmail
-            );
+            await page.fill(`input[name="${pattern}"], input[id="${pattern}"]`, config.supportEmail);
             console.log(`✓ Filled email using ${pattern}`);
           } catch (e) {}
         }
@@ -219,25 +181,19 @@ async function autoFillUDDashboard() {
         const colorPatterns = {
           primary: ['primaryColor', 'primary_color', 'brandColor', 'brand_color'],
           background: ['backgroundColor', 'background_color', 'bgColor', 'bg_color'],
-          button: ['buttonColor', 'button_color', 'btnColor'],
+          button: ['buttonColor', 'button_color', 'btnColor']
         };
 
         for (const pattern of colorPatterns.primary) {
           try {
-            await page.fill(
-              `input[name="${pattern}"], input[id="${pattern}"]`,
-              config.primaryColor
-            );
+            await page.fill(`input[name="${pattern}"], input[id="${pattern}"]`, config.primaryColor);
             console.log(`✓ Filled primary color using ${pattern}`);
           } catch (e) {}
         }
 
         for (const pattern of colorPatterns.background) {
           try {
-            await page.fill(
-              `input[name="${pattern}"], input[id="${pattern}"]`,
-              config.backgroundColor
-            );
+            await page.fill(`input[name="${pattern}"], input[id="${pattern}"]`, config.backgroundColor);
             console.log(`✓ Filled background color using ${pattern}`);
           } catch (e) {}
         }
@@ -248,7 +204,7 @@ async function autoFillUDDashboard() {
             console.log(`✓ Filled button color using ${pattern}`);
           } catch (e) {}
         }
-      },
+      }
     ];
 
     // Try all strategies
@@ -279,6 +235,7 @@ async function autoFillUDDashboard() {
 
     // Keep browser open
     await new Promise(() => {});
+
   } catch (error) {
     console.error('\n❌ Error:', error.message);
     console.log('\nStack trace:', error.stack);

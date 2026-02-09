@@ -7,11 +7,18 @@
     "rootDir": "./src",
     "declaration": true,
     "composite": true,
-    "baseUrl": ".",
+    
     "types": ["node"],
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
-  "references": [{ "path": "../extension-system" }, { "path": "../database" }]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ],
+  "references": []
 }

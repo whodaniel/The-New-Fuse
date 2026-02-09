@@ -24,7 +24,7 @@
         },
         {
           "phase": 2,
-          "name": "Protocol Harmonization",
+          "name": "Protocol Harmonization", 
           "tasks": [
             "Consolidate A2A, MCP, Anthropic XML adapters",
             "Create unified protocol detection system",
@@ -41,7 +41,7 @@
             "Unify workflow builder UI and execution engine",
             "Consolidate workflow persistence layer"
           ],
-          "assigned_to": "gemini_instance_2",
+          "assigned_to": "gemini_instance_2", 
           "estimated_time": "2-3 hours"
         },
         {

@@ -34,9 +34,9 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
       cors: {
         origin: this.configService.get('CORS_ORIGINS', '*'),
         methods: ['GET', 'POST'],
-        credentials: true,
+        credentials: true
       },
-      transports: ['websocket', 'polling'],
+      transports: ['websocket', 'polling']
     });
 
     this.server.on('connection', (socket: Socket) => {
@@ -61,7 +61,7 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
       socket,
       connectedAt: new Date(),
       lastActivity: new Date(),
-      metadata: {},
+      metadata: {}
     };
 
     this.clients.set(clientId, client);
@@ -96,7 +96,7 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
     socket.emit('connected', {
       clientId,
       timestamp: new Date().toISOString(),
-      message: 'Connected to WebSocket server',
+      message: 'Connected to WebSocket server'
     });
 
     this.emit('clientConnected', client);
@@ -158,7 +158,7 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
   broadcast(message: BroadcastMessage): void {
     this.server.emit(message.type, {
       ...message.data,
-      timestamp: message.timestamp,
+      timestamp: message.timestamp
     });
     this.logger.debug('Broadcasted message:', message);
   }
@@ -166,7 +166,7 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
   broadcastToRoom(room: string, message: BroadcastMessage): void {
     this.server.to(room).emit(message.type, {
       ...message.data,
-      timestamp: message.timestamp,
+      timestamp: message.timestamp
     });
     this.logger.debug(`Broadcasted to room ${room}:`, message);
   }
@@ -176,7 +176,7 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
     if (client) {
       client.socket.emit(type, {
         ...data,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       });
       return true;
     }
@@ -205,7 +205,9 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
   }
 
   getClientsInRoom(room: string): WebSocketClient[] {
-    return Array.from(this.clients.values()).filter((client) => client.socket.rooms.has(room));
+    return Array.from(this.clients.values()).filter(client => 
+      client.socket.rooms.has(room)
+    );
   }
 
   isClientConnected(clientId: string): boolean {
@@ -234,16 +236,15 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
     return {
       status: 'healthy',
       connectedClients: this.clients.size,
-      uptime: process.uptime(),
+      uptime: process.uptime()
     };
   }
 
   // Cleanup inactive clients
-  cleanupInactiveClients(timeoutMs: number = 300000): number {
-    // 5 minutes default
+  cleanupInactiveClients(timeoutMs: number = 300000): number { // 5 minutes default
     const now = new Date();
     let cleaned = 0;
-
+    
     for (const [clientId, client] of this.clients) {
       const inactiveTime = now.getTime() - client.lastActivity.getTime();
       if (inactiveTime > timeoutMs) {

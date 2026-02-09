@@ -62,13 +62,13 @@ export class MasterClockService extends EventEmitter {
   private redisService: IRedisService;
   private heartbeatService: IHeartbeatMonitoringService;
   private metricsService: IMetricsService;
-
+  
   private syncInterval?: NodeJS.Timeout;
   private correctionInterval?: NodeJS.Timeout;
   private instanceClocks: Map<string, ClockSyncData> = new Map();
   private masterTime: Date = new Date();
   private isInitialized: boolean = false;
-
+  
   private metrics: ClockMetrics = {
     syncOperations: 0,
     driftCorrections: 0,
@@ -76,7 +76,7 @@ export class MasterClockService extends EventEmitter {
     maxDrift: 0,
     instanceCount: 0,
     lastSyncTime: new Date(),
-    healthStatus: 'healthy',
+    healthStatus: 'healthy'
   };
 
   constructor(
@@ -103,19 +103,19 @@ export class MasterClockService extends EventEmitter {
     try {
       // Set up Redis pub/sub subscriptions for clock synchronization
       await this.setupRedisSubscriptions();
-
+      
       // Integrate with existing HeartbeatMonitoringService
       this.setupHeartbeatIntegration();
-
+      
       // Start periodic sync operations
       this.startSyncOperations();
-
+      
       // Register this instance as the master clock
       await this.registerMasterClock();
-
+      
       this.isInitialized = true;
       this.emit('initialized');
-
+      
       console.log(`MasterClockService initialized with instance ID: ${this.config.instanceId}`);
     } catch (error) {
       console.error('Failed to initialize MasterClockService:', error);
@@ -136,7 +136,7 @@ export class MasterClockService extends EventEmitter {
       clearInterval(this.syncInterval);
       this.syncInterval = undefined;
     }
-
+    
     if (this.correctionInterval) {
       clearInterval(this.correctionInterval);
       this.correctionInterval = undefined;
@@ -149,7 +149,7 @@ export class MasterClockService extends EventEmitter {
 
     this.isInitialized = false;
     this.emit('shutdown');
-
+    
     console.log('MasterClockService shutdown completed');
   }
 
@@ -159,10 +159,10 @@ export class MasterClockService extends EventEmitter {
   async now(): Promise<Date> {
     // Update master time with high precision
     this.masterTime = new Date();
-
+    
     // Broadcast time sync to all instances
     await this.broadcastTimeSync();
-
+    
     return new Date(this.masterTime);
   }
 
@@ -174,7 +174,7 @@ export class MasterClockService extends EventEmitter {
       instanceId: this.config.instanceId,
       timestamp: new Date(),
       drift: 0,
-      lastSync: new Date(),
+      lastSync: new Date()
     };
 
     // Send sync command to specific instance
@@ -200,27 +200,26 @@ export class MasterClockService extends EventEmitter {
       instances.push({
         instanceId,
         drift,
-        lastSync: clockData.lastSync,
+        lastSync: clockData.lastSync
       });
-
+      
       maxDrift = Math.max(maxDrift, drift);
     }
 
     const requiresCorrection = maxDrift > this.config.driftThresholdMs;
-
+    
     const report: ClockDriftReport = {
       instances,
       maxDrift,
       requiresCorrection,
-      timestamp: now,
+      timestamp: now
     };
 
     // Update metrics
     this.metrics.maxDrift = Math.max(this.metrics.maxDrift, maxDrift);
-    this.metrics.avgDrift =
-      instances.length > 0
-        ? instances.reduce((sum, inst) => sum + inst.drift, 0) / instances.length
-        : 0;
+    this.metrics.avgDrift = instances.length > 0 
+      ? instances.reduce((sum, inst) => sum + inst.drift, 0) / instances.length 
+      : 0;
     this.metrics.instanceCount = instances.length;
     this.updateHealthStatus(maxDrift);
 
@@ -233,13 +232,13 @@ export class MasterClockService extends EventEmitter {
    */
   async correctDrift(instanceIds: string[]): Promise<void> {
     const correctionTime = new Date();
-
+    
     for (const instanceId of instanceIds) {
       const correctionData = {
         masterTime: correctionTime,
         instanceId: this.config.instanceId,
         correctionType: 'drift_correction',
-        timestamp: correctionTime,
+        timestamp: correctionTime
       };
 
       await this.redisService.publish(
@@ -250,7 +249,7 @@ export class MasterClockService extends EventEmitter {
 
     this.metrics.driftCorrections += instanceIds.length;
     this.emit('drift_corrected', { instanceIds, correctionTime });
-
+    
     console.log(`Clock drift corrected for ${instanceIds.length} instances`);
   }
 
@@ -266,18 +265,21 @@ export class MasterClockService extends EventEmitter {
    */
   private async setupRedisSubscriptions(): Promise<void> {
     // Subscribe to clock sync requests
-    await this.redisService.subscribe(this.config.redisChannels.clockSync, (message) =>
-      this.handleClockSyncMessage(message)
+    await this.redisService.subscribe(
+      this.config.redisChannels.clockSync,
+      (message) => this.handleClockSyncMessage(message)
     );
 
     // Subscribe to drift alerts
-    await this.redisService.subscribe(this.config.redisChannels.driftAlert, (message) =>
-      this.handleDriftAlert(message)
+    await this.redisService.subscribe(
+      this.config.redisChannels.driftAlert,
+      (message) => this.handleDriftAlert(message)
     );
 
     // Subscribe to correction acknowledgments
-    await this.redisService.subscribe(this.config.redisChannels.correction, (message) =>
-      this.handleCorrectionAck(message)
+    await this.redisService.subscribe(
+      this.config.redisChannels.correction,
+      (message) => this.handleCorrectionAck(message)
     );
 
     console.log('Redis subscriptions established for clock synchronization');
@@ -319,12 +321,12 @@ export class MasterClockService extends EventEmitter {
     // Periodic drift detection and correction
     this.correctionInterval = setInterval(async () => {
       const driftReport = await this.detectDrift();
-
+      
       if (driftReport.requiresCorrection) {
         const driftedInstances = driftReport.instances
-          .filter((inst) => inst.drift > this.config.driftThresholdMs)
-          .map((inst) => inst.instanceId);
-
+          .filter(inst => inst.drift > this.config.driftThresholdMs)
+          .map(inst => inst.instanceId);
+        
         if (driftedInstances.length > 0) {
           await this.correctDrift(driftedInstances);
         }
@@ -344,8 +346,8 @@ export class MasterClockService extends EventEmitter {
       startTime: new Date(),
       config: {
         syncInterval: this.config.syncIntervalMs,
-        driftThreshold: this.config.driftThresholdMs,
-      },
+        driftThreshold: this.config.driftThresholdMs
+      }
     };
 
     await this.redisService.hset(
@@ -365,10 +367,13 @@ export class MasterClockService extends EventEmitter {
       instanceId: this.config.instanceId,
       timestamp: new Date(),
       drift: 0,
-      lastSync: new Date(),
+      lastSync: new Date()
     };
 
-    await this.redisService.publish(this.config.redisChannels.clockSync, JSON.stringify(syncData));
+    await this.redisService.publish(
+      this.config.redisChannels.clockSync,
+      JSON.stringify(syncData)
+    );
 
     this.metrics.syncOperations++;
     this.metrics.lastSyncTime = syncData.timestamp;
@@ -380,15 +385,16 @@ export class MasterClockService extends EventEmitter {
   private handleClockSyncMessage(message: any): void {
     try {
       const syncData: ClockSyncData = JSON.parse(message.message);
-
+      
       // Don't process our own messages
       if (syncData.instanceId === this.config.instanceId) {
         return;
       }
 
       // Ensure timestamp is a Date object
-      const timestamp =
-        typeof syncData.timestamp === 'string' ? new Date(syncData.timestamp) : syncData.timestamp;
+      const timestamp = typeof syncData.timestamp === 'string' 
+        ? new Date(syncData.timestamp) 
+        : syncData.timestamp;
 
       this.updateInstanceClock(syncData.instanceId, timestamp);
       this.emit('instance_sync_received', syncData);
@@ -404,7 +410,7 @@ export class MasterClockService extends EventEmitter {
     try {
       const alertData = JSON.parse(message.message);
       this.emit('drift_alert_received', alertData);
-
+      
       // Trigger immediate drift correction if needed
       if (alertData.severity === 'critical') {
         this.correctDrift([alertData.instanceId]);
@@ -432,12 +438,12 @@ export class MasterClockService extends EventEmitter {
   private updateInstanceClock(instanceId: string, timestamp: Date): void {
     // Ensure timestamp is a valid Date object
     const validTimestamp = timestamp instanceof Date ? timestamp : new Date(timestamp);
-
+    
     const clockData: ClockSyncData = {
       instanceId,
       timestamp: validTimestamp,
       drift: Math.abs(Date.now() - validTimestamp.getTime()),
-      lastSync: new Date(),
+      lastSync: new Date()
     };
 
     this.instanceClocks.set(instanceId, clockData);
@@ -456,7 +462,7 @@ export class MasterClockService extends EventEmitter {
    */
   private updateHealthStatus(maxDrift: number): void {
     let newStatus: ClockMetrics['healthStatus'];
-
+    
     if (maxDrift > this.config.maxDriftMs) {
       newStatus = 'critical';
     } else if (maxDrift > this.config.driftThresholdMs) {
@@ -491,10 +497,10 @@ export class MasterClockService extends EventEmitter {
    */
   async forceSync(): Promise<void> {
     await this.broadcastTimeSync();
-
+    
     // Wait a moment for responses
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
     const driftReport = await this.detectDrift();
     this.emit('force_sync_completed', driftReport);
   }

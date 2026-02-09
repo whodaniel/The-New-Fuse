@@ -1,12 +1,12 @@
 /**
  * MCP Callback Handler
- *
+ * 
  * Manages asynchronous callbacks from MCP services, providing reliable delivery,
  * retry mechanisms, and callback routing for workflow executions.
  */
 
 import { EventEmitter } from 'events';
-import { MCPCallback } from '../interfaces/IMCPWorkflowIntegration';
+import { MCPCallback, TaskExecutionStatus } from '../interfaces/IMCPWorkflowIntegration';
 import { MCPErrorClass } from '../types/error';
 
 /**
@@ -15,28 +15,28 @@ import { MCPErrorClass } from '../types/error';
 export interface CallbackHandlerConfig {
   /** Maximum number of retry attempts for failed callbacks */
   maxRetries: number;
-
+  
   /** Base delay between retries in milliseconds */
   retryDelay: number;
-
+  
   /** Maximum delay between retries in milliseconds */
   maxRetryDelay: number;
-
+  
   /** Retry strategy */
   retryStrategy: 'fixed' | 'exponential' | 'linear';
-
+  
   /** Callback timeout in milliseconds */
   callbackTimeout: number;
-
+  
   /** Maximum number of callbacks to queue */
   maxQueueSize: number;
-
+  
   /** Enable callback persistence */
   enablePersistence: boolean;
-
+  
   /** Callback processing batch size */
   batchSize: number;
-
+  
   /** Processing interval in milliseconds */
   processingInterval: number;
 }
@@ -47,16 +47,16 @@ export interface CallbackHandlerConfig {
 export interface CallbackRegistration {
   /** Execution ID */
   executionId: string;
-
+  
   /** Callback handler function */
   handler: (callback: MCPCallback) => Promise<void>;
-
+  
   /** Registration timestamp */
   registeredAt: Date;
-
+  
   /** Handler timeout */
   timeout?: number;
-
+  
   /** Handler metadata */
   metadata?: Record<string, any>;
 }
@@ -67,25 +67,25 @@ export interface CallbackRegistration {
 export interface CallbackQueueEntry {
   /** Unique entry ID */
   id: string;
-
+  
   /** The callback to process */
   callback: MCPCallback;
-
+  
   /** Number of processing attempts */
   attempts: number;
-
+  
   /** Next retry time */
   nextRetry: Date;
-
+  
   /** Entry creation time */
   createdAt: Date;
-
+  
   /** Last processing attempt time */
   lastAttempt?: Date;
-
+  
   /** Last error encountered */
   lastError?: string;
-
+  
   /** Entry metadata */
   metadata?: Record<string, any>;
 }
@@ -96,16 +96,16 @@ export interface CallbackQueueEntry {
 export interface CallbackProcessingResult {
   /** Whether processing was successful */
   success: boolean;
-
+  
   /** Processing duration in milliseconds */
   duration: number;
-
+  
   /** Error message if failed */
   error?: string;
-
+  
   /** Number of attempts made */
   attempts: number;
-
+  
   /** Processing metadata */
   metadata?: Record<string, any>;
 }
@@ -116,25 +116,25 @@ export interface CallbackProcessingResult {
 export interface CallbackStatistics {
   /** Total callbacks received */
   totalReceived: number;
-
+  
   /** Successfully processed callbacks */
   successfullyProcessed: number;
-
+  
   /** Failed callbacks */
   failed: number;
-
+  
   /** Currently queued callbacks */
   queued: number;
-
+  
   /** Average processing time in milliseconds */
   averageProcessingTime: number;
-
+  
   /** Success rate as percentage */
   successRate: number;
-
+  
   /** Callbacks processed per minute */
   callbacksPerMinute: number;
-
+  
   /** Last update timestamp */
   lastUpdated: Date;
 }
@@ -155,7 +155,7 @@ export class MCPCallbackHandler extends EventEmitter {
   constructor(config: CallbackHandlerConfig) {
     super();
     this.config = config;
-
+    
     this.statistics = {
       totalReceived: 0,
       successfullyProcessed: 0,
@@ -164,7 +164,7 @@ export class MCPCallbackHandler extends EventEmitter {
       averageProcessingTime: 0,
       successRate: 0,
       callbacksPerMinute: 0,
-      lastUpdated: new Date(),
+      lastUpdated: new Date()
     };
   }
 
@@ -204,20 +204,16 @@ export class MCPCallbackHandler extends EventEmitter {
   /**
    * Register a callback handler for an execution
    */
-  registerHandler(
-    executionId: string,
-    handler: (callback: MCPCallback) => Promise<void>,
-    options?: {
-      timeout?: number;
-      metadata?: Record<string, any>;
-    }
-  ): void {
+  registerHandler(executionId: string, handler: (callback: MCPCallback) => Promise<void>, options?: {
+    timeout?: number;
+    metadata?: Record<string, any>;
+  }): void {
     const registration: CallbackRegistration = {
       executionId,
       handler,
       registeredAt: new Date(),
       timeout: options?.timeout,
-      metadata: options?.metadata,
+      metadata: options?.metadata
     };
 
     this.registrations.set(executionId, registration);
@@ -230,11 +226,11 @@ export class MCPCallbackHandler extends EventEmitter {
   unregisterHandler(executionId: string): boolean {
     const existed = this.registrations.has(executionId);
     this.registrations.delete(executionId);
-
+    
     if (existed) {
       this.emit('handlerUnregistered', { executionId });
     }
-
+    
     return existed;
   }
 
@@ -243,11 +239,11 @@ export class MCPCallbackHandler extends EventEmitter {
    */
   async handleCallback(callback: MCPCallback): Promise<void> {
     this.statistics.totalReceived++;
-
+    
     try {
       // Validate callback
       this.validateCallback(callback);
-
+      
       // Check if we have a registered handler
       const registration = this.registrations.get(callback.executionId);
       if (!registration) {
@@ -266,6 +262,7 @@ export class MCPCallbackHandler extends EventEmitter {
         this.queueCallback(callback);
         this.emit('callbackQueued', { callback, error });
       }
+
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
       this.statistics.failed++;
@@ -294,16 +291,13 @@ export class MCPCallbackHandler extends EventEmitter {
     pendingRetries: number;
   } {
     const now = new Date();
-    const pendingRetries = this.callbackQueue.filter((entry) => entry.nextRetry <= now).length;
-
+    const pendingRetries = this.callbackQueue.filter(entry => entry.nextRetry <= now).length;
+    
     return {
       size: this.callbackQueue.length,
       oldestEntry: this.callbackQueue.length > 0 ? this.callbackQueue[0].createdAt : undefined,
-      newestEntry:
-        this.callbackQueue.length > 0
-          ? this.callbackQueue[this.callbackQueue.length - 1].createdAt
-          : undefined,
-      pendingRetries,
+      newestEntry: this.callbackQueue.length > 0 ? this.callbackQueue[this.callbackQueue.length - 1].createdAt : undefined,
+      pendingRetries
     };
   }
 
@@ -330,19 +324,19 @@ export class MCPCallbackHandler extends EventEmitter {
   async retryCallbacks(executionId: string): Promise<number> {
     const retriedCount = 0;
     const now = new Date();
-
+    
     for (const entry of this.callbackQueue) {
       if (entry.callback.executionId === executionId) {
         entry.nextRetry = now;
         entry.attempts = 0; // Reset attempts
       }
     }
-
+    
     // Trigger immediate processing
     if (!this.isProcessing) {
       setImmediate(() => this.processCallbackQueue());
     }
-
+    
     return retriedCount;
   }
 
@@ -351,19 +345,19 @@ export class MCPCallbackHandler extends EventEmitter {
    */
   removeCallbacks(executionId: string): number {
     const initialLength = this.callbackQueue.length;
-
+    
     for (let i = this.callbackQueue.length - 1; i >= 0; i--) {
       if (this.callbackQueue[i].callback.executionId === executionId) {
         this.callbackQueue.splice(i, 1);
       }
     }
-
+    
     const removedCount = initialLength - this.callbackQueue.length;
-
+    
     if (removedCount > 0) {
       this.emit('callbacksRemoved', { executionId, removedCount });
     }
-
+    
     return removedCount;
   }
 
@@ -373,60 +367,61 @@ export class MCPCallbackHandler extends EventEmitter {
     if (!callback.executionId) {
       throw new MCPErrorClass(-32602, 'Callback must have an execution ID');
     }
-
+    
     if (!callback.type) {
       throw new MCPErrorClass(-32602, 'Callback must have a type');
     }
-
+    
     if (!['progress', 'result', 'error', 'status'].includes(callback.type)) {
       throw new MCPErrorClass(-32602, `Invalid callback type: ${callback.type}`);
     }
-
+    
     if (!callback.timestamp) {
       throw new MCPErrorClass(-32602, 'Callback must have a timestamp');
     }
-
+    
     if (!callback.source) {
       throw new MCPErrorClass(-32602, 'Callback must have a source');
     }
   }
 
-  private async processCallbackImmediate(
-    callback: MCPCallback,
-    registration: CallbackRegistration
-  ): Promise<void> {
+  private async processCallbackImmediate(callback: MCPCallback, registration: CallbackRegistration): Promise<void> {
     const startTime = Date.now();
     const timeout = registration.timeout || this.config.callbackTimeout;
-
+    
     try {
       // Create timeout promise
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(() => reject(new Error('Callback processing timeout')), timeout);
       });
-
+      
       // Race between handler execution and timeout
-      await Promise.race([registration.handler(callback), timeoutPromise]);
-
+      await Promise.race([
+        registration.handler(callback),
+        timeoutPromise
+      ]);
+      
       const duration = Date.now() - startTime;
-
+      
       const result: CallbackProcessingResult = {
         success: true,
         duration,
-        attempts: 1,
+        attempts: 1
       };
-
+      
       this.processingResults.set(this.generateResultId(callback), result);
+      
     } catch (error) {
       const duration = Date.now() - startTime;
       const err = error instanceof Error ? error : new Error(String(error));
-
+      
       const result: CallbackProcessingResult = {
         success: false,
         duration,
         error: err.message,
-        attempts: 1,
+        attempts: 1
       };
-
+      
       this.processingResults.set(this.generateResultId(callback), result);
       throw err;
     }
@@ -446,7 +441,7 @@ export class MCPCallbackHandler extends EventEmitter {
       callback,
       attempts: 0,
       nextRetry: new Date(),
-      createdAt: new Date(),
+      createdAt: new Date()
     };
 
     this.callbackQueue.push(entry);
@@ -476,6 +471,7 @@ export class MCPCallbackHandler extends EventEmitter {
       for (const entry of batch) {
         await this.processQueuedCallback(entry);
       }
+
     } catch (error) {
       console.error('[MCPCallbackHandler] Error processing callback queue:', error);
     } finally {
@@ -486,7 +482,7 @@ export class MCPCallbackHandler extends EventEmitter {
 
   private async processQueuedCallback(entry: CallbackQueueEntry): Promise<void> {
     const registration = this.registrations.get(entry.callback.executionId);
-
+    
     if (!registration) {
       // Handler was unregistered, remove from queue
       this.removeQueueEntry(entry.id);
@@ -499,11 +495,12 @@ export class MCPCallbackHandler extends EventEmitter {
 
     try {
       await this.processCallbackImmediate(entry.callback, registration);
-
+      
       // Success - remove from queue
       this.removeQueueEntry(entry.id);
       this.statistics.successfullyProcessed++;
       this.emit('callbackProcessed', { callback: entry.callback, attempts: entry.attempts });
+
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
       entry.lastError = err.message;
@@ -512,25 +509,17 @@ export class MCPCallbackHandler extends EventEmitter {
         // Max retries exceeded - remove from queue and mark as failed
         this.removeQueueEntry(entry.id);
         this.statistics.failed++;
-        this.emit('callbackFailed', {
-          callback: entry.callback,
-          error: err,
-          attempts: entry.attempts,
-        });
+        this.emit('callbackFailed', { callback: entry.callback, error: err, attempts: entry.attempts });
       } else {
         // Schedule retry
         entry.nextRetry = this.calculateNextRetry(entry.attempts);
-        this.emit('callbackRetryScheduled', {
-          callback: entry.callback,
-          nextRetry: entry.nextRetry,
-          attempts: entry.attempts,
-        });
+        this.emit('callbackRetryScheduled', { callback: entry.callback, nextRetry: entry.nextRetry, attempts: entry.attempts });
       }
     }
   }
 
   private removeQueueEntry(entryId: string): boolean {
-    const index = this.callbackQueue.findIndex((entry) => entry.id === entryId);
+    const index = this.callbackQueue.findIndex(entry => entry.id === entryId);
     if (index >= 0) {
       this.callbackQueue.splice(index, 1);
       return true;
@@ -549,7 +538,10 @@ export class MCPCallbackHandler extends EventEmitter {
         );
         break;
       case 'linear':
-        delay = Math.min(this.config.retryDelay * attempts, this.config.maxRetryDelay);
+        delay = Math.min(
+          this.config.retryDelay * attempts,
+          this.config.maxRetryDelay
+        );
         break;
       case 'fixed':
       default:
@@ -565,16 +557,16 @@ export class MCPCallbackHandler extends EventEmitter {
     // 1. Queue them for a short time in case handler is registered later
     // 2. Log and discard them
     // 3. Store them for manual inspection
-
+    
     // For now, we'll emit an event and optionally queue for a short time
     this.emit('orphanedCallback', { callback });
-
+    
     // Optionally queue for a short time (e.g., 30 seconds)
     setTimeout(() => {
       const registration = this.registrations.get(callback.executionId);
       if (registration) {
         // Handler was registered later, process the callback
-        this.handleCallback(callback).catch((error) => {
+        this.handleCallback(callback).catch(error => {
           this.emit('orphanedCallbackError', { callback, error });
         });
       }
@@ -583,7 +575,7 @@ export class MCPCallbackHandler extends EventEmitter {
 
   private updateStatistics(): void {
     const total = this.statistics.successfullyProcessed + this.statistics.failed;
-
+    
     if (total > 0) {
       this.statistics.successRate = (this.statistics.successfullyProcessed / total) * 100;
     }

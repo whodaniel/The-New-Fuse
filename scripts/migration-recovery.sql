@@ -1,5 +1,5 @@
--- Drop the _drizzle_migrations table to start fresh
-DROP TABLE IF EXISTS _drizzle_migrations;
+-- Drop the _prisma_migrations table to start fresh
+DROP TABLE IF EXISTS _prisma_migrations;
 
 -- Drop the enum type that might be causing issues
 DROP TYPE IF EXISTS "Role_new";

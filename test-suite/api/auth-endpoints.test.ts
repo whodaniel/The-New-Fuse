@@ -6,7 +6,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { DatabaseService } from '../../src/db/db.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
 import { AppModule } from '../../src/app.module';
 
 // API Endpoint categories for comprehensive testing
@@ -97,7 +97,7 @@ const SECURITY_TEST_PAYLOADS = {
 
 describe('API Endpoint Security Tests', () => {
   let app: INestApplication;
-  let db: DatabaseService;
+  let prisma: PrismaService;
   let authToken: string;
   let adminToken: string;
   let testUser: any;
@@ -112,10 +112,10 @@ describe('API Endpoint Security Tests', () => {
     app = moduleRef.createNestApplication();
     await app.init();
 
-    db = moduleRef.get<DatabaseService>(DatabaseService);
+    prisma = moduleRef.get<PrismaService>(PrismaService);
 
     // Setup test users
-    testUser = await db.user.create({
+    testUser = await prisma.user.create({
       data: {
         email: 'api.test.user@example.com',
         password: 'UserPassword123!',
@@ -124,7 +124,7 @@ describe('API Endpoint Security Tests', () => {
       },
     });
 
-    testAdmin = await db.user.create({
+    testAdmin = await prisma.user.create({
       data: {
         email: 'api.test.admin@example.com',
         password: 'AdminPassword123!',
@@ -153,7 +153,7 @@ describe('API Endpoint Security Tests', () => {
     adminToken = adminLogin.body.access_token;
 
     // Setup test agent
-    testAgent = await db.agent.create({
+    testAgent = await prisma.agent.create({
       data: {
         name: 'API Test Agent',
         description: 'Test agent for API security testing',
@@ -164,7 +164,7 @@ describe('API Endpoint Security Tests', () => {
   });
 
   afterAll(async () => {
-    await db.agent.deleteMany({
+    await prisma.agent.deleteMany({
       where: { 
         OR: [
           { userId: testUser.id },
@@ -172,7 +172,7 @@ describe('API Endpoint Security Tests', () => {
         ],
       },
     });
-    await db.user.deleteMany({
+    await prisma.user.deleteMany({
       where: {
         OR: [
           { id: testUser.id },
@@ -389,7 +389,7 @@ describe('API Endpoint Security Tests', () => {
 
     it('should validate agent ownership', async () => {
       // Create agent as testUser
-      const userAgent = await db.agent.create({
+      const userAgent = await prisma.agent.create({
         data: {
           name: 'User Agent',
           description: 'Test user agent',
@@ -399,7 +399,7 @@ describe('API Endpoint Security Tests', () => {
       });
 
       // Try to access as different user
-      const otherUser = await db.user.create({
+      const otherUser = await prisma.user.create({
         data: {
           email: 'other.user@example.com',
           password: 'OtherPassword123!',
@@ -425,8 +425,8 @@ describe('API Endpoint Security Tests', () => {
       expect(response.status).toBe(403);
 
       // Clean up
-      await db.agent.delete({ where: { id: userAgent.id } });
-      await db.user.delete({ where: { id: otherUser.id } });
+      await prisma.agent.delete({ where: { id: userAgent.id } });
+      await prisma.user.delete({ where: { id: otherUser.id } });
     });
 
     it('should prevent XSS in agent data', async () => {

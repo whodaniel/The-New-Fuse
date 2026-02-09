@@ -1,10 +1,10 @@
 export {
   Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
+  CardFooter,
   CardTitle,
-  cardVariants,
+  CardDescription,
+  CardContent,
   type CardProps,
-} from './Card';
+  cardVariants,
+} from './Card'

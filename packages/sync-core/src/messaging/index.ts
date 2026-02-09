@@ -2,46 +2,46 @@
 export * from './SyncAwareA2AMessage';
 
 // Core Messaging Services
-export * from './CommunicationHubFailover';
-export * from './MessageQueueSynchronizer';
 export * from './SyncAwareAgentWebSocketService';
+export * from './MessageQueueSynchronizer';
+export * from './CommunicationHubFailover';
 export * from './SyncAwareMessagingService';
 
 // Re-export for convenience
 export {
-  CrossTenantRoutingConfig,
-  MessageDeliveryMetrics,
-  MessageFailoverConfig,
-  MessageQueueSyncConfig,
-  MessageSyncStatus,
   SyncAwareA2AMessage,
   SyncAwareA2AMessageV1,
   SyncAwareA2AMessageV2,
-  SyncAwareMessageUtils,
   SyncMetadata,
+  MessageSyncStatus,
+  CrossTenantRoutingConfig,
+  MessageQueueSyncConfig,
+  MessageFailoverConfig,
+  MessageDeliveryMetrics,
+  SyncAwareMessageUtils
 } from './SyncAwareA2AMessage';
 
 export {
   SyncAwareAgentWebSocketService,
   type IAgentWebSocketService,
-  type SyncAwareWebSocketConfig,
+  type SyncAwareWebSocketConfig
 } from './SyncAwareAgentWebSocketService';
 
 export {
   MessageQueueSynchronizer,
-  type QueueConflict,
   type QueueSyncMetrics,
+  type QueueConflict
 } from './MessageQueueSynchronizer';
 
 export {
   CommunicationHubFailover,
-  type CircuitBreakerState,
   type CommunicationNode,
   type FailoverEvent,
+  type CircuitBreakerState
 } from './CommunicationHubFailover';
 
 export {
   SyncAwareMessagingService,
-  type MessagingMetrics,
   type MessagingServiceConfig,
+  type MessagingMetrics
 } from './SyncAwareMessagingService';

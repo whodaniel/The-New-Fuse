@@ -552,9 +552,7 @@ export class ElectronBridge extends BaseBridge {
   }
 
   private setupIPCListeners(): void {
-    if (!this.ipcRenderer) {
-      return;
-    }
+    if (!this.ipcRenderer) return;
 
     const ipc = this.ipcRenderer as {
       on: (channel: string, handler: (event: unknown, ...args: unknown[]) => void) => void;

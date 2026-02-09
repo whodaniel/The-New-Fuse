@@ -120,7 +120,7 @@ export class PerformanceValidator {
   ): Promise<ValidationResult> {
     this.logger.info('Starting performance validation', {
       scenario: scenario.name,
-      targets,
+      targets
     });
 
     // Run load test
@@ -139,17 +139,17 @@ export class PerformanceValidator {
     const recommendations = this.generateRecommendations(validations, metrics);
 
     const result: ValidationResult = {
-      passed: validations.every((v) => v.passed),
+      passed: validations.every(v => v.passed),
       score,
       validations,
       metrics,
-      recommendations,
+      recommendations
     };
 
     this.logger.info('Performance validation completed', {
       passed: result.passed,
       score: result.score,
-      failedTargets: validations.filter((v) => !v.passed).length,
+      failedTargets: validations.filter(v => !v.passed).length
     });
 
     return result;
@@ -177,7 +177,7 @@ export class PerformanceValidator {
       maxErrorRate: 0.05,
       maxMemoryUsage: 1024 * 1024 * 1024, // 1GB
       maxCPUUsage: 80,
-      minConcurrentConnections: 10,
+      minConcurrentConnections: 10
     };
 
     // Run tests with increasing load
@@ -226,23 +226,21 @@ export class PerformanceValidator {
       stressMetrics.push(metrics);
 
       // Check for degradation
-      if (
-        degradationPoint === 0 &&
-        (metrics.responseTime.avg > 2000 ||
-          metrics.errors.rate > 0.1 ||
-          metrics.throughput.rps < currentUsers * 0.1)
-      ) {
+      if (degradationPoint === 0 && (
+        metrics.responseTime.avg > 2000 ||
+        metrics.errors.rate > 0.1 ||
+        metrics.throughput.rps < currentUsers * 0.1
+      )) {
         degradationPoint = currentUsers;
         this.logger.info(`Performance degradation detected at ${currentUsers} users`);
       }
 
       // Check for breaking point
-      if (
-        breakingPoint === 0 &&
-        (metrics.responseTime.avg > 10000 ||
-          metrics.errors.rate > 0.5 ||
-          metrics.throughput.rps < currentUsers * 0.05)
-      ) {
+      if (breakingPoint === 0 && (
+        metrics.responseTime.avg > 10000 ||
+        metrics.errors.rate > 0.5 ||
+        metrics.throughput.rps < currentUsers * 0.05
+      )) {
         breakingPoint = currentUsers;
         this.logger.info(`Breaking point reached at ${currentUsers} users`);
         break;
@@ -261,7 +259,7 @@ export class PerformanceValidator {
       breakingPoint: breakingPoint || maxUsers,
       degradationPoint: degradationPoint || maxUsers,
       recoveryTime,
-      stressMetrics,
+      stressMetrics
     };
   }
 
@@ -270,7 +268,7 @@ export class PerformanceValidator {
    */
   private extractMetrics(testResult: any): PerformanceMetrics {
     const overall = testResult.overall;
-
+    
     return {
       responseTime: {
         avg: overall.responseTime.avg,
@@ -278,27 +276,27 @@ export class PerformanceValidator {
         p95: overall.responseTime.p95,
         p99: overall.responseTime.p99,
         min: overall.responseTime.min,
-        max: overall.responseTime.max,
+        max: overall.responseTime.max
       },
       throughput: {
         rps: overall.rps,
-        bytesPerSecond: overall.throughput,
+        bytesPerSecond: overall.throughput
       },
       errors: {
         rate: 1 - overall.successRate,
         count: overall.failedRequests,
-        types: this.extractErrorTypes(testResult.errors),
+        types: this.extractErrorTypes(testResult.errors)
       },
       resources: {
         memoryUsage: process.memoryUsage().heapUsed,
         cpuUsage: this.getCurrentCPUUsage(),
-        connections: this.getCurrentConnectionCount(),
+        connections: this.getCurrentConnectionCount()
       },
       scalability: {
         concurrentUsers: this.extractConcurrentUsers(testResult),
         linearScaling: this.checkLinearScaling(testResult),
-        bottlenecks: this.identifyBottlenecks(testResult),
-      },
+        bottlenecks: this.identifyBottlenecks(testResult)
+      }
     };
   }
 
@@ -312,80 +310,64 @@ export class PerformanceValidator {
     const validations: TargetValidation[] = [];
 
     // Response time validations
-    validations.push(
-      this.createValidation(
-        'Average Response Time',
-        targets.maxAvgResponseTime,
-        metrics.responseTime.avg,
-        (actual, expected) => actual <= expected
-      )
-    );
+    validations.push(this.createValidation(
+      'Average Response Time',
+      targets.maxAvgResponseTime,
+      metrics.responseTime.avg,
+      (actual, expected) => actual <= expected
+    ));
 
-    validations.push(
-      this.createValidation(
-        'P95 Response Time',
-        targets.maxP95ResponseTime,
-        metrics.responseTime.p95,
-        (actual, expected) => actual <= expected
-      )
-    );
+    validations.push(this.createValidation(
+      'P95 Response Time',
+      targets.maxP95ResponseTime,
+      metrics.responseTime.p95,
+      (actual, expected) => actual <= expected
+    ));
 
-    validations.push(
-      this.createValidation(
-        'P99 Response Time',
-        targets.maxP99ResponseTime,
-        metrics.responseTime.p99,
-        (actual, expected) => actual <= expected
-      )
-    );
+    validations.push(this.createValidation(
+      'P99 Response Time',
+      targets.maxP99ResponseTime,
+      metrics.responseTime.p99,
+      (actual, expected) => actual <= expected
+    ));
 
     // Throughput validations
-    validations.push(
-      this.createValidation(
-        'Requests per Second',
-        targets.minRPS,
-        metrics.throughput.rps,
-        (actual, expected) => actual >= expected
-      )
-    );
+    validations.push(this.createValidation(
+      'Requests per Second',
+      targets.minRPS,
+      metrics.throughput.rps,
+      (actual, expected) => actual >= expected
+    ));
 
     // Error rate validations
-    validations.push(
-      this.createValidation(
-        'Success Rate',
-        targets.minSuccessRate,
-        1 - metrics.errors.rate,
-        (actual, expected) => actual >= expected
-      )
-    );
+    validations.push(this.createValidation(
+      'Success Rate',
+      targets.minSuccessRate,
+      1 - metrics.errors.rate,
+      (actual, expected) => actual >= expected
+    ));
 
-    validations.push(
-      this.createValidation(
-        'Error Rate',
-        targets.maxErrorRate,
-        metrics.errors.rate,
-        (actual, expected) => actual <= expected
-      )
-    );
+    validations.push(this.createValidation(
+      'Error Rate',
+      targets.maxErrorRate,
+      metrics.errors.rate,
+      (actual, expected) => actual <= expected
+    ));
 
     // Resource validations
-    validations.push(
-      this.createValidation(
-        'Memory Usage',
-        targets.maxMemoryUsage,
-        metrics.resources.memoryUsage,
-        (actual, expected) => actual <= expected
-      )
-    );
+    validations.push(this.createValidation(
+      'Memory Usage',
+      targets.maxMemoryUsage,
+      metrics.resources.memoryUsage,
+      (actual, expected) => actual <= expected
+    ));
 
-    validations.push(
-      this.createValidation(
-        'CPU Usage',
-        targets.maxCPUUsage,
-        metrics.resources.cpuUsage,
-        (actual, expected) => actual <= expected
-      )
-    );
+    validations.push(this.createValidation(
+      'CPU Usage',
+      targets.maxCPUUsage,
+      metrics.resources.cpuUsage,
+      (actual, expected) => actual <= expected
+    ));
 
     return validations;
   }
@@ -407,7 +389,7 @@ export class PerformanceValidator {
       expected,
       actual,
       passed,
-      deviation,
+      deviation
     };
   }
 
@@ -441,35 +423,35 @@ export class PerformanceValidator {
     const recommendations: string[] = [];
 
     // Response time recommendations
-    const avgResponseTimeValidation = validations.find((v) => v.target === 'Average Response Time');
+    const avgResponseTimeValidation = validations.find(v => v.target === 'Average Response Time');
     if (avgResponseTimeValidation && !avgResponseTimeValidation.passed) {
       recommendations.push('Consider optimizing slow operations and implementing caching');
       recommendations.push('Review database queries and add appropriate indexes');
     }
 
     // Throughput recommendations
-    const rpsValidation = validations.find((v) => v.target === 'Requests per Second');
+    const rpsValidation = validations.find(v => v.target === 'Requests per Second');
     if (rpsValidation && !rpsValidation.passed) {
       recommendations.push('Consider horizontal scaling or load balancing');
       recommendations.push('Optimize request processing pipeline');
     }
 
     // Error rate recommendations
-    const errorRateValidation = validations.find((v) => v.target === 'Error Rate');
+    const errorRateValidation = validations.find(v => v.target === 'Error Rate');
     if (errorRateValidation && !errorRateValidation.passed) {
       recommendations.push('Investigate and fix sources of errors');
       recommendations.push('Implement better error handling and retry mechanisms');
     }
 
     // Memory recommendations
-    const memoryValidation = validations.find((v) => v.target === 'Memory Usage');
+    const memoryValidation = validations.find(v => v.target === 'Memory Usage');
     if (memoryValidation && !memoryValidation.passed) {
       recommendations.push('Investigate memory leaks and optimize memory usage');
       recommendations.push('Consider implementing memory-efficient data structures');
     }
 
     // CPU recommendations
-    const cpuValidation = validations.find((v) => v.target === 'CPU Usage');
+    const cpuValidation = validations.find(v => v.target === 'CPU Usage');
     if (cpuValidation && !cpuValidation.passed) {
       recommendations.push('Optimize CPU-intensive operations');
       recommendations.push('Consider using worker threads for heavy computations');
@@ -477,9 +459,7 @@ export class PerformanceValidator {
 
     // Bottleneck recommendations
     if (metrics.scalability.bottlenecks.length > 0) {
-      recommendations.push(
-        `Address identified bottlenecks: ${metrics.scalability.bottlenecks.join(', ')}`
-      );
+      recommendations.push(`Address identified bottlenecks: ${metrics.scalability.bottlenecks.join(', ')}`);
     }
 
     return recommendations;
@@ -490,7 +470,7 @@ export class PerformanceValidator {
    */
   private scaleScenario(baseScenario: LoadTestScenario, userCount: number): LoadTestScenario {
     const scaledScenario = JSON.parse(JSON.stringify(baseScenario));
-
+    
     // Scale each phase
     scaledScenario.phases.forEach((phase: any) => {
       const scaleFactor = userCount / Math.max(phase.users.end, 1);
@@ -512,7 +492,7 @@ export class PerformanceValidator {
     const throughputData = results.map((result, index) => ({
       users: userCounts[index],
       rps: result.metrics.throughput.rps,
-      responseTime: result.metrics.responseTime.avg,
+      responseTime: result.metrics.responseTime.avg
     }));
 
     // Check for linear scaling
@@ -529,7 +509,7 @@ export class PerformanceValidator {
       optimalUserCount,
       bottlenecks,
       throughputData,
-      scalabilityScore: this.calculateScalabilityScore(results),
+      scalabilityScore: this.calculateScalabilityScore(results)
     };
   }
 
@@ -538,7 +518,7 @@ export class PerformanceValidator {
    */
   private extractErrorTypes(errors: any[]): Record<string, number> {
     const types: Record<string, number> = {};
-    errors.forEach((error) => {
+    errors.forEach(error => {
       types[error.type] = (types[error.type] || 0) + error.count;
     });
     return types;
@@ -556,10 +536,8 @@ export class PerformanceValidator {
   }
 
   private extractConcurrentUsers(testResult: any): number {
-    return testResult.timeline.reduce(
-      (max: number, point: any) => Math.max(max, point.activeUsers),
-      0
-    );
+    return testResult.timeline.reduce((max: number, point: any) => 
+      Math.max(max, point.activeUsers), 0);
   }
 
   private checkLinearScaling(testResult: any): boolean {
@@ -569,70 +547,70 @@ export class PerformanceValidator {
 
   private identifyBottlenecks(testResult: any): string[] {
     const bottlenecks: string[] = [];
-
+    
     if (testResult.overall.responseTime.avg > 1000) {
       bottlenecks.push('High response time');
     }
-
+    
     if (testResult.overall.successRate < 0.95) {
       bottlenecks.push('High error rate');
     }
-
+    
     return bottlenecks;
   }
 
   private checkLinearScalingFromData(data: any[]): boolean {
     // Check if throughput scales linearly with users
     if (data.length < 2) return true;
-
+    
     const firstPoint = data[0];
     const lastPoint = data[data.length - 1];
-
+    
     const expectedRPS = (lastPoint.users / firstPoint.users) * firstPoint.rps;
     const actualRPS = lastPoint.rps;
-
+    
     return actualRPS >= expectedRPS * 0.8; // 80% of linear scaling
   }
 
   private findOptimalUserCount(results: ValidationResult[], userCounts: number[]): number {
     let optimalIndex = 0;
     let bestScore = 0;
-
+    
     results.forEach((result, index) => {
       if (result.score > bestScore) {
         bestScore = result.score;
         optimalIndex = index;
       }
     });
-
+    
     return userCounts[optimalIndex];
   }
 
   private identifyScalingBottlenecks(results: ValidationResult[]): string[] {
     const bottlenecks: string[] = [];
-
+    
     // Check for degrading performance
     for (let i = 1; i < results.length; i++) {
       const prev = results[i - 1];
       const curr = results[i];
-
+      
       if (curr.metrics.responseTime.avg > prev.metrics.responseTime.avg * 1.5) {
         bottlenecks.push('Response time degradation');
         break;
       }
-
+      
       if (curr.metrics.errors.rate > prev.metrics.errors.rate * 2) {
         bottlenecks.push('Error rate increase');
         break;
       }
     }
-
+    
     return bottlenecks;
   }
 
   private calculateScalabilityScore(results: ValidationResult[]): number {
     if (results.length === 0) return 0;
-
+    
     return results.reduce((sum, result) => sum + result.score, 0) / results.length;
   }
 }

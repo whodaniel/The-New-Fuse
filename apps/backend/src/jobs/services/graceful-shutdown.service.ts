@@ -1,5 +1,5 @@
-import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { QueueName } from '../constants/queue-names';
 
@@ -18,7 +18,7 @@ export class GracefulShutdownService implements OnModuleDestroy {
     @InjectQueue(QueueName.AGENT_EXECUTION) private agentQueue: Queue,
     @InjectQueue(QueueName.REPORT_GENERATION) private reportQueue: Queue,
     @InjectQueue(QueueName.DATA_SYNC) private dataSyncQueue: Queue,
-    @InjectQueue(QueueName.CLEANUP) private cleanupQueue: Queue
+    @InjectQueue(QueueName.CLEANUP) private cleanupQueue: Queue,
   ) {
     // Register signal handlers
     this.registerSignalHandlers();
@@ -118,7 +118,7 @@ export class GracefulShutdownService implements OnModuleDestroy {
         } catch (error) {
           this.logger.error(`Failed to pause queue ${queue.name}:`, error);
         }
-      })
+      }),
     );
 
     this.logger.log('All queues paused');
@@ -146,10 +146,13 @@ export class GracefulShutdownService implements OnModuleDestroy {
         queues.map(async ({ name, queue }) => {
           const counts = await queue.getJobCounts();
           return { name, active: counts.active || 0 };
-        })
+        }),
       );
 
-      const totalActive = activeJobCounts.reduce((sum, { active }) => sum + active, 0);
+      const totalActive = activeJobCounts.reduce(
+        (sum, { active }) => sum + active,
+        0,
+      );
 
       if (totalActive === 0) {
         this.logger.log('All active jobs completed');
@@ -158,7 +161,7 @@ export class GracefulShutdownService implements OnModuleDestroy {
 
       this.logger.debug(
         `Waiting for ${totalActive} active jobs to complete...`,
-        activeJobCounts.filter((q) => q.active > 0)
+        activeJobCounts.filter((q) => q.active > 0),
       );
 
       // Wait 1 second before checking again
@@ -170,15 +173,18 @@ export class GracefulShutdownService implements OnModuleDestroy {
       queues.map(async ({ name, queue }) => {
         const counts = await queue.getJobCounts();
         return { name, active: counts.active || 0 };
-      })
+      }),
     );
 
-    const totalActive = activeJobCounts.reduce((sum, { active }) => sum + active, 0);
+    const totalActive = activeJobCounts.reduce(
+      (sum, { active }) => sum + active,
+      0,
+    );
 
     if (totalActive > 0) {
       this.logger.warn(
         `Shutdown timeout reached. ${totalActive} jobs still active:`,
-        activeJobCounts.filter((q) => q.active > 0)
+        activeJobCounts.filter((q) => q.active > 0),
       );
     }
   }
@@ -205,7 +211,7 @@ export class GracefulShutdownService implements OnModuleDestroy {
         } catch (error) {
           this.logger.error(`Failed to close queue ${name}:`, error);
         }
-      })
+      }),
     );
 
     this.logger.log('All queue connections closed');

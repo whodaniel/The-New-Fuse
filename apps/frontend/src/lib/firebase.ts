@@ -12,17 +12,26 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Sanity check for Firebase Config
-const isEnvPlaceholder = (val: string | undefined) => !val || val.startsWith('${');
-
-if (isEnvPlaceholder(firebaseConfig.apiKey)) {
+// Sanity check for Firebase API Key
+if (firebaseConfig.apiKey && firebaseConfig.apiKey !== '${VITE_FIREBASE_API_KEY}') {
+  const key = firebaseConfig.apiKey;
+  if (key.length < 30) {
+    console.error(
+      `[The New Fuse] Firebase API Key seems too short (${key.length} chars). Check Railway variables.`
+    );
+  } else {
+    // Only log this once in production to reduce noise
+    if (import.meta.env.DEV) {
+      console.log(
+        `[The New Fuse] Firebase config detected (Key starts with: ${key.substring(0, 8)}...)`
+      );
+    }
+  }
+} else {
+  const isEnvPlaceholder = firebaseConfig.apiKey === '${VITE_FIREBASE_API_KEY}';
   console.error(
-    '[The New Fuse] Firebase API Key is missing! Auth will fail. Set VITE_FIREBASE_API_KEY.'
-  );
-}
-if (isEnvPlaceholder(firebaseConfig.projectId)) {
-  console.error(
-    '[The New Fuse] Firebase Project ID is missing! Database will fail. Set VITE_FIREBASE_PROJECT_ID.'
+    `[The New Fuse] Firebase API Key is ${isEnvPlaceholder ? 'unresolved placeholder' : 'missing'}! Auth will fail. ` +
+    'Action Required: Set VITE_FIREBASE_API_KEY in Railway environment variables and redeploy.'
   );
 }
 
@@ -38,18 +47,31 @@ try {
 export const auth = getAuth(app);
 
 // Initialize Firestore with proper error handling
-let db: Firestore | undefined;
-
-// Disabled automatic initialization as Firestore is not currently used
-// Uncomment logic below if Firestore is needed in the future
+let db: Firestore;
 
 try {
-  // Only attempt Firestore init if we have a project ID
-  if (!isEnvPlaceholder(firebaseConfig.projectId)) {
-     // console.log('[The New Fuse] Firestore initialization skipped (unused)');
+  // Ensure app is initialized before accessing Firestore
+  const currentApp = getApp();
+
+  try {
+    // Try to get existing instance
+    db = getFirestore(currentApp);
+  } catch (e) {
+    // If getting existing failed, try initializing
+    try {
+      db = initializeFirestore(currentApp, {
+        cacheSizeBytes: CACHE_SIZE_UNLIMITED
+      });
+    } catch (initError) {
+      // If initialization failed (e.g. already exists but getFirestore failed?), fallback
+      console.warn('[The New Fuse] Firestore init fallback:', initError);
+      db = getFirestore(currentApp);
+    }
   }
 } catch (error) {
-  // console.error('[The New Fuse] Critical Firestore initialization error - check project config:', error);
+  console.error('[The New Fuse] Critical Firestore initialization error - check project config:', error);
+  // Prevent crash by creating a dummy object if needed, or letting it throw later
+  // For now, allow it to be undefined and let explicit usage fail if critical
 }
 
 export { db };

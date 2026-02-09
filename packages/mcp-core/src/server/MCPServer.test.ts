@@ -2,9 +2,9 @@
  * MCPServer Unit Tests
  */
 
-import { MCPRequest } from '../interfaces/IMCPMessage';
 import { MCPServer } from '../server/MCPServer';
-import { JSONRPCErrorCode, LogLevel, MCPServerConfig } from '../types';
+import { MCPServerConfig, LogLevel, JSONRPCErrorCode } from '../types';
+import { MCPRequest } from '../interfaces/IMCPMessage';
 import { MCPErrorCode } from '../types/error';
 
 describe('MCPServer', () => {
@@ -22,7 +22,7 @@ describe('MCPServer', () => {
       timeout: 30000,
       enableAuth: false,
       enableTLS: false,
-      logLevel: LogLevel.INFO,
+      logLevel: LogLevel.INFO
     };
   });
 
@@ -79,8 +79,8 @@ describe('MCPServer', () => {
         name: 'Test Resource',
         description: 'A test resource',
         handler: {
-          read: jest.fn().mockResolvedValue({ content: 'test content' }),
-        },
+          read: jest.fn().mockResolvedValue({ content: 'test content' })
+        }
       };
 
       server.registerResource(resource);
@@ -94,31 +94,29 @@ describe('MCPServer', () => {
       const resource1 = {
         uri: 'test://resource1',
         name: 'Test Resource 1',
-        handler: { read: jest.fn() },
+        handler: { read: jest.fn() }
       };
       const resource2 = {
         uri: 'test://resource1',
         name: 'Test Resource 2',
-        handler: { read: jest.fn() },
+        handler: { read: jest.fn() }
       };
 
       server.registerResource(resource1);
 
-      expect(() => server.registerResource(resource2)).toThrow(
-        'Resource with URI "test://resource1" already registered'
-      );
+      expect(() => server.registerResource(resource2))
+        .toThrow('Resource with URI "test://resource1" already registered');
     });
 
     it('should throw error for invalid resource', () => {
       const invalidResource = {
         uri: '',
         name: 'Test Resource',
-        handler: { read: jest.fn() },
+        handler: { read: jest.fn() }
       };
 
-      expect(() => server.registerResource(invalidResource)).toThrow(
-        'Resource must have uri and name'
-      );
+      expect(() => server.registerResource(invalidResource))
+        .toThrow('Resource must have uri and name');
     });
   });
 
@@ -133,8 +131,8 @@ describe('MCPServer', () => {
         description: 'A test tool',
         inputSchema: { type: 'object' },
         handler: {
-          execute: jest.fn().mockResolvedValue({ success: true }),
-        },
+          execute: jest.fn().mockResolvedValue({ success: true })
+        }
       };
 
       server.registerTool(tool);
@@ -149,20 +147,19 @@ describe('MCPServer', () => {
         name: 'test-tool',
         description: 'Test Tool 1',
         inputSchema: { type: 'object' },
-        handler: { execute: jest.fn() },
+        handler: { execute: jest.fn() }
       };
       const tool2 = {
         name: 'test-tool',
         description: 'Test Tool 2',
         inputSchema: { type: 'object' },
-        handler: { execute: jest.fn() },
+        handler: { execute: jest.fn() }
       };
 
       server.registerTool(tool1);
 
-      expect(() => server.registerTool(tool2)).toThrow(
-        'Tool with name "test-tool" already registered'
-      );
+      expect(() => server.registerTool(tool2))
+        .toThrow('Tool with name "test-tool" already registered');
     });
   });
 
@@ -177,7 +174,7 @@ describe('MCPServer', () => {
         version: '1.0.0',
         description: 'A test capability',
         methods: ['test/method'],
-        experimental: false,
+        experimental: false
       };
 
       server.registerCapability(capability);
@@ -185,15 +182,15 @@ describe('MCPServer', () => {
       const capabilities = server.getRegisteredCapabilities();
       // Should have default capabilities plus the new one
       expect(capabilities.length).toBeGreaterThan(3);
-      expect(capabilities.some((cap) => cap.name === 'test-capability')).toBe(true);
+      expect(capabilities.some(cap => cap.name === 'test-capability')).toBe(true);
     });
 
     it('should register default capabilities on start', () => {
       const capabilities = server.getRegisteredCapabilities();
 
-      expect(capabilities.some((cap) => cap.name === 'resources')).toBe(true);
-      expect(capabilities.some((cap) => cap.name === 'tools')).toBe(true);
-      expect(capabilities.some((cap) => cap.name === 'server')).toBe(true);
+      expect(capabilities.some(cap => cap.name === 'resources')).toBe(true);
+      expect(capabilities.some(cap => cap.name === 'tools')).toBe(true);
+      expect(capabilities.some(cap => cap.name === 'server')).toBe(true);
     });
   });
 
@@ -206,7 +203,7 @@ describe('MCPServer', () => {
       const request: MCPRequest = {
         jsonrpc: '2.0',
         id: 1,
-        method: 'server/info',
+        method: 'server/info'
       };
 
       const response = await server.handleRequest(request);
@@ -221,7 +218,7 @@ describe('MCPServer', () => {
       const request: MCPRequest = {
         jsonrpc: '2.0',
         id: 2,
-        method: 'server/ping',
+        method: 'server/ping'
       };
 
       const response = await server.handleRequest(request);
@@ -236,14 +233,14 @@ describe('MCPServer', () => {
       const resource = {
         uri: 'test://resource1',
         name: 'Test Resource',
-        handler: { read: jest.fn() },
+        handler: { read: jest.fn() }
       };
       server.registerResource(resource);
 
       const request: MCPRequest = {
         jsonrpc: '2.0',
         id: 3,
-        method: 'resources/list',
+        method: 'resources/list'
       };
 
       const response = await server.handleRequest(request);
@@ -260,14 +257,14 @@ describe('MCPServer', () => {
         name: 'test-tool',
         description: 'A test tool',
         inputSchema: { type: 'object' },
-        handler: { execute: jest.fn() },
+        handler: { execute: jest.fn() }
       };
       server.registerTool(tool);
 
       const request: MCPRequest = {
         jsonrpc: '2.0',
         id: 4,
-        method: 'tools/list',
+        method: 'tools/list'
       };
 
       const response = await server.handleRequest(request);
@@ -282,7 +279,7 @@ describe('MCPServer', () => {
       const request: MCPRequest = {
         jsonrpc: '2.0',
         id: 5,
-        method: 'unknown/method',
+        method: 'unknown/method'
       };
 
       const response = await server.handleRequest(request);
@@ -294,13 +291,13 @@ describe('MCPServer', () => {
 
     it('should handle resource read request', async () => {
       const mockHandler = {
-        read: jest.fn().mockResolvedValue({ content: 'test content', mimeType: 'text/plain' }),
+        read: jest.fn().mockResolvedValue({ content: 'test content', mimeType: 'text/plain' })
       };
 
       const resource = {
         uri: 'test://resource1',
         name: 'Test Resource',
-        handler: mockHandler,
+        handler: mockHandler
       };
       server.registerResource(resource);
 
@@ -308,27 +305,25 @@ describe('MCPServer', () => {
         jsonrpc: '2.0',
         id: 6,
         method: 'resources/read',
-        params: { uri: 'test://resource1' },
+        params: { uri: 'test://resource1' }
       };
 
       const response = await server.handleRequest(request);
 
       expect(response.result.content).toBe('test content');
-      expect(mockHandler.read).toHaveBeenCalledWith('test://resource1', {
-        uri: 'test://resource1',
-      });
+      expect(mockHandler.read).toHaveBeenCalledWith('test://resource1', { uri: 'test://resource1' });
     });
 
     it('should handle tool call request', async () => {
       const mockHandler = {
-        execute: jest.fn().mockResolvedValue({ success: true, result: 'tool executed' }),
+        execute: jest.fn().mockResolvedValue({ success: true, result: 'tool executed' })
       };
 
       const tool = {
         name: 'test-tool',
         description: 'A test tool',
         inputSchema: { type: 'object' },
-        handler: mockHandler,
+        handler: mockHandler
       };
       server.registerTool(tool);
 
@@ -336,7 +331,7 @@ describe('MCPServer', () => {
         jsonrpc: '2.0',
         id: 7,
         method: 'tools/call',
-        params: { name: 'test-tool', arguments: { param1: 'value1' } },
+        params: { name: 'test-tool', arguments: { param1: 'value1' } }
       };
 
       const response = await server.handleRequest(request);
@@ -352,7 +347,7 @@ describe('MCPServer', () => {
       const request: MCPRequest = {
         jsonrpc: '2.0',
         id: 8,
-        method: 'server/info',
+        method: 'server/info'
       };
 
       const response = await server.handleRequest(request);
@@ -384,7 +379,7 @@ describe('MCPServer', () => {
       const request: MCPRequest = {
         jsonrpc: '2.0',
         id: 1,
-        method: 'server/ping',
+        method: 'server/ping'
       };
 
       await server.handleRequest(request);

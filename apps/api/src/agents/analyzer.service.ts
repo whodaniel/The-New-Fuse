@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseService } from '@the-new-fuse/database';
+import { PrismaService } from '@the-new-fuse/database';
 import * as fs from 'fs/promises';
 import { glob } from 'glob';
 import * as path from 'path';
@@ -46,7 +46,7 @@ export class AnalyzerAgentService {
   private readonly logger = new Logger(AnalyzerAgentService.name);
   private readonly codebaseRoot = '/home/user/fuse';
 
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async scanCodebase(): Promise<AnalysisReport> {
     this.logger.log('Starting comprehensive codebase analysis...');
@@ -237,7 +237,7 @@ export class AnalyzerAgentService {
     const bottlenecks: Array<{ location: string; description: string; impact: number }> = [];
 
     // Check for missing indexes in schema
-    const schemaFiles = files.filter((f) => f.includes('schema.db'));
+    const schemaFiles = files.filter((f) => f.includes('schema.prisma'));
     for (const schema of schemaFiles) {
       bottlenecks.push({
         location: path.relative(this.codebaseRoot, schema),

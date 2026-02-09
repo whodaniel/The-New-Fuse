@@ -174,11 +174,7 @@ const ENV_VARS: EnvVarConfig[] = [
 /**
  * Validates a single environment variable
  */
-function validateEnvVar(config: EnvVarConfig): {
-  valid: boolean;
-  error?: string;
-  warning?: string;
-} {
+function validateEnvVar(config: EnvVarConfig): { valid: boolean; error?: string; warning?: string } {
   const value = process.env[config.name];
 
   // Check if required variable is missing
@@ -239,10 +235,7 @@ export function validateEnvironment(): EnvValidationResult {
 
   // Check for OAuth configuration completeness
   const hasAnyOAuth = process.env.GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_SECRET;
-  const hasCompleteOAuth =
-    process.env.GOOGLE_CLIENT_ID &&
-    process.env.GOOGLE_CLIENT_SECRET &&
-    process.env.GOOGLE_CALLBACK_URL;
+  const hasCompleteOAuth = process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_CALLBACK_URL;
 
   if (hasAnyOAuth && !hasCompleteOAuth) {
     warnings.push(
@@ -259,7 +252,9 @@ export function validateEnvironment(): EnvValidationResult {
     }
 
     if (!process.env.FRONTEND_URL?.startsWith('https://')) {
-      warnings.push('⚠️  FRONTEND_URL should use HTTPS in production for security.');
+      warnings.push(
+        '⚠️  FRONTEND_URL should use HTTPS in production for security.'
+      );
     }
   }
 
@@ -279,14 +274,14 @@ export function validateEnvironmentOrExit(): void {
   // Print warnings
   if (result.warnings.length > 0) {
     console.log('⚠️  Warnings:\n');
-    result.warnings.forEach((warning) => console.log(warning));
+    result.warnings.forEach(warning => console.log(warning));
     console.log('');
   }
 
   // Print errors and exit if validation failed
   if (!result.isValid) {
     console.error('❌ Environment validation failed!\n');
-    result.errors.forEach((error) => console.error(error));
+    result.errors.forEach(error => console.error(error));
     console.error('\n💡 Tip: Copy .env.example to .env and fill in the required values.\n');
     process.exit(1);
   }

@@ -5,18 +5,16 @@
  */
 
 import * as fs from 'fs/promises';
-import matter from 'gray-matter';
 import * as path from 'path';
+import matter from 'gray-matter';
 import { z } from 'zod';
-import { ClaudeSkill, SkillCategory, SkillMetadata } from '../types';
+import { SkillMetadata, ClaudeSkill, SkillCategory } from '../types';
 
 /**
  * Zod schema for skill frontmatter validation
  */
 const SkillFrontmatterSchema = z.object({
-  name: z
-    .string()
-    .regex(/^[a-z0-9-]+$/, 'Name must be in hyphen-case with lowercase alphanumeric characters'),
+  name: z.string().regex(/^[a-z0-9-]+$/, 'Name must be in hyphen-case with lowercase alphanumeric characters'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   license: z.string().optional(),
   'allowed-tools': z.array(z.string()).optional(),
@@ -41,9 +39,7 @@ export class SkillParser {
       // Validate frontmatter
       const validationResult = SkillFrontmatterSchema.safeParse(data);
       if (!validationResult.success) {
-        throw new Error(
-          `Invalid skill frontmatter in ${filePath}: ${validationResult.error.message}`
-        );
+        throw new Error(`Invalid skill frontmatter in ${filePath}: ${validationResult.error.message}`);
       }
 
       const frontmatter = validationResult.data;
@@ -77,9 +73,7 @@ export class SkillParser {
 
       return skill;
     } catch (error) {
-      throw new Error(
-        `Failed to parse skill file ${filePath}: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to parse skill file ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -131,20 +125,16 @@ export class SkillParser {
     }
 
     // Check for specific skill names and patterns
-    if (
-      pathLower.includes('algorithmic-art') ||
-      pathLower.includes('canvas-design') ||
-      pathLower.includes('theme-factory') ||
-      pathLower.includes('brand-guidelines')
-    ) {
+    if (pathLower.includes('algorithmic-art') ||
+        pathLower.includes('canvas-design') ||
+        pathLower.includes('theme-factory') ||
+        pathLower.includes('brand-guidelines')) {
       return SkillCategory.CREATIVE_DESIGN;
     }
 
-    if (
-      pathLower.includes('mcp-builder') ||
-      pathLower.includes('webapp-testing') ||
-      pathLower.includes('artifacts-builder')
-    ) {
+    if (pathLower.includes('mcp-builder') ||
+        pathLower.includes('webapp-testing') ||
+        pathLower.includes('artifacts-builder')) {
       return SkillCategory.DEVELOPMENT_TECHNICAL;
     }
 
@@ -190,23 +180,12 @@ export class SkillParser {
 
     // Common technology keywords
     const techKeywords = [
-      'pdf',
-      'xlsx',
-      'docx',
-      'pptx',
-      'python',
-      'typescript',
-      'javascript',
-      'react',
-      'playwright',
-      'mcp',
-      'api',
-      'testing',
-      'design',
-      'art',
-      'creative',
-      'communication',
-      'enterprise',
+      'pdf', 'xlsx', 'docx', 'pptx',
+      'python', 'typescript', 'javascript',
+      'react', 'playwright',
+      'mcp', 'api', 'testing',
+      'design', 'art', 'creative',
+      'communication', 'enterprise'
     ];
 
     const contentLower = content.toLowerCase();
@@ -228,7 +207,7 @@ export class SkillParser {
     let instructions = content.replace(/^---[\s\S]*?---/, '').trim();
 
     // Extract main content before examples/references sections if they exist
-    const sections = instructions.split(/^#+\s+(Examples?|References?|Guidelines?)/im);
+    const sections = instructions.split(/^#+\s+(Examples?|References?|Guidelines?)/mi);
     if (sections.length > 1) {
       // Return everything before the first major section
       return sections[0].trim();
@@ -276,7 +255,7 @@ export class SkillParser {
 
     return {
       valid: errors.length === 0,
-      errors,
+      errors
     };
   }
 }

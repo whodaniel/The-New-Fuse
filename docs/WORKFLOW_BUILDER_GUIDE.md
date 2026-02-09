@@ -2,10 +2,7 @@
 
 ## Overview
 
-The Enhanced Workflow Builder is a production-ready drag-and-drop visual
-workflow editor for The New Fuse framework. It enables you to create complex
-multi-agent workflows with conditional logic, parallel execution, and
-human-in-the-loop approvals.
+The Enhanced Workflow Builder is a production-ready drag-and-drop visual workflow editor for The New Fuse framework. It enables you to create complex multi-agent workflows with conditional logic, parallel execution, and human-in-the-loop approvals.
 
 ## Table of Contents
 
@@ -29,7 +26,6 @@ Navigate to `/workflows/builder` in The New Fuse application.
 ### Interface Overview
 
 The workflow builder consists of:
-
 - **Canvas**: Central area where you design workflows
 - **Node Library**: Right drawer containing all available node types
 - **Control Panel**: Top toolbar with execution and save controls
@@ -45,7 +41,6 @@ The workflow builder consists of:
 Agent Task Nodes execute tasks using AI agents from the agent registry.
 
 **Features:**
-
 - Select specific agents or agent types
 - Set task priority (low, medium, high)
 - Define estimated execution time
@@ -53,7 +48,6 @@ Agent Task Nodes execute tasks using AI agents from the agent registry.
 - View agent execution status
 
 **Configuration:**
-
 ```typescript
 {
   label: "Code Review Agent",
@@ -71,7 +65,6 @@ Agent Task Nodes execute tasks using AI agents from the agent registry.
 ```
 
 **Use Cases:**
-
 - Code analysis and review
 - Research and information gathering
 - Content generation
@@ -83,14 +76,12 @@ Agent Task Nodes execute tasks using AI agents from the agent registry.
 Branch workflow execution based on conditions.
 
 **Features:**
-
 - JavaScript expression evaluation
 - True/False output handles
 - Access to workflow variables
 - Safe execution context
 
 **Configuration:**
-
 ```typescript
 {
   label: "Check Test Results",
@@ -100,25 +91,23 @@ Branch workflow execution based on conditions.
 ```
 
 **Available Variables:**
-
 - Workflow input variables
 - Previous node outputs
 - Built-in functions: Math, Date, String, Number, Boolean, Array, Object
 
 **Examples:**
-
 ```javascript
 // Simple comparison
-status === 'success';
+status === "success"
 
 // Numeric threshold
-errorCount < 5 && coverage >= 90;
+errorCount < 5 && coverage >= 90
 
 // Array operations
-results.length > 0 && results.every((r) => r.passed);
+results.length > 0 && results.every(r => r.passed)
 
 // String matching
-message.includes('approved') || priority === 'high';
+message.includes("approved") || priority === "high"
 ```
 
 ### 3. Parallel Execution Nodes
@@ -126,14 +115,12 @@ message.includes('approved') || priority === 'high';
 Execute multiple tasks simultaneously.
 
 **Features:**
-
 - Up to 10 parallel branches
 - Wait for all or first completion
 - Aggregate results
 - Independent error handling
 
 **Configuration:**
-
 ```typescript
 {
   label: "Parallel Research",
@@ -144,7 +131,6 @@ Execute multiple tasks simultaneously.
 ```
 
 **Use Cases:**
-
 - Multi-agent research
 - Parallel data processing
 - Independent service calls
@@ -156,7 +142,6 @@ Execute multiple tasks simultaneously.
 Pause workflow for human review and approval.
 
 **Features:**
-
 - Multiple approvers support
 - Timeout configuration
 - Email/Slack notifications
@@ -164,7 +149,6 @@ Pause workflow for human review and approval.
 - Rejection handling
 
 **Configuration:**
-
 ```typescript
 {
   label: "Senior Developer Approval",
@@ -177,7 +161,6 @@ Pause workflow for human review and approval.
 ```
 
 **Approval Flow:**
-
 1. Workflow pauses at approval node
 2. Notifications sent to approvers
 3. Approvers review in UI
@@ -189,14 +172,12 @@ Pause workflow for human review and approval.
 Coordinate multiple agents working together on a task.
 
 **Features:**
-
 - Sequential or parallel coordination
 - Agent handoff management
 - Context preservation
 - Load balancing
 
 **Configuration:**
-
 ```typescript
 {
   label: "Team Code Review",
@@ -228,7 +209,6 @@ Coordinate multiple agents working together on a task.
 ### Workflow Variables
 
 Define workflow-level variables:
-
 ```typescript
 {
   name: "pullRequestId",
@@ -255,32 +235,29 @@ Define workflow-level variables:
 
 ### Connecting to Agent Registry
 
-The workflow builder automatically loads available agents from the Master Agent
-Registry.
+The workflow builder automatically loads available agents from the Master Agent Registry.
 
 **Agent Selection:**
-
 ```typescript
 // Method 1: By Agent ID (specific agent)
 {
-  agentId: 'agent-abc-123';
+  agentId: "agent-abc-123"
 }
 
 // Method 2: By Agent Type (any available)
 {
-  agentType: 'code-reviewer';
+  agentType: "code-reviewer"
 }
 
 // Method 3: By Capabilities (matching capabilities)
 {
-  requiredCapabilities: ['codeGeneration', 'gitOperations'];
+  requiredCapabilities: ["codeGeneration", "gitOperations"]
 }
 ```
 
 ### Agent Status Monitoring
 
 Real-time agent status displayed in nodes:
-
 - **Idle**: Ready to accept tasks
 - **Running**: Currently executing
 - **Completed**: Task finished successfully
@@ -290,7 +267,6 @@ Real-time agent status displayed in nodes:
 ### Agent Configuration
 
 Configure agent behavior per node:
-
 ```typescript
 {
   agentConfig: {
@@ -320,7 +296,6 @@ Configure agent behavior per node:
 ### Real-Time Monitoring
 
 **WebSocket Connection:**
-
 ```typescript
 // Frontend automatically subscribes
 ws://localhost:3000/workflow-execution
@@ -335,7 +310,6 @@ ws://localhost:3000/workflow-execution
 ```
 
 **Execution Controls:**
-
 - **Pause**: Temporarily halt execution
 - **Resume**: Continue paused execution
 - **Cancel**: Stop and rollback
@@ -344,7 +318,6 @@ ws://localhost:3000/workflow-execution
 ### Execution Logs
 
 View detailed execution logs:
-
 ```typescript
 {
   timestamp: "2025-11-18T10:30:00Z",
@@ -362,7 +335,6 @@ View detailed execution logs:
 ### Error Handling
 
 **Automatic Retry:**
-
 ```typescript
 {
   retryPolicy: {
@@ -375,7 +347,6 @@ View detailed execution logs:
 ```
 
 **Error Recovery:**
-
 ```typescript
 {
   errorHandling: {
@@ -431,7 +402,7 @@ setNodes(template.nodes);
 setEdges(template.edges);
 
 // Customize
-nodes.forEach((node) => {
+nodes.forEach(node => {
   // Assign specific agents
   if (node.type === 'agentTask') {
     node.data.agentId = 'your-agent-id';
@@ -450,12 +421,8 @@ const myTemplate: WorkflowTemplate = {
   difficulty: 'intermediate',
   estimatedTime: 20,
   tags: ['custom', 'automation'],
-  nodes: [
-    /* your nodes */
-  ],
-  edges: [
-    /* your edges */
-  ],
+  nodes: [ /* your nodes */ ],
+  edges: [ /* your edges */ ]
 };
 ```
 
@@ -466,7 +433,6 @@ const myTemplate: WorkflowTemplate = {
 ### Workflow API
 
 #### Create Workflow
-
 ```http
 POST /api/workflows
 Content-Type: application/json
@@ -482,7 +448,6 @@ Content-Type: application/json
 ```
 
 #### Execute Workflow
-
 ```http
 POST /api/workflows/:id/execute
 Content-Type: application/json
@@ -496,13 +461,11 @@ Content-Type: application/json
 ```
 
 #### Get Execution Status
-
 ```http
 GET /api/workflows/executions/:executionId
 ```
 
 #### Control Execution
-
 ```http
 POST /api/workflows/executions/:executionId/pause
 POST /api/workflows/executions/:executionId/resume
@@ -512,15 +475,13 @@ POST /api/workflows/executions/:executionId/cancel
 ### WebSocket Events
 
 #### Subscribe to Execution
-
 ```typescript
 socket.emit('subscribe_execution', {
-  executionId: 'exec-123',
+  executionId: 'exec-123'
 });
 ```
 
 #### Receive Updates
-
 ```typescript
 socket.on('execution_update', (update) => {
   console.log(update.type, update.data);
@@ -571,37 +532,37 @@ socket.on('execution_update', (update) => {
 
 ```typescript
 const codeReviewWorkflow = {
-  name: 'Simple Code Review',
+  name: "Simple Code Review",
   nodes: [
     {
-      id: 'read',
-      type: 'agentTask',
+      id: "read",
+      type: "agentTask",
       data: {
-        label: 'Read Code',
-        agentType: 'code-reader',
-      },
+        label: "Read Code",
+        agentType: "code-reader"
+      }
     },
     {
-      id: 'review',
-      type: 'agentTask',
+      id: "review",
+      type: "agentTask",
       data: {
-        label: 'Review Code',
-        agentType: 'code-reviewer',
-      },
+        label: "Review Code",
+        agentType: "code-reviewer"
+      }
     },
     {
-      id: 'approve',
-      type: 'humanApproval',
+      id: "approve",
+      type: "humanApproval",
       data: {
-        label: 'Approval',
-        approvers: 1,
-      },
-    },
+        label: "Approval",
+        approvers: 1
+      }
+    }
   ],
   edges: [
-    { source: 'read', target: 'review' },
-    { source: 'review', target: 'approve' },
-  ],
+    { source: "read", target: "review" },
+    { source: "review", target: "approve" }
+  ]
 };
 ```
 
@@ -609,42 +570,42 @@ const codeReviewWorkflow = {
 
 ```typescript
 const researchWorkflow = {
-  name: 'Parallel Research',
+  name: "Parallel Research",
   nodes: [
     {
-      id: 'split',
-      type: 'parallel',
-      data: { parallelTasks: 3 },
+      id: "split",
+      type: "parallel",
+      data: { parallelTasks: 3 }
     },
     {
-      id: 'research1',
-      type: 'agentTask',
-      data: { label: 'Technical Research' },
+      id: "research1",
+      type: "agentTask",
+      data: { label: "Technical Research" }
     },
     {
-      id: 'research2',
-      type: 'agentTask',
-      data: { label: 'Business Research' },
+      id: "research2",
+      type: "agentTask",
+      data: { label: "Business Research" }
     },
     {
-      id: 'research3',
-      type: 'agentTask',
-      data: { label: 'Market Research' },
+      id: "research3",
+      type: "agentTask",
+      data: { label: "Market Research" }
     },
     {
-      id: 'combine',
-      type: 'agentTask',
-      data: { label: 'Combine Results' },
-    },
+      id: "combine",
+      type: "agentTask",
+      data: { label: "Combine Results" }
+    }
   ],
   edges: [
-    { source: 'split', sourceHandle: 'output-1', target: 'research1' },
-    { source: 'split', sourceHandle: 'output-2', target: 'research2' },
-    { source: 'split', sourceHandle: 'output-3', target: 'research3' },
-    { source: 'research1', target: 'combine' },
-    { source: 'research2', target: 'combine' },
-    { source: 'research3', target: 'combine' },
-  ],
+    { source: "split", sourceHandle: "output-1", target: "research1" },
+    { source: "split", sourceHandle: "output-2", target: "research2" },
+    { source: "split", sourceHandle: "output-3", target: "research3" },
+    { source: "research1", target: "combine" },
+    { source: "research2", target: "combine" },
+    { source: "research3", target: "combine" }
+  ]
 };
 ```
 
@@ -652,37 +613,37 @@ const researchWorkflow = {
 
 ```typescript
 const conditionalWorkflow = {
-  name: 'Test and Deploy',
+  name: "Test and Deploy",
   nodes: [
     {
-      id: 'test',
-      type: 'agentTask',
-      data: { label: 'Run Tests' },
+      id: "test",
+      type: "agentTask",
+      data: { label: "Run Tests" }
     },
     {
-      id: 'condition',
-      type: 'conditional',
+      id: "condition",
+      type: "conditional",
       data: {
-        label: 'Tests Passed?',
-        condition: 'testsPassed === true',
-      },
+        label: "Tests Passed?",
+        condition: "testsPassed === true"
+      }
     },
     {
-      id: 'deploy',
-      type: 'agentTask',
-      data: { label: 'Deploy to Production' },
+      id: "deploy",
+      type: "agentTask",
+      data: { label: "Deploy to Production" }
     },
     {
-      id: 'notify',
-      type: 'agentTask',
-      data: { label: 'Notify Team of Failure' },
-    },
+      id: "notify",
+      type: "agentTask",
+      data: { label: "Notify Team of Failure" }
+    }
   ],
   edges: [
-    { source: 'test', target: 'condition' },
-    { source: 'condition', sourceHandle: 'true', target: 'deploy' },
-    { source: 'condition', sourceHandle: 'false', target: 'notify' },
-  ],
+    { source: "test", target: "condition" },
+    { source: "condition", sourceHandle: "true", target: "deploy" },
+    { source: "condition", sourceHandle: "false", target: "notify" }
+  ]
 };
 ```
 
@@ -693,25 +654,21 @@ const conditionalWorkflow = {
 ### Common Issues
 
 **Issue**: Workflow won't execute
-
 - Check that all required inputs are provided
 - Verify all nodes are properly connected
 - Ensure agents are available and active
 
 **Issue**: Node execution timeout
-
 - Increase timeout in node configuration
 - Check agent availability
 - Verify task complexity is appropriate
 
 **Issue**: WebSocket connection lost
-
 - Check network connectivity
 - Verify WebSocket endpoint is accessible
 - Review server logs
 
 **Issue**: Agent not found
-
 - Refresh agent registry
 - Verify agent is registered
 - Check agent status
@@ -721,10 +678,8 @@ const conditionalWorkflow = {
 ## Support
 
 For questions and support:
-
 - Documentation: `/docs`
-- GitHub Issues:
-  [github.com/your-repo/issues](https://github.com/your-repo/issues)
+- GitHub Issues: [github.com/your-repo/issues](https://github.com/your-repo/issues)
 - Community: Join our Discord
 - Email: support@thenewfuse.com
 
@@ -733,7 +688,6 @@ For questions and support:
 ## Changelog
 
 ### Version 1.0.0 (2025-11-18)
-
 - Initial release
 - Enhanced node types (agent, conditional, parallel, human approval)
 - Agent registry integration

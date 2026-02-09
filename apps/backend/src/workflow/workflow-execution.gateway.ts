@@ -3,27 +3,20 @@
  * Provides live updates during workflow execution
  */
 
-import { Logger } from '@nestjs/common';
 import {
-  ConnectedSocket,
-  MessageBody,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  SubscribeMessage,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  ConnectedSocket,
+  MessageBody
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { Logger, UseGuards } from '@nestjs/common';
 
 interface ExecutionUpdate {
-  type:
-    | 'status'
-    | 'node_started'
-    | 'node_completed'
-    | 'node_failed'
-    | 'workflow_completed'
-    | 'workflow_failed'
-    | 'log';
+  type: 'status' | 'node_started' | 'node_completed' | 'node_failed' | 'workflow_completed' | 'workflow_failed' | 'log';
   executionId: string;
   workflowId?: string;
   nodeId?: string;
@@ -39,9 +32,9 @@ interface ExecutionSubscription {
 @WebSocketGateway({
   cors: {
     origin: '*', // Configure based on your environment
-    credentials: true,
+    credentials: true
   },
-  namespace: '/workflow-execution',
+  namespace: '/workflow-execution'
 })
 export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
@@ -62,7 +55,7 @@ export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayD
     // Clean up subscriptions
     const subscriptions = this.clientSubscriptions.get(client.id);
     if (subscriptions) {
-      subscriptions.forEach((executionId) => {
+      subscriptions.forEach(executionId => {
         const subscribers = this.activeSubscriptions.get(executionId);
         if (subscribers) {
           subscribers.delete(client.id);
@@ -98,7 +91,7 @@ export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayD
 
     client.emit('subscription_confirmed', {
       executionId,
-      timestamp: new Date(),
+      timestamp: new Date()
     });
   }
 
@@ -128,7 +121,7 @@ export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayD
 
     client.emit('unsubscription_confirmed', {
       executionId,
-      timestamp: new Date(),
+      timestamp: new Date()
     });
   }
 
@@ -149,7 +142,7 @@ export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayD
       type: 'status',
       executionId,
       data: { status: 'pausing', requestedBy: client.id },
-      timestamp: new Date(),
+      timestamp: new Date()
     });
 
     return { success: true, executionId };
@@ -172,7 +165,7 @@ export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayD
       type: 'status',
       executionId,
       data: { status: 'resuming', requestedBy: client.id },
-      timestamp: new Date(),
+      timestamp: new Date()
     });
 
     return { success: true, executionId };
@@ -197,9 +190,9 @@ export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayD
       data: {
         status: 'cancelling',
         reason: reason || 'Cancelled by user',
-        requestedBy: client.id,
+        requestedBy: client.id
       },
-      timestamp: new Date(),
+      timestamp: new Date()
     });
 
     return { success: true, executionId };
@@ -220,7 +213,7 @@ export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayD
       `Broadcasting ${update.type} to ${subscribers.size} clients for execution ${executionId}`
     );
 
-    subscribers.forEach((clientId) => {
+    subscribers.forEach(clientId => {
       this.server.to(clientId).emit('execution_update', update);
     });
   }
@@ -232,7 +225,7 @@ export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayD
     this.broadcastToExecution(executionId, {
       executionId,
       timestamp: new Date(),
-      ...update,
+      ...update
     } as ExecutionUpdate);
   }
 
@@ -243,7 +236,7 @@ export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayD
     this.sendExecutionUpdate(executionId, {
       type: 'node_started',
       nodeId,
-      data: nodeData,
+      data: nodeData
     });
   }
 
@@ -254,7 +247,7 @@ export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayD
     this.sendExecutionUpdate(executionId, {
       type: 'node_completed',
       nodeId,
-      data: { output, duration },
+      data: { output, duration }
     });
   }
 
@@ -265,7 +258,7 @@ export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayD
     this.sendExecutionUpdate(executionId, {
       type: 'node_failed',
       nodeId,
-      data: { error },
+      data: { error }
     });
   }
 
@@ -276,7 +269,7 @@ export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayD
     this.sendExecutionUpdate(executionId, {
       type: 'workflow_completed',
       workflowId,
-      data: { output, statistics },
+      data: { output, statistics }
     });
   }
 
@@ -287,27 +280,22 @@ export class WorkflowExecutionGateway implements OnGatewayConnection, OnGatewayD
     this.sendExecutionUpdate(executionId, {
       type: 'workflow_failed',
       workflowId,
-      data: { error },
+      data: { error }
     });
   }
 
   /**
    * Send execution log
    */
-  sendLog(
-    executionId: string,
-    level: 'debug' | 'info' | 'warn' | 'error',
-    message: string,
-    metadata?: any
-  ) {
+  sendLog(executionId: string, level: 'debug' | 'info' | 'warn' | 'error', message: string, metadata?: any) {
     this.sendExecutionUpdate(executionId, {
       type: 'log',
       data: {
         level,
         message,
         metadata,
-        timestamp: new Date(),
-      },
+        timestamp: new Date()
+      }
     });
   }
 

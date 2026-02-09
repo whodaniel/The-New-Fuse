@@ -2,10 +2,10 @@
  * BuildProcessThrottler - Manages build process queue with memory-aware scheduling
  */
 
-import { ChildProcess, spawn } from 'child_process';
+import { spawn, ChildProcess } from 'child_process';
 import { EventEmitter } from 'events';
-import { SystemResourceDetector } from '../system/SystemResourceDetector.js';
 import { MemoryUsage } from '../types/index.js';
+import { SystemResourceDetector } from '../system/SystemResourceDetector.js';
 
 export interface BuildTask {
   id: string;
@@ -52,7 +52,7 @@ export class BuildProcessThrottler extends EventEmitter {
       defaultTimeout: 300000, // 5 minutes
       processMemoryLimit: 512, // 512MB per process
       queueTimeout: 600000, // 10 minutes
-      ...options,
+      ...options
     };
   }
 
@@ -69,11 +69,11 @@ export class BuildProcessThrottler extends EventEmitter {
       priority: 0,
       timeout: this.options.defaultTimeout,
       memoryLimit: this.options.processMemoryLimit,
-      ...task,
+      ...task
     };
 
     // Insert task in priority order (higher priority first)
-    const insertIndex = this.queue.findIndex((t) => (t.priority || 0) < (fullTask.priority || 0));
+    const insertIndex = this.queue.findIndex(t => (t.priority || 0) < (fullTask.priority || 0));
     if (insertIndex === -1) {
       this.queue.push(fullTask);
     } else {
@@ -81,10 +81,10 @@ export class BuildProcessThrottler extends EventEmitter {
     }
 
     this.emit('taskQueued', { taskId: task.id, queueLength: this.queue.length });
-
+    
     // Try to process the queue
     this.processQueue();
-
+    
     return task.id;
   }
 
@@ -127,7 +127,7 @@ export class BuildProcessThrottler extends EventEmitter {
    */
   cancelTask(taskId: string): boolean {
     // Remove from queue if not started
-    const queueIndex = this.queue.findIndex((t) => t.id === taskId);
+    const queueIndex = this.queue.findIndex(t => t.id === taskId);
     if (queueIndex !== -1) {
       this.queue.splice(queueIndex, 1);
       this.emit('taskCancelled', { taskId, reason: 'cancelled_from_queue' });
@@ -163,10 +163,7 @@ export class BuildProcessThrottler extends EventEmitter {
   /**
    * Check if system has enough memory to start new processes
    */
-  async hasAvailableMemory(
-    currentMemoryUsage: MemoryUsage,
-    requiredMemory?: number
-  ): Promise<boolean> {
+  async hasAvailableMemory(currentMemoryUsage: MemoryUsage, requiredMemory?: number): Promise<boolean> {
     const required = requiredMemory || this.options.processMemoryLimit;
     const detector = SystemResourceDetector.getInstance();
     const resources = await detector.getSystemResources();
@@ -190,7 +187,7 @@ export class BuildProcessThrottler extends EventEmitter {
       runningCount: this.running.size,
       completedCount: this.results.size,
       maxConcurrency: this.options.maxConcurrency,
-      isShuttingDown: this.isShuttingDown,
+      isShuttingDown: this.isShuttingDown
     };
   }
 
@@ -199,20 +196,22 @@ export class BuildProcessThrottler extends EventEmitter {
    */
   async shutdown(timeout: number = 30000): Promise<void> {
     this.isShuttingDown = true;
-
+    
     // Clear the queue
     const queuedTasks = this.queue.splice(0);
-    queuedTasks.forEach((task) => {
+    queuedTasks.forEach(task => {
       this.emit('taskCancelled', { taskId: task.id, reason: 'shutdown' });
     });
 
     // Kill all running processes
     const runningTaskIds = Array.from(this.running.keys());
-    const shutdownPromises = runningTaskIds.map((taskId) => this.killProcess(taskId, 'SIGTERM'));
+    const shutdownPromises = runningTaskIds.map(taskId => 
+      this.killProcess(taskId, 'SIGTERM')
+    );
 
     // Wait for processes to terminate or force kill after timeout
     const shutdownTimeout = setTimeout(() => {
-      runningTaskIds.forEach((taskId) => {
+      runningTaskIds.forEach(taskId => {
         this.killProcess(taskId, 'SIGKILL');
       });
     }, timeout);
@@ -222,7 +221,7 @@ export class BuildProcessThrottler extends EventEmitter {
       clearTimeout(shutdownTimeout);
     } catch (error) {
       // Force kill any remaining processes
-      runningTaskIds.forEach((taskId) => {
+      runningTaskIds.forEach(taskId => {
         this.killProcess(taskId, 'SIGKILL');
       });
       throw error;
@@ -245,7 +244,7 @@ export class BuildProcessThrottler extends EventEmitter {
 
     // Start as many tasks as we have slots for
     const tasksToStart = this.queue.splice(0, availableSlots);
-    tasksToStart.forEach((task) => this.startTask(task));
+    tasksToStart.forEach(task => this.startTask(task));
   }
 
   /**
@@ -253,16 +252,16 @@ export class BuildProcessThrottler extends EventEmitter {
    */
   private startTask(task: BuildTask): void {
     const startTime = Date.now();
-
+    
     try {
       const childProcess = spawn(task.command, task.args, {
         cwd: task.cwd || process.cwd(),
         env: { ...process.env, ...task.env },
-        stdio: ['pipe', 'pipe', 'pipe'],
+        stdio: ['pipe', 'pipe', 'pipe']
       });
 
       this.running.set(task.id, childProcess);
-
+      
       let stdout = '';
       let stderr = '';
 
@@ -282,7 +281,7 @@ export class BuildProcessThrottler extends EventEmitter {
       childProcess.on('exit', (code, signal) => {
         clearTimeout(timeoutId);
         this.running.delete(task.id);
-
+        
         const duration = Date.now() - startTime;
         const result: BuildTaskResult = {
           id: task.id,
@@ -290,12 +289,12 @@ export class BuildProcessThrottler extends EventEmitter {
           exitCode: code,
           stdout,
           stderr,
-          duration,
+          duration
         };
 
         this.results.set(task.id, result);
         this.emit('taskCompleted', result);
-
+        
         // Process next tasks in queue
         this.processQueue();
       });
@@ -303,7 +302,7 @@ export class BuildProcessThrottler extends EventEmitter {
       childProcess.on('error', (error) => {
         clearTimeout(timeoutId);
         this.running.delete(task.id);
-
+        
         const duration = Date.now() - startTime;
         const result: BuildTaskResult = {
           id: task.id,
@@ -312,17 +311,18 @@ export class BuildProcessThrottler extends EventEmitter {
           stdout,
           stderr,
           duration,
-          error,
+          error
         };
 
         this.results.set(task.id, result);
         this.emit('taskCompleted', result);
-
+        
         // Process next tasks in queue
         this.processQueue();
       });
 
       this.emit('taskStarted', { taskId: task.id, pid: childProcess.pid });
+
     } catch (error) {
       const duration = Date.now() - startTime;
       const result: BuildTaskResult = {
@@ -332,7 +332,7 @@ export class BuildProcessThrottler extends EventEmitter {
         stdout: '',
         stderr: '',
         duration,
-        error: error as Error,
+        error: error as Error
       };
 
       this.results.set(task.id, result);
@@ -357,10 +357,10 @@ export class BuildProcessThrottler extends EventEmitter {
       };
 
       process.once('exit', onExit);
-
+      
       try {
         process.kill(signal);
-
+        
         // If SIGTERM doesn't work within 5 seconds, use SIGKILL
         if (signal === 'SIGTERM') {
           setTimeout(() => {
@@ -401,6 +401,6 @@ export class BuildProcessThrottler extends EventEmitter {
    * Get queued task IDs
    */
   getQueuedTaskIds(): string[] {
-    return this.queue.map((task) => task.id);
+    return this.queue.map(task => task.id);
   }
 }

@@ -28,17 +28,17 @@
             },
             "thresholds": {
               "steps": [
-                { "color": "red", "value": 0 },
-                { "color": "green", "value": 1 }
+                {"color": "red", "value": 0},
+                {"color": "green", "value": 1}
               ]
             },
             "mappings": [
-              { "options": { "0": { "text": "Down" } }, "type": "value" },
-              { "options": { "1": { "text": "Up" } }, "type": "value" }
+              {"options": {"0": {"text": "Down"}}, "type": "value"},
+              {"options": {"1": {"text": "Up"}}, "type": "value"}
             ]
           }
         },
-        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 }
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
       },
       {
         "id": 2,
@@ -50,8 +50,10 @@
             "legendFormat": "Operations/sec"
           }
         ],
-        "yAxes": [{ "label": "Operations per second", "min": 0 }],
-        "gridPos": { "h": 8, "w": 12, "x": 6, "y": 0 }
+        "yAxes": [
+          {"label": "Operations per second", "min": 0}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 6, "y": 0}
       },
       {
         "id": 3,
@@ -71,8 +73,10 @@
             "legendFormat": "99th percentile"
           }
         ],
-        "yAxes": [{ "label": "Seconds", "min": 0 }],
-        "gridPos": { "h": 8, "w": 12, "x": 18, "y": 0 }
+        "yAxes": [
+          {"label": "Seconds", "min": 0}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 18, "y": 0}
       },
       {
         "id": 4,
@@ -84,8 +88,10 @@
             "legendFormat": "Queue Size"
           }
         ],
-        "yAxes": [{ "label": "Items", "min": 0 }],
-        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 }
+        "yAxes": [
+          {"label": "Items", "min": 0}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
       },
       {
         "id": 5,
@@ -97,8 +103,10 @@
             "legendFormat": "Errors/sec"
           }
         ],
-        "yAxes": [{ "label": "Errors per second", "min": 0 }],
-        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 }
+        "yAxes": [
+          {"label": "Errors per second", "min": 0}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
       },
       {
         "id": 6,
@@ -114,8 +122,10 @@
             "legendFormat": "Unresolved Conflicts"
           }
         ],
-        "yAxes": [{ "label": "Count", "min": 0 }],
-        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 }
+        "yAxes": [
+          {"label": "Count", "min": 0}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
       },
       {
         "id": 7,
@@ -131,8 +141,10 @@
             "legendFormat": "Watched Paths"
           }
         ],
-        "yAxes": [{ "label": "Count", "min": 0 }],
-        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 }
+        "yAxes": [
+          {"label": "Count", "min": 0}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
       },
       {
         "id": 8,
@@ -144,8 +156,10 @@
             "legendFormat": "Clock Drift (ms)"
           }
         ],
-        "yAxes": [{ "label": "Milliseconds", "min": 0 }],
-        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 }
+        "yAxes": [
+          {"label": "Milliseconds", "min": 0}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24}
       },
       {
         "id": 9,
@@ -161,8 +175,10 @@
             "legendFormat": "CPU Usage %"
           }
         ],
-        "yAxes": [{ "label": "Percentage", "min": 0, "max": 100 }],
-        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 }
+        "yAxes": [
+          {"label": "Percentage", "min": 0, "max": 100}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24}
       },
       {
         "id": 10,
@@ -178,8 +194,10 @@
             "legendFormat": "Active Connections"
           }
         ],
-        "yAxes": [{ "label": "Seconds / Count", "min": 0 }],
-        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 }
+        "yAxes": [
+          {"label": "Seconds / Count", "min": 0}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 32}
       },
       {
         "id": 11,
@@ -195,8 +213,10 @@
             "legendFormat": "Active Connections"
           }
         ],
-        "yAxes": [{ "label": "Seconds / Count", "min": 0 }],
-        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 }
+        "yAxes": [
+          {"label": "Seconds / Count", "min": 0}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 32}
       }
     ]
   }

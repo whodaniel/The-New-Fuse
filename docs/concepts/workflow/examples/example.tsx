@@ -20,9 +20,9 @@ export class Example {
     this.redisClient = createClient({
       socket: {
         host: redisHost,
-        port: redisPort,
+        port: redisPort
       },
-      database: redisDb,
+      database: redisDb
     });
     this.pubsub = this.redisClient.duplicate();
     this.connected = false;
@@ -36,7 +36,7 @@ export class Example {
     try {
       await this.redisClient.connect();
       await this.pubsub.connect();
-
+      
       const pong = await this.redisClient.ping();
       if (pong === 'PONG') {
         this.connected = true;
@@ -44,10 +44,7 @@ export class Example {
         this.logger.info('Subscribed to example_channel');
       }
     } catch (error) {
-      this.logger.error(
-        'Error connecting to Redis:',
-        error instanceof Error ? error.message : String(error)
-      );
+      this.logger.error('Error connecting to Redis:', error instanceof Error ? error.message : String(error));
       throw error;
     }
   }
@@ -65,10 +62,7 @@ export class Example {
       await this.redisClient.publish('example_channel', messageStr);
       this.logger.debug('Sent message:', messageStr);
     } catch (error) {
-      this.logger.error(
-        'Error sending message:',
-        error instanceof Error ? error.message : String(error)
-      );
+      this.logger.error('Error sending message:', error instanceof Error ? error.message : String(error));
       throw error;
     }
   }
@@ -81,13 +75,11 @@ export class Example {
       const messageData = JSON.parse(message);
       // Process the message
       this.logger.debug('Received message:', messageData);
-
+      
       // Add your message processing logic here
+      
     } catch (error) {
-      this.logger.error(
-        'Error processing message:',
-        error instanceof Error ? error.message : String(error)
-      );
+      this.logger.error('Error processing message:', error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -104,10 +96,7 @@ export class Example {
         this.logger.info('Disconnected from Redis');
       }
     } catch (error) {
-      this.logger.error(
-        'Error disconnecting:',
-        error instanceof Error ? error.message : String(error)
-      );
+      this.logger.error('Error disconnecting:', error instanceof Error ? error.message : String(error));
       throw error;
     }
   }

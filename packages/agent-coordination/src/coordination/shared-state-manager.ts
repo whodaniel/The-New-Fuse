@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { v4 as uuidv4 } from 'uuid';
-import { MessageSerializer } from '../serializers/message-serializer';
 import { SharedState, StateLock } from '../types/coordination.types';
+import { MessageSerializer } from '../serializers/message-serializer';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Shared state manager for collaborative agent tasks
@@ -50,7 +50,11 @@ export class SharedStateManager {
     const stateKey = this.keyPrefix + key;
     const ttl = options?.ttl || this.defaultTTL;
 
-    await this.redisService.set(stateKey, this.serializer.serialize(state), ttl);
+    await this.redisService.set(
+      stateKey,
+      this.serializer.serialize(state),
+      ttl
+    );
 
     this.logger.debug('State set: ' + key + ' (version ' + version + ')');
     return state;
@@ -82,7 +86,7 @@ export class SharedStateManager {
     ownerId: string
   ): Promise<SharedState | null> {
     const current = await this.getState(key);
-
+    
     if (!current) {
       throw new Error('State not found: ' + key);
     }
@@ -90,9 +94,9 @@ export class SharedStateManager {
     const newValue = updater(current.value);
     const newVersion = current.version + 1;
 
-    return await this.setState(key, newValue, ownerId, {
+    return await this.setState(key, newValue, ownerId, { 
       version: newVersion,
-      ttl: current.ttl,
+      ttl: current.ttl 
     });
   }
 
@@ -102,12 +106,12 @@ export class SharedStateManager {
   async deleteState(key: string): Promise<boolean> {
     const stateKey = this.keyPrefix + key;
     const result = await this.redisService.del(stateKey);
-
+    
     if (result > 0) {
       this.logger.debug('State deleted: ' + key);
       return true;
     }
-
+    
     return false;
   }
 
@@ -131,7 +135,11 @@ export class SharedStateManager {
       renewable: true,
     };
 
-    await this.redisService.set(lockKey, this.serializer.serialize(lock), ttl);
+    await this.redisService.set(
+      lockKey,
+      this.serializer.serialize(lock),
+      ttl
+    );
 
     this.logger.debug('Lock acquired: ' + key + ' by ' + agentId);
     return lock;
@@ -148,7 +156,7 @@ export class SharedStateManager {
 
     try {
       const lock = this.serializer.deserialize<StateLock>(lockData);
-
+      
       if (lock.lockId === lockId) {
         await this.redisService.del(lockKey);
         this.logger.debug('Lock released: ' + key);
@@ -164,7 +172,11 @@ export class SharedStateManager {
   /**
    * Renew lock
    */
-  async renewLock(key: string, lockId: string, ttl: number = this.lockTTL): Promise<boolean> {
+  async renewLock(
+    key: string,
+    lockId: string,
+    ttl: number = this.lockTTL
+  ): Promise<boolean> {
     const lockKey = this.keyPrefix + 'lock:' + key;
     const lockData = await this.redisService.get(lockKey);
 
@@ -172,12 +184,16 @@ export class SharedStateManager {
 
     try {
       const lock = this.serializer.deserialize<StateLock>(lockData);
-
+      
       if (lock.lockId === lockId && lock.renewable) {
         lock.expiresAt = Date.now() + ttl * 1000;
-
-        await this.redisService.set(lockKey, this.serializer.serialize(lock), ttl);
-
+        
+        await this.redisService.set(
+          lockKey,
+          this.serializer.serialize(lock),
+          ttl
+        );
+        
         this.logger.debug('Lock renewed: ' + key);
         return true;
       }
@@ -219,10 +235,10 @@ export class SharedStateManager {
   async listStates(pattern: string = '*'): Promise<string[]> {
     const fullPattern = this.keyPrefix + pattern;
     const keys = await this.redisService.keys(fullPattern);
-
+    
     return keys
-      .filter((key) => !key.includes(':lock:'))
-      .map((key) => key.replace(this.keyPrefix, ''));
+      .filter(key => !key.includes(':lock:'))
+      .map(key => key.replace(this.keyPrefix, ''));
   }
 
   /**
@@ -250,7 +266,9 @@ export class SharedStateManager {
     states: Array<{ key: string; value: any; ownerId: string; ttl?: number }>
   ): Promise<SharedState[]> {
     return await Promise.all(
-      states.map(({ key, value, ownerId, ttl }) => this.setState(key, value, ownerId, { ttl }))
+      states.map(({ key, value, ownerId, ttl }) =>
+        this.setState(key, value, ownerId, { ttl })
+      )
     );
   }
 }

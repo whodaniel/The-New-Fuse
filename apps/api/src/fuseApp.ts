@@ -1,10 +1,11 @@
-import { compare, hash } from 'bcrypt'; // Changed 'generate' to 'hash'
 import express, { Request, Response } from 'express';
 import session from 'express-session';
-import IORedis from 'ioredis'; // Default import for ioredis
-import { performance } from 'perf_hooks';
-import { Pool } from 'pg';
 import { WebSocket, WebSocketServer } from 'ws';
+import { v4 as uuidv4 } from 'uuid';
+import { hash, compare } from 'bcrypt'; // Changed 'generate' to 'hash'
+import { Pool } from 'pg';
+import { performance } from 'perf_hooks';
+import IORedis from 'ioredis'; // Default import for ioredis
 
 // Configuration
 const SECRET_KEY = process.env.SECRET_KEY || 'dev';
@@ -13,7 +14,7 @@ const SESSION_LIFETIME = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 // Initialize database connection
 const pool = new Pool({
-  connectionString: DATABASE_URL,
+  connectionString: DATABASE_URL
 });
 
 // Initialize Redis client
@@ -24,14 +25,12 @@ const redisClient = new IORedis(); // Create ioredis client instance
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  session({
-    secret: SECRET_KEY,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { maxAge: SESSION_LIFETIME },
-  })
-);
+app.use(session({
+  secret: SECRET_KEY,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: SESSION_LIFETIME }
+}));
 
 // Authentication routes
 // Fix the register route handler with proper typing
@@ -39,21 +38,14 @@ app.post('/register', async (req: Request, res: Response): Promise<void> => {
   const { username, email, password } = req.body;
 
   try {
-    const userCheck = await pool.query('SELECT * FROM users WHERE username = $1 OR email = $2', [
-      username,
-      email,
-    ]);
+    const userCheck = await pool.query('SELECT * FROM users WHERE username = $1 OR email = $2', [username, email]);
     if (userCheck.rows.length > 0) {
       res.status(400).send('Username or email already exists');
       return;
     }
 
     const passwordHash = await hash(password, 10);
-    await pool.query('INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)', [
-      username,
-      email,
-      passwordHash,
-    ]);
+    await pool.query('INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)', [username, email, passwordHash]);
     res.status(201).send('Registration successful');
   } catch (error) {
     console.error(error instanceof Error ? error.message : 'Unknown error');
@@ -90,7 +82,7 @@ app.post('/login', async (req: Request, res: Response): Promise<void> => {
 });
 
 app.get('/logout', (req: Request, res: Response) => {
-  req.session.destroy((err) => {
+  req.session.destroy(err => {
     if (err) {
       console.error(err);
       return res.status(500).send('Internal server error');
@@ -123,21 +115,12 @@ app.post('/agents/new', async (req: Request, res: Response) => {
     return res.redirect('/login');
   }
 
-  const { name, description, agent_type, language_model, custom_prompt, custom_parameters } =
-    req.body;
+  const { name, description, agent_type, language_model, custom_prompt, custom_parameters } = req.body;
 
   try {
     await pool.query(
       'INSERT INTO agents (name, description, agent_type, language_model, custom_prompt, custom_parameters, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-      [
-        name,
-        description,
-        agent_type,
-        language_model,
-        custom_prompt,
-        custom_parameters,
-        req.session.user_id,
-      ]
+      [name, description, agent_type, language_model, custom_prompt, custom_parameters, req.session.user_id]
     );
     res.status(201).send('Agent created successfully');
   } catch (error) {
@@ -179,18 +162,19 @@ wss.on('connection', (ws: WebSocket) => {
     }
   });
 
-  ws.on('close', () => {});
+  ws.on('close', () => {
+    
+  });
 });
 
 // Metrics handler
-async function getMetrics(): Promise<any> {
-  // Removed extra ': any'
+async function getMetrics(): Promise<any> { // Removed extra ': any'
   const start = performance.now();
   // Simulate some performance metrics
   const metrics = {
     latency: performance.now() - start,
     requests: Math.floor(Math.random() * 100),
-    errors: Math.floor(Math.random() * 5),
+    errors: Math.floor(Math.random() * 5)
   };
   return metrics;
 }
@@ -198,7 +182,7 @@ async function getMetrics(): Promise<any> {
 // Middleware to handle WebSocket upgrade
 app.use((req, res, next) => {
   if (req.url === '/ws/metrics' && req.headers.upgrade === 'websocket') {
-    wss.handleUpgrade(req, req.socket, Buffer.alloc(0), (ws) => {
+    wss.handleUpgrade(req, req.socket, Buffer.alloc(0), ws => {
       wss.emit('connection', ws, req);
     });
   } else {
@@ -208,4 +192,6 @@ app.use((req, res, next) => {
 
 // Start the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {});
+app.listen(PORT, () => {
+  
+});

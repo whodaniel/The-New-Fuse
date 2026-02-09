@@ -12,8 +12,8 @@
 - ✅ Railway is routing correctly to port 3007
 - ❌ SkIDEancer application not responding on port 3007
 
-**This is progress!** The routing is correct now; we just need to fix the
-SkIDEancer startup.
+**This is progress!** The routing is correct now; we just need to fix the SkIDEancer
+startup.
 
 ---
 
@@ -278,7 +278,7 @@ If logs show complex errors, try a clean redeploy:
 | -------------------- | --------- | ----------- | ------------- |
 | Port Routing         | 3007      | 3007        | ✅ Fixed      |
 | Application Response | 200 OK    | 502         | ❌ Fix Needed |
-| SkIDEancer Process   | Running   | Not Running | ❌ Fix Needed |
+| SkIDEancer Process        | Running   | Not Running | ❌ Fix Needed |
 | Build Step           | Completed | ?           | ❓ Check Logs |
 
 ---

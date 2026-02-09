@@ -4,7 +4,7 @@
 
 import { EventEmitter } from 'events';
 import { IPerformanceMonitor, PerformanceReport } from '../interfaces/IMonitoring';
-import { AlertSeverity, PerformanceMetrics } from '../types/monitoring';
+import { PerformanceMetrics, AlertSeverity } from '../types/monitoring';
 import { Logger } from '../utils/Logger';
 
 export interface PerformanceMonitorConfig {
@@ -86,7 +86,7 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
 
     this.logger.info('Starting performance monitor', {
       metricsInterval: this.config.metricsInterval,
-      retentionPeriod: this.config.retentionPeriod,
+      retentionPeriod: this.config.retentionPeriod
     });
 
     this.running = true;
@@ -131,7 +131,7 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
    */
   recordRequestStart(requestId: string): void {
     this.requestTrackers.set(requestId, {
-      startTime: Date.now(),
+      startTime: Date.now()
     });
     this.totalRequests++;
   }
@@ -169,7 +169,7 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
     this.emit('requestCompleted', {
       requestId,
       duration,
-      success,
+      success
     });
   }
 
@@ -201,12 +201,12 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
    */
   recordResourceAccess(uri: string, duration: number, cached: boolean): void {
     const accessId = `${uri}_${Date.now()}`;
-
+    
     this.resourceAccessTrackers.set(accessId, {
       uri,
       startTime: Date.now() - duration,
       endTime: Date.now(),
-      cached,
+      cached
     });
 
     // Record access time
@@ -224,7 +224,7 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
     this.emit('resourceAccessed', {
       uri,
       duration,
-      cached,
+      cached
     });
 
     // Clean up tracker after a delay
@@ -238,12 +238,12 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
    */
   recordToolExecution(name: string, duration: number, success: boolean): void {
     const executionId = `${name}_${Date.now()}`;
-
+    
     this.toolExecutionTrackers.set(executionId, {
       name,
       startTime: Date.now() - duration,
       endTime: Date.now(),
-      success,
+      success
     });
 
     // Record execution time
@@ -259,7 +259,7 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
     this.emit('toolExecuted', {
       name,
       duration,
-      success,
+      success
     });
 
     // Clean up tracker after a delay
@@ -283,12 +283,10 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
 
     // Calculate rates
     const rps = uptimeSeconds > 0 ? this.totalRequests / uptimeSeconds : 0;
-    const cacheHitRate =
-      this.cacheHits + this.cacheMisses > 0
-        ? this.cacheHits / (this.cacheHits + this.cacheMisses)
-        : 0;
-    const toolSuccessRate =
-      this.toolExecutionCount > 0 ? this.toolSuccessCount / this.toolExecutionCount : 0;
+    const cacheHitRate = (this.cacheHits + this.cacheMisses) > 0 ? 
+      this.cacheHits / (this.cacheHits + this.cacheMisses) : 0;
+    const toolSuccessRate = this.toolExecutionCount > 0 ? 
+      this.toolSuccessCount / this.toolExecutionCount : 0;
 
     // Calculate averages
     const avgConnectionTime = this.calculateAverage(this.connectionTimes);
@@ -298,8 +296,8 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
     // Get system metrics
     const memoryUsage = process.memoryUsage();
     const cpuUsage = process.cpuUsage();
-    const cpuPercent =
-      uptimeSeconds > 0 ? ((cpuUsage.user + cpuUsage.system) / 1000000 / uptimeSeconds) * 100 : 0;
+    const cpuPercent = uptimeSeconds > 0 ? 
+      (cpuUsage.user + cpuUsage.system) / 1000000 / uptimeSeconds * 100 : 0;
 
     return {
       requests: {
@@ -309,32 +307,32 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
         rps,
         avgResponseTime,
         p95ResponseTime,
-        p99ResponseTime,
+        p99ResponseTime
       },
       connections: {
         active: this.activeConnections,
         total: this.totalConnections,
         failed: this.failedConnections,
-        avgConnectionTime,
+        avgConnectionTime
       },
       resources: {
         total: this.getResourceCount(),
         accessCount: this.resourceAccessCount,
         cacheHitRate,
-        avgReadTime: avgResourceReadTime,
+        avgReadTime: avgResourceReadTime
       },
       tools: {
         total: this.getToolCount(),
         executionCount: this.toolExecutionCount,
         avgExecutionTime: avgToolExecutionTime,
-        successRate: toolSuccessRate,
+        successRate: toolSuccessRate
       },
       system: {
         memoryUsage: memoryUsage.heapUsed,
         cpuUsage: Math.min(cpuPercent, 100),
         uptime,
-        healthScore: this.calculateHealthScore(),
-      },
+        healthScore: this.calculateHealthScore()
+      }
     };
   }
 
@@ -344,8 +342,8 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
   getPerformanceHistory(hours: number): PerformanceMetrics[] {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
     return this.metricsHistory
-      .filter((entry) => entry.timestamp >= cutoff)
-      .map((entry) => entry.metrics);
+      .filter(entry => entry.timestamp >= cutoff)
+      .map(entry => entry.metrics);
   }
 
   /**
@@ -370,12 +368,12 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
       period: {
         start: startTime,
         end: endTime,
-        duration: timeWindow * 60 * 60 * 1000,
+        duration: timeWindow * 60 * 60 * 1000
       },
       summary: currentMetrics,
       trends,
       issues,
-      recommendations,
+      recommendations
     };
   }
 
@@ -391,16 +389,13 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
     // Clean up old metrics
     const cutoff = new Date(Date.now() - this.config.retentionPeriod);
     const initialLength = this.metricsHistory.length;
-
-    this.metricsHistory.splice(
-      0,
-      this.metricsHistory.findIndex((entry) => entry.timestamp >= cutoff)
-    );
+    
+    this.metricsHistory.splice(0, this.metricsHistory.findIndex(
+      entry => entry.timestamp >= cutoff
+    ));
 
     if (this.metricsHistory.length < initialLength) {
-      this.logger.debug(
-        `Cleaned up ${initialLength - this.metricsHistory.length} old metrics entries`
-      );
+      this.logger.debug(`Cleaned up ${initialLength - this.metricsHistory.length} old metrics entries`);
     }
 
     this.emit('performanceUpdate', metrics);
@@ -421,19 +416,19 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
         type: 'high-response-time',
         severity: AlertSeverity.MEDIUM,
         message: `Average response time is ${metrics.requests.avgResponseTime.toFixed(2)}ms`,
-        data: { avgResponseTime: metrics.requests.avgResponseTime },
+        data: { avgResponseTime: metrics.requests.avgResponseTime }
       });
     }
 
     // High error rate alert
-    const errorRate =
-      metrics.requests.total > 0 ? metrics.requests.failed / metrics.requests.total : 0;
+    const errorRate = metrics.requests.total > 0 ? 
+      metrics.requests.failed / metrics.requests.total : 0;
     if (errorRate > 0.1) {
       alerts.push({
         type: 'high-error-rate',
         severity: AlertSeverity.HIGH,
         message: `Error rate is ${(errorRate * 100).toFixed(2)}%`,
-        data: { errorRate },
+        data: { errorRate }
       });
     }
 
@@ -443,7 +438,7 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
         type: 'low-cache-hit-rate',
         severity: AlertSeverity.LOW,
         message: `Cache hit rate is ${(metrics.resources.cacheHitRate * 100).toFixed(2)}%`,
-        data: { cacheHitRate: metrics.resources.cacheHitRate },
+        data: { cacheHitRate: metrics.resources.cacheHitRate }
       });
     }
 
@@ -454,12 +449,12 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
         type: 'high-memory-usage',
         severity: AlertSeverity.MEDIUM,
         message: `Memory usage is ${memoryUsageGB.toFixed(2)}GB`,
-        data: { memoryUsage: metrics.system.memoryUsage },
+        data: { memoryUsage: metrics.system.memoryUsage }
       });
     }
 
     // Emit alerts
-    alerts.forEach((alert) => {
+    alerts.forEach(alert => {
       this.emit('performanceAlert', alert);
     });
   }
@@ -473,7 +468,7 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
         responseTime: 'stable',
         throughput: 'stable',
         errorRate: 'stable',
-        availability: 'stable',
+        availability: 'stable'
       };
     }
 
@@ -481,27 +476,31 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
     const older = historicalMetrics.slice(0, 5); // First 5 data points
 
     const recentAvgResponseTime = this.calculateAverage(
-      recent.map((m) => m.requests.avgResponseTime)
+      recent.map(m => m.requests.avgResponseTime)
     );
     const olderAvgResponseTime = this.calculateAverage(
-      older.map((m) => m.requests.avgResponseTime)
+      older.map(m => m.requests.avgResponseTime)
     );
 
-    const recentThroughput = this.calculateAverage(recent.map((m) => m.requests.rps));
-    const olderThroughput = this.calculateAverage(older.map((m) => m.requests.rps));
+    const recentThroughput = this.calculateAverage(
+      recent.map(m => m.requests.rps)
+    );
+    const olderThroughput = this.calculateAverage(
+      older.map(m => m.requests.rps)
+    );
 
     const recentErrorRate = this.calculateAverage(
-      recent.map((m) => (m.requests.total > 0 ? m.requests.failed / m.requests.total : 0))
+      recent.map(m => m.requests.total > 0 ? m.requests.failed / m.requests.total : 0)
     );
     const olderErrorRate = this.calculateAverage(
-      older.map((m) => (m.requests.total > 0 ? m.requests.failed / m.requests.total : 0))
+      older.map(m => m.requests.total > 0 ? m.requests.failed / m.requests.total : 0)
     );
 
     return {
       responseTime: this.getTrend(olderAvgResponseTime, recentAvgResponseTime, true),
       throughput: this.getTrend(olderThroughput, recentThroughput, false),
       errorRate: this.getTrend(olderErrorRate, recentErrorRate, true),
-      availability: 'stable', // Simplified for now
+      availability: 'stable' // Simplified for now
     };
   }
 
@@ -518,20 +517,20 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
         description: 'High average response time',
         severity: AlertSeverity.MEDIUM,
         impact: 'User experience degradation',
-        recommendation: 'Investigate slow operations and optimize performance',
+        recommendation: 'Investigate slow operations and optimize performance'
       });
     }
 
     // High error rate
-    const errorRate =
-      metrics.requests.total > 0 ? metrics.requests.failed / metrics.requests.total : 0;
+    const errorRate = metrics.requests.total > 0 ? 
+      metrics.requests.failed / metrics.requests.total : 0;
     if (errorRate > 0.05) {
       issues.push({
         type: 'reliability',
         description: 'High error rate',
         severity: errorRate > 0.1 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
         impact: 'Service reliability concerns',
-        recommendation: 'Review error logs and fix underlying issues',
+        recommendation: 'Review error logs and fix underlying issues'
       });
     }
 
@@ -542,7 +541,7 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
         description: 'Low cache hit rate',
         severity: AlertSeverity.LOW,
         impact: 'Increased resource access latency',
-        recommendation: 'Review caching strategy and cache invalidation policies',
+        recommendation: 'Review caching strategy and cache invalidation policies'
       });
     }
 
@@ -554,7 +553,7 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
         description: 'High memory usage',
         severity: AlertSeverity.MEDIUM,
         impact: 'Potential memory exhaustion',
-        recommendation: 'Monitor memory leaks and optimize memory usage',
+        recommendation: 'Monitor memory leaks and optimize memory usage'
       });
     }
 
@@ -579,9 +578,7 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
 
     // Throughput recommendations
     if (metrics.requests.rps < 10 && metrics.system.cpuUsage < 50) {
-      recommendations.push(
-        'System appears underutilized - consider load testing to validate capacity'
-      );
+      recommendations.push('System appears underutilized - consider load testing to validate capacity');
     }
 
     // Cache recommendations
@@ -597,9 +594,7 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
 
     // Trend-based recommendations
     if (trends.responseTime === 'degrading') {
-      recommendations.push(
-        'Response time is trending upward - investigate performance bottlenecks'
-      );
+      recommendations.push('Response time is trending upward - investigate performance bottlenecks');
     }
 
     if (trends.errorRate === 'degrading') {
@@ -622,7 +617,7 @@ export class PerformanceMonitor extends EventEmitter implements IPerformanceMoni
    */
   private calculatePercentile(values: number[], percentile: number): number {
     if (values.length === 0) return 0;
-
+    
     const sorted = [...values].sort((a, b) => a - b);
     const index = Math.ceil(sorted.length * percentile) - 1;
     return sorted[Math.max(0, index)];

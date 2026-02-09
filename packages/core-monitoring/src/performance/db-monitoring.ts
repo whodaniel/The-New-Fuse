@@ -74,12 +74,9 @@ export class DatabaseMonitor {
     }
 
     // Set up periodic cleanup
-    this.cleanupInterval = setInterval(
-      () => {
-        this.cleanup();
-      },
-      60 * 60 * 1000
-    ); // Every hour
+    this.cleanupInterval = setInterval(() => {
+      this.cleanup();
+    }, 60 * 60 * 1000); // Every hour
   }
 
   /**
@@ -188,15 +185,12 @@ export class DatabaseMonitor {
   /**
    * Record connection pool metrics
    */
-  recordPoolMetrics(
-    database: string,
-    metrics: {
-      total: number;
-      active: number;
-      idle: number;
-      waiting: number;
-    }
-  ): void {
+  recordPoolMetrics(database: string, metrics: {
+    total: number;
+    active: number;
+    idle: number;
+    waiting: number;
+  }): void {
     if (!this.config.enabled) {
       return;
     }
@@ -229,7 +223,7 @@ export class DatabaseMonitor {
    */
   getSlowQueries(limit: number = 100): QueryMetric[] {
     return this.queries
-      .filter((q) => q.duration >= this.config.slowQueryThreshold)
+      .filter(q => q.duration >= this.config.slowQueryThreshold)
       .sort((a, b) => b.duration - a.duration)
       .slice(0, limit);
   }
@@ -250,7 +244,7 @@ export class DatabaseMonitor {
     let metrics = this.poolMetrics;
 
     if (database) {
-      metrics = metrics.filter((m) => m.database === database);
+      metrics = metrics.filter(m => m.database === database);
     }
 
     return metrics.slice(-limit);
@@ -270,17 +264,20 @@ export class DatabaseMonitor {
     let queries = this.queries;
 
     if (database) {
-      queries = queries.filter((q) => q.database === database);
+      queries = queries.filter(q => q.database === database);
     }
 
     const totalQueries = queries.length;
-    const slowQueries = queries.filter((q) => q.duration >= this.config.slowQueryThreshold).length;
-    const errors = queries.filter((q) => !q.success).length;
+    const slowQueries = queries.filter(q => q.duration >= this.config.slowQueryThreshold).length;
+    const errors = queries.filter(q => !q.success).length;
 
-    const avgDuration =
-      totalQueries > 0 ? queries.reduce((sum, q) => sum + q.duration, 0) / totalQueries : 0;
+    const avgDuration = totalQueries > 0
+      ? queries.reduce((sum, q) => sum + q.duration, 0) / totalQueries
+      : 0;
 
-    const maxDuration = totalQueries > 0 ? Math.max(...queries.map((q) => q.duration)) : 0;
+    const maxDuration = totalQueries > 0
+      ? Math.max(...queries.map(q => q.duration))
+      : 0;
 
     const operationCounts: Record<string, number> = {};
     for (const query of queries) {
@@ -325,9 +322,8 @@ export class DatabaseMonitor {
 
     // Keep only top 1000 patterns
     if (this.queryPatterns.size > 1000) {
-      const sorted = Array.from(this.queryPatterns.entries()).sort(
-        ([, a], [, b]) => b.count - a.count
-      );
+      const sorted = Array.from(this.queryPatterns.entries())
+        .sort(([, a], [, b]) => b.count - a.count);
 
       this.queryPatterns = new Map(sorted.slice(0, 500));
     }
@@ -381,8 +377,8 @@ export class DatabaseMonitor {
     return stack
       .split('\n')
       .slice(3) // Skip this function and trackQuery
-      .map((line) => line.trim())
-      .filter((line) => line.startsWith('at '))
+      .map(line => line.trim())
+      .filter(line => line.startsWith('at '))
       .slice(0, 10);
   }
 
@@ -407,8 +403,8 @@ export class DatabaseMonitor {
     const now = Date.now();
     const cutoff = now - this.config.retentionPeriod;
 
-    this.queries = this.queries.filter((q) => q.timestamp > cutoff);
-    this.poolMetrics = this.poolMetrics.filter((m) => m.timestamp > cutoff);
+    this.queries = this.queries.filter(q => q.timestamp > cutoff);
+    this.poolMetrics = this.poolMetrics.filter(m => m.timestamp > cutoff);
 
     // Remove old query patterns
     for (const [pattern, data] of this.queryPatterns.entries()) {

@@ -10,10 +10,10 @@ import {
   OptimizationJob,
   TopologyOptimizationConfig,
 } from '@the-new-fuse/types';
-import { RedisLockService } from '../../services/redis-lock.service';
 import { PromptOptimizerService } from './prompt-optimizer.service';
 import { TopologyOptimizerService } from './topology-optimizer.service';
 import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service';
+import { RedisLockService } from '../../services/redis-lock.service';
 
 @Injectable()
 export class MassOrchestrationService {
@@ -23,7 +23,7 @@ export class MassOrchestrationService {
     private readonly promptOptimizer: PromptOptimizerService,
     private readonly topologyOptimizer: TopologyOptimizerService,
     private readonly workflowOptimizer: WorkflowPromptOptimizerService,
-    private readonly redisLockService: RedisLockService
+    private readonly redisLockService: RedisLockService,
   ) {}
 
   // Stage 1: Block-Level Prompt Optimization
@@ -79,11 +79,7 @@ export class MassOrchestrationService {
       throw new Error('Could not acquire lock for workflow topology optimization');
     }
 
-    const job = await this.createOptimizationJob(
-      'topology',
-      JSON.stringify(sortedAgentIds),
-      config
-    );
+    const job = await this.createOptimizationJob('topology', JSON.stringify(sortedAgentIds), config);
 
     try {
       await this.updateJobStatus(job.id, 'running');
@@ -210,7 +206,7 @@ export class MassOrchestrationService {
     sourceAgentId: string,
     config: MassOptimizationConfig
   ): Promise<{ optimizedAgent: any; optimizationJob: OptimizationJob }> {
-    const sourceAgent = await drizzleAgentRepository.findById(sourceAgentId, config.userId);
+    const sourceAgent = await drizzleAgentRepository.findById(sourceAgentId);
 
     if (!sourceAgent) {
       throw new Error(`Source agent ${sourceAgentId} not found`);

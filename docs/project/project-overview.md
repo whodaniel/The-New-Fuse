@@ -2,15 +2,11 @@
 
 ## Introduction
 
-The New Fuse is a platform for inter-LLM communication, facilitating enhanced
-interactions between language models and providing a structured environment for
-multi-agent AI systems. This document provides a comprehensive overview of the
-project architecture, components, and development workflow.
+The New Fuse is a platform for inter-LLM communication, facilitating enhanced interactions between language models and providing a structured environment for multi-agent AI systems. This document provides a comprehensive overview of the project architecture, components, and development workflow.
 
 ## Architecture
 
-The project follows a monorepo structure using Turborepo for build
-orchestration, with the following key components:
+The project follows a monorepo structure using Turborepo for build orchestration, with the following key components:
 
 ### Core Components
 
@@ -46,8 +42,7 @@ orchestration, with the following key components:
 
 ### Build Process
 
-The build process follows a specific order to ensure dependencies are built
-correctly:
+The build process follows a specific order to ensure dependencies are built correctly:
 
 1. Build types package: `pnpm build:types`
 2. Build utils package: `pnpm build:utils`
@@ -72,14 +67,11 @@ Deployment is managed through GitHub Actions with the following environments:
 The project includes several VS Code tasks to streamline development:
 
 ### Docker Tasks
-
 - `docker-build`: Builds the Docker container for the shared package
 - `docker-run: release`: Runs the Docker container in release mode
-- `docker-run: debug`: Runs the Docker container in debug mode with development
-  environment
+- `docker-run: debug`: Runs the Docker container in debug mode with development environment
 
 ### Development Tasks
-
 - `Live Preview: Run Server`: Runs the live preview server
 - `Initialize MCP Integration`: Sets up the Model Context Protocol integration
 - `Show MCP Tools`: Displays available MCP tools
@@ -87,16 +79,15 @@ The project includes several VS Code tasks to streamline development:
 - `Ask Agent with MCP Tools`: Interacts with agents using MCP tools
 
 ### Setup Tasks
-
 - `Setup MCP`: Runs scripts to set up MCP permissions and extension
 - `Create Sample Files`: Generates sample project files
 - `Launch VS Code with Extension`: Launches VS Code with the project extension
 
 ## Database Management
 
-The project uses both Drizzle and TypeORM for database access:
+The project uses both Prisma and TypeORM for database access:
 
-- **Drizzle**: Used for schema management and migrations
+- **Prisma**: Used for schema management and migrations
 - **TypeORM**: Used for entity management and queries
 
 ### Database Schema
@@ -111,7 +102,7 @@ The database includes the following core entities:
 
 ### Migrations
 
-Database migrations are managed through Drizzle and can be run with:
+Database migrations are managed through Prisma and can be run with:
 
 ```bash
 yarn db:migrate
@@ -148,8 +139,7 @@ The frontend is built with React and includes:
 
 ## Configuration
 
-The project uses environment variables for configuration, with the following key
-variables:
+The project uses environment variables for configuration, with the following key variables:
 
 - `NODE_ENV`: Environment (development, production)
 - `DATABASE_URL`: PostgreSQL connection URL
@@ -162,8 +152,7 @@ variables:
 
 ### Common Issues
 
-- **Database Connection**: Ensure PostgreSQL is running and the connection URL
-  is correct
+- **Database Connection**: Ensure PostgreSQL is running and the connection URL is correct
 - **Build Errors**: Make sure packages are built in the correct order
 - **Extension Issues**: Check the VS Code extension logs for errors
 

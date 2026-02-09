@@ -18,14 +18,12 @@ Common issues and solutions for The New Fuse CI/CD pipeline.
 **Symptom**: ESLint or Prettier errors
 
 **Error**:
-
 ```
 Error: Expected 1 space after semicolon (semi-spacing)
 Error: Delete `·` (prettier/prettier)
 ```
 
 **Solution**:
-
 ```bash
 # Auto-fix linting issues
 pnpm run lint:fix
@@ -38,7 +36,6 @@ pnpm run lint
 ```
 
 **Prevention**:
-
 - Set up pre-commit hooks
 - Configure editor to auto-format
 - Use Prettier extension
@@ -50,14 +47,12 @@ pnpm run lint
 **Symptom**: TypeScript compilation errors
 
 **Error**:
-
 ```
 apps/frontend/src/App.tsx:45:12 - error TS2345:
 Argument of type 'string' is not assignable to parameter of type 'number'
 ```
 
 **Solution**:
-
 ```bash
 # Run type check locally
 pnpm run type-check
@@ -73,13 +68,11 @@ pnpm run type-check
 ```
 
 **Common causes**:
-
 - Missing type definitions
 - Incompatible package versions
 - Import path issues
 
 **Debug**:
-
 ```bash
 # Check TypeScript version
 pnpm list typescript
@@ -98,7 +91,6 @@ rm -rf **/*.tsbuildinfo
 **Symptom**: Test assertions fail
 
 **Error**:
-
 ```
 FAIL packages/api/src/auth/auth.service.test.ts
   ● AuthService › should validate token
@@ -110,7 +102,6 @@ FAIL packages/api/src/auth/auth.service.test.ts
 ```
 
 **Solution**:
-
 ```bash
 # Run failing test locally
 pnpm run test:unit -- auth.service.test.ts
@@ -126,14 +117,12 @@ pnpm run test:unit -- -u
 ```
 
 **Common causes**:
-
 - Outdated mocks
 - Environment differences
 - Timing issues
 - Missing setup/teardown
 
 **Debug**:
-
 ```bash
 # Run single test
 pnpm run test:unit -- -t "should validate token"
@@ -152,13 +141,11 @@ pnpm run test:unit -- --testTimeout=10000
 **Symptom**: Database or API tests fail
 
 **Error**:
-
 ```
 Error: connect ECONNREFUSED 127.0.0.1:5432
 ```
 
 **Solution**:
-
 ```bash
 # Check Docker services
 docker ps
@@ -175,14 +162,12 @@ pnpm run test:integration
 ```
 
 **Common causes**:
-
 - Services not running
 - Wrong connection strings
 - Database not seeded
 - Port conflicts
 
 **Debug**:
-
 ```bash
 # Test database connection
 pnpm run db:test-connection
@@ -204,14 +189,12 @@ pnpm run test:integration
 **Symptom**: Playwright tests timeout or fail
 
 **Error**:
-
 ```
 Error: Timeout 30000ms exceeded.
 waiting for selector "button[data-testid='submit']"
 ```
 
 **Solution**:
-
 ```bash
 # Run E2E tests locally
 pnpm run test:e2e
@@ -230,14 +213,12 @@ pnpm exec playwright show-report
 ```
 
 **Common causes**:
-
 - Elements not rendered
 - Wrong selectors
 - Network delays
 - Application not started
 
 **Debug**:
-
 ```bash
 # Run specific test
 pnpm exec playwright test login.spec.ts
@@ -259,13 +240,11 @@ pnpm exec playwright show-trace trace.zip
 **Symptom**: Coverage below threshold
 
 **Error**:
-
 ```
 Error: Coverage for statements (65%) does not meet threshold (70%)
 ```
 
 **Solution**:
-
 ```bash
 # Generate coverage report
 pnpm run test:coverage
@@ -278,14 +257,12 @@ cat coverage/coverage-summary.json
 ```
 
 **Fix**:
-
 - Add tests for uncovered code
 - Remove dead code
 - Exclude test files from coverage
 - Adjust thresholds (if justified)
 
 **Configuration**:
-
 ```javascript
 // jest.config.js
 coverageThreshold: {
@@ -307,14 +284,12 @@ coverageThreshold: {
 **Symptom**: Package fails to compile
 
 **Error**:
-
 ```
 ERROR in src/index.ts
 Module not found: Error: Can't resolve '@the-new-fuse/types'
 ```
 
 **Solution**:
-
 ```bash
 # Build dependencies first
 pnpm run build:packages
@@ -333,14 +308,12 @@ pnpm run build:packages
 ```
 
 **Common causes**:
-
 - Missing dependencies
 - Circular dependencies
 - Build order issues
 - Misconfigured tsconfig
 
 **Debug**:
-
 ```bash
 # Check package dependencies
 cat packages/api/package.json | grep dependencies
@@ -359,13 +332,11 @@ cat packages/api/tsconfig.json
 **Symptom**: Application build fails
 
 **Error**:
-
 ```
 ✘ [ERROR] Could not resolve "process/browser"
 ```
 
 **Solution**:
-
 ```bash
 # Clean node_modules
 rm -rf node_modules apps/*/node_modules packages/*/node_modules
@@ -379,7 +350,6 @@ cat apps/frontend/.env.example
 ```
 
 **For Vite (Frontend)**:
-
 ```bash
 # Clear Vite cache
 rm -rf apps/frontend/node_modules/.vite
@@ -392,7 +362,6 @@ pnpm run build:analyze
 ```
 
 **For NestJS (Backend)**:
-
 ```bash
 # Clean dist
 rm -rf apps/api/dist
@@ -409,13 +378,11 @@ pnpm run build --watch
 **Symptom**: Build runs out of memory
 
 **Error**:
-
 ```
 FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
 ```
 
 **Solution**:
-
 ```bash
 # Increase Node memory
 export NODE_OPTIONS="--max-old-space-size=8192"
@@ -431,7 +398,6 @@ pnpm run build:staged
 ```
 
 **For CI/CD**:
-
 ```yaml
 # In workflow file
 env:
@@ -446,7 +412,6 @@ env:
 **Symptom**: Stale cache causing build issues
 
 **Solution**:
-
 ```bash
 # Clear Turbo cache
 pnpm run clean:cache
@@ -460,7 +425,6 @@ gh cache delete <cache-key>
 ```
 
 **Force fresh build**:
-
 ```bash
 # Disable cache
 TURBO_FORCE=true pnpm run build
@@ -477,13 +441,11 @@ TURBO_FORCE=true pnpm run build
 **Symptom**: Deployment fails on Railway
 
 **Error**:
-
 ```
 Error: Failed to deploy service api-gateway
 ```
 
 **Solution**:
-
 ```bash
 # Check Railway status
 railway status
@@ -499,14 +461,12 @@ railway up --service=api-gateway
 ```
 
 **Common causes**:
-
 - Build errors
 - Missing environment variables
 - Dockerfile issues
 - Resource limits
 
 **Debug**:
-
 ```bash
 # Test Dockerfile locally
 docker build -f apps/api-gateway/Dockerfile.railway -t test .
@@ -526,13 +486,11 @@ railway variables
 **Symptom**: Health checks fail after deployment
 
 **Error**:
-
 ```
 Health check failed with code 502
 ```
 
 **Solution**:
-
 ```bash
 # Check service logs
 railway logs --service=api-gateway
@@ -548,14 +506,12 @@ railway restart --service=api-gateway
 ```
 
 **Common causes**:
-
 - Service not started
 - Wrong health check path
 - Port mismatch
 - Database connection issues
 
 **Debug**:
-
 ```bash
 # SSH into service
 railway shell
@@ -577,13 +533,11 @@ railway run -- pnpm run db:test-connection
 **Symptom**: Migrations fail during deployment
 
 **Error**:
-
 ```
 Error: Migration failed: duplicate column name
 ```
 
 **Solution**:
-
 ```bash
 # Check migration status
 railway run -- pnpm run db:migrate:status
@@ -599,7 +553,6 @@ railway run -- pnpm run db:studio
 ```
 
 **Prevention**:
-
 - Test migrations in staging
 - Write reversible migrations
 - Backup database before migrations
@@ -611,13 +564,11 @@ railway run -- pnpm run db:studio
 **Symptom**: Docker image build fails
 
 **Error**:
-
 ```
 ERROR: failed to solve: process "/bin/sh -c pnpm install" did not complete successfully
 ```
 
 **Solution**:
-
 ```bash
 # Test Dockerfile locally
 docker build -f Dockerfile.railway .
@@ -633,7 +584,6 @@ docker build --progress=plain -f Dockerfile.railway .
 ```
 
 **Common issues**:
-
 - Wrong COPY paths
 - Missing .dockerignore
 - Invalid build args
@@ -648,13 +598,11 @@ docker build --progress=plain -f Dockerfile.railway .
 **Symptom**: Bundle size exceeded limit
 
 **Error**:
-
 ```
 Bundle size increased by more than 10% (12.5%)
 ```
 
 **Solution**:
-
 ```bash
 # Analyze bundle
 pnpm run build:analyze
@@ -667,21 +615,17 @@ npx bundle-phobia <package-name>
 ```
 
 **Fix strategies**:
-
 1. **Code splitting**:
-
    ```typescript
    const Component = lazy(() => import('./Component'));
    ```
 
 2. **Tree shaking**:
-
    ```javascript
    import { specific } from 'library'; // Instead of import * as lib
    ```
 
 3. **Remove unused dependencies**:
-
    ```bash
    npx depcheck
    ```
@@ -697,13 +641,11 @@ npx bundle-phobia <package-name>
 **Symptom**: Performance score below threshold
 
 **Error**:
-
 ```
 Performance score: 65 (expected: >80)
 ```
 
 **Solution**:
-
 ```bash
 # Run Lighthouse locally
 npx lighthouse http://localhost:3000 --view
@@ -713,14 +655,12 @@ npx lighthouse http://localhost:3000 --only-categories=performance
 ```
 
 **Common issues**:
-
 - Large images
 - Blocking resources
 - Unoptimized JavaScript
 - No lazy loading
 
 **Fixes**:
-
 1. **Optimize images**: Use WebP, lazy load
 2. **Code splitting**: Split large bundles
 3. **Defer scripts**: Non-critical JavaScript
@@ -734,13 +674,11 @@ npx lighthouse http://localhost:3000 --only-categories=performance
 **Symptom**: npm audit finds vulnerabilities
 
 **Error**:
-
 ```
 found 5 vulnerabilities (3 moderate, 2 high)
 ```
 
 **Solution**:
-
 ```bash
 # Check vulnerabilities
 pnpm audit
@@ -756,7 +694,6 @@ pnpm why <package-name>
 ```
 
 **For unfixable vulnerabilities**:
-
 1. Check if vulnerability affects your usage
 2. Look for alternative packages
 3. Pin to safe version
@@ -771,7 +708,6 @@ pnpm why <package-name>
 **Symptom**: Workflows take too long
 
 **Solution**:
-
 ```bash
 # Check cache hit rate
 # In workflow logs, look for "Cache restored from key"
@@ -789,7 +725,6 @@ pnpm why <package-name>
 ```
 
 **Example optimization**:
-
 ```yaml
 strategy:
   matrix:
@@ -804,7 +739,6 @@ run: pnpm run test --shard=${{ matrix.shard }}/4
 **Symptom**: Builds take too long
 
 **Solution**:
-
 ```bash
 # Use Turbo cache
 export TURBO_TOKEN=<token>
@@ -829,13 +763,11 @@ pnpm run build --graph
 **Symptom**: Workflows don't start
 
 **Error**:
-
 ```
 You have exceeded your GitHub Actions quota
 ```
 
 **Solution**:
-
 1. Check usage: Settings → Billing
 2. Optimize workflows (reduce runs)
 3. Use self-hosted runners
@@ -848,13 +780,11 @@ You have exceeded your GitHub Actions quota
 **Symptom**: Service crashes due to resources
 
 **Error**:
-
 ```
 Error: Service killed due to memory limit
 ```
 
 **Solution**:
-
 ```bash
 # Check resource usage
 railway metrics --service=api-gateway
@@ -875,7 +805,6 @@ railway metrics --service=api-gateway
 If you can't resolve an issue:
 
 1. **Check logs**: Always start with logs
-
    ```bash
    gh run view <run-id>
    railway logs --service=<service>

@@ -11,9 +11,9 @@
  */
 
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import axios, { AxiosInstance } from 'axios';
-import { ChildProcess, spawn } from 'child_process';
+import { spawn, ChildProcess } from 'child_process';
 import { EventEmitter } from 'events';
+import axios, { AxiosInstance } from 'axios';
 import * as path from 'path';
 import { isValidPublicUrl } from '../../utils/src/validators.server';
 
@@ -42,7 +42,7 @@ export interface CryptoAgentStatus {
 enum IntegrationMode {
   HTTP_API = 'http_api',
   CHILD_PROCESS = 'child_process',
-  SOCKET = 'socket',
+  SOCKET = 'socket'
 }
 
 @Injectable()
@@ -55,7 +55,8 @@ export class CryptoAgentService implements OnModuleInit {
 
   constructor() {
     // Determine integration mode from environment
-    this.mode = (process.env.CRYPTO_AGENT_MODE as IntegrationMode) || IntegrationMode.HTTP_API;
+    this.mode = (process.env.CRYPTO_AGENT_MODE as IntegrationMode) ||
+                IntegrationMode.HTTP_API;
 
     this.logger.log(`Initializing Crypto Agent Bridge (mode: ${this.mode})`);
   }
@@ -100,8 +101,8 @@ export class CryptoAgentService implements OnModuleInit {
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': process.env.CRYPTO_AGENT_API_KEY || '',
-      },
+        'X-API-Key': process.env.CRYPTO_AGENT_API_KEY || ''
+      }
     });
 
     // Test connection
@@ -128,8 +129,8 @@ export class CryptoAgentService implements OnModuleInit {
       cwd: path.join(__dirname, '../..'),
       env: {
         ...process.env,
-        PYTHONUNBUFFERED: '1',
-      },
+        PYTHONUNBUFFERED: '1'
+      }
     });
 
     // Handle stdout
@@ -204,7 +205,7 @@ export class CryptoAgentService implements OnModuleInit {
       task_id: `task_${Date.now()}`,
       status: 'queued',
       result: { message: 'Task queued (child process mode)' },
-      agent_id: 'crypto-agent-001',
+      agent_id: 'crypto-agent-001'
     };
   }
 
@@ -222,7 +223,7 @@ export class CryptoAgentService implements OnModuleInit {
           agent_id: 'crypto-agent-001',
           queue_length: 0,
           total_completed: 0,
-          state: {},
+          state: {}
         };
     }
   }
@@ -255,12 +256,19 @@ export class CryptoAgentService implements OnModuleInit {
     return await this.submitTask({ prompt });
   }
 
-  async swapTokens(amount: number, fromToken: string, toToken: string): Promise<CryptoAgentResult> {
+  async swapTokens(
+    amount: number,
+    fromToken: string,
+    toToken: string
+  ): Promise<CryptoAgentResult> {
     const prompt = `Swap ${amount} ${fromToken} for ${toToken}`;
     return await this.submitTask({ prompt });
   }
 
-  async stakeForYield(amount: number, token: string): Promise<CryptoAgentResult> {
+  async stakeForYield(
+    amount: number,
+    token: string
+  ): Promise<CryptoAgentResult> {
     const prompt = `Stake ${amount} ${token} in the highest-yield pool`;
     return await this.submitTask({ prompt });
   }

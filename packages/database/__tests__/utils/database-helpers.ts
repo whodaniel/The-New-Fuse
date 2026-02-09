@@ -109,9 +109,7 @@ export function pastTimestamp(secondsAgo: number): Date {
 /**
  * Measure execution time of an async function
  */
-export async function measureExecutionTime<T>(
-  fn: () => Promise<T>
-): Promise<{ result: T; durationMs: number }> {
+export async function measureExecutionTime<T>(fn: () => Promise<T>): Promise<{ result: T; durationMs: number }> {
   const startTime = performance.now();
   const result = await fn();
   const durationMs = performance.now() - startTime;

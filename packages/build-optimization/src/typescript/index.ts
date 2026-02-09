@@ -2,15 +2,15 @@
  * TypeScript compilation optimization module
  */
 
-export {
+export { 
   TypeScriptCompilationManager,
-  type CompilationMetrics,
-  type TypeScriptCompilationOptions,
   type TypeScriptProject,
+  type TypeScriptCompilationOptions,
+  type CompilationMetrics
 } from './TypeScriptCompilationManager.js';
 
 export {
   MemoryCleanupUtility,
   type MemoryCleanupConfig,
-  type MemoryCleanupResult,
+  type MemoryCleanupResult
 } from './MemoryCleanupUtility.js';

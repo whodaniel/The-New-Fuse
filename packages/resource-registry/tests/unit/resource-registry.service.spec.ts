@@ -1,5 +1,5 @@
 import { ResourceRegistryService } from '../../src/services/resource-registry.service';
-import { ResourceCategory, ResourceType } from '../../src/types';
+import { ResourceCategory, ResourceType, ResourceVisibility, ResourceStatus } from '../../src/types';
 
 describe('ResourceRegistryService', () => {
   let service: ResourceRegistryService;

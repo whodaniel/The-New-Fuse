@@ -153,9 +153,7 @@ export class MessageBatcher extends EventEmitter {
       this.timer = null;
     }
 
-    if (this.batch.length === 0) {
-      return;
-    }
+    if (this.batch.length === 0) return;
 
     const messages = [...this.batch];
     this.batch = [];
@@ -403,14 +401,10 @@ export class EnhancedCommunication extends EventEmitter {
    * Start processing queue
    */
   startProcessing(): void {
-    if (this.processInterval) {
-      return;
-    }
+    if (this.processInterval) return;
 
     this.processInterval = setInterval(async () => {
-      if (this.processing) {
-        return;
-      }
+      if (this.processing) return;
       this.processing = true;
 
       while (!this.queue.isEmpty()) {

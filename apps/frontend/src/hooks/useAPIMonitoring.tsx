@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '../services/api';
 
 interface ProviderStats {
@@ -82,7 +82,7 @@ export function useAPIMonitoring(): any {
   });
   const [costBreakdown, setCostBreakdown] = useState<CostBreakdown>({
     byProvider: [],
-    byModel: [],
+    byModel: []
   });
   const [requestRate, setRequestRate] = useState<TimeSeriesPoint[]>([]);
   const [errorRate, setErrorRate] = useState<ErrorRatePoint[]>([]);
@@ -92,21 +92,26 @@ export function useAPIMonitoring(): any {
     cacheTTL: 3600,
     semanticCacheEnabled: true,
     costTrackingEnabled: true,
-    failoverEnabled: true,
+    failoverEnabled: true
   });
   const [loading, setLoading] = useState(true);
 
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [providersResponse, statsResponse, costResponse, timeSeriesResponse, settingsResponse] =
-        await Promise.all([
-          api.get('/admin/api-gateway/providers'),
-          api.get('/admin/api-gateway/stats'),
-          api.get('/admin/api-gateway/costs'),
-          api.get('/admin/api-gateway/timeseries'),
-          api.get('/admin/api-gateway/settings'),
-        ]);
+      const [
+        providersResponse,
+        statsResponse,
+        costResponse,
+        timeSeriesResponse,
+        settingsResponse
+      ] = await Promise.all([
+        api.get('/admin/api-gateway/providers'),
+        api.get('/admin/api-gateway/stats'),
+        api.get('/admin/api-gateway/costs'),
+        api.get('/admin/api-gateway/timeseries'),
+        api.get('/admin/api-gateway/settings')
+      ]);
 
       setProviders(providersResponse.data);
       setStats(statsResponse.data);
@@ -124,7 +129,7 @@ export function useAPIMonitoring(): any {
 
   useEffect(() => {
     loadData();
-
+    
     // Set up polling to refresh data
     const interval = setInterval(loadData, 30000); // refresh every 30 seconds
     return () => clearInterval(interval);
@@ -139,17 +144,14 @@ export function useAPIMonitoring(): any {
     }
   }, []);
 
-  const resetProvider = useCallback(
-    async (providerId: string) => {
-      try {
-        await api.post(`/admin/api-gateway/providers/${providerId}/reset`);
-        loadData(); // Reload data after reset
-      } catch (error) {
-        console.error('Error resetting provider:', error);
-      }
-    },
-    [loadData]
-  );
+  const resetProvider = useCallback(async (providerId: string) => {
+    try {
+      await api.post(`/admin/api-gateway/providers/${providerId}/reset`);
+      loadData(); // Reload data after reset
+    } catch (error) {
+      console.error('Error resetting provider:', error);
+    }
+  }, [loadData]);
 
   const clearCache = useCallback(async () => {
     try {
@@ -171,6 +173,6 @@ export function useAPIMonitoring(): any {
     updateSettings,
     resetProvider,
     clearCache,
-    loading,
+    loading
   };
 }

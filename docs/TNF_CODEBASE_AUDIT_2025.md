@@ -18,7 +18,7 @@ significant overlap in orchestration and messaging capabilities.
     endpoints, while the new architecture uses Redis Pub/Sub (`tnf:bus`).
 3.  **Rich Scheduling**: Strong usage of `@nestjs/schedule` and `cron` for
     business logic, distinct from the `HeartbeatMonitoringService` in Relay.
-4.  **Fragmented Identity**: `MasterAgentRegistry` (Drizzle/SQL) vs
+4.  **Fragmented Identity**: `MasterAgentRegistry` (Prisma/SQL) vs
     `RedisAgentRegistry` (Runtime).
 
 ## 2. Component Analysis
@@ -59,7 +59,7 @@ agents. They become "Super Agents" on the bus.
 
 | Registry                | Backing           | Purpose                               |
 | ----------------------- | ----------------- | ------------------------------------- |
-| **MasterAgentRegistry** | Drizzle (Postgres) | Compliance, NFTs, History, Governance |
+| **MasterAgentRegistry** | Prisma (Postgres) | Compliance, NFTs, History, Governance |
 | **RedisAgentRegistry**  | Redis Hash        | Real-time Routing, Presence, TTL      |
 
 **Integration Plan:**

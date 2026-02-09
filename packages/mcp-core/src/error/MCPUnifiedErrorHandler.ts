@@ -4,13 +4,15 @@
  */
 
 import {
-  BaseError,
   BaseErrorHandler,
   BaseErrorHandlerConfig,
-  ErrorCategory,
+  BaseError,
   ErrorContext,
+  ErrorHandler,
+  RecoveryStrategy,
   ErrorSeverity,
-  Logger,
+  ErrorCategory,
+  Logger
 } from '@the-new-fuse/core-error-handling';
 
 /**
@@ -50,6 +52,7 @@ export interface MCPErrorHandlerConfig extends BaseErrorHandlerConfig {
  * MCP error handler implementation
  */
 export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorContext> {
+  
   constructor(config: Partial<MCPErrorHandlerConfig> = {}, logger?: Logger) {
     const mcpConfig: MCPErrorHandlerConfig = {
       // Base configuration with defaults
@@ -62,9 +65,9 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
       enableConnectionRecovery: config.enableConnectionRecovery ?? true,
       enableResourceRetry: config.enableResourceRetry ?? true,
       enableToolRetry: config.enableToolRetry ?? true,
-      maxConnectionRetries: config.maxConnectionRetries ?? 3,
+      maxConnectionRetries: config.maxConnectionRetries ?? 3
     };
-
+    
     super(mcpConfig, logger || new Logger('MCPUnifiedErrorHandler'));
   }
 
@@ -81,13 +84,13 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
       recover: async (error: MCPError, context: MCPErrorContext) => {
         this.logger.debug('Attempting MCP connection recovery', {
           connectionId: error.connectionId,
-          errorCode: error.code,
+          errorCode: error.code
         });
-
+        
         // Implementation would depend on the specific MCP client/server
         // This is a placeholder for the actual recovery logic
         return this.attemptConnectionRecovery(error, context);
-      },
+      }
     });
 
     // Resource retry strategy
@@ -99,11 +102,11 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
       recover: async (error: MCPError, context: MCPErrorContext) => {
         this.logger.debug('Attempting MCP resource recovery', {
           resourceUri: error.resourceUri,
-          errorCode: error.code,
+          errorCode: error.code
         });
-
+        
         return this.attemptResourceRecovery(error, context);
-      },
+      }
     });
 
     // Tool execution retry strategy
@@ -115,11 +118,11 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
       recover: async (error: MCPError, context: MCPErrorContext) => {
         this.logger.debug('Attempting MCP tool recovery', {
           toolName: error.toolName,
-          errorCode: error.code,
+          errorCode: error.code
         });
-
+        
         return this.attemptToolRecovery(error, context);
-      },
+      }
     });
 
     // Authentication refresh strategy
@@ -131,7 +134,7 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
       recover: async (error: MCPError, context: MCPErrorContext) => {
         this.logger.debug('Attempting MCP authentication refresh');
         return this.attemptAuthRefresh(error, context);
-      },
+      }
     });
   }
 
@@ -146,12 +149,12 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
       handle: async (error: MCPError, context: MCPErrorContext) => {
         this.logger.warn(`MCP connection error: ${error.message}`, {
           connectionId: error.connectionId,
-          clientId: context.clientId,
+          clientId: context.clientId
         });
-
+        
         // Emit specific connection error event
         this.emit('connectionError', error, context);
-      },
+      }
     });
 
     // Resource error handler
@@ -161,12 +164,12 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
       handle: async (error: MCPError, context: MCPErrorContext) => {
         this.logger.warn(`MCP resource error: ${error.message}`, {
           resourceUri: error.resourceUri,
-          operation: context.operation,
+          operation: context.operation
         });
-
+        
         // Emit specific resource error event
         this.emit('resourceError', error, context);
-      },
+      }
     });
 
     // Tool execution error handler
@@ -176,12 +179,12 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
       handle: async (error: MCPError, context: MCPErrorContext) => {
         this.logger.warn(`MCP tool error: ${error.message}`, {
           toolName: error.toolName,
-          operation: context.operation,
+          operation: context.operation
         });
-
+        
         // Emit specific tool error event
         this.emit('toolError', error, context);
-      },
+      }
     });
 
     // Generic MCP error handler
@@ -190,10 +193,10 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
       canHandle: () => true,
       handle: async (error: MCPError, context: MCPErrorContext) => {
         this.logger.debug(`Generic MCP handler processing error: ${error.code}`);
-
+        
         // Default MCP error handling logic
         this.emit('mcpError', error, context);
-      },
+      }
     });
   }
 
@@ -227,7 +230,7 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
       toolName: options.toolName,
       requestId: options.requestId,
       correlationId: options.correlationId,
-      metadata: options.metadata,
+      metadata: options.metadata
     };
   }
 
@@ -239,18 +242,22 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
     error: Error,
     context: Partial<MCPErrorContext> = {}
   ): Promise<void> {
-    const mcpError = this.createMCPError(-32401, `Connection error: ${error.message}`, {
-      severity: ErrorSeverity.HIGH,
-      category: ErrorCategory.NETWORK,
-      connectionId,
-      retryable: true,
-    });
+    const mcpError = this.createMCPError(
+      -32401,
+      `Connection error: ${error.message}`,
+      {
+        severity: ErrorSeverity.HIGH,
+        category: ErrorCategory.NETWORK,
+        connectionId,
+        retryable: true
+      }
+    );
 
     const mcpContext: MCPErrorContext = {
       component: 'mcp-connection',
       operation: 'connect',
       connectionId,
-      ...context,
+      ...context
     };
 
     await this.handleError(mcpError, mcpContext);
@@ -264,17 +271,21 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
     error: Error,
     context: Partial<MCPErrorContext> = {}
   ): Promise<void> {
-    const mcpError = this.createMCPError(-32404, `Resource error: ${error.message}`, {
-      severity: ErrorSeverity.MEDIUM,
-      category: ErrorCategory.SYSTEM,
-      resourceUri,
-      retryable: true,
-    });
+    const mcpError = this.createMCPError(
+      -32404,
+      `Resource error: ${error.message}`,
+      {
+        severity: ErrorSeverity.MEDIUM,
+        category: ErrorCategory.SYSTEM,
+        resourceUri,
+        retryable: true
+      }
+    );
 
     const mcpContext: MCPErrorContext = {
       component: 'mcp-resource',
       operation: 'access',
-      ...context,
+      ...context
     };
 
     await this.handleError(mcpError, mcpContext);
@@ -288,17 +299,21 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
     error: Error,
     context: Partial<MCPErrorContext> = {}
   ): Promise<void> {
-    const mcpError = this.createMCPError(-32500, `Tool error: ${error.message}`, {
-      severity: ErrorSeverity.MEDIUM,
-      category: ErrorCategory.BUSINESS,
-      toolName,
-      retryable: true,
-    });
+    const mcpError = this.createMCPError(
+      -32500,
+      `Tool error: ${error.message}`,
+      {
+        severity: ErrorSeverity.MEDIUM,
+        category: ErrorCategory.BUSINESS,
+        toolName,
+        retryable: true
+      }
+    );
 
     const mcpContext: MCPErrorContext = {
       component: 'mcp-tool',
       operation: 'execute',
-      ...context,
+      ...context
     };
 
     await this.handleError(mcpError, mcpContext);
@@ -307,10 +322,7 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
   /**
    * Attempt connection recovery (placeholder implementation)
    */
-  private async attemptConnectionRecovery(
-    error: MCPError,
-    context: MCPErrorContext
-  ): Promise<boolean> {
+  private async attemptConnectionRecovery(error: MCPError, context: MCPErrorContext): Promise<boolean> {
     // This would be implemented by the specific MCP client/server
     // For now, return false to indicate recovery failed
     this.logger.debug('Connection recovery not implemented yet');
@@ -320,10 +332,7 @@ export class MCPUnifiedErrorHandler extends BaseErrorHandler<MCPError, MCPErrorC
   /**
    * Attempt resource recovery (placeholder implementation)
    */
-  private async attemptResourceRecovery(
-    error: MCPError,
-    context: MCPErrorContext
-  ): Promise<boolean> {
+  private async attemptResourceRecovery(error: MCPError, context: MCPErrorContext): Promise<boolean> {
     // This would be implemented by the specific resource manager
     this.logger.debug('Resource recovery not implemented yet');
     return false;

@@ -54,7 +54,7 @@ export class AgentService {
         config: data.configuration as any,
         provider: data.provider || 'default',
         userId,
-      } as any);
+      });
 
       this.logger.log(`Created agent: ${agent.id} (${agent.name})`);
       return this.transformAgent(agent);
@@ -93,9 +93,9 @@ export class AgentService {
   }
 
   async getAgentById(id: string, userId: string): Promise<Agent> {
-    const agent = await drizzleAgentRepository.findById(id, userId);
+    const agent = await drizzleAgentRepository.findById(id);
 
-    if (!agent) {
+    if (!agent || agent.userId !== userId) {
       throw new NotFoundException(`Agent with id "${id}" not found`);
     }
 
@@ -105,9 +105,9 @@ export class AgentService {
   async updateAgent(id: string, updates: UpdateAgentDto, userId: string): Promise<Agent> {
     try {
       // Verify agent exists and belongs to user
-      const existingAgent = await drizzleAgentRepository.findById(id, userId);
+      const existingAgent = await drizzleAgentRepository.findById(id);
 
-      if (!existingAgent) {
+      if (!existingAgent || existingAgent.userId !== userId) {
         throw new NotFoundException(`Agent with id "${id}" not found`);
       }
 
@@ -121,10 +121,10 @@ export class AgentService {
       }
 
       // Update the agent
-      const agent = await drizzleAgentRepository.update(id, userId, {
+      const agent = await drizzleAgentRepository.update(id, {
         ...updates,
         updatedAt: new Date(),
-      } as any);
+      });
 
       if (!agent) {
         throw new InternalServerErrorException(`Failed to update agent ${id}`);
@@ -145,7 +145,7 @@ export class AgentService {
   async deleteAgent(id: string, userId: string): Promise<void> {
     try {
       const agent = await this.getAgentById(id, userId);
-      await drizzleAgentRepository.softDelete(agent.id, userId);
+      await drizzleAgentRepository.softDelete(agent.id);
       this.logger.log(`Deleted agent: ${id}`);
     } catch (error) {
       if (error instanceof NotFoundException) {

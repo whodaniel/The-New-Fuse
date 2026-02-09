@@ -11,13 +11,13 @@ export const STANDARD_PORTS = {
   API_GATEWAY: 8080,
 
   // Individual Backend Services (behind gateway)
-  BACKEND_API: 3004,
+  BACKEND_API: 3001,
   WEBHOOKS_API: 3002,
 
-  // WebSocket server (Same as Backend API for NestJS)
-  WEBSOCKET: 3004,
+  // WebSocket server
+  WEBSOCKET: 3002,
 
-  // Drizzle Studio (database UI)
+  // Prisma Studio (database UI)
   DATABASE_UI: 5555,
 
   // Additional services (reserved)
@@ -30,24 +30,8 @@ export const STANDARD_PORTS = {
 
 // Environment-based configuration
 export const getApiUrl = () => {
-  // Force the working Railway backend for production domain
-  if (typeof window !== 'undefined' && window.location.hostname.includes('thenewfuse.com')) {
-    return 'https://api-production-48f1.up.railway.app/api';
-  }
-
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
-  }
-
-  // In browser, detect based on current location
-  if (typeof window !== 'undefined') {
-    const host = window.location.host;
-    const protocol = window.location.protocol;
-
-    // Railway deployments
-    if (host.includes('railway.app')) {
-      return `${protocol}//${host}`;
-    }
   }
 
   // Default to unified API Gateway
@@ -63,17 +47,16 @@ export const getWebSocketUrl = () => {
   // In browser, detect based on current location
   if (typeof window !== 'undefined') {
     const host = window.location.host;
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 
     // Production: thenewfuse.com
     if (host.includes('thenewfuse.com')) {
-      // Direct connection to Railway backend
-      return 'wss://api-production-48f1.up.railway.app';
+      return `wss://thenewfuse.com/ws`;
     }
 
     // Railway deployments
     if (host.includes('railway.app')) {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      return `${protocol}//${host}`;
+      return `${protocol}//${host}/ws`;
     }
   }
 

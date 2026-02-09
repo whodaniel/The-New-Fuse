@@ -144,13 +144,10 @@ export interface ISystemHealthMonitor extends EventEmitter {
 export interface HealthStatus {
   timestamp: Date;
   overall: 'healthy' | 'degraded' | 'unhealthy';
-  components: Record<
-    string,
-    {
-      status: 'healthy' | 'degraded' | 'unhealthy';
-      message?: string;
-      responseTime?: number;
-    }
-  >;
+  components: Record<string, {
+    status: 'healthy' | 'degraded' | 'unhealthy';
+    message?: string;
+    responseTime?: number;
+  }>;
   score: number; // 0-100
 }

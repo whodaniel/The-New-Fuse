@@ -1,5 +1,5 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { SecurityService } from '../SecurityService';
 // import { Logger } from '@the-new-fuse/utils';
 import { SecurityMiddlewareConfig } from './types';
@@ -22,7 +22,7 @@ export class SecurityMiddleware implements NestMiddleware {
       if (!token) {
         return res.status(401).json({
           status: 'error',
-          message: 'Authentication required',
+          message: 'Authentication required'
         });
       }
 
@@ -31,7 +31,7 @@ export class SecurityMiddleware implements NestMiddleware {
         const isValid = await this.securityService.validateRequest({
           req,
           resource: req.path,
-          action: 'access',
+          action: 'access'
         });
 
         if (!isValid) {
@@ -40,7 +40,7 @@ export class SecurityMiddleware implements NestMiddleware {
       } catch {
         return res.status(401).json({
           status: 'error',
-          message: 'Invalid token',
+          message: 'Invalid token'
         });
       }
 
@@ -52,19 +52,19 @@ export class SecurityMiddleware implements NestMiddleware {
         const hasAccess = await this.securityService.validateRequest({
           req,
           resource,
-          action: 'access',
+          action: 'access'
         });
 
         if (!hasAccess) {
           return res.status(403).json({
             status: 'error',
-            message: 'Access denied',
+            message: 'Access denied'
           });
         }
       } catch {
         return res.status(403).json({
           status: 'error',
-          message: 'Access denied',
+          message: 'Access denied'
         });
       }
 
@@ -73,7 +73,7 @@ export class SecurityMiddleware implements NestMiddleware {
       // this.logger.error('Security middleware error:', error);
       return res.status(500).json({
         status: 'error',
-        message: 'Internal server error',
+        message: 'Internal server error'
       });
     }
   }
@@ -97,7 +97,7 @@ export class SecurityMiddleware implements NestMiddleware {
       POST: 'create',
       PUT: 'update',
       PATCH: 'update',
-      DELETE: 'delete',
+      DELETE: 'delete'
     };
 
     return methodToAction[req.method] || 'unknown';

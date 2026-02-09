@@ -2,8 +2,8 @@
  * Menu Component - Chakra-compatible Menu/Dropdown for The New Fuse
  */
 
+import React, { useState, useRef, useEffect, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import React, { useEffect, useRef, useState, type ReactNode } from 'react';
 
 interface MenuProps {
   children: ReactNode;
@@ -12,12 +12,7 @@ interface MenuProps {
   closeOnSelect?: boolean;
 }
 
-export const Menu = ({
-  children,
-  isOpen: controlledIsOpen,
-  onClose,
-  closeOnSelect = true,
-}: MenuProps) => {
+export const Menu = ({ children, isOpen: controlledIsOpen, onClose, closeOnSelect = true }: MenuProps) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
   const setIsOpen = onClose ? () => onClose() : setInternalIsOpen;
@@ -137,19 +132,9 @@ export const MenuDivider = ({ className }: { className?: string }) => (
   <div className={cn('my-1 border-t border-neutral-200 dark:border-neutral-700', className)} />
 );
 
-export const MenuGroup = ({
-  title,
-  children,
-  className,
-}: {
-  title?: string;
-  children: ReactNode;
-  className?: string;
-}) => (
+export const MenuGroup = ({ title, children, className }: { title?: string; children: ReactNode; className?: string }) => (
   <div className={cn('py-1', className)}>
-    {title && (
-      <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">{title}</div>
-    )}
+    {title && <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">{title}</div>}
     {children}
   </div>
 );

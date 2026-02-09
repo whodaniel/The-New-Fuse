@@ -1,19 +1,19 @@
 /**
  * Workflow Repository - Drizzle ORM Implementation
- *
+ * 
  * This repository provides data access for Workflow entities using Drizzle ORM.
- * It replaces the legacy legacy ORM-based repository.
+ * It replaces the legacy Prisma-based repository.
  */
 
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  and,
-  desc,
-  DRIZZLE_CLIENT,
+import { 
+  DRIZZLE_CLIENT, 
   type DrizzleClient,
   drizzleSchema,
   eq,
+  and,
   isNull,
+  desc,
 } from '@the-new-fuse/database';
 
 // Destructure the schema tables we need
@@ -60,16 +60,15 @@ export interface IWorkflowRepository {
 
 @Injectable()
 export class WorkflowRepository implements IWorkflowRepository {
-  constructor(@Inject(DRIZZLE_CLIENT) private readonly db: DrizzleClient) {}
+  constructor(
+    @Inject(DRIZZLE_CLIENT) private readonly db: DrizzleClient
+  ) {}
 
   /**
    * Create a new workflow
    */
   async create(data: WorkflowInsert): Promise<Workflow> {
-    const [workflow] = await this.db
-      .insert(workflows)
-      .values(data as any)
-      .returning();
+    const [workflow] = await this.db.insert(workflows).values(data as any).returning();
     return workflow;
   }
 
@@ -177,7 +176,9 @@ export class WorkflowRepository implements IWorkflowRepository {
  */
 @Injectable()
 export class WorkflowExecutionRepository {
-  constructor(@Inject(DRIZZLE_CLIENT) private readonly db: DrizzleClient) {}
+  constructor(
+    @Inject(DRIZZLE_CLIENT) private readonly db: DrizzleClient
+  ) {}
 
   /**
    * Create a new workflow execution
@@ -253,7 +254,10 @@ export class WorkflowExecutionRepository {
     }
 
     if (conditions.length === 0) {
-      return this.db.select().from(workflowExecutions).orderBy(desc(workflowExecutions.startedAt));
+      return this.db
+        .select()
+        .from(workflowExecutions)
+        .orderBy(desc(workflowExecutions.startedAt));
     }
 
     return this.db
@@ -266,10 +270,7 @@ export class WorkflowExecutionRepository {
   /**
    * Update an execution
    */
-  async update(
-    id: string,
-    data: Partial<WorkflowExecutionInsert>
-  ): Promise<WorkflowExecution | null> {
+  async update(id: string, data: Partial<WorkflowExecutionInsert>): Promise<WorkflowExecution | null> {
     const [execution] = await this.db
       .update(workflowExecutions)
       .set(data as any)
@@ -293,9 +294,9 @@ export class WorkflowExecutionRepository {
 }
 
 // Re-export types for consumers
-export type {
-  WorkflowInsert as NewWorkflow,
-  WorkflowExecutionInsert as NewWorkflowExecution,
-  Workflow,
-  WorkflowExecution,
+export type { 
+  Workflow, 
+  WorkflowInsert as NewWorkflow, 
+  WorkflowExecution, 
+  WorkflowExecutionInsert as NewWorkflowExecution 
 };

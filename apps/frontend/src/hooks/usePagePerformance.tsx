@@ -23,9 +23,7 @@ export const usePagePerformance = (pageName: string) => {
       const metrics: Partial<PerformanceMetrics> = {};
 
       // Navigation Timing API
-      const navigation = performance.getEntriesByType(
-        'navigation'
-      )[0] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
       if (navigation) {
         metrics.loadTime = navigation.loadEventEnd - navigation.fetchStart;
         metrics.domContentLoaded = navigation.domContentLoadedEventEnd - navigation.fetchStart;
@@ -33,7 +31,7 @@ export const usePagePerformance = (pageName: string) => {
 
       // Paint Timing API
       const paintEntries = performance.getEntriesByType('paint');
-      const fcp = paintEntries.find((entry) => entry.name === 'first-contentful-paint');
+      const fcp = paintEntries.find(entry => entry.name === 'first-contentful-paint');
       if (fcp) {
         metrics.firstContentfulPaint = fcp.startTime;
       }
@@ -88,41 +86,25 @@ export const usePagePerformance = (pageName: string) => {
         if (process.env.NODE_ENV === 'development') {
           console.log(`📊 Performance Metrics for ${pageName}:`, {
             'Load Time': metrics.loadTime ? `${(metrics.loadTime / 1000).toFixed(2)}s` : 'N/A',
-            'DOM Content Loaded': metrics.domContentLoaded
-              ? `${(metrics.domContentLoaded / 1000).toFixed(2)}s`
-              : 'N/A',
-            'First Contentful Paint': metrics.firstContentfulPaint
-              ? `${(metrics.firstContentfulPaint / 1000).toFixed(2)}s`
-              : 'N/A',
-            'Largest Contentful Paint': metrics.largestContentfulPaint
-              ? `${(metrics.largestContentfulPaint / 1000).toFixed(2)}s`
-              : 'N/A',
+            'DOM Content Loaded': metrics.domContentLoaded ? `${(metrics.domContentLoaded / 1000).toFixed(2)}s` : 'N/A',
+            'First Contentful Paint': metrics.firstContentfulPaint ? `${(metrics.firstContentfulPaint / 1000).toFixed(2)}s` : 'N/A',
+            'Largest Contentful Paint': metrics.largestContentfulPaint ? `${(metrics.largestContentfulPaint / 1000).toFixed(2)}s` : 'N/A',
             'Cumulative Layout Shift': metrics.cumulativeLayoutShift?.toFixed(3) || 'N/A',
-            'First Input Delay': metrics.firstInputDelay
-              ? `${metrics.firstInputDelay.toFixed(2)}ms`
-              : 'N/A',
+            'First Input Delay': metrics.firstInputDelay ? `${metrics.firstInputDelay.toFixed(2)}ms` : 'N/A',
           });
 
           // Performance recommendations
           if (metrics.firstContentfulPaint && metrics.firstContentfulPaint > 2500) {
-            console.warn(
-              `⚠️ FCP is slow (${(metrics.firstContentfulPaint / 1000).toFixed(2)}s). Consider optimizing above-the-fold content.`
-            );
+            console.warn(`⚠️ FCP is slow (${(metrics.firstContentfulPaint / 1000).toFixed(2)}s). Consider optimizing above-the-fold content.`);
           }
           if (metrics.largestContentfulPaint && metrics.largestContentfulPaint > 2500) {
-            console.warn(
-              `⚠️ LCP is slow (${(metrics.largestContentfulPaint / 1000).toFixed(2)}s). Consider optimizing largest contentful element.`
-            );
+            console.warn(`⚠️ LCP is slow (${(metrics.largestContentfulPaint / 1000).toFixed(2)}s). Consider optimizing largest contentful element.`);
           }
           if (metrics.cumulativeLayoutShift && metrics.cumulativeLayoutShift > 0.1) {
-            console.warn(
-              `⚠️ CLS is high (${metrics.cumulativeLayoutShift.toFixed(3)}). Consider adding size attributes to images and reserving space for dynamic content.`
-            );
+            console.warn(`⚠️ CLS is high (${metrics.cumulativeLayoutShift.toFixed(3)}). Consider adding size attributes to images and reserving space for dynamic content.`);
           }
           if (metrics.firstInputDelay && metrics.firstInputDelay > 100) {
-            console.warn(
-              `⚠️ FID is slow (${metrics.firstInputDelay.toFixed(2)}ms). Consider reducing JavaScript execution time.`
-            );
+            console.warn(`⚠️ FID is slow (${metrics.firstInputDelay.toFixed(2)}ms). Consider reducing JavaScript execution time.`);
           }
         }
 
@@ -156,7 +138,7 @@ export const usePagePerformance = (pageName: string) => {
 export const PERFORMANCE_THRESHOLDS = {
   FCP: { good: 1800, needsImprovement: 3000 }, // First Contentful Paint
   LCP: { good: 2500, needsImprovement: 4000 }, // Largest Contentful Paint
-  FID: { good: 100, needsImprovement: 300 }, // First Input Delay
-  CLS: { good: 0.1, needsImprovement: 0.25 }, // Cumulative Layout Shift
+  FID: { good: 100, needsImprovement: 300 },   // First Input Delay
+  CLS: { good: 0.1, needsImprovement: 0.25 },  // Cumulative Layout Shift
   TTFB: { good: 800, needsImprovement: 1800 }, // Time to First Byte
 };

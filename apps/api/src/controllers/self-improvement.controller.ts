@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
+import { Controller, Post, Get, Body, Logger, Param } from '@nestjs/common';
+import { CoordinatorAgentService } from '../agents/coordinator.service';
 import { AnalyzerAgentService } from '../agents/analyzer.service';
 import { ArchitectAgentService } from '../agents/architect.service';
-import { CoordinatorAgentService } from '../agents/coordinator.service';
 import { ImplementerAgentService } from '../agents/implementer.service';
 import { ReviewerAgentService } from '../agents/reviewer.service';
 
@@ -14,7 +14,7 @@ export class SelfImprovementController {
     private readonly analyzer: AnalyzerAgentService,
     private readonly architect: ArchitectAgentService,
     private readonly implementer: ImplementerAgentService,
-    private readonly reviewer: ReviewerAgentService
+    private readonly reviewer: ReviewerAgentService,
   ) {}
 
   @Post('cycle/start')
@@ -142,7 +142,7 @@ export class SelfImprovementController {
         score: review.score,
         decision: review.decision,
         feedback: review.feedback,
-        criticalIssues: review.securityIssues.filter((s) => s.severity === 'critical').length,
+        criticalIssues: review.securityIssues.filter(s => s.severity === 'critical').length,
       },
     };
   }

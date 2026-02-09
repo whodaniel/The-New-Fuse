@@ -3,6 +3,6 @@ import { TraeAgent } from './trae-agent';
 
 @Module({
   providers: [TraeAgent],
-  exports: [TraeAgent],
+  exports: [TraeAgent]
 })
 export class TraeAgentModule {}

@@ -17,7 +17,7 @@ export class APINode {
         method: config.method,
         headers: {
           'Content-Type': 'application/json',
-          ...config.headers,
+          ...config.headers
         },
         body: config.body ? JSON.stringify(config.body) : undefined,
       });
@@ -28,9 +28,7 @@ export class APINode {
 
       return await response.json();
     } catch (error) {
-      throw new Error(
-        `API node execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      );
+      throw new Error(`API node execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 }

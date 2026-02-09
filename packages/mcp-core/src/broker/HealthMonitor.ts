@@ -1,12 +1,12 @@
 /**
  * Health Monitor Implementation
- *
+ * 
  * Monitors the health of registered MCP services through periodic health checks
  * and provides health status reporting and automatic cleanup capabilities.
  */
 
 import { EventEmitter } from 'events';
-import { HealthCheckConfig, ServiceHealth } from '../types';
+import { ServiceHealth, HealthCheckConfig } from '../types';
 import { ServiceStatus } from '../types/common';
 import { MCPErrorClass, MCPErrorCode } from '../types/error';
 
@@ -47,7 +47,7 @@ export class HealthMonitor extends EventEmitter {
 
     // Start global health check interval
     this.globalInterval = setInterval(() => {
-      this.performHealthChecks().catch((error) => {
+      this.performHealthChecks().catch(error => {
         console.error('Health check cycle failed:', error);
       });
     }, this.config.interval * 1000);
@@ -108,7 +108,7 @@ export class HealthMonitor extends EventEmitter {
       errorRate: 0,
       lastCheck: now,
       score: 1.0,
-      details: {},
+      details: {}
     };
 
     const tracker: ServiceHealthTracker = {
@@ -117,7 +117,7 @@ export class HealthMonitor extends EventEmitter {
       health: initialHealth,
       consecutiveFailures: 0,
       consecutiveSuccesses: 0,
-      lastCheckTime: now,
+      lastCheckTime: now
     };
 
     this.services.set(serviceId, tracker);
@@ -164,7 +164,7 @@ export class HealthMonitor extends EventEmitter {
    * Get health status of all monitored services
    */
   async getAllServiceHealth(): Promise<ServiceHealth[]> {
-    return Array.from(this.services.values()).map((tracker) => ({ ...tracker.health }));
+    return Array.from(this.services.values()).map(tracker => ({ ...tracker.health }));
   }
 
   /**
@@ -188,7 +188,7 @@ export class HealthMonitor extends EventEmitter {
       // Perform health check (simplified HTTP ping)
       const healthCheckResult = await this.performHealthCheck(tracker.endpoint);
       responseTime = Date.now() - startTime;
-
+      
       if (healthCheckResult.success) {
         tracker.consecutiveFailures = 0;
         tracker.consecutiveSuccesses++;
@@ -197,20 +197,18 @@ export class HealthMonitor extends EventEmitter {
       } else {
         tracker.consecutiveSuccesses = 0;
         tracker.consecutiveFailures++;
-        status =
-          tracker.consecutiveFailures >= this.config.failureThreshold
-            ? ServiceStatus.OFFLINE
-            : ServiceStatus.DEGRADED;
+        status = tracker.consecutiveFailures >= this.config.failureThreshold 
+          ? ServiceStatus.OFFLINE 
+          : ServiceStatus.DEGRADED;
         details = { error: healthCheckResult.error };
       }
     } catch (error) {
       responseTime = Date.now() - startTime;
       tracker.consecutiveSuccesses = 0;
       tracker.consecutiveFailures++;
-      status =
-        tracker.consecutiveFailures >= this.config.failureThreshold
-          ? ServiceStatus.OFFLINE
-          : ServiceStatus.DEGRADED;
+      status = tracker.consecutiveFailures >= this.config.failureThreshold 
+        ? ServiceStatus.OFFLINE 
+        : ServiceStatus.DEGRADED;
       details = { error: error instanceof Error ? error.message : 'Unknown error' };
     }
 
@@ -220,10 +218,9 @@ export class HealthMonitor extends EventEmitter {
     // Calculate uptime (simplified)
     const now = new Date();
     const timeSinceLastCheck = now.getTime() - tracker.lastCheckTime.getTime();
-    const uptime =
-      status === ServiceStatus.ONLINE
-        ? tracker.health.uptime + timeSinceLastCheck
-        : tracker.health.uptime;
+    const uptime = status === ServiceStatus.ONLINE 
+      ? tracker.health.uptime + timeSinceLastCheck 
+      : tracker.health.uptime;
 
     // Calculate error rate (simplified)
     const totalChecks = tracker.consecutiveFailures + tracker.consecutiveSuccesses;
@@ -239,7 +236,7 @@ export class HealthMonitor extends EventEmitter {
       errorRate,
       lastCheck: now,
       score: healthScore,
-      details,
+      details
     };
     tracker.lastCheckTime = now;
 
@@ -257,23 +254,18 @@ export class HealthMonitor extends EventEmitter {
    */
   getStatistics() {
     const services = Array.from(this.services.values());
-    const statusCounts = services.reduce(
-      (acc, tracker) => {
-        acc[tracker.health.status] = (acc[tracker.health.status] || 0) + 1;
-        return acc;
-      },
-      {} as Record<ServiceStatus, number>
-    );
+    const statusCounts = services.reduce((acc, tracker) => {
+      acc[tracker.health.status] = (acc[tracker.health.status] || 0) + 1;
+      return acc;
+    }, {} as Record<ServiceStatus, number>);
 
-    const averageResponseTime =
-      services.length > 0
-        ? services.reduce((sum, tracker) => sum + tracker.health.responseTime, 0) / services.length
-        : 0;
+    const averageResponseTime = services.length > 0 
+      ? services.reduce((sum, tracker) => sum + tracker.health.responseTime, 0) / services.length 
+      : 0;
 
-    const averageHealthScore =
-      services.length > 0
-        ? services.reduce((sum, tracker) => sum + tracker.health.score, 0) / services.length
-        : 0;
+    const averageHealthScore = services.length > 0 
+      ? services.reduce((sum, tracker) => sum + tracker.health.score, 0) / services.length 
+      : 0;
 
     return {
       totalServices: services.length,
@@ -281,8 +273,7 @@ export class HealthMonitor extends EventEmitter {
       averageResponseTime,
       averageHealthScore,
       healthyServices: statusCounts[ServiceStatus.ONLINE] || 0,
-      unhealthyServices:
-        (statusCounts[ServiceStatus.OFFLINE] || 0) + (statusCounts[ServiceStatus.DEGRADED] || 0),
+      unhealthyServices: (statusCounts[ServiceStatus.OFFLINE] || 0) + (statusCounts[ServiceStatus.DEGRADED] || 0)
     };
   }
 
@@ -290,8 +281,8 @@ export class HealthMonitor extends EventEmitter {
    * Perform health checks for all monitored services
    */
   private async performHealthChecks(): Promise<void> {
-    const promises = Array.from(this.services.keys()).map((serviceId) =>
-      this.checkServiceHealth(serviceId).catch((error) => {
+    const promises = Array.from(this.services.keys()).map(serviceId =>
+      this.checkServiceHealth(serviceId).catch(error => {
         console.error(`Health check failed for service ${serviceId}:`, error);
       })
     );
@@ -302,28 +293,26 @@ export class HealthMonitor extends EventEmitter {
   /**
    * Perform actual health check against service endpoint
    */
-  private async performHealthCheck(
-    endpoint: string
-  ): Promise<{ success: boolean; error?: string; details?: any }> {
+  private async performHealthCheck(endpoint: string): Promise<{ success: boolean; error?: string; details?: any }> {
     try {
       // For now, we'll implement a simple HTTP-based health check
       // In a real implementation, this would use the MCP protocol
-
+      
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
 
       try {
         // Try to parse the endpoint as URL
         const url = new URL(endpoint);
-
+        
         // For HTTP/HTTPS endpoints, perform HTTP health check
         if (url.protocol === 'http:' || url.protocol === 'https:') {
           const response = await fetch(`${endpoint}/health`, {
             method: 'GET',
             signal: controller.signal,
             headers: {
-              'Content-Type': 'application/json',
-            },
+              'Content-Type': 'application/json'
+            }
           });
 
           clearTimeout(timeoutId);
@@ -342,7 +331,7 @@ export class HealthMonitor extends EventEmitter {
         }
       } catch (error) {
         clearTimeout(timeoutId);
-
+        
         if (error instanceof Error) {
           if (error.name === 'AbortError') {
             return { success: false, error: 'Health check timeout' };
@@ -362,8 +351,8 @@ export class HealthMonitor extends EventEmitter {
    * Calculate health score based on various factors
    */
   private calculateHealthScore(
-    tracker: ServiceHealthTracker,
-    responseTime: number,
+    tracker: ServiceHealthTracker, 
+    responseTime: number, 
     status: ServiceStatus
   ): number {
     let score = 1.0;
@@ -398,10 +387,7 @@ export class HealthMonitor extends EventEmitter {
 
     // Boost score based on consecutive successes (up to original score)
     if (tracker.consecutiveSuccesses > this.config.recoveryThreshold) {
-      const successBoost = Math.min(
-        (tracker.consecutiveSuccesses - this.config.recoveryThreshold) * 0.05,
-        0.2
-      );
+      const successBoost = Math.min((tracker.consecutiveSuccesses - this.config.recoveryThreshold) * 0.05, 0.2);
       score = Math.min(score + successBoost, 1.0);
     }
 

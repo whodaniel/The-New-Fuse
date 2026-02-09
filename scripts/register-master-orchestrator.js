@@ -7,12 +7,12 @@
  * and establishes the foundation for multi-agent coordination.
  */
 
-const { DrizzleClient } = require('@drizzle/client');
+const { PrismaClient } = require('@prisma/client');
 const { createHash } = require('crypto');
 
 class MasterOrchestratorRegistration {
   constructor() {
-    this.drizzle = new DrizzleClient();
+    this.prisma = new PrismaClient();
     this.userId = 'system'; // Default system user for autonomous agents
   }
 
@@ -110,13 +110,13 @@ PLATFORM OBJECTIVES:
   async ensureSystemUser() {
     try {
       // Check if system user exists
-      let user = await this.drizzle.user.findUnique({
+      let user = await this.prisma.user.findUnique({
         where: { email: 'system@thenewfuse.com' }
       });
 
       if (!user) {
         // Create system user for autonomous agents
-        user = await this.drizzle.user.create({
+        user = await this.prisma.user.create({
           data: {
             email: 'system@thenewfuse.com',
             name: 'System Agent Controller',
@@ -144,7 +144,7 @@ PLATFORM OBJECTIVES:
       const profile = this.generateAgentProfile();
       
       // Check if Master Orchestrator already exists
-      const existingAgent = await this.drizzle.agent.findFirst({
+      const existingAgent = await this.prisma.agent.findFirst({
         where: { 
           name: profile.name,
           deletedAt: null 
@@ -154,7 +154,7 @@ PLATFORM OBJECTIVES:
       if (existingAgent) {
         console.log('⚠️  Master Orchestrator Agent already exists, updating...');
         
-        const updatedAgent = await this.drizzle.agent.update({
+        const updatedAgent = await this.prisma.agent.update({
           where: { id: existingAgent.id },
           data: {
             description: profile.description,
@@ -170,7 +170,7 @@ PLATFORM OBJECTIVES:
         return updatedAgent;
       } else {
         // Create new Master Orchestrator Agent
-        const newAgent = await this.drizzle.agent.create({
+        const newAgent = await this.prisma.agent.create({
           data: {
             name: profile.name,
             description: profile.description,
@@ -237,7 +237,7 @@ PLATFORM OBJECTIVES:
   }
 
   async cleanup() {
-    await this.drizzle.$disconnect();
+    await this.prisma.$disconnect();
   }
 }
 

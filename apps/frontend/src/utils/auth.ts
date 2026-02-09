@@ -1,3 +1,4 @@
+;
 // exports.AuthManagerImpl = void 0; // Cleaned up exports
 import bcryptjs_1 from 'bcryptjs';
 import jsonwebtoken_1 from 'jsonwebtoken';
@@ -67,3 +68,4 @@ export { AuthManagerImpl };
 // The line `exports.AuthManagerImpl = exports.UserExistsError = exports.AuthError = void 0;`
 // should ideally become `exports.AuthManagerImpl = void 0;` or be handled by the build system.
 // For now, I will leave it and it can be cleaned in a separate step if needed.
+;

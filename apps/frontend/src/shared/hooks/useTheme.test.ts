@@ -1,6 +1,6 @@
-import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
 import { useTheme } from './useTheme';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 describe('useTheme', () => {
   beforeEach(() => {
@@ -21,7 +21,7 @@ describe('useTheme', () => {
 
   it('should update theme when setTheme is called', () => {
     const { result } = renderHook(() => useTheme());
-
+    
     act(() => {
       result.current[1]('dark');
     });
@@ -32,7 +32,7 @@ describe('useTheme', () => {
 
   it('should use custom storage key if provided', () => {
     const { result } = renderHook(() => useTheme('custom-theme-key'));
-
+    
     act(() => {
       result.current[1]('dark');
     });

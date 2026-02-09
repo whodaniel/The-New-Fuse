@@ -20,24 +20,24 @@ describe('Filesystem Operations Test', () => {
 
   test('should write and read files correctly', async () => {
     const testData = { message: 'Hello World', timestamp: Date.now() };
-
+    
     // Write file
     await fs.writeJson(testFile, testData, { spaces: 2 });
     // File written to: testFile
-
+    
     // Test file existence check
     const exists = await fs.pathExists(testFile);
     // File exists (fs.pathExists): exists
     expect(exists).toBe(true);
-
+    
     // Read file content
     const content = await fs.readFile(testFile, 'utf8');
     // File content type, length, and preview logged for debugging
-
+    
     expect(content).toBeDefined();
     expect(typeof content).toBe('string');
     expect(content.length).toBeGreaterThan(0);
-
+    
     // Parse and verify JSON
     const parsedData = JSON.parse(content);
     expect(parsedData.message).toBe('Hello World');

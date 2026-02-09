@@ -3,12 +3,7 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  WorkflowStep,
-  StepExecution,
-  WorkflowExecution,
-  WorkflowStepType,
-} from '../types/workflow';
+import { WorkflowStep, StepExecution, WorkflowExecution, WorkflowStepType } from '../types/workflow';
 import { ServiceState } from '../constants/types';
 import { BaseError } from '../utils/errors';
 
@@ -87,7 +82,7 @@ export class WorkflowExecutor {
     }
 
     this.logger.debug(`Executing step: ${step.name} (${step.type})`);
-
+    
     try {
       const result = await executor.execute(step, context);
       this.logger.debug(`Step execution completed: ${step.name}`);
@@ -114,16 +109,16 @@ export class WorkflowExecutor {
   private initializeDefaultExecutors(): void {
     // Task Step Executor
     this.registerStepExecutor(WorkflowStepType.TASK, new TaskStepExecutor());
-
+    
     // Decision Step Executor
     this.registerStepExecutor(WorkflowStepType.DECISION, new DecisionStepExecutor());
-
+    
     // Wait Step Executor
     this.registerStepExecutor(WorkflowStepType.WAIT, new WaitStepExecutor());
-
+    
     // Script Step Executor
     this.registerStepExecutor(WorkflowStepType.SCRIPT, new ScriptStepExecutor());
-
+    
     // Parallel Step Executor
     this.registerStepExecutor(WorkflowStepType.PARALLEL, new ParallelStepExecutor());
 
@@ -145,25 +140,22 @@ class TaskStepExecutor implements StepExecutor {
 
     // Apply input mapping
     const taskInput = this.applyInputMapping(config.inputMapping, variables);
-
+    
     // Execute the task (this would integrate with actual task execution system)
     const taskResult = await this.executeTask(config, taskInput, context);
-
+    
     // Apply output mapping
     const mappedOutput = this.applyOutputMapping(config.outputMapping, taskResult);
-
+    
     // Update execution variables
     Object.assign(context.variables, mappedOutput);
-
+    
     return taskResult;
   }
 
-  private applyInputMapping(
-    mapping: Record<string, string> | undefined,
-    variables: Record<string, any>,
-  ): Record<string, any> {
+  private applyInputMapping(mapping: Record<string, string> | undefined, variables: Record<string, any>): Record<string, any> {
     if (!mapping) return variables;
-
+    
     const mapped: Record<string, any> = {};
     for (const [targetKey, sourceKey] of Object.entries(mapping)) {
       if (variables.hasOwnProperty(sourceKey)) {
@@ -173,12 +165,9 @@ class TaskStepExecutor implements StepExecutor {
     return mapped;
   }
 
-  private applyOutputMapping(
-    mapping: Record<string, string> | undefined,
-    result: any,
-  ): Record<string, any> {
+  private applyOutputMapping(mapping: Record<string, string> | undefined, result: any): Record<string, any> {
     if (!mapping) return result;
-
+    
     const mapped: Record<string, any> = {};
     for (const [targetKey, sourceKey] of Object.entries(mapping)) {
       if (result && result.hasOwnProperty(sourceKey)) {
@@ -188,21 +177,15 @@ class TaskStepExecutor implements StepExecutor {
     return mapped;
   }
 
-  private async executeTask(
-    config: any,
-    input: Record<string, any>,
-    context: ExecutionContext,
-  ): Promise<any> {
+  private async executeTask(config: any, input: Record<string, any>, context: ExecutionContext): Promise<any> {
     // This would integrate with the actual task execution system
     // For now, simulate task execution
-
-    context.stepExecution.logs.push(
-      `Executing task with parameters: ${JSON.stringify(config.parameters)}`,
-    );
-
+    
+    context.stepExecution.logs.push(`Executing task with parameters: ${JSON.stringify(config.parameters)}`);
+    
     // Simulate async work
-    await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
-
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 1000));
+    
     return {
       success: true,
       result: `Task completed with input: ${JSON.stringify(input)}`,
@@ -230,20 +213,20 @@ class DecisionStepExecutor implements StepExecutor {
     for (const condition of conditions) {
       const result = this.evaluateCondition(condition, variables);
       context.stepExecution.logs.push(`Condition "${condition.condition}" evaluated to: ${result}`);
-
+      
       if (result) {
-        return {
-          decision: true,
+        return { 
+          decision: true, 
           condition: condition.condition,
-          matchedCondition: condition,
+          matchedCondition: condition 
         };
       }
     }
 
-    return {
-      decision: false,
+    return { 
+      decision: false, 
       reason: 'No conditions matched',
-      evaluatedConditions: conditions.length,
+      evaluatedConditions: conditions.length 
     };
   }
 
@@ -281,7 +264,7 @@ class DecisionStepExecutor implements StepExecutor {
         Boolean,
         Array,
         Object,
-        JSON,
+        JSON
       };
 
       // Use Function constructor with strict mode
@@ -309,7 +292,7 @@ class DecisionStepExecutor implements StepExecutor {
         Boolean,
         Array,
         Object,
-        JSON,
+        JSON
       };
 
       // Use Function constructor with strict mode and controlled parameters
@@ -326,7 +309,7 @@ class DecisionStepExecutor implements StepExecutor {
   private evaluateValue(condition: any, variables: Record<string, any>): boolean {
     const { operator, value } = condition;
     const variableValue = variables[condition.variable];
-
+    
     switch (operator) {
       case 'equals':
         return variableValue === value;
@@ -352,11 +335,11 @@ class WaitStepExecutor implements StepExecutor {
   async execute(step: WorkflowStep, context: ExecutionContext): Promise<any> {
     const duration = step.config.parameters.duration || 1000;
     const reason = step.config.parameters.reason || 'Workflow wait step';
-
+    
     context.stepExecution.logs.push(`Waiting for ${duration}ms - ${reason}`);
-
-    await new Promise((resolve) => setTimeout(resolve, duration));
-
+    
+    await new Promise(resolve => setTimeout(resolve, duration));
+    
     return {
       waited: duration,
       reason,
@@ -374,23 +357,20 @@ class ScriptStepExecutor implements StepExecutor {
 
   async execute(step: WorkflowStep, context: ExecutionContext): Promise<any> {
     const { script, language = 'javascript' } = step.config.parameters;
-
+    
     if (!script) {
       throw new BaseError('No script provided for script step', 'MISSING_SCRIPT');
     }
 
     context.stepExecution.logs.push(`Executing ${language} script`);
-
+    
     try {
       switch (language.toLowerCase()) {
         case 'javascript':
         case 'js':
           return await this.executeJavaScript(script, context);
         default:
-          throw new BaseError(
-            `Unsupported script language: ${language}`,
-            'UNSUPPORTED_SCRIPT_LANGUAGE',
-          );
+          throw new BaseError(`Unsupported script language: ${language}`, 'UNSUPPORTED_SCRIPT_LANGUAGE');
       }
     } catch (error) {
       context.stepExecution.logs.push(`Script execution failed: ${(error as Error).message}`);
@@ -422,10 +402,7 @@ class ScriptStepExecutor implements StepExecutor {
 
       for (const pattern of dangerousPatterns) {
         if (pattern.test(script)) {
-          throw new BaseError(
-            `Script contains forbidden pattern: ${pattern.source}`,
-            'FORBIDDEN_PATTERN',
-          );
+          throw new BaseError(`Script contains forbidden pattern: ${pattern.source}`, 'FORBIDDEN_PATTERN');
         }
       }
 
@@ -462,10 +439,7 @@ class ScriptStepExecutor implements StepExecutor {
       // Execute with Function constructor using controlled parameters
       const keys = Object.keys(safeContext);
       const values = Object.values(safeContext);
-      const func = new Function(
-        ...keys,
-        `'use strict'; return (async function() { ${script} })();`,
-      );
+      const func = new Function(...keys, `'use strict'; return (async function() { ${script} })();`);
       const result = await func(...values);
 
       return {
@@ -475,10 +449,7 @@ class ScriptStepExecutor implements StepExecutor {
       };
     } catch (error) {
       this.logger.error('JavaScript execution failed', error as Error);
-      throw new BaseError(
-        `Script execution failed: ${(error as Error).message}`,
-        'SCRIPT_EXECUTION_FAILED',
-      );
+      throw new BaseError(`Script execution failed: ${(error as Error).message}`, 'SCRIPT_EXECUTION_FAILED');
     }
   }
 }
@@ -492,20 +463,20 @@ class ParallelStepExecutor implements StepExecutor {
 
   async execute(step: WorkflowStep, context: ExecutionContext): Promise<any> {
     const { parallelSteps = [] } = step.config.parameters;
-
+    
     if (parallelSteps.length === 0) {
       return { parallelResults: [], message: 'No parallel steps to execute' };
     }
 
     context.stepExecution.logs.push(`Executing ${parallelSteps.length} parallel steps`);
-
+    
     // Execute all parallel steps concurrently
-    const promises = parallelSteps.map((parallelStep: any, index: number) =>
-      this.executeParallelStep(parallelStep, context, index),
+    const promises = parallelSteps.map((parallelStep: any, index: number) => 
+      this.executeParallelStep(parallelStep, context, index)
     );
-
+    
     const results = await Promise.allSettled(promises);
-
+    
     // Process results
     const parallelResults = results.map((result, index) => ({
       stepIndex: index,
@@ -513,14 +484,12 @@ class ParallelStepExecutor implements StepExecutor {
       result: result.status === 'fulfilled' ? result.value : undefined,
       error: result.status === 'rejected' ? result.reason : undefined,
     }));
-
-    const successCount = parallelResults.filter((r) => r.status === 'fulfilled').length;
+    
+    const successCount = parallelResults.filter(r => r.status === 'fulfilled').length;
     const failureCount = parallelResults.length - successCount;
-
-    context.stepExecution.logs.push(
-      `Parallel execution completed: ${successCount} succeeded, ${failureCount} failed`,
-    );
-
+    
+    context.stepExecution.logs.push(`Parallel execution completed: ${successCount} succeeded, ${failureCount} failed`);
+    
     return {
       parallelResults,
       summary: {
@@ -532,17 +501,13 @@ class ParallelStepExecutor implements StepExecutor {
     };
   }
 
-  private async executeParallelStep(
-    parallelStep: any,
-    context: ExecutionContext,
-    index: number,
-  ): Promise<any> {
+  private async executeParallelStep(parallelStep: any, context: ExecutionContext, index: number): Promise<any> {
     // This would execute a sub-step in parallel
     // For now, simulate parallel work
     const duration = Math.random() * 2000; // Random duration up to 2 seconds
-
-    await new Promise((resolve) => setTimeout(resolve, duration));
-
+    
+    await new Promise(resolve => setTimeout(resolve, duration));
+    
     return {
       stepIndex: index,
       stepName: parallelStep.name || `Parallel Step ${index}`,

@@ -1,6 +1,7 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { useApiMetrics } from '../../../hooks/useApiMetrics';
 import { ApiMonitor } from '../ApiMonitor';
+import { useApiMetrics } from '../../../hooks/useApiMetrics';
 
 jest.mock('../../../hooks/useApiMetrics');
 
@@ -10,7 +11,7 @@ describe('ApiMonitor', () => {
     errorRate: 2.5,
     avgResponseTime: 150,
     requestsOverTime: [],
-    responseTimesOverTime: [],
+    responseTimesOverTime: []
   };
 
   beforeEach(() => {
@@ -18,7 +19,7 @@ describe('ApiMonitor', () => {
       metrics: mockMetrics,
       endpoints: [],
       errors: [],
-      loading: false,
+      loading: false
     });
   });
 

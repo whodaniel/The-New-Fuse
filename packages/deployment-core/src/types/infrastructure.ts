@@ -4,12 +4,12 @@
  */
 
 export enum CloudProvider {
-  GCP = 'gcp',
+  GCP = 'gcp'
 }
 
 export enum ResourceType {
   COMPUTE = 'compute',
-  STORAGE = 'storage',
+  STORAGE = 'storage', 
   NETWORK = 'network',
   DATABASE = 'database',
   SECURITY_GROUP = 'security_group',
@@ -24,7 +24,7 @@ export enum ResourceType {
   SSL_CERTIFICATE = 'ssl_certificate',
   CONTAINER_REGISTRY = 'container_registry',
   GKE_CLUSTER = 'gke_cluster',
-  CLOUD_FUNCTION = 'cloud_function',
+  CLOUD_FUNCTION = 'cloud_function'
 }
 
 export enum ResourceState {
@@ -34,14 +34,14 @@ export enum ResourceState {
   DELETING = 'deleting',
   DELETED = 'deleted',
   ERROR = 'error',
-  UNKNOWN = 'unknown',
+  UNKNOWN = 'unknown'
 }
 
 export enum EnvironmentType {
   DEVELOPMENT = 'development',
   STAGING = 'staging',
   PRODUCTION = 'production',
-  TEST = 'test',
+  TEST = 'test'
 }
 
 export interface InfrastructureTemplate {
@@ -112,7 +112,7 @@ export enum VariableType {
   BOOLEAN = 'boolean',
   LIST = 'list',
   MAP = 'map',
-  OBJECT = 'object',
+  OBJECT = 'object'
 }
 
 export interface VariableValidation {
@@ -153,7 +153,7 @@ export enum InfrastructureStatus {
   UPDATING = 'updating',
   DESTROYING = 'destroying',
   DESTROYED = 'destroyed',
-  ERROR = 'error',
+  ERROR = 'error'
 }
 
 export interface StateMetadata {
@@ -178,7 +178,7 @@ export enum ChangeAction {
   UPDATE = 'update',
   DELETE = 'delete',
   REPLACE = 'replace',
-  NO_CHANGE = 'no_change',
+  NO_CHANGE = 'no_change'
 }
 
 export interface ExecutionPlan {
@@ -196,7 +196,7 @@ export enum RiskLevel {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical',
+  CRITICAL = 'critical'
 }
 
 export interface ApprovalRequirement {
@@ -209,7 +209,7 @@ export interface ApprovalRequirement {
 export enum ApprovalType {
   MANUAL = 'manual',
   AUTOMATED = 'automated',
-  POLICY_BASED = 'policy_based',
+  POLICY_BASED = 'policy_based'
 }
 
 export interface ProvisionResult {
@@ -279,14 +279,14 @@ export interface ValidationSuggestion {
 export enum ErrorSeverity {
   ERROR = 'error',
   WARNING = 'warning',
-  INFO = 'info',
+  INFO = 'info'
 }
 
 export enum SuggestionType {
   OPTIMIZATION = 'optimization',
   SECURITY = 'security',
   COST = 'cost',
-  PERFORMANCE = 'performance',
+  PERFORMANCE = 'performance'
 }
 
 export interface PlanResult {
@@ -315,21 +315,21 @@ export enum RiskType {
   DATA_LOSS = 'data_loss',
   SECURITY = 'security',
   COST = 'cost',
-  PERFORMANCE = 'performance',
+  PERFORMANCE = 'performance'
 }
 
 export enum ImpactLevel {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical',
+  CRITICAL = 'critical'
 }
 
 export enum ProbabilityLevel {
   UNLIKELY = 'unlikely',
   POSSIBLE = 'possible',
   LIKELY = 'likely',
-  CERTAIN = 'certain',
+  CERTAIN = 'certain'
 }
 
 export interface CostEstimate {
@@ -368,7 +368,7 @@ export interface PhaseDependency {
 export enum DependencyType {
   HARD = 'hard',
   SOFT = 'soft',
-  OPTIONAL = 'optional',
+  OPTIONAL = 'optional'
 }
 
 export interface ApplyResult {

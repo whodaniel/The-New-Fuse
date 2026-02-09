@@ -61,7 +61,7 @@ export class ComponentAnalysisTask {
     if (!sourceCode) return 0;
     let score = 100;
     const patterns = [/eval\(/, /innerHTML/];
-    patterns.forEach((pattern) => {
+    patterns.forEach(pattern => {
       const matches = sourceCode.match(pattern);
       if (matches) {
         score -= matches.length * 10;
@@ -77,7 +77,7 @@ export class ComponentAnalysisTask {
       /while\s*\([^)]*\)\s*{[^}]*while\s*\(/gi, // Nested while loops
     ];
     let score = 100;
-    inefficientPatterns.forEach((pattern) => {
+    inefficientPatterns.forEach(pattern => {
       const matches = sourceCode.match(pattern);
       if (matches) {
         score -= matches.length * 5;

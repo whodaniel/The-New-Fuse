@@ -3,8 +3,8 @@
  */
 
 import { IConcurrencyController } from '../interfaces/index.js';
+import { SystemResources, MemoryUsage } from '../types/index.js';
 import { SystemResourceDetector } from '../system/SystemResourceDetector.js';
-import { MemoryUsage, SystemResources } from '../types/index.js';
 
 export class ConcurrencyController implements IConcurrencyController {
   private currentConcurrency: number;
@@ -35,7 +35,7 @@ export class ConcurrencyController implements IConcurrencyController {
       throw new Error('Maximum concurrency must be at least 1');
     }
     this.maxConcurrency = max;
-
+    
     // Adjust current concurrency if it exceeds new maximum
     if (this.currentConcurrency > max) {
       this.currentConcurrency = max;
@@ -54,7 +54,7 @@ export class ConcurrencyController implements IConcurrencyController {
     if (memoryUtilization > this.memoryThreshold) {
       // Memory usage is high, reduce concurrency
       this.reduceConcurrency();
-    } else if (memoryUtilization < this.memoryThreshold - 0.2) {
+    } else if (memoryUtilization < (this.memoryThreshold - 0.2)) {
       // Memory usage is low, potentially increase concurrency
       this.increaseConcurrency();
     }
@@ -65,20 +65,20 @@ export class ConcurrencyController implements IConcurrencyController {
    */
   calculateOptimalConcurrency(systemResources: SystemResources): number {
     const { cpuCores, totalMemory, availableMemory } = systemResources;
-
+    
     // Base concurrency on CPU cores, but limit based on memory
     let optimalConcurrency = Math.max(1, Math.floor(cpuCores / 2));
-
+    
     // Adjust based on available memory (assume each build process needs ~512MB)
     const memoryBasedConcurrency = Math.floor(availableMemory / 512);
     optimalConcurrency = Math.min(optimalConcurrency, memoryBasedConcurrency);
-
+    
     // Ensure it doesn't exceed maximum
     optimalConcurrency = Math.min(optimalConcurrency, this.maxConcurrency);
-
+    
     // Ensure it's at least minimum
     optimalConcurrency = Math.max(optimalConcurrency, this.minConcurrency);
-
+    
     return optimalConcurrency;
   }
 
@@ -124,7 +124,7 @@ export class ConcurrencyController implements IConcurrencyController {
       max: this.maxConcurrency,
       min: this.minConcurrency,
       default: this.defaultConcurrency,
-      memoryThreshold: this.memoryThreshold,
+      memoryThreshold: this.memoryThreshold
     };
   }
 
@@ -134,7 +134,7 @@ export class ConcurrencyController implements IConcurrencyController {
   private reduceConcurrency(): void {
     const reduction = Math.max(1, Math.floor(this.currentConcurrency * this.adjustmentFactor));
     const newConcurrency = Math.max(this.minConcurrency, this.currentConcurrency - reduction);
-
+    
     if (newConcurrency !== this.currentConcurrency) {
       this.currentConcurrency = newConcurrency;
     }
@@ -154,9 +154,7 @@ export class ConcurrencyController implements IConcurrencyController {
    */
   forceConcurrency(concurrency: number): void {
     if (concurrency < this.minConcurrency || concurrency > this.maxConcurrency) {
-      throw new Error(
-        `Concurrency must be between ${this.minConcurrency} and ${this.maxConcurrency}`
-      );
+      throw new Error(`Concurrency must be between ${this.minConcurrency} and ${this.maxConcurrency}`);
     }
     this.currentConcurrency = concurrency;
   }
@@ -178,23 +176,20 @@ export class ConcurrencyController implements IConcurrencyController {
       return {
         shouldAdjust: true,
         direction: 'decrease',
-        reason: `Memory utilization (${(memoryUtilization * 100).toFixed(1)}%) exceeds threshold (${(this.memoryThreshold * 100).toFixed(1)}%)`,
+        reason: `Memory utilization (${(memoryUtilization * 100).toFixed(1)}%) exceeds threshold (${(this.memoryThreshold * 100).toFixed(1)}%)`
       };
-    } else if (
-      memoryUtilization < this.memoryThreshold - 0.2 &&
-      this.currentConcurrency < this.maxConcurrency
-    ) {
+    } else if (memoryUtilization < (this.memoryThreshold - 0.2) && this.currentConcurrency < this.maxConcurrency) {
       return {
         shouldAdjust: true,
         direction: 'increase',
-        reason: `Memory utilization (${(memoryUtilization * 100).toFixed(1)}%) is low, can increase concurrency`,
+        reason: `Memory utilization (${(memoryUtilization * 100).toFixed(1)}%) is low, can increase concurrency`
       };
     }
 
     return {
       shouldAdjust: false,
       direction: 'none',
-      reason: `Memory utilization (${(memoryUtilization * 100).toFixed(1)}%) is within acceptable range`,
+      reason: `Memory utilization (${(memoryUtilization * 100).toFixed(1)}%) is within acceptable range`
     };
   }
 }

@@ -15,8 +15,7 @@
 
 ## Overview
 
-The Agent Registry API provides a comprehensive system for agents to register,
-onboard, and integrate with The New Fuse platform.
+The Agent Registry API provides a comprehensive system for agents to register, onboard, and integrate with The New Fuse platform.
 
 **Base URL**: `https://api.thenewfuse.com` or `http://localhost:3001`
 
@@ -24,17 +23,14 @@ onboard, and integrate with The New Fuse platform.
 
 ## Authentication
 
-Most endpoints require authentication using an agent token. After registration,
-you'll receive an `authToken` that must be included in subsequent requests.
+Most endpoints require authentication using an agent token. After registration, you'll receive an `authToken` that must be included in subsequent requests.
 
 ### Header Format
-
 ```
 X-Agent-Token: tnf_agent_xxxxxxxxxxxxx
 ```
 
 ### Example
-
 ```bash
 curl -H "X-Agent-Token: tnf_agent_abc123..." \
      https://api.thenewfuse.com/api/agent-registry/heartbeat
@@ -56,40 +52,6 @@ Register a new agent with the platform.
   version?: string;          // Optional: Agent version (e.g., "1.0.0")
   author?: string;           // Optional: Author name
   description?: string;      // Optional: Agent description
-  invitationCode: string;    // Required: Invitation code
-  tenantId?: string;         // Optional: Tenant identifier
-  organizationId?: string;   // Optional: Organization identifier
-  agencyId?: string;         // Optional: Agency/workspace identifier
-  identity?: {               // Optional: Identity payload
-    longTermId?: string;
-    ephemeralId?: string;
-    federationId?: string;
-    protocolVersion?: string;
-    assignmentPolicy?: string;
-  };
-  trust?: {                  // Optional: Trust payload
-    tier?: string;
-    verifiedBy?: string;
-    evidence?: object;
-    expiresAt?: string;
-  };
-  protocols?: {              // Optional: Protocol mapping
-    openclaw?: boolean;
-    skills?: {
-      progressiveDisclosure?: boolean;
-      dynamicMcpLoading?: boolean;
-      skillIds?: string[];
-      skillProviders?: string[];
-    };
-    mcp?: {
-      allowDynamicLoading?: boolean;
-      servers?: string[];
-      allowlist?: string[];
-    };
-    handoff?: object;
-    memory?: object;
-    abilityMap?: object;
-  };
   capabilities: Array<{      // Required: List of capabilities
     name: string;            // Capability name
     type: 'core' | 'extended' | 'custom';  // Capability type
@@ -102,9 +64,6 @@ Register a new agent with the platform.
 }
 ```
 
-**Tenant Scope Requirement**: When `AGENT_INVITE_REQUIRED=true` or `A2A_REQUIRE_TENANT_SCOPE=true`,
-at least one of `tenantId`, `organizationId`, or `agencyId` is required.
-
 #### Example Request
 
 ```bash
@@ -115,34 +74,6 @@ curl -X POST https://api.thenewfuse.com/api/agent-registry/register \
     "version": "1.0.0",
     "author": "John Doe",
     "description": "An AI-powered code assistant",
-    "invitationCode": "tnf_invite_xxxxx",
-    "tenantId": "tenant-123",
-    "organizationId": "org-123",
-    "agencyId": "workspace-123",
-    "identity": {
-      "longTermId": "agent-123",
-      "ephemeralId": "inst-456",
-      "protocolVersion": "tnf-1",
-      "assignmentPolicy": "network-issued"
-    },
-    "trust": {
-      "tier": "unverified"
-    },
-    "protocols": {
-      "openclaw": true,
-      "skills": {
-        "progressiveDisclosure": true,
-        "dynamicMcpLoading": true,
-        "skillIds": ["agent:onboarding-core"]
-      },
-      "mcp": {
-        "allowDynamicLoading": true,
-        "servers": ["registry", "memory"]
-      },
-      "handoff": {
-        "protocolVersion": "tnf-handoff-1"
-      }
-    },
     "capabilities": [
       {
         "name": "code_generation",
@@ -187,53 +118,9 @@ curl -X POST https://api.thenewfuse.com/api/agent-registry/register \
 }
 ```
 
-**Rate Limit**: 15 requests per minute per invitation code
-
----
-
-### POST /api/agent-registry/invitations
-
-Create an invitation code (admin only).
-
-**Authentication**: Required (Admin JWT)
-
-#### Example Request
-
-```bash
-curl -X POST https://api.thenewfuse.com/api/agent-registry/invitations \
-  -H "Authorization: Bearer <admin-jwt>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "maxUses": 1,
-    "expiresAt": "2026-02-28T00:00:00.000Z",
-    "tenantId": "tenant-123",
-    "organizationId": "org-123",
-    "agencyId": "workspace-123",
-    "metadata": {
-      "reason": "Founding partner agent"
-    }
-  }'
-```
-
-#### Response (201 Created)
-
-```json
-{
-  "id": "invite-uuid",
-  "code": "tnf_invite_xxxxx",
-  "status": "ACTIVE",
-  "maxUses": 1,
-  "usedCount": 0,
-  "expiresAt": "2026-02-28T00:00:00.000Z"
-}
-```
-
-**Rate Limit**: 10 requests per minute per admin
-
 #### Error Responses
 
 **400 Bad Request** - Invalid input
-
 ```json
 {
   "statusCode": 400,
@@ -302,91 +189,6 @@ curl https://api.thenewfuse.com/api/agent-registry/registration/550e8400-e29b-41
 }
 ```
 
----
-
-### GET /api/agent-registry/registrations/reporting
-
-Query registrations by protocol metadata (admin only).
-
-**Authentication**: Required (Admin JWT)
-
-#### Query Parameters
-
-- `tenantId` (optional)
-- `organizationId` (optional)
-- `agencyId` (optional)
-- `trustTier` (optional)
-- `inviteId` (optional)
-- `limit` (optional)
-- `offset` (optional)
-
-#### Example Request
-
-```bash
-curl -X GET "https://api.thenewfuse.com/api/agent-registry/registrations/reporting?tenantId=tenant-123&trustTier=verified&limit=50" \
-  -H "Authorization: Bearer <admin-jwt>"
-```
-
-#### Response (200 OK)
-
-```json
-[
-  {
-    "id": "reg-uuid",
-    "agentId": "agent-uuid",
-    "tenantId": "tenant-123",
-    "organizationId": "org-123",
-    "agencyId": "workspace-123",
-    "identityLongTermId": "agent-agent-uuid",
-    "identityEphemeralId": "inst-abc123",
-    "protocolVersion": "tnf-1",
-    "trustTier": "verified",
-    "inviteId": "invite-uuid",
-    "verificationStatus": "VERIFIED",
-    "onboardingStatus": "READY"
-  }
-]
-```
-
-**Rate Limit**: 30 requests per minute per tenant filter
-
----
-
-### GET /api/agent-registry/registrations/integrity
-
-Validate registration integrity (admin only). When invitation gating is enabled,
-this fails if any registration is missing a `tenantId`.
-
-**Authentication**: Required (Admin JWT)
-
-#### Example Request
-
-```bash
-curl -X GET https://api.thenewfuse.com/api/agent-registry/registrations/integrity \
-  -H "Authorization: Bearer <admin-jwt>"
-```
-
-#### Response (200 OK)
-
-```json
-{
-  "status": "passed",
-  "missingTenantCount": 0
-}
-```
-
-#### Response (400 Bad Request)
-
-```json
-{
-  "status": "failed",
-  "missingTenantCount": 3,
-  "registrations": ["reg-1", "reg-2", "reg-3"]
-}
-```
-
-**Rate Limit**: 10 requests per minute
-
 ## Onboarding APIs
 
 ### POST /api/agent-registry/onboarding/:registrationId/start
@@ -414,8 +216,6 @@ curl -X POST https://api.thenewfuse.com/api/agent-registry/onboarding/550e8400..
   "data": {}
 }
 ```
-
-**Rate Limit**: 30 requests per minute per registration
 
 ---
 
@@ -453,8 +253,6 @@ curl -X POST https://api.thenewfuse.com/api/agent-registry/onboarding/550e8400..
 ]
 ```
 
-**Rate Limit**: 20 requests per minute per registration
-
 ---
 
 ### POST /api/agent-registry/onboarding/:registrationId/complete-step
@@ -471,18 +269,6 @@ Complete an onboarding step.
   data?: object;       // Optional step data
 }
 ```
-
-#### Step Data Requirements
-
-The following steps require specific `data` payloads:
-
-- `identity_assigned`: `data.identity.longTermId` and `data.identity.ephemeralId`
-- `protocol_alignment`: `data.protocols` object
-- `skills_discovered`: `data.skills.skillIds` array
-- `mcp_configured`: `data.mcp.servers` array or `data.mcp.allowDynamicLoading: true`
-- `integration_test`: `data.result.passed` boolean
-- `handoff_verified`: `data.handoff.protocolVersion`
-- `memory_configured`: `data.memory.provider` or `data.memory.namespace`
 
 #### Example Request
 
@@ -514,8 +300,6 @@ curl -X POST https://api.thenewfuse.com/api/agent-registry/onboarding/550e8400..
   }
 }
 ```
-
-**Rate Limit**: 60 requests per minute per registration/step
 
 ---
 
@@ -582,7 +366,9 @@ curl https://api.thenewfuse.com/api/agent-registry/orientation/steps
     "content": "# Welcome to The New Fuse! 🚀\n\n...",
     "order": 1,
     "estimatedDuration": 300,
-    "resources": ["https://docs.thenewfuse.com/getting-started"],
+    "resources": [
+      "https://docs.thenewfuse.com/getting-started"
+    ],
     "interactiveDemo": false
   },
   {
@@ -592,7 +378,9 @@ curl https://api.thenewfuse.com/api/agent-registry/orientation/steps
     "content": "# System Architecture\n\n...",
     "order": 2,
     "estimatedDuration": 600,
-    "resources": ["https://docs.thenewfuse.com/architecture"],
+    "resources": [
+      "https://docs.thenewfuse.com/architecture"
+    ],
     "interactiveDemo": true
   }
 ]
@@ -647,18 +435,18 @@ Search agents in the directory.
 
 #### Query Parameters
 
-| Parameter    | Type     | Description                                             |
-| ------------ | -------- | ------------------------------------------------------- |
-| query        | string   | Search query (searches name, description)               |
-| category     | string   | Filter by category                                      |
-| capability   | string   | Filter by capability                                    |
-| verifiedOnly | boolean  | Show only verified agents                               |
-| publicOnly   | boolean  | Show only public agents                                 |
-| tags         | string[] | Filter by tags                                          |
-| page         | number   | Page number (default: 1)                                |
-| limit        | number   | Items per page (default: 20, max: 100)                  |
-| sortBy       | string   | Sort field: rating, usageCount, lastActiveAt, createdAt |
-| sortOrder    | string   | Sort order: asc, desc (default: desc)                   |
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| query | string | Search query (searches name, description) |
+| category | string | Filter by category |
+| capability | string | Filter by capability |
+| verifiedOnly | boolean | Show only verified agents |
+| publicOnly | boolean | Show only public agents |
+| tags | string[] | Filter by tags |
+| page | number | Page number (default: 1) |
+| limit | number | Items per page (default: 20, max: 100) |
+| sortBy | string | Sort field: rating, usageCount, lastActiveAt, createdAt |
+| sortOrder | string | Sort order: asc, desc (default: desc) |
 
 #### Example Request
 
@@ -705,9 +493,9 @@ Get featured agents.
 
 #### Query Parameters
 
-| Parameter | Type   | Description                            |
-| --------- | ------ | -------------------------------------- |
-| limit     | number | Maximum agents to return (default: 10) |
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| limit | number | Maximum agents to return (default: 10) |
 
 ---
 
@@ -822,11 +610,11 @@ Get agent metrics.
 
 #### Query Parameters
 
-| Parameter | Type   | Description           |
-| --------- | ------ | --------------------- |
-| type      | string | Filter by metric type |
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| type | string | Filter by metric type |
 | startDate | string | Start date (ISO 8601) |
-| endDate   | string | End date (ISO 8601)   |
+| endDate | string | End date (ISO 8601) |
 
 #### Example Request
 
@@ -882,15 +670,15 @@ All errors follow the standard format:
 
 ### Common Status Codes
 
-| Code | Description           |
-| ---- | --------------------- |
-| 200  | Success               |
-| 201  | Created               |
-| 400  | Bad Request           |
-| 401  | Unauthorized          |
-| 404  | Not Found             |
-| 429  | Too Many Requests     |
-| 500  | Internal Server Error |
+| Code | Description |
+|------|-------------|
+| 200 | Success |
+| 201 | Created |
+| 400 | Bad Request |
+| 401 | Unauthorized |
+| 404 | Not Found |
+| 429 | Too Many Requests |
+| 500 | Internal Server Error |
 
 ## Rate Limits
 
@@ -918,7 +706,9 @@ const apiClient = axios.create({
 const response = await apiClient.post('/api/agent-registry/register', {
   name: 'MyAgent',
   version: '1.0.0',
-  capabilities: [{ name: 'custom_capability', type: 'custom' }],
+  capabilities: [
+    { name: 'custom_capability', type: 'custom' }
+  ],
 });
 
 const { authToken, registrationId } = response.data;
@@ -970,7 +760,6 @@ curl -X POST https://api.thenewfuse.com/api/agent-registry/heartbeat \
 ## Support
 
 For questions or issues:
-
 - Documentation: https://docs.thenewfuse.com
 - Email: support@thenewfuse.com
 - GitHub: https://github.com/thenewfuse/issues

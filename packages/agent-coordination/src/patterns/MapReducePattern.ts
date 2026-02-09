@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { Task } from '../core/types';
+import { Task, TaskResult } from '../core/types';
 import { Coordinator } from '../orchestration/Coordinator';
 
 /**
@@ -100,7 +100,10 @@ export class MapReducePattern<TInput, TMapOutput, TFinalOutput> extends EventEmi
   /**
    * Wait for all map results
    */
-  private async waitForMapResults(tasks: Task[], timeout: number): Promise<TMapOutput[]> {
+  private async waitForMapResults(
+    tasks: Task[],
+    timeout: number
+  ): Promise<TMapOutput[]> {
     const results: TMapOutput[] = [];
     const startTime = Date.now();
 

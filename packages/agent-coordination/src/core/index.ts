@@ -2,7 +2,7 @@
  * Core coordination components
  */
 
-export * from './AgentPool';
-export * from './TaskAssigner';
-export * from './TaskQueue';
 export * from './types';
+export * from './TaskQueue';
+export * from './TaskAssigner';
+export * from './AgentPool';

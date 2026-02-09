@@ -1,6 +1,6 @@
 /**
  * End-to-End Complete Scenarios Tests
- *
+ * 
  * Tests realistic scenarios that combine Master Agent Registry, Workflow Engine,
  * and Extension System working together to accomplish complex tasks
  */
@@ -17,7 +17,7 @@ enum WorkflowNodeType {
   PARALLEL = 'PARALLEL',
   SEQUENTIAL = 'SEQUENTIAL',
   CUSTOM = 'CUSTOM',
-  AGENT_COORDINATION = 'AGENT_COORDINATION',
+  AGENT_COORDINATION = 'AGENT_COORDINATION'
 }
 
 enum WorkflowExecutionStatus {
@@ -25,7 +25,7 @@ enum WorkflowExecutionStatus {
   RUNNING = 'RUNNING',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED',
+  CANCELLED = 'CANCELLED'
 }
 
 describe('End-to-End Complete Scenarios', () => {
@@ -50,16 +50,16 @@ describe('End-to-End Complete Scenarios', () => {
         TestHelpers.createTestExtension('data-validator', 'workflow_node'),
         TestHelpers.createTestExtension('data-cleaner', 'agent_capability'),
         TestHelpers.createTestExtension('data-analyzer', 'workflow_node'),
-        TestHelpers.createTestExtension('report-generator', 'agent_capability'),
+        TestHelpers.createTestExtension('report-generator', 'agent_capability')
       ]);
 
       // Load and activate all extensions
       const loadResults = await Promise.all(
-        extensions.map((ext) => env.extensionManager.loadExtension(ext.extensionDir))
+        extensions.map(ext => env.extensionManager.loadExtension(ext.extensionDir))
       );
-
+      
       await Promise.all(
-        loadResults.map((result) => env.extensionManager.activateExtension(result.extension.id))
+        loadResults.map(result => env.extensionManager.activateExtension(result.extension.id))
       );
 
       // Create specialized agents for different pipeline stages
@@ -72,10 +72,8 @@ describe('End-to-End Complete Scenarios', () => {
       await TestHelpers.waitForCondition(async () => {
         const cleanerProfile = await env.agentRegistry.getAgentProfile(dataCleaningAgent.agentId);
         const reporterProfile = await env.agentRegistry.getAgentProfile(reportingAgent.agentId);
-        return (
-          cleanerProfile?.availableExtensions?.length >= 2 &&
-          reporterProfile?.availableExtensions?.length >= 2
-        );
+        return cleanerProfile?.availableExtensions?.length >= 2 && 
+               reporterProfile?.availableExtensions?.length >= 2;
       });
 
       // Create comprehensive data processing workflow
@@ -91,7 +89,7 @@ describe('End-to-End Complete Scenarios', () => {
         { x: 150, y: 100 },
         {
           validationRules: ['not_null', 'format_check', 'range_validation'],
-          strictMode: true,
+          strictMode: true
         }
       );
 
@@ -104,7 +102,7 @@ describe('End-to-End Complete Scenarios', () => {
           task: 'Clean and normalize the validated data',
           priority: 'high',
           expectedDuration: 10,
-          requiredExtensions: ['data-cleaner'],
+          requiredExtensions: ['data-cleaner']
         }
       );
 
@@ -115,7 +113,7 @@ describe('End-to-End Complete Scenarios', () => {
         {
           analysisType: 'comprehensive',
           includeStatistics: true,
-          generateInsights: true,
+          generateInsights: true
         }
       );
 
@@ -128,47 +126,38 @@ describe('End-to-End Complete Scenarios', () => {
           task: 'Generate comprehensive analysis report',
           priority: 'medium',
           expectedDuration: 15,
-          requiredExtensions: ['report-generator'],
+          requiredExtensions: ['report-generator']
         }
       );
 
       // Connect the pipeline
-      builder.addConnection(
-        workflow.definition.nodes[0].id,
-        'output',
-        dataValidatorNode.id,
-        'input'
-      );
+      builder.addConnection(workflow.definition.nodes[0].id, 'output', dataValidatorNode.id, 'input');
       builder.addConnection(dataValidatorNode.id, 'valid_data', dataCleaningTask.id, 'task');
       builder.addConnection(dataCleaningTask.id, 'result', dataAnalyzerNode.id, 'input');
       builder.addConnection(dataAnalyzerNode.id, 'analysis', reportGenerationTask.id, 'task');
-      builder.addConnection(
-        reportGenerationTask.id,
-        'result',
-        workflow.definition.nodes[1].id,
-        'input'
-      );
+      builder.addConnection(reportGenerationTask.id, 'result', workflow.definition.nodes[1].id, 'input');
 
       // Execute the complete pipeline
       const savedWorkflow = await env.workflowEngine.repository.createWorkflow(workflow);
       const testDataset = TestHelpers.generateTestData(100);
-
-      const executionId = await env.workflowEngine.engine.executeWorkflow(savedWorkflow.id, {
-        rawData: testDataset,
-        metadata: {
-          source: 'test_scenario',
-          timestamp: new Date(),
-          requestId: 'e2e-test-001',
-        },
-      });
+      
+      const executionId = await env.workflowEngine.engine.executeWorkflow(
+        savedWorkflow.id,
+        { 
+          rawData: testDataset,
+          metadata: {
+            source: 'test_scenario',
+            timestamp: new Date(),
+            requestId: 'e2e-test-001'
+          }
+        }
+      );
 
       // Wait for pipeline completion
       await TestHelpers.waitForCondition(async () => {
         const execution = await env.workflowEngine.engine.getExecutionStatus(executionId);
-        return (
-          execution?.status === WorkflowExecutionStatus.COMPLETED ||
-          execution?.status === WorkflowExecutionStatus.FAILED
-        );
+        return execution?.status === WorkflowExecutionStatus.COMPLETED ||
+               execution?.status === WorkflowExecutionStatus.FAILED;
       }, 60000); // Extended timeout for complex pipeline
 
       // Verify pipeline execution
@@ -178,7 +167,7 @@ describe('End-to-End Complete Scenarios', () => {
 
       // Verify all nodes executed
       expect(execution.nodeExecutions.length).toBe(6); // start + 4 pipeline nodes + end
-
+      
       // Verify agents completed their tasks
       const cleanerProfile = await env.agentRegistry.getAgentProfile(dataCleaningAgent.agentId);
       const reporterProfile = await env.agentRegistry.getAgentProfile(reportingAgent.agentId);
@@ -202,16 +191,16 @@ describe('End-to-End Complete Scenarios', () => {
         TestHelpers.createTestExtension('task-coordinator', 'agent_capability'),
         TestHelpers.createTestExtension('message-router', 'workflow_node'),
         TestHelpers.createTestExtension('progress-tracker', 'agent_capability'),
-        TestHelpers.createTestExtension('conflict-resolver', 'workflow_node'),
+        TestHelpers.createTestExtension('conflict-resolver', 'workflow_node')
       ]);
 
       // Load extensions
       const loadResults = await Promise.all(
-        extensions.map((ext) => env.extensionManager.loadExtension(ext.extensionDir))
+        extensions.map(ext => env.extensionManager.loadExtension(ext.extensionDir))
       );
-
+      
       await Promise.all(
-        loadResults.map((result) => env.extensionManager.activateExtension(result.extension.id))
+        loadResults.map(result => env.extensionManager.activateExtension(result.extension.id))
       );
 
       // Create team of specialized agents
@@ -223,20 +212,11 @@ describe('End-to-End Complete Scenarios', () => {
 
       // Configure agent capabilities
       const agentConfigs = [
-        {
-          agent: teamLeader,
-          capabilities: { coordination: true, taskManagement: true, reporting: true },
-        },
+        { agent: teamLeader, capabilities: { coordination: true, taskManagement: true, reporting: true } },
         { agent: developer1, capabilities: { coding: true, debugging: true, documentation: true } },
         { agent: developer2, capabilities: { coding: true, testing: true, optimization: true } },
-        {
-          agent: tester,
-          capabilities: { testing: true, qualityAssurance: true, bugReporting: true },
-        },
-        {
-          agent: reviewer,
-          capabilities: { codeReview: true, qualityAssurance: true, approval: true },
-        },
+        { agent: tester, capabilities: { testing: true, qualityAssurance: true, bugReporting: true } },
+        { agent: reviewer, capabilities: { codeReview: true, qualityAssurance: true, approval: true } }
       ];
 
       // Agent capabilities are configured during agent creation
@@ -246,7 +226,7 @@ describe('End-to-End Complete Scenarios', () => {
         const profiles = await Promise.all(
           agentConfigs.map(({ agent }) => env.agentRegistry.getAgentProfile(agent.agentId))
         );
-        return profiles.every((profile) => profile?.availableExtensions?.length >= 2);
+        return profiles.every(profile => profile?.availableExtensions?.length >= 2);
       });
 
       // Create collaborative software development workflow
@@ -263,14 +243,9 @@ describe('End-to-End Complete Scenarios', () => {
         {
           coordinationType: 'hierarchical',
           leaderAgentId: teamLeader.agentId,
-          participantAgents: [
-            developer1.agentId,
-            developer2.agentId,
-            tester.agentId,
-            reviewer.agentId,
-          ],
+          participantAgents: [developer1.agentId, developer2.agentId, tester.agentId, reviewer.agentId],
           task: 'Develop and test new feature',
-          maxConcurrency: 2,
+          maxConcurrency: 2
         }
       );
 
@@ -281,7 +256,7 @@ describe('End-to-End Complete Scenarios', () => {
         {
           routingStrategy: 'skill_based',
           enableBroadcast: true,
-          messageFiltering: true,
+          messageFiltering: true
         }
       );
 
@@ -295,7 +270,7 @@ describe('End-to-End Complete Scenarios', () => {
           priority: 'high',
           expectedDuration: 20,
           dependencies: ['coordination'],
-          requiredExtensions: ['task-coordinator', 'progress-tracker'],
+          requiredExtensions: ['task-coordinator', 'progress-tracker']
         }
       );
 
@@ -309,7 +284,7 @@ describe('End-to-End Complete Scenarios', () => {
           priority: 'high',
           expectedDuration: 20,
           dependencies: ['coordination'],
-          requiredExtensions: ['task-coordinator', 'progress-tracker'],
+          requiredExtensions: ['task-coordinator', 'progress-tracker']
         }
       );
 
@@ -320,7 +295,7 @@ describe('End-to-End Complete Scenarios', () => {
         {
           strategy: 'automated_merge',
           requireManualReview: true,
-          notifyStakeholders: true,
+          notifyStakeholders: true
         }
       );
 
@@ -333,7 +308,7 @@ describe('End-to-End Complete Scenarios', () => {
           task: 'Comprehensive feature testing',
           priority: 'high',
           expectedDuration: 15,
-          requiredExtensions: ['progress-tracker'],
+          requiredExtensions: ['progress-tracker']
         }
       );
 
@@ -346,7 +321,7 @@ describe('End-to-End Complete Scenarios', () => {
           task: 'Final code review and approval',
           priority: 'medium',
           expectedDuration: 10,
-          requiredExtensions: ['progress-tracker'],
+          requiredExtensions: ['progress-tracker']
         }
       );
 
@@ -363,28 +338,29 @@ describe('End-to-End Complete Scenarios', () => {
 
       // Execute collaborative workflow
       const savedWorkflow = await env.workflowEngine.repository.createWorkflow(workflow);
-
-      const executionId = await env.workflowEngine.engine.executeWorkflow(savedWorkflow.id, {
-        featureSpec: {
-          name: 'UserDashboard',
-          requirements: ['responsive design', 'real-time updates', 'user preferences'],
-          priority: 'high',
-          deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week
-        },
-        projectContext: {
-          repository: 'feature-branch',
-          framework: 'react',
-          testingFramework: 'jest',
-        },
-      });
+      
+      const executionId = await env.workflowEngine.engine.executeWorkflow(
+        savedWorkflow.id,
+        {
+          featureSpec: {
+            name: 'UserDashboard',
+            requirements: ['responsive design', 'real-time updates', 'user preferences'],
+            priority: 'high',
+            deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 1 week
+          },
+          projectContext: {
+            repository: 'feature-branch',
+            framework: 'react',
+            testingFramework: 'jest'
+          }
+        }
+      );
 
       // Wait for collaboration completion
       await TestHelpers.waitForCondition(async () => {
         const execution = await env.workflowEngine.engine.getExecutionStatus(executionId);
-        return (
-          execution?.status === WorkflowExecutionStatus.COMPLETED ||
-          execution?.status === WorkflowExecutionStatus.FAILED
-        );
+        return execution?.status === WorkflowExecutionStatus.COMPLETED ||
+               execution?.status === WorkflowExecutionStatus.FAILED;
       }, 90000); // Extended timeout for complex collaboration
 
       // Verify collaboration results
@@ -422,7 +398,7 @@ describe('End-to-End Complete Scenarios', () => {
         TestHelpers.createTestExtension('unreliable-processor', 'workflow_node'),
         TestHelpers.createTestExtension('backup-processor', 'workflow_node'),
         TestHelpers.createTestExtension('error-handler', 'agent_capability'),
-        TestHelpers.createTestExtension('recovery-coordinator', 'agent_capability'),
+        TestHelpers.createTestExtension('recovery-coordinator', 'agent_capability')
       ]);
 
       // Modify unreliable-processor to fail occasionally
@@ -454,11 +430,11 @@ module.exports = UnreliableProcessor;
 
       // Load all extensions
       const loadResults = await Promise.all(
-        extensions.map((ext) => env.extensionManager.loadExtension(ext.extensionDir))
+        extensions.map(ext => env.extensionManager.loadExtension(ext.extensionDir))
       );
-
+      
       await Promise.all(
-        loadResults.map((result) => env.extensionManager.activateExtension(result.extension.id))
+        loadResults.map(result => env.extensionManager.activateExtension(result.extension.id))
       );
 
       // Create recovery-capable agents
@@ -473,9 +449,9 @@ module.exports = UnreliableProcessor;
         const profiles = await Promise.all([
           env.agentRegistry.getAgentProfile(primaryAgent.agentId),
           env.agentRegistry.getAgentProfile(backupAgent.agentId),
-          env.agentRegistry.getAgentProfile(monitorAgent.agentId),
+          env.agentRegistry.getAgentProfile(monitorAgent.agentId)
         ]);
-        return profiles.every((profile) => profile?.availableExtensions?.length >= 2);
+        return profiles.every(profile => profile?.availableExtensions?.length >= 2);
       });
 
       // Create resilient workflow with error handling
@@ -494,7 +470,7 @@ module.exports = UnreliableProcessor;
           task: 'Monitor system health and errors',
           priority: 'high',
           expectedDuration: 30,
-          requiredExtensions: ['error-handler', 'recovery-coordinator'],
+          requiredExtensions: ['error-handler', 'recovery-coordinator']
         }
       );
 
@@ -505,7 +481,7 @@ module.exports = UnreliableProcessor;
         {
           retryAttempts: 3,
           timeoutMs: 10000,
-          fallbackEnabled: true,
+          fallbackEnabled: true
         }
       );
 
@@ -518,7 +494,7 @@ module.exports = UnreliableProcessor;
           task: 'Detect and handle processing errors',
           priority: 'critical',
           expectedDuration: 5,
-          requiredExtensions: ['error-handler'],
+          requiredExtensions: ['error-handler']
         }
       );
 
@@ -528,7 +504,7 @@ module.exports = UnreliableProcessor;
         { x: 500, y: 150 },
         {
           activateOnFailure: true,
-          preserveContext: true,
+          preserveContext: true
         }
       );
 
@@ -541,7 +517,7 @@ module.exports = UnreliableProcessor;
           task: 'Coordinate system recovery',
           priority: 'critical',
           expectedDuration: 10,
-          requiredExtensions: ['recovery-coordinator'],
+          requiredExtensions: ['recovery-coordinator']
         }
       );
 
@@ -559,11 +535,14 @@ module.exports = UnreliableProcessor;
       const executionPromises = [];
 
       for (let i = 0; i < 5; i++) {
-        const executionPromise = env.workflowEngine.engine.executeWorkflow(savedWorkflow.id, {
-          data: TestHelpers.generateTestData(20),
-          executionIndex: i,
-          expectFailures: true,
-        });
+        const executionPromise = env.workflowEngine.engine.executeWorkflow(
+          savedWorkflow.id,
+          { 
+            data: TestHelpers.generateTestData(20),
+            executionIndex: i,
+            expectFailures: true
+          }
+        );
         executionPromises.push(executionPromise);
       }
 
@@ -572,24 +551,21 @@ module.exports = UnreliableProcessor;
       // Wait for all executions to complete (some may succeed, some may fail and recover)
       await TestHelpers.waitForCondition(async () => {
         const executions = await Promise.all(
-          executionIds.map((id) => env.workflowEngine.engine.getExecutionStatus(id))
+          executionIds.map(id => env.workflowEngine.engine.getExecutionStatus(id))
         );
-        return executions.every(
-          (exec) =>
-            exec?.status === WorkflowExecutionStatus.COMPLETED ||
-            exec?.status === WorkflowExecutionStatus.FAILED
+        return executions.every(exec => 
+          exec?.status === WorkflowExecutionStatus.COMPLETED ||
+          exec?.status === WorkflowExecutionStatus.FAILED
         );
       }, 120000); // Extended timeout for multiple executions
 
       // Verify resilience results
       const executions = await Promise.all(
-        executionIds.map((id) => env.workflowEngine.engine.getExecutionStatus(id))
+        executionIds.map(id => env.workflowEngine.engine.getExecutionStatus(id))
       );
 
       // At least some executions should have completed (via backup if needed)
-      const completedExecutions = executions.filter(
-        (exec) => exec?.status === WorkflowExecutionStatus.COMPLETED
-      );
+      const completedExecutions = executions.filter(exec => exec?.status === WorkflowExecutionStatus.COMPLETED);
       expect(completedExecutions.length).toBeGreaterThan(0);
 
       // Verify error handling occurred
@@ -621,21 +597,21 @@ module.exports = UnreliableProcessor;
         TestHelpers.createTestExtension('high-throughput-processor', 'workflow_node'),
         TestHelpers.createTestExtension('load-balancer', 'agent_capability'),
         TestHelpers.createTestExtension('performance-monitor', 'agent_capability'),
-        TestHelpers.createTestExtension('resource-optimizer', 'workflow_node'),
+        TestHelpers.createTestExtension('resource-optimizer', 'workflow_node')
       ]);
 
       // Load extensions
       const loadResults = await Promise.all(
-        extensions.map((ext) => env.extensionManager.loadExtension(ext.extensionDir))
+        extensions.map(ext => env.extensionManager.loadExtension(ext.extensionDir))
       );
-
+      
       await Promise.all(
-        loadResults.map((result) => env.extensionManager.activateExtension(result.extension.id))
+        loadResults.map(result => env.extensionManager.activateExtension(result.extension.id))
       );
 
       // Create agent pool for high-load processing
       const agentPool = await Promise.all(
-        Array.from({ length: 10 }, (_, i) =>
+        Array.from({ length: 10 }, (_, i) => 
           TestHelpers.createTestAgent(`WorkerAgent${i}`, 'WORKER')
         )
       );
@@ -649,11 +625,11 @@ module.exports = UnreliableProcessor;
       // Wait for extensions
       await TestHelpers.waitForCondition(async () => {
         const profiles = await Promise.all([
-          ...agentPool.map((agent) => env.agentRegistry.getAgentProfile(agent.agentId)),
+          ...agentPool.map(agent => env.agentRegistry.getAgentProfile(agent.agentId)),
           env.agentRegistry.getAgentProfile(loadBalancer.agentId),
-          env.agentRegistry.getAgentProfile(performanceMonitor.agentId),
+          env.agentRegistry.getAgentProfile(performanceMonitor.agentId)
         ]);
-        return profiles.every((profile) => profile?.availableExtensions?.length >= 2);
+        return profiles.every(profile => profile?.availableExtensions?.length >= 2);
       });
 
       // Create high-performance workflow template
@@ -672,7 +648,7 @@ module.exports = UnreliableProcessor;
           task: 'Monitor system performance during high load',
           priority: 'high',
           expectedDuration: 60,
-          requiredExtensions: ['performance-monitor'],
+          requiredExtensions: ['performance-monitor']
         }
       );
 
@@ -685,7 +661,7 @@ module.exports = UnreliableProcessor;
           task: 'Distribute load across worker agents',
           priority: 'critical',
           expectedDuration: 30,
-          requiredExtensions: ['load-balancer'],
+          requiredExtensions: ['load-balancer']
         }
       );
 
@@ -696,7 +672,7 @@ module.exports = UnreliableProcessor;
         {
           optimizationStrategy: 'dynamic',
           resourceThrottling: true,
-          memoryManagement: true,
+          memoryManagement: true
         }
       );
 
@@ -707,7 +683,7 @@ module.exports = UnreliableProcessor;
         {
           batchSize: 100,
           parallelism: 5,
-          optimization: 'speed',
+          optimization: 'speed'
         }
       );
 
@@ -717,34 +693,19 @@ module.exports = UnreliableProcessor;
         { x: 650, y: 100 },
         {
           coordinationType: 'parallel',
-          agentIds: agentPool.map((a) => a.agentId),
+          agentIds: agentPool.map(a => a.agentId),
           task: 'Process data chunks in parallel',
-          maxConcurrency: 10,
+          maxConcurrency: 10
         }
       );
 
       // Connect high-performance workflow
-      builder.addConnection(
-        workflow.definition.nodes[0].id,
-        'output',
-        performanceMonitoringTask.id,
-        'task'
-      );
-      builder.addConnection(
-        performanceMonitoringTask.id,
-        'monitoring',
-        loadBalancingTask.id,
-        'task'
-      );
+      builder.addConnection(workflow.definition.nodes[0].id, 'output', performanceMonitoringTask.id, 'task');
+      builder.addConnection(performanceMonitoringTask.id, 'monitoring', loadBalancingTask.id, 'task');
       builder.addConnection(loadBalancingTask.id, 'balanced', resourceOptimizerNode.id, 'input');
       builder.addConnection(resourceOptimizerNode.id, 'optimized', highThroughputNode.id, 'input');
       builder.addConnection(highThroughputNode.id, 'output', coordinationNode.id, 'agents');
-      builder.addConnection(
-        coordinationNode.id,
-        'results',
-        workflow.definition.nodes[1].id,
-        'input'
-      );
+      builder.addConnection(coordinationNode.id, 'results', workflow.definition.nodes[1].id, 'input');
 
       // Save workflow template
       const savedWorkflow = await env.workflowEngine.repository.createWorkflow(workflow);
@@ -755,12 +716,15 @@ module.exports = UnreliableProcessor;
       const datasetSize = 500;
 
       const executionPromises = Array.from({ length: concurrentExecutions }, (_, i) =>
-        env.workflowEngine.engine.executeWorkflow(savedWorkflow.id, {
-          data: TestHelpers.generateTestData(datasetSize),
-          executionBatch: Math.floor(i / 5),
-          executionIndex: i,
-          startTime: startTime,
-        })
+        env.workflowEngine.engine.executeWorkflow(
+          savedWorkflow.id,
+          {
+            data: TestHelpers.generateTestData(datasetSize),
+            executionBatch: Math.floor(i / 5),
+            executionIndex: i,
+            startTime: startTime
+          }
+        )
       );
 
       const executionIds = await Promise.all(executionPromises);
@@ -768,12 +732,11 @@ module.exports = UnreliableProcessor;
       // Wait for all high-load executions to complete
       await TestHelpers.waitForCondition(async () => {
         const executions = await Promise.all(
-          executionIds.map((id) => env.workflowEngine.engine.getExecutionStatus(id))
+          executionIds.map(id => env.workflowEngine.engine.getExecutionStatus(id))
         );
-        return executions.every(
-          (exec) =>
-            exec?.status === WorkflowExecutionStatus.COMPLETED ||
-            exec?.status === WorkflowExecutionStatus.FAILED
+        return executions.every(exec => 
+          exec?.status === WorkflowExecutionStatus.COMPLETED ||
+          exec?.status === WorkflowExecutionStatus.FAILED
         );
       }, 180000); // Very extended timeout for high-load testing
 
@@ -782,31 +745,26 @@ module.exports = UnreliableProcessor;
 
       // Verify high-performance results
       const executions = await Promise.all(
-        executionIds.map((id) => env.workflowEngine.engine.getExecutionStatus(id))
+        executionIds.map(id => env.workflowEngine.engine.getExecutionStatus(id))
       );
 
-      const completedExecutions = executions.filter(
-        (exec) => exec?.status === WorkflowExecutionStatus.COMPLETED
-      );
+      const completedExecutions = executions.filter(exec => exec?.status === WorkflowExecutionStatus.COMPLETED);
       const successRate = (completedExecutions.length / concurrentExecutions) * 100;
 
       // Performance assertions
       expect(successRate).toBeGreaterThan(80); // At least 80% success rate under high load
       expect(totalExecutionTime).toBeLessThan(180000); // Complete within 3 minutes
-
+      
       // Verify system handled the load
       const systemStats = env.extensionManager.getExtensionStats();
       expect(systemStats.totalExecutions).toBeGreaterThan(concurrentExecutions * 2);
 
       // Verify agent pool utilization
       const agentProfiles = await Promise.all(
-        agentPool.map((agent) => env.agentRegistry.getAgentProfile(agent.agentId))
+        agentPool.map(agent => env.agentRegistry.getAgentProfile(agent.agentId))
       );
 
-      const totalTasksProcessed = agentProfiles.reduce(
-        (sum, profile) => sum + profile.completedTasks,
-        0
-      );
+      const totalTasksProcessed = agentProfiles.reduce((sum, profile) => sum + profile.completedTasks, 0);
       expect(totalTasksProcessed).toBeGreaterThan(concurrentExecutions);
 
       // Verify performance monitoring captured metrics

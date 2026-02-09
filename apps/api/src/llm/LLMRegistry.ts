@@ -1,7 +1,7 @@
 export interface LLMProvider {
   id: string;
   name: string;
-  type: 'openai' | 'anthropic' | 'sambanova' | 'local' | 'other';
+  type: 'openai' | 'anthropic' | 'local' | 'other';
   apiKey?: string;
   baseUrl?: string;
   model?: string;

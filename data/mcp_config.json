@@ -1,21 +1,8 @@
 {
   "mcpServers": {
-    "google-drive": {
-      "command": "/Users/<owner>/.nvm/versions/node/v24.12.0/bin/node",
-      "args": [
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/google-drive-mcp-server/dist/index.js"
-      ],
-      "env": {
-        "GOOGLE_APPLICATION_CREDENTIALS": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/google-drive-mcp-server/credentials/gcp-oauth.keys.json",
-        "MCP_GDRIVE_CREDENTIALS": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/google-drive-mcp-server/credentials/.gdrive-server-credentials.json"
-      },
-      "description": "Local Google Drive MCP server - secure integration with Drive, Docs, Sheets, and Slides",
-      "priority": 5,
-      "tags": ["google", "drive", "storage", "documents"]
-    },
     "tnf-enhanced-mcp-server": {
       "command": "node",
-      "args": ["--import", "tsx/esm", "./src/mcp/enhanced-tnf-mcp-server.ts"],
+      "args": ["--loader", "tsx/esm", "./src/mcp/enhanced-tnf-mcp-server.ts"],
       "env": {
         "TNF_API_BASE_URL": "http://localhost:8080/v1",
         "NODE_ENV": "development"
@@ -38,7 +25,7 @@
     },
     "tnf-complete-api-wrapper": {
       "command": "node",
-      "args": ["--import", "tsx/esm", "./src/mcp/complete-api-mcp-server.ts"],
+      "args": ["--loader", "tsx/esm", "./src/mcp/complete-api-mcp-server.ts"],
       "env": {
         "TNF_API_BASE_URL": "http://localhost:8080/v1",
         "NODE_ENV": "development"
@@ -63,7 +50,7 @@
     },
     "tnf-mcp-config-manager": {
       "command": "node",
-      "args": ["--import", "tsx/esm", "./src/mcp/tnf-mcp-config-manager.ts"],
+      "args": ["--loader", "tsx/esm", "./src/mcp/tnf-mcp-config-manager.ts"],
       "env": {
         "TNF_CORE_PATH": "./data",
         "LOG_LEVEL": "info"
@@ -166,6 +153,13 @@
       "description": "Official Anthropic Slack server - channel access, thread summarization, and messaging (requires Slack bot token)",
       "priority": 5,
       "tags": ["official", "slack", "communication", "collaboration"]
+    },
+    "google-drive": {
+      "command": "npx",
+      "args": ["-y", "@piotr-agier/google-drive-mcp"],
+      "description": "Google Drive MCP server - secure integration with Drive, Docs, Sheets, and Slides (requires OAuth)",
+      "priority": 5,
+      "tags": ["google", "drive", "storage", "documents"]
     },
     "puppeteer": {
       "command": "npx",

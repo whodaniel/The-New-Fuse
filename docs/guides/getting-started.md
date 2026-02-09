@@ -14,7 +14,6 @@ cd The-New-Fuse
 ```
 
 This script will:
-
 - ✅ Check your Node.js and Bun versions
 - ✅ Install all dependencies with native module support
 - ✅ Compile and verify native modules (like canvas)
@@ -168,7 +167,6 @@ cp .env.development.example .env.development
 ```
 
 Key variables:
-
 - `NODE_ENV` - Environment (development/production)
 - `DATABASE_URL` - Database connection string
 - `REDIS_URL` - Redis connection string

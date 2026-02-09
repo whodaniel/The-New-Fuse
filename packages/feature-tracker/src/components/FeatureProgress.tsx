@@ -1,5 +1,5 @@
-import { FC } from 'react';
-import { FeatureProgress as FeatureProgressType, FeatureStage } from '../types';
+import React, { FC } from 'react';
+import { FeatureStage, FeatureProgress as FeatureProgressType } from '../types';
 
 // Define interfaces for props for better type safety
 interface ProgressBarProps {
@@ -8,9 +8,9 @@ interface ProgressBarProps {
 
 const ProgressBar: FC<ProgressBarProps> = ({ percentage }) => (
   <div className="w-full h-2 bg-gray-200 rounded-full">
-    <div
-      className={`h-full bg-blue-500 rounded-full transition-all duration-300 w-[${percentage}%]`}
-    />
+      <div
+        className={`h-full bg-blue-500 rounded-full transition-all duration-300 w-[${percentage}%]`}
+      />
   </div>
 );
 
@@ -21,16 +21,15 @@ interface StageIndicatorProps {
 }
 
 const StageIndicator: FC<StageIndicatorProps> = ({ stage, isActive, isCompleted }) => (
-  <div
-    className={`flex flex-col items-center ${isActive ? 'text-blue-500' : isCompleted ? 'text-green-500' : 'text-gray-400'}`}
-  >
-    <div
-      className={`w-4 h-4 rounded-full ${
-        isActive ? 'bg-blue-500' : isCompleted ? 'bg-green-500' : 'bg-gray-400'
-      }`}
-    />
-    <span className="text-sm mt-1">{String(stage)}</span>{' '}
-    {/* Ensure stage is string if it's an enum */}
+  <div className={`flex flex-col items-center ${isActive ? 'text-blue-500' : isCompleted ? 'text-green-500' : 'text-gray-400'}`}>
+    <div className={`w-4 h-4 rounded-full ${
+      isActive
+        ? 'bg-blue-500'
+        : isCompleted
+          ? 'bg-green-500'
+          : 'bg-gray-400'
+    }`}/>
+    <span className="text-sm mt-1">{String(stage)}</span> {/* Ensure stage is string if it's an enum */}
   </div>
 );
 
@@ -69,7 +68,7 @@ export const FeatureProgress: FC<FeatureProgressProps> = ({ feature }) => {
           ))}
         </div>
         {/* Render progress bar */}
-        <ProgressBar percentage={feature.completionPercentage} />
+        <ProgressBar percentage={feature.completionPercentage}/>
       </div>
 
       {/* Grid for metrics and challenges/risks */}
@@ -107,7 +106,9 @@ export const FeatureProgress: FC<FeatureProgressProps> = ({ feature }) => {
       {feature.qualitativeAssessment.notes && (
         <div className="mt-4">
           <h3 className="font-semibold mb-2">Notes</h3>
-          <p className="text-sm text-gray-600">{feature.qualitativeAssessment.notes}</p>
+          <p className="text-sm text-gray-600">
+            {feature.qualitativeAssessment.notes}
+          </p>
         </div>
       )}
     </div>

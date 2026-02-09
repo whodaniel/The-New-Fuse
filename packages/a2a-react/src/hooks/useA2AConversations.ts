@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState, useCallback } from 'react';
 
 export interface Conversation {
   id: string;
@@ -22,6 +22,6 @@ export function useA2AConversations() {
   return {
     conversations,
     joinConversation,
-    leaveConversation,
+    leaveConversation
   };
 }

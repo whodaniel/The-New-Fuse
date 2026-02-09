@@ -64,13 +64,13 @@
   "author": "The New Fuse Team",
   "license": "MIT",
   "dependencies": {
-    "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/utils": "workspace:*",
+    "@the-new-fuse/database": "workspace:*",
     "axios": "^1.12.2",
-    "fs-extra": "^11.2.0",
-    "glob": "^11.1.0",
     "simple-git": "^3.25.0",
+    "glob": "^11.1.0",
+    "fs-extra": "^11.2.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -80,7 +80,7 @@
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.49.0",
     "@typescript-eslint/parser": "^8.49.0",
-    "eslint": "^9.39.2",
+    "eslint": "^9.38.0",
     "jest": "^30.2.0",
     "rimraf": "^6.0.1",
     "ts-jest": "^29.4.6",

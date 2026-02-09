@@ -3,11 +3,11 @@ export enum UserRole {
   USER = 'user',
   ADMIN = 'admin',
   SUPER_ADMIN = 'super_admin',
-
+  
   // Agent roles
   AGENT = 'agent',
   SYSTEM = 'system',
-
+  
   // Agency roles (white-label multi-tenant)
   AGENCY_OWNER = 'agency_owner',
   AGENCY_ADMIN = 'agency_admin',

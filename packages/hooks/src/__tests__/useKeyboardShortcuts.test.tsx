@@ -8,7 +8,9 @@ describe('useKeyboardShortcuts', () => {
 
   it('should handle keyboard shortcuts when enabled', () => {
     const handler = jest.fn();
-    const shortcuts = [{ key: 'z', ctrlKey: true, handler, preventDefault: true }];
+    const shortcuts = [
+      { key: 'z', ctrlKey: true, handler, preventDefault: true }
+    ];
 
     renderHook(() => useKeyboardShortcuts({ shortcuts, enabled: true }));
 
@@ -23,7 +25,9 @@ describe('useKeyboardShortcuts', () => {
 
   it('should not handle shortcuts when disabled', () => {
     const handler = jest.fn();
-    const shortcuts = [{ key: 'z', ctrlKey: true, handler }];
+    const shortcuts = [
+      { key: 'z', ctrlKey: true, handler }
+    ];
 
     renderHook(() => useKeyboardShortcuts({ shortcuts, enabled: false }));
 
@@ -41,24 +45,20 @@ describe('useKeyboardShortcuts', () => {
     const handler2 = jest.fn();
     const shortcuts = [
       { key: 'z', ctrlKey: true, handler: handler1 },
-      { key: 'y', ctrlKey: true, handler: handler2 },
+      { key: 'y', ctrlKey: true, handler: handler2 }
     ];
 
     renderHook(() => useKeyboardShortcuts({ shortcuts }));
 
-    window.dispatchEvent(
-      new KeyboardEvent('keydown', {
-        key: 'z',
-        ctrlKey: true,
-      })
-    );
+    window.dispatchEvent(new KeyboardEvent('keydown', {
+      key: 'z',
+      ctrlKey: true,
+    }));
 
-    window.dispatchEvent(
-      new KeyboardEvent('keydown', {
-        key: 'y',
-        ctrlKey: true,
-      })
-    );
+    window.dispatchEvent(new KeyboardEvent('keydown', {
+      key: 'y',
+      ctrlKey: true,
+    }));
 
     expect(handler1).toHaveBeenCalled();
     expect(handler2).toHaveBeenCalled();
@@ -66,16 +66,16 @@ describe('useKeyboardShortcuts', () => {
 
   it('should handle case-insensitive key matching', () => {
     const handler = jest.fn();
-    const shortcuts = [{ key: 'Z', ctrlKey: true, handler }];
+    const shortcuts = [
+      { key: 'Z', ctrlKey: true, handler }
+    ];
 
     renderHook(() => useKeyboardShortcuts({ shortcuts }));
 
-    window.dispatchEvent(
-      new KeyboardEvent('keydown', {
-        key: 'z',
-        ctrlKey: true,
-      })
-    );
+    window.dispatchEvent(new KeyboardEvent('keydown', {
+      key: 'z',
+      ctrlKey: true,
+    }));
 
     expect(handler).toHaveBeenCalled();
   });

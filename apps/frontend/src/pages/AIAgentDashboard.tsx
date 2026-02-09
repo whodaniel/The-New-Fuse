@@ -78,7 +78,42 @@ const AIAgentPortal: React.FC = () => {
         const data = await response.json();
         setAgents(data);
       } else {
-        console.error('Failed to fetch agents:', response.statusText);
+        // Mock data for development
+        setAgents([
+          {
+            id: '1',
+            name: 'Customer Support Agent',
+            description: 'Handles customer inquiries and support tickets',
+            type: 'Support',
+            status: 'active',
+            capabilities: ['Natural Language Processing', 'Ticket Management', 'FAQ Assistance'],
+            lastActive: '2 minutes ago',
+            performance: 95,
+            conversations: 1247,
+          },
+          {
+            id: '2',
+            name: 'Sales Assistant',
+            description: 'Assists with lead qualification and sales processes',
+            type: 'Sales',
+            status: 'active',
+            capabilities: ['Lead Scoring', 'Product Recommendations', 'CRM Integration'],
+            lastActive: '5 minutes ago',
+            performance: 88,
+            conversations: 892,
+          },
+          {
+            id: '3',
+            name: 'Content Creator',
+            description: 'Generates marketing content and social media posts',
+            type: 'Marketing',
+            status: 'training',
+            capabilities: ['Content Generation', 'SEO Optimization', 'Brand Voice'],
+            lastActive: '1 hour ago',
+            performance: 76,
+            conversations: 234,
+          },
+        ]);
       }
     } catch (error) {
       console.error('Error fetching agents:', error);
@@ -271,7 +306,7 @@ const AIAgentPortal: React.FC = () => {
           <motion.div variants={itemVariants}>
             <StatsCard
               label="Avg Performance"
-              value={`${agents.length > 0 ? Math.round(agents.reduce((sum, agent) => sum + agent.performance, 0) / agents.length) : 0}%`}
+              value={`${Math.round(agents.reduce((sum, agent) => sum + agent.performance, 0) / agents.length)}%`}
               icon={BarChart3}
               gradient="orange"
             />

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { DatabaseService } from '../database.service.tsx';
-import { User, Drizzle } from "@the-new-fuse/database";
+import { User, Prisma } from "@the-new-fuse/database";
 
 @Injectable()
 export class UserRepository {
@@ -18,13 +18,13 @@ export class UserRepository {
     });
   }
 
-  async create(data: Drizzle.UserCreateInput): Promise<User> {
+  async create(data: Prisma.UserCreateInput): Promise<User> {
     return this.db.client.user.create({
       data,
     });
   }
 
-  async update(id: string, data: Drizzle.UserUpdateInput): Promise<User> {
+  async update(id: string, data: Prisma.UserUpdateInput): Promise<User> {
     return this.db.client.user.update({
       where: { id },
       data,
@@ -40,8 +40,8 @@ export class UserRepository {
   async findMany(params: {
     skip?: number;
     take?: number;
-    where?: Drizzle.UserWhereInput;
-    orderBy?: Drizzle.UserOrderByWithRelationInput;
+    where?: Prisma.UserWhereInput;
+    orderBy?: Prisma.UserOrderByWithRelationInput;
   }): Promise<User[]> {
     return this.db.client.user.findMany(params);
   }

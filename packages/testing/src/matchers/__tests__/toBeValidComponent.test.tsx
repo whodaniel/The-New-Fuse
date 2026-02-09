@@ -14,9 +14,9 @@ describe('toBeValidComponent', () => {
     requiredProps: ['title'],
     props: {
       title: (value: any) => typeof value === 'string',
-      count: (value: any) => typeof value === 'number',
+      count: (value: any) => typeof value === 'number'
     },
-    childrenAllowed: false,
+    childrenAllowed: false
   };
 
   it('should pass for valid component', async () => {

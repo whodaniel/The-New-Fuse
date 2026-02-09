@@ -1,12 +1,12 @@
-import { Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { QueueName } from './constants/queue-names';
+import { Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { JobMetricsService } from './services/job-metrics.service';
+import { QueueName } from './constants/queue-names';
 
 /**
  * Jobs monitoring controller
  * Provides API endpoints for monitoring job queues
  */
-@Controller('jobs')
+@Controller('api/jobs')
 export class JobsMonitoringController {
   constructor(private readonly metricsService: JobMetricsService) {}
 
@@ -42,7 +42,10 @@ export class JobsMonitoringController {
    * GET /api/jobs/queues/:queueName/failed
    */
   @Get('queues/:queueName/failed')
-  async getFailedJobs(@Param('queueName') queueName: QueueName, @Query('limit') limit?: number) {
+  async getFailedJobs(
+    @Param('queueName') queueName: QueueName,
+    @Query('limit') limit?: number,
+  ) {
     return this.metricsService.getFailedJobs(queueName, limit || 10);
   }
 
@@ -51,7 +54,10 @@ export class JobsMonitoringController {
    * GET /api/jobs/queues/:queueName/active
    */
   @Get('queues/:queueName/active')
-  async getActiveJobs(@Param('queueName') queueName: QueueName, @Query('limit') limit?: number) {
+  async getActiveJobs(
+    @Param('queueName') queueName: QueueName,
+    @Query('limit') limit?: number,
+  ) {
     return this.metricsService.getActiveJobs(queueName, limit || 10);
   }
 
@@ -60,7 +66,10 @@ export class JobsMonitoringController {
    * GET /api/jobs/queues/:queueName/completed
    */
   @Get('queues/:queueName/completed')
-  async getCompletedJobs(@Param('queueName') queueName: QueueName, @Query('limit') limit?: number) {
+  async getCompletedJobs(
+    @Param('queueName') queueName: QueueName,
+    @Query('limit') limit?: number,
+  ) {
     return this.metricsService.getCompletedJobs(queueName, limit || 10);
   }
 
@@ -101,9 +110,13 @@ export class JobsMonitoringController {
   async cleanQueue(
     @Param('queueName') queueName: QueueName,
     @Query('grace') grace?: number,
-    @Query('status') status?: 'completed' | 'failed'
+    @Query('status') status?: 'completed' | 'failed',
   ) {
-    const cleaned = await this.metricsService.cleanQueue(queueName, grace, status);
+    const cleaned = await this.metricsService.cleanQueue(
+      queueName,
+      grace,
+      status,
+    );
     return { message: `Cleaned ${cleaned} jobs from ${queueName}` };
   }
 
@@ -119,8 +132,10 @@ export class JobsMonitoringController {
     const healthChecks = await Promise.all(
       statistics.queues.map(async (queue) => ({
         queueName: queue.queueName,
-        health: await this.metricsService.getQueueHealth(queue.queueName as QueueName),
-      }))
+        health: await this.metricsService.getQueueHealth(
+          queue.queueName as QueueName,
+        ),
+      })),
     );
 
     return {

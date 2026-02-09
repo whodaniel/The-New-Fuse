@@ -1,13 +1,13 @@
 /**
- * Compatibility Layer for legacy ORM migration to Drizzle
+ * Compatibility Layer for Prisma to Drizzle Migration
  *
  * This file provides aliases to maintain backwards compatibility
  * during the migration period. Services can gradually migrate from
- * legacy ORM repositories to Drizzle repositories without breaking changes.
+ * Prisma repositories to Drizzle repositories without breaking changes.
  *
  * Usage:
  * ```typescript
- * // Old way (legacy ORM)
+ * // Old way (Prisma)
  * import { UserRepository } from '@the-new-fuse/database';
  *
  * // New way (Drizzle - same import path)
@@ -17,10 +17,10 @@
  */
 
 import {
+  drizzleUserRepository,
   drizzleAgentRepository,
   drizzleChatRepository,
   drizzleTaskRepository,
-  drizzleUserRepository,
   drizzleWorkflowRepository,
 } from './repositories';
 
@@ -28,7 +28,7 @@ import {
  * Repository Aliases for Backwards Compatibility
  *
  * These aliases allow existing code to continue working while
- * gradually migrating from a legacy ORM to Drizzle.
+ * gradually migrating from Prisma to Drizzle.
  */
 
 // User Repository Alias
@@ -59,10 +59,10 @@ export type WorkflowExecutionRepository = typeof drizzleWorkflowRepository;
  * Re-export all Drizzle repositories for direct access
  */
 export {
+  drizzleUserRepository,
   drizzleAgentRepository,
   drizzleChatRepository,
   drizzleTaskRepository,
-  drizzleUserRepository,
   drizzleWorkflowRepository,
 } from './repositories';
 
@@ -70,9 +70,9 @@ export {
  * Re-export repository classes for type annotations
  */
 export {
+  DrizzleUserRepository,
   DrizzleAgentRepository,
   DrizzleChatRepository,
   DrizzleTaskRepository,
-  DrizzleUserRepository,
   DrizzleWorkflowRepository,
 } from './repositories';

@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 
 export interface TooltipProps {
   children: React.ReactNode;
@@ -10,7 +10,7 @@ export interface TooltipProps {
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
   ({ children, content, side = 'top', className = '' }, ref) => {
     const [isVisible, setIsVisible] = useState(false);
-
+    
     // Position classes based on side
     const positionClasses = {
       top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
@@ -18,7 +18,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
       left: 'right-full top-1/2 -translate-y-1/2 mr-2',
     };
-
+    
     return (
       <div className="relative inline-flex" ref={ref}>
         <div
@@ -29,9 +29,9 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
         >
           {children}
         </div>
-
+        
         {isVisible && (
-          <div
+          <div 
             className={`absolute z-50 px-3 py-2 text-sm text-white bg-black rounded-md ${positionClasses[side]} ${className}`}
             role="tooltip"
           >

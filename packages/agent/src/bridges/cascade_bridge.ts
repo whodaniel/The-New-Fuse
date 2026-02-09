@@ -11,7 +11,6 @@
  */
 
 import { BaseBridge, MessageType, Priority } from './index';
-
 import type { UniversalMessage } from './universal_bridge';
 
 // Cascade Step Definition
@@ -155,7 +154,7 @@ export class CascadeBridge extends BaseBridge {
     this.emit('workflow:started', { workflowId, startedAt });
 
     try {
-      const currentInput = initialInput;
+      let currentInput = initialInput;
       let finalOutput: unknown;
 
       switch (workflow.mode) {

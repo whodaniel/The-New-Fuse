@@ -1,15 +1,10 @@
 # The New Fuse Agent Development Guide
 
-This guide provides detailed instructions for developing agents for The New Fuse
-platform, including best practices, examples, and integration patterns.
+This guide provides detailed instructions for developing agents for The New Fuse platform, including best practices, examples, and integration patterns.
 
 ## Introduction to Agents
 
-In The New Fuse ecosystem, agents are autonomous software components that
-provide specific capabilities and can communicate with other agents through the
-Model Context Protocol (MCP). Agents can be specialized for particular tasks
-such as text analysis, code generation, data processing, or domain-specific
-operations.
+In The New Fuse ecosystem, agents are autonomous software components that provide specific capabilities and can communicate with other agents through the Model Context Protocol (MCP). Agents can be specialized for particular tasks such as text analysis, code generation, data processing, or domain-specific operations.
 
 ## Agent Architecture
 
@@ -31,22 +26,22 @@ class MyCustomAgent implements Agent {
   id: string;
   name: string;
   description: string;
-
+  
   // Capability registry
   capabilities: Capability[];
-
+  
   constructor() {
     this.id = 'my-custom-agent';
     this.name = 'My Custom Agent';
     this.description = 'Provides custom processing capabilities';
     this.capabilities = this.defineCapabilities();
   }
-
+  
   // Register the agent with The New Fuse
   async register(): Promise<void> {
     // Implementation
   }
-
+  
   // Define agent capabilities
   defineCapabilities(): Capability[] {
     return [
@@ -64,42 +59,42 @@ class MyCustomAgent implements Agent {
                 name: 'text',
                 type: 'string',
                 required: true,
-                description: 'The text to summarize',
+                description: 'The text to summarize'
               },
               {
                 name: 'maxLength',
                 type: 'number',
                 required: false,
                 description: 'Maximum length of summary',
-                default: 200,
-              },
-            ],
-          },
-        ],
-      },
+                default: 200
+              }
+            ]
+          }
+        ]
+      }
     ];
   }
-
+  
   // Handle incoming requests
   async handleRequest(request: Request): Promise<Response> {
     const { capability, action, parameters } = request;
-
+    
     if (capability === 'text-processing' && action === 'summarize') {
       return this.handleSummarize(parameters);
     }
-
+    
     throw new Error(`Unsupported capability/action: ${capability}/${action}`);
   }
-
+  
   // Implementation of specific actions
   async handleSummarize(parameters: any): Promise<Response> {
     const { text, maxLength } = parameters;
     // Implementation of text summarization
     const summary = '...'; // Actual implementation here
-
+    
     return {
       status: 'success',
-      data: { summary },
+      data: { summary }
     };
   }
 }
@@ -119,25 +114,23 @@ Before starting development, clearly define:
 ### 2. Set Up Development Environment
 
 1. Install prerequisites:
-
    ```bash
    # Clone The New Fuse repository
    git clone https://github.com/whodaniel/fuse.git
    cd fuse
-
+   
    # Install dependencies
    yarn install
-
+   
    # Set up agent development environment
    yarn agent:setup-dev
    ```
 
 2. Create a new agent project:
-
    ```bash
    # Generate agent scaffold
    yarn agent:create my-custom-agent
-
+   
    # Navigate to agent directory
    cd packages/agents/my-custom-agent
    ```
@@ -152,14 +145,12 @@ Before starting development, clearly define:
 ### 4. Test Locally
 
 1. Start the development server:
-
    ```bash
    # In the agent directory
    yarn dev
    ```
 
 2. Use the agent test client:
-
    ```bash
    # In another terminal
    yarn agent:test-client
@@ -180,7 +171,6 @@ Before starting development, clearly define:
 ### 5. Register with The New Fuse
 
 1. Build your agent:
-
    ```bash
    yarn build
    ```
@@ -252,7 +242,7 @@ const textAnalysisCapability: Capability = {
           name: 'text',
           type: 'string',
           required: true,
-          description: 'The text to analyze',
+          description: 'The text to analyze'
         },
         {
           name: 'language',
@@ -260,29 +250,28 @@ const textAnalysisCapability: Capability = {
           required: false,
           description: 'The language of the text (ISO code)',
           default: 'en',
-          enum: ['en', 'es', 'fr', 'de', 'it', 'pt', 'ja', 'zh'],
-        },
+          enum: ['en', 'es', 'fr', 'de', 'it', 'pt', 'ja', 'zh']
+        }
       ],
       returns: {
         type: 'object',
         properties: {
           sentiment: {
             type: 'string',
-            enum: ['positive', 'negative', 'neutral'],
+            enum: ['positive', 'negative', 'neutral']
           },
           score: {
             type: 'number',
-            description:
-              'Sentiment score between -1 (negative) and 1 (positive)',
+            description: 'Sentiment score between -1 (negative) and 1 (positive)'
           },
           confidence: {
             type: 'number',
-            description: 'Confidence score between 0 and 1',
-          },
-        },
-      },
-    },
-  ],
+            description: 'Confidence score between 0 and 1'
+          }
+        }
+      }
+    }
+  ]
 };
 ```
 
@@ -297,44 +286,43 @@ class LLMAgent implements Agent {
   // Agent identity
   id: string = 'llm-agent';
   name: string = 'Language Model Agent';
-  description: string =
-    'Provides natural language processing using OpenAI models';
-
+  description: string = 'Provides natural language processing using OpenAI models';
+  
   // LLM client
   private llm: OpenAI;
-
+  
   constructor() {
     this.llm = new OpenAI({
       modelName: 'gpt-4',
       temperature: 0.7,
-      maxTokens: 1000,
+      maxTokens: 1000
     });
   }
-
+  
   // Handle text generation request
   async handleTextGeneration(parameters: any): Promise<Response> {
     const { prompt, maxLength } = parameters;
-
+    
     try {
       const response = await this.llm.generate(prompt, {
-        maxTokens: maxLength || 500,
+        maxTokens: maxLength || 500
       });
-
+      
       return {
         status: 'success',
         data: {
           text: response.text,
           model: response.model,
-          completionTokens: response.usage.completionTokens,
-        },
+          completionTokens: response.usage.completionTokens
+        }
       };
     } catch (error) {
       return {
         status: 'error',
         error: {
           message: error.message,
-          code: 'llm_error',
-        },
+          code: 'llm_error'
+        }
       };
     }
   }
@@ -349,47 +337,41 @@ import * as tf from '@tensorflow/tfjs-node';
 class SentimentAnalysisAgent implements Agent {
   id: string = 'sentiment-analysis-agent';
   name: string = 'Sentiment Analysis Agent';
-  description: string =
-    'Analyzes text sentiment using a custom TensorFlow model';
-
+  description: string = 'Analyzes text sentiment using a custom TensorFlow model';
+  
   private model: tf.LayersModel;
   private tokenizer: Tokenizer;
-
+  
   constructor() {
     // Load model and tokenizer during initialization
     this.initialize();
   }
-
+  
   async initialize() {
-    this.model = await tf.loadLayersModel(
-      'file://./models/sentiment_model/model.json'
-    );
+    this.model = await tf.loadLayersModel('file://./models/sentiment_model/model.json');
     this.tokenizer = new Tokenizer('./models/tokenizer.json');
   }
-
+  
   async analyzeSentiment(text: string): Promise<SentimentResult> {
     // Tokenize and preprocess text
     const tokens = this.tokenizer.tokenize(text);
     const sequence = this.tokenizer.textsToSequences([tokens]);
-    const paddedSequence = this.tokenizer.padSequences(sequence, {
-      maxLen: 100,
-    });
-
+    const paddedSequence = this.tokenizer.padSequences(sequence, { maxLen: 100 });
+    
     // Convert to tensor and predict
     const input = tf.tensor2d(paddedSequence);
     const prediction = this.model.predict(input) as tf.Tensor;
     const score = (await prediction.data())[0];
-
+    
     // Clean up tensors
     input.dispose();
     prediction.dispose();
-
+    
     // Map score to sentiment and confidence
     return {
-      sentiment:
-        score > 0.6 ? 'positive' : score < 0.4 ? 'negative' : 'neutral',
+      sentiment: score > 0.6 ? 'positive' : (score < 0.4 ? 'negative' : 'neutral'),
       score: score * 2 - 1, // Map 0-1 to -1 to 1
-      confidence: Math.abs(score - 0.5) * 2, // Map distance from 0.5 to 0-1 range
+      confidence: Math.abs(score - 0.5) * 2 // Map distance from 0.5 to 0-1 range
     };
   }
 }
@@ -402,10 +384,10 @@ class SentimentAnalysisAgent implements Agent {
 ```typescript
 class ContextAwareAgent implements Agent {
   // ...other agent implementation
-
+  
   // Context management
   private contexts: Map<string, Context> = new Map();
-
+  
   // Get or create context
   getContext(contextId: string): Context {
     if (!this.contexts.has(contextId)) {
@@ -414,43 +396,43 @@ class ContextAwareAgent implements Agent {
         created: new Date(),
         lastUpdated: new Date(),
         messages: [],
-        metadata: {},
+        metadata: {}
       });
     }
-
+    
     return this.contexts.get(contextId);
   }
-
+  
   // Update context with new message
   updateContext(contextId: string, message: Message): void {
     const context = this.getContext(contextId);
     context.messages.push(message);
     context.lastUpdated = new Date();
-
+    
     // Prune old contexts to prevent memory leaks
     this.pruneOldContexts();
   }
-
+  
   // Process request with context awareness
   async handleRequest(request: Request): Promise<Response> {
     const contextId = request.contextId;
     const context = contextId ? this.getContext(contextId) : null;
-
+    
     // Use context in processing
     const result = await this.processWithContext(request, context);
-
+    
     // Update context with new information
     if (contextId) {
       this.updateContext(contextId, {
         role: 'assistant',
         content: JSON.stringify(result),
-        timestamp: new Date(),
+        timestamp: new Date()
       });
     }
-
+    
     return {
       status: 'success',
-      data: result,
+      data: result
     };
   }
 }
@@ -463,52 +445,49 @@ import { VectorStore } from '@thenewfuse/vector-store';
 
 class MemoryEnabledAgent implements Agent {
   // ...other agent implementation
-
+  
   // Vector store for semantic search
   private vectorStore: VectorStore;
-
+  
   constructor() {
     // Initialize vector store
     this.vectorStore = new VectorStore({
       dimensions: 1536,
-      similarityMetric: 'cosine',
+      similarityMetric: 'cosine'
     });
   }
-
+  
   // Store information in memory
   async rememberInformation(info: string, metadata: any = {}): Promise<string> {
     const memoryId = await this.vectorStore.store(info, metadata);
     return memoryId;
   }
-
+  
   // Retrieve relevant memories
-  async recallRelevantInformation(
-    query: string,
-    maxResults: number = 5
-  ): Promise<Memory[]> {
+  async recallRelevantInformation(query: string, maxResults: number = 5): Promise<Memory[]> {
     const results = await this.vectorStore.search(query, maxResults);
     return results;
   }
-
+  
   // Use memory in request processing
   async handleRequestWithMemory(request: Request): Promise<Response> {
     // Recall relevant information
     const relevantMemories = await this.recallRelevantInformation(
       request.parameters.query || JSON.stringify(request.parameters)
     );
-
+    
     // Enhance request with memories
     const enhancedRequest = {
       ...request,
       context: {
         ...request.context,
-        relevantMemories,
-      },
+        relevantMemories
+      }
     };
-
+    
     // Process the enhanced request
     const response = await this.processRequest(enhancedRequest);
-
+    
     // Store new information learned from this interaction
     if (response.status === 'success' && response.data.shouldRemember) {
       await this.rememberInformation(
@@ -516,7 +495,7 @@ class MemoryEnabledAgent implements Agent {
         { source: 'interaction', timestamp: new Date(), requestId: request.id }
       );
     }
-
+    
     return response;
   }
 }
@@ -527,45 +506,43 @@ class MemoryEnabledAgent implements Agent {
 ```typescript
 class ReasoningAgent implements Agent {
   // ...other agent implementation
-
+  
   async handleComplexReasoning(request: Request): Promise<Response> {
     // Step 1: Break down the problem
-    const problemBreakdown = await this.decomposeProblem(
-      request.parameters.problem
-    );
-
+    const problemBreakdown = await this.decomposeProblem(request.parameters.problem);
+    
     // Step 2: Gather relevant information for each sub-problem
     const informationGathering = await Promise.all(
       problemBreakdown.subProblems.map(async (subProblem) => {
         return {
           subProblem,
-          relevantInfo: await this.gatherInformation(subProblem),
+          relevantInfo: await this.gatherInformation(subProblem)
         };
       })
     );
-
+    
     // Step 3: Solve each sub-problem
     const subSolutions = await Promise.all(
       informationGathering.map(async ({ subProblem, relevantInfo }) => {
         return {
           subProblem,
-          solution: await this.solveSubProblem(subProblem, relevantInfo),
+          solution: await this.solveSubProblem(subProblem, relevantInfo)
         };
       })
     );
-
+    
     // Step 4: Integrate the solutions
     const integratedSolution = await this.integrateSolutions(
       request.parameters.problem,
       subSolutions
     );
-
+    
     // Step 5: Verify the solution
     const verificationResult = await this.verifySolution(
       request.parameters.problem,
       integratedSolution
     );
-
+    
     // Step 6: Return final result
     return {
       status: 'success',
@@ -574,10 +551,10 @@ class ReasoningAgent implements Agent {
         reasoning: {
           problemBreakdown,
           subSolutions,
-          verification: verificationResult,
+          verification: verificationResult
         },
-        confidence: verificationResult.confidence,
-      },
+        confidence: verificationResult.confidence
+      }
     };
   }
 }
@@ -592,85 +569,77 @@ import { JwtService } from '@thenewfuse/security';
 
 class SecureAgent implements Agent {
   // ...other agent implementation
-
+  
   private jwtService: JwtService;
-
+  
   constructor() {
     this.jwtService = new JwtService({
       secret: process.env.JWT_SECRET,
-      expiresIn: '1h',
+      expiresIn: '1h'
     });
   }
-
+  
   // Validate authentication token
   async authenticate(request: Request): Promise<AuthenticationResult> {
     if (!request.authentication || !request.authentication.token) {
       throw new AuthenticationError('Missing authentication token');
     }
-
+    
     try {
-      const decoded = await this.jwtService.verify(
-        request.authentication.token
-      );
+      const decoded = await this.jwtService.verify(request.authentication.token);
       return {
         authenticated: true,
-        identity: decoded,
+        identity: decoded
       };
     } catch (error) {
       throw new AuthenticationError('Invalid authentication token');
     }
   }
-
+  
   // Check if agent has permission for requested capability
-  async authorize(
-    identity: Identity,
-    capability: string,
-    action: string
-  ): Promise<boolean> {
+  async authorize(identity: Identity, capability: string, action: string): Promise<boolean> {
     // Check permissions in agent registry
     const permissions = await AgentRegistry.getPermissions(identity.agentId);
-
-    return permissions.some(
-      (permission) =>
-        (permission.capability === '*' ||
-          permission.capability === capability) &&
-        (permission.action === '*' || permission.action === action)
+    
+    return permissions.some(permission => 
+      (permission.capability === '*' || permission.capability === capability) &&
+      (permission.action === '*' || permission.action === action)
     );
   }
-
+  
   // Handle request with security checks
   async handleRequest(request: Request): Promise<Response> {
     try {
       // Authenticate request
       const { authenticated, identity } = await this.authenticate(request);
-
+      
       if (!authenticated) {
         return {
           status: 'error',
           error: {
             code: 'authentication_failed',
-            message: 'Authentication failed',
-          },
+            message: 'Authentication failed'
+          }
         };
       }
-
+      
       // Authorize capability access
       const authorized = await this.authorize(
-        identity,
+        identity, 
         request.capability,
         request.action
       );
-
+      
       if (!authorized) {
         return {
           status: 'error',
           error: {
             code: 'authorization_failed',
-            message: 'Not authorized to use this capability/action',
-          },
+            message: 'Not authorized to use this capability/action'
+          }
         };
       }
-
+      
       // Process the authenticated and authorized request
       return await this.processRequest(request);
     } catch (error) {
@@ -678,8 +647,8 @@ class SecureAgent implements Agent {
         status: 'error',
         error: {
           code: 'security_error',
-          message: error.message,
-        },
+          message: error.message
+        }
       };
     }
   }
@@ -693,54 +662,50 @@ import Joi from 'joi';
 
 class ValidationAgent implements Agent {
   // ...other agent implementation
-
+  
   // Schema definitions for parameters
   private schemas: Record<string, Joi.Schema> = {
     'text-processing.summarize': Joi.object({
       text: Joi.string().required().max(10000),
-      maxLength: Joi.number().integer().min(10).max(1000).default(200),
+      maxLength: Joi.number().integer().min(10).max(1000).default(200)
     }),
-
+    
     'sentiment-analysis.analyze-sentiment': Joi.object({
       text: Joi.string().required().max(5000),
-      language: Joi.string().alphanum().length(2).default('en'),
-    }),
+      language: Joi.string().alphanum().length(2).default('en')
+    })
   };
-
+  
   // Validate request parameters
-  validateParameters(
-    capability: string,
-    action: string,
-    parameters: any
-  ): ValidationResult {
+  validateParameters(capability: string, action: string, parameters: any): ValidationResult {
     const schemaKey = `${capability}.${action}`;
     const schema = this.schemas[schemaKey];
-
+    
     if (!schema) {
       throw new Error(`No validation schema for ${schemaKey}`);
     }
-
+    
     const validationResult = schema.validate(parameters, {
       abortEarly: false,
-      stripUnknown: true,
+      stripUnknown: true
     });
-
+    
     if (validationResult.error) {
       return {
         valid: false,
-        errors: validationResult.error.details.map((detail) => ({
+        errors: validationResult.error.details.map(detail => ({
           path: detail.path.join('.'),
-          message: detail.message,
-        })),
+          message: detail.message
+        }))
       };
     }
-
+    
     return {
       valid: true,
-      value: validationResult.value,
+      value: validationResult.value
     };
   }
-
+  
   // Handle request with validation
   async handleRequest(request: Request): Promise<Response> {
     // Validate parameters
@@ -749,24 +714,24 @@ class ValidationAgent implements Agent {
       request.action,
       request.parameters
     );
-
+    
     if (!validation.valid) {
       return {
         status: 'error',
         error: {
           code: 'validation_error',
           message: 'Invalid parameters',
-          details: validation.errors,
-        },
+          details: validation.errors
+        }
       };
     }
-
+    
     // Use validated parameters
     const validatedRequest = {
       ...request,
-      parameters: validation.value,
+      parameters: validation.value
     };
-
+    
     // Process the validated request
     return await this.processRequest(validatedRequest);
   }
@@ -783,39 +748,38 @@ import { TextProcessingAgent } from '../src/text-processing-agent';
 
 describe('TextProcessingAgent', () => {
   let agent: TextProcessingAgent;
-
+  
   beforeEach(() => {
     agent = new TextProcessingAgent();
   });
-
+  
   describe('summarize', () => {
     it('should summarize text within the specified length', async () => {
       // Arrange
-      const text =
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(20);
+      const text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(20);
       const maxLength = 100;
-
+      
       // Act
       const response = await agent.handleRequest({
         capability: 'text-processing',
         action: 'summarize',
-        parameters: { text, maxLength },
+        parameters: { text, maxLength }
       });
-
+      
       // Assert
       expect(response.status).toBe('success');
       expect(response.data.summary).toBeDefined();
       expect(response.data.summary.length).toBeLessThanOrEqual(maxLength);
     });
-
+    
     it('should handle empty text', async () => {
       // Act
       const response = await agent.handleRequest({
         capability: 'text-processing',
         action: 'summarize',
-        parameters: { text: '' },
+        parameters: { text: '' }
       });
-
+      
       // Assert
       expect(response.status).toBe('error');
       expect(response.error.code).toBe('invalid_input');
@@ -833,45 +797,45 @@ import { AgentTestHarness } from '@thenewfuse/agent-testing';
 describe('Agent Integration Tests', () => {
   let harness: AgentTestHarness;
   let mcpClient: MCP;
-
+  
   beforeAll(async () => {
     // Start the agent in test mode
     harness = await AgentTestHarness.start({
       agentPath: './dist/index.js',
-      env: { NODE_ENV: 'test' },
+      env: { NODE_ENV: 'test' }
     });
-
+    
     // Connect MCP client
     mcpClient = new MCP({
       serverUrl: harness.getMCPServerUrl(),
       agentId: 'test-client',
-      agentName: 'Test Client',
+      agentName: 'Test Client'
     });
-
+    
     await mcpClient.connect();
   });
-
+  
   afterAll(async () => {
     await mcpClient.disconnect();
     await harness.stop();
   });
-
+  
   it('should register capabilities correctly', async () => {
     // Get agent capabilities
     const agent = await mcpClient.discoverAgent(harness.getAgentId());
-
+    
     // Verify expected capabilities
     expect(agent).toBeDefined();
     expect(agent.capabilities).toContainEqual(
       expect.objectContaining({
         id: 'text-processing',
         actions: expect.arrayContaining([
-          expect.objectContaining({ id: 'summarize' }),
-        ]),
+          expect.objectContaining({ id: 'summarize' })
+        ])
       })
     );
   });
-
+  
   it('should successfully process a request', async () => {
     // Send request to the agent
     const response = await mcpClient.sendRequest({
@@ -879,13 +843,11 @@ describe('Agent Integration Tests', () => {
       capability: 'text-processing',
       action: 'summarize',
       parameters: {
-        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(
-          10
-        ),
-        maxLength: 100,
-      },
+        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(10),
+        maxLength: 100
+      }
     });
-
+    
     // Verify response
     expect(response.status).toBe('success');
     expect(response.data.summary).toBeDefined();
@@ -915,13 +877,11 @@ describe('Agent Integration Tests', () => {
 ### Debugging Tools
 
 1. **Local Agent Console**
-
    ```bash
    yarn agent:debug my-agent
    ```
 
 2. **MCP Protocol Inspector**
-
    ```bash
    yarn mcp:inspect --agent-id my-agent
    ```
@@ -983,33 +943,33 @@ spec:
         app: my-custom-agent
     spec:
       containers:
-        - name: agent
-          image: thenewfuse/my-custom-agent:latest
-          ports:
-            - containerPort: 3000
-          env:
-            - name: NODE_ENV
-              value: production
-            - name: MCP_SERVER_URL
-              value: wss://mcp.thenewfuse.ai
-            - name: AGENT_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: agent-secrets
-                  key: secretKey
-          resources:
-            requests:
-              memory: '256Mi'
-              cpu: '100m'
-            limits:
-              memory: '512Mi'
-              cpu: '500m'
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 3000
-            initialDelaySeconds: 5
-            periodSeconds: 10
+      - name: agent
+        image: thenewfuse/my-custom-agent:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: production
+        - name: MCP_SERVER_URL
+          value: wss://mcp.thenewfuse.ai
+        - name: AGENT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: agent-secrets
+              key: secretKey
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
 ```
 
 ## Advanced Integrations
@@ -1023,9 +983,9 @@ class WeatherAgent implements Agent {
   id: string = 'weather-agent';
   name: string = 'Weather Information Agent';
   description: string = 'Provides weather information for locations';
-
+  
   private apiKey: string = process.env.WEATHER_API_KEY;
-
+  
   // Define capabilities
   defineCapabilities(): Capability[] {
     return [
@@ -1043,8 +1003,7 @@ class WeatherAgent implements Agent {
                 name: 'location',
                 type: 'string',
                 required: true,
-                description:
-                  'The location to get weather for (city name or coordinates)',
+                description: 'The location to get weather for (city name or coordinates)'
               },
               {
                 name: 'units',
@@ -1052,31 +1011,28 @@ class WeatherAgent implements Agent {
                 required: false,
                 description: 'Units for temperature (metric or imperial)',
                 default: 'metric',
-                enum: ['metric', 'imperial'],
-              },
-            ],
-          },
-        ],
-      },
+                enum: ['metric', 'imperial']
+              }
+            ]
+          }
+        ]
+      }
     ];
   }
-
+  
   // Handle weather request
   async handleGetCurrentWeather(parameters: any): Promise<Response> {
     const { location, units } = parameters;
-
+    
     try {
-      const response = await axios.get(
-        'https://api.weatherservice.com/current',
-        {
-          params: {
-            q: location,
-            units: units,
-            appid: this.apiKey,
-          },
+      const response = await axios.get('https://api.weatherservice.com/current', {
+        params: {
+          q: location,
+          units: units,
+          appid: this.apiKey
         }
-      );
-
+      });
+      
       return {
         status: 'success',
         data: {
@@ -1089,19 +1045,19 @@ class WeatherAgent implements Agent {
             country: response.data.sys.country,
             coordinates: {
               lat: response.data.coord.lat,
-              lon: response.data.coord.lon,
-            },
+              lon: response.data.coord.lon
+            }
           },
-          timestamp: new Date().toISOString(),
-        },
+          timestamp: new Date().toISOString()
+        }
       };
     } catch (error) {
       return {
         status: 'error',
         error: {
           code: 'weather_api_error',
-          message: error.message,
-        },
+          message: error.message
+        }
       };
     }
   }
@@ -1111,67 +1067,67 @@ class WeatherAgent implements Agent {
 ### Database Integration
 
 ```typescript
-import { DrizzleClient } from '@drizzle/client';
+import { PrismaClient } from '@prisma/client';
 
 class DatabaseAgent implements Agent {
   id: string = 'database-agent';
   name: string = 'Database Agent';
   description: string = 'Provides database access capabilities';
-
-  private drizzle: DrizzleClient;
-
+  
+  private prisma: PrismaClient;
+  
   constructor() {
-    this.drizzle = new DrizzleClient();
+    this.prisma = new PrismaClient();
   }
-
+  
   // Handle database query request
   async handleDatabaseQuery(parameters: any): Promise<Response> {
     const { table, filter, fields, limit } = parameters;
-
+    
     try {
       // Validate permissions to access this table
       this.validateTableAccess(table);
-
+      
       // Execute query
-      const results = await this.drizzle[table].findMany({
+      const results = await this.prisma[table].findMany({
         where: filter,
         select: this.buildSelectObject(fields),
-        take: limit || 100,
+        take: limit || 100
       });
-
+      
       return {
         status: 'success',
         data: {
           results,
-          count: results.length,
-        },
+          count: results.length
+        }
       };
     } catch (error) {
       return {
         status: 'error',
         error: {
           code: 'database_error',
-          message: error.message,
-        },
+          message: error.message
+        }
       };
     }
   }
-
+  
   // Validate table access
   private validateTableAccess(table: string): void {
     const allowedTables = ['products', 'categories', 'public_data'];
-
+    
     if (!allowedTables.includes(table)) {
       throw new Error(`Access to table '${table}' is not allowed`);
     }
   }
-
+  
   // Build select object from fields array
   private buildSelectObject(fields: string[]): Record<string, boolean> {
     if (!fields || fields.length === 0) {
       return undefined; // Select all fields
     }
-
+    
     return fields.reduce((acc, field) => {
       acc[field] = true;
       return acc;
@@ -1182,11 +1138,9 @@ class DatabaseAgent implements Agent {
 
 ### Google ADK Integration
 
-Agents can leverage tools and capabilities provided by Google's Agent
-Development Kit (ADK) via the integrated Python bridge.
+Agents can leverage tools and capabilities provided by Google's Agent Development Kit (ADK) via the integrated Python bridge.
 
-- **Calling ADK Tools:** Use the `ADKBridgeService` to execute tools available
-  in the connected ADK environment.
+- **Calling ADK Tools:** Use the `ADKBridgeService` to execute tools available in the connected ADK environment.
 
   ```typescript
   // Example within an agent method
@@ -1197,19 +1151,13 @@ Development Kit (ADK) via the integrated Python bridge.
   }
   ```
 
-- **Further Examples:** For more detailed examples of interacting with the ADK
-  bridge service and its API, see the
-  [ADK Integration Usage Examples](../integrations/adk-usage.md).
+- **Further Examples:** For more detailed examples of interacting with the ADK bridge service and its API, see the [ADK Integration Usage Examples](../integrations/adk-usage.md).
 
 ## Conclusion
 
-This guide provides a comprehensive overview of agent development for The New
-Fuse platform. By following these patterns and best practices, you can create
-powerful, secure, and efficient agents that integrate seamlessly with the
-ecosystem.
+This guide provides a comprehensive overview of agent development for The New Fuse platform. By following these patterns and best practices, you can create powerful, secure, and efficient agents that integrate seamlessly with the ecosystem.
 
 For more information, refer to:
-
 - [The New Fuse API Specification](./API_SPECIFICATION.md)
 - [Model Context Protocol (MCP) Specification](./MCP_SPECIFICATION.md)
 - [The New Fuse Workflow System Guide](./WORKFLOW_GUIDE.md)

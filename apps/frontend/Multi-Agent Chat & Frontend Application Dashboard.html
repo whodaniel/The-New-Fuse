@@ -1,577 +1,401 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The New Fuse - Frontend Application</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 40px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-      }
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        background: white;
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      }
-      h1 {
-        color: #333;
-        text-align: center;
-        margin-bottom: 10px;
-        font-size: 2.5em;
-      }
-      .subtitle {
-        text-align: center;
-        color: #666;
-        margin-bottom: 40px;
-        font-size: 1.2em;
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 25px;
-        margin-top: 30px;
-      }
-      .card {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        padding: 25px;
-        border-radius: 12px;
-        border-left: 5px solid #007bff;
-        transition:
-          transform 0.3s ease,
-          box-shadow 0.3s ease;
-      }
-      .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-      }
-      .card h3 {
-        margin-top: 0;
-        color: #007bff;
-        font-size: 1.3em;
-      }
-      .card a {
-        display: inline-block;
-        margin: 8px 12px 8px 0;
-        padding: 8px 15px;
-        background: #007bff;
-        color: white;
-        text-decoration: none;
-        border-radius: 6px;
-        font-size: 0.9em;
-        transition: background 0.3s ease;
-      }
-      .card a:hover {
-        background: #0056b3;
-      }
-      .highlight {
-        background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-        border-left-color: #ff6b6b;
-      }
-      .highlight h3 {
-        color: #ff6b6b;
-      }
-      .highlight a {
-        background: #ff6b6b;
-      }
-      .highlight a:hover {
-        background: #e55555;
-      }
-      .footer {
-        text-align: center;
-        margin-top: 40px;
-        padding: 20px;
-        background: #f8f9fa;
-        border-radius: 10px;
-      }
-      .status {
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        background: #28a745;
-        border-radius: 50%;
-        margin-right: 8px;
-        animation: pulse 2s infinite;
-      }
-      @keyframes pulse {
-        0% {
-          opacity: 1;
+        body { font-family: Arial, sans-serif; margin: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        h1 { color: #333; text-align: center; margin-bottom: 10px; font-size: 2.5em; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 40px; font-size: 1.2em; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-top: 30px; }
+        .card { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 25px; border-radius: 12px; border-left: 5px solid #007bff; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .card h3 { margin-top: 0; color: #007bff; font-size: 1.3em; }
+        .card a { display: inline-block; margin: 8px 12px 8px 0; padding: 8px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 6px; font-size: 0.9em; transition: background 0.3s ease; }
+        .card a:hover { background: #0056b3; }
+        .highlight { background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); border-left-color: #ff6b6b; }
+        .highlight h3 { color: #ff6b6b; }
+        .highlight a { background: #ff6b6b; }
+        .highlight a:hover { background: #e55555; }
+        .footer { text-align: center; margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px; }
+        .status { display: inline-block; width: 12px; height: 12px; background: #28a745; border-radius: 50%; margin-right: 8px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        
+        /* Server Control Styles */
+        .server-control { 
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+            border-left-color: #28a745; 
+            color: white; 
+            margin-bottom: 30px;
         }
-        50% {
-          opacity: 0.5;
+        .server-control h3 { color: white; }
+        .server-control p { color: rgba(255,255,255,0.9); }
+        
+        /* Collapsible Button */
+        .collapse-btn {
+            background: rgba(255,255,255,0.2) !important; 
+            border: 2px solid white;
+            color: white !important;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        100% {
-          opacity: 1;
+        .collapse-btn:hover { 
+            background: white !important; 
+            color: #28a745 !important;
         }
-      }
-
-      /* Server Control Styles */
-      .server-control {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        border-left-color: #28a745;
-        color: white;
-        margin-bottom: 30px;
-      }
-      .server-control h3 {
-        color: white;
-      }
-      .server-control p {
-        color: rgba(255, 255, 255, 0.9);
-      }
-
-      /* Collapsible Button */
-      .collapse-btn {
-        background: rgba(255, 255, 255, 0.2) !important;
-        border: 2px solid white;
-        color: white !important;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        padding: 12px 20px;
-        border-radius: 8px;
-        font-size: 16px;
-        width: 100%;
-        text-align: left;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .collapse-btn:hover {
-        background: white !important;
-        color: #28a745 !important;
-      }
-      .collapse-arrow {
-        transition: transform 0.3s ease;
-        font-size: 18px;
-      }
-      .collapse-arrow.open {
-        transform: rotate(180deg);
-      }
-
-      /* Collapsible Content */
-      .collapsible-content {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        margin-top: 15px;
-      }
-      .collapsible-content.open {
-        max-height: 1000px;
-        padding: 20px;
-      }
-
-      /* Server Control Content Styles */
-      .status-indicator {
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 8px;
-      }
-      .status-running {
-        background: #28a745;
-        animation: pulse 2s infinite;
-      }
-      .status-stopped {
-        background: #dc3545;
-      }
-
-      .server-status-section {
-        background: rgba(255, 255, 255, 0.15);
-        padding: 15px;
-        border-radius: 8px;
-        margin: 15px 0;
-      }
-
-      .instructions-section {
-        background: rgba(255, 255, 255, 0.15);
-        padding: 15px;
-        border-radius: 8px;
-        margin: 15px 0;
-      }
-
-      .command-box {
-        background: #1a1a1a;
-        color: #00ff00;
-        padding: 12px;
-        border-radius: 6px;
-        font-family: 'Courier New', monospace;
-        font-size: 12px;
-        margin: 10px 0;
-        overflow-x: auto;
-        word-break: break-all;
-      }
-
-      .control-btn {
-        background: rgba(255, 255, 255, 0.3);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        margin: 5px 5px 5px 0;
-        font-size: 13px;
-        transition: all 0.3s ease;
-      }
-      .control-btn:hover {
-        background: rgba(255, 255, 255, 0.5);
-      }
-      .control-btn:disabled {
-        background: rgba(255, 255, 255, 0.1);
-        cursor: not-allowed;
-        opacity: 0.6;
-      }
-
-      .quick-links {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 8px;
-        margin: 15px 0;
-      }
-      .quick-link {
-        background: rgba(40, 167, 69, 0.8);
-        color: white;
-        text-decoration: none;
-        padding: 8px 12px;
-        border-radius: 5px;
-        text-align: center;
-        font-size: 12px;
-        transition: background 0.3s;
-      }
-      .quick-link:hover {
-        background: rgba(40, 167, 69, 1);
-      }
+        .collapse-arrow {
+            transition: transform 0.3s ease;
+            font-size: 18px;
+        }
+        .collapse-arrow.open {
+            transform: rotate(180deg);
+        }
+        
+        /* Collapsible Content */
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        .collapsible-content.open {
+            max-height: 1000px;
+            padding: 20px;
+        }
+        
+        /* Server Control Content Styles */
+        .status-indicator { 
+            width: 16px; 
+            height: 16px; 
+            border-radius: 50%; 
+            display: inline-block; 
+            margin-right: 8px;
+        }
+        .status-running { background: #28a745; animation: pulse 2s infinite; }
+        .status-stopped { background: #dc3545; }
+        
+        .server-status-section {
+            background: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .instructions-section {
+            background: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .command-box {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin: 10px 0;
+            overflow-x: auto;
+            word-break: break-all;
+        }
+        
+        .control-btn {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.5);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px 5px 5px 0;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+        .control-btn:hover { background: rgba(255,255,255,0.5); }
+        .control-btn:disabled { background: rgba(255,255,255,0.1); cursor: not-allowed; opacity: 0.6; }
+        
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+            margin: 15px 0;
+        }
+        .quick-link {
+            background: rgba(40, 167, 69, 0.8);
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+        .quick-link:hover { background: rgba(40, 167, 69, 1); }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <h1>🚀 The New Fuse</h1>
-      <p class="subtitle">
-        <span class="status"></span>
-        Multi-Agent Chat & Frontend Application Dashboard
-      </p>
-
-      <!-- Server Control Section -->
-      <div class="card server-control">
-        <h3>🚀 Vite Development Server Control</h3>
-        <p>Manage the React development server for live page access.</p>
-
-        <button class="collapse-btn" onclick="toggleServerControls()">
-          <span>⚙️ Server Control Panel</span>
-          <span class="collapse-arrow" id="collapseArrow">▼</span>
-        </button>
-
-        <div class="collapsible-content" id="serverControlContent">
-          <div class="server-status-section">
-            <h4 style="margin-top: 0; color: white">
-              <span id="statusIndicator" class="status-indicator status-stopped"></span>
-              Server Status: <span id="statusText">Checking...</span>
-            </h4>
-            <p style="margin: 5px 0">
-              Local development server on <strong>http://localhost:3000</strong>
-            </p>
-            <button id="checkStatusBtn" class="control-btn" onclick="checkServerStatus()">
-              🔄 Check Status
+        <h1>🚀 The New Fuse</h1>
+        <p class="subtitle">
+            <span class="status"></span>
+            Multi-Agent Chat & Frontend Application Dashboard
+        </p>
+        
+        <!-- Server Control Section -->
+        <div class="card server-control">
+            <h3>🚀 Vite Development Server Control</h3>
+            <p>Manage the React development server for live page access.</p>
+            
+            <button class="collapse-btn" onclick="toggleServerControls()">
+                <span>⚙️ Server Control Panel</span>
+                <span class="collapse-arrow" id="collapseArrow">▼</span>
             </button>
-            <button id="openAppBtn" class="control-btn" onclick="openApp()" disabled>
-              🌐 Open App
-            </button>
-          </div>
-
-          <div class="instructions-section">
-            <h4 style="margin-top: 0; color: white">🎯 How to Start the Server</h4>
-            <p style="margin: 10px 0; color: rgba(255, 255, 255, 0.9)">
-              <strong>Method 1: Using Terminal (Recommended)</strong>
-            </p>
-            <ol style="margin: 10px 0; color: rgba(255, 255, 255, 0.9)">
-              <li>Open Terminal application</li>
-              <li>Copy and paste this command:</li>
-            </ol>
-            <div class="command-box">cd "$(pwd)" && pnpm run dev</div>
-            <button class="control-btn" onclick="copyCommand()">📋 Copy Command</button>
-
-            <p style="margin: 15px 0 5px 0; color: rgba(255, 255, 255, 0.9)">
-              <strong>Method 2: Using VS Code</strong>
-            </p>
-            <ol style="margin: 5px 0; color: rgba(255, 255, 255, 0.8); font-size: 13px">
-              <li>Open VS Code</li>
-              <li>Open the frontend folder</li>
-              <li>Open integrated terminal (Terminal → New Terminal)</li>
-              <li>
-                Run:
-                <code style="background: rgba(0, 0, 0, 0.3); padding: 2px 6px; border-radius: 3px"
-                  >pnpm run dev</code
-                >
-              </li>
-            </ol>
-
-            <button class="control-btn" onclick="createStartScript()">
-              📜 Create Start Script
-            </button>
-            <small style="color: rgba(255, 255, 255, 0.7)"
-              >(Creates a clickable .command file)</small
-            >
-          </div>
-
-          <div id="quickLinks" class="quick-links" style="display: none">
-            <h4 style="margin: 15px 0 10px 0; color: white; grid-column: 1 / -1">
-              🔗 Quick Links (when server is running)
-            </h4>
-            <a href="http://localhost:3000" class="quick-link" target="_blank" rel="noopener"
-              >🏠 Home</a
-            >
-            <a
-              href="http://localhost:3000/dashboard"
-              class="quick-link"
-              target="_blank"
-              rel="noopener"
-              >📊 Dashboard</a
-            >
-            <a
-              href="http://localhost:3000/multi-agent-chat"
-              class="quick-link"
-              target="_blank"
-              rel="noopener"
-              >💬 Chat</a
-            >
-            <a href="http://localhost:3000/agents" class="quick-link" target="_blank" rel="noopener"
-              >🤖 Agents</a
-            >
-            <a
-              href="http://localhost:3000/workflows"
-              class="quick-link"
-              target="_blank"
-              rel="noopener"
-              >⚙️ Workflows</a
-            >
-            <a href="http://localhost:3000/admin" class="quick-link" target="_blank" rel="noopener"
-              >🛠️ Admin</a
-            >
-          </div>
-
-          <div class="instructions-section">
-            <h4 style="margin-top: 0; color: white">🛠️ Troubleshooting</h4>
-            <ul style="margin: 10px 0; color: rgba(255, 255, 255, 0.8); font-size: 13px">
-              <li>
-                <strong>Port already in use:</strong> Kill existing process with
-                <code style="background: rgba(0, 0, 0, 0.3); padding: 2px 6px; border-radius: 3px"
-                  >npx kill-port 3000</code
-                >
-              </li>
-              <li>
-                <strong>Module not found:</strong> Run
-                <code style="background: rgba(0, 0, 0, 0.3); padding: 2px 6px; border-radius: 3px"
-                  >pnpm install</code
-                >
-                first
-              </li>
-              <li>
-                <strong>Permission denied:</strong> Try
-                <code style="background: rgba(0, 0, 0, 0.3); padding: 2px 6px; border-radius: 3px"
-                  >sudo pnpm run dev</code
-                >
-                (Use with caution)
-              </li>
-              <li>
-                <strong>Node.js not found:</strong> Install Node.js from
-                <a href="https://nodejs.org" target="_blank" rel="noopener" style="color: #87ceeb"
-                  >nodejs.org</a
-                >
-              </li>
-            </ul>
-          </div>
+            
+            <div class="collapsible-content" id="serverControlContent">
+                <div class="server-status-section">
+                    <h4 style="margin-top: 0; color: white;">
+                        <span id="statusIndicator" class="status-indicator status-stopped"></span>
+                        Server Status: <span id="statusText">Checking...</span>
+                    </h4>
+                    <p style="margin: 5px 0;">Local development server on <strong>http://localhost:3000</strong></p>
+                    <button id="checkStatusBtn" class="control-btn" onclick="checkServerStatus()">🔄 Check Status</button>
+                    <button id="openAppBtn" class="control-btn" onclick="openApp()" disabled>🌐 Open App</button>
+                </div>
+                
+                <div class="instructions-section">
+                    <h4 style="margin-top: 0; color: white;">🎯 How to Start the Server</h4>
+                    <p style="margin: 10px 0; color: rgba(255,255,255,0.9);"><strong>Method 1: Using Terminal (Recommended)</strong></p>
+                    <ol style="margin: 10px 0; color: rgba(255,255,255,0.9);">
+                        <li>Open Terminal application</li>
+                        <li>Copy and paste this command:</li>
+                    </ol>
+                    <div class="command-box">cd "$(pwd)" && pnpm run dev</div>
+                    <button class="control-btn" onclick="copyCommand()">📋 Copy Command</button>
+                    
+                    <p style="margin: 15px 0 5px 0; color: rgba(255,255,255,0.9);"><strong>Method 2: Using VS Code</strong></p>
+                    <ol style="margin: 5px 0; color: rgba(255,255,255,0.8); font-size: 13px;">
+                        <li>Open VS Code</li>
+                        <li>Open the frontend folder</li>
+                        <li>Open integrated terminal (Terminal → New Terminal)</li>
+                        <li>Run: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">pnpm run dev</code></li>
+                    </ol>
+                    
+                    <button class="control-btn" onclick="createStartScript()">📜 Create Start Script</button>
+                    <small style="color: rgba(255,255,255,0.7);">(Creates a clickable .command file)</small>
+                </div>
+                
+                <div id="quickLinks" class="quick-links" style="display: none;">
+                    <h4 style="margin: 15px 0 10px 0; color: white; grid-column: 1 / -1;">🔗 Quick Links (when server is running)</h4>
+ <a href="http://localhost:3000" class="quick-link" target="_blank" rel="noopener">🏠 Home</a>
+ <a href="http://localhost:3000/dashboard" class="quick-link" target="_blank" rel="noopener">📊 Dashboard</a>
+ <a href="http://localhost:3000/multi-agent-chat" class="quick-link" target="_blank" rel="noopener">💬 Chat</a>
+                    <a href="http://localhost:3000/agents" class="quick-link" target="_blank" rel="noopener">🤖 Agents</a>
+                    <a href="http://localhost:3000/workflows" class="quick-link" target="_blank" rel="noopener">⚙️ Workflows</a>
+                    <a href="http://localhost:3000/admin" class="quick-link" target="_blank" rel="noopener">🛠️ Admin</a>
+                </div>
+                
+                <div class="instructions-section">
+                    <h4 style="margin-top: 0; color: white;">🛠️ Troubleshooting</h4>
+                    <ul style="margin: 10px 0; color: rgba(255,255,255,0.8); font-size: 13px;">
+                        <li><strong>Port already in use:</strong> Kill existing process with <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">npx kill-port 3000</code></li>
+                        <li><strong>Module not found:</strong> Run <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">pnpm install</code> first</li>
+                        <li><strong>Permission denied:</strong> Try <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">sudo pnpm run dev</code> (Use with caution)</li>
+                        <li><strong>Node.js not found:</strong> Install Node.js from <a href="https://nodejs.org" target="_blank" rel="noopener" style="color: #87CEEB;">nodejs.org</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <div class="grid">
-        <div class="card highlight">
-          <h3>🤖 Multi-Agent Chat</h3>
-          <p>
-            New integrated multi-agent chat system with Firebase backend, real-time messaging, and
-            agent management.
-          </p>
-          <a href="/src/components/MultiAgentChat.tsx" target="_blank">View Component</a>
-          <a href="/src/pages/MultiAgentChat.tsx" target="_blank">Chat Page</a>
+        
+        <div class="grid">
+            <div class="card highlight">
+                <h3>🤖 Multi-Agent Chat</h3>
+                <p>New integrated multi-agent chat system with Firebase backend, real-time messaging, and agent management.</p>
+                <a href="/src/components/MultiAgentChat.tsx" target="_blank">View Component</a>
+                <a href="/src/pages/MultiAgentChat.tsx" target="_blank">Chat Page</a>
+            </div>
+            
+            <div class="card">
+                <h3>🏠 Main Pages</h3>
+                <p>Core application pages and entry points.</p>
+                <a href="/src/pages/Home.tsx" target="_blank">Home</a>
+                <a href="/src/pages/Dashboard.tsx" target="_blank">Dashboard</a>
+                <a href="/src/pages/Landing.tsx" target="_blank">Landing</a>
+            </div>
+            
+            <div class="card">
+                <h3>🔐 Authentication</h3>
+                <p>User authentication and authorization flows.</p>
+                <a href="/src/pages/auth/Login.tsx" target="_blank">Login</a>
+                <a href="/src/pages/auth/Register.tsx" target="_blank">Register</a>
+                <a href="/src/pages/auth/SSO.tsx" target="_blank">SSO</a>
+            </div>
+            
+            <div class="card">
+                <h3>🤖 AI & Agents</h3>
+                <p>AI agent management and interaction systems.</p>
+                <a href="/src/pages/Agents/index.tsx" target="_blank">Agents</a>
+                <a href="/src/pages/AIAgentPortal/index.tsx" target="_blank">AI Portal</a>
+                <a href="/src/pages/Chat.tsx" target="_blank">Chat</a>
+            </div>
+            
+            <div class="card">
+                <h3>⚙️ Workflows</h3>
+                <p>Workflow management and automation systems.</p>
+                <a href="/src/pages/Workflows.tsx" target="_blank">Workflows</a>
+                <a href="/src/pages/WorkflowsEnhanced.tsx" target="_blank">Enhanced</a>
+                <a href="/src/components/workflow/WorkflowNode.tsx" target="_blank">Nodes</a>
+            </div>
+            
+            <div class="card">
+                <h3>👥 Workspace</h3>
+                <p>Collaborative workspace and team features.</p>
+                <a href="/src/pages/workspace/Overview.tsx" target="_blank">Overview</a>
+                <a href="/src/pages/workspace/Settings.tsx" target="_blank">Settings</a>
+                <a href="/src/pages/WorkspaceChat/index.tsx" target="_blank">Chat</a>
+            </div>
+            
+            <div class="card">
+                <h3>🛠️ Admin</h3>
+                <p>Administrative controls and system management.</p>
+                <a href="/src/pages/Admin/index.tsx" target="_blank">Admin Panel</a>
+                <a href="/src/pages/Admin/FeatureFlags/index.tsx" target="_blank">Feature Flags</a>
+                <a href="/src/pages/Admin/Settings.tsx" target="_blank">Settings</a>
+            </div>
+            
+            <div class="card">
+                <h3>📊 Analytics & Demo</h3>
+                <p>Analytics, demonstrations, and showcases.</p>
+                <a href="/src/pages/Analytics.tsx" target="_blank">Analytics</a>
+                <a href="/src/pages/ComponentsShowcase.tsx" target="_blank">Showcase</a>
+                <a href="/src/pages/graph-demo.tsx" target="_blank">Graph Demo</a>
+                <a href="/src/pages/TimelineDemo.tsx" target="_blank">Timeline</a>
+            </div>
+            
+            <div class="card">
+                <h3>🧪 Testing & Debug</h3>
+                <p>Testing utilities and debugging tools.</p>
+                <a href="/src/pages/Test.tsx" target="_blank">Test Page</a>
+                <a href="/src/pages/SuperSimpleTest.tsx" target="_blank">Simple Test</a>
+                <a href="/src/pages/Debug.tsx" target="_blank">Debug</a>
+            </div>
         </div>
-
-        <div class="card">
-          <h3>🏠 Main Pages</h3>
-          <p>Core application pages and entry points.</p>
-          <a href="/src/pages/Home.tsx" target="_blank">Home</a>
-          <a href="/src/pages/Dashboard.tsx" target="_blank">Dashboard</a>
-          <a href="/src/pages/Landing.tsx" target="_blank">Landing</a>
+        
+        <div class="footer">
+            <h4>🌟 Server Status</h4>
+            <p>Frontend server is running on <strong>http://localhost:3000</strong></p>
+            <p>Multi-Agent Chat integration completed successfully!</p>
+            <small>Use the links above to navigate to different parts of the application.</small>
         </div>
-
-        <div class="card">
-          <h3>🔐 Authentication</h3>
-          <p>User authentication and authorization flows.</p>
-          <a href="/src/pages/auth/Login.tsx" target="_blank">Login</a>
-          <a href="/src/pages/auth/Register.tsx" target="_blank">Register</a>
-          <a href="/src/pages/auth/SSO.tsx" target="_blank">SSO</a>
-        </div>
-
-        <div class="card">
-          <h3>🤖 AI & Agents</h3>
-          <p>AI agent management and interaction systems.</p>
-          <a href="/src/pages/Agents/index.tsx" target="_blank">Agents</a>
-          <a href="/src/pages/AIAgentPortal/index.tsx" target="_blank">AI Portal</a>
-          <a href="/src/pages/Chat.tsx" target="_blank">Chat</a>
-        </div>
-
-        <div class="card">
-          <h3>⚙️ Workflows</h3>
-          <p>Workflow management and automation systems.</p>
-          <a href="/src/pages/Workflows.tsx" target="_blank">Workflows</a>
-          <a href="/src/pages/WorkflowsEnhanced.tsx" target="_blank">Enhanced</a>
-          <a href="/src/components/workflow/WorkflowNode.tsx" target="_blank">Nodes</a>
-        </div>
-
-        <div class="card">
-          <h3>👥 Workspace</h3>
-          <p>Collaborative workspace and team features.</p>
-          <a href="/src/pages/workspace/Overview.tsx" target="_blank">Overview</a>
-          <a href="/src/pages/workspace/Settings.tsx" target="_blank">Settings</a>
-          <a href="/src/pages/WorkspaceChat/index.tsx" target="_blank">Chat</a>
-        </div>
-
-        <div class="card">
-          <h3>🛠️ Admin</h3>
-          <p>Administrative controls and system management.</p>
-          <a href="/src/pages/Admin/index.tsx" target="_blank">Admin Panel</a>
-          <a href="/src/pages/Admin/FeatureFlags/index.tsx" target="_blank">Feature Flags</a>
-          <a href="/src/pages/Admin/Settings.tsx" target="_blank">Settings</a>
-        </div>
-
-        <div class="card">
-          <h3>📊 Analytics & Demo</h3>
-          <p>Analytics, demonstrations, and showcases.</p>
-          <a href="/src/pages/Analytics.tsx" target="_blank">Analytics</a>
-          <a href="/src/pages/ComponentsShowcase.tsx" target="_blank">Showcase</a>
-          <a href="/src/pages/graph-demo.tsx" target="_blank">Graph Demo</a>
-          <a href="/src/pages/TimelineDemo.tsx" target="_blank">Timeline</a>
-        </div>
-
-        <div class="card">
-          <h3>🧪 Testing & Debug</h3>
-          <p>Testing utilities and debugging tools.</p>
-          <a href="/src/pages/Test.tsx" target="_blank">Test Page</a>
-          <a href="/src/pages/SuperSimpleTest.tsx" target="_blank">Simple Test</a>
-          <a href="/src/pages/Debug.tsx" target="_blank">Debug</a>
-        </div>
-      </div>
-
-      <div class="footer">
-        <h4>🌟 Server Status</h4>
-        <p>Frontend server is running on <strong>http://localhost:3000</strong></p>
-        <p>Multi-Agent Chat integration completed successfully!</p>
-        <small>Use the links above to navigate to different parts of the application.</small>
-      </div>
     </div>
-
+    
     <script>
-      let checkInterval;
-
-      // Toggle collapsible server controls
-      function toggleServerControls() {
-        const content = document.getElementById('serverControlContent');
-        const arrow = document.getElementById('collapseArrow');
-
-        if (content.classList.contains('open')) {
-          content.classList.remove('open');
-          arrow.classList.remove('open');
-          arrow.textContent = '▼';
-          // Stop checking when collapsed
-          if (checkInterval) {
-            clearInterval(checkInterval);
-            checkInterval = null;
-          }
-        } else {
-          content.classList.add('open');
-          arrow.classList.add('open');
-          arrow.textContent = '▲';
-          // Start checking when expanded
-          checkServerStatus();
-          checkInterval = setInterval(checkServerStatus, 5000);
+        let checkInterval;
+        
+        // Toggle collapsible server controls
+        function toggleServerControls() {
+            const content = document.getElementById('serverControlContent');
+            const arrow = document.getElementById('collapseArrow');
+            
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                arrow.classList.remove('open');
+                arrow.textContent = '▼';
+                // Stop checking when collapsed
+                if (checkInterval) {
+                    clearInterval(checkInterval);
+                    checkInterval = null;
+                }
+            } else {
+                content.classList.add('open');
+                arrow.classList.add('open');
+                arrow.textContent = '▲';
+                // Start checking when expanded
+                checkServerStatus();
+                checkInterval = setInterval(checkServerStatus, 5000);
+            }
         }
-      }
-
-      // Check server status
-      async function checkServerStatus() {
-        const indicator = document.getElementById('statusIndicator');
-        const statusText = document.getElementById('statusText');
-        const openBtn = document.getElementById('openAppBtn');
-        const quickLinks = document.getElementById('quickLinks');
-
-        try {
-          statusText.textContent = 'Checking...';
-          const response = await fetch('http://localhost:3000', {
-            method: 'GET',
-            mode: 'no-cors',
-          });
-
-          indicator.className = 'status-indicator status-running';
-          statusText.textContent = 'Running ✅';
-          openBtn.disabled = false;
-          quickLinks.style.display = 'grid';
-        } catch (error) {
-          indicator.className = 'status-indicator status-stopped';
-          statusText.textContent = 'Stopped ❌';
-          openBtn.disabled = true;
-          quickLinks.style.display = 'none';
+        
+        // Check server status
+        async function checkServerStatus() {
+            const indicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const openBtn = document.getElementById('openAppBtn');
+            const quickLinks = document.getElementById('quickLinks');
+            
+            try {
+                statusText.textContent = 'Checking...';
+                const response = await fetch('http://localhost:3000', { 
+                    method: 'GET',
+                    mode: 'no-cors'
+                });
+                
+                indicator.className = 'status-indicator status-running';
+                statusText.textContent = 'Running ✅';
+                openBtn.disabled = false;
+                quickLinks.style.display = 'grid';
+                
+            } catch (error) {
+                indicator.className = 'status-indicator status-stopped';
+                statusText.textContent = 'Stopped ❌';
+                openBtn.disabled = true;
+                quickLinks.style.display = 'none';
+            }
         }
-      }
-
-      // Open app in new tab
-      function openApp() {
-        window.open('http://localhost:3000', '_blank');
-      }
-
-      // Copy terminal command to clipboard
-      function copyCommand() {
-        const command = 'cd "$(pwd)" && pnpm run dev';
-        navigator.clipboard
-          .writeText(command)
-          .then(() => {
-            alert('Command copied to clipboard! Paste it in Terminal.');
-          })
-          .catch(() => {
-            alert('Copy failed. Please manually copy the command from the box above.');
-          });
-      }
-
-      // Create start script
-      function createStartScript() {
-        const scriptContent = `#!/bin/bash
+        
+        // Open app in new tab
+        function openApp() {
+            window.open('http://localhost:3000', '_blank');
+        }
+        
+        // Copy terminal command to clipboard
+        function copyCommand() {
+            const command = 'cd "$(pwd)" && pnpm run dev';
+            navigator.clipboard.writeText(command).then(() => {
+                alert('Command copied to clipboard! Paste it in Terminal.');
+            }).catch(() => {
+                alert('Copy failed. Please manually copy the command from the box above.');
+            });
+        }
+        
+        // Create start script
+        function createStartScript() {
+            const scriptContent = `#!/bin/bash
 cd "$(pwd)"
 pnpm run dev
 `;
-
-        const blob = new Blob([scriptContent], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'start-vite-server.command';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        alert('Script downloaded! Make it executable with: chmod +x start-vite-server.command');
-      }
-
-      // Clean up interval when page unloads
-      window.addEventListener('beforeunload', () => {
-        if (checkInterval) {
-          clearInterval(checkInterval);
+            
+            const blob = new Blob([scriptContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'start-vite-server.command';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('Script downloaded! Make it executable with: chmod +x start-vite-server.command');
         }
-      });
+        
+        // Clean up interval when page unloads
+        window.addEventListener('beforeunload', () => {
+            if (checkInterval) {
+                clearInterval(checkInterval);
+            }
+        });
     </script>
-  </body>
+</body>
 </html>

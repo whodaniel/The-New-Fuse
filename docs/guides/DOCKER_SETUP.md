@@ -1,14 +1,11 @@
 # Docker Setup and Configuration
 
 ## Overview
-
-This document details the Docker configuration and setup for both development
-and production environments.
+This document details the Docker configuration and setup for both development and production environments.
 
 ## Development Environment
 
 ### Dockerfile.dev
-
 ```dockerfile
 FROM node:20-bullseye
 
@@ -20,7 +17,6 @@ FROM node:20-bullseye
 ```
 
 ### Development Workflow
-
 1. Start all services:
    ```bash
    docker-compose up --build
@@ -34,11 +30,9 @@ FROM node:20-bullseye
 ## Production Environment
 
 ### Dockerfile
-
 Multi-stage build process:
 
 #### Stage 1: Builder
-
 ```dockerfile
 FROM node:20-bullseye AS builder
 - Full build environment
@@ -48,7 +42,6 @@ FROM node:20-bullseye AS builder
 ```
 
 #### Stage 2: Production
-
 ```dockerfile
 FROM node:20-bullseye-slim
 - Minimal runtime environment
@@ -59,33 +52,30 @@ FROM node:20-bullseye-slim
 ## Docker Compose Configuration
 
 ### Services
-
 1. Node.js Application
-
    ```yaml
    app:
      build:
        context: .
-       dockerfile: Dockerfile.dev # or Dockerfile for production
+       dockerfile: Dockerfile.dev  # or Dockerfile for production
      ports:
-       - '3000:3000'
-       - '8000:8000'
-     volumes: # Development only
+       - "3000:3000"
+       - "8000:8000"
+     volumes:  # Development only
        - .:/app
        - /app/node_modules
    ```
 
 2. PostgreSQL Database
-
    ```yaml
    postgres:
      image: postgres:14
      ports:
-       - '5433:5432'
+       - "5433:5432"
      volumes:
        - postgres_data:/var/lib/postgresql/data
      healthcheck:
-       test: ['CMD-SHELL', 'pg_isready -U postgres']
+       test: ["CMD-SHELL", "pg_isready -U postgres"]
    ```
 
 3. Redis Cache
@@ -93,22 +83,20 @@ FROM node:20-bullseye-slim
    redis:
      image: redis:7
      ports:
-       - '6379:6379'
+       - "6379:6379"
      volumes:
        - redis_data:/data
      healthcheck:
-       test: ['CMD', 'redis-cli', 'ping']
+       test: ["CMD", "redis-cli", "ping"]
    ```
 
 ## Volume Management
-
 - `postgres_data`: Persistent PostgreSQL data
 - `redis_data`: Persistent Redis data
 - Source code mount (development only)
 - Node modules volume (development only)
 
 ## Health Checks
-
 - PostgreSQL: Checks database availability
 - Redis: Verifies cache service
 - Ensures proper service startup order
@@ -116,7 +104,6 @@ FROM node:20-bullseye-slim
 ## Common Docker Commands
 
 ### Development
-
 ```bash
 # Start development environment
 docker-compose up --build
@@ -132,7 +119,6 @@ docker-compose down
 ```
 
 ### Container Management
-
 ```bash
 # List containers
 docker ps
@@ -145,7 +131,6 @@ docker logs fuse-app -f
 ```
 
 ### Data Management
-
 ```bash
 # Remove volumes
 docker-compose down -v

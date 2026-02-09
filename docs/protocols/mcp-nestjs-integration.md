@@ -1,13 +1,10 @@
 # MCP Integration with NestJS
 
-This document explains how the Model Context Protocol (MCP) is integrated with
-NestJS in The New Fuse.
+This document explains how the Model Context Protocol (MCP) is integrated with NestJS in The New Fuse.
 
 ## Architecture Overview
 
-The MCP integration with NestJS follows a broker/director pattern, with The New
-Fuse serving as the primary MCP server while also being able to act as an MCP
-client to other MCP servers.
+The MCP integration with NestJS follows a broker/director pattern, with The New Fuse serving as the primary MCP server while also being able to act as an MCP client to other MCP servers.
 
 ```mermaid
 graph TD
@@ -29,8 +26,7 @@ graph TD
 
 ### The New Fuse as Primary MCP Server
 
-The New Fuse platform serves as the primary MCP server in this architecture.
-This means:
+The New Fuse platform serves as the primary MCP server in this architecture. This means:
 
 1. It provides a centralized hub (MCPBrokerService) for all MCP communication
 2. It hosts multiple specialized MCP servers (Agent, Chat, Workflow, Fuse)
@@ -45,8 +41,7 @@ All agents within The New Fuse can act as MCP clients. This includes:
 2. Sub-agents that specialize in specific tasks
 3. External agents that connect through Redis
 
-Agents can consume MCP capabilities from any MCP server, whether internal to The
-New Fuse or external.
+Agents can consume MCP capabilities from any MCP server, whether internal to The New Fuse or external.
 
 ## Components
 
@@ -61,8 +56,7 @@ The `MCPBrokerService` is the central entry point for all MCP directives. It:
 
 ### Director Agent Service
 
-The `DirectorAgentService` is the main agent that coordinates all MCP
-operations. It:
+The `DirectorAgentService` is the main agent that coordinates all MCP operations. It:
 
 1. Manages tasks and their lifecycle
 2. Assigns tasks to appropriate agents
@@ -111,19 +105,17 @@ The following Redis channels are used for communication:
 ```typescript
 // Using the MCP Broker Service
 const result = await mcpBroker.executeDirective(
-  'agent', // Server name
-  'registerAgent', // Action
-  {
-    // Parameters
+  'agent',           // Server name
+  'registerAgent',   // Action
+  {                  // Parameters
     name: 'my-agent',
-    capabilities: ['code', 'search'],
+    capabilities: ['code', 'search']
   },
-  {
-    // Options
+  {                  // Options
     sender: 'api',
     metadata: {
-      priority: 'high',
-    },
+      priority: 'high'
+    }
   }
 );
 ```
@@ -137,13 +129,13 @@ const task = await directorAgent.createTask(
   'Register a new agent',
   {
     name: 'my-agent',
-    capabilities: ['code', 'search'],
+    capabilities: ['code', 'search']
   },
   {
     priority: 'high',
     metadata: {
-      requestedBy: 'user123',
-    },
+      requestedBy: 'user123'
+    }
   }
 );
 ```
@@ -241,8 +233,7 @@ constructor(
 
 ### Primary MCP Agent as Client to Other MCP Servers
 
-The primary MCP agent (Director Agent) in The New Fuse can act as an MCP client
-to other MCP servers:
+The primary MCP agent (Director Agent) in The New Fuse can act as an MCP client to other MCP servers:
 
 1. It can issue directives to any internal MCP server through the broker
 2. It can communicate with external MCP servers through Redis
@@ -256,22 +247,17 @@ This dual role (both server and client) allows The New Fuse to:
 
 ### Inheritance of Relationships by Sub-Agents
 
-All sub-agent classifications within The New Fuse inherit the MCP client-server
-relationships:
+All sub-agent classifications within The New Fuse inherit the MCP client-server relationships:
 
 1. Any sub-agent can access any MCP server through the broker
-2. The hierarchical structure allows capabilities to be inherited down the agent
-   tree
-3. Sub-agents benefit from the authentication and routing provided by the parent
-   agents
+2. The hierarchical structure allows capabilities to be inherited down the agent tree
+3. Sub-agents benefit from the authentication and routing provided by the parent agents
 
 This inheritance model creates a powerful ecosystem where:
 
 - New agents can be added without modifying the MCP infrastructure
-- Specialized agents can focus on their core capabilities while leveraging
-  shared MCP access
-- The platform can evolve by adding new MCP servers that are immediately
-  available to all agents
+- Specialized agents can focus on their core capabilities while leveraging shared MCP access
+- The platform can evolve by adding new MCP servers that are immediately available to all agents
 
 ## Hub and Spoke Model with Inheritance
 
@@ -291,43 +277,28 @@ In this model:
 
 1. **MCPBrokerService** is the central hub that manages all MCP communication
 2. **DirectorAgentService** is the primary agent that coordinates tasks
-3. **MCP\*Servers** (AgentServer, ChatServer, etc.) provide specific
-   capabilities
-4. **Sub-Agents** inherit the ability to communicate with any MCP server through
-   the broker
+3. **MCP*Servers** (AgentServer, ChatServer, etc.) provide specific capabilities
+4. **Sub-Agents** inherit the ability to communicate with any MCP server through the broker
 
-The Redis PubSub layer allows external MCP servers to participate in this
-ecosystem, and The New Fuse can act as both an MCP server (providing
-capabilities to external clients) and an MCP client (consuming capabilities from
-external servers).
+The Redis PubSub layer allows external MCP servers to participate in this ecosystem, and The New Fuse can act as both an MCP server (providing capabilities to external clients) and an MCP client (consuming capabilities from external servers).
 
 ## Practical Example: Cross-Server Communication
 
-Here's a practical example of how this architecture enables cross-server
-communication:
+Here's a practical example of how this architecture enables cross-server communication:
 
 1. A sub-agent (e.g., a code analysis agent) needs to perform a file operation
 2. The sub-agent sends a request to the Director
 3. The Director creates a task and sends it to the MCPBroker
 4. The MCPBroker determines that this task requires the filesystem MCP server
-5. The MCPBroker sends the request to the filesystem server (which could be
-   internal or external)
-6. The filesystem server performs the operation and sends the result back
-   through Redis
+5. The MCPBroker sends the request to the filesystem server (which could be internal or external)
+6. The filesystem server performs the operation and sends the result back through Redis
 7. The MCPBroker receives the result and forwards it to the Director
 8. The Director updates the task status and notifies the sub-agent
 
-This flow works the same way regardless of whether the MCP server is internal to
-The New Fuse or an external server, and it works for any type of agent within
-the platform.
+This flow works the same way regardless of whether the MCP server is internal to The New Fuse or an external server, and it works for any type of agent within the platform.
 
 ## Conclusion
 
-This integration provides a robust and scalable architecture for MCP in The New
-Fuse. The broker/director pattern ensures a single point of entry for all MCP
-directives while allowing for distributed execution and coordination of tasks.
+This integration provides a robust and scalable architecture for MCP in The New Fuse. The broker/director pattern ensures a single point of entry for all MCP directives while allowing for distributed execution and coordination of tasks.
 
-The New Fuse serves as the primary MCP server in this architecture, but it can
-also act as an MCP client to other MCP servers. This dual role, combined with
-the inheritance of relationships by sub-agents, creates a powerful ecosystem for
-AI agent coordination and communication.
+The New Fuse serves as the primary MCP server in this architecture, but it can also act as an MCP client to other MCP servers. This dual role, combined with the inheritance of relationships by sub-agents, creates a powerful ecosystem for AI agent coordination and communication.

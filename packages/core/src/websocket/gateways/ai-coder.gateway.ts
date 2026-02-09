@@ -30,7 +30,7 @@ export class AiCoderGateway implements OnGatewayConnection, OnGatewayDisconnect 
       await this.webSocketService.handleConnection(client.id, {
         userAgent: client.handshake.headers['user-agent'],
         ip: client.handshake.address,
-        namespace: 'ai-coder',
+        namespace: 'ai-coder'
       });
       this.logger.log(`AI Coder client connected: ${client.id}`);
       client.emit('connection-established', { clientId: client.id });
@@ -56,13 +56,13 @@ export class AiCoderGateway implements OnGatewayConnection, OnGatewayDisconnect 
   ): Promise<void> {
     try {
       await this.webSocketService.handleMessage(client.id, 'code-generation-request', data);
-
+      
       // Mock code generation response
       const response = {
         requestId: data.requestId,
         code: '// Generated code placeholder',
         language: data.language || 'typescript',
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
 
       await this.webSocketService.sendMessage(client.id, 'code-generation-response', response);
@@ -81,16 +81,16 @@ export class AiCoderGateway implements OnGatewayConnection, OnGatewayDisconnect 
   ): Promise<void> {
     try {
       await this.webSocketService.handleMessage(client.id, 'code-analysis-request', data);
-
+      
       // Mock code analysis response
       const response = {
         requestId: data.requestId,
         analysis: {
           complexity: 3,
           issues: [],
-          suggestions: ['Consider adding error handling'],
+          suggestions: ['Consider adding error handling']
         },
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
 
       await this.webSocketService.sendMessage(client.id, 'code-analysis-response', response);
@@ -109,15 +109,15 @@ export class AiCoderGateway implements OnGatewayConnection, OnGatewayDisconnect 
   ): Promise<void> {
     try {
       await this.webSocketService.handleMessage(client.id, 'code-completion-request', data);
-
+      
       // Mock code completion response
       const response = {
         requestId: data.requestId,
         completions: [
           { text: 'console.log(', insertText: 'console.log(' },
-          { text: 'const ', insertText: 'const ' },
+          { text: 'const ', insertText: 'const ' }
         ],
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
 
       await this.webSocketService.sendMessage(client.id, 'code-completion-response', response);

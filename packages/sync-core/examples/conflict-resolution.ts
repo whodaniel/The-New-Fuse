@@ -6,8 +6,8 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { ConflictManager } from '../src/services/ConflictManager';
 import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
+import { ConflictManager } from '../src/services/ConflictManager';
 
 interface Document {
   id: string;
@@ -22,7 +22,7 @@ interface Document {
 export class DocumentSyncService {
   constructor(
     private readonly syncOrchestrator: SyncOrchestrator,
-    private readonly conflictManager: ConflictManager
+    private readonly conflictManager: ConflictManager,
   ) {
     this.registerConflictResolvers();
   }
@@ -76,16 +76,27 @@ export class DocumentSyncService {
 
     try {
       // Try to sync with version check
-      await this.syncOrchestrator.syncTenantData(tenantId, 'document', updatedDoc, {
-        expectedVersion: currentDoc.version, // Conflict detection
-      });
+      await this.syncOrchestrator.syncTenantData(
+        tenantId,
+        'document',
+        updatedDoc,
+        {
+          expectedVersion: currentDoc.version, // Conflict detection
+        }
+      );
 
       console.log(`Document ${documentId} updated successfully`);
       return updatedDoc;
+
     } catch (error) {
       if (error.code === 'VERSION_CONFLICT') {
         // Handle conflict
-        return await this.handleConflict(documentId, currentDoc, updatedDoc, tenantId);
+        return await this.handleConflict(
+          documentId,
+          currentDoc,
+          updatedDoc,
+          tenantId
+        );
       }
       throw error;
     }
@@ -110,17 +121,26 @@ export class DocumentSyncService {
     switch (conflictType) {
       case 'SIMPLE_FIELD_CHANGE':
         // Use latest wins for simple changes
-        resolution = await this.resolveByLatestTimestamp(localVersion, remoteVersion);
+        resolution = await this.resolveByLatestTimestamp(
+          localVersion,
+          remoteVersion
+        );
         break;
 
       case 'CONTENT_MODIFICATION':
         // Use smart merge for content changes
-        resolution = await this.smartMergeDocuments(localVersion, remoteVersion);
+        resolution = await this.smartMergeDocuments(
+          localVersion,
+          remoteVersion
+        );
         break;
 
       case 'COMPLEX_CONFLICT':
         // Queue for manual review
-        resolution = await this.queueForManualReview(localVersion, remoteVersion);
+        resolution = await this.queueForManualReview(
+          localVersion,
+          remoteVersion
+        );
         break;
 
       default:
@@ -140,7 +160,11 @@ export class DocumentSyncService {
     });
 
     // Sync resolved version
-    await this.syncOrchestrator.syncTenantData(tenantId, 'document', resolution);
+    await this.syncOrchestrator.syncTenantData(
+      tenantId,
+      'document',
+      resolution
+    );
 
     return resolution;
   }
@@ -166,7 +190,10 @@ export class DocumentSyncService {
   /**
    * Strategy 1: Resolve by latest timestamp
    */
-  private async resolveByLatestTimestamp(local: Document, remote: Document): Promise<Document> {
+  private async resolveByLatestTimestamp(
+    local: Document,
+    remote: Document
+  ): Promise<Document> {
     console.log('Resolving conflict using latest timestamp');
 
     return local.lastModifiedAt > remote.lastModifiedAt ? local : remote;
@@ -175,7 +202,10 @@ export class DocumentSyncService {
   /**
    * Strategy 2: Smart merge documents
    */
-  private async smartMergeDocuments(local: Document, remote: Document): Promise<Document> {
+  private async smartMergeDocuments(
+    local: Document,
+    remote: Document
+  ): Promise<Document> {
     console.log('Resolving conflict using smart merge');
 
     // Merge non-conflicting fields
@@ -202,7 +232,10 @@ export class DocumentSyncService {
   /**
    * Strategy 3: Queue for manual review
    */
-  private async queueForManualReview(local: Document, remote: Document): Promise<Document> {
+  private async queueForManualReview(
+    local: Document,
+    remote: Document
+  ): Promise<Document> {
     console.log('Complex conflict - queuing for manual review');
 
     // Create conflict record
@@ -264,7 +297,7 @@ export class DocumentSyncService {
     const remoteWords = new Set(remote.split(/\s+/));
 
     let overlap = 0;
-    localWords.forEach((word) => {
+    localWords.forEach(word => {
       if (remoteWords.has(word)) overlap++;
     });
 
@@ -275,7 +308,11 @@ export class DocumentSyncService {
   /**
    * Notify admins of conflict requiring review
    */
-  private async notifyAdmins(documentId: string, local: Document, remote: Document) {
+  private async notifyAdmins(
+    documentId: string,
+    local: Document,
+    remote: Document
+  ) {
     // Send notification through notification service
     console.log(`Notifying admins of conflict for document ${documentId}`);
 

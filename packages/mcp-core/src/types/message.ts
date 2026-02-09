@@ -4,17 +4,17 @@
 
 // Re-export message interfaces from the interfaces module
 export type {
-  JSONRPCError,
   JSONRPCMessage,
-  JSONRPCMessage_Union,
-  JSONRPCNotification,
   JSONRPCRequest,
   JSONRPCResponse,
-  MCPError,
-  MCPMessage,
-  MCPNotification,
+  JSONRPCNotification,
+  JSONRPCError,
   MCPRequest,
   MCPResponse,
+  MCPNotification,
+  MCPError,
+  MCPMessage,
+  JSONRPCMessage_Union
 } from '../interfaces/IMCPMessage';
 
 /**
@@ -24,7 +24,7 @@ export enum MessagePriority {
   LOW = 'low',
   NORMAL = 'normal',
   HIGH = 'high',
-  CRITICAL = 'critical',
+  CRITICAL = 'critical'
 }
 
 /**
@@ -34,7 +34,7 @@ export enum MessageType {
   REQUEST = 'request',
   RESPONSE = 'response',
   NOTIFICATION = 'notification',
-  ERROR = 'error',
+  ERROR = 'error'
 }
 
 /**
@@ -44,7 +44,7 @@ export enum NotificationType {
   EVENT = 'event',
   STATUS = 'status',
   ALERT = 'alert',
-  HEARTBEAT = 'heartbeat',
+  HEARTBEAT = 'heartbeat'
 }
 
 /**

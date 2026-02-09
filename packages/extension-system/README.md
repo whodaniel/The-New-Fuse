@@ -1,21 +1,15 @@
 # Unified Extension System
 
-The Unified Extension System consolidates and standardizes all extension,
-plugin, and module functionality across The New Fuse Framework. It provides a
-secure, scalable, and comprehensive platform for extending the framework's
-capabilities while maintaining consistency and reliability.
+The Unified Extension System consolidates and standardizes all extension, plugin, and module functionality across The New Fuse Framework. It provides a secure, scalable, and comprehensive platform for extending the framework's capabilities while maintaining consistency and reliability.
 
 ## Features
 
 ### Core Components
 
 - **🔌 Extension Manager**: Central management system for all extensions
-- **📥 Extension Loader**: Dynamic loading with security sandboxing and
-  validation
-- **📚 Extension Registry**: Persistent registry with search, reviews, and
-  statistics
-- **✅ Extension Validator**: Comprehensive validation including security
-  scanning
+- **📥 Extension Loader**: Dynamic loading with security sandboxing and validation
+- **📚 Extension Registry**: Persistent registry with search, reviews, and statistics
+- **✅ Extension Validator**: Comprehensive validation including security scanning
 - **🔒 Security System**: Permission model, sandboxing, and threat detection
 
 ### Extension Types Supported
@@ -76,10 +70,7 @@ console.log(`${extensions.length} extensions loaded`);
 ### Advanced Configuration
 
 ```typescript
-import {
-  ExtensionSystemFactory,
-  ExtensionSystemConfig,
-} from '@the-new-fuse/extension-system';
+import { ExtensionSystemFactory, ExtensionSystemConfig } from '@the-new-fuse/extension-system';
 
 const config: ExtensionSystemConfig = {
   extensionDirectory: './extensions',
@@ -91,14 +82,14 @@ const config: ExtensionSystemConfig = {
   maxLoadTime: 30000,
   maxMemoryUsage: 128 * 1024 * 1024,
   allowDevelopmentExtensions: process.env.NODE_ENV === 'development',
-  trustedSources: ['@my-org/', 'https://my-registry.com/'],
+  trustedSources: ['@my-org/', 'https://my-registry.com/']
 };
 
 const extensionManager = ExtensionSystemFactory.create(
   config,
   logger,
-  agentRegistry, // Optional: integrate with agents
-  workflowEngine // Optional: integrate with workflows
+  agentRegistry,  // Optional: integrate with agents
+  workflowEngine  // Optional: integrate with workflows
 );
 ```
 
@@ -138,11 +129,7 @@ Every extension needs an `extension.json` manifest file:
 
 ```typescript
 // index.ts
-import {
-  WorkflowNode,
-  ExtensionLifecycle,
-  ExtensionContext,
-} from '@the-new-fuse/extension-system/types';
+import { WorkflowNode, ExtensionLifecycle, ExtensionContext } from '@the-new-fuse/extension-system/types';
 
 export class MyCustomNode implements ExtensionLifecycle {
   private config: any;
@@ -157,7 +144,7 @@ export class MyCustomNode implements ExtensionLifecycle {
     return {
       processed: true,
       timestamp: new Date(),
-      input,
+      input
     };
   }
 
@@ -173,10 +160,7 @@ export default MyCustomNode;
 
 ```typescript
 // capability.ts
-import {
-  AgentCapabilityExtension,
-  ExtensionLifecycle,
-} from '@the-new-fuse/extension-system/types';
+import { AgentCapabilityExtension, ExtensionLifecycle } from '@the-new-fuse/extension-system/types';
 
 export class DataAnalysisCapability implements ExtensionLifecycle {
   private agent: any;
@@ -195,7 +179,7 @@ export class DataAnalysisCapability implements ExtensionLifecycle {
     return {
       mean: data.reduce((a, b) => a + b, 0) / data.length,
       count: data.length,
-      analysis: 'completed',
+      analysis: 'completed'
     };
   }
 }
@@ -213,7 +197,7 @@ import { ExtensionLifecycle } from '@the-new-fuse/extension-system/types';
 @Module({
   providers: [MyService],
   controllers: [MyController],
-  exports: [MyService],
+  exports: [MyService]
 })
 export class MyExtensionModule implements ExtensionLifecycle {
   async onLoad(context: ExtensionContext): Promise<void> {
@@ -232,7 +216,7 @@ export default MyExtensionModule;
 // Load extension
 const result = await extensionManager.loadExtension('./my-extension', {
   skipValidation: false,
-  configOverrides: { enabled: true },
+  configOverrides: { enabled: true }
 });
 
 // Activate extension
@@ -241,7 +225,7 @@ await extensionManager.activateExtension('my-extension@1.0.0');
 // Configure extension
 await extensionManager.setExtensionConfig('my-extension@1.0.0', {
   apiKey: 'secret',
-  timeout: 5000,
+  timeout: 5000
 });
 
 // Unload extension
@@ -252,8 +236,7 @@ await extensionManager.unloadExtension('my-extension@1.0.0');
 
 ```typescript
 // Search by type
-const workflowExtensions =
-  extensionManager.getExtensionsByType('workflow_node');
+const workflowExtensions = extensionManager.getExtensionsByType('workflow_node');
 
 // Search by category
 const agentExtensions = extensionManager.getExtensionsByCategory('agent');
@@ -265,7 +248,7 @@ const searchResult = await registry.searchExtensions({
   minRating: 4.0,
   limit: 10,
   sortBy: 'rating',
-  sortOrder: 'desc',
+  sortOrder: 'desc'
 });
 ```
 
@@ -307,7 +290,6 @@ Extensions must declare required permissions:
 ```
 
 Available permissions:
-
 - `filesystem_read` / `filesystem_write`
 - `network_access`
 - `database_access`
@@ -329,8 +311,8 @@ const sandbox = {
     cpu: 80, // 80% CPU limit
     time: 30000, // 30 seconds
     network: true,
-    filesystem: false,
-  },
+    filesystem: false
+  }
 };
 ```
 
@@ -339,10 +321,7 @@ const sandbox = {
 The validator performs comprehensive security scans:
 
 ```typescript
-const securityResult = await validator.performSecurityScan(
-  manifest,
-  extensionPath
-);
+const securityResult = await validator.performSecurityScan(manifest, extensionPath);
 if (!securityResult.safe) {
   console.warn('Security issues found:', securityResult.issues);
 }
@@ -358,7 +337,11 @@ import { ExtensionSystemIntegrator } from '@the-new-fuse/extension-system';
 const integrator = new ExtensionSystemIntegrator(extensionManager, logger);
 
 // Migrate existing modules
-await integrator.migrateNestJSModules([MyModule1, MyModule2, MyModule3]);
+await integrator.migrateNestJSModules([
+  MyModule1,
+  MyModule2,
+  MyModule3
+]);
 ```
 
 ### From Custom Plugin Systems
@@ -391,8 +374,7 @@ for (const [filename, content] of Object.entries(template)) {
 
 ```typescript
 // Validate extension structure
-const validation =
-  ExtensionDevelopmentUtils.validateExtensionStructure('./my-extension');
+const validation = ExtensionDevelopmentUtils.validateExtensionStructure('./my-extension');
 if (!validation.valid) {
   console.error('Validation issues:', validation.issues);
 }
@@ -431,15 +413,9 @@ if (!validation.valid) {
 ```typescript
 // Register custom workflow node
 extensionManager.onExtensionEvent(async (event) => {
-  if (
-    event.type === 'extension_loaded' &&
-    event.data.extension.type === 'workflow_node'
-  ) {
+  if (event.type === 'extension_loaded' && event.data.extension.type === 'workflow_node') {
     const extension = event.data.extension;
-    await workflowEngine.registerNodeType(
-      extension.nodeType,
-      extension.nodeClass
-    );
+    await workflowEngine.registerNodeType(extension.nodeType, extension.nodeClass);
   }
 });
 ```
@@ -449,13 +425,10 @@ extensionManager.onExtensionEvent(async (event) => {
 ```typescript
 // Register agent capability
 extensionManager.onExtensionEvent(async (event) => {
-  if (
-    event.type === 'extension_loaded' &&
-    event.data.extension.type === 'agent_capability'
-  ) {
+  if (event.type === 'extension_loaded' && event.data.extension.type === 'agent_capability') {
     const extension = event.data.extension;
     await agentRegistry.registerCapability(
-      extension.capabilityName,
+      extension.capabilityName, 
       extension.capabilityClass
     );
   }
@@ -468,10 +441,7 @@ extensionManager.onExtensionEvent(async (event) => {
 
 ```typescript
 interface ExtensionAPI {
-  loadExtension(
-    path: string,
-    options?: ExtensionLoadOptions
-  ): Promise<ExtensionLoadResult>;
+  loadExtension(path: string, options?: ExtensionLoadOptions): Promise<ExtensionLoadResult>;
   unloadExtension(id: string): Promise<boolean>;
   activateExtension(id: string): Promise<boolean>;
   deactivateExtension(id: string): Promise<boolean>;
@@ -491,18 +461,14 @@ interface ExtensionLifecycle {
   onUnload?(context: ExtensionContext): Promise<void> | void;
   onActivate?(context: ExtensionContext): Promise<void> | void;
   onDeactivate?(context: ExtensionContext): Promise<void> | void;
-  onConfigChange?(
-    config: Record<string, any>,
-    context: ExtensionContext
-  ): Promise<void> | void;
+  onConfigChange?(config: Record<string, any>, context: ExtensionContext): Promise<void> | void;
   onError?(error: Error, context: ExtensionContext): Promise<void> | void;
 }
 ```
 
 ## Contributing
 
-See the main [Contributing Guide](../../CONTRIBUTING.md) for development setup
-and guidelines.
+See the main [Contributing Guide](../../CONTRIBUTING.md) for development setup and guidelines.
 
 ## License
 

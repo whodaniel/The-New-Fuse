@@ -7,14 +7,11 @@ set -e
 
 echo "Current directory: $(pwd)"
 echo "SERVICE_PATH: ${SERVICE_PATH}"
-echo "PORT: ${PORT}"
 echo "Listing current directory:"
 ls -la
 
-if [ "$SERVICE_PATH" = "frontend" ] || [ "$SERVICE_PATH" = "ai-arcade" ]; then
-  echo "Starting frontend service: $SERVICE_PATH..."
-  echo "Contents of dist directory:"
-  ls -la dist
+if [ "$SERVICE_PATH" = "frontend" ]; then
+  echo "Starting frontend service..."
   # Use http-server for production serving of static files (avoids Vite preview permission issues)
   exec npx --yes http-server dist -p ${PORT:-3000} -a 0.0.0.0 --cors
 else

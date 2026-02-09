@@ -39,18 +39,17 @@ export class MCPBrokerService {
       // Register some mock servers for development
       this.registerServer('mock-server', {
         capabilities: ['text-generation', 'image-analysis'],
-        version: '1.0.0',
+        version: '1.0.0'
       });
 
       this.registerServer('code-assistant', {
         capabilities: ['code-completion', 'code-explanation'],
-        version: '1.1.0',
+        version: '1.1.0'
       });
 
       this.isInitialized = true;
       this.logger.log('MCP Broker Service initialized successfully');
-    } catch (error) {
-      // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error('Failed to initialize MCP Broker Service', err);
       throw err;
@@ -79,8 +78,7 @@ export class MCPBrokerService {
       this.isInitialized = false;
 
       this.logger.log('MCP Broker Service cleanup completed');
-    } catch (error) {
-      // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error('Error during MCP Broker Service cleanup', err);
       throw err;
@@ -111,24 +109,23 @@ export class MCPBrokerService {
    */
   async getServerStatus(): Promise<Record<string, any>> {
     const status: Record<string, any> = {};
-
+    
     for (const [name, server] of this.servers.entries()) {
       try {
         status[name] = {
           online: true,
           capabilities: server.capabilities || [],
-          version: server.version || '1.0.0',
+          version: server.version || '1.0.0'
         };
-      } catch (error) {
-        // Change to unknown
+      } catch (error) { // Change to unknown
         const err = toError(error); // Use helper
         status[name] = {
           online: false,
-          error: err.message, // Use err.message
+          error: err.message // Use err.message
         };
       }
     }
-
+    
     return status;
   }
 
@@ -183,22 +180,21 @@ export class MCPBrokerService {
     context: { sender: string; metadata?: Record<string, any> } = { sender: 'system' }
   ): Promise<any> {
     const server = this.servers.get(serverName);
-
+    
     if (!server) {
       throw new Error(`MCP server not found: ${serverName}`);
     }
-
+    
     this.logger.log(`Executing MCP directive: ${serverName}.${action}`);
-
+    
     try {
       // Mock implementation - in a real system, this would call the server
       return {
         success: true,
         action,
-        result: { message: `Executed ${action} on ${serverName}` },
+        result: { message: `Executed ${action} on ${serverName}` }
       };
-    } catch (error) {
-      // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error executing MCP directive: ${err.message}`, err.stack); // Use err.message and err.stack
       throw err;

@@ -1,4 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
+/**
+ * Terminal Component for TNF Tauri Desktop
+ *
+ * Provides an embedded terminal within the Tauri app using xterm.js
+ * Allows users to run TNF CLI commands without opening a separate terminal.
+ */
+
+import { invoke } from '@tauri-apps/api/core';
+import { listen } from '@tauri-apps/api/event';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Terminal as XTerm } from 'xterm';
+import { FitAddon } from 'xterm-addon-fit';
+import { WebLinksAddon } from 'xterm-addon-web-links';
+import 'xterm/css/xterm.css';
 
 // ============================================================================
 // TYPES
@@ -71,78 +84,203 @@ export const Terminal: React.FC<TerminalProps> = ({
   initialCommand,
   showQuickActions = true,
 }) => {
-  const [history, setHistory] = useState<string[]>([
-    'Welcome to TNF Terminal - AI Agent Command Center',
-  ]);
-  const [currentInput, setCurrentInput] = useState('');
+  const terminalRef = useRef<HTMLDivElement>(null);
+  const xtermRef = useRef<XTerm | null>(null);
+  const fitAddonRef = useRef<FitAddon | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const inputBuffer = useRef<string>('');
 
+  // Initialize terminal
   useEffect(() => {
-    // Simulate connection
-    const timer = setTimeout(() => {
-      setIsConnected(true);
-      setHistory((prev) => [...prev, 'Uplink established.', '> ']);
-    }, 1000);
-    return () => clearTimeout(timer);
+    if (!terminalRef.current) return;
+
+    // Create terminal instance
+    const terminal = new XTerm({
+      theme: {
+        background: '#1a1b26',
+        foreground: '#c0caf5',
+        cursor: '#c0caf5',
+        cursorAccent: '#1a1b26',
+        selection: 'rgba(125, 174, 255, 0.3)',
+        black: '#15161e',
+        red: '#f7768e',
+        green: '#9ece6a',
+        yellow: '#e0af68',
+        blue: '#7aa2f7',
+        magenta: '#bb9af7',
+        cyan: '#7dcfff',
+        white: '#a9b1d6',
+        brightBlack: '#414868',
+        brightRed: '#f7768e',
+        brightGreen: '#9ece6a',
+        brightYellow: '#e0af68',
+        brightBlue: '#7aa2f7',
+        brightMagenta: '#bb9af7',
+        brightCyan: '#7dcfff',
+        brightWhite: '#c0caf5',
+      },
+      fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+      fontSize: 14,
+      cursorBlink: true,
+      cursorStyle: 'block',
+      scrollback: 10000,
+    });
+
+    // Add addons
+    const fitAddon = new FitAddon();
+    const webLinksAddon = new WebLinksAddon();
+
+    terminal.loadAddon(fitAddon);
+    terminal.loadAddon(webLinksAddon);
+
+    // Open terminal
+    terminal.open(terminalRef.current);
+    fitAddon.fit();
+
+    xtermRef.current = terminal;
+    fitAddonRef.current = fitAddon;
+
+    // Write welcome message
+    terminal.writeln('\x1b[1;34m╔═══════════════════════════════════════════════════╗\x1b[0m');
+    terminal.writeln('\x1b[1;34m║       TNF Terminal - AI Agent Command Center      ║\x1b[0m');
+    terminal.writeln('\x1b[1;34m╚═══════════════════════════════════════════════════╝\x1b[0m');
+    terminal.writeln('');
+    terminal.writeln('\x1b[33mType commands or use Quick Actions above.\x1b[0m');
+    terminal.writeln('');
+
+    // Connect to shell
+    connectToShell(terminal);
+
+    // Handle resize
+    const handleResize = () => {
+      fitAddon.fit();
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      terminal.dispose();
+    };
   }, []);
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [history, currentInput]);
+  // Connect to system shell via Tauri
+  const connectToShell = async (terminal: XTerm) => {
+    try {
+      // Create a new PTY session
+      const id = await invoke<string>('create_shell_session');
+      setSessionId(id);
+      setIsConnected(true);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      const cmd = currentInput.trim();
-      const newHistory = [...history];
-      // Remove the prompt from the last line if it exists
-      if (newHistory.length > 0 && newHistory[newHistory.length - 1] === '> ') {
-        newHistory.pop();
-      }
-      newHistory.push(`> ${cmd}`);
+      // Listen for output from the shell
+      const unlisten = await listen<string>(`shell-output-${id}`, (event) => {
+        terminal.write(event.payload);
+        if (onOutput) {
+          onOutput(event.payload);
+        }
+      });
 
-      // Sim response
-      if (cmd === 'help') {
-        newHistory.push('Available commands: help, status, agents, clear');
-      } else if (cmd === 'clear') {
-        setHistory(['> ']);
-        setCurrentInput('');
-        return;
-      } else if (cmd) {
-        newHistory.push(`Command not found: ${cmd}`);
+      // Handle user input
+      terminal.onData((data) => {
+        invoke('write_to_shell', { sessionId: id, data });
+      });
+
+      // Write prompt
+      terminal.write('\r\n\x1b[32m$\x1b[0m ');
+
+      // Run initial command if provided
+      if (initialCommand) {
+        setTimeout(() => {
+          invoke('write_to_shell', { sessionId: id, data: initialCommand + '\n' });
+        }, 500);
       }
-      newHistory.push('> ');
-      setHistory(newHistory);
-      setCurrentInput('');
+
+      return () => {
+        unlisten();
+        invoke('close_shell_session', { sessionId: id });
+      };
+    } catch (error) {
+      console.error('Failed to connect to shell:', error);
+      terminal.writeln('\x1b[31mFailed to connect to shell. Using local echo mode.\x1b[0m');
+
+      // Fallback to local echo mode
+      enableLocalEchoMode(terminal);
     }
   };
 
-  const runQuickAction = (action: QuickAction) => {
-    setHistory((prev) => [
-      ...prev.slice(0, prev.length - 1),
-      `> ${action.command}`,
-      'Executing quick action...',
-      '> ',
-    ]);
+  // Local echo mode fallback
+  const enableLocalEchoMode = (terminal: XTerm) => {
+    terminal.write('\r\n\x1b[32m$\x1b[0m ');
+
+    terminal.onData((data) => {
+      if (data === '\r') {
+        // Enter pressed
+        const command = inputBuffer.current;
+        inputBuffer.current = '';
+        terminal.write('\r\n');
+
+        if (command.trim()) {
+          executeLocalCommand(terminal, command);
+        } else {
+          terminal.write('\x1b[32m$\x1b[0m ');
+        }
+      } else if (data === '\u007F') {
+        // Backspace
+        if (inputBuffer.current.length > 0) {
+          inputBuffer.current = inputBuffer.current.slice(0, -1);
+          terminal.write('\b \b');
+        }
+      } else if (data >= ' ' && data <= '~') {
+        // Regular character
+        inputBuffer.current += data;
+        terminal.write(data);
+      }
+    });
   };
+
+  // Execute command locally (for basic commands when PTY unavailable)
+  const executeLocalCommand = async (terminal: XTerm, command: string) => {
+    try {
+      const result = await invoke<string>('execute_command', { command });
+      terminal.write(result);
+    } catch (error) {
+      terminal.writeln(`\x1b[31mError: ${error}\x1b[0m`);
+    }
+    terminal.write('\r\n\x1b[32m$\x1b[0m ');
+  };
+
+  // Run a quick action
+  const runQuickAction = useCallback(
+    (action: QuickAction) => {
+      if (!xtermRef.current) return;
+
+      const terminal = xtermRef.current;
+      terminal.write(`\r\n\x1b[33m> ${action.command}\x1b[0m\r\n`);
+
+      if (sessionId) {
+        invoke('write_to_shell', { sessionId, data: action.command + '\n' });
+      } else {
+        executeLocalCommand(terminal, action.command);
+      }
+    },
+    [sessionId]
+  );
 
   return (
     <div className={`terminal-container ${className}`} style={styles.container}>
       {/* Quick Actions Bar */}
       {showQuickActions && (
         <div style={styles.quickActions}>
-          <span style={styles.quickActionsLabel}>COMMAND PROTOCOLS:</span>
+          <span style={styles.quickActionsLabel}>Quick Actions:</span>
           {QUICK_ACTIONS.map((action, index) => (
             <button
               key={index}
               onClick={() => runQuickAction(action)}
-              className="quick-action-btn"
+              style={styles.quickActionButton}
               title={action.description}
             >
-              <span className="icon">{action.icon}</span>
-              <span className="label">{action.label}</span>
+              <span style={styles.quickActionIcon}>{action.icon}</span>
+              <span style={styles.quickActionLabel}>{action.label}</span>
             </button>
           ))}
         </div>
@@ -150,180 +288,19 @@ export const Terminal: React.FC<TerminalProps> = ({
 
       {/* Connection Status */}
       <div style={styles.statusBar}>
-        <div style={styles.statusGroup}>
-          <span className={`status-indicator ${isConnected ? 'connected' : 'disconnected'}`} />
-          <span style={styles.statusText}>
-            {isConnected ? 'UPLINK ESTABLISHED' : 'LOCAL ECHO: OFFLINE'}
-          </span>
-        </div>
-        <span style={styles.secureBadge}>SECURE_SHELL_V4</span>
-      </div>
-
-      {/* Terminal Viewport with Effects */}
-      <div className="terminal-viewport" style={styles.terminal}>
-        <div className="scanline" />
-        <div className="crt-flicker" />
-        <div
-          className="terminal-content"
-          ref={scrollRef}
+        <span
           style={{
-            overflowY: 'auto',
-            height: '100%',
-            fontFamily: '"JetBrains Mono", monospace',
-            fontSize: '14px',
-            color: '#c0caf5',
-            paddingBottom: '20px',
+            ...styles.statusDot,
+            backgroundColor: isConnected ? '#9ece6a' : '#f7768e',
           }}
-        >
-          {history.map((line, i) => (
-            <div key={i} style={{ minHeight: '20px' }}>
-              {line === '> ' ? (
-                <span>
-                  <span style={{ color: '#10b981' }}>{'>'}</span> {currentInput}
-                  <span className="cursor">█</span>
-                </span>
-              ) : (
-                line
-              )}
-            </div>
-          ))}
-        </div>
-        <input
-          type="text"
-          value={currentInput}
-          onChange={(e) => setCurrentInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          style={{
-            opacity: 0,
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            height: '100%',
-            width: '100%',
-            cursor: 'default',
-          }}
-          autoFocus
         />
+        <span style={styles.statusText}>
+          {isConnected ? 'Connected to shell' : 'Local echo mode'}
+        </span>
       </div>
 
-      <style>{`
-        .terminal-container {
-          box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 0 0 1px #292e42;
-          background: #0f111a;
-          position: relative;
-        }
-
-        /* Quick Action Buttons */
-        .quick-action-btn {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          padding: 6px 12px;
-          background: rgba(41, 46, 66, 0.5);
-          border: 1px solid rgba(86, 95, 137, 0.3);
-          border-radius: 4px;
-          color: #7aa2f7;
-          font-family: 'JetBrains Mono', monospace;
-          font-size: 11px;
-          cursor: pointer;
-          transition: all 0.2s;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-
-        .quick-action-btn:hover {
-          background: rgba(65, 72, 104, 0.8);
-          border-color: #7aa2f7;
-          box-shadow: 0 0 8px rgba(122, 162, 247, 0.2);
-          transform: translateY(-1px);
-        }
-
-        .quick-action-btn .icon {
-          font-size: 12px;
-        }
-
-        /* Status Indicator */
-        .status-indicator {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          border: 1px solid rgba(0,0,0,0.5);
-        }
-        .status-indicator.connected {
-          background: #9ece6a;
-          box-shadow: 0 0 8px #9ece6a;
-          animation: pulse-green 2s infinite;
-        }
-        .status-indicator.disconnected {
-          background: #f7768e;
-          box-shadow: 0 0 8px #f7768e;
-        }
-
-        @keyframes pulse-green {
-          0% { opacity: 1; box-shadow: 0 0 5px #9ece6a; }
-          50% { opacity: 0.7; box-shadow: 0 0 2px #9ece6a; }
-          100% { opacity: 1; box-shadow: 0 0 5px #9ece6a; }
-        }
-
-        /* Terminal Viewport */
-        .terminal-viewport {
-          position: relative;
-          flex: 1;
-          overflow: hidden;
-          background: #1a1b26;
-        }
-
-        .cursor {
-            animation: blink 1s step-end infinite;
-            color: #10b981;
-            margin-left: 2px;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        /* CRT Effects */
-        .scanline {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(
-            to bottom,
-            rgba(255,255,255,0),
-            rgba(255,255,255,0) 50%,
-            rgba(0,0,0,0.2) 50%,
-            rgba(0,0,0,0.2)
-          );
-          background-size: 100% 4px;
-          pointer-events: none;
-          z-index: 10;
-          opacity: 0.15;
-          mix-blend-mode: overlay;
-        }
-
-        .crt-flicker {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(18, 16, 16, 0.1);
-          opacity: 0;
-          z-index: 10;
-          pointer-events: none;
-          animation: flicker 0.15s infinite;
-        }
-
-        @keyframes flicker {
-          0% { opacity: 0.02; }
-          50% { opacity: 0.05; }
-          100% { opacity: 0.02; }
-        }
-      `}</style>
+      {/* Terminal */}
+      <div ref={terminalRef} style={styles.terminal} />
     </div>
   );
 };
@@ -337,57 +314,66 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
-    borderRadius: '4px',
+    backgroundColor: '#1a1b26',
+    borderRadius: '8px',
     overflow: 'hidden',
-    border: '1px solid #292e42',
   },
   quickActions: {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
     padding: '8px 12px',
-    backgroundColor: '#13141f',
+    backgroundColor: '#16161e',
     borderBottom: '1px solid #292e42',
     overflowX: 'auto',
+    flexWrap: 'nowrap',
   },
   quickActionsLabel: {
     color: '#565f89',
-    fontSize: '10px',
-    fontWeight: 700,
-    letterSpacing: '1px',
-    marginRight: '8px',
+    fontSize: '12px',
+    fontWeight: 500,
+    whiteSpace: 'nowrap',
+  },
+  quickActionButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    padding: '4px 10px',
+    backgroundColor: '#292e42',
+    border: 'none',
+    borderRadius: '4px',
+    color: '#c0caf5',
+    fontSize: '12px',
+    cursor: 'pointer',
+    transition: 'all 0.15s ease',
+    whiteSpace: 'nowrap',
+  },
+  quickActionIcon: {
+    fontSize: '14px',
+  },
+  quickActionLabel: {
+    fontWeight: 500,
   },
   statusBar: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: '6px',
     padding: '4px 12px',
     backgroundColor: '#16161e',
-    borderBottom: '1px solid #1a1b26',
-    fontFamily: '"JetBrains Mono", monospace',
+    borderBottom: '1px solid #292e42',
   },
-  statusGroup: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
+  statusDot: {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
   },
   statusText: {
     color: '#565f89',
-    fontSize: '10px',
-    fontWeight: 600,
-    letterSpacing: '0.5px',
-  },
-  secureBadge: {
-    fontSize: '9px',
-    color: '#343b59',
-    padding: '2px 4px',
-    border: '1px solid #24283b',
-    borderRadius: '2px',
+    fontSize: '11px',
   },
   terminal: {
     flex: 1,
-    padding: '12px',
-    position: 'relative',
+    padding: '8px',
   },
 };
 

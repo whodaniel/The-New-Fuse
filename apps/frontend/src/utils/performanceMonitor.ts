@@ -21,7 +21,7 @@ class PerformanceMonitor {
     bundleSize: {},
     routeLoadTime: {},
     memoryUsage: 0,
-    timestamp: Date.now(),
+    timestamp: Date.now()
   };
 
   private bundleStats: BundleStats[] = [];
@@ -44,18 +44,18 @@ class PerformanceMonitor {
               const size = (entry as any).transferSize || 0;
               const loadTime = entry.duration;
               const fileName = entry.name.split('/').pop() || 'unknown';
-
+              
               this.bundleStats.push({
                 name: fileName,
                 size,
                 loadingTime: loadTime,
-                chunkType: this.determineChunkType(fileName),
+                chunkType: this.determineChunkType(fileName)
               });
             }
           }
         });
       });
-
+      
       try {
         this.observer.observe({ entryTypes: ['navigation', 'resource', 'measure'] });
       } catch (error) {
@@ -105,7 +105,7 @@ class PerformanceMonitor {
       size,
       gzipSize,
       loadingTime: 0, // Will be updated during actual load
-      chunkType: this.determineChunkType(bundleName),
+      chunkType: this.determineChunkType(bundleName)
     });
   }
 
@@ -131,10 +131,10 @@ class PerformanceMonitor {
       route: 0,
       component: 0,
       vendor: 0,
-      utility: 0,
+      utility: 0
     };
 
-    this.bundleStats.forEach((stat) => {
+    this.bundleStats.forEach(stat => {
       breakdown[stat.chunkType] += stat.size;
     });
 
@@ -150,28 +150,20 @@ class PerformanceMonitor {
     // Check for heavy components
     heavyComponents.forEach(({ name, time }) => {
       if (time > 1000) {
-        recommendations.push(
-          `Component "${name}" loads in ${time.toFixed(0)}ms - consider lazy loading or code splitting`
-        );
+        recommendations.push(`Component "${name}" loads in ${time.toFixed(0)}ms - consider lazy loading or code splitting`);
       }
     });
 
     // Check bundle sizes
     Object.entries(bundleBreakdown).forEach(([type, size]) => {
-      if (size > 1024 * 1024) {
-        // 1MB
-        recommendations.push(
-          `${type} bundle is ${(size / 1024 / 1024).toFixed(1)}MB - consider further splitting`
-        );
+      if (size > 1024 * 1024) { // 1MB
+        recommendations.push(`${type} bundle is ${(size / 1024 / 1024).toFixed(1)}MB - consider further splitting`);
       }
     });
 
     // Memory usage recommendations
-    if (this.metrics.memoryUsage > 50 * 1024 * 1024) {
-      // 50MB
-      recommendations.push(
-        `Memory usage is ${(this.metrics.memoryUsage / 1024 / 1024).toFixed(1)}MB - consider memory optimization`
-      );
+    if (this.metrics.memoryUsage > 50 * 1024 * 1024) { // 50MB
+      recommendations.push(`Memory usage is ${(this.metrics.memoryUsage / 1024 / 1024).toFixed(1)}MB - consider memory optimization`);
     }
 
     return recommendations;
@@ -181,20 +173,20 @@ class PerformanceMonitor {
   logSummary() {
     const report = this.generateReport();
     const recommendations = this.getRecommendations();
-
+    
     console.group('📊 Performance Summary');
     console.log('Component Load Times:', report.componentLoadTime);
     console.log('Route Load Times:', report.routeLoadTime);
     console.log('Bundle Sizes:', report.bundleSize);
     console.log('Memory Usage:', `${(report.memoryUsage / 1024 / 1024).toFixed(1)}MB`);
     console.log('Bundle Breakdown:', this.getBundleBreakdown());
-
+    
     if (recommendations.length > 0) {
       console.group('💡 Recommendations');
-      recommendations.forEach((rec) => console.log('•', rec));
+      recommendations.forEach(rec => console.log('•', rec));
       console.groupEnd();
     }
-
+    
     console.groupEnd();
   }
 
@@ -235,4 +227,4 @@ if (process.env.NODE_ENV === 'development') {
   }
 }
 
-export type { BundleStats, PerformanceMetrics };
+export type { PerformanceMetrics, BundleStats };

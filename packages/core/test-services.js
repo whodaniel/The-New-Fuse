@@ -16,36 +16,28 @@ try {
   const agentService = new AgentLLMService();
   const promptService = new PromptService();
   const logService = new LoggingService();
-
+  
   console.log('✓ All services can be instantiated');
-
+  
   // Test a simple method
-  agentService
-    .processMessage('Hello World')
-    .then((result) => {
-      console.log('✓ AgentLLMService.processMessage():', result);
-    })
-    .catch((err) => {
-      console.log('✗ AgentLLMService.processMessage() error:', err.message);
-    });
-
-  promptService
-    .validatePrompt('Test prompt')
-    .then((result) => {
-      console.log('✓ PromptService.validatePrompt():', result);
-    })
-    .catch((err) => {
-      console.log('✗ PromptService.validatePrompt() error:', err.message);
-    });
-
-  logService
-    .info('Test log message')
-    .then((result) => {
-      console.log('✓ LoggingService.info():', result.level, result.message);
-    })
-    .catch((err) => {
-      console.log('✗ LoggingService.info() error:', err.message);
-    });
+  agentService.processMessage('Hello World').then(result => {
+    console.log('✓ AgentLLMService.processMessage():', result);
+  }).catch(err => {
+    console.log('✗ AgentLLMService.processMessage() error:', err.message);
+  });
+  
+  promptService.validatePrompt('Test prompt').then(result => {
+    console.log('✓ PromptService.validatePrompt():', result);
+  }).catch(err => {
+    console.log('✗ PromptService.validatePrompt() error:', err.message);
+  });
+  
+  logService.info('Test log message').then(result => {
+    console.log('✓ LoggingService.info():', result.level, result.message);
+  }).catch(err => {
+    console.log('✗ LoggingService.info() error:', err.message);
+  });
+  
 } catch (error) {
   console.log('✗ Service instantiation failed:', error.message);
 }

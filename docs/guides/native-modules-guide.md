@@ -2,32 +2,26 @@
 
 ## Overview
 
-The New Fuse project requires several native modules that must be compiled for
-your specific system architecture. This guide covers the automated setup process
-and troubleshooting for native module issues.
+The New Fuse project requires several native modules that must be compiled for your specific system architecture. This guide covers the automated setup process and troubleshooting for native module issues.
 
 ## Required Native Modules
 
 The following native modules are required for full functionality:
 
 ### Core Modules
-
 - **canvas** - HTML5 canvas support for server-side rendering
 - **drivelist** - Drive enumeration for system integration
 - **node-pty** - Pseudo-terminal support for SkIDEancer IDE
 - **@vscode/ripgrep** - Fast text search functionality
 
 ### Optional Modules
-
 - **keytar** - Secure credential storage
 - **find-git-repositories** - Git repository discovery
 
 ## Automated Setup
 
 ### Quick Start
-
-The project includes automated native module setup that runs during
-installation:
+The project includes automated native module setup that runs during installation:
 
 ```bash
 # Fresh installation (includes native module setup)
@@ -41,7 +35,6 @@ pnpm run fix:native-modules
 ```
 
 ### Build Process Integration
-
 The build system automatically checks and fixes native modules:
 
 ```bash
@@ -57,26 +50,20 @@ pnpm run build
 ## How the Automated System Works
 
 ### 1. Installation Hook
-
 When you run `pnpm install`, the postinstall script automatically:
-
 - Runs the standard postinstall tasks
 - Executes `scripts/setup-native-modules.cjs`
 - Verifies all required modules are properly built
 
 ### 2. Pre-Build Verification
-
 Before every build, the system:
-
 - Checks all required native modules exist
 - Tests critical modules (like canvas) are functional
 - Automatically runs repairs if issues are detected
 - Provides detailed error messages for manual fixes
 
 ### 3. Intelligent Module Location
-
 The setup script handles common native module issues:
-
 - **Subdependency Discovery**: Finds modules installed as subdependencies
 - **Binary Relocation**: Copies compiled binaries to correct locations
 - **Rebuild Automation**: Automatically rebuilds modules when needed
@@ -87,13 +74,11 @@ The setup script handles common native module issues:
 ### Common Issues and Solutions
 
 #### Issue 1: Canvas Module Missing
-
 ```bash
 Error: Cannot find module '../build/Release/canvas.node'
 ```
 
 **Solution:**
-
 ```bash
 # Automatic fix
 pnpm run setup:native-modules
@@ -103,15 +88,13 @@ cd node_modules/canvas && node-gyp rebuild
 ```
 
 #### Issue 2: Drivelist Module Missing
-
 ```bash
 Error: Cannot find module 'drivelist/build/Release/drivelist.node'
 ```
 
 **Solution:**
-
 ```bash
-# Automatic fix
+# Automatic fix  
 pnpm run setup:native-modules
 
 # Manual fix
@@ -119,13 +102,11 @@ pnpm add drivelist --dev
 ```
 
 #### Issue 3: Node-PTY Missing
-
 ```bash
 Error: Cannot find module 'node-pty/build/Release/spawn-helper'
 ```
 
 **Solution:**
-
 ```bash
 # Automatic fix
 pnpm run setup:native-modules
@@ -135,13 +116,11 @@ pnpm add node-pty --dev
 ```
 
 #### Issue 4: Ripgrep Binary Missing
-
 ```bash
 Error: Cannot find module '@vscode/ripgrep/bin/rg'
 ```
 
 **Solution:**
-
 ```bash
 # Automatic fix
 pnpm run setup:native-modules
@@ -153,7 +132,6 @@ pnpm add @vscode/ripgrep --dev
 ### Advanced Troubleshooting
 
 #### Clean Rebuild
-
 If you encounter persistent issues:
 
 ```bash
@@ -168,7 +146,6 @@ pnpm run setup:native-modules
 ```
 
 #### Node.js Version Issues
-
 Native modules are sensitive to Node.js versions:
 
 ```bash
@@ -181,7 +158,6 @@ pnpm install
 ```
 
 #### Architecture Mismatches
-
 On Apple Silicon Macs or other architectures:
 
 ```bash
@@ -195,7 +171,6 @@ cd node_modules/canvas && node-gyp rebuild --arch=arm64
 ## Development Workflow Integration
 
 ### Pre-Development Setup
-
 ```bash
 # 1. Clone repository
 git clone <repository-url>
@@ -209,7 +184,6 @@ pnpm run build
 ```
 
 ### Continuous Integration
-
 For CI/CD pipelines, ensure native modules are properly handled:
 
 ```yaml
@@ -225,7 +199,6 @@ For CI/CD pipelines, ensure native modules are properly handled:
 ```
 
 ### Docker Integration
-
 When using Docker, native modules need special handling:
 
 ```dockerfile
@@ -249,7 +222,6 @@ RUN pnpm run setup:native-modules
 ## Monitoring and Diagnostics
 
 ### Health Check Commands
-
 ```bash
 # Quick health check
 pnpm run setup:native-modules
@@ -263,7 +235,6 @@ node -e "const drivelist = require('drivelist'); console.log('Drivelist OK');"
 ```
 
 ### Debug Information
-
 The setup script provides detailed logging:
 
 ```bash
@@ -279,13 +250,11 @@ ls -la node_modules/@vscode/ripgrep/bin/
 ## Performance Considerations
 
 ### Build Time Optimization
-
 - Native modules are only rebuilt when necessary
 - Pre-built binaries are used when available
 - Parallel compilation where supported
 
 ### Memory Usage
-
 - Build processes are memory-optimized
 - Automatic fallback to lower-memory strategies
 - Progress monitoring and resource management
@@ -293,19 +262,16 @@ ls -la node_modules/@vscode/ripgrep/bin/
 ## Platform-Specific Notes
 
 ### macOS
-
 - Xcode Command Line Tools required
 - Apple Silicon vs Intel considerations handled automatically
 - Homebrew dependencies may be needed for canvas (cairo, pango, etc.)
 
 ### Linux
-
 - Build-essential package required
 - System libraries needed: libcairo2-dev, libpango1.0-dev, libjpeg-dev
 - Distribution-specific package managers supported
 
 ### Windows
-
 - Visual Studio Build Tools required
 - Python 3.x installation needed
 - Windows SDK components may be required
@@ -313,19 +279,16 @@ ls -la node_modules/@vscode/ripgrep/bin/
 ## Integration with Build System
 
 The native module system is integrated with:
-
 - **Turbo**: Monorepo build orchestration
 - **TypeScript**: Type checking and compilation
 - **Webpack**: SkIDEancer IDE bundling
-- **Drizzle**: Database client generation
+- **Prisma**: Database client generation
 
-All these systems respect native module dependencies and will trigger setup when
-needed.
+All these systems respect native module dependencies and will trigger setup when needed.
 
 ## Future Enhancements
 
 Planned improvements to the native module system:
-
 1. **Pre-built Binary Distribution**: Reduce compilation time
 2. **Cross-Compilation Support**: Build for multiple architectures
 3. **Module Caching**: Cache compiled modules across builds
@@ -343,7 +306,6 @@ If you encounter issues not covered in this guide:
 5. **Report Issues**: Include full error messages and system information
 
 For additional support, include this information in your reports:
-
 ```bash
 # System information
 node --version

@@ -28,7 +28,7 @@ export class MetricsService {
       name,
       value,
       timestamp: new Date(),
-      tags,
+      tags
     };
 
     if (!this.metrics.has(name)) {
@@ -54,23 +54,23 @@ export class MetricsService {
 
   getSnapshot(): MetricsSnapshot {
     const allMetrics: Metric[] = [];
-
+    
     for (const metricsList of this.metrics.values()) {
       allMetrics.push(...metricsList);
     }
 
-    const values = allMetrics.map((m) => m.value);
+    const values = allMetrics.map(m => m.value);
     const summary = {
       total: values.length,
       average: values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0,
       min: values.length > 0 ? Math.min(...values) : 0,
-      max: values.length > 0 ? Math.max(...values) : 0,
+      max: values.length > 0 ? Math.max(...values) : 0
     };
 
     return {
       timestamp: new Date(),
       metrics: allMetrics,
-      summary,
+      summary
     };
   }
 
@@ -84,19 +84,19 @@ export class MetricsService {
 
   getMetricsSummary(name: string): { count: number; latest: number; average: number } {
     const metricsList = this.getMetrics(name);
-
+    
     if (metricsList.length === 0) {
       return { count: 0, latest: 0, average: 0 };
     }
 
-    const values = metricsList.map((m) => m.value);
+    const values = metricsList.map(m => m.value);
     const average = values.reduce((a, b) => a + b, 0) / values.length;
     const latest = values[values.length - 1];
 
     return {
       count: metricsList.length,
       latest,
-      average,
+      average
     };
   }
 }

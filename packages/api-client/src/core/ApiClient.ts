@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ApiConfig } from '../config/ApiConfig';
 
 /**
@@ -17,9 +17,9 @@ export class ApiClient {
       timeout: config.timeout || 30000,
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json',
-        ...config.headers,
-      },
+        'Accept': 'application/json',
+        ...config.headers
+      }
     });
 
     // Add request interceptor for authentication

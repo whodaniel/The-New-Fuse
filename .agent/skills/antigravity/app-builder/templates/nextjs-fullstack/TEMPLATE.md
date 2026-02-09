@@ -1,21 +1,20 @@
 ---
 name: nextjs-fullstack
-description:
-  Next.js full-stack template principles. App Router, Drizzle, Tailwind.
+description: Next.js full-stack template principles. App Router, Prisma, Tailwind.
 ---
 
 # Next.js Full-Stack Template
 
 ## Tech Stack
 
-| Component  | Technology              |
-| ---------- | ----------------------- |
-| Framework  | Next.js 14 (App Router) |
-| Language   | TypeScript              |
-| Database   | PostgreSQL + Drizzle     |
-| Styling    | Tailwind CSS            |
-| Auth       | Clerk (optional)        |
-| Validation | Zod                     |
+| Component | Technology |
+|-----------|------------|
+| Framework | Next.js 14 (App Router) |
+| Language | TypeScript |
+| Database | PostgreSQL + Prisma |
+| Styling | Tailwind CSS |
+| Auth | Clerk (optional) |
+| Validation | Zod |
 
 ---
 
@@ -23,8 +22,8 @@ description:
 
 ```
 project-name/
-├── drizzle/
-│   └── schema.drizzle
+├── prisma/
+│   └── schema.prisma
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx
@@ -34,7 +33,7 @@ project-name/
 │   ├── components/
 │   │   └── ui/
 │   ├── lib/
-│   │   ├── db.ts        # Drizzle client
+│   │   ├── db.ts        # Prisma client
 │   │   └── utils.ts
 │   └── types/
 ├── .env.example
@@ -45,29 +44,29 @@ project-name/
 
 ## Key Concepts
 
-| Concept           | Description         |
-| ----------------- | ------------------- |
+| Concept | Description |
+|---------|-------------|
 | Server Components | Default, fetch data |
-| Server Actions    | Form mutations      |
-| Route Handlers    | API endpoints       |
-| Drizzle            | Type-safe ORM       |
+| Server Actions | Form mutations |
+| Route Handlers | API endpoints |
+| Prisma | Type-safe ORM |
 
 ---
 
 ## Environment Variables
 
-| Variable            | Purpose           |
-| ------------------- | ----------------- |
-| DATABASE_URL        | Drizzle connection |
-| NEXT_PUBLIC_APP_URL | Public URL        |
+| Variable | Purpose |
+|----------|---------|
+| DATABASE_URL | Prisma connection |
+| NEXT_PUBLIC_APP_URL | Public URL |
 
 ---
 
 ## Setup Steps
 
 1. `npx create-next-app {{name}} --typescript --tailwind --app`
-2. `npm install drizzle @drizzle/client zod`
-3. `npx drizzle init`
+2. `npm install prisma @prisma/client zod`
+3. `npx prisma init`
 4. Configure schema
 5. `npm run db:push`
 6. `npm run dev`
@@ -78,6 +77,6 @@ project-name/
 
 - Server Components by default
 - Server Actions for mutations
-- Drizzle for type-safe DB
+- Prisma for type-safe DB
 - Zod for validation
 - Edge runtime where possible

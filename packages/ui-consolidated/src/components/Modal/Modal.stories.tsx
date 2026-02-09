@@ -1,15 +1,15 @@
+import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
-import { Button } from '../Button';
 import {
   Modal,
-  ModalCloseButton,
   ModalContent,
-  ModalDescription,
-  ModalFooter,
   ModalHeader,
   ModalTitle,
+  ModalDescription,
+  ModalFooter,
+  ModalCloseButton,
 } from './Modal';
+import { Button } from '../Button';
 
 const meta: Meta<typeof Modal> = {
   title: 'Components/Modal',
@@ -35,7 +35,7 @@ type Story = StoryObj<typeof Modal>;
 export const Default: Story = {
   render: (args) => {
     const [open, setOpen] = useState(false);
-
+    
     return (
       <>
         <Button onClick={() => setOpen(true)}>Open Modal</Button>
@@ -50,9 +50,7 @@ export const Default: Story = {
               <p>This is the modal content. You can put anything here.</p>
             </div>
             <ModalFooter>
-              <Button variant="outline" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
+              <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
               <Button onClick={() => setOpen(false)}>Continue</Button>
             </ModalFooter>
           </ModalContent>
@@ -66,12 +64,12 @@ export const Sizes: Story = {
   render: (args) => {
     const [open, setOpen] = useState(false);
     const [size, setSize] = useState<'sm' | 'md' | 'lg' | 'xl' | '2xl'>('md');
-
+    
     const openModal = (selectedSize: typeof size) => {
       setSize(selectedSize);
       setOpen(true);
     };
-
+    
     return (
       <>
         <div className="flex gap-2">
@@ -92,9 +90,7 @@ export const Sizes: Story = {
               <p>This is the modal content. The size of this modal is {size}.</p>
             </div>
             <ModalFooter>
-              <Button variant="outline" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
+              <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
               <Button onClick={() => setOpen(false)}>Continue</Button>
             </ModalFooter>
           </ModalContent>
@@ -108,12 +104,12 @@ export const Positions: Story = {
   render: (args) => {
     const [open, setOpen] = useState(false);
     const [position, setPosition] = useState<'default' | 'top' | 'bottom'>('default');
-
+    
     const openModal = (selectedPosition: typeof position) => {
       setPosition(selectedPosition);
       setOpen(true);
     };
-
+    
     return (
       <>
         <div className="flex gap-2">
@@ -125,23 +121,14 @@ export const Positions: Story = {
           <ModalContent>
             <ModalCloseButton />
             <ModalHeader>
-              <ModalTitle>
-                {position === 'default'
-                  ? 'Center'
-                  : position.charAt(0).toUpperCase() + position.slice(1)}{' '}
-                Position
-              </ModalTitle>
-              <ModalDescription>
-                This modal is positioned at the {position === 'default' ? 'center' : position}.
-              </ModalDescription>
+              <ModalTitle>{position === 'default' ? 'Center' : position.charAt(0).toUpperCase() + position.slice(1)} Position</ModalTitle>
+              <ModalDescription>This modal is positioned at the {position === 'default' ? 'center' : position}.</ModalDescription>
             </ModalHeader>
             <div className="py-4">
               <p>This is the modal content.</p>
             </div>
             <ModalFooter>
-              <Button variant="outline" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
+              <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
               <Button onClick={() => setOpen(false)}>Continue</Button>
             </ModalFooter>
           </ModalContent>
@@ -154,7 +141,7 @@ export const Positions: Story = {
 export const WithForm: Story = {
   render: (args) => {
     const [open, setOpen] = useState(false);
-
+    
     return (
       <>
         <Button onClick={() => setOpen(true)}>Open Form Modal</Button>
@@ -221,12 +208,10 @@ export const WithForm: Story = {
 export const Confirmation: Story = {
   render: (args) => {
     const [open, setOpen] = useState(false);
-
+    
     return (
       <>
-        <Button variant="destructive" onClick={() => setOpen(true)}>
-          Delete Item
-        </Button>
+        <Button variant="destructive" onClick={() => setOpen(true)}>Delete Item</Button>
         <Modal {...args} open={open} onOpenChange={setOpen}>
           <ModalContent size="sm">
             <ModalHeader>
@@ -237,12 +222,8 @@ export const Confirmation: Story = {
               <p>Are you sure you want to delete this item?</p>
             </div>
             <ModalFooter>
-              <Button variant="outline" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
-              <Button variant="destructive" onClick={() => setOpen(false)}>
-                Delete
-              </Button>
+              <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button variant="destructive" onClick={() => setOpen(false)}>Delete</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>

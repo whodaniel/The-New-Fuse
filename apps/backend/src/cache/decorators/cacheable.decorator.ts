@@ -169,7 +169,7 @@ export const CacheInvalidate = (options: CacheInvalidateOptions = {}): MethodDec
  */
 export const CacheableAndEvict = (
   cacheableOptions: CacheableOptions = {},
-  evictOptions: CacheEvictOptions = {}
+  evictOptions: CacheEvictOptions = {},
 ) => {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     Cacheable(cacheableOptions)(target, propertyKey, descriptor);

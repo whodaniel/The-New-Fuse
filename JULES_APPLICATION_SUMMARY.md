@@ -12,7 +12,7 @@
 
 - Added Drizzle ORM to tech stack
 - Documented Drizzle migration commands
-- Marked Drizzle as "Legacy" (migrating to Drizzle)
+- Marked Prisma as "Legacy" (migrating to Drizzle)
 
 ### 2. **Agent Controller** (`apps/backend/src/modules/agent/agent.controller.ts`)
 

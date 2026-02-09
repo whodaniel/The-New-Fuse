@@ -3,7 +3,7 @@ import { z } from 'zod';
 const UserCredentialsSchema = z.object({
   username: z.string(),
   password: z.string(),
-  email: z.string().email().optional(),
+  email: z.string().email().optional()
 });
 
 export type UserCredentialsType = z.infer<typeof UserCredentialsSchema>;

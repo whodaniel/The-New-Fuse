@@ -1,7 +1,6 @@
 # The New Fuse - Application Sitemap
 
-This document provides a comprehensive sitemap of The New Fuse application,
-showing the hierarchical structure of all pages and their relationships.
+This document provides a comprehensive sitemap of The New Fuse application, showing the hierarchical structure of all pages and their relationships.
 
 ## Main Navigation Structure
 
@@ -12,6 +11,7 @@ showing the hierarchical structure of all pages and their relationships.
       - **New Agent** (`/dashboard/agents/new`) - Create new agent
     - **Analytics** (`/dashboard/analytics`) - Dashboard analytics
     - **Settings** (`/dashboard/settings`) - Dashboard settings
+  
   - **Workspace** (`/workspace`) - Workspace management
     - **Overview** (`/workspace/overview`) - Workspace overview
     - **Analytics** (`/workspace/analytics`) - Workspace analytics
@@ -23,13 +23,11 @@ showing the hierarchical structure of all pages and their relationships.
     - **Agent Marketplace** (`/ai-agent-portal/marketplace`) - Discover agents
     - **Agent Creation Studio** (`/ai-agent-portal/create`) - Create agents
     - **Agent Training Arena** (`/ai-agent-portal/training`) - Train agents
-    - **Agent Workflow Manager** (`/ai-agent-portal/workflows`) - Manage agent
-      workflows
+    - **Agent Workflow Manager** (`/ai-agent-portal/workflows`) - Manage agent workflows
 
   - **Settings** (`/settings`) - Application settings
     - **General** (`/settings/general`) - General settings
-    - **Embedding Preferences** (`/settings/embedding-preferences`) - AI
-      embedding preferences
+    - **Embedding Preferences** (`/settings/embedding-preferences`) - AI embedding preferences
 
   - **Admin** (`/admin`) - Administration panel (admin users only)
     - **Dashboard** (`/admin/dashboard`) - Admin dashboard
@@ -39,8 +37,7 @@ showing the hierarchical structure of all pages and their relationships.
     - **Settings** (`/admin/settings`) - Admin settings
     - **Agents** (`/admin/agents`) - Agent management
       - **Skills** (`/admin/agents/skills`) - Agent skills configuration
-    - **Experimental Features** (`/admin/experimental-features`) - Experimental
-      features
+    - **Experimental Features** (`/admin/experimental-features`) - Experimental features
 
 ## Authentication Pages
 

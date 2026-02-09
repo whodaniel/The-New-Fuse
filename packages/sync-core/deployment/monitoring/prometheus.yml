@@ -2,8 +2,8 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
-    cluster: "sync-core"
-    environment: "${ENVIRONMENT:-development}"
+    cluster: 'sync-core'
+    environment: '${ENVIRONMENT:-development}'
 
 rule_files:
   - "sync_alerts.yml"
@@ -12,48 +12,48 @@ alerting:
   alertmanagers:
     - static_configs:
         - targets:
-            - alertmanager:9093
+          - alertmanager:9093
 
 scrape_configs:
   # Sync Core service metrics
-  - job_name: "sync-core"
+  - job_name: 'sync-core'
     static_configs:
-      - targets: ["sync-core:3003"]
-    metrics_path: "/metrics"
+      - targets: ['sync-core:3003']
+    metrics_path: '/metrics'
     scrape_interval: 10s
     scrape_timeout: 5s
     honor_labels: true
     params:
-      format: ["prometheus"]
+      format: ['prometheus']
 
   # Redis metrics (if Redis exporter is available)
-  - job_name: "redis"
+  - job_name: 'redis'
     static_configs:
-      - targets: ["redis:6379"]
-    metrics_path: "/metrics"
+      - targets: ['redis:6379']
+    metrics_path: '/metrics'
     scrape_interval: 15s
 
   # PostgreSQL metrics (if postgres exporter is available)
-  - job_name: "postgres"
+  - job_name: 'postgres'
     static_configs:
-      - targets: ["postgres:5432"]
-    metrics_path: "/metrics"
+      - targets: ['postgres:5432']
+    metrics_path: '/metrics'
     scrape_interval: 15s
 
   # Node exporter for system metrics
-  - job_name: "node-exporter"
+  - job_name: 'node-exporter'
     static_configs:
-      - targets: ["node-exporter:9100"]
+      - targets: ['node-exporter:9100']
     scrape_interval: 15s
 
   # Docker container metrics
-  - job_name: "cadvisor"
+  - job_name: 'cadvisor'
     static_configs:
-      - targets: ["cadvisor:8080"]
+      - targets: ['cadvisor:8080']
     scrape_interval: 15s
 
   # Kubernetes pods (when running in K8s)
-  - job_name: "kubernetes-pods"
+  - job_name: 'kubernetes-pods'
     kubernetes_sd_configs:
       - role: pod
     relabel_configs:
@@ -79,7 +79,7 @@ scrape_configs:
         target_label: kubernetes_pod_name
 
   # Kubernetes services
-  - job_name: "kubernetes-services"
+  - job_name: 'kubernetes-services'
     kubernetes_sd_configs:
       - role: service
     relabel_configs:

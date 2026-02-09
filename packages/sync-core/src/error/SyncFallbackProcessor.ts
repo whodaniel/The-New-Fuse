@@ -4,10 +4,10 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { IMetricsCollector } from '@the-new-fuse/core-monitoring';
-import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { EventEmitter } from 'events';
-import { FallbackOperation, SyncContext } from './SyncErrorHandler.js';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { IMetricsCollector } from '@the-new-fuse/core-monitoring';
+import { SyncError, SyncContext, FallbackOperation } from './SyncErrorHandler.js';
 
 /**
  * Fallback strategy configuration
@@ -93,10 +93,10 @@ export class SyncFallbackProcessor extends EventEmitter {
     logger?: Logger
   ) {
     super();
-
+    
     this.logger = logger || new Logger('SyncFallbackProcessor');
     this.metricsCollector = metricsCollector;
-
+    
     this.config = {
       enabled: true,
       processingInterval: 10000, // 10 seconds
@@ -106,7 +106,7 @@ export class SyncFallbackProcessor extends EventEmitter {
       enableMetrics: true,
       enableAlternativeActions: true,
       gracefulDegradationEnabled: true,
-      ...config,
+      ...config
     };
 
     this.statistics = {
@@ -117,7 +117,7 @@ export class SyncFallbackProcessor extends EventEmitter {
       strategiesUsed: {},
       operationTypes: {},
       alternativeActionsTriggered: 0,
-      gracefulDegradations: 0,
+      gracefulDegradations: 0
     };
 
     this.initializeDefaultStrategies();
@@ -146,17 +146,17 @@ export class SyncFallbackProcessor extends EventEmitter {
    */
   async processFallbackOperation(operation: FallbackOperation): Promise<FallbackResult> {
     const startTime = Date.now();
-
+    
     try {
       this.logger.debug(`Processing fallback operation: ${operation.id}`, {
         operation: operation.operation,
         resourceType: operation.context.syncType,
-        tenantId: operation.context.tenantId,
+        tenantId: operation.context.tenantId
       });
 
       // Find applicable strategies
       const applicableStrategies = this.findApplicableStrategies(operation);
-
+      
       if (applicableStrategies.length === 0) {
         return await this.handleNoApplicableStrategy(operation, startTime);
       }
@@ -167,16 +167,14 @@ export class SyncFallbackProcessor extends EventEmitter {
 
         try {
           const result = await this.executeStrategyWithTimeout(strategy, operation);
-
+          
           if (result.success) {
             await this.handleSuccessfulFallback(operation, result, startTime);
             return result;
           }
+
         } catch (error) {
-          this.logger.warn(
-            `Strategy ${strategy.name} failed for operation ${operation.id}:`,
-            error
-          );
+          this.logger.warn(`Strategy ${strategy.name} failed for operation ${operation.id}:`, error);
         }
       }
 
@@ -194,6 +192,7 @@ export class SyncFallbackProcessor extends EventEmitter {
       }
 
       return await this.handleCompleteFailure(operation, startTime);
+
     } catch (error) {
       this.logger.error(`Error processing fallback operation ${operation.id}:`, error);
       return {
@@ -201,7 +200,7 @@ export class SyncFallbackProcessor extends EventEmitter {
         strategy: 'error',
         executionTime: Date.now() - startTime,
         error: error instanceof Error ? error : new Error(String(error)),
-        shouldRetry: false,
+        shouldRetry: false
       };
     }
   }
@@ -260,7 +259,7 @@ export class SyncFallbackProcessor extends EventEmitter {
       clearInterval(this.processingTimer);
       this.processingTimer = undefined;
     }
-
+    
     this.removeAllListeners();
     this.logger.debug('SyncFallbackProcessor shutdown complete');
   }
@@ -279,7 +278,7 @@ export class SyncFallbackProcessor extends EventEmitter {
       enabled: true,
       execute: async (operation: FallbackOperation) => {
         return await this.executeCacheRestore(operation);
-      },
+      }
     });
 
     // Local storage fallback
@@ -292,7 +291,7 @@ export class SyncFallbackProcessor extends EventEmitter {
       enabled: true,
       execute: async (operation: FallbackOperation) => {
         return await this.executeLocalStorage(operation);
-      },
+      }
     });
 
     // Simplified sync strategy
@@ -305,7 +304,7 @@ export class SyncFallbackProcessor extends EventEmitter {
       enabled: true,
       execute: async (operation: FallbackOperation) => {
         return await this.executeSimplifiedSync(operation);
-      },
+      }
     });
 
     // Read-only mode strategy
@@ -318,7 +317,7 @@ export class SyncFallbackProcessor extends EventEmitter {
       enabled: true,
       execute: async (operation: FallbackOperation) => {
         return await this.executeReadOnlyMode(operation);
-      },
+      }
     });
 
     // Queue for later strategy
@@ -331,7 +330,7 @@ export class SyncFallbackProcessor extends EventEmitter {
       enabled: true,
       execute: async (operation: FallbackOperation) => {
         return await this.executeQueueForLater(operation);
-      },
+      }
     });
   }
 
@@ -348,10 +347,10 @@ export class SyncFallbackProcessor extends EventEmitter {
           operation,
           context,
           message: `Sync operation failed: ${operation.operation}`,
-          actions: ['retry', 'skip', 'manual_resolve'],
+          actions: ['retry', 'skip', 'manual_resolve']
         });
         return true;
-      },
+      }
     });
 
     // Log for manual review
@@ -364,12 +363,12 @@ export class SyncFallbackProcessor extends EventEmitter {
           operation: operation.operation,
           resourceType: context.syncType,
           tenantId: context.tenantId,
-          data: operation.data,
+          data: operation.data
         });
-
+        
         this.emit('manualReviewRequired', { operation, context });
         return true;
-      },
+      }
     });
 
     // Create incident
@@ -382,10 +381,10 @@ export class SyncFallbackProcessor extends EventEmitter {
           title: `Critical sync failure: ${operation.operation}`,
           description: `Failed to sync ${context.syncType} for tenant ${context.tenantId}`,
           operation,
-          context,
+          context
         });
         return true;
-      },
+      }
     });
   }
 
@@ -400,7 +399,7 @@ export class SyncFallbackProcessor extends EventEmitter {
 
     this.processingTimer = setInterval(() => {
       if (this.currentlyProcessing < this.config.maxConcurrentProcessing) {
-        this.processNextBatch().catch((error) => {
+        this.processNextBatch().catch(error => {
           this.logger.error('Error in fallback processing:', error);
         });
       }
@@ -423,17 +422,15 @@ export class SyncFallbackProcessor extends EventEmitter {
    */
   private findApplicableStrategies(operation: FallbackOperation): FallbackStrategy[] {
     const strategies = Array.from(this.strategies.values())
-      .filter((strategy) => {
+      .filter(strategy => {
         // Check operation applicability
-        const operationMatch =
-          strategy.applicableOperations.includes('*') ||
-          strategy.applicableOperations.includes(operation.operation);
-
+        const operationMatch = strategy.applicableOperations.includes('*') ||
+                              strategy.applicableOperations.includes(operation.operation);
+        
         // Check resource type applicability
-        const resourceMatch =
-          strategy.applicableResourceTypes.includes('*') ||
-          strategy.applicableResourceTypes.includes(operation.context.syncType);
-
+        const resourceMatch = strategy.applicableResourceTypes.includes('*') ||
+                             strategy.applicableResourceTypes.includes(operation.context.syncType);
+        
         return operationMatch && resourceMatch && strategy.enabled;
       })
       .sort((a, b) => a.priority - b.priority); // Sort by priority (lower = higher priority)
@@ -449,19 +446,18 @@ export class SyncFallbackProcessor extends EventEmitter {
     operation: FallbackOperation
   ): Promise<FallbackResult> {
     const timeout = strategy.maxExecutionTime || this.config.defaultTimeout;
-
+    
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         reject(new Error(`Strategy ${strategy.name} timed out after ${timeout}ms`));
       }, timeout);
 
-      strategy
-        .execute(operation)
-        .then((result) => {
+      strategy.execute(operation)
+        .then(result => {
           clearTimeout(timer);
           resolve(result);
         })
-        .catch((error) => {
+        .catch(error => {
           clearTimeout(timer);
           reject(error);
         });
@@ -477,7 +473,7 @@ export class SyncFallbackProcessor extends EventEmitter {
     startTime: number
   ): Promise<void> {
     const executionTime = Date.now() - startTime;
-
+    
     this.statistics.totalProcessed++;
     this.statistics.successfulFallbacks++;
     this.updateAverageExecutionTime(executionTime);
@@ -488,17 +484,17 @@ export class SyncFallbackProcessor extends EventEmitter {
       this.metricsCollector.incrementCounter('sync_fallback_success_total', {
         strategy: result.strategy,
         operation: operation.operation,
-        resourceType: operation.context.syncType,
+        resourceType: operation.context.syncType
       });
       this.metricsCollector.recordHistogram('sync_fallback_execution_time', executionTime, {
-        strategy: result.strategy,
+        strategy: result.strategy
       });
     }
 
     this.logger.info(`Fallback successful: ${operation.id}`, {
       strategy: result.strategy,
       executionTime,
-      operation: operation.operation,
+      operation: operation.operation
     });
 
     this.emit('fallbackSuccess', { operation, result });
@@ -512,46 +508,42 @@ export class SyncFallbackProcessor extends EventEmitter {
     startTime: number
   ): Promise<FallbackResult> {
     this.logger.warn(`No applicable fallback strategy for operation: ${operation.id}`);
-
+    
     return {
       success: false,
       strategy: 'none',
       executionTime: Date.now() - startTime,
       error: new Error('No applicable fallback strategy found'),
       shouldRetry: false,
-      alternativeAction: 'logForReview',
+      alternativeAction: 'logForReview'
     };
   }
 
   /**
    * Try alternative actions when all strategies fail
    */
-  private async tryAlternativeActions(
-    operation: FallbackOperation
-  ): Promise<FallbackResult | null> {
+  private async tryAlternativeActions(operation: FallbackOperation): Promise<FallbackResult | null> {
     for (const action of this.alternativeActions.values()) {
       try {
         const success = await action.execute(operation, operation.context);
         if (success) {
           this.statistics.alternativeActionsTriggered++;
-
-          this.logger.info(
-            `Alternative action succeeded: ${action.name} for operation ${operation.id}`
-          );
-
+          
+          this.logger.info(`Alternative action succeeded: ${action.name} for operation ${operation.id}`);
+          
           return {
             success: true,
             strategy: 'alternativeAction',
             executionTime: 0,
             shouldRetry: false,
-            alternativeAction: action.name,
+            alternativeAction: action.name
           };
         }
       } catch (error) {
         this.logger.warn(`Alternative action ${action.name} failed:`, error);
       }
     }
-
+    
     return null;
   }
 
@@ -563,13 +555,13 @@ export class SyncFallbackProcessor extends EventEmitter {
     startTime: number
   ): Promise<FallbackResult> {
     this.statistics.gracefulDegradations++;
-
+    
     this.logger.info(`Performing graceful degradation for operation: ${operation.id}`);
-
+    
     // Emit graceful degradation event
     this.emit('gracefulDegradation', {
       operation,
-      message: 'System operating in degraded mode due to sync failure',
+      message: 'System operating in degraded mode due to sync failure'
     });
 
     return {
@@ -577,7 +569,7 @@ export class SyncFallbackProcessor extends EventEmitter {
       strategy: 'gracefulDegradation',
       executionTime: Date.now() - startTime,
       shouldRetry: false,
-      data: { degradedMode: true },
+      data: { degradedMode: true }
     };
   }
 
@@ -590,9 +582,9 @@ export class SyncFallbackProcessor extends EventEmitter {
   ): Promise<FallbackResult> {
     this.statistics.totalProcessed++;
     this.statistics.failedFallbacks++;
-
+    
     this.logger.error(`Complete fallback failure for operation: ${operation.id}`);
-
+    
     this.emit('fallbackFailure', { operation });
 
     return {
@@ -600,7 +592,7 @@ export class SyncFallbackProcessor extends EventEmitter {
       strategy: 'none',
       executionTime: Date.now() - startTime,
       error: new Error('All fallback strategies failed'),
-      shouldRetry: false,
+      shouldRetry: false
     };
   }
 
@@ -609,7 +601,7 @@ export class SyncFallbackProcessor extends EventEmitter {
    */
   private updateAverageExecutionTime(executionTime: number): void {
     const total = this.statistics.successfulFallbacks + this.statistics.failedFallbacks;
-    this.statistics.averageExecutionTime =
+    this.statistics.averageExecutionTime = 
       (this.statistics.averageExecutionTime * (total - 1) + executionTime) / total;
   }
 
@@ -624,8 +616,7 @@ export class SyncFallbackProcessor extends EventEmitter {
    * Update operation type statistics
    */
   private updateOperationTypeStats(operation: string): void {
-    this.statistics.operationTypes[operation] =
-      (this.statistics.operationTypes[operation] || 0) + 1;
+    this.statistics.operationTypes[operation] = (this.statistics.operationTypes[operation] || 0) + 1;
   }
 
   // Default strategy implementations
@@ -635,38 +626,39 @@ export class SyncFallbackProcessor extends EventEmitter {
    */
   private async executeCacheRestore(operation: FallbackOperation): Promise<FallbackResult> {
     const startTime = Date.now();
-
+    
     try {
       // Try to restore from Redis cache
       const cacheKey = `sync:cache:${operation.context.syncType}:${operation.context.resourcePath}`;
       const cachedData = await this.redisService.get(cacheKey);
-
+      
       if (cachedData) {
         this.emit('cacheRestoreSuccess', { operation, data: JSON.parse(cachedData) });
-
+        
         return {
           success: true,
           strategy: 'cacheRestore',
           executionTime: Date.now() - startTime,
           data: JSON.parse(cachedData),
-          shouldRetry: false,
+          shouldRetry: false
         };
       }
-
+      
       return {
         success: false,
         strategy: 'cacheRestore',
         executionTime: Date.now() - startTime,
         error: new Error('No cached data available'),
-        shouldRetry: false,
+        shouldRetry: false
       };
+      
     } catch (error) {
       return {
         success: false,
         strategy: 'cacheRestore',
         executionTime: Date.now() - startTime,
         error: error instanceof Error ? error : new Error(String(error)),
-        shouldRetry: false,
+        shouldRetry: false
       };
     }
   }
@@ -676,16 +668,16 @@ export class SyncFallbackProcessor extends EventEmitter {
    */
   private async executeLocalStorage(operation: FallbackOperation): Promise<FallbackResult> {
     const startTime = Date.now();
-
+    
     // Emit event for local storage handling
     this.emit('localStorageRequired', { operation });
-
+    
     return {
       success: true,
       strategy: 'localStorage',
       executionTime: Date.now() - startTime,
       shouldRetry: false,
-      data: { storedLocally: true },
+      data: { storedLocally: true }
     };
   }
 
@@ -694,16 +686,16 @@ export class SyncFallbackProcessor extends EventEmitter {
    */
   private async executeSimplifiedSync(operation: FallbackOperation): Promise<FallbackResult> {
     const startTime = Date.now();
-
+    
     // Emit event for simplified sync
     this.emit('simplifiedSyncRequired', { operation });
-
+    
     return {
       success: true,
       strategy: 'simplifiedSync',
       executionTime: Date.now() - startTime,
       shouldRetry: true,
-      data: { simplified: true },
+      data: { simplified: true }
     };
   }
 
@@ -712,16 +704,16 @@ export class SyncFallbackProcessor extends EventEmitter {
    */
   private async executeReadOnlyMode(operation: FallbackOperation): Promise<FallbackResult> {
     const startTime = Date.now();
-
+    
     // Switch to read-only mode
     this.emit('readOnlyModeActivated', { operation });
-
+    
     return {
       success: true,
       strategy: 'readOnlyMode',
       executionTime: Date.now() - startTime,
       shouldRetry: false,
-      data: { readOnlyMode: true },
+      data: { readOnlyMode: true }
     };
   }
 
@@ -730,32 +722,33 @@ export class SyncFallbackProcessor extends EventEmitter {
    */
   private async executeQueueForLater(operation: FallbackOperation): Promise<FallbackResult> {
     const startTime = Date.now();
-
+    
     try {
       // Queue operation for later processing
       const queueKey = 'sync:deferred:operations';
       const deferredOp = {
         ...operation,
         deferredAt: new Date(),
-        reason: 'fallback_queue',
+        reason: 'fallback_queue'
       };
-
+      
       await this.redisService.lpush(queueKey, JSON.stringify(deferredOp));
-
+      
       return {
         success: true,
         strategy: 'queueForLater',
         executionTime: Date.now() - startTime,
         shouldRetry: false,
-        data: { queued: true },
+        data: { queued: true }
       };
+      
     } catch (error) {
       return {
         success: false,
         strategy: 'queueForLater',
         executionTime: Date.now() - startTime,
         error: error instanceof Error ? error : new Error(String(error)),
-        shouldRetry: false,
+        shouldRetry: false
       };
     }
   }

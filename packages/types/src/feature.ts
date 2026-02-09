@@ -1,4 +1,4 @@
-import { FeatureStage, SuggestionPriority, SuggestionStatus } from './core/suggestion-enums';
+import { SuggestionStatus, SuggestionPriority, FeatureStage } from './core/suggestion-enums';
 
 export interface StageTransition {
   id: string;

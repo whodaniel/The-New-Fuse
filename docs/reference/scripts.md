@@ -3,9 +3,7 @@
 ## Cleanup Scripts
 
 ### Main Cleanup Script
-
-The project uses a TypeScript-based cleanup script (`scripts/cleanup.ts`) that
-consolidates all cleanup operations.
+The project uses a TypeScript-based cleanup script (`scripts/cleanup.ts`) that consolidates all cleanup operations.
 
 ```bash
 # Full system cleanup
@@ -21,7 +19,6 @@ yarn clean:cache   # Clean cache
 ## Analysis Scripts
 
 ### Component Analysis
-
 ```bash
 # Run manual component analysis
 yarn analyze:components
@@ -33,13 +30,11 @@ yarn analyze:components:report
 yarn task:run component-analysis
 ```
 
-For more details about automated component analysis, see
-[Automated Component Analysis](automated-component-analysis.md).
+For more details about automated component analysis, see [Automated Component Analysis](automated-component-analysis.md).
 
 ## Development Scripts
 
 ### Core Development
-
 ```bash
 # Start development server
 pnpm dev
@@ -55,7 +50,6 @@ pnpm run type-check
 ```
 
 ### Testing
-
 ```bash
 # Run all tests
 pnpm test
@@ -67,7 +61,6 @@ pnpm run test:e2e
 ```
 
 ### Database Operations
-
 ```bash
 # Reset development database
 pnpm run db:reset
@@ -80,7 +73,6 @@ pnpm run db:generate
 ```
 
 ### Docker Operations
-
 ```bash
 # Start Docker environment
 pnpm run docker:up
@@ -95,7 +87,6 @@ pnpm run clean:docker
 ## Maintenance Scripts
 
 ### Code Quality
-
 ```bash
 # Lint code
 yarn lint
@@ -108,7 +99,6 @@ yarn type-check
 ```
 
 ### Dependency Management
-
 ```bash
 # Update dependencies
 yarn upgrade-interactive
@@ -123,7 +113,6 @@ yarn outdated
 ## CI/CD Scripts
 
 ### Build
-
 ```bash
 # Production build
 yarn build:prod
@@ -133,7 +122,6 @@ yarn build:staging
 ```
 
 ### Deployment
-
 ```bash
 # Deploy to production
 yarn deploy:prod
@@ -145,7 +133,6 @@ yarn deploy:staging
 ## Troubleshooting Scripts
 
 ### System Reset
-
 ```bash
 # Reset development environment
 yarn reset:dev
@@ -158,7 +145,6 @@ yarn db:reset
 ```
 
 ### Logging
-
 ```bash
 # View application logs
 yarn logs
@@ -170,7 +156,6 @@ yarn logs:error
 ## Script Organization
 
 All scripts are organized in the following structure:
-
 ```
 scripts/
 ├── cleanup.ts          # Main cleanup script

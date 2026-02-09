@@ -20,5 +20,7 @@
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*spec.ts"],
-  "references": [{ "path": "../types" }]
+  "references": [
+    { "path": "../types" }
+  ]
 }

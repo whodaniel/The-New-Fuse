@@ -1,6 +1,6 @@
-import { ApiConfig } from '../config/ApiConfig';
 import { ApiClient } from '../core/ApiClient';
-import { AuthType, Integration, IntegrationConfig, IntegrationType } from './types';
+import { ApiConfig } from '../config/ApiConfig';
+import { Integration, IntegrationType, IntegrationConfig, AuthType } from './types';
 
 /**
  * Make.com integration configuration
@@ -31,16 +31,16 @@ export class MakeIntegration implements Integration {
   isEnabled: boolean = true;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
-
+  
   private apiClient: ApiClient;
-
+  
   constructor(config: MakeConfig) {
     this.id = config.id;
     this.name = config.name;
     this.type = config.type;
     this.description = config.description;
     this.config = config;
-
+    
     // Default Make capabilities
     this.capabilities = {
       actions: [
@@ -50,34 +50,39 @@ export class MakeIntegration implements Integration {
         'list_connections',
         'get_scenario_execution_history',
         'list_organizations',
-        'list_teams',
+        'list_teams'
       ],
-      triggers: ['scenario_started', 'scenario_completed', 'scenario_error', 'data_store_updated'],
+      triggers: [
+        'scenario_started',
+        'scenario_completed',
+        'scenario_error',
+        'data_store_updated'
+      ],
       supportsWebhooks: true,
       supportsPolling: true,
-      supportsCustomFields: true,
+      supportsCustomFields: true
     };
-
+    
     // Create API client for Make
     const apiConfig: ApiConfig = {
       baseURL: config.baseUrl || '',
       headers: {
         ...config.defaultHeaders,
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     };
-
+    
     // Add API key if provided
     if (config.apiKey) {
       apiConfig.headers = {
         ...apiConfig.headers,
-        Authorization: `Token ${config.apiKey}`,
+        'Authorization': `Token ${config.apiKey}`
       };
     }
-
+    
     this.apiClient = new ApiClient(apiConfig);
   }
-
+  
   /**
    * Connect to Make API
    */
@@ -90,12 +95,10 @@ export class MakeIntegration implements Integration {
       return true;
     } catch (error) {
       this.isConnected = false;
-      throw new Error(
-        `Failed to connect to Make: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to connect to Make: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Disconnect from Make
    */
@@ -104,7 +107,7 @@ export class MakeIntegration implements Integration {
     this.updatedAt = new Date();
     return true;
   }
-
+  
   /**
    * Execute a Make action
    */
@@ -112,7 +115,7 @@ export class MakeIntegration implements Integration {
     if (!this.isConnected) {
       throw new Error('Not connected to Make. Call connect() first.');
     }
-
+    
     switch (action) {
       case 'list_scenarios':
         return this.listScenarios(params.teamId || this.config.teamId);
@@ -130,7 +133,7 @@ export class MakeIntegration implements Integration {
         throw new Error(`Unsupported Make action: ${action}`);
     }
   }
-
+  
   /**
    * List scenarios in a team
    */
@@ -138,16 +141,14 @@ export class MakeIntegration implements Integration {
     if (!teamId) {
       throw new Error('Team ID is required for listing scenarios');
     }
-
+    
     try {
       return await this.apiClient.get(`/api/v2/scenarios?teamId=${teamId}`);
     } catch (error) {
-      throw new Error(
-        `Failed to list scenarios: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to list scenarios: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Get a specific scenario
    */
@@ -155,12 +156,10 @@ export class MakeIntegration implements Integration {
     try {
       return await this.apiClient.get(`/api/v2/scenarios/${scenarioId}`);
     } catch (error) {
-      throw new Error(
-        `Failed to get scenario: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to get scenario: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Run a specific scenario
    */
@@ -168,12 +167,10 @@ export class MakeIntegration implements Integration {
     try {
       return await this.apiClient.post(`/api/v2/scenarios/${scenarioId}/run`, data || {});
     } catch (error) {
-      throw new Error(
-        `Failed to run scenario: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to run scenario: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * List organizations
    */
@@ -181,12 +178,10 @@ export class MakeIntegration implements Integration {
     try {
       return await this.apiClient.get('/api/v2/organizations');
     } catch (error) {
-      throw new Error(
-        `Failed to list organizations: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to list organizations: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * List teams in an organization
    */
@@ -194,16 +189,14 @@ export class MakeIntegration implements Integration {
     if (!organizationId) {
       throw new Error('Organization ID is required for listing teams');
     }
-
+    
     try {
       return await this.apiClient.get(`/api/v2/teams?organizationId=${organizationId}`);
     } catch (error) {
-      throw new Error(
-        `Failed to list teams: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to list teams: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Create a webhook for a scenario
    */
@@ -211,15 +204,13 @@ export class MakeIntegration implements Integration {
     try {
       return await this.apiClient.post(`/api/v2/hooks`, {
         scenarioId,
-        url: hookUrl,
+        url: hookUrl
       });
     } catch (error) {
-      throw new Error(
-        `Failed to create webhook: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to create webhook: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Get metadata about this integration
    */
@@ -231,7 +222,7 @@ export class MakeIntegration implements Integration {
       capabilities: this.capabilities,
       isConnected: this.isConnected,
       isEnabled: this.isEnabled,
-      lastUpdated: this.updatedAt,
+      lastUpdated: this.updatedAt
     };
   }
 }
@@ -250,12 +241,11 @@ export function createMakeIntegration(config: Partial<MakeConfig> = {}): MakeInt
     webhookSupport: true,
     apiVersion: 'v2',
     docUrl: 'https://www.make.com/en/api-documentation',
-    logoUrl:
-      'https://images.ctfassets.net/qqlj6g4ee76j/687aa1dtTqo7cAPKFGOXi/549c8c65ab14f3dd266c3a4c8b5a9300/Make-Logo-RGB-Dark.svg',
+    logoUrl: 'https://images.ctfassets.net/qqlj6g4ee76j/687aa1dtTqo7cAPKFGOXi/549c8c65ab14f3dd266c3a4c8b5a9300/Make-Logo-RGB-Dark.svg'
   };
-
+  
   return new MakeIntegration({
     ...defaultConfig,
-    ...config,
+    ...config
   });
 }

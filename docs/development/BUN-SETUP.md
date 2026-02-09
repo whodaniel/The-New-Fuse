@@ -106,7 +106,6 @@ pnpm run --filter @the-new-fuse/core build
 ### Package-specific Commands
 
 If migrating from Yarn:
-
 1. Remove yarn.lock and .yarn directory
 2. Remove .yarnrc.yml file
 3. Run `pnpm install` to create bun.lockb

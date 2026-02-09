@@ -1,16 +1,16 @@
-import { DrizzleClient } from '@drizzle/client';
+import { PrismaClient } from '@prisma/client';
 
 /**
  * Script to verify if Augment has been registered in the database
  */
 async function verifyAugmentRegistration(): any {
-  const drizzle = new DrizzleClient();
+  const prisma = new PrismaClient();
   
   try {
     console.log('Checking if Augment is registered...');
     
     // Check if Augment exists in the database
-    const augmentAgent = await drizzle.agent.findFirst({
+    const augmentAgent = await prisma.agent.findFirst({
       where: {
         name: 'Augment',
         deletedAt: null
@@ -29,7 +29,7 @@ async function verifyAugmentRegistration(): any {
     console.error('Error verifying Augment registration:', error);
     throw error;
   } finally {
-    await drizzle.$disconnect();
+    await prisma.$disconnect();
   }
 }
 

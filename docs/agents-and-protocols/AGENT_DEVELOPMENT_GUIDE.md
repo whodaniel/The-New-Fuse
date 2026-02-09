@@ -2,15 +2,11 @@
 
 ## Overview
 
-This guide provides step-by-step instructions for developing AI agents that
-integrate with The New Fuse agent communication infrastructure. Whether you're
-building a simple assistant or a complex multi-agent system, this guide covers
-all the essentials.
+This guide provides step-by-step instructions for developing AI agents that integrate with The New Fuse agent communication infrastructure. Whether you're building a simple assistant or a complex multi-agent system, this guide covers all the essentials.
 
 **Target Audience**: Developers building AI agents for The New Fuse ecosystem
 
 **Prerequisites**:
-
 - TypeScript/JavaScript knowledge
 - Understanding of async/await patterns
 - Familiarity with REST APIs
@@ -58,8 +54,8 @@ class SimpleAgent {
       type: 'assistant',
       metadata: {
         capabilities: this.capabilities,
-        version: '1.0.0',
-      },
+        version: '1.0.0'
+      }
     });
 
     this.agentId = agent.id;
@@ -77,7 +73,7 @@ class SimpleAgent {
   async sendMessage(targetAgentId: string, content: string): Promise<void> {
     await this.chatService.sendMessage(targetAgentId, content, {
       fromAgent: this.agentId,
-      timestamp: Date.now(),
+      timestamp: Date.now()
     });
   }
 
@@ -101,31 +97,26 @@ await agent.initialize();
 Every agent should implement these core components:
 
 **1. Registration Module**:
-
 - Handles agent registration with the registry
 - Manages agent metadata and capabilities
 - Handles authentication and authorization
 
 **2. Communication Module**:
-
 - Manages connections (WebSocket, HTTP, Redis, MCP)
 - Implements protocol-specific logic
 - Handles message serialization/deserialization
 
 **3. Message Handler Module**:
-
 - Processes incoming messages
 - Routes messages to appropriate handlers
 - Implements business logic
 
 **4. State Management Module**:
-
 - Manages agent state
 - Handles session data
 - Implements persistence if needed
 
 **5. Error Handler Module**:
-
 - Catches and handles errors
 - Implements retry logic
 - Provides error reporting
@@ -186,7 +177,7 @@ const metadata: AgentMetadata = {
   version: '1.0.0',
   description: 'AI-powered code assistant',
   model: 'gpt-4',
-  provider: 'OpenAI',
+  provider: 'OpenAI'
 };
 ```
 
@@ -206,12 +197,13 @@ class AgentRegistration {
         metadata: {
           capabilities: metadata.capabilities,
           version: metadata.version,
-          ...metadata,
-        },
+          ...metadata
+        }
       });
 
       console.log(`Agent registered successfully: ${agent.id}`);
       return agent.id;
+
     } catch (error) {
       console.error('Registration failed:', error);
       throw error;
@@ -269,7 +261,7 @@ class WebSocketAgent {
       transports: ['websocket'],
       reconnection: true,
       reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
+      reconnectionDelay: 1000
     });
 
     this.setupEventHandlers();
@@ -306,20 +298,20 @@ class WebSocketAgent {
       source: {
         agentId: this.agentId,
         agentType: 'websocket-agent',
-        capabilities: ['chat', 'assistance'],
+        capabilities: ['chat', 'assistance']
       },
       target: {
-        agentId: 'tnf-relay',
+        agentId: 'tnf-relay'
       },
       content: {
         type: 'request',
         action: 'register',
         data: {
           agentId: this.agentId,
-          status: 'online',
+          status: 'online'
         },
-        priority: 'high',
-      },
+        priority: 'high'
+      }
     };
 
     this.socket.emit('agent:register', registration);
@@ -333,17 +325,17 @@ class WebSocketAgent {
       source: {
         agentId: this.agentId,
         agentType: 'websocket-agent',
-        capabilities: [],
+        capabilities: []
       },
       target: {
-        agentId: targetAgentId,
+        agentId: targetAgentId
       },
       content: {
         type: 'request',
         action: 'message',
         data: content,
-        priority: 'medium',
-      },
+        priority: 'medium'
+      }
     };
 
     this.socket.emit('agent:message', message);
@@ -400,18 +392,14 @@ class RedisPubSubAgent {
     console.log(`Agent ${this.agentId} subscribed to Redis channels`);
   }
 
-  async sendMessage(
-    targetAgentId: string,
-    content: string,
-    metadata?: any
-  ): Promise<void> {
+  async sendMessage(targetAgentId: string, content: string, metadata?: any): Promise<void> {
     const message = {
       id: `msg_${Date.now()}`,
       from: this.agentId,
       to: targetAgentId,
       content,
       timestamp: new Date(),
-      metadata,
+      metadata
     };
 
     const channel = `agent-chat:${targetAgentId}`;
@@ -425,13 +413,10 @@ class RedisPubSubAgent {
       to: 'broadcast',
       content,
       timestamp: new Date(),
-      metadata,
+      metadata
     };
 
-    await this.publisher.publish(
-      'agent-chat:broadcast',
-      JSON.stringify(message)
-    );
+    await this.publisher.publish('agent-chat:broadcast', JSON.stringify(message));
   }
 
   private handleRedisMessage(channel: string, message: string): void {
@@ -472,13 +457,13 @@ class HTTPAgent {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': this.apiKey,
+        'X-API-Key': this.apiKey
       },
       body: JSON.stringify({
         name,
         type,
-        metadata,
-      }),
+        metadata
+      })
     });
 
     if (!response.ok) {
@@ -491,21 +476,18 @@ class HTTPAgent {
   }
 
   async sendMessage(targetAgentId: string, message: any): Promise<void> {
-    const response = await fetch(
-      `${this.apiUrl}/agents/${targetAgentId}/messages`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-Key': this.apiKey,
-        },
-        body: JSON.stringify({
-          from: this.agentId,
-          content: message,
-          timestamp: Date.now(),
-        }),
-      }
-    );
+    const response = await fetch(`${this.apiUrl}/agents/${targetAgentId}/messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': this.apiKey
+      },
+      body: JSON.stringify({
+        from: this.agentId,
+        content: message,
+        timestamp: Date.now()
+      })
+    });
 
     if (!response.ok) {
       throw new Error(`Message send failed: ${response.statusText}`);
@@ -515,8 +497,8 @@ class HTTPAgent {
   async getAgentInfo(agentId: string): Promise<any> {
     const response = await fetch(`${this.apiUrl}/agents/${agentId}`, {
       headers: {
-        'X-API-Key': this.apiKey,
-      },
+        'X-API-Key': this.apiKey
+      }
     });
 
     if (!response.ok) {
@@ -530,8 +512,8 @@ class HTTPAgent {
     const params = new URLSearchParams(criteria);
     const response = await fetch(`${this.apiUrl}/agents?${params}`, {
       headers: {
-        'X-API-Key': this.apiKey,
-      },
+        'X-API-Key': this.apiKey
+      }
     });
 
     if (!response.ok) {
@@ -580,7 +562,7 @@ class MessageRouter {
     }
 
     // Execute all handlers for this action
-    await Promise.all(handlers.map((handler) => handler(message)));
+    await Promise.all(handlers.map(handler => handler(message)));
   }
 }
 
@@ -625,34 +607,26 @@ class RetryHandler {
         lastError = error as Error;
 
         if (attempt < maxRetries) {
-          console.log(
-            `Attempt ${attempt + 1} failed, retrying in ${delay}ms...`
-          );
+          console.log(`Attempt ${attempt + 1} failed, retrying in ${delay}ms...`);
           await this.sleep(delay * Math.pow(2, attempt));
         }
       }
     }
 
-    throw new Error(
-      `Operation failed after ${maxRetries} retries: ${lastError!.message}`
-    );
+    throw new Error(`Operation failed after ${maxRetries} retries: ${lastError!.message}`);
   }
 
   private sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }
 
 // Usage
 const retryHandler = new RetryHandler();
 
-await retryHandler.withRetry(
-  async () => {
-    await agent.sendMessage(targetId, content);
-  },
-  3,
-  1000
-);
+await retryHandler.withRetry(async () => {
+  await agent.sendMessage(targetId, content);
+}, 3, 1000);
 ```
 
 ### Circuit Breaker
@@ -730,17 +704,15 @@ describe('MyAgent', () => {
 
   it('should send message', async () => {
     await agent.initialize();
-    await expect(
-      agent.sendMessage('target-id', 'hello')
-    ).resolves.not.toThrow();
+    await expect(agent.sendMessage('target-id', 'hello')).resolves.not.toThrow();
   });
 
   it('should handle incoming message', async () => {
     const message = {
       content: {
         action: 'test-action',
-        data: { key: 'value' },
-      },
+        data: { key: 'value' }
+      }
     };
 
     await agent.handleMessage(message);
@@ -774,7 +746,7 @@ describe('Agent Integration Tests', () => {
     await agent1.sendMessage(agent2.agentId, 'test message');
 
     // Wait for message delivery
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     expect(receivedMessage).toBeDefined();
     expect(receivedMessage.content).toBe('test message');
@@ -842,7 +814,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - '6379:6379'
+      - "6379:6379"
 ```
 
 ---
@@ -852,8 +824,7 @@ services:
 ### 1. Agent Design
 
 - **Single Responsibility**: Each agent should have a clear, focused purpose
-- **Stateless When Possible**: Design agents to be stateless for better
-  scalability
+- **Stateless When Possible**: Design agents to be stateless for better scalability
 - **Idempotent Operations**: Operations should be safe to retry
 - **Graceful Degradation**: Handle failures gracefully without cascading
 
@@ -889,8 +860,7 @@ services:
 
 ## Example Implementations
 
-See the `/home/user/fuse/examples/` directory for complete example
-implementations:
+See the `/home/user/fuse/examples/` directory for complete example implementations:
 
 - `code-execution-agent/` - Agent for executing code snippets
 - `agent-workflow/` - Multi-agent workflow orchestration
@@ -910,11 +880,12 @@ implementations:
 ## Support
 
 For questions and support:
-
 - GitHub Issues: https://github.com/whodaniel/fuse/issues
 - Documentation: /home/user/fuse/docs/
 - Community: Join our Discord/Slack
 
 ---
 
-**Version**: 1.0.0 **Last Updated**: 2025-11-18 **Status**: Production Ready
+**Version**: 1.0.0
+**Last Updated**: 2025-11-18
+**Status**: Production Ready

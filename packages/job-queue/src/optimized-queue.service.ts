@@ -1,10 +1,10 @@
 // Optimized Job Queue Service - High-performance background job processing for agent workflows
 // Features intelligent prioritization, batching, parallel processing, and automatic retry logic
 
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import Bull, { Queue, Job, JobOptions } from 'bull';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import Bull, { Job, JobOptions, Queue } from 'bull';
 
 export interface JobData {
   id: string;
@@ -38,11 +38,11 @@ export interface QueueMetrics {
 }
 
 export enum JobPriority {
-  CRITICAL = 1, // System critical operations
-  HIGH = 2, // Real-time agent communication
-  MEDIUM = 3, // Workflow processing
-  LOW = 4, // Background tasks
-  BATCH = 5, // Bulk operations
+  CRITICAL = 1,    // System critical operations
+  HIGH = 2,        // Real-time agent communication
+  MEDIUM = 3,      // Workflow processing
+  LOW = 4,         // Background tasks
+  BATCH = 5,       // Bulk operations
 }
 
 export enum JobType {
@@ -166,7 +166,7 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
               port: this.configService.get('REDIS_PORT', 6379),
               password: this.configService.get('REDIS_PASSWORD'),
               db: this.configService.get('REDIS_QUEUE_DB', 1),
-            },
+            }
           };
 
       const queue = new Bull(config.name, {
@@ -249,24 +249,18 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
     // Cache job metadata using UnifiedRedisService for fast lookups
     try {
       const jobMetadataKey = `job:metadata:${jobId}`;
-      await this.unifiedRedis.set(
-        jobMetadataKey,
-        JSON.stringify({
-          id: jobId,
-          type: jobType,
-          status: 'queued',
-          queuedAt: enhancedJobData.context.queuedAt,
-          priority: jobOptions.priority,
-        }),
-        3600
-      ); // 1 hour TTL
+      await this.unifiedRedis.set(jobMetadataKey, JSON.stringify({
+        id: jobId,
+        type: jobType,
+        status: 'queued',
+        queuedAt: enhancedJobData.context.queuedAt,
+        priority: jobOptions.priority
+      }), 3600); // 1 hour TTL
     } catch (error) {
       this.logger.warn(`Failed to cache job metadata for ${jobId}`, error);
     }
 
-    this.logger.log(
-      `Job added: ${job.id} to queue: ${jobType} with priority: ${jobOptions.priority}`
-    );
+    this.logger.log(`Job added: ${job.id} to queue: ${jobType} with priority: ${jobOptions.priority}`);
 
     return job;
   }
@@ -308,17 +302,13 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
     // Update job status in cache
     try {
       const jobMetadataKey = `job:metadata:${job.data.id}`;
-      await this.unifiedRedis.set(
-        jobMetadataKey,
-        JSON.stringify({
-          id: job.data.id,
-          type,
-          status: 'processing',
-          startedAt: new Date().toISOString(),
-          attemptsMade: job.attemptsMade,
-        }),
-        3600
-      );
+      await this.unifiedRedis.set(jobMetadataKey, JSON.stringify({
+        id: job.data.id,
+        type,
+        status: 'processing',
+        startedAt: new Date().toISOString(),
+        attemptsMade: job.attemptsMade
+      }), 3600);
     } catch (error) {
       this.logger.warn(`Failed to update job status for ${job.data.id}`, error);
     }
@@ -369,24 +359,21 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
       // Update completion status in cache
       try {
         const jobMetadataKey = `job:metadata:${job.data.id}`;
-        await this.unifiedRedis.set(
-          jobMetadataKey,
-          JSON.stringify({
-            id: job.data.id,
-            type,
-            status: 'completed',
-            completedAt: new Date().toISOString(),
-            duration,
-            success: true,
-          }),
-          3600
-        );
+        await this.unifiedRedis.set(jobMetadataKey, JSON.stringify({
+          id: job.data.id,
+          type,
+          status: 'completed',
+          completedAt: new Date().toISOString(),
+          duration,
+          success: true
+        }), 3600);
       } catch (error) {
         this.logger.warn(`Failed to update job completion status for ${job.data.id}`, error);
       }
 
       this.logger.debug(`Job completed: ${job.id} in ${duration}ms`);
       return jobResult;
+
     } catch (error) {
       const duration = Date.now() - startTime;
       const jobResult: JobResult = {
@@ -399,19 +386,15 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
       // Update failure status in cache
       try {
         const jobMetadataKey = `job:metadata:${job.data.id}`;
-        await this.unifiedRedis.set(
-          jobMetadataKey,
-          JSON.stringify({
-            id: job.data.id,
-            type,
-            status: 'failed',
-            failedAt: new Date().toISOString(),
-            duration,
-            error: error.message,
-            attemptsMade: job.attemptsMade,
-          }),
-          3600
-        );
+        await this.unifiedRedis.set(jobMetadataKey, JSON.stringify({
+          id: job.data.id,
+          type,
+          status: 'failed',
+          failedAt: new Date().toISOString(),
+          duration,
+          error: error.message,
+          attemptsMade: job.attemptsMade
+        }), 3600);
       } catch (error) {
         this.logger.warn(`Failed to update job failure status for ${job.data.id}`, error);
       }
@@ -556,13 +539,12 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
       const timestamp = Date.now();
 
       // Use UnifiedRedisService to increment event counters
-      this.unifiedRedis
-        .incr(metricsKey)
+      this.unifiedRedis.incr(metricsKey)
         .then(() => {
           // Set expiry for event counters (1 hour)
           return this.unifiedRedis.expire(metricsKey, 3600);
         })
-        .catch((error) => {
+        .catch(error => {
           this.logger.error(`Failed to update metrics for ${jobType}:${event}`, error);
         });
     } catch (error) {

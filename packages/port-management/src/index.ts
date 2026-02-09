@@ -1,11 +1,13 @@
 // packages/port-management/src/index.ts
 
-export { ConfigurationUpdater } from './config-updater';
-export type { ConfigUpdateTarget } from './config-updater';
 export { PortRegistryService } from './services/port-registry.service';
+export { ConfigurationUpdater } from './config-updater';
 export type {
-  PortConflict,
   PortRegistration,
+  PortConflict,
   PortResolution,
-  ServiceConfiguration,
+  ServiceConfiguration
 } from './services/port-registry.service';
+export type {
+  ConfigUpdateTarget
+} from './config-updater';

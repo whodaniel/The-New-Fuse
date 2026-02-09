@@ -24,50 +24,15 @@ export class InputSanitizationService {
 
     return this.domPurify.sanitize(html, {
       ALLOWED_TAGS: [
-        'p',
-        'br',
-        'strong',
-        'em',
-        'u',
-        'i',
-        'b',
-        'a',
-        'ul',
-        'ol',
-        'li',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
-        'blockquote',
-        'code',
-        'pre',
-        'div',
-        'span',
-        'img',
-        'table',
-        'thead',
-        'tbody',
-        'tr',
-        'th',
-        'td',
+        'p', 'br', 'strong', 'em', 'u', 'i', 'b', 'a', 'ul', 'ol', 'li',
+        'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'code', 'pre',
+        'div', 'span', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td'
       ],
       ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id'],
       ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel|callto):|[^a-z]|[a-z+.-]+(?:[^a-z+.-]|$))/i,
       KEEP_CONTENT: false,
       FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button'],
-      FORBID_ATTR: [
-        'onload',
-        'onclick',
-        'onerror',
-        'onmouseover',
-        'onfocus',
-        'onblur',
-        'onchange',
-        'onsubmit',
-      ],
+      FORBID_ATTR: ['onload', 'onclick', 'onerror', 'onmouseover', 'onfocus', 'onblur', 'onchange', 'onsubmit']
     });
   }
 
@@ -116,14 +81,12 @@ export class InputSanitizationService {
     }
 
     // Remove or replace dangerous characters
-    return (
-      fileName
-        .replace(/[\/\\?%*:|"<>]/g, '_') // Replace dangerous characters
-        .replace(/\.\./g, '_') // Remove path traversal
-        .replace(/^\.*/, '') // Remove leading dots
-        .substring(0, 255) // Limit length
-        .trim() || 'unnamed_file'
-    );
+    return fileName
+      .replace(/[\/\\?%*:|"<>]/g, '_') // Replace dangerous characters
+      .replace(/\.\./g, '_') // Remove path traversal
+      .replace(/^\.*/, '') // Remove leading dots
+      .substring(0, 255) // Limit length
+      .trim() || 'unnamed_file';
   }
 
   /**
@@ -136,7 +99,7 @@ export class InputSanitizationService {
 
     try {
       const parsed = new URL(url);
-
+      
       // Only allow certain protocols
       const allowedProtocols = ['http:', 'https:', 'mailto:', 'tel:', 'callto:'];
       if (!allowedProtocols.includes(parsed.protocol)) {
@@ -144,8 +107,7 @@ export class InputSanitizationService {
       }
 
       // Remove dangerous characters from the URL
-      return parsed
-        .toString()
+      return parsed.toString()
         .replace(/[<>"']/g, '')
         .substring(0, 2048);
     } catch {
@@ -213,7 +175,7 @@ export class InputSanitizationService {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.sanitizeObject(item));
+      return obj.map(item => this.sanitizeObject(item));
     }
 
     if (typeof obj === 'object') {
@@ -257,7 +219,7 @@ export class InputSanitizationService {
 
     // Allow hex colors, rgb, rgba, hsl, hsla
     const colorPattern = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$|^(rgb|rgba|hsl|hsla)\(.*\)$/i;
-
+    
     return colorPattern.test(color) ? color : '#000000';
   }
 
@@ -270,9 +232,8 @@ export class InputSanitizationService {
     }
 
     // IPv4 pattern
-    const ipv4Pattern =
-      /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-
+    const ipv4Pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    
     // IPv6 pattern (simplified)
     const ipv6Pattern = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^::1$|^::$/;
 

@@ -3,41 +3,42 @@
  * Entry point for the NestJS application
  */
 
-import { Logger, ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { Logger } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
-
+  
   // Create NestJS application
   const app = await NestFactory.create(AppModule);
-
+  
   // Get configuration
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT', 3000);
-
+  
   // Set global prefix for all routes
   app.setGlobalPrefix('api/v1');
-
+  
   // Enable CORS
   app.enableCors();
-
+  
   // Set up global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true,
+      transform: true
     })
   );
-
+  
   // Apply global exception filter
   app.useGlobalFilters(new GlobalExceptionFilter());
-
+  
   // Set up Swagger documentation
   if (configService.get<string>('NODE_ENV') !== 'production') {
     const swaggerConfig = new DocumentBuilder()
@@ -46,18 +47,18 @@ async function bootstrap() {
       .setVersion('1.0')
       .addBearerAuth()
       .build();
-
+    
     const document = SwaggerModule.createDocument(app as any, swaggerConfig);
     SwaggerModule.setup('api/docs', app as any, document);
-
+    
     logger.log('Swagger documentation available at /api/docs');
   }
-
+  
   // Start the server
   await app.listen(port);
   logger.log(`Application is running on: http://localhost:${port}/api/v1`);
 }
 
-bootstrap().catch((err) => {
+bootstrap().catch(err => {
   new Logger('Bootstrap').error(`Failed to start application: ${err.message}`, err.stack);
 });

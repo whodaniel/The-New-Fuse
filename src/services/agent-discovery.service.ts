@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseService } from '../lib/drizzle/drizzle.service.js';
+import { PrismaService } from '../lib/prisma/prisma.service.js';
 import { MCPBrokerService } from '../mcp/services/mcp-broker.service.tsx';
-import { AgentType, AgentStatus } from '@drizzle/client';
+import { AgentType, AgentStatus } from '@prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 /**
@@ -13,7 +13,7 @@ export class AgentDiscoveryService {
   private readonly logger = new Logger(AgentDiscoveryService.name);
 
   constructor(
-    private readonly drizzle: DatabaseService,
+    private readonly prisma: PrismaService,
     private readonly mcpBroker: MCPBrokerService,
     private readonly eventEmitter: EventEmitter2
   ) {}
@@ -27,30 +27,13 @@ export class AgentDiscoveryService {
     type: AgentType,
     userId: string,
     capabilities: string[],
-    tools: Record<string, any>,
-    options?: {
-      inviteCode?: string;
-      tenantId?: string;
-      organizationId?: string;
-      identity?: {
-        persistentId?: string;
-        federationId?: string;
-        ephemeralId?: string;
-        instanceId?: string;
-      };
-      trust?: {
-        tier?: 'unverified' | 'verified' | 'certified';
-        score?: number;
-      };
-    }
+    tools: Record<string, any>
   ) {
     try {
       this.logger.log(`Registering agent: ${name}`);
 
-      this.assertInviteCode(options?.inviteCode);
-
       // Check if agent already exists
-      const existingAgent = await this.drizzle.agent.findFirst({
+      const existingAgent = await this.prisma.agent.findFirst({
         where: {
           name
         }
@@ -62,12 +45,7 @@ export class AgentDiscoveryService {
       }
 
       // Register agent in database
-      const resolvedTrustTier =
-        options?.trust?.tier || (options?.inviteCode ? 'verified' : 'unverified');
-      const resolvedTrustScore =
-        options?.trust?.score ?? (options?.inviteCode ? 75 : 0);
-
-      const agent = await this.drizzle.agent.create({
+      const agent = await this.prisma.agent.create({
         data: {
           name,
           description,
@@ -79,14 +57,7 @@ export class AgentDiscoveryService {
             tools,
             metadata: {
               registrationDate: new Date().toISOString(),
-              lastUpdated: new Date().toISOString(),
-              tenantId: options?.tenantId,
-              organizationId: options?.organizationId,
-              identity: options?.identity || {},
-              trust: {
-                tier: resolvedTrustTier,
-                score: resolvedTrustScore
-              }
+              lastUpdated: new Date().toISOString()
             }
           }
         }
@@ -95,7 +66,7 @@ export class AgentDiscoveryService {
       this.logger.log(`Successfully registered agent ${name} with ID: ${agent.id}`);
 
       // Create metrics entry for the agent
-      await this.drizzle.codeMetrics.create({
+      await this.prisma.codeMetrics.create({
         data: {
           agentId: agent.id,
           linesOfCode: 0,
@@ -150,7 +121,7 @@ export class AgentDiscoveryService {
     try {
       this.logger.log('Discovering registered agents...');
 
-      const agents = await this.drizzle.agent.findMany({
+      const agents = await this.prisma.agent.findMany({
         where: {
           status: AgentStatus.ACTIVE
         },
@@ -174,7 +145,7 @@ export class AgentDiscoveryService {
     try {
       this.logger.log(`Updating tools for agent ${agentId}`);
 
-      const agent = await this.drizzle.agent.findUnique({
+      const agent = await this.prisma.agent.findUnique({
         where: { id: agentId }
       });
 
@@ -190,7 +161,7 @@ export class AgentDiscoveryService {
         lastUpdated: new Date().toISOString()
       };
 
-      await this.drizzle.agent.update({
+      await this.prisma.agent.update({
         where: { id: agentId },
         data: { config }
       });
@@ -244,27 +215,5 @@ export class AgentDiscoveryService {
     }
 
     return capabilities;
-  }
-
-  private assertInviteCode(inviteCode?: string): void {
-    const raw = process.env.TNF_AGENT_INVITE_CODES || '';
-    const required = process.env.TNF_AGENT_INVITE_REQUIRED === 'true';
-
-    if (!required) {
-      return;
-    }
-
-    const allowed = raw
-      .split(',')
-      .map((code) => code.trim())
-      .filter(Boolean);
-
-    if (!allowed.length) {
-      throw new Error('Agent invite codes are required but no allowlist is configured');
-    }
-
-    if (!inviteCode || !allowed.includes(inviteCode.trim())) {
-      throw new Error('Invalid or missing agent invite code');
-    }
   }
 }

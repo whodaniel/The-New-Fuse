@@ -1,7 +1,7 @@
-import { useToast } from '@/hooks/useToast';
-import { Permission } from '@the-new-fuse/types';
 import React from 'react';
 import { useRoles } from '../../hooks/useRoles';
+import { Permission } from '@the-new-fuse/types';
+import { useToast } from '@/hooks/useToast';
 
 export const RoleManager: React.FC = () => {
   const { roles, permissions, updateRolePermissions } = useRoles();
@@ -73,3 +73,4 @@ export const RoleManager: React.FC = () => {
     </div>
   );
 };
+

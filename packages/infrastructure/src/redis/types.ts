@@ -85,38 +85,15 @@ export interface RedisMetrics {
   };
 }
 
-export type RedisOperationType =
-  | 'get'
-  | 'set'
-  | 'del'
-  | 'exists'
-  | 'expire'
-  | 'hget'
-  | 'hset'
-  | 'hgetall'
-  | 'hdel'
-  | 'lpush'
-  | 'rpop'
-  | 'llen'
-  | 'lrange'
-  | 'ltrim'
-  | 'lindex'
-  | 'zadd'
-  | 'zrange'
-  | 'zpopmax'
-  | 'zrem'
-  | 'sadd'
-  | 'srem'
-  | 'smembers'
-  | 'sismember'
-  | 'publish'
-  | 'subscribe'
-  | 'unsubscribe'
-  | 'psubscribe'
-  | 'punsubscribe'
-  | 'ping'
-  | 'flushdb'
-  | 'keys';
+export type RedisOperationType = 
+  | 'get' | 'set' | 'del' | 'exists' | 'expire'
+  | 'hget' | 'hset' | 'hgetall' | 'hdel'
+  | 'lpush' | 'rpop' | 'llen' | 'lrange' | 'ltrim' | 'lindex'
+  | 'zadd' | 'zrange' | 'zpopmax' | 'zrem'
+  | 'sadd' | 'srem' | 'smembers' | 'sismember'
+  | 'publish' | 'subscribe' | 'unsubscribe'
+  | 'psubscribe' | 'punsubscribe'
+  | 'ping' | 'flushdb' | 'keys';
 
 export interface RedisOperationLog {
   operation: RedisOperationType;

@@ -14,7 +14,7 @@ export interface SyncConfiguration {
     driftThreshold: number;
     correctionTimeout: number;
   };
-
+  
   // File Watcher Configuration
   fileWatcher: {
     enabled: boolean;
@@ -24,7 +24,7 @@ export interface SyncConfiguration {
     batchSize: number;
     maxWatchers: number;
   };
-
+  
   // Orchestrator Configuration
   orchestrator: {
     maxConcurrentSyncs: number;
@@ -33,7 +33,7 @@ export interface SyncConfiguration {
     retryDelay: number;
     timeoutMs: number;
   };
-
+  
   // Performance Configuration
   performance: {
     monitoringEnabled: boolean;
@@ -42,7 +42,7 @@ export interface SyncConfiguration {
     memoryThreshold: number;
     cpuThreshold: number;
   };
-
+  
   // Database Configuration
   database: {
     connectionPool: number;
@@ -50,7 +50,7 @@ export interface SyncConfiguration {
     retryAttempts: number;
     migrationTimeout: number;
   };
-
+  
   // Redis Configuration
   redis: {
     keyspacePrefix: string;
@@ -59,7 +59,7 @@ export interface SyncConfiguration {
     retryAttempts: number;
     maxConnections: number;
   };
-
+  
   // Security Configuration
   security: {
     tenantIsolation: boolean;
@@ -67,7 +67,7 @@ export interface SyncConfiguration {
     auditLogging: boolean;
     accessControlEnabled: boolean;
   };
-
+  
   // Monitoring Configuration
   monitoring: {
     metricsEnabled: boolean;
@@ -94,15 +94,15 @@ export class SyncConfigService extends EventEmitter {
    */
   private loadConfiguration(): SyncConfiguration {
     const env = process.env;
-
+    
     return {
       masterClock: {
         enabled: this.parseBoolean(env.SYNC_MASTER_CLOCK_ENABLED, true),
         syncInterval: this.parseInt(env.SYNC_MASTER_CLOCK_INTERVAL, 5000),
         driftThreshold: this.parseInt(env.SYNC_DRIFT_THRESHOLD, 100),
-        correctionTimeout: this.parseInt(env.SYNC_CORRECTION_TIMEOUT, 30000),
+        correctionTimeout: this.parseInt(env.SYNC_CORRECTION_TIMEOUT, 30000)
       },
-
+      
       fileWatcher: {
         enabled: this.parseBoolean(env.SYNC_FILE_WATCHER_ENABLED, true),
         patterns: this.parseArray(env.SYNC_FILE_PATTERNS, [
@@ -112,7 +112,7 @@ export class SyncConfigService extends EventEmitter {
           '**/*.ts',
           '**/*.js',
           '**/config/**/*',
-          '**/templates/**/*',
+          '**/templates/**/*'
         ]),
         excludePatterns: this.parseArray(env.SYNC_EXCLUDE_PATTERNS, [
           '**/node_modules/**',
@@ -120,57 +120,57 @@ export class SyncConfigService extends EventEmitter {
           '**/build/**',
           '**/.git/**',
           '**/coverage/**',
-          '**/*.log',
+          '**/*.log'
         ]),
         debounceMs: this.parseInt(env.SYNC_DEBOUNCE_MS, 1000),
         batchSize: this.parseInt(env.SYNC_BATCH_SIZE, 100),
-        maxWatchers: this.parseInt(env.SYNC_MAX_WATCHERS, 1000),
+        maxWatchers: this.parseInt(env.SYNC_MAX_WATCHERS, 1000)
       },
-
+      
       orchestrator: {
         maxConcurrentSyncs: this.parseInt(env.SYNC_MAX_CONCURRENT, 10),
         queueSize: this.parseInt(env.SYNC_QUEUE_SIZE, 1000),
         retryAttempts: this.parseInt(env.SYNC_RETRY_ATTEMPTS, 3),
         retryDelay: this.parseInt(env.SYNC_RETRY_DELAY, 1000),
-        timeoutMs: this.parseInt(env.SYNC_TIMEOUT_MS, 30000),
+        timeoutMs: this.parseInt(env.SYNC_TIMEOUT_MS, 30000)
       },
-
+      
       performance: {
         monitoringEnabled: this.parseBoolean(env.SYNC_PERFORMANCE_MONITORING, true),
         cacheSize: this.parseInt(env.SYNC_CACHE_SIZE, 1000),
         cacheTtl: this.parseInt(env.SYNC_CACHE_TTL, 300000), // 5 minutes
         memoryThreshold: this.parseFloat(env.SYNC_MEMORY_THRESHOLD, 0.8),
-        cpuThreshold: this.parseFloat(env.SYNC_CPU_THRESHOLD, 0.8),
+        cpuThreshold: this.parseFloat(env.SYNC_CPU_THRESHOLD, 0.8)
       },
-
+      
       database: {
         connectionPool: this.parseInt(env.SYNC_DB_POOL_SIZE, 10),
         queryTimeout: this.parseInt(env.SYNC_DB_QUERY_TIMEOUT, 30000),
         retryAttempts: this.parseInt(env.SYNC_DB_RETRY_ATTEMPTS, 3),
-        migrationTimeout: this.parseInt(env.SYNC_DB_MIGRATION_TIMEOUT, 60000),
+        migrationTimeout: this.parseInt(env.SYNC_DB_MIGRATION_TIMEOUT, 60000)
       },
-
+      
       redis: {
         keyspacePrefix: env.SYNC_REDIS_PREFIX || 'sync:',
         connectionTimeout: this.parseInt(env.SYNC_REDIS_CONNECT_TIMEOUT, 10000),
         commandTimeout: this.parseInt(env.SYNC_REDIS_COMMAND_TIMEOUT, 5000),
         retryAttempts: this.parseInt(env.SYNC_REDIS_RETRY_ATTEMPTS, 3),
-        maxConnections: this.parseInt(env.SYNC_REDIS_MAX_CONNECTIONS, 10),
+        maxConnections: this.parseInt(env.SYNC_REDIS_MAX_CONNECTIONS, 10)
       },
-
+      
       security: {
         tenantIsolation: this.parseBoolean(env.SYNC_TENANT_ISOLATION, true),
         encryptionEnabled: this.parseBoolean(env.SYNC_ENCRYPTION_ENABLED, true),
         auditLogging: this.parseBoolean(env.SYNC_AUDIT_LOGGING, true),
-        accessControlEnabled: this.parseBoolean(env.SYNC_ACCESS_CONTROL, true),
+        accessControlEnabled: this.parseBoolean(env.SYNC_ACCESS_CONTROL, true)
       },
-
+      
       monitoring: {
         metricsEnabled: this.parseBoolean(env.SYNC_METRICS_ENABLED, true),
         healthCheckInterval: this.parseInt(env.SYNC_HEALTH_CHECK_INTERVAL, 30000),
         alertingEnabled: this.parseBoolean(env.SYNC_ALERTING_ENABLED, true),
-        dashboardEnabled: this.parseBoolean(env.SYNC_DASHBOARD_ENABLED, true),
-      },
+        dashboardEnabled: this.parseBoolean(env.SYNC_DASHBOARD_ENABLED, true)
+      }
     };
   }
 
@@ -181,7 +181,7 @@ export class SyncConfigService extends EventEmitter {
     // Watch for configuration changes every 30 seconds
     this.configWatcher = setInterval(() => {
       const newConfig = this.loadConfiguration();
-
+      
       if (this.hasConfigChanged(this.config, newConfig)) {
         this.logger.log('Configuration changed, updating...');
         const oldConfig = { ...this.config };
@@ -280,10 +280,7 @@ export class SyncConfigService extends EventEmitter {
     }
 
     // Validate performance config
-    if (
-      this.config.performance.memoryThreshold > 1 ||
-      this.config.performance.memoryThreshold < 0
-    ) {
+    if (this.config.performance.memoryThreshold > 1 || this.config.performance.memoryThreshold < 0) {
       errors.push('Memory threshold must be between 0 and 1');
     }
 
@@ -294,7 +291,7 @@ export class SyncConfigService extends EventEmitter {
 
     return {
       valid: errors.length === 0,
-      errors,
+      errors
     };
   }
 
@@ -310,14 +307,14 @@ export class SyncConfigService extends EventEmitter {
     isTest: boolean;
   } {
     const nodeEnv = process.env.NODE_ENV || 'development';
-
+    
     return {
       environment: process.env.ENVIRONMENT || nodeEnv,
       nodeEnv,
       logLevel: process.env.SYNC_LOG_LEVEL || 'info',
       isDevelopment: nodeEnv === 'development',
       isProduction: nodeEnv === 'production',
-      isTest: nodeEnv === 'test',
+      isTest: nodeEnv === 'test'
     };
   }
 
@@ -346,7 +343,7 @@ export class SyncConfigService extends EventEmitter {
     try {
       return JSON.parse(value);
     } catch {
-      return value.split(',').map((s) => s.trim());
+      return value.split(',').map(s => s.trim());
     }
   }
 

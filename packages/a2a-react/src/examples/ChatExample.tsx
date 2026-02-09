@@ -10,7 +10,7 @@ const ChatComponent: React.FC = () => {
       type: 'REQUEST',
       fromAgent: 'user',
       toAgent: 'assistant',
-      payload: { text: 'Hello, how can you help me?' },
+      payload: { text: 'Hello, how can you help me?' }
     });
   };
 
@@ -18,32 +18,28 @@ const ChatComponent: React.FC = () => {
     <div>
       <h2>Available Agents</h2>
       <ul>
-        {agents.map((agent) => (
-          <li key={agent.id}>
-            {agent.name} - {agent.status}
-          </li>
+        {agents.map(agent => (
+          <li key={agent.id}>{agent.name} - {agent.status}</li>
         ))}
       </ul>
-
+      
       <h2>Messages</h2>
       <div>
-        {messages.map((message) => (
+        {messages.map(message => (
           <div key={message.id}>
-            <strong>
-              {message.fromAgent} → {message.toAgent}:
-            </strong>
+            <strong>{message.fromAgent} → {message.toAgent}:</strong>
             <pre>{JSON.stringify(message.payload, null, 2)}</pre>
           </div>
         ))}
       </div>
-
+      
       <button onClick={handleSendMessage}>Send Test Message</button>
     </div>
   );
 };
 
 const ChatExample: React.FC = () => {
-  const config = { url: 'ws://localhost:8080', agentId: 'user' };
+  const config = { url: "ws://localhost:8080", agentId: "user" };
   return (
     <A2AProvider config={config}>
       <ChatComponent />

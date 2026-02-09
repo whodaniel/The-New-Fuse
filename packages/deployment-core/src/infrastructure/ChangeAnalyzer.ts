@@ -4,24 +4,24 @@
  */
 
 import {
-  ChangeAction,
-  CostBreakdown,
-  CostEstimate,
-  DependencyType,
-  ExecutionPhase,
-  ExecutionTimeline,
-  ImpactLevel,
-  InfrastructureChange,
   InfrastructureState,
   InfrastructureUpdate,
-  PhaseDependency,
+  InfrastructureChange,
   PlanResult,
-  ProbabilityLevel,
-  ResourceType,
   RiskAssessment,
-  RiskFactor,
+  CostEstimate,
+  ExecutionTimeline,
+  ChangeAction,
+  ResourceType,
   RiskLevel,
+  RiskFactor,
   RiskType,
+  ImpactLevel,
+  ProbabilityLevel,
+  CostBreakdown,
+  ExecutionPhase,
+  PhaseDependency,
+  DependencyType
 } from '../types/infrastructure';
 
 export class ChangeAnalyzer {
@@ -71,10 +71,9 @@ export class ChangeAnalyzer {
 
       // Optimize change order
       return this.optimizeChangeOrder(changes);
+
     } catch (error) {
-      throw new Error(
-        `Change analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      throw new Error(`Change analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -96,12 +95,11 @@ export class ChangeAnalyzer {
         changes,
         riskAssessment,
         estimatedCost: costEstimate,
-        timeline,
+        timeline
       };
+
     } catch (error) {
-      throw new Error(
-        `Change planning failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+      throw new Error(`Change planning failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -119,7 +117,7 @@ export class ChangeAnalyzer {
         resourceType: ResourceType.COMPUTE, // Generic type for template changes
         before: { metadata: 'current' },
         after: { metadata: templateChanges.metadata },
-        reason: 'Template metadata update',
+        reason: 'Template metadata update'
       });
     }
 
@@ -131,7 +129,7 @@ export class ChangeAnalyzer {
         resourceType: ResourceType.COMPUTE,
         before: { provider: 'current' },
         after: { provider: templateChanges.provider },
-        reason: 'Provider change requires infrastructure replacement',
+        reason: 'Provider change requires infrastructure replacement'
       });
     }
 
@@ -146,18 +144,21 @@ export class ChangeAnalyzer {
 
     for (const [variableName, newValue] of Object.entries(variableChanges)) {
       // Determine impact of variable change
-      const impactedResources = this.findResourcesUsingVariable(currentState, variableName);
+      const impactedResources = this.findResourcesUsingVariable(
+        currentState,
+        variableName
+      );
 
       for (const resourceName of impactedResources) {
         const changeAction = this.determineChangeAction(variableName, newValue);
-
+        
         changes.push({
           action: changeAction,
           resourceName,
           resourceType: ResourceType.COMPUTE, // Would be determined from actual resource
           before: { [variableName]: 'current_value' },
           after: { [variableName]: newValue },
-          reason: `Variable ${variableName} changed`,
+          reason: `Variable ${variableName} changed`
         });
       }
     }
@@ -170,7 +171,9 @@ export class ChangeAnalyzer {
     resourceChanges: any[]
   ): Promise<InfrastructureChange[]> {
     const changes: InfrastructureChange[] = [];
-    const currentResources = new Map(currentState.resources.map((r) => [r.name, r]));
+    const currentResources = new Map(
+      currentState.resources.map(r => [r.name, r])
+    );
 
     for (const newResource of resourceChanges) {
       const currentResource = currentResources.get(newResource.name);
@@ -182,7 +185,7 @@ export class ChangeAnalyzer {
           resourceName: newResource.name,
           resourceType: newResource.type,
           after: newResource.properties,
-          reason: 'New resource added',
+          reason: 'New resource added'
         });
       } else {
         // Compare existing resource
@@ -194,7 +197,7 @@ export class ChangeAnalyzer {
     }
 
     // Check for deleted resources
-    const newResourceNames = new Set(resourceChanges.map((r) => r.name));
+    const newResourceNames = new Set(resourceChanges.map(r => r.name));
     for (const currentResource of currentState.resources) {
       if (!newResourceNames.has(currentResource.name)) {
         changes.push({
@@ -202,7 +205,7 @@ export class ChangeAnalyzer {
           resourceName: currentResource.name,
           resourceType: currentResource.type,
           before: currentResource.properties,
-          reason: 'Resource removed',
+          reason: 'Resource removed'
         });
       }
     }
@@ -214,10 +217,16 @@ export class ChangeAnalyzer {
     const changes: InfrastructureChange[] = [];
 
     // Compare properties
-    const propertyChanges = this.compareObjects(currentResource.properties, newResource.properties);
+    const propertyChanges = this.compareObjects(
+      currentResource.properties,
+      newResource.properties
+    );
 
     if (propertyChanges.length > 0) {
-      const requiresReplacement = this.requiresReplacement(currentResource.type, propertyChanges);
+      const requiresReplacement = this.requiresReplacement(
+        currentResource.type,
+        propertyChanges
+      );
 
       changes.push({
         action: requiresReplacement ? ChangeAction.REPLACE : ChangeAction.UPDATE,
@@ -225,9 +234,9 @@ export class ChangeAnalyzer {
         resourceType: currentResource.type,
         before: currentResource.properties,
         after: newResource.properties,
-        reason: requiresReplacement
+        reason: requiresReplacement 
           ? 'Property changes require resource replacement'
-          : 'Resource properties updated',
+          : 'Resource properties updated'
       });
     }
 
@@ -269,30 +278,31 @@ export class ChangeAnalyzer {
       [ResourceType.SSL_CERTIFICATE]: ['domains'],
       [ResourceType.CONTAINER_REGISTRY]: ['location'],
       [ResourceType.GKE_CLUSTER]: ['location', 'network'],
-      [ResourceType.CLOUD_FUNCTION]: ['runtime', 'region'],
+      [ResourceType.CLOUD_FUNCTION]: ['runtime', 'region']
     };
 
     const replacementProps = replacementProperties[resourceType] || [];
-    return changedProperties.some((prop) => replacementProps.includes(prop));
+    return changedProperties.some(prop => replacementProps.includes(prop));
   }
 
-  private findResourcesUsingVariable(state: InfrastructureState, variableName: string): string[] {
+  private findResourcesUsingVariable(
+    state: InfrastructureState,
+    variableName: string
+  ): string[] {
     const resourceNames: string[] = [];
 
     for (const resource of state.resources) {
       const resourceStr = JSON.stringify(resource.properties);
       // Check for variable references or if the variable name matches a property
-      if (
-        resourceStr.includes(`\${${variableName}}`) ||
-        resource.properties.hasOwnProperty(variableName)
-      ) {
+      if (resourceStr.includes(`\${${variableName}}`) || 
+          resource.properties.hasOwnProperty(variableName)) {
         resourceNames.push(resource.name);
       }
     }
 
     // If no resources found, assume all resources might be affected
     if (resourceNames.length === 0 && state.resources.length > 0) {
-      return state.resources.map((r) => r.name);
+      return state.resources.map(r => r.name);
     }
 
     return resourceNames;
@@ -301,7 +311,7 @@ export class ChangeAnalyzer {
   private determineChangeAction(variableName: string, _newValue: any): ChangeAction {
     // Determine if variable change requires replacement or just update
     const replacementVariables = ['region', 'availabilityZone', 'instanceType'];
-
+    
     if (replacementVariables.includes(variableName)) {
       return ChangeAction.REPLACE;
     }
@@ -316,23 +326,19 @@ export class ChangeAnalyzer {
       ChangeAction.REPLACE,
       ChangeAction.CREATE,
       ChangeAction.UPDATE,
-      ChangeAction.NO_CHANGE,
+      ChangeAction.NO_CHANGE
     ];
 
     return changes.sort((a, b) => {
       const aPriority = priorityOrder.indexOf(a.action);
       const bPriority = priorityOrder.indexOf(b.action);
-
+      
       if (aPriority !== bPriority) {
         return aPriority - bPriority;
       }
 
       // Secondary sort by resource type criticality
-      const criticalTypes = [
-        ResourceType.NETWORK,
-        ResourceType.SECURITY_GROUP,
-        ResourceType.IAM_ROLE,
-      ];
+      const criticalTypes = [ResourceType.NETWORK, ResourceType.SECURITY_GROUP, ResourceType.IAM_ROLE];
       const aIsCritical = criticalTypes.includes(a.resourceType);
       const bIsCritical = criticalTypes.includes(b.resourceType);
 
@@ -359,18 +365,18 @@ class RiskAnalyzer {
     }
 
     // Determine overall risk level
-    if (riskFactors.some((f) => f.impact === ImpactLevel.CRITICAL)) {
+    if (riskFactors.some(f => f.impact === ImpactLevel.CRITICAL)) {
       overallRisk = RiskLevel.CRITICAL;
-    } else if (riskFactors.some((f) => f.impact === ImpactLevel.HIGH)) {
+    } else if (riskFactors.some(f => f.impact === ImpactLevel.HIGH)) {
       overallRisk = RiskLevel.HIGH;
-    } else if (riskFactors.some((f) => f.impact === ImpactLevel.MEDIUM)) {
+    } else if (riskFactors.some(f => f.impact === ImpactLevel.MEDIUM)) {
       overallRisk = RiskLevel.MEDIUM;
     }
 
     return {
       level: overallRisk,
       factors: riskFactors,
-      mitigation: this.generateMitigationStrategies(riskFactors),
+      mitigation: this.generateMitigationStrategies(riskFactors)
     };
   }
 
@@ -384,7 +390,7 @@ class RiskAnalyzer {
           type: RiskType.DOWNTIME,
           description: `Deleting ${change.resourceName} may cause service disruption`,
           impact: this.getResourceImpact(change.resourceType),
-          probability: ProbabilityLevel.CERTAIN,
+          probability: ProbabilityLevel.CERTAIN
         });
         break;
 
@@ -393,7 +399,7 @@ class RiskAnalyzer {
           type: RiskType.DOWNTIME,
           description: `Replacing ${change.resourceName} will cause temporary downtime`,
           impact: this.getResourceImpact(change.resourceType),
-          probability: ProbabilityLevel.LIKELY,
+          probability: ProbabilityLevel.LIKELY
         });
         break;
 
@@ -402,7 +408,7 @@ class RiskAnalyzer {
           type: RiskType.PERFORMANCE,
           description: `Updating ${change.resourceName} may affect performance`,
           impact: ImpactLevel.LOW,
-          probability: ProbabilityLevel.POSSIBLE,
+          probability: ProbabilityLevel.POSSIBLE
         });
         break;
     }
@@ -413,7 +419,7 @@ class RiskAnalyzer {
         type: RiskType.DATA_LOSS,
         description: 'Cloud SQL changes carry risk of data loss',
         impact: ImpactLevel.CRITICAL,
-        probability: ProbabilityLevel.UNLIKELY,
+        probability: ProbabilityLevel.UNLIKELY
       });
     }
 
@@ -422,7 +428,7 @@ class RiskAnalyzer {
         type: RiskType.SECURITY,
         description: 'Firewall rule changes may affect access controls',
         impact: ImpactLevel.HIGH,
-        probability: ProbabilityLevel.POSSIBLE,
+        probability: ProbabilityLevel.POSSIBLE
       });
     }
 
@@ -447,7 +453,7 @@ class RiskAnalyzer {
       [ResourceType.SSL_CERTIFICATE]: ImpactLevel.LOW,
       [ResourceType.CONTAINER_REGISTRY]: ImpactLevel.LOW,
       [ResourceType.GKE_CLUSTER]: ImpactLevel.CRITICAL,
-      [ResourceType.CLOUD_FUNCTION]: ImpactLevel.MEDIUM,
+      [ResourceType.CLOUD_FUNCTION]: ImpactLevel.MEDIUM
     };
 
     return impactMap[resourceType] || ImpactLevel.MEDIUM;
@@ -456,19 +462,19 @@ class RiskAnalyzer {
   private generateMitigationStrategies(riskFactors: RiskFactor[]): string[] {
     const strategies: string[] = [];
 
-    if (riskFactors.some((f) => f.type === RiskType.DOWNTIME)) {
+    if (riskFactors.some(f => f.type === RiskType.DOWNTIME)) {
       strategies.push('Schedule changes during maintenance window');
       strategies.push('Implement blue-green deployment strategy');
       strategies.push('Prepare rollback procedures');
     }
 
-    if (riskFactors.some((f) => f.type === RiskType.DATA_LOSS)) {
+    if (riskFactors.some(f => f.type === RiskType.DATA_LOSS)) {
       strategies.push('Create backup before making changes');
       strategies.push('Test changes in non-production environment first');
       strategies.push('Implement point-in-time recovery');
     }
 
-    if (riskFactors.some((f) => f.type === RiskType.SECURITY)) {
+    if (riskFactors.some(f => f.type === RiskType.SECURITY)) {
       strategies.push('Review security group rules carefully');
       strategies.push('Test access controls after changes');
       strategies.push('Monitor for unauthorized access');
@@ -490,7 +496,7 @@ class CostEstimator {
           resourceType: change.resourceType,
           resourceName: change.resourceName,
           monthlyCost: changeCost,
-          yearlyCost: changeCost * 12,
+          yearlyCost: changeCost * 12
         });
         totalMonthlyCost += changeCost;
       }
@@ -500,7 +506,7 @@ class CostEstimator {
       currency: 'USD',
       monthly: totalMonthlyCost,
       yearly: totalMonthlyCost * 12,
-      breakdown,
+      breakdown
     };
   }
 
@@ -523,7 +529,7 @@ class CostEstimator {
       [ResourceType.SSL_CERTIFICATE]: 0,
       [ResourceType.CONTAINER_REGISTRY]: 5,
       [ResourceType.GKE_CLUSTER]: 75,
-      [ResourceType.CLOUD_FUNCTION]: 5,
+      [ResourceType.CLOUD_FUNCTION]: 5
     };
 
     const baseCost = baseCosts[change.resourceType] || 0;
@@ -552,7 +558,7 @@ class TimelineCalculator {
     return {
       estimatedDuration: totalDuration,
       phases,
-      dependencies,
+      dependencies
     };
   }
 
@@ -560,17 +566,17 @@ class TimelineCalculator {
     const phases: ExecutionPhase[] = [];
 
     // Group changes by action type
-    const deleteChanges = changes.filter((c) => c.action === ChangeAction.DELETE);
-    const replaceChanges = changes.filter((c) => c.action === ChangeAction.REPLACE);
-    const createChanges = changes.filter((c) => c.action === ChangeAction.CREATE);
-    const updateChanges = changes.filter((c) => c.action === ChangeAction.UPDATE);
+    const deleteChanges = changes.filter(c => c.action === ChangeAction.DELETE);
+    const replaceChanges = changes.filter(c => c.action === ChangeAction.REPLACE);
+    const createChanges = changes.filter(c => c.action === ChangeAction.CREATE);
+    const updateChanges = changes.filter(c => c.action === ChangeAction.UPDATE);
 
     if (deleteChanges.length > 0) {
       phases.push({
         name: 'Delete Resources',
         duration: this.estimatePhaseDuration(deleteChanges),
-        resources: deleteChanges.map((c) => c.resourceName),
-        parallelizable: true,
+        resources: deleteChanges.map(c => c.resourceName),
+        parallelizable: true
       });
     }
 
@@ -578,8 +584,8 @@ class TimelineCalculator {
       phases.push({
         name: 'Replace Resources',
         duration: this.estimatePhaseDuration(replaceChanges),
-        resources: replaceChanges.map((c) => c.resourceName),
-        parallelizable: false,
+        resources: replaceChanges.map(c => c.resourceName),
+        parallelizable: false
       });
     }
 
@@ -587,8 +593,8 @@ class TimelineCalculator {
       phases.push({
         name: 'Create Resources',
         duration: this.estimatePhaseDuration(createChanges),
-        resources: createChanges.map((c) => c.resourceName),
-        parallelizable: true,
+        resources: createChanges.map(c => c.resourceName),
+        parallelizable: true
       });
     }
 
@@ -596,8 +602,8 @@ class TimelineCalculator {
       phases.push({
         name: 'Update Resources',
         duration: this.estimatePhaseDuration(updateChanges),
-        resources: updateChanges.map((c) => c.resourceName),
-        parallelizable: true,
+        resources: updateChanges.map(c => c.resourceName),
+        parallelizable: true
       });
     }
 
@@ -612,7 +618,7 @@ class TimelineCalculator {
       dependencies.push({
         phase: phases[i].name,
         dependsOn: [phases[i - 1].name],
-        type: DependencyType.HARD,
+        type: DependencyType.HARD
       });
     }
 
@@ -646,13 +652,13 @@ class TimelineCalculator {
       [ResourceType.SSL_CERTIFICATE]: 300, // 5 minutes
       [ResourceType.CONTAINER_REGISTRY]: 60, // 1 minute
       [ResourceType.GKE_CLUSTER]: 600, // 10 minutes
-      [ResourceType.CLOUD_FUNCTION]: 120, // 2 minutes
+      [ResourceType.CLOUD_FUNCTION]: 120 // 2 minutes
     };
 
     let totalDuration = 0;
     for (const change of changes) {
       const baseDuration = baseDurations[change.resourceType] || 120;
-
+      
       // Adjust duration based on action
       let actionMultiplier = 1;
       switch (change.action) {

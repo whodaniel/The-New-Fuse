@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import axios from 'axios';
-import chalk from 'chalk';
-import * as fs from 'fs';
-import ora from 'ora';
-import * as path from 'path';
 import yargs from 'yargs';
+import chalk from 'chalk';
+import ora from 'ora';
+import axios from 'axios';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // CLI Configuration
 interface CLIConfig {
@@ -24,14 +24,14 @@ class ClaudeDevCLI {
 
   private loadConfig(): CLIConfig {
     const configPath = path.join(process.env.HOME || '', '.claude-dev-cli.json');
-
+    
     try {
       if (fs.existsSync(configPath)) {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
         return {
           apiBaseUrl: config.apiBaseUrl || 'http://localhost:3000/api/claude-dev',
           apiKey: config.apiKey || process.env.CLAUDE_DEV_API_KEY,
-          timeout: config.timeout || 30000,
+          timeout: config.timeout || 30000
         };
       }
     } catch (error) {
@@ -41,13 +41,13 @@ class ClaudeDevCLI {
     return {
       apiBaseUrl: process.env.CLAUDE_DEV_API_URL || 'http://localhost:3000/api/claude-dev',
       apiKey: process.env.CLAUDE_DEV_API_KEY,
-      timeout: 30000,
+      timeout: 30000
     };
   }
 
   private saveConfig(): void {
     const configPath = path.join(process.env.HOME || '', '.claude-dev-cli.json');
-
+    
     try {
       fs.writeFileSync(configPath, JSON.stringify(this.config, null, 2));
       console.log(chalk.green(`✓ Config saved to ${configPath}`));
@@ -58,7 +58,7 @@ class ClaudeDevCLI {
 
   private async makeRequest(endpoint: string, method = 'GET', data?: any): Promise<any> {
     const url = `${this.config.apiBaseUrl}${endpoint}`;
-
+    
     try {
       const response = await axios({
         method,
@@ -67,16 +67,14 @@ class ClaudeDevCLI {
         timeout: this.config.timeout,
         headers: {
           'Content-Type': 'application/json',
-          ...(this.config.apiKey && { Authorization: `Bearer ${this.config.apiKey}` }),
-        },
+          ...(this.config.apiKey && { 'Authorization': `Bearer ${this.config.apiKey}` })
+        }
       });
-
+      
       return response.data;
     } catch (error: any) {
       if (error.response) {
-        throw new Error(
-          `API Error: ${error.response.status} - ${error.response.data?.message || error.response.statusText}`
-        );
+        throw new Error(`API Error: ${error.response.status} - ${error.response.data?.message || error.response.statusText}`);
       } else if (error.request) {
         throw new Error('Network Error: Could not connect to the API');
       } else {
@@ -92,13 +90,12 @@ class ClaudeDevCLI {
     console.log(`Status: ${chalk.green(automation.status)}`);
     console.log(`Tokens Used: ${chalk.yellow(automation.tokensUsed)}`);
     console.log(`Cost: $${automation.cost.toFixed(6)}`);
-
+    
     if (automation.startTime && automation.endTime) {
-      const duration =
-        new Date(automation.endTime).getTime() - new Date(automation.startTime).getTime();
+      const duration = new Date(automation.endTime).getTime() - new Date(automation.startTime).getTime();
       console.log(`Duration: ${chalk.blue(Math.round(duration / 1000))} seconds`);
     }
-
+    
     if (automation.result) {
       console.log(chalk.bold('\n📄 Result:'));
       if (typeof automation.result === 'string') {
@@ -111,24 +108,20 @@ class ClaudeDevCLI {
 
   async listTemplates(category?: string): Promise<void> {
     this.spinner.start('Loading templates...');
-
+    
     try {
       const endpoint = category ? `/templates?category=${category}` : '/templates';
       const templates = await this.makeRequest(endpoint);
-
+      
       this.spinner.stop();
-
+      
       if (templates.length === 0) {
         console.log(chalk.yellow('No templates found.'));
         return;
       }
-
-      console.log(
-        chalk.bold(
-          `\n📋 ${category ? `${category.charAt(0).toUpperCase() + category.slice(1)} ` : ''}Templates:\n`
-        )
-      );
-
+      
+      console.log(chalk.bold(`\n📋 ${category ? `${category.charAt(0).toUpperCase() + category.slice(1)} ` : ''}Templates:\n`));
+      
       templates.forEach((template: any) => {
         console.log(`${chalk.cyan(template.id)} - ${template.name}`);
         console.log(`  ${chalk.gray(template.description)}`);
@@ -143,23 +136,21 @@ class ClaudeDevCLI {
 
   async getTemplate(templateId: string): Promise<void> {
     this.spinner.start('Loading template...');
-
+    
     try {
       const template = await this.makeRequest(`/templates/${templateId}`);
-
+      
       this.spinner.stop();
-
+      
       console.log(chalk.bold(`\n📄 Template: ${template.name}\n`));
       console.log(`ID: ${chalk.cyan(template.id)}`);
       console.log(`Category: ${chalk.yellow(template.category)}`);
       console.log(`Description: ${template.description}`);
-
+      
       if (template.parameters && template.parameters.length > 0) {
         console.log(chalk.bold('\nParameters:'));
         template.parameters.forEach((param: any) => {
-          console.log(
-            `  ${chalk.cyan(param.name)} ${param.required ? chalk.red('(required)') : chalk.gray('(optional)')}`
-          );
+          console.log(`  ${chalk.cyan(param.name)} ${param.required ? chalk.red('(required)') : chalk.gray('(optional)')}`);
           console.log(`    Type: ${param.type}`);
           console.log(`    Description: ${param.description}`);
           if (param.default) {
@@ -168,7 +159,7 @@ class ClaudeDevCLI {
           console.log('');
         });
       }
-
+      
       if (template.example) {
         console.log(chalk.bold('Example:'));
         console.log(template.example);
@@ -197,7 +188,7 @@ if (require.main === module) {
         yargs.positional('category', {
           type: 'string',
           describe: 'Filter by category (development, analysis, automation, communication)',
-          choices: ['development', 'analysis', 'automation', 'communication'],
+          choices: ['development', 'analysis', 'automation', 'communication']
         });
       },
       (argv) => cli.listTemplates(argv.category as string)
@@ -209,7 +200,7 @@ if (require.main === module) {
         yargs.positional('templateId', {
           type: 'string',
           describe: 'Template ID to retrieve',
-          demandOption: true,
+          demandOption: true
         });
       },
       (argv) => cli.getTemplate(argv.templateId as string)

@@ -1,4 +1,4 @@
-import { cleanupTestEnvironment, setupTestEnvironment } from './setup/test-setup';
+import { setupTestEnvironment, cleanupTestEnvironment } from './setup/test-setup';
 
 describe('Complete Scenarios Tests', () => {
   beforeAll(async () => {

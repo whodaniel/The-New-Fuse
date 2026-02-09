@@ -39,7 +39,7 @@
     "**/.ide/**": true,
     "**/apps/ide-ide/static/**": true,
     "**/apps/ide-ide/lib/**": true,
-    "**/drizzle/migrations/**": true,
+    "**/prisma/migrations/**": true,
     "**/k8s/**": true,
     "**/deployment/**": true,
     "**/.turbo/**": true

@@ -305,7 +305,7 @@ class EnhancedCleaner {
     this.log('🤖 Cleaning generated files...', 'blue');
     
     const generatedDirs = [
-      'generated/drizzle',
+      'generated/prisma',
       'src-gen',
       'lib',
     ];

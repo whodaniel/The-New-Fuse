@@ -1,7 +1,14 @@
-import { AlertCircle, CheckCircle, Info, Maximize2, Minimize2, RefreshCw } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { OnboardingAdminService } from '../../../services/onboarding-admin.service';
 import { OnboardingAnalytics } from './OnboardingAnalytics';
+import {
+  RefreshCw,
+  Maximize2,
+  Minimize2,
+  Info,
+  CheckCircle,
+  AlertCircle
+} from 'lucide-react';
 
 interface OnboardingWizardPreviewProps {}
 
@@ -45,9 +52,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
       }
     } catch (err) {
       console.error('Error validating configuration:', err);
-      setPreviewError(
-        'Failed to load preview. An error occurred while validating the configuration.'
-      );
+      setPreviewError('Failed to load preview. An error occurred while validating the configuration.');
     } finally {
       setIsLoading(false);
     }
@@ -93,15 +98,13 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
     <div>
       {/* Custom notification display */}
       {notification && (
-        <div
-          className={`mb-4 p-4 rounded-md border ${
-            notification.type === 'success'
-              ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200'
-              : notification.type === 'error'
-                ? 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200'
-                : 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200'
-          }`}
-        >
+        <div className={`mb-4 p-4 rounded-md border ${
+          notification.type === 'success'
+            ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200'
+            : notification.type === 'error'
+            ? 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200'
+            : 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200'
+        }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               {notification.type === 'success' && <CheckCircle className="w-5 h-5 mr-2" />}
@@ -120,9 +123,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
       )}
 
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          Onboarding Wizard Preview
-        </h2>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Onboarding Wizard Preview</h2>
         <div className="flex items-center space-x-3">
           <div className="max-w-48">
             <select
@@ -151,7 +152,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
             onClick={handleToggleFullscreen}
             className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
             aria-label="Toggle fullscreen"
-            title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+            title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
@@ -159,8 +160,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
       </div>
 
       <p className="mb-4 text-gray-600 dark:text-gray-400">
-        Preview how the onboarding wizard will appear to users. You can switch between user types to
-        see different onboarding flows.
+        Preview how the onboarding wizard will appear to users. You can switch between user types to see different onboarding flows.
       </p>
 
       {previewError && (
@@ -289,9 +289,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
             <div className="space-y-6">
               <div className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
                 <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    Validation Results
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Validation Results</h3>
                 </div>
                 <div className="p-6">
                   <button
@@ -308,8 +306,8 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
                         validationResults.status === 'success'
                           ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800'
                           : validationResults.status === 'warning'
-                            ? 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800'
-                            : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
+                          ? 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800'
+                          : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
                       }`}
                     >
                       <div className="flex items-start">
@@ -328,8 +326,8 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
                               validationResults.status === 'success'
                                 ? 'text-green-800 dark:text-green-200'
                                 : validationResults.status === 'warning'
-                                  ? 'text-yellow-800 dark:text-yellow-200'
-                                  : 'text-red-800 dark:text-red-200'
+                                ? 'text-yellow-800 dark:text-yellow-200'
+                                : 'text-red-800 dark:text-red-200'
                             }`}
                           >
                             {validationResults.message}
@@ -337,16 +335,12 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
 
                           {validationResults.details && validationResults.details.length > 0 && (
                             <div className="mt-4 ml-2">
-                              <p className="font-semibold text-gray-900 dark:text-white mb-2">
-                                Details:
-                              </p>
+                              <p className="font-semibold text-gray-900 dark:text-white mb-2">Details:</p>
                               <div className="space-y-1">
                                 {validationResults.details.map((detail, index) => (
                                   <div key={index} className="flex items-start">
                                     <span className="text-gray-500 mr-2">•</span>
-                                    <span className="text-gray-700 dark:text-gray-300">
-                                      {detail}
-                                    </span>
+                                    <span className="text-gray-700 dark:text-gray-300">{detail}</span>
                                   </div>
                                 ))}
                               </div>
@@ -361,9 +355,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
 
               <div className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
                 <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    Best Practices
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Best Practices</h3>
                 </div>
                 <div className="p-6">
                   <div className="space-y-4">
@@ -384,9 +376,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
                         <CheckCircle className="w-5 h-5 text-green-500" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900 dark:text-white">
-                          Clear instructions
-                        </p>
+                        <p className="font-medium text-gray-900 dark:text-white">Clear instructions</p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
                           Each step should have clear instructions and purpose.
                         </p>
@@ -410,9 +400,7 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
                         <CheckCircle className="w-5 h-5 text-green-500" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900 dark:text-white">
-                          Progress indicators
-                        </p>
+                        <p className="font-medium text-gray-900 dark:text-white">Progress indicators</p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
                           Show users how far they've come and how much is left.
                         </p>
@@ -437,7 +425,9 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
           )}
 
           {/* Analytics Tab */}
-          {activeTab === 'analytics' && <OnboardingAnalytics />}
+          {activeTab === 'analytics' && (
+            <OnboardingAnalytics />
+          )}
         </div>
       </div>
     </div>

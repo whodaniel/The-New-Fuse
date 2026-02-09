@@ -95,11 +95,7 @@ const processFile = (filePath) => {
     const importEndLineIndex = content.indexOf('\n', importEndIndex);
 
     if (importEndLineIndex !== -1) {
-      content =
-        content.slice(0, importEndLineIndex + 1) +
-        '\n' +
-        notice +
-        content.slice(importEndLineIndex + 1);
+      content = content.slice(0, importEndLineIndex + 1) + '\n' + notice + content.slice(importEndLineIndex + 1);
     } else {
       content = notice + content;
     }

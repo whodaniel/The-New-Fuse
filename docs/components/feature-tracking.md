@@ -2,32 +2,27 @@
 
 ## Purpose
 
-This document establishes a systematic approach to track features and
-functionality across components during the consolidation process. The goal is to
-ensure that no valuable features are lost when consolidating duplicate
-components or removing unused ones.
+This document establishes a systematic approach to track features and functionality across components during the consolidation process. The goal is to ensure that no valuable features are lost when consolidating duplicate components or removing unused ones.
 
 ## Feature Tracking Methodology
 
 ### 1. Component Feature Inventory
 
-For each component identified for consolidation or review, document the
-following:
+For each component identified for consolidation or review, document the following:
 
-| Feature ID | Feature Description | Implementation Details | Used By                  | Priority        | Migration Status                  |
-| ---------- | ------------------- | ---------------------- | ------------------------ | --------------- | --------------------------------- |
+| Feature ID | Feature Description | Implementation Details | Used By | Priority | Migration Status |
+|------------|---------------------|------------------------|---------|----------|------------------|
 | FID-001    | Feature description | How it's implemented   | List of components/pages | High/Medium/Low | Not Started/In Progress/Completed |
 
 ### 2. Feature Comparison Matrix
 
-When consolidating duplicate components, use this matrix to compare features
-across implementations:
+When consolidating duplicate components, use this matrix to compare features across implementations:
 
-| Feature   | Component A | Component B | Component C | Target Implementation               |
-| --------- | ----------- | ----------- | ----------- | ----------------------------------- |
-| Feature 1 | ✓ (details) | ✓ (details) | ✗           | Component A approach because...     |
-| Feature 2 | ✗           | ✓ (details) | ✓ (details) | Component B approach because...     |
-| Feature 3 | ✓ (details) | ✗           | ✓ (details) | New implementation that combines... |
+| Feature | Component A | Component B | Component C | Target Implementation |
+|---------|-------------|-------------|-------------|----------------------|
+| Feature 1 | ✓ (details) | ✓ (details) | ✗ | Component A approach because... |
+| Feature 2 | ✗ | ✓ (details) | ✓ (details) | Component B approach because... |
+| Feature 3 | ✓ (details) | ✗ | ✓ (details) | New implementation that combines... |
 
 ## Implementation Process
 
@@ -87,27 +82,24 @@ After consolidation:
 
 ### Feature Inventory
 
-| Feature ID | Feature Description                 | Implementation Details                 | Used By              | Priority | Migration Status |
-| ---------- | ----------------------------------- | -------------------------------------- | -------------------- | -------- | ---------------- |
-| BTN-001    | Primary/Secondary/Tertiary variants | Uses different CSS classes             | Dashboard, Forms     | High     | Not Started      |
-| BTN-002    | Size variations (sm, md, lg)        | Uses different CSS classes             | Throughout app       | High     | Not Started      |
-| BTN-003    | Loading state with spinner          | Uses state and conditional rendering   | Forms, Data tables   | Medium   | Not Started      |
-| BTN-004    | Icon support (left/right)           | Accepts icon component as prop         | Navigation, Toolbars | Medium   | Not Started      |
-| BTN-005    | Tooltip support                     | Uses title attribute or custom tooltip | Advanced UI          | Low      | Not Started      |
+| Feature ID | Feature Description | Implementation Details | Used By | Priority | Migration Status |
+|------------|---------------------|------------------------|---------|----------|------------------|
+| BTN-001 | Primary/Secondary/Tertiary variants | Uses different CSS classes | Dashboard, Forms | High | Not Started |
+| BTN-002 | Size variations (sm, md, lg) | Uses different CSS classes | Throughout app | High | Not Started |
+| BTN-003 | Loading state with spinner | Uses state and conditional rendering | Forms, Data tables | Medium | Not Started |
+| BTN-004 | Icon support (left/right) | Accepts icon component as prop | Navigation, Toolbars | Medium | Not Started |
+| BTN-005 | Tooltip support | Uses title attribute or custom tooltip | Advanced UI | Low | Not Started |
 
 ### Feature Comparison Matrix
 
-| Feature  | UI Button      | Core Button    | Feature Button | Target Implementation                 |
-| -------- | -------------- | -------------- | -------------- | ------------------------------------- |
-| Variants | ✓ (3 variants) | ✓ (5 variants) | ✓ (2 variants) | Core Button - more comprehensive      |
-| Sizes    | ✓ (3 sizes)    | ✓ (3 sizes)    | ✓ (2 sizes)    | UI Button - cleaner implementation    |
-| Loading  | ✓ (spinner)    | ✗              | ✓ (text only)  | UI Button - better UX                 |
-| Icons    | ✓ (limited)    | ✓ (flexible)   | ✗              | Core Button - more flexible           |
-| Tooltip  | ✗              | ✓              | ✓              | Feature Button - better accessibility |
+| Feature | UI Button | Core Button | Feature Button | Target Implementation |
+|---------|-----------|-------------|---------------|----------------------|
+| Variants | ✓ (3 variants) | ✓ (5 variants) | ✓ (2 variants) | Core Button - more comprehensive |
+| Sizes | ✓ (3 sizes) | ✓ (3 sizes) | ✓ (2 sizes) | UI Button - cleaner implementation |
+| Loading | ✓ (spinner) | ✗ | ✓ (text only) | UI Button - better UX |
+| Icons | ✓ (limited) | ✓ (flexible) | ✗ | Core Button - more flexible |
+| Tooltip | ✗ | ✓ | ✓ | Feature Button - better accessibility |
 
 ## Conclusion
 
-By systematically tracking features across components, we can ensure that the
-consolidation process preserves all valuable functionality while eliminating
-redundancy. This approach minimizes the risk of losing important features and
-provides a clear path for migration.
+By systematically tracking features across components, we can ensure that the consolidation process preserves all valuable functionality while eliminating redundancy. This approach minimizes the risk of losing important features and provides a clear path for migration.

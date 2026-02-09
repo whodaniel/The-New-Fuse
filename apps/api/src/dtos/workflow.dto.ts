@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsOptional, IsArray, IsObject, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { IsArray, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class WorkflowStepDto {
   @ApiProperty()

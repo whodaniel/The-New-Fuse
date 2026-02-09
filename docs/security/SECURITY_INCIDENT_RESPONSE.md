@@ -54,7 +54,7 @@ compromised.
 3. **Create** a new secret key
 4. Update `.env.local`:
    ```bash
-   STRIPE_SECRET_KEY=sk_live_NEW_KEY_HERE
+   STRIPE_SECRET_KEY=<STRIPE_SECRET_KEY>
    ```
 5. Update production environment
 6. **CRITICAL:** Check Stripe dashboard for unauthorized charges
@@ -172,7 +172,7 @@ git push --force --tags origin
 cat .gitignore | grep -E "(\.env|credentials|\.key|\.pem)"
 
 # Check for remaining secrets
-git grep -i "sk_live_" || echo "✅ No Stripe keys found"
+git grep -i "STRIPE_SECRET_KEY" || echo "✅ No Stripe keys found"
 git grep -i "AIzaSy" || echo "✅ No Google API keys found"
 git grep -i "BEGIN PRIVATE KEY" || echo "✅ No private keys found"
 ```
@@ -198,7 +198,7 @@ sudo apt-get install git-secrets  # Linux
 cd /home/user/fuse
 git secrets --install
 git secrets --register-aws
-git secrets --add 'sk_live_[a-zA-Z0-9]+'  # Stripe
+git secrets --add 'STRIPE_(SECRET|API)_KEY='  # Stripe
 git secrets --add 'AIzaSy[a-zA-Z0-9_-]+'  # Google
 git secrets --add 'sk-or-v1-[a-f0-9]+'    # OpenRouter
 ```

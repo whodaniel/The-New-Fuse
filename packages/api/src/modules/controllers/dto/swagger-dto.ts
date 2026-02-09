@@ -26,7 +26,7 @@ export class WorkflowDto {
   @ApiProperty({
     description: 'Trigger type',
     enum: ['manual', 'event', 'schedule'],
-    example: 'manual',
+    example: 'manual'
   })
   triggerType!: 'manual' | 'event' | 'schedule';
 
@@ -68,7 +68,7 @@ export class WorkflowExecutionDto {
   @ApiProperty({
     description: 'Execution status',
     enum: ['pending', 'running', 'completed', 'failed', 'paused', 'cancelled'],
-    example: 'running',
+    example: 'running'
   })
   status!: WorkflowStatus;
 
@@ -87,18 +87,8 @@ export class WorkflowExecutionDto {
   @ApiProperty({ description: 'Error message if failed', required: false })
   error?: string | null;
 
-  @ApiProperty({
-    description: 'Step execution history',
-    type: 'array',
-    items: { type: 'object' },
-    required: false,
-  })
-  stepHistory?: Array<{
-    stepId: string;
-    status: WorkflowStatus;
-    timestamp: Date;
-    result?: unknown;
-  }>;
+  @ApiProperty({ description: 'Step execution history', type: 'array', items: { type: 'object' }, required: false })
+  stepHistory?: Array<{ stepId: string; status: WorkflowStatus; timestamp: Date; result?: unknown }>;
 
   @ApiProperty({ description: 'Creation timestamp' })
   createdAt!: Date;
@@ -132,7 +122,7 @@ export class AgentDto {
   @ApiProperty({
     description: 'Agent status',
     enum: ['active', 'inactive', 'busy', 'error'],
-    example: 'active',
+    example: 'active'
   })
   status!: string;
 

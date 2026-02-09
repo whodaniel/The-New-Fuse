@@ -1,14 +1,23 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Calendar, ChevronLeft, Clock, Paperclip, Plus, Save, Tag, X } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Select } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import {
+  Save,
+  X,
+  ChevronLeft,
+  Plus,
+  Calendar,
+  Clock,
+  Tag,
+  Paperclip
+} from 'lucide-react';
 
 // Mock data for agents
 const mockAgents = [
@@ -16,15 +25,14 @@ const mockAgents = [
   { id: 2, name: 'DataAnalyzer', avatar: 'DA' },
   { id: 3, name: 'ContentWriter', avatar: 'CW' },
   { id: 4, name: 'BugHunter', avatar: 'BH' },
-  { id: 5, name: 'APIIntegrator', avatar: 'AI' },
+  { id: 5, name: 'APIIntegrator', avatar: 'AI' }
 ];
 
 // Mock task data
 const mockTaskData = {
   id: 1,
   title: 'Implement new API endpoint',
-  description:
-    'Create a new REST API endpoint for user authentication that supports both username/password and OAuth flows. The endpoint should validate inputs, handle errors appropriately, and return standardized responses.',
+  description: 'Create a new REST API endpoint for user authentication that supports both username/password and OAuth flows. The endpoint should validate inputs, handle errors appropriately, and return standardized responses.',
   status: 'in_progress',
   priority: 'high',
   category: 'development',
@@ -34,8 +42,8 @@ const mockTaskData = {
   tags: ['API', 'Authentication', 'Backend'],
   attachments: [
     { name: 'api-spec.md', type: 'document', size: '24KB', url: '#' },
-    { name: 'auth-flow.png', type: 'image', size: '156KB', url: '#' },
-  ],
+    { name: 'auth-flow.png', type: 'image', size: '156KB', url: '#' }
+  ]
 };
 
 /**
@@ -44,7 +52,7 @@ const mockTaskData = {
 const EditTask: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
+  
   // Form state
   const [formData, setFormData] = useState({
     title: '',
@@ -56,30 +64,28 @@ const EditTask: React.FC = () => {
     dueDate: '',
     estimatedHours: '',
     tags: [] as string[],
-    newTag: '',
+    newTag: ''
   });
-
+  
   // Load task data
   useEffect(() => {
     // In a real app, we would fetch the task data from the server
     // For now, use the mock data
     setFormData({
       ...mockTaskData,
-      newTag: '',
+      newTag: ''
     });
   }, [id]);
-
+  
   // Handle input change
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
   };
-
+  
   // Handle tag input
   const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && formData.newTag.trim()) {
@@ -88,27 +94,27 @@ const EditTask: React.FC = () => {
         setFormData((prev: any) => ({
           ...prev,
           tags: [...prev.tags, prev.newTag.trim()],
-          newTag: '',
+          newTag: ''
         }));
       }
     }
   };
-
+  
   // Remove tag
   const removeTag = (tagToRemove: string) => {
     setFormData((prev: any) => ({
       ...prev,
-      tags: prev.tags.filter((tag) => tag !== tagToRemove),
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
     }));
   };
-
+  
   // Format date for input
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toISOString().split('T')[0];
   };
-
+  
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,11 +123,11 @@ const EditTask: React.FC = () => {
     // For now, just navigate back to the task detail
     navigate(`/tasks/${id}`);
   };
-
+  
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
-
+      
       <main className="flex-1 p-6 overflow-auto">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center mb-6">
@@ -139,7 +145,7 @@ const EditTask: React.FC = () => {
               <p className="text-muted-foreground">Update task details</p>
             </div>
           </div>
-
+          
           <form onSubmit={handleSubmit}>
             <Card className="mb-6">
               <div className="p-6">
@@ -156,7 +162,7 @@ const EditTask: React.FC = () => {
                       required
                     />
                   </div>
-
+                  
                   <div>
                     <Label htmlFor="description">Description</Label>
                     <Textarea
@@ -169,7 +175,7 @@ const EditTask: React.FC = () => {
                       required
                     />
                   </div>
-
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="status">Status</Label>
@@ -186,7 +192,7 @@ const EditTask: React.FC = () => {
                         <option value="completed">Completed</option>
                       </Select>
                     </div>
-
+                    
                     <div>
                       <Label htmlFor="priority">Priority</Label>
                       <Select
@@ -203,7 +209,7 @@ const EditTask: React.FC = () => {
                       </Select>
                     </div>
                   </div>
-
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="category">Category</Label>
@@ -224,7 +230,7 @@ const EditTask: React.FC = () => {
                         <option value="other">Other</option>
                       </Select>
                     </div>
-
+                    
                     <div>
                       <Label htmlFor="assignedTo">Assign To</Label>
                       <Select
@@ -235,7 +241,7 @@ const EditTask: React.FC = () => {
                         required
                       >
                         <option value="">Select an agent</option>
-                        {mockAgents.map((agent) => (
+                        {mockAgents.map(agent => (
                           <option key={agent.id} value={agent.id.toString()}>
                             {agent.name}
                           </option>
@@ -243,7 +249,7 @@ const EditTask: React.FC = () => {
                       </Select>
                     </div>
                   </div>
-
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="dueDate" className="flex items-center">
@@ -259,7 +265,7 @@ const EditTask: React.FC = () => {
                         required
                       />
                     </div>
-
+                    
                     <div>
                       <Label htmlFor="estimatedHours" className="flex items-center">
                         <Clock className="h-4 w-4 mr-1" />
@@ -277,7 +283,7 @@ const EditTask: React.FC = () => {
                       />
                     </div>
                   </div>
-
+                  
                   <div>
                     <Label htmlFor="newTag" className="flex items-center">
                       <Tag className="h-4 w-4 mr-1" />
@@ -297,20 +303,15 @@ const EditTask: React.FC = () => {
                         type="button"
                         variant="outline"
                         onClick={() => {
-                          if (
-                            formData.newTag.trim() &&
-                            !formData.tags.includes(formData.newTag.trim())
-                          ) {
+                          if (formData.newTag.trim() && !formData.tags.includes(formData.newTag.trim())) {
                             setFormData((prev: any) => ({
                               ...prev,
                               tags: [...prev.tags, prev.newTag.trim()],
-                              newTag: '',
+                              newTag: ''
                             }));
                           }
                         }}
-                        disabled={
-                          !formData.newTag.trim() || formData.tags.includes(formData.newTag.trim())
-                        }
+                        disabled={!formData.newTag.trim() || formData.tags.includes(formData.newTag.trim())}
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
@@ -332,7 +333,7 @@ const EditTask: React.FC = () => {
                       </div>
                     )}
                   </div>
-
+                  
                   <div>
                     <Label className="flex items-center">
                       <Paperclip className="h-4 w-4 mr-1" />
@@ -345,16 +346,16 @@ const EditTask: React.FC = () => {
                             <div className="font-medium">{attachment.name}</div>
                             <div className="text-xs text-muted-foreground">{attachment.size}</div>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-red-500 hover:text-red-700"
-                          >
+                          <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">
                             <X className="h-4 w-4" />
                           </Button>
                         </div>
                       ))}
-                      <Input type="file" multiple className="cursor-pointer" />
+                      <Input
+                        type="file"
+                        multiple
+                        className="cursor-pointer"
+                      />
                       <p className="text-xs text-muted-foreground">
                         You can upload additional files. Maximum file size: 10MB.
                       </p>
@@ -363,9 +364,13 @@ const EditTask: React.FC = () => {
                 </div>
               </div>
             </Card>
-
+            
             <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={() => navigate(`/tasks/${id}`)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate(`/tasks/${id}`)}
+              >
                 <X className="h-4 w-4 mr-2" />
                 Cancel
               </Button>

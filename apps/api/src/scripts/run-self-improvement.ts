@@ -8,8 +8,8 @@
  */
 
 import { NestFactory } from '@nestjs/core';
-import { CoordinatorAgentService } from '../agents/coordinator.service';
 import { AppModule } from '../app.module';
+import { CoordinatorAgentService } from '../agents/coordinator.service';
 
 async function bootstrap() {
   console.log('🚀 Starting Self-Improvement Agent Swarm...\n');
@@ -64,14 +64,9 @@ async function bootstrap() {
     console.log('📊 Detailed Improvements:');
     console.log('-'.repeat(80));
     report.improvements.forEach((imp, index) => {
-      const emoji =
-        imp.status === 'completed'
-          ? '✅'
-          : imp.status === 'in_progress'
-            ? '⏳'
-            : imp.status === 'failed'
-              ? '❌'
-              : '⏸️';
+      const emoji = imp.status === 'completed' ? '✅' :
+                    imp.status === 'in_progress' ? '⏳' :
+                    imp.status === 'failed' ? '❌' : '⏸️';
       console.log(`${index + 1}. ${emoji} ${imp.title} [${imp.status}]`);
     });
     console.log();
@@ -125,6 +120,7 @@ async function bootstrap() {
     console.log('The agents are now continuously monitoring and improving the framework.');
     console.log('Next cycle will begin automatically based on detected changes.');
     console.log();
+
   } catch (error) {
     console.error('❌ Error during self-improvement cycle:', error);
     console.error((error as Error).stack);
@@ -134,7 +130,7 @@ async function bootstrap() {
 }
 
 // Run the demonstration
-bootstrap().catch((error) => {
+bootstrap().catch(error => {
   console.error('Fatal error:', error);
   process.exit(1);
 });

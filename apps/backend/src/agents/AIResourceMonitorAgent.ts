@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Cron } from '@nestjs/schedule';
+import Redis from 'ioredis';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { AgentInbox } from '../shared/agent-inbox';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import Redis from 'ioredis';
-import { AgentInbox } from '../shared/agent-inbox';
 
 export interface AIResource {
   id: string;
@@ -48,14 +48,14 @@ export interface PriceUpdate {
 
 /**
  * AIResourceMonitor Agent
- *
+ * 
  * Continuously monitors for:
  * - New AI models and services
  * - Beta programs and free credits
  * - Price changes
  * - Quota increases
  * - Breaking AI news
- *
+ * 
  * Runs 24/7 to ensure we NEVER miss a free compute opportunity.
  */
 @Injectable()
@@ -80,11 +80,11 @@ export class AIResourceMonitorAgent {
     this.logger.log('🐦 Checking Twitter for AI announcements...');
 
     const accounts = ['@anthropicai', '@GoogleAI', '@OpenAI', '@MistralAI', '@grok'];
-
+    
     for (const account of accounts) {
       try {
         const updates = await this.checkTwitterAccount(account);
-
+        
         for (const update of updates) {
           if (this.isRelevantAnnouncement(update.text)) {
             await this.processAnnouncement(update);
@@ -94,14 +94,6 @@ export class AIResourceMonitorAgent {
         this.logger.error(`Failed to check ${account}:`, error);
       }
     }
-  }
-
-  /**
-   * Process a detected announcement
-   */
-  private async processAnnouncement(update: any): Promise<void> {
-    this.logger.log(`Processing announcement: ${JSON.stringify(update)}`);
-    // Placeholder logic - map to relevant resource update if possible
   }
 
   /**
@@ -121,7 +113,7 @@ export class AIResourceMonitorAgent {
     for (const blog of blogs) {
       try {
         const posts = await this.scrapeBlog(blog.url);
-
+        
         for (const post of posts) {
           if (await this.isNewPost(post.id)) {
             await this.analyzeBlogPost(post, blog.provider);
@@ -149,7 +141,7 @@ export class AIResourceMonitorAgent {
     for (const source of sources) {
       try {
         const articles = await this.scrapeNewsSource(source);
-
+        
         for (const article of articles) {
           if (this.containsRelevantKeywords(article.title)) {
             await this.analyzeArticle(article);
@@ -173,7 +165,7 @@ export class AIResourceMonitorAgent {
     for (const subreddit of subreddits) {
       try {
         const posts = await this.fetchRedditPosts(subreddit);
-
+        
         for (const post of posts) {
           if (this.containsRelevantKeywords(post.title)) {
             await this.analyzeRedditPost(post);
@@ -231,15 +223,13 @@ export class AIResourceMonitorAgent {
     const text = post.title + ' ' + post.content;
 
     // Detect new model launch
-    if (
-      this.containsPattern(text, [
-        'announcing',
-        'introducing',
-        'launch',
-        'new model',
-        'is now available',
-      ])
-    ) {
+    if (this.containsPattern(text, [
+      'announcing',
+      'introducing',
+      'launch',
+      'new model',
+      'is now available',
+    ])) {
       await this.handleNewModelAnnouncement(post, provider);
     }
 
@@ -479,8 +469,7 @@ export class AIResourceMonitorAgent {
     if (this.containsPattern(text, ['image', 'vision', 'multimodal']))
       capabilities.push('multimodal');
     if (this.containsPattern(text, ['fast', 'speed', 'low latency'])) capabilities.push('fast');
-    if (this.containsPattern(text, ['long context', '100k', '200k']))
-      capabilities.push('long-context');
+    if (this.containsPattern(text, ['long context', '100k', '200k'])) capabilities.push('long-context');
 
     return capabilities;
   }
@@ -554,8 +543,9 @@ export class AIResourceMonitorAgent {
       active: resources.filter((r) => r.status === 'active').length,
       free: resources.filter((r) => r.tier === 'free').length,
       beta: resources.filter((r) => r.status === 'beta').length,
-      newToday: resources.filter((r) => r.discovered.toDateString() === new Date().toDateString())
-        .length,
+      newToday: resources.filter(
+        (r) => r.discovered.toDateString() === new Date().toDateString()
+      ).length,
     };
 
     this.logger.log(`📊 Daily Report: ${JSON.stringify(report)}`);

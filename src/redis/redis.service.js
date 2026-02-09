@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createRedisService = exports.RedisServiceImpl = void 0;
-const connection_tsx_1 = require("../utils/redis/connection.tsx");
+const connection_1 = require("../utils/redis/connection");
 class RedisServiceImpl {
     client;
     constructor(options) {
-        this.client = (0, connection_tsx_1.createRedisClient)(options);
+        this.client = (0, connection_1.createRedisClient)(options);
     }
     getClient() {
         return this.client;

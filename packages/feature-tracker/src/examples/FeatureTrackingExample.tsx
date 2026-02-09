@@ -1,17 +1,24 @@
-import { FC, useEffect } from 'react';
-import { FeatureProgress } from '../components/FeatureProgress';
-import { useFeatureTracker } from '../hooks/useFeatureTracker';
+import React, { FC, useEffect } from "react";
 import { FeatureStage } from '../types';
+import { useFeatureTracker } from '../hooks/useFeatureTracker';
+import { FeatureProgress } from '../components/FeatureProgress';
 
 export const FeatureTrackingExample: FC = () => {
-  const { feature, initializeFeature, updateStage, updateMetrics, updateQualitativeAssessment } =
-    useFeatureTracker('auth-001');
+  const {
+    feature,
+    initializeFeature,
+    updateStage,
+    updateMetrics,
+    updateQualitativeAssessment,
+  } = useFeatureTracker('auth-001');
 
   useEffect(() => {
     if (!feature) {
-      initializeFeature('User Authentication', 'Implement secure user authentication with JWT', [
-        'database-001',
-      ]);
+      initializeFeature(
+        'User Authentication',
+        'Implement secure user authentication with JWT',
+        ['database-001']
+      );
     }
   }, [feature, initializeFeature]);
 

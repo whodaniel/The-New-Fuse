@@ -2,16 +2,11 @@
 
 ## Overview
 
-The CMS Integration module provides comprehensive content management system
-functionality that seamlessly integrates with The New Fuse's existing user and
-tenant systems. It implements personal content management, project configuration
-synchronization, collaborative content sharing, and private data isolation while
-maintaining security and audit trails.
+The CMS Integration module provides comprehensive content management system functionality that seamlessly integrates with The New Fuse's existing user and tenant systems. It implements personal content management, project configuration synchronization, collaborative content sharing, and private data isolation while maintaining security and audit trails.
 
 ## Key Features
 
 ### 1. Personal Content Management
-
 - **User-centric content storage** using existing User models
 - **Tenant isolation** with proper privacy boundaries
 - **Real-time synchronization** across user's active sessions
@@ -19,7 +14,6 @@ maintaining security and audit trails.
 - **Content metadata** and tagging system
 
 ### 2. Project Configuration Sync
-
 - **File-based configuration monitoring** with chokidar
 - **Privacy boundary enforcement** using existing tenant patterns
 - **Collaborative configuration management** with role-based access
@@ -27,7 +21,6 @@ maintaining security and audit trails.
 - **Real-time propagation** across environments
 
 ### 3. Collaborative Content Sharing
-
 - **Role-based access control** using existing UserRole enum
 - **Permission management** with granular controls
 - **Expiration-based sharing** with automatic cleanup
@@ -35,7 +28,6 @@ maintaining security and audit trails.
 - **Audit trails** for all sharing activities
 
 ### 4. Private Data Isolation
-
 - **Tenant-level data segregation** using existing patterns
 - **Privacy boundary enforcement** with configurable restrictions
 - **Encryption** for sensitive data at rest and in transit
@@ -53,33 +45,33 @@ graph TB
         CCS[CollaborativeContentService]
         PDIS[PrivateDataIsolationService]
     end
-
+    
     subgraph "Existing Infrastructure"
         User[User Models]
         Tenant[Tenant Patterns]
         Redis[Redis Pub/Sub]
-        DB[(Drizzle Database)]
+        DB[(Prisma Database)]
         WS[WebSocket Services]
         FSW[FileSystemWatcher]
     end
-
+    
     CMS --> PCM
     CMS --> PCS
     CMS --> CCS
     CMS --> PDIS
-
+    
     PCM --> User
     PCM --> DB
     PCM --> Redis
-
+    
     PCS --> Tenant
     PCS --> FSW
     PCS --> DB
-
+    
     CCS --> User
     CCS --> WS
     CCS --> Redis
-
+    
     PDIS --> Tenant
     PDIS --> DB
     PDIS --> Redis
@@ -95,7 +87,7 @@ Main orchestration service that coordinates all CMS functionality.
 import { CMSIntegrationService } from '@sync-core/cms';
 
 const cmsService = new CMSIntegrationService(
-  drizzle,
+  prisma,
   redis,
   syncOrchestrator,
   fileWatcher,
@@ -106,7 +98,7 @@ const cmsService = new CMSIntegrationService(
     defaultPrivacy: PrivacyLevel.PRIVATE,
     maxContentSize: 10 * 1024 * 1024, // 10MB
     allowedContentTypes: [ContentType.DOCUMENT, ContentType.TEMPLATE],
-    syncInterval: 30000, // 30 seconds
+    syncInterval: 30000 // 30 seconds
   }
 );
 
@@ -129,15 +121,15 @@ const content = await cmsService.createPersonalContent(userId, {
     isPublic: false,
     allowedUsers: [],
     allowedRoles: [],
-    permissions: [],
-  },
+    permissions: []
+  }
 });
 
 // List user's content
 const userContent = await cmsService.getUserContent(userId, {
   includePersonal: true,
   contentType: ContentType.DOCUMENT,
-  limit: 10,
+  limit: 10
 });
 ```
 
@@ -152,7 +144,7 @@ const project = await cmsService.createProjectConfiguration(userId, {
   description: 'Project configuration',
   config: {
     database: { host: 'localhost', port: 5432 },
-    api: { baseUrl: 'http://localhost:3000' },
+    api: { baseUrl: 'http://localhost:3000' }
   },
   privacy: PrivacyLevel.PRIVATE,
   collaborators: [],
@@ -161,8 +153,8 @@ const project = await cmsService.createProjectConfiguration(userId, {
     frequency: SyncFrequency.REAL_TIME,
     conflictResolution: ConflictResolutionStrategy.LAST_WRITE_WINS,
     backupEnabled: true,
-    versionHistory: true,
-  },
+    versionHistory: true
+  }
 });
 ```
 
@@ -202,7 +194,7 @@ const boundary = await privateDataService.createPrivacyBoundary(
   ['personal_content', 'project_config'],
   [
     { type: RestrictionType.ROLE_BASED, value: 'ADMIN' },
-    { type: RestrictionType.TIME_WINDOW, value: '09:00-17:00' },
+    { type: RestrictionType.TIME_WINDOW, value: '09:00-17:00' }
   ]
 );
 
@@ -215,7 +207,6 @@ console.log(`Violations: ${audit.violations.length}`);
 ## Data Models
 
 ### Content Item
-
 ```typescript
 interface ContentItem {
   id: string;
@@ -235,7 +226,6 @@ interface ContentItem {
 ```
 
 ### Project Configuration
-
 ```typescript
 interface ProjectConfiguration {
   id: string;
@@ -254,7 +244,6 @@ interface ProjectConfiguration {
 ```
 
 ### Privacy Boundary
-
 ```typescript
 interface PrivacyBoundary {
   tenantId: string;
@@ -334,29 +323,25 @@ CREATE TABLE privacy_boundaries (
 ## Integration with Existing Systems
 
 ### User and Tenant Models
-
 - Uses existing `User` model for ownership and permissions
 - Leverages existing `UserRole` enum for access control
 - Implements tenant isolation using established patterns
 - Integrates with existing `AuthEvent` logging for audit trails
 
 ### Redis and WebSocket Services
-
 - Uses existing Redis pub/sub infrastructure for real-time updates
 - Integrates with `AgentWebSocketService` for live notifications
 - Leverages existing Redis keyspace patterns for tenant isolation
 - Uses established Redis caching strategies
 
 ### File System Monitoring
-
 - Extends existing `EnhancedFileSystemWatcher` for configuration files
 - Integrates with existing file synchronization patterns
 - Uses established chokidar configuration and event handling
 - Maintains compatibility with existing file watching infrastructure
 
 ### Database Integration
-
-- Uses existing Drizzle client and connection patterns
+- Uses existing Prisma client and connection patterns
 - Leverages established database transaction patterns
 - Integrates with existing database versioning and conflict resolution
 - Uses existing database-level tenant isolation
@@ -364,21 +349,18 @@ CREATE TABLE privacy_boundaries (
 ## Security and Privacy
 
 ### Data Isolation
-
 - **Tenant-level isolation** using existing patterns
 - **User-specific data segregation** with proper access controls
 - **Privacy boundary enforcement** with configurable restrictions
 - **Encryption** for sensitive data using tenant-specific keys
 
 ### Access Control
-
 - **Role-based permissions** using existing UserRole hierarchy
 - **Granular permission system** with read/write/share/admin levels
 - **Time-based access** with expiration and automatic cleanup
 - **Audit logging** for all access attempts and permission changes
 
 ### Compliance
-
 - **Privacy compliance auditing** with detailed reporting
 - **Data retention policies** with automatic cleanup
 - **Access pattern monitoring** for anomaly detection
@@ -387,21 +369,18 @@ CREATE TABLE privacy_boundaries (
 ## Performance Considerations
 
 ### Caching Strategy
-
 - **Redis caching** for frequently accessed content
 - **Tenant-specific cache keys** for isolation
 - **Cache invalidation** on content updates
 - **LRU eviction** for memory management
 
 ### Synchronization Optimization
-
 - **Batched updates** for high-volume changes
 - **Debounced file watching** to prevent excessive events
 - **Conflict resolution** with minimal data transfer
 - **Incremental synchronization** for large content
 
 ### Scalability
-
 - **Horizontal scaling** with Redis clustering
 - **Database sharding** support for large datasets
 - **Load balancing** for file watching across instances
@@ -410,21 +389,18 @@ CREATE TABLE privacy_boundaries (
 ## Monitoring and Observability
 
 ### Metrics Collection
-
 - **Content creation/update rates** per tenant
 - **Collaboration activity** and sharing patterns
 - **Privacy compliance** metrics and violations
 - **Synchronization performance** and error rates
 
 ### Health Monitoring
-
 - **Service availability** and response times
 - **Database connection** health and performance
 - **Redis connectivity** and pub/sub latency
 - **File system** monitoring and disk usage
 
 ### Alerting
-
 - **Privacy violations** and compliance issues
 - **Synchronization failures** and conflicts
 - **Performance degradation** and resource limits
@@ -433,28 +409,24 @@ CREATE TABLE privacy_boundaries (
 ## Best Practices
 
 ### Content Management
-
 1. **Use appropriate privacy levels** for different content types
 2. **Implement proper metadata** for searchability and organization
 3. **Regular content cleanup** to manage storage usage
 4. **Version control** for important configurations
 
 ### Collaboration
-
 1. **Principle of least privilege** for permission assignment
 2. **Regular permission audits** and cleanup
 3. **Clear expiration policies** for temporary access
 4. **Proper role hierarchy** enforcement
 
 ### Privacy and Security
-
 1. **Regular privacy audits** and compliance checks
 2. **Encryption for sensitive data** at rest and in transit
 3. **Proper tenant isolation** and boundary enforcement
 4. **Comprehensive audit logging** for all operations
 
 ### Performance
-
 1. **Efficient caching strategies** with proper invalidation
 2. **Optimized database queries** with proper indexing
 3. **Batched operations** for bulk updates
@@ -465,28 +437,24 @@ CREATE TABLE privacy_boundaries (
 ### Common Issues
 
 #### Content Not Syncing
-
 - Check Redis connectivity and pub/sub channels
 - Verify tenant isolation and permissions
 - Review file watcher configuration and patterns
 - Check database transaction logs for conflicts
 
 #### Permission Denied Errors
-
 - Verify user roles and permission hierarchy
 - Check privacy boundaries and restrictions
 - Review sharing permissions and expiration
 - Validate tenant isolation configuration
 
 #### Performance Issues
-
 - Monitor Redis memory usage and eviction
 - Check database query performance and indexing
 - Review file watcher event volume and debouncing
 - Analyze synchronization batch sizes and frequency
 
 #### Privacy Compliance Violations
-
 - Run privacy audit and review violations
 - Check data access patterns and unauthorized attempts
 - Verify encryption and data isolation
@@ -495,7 +463,6 @@ CREATE TABLE privacy_boundaries (
 ### Debugging Tools
 
 #### CMS Event Monitoring
-
 ```typescript
 // Subscribe to CMS events for debugging
 redis.subscribe('cms_events', (message) => {
@@ -505,7 +472,6 @@ redis.subscribe('cms_events', (message) => {
 ```
 
 #### Privacy Audit
-
 ```typescript
 // Run comprehensive privacy audit
 const audit = await cmsService.auditPrivacyCompliance(tenantId);
@@ -513,7 +479,6 @@ console.log('Privacy Audit Results:', audit);
 ```
 
 #### Sync Status Check
-
 ```typescript
 // Check synchronization status
 await cmsService.syncUserCMSData(userId);
@@ -523,7 +488,6 @@ console.log('Sync completed successfully');
 ## Migration Guide
 
 ### From Existing Content Systems
-
 1. **Export existing content** in compatible format
 2. **Map user permissions** to new role-based system
 3. **Migrate configurations** with proper privacy settings
@@ -531,7 +495,6 @@ console.log('Sync completed successfully');
 5. **Update client applications** to use new APIs
 
 ### Database Migration
-
 ```sql
 -- Add CMS tables to existing database
 -- Run the table creation scripts provided above
@@ -540,7 +503,6 @@ console.log('Sync completed successfully');
 ```
 
 ### Configuration Updates
-
 ```typescript
 // Update application configuration
 const cmsConfig = {
@@ -550,16 +512,14 @@ const cmsConfig = {
   defaultPrivacy: PrivacyLevel.PRIVATE,
   maxContentSize: 10 * 1024 * 1024,
   allowedContentTypes: [ContentType.DOCUMENT, ContentType.TEMPLATE],
-  syncInterval: 30000,
+  syncInterval: 30000
 };
 ```
 
 ## API Reference
 
-See the [API Reference](./API_REFERENCE.md) for detailed documentation of all
-CMS integration methods and interfaces.
+See the [API Reference](./API_REFERENCE.md) for detailed documentation of all CMS integration methods and interfaces.
 
 ## Examples
 
-See the [Usage Examples](./USAGE_EXAMPLES.md) for comprehensive examples of CMS
-integration usage patterns and best practices.
+See the [Usage Examples](./USAGE_EXAMPLES.md) for comprehensive examples of CMS integration usage patterns and best practices.

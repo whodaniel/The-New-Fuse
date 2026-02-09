@@ -5,13 +5,11 @@ Complete N8N workflow import/export support for The New Fuse workflow builder.
 ## Features
 
 ✅ **Full N8N Compatibility**
-
 - Import ANY N8N workflow JSON file
 - Export workflows to N8N format
 - 95%+ feature parity with N8N
 
 ✅ **All Node Properties Supported**
-
 - 20+ node properties including:
   - Error handling (`onError`, `continueOnFail`)
   - Retry logic (`retryOnFail`, `maxTries`, `waitBetweenTries`)
@@ -20,14 +18,12 @@ Complete N8N workflow import/export support for The New Fuse workflow builder.
   - Disabled state
 
 ✅ **Multi-Output Connections**
-
 - IF nodes (true/false branches)
 - Switch nodes (N outputs)
 - Conditional logic
 - Parallel execution
 
 ✅ **Advanced Features**
-
 - Pin data (test data)
 - Workflow settings (timezone, timeout, etc.)
 - Static data (persistent state)
@@ -41,7 +37,7 @@ Complete N8N workflow import/export support for The New Fuse workflow builder.
 import { n8nConverter } from '@/components/WorkflowEditor/converters/N8nWorkflowConverter';
 
 // Load N8N JSON
-const n8nWorkflow = await fetch('/workflow.json').then((r) => r.json());
+const n8nWorkflow = await fetch('/workflow.json').then(r => r.json());
 
 // Convert to ReactFlow
 const reactFlowWorkflow = n8nConverter.convertFromN8n(n8nWorkflow);
@@ -73,7 +69,7 @@ const n8nWorkflow = n8nConverter.convertToN8n(reactFlowWorkflow);
 
 // Download
 const blob = new Blob([JSON.stringify(n8nWorkflow, null, 2)], {
-  type: 'application/json',
+  type: 'application/json'
 });
 saveAs(blob, 'workflow.json');
 ```
@@ -87,20 +83,14 @@ saveAs(blob, 'workflow.json');
 ```typescript
 class N8nWorkflowConverter {
   // Import N8N → ReactFlow
-  convertFromN8n(n8nWorkflow: N8nWorkflow): ReactFlowWorkflow;
+  convertFromN8n(n8nWorkflow: N8nWorkflow): ReactFlowWorkflow
 
   // Export ReactFlow → N8N
-  convertToN8n(workflow: ReactFlowWorkflow): N8nWorkflow;
+  convertToN8n(workflow: ReactFlowWorkflow): N8nWorkflow
 
   // Validation
-  validateN8nWorkflow(workflow: N8nWorkflow): {
-    valid: boolean;
-    errors: string[];
-  };
-  validateReactFlowWorkflow(workflow: ReactFlowWorkflow): {
-    valid: boolean;
-    errors: string[];
-  };
+  validateN8nWorkflow(workflow: N8nWorkflow): { valid: boolean; errors: string[] }
+  validateReactFlowWorkflow(workflow: ReactFlowWorkflow): { valid: boolean; errors: string[] }
 }
 ```
 
@@ -109,18 +99,18 @@ class N8nWorkflowConverter {
 ```typescript
 const NODE_TYPE_MAP = {
   // Triggers
-  webhook: 'n8n-nodes-base.webhook',
+  'webhook': 'n8n-nodes-base.webhook',
   'cron-trigger': 'n8n-nodes-base.cronTrigger',
   'manual-trigger': 'n8n-nodes-base.manualTrigger',
 
   // Logic (Multi-output)
-  if: 'n8n-nodes-base.if', // 2 outputs
-  switch: 'n8n-nodes-base.switch', // N outputs
-  merge: 'n8n-nodes-base.merge',
+  'if': 'n8n-nodes-base.if',           // 2 outputs
+  'switch': 'n8n-nodes-base.switch',   // N outputs
+  'merge': 'n8n-nodes-base.merge',
 
   // Data
-  set: 'n8n-nodes-base.set',
-  code: 'n8n-nodes-base.code',
+  'set': 'n8n-nodes-base.set',
+  'code': 'n8n-nodes-base.code',
 
   // HTTP
   'http-request': 'n8n-nodes-base.httpRequest',
@@ -135,7 +125,6 @@ const NODE_TYPE_MAP = {
 **File:** `pages/workflow-pages/WorkflowBuilderEnhanced.tsx`
 
 **Features:**
-
 - N8N import/export buttons
 - Enhanced node settings panel
 - Visual indicators for node states
@@ -146,7 +135,7 @@ const NODE_TYPE_MAP = {
 ```tsx
 import WorkflowBuilderEnhanced from '@/pages/workflow-pages/WorkflowBuilderEnhanced';
 
-<WorkflowBuilderEnhanced />;
+<WorkflowBuilderEnhanced />
 ```
 
 ### Node Settings Panel
@@ -195,7 +184,7 @@ The enhanced builder includes a comprehensive node settings panel:
   ],
   "connections": {
     "Webhook": {
-      "main": [[{ "node": "HTTP Request", "type": "main", "index": 0 }]]
+      "main": [[{"node": "HTTP Request", "type": "main", "index": 0}]]
     }
   }
 }
@@ -232,8 +221,8 @@ The enhanced builder includes a comprehensive node settings panel:
   "connections": {
     "IF": {
       "main": [
-        [{ "node": "True Action", "type": "main", "index": 0 }],
-        [{ "node": "False Action", "type": "main", "index": 0 }]
+        [{"node": "True Action", "type": "main", "index": 0}],
+        [{"node": "False Action", "type": "main", "index": 0}]
       ]
     }
   }
@@ -268,7 +257,9 @@ The enhanced builder includes a comprehensive node settings panel:
   ],
   "connections": {},
   "pinData": {
-    "API Call": [{ "json": { "test": "data" } }]
+    "API Call": [
+      {"json": {"test": "data"}}
+    ]
   },
   "settings": {
     "timezone": "America/New_York",
@@ -315,8 +306,7 @@ const n8nWorkflow = n8nConverter.convertToN8n(reactFlowWorkflow);
 
 // Validate
 const { valid, errors } = n8nConverter.validateN8nWorkflow(n8nWorkflow);
-const { valid, errors } =
-  n8nConverter.validateReactFlowWorkflow(reactFlowWorkflow);
+const { valid, errors } = n8nConverter.validateReactFlowWorkflow(reactFlowWorkflow);
 ```
 
 ### Types
@@ -399,8 +389,7 @@ const n8nWorkflow = n8nConverter.convertToN8n({
 
 ### Problem: Multi-output nodes not working
 
-**Solution:** Use the new converter. The old converter doesn't support
-multi-output nodes.
+**Solution:** Use the new converter. The old converter doesn't support multi-output nodes.
 
 ```typescript
 // ❌ Old (broken for IF/Switch)
@@ -434,22 +423,22 @@ if (!valid) {
 ## Performance
 
 | Workflow Size | Conversion Time |
-| ------------- | --------------- |
-| 10 nodes      | < 1ms           |
-| 100 nodes     | < 10ms          |
-| 1000 nodes    | < 100ms         |
+|--------------|-----------------|
+| 10 nodes | < 1ms |
+| 100 nodes | < 10ms |
+| 1000 nodes | < 100ms |
 
 ## Support Matrix
 
-| Feature         | N8N | Old Converter | New Converter |
-| --------------- | --- | ------------- | ------------- |
-| Basic nodes     | ✅  | ✅            | ✅            |
-| Multi-output    | ✅  | ❌            | ✅            |
-| All properties  | ✅  | ❌            | ✅            |
-| Pin data        | ✅  | ❌            | ✅            |
-| Settings        | ✅  | ❌            | ✅            |
-| Validation      | ✅  | ⚠️            | ✅            |
-| Round-trip safe | ✅  | ❌            | ✅            |
+| Feature | N8N | Old Converter | New Converter |
+|---------|-----|---------------|---------------|
+| Basic nodes | ✅ | ✅ | ✅ |
+| Multi-output | ✅ | ❌ | ✅ |
+| All properties | ✅ | ❌ | ✅ |
+| Pin data | ✅ | ❌ | ✅ |
+| Settings | ✅ | ❌ | ✅ |
+| Validation | ✅ | ⚠️ | ✅ |
+| Round-trip safe | ✅ | ❌ | ✅ |
 
 ## Related Documentation
 

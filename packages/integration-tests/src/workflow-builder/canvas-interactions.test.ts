@@ -1,6 +1,6 @@
 /**
  * Canvas Interactions and Visual Feedback Tests
- *
+ * 
  * Tests advanced canvas interactions, visual feedback, and user experience features:
  * - Mouse and keyboard interactions
  * - Visual feedback during drag operations
@@ -22,7 +22,7 @@ enum WorkflowNodeType {
   AGENT_TASK = 'AGENT_TASK',
   CONDITION = 'CONDITION',
   PARALLEL = 'PARALLEL',
-  CUSTOM = 'CUSTOM',
+  CUSTOM = 'CUSTOM'
 }
 
 // Mock WorkflowBuilder class
@@ -35,52 +35,44 @@ class WorkflowBuilder {
   private marqueeState: any = { isActive: false };
   private viewport: any = { x: 0, y: 0, zoom: 1 };
   private interactionMode: string = 'default';
-
+  
   async initialize() {}
   async cleanup() {}
-
-  addNode(type: WorkflowNodeType, name: string, position: { x: number; y: number }, config?: any) {
+  
+  addNode(type: WorkflowNodeType, name: string, position: {x: number, y: number}, config?: any) {
     const node = {
       id: `node_${this.nodes.length + 1}`,
       type,
       name,
       position,
-      config: config || {},
+      config: config || {}
     };
     this.nodes.push(node);
     return node;
   }
-
-  getNodes() {
-    return this.nodes;
-  }
-  getNode(id: string) {
-    return this.nodes.find((n) => n.id === id);
-  }
-  removeNode(id: string) {
-    this.nodes = this.nodes.filter((n) => n.id !== id);
-  }
-
+  
+  getNodes() { return this.nodes; }
+  getNode(id: string) { return this.nodes.find(n => n.id === id); }
+  removeNode(id: string) { this.nodes = this.nodes.filter(n => n.id !== id); }
+  
   addConnection(sourceId: string, sourceHandle: string, targetId: string, targetHandle: string) {
     const connection = {
       id: `conn_${this.connections.length + 1}`,
       sourceId,
       sourceHandle,
       targetId,
-      targetHandle,
+      targetHandle
     };
     this.connections.push(connection);
     return connection;
   }
-
-  getConnections() {
-    return this.connections;
-  }
-
+  
+  getConnections() { return this.connections; }
+  
   selectNode(id: string, options?: any) {
     if (options?.addToSelection) {
       if (this.selectedNodes.includes(id)) {
-        this.selectedNodes = this.selectedNodes.filter((n) => n !== id);
+        this.selectedNodes = this.selectedNodes.filter(n => n !== id);
       } else {
         this.selectedNodes.push(id);
       }
@@ -88,13 +80,13 @@ class WorkflowBuilder {
       // For range selection, find the range between the last selected node and the new node
       if (this.selectedNodes.length > 0) {
         const lastSelectedId = this.selectedNodes[this.selectedNodes.length - 1];
-        const lastSelectedIndex = this.nodes.findIndex((n) => n.id === lastSelectedId);
-        const newNodeIndex = this.nodes.findIndex((n) => n.id === id);
-
+        const lastSelectedIndex = this.nodes.findIndex(n => n.id === lastSelectedId);
+        const newNodeIndex = this.nodes.findIndex(n => n.id === id);
+        
         if (lastSelectedIndex !== -1 && newNodeIndex !== -1) {
           const startIndex = Math.min(lastSelectedIndex, newNodeIndex);
           const endIndex = Math.max(lastSelectedIndex, newNodeIndex);
-
+          
           // Clear current selection and select the range
           this.selectedNodes = [];
           for (let i = startIndex; i <= endIndex; i++) {
@@ -116,172 +108,149 @@ class WorkflowBuilder {
       this.selectedNodes = [id];
     }
   }
-
-  getSelectedNodes() {
-    return this.selectedNodes;
-  }
-  clearSelection() {
-    this.selectedNodes = [];
-  }
-
+  
+  getSelectedNodes() { return this.selectedNodes; }
+  clearSelection() { this.selectedNodes = []; }
+  
   handleCanvasClick(event: any) {
     if (event.target?.nodeId) {
       this.selectNode(event.target.nodeId, { addToSelection: event.ctrlKey });
     }
   }
-
+  
   handleCanvasDoubleClick(event: any) {
     if (this.onNodeEdit && event.target?.nodeId) {
       this.onNodeEdit(event.target.nodeId);
     }
   }
-
+  
   handleCanvasRightClick(event: any) {
     if (this.onContextMenu && event.target?.nodeId) {
       this.onContextMenu({
         nodeId: event.target.nodeId,
-        position: { x: event.clientX, y: event.clientY },
+        position: { x: event.clientX, y: event.clientY }
       });
     }
   }
-
+  
   handleCanvasWheel(event: any) {
     const zoomDelta = event.deltaY > 0 ? 0.9 : 1.1;
     this.viewport.zoom *= zoomDelta;
   }
-
-  getViewport() {
-    return this.viewport;
-  }
-  setViewport(viewport: any) {
-    Object.assign(this.viewport, viewport);
-  }
-
+  
+  getViewport() { return this.viewport; }
+  setViewport(viewport: any) { Object.assign(this.viewport, viewport); }
+  
   handleDragStart(event: any) {
     this.dragState = {
       isDragging: true,
       draggedNode: event.target?.nodeId,
-      dragStartPosition: { x: event.clientX, y: event.clientY },
+      dragStartPosition: { x: event.clientX, y: event.clientY }
     };
   }
-
-  getDragState() {
-    return this.dragState;
-  }
-
+  
+  getDragState() { return this.dragState; }
+  
   handleLibraryDragStart(event: any) {
     this.dragState = {
       isDragging: true,
-      draggedNodeType: event.target?.nodeType,
+      draggedNodeType: event.target?.nodeType
     };
   }
-
+  
   getDropZones() {
     return {
       canvasDropZone: {
         visible: this.dragState.isDragging,
-        accepts: ['agent_task', 'start', 'end'],
-      },
+        accepts: ['agent_task', 'start', 'end']
+      }
     };
   }
-
+  
   handleConnectionDragStart(event: any) {
     this.connectionState = {
       isConnecting: true,
       sourceNode: event.target?.nodeId,
       sourceHandle: event.target?.handleId,
       previewPath: 'M0,0 L100,100',
-      compatibleTargets: this.nodes.filter((n) => n.id !== event.target?.nodeId).map((n) => n.id),
-      incompatibleTargets: [],
+      compatibleTargets: this.nodes.filter(n => n.id !== event.target?.nodeId).map(n => n.id),
+      incompatibleTargets: []
     };
   }
-
-  getConnectionState() {
-    return this.connectionState;
-  }
-
+  
+  getConnectionState() { return this.connectionState; }
+  
   getNodeHighlight(nodeId: string) {
     return {
-      type: this.connectionState.compatibleTargets?.includes(nodeId)
-        ? 'compatible-target'
-        : 'incompatible-target',
+      type: this.connectionState.compatibleTargets?.includes(nodeId) ? 'compatible-target' : 'incompatible-target',
       visible: this.connectionState.isConnecting,
-      dimmed: !this.connectionState.compatibleTargets?.includes(nodeId),
+      dimmed: !this.connectionState.compatibleTargets?.includes(nodeId)
     };
   }
-
+  
   setGridSnap(_enabled: boolean, _options?: any) {}
-
+  
   handleNodeDragMove(_event: any) {}
-
+  
   getSnapGuides() {
     return {
       vertical: { visible: true, position: 120 },
-      horizontal: { visible: true, position: 100 },
+      horizontal: { visible: true, position: 100 }
     };
   }
-
+  
   setAlignmentGuides(_enabled: boolean, _options?: any) {}
-
+  
   getAlignmentGuides() {
     return {
       horizontal: {
         visible: true,
         position: 100,
-        alignedNodes: this.nodes.slice(0, 2).map((n) => n.id),
-      },
+        alignedNodes: this.nodes.slice(0, 2).map(n => n.id)
+      }
     };
   }
-
+  
   startMarqueeSelection(position: any) {
     this.marqueeState = {
       isActive: true,
       startPosition: position,
-      currentPosition: position,
+      currentPosition: position
     };
   }
-
+  
   updateMarqueeSelection(position: any) {
     this.marqueeState.currentPosition = position;
   }
-
+  
   endMarqueeSelection() {
     // Ensure marquee state is valid before proceeding
-    if (
-      !this.marqueeState.isActive ||
-      !this.marqueeState.startPosition ||
-      !this.marqueeState.currentPosition
-    ) {
+    if (!this.marqueeState.isActive || !this.marqueeState.startPosition || !this.marqueeState.currentPosition) {
       this.marqueeState.isActive = false;
       return;
     }
-
+    
     // Select nodes within marquee bounds
     const bounds = {
       left: Math.min(this.marqueeState.startPosition.x, this.marqueeState.currentPosition.x),
       right: Math.max(this.marqueeState.startPosition.x, this.marqueeState.currentPosition.x),
       top: Math.min(this.marqueeState.startPosition.y, this.marqueeState.currentPosition.y),
-      bottom: Math.max(this.marqueeState.startPosition.y, this.marqueeState.currentPosition.y),
+      bottom: Math.max(this.marqueeState.startPosition.y, this.marqueeState.currentPosition.y)
     };
-
+    
     this.selectedNodes = this.nodes
-      .filter(
-        (node) =>
-          node.position &&
-          node.position.x >= bounds.left &&
-          node.position.x <= bounds.right &&
-          node.position.y >= bounds.top &&
-          node.position.y <= bounds.bottom
+      .filter(node => 
+        node.position && 
+        node.position.x >= bounds.left && node.position.x <= bounds.right &&
+        node.position.y >= bounds.top && node.position.y <= bounds.bottom
       )
-      .map((node) => node.id);
-
+      .map(node => node.id);
+    
     this.marqueeState.isActive = false;
   }
-
-  getMarqueeState() {
-    return this.marqueeState;
-  }
-
+  
+  getMarqueeState() { return this.marqueeState; }
+  
   private lassoPath: any[] = [];
 
   startLassoSelection(position: any) {
@@ -298,21 +267,16 @@ class WorkflowBuilder {
     }
 
     // Use point-in-polygon algorithm to check which nodes are inside the lasso
-    const selectedNodeIds = this.nodes
-      .filter((node) => {
-        if (!node.position) return false;
-        return this.isPointInPolygon(node.position, this.lassoPath);
-      })
-      .map((node) => node.id);
+    const selectedNodeIds = this.nodes.filter(node => {
+      if (!node.position) return false;
+      return this.isPointInPolygon(node.position, this.lassoPath);
+    }).map(node => node.id);
 
     this.selectedNodes = selectedNodeIds;
     this.lassoPath = [];
   }
 
-  private isPointInPolygon(
-    point: { x: number; y: number },
-    polygon: { x: number; y: number }[]
-  ): boolean {
+  private isPointInPolygon(point: {x: number, y: number}, polygon: {x: number, y: number}[]): boolean {
     let inside = false;
     const x = point.x;
     const y = point.y;
@@ -323,40 +287,40 @@ class WorkflowBuilder {
       const xj = polygon[j].x;
       const yj = polygon[j].y;
 
-      if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
+      if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
         inside = !inside;
       }
     }
 
     return inside;
   }
-
+  
   invertSelection() {
-    const allNodeIds = this.nodes.map((n) => n.id);
-    this.selectedNodes = allNodeIds.filter((id) => !this.selectedNodes.includes(id));
+    const allNodeIds = this.nodes.map(n => n.id);
+    this.selectedNodes = allNodeIds.filter(id => !this.selectedNodes.includes(id));
   }
-
+  
   selectConnection(_id: string, _options?: any) {}
-
+  
   handleKeyboardShortcut(event: any) {
     const actions: any = {
-      c: { action: 'copy', success: true },
-      v: { action: 'paste', success: true },
-      z: event.shiftKey ? { action: 'redo', success: true } : { action: 'undo', success: true },
-      Delete: { action: 'delete', success: true },
-      ArrowRight: { action: 'navigate', success: true },
-      ArrowLeft: { action: 'navigate', success: true },
-      Escape: { action: 'clear_selection', success: true },
-      Enter: { action: 'select_focused', success: true },
+      'c': { action: 'copy', success: true },
+      'v': { action: 'paste', success: true },
+      'z': event.shiftKey ? { action: 'redo', success: true } : { action: 'undo', success: true },
+      'Delete': { action: 'delete', success: true },
+      'ArrowRight': { action: 'navigate', success: true },
+      'ArrowLeft': { action: 'navigate', success: true },
+      'Escape': { action: 'clear_selection', success: true },
+      'Enter': { action: 'select_focused', success: true }
     };
-
+    
     if (event.key === 'Escape') {
       this.clearSelection();
     }
-
+    
     return actions[event.key] || { action: 'unknown', success: false };
   }
-
+  
   handleKeyDown(event: any) {
     if (event.key === ' ') {
       this.interactionMode = 'pan';
@@ -364,7 +328,7 @@ class WorkflowBuilder {
     }
     return { action: 'none' };
   }
-
+  
   handleKeyUp(event: any) {
     if (event.key === ' ') {
       this.interactionMode = 'default';
@@ -372,15 +336,13 @@ class WorkflowBuilder {
     }
     return { action: 'none' };
   }
-
-  getInteractionMode() {
-    return this.interactionMode;
-  }
-
+  
+  getInteractionMode() { return this.interactionMode; }
+  
   setNodeHighlight(_nodeId: string, _highlight: any) {}
-
+  
   setConfiguration(_config: any) {}
-
+  
   handleDragMove(_event: any) {}
   handleDragEnd(event: any) {
     const node = this.getNode(this.dragState.draggedNode);
@@ -389,101 +351,82 @@ class WorkflowBuilder {
     }
     this.dragState.isDragging = false;
   }
-
+  
   getVisibleNodes() {
     return this.nodes.slice(0, Math.floor(this.nodes.length * 0.7));
   }
-
-  calculateConnectionPath(
-    sourceId: string,
-    sourceHandle: string,
-    targetId: string,
-    targetHandle: string,
-    options: any
-  ) {
+  
+  calculateConnectionPath(sourceId: string, sourceHandle: string, targetId: string, targetHandle: string, options: any) {
     const paths: any = {
-      straight: [
-        { x: 0, y: 0 },
-        { x: 100, y: 100 },
-      ],
-      bezier: [
-        { x: 0, y: 0 },
-        { x: 25, y: 25 },
-        { x: 75, y: 75 },
-        { x: 100, y: 100 },
-      ],
-      stepped: [
-        { x: 0, y: 0 },
-        { x: 50, y: 0 },
-        { x: 50, y: 100 },
-        { x: 100, y: 100 },
-      ],
+      'straight': [{ x: 0, y: 0 }, { x: 100, y: 100 }],
+      'bezier': [{ x: 0, y: 0 }, { x: 25, y: 25 }, { x: 75, y: 75 }, { x: 100, y: 100 }],
+      'stepped': [{ x: 0, y: 0 }, { x: 50, y: 0 }, { x: 50, y: 100 }, { x: 100, y: 100 }]
     };
     return paths[options.style] || paths.straight;
   }
-
+  
   focusNextNode() {
-    const currentIndex = this.nodes.findIndex((n) => n.id === this.selectedNodes[0]);
+    const currentIndex = this.nodes.findIndex(n => n.id === this.selectedNodes[0]);
     const nextIndex = (currentIndex + 1) % this.nodes.length;
     return this.nodes[nextIndex]?.id;
   }
-
+  
   focusPreviousNode() {
-    const currentIndex = this.nodes.findIndex((n) => n.id === this.selectedNodes[0]);
+    const currentIndex = this.nodes.findIndex(n => n.id === this.selectedNodes[0]);
     const prevIndex = currentIndex > 0 ? currentIndex - 1 : this.nodes.length - 1;
     return this.nodes[prevIndex]?.id;
   }
-
+  
   setNodeState(_nodeId: string, _state: string) {}
-
+  
   getNodeState(_nodeId: string) {
     const states: any = {
-      processing: { visual: { indicator: 'processing', animated: true } },
-      completed: { visual: { indicator: 'completed', color: '#4caf50' } },
-      error: { visual: { indicator: 'error', color: '#f44336' } },
-      warning: { visual: { indicator: 'warning', color: '#ff9800' } },
+      'processing': { visual: { indicator: 'processing', animated: true } },
+      'completed': { visual: { indicator: 'completed', color: '#4caf50' } },
+      'error': { visual: { indicator: 'error', color: '#f44336' } },
+      'warning': { visual: { indicator: 'warning', color: '#ff9800' } }
     };
     return states.processing;
   }
-
+  
   getNodeTooltip(nodeId: string) {
     const node = this.getNode(nodeId);
     return {
       title: node?.name || '',
       content: node?.config?.task || '',
-      metadata: `Priority: ${node?.config?.priority || 'normal'}\nTimeout: ${Math.floor((node?.config?.timeout || 0) / 60000)} minutes`,
+      metadata: `Priority: ${node?.config?.priority || 'normal'}\nTimeout: ${Math.floor((node?.config?.timeout || 0) / 60000)} minutes`
     };
   }
-
+  
   getConnectionTooltip(connectionId: string) {
-    const conn = this.connections.find((c) => c.id === connectionId);
+    const conn = this.connections.find(c => c.id === connectionId);
     const source = this.getNode(conn?.sourceId);
     const target = this.getNode(conn?.targetId);
     return {
       content: `${source?.name} → ${target?.name}`,
-      metadata: `Handle: ${conn?.sourceHandle} → ${conn?.targetHandle}`,
+      metadata: `Handle: ${conn?.sourceHandle} → ${conn?.targetHandle}`
     };
   }
-
+  
   setAccessibilityMode(_mode: string, _enabled: boolean) {}
-
+  
   getNodeStyle(nodeId: string) {
     return {
       highContrast: true,
       borderWidth: 2,
       contrastRatio: 4.5,
       selected: this.selectedNodes.includes(nodeId),
-      selectionHighlight: { contrastRatio: 7 },
+      selectionHighlight: { contrastRatio: 7 }
     };
   }
-
+  
   getConnectionStyle(_connectionId: string) {
     return {
       highContrast: true,
-      strokeWidth: 3,
+      strokeWidth: 3
     };
   }
-
+  
   onNodeEdit?: (nodeId: string) => void;
   onContextMenu?: (data: any) => void;
   onAccessibilityAnnouncement?: (message: string) => void;
@@ -617,11 +560,11 @@ describe('Canvas Interactions and Visual Feedback', () => {
         clientY: 100,
         button: 0,
         ctrlKey: false,
-        shiftKey: false,
+        shiftKey: false
       };
 
       builder.handleCanvasClick(clickEvent);
-
+      
       const selectedNodes = builder.getSelectedNodes();
       expect(selectedNodes).toEqual([node1.id]);
       expect(selectedNodes).not.toContain(node2.id);
@@ -639,7 +582,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         clientX: 100,
         clientY: 100,
         button: 0,
-        ctrlKey: false,
+        ctrlKey: false
       });
 
       // Ctrl+click second node to add to selection
@@ -649,7 +592,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         clientX: 200,
         clientY: 100,
         button: 0,
-        ctrlKey: true,
+        ctrlKey: true
       });
 
       const selectedNodes = builder.getSelectedNodes();
@@ -663,10 +606,11 @@ describe('Canvas Interactions and Visual Feedback', () => {
       // Create a row of nodes
       const nodes = [];
       for (let i = 0; i < 5; i++) {
-        const node = builder.addNode(WorkflowNodeType.AGENT_TASK, `Task ${i}`, {
-          x: i * 100 + 100,
-          y: 100,
-        });
+        const node = builder.addNode(
+          WorkflowNodeType.AGENT_TASK, 
+          `Task ${i}`, 
+          { x: i * 100 + 100, y: 100 }
+        );
         nodes.push(node);
       }
 
@@ -677,7 +621,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         clientX: 100,
         clientY: 100,
         button: 0,
-        ctrlKey: false,
+        ctrlKey: false
       });
 
       // Shift+click third node to select range
@@ -687,7 +631,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         clientX: 300,
         clientY: 100,
         button: 0,
-        shiftKey: true,
+        shiftKey: true
       });
 
       const selectedNodes = builder.getSelectedNodes();
@@ -699,8 +643,8 @@ describe('Canvas Interactions and Visual Feedback', () => {
 
     test('should handle double-click for node editing', async () => {
       const node = builder.addNode(
-        WorkflowNodeType.AGENT_TASK,
-        'Editable Task',
+        WorkflowNodeType.AGENT_TASK, 
+        'Editable Task', 
         { x: 100, y: 100 },
         { task: 'Original task', priority: 'medium' }
       );
@@ -713,7 +657,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         type: 'dblclick',
         target: { nodeId: node.id },
         clientX: 100,
-        clientY: 100,
+        clientY: 100
       });
 
       expect(editSpy).toHaveBeenCalledWith(node.id);
@@ -731,13 +675,13 @@ describe('Canvas Interactions and Visual Feedback', () => {
         target: { nodeId: node.id },
         clientX: 100,
         clientY: 100,
-        button: 2,
+        button: 2
       });
 
       expect(contextMenuSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           nodeId: node.id,
-          position: { x: 100, y: 100 },
+          position: { x: 100, y: 100 }
         })
       );
     });
@@ -752,7 +696,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         deltaY: -100, // Negative for zoom in
         clientX: 400,
         clientY: 300,
-        ctrlKey: false,
+        ctrlKey: false
       });
 
       const zoomedViewport = builder.getViewport();
@@ -764,7 +708,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         deltaY: 200, // Positive for zoom out
         clientX: 400,
         clientY: 300,
-        ctrlKey: false,
+        ctrlKey: false
       });
 
       const zoomedOutViewport = builder.getViewport();
@@ -784,12 +728,12 @@ describe('Canvas Interactions and Visual Feedback', () => {
         clientY: 100,
         dataTransfer: {
           setData: jest.fn(),
-          effectAllowed: 'move',
-        },
+          effectAllowed: 'move'
+        }
       };
 
       builder.handleDragStart(dragStartEvent);
-
+      
       const dragState = builder.getDragState();
       expect(dragState.isDragging).toBe(true);
       expect(dragState.draggedNode).toBe(node.id);
@@ -803,8 +747,8 @@ describe('Canvas Interactions and Visual Feedback', () => {
         target: { nodeType: 'agent_task' },
         dataTransfer: {
           setData: jest.fn(),
-          effectAllowed: 'copy',
-        },
+          effectAllowed: 'copy'
+        }
       };
 
       builder.handleLibraryDragStart(libraryDragEvent);
@@ -829,10 +773,10 @@ describe('Canvas Interactions and Visual Feedback', () => {
         target: {
           nodeId: sourceNode.id,
           handleId: 'output',
-          handleType: 'source',
+          handleType: 'source'
         },
         clientX: 150, // Right side of source node
-        clientY: 100,
+        clientY: 100
       };
 
       builder.handleConnectionDragStart(connectionDragEvent);
@@ -846,25 +790,19 @@ describe('Canvas Interactions and Visual Feedback', () => {
 
     test('should highlight compatible targets during connection drag', async () => {
       const sourceNode = builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 });
-      const compatibleTarget = builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task', {
-        x: 300,
-        y: 100,
-      });
-      const incompatibleTarget = builder.addNode(WorkflowNodeType.START, 'Another Start', {
-        x: 300,
-        y: 200,
-      });
+      const compatibleTarget = builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task', { x: 300, y: 100 });
+      const incompatibleTarget = builder.addNode(WorkflowNodeType.START, 'Another Start', { x: 300, y: 200 });
 
       // Start connection drag
       builder.handleConnectionDragStart({
         type: 'dragstart',
-        target: {
-          nodeId: sourceNode.id,
+        target: { 
+          nodeId: sourceNode.id, 
           handleId: 'output',
-          handleType: 'source',
+          handleType: 'source' 
         },
         clientX: 150,
-        clientY: 100,
+        clientY: 100
       });
 
       // Check target highlighting
@@ -893,7 +831,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       builder.handleNodeDragMove({
         nodeId: node.id,
         position: { x: 118, y: 97 }, // Near grid lines
-        originalPosition: { x: 100, y: 100 },
+        originalPosition: { x: 100, y: 100 }
       });
 
       const snapGuides = builder.getSnapGuides();
@@ -915,7 +853,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       builder.handleNodeDragMove({
         nodeId: draggingNode.id,
         position: { x: 200, y: 105 }, // Near horizontal alignment
-        originalPosition: { x: 200, y: 200 },
+        originalPosition: { x: 200, y: 200 }
       });
 
       const alignmentGuides = builder.getAlignmentGuides();
@@ -932,7 +870,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 }),
         builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task 1', { x: 200, y: 150 }),
         builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task 2', { x: 300, y: 200 }),
-        builder.addNode(WorkflowNodeType.END, 'End', { x: 400, y: 100 }),
+        builder.addNode(WorkflowNodeType.END, 'End', { x: 400, y: 100 })
       ];
 
       // Start marquee selection
@@ -967,7 +905,11 @@ describe('Canvas Interactions and Visual Feedback', () => {
         const angle = (i / 6) * 2 * Math.PI;
         const x = centerX + Math.cos(angle) * radius;
         const y = centerY + Math.sin(angle) * radius;
-        const node = builder.addNode(WorkflowNodeType.AGENT_TASK, `Task ${i}`, { x, y });
+        const node = builder.addNode(
+          WorkflowNodeType.AGENT_TASK, 
+          `Task ${i}`, 
+          { x, y }
+        );
         nodes.push(node);
       }
 
@@ -980,7 +922,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         { x: centerX, y: centerY - radius - 20 },
         { x: centerX - radius - 20, y: centerY },
         { x: centerX, y: centerY + radius + 20 },
-        { x: centerX + radius + 20, y: centerY },
+        { x: centerX + radius + 20, y: centerY }
       ];
 
       builder.updateLassoSelection(lassoPath);
@@ -995,7 +937,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       const nodes = [
         builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 }),
         builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task', { x: 200, y: 100 }),
-        builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 }),
+        builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 })
       ];
 
       // Select first node
@@ -1020,7 +962,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 }),
         builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task 1', { x: 200, y: 100 }),
         builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task 2', { x: 300, y: 100 }),
-        builder.addNode(WorkflowNodeType.END, 'End', { x: 400, y: 100 }),
+        builder.addNode(WorkflowNodeType.END, 'End', { x: 400, y: 100 })
       ];
 
       // Select first two nodes
@@ -1049,7 +991,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       const copyResult = builder.handleKeyboardShortcut({
         key: 'c',
         ctrlKey: true,
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
       expect(copyResult.action).toBe('copy');
       expect(copyResult.success).toBe(true);
@@ -1058,7 +1000,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       const pasteResult = builder.handleKeyboardShortcut({
         key: 'v',
         ctrlKey: true,
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
       expect(pasteResult.action).toBe('paste');
       expect(pasteResult.success).toBe(true);
@@ -1068,7 +1010,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       const undoResult = builder.handleKeyboardShortcut({
         key: 'z',
         ctrlKey: true,
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
       expect(undoResult.action).toBe('undo');
       expect(undoResult.success).toBe(true);
@@ -1078,7 +1020,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         key: 'z',
         ctrlKey: true,
         shiftKey: true,
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
       expect(redoResult.action).toBe('redo');
       expect(redoResult.success).toBe(true);
@@ -1096,7 +1038,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       // Press delete key
       const deleteResult = builder.handleKeyboardShortcut({
         key: 'Delete',
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
 
       expect(deleteResult.action).toBe('delete');
@@ -1109,7 +1051,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       const nodes = [
         builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 }),
         builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task', { x: 200, y: 100 }),
-        builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 }),
+        builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 })
       ];
 
       // Connect nodes
@@ -1122,7 +1064,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       // Press right arrow to navigate to next connected node
       const rightArrowResult = builder.handleKeyboardShortcut({
         key: 'ArrowRight',
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
 
       expect(rightArrowResult.action).toBe('navigate');
@@ -1131,7 +1073,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       // Press right arrow again
       builder.handleKeyboardShortcut({
         key: 'ArrowRight',
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
 
       expect(builder.getSelectedNodes()).toEqual([nodes[2].id]);
@@ -1139,7 +1081,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       // Press left arrow to go back
       builder.handleKeyboardShortcut({
         key: 'ArrowLeft',
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
 
       expect(builder.getSelectedNodes()).toEqual([nodes[1].id]);
@@ -1150,7 +1092,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 }),
         builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task 1', { x: 200, y: 100 }),
         builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task 2', { x: 300, y: 100 }),
-        builder.addNode(WorkflowNodeType.END, 'End', { x: 400, y: 100 }),
+        builder.addNode(WorkflowNodeType.END, 'End', { x: 400, y: 100 })
       ];
 
       // Connect nodes in sequence
@@ -1165,7 +1107,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       builder.handleKeyboardShortcut({
         key: 'ArrowRight',
         shiftKey: true,
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
 
       expect(builder.getSelectedNodes()).toEqual([nodes[0].id, nodes[1].id]);
@@ -1174,7 +1116,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       builder.handleKeyboardShortcut({
         key: 'ArrowRight',
         shiftKey: true,
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
 
       expect(builder.getSelectedNodes()).toEqual([nodes[0].id, nodes[1].id, nodes[2].id]);
@@ -1183,7 +1125,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
     test('should handle escape key to clear selection', async () => {
       const nodes = [
         builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 }),
-        builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 }),
+        builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 })
       ];
 
       // Select both nodes
@@ -1195,7 +1137,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       // Press escape to clear selection
       const escapeResult = builder.handleKeyboardShortcut({
         key: 'Escape',
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
 
       expect(escapeResult.action).toBe('clear_selection');
@@ -1206,7 +1148,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       // Press spacebar to enter pan mode
       const spaceDownResult = builder.handleKeyDown({
         key: ' ',
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
 
       expect(spaceDownResult.action).toBe('enter_pan_mode');
@@ -1215,7 +1157,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       // Release spacebar to exit pan mode
       const spaceUpResult = builder.handleKeyUp({
         key: ' ',
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
 
       expect(spaceUpResult.action).toBe('exit_pan_mode');
@@ -1245,15 +1187,14 @@ describe('Canvas Interactions and Visual Feedback', () => {
           builder.setNodeHighlight(node.id, {
             type: 'processing',
             animated: true,
-            color: '#ffeb3b',
+            color: '#ffeb3b'
           });
         }
       }
 
       // Connect adjacent nodes
       for (let i = 0; i < nodes.length - 1; i++) {
-        if (i % 10 !== 9) {
-          // Don't connect across rows
+        if (i % 10 !== 9) { // Don't connect across rows
           builder.addConnection(nodes[i].id, 'output', nodes[i + 1].id, 'input');
         }
       }
@@ -1263,7 +1204,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         enableAnimations: true,
         enableParticleEffects: true,
         enableNodeGlow: true,
-        enableConnectionPulse: true,
+        enableConnectionPulse: true
       });
 
       const endTime = performance.now();
@@ -1293,7 +1234,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       // Enable smooth animations
       builder.setConfiguration({
         enableSmoothDrag: true,
-        dragAnimationDuration: 200,
+        dragAnimationDuration: 200
       });
 
       const dragStart = performance.now();
@@ -1303,7 +1244,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
         type: 'dragstart',
         target: { nodeId: node.id },
         clientX: 100,
-        clientY: 100,
+        clientY: 100
       });
 
       // Simulate drag movement with multiple updates
@@ -1311,14 +1252,14 @@ describe('Canvas Interactions and Visual Feedback', () => {
         { x: 110, y: 110 },
         { x: 130, y: 120 },
         { x: 160, y: 140 },
-        { x: 200, y: 160 },
+        { x: 200, y: 160 }
       ];
 
       for (const position of positions) {
         builder.handleDragMove({
           type: 'dragmove',
           clientX: position.x,
-          clientY: position.y,
+          clientY: position.y
         });
       }
 
@@ -1326,7 +1267,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       builder.handleDragEnd({
         type: 'dragend',
         clientX: 200,
-        clientY: 160,
+        clientY: 160
       });
 
       const dragEnd = performance.now();
@@ -1348,7 +1289,11 @@ describe('Canvas Interactions and Visual Feedback', () => {
 
       for (let x = 0; x < canvasSize; x += nodeSpacing) {
         for (let y = 0; y < canvasSize; y += nodeSpacing) {
-          const node = builder.addNode(WorkflowNodeType.AGENT_TASK, `Task ${x}-${y}`, { x, y });
+          const node = builder.addNode(
+            WorkflowNodeType.AGENT_TASK,
+            `Task ${x}-${y}`,
+            { x, y }
+          );
           nodes.push(node);
         }
       }
@@ -1367,12 +1312,12 @@ describe('Canvas Interactions and Visual Feedback', () => {
 
       // Test zoom performance
       const zoomStart = performance.now();
-
+      
       for (let i = 0; i < 10; i++) {
-        builder.setViewport({
-          x: -500,
-          y: -500,
-          zoom: 0.5 + i * 0.1,
+        builder.setViewport({ 
+          x: -500, 
+          y: -500, 
+          zoom: 0.5 + (i * 0.1) 
         });
       }
 
@@ -1388,26 +1333,20 @@ describe('Canvas Interactions and Visual Feedback', () => {
 
       // Calculate connection path with various styles
       const straightPath = builder.calculateConnectionPath(
-        sourceNode.id,
-        'output',
-        targetNode.id,
-        'input',
+        sourceNode.id, 'output',
+        targetNode.id, 'input',
         { style: 'straight' }
       );
 
       const bezierPath = builder.calculateConnectionPath(
-        sourceNode.id,
-        'output',
-        targetNode.id,
-        'input',
+        sourceNode.id, 'output',
+        targetNode.id, 'input',
         { style: 'bezier' }
       );
 
       const steppedPath = builder.calculateConnectionPath(
-        sourceNode.id,
-        'output',
-        targetNode.id,
-        'input',
+        sourceNode.id, 'output',
+        targetNode.id, 'input',
         { style: 'stepped' }
       );
 
@@ -1431,7 +1370,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       const nodes = [
         builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 }),
         builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task', { x: 200, y: 100 }),
-        builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 }),
+        builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 })
       ];
 
       // Test tab navigation
@@ -1451,7 +1390,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
       // Test enter to select focused node
       const selectResult = builder.handleKeyboardShortcut({
         key: 'Enter',
-        preventDefault: jest.fn(),
+        preventDefault: jest.fn()
       });
 
       expect(selectResult.action).toBe('select_focused');
@@ -1486,8 +1425,8 @@ describe('Canvas Interactions and Visual Feedback', () => {
 
     test('should provide visual indicators for states', async () => {
       const node = builder.addNode(
-        WorkflowNodeType.AGENT_TASK,
-        'Task Node',
+        WorkflowNodeType.AGENT_TASK, 
+        'Task Node', 
         { x: 100, y: 100 },
         { task: 'Process data' }
       );
@@ -1519,10 +1458,10 @@ describe('Canvas Interactions and Visual Feedback', () => {
         WorkflowNodeType.AGENT_TASK,
         'Complex Task',
         { x: 100, y: 100 },
-        {
+        { 
           task: 'Process complex data with multiple parameters',
           priority: 'high',
-          timeout: 300000,
+          timeout: 300000
         }
       );
 

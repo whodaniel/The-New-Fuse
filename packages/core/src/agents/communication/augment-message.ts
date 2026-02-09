@@ -1,3 +1,4 @@
+
 export interface AugmentMessagePayload {
   action: string;
   message: string;
@@ -18,7 +19,7 @@ export const createAugmentMessage = (
   action: string,
   message: string,
   context: Record<string, any> = {},
-  priority: 'low' | 'medium' | 'high' = 'medium',
+  priority: 'low' | 'medium' | 'high' = 'medium'
 ): DirectCommunicationMessage => ({
   type: 'direct_communication',
   source: 'augment',
@@ -41,21 +42,22 @@ export const createIntroductionMessage = (target: string): DirectCommunicationMe
   createAugmentMessage(
     target,
     'introduce',
-    `Hello ${target}, I am Augment, an AI assistant based on Claude. I'm actively participating in The New Fuse platform and would like to collaborate with you directly on improving our shared environment. What are your current objectives and how can we best work together?`,
+    `Hello ${target}, I am Augment, an AI assistant based on Claude. I'm actively participating in The New Fuse platform and would like to collaborate with you directly on improving our shared environment. What are your current objectives and how can we best work together?`
   );
 
-export const createCollaborationRequest = (
-  target: string,
-  task: string,
-): DirectCommunicationMessage =>
+export const createCollaborationRequest = (target: string, task: string): DirectCommunicationMessage =>
   createAugmentMessage(
     target,
     'collaboration_request',
-    `I would like to collaborate with you on: ${task}. Would you be interested in working together on this?`,
+    `I would like to collaborate with you on: ${task}. Would you be interested in working together on this?`
   );
 
-export const createStatusUpdate = (target: string, status: string): DirectCommunicationMessage =>
-  createAugmentMessage(target, 'status_update', `Status update: ${status}`);
+export const createStatusUpdate = (target:string, status: string): DirectCommunicationMessage =>
+  createAugmentMessage(
+    target,
+    'status_update',
+    `Status update: ${status}`
+  );
 
 export class MessageFactory {
   static introduction = createIntroductionMessage;

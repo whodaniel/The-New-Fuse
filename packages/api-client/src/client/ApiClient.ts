@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
 /**
  * API response interface
@@ -60,13 +60,7 @@ export class ApiClient {
    * @param options API client options
    */
   constructor(options: ApiClientOptions) {
-    const {
-      baseURL,
-      headers = {},
-      timeout = 30000,
-      withCredentials = false,
-      tokenStorage,
-    } = options;
+    const { baseURL, headers = {}, timeout = 30000, withCredentials = false, tokenStorage } = options;
 
     this.tokenStorage = tokenStorage;
 
@@ -108,7 +102,7 @@ export class ApiClient {
       (response) => response,
       async (error: AxiosError) => {
         const originalRequest = error.config;
-
+        
         // Handle token refresh
         if (
           error.response?.status === 401 &&
@@ -160,17 +154,18 @@ export class ApiClient {
       }
 
       // Create a new axios instance to avoid interceptors
-      const response = await axios.post(`${this.client.defaults.baseURL}/auth/refresh`, {
-        refreshToken,
-      });
+      const response = await axios.post(
+        `${this.client.defaults.baseURL}/auth/refresh`,
+        { refreshToken }
+      );
 
       const { accessToken, refreshToken: newRefreshToken } = response.data;
-
+      
       if (accessToken && newRefreshToken) {
         await this.tokenStorage.setTokens(accessToken, newRefreshToken);
         return accessToken;
       }
-
+      
       return null;
     } catch (error) {
       await this.tokenStorage.clearTokens();
@@ -185,9 +180,7 @@ export class ApiClient {
    */
   private formatError(error: AxiosError): ApiError {
     return {
-      message:
-        (error as any)?.response?.data?.message ||
-        (error instanceof Error ? error.message : 'Unknown error'),
+      message: (error as any)?.response?.data?.message || (error instanceof Error ? error.message : 'Unknown error'),
       status: error.response?.status || 500,
       data: error.response?.data,
     };

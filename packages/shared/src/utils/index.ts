@@ -53,7 +53,7 @@ export const objectUtils = {
    */
   pick<T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
     const result = {} as Pick<T, K>;
-    keys.forEach((key) => {
+    keys.forEach(key => {
       if (key in obj) {
         result[key] = obj[key];
       }
@@ -66,7 +66,7 @@ export const objectUtils = {
    */
   omit<T extends object, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
     const result = { ...obj };
-    keys.forEach((key) => {
+    keys.forEach(key => {
       delete result[key];
     });
     return result as Omit<T, K>;
@@ -96,9 +96,8 @@ export const stringUtils = {
    * Convert string to title case
    */
   toTitleCase(str: string): string {
-    return str.replace(
-      /\w\S*/g,
-      (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    return str.replace(/\w\S*/g, (txt) =>
+      txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
     );
   },
 
@@ -139,7 +138,7 @@ export const formatUtils = {
   currency(amount: number, currency = 'USD', locale = 'en-US'): string {
     return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency,
+      currency
     }).format(amount);
   },
 
@@ -186,13 +185,17 @@ export const asyncUtils = {
    * Delay execution for specified milliseconds
    */
   delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   },
 
   /**
    * Retry function with exponential backoff
    */
-  async retryWithBackoff<T>(fn: () => Promise<T>, maxRetries = 3, baseDelay = 1000): Promise<T> {
+  async retryWithBackoff<T>(
+    fn: () => Promise<T>,
+    maxRetries = 3,
+    baseDelay = 1000
+  ): Promise<T> {
     let lastError: Error;
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
@@ -246,7 +249,7 @@ export const asyncUtils = {
       if (!inThrottle) {
         func(...args);
         inThrottle = true;
-        setTimeout(() => (inThrottle = false), limit);
+        setTimeout(() => inThrottle = false, limit);
       }
     };
   },

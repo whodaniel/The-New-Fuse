@@ -1,6 +1,6 @@
-import { useProviderEndpointAutoDiscovery } from '@/hooks/useProviderEndpointAutoDiscovery';
-import system from '@/models/system';
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import system from "@/models/system";
+import { useProviderEndpointAutoDiscovery } from "@/hooks/useProviderEndpointAutoDiscovery";
 
 interface NovitaSettings {
   NovitaBasePath?: string;
@@ -20,9 +20,9 @@ interface ModelSelectionProps {
 
 export default function NovitaLLMOptions({ settings }: NovitaLLMOptionsProps): React.ReactElement {
   const { basePathValue } = useProviderEndpointAutoDiscovery({
-    provider: 'novita',
+    provider: "novita",
     initialBasePath: settings?.NovitaBasePath,
-    ENDPOINTS: [],
+    ENDPOINTS: []
   });
 
   return (
@@ -40,7 +40,7 @@ function NovitaModelSelection({ settings, basePath }: ModelSelectionProps): Reac
 
   React.useEffect(() => {
     async function findCustomModels() {
-      if (!basePath || !basePath.includes('/v1')) {
+      if (!basePath || !basePath.includes("/v1")) {
         setCustomModels([]);
         setLoading(false);
         return;
@@ -48,10 +48,10 @@ function NovitaModelSelection({ settings, basePath }: ModelSelectionProps): Reac
 
       setLoading(true);
       try {
-        const { models } = await system.customModels('novita', null, basePath);
+        const { models } = await system.customModels("novita", null, basePath);
         setCustomModels(models || []);
       } catch (error) {
-        console.error('Failed to fetch custom models:', error);
+        console.error("Failed to fetch custom models:", error);
         setCustomModels([]);
       }
       setLoading(false);
@@ -73,7 +73,9 @@ function NovitaModelSelection({ settings, basePath }: ModelSelectionProps): Reac
           aria-labelledby="novita-model-label"
         >
           <option disabled selected>
-            {basePath?.includes('/v1') ? '--loading available models--' : 'Enter Novita URL first'}
+            {basePath?.includes("/v1")
+              ? "--loading available models--"
+              : "Enter Novita URL first"}
           </option>
         </select>
       </div>
@@ -92,7 +94,11 @@ function NovitaModelSelection({ settings, basePath }: ModelSelectionProps): Reac
         aria-labelledby="novita-model-label"
       >
         {customModels.map((model) => (
-          <option key={model.id} value={model.id} selected={settings.NovitaModelPref === model.id}>
+          <option
+            key={model.id}
+            value={model.id}
+            selected={settings.NovitaModelPref === model.id}
+          >
             {model.id}
           </option>
         ))}

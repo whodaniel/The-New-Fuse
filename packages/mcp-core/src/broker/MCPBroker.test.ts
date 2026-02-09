@@ -6,11 +6,11 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MCPRequest } from '../interfaces/IMCPMessage';
-import { BrokerConfig, MCPServiceInfo } from '../types';
-import { ServiceStatus } from '../types/common';
-import { MCPErrorClass } from '../types/error';
 import { MCPBroker } from './MCPBroker';
+import { MCPServiceInfo, BrokerConfig } from '../types';
+import { ServiceStatus, LoadBalancingStrategy } from '../types/common';
+import { MCPErrorClass, MCPErrorCode } from '../types/error';
+import { MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
 
 describe('MCPBroker', () => {
   let broker: MCPBroker;
@@ -33,7 +33,7 @@ describe('MCPBroker', () => {
       status: ServiceStatus.ONLINE,
       metadata: {},
       registeredAt: new Date(),
-      lastHeartbeat: new Date(),
+      lastHeartbeat: new Date()
     };
 
     // Create mock config
@@ -43,15 +43,15 @@ describe('MCPBroker', () => {
       registry: {
         type: 'memory',
         serviceTTL: 300,
-        cleanupInterval: 60,
+        cleanupInterval: 60
       },
       healthCheck: {
         enabled: true,
         interval: 30,
         timeout: 5000,
         failureThreshold: 3,
-        recoveryThreshold: 2,
-      },
+        recoveryThreshold: 2
+      }
     };
 
     broker = new MCPBroker(mockConfig);
@@ -152,18 +152,14 @@ describe('MCPBroker', () => {
       const invalidService = { ...mockServiceInfo, id: '' };
 
       await expect(broker.registerService(invalidService)).rejects.toThrow(MCPErrorClass);
-      await expect(broker.registerService(invalidService)).rejects.toThrow(
-        'Service ID is required'
-      );
+      await expect(broker.registerService(invalidService)).rejects.toThrow('Service ID is required');
     });
 
     it('should throw error when broker is not running', async () => {
       await broker.stop();
 
       await expect(broker.registerService(mockServiceInfo)).rejects.toThrow(MCPErrorClass);
-      await expect(broker.registerService(mockServiceInfo)).rejects.toThrow(
-        'Broker is not running'
-      );
+      await expect(broker.registerService(mockServiceInfo)).rejects.toThrow('Broker is not running');
     });
 
     it('should validate all required service fields', async () => {
@@ -174,7 +170,7 @@ describe('MCPBroker', () => {
         { field: 'endpoint', value: '' },
         { field: 'capabilities', value: 'not-array' },
         { field: 'resources', value: 'not-array' },
-        { field: 'tools', value: 'not-array' },
+        { field: 'tools', value: 'not-array' }
       ];
 
       for (const testCase of testCases) {
@@ -196,12 +192,10 @@ describe('MCPBroker', () => {
 
       await broker.unregisterService(mockServiceInfo.id);
 
-      expect(serviceUnregisteredSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          id: mockServiceInfo.id,
-          name: mockServiceInfo.name,
-        })
-      );
+      expect(serviceUnregisteredSpy).toHaveBeenCalledWith(expect.objectContaining({
+        id: mockServiceInfo.id,
+        name: mockServiceInfo.name
+      }));
     });
 
     it('should throw error when unregistering non-existent service', async () => {
@@ -213,9 +207,7 @@ describe('MCPBroker', () => {
       await broker.stop();
 
       await expect(broker.unregisterService(mockServiceInfo.id)).rejects.toThrow(MCPErrorClass);
-      await expect(broker.unregisterService(mockServiceInfo.id)).rejects.toThrow(
-        'Broker is not running'
-      );
+      await expect(broker.unregisterService(mockServiceInfo.id)).rejects.toThrow('Broker is not running');
     });
   });
 
@@ -268,7 +260,7 @@ describe('MCPBroker', () => {
         jsonrpc: '2.0',
         id: 'test-request-1',
         method: 'test/method',
-        params: { test: 'data' },
+        params: { test: 'data' }
       };
     });
 
@@ -310,7 +302,7 @@ describe('MCPBroker', () => {
         responseTime: 100,
         errorRate: 0,
         lastCheck: new Date(),
-        score: 1.0,
+        score: 1.0
       };
 
       // This would normally be mocked through the HealthMonitor mock
@@ -320,14 +312,13 @@ describe('MCPBroker', () => {
     it('should throw error when health checking is disabled', async () => {
       const brokerWithoutHealth = new MCPBroker({
         ...mockConfig,
-        healthCheck: { ...mockConfig.healthCheck!, enabled: false },
+        healthCheck: { ...mockConfig.healthCheck!, enabled: false }
       });
 
       await brokerWithoutHealth.start();
 
-      await expect(brokerWithoutHealth.getServiceHealth(mockServiceInfo.id)).rejects.toThrow(
-        'Health checking is disabled'
-      );
+      await expect(brokerWithoutHealth.getServiceHealth(mockServiceInfo.id))
+        .rejects.toThrow('Health checking is disabled');
 
       await brokerWithoutHealth.stop();
     });
@@ -336,9 +327,7 @@ describe('MCPBroker', () => {
       await broker.stop();
 
       await expect(broker.getServiceHealth(mockServiceInfo.id)).rejects.toThrow(MCPErrorClass);
-      await expect(broker.getServiceHealth(mockServiceInfo.id)).rejects.toThrow(
-        'Broker is not running'
-      );
+      await expect(broker.getServiceHealth(mockServiceInfo.id)).rejects.toThrow('Broker is not running');
     });
   });
 

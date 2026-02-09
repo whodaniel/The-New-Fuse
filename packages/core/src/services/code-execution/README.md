@@ -104,8 +104,8 @@ const result = await mcpServer.executeTool('executeCode', {
   allowedModules: ['path', 'util'],
   context: {
     customVar: 123,
-    customFunc: (x) => x * 2,
-  },
+    customFunc: (x) => x * 2
+  }
 });
 
 console.log(result);
@@ -135,9 +135,9 @@ const session = await mcpServer.executeTool('createCodeExecutionSession', {
     {
       name: 'main.js',
       content: 'console.log("Hello, world!");',
-      language: 'javascript',
-    },
-  ],
+      language: 'javascript'
+    }
+  ]
 });
 
 console.log(session);
@@ -170,7 +170,7 @@ const result = await mcpServer.executeTool('executeCode', {
   code: 'console.log("Hello from session!");',
   language: 'javascript',
   sessionId: '1234-5678-9012',
-  persistEnvironment: true,
+  persistEnvironment: true
 });
 
 console.log(result);

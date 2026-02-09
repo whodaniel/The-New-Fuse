@@ -25,12 +25,7 @@ export class CommunicationProtocol {
     }
   }
 
-  createMessage(
-    type: string,
-    payload: any,
-    senderId: string,
-    recipientId?: string,
-  ): MessageProtocol {
+  createMessage(type: string, payload: any, senderId: string, recipientId?: string): MessageProtocol {
     return {
       type,
       payload,

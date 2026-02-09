@@ -24,7 +24,7 @@ export class PerformanceReportGenerator {
 
   public async generateReport(
     testResults: TestResult[],
-    options: Partial<ReportOptions> = {},
+    options: Partial<ReportOptions> = {}
   ): Promise<string> {
     const finalOptions: ReportOptions = {
       format: 'html',
@@ -32,7 +32,7 @@ export class PerformanceReportGenerator {
       includeCharts: true,
       includeRawData: false,
       ...this.defaultOptions,
-      ...options,
+      ...options
     };
 
     await this.ensureOutputDirectory(finalOptions.outputDir);
@@ -41,7 +41,7 @@ export class PerformanceReportGenerator {
     const reportFileName = `performance-report-${timestamp}`;
     const reportPath = path.join(
       finalOptions.outputDir,
-      `${reportFileName}.${finalOptions.format}`,
+      `${reportFileName}.${finalOptions.format}`
     );
 
     let report: string;
@@ -68,10 +68,10 @@ export class PerformanceReportGenerator {
     return JSON.stringify(
       {
         timestamp: new Date().toISOString(),
-        results: testResults,
+        results: testResults
       },
       null,
-      2,
+      2
     );
   }
 
@@ -205,7 +205,7 @@ export class PerformanceReportGenerator {
       if (test.regressionAnalysis) {
         html += `
     <h3>Regression Analysis</h3>`;
-
+        
         if (test.regressionAnalysis.hasRegression) {
           html += `
     <div class="regression">

@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
 
-function useLocalStorage<T>(
-  key: string,
-  initialValue: T
-): [T, React.Dispatch<React.SetStateAction<T>>] {
+import { useState, useEffect } from 'react';
+
+function useLocalStorage<T,>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
   const getStoredValue = (): T => {
     try {
       const item = window.localStorage.getItem(key);

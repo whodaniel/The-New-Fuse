@@ -1,15 +1,15 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useState, useEffect, useRef } from 'react';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useAuth } from '@/hooks/useAuth';
-import { useSocket } from '@/hooks/useSocket';
-import { MessageType } from '@/types/chat';
-import { formatDistanceToNow } from 'date-fns';
-import { Paperclip, Send, Smile } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Send, Paperclip, Smile } from 'lucide-react';
 import { nanoid } from 'nanoid';
-import { useEffect, useRef, useState } from 'react';
+import { formatDistanceToNow } from 'date-fns';
+import { useSocket } from '@/hooks/useSocket';
+import { useAuth } from '@/hooks/useAuth';
+import { MessageType } from '@/types/chat';
 import { MarkdownRenderer } from './MarkdownRenderer';
 
 interface Message {
@@ -38,7 +38,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({ roomId, title }) => {
   const [newMessage, setNewMessage] = useState('');
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error] = useState<string | null>(null);
+  const [error, ] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socket = useSocket();
   const { user } = useAuth();
@@ -138,23 +138,16 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({ roomId, title }) => {
     const sender = members.find((m) => m.id === message.senderId);
 
     return (
-      <div
-        key={message.id}
-        className={`flex items-start gap-3 my-4 ${isSelf ? 'flex-row-reverse' : ''}`}
-      >
+      <div key={message.id} className={`flex items-start gap-3 my-4 ${isSelf ? 'flex-row-reverse' : ''}`}>
         <Avatar>
           <AvatarImage src={sender?.avatar} alt={sender?.name} />
           <AvatarFallback>{sender?.name?.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className={`flex flex-col gap-1 ${isSelf ? 'items-end' : ''}`}>
-          <div
-            className={`rounded-lg p-3 ${isSelf ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
-          >
+          <div className={`rounded-lg p-3 ${isSelf ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
             <p className="font-semibold text-sm">{sender?.name}</p>
             {message.type === MessageType.TEXT && <p className="text-sm">{message.content}</p>}
-            {message.type === MessageType.MARKDOWN && (
-              <MarkdownRenderer content={message.content} />
-            )}
+            {message.type === MessageType.MARKDOWN && <MarkdownRenderer content={message.content} />}
             {/* Add other message types here */}
           </div>
           <p className="text-xs text-muted-foreground">
@@ -179,10 +172,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({ roomId, title }) => {
         <CardTitle>{title || `Chat Room ${roomId}`}</CardTitle>
         <div className="flex items-center gap-2">
           {members.map((member) => (
-            <Avatar
-              key={member.id}
-              title={`${member.name}${member.isTyping ? ' (typing...)' : ''}`}
-            >
+            <Avatar key={member.id} title={`${member.name}${member.isTyping ? ' (typing...)' : ''}`}>
               <AvatarImage src={member.avatar} alt={member.name} />
               <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
             </Avatar>

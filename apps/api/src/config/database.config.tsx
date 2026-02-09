@@ -1,20 +1,13 @@
 import { ConfigService } from '@nestjs/config';
-
-/**
- * Database configuration options (legacy TypeORM compatible interface)
- * @deprecated Use Drizzle ORM configuration instead
- */
-export interface DatabaseConfigOptions {
-  type: 'postgres';
-  host: string;
-  port: number;
-  username: string | undefined;
-  password: string | undefined;
-  database: string;
-  entities?: any[];
-  synchronize: boolean;
-  logging: boolean;
-}
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { Agent } from '../entities/Agent';
+import { AuthEvent } from '../entities/AuthEvent';
+import { AuthSession } from '../entities/AuthSession';
+import { LoginAttempt } from '../entities/LoginAttempt';
+import { Pipeline } from '../entities/Pipeline';
+import { Task } from '../entities/Task';
+import { TaskExecution } from '../entities/TaskExecution';
+import { User } from '../entities/User';
 
 function parseDatabaseUrl(
   databaseUrl: string,
@@ -48,7 +41,7 @@ function parseDatabaseUrl(
   }
 }
 
-export const getDatabaseConfig = (configService: ConfigService): DatabaseConfigOptions => {
+export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOptions => {
   // Try to parse DATABASE_URL first (Railway format)
   const databaseUrl = configService.get('DATABASE_URL');
   let dbConfig;
@@ -73,7 +66,8 @@ export const getDatabaseConfig = (configService: ConfigService): DatabaseConfigO
     username: dbConfig.username,
     password: dbConfig.password,
     database: dbConfig.database,
-    // Disable synchronize to prevent schema conflicts - use Drizzle migrations instead
+    entities: [User, Agent, Pipeline, Task, TaskExecution, AuthSession, LoginAttempt, AuthEvent],
+    // Disable synchronize to prevent schema conflicts - use Prisma migrations instead
     synchronize: false,
     logging: configService.get('NODE_ENV') === 'development',
   };

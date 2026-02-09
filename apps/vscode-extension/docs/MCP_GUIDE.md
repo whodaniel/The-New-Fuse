@@ -1,6 +1,6 @@
 # The New Fuse MCP Guide
 
-**For VS Code Extension v9.1.0+**
+**For VS Code Extension v7.4.0+**
 
 ## 1. Overview
 
@@ -15,8 +15,6 @@ development workflow.
 - **Per-Agent Logic**: Configure specific servers for individual AI agents.
 - **Workflow Integration**: Assign servers to specific workflow steps.
 - **Server Discovery**: Browse and connect to 10+ pre-configured servers.
-- **Tool Discovery Protocol**: Dynamic tool loading with ~85% token reduction
-  (v9.1.0+).
 
 ---
 
@@ -176,67 +174,6 @@ When multiple configurations exist, the system applies settings in this order
 | **Connection failed**  | Verify command paths and environment variables in settings.        |
 | **Config not saving**  | Ensure VS Code has permission to write to Global State.            |
 | **Wrong server used**  | Check the Configuration Hierarchy; lower levels may be overridden. |
-
----
-
----
-
-## 10. Tool Discovery Protocol (v9.1.0+)
-
-The New Fuse now implements Anthropic's Tool Discovery Protocol for dynamic tool
-loading, reducing token usage by ~85% when working with large tool libraries.
-
-### How It Works
-
-1. **Tool Deferral**: Tools are marked with `defer_loading: true` and not loaded
-   into context initially.
-2. **Tool Search**: When Claude needs a tool, it uses `tool_search_tool_*` to
-   discover relevant tools.
-3. **On-Demand Loading**: Discovered tools are loaded into the active context.
-
-### Configuration
-
-Configure tool search via VSCode settings (`theNewFuse.toolSearch.*`):
-
-| Setting              | Default              | Description                            |
-| -------------------- | -------------------- | -------------------------------------- |
-| `enabled`            | `true`               | Enable/disable Tool Discovery Protocol |
-| `maxResults`         | `5`                  | Maximum tools returned per search      |
-| `defaultMethod`      | `bm25`               | Search algorithm (regex or bm25)       |
-| `alwaysLoadedTools`  | `["read_file", ...]` | Tools never deferred                   |
-| `deferredCategories` | `["google", ...]`    | Categories deferred by default         |
-
-### Per-Server Configuration
-
-Each MCP server can be configured for tool deferral:
-
-```json
-{
-  "name": "my-server",
-  "command": "npx",
-  "args": ["@my/mcp-server"],
-  "enabled": true,
-  "default_defer_loading": true,
-  "always_loaded_tools": ["critical_tool"]
-}
-```
-
-### Search Methods
-
-| Method    | Tool Name                         | Use Case                 |
-| --------- | --------------------------------- | ------------------------ |
-| **BM25**  | `tool_search_tool_bm25_20251119`  | Natural language queries |
-| **Regex** | `tool_search_tool_regex_20251119` | Exact pattern matching   |
-
-### Performance Benefits
-
-- **~85% token reduction** for tool definitions
-- **Improved accuracy** (Opus 4: 49%→74%, Opus 4.5: 79.5%→88.1%)
-- **Scalable** to 10,000+ tools
-
-### External Documentation
-
-- [Anthropic Tool Search Docs](https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool)
 
 ---
 

@@ -2,12 +2,12 @@
  * Admin Metrics Controller
  */
 
-import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Query, UseGuards, Res } from '@nestjs/common';
 import { Response } from 'express';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard';
-import { ApiLogsRepository } from '../../repositories/api-logs.repository';
 import { SystemMetricsService } from '../../services/system-metrics.service';
+import { ApiLogsRepository } from '../../repositories/api-logs.repository';
 import { toError } from '../../utils/error';
 
 @ApiTags('admin', 'system')
@@ -26,8 +26,8 @@ export class AdminMetricsController {
       const metrics = await this.systemMetricsService.getMetrics();
       return res.status(200).json(metrics);
     } catch (error) {
-      const err = toError(error);
-      return res.status(500).json({ error: err.message });
+       const err = toError(error);
+       return res.status(500).json({ error: err.message });
     }
   }
 
@@ -58,26 +58,26 @@ export class AdminMetricsController {
         totalRequests: Number(summary.count),
         errorCount: Number(summary.errorCount),
         avgResponseTime: Number(summary.avgDuration || 0),
-        statusCodes: statusCodes.map((s) => ({ status: s.status, count: Number(s.count) })),
-        methods: methods.map((m) => ({ method: m.method, count: Number(m.count) })),
-        timeSeries: timeSeries.map((t) => ({
+        statusCodes: statusCodes.map(s => ({ status: s.status, count: Number(s.count) })),
+        methods: methods.map(m => ({ method: m.method, count: Number(m.count) })),
+        timeSeries: timeSeries.map(t => ({
           time: t.time,
           requests: Number(t.requests),
           errors: Number(t.errors),
-          responseTime: Number(t.avgDuration || 0),
+          responseTime: Number(t.avgDuration || 0)
         })),
-        topEndpoints: topEndpoints.map((e) => ({
+        topEndpoints: topEndpoints.map(e => ({
           endpoint: e.endpoint,
           requests: Number(e.count),
           avgTime: Number(e.avgDuration || 0),
-          errors: Number(e.errorCount),
-        })),
+          errors: Number(e.errorCount)
+        }))
       };
 
       return res.status(200).json(response);
     } catch (error) {
-      const err = toError(error);
-      return res.status(500).json({ error: err.message });
+       const err = toError(error);
+       return res.status(500).json({ error: err.message });
     }
   }
 }

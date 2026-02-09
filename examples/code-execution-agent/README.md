@@ -1,13 +1,10 @@
 # Code Execution Agent Example
 
-This example demonstrates how to create an agent that uses the code execution
-capability.
+This example demonstrates how to create an agent that uses the code execution capability.
 
 ## Overview
 
-The Code Execution Agent is a simple agent that can execute JavaScript and
-TypeScript code in a secure environment. It uses the MCP (Model Context
-Protocol) to communicate with the Code Execution Service.
+The Code Execution Agent is a simple agent that can execute JavaScript and TypeScript code in a secure environment. It uses the MCP (Model Context Protocol) to communicate with the Code Execution Service.
 
 ## Files
 
@@ -96,8 +93,7 @@ You can customize the agent by modifying the following:
 
 ## Security Considerations
 
-The Code Execution Agent executes code in a secure environment with the
-following security measures:
+The Code Execution Agent executes code in a secure environment with the following security measures:
 
 - **Resource Limits**: Strict limits on execution time and memory usage
 - **Module Restrictions**: Only allowed modules can be imported
@@ -106,6 +102,4 @@ following security measures:
 
 ## Billing
 
-The Code Execution Service implements a billing system that tracks resource
-usage and calculates costs. You can get pricing information using the
-`getPricing()` method and usage information using the `getUsage()` method.
+The Code Execution Service implements a billing system that tracks resource usage and calculates costs. You can get pricing information using the `getPricing()` method and usage information using the `getUsage()` method.

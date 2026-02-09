@@ -15,12 +15,12 @@ mkdir -p "$LOGS_DIR"
 # Step 1: Build and prepare
 echo "📦 Step 1: Building and preparing..."
 yarn build > "$LOGS_DIR/build.log" 2>&1
-yarn drizzle:generate >> "$LOGS_DIR/build.log" 2>&1
+yarn prisma:generate >> "$LOGS_DIR/build.log" 2>&1
 echo "✅ Build and preparation completed"
 
 # Step 2: Database setup
 echo "📊 Step 2: Setting up database..."
-yarn drizzle:migrate > "$LOGS_DIR/database.log" 2>&1
+yarn prisma:migrate > "$LOGS_DIR/database.log" 2>&1
 echo "✅ Database setup completed"
 
 # Step 3: Launch services

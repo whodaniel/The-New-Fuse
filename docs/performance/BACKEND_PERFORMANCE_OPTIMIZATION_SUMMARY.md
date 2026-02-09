@@ -14,11 +14,11 @@ in throughput.
 
 #### ✅ Connection Pooling
 
-**File:** `/apps/backend/src/drizzle/drizzle.service.ts`
+**File:** `/apps/backend/src/prisma/prisma.service.ts`
 
 **Improvements:**
 
-- Optimized Drizzle connection pool with automatic sizing
+- Optimized Prisma connection pool with automatic sizing
 - Slow query logging (queries > 1000ms)
 - Proper connection lifecycle management
 - Development query logging for debugging
@@ -37,7 +37,7 @@ in throughput.
 
 #### ✅ Database Indexes
 
-**File:** `/packages/database/drizzle/migrations/add_performance_indexes.sql`
+**File:** `/packages/database/prisma/migrations/add_performance_indexes.sql`
 
 **Indexes Added:** 40+ strategic indexes
 
@@ -66,13 +66,13 @@ in throughput.
 **Before:**
 
 ```typescript
-const users = await drizzle.user.findMany(); // Fetches ALL fields
+const users = await prisma.user.findMany(); // Fetches ALL fields
 ```
 
 **After:**
 
 ```typescript
-const users = await drizzle.user.findMany({
+const users = await prisma.user.findMany({
   select: {
     id: true,
     email: true,
@@ -255,7 +255,7 @@ server {
 
 #### ✅ Database Connection Pool
 
-**File:** `/apps/backend/src/drizzle/drizzle.service.ts`
+**File:** `/apps/backend/src/prisma/prisma.service.ts`
 
 **Configuration:**
 
@@ -508,7 +508,7 @@ artillery run tests/load/artillery-config.yml
 
 ```typescript
 // Automatically logs queries > 1000ms
-[Drizzle] Slow query detected (1250ms): SELECT * FROM users WHERE ...
+[Prisma] Slow query detected (1250ms): SELECT * FROM users WHERE ...
 ```
 
 **Features:**
@@ -624,7 +624,7 @@ groups:
 
 #### Database
 
-- `/packages/database/drizzle/migrations/add_performance_indexes.sql`
+- `/packages/database/prisma/migrations/add_performance_indexes.sql`
 
 #### Documentation
 
@@ -637,7 +637,7 @@ groups:
 
 #### Services
 
-- `/apps/backend/src/drizzle/drizzle.service.ts` - Connection pooling
+- `/apps/backend/src/prisma/prisma.service.ts` - Connection pooling
 - `/apps/backend/src/services/redis.service.ts` - Connection pooling
 - `/apps/backend/src/users/users.service.ts` - Query optimization, pagination
 - `/apps/backend/src/modules/agent/agent.service.ts` - Query optimization,
@@ -660,7 +660,7 @@ groups:
 ### 1. Apply Database Indexes
 
 ```bash
-psql $DATABASE_URL -f packages/database/drizzle/migrations/add_performance_indexes.sql
+psql $DATABASE_URL -f packages/database/prisma/migrations/add_performance_indexes.sql
 ```
 
 ### 2. Configure Environment

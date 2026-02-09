@@ -29,11 +29,11 @@ echo "Installing all dependencies (allowing scripts)..."
 pnpm install
 echo "✅ Clean install complete."
 
-# 2. Generate Drizzle Client
+# 2. Generate Prisma Client
 echo "
---- Step 2: Generating Drizzle Client ---"
-bun drizzle generate --schema packages/database/drizzle/schema.drizzle
-echo "✅ Drizzle Client generated."
+--- Step 2: Generating Prisma Client ---"
+bun prisma generate --schema packages/database/prisma/schema.prisma
+echo "✅ Prisma Client generated."
 
 # 3. Build SkIDEancer IDE
 echo "

@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 export class ApiError extends Error {
   statusCode: number;
@@ -24,12 +24,12 @@ export const errorHandler = (
     return res.status(err.statusCode).json({
       success: false,
       message: err.message,
-      ...err.data,
+      ...err.data
     });
   }
 
   return res.status(500).json({
     success: false,
-    message: err.message || 'Internal server error',
+    message: err.message || 'Internal server error'
   });
 };

@@ -2,10 +2,10 @@
  * Unit tests for PermissionValidator
  */
 
-import { beforeEach, describe, expect, it } from '@jest/globals';
+import { describe, it, expect, beforeEach } from '@jest/globals';
+import { PermissionValidator, MCPOperation, MCPResourceType } from './PermissionValidator';
+import { RBACManager, Permission, Role } from './RBACManager';
 import { AuthContext } from './AuthenticationManager';
-import { MCPOperation, MCPResourceType, PermissionValidator } from './PermissionValidator';
-import { Permission, RBACManager, Role } from './RBACManager';
 
 describe('PermissionValidator', () => {
   let rbacManager: RBACManager;
@@ -15,7 +15,7 @@ describe('PermissionValidator', () => {
     rbacManager = new RBACManager({
       enableRoleHierarchy: true,
       defaultDeny: false,
-      enableAuditLogging: false, // Disable for unit tests
+      enableAuditLogging: false // Disable for unit tests
     });
 
     permissionValidator = new PermissionValidator(rbacManager);
@@ -26,26 +26,18 @@ describe('PermissionValidator', () => {
 
   describe('Operation Permission Mapping', () => {
     it('should return correct required permissions for resource operations', () => {
-      const readPermissions = permissionValidator.getRequiredPermissions(
-        MCPOperation.RESOURCE_READ
-      );
+      const readPermissions = permissionValidator.getRequiredPermissions(MCPOperation.RESOURCE_READ);
       expect(readPermissions).toEqual(['mcp.resource.read']);
 
-      const writePermissions = permissionValidator.getRequiredPermissions(
-        MCPOperation.RESOURCE_WRITE
-      );
+      const writePermissions = permissionValidator.getRequiredPermissions(MCPOperation.RESOURCE_WRITE);
       expect(writePermissions).toEqual(['mcp.resource.write']);
 
-      const deletePermissions = permissionValidator.getRequiredPermissions(
-        MCPOperation.RESOURCE_DELETE
-      );
+      const deletePermissions = permissionValidator.getRequiredPermissions(MCPOperation.RESOURCE_DELETE);
       expect(deletePermissions).toEqual(['mcp.resource.write']);
     });
 
     it('should return correct required permissions for tool operations', () => {
-      const executePermissions = permissionValidator.getRequiredPermissions(
-        MCPOperation.TOOL_EXECUTE
-      );
+      const executePermissions = permissionValidator.getRequiredPermissions(MCPOperation.TOOL_EXECUTE);
       expect(executePermissions).toEqual(['mcp.tool.execute']);
 
       const listPermissions = permissionValidator.getRequiredPermissions(MCPOperation.TOOL_LIST);
@@ -56,21 +48,15 @@ describe('PermissionValidator', () => {
       const infoPermissions = permissionValidator.getRequiredPermissions(MCPOperation.SERVER_INFO);
       expect(infoPermissions).toEqual([]);
 
-      const configPermissions = permissionValidator.getRequiredPermissions(
-        MCPOperation.SERVER_CONFIGURE
-      );
+      const configPermissions = permissionValidator.getRequiredPermissions(MCPOperation.SERVER_CONFIGURE);
       expect(configPermissions).toEqual(['mcp.server.admin']);
     });
 
     it('should return correct required permissions for admin operations', () => {
-      const userManagePermissions = permissionValidator.getRequiredPermissions(
-        MCPOperation.ADMIN_USER_MANAGE
-      );
+      const userManagePermissions = permissionValidator.getRequiredPermissions(MCPOperation.ADMIN_USER_MANAGE);
       expect(userManagePermissions).toEqual(['mcp.admin.user']);
 
-      const auditViewPermissions = permissionValidator.getRequiredPermissions(
-        MCPOperation.ADMIN_AUDIT_VIEW
-      );
+      const auditViewPermissions = permissionValidator.getRequiredPermissions(MCPOperation.ADMIN_AUDIT_VIEW);
       expect(auditViewPermissions).toEqual(['mcp.admin.audit']);
     });
   });
@@ -82,9 +68,9 @@ describe('PermissionValidator', () => {
       const validationContext = {
         userId: 'developer',
         roles: rbacManager.getUserRoles('developer'),
-        permissions: rbacManager.getUserPermissions('developer').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('developer').map(p => p.name),
         operation: MCPOperation.RESOURCE_READ,
-        resourceUri: 'file:document.txt',
+        resourceUri: 'file:document.txt'
       };
 
       const result = await permissionValidator.validateOperation(validationContext);
@@ -99,9 +85,9 @@ describe('PermissionValidator', () => {
       const validationContext = {
         userId: 'user',
         roles: rbacManager.getUserRoles('user'),
-        permissions: rbacManager.getUserPermissions('user').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('user').map(p => p.name),
         operation: MCPOperation.TOOL_EXECUTE,
-        resourceUri: 'tool:data-processor',
+        resourceUri: 'tool:data-processor'
       };
 
       const result = await permissionValidator.validateOperation(validationContext);
@@ -117,8 +103,8 @@ describe('PermissionValidator', () => {
       const validationContext = {
         userId: 'user',
         roles: rbacManager.getUserRoles('user'),
-        permissions: rbacManager.getUserPermissions('user').map((p) => p.name),
-        operation: MCPOperation.SERVER_INFO,
+        permissions: rbacManager.getUserPermissions('user').map(p => p.name),
+        operation: MCPOperation.SERVER_INFO
       };
 
       const result = await permissionValidator.validateOperation(validationContext);
@@ -134,7 +120,7 @@ describe('PermissionValidator', () => {
       const authContext: AuthContext = {
         userId: 'developer',
         roles: rbacManager.getUserRoles('developer'),
-        permissions: rbacManager.getUserPermissions('developer').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('developer').map(p => p.name)
       };
 
       const result = await permissionValidator.validateResourceAccess(
@@ -152,7 +138,7 @@ describe('PermissionValidator', () => {
       const authContext: AuthContext = {
         userId: 'user',
         roles: rbacManager.getUserRoles('user'),
-        permissions: rbacManager.getUserPermissions('user').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('user').map(p => p.name)
       };
 
       const result = await permissionValidator.validateResourceAccess(
@@ -173,7 +159,7 @@ describe('PermissionValidator', () => {
       const authContext: AuthContext = {
         userId: 'developer',
         roles: rbacManager.getUserRoles('developer'),
-        permissions: rbacManager.getUserPermissions('developer').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('developer').map(p => p.name)
       };
 
       const result = await permissionValidator.validateToolExecution(
@@ -191,7 +177,7 @@ describe('PermissionValidator', () => {
       const authContext: AuthContext = {
         userId: 'user',
         roles: rbacManager.getUserRoles('user'),
-        permissions: rbacManager.getUserPermissions('user').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('user').map(p => p.name)
       };
 
       const result = await permissionValidator.validateToolExecution(
@@ -212,7 +198,7 @@ describe('PermissionValidator', () => {
       const authContext: AuthContext = {
         userId: 'admin',
         roles: rbacManager.getUserRoles('admin'),
-        permissions: rbacManager.getUserPermissions('admin').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('admin').map(p => p.name)
       };
 
       const result = await permissionValidator.validateServerAdmin(
@@ -229,7 +215,7 @@ describe('PermissionValidator', () => {
       const authContext: AuthContext = {
         userId: 'user',
         roles: rbacManager.getUserRoles('user'),
-        permissions: rbacManager.getUserPermissions('user').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('user').map(p => p.name)
       };
 
       const result = await permissionValidator.validateServerAdmin(
@@ -247,7 +233,7 @@ describe('PermissionValidator', () => {
       const authContext: AuthContext = {
         userId: 'admin',
         roles: rbacManager.getUserRoles('admin'),
-        permissions: rbacManager.getUserPermissions('admin').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('admin').map(p => p.name)
       };
 
       const result = await permissionValidator.validateServerAdmin(
@@ -268,24 +254,24 @@ describe('PermissionValidator', () => {
           name: 'mcp.broker.register',
           description: 'Register services with broker',
           resourceType: 'broker',
-          operations: ['register', 'unregister'],
+          operations: ['register', 'unregister']
         },
         {
           name: 'mcp.broker.discover',
           description: 'Discover services',
           resourceType: 'broker',
-          operations: ['discover'],
-        },
+          operations: ['discover']
+        }
       ];
 
-      brokerPermissions.forEach((p) => rbacManager.createPermission(p));
+      brokerPermissions.forEach(p => rbacManager.createPermission(p));
 
       const brokerRole: Role = {
         name: 'mcp.broker-operator',
         description: 'Broker Operator',
         permissions: ['mcp.broker.register', 'mcp.broker.discover'],
         createdAt: new Date(),
-        updatedAt: new Date(),
+        updatedAt: new Date()
       };
 
       rbacManager.createRole(brokerRole);
@@ -297,7 +283,7 @@ describe('PermissionValidator', () => {
       const authContext: AuthContext = {
         userId: 'broker-operator',
         roles: rbacManager.getUserRoles('broker-operator'),
-        permissions: rbacManager.getUserPermissions('broker-operator').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('broker-operator').map(p => p.name)
       };
 
       const result = await permissionValidator.validateBrokerOperation(
@@ -315,7 +301,7 @@ describe('PermissionValidator', () => {
       const authContext: AuthContext = {
         userId: 'user',
         roles: rbacManager.getUserRoles('user'),
-        permissions: rbacManager.getUserPermissions('user').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('user').map(p => p.name)
       };
 
       const result = await permissionValidator.validateBrokerOperation(
@@ -334,7 +320,7 @@ describe('PermissionValidator', () => {
       const authContext: AuthContext = {
         userId: 'broker-operator',
         roles: rbacManager.getUserRoles('broker-operator'),
-        permissions: rbacManager.getUserPermissions('broker-operator').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('broker-operator').map(p => p.name)
       };
 
       const result = await permissionValidator.validateBrokerOperation(
@@ -414,10 +400,10 @@ describe('PermissionValidator', () => {
       const contextWithId = {
         userId: 'developer',
         roles: rbacManager.getUserRoles('developer'),
-        permissions: rbacManager.getUserPermissions('developer').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('developer').map(p => p.name),
         operation: MCPOperation.RESOURCE_READ,
         resourceType: MCPResourceType.FILE,
-        resourceId: 'document.txt',
+        resourceId: 'document.txt'
       };
 
       const resultWithId = await permissionValidator.validateOperation(contextWithId);
@@ -427,9 +413,9 @@ describe('PermissionValidator', () => {
       const contextWithTool = {
         userId: 'developer',
         roles: rbacManager.getUserRoles('developer'),
-        permissions: rbacManager.getUserPermissions('developer').map((p) => p.name),
+        permissions: rbacManager.getUserPermissions('developer').map(p => p.name),
         operation: MCPOperation.TOOL_EXECUTE,
-        toolName: 'file-processor',
+        toolName: 'file-processor'
       };
 
       const resultWithTool = await permissionValidator.validateOperation(contextWithTool);
@@ -445,7 +431,7 @@ describe('PermissionValidator', () => {
         roles: [],
         permissions: [],
         operation: MCPOperation.RESOURCE_READ,
-        resourceUri: 'file:test.txt',
+        resourceUri: 'file:test.txt'
       };
 
       const result = await permissionValidator.validateOperation(invalidContext);
@@ -461,7 +447,7 @@ describe('PermissionValidator', () => {
         roles: ['mcp.user'],
         permissions: ['mcp.resource.read'],
         operation: MCPOperation.RESOURCE_READ,
-        resourceUri: 'file:test.txt',
+        resourceUri: 'file:test.txt'
       };
 
       const result = await permissionValidator.validateOperation(context);
@@ -482,17 +468,17 @@ describe('PermissionValidator', () => {
         name: 'mcp.admin.user',
         description: 'Manage users',
         resourceType: 'admin',
-        operations: ['create', 'read', 'update', 'delete'],
+        operations: ['create', 'read', 'update', 'delete']
       },
       {
         name: 'mcp.admin.audit',
         description: 'View audit logs',
         resourceType: 'admin',
-        operations: ['read', 'query'],
-      },
+        operations: ['read', 'query']
+      }
     ];
 
-    additionalPermissions.forEach((p) => rbacManager.createPermission(p));
+    additionalPermissions.forEach(p => rbacManager.createPermission(p));
 
     // Additional roles for testing
     const additionalRoles: Role[] = [
@@ -500,18 +486,14 @@ describe('PermissionValidator', () => {
         name: 'mcp.super-admin',
         description: 'Super Administrator',
         permissions: [
-          'mcp.resource.read',
-          'mcp.resource.write',
-          'mcp.tool.execute',
-          'mcp.server.admin',
-          'mcp.admin.user',
-          'mcp.admin.audit',
+          'mcp.resource.read', 'mcp.resource.write', 'mcp.tool.execute', 
+          'mcp.server.admin', 'mcp.admin.user', 'mcp.admin.audit'
         ],
         createdAt: new Date(),
-        updatedAt: new Date(),
-      },
+        updatedAt: new Date()
+      }
     ];
 
-    additionalRoles.forEach((r) => rbacManager.createRole(r));
+    additionalRoles.forEach(r => rbacManager.createRole(r));
   }
 });

@@ -1,7 +1,6 @@
 # MCP Core Troubleshooting Guide
 
-This guide helps you diagnose and resolve common issues when working with the
-MCP Core package.
+This guide helps you diagnose and resolve common issues when working with the MCP Core package.
 
 ## Table of Contents
 
@@ -21,13 +20,11 @@ MCP Core package.
 ### Issue: Server Fails to Start
 
 **Symptoms:**
-
 ```
 Error: listen EADDRINUSE :::8080
 ```
 
 **Causes:**
-
 - Port already in use by another process
 - Permission denied for port binding (ports < 1024 require root)
 - Invalid server configuration
@@ -35,43 +32,39 @@ Error: listen EADDRINUSE :::8080
 **Solutions:**
 
 1. **Check port usage:**
-
 ```bash
 # On macOS/Linux
 lsof -i :8080
 netstat -tulpn | grep :8080
 
-# On Windows
+# On Windows  
 netstat -ano | findstr :8080
 ```
 
 2. **Use a different port:**
-
 ```typescript
 const server = MCPSystemFactory.createServer({
   name: 'my-server',
   version: '1.0.0',
-  port: 8081, // Changed from 8080
+  port: 8081  // Changed from 8080
 });
 ```
 
 3. **Kill conflicting process:**
-
 ```bash
 # Find and kill process using the port
 kill -9 $(lsof -ti:8080)
 ```
 
 4. **Check server configuration:**
-
 ```typescript
 // Validate configuration before starting
 const config: MCPServerConfig = {
   name: 'test-server',
   version: '1.0.0',
   port: 8080,
-  host: '0.0.0.0', // Ensure valid host
-  maxConnections: 100,
+  host: '0.0.0.0',  // Ensure valid host
+  maxConnections: 100
 };
 
 // Add error handling
@@ -86,13 +79,11 @@ try {
 ### Issue: Client Connection Refused
 
 **Symptoms:**
-
 ```
 Error: connect ECONNREFUSED 127.0.0.1:8080
 ```
 
 **Causes:**
-
 - Server not running
 - Wrong server address/port
 - Network connectivity issues
@@ -101,19 +92,17 @@ Error: connect ECONNREFUSED 127.0.0.1:8080
 **Solutions:**
 
 1. **Verify server is running:**
-
 ```bash
 curl -I http://localhost:8080
 telnet localhost 8080
 ```
 
 2. **Check client configuration:**
-
 ```typescript
 const client = MCPSystemFactory.createClient({
-  serverUrl: 'ws://localhost:8080', // Ensure correct protocol and port
-  connectionTimeout: 10000, // Increase timeout
-  maxRetries: 5, // Allow retries
+  serverUrl: 'ws://localhost:8080',  // Ensure correct protocol and port
+  connectionTimeout: 10000,         // Increase timeout
+  maxRetries: 5                     // Allow retries
 });
 
 try {
@@ -125,7 +114,6 @@ try {
 ```
 
 3. **Test connection manually:**
-
 ```typescript
 // Add connection diagnostics
 async function testConnection(url: string) {
@@ -145,13 +133,11 @@ await testConnection('http://localhost:8080');
 ### WebSocket Connection Issues
 
 **Symptoms:**
-
 - Intermittent connection drops
 - WebSocket upgrade failures
 - Connection timeouts
 
 **Diagnosis:**
-
 ```typescript
 import { MCPSystemFactory } from '@the-new-fuse/mcp-core';
 
@@ -160,16 +146,14 @@ const client = MCPSystemFactory.createClient({
   connectionTimeout: 5000,
   maxRetries: 3,
   keepAlive: true,
-  heartbeatInterval: 30000,
+  heartbeatInterval: 30000
 });
 
 // Add connection event handlers
 client.on('connect', () => console.log('Connected'));
 client.on('disconnect', (reason) => console.log('Disconnected:', reason));
 client.on('error', (error) => console.error('Connection error:', error));
-client.on('reconnect', (attempt) =>
-  console.log('Reconnecting attempt:', attempt)
-);
+client.on('reconnect', (attempt) => console.log('Reconnecting attempt:', attempt));
 
 // Monitor connection health
 setInterval(async () => {
@@ -181,20 +165,18 @@ setInterval(async () => {
 **Solutions:**
 
 1. **Configure connection pooling:**
-
 ```typescript
 const client = MCPSystemFactory.createClient({
   serverUrl: 'ws://localhost:8080',
   connectionPool: {
     maxConnections: 10,
     idleTimeout: 30000,
-    reconnectDelay: 1000,
-  },
+    reconnectDelay: 1000
+  }
 });
 ```
 
 2. **Implement retry logic:**
-
 ```typescript
 async function connectWithRetry(client: MCPClient, maxAttempts = 5) {
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -204,14 +186,14 @@ async function connectWithRetry(client: MCPClient, maxAttempts = 5) {
       return;
     } catch (error) {
       console.warn(`Connection attempt ${attempt} failed:`, error.message);
-
+      
       if (attempt === maxAttempts) {
         throw new Error(`Failed to connect after ${maxAttempts} attempts`);
       }
-
+      
       // Exponential backoff
       const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
-      await new Promise((resolve) => setTimeout(resolve, delay));
+      await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
 }
@@ -220,14 +202,12 @@ async function connectWithRetry(client: MCPClient, maxAttempts = 5) {
 ### Network Proxy Issues
 
 **Symptoms:**
-
 - Connection works locally but fails through proxy
 - SSL certificate errors
 
 **Solutions:**
 
 1. **Configure proxy settings:**
-
 ```typescript
 const client = MCPSystemFactory.createClient({
   serverUrl: 'wss://remote-server:8080',
@@ -236,25 +216,24 @@ const client = MCPSystemFactory.createClient({
     port: 8080,
     auth: {
       username: 'user',
-      password: 'pass',
-    },
+      password: 'pass'
+    }
   },
   tls: {
-    rejectUnauthorized: false, // Only for development
-  },
+    rejectUnauthorized: false  // Only for development
+  }
 });
 ```
 
 2. **Handle corporate firewalls:**
-
 ```typescript
 // Use HTTP tunneling for WebSocket connections
 const client = MCPSystemFactory.createClient({
   serverUrl: 'wss://server.company.com:443/mcp',
   transport: {
     type: 'websocket-tunnel',
-    tunnelUrl: 'https://proxy.company.com/tunnel',
-  },
+    tunnelUrl: 'https://proxy.company.com/tunnel'
+  }
 });
 ```
 
@@ -263,13 +242,11 @@ const client = MCPSystemFactory.createClient({
 ### High Memory Usage
 
 **Symptoms:**
-
 - Memory usage continuously increases
 - Out of memory errors
 - Slow garbage collection
 
 **Diagnosis:**
-
 ```typescript
 import { PerformanceMonitor } from '@the-new-fuse/mcp-core/monitoring';
 
@@ -279,15 +256,14 @@ monitor.on('memoryWarning', (usage) => {
   console.warn('High memory usage:', {
     heapUsed: `${(usage.heapUsed / 1024 / 1024).toFixed(2)}MB`,
     heapTotal: `${(usage.heapTotal / 1024 / 1024).toFixed(2)}MB`,
-    external: `${(usage.external / 1024 / 1024).toFixed(2)}MB`,
+    external: `${(usage.external / 1024 / 1024).toFixed(2)}MB`
   });
 });
 
 // Monitor for memory leaks
 setInterval(() => {
   const usage = process.memoryUsage();
-  if (usage.heapUsed > 500 * 1024 * 1024) {
-    // 500MB threshold
+  if (usage.heapUsed > 500 * 1024 * 1024) { // 500MB threshold
     console.warn('Possible memory leak detected');
     // Trigger garbage collection if needed
     if (global.gc) {
@@ -300,21 +276,19 @@ setInterval(() => {
 **Solutions:**
 
 1. **Configure resource limits:**
-
 ```typescript
 const server = MCPSystemFactory.createServer({
   name: 'memory-efficient-server',
   version: '1.0.0',
   performance: {
-    maxMemoryUsage: 256 * 1024 * 1024, // 256MB limit
+    maxMemoryUsage: 256 * 1024 * 1024,  // 256MB limit
     memoryCheckInterval: 10000,
-    enableGarbageCollection: true,
-  },
+    enableGarbageCollection: true
+  }
 });
 ```
 
 2. **Implement resource cleanup:**
-
 ```typescript
 class ResourceAwareHandler extends ResourceHandler {
   private cache = new Map();
@@ -327,13 +301,13 @@ class ResourceAwareHandler extends ResourceHandler {
     }
 
     const data = await this.readFromSource(uri);
-
+    
     // Implement LRU cache
     if (this.cache.size >= this.maxCacheSize) {
       const firstKey = this.cache.keys().next().value;
       this.cache.delete(firstKey);
     }
-
+    
     this.cache.set(uri, data);
     return data;
   }
@@ -348,13 +322,11 @@ class ResourceAwareHandler extends ResourceHandler {
 ### Slow Response Times
 
 **Symptoms:**
-
 - High latency for requests
 - Timeout errors
 - Poor throughput
 
 **Diagnosis:**
-
 ```typescript
 import { RequestProfiler } from '@the-new-fuse/mcp-core/profiling';
 
@@ -363,7 +335,7 @@ const profiler = new RequestProfiler();
 class ProfiledMCPServer extends MCPServer {
   async handleRequest(request: MCPRequest): Promise<MCPResponse> {
     const profile = profiler.start(request.method);
-
+    
     try {
       const response = await super.handleRequest(request);
       profile.end('success');
@@ -380,7 +352,7 @@ profiler.on('slowRequest', (profile) => {
   console.warn('Slow request detected:', {
     method: profile.method,
     duration: profile.duration,
-    stackTrace: profile.stackTrace,
+    stackTrace: profile.stackTrace
   });
 });
 ```
@@ -388,7 +360,6 @@ profiler.on('slowRequest', (profile) => {
 **Solutions:**
 
 1. **Enable request batching:**
-
 ```typescript
 const server = MCPSystemFactory.createServer({
   name: 'high-performance-server',
@@ -396,38 +367,37 @@ const server = MCPSystemFactory.createServer({
   performance: {
     enableRequestBatching: true,
     batchSize: 10,
-    batchTimeout: 50,
-  },
+    batchTimeout: 50
+  }
 });
 ```
 
 2. **Implement caching strategy:**
-
 ```typescript
 import { CacheManager } from '@the-new-fuse/mcp-core/caching';
 
 const cache = new CacheManager({
   maxSize: 10000,
-  ttl: 300000, // 5 minutes
-  strategy: 'lru',
+  ttl: 300000,  // 5 minutes
+  strategy: 'lru'
 });
 
 class CachedResourceHandler extends ResourceHandler {
   async read(uri: string): Promise<any> {
     const cacheKey = `resource:${uri}`;
-
+    
     // Check cache first
     const cached = await cache.get(cacheKey);
     if (cached) {
       return cached;
     }
-
+    
     // Read from source
     const data = await this.readFromSource(uri);
-
+    
     // Cache the result
     await cache.set(cacheKey, data);
-
+    
     return data;
   }
 }
@@ -438,18 +408,16 @@ class CachedResourceHandler extends ResourceHandler {
 ### Resource Not Found Errors
 
 **Symptoms:**
-
 ```
 MCPError: Resource not found: file:///path/to/missing.txt
 ```
 
 **Diagnosis:**
-
 ```typescript
 class DiagnosticResourceHandler extends ResourceHandler {
   async read(uri: string): Promise<any> {
     console.log(`Attempting to read resource: ${uri}`);
-
+    
     try {
       return await this.readResource(uri);
     } catch (error) {
@@ -457,7 +425,7 @@ class DiagnosticResourceHandler extends ResourceHandler {
         error: error.message,
         exists: await this.resourceExists(uri),
         permissions: await this.checkPermissions(uri),
-        metadata: await this.getMetadata(uri).catch(() => null),
+        metadata: await this.getMetadata(uri).catch(() => null)
       });
       throw error;
     }
@@ -482,7 +450,6 @@ class DiagnosticResourceHandler extends ResourceHandler {
 **Solutions:**
 
 1. **Implement proper URI handling:**
-
 ```typescript
 class RobustFileHandler extends ResourceHandler {
   private basePath: string;
@@ -494,7 +461,7 @@ class RobustFileHandler extends ResourceHandler {
 
   async read(uri: string): Promise<any> {
     const filePath = this.resolveUri(uri);
-
+    
     // Security check - ensure path is within base directory
     if (!filePath.startsWith(this.basePath)) {
       throw new Error(`Access denied: ${uri} is outside allowed directory`);
@@ -509,10 +476,7 @@ class RobustFileHandler extends ResourceHandler {
       }
     } catch (error) {
       if (error.code === 'ENOENT') {
-        throw new MCPError(
-          MCPErrorCode.RESOURCE_NOT_FOUND,
-          `Resource not found: ${uri}`
-        );
+        throw new MCPError(MCPErrorCode.RESOURCE_NOT_FOUND, `Resource not found: ${uri}`);
       }
       throw error;
     }
@@ -530,7 +494,6 @@ class RobustFileHandler extends ResourceHandler {
 **Solutions:**
 
 1. **Implement proper access control:**
-
 ```typescript
 interface ResourcePermissions {
   read: boolean;
@@ -552,16 +515,9 @@ class SecureResourceHandler extends ResourceHandler {
     return this.performWrite(uri, data);
   }
 
-  private async checkPermission(
-    uri: string,
-    operation: 'read' | 'write' | 'execute'
-  ): Promise<void> {
-    const perms = this.permissions.get(uri) || {
-      read: true,
-      write: false,
-      execute: false,
-    };
-
+  private async checkPermission(uri: string, operation: 'read' | 'write' | 'execute'): Promise<void> {
+    const perms = this.permissions.get(uri) || { read: true, write: false, execute: false };
+    
     if (!perms[operation]) {
       throw new MCPError(
         MCPErrorCode.RESOURCE_ACCESS_DENIED,
@@ -581,19 +537,17 @@ class SecureResourceHandler extends ResourceHandler {
 ### Tool Timeout Issues
 
 **Symptoms:**
-
 - Tools fail with timeout errors
 - Long-running operations interrupted
 
 **Solutions:**
 
 1. **Configure appropriate timeouts:**
-
 ```typescript
 const toolEngine = MCPSystemFactory.createToolEngine({
-  defaultTimeout: 60000, // 1 minute default
-  maxTimeout: 300000, // 5 minute maximum
-  enableTimeoutExtension: true, // Allow tools to request more time
+  defaultTimeout: 60000,        // 1 minute default
+  maxTimeout: 300000,           // 5 minute maximum
+  enableTimeoutExtension: true  // Allow tools to request more time
 });
 
 class LongRunningToolHandler extends ToolHandler {
@@ -609,7 +563,6 @@ class LongRunningToolHandler extends ToolHandler {
 ```
 
 2. **Implement progress reporting:**
-
 ```typescript
 class ProgressReportingTool extends ToolHandler {
   async execute(params: any): Promise<any> {
@@ -626,7 +579,7 @@ class ProgressReportingTool extends ToolHandler {
         current: i + 1,
         total,
         percentage: Math.round(((i + 1) / total) * 100),
-        message: `Processed ${i + 1} of ${total} items`,
+        message: `Processed ${i + 1} of ${total} items`
       });
     }
 
@@ -640,7 +593,6 @@ class ProgressReportingTool extends ToolHandler {
 **Solutions:**
 
 1. **Improve input validation:**
-
 ```typescript
 class RobustToolHandler extends ToolHandler {
   private ajv = new Ajv({ allErrors: true });
@@ -651,16 +603,16 @@ class RobustToolHandler extends ToolHandler {
     const valid = validate(params);
 
     if (!valid) {
-      const errors = validate.errors?.map((error) => ({
+      const errors = validate.errors?.map(error => ({
         path: error.instancePath,
         message: error.message,
-        value: error.data,
+        value: error.data
       }));
 
       console.error('Validation errors:', errors);
       throw new MCPError(
         MCPErrorCode.TOOL_VALIDATION_FAILED,
-        `Input validation failed: ${errors?.map((e) => e.message).join(', ')}`,
+        `Input validation failed: ${errors?.map(e => e.message).join(', ')}`,
         { errors }
       );
     }
@@ -677,13 +629,13 @@ class RobustToolHandler extends ToolHandler {
           type: 'object',
           properties: {
             format: { type: 'string', enum: ['json', 'csv', 'xml'] },
-            includeHeaders: { type: 'boolean' },
+            includeHeaders: { type: 'boolean' }
           },
-          additionalProperties: false,
-        },
+          additionalProperties: false
+        }
       },
       required: ['input'],
-      additionalProperties: false,
+      additionalProperties: false
     };
   }
 }
@@ -694,7 +646,6 @@ class RobustToolHandler extends ToolHandler {
 ### JSON-RPC Format Errors
 
 **Symptoms:**
-
 ```
 Error: Invalid request: missing jsonrpc field
 Error: Invalid request: jsonrpc must be '2.0'
@@ -703,39 +654,30 @@ Error: Invalid request: jsonrpc must be '2.0'
 **Solutions:**
 
 1. **Ensure proper message format:**
-
 ```typescript
 // Correct message format
 const validRequest: MCPRequest = {
-  jsonrpc: '2.0', // Required, must be exactly '2.0'
-  id: 'unique-id-123', // Required for requests
+  jsonrpc: '2.0',           // Required, must be exactly '2.0'
+  id: 'unique-id-123',      // Required for requests
   method: 'resources/list', // Required
-  params: {}, // Optional
+  params: {}                // Optional
 };
 
 // Use message builder for safety
 class MCPMessageBuilder {
-  static createRequest(
-    method: string,
-    params?: any,
-    id?: string | number
-  ): MCPRequest {
+  static createRequest(method: string, params?: any, id?: string | number): MCPRequest {
     return {
       jsonrpc: '2.0',
       id: id ?? this.generateId(),
       method,
-      params,
+      params
     };
   }
 
-  static createResponse(
-    id: string | number,
-    result?: any,
-    error?: MCPError
-  ): MCPResponse {
+  static createResponse(id: string | number, result?: any, error?: MCPError): MCPResponse {
     const response: MCPResponse = {
       jsonrpc: '2.0',
-      id,
+      id
     };
 
     if (error) {
@@ -758,7 +700,6 @@ class MCPMessageBuilder {
 **Solutions:**
 
 1. **Use comprehensive validation:**
-
 ```typescript
 import { mcpValidator } from '@the-new-fuse/mcp-core';
 
@@ -772,7 +713,7 @@ class ValidatedMCPServer extends MCPServer {
         undefined,
         new MCPError(
           MCPErrorCode.INVALID_REQUEST,
-          `Request validation failed: ${validation.errors.map((e) => e.message).join(', ')}`,
+          `Request validation failed: ${validation.errors.map(e => e.message).join(', ')}`,
           { errors: validation.errors }
         )
       );
@@ -784,9 +725,10 @@ class ValidatedMCPServer extends MCPServer {
       return MCPMessageBuilder.createResponse(
         request.id,
         undefined,
-        error instanceof MCPError
-          ? error
-          : new MCPError(MCPErrorCode.INTERNAL_ERROR, error.message)
+        error instanceof MCPError ? error : new MCPError(
+          MCPErrorCode.INTERNAL_ERROR,
+          error.message
+        )
       );
     }
   }
@@ -798,7 +740,6 @@ class ValidatedMCPServer extends MCPServer {
 ### Event Listener Leaks
 
 **Symptoms:**
-
 ```
 (node:1234) MaxListenersExceededWarning: Possible EventEmitter memory leak detected
 ```
@@ -806,15 +747,11 @@ class ValidatedMCPServer extends MCPServer {
 **Solutions:**
 
 1. **Proper event listener cleanup:**
-
 ```typescript
 class CleanupAwareMCPServer extends MCPServer {
   private subscriptions: Set<() => void> = new Set();
 
-  async registerResource(
-    resource: MCPResource,
-    handler: ResourceHandler
-  ): Promise<void> {
+  async registerResource(resource: MCPResource, handler: ResourceHandler): Promise<void> {
     await super.registerResource(resource, handler);
 
     // Track cleanup functions
@@ -822,7 +759,7 @@ class CleanupAwareMCPServer extends MCPServer {
       const cleanup = await handler.subscribe(resource.uri, (data) => {
         this.handleResourceChange(resource.uri, data);
       });
-
+      
       this.subscriptions.add(cleanup);
     }
   }
@@ -844,7 +781,6 @@ class CleanupAwareMCPServer extends MCPServer {
 ```
 
 2. **Use weak references for caching:**
-
 ```typescript
 class WeakCacheManager {
   private cache = new WeakMap();
@@ -882,7 +818,7 @@ const logger = new Logger({
   level: 'debug',
   format: 'json',
   includeStackTrace: true,
-  includeTimestamp: true,
+  includeTimestamp: true
 });
 
 const server = MCPSystemFactory.createServer({
@@ -892,8 +828,8 @@ const server = MCPSystemFactory.createServer({
     level: 'debug',
     enableRequestLogging: true,
     enableResponseLogging: true,
-    enableErrorLogging: true,
-  },
+    enableErrorLogging: true
+  }
 });
 ```
 
@@ -903,29 +839,29 @@ const server = MCPSystemFactory.createServer({
 class TracingMCPServer extends MCPServer {
   async handleRequest(request: MCPRequest): Promise<MCPResponse> {
     const traceId = this.generateTraceId();
-
+    
     console.log(`[${traceId}] Incoming request:`, {
       method: request.method,
       id: request.id,
-      params: request.params,
+      params: request.params
     });
 
     const startTime = Date.now();
-
+    
     try {
       const response = await super.handleRequest(request);
       const duration = Date.now() - startTime;
-
+      
       console.log(`[${traceId}] Response (${duration}ms):`, {
         id: response.id,
         success: !response.error,
-        error: response.error?.message,
+        error: response.error?.message
       });
-
+      
       return response;
     } catch (error) {
       const duration = Date.now() - startTime;
-
+      
       console.error(`[${traceId}] Error (${duration}ms):`, error);
       throw error;
     }
@@ -953,9 +889,9 @@ const healthChecker = new HealthChecker({
         const heapPercent = (usage.heapUsed / usage.heapTotal) * 100;
         return {
           healthy: heapPercent < 90,
-          details: { heapPercent, heapUsed: usage.heapUsed },
+          details: { heapPercent, heapUsed: usage.heapUsed }
         };
-      },
+      }
     },
     {
       name: 'database-connection',
@@ -966,14 +902,14 @@ const healthChecker = new HealthChecker({
         } catch (error) {
           return { healthy: false, error: error.message };
         }
-      },
-    },
-  ],
+      }
+    }
+  ]
 });
 
 healthChecker.on('unhealthy', (check) => {
   console.error(`Health check failed: ${check.name}`, check.details);
-
+  
   // Implement alerting logic
   this.sendAlert(`Health check ${check.name} failed`, check.details);
 });
@@ -983,29 +919,29 @@ healthChecker.on('unhealthy', (check) => {
 
 ### JSON-RPC Standard Errors
 
-| Code   | Name             | Description                                  |
-| ------ | ---------------- | -------------------------------------------- |
-| -32700 | Parse Error      | Invalid JSON was received                    |
-| -32600 | Invalid Request  | The JSON sent is not a valid Request object  |
+| Code | Name | Description |
+|------|------|-------------|
+| -32700 | Parse Error | Invalid JSON was received |
+| -32600 | Invalid Request | The JSON sent is not a valid Request object |
 | -32601 | Method Not Found | The method does not exist / is not available |
-| -32602 | Invalid Params   | Invalid method parameter(s)                  |
-| -32603 | Internal Error   | Internal JSON-RPC error                      |
+| -32602 | Invalid Params | Invalid method parameter(s) |
+| -32603 | Internal Error | Internal JSON-RPC error |
 
 ### MCP-Specific Errors
 
-| Code   | Name                   | Description                        | Retryable |
-| ------ | ---------------------- | ---------------------------------- | --------- |
-| -32000 | Resource Not Found     | Requested resource does not exist  | No        |
-| -32001 | Resource Access Denied | Permission denied for resource     | No        |
-| -32002 | Resource Unavailable   | Resource temporarily unavailable   | Yes       |
-| -32010 | Tool Not Found         | Requested tool does not exist      | No        |
-| -32011 | Tool Execution Failed  | Tool execution error               | Depends   |
-| -32012 | Tool Validation Failed | Tool input validation failed       | No        |
-| -32013 | Tool Timeout           | Tool execution timed out           | Yes       |
-| -32020 | Service Unavailable    | MCP service is unavailable         | Yes       |
-| -32021 | Service Overloaded     | MCP service is overloaded          | Yes       |
-| -32030 | Authentication Failed  | Authentication credentials invalid | No        |
-| -32031 | Authorization Failed   | Insufficient permissions           | No        |
+| Code | Name | Description | Retryable |
+|------|------|-------------|-----------|
+| -32000 | Resource Not Found | Requested resource does not exist | No |
+| -32001 | Resource Access Denied | Permission denied for resource | No |
+| -32002 | Resource Unavailable | Resource temporarily unavailable | Yes |
+| -32010 | Tool Not Found | Requested tool does not exist | No |
+| -32011 | Tool Execution Failed | Tool execution error | Depends |
+| -32012 | Tool Validation Failed | Tool input validation failed | No |
+| -32013 | Tool Timeout | Tool execution timed out | Yes |
+| -32020 | Service Unavailable | MCP service is unavailable | Yes |
+| -32021 | Service Overloaded | MCP service is overloaded | Yes |
+| -32030 | Authentication Failed | Authentication credentials invalid | No |
+| -32031 | Authorization Failed | Insufficient permissions | No |
 
 ## Getting Help
 
@@ -1022,21 +958,21 @@ function generateDiagnosticReport() {
       platform: process.platform,
       nodeVersion: process.version,
       memoryUsage: process.memoryUsage(),
-      cpuUsage: process.cpuUsage(),
+      cpuUsage: process.cpuUsage()
     },
     mcp: {
       version: require('@the-new-fuse/mcp-core/package.json').version,
       serverConfig: server.getConfig(),
       activeConnections: server.getConnectionCount(),
       registeredResources: server.getResourceCount(),
-      registeredTools: server.getToolCount(),
+      registeredTools: server.getToolCount()
     },
     performance: {
       uptime: process.uptime(),
       requestsHandled: server.getMetrics().totalRequests,
       averageResponseTime: server.getMetrics().averageResponseTime,
-      errorRate: server.getMetrics().errorRate,
-    },
+      errorRate: server.getMetrics().errorRate
+    }
   };
 }
 ```
@@ -1061,17 +997,17 @@ function generateDiagnosticReport() {
 
 ### Common Error Codes and Solutions
 
-| Error Code | Error Name             | Quick Fix                                     |
-| ---------- | ---------------------- | --------------------------------------------- |
-| -32700     | Parse Error            | Check JSON format, ensure valid UTF-8         |
-| -32600     | Invalid Request        | Verify jsonrpc: "2.0" and required fields     |
-| -32601     | Method Not Found       | Check method name spelling and registration   |
-| -32602     | Invalid Params         | Validate parameter types and required fields  |
-| -32000     | Resource Not Found     | Verify resource URI and permissions           |
-| -32001     | Resource Access Denied | Check authentication and authorization        |
-| -32010     | Tool Not Found         | Ensure tool is registered and name is correct |
-| -32011     | Tool Execution Failed  | Check tool implementation and parameters      |
-| -32030     | Authentication Failed  | Verify credentials and token validity         |
+| Error Code | Error Name | Quick Fix |
+|------------|------------|-----------|
+| -32700 | Parse Error | Check JSON format, ensure valid UTF-8 |
+| -32600 | Invalid Request | Verify jsonrpc: "2.0" and required fields |
+| -32601 | Method Not Found | Check method name spelling and registration |
+| -32602 | Invalid Params | Validate parameter types and required fields |
+| -32000 | Resource Not Found | Verify resource URI and permissions |
+| -32001 | Resource Access Denied | Check authentication and authorization |
+| -32010 | Tool Not Found | Ensure tool is registered and name is correct |
+| -32011 | Tool Execution Failed | Check tool implementation and parameters |
+| -32030 | Authentication Failed | Verify credentials and token validity |
 
 ### Performance Checklist
 
@@ -1100,5 +1036,4 @@ function generateDiagnosticReport() {
 - [ ] Log aggregation configured
 - [ ] Backup and recovery procedures
 
-Remember to never include sensitive information (API keys, passwords, personal
-data) in issue reports or diagnostic information.
+Remember to never include sensitive information (API keys, passwords, personal data) in issue reports or diagnostic information.

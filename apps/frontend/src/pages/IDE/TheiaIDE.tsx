@@ -3,8 +3,8 @@
  * Provides embedded access to the Theia IDE within TNF platform
  */
 
-import { AlertCircle, ExternalLink, RotateCw } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { AlertCircle, ExternalLink, RotateCw } from 'lucide-react';
 
 interface IdeStatus {
   status: 'loading' | 'ready' | 'error';
@@ -22,7 +22,7 @@ const TheiaIDE: React.FC = () => {
         const response = await fetch(`${ideUrl}/health`, {
           method: 'GET',
           headers: {
-            Accept: 'application/json',
+            'Accept': 'application/json',
           },
         });
 
@@ -59,7 +59,9 @@ const TheiaIDE: React.FC = () => {
       <div className="w-full h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 dark:bg-gray-900/50">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 border-t-2 border-blue-500/30"></div>
-          <p className="text-lg text-gray-600 dark:text-gray-400">Loading Theia IDE...</p>
+          <p className="text-lg text-gray-600 dark:text-gray-400">
+            Loading Theia IDE...
+          </p>
         </div>
       </div>
     );
@@ -72,8 +74,12 @@ const TheiaIDE: React.FC = () => {
           <div className="p-4 bg-red-100 dark:bg-red-900/20 rounded-full mb-4">
             <AlertCircle className="w-10 h-10 text-red-600 dark:text-red-400" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">IDE Unavailable</h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-lg">{ideStatus.message}</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            IDE Unavailable
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-lg">
+            {ideStatus.message}
+          </p>
           <div className="flex gap-4">
             <button
               onClick={handleRefresh}
@@ -115,7 +121,11 @@ const TheiaIDE: React.FC = () => {
       </div>
 
       {/* IDE Iframe */}
-      <iframe src={ideUrl} className="w-full flex-1 border-none bg-white" title="Theia IDE" />
+      <iframe
+        src={ideUrl}
+        className="w-full flex-1 border-none bg-white"
+        title="Theia IDE"
+      />
     </div>
   );
 };

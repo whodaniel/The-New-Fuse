@@ -1,15 +1,15 @@
-import { DatabaseService } from '@/services/database.service';
-import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/core/Alert';
-import { Button } from '@/shared/ui/core/Button';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/shared/ui/core/Card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/core/Dialog';
-import { Input } from '@/shared/ui/core/Input';
-import { Label } from '@/shared/ui/core/Label';
+import { Button } from '@/shared/ui/core/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/core/Tabs';
+import { Alert, AlertTitle, AlertDescription } from '@/shared/ui/core/Alert';
+import { Input } from '@/shared/ui/core/Input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/core/Dialog';
+import { Label } from '@/shared/ui/core/Label';
 import { useToast } from '@/shared/ui/core/Toast';
-import { DatabaseConfig, DatabaseStats } from '@/types/database';
+import { DatabaseService } from '@/services/database.service';
+import { DatabaseStats, DatabaseConfig } from '@/types/database';
 import { retry } from '@/utils/retry';
-import { useEffect, useState } from 'react';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
@@ -32,11 +32,14 @@ export function DatabaseAdmin() {
 
   const fetchDatabaseStats = async () => {
     try {
-      const result = await retry(async () => await DatabaseService.getStats(), {
-        maxRetries: MAX_RETRIES,
-        delay: RETRY_DELAY,
-        timeout: TIMEOUT,
-      });
+      const result = await retry(
+        async () => await DatabaseService.getStats(),
+        {
+          maxRetries: MAX_RETRIES,
+          delay: RETRY_DELAY,
+          timeout: TIMEOUT
+        }
+      );
       setStats(result);
     } catch (err) {
       setError('Failed to fetch database statistics');
@@ -46,11 +49,14 @@ export function DatabaseAdmin() {
 
   const fetchDatabaseConfigs = async () => {
     try {
-      const result = await retry(async () => await DatabaseService.getConfigurations(), {
-        maxRetries: MAX_RETRIES,
-        delay: RETRY_DELAY,
-        timeout: TIMEOUT,
-      });
+      const result = await retry(
+        async () => await DatabaseService.getConfigurations(),
+        {
+          maxRetries: MAX_RETRIES,
+          delay: RETRY_DELAY,
+          timeout: TIMEOUT
+        }
+      );
       setConfigs(result);
       setIsLoading(false);
     } catch (err) {
@@ -188,9 +194,7 @@ export function DatabaseAdmin() {
                   <CardContent>
                     <h3 className="font-semibold">{config.database}</h3>
                     <p>Type: {config.type}</p>
-                    <p>
-                      Host: {config.host}:{config.port}
-                    </p>
+                    <p>Host: {config.host}:{config.port}</p>
                     <Button variant="secondary" onClick={() => setSelectedConfig(config)}>
                       Edit
                     </Button>

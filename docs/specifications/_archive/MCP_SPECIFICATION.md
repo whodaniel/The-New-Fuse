@@ -1,15 +1,10 @@
 # Model Context Protocol (MCP) Specification
 
-The Model Context Protocol (MCP) is a standardized communication protocol for
-inter-LLM communication in the Fuse framework. This document outlines the
-specification, methods, and usage patterns.
+The Model Context Protocol (MCP) is a standardized communication protocol for inter-LLM communication in the Fuse framework. This document outlines the specification, methods, and usage patterns.
 
 ## Overview
 
-MCP enables different AI models and agents to share context, execute
-capabilities, and coordinate on complex tasks by providing a standardized
-interface for communication. It supports both synchronous and asynchronous
-communication patterns.
+MCP enables different AI models and agents to share context, execute capabilities, and coordinate on complex tasks by providing a standardized interface for communication. It supports both synchronous and asynchronous communication patterns.
 
 ## Protocol Structure
 
@@ -130,12 +125,9 @@ Agents declare their capabilities using a standardized format:
           "returns": {
             "type": "object",
             "properties": {
-              "sentiment": {
-                "type": "string",
-                "enum": ["positive", "negative", "neutral"]
-              },
-              "score": { "type": "number", "minimum": -1, "maximum": 1 },
-              "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+              "sentiment": {"type": "string", "enum": ["positive", "negative", "neutral"]},
+              "score": {"type": "number", "minimum": -1, "maximum": 1},
+              "confidence": {"type": "number", "minimum": 0, "maximum": 1}
             }
           }
         }
@@ -228,8 +220,7 @@ MCP defines standard error responses:
 
 ## Protocol Extensions
 
-MCP can be extended with custom message types and capabilities through
-extensions:
+MCP can be extended with custom message types and capabilities through extensions:
 
 ```json
 {
@@ -256,12 +247,10 @@ extensions:
 In the Fuse framework, MCP is implemented through:
 
 1. **MCP Server**: Handles routing and validation of MCP messages
-2. **MCP Client Libraries**: Provide language-specific implementations for
-   agents
+2. **MCP Client Libraries**: Provide language-specific implementations for agents
 3. **VS Code Extension**: Integrates MCP into the development environment
 
 For VS Code integration, use the following tasks:
-
 - Initialize MCP Integration: `Initialize MCP Integration`
 - Show MCP Tools: `Show MCP Tools`
 - Test MCP Tool: `Test MCP Tool`
@@ -278,7 +267,7 @@ import { MCPClient } from '@fuse/mcp-client';
 const client = new MCPClient({
   agentId: 'my-agent',
   agentName: 'My Agent',
-  serverUrl: 'wss://mcp.fuse.ai',
+  serverUrl: 'wss://mcp.fuse.ai'
 });
 
 // Register capabilities
@@ -287,7 +276,7 @@ await client.registerCapabilities([
     id: 'text-analysis',
     name: 'Text Analysis',
     // ...capability definition
-  },
+  }
 ]);
 
 // Handle incoming requests
@@ -297,21 +286,21 @@ client.onRequest('text-analysis', 'sentiment-analysis', async (request) => {
   return {
     sentiment: 'positive',
     score: 0.89,
-    confidence: 0.95,
+    confidence: 0.95
   };
 });
 
 // Send a request to another agent
 const response = await client.sendRequest({
   target: {
-    agentId: 'other-agent',
+    agentId: 'other-agent'
   },
   capability: 'code-generation',
   action: 'generate-function',
   parameters: {
     description: 'A function that calculates the factorial of a number',
-    language: 'javascript',
-  },
+    language: 'javascript'
+  }
 });
 ```
 
@@ -325,7 +314,7 @@ const response = await clientA.sendRequest({
   target: { agentId: 'agent-b' },
   capability: 'math',
   action: 'calculate',
-  parameters: { expression: '2 + 2' },
+  parameters: { expression: '2 + 2' }
 });
 
 // Agent B handles the request
@@ -342,7 +331,7 @@ clientB.onRequest('math', 'calculate', async (request) => {
 // Agent A publishes an event
 await clientA.publishEvent({
   eventType: 'data-updated',
-  data: { datasetId: 'dataset-123', timestamp: Date.now() },
+  data: { datasetId: 'dataset-123', timestamp: Date.now() }
 });
 
 // Agent B subscribes to events
@@ -355,8 +344,7 @@ clientB.subscribeToEvents('data-updated', async (event) => {
 ## Best Practices
 
 1. **Versioning**: Always include version information in capability declarations
-2. **Error Handling**: Provide detailed error messages with appropriate error
-   codes
+2. **Error Handling**: Provide detailed error messages with appropriate error codes
 3. **Authentication**: Secure all communications with proper authentication
 4. **Rate Limiting**: Implement rate limiting to prevent abuse
 5. **Observability**: Log MCP messages for debugging and audit purposes

@@ -1,7 +1,6 @@
 ---
 name: sequencing
-description:
-  Sequencing patterns for Remotion - delay, trim, limit duration of items
+description: Sequencing patterns for Remotion - delay, trim, limit duration of items
 metadata:
   tags: sequence, series, timing, delay, trim
 ---
@@ -46,7 +45,7 @@ Always premount any `<Sequence>`!
 Use `<Series>` when elements should play one after another without overlap.
 
 ```tsx
-import { Series } from 'remotion';
+import {Series} from 'remotion';
 
 <Series>
   <Series.Sequence durationInFrames={45}>
@@ -61,9 +60,7 @@ import { Series } from 'remotion';
 </Series>;
 ```
 
-Same as with `<Sequence>`, the items will be wrapped in an absolute fill element
-by default when using `<Series.Sequence>`, unless the `layout` prop is set to
-`none`.
+Same as with `<Sequence>`, the items will be wrapped in an absolute fill element by default when using `<Series.Sequence>`, unless the `layout` prop is set to `none`.
 
 ### Series with overlaps
 
@@ -83,8 +80,7 @@ Use negative offset for overlapping sequences:
 
 ## Frame References Inside Sequences
 
-Inside a Sequence, `useCurrentFrame()` returns the local frame (starting from
-0):
+Inside a Sequence, `useCurrentFrame()` returns the local frame (starting from 0):
 
 ```tsx
 <Sequence from={60} durationInFrames={30}>

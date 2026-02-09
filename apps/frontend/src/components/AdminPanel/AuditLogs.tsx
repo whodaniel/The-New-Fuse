@@ -73,3 +73,4 @@ export const AuditLogs: React.FC = () => {
     </div>
   );
 };
+

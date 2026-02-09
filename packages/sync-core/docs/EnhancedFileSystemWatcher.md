@@ -1,14 +1,10 @@
 # Enhanced File System Watcher
 
-The Enhanced File System Watcher extends The New Fuse's existing file
-synchronization capabilities with comprehensive chokidar-based monitoring,
-multi-tenant support, and conflict detection.
+The Enhanced File System Watcher extends The New Fuse's existing file synchronization capabilities with comprehensive chokidar-based monitoring, multi-tenant support, and conflict detection.
 
 ## Overview
 
-This component builds upon the existing browser hub sync patterns
-(`scripts/sync-browser-hub-global.cjs`) and the basic `FileSystemWatcher` in
-`packages/core/src/utils/FileSystemWatcher.ts` to provide:
+This component builds upon the existing browser hub sync patterns (`scripts/sync-browser-hub-global.cjs`) and the basic `FileSystemWatcher` in `packages/core/src/utils/FileSystemWatcher.ts` to provide:
 
 - **Multi-tenant file watching** with proper isolation
 - **Checksum-based conflict detection** to prevent data loss
@@ -18,25 +14,24 @@ This component builds upon the existing browser hub sync patterns
 
 ## Architecture Integration
 
-The Enhanced File System Watcher integrates seamlessly with existing
-infrastructure:
+The Enhanced File System Watcher integrates seamlessly with existing infrastructure:
 
 ```mermaid
 graph TB
     subgraph "Existing Infrastructure"
         Redis[Redis Pub/Sub]
         WS[AgentWebSocketService]
-        DB[(Drizzle Database)]
+        DB[(Prisma Database)]
         BrowserHub[Browser Hub Sync]
     end
-
+    
     subgraph "Enhanced File Watcher"
         EFW[EnhancedFileSystemWatcher]
         Chokidar[Chokidar Watchers]
         Checksums[Checksum Cache]
         Conflicts[Conflict Detection]
     end
-
+    
     EFW --> Redis
     EFW --> DB
     EFW --> WS
@@ -54,20 +49,19 @@ graph TB
 // Watch tenant-specific files
 await watcher.watchTenantFiles('tenant-1', [
   './data/tenants/tenant-1/**/*',
-  './apps/*/tenant-configs/tenant-1/**/*',
+  './apps/*/tenant-configs/tenant-1/**/*'
 ]);
 
 // Watch global files (cross-tenant)
 await watcher.watchGlobalFiles([
   './apps/browser-hub/**/*',
-  './packages/*/templates/**/*',
+  './packages/*/templates/**/*'
 ]);
 ```
 
 ### 2. Conflict Detection
 
 The watcher automatically detects conflicts based on:
-
 - **Checksum mismatches** between local and remote versions
 - **Concurrent modifications** from multiple sources
 - **Version conflicts** in database sync state
@@ -78,7 +72,7 @@ watcher.on('conflict', (conflict) => {
     file: conflict.filePath,
     type: conflict.conflictType, // 'checksum' | 'concurrent' | 'version'
     localChecksum: conflict.localChecksum,
-    remoteChecksum: conflict.remoteChecksum,
+    remoteChecksum: conflict.remoteChecksum
   });
 });
 ```
@@ -90,14 +84,14 @@ watcher.on('fileChange', (event) => {
   console.log(`File ${event.type}: ${event.filePath}`, {
     tenant: event.tenantId,
     checksum: event.checksum,
-    timestamp: event.timestamp,
+    timestamp: event.timestamp
   });
 });
 ```
 
 ### 4. Database Integration
 
-All file changes are tracked in the database using the existing Drizzle schema:
+All file changes are tracked in the database using the existing Prisma schema:
 
 ```sql
 -- Sync state tracking
@@ -144,7 +138,7 @@ const config = {
   paths: ['./apps/browser-hub/**/*'],
   enableChecksumValidation: true,
   enableConflictDetection: true,
-  debounceMs: 200,
+  debounceMs: 200
 };
 
 await watcher.initialize(config);
@@ -157,16 +151,14 @@ await watcher.initialize(config);
 await watcher.watchGlobalFiles([
   './apps/browser-hub/**/*.html',
   './apps/browser-hub/**/*.js',
-  './apps/browser-hub/**/*.css',
+  './apps/browser-hub/**/*.css'
 ]);
 
 // Integrate with existing sync system
 watcher.on('fileChange', async (event) => {
   if (event.filePath.includes('browser-hub')) {
     // Trigger existing browser hub sync
-    const {
-      BrowserHubSyncManager,
-    } = require('../../scripts/sync-browser-hub-global.cjs');
+    const { BrowserHubSyncManager } = require('../../scripts/sync-browser-hub-global.cjs');
     const syncManager = new BrowserHubSyncManager();
     await syncManager.copyToTargets(event.filePath);
   }
@@ -182,7 +174,7 @@ const tenants = ['tenant-1', 'tenant-2', 'tenant-3'];
 for (const tenantId of tenants) {
   await watcher.watchTenantFiles(tenantId, [
     `./data/tenants/${tenantId}/**/*`,
-    `./apps/*/tenant-configs/${tenantId}/**/*`,
+    `./apps/*/tenant-configs/${tenantId}/**/*`
   ]);
 }
 ```
@@ -193,14 +185,14 @@ for (const tenantId of tenants) {
 
 ```typescript
 interface WatcherConfig {
-  paths: string[]; // Paths to watch
-  ignored?: string[]; // Patterns to ignore
-  depth?: number; // Maximum directory depth
-  tenantId?: string; // Tenant context
-  debounceMs?: number; // Debounce delay (default: 200ms)
+  paths: string[];                    // Paths to watch
+  ignored?: string[];                 // Patterns to ignore
+  depth?: number;                     // Maximum directory depth
+  tenantId?: string;                  // Tenant context
+  debounceMs?: number;                // Debounce delay (default: 200ms)
   enableChecksumValidation?: boolean; // Enable checksum validation
-  enableConflictDetection?: boolean; // Enable conflict detection
-  batchSize?: number; // Batch size for operations
+  enableConflictDetection?: boolean;  // Enable conflict detection
+  batchSize?: number;                 // Batch size for operations
 }
 ```
 
@@ -253,7 +245,6 @@ interface FileConflict {
 ### Debouncing
 
 File changes are debounced to prevent excessive processing:
-
 - Default debounce: 200ms
 - Configurable per watcher instance
 - Prevents duplicate events for rapid file changes
@@ -321,8 +312,7 @@ watcher.on('error', (error) => {
 
 ## Integration with Multi-Tenant Browser Hub Sync
 
-The Enhanced File System Watcher works alongside the new multi-tenant browser
-hub sync script:
+The Enhanced File System Watcher works alongside the new multi-tenant browser hub sync script:
 
 ### Script Features
 
@@ -372,8 +362,7 @@ pnpm test src/watchers/EnhancedFileSystemWatcher.integration.test.ts
 
 ### Compatibility
 
-The Enhanced File System Watcher is designed to be a drop-in replacement for the
-existing `FileSystemWatcher`:
+The Enhanced File System Watcher is designed to be a drop-in replacement for the existing `FileSystemWatcher`:
 
 ```typescript
 // Old way
@@ -433,9 +422,9 @@ Adjust configuration based on usage patterns:
 
 ```typescript
 const config = {
-  debounceMs: 500, // Increase for high-volume changes
-  batchSize: 100, // Increase for better throughput
-  depth: 5, // Limit depth for large directories
+  debounceMs: 500,     // Increase for high-volume changes
+  batchSize: 100,      // Increase for better throughput
+  depth: 5             // Limit depth for large directories
 };
 ```
 
@@ -490,10 +479,6 @@ setInterval(async () => {
 
 ## Conclusion
 
-The Enhanced File System Watcher provides a robust foundation for multi-tenant
-file synchronization in The New Fuse platform. It extends existing capabilities
-while maintaining compatibility and adding essential features for
-enterprise-scale deployments.
+The Enhanced File System Watcher provides a robust foundation for multi-tenant file synchronization in The New Fuse platform. It extends existing capabilities while maintaining compatibility and adding essential features for enterprise-scale deployments.
 
-For more examples and advanced usage patterns, see the
-`EnhancedFileSystemWatcher.example.ts` file in the package.
+For more examples and advanced usage patterns, see the `EnhancedFileSystemWatcher.example.ts` file in the package.

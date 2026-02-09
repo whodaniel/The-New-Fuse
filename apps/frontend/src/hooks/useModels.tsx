@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 
 interface Model {
@@ -25,12 +25,12 @@ export function useModels(): any {
     try {
       const response = await api.get('/api/models');
       setModels(response.data);
-
+      
       // Set default selected model if none is selected
       if (!selectedModel && response.data.length > 0) {
         setSelectedModel(response.data[0].id);
       }
-
+      
       setError(null);
     } catch (err) {
       setError(err as Error);
@@ -51,9 +51,9 @@ export function useModels(): any {
         model: selectedModel,
         prompt,
         max_tokens: 1000,
-        temperature: 0.7,
+        temperature: 0.7
       });
-
+      
       setError(null);
       return response.data.completion;
     } catch (err) {
@@ -71,6 +71,6 @@ export function useModels(): any {
     setSelectedModel,
     loading,
     error,
-    generateCompletion,
+    generateCompletion
   };
 }

@@ -889,7 +889,7 @@ export interface DatabaseTransaction {
 export interface Migration {
   version: string;
   name: string;
-  up: (drizzle: unknown) => Promise<void>;
-  down: (drizzle: unknown) => Promise<void>;
+  up: (prisma: unknown) => Promise<void>;
+  down: (prisma: unknown) => Promise<void>;
   timestamp: number;
 }

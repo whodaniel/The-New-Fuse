@@ -29,7 +29,6 @@ Create a new resource in the registry.
 **Endpoint:** `POST /api/resources`
 
 **Request Body:**
-
 ```json
 {
   "name": "Data Processing Skill",
@@ -51,7 +50,6 @@ Create a new resource in the registry.
 ```
 
 **Response:** `201 Created`
-
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -70,7 +68,6 @@ Search and filter resources with pagination.
 **Endpoint:** `GET /api/resources`
 
 **Query Parameters:**
-
 - `query` (string): Search query
 - `category` (array): Filter by categories
 - `type` (array): Filter by types
@@ -86,20 +83,17 @@ Search and filter resources with pagination.
 - `maxVersion` (string): Maximum version
 - `createdAfter` (string): Created after date (ISO 8601)
 - `createdBefore` (string): Created before date (ISO 8601)
-- `sortBy` (string): Sort field (name, createdAt, updatedAt, usageCount,
-  downloadCount, favoriteCount)
+- `sortBy` (string): Sort field (name, createdAt, updatedAt, usageCount, downloadCount, favoriteCount)
 - `sortOrder` (string): Sort order (asc, desc)
 - `page` (number): Page number (default: 1)
 - `limit` (number): Items per page (default: 20, max: 100)
 
 **Example Request:**
-
 ```http
 GET /api/resources?query=data&category=CLAUDE_SKILL&isVerified=true&page=1&limit=20
 ```
 
 **Response:** `200 OK`
-
 ```json
 {
   "data": [
@@ -124,7 +118,6 @@ Get a specific resource by its ID.
 **Endpoint:** `GET /api/resources/:id`
 
 **Response:** `200 OK`
-
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -154,7 +147,6 @@ Update an existing resource.
 **Endpoint:** `PUT /api/resources/:id`
 
 **Request Body:**
-
 ```json
 {
   "description": "Updated description",
@@ -164,7 +156,6 @@ Update an existing resource.
 ```
 
 **Response:** `200 OK`
-
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -188,7 +179,6 @@ List all available resource categories.
 **Endpoint:** `GET /api/resources/categories`
 
 **Response:** `200 OK`
-
 ```json
 [
   "CLAUDE_SKILL",
@@ -206,7 +196,6 @@ Get all versions of a resource.
 **Endpoint:** `GET /api/resources/:id/versions`
 
 **Response:** `200 OK`
-
 ```json
 [
   {
@@ -233,7 +222,6 @@ Get a specific version of a resource.
 **Endpoint:** `GET /api/resources/:id/versions/:version`
 
 **Response:** `200 OK`
-
 ```json
 {
   "id": "version-1",
@@ -252,7 +240,6 @@ Download a resource (logs download count).
 **Endpoint:** `POST /api/resources/:id/download`
 
 **Response:** `200 OK`
-
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -401,7 +388,6 @@ curl -X PUT http://localhost:3000/api/resources/550e8400-e29b-41d4-a716-44665544
 ### Error Examples
 
 **Invalid Version:**
-
 ```json
 {
   "statusCode": 400,
@@ -411,7 +397,6 @@ curl -X PUT http://localhost:3000/api/resources/550e8400-e29b-41d4-a716-44665544
 ```
 
 **Access Denied:**
-
 ```json
 {
   "statusCode": 403,
@@ -421,7 +406,6 @@ curl -X PUT http://localhost:3000/api/resources/550e8400-e29b-41d4-a716-44665544
 ```
 
 **Resource Not Found:**
-
 ```json
 {
   "statusCode": 404,

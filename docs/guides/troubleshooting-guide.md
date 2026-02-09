@@ -3,24 +3,18 @@
 ## 🚨 **Common Issues & Solutions**
 
 ### **Issue 1: Tabs Show Placeholder Content**
+**Problem:** Tabs load but show basic pages like "This page is working and ready for content"
 
-**Problem:** Tabs load but show basic pages like "This page is working and ready
-for content"
-
-**Root Cause:** The frontend service is running but not serving the full
-application
+**Root Cause:** The frontend service is running but not serving the full application
 
 **Solutions:**
-
 1. **Check if frontend is fully loaded:**
-
    ```bash
    curl http://localhost:3000
    curl http://localhost:3000/workflows
    ```
 
 2. **Restart with full frontend:**
-
    ```bash
    # Stop current services (Ctrl+C)
    pnpm run dev:with-frontend
@@ -35,13 +29,11 @@ application
    ```
 
 ### **Issue 2: Services Show as Online but Tabs Don't Load**
-
 **Problem:** Service status shows green dots but content doesn't load in tabs
 
 **Root Cause:** Services are starting but not fully ready
 
 **Solutions:**
-
 1. **Wait for full startup (30-60 seconds)**
 2. **Check service logs:**
    ```bash
@@ -55,13 +47,11 @@ application
    ```
 
 ### **Issue 3: Connection Refused Errors**
-
 **Problem:** `ERR_CONNECTION_REFUSED` in console
 
 **Root Cause:** Services not started or ports blocked
 
 **Solutions:**
-
 1. **Start services first:**
    ```bash
    pnpm run dev
@@ -79,13 +69,11 @@ application
    ```
 
 ### **Issue 4: Blank or White Tabs**
-
 **Problem:** Tabs open but show blank white content
 
 **Root Cause:** iframe loading issues or CORS problems
 
 **Solutions:**
-
 1. **Check browser console** for specific errors
 2. **Try reloading the tab** (reload button or Ctrl+R)
 3. **Check if service is actually running:**
@@ -97,41 +85,34 @@ application
    - Compare with tab content
 
 ### **Issue 5: Services Start But Don't Connect**
-
 **Problem:** `pnpm run dev` starts services but browser hub doesn't connect
 
 **Root Cause:** Timing issues or service readiness
 
 **Solutions:**
-
 1. **Wait for services to be fully ready** (check logs)
 2. **Refresh service status** (click refresh button)
 3. **Check service health manually:**
-
    ```bash
    # API Gateway
    curl http://localhost:3005/health
-
+   
    # Frontend
    curl http://localhost:3000
-
+   
    # SkIDEancer
    curl http://localhost:3007
-
+   
    # Backend
    curl http://localhost:3004/api/agents
    ```
 
 ### **Issue 6: Canvas Native Module Missing (canvas.node)**
+**Problem:** Tests fail with "Cannot find module 'canvas.node'" or canvas package not working
 
-**Problem:** Tests fail with "Cannot find module 'canvas.node'" or canvas
-package not working
-
-**Root Cause:** Bun has compatibility issues with native modules like canvas,
-causing silent installation failures
+**Root Cause:** Bun has compatibility issues with native modules like canvas, causing silent installation failures
 
 **Symptoms:**
-
 - `node_modules/canvas` directory missing after `pnpm install`
 - Tests fail with canvas.node missing errors
 - Canvas package appears in package.json but doesn't install
@@ -139,20 +120,17 @@ causing silent installation failures
 **Solution - Hybrid Package Manager Approach:**
 
 1. **Switch to compatible Node.js version:**
-
    ```bash
    nvm use 18.20.5  # or any Node.js 18.x version
    ```
 
 2. **Clean installation with script bypass:**
-
    ```bash
    rm -rf node_modules bun.lockb
    pnpm install --ignore-scripts
    ```
 
 3. **Manually compile canvas native bindings:**
-
    ```bash
    cd node_modules/canvas
    node-gyp rebuild
@@ -160,34 +138,29 @@ causing silent installation failures
    ```
 
 4. **Verify canvas is working:**
-
    ```bash
    # Test with Node.js
    node -e "const { createCanvas } = require('canvas'); console.log('Canvas loaded successfully!'); const canvas = createCanvas(200, 200); console.log('Canvas created successfully!');"
-
+   
    # Test with Bun
    bun -e "const { createCanvas } = require('canvas'); console.log('Canvas loaded successfully with Bun!'); const canvas = createCanvas(200, 200); console.log('Canvas created successfully with Bun!');"
    ```
 
 **Why This Works:**
-
 - Bun's native module compilation has compatibility issues with certain packages
-- Using `--ignore-scripts` allows package installation without problematic build
-  scripts
+- Using `--ignore-scripts` allows package installation without problematic build scripts
 - Manual compilation with `node-gyp` uses the more mature Node.js toolchain
 - Once compiled, the native module works with both Node.js and Bun runtimes
 
-**System Dependencies (macOS):** If you encounter compilation errors, ensure you
-have the required system libraries:
-
+**System Dependencies (macOS):**
+If you encounter compilation errors, ensure you have the required system libraries:
 ```bash
 # Install via Homebrew if needed
 brew install cairo pango libpng jpeg giflib librsvg
 ```
 
-**Alternative Approach:** If the above doesn't work, you can use npm for
-installation and Bun for runtime:
-
+**Alternative Approach:**
+If the above doesn't work, you can use npm for installation and Bun for runtime:
 ```bash
 # Temporarily change package manager
 # Edit package.json: "packageManager": "npm@10.8.2"
@@ -199,7 +172,6 @@ pnpm test  # Use Bun for running tests
 ## 🔍 **Diagnostic Commands**
 
 ### **Check Service Status**
-
 ```bash
 # Quick service check
 pnpm run check-build
@@ -214,7 +186,6 @@ curl -s http://localhost:3007 | head -20
 ```
 
 ### **Check Native Module Installation**
-
 ```bash
 # Check if canvas is installed
 ls -la node_modules/canvas/
@@ -231,7 +202,6 @@ node --version  # Should be 18.x or 20.x for best native module support
 ```
 
 ### **Check Logs**
-
 ```bash
 # Service logs (if using start-services script)
 tail -f /tmp/tnf-services.log
@@ -243,7 +213,6 @@ cd apps/ide-ide && pnpm run dev
 ```
 
 ### **Network Debugging**
-
 ```bash
 # Check what's listening on ports
 netstat -tulpn | grep :300
@@ -257,15 +226,12 @@ telnet localhost 3007
 ## 🎯 **Step-by-Step Troubleshooting**
 
 ### **Step 1: Verify Build Status**
-
 ```bash
 pnpm run check-build
 ```
-
 **Expected:** All components should show as built
 
 ### **Step 2: Start Services Properly**
-
 ```bash
 # Stop any existing services
 pkill -f "turbo run dev"
@@ -279,21 +245,18 @@ pnpm run dev
 ```
 
 ### **Step 3: Wait for Full Startup**
-
 **Wait 30-60 seconds** for all services to be ready
 
 ### **Step 4: Check Service Endpoints**
-
 ```bash
 # These should all respond
 curl http://localhost:3000
-curl http://localhost:3005/health
+curl http://localhost:3005/health  
 curl http://localhost:3007
 curl http://localhost:3004/api/agents
 ```
 
 ### **Step 5: Test Browser Hub**
-
 1. **Launch browser hub** (should happen automatically with `pnpm run dev`)
 2. **Check service status** in toolbar (should show green dots)
 3. **Try opening a service** (click sidebar item)
@@ -302,7 +265,6 @@ curl http://localhost:3004/api/agents
 ## 🚀 **Advanced Troubleshooting**
 
 ### **Frontend Service Issues**
-
 ```bash
 # Check if frontend is built
 ls -la apps/frontend/dist/
@@ -319,7 +281,6 @@ curl http://localhost:3000/analytics
 ```
 
 ### **API Gateway Issues**
-
 ```bash
 # Check API Gateway health
 curl http://localhost:3005/health
@@ -333,7 +294,6 @@ pnpm run dev
 ```
 
 ### **SkIDEancer IDE Issues**
-
 ```bash
 # Check SkIDEancer status
 curl -I http://localhost:3007
@@ -349,21 +309,18 @@ pnpm run dev
 ## 💡 **Pro Tips**
 
 ### **Development Workflow**
-
 1. **Always use `pnpm run dev`** - it handles everything
 2. **Wait for full startup** - don't rush to open tabs
 3. **Check service status** before opening services
 4. **Use browser console** to debug loading issues
 
 ### **Performance Tips**
-
 1. **Keep services running** between sessions
 2. **Use smart build** to avoid rebuilds
 3. **Close unused tabs** to save memory
 4. **Monitor service logs** for issues
 
 ### **Common Fixes**
-
 1. **Restart everything:** `pkill -f turbo && pnpm run dev`
 2. **Clear browser cache:** Hard refresh (Ctrl+Shift+R)
 3. **Check firewall:** Ensure ports 3000-3008 are open
@@ -372,7 +329,6 @@ pnpm run dev
 ## 🎉 **Expected Behavior**
 
 ### **When Everything Works:**
-
 - ✅ `pnpm run dev` starts all services
 - ✅ Browser hub launches automatically
 - ✅ Service status shows green dots
@@ -381,20 +337,15 @@ pnpm run dev
 - ✅ Smooth navigation between services
 
 ### **Startup Timeline:**
-
 - **0-10s:** Build check and port clearing
 - **10-30s:** Services starting up
 - **30-60s:** Services fully ready
 - **60s+:** Browser hub connects and works perfectly
 
-**If you're still having issues after following this guide, the problem is
-likely in the service startup sequence or frontend build configuration.** 🔧
+**If you're still having issues after following this guide, the problem is likely in the service startup sequence or frontend build configuration.** 🔧
 
 ## 📚 **Additional Resources**
 
-- **[Native Modules Guide](docs/NATIVE_MODULES_GUIDE.md)** - Comprehensive guide
-  for handling native module compatibility issues with Bun
-- **[Build Optimization](docs/BUILD_OPTIMIZATION.md)** - Memory-efficient build
-  strategies and troubleshooting
-- **[Development Setup](DEVELOPMENT_SETUP.md)** - Complete development
-  environment setup guide
+- **[Native Modules Guide](docs/NATIVE_MODULES_GUIDE.md)** - Comprehensive guide for handling native module compatibility issues with Bun
+- **[Build Optimization](docs/BUILD_OPTIMIZATION.md)** - Memory-efficient build strategies and troubleshooting
+- **[Development Setup](DEVELOPMENT_SETUP.md)** - Complete development environment setup guide

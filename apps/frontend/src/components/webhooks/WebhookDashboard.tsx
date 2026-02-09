@@ -1,32 +1,24 @@
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@the-new-fuse/ui-consolidated';
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@the-new-fuse/ui-consolidated';
+import { Button } from '@the-new-fuse/ui-consolidated';
+import { Badge } from '@the-new-fuse/ui-consolidated';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@the-new-fuse/ui-consolidated';
 import {
   Activity,
-  AlertTriangle,
-  BarChart3,
-  CheckCircle,
   Plus,
   Settings,
   TrendingUp,
+  AlertTriangle,
+  CheckCircle,
+  BarChart3,
 } from 'lucide-react';
-import { useState } from 'react';
-import { BusinessMetricsDisplay } from './BusinessMetricsDisplay';
+import { useWebhookManagement } from './hooks/useWebhookManagement';
 import { useBusinessMetrics } from './hooks/useBusinessMetrics';
 import { useSSEConnection } from './hooks/useSSEConnection';
-import { useWebhookManagement } from './hooks/useWebhookManagement';
+import { WebhookConfigurationForm } from './WebhookConfigurationForm';
 import { IntegrationStatusGrid } from './IntegrationStatusGrid';
 import { RealtimeEventStream } from './RealtimeEventStream';
-import { WebhookConfigurationForm } from './WebhookConfigurationForm';
+import { BusinessMetricsDisplay } from './BusinessMetricsDisplay';
 import { WebhookDeliveryLogs } from './WebhookDeliveryLogs';
 
 export interface WebhookDashboardProps {
@@ -52,7 +44,10 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
     getPerformanceGrade,
   } = useBusinessMetrics();
 
-  const { connectionState, latestEvent } = useSSEConnection();
+  const {
+    connectionState,
+    latestEvent,
+  } = useSSEConnection();
 
   const activeConfigurations = getActiveConfigurations();
   const failedDeliveries = getFailedDeliveries();
@@ -95,13 +90,11 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
           </p>
         </div>
         <div className="flex items-center space-x-3">
-          <Badge
-            className={getStatusColor(connectionState.isConnected ? 'connected' : 'disconnected')}
-          >
+          <Badge className={getStatusColor(connectionState.isConnected ? 'connected' : 'disconnected')}>
             <Activity className="w-3 h-3 mr-1" />
             {connectionState.isConnected ? 'Live' : 'Offline'}
           </Badge>
-          <Button
+          <Button 
             onClick={() => setShowNewWebhookForm(true)}
             className="bg-blue-600 hover:bg-blue-700"
           >
@@ -140,9 +133,10 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
               {metricsLoading ? '...' : formatNumber(metrics?.totalEvents || 0)}
             </div>
             <p className="text-xs text-muted-foreground">
-              {metrics?.revenueMetrics.totalRevenue
+              {metrics?.revenueMetrics.totalRevenue 
                 ? `$${formatNumber(metrics.revenueMetrics.totalRevenue)} revenue`
-                : 'No revenue data'}
+                : 'No revenue data'
+              }
             </p>
           </CardContent>
         </Card>
@@ -157,9 +151,7 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
               {metricsLoading ? '...' : `${Math.round(healthScore)}% (${performanceGrade})`}
             </div>
             <p className="text-xs text-muted-foreground">
-              {metrics?.errorRate
-                ? `${(metrics.errorRate * 100).toFixed(1)}% error rate`
-                : 'No errors'}
+              {metrics?.errorRate ? `${(metrics.errorRate * 100).toFixed(1)}% error rate` : 'No errors'}
             </p>
           </CardContent>
         </Card>
@@ -172,9 +164,7 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
           <CardContent>
             <div className="text-2xl font-bold">{failedDeliveries.length}</div>
             <p className="text-xs text-muted-foreground">
-              {latestEvent
-                ? `Last event: ${new Date(latestEvent.timestamp).toLocaleTimeString()}`
-                : 'No recent events'}
+              {latestEvent ? `Last event: ${new Date(latestEvent.timestamp).toLocaleTimeString()}` : 'No recent events'}
             </p>
           </CardContent>
         </Card>
@@ -197,7 +187,10 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
                 <CardTitle>Integration Status</CardTitle>
               </CardHeader>
               <CardContent>
-                <IntegrationStatusGrid configurations={configurations} loading={webhookLoading} />
+                <IntegrationStatusGrid 
+                  configurations={configurations}
+                  loading={webhookLoading}
+                />
               </CardContent>
             </Card>
 
@@ -206,7 +199,10 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
                 <CardTitle>Recent Activity</CardTitle>
               </CardHeader>
               <CardContent>
-                <RealtimeEventStream maxEvents={5} showFilters={false} />
+                <RealtimeEventStream 
+                  maxEvents={5}
+                  showFilters={false}
+                />
               </CardContent>
             </Card>
           </div>
@@ -216,13 +212,17 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
               <CardTitle>Business Metrics Overview</CardTitle>
             </CardHeader>
             <CardContent>
-              <BusinessMetricsDisplay metrics={metrics} loading={metricsLoading} compact={true} />
+              <BusinessMetricsDisplay 
+                metrics={metrics}
+                loading={metricsLoading}
+                compact={true}
+              />
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="integrations">
-          <IntegrationStatusGrid
+          <IntegrationStatusGrid 
             configurations={configurations}
             loading={webhookLoading}
             showActions={true}
@@ -231,11 +231,18 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
         </TabsContent>
 
         <TabsContent value="events">
-          <RealtimeEventStream showFilters={true} showMetrics={true} />
+          <RealtimeEventStream 
+            showFilters={true}
+            showMetrics={true}
+          />
         </TabsContent>
 
         <TabsContent value="analytics">
-          <BusinessMetricsDisplay metrics={metrics} loading={metricsLoading} compact={false} />
+          <BusinessMetricsDisplay 
+            metrics={metrics}
+            loading={metricsLoading}
+            compact={false}
+          />
         </TabsContent>
 
         <TabsContent value="logs">
@@ -259,7 +266,7 @@ export function WebhookDashboard({ className }: WebhookDashboardProps) {
       {showNewWebhookForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <WebhookConfigurationForm
+            <WebhookConfigurationForm 
               onSuccess={() => setShowNewWebhookForm(false)}
               onCancel={() => setShowNewWebhookForm(false)}
             />

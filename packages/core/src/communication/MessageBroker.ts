@@ -64,7 +64,7 @@ export class MessageBroker {
 
   async getMessageHistory(topic?: string): Promise<Message[]> {
     if (topic) {
-      return this.messageQueue.filter((msg) => msg.topic === topic);
+      return this.messageQueue.filter(msg => msg.topic === topic);
     }
     return [...this.messageQueue];
   }

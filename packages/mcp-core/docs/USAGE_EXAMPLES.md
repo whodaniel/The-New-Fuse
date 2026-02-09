@@ -1,7 +1,6 @@
 # MCP Core Usage Examples
 
-This document provides comprehensive usage examples for common MCP integration
-patterns and real-world scenarios.
+This document provides comprehensive usage examples for common MCP integration patterns and real-world scenarios.
 
 ## Table of Contents
 
@@ -26,15 +25,15 @@ import { MCPSystemFactory, ToolHandler } from '@the-new-fuse/mcp-core';
 // Simple echo tool
 class EchoTool extends ToolHandler {
   name = 'echo';
-
+  
   async execute(params: { message: string }): Promise<any> {
     return {
       echo: params.message,
       timestamp: new Date().toISOString(),
-      length: params.message.length,
+      length: params.message.length
     };
   }
-
+  
   async validate(params: any): Promise<boolean> {
     return typeof params?.message === 'string';
   }
@@ -45,23 +44,20 @@ async function startEchoServer() {
   const server = MCPSystemFactory.createServer({
     name: 'echo-server',
     version: '1.0.0',
-    port: 8080,
+    port: 8080
   });
 
-  await server.registerTool(
-    {
-      name: 'echo',
-      description: 'Echoes back the provided message',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          message: { type: 'string', maxLength: 1000 },
-        },
-        required: ['message'],
+  await server.registerTool({
+    name: 'echo',
+    description: 'Echoes back the provided message',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', maxLength: 1000 }
       },
-    },
-    new EchoTool()
-  );
+      required: ['message']
+    }
+  }, new EchoTool());
 
   await server.start();
   console.log('Echo server running on port 8080');
@@ -78,16 +74,16 @@ import { MCPSystemFactory } from '@the-new-fuse/mcp-core';
 async function useEchoClient() {
   const client = MCPSystemFactory.createClient({
     serverUrl: 'ws://localhost:8080',
-    connectionTimeout: 5000,
+    connectionTimeout: 5000
   });
 
   try {
     await client.connect();
-
+    
     const result = await client.callTool('echo', {
-      message: 'Hello, MCP!',
+      message: 'Hello, MCP!'
     });
-
+    
     console.log('Echo result:', result);
   } finally {
     await client.disconnect();
@@ -102,11 +98,7 @@ useEchoClient().catch(console.error);
 ### Multi-Service MCP Server
 
 ```typescript
-import {
-  MCPSystemFactory,
-  ResourceHandler,
-  ToolHandler,
-} from '@the-new-fuse/mcp-core';
+import { MCPSystemFactory, ResourceHandler, ToolHandler } from '@the-new-fuse/mcp-core';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
@@ -123,18 +115,18 @@ class FileSystemHandler extends ResourceHandler {
       content,
       mimeType: 'text/plain',
       size: content.length,
-      lastModified: (await fs.stat(filePath)).mtime.toISOString(),
+      lastModified: (await fs.stat(filePath)).mtime.toISOString()
     };
   }
 
   async list(pattern?: string): Promise<any[]> {
     const files = await fs.readdir(this.basePath);
     return files
-      .filter((file) => !pattern || file.includes(pattern))
-      .map((file) => ({
+      .filter(file => !pattern || file.includes(pattern))
+      .map(file => ({
         uri: `file:///${file}`,
         name: file,
-        mimeType: 'text/plain',
+        mimeType: 'text/plain'
       }));
   }
 
@@ -162,10 +154,10 @@ class TextProcessorTool extends ToolHandler {
       case 'reverse':
         return { result: text.split('').reverse().join(''), operation };
       case 'wordcount':
-        return {
-          result: text.split(/\s+/).length,
+        return { 
+          result: text.split(/\s+/).length, 
           operation,
-          characters: text.length,
+          characters: text.length 
         };
       default:
         throw new Error(`Unknown operation: ${operation}`);
@@ -175,9 +167,7 @@ class TextProcessorTool extends ToolHandler {
   async validate(params: any): Promise<boolean> {
     return (
       typeof params?.text === 'string' &&
-      ['uppercase', 'lowercase', 'reverse', 'wordcount'].includes(
-        params?.operation
-      )
+      ['uppercase', 'lowercase', 'reverse', 'wordcount'].includes(params?.operation)
     );
   }
 }
@@ -192,63 +182,56 @@ async function createMultiServiceServer() {
     rateLimiting: {
       enabled: true,
       maxRequestsPerMinute: 1000,
-      burstSize: 50,
-    },
+      burstSize: 50
+    }
   });
 
   // Register file system resources
   const fileHandler = new FileSystemHandler('./data');
-  await server.registerResource(
-    {
-      uri: 'file:///',
-      name: 'File System',
-      description: 'Local file system access',
-      permissions: { read: true, write: false },
-    },
-    fileHandler
-  );
+  await server.registerResource({
+    uri: 'file:///',
+    name: 'File System',
+    description: 'Local file system access',
+    permissions: { read: true, write: false }
+  }, fileHandler);
 
   // Register text processing tool
-  await server.registerTool(
-    {
-      name: 'text-processor',
-      description: 'Processes text with various operations',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          text: { type: 'string', minLength: 1 },
-          operation: {
-            type: 'string',
-            enum: ['uppercase', 'lowercase', 'reverse', 'wordcount'],
-          },
-        },
-        required: ['text', 'operation'],
+  await server.registerTool({
+    name: 'text-processor',
+    description: 'Processes text with various operations',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        text: { type: 'string', minLength: 1 },
+        operation: {
+          type: 'string',
+          enum: ['uppercase', 'lowercase', 'reverse', 'wordcount']
+        }
       },
-    },
-    new TextProcessorTool()
-  );
+      required: ['text', 'operation']
+    }
+  }, new TextProcessorTool());
 
   // Add server capabilities
   await server.registerCapability({
     name: 'file-access',
     version: '1.0.0',
     description: 'File system access capability',
-    methods: ['resources/list', 'resources/read'],
+    methods: ['resources/list', 'resources/read']
   });
 
   await server.registerCapability({
     name: 'text-processing',
     version: '1.0.0',
     description: 'Text processing capability',
-    methods: ['tools/call'],
+    methods: ['tools/call']
   });
 
   await server.start();
   console.log('Multi-service server running on port 8080');
-
+  
   return server;
 }
 ```
 
-For more comprehensive examples, see the individual example files in the
-examples/ directory.
+For more comprehensive examples, see the individual example files in the examples/ directory.

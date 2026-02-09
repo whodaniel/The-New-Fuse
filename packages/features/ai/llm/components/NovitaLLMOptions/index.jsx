@@ -1,6 +1,6 @@
-import System from '@/models/system';
-import { CaretDown, CaretUp } from '@phosphor-icons/react';
-import { useEffect, useState } from 'react';
+import System from "@/models/system";
+import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { useState, useEffect } from "react";
 
 export default function NovitaLLMOptions({ settings }) {
   return (
@@ -15,13 +15,15 @@ export default function NovitaLLMOptions({ settings }) {
             name="NovitaLLMApiKey"
             className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Novita API Key"
-            defaultValue={settings?.NovitaLLMApiKey ? '*'.repeat(20) : ''}
+            defaultValue={settings?.NovitaLLMApiKey ? "*".repeat(20) : ""}
             required={true}
             autoComplete="off"
             spellCheck={false}
           />
         </div>
-        {!settings?.credentialsOnly && <NovitaModelSelection settings={settings} />}
+        {!settings?.credentialsOnly && (
+          <NovitaModelSelection settings={settings} />
+        )}
       </div>
       <AdvancedControls settings={settings} />
     </div>
@@ -39,7 +41,7 @@ function AdvancedControls({ settings }) {
           onClick={() => setShowAdvancedControls(!showAdvancedControls)}
           className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
-          {showAdvancedControls ? 'Hide' : 'Show'} advanced settings
+          {showAdvancedControls ? "Hide" : "Show"} advanced settings
           {showAdvancedControls ? (
             <CaretUp size={14} className="ml-1" />
           ) : (
@@ -79,7 +81,7 @@ function NovitaModelSelection({ settings }) {
   useEffect(() => {
     async function findCustomModels() {
       setLoading(true);
-      const { models } = await System.customModels('novita');
+      const { models } = await System.customModels("novita");
       if (models?.length > 0) {
         const modelsByOrganization = models.reduce((acc, model) => {
           acc[model.organization] = acc[model.organization] || [];

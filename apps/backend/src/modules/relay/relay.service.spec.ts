@@ -1,7 +1,8 @@
-import { ConfigService } from '@nestjs/config';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { RelayService } from './relay.service';
+import { ConfigService } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 jest.mock('@the-new-fuse/relay-core', () => ({
   RelayServer: jest.fn().mockImplementation(() => ({
@@ -46,34 +47,16 @@ describe('RelayService', () => {
   describe('Agent Management', () => {
     it('should not allow more than 10,000 agents', () => {
       for (let i = 0; i < 10001; i++) {
-        service.registerAgent({
-          id: `agent${i}`,
-          name: `Agent ${i}`,
-          type: 'test',
-          capabilities: [],
-          status: 'online',
-        });
+        service.registerAgent({ id: `agent${i}`, name: `Agent ${i}`, type: 'test', capabilities: [], status: 'online' });
       }
       expect(service.getAllAgents()).resolves.toHaveLength(10000);
     });
 
     it('should evict least recently used agent', async () => {
       for (let i = 0; i < 10000; i++) {
-        await service.registerAgent({
-          id: `agent${i}`,
-          name: `Agent ${i}`,
-          type: 'test',
-          capabilities: [],
-          status: 'online',
-        });
+        await service.registerAgent({ id: `agent${i}`, name: `Agent ${i}`, type: 'test', capabilities: [], status: 'online' });
       }
-      await service.registerAgent({
-        id: 'new-agent',
-        name: 'New Agent',
-        type: 'test',
-        capabilities: [],
-        status: 'online',
-      });
+      await service.registerAgent({ id: 'new-agent', name: 'New Agent', type: 'test', capabilities: [], status: 'online' });
 
       expect(service.getAgent('agent0')).resolves.toBeUndefined();
       expect(service.getAgent('new-agent')).resolves.toBeDefined();

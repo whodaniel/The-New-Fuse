@@ -18,9 +18,7 @@ type CommonProps = {
   'data-testid'?: string;
 };
 
-export const generateButtonProps = (
-  options: GenerateComponentPropsOptions = {},
-): CommonProps & {
+export const generateButtonProps = (options: GenerateComponentPropsOptions = {}): CommonProps & {
   variant: string;
   size: string;
   disabled?: boolean;
@@ -35,12 +33,10 @@ export const generateButtonProps = (
   disabled: options.disabled,
   loading: options.loading,
   ...(options.withChildren && { children: 'Click me' }),
-  ...(options.withCallbacks && { onClick: () => console.log('Button clicked') }),
+  ...(options.withCallbacks && { onClick: () => console.log('Button clicked') })
 });
 
-export const generateCardProps = (
-  options: GenerateComponentPropsOptions = {},
-): CommonProps & {
+export const generateCardProps = (options: GenerateComponentPropsOptions = {}): CommonProps & {
   title: string;
   subtitle?: string;
   elevation?: number;
@@ -52,13 +48,11 @@ export const generateCardProps = (
   subtitle: options.withChildren ? 'Test Subtitle' : undefined,
   elevation: Math.floor(Math.random() * 5),
   ...(options.withChildren && {
-    children: '<div>Card content</div>',
-  }),
+    children: '<div>Card content</div>'
+  })
 });
 
-export const generateFormProps = (
-  options: GenerateComponentPropsOptions = {},
-): CommonProps & {
+export const generateFormProps = (options: GenerateComponentPropsOptions = {}): CommonProps & {
   initialValues: Record<string, any>;
   onSubmit?: (values: any) => void;
   validate?: (values: any) => Record<string, string>;
@@ -69,7 +63,7 @@ export const generateFormProps = (
     username: '',
     email: '',
     password: '',
-    remember: false,
+    remember: false
   },
   ...(options.withCallbacks && {
     onSubmit: (values: any) => console.log('Form submitted:', values),
@@ -79,13 +73,11 @@ export const generateFormProps = (
         errors.email = 'Required';
       }
       return errors;
-    },
-  }),
+    }
+  })
 });
 
-export const generateListProps = (
-  data: any[] = [],
-): CommonProps & {
+export const generateListProps = (data: any[] = []): CommonProps & {
   items: any[];
   renderItem?: (item: any) => React.ReactNode;
   keyExtractor?: (item: any) => string;
@@ -93,22 +85,17 @@ export const generateListProps = (
 } => ({
   id: generateId(),
   'data-testid': 'list-test',
-  items:
-    data.length > 0
-      ? data
-      : [
-          { id: '1', title: 'Item 1' },
-          { id: '2', title: 'Item 2' },
-          { id: '3', title: 'Item 3' },
-        ],
+  items: data.length > 0 ? data : [
+    { id: '1', title: 'Item 1' },
+    { id: '2', title: 'Item 2' },
+    { id: '3', title: 'Item 3' }
+  ],
   renderItem: (item: any) => `<div>${item.title}</div>`,
   keyExtractor: (item: any) => item.id,
-  onItemClick: (item: any) => console.log('Item clicked:', item),
+  onItemClick: (item: any) => console.log('Item clicked:', item)
 });
 
-export const generateModalProps = (
-  options: GenerateComponentPropsOptions = {},
-): CommonProps & {
+export const generateModalProps = (options: GenerateComponentPropsOptions = {}): CommonProps & {
   isOpen: boolean;
   title: string;
   onClose?: () => void;
@@ -121,16 +108,14 @@ export const generateModalProps = (
   title: 'Test Modal',
   size: options.size || 'medium',
   ...(options.withCallbacks && {
-    onClose: () => console.log('Modal closed'),
+    onClose: () => console.log('Modal closed')
   }),
   ...(options.withChildren && {
-    children: '<div>Modal content</div>',
-  }),
+    children: '<div>Modal content</div>'
+  })
 });
 
-export const generateTableProps = (
-  data: any[] = [],
-): CommonProps & {
+export const generateTableProps = (data: any[] = []): CommonProps & {
   columns: Array<{
     id: string;
     header: string;
@@ -146,16 +131,13 @@ export const generateTableProps = (
   columns: [
     { id: 'id', header: 'ID', accessor: 'id', sortable: true },
     { id: 'name', header: 'Name', accessor: 'name', sortable: true },
-    { id: 'status', header: 'Status', accessor: 'status' },
+    { id: 'status', header: 'Status', accessor: 'status' }
   ],
-  data:
-    data.length > 0
-      ? data
-      : [
-          { id: '1', name: 'Item 1', status: 'active' },
-          { id: '2', name: 'Item 2', status: 'inactive' },
-          { id: '3', name: 'Item 3', status: 'pending' },
-        ],
+  data: data.length > 0 ? data : [
+    { id: '1', name: 'Item 1', status: 'active' },
+    { id: '2', name: 'Item 2', status: 'inactive' },
+    { id: '3', name: 'Item 3', status: 'pending' }
+  ],
   onSort: (column: string) => console.log('Sort by:', column),
-  onRowClick: (row: any) => console.log('Row clicked:', row),
+  onRowClick: (row: any) => console.log('Row clicked:', row)
 });

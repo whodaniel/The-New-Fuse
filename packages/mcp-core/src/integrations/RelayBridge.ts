@@ -1,13 +1,13 @@
 /**
  * Relay Bridge for MCP Core Integration
- *
+ * 
  * This bridge integrates mcp-core with relay-core, replacing the existing
  * MCPTransport with our unified MCPServer implementation while maintaining
  * backward compatibility.
  */
 
-import { MCPSystemConfig, MCPSystemFactory } from '../factory/MCPSystemFactory';
 import { MCPServer } from '../server/MCPServer';
+import { MCPSystemFactory, MCPSystemConfig } from '../factory/MCPSystemFactory';
 import { LogLevel } from '../types/common';
 
 // Import types from relay-core for integration
@@ -34,14 +34,14 @@ export interface RelayBridgeConfig {
     enableAuth: boolean;
     logLevel: LogLevel;
   };
-
+  
   /** Relay components */
   relay: {
     agentRegistry: MasterAgentRegistry;
     heartbeatService?: HeartbeatMonitoringService;
     logger: Logger;
   };
-
+  
   /** Bridge options */
   options?: {
     replaceExistingTransport: boolean;
@@ -88,20 +88,20 @@ export class RelayBridge {
           timeout: 30000,
           enableAuth: this.config.server.enableAuth,
           enableTLS: false,
-          logLevel: this.config.server.logLevel,
+          logLevel: this.config.server.logLevel
         },
         relay: {
           enabled: true,
           agentRegistry: this.config.relay.agentRegistry,
           heartbeatService: this.config.relay.heartbeatService,
-          logger: this.config.relay.logger,
+          logger: this.config.relay.logger
         },
         workflow: {
-          enabled: true,
+          enabled: true
         },
         monitoring: {
-          enabled: this.config.options?.enableMetrics ?? true,
-        },
+          enabled: this.config.options?.enableMetrics ?? true
+        }
       };
 
       // Create the integrated system
@@ -113,6 +113,7 @@ export class RelayBridge {
 
       this.isInitialized = true;
       this.logger.info('✅ Relay Bridge initialized successfully');
+
     } catch (error) {
       this.logger.error('❌ Failed to initialize Relay Bridge', error);
       throw error;
@@ -129,15 +130,16 @@ export class RelayBridge {
 
     try {
       this.logger.info('🚀 Starting Relay Bridge...');
-
+      
       await this.mcpSystem.start();
-
+      
       // Migrate existing resources if enabled
       if (this.config.options?.migrateExistingResources) {
         await this.migrateExistingResources();
       }
 
       this.logger.info('✅ Relay Bridge started successfully');
+
     } catch (error) {
       this.logger.error('❌ Failed to start Relay Bridge', error);
       throw error;
@@ -154,10 +156,11 @@ export class RelayBridge {
 
     try {
       this.logger.info('🛑 Stopping Relay Bridge...');
-
+      
       await this.mcpSystem.stop();
-
+      
       this.logger.info('✅ Relay Bridge stopped successfully');
+
     } catch (error) {
       this.logger.error('❌ Error stopping Relay Bridge', error);
       throw error;
@@ -198,7 +201,7 @@ export class RelayBridge {
     if (!this.mcpSystem) {
       return {
         status: 'unhealthy',
-        reason: 'Bridge not initialized',
+        reason: 'Bridge not initialized'
       };
     }
 
@@ -209,13 +212,13 @@ export class RelayBridge {
         bridge: 'operational',
         components: systemHealth.components,
         uptime: systemHealth.uptime,
-        timestamp: new Date(),
+        timestamp: new Date()
       };
     } catch (error) {
       return {
         status: 'unhealthy',
         reason: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date(),
+        timestamp: new Date()
       };
     }
   }
@@ -240,11 +243,11 @@ export class RelayBridge {
             content: JSON.stringify(agents, null, 2),
             metadata: {
               count: agents.length,
-              generated: new Date().toISOString(),
-            },
+              generated: new Date().toISOString()
+            }
           };
-        },
-      },
+        }
+      }
     });
 
     // Register heartbeat status resource
@@ -259,19 +262,19 @@ export class RelayBridge {
             const status = {
               active: true,
               lastCheck: new Date().toISOString(),
-              monitoredAgents: 0, // Would be actual count
+              monitoredAgents: 0 // Would be actual count
             };
-
+            
             return {
               uri: 'relay://heartbeat',
               mimeType: 'application/json',
               content: JSON.stringify(status, null, 2),
               metadata: {
-                generated: new Date().toISOString(),
-              },
+                generated: new Date().toISOString()
+              }
             };
-          },
-        },
+          }
+        }
       });
     }
 
@@ -281,25 +284,20 @@ export class RelayBridge {
       name: 'Relay Configuration',
       description: 'Current relay bridge configuration',
       handler: {
-        read: () =>
-          Promise.resolve({
-            uri: 'relay://config',
-            mimeType: 'application/json',
-            content: JSON.stringify(
-              {
-                server: this.config.server,
-                options: this.config.options,
-                initialized: this.isInitialized,
-                running: this.isRunning(),
-              },
-              null,
-              2
-            ),
-            metadata: {
-              generated: new Date().toISOString(),
-            },
-          }),
-      },
+        read: () => Promise.resolve({
+          uri: 'relay://config',
+          mimeType: 'application/json',
+          content: JSON.stringify({
+            server: this.config.server,
+            options: this.config.options,
+            initialized: this.isInitialized,
+            running: this.isRunning()
+          }, null, 2),
+          metadata: {
+            generated: new Date().toISOString()
+          }
+        })
+      }
     });
 
     this.logger.debug('📋 Registered relay-specific resources');
@@ -319,44 +317,42 @@ export class RelayBridge {
         type: 'object',
         properties: {
           agentId: { type: 'string' },
-          includeMetadata: { type: 'boolean', default: false },
+          includeMetadata: { type: 'boolean', default: false }
         },
-        required: ['agentId'],
+        required: ['agentId']
       },
       handler: {
         execute: async (params: { agentId: string; includeMetadata?: boolean }) => {
           try {
             const agent = this.config.relay.agentRegistry?.getAgent?.(params.agentId);
-
+            
             if (!agent) {
               return {
                 success: false,
-                error: `Agent not found: ${params.agentId}`,
+                error: `Agent not found: ${params.agentId}`
               };
             }
 
-            const result = params.includeMetadata
-              ? agent
-              : {
-                  id: agent.id,
-                  name: agent.name,
-                  type: agent.type,
-                  status: agent.status,
-                  lastSeen: agent.lastSeen,
-                };
+            const result = params.includeMetadata ? agent : {
+              id: agent.id,
+              name: agent.name,
+              type: agent.type,
+              status: agent.status,
+              lastSeen: agent.lastSeen
+            };
 
             return {
               success: true,
-              result,
+              result
             };
           } catch (error) {
             return {
               success: false,
-              error: error instanceof Error ? error.message : 'Agent lookup failed',
+              error: error instanceof Error ? error.message : 'Agent lookup failed'
             };
           }
-        },
-      },
+        }
+      }
     });
 
     // Register agent registration tool
@@ -372,37 +368,35 @@ export class RelayBridge {
               id: { type: 'string' },
               name: { type: 'string' },
               type: { type: 'string' },
-              capabilities: { type: 'array', items: { type: 'string' } },
+              capabilities: { type: 'array', items: { type: 'string' } }
             },
-            required: ['id', 'name', 'type'],
-          },
+            required: ['id', 'name', 'type']
+          }
         },
-        required: ['agentData'],
+        required: ['agentData']
       },
       handler: {
         execute: async (params: { agentData: any }) => {
           try {
             // This would integrate with the actual agent registry
-            const registrationResult = await this.config.relay.agentRegistry?.registerAgent?.(
-              params.agentData
-            );
-
+            const registrationResult = await this.config.relay.agentRegistry?.registerAgent?.(params.agentData);
+            
             return {
               success: true,
               result: {
                 registered: true,
                 agentId: params.agentData.id,
-                timestamp: new Date().toISOString(),
-              },
+                timestamp: new Date().toISOString()
+              }
             };
           } catch (error) {
             return {
               success: false,
-              error: error instanceof Error ? error.message : 'Agent registration failed',
+              error: error instanceof Error ? error.message : 'Agent registration failed'
             };
           }
-        },
-      },
+        }
+      }
     });
 
     // Register heartbeat trigger tool
@@ -414,9 +408,9 @@ export class RelayBridge {
           type: 'object',
           properties: {
             agentId: { type: 'string' },
-            force: { type: 'boolean', default: false },
+            force: { type: 'boolean', default: false }
           },
-          required: ['agentId'],
+          required: ['agentId']
         },
         handler: {
           execute: async (params: { agentId: string; force?: boolean }) => {
@@ -426,21 +420,21 @@ export class RelayBridge {
                 agentId: params.agentId,
                 heartbeatSent: true,
                 timestamp: new Date().toISOString(),
-                forced: params.force || false,
+                forced: params.force || false
               };
 
               return {
                 success: true,
-                result,
+                result
               };
             } catch (error) {
               return {
                 success: false,
-                error: error instanceof Error ? error.message : 'Heartbeat trigger failed',
+                error: error instanceof Error ? error.message : 'Heartbeat trigger failed'
               };
             }
-          },
-        },
+          }
+        }
       });
     }
 
@@ -452,11 +446,11 @@ export class RelayBridge {
    */
   private async migrateExistingResources(): Promise<void> {
     this.logger.info('🔄 Migrating existing resources...');
-
+    
     try {
       // This would implement migration logic from the old MCPTransport
       // For now, we'll just log that migration would happen here
-
+      
       this.logger.info('✅ Resource migration completed');
     } catch (error) {
       this.logger.error('❌ Resource migration failed', error);
@@ -475,7 +469,7 @@ export class RelayBridge {
     // Return an adapter that mimics the old MCPTransport interface
     return {
       name: 'mcp',
-
+      
       async start(): Promise<boolean> {
         try {
           if (!this.isRunning()) {
@@ -498,9 +492,9 @@ export class RelayBridge {
             jsonrpc: '2.0',
             id: message.id || Date.now(),
             method: message.method || 'unknown',
-            params: message.params,
+            params: message.params
           });
-
+          
           return response.error === undefined;
         } catch {
           return false;
@@ -514,7 +508,7 @@ export class RelayBridge {
 
       isConnected(): boolean {
         return this.isRunning();
-      },
+      }
     };
   }
 }
@@ -534,6 +528,7 @@ export async function replaceMCPTransport(
   relayConfig: Omit<RelayBridgeConfig, 'server'>,
   serverConfig?: Partial<RelayBridgeConfig['server']>
 ): Promise<RelayBridge> {
+  
   // Extract configuration from existing transport if possible
   const bridgeConfig: RelayBridgeConfig = {
     server: {
@@ -542,7 +537,7 @@ export async function replaceMCPTransport(
       port: serverConfig?.port || 3000,
       host: serverConfig?.host || 'localhost',
       enableAuth: serverConfig?.enableAuth || false,
-      logLevel: serverConfig?.logLevel || LogLevel.INFO,
+      logLevel: serverConfig?.logLevel || LogLevel.INFO
     },
     relay: relayConfig.relay,
     options: {
@@ -550,12 +545,12 @@ export async function replaceMCPTransport(
       enableBackwardCompatibility: true,
       migrateExistingResources: true,
       enableMetrics: true,
-      ...relayConfig.options,
-    },
+      ...relayConfig.options
+    }
   };
 
   const bridge = new RelayBridge(bridgeConfig);
-
+  
   // Stop existing transport if it's running
   if (existingTransport?.isConnected?.()) {
     await existingTransport.stop?.();

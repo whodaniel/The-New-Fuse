@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function WorkspaceOverview() {
   return (
     <div className="p-6">
@@ -17,7 +19,7 @@ export default function WorkspaceOverview() {
             </div>
           </div>
         </div>
-
+        
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex items-center">
             <div className="text-2xl mr-3">🔄</div>
@@ -27,7 +29,7 @@ export default function WorkspaceOverview() {
             </div>
           </div>
         </div>
-
+        
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex items-center">
             <div className="text-2xl mr-3">👥</div>
@@ -37,7 +39,7 @@ export default function WorkspaceOverview() {
             </div>
           </div>
         </div>
-
+        
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex items-center">
             <div className="text-2xl mr-3">📊</div>
@@ -60,7 +62,7 @@ export default function WorkspaceOverview() {
               <p className="text-sm text-gray-500">2 minutes ago</p>
             </div>
           </div>
-
+          
           <div className="flex items-center p-3 bg-gray-50 rounded-lg">
             <div className="text-lg mr-3">👥</div>
             <div className="flex-1">
@@ -68,7 +70,7 @@ export default function WorkspaceOverview() {
               <p className="text-sm text-gray-500">15 minutes ago</p>
             </div>
           </div>
-
+          
           <div className="flex items-center p-3 bg-gray-50 rounded-lg">
             <div className="text-lg mr-3">🔄</div>
             <div className="flex-1">

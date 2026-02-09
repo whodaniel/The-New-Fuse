@@ -1,4 +1,4 @@
-import { AuthError, DeviceInfo, LockoutStatus, User } from './auth';
+import { User, DeviceInfo, LockoutStatus, AuthError } from './auth';
 
 export interface SecurityService {
   checkRateLimit(ip: string): boolean;

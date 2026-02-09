@@ -178,12 +178,12 @@ function fixTypesPackage() {
 function createMissingServices() {
     const missingFiles = [
         {
-            path: 'packages/api/src/modules/drizzle/drizzle.service.ts',
+            path: 'packages/api/src/modules/prisma/prisma.service.ts',
             content: `import { Injectable, OnModuleInit } from '@nestjs/common';
-import { DrizzleClient } from '@drizzle/client';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
-export class DatabaseService extends DrizzleClient implements OnModuleInit {
+export class PrismaService extends PrismaClient implements OnModuleInit {
   async onModuleInit() {
     await this.$connect();
   }

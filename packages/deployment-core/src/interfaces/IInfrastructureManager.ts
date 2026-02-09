@@ -4,18 +4,18 @@
  */
 
 import {
-  ApplyResult,
-  CloudProvider,
-  DestroyResult,
-  ExecutionPlan,
-  InfrastructureChange,
-  InfrastructureState,
   InfrastructureTemplate,
   InfrastructureUpdate,
-  PlanResult,
+  InfrastructureChange,
+  ExecutionPlan,
   ProvisionResult,
   UpdateResult,
+  DestroyResult,
   ValidationResult,
+  PlanResult,
+  ApplyResult,
+  InfrastructureState,
+  CloudProvider
 } from '../types/infrastructure';
 
 export interface IInfrastructureManager {
@@ -128,7 +128,7 @@ export enum HealthLevel {
   HEALTHY = 'healthy',
   DEGRADED = 'degraded',
   UNHEALTHY = 'unhealthy',
-  UNKNOWN = 'unknown',
+  UNKNOWN = 'unknown'
 }
 
 export interface ResourceHealth {
@@ -150,7 +150,7 @@ export enum IssueSeverity {
   HIGH = 'high',
   MEDIUM = 'medium',
   LOW = 'low',
-  INFO = 'info',
+  INFO = 'info'
 }
 
 export interface CostMetrics {
@@ -164,7 +164,7 @@ export interface CostMetrics {
 export enum CostTrend {
   INCREASING = 'increasing',
   DECREASING = 'decreasing',
-  STABLE = 'stable',
+  STABLE = 'stable'
 }
 
 export interface ResourceCost {
@@ -186,7 +186,7 @@ export enum OptimizationType {
   RESERVED_INSTANCES = 'reserved_instances',
   SPOT_INSTANCES = 'spot_instances',
   STORAGE_OPTIMIZATION = 'storage_optimization',
-  NETWORK_OPTIMIZATION = 'network_optimization',
+  NETWORK_OPTIMIZATION = 'network_optimization'
 }
 
 export interface PerformanceMetrics {
@@ -224,7 +224,7 @@ export enum VulnerabilitySeverity {
   CRITICAL = 'critical',
   HIGH = 'high',
   MEDIUM = 'medium',
-  LOW = 'low',
+  LOW = 'low'
 }
 
 export interface ComplianceStatus {
@@ -238,7 +238,7 @@ export enum ComplianceLevel {
   COMPLIANT = 'compliant',
   NON_COMPLIANT = 'non_compliant',
   PARTIALLY_COMPLIANT = 'partially_compliant',
-  NOT_ASSESSED = 'not_assessed',
+  NOT_ASSESSED = 'not_assessed'
 }
 
 export interface SecurityRecommendation {
@@ -254,12 +254,12 @@ export enum SecurityRecommendationType {
   ENCRYPTION = 'encryption',
   NETWORK_SECURITY = 'network_security',
   MONITORING = 'monitoring',
-  PATCH_MANAGEMENT = 'patch_management',
+  PATCH_MANAGEMENT = 'patch_management'
 }
 
 export enum RecommendationPriority {
   CRITICAL = 'critical',
   HIGH = 'high',
   MEDIUM = 'medium',
-  LOW = 'low',
+  LOW = 'low'
 }

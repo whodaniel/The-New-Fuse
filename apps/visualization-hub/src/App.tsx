@@ -14,13 +14,11 @@ import {
   Container,
   Flex,
   Heading,
-  HStack,
   Icon,
   SimpleGrid,
-  Stack,
   Text,
 } from '@chakra-ui/react';
-import { FiActivity, FiArrowLeft, FiChevronRight, FiCpu, FiLayers, FiWifi } from 'react-icons/fi';
+import { FiActivity, FiArrowLeft, FiChevronRight, FiCpu, FiLayers } from 'react-icons/fi';
 
 // Temporary type fix for react-icons in strict mode
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,14 +27,9 @@ const FiArrowLeftFixed = FiArrowLeft as any;
 const FiChevronRightFixed = FiChevronRight as any;
 
 import AgentFlowViewer from './components/AgentFlowViewer';
-import ServiceArchitectureMap from './components/ServiceArchitectureMap';
-import VisualizationsList from './components/VisualizationsList';
-import WorkflowStatusDashboard from './components/WorkflowStatusDashboard';
-import { useAGUI } from './hooks/useAGUI';
 
 function App() {
-  const [view, setView] = useState('dashboard'); // dashboard | agent-flow | service-map | workflow-monitor
-  const { connected } = useAGUI();
+  const [view, setView] = useState('dashboard'); // dashboard | agent-flow
 
   return (
     <Box minH="100vh" bg="gray.50">
@@ -44,23 +37,9 @@ function App() {
         <Container maxW="container.xl">
           <Flex justify="space-between" align="center">
             <Box>
-              <HStack spacing={4} mb={2}>
-                <Heading as="h1" size="xl">
-                  Visualization Hub
-                </Heading>
-                <Badge
-                  colorScheme={connected ? 'green' : 'red'}
-                  variant="solid"
-                  display="flex"
-                  alignItems="center"
-                  px={2}
-                  py={1}
-                  borderRadius="full"
-                >
-                  <Icon as={FiWifi} mr={1} />
-                  {connected ? 'AG-UI CONNECTED' : 'AG-UI OFFLINE'}
-                </Badge>
-              </HStack>
+              <Heading as="h1" size="xl" mb={2}>
+                Visualization Hub
+              </Heading>
               <Text fontSize="lg" opacity={0.9}>
                 Central intelligence for The New Fuse agent ecosystem
               </Text>
@@ -92,8 +71,8 @@ function App() {
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbItem isCurrentPage>
-                <BreadcrumbLink color="white" fontWeight="bold" textTransform="capitalize">
-                  {view.replace('-', ' ')}
+                <BreadcrumbLink color="white" fontWeight="bold">
+                  {view === 'agent-flow' ? 'Agent Flow' : view}
                 </BreadcrumbLink>
               </BreadcrumbItem>
             </Breadcrumb>
@@ -103,87 +82,75 @@ function App() {
 
       <Container maxW="container.xl">
         {view === 'dashboard' ? (
-          <Stack spacing={8}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
-              <Card _hover={{ transform: 'translateY(-5px)', shadow: 'lg' }} transition="all 0.2s">
-                <CardHeader pb={0}>
-                  <Flex align="center" justify="space-between">
-                    <Icon as={FiActivity} boxSize={8} color="green.500" />
-                    <Badge colorScheme="green">Live</Badge>
-                  </Flex>
-                </CardHeader>
-                <CardBody>
-                  <Heading size="md" mb={2}>
-                    Agent Flow
-                  </Heading>
-                  <Text color="gray.600">
-                    Real-time network graph of agent communication and message passing.
-                  </Text>
-                </CardBody>
-                <CardFooter>
-                  <Button colorScheme="blue" width="full" onClick={() => setView('agent-flow')}>
-                    View Live Graph
-                  </Button>
-                </CardFooter>
-              </Card>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
+            <Card _hover={{ transform: 'translateY(-5px)', shadow: 'lg' }} transition="all 0.2s">
+              <CardHeader pb={0}>
+                <Flex align="center" justify="space-between">
+                  <Icon as={FiActivity} boxSize={8} color="green.500" />
+                  <Badge colorScheme="green">Live</Badge>
+                </Flex>
+              </CardHeader>
+              <CardBody>
+                <Heading size="md" mb={2}>
+                  Agent Flow
+                </Heading>
+                <Text color="gray.600">
+                  Real-time network graph of agent communication and message passing.
+                </Text>
+              </CardBody>
+              <CardFooter>
+                <Button colorScheme="blue" width="full" onClick={() => setView('agent-flow')}>
+                  View Live Graph
+                </Button>
+              </CardFooter>
+            </Card>
 
-              <Card _hover={{ transform: 'translateY(-5px)', shadow: 'lg' }} transition="all 0.2s">
-                <CardHeader pb={0}>
-                  <Flex align="center" justify="space-between">
-                    <Icon as={FiLayers} boxSize={8} color="purple.500" />
-                    <Badge colorScheme="purple">Active</Badge>
-                  </Flex>
-                </CardHeader>
-                <CardBody>
-                  <Heading size="md" mb={2}>
-                    Service Map
-                  </Heading>
-                  <Text color="gray.600">
-                    Hierarchical treemap of all microservices and their resource usage.
-                  </Text>
-                </CardBody>
-                <CardFooter>
-                  <Button colorScheme="blue" width="full" onClick={() => setView('service-map')}>
-                    Explore
-                  </Button>
-                </CardFooter>
-              </Card>
+            <Card _hover={{ transform: 'translateY(-5px)', shadow: 'lg' }} transition="all 0.2s">
+              <CardHeader pb={0}>
+                <Flex align="center" justify="space-between">
+                  <Icon as={FiLayers} boxSize={8} color="purple.500" />
+                  <Badge colorScheme="purple">Static</Badge>
+                </Flex>
+              </CardHeader>
+              <CardBody>
+                <Heading size="md" mb={2}>
+                  Service Map
+                </Heading>
+                <Text color="gray.600">
+                  Hierarchical treemap of all microservices and their resource usage.
+                </Text>
+              </CardBody>
+              <CardFooter>
+                <Button colorScheme="blue" variant="outline" width="full">
+                  Explore
+                </Button>
+              </CardFooter>
+            </Card>
 
-              <Card _hover={{ transform: 'translateY(-5px)', shadow: 'lg' }} transition="all 0.2s">
-                <CardHeader pb={0}>
-                  <Flex align="center" justify="space-between">
-                    <Icon as={FiCpu} boxSize={8} color="orange.500" />
-                    <Badge colorScheme="orange">Beta</Badge>
-                  </Flex>
-                </CardHeader>
-                <CardBody>
-                  <Heading size="md" mb={2}>
-                    Workflow Monitor
-                  </Heading>
-                  <Text color="gray.600">
-                    Track status and performance of active autonomous workflows.
-                  </Text>
-                </CardBody>
-                <CardFooter>
-                  <Button
-                    colorScheme="blue"
-                    width="full"
-                    onClick={() => setView('workflow-monitor')}
-                  >
-                    Monitor
-                  </Button>
-                </CardFooter>
-              </Card>
-            </SimpleGrid>
-
-            <VisualizationsList />
-          </Stack>
+            <Card _hover={{ transform: 'translateY(-5px)', shadow: 'lg' }} transition="all 0.2s">
+              <CardHeader pb={0}>
+                <Flex align="center" justify="space-between">
+                  <Icon as={FiCpu} boxSize={8} color="orange.500" />
+                  <Badge colorScheme="orange">Beta</Badge>
+                </Flex>
+              </CardHeader>
+              <CardBody>
+                <Heading size="md" mb={2}>
+                  Workflow Monitor
+                </Heading>
+                <Text color="gray.600">
+                  Track status and performance of active autonomous workflows.
+                </Text>
+              </CardBody>
+              <CardFooter>
+                <Button colorScheme="blue" variant="outline" width="full">
+                  Monitor
+                </Button>
+              </CardFooter>
+            </Card>
+          </SimpleGrid>
         ) : (
-          <Box>
-            {view === 'agent-flow' && <AgentFlowViewer />}
-            {view === 'service-map' && <ServiceArchitectureMap />}
-            {view === 'workflow-monitor' && <WorkflowStatusDashboard />}
-          </Box>
+          view === 'agent-flow' && <AgentFlowViewer />
         )}
       </Container>
     </Box>

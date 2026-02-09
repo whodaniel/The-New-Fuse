@@ -3,7 +3,6 @@
 ## Frontend Environment Variables
 
 ### Core Configuration
-
 ```env
 # API URL for backend communication
 VITE_API_URL=http://localhost:3001
@@ -19,7 +18,6 @@ VITE_DEBUG_MODE=false
 ```
 
 ### Authentication
-
 ```env
 # Authentication token storage key
 VITE_AUTH_TOKEN_KEY=auth_token
@@ -31,7 +29,6 @@ VITE_TOKEN_REFRESH_INTERVAL=15
 ## Backend Environment Variables
 
 ### Server Configuration
-
 ```env
 # Server port number
 PORT=3001
@@ -47,7 +44,6 @@ RATE_LIMIT=100
 ```
 
 ### Database Configuration
-
 ```env
 # PostgreSQL connection details
 DB_HOST=localhost
@@ -63,7 +59,6 @@ DB_POOL_MAX=10
 ```
 
 ### Authentication
-
 ```env
 # JWT configuration
 JWT_SECRET=your_jwt_secret
@@ -76,7 +71,6 @@ BCRYPT_SALT_ROUNDS=12
 ```
 
 ### Monitoring
-
 ```env
 # Monitoring configuration
 ENABLE_MONITORING=true
@@ -89,7 +83,6 @@ HEALTH_CHECK_TIMEOUT=5000
 ```
 
 ### Logging
-
 ```env
 # Log configuration
 LOG_LEVEL=info
@@ -102,7 +95,6 @@ MAX_LOG_FILES=5
 ## Usage Instructions
 
 1. Copy the appropriate `.env.example` file for your service:
-
    ```bash
    cp apps/frontend/.env.example apps/frontend/.env
    cp apps/api/.env.example apps/api/.env
@@ -121,7 +113,6 @@ MAX_LOG_FILES=5
 ## Environment Specific Configurations
 
 ### Development
-
 ```env
 NODE_ENV=development
 LOG_LEVEL=debug
@@ -130,7 +121,6 @@ DB_SSL=false
 ```
 
 ### Production
-
 ```env
 NODE_ENV=production
 LOG_LEVEL=info
@@ -140,7 +130,6 @@ RATE_LIMIT=60
 ```
 
 ### Testing
-
 ```env
 NODE_ENV=test
 LOG_LEVEL=debug

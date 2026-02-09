@@ -1,15 +1,6 @@
+import { IsString, IsNotEmpty, IsEnum, IsOptional, IsArray, IsObject, IsBoolean, Matches } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-  Matches,
-} from 'class-validator';
-import { ResourceCategory, ResourceStatus, ResourceType, ResourceVisibility } from '../types';
+import { ResourceCategory, ResourceType, ResourceVisibility, ResourceStatus } from '../types';
 
 export class CreateResourceDto {
   @ApiProperty({ description: 'Resource name' })
@@ -56,11 +47,7 @@ export class CreateResourceDto {
   @IsNotEmpty()
   source!: string;
 
-  @ApiPropertyOptional({
-    enum: ResourceVisibility,
-    description: 'Resource visibility',
-    default: ResourceVisibility.PUBLIC,
-  })
+  @ApiPropertyOptional({ enum: ResourceVisibility, description: 'Resource visibility', default: ResourceVisibility.PUBLIC })
   @IsEnum(ResourceVisibility)
   @IsOptional()
   visibility?: ResourceVisibility;
@@ -96,11 +83,7 @@ export class CreateResourceDto {
   @IsOptional()
   keywords?: string[];
 
-  @ApiPropertyOptional({
-    enum: ResourceStatus,
-    description: 'Resource status',
-    default: ResourceStatus.ACTIVE,
-  })
+  @ApiPropertyOptional({ enum: ResourceStatus, description: 'Resource status', default: ResourceStatus.ACTIVE })
   @IsEnum(ResourceStatus)
   @IsOptional()
   status?: ResourceStatus;

@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { DrizzleClient } from "@the-new-fuse/database";
+import { PrismaClient } from "@the-new-fuse/database";
 
 interface UserRequest extends Request {
   user: {
@@ -18,13 +18,13 @@ interface CreateChatRequest {
 }
 
 const router = express.Router();
-const drizzle = new DrizzleClient();
+const prisma = new PrismaClient();
 
 // Get all chats for a user
 router.get("/", async (req: UserRequest, res: Response) => {
   try {
     const userId = req.user.userId;
-    const chats = await drizzle.chat.findMany({
+    const chats = await prisma.chat.findMany({
       where: { userId },
       orderBy: { updatedAt: "desc" },
     });
@@ -46,7 +46,7 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
     const chatId = req.params.id;
     const userId = req.user.userId;
     
-    const chat = await drizzle.chat.findUnique({
+    const chat = await prisma.chat.findUnique({
       where: { id: chatId },
       include: {
         messages: {
@@ -79,7 +79,7 @@ router.post(
       const { title } = req.body;
       const userId = req.user.userId;
       
-      const chat = await drizzle.chat.create({
+      const chat = await prisma.chat.create({
         data: {
           title,
           userId,
@@ -109,7 +109,7 @@ router.post(
       const userId = req.user.userId;
 
       // Verify chat ownership
-      const chat = await drizzle.chat.findUnique({
+      const chat = await prisma.chat.findUnique({
         where: { id: chatId },
       });
 
@@ -117,7 +117,7 @@ router.post(
         return res.status(404).json({ message: "Chat not found" });
       }
       
-      const message = await drizzle.message.create({
+      const message = await prisma.message.create({
         data: {
           content,
           role,
@@ -126,7 +126,7 @@ router.post(
       });
 
       // Update chat's updatedAt timestamp
-      await drizzle.chat.update({
+      await prisma.chat.update({
         where: { id: chatId },
         data: { updatedAt: new Date() },
       });
@@ -151,7 +151,7 @@ router.delete("/:id", async (req: UserRequest, res: Response) => {
     const userId = req.user.userId;
 
     // Verify chat ownership
-    const chat = await drizzle.chat.findUnique({
+    const chat = await prisma.chat.findUnique({
       where: { id: chatId },
     });
 
@@ -160,12 +160,12 @@ router.delete("/:id", async (req: UserRequest, res: Response) => {
     }
 
     // Delete all messages in the chat
-    await drizzle.message.deleteMany({
+    await prisma.message.deleteMany({
       where: { chatId },
     });
 
     // Delete the chat
-    await drizzle.chat.delete({
+    await prisma.chat.delete({
       where: { id: chatId },
     });
 

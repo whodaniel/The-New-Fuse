@@ -3,7 +3,6 @@
 ## Current Structure Analysis
 
 ### Packages to Merge
-
 - `api-client`: Client-side API utilities
 - `api-core`: Core API functionality
 - `core-api`: Additional API implementations
@@ -11,7 +10,6 @@
 ## Consolidation Strategy
 
 ### 1. Package Merge
-
 - Create unified package under `@the-new-fuse/api`
 - Maintain all current functionality
 - Ensure backward compatibility
@@ -19,7 +17,6 @@
 ### 2. Interface Standardization
 
 #### API Client
-
 - Implement unified HTTP client
 - Standardize request/response handling
 - Implement proper error handling
@@ -27,21 +24,18 @@
 - Add response transformers
 
 #### Core Functionality
-
 - Consolidate endpoint implementations
 - Standardize authentication handling
 - Implement rate limiting
 - Add request validation
 
 #### Error Handling
-
 - Create unified error types
 - Implement consistent error responses
 - Add proper error logging
 - Implement retry mechanisms
 
 ### 3. Type System
-
 - Create shared type definitions
 - Implement proper validation schemas
 - Add runtime type checking
@@ -76,7 +70,6 @@
 ## Migration Guide
 
 ### Client Usage
-
 ```typescript
 // Old way
 import { ApiClient } from '@the-new-fuse/api-client';
@@ -87,7 +80,6 @@ import { createApiClient } from '@the-new-fuse/api';
 ```
 
 ### Configuration
-
 ```typescript
 interface ApiConfig {
   baseUrl: string;

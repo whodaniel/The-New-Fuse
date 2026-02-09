@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 
 export interface PromptTemplate {
@@ -50,9 +50,7 @@ export function usePromptTemplates(): any {
 
   const transformBackendTemplate = (backendTemplate: any): PromptTemplate => {
     // Find the current version or the latest one
-    let currentVersion = backendTemplate.versions?.find(
-      (v: any) => v.id === backendTemplate.currentVersionId
-    );
+    let currentVersion = backendTemplate.versions?.find((v: any) => v.id === backendTemplate.currentVersionId);
     if (!currentVersion && backendTemplate.versions?.length > 0) {
       // Fallback to the latest version if currentVersionId is not set or not found
       currentVersion = backendTemplate.versions.sort((a: any, b: any) => b.version - a.version)[0];
@@ -69,7 +67,7 @@ export function usePromptTemplates(): any {
       createdAt: backendTemplate.createdAt,
       updatedAt: backendTemplate.updatedAt,
       versions: backendTemplate.versions || [],
-      currentVersionId: backendTemplate.currentVersionId,
+      currentVersionId: backendTemplate.currentVersionId
     };
   };
 
@@ -105,7 +103,7 @@ export function usePromptTemplates(): any {
           name: params.name,
           description: params.description,
           category: params.category,
-          tags: params.tags,
+          tags: params.tags
         });
 
         // And create a new version for the content change
@@ -113,7 +111,7 @@ export function usePromptTemplates(): any {
           content: params.content,
           variables: params.variables,
           label: 'Updated via Workbench',
-          changelog: params.changelog || 'Updated via Workbench',
+          changelog: params.changelog || 'Updated via Workbench'
         });
       } else {
         // Create new template (POST)
@@ -123,14 +121,12 @@ export function usePromptTemplates(): any {
           description: params.description,
           category: params.category || 'General',
           tags: params.tags || [],
-          versions: [
-            {
-              content: params.content,
-              variables: params.variables,
-              version: 1,
-              label: 'Initial Version',
-            },
-          ],
+          versions: [{
+            content: params.content,
+            variables: params.variables,
+            version: 1,
+            label: 'Initial Version'
+          }]
         });
       }
 
@@ -182,6 +178,6 @@ export function usePromptTemplates(): any {
     saveTemplate,
     loadTemplate,
     loadTemplates,
-    getTemplateVersions,
+    getTemplateVersions
   };
 }

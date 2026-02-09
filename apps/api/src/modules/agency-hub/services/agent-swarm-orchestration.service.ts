@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { DatabaseService, drizzleAuditLogsRepository } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database';
 
 export interface SwarmConfiguration {
   maxConcurrentExecutions: number;
@@ -8,15 +8,11 @@ export interface SwarmConfiguration {
   enableAutoScaling: boolean;
   agentSelectionStrategy: 'round_robin' | 'quality_based' | 'load_balanced';
   coordinationMode: 'centralized' | 'distributed' | 'hybrid';
-  tenantId?: string;
-  organizationId?: string;
 }
 
 export interface SwarmAgent {
   id: string;
   agencyId: string;
-  tenantId?: string;
-  organizationId?: string;
   name: string;
   type: 'specialized' | 'generalist' | 'coordinator';
   capabilities: string[];
@@ -30,8 +26,6 @@ export interface SwarmAgent {
 export interface SwarmTask {
   id: string;
   agencyId: string;
-  tenantId?: string;
-  organizationId?: string;
   type: string;
   priority: 'low' | 'medium' | 'high' | 'critical';
   payload: any;
@@ -111,12 +105,12 @@ export class AgentSwarmOrchestrationService {
    */
   async initializeSwarm(): Promise<{ message: string; agentCount: number }> {
     this.logger.log('Global swarm initialization');
-
+    
     let totalAgents = 0;
     for (const agents of this.activeAgents.values()) {
       totalAgents += agents.length;
     }
-
+    
     return {
       message: 'Swarm orchestration service initialized',
       agentCount: totalAgents,
@@ -145,14 +139,14 @@ export class AgentSwarmOrchestrationService {
     // Aggregate across all agencies
     for (const agents of this.activeAgents.values()) {
       totalAgents += agents.length;
-      onlineAgents += agents.filter((a) => a.status === 'active').length;
-      busyAgents += agents.filter((a) => a.status === 'busy').length;
-      offlineAgents += agents.filter((a) => a.status === 'offline').length;
+      onlineAgents += agents.filter(a => a.status === 'active').length;
+      busyAgents += agents.filter(a => a.status === 'busy').length;
+      offlineAgents += agents.filter(a => a.status === 'offline').length;
     }
 
     for (const executions of this.activeExecutions.values()) {
-      activeExecutions += executions.filter((e) => e.status === 'executing').length;
-      completedExecutions += executions.filter((e) => e.status === 'completed').length;
+      activeExecutions += executions.filter(e => e.status === 'executing').length;
+      completedExecutions += executions.filter(e => e.status === 'completed').length;
     }
 
     return {
@@ -168,10 +162,7 @@ export class AgentSwarmOrchestrationService {
   /**
    * Initialize swarm orchestration for an agency
    */
-  async initializeAgencySwarm(
-    agencyId: string,
-    config?: Partial<SwarmConfiguration>
-  ): Promise<void> {
+  async initializeAgencySwarm(agencyId: string, config?: Partial<SwarmConfiguration>): Promise<void> {
     this.logger.log(`Initializing swarm orchestration for agency: ${agencyId}`);
 
     const defaultConfig: SwarmConfiguration = {
@@ -179,7 +170,7 @@ export class AgentSwarmOrchestrationService {
       defaultQualityThreshold: 0.8,
       enableAutoScaling: true,
       agentSelectionStrategy: 'quality_based',
-      coordinationMode: 'hybrid',
+      coordinationMode: 'hybrid'
     };
 
     const swarmConfig = { ...defaultConfig, ...config };
@@ -193,7 +184,7 @@ export class AgentSwarmOrchestrationService {
     this.eventEmitter.emit('swarm.initialized', {
       agencyId,
       configuration: swarmConfig,
-      timestamp: new Date(),
+      timestamp: new Date()
     });
 
     this.logger.log(`Swarm orchestration initialized for agency: ${agencyId}`);
@@ -220,7 +211,7 @@ export class AgentSwarmOrchestrationService {
     // Emit swarm disabled event
     this.eventEmitter.emit('swarm.disabled', {
       agencyId,
-      timestamp: new Date(),
+      timestamp: new Date()
     });
 
     this.logger.log(`Swarm orchestration disabled for agency: ${agencyId}`);
@@ -229,33 +220,20 @@ export class AgentSwarmOrchestrationService {
   /**
    * Register an agent with the swarm
    */
-  async registerAgent(
-    agencyId: string,
-    agent: Omit<SwarmAgent, 'id' | 'agencyId' | 'lastHeartbeat'>
-  ): Promise<string> {
+  async registerAgent(agencyId: string, agent: Omit<SwarmAgent, 'id' | 'agencyId' | 'lastHeartbeat'>): Promise<string> {
     this.logger.log(`Registering agent for agency: ${agencyId}, name: ${agent.name}`);
 
     // Ensure swarm is initialized
     if (!this.swarmConfigurations.has(agencyId)) {
-      await this.initializeAgencySwarm(agencyId);
-    }
-
-    const config = this.swarmConfigurations.get(agencyId);
-    if (config?.tenantId && agent.tenantId && config.tenantId !== agent.tenantId) {
-      throw new Error(`Agent tenant mismatch for agency ${agencyId}`);
-    }
-    if (config?.organizationId && agent.organizationId && config.organizationId !== agent.organizationId) {
-      throw new Error(`Agent organization mismatch for agency ${agencyId}`);
+        await this.initializeAgencySwarm(agencyId);
     }
 
     const agentId = `agent-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const swarmAgent: SwarmAgent = {
       id: agentId,
       agencyId,
-      tenantId: agent.tenantId || config?.tenantId,
-      organizationId: agent.organizationId || config?.organizationId,
       ...agent,
-      lastHeartbeat: new Date(),
+      lastHeartbeat: new Date()
     };
 
     const agents = this.activeAgents.get(agencyId) || [];
@@ -266,7 +244,7 @@ export class AgentSwarmOrchestrationService {
     this.eventEmitter.emit('agent.registered', {
       agencyId,
       agent: swarmAgent,
-      timestamp: new Date(),
+      timestamp: new Date()
     });
 
     this.logger.log(`Agent registered: ${agentId} for agency: ${agencyId}`);
@@ -276,36 +254,23 @@ export class AgentSwarmOrchestrationService {
   /**
    * Submit a task for swarm execution
    */
-  async submitTask(
-    agencyId: string,
-    task: Omit<SwarmTask, 'id' | 'agencyId' | 'status' | 'progress' | 'createdAt'>
-  ): Promise<string> {
+  async submitTask(agencyId: string, task: Omit<SwarmTask, 'id' | 'agencyId' | 'status' | 'progress' | 'createdAt'>): Promise<string> {
     this.logger.log(`Submitting task for agency: ${agencyId}, type: ${task.type}`);
 
     // Ensure swarm is initialized
     if (!this.swarmConfigurations.has(agencyId)) {
-      await this.initializeAgencySwarm(agencyId);
-    }
-
-    const config = this.swarmConfigurations.get(agencyId);
-    if (config?.tenantId && task.tenantId && config.tenantId !== task.tenantId) {
-      throw new Error(`Task tenant mismatch for agency ${agencyId}`);
-    }
-    if (config?.organizationId && task.organizationId && config.organizationId !== task.organizationId) {
-      throw new Error(`Task organization mismatch for agency ${agencyId}`);
+        await this.initializeAgencySwarm(agencyId);
     }
 
     const taskId = `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const swarmTask: SwarmTask = {
       id: taskId,
       agencyId,
-      tenantId: task.tenantId || config?.tenantId,
-      organizationId: task.organizationId || config?.organizationId,
       ...task,
       status: 'pending',
       progress: 0,
       createdAt: new Date(),
-      assignedAgents: [],
+      assignedAgents: []
     };
 
     const tasks = this.taskQueue.get(agencyId) || [];
@@ -327,44 +292,42 @@ export class AgentSwarmOrchestrationService {
     const executions = this.activeExecutions.get(agencyId) || [];
     const tasks = this.taskQueue.get(agencyId) || [];
 
-    const activeAgents = agents.filter((a) => a.status === 'active');
-    const recentTasks = tasks.filter(
-      (t) => t.createdAt.getTime() > Date.now() - 24 * 60 * 60 * 1000 // Last 24 hours
+    const activeAgents = agents.filter(a => a.status === 'active');
+    const recentTasks = tasks.filter(t =>
+      t.createdAt.getTime() > Date.now() - 24 * 60 * 60 * 1000 // Last 24 hours
     );
 
-    const completedTasks = recentTasks.filter((t) => t.status === 'completed');
-    const failedTasks = recentTasks.filter((t) => t.status === 'failed');
+    const completedTasks = recentTasks.filter(t => t.status === 'completed');
+    const failedTasks = recentTasks.filter(t => t.status === 'failed');
 
-    const averageResponseTime =
-      completedTasks.length > 0
-        ? completedTasks.reduce((sum, task) => {
-            const duration =
-              task.completedAt && task.startedAt
-                ? task.completedAt.getTime() - task.startedAt.getTime()
-                : 0;
-            return sum + duration;
-          }, 0) / completedTasks.length
-        : 0;
+    const averageResponseTime = completedTasks.length > 0
+      ? completedTasks.reduce((sum, task) => {
+          const duration = task.completedAt && task.startedAt
+            ? task.completedAt.getTime() - task.startedAt.getTime()
+            : 0;
+          return sum + duration;
+        }, 0) / completedTasks.length
+      : 0;
 
     return {
       agencyId,
       isSwarmEnabled: this.swarmConfigurations.has(agencyId),
-      activeExecutions: executions.filter((e) => e.status === 'executing').length,
+      activeExecutions: executions.filter(e => e.status === 'executing').length,
       totalProviders: agents.length,
       activeProviders: activeAgents.length,
-      availableCategories: [...new Set(agents.flatMap((a) => a.capabilities))],
+      availableCategories: [...new Set(agents.flatMap(a => a.capabilities))],
       recentActivity: {
         totalRequests: recentTasks.length,
         completedRequests: completedTasks.length,
         failedRequests: failedTasks.length,
-        averageResponseTime: Math.round(averageResponseTime),
+        averageResponseTime: Math.round(averageResponseTime)
       },
       healthMetrics: {
         overallHealth: this.calculateOverallHealth(agencyId),
         agentConnectivity: agents.length > 0 ? activeAgents.length / agents.length : 0,
         systemLoad: this.calculateSystemLoad(agencyId),
-        errorRate: recentTasks.length > 0 ? failedTasks.length / recentTasks.length : 0,
-      },
+        errorRate: recentTasks.length > 0 ? failedTasks.length / recentTasks.length : 0
+      }
     };
   }
 
@@ -377,12 +340,12 @@ export class AgentSwarmOrchestrationService {
 
     return {
       totalExecutions: executions.length,
-      activeExecutions: executions.filter((e) => e.status === 'executing').length,
-      completedExecutions: executions.filter((e) => e.status === 'completed').length,
-      failedExecutions: executions.filter((e) => e.status === 'failed').length,
+      activeExecutions: executions.filter(e => e.status === 'executing').length,
+      completedExecutions: executions.filter(e => e.status === 'completed').length,
+      failedExecutions: executions.filter(e => e.status === 'failed').length,
       averageExecutionTime: this.calculateAverageExecutionTime(executions),
-      taskBacklog: tasks.filter((t) => t.status === 'pending').length,
-      agentUtilization: this.calculateAgentUtilization(agencyId),
+      taskBacklog: tasks.filter(t => t.status === 'pending').length,
+      agentUtilization: this.calculateAgentUtilization(agencyId)
     };
   }
 
@@ -397,8 +360,8 @@ export class AgentSwarmOrchestrationService {
 
     if (!config) return;
 
-    const pendingTasks = tasks.filter((t) => t.status === 'pending');
-    const activeExecutionsCount = executions.filter((e) => e.status === 'executing').length;
+    const pendingTasks = tasks.filter(t => t.status === 'pending');
+    const activeExecutionsCount = executions.filter(e => e.status === 'executing').length;
 
     for (const task of pendingTasks) {
       if (activeExecutionsCount >= config.maxConcurrentExecutions) break;
@@ -414,21 +377,16 @@ export class AgentSwarmOrchestrationService {
    * Find suitable agents for a task based on capabilities and availability
    */
   private findSuitableAgents(agents: SwarmAgent[], task: SwarmTask): SwarmAgent[] {
-    return agents
-      .filter(
-        (agent) =>
-          agent.status === 'active' &&
-          agent.currentLoad < agent.maxLoad &&
-          (!task.tenantId || agent.tenantId === task.tenantId) &&
-          (!task.organizationId || agent.organizationId === task.organizationId) &&
-          task.requirements.some((req) => agent.capabilities.includes(req))
-      )
-      .sort((a, b) => {
-        // Sort by quality score and current load
-        const aScore = a.qualityScore * (1 - a.currentLoad / a.maxLoad);
-        const bScore = b.qualityScore * (1 - b.currentLoad / b.maxLoad);
-        return bScore - aScore;
-      });
+    return agents.filter(agent =>
+      agent.status === 'active' &&
+      agent.currentLoad < agent.maxLoad &&
+      task.requirements.some(req => agent.capabilities.includes(req))
+    ).sort((a, b) => {
+      // Sort by quality score and current load
+      const aScore = a.qualityScore * (1 - a.currentLoad / a.maxLoad);
+      const bScore = b.qualityScore * (1 - b.currentLoad / b.maxLoad);
+      return bScore - aScore;
+    });
   }
 
   /**
@@ -438,9 +396,9 @@ export class AgentSwarmOrchestrationService {
     const executionId = `exec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
     // Simulate updating load
-    agents.forEach((agent) => {
-      agent.currentLoad += 1;
-      // agent.status = 'busy'; // Consider logic for when to mark as busy
+    agents.forEach(agent => {
+        agent.currentLoad += 1;
+        // agent.status = 'busy'; // Consider logic for when to mark as busy
     });
 
     const execution: SwarmExecution = {
@@ -450,25 +408,23 @@ export class AgentSwarmOrchestrationService {
       coordinatorAgent: agents[0].id,
       participatingAgents: agents,
       executionPlan: {
-        phases: [
-          {
-            name: 'execution',
-            agents: agents.map((a) => a.id),
-            dependencies: [],
-            estimatedDuration: 5000, // 5 seconds default
-          },
-        ],
+        phases: [{
+          name: 'execution',
+          agents: agents.map(a => a.id),
+          dependencies: [],
+          estimatedDuration: 5000 // 5 seconds default
+        }]
       },
       status: 'executing',
       metrics: {
         startTime: new Date(),
-        agentUtilization: {},
-      },
+        agentUtilization: {}
+      }
     };
 
     // Update task status
     task.status = 'assigned';
-    task.assignedAgents = agents.map((a) => a.id);
+    task.assignedAgents = agents.map(a => a.id);
     task.startedAt = new Date();
 
     // Add to active executions
@@ -480,117 +436,65 @@ export class AgentSwarmOrchestrationService {
     this.eventEmitter.emit('task.assigned', {
       task,
       execution,
-      timestamp: new Date(),
+      timestamp: new Date()
     });
 
-    this.logger.log(
-      `Task ${task.id} assigned to ${agents.length} agents in execution ${executionId}`
-    );
-
-    drizzleAuditLogsRepository
-      .create({
-      action: 'swarm.task.assigned',
-      resourceType: 'swarm_task',
-      resourceId: task.id,
-      status: 'success',
-      details: {
-        agencyId: task.agencyId,
-        tenantId: task.tenantId,
-        organizationId: task.organizationId,
-        assignedAgents: agents.map((a) => a.id),
-      },
-    })
-      .catch((error: Error) => {
-        this.logger.warn(`Failed to write audit log for task assignment: ${error.message}`);
-      });
+    this.logger.log(`Task ${task.id} assigned to ${agents.length} agents in execution ${executionId}`);
 
     // NOTE: In a real implementation, we would now dispatch messages to the agents via A2A
     // e.g. this.a2aService.sendMessage(agents[0].id, { type: 'TASK_ASSIGNED', payload: task });
     // For now, we simulate completion after a delay
     setTimeout(() => {
-      this.completeExecution(executionId, task.agencyId);
+        this.completeExecution(executionId, task.agencyId);
     }, 5000);
   }
 
   private async completeExecution(executionId: string, agencyId: string): Promise<void> {
-    const executions = this.activeExecutions.get(agencyId);
-    const execution = executions?.find((e) => e.id === executionId);
-    if (execution) {
-      execution.status = 'completed';
-      execution.metrics.endTime = new Date();
+      const executions = this.activeExecutions.get(agencyId);
+      const execution = executions?.find(e => e.id === executionId);
+      if (execution) {
+          execution.status = 'completed';
+          execution.metrics.endTime = new Date();
 
-      // Release agents
-      execution.participatingAgents.forEach((agent) => {
-        if (agent.currentLoad > 0) agent.currentLoad -= 1;
-        agent.status = 'active';
-      });
+          // Release agents
+          execution.participatingAgents.forEach(agent => {
+              if (agent.currentLoad > 0) agent.currentLoad -= 1;
+              agent.status = 'active';
+          });
 
-      const tasks = this.taskQueue.get(agencyId);
-      const task = tasks?.find((t) => t.id === execution.taskId);
-      if (task) {
-        task.status = 'completed';
-        task.completedAt = new Date();
+          const tasks = this.taskQueue.get(agencyId);
+          const task = tasks?.find(t => t.id === execution.taskId);
+          if (task) {
+              task.status = 'completed';
+              task.completedAt = new Date();
+          }
+
+          this.eventEmitter.emit('execution.completed', {
+             execution,
+             timestamp: new Date()
+          });
       }
-
-      this.eventEmitter.emit('execution.completed', {
-        execution,
-        timestamp: new Date(),
-      });
-
-      drizzleAuditLogsRepository
-        .create({
-        action: 'swarm.execution.completed',
-        resourceType: 'swarm_execution',
-        resourceId: execution.id,
-        status: 'success',
-        details: {
-          agencyId,
-          taskId: execution.taskId,
-          durationMs: execution.metrics.endTime && execution.metrics.startTime
-            ? execution.metrics.endTime.getTime() - execution.metrics.startTime.getTime()
-            : undefined,
-          participatingAgents: execution.participatingAgents.map((a) => a.id),
-        },
-      })
-        .catch((error: Error) => {
-          this.logger.warn(`Failed to write audit log for execution completion: ${error.message}`);
-        });
-    }
   }
 
+  /**
+   * Terminate an execution
+   */
   private async terminateExecution(executionId: string, reason: string): Promise<void> {
     for (const [, executions] of this.activeExecutions.entries()) {
-      const execution = executions.find((e) => e.id === executionId);
+      const execution = executions.find(e => e.id === executionId);
       if (execution) {
         execution.status = 'failed';
         execution.metrics.endTime = new Date();
 
-        execution.participatingAgents.forEach((agent) => {
-          if (agent.currentLoad > 0) agent.currentLoad -= 1;
+        execution.participatingAgents.forEach(agent => {
+             if (agent.currentLoad > 0) agent.currentLoad -= 1;
         });
 
         this.eventEmitter.emit('execution.terminated', {
           execution,
           reason,
-          timestamp: new Date(),
+          timestamp: new Date()
         });
-
-        drizzleAuditLogsRepository
-          .create({
-            action: 'swarm.execution.failed',
-            resourceType: 'swarm_execution',
-            resourceId: execution.id,
-            status: 'failure',
-            errorMessage: reason,
-            details: {
-              agencyId: execution.agencyId,
-              taskId: execution.taskId,
-              participatingAgents: execution.participatingAgents.map((a) => a.id),
-            },
-          })
-          .catch((error: Error) => {
-            this.logger.warn(`Failed to write audit log for execution failure: ${error.message}`);
-          });
 
         this.logger.log(`Execution ${executionId} terminated: ${reason}`);
         break;
@@ -623,7 +527,7 @@ export class AgentSwarmOrchestrationService {
           this.eventEmitter.emit('agent.offline', {
             agencyId,
             agent,
-            timestamp: now,
+            timestamp: now
           });
           this.logger.warn(`Agent ${agent.id} marked as offline`);
         }
@@ -638,7 +542,7 @@ export class AgentSwarmOrchestrationService {
     const agents = this.activeAgents.get(agencyId) || [];
     if (agents.length === 0) return 'poor';
 
-    const activeAgents = agents.filter((a) => a.status === 'active');
+    const activeAgents = agents.filter(a => a.status === 'active');
     const connectivity = activeAgents.length / agents.length;
     const systemLoad = this.calculateSystemLoad(agencyId);
 
@@ -655,7 +559,7 @@ export class AgentSwarmOrchestrationService {
     const agents = this.activeAgents.get(agencyId) || [];
     if (agents.length === 0) return 0;
 
-    const totalLoad = agents.reduce((sum, agent) => sum + agent.currentLoad / agent.maxLoad, 0);
+    const totalLoad = agents.reduce((sum, agent) => sum + (agent.currentLoad / agent.maxLoad), 0);
     return totalLoad / agents.length;
   }
 
@@ -663,8 +567,8 @@ export class AgentSwarmOrchestrationService {
    * Calculate average execution time
    */
   private calculateAverageExecutionTime(executions: SwarmExecution[]): number {
-    const completedExecutions = executions.filter(
-      (e) => e.status === 'completed' && e.metrics.endTime
+    const completedExecutions = executions.filter(e =>
+      e.status === 'completed' && e.metrics.endTime
     );
 
     if (completedExecutions.length === 0) return 0;

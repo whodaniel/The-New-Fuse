@@ -127,15 +127,7 @@ const ResultPanel: React.FC<{ title: string; content: string }> = ({ title, cont
       <div className="flex justify-between items-center mb-2">
         <p className="font-medium">{title}</p>
         <Button onClick={onCopy} className="text-xs flex items-center gap-1">
-          {hasCopied ? (
-            <>
-              <FaCheck /> Copied
-            </>
-          ) : (
-            <>
-              <FaCopy /> Copy
-            </>
-          )}
+          {hasCopied ? <><FaCheck /> Copied</> : <><FaCopy /> Copy</>}
         </Button>
       </div>
       <div className="p-3 border border-gray-200 rounded-md font-mono text-sm whitespace-pre-wrap max-h-[300px] overflow-y-auto bg-gray-50">

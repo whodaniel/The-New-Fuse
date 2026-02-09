@@ -4,9 +4,9 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { EventEmitter } from 'events';
-import { SyncContext, SyncError } from './SyncErrorHandler.js';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { SyncError, SyncContext } from './SyncErrorHandler.js';
 
 /**
  * Retry configuration
@@ -59,15 +59,12 @@ export interface RetryStatistics {
   failedRetries: number;
   averageAttempts: number;
   circuitBreakerTrips: number;
-  operationStats: Record<
-    string,
-    {
-      attempts: number;
-      successes: number;
-      failures: number;
-      avgDelay: number;
-    }
-  >;
+  operationStats: Record<string, {
+    attempts: number;
+    successes: number;
+    failures: number;
+    avgDelay: number;
+  }>;
 }
 
 /**
@@ -90,12 +87,12 @@ export class SyncRetryManager extends EventEmitter {
     logger?: Logger
   ) {
     super();
-
+    
     this.logger = logger || new Logger('SyncRetryManager');
     this.retryQueueKey = 'sync:retry:queue';
     this.circuitBreakerKey = 'sync:circuit_breakers';
     this.statsKey = 'sync:retry:stats';
-
+    
     this.config = {
       maxAttempts: 5,
       baseDelay: 1000, // 1 second
@@ -105,7 +102,7 @@ export class SyncRetryManager extends EventEmitter {
       circuitBreakerEnabled: true,
       circuitBreakerThreshold: 5,
       circuitBreakerTimeout: 60000, // 1 minute
-      ...config,
+      ...config
     };
 
     this.statistics = {
@@ -114,7 +111,7 @@ export class SyncRetryManager extends EventEmitter {
       failedRetries: 0,
       averageAttempts: 0,
       circuitBreakerTrips: 0,
-      operationStats: {},
+      operationStats: {}
     };
 
     this.initializeRetryProcessor();
@@ -131,7 +128,7 @@ export class SyncRetryManager extends EventEmitter {
     customConfig?: Partial<RetryConfig>
   ): Promise<string> {
     const config = { ...this.config, ...customConfig };
-
+    
     // Check circuit breaker
     if (config.circuitBreakerEnabled && this.isCircuitBreakerOpen(operation)) {
       this.logger.warn(`Circuit breaker open for operation: ${operation}`);
@@ -151,7 +148,7 @@ export class SyncRetryManager extends EventEmitter {
       nextRetryAt,
       lastError: error,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
 
     // Store in Redis sorted set with score as retry time
@@ -162,11 +159,11 @@ export class SyncRetryManager extends EventEmitter {
       retryId,
       attemptNumber: 1,
       nextRetryAt,
-      tenantId: context.tenantId,
+      tenantId: context.tenantId
     });
 
     this.emit('retryScheduled', { retryAttempt, error });
-
+    
     return retryId;
   }
 
@@ -176,14 +173,14 @@ export class SyncRetryManager extends EventEmitter {
   async processRetries(batchSize: number = 20): Promise<void> {
     try {
       const now = Date.now();
-
+      
       // Get retries ready for processing
       const retryData = await this.redisService.zrange(this.retryQueueKey, 0, batchSize - 1);
-
+      
       for (const retryStr of retryData) {
         try {
           const retry: RetryAttempt = JSON.parse(retryStr);
-
+          
           // Check if it's time to retry
           if (retry.nextRetryAt.getTime() > now) {
             continue;
@@ -206,10 +203,12 @@ export class SyncRetryManager extends EventEmitter {
           } else {
             await this.handleRetryFailure(retry);
           }
+
         } catch (processError) {
           this.logger.error('Error processing retry:', processError);
         }
       }
+
     } catch (error) {
       this.logger.error('Error processing retry queue:', error);
     }
@@ -229,7 +228,7 @@ export class SyncRetryManager extends EventEmitter {
     } catch (error) {
       this.logger.error('Error loading retry statistics:', error);
     }
-
+    
     return { ...this.statistics };
   }
 
@@ -251,9 +250,9 @@ export class SyncRetryManager extends EventEmitter {
       breaker.successCount = 0;
       breaker.lastFailureAt = undefined;
       breaker.nextAttemptAt = undefined;
-
+      
       await this.persistCircuitBreakerState(operation, breaker);
-
+      
       this.logger.info(`Circuit breaker reset for operation: ${operation}`);
       this.emit('circuitBreakerReset', { operation, breaker });
     }
@@ -265,7 +264,7 @@ export class SyncRetryManager extends EventEmitter {
   async clearRetryQueue(): Promise<number> {
     const count = await this.redisService.zrange(this.retryQueueKey, 0, -1);
     await this.redisService.del(this.retryQueueKey);
-
+    
     this.logger.info(`Cleared ${count.length} pending retries`);
     return count.length;
   }
@@ -278,7 +277,7 @@ export class SyncRetryManager extends EventEmitter {
       clearInterval(this.processingTimer);
       this.processingTimer = undefined;
     }
-
+    
     this.removeAllListeners();
     this.logger.debug('SyncRetryManager shutdown complete');
   }
@@ -289,13 +288,13 @@ export class SyncRetryManager extends EventEmitter {
   private initializeRetryProcessor(): void {
     // Process retries every 5 seconds
     this.processingTimer = setInterval(() => {
-      this.processRetries().catch((error) => {
+      this.processRetries().catch(error => {
         this.logger.error('Error in retry processor:', error);
       });
     }, 5000);
 
     // Load circuit breaker states from Redis
-    this.loadCircuitBreakerStates().catch((error) => {
+    this.loadCircuitBreakerStates().catch(error => {
       this.logger.error('Error loading circuit breaker states:', error);
     });
 
@@ -307,16 +306,16 @@ export class SyncRetryManager extends EventEmitter {
    */
   private calculateNextRetryTime(attemptNumber: number, config: RetryConfig): Date {
     let delay = config.baseDelay * Math.pow(config.backoffMultiplier, attemptNumber - 1);
-
+    
     // Apply maximum delay limit
     delay = Math.min(delay, config.maxDelay);
-
+    
     // Add jitter to prevent thundering herd
     if (config.jitterEnabled) {
       const jitter = delay * 0.1 * Math.random(); // Up to 10% jitter
       delay += jitter;
     }
-
+    
     return new Date(Date.now() + delay);
   }
 
@@ -328,18 +327,19 @@ export class SyncRetryManager extends EventEmitter {
       this.logger.debug(`Executing retry: ${retry.id}`, {
         operation: retry.operation,
         attemptNumber: retry.attemptNumber,
-        tenantId: retry.context.tenantId,
+        tenantId: retry.context.tenantId
       });
 
       // Emit retry execution event for custom handlers
       const result = await new Promise<boolean>((resolve) => {
         this.emit('executeRetry', retry, resolve);
-
+        
         // Default timeout
         setTimeout(() => resolve(false), 30000);
       });
 
       return result;
+
     } catch (error) {
       this.logger.error(`Error executing retry ${retry.id}:`, error);
       return false;
@@ -353,7 +353,7 @@ export class SyncRetryManager extends EventEmitter {
     this.logger.info(`Retry succeeded: ${retry.id}`, {
       operation: retry.operation,
       attemptNumber: retry.attemptNumber,
-      tenantId: retry.context.tenantId,
+      tenantId: retry.context.tenantId
     });
 
     // Update statistics
@@ -388,16 +388,17 @@ export class SyncRetryManager extends EventEmitter {
         operation: retry.operation,
         attemptNumber: retry.attemptNumber,
         nextRetryAt: retry.nextRetryAt,
-        tenantId: retry.context.tenantId,
+        tenantId: retry.context.tenantId
       });
 
       this.emit('retryRescheduled', retry);
+
     } else {
       // Max attempts reached
       this.logger.error(`Retry exhausted: ${retry.id}`, {
         operation: retry.operation,
         maxAttempts: retry.maxAttempts,
-        tenantId: retry.context.tenantId,
+        tenantId: retry.context.tenantId
       });
 
       // Update statistics
@@ -446,7 +447,7 @@ export class SyncRetryManager extends EventEmitter {
         operation,
         state: 'closed',
         failureCount: 0,
-        successCount: 0,
+        successCount: 0
       };
       this.circuitBreakers.set(operation, breaker);
     }
@@ -474,7 +475,7 @@ export class SyncRetryManager extends EventEmitter {
         operation,
         state: 'closed',
         failureCount: 0,
-        successCount: 0,
+        successCount: 0
       };
       this.circuitBreakers.set(operation, breaker);
     }
@@ -485,14 +486,14 @@ export class SyncRetryManager extends EventEmitter {
     if (breaker.failureCount >= this.config.circuitBreakerThreshold) {
       breaker.state = 'open';
       breaker.nextAttemptAt = new Date(Date.now() + this.config.circuitBreakerTimeout);
-
+      
       this.statistics.circuitBreakerTrips++;
-
+      
       this.logger.warn(`Circuit breaker opened: ${operation}`, {
         failureCount: breaker.failureCount,
-        nextAttemptAt: breaker.nextAttemptAt,
+        nextAttemptAt: breaker.nextAttemptAt
       });
-
+      
       this.emit('circuitBreakerOpened', { operation, breaker });
     }
 
@@ -508,13 +509,13 @@ export class SyncRetryManager extends EventEmitter {
         attempts: 0,
         successes: 0,
         failures: 0,
-        avgDelay: 0,
+        avgDelay: 0
       };
     }
 
     const stats = this.statistics.operationStats[operation];
     stats.attempts += attempts;
-
+    
     if (success) {
       stats.successes++;
     } else {
@@ -543,10 +544,7 @@ export class SyncRetryManager extends EventEmitter {
   /**
    * Persist circuit breaker state to Redis
    */
-  private async persistCircuitBreakerState(
-    operation: string,
-    breaker: CircuitBreakerState
-  ): Promise<void> {
+  private async persistCircuitBreakerState(operation: string, breaker: CircuitBreakerState): Promise<void> {
     try {
       const key = `${this.circuitBreakerKey}:${operation}`;
       await this.redisService.set(key, JSON.stringify(breaker), 3600); // 1 hour TTL
@@ -562,7 +560,7 @@ export class SyncRetryManager extends EventEmitter {
     try {
       const pattern = `${this.circuitBreakerKey}:*`;
       const keys = await this.redisService.keys(pattern);
-
+      
       for (const key of keys) {
         const data = await this.redisService.get(key);
         if (data) {
@@ -570,8 +568,9 @@ export class SyncRetryManager extends EventEmitter {
           this.circuitBreakers.set(breaker.operation, breaker);
         }
       }
-
+      
       this.logger.debug(`Loaded ${this.circuitBreakers.size} circuit breaker states`);
+      
     } catch (error) {
       this.logger.error('Error loading circuit breaker states:', error);
     }

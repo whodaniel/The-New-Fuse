@@ -62,7 +62,7 @@
       "imports": [
         "@nestjs/common",
         "@nestjs/config",
-        "../../../src/core/database/(drizzle as any).service"
+        "../../../src/core/database/(prisma as any).service"
       ],
       "is_component": false,
       "exports": [
@@ -127,7 +127,7 @@
       "imports": [
         "@nestjs/common",
         "@nestjs/config",
-        "../../../src/core/database/(drizzle as any).service"
+        "../../../src/core/database/(prisma as any).service"
       ],
       "is_component": false,
       "exports": [
@@ -7276,7 +7276,7 @@
         "./metrics/metrics.service",
         "./task/task.service",
         "./redis/redis.service",
-        "./drizzle/drizzle.service",
+        "./prisma/prisma.service",
         "ioredis"
       ],
       "is_component": false,
@@ -7505,7 +7505,7 @@
         "@the-new-fuse/types",
         "@the-new-fuse/utils",
         "../monitoring/metrics-collector.service",
-        "../drizzle/drizzle.service",
+        "../prisma/prisma.service",
         "../monitoring/ErrorTrackingService"
       ],
       "is_component": false,
@@ -7530,7 +7530,7 @@
       "file": "packages/core/backup/src_original/metrics/MetricService.tsx",
       "imports": [
         "@nestjs/common",
-        "../drizzle/drizzle.service",
+        "../prisma/prisma.service",
         "@the-new-fuse/types;"
       ],
       "is_component": false,
@@ -7610,8 +7610,8 @@
         "class"
       ]
     },
-    "packages/core/backup/src_original/database/drizzle.service.tsx": {
-      "file": "packages/core/backup/src_original/database/drizzle.service.tsx",
+    "packages/core/backup/src_original/database/prisma.service.tsx": {
+      "file": "packages/core/backup/src_original/database/prisma.service.tsx",
       "imports": [
         "@nestjs/common",
         "@the-new-fuse/database"
@@ -7643,7 +7643,7 @@
         "@nestjs/config",
         "@nestjs/event-emitter",
         "../logging/centralized-logging.service",
-        "../drizzle/drizzle.service",
+        "../prisma/prisma.service",
         "./ConnectionPoolManager"
       ],
       "is_component": false,
@@ -7702,7 +7702,7 @@
         "@nestjs/config",
         "@nestjs/event-emitter",
         "../logging/centralized-logging.service",
-        "../drizzle/drizzle.service",
+        "../prisma/prisma.service",
         "../monitoring/performance-monitoring.service",
         "../utils/correlation-id"
       ],
@@ -7940,7 +7940,7 @@
         "@nestjs/config",
         "@nestjs/event-emitter",
         "../logging/centralized-logging.service",
-        "../drizzle/drizzle.service",
+        "../prisma/prisma.service",
         "../monitoring/performance-monitoring.service"
       ],
       "is_component": false,
@@ -8702,7 +8702,7 @@
         "@nestjs/config",
         "@nestjs/event-emitter",
         "@the-new-fuse/utils",
-        "../drizzle/drizzle.service",
+        "../prisma/prisma.service",
         "../monitoring/ErrorTrackingService"
       ],
       "is_component": false,
@@ -8982,7 +8982,7 @@
         "@nestjs/config",
         "@nestjs/event-emitter",
         "@the-new-fuse/utils",
-        "../drizzle/drizzle.service",
+        "../prisma/prisma.service",
         "../utils/correlation-id",
         "express"
       ],
@@ -9153,7 +9153,7 @@
       "file": "packages/core/backup/src_original/auth/auth.service.tsx",
       "imports": [
         "@nestjs/common",
-        "../drizzle/drizzle.service",
+        "../prisma/prisma.service",
         "bcrypt",
         "@nestjs/jwt",
         "@the-new-fuse/utils;"
@@ -9182,7 +9182,7 @@
         "@nestjs/common",
         "@nestjs/jwt",
         "@nestjs/config",
-        "../drizzle/drizzle.service",
+        "../prisma/prisma.service",
         "bcrypt",
         "@the-new-fuse/database"
       ],
@@ -9640,8 +9640,8 @@
         "interface"
       ]
     },
-    "packages/core/backup/src_original/drizzle/drizzle.service.tsx": {
-      "file": "packages/core/backup/src_original/drizzle/drizzle.service.tsx",
+    "packages/core/backup/src_original/prisma/prisma.service.tsx": {
+      "file": "packages/core/backup/src_original/prisma/prisma.service.tsx",
       "imports": [
         "@nestjs/common",
         "@the-new-fuse/database"
@@ -10735,7 +10735,7 @@
       "file": "packages/core/backup/src_original/task/task.repository.tsx",
       "imports": [
         "@nestjs/common",
-        "../database/drizzle.service",
+        "../database/prisma.service",
         "./types"
       ],
       "is_component": false,
@@ -11655,7 +11655,7 @@
         "@nestjs/config",
         "@nestjs/event-emitter",
         "@the-new-fuse/utils",
-        "../drizzle/drizzle.service",
+        "../prisma/prisma.service",
         "process",
         "os",
         "../utils/correlation-id"
@@ -11689,7 +11689,7 @@
         "@nestjs/event-emitter",
         "@the-new-fuse/utils",
         "./performance-monitoring.service",
-        "../drizzle/drizzle.service"
+        "../prisma/prisma.service"
       ],
       "is_component": false,
       "exports": [
@@ -11814,7 +11814,7 @@
         "@the-new-fuse/utils",
         "./ErrorTrackingService",
         "@nestjs/config",
-        "../drizzle/drizzle.service"
+        "../prisma/prisma.service"
       ],
       "is_component": false,
       "exports": [
@@ -12128,7 +12128,7 @@
       "file": "packages/core/backup/src_original/notifications/notification.handler.tsx",
       "imports": [
         "@nestjs/common",
-        "../drizzle/drizzle.service"
+        "../prisma/prisma.service"
       ],
       "is_component": false,
       "exports": [
@@ -12808,7 +12808,7 @@
       "file": "packages/core/backup/src_original/analysis/quality/code.quality.analyzer.tsx",
       "imports": [
         "@nestjs/common",
-        "../../database/drizzle.service",
+        "../../database/prisma.service",
         "@the-new-fuse/types"
       ],
       "is_component": false,
@@ -12820,7 +12820,7 @@
       "file": "packages/core/backup/src_original/analysis/security/security.scanner.tsx",
       "imports": [
         "@nestjs/common",
-        "../../database/drizzle.service",
+        "../../database/prisma.service",
         "@the-new-fuse/types",
         "@the-new-fuse/database"
       ],
@@ -12833,7 +12833,7 @@
       "file": "packages/core/backup/src_original/analysis/dependency/dependency.mapper.tsx",
       "imports": [
         "@nestjs/common",
-        "../../database/drizzle.service",
+        "../../database/prisma.service",
         "@the-new-fuse/types;"
       ],
       "is_component": false,
@@ -13261,7 +13261,7 @@
       "imports": [
         "@nestjs/testing",
         "../src/agents/agents.service",
-        "../src/drizzle/drizzle.service",
+        "../src/prisma/prisma.service",
         "@nestjs/config",
         "@the-new-fuse/core",
         "../src/agents/agent.factory",

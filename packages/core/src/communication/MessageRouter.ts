@@ -18,12 +18,14 @@ export class MessageRouter {
   }
 
   removeRule(topic: string, target: string): void {
-    this.rules = this.rules.filter((rule) => rule.topic !== topic || rule.target !== target);
+    this.rules = this.rules.filter(
+      rule => rule.topic !== topic || rule.target !== target
+    );
   }
 
   async routeMessage(message: Message): Promise<void> {
     const applicableRules = this.rules.filter(
-      (rule) => rule.topic === message.topic && (!rule.condition || rule.condition(message)),
+      rule => rule.topic === message.topic && (!rule.condition || rule.condition(message))
     );
 
     for (const rule of applicableRules) {

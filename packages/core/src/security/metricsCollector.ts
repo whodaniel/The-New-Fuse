@@ -59,15 +59,11 @@ export class MetricsCollectorService implements OnModuleInit, OnModuleDestroy {
 
   private getCpuUsage() {
     const cpus = os.cpus();
-    const total = cpus.reduce(
-      (acc, cpu) => {
-        acc.total +=
-          cpu.times.user + cpu.times.nice + cpu.times.sys + cpu.times.idle + cpu.times.irq;
-        acc.idle += cpu.times.idle;
-        return acc;
-      },
-      { total: 0, idle: 0 },
-    );
+    const total = cpus.reduce((acc, cpu) => {
+      acc.total += cpu.times.user + cpu.times.nice + cpu.times.sys + cpu.times.idle + cpu.times.irq;
+      acc.idle += cpu.times.idle;
+      return acc;
+    }, { total: 0, idle: 0 });
 
     return {
       total: total.total,

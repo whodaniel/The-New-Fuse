@@ -1,0 +1,25 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+// @ts-checkimport React from 'react';
+import { Badge } from '@/components/ui/badge';
+export const AgentStatus: return 'success';
+            case 'inactive':
+                return 'secondary';
+            case 'error':
+                return 'destructive';
+            default:
+                return 'default';
+        }
+    };
+    return (<Badge variant = ({ agent }) => {
+    const getStatusVariant: unknown) {
+            case 'active'{getStatusVariant(agent.status)} className = (status) => {
+        switch(status"capitalize">
+      {agent.status}
+    </Badge>);
+};
+//# sourceMappingURL=AgentStatus.js.map

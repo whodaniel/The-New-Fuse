@@ -58,30 +58,25 @@ export class RedundancyDetector {
   }
 
   private calculateSimilarity(set1: Set<string>, set2: Set<string>): number {
-    const intersection = new Set([...set1].filter((x) => set2.has(x)));
+    const intersection = new Set([...set1].filter(x => set2.has(x)));
     const union = new Set([...set1, ...set2]);
     return intersection.size / union.size;
   }
 
   private getSharedFunctionality(set1: Set<string>, set2: Set<string>): string[] {
-    return [...set1].filter((x) => set2.has(x));
+    return [...set1].filter(x => set2.has(x));
   }
 
-  private generateSuggestions(
-    component: string,
-    similarities: RedundancyReport['similarComponents'],
-  ): string[] {
+  private generateSuggestions(component: string, similarities: RedundancyReport['similarComponents']): string[] {
     const suggestions: string[] = [];
 
     if (similarities.length === 1) {
       suggestions.push(`Consider merging ${component} with ${similarities[0].name}`);
     } else {
-      suggestions.push(
-        `Consider consolidating ${component} with ${similarities.map((s) => s.name).join(', ')}`,
-      );
+      suggestions.push(`Consider consolidating ${component} with ${similarities.map(s => s.name).join(', ')}`);
     }
 
-    similarities.forEach((sim) => {
+    similarities.forEach(sim => {
       if (sim.sharedFunctionality.length > 0) {
         suggestions.push(`Extract shared functionality: ${sim.sharedFunctionality.join(', ')}`);
       }

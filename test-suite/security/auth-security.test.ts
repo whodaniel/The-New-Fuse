@@ -7,7 +7,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
-import { DatabaseService } from '../../src/db/db.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
 import { InputSanitizationService } from '../../src/security/input-sanitization.service';
 import { SecurityTestingService } from '../../src/security/security-testing.service';
 
@@ -46,7 +46,7 @@ const SECURITY_TEST_DATA = {
 
 describe('Security Tests', () => {
   let app: INestApplication;
-  let db: DatabaseService;
+  let prisma: PrismaService;
   let inputSanitization: InputSanitizationService;
   let securityTesting: SecurityTestingService;
 
@@ -58,13 +58,13 @@ describe('Security Tests', () => {
     app = moduleRef.createNestApplication();
     await app.init();
 
-    db = app.get(DatabaseService);
+    prisma = app.get(PrismaService);
     inputSanitization = app.get(InputSanitizationService);
     securityTesting = app.get(SecurityTestingService);
   });
 
   afterAll(async () => {
-    await db.cleanDatabase();
+    await prisma.cleanDatabase();
     await app.close();
   });
 
@@ -74,7 +74,7 @@ describe('Security Tests', () => {
 
     beforeEach(async () => {
       // Create test user
-      testUser = await db.user.create({
+      testUser = await prisma.user.create({
         data: {
           email: 'security.test@example.com',
           password: 'TestPassword123!',
@@ -175,7 +175,7 @@ describe('Security Tests', () => {
       let regularUser: any;
 
       beforeEach(async () => {
-        adminUser = await db.user.create({
+        adminUser = await prisma.user.create({
           data: {
             email: 'admin.test@example.com',
             password: 'AdminPassword123!',
@@ -184,7 +184,7 @@ describe('Security Tests', () => {
           },
         });
 
-        regularUser = await db.user.create({
+        regularUser = await prisma.user.create({
           data: {
             email: 'user.test@example.com',
             password: 'UserPassword123!',

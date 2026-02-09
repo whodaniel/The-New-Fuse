@@ -131,7 +131,7 @@ components:
           type: string
           description: JWT refresh token (7 days expiry)
         user:
-          $ref: "#/components/schemas/User"
+          $ref: '#/components/schemas/User'
         expiresIn:
           type: integer
           description: Token expiration time in seconds
@@ -209,7 +209,7 @@ components:
           maxLength: 100
           example: "Customer Support Bot"
         type:
-          $ref: "#/components/schemas/AgentType"
+          $ref: '#/components/schemas/AgentType'
         description:
           type: string
           maxLength: 500
@@ -220,7 +220,7 @@ components:
         capabilities:
           type: array
           items:
-            $ref: "#/components/schemas/AgentCapability"
+            $ref: '#/components/schemas/AgentCapability'
         configuration:
           type: object
           additionalProperties: true
@@ -240,12 +240,12 @@ components:
         capabilities:
           type: array
           items:
-            $ref: "#/components/schemas/AgentCapability"
+            $ref: '#/components/schemas/AgentCapability'
         configuration:
           type: object
           additionalProperties: true
         status:
-          $ref: "#/components/schemas/AgentStatus"
+          $ref: '#/components/schemas/AgentStatus'
 
     AgentResponseDto:
       type: object
@@ -256,15 +256,15 @@ components:
         name:
           type: string
         type:
-          $ref: "#/components/schemas/AgentType"
+          $ref: '#/components/schemas/AgentType'
         status:
-          $ref: "#/components/schemas/AgentStatus"
+          $ref: '#/components/schemas/AgentStatus'
         description:
           type: string
         capabilities:
           type: array
           items:
-            $ref: "#/components/schemas/AgentCapability"
+            $ref: '#/components/schemas/AgentCapability'
         configuration:
           type: object
           additionalProperties: true
@@ -403,7 +403,7 @@ components:
         description:
           type: string
         status:
-          $ref: "#/components/schemas/WorkflowStatus"
+          $ref: '#/components/schemas/WorkflowStatus'
         nodes:
           type: array
           items:
@@ -604,21 +604,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LoginDto"
+              $ref: '#/components/schemas/LoginDto'
       responses:
-        "200":
+        '200':
           description: Login successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthResponse"
-        "401":
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
           description: Invalid credentials
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "429":
+                $ref: '#/components/schemas/Error'
+        '429':
           description: Too many requests - rate limit exceeded
 
   /auth/register:
@@ -633,21 +633,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RegisterDto"
+              $ref: '#/components/schemas/RegisterDto'
       responses:
-        "201":
+        '201':
           description: Registration successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthResponse"
-        "400":
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
           description: Invalid registration data
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationError"
-        "409":
+                $ref: '#/components/schemas/ValidationError'
+        '409':
           description: Email already registered
 
   /auth/refresh:
@@ -668,13 +668,13 @@ paths:
                 refreshToken:
                   type: string
       responses:
-        "200":
+        '200':
           description: Token refreshed successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthResponse"
-        "401":
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
           description: Invalid refresh token
 
   /auth/logout:
@@ -686,7 +686,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Logout successful
           content:
             application/json:
@@ -698,7 +698,7 @@ paths:
                   timestamp:
                     type: string
                     format: date-time
-        "401":
+        '401':
           description: Not authenticated
 
   /auth/me:
@@ -710,13 +710,13 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Current user information
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
-        "401":
+                $ref: '#/components/schemas/User'
+        '401':
           description: Not authenticated
 
   # Agent Endpoints
@@ -732,24 +732,24 @@ paths:
         - name: type
           in: query
           schema:
-            $ref: "#/components/schemas/AgentType"
+            $ref: '#/components/schemas/AgentType'
         - name: status
           in: query
           schema:
-            $ref: "#/components/schemas/AgentStatus"
+            $ref: '#/components/schemas/AgentStatus'
         - name: search
           in: query
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: List of agents
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/AgentResponseDto"
+                  $ref: '#/components/schemas/AgentResponseDto'
 
     post:
       tags:
@@ -763,15 +763,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateAgentDto"
+              $ref: '#/components/schemas/CreateAgentDto'
       responses:
-        "201":
+        '201':
           description: Agent created successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AgentResponseDto"
-        "400":
+                $ref: '#/components/schemas/AgentResponseDto'
+        '400':
           description: Invalid agent data
 
   /agents/active:
@@ -783,14 +783,14 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: List of active agents
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/AgentResponseDto"
+                  $ref: '#/components/schemas/AgentResponseDto'
 
   /agents/stats/types:
     get:
@@ -801,7 +801,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Agent counts by type
           content:
             application/json:
@@ -825,13 +825,13 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Agent details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AgentResponseDto"
-        "404":
+                $ref: '#/components/schemas/AgentResponseDto'
+        '404':
           description: Agent not found
 
     put:
@@ -852,15 +852,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateAgentDto"
+              $ref: '#/components/schemas/UpdateAgentDto'
       responses:
-        "200":
+        '200':
           description: Agent updated successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AgentResponseDto"
-        "404":
+                $ref: '#/components/schemas/AgentResponseDto'
+        '404':
           description: Agent not found
 
     delete:
@@ -877,9 +877,9 @@ paths:
           schema:
             type: string
       responses:
-        "204":
+        '204':
           description: Agent deleted successfully
-        "404":
+        '404':
           description: Agent not found
 
   /agents/{id}/stats:
@@ -897,7 +897,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Agent statistics
           content:
             application/json:
@@ -934,12 +934,12 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Agent activated successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AgentResponseDto"
+                $ref: '#/components/schemas/AgentResponseDto'
 
   /agents/{id}/deactivate:
     put:
@@ -956,7 +956,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Agent deactivated successfully
 
   /agents/{id}/pause:
@@ -974,7 +974,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Agent paused successfully
 
   # Chat Endpoints
@@ -987,14 +987,14 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: List of chat rooms
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ChatRoom"
+                  $ref: '#/components/schemas/ChatRoom'
 
   /chat/rooms/{roomId}:
     get:
@@ -1011,12 +1011,12 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Chat room details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ChatRoom"
+                $ref: '#/components/schemas/ChatRoom'
 
   /chat/rooms/{roomId}/messages:
     get:
@@ -1044,7 +1044,7 @@ paths:
             type: integer
             default: 0
       responses:
-        "200":
+        '200':
           description: List of messages
           content:
             application/json:
@@ -1054,9 +1054,9 @@ paths:
                   messages:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Message"
+                      $ref: '#/components/schemas/Message'
                   pagination:
-                    $ref: "#/components/schemas/Pagination"
+                    $ref: '#/components/schemas/Pagination'
 
     post:
       tags:
@@ -1076,14 +1076,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateMessageDto"
+              $ref: '#/components/schemas/CreateMessageDto'
       responses:
-        "201":
+        '201':
           description: Message sent successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Message"
+                $ref: '#/components/schemas/Message'
 
   /chat/analytics:
     get:
@@ -1094,7 +1094,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Chat analytics data
 
   # Workflow Endpoints
@@ -1120,13 +1120,13 @@ paths:
         - name: status
           in: query
           schema:
-            $ref: "#/components/schemas/WorkflowStatus"
+            $ref: '#/components/schemas/WorkflowStatus'
         - name: search
           in: query
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: List of workflows
           content:
             application/json:
@@ -1136,9 +1136,9 @@ paths:
                   workflows:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Workflow"
+                      $ref: '#/components/schemas/Workflow'
                   pagination:
-                    $ref: "#/components/schemas/Pagination"
+                    $ref: '#/components/schemas/Pagination'
 
     post:
       tags:
@@ -1152,14 +1152,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateWorkflowDto"
+              $ref: '#/components/schemas/CreateWorkflowDto'
       responses:
-        "201":
+        '201':
           description: Workflow created successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Workflow"
+                $ref: '#/components/schemas/Workflow'
 
   /workflows/{id}:
     get:
@@ -1176,12 +1176,12 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Workflow details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Workflow"
+                $ref: '#/components/schemas/Workflow'
 
     patch:
       tags:
@@ -1201,9 +1201,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateWorkflowDto"
+              $ref: '#/components/schemas/CreateWorkflowDto'
       responses:
-        "200":
+        '200':
           description: Workflow updated successfully
 
     delete:
@@ -1220,7 +1220,7 @@ paths:
           schema:
             type: string
       responses:
-        "204":
+        '204':
           description: Workflow deleted successfully
 
   /workflows/execute:
@@ -1246,12 +1246,12 @@ paths:
                   type: object
                   additionalProperties: true
       responses:
-        "201":
+        '201':
           description: Workflow execution started
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WorkflowExecution"
+                $ref: '#/components/schemas/WorkflowExecution'
 
   /workflows/executions/{executionId}:
     get:
@@ -1268,12 +1268,12 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Execution details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WorkflowExecution"
+                $ref: '#/components/schemas/WorkflowExecution'
 
   /workflows/executions/{executionId}/cancel:
     post:
@@ -1290,7 +1290,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Execution cancelled successfully
 
   # Wallet Endpoints
@@ -1307,14 +1307,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateWalletDto"
+              $ref: '#/components/schemas/CreateWalletDto'
       responses:
-        "201":
+        '201':
           description: Wallet created successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Wallet"
+                $ref: '#/components/schemas/Wallet'
 
   /wallets/user/{userId}:
     get:
@@ -1331,14 +1331,14 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: List of user wallets
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Wallet"
+                  $ref: '#/components/schemas/Wallet'
 
   /wallets/address/{address}:
     get:
@@ -1355,12 +1355,12 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Wallet details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Wallet"
+                $ref: '#/components/schemas/Wallet'
 
   # Transaction Endpoints
   /transactions/execute/{walletId}:
@@ -1382,14 +1382,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TransactionDto"
+              $ref: '#/components/schemas/TransactionDto'
       responses:
-        "201":
+        '201':
           description: Transaction executed successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Transaction"
+                $ref: '#/components/schemas/Transaction'
 
   /transactions/execute-batch/{walletId}:
     post:
@@ -1415,11 +1415,11 @@ paths:
                 transactions:
                   type: array
                   items:
-                    $ref: "#/components/schemas/TransactionDto"
+                    $ref: '#/components/schemas/TransactionDto'
                 useSmartAccount:
                   type: boolean
       responses:
-        "201":
+        '201':
           description: Batch transaction executed successfully
 
   /transactions/wallet/{walletId}:
@@ -1437,14 +1437,14 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: List of transactions
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Transaction"
+                  $ref: '#/components/schemas/Transaction'
 
   # Smart Account Endpoints
   /smart-accounts/enable/{walletId}:
@@ -1462,7 +1462,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Smart account enabled successfully
 
   /smart-accounts/deploy/{walletId}:
@@ -1480,7 +1480,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Smart account deployed successfully
 
   /smart-accounts/execute/{walletId}:
@@ -1511,7 +1511,7 @@ paths:
                 data:
                   type: string
       responses:
-        "200":
+        '200':
           description: Transaction executed successfully
 
   /smart-accounts/info/{walletId}:
@@ -1529,7 +1529,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Smart account information
 
   # MCP Endpoints
@@ -1542,14 +1542,14 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: List of MCP servers
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/MCPServer"
+                  $ref: '#/components/schemas/MCPServer'
 
     post:
       tags:
@@ -1574,7 +1574,7 @@ paths:
                   items:
                     type: string
       responses:
-        "201":
+        '201':
           description: MCP server registered successfully
 
   /mcp/servers/{id}/status:
@@ -1592,7 +1592,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: MCP server status
 
   /mcp/servers/{id}:
@@ -1616,7 +1616,7 @@ paths:
             schema:
               type: object
       responses:
-        "200":
+        '200':
           description: MCP server updated successfully
 
     delete:
@@ -1633,5 +1633,5 @@ paths:
           schema:
             type: string
       responses:
-        "204":
+        '204':
           description: MCP server removed successfully

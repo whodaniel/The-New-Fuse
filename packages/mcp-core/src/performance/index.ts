@@ -3,42 +3,59 @@
  */
 
 // Caching strategies
-export { CacheFactory, EvictionStrategy, LRUCache, MultiLevelCache } from './CacheStrategy';
-
-export type { CacheConfig, CacheEntry, CacheStats, ICache } from './CacheStrategy';
-
-// Connection pool optimization
-export { ConnectionPoolFactory, OptimizedConnectionPool } from './ConnectionPoolOptimizer';
+export {
+  LRUCache,
+  MultiLevelCache,
+  CacheFactory,
+  EvictionStrategy
+} from './CacheStrategy';
 
 export type {
-  ConnectionPoolConfig,
+  ICache,
+  CacheEntry,
+  CacheConfig,
+  CacheStats
+} from './CacheStrategy';
+
+// Connection pool optimization
+export {
+  OptimizedConnectionPool,
+  ConnectionPoolFactory
+} from './ConnectionPoolOptimizer';
+
+export type {
   IConnection,
   IConnectionFactory,
-  PoolStatistics,
+  ConnectionPoolConfig,
+  PoolStatistics
 } from './ConnectionPoolOptimizer';
 
 // Load testing
-export { LoadTestRunner } from './LoadTestRunner';
+export {
+  LoadTestRunner
+} from './LoadTestRunner';
 
 export type {
-  ErrorSummary,
-  LoadTestOperation,
-  LoadTestPhase,
-  LoadTestResult,
   LoadTestScenario,
-  OperationResult,
+  LoadTestPhase,
+  LoadTestOperation,
+  LoadTestResult,
   PhaseResult,
+  OperationResult,
   TestStatistics,
   TimelinePoint,
+  ErrorSummary
 } from './LoadTestRunner';
 
 // Performance validation
-export { PerformanceValidator } from './PerformanceValidator';
+export {
+  PerformanceValidator
+} from './PerformanceValidator';
 
 export type {
-  PerformanceMetrics,
   PerformanceTargets,
-  ScalabilityAnalysis,
-  TargetValidation,
   ValidationResult,
+  TargetValidation,
+  PerformanceMetrics,
+  ScalabilityAnalysis
 } from './PerformanceValidator';

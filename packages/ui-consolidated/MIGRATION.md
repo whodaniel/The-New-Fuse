@@ -1,7 +1,6 @@
 # Migration Guide
 
-This guide will help you migrate from the various UI component implementations
-to the consolidated UI components.
+This guide will help you migrate from the various UI component implementations to the consolidated UI components.
 
 ## Button Component
 
@@ -11,23 +10,17 @@ to the consolidated UI components.
 // From packages/ui/src/components/Button.tsx
 import { Button } from '@the-new-fuse/ui/src/components/Button';
 
-<Button variant="default" size="default">
-  Click me
-</Button>;
+<Button variant="default" size="default">Click me</Button>
 
 // From packages/ui-components/src/core/button/Button.tsx
 import { Button } from '@the-new-fuse/ui-components/src/core/button';
 
-<Button variant="destructive" isLoading={true}>
-  Delete
-</Button>;
+<Button variant="destructive" isLoading={true}>Delete</Button>
 
 // From apps/frontend/src/shared/ui/core/Button/Button.tsx
 import { Button } from '@/shared/ui/core/Button';
 
-<Button icon={<Icon />} iconPosition="start">
-  With Icon
-</Button>;
+<Button icon={<Icon />} iconPosition="start">With Icon</Button>
 ```
 
 ### After
@@ -50,19 +43,17 @@ import { Button } from '@the-new-fuse/ui-consolidated';
 // From packages/ui/src/components/Card.tsx
 import { Card } from '@the-new-fuse/ui/src/components/Card';
 
-<Card>Content</Card>;
+<Card>Content</Card>
 
 // From packages/ui-components/src/core/card/Card.tsx
 import { Card } from '@the-new-fuse/ui-components/src/core/card';
 
-<Card title="Card Title">Content</Card>;
+<Card title="Card Title">Content</Card>
 
 // From apps/frontend/src/shared/ui/core/Card/Card.tsx
 import { Card } from '@/shared/ui/core/Card';
 
-<Card variant="elevated" size="lg">
-  Content
-</Card>;
+<Card variant="elevated" size="lg">Content</Card>
 ```
 
 ### After
@@ -85,17 +76,17 @@ import { Card } from '@the-new-fuse/ui-consolidated';
 // From packages/ui/src/components/Input.tsx
 import { Input } from '@the-new-fuse/ui/src/components/Input';
 
-<Input placeholder="Enter text" />;
+<Input placeholder="Enter text" />
 
 // From packages/ui-components/src/core/input/Input.tsx
 import { Input } from '@the-new-fuse/ui-components/src/core/input';
 
-<Input label="Email" error="Invalid email" />;
+<Input label="Email" error="Invalid email" />
 
 // From apps/frontend/src/shared/ui/core/Input/Input.tsx
 import { Input } from '@/shared/ui/core/Input';
 
-<Input startIcon={<Icon />} endIcon={<Icon />} />;
+<Input startIcon={<Icon />} endIcon={<Icon />} />
 ```
 
 ### After
@@ -121,22 +112,22 @@ import { Select } from '@the-new-fuse/ui/src/components/Select';
 <Select>
   <option value="1">Option 1</option>
   <option value="2">Option 2</option>
-</Select>;
+</Select>
 
 // From packages/ui-components/src/core/select/Select.tsx
 import { Select } from '@the-new-fuse/ui-components/src/core/select';
 
-<Select label="Country" error="Required" />;
+<Select label="Country" error="Required" />
 
 // From apps/frontend/src/shared/ui/core/Select/Select.tsx
 import { Select } from '@/shared/ui/core/Select';
 
-<Select
+<Select 
   options={[
     { value: 'us', label: 'United States' },
     { value: 'ca', label: 'Canada' },
   ]}
-/>;
+/>
 ```
 
 ### After
@@ -153,7 +144,7 @@ import { Select } from '@the-new-fuse/ui-consolidated';
 
 <Select label="Country" error="Required" />
 
-<Select
+<Select 
   options={[
     { value: 'us', label: 'United States' },
     { value: 'ca', label: 'Canada' },
@@ -201,27 +192,22 @@ import { cn } from '@the-new-fuse/ui-consolidated';
 pnpm install
 ```
 
-3. Find and replace all imports of the old components with the new consolidated
-   components.
+3. Find and replace all imports of the old components with the new consolidated components.
 
 4. Test your application to ensure everything works as expected.
 
-5. Remove the old component imports once you've verified that the new components
-   work correctly.
+5. Remove the old component imports once you've verified that the new components work correctly.
 
 ## Troubleshooting
 
 If you encounter any issues during migration, please check the following:
 
-1. Make sure you're using the correct prop names. The consolidated components
-   may have slightly different prop names than the old components.
+1. Make sure you're using the correct prop names. The consolidated components may have slightly different prop names than the old components.
 
 2. Check the component documentation for any changes in behavior or API.
 
-3. If you're using TypeScript, make sure your types are correct. The
-   consolidated components export their types, so you can import them directly.
+3. If you're using TypeScript, make sure your types are correct. The consolidated components export their types, so you can import them directly.
 
-4. If you're using custom styles, make sure they're applied correctly to the new
-   components.
+4. If you're using custom styles, make sure they're applied correctly to the new components.
 
 If you still have issues, please open an issue on the repository.

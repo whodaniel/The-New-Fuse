@@ -1,7 +1,6 @@
 import { createClient } from 'redis';
 
-const REDIS_URL =
-  'redis://default:CxXMZw3qW3zYXq1JYy7bCuqwRrL7tH0d@redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com:11337';
+const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
 class RedisClient {
   private static instance: RedisClient;

@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/design-system';
-import { useToast } from '@/hooks/useToast';
 import React from 'react';
+import { Button } from '@/components/ui/design-system';
 import { useSystemConfig } from '../../hooks/useSystemConfig';
+import { useToast } from '@/hooks/useToast';
 
 export const SystemConfig: React.FC = () => {
   const { config, updateConfig, loading } = useSystemConfig();

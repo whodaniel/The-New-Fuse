@@ -2,7 +2,7 @@
   "name": "the-new-fuse",
   "displayName": "The New Fuse",
   "description": "AI-Powered Development Assistant with Multi-Provider LLM Support & MCP Integration",
-  "version": "9.0.2",
+  "version": "9.0.0",
   "publisher": "TheNewFuse",
   "license": "MIT",
   "repository": {
@@ -43,7 +43,7 @@
         {
           "id": "theNewFuse",
           "title": "The New Fuse",
-          "icon": "media/sidebar-icon.png"
+          "icon": "$(robot)"
         }
       ]
     },
@@ -333,76 +333,6 @@
         "title": "Execute Script in Browser",
         "category": "The New Fuse",
         "icon": "$(code)"
-      },
-      {
-        "command": "theNewFuse.codeLens.explain",
-        "title": "Explain Code (AI)",
-        "category": "The New Fuse - AI",
-        "icon": "$(info)"
-      },
-      {
-        "command": "theNewFuse.codeLens.optimize",
-        "title": "Optimize Code (AI)",
-        "category": "The New Fuse - AI",
-        "icon": "$(rocket)"
-      },
-      {
-        "command": "theNewFuse.codeLens.generateTests",
-        "title": "Generate Tests (AI)",
-        "category": "The New Fuse - AI",
-        "icon": "$(beaker)"
-      },
-      {
-        "command": "theNewFuse.codeLens.document",
-        "title": "Generate Documentation (AI)",
-        "category": "The New Fuse - AI",
-        "icon": "$(book)"
-      },
-      {
-        "command": "theNewFuse.hover.explain",
-        "title": "Explain Hover Element (AI)",
-        "category": "The New Fuse - AI"
-      },
-      {
-        "command": "theNewFuse.hover.toggleAIHints",
-        "title": "Toggle AI Hover Hints",
-        "category": "The New Fuse - AI",
-        "icon": "$(info)"
-      },
-      {
-        "command": "theNewFuse.completion.toggle",
-        "title": "Toggle AI Completions",
-        "category": "The New Fuse - AI",
-        "icon": "$(lightbulb)"
-      },
-      {
-        "command": "theNewFuse.completion.clearCache",
-        "title": "Clear AI Completion Cache",
-        "category": "The New Fuse - AI"
-      },
-      {
-        "command": "theNewFuse.completion.triggerManual",
-        "title": "Trigger AI Completion",
-        "category": "The New Fuse - AI",
-        "icon": "$(lightbulb-autofix)"
-      },
-      {
-        "command": "theNewFuse.workspace.index",
-        "title": "Index Workspace",
-        "category": "The New Fuse",
-        "icon": "$(search)"
-      },
-      {
-        "command": "theNewFuse.workspace.searchSymbols",
-        "title": "Search Symbols (AI)",
-        "category": "The New Fuse",
-        "icon": "$(symbol-field)"
-      },
-      {
-        "command": "theNewFuse.git.summary",
-        "title": "Git Repository Summary",
-        "category": "The New Fuse",
-        "icon": "$(git-branch)"
       }
     ],
     "menus": {
@@ -484,11 +414,6 @@
         "command": "theNewFuse.newChat",
         "key": "ctrl+shift+n",
         "mac": "cmd+shift+n"
-      },
-      {
-        "command": "theNewFuse.openBrowser",
-        "key": "ctrl+alt+b",
-        "mac": "cmd+alt+b"
       },
       {
         "command": "theNewFuse.inlineSuggestions",
@@ -590,18 +515,6 @@
                 "type": "boolean",
                 "default": true,
                 "description": "Whether the server is enabled"
-              },
-              "default_defer_loading": {
-                "type": "boolean",
-                "default": false,
-                "description": "Whether to defer loading tools from this server by default (Tool Discovery Protocol)"
-              },
-              "always_loaded_tools": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "Tool names that should always be loaded (never deferred)"
               }
             },
             "required": [
@@ -609,57 +522,6 @@
               "command"
             ]
           }
-        },
-        "theNewFuse.toolSearch.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable Anthropic Tool Discovery Protocol for dynamic tool loading"
-        },
-        "theNewFuse.toolSearch.maxResults": {
-          "type": "number",
-          "default": 5,
-          "minimum": 1,
-          "maximum": 10,
-          "description": "Maximum number of tools returned per search (3-5 recommended)"
-        },
-        "theNewFuse.toolSearch.defaultMethod": {
-          "type": "string",
-          "default": "bm25",
-          "enum": [
-            "regex",
-            "bm25"
-          ],
-          "enumDescriptions": [
-            "Regex pattern matching (exact patterns)",
-            "BM25 relevance ranking (natural language)"
-          ],
-          "description": "Default search algorithm for tool discovery"
-        },
-        "theNewFuse.toolSearch.alwaysLoadedTools": {
-          "type": "array",
-          "default": [
-            "read_file",
-            "write_file",
-            "list_directory",
-            "search_files"
-          ],
-          "items": {
-            "type": "string"
-          },
-          "description": "Tools that should always be loaded immediately (never deferred)"
-        },
-        "theNewFuse.toolSearch.deferredCategories": {
-          "type": "array",
-          "default": [
-            "google",
-            "automation",
-            "external",
-            "database"
-          ],
-          "items": {
-            "type": "string"
-          },
-          "description": "Tool categories to defer by default"
         },
         "theNewFuse.providers.openai.baseUrl": {
           "type": "string",
@@ -737,48 +599,6 @@
           "minimum": 0,
           "maximum": 2,
           "description": "Response temperature (creativity)"
-        },
-        "theNewFuse.features.codeLens.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable AI-powered CodeLens (inline code suggestions)"
-        },
-        "theNewFuse.features.hover.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable AI-powered hover hints"
-        },
-        "theNewFuse.features.hover.aiHints": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable AI-generated insights in hover hints (may slow down editor)"
-        },
-        "theNewFuse.features.completion.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable AI-powered code completions"
-        },
-        "theNewFuse.features.completion.triggerDelay": {
-          "type": "number",
-          "default": 1000,
-          "minimum": 0,
-          "maximum": 5000,
-          "description": "Delay before triggering AI completions (in milliseconds)"
-        },
-        "theNewFuse.features.workspaceIndexing.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable automatic workspace indexing for better AI context"
-        },
-        "theNewFuse.features.workspaceIndexing.autoIndex": {
-          "type": "boolean",
-          "default": true,
-          "description": "Automatically index workspace on startup"
-        },
-        "theNewFuse.features.git.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable Git integration for enhanced context awareness"
         },
         "theNewFuse.cliAgents": {
           "type": "array",
@@ -866,7 +686,7 @@
     "@vscode/test-electron": "^2.3.9",
     "@vscode/vsce": "^2.32.0",
     "esbuild": "^0.27.1",
-    "eslint": "^9.39.2",
+    "eslint": "^9.13.0",
     "typescript": "^5.5.3",
     "typescript-eslint": "^0.0.1-alpha.0",
     "vitest": "^4.0.18"

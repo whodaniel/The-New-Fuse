@@ -1,34 +1,27 @@
 # Store Documentation
 
-This store uses Zustand for state management and is organized into slices for
-better maintainability and separation of concerns.
+This store uses Zustand for state management and is organized into slices for better maintainability and separation of concerns.
 
 ## Store Structure
 
 The store is divided into three main slices:
 
 ### Agent Slice
-
 Handles all agent-related state and operations:
-
 - Managing agent list
 - Selecting/deselecting agents
 - Updating agent skills and status
 - CRUD operations for agents
 
 ### Chat Slice
-
 Manages chat-related state and operations:
-
 - Active conversations
 - Message history
 - Real-time message updates
 - Chat creation and deletion
 
 ### System Slice
-
 Handles application-wide state:
-
 - Loading states
 - Error handling
 - Global notifications
@@ -73,7 +66,6 @@ const MyComponent = () => {
 ## Type Safety
 
 The store is fully typed with TypeScript, providing:
-
 - Type inference for all state values
 - Type checking for all actions
 - Proper error handling types
@@ -81,8 +73,7 @@ The store is fully typed with TypeScript, providing:
 
 ## Best Practices
 
-1. Use the selector hooks (`useAgents`, `useChat`, `useSystem`) instead of the
-   full store when possible
+1. Use the selector hooks (`useAgents`, `useChat`, `useSystem`) instead of the full store when possible
 2. Handle loading states and errors using the system slice
 3. Use the `useStoreUpdates` hook for consistent error handling
 4. Keep state updates atomic and predictable
@@ -91,7 +82,6 @@ The store is fully typed with TypeScript, providing:
 ## API Integration
 
 The store integrates with the backend API through service layers:
-
 - `agentService` for agent operations
 - `chatService` for chat operations
 - All API calls are properly typed and handle errors consistently
@@ -99,7 +89,6 @@ The store integrates with the backend API through service layers:
 ## Real-time Updates
 
 The chat slice integrates with Socket.IO for real-time updates:
-
 - Message notifications
 - Agent status changes
 - Typing indicators
@@ -108,7 +97,6 @@ The chat slice integrates with Socket.IO for real-time updates:
 ## Error Handling
 
 Errors are managed centrally through the system slice:
-
 - API errors are caught and displayed
 - Network issues are handled gracefully
 - User feedback is consistent
@@ -116,7 +104,6 @@ Errors are managed centrally through the system slice:
 ## State Persistence
 
 The store handles state persistence where needed:
-
 - Chat history is maintained
 - Agent preferences are saved
 - System settings are preserved
@@ -124,7 +111,6 @@ The store handles state persistence where needed:
 ## Performance
 
 The store is optimized for performance:
-
 - Selective re-rendering through proper selectors
 - Efficient state updates
 - Memoized selectors for complex computations

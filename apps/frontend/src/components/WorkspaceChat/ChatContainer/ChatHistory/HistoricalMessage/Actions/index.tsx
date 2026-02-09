@@ -1,3 +1,4 @@
+import React from 'react';
 import { Copy, Trash2 } from 'lucide-react';
 
 interface ActionsProps {
@@ -8,7 +9,7 @@ interface ActionsProps {
   isLastMessage?: boolean;
   regenerateMessage?: (chatId: string) => void;
   isEditing?: boolean;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   forkThread?: (chatId: string) => void;
 }
 
@@ -65,7 +66,7 @@ export default function Actions({
         <Copy size={16} />
       </button>
 
-      {role === 'user' && (
+      {role === "user" && (
         <button
           className="p-1 rounded hover:bg-white/10 text-white/60 hover:text-white"
           title="Edit message"
@@ -75,7 +76,7 @@ export default function Actions({
         </button>
       )}
 
-      {role === 'assistant' && isLastMessage && regenerateMessage && (
+      {role === "assistant" && isLastMessage && regenerateMessage && (
         <button
           onClick={handleRegenerate}
           className="p-1 rounded hover:bg-white/10 text-white/60 hover:text-white"

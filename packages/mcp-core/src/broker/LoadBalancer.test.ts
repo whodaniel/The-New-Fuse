@@ -1,15 +1,15 @@
 /**
  * LoadBalancer Unit Tests
- *
+ * 
  * Comprehensive unit tests for the LoadBalancer class covering
  * all load balancing strategies, service management, and statistics.
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { LoadBalancingConfig, MCPServiceInfo } from '../types';
+import { LoadBalancer } from './LoadBalancer';
+import { MCPServiceInfo, LoadBalancingConfig } from '../types';
 import { LoadBalancingStrategy, ServiceStatus } from '../types/common';
 import { MCPErrorClass } from '../types/error';
-import { LoadBalancer } from './LoadBalancer';
 
 describe('LoadBalancer', () => {
   let loadBalancer: LoadBalancer;
@@ -24,8 +24,8 @@ describe('LoadBalancer', () => {
       weights: {
         'service-1': 3,
         'service-2': 2,
-        'service-3': 1,
-      },
+        'service-3': 1
+      }
     };
 
     loadBalancer = new LoadBalancer(config);
@@ -43,7 +43,7 @@ describe('LoadBalancer', () => {
         metadata: { priority: 'high' },
         registeredAt: new Date(),
         lastHeartbeat: new Date(),
-        healthScore: 0.95,
+        healthScore: 0.95
       },
       {
         id: 'service-2',
@@ -57,7 +57,7 @@ describe('LoadBalancer', () => {
         metadata: { priority: 'medium' },
         registeredAt: new Date(),
         lastHeartbeat: new Date(),
-        healthScore: 0.88,
+        healthScore: 0.88
       },
       {
         id: 'service-3',
@@ -71,12 +71,12 @@ describe('LoadBalancer', () => {
         metadata: { priority: 'low' },
         registeredAt: new Date(),
         lastHeartbeat: new Date(),
-        healthScore: 0.65,
-      },
+        healthScore: 0.65
+      }
     ];
 
     // Add all services to load balancer
-    mockServices.forEach((service) => loadBalancer.addService(service));
+    mockServices.forEach(service => loadBalancer.addService(service));
   });
 
   describe('Service Management', () => {
@@ -92,15 +92,15 @@ describe('LoadBalancer', () => {
         status: ServiceStatus.ONLINE,
         metadata: {},
         registeredAt: new Date(),
-        lastHeartbeat: new Date(),
+        lastHeartbeat: new Date()
       };
 
       loadBalancer.addService(newService);
 
       const allServices = loadBalancer.getAllServices();
       expect(allServices).toHaveLength(4);
-
-      const addedService = allServices.find((instance) => instance.service.id === 'service-4');
+      
+      const addedService = allServices.find(instance => instance.service.id === 'service-4');
       expect(addedService).toBeDefined();
       expect(addedService!.weight).toBe(1); // Default weight since not specified in config
       expect(addedService!.isHealthy).toBe(true);
@@ -110,30 +110,30 @@ describe('LoadBalancer', () => {
       // Setup sticky session
       const stickyConfig = { ...config, stickySession: true };
       const stickyLoadBalancer = new LoadBalancer(stickyConfig);
-      mockServices.forEach((service) => stickyLoadBalancer.addService(service));
-
+      mockServices.forEach(service => stickyLoadBalancer.addService(service));
+      
       // Select service with session to create sticky mapping
       stickyLoadBalancer.selectService('test-session');
-
+      
       // Remove the service
       stickyLoadBalancer.removeService('service-1');
-
+      
       const allServices = stickyLoadBalancer.getAllServices();
       expect(allServices).toHaveLength(2);
-      expect(allServices.find((instance) => instance.service.id === 'service-1')).toBeUndefined();
+      expect(allServices.find(instance => instance.service.id === 'service-1')).toBeUndefined();
     });
 
     it('should update service information correctly', () => {
       const updatedService: MCPServiceInfo = {
         ...mockServices[0],
         status: ServiceStatus.DEGRADED,
-        healthScore: 0.5,
+        healthScore: 0.5
       };
 
       loadBalancer.updateService(updatedService);
 
       const allServices = loadBalancer.getAllServices();
-      const updatedInstance = allServices.find((instance) => instance.service.id === 'service-1');
+      const updatedInstance = allServices.find(instance => instance.service.id === 'service-1');
       expect(updatedInstance).toBeDefined();
       expect(updatedInstance!.service.status).toBe(ServiceStatus.DEGRADED);
       expect(updatedInstance!.isHealthy).toBe(false);
@@ -141,17 +141,17 @@ describe('LoadBalancer', () => {
 
     it('should mark service as healthy/unhealthy correctly', () => {
       // Initially service should be healthy
-      let serviceInstance = loadBalancer.getAllServices().find((s) => s.service.id === 'service-1');
+      let serviceInstance = loadBalancer.getAllServices().find(s => s.service.id === 'service-1');
       expect(serviceInstance!.isHealthy).toBe(true);
 
       // Mark as unhealthy
       loadBalancer.markServiceUnhealthy('service-1');
-      serviceInstance = loadBalancer.getAllServices().find((s) => s.service.id === 'service-1');
+      serviceInstance = loadBalancer.getAllServices().find(s => s.service.id === 'service-1');
       expect(serviceInstance!.isHealthy).toBe(false);
 
       // Mark as healthy again
       loadBalancer.markServiceHealthy('service-1');
-      serviceInstance = loadBalancer.getAllServices().find((s) => s.service.id === 'service-1');
+      serviceInstance = loadBalancer.getAllServices().find(s => s.service.id === 'service-1');
       expect(serviceInstance!.isHealthy).toBe(true);
     });
   });
@@ -160,7 +160,7 @@ describe('LoadBalancer', () => {
     beforeEach(() => {
       config.defaultStrategy = LoadBalancingStrategy.ROUND_ROBIN;
       loadBalancer = new LoadBalancer(config);
-      mockServices.forEach((service) => loadBalancer.addService(service));
+      mockServices.forEach(service => loadBalancer.addService(service));
     });
 
     it('should distribute requests in round robin fashion', () => {
@@ -173,12 +173,7 @@ describe('LoadBalancer', () => {
       // With health check enabled, only healthy services (service-1 and service-2) should be selected
       // Pattern should repeat: service-1, service-2, service-1, service-2, ...
       expect(selections).toEqual([
-        'service-1',
-        'service-2',
-        'service-1',
-        'service-2',
-        'service-1',
-        'service-2',
+        'service-1', 'service-2', 'service-1', 'service-2', 'service-1', 'service-2'
       ]);
     });
 
@@ -199,7 +194,7 @@ describe('LoadBalancer', () => {
     it('should include all services when health check is disabled', () => {
       const noHealthCheckConfig = { ...config, useHealthCheck: false };
       const noHealthCheckBalancer = new LoadBalancer(noHealthCheckConfig);
-      mockServices.forEach((service) => noHealthCheckBalancer.addService(service));
+      mockServices.forEach(service => noHealthCheckBalancer.addService(service));
 
       const selections = [];
       for (let i = 0; i < 6; i++) {
@@ -209,12 +204,7 @@ describe('LoadBalancer', () => {
 
       // Should cycle through all services including the degraded one
       expect(selections).toEqual([
-        'service-1',
-        'service-2',
-        'service-3',
-        'service-1',
-        'service-2',
-        'service-3',
+        'service-1', 'service-2', 'service-3', 'service-1', 'service-2', 'service-3'
       ]);
     });
   });
@@ -223,7 +213,7 @@ describe('LoadBalancer', () => {
     beforeEach(() => {
       config.defaultStrategy = LoadBalancingStrategy.LEAST_CONNECTIONS;
       loadBalancer = new LoadBalancer(config);
-      mockServices.forEach((service) => loadBalancer.addService(service));
+      mockServices.forEach(service => loadBalancer.addService(service));
     });
 
     it('should select service with least connections', () => {
@@ -242,29 +232,29 @@ describe('LoadBalancer', () => {
 
     it('should handle connection count management correctly', () => {
       const serviceId = 'service-1';
-
+      
       // Initial connection count should be 0
-      let serviceInstance = loadBalancer.getAllServices().find((s) => s.service.id === serviceId);
+      let serviceInstance = loadBalancer.getAllServices().find(s => s.service.id === serviceId);
       expect(serviceInstance!.connectionCount).toBe(0);
 
       // Increment connections
       loadBalancer.incrementConnections(serviceId);
       loadBalancer.incrementConnections(serviceId);
-
-      serviceInstance = loadBalancer.getAllServices().find((s) => s.service.id === serviceId);
+      
+      serviceInstance = loadBalancer.getAllServices().find(s => s.service.id === serviceId);
       expect(serviceInstance!.connectionCount).toBe(2);
 
       // Decrement connections
       loadBalancer.decrementConnections(serviceId);
-
-      serviceInstance = loadBalancer.getAllServices().find((s) => s.service.id === serviceId);
+      
+      serviceInstance = loadBalancer.getAllServices().find(s => s.service.id === serviceId);
       expect(serviceInstance!.connectionCount).toBe(1);
 
       // Decrement below zero should stay at zero
       loadBalancer.decrementConnections(serviceId);
       loadBalancer.decrementConnections(serviceId);
-
-      serviceInstance = loadBalancer.getAllServices().find((s) => s.service.id === serviceId);
+      
+      serviceInstance = loadBalancer.getAllServices().find(s => s.service.id === serviceId);
       expect(serviceInstance!.connectionCount).toBe(0);
     });
   });
@@ -273,7 +263,7 @@ describe('LoadBalancer', () => {
     beforeEach(() => {
       config.defaultStrategy = LoadBalancingStrategy.WEIGHTED;
       loadBalancer = new LoadBalancer(config);
-      mockServices.forEach((service) => loadBalancer.addService(service));
+      mockServices.forEach(service => loadBalancer.addService(service));
     });
 
     it('should distribute requests according to weights over many selections', () => {
@@ -296,18 +286,15 @@ describe('LoadBalancer', () => {
       expect(service1Percentage).toBeLessThan(0.65);
       expect(service2Percentage).toBeGreaterThan(0.35);
       expect(service2Percentage).toBeLessThan(0.45);
-
+      
       // Service-3 is unhealthy so should not be selected
       expect(selections['service-3']).toBeUndefined();
     });
 
     it('should fallback to random when all weights are zero', () => {
-      const zeroWeightConfig = {
-        ...config,
-        weights: { 'service-1': 0, 'service-2': 0, 'service-3': 0 },
-      };
+      const zeroWeightConfig = { ...config, weights: { 'service-1': 0, 'service-2': 0, 'service-3': 0 } };
       const zeroWeightBalancer = new LoadBalancer(zeroWeightConfig);
-      mockServices.forEach((service) => zeroWeightBalancer.addService(service));
+      mockServices.forEach(service => zeroWeightBalancer.addService(service));
 
       // Should not throw and should return a service
       const selected = zeroWeightBalancer.selectService();
@@ -320,12 +307,12 @@ describe('LoadBalancer', () => {
     beforeEach(() => {
       config.defaultStrategy = LoadBalancingStrategy.RANDOM;
       loadBalancer = new LoadBalancer(config);
-      mockServices.forEach((service) => loadBalancer.addService(service));
+      mockServices.forEach(service => loadBalancer.addService(service));
     });
 
     it('should select services randomly', () => {
       const selections = new Set<string>();
-
+      
       // Make many selections to ensure we get different services
       for (let i = 0; i < 50; i++) {
         const selected = loadBalancer.selectService();
@@ -355,20 +342,20 @@ describe('LoadBalancer', () => {
     beforeEach(() => {
       config.stickySession = true;
       loadBalancer = new LoadBalancer(config);
-      mockServices.forEach((service) => loadBalancer.addService(service));
+      mockServices.forEach(service => loadBalancer.addService(service));
     });
 
     it('should maintain sticky sessions', () => {
       const sessionId = 'test-session-123';
-
+      
       // First selection should create sticky mapping
       const first = loadBalancer.selectService(sessionId);
       expect(first).toBeDefined();
-
+      
       // Subsequent selections with same session should return same service
       const second = loadBalancer.selectService(sessionId);
       const third = loadBalancer.selectService(sessionId);
-
+      
       expect(second!.id).toBe(first!.id);
       expect(third!.id).toBe(first!.id);
     });
@@ -376,15 +363,15 @@ describe('LoadBalancer', () => {
     it('should handle different sessions independently', () => {
       const session1 = 'session-1';
       const session2 = 'session-2';
-
+      
       const service1 = loadBalancer.selectService(session1);
       const service2 = loadBalancer.selectService(session2);
-
+      
       // Different sessions can get different services
       // (Though they might get the same service by chance)
       expect(service1).toBeDefined();
       expect(service2).toBeDefined();
-
+      
       // But each session should be consistent
       expect(loadBalancer.selectService(session1)!.id).toBe(service1!.id);
       expect(loadBalancer.selectService(session2)!.id).toBe(service2!.id);
@@ -392,13 +379,13 @@ describe('LoadBalancer', () => {
 
     it('should clear sticky sessions correctly', () => {
       const sessionId = 'test-session';
-
+      
       const first = loadBalancer.selectService(sessionId);
       expect(first).toBeDefined();
-
+      
       // Clear the session
       loadBalancer.clearStickySession(sessionId);
-
+      
       // Next selection might return a different service
       const second = loadBalancer.selectService(sessionId);
       expect(second).toBeDefined();
@@ -407,19 +394,19 @@ describe('LoadBalancer', () => {
 
     it('should handle removed service in sticky session', () => {
       const sessionId = 'test-session';
-
+      
       // Force selection of service-1
       jest.spyOn(Math, 'random').mockReturnValue(0); // This will select the first service
       const first = loadBalancer.selectService(sessionId);
-
+      
       // Remove the service
       loadBalancer.removeService(first!.id);
-
+      
       // Next selection should work and select from remaining services
       const second = loadBalancer.selectService(sessionId);
       expect(second).toBeDefined();
       expect(second!.id).not.toBe(first!.id);
-
+      
       jest.restoreAllMocks();
     });
   });
@@ -432,7 +419,7 @@ describe('LoadBalancer', () => {
       loadBalancer.incrementConnections('service-1');
 
       const stats = loadBalancer.getStatistics();
-
+      
       expect(stats.totalServices).toBe(3);
       expect(stats.healthyServices).toBe(2); // service-3 is degraded
       expect(stats.totalRequests).toBe(2); // Two services were requested
@@ -443,7 +430,7 @@ describe('LoadBalancer', () => {
     it('should handle empty service list in statistics', () => {
       const emptyBalancer = new LoadBalancer(config);
       const stats = emptyBalancer.getStatistics();
-
+      
       expect(stats.totalServices).toBe(0);
       expect(stats.healthyServices).toBe(0);
       expect(stats.totalRequests).toBe(0);
@@ -455,15 +442,13 @@ describe('LoadBalancer', () => {
       for (let i = 0; i < 3; i++) {
         loadBalancer.selectService();
       }
-
+      
       const stats = loadBalancer.getStatistics();
       expect(stats.totalRequests).toBe(3);
-
+      
       // Check that requests were distributed (exact distribution depends on strategy)
-      const totalDistributed = Object.values(stats.requestDistribution).reduce(
-        (sum, count) => sum + count,
-        0
-      );
+      const totalDistributed = Object.values(stats.requestDistribution)
+        .reduce((sum, count) => sum + count, 0);
       expect(totalDistributed).toBe(3);
     });
   });
@@ -471,7 +456,7 @@ describe('LoadBalancer', () => {
   describe('Error Handling', () => {
     it('should throw error for unknown load balancing strategy', () => {
       const invalidStrategy = 'invalid-strategy' as LoadBalancingStrategy;
-
+      
       expect(() => {
         loadBalancer.selectService(undefined, invalidStrategy);
       }).toThrow(MCPErrorClass);
@@ -479,7 +464,7 @@ describe('LoadBalancer', () => {
 
     it('should return null when no services are available', () => {
       const emptyBalancer = new LoadBalancer(config);
-
+      
       const selected = emptyBalancer.selectService();
       expect(selected).toBeNull();
     });
@@ -489,7 +474,7 @@ describe('LoadBalancer', () => {
       loadBalancer.markServiceUnhealthy('service-1');
       loadBalancer.markServiceUnhealthy('service-2');
       loadBalancer.markServiceUnhealthy('service-3');
-
+      
       const selected = loadBalancer.selectService();
       expect(selected).toBeNull();
     });
@@ -508,13 +493,13 @@ describe('LoadBalancer', () => {
         status: ServiceStatus.ONLINE,
         metadata: {},
         registeredAt: new Date(),
-        lastHeartbeat: new Date(),
+        lastHeartbeat: new Date()
       });
       loadBalancer.markServiceHealthy('non-existent-service');
       loadBalancer.markServiceUnhealthy('non-existent-service');
       loadBalancer.incrementConnections('non-existent-service');
       loadBalancer.decrementConnections('non-existent-service');
-
+      
       // Should not throw any errors
       expect(true).toBe(true);
     });
@@ -524,14 +509,14 @@ describe('LoadBalancer', () => {
     beforeEach(() => {
       config.defaultStrategy = LoadBalancingStrategy.ROUND_ROBIN;
       loadBalancer = new LoadBalancer(config);
-      mockServices.forEach((service) => loadBalancer.addService(service));
+      mockServices.forEach(service => loadBalancer.addService(service));
     });
 
     it('should use override strategy when provided', () => {
       // Default is round robin, but override with random
       const selected1 = loadBalancer.selectService(undefined, LoadBalancingStrategy.RANDOM);
       const selected2 = loadBalancer.selectService(undefined, LoadBalancingStrategy.RANDOM);
-
+      
       expect(selected1).toBeDefined();
       expect(selected2).toBeDefined();
       expect(['service-1', 'service-2']).toContain(selected1!.id);
@@ -541,7 +526,7 @@ describe('LoadBalancer', () => {
     it('should fall back to default strategy when no override provided', () => {
       const selected1 = loadBalancer.selectService();
       const selected2 = loadBalancer.selectService();
-
+      
       // Round robin should give us different services (or same if only one healthy)
       expect(['service-1', 'service-2']).toContain(selected1!.id);
       expect(['service-1', 'service-2']).toContain(selected2!.id);

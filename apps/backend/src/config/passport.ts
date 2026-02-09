@@ -35,13 +35,13 @@ passport.use(
             name: profile.displayName,
             hashedPassword: '', // Empty password for OAuth users
             emailVerified: true, // Since Google has verified the email
-          } as any);
+          });
         } else {
           // Update user to link Google account if not already linked
           user =
             (await drizzleUserRepository.update(user.id, {
               emailVerified: true,
-            } as any)) || user;
+            })) || user;
         }
 
         return done(null, user);

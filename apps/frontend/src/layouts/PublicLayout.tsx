@@ -13,7 +13,9 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
       <SmartNavigation />
 
       {/* Main Content Wrapper with top padding to account for fixed header */}
-      <main className="flex-1 pt-16">{children || <Outlet />}</main>
+      <main className="flex-1 pt-16">
+        {children || <Outlet />}
+      </main>
 
       <SiteFooter />
     </div>

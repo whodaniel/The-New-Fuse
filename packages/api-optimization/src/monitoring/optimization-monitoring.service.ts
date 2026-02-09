@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { CacheInvalidationService } from '../caching/cache-invalidation.service';
-import { ResponseCacheService } from '../caching/response-cache.service';
 import { RedisRateLimiterService } from '../rate-limiting/redis-rate-limiter.service';
+import { ResponseCacheService } from '../caching/response-cache.service';
+import { CacheInvalidationService } from '../caching/cache-invalidation.service';
 
 export interface OptimizationMetrics {
   rateLimit: {
@@ -48,7 +48,7 @@ export class OptimizationMonitoringService {
     rateLimitBlockedKeys: 10,
     cacheHitRateMin: 50, // %
     cacheHitRateLow: 30, // %
-    rateLimitHighConsumption: 80, // % of limit
+    rateLimitHighConsumption: 80 // % of limit
   };
 
   constructor(
@@ -67,14 +67,14 @@ export class OptimizationMonitoringService {
     const [rateLimitMetrics, cacheStats, invalidationStats] = await Promise.all([
       this.rateLimiter.getMetrics(),
       Promise.resolve(this.cacheService.getStats()),
-      Promise.resolve(this.invalidationService.getStats()),
+      Promise.resolve(this.invalidationService.getStats())
     ]);
 
     return {
       rateLimit: rateLimitMetrics,
       cache: cacheStats,
       invalidation: invalidationStats,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString()
     };
   }
 
@@ -88,8 +88,10 @@ export class OptimizationMonitoringService {
   /**
    * Get alerts by severity
    */
-  getAlertsBySeverity(severity: 'info' | 'warning' | 'critical'): OptimizationAlert[] {
-    return this.alerts.filter((alert) => alert.severity === severity);
+  getAlertsBySeverity(
+    severity: 'info' | 'warning' | 'critical'
+  ): OptimizationAlert[] {
+    return this.alerts.filter(alert => alert.severity === severity);
   }
 
   /**
@@ -97,7 +99,9 @@ export class OptimizationMonitoringService {
    */
   clearAlerts(olderThan?: Date): void {
     if (olderThan) {
-      this.alerts = this.alerts.filter((alert) => new Date(alert.timestamp) > olderThan);
+      this.alerts = this.alerts.filter(
+        alert => new Date(alert.timestamp) > olderThan
+      );
     } else {
       this.alerts = [];
     }
@@ -113,7 +117,7 @@ export class OptimizationMonitoringService {
   }> {
     const [rateLimitHealth, cacheHealth] = await Promise.all([
       this.rateLimiter.healthCheck(),
-      this.cacheService.healthCheck(),
+      this.cacheService.healthCheck()
     ]);
 
     const criticalAlerts = this.getAlertsBySeverity('critical').length;
@@ -135,9 +139,9 @@ export class OptimizationMonitoringService {
       status: overallStatus,
       components: {
         rateLimit: rateLimitHealth,
-        cache: cacheHealth,
+        cache: cacheHealth
       },
-      alerts: this.alerts.length,
+      alerts: this.alerts.length
     };
   }
 
@@ -149,14 +153,17 @@ export class OptimizationMonitoringService {
     health: any;
     recommendations: string[];
   }> {
-    const [metrics, health] = await Promise.all([this.getMetrics(), this.getHealthStatus()]);
+    const [metrics, health] = await Promise.all([
+      this.getMetrics(),
+      this.getHealthStatus()
+    ]);
 
     const recommendations = this.generateRecommendations(metrics);
 
     return {
       metrics,
       health,
-      recommendations,
+      recommendations
     };
   }
 
@@ -165,7 +172,7 @@ export class OptimizationMonitoringService {
   private startMonitoring(): void {
     // Check metrics every 60 seconds
     setInterval(() => {
-      this.checkMetrics().catch((error) => {
+      this.checkMetrics().catch(error => {
         this.logger.error('Monitoring check error:', error);
       });
     }, 60000);
@@ -186,7 +193,7 @@ export class OptimizationMonitoringService {
           metric: 'blockedKeys',
           value: metrics.rateLimit.blockedKeys,
           threshold: this.thresholds.rateLimitBlockedKeys,
-          timestamp: new Date().toISOString(),
+          timestamp: new Date().toISOString()
         });
       }
 
@@ -199,7 +206,7 @@ export class OptimizationMonitoringService {
           metric: 'hitRate',
           value: metrics.cache.hitRate,
           threshold: this.thresholds.cacheHitRateLow,
-          timestamp: new Date().toISOString(),
+          timestamp: new Date().toISOString()
         });
       } else if (metrics.cache.hitRate < this.thresholds.cacheHitRateMin) {
         this.addAlert({
@@ -209,7 +216,7 @@ export class OptimizationMonitoringService {
           metric: 'hitRate',
           value: metrics.cache.hitRate,
           threshold: this.thresholds.cacheHitRateMin,
-          timestamp: new Date().toISOString(),
+          timestamp: new Date().toISOString()
         });
       }
 
@@ -223,7 +230,7 @@ export class OptimizationMonitoringService {
             message: `High rate limit consumption: ${consumer.key} (${consumer.count} requests)`,
             metric: 'consumption',
             value: consumer.count,
-            timestamp: new Date().toISOString(),
+            timestamp: new Date().toISOString()
           });
         }
       }

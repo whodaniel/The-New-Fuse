@@ -2,7 +2,7 @@ export interface MarketplaceItem {
   id: string;
   title: string;
   description: string;
-  type: 'agent' | 'workflow' | 'template';
+  type: agent' | 'workflow' | 'template';
   category: string;
   author: {
     id: string;
@@ -28,8 +28,8 @@ export interface MarketplaceFilter {
   tags?: string[];
   priceRange?: [number, number];
   rating?: number;
-  sortBy?: 'popular' | 'recent' | 'rating' | 'price';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: popular' | 'recent' | 'rating' | 'price';
+  sortOrder?: asc' | 'desc';
 }
 
 export interface MarketplaceState {

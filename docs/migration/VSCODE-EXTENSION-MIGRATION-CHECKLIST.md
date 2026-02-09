@@ -2,11 +2,10 @@
 
 ## Overview
 
-This document tracks the systematic migration of features from the old
-vscode-extension to the new improved version.
+This document tracks the systematic migration of features from the old vscode-extension to the new improved version.
 
-**Old Version**: `/old-vscode-extension/` (v1.0.2) **New Version**:
-`/vscode-extension/` (v0.0.1)
+**Old Version**: `/old-vscode-extension/` (v1.0.2)
+**New Version**: `/vscode-extension/` (v0.0.1)
 
 ## Migration Status Legend
 
@@ -44,23 +43,20 @@ vscode-extension to the new improved version.
 ### 1.1 Package Configuration
 
 - [ ] ⏳ **Extension Metadata** - Publisher, icon, repository info
-- [ ] ⏳ **Version Management** - Proper versioning strategy (Old: v1.0.2 → New:
-      v0.0.1)
+- [ ] ⏳ **Version Management** - Proper versioning strategy (Old: v1.0.2 → New: v0.0.1)
 - [ ] ⏳ **Engine Requirements** - VS Code version compatibility
 - [ ] ⏳ **Categories** - Extension marketplace categories
 
 ### 1.2 Activation & Main Entry
 
-- [ ] ⚠️ **Extension Activation** - `extension.ts` main entry point (EXISTS in
-      both)
+- [ ] ⚠️ **Extension Activation** - `extension.ts` main entry point (EXISTS in both)
 - [ ] ⏳ **Activation Events** - When extension should start
 - [ ] ⏳ **Command Registration** - All commands properly registered
 
 ### 1.3 Analysis Results Summary
 
-**Files**: Old (95 TypeScript files) → New (18 TypeScript files) - **77 files
-missing!** **Commands**: Old (17 commands) → New (21 commands) - **17 old
-commands missing!**
+**Files**: Old (95 TypeScript files) → New (18 TypeScript files) - **77 files missing!**
+**Commands**: Old (17 commands) → New (21 commands) - **17 old commands missing!**
 
 ---
 
@@ -114,13 +110,10 @@ commands missing!**
 ### 3.1 LLM Provider Management
 
 - [ ] ⚠️ **LLMProviderManager** - EXISTS in both, need feature parity check
-- [ ] ❌ **OpenAI Provider** - Old has full implementation, New has basic
-      version
-- [ ] ❌ **Ollama Provider** - Old has full implementation, New has basic
-      version
+- [ ] ❌ **OpenAI Provider** - Old has full implementation, New has basic version
+- [ ] ❌ **Ollama Provider** - Old has full implementation, New has basic version
 - [ ] 🆕 **VSCode LLM Provider** - New implementation (good!)
-- [ ] ❌ **LLM Monitoring Service** - Old has full monitoring, New has basic
-      monitoring
+- [ ] ❌ **LLM Monitoring Service** - Old has full monitoring, New has basic monitoring
 - [ ] ❌ **Anthropic Provider** - Missing from new version
 - [ ] ❌ **Cerebras Provider** - Missing from new version
 
@@ -239,8 +232,7 @@ commands missing!**
 
 ### Phase 1: Critical Infrastructure Migration (URGENT)
 
-1. **Agent Communication System**: Migrate complete agent communication
-   infrastructure
+1. **Agent Communication System**: Migrate complete agent communication infrastructure
    - `agent-communication.ts`
    - `agent-registry.ts`
    - `file-protocol-communicator.ts`
@@ -286,13 +278,12 @@ commands missing!**
 
 - **CRITICAL**: The new version is missing 81% of the original functionality
 - **CONCERN**: Many core features appear to have been simplified or removed
-- **DECISION NEEDED**: Determine which old features are still required vs.
-  intentionally deprecated
-- **ARCHITECTURE**: New version appears to be a cleaner rewrite, but lacks
-  feature completeness
+- **DECISION NEEDED**: Determine which old features are still required vs. intentionally deprecated
+- **ARCHITECTURE**: New version appears to be a cleaner rewrite, but lacks feature completeness
 - **BACKWARDS COMPATIBILITY**: Critical for users migrating from old version
 
 ---
 
-_Last Updated: May 23, 2025_ _Migration Lead: AI Assistant_ _Status: CRITICAL
-GAPS IDENTIFIED - IMMEDIATE ACTION REQUIRED_
+*Last Updated: May 23, 2025*
+*Migration Lead: AI Assistant*
+*Status: CRITICAL GAPS IDENTIFIED - IMMEDIATE ACTION REQUIRED*

@@ -6,18 +6,13 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 export class AlertService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly eventEmitter: EventEmitter2
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   /**
    * Send a system alert
    */
-  sendAlert(
-    alertType: string,
-    message: string,
-    severity: 'info' | 'warning' | 'error' | 'critical' = 'info',
-    metadata: Record<string, any> = {}
-  ): void {
+  sendAlert(alertType: string, message: string, severity: 'info' | 'warning' | 'error' | 'critical' = 'info', metadata: Record<string, any> = {}): void {
     const alert = {
       type: alertType,
       message,
@@ -69,12 +64,12 @@ export class AlertService {
   shouldSendAlerts(): boolean {
     const environment = this.configService.get<string>('NODE_ENV');
     const alertsEnabled = this.configService.get<string>('ALERTS_ENABLED');
-
+    
     // Default to enabled for production, disabled for development/test
     if (alertsEnabled !== undefined) {
       return alertsEnabled === 'true';
     }
-
+    
     return environment === 'production';
   }
 }

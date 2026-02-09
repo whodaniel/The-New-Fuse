@@ -5,10 +5,10 @@
  * This provides a clean interface for calling crypto operations from the TNF backend.
  */
 
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { ChildProcess, spawn } from 'child_process';
-import * as net from 'net';
+import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { spawn, ChildProcess } from 'child_process';
 import * as path from 'path';
+import * as net from 'net';
 
 // ===== Types =====
 
@@ -110,14 +110,11 @@ export class CryptoAgentExecutorService implements OnModuleInit, OnModuleDestroy
   private pythonProcess?: ChildProcess;
   private socketClient?: net.Socket;
   private requestCounter = 0;
-  private pendingRequests = new Map<
-    number,
-    {
-      resolve: (value: CryptoAgentResult) => void;
-      reject: (reason: any) => void;
-      timeout: NodeJS.Timeout;
-    }
-  >();
+  private pendingRequests = new Map<number, {
+    resolve: (value: CryptoAgentResult) => void;
+    reject: (reason: any) => void;
+    timeout: NodeJS.Timeout;
+  }>();
 
   constructor() {
     // Default configuration
@@ -159,10 +156,8 @@ export class CryptoAgentExecutorService implements OnModuleInit, OnModuleDestroy
     // Start Python executor in socket server mode
     this.pythonProcess = spawn(this.config.python_path!, [
       this.config.executor_path!,
-      '--mode',
-      'socket',
-      '--socket-path',
-      this.config.socket_path!,
+      '--mode', 'socket',
+      '--socket-path', this.config.socket_path!,
     ]);
 
     this.pythonProcess.on('error', (error) => {
@@ -201,7 +196,7 @@ export class CryptoAgentExecutorService implements OnModuleInit, OnModuleDestroy
       if (await this.checkSocketExists()) {
         return;
       }
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      await new Promise(resolve => setTimeout(resolve, delayMs));
     }
 
     throw new Error('Timeout waiting for Python executor socket');
@@ -219,10 +214,7 @@ export class CryptoAgentExecutorService implements OnModuleInit, OnModuleDestroy
 
   // ===== Core Execution Method =====
 
-  async executeAgent(
-    agentName: string,
-    inputData: Record<string, any>
-  ): Promise<CryptoAgentResult> {
+  async executeAgent(agentName: string, inputData: Record<string, any>): Promise<CryptoAgentResult> {
     const startTime = Date.now();
 
     try {
@@ -296,8 +288,7 @@ export class CryptoAgentExecutorService implements OnModuleInit, OnModuleDestroy
     return new Promise((resolve, reject) => {
       const process = spawn(this.config.python_path!, [
         this.config.executor_path!,
-        '--mode',
-        'stdio',
+        '--mode', 'stdio',
       ]);
 
       let stdout = '';

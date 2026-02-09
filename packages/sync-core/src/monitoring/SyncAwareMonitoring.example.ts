@@ -1,24 +1,25 @@
 /**
  * Sync-Aware Monitoring System Usage Examples
- *
+ * 
  * This file demonstrates how to integrate and use the sync-aware heartbeat monitoring
  * system with existing infrastructure and monitoring services.
  */
 
-import { Injectable, Logger, Module } from '@nestjs/common';
-import { HeartbeatMonitoringService } from '@the-new-fuse/relay-core';
-import { DashboardMonitoringIntegration } from '../dashboard/DashboardMonitoringIntegration';
-import { SyncDashboardService } from '../dashboard/SyncDashboardService';
-import { ConflictManager } from '../services/ConflictManager';
-import { MasterClockService } from '../services/MasterClockService';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import {
+import { Module, Injectable, Logger } from '@nestjs/common';
+import { 
   SyncAwareHeartbeatMonitoringService,
   SyncHealthDashboardIntegration,
-  SyncHealthEscalation,
-  UnifiedSyncHealthReport,
   UnifiedSyncHealthReporting,
+  SyncHealthMetrics,
+  SyncHealthEscalation,
+  UnifiedSyncHealthReport
 } from './index';
+import { HeartbeatMonitoringService } from '@the-new-fuse/relay-core';
+import { MasterClockService } from '../services/MasterClockService';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
+import { ConflictManager } from '../services/ConflictManager';
+import { SyncDashboardService } from '../dashboard/SyncDashboardService';
+import { DashboardMonitoringIntegration } from '../dashboard/DashboardMonitoringIntegration';
 
 /**
  * Example 1: Basic Setup and Integration
@@ -39,44 +40,35 @@ export class BasicSyncMonitoringExample {
     // Listen to sync health events
     this.syncHealthService.on('sync_aware_heartbeat_received', (data) => {
       this.logger.log(`Sync-aware heartbeat from agent ${data.agentId}: ${data.syncState}`);
-
+      
       // Log sync metrics
       if (data.syncMetrics.syncErrorRate > 0.1) {
-        this.logger.warn(
-          `High error rate detected for agent ${data.agentId}: ${(data.syncMetrics.syncErrorRate * 100).toFixed(1)}%`
-        );
+        this.logger.warn(`High error rate detected for agent ${data.agentId}: ${(data.syncMetrics.syncErrorRate * 100).toFixed(1)}%`);
       }
     });
 
     // Listen to escalations
-    this.syncHealthService.on(
-      'sync_health_escalation_created',
-      (escalation: SyncHealthEscalation) => {
-        this.logger.error(
-          `Sync health escalation: ${escalation.type} (${escalation.severity}) for agent ${escalation.agentId}`
-        );
-
-        // Handle different escalation types
-        switch (escalation.type) {
-          case 'sync_failure':
-            this.handleSyncFailureEscalation(escalation);
-            break;
-          case 'conflict_storm':
-            this.handleConflictStormEscalation(escalation);
-            break;
-          case 'clock_drift':
-            this.handleClockDriftEscalation(escalation);
-            break;
-        }
+    this.syncHealthService.on('sync_health_escalation_created', (escalation: SyncHealthEscalation) => {
+      this.logger.error(`Sync health escalation: ${escalation.type} (${escalation.severity}) for agent ${escalation.agentId}`);
+      
+      // Handle different escalation types
+      switch (escalation.type) {
+        case 'sync_failure':
+          this.handleSyncFailureEscalation(escalation);
+          break;
+        case 'conflict_storm':
+          this.handleConflictStormEscalation(escalation);
+          break;
+        case 'clock_drift':
+          this.handleClockDriftEscalation(escalation);
+          break;
       }
-    );
+    });
 
     // Listen to health reports
     this.healthReporting.on('health_report_generated', (report: UnifiedSyncHealthReport) => {
-      this.logger.log(
-        `Health report generated: ${report.reportType} - System health: ${report.systemOverview.health}`
-      );
-
+      this.logger.log(`Health report generated: ${report.reportType} - System health: ${report.systemOverview.health}`);
+      
       // Check for critical issues
       if (report.systemOverview.health === 'critical') {
         this.handleCriticalSystemHealth(report);
@@ -88,7 +80,7 @@ export class BasicSyncMonitoringExample {
 
   private handleSyncFailureEscalation(escalation: SyncHealthEscalation): void {
     this.logger.warn(`Handling sync failure escalation for agent ${escalation.agentId}`);
-
+    
     // Example: Send notification to operations team
     // await this.notificationService.sendAlert({
     //   type: 'sync_failure',
@@ -100,24 +92,24 @@ export class BasicSyncMonitoringExample {
 
   private handleConflictStormEscalation(escalation: SyncHealthEscalation): void {
     this.logger.warn(`Handling conflict storm escalation for agent ${escalation.agentId}`);
-
+    
     // Example: Temporarily reduce sync frequency
     // await this.syncOrchestrator.reduceSyncFrequency(escalation.agentId, 0.5);
   }
 
   private handleClockDriftEscalation(escalation: SyncHealthEscalation): void {
     this.logger.warn('Handling clock drift escalation');
-
+    
     // Example: Trigger clock synchronization
     // await this.masterClockService.forceSynchronization();
   }
 
   private handleCriticalSystemHealth(report: UnifiedSyncHealthReport): void {
     this.logger.error('Critical system health detected!');
-
+    
     // Example: Trigger emergency procedures
     // await this.emergencyResponseService.activateEmergencyMode();
-
+    
     // Send immediate notifications
     // await this.notificationService.sendCriticalAlert({
     //   message: 'Sync system in critical state',
@@ -167,12 +159,12 @@ export class CustomMetricsIntegrationExample {
       operationType: data.operation?.type,
       success: data.success,
       duration: data.duration,
-      businessImpact: this.calculateBusinessImpact(data),
+      businessImpact: this.calculateBusinessImpact(data)
     };
 
     // Send to business metrics system
     // await this.businessMetricsService.record(businessMetrics);
-
+    
     this.logger.debug(`Business metrics recorded for agent ${data.agentId}`);
   }
 
@@ -180,13 +172,13 @@ export class CustomMetricsIntegrationExample {
     // Example: Track SLA compliance
     const slaCompliance = {
       errorRateCompliance: report.syncPerformance.errorRate < 0.01, // 1% SLA
-      latencyCompliance: report.syncPerformance.avgLatency < 2000, // 2s SLA
-      availabilityCompliance: report.systemOverview.health !== 'critical',
+      latencyCompliance: report.syncPerformance.avgLatency < 2000,   // 2s SLA
+      availabilityCompliance: report.systemOverview.health !== 'critical'
     };
 
     // Record SLA metrics
     // await this.slaTrackingService.recordCompliance(slaCompliance);
-
+    
     this.logger.debug(`SLA compliance tracked: ${JSON.stringify(slaCompliance)}`);
   }
 
@@ -195,11 +187,11 @@ export class CustomMetricsIntegrationExample {
     const customConfig = {
       realTimeInterval: 15, // 15 seconds for high-frequency monitoring
       alertThresholds: {
-        errorRate: 0.005, // 0.5% for strict business requirements
-        latency: 1500, // 1.5s for premium service tiers
-        conflictRate: 0.01, // 1% conflict rate threshold
-        escalationRate: 0.005, // 0.5% escalation rate threshold
-      },
+        errorRate: 0.005,      // 0.5% for strict business requirements
+        latency: 1500,         // 1.5s for premium service tiers
+        conflictRate: 0.01,    // 1% conflict rate threshold
+        escalationRate: 0.005  // 0.5% escalation rate threshold
+      }
     };
 
     this.healthReporting.updateConfig(customConfig);
@@ -255,10 +247,10 @@ export class DashboardVisualizationExample {
         refreshInterval: 60,
         thresholds: [
           { value: 0.1, color: '#f59e0b', label: 'Medium Impact' },
-          { value: 0.25, color: '#ef4444', label: 'High Impact' },
-        ],
+          { value: 0.25, color: '#ef4444', label: 'High Impact' }
+        ]
       },
-      position: { x: 0, y: 7, width: 6, height: 3 },
+      position: { x: 0, y: 7, width: 6, height: 3 }
     });
 
     // Example: Add tenant-specific health widget
@@ -268,9 +260,9 @@ export class DashboardVisualizationExample {
       title: 'Tenant Health Overview',
       config: {
         metric: 'tenant_health',
-        refreshInterval: 30,
+        refreshInterval: 30
       },
-      position: { x: 6, y: 7, width: 6, height: 3 },
+      position: { x: 6, y: 7, width: 6, height: 3 }
     });
 
     this.logger.log('Custom dashboard widgets configured');
@@ -287,13 +279,10 @@ export class DashboardVisualizationExample {
 
   private setupHistoricalVisualization(): void {
     // Example: Generate historical reports for visualization
-    setInterval(
-      async () => {
-        const historicalReport = await this.healthReporting.generateOnDemandReport('hourly');
-        await this.storeHistoricalData(historicalReport);
-      },
-      60 * 60 * 1000
-    ); // Every hour
+    setInterval(async () => {
+      const historicalReport = await this.healthReporting.generateOnDemandReport('hourly');
+      await this.storeHistoricalData(historicalReport);
+    }, 60 * 60 * 1000); // Every hour
 
     this.logger.log('Historical visualization configured');
   }
@@ -306,12 +295,12 @@ export class DashboardVisualizationExample {
       errorRate: data.syncMetrics.errorRate,
       avgLatency: data.syncMetrics.avgLatency,
       agentCount: data.agentMetrics.total,
-      activeEscalations: data.escalations.active,
+      activeEscalations: data.escalations.active
     };
 
     // Send to external system
     // await this.externalDashboardService.stream(streamData);
-
+    
     this.logger.debug('Data streamed to external dashboard');
   }
 
@@ -325,14 +314,14 @@ export class DashboardVisualizationExample {
         errorRate: report.syncPerformance.errorRate,
         avgLatency: report.syncPerformance.avgLatency,
         throughput: report.syncPerformance.throughputPerMinute,
-        conflictRate: report.conflictMetrics.conflictRate,
+        conflictRate: report.conflictMetrics.conflictRate
       },
-      trends: report.trends,
+      trends: report.trends
     };
 
     // Store in time-series database
     // await this.timeSeriesDatabase.insert('sync_health_history', historicalData);
-
+    
     this.logger.debug('Historical data stored');
   }
 }
@@ -344,7 +333,9 @@ export class DashboardVisualizationExample {
 export class AutomatedRecoveryExample {
   private readonly logger = new Logger(AutomatedRecoveryExample.name);
 
-  constructor(private readonly syncHealthService: SyncAwareHeartbeatMonitoringService) {}
+  constructor(
+    private readonly syncHealthService: SyncAwareHeartbeatMonitoringService
+  ) {}
 
   async setupAutomatedRecovery(): Promise<void> {
     this.logger.log('Setting up automated recovery and self-healing...');
@@ -426,12 +417,12 @@ export class AutomatedRecoveryExample {
       urgency: data.urgency,
       alert: data.alert,
       recommendedActions: data.recommendedActions,
-      timestamp: new Date(),
+      timestamp: new Date()
     };
 
     // Send to support system
     // await this.supportTicketService.createTicket(interventionRequest);
-
+    
     // Send immediate notification to on-call engineer
     // await this.notificationService.sendUrgentAlert(interventionRequest);
 
@@ -484,44 +475,44 @@ export class AutomatedRecoveryExample {
     SyncAwareHeartbeatMonitoringService,
     SyncHealthDashboardIntegration,
     UnifiedSyncHealthReporting,
-
+    
     // Example services
     BasicSyncMonitoringExample,
     CustomMetricsIntegrationExample,
     DashboardVisualizationExample,
     AutomatedRecoveryExample,
-
+    
     // Dependencies (these would be imported from other modules in real usage)
     {
       provide: HeartbeatMonitoringService,
-      useClass: HeartbeatMonitoringService,
+      useClass: HeartbeatMonitoringService
     },
     {
       provide: MasterClockService,
-      useClass: MasterClockService,
+      useClass: MasterClockService
     },
     {
       provide: SyncOrchestrator,
-      useClass: SyncOrchestrator,
+      useClass: SyncOrchestrator
     },
     {
       provide: ConflictManager,
-      useClass: ConflictManager,
+      useClass: ConflictManager
     },
     {
       provide: SyncDashboardService,
-      useClass: SyncDashboardService,
+      useClass: SyncDashboardService
     },
     {
       provide: DashboardMonitoringIntegration,
-      useClass: DashboardMonitoringIntegration,
-    },
+      useClass: DashboardMonitoringIntegration
+    }
   ],
   exports: [
     SyncAwareHeartbeatMonitoringService,
     SyncHealthDashboardIntegration,
-    UnifiedSyncHealthReporting,
-  ],
+    UnifiedSyncHealthReporting
+  ]
 })
 export class SyncAwareMonitoringModule {}
 

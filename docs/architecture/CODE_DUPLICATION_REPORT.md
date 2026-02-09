@@ -18,7 +18,7 @@ code** (estimated 12-15% reduction in codebase size).
 - **90%+ Duplication:** OAuth strategies (Google vs GitHub)
 - **100% Functional Overlap:** Dual WorkflowEngine implementations
 - **85%+ Pattern Duplication:** Registry services (Skills, Workflows, Resources)
-- **9 Duplicate Implementations:** DatabaseService across packages
+- **9 Duplicate Implementations:** PrismaService across packages
 - **20+ Similar Implementations:** MCP server boilerplate
 - **274+ Duplicate Definitions:** DTO/Interface types
 - **30 Security Issues:** Insecure `Math.random()` usage (should use `crypto`)
@@ -44,7 +44,7 @@ variations
 export class GoogleStrategy/GitHubStrategy extends PassportStrategy(Strategy, 'google'/'github') {
   constructor(
     private configService: ConfigService,
-    private drizzle: DatabaseService,
+    private prisma: PrismaService,
   ) {
     super({
       clientID: configService.get<string>('PROVIDER_CLIENT_ID'),
@@ -70,18 +70,18 @@ export class GoogleStrategy/GitHubStrategy extends PassportStrategy(Strategy, 'g
 
     try {
       // IDENTICAL USER LINKING LOGIC (90% exact match)
-      let user = await this.drizzle.user.findUnique({
+      let user = await this.prisma.user.findUnique({
         where: { providerId: id },
       });
 
       if (!user) {
-        user = await this.drizzle.user.findUnique({
+        user = await this.prisma.user.findUnique({
           where: { email },
         });
 
         if (user) {
           // Link provider account to existing user
-          user = await this.drizzle.user.update({
+          user = await this.prisma.user.update({
             where: { id: user.id },
             data: {
               providerId: id,
@@ -91,7 +91,7 @@ export class GoogleStrategy/GitHubStrategy extends PassportStrategy(Strategy, 'g
           });
         } else {
           // Create new user with provider account
-          user = await this.drizzle.user.create({
+          user = await this.prisma.user.create({
             data: {
               email,
               name: displayName || email.split('@')[0],
@@ -104,7 +104,7 @@ export class GoogleStrategy/GitHubStrategy extends PassportStrategy(Strategy, 'g
         }
       } else {
         // Update last login timestamp
-        user = await this.drizzle.user.update({
+        user = await this.prisma.user.update({
           where: { id: user.id },
           data: {
             picture: photos?.[0]?.value,
@@ -131,7 +131,7 @@ export abstract class BaseOAuthStrategy<TProfile> extends PassportStrategy(
 ) {
   constructor(
     protected configService: ConfigService,
-    protected drizzle: DatabaseService,
+    protected prisma: PrismaService,
     protected providerName: string,
     strategyOptions: any
   ) {
@@ -193,8 +193,8 @@ export abstract class BaseOAuthStrategy<TProfile> extends PassportStrategy(
 // SIMPLIFIED: google.strategy.ts
 @Injectable()
 export class GoogleStrategy extends BaseOAuthStrategy<GoogleProfile> {
-  constructor(configService: ConfigService, drizzle: DatabaseService) {
-    super(configService, drizzle, 'google', {
+  constructor(configService: ConfigService, prisma: PrismaService) {
+    super(configService, prisma, 'google', {
       clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
       clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET'),
       callbackURL: configService.get<string>('GOOGLE_CALLBACK_URL'),
@@ -428,9 +428,9 @@ export class WorkflowRegistry extends BaseRegistry<N8nWorkflow> {
   }
 }
 
-// SIMPLIFIED: ResourceRegistryService (uses Drizzle, slightly different)
-export class ResourceRegistryService extends BaseDrizzleRegistry<Resource> {
-  // Override with Drizzle operations instead of Map
+// SIMPLIFIED: ResourceRegistryService (uses Prisma, slightly different)
+export class ResourceRegistryService extends BasePrismaRegistry<Resource> {
+  // Override with Prisma operations instead of Map
 }
 ```
 
@@ -440,28 +440,28 @@ export class ResourceRegistryService extends BaseDrizzleRegistry<Resource> {
 
 ---
 
-### 4. DatabaseService Duplication (9 Implementations)
+### 4. PrismaService Duplication (9 Implementations)
 
 **Files:**
 
-- `/apps/backend/src/drizzle/drizzle.service.ts`
-- `/apps/api/src/modules/drizzle/drizzle.service.ts`
-- `/packages/api/src/services/drizzle.service.ts`
-- `/packages/database/src/drizzle.service.ts`
-- `/packages/database/src/drizzle.service.production.ts`
+- `/apps/backend/src/prisma/prisma.service.ts`
+- `/apps/api/src/modules/prisma/prisma.service.ts`
+- `/packages/api/src/services/prisma.service.ts`
+- `/packages/database/src/prisma.service.ts`
+- `/packages/database/src/prisma.service.production.ts`
 - ... and 4 more
 
-**Duplication Type:** Nearly identical NestJS service wrappers for DrizzleClient
+**Duplication Type:** Nearly identical NestJS service wrappers for PrismaClient
 
 **Pattern (repeated 9 times):**
 
 ```typescript
 @Injectable()
-export class DatabaseService
-  extends DrizzleClient
+export class PrismaService
+  extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
-  private readonly logger = new Logger(DatabaseService.name);
+  private readonly logger = new Logger(PrismaService.name);
 
   async onModuleInit() {
     await this.$connect();
@@ -479,7 +479,7 @@ export class DatabaseService
 
 **Recommended Consolidation:**
 
-- **KEEP:** `/packages/database/src/drizzle.service.ts` as single source
+- **KEEP:** `/packages/database/src/prisma.service.ts` as single source
 - **REMOVE:** All other 8 implementations
 - **UPDATE:** All imports to use `@tnf/database`
 
@@ -1001,7 +1001,7 @@ const id = generateSecureId('agent_');
    - Effort: 1 day
    - Impact: ~400 lines saved
 
-5. **Consolidate DatabaseService** (9 implementations → 1)
+5. **Consolidate PrismaService** (9 implementations → 1)
    - Effort: 4 hours
    - Impact: 200 lines saved, clearer imports
 
@@ -1047,7 +1047,7 @@ const id = generateSecureId('agent_');
 | OAuth Strategies   | 2         | 160          | 🔴 Critical |
 | WorkflowEngine     | 2         | 128          | 🔴 Critical |
 | Registry Pattern   | 3         | 600          | 🟠 High     |
-| DatabaseService      | 9         | 200          | 🟠 High     |
+| PrismaService      | 9         | 200          | 🟠 High     |
 | MCP Servers        | 20+       | 2000         | 🟡 Medium   |
 | DTOs               | 274+      | 3000         | 🟡 Medium   |
 | Search Methods     | 20+       | 300          | 🟡 Medium   |
@@ -1085,7 +1085,7 @@ const id = generateSecureId('agent_');
 ### Short-term (Next 2 Weeks)
 
 5. 🟠 Create BaseRegistry abstract class
-6. 🟠 Consolidate DatabaseService implementations
+6. 🟠 Consolidate PrismaService implementations
 7. 🟡 Centralize DTO definitions
 
 ### Long-term (Next Month)
@@ -1108,7 +1108,7 @@ const id = generateSecureId('agent_');
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(
     private configService: ConfigService,
-    private drizzle: DatabaseService
+    private prisma: PrismaService
   ) {
     super({
       clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
@@ -1125,7 +1125,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
   constructor(
     private configService: ConfigService,
-    private drizzle: DatabaseService
+    private prisma: PrismaService
   ) {
     super({
       clientID: configService.get<string>('GITHUB_CLIENT_ID'),
@@ -1145,7 +1145,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
 export abstract class BaseOAuthStrategy<TProfile> {
   constructor(
     protected configService: ConfigService,
-    protected drizzle: DatabaseService,
+    protected prisma: PrismaService,
     protected providerName: string,
     strategyOptions: any
   ) {
@@ -1164,8 +1164,8 @@ export abstract class BaseOAuthStrategy<TProfile> {
 // google.strategy.ts (15 lines) - SPECIFIC
 @Injectable()
 export class GoogleStrategy extends BaseOAuthStrategy<GoogleProfile> {
-  constructor(configService: ConfigService, drizzle: DatabaseService) {
-    super(configService, drizzle, 'google', {
+  constructor(configService: ConfigService, prisma: PrismaService) {
+    super(configService, prisma, 'google', {
       clientID: configService.get('GOOGLE_CLIENT_ID'),
       clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
       callbackURL: configService.get('GOOGLE_CALLBACK_URL'),
@@ -1265,8 +1265,8 @@ export class WorkflowRegistry {
 // resource-registry/src/services/resource-registry.service.ts (459 lines)
 @Injectable()
 export class ResourceRegistryService {
-  private readonly drizzle: DrizzleClient;
-  // ... SIMILAR PATTERN with Drizzle (459 lines)
+  private readonly prisma: PrismaClient;
+  // ... SIMILAR PATTERN with Prisma (459 lines)
 }
 ```
 
@@ -1320,8 +1320,8 @@ export class WorkflowRegistry extends BaseRegistry<N8nWorkflow> {
 }
 
 // resource-registry/src/services/resource-registry.service.ts (125 lines) - SPECIFIC
-export class ResourceRegistryService extends BaseDrizzleRegistry<Resource> {
-  // Only resource-specific + Drizzle operations (125 lines)
+export class ResourceRegistryService extends BasePrismaRegistry<Resource> {
+  // Only resource-specific + Prisma operations (125 lines)
 }
 ```
 
@@ -1363,8 +1363,8 @@ export class ResourceRegistryService extends BaseDrizzleRegistry<Resource> {
 # Find all Math.random() usage
 grep -r "Math.random()" --include="*.ts" --include="*.tsx"
 
-# Find all DatabaseService definitions
-find . -name "drizzle.service.ts" -type f
+# Find all PrismaService definitions
+find . -name "prisma.service.ts" -type f
 
 # Find duplicate DTO definitions
 grep -r "export interface.*Dto" --include="*.ts" | cut -d: -f2 | sort | uniq -d
@@ -1379,7 +1379,7 @@ Fuse monorepo, particularly in:
 
 1. Authentication strategies (OAuth providers)
 2. Registry pattern implementations
-3. Infrastructure services (Drizzle, MCP servers)
+3. Infrastructure services (Prisma, MCP servers)
 4. Type definitions (DTOs)
 5. UI components (Dashboards)
 

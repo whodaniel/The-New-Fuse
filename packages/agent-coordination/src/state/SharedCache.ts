@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events';
 import Redis from 'ioredis';
+import { EventEmitter } from 'events';
 
 /**
  * Shared cache for agent collaboration

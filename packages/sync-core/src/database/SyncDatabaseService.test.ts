@@ -1,14 +1,14 @@
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { DatabaseService } from '@the-new-fuse/database/generated/db';
-import { SyncDatabaseService } from './SyncDatabaseService';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 const vi = jest;
+import { PrismaClient } from '@the-new-fuse/database/generated/prisma';
+import { SyncDatabaseService } from './SyncDatabaseService';
 
 describe('SyncDatabaseService', () => {
   let service: SyncDatabaseService;
-  let db: DatabaseService;
+  let prisma: PrismaClient;
 
   beforeEach(() => {
-    db = {
+    prisma = {
       syncState: {
         findFirst: jest.fn(),
         create: jest.fn(),
@@ -27,7 +27,7 @@ describe('SyncDatabaseService', () => {
       $queryRaw: jest.fn(),
     } as any;
 
-    service = new SyncDatabaseService(db);
+    service = new SyncDatabaseService(prisma);
   });
 
   it('should be defined', () => {
@@ -48,8 +48,8 @@ describe('SyncDatabaseService', () => {
         metadata: null,
       };
 
-      jest.mocked(db.syncState.findFirst).mockResolvedValue(null);
-      jest.mocked(db.syncState.create).mockResolvedValue(mockSyncState);
+      jest.mocked(prisma.syncState.findFirst).mockResolvedValue(null);
+      jest.mocked(prisma.syncState.create).mockResolvedValue(mockSyncState);
 
       const result = await service.upsertSyncState({
         resourceType: 'agent',
@@ -62,14 +62,14 @@ describe('SyncDatabaseService', () => {
       });
 
       expect(result).toEqual(mockSyncState);
-      expect(db.syncState.findFirst).toHaveBeenCalledWith({
+      expect(prisma.syncState.findFirst).toHaveBeenCalledWith({
         where: {
           resourceType: 'agent',
           resourceId: 'agent-123',
           tenantId: 'tenant-1',
         },
       });
-      expect(db.syncState.create).toHaveBeenCalled();
+      expect(prisma.syncState.create).toHaveBeenCalled();
     });
   });
 
@@ -87,12 +87,12 @@ describe('SyncDatabaseService', () => {
         metadata: null,
       };
 
-      jest.mocked(db.syncState.findFirst).mockResolvedValue(mockSyncState);
+      jest.mocked(prisma.syncState.findFirst).mockResolvedValue(mockSyncState);
 
       const result = await service.getSyncState('agent', 'agent-123', 'tenant-1');
 
       expect(result).toEqual(mockSyncState);
-      expect(db.syncState.findFirst).toHaveBeenCalledWith({
+      expect(prisma.syncState.findFirst).toHaveBeenCalledWith({
         where: {
           resourceType: 'agent',
           resourceId: 'agent-123',
@@ -118,7 +118,7 @@ describe('SyncDatabaseService', () => {
         createdAt: new Date(),
       };
 
-      jest.mocked(db.syncConflict.create).mockResolvedValue(mockConflict);
+      jest.mocked(prisma.syncConflict.create).mockResolvedValue(mockConflict);
 
       const result = await service.createSyncConflict({
         resourceType: 'agent',
@@ -130,7 +130,7 @@ describe('SyncDatabaseService', () => {
       });
 
       expect(result).toEqual(mockConflict);
-      expect(db.syncConflict.create).toHaveBeenCalledWith({
+      expect(prisma.syncConflict.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           resourceType: 'agent',
           resourceId: 'agent-123',
@@ -143,7 +143,7 @@ describe('SyncDatabaseService', () => {
 
   describe('healthCheck', () => {
     it('should return healthy status when database is accessible', async () => {
-      jest.mocked(db.$queryRaw).mockResolvedValue([{ '?column?': 1 }]);
+      jest.mocked(prisma.$queryRaw).mockResolvedValue([{ '?column?': 1 }]);
 
       const result = await service.healthCheck();
 
@@ -153,7 +153,7 @@ describe('SyncDatabaseService', () => {
     });
 
     it('should return unhealthy status when database is not accessible', async () => {
-      jest.mocked(db.$queryRaw).mockRejectedValue(new Error('Connection failed'));
+      jest.mocked(prisma.$queryRaw).mockRejectedValue(new Error('Connection failed'));
 
       const result = await service.healthCheck();
 

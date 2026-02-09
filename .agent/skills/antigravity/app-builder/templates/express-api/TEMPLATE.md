@@ -1,20 +1,20 @@
 ---
 name: express-api
-description: Express.js REST API template principles. TypeScript, Drizzle, JWT.
+description: Express.js REST API template principles. TypeScript, Prisma, JWT.
 ---
 
 # Express.js API Template
 
 ## Tech Stack
 
-| Component  | Technology          |
-| ---------- | ------------------- |
-| Runtime    | Node.js 20+         |
-| Framework  | Express.js          |
-| Language   | TypeScript          |
-| Database   | PostgreSQL + Drizzle |
-| Validation | Zod                 |
-| Auth       | JWT + bcrypt        |
+| Component | Technology |
+|-----------|------------|
+| Runtime | Node.js 20+ |
+| Framework | Express.js |
+| Language | TypeScript |
+| Database | PostgreSQL + Prisma |
+| Validation | Zod |
+| Auth | JWT + bcrypt |
 
 ---
 
@@ -22,8 +22,8 @@ description: Express.js REST API template principles. TypeScript, Drizzle, JWT.
 
 ```
 project-name/
-├── drizzle/
-│   └── schema.drizzle
+├── prisma/
+│   └── schema.prisma
 ├── src/
 │   ├── app.ts           # Express setup
 │   ├── config/          # Environment
@@ -43,23 +43,23 @@ project-name/
 
 ## Middleware Stack
 
-| Order | Middleware        |
-| ----- | ----------------- |
-| 1     | helmet (security) |
-| 2     | cors              |
-| 3     | morgan (logging)  |
-| 4     | body parsing      |
-| 5     | routes            |
-| 6     | error handler     |
+| Order | Middleware |
+|-------|------------|
+| 1 | helmet (security) |
+| 2 | cors |
+| 3 | morgan (logging) |
+| 4 | body parsing |
+| 5 | routes |
+| 6 | error handler |
 
 ---
 
 ## API Response Format
 
-| Type    | Structure                              |
-| ------- | -------------------------------------- |
-| Success | `{ success: true, data: {...} }`       |
-| Error   | `{ error: "message", details: [...] }` |
+| Type | Structure |
+|------|-----------|
+| Success | `{ success: true, data: {...} }` |
+| Error | `{ error: "message", details: [...] }` |
 
 ---
 
@@ -67,8 +67,8 @@ project-name/
 
 1. Create project directory
 2. `npm init -y`
-3. Install deps: `npm install express drizzle zod bcrypt jsonwebtoken`
-4. Configure Drizzle
+3. Install deps: `npm install express prisma zod bcrypt jsonwebtoken`
+4. Configure Prisma
 5. `npm run db:push`
 6. `npm run dev`
 
@@ -80,4 +80,4 @@ project-name/
 - Validate all inputs with Zod
 - Centralized error handling
 - Environment-based config
-- Use Drizzle for type-safe DB access
+- Use Prisma for type-safe DB access

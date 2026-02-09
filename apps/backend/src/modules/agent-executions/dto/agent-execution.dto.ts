@@ -1,18 +1,18 @@
+import { IsString, IsOptional, IsEnum, IsObject, IsDateString, IsNumber, Min } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export enum ExecutionStatus {
   PENDING = 'PENDING',
   RUNNING = 'RUNNING',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED',
+  CANCELLED = 'CANCELLED'
 }
 
 export class AgentExecutionQueryDto {
   @ApiPropertyOptional({
     description: 'Filter by agent ID',
-    example: 'agent_123',
+    example: 'agent_123'
   })
   @IsOptional()
   @IsString()
@@ -21,7 +21,7 @@ export class AgentExecutionQueryDto {
   @ApiPropertyOptional({
     description: 'Filter by execution status',
     enum: ExecutionStatus,
-    example: ExecutionStatus.COMPLETED,
+    example: ExecutionStatus.COMPLETED
   })
   @IsOptional()
   @IsEnum(ExecutionStatus)
@@ -29,7 +29,7 @@ export class AgentExecutionQueryDto {
 
   @ApiPropertyOptional({
     description: 'Filter by user ID',
-    example: 'usr_123',
+    example: 'usr_123'
   })
   @IsOptional()
   @IsString()
@@ -37,7 +37,7 @@ export class AgentExecutionQueryDto {
 
   @ApiPropertyOptional({
     description: 'Start date for filtering (ISO 8601)',
-    example: '2024-01-01T00:00:00Z',
+    example: '2024-01-01T00:00:00Z'
   })
   @IsOptional()
   @IsDateString()
@@ -45,7 +45,7 @@ export class AgentExecutionQueryDto {
 
   @ApiPropertyOptional({
     description: 'End date for filtering (ISO 8601)',
-    example: '2024-12-31T23:59:59Z',
+    example: '2024-12-31T23:59:59Z'
   })
   @IsOptional()
   @IsDateString()
@@ -54,7 +54,7 @@ export class AgentExecutionQueryDto {
   @ApiPropertyOptional({
     description: 'Page number for pagination',
     example: 1,
-    minimum: 1,
+    minimum: 1
   })
   @IsOptional()
   @IsNumber()
@@ -64,7 +64,7 @@ export class AgentExecutionQueryDto {
   @ApiPropertyOptional({
     description: 'Number of items per page',
     example: 20,
-    minimum: 1,
+    minimum: 1
   })
   @IsOptional()
   @IsNumber()
@@ -87,25 +87,25 @@ export class AgentExecutionResponseDto {
 
   @ApiProperty({
     enum: ExecutionStatus,
-    example: ExecutionStatus.COMPLETED,
+    example: ExecutionStatus.COMPLETED
   })
   status: ExecutionStatus;
 
   @ApiPropertyOptional({
     description: 'Execution input parameters',
-    example: { query: 'Process this data' },
+    example: { query: 'Process this data' }
   })
   input?: Record<string, any>;
 
   @ApiPropertyOptional({
     description: 'Execution output/result',
-    example: { result: 'Processing completed' },
+    example: { result: 'Processing completed' }
   })
   output?: Record<string, any>;
 
   @ApiPropertyOptional({
     description: 'Error message if execution failed',
-    example: 'Rate limit exceeded',
+    example: 'Rate limit exceeded'
   })
   error?: string;
 
@@ -117,7 +117,7 @@ export class AgentExecutionResponseDto {
 
   @ApiPropertyOptional({
     description: 'Execution duration in milliseconds',
-    example: 330000,
+    example: 330000
   })
   duration?: number;
 
@@ -128,7 +128,7 @@ export class AgentExecutionResponseDto {
 export class AgentExecutionListResponseDto {
   @ApiProperty({
     type: [AgentExecutionResponseDto],
-    description: 'List of agent executions',
+    description: 'List of agent executions'
   })
   executions: AgentExecutionResponseDto[];
 
@@ -138,8 +138,8 @@ export class AgentExecutionListResponseDto {
       total: 100,
       page: 1,
       limit: 20,
-      totalPages: 5,
-    },
+      totalPages: 5
+    }
   })
   pagination: {
     total: number;

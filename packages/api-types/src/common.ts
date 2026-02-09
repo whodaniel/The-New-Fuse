@@ -21,17 +21,7 @@ export interface SortOptions {
 
 export interface FilterOptions {
   field: string;
-  operator:
-    | 'eq'
-    | 'ne'
-    | 'gt'
-    | 'gte'
-    | 'lt'
-    | 'lte'
-    | 'contains'
-    | 'startsWith'
-    | 'endsWith'
-    | 'in';
+  operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'startsWith' | 'endsWith' | 'in';
   value: unknown;
 }
 
@@ -64,10 +54,7 @@ export interface HealthIndicatorResult {
 }
 
 export class HealthCheckError extends Error {
-  constructor(
-    message: string,
-    public causes: HealthIndicatorResult
-  ) {
+  constructor(message: string, public causes: HealthIndicatorResult) {
     super(message);
   }
 }

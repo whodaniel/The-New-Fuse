@@ -4,12 +4,12 @@
  * Loads skills from Anthropic's skills repository
  */
 
-import { exec } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { exec } from 'child_process';
 import { promisify } from 'util';
 import { SkillParser } from '../parser';
-import { ClaudeSkill, SkillCategory, SkillImportResult, SkillLoaderConfig } from '../types';
+import { ClaudeSkill, SkillLoaderConfig, SkillImportResult, SkillCategory } from '../types';
 
 const execAsync = promisify(exec);
 
@@ -62,9 +62,7 @@ export class SkillLoader {
 
       console.log('Skill loader initialized successfully');
     } catch (error) {
-      throw new Error(
-        `Failed to initialize skill loader: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to initialize skill loader: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -108,14 +106,10 @@ export class SkillLoader {
         result.skills = this.filterSkills(result.skills);
       }
 
-      console.log(
-        `Loaded ${result.imported} skills (${result.failed} failed, ${result.skipped} skipped)`
-      );
+      console.log(`Loaded ${result.imported} skills (${result.failed} failed, ${result.skipped} skipped)`);
       return result;
     } catch (error) {
-      throw new Error(
-        `Failed to load skills: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to load skills: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -174,9 +168,7 @@ export class SkillLoader {
         }
       }
     } catch (error) {
-      throw new Error(
-        `Failed to load skill ${skillName}: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to load skill ${skillName}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -222,9 +214,7 @@ export class SkillLoader {
 
       return skills.sort();
     } catch (error) {
-      throw new Error(
-        `Failed to list available skills: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to list available skills: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -316,16 +306,14 @@ export class SkillLoader {
         }
       }
     } catch (error) {
-      throw new Error(
-        `Failed to load skills from ${directoryPath}: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to load skills from ${directoryPath}: ${error instanceof Error ? error.message : String(error)}`);
     }
 
     return result;
   }
 
   private filterSkills(skills: ClaudeSkill[]): ClaudeSkill[] {
-    return skills.filter((skill) => {
+    return skills.filter(skill => {
       // Filter by category
       if (this.config.categoriesFilter && this.config.categoriesFilter.length > 0) {
         if (!this.config.categoriesFilter.includes(skill.category as SkillCategory)) {
@@ -335,7 +323,9 @@ export class SkillLoader {
 
       // Filter by tags
       if (this.config.tagsFilter && this.config.tagsFilter.length > 0) {
-        const hasMatchingTag = skill.tags.some((tag) => this.config.tagsFilter!.includes(tag));
+        const hasMatchingTag = skill.tags.some(tag =>
+          this.config.tagsFilter!.includes(tag)
+        );
         if (!hasMatchingTag) {
           return false;
         }

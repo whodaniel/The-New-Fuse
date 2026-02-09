@@ -1,7 +1,6 @@
 # MCP Core Developer Onboarding Guide
 
-Welcome to MCP Core development! This guide will help you get started with the
-Model Context Protocol system and become productive quickly.
+Welcome to MCP Core development! This guide will help you get started with the Model Context Protocol system and become productive quickly.
 
 ## Table of Contents
 
@@ -19,7 +18,6 @@ Model Context Protocol system and become productive quickly.
 ## Prerequisites
 
 ### Required Knowledge
-
 - **TypeScript/JavaScript**: Intermediate to advanced level
 - **Node.js**: Understanding of async/await, event loops, and modules
 - **JSON-RPC 2.0**: Basic understanding of the protocol
@@ -27,14 +25,12 @@ Model Context Protocol system and become productive quickly.
 - **Design Patterns**: Factory, Observer, Strategy patterns
 
 ### Required Tools
-
 - **Node.js 18+** or **Bun runtime**
 - **TypeScript 5.0+**
 - **Git** for version control
 - **VS Code** (recommended) with TypeScript extensions
 
 ### Recommended Background
-
 - Experience with API design
 - Understanding of microservices architecture
 - Familiarity with testing frameworks (Jest/Vitest)
@@ -44,9 +40,7 @@ Model Context Protocol system and become productive quickly.
 
 ### What is MCP?
 
-The Model Context Protocol (MCP) is a standardized communication protocol that
-enables:
-
+The Model Context Protocol (MCP) is a standardized communication protocol that enables:
 - **AI agents** to interact with external tools and services
 - **Resource sharing** between different systems
 - **Tool execution** in a secure, controlled environment
@@ -98,7 +92,6 @@ pnpm test
 ### 2. IDE Configuration
 
 **VS Code Settings** (`.vscode/settings.json`):
-
 ```json
 {
   "typescript.preferences.importModuleSpecifier": "relative",
@@ -112,7 +105,6 @@ pnpm test
 ```
 
 **Recommended Extensions**:
-
 - TypeScript Importer
 - ESLint
 - Prettier
@@ -122,7 +114,6 @@ pnpm test
 ### 3. Environment Variables
 
 Create `.env` file:
-
 ```bash
 # Development configuration
 NODE_ENV=development
@@ -164,7 +155,7 @@ export class CalculatorTool extends ToolHandler {
     }
 
     let result: number;
-
+    
     switch (operation) {
       case 'add':
         result = a + b;
@@ -195,7 +186,7 @@ export class CalculatorTool extends ToolHandler {
       operation,
       operands: { a, b },
       result,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString()
     };
   }
 
@@ -215,18 +206,18 @@ export class CalculatorTool extends ToolHandler {
         operation: {
           type: 'string',
           enum: ['add', 'subtract', 'multiply', 'divide'],
-          description: 'Mathematical operation to perform',
+          description: 'Mathematical operation to perform'
         },
         a: {
           type: 'number',
-          description: 'First operand',
+          description: 'First operand'
         },
         b: {
           type: 'number',
-          description: 'Second operand',
-        },
+          description: 'Second operand'
+        }
       },
-      required: ['operation', 'a', 'b'],
+      required: ['operation', 'a', 'b']
     };
   }
 }
@@ -249,32 +240,29 @@ async function createCalculatorServer() {
     maxConnections: 100,
     logging: {
       level: 'debug',
-      format: 'text',
-    },
+      format: 'text'
+    }
   });
 
   // Register the calculator tool
-  await server.registerTool(
-    {
-      name: 'calculator',
-      description: 'Performs basic mathematical operations',
-      inputSchema: new CalculatorTool().getInputSchema(),
-    },
-    new CalculatorTool()
-  );
+  await server.registerTool({
+    name: 'calculator',
+    description: 'Performs basic mathematical operations',
+    inputSchema: new CalculatorTool().getInputSchema()
+  }, new CalculatorTool());
 
   // Register server capability
   await server.registerCapability({
     name: 'mathematical-operations',
     version: '1.0.0',
     description: 'Basic mathematical operations capability',
-    methods: ['tools/call'],
+    methods: ['tools/call']
   });
 
   // Start the server
   await server.start();
   console.log('Calculator server running on port 8080');
-
+  
   return server;
 }
 
@@ -298,7 +286,7 @@ async function createCalculatorClient() {
   const client = MCPSystemFactory.createClient({
     serverUrl: 'ws://localhost:8080',
     connectionTimeout: 5000,
-    maxRetries: 3,
+    maxRetries: 3
   });
 
   try {
@@ -308,23 +296,20 @@ async function createCalculatorClient() {
 
     // List available tools
     const tools = await client.listTools();
-    console.log(
-      'Available tools:',
-      tools.map((t) => t.name)
-    );
+    console.log('Available tools:', tools.map(t => t.name));
 
     // Perform calculations
     const addResult = await client.callTool('calculator', {
       operation: 'add',
       a: 10,
-      b: 5,
+      b: 5
     });
     console.log('10 + 5 =', addResult.result);
 
     const divideResult = await client.callTool('calculator', {
       operation: 'divide',
       a: 20,
-      b: 4,
+      b: 4
     });
     console.log('20 / 4 =', divideResult.result);
 
@@ -333,11 +318,12 @@ async function createCalculatorClient() {
       await client.callTool('calculator', {
         operation: 'divide',
         a: 10,
-        b: 0,
+        b: 0
       });
     } catch (error) {
       console.log('Expected error:', error.message);
     }
+
   } finally {
     await client.disconnect();
     console.log('Disconnected from server');
@@ -372,38 +358,35 @@ export class ConfigResourceHandler extends ResourceHandler {
 
   async read(uri: string): Promise<any> {
     const key = this.extractKey(uri);
-
+    
     if (!this.config.has(key)) {
-      throw new MCPError(
-        MCPErrorCode.RESOURCE_NOT_FOUND,
-        `Config key not found: ${key}`
-      );
+      throw new MCPError(MCPErrorCode.RESOURCE_NOT_FOUND, `Config key not found: ${key}`);
     }
 
     return {
       key,
       value: this.config.get(key),
-      lastModified: new Date().toISOString(),
+      lastModified: new Date().toISOString()
     };
   }
 
   async list(pattern?: string): Promise<any[]> {
     const keys = Array.from(this.config.keys());
-    const filteredKeys = pattern
-      ? keys.filter((key) => key.includes(pattern))
+    const filteredKeys = pattern 
+      ? keys.filter(key => key.includes(pattern))
       : keys;
 
-    return filteredKeys.map((key) => ({
+    return filteredKeys.map(key => ({
       uri: `config://${key}`,
       name: key,
-      mimeType: 'application/json',
+      mimeType: 'application/json'
     }));
   }
 
   async write(uri: string, data: any): Promise<void> {
     const key = this.extractKey(uri);
     this.config.set(key, data.value);
-
+    
     // Notify subscribers of change
     this.emit('change', { uri, key, value: data.value });
   }
@@ -460,12 +443,12 @@ export class FileProcessorTool extends ToolHandler {
     try {
       const content = await fs.readFile(path, 'utf-8');
       const stats = await fs.stat(path);
-
+      
       return {
         path,
         content,
         size: stats.size,
-        lastModified: stats.mtime.toISOString(),
+        lastModified: stats.mtime.toISOString()
       };
     } catch (error) {
       throw new MCPError(
@@ -491,9 +474,10 @@ export class RobustToolHandler extends ToolHandler {
     try {
       // Validate input
       await this.validateInput(params);
-
+      
       // Perform operation
       return await this.performOperation(params);
+      
     } catch (error) {
       // Transform errors to appropriate MCP errors
       if (error instanceof ValidationError) {
@@ -503,9 +487,11 @@ export class RobustToolHandler extends ToolHandler {
           { field: error.field, value: error.value }
         );
       } else if (error instanceof TimeoutError) {
-        throw new MCPError(MCPErrorCode.TOOL_TIMEOUT, 'Operation timed out', {
-          timeout: error.timeout,
-        });
+        throw new MCPError(
+          MCPErrorCode.TOOL_TIMEOUT,
+          'Operation timed out',
+          { timeout: error.timeout }
+        );
       } else if (error instanceof MCPError) {
         // Re-throw MCP errors as-is
         throw error;
@@ -547,47 +533,31 @@ export class ToolFactory {
 
 ```typescript
 interface MCPMiddleware {
-  handle(
-    request: MCPRequest,
-    next: () => Promise<MCPResponse>
-  ): Promise<MCPResponse>;
+  handle(request: MCPRequest, next: () => Promise<MCPResponse>): Promise<MCPResponse>;
 }
 
 export class ValidationMiddleware implements MCPMiddleware {
-  async handle(
-    request: MCPRequest,
-    next: () => Promise<MCPResponse>
-  ): Promise<MCPResponse> {
+  async handle(request: MCPRequest, next: () => Promise<MCPResponse>): Promise<MCPResponse> {
     // Validate request format
     if (!this.isValidRequest(request)) {
-      throw new MCPError(
-        MCPErrorCode.INVALID_REQUEST,
-        'Invalid request format'
-      );
+      throw new MCPError(MCPErrorCode.INVALID_REQUEST, 'Invalid request format');
     }
-
+    
     return next();
   }
 }
 
 export class LoggingMiddleware implements MCPMiddleware {
-  async handle(
-    request: MCPRequest,
-    next: () => Promise<MCPResponse>
-  ): Promise<MCPResponse> {
+  async handle(request: MCPRequest, next: () => Promise<MCPResponse>): Promise<MCPResponse> {
     console.log(`[${new Date().toISOString()}] ${request.method}`);
-
+    
     const start = Date.now();
     try {
       const response = await next();
-      console.log(
-        `[${new Date().toISOString()}] ${request.method} - ${Date.now() - start}ms`
-      );
+      console.log(`[${new Date().toISOString()}] ${request.method} - ${Date.now() - start}ms`);
       return response;
     } catch (error) {
-      console.error(
-        `[${new Date().toISOString()}] ${request.method} - ERROR: ${error.message}`
-      );
+      console.error(`[${new Date().toISOString()}] ${request.method} - ERROR: ${error.message}`);
       throw error;
     }
   }
@@ -601,22 +571,22 @@ import { EventEmitter } from 'events';
 
 export class MCPEventBus extends EventEmitter {
   private static instance: MCPEventBus;
-
+  
   static getInstance(): MCPEventBus {
     if (!MCPEventBus.instance) {
       MCPEventBus.instance = new MCPEventBus();
     }
     return MCPEventBus.instance;
   }
-
+  
   publishResourceChange(uri: string, change: any): void {
     this.emit('resource:changed', { uri, change });
   }
-
+  
   publishToolExecution(toolName: string, result: any): void {
     this.emit('tool:executed', { toolName, result });
   }
-
+  
   subscribeToResourceChanges(callback: (event: any) => void): () => void {
     this.on('resource:changed', callback);
     return () => this.off('resource:changed', callback);
@@ -634,7 +604,7 @@ import { Logger } from '@the-new-fuse/mcp-core';
 const logger = new Logger({
   level: 'debug',
   format: 'json',
-  includeStackTrace: true,
+  includeStackTrace: true
 });
 
 // Use throughout your application
@@ -649,21 +619,21 @@ logger.error('Tool execution failed', { toolName, error: error.message });
 export class TracingServer extends MCPServer {
   async handleRequest(request: MCPRequest): Promise<MCPResponse> {
     const traceId = this.generateTraceId();
-
+    
     console.log(`[TRACE:${traceId}] Request:`, {
       method: request.method,
       id: request.id,
-      params: this.sanitizeParams(request.params),
+      params: this.sanitizeParams(request.params)
     });
-
+    
     try {
       const response = await super.handleRequest(request);
-
+      
       console.log(`[TRACE:${traceId}] Response:`, {
         id: response.id,
-        success: !response.error,
+        success: !response.error
       });
-
+      
       return response;
     } catch (error) {
       console.error(`[TRACE:${traceId}] Error:`, error.message);
@@ -676,14 +646,13 @@ export class TracingServer extends MCPServer {
 ### 3. Common Issues and Solutions
 
 **Connection Issues:**
-
 ```typescript
 // Add connection retry logic
 const client = MCPSystemFactory.createClient({
   serverUrl: 'ws://localhost:8080',
   connectionTimeout: 10000,
   maxRetries: 5,
-  retryDelay: 1000,
+  retryDelay: 1000
 });
 
 client.on('disconnect', (reason) => {
@@ -693,22 +662,21 @@ client.on('disconnect', (reason) => {
 ```
 
 **Memory Leaks:**
-
 ```typescript
 // Always clean up resources
 export class CleanupAwareHandler extends ResourceHandler {
   private subscriptions: Set<() => void> = new Set();
-
+  
   async subscribe(uri: string, callback: Function): Promise<() => void> {
     const unsubscribe = await super.subscribe(uri, callback);
     this.subscriptions.add(unsubscribe);
-
+    
     return () => {
       unsubscribe();
       this.subscriptions.delete(unsubscribe);
     };
   }
-
+  
   async dispose(): Promise<void> {
     // Clean up all subscriptions
     for (const unsubscribe of this.subscriptions) {
@@ -730,53 +698,51 @@ import { MCPError, MCPErrorCode } from '@the-new-fuse/mcp-core';
 
 describe('CalculatorTool', () => {
   let tool: CalculatorTool;
-
+  
   beforeEach(() => {
     tool = new CalculatorTool();
   });
-
+  
   describe('execute', () => {
     it('should add two numbers correctly', async () => {
       const result = await tool.execute({
         operation: 'add',
         a: 5,
-        b: 3,
+        b: 3
       });
-
+      
       expect(result.result).toBe(8);
       expect(result.operation).toBe('add');
       expect(result.operands).toEqual({ a: 5, b: 3 });
     });
-
+    
     it('should throw error for division by zero', async () => {
-      await expect(
-        tool.execute({
-          operation: 'divide',
-          a: 10,
-          b: 0,
-        })
-      ).rejects.toThrow(MCPError);
+      await expect(tool.execute({
+        operation: 'divide',
+        a: 10,
+        b: 0
+      })).rejects.toThrow(MCPError);
     });
   });
-
+  
   describe('validate', () => {
     it('should validate correct parameters', async () => {
       const valid = await tool.validate({
         operation: 'add',
         a: 5,
-        b: 3,
+        b: 3
       });
-
+      
       expect(valid).toBe(true);
     });
-
+    
     it('should reject invalid operation', async () => {
       const valid = await tool.validate({
         operation: 'invalid',
         a: 5,
-        b: 3,
+        b: 3
       });
-
+      
       expect(valid).toBe(false);
     });
   });
@@ -793,46 +759,43 @@ import { CalculatorTool } from '../../src/tools/CalculatorTool';
 describe('Server-Client Integration', () => {
   let server: MCPServer;
   let client: MCPClient;
-
+  
   beforeAll(async () => {
     // Start test server
     server = MCPSystemFactory.createServer({
       name: 'test-server',
       version: '1.0.0',
-      port: 8082,
+      port: 8082
     });
-
-    await server.registerTool(
-      {
-        name: 'calculator',
-        description: 'Calculator tool',
-        inputSchema: new CalculatorTool().getInputSchema(),
-      },
-      new CalculatorTool()
-    );
-
+    
+    await server.registerTool({
+      name: 'calculator',
+      description: 'Calculator tool',
+      inputSchema: new CalculatorTool().getInputSchema()
+    }, new CalculatorTool());
+    
     await server.start();
-
+    
     // Connect client
     client = MCPSystemFactory.createClient({
-      serverUrl: 'ws://localhost:8082',
+      serverUrl: 'ws://localhost:8082'
     });
-
+    
     await client.connect();
   });
-
+  
   afterAll(async () => {
     await client.disconnect();
     await server.stop();
   });
-
+  
   it('should execute calculator tool end-to-end', async () => {
     const result = await client.callTool('calculator', {
       operation: 'multiply',
       a: 6,
-      b: 7,
+      b: 7
     });
-
+    
     expect(result.result).toBe(42);
   });
 });
@@ -868,36 +831,29 @@ test(integration): add broker service tests
 ## Resources and Next Steps
 
 ### Documentation
-
 - [API Reference](./API_REFERENCE.md) - Complete API documentation
 - [Best Practices](./BEST_PRACTICES.md) - Development best practices
 - [Troubleshooting](./TROUBLESHOOTING.md) - Common issues and solutions
 - [Usage Examples](./USAGE_EXAMPLES.md) - Real-world examples
 
 ### Example Projects
-
 - [Basic File Server](../examples/file-server.ts)
 - [Database Integration](../examples/database-integration.ts)
 - [Authentication Server](../examples/auth-server.ts)
 - [Monitoring Dashboard](../examples/monitoring-dashboard.ts)
 
 ### Community
-
 - GitHub Issues: Report bugs and request features
 - Discussions: Ask questions and share ideas
 - Discord: Real-time community support
 
 ### Advanced Topics
-
 - Custom transport implementations
 - Plugin development
 - Performance optimization
 - Security hardening
 - Deployment strategies
 
-Congratulations! You now have a solid foundation for developing with MCP Core.
-Start with the simple examples and gradually work your way up to more complex
-scenarios. Remember to refer to the documentation and don't hesitate to ask for
-help in the community channels.
+Congratulations! You now have a solid foundation for developing with MCP Core. Start with the simple examples and gradually work your way up to more complex scenarios. Remember to refer to the documentation and don't hesitate to ask for help in the community channels.
 
 Happy coding! 🚀

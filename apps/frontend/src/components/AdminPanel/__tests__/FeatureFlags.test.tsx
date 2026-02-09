@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { useFeatureFlags } from '../../../hooks/useFeatureFlags';
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { FeatureFlags } from '../FeatureFlags';
+import { useFeatureFlags } from '../../../hooks/useFeatureFlags';
 
 jest.mock('../../../hooks/useFeatureFlags');
 
@@ -10,15 +11,15 @@ describe('FeatureFlags', () => {
       name: 'testFeature',
       enabled: true,
       environment: 'development',
-      updatedAt: '2024-03-01',
-    },
+      updatedAt: '2024-03-01'
+    }
   ];
 
   beforeEach(() => {
     (useFeatureFlags as jest.Mock).mockReturnValue({
       flags: mockFlags,
       updateFlag: jest.fn(),
-      loading: false,
+      loading: false
     });
   });
 
@@ -32,13 +33,13 @@ describe('FeatureFlags', () => {
     (useFeatureFlags as jest.Mock).mockReturnValue({
       flags: mockFlags,
       updateFlag: mockUpdateFlag,
-      loading: false,
+      loading: false
     });
 
     render(<FeatureFlags />);
     const toggle = screen.getByRole('switch');
     fireEvent.click(toggle);
-
+    
     expect(mockUpdateFlag).toHaveBeenCalledWith('testFeature', false);
   });
 });

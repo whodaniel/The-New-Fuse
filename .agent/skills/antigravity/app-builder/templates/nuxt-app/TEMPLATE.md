@@ -1,21 +1,21 @@
 ---
 name: nuxt-app
-description: Nuxt 3 full-stack template. Vue 3, Pinia, Tailwind, Drizzle.
+description: Nuxt 3 full-stack template. Vue 3, Pinia, Tailwind, Prisma.
 ---
 
 # Nuxt 3 Full-Stack Template
 
 ## Tech Stack
 
-| Component  | Technology              |
-| ---------- | ----------------------- |
-| Framework  | Nuxt 3                  |
-| Language   | TypeScript              |
-| UI         | Vue 3 (Composition API) |
-| State      | Pinia                   |
-| Database   | PostgreSQL + Drizzle     |
-| Styling    | Tailwind CSS            |
-| Validation | Zod                     |
+| Component | Technology |
+|-----------|------------|
+| Framework | Nuxt 3 |
+| Language | TypeScript |
+| UI | Vue 3 (Composition API) |
+| State | Pinia |
+| Database | PostgreSQL + Prisma |
+| Styling | Tailwind CSS |
+| Validation | Zod |
 
 ---
 
@@ -23,14 +23,14 @@ description: Nuxt 3 full-stack template. Vue 3, Pinia, Tailwind, Drizzle.
 
 ```
 project-name/
-├── drizzle/
-│   └── schema.drizzle
+├── prisma/
+│   └── schema.prisma
 ├── server/
 │   ├── api/
 │   │   └── [resource]/
 │   │       └── index.ts
 │   └── utils/
-│       └── db.ts         # Drizzle client
+│       └── db.ts         # Prisma client
 ├── composables/
 │   └── useAuth.ts
 ├── stores/
@@ -54,22 +54,22 @@ project-name/
 
 ## Key Concepts
 
-| Concept            | Description                    |
-| ------------------ | ------------------------------ |
-| Auto-imports       | Components, composables, utils |
-| File-based routing | pages/ → routes                |
-| Server Routes      | server/api/ → API endpoints    |
-| Composables        | Reusable reactive logic        |
-| Pinia              | State management               |
+| Concept | Description |
+|---------|-------------|
+| Auto-imports | Components, composables, utils |
+| File-based routing | pages/ → routes |
+| Server Routes | server/api/ → API endpoints |
+| Composables | Reusable reactive logic |
+| Pinia | State management |
 
 ---
 
 ## Environment Variables
 
-| Variable            | Purpose           |
-| ------------------- | ----------------- |
-| DATABASE_URL        | Drizzle connection |
-| NUXT_PUBLIC_APP_URL | Public URL        |
+| Variable | Purpose |
+|----------|---------|
+| DATABASE_URL | Prisma connection |
+| NUXT_PUBLIC_APP_URL | Public URL |
 
 ---
 
@@ -77,15 +77,15 @@ project-name/
 
 1. `npx nuxi@latest init {{name}}`
 2. `cd {{name}}`
-3. `npm install @pinia/nuxt @drizzle/client drizzle zod`
+3. `npm install @pinia/nuxt @prisma/client prisma zod`
 4. `npm install -D @nuxtjs/tailwindcss`
 5. Add modules to `nuxt.config.ts`:
    ```ts
-   modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss'];
+   modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss']
    ```
-6. `npx drizzle init`
+6. `npx prisma init`
 7. Configure schema
-8. `npx drizzle db push`
+8. `npx prisma db push`
 9. `npm run dev`
 
 ---

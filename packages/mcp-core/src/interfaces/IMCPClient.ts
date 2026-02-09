@@ -1,9 +1,13 @@
-import { NotificationCallback } from '../types';
-import { MCPCapability } from './IMCPCapability';
-import { ConnectionOptions } from './IMCPConnection';
-import { MCPNotification, MCPRequest, MCPResponse } from './IMCPMessage';
+import { 
+  MCPRequest, 
+  MCPResponse, 
+  MCPNotification
+} from './IMCPMessage';
 import { MCPResource, ResourceContent } from './IMCPResource';
+import { MCPCapability } from './IMCPCapability';
 import { ToolResult } from './IMCPTool';
+import { ConnectionOptions } from './IMCPConnection';
+import { NotificationCallback } from '../types';
 
 /**
  * Core MCP Client interface that defines the contract for MCP client implementations.

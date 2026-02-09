@@ -41,7 +41,7 @@ export class AgentWorkflowManager extends EventEmitter {
       status: 'pending',
       steps,
       completedSteps: [],
-      failedSteps: [],
+      failedSteps: []
     };
     this.workflows.set(workflowId, workflow);
     this.logger.log('Workflow created', { workflowId, name });
@@ -59,9 +59,9 @@ export class AgentWorkflowManager extends EventEmitter {
       workflowState.startTime = new Date();
       this.emit('workflowStarted', workflowState);
       this.logger.log('Workflow started', { workflowId });
-
+      
       await this.executeWorkflow(workflowState);
-
+      
       workflowState.status = 'completed';
       workflowState.endTime = new Date();
       this.emit('workflowCompleted', workflowState);
@@ -119,16 +119,16 @@ export class AgentWorkflowManager extends EventEmitter {
 
       try {
         workflow.currentStep = step.id;
-        this.logger.log('Executing workflow step', {
-          workflowId: workflow.id,
-          stepId: step.id,
-          stepType: step.type,
+        this.logger.log('Executing workflow step', { 
+          workflowId: workflow.id, 
+          stepId: step.id, 
+          stepType: step.type 
         });
-
+        
         // Check dependencies
         if (step.dependencies && step.dependencies.length > 0) {
-          const unmetDeps = step.dependencies.filter(
-            (dep) => !workflow.completedSteps.includes(dep),
+          const unmetDeps = step.dependencies.filter(dep => 
+            !workflow.completedSteps.includes(dep)
           );
           if (unmetDeps.length > 0) {
             throw new Error(`Unmet dependencies: ${unmetDeps.join(', ')}`);

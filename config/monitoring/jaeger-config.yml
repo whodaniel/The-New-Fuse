@@ -1,50 +1,50 @@
 jaeger:
   # Jaeger configuration for distributed tracing
-
+  
   # Collector configuration
   collector:
     # gRPC server settings
     grpc-server:
       host-port: "0.0.0.0:14250"
-
-    # HTTP server settings
+    
+    # HTTP server settings  
     http-server:
       host-port: "0.0.0.0:14268"
-
+    
     # Zipkin compatibility
     zipkin:
       host-port: "0.0.0.0:9411"
-
+    
     # Queue settings for high throughput
     queue:
       size: 10000
-
+      
     # Worker settings
     num-workers: 100
-
+    
     # Sampling strategies
     sampling:
       strategies-file: /etc/jaeger/sampling_strategies.json
-
+      
   # Query service configuration
   query:
     # HTTP server for UI
     http-server:
       host-port: "0.0.0.0:16686"
-
+    
     # gRPC server
     grpc-server:
       host-port: "0.0.0.0:16685"
-
+    
     # Additional query options
     additional-headers:
       - "Access-Control-Allow-Origin: *"
       - "Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS"
       - "Access-Control-Allow-Headers: Content-Type, Authorization"
-
+    
     # UI configuration
     ui-config: /etc/jaeger/ui.json
-
+    
   # Agent configuration (for sidecar deployment)
   agent:
     # Jaeger agent ports
@@ -52,18 +52,18 @@ jaeger:
       thrift-compact-port: 6831
       thrift-binary-port: 6832
       thrift-http-port: 14268
-
+    
     # Zipkin compatibility
     zipkin:
       thrift-compact-port: 5775
-
+    
     # Processor settings
     processor:
       jaeger-compact:
         server-max-packet-size: 65000
         server-queue-size: 1000
         workers: 10
-
+      
       jaeger-binary:
         server-max-packet-size: 65000
         server-queue-size: 1000
@@ -72,34 +72,34 @@ jaeger:
 # Storage configuration
 storage:
   type: elasticsearch
-
+  
   elasticsearch:
     # Elasticsearch cluster configuration
     server-urls: http://elasticsearch:9200
-
+    
     # Index settings for high-scale operations
     index-prefix: jaeger
-
+    
     # Bulk processing settings
     bulk:
-      size: 5000000 # 5MB
+      size: 5000000  # 5MB
       workers: 10
       flush-interval: 200ms
-
+      
     # Index template settings
     create-index-templates: true
-
+    
     # Retention settings
     index-date-separator: "-"
-
+    
     # Performance settings
     max-doc-count: 10000000
-    max-span-age: 168h # 7 days
-
+    max-span-age: 168h  # 7 days
+    
     # Authentication (if required)
     # username: elastic
     # password: changeme
-
+    
     # TLS settings (if required)
     # tls:
     #   enabled: true
@@ -111,24 +111,24 @@ storage:
 sampling-strategies:
   default_strategy:
     type: probabilistic
-    param: 0.1 # 10% sampling rate
-
+    param: 0.1  # 10% sampling rate
+    
   per_service_strategies:
     - service: "api-service"
       type: probabilistic
-      param: 0.5 # 50% sampling for API service
-
+      param: 0.5  # 50% sampling for API service
+      
     - service: "frontend-service"
       type: probabilistic
-      param: 0.2 # 20% sampling for frontend
-
+      param: 0.2  # 20% sampling for frontend
+      
     - service: "database-service"
       type: probabilistic
-      param: 1.0 # 100% sampling for database operations
-
+      param: 1.0  # 100% sampling for database operations
+      
     - service: "cache-service"
       type: probabilistic
-      param: 0.3 # 30% sampling for cache operations
+      param: 0.3  # 30% sampling for cache operations
 
 # Metrics configuration
 metrics:
@@ -136,15 +136,15 @@ metrics:
   prometheus:
     enabled: true
     namespace: jaeger
-
+    
   # Additional metrics
   factory: prometheus
-
+  
 # Logging configuration
 logging:
   level: info
   format: json
-
+  
 # Health check configuration
 health-check:
   http-port: 14269
@@ -160,13 +160,13 @@ span-processor:
   batch:
     # Maximum batch size
     max-export-batch-size: 512
-
+    
     # Batch timeout
     export-timeout: 30s
-
+    
     # Schedule delay
     schedule-delay: 5s
-
+    
     # Maximum queue size
     max-queue-size: 2048
 
@@ -182,13 +182,13 @@ resources:
 # Environment-specific configurations
 environments:
   production:
-    sampling-rate: 0.01 # 1% in production
+    sampling-rate: 0.01  # 1% in production
     retention-days: 7
-
+    
   staging:
-    sampling-rate: 0.1 # 10% in staging
+    sampling-rate: 0.1   # 10% in staging
     retention-days: 3
-
+    
   development:
-    sampling-rate: 1.0 # 100% in development
+    sampling-rate: 1.0   # 100% in development
     retention-days: 1

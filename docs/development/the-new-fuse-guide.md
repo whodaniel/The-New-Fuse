@@ -2,18 +2,13 @@
 
 ## Core Philosophy
 
-The New Fuse emphasizes **practical implementation** over documentation
-upgrades. Key principles:
-
-- Every workflow must include validation checkpoints matching
-  execute-workflow.js parameters
+The New Fuse emphasizes **practical implementation** over documentation upgrades. Key principles:
+- Every workflow must include validation checkpoints matching execute-workflow.js parameters
 - All examples should be directly executable with current Redis configuration
 - Script parameters enforce production readiness checks
 - Documentation changes require corresponding code updates
 
-This guide provides detailed instructions on how to use The New Fuse extension
-with GitHub Copilot and other AI agents to create powerful collaborative
-workflows.
+This guide provides detailed instructions on how to use The New Fuse extension with GitHub Copilot and other AI agents to create powerful collaborative workflows.
 
 ## Table of Contents
 
@@ -35,7 +30,6 @@ Before you begin, ensure you have the following:
 - Redis server 7.2.4+ running on port 6379
 
 Verification commands:
-
 ```bash
 # Check extension versions
 code --list-extensions --show-versions | grep -E 'fuse|copilot'
@@ -56,11 +50,9 @@ ps aux | grep redis
 
 ## Activation
 
-To activate The New Fuse extension and establish communication with other AI
-agents:
+To activate The New Fuse extension and establish communication with other AI agents:
 
-1. Open VS Code Command Palette (Cmd+Shift+P on Mac, Ctrl+Shift+P on
-   Windows/Linux)
+1. Open VS Code Command Palette (Cmd+Shift+P on Mac, Ctrl+Shift+P on Windows/Linux)
 2. Run `The New Fuse: Show Discovered AI Agents`
 3. Run `The New Fuse: Refresh Agent Discovery`
 4. Run `The New Fuse: Open Workflow Builder`
@@ -82,15 +74,13 @@ node open-workflow-builder.js
 
 ### Discovering AI Agents
 
-The New Fuse automatically discovers AI-capable extensions in your VS Code
-environment. You can view the discovered agents by running:
+The New Fuse automatically discovers AI-capable extensions in your VS Code environment. You can view the discovered agents by running:
 
 ```
 The New Fuse: Show Discovered AI Agents
 ```
 
 This will display a list of discovered agents, including:
-
 - GitHub Copilot
 - Claude (if installed)
 - Roo Cline (if installed)
@@ -98,21 +88,17 @@ This will display a list of discovered agents, including:
 
 ### Agent Status
 
-The workflow builder includes a status bar that shows the number of connected
-agents. Agents can be in one of two states:
-
+The workflow builder includes a status bar that shows the number of connected agents. Agents can be in one of two states:
 - Online: The agent is active and available for use in workflows
 - Offline: The agent is installed but not currently active
 
-You can refresh agent discovery by clicking the "Refresh Agents" button in the
-status bar.
+You can refresh agent discovery by clicking the "Refresh Agents" button in the status bar.
 
 ## Creating Workflows
 
 ### Basic Workflow Structure
 
 A workflow consists of:
-
 - Steps: Individual tasks performed by AI agents
 - Connections: Data flow between steps
 
@@ -120,23 +106,16 @@ A workflow consists of:
 
 1.  Open the workflow builder.
 2.  Click "New Workflow".
-3.  Add a step by dragging a step type from the sidebar onto the canvas.
-    Consider starting with a "Code Generation" or "Text Generation" step.
-4.  Configure the step by selecting an agent (e.g., GitHub Copilot, Claude) and
-    setting the inputs. Pay close attention to the required input parameters for
-    the selected agent.
+3.  Add a step by dragging a step type from the sidebar onto the canvas.  Consider starting with a "Code Generation" or "Text Generation" step.
+4.  Configure the step by selecting an agent (e.g., GitHub Copilot, Claude) and setting the inputs.  Pay close attention to the required input parameters for the selected agent.
 5.  Add additional steps as needed to create a multi-step workflow.
-6.  Connect steps by dragging from an output port on one step to an input port
-    on another step. Ensure the data types are compatible between the output and
-    input.
+6.  Connect steps by dragging from an output port on one step to an input port on another step.  Ensure the data types are compatible between the output and input.
 7.  Save the workflow, giving it a descriptive name.
-8.  Execute the workflow. Monitor the VS Code output panel for progress and any
-    error messages.
+8.  Execute the workflow.  Monitor the VS Code output panel for progress and any error messages.
 
 ### Workflow Examples
 
 **Multi-Agent Code Review Workflow:**
-
 ```json
 {
   "name": "AI Code Review",
@@ -213,8 +192,7 @@ A workflow consists of:
 
 ### Example: Code Generation Workflow
 
-Here's a simple workflow that generates code with GitHub Copilot and explains it
-with The New Fuse:
+Here's a simple workflow that generates code with GitHub Copilot and explains it with The New Fuse:
 
 1. Add a "Code Generation" step
    - Agent: GitHub Copilot
@@ -226,8 +204,7 @@ with The New Fuse:
    - Input: Code = ${steps.1.outputs.code}
    - Output: Explanation
 
-3. Connect the steps by dragging from the "Code" output of step 1 to the "Code"
-   input of step 2
+3. Connect the steps by dragging from the "Code" output of step 1 to the "Code" input of step 2
 
 4. Save and execute the workflow
 
@@ -240,8 +217,7 @@ You can create complex workflows involving multiple AI agents working together:
 1. **Requirements Gathering**: Use The New Fuse to generate requirements
 2. **Architecture Design**: Use GitHub Copilot to design system architecture
 3. **API Generation**: Use Claude to generate API specifications
-4. **Implementation**: Use GitHub Copilot and Roo Cline to implement backend and
-   frontend
+4. **Implementation**: Use GitHub Copilot and Roo Cline to implement backend and frontend
 5. **Testing**: Use The New Fuse to generate tests
 6. **Optimization**: Use GitHub Copilot to review and optimize code
 
@@ -249,14 +225,10 @@ You can create complex workflows involving multiple AI agents working together:
 
 We've provided sample workflow templates in the `workflows` directory:
 
-- `copilot-collaboration.json`: A simple workflow demonstrating collaboration
-  between The New Fuse and GitHub Copilot
-- `advanced-ai-collaboration.json`: A complex workflow demonstrating
-  collaboration between multiple AI agents
+- `copilot-collaboration.json`: A simple workflow demonstrating collaboration between The New Fuse and GitHub Copilot
+- `advanced-ai-collaboration.json`: A complex workflow demonstrating collaboration between multiple AI agents
 
-You can execute these workflows using the `execute-workflow.js` script which now
-includes:
-
+You can execute these workflows using the `execute-workflow.js` script which now includes:
 - Workflow structure validation
 - Redis connection monitoring
 - Real-time execution events
@@ -333,8 +305,7 @@ We've provided several scripts to help you use The New Fuse:
 - `refresh-agents.js`: Refreshes agent discovery
 - `open-workflow-builder.js`: Opens the workflow builder
 - `create-collaborative-workflow.js`: Creates a sample collaborative workflow
-- `execute-workflow.js`: Executes workflows with Redis monitoring and validation
-  including:
+- `execute-workflow.js`: Executes workflows with Redis monitoring and validation including:
   - redisConnectionTimeout (3000ms default)
   - minRedisVersion (7.2.4)
   - pubSubLatencyChecks (true)
@@ -353,11 +324,8 @@ We've provided several scripts to help you use The New Fuse:
 - `setup-extension.sh`: Complete extension setup
 - `direct-launch.sh`: Fast launch configuration
 
-These scripts require the VS Code API to be available and should be run in a
-JavaScript Debug Terminal within VS Code.
+These scripts require the VS Code API to be available and should be run in a JavaScript Debug Terminal within VS Code.
 
 ---
 
-With this guide, you should be able to use The New Fuse extension to its full
-potential, creating powerful collaborative workflows between different AI agents
-in VS Code.
+With this guide, you should be able to use The New Fuse extension to its full potential, creating powerful collaborative workflows between different AI agents in VS Code.

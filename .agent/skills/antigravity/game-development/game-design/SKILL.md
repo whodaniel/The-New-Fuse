@@ -1,8 +1,6 @@
 ---
 name: game-design
-description:
-  Game design principles. GDD structure, balancing, player psychology,
-  progression.
+description: Game design principles. GDD structure, balancing, player psychology, progression.
 allowed-tools: Read, Glob, Grep
 ---
 
@@ -26,12 +24,12 @@ Every game needs a fun 30-second loop:
 
 ### Loop Examples
 
-| Genre      | Core Loop                         |
-| ---------- | --------------------------------- |
-| Platformer | Run → Jump → Land → Collect       |
-| Shooter    | Aim → Shoot → Kill → Loot         |
-| Puzzle     | Observe → Think → Solve → Advance |
-| RPG        | Explore → Fight → Level → Gear    |
+| Genre | Core Loop |
+|-------|-----------|
+| Platformer | Run → Jump → Land → Collect |
+| Shooter | Aim → Shoot → Kill → Loot |
+| Puzzle | Observe → Think → Solve → Advance |
+| RPG | Explore → Fight → Level → Gear |
 
 ---
 
@@ -39,14 +37,14 @@ Every game needs a fun 30-second loop:
 
 ### Essential Sections
 
-| Section         | Content                  |
-| --------------- | ------------------------ |
-| **Pitch**       | One-sentence description |
-| **Core Loop**   | 30-second gameplay       |
-| **Mechanics**   | How systems work         |
-| **Progression** | How player advances      |
-| **Art Style**   | Visual direction         |
-| **Audio**       | Sound direction          |
+| Section | Content |
+|---------|---------|
+| **Pitch** | One-sentence description |
+| **Core Loop** | 30-second gameplay |
+| **Mechanics** | How systems work |
+| **Progression** | How player advances |
+| **Art Style** | Visual direction |
+| **Audio** | Sound direction |
 
 ### Principles
 
@@ -60,20 +58,20 @@ Every game needs a fun 30-second loop:
 
 ### Motivation Types
 
-| Type           | Driven By              |
-| -------------- | ---------------------- |
-| **Achiever**   | Goals, completion      |
-| **Explorer**   | Discovery, secrets     |
+| Type | Driven By |
+|------|-----------|
+| **Achiever** | Goals, completion |
+| **Explorer** | Discovery, secrets |
 | **Socializer** | Interaction, community |
-| **Killer**     | Competition, dominance |
+| **Killer** | Competition, dominance |
 
 ### Reward Schedules
 
-| Schedule     | Effect       | Use               |
-| ------------ | ------------ | ----------------- |
-| **Fixed**    | Predictable  | Milestone rewards |
-| **Variable** | Addictive    | Loot drops        |
-| **Ratio**    | Effort-based | Grind games       |
+| Schedule | Effect | Use |
+|----------|--------|-----|
+| **Fixed** | Predictable | Milestone rewards |
+| **Variable** | Addictive | Loot drops |
+| **Ratio** | Effort-based | Grind games |
 
 ---
 
@@ -89,11 +87,11 @@ Just Right → Flow → Engagement
 
 ### Balancing Strategies
 
-| Strategy          | How                    |
-| ----------------- | ---------------------- |
-| **Dynamic**       | Adjust to player skill |
-| **Selection**     | Let player choose      |
-| **Accessibility** | Options for all        |
+| Strategy | How |
+|----------|-----|
+| **Dynamic** | Adjust to player skill |
+| **Selection** | Let player choose |
+| **Accessibility** | Options for all |
 
 ---
 
@@ -101,12 +99,12 @@ Just Right → Flow → Engagement
 
 ### Progression Types
 
-| Type        | Example                 |
-| ----------- | ----------------------- |
-| **Skill**   | Player gets better      |
-| **Power**   | Character gets stronger |
-| **Content** | New areas unlock        |
-| **Story**   | Narrative advances      |
+| Type | Example |
+|------|---------|
+| **Skill** | Player gets better |
+| **Power** | Character gets stronger |
+| **Content** | New areas unlock |
+| **Story** | Narrative advances |
 
 ### Pacing Principles
 
@@ -119,12 +117,12 @@ Just Right → Flow → Engagement
 
 ## 6. Anti-Patterns
 
-| ❌ Don't              | ✅ Do                   |
-| --------------------- | ----------------------- |
-| Design in isolation   | Playtest constantly     |
-| Polish before fun     | Prototype first         |
+| ❌ Don't | ✅ Do |
+|----------|-------|
+| Design in isolation | Playtest constantly |
+| Polish before fun | Prototype first |
 | Force one way to play | Allow player expression |
-| Punish excessively    | Reward progress         |
+| Punish excessively | Reward progress |
 
 ---
 

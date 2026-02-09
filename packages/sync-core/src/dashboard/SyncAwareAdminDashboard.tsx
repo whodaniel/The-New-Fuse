@@ -1,53 +1,56 @@
+import React, { useState, useEffect } from 'react';
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Badge,
   Box,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  CloseButton,
-  Flex,
-  Heading,
-  HStack,
-  Icon,
-  Progress,
   SimpleGrid,
-  Stack,
-  StackDivider,
   Stat,
-  StatArrow,
-  StatHelpText,
   StatLabel,
   StatNumber,
+  StatHelpText,
+  StatArrow,
+  Heading,
   Text,
+  Card,
+  CardHeader,
+  CardBody,
+  Stack,
+  StackDivider,
+  Flex,
+  Icon,
+  Progress,
+  HStack,
+  Badge,
+  Button,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
+  Spinner,
   Tooltip,
-  useToast,
+  useToast
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
-import {
-  FiActivity,
-  FiCheckCircle,
+import { 
+  FiUsers, 
+  FiActivity, 
+  FiMessageSquare, 
+  FiServer,
+  FiAlertCircle,
+  FiRefreshCw,
   FiClock,
   FiDatabase,
-  FiHardDrive,
-  FiMessageSquare,
-  FiRefreshCw,
-  FiServer,
-  FiUsers,
   FiWifi,
+  FiHardDrive,
+  FiCheckCircle,
   FiXCircle,
+  FiAlertTriangle
 } from 'react-icons/fi';
-import {
-  useFilteredAlerts,
+import { 
+  useSyncDashboard, 
+  useFilteredAlerts, 
+  useRecentOperations, 
   useHealthScore,
-  useRecentOperations,
-  useSyncDashboard,
-  type SyncOperation,
   type SystemAlert,
+  type SyncOperation 
 } from './useSyncDashboard';
 
 /**
@@ -76,27 +79,34 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
   showAlerts = true,
   showOperations = true,
   autoRefresh = true,
-  refreshInterval = 30000,
+  refreshInterval = 30000
 }) => {
   const toast = useToast();
-
+  
   // Sync dashboard hook
-  const { data, isConnected, isLoading, error, refresh, clearAlerts, acknowledgeAlert } =
-    useSyncDashboard({
-      tenantId,
-      userId,
-      autoConnect: true,
-      updateInterval: autoRefresh ? refreshInterval : 0,
-    });
+  const {
+    data,
+    isConnected,
+    isLoading,
+    error,
+    refresh,
+    clearAlerts,
+    acknowledgeAlert
+  } = useSyncDashboard({
+    tenantId,
+    userId,
+    autoConnect: true,
+    updateInterval: autoRefresh ? refreshInterval : 0
+  });
 
   // Filter alerts by severity
   const criticalAlerts = useFilteredAlerts(data.alerts, 'critical');
   const warningAlerts = useFilteredAlerts(data.alerts, 'warning');
   const infoAlerts = useFilteredAlerts(data.alerts, 'info');
-
+  
   // Get recent operations
   const recentOperations = useRecentOperations(data.operations, 5);
-
+  
   // Calculate health score
   const healthScore = useHealthScore(data.health);
 
@@ -107,7 +117,7 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
     totalAgents: 78,
     activeAgents: 42,
     userGrowth: 12,
-    agentGrowth: 24,
+    agentGrowth: 24
   });
 
   // Show error toast when connection fails
@@ -118,7 +128,7 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
         description: error,
         status: 'error',
         duration: 5000,
-        isClosable: true,
+        isClosable: true
       });
     }
   }, [error, toast]);
@@ -129,13 +139,13 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
     const now = new Date();
     const diffMs = now.getTime() - dateObj.getTime();
     const diffMins = Math.floor(diffMs / (1000 * 60));
-
+    
     if (diffMins < 1) return 'Just now';
     if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? '' : 's'} ago`;
-
+    
     const diffHours = Math.floor(diffMins / 60);
     if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
-
+    
     const diffDays = Math.floor(diffHours / 24);
     return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
   };
@@ -143,44 +153,31 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
   // Get status color for service health
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'healthy':
-        return 'green';
-      case 'degraded':
-        return 'yellow';
-      case 'unhealthy':
-        return 'red';
-      default:
-        return 'gray';
+      case 'healthy': return 'green';
+      case 'degraded': return 'yellow';
+      case 'unhealthy': return 'red';
+      default: return 'gray';
     }
   };
 
   // Get alert color scheme
   const getAlertColorScheme = (level: SystemAlert['level']) => {
     switch (level) {
-      case 'critical':
-        return 'red';
-      case 'error':
-        return 'red';
-      case 'warning':
-        return 'orange';
-      case 'info':
-        return 'blue';
-      default:
-        return 'gray';
+      case 'critical': return 'red';
+      case 'error': return 'red';
+      case 'warning': return 'orange';
+      case 'info': return 'blue';
+      default: return 'gray';
     }
   };
 
   // Get operation status icon
   const getOperationIcon = (operation: SyncOperation) => {
     switch (operation.status) {
-      case 'completed':
-        return FiCheckCircle;
-      case 'failed':
-        return FiXCircle;
-      case 'in_progress':
-        return FiActivity;
-      default:
-        return FiClock;
+      case 'completed': return FiCheckCircle;
+      case 'failed': return FiXCircle;
+      case 'in_progress': return FiActivity;
+      default: return FiClock;
     }
   };
 
@@ -190,9 +187,7 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
       <Flex justify="space-between" align="center" mb={6}>
         <Heading>Admin Dashboard</Heading>
         <HStack>
-          <Tooltip
-            label={isConnected ? 'Connected to sync system' : 'Disconnected from sync system'}
-          >
+          <Tooltip label={isConnected ? 'Connected to sync system' : 'Disconnected from sync system'}>
             <Badge colorScheme={isConnected ? 'green' : 'red'}>
               <Icon as={FiWifi} mr={1} />
               {isConnected ? 'Connected' : 'Disconnected'}
@@ -223,7 +218,7 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
             {legacyStats.userGrowth}% since last month
           </StatHelpText>
         </Stat>
-
+        
         <Stat p={4} shadow="md" border="1px" borderColor="gray.200" borderRadius="md">
           <StatLabel>Active Users</StatLabel>
           <StatNumber>{legacyStats.activeUsers}</StatNumber>
@@ -231,7 +226,7 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
             {Math.round((legacyStats.activeUsers / legacyStats.totalUsers) * 100)}% of total users
           </StatHelpText>
         </Stat>
-
+        
         <Stat p={4} shadow="md" border="1px" borderColor="gray.200" borderRadius="md">
           <StatLabel>Total Agents</StatLabel>
           <Flex align="center">
@@ -243,7 +238,7 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
             {legacyStats.agentGrowth}% since last month
           </StatHelpText>
         </Stat>
-
+        
         <Stat p={4} shadow="md" border="1px" borderColor="gray.200" borderRadius="md">
           <StatLabel>System Health</StatLabel>
           <Flex align="center">
@@ -257,9 +252,7 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
       {/* Sync Metrics (if enabled) */}
       {showSyncMetrics && data.metrics && (
         <Box mb={8}>
-          <Heading size="md" mb={4}>
-            Sync Metrics
-          </Heading>
+          <Heading size="md" mb={4}>Sync Metrics</Heading>
           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
             <Card>
               <CardHeader>
@@ -333,9 +326,7 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
       {/* System Health (if enabled) */}
       {showHealthStatus && data.health && (
         <Box mb={8}>
-          <Heading size="md" mb={4}>
-            System Health
-          </Heading>
+          <Heading size="md" mb={4}>System Health</Heading>
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
             <Card>
               <CardHeader>
@@ -433,13 +424,8 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
                   {data.alerts.slice(0, 10).map((alert) => (
                     <Alert
                       key={alert.id}
-                      status={
-                        alert.level === 'critical' || alert.level === 'error'
-                          ? 'error'
-                          : alert.level === 'warning'
-                            ? 'warning'
-                            : 'info'
-                      }
+                      status={alert.level === 'critical' || alert.level === 'error' ? 'error' : 
+                             alert.level === 'warning' ? 'warning' : 'info'}
                       borderRadius="md"
                     >
                       <AlertIcon />
@@ -447,12 +433,17 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
                         <AlertTitle fontSize="sm">
                           {alert.component} - {alert.level.toUpperCase()}
                         </AlertTitle>
-                        <AlertDescription fontSize="sm">{alert.message}</AlertDescription>
+                        <AlertDescription fontSize="sm">
+                          {alert.message}
+                        </AlertDescription>
                         <Text fontSize="xs" color="gray.500" mt={1}>
                           {formatTime(alert.timestamp)}
                         </Text>
                       </Box>
-                      <CloseButton size="sm" onClick={() => acknowledgeAlert(alert.id)} />
+                      <CloseButton
+                        size="sm"
+                        onClick={() => acknowledgeAlert(alert.id)}
+                      />
                     </Alert>
                   ))}
                 </Stack>
@@ -476,33 +467,22 @@ export const SyncAwareAdminDashboard: React.FC<SyncAwareAdminDashboardProps> = (
                     <Box key={operation.id}>
                       <HStack justify="space-between">
                         <HStack>
-                          <Icon
+                          <Icon 
                             as={getOperationIcon(operation)}
                             color={
-                              operation.status === 'completed'
-                                ? 'green.500'
-                                : operation.status === 'failed'
-                                  ? 'red.500'
-                                  : operation.status === 'in_progress'
-                                    ? 'blue.500'
-                                    : 'gray.500'
+                              operation.status === 'completed' ? 'green.500' :
+                              operation.status === 'failed' ? 'red.500' :
+                              operation.status === 'in_progress' ? 'blue.500' : 'gray.500'
                             }
                           />
                           <Text fontWeight="bold" fontSize="sm">
                             {operation.type.replace('_', ' ').toUpperCase()}
                           </Text>
-                          <Badge
-                            size="sm"
-                            colorScheme={
-                              operation.status === 'completed'
-                                ? 'green'
-                                : operation.status === 'failed'
-                                  ? 'red'
-                                  : operation.status === 'in_progress'
-                                    ? 'blue'
-                                    : 'gray'
-                            }
-                          >
+                          <Badge size="sm" colorScheme={
+                            operation.status === 'completed' ? 'green' :
+                            operation.status === 'failed' ? 'red' :
+                            operation.status === 'in_progress' ? 'blue' : 'gray'
+                          }>
                             {operation.status}
                           </Badge>
                         </HStack>

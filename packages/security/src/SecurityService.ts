@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { EncryptionService } from './EncryptionService';
-import { AuditService } from './audit';
 import { AuthService } from './auth';
+import { AuditService } from './audit';
 import { RateLimitingService } from './rate-limiting';
 
 @Injectable()
@@ -14,26 +14,21 @@ export class SecurityService {
     private readonly rateLimit: RateLimitingService
   ) {}
 
-  async encrypt(
-    data: string
-  ): Promise<{ encrypted: Buffer; iv: Buffer; tag: Buffer; salt?: Buffer }> {
+  async encrypt(data: string): Promise<{ encrypted: Buffer; iv: Buffer; tag: Buffer; salt?: Buffer }> {
     if (!process.env.ENCRYPTION_KEY) {
       throw new Error('ENCRYPTION_KEY is not defined');
     }
-    const encryptedString = await this.encryption.encrypt(
-      data,
-      Buffer.from(process.env.ENCRYPTION_KEY)
-    );
+    const encryptedString = await this.encryption.encrypt(data, Buffer.from(process.env.ENCRYPTION_KEY));
     // Parse the "iv:tag:encryptedData" format
     const parts = encryptedString.split(':');
     const iv = Buffer.from(parts[0], 'hex');
     const tag = Buffer.from(parts[1], 'hex');
     const encryptedData = Buffer.from(parts[2], 'hex');
-
+    
     return {
       encrypted: encryptedData,
       iv,
-      tag,
+      tag
     };
   }
 
@@ -54,7 +49,7 @@ export class SecurityService {
   async authenticate(req: Request): Promise<boolean> {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return false;
-
+    
     const payload = this.auth.verifyToken(token);
     return payload !== null;
   }
@@ -67,8 +62,8 @@ export class SecurityService {
       resourceType: 'endpoint',
       details: {
         method: req.method,
-        ip: req.ip,
-      },
+        ip: req.ip
+      }
     });
   }
 
@@ -86,8 +81,8 @@ export class SecurityService {
         resourceType: 'endpoint',
         details: {
           reason: 'Rate limit exceeded',
-          ip: request.req.ip,
-        },
+          ip: request.req.ip
+        }
       });
       return false;
     }
@@ -99,8 +94,8 @@ export class SecurityService {
       resourceType: 'endpoint',
       details: {
         ip: request.req.ip,
-        userAgent: request.req.headers['user-agent'],
-      },
+        userAgent: request.req.headers['user-agent']
+      }
     });
 
     return true;

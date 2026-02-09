@@ -6,8 +6,8 @@
  */
 
 import CDP from 'chrome-remote-interface';
+import { WebSocketServer, WebSocket } from 'ws';
 import { EventEmitter } from 'events';
-import { WebSocket, WebSocketServer } from 'ws';
 
 interface BrowserInstance {
   id: string;
@@ -66,13 +66,13 @@ export class DevToolsBridge extends EventEmitter {
       wsEndpoint,
       status: 'idle',
       lastActivity: new Date(),
-      agentType,
+      agentType
     };
 
     try {
       // Connect to browser via CDP
       instance.cdpClient = await CDP({
-        target: wsEndpoint,
+        target: wsEndpoint
       });
 
       const { Runtime, Console, Network, Performance, Page } = instance.cdpClient;
@@ -83,7 +83,7 @@ export class DevToolsBridge extends EventEmitter {
         Console.enable(),
         Network.enable(),
         Performance.enable(),
-        Page.enable(),
+        Page.enable()
       ]);
 
       // Listen to console messages
@@ -91,7 +91,7 @@ export class DevToolsBridge extends EventEmitter {
         this.broadcastToAntigravity('console', {
           browserId,
           message: params.message,
-          timestamp: new Date(),
+          timestamp: new Date()
         });
       });
 
@@ -100,7 +100,7 @@ export class DevToolsBridge extends EventEmitter {
         this.broadcastToAntigravity('network', {
           browserId,
           request: params.request,
-          timestamp: new Date(),
+          timestamp: new Date()
         });
       });
 
@@ -108,7 +108,7 @@ export class DevToolsBridge extends EventEmitter {
       Page.loadEventFired(() => {
         this.broadcastToAntigravity('pageLoad', {
           browserId,
-          timestamp: new Date(),
+          timestamp: new Date()
         });
       });
 
@@ -156,7 +156,7 @@ export class DevToolsBridge extends EventEmitter {
       const { Page } = instance.cdpClient;
       const { data } = await Page.captureScreenshot({
         format: 'png',
-        quality: 80,
+        quality: 80
       });
 
       const buffer = Buffer.from(data, 'base64');
@@ -165,7 +165,7 @@ export class DevToolsBridge extends EventEmitter {
       this.broadcastToAntigravity('screenshot', {
         browserId,
         data,
-        timestamp: new Date(),
+        timestamp: new Date()
       });
 
       return buffer;
@@ -188,7 +188,7 @@ export class DevToolsBridge extends EventEmitter {
       const { Runtime } = instance.cdpClient;
       const result = await Runtime.evaluate({
         expression: script,
-        returnByValue: true,
+        returnByValue: true
       });
 
       if (result.exceptionDetails) {
@@ -206,9 +206,7 @@ export class DevToolsBridge extends EventEmitter {
    * Get list of console messages from a browser
    */
   async getConsoleMessages(browserId: string): Promise<any[]> {
-    const messages = await this.evaluateScript(
-      browserId,
-      `
+    const messages = await this.evaluateScript(browserId, `
       (function() {
         const messages = [];
         const originalLog = console.log;
@@ -218,8 +216,7 @@ export class DevToolsBridge extends EventEmitter {
         window.__consoleMessages = window.__consoleMessages || [];
         return window.__consoleMessages;
       })()
-    `
-    );
+    `);
 
     return messages || [];
   }
@@ -228,41 +225,37 @@ export class DevToolsBridge extends EventEmitter {
    * Send browser list to a specific WebSocket client
    */
   private sendBrowserList(ws: WebSocket) {
-    const browserList = Array.from(this.browsers.values()).map((b) => ({
+    const browserList = Array.from(this.browsers.values()).map(b => ({
       id: b.id,
       status: b.status,
       agentType: b.agentType,
       lastActivity: b.lastActivity,
-      wsEndpoint: b.wsEndpoint,
+      wsEndpoint: b.wsEndpoint
     }));
 
-    ws.send(
-      JSON.stringify({
-        type: 'browserList',
-        browsers: browserList,
-      })
-    );
+    ws.send(JSON.stringify({
+      type: 'browserList',
+      browsers: browserList
+    }));
   }
 
   /**
    * Broadcast browser list to all connected Antigravity clients
    */
   private broadcastBrowserList() {
-    const browserList = Array.from(this.browsers.values()).map((b) => ({
+    const browserList = Array.from(this.browsers.values()).map(b => ({
       id: b.id,
       status: b.status,
       agentType: b.agentType,
-      lastActivity: b.lastActivity,
+      lastActivity: b.lastActivity
     }));
 
-    this.wss.clients.forEach((client) => {
+    this.wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(
-          JSON.stringify({
-            type: 'browserList',
-            browsers: browserList,
-          })
-        );
+        client.send(JSON.stringify({
+          type: 'browserList',
+          browsers: browserList
+        }));
       }
     });
   }
@@ -273,7 +266,7 @@ export class DevToolsBridge extends EventEmitter {
   private broadcastToAntigravity(type: string, data: any) {
     const message = JSON.stringify({ type, data });
 
-    this.wss.clients.forEach((client) => {
+    this.wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(message);
       }
@@ -296,48 +289,40 @@ export class DevToolsBridge extends EventEmitter {
 
       case 'takeScreenshot':
         const screenshot = await this.takeScreenshot(browserId);
-        ws.send(
-          JSON.stringify({
-            type: 'screenshot',
-            browserId,
-            data: screenshot?.toString('base64'),
-            timestamp: new Date(),
-          })
-        );
+        ws.send(JSON.stringify({
+          type: 'screenshot',
+          browserId,
+          data: screenshot?.toString('base64'),
+          timestamp: new Date()
+        }));
         break;
 
       case 'evaluateScript':
         try {
           const result = await this.evaluateScript(browserId, payload.script);
-          ws.send(
-            JSON.stringify({
-              type: 'scriptResult',
-              browserId,
-              result,
-              success: true,
-            })
-          );
+          ws.send(JSON.stringify({
+            type: 'scriptResult',
+            browserId,
+            result,
+            success: true
+          }));
         } catch (error) {
-          ws.send(
-            JSON.stringify({
-              type: 'scriptResult',
-              browserId,
-              error: error.message,
-              success: false,
-            })
-          );
+          ws.send(JSON.stringify({
+            type: 'scriptResult',
+            browserId,
+            error: error.message,
+            success: false
+          }));
         }
         break;
 
       case 'getConsoleMessages':
         const messages = await this.getConsoleMessages(browserId);
-        ws.send(
-          JSON.stringify({
-            type: 'consoleMessages',
-            browserId,
-            messages,
-          })
-        );
+        ws.send(JSON.stringify({
+          type: 'consoleMessages',
+          browserId,
+          messages
+        }));
         break;
 
       default:

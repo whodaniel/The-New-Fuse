@@ -1,4 +1,4 @@
-import { ChildProcess, spawn } from 'child_process';
+import { spawn, ChildProcess } from 'child_process';
 import * as http from 'http';
 import { logger } from './logger';
 
@@ -47,7 +47,7 @@ export class ServerManager {
     this.server = spawn('pnpm', ['dev'], {
       stdio: 'inherit',
       shell: true,
-      env: { ...process.env, PORT: this.port.toString() },
+      env: { ...process.env, PORT: this.port.toString() }
     });
 
     this.server.on('error', (error) => {
@@ -61,16 +61,14 @@ export class ServerManager {
 
     return new Promise((resolve, reject) => {
       const checkServer = (): any => {
-        http
-          .get(serverUrl, (res) => {
-            if (res.statusCode === 200) {
-              logger.info('Server started successfully');
-              resolve();
-            } else {
-              retry();
-            }
-          })
-          .on('error', retry);
+        http.get(serverUrl, (res) => {
+          if (res.statusCode === 200) {
+            logger.info('Server started successfully');
+            resolve();
+          } else {
+            retry();
+          }
+        }).on('error', retry);
       };
 
       const retry = (): any => {

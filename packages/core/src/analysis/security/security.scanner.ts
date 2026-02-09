@@ -31,7 +31,7 @@ export class SecurityScanner {
       pattern: /eval\s*\(/g,
       title: 'Dangerous eval() usage',
       description: 'Use of eval() function can lead to code injection vulnerabilities',
-      fix: 'Avoid using eval(). Use JSON.parse() for JSON data or safer alternatives.',
+      fix: 'Avoid using eval(). Use JSON.parse() for JSON data or safer alternatives.'
     },
     {
       type: 'xss' as const,
@@ -39,7 +39,7 @@ export class SecurityScanner {
       pattern: /innerHTML\s*=/g,
       title: 'Direct innerHTML manipulation',
       description: 'Direct innerHTML manipulation can lead to XSS vulnerabilities',
-      fix: 'Use textContent or properly sanitize HTML content before setting innerHTML.',
+      fix: 'Use textContent or properly sanitize HTML content before setting innerHTML.'
     },
     {
       type: 'injection' as const,
@@ -47,7 +47,7 @@ export class SecurityScanner {
       pattern: /document\.write\s*\(/g,
       title: 'Dangerous document.write usage',
       description: 'document.write can be exploited for XSS attacks',
-      fix: 'Use safer DOM manipulation methods like appendChild or textContent.',
+      fix: 'Use safer DOM manipulation methods like appendChild or textContent.'
     },
     {
       type: 'crypto' as const,
@@ -55,7 +55,7 @@ export class SecurityScanner {
       pattern: /Math\.random\s*\(\)/g,
       title: 'Weak random number generation',
       description: 'Math.random() is not cryptographically secure',
-      fix: 'Use crypto.getRandomValues() for cryptographic purposes.',
+      fix: 'Use crypto.getRandomValues() for cryptographic purposes.'
     },
     {
       type: 'auth' as const,
@@ -63,8 +63,8 @@ export class SecurityScanner {
       pattern: /localStorage\.setItem\s*\(\s*['"](token|password|secret)/g,
       title: 'Sensitive data in localStorage',
       description: 'Storing sensitive data in localStorage is insecure',
-      fix: 'Use secure HTTP-only cookies or sessionStorage with proper encryption.',
-    },
+      fix: 'Use secure HTTP-only cookies or sessionStorage with proper encryption.'
+    }
   ];
 
   async scanFile(filePath: string, content: string): Promise<SecurityVulnerability[]> {
@@ -73,7 +73,7 @@ export class SecurityScanner {
     try {
       const lines = content.split('\n');
 
-      this.patterns.forEach((pattern) => {
+      this.patterns.forEach(pattern => {
         lines.forEach((line, lineIndex) => {
           const matches = line.matchAll(pattern.pattern);
 
@@ -86,7 +86,7 @@ export class SecurityScanner {
               file: filePath,
               line: lineIndex + 1,
               column: match.index,
-              fix: pattern.fix,
+              fix: pattern.fix
             });
           }
         });
@@ -116,27 +116,23 @@ export class SecurityScanner {
     return {
       vulnerabilities: allVulnerabilities,
       score,
-      summary,
+      summary
     };
   }
 
   private calculateSummary(vulnerabilities: SecurityVulnerability[]) {
-    return vulnerabilities.reduce(
-      (acc, vuln) => {
-        acc[vuln.severity]++;
-        return acc;
-      },
-      { critical: 0, high: 0, medium: 0, low: 0 },
-    );
+    return vulnerabilities.reduce((acc, vuln) => {
+      acc[vuln.severity]++;
+      return acc;
+    }, { critical: 0, high: 0, medium: 0, low: 0 });
   }
 
   private calculateSecurityScore(summary: ReturnType<typeof this.calculateSummary>): number {
     const weights = { critical: 20, high: 10, medium: 5, low: 1 };
-    const totalDeductions =
-      summary.critical * weights.critical +
-      summary.high * weights.high +
-      summary.medium * weights.medium +
-      summary.low * weights.low;
+    const totalDeductions = summary.critical * weights.critical +
+                          summary.high * weights.high +
+                          summary.medium * weights.medium +
+                          summary.low * weights.low;
     return Math.max(0, 100 - totalDeductions);
   }
 }

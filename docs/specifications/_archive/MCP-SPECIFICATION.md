@@ -1,15 +1,10 @@
 # Model Context Protocol (MCP) Specification
 
-The Model Context Protocol (MCP) is a standardized communication protocol for
-inter-LLM communication in the Fuse framework. This document outlines the
-specification, methods, and usage patterns.
+The Model Context Protocol (MCP) is a standardized communication protocol for inter-LLM communication in the Fuse framework. This document outlines the specification, methods, and usage patterns.
 
 ## Overview
 
-MCP enables different AI models and agents to share context, execute
-capabilities, and coordinate on complex tasks by providing a standardized
-interface for communication. It supports both synchronous and asynchronous
-communication patterns.
+MCP enables different AI models and agents to share context, execute capabilities, and coordinate on complex tasks by providing a standardized interface for communication. It supports both synchronous and asynchronous communication patterns.
 
 ## Protocol Structure
 
@@ -17,31 +12,31 @@ MCP messages follow a structured format:
 
 ```typescript
 interface MCPMessage<T = unknown> {
-  version: string;
-  messageId: string;
-  timestamp: number;
-  source: {
-    id: string;
-    type: 'ai_agent' | 'user' | 'system';
-    capabilities: string[];
-  };
-  target: {
-    id: string;
-    type: 'ai_agent' | 'user' | 'system';
-  };
-  content: {
-    type: MCPMessageType;
-    action: string;
-    data: T;
-    priority: 'low' | 'medium' | 'high';
-  };
-  metadata: {
-    conversationId?: string;
-    parentMessageId?: string;
-    capabilities?: string[];
-    protocol: 'mcp';
-    protocolVersion: '1.0.0';
-  };
+    version: string;
+    messageId: string;
+    timestamp: number;
+    source: {
+        id: string;
+        type: 'ai_agent' | 'user' | 'system';
+        capabilities: string[];
+    };
+    target: {
+        id: string;
+        type: 'ai_agent' | 'user' | 'system';
+    };
+    content: {
+        type: MCPMessageType;
+        action: string;
+        data: T;
+        priority: 'low' | 'medium' | 'high';
+    };
+    metadata: {
+        conversationId?: string;
+        parentMessageId?: string;
+        capabilities?: string[];
+        protocol: 'mcp';
+        protocolVersion: '1.0.0';
+    };
 }
 ```
 
@@ -56,16 +51,15 @@ MCP supports the following message types:
 
 ## Capabilities
 
-Capabilities are the core of MCP. They define what an agent can do and how it
-can be invoked.
+Capabilities are the core of MCP. They define what an agent can do and how it can be invoked.
 
 ```typescript
 interface MCPCapability {
-  name: string;
-  description: string;
-  parameters: Record<string, unknown>;
-  returns: Record<string, unknown>;
-  execute: (params: unknown) => Promise<any>;
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+    returns: Record<string, unknown>;
+    execute: (params: unknown) => Promise<any>;
 }
 ```
 
@@ -118,7 +112,7 @@ interface Message {
 const client = new MCPClient({
   agentId: 'my-agent',
   agentName: 'My Agent',
-  serverUrl: 'wss://mcp.fuse.ai',
+  serverUrl: 'wss://mcp.fuse.ai'
 });
 
 // Register capabilities
@@ -127,7 +121,7 @@ await client.registerCapabilities([
     id: 'text-analysis',
     name: 'Text Analysis',
     // ...capability definition
-  },
+  }
 ]);
 
 // Handle incoming requests
@@ -137,7 +131,7 @@ client.onRequest('text-analysis', 'sentiment-analysis', async (request) => {
   return {
     sentiment: 'positive',
     score: 0.89,
-    confidence: 0.95,
+    confidence: 0.95
   };
 });
 ```
@@ -149,7 +143,7 @@ client.onRequest('text-analysis', 'sentiment-analysis', async (request) => {
 const server = new MCPServer({
   id: 'mcp-server',
   name: 'MCP Server',
-  port: 3000,
+  port: 3000
 });
 
 // Register capabilities
@@ -158,18 +152,18 @@ server.registerCapability('file-operations', 'read-file', {
   parameters: {
     path: {
       type: 'string',
-      description: 'Path to the file',
-    },
+      description: 'Path to the file'
+    }
   },
   returns: {
     content: {
       type: 'string',
-      description: 'Content of the file',
-    },
+      description: 'Content of the file'
+    }
   },
   execute: async (params) => {
     // Implementation
-  },
+  }
 });
 
 // Start server
@@ -178,15 +172,11 @@ await server.start();
 
 ## VS Code Integration
 
-The New Fuse VS Code extension integrates with MCP to provide a seamless
-experience for developers:
+The New Fuse VS Code extension integrates with MCP to provide a seamless experience for developers:
 
 ```typescript
 // Register MCP integration
-const { mcpManager, agentIntegration } = registerMCPIntegration(
-  context,
-  lmBridge
-);
+const { mcpManager, agentIntegration } = registerMCPIntegration(context, lmBridge);
 
 // Register commands
 context.subscriptions.push(
@@ -195,9 +185,7 @@ context.subscriptions.push(
       await mcpManager.initialize();
       return true;
     } catch (error) {
-      vscode.window.showErrorMessage(
-        `MCP initialization failed: ${error.message}`
-      );
+      vscode.window.showErrorMessage(`MCP initialization failed: ${error.message}`);
       return false;
     }
   }),
@@ -206,16 +194,12 @@ context.subscriptions.push(
     try {
       const tools = await mcpManager.getTools();
       if (!tools.length) {
-        vscode.window.showInformationMessage(
-          'No MCP tools available. Try initializing MCP first.'
-        );
+        vscode.window.showInformationMessage('No MCP tools available. Try initializing MCP first.');
         return;
       }
       return mcpManager.showToolsQuickPick();
     } catch (error) {
-      vscode.window.showErrorMessage(
-        `Failed to show MCP tools: ${error.message}`
-      );
+      vscode.window.showErrorMessage(`Failed to show MCP tools: ${error.message}`);
     }
   })
 );
@@ -233,6 +217,4 @@ context.subscriptions.push(
 
 ## Conclusion
 
-The Model Context Protocol (MCP) provides a standardized way for AI agents to
-communicate and collaborate. By following this specification, developers can
-create interoperable AI systems that work together seamlessly.
+The Model Context Protocol (MCP) provides a standardized way for AI agents to communicate and collaborate. By following this specification, developers can create interoperable AI systems that work together seamlessly.

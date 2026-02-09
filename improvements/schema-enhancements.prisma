@@ -1,0 +1,14 @@
+model Feature {
+  // Add new fields
+  priority        Int
+  impact          Float
+  rolloutStrategy String
+  testCoverage    Float
+  userFeedback    Feedback[]
+  performanceMetrics PerformanceData[]
+  
+  // Add new relationships
+  teamOwners      User[]
+  relatedFeatures Feature[] @relation("RelatedFeatures")
+  dependencies    FeatureDependency[]
+}

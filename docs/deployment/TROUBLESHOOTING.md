@@ -7,13 +7,11 @@ Common deployment issues and solutions.
 ### Issue: `pnpm install` fails
 
 **Symptoms:**
-
 - Dependency installation errors
 - Network timeouts
 - Permission errors
 
 **Solutions:**
-
 ```bash
 # Clear pnpm cache
 pnpm store prune
@@ -32,18 +30,16 @@ pnpm --version  # Should be >= 8.x
 ### Issue: TypeScript build errors
 
 **Symptoms:**
-
 - Type errors during build
 - Missing type definitions
 
 **Solutions:**
-
 ```bash
 # Clear TypeScript cache
 rm -rf **/*.tsbuildinfo
 
-# Regenerate Drizzle client
-pnpm drizzle generate
+# Regenerate Prisma client
+pnpm prisma generate
 
 # Type check
 pnpm run type-check
@@ -55,13 +51,11 @@ pnpm run clean && pnpm run build
 ### Issue: Turbo build fails
 
 **Symptoms:**
-
 - Build times out
 - Memory errors
 - Concurrent build issues
 
 **Solutions:**
-
 ```bash
 # Use memory-optimized build
 BUILD_MEMORY_LIMIT=2048 BUILD_CONCURRENCY=2 pnpm run build:memory-optimized
@@ -79,12 +73,10 @@ pnpm run build --concurrency=1
 ### Issue: Railway CLI not authenticated
 
 **Symptoms:**
-
 - "Not logged in" errors
 - Authentication failures
 
 **Solutions:**
-
 ```bash
 # Login to Railway
 railway login
@@ -99,12 +91,10 @@ railway link
 ### Issue: Service fails to start
 
 **Symptoms:**
-
 - Service shows as "crashed"
 - Health checks fail
 
 **Solutions:**
-
 ```bash
 # Check service logs
 railway logs --service <service-name>
@@ -122,12 +112,10 @@ cat apps/<service>/Dockerfile
 ### Issue: Build timeout on Railway
 
 **Symptoms:**
-
 - Deployment exceeds time limit
 - Build killed mid-process
 
 **Solutions:**
-
 ```bash
 # Use Railway-optimized build
 BUILD_FRONTEND=false pnpm run build:railway
@@ -143,37 +131,33 @@ BUILD_FRONTEND=false pnpm run build:railway
 ### Issue: Migration fails
 
 **Symptoms:**
-
-- `drizzle migrate deploy` errors
+- `prisma migrate deploy` errors
 - Schema mismatch
 - Connection timeouts
 
 **Solutions:**
-
 ```bash
 # Check database connection
-pnpm drizzle db execute --stdin <<< "SELECT 1;"
+pnpm prisma db execute --stdin <<< "SELECT 1;"
 
 # View migration status
-pnpm drizzle migrate status
+pnpm prisma migrate status
 
 # Force migration (CAUTION)
-pnpm drizzle migrate resolve --applied <migration-name>
+pnpm prisma migrate resolve --applied <migration-name>
 
 # Reset database (DEVELOPMENT ONLY)
-pnpm drizzle migrate reset
+pnpm prisma migrate reset
 ```
 
 ### Issue: Database connection errors
 
 **Symptoms:**
-
 - "Connection refused"
 - "Too many connections"
 - Timeout errors
 
 **Solutions:**
-
 ```bash
 # Verify DATABASE_URL
 echo $DATABASE_URL
@@ -193,12 +177,10 @@ psql $DATABASE_URL -c "SELECT 1;"
 ### Issue: Missing environment variables
 
 **Symptoms:**
-
 - "Environment variable not set" errors
 - Services crash on startup
 
 **Solutions:**
-
 ```bash
 # Validate environment
 ./scripts/deployment/validate-deployment.sh
@@ -218,12 +200,10 @@ railway variables --set VAR_NAME=value
 ### Issue: Automatic rollback fails
 
 **Symptoms:**
-
 - Rollback script errors
 - Services still in failed state
 
 **Solutions:**
-
 ```bash
 # Manual rollback
 ./scripts/deployment/rollback.sh <deployment-id>
@@ -243,12 +223,10 @@ railway up --service <service-name>
 ### Issue: Slow deployment
 
 **Symptoms:**
-
 - Deployment takes > 15 minutes
 - Timeouts during deployment
 
 **Solutions:**
-
 ```bash
 # Use parallel deployment
 PARALLEL_DEPLOYMENTS=true ./scripts/deployment/deploy-automated.sh
@@ -266,12 +244,10 @@ pnpm run build:memory-optimized
 ### Issue: High memory usage during build
 
 **Symptoms:**
-
 - "JavaScript heap out of memory"
 - Build process killed
 
 **Solutions:**
-
 ```bash
 # Increase Node memory
 export NODE_OPTIONS="--max-old-space-size=4096"
@@ -288,12 +264,10 @@ pnpm run build:staged
 ### Issue: Smoke tests fail after deployment
 
 **Symptoms:**
-
 - Health endpoints return 500
 - Services not responding
 
 **Solutions:**
-
 ```bash
 # Check service logs
 railway logs --service <service-name>
@@ -315,7 +289,6 @@ HEALTH_CHECK_TIMEOUT=60 ./scripts/deployment/smoke-tests.sh
 **Cause:** Service not running or wrong port
 
 **Solution:**
-
 ```bash
 # Check service status
 railway status
@@ -329,7 +302,6 @@ railway variables | grep PORT
 **Cause:** Network issues or slow service
 
 **Solution:**
-
 ```bash
 # Increase timeout
 TIMEOUT=60 ./scripts/deployment/smoke-tests.sh
@@ -343,7 +315,6 @@ railway status
 **Cause:** File permissions or authentication
 
 **Solution:**
-
 ```bash
 # Fix script permissions
 chmod +x scripts/deployment/*.sh
@@ -359,19 +330,16 @@ railway whoami
 When reporting issues, include:
 
 1. **Deployment logs**
-
    ```bash
    cat logs/deployment/deploy-*.log
    ```
 
 2. **Railway logs**
-
    ```bash
    railway logs --service <service-name>
    ```
 
 3. **Build output**
-
    ```bash
    pnpm run build 2>&1 | tee build.log
    ```

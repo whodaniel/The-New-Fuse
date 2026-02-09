@@ -1,14 +1,6 @@
-import type { CreateWorkflowDefinitionDto } from '@the-new-fuse/types';
+import { IsString, IsNotEmpty, IsOptional, IsArray, IsEnum, ValidateNested, IsObject } from 'class-validator';
 import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsEnum,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import type { CreateWorkflowDefinitionDto } from '@the-new-fuse/types';
 
 export class CreateWorkflowDto implements CreateWorkflowDefinitionDto {
   @IsString()

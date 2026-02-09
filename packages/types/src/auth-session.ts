@@ -15,7 +15,7 @@ export interface ApiAuthSession extends AuthSession {
   };
 }
 
-export type CreateAuthSessionDto = Pick<AuthSession, 'userId' | 'expiresAt'>;
+export type CreateAuthSessionDto = Pick<AuthSession, 'userId'|'expiresAt'>;
 
 export type AuthToken = {
   access_token: string;

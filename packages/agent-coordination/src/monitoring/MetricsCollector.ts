@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { AgentInfo, PerformanceMetrics, Task, TaskStatus } from '../core/types';
+import { PerformanceMetrics, Task, TaskStatus, AgentInfo } from '../core/types';
 
 /**
  * Detailed metrics for a time period
@@ -96,7 +96,8 @@ export class MetricsCollector extends EventEmitter {
     if (!execution) return;
 
     execution.endTime = new Date();
-    execution.duration = execution.endTime.getTime() - execution.startTime.getTime();
+    execution.duration =
+      execution.endTime.getTime() - execution.startTime.getTime();
     execution.status = TaskStatus.COMPLETED;
 
     this.taskExecutions.delete(taskId);
@@ -113,7 +114,8 @@ export class MetricsCollector extends EventEmitter {
     if (!execution) return;
 
     execution.endTime = new Date();
-    execution.duration = execution.endTime.getTime() - execution.startTime.getTime();
+    execution.duration =
+      execution.endTime.getTime() - execution.startTime.getTime();
     execution.status = TaskStatus.FAILED;
 
     this.taskExecutions.delete(taskId);
@@ -137,7 +139,10 @@ export class MetricsCollector extends EventEmitter {
   /**
    * Get current performance metrics
    */
-  getCurrentMetrics(activeAgents: AgentInfo[], queueDepth: number): PerformanceMetrics {
+  getCurrentMetrics(
+    activeAgents: AgentInfo[],
+    queueDepth: number
+  ): PerformanceMetrics {
     const now = new Date();
     const totalTasks = this.completedExecutions.length;
     const successfulTasks = this.completedExecutions.filter(
@@ -152,7 +157,8 @@ export class MetricsCollector extends EventEmitter {
 
     const averageExecutionTime =
       executionTimes.length > 0
-        ? executionTimes.reduce((sum, time) => sum + time, 0) / executionTimes.length
+        ? executionTimes.reduce((sum, time) => sum + time, 0) /
+          executionTimes.length
         : 0;
 
     // Calculate tasks per second (last minute)
@@ -176,13 +182,24 @@ export class MetricsCollector extends EventEmitter {
   /**
    * Get detailed metrics for a time period
    */
-  getDetailedMetrics(startDate: Date, endDate: Date, agents: AgentInfo[]): DetailedMetrics {
+  getDetailedMetrics(
+    startDate: Date,
+    endDate: Date,
+    agents: AgentInfo[]
+  ): DetailedMetrics {
     const periodExecutions = this.completedExecutions.filter(
-      (e) => e.endTime && e.endTime >= startDate && e.endTime <= endDate
+      (e) =>
+        e.endTime &&
+        e.endTime >= startDate &&
+        e.endTime <= endDate
     );
 
-    const completed = periodExecutions.filter((e) => e.status === TaskStatus.COMPLETED).length;
-    const failed = periodExecutions.filter((e) => e.status === TaskStatus.FAILED).length;
+    const completed = periodExecutions.filter(
+      (e) => e.status === TaskStatus.COMPLETED
+    ).length;
+    const failed = periodExecutions.filter(
+      (e) => e.status === TaskStatus.FAILED
+    ).length;
 
     const executionTimes = periodExecutions
       .filter((e) => e.duration !== undefined)
@@ -194,10 +211,14 @@ export class MetricsCollector extends EventEmitter {
         ? executionTimes.reduce((sum, t) => sum + t, 0) / executionTimes.length
         : 0;
 
-    const periodDuration = (endDate.getTime() - startDate.getTime()) / 1000; // seconds
+    const periodDuration =
+      (endDate.getTime() - startDate.getTime()) / 1000; // seconds
 
     const totalLoad = agents.reduce((sum, agent) => sum + agent.currentLoad, 0);
-    const totalCapacity = agents.reduce((sum, agent) => sum + agent.maxConcurrentTasks, 0);
+    const totalCapacity = agents.reduce(
+      (sum, agent) => sum + agent.maxConcurrentTasks,
+      0
+    );
 
     return {
       period: {
@@ -217,7 +238,10 @@ export class MetricsCollector extends EventEmitter {
         failureRate: periodExecutions.length > 0 ? failed / periodExecutions.length : 0,
         averageExecutionTime: avgExecTime,
         minExecutionTime: executionTimes.length > 0 ? executionTimes[0] : 0,
-        maxExecutionTime: executionTimes.length > 0 ? executionTimes[executionTimes.length - 1] : 0,
+        maxExecutionTime:
+          executionTimes.length > 0
+            ? executionTimes[executionTimes.length - 1]
+            : 0,
         p50ExecutionTime: this.percentile(executionTimes, 0.5),
         p95ExecutionTime: this.percentile(executionTimes, 0.95),
         p99ExecutionTime: this.percentile(executionTimes, 0.99),
@@ -261,10 +285,16 @@ export class MetricsCollector extends EventEmitter {
     averageExecutionTime: number;
     successRate: number;
   } {
-    const agentExecutions = this.completedExecutions.filter((e) => e.agentId === agentId);
+    const agentExecutions = this.completedExecutions.filter(
+      (e) => e.agentId === agentId
+    );
 
-    const completed = agentExecutions.filter((e) => e.status === TaskStatus.COMPLETED).length;
-    const failed = agentExecutions.filter((e) => e.status === TaskStatus.FAILED).length;
+    const completed = agentExecutions.filter(
+      (e) => e.status === TaskStatus.COMPLETED
+    ).length;
+    const failed = agentExecutions.filter(
+      (e) => e.status === TaskStatus.FAILED
+    ).length;
 
     const executionTimes = agentExecutions
       .filter((e) => e.duration !== undefined)
@@ -304,7 +334,9 @@ export class MetricsCollector extends EventEmitter {
       totalTasksProcessed: this.completedExecutions.length,
       currentlyProcessing: this.taskExecutions.size,
       overallSuccessRate:
-        this.completedExecutions.length > 0 ? completed / this.completedExecutions.length : 0,
+        this.completedExecutions.length > 0
+          ? completed / this.completedExecutions.length
+          : 0,
     };
   }
 

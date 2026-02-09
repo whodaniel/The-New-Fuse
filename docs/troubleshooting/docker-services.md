@@ -2,13 +2,11 @@
 
 ## Overview
 
-This guide covers common issues when running The New Fuse with Docker
-infrastructure and provides step-by-step solutions.
+This guide covers common issues when running The New Fuse with Docker infrastructure and provides step-by-step solutions.
 
 ## Quick Diagnosis
 
 ### Check Service Status
-
 ```bash
 # Check all Docker services
 pnpm run docker:status
@@ -23,7 +21,6 @@ pnpm run docker:logs
 ### Common Status Indicators
 
 **✅ Healthy Services:**
-
 ```
 NAME               STATUS                   PORTS
 tnf-postgres-dev   Up X minutes (healthy)   0.0.0.0:5433->5432/tcp
@@ -31,7 +28,6 @@ tnf-redis-dev      Up X minutes (healthy)   0.0.0.0:6380->6379/tcp
 ```
 
 **❌ Unhealthy Services:**
-
 ```
 NAME               STATUS
 tnf-postgres-dev   Restarting (1) X seconds ago
@@ -43,7 +39,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 ### Problem: Container Won't Start
 
 **Symptoms:**
-
 - `docker ps` shows no PostgreSQL container
 - Connection errors to port 5433
 - "Container tnf-postgres-dev not found" errors
@@ -51,30 +46,27 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Check Port Conflicts:**
-
    ```bash
    # Check if port 5433 is in use
    lsof -i :5433
-
+   
    # If something is using the port, kill it:
    kill -9 $(lsof -ti :5433)
-
+   
    # Or change the port in docker-compose.dev-simple.yml
    ```
 
 2. **Restart Docker Services:**
-
    ```bash
    pnpm run docker:stop
    pnpm run docker:start
    ```
 
 3. **Check Docker Daemon:**
-
    ```bash
    # Ensure Docker is running
    docker info
-
+   
    # If not running, start Docker Desktop
    open -a Docker
    ```
@@ -82,7 +74,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 ### Problem: PostgreSQL Health Check Failing
 
 **Symptoms:**
-
 - Container shows as "unhealthy"
 - Connection timeouts
 - Database queries fail
@@ -90,17 +81,15 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Check Container Logs:**
-
    ```bash
    docker logs tnf-postgres-dev
    ```
 
 2. **Manual Health Check:**
-
    ```bash
    # Test from within container
    docker exec tnf-postgres-dev pg_isready -U newfuse
-
+   
    # Should return: localhost:5432 - accepting connections
    ```
 
@@ -113,7 +102,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 ### Problem: Database Connection Refused
 
 **Symptoms:**
-
 - "Connection refused" errors in application
 - Cannot connect via psql
 - Backend API shows database as stopped
@@ -121,14 +109,12 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Verify Connection Details:**
-
    ```bash
    # Test connection
    docker exec tnf-postgres-dev psql -U newfuse -d the_new_fuse_dev -c "SELECT 1;"
    ```
 
 2. **Check Environment Variables:**
-
    ```bash
    echo $DATABASE_URL
    # Should be: postgresql://newfuse:secretpass123@localhost:5433/the_new_fuse_dev
@@ -143,7 +129,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 ### Problem: Data Loss/Corruption
 
 **Symptoms:**
-
 - Missing tables or data
 - Database appears empty
 - Startup errors about corrupted data
@@ -151,14 +136,12 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Check Volume Status:**
-
    ```bash
    docker volume ls | grep postgres
    docker volume inspect the-new-fuse_postgres_dev_data
    ```
 
 2. **Restore from Backup:**
-
    ```bash
    # If you have a backup
    docker exec -i tnf-postgres-dev psql -U newfuse -d the_new_fuse_dev < backup.sql
@@ -175,7 +158,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 ### Problem: Redis Container Crashing
 
 **Symptoms:**
-
 - Container status shows "Restarting" or "Exited"
 - Architecture/library errors in logs
 - Connection refused to port 6380
@@ -183,13 +165,11 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Check Container Logs:**
-
    ```bash
    docker logs tnf-redis-dev
    ```
 
 2. **Architecture Issues (Common on Apple Silicon):**
-
    ```bash
    # If you see library/symbol errors, try different image
    # Edit docker-compose.dev-simple.yml:
@@ -197,18 +177,16 @@ tnf-redis-dev      Exited (127) X seconds ago
    ```
 
 3. **Port Conflict:**
-
    ```bash
    # Check port usage
    lsof -i :6380
-
+   
    # Change port if needed in docker-compose.dev-simple.yml
    ```
 
 ### Problem: Redis Memory Issues
 
 **Symptoms:**
-
 - Container runs but crashes under load
 - Memory-related errors in logs
 - Slow Redis operations
@@ -216,13 +194,11 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Check Memory Usage:**
-
    ```bash
    docker exec tnf-redis-dev redis-cli INFO memory
    ```
 
 2. **Configure Memory Limits:**
-
    ```yaml
    # Add to docker-compose.dev-simple.yml
    redis-dev:
@@ -241,7 +217,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 ### Problem: Redis Connection Timeout
 
 **Symptoms:**
-
 - Application shows Redis as disconnected
 - Timeout errors in application logs
 - Redis CLI connection fails
@@ -249,14 +224,12 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Test Connection:**
-
    ```bash
    docker exec tnf-redis-dev redis-cli ping
    # Should return: PONG
    ```
 
 2. **Check Network Configuration:**
-
    ```bash
    # Test from host
    telnet localhost 6380
@@ -272,7 +245,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 ### Problem: Services Won't Start
 
 **Symptoms:**
-
 - `docker-compose up` fails
 - Network or volume creation errors
 - Permission denied errors
@@ -280,20 +252,18 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Clean Docker State:**
-
    ```bash
    # Remove containers and networks
    docker-compose -f docker-compose.dev-simple.yml down
-
+   
    # Clean up unused resources
    docker system prune -f
-
+   
    # Restart
    pnpm run docker:start
    ```
 
 2. **Fix Permissions (macOS):**
-
    ```bash
    sudo chown -R $(whoami) ~/.docker
    ```
@@ -307,7 +277,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 ### Problem: Network Conflicts
 
 **Symptoms:**
-
 - "Network already exists" errors
 - Services can't communicate
 - Port binding failures
@@ -315,7 +284,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Remove Conflicting Networks:**
-
    ```bash
    docker network ls
    docker network rm tnf-dev-network
@@ -332,7 +300,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 ### Problem: Volume Permission Issues
 
 **Symptoms:**
-
 - Database can't write to disk
 - Permission denied errors in logs
 - Data not persisting
@@ -340,7 +307,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Check Volume Ownership:**
-
    ```bash
    docker volume inspect the-new-fuse_postgres_dev_data
    ```
@@ -357,7 +323,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 ### Problem: Backend Can't Connect to Database
 
 **Symptoms:**
-
 - Backend logs show connection errors
 - API returns database connection errors
 - Service status API shows database as stopped
@@ -365,7 +330,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Check Environment Variables:**
-
    ```bash
    # Load Docker environment
    export $(cat .env.docker | xargs)
@@ -373,7 +337,6 @@ tnf-redis-dev      Exited (127) X seconds ago
    ```
 
 2. **Test Connection from Backend:**
-
    ```bash
    # Manual connection test
    node -e "
@@ -389,15 +352,12 @@ tnf-redis-dev      Exited (127) X seconds ago
 3. **Update Backend Configuration:**
    ```typescript
    // Ensure backend uses correct connection string
-   const DATABASE_URL =
-     process.env.DATABASE_URL ||
-     'postgresql://newfuse:secretpass123@localhost:5433/the_new_fuse_dev';
+   const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://newfuse:secretpass123@localhost:5433/the_new_fuse_dev';
    ```
 
 ### Problem: Frontend Can't Reach Backend
 
 **Symptoms:**
-
 - Frontend shows "Network Error"
 - API calls fail
 - Service status not updating
@@ -405,13 +365,11 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Check Backend Status:**
-
    ```bash
    curl http://localhost:3004/api/services/status
    ```
 
 2. **Verify Backend is Running:**
-
    ```bash
    lsof -i :3004
    pnpm run dev:backend
@@ -421,7 +379,7 @@ tnf-redis-dev      Exited (127) X seconds ago
    ```typescript
    // Backend should allow frontend origin
    app.enableCors({
-     origin: 'http://localhost:3000',
+     origin: 'http://localhost:3000'
    });
    ```
 
@@ -430,7 +388,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 ### Problem: Slow Database Queries
 
 **Symptoms:**
-
 - Application feels sluggish
 - Long response times
 - Database connection timeouts
@@ -438,21 +395,19 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Check Active Connections:**
-
    ```sql
    docker exec tnf-postgres-dev psql -U newfuse -d the_new_fuse_dev -c "
-   SELECT count(*) as active_connections
-   FROM pg_stat_activity
+   SELECT count(*) as active_connections 
+   FROM pg_stat_activity 
    WHERE state = 'active';
    "
    ```
 
 2. **Monitor Query Performance:**
-
    ```sql
    docker exec tnf-postgres-dev psql -U newfuse -d the_new_fuse_dev -c "
-   SELECT query, calls, total_time, mean_time
-   FROM pg_stat_statements
+   SELECT query, calls, total_time, mean_time 
+   FROM pg_stat_statements 
    ORDER BY total_time DESC LIMIT 10;
    "
    ```
@@ -472,7 +427,6 @@ tnf-redis-dev      Exited (127) X seconds ago
 ### Problem: High Memory Usage
 
 **Symptoms:**
-
 - System running out of memory
 - Docker containers being killed
 - Slow overall performance
@@ -480,13 +434,11 @@ tnf-redis-dev      Exited (127) X seconds ago
 **Solutions:**
 
 1. **Monitor Resource Usage:**
-
    ```bash
    docker stats
    ```
 
 2. **Limit Container Memory:**
-
    ```yaml
    # Add to docker-compose.dev-simple.yml
    services:
@@ -578,13 +530,11 @@ watch docker stats
 ### Development Workflow
 
 1. **Always check Docker status before starting:**
-
    ```bash
    pnpm run docker:status
    ```
 
 2. **Use test script regularly:**
-
    ```bash
    pnpm run docker:test
    ```
@@ -597,7 +547,6 @@ watch docker stats
 ### System Maintenance
 
 1. **Regular cleanup:**
-
    ```bash
    # Weekly cleanup
    docker system prune -f
@@ -605,7 +554,6 @@ watch docker stats
    ```
 
 2. **Backup important data:**
-
    ```bash
    # Daily backup
    docker exec tnf-postgres-dev pg_dump -U newfuse -d the_new_fuse_dev > backup-$(date +%Y%m%d).sql

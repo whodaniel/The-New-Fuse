@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ResponsiveImageProps {
   src: string;
@@ -65,14 +65,15 @@ export default function ResponsiveImage({
     transition-opacity duration-300
   `.trim();
 
-  const containerStyle = aspectRatio ? { aspectRatio } : undefined;
+  const containerStyle = aspectRatio
+    ? { aspectRatio }
+    : undefined;
 
   return (
-    <div
-      className={`relative overflow-hidden ${aspectRatio ? '' : 'w-full h-full'}`}
-      style={containerStyle}
-    >
-      {!isLoaded && !priority && <div className="absolute inset-0 bg-muted animate-pulse" />}
+    <div className={`relative overflow-hidden ${aspectRatio ? '' : 'w-full h-full'}`} style={containerStyle}>
+      {!isLoaded && !priority && (
+        <div className="absolute inset-0 bg-muted animate-pulse" />
+      )}
       <img
         src={imageSrc || src}
         alt={alt}

@@ -34,7 +34,7 @@ export enum WorkflowStatus {
   PAUSED = 'PAUSED',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  STOPPED = 'STOPPED',
+  STOPPED = 'STOPPED'
 }
 
 export enum WorkflowStepType {

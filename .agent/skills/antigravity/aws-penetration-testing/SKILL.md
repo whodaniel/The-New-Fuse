@@ -1,23 +1,16 @@
 ---
 name: AWS Penetration Testing
-description:
-  This skill should be used when the user asks to "pentest AWS", "test AWS
-  security", "enumerate IAM", "exploit cloud infrastructure", "AWS privilege
-  escalation", "S3 bucket testing", "metadata SSRF", "Lambda exploitation", or
-  needs guidance on Amazon Web Services security assessment.
+description: This skill should be used when the user asks to "pentest AWS", "test AWS security", "enumerate IAM", "exploit cloud infrastructure", "AWS privilege escalation", "S3 bucket testing", "metadata SSRF", "Lambda exploitation", or needs guidance on Amazon Web Services security assessment.
 metadata:
   author: zebbern
-  version: '1.1'
+  version: "1.1"
 ---
 
 # AWS Penetration Testing
 
 ## Purpose
 
-Provide comprehensive techniques for penetration testing AWS cloud environments.
-Covers IAM enumeration, privilege escalation, SSRF to metadata endpoint, S3
-bucket exploitation, Lambda code extraction, and persistence techniques for red
-team operations.
+Provide comprehensive techniques for penetration testing AWS cloud environments. Covers IAM enumeration, privilege escalation, SSRF to metadata endpoint, S3 bucket exploitation, Lambda code extraction, and persistence techniques for red team operations.
 
 ## Inputs/Prerequisites
 
@@ -39,14 +32,14 @@ team operations.
 
 ## Essential Tools
 
-| Tool             | Purpose                    | Installation                                               |
-| ---------------- | -------------------------- | ---------------------------------------------------------- |
-| Pacu             | AWS exploitation framework | `git clone https://github.com/RhinoSecurityLabs/pacu`      |
-| SkyArk           | Shadow Admin discovery     | `Import-Module .\SkyArk.ps1`                               |
-| Prowler          | Security auditing          | `pip install prowler`                                      |
-| ScoutSuite       | Multi-cloud auditing       | `pip install scoutsuite`                                   |
-| enumerate-iam    | Permission enumeration     | `git clone https://github.com/andresriancho/enumerate-iam` |
-| Principal Mapper | IAM analysis               | `pip install principalmapper`                              |
+| Tool | Purpose | Installation |
+|------|---------|--------------|
+| Pacu | AWS exploitation framework | `git clone https://github.com/RhinoSecurityLabs/pacu` |
+| SkyArk | Shadow Admin discovery | `Import-Module .\SkyArk.ps1` |
+| Prowler | Security auditing | `pip install prowler` |
+| ScoutSuite | Multi-cloud auditing | `pip install scoutsuite` |
+| enumerate-iam | Permission enumeration | `git clone https://github.com/andresriancho/enumerate-iam` |
+| Principal Mapper | IAM analysis | `pip install principalmapper` |
 
 ---
 
@@ -148,15 +141,15 @@ http://169.254.170.2/v2/credentials/CREDENTIAL-PATH
 
 These permissions are equivalent to administrator:
 
-| Permission                          | Exploitation                |
-| ----------------------------------- | --------------------------- |
-| `iam:CreateAccessKey`               | Create keys for admin user  |
-| `iam:CreateLoginProfile`            | Set password for any user   |
-| `iam:AttachUserPolicy`              | Attach admin policy to self |
-| `iam:PutUserPolicy`                 | Add inline admin policy     |
-| `iam:AddUserToGroup`                | Add self to admin group     |
-| `iam:PassRole` + `ec2:RunInstances` | Launch EC2 with admin role  |
-| `lambda:UpdateFunctionCode`         | Inject code into Lambda     |
+| Permission | Exploitation |
+|------------|--------------|
+| `iam:CreateAccessKey` | Create keys for admin user |
+| `iam:CreateLoginProfile` | Set password for any user |
+| `iam:AttachUserPolicy` | Attach admin policy to self |
+| `iam:PutUserPolicy` | Add inline admin policy |
+| `iam:AddUserToGroup` | Add self to admin group |
+| `iam:PassRole` + `ec2:RunInstances` | Launch EC2 with admin role |
+| `lambda:UpdateFunctionCode` | Inject code into Lambda |
 
 ### Create Access Key for Another User
 
@@ -335,21 +328,20 @@ aws cloudtrail update-trail --name trail_name \
   --no-include-global-service-events --no-is-multi-region-trail
 ```
 
-**Note:** Kali/Parrot/Pentoo Linux triggers GuardDuty alerts based on
-user-agent. Use Pacu which modifies the user-agent.
+**Note:** Kali/Parrot/Pentoo Linux triggers GuardDuty alerts based on user-agent. Use Pacu which modifies the user-agent.
 
 ---
 
 ## Quick Reference
 
-| Task         | Command                                         |
-| ------------ | ----------------------------------------------- |
-| Get identity | `aws sts get-caller-identity`                   |
-| List users   | `aws iam list-users`                            |
-| List roles   | `aws iam list-roles`                            |
-| List buckets | `aws s3 ls`                                     |
-| List EC2     | `aws ec2 describe-instances`                    |
-| List Lambda  | `aws lambda list-functions`                     |
+| Task | Command |
+|------|---------|
+| Get identity | `aws sts get-caller-identity` |
+| List users | `aws iam list-users` |
+| List roles | `aws iam list-roles` |
+| List buckets | `aws s3 ls` |
+| List EC2 | `aws ec2 describe-instances` |
+| List Lambda | `aws lambda list-functions` |
 | Get metadata | `curl http://169.254.169.254/latest/meta-data/` |
 
 ---
@@ -357,19 +349,16 @@ user-agent. Use Pacu which modifies the user-agent.
 ## Constraints
 
 **Must:**
-
 - Obtain written authorization before testing
 - Document all actions for audit trail
 - Test in scope resources only
 
 **Must Not:**
-
 - Modify production data without approval
 - Leave persistent backdoors without documentation
 - Disable security controls permanently
 
 **Should:**
-
 - Check for IMDSv2 before attempting metadata attacks
 - Enumerate thoroughly before exploitation
 - Clean up test resources after engagement
@@ -401,19 +390,16 @@ aws sts get-caller-identity
 
 ## Troubleshooting
 
-| Issue                         | Solution                                   |
-| ----------------------------- | ------------------------------------------ |
-| Access Denied on all commands | Enumerate permissions with enumerate-iam   |
-| Metadata endpoint blocked     | Check for IMDSv2, try container metadata   |
-| GuardDuty alerts              | Use Pacu with custom user-agent            |
-| Expired credentials           | Re-fetch from metadata (temp creds rotate) |
-| CloudTrail logging actions    | Consider disable or log obfuscation        |
+| Issue | Solution |
+|-------|----------|
+| Access Denied on all commands | Enumerate permissions with enumerate-iam |
+| Metadata endpoint blocked | Check for IMDSv2, try container metadata |
+| GuardDuty alerts | Use Pacu with custom user-agent |
+| Expired credentials | Re-fetch from metadata (temp creds rotate) |
+| CloudTrail logging actions | Consider disable or log obfuscation |
 
 ---
 
 ## Additional Resources
 
-For advanced techniques including Lambda/API Gateway exploitation, Secrets
-Manager & KMS, Container security (ECS/EKS/ECR), RDS/DynamoDB exploitation, VPC
-lateral movement, and security checklists, see
-[references/advanced-aws-pentesting.md](references/advanced-aws-pentesting.md).
+For advanced techniques including Lambda/API Gateway exploitation, Secrets Manager & KMS, Container security (ECS/EKS/ECR), RDS/DynamoDB exploitation, VPC lateral movement, and security checklists, see [references/advanced-aws-pentesting.md](references/advanced-aws-pentesting.md).

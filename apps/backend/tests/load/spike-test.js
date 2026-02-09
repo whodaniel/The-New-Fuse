@@ -1,5 +1,5 @@
-import { check, sleep } from 'k6';
 import http from 'k6/http';
+import { check, sleep } from 'k6';
 
 /**
  * Spike Test Configuration
@@ -8,16 +8,16 @@ import http from 'k6/http';
  */
 export const options = {
   stages: [
-    { duration: '1m', target: 50 }, // Normal load
+    { duration: '1m', target: 50 },    // Normal load
     { duration: '30s', target: 1000 }, // Sudden spike
-    { duration: '3m', target: 1000 }, // Stay at spike
-    { duration: '30s', target: 50 }, // Return to normal
-    { duration: '2m', target: 50 }, // Recovery period
-    { duration: '30s', target: 0 }, // Ramp down
+    { duration: '3m', target: 1000 },  // Stay at spike
+    { duration: '30s', target: 50 },   // Return to normal
+    { duration: '2m', target: 50 },    // Recovery period
+    { duration: '30s', target: 0 },    // Ramp down
   ],
   thresholds: {
     http_req_duration: ['p(95)<2000'], // Allow higher latency during spike
-    http_req_failed: ['rate<0.05'], // Allow 5% error rate during spike
+    http_req_failed: ['rate<0.05'],    // Allow 5% error rate during spike
   },
 };
 
@@ -38,7 +38,7 @@ export function setup() {
 
 export default function (data) {
   const headers = {
-    Authorization: `Bearer ${data.authToken}`,
+    'Authorization': `Bearer ${data.authToken}`,
   };
 
   // Mix of different endpoints

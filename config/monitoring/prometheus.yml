@@ -4,15 +4,15 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
-    monitor: "thenewfuse-monitor"
-    environment: "production"
+    monitor: 'thenewfuse-monitor'
+    environment: 'production'
 
 # Alertmanager configuration
 alerting:
   alertmanagers:
     - static_configs:
         - targets:
-            - alertmanager:9093
+          - alertmanager:9093
       timeout: 10s
       api_version: v2
 
@@ -24,76 +24,76 @@ rule_files:
 # Scrape configuration
 scrape_configs:
   # Prometheus itself
-  - job_name: "prometheus"
+  - job_name: 'prometheus'
     static_configs:
-      - targets: ["localhost:9090"]
+      - targets: ['localhost:9090']
     scrape_interval: 5s
     metrics_path: /metrics
 
   # Node Exporter for system metrics
-  - job_name: "node-exporter"
+  - job_name: 'node-exporter'
     static_configs:
-      - targets: ["node-exporter:9100"]
+      - targets: ['node-exporter:9100']
     scrape_interval: 15s
     metrics_path: /metrics
 
   # cAdvisor for container metrics
-  - job_name: "cadvisor"
+  - job_name: 'cadvisor'
     static_configs:
-      - targets: ["cadvisor:8080"]
+      - targets: ['cadvisor:8080']
     scrape_interval: 15s
     metrics_path: /metrics
 
   # API Services
-  - job_name: "api-services"
+  - job_name: 'api-services'
     static_configs:
-      - targets:
-          - "api-1:3001"
-          - "api-2:3001"
-          - "api-3:3001"
+      - targets: 
+          - 'api-1:3001'
+          - 'api-2:3001'
+          - 'api-3:3001'
     scrape_interval: 10s
     metrics_path: /metrics
     scrape_timeout: 5s
 
   # Frontend Services
-  - job_name: "frontend-services"
+  - job_name: 'frontend-services'
     static_configs:
       - targets:
-          - "frontend-1:3000"
-          - "frontend-2:3000"
+          - 'frontend-1:3000'
+          - 'frontend-2:3000'
     scrape_interval: 15s
     metrics_path: /metrics
 
   # PostgreSQL Exporter
-  - job_name: "postgres"
+  - job_name: 'postgres'
     static_configs:
-      - targets: ["postgres-exporter:9187"]
+      - targets: ['postgres-exporter:9187']
     scrape_interval: 15s
     metrics_path: /metrics
 
   # Redis Exporter
-  - job_name: "redis"
+  - job_name: 'redis'
     static_configs:
-      - targets: ["redis-exporter:9121"]
+      - targets: ['redis-exporter:9121']
     scrape_interval: 15s
     metrics_path: /metrics
 
   # Nginx Exporter
-  - job_name: "nginx"
+  - job_name: 'nginx'
     static_configs:
-      - targets: ["nginx-exporter:9113"]
+      - targets: ['nginx-exporter:9113']
     scrape_interval: 15s
     metrics_path: /metrics
 
   # PgBouncer Exporter
-  - job_name: "pgbouncer"
+  - job_name: 'pgbouncer'
     static_configs:
-      - targets: ["pgbouncer-exporter:9127"]
+      - targets: ['pgbouncer-exporter:9127']
     scrape_interval: 15s
     metrics_path: /metrics
 
   # Blackbox Exporter for endpoint monitoring
-  - job_name: "blackbox"
+  - job_name: 'blackbox'
     metrics_path: /probe
     params:
       module: [http_2xx]
@@ -111,42 +111,42 @@ scrape_configs:
         replacement: blackbox-exporter:9115
 
   # Custom application metrics
-  - job_name: "custom-metrics"
+  - job_name: 'custom-metrics'
     static_configs:
-      - targets: ["metrics-collector:8080"]
+      - targets: ['metrics-collector:8080']
     scrape_interval: 30s
     metrics_path: /custom-metrics
 
   # Jaeger metrics
-  - job_name: "jaeger-collector"
+  - job_name: 'jaeger-collector'
     static_configs:
-      - targets: ["jaeger-collector:14269"]
+      - targets: ['jaeger-collector:14269']
     scrape_interval: 15s
     metrics_path: /metrics
 
-  - job_name: "jaeger-query"
+  - job_name: 'jaeger-query'
     static_configs:
-      - targets: ["jaeger-query:16687"]
+      - targets: ['jaeger-query:16687']
     scrape_interval: 15s
     metrics_path: /metrics
 
-  - job_name: "jaeger-agent"
+  - job_name: 'jaeger-agent'
     static_configs:
-      - targets: ["jaeger-agent:14271"]
+      - targets: ['jaeger-agent:14271']
     scrape_interval: 15s
     metrics_path: /metrics
 
   # Elasticsearch metrics
-  - job_name: "elasticsearch"
+  - job_name: 'elasticsearch'
     static_configs:
-      - targets: ["elasticsearch:9200"]
+      - targets: ['elasticsearch:9200']
     scrape_interval: 30s
     metrics_path: /_prometheus/metrics
 
   # Alertmanager metrics
-  - job_name: "alertmanager"
+  - job_name: 'alertmanager'
     static_configs:
-      - targets: ["alertmanager:9093"]
+      - targets: ['alertmanager:9093']
     scrape_interval: 15s
     metrics_path: /metrics
 

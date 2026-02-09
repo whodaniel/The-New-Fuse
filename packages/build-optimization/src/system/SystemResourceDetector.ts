@@ -5,7 +5,7 @@
 import * as os from 'os';
 import process from 'process';
 import { ISystemResourceDetector } from '../interfaces/index.js';
-import { MemoryUsage, SystemResources } from '../types/index.js';
+import { SystemResources, MemoryUsage } from '../types/index.js';
 
 /**
  * Detects system resources including memory, CPU, and platform information
@@ -38,7 +38,7 @@ export class SystemResourceDetector implements ISystemResourceDetector {
       availableMemory,
       cpuCores,
       platform,
-      nodeVersion,
+      nodeVersion
     };
   }
 
@@ -48,7 +48,7 @@ export class SystemResourceDetector implements ISystemResourceDetector {
   public getCurrentMemoryUsage(): MemoryUsage {
     const memUsage = process.memoryUsage();
     const totalMemory = this.getTotalMemoryMB();
-
+    
     // Convert bytes to MB
     const currentMB = Math.round(memUsage.heapUsed / 1024 / 1024);
     const percentage = Math.round((currentMB / totalMemory) * 100);
@@ -57,7 +57,7 @@ export class SystemResourceDetector implements ISystemResourceDetector {
       current: currentMB,
       peak: Math.round(memUsage.heapTotal / 1024 / 1024),
       percentage,
-      timestamp: Date.now(),
+      timestamp: Date.now()
     };
   }
 
@@ -67,11 +67,11 @@ export class SystemResourceDetector implements ISystemResourceDetector {
   public hasSufficientResources(requiredMemory: number): boolean {
     const availableMemory = this.getAvailableMemoryMB();
     const currentUsage = this.getCurrentMemoryUsage();
-
+    
     // Consider current usage and leave 20% buffer
     const usableMemory = availableMemory - currentUsage.current;
     const memoryWithBuffer = usableMemory * 0.8;
-
+    
     return memoryWithBuffer >= requiredMemory;
   }
 
@@ -105,10 +105,10 @@ export class SystemResourceDetector implements ISystemResourceDetector {
       system: {
         total: totalMB,
         free: freeMB,
-        used: usedMB,
+        used: usedMB
       },
       process: process.memoryUsage(),
-      platform: os.platform(),
+      platform: os.platform()
     };
   }
 
@@ -126,7 +126,7 @@ export class SystemResourceDetector implements ISystemResourceDetector {
       cores: cpus.length,
       model: cpus[0]?.model || 'Unknown',
       speed: cpus[0]?.speed || 0,
-      architecture: os.arch(),
+      architecture: os.arch()
     };
   }
 
@@ -139,7 +139,7 @@ export class SystemResourceDetector implements ISystemResourceDetector {
   } {
     const totalMemory = this.getTotalMemoryMB();
     const platform = os.platform();
-
+    
     // Platform-specific adjustments
     let maxHeapSize: number;
     let recommendedMaxConcurrency: number;
@@ -164,7 +164,7 @@ export class SystemResourceDetector implements ISystemResourceDetector {
 
     return {
       maxHeapSize,
-      recommendedMaxConcurrency,
+      recommendedMaxConcurrency
     };
   }
 
@@ -203,7 +203,7 @@ export class SystemResourceDetector implements ISystemResourceDetector {
         maxConcurrency: Math.max(1, Math.floor(cpuCores / 2)),
         memoryThreshold: 70, // 70% threshold in CI
         enableIncrementalBuilds: true,
-        stageSize: Math.max(2, Math.floor(totalMemory / 1024)), // 1 package per GB
+        stageSize: Math.max(2, Math.floor(totalMemory / 1024)) // 1 package per GB
       };
     } else {
       // More aggressive settings for local development
@@ -211,7 +211,7 @@ export class SystemResourceDetector implements ISystemResourceDetector {
         maxConcurrency: Math.max(2, Math.floor(cpuCores * 0.75)),
         memoryThreshold: 80, // 80% threshold locally
         enableIncrementalBuilds: true,
-        stageSize: Math.max(3, Math.floor(totalMemory / 512)), // More packages per stage
+        stageSize: Math.max(3, Math.floor(totalMemory / 512)) // More packages per stage
       };
     }
   }

@@ -10,7 +10,7 @@ flowchart TD
         B --> C[AgentMonitoringService]
         B --> D[PrometheusService]
     end
-
+    
     C --> E[Agent Metrics]
     D --> F[Grafana Dashboards]
     style A fill:#e7f9e7,stroke:#333
@@ -19,23 +19,18 @@ flowchart TD
     style D fill:#d4f1f9,stroke:#333
 ```
 
-The Roo monitoring system is implemented as part of the VSCode extension and
-consists of several components:
+The Roo monitoring system is implemented as part of the VSCode extension and consists of several components:
 
-1. **RooOutputMonitor**: The core class responsible for monitoring and
-   forwarding Roo's output
+1. **RooOutputMonitor**: The core class responsible for monitoring and forwarding Roo's output
 2. **WebSocket Server**: Handles communication with connected clients
-3. **Output Channel Interception**: Captures output from Roo-related output
-   channels
-4. **Terminal Monitoring**: Detects and monitors terminals that might be running
-   Roo
+3. **Output Channel Interception**: Captures output from Roo-related output channels
+4. **Terminal Monitoring**: Detects and monitors terminals that might be running Roo
 
 ## Implementation Details
 
 ### RooOutputMonitor Class
 
-The `RooOutputMonitor` class is the central component of the monitoring system.
-It:
+The `RooOutputMonitor` class is the central component of the monitoring system. It:
 
 - Monitors multiple output channels for Roo-related content
 - Detects and monitors terminals that might be running Roo
@@ -44,8 +39,7 @@ It:
 
 ### Output Channel Monitoring
 
-The monitor intercepts output from VSCode output channels by replacing the
-original `append` and `appendLine` methods with custom implementations that:
+The monitor intercepts output from VSCode output channels by replacing the original `append` and `appendLine` methods with custom implementations that:
 
 1. Process the output to determine if it's Roo-related
 2. Forward the output to connected clients
@@ -54,7 +48,7 @@ original `append` and `appendLine` methods with custom implementations that:
 ```typescript
 private monitorOutputChannel(channel: vscode.OutputChannel, isRooChannel: boolean) {
     // ... implementation details ...
-
+    
     // Intercept and forward output
     const originalAppend = channel.append;
     channel.append = (value: string) => {
@@ -73,7 +67,7 @@ sequenceDiagram
     participant M as MonitoringService
     participant P as Prometheus
     participant G as Grafana
-
+    
     A->>M: Push metrics
     M->>P: Export metrics
     P->>G: Provide data
@@ -89,11 +83,11 @@ private processOutput(value: string, source: string, isRooChannel: boolean) {
     // Check if this is direct Roo output
     const rooOutputPattern = /\[Roo Coder\]:|Roo>|Roo Coder:/i;
     const isDirectRooOutput = rooOutputPattern.test(value);
-
+    
     // Check if this mentions Roo but isn't direct output
     const rooMentionPattern = /Roo|AI Coder|Code Assistant/i;
     const isRooRelated = !isDirectRooOutput && rooMentionPattern.test(value);
-
+    
     // ... determine message type and broadcast ...
 }
 ```
@@ -105,7 +99,7 @@ The system monitors terminals to detect those that might be running Roo:
 ```typescript
 private monitorTerminal(terminal: vscode.Terminal) {
     // ... implementation details ...
-
+    
     // Check if this is a Roo-related terminal based on name
     const isRooTerminal = /Roo|AI Coder|Code Assistant/i.test(terminal.name);
     if (isRooTerminal) {
@@ -136,8 +130,7 @@ Message types include:
 - `roo_output`: Direct output from Roo Coder
 - `roo_related_output`: Output that mentions Roo but isn't direct output
 - `output`: Other output from monitored channels
-- `roo_terminal_detected`: Notification when a new Roo-related terminal is
-  opened
+- `roo_terminal_detected`: Notification when a new Roo-related terminal is opened
 
 ## Integration with Extension
 
@@ -145,29 +138,26 @@ The monitoring system is initialized when the VSCode extension is activated:
 
 ```typescript
 export function activate(context: vscode.ExtensionContext) {
-  const connections: WebSocket[] = [];
-
-  // Initialize Roo Output Monitor
-  const rooMonitor = new RooOutputMonitor(connections);
-  rooMonitor.startMonitoring();
-
-  // Register for disposal
-  context.subscriptions.push({
-    dispose: () => rooMonitor.dispose(),
-  });
-
-  // ... WebSocket server setup ...
+    const connections: WebSocket[] = [];
+    
+    // Initialize Roo Output Monitor
+    const rooMonitor = new RooOutputMonitor(connections);
+    rooMonitor.startMonitoring();
+    
+    // Register for disposal
+    context.subscriptions.push({
+        dispose: () => rooMonitor.dispose()
+    });
+    
+    // ... WebSocket server setup ...
 }
 ```
 
 ## Limitations
 
-- VSCode API doesn't provide direct access to terminal output unless the
-  terminal is created with the ExtensionTerminal API
-- Output channels created after the extension is activated might not be detected
-  automatically
-- Pattern matching for Roo-related content might produce false positives or miss
-  some outputs
+- VSCode API doesn't provide direct access to terminal output unless the terminal is created with the ExtensionTerminal API
+- Output channels created after the extension is activated might not be detected automatically
+- Pattern matching for Roo-related content might produce false positives or miss some outputs
 
 ## Alerting Pipeline
 

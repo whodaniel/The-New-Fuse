@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export type Theme = 'light' | 'dark' | 'system';
 
@@ -27,7 +27,7 @@ interface ThemeProviderProps {
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
   defaultTheme = 'system',
-  storageKey = 'ui-theme',
+  storageKey = 'ui-theme'
 }) => {
   const [theme, setThemeState] = useState<Theme>(defaultTheme);
   const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>('light');
@@ -43,9 +43,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   useEffect(() => {
     const updateEffectiveTheme = () => {
       if (theme === 'system') {
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? 'dark'
-          : 'light';
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         setEffectiveTheme(systemTheme);
       } else {
         setEffectiveTheme(theme);
@@ -71,7 +69,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     const root = document.documentElement;
     root.classList.remove('light', 'dark');
     root.classList.add(effectiveTheme);
-
+    
     // Update meta theme-color
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
@@ -86,7 +84,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
   return (
     <ThemeContext.Provider value={{ theme, effectiveTheme, setTheme }}>
-      <div className={`theme-${effectiveTheme}`}>{children}</div>
+      <div className={`theme-${effectiveTheme}`}>
+        {children}
+      </div>
     </ThemeContext.Provider>
   );
 };

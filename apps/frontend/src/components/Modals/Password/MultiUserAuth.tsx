@@ -1,27 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { RecoveryCodeModal } from '../../../components/Modals/DisplayRecoveryCodeModal/DisplayRecoveryCodeModal';
-import { Button } from '../../../components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '../../../components/ui/dialog';
-import { Input } from '../../../components/ui/input';
-import { useModal } from '../../../hooks/useModal';
-import System from '../../../models/system';
-import { LOCAL_STORAGE_KEYS } from '../../../utils/constants';
-import paths from '../../../utils/paths';
-import { showErrorToast, showSuccessToast } from '../../../utils/toast';
+import React, { useEffect, useState } from "react";
+import System from "../../../models/system";
+import { LOCAL_STORAGE_KEYS } from "../../../utils/constants";
+import paths from "../../../utils/paths";
+import { showErrorToast, showSuccessToast } from "../../../utils/toast";
+import { useModal } from "../../../hooks/useModal";
+import { RecoveryCodeModal } from "../../../components/Modals/DisplayRecoveryCodeModal/DisplayRecoveryCodeModal";
+import { useTranslation } from "react-i18next";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "../../../components/ui/dialog";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+
 
 interface RecoveryResponse {
   success: boolean;
   resetToken: string | null;
   error: string | null;
 }
+
+
 
 interface RecoveryFormProps {
   onSubmit: (username: string, recoveryCodes: string[]) => void;
@@ -34,8 +30,10 @@ interface ResetPasswordFormProps {
 
 const RecoveryForm: React.FC<RecoveryFormProps> = ({ onSubmit, setShowRecoveryForm }) => {
   const { t } = useTranslation();
-  const [username, setUsername] = useState('');
-  const [recoveryCodeInputs, setRecoveryCodeInputs] = useState<string[]>(Array(2).fill(''));
+  const [username, setUsername] = useState("");
+  const [recoveryCodeInputs, setRecoveryCodeInputs] = useState<string[]>(
+    Array(2).fill("")
+  );
 
   const handleRecoveryCodeChange = (index: number, value: string) => {
     const updatedCodes = [...recoveryCodeInputs];
@@ -45,39 +43,45 @@ const RecoveryForm: React.FC<RecoveryFormProps> = ({ onSubmit, setShowRecoveryFo
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const recoveryCodes = recoveryCodeInputs.filter((code) => code.trim() !== '');
+    const recoveryCodes = recoveryCodeInputs.filter(
+      (code) => code.trim() !== ""
+    );
     onSubmit(username, recoveryCodes);
   };
 
   return (
     <div className="w-full max-w-md">
       <DialogHeader>
-        <DialogTitle>{t('login.password-reset.title')}</DialogTitle>
-        <DialogDescription>{t('login.password-reset.description')}</DialogDescription>
+        <DialogTitle>{t("login.password-reset.title")}</DialogTitle>
+        <DialogDescription>
+          {t("login.password-reset.description")}
+        </DialogDescription>
       </DialogHeader>
       <form onSubmit={handleSubmit} className="space-y-4 py-4">
         <div className="space-y-2">
           <label htmlFor="username" className="text-sm font-medium">
-            {t('login.multi-user.placeholder-username')}
+            {t("login.multi-user.placeholder-username")}
           </label>
           <Input
             id="username"
             name="username"
             type="text"
-            placeholder={t('login.multi-user.placeholder-username')}
+            placeholder={t("login.multi-user.placeholder-username")}
             value={username}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
             required
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium">{t('login.password-reset.recovery-codes')}</label>
+          <label className="text-sm font-medium">
+            {t("login.password-reset.recovery-codes")}
+          </label>
           {recoveryCodeInputs.map((code, index) => (
             <Input
               key={index}
               type="text"
               name={`recoveryCode${index + 1}`}
-              placeholder={t('login.password-reset.recovery-code', {
+              placeholder={t("login.password-reset.recovery-code", {
                 index: index + 1,
               })}
               value={code}
@@ -89,9 +93,13 @@ const RecoveryForm: React.FC<RecoveryFormProps> = ({ onSubmit, setShowRecoveryFo
           ))}
         </div>
         <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
-          <Button type="submit">{t('login.password-reset.title')}</Button>
-          <Button type="button" variant="ghost" onClick={() => setShowRecoveryForm(false)}>
-            {t('login.password-reset.back')}
+          <Button type="submit">{t("login.password-reset.title")}</Button>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setShowRecoveryForm(false)}
+          >
+            {t("login.password-reset.back")}
           </Button>
         </DialogFooter>
       </form>
@@ -100,8 +108,8 @@ const RecoveryForm: React.FC<RecoveryFormProps> = ({ onSubmit, setShowRecoveryFo
 };
 
 const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSubmit }) => {
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -135,9 +143,7 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSubmit }) => {
             name="confirmPassword"
             placeholder="Confirm Password"
             value={confirmPassword}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setConfirmPassword(e.target.value)
-            }
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
             required
           />
         </div>
@@ -156,8 +162,8 @@ export default function MultiUserAuth() {
     openModal: openRecoveryModal,
     closeModal: closeRecoveryModal,
   } = useModal();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [appName, setAppName] = useState<string | null>(null);
   const [recoveryCodes, setRecoveryCodes] = useState<string[] | null>(null);
@@ -176,14 +182,17 @@ export default function MultiUserAuth() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    const { valid, user, token, message, recoveryCodes } = await System.login(username, password);
+    const { valid, user, token, message, recoveryCodes } = await System.login(
+      username,
+      password
+    );
     if (valid && !!token) {
       if (recoveryCodes) {
         setRecoveryCodes(recoveryCodes);
         openRecoveryModal();
       }
       window.localStorage.setItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN, token);
-      window.localStorage.setItem('AUTH_USER', JSON.stringify(user));
+      window.localStorage.setItem("AUTH_USER", JSON.stringify(user));
       window.location.replace(paths.home());
     } else {
       setError(message);
@@ -206,15 +215,18 @@ export default function MultiUserAuth() {
 
   const handleResetPassword = async (newPassword: string, confirmPassword: string) => {
     if (newPassword !== confirmPassword) {
-      showErrorToast('Passwords do not match');
+      showErrorToast("Passwords do not match");
       return;
     }
     if (!resetToken) return;
 
-    const { success, error } = await System.resetPassword(resetToken, newPassword);
+    const { success, error } = await System.resetPassword(
+      resetToken,
+      newPassword
+    );
     if (success) {
       setShowResetPasswordForm(false);
-      showSuccessToast('Password reset successfully. You can now log in.');
+      showSuccessToast("Password reset successfully. You can now log in.");
     } else {
       if (error) showErrorToast(error);
     }
@@ -224,40 +236,47 @@ export default function MultiUserAuth() {
     <Dialog open={true} onOpenChange={() => {}}>
       <DialogContent className="w-full max-w-md">
         {showRecoveryForm ? (
-          <RecoveryForm onSubmit={handleRecovery} setShowRecoveryForm={setShowRecoveryForm} />
+          <RecoveryForm
+            onSubmit={handleRecovery}
+            setShowRecoveryForm={setShowRecoveryForm}
+          />
         ) : showResetPasswordForm ? (
           <ResetPasswordForm onSubmit={handleResetPassword} />
         ) : (
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-x-2">
-                <span className="text-2xl font-bold text-white">{t('login.multi-user.title')}</span>
+                <span className="text-2xl font-bold text-white">
+                  {t("login.multi-user.title")}
+                </span>
                 <span className="text-2xl font-bold bg-linear-to-r from-[#75D6FF] to-[#FFFFFF] bg-clip-text text-transparent">
                   {appName}
                 </span>
               </DialogTitle>
-              <DialogDescription>{t('login.multi-user.description')}</DialogDescription>
+              <DialogDescription>
+                {t("login.multi-user.description")}
+              </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleLogin} className="space-y-4 py-4">
               <div className="space-y-2">
-                <label htmlFor="username">{t('login.multi-user.placeholder-username')}</label>
+                <label htmlFor="username">{t("login.multi-user.placeholder-username")}</label>
                 <Input
                   id="username"
                   name="username"
                   type="text"
-                  placeholder={t('login.multi-user.placeholder-username')}
+                  placeholder={t("login.multi-user.placeholder-username")}
                   value={username}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="password">{t('login.multi-user.placeholder-password')}</label>
+                <label htmlFor="password">{t("login.multi-user.placeholder-password")}</label>
                 <Input
                   id="password"
                   name="password"
                   type="password"
-                  placeholder={t('login.multi-user.placeholder-password')}
+                  placeholder={t("login.multi-user.placeholder-password")}
                   value={password}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                   required
@@ -271,9 +290,9 @@ export default function MultiUserAuth() {
                   onClick={() => setShowRecoveryForm(true)}
                   className="p-0 h-auto"
                 >
-                  {t('login.password-reset.title')}
+                  {t("login.password-reset.title")}
                 </Button>
-                <Button type="submit">{t('login.multi-user.login-button')}</Button>
+                <Button type="submit">{t("login.multi-user.login-button")}</Button>
               </DialogFooter>
             </form>
           </>

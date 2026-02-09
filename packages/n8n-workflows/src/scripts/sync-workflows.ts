@@ -4,8 +4,8 @@
  * Continuous sync script for keeping workflows up to date
  */
 
-import * as path from 'path';
 import { WorkflowService } from '../services/WorkflowService';
+import * as path from 'path';
 
 const SYNC_INTERVAL_HOURS = 24; // Sync every 24 hours
 
@@ -44,12 +44,9 @@ async function main() {
   await sync();
 
   // Schedule periodic syncs
-  setInterval(
-    async () => {
-      await sync();
-    },
-    SYNC_INTERVAL_HOURS * 60 * 60 * 1000
-  );
+  setInterval(async () => {
+    await sync();
+  }, SYNC_INTERVAL_HOURS * 60 * 60 * 1000);
 
   console.log('Sync service running. Press Ctrl+C to stop.');
 }

@@ -1,6 +1,6 @@
-import { Edit2, Plus, Trash2 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { OnboardingAdminService } from '../../../services/onboarding-admin.service';
+import { Edit2, Trash2, Plus } from 'lucide-react';
 
 interface UserType {
   id: string;
@@ -27,7 +27,7 @@ interface OnboardingUserTypesProps {
 export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
   onSave,
   onChange,
-  hasUnsavedChanges,
+  hasUnsavedChanges
 }) => {
   // Custom notification state to replace useToast
   const [notification, setNotification] = useState<{
@@ -73,10 +73,10 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
             enabled: true,
             detectionMethod: 'behavior',
             detectionConfig: {
-              behaviorPattern: 'human-like interaction patterns',
+              behaviorPattern: 'human-like interaction patterns'
             },
             onboardingFlow: 'human-onboarding',
-            priority: 10,
+            priority: 10
           },
           {
             id: 'ai_agent',
@@ -86,11 +86,11 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
             detectionMethod: 'header',
             detectionConfig: {
               headerName: 'X-Agent-Type',
-              headerValue: 'ai_agent',
+              headerValue: 'ai_agent'
             },
             onboardingFlow: 'ai-agent-onboarding',
-            priority: 20,
-          },
+            priority: 20
+          }
         ]);
       } finally {
         setIsLoading(false);
@@ -117,7 +117,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
       detectionMethod: 'header',
       detectionConfig: {},
       onboardingFlow: '',
-      priority: userTypes.length + 10,
+      priority: userTypes.length + 10
     });
     setIsNewUserType(true);
     onOpen();
@@ -126,7 +126,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
   // Handle delete user type
   const handleDeleteUserType = (id: string) => {
     if (window.confirm('Are you sure you want to delete this user type?')) {
-      setUserTypes(userTypes.filter((ut) => ut.id !== id));
+      setUserTypes(userTypes.filter(ut => ut.id !== id));
       onChange();
     }
   };
@@ -138,7 +138,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
     if (isNewUserType) {
       setUserTypes([...userTypes, editingUserType]);
     } else {
-      setUserTypes(userTypes.map((ut) => (ut.id === editingUserType.id ? editingUserType : ut)));
+      setUserTypes(userTypes.map(ut => ut.id === editingUserType.id ? editingUserType : ut));
     }
 
     onChange();
@@ -146,9 +146,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
   };
 
   // Handle input change
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     if (!editingUserType) return;
 
     const { name, value, type } = e.target;
@@ -162,8 +160,8 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
         ...editingUserType,
         detectionConfig: {
           ...editingUserType.detectionConfig,
-          [configKey]: value,
-        },
+          [configKey]: value
+        }
       });
     } else {
       setEditingUserType({ ...editingUserType, [name]: value });
@@ -197,7 +195,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
     setEditingUserType({
       ...editingUserType,
       detectionMethod: method,
-      detectionConfig,
+      detectionConfig
     });
   };
 
@@ -235,15 +233,11 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
     <div>
       {/* Custom notification display */}
       {notification && (
-        <div
-          className={`mb-4 p-4 rounded-md ${
-            notification.type === 'success'
-              ? 'bg-green-50 text-green-800 border border-green-200'
-              : notification.type === 'error'
-                ? 'bg-red-50 text-red-800 border border-red-200'
-                : 'bg-blue-50 text-blue-800 border border-blue-200'
-          }`}
-        >
+        <div className={`mb-4 p-4 rounded-md ${
+          notification.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' :
+          notification.type === 'error' ? 'bg-red-50 text-red-800 border border-red-200' :
+          'bg-blue-50 text-blue-800 border border-blue-200'
+        }`}>
           <div className="flex justify-between items-center">
             <span>{notification.message}</span>
             <button
@@ -269,11 +263,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
           <div className="flex items-start">
             <div className="flex-shrink-0">
               <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
             </div>
             <div className="ml-3 flex-1">
@@ -292,178 +282,150 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
 
       {!isLoading && !error && (
         <div className="space-y-6">
-          <div className="bg-white rounded-lg shadow border">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium text-gray-900">User Types</h3>
-                <button
-                  onClick={handleAddUserType}
-                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add User Type
-                </button>
-              </div>
+        <div className="bg-white rounded-lg shadow border">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-medium text-gray-900">User Types</h3>
+              <button
+                onClick={handleAddUserType}
+                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add User Type
+              </button>
             </div>
-            <div className="px-6 py-4">
-              <p className="text-gray-600 mb-4">
-                Configure the different types of users that can access the platform. Each user type
-                can have its own onboarding flow.
-              </p>
+          </div>
+          <div className="px-6 py-4">
+            <p className="text-gray-600 mb-4">
+              Configure the different types of users that can access the platform. Each user type can have its own onboarding flow.
+            </p>
 
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Name
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Detection Method
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Onboarding Flow
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Priority
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {userTypes.map((userType) => (
-                      <tr key={userType.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex flex-col">
-                            <div className="text-sm font-medium text-gray-900">{userType.name}</div>
-                            <div className="text-sm text-gray-500">{userType.description}</div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {getDetectionMethodDisplay(userType)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {userType.onboardingFlow}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              userType.enabled
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-gray-100 text-gray-800'
-                            }`}
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detection Method</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Onboarding Flow</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {userTypes.map((userType) => (
+                    <tr key={userType.id}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-col">
+                          <div className="text-sm font-medium text-gray-900">{userType.name}</div>
+                          <div className="text-sm text-gray-500">{userType.description}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{getDetectionMethodDisplay(userType)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{userType.onboardingFlow}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          userType.enabled 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {userType.enabled ? 'Enabled' : 'Disabled'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{userType.priority}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEditUserType(userType)}
+                            className="text-blue-600 hover:text-blue-900"
+                            aria-label="Edit user type"
+                            title="Edit user type"
                           >
-                            {userType.enabled ? 'Enabled' : 'Disabled'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {userType.priority}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => handleEditUserType(userType)}
-                              className="text-blue-600 hover:text-blue-900"
-                              aria-label="Edit user type"
-                              title="Edit user type"
-                            >
-                              <Edit2 className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteUserType(userType.id)}
-                              className="text-red-600 hover:text-red-900"
-                              aria-label="Delete user type"
-                              title="Delete user type"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                            <Edit2 className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteUserType(userType.id)}
+                            className="text-red-600 hover:text-red-900"
+                            aria-label="Delete user type"
+                            title="Delete user type"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow border">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">User Type Detection</h3>
-            </div>
-            <div className="px-6 py-4">
-              <p className="text-gray-600 mb-4">
-                Configure how the system detects different user types. User types are evaluated in
-                order of priority (highest first).
-              </p>
-
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="enable-auto-detection"
-                    defaultChecked={true}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor="enable-auto-detection"
-                    className="ml-2 block text-sm text-gray-900"
-                  >
-                    Enable automatic user type detection
-                  </label>
-                </div>
-
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="allow-manual-override"
-                    defaultChecked={true}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor="allow-manual-override"
-                    className="ml-2 block text-sm text-gray-900"
-                  >
-                    Allow users to manually select their type
-                  </label>
-                </div>
-
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="remember-user-type"
-                    defaultChecked={true}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="remember-user-type" className="ml-2 block text-sm text-gray-900">
-                    Remember user type between sessions
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <hr className="my-6" />
-
-          <div className="flex justify-end">
-            <button
-              onClick={handleSaveChanges}
-              disabled={!hasUnsavedChanges}
-              className={`px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${
-                hasUnsavedChanges
-                  ? 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                  : 'bg-gray-300 cursor-not-allowed'
-              }`}
-            >
-              Save Changes
-            </button>
           </div>
         </div>
+
+        <div className="bg-white rounded-lg shadow border">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900">User Type Detection</h3>
+          </div>
+          <div className="px-6 py-4">
+            <p className="text-gray-600 mb-4">
+              Configure how the system detects different user types. User types are evaluated in order of priority (highest first).
+            </p>
+
+            <div className="space-y-4">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="enable-auto-detection"
+                  defaultChecked={true}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="enable-auto-detection" className="ml-2 block text-sm text-gray-900">
+                  Enable automatic user type detection
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="allow-manual-override"
+                  defaultChecked={true}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="allow-manual-override" className="ml-2 block text-sm text-gray-900">
+                  Allow users to manually select their type
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="remember-user-type"
+                  defaultChecked={true}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="remember-user-type" className="ml-2 block text-sm text-gray-900">
+                  Remember user type between sessions
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr className="my-6" />
+
+        <div className="flex justify-end">
+          <button
+            onClick={handleSaveChanges}
+            disabled={!hasUnsavedChanges}
+            className={`px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${
+              hasUnsavedChanges 
+                ? 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500' 
+                : 'bg-gray-300 cursor-not-allowed'
+            }`}
+          >
+            Save Changes
+          </button>
+        </div>
+      </div>
       )}
 
       {/* Edit User Type Modal */}
@@ -474,9 +436,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
               <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
 
-            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
-              &#8203;
-            </span>
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
@@ -490,23 +450,15 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
                     aria-label="Close modal"
                   >
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
                 </div>
-
+                
                 {editingUserType && (
                   <div className="space-y-4">
                     <div>
-                      <label
-                        htmlFor="user-type-id"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="user-type-id" className="block text-sm font-medium text-gray-700">
                         ID <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -527,10 +479,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
                     </div>
 
                     <div>
-                      <label
-                        htmlFor="user-type-name"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="user-type-name" className="block text-sm font-medium text-gray-700">
                         Name <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -545,10 +494,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
                     </div>
 
                     <div>
-                      <label
-                        htmlFor="user-type-description"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="user-type-description" className="block text-sm font-medium text-gray-700">
                         Description
                       </label>
                       <textarea
@@ -568,27 +514,19 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
                         id="user-type-enabled"
                         name="enabled"
                         checked={editingUserType.enabled}
-                        onChange={(e) =>
-                          setEditingUserType({
-                            ...editingUserType,
-                            enabled: e.target.checked,
-                          })
-                        }
+                        onChange={(e) => setEditingUserType({
+                          ...editingUserType,
+                          enabled: e.target.checked
+                        })}
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                       />
-                      <label
-                        htmlFor="user-type-enabled"
-                        className="ml-2 block text-sm text-gray-900"
-                      >
+                      <label htmlFor="user-type-enabled" className="ml-2 block text-sm text-gray-900">
                         Enabled
                       </label>
                     </div>
 
                     <div>
-                      <label
-                        htmlFor="detection-method"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="detection-method" className="block text-sm font-medium text-gray-700">
                         Detection Method <span className="text-red-500">*</span>
                       </label>
                       <select
@@ -610,10 +548,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
                     {editingUserType.detectionMethod === 'header' && (
                       <div className="space-y-3">
                         <div>
-                          <label
-                            htmlFor="header-name"
-                            className="block text-sm font-medium text-gray-700"
-                          >
+                          <label htmlFor="header-name" className="block text-sm font-medium text-gray-700">
                             Header Name <span className="text-red-500">*</span>
                           </label>
                           <input
@@ -628,10 +563,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
                         </div>
 
                         <div>
-                          <label
-                            htmlFor="header-value"
-                            className="block text-sm font-medium text-gray-700"
-                          >
+                          <label htmlFor="header-value" className="block text-sm font-medium text-gray-700">
                             Header Value <span className="text-red-500">*</span>
                           </label>
                           <input
@@ -649,10 +581,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
 
                     {editingUserType.detectionMethod === 'auth' && (
                       <div>
-                        <label
-                          htmlFor="auth-type"
-                          className="block text-sm font-medium text-gray-700"
-                        >
+                        <label htmlFor="auth-type" className="block text-sm font-medium text-gray-700">
                           Authentication Type <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -669,10 +598,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
 
                     {editingUserType.detectionMethod === 'behavior' && (
                       <div>
-                        <label
-                          htmlFor="behavior-pattern"
-                          className="block text-sm font-medium text-gray-700"
-                        >
+                        <label htmlFor="behavior-pattern" className="block text-sm font-medium text-gray-700">
                           Behavior Pattern <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -685,17 +611,13 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
                           className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                         />
                         <p className="mt-1 text-sm text-gray-500">
-                          This is a simplified representation. In a real implementation, behavior
-                          patterns would be configured more extensively.
+                          This is a simplified representation. In a real implementation, behavior patterns would be configured more extensively.
                         </p>
                       </div>
                     )}
 
                     <div>
-                      <label
-                        htmlFor="onboarding-flow"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="onboarding-flow" className="block text-sm font-medium text-gray-700">
                         Onboarding Flow <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -732,7 +654,7 @@ export const OnboardingUserTypes: React.FC<OnboardingUserTypesProps> = ({
                   </div>
                 )}
               </div>
-
+              
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
                   type="button"

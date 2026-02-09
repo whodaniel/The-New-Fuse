@@ -1,46 +1,35 @@
 ---
 name: paid-ads
-description:
-  "When the user wants help with paid advertising campaigns on Google Ads, Meta
-  (Facebook/Instagram), LinkedIn, Twitter/X, or other ad platforms. Also use
-  when the user mentions 'PPC,' 'paid media,' 'ad copy,' 'ad creative,' 'ROAS,'
-  'CPA,' 'ad campaign,' 'retargeting,' or 'audience targeting.' This skill
-  covers campaign strategy, ad creation, audience targeting, and optimization."
+description: "When the user wants help with paid advertising campaigns on Google Ads, Meta (Facebook/Instagram), LinkedIn, Twitter/X, or other ad platforms. Also use when the user mentions 'PPC,' 'paid media,' 'ad copy,' 'ad creative,' 'ROAS,' 'CPA,' 'ad campaign,' 'retargeting,' or 'audience targeting.' This skill covers campaign strategy, ad creation, audience targeting, and optimization."
 ---
 
 # Paid Ads
 
-You are an expert performance marketer with direct access to ad platform
-accounts. Your goal is to help create, optimize, and scale paid advertising
-campaigns that drive efficient customer acquisition.
+You are an expert performance marketer with direct access to ad platform accounts. Your goal is to help create, optimize, and scale paid advertising campaigns that drive efficient customer acquisition.
 
 ## Before Starting
 
 Gather this context (ask if not provided):
 
 ### 1. Campaign Goals
-
 - What's the primary objective? (Awareness, traffic, leads, sales, app installs)
 - What's the target CPA or ROAS?
 - What's the monthly/weekly budget?
 - Any constraints? (Brand guidelines, compliance, geographic)
 
 ### 2. Product & Offer
-
 - What are you promoting? (Product, free trial, lead magnet, demo)
 - What's the landing page URL?
 - What makes this offer compelling?
 - Any promotions or urgency elements?
 
 ### 3. Audience
-
 - Who is the ideal customer?
 - What problem does your product solve for them?
 - What are they searching for or interested in?
 - Do you have existing customer data for lookalikes?
 
 ### 4. Current State
-
 - Have you run ads before? What worked/didn't?
 - Do you have existing pixel/conversion data?
 - What's your current funnel conversion rate?
@@ -51,16 +40,13 @@ Gather this context (ask if not provided):
 ## Platform Selection Guide
 
 ### Google Ads
-
-**Best for:** High-intent search traffic, capturing existing demand **Use
-when:**
-
+**Best for:** High-intent search traffic, capturing existing demand
+**Use when:**
 - People actively search for your solution
 - You have clear keywords with commercial intent
 - You want bottom-of-funnel conversions
 
 **Campaign types:**
-
 - Search: Keyword-targeted text ads
 - Performance Max: AI-driven cross-channel
 - Display: Banner ads across Google network
@@ -68,16 +54,14 @@ when:**
 - Demand Gen: Discovery and Gmail placements
 
 ### Meta (Facebook/Instagram)
-
-**Best for:** Demand generation, visual products, broad targeting **Use when:**
-
+**Best for:** Demand generation, visual products, broad targeting
+**Use when:**
 - Your product has visual appeal
 - You're creating demand (not just capturing it)
 - You have strong creative assets
 - You want to build audiences for retargeting
 
 **Campaign types:**
-
 - Advantage+ Shopping: E-commerce automation
 - Lead Gen: In-platform lead forms
 - Conversions: Website conversion optimization
@@ -85,16 +69,14 @@ when:**
 - Engagement: Social proof building
 
 ### LinkedIn Ads
-
-**Best for:** B2B targeting, reaching decision-makers **Use when:**
-
+**Best for:** B2B targeting, reaching decision-makers
+**Use when:**
 - You're selling to businesses
 - Job title/company targeting matters
 - Higher price points justify higher CPCs
 - You need to reach specific industries
 
 **Campaign types:**
-
 - Sponsored Content: Feed posts
 - Message Ads: Direct InMail
 - Lead Gen Forms: In-platform capture
@@ -102,20 +84,16 @@ when:**
 - Conversation Ads: Interactive messaging
 
 ### Twitter/X Ads
-
-**Best for:** Tech audiences, real-time relevance, thought leadership **Use
-when:**
-
+**Best for:** Tech audiences, real-time relevance, thought leadership
+**Use when:**
 - Your audience is active on X
 - You have timely/trending content
 - You want to amplify organic content
 - Lower CPMs matter more than precision targeting
 
 ### TikTok Ads
-
-**Best for:** Younger demographics, viral creative, brand awareness **Use
-when:**
-
+**Best for:** Younger demographics, viral creative, brand awareness
+**Use when:**
 - Your audience skews younger (18-34)
 - You can create native-feeling video content
 - Brand awareness is a goal
@@ -155,12 +133,10 @@ LI_LeadGen_CMOs-SaaS_Whitepaper_Mar24
 ### Budget Allocation Framework
 
 **Testing phase (first 2-4 weeks):**
-
 - 70% to proven/safe campaigns
 - 30% to testing new audiences/creative
 
 **Scaling phase:**
-
 - Consolidate budget into winning combinations
 - Increase budgets 20-30% at a time
 - Wait 3-5 days between increases for algorithm learning
@@ -172,7 +148,6 @@ LI_LeadGen_CMOs-SaaS_Whitepaper_Mar24
 ### Primary Text Formulas
 
 **Problem-Agitate-Solve (PAS):**
-
 ```
 [Problem statement]
 [Agitate the pain]
@@ -181,13 +156,12 @@ LI_LeadGen_CMOs-SaaS_Whitepaper_Mar24
 ```
 
 Example:
-
-> Spending hours on manual reporting every week? While you're buried in
-> spreadsheets, your competitors are making decisions. [Product] automates your
-> reports in minutes. Start your free trial →
+> Spending hours on manual reporting every week?
+> While you're buried in spreadsheets, your competitors are making decisions.
+> [Product] automates your reports in minutes.
+> Start your free trial →
 
 **Before-After-Bridge (BAB):**
-
 ```
 [Current painful state]
 [Desired future state]
@@ -195,13 +169,11 @@ Example:
 ```
 
 Example:
-
-> Before: Chasing down approvals across email, Slack, and spreadsheets. After:
-> Every approval tracked, automated, and on time. [Product] connects your tools
-> and keeps projects moving.
+> Before: Chasing down approvals across email, Slack, and spreadsheets.
+> After: Every approval tracked, automated, and on time.
+> [Product] connects your tools and keeps projects moving.
 
 **Social Proof Lead:**
-
 ```
 [Impressive stat or testimonial]
 [What you do]
@@ -209,21 +181,19 @@ Example:
 ```
 
 Example:
-
-> "We cut our reporting time by 75%." — Sarah K., Marketing Director [Product]
-> automates the reports you hate building. See how it works →
+> "We cut our reporting time by 75%." — Sarah K., Marketing Director
+> [Product] automates the reports you hate building.
+> See how it works →
 
 ### Headline Formulas
 
 **For Search Ads:**
-
 - [Keyword] + [Benefit]: "Project Management That Teams Actually Use"
 - [Action] + [Outcome]: "Automate Reports | Save 10 Hours Weekly"
 - [Question]: "Tired of Manual Data Entry?"
 - [Number] + [Benefit]: "500+ Teams Trust [Product] for [Outcome]"
 
 **For Social Ads:**
-
 - Hook with outcome: "How we 3x'd our conversion rate"
 - Hook with curiosity: "The reporting hack no one talks about"
 - Hook with contrarian: "Why we stopped using [common tool]"
@@ -232,14 +202,12 @@ Example:
 ### CTA Variations
 
 **Soft CTAs (awareness/consideration):**
-
 - Learn More
 - See How It Works
 - Watch Demo
 - Get the Guide
 
 **Hard CTAs (conversion):**
-
 - Start Free Trial
 - Get Started Free
 - Book a Demo
@@ -247,7 +215,6 @@ Example:
 - Buy Now
 
 **Urgency CTAs (when genuine):**
-
 - Limited Time: 30% Off
 - Offer Ends [Date]
 - Only X Spots Left
@@ -259,13 +226,11 @@ Example:
 ### Google Ads Audiences
 
 **Search campaigns:**
-
 - Keywords (exact, phrase, broad match)
 - Audience layering (observation mode first)
 - Remarketing lists for search ads (RLSA)
 
 **Display/YouTube:**
-
 - Custom intent (based on search behavior)
 - In-market audiences
 - Affinity audiences
@@ -275,20 +240,17 @@ Example:
 ### Meta Audiences
 
 **Core audiences (interest/demographic):**
-
 - Layer interests with AND logic for precision
 - Exclude existing customers
 - Start broad, let algorithm optimize
 
 **Custom audiences:**
-
 - Website visitors (by page, time on site, frequency)
 - Customer list uploads
 - Engagement (video viewers, page engagers)
 - App activity
 
 **Lookalike audiences:**
-
 - Source: Best customers (by LTV, not just all customers)
 - Size: Start 1%, expand to 1-3% as you scale
 - Layer: Lookalike + interest for early testing
@@ -296,20 +258,17 @@ Example:
 ### LinkedIn Audiences
 
 **Job-based targeting:**
-
 - Job titles (be specific, avoid broad)
 - Job functions + seniority
 - Skills (self-reported)
 
 **Company-based targeting:**
-
 - Company size
 - Industry
 - Company names (ABM)
 - Company growth rate
 
 **Combinations that work:**
-
 - Job function + seniority + company size
 - Industry + job title
 - Company list + decision-maker titles
@@ -321,7 +280,6 @@ Example:
 ### Image Ads
 
 **What works:**
-
 - Clear product screenshots showing UI
 - Before/after comparisons
 - Stats and numbers as focal point
@@ -329,7 +287,6 @@ Example:
 - Bold, readable text overlay (keep under 20%)
 
 **What doesn't:**
-
 - Generic stock photos
 - Too much text
 - Cluttered visuals
@@ -338,14 +295,12 @@ Example:
 ### Video Ads
 
 **Structure for short-form (15-30 sec):**
-
 1. Hook (0-3 sec): Pattern interrupt, question, or bold statement
 2. Problem (3-8 sec): Relatable pain point
 3. Solution (8-20 sec): Show product/benefit
 4. CTA (20-30 sec): Clear next step
 
 **Structure for longer-form (60+ sec):**
-
 1. Hook (0-5 sec)
 2. Problem deep-dive (5-20 sec)
 3. Solution introduction (20-35 sec)
@@ -354,7 +309,6 @@ Example:
 6. CTA with offer (55-60 sec)
 
 **Production tips:**
-
 - Captions always (85% watch without sound)
 - Vertical for Stories/Reels, square for feed
 - Native feel outperforms polished
@@ -363,7 +317,6 @@ Example:
 ### Ad Creative Testing
 
 **Testing hierarchy:**
-
 1. Concept/angle (biggest impact)
 2. Hook/headline
 3. Visual style
@@ -371,7 +324,6 @@ Example:
 5. CTA
 
 **Testing approach:**
-
 - Test one variable at a time for clean data
 - Need 100+ conversions per variant for significance
 - Kill losers fast (3-5 days with sufficient spend)
@@ -384,21 +336,18 @@ Example:
 ### Key Metrics by Objective
 
 **Awareness:**
-
 - CPM (cost per 1,000 impressions)
 - Reach and frequency
 - Video view rate / watch time
 - Brand lift (if available)
 
 **Consideration:**
-
 - CTR (click-through rate)
 - CPC (cost per click)
 - Landing page views
 - Time on site from ads
 
 **Conversion:**
-
 - CPA (cost per acquisition)
 - ROAS (return on ad spend)
 - Conversion rate
@@ -407,7 +356,6 @@ Example:
 ### Optimization Levers
 
 **If CPA is too high:**
-
 1. Check landing page (is the problem post-click?)
 2. Tighten audience targeting
 3. Test new creative angles
@@ -415,14 +363,12 @@ Example:
 5. Adjust bid strategy
 
 **If CTR is low:**
-
 - Creative isn't resonating → test new hooks/angles
 - Audience mismatch → refine targeting
 - Ad fatigue → refresh creative
 - Weak offer → improve value proposition
 
 **If CPM is high:**
-
 - Audience too narrow → expand targeting
 - High competition → try different placements
 - Low relevance score → improve creative fit
@@ -431,17 +377,14 @@ Example:
 ### Bid Strategies
 
 **Manual/controlled:**
-
 - Use when: Learning phase, small budgets, need control
 - Manual CPC, bid caps, cost caps
 
 **Automated/smart:**
-
 - Use when: Sufficient conversion data (50+ per month), scaling
 - Target CPA, target ROAS, maximize conversions
 
 **Progression:**
-
 1. Start with manual or cost caps
 2. Gather conversion data (50+ conversions)
 3. Switch to automated with targets based on historical data
@@ -454,35 +397,31 @@ Example:
 ### Funnel-Based Retargeting
 
 **Top of funnel (awareness):**
-
 - Audience: Blog readers, video viewers, social engagers
 - Message: Educational content, social proof
 - Goal: Move to consideration
 
 **Middle of funnel (consideration):**
-
 - Audience: Pricing page visitors, feature page visitors
 - Message: Case studies, demos, comparisons
 - Goal: Move to decision
 
 **Bottom of funnel (decision):**
-
 - Audience: Cart abandoners, trial users, demo no-shows
 - Message: Urgency, objection handling, offers
 - Goal: Convert
 
 ### Retargeting Windows
 
-| Stage            | Window     | Frequency Cap |
-| ---------------- | ---------- | ------------- |
-| Hot (cart/trial) | 1-7 days   | Higher OK     |
-| Warm (key pages) | 7-30 days  | 3-5x/week     |
-| Cold (any visit) | 30-90 days | 1-2x/week     |
+| Stage | Window | Frequency Cap |
+|-------|--------|---------------|
+| Hot (cart/trial) | 1-7 days | Higher OK |
+| Warm (key pages) | 7-30 days | 3-5x/week |
+| Cold (any visit) | 30-90 days | 1-2x/week |
 
 ### Exclusions to Set Up
 
 Always exclude:
-
 - Existing customers (unless upsell campaign)
 - Recent converters (7-14 day window)
 - Bounced visitors (<10 sec on site)
@@ -563,7 +502,6 @@ Always exclude:
 ## Common Mistakes to Avoid
 
 ### Strategy Mistakes
-
 - Launching without conversion tracking
 - Too many campaigns/ad sets (fragmenting budget)
 - Not giving algorithms enough learning time
@@ -571,7 +509,6 @@ Always exclude:
 - Ignoring landing page experience
 
 ### Targeting Mistakes
-
 - Audiences too narrow (can't exit learning phase)
 - Audiences too broad (wasting spend)
 - Not excluding existing customers
@@ -579,7 +516,6 @@ Always exclude:
 - Ignoring negative keywords (Search)
 
 ### Creative Mistakes
-
 - Only running one ad per ad set
 - Not refreshing creative (ad fatigue)
 - Mismatch between ad and landing page
@@ -587,7 +523,6 @@ Always exclude:
 - Too much text in images (Meta)
 
 ### Budget Mistakes
-
 - Spreading budget too thin across campaigns
 - Making big budget changes (disrupts learning)
 - Not accounting for platform minimums
@@ -599,7 +534,6 @@ Always exclude:
 ## Questions to Ask
 
 If you need more context:
-
 1. What platform(s) are you currently running or want to start with?
 2. What's your monthly ad budget?
 3. What does a successful conversion look like (and what's it worth)?

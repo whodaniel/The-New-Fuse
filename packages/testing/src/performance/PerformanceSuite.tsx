@@ -1,14 +1,5 @@
-import {
-  measurePerformance,
-  PerformanceResult,
-  PerformanceStats,
-  PerformanceThresholds,
-} from './utils/measurePerformance';
-import {
-  detectMemoryLeak,
-  LeakDetectionOptions,
-  LeakDetectionResult,
-} from './utils/memoryLeakDetector';
+import { measurePerformance, PerformanceResult, PerformanceStats, PerformanceThresholds } from './utils/measurePerformance';
+import { detectMemoryLeak, LeakDetectionOptions, LeakDetectionResult } from './utils/memoryLeakDetector';
 import { RegressionDetector, RegressionThresholds } from './regression/regressionDetector';
 import { PerformanceReportGenerator, TestResult, ReportOptions } from './reporting/reportGenerator';
 
@@ -39,11 +30,11 @@ export class PerformanceSuite {
         regression?: RegressionThresholds;
         leakDetection?: LeakDetectionOptions;
       };
-    } = {},
+    } = {}
   ) {
     this.regressionDetector = new RegressionDetector(
       options.baselinePath,
-      options.defaultThresholds?.regression,
+      options.defaultThresholds?.regression
     );
     this.reportGenerator = new PerformanceReportGenerator(options.reportOptions);
   }
@@ -53,14 +44,14 @@ export class PerformanceSuite {
    */
   public async test(
     fn: () => Promise<any> | any,
-    options: PerformanceTestOptions,
+    options: PerformanceTestOptions
   ): Promise<PerformanceTestResult> {
     const {
       name,
       iterations = 100,
       warmupIterations = 5,
       performanceThresholds = this.options.defaultThresholds?.performance,
-      leakDetectionOptions = this.options.defaultThresholds?.leakDetection,
+      leakDetectionOptions = this.options.defaultThresholds?.leakDetection
     } = options;
 
     // Run performance measurements
@@ -68,16 +59,18 @@ export class PerformanceSuite {
       iterations,
       warmupIterations,
       thresholds: performanceThresholds,
-      label: name,
+      label: name
     });
 
     // Run memory leak detection
     const leakResults = await detectMemoryLeak(fn, leakDetectionOptions);
 
     // Check for regressions
-    const regressionAnalysis = await this.regressionDetector
-      .detectRegression(name, perfResults, process.env.NODE_ENV || 'development')
-      .catch(() => undefined); // Handle case where no baseline exists yet
+    const regressionAnalysis = await this.regressionDetector.detectRegression(
+      name,
+      perfResults,
+      process.env.NODE_ENV || 'development'
+    ).catch(() => undefined); // Handle case where no baseline exists yet
 
     const testResult: PerformanceTestResult = {
       name,
@@ -86,7 +79,7 @@ export class PerformanceSuite {
       results: perfResults.results,
       stats: perfResults.stats,
       regressionAnalysis,
-      leakDetection: leakResults,
+      leakDetection: leakResults
     };
 
     this.testResults.set(name, testResult);
@@ -104,14 +97,14 @@ export class PerformanceSuite {
       }
       await this.regressionDetector.saveBaseline(testName, {
         results: result.results,
-        stats: result.stats,
+        stats: result.stats
       });
     } else {
       // Save all test results as baselines
       for (const [name, result] of this.testResults.entries()) {
         await this.regressionDetector.saveBaseline(name, {
           results: result.results,
-          stats: result.stats,
+          stats: result.stats
         });
       }
     }
@@ -121,7 +114,10 @@ export class PerformanceSuite {
    * Generate a performance report for all completed tests
    */
   public async generateReport(options?: Partial<ReportOptions>): Promise<string> {
-    return this.reportGenerator.generateReport(Array.from(this.testResults.values()), options);
+    return this.reportGenerator.generateReport(
+      Array.from(this.testResults.values()),
+      options
+    );
   }
 
   /**

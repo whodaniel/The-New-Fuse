@@ -64,7 +64,7 @@ the "spark of life" to this system.
 
 | Package           | Role                   | Status |
 | ----------------- | ---------------------- | ------ |
-| `database`        | Drizzle + Repositories  | 100%   |
+| `database`        | Prisma + Repositories  | 100%   |
 | `security`        | Auth + Encryption      | 100%   |
 | `core-monitoring` | Metrics + Alerts       | 100%   |
 | `job-queue`       | Bull queue integration | 100%   |

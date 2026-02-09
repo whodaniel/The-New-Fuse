@@ -2,28 +2,24 @@
 
 ## Overview
 
-This document details the implementation of a unified API Gateway for The New
-Fuse platform and the resolution of critical port conflicts that existed in the
-previous architecture.
+This document details the implementation of a unified API Gateway for The New Fuse platform and the resolution of critical port conflicts that existed in the previous architecture.
 
 ## Problem Statement
 
 ### Previous Issues Identified
 
 1. **Port Conflicts**: Multiple services competing for the same ports
-2. **API Inconsistencies**: Different authentication, versioning, and error
-   handling across services
-3. **Documentation Fragmentation**: Multiple Swagger endpoints with different
-   configurations
+2. **API Inconsistencies**: Different authentication, versioning, and error handling across services
+3. **Documentation Fragmentation**: Multiple Swagger endpoints with different configurations
 4. **TypeScript Compilation Errors**: Critical syntax errors preventing builds
 
 ### Specific Port Conflicts
 
-| Port | Previous Usage              | Conflict       |
-| ---- | --------------------------- | -------------- |
-| 3000 | Frontend + Webhooks Service | ❌ Collision   |
-| 3001 | Backend + Agents Service    | ❌ Collision   |
-| 3004 | Backend Service             | ✅ No conflict |
+| Port | Previous Usage | Conflict |
+|------|----------------|----------|
+| 3000 | Frontend + Webhooks Service | ❌ Collision |
+| 3001 | Backend + Agents Service | ❌ Collision |
+| 3004 | Backend Service | ✅ No conflict |
 
 ## Solution: Unified API Gateway
 
@@ -97,26 +93,24 @@ apps/api-gateway/
 
 ### 2. Resolved Port Mapping
 
-| Service              | Port | Purpose                 | Status      |
-| -------------------- | ---- | ----------------------- | ----------- |
-| Frontend Development | 3000 | React/Vite dev server   | ✅ Active   |
-| API Gateway          | 8080 | Unified API entry point | ✅ NEW      |
-| Backend API          | 3001 | Core business logic     | ✅ Active   |
-| Webhooks Service     | 3002 | Event ingestion         | ✅ Moved    |
-| Vite Preview         | 5173 | Production preview      | ✅ Reserved |
-| Database UI          | 5555 | Drizzle Studio           | ✅ Reserved |
+| Service | Port | Purpose | Status |
+|---------|------|---------|--------|
+| Frontend Development | 3000 | React/Vite dev server | ✅ Active |
+| API Gateway | 8080 | Unified API entry point | ✅ NEW |
+| Backend API | 3001 | Core business logic | ✅ Active |
+| Webhooks Service | 3002 | Event ingestion | ✅ Moved |
+| Vite Preview | 5173 | Production preview | ✅ Reserved |
+| Database UI | 5555 | Prisma Studio | ✅ Reserved |
 
 ### 3. API Route Consolidation
 
 #### Before (Multiple Endpoints)
-
 - Agents: `http://localhost:3001/agents`
 - Webhooks: `http://localhost:3000/webhooks`
 - Chat: `http://localhost:3004/api/chat`
 - MCP: `http://localhost:3004/api/mcp`
 
 #### After (Unified Gateway)
-
 - All APIs: `http://localhost:8080/v1/*`
 - Agents: `http://localhost:8080/v1/agents`
 - Webhooks: `http://localhost:8080/v1/webhooks`
@@ -129,7 +123,6 @@ apps/api-gateway/
 ### 1. Frontend Configuration Updates
 
 **File: `packages/frontend/.env`**
-
 ```env
 # Before
 VITE_API_URL=http://localhost:3001
@@ -139,13 +132,12 @@ VITE_API_URL=http://localhost:8080
 ```
 
 **File: `apps/frontend/src/config/ports.ts`**
-
 ```typescript
 export const STANDARD_PORTS = {
   FRONTEND: 3000,
-  API_GATEWAY: 8080, // NEW
+  API_GATEWAY: 8080,        // NEW
   BACKEND_API: 3001,
-  WEBHOOKS_API: 3002, // MOVED
+  WEBHOOKS_API: 3002,       // MOVED
   // ... other ports
 } as const;
 ```
@@ -153,7 +145,6 @@ export const STANDARD_PORTS = {
 ### 2. Backend CORS Updates
 
 **File: `apps/backend/.env`**
-
 ```env
 # Updated CORS for gateway architecture
 CORS_ORIGINS="http://localhost:3000,http://localhost:8080,http://localhost:5173"
@@ -162,7 +153,6 @@ CORS_ORIGINS="http://localhost:3000,http://localhost:8080,http://localhost:5173"
 ### 3. API Gateway Environment
 
 **File: `apps/api-gateway/.env`**
-
 ```env
 PORT=8080
 BACKEND_SERVICE_URL=http://localhost:3001
@@ -176,7 +166,6 @@ CORS_ORIGINS=http://localhost:3000,http://localhost:5173
 ### 1. TypeScript Compilation Errors
 
 **File: `packages/core/src/api/api-versioning.service.ts`**
-
 - Fixed 20+ syntax errors including:
   - Malformed import statements
   - Missing import for `Logger`
@@ -187,19 +176,16 @@ CORS_ORIGINS=http://localhost:3000,http://localhost:5173
 ### 2. API Consistency Standardization
 
 #### Authentication
-
 - **Unified**: JWT Bearer token + API key support
 - **Consistent**: Same auth mechanism across all endpoints
 - **Secure**: Proper CORS and security headers
 
 #### Error Handling
-
 - **Standardized**: Global exception filter
 - **Consistent**: Same error response format
 - **Informative**: Proper HTTP status codes and messages
 
 #### API Versioning
-
 - **Strategy**: URI-based versioning (`/v1/`)
 - **Consistent**: All endpoints follow same pattern
 - **Future-proof**: Easy to add v2, v3, etc.
@@ -260,11 +246,10 @@ curl http://localhost:8080/proxy/services
 ### For Frontend Developers
 
 1. **Update API Base URL**:
-
    ```javascript
    // Old
    const API_BASE = 'http://localhost:3001';
-
+   
    // New
    const API_BASE = 'http://localhost:8080/v1';
    ```

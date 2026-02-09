@@ -161,10 +161,7 @@ export class HealthCheckService extends EventEmitter {
   /**
    * Run a single health check with timeout
    */
-  private async runCheck(
-    name: string,
-    checkFn: HealthCheckFunction
-  ): Promise<[string, ServiceHealth]> {
+  private async runCheck(name: string, checkFn: HealthCheckFunction): Promise<[string, ServiceHealth]> {
     const startTime = Date.now();
 
     try {
@@ -301,7 +298,7 @@ export class CommonHealthChecks {
         if (queryFn) {
           await queryFn();
         } else if (client.$queryRaw) {
-          // Database
+          // Prisma
           await client.$queryRaw`SELECT 1`;
         } else if (client.query) {
           // pg, mysql2

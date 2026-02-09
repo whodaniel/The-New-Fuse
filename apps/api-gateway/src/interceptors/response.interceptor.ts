@@ -3,10 +3,15 @@
  * Standardizes response format across the API Gateway
  */
 
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { Request } from 'express';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Request } from 'express';
 
 export interface StandardResponse<T> {
   success: boolean;
@@ -18,10 +23,15 @@ export interface StandardResponse<T> {
 }
 
 @Injectable()
-export class ResponseInterceptor<T> implements NestInterceptor<T, StandardResponse<T>> {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<StandardResponse<T>> {
+export class ResponseInterceptor<T>
+  implements NestInterceptor<T, StandardResponse<T>>
+{
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Observable<StandardResponse<T>> {
     const request = context.switchToHttp().getRequest<Request>();
-
+    
     return next.handle().pipe(
       map((data) => ({
         success: true,
@@ -29,7 +39,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, StandardRespon
         path: request.url,
         method: request.method,
         data,
-      }))
+      })),
     );
   }
 }

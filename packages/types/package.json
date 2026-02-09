@@ -31,7 +31,7 @@
     "@types/react": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.18.0",
-    "eslint": "^9.39.2",
+    "eslint": "^9.17.0",
     "eslint-config-custom": "workspace:*",
     "prettier": "^3.4.2",
     "rimraf": "^6.0.1",

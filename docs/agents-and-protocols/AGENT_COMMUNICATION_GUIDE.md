@@ -1,9 +1,6 @@
 # Agent Communication Guide
 
-This guide provides comprehensive documentation for implementing and managing
-agent communication within the multi-agent system. It covers communication
-protocols, message structures, orchestration patterns, and best practices for
-inter-agent collaboration.
+This guide provides comprehensive documentation for implementing and managing agent communication within the multi-agent system. It covers communication protocols, message structures, orchestration patterns, and best practices for inter-agent collaboration.
 
 ## Table of Contents
 
@@ -26,8 +23,7 @@ The agent communication system is built on several key components:
 
 - **Agency Hub**: Central orchestration service managing agent lifecycle
 - **Message Router**: Routes messages between agents and services
-- **Protocol Handlers**: Implement specific communication protocols (WebSocket,
-  HTTP, MCP)
+- **Protocol Handlers**: Implement specific communication protocols (WebSocket, HTTP, MCP)
 - **Swarm Orchestrator**: Manages collaborative agent workflows
 - **Authentication Service**: Handles agent identity and permissions
 
@@ -51,14 +47,14 @@ All inter-agent messages follow a standardized structure:
 
 ```typescript
 interface BaseMessage {
-  id: string; // Unique message identifier
-  type: MessageType; // Message type enum
-  timestamp: number; // Unix timestamp
-  sender: AgentIdentifier; // Sending agent information
-  recipient: AgentIdentifier; // Target agent information
-  payload: any; // Message-specific data
-  metadata?: MessageMetadata; // Optional metadata
-  protocol: ProtocolType; // Communication protocol used
+  id: string;                    // Unique message identifier
+  type: MessageType;             // Message type enum
+  timestamp: number;             // Unix timestamp
+  sender: AgentIdentifier;       // Sending agent information
+  recipient: AgentIdentifier;    // Target agent information
+  payload: any;                  // Message-specific data
+  metadata?: MessageMetadata;    // Optional metadata
+  protocol: ProtocolType;        // Communication protocol used
 }
 
 interface AgentIdentifier {
@@ -136,14 +132,11 @@ Request-response communication for stateless interactions:
 ```typescript
 class HTTPProtocol implements CommunicationProtocol {
   async send(message: BaseMessage): Promise<MessageResponse> {
-    const response = await fetch(
-      `/api/agents/${message.recipient.id}/messages`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(message),
-      }
-    );
+    const response = await fetch(`/api/agents/${message.recipient.id}/messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(message)
+    });
     return response.json();
   }
 }
@@ -258,7 +251,7 @@ interface SwarmMember {
 class BroadcastPattern {
   async broadcast(message: BaseMessage, swarmId: string): Promise<void> {
     const members = await this.getSwarmMembers(swarmId);
-    const promises = members.map((member) =>
+    const promises = members.map(member => 
       this.sendMessage(message, member.agentId)
     );
     await Promise.all(promises);
@@ -270,13 +263,10 @@ class BroadcastPattern {
 
 ```typescript
 class RequestResponsePattern {
-  async request(
-    message: BaseMessage,
-    timeout: number = 5000
-  ): Promise<BaseMessage> {
+  async request(message: BaseMessage, timeout: number = 5000): Promise<BaseMessage> {
     return new Promise((resolve, reject) => {
       const timeoutId = setTimeout(() => reject(new Error('Timeout')), timeout);
-
+      
       this.sendMessage(message).then(() => {
         this.onResponse(message.id, (response) => {
           clearTimeout(timeoutId);
@@ -298,7 +288,7 @@ class PubSubPattern {
 
   async publish(topic: string, message: BaseMessage): Promise<void> {
     const subscribers = this.getSubscribers(topic);
-    subscribers.forEach((callback) => callback(message));
+    subscribers.forEach(callback => callback(message));
   }
 }
 ```
@@ -318,15 +308,13 @@ interface AuthenticationCredentials {
 }
 
 class AuthenticationService {
-  async authenticate(
-    credentials: AuthenticationCredentials
-  ): Promise<AuthToken> {
+  async authenticate(credentials: AuthenticationCredentials): Promise<AuthToken> {
     // Verify API key and signature
     const isValid = await this.verifyCredentials(credentials);
     if (!isValid) {
       throw new Error('Authentication failed');
     }
-
+    
     return this.generateToken(credentials.agentId);
   }
 }
@@ -340,16 +328,14 @@ class AuthenticationService {
 class MessageSigner {
   sign(message: BaseMessage, privateKey: string): string {
     const payload = JSON.stringify(message);
-    return crypto
-      .createSign('RSA-SHA256')
+    return crypto.createSign('RSA-SHA256')
       .update(payload)
       .sign(privateKey, 'base64');
   }
 
   verify(message: BaseMessage, signature: string, publicKey: string): boolean {
     const payload = JSON.stringify(message);
-    return crypto
-      .createVerify('RSA-SHA256')
+    return crypto.createVerify('RSA-SHA256')
       .update(payload)
       .verify(publicKey, signature, 'base64');
   }
@@ -362,21 +348,16 @@ class MessageSigner {
 class MessageEncryption {
   encrypt(message: BaseMessage, recipientPublicKey: string): EncryptedMessage {
     const serialized = JSON.stringify(message);
-    const encrypted = crypto.publicEncrypt(
-      recipientPublicKey,
-      Buffer.from(serialized)
-    );
+    const encrypted = crypto.publicEncrypt(recipientPublicKey, Buffer.from(serialized));
     return {
       encryptedPayload: encrypted.toString('base64'),
-      algorithm: 'RSA-OAEP',
+      algorithm: 'RSA-OAEP'
     };
   }
 
   decrypt(encryptedMessage: EncryptedMessage, privateKey: string): BaseMessage {
-    const decrypted = crypto.privateDecrypt(
-      privateKey,
-      Buffer.from(encryptedMessage.encryptedPayload, 'base64')
-    );
+    const decrypted = crypto.privateDecrypt(privateKey, 
+      Buffer.from(encryptedMessage.encryptedPayload, 'base64'));
     return JSON.parse(decrypted.toString());
   }
 }
@@ -393,7 +374,7 @@ enum CommunicationError {
   AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR',
   PROTOCOL_ERROR = 'PROTOCOL_ERROR',
   AGENT_UNAVAILABLE = 'AGENT_UNAVAILABLE',
-  MESSAGE_REJECTED = 'MESSAGE_REJECTED',
+  MESSAGE_REJECTED = 'MESSAGE_REJECTED'
 }
 ```
 
@@ -411,7 +392,7 @@ class RetryManager {
         return await operation();
       } catch (error) {
         if (attempt === maxRetries) throw error;
-
+        
         const delay = baseDelay * Math.pow(2, attempt);
         await this.delay(delay);
       }
@@ -463,9 +444,9 @@ class MessageTracer {
       sender: message.sender.id,
       recipient: message.recipient.id,
       type: message.type,
-      protocol: message.protocol,
+      protocol: message.protocol
     };
-
+    
     this.storage.store(trace);
   }
 
@@ -500,27 +481,26 @@ class HealthChecker {
   async checkAgentHealth(agentId: string): Promise<HealthStatus> {
     const ping = await this.sendPing(agentId);
     const latency = ping.responseTime;
-
+    
     return {
       agentId,
       status: ping.success ? 'HEALTHY' : 'UNHEALTHY',
       latency,
-      lastChecked: Date.now(),
+      lastChecked: Date.now()
     };
   }
 
   async checkSystemHealth(): Promise<SystemHealth> {
     const agents = await this.getAllAgents();
     const healthChecks = await Promise.all(
-      agents.map((agent) => this.checkAgentHealth(agent.id))
+      agents.map(agent => this.checkAgentHealth(agent.id))
     );
-
+    
     return {
       totalAgents: agents.length,
-      healthyAgents: healthChecks.filter((h) => h.status === 'HEALTHY').length,
-      unhealthyAgents: healthChecks.filter((h) => h.status === 'UNHEALTHY')
-        .length,
-      averageLatency: this.calculateAverageLatency(healthChecks),
+      healthyAgents: healthChecks.filter(h => h.status === 'HEALTHY').length,
+      unhealthyAgents: healthChecks.filter(h => h.status === 'UNHEALTHY').length,
+      averageLatency: this.calculateAverageLatency(healthChecks)
     };
   }
 }
@@ -538,8 +518,7 @@ class HealthChecker {
 ### Agent Coordination
 
 1. **Define clear roles**: Each agent should have well-defined responsibilities
-2. **Avoid circular dependencies**: Design communication flows to prevent
-   deadlocks
+2. **Avoid circular dependencies**: Design communication flows to prevent deadlocks
 3. **Use timeouts**: Always include timeouts for blocking operations
 4. **Implement heartbeats**: Regular health checks prevent zombie agents
 
@@ -682,7 +661,7 @@ const trace = await messageTracer.getMessageTrace('message-id');
 // Monitor performance
 const metrics = await performanceMonitor.getMetrics({
   start: Date.now() - 3600000,
-  end: Date.now(),
+  end: Date.now()
 });
 
 // Health check
@@ -691,11 +670,7 @@ const health = await healthChecker.checkSystemHealth();
 
 ## TNF Agent Relay System
 
-The TNF Agent Communication Relay is a macOS application that enables AI agents
-to communicate across different environments in The New Fuse ecosystem. This
-application serves as a central hub for message routing between VS Code
-extensions, Chrome extensions, terminal applications, and Redis-connected
-agents.
+The TNF Agent Communication Relay is a macOS application that enables AI agents to communicate across different environments in The New Fuse ecosystem. This application serves as a central hub for message routing between VS Code extensions, Chrome extensions, terminal applications, and Redis-connected agents.
 
 ### Installation
 
@@ -712,7 +687,6 @@ bash scripts/install-tnf-relay.sh
 #### Manual Installation
 
 1. **Create the relay application:**
-
    ```bash
    # Navigate to the relay directory
    cd scripts/tnf-agent-relay
@@ -740,22 +714,22 @@ property relayConfig : {
     -- Agent discovery settings
     agentDiscoveryInterval: 30,
     discoveryMethods: {"websocket", "redis", "file", "mcp"},
-
+    
     -- Message handling
     messageRetryAttempts: 3,
     messageTimeout: 5000,
     maxQueueSize: 1000,
-
+    
     -- Logging and monitoring
     logLevel: "info",
     logRetentionDays: 7,
     metricsEnabled: true,
-
+    
     -- Protocol settings
     enabledProtocols: {"websocket", "redis", "file", "mcp"},
     websocketPort: 3711,
     redisConnection: "redis://localhost:6379",
-
+    
     -- Security settings
     enableAuthentication: false,
     allowedOrigins: {"*"},
@@ -767,7 +741,6 @@ property relayConfig : {
 ### Core Relay Functions
 
 #### Agent Registration
-
 ```applescript
 -- Register a new agent
 on registerAgent(agentInfo)
@@ -781,31 +754,30 @@ on registerAgent(agentInfo)
         lastSeen: (current date),
         connectionInfo: (connectionInfo of agentInfo)
     }
-
+    
     set end of agentRegistry to agentRecord
     logMessage("Agent registered: " & agentID, "info")
-
+    
     -- Broadcast agent availability
     broadcastAgentStatus(agentID, "online")
 end registerAgent
 ```
 
 #### Message Routing
-
 ```applescript
 -- Route message between agents
 on routeMessage(messageData)
     set sourceAgent to (source of messageData)
     set targetAgent to (target of messageData)
     set messageContent to (content of messageData)
-
+    
     -- Find target agent
     set targetInfo to findAgent(targetAgent)
     if targetInfo is missing value then
         logMessage("Target agent not found: " & targetAgent, "error")
         return false
     end if
-
+    
     -- Route based on agent connection type
     set connectionType to (connectionType of targetInfo)
     if connectionType is "websocket" then
@@ -821,31 +793,30 @@ end routeMessage
 ```
 
 #### Agent Discovery
-
 ```applescript
 -- Discover available agents
 on discoverAgents()
     set discoveredAgents to {}
-
+    
     -- WebSocket discovery
     set wsAgents to discoverWebSocketAgents()
     set discoveredAgents to discoveredAgents & wsAgents
-
+    
     -- Redis discovery
     set redisAgents to discoverRedisAgents()
     set discoveredAgents to discoveredAgents & redisAgents
-
+    
     -- File protocol discovery
     set fileAgents to discoverFileAgents()
     set discoveredAgents to discoveredAgents & fileAgents
-
+    
     -- MCP discovery
     set mcpAgents to discoverMCPAgents()
     set discoveredAgents to discoveredAgents & mcpAgents
-
+    
     -- Update agent registry
     updateAgentRegistry(discoveredAgents)
-
+    
     return discoveredAgents
 end discoverAgents
 ```

@@ -286,7 +286,7 @@ Located in `/home/user/fuse/docs/admin/`
 - **NestJS** - Backend framework
 - **TypeScript** - Type safety
 - **Express** - HTTP server
-- **Drizzle** - Database ORM (integration ready)
+- **Prisma** - Database ORM (integration ready)
 
 ## File Structure
 
@@ -358,7 +358,7 @@ Implement AdminGuard to protect admin routes (instructions in QUICK_START.md).
 
 The backend service methods are ready to be connected to your database:
 
-- Update `admin.service.ts` to use your Drizzle/TypeORM models
+- Update `admin.service.ts` to use your Prisma/TypeORM models
 - Implement actual database queries
 - Add proper error handling
 

@@ -238,8 +238,8 @@ signed packets.GLSL Draft: Field DynamicsOpenGL Shading Languageprecision highp
 float; uniform float u_time; uniform vec2 u_resolution; uniform float
 u_data_density; // Driven by A2A verified traffic
 
-void main() { vec2 uv = gl*FragCoord.xy / u_resolution.xy; float pulse =
-sin(u_time * 2.0 + u*data_density) * 0.5 + 0.5; vec3 color = vec3(0.1, 0.8 _
+void main() { vec2 uv = gl_FragCoord.xy / u_resolution.xy; float pulse =
+sin(u_time _ 2.0 + u_data_density) _ 0.5 + 0.5; vec3 color = vec3(0.1, 0.8 _
 pulse, 0.4) _ u_data_density; gl_FragColor = vec4(color, 1.0); } 📌 NEXT
 COORDINATION STEPSNode_01, please provide the JSON structure for the A2A Secure
 Handshake wrapper.Node_WEB, please provide the AGENTEK Registry entry for our

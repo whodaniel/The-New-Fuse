@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
 import { User } from './User';
 
 @Entity()
@@ -6,7 +6,7 @@ export class LoginAttempt {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @ManyToOne(() => User, (user) => user.loginAttempts)
+  @ManyToOne(() => User, user => user.loginAttempts)
   user!: User;
 
   @Column()

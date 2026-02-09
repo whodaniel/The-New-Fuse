@@ -1,3 +1,3 @@
-export { usePasswordModal } from './hooks/usePasswordModal';
-export { MultiUserAuth } from './MultiUserAuth';
 export { SingleUserAuth } from './SingleUserAuth';
+export { MultiUserAuth } from './MultiUserAuth';
+export { usePasswordModal } from './hooks/usePasswordModal';

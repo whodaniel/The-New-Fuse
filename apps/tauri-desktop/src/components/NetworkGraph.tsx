@@ -1,146 +1,154 @@
-import React, { useRef, useState } from 'react';
+import * as d3 from 'd3';
+import React, { useEffect, useRef } from 'react';
 
-// ============================================================================
-// NETWORK GRAPH COMPONENT (Visual Simulation)
-// ============================================================================
+interface NetworkNode {
+  id: string;
+  group: 'local' | 'cloud' | 'agent';
+  status: 'online' | 'offline' | 'active' | 'idle';
+  label: string;
+}
+
+interface NetworkLink {
+  source: string;
+  target: string;
+  value: number;
+  active: boolean;
+}
 
 export const NetworkGraph: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
 
-  // Generating mock nodes for the visualization
-  const [nodes] = useState(() => {
-    return Array.from({ length: 15 }).map((_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 10 + 5,
-      connections: [] as number[],
-    }));
-  });
+  useEffect(() => {
+    if (!svgRef.current) return;
+
+    // Mock Data representing the "Trinity" Architecture
+    const nodes: NetworkNode[] = [
+      { id: 'desktop', group: 'local', status: 'online', label: 'Tauri Desktop (Relay)' },
+      { id: 'chrome', group: 'local', status: 'online', label: 'Chrome Extension' },
+      { id: 'cloud', group: 'cloud', status: 'online', label: 'Cloud Sandbox' },
+      { id: 'web', group: 'cloud', status: 'online', label: 'Web Dashboard' },
+      { id: 'redis', group: 'cloud', status: 'active', label: 'Redis Bus' },
+      { id: 'agent-1', group: 'agent', status: 'active', label: 'Claude Agent' },
+      { id: 'agent-2', group: 'agent', status: 'idle', label: 'GPT Worker' },
+    ];
+
+    const links: NetworkLink[] = [
+      { source: 'desktop', target: 'cloud', value: 5, active: true },
+      { source: 'chrome', target: 'desktop', value: 3, active: true },
+      { source: 'web', target: 'cloud', value: 2, active: true },
+      { source: 'cloud', target: 'redis', value: 10, active: true },
+      { source: 'redis', target: 'agent-1', value: 5, active: true },
+      { source: 'redis', target: 'agent-2', value: 5, active: false },
+    ];
+
+    // Clear previous render
+    d3.select(svgRef.current).selectAll('*').remove();
+
+    const width = 800;
+    const height = 400;
+
+    const svg = d3
+      .select(svgRef.current)
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .attr('viewBox', [0, 0, width, height]);
+
+    const simulation = d3
+      .forceSimulation(nodes as any)
+      .force(
+        'link',
+        d3
+          .forceLink(links)
+          .id((d: any) => d.id)
+          .distance(100)
+      )
+      .force('charge', d3.forceManyBody().strength(-300))
+      .force('center', d3.forceCenter(width / 2, height / 2));
+
+    // Draw Links
+    const link = svg
+      .append('g')
+      .selectAll('line')
+      .data(links)
+      .join('line')
+      .attr('stroke', (d) => (d.active ? '#6366f1' : '#334155'))
+      .attr('stroke-width', 2)
+      .attr('stroke-opacity', 0.6);
+
+    // Draw Nodes
+    const node = svg
+      .append('g')
+      .selectAll('circle')
+      .data(nodes)
+      .join('g')
+      .call(drag(simulation) as any);
+
+    node
+      .append('circle')
+      .attr('r', 20)
+      .attr('fill', (d) => {
+        if (d.group === 'local') return '#10b981';
+        if (d.group === 'cloud') return '#3b82f6';
+        return '#8b5cf6';
+      })
+      .attr('stroke', '#fff')
+      .attr('stroke-width', 2);
+
+    node
+      .append('text')
+      .text((d) => d.label)
+      .attr('x', 24)
+      .attr('y', 4)
+      .attr('fill', '#cbd5e1')
+      .attr('font-size', '12px')
+      .style('pointer-events', 'none');
+
+    // Ticking animation
+    simulation.on('tick', () => {
+      link
+        .attr('x1', (d: any) => d.source.x)
+        .attr('y1', (d: any) => d.source.y)
+        .attr('x2', (d: any) => d.target.x)
+        .attr('y2', (d: any) => d.target.y);
+
+      node.attr('transform', (d: any) => `translate(${d.x},${d.y})`);
+    });
+
+    // Drag behavior
+    function drag(simulation: any) {
+      function dragstarted(event: any) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        event.subject.fx = event.subject.x;
+        event.subject.fy = event.subject.y;
+      }
+
+      function dragged(event: any) {
+        event.subject.fx = event.x;
+        event.subject.fy = event.y;
+      }
+
+      function dragended(event: any) {
+        if (!event.active) simulation.alphaTarget(0);
+        event.subject.fx = null;
+        event.subject.fy = null;
+      }
+
+      return d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended);
+    }
+  }, []);
 
   return (
-    <div className="network-graph-container" ref={containerRef}>
-      <div className="nodes-layer">
-        {nodes.map((node) => (
-          <div
-            key={node.id}
-            className="node"
-            style={{
-              left: `${node.x}%`,
-              top: `${node.y}%`,
-              width: `${node.size}px`,
-              height: `${node.size}px`,
-              animationDelay: `${Math.random() * 2}s`,
-            }}
-          />
-        ))}
-      </div>
-      <svg className="connections-layer">
-        {/* Mock connections - just random lines for visual flair */}
-        <line
-          x1="10%"
-          y1="10%"
-          x2="40%"
-          y2="80%"
-          stroke="rgba(59, 130, 246, 0.2)"
-          strokeWidth="1"
-        />
-        <line
-          x1="40%"
-          y1="80%"
-          x2="80%"
-          y2="20%"
-          stroke="rgba(59, 130, 246, 0.2)"
-          strokeWidth="1"
-        />
-        <line
-          x1="80%"
-          y1="20%"
-          x2="20%"
-          y2="30%"
-          stroke="rgba(59, 130, 246, 0.2)"
-          strokeWidth="1"
-        />
-        <line
-          x1="50%"
-          y1="50%"
-          x2="90%"
-          y2="90%"
-          stroke="rgba(59, 130, 246, 0.2)"
-          strokeWidth="1"
-        />
-      </svg>
-      <div className="particles-layer">
-        <div className="particle p1" />
-        <div className="particle p2" />
-        <div className="particle p3" />
-      </div>
-
-      <style>{`
-        .network-graph-container {
-          width: 100%;
-          height: 100%;
-          background: #0b0e14;
-          position: relative;
-          overflow: hidden;
-        }
-
-        .nodes-layer {
-            position: absolute;
-            inset: 0;
-            z-index: 10;
-        }
-
-        .node {
-            position: absolute;
-            background: #3b82f6;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #3b82f6;
-            opacity: 0.6;
-            transform: translate(-50%, -50%);
-            animation: pulse-node 3s infinite ease-in-out;
-        }
-
-        .connections-layer {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        .particles-layer {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 8;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 4px #fff;
-            opacity: 0;
-        }
-
-        .p1 { top: 10%; left: 10%; animation: travel 4s linear infinite; }
-        .p2 { top: 40%; left: 80%; animation: travel 5s linear infinite 1s; }
-        .p3 { top: 80%; left: 20%; animation: travel 6s linear infinite 0.5s; }
-
-        @keyframes pulse-node {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
-        }
-
-        @keyframes travel {
-            0% { transform: translate(0, 0); opacity: 1; }
-            100% { transform: translate(200px, 100px); opacity: 0; }
-        }
-      `}</style>
+    <div
+      className="network-graph-container"
+      style={{
+        width: '100%',
+        height: '400px',
+        background: '#020617',
+        borderRadius: '12px',
+        overflow: 'hidden',
+      }}
+    >
+      <svg ref={svgRef} style={{ width: '100%', height: '100%' }} />
     </div>
   );
 };

@@ -102,8 +102,9 @@ export class UserService extends BaseService {
    * @returns Promise resolving to the users data
    */
   async getUsers(page: number = 1, limit: number = 10): Promise<{ users: User[]; total: number }> {
-    return this.apiClient.get<{ users: User[]; total: number }>(this.getPath(), {
-      params: { page, limit },
-    });
+    return this.apiClient.get<{ users: User[]; total: number }>(
+      this.getPath(),
+      { params: { page, limit } }
+    );
   }
 }

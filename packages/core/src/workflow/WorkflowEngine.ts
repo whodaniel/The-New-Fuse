@@ -4,13 +4,13 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import {
-  WorkflowDefinition,
-  WorkflowExecution,
-  WorkflowExecutionStatus,
-  StepExecution,
+import { 
+  WorkflowDefinition, 
+  WorkflowExecution, 
+  WorkflowExecutionStatus, 
+  StepExecution, 
   WorkflowStep,
-  WorkflowStepType,
+  WorkflowStepType 
 } from '../types/workflow';
 import { WorkflowError } from '../utils/errors';
 import { ServiceState } from '../constants/types';
@@ -88,9 +88,7 @@ export class WorkflowEngine extends EventEmitter {
       // Fallback for older environments with crypto.getRandomValues
       const array = new Uint8Array(9);
       crypto.getRandomValues(array);
-      return Array.from(array, (byte) => byte.toString(36))
-        .join('')
-        .substring(0, 9);
+      return Array.from(array, byte => byte.toString(36)).join('').substring(0, 9);
     } else {
       // Node.js fallback using crypto module
       const { randomBytes } = require('crypto');
@@ -157,7 +155,7 @@ export class WorkflowEngine extends EventEmitter {
   }
 
   async getExecutionsByWorkflow(workflowId: string): Promise<WorkflowExecution[]> {
-    return Array.from(this.executions.values()).filter((exec) => exec.workflowId === workflowId);
+    return Array.from(this.executions.values()).filter(exec => exec.workflowId === workflowId);
   }
 
   async cancelExecution(executionId: string): Promise<boolean> {
@@ -169,7 +167,7 @@ export class WorkflowEngine extends EventEmitter {
     if (execution.status === WorkflowExecutionStatus.RUNNING) {
       execution.status = WorkflowExecutionStatus.CANCELLED;
       execution.endTime = new Date();
-
+      
       this.logger.log(`Cancelled workflow execution: ${executionId}`);
       this.emit('executionCancelled', execution);
       return true;
@@ -198,7 +196,7 @@ export class WorkflowEngine extends EventEmitter {
 
     execution.status = WorkflowExecutionStatus.RUNNING;
     this.executionQueue.push(executionId);
-
+    
     this.logger.log(`Resumed workflow execution: ${executionId}`);
     this.emit('executionResumed', execution);
     return true;
@@ -213,7 +211,7 @@ export class WorkflowEngine extends EventEmitter {
   private async processQueue(): Promise<void> {
     while (this.isProcessing && this.state === ServiceState.RUNNING) {
       if (this.executionQueue.length === 0) {
-        await new Promise((resolve) => setTimeout(resolve, 100)); // Wait 100ms
+        await new Promise(resolve => setTimeout(resolve, 100)); // Wait 100ms
         continue;
       }
 
@@ -250,7 +248,7 @@ export class WorkflowEngine extends EventEmitter {
 
       execution.status = WorkflowExecutionStatus.COMPLETED;
       execution.endTime = new Date();
-
+      
       this.logger.log(`Completed workflow execution: ${executionId}`);
       this.emit('executionCompleted', execution);
     } catch (error) {
@@ -259,7 +257,7 @@ export class WorkflowEngine extends EventEmitter {
       execution.error = new WorkflowError(
         (error as Error).message,
         'EXECUTION_FAILED',
-        execution.id,
+        execution.id
       );
 
       this.logger.error(`Failed workflow execution: ${executionId}`, error as Error);
@@ -267,32 +265,24 @@ export class WorkflowEngine extends EventEmitter {
     }
   }
 
-  private async executeWorkflowSteps(
-    workflow: WorkflowDefinition,
-    execution: WorkflowExecution,
-  ): Promise<void> {
-    const stepMap = new Map(workflow.steps.map((step) => [step.id, step]));
+  private async executeWorkflowSteps(workflow: WorkflowDefinition, execution: WorkflowExecution): Promise<void> {
+    const stepMap = new Map(workflow.steps.map(step => [step.id, step]));
     const completedSteps = new Set<string>();
-    const pendingSteps = new Set(workflow.steps.map((step) => step.id));
+    const pendingSteps = new Set(workflow.steps.map(step => step.id));
 
     while (pendingSteps.size > 0 && execution.status === WorkflowExecutionStatus.RUNNING) {
       // Find steps that can be executed (all dependencies completed)
-      const readySteps = Array.from(pendingSteps).filter((stepId) => {
+      const readySteps = Array.from(pendingSteps).filter(stepId => {
         const step = stepMap.get(stepId)!;
-        return step.dependencies.every((depId) => completedSteps.has(depId));
+        return step.dependencies.every(depId => completedSteps.has(depId));
       });
 
       if (readySteps.length === 0) {
-        throw new BaseError(
-          'Workflow has circular dependencies or missing steps',
-          'WORKFLOW_DEPENDENCY_ERROR',
-        );
+        throw new BaseError('Workflow has circular dependencies or missing steps', 'WORKFLOW_DEPENDENCY_ERROR');
       }
 
       // Execute ready steps (can be parallel)
-      const stepPromises = readySteps.map((stepId) =>
-        this.executeStep(stepMap.get(stepId)!, execution),
-      );
+      const stepPromises = readySteps.map(stepId => this.executeStep(stepMap.get(stepId)!, execution));
       const stepResults = await Promise.allSettled(stepPromises);
 
       // Process results
@@ -327,7 +317,7 @@ export class WorkflowEngine extends EventEmitter {
 
     try {
       const result = await this.executeStepLogic(step, execution, stepExecution);
-
+      
       stepExecution.status = WorkflowExecutionStatus.COMPLETED;
       stepExecution.endTime = new Date();
       stepExecution.output = result;
@@ -341,7 +331,7 @@ export class WorkflowEngine extends EventEmitter {
         (error as Error).message,
         'STEP_EXECUTION_FAILED',
         execution.id,
-        { stepId: step.id },
+        { stepId: step.id }
       );
 
       this.logger.error(`Failed step: ${step.name} (${step.id})`, error as Error);
@@ -350,11 +340,7 @@ export class WorkflowEngine extends EventEmitter {
     }
   }
 
-  private async executeStepLogic(
-    step: WorkflowStep,
-    execution: WorkflowExecution,
-    stepExecution: StepExecution,
-  ): Promise<any> {
+  private async executeStepLogic(step: WorkflowStep, execution: WorkflowExecution, stepExecution: StepExecution): Promise<any> {
     switch (step.type) {
       case WorkflowStepType.TASK:
         return await this.executeTaskStep(step, execution, stepExecution);
@@ -371,27 +357,19 @@ export class WorkflowEngine extends EventEmitter {
     }
   }
 
-  private async executeTaskStep(
-    step: WorkflowStep,
-    execution: WorkflowExecution,
-    stepExecution: StepExecution,
-  ): Promise<any> {
+  private async executeTaskStep(step: WorkflowStep, execution: WorkflowExecution, stepExecution: StepExecution): Promise<any> {
     // This would integrate with the task execution system
     stepExecution.logs.push(`Executing task step: ${step.name}`);
-
+    
     // Simulate task execution
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
     return { result: `Task ${step.name} completed`, timestamp: new Date() };
   }
 
-  private async executeDecisionStep(
-    step: WorkflowStep,
-    execution: WorkflowExecution,
-    stepExecution: StepExecution,
-  ): Promise<any> {
+  private async executeDecisionStep(step: WorkflowStep, execution: WorkflowExecution, stepExecution: StepExecution): Promise<any> {
     stepExecution.logs.push(`Evaluating decision: ${step.name}`);
-
+    
     // Evaluate conditions
     if (step.conditions) {
       for (const condition of step.conditions) {
@@ -401,47 +379,35 @@ export class WorkflowEngine extends EventEmitter {
         }
       }
     }
-
+    
     return { decision: false };
   }
 
-  private async executeParallelStep(
-    step: WorkflowStep,
-    execution: WorkflowExecution,
-    stepExecution: StepExecution,
-  ): Promise<any> {
+  private async executeParallelStep(step: WorkflowStep, execution: WorkflowExecution, stepExecution: StepExecution): Promise<any> {
     stepExecution.logs.push(`Executing parallel step: ${step.name}`);
-
+    
     // This would execute multiple sub-steps in parallel
     return { parallelResults: [], completedAt: new Date() };
   }
 
-  private async executeWaitStep(
-    step: WorkflowStep,
-    execution: WorkflowExecution,
-    stepExecution: StepExecution,
-  ): Promise<any> {
+  private async executeWaitStep(step: WorkflowStep, execution: WorkflowExecution, stepExecution: StepExecution): Promise<any> {
     const waitTime = step.config.parameters.duration || 1000;
     stepExecution.logs.push(`Waiting for ${waitTime}ms`);
-
-    await new Promise((resolve) => setTimeout(resolve, waitTime));
-
+    
+    await new Promise(resolve => setTimeout(resolve, waitTime));
+    
     return { waited: waitTime };
   }
 
-  private async executeScriptStep(
-    step: WorkflowStep,
-    execution: WorkflowExecution,
-    stepExecution: StepExecution,
-  ): Promise<any> {
+  private async executeScriptStep(step: WorkflowStep, execution: WorkflowExecution, stepExecution: StepExecution): Promise<any> {
     stepExecution.logs.push(`Executing script: ${step.name}`);
-
+    
     // This would execute custom script logic
     const script = step.config.parameters.script;
     if (typeof script === 'function') {
       return await script(execution.variables, stepExecution);
     }
-
+    
     return { scriptResult: 'Script executed' };
   }
 
@@ -475,7 +441,7 @@ export class WorkflowEngine extends EventEmitter {
         Boolean,
         Array,
         Object,
-        JSON,
+        JSON
       };
 
       // Use Function constructor which is safer than eval

@@ -26,7 +26,7 @@ export interface IBaseRepository<T> {
 export abstract class BaseService<T> {
   protected readonly logger: Logger;
   protected abstract readonly repository: IBaseRepository<T>;
-
+  
   constructor(serviceName?: string) {
     this.logger = new Logger(serviceName || this.constructor.name);
   }

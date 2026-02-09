@@ -1,7 +1,0 @@
-name = "fuse-frontend"
-compatibility_date = "2024-02-08"
-pages_build_output_dir = "dist"
-
-[vars]
-# Add environment variables here if needed
-VITE_API_URL = "https://api.thenewfuse.com" # Or the worker URL

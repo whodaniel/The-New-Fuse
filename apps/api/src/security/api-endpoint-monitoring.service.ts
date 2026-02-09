@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { SecurityLoggingService } from './security-logging.service';
+import { ConfigService } from '@nestjs/config';
 
 export interface ApiEndpointMetrics {
   endpoint: string;
@@ -48,7 +48,7 @@ export class ApiEndpointMonitoringService implements OnModuleInit {
   onModuleInit() {
     // Initialize monitoring
     this.logger.log('API Endpoint Monitoring Service initialized');
-
+    
     // Start periodic cleanup
     setInterval(() => {
       this.cleanupOldMetrics();
@@ -97,9 +97,8 @@ export class ApiEndpointMonitoringService implements OnModuleInit {
     }
 
     // Update average response time (running average)
-    metrics.averageResponseTime =
-      (metrics.averageResponseTime * (metrics.totalRequests - 1) + responseTime) /
-      metrics.totalRequests;
+    metrics.averageResponseTime = 
+      (metrics.averageResponseTime * (metrics.totalRequests - 1) + responseTime) / metrics.totalRequests;
 
     // Update error rate
     metrics.errorRate = (metrics.failedRequests / metrics.totalRequests) * 100;
@@ -133,7 +132,7 @@ export class ApiEndpointMonitoringService implements OnModuleInit {
    */
   recordAuthFailure(ip?: string, reason?: string): void {
     this.securityMetrics.authenticationFailures++;
-
+    
     if (this.securityMetrics.authenticationFailures > 100) {
       this.securityLogging.logRateLimit('quota_exceeded', {
         ip,
@@ -181,9 +180,8 @@ export class ApiEndpointMonitoringService implements OnModuleInit {
    * Get all endpoint metrics
    */
   getEndpointMetrics(): ApiEndpointMetrics[] {
-    return Array.from(this.endpointMetrics.values()).sort(
-      (a, b) => b.totalRequests - a.totalRequests
-    );
+    return Array.from(this.endpointMetrics.values())
+      .sort((a, b) => b.totalRequests - a.totalRequests);
   }
 
   /**
@@ -196,28 +194,25 @@ export class ApiEndpointMonitoringService implements OnModuleInit {
   /**
    * Get security metrics summary
    */
-  getSecurityMetrics(): SecurityMetrics & {
+  getSecurityMetrics(): SecurityMetrics & { 
     securityScore: number;
     threatLevel: 'low' | 'medium' | 'high' | 'critical';
   } {
     const totalRequests = this.securityMetrics.totalRequests || 1;
-
+    
     // Calculate security score (0-100)
     const authFailureRate = (this.securityMetrics.authenticationFailures / totalRequests) * 100;
     const authZFailureRate = (this.securityMetrics.authorizationFailures / totalRequests) * 100;
     const rateLimitRate = (this.securityMetrics.rateLimitViolations / totalRequests) * 100;
-    const validationFailureRate =
-      (this.securityMetrics.inputValidationFailures / totalRequests) * 100;
+    const validationFailureRate = (this.securityMetrics.inputValidationFailures / totalRequests) * 100;
     const violationRate = (this.securityMetrics.securityViolations / totalRequests) * 100;
 
-    const securityScore = Math.max(
-      0,
-      100 -
-        authFailureRate * 2 -
-        authZFailureRate * 3 -
-        rateLimitRate * 1 -
-        validationFailureRate * 2 -
-        violationRate * 5
+    const securityScore = Math.max(0, 100 - 
+      (authFailureRate * 2) - 
+      (authZFailureRate * 3) - 
+      (rateLimitRate * 1) - 
+      (validationFailureRate * 2) - 
+      (violationRate * 5)
     );
 
     // Determine threat level
@@ -241,14 +236,14 @@ export class ApiEndpointMonitoringService implements OnModuleInit {
    * Get unhealthy endpoints
    */
   getUnhealthyEndpoints(): ApiEndpointMetrics[] {
-    return this.getEndpointMetrics().filter((m) => m.status === 'unhealthy');
+    return this.getEndpointMetrics().filter(m => m.status === 'unhealthy');
   }
 
   /**
    * Get degraded endpoints
    */
   getDegradedEndpoints(): ApiEndpointMetrics[] {
-    return this.getEndpointMetrics().filter((m) => m.status === 'degraded');
+    return this.getEndpointMetrics().filter(m => m.status === 'degraded');
   }
 
   /**
@@ -268,10 +263,10 @@ export class ApiEndpointMonitoringService implements OnModuleInit {
   } {
     const endpoints = this.getEndpointMetrics();
     const securityMetrics = this.getSecurityMetrics();
-
-    const healthyCount = endpoints.filter((e) => e.status === 'healthy').length;
-    const degradedCount = endpoints.filter((e) => e.status === 'degraded').length;
-    const unhealthyCount = endpoints.filter((e) => e.status === 'unhealthy').length;
+    
+    const healthyCount = endpoints.filter(e => e.status === 'healthy').length;
+    const degradedCount = endpoints.filter(e => e.status === 'degraded').length;
+    const unhealthyCount = endpoints.filter(e => e.status === 'unhealthy').length;
 
     // Determine overall health
     let overallHealth: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
@@ -302,7 +297,7 @@ export class ApiEndpointMonitoringService implements OnModuleInit {
    * Clean up old metrics (older than 24 hours)
    */
   private cleanupOldMetrics(): void {
-    const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+    const cutoff = Date.now() - (24 * 60 * 60 * 1000);
     let cleaned = 0;
 
     for (const [key, metrics] of this.endpointMetrics.entries()) {
@@ -325,9 +320,15 @@ export class ApiEndpointMonitoringService implements OnModuleInit {
     // High error rate from same endpoint
     if (statusCode >= 400 && statusCode < 500) {
       // Check for common attack patterns
-      const suspiciousPatterns = [/admin/i, /api\/.*\.\./i, /\/\.\./i, /system/i, /config/i];
+      const suspiciousPatterns = [
+        /admin/i,
+        /api\/.*\.\./i,
+        /\/\.\./i,
+        /system/i,
+        /config/i,
+      ];
 
-      return suspiciousPatterns.some((pattern) => pattern.test(endpoint));
+      return suspiciousPatterns.some(pattern => pattern.test(endpoint));
     }
 
     // Unusual HTTP methods
@@ -346,37 +347,27 @@ export class ApiEndpointMonitoringService implements OnModuleInit {
 
     // Security recommendations
     if (securityMetrics.authenticationFailures > 50) {
-      recommendations.push(
-        'High authentication failure rate detected. Consider implementing account lockout.'
-      );
+      recommendations.push('High authentication failure rate detected. Consider implementing account lockout.');
     }
 
     if (securityMetrics.rateLimitViolations > 100) {
-      recommendations.push(
-        'High rate limit violations. Consider adjusting rate limits or investigating potential abuse.'
-      );
+      recommendations.push('High rate limit violations. Consider adjusting rate limits or investigating potential abuse.');
     }
 
     if (securityMetrics.securityViolations > 10) {
-      recommendations.push(
-        'Security violations detected. Review input validation and implement additional security measures.'
-      );
+      recommendations.push('Security violations detected. Review input validation and implement additional security measures.');
     }
 
     // Performance recommendations
-    const slowEndpoints = endpoints.filter((e) => e.averageResponseTime > 2000);
+    const slowEndpoints = endpoints.filter(e => e.averageResponseTime > 2000);
     if (slowEndpoints.length > 0) {
-      recommendations.push(
-        `${slowEndpoints.length} endpoints have slow response times. Consider performance optimization.`
-      );
+      recommendations.push(`${slowEndpoints.length} endpoints have slow response times. Consider performance optimization.`);
     }
 
     // Error rate recommendations
-    const errorProneEndpoints = endpoints.filter((e) => e.errorRate > 10);
+    const errorProneEndpoints = endpoints.filter(e => e.errorRate > 10);
     if (errorProneEndpoints.length > 0) {
-      recommendations.push(
-        `${errorProneEndpoints.length} endpoints have high error rates. Review error handling.`
-      );
+      recommendations.push(`${errorProneEndpoints.length} endpoints have high error rates. Review error handling.`);
     }
 
     return recommendations;

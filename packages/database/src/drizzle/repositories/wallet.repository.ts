@@ -48,8 +48,6 @@ export class DrizzleWalletRepository {
 
     if (!agent) return { ...wallet, agent: null, user: null };
 
-    if (!agent.userId) return { ...wallet, agent, user: null };
-
     // Fetch user
     const [user] = await db.select().from(users).where(eq(users.id, agent.userId));
 
@@ -82,8 +80,6 @@ export class DrizzleWalletRepository {
     const [agent] = await db.select().from(agents).where(eq(agents.id, wallet.agentId));
 
     if (!agent) return { ...wallet, agent: null, user: null };
-
-    if (!agent.userId) return { ...wallet, agent, user: null };
 
     const [user] = await db.select().from(users).where(eq(users.id, agent.userId));
 

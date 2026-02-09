@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 const securityHeadersMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   // Security headers

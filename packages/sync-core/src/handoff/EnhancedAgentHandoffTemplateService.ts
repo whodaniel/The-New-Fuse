@@ -1,15 +1,15 @@
 /**
  * Enhanced Agent Handoff Template Service
- *
+ * 
  * Extends the existing AgentHandoffTemplateService with flywheel protocol integration,
  * versioning, analytics, and real-time synchronization capabilities.
- *
+ * 
  * Requirements: 4.1, 4.2, 4.3, 4.4, 4.5
  */
 
-import { MasterClockService } from '../services/MasterClockService';
+import { PromptHandoffFlywheel, HandoffTemplate, HandoffContext } from './PromptHandoffFlywheel';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { HandoffContext, HandoffTemplate, PromptHandoffFlywheel } from './PromptHandoffFlywheel';
+import { MasterClockService } from '../services/MasterClockService';
 
 // Import existing services (assuming they exist in the codebase)
 interface ExistingPromptTemplateService {
@@ -107,10 +107,7 @@ export class EnhancedAgentHandoffTemplateService {
    * Requirement 4.1: Complete execution context and history preservation
    */
   async createEnhancedHandoffTemplate(
-    template: Omit<
-      EnhancedHandoffTemplate,
-      'id' | 'createdAt' | 'updatedAt' | 'versionHistory' | 'analytics'
-    >
+    template: Omit<EnhancedHandoffTemplate, 'id' | 'createdAt' | 'updatedAt' | 'versionHistory' | 'analytics'>
   ): Promise<string> {
     const templateId = this.generateId();
     const now = await this.masterClock.now();
@@ -120,21 +117,19 @@ export class EnhancedAgentHandoffTemplateService {
       id: templateId,
       createdAt: now,
       updatedAt: now,
-      versionHistory: [
-        {
-          id: this.generateId(),
-          version: template.version,
-          changes: ['Initial template creation'],
-          createdBy: 'system',
-          createdAt: now,
-          isActive: true,
-          metrics: {
-            usageCount: 0,
-            successRate: 0,
-            averageExecutionTime: 0,
-          },
-        },
-      ],
+      versionHistory: [{
+        id: this.generateId(),
+        version: template.version,
+        changes: ['Initial template creation'],
+        createdBy: 'system',
+        createdAt: now,
+        isActive: true,
+        metrics: {
+          usageCount: 0,
+          successRate: 0,
+          averageExecutionTime: 0
+        }
+      }],
       analytics: {
         totalExecutions: 0,
         successRate: 0,
@@ -143,8 +138,8 @@ export class EnhancedAgentHandoffTemplateService {
         agentUtilization: {},
         popularVariables: [],
         recentActivity: [],
-        performanceTrends: [],
-      },
+        performanceTrends: []
+      }
     };
 
     this.handoffTemplates.set(templateId, enhancedTemplate);
@@ -157,16 +152,16 @@ export class EnhancedAgentHandoffTemplateService {
         content: template.content,
         variables: template.variables,
         category: 'Handoff',
-        tags: ['handoff', 'agent-communication', ...template.agentCapabilities],
+        tags: ['handoff', 'agent-communication', ...template.agentCapabilities]
       });
-
+      
       enhancedTemplate.baseTemplateId = baseTemplate.id;
     }
 
     // Sync across all instances
     await this.syncOrchestrator.syncGlobalData('enhanced_handoff_template', {
       action: 'create',
-      template: enhancedTemplate,
+      template: enhancedTemplate
     });
 
     return templateId;
@@ -199,12 +194,12 @@ export class EnhancedAgentHandoffTemplateService {
       metrics: {
         usageCount: 0,
         successRate: 0,
-        averageExecutionTime: 0,
-      },
+        averageExecutionTime: 0
+      }
     };
 
     // Deactivate previous version
-    template.versionHistory.forEach((v) => (v.isActive = false));
+    template.versionHistory.forEach(v => v.isActive = false);
     template.versionHistory.push(versionRecord);
 
     // Update template
@@ -212,7 +207,7 @@ export class EnhancedAgentHandoffTemplateService {
       ...template,
       ...updates,
       version: newVersion,
-      updatedAt: now,
+      updatedAt: now
     };
 
     this.handoffTemplates.set(templateId, updatedTemplate);
@@ -222,7 +217,7 @@ export class EnhancedAgentHandoffTemplateService {
       await this.existingTemplateService.updateTemplate(template.baseTemplateId, {
         content: updatedTemplate.content,
         variables: updatedTemplate.variables,
-        updatedAt: now,
+        updatedAt: now
       });
     }
 
@@ -238,14 +233,14 @@ export class EnhancedAgentHandoffTemplateService {
       successCriteria: updatedTemplate.successCriteria,
       backpressureThreshold: updatedTemplate.backpressureThreshold,
       loadBalancingWeight: updatedTemplate.loadBalancingWeight,
-      updatedAt: now,
+      updatedAt: now
     });
 
     // Sync update across all instances
     await this.syncOrchestrator.syncGlobalData('enhanced_handoff_template', {
       action: 'update',
       template: updatedTemplate,
-      versionRecord,
+      versionRecord
     });
   }
 
@@ -282,9 +277,9 @@ export class EnhancedAgentHandoffTemplateService {
         successfulHandoffs: 0,
         averageHandoffTime: 0,
         contextPreservationScore: 0,
-        tokenEfficiency: 0,
+        tokenEfficiency: 0
       },
-      status: 'active',
+      status: 'active'
     };
 
     this.activeSessions.set(sessionId, session);
@@ -295,7 +290,7 @@ export class EnhancedAgentHandoffTemplateService {
       ...sessionData,
       session_id: sessionId,
       agent_id: agentId,
-      timestamp: now.toISOString(),
+      timestamp: now.toISOString()
     };
 
     // Add memory context if enabled
@@ -304,12 +299,17 @@ export class EnhancedAgentHandoffTemplateService {
     }
 
     // Initiate handoff via flywheel
-    const contextId = await this.flywheel.initiateHandoff(agentId, templateId, enhancedVariables, {
-      targetAgentId: options.targetAgentId,
-      sessionId,
-      priority: 'normal',
-      timeout: 300000,
-    });
+    const contextId = await this.flywheel.initiateHandoff(
+      agentId,
+      templateId,
+      enhancedVariables,
+      {
+        targetAgentId: options.targetAgentId,
+        sessionId,
+        priority: 'normal',
+        timeout: 300000
+      }
+    );
 
     // Track context in session
     const context = await this.flywheel.getHandoffContext(contextId);
@@ -321,7 +321,7 @@ export class EnhancedAgentHandoffTemplateService {
     // Sync session creation
     await this.syncOrchestrator.syncGlobalData('handoff_session', {
       action: 'create',
-      session,
+      session
     });
 
     return sessionId;
@@ -342,8 +342,8 @@ export class EnhancedAgentHandoffTemplateService {
 
     // Find agents with required capabilities
     const capableAgents = Object.entries(agentCapabilities)
-      .filter(([agentId, caps]) =>
-        template.agentCapabilities.every((reqCap) => caps.includes(reqCap))
+      .filter(([agentId, caps]) => 
+        template.agentCapabilities.every(reqCap => caps.includes(reqCap))
       )
       .map(([agentId]) => agentId);
 
@@ -352,14 +352,14 @@ export class EnhancedAgentHandoffTemplateService {
     }
 
     // Apply load balancing
-    const agentLoads = capableAgents.map((agentId) => ({
+    const agentLoads = capableAgents.map(agentId => ({
       agentId,
       load: currentLoad[agentId] || 0,
-      weight: template.loadBalancingWeight,
+      weight: template.loadBalancingWeight
     }));
 
     // Sort by weighted load (lower is better)
-    agentLoads.sort((a, b) => a.load * a.weight - b.load * b.weight);
+    agentLoads.sort((a, b) => (a.load * a.weight) - (b.load * b.weight));
 
     // Check backpressure threshold
     const selectedAgent = agentLoads[0];
@@ -413,12 +413,12 @@ export class EnhancedAgentHandoffTemplateService {
     }
 
     // Get sessions in time range
-    const sessions = Array.from(this.activeSessions.values()).filter(
-      (s) =>
+    const sessions = Array.from(this.activeSessions.values())
+      .filter(s => 
         s.templateId === templateId &&
         s.startTime >= timeRange.start &&
         s.startTime <= timeRange.end
-    );
+      );
 
     // Generate recommendations
     const recommendations = await this.generateRecommendations(template, sessions);
@@ -427,7 +427,7 @@ export class EnhancedAgentHandoffTemplateService {
       template,
       analytics: template.analytics,
       sessions,
-      recommendations,
+      recommendations
     };
   }
 
@@ -442,14 +442,13 @@ export class EnhancedAgentHandoffTemplateService {
     for (const template of this.handoffTemplates.values()) {
       if (template.baseTemplateId) {
         // Get latest analytics from existing service
-        const existingAnalytics = await this.existingTemplateService.getTemplateAnalytics(
-          template.baseTemplateId
-        );
+        const existingAnalytics = await this.existingTemplateService
+          .getTemplateAnalytics(template.baseTemplateId);
 
         if (existingAnalytics) {
           // Merge analytics
           template.analytics.totalExecutions += existingAnalytics.totalRuns || 0;
-          template.analytics.successRate =
+          template.analytics.successRate = 
             (template.analytics.successRate + existingAnalytics.successRate) / 2;
         }
       }
@@ -471,16 +470,14 @@ export class EnhancedAgentHandoffTemplateService {
 
     // Use existing service if requested and available
     if (options.useExistingService && this.existingHandoffService) {
-      const existingPrompt = await this.existingHandoffService.createHandoffPrompt(
-        templateId,
-        variables
-      );
-
+      const existingPrompt = await this.existingHandoffService
+        .createHandoffPrompt(templateId, variables);
+      
       if (options.enhanceWithContext) {
         // Enhance with flywheel context
         return this.enhancePromptWithContext(existingPrompt, variables);
       }
-
+      
       return existingPrompt;
     }
 
@@ -533,31 +530,31 @@ export class EnhancedAgentHandoffTemplateService {
       recent_interactions: [],
       context_summary: '',
       preferences: {},
-      capabilities: [],
+      capabilities: []
     };
   }
 
   private async updateTemplateAnalytics(template: EnhancedHandoffTemplate): Promise<void> {
     // Update analytics based on recent executions
     const recentExecutions = template.analytics.recentActivity.length;
-
+    
     if (recentExecutions > 0) {
       // Calculate trends
       const now = await this.masterClock.now();
       const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-
+      
       const recentTrend = {
         date: now,
         executionCount: recentExecutions,
         successRate: template.analytics.successRate,
-        averageTime: template.analytics.averageExecutionTime,
+        averageTime: template.analytics.averageExecutionTime
       };
 
       template.analytics.performanceTrends.push(recentTrend);
-
+      
       // Keep only last 30 days of trends
       template.analytics.performanceTrends = template.analytics.performanceTrends
-        .filter((trend) => trend.date > dayAgo)
+        .filter(trend => trend.date > dayAgo)
         .slice(-30);
     }
   }
@@ -567,7 +564,7 @@ export class EnhancedAgentHandoffTemplateService {
       return;
     }
 
-    const completedContexts = session.contexts.filter((c) => c.status === 'completed');
+    const completedContexts = session.contexts.filter(c => c.status === 'completed');
     const totalTime = completedContexts.reduce((sum, c) => {
       if (c.executionHistory.length > 0) {
         const lastExecution = c.executionHistory[c.executionHistory.length - 1];
@@ -578,19 +575,18 @@ export class EnhancedAgentHandoffTemplateService {
 
     session.metrics.successfulHandoffs = completedContexts.length;
     session.metrics.averageHandoffTime = totalTime / Math.max(completedContexts.length, 1);
-
+    
     // Calculate context preservation score
-    const preservationScores = completedContexts.flatMap((c) =>
-      c.executionHistory.map((e) => e.contextPreservation)
+    const preservationScores = completedContexts.flatMap(c => 
+      c.executionHistory.map(e => e.contextPreservation)
     );
-
-    session.metrics.contextPreservationScore =
-      preservationScores.reduce((sum, score) => sum + score, 0) /
+    
+    session.metrics.contextPreservationScore = 
+      preservationScores.reduce((sum, score) => sum + score, 0) / 
       Math.max(preservationScores.length, 1);
 
     // Calculate token efficiency (simplified)
-    session.metrics.tokenEfficiency = Math.min(
-      100,
+    session.metrics.tokenEfficiency = Math.min(100, 
       (session.metrics.successfulHandoffs / session.metrics.totalHandoffs) * 100
     );
   }
@@ -620,7 +616,7 @@ export class EnhancedAgentHandoffTemplateService {
     const utilizationValues = Object.values(template.analytics.agentUtilization);
     const maxUtilization = Math.max(...utilizationValues);
     const minUtilization = Math.min(...utilizationValues);
-
+    
     if (maxUtilization - minUtilization > 50) {
       recommendations.push('Consider load balancing improvements for better agent distribution');
     }
@@ -643,7 +639,10 @@ export class EnhancedAgentHandoffTemplateService {
     return compiled;
   }
 
-  private enhancePromptWithContext(prompt: string, variables: Record<string, any>): string {
+  private enhancePromptWithContext(
+    prompt: string,
+    variables: Record<string, any>
+  ): string {
     const contextSection = `\n\n## Enhanced Context\n${JSON.stringify(variables, null, 2)}`;
     return prompt + contextSection;
   }
@@ -679,7 +678,8 @@ export class EnhancedAgentHandoffTemplateService {
   }
 
   async listActiveSessions(): Promise<HandoffSession[]> {
-    return Array.from(this.activeSessions.values()).filter((s) => s.status === 'active');
+    return Array.from(this.activeSessions.values())
+      .filter(s => s.status === 'active');
   }
 
   async completeSession(sessionId: string): Promise<void> {
@@ -687,10 +687,10 @@ export class EnhancedAgentHandoffTemplateService {
     if (session) {
       session.status = 'completed';
       session.endTime = await this.masterClock.now();
-
+      
       await this.syncOrchestrator.syncGlobalData('handoff_session', {
         action: 'complete',
-        session,
+        session
       });
     }
   }

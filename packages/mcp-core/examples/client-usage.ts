@@ -1,6 +1,6 @@
 /**
  * Example usage of MCPClient
- *
+ * 
  * This example demonstrates how to use the MCPClient to connect to an MCP server,
  * access resources, call tools, and handle notifications.
  */
@@ -17,15 +17,15 @@ async function main() {
     retryPolicy: {
       maxAttempts: 3,
       baseDelay: 1000,
-      maxDelay: 10000,
+      maxDelay: 10000
     },
     options: {
       enableCaching: true,
       cacheTTL: 300000, // 5 minutes
       autoReconnect: true,
       maxReconnectAttempts: 5,
-      reconnectInterval: 5000,
-    },
+      reconnectInterval: 5000
+    }
   };
 
   // Create client instance
@@ -40,16 +40,13 @@ async function main() {
     // Get server capabilities
     console.log('\nGetting server capabilities...');
     const capabilities = await client.getServerCapabilities();
-    console.log(
-      'Server capabilities:',
-      capabilities.map((c) => c.name)
-    );
+    console.log('Server capabilities:', capabilities.map(c => c.name));
 
     // List available resources
     console.log('\nListing available resources...');
     const resources = await client.listResources();
     console.log('Available resources:');
-    resources.forEach((resource) => {
+    resources.forEach(resource => {
       console.log(`  - ${resource.name} (${resource.uri})`);
     });
 
@@ -60,7 +57,7 @@ async function main() {
       console.log('Resource content:', {
         uri: content.uri,
         mimeType: content.mimeType,
-        contentLength: content.content.toString().length,
+        contentLength: content.content.toString().length
       });
 
       // Read the same resource again (should be cached)
@@ -73,7 +70,7 @@ async function main() {
     console.log('\nCalling a tool...');
     try {
       const toolResult = await client.callTool('echo', {
-        message: 'Hello from MCP client!',
+        message: 'Hello from MCP client!'
       });
       console.log('Tool result:', toolResult);
     } catch (error) {
@@ -98,8 +95,8 @@ async function main() {
       method: 'client/hello',
       params: {
         message: 'Hello from client',
-        timestamp: new Date().toISOString(),
-      },
+        timestamp: new Date().toISOString()
+      }
     });
 
     // Wait for a specific notification (with timeout)
@@ -119,7 +116,7 @@ async function main() {
       successfulRequests: stats.successfulRequests,
       failedRequests: stats.failedRequests,
       averageResponseTime: stats.averageResponseTime,
-      activeConnections: stats.activeConnections,
+      activeConnections: stats.activeConnections
     });
 
     // Get cache statistics
@@ -129,7 +126,7 @@ async function main() {
       totalEntries: cacheStats.totalEntries,
       hitCount: cacheStats.hitCount,
       missCount: cacheStats.missCount,
-      hitRate: cacheStats.hitRate,
+      hitRate: cacheStats.hitRate
     });
 
     // Ping the server
@@ -142,7 +139,8 @@ async function main() {
     console.log('Unsubscribed from status notifications');
 
     // Wait a bit to see any final notifications
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
   } catch (error) {
     console.error('Error:', error);
   } finally {
@@ -162,14 +160,14 @@ async function robustClientExample() {
     retryPolicy: {
       maxAttempts: 5,
       baseDelay: 1000,
-      maxDelay: 30000,
+      maxDelay: 30000
     },
     options: {
       enableCaching: true,
       autoReconnect: true,
       maxReconnectAttempts: 10,
-      reconnectInterval: 5000,
-    },
+      reconnectInterval: 5000
+    }
   };
 
   const client = new MCPClient(config);
@@ -219,6 +217,7 @@ async function robustClientExample() {
 
         const toolResult = await client.callTool('system/health', {});
         console.log('System health:', toolResult);
+
       } catch (error) {
         console.error('Operation failed:', error.message);
       }
@@ -232,6 +231,7 @@ async function robustClientExample() {
       clearInterval(interval);
       client.cleanup();
     }, 60000);
+
   } catch (error) {
     console.error('Failed to connect:', error);
     await client.cleanup();
@@ -241,12 +241,10 @@ async function robustClientExample() {
 // Run the examples
 if (require.main === module) {
   console.log('=== Basic MCP Client Example ===');
-  main()
-    .then(() => {
-      console.log('\n=== Robust MCP Client Example ===');
-      return robustClientExample();
-    })
-    .catch(console.error);
+  main().then(() => {
+    console.log('\n=== Robust MCP Client Example ===');
+    return robustClientExample();
+  }).catch(console.error);
 }
 
 export { main as basicClientExample, robustClientExample };

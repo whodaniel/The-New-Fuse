@@ -38,7 +38,6 @@ Test individual functions, classes, or components in isolation.
 **Location**: `src/**/__tests__/*.test.ts` or `src/**/*.spec.ts`
 
 **Examples**:
-
 - Testing a utility function
 - Testing a React component
 - Testing a service class
@@ -50,7 +49,6 @@ Test interactions between multiple components or services.
 **Location**: `test/**/*.spec.ts` or `src/**/*.integration.test.ts`
 
 **Examples**:
-
 - Testing API endpoints with database
 - Testing service-to-service communication
 - Testing complex component interactions
@@ -62,7 +60,6 @@ Test complete user workflows through the UI.
 **Location**: `e2e/**/*.spec.ts`
 
 **Examples**:
-
 - User registration and login flow
 - Creating and running a workflow
 - Admin dashboard operations
@@ -336,8 +333,7 @@ open coverage/index.html
 3. **Use descriptive test names** - clearly state what is being tested
 4. **Follow AAA pattern** - Arrange, Act, Assert
 5. **Don't test implementation details** - focus on behavior
-6. **Mock external dependencies** - avoid hitting real APIs or databases in unit
-   tests
+6. **Mock external dependencies** - avoid hitting real APIs or databases in unit tests
 
 ### Unit Tests
 

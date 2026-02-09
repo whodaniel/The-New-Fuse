@@ -239,13 +239,9 @@ export default function Workflows() {
                           : 'Running...'}
                       </td>
                       <td className="py-4">
-                        <Link
-                          to={`/workflows/${execution.workflowId}/results?executionId=${execution.id}`}
-                        >
-                          <PremiumButton size="sm" variant="ghost">
-                            View Results
-                          </PremiumButton>
-                        </Link>
+                        <PremiumButton size="sm" variant="ghost">
+                          View Logs
+                        </PremiumButton>
                       </td>
                     </tr>
                   ))}

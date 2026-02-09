@@ -1,16 +1,16 @@
 import { Logger } from 'winston';
 import {
+  BaseDeploymentStrategy,
+  DeploymentPhase,
+  ServiceDeploymentStatus,
+  RollbackResult
+} from './DeploymentStrategy';
+import {
   DeploymentConfig,
   DeploymentResult,
   PipelineStatus,
-  ServiceDeploymentResult,
+  ServiceDeploymentResult
 } from '../types/pipeline';
-import {
-  BaseDeploymentStrategy,
-  DeploymentPhase,
-  RollbackResult,
-  ServiceDeploymentStatus,
-} from './DeploymentStrategy';
 
 /**
  * Blue-Green Deployment Strategy
@@ -29,7 +29,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
 
     this.logger.info(`Starting blue-green deployment: ${deploymentId}`, {
       environment: config.environment,
-      services: config.services.length,
+      services: config.services.length
     });
 
     try {
@@ -53,7 +53,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.PREPARING,
         currentStep: 'Preparing blue-green deployment',
-        progress: 10,
+        progress: 10
       });
 
       await this.prepareTargetEnvironment(config, targetEnv, deploymentId);
@@ -62,16 +62,16 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.DEPLOYING,
         currentStep: `Deploying to ${targetEnv} environment`,
-        progress: 20,
+        progress: 20
       });
 
       const serviceResults: ServiceDeploymentResult[] = [];
 
       for (let i = 0; i < config.services.length; i++) {
         const service = config.services[i];
-
+        
         this.logDeploymentStep(deploymentId, `Deploying service to ${targetEnv}: ${service.name}`);
-
+        
         const serviceResult = await this.deployServiceToEnvironment(
           service,
           targetEnv,
@@ -81,11 +81,11 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
         serviceResults.push(serviceResult);
 
         // Update progress
-        const serviceProgress = ((i + 1) / config.services.length) * 40; // 40% for all services
+        const serviceProgress = (i + 1) / config.services.length * 40; // 40% for all services
         this.updateProgress(deploymentId, {
           progress: 20 + serviceProgress,
           currentStep: `Deployed ${i + 1}/${config.services.length} services to ${targetEnv}`,
-          completedSteps: progress.completedSteps + 1,
+          completedSteps: progress.completedSteps + 1
         });
 
         if (serviceResult.status === PipelineStatus.FAILED) {
@@ -97,7 +97,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.VALIDATING,
         currentStep: `Validating ${targetEnv} environment`,
-        progress: 65,
+        progress: 65
       });
 
       await this.validateTargetEnvironment(config, targetEnv, deploymentId);
@@ -106,7 +106,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.PROMOTING,
         currentStep: `Switching traffic to ${targetEnv}`,
-        progress: 80,
+        progress: 80
       });
 
       await this.switchTraffic(config, currentEnv, targetEnv, deploymentId);
@@ -114,19 +114,17 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
       // Phase 5: Post-switch validation
       this.updateProgress(deploymentId, {
         currentStep: 'Validating traffic switch',
-        progress: 90,
+        progress: 90
       });
 
       const healthChecks = await this.getHealthChecks(config);
       const healthResults = await this.executeHealthChecks(healthChecks, deploymentId);
 
-      const unhealthyChecks = healthResults.filter((h) => h.status !== 'healthy');
+      const unhealthyChecks = healthResults.filter(h => h.status !== 'healthy');
       if (unhealthyChecks.length > 0) {
         // Rollback traffic switch
         await this.switchTraffic(config, targetEnv, currentEnv, deploymentId);
-        throw new Error(
-          `Post-switch health checks failed: ${unhealthyChecks.map((h) => h.name).join(', ')}`
-        );
+        throw new Error(`Post-switch health checks failed: ${unhealthyChecks.map(h => h.name).join(', ')}`);
       }
 
       // Phase 6: Cleanup old environment (optional)
@@ -134,11 +132,11 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
       if (blueGreenConfig?.scaleDownDelay) {
         this.updateProgress(deploymentId, {
           currentStep: `Waiting ${blueGreenConfig.scaleDownDelay} before cleanup`,
-          progress: 95,
+          progress: 95
         });
 
         const delayMs = this.parseDuration(blueGreenConfig.scaleDownDelay);
-        await new Promise((resolve) => setTimeout(resolve, delayMs));
+        await new Promise(resolve => setTimeout(resolve, delayMs));
       }
 
       await this.cleanupOldEnvironment(config, currentEnv, deploymentId);
@@ -151,7 +149,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
         phase: DeploymentPhase.COMPLETED,
         currentStep: 'Blue-green deployment completed',
         progress: 100,
-        completedSteps: progress.totalSteps,
+        completedSteps: progress.totalSteps
       });
 
       const endTime = new Date();
@@ -167,38 +165,36 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
         environment: config.environment,
         services: serviceResults,
         healthChecks: healthResults,
-        logs: progress.logs,
+        logs: progress.logs
       };
 
-      this.logDeploymentStep(
-        deploymentId,
-        `Blue-green deployment completed successfully in ${duration}ms`
-      );
+      this.logDeploymentStep(deploymentId, `Blue-green deployment completed successfully in ${duration}ms`);
       this.emit('deployment:complete', { deploymentId, result });
 
       return result;
+
     } catch (error) {
       this.logger.error(`Blue-green deployment failed: ${deploymentId}`, {
         error: error.message,
-        stack: error.stack,
+        stack: error.stack
       });
 
       // Update progress to failed state
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.FAILED,
         currentStep: `Deployment failed: ${error.message}`,
-        progress: 0,
+        progress: 0
       });
 
       // Attempt rollback if configured
       if (config.rollbackPolicy.enabled && config.rollbackPolicy.automatic) {
         this.logDeploymentStep(deploymentId, 'Attempting automatic rollback', 'warn');
-
+        
         try {
           await this.rollback(deploymentId, error.message);
         } catch (rollbackError) {
           this.logger.error(`Rollback failed: ${deploymentId}`, {
-            error: rollbackError.message,
+            error: rollbackError.message
           });
         }
       }
@@ -217,7 +213,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
         services: [],
         healthChecks: [],
         logs: this.deployments.get(deploymentId)?.logs || [error.message],
-        error: error.message,
+        error: error.message
       };
 
       this.emit('deployment:failed', { deploymentId, result: failedResult, error });
@@ -236,9 +232,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
     // Validate services have proper configuration for blue-green
     config.services.forEach((service) => {
       if (!service.replicas || service.replicas < 1) {
-        errors.push(
-          `Service ${service.name}: Must have at least 1 replica for blue-green deployment`
-        );
+        errors.push(`Service ${service.name}: Must have at least 1 replica for blue-green deployment`);
       }
 
       if (!service.healthCheck) {
@@ -247,9 +241,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
 
       // Blue-green requires double the resources temporarily
       if (!service.resources) {
-        errors.push(
-          `Service ${service.name}: Resource requirements must be specified for blue-green`
-        );
+        errors.push(`Service ${service.name}: Resource requirements must be specified for blue-green`);
       }
     });
 
@@ -263,9 +255,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
       if (blueGreenConfig.prePromotionAnalysis && blueGreenConfig.prePromotionAnalysis.length > 0) {
         blueGreenConfig.prePromotionAnalysis.forEach((analysis, index) => {
           if (!analysis.name || !analysis.provider || !analysis.query) {
-            errors.push(
-              `Pre-promotion analysis ${index + 1}: name, provider, and query are required`
-            );
+            errors.push(`Pre-promotion analysis ${index + 1}: name, provider, and query are required`);
           }
         });
       }
@@ -273,13 +263,13 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
 
     return {
       valid: errors.length === 0,
-      errors,
+      errors
     };
   }
 
   async rollback(deploymentId: string, reason: string): Promise<RollbackResult> {
     const startTime = Date.now();
-
+    
     this.logger.info(`Starting rollback for blue-green deployment: ${deploymentId}`, { reason });
 
     try {
@@ -287,7 +277,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.ROLLING_BACK,
         currentStep: 'Rolling back blue-green deployment',
-        progress: 0,
+        progress: 0
       });
 
       // Get deployment progress to find environment info
@@ -321,14 +311,15 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
         previousVersion: currentEnv,
         currentVersion: previousEnv,
         duration,
-        logs: progress.logs,
+        logs: progress.logs
       };
+
     } catch (error) {
       const endTime = Date.now();
       const duration = endTime - startTime;
 
       this.logger.error(`Blue-green rollback failed: ${deploymentId}`, {
-        error: error.message,
+        error: error.message
       });
 
       return {
@@ -337,7 +328,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
         currentVersion: 'unknown',
         duration,
         logs: [`Rollback failed: ${error.message}`],
-        error: error.message,
+        error: error.message
       };
     }
   }
@@ -374,13 +365,13 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
     deploymentId: string
   ): Promise<ServiceDeploymentResult> {
     const serviceName = `${service.name}-${targetEnv}`;
-
+    
     try {
       this.logDeploymentStep(deploymentId, `Deploying ${service.name} to ${targetEnv} environment`);
 
       // Update service progress
       const progress = this.deployments.get(deploymentId);
-      const serviceProgress = progress?.services.find((s) => s.name === service.name);
+      const serviceProgress = progress?.services.find(s => s.name === service.name);
       if (serviceProgress) {
         serviceProgress.status = ServiceDeploymentStatus.DEPLOYING;
       }
@@ -395,18 +386,15 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
       }
 
       // Run service-specific health checks
-      const healthCheck = await this.executeHealthCheck(
-        {
-          name: `${serviceName}-health`,
-          type: 'http',
-          port: service.ports?.[0]?.port || 8080,
-          path: '/health',
-          timeout: 30000,
-          interval: 5000,
-          retries: 5,
-        },
-        deploymentId
-      );
+      const healthCheck = await this.executeHealthCheck({
+        name: `${serviceName}-health`,
+        type: 'http',
+        port: service.ports?.[0]?.port || 8080,
+        path: '/health',
+        timeout: 30000,
+        interval: 5000,
+        retries: 5
+      }, deploymentId);
 
       if (healthCheck.status !== 'healthy') {
         throw new Error(`Health check failed for ${serviceName}: ${healthCheck.message}`);
@@ -429,20 +417,21 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
         replicas: {
           desired: service.replicas,
           ready: service.replicas,
-          available: service.replicas,
+          available: service.replicas
         },
         image: service.image,
         version: service.tag,
-        endpoints: [`http://${serviceName}.${config.environment}.svc.cluster.local`],
+        endpoints: [`http://${serviceName}.${config.environment}.svc.cluster.local`]
       };
+
     } catch (error) {
       this.logger.error(`Service deployment failed in ${targetEnv}: ${service.name}`, {
-        error: error.message,
+        error: error.message
       });
 
       // Update service progress to failed
       const progress = this.deployments.get(deploymentId);
-      const serviceProgress = progress?.services.find((s) => s.name === service.name);
+      const serviceProgress = progress?.services.find(s => s.name === service.name);
       if (serviceProgress) {
         serviceProgress.status = ServiceDeploymentStatus.FAILED;
       }
@@ -453,11 +442,11 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
         replicas: {
           desired: service.replicas,
           ready: 0,
-          available: 0,
+          available: 0
         },
         image: service.image,
         version: service.tag,
-        endpoints: [],
+        endpoints: []
       };
     }
   }
@@ -481,11 +470,9 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
     const healthChecks = await this.getHealthChecks(config);
     const healthResults = await this.executeHealthChecks(healthChecks, deploymentId);
 
-    const unhealthyChecks = healthResults.filter((h) => h.status !== 'healthy');
+    const unhealthyChecks = healthResults.filter(h => h.status !== 'healthy');
     if (unhealthyChecks.length > 0) {
-      throw new Error(
-        `${targetEnv} environment validation failed: ${unhealthyChecks.map((h) => h.name).join(', ')}`
-      );
+      throw new Error(`${targetEnv} environment validation failed: ${unhealthyChecks.map(h => h.name).join(', ')}`);
     }
 
     // Run smoke tests
@@ -512,7 +499,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
     await this.updateDNSRecords(config, fromEnv, toEnv);
 
     // Wait for traffic switch to propagate
-    await new Promise((resolve) => setTimeout(resolve, 10000));
+    await new Promise(resolve => setTimeout(resolve, 10000));
 
     this.logDeploymentStep(deploymentId, `Traffic switch from ${fromEnv} to ${toEnv} completed`);
   }
@@ -544,7 +531,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
 
     // This would implement the reverse of switchTraffic
     await this.updateLoadBalancer({} as any, fromEnv, toEnv);
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
     this.logDeploymentStep(deploymentId, `Traffic rollback completed`);
   }
@@ -553,7 +540,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
     this.logDeploymentStep(deploymentId, `Validating rollback to ${env} environment`);
 
     // Run basic health checks to ensure rollback was successful
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
     this.logDeploymentStep(deploymentId, `Rollback validation completed`);
   }
@@ -568,16 +555,11 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
     const value = parseInt(amount);
 
     switch (unit) {
-      case 's':
-        return value * 1000;
-      case 'm':
-        return value * 60 * 1000;
-      case 'h':
-        return value * 60 * 60 * 1000;
-      case 'd':
-        return value * 24 * 60 * 60 * 1000;
-      default:
-        return 0;
+      case 's': return value * 1000;
+      case 'm': return value * 60 * 1000;
+      case 'h': return value * 60 * 60 * 1000;
+      case 'd': return value * 24 * 60 * 60 * 1000;
+      default: return 0;
     }
   }
 
@@ -586,88 +568,55 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
   }
 
   // Placeholder methods for integration with actual infrastructure
-  private async ensureEnvironmentResources(
-    config: DeploymentConfig,
-    env: 'blue' | 'green'
-  ): Promise<void> {
+  private async ensureEnvironmentResources(config: DeploymentConfig, env: 'blue' | 'green'): Promise<void> {
     this.logger.debug(`Ensuring resources for ${env} environment`);
   }
 
-  private async setupEnvironmentNetworking(
-    config: DeploymentConfig,
-    env: 'blue' | 'green'
-  ): Promise<void> {
+  private async setupEnvironmentNetworking(config: DeploymentConfig, env: 'blue' | 'green'): Promise<void> {
     this.logger.debug(`Setting up networking for ${env} environment`);
   }
 
-  private async setupEnvironmentMonitoring(
-    config: DeploymentConfig,
-    env: 'blue' | 'green',
-    _deploymentId: string
-  ): Promise<void> {
+  private async setupEnvironmentMonitoring(config: DeploymentConfig, env: 'blue' | 'green', _deploymentId: string): Promise<void> {
     this.logger.debug(`Setting up monitoring for ${env} environment`);
   }
 
   private async createServiceInEnvironment(service: any, env: 'blue' | 'green'): Promise<void> {
     this.logger.debug(`Creating service ${service.name} in ${env} environment`);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
   }
 
-  private async runAnalysis(
-    analysis: any,
-    env: 'blue' | 'green',
-    _deploymentId: string
-  ): Promise<void> {
+  private async runAnalysis(analysis: any, env: 'blue' | 'green', _deploymentId: string): Promise<void> {
     this.logger.debug(`Running analysis ${analysis.name} on ${env} environment`);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
-  private async runSmokeTests(
-    config: DeploymentConfig,
-    env: 'blue' | 'green',
-    _deploymentId: string
-  ): Promise<void> {
+  private async runSmokeTests(config: DeploymentConfig, env: 'blue' | 'green', _deploymentId: string): Promise<void> {
     this.logger.debug(`Running smoke tests on ${env} environment`);
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
   }
 
-  private async updateLoadBalancer(
-    config: DeploymentConfig,
-    fromEnv: 'blue' | 'green',
-    toEnv: 'blue' | 'green'
-  ): Promise<void> {
+  private async updateLoadBalancer(config: DeploymentConfig, fromEnv: 'blue' | 'green', toEnv: 'blue' | 'green'): Promise<void> {
     this.logger.debug(`Updating load balancer from ${fromEnv} to ${toEnv}`);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
-  private async updateServiceMeshRouting(
-    config: DeploymentConfig,
-    fromEnv: 'blue' | 'green',
-    toEnv: 'blue' | 'green'
-  ): Promise<void> {
+  private async updateServiceMeshRouting(config: DeploymentConfig, fromEnv: 'blue' | 'green', toEnv: 'blue' | 'green'): Promise<void> {
     this.logger.debug(`Updating service mesh routing from ${fromEnv} to ${toEnv}`);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
 
-  private async updateDNSRecords(
-    config: DeploymentConfig,
-    fromEnv: 'blue' | 'green',
-    toEnv: 'blue' | 'green'
-  ): Promise<void> {
+  private async updateDNSRecords(config: DeploymentConfig, fromEnv: 'blue' | 'green', toEnv: 'blue' | 'green'): Promise<void> {
     this.logger.debug(`Updating DNS records from ${fromEnv} to ${toEnv}`);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
 
   private async scaleDownService(serviceName: string, replicas: number): Promise<void> {
     this.logger.debug(`Scaling down ${serviceName} to ${replicas} replicas`);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
-  private async cleanupEnvironmentResources(
-    config: DeploymentConfig,
-    env: 'blue' | 'green'
-  ): Promise<void> {
+  private async cleanupEnvironmentResources(config: DeploymentConfig, env: 'blue' | 'green'): Promise<void> {
     this.logger.debug(`Cleaning up resources for ${env} environment`);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
 }

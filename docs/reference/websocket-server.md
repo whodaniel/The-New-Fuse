@@ -1,21 +1,14 @@
 # WebSocket Server for Chrome Extension Integration
 
-The New Fuse includes a WebSocket server that enables communication between the
-VS Code extension and the Chrome extension. This document describes the
-WebSocket server architecture, configuration, and usage.
+The New Fuse includes a WebSocket server that enables communication between the VS Code extension and the Chrome extension. This document describes the WebSocket server architecture, configuration, and usage.
 
 ## Updates
 
 The WebSocket server is a mature component with the following features:
-
-- **Secure WebSocket Support**: Added support for wss:// protocol using SSL
-  certificates
-- **Improved Error Handling**: Enhanced error handling and reconnection logic
-  with exponential backoff
-- **Multiple Client Support**: Added support for multiple connected clients with
-  unique identifiers
-- **Client Management**: Added client tracking, authentication, and connection
-  monitoring
+- **Secure WebSocket Support**: Added support for wss:// protocol using SSL certificates
+- **Improved Error Handling**: Enhanced error handling and reconnection logic with exponential backoff
+- **Multiple Client Support**: Added support for multiple connected clients with unique identifiers
+- **Client Management**: Added client tracking, authentication, and connection monitoring
 
 ## Overview
 
@@ -29,15 +22,12 @@ The WebSocket server is a component of the VS Code extension that:
 
 ## Architecture
 
-The WebSocket server is implemented as a service in the VS Code extension. It
-uses the `ws` library to create a WebSocket server that listens on a
-configurable port.
+The WebSocket server is implemented as a service in the VS Code extension. It uses the `ws` library to create a WebSocket server that listens on a configurable port.
 
 ### Components
 
 - **ChromeWebSocketService**: The main service that manages the WebSocket server
-- **ChromeExtensionHandler**: Handles messages from the Chrome extension and
-  forwards them to the appropriate services
+- **ChromeExtensionHandler**: Handles messages from the Chrome extension and forwards them to the appropriate services
 - **RelayService**: Provides authentication and message relay capabilities
 
 ### Message Flow
@@ -46,10 +36,8 @@ configurable port.
 2. The Chrome extension sends an authentication message
 3. The WebSocket server authenticates the connection
 4. The Chrome extension sends messages to the WebSocket server
-5. The WebSocket server processes the messages and forwards them to the
-   appropriate services
-6. The services process the messages and send responses back to the WebSocket
-   server
+5. The WebSocket server processes the messages and forwards them to the appropriate services
+6. The services process the messages and send responses back to the WebSocket server
 7. The WebSocket server sends the responses back to the Chrome extension
 
 ## Configuration
@@ -57,19 +45,13 @@ configurable port.
 The WebSocket server can be configured through the VS Code extension settings:
 
 - **Port**: The port on which the WebSocket server listens (default: 3710)
-- **Enable Chrome Integration**: Whether to enable the Chrome extension
-  integration (default: true)
-- **Use Secure WebSocket**: Whether to use secure WebSocket (wss://) for Chrome
-  extension communication (default: false)
+- **Enable Chrome Integration**: Whether to enable the Chrome extension integration (default: true)
+- **Use Secure WebSocket**: Whether to use secure WebSocket (wss://) for Chrome extension communication (default: false)
 
-**Note:** For development and testing purposes, a standalone test server
-(`test-websocket-server-3711.cjs`) is often used, which runs on port **3711** to
-avoid conflicts with the primary VS Code extension server.
+**Note:** For development and testing purposes, a standalone test server (`test-websocket-server-3711.cjs`) is often used, which runs on port **3711** to avoid conflicts with the primary VS Code extension server.
 
-- **Maximum Chrome Clients**: Maximum number of Chrome extension clients that
-  can connect simultaneously (default: 5)
-- **Certificate Path**: Path to SSL certificate file for secure WebSocket
-  connections
+- **Maximum Chrome Clients**: Maximum number of Chrome extension clients that can connect simultaneously (default: 5)
+- **Certificate Path**: Path to SSL certificate file for secure WebSocket connections
 - **Key Path**: Path to SSL key file for secure WebSocket connections
 
 To change these settings:
@@ -84,18 +66,15 @@ To change these settings:
 To use secure WebSocket (wss://), you need to provide SSL certificates:
 
 1. Generate self-signed certificates for development:
-
    ```bash
    openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -days 365 -nodes -subj "/CN=localhost"
    ```
 
-2. Place the certificates in the extension's `certs` directory or specify custom
-   paths in the settings
+2. Place the certificates in the extension's `certs` directory or specify custom paths in the settings
 
 3. Enable secure WebSocket in the settings:
    - Set `thefuse.useSecureWebSocket` to `true`
-   - Optionally set `thefuse.certPath` and `thefuse.keyPath` if not using the
-     default locations
+   - Optionally set `thefuse.certPath` and `thefuse.keyPath` if not using the default locations
 
 4. Update the Chrome extension settings to use `wss://` protocol:
    - Right-click on the extension icon and select "Options"
@@ -106,8 +85,7 @@ To use secure WebSocket (wss://), you need to provide SSL certificates:
 
 ### Starting the WebSocket Server
 
-The WebSocket server starts automatically when the VS Code extension is
-activated. You can also start it manually:
+The WebSocket server starts automatically when the VS Code extension is activated. You can also start it manually:
 
 1. Open the Command Palette in VS Code (Cmd+Shift+P or Ctrl+Shift+P)
 2. Run the command "The New Fuse: Restart Chrome WebSocket Server"
@@ -119,8 +97,7 @@ To check the status of the WebSocket server:
 1. Open the Command Palette in VS Code (Cmd+Shift+P or Ctrl+Shift+P)
 2. Run the command "The New Fuse: Show Connection Status"
 
-This will show the status of the WebSocket server and the number of connected
-clients.
+This will show the status of the WebSocket server and the number of connected clients.
 
 ### Viewing Connected Clients
 
@@ -130,7 +107,6 @@ To view information about connected Chrome extension clients:
 2. Run the command "The New Fuse: Show Connected Chrome Extension Clients"
 
 This will open a panel showing details about each connected client, including:
-
 - Client ID
 - IP Address
 - Authentication status
@@ -138,17 +114,14 @@ This will open a panel showing details about each connected client, including:
 
 ### Stopping the WebSocket Server
 
-The WebSocket server stops automatically when the VS Code extension is
-deactivated. You can also stop it manually:
+The WebSocket server stops automatically when the VS Code extension is deactivated. You can also stop it manually:
 
 1. Open the Command Palette in VS Code (Cmd+Shift+P or Ctrl+Shift+P)
-2. Run the command "The New Fuse: Restart Chrome WebSocket Server" (this will
-   stop the current server and start a new one)
+2. Run the command "The New Fuse: Restart Chrome WebSocket Server" (this will stop the current server and start a new one)
 
 ## Message Protocol
 
-The WebSocket server uses a JSON-based message protocol for communication with
-the Chrome extension.
+The WebSocket server uses a JSON-based message protocol for communication with the Chrome extension.
 
 ### Message Types
 
@@ -159,10 +132,8 @@ the Chrome extension.
 - **CODE_INPUT**: Code input message
 - **AI_OUTPUT**: AI output message
 - **SYSTEM**: System message
-- **DB_COMMAND**: (For Testing) Executes a command against a connected Redis
-  instance.
-- **BROADCAST**: (For Testing/Relay) Sends a message to all connected clients
-  and/or a Redis pub/sub channel.
+- **DB_COMMAND**: (For Testing) Executes a command against a connected Redis instance.
+- **BROADCAST**: (For Testing/Relay) Sends a message to all connected clients and/or a Redis pub/sub channel.
 
 ### Message Format
 
@@ -180,8 +151,7 @@ All messages are JSON objects with the following structure:
 
 ### Authentication
 
-The Chrome extension authenticates with the WebSocket server by sending an AUTH
-message:
+The Chrome extension authenticates with the WebSocket server by sending an AUTH message:
 
 ```json
 {
@@ -201,8 +171,7 @@ The WebSocket server responds with an AUTH_RESPONSE message:
 
 ### Heartbeat
 
-The Chrome extension sends a PING message to the WebSocket server every 30
-seconds:
+The Chrome extension sends a PING message to the WebSocket server every 30 seconds:
 
 ```json
 {
@@ -221,8 +190,7 @@ The WebSocket server responds with a PONG message:
 
 ### Code Input
 
-The Chrome extension sends a CODE_INPUT message to the WebSocket server when the
-user wants to send code to VS Code:
+The Chrome extension sends a CODE_INPUT message to the WebSocket server when the user wants to send code to VS Code:
 
 ```json
 {
@@ -233,8 +201,7 @@ user wants to send code to VS Code:
 
 ### AI Output
 
-The WebSocket server sends an AI_OUTPUT message to the Chrome extension when an
-AI agent generates output:
+The WebSocket server sends an AI_OUTPUT message to the Chrome extension when an AI agent generates output:
 
 ```json
 {
@@ -249,10 +216,8 @@ AI agent generates output:
 The WebSocket server uses the following security measures:
 
 - **Authentication**: All connections must be authenticated with a valid token
-- **Local Only**: By default, the WebSocket server only accepts connections from
-  localhost
-- **HTTPS Support**: The WebSocket server can be configured to use HTTPS for
-  secure connections
+- **Local Only**: By default, the WebSocket server only accepts connections from localhost
+- **HTTPS Support**: The WebSocket server can be configured to use HTTPS for secure connections
 
 ## Troubleshooting
 
@@ -266,15 +231,11 @@ If the WebSocket server fails to start:
 
 ### Connection Issues
 
-Please refer to the
-[WebSocket Connection Guide](../guides/WEBSOCKET-CONNECTION-GUIDE.md) for
-detailed troubleshooting steps.
+Please refer to the [WebSocket Connection Guide](../guides/WEBSOCKET-CONNECTION-GUIDE.md) for detailed troubleshooting steps.
 
 ## Future Improvements
 
 Planned improvements for the WebSocket server include:
-
-- **Message Compression**: Implement message compression to reduce bandwidth
-  usage
+- **Message Compression**: Implement message compression to reduce bandwidth usage
 - **Rate Limiting**: Add rate limiting to prevent abuse
 - **Connection Pooling**: Implement connection pooling for better performance

@@ -17,7 +17,7 @@ import { WorkflowMonitoringService } from './services/WorkflowMonitoringService.
 import { WorkflowMCPIntegrationService } from './services/WorkflowMCPIntegrationService.js';
 import { AnalyticsIntegrationService } from './services/AnalyticsIntegrationService.js';
 import { SchemaValidationService } from './services/SchemaValidationService.js';
-import { DatabaseService } from './drizzle/drizzle.service.js';
+import { PrismaService } from './prisma/prisma.service.js';
 import { MetricsService } from './metrics/metrics.service.js';
 import { RedisService } from './redis/redis.service.tsx';
 import { Logger } from './common/logger.service.js';
@@ -47,7 +47,7 @@ import { CopilotIntegrationModule } from './modules/CopilotIntegrationModule.js'
     WorkflowMCPIntegrationService,
     AnalyticsIntegrationService,
     SchemaValidationService,
-    DatabaseService,
+    PrismaService,
     MetricsService,
     RedisService,
     Logger,

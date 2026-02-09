@@ -3,13 +3,13 @@
  * Main server entry point that integrates with existing infrastructure
  */
 
-import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { SyncConfigService } from './SyncConfigService';
-import { SyncHealthService } from './SyncHealthService';
-import { SyncMetricsService } from './SyncMetricsService';
+import { Logger, ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { SyncModule } from './SyncModule';
+import { SyncHealthService } from './SyncHealthService';
+import { SyncConfigService } from './SyncConfigService';
+import { SyncMetricsService } from './SyncMetricsService';
 
 export class SyncServer {
   private readonly logger = new Logger(SyncServer.name);
@@ -27,7 +27,7 @@ export class SyncServer {
 
       // Create NestJS application
       this.app = await NestFactory.create(SyncModule, {
-        logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+        logger: ['error', 'warn', 'log', 'debug', 'verbose']
       });
 
       // Get services
@@ -55,6 +55,7 @@ export class SyncServer {
 
       // Setup graceful shutdown
       this.setupGracefulShutdown();
+
     } catch (error) {
       this.logger.error('Failed to start Sync Core server', error);
       process.exit(1);
@@ -73,13 +74,11 @@ export class SyncServer {
     });
 
     // Global validation pipe
-    this.app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-      })
-    );
+    this.app.useGlobalPipes(new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }));
 
     // Setup Swagger documentation
     const config = new DocumentBuilder()
@@ -115,7 +114,7 @@ export class SyncServer {
         this.logger.error('Health check failed', error);
         res.status(503).json({
           status: 'unhealthy',
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : 'Unknown error'
         });
       }
     });
@@ -127,7 +126,7 @@ export class SyncServer {
         const ready = health.overall !== 'unhealthy';
         res.status(ready ? 200 : 503).json({
           ready,
-          status: health.overall,
+          status: health.overall
         });
       } catch (error) {
         res.status(503).json({ ready: false, error: 'Health check failed' });
@@ -141,7 +140,7 @@ export class SyncServer {
         const started = this.healthService && this.configService && this.metricsService;
         res.status(started ? 200 : 503).json({
           started: !!started,
-          timestamp: new Date().toISOString(),
+          timestamp: new Date().toISOString()
         });
       } catch (error) {
         res.status(503).json({ started: false, error: 'Startup check failed' });
@@ -156,7 +155,7 @@ export class SyncServer {
       } catch (error) {
         this.logger.error('Detailed health check failed', error);
         res.status(500).json({
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : 'Unknown error'
         });
       }
     });
@@ -192,7 +191,7 @@ export class SyncServer {
       } catch (error) {
         this.logger.error('Failed to get JSON metrics', error);
         res.status(500).json({
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : 'Unknown error'
         });
       }
     });

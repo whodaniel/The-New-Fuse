@@ -5,25 +5,25 @@ interface FeatureSuggestionCardProps {
   suggestion: FeatureSuggestion;
   onVote: (id: string) => Promise<void>;
   onConvert: (id: string) => Promise<void>;
-  onAddTodo: (todo: { title: string; suggestionId: string }) => Promise<void>;
+  onAddTodo: (todo: { title: string, suggestionId: string }) => Promise<void>;
   onAddComment: (content: string) => Promise<void>;
   currentUserId: string;
 }
 
-const FeatureSuggestionCard: React.FC<FeatureSuggestionCardProps> = ({
-  suggestion,
-  onVote,
-  onConvert,
-  onAddTodo,
-  onAddComment,
-  currentUserId,
+const FeatureSuggestionCard: React.FC<FeatureSuggestionCardProps> = ({ 
+  suggestion, 
+  onVote, 
+  onConvert, 
+  onAddTodo, 
+  onAddComment, 
+  currentUserId 
 }) => {
   const [newComment, setNewComment] = useState('');
   const [newTodoTitle, setNewTodoTitle] = useState('');
-
+  
   const handleVote = () => onVote(suggestion.id);
   const handleConvert = () => onConvert(suggestion.id);
-
+  
   const handleAddComment = (e: React.FormEvent) => {
     e.preventDefault();
     if (newComment.trim()) {
@@ -31,13 +31,13 @@ const FeatureSuggestionCard: React.FC<FeatureSuggestionCardProps> = ({
       setNewComment('');
     }
   };
-
+  
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
     if (newTodoTitle.trim()) {
       onAddTodo({
         title: newTodoTitle,
-        suggestionId: suggestion.id,
+        suggestionId: suggestion.id
       });
       setNewTodoTitle('');
     }
@@ -51,23 +51,17 @@ const FeatureSuggestionCard: React.FC<FeatureSuggestionCardProps> = ({
           <p className="text-gray-600">{suggestion.description}</p>
         </div>
         <div className="flex items-center space-x-2">
-          <button
-            onClick={handleVote}
-            className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200"
-          >
+          <button onClick={handleVote} className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200">
             ⬆️ {suggestion.votes}
           </button>
           {suggestion.status !== SuggestionStatus.CONVERTED && (
-            <button
-              onClick={handleConvert}
-              className="px-3 py-1 bg-green-100 text-green-600 rounded-full hover:bg-green-200"
-            >
+            <button onClick={handleConvert} className="px-3 py-1 bg-green-100 text-green-600 rounded-full hover:bg-green-200">
               Convert to Feature
             </button>
           )}
         </div>
       </div>
-
+      
       <div className="flex flex-wrap gap-2 mt-2 mb-3">
         {suggestion.tags.map((tag) => (
           <span key={tag} className="px-2 py-1 bg-gray-100 text-gray-600 text-sm rounded-full">
@@ -75,7 +69,7 @@ const FeatureSuggestionCard: React.FC<FeatureSuggestionCardProps> = ({
           </span>
         ))}
       </div>
-
+      
       <div className="mt-4">
         <h4 className="text-sm font-medium mb-2">Add a comment</h4>
         <form onSubmit={handleAddComment} className="flex gap-2">
@@ -91,7 +85,7 @@ const FeatureSuggestionCard: React.FC<FeatureSuggestionCardProps> = ({
           </button>
         </form>
       </div>
-
+      
       <div className="mt-4">
         <h4 className="text-sm font-medium mb-2">Add a todo</h4>
         <form onSubmit={handleAddTodo} className="flex gap-2">
@@ -131,21 +125,18 @@ const FeatureSuggestionList: React.FC<FeatureSuggestionListProps> = ({
   return (
     <div className="space-y-4">
       {suggestions.map((suggestion: FeatureSuggestion) => (
-        <div
-          key={suggestion.id}
-          className="bg-white rounded-lg shadow-sm p-4 border border-gray-200"
-        >
+        <div key={suggestion.id} className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
           <div className="flex justify-between items-start">
             <h4 className="font-medium text-gray-900">{suggestion.title}</h4>
             <div className="flex space-x-2">
-              <button
-                onClick={() => onUpdateStatus(suggestion.id, SuggestionStatus.UNDER_REVIEW)}
+              <button 
+                onClick={() => onUpdateStatus(suggestion.id, SuggestionStatus.UNDER_REVIEW)} 
                 className="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200"
               >
                 Review
               </button>
-              <button
-                onClick={() => onConvertToFeature(suggestion.id)}
+              <button 
+                onClick={() => onConvertToFeature(suggestion.id)} 
                 className="px-3 py-1 text-sm bg-green-100 text-green-800 rounded-lg hover:bg-green-200"
               >
                 Convert

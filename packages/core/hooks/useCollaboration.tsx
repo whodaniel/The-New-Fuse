@@ -11,9 +11,11 @@ import {
 export function useCollaboration(
   websocketUrl: string,
   initialState: CollaborationState,
-  currentUser: User,
+  currentUser: User
 ): unknown {
-  const [manager] = useState(() => new CollaborationManager(websocketUrl, initialState));
+  const [manager] = useState(
+    () => new CollaborationManager(websocketUrl, initialState)
+  );
   const [state, setState] = useState<CollaborationState>(initialState);
 
   useEffect(() => {
@@ -56,18 +58,22 @@ export function useCollaboration(
         ...(widgetId && { widgetId }),
       });
     },
-    [manager, currentUser],
+    [manager, currentUser]
   );
 
   const resolveComment = useCallback(
     (comment: Comment) => {
       (manager as any).resolveComment((comment as any).id, currentUser);
     },
-    [manager, currentUser],
+    [manager, currentUser]
   );
 
   const addAnnotation = useCallback(
-    (widgetId: string, content: string, position: { x: number; y: number }) => {
+    (
+      widgetId: string,
+      content: string,
+      position: { x: number; y: number }
+    ) => {
       (manager as any).addAnnotation({
         widgetId,
         content,
@@ -75,32 +81,35 @@ export function useCollaboration(
         author: currentUser,
       });
     },
-    [manager, currentUser],
+    [manager, currentUser]
   );
 
   const updateAnnotation = useCallback(
     (annotationId: string, updates: Partial<Annotation>) => {
       (manager as any).updateAnnotation(annotationId, updates);
     },
-    [manager],
+    [manager]
   );
 
   const trackActivity = useCallback(
-    (type: ActivityEvent['type'], metadata: Record<string, unknown> = {}) => {
+    (
+      type: ActivityEvent['type'],
+      metadata: Record<string, unknown> = {}
+    ) => {
       (manager as any).trackActivity({
         type,
         user: currentUser,
         metadata,
       });
     },
-    [manager, currentUser],
+    [manager, currentUser]
   );
 
   const updateCursor = useCallback(
     (position: { x: number; y: number }) => {
       (manager as any).updateCursor((currentUser as any).id, position);
     },
-    [manager, (currentUser as any).id],
+    [manager, (currentUser as any).id]
   );
 
   return {

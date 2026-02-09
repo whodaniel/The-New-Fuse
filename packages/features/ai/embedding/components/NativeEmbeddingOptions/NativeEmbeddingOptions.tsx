@@ -1,3 +1,4 @@
+import React from 'react';
 import type { BaseEmbeddingSettings } from '@/types/embedding';
 import { COMMON_STYLES } from '@/types/embedding';
 
@@ -5,7 +6,10 @@ interface NativeEmbeddingOptionsProps {
   settings: BaseEmbeddingSettings;
 }
 
-const NATIVE_MODELS = ['all-MiniLM-L6-v2', 'multilingual-e5-large'];
+const NATIVE_MODELS = [
+  'all-MiniLM-L6-v2',
+  'multilingual-e5-large'
+];
 
 export function NativeEmbeddingOptions({ settings }: NativeEmbeddingOptionsProps) {
   return (

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 
 interface AuditLog {
@@ -21,7 +21,7 @@ export function useAuditLogs(): any {
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [filters, setFilters] = useState<LogFilters>({
     type: '',
-    search: '',
+    search: ''
   });
   const [loading, setLoading] = useState(true);
 

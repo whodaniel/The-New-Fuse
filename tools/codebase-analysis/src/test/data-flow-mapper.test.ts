@@ -66,7 +66,7 @@ describe('DataFlowMapper', () => {
     it('should identify repositories', () => {
       const determineNodeTypeMethod = (mapper as any).determineNodeType.bind(mapper);
       
-      const repositoryContent = 'await drizzle.user.findMany()';
+      const repositoryContent = 'await prisma.user.findMany()';
       const result = determineNodeTypeMethod('src/repositories/UserRepository.ts', repositoryContent);
       
       expect(result).toBe('repository');
@@ -190,11 +190,11 @@ describe('DataFlowMapper', () => {
   });
 
   describe('extractDatabaseOperations', () => {
-    it('should extract Drizzle operations', () => {
+    it('should extract Prisma operations', () => {
       const extractDatabaseOperationsMethod = (mapper as any).extractDatabaseOperations.bind(mapper);
       
       const lines = [
-        'const users = await drizzle.user.findMany({',
+        'const users = await prisma.user.findMany({',
         '  where: { isActive: true }',
         '});'
       ];
@@ -254,21 +254,21 @@ describe('DataFlowMapper', () => {
     it('should assess findMany without pagination as inefficient', () => {
       const assessQueryPerformanceMethod = (mapper as any).assessQueryPerformance.bind(mapper);
       
-      const result = assessQueryPerformanceMethod('await drizzle.user.findMany()');
+      const result = assessQueryPerformanceMethod('await prisma.user.findMany()');
       expect(result).toBe('inefficient');
     });
 
     it('should assess findMany with include as moderate', () => {
       const assessQueryPerformanceMethod = (mapper as any).assessQueryPerformance.bind(mapper);
       
-      const result = assessQueryPerformanceMethod('await drizzle.user.findMany({ include: { posts: true } })');
+      const result = assessQueryPerformanceMethod('await prisma.user.findMany({ include: { posts: true } })');
       expect(result).toBe('moderate');
     });
 
     it('should assess simple queries as efficient', () => {
       const assessQueryPerformanceMethod = (mapper as any).assessQueryPerformance.bind(mapper);
       
-      const result = assessQueryPerformanceMethod('await drizzle.user.findUnique({ where: { id } })');
+      const result = assessQueryPerformanceMethod('await prisma.user.findUnique({ where: { id } })');
       expect(result).toBe('efficient');
     });
   });

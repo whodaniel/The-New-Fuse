@@ -39,7 +39,7 @@ export const ConsoleView: React.FC<ConsoleViewProps> = ({ initialTab = 'connecti
       elements: 1,
       chat: 2,
       services: 3,
-      logs: 3, // 'logs' maps to Services for now as per previous structure context, or maybe 0? Let's use 0 as default if unknown.
+      logs: 3 // 'logs' maps to Services for now as per previous structure context, or maybe 0? Let's use 0 as default if unknown.
     };
     if (initialTab && tabMap[initialTab] !== undefined) {
       setTabIndex(tabMap[initialTab]);

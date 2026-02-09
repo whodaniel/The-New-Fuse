@@ -1,14 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DatabaseService, eq } from '@the-new-fuse/database';
+import { DatabaseService } from '@the-new-fuse/database/drizzle';
 import { payPalSubscriptions } from '@the-new-fuse/database/drizzle/schema';
-// Use global fetch (Node.js 18+) or dynamic import for node-fetch
-const fetch =
-  globalThis.fetch ||
-  (async (url: string, options?: any) => {
-    const { default: nodeFetch } = await import('node-fetch');
-    return nodeFetch(url, options);
-  });
+import { eq } from 'drizzle-orm';
+import fetch from 'node-fetch'; // Standard fetch might be available in Node 18+
 
 @Injectable()
 export class PayPalService {

@@ -9,7 +9,7 @@ import { Logger } from '../utils/Logger';
 export enum CircuitState {
   CLOSED = 'closed',
   OPEN = 'open',
-  HALF_OPEN = 'half_open',
+  HALF_OPEN = 'half_open'
 }
 
 export interface CircuitBreakerConfig {
@@ -68,16 +68,16 @@ export class CircuitBreaker<T = any> extends EventEmitter {
   private readonly config: CircuitBreakerConfig;
   private readonly logger: Logger;
   private readonly name: string;
-
+  
   private state: CircuitState = CircuitState.CLOSED;
   private failureCount = 0;
   private successCount = 0;
   private lastFailureTime?: Date;
   private nextAttemptTime?: Date;
-
+  
   // Rolling window for failure tracking
   private readonly requestHistory: Array<{ timestamp: Date; success: boolean }> = [];
-
+  
   // Statistics
   private totalRequests = 0;
   private successfulRequests = 0;
@@ -85,9 +85,13 @@ export class CircuitBreaker<T = any> extends EventEmitter {
   private rejectedRequests = 0;
   private lastStateChange = new Date();
 
-  constructor(name: string, config: Partial<CircuitBreakerConfig> = {}, logger?: Logger) {
+  constructor(
+    name: string,
+    config: Partial<CircuitBreakerConfig> = {},
+    logger?: Logger
+  ) {
     super();
-
+    
     this.name = name;
     this.config = {
       failureThreshold: 5,
@@ -96,11 +100,11 @@ export class CircuitBreaker<T = any> extends EventEmitter {
       rollingWindowSize: 10,
       rollingWindowTime: 60000, // 1 minute
       enableMonitoring: true,
-      ...config,
+      ...config
     };
-
+    
     this.logger = logger || new Logger(`CircuitBreaker:${name}`);
-
+    
     if (this.config.enableMonitoring) {
       this.startMonitoring();
     }
@@ -118,12 +122,12 @@ export class CircuitBreaker<T = any> extends EventEmitter {
       if (!this.canAttemptReset()) {
         this.rejectedRequests++;
         this.emit('requestRejected', this.name, this.state);
-
+        
         return {
           success: false,
           rejected: true,
           executionTime: Date.now() - startTime,
-          error: new Error(`Circuit breaker is OPEN for ${this.name}`),
+          error: new Error(`Circuit breaker is OPEN for ${this.name}`)
         };
       } else {
         // Transition to half-open
@@ -134,25 +138,25 @@ export class CircuitBreaker<T = any> extends EventEmitter {
     try {
       const result = await fn();
       const executionTime = Date.now() - startTime;
-
+      
       this.onSuccess();
-
+      
       return {
         success: true,
         data: result,
         rejected: false,
-        executionTime,
+        executionTime
       };
     } catch (error) {
       const executionTime = Date.now() - startTime;
-
+      
       this.onFailure(error instanceof Error ? error : new Error(String(error)));
-
+      
       return {
         success: false,
         error: error instanceof Error ? error : new Error(String(error)),
         rejected: false,
-        executionTime,
+        executionTime
       };
     }
   }
@@ -162,9 +166,8 @@ export class CircuitBreaker<T = any> extends EventEmitter {
    */
   getStats(): CircuitBreakerStats {
     const now = Date.now();
-    const timeUntilRetry = this.nextAttemptTime
-      ? Math.max(0, this.nextAttemptTime.getTime() - now)
-      : undefined;
+    const timeUntilRetry = this.nextAttemptTime ? 
+      Math.max(0, this.nextAttemptTime.getTime() - now) : undefined;
 
     return {
       state: this.state,
@@ -172,11 +175,12 @@ export class CircuitBreaker<T = any> extends EventEmitter {
       successfulRequests: this.successfulRequests,
       failedRequests: this.failedRequests,
       rejectedRequests: this.rejectedRequests,
-      successRate:
-        this.totalRequests > 0 ? (this.successfulRequests / this.totalRequests) * 100 : 0,
-      failureRate: this.totalRequests > 0 ? (this.failedRequests / this.totalRequests) * 100 : 0,
+      successRate: this.totalRequests > 0 ? 
+        (this.successfulRequests / this.totalRequests) * 100 : 0,
+      failureRate: this.totalRequests > 0 ? 
+        (this.failedRequests / this.totalRequests) * 100 : 0,
       lastStateChange: this.lastStateChange,
-      timeUntilRetry,
+      timeUntilRetry
     };
   }
 
@@ -190,7 +194,7 @@ export class CircuitBreaker<T = any> extends EventEmitter {
     this.lastFailureTime = undefined;
     this.nextAttemptTime = undefined;
     this.requestHistory.length = 0;
-
+    
     this.logger.info(`Circuit breaker ${this.name} manually reset`);
     this.emit('manualReset', this.name);
   }
@@ -225,7 +229,7 @@ export class CircuitBreaker<T = any> extends EventEmitter {
 
     if (this.state === CircuitState.HALF_OPEN) {
       this.successCount++;
-
+      
       if (this.successCount >= this.config.successThreshold) {
         this.transitionTo(CircuitState.CLOSED);
         this.failureCount = 0;
@@ -274,10 +278,10 @@ export class CircuitBreaker<T = any> extends EventEmitter {
     // Rolling window check
     const recentFailures = this.getRecentFailures();
     const recentRequests = this.getRecentRequests();
-
+    
     if (recentRequests >= this.config.rollingWindowSize) {
       const failureRate = recentFailures / recentRequests;
-      return failureRate >= this.config.failureThreshold / this.config.rollingWindowSize;
+      return failureRate >= (this.config.failureThreshold / this.config.rollingWindowSize);
     }
 
     return false;
@@ -322,8 +326,8 @@ export class CircuitBreaker<T = any> extends EventEmitter {
 
     // Clean up old entries
     const cutoff = new Date(now.getTime() - this.config.rollingWindowTime);
-    const firstValidIndex = this.requestHistory.findIndex((entry) => entry.timestamp >= cutoff);
-
+    const firstValidIndex = this.requestHistory.findIndex(entry => entry.timestamp >= cutoff);
+    
     if (firstValidIndex > 0) {
       this.requestHistory.splice(0, firstValidIndex);
     }
@@ -339,7 +343,8 @@ export class CircuitBreaker<T = any> extends EventEmitter {
    */
   private getRecentFailures(): number {
     const cutoff = new Date(Date.now() - this.config.rollingWindowTime);
-    return this.requestHistory.filter((entry) => entry.timestamp >= cutoff && !entry.success)
+    return this.requestHistory
+      .filter(entry => entry.timestamp >= cutoff && !entry.success)
       .length;
   }
 
@@ -348,7 +353,9 @@ export class CircuitBreaker<T = any> extends EventEmitter {
    */
   private getRecentRequests(): number {
     const cutoff = new Date(Date.now() - this.config.rollingWindowTime);
-    return this.requestHistory.filter((entry) => entry.timestamp >= cutoff).length;
+    return this.requestHistory
+      .filter(entry => entry.timestamp >= cutoff)
+      .length;
   }
 
   /**
@@ -382,24 +389,24 @@ export class CircuitBreakerManager extends EventEmitter {
    * Create or get a circuit breaker
    */
   getCircuitBreaker<T = any>(
-    name: string,
+    name: string, 
     config?: Partial<CircuitBreakerConfig>
   ): CircuitBreaker<T> {
     let circuitBreaker = this.circuitBreakers.get(name);
-
+    
     if (!circuitBreaker) {
       circuitBreaker = new CircuitBreaker<T>(name, config, this.logger);
       this.circuitBreakers.set(name, circuitBreaker);
-
+      
       // Forward events
       circuitBreaker.on('stateChange', (...args) => this.emit('stateChange', ...args));
       circuitBreaker.on('requestFailure', (...args) => this.emit('requestFailure', ...args));
       circuitBreaker.on('requestSuccess', (...args) => this.emit('requestSuccess', ...args));
       circuitBreaker.on('requestRejected', (...args) => this.emit('requestRejected', ...args));
-
+      
       this.logger.debug(`Created circuit breaker: ${name}`);
     }
-
+    
     return circuitBreaker as CircuitBreaker<T>;
   }
 
@@ -408,11 +415,11 @@ export class CircuitBreakerManager extends EventEmitter {
    */
   getAllStats(): Record<string, CircuitBreakerStats> {
     const stats: Record<string, CircuitBreakerStats> = {};
-
+    
     for (const [name, circuitBreaker] of this.circuitBreakers) {
       stats[name] = circuitBreaker.getStats();
     }
-
+    
     return stats;
   }
 
@@ -423,7 +430,7 @@ export class CircuitBreakerManager extends EventEmitter {
     for (const [name, circuitBreaker] of this.circuitBreakers) {
       circuitBreaker.reset();
     }
-
+    
     this.logger.info('All circuit breakers reset');
     this.emit('allReset');
   }
@@ -465,11 +472,11 @@ export class CircuitBreakerManager extends EventEmitter {
   } {
     const stats = this.getAllStats();
     const totalCircuits = Object.keys(stats).length;
-
+    
     let healthyCircuits = 0;
     let openCircuits = 0;
     let halfOpenCircuits = 0;
-
+    
     for (const stat of Object.values(stats)) {
       switch (stat.state) {
         case CircuitState.CLOSED:
@@ -483,13 +490,13 @@ export class CircuitBreakerManager extends EventEmitter {
           break;
       }
     }
-
+    
     return {
       healthy: openCircuits === 0,
       totalCircuits,
       healthyCircuits,
       openCircuits,
-      halfOpenCircuits,
+      halfOpenCircuits
     };
   }
 }

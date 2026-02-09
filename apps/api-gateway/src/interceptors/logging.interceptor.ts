@@ -3,10 +3,16 @@
  * Logs requests and responses for the API Gateway
  */
 
-import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
-import { Request, Response } from 'express';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+  Logger,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -19,15 +25,19 @@ export class LoggingInterceptor implements NestInterceptor {
     const userAgent = headers['user-agent'] || '';
     const startTime = Date.now();
 
-    this.logger.log(`Incoming Request: ${method} ${url} - User-Agent: ${userAgent}`);
+    this.logger.log(
+      `Incoming Request: ${method} ${url} - User-Agent: ${userAgent}`,
+    );
 
     return next.handle().pipe(
       tap(() => {
         const duration = Date.now() - startTime;
         const { statusCode } = response;
-
-        this.logger.log(`Outgoing Response: ${method} ${url} - ${statusCode} - ${duration}ms`);
-      })
+        
+        this.logger.log(
+          `Outgoing Response: ${method} ${url} - ${statusCode} - ${duration}ms`,
+        );
+      }),
     );
   }
 }

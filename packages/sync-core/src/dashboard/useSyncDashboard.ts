@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 /**
  * Dashboard update types from the sync system
  */
-export type DashboardUpdateType =
+export type DashboardUpdateType = 
   | 'sync_metrics'
   | 'sync_health'
   | 'agent_status'
@@ -142,7 +142,7 @@ export function useSyncDashboard(config: UseSyncDashboardConfig = {}): UseSyncDa
     userId,
     autoConnect = true,
     reconnectAttempts = 5,
-    updateInterval = 30000, // 30 seconds
+    updateInterval = 30000 // 30 seconds
   } = config;
 
   // State management
@@ -151,7 +151,7 @@ export function useSyncDashboard(config: UseSyncDashboardConfig = {}): UseSyncDa
     health: null,
     alerts: [],
     operations: [],
-    lastUpdated: null,
+    lastUpdated: null
   });
 
   const [isConnected, setIsConnected] = useState(false);
@@ -178,12 +178,12 @@ export function useSyncDashboard(config: UseSyncDashboardConfig = {}): UseSyncDa
         query: {
           agentId: `dashboard_${userId || 'anonymous'}`,
           tenantId: tenantId || 'global',
-          capabilities: JSON.stringify(['dashboard']),
+          capabilities: JSON.stringify(['dashboard'])
         },
         transports: ['websocket'],
         reconnection: true,
         reconnectionAttempts: reconnectAttempts,
-        reconnectionDelay: 1000,
+        reconnectionDelay: 1000
       });
 
       socketRef.current = socket;
@@ -194,7 +194,7 @@ export function useSyncDashboard(config: UseSyncDashboardConfig = {}): UseSyncDa
         setIsLoading(false);
         setError(null);
         reconnectAttemptsRef.current = 0;
-
+        
         // Request initial dashboard data
         socket.emit('get_dashboard_data', { tenantId });
       });
@@ -217,7 +217,7 @@ export function useSyncDashboard(config: UseSyncDashboardConfig = {}): UseSyncDa
       socket.on('dashboard_data', (dashboardData: DashboardData) => {
         setData({
           ...dashboardData,
-          lastUpdated: new Date(),
+          lastUpdated: new Date()
         });
         setIsLoading(false);
       });
@@ -226,10 +226,9 @@ export function useSyncDashboard(config: UseSyncDashboardConfig = {}): UseSyncDa
       socket.on('error', (err) => {
         setError(`Socket error: ${err.error || err.message || 'Unknown error'}`);
       });
+
     } catch (err) {
-      setError(
-        `Failed to initialize connection: ${err instanceof Error ? err.message : 'Unknown error'}`
-      );
+      setError(`Failed to initialize connection: ${err instanceof Error ? err.message : 'Unknown error'}`);
       setIsLoading(false);
     }
   }, [tenantId, userId, reconnectAttempts]);
@@ -242,59 +241,56 @@ export function useSyncDashboard(config: UseSyncDashboardConfig = {}): UseSyncDa
       socketRef.current.disconnect();
       socketRef.current = null;
     }
-
+    
     if (refreshIntervalRef.current) {
       clearInterval(refreshIntervalRef.current);
       refreshIntervalRef.current = null;
     }
-
+    
     setIsConnected(false);
   }, []);
 
   /**
    * Handle incoming dashboard updates
    */
-  const handleDashboardUpdate = useCallback(
-    (update: DashboardUpdate) => {
-      setData((prevData) => {
-        const newData = { ...prevData };
-
-        switch (update.type) {
-          case 'sync_metrics':
-            newData.metrics = update.data;
-            break;
-
-          case 'sync_health':
-            newData.health = update.data;
-            break;
-
-          case 'system_alert':
-            // Add new alert to the beginning of the array
-            newData.alerts = [update.data, ...prevData.alerts.slice(0, 99)]; // Keep max 100 alerts
-            break;
-
-          case 'sync_operation':
-            // Add new operation to the beginning of the array
-            newData.operations = [update.data, ...prevData.operations.slice(0, 49)]; // Keep max 50 operations
-            break;
-
-          case 'agent_status':
-          case 'task_progress':
-          case 'file_change':
-          case 'conflict_detected':
-            // These updates might affect metrics or health, trigger a refresh
-            if (socketRef.current) {
-              socketRef.current.emit('get_dashboard_data', { tenantId });
-            }
-            break;
-        }
-
-        newData.lastUpdated = new Date();
-        return newData;
-      });
-    },
-    [tenantId]
-  );
+  const handleDashboardUpdate = useCallback((update: DashboardUpdate) => {
+    setData(prevData => {
+      const newData = { ...prevData };
+      
+      switch (update.type) {
+        case 'sync_metrics':
+          newData.metrics = update.data;
+          break;
+          
+        case 'sync_health':
+          newData.health = update.data;
+          break;
+          
+        case 'system_alert':
+          // Add new alert to the beginning of the array
+          newData.alerts = [update.data, ...prevData.alerts.slice(0, 99)]; // Keep max 100 alerts
+          break;
+          
+        case 'sync_operation':
+          // Add new operation to the beginning of the array
+          newData.operations = [update.data, ...prevData.operations.slice(0, 49)]; // Keep max 50 operations
+          break;
+          
+        case 'agent_status':
+        case 'task_progress':
+        case 'file_change':
+        case 'conflict_detected':
+          // These updates might affect metrics or health, trigger a refresh
+          if (socketRef.current) {
+            socketRef.current.emit('get_dashboard_data', { tenantId });
+          }
+          break;
+      }
+      
+      newData.lastUpdated = new Date();
+      return newData;
+    });
+  }, [tenantId]);
 
   /**
    * Refresh dashboard data
@@ -311,10 +307,10 @@ export function useSyncDashboard(config: UseSyncDashboardConfig = {}): UseSyncDa
    * Clear all alerts
    */
   const clearAlerts = useCallback(() => {
-    setData((prevData) => ({
+    setData(prevData => ({
       ...prevData,
       alerts: [],
-      lastUpdated: new Date(),
+      lastUpdated: new Date()
     }));
   }, []);
 
@@ -322,10 +318,10 @@ export function useSyncDashboard(config: UseSyncDashboardConfig = {}): UseSyncDa
    * Acknowledge specific alert
    */
   const acknowledgeAlert = useCallback((alertId: string) => {
-    setData((prevData) => ({
+    setData(prevData => ({
       ...prevData,
-      alerts: prevData.alerts.filter((alert) => alert.id !== alertId),
-      lastUpdated: new Date(),
+      alerts: prevData.alerts.filter(alert => alert.id !== alertId),
+      lastUpdated: new Date()
     }));
   }, []);
 
@@ -378,7 +374,7 @@ export function useSyncDashboard(config: UseSyncDashboardConfig = {}): UseSyncDa
     disconnect,
     refresh,
     clearAlerts,
-    acknowledgeAlert,
+    acknowledgeAlert
   };
 }
 
@@ -386,7 +382,7 @@ export function useSyncDashboard(config: UseSyncDashboardConfig = {}): UseSyncDa
  * Helper hook for filtering alerts by level
  */
 export function useFilteredAlerts(alerts: SystemAlert[], level?: SystemAlert['level']) {
-  return alerts.filter((alert) => !level || alert.level === level);
+  return alerts.filter(alert => !level || alert.level === level);
 }
 
 /**
@@ -403,21 +399,21 @@ export function useRecentOperations(operations: SyncOperation[], limit: number =
  */
 export function useHealthScore(health: SyncHealth | null): number {
   if (!health) return 0;
-
+  
   let score = 100;
-
+  
   // Deduct points based on status
   if (health.status === 'degraded') score -= 20;
   else if (health.status === 'unhealthy') score -= 50;
-
+  
   // Deduct points for service issues
-  Object.values(health.services).forEach((serviceStatus) => {
+  Object.values(health.services).forEach(serviceStatus => {
     if (serviceStatus !== 'healthy') score -= 10;
   });
-
+  
   // Deduct points for clock drift
   if (health.clockSync.status === 'drifted') score -= 10;
   else if (health.clockSync.status === 'failed') score -= 30;
-
+  
   return Math.max(0, score);
 }

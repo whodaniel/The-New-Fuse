@@ -50,7 +50,10 @@ export interface EncryptedData {
  * @param keyId - Optional key ID for key rotation tracking
  * @returns Encrypted data object
  */
-export function encryptApiKey(plaintext: string, keyId?: string): EncryptedData {
+export function encryptApiKey(
+  plaintext: string,
+  keyId?: string
+): EncryptedData {
   const password = getEncryptionPassword();
 
   // Generate random salt and IV
@@ -116,7 +119,10 @@ export function decryptApiKey(encrypted: EncryptedData): string {
  */
 export function hashApiKey(apiKey: string): string {
   const crypto = require('crypto');
-  return crypto.createHash('sha256').update(apiKey).digest('base64');
+  return crypto
+    .createHash('sha256')
+    .update(apiKey)
+    .digest('base64');
 }
 
 /**
@@ -135,10 +141,10 @@ export function verifyApiKeyHash(apiKey: string, hash: string): boolean {
  *
  * Usage in migration:
  * ```typescript
- * const configs = await db.lLMConfig.findMany();
+ * const configs = await prisma.lLMConfig.findMany();
  * for (const config of configs) {
  *   const encrypted = encryptApiKey(config.apiKey);
- *   await db.lLMConfig.update({
+ *   await prisma.lLMConfig.update({
  *     where: { id: config.id },
  *     data: {
  *       apiKeyEncrypted: JSON.stringify(encrypted),
@@ -150,13 +156,13 @@ export function verifyApiKeyHash(apiKey: string, hash: string): boolean {
  * ```
  */
 export async function migratePlaintextToEncrypted(
-  db: any,
+  prisma: any,
   tableName: string,
   plaintextField: string,
   encryptedField: string,
   hashField?: string
 ): Promise<number> {
-  const records = await db[tableName].findMany({
+  const records = await prisma[tableName].findMany({
     where: {
       [plaintextField]: { not: null },
       [encryptedField]: null,
@@ -180,7 +186,7 @@ export async function migratePlaintextToEncrypted(
       updateData[hashField] = hashApiKey(plaintext);
     }
 
-    await db[tableName].update({
+    await prisma[tableName].update({
       where: { id: record.id },
       data: updateData,
     });
@@ -197,13 +203,13 @@ export async function migratePlaintextToEncrypted(
  * Re-encrypts all data with new encryption key
  */
 export async function rotateEncryptionKeys(
-  db: any,
+  prisma: any,
   tableName: string,
   encryptedField: string,
   oldKeyId: string,
   newKeyId: string
 ): Promise<number> {
-  const records = await db[tableName].findMany({
+  const records = await prisma[tableName].findMany({
     where: {
       encryptionKeyId: oldKeyId,
     },
@@ -220,7 +226,7 @@ export async function rotateEncryptionKeys(
     // Re-encrypt with new key
     const reencrypted = encryptApiKey(plaintext, newKeyId);
 
-    await db[tableName].update({
+    await prisma[tableName].update({
       where: { id: record.id },
       data: {
         [encryptedField]: JSON.stringify(reencrypted),

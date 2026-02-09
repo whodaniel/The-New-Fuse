@@ -3,7 +3,6 @@
 ## Core Types and Interfaces
 
 ### Memory System
-
 ```typescript
 interface Memory {
   id: string;
@@ -33,7 +32,6 @@ interface MemoryHierarchy {
 ```
 
 ### Task Management
-
 ```typescript
 interface Task {
   id: string;
@@ -49,12 +47,11 @@ enum TaskStatus {
   RUNNING = 'RUNNING',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  SCHEDULED = 'SCHEDULED',
+  SCHEDULED = 'SCHEDULED'
 }
 ```
 
 ### Learning System
-
 ```typescript
 interface LearningData {
   input: string;
@@ -72,7 +69,6 @@ interface NeuralPathway {
 ```
 
 ### Communication
-
 ```typescript
 interface Message {
   id: string;
@@ -87,12 +83,11 @@ enum MessageType {
   SYSTEM = 'SYSTEM',
   TASK = 'TASK',
   RESULT = 'RESULT',
-  ERROR = 'ERROR',
+  ERROR = 'ERROR'
 }
 ```
 
 ### Monitoring
-
 ```typescript
 interface Metric {
   name: string;
@@ -113,7 +108,6 @@ interface AuditLog {
 ```
 
 ### Configuration
-
 ```typescript
 interface AuthConfig {
   jwtSecret: string;
@@ -142,7 +136,6 @@ interface PoolConfig {
 ```
 
 ### Advanced Features
-
 ```typescript
 interface CollectiveNode {
   id: string;
@@ -174,7 +167,6 @@ interface OptimizationConfig {
 ```
 
 ### Agent System
-
 ```typescript
 interface Agent {
   id: string;
@@ -202,7 +194,6 @@ interface AgentProfile {
 ```
 
 ### Communication System
-
 ```typescript
 // Chat Components
 interface ChatProps {
@@ -229,7 +220,6 @@ interface UserMessageProps {
 ```
 
 ### UI Components
-
 ```typescript
 interface MessageCardProps {
   message: Message;
@@ -250,4 +240,3 @@ interface MessageListProps {
   isLoading?: boolean;
   groupByDate?: boolean;
 }
-```

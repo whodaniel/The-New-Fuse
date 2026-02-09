@@ -2,6 +2,8 @@
  * Network Tab - Federation Channels
  */
 
+import React from 'react';
+
 interface Props {
   status: any;
 }

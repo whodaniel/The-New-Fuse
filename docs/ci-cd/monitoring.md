@@ -16,7 +16,6 @@ Guide for monitoring CI/CD pipeline health and setting up alerts.
 ## Overview
 
 Effective monitoring ensures:
-
 - Quick detection of issues
 - Fast incident response
 - Continuous improvement
@@ -27,35 +26,30 @@ Effective monitoring ensures:
 ### CI/CD Health Metrics
 
 #### Build Success Rate
-
 - **Metric**: Percentage of successful builds
 - **Target**: >95%
 - **Alert**: <90% in last 24 hours
 - **Action**: Investigate failing builds
 
 #### Deployment Frequency
-
 - **Metric**: Deployments per day/week
 - **Target**: Multiple per day
 - **Alert**: No deployments in 7 days
 - **Action**: Check if team is blocked
 
 #### Deployment Success Rate
-
 - **Metric**: Percentage of successful deployments
 - **Target**: >95%
 - **Alert**: <90% in last week
 - **Action**: Review deployment process
 
 #### Mean Time to Recovery (MTTR)
-
 - **Metric**: Time from failure to recovery
 - **Target**: <30 minutes
 - **Alert**: >1 hour average
 - **Action**: Improve rollback procedures
 
 #### Change Failure Rate
-
 - **Metric**: Percentage of changes causing incidents
 - **Target**: <5%
 - **Alert**: >10% in last month
@@ -64,28 +58,24 @@ Effective monitoring ensures:
 ### Workflow Metrics
 
 #### Test Suite Duration
-
 - **Metric**: Time to run all tests
 - **Target**: <20 minutes
 - **Alert**: >30 minutes
 - **Action**: Optimize tests or parallelize
 
 #### Build Duration
-
 - **Metric**: Time to build all packages/apps
 - **Target**: <20 minutes
 - **Alert**: >30 minutes
 - **Action**: Optimize builds or cache
 
 #### Queue Time
-
 - **Metric**: Time waiting for runner
 - **Target**: <2 minutes
 - **Alert**: >10 minutes
 - **Action**: Add runners or optimize workflows
 
 #### Cache Hit Rate
-
 - **Metric**: Percentage of cache hits
 - **Target**: >80%
 - **Alert**: <50%
@@ -96,7 +86,6 @@ Effective monitoring ensures:
 ### Built-in Monitoring
 
 #### Workflow Status
-
 ```bash
 # List recent runs
 gh run list --limit 50
@@ -110,7 +99,6 @@ gh run list --workflow=test.yml
 ```
 
 #### Workflow Analytics
-
 - Go to: Repository → Insights → Actions
 - View:
   - Workflow runs over time
@@ -123,7 +111,6 @@ gh run list --workflow=test.yml
 #### Track Build Times
 
 Add to workflows:
-
 ```yaml
 - name: Start timer
   id: start
@@ -167,7 +154,6 @@ Track these in GitHub Actions insights:
 Monitor in Railway dashboard:
 
 #### Service Health
-
 - CPU usage
 - Memory usage
 - Network traffic
@@ -175,7 +161,6 @@ Monitor in Railway dashboard:
 - Error rates
 
 #### Deployment Status
-
 - Active deployments
 - Deployment history
 - Build logs
@@ -200,25 +185,21 @@ railway deployments --service=api-gateway
 ### Key Metrics
 
 #### CPU Usage
-
 - **Target**: <70% average
 - **Alert**: >90% sustained
 - **Action**: Scale up or optimize
 
 #### Memory Usage
-
 - **Target**: <80% of allocated
 - **Alert**: >90% sustained
 - **Action**: Increase memory or fix leaks
 
 #### Response Time
-
 - **Target**: p95 <500ms
 - **Alert**: p95 >1000ms
 - **Action**: Performance optimization
 
 #### Error Rate
-
 - **Target**: <0.1%
 - **Alert**: >1%
 - **Action**: Investigate errors
@@ -241,7 +222,6 @@ Sentry.init({
 ```
 
 **Monitor**:
-
 - Unhandled errors
 - Failed API calls
 - Performance issues
@@ -257,7 +237,6 @@ import newrelic from 'newrelic';
 ```
 
 **Monitor**:
-
 - API response times
 - Database queries
 - External service calls
@@ -271,7 +250,6 @@ railway variables set LOG_DRAIN_URL=<logtail-url>
 ```
 
 **Monitor**:
-
 - Application logs
 - Error logs
 - Access logs
@@ -317,7 +295,6 @@ async getMetrics(): Promise<Metrics> {
 #### Workflow Failure Notifications
 
 Add to workflows:
-
 ```yaml
 - name: Notify on failure
   if: failure()
@@ -331,7 +308,6 @@ Add to workflows:
 #### Email Notifications
 
 Configure in GitHub:
-
 1. Settings → Notifications
 2. Actions → Email notifications
 3. Select: "Send notifications for failed workflows"
@@ -404,13 +380,11 @@ For critical alerts:
 Create custom dashboard:
 
 **Tools**:
-
 - Grafana + GitHub Actions Exporter
 - Custom web dashboard
 - Slack bot with slash commands
 
 **Metrics to display**:
-
 - Success rate by workflow
 - Average duration
 - Queue time
@@ -421,7 +395,6 @@ Create custom dashboard:
 Use Railway's built-in dashboard:
 
 **Key views**:
-
 - Service overview (all services)
 - Resource usage graphs
 - Deployment timeline
@@ -432,7 +405,6 @@ Use Railway's built-in dashboard:
 **Recommended**: Grafana + Prometheus
 
 **Panels**:
-
 1. **Request Rate**: Requests per second
 2. **Error Rate**: Errors per second
 3. **Response Time**: p50, p95, p99
@@ -458,28 +430,24 @@ histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
 ### Alert Levels
 
 #### P0 - Critical
-
 - **Examples**: Production down, data loss
 - **Response**: Immediate (24/7)
 - **Notification**: PagerDuty + Slack
 - **SLA**: 15 minutes to acknowledge
 
 #### P1 - High
-
 - **Examples**: Feature broken, high error rate
 - **Response**: Within 1 hour (business hours)
 - **Notification**: Slack + Email
 - **SLA**: 1 hour to acknowledge
 
 #### P2 - Medium
-
 - **Examples**: Slow performance, minor bugs
 - **Response**: Within 4 hours
 - **Notification**: Slack
 - **SLA**: 4 hours to acknowledge
 
 #### P3 - Low
-
 - **Examples**: Cosmetic issues, enhancements
 - **Response**: Next business day
 - **Notification**: Ticket
@@ -499,14 +467,12 @@ histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
 ### On-Call Rotation
 
 **Setup**:
-
 1. Define on-call schedule
 2. Configure PagerDuty rotation
 3. Document escalation path
 4. Regular rotation (weekly)
 
 **Responsibilities**:
-
 - Monitor alerts
 - Respond to incidents
 - Triage issues

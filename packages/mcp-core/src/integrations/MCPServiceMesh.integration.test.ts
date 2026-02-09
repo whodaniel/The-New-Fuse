@@ -2,15 +2,15 @@
  * Integration tests for MCP Service Mesh Integration
  */
 
-import {
-  AutoDiscoveryConfig,
-  ServiceMeshRegistration,
-  ServiceScalingConfig,
-} from '../interfaces/IMCPServiceMesh';
-import { MCPServiceInfo, ServiceHealth } from '../types/broker';
-import { ServiceStatus } from '../types/common';
 import { MCPServiceMesh } from './MCPServiceMesh';
 import { KubernetesServiceMeshProvider } from './providers/KubernetesServiceMeshProvider';
+import { MCPServiceInfo, ServiceHealth } from '../types/broker';
+import { ServiceStatus } from '../types/common';
+import {
+  ServiceMeshRegistration,
+  ServiceScalingConfig,
+  AutoDiscoveryConfig
+} from '../interfaces/IMCPServiceMesh';
 
 describe('MCPServiceMesh Integration Tests', () => {
   let serviceMesh: MCPServiceMesh;
@@ -26,11 +26,11 @@ describe('MCPServiceMesh Integration Tests', () => {
       token: 'test-token',
       meshType: 'istio',
       defaultLabels: {
-        'app.kubernetes.io/managed-by': 'mcp-service-mesh',
+        'app.kubernetes.io/managed-by': 'mcp-service-mesh'
       },
       defaultAnnotations: {
-        'mcp.io/managed': 'true',
-      },
+        'mcp.io/managed': 'true'
+      }
     });
 
     serviceMesh = new MCPServiceMesh({
@@ -42,29 +42,29 @@ describe('MCPServiceMesh Integration Tests', () => {
         defaultTags: ['mcp-service', 'auto-discovered'],
         defaultMetadata: {
           source: 'mcp-auto-discovery',
-          version: '1.0.0',
+          version: '1.0.0'
         },
         defaultHealthCheck: {
           path: '/health',
           interval: 30,
           timeout: 5000,
           failureThreshold: 3,
-          successThreshold: 1,
+          successThreshold: 1
         },
         defaultLoadBalancing: {
           algorithm: 'round_robin',
-          healthCheckEnabled: true,
-        },
+          healthCheckEnabled: true
+        }
       },
       healthMonitoring: {
         enabled: true,
         interval: 30,
-        timeout: 5000,
+        timeout: 5000
       },
       metricsCollection: {
         enabled: true,
         interval: 60,
-        retention: 3600,
+        retention: 3600
       },
       scaling: {
         enabled: true,
@@ -73,9 +73,9 @@ describe('MCPServiceMesh Integration Tests', () => {
           maxInstances: 10,
           targetCPU: 0.7,
           scaleUpCooldown: 300,
-          scaleDownCooldown: 600,
-        },
-      },
+          scaleDownCooldown: 600
+        }
+      }
     });
 
     mockMCPService = {
@@ -89,14 +89,14 @@ describe('MCPServiceMesh Integration Tests', () => {
           name: 'test-resource',
           uri: 'test://resource/1',
           description: 'Integration test resource',
-          handler: {} as any,
+          handler: {} as any
         },
         {
           name: 'config-resource',
           uri: 'config://app/settings',
           description: 'Application configuration resource',
-          handler: {} as any,
-        },
+          handler: {} as any
+        }
       ],
       tools: [
         {
@@ -106,23 +106,23 @@ describe('MCPServiceMesh Integration Tests', () => {
             type: 'object',
             properties: {
               data: { type: 'array' },
-              algorithm: { type: 'string', enum: ['sort', 'filter', 'transform'] },
+              algorithm: { type: 'string', enum: ['sort', 'filter', 'transform'] }
             },
-            required: ['data', 'algorithm'],
+            required: ['data', 'algorithm']
           },
-          handler: {} as any,
-        },
+          handler: {} as any
+        }
       ],
       status: ServiceStatus.ONLINE,
       metadata: {
         environment: 'test',
         team: 'platform',
-        criticality: 'high',
+        criticality: 'high'
       },
       registeredAt: new Date(),
       lastHeartbeat: new Date(),
       healthScore: 0.95,
-      tags: ['integration-test', 'platform-service'],
+      tags: ['integration-test', 'platform-service']
     };
 
     mockMeshRegistration = {
@@ -136,8 +136,8 @@ describe('MCPServiceMesh Integration Tests', () => {
           protocol: 'http',
           weight: 100,
           metadata: {
-            primary: true,
-          },
+            primary: true
+          }
         },
         {
           address: 'integration-test-service',
@@ -145,15 +145,15 @@ describe('MCPServiceMesh Integration Tests', () => {
           protocol: 'http',
           weight: 0,
           metadata: {
-            metrics: true,
-          },
-        },
+            metrics: true
+          }
+        }
       ],
       metadata: {
         environment: 'test',
         team: 'platform',
         criticality: 'high',
-        deployment: 'blue-green',
+        deployment: 'blue-green'
       },
       healthCheck: {
         path: '/health',
@@ -162,7 +162,7 @@ describe('MCPServiceMesh Integration Tests', () => {
         failureThreshold: 3,
         successThreshold: 1,
         method: 'GET',
-        expectedStatusCodes: [200, 204],
+        expectedStatusCodes: [200, 204]
       },
       loadBalancing: {
         algorithm: 'round_robin',
@@ -172,10 +172,10 @@ describe('MCPServiceMesh Integration Tests', () => {
           failureThreshold: 5,
           recoveryTimeout: 30000,
           halfOpenMaxCalls: 3,
-          minRequestThreshold: 10,
-        },
+          minRequestThreshold: 10
+        }
       },
-      tags: ['mcp-service', 'integration-test', 'platform-service', 'high-availability'],
+      tags: ['mcp-service', 'integration-test', 'platform-service', 'high-availability']
     };
   });
 
@@ -197,7 +197,7 @@ describe('MCPServiceMesh Integration Tests', () => {
 
       // Step 2: Verify service discovery
       const discoveredServices = await serviceMesh.discoverServices({
-        serviceName: 'integration-test-service',
+        serviceName: 'integration-test-service'
       });
 
       expect(discoveredServices).toHaveLength(1);
@@ -237,23 +237,23 @@ describe('MCPServiceMesh Integration Tests', () => {
             metric: 'cpu',
             targetValue: 0.75,
             scaleUpThreshold: 0.85,
-            scaleDownThreshold: 0.6,
+            scaleDownThreshold: 0.6
           },
           {
             name: 'memory-scaling',
             metric: 'memory',
             targetValue: 0.8,
             scaleUpThreshold: 0.9,
-            scaleDownThreshold: 0.7,
+            scaleDownThreshold: 0.7
           },
           {
             name: 'rps-scaling',
             metric: 'rps',
             targetValue: 100,
             scaleUpThreshold: 120,
-            scaleDownThreshold: 80,
-          },
-        ],
+            scaleDownThreshold: 80
+          }
+        ]
       };
 
       const scalingResult = await serviceMesh.configureScaling(
@@ -284,8 +284,8 @@ describe('MCPServiceMesh Integration Tests', () => {
         score: 0.75,
         details: {
           reason: 'High response time detected',
-          affectedEndpoints: ['http://integration-test-service:8080'],
-        },
+          affectedEndpoints: ['http://integration-test-service:8080']
+        }
       };
 
       const healthUpdateResult = await serviceMesh.updateServiceHealth(
@@ -309,7 +309,7 @@ describe('MCPServiceMesh Integration Tests', () => {
 
       // Step 10: Verify service is no longer discoverable
       const servicesAfterUnregistration = await serviceMesh.discoverServices({
-        serviceName: 'integration-test-service',
+        serviceName: 'integration-test-service'
       });
 
       expect(servicesAfterUnregistration).toHaveLength(0);
@@ -327,7 +327,7 @@ describe('MCPServiceMesh Integration Tests', () => {
         defaultMetadata: {
           source: 'auto-discovery',
           managedBy: 'mcp-service-mesh',
-          discoveryVersion: '1.0.0',
+          discoveryVersion: '1.0.0'
         },
         defaultHealthCheck: {
           path: '/health',
@@ -335,13 +335,13 @@ describe('MCPServiceMesh Integration Tests', () => {
           timeout: 5000,
           failureThreshold: 3,
           successThreshold: 1,
-          method: 'GET',
+          method: 'GET'
         },
         defaultLoadBalancing: {
           algorithm: 'least_connections',
           sessionAffinity: true,
-          healthCheckEnabled: true,
-        },
+          healthCheckEnabled: true
+        }
       };
 
       const enableResult = await serviceMesh.enableAutoDiscovery(autoDiscoveryConfig);
@@ -377,27 +377,20 @@ describe('MCPServiceMesh Integration Tests', () => {
             id: `multi-service-${i}`,
             name: `multi-service-${i}`,
             endpoint: `http://multi-service-${i}:8080`,
-            capabilities:
-              i === 1
-                ? ['resource-access']
-                : i === 2
-                  ? ['tool-execution']
-                  : ['workflow-integration'],
-            tags: [`service-${i}`, 'multi-test'],
+            capabilities: i === 1 ? ['resource-access'] : i === 2 ? ['tool-execution'] : ['workflow-integration'],
+            tags: [`service-${i}`, 'multi-test']
           },
           mesh: {
             ...mockMeshRegistration,
             serviceId: `multi-service-${i}`,
             serviceName: `multi-service-${i}`,
-            endpoints: [
-              {
-                address: `multi-service-${i}`,
-                port: 8080,
-                protocol: 'http',
-              },
-            ],
-            tags: [`service-${i}`, 'multi-test', 'mcp-service'],
-          },
+            endpoints: [{
+              address: `multi-service-${i}`,
+              port: 8080,
+              protocol: 'http'
+            }],
+            tags: [`service-${i}`, 'multi-test', 'mcp-service']
+          }
         });
       }
     });
@@ -418,24 +411,26 @@ describe('MCPServiceMesh Integration Tests', () => {
 
       // Test service discovery with different filters
       const allServices = await serviceMesh.discoverServices({
-        tags: ['multi-test'],
+        tags: ['multi-test']
       });
       expect(allServices).toHaveLength(3);
 
       const resourceServices = await serviceMesh.discoverServices({
-        tags: ['capability-resource-access'],
+        tags: ['capability-resource-access']
       });
       expect(resourceServices).toHaveLength(1);
       expect(resourceServices[0].serviceName).toBe('multi-service-1');
 
       const toolServices = await serviceMesh.discoverServices({
-        tags: ['capability-tool-execution'],
+        tags: ['capability-tool-execution']
       });
       expect(toolServices).toHaveLength(1);
       expect(toolServices[0].serviceName).toBe('multi-service-2');
 
       // Test health monitoring for all services
-      const healthPromises = services.map(({ mcp }) => serviceMesh.getServiceHealth(mcp.id));
+      const healthPromises = services.map(({ mcp }) =>
+        serviceMesh.getServiceHealth(mcp.id)
+      );
 
       const healthResults = await Promise.all(healthPromises);
 
@@ -445,7 +440,9 @@ describe('MCPServiceMesh Integration Tests', () => {
       });
 
       // Test metrics collection for all services
-      const metricsPromises = services.map(({ mcp }) => serviceMesh.getServiceMetrics(mcp.id));
+      const metricsPromises = services.map(({ mcp }) =>
+        serviceMesh.getServiceMetrics(mcp.id)
+      );
 
       const metricsResults = await Promise.all(metricsPromises);
 
@@ -462,13 +459,13 @@ describe('MCPServiceMesh Integration Tests', () => {
 
       const unregistrationResults = await Promise.all(unregistrationPromises);
 
-      unregistrationResults.forEach((result) => {
+      unregistrationResults.forEach(result => {
         expect(result.success).toBe(true);
       });
 
       // Verify all services are unregistered
       const servicesAfterCleanup = await serviceMesh.discoverServices({
-        tags: ['multi-test'],
+        tags: ['multi-test']
       });
       expect(servicesAfterCleanup).toHaveLength(0);
     });
@@ -510,7 +507,7 @@ describe('MCPServiceMesh Integration Tests', () => {
       const invalidService = {
         ...mockMCPService,
         id: '', // Invalid empty ID
-        name: '',
+        name: ''
       };
 
       const result = await serviceMesh.registerService(invalidService, mockMeshRegistration);
@@ -525,13 +522,13 @@ describe('MCPServiceMesh Integration Tests', () => {
         mcp: {
           ...mockMCPService,
           id: `concurrent-service-${i}`,
-          name: `concurrent-service-${i}`,
+          name: `concurrent-service-${i}`
         },
         mesh: {
           ...mockMeshRegistration,
           serviceId: `concurrent-service-${i}`,
-          serviceName: `concurrent-service-${i}`,
-        },
+          serviceName: `concurrent-service-${i}`
+        }
       }));
 
       // Register all services concurrently
@@ -543,17 +540,16 @@ describe('MCPServiceMesh Integration Tests', () => {
 
       // Most should succeed (depending on provider limitations)
       const successfulRegistrations = results.filter(
-        (result) => result.status === 'fulfilled' && result.value.success
+        result => result.status === 'fulfilled' && result.value.success
       );
 
       expect(successfulRegistrations.length).toBeGreaterThan(0);
 
       // Cleanup successful registrations
       const cleanupPromises = concurrentServices
-        .filter(
-          (_, index) =>
-            results[index].status === 'fulfilled' &&
-            (results[index] as PromiseFulfilledResult<any>).value.success
+        .filter((_, index) => 
+          results[index].status === 'fulfilled' && 
+          (results[index] as PromiseFulfilledResult<any>).value.success
         )
         .map(({ mcp }) => serviceMesh.unregisterService(mcp.id));
 

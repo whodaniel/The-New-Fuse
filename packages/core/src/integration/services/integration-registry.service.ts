@@ -37,10 +37,10 @@ export class IntegrationRegistryService {
   }
 
   findIntegrationsByCategory(category: string): IntegrationMetadata[] {
-    return this.listIntegrations().filter((integration) => integration.category === category);
+    return this.listIntegrations().filter(integration => integration.category === category);
   }
 
   findIntegrationsByTag(tag: string): IntegrationMetadata[] {
-    return this.listIntegrations().filter((integration) => integration.tags.includes(tag));
+    return this.listIntegrations().filter(integration => integration.tags.includes(tag));
   }
 }

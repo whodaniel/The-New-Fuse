@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
 import { useAgentRealtime } from './useAgentRealtime';
 
@@ -21,10 +21,7 @@ export interface UseAgentsResult {
   fetchAgents: () => Promise<void>;
   getAgent: (id: string) => Promise<Agent | null>;
   createAgent: (agent: Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Agent>;
-  updateAgent: (
-    id: string,
-    data: Partial<Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>>
-  ) => Promise<Agent | null>;
+  updateAgent: (id: string, data: Partial<Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<Agent | null>;
   deleteAgent: (id: string) => Promise<boolean>;
   isRealtimeConnected: boolean;
 }
@@ -33,10 +30,10 @@ export function useAgents(realtimeEnabled = true): UseAgentsResult {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-
+  
   // Initialize real-time updates
   const { isConnected: isRealtimeConnected, subscribeToAgentEvents } = useAgentRealtime({
-    enabled: realtimeEnabled,
+    enabled: realtimeEnabled
   });
 
   const fetchAgents = useCallback(async () => {
@@ -70,42 +67,36 @@ export function useAgents(realtimeEnabled = true): UseAgentsResult {
     }
   }, []);
 
-  const createAgent = useCallback(
-    async (agent: Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>): Promise<Agent> => {
-      try {
-        const response = await api.post('/api/agents', agent);
-        if (response.data.success) {
-          // Note: No need to update local state here as the WebSocket will handle it
-          return response.data.data;
-        }
-        throw new Error(response.data.error || 'Failed to create agent');
-      } catch (err) {
-        console.error('Error creating agent:', err);
-        throw err instanceof Error ? err : new Error('Unknown error occurred');
+  const createAgent = useCallback(async (agent: Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>): Promise<Agent> => {
+    try {
+      const response = await api.post('/api/agents', agent);
+      if (response.data.success) {
+        // Note: No need to update local state here as the WebSocket will handle it
+        return response.data.data;
       }
-    },
-    []
-  );
+      throw new Error(response.data.error || 'Failed to create agent');
+    } catch (err) {
+      console.error('Error creating agent:', err);
+      throw err instanceof Error ? err : new Error('Unknown error occurred');
+    }
+  }, []);
 
-  const updateAgent = useCallback(
-    async (
-      id: string,
-      data: Partial<Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>>
-    ): Promise<Agent | null> => {
-      try {
-        const response = await api.put(`/api/agents/${id}`, data);
-        if (response.data.success) {
-          // Note: No need to update local state here as the WebSocket will handle it
-          return response.data.data;
-        }
-        return null;
-      } catch (err) {
-        console.error(`Error updating agent ${id}:`, err);
-        return null;
+  const updateAgent = useCallback(async (
+    id: string, 
+    data: Partial<Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>>
+  ): Promise<Agent | null> => {
+    try {
+      const response = await api.put(`/api/agents/${id}`, data);
+      if (response.data.success) {
+        // Note: No need to update local state here as the WebSocket will handle it
+        return response.data.data;
       }
-    },
-    []
-  );
+      return null;
+    } catch (err) {
+      console.error(`Error updating agent ${id}:`, err);
+      return null;
+    }
+  }, []);
 
   const deleteAgent = useCallback(async (id: string): Promise<boolean> => {
     try {
@@ -124,24 +115,28 @@ export function useAgents(realtimeEnabled = true): UseAgentsResult {
   // Setup real-time updates for agents
   useEffect(() => {
     if (!realtimeEnabled) return;
-
+    
     const unsubscribe = subscribeToAgentEvents(
       // Handle agent creation
       (newAgent) => {
-        setAgents((prevAgents) => [...prevAgents, newAgent]);
+        setAgents(prevAgents => [...prevAgents, newAgent]);
       },
       // Handle agent update
       (updatedAgent) => {
-        setAgents((prevAgents) =>
-          prevAgents.map((agent) => (agent.id === updatedAgent.id ? updatedAgent : agent))
+        setAgents(prevAgents => 
+          prevAgents.map(agent => 
+            agent.id === updatedAgent.id ? updatedAgent : agent
+          )
         );
       },
       // Handle agent deletion
       (deletedAgent) => {
-        setAgents((prevAgents) => prevAgents.filter((agent) => agent.id !== deletedAgent.id));
+        setAgents(prevAgents => 
+          prevAgents.filter(agent => agent.id !== deletedAgent.id)
+        );
       }
     );
-
+    
     return unsubscribe;
   }, [realtimeEnabled, subscribeToAgentEvents]);
 
@@ -159,6 +154,6 @@ export function useAgents(realtimeEnabled = true): UseAgentsResult {
     createAgent,
     updateAgent,
     deleteAgent,
-    isRealtimeConnected,
+    isRealtimeConnected
   };
 }

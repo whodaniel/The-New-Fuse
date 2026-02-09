@@ -28,7 +28,7 @@ deployment_strategies:
       automatic: true
       failure_threshold: 50
       timeout_seconds: 300
-
+      
   # Blue-Green Deployment Strategy
   blue_green:
     name: "Blue-Green Deployment"
@@ -63,7 +63,7 @@ deployment_strategies:
       automatic: true
       failure_threshold: 25
       timeout_seconds: 180
-
+      
   # Canary Deployment Strategy
   canary:
     name: "Canary Deployment"
@@ -115,28 +115,28 @@ environment_strategies:
   development:
     default_strategy: "rolling_update"
     allowed_strategies: ["rolling_update", "recreate"]
-
+    
   staging:
     default_strategy: "blue_green"
     allowed_strategies: ["rolling_update", "blue_green", "canary"]
-
+    
   production:
     default_strategy: "canary"
     allowed_strategies: ["blue_green", "canary"]
     approval_required: true
-
+    
 # Service-specific strategy overrides
 service_strategies:
   api:
     development: "rolling_update"
     staging: "blue_green"
     production: "canary"
-
+    
   frontend:
     development: "rolling_update"
     staging: "blue_green"
     production: "blue_green"
-
+    
   worker:
     development: "rolling_update"
     staging: "rolling_update"
@@ -161,36 +161,36 @@ rollback_policies:
         timeout: "5m"
       - type: "notify"
         channels: ["slack", "email"]
-
+        
   manual:
     enabled: true
     approval_required: false
     timeout: "30m"
-
+    
 # Monitoring and alerting during deployments
 deployment_monitoring:
   metrics:
     - name: "deployment_duration"
       type: "histogram"
       labels: ["environment", "service", "strategy"]
-
+      
     - name: "deployment_success_rate"
       type: "counter"
       labels: ["environment", "service", "strategy", "status"]
-
+      
     - name: "rollback_count"
       type: "counter"
       labels: ["environment", "service", "reason"]
-
+      
   alerts:
     - name: "deployment_taking_too_long"
       condition: "deployment_duration > 30m"
       severity: "warning"
-
+      
     - name: "deployment_failed"
       condition: "deployment_success_rate{status='failed'} > 0"
       severity: "critical"
-
+      
     - name: "frequent_rollbacks"
       condition: "rate(rollback_count[1h]) > 3"
       severity: "warning"

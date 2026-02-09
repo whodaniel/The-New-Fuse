@@ -40,7 +40,7 @@ function checkBuildArtifacts() {
   const artifacts = [
     { name: 'Theia Frontend Bundle', path: 'apps/theia-ide/lib/frontend/bundle.js' },
     { name: 'Theia Backend', path: 'apps/theia-ide/lib/backend/main.js' },
-    { name: 'Database Types', path: 'packages/database/generated/drizzle/index.d.ts' },
+    { name: 'Database Types', path: 'packages/database/generated/prisma/index.d.ts' },
     { name: 'UI Components', path: 'packages/ui-consolidated/dist/index.js' }
   ];
   

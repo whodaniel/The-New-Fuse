@@ -1,10 +1,11 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { useWebSocket } from '../../hooks/useWebSocket';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { AgentWorkflowManager } from '../AgentWorkflowManager';
+import { useWebSocket } from '../../hooks/useWebSocket';
 
 // Mock the WebSocket hook
 jest.mock('../../hooks/useWebSocket', () => ({
-  useWebSocket: jest.fn(),
+  useWebSocket: jest.fn()
 }));
 
 const mockWorkflows = [
@@ -18,8 +19,8 @@ const mockWorkflows = [
     metrics: {
       tasksCompleted: 150,
       tasksRemaining: 50,
-      errorRate: 2,
-    },
+      errorRate: 2
+    }
   },
   {
     id: '2',
@@ -31,9 +32,9 @@ const mockWorkflows = [
     metrics: {
       tasksCompleted: 80,
       tasksRemaining: 120,
-      errorRate: 5,
-    },
-  },
+      errorRate: 5
+    }
+  }
 ];
 
 describe('AgentWorkflowManager', () => {
@@ -49,13 +50,13 @@ describe('AgentWorkflowManager', () => {
 
     (useWebSocket as jest.Mock).mockReturnValue({
       subscribe: mockSubscribe,
-      send: mockSend,
+      send: mockSend
     });
   });
 
   it('renders workflow list', async () => {
     render(<AgentWorkflowManager />);
-
+    
     await waitFor(() => {
       expect(screen.getByText('Analysis Workflow')).toBeInTheDocument();
       expect(screen.getByText('Trading Workflow')).toBeInTheDocument();
@@ -83,7 +84,7 @@ describe('AgentWorkflowManager', () => {
 
     expect(send).toHaveBeenCalledWith('workflow_action', {
       id: '1',
-      action: 'pause',
+      action: 'pause'
     });
   });
 });

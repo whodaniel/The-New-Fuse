@@ -348,13 +348,12 @@ export class APMService {
     slowTransactions: number;
   } {
     const completed = this.completedTransactions;
-    const avgDuration =
-      completed.length > 0
-        ? completed.reduce((sum, t) => sum + (t.duration || 0), 0) / completed.length
-        : 0;
+    const avgDuration = completed.length > 0
+      ? completed.reduce((sum, t) => sum + (t.duration || 0), 0) / completed.length
+      : 0;
 
     const slowTransactions = completed.filter(
-      (t) => t.duration && t.duration > (this.config.slowRequestThreshold || 1000)
+      t => t.duration && t.duration > (this.config.slowRequestThreshold || 1000)
     ).length;
 
     return {

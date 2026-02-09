@@ -20,7 +20,11 @@ export function A11yProvider({ children }: { children: React.ReactNode }) {
     toggleHighContrast,
   };
 
-  return <A11yContext.Provider value={value}>{children}</A11yContext.Provider>;
+  return (
+    <A11yContext.Provider value={value}>
+      {children}
+    </A11yContext.Provider>
+  );
 }
 
 export function useA11y() {

@@ -1,17 +1,17 @@
-import { WorkspaceData } from '@/types/workspace';
-import renderMarkdown from '@/utils/chat/markdown';
-import { userFromStorage } from '@/utils/request';
-import { TimeStamp } from '@/utils/TimeStamp';
-import { Warning } from '@phosphor-icons/react';
-import createDOMPurify from 'dompurify';
-import React, { memo, ReactElement } from 'react';
-import { v4 } from 'uuid';
+import React, { memo, ReactElement } from "react";
+import { Warning } from "@phosphor-icons/react";
 import UserIcon from '../../../../UserIcon';
-import Citations from '../Citation';
 import Actions from './Actions';
-import { useWatchDeleteMessage } from './Actions/DeleteMessage';
+import renderMarkdown from "@/utils/chat/markdown";
+import { userFromStorage } from "@/utils/request";
+import Citations from '../Citation';
+import { v4 } from "uuid";
+import createDOMPurify from "dompurify";
 import { EditMessageForm, useEditMessage } from './Actions/EditMessage';
+import { useWatchDeleteMessage } from './Actions/DeleteMessage';
 import TTSMessage from './Actions/TTSButton';
+import { WorkspaceData } from "@/types/workspace";
+import { TimeStamp } from "@/utils/TimeStamp";
 
 const DOMPurify = createDOMPurify(window);
 
@@ -24,7 +24,7 @@ interface Source {
 interface HistoricalMessageProps {
   uuid?: string;
   message: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   workspace: WorkspaceData | null;
   sources?: Source[];
   attachments?: {
@@ -39,7 +39,7 @@ interface HistoricalMessageProps {
   saveEditedMessage?: (params: {
     editedMessage: string;
     chatId: string;
-    role: 'user' | 'assistant';
+    role: "user" | "assistant";
     attachments?: File[];
   }) => void;
   forkThread?: (chatId: string) => void;
@@ -48,7 +48,7 @@ interface HistoricalMessageProps {
 }
 
 interface ProfileImageProps {
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   workspace: WorkspaceData | null;
 }
 
@@ -87,19 +87,23 @@ const HistoricalMessage = ({
 
   const adjustTextArea = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const element = event.target;
-    element.style.height = 'auto';
+    element.style.height = "auto";
     element.style.height = `${element.scrollHeight}px`;
   };
 
   if (error) {
     return (
-      <div key={uuid} className={`flex justify-center items-end w-full bg-theme-bg-chat`}>
+      <div
+        key={uuid}
+        className={`flex justify-center items-end w-full bg-theme-bg-chat`}
+      >
         <div className="py-8 px-4 w-full flex gap-x-5 md:max-w-[80%] flex-col">
           <div className="flex gap-x-5">
             <ProfileImage role={role} workspace={workspace} />
             <div className="p-2 rounded-lg bg-red-50 text-red-500">
               <span className="inline-block">
-                <Warning className="h-4 w-4 mb-1 inline-block" /> Could not respond to message.
+                <Warning className="h-4 w-4 mb-1 inline-block" /> Could not
+                respond to message.
               </span>
               <p className="text-xs font-mono mt-2 border-l-2 border-red-300 pl-2 bg-red-200 p-2 rounded-sm">
                 {error}
@@ -117,7 +121,7 @@ const HistoricalMessage = ({
       key={uuid}
       onAnimationEnd={onEndAnimation}
       className={`${
-        isDeleted ? 'animate-remove' : ''
+        isDeleted ? "animate-remove" : ""
       } flex justify-center items-end w-full group bg-theme-bg-chat`}
     >
       <div className="py-8 px-4 w-full flex gap-x-5 md:max-w-[80%] flex-col">
@@ -125,8 +129,12 @@ const HistoricalMessage = ({
           <div className="flex flex-col items-center">
             <ProfileImage role={role} workspace={workspace} />
             <div className="mt-1 -mb-10">
-              {role === 'assistant' && workspace?.slug && chatId && (
-                <TTSMessage slug={workspace.slug} chatId={chatId} message={message} />
+              {role === "assistant" && workspace?.slug && chatId && (
+                <TTSMessage
+                  slug={workspace.slug}
+                  chatId={chatId}
+                  message={message}
+                />
               )}
             </div>
           </div>
@@ -164,14 +172,14 @@ const HistoricalMessage = ({
             forkThread={forkThread}
           />
         </div>
-        {role === 'assistant' && <Citations sources={sources} />}
+        {role === "assistant" && <Citations sources={sources} />}
         <div className="flex items-center gap-2">
           <span className="text-xs text-white/60" title={timestamp.formatDateTime()}>
             {timestamp.formatRelative()}
           </span>
           {editedTimestamp && (
-            <span
-              className="text-xs text-white/40"
+            <span 
+              className="text-xs text-white/40" 
               title={`Edited ${editedTimestamp.formatDateTime()}`}
             >
               (edited {editedTimestamp.formatRelative()})
@@ -184,7 +192,7 @@ const HistoricalMessage = ({
 };
 
 function ProfileImage({ role, workspace }: ProfileImageProps): ReactElement {
-  if (role === 'assistant' && workspace?.pfpUrl) {
+  if (role === "assistant" && workspace?.pfpUrl) {
     return (
       <div className="relative w-[35px] h-[35px] rounded-full flex-shrink-0 overflow-hidden">
         <img
@@ -199,7 +207,7 @@ function ProfileImage({ role, workspace }: ProfileImageProps): ReactElement {
   return (
     <UserIcon
       user={{
-        uid: role === 'user' ? userFromStorage()?.username : workspace?.slug,
+        uid: role === "user" ? userFromStorage()?.username : workspace?.slug,
       }}
       role={role}
     />

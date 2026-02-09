@@ -1,26 +1,30 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
   HttpCode,
   HttpStatus,
   Logger,
-  Param,
-  Post,
-  Put,
-  Query,
-  Req,
   UseGuards,
+  Req,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateResourceDto, SearchResourceDto, UpdateResourceDto } from '../dto';
 import {
-  AccessContext,
-  ResourceAccessControlService,
-} from '../services/resource-access-control.service';
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { ResourceRegistryService } from '../services/resource-registry.service';
-import { Resource, ResourceAction, SearchResult } from '../types';
+import { ResourceAccessControlService, AccessContext } from '../services/resource-access-control.service';
+import { CreateResourceDto, UpdateResourceDto, SearchResourceDto } from '../dto';
+import { Resource, SearchResult, ResourceAction } from '../types';
 
 // Import authentication guards - use service or user auth to support both
 // JWT tokens (users) and API keys (services/agents)
@@ -44,7 +48,7 @@ export class ResourceRegistryController {
 
   constructor(
     private readonly resourceService: ResourceRegistryService,
-    private readonly accessControl: ResourceAccessControlService
+    private readonly accessControl: ResourceAccessControlService,
   ) {}
 
   /**
@@ -63,7 +67,10 @@ export class ResourceRegistryController {
   @ApiResponse({ status: 401, description: 'Unauthorized - Authentication required' })
   @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions' })
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createDto: CreateResourceDto, @Req() request?: any): Promise<Resource> {
+  async create(
+    @Body() createDto: CreateResourceDto,
+    @Req() request?: any,
+  ): Promise<Resource> {
     this.logger.log(`Creating resource: ${createDto.name}`);
 
     const resource = await this.resourceService.create(createDto);
@@ -74,7 +81,7 @@ export class ResourceRegistryController {
       resource.id,
       ResourceAction.UPDATE,
       context.userId || context.agentId,
-      context.isAgent ? 'agent' : 'user'
+      context.isAgent ? 'agent' : 'user',
     );
 
     return resource;
@@ -95,7 +102,7 @@ export class ResourceRegistryController {
   @ApiResponse({ status: 401, description: 'Unauthorized - Authentication required' })
   async search(
     @Query() searchDto: SearchResourceDto,
-    @Req() request?: any
+    @Req() request?: any,
   ): Promise<SearchResult<Resource>> {
     this.logger.log('Searching resources');
 
@@ -126,7 +133,10 @@ export class ResourceRegistryController {
   @ApiResponse({ status: 200, description: 'Resource retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Resource not found' })
   @ApiResponse({ status: 403, description: 'Access denied' })
-  async findById(@Param('id') id: string, @Req() request?: any): Promise<Resource> {
+  async findById(
+    @Param('id') id: string,
+    @Req() request?: any,
+  ): Promise<Resource> {
     this.logger.log(`Getting resource: ${id}`);
 
     const resource = await this.resourceService.findById(id);
@@ -140,7 +150,7 @@ export class ResourceRegistryController {
       resource.id,
       ResourceAction.VIEW,
       context.userId || context.agentId,
-      context.isAgent ? 'agent' : 'user'
+      context.isAgent ? 'agent' : 'user',
     );
 
     return resource;
@@ -155,7 +165,7 @@ export class ResourceRegistryController {
   async update(
     @Param('id') id: string,
     @Body() updateDto: UpdateResourceDto,
-    @Req() request?: any
+    @Req() request?: any,
   ): Promise<Resource> {
     this.logger.log(`Updating resource: ${id}`);
 
@@ -172,7 +182,7 @@ export class ResourceRegistryController {
       resource.id,
       ResourceAction.UPDATE,
       context.userId || context.agentId,
-      context.isAgent ? 'agent' : 'user'
+      context.isAgent ? 'agent' : 'user',
     );
 
     return resource;
@@ -185,7 +195,10 @@ export class ResourceRegistryController {
   @ApiResponse({ status: 404, description: 'Resource not found' })
   @ApiResponse({ status: 403, description: 'Access denied' })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param('id') id: string, @Req() request?: any): Promise<void> {
+  async delete(
+    @Param('id') id: string,
+    @Req() request?: any,
+  ): Promise<void> {
     this.logger.log(`Deleting resource: ${id}`);
 
     const existingResource = await this.resourceService.findById(id);
@@ -201,7 +214,7 @@ export class ResourceRegistryController {
       id,
       ResourceAction.DELETE,
       context.userId || context.agentId,
-      context.isAgent ? 'agent' : 'user'
+      context.isAgent ? 'agent' : 'user',
     );
   }
 
@@ -210,7 +223,10 @@ export class ResourceRegistryController {
   @ApiParam({ name: 'id', description: 'Resource ID' })
   @ApiResponse({ status: 200, description: 'Versions retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Resource not found' })
-  async getVersions(@Param('id') id: string, @Req() request?: any): Promise<any[]> {
+  async getVersions(
+    @Param('id') id: string,
+    @Req() request?: any,
+  ): Promise<any[]> {
     this.logger.log(`Getting versions for resource: ${id}`);
 
     const resource = await this.resourceService.findById(id);
@@ -231,7 +247,7 @@ export class ResourceRegistryController {
   async getVersion(
     @Param('id') id: string,
     @Param('version') version: string,
-    @Req() request?: any
+    @Req() request?: any,
   ): Promise<any> {
     this.logger.log(`Getting version ${version} for resource: ${id}`);
 
@@ -250,7 +266,10 @@ export class ResourceRegistryController {
   @ApiResponse({ status: 200, description: 'Resource content returned' })
   @ApiResponse({ status: 404, description: 'Resource not found' })
   @ApiResponse({ status: 403, description: 'Access denied' })
-  async download(@Param('id') id: string, @Req() request?: any): Promise<any> {
+  async download(
+    @Param('id') id: string,
+    @Req() request?: any,
+  ): Promise<any> {
     this.logger.log(`Downloading resource: ${id}`);
 
     const resource = await this.resourceService.findById(id);
@@ -264,7 +283,7 @@ export class ResourceRegistryController {
       resource.id,
       ResourceAction.DOWNLOAD,
       context.userId || context.agentId,
-      context.isAgent ? 'agent' : 'user'
+      context.isAgent ? 'agent' : 'user',
     );
 
     return {

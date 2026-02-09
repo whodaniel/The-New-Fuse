@@ -1,9 +1,9 @@
-import { Preloader } from '@/components/Preloader';
-import { useProviderEndpointAutoDiscovery } from '@/hooks/useProviderEndpointAutoDiscovery';
-import system from '@/models/system';
-import { CaretDown, CaretUp } from '@phosphor-icons/react';
 import React, { useState } from 'react';
-import { BaseLLMOptionsProps, LLMModel, ModelSelectionProps } from '../../types';
+import { CaretUp, CaretDown } from "@phosphor-icons/react";
+import { Preloader } from "@/components/Preloader";
+import { useProviderEndpointAutoDiscovery } from "@/hooks/useProviderEndpointAutoDiscovery";
+import { BaseLLMOptionsProps, ModelSelectionProps, LLMModel } from '../../types';
+import system from "@/models/system";
 
 interface ClaudeAiSettings extends BaseLLMOptionsProps {
   settings: {
@@ -21,31 +21,33 @@ interface ClaudeModel extends LLMModel {
   generation?: 'claude-3' | 'claude-2' | 'claude-1';
 }
 
-const CLAUDE_COMMON_URLS = ['https://api.anthropic.com/v1'];
+const CLAUDE_COMMON_URLS = [
+  "https://api.anthropic.com/v1"
+];
 
 const DEFAULT_MODELS: ClaudeModel[] = [
-  {
-    id: 'claude-3-opus',
+  { 
+    id: "claude-3-opus",
     contextWindow: 200000,
-    description: 'Most powerful model, best for complex tasks',
-    generation: 'claude-3',
+    description: "Most powerful model, best for complex tasks",
+    generation: "claude-3"
   },
   {
-    id: 'claude-3-sonnet',
+    id: "claude-3-sonnet",
     contextWindow: 200000,
-    description: 'Excellent balance of intelligence and speed',
-    generation: 'claude-3',
+    description: "Excellent balance of intelligence and speed",
+    generation: "claude-3"
   },
   {
-    id: 'claude-2.1',
+    id: "claude-2.1",
     contextWindow: 100000,
-    description: 'Previous generation model',
-    generation: 'claude-2',
-  },
+    description: "Previous generation model",
+    generation: "claude-2"
+  }
 ];
 
 export default function ClaudeAiOptions({ settings }: ClaudeAiSettings): React.ReactElement {
-  const {
+  const { 
     autoDetecting,
     basePath,
     basePathValue,
@@ -53,19 +55,23 @@ export default function ClaudeAiOptions({ settings }: ClaudeAiSettings): React.R
     setShowAdvancedControls,
     handleAutoDetectClick,
   } = useProviderEndpointAutoDiscovery({
-    provider: 'claude',
+    provider: "claude",
     initialBasePath: settings?.ClaudeAiBasePath,
-    ENDPOINTS: CLAUDE_COMMON_URLS,
+    ENDPOINTS: CLAUDE_COMMON_URLS
   });
 
   const [tokenLimit, setTokenLimit] = useState<number>(settings?.ClaudeAiTokenLimit || 100000);
-  const [apiKey] = useState<string>(settings?.ClaudeAiApiKey || '');
-  const [systemPrompt, setSystemPrompt] = useState<string>(settings?.ClaudeAiSystemPrompt || '');
+  const [apiKey] = useState<string>(settings?.ClaudeAiApiKey || "");
+  const [systemPrompt, setSystemPrompt] = useState<string>(settings?.ClaudeAiSystemPrompt || "");
 
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
-        <ClaudeAiModelSelection settings={settings} basePath={basePath.value} apiKey={apiKey} />
+        <ClaudeAiModelSelection 
+          settings={settings} 
+          basePath={basePath.value}
+          apiKey={apiKey}
+        />
         <div className="flex flex-col w-60">
           <label className="text-white text-sm font-semibold block mb-2" id="token-limit-label">
             Token context window
@@ -106,7 +112,7 @@ export default function ClaudeAiOptions({ settings }: ClaudeAiSettings): React.R
           onClick={() => setShowAdvancedControls(!showAdvancedControls)}
           className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
-          {showAdvancedControls ? 'Hide' : 'Show'} Manual Endpoint Input
+          {showAdvancedControls ? "Hide" : "Show"} Manual Endpoint Input
           {showAdvancedControls ? (
             <CaretUp size={14} className="ml-1" />
           ) : (
@@ -155,17 +161,13 @@ export default function ClaudeAiOptions({ settings }: ClaudeAiSettings): React.R
   );
 }
 
-function ClaudeAiModelSelection({
-  settings,
-  basePath = null,
-  apiKey = null,
-}: ModelSelectionProps): React.ReactElement {
+function ClaudeAiModelSelection({ settings, basePath = null, apiKey = null }: ModelSelectionProps): React.ReactElement {
   const [models, setModels] = useState<ClaudeModel[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   React.useEffect(() => {
     async function findModels() {
-      if (!basePath || !basePath.includes('/v1')) {
+      if (!basePath || !basePath.includes("/v1")) {
         setModels([]);
         setLoading(false);
         return;
@@ -173,28 +175,23 @@ function ClaudeAiModelSelection({
 
       setLoading(true);
       try {
-        const { models } = await system.customModels('claude', apiKey, basePath);
+        const { models } = await system.customModels("claude", apiKey, basePath);
         if (models && models.length > 0) {
           // Convert and enhance models with Claude-specific information
-          const enhancedModels: ClaudeModel[] = models
-            .map((model) => ({
-              ...model,
-              contextWindow: model.id.includes('claude-3') ? 200000 : 100000,
-              generation: model.id.includes('claude-3')
-                ? 'claude-3'
-                : model.id.includes('claude-2')
-                  ? 'claude-2'
-                  : 'claude-1',
-            }))
-            .sort((a, b) => b.contextWindow - a.contextWindow);
-
+          const enhancedModels: ClaudeModel[] = models.map(model => ({
+            ...model,
+            contextWindow: model.id.includes('claude-3') ? 200000 : 100000,
+            generation: model.id.includes('claude-3') ? 'claude-3' : 
+                       model.id.includes('claude-2') ? 'claude-2' : 'claude-1'
+          })).sort((a, b) => b.contextWindow - a.contextWindow);
+          
           setModels(enhancedModels);
         } else {
           // Fall back to default models if no models found
           setModels(DEFAULT_MODELS);
         }
       } catch (error) {
-        console.error('Failed to fetch models:', error);
+        console.error("Failed to fetch models:", error);
         // Fall back to default models if API call fails
         setModels(DEFAULT_MODELS);
       }
@@ -245,9 +242,9 @@ function ClaudeAiModelSelection({
           </option>
         ))}
       </select>
-      {models.find((m) => m.id === settings.ClaudeAiModelPref)?.description && (
+      {models.find(m => m.id === settings.ClaudeAiModelPref)?.description && (
         <p className="text-xs text-white/60 mt-1">
-          {models.find((m) => m.id === settings.ClaudeAiModelPref)?.description}
+          {models.find(m => m.id === settings.ClaudeAiModelPref)?.description}
         </p>
       )}
     </div>

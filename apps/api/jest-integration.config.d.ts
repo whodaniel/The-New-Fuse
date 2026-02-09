@@ -6,6 +6,6 @@ export let globalSetup: string;
 export let globalTeardown: string;
 export let coverageDirectory: string;
 export let moduleNameMapper: {
-  '^@/(.*)$': string;
+    '^@/(.*)$': string;
 };
 //# sourceMappingURL=jest-integration.config.d.ts.map

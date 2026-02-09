@@ -28,12 +28,15 @@ export const ChatCore: FC<ChatCoreProps> = ({
   enableVoice = false,
   enableVideo = false,
   enableAttachments = false,
-  className = '',
+  className = ''
 }) => {
   return (
     <div className={`chat-container flex flex-col h-full ${className}`}>
       <ChatHistory messages={messages} />
-      <ChatControls enableVoice={enableVoice} enableVideo={enableVideo} />
+      <ChatControls
+        enableVoice={enableVoice}
+        enableVideo={enableVideo}
+      />
       <PromptInput
         onSend={onSendMessage}
         onTyping={onTyping}

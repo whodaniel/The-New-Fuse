@@ -1,6 +1,11 @@
+import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './Accordion';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from './Accordion';
 
 const meta: Meta<typeof Accordion> = {
   title: 'Components/Accordion',
@@ -35,7 +40,9 @@ export const Default: Story = {
     <Accordion className="w-[400px]" {...args}>
       <AccordionItem value="item-1">
         <AccordionTrigger>Is it accessible?</AccordionTrigger>
-        <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
+        <AccordionContent>
+          Yes. It adheres to the WAI-ARIA design pattern.
+        </AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-2">
         <AccordionTrigger>Is it styled?</AccordionTrigger>
@@ -90,39 +97,51 @@ export const Variants: Story = {
         <Accordion type="single" defaultValue="item-1" className="w-[400px]">
           <AccordionItem value="item-1">
             <AccordionTrigger>Default variant</AccordionTrigger>
-            <AccordionContent>This is the default variant of the accordion.</AccordionContent>
+            <AccordionContent>
+              This is the default variant of the accordion.
+            </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
             <AccordionTrigger>Another item</AccordionTrigger>
-            <AccordionContent>This is another item in the default variant.</AccordionContent>
+            <AccordionContent>
+              This is another item in the default variant.
+            </AccordionContent>
           </AccordionItem>
         </Accordion>
       </div>
-
+      
       <div>
         <h3 className="mb-2 text-sm font-medium">Bordered</h3>
         <Accordion type="single" defaultValue="item-1" variant="bordered" className="w-[400px]">
           <AccordionItem value="item-1">
             <AccordionTrigger>Bordered variant</AccordionTrigger>
-            <AccordionContent>This is the bordered variant of the accordion.</AccordionContent>
+            <AccordionContent>
+              This is the bordered variant of the accordion.
+            </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
             <AccordionTrigger>Another item</AccordionTrigger>
-            <AccordionContent>This is another item in the bordered variant.</AccordionContent>
+            <AccordionContent>
+              This is another item in the bordered variant.
+            </AccordionContent>
           </AccordionItem>
         </Accordion>
       </div>
-
+      
       <div>
         <h3 className="mb-2 text-sm font-medium">Ghost</h3>
         <Accordion type="single" defaultValue="item-1" variant="ghost" className="w-[400px]">
           <AccordionItem value="item-1">
             <AccordionTrigger>Ghost variant</AccordionTrigger>
-            <AccordionContent>This is the ghost variant of the accordion.</AccordionContent>
+            <AccordionContent>
+              This is the ghost variant of the accordion.
+            </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
             <AccordionTrigger>Another item</AccordionTrigger>
-            <AccordionContent>This is another item in the ghost variant.</AccordionContent>
+            <AccordionContent>
+              This is another item in the ghost variant.
+            </AccordionContent>
           </AccordionItem>
         </Accordion>
       </div>
@@ -135,7 +154,9 @@ export const Disabled: Story = {
     <Accordion type="single" defaultValue="item-1" className="w-[400px]">
       <AccordionItem value="item-1">
         <AccordionTrigger>Enabled item</AccordionTrigger>
-        <AccordionContent>This item is enabled and can be toggled.</AccordionContent>
+        <AccordionContent>
+          This item is enabled and can be toggled.
+        </AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-2" disabled>
         <AccordionTrigger>Disabled item</AccordionTrigger>
@@ -145,7 +166,9 @@ export const Disabled: Story = {
       </AccordionItem>
       <AccordionItem value="item-3">
         <AccordionTrigger>Another enabled item</AccordionTrigger>
-        <AccordionContent>This item is also enabled and can be toggled.</AccordionContent>
+        <AccordionContent>
+          This item is also enabled and can be toggled.
+        </AccordionContent>
       </AccordionItem>
     </Accordion>
   ),
@@ -154,10 +177,15 @@ export const Disabled: Story = {
 export const Controlled: Story = {
   render: () => {
     const [value, setValue] = useState<string>('item-1');
-
+    
     return (
       <div className="flex flex-col gap-4">
-        <Accordion type="single" value={value} onValueChange={setValue} className="w-[400px]">
+        <Accordion
+          type="single"
+          value={value}
+          onValueChange={setValue}
+          className="w-[400px]"
+        >
           <AccordionItem value="item-1">
             <AccordionTrigger>First item</AccordionTrigger>
             <AccordionContent>
@@ -171,7 +199,7 @@ export const Controlled: Story = {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-
+        
         <div className="flex gap-2">
           <button
             className="px-3 py-1 text-sm border rounded-md"
@@ -185,7 +213,10 @@ export const Controlled: Story = {
           >
             Open Item 2
           </button>
-          <button className="px-3 py-1 text-sm border rounded-md" onClick={() => setValue('')}>
+          <button
+            className="px-3 py-1 text-sm border rounded-md"
+            onClick={() => setValue('')}
+          >
             Close All
           </button>
         </div>
@@ -212,17 +243,23 @@ export const WithCustomChevron: Story = {
               strokeLinejoin="round"
               className="h-4 w-4"
             >
-              <path d="m6 9 6 6 6-6" />
+              <path d="m6 9 6 6 6-6"/>
             </svg>
           }
         >
           Custom chevron
         </AccordionTrigger>
-        <AccordionContent>This accordion has a custom chevron icon.</AccordionContent>
+        <AccordionContent>
+          This accordion has a custom chevron icon.
+        </AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-2">
-        <AccordionTrigger showChevron={false}>No chevron</AccordionTrigger>
-        <AccordionContent>This accordion item has no chevron icon.</AccordionContent>
+        <AccordionTrigger showChevron={false}>
+          No chevron
+        </AccordionTrigger>
+        <AccordionContent>
+          This accordion item has no chevron icon.
+        </AccordionContent>
       </AccordionItem>
     </Accordion>
   ),

@@ -1,31 +1,20 @@
 import {
-  Body,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
-  Logger,
-  Param,
   Post,
+  Put,
+  Delete,
+  Body,
+  Param,
   Query,
+  HttpStatus,
+  HttpException,
+  UseGuards,
+  Logger,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import {
-  ClaudeDevAgent,
-  ClaudeDevAutomationService,
-  ClaudeDevStatistics,
-} from '../services/ClaudeDevAutomationService';
-import {
-  ClaudeDevTemplateRegistry,
-  ClaudeDevTemplateUtils,
-} from '../services/claude-dev-templates';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
+import { ClaudeDevAutomationService, ClaudeDevAgent, ClaudeDevTask, ClaudeDevStatistics } from '../services/ClaudeDevAutomationService';
+import { ClaudeDevTemplateRegistry, ClaudeDevTemplateUtils } from '../services/claude-dev-templates';
 
 // DTOs for API requests and responses
 export class CreateAgentDto {
@@ -46,17 +35,7 @@ export class UpdateAgentDto {
 }
 
 export class ExecuteTaskDto {
-  type:
-    | 'code_review'
-    | 'project_setup'
-    | 'debug'
-    | 'documentation'
-    | 'test'
-    | 'refactor'
-    | 'deploy'
-    | 'security'
-    | 'analysis'
-    | 'ui_ux' = 'code_review';
+  type: 'code_review' | 'project_setup' | 'debug' | 'documentation' | 'test' | 'refactor' | 'deploy' | 'security' | 'analysis' | 'ui_ux' = 'code_review';
   priority?: 'low' | 'medium' | 'high' | 'critical';
   description?: string;
   parameters?: Record<string, any>;
@@ -80,7 +59,9 @@ export class TemplateCustomizationDto {
 export class ClaudeDevAutomationController {
   private readonly logger = new Logger(ClaudeDevAutomationController.name);
 
-  constructor(private readonly claudeDevService: ClaudeDevAutomationService) {}
+  constructor(
+    private readonly claudeDevService: ClaudeDevAutomationService,
+  ) {}
 
   // Health and Status Endpoints
 
@@ -97,7 +78,10 @@ export class ClaudeDevAutomationController {
       };
     } catch (error) {
       this.logger.error('Health check failed', error);
-      throw new HttpException('Health check failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Health check failed',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -115,7 +99,10 @@ export class ClaudeDevAutomationController {
       };
     } catch (error) {
       this.logger.error('Failed to get statistics', error);
-      throw new HttpException('Failed to retrieve statistics', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to retrieve statistics',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -126,7 +113,10 @@ export class ClaudeDevAutomationController {
   @ApiParam({ name: 'tenantId', description: 'Tenant identifier' })
   @ApiResponse({ status: 201, description: 'Agent created successfully' })
   @ApiResponse({ status: 400, description: 'Invalid request data' })
-  async createAgent(@Param('tenantId') tenantId: string, @Body() createAgentDto: CreateAgentDto) {
+  async createAgent(
+    @Param('tenantId') tenantId: string,
+    @Body() createAgentDto: CreateAgentDto,
+  ) {
     try {
       this.validateTenantId(tenantId);
       this.validateCreateAgentDto(createAgentDto);
@@ -142,19 +132,16 @@ export class ClaudeDevAutomationController {
     } catch (error) {
       this.logger.error(`Failed to create agent for tenant ${tenantId}`, error);
 
-      if (
-        (error as Error).message.includes('Template') &&
-        (error as Error).message.includes('not found')
-      ) {
+      if ((error as Error).message.includes('Template') && (error as Error).message.includes('not found')) {
         throw new HttpException(
           `Invalid template: ${(error as Error).message}`,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
 
       throw new HttpException(
         (error as Error).message || 'Failed to create agent',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -168,7 +155,7 @@ export class ClaudeDevAutomationController {
   async getAgentsByTenant(
     @Param('tenantId') tenantId: string,
     @Query('status') status?: string,
-    @Query('template') template?: string
+    @Query('template') template?: string,
   ) {
     try {
       this.validateTenantId(tenantId);
@@ -177,10 +164,10 @@ export class ClaudeDevAutomationController {
 
       // Apply filters
       if (status) {
-        agents = agents.filter((agent) => agent.status === status);
+        agents = agents.filter(agent => agent.status === status);
       }
       if (template) {
-        agents = agents.filter((agent) => agent.template === template);
+        agents = agents.filter(agent => agent.template === template);
       }
 
       return {
@@ -191,7 +178,10 @@ export class ClaudeDevAutomationController {
       };
     } catch (error) {
       this.logger.error(`Failed to get agents for tenant ${tenantId}`, error);
-      throw new HttpException('Failed to retrieve agents', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to retrieve agents',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -201,7 +191,10 @@ export class ClaudeDevAutomationController {
   @ApiParam({ name: 'agentId', description: 'Agent identifier' })
   @ApiResponse({ status: 200, description: 'Agent details' })
   @ApiResponse({ status: 404, description: 'Agent not found' })
-  async getAgent(@Param('tenantId') tenantId: string, @Param('agentId') agentId: string) {
+  async getAgent(
+    @Param('tenantId') tenantId: string,
+    @Param('agentId') agentId: string,
+  ) {
     try {
       this.validateTenantId(tenantId);
       this.validateAgentId(agentId);
@@ -211,7 +204,7 @@ export class ClaudeDevAutomationController {
       if (!agent) {
         throw new HttpException(
           `Agent ${agentId} not found for tenant ${tenantId}`,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -226,7 +219,10 @@ export class ClaudeDevAutomationController {
       }
 
       this.logger.error(`Failed to get agent ${agentId}`, error);
-      throw new HttpException('Failed to retrieve agent', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to retrieve agent',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -239,7 +235,7 @@ export class ClaudeDevAutomationController {
   async executeTask(
     @Param('tenantId') tenantId: string,
     @Param('agentId') agentId: string,
-    @Body() executeTaskDto: ExecuteTaskDto
+    @Body() executeTaskDto: ExecuteTaskDto,
   ) {
     try {
       this.validateTenantId(tenantId);
@@ -258,16 +254,22 @@ export class ClaudeDevAutomationController {
       this.logger.error(`Failed to execute task for agent ${agentId}`, error);
 
       if ((error as Error).message.includes('not found')) {
-        throw new HttpException((error as Error).message, HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          (error as Error).message,
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       if ((error as Error).message.includes('not active')) {
-        throw new HttpException((error as Error).message, HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          (error as Error).message,
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       throw new HttpException(
         (error as Error).message || 'Failed to execute task',
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
@@ -285,7 +287,7 @@ export class ClaudeDevAutomationController {
     @Query('agentId') agentId?: string,
     @Query('status') status?: string,
     @Query('type') type?: string,
-    @Query('limit') limit?: string
+    @Query('limit') limit?: string,
   ) {
     try {
       this.validateTenantId(tenantId);
@@ -296,10 +298,10 @@ export class ClaudeDevAutomationController {
 
       // Apply filters
       if (status) {
-        tasks = tasks.filter((task) => task.status === status);
+        tasks = tasks.filter(task => task.status === status);
       }
       if (type) {
-        tasks = tasks.filter((task) => task.type === type);
+        tasks = tasks.filter(task => task.type === type);
       }
 
       // Apply limit
@@ -318,7 +320,10 @@ export class ClaudeDevAutomationController {
       };
     } catch (error) {
       this.logger.error(`Failed to get tasks for tenant ${tenantId}`, error);
-      throw new HttpException('Failed to retrieve tasks', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to retrieve tasks',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -329,7 +334,7 @@ export class ClaudeDevAutomationController {
   @ApiResponse({ status: 207, description: 'Partial success - some agents failed' })
   async createAgentBatch(
     @Param('tenantId') tenantId: string,
-    @Body() createAgentBatchDto: CreateAgentBatchDto
+    @Body() createAgentBatchDto: CreateAgentBatchDto,
   ) {
     try {
       this.validateTenantId(tenantId);
@@ -337,7 +342,7 @@ export class ClaudeDevAutomationController {
       if (!createAgentBatchDto.agents || createAgentBatchDto.agents.length === 0) {
         throw new HttpException(
           'At least one agent configuration is required',
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
 
@@ -348,14 +353,14 @@ export class ClaudeDevAutomationController {
         } catch (error) {
           throw new HttpException(
             `Invalid configuration for agent ${index}: ${(error as Error).message}`,
-            HttpStatus.BAD_REQUEST
+            HttpStatus.BAD_REQUEST,
           );
         }
       });
 
       const createdAgents = await this.claudeDevService.createAgentBatch(
         tenantId,
-        createAgentBatchDto.agents
+        createAgentBatchDto.agents,
       );
 
       const hasFailures = createdAgents.length < createAgentBatchDto.agents.length;
@@ -376,7 +381,10 @@ export class ClaudeDevAutomationController {
       }
 
       this.logger.error(`Failed to create agent batch for tenant ${tenantId}`, error);
-      throw new HttpException('Failed to create agent batch', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to create agent batch',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -387,7 +395,10 @@ export class ClaudeDevAutomationController {
   @ApiQuery({ name: 'category', required: false, description: 'Filter by category' })
   @ApiQuery({ name: 'tag', required: false, description: 'Filter by tag' })
   @ApiResponse({ status: 200, description: 'List of available templates' })
-  async getTemplates(@Query('category') category?: string, @Query('tag') tag?: string) {
+  async getTemplates(
+    @Query('category') category?: string,
+    @Query('tag') tag?: string,
+  ) {
     try {
       let templates = ClaudeDevTemplateRegistry.getAllTemplates();
 
@@ -400,7 +411,7 @@ export class ClaudeDevAutomationController {
       }
 
       // Return template summaries (without full prompts for brevity)
-      const templateSummaries = templates.map((template) => ({
+      const templateSummaries = templates.map(template => ({
         id: template.id,
         name: template.name,
         description: template.description,
@@ -420,7 +431,10 @@ export class ClaudeDevAutomationController {
       };
     } catch (error) {
       this.logger.error('Failed to get templates', error);
-      throw new HttpException('Failed to retrieve templates', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to retrieve templates',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -434,7 +448,10 @@ export class ClaudeDevAutomationController {
       const template = ClaudeDevTemplateRegistry.getTemplate(templateId);
 
       if (!template) {
-        throw new HttpException(`Template ${templateId} not found`, HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          `Template ${templateId} not found`,
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       return {
@@ -448,7 +465,10 @@ export class ClaudeDevAutomationController {
       }
 
       this.logger.error(`Failed to get template ${templateId}`, error);
-      throw new HttpException('Failed to retrieve template', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to retrieve template',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -459,14 +479,17 @@ export class ClaudeDevAutomationController {
   @ApiResponse({ status: 404, description: 'Template not found' })
   async customizeTemplate(
     @Param('templateId') templateId: string,
-    @Body() customization: TemplateCustomizationDto
+    @Body() customization: TemplateCustomizationDto,
   ) {
     try {
-      const agentConfig = ClaudeDevTemplateUtils.createAgentFromTemplate(templateId, {
-        configuration: customization.configuration,
-        permissions: customization.permissions,
-        metadata: customization.metadata,
-      });
+      const agentConfig = ClaudeDevTemplateUtils.createAgentFromTemplate(
+        templateId,
+        {
+          configuration: customization.configuration,
+          permissions: customization.permissions,
+          metadata: customization.metadata,
+        },
+      );
 
       return {
         success: true,
@@ -478,12 +501,15 @@ export class ClaudeDevAutomationController {
       this.logger.error(`Failed to customize template ${templateId}`, error);
 
       if ((error as Error).message.includes('not found')) {
-        throw new HttpException((error as Error).message, HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          (error as Error).message,
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       throw new HttpException(
         (error as Error).message || 'Failed to customize template',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -495,7 +521,7 @@ export class ClaudeDevAutomationController {
   @ApiResponse({ status: 200, description: 'Usage analytics' })
   async getUsageAnalytics(
     @Param('tenantId') tenantId: string,
-    @Query('period') period: string = '7d'
+    @Query('period') period: string = '7d',
   ) {
     try {
       this.validateTenantId(tenantId);
@@ -538,7 +564,7 @@ export class ClaudeDevAutomationController {
       this.logger.error(`Failed to get usage analytics for tenant ${tenantId}`, error);
       throw new HttpException(
         'Failed to retrieve usage analytics',
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
@@ -576,22 +602,14 @@ export class ClaudeDevAutomationController {
 
   private validateExecuteTaskDto(dto: ExecuteTaskDto): void {
     const validTaskTypes = [
-      'code_review',
-      'project_setup',
-      'debug',
-      'documentation',
-      'test',
-      'refactor',
-      'deploy',
-      'security',
-      'analysis',
-      'ui_ux',
+      'code_review', 'project_setup', 'debug', 'documentation',
+      'test', 'refactor', 'deploy', 'security', 'analysis', 'ui_ux'
     ];
 
     if (!dto.type || !validTaskTypes.includes(dto.type)) {
       throw new HttpException(
         `Invalid task type. Must be one of: ${validTaskTypes.join(', ')}`,
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -600,30 +618,24 @@ export class ClaudeDevAutomationController {
       if (!validPriorities.includes(dto.priority)) {
         throw new HttpException(
           `Invalid priority. Must be one of: ${validPriorities.join(', ')}`,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
     }
   }
 
   private groupAgentsByTemplate(agents: ClaudeDevAgent[]): Record<string, number> {
-    return agents.reduce(
-      (acc, agent) => {
-        acc[agent.template] = (acc[agent.template] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
+    return agents.reduce((acc, agent) => {
+      acc[agent.template] = (acc[agent.template] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
   }
 
   private groupAgentsByStatus(agents: ClaudeDevAgent[]): Record<string, number> {
-    return agents.reduce(
-      (acc, agent) => {
-        acc[agent.status] = (acc[agent.status] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
+    return agents.reduce((acc, agent) => {
+      acc[agent.status] = (acc[agent.status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
   }
 
   private calculateEfficiencyMetrics(stats: ClaudeDevStatistics): any {
@@ -633,7 +645,7 @@ export class ClaudeDevAutomationController {
       resourceEfficiency: {
         cpu: 100 - stats.resourceUsage.cpuUsage,
         memory: 100 - stats.resourceUsage.memoryUsage,
-        overall: 100 - (stats.resourceUsage.cpuUsage + stats.resourceUsage.memoryUsage) / 2,
+        overall: 100 - ((stats.resourceUsage.cpuUsage + stats.resourceUsage.memoryUsage) / 2),
       },
       qualityScore: stats.successRate,
     };

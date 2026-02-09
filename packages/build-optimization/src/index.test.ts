@@ -2,8 +2,8 @@
  * Basic tests for build optimization package exports
  */
 
-import { describe, expect, it } from 'vitest';
-import { DEFAULT_CONFIG, VERSION } from './index.js';
+import { describe, it, expect } from 'vitest';
+import { VERSION, DEFAULT_CONFIG } from './index.js';
 
 describe('Build Optimization Package', () => {
   it('should export version information', () => {

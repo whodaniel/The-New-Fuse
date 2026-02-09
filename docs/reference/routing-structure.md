@@ -1,14 +1,10 @@
 # The New Fuse Routing Structure
 
-This document provides a comprehensive overview of the routing structure in The
-New Fuse application.
+This document provides a comprehensive overview of the routing structure in The New Fuse application.
 
 ## Overview
 
-The routing system in The New Fuse is organized hierarchically, with routes
-grouped by functionality. The main router is defined in
-`apps/frontend/src/Router.tsx` and is used by the application entry point in
-`apps/frontend/src/App.tsx`.
+The routing system in The New Fuse is organized hierarchically, with routes grouped by functionality. The main router is defined in `apps/frontend/src/Router.tsx` and is used by the application entry point in `apps/frontend/src/App.tsx`.
 
 ## Route Categories
 
@@ -35,9 +31,7 @@ These routes handle user authentication:
 - `/auth/reset-password/:token` - Password reset
 - `/auth/sso/:provider` - Single sign-on
 
-For backward compatibility, the following routes redirect to their `/auth/`
-counterparts:
-
+For backward compatibility, the following routes redirect to their `/auth/` counterparts:
 - `/login` → `/auth/login`
 - `/register` → `/auth/register`
 - `/forgot-password` → `/auth/forgot-password`
@@ -47,19 +41,15 @@ counterparts:
 These routes require authentication to access:
 
 #### Dashboard
-
 - `/dashboard` - Main dashboard
 
 #### Analytics
-
 - `/analytics` - Analytics dashboard
 
 #### AI Agent Portal
-
 - `/ai-agent-portal/*` - AI agent management portal
 
 #### Admin Section
-
 - `/admin` - Redirects to `/admin/dashboard`
 - `/admin/dashboard` - Admin dashboard
 - `/admin/users` - User management
@@ -68,7 +58,6 @@ These routes require authentication to access:
 - `/admin/settings` - Admin settings
 
 #### Settings Section
-
 - `/settings` - Redirects to `/settings/general`
 - `/settings/general` - General settings
 - `/settings/appearance` - UI appearance settings
@@ -77,7 +66,6 @@ These routes require authentication to access:
 - `/settings/notifications` - Notification preferences
 
 #### Workspace Section
-
 - `/workspace/:workspaceId` - Redirects to `/workspace/:workspaceId/overview`
 - `/workspace/:workspaceId/overview` - Workspace overview
 - `/workspace/:workspaceId/members` - Workspace member management
@@ -85,7 +73,6 @@ These routes require authentication to access:
 - `/workspace/:workspaceId/settings` - Workspace settings
 
 ### Error Handling
-
 - `*` - Catch-all route for 404 errors
 
 ## Route Components
@@ -99,11 +86,8 @@ The router uses several wrapper components to handle different route types:
 
 ## Lazy Loading
 
-All routes (except the landing page) use React's lazy loading to improve initial
-load performance. This means that route components are only loaded when needed.
+All routes (except the landing page) use React's lazy loading to improve initial load performance. This means that route components are only loaded when needed.
 
 ## Navigation
 
-For development and testing purposes, a comprehensive navigation page is
-available at `/all-pages`. This page provides links to all available routes in
-the application, organized by category.
+For development and testing purposes, a comprehensive navigation page is available at `/all-pages`. This page provides links to all available routes in the application, organized by category.

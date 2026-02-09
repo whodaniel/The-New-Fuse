@@ -1,19 +1,14 @@
 # GitHub Actions, Workflows, and Resources – AI Agent Reference Guide
 
-This guide provides a comprehensive summary of how GitHub Actions, workflows,
-runners, APIs, and related resources work, along with instructions on how AI
-agents can discover, utilize, and interact with these assets.
+This guide provides a comprehensive summary of how GitHub Actions, workflows, runners, APIs, and related resources work, along with instructions on how AI agents can discover, utilize, and interact with these assets.
 
 ---
 
 ## 1. **GitHub Actions Overview**
 
-- **GitHub Actions** is an automation platform integrated with GitHub
-  repositories.
-- It enables automation of software development workflows like CI/CD, testing,
-  deployment, and more.
-- Workflows are defined in YAML files within `.github/workflows/` in a
-  repository.
+- **GitHub Actions** is an automation platform integrated with GitHub repositories.
+- It enables automation of software development workflows like CI/CD, testing, deployment, and more.
+- Workflows are defined in YAML files within `.github/workflows/` in a repository.
 
 ---
 
@@ -29,7 +24,6 @@ agents can discover, utilize, and interact with these assets.
   - **Steps**: Each job contains steps that execute actions or run scripts.
 
 **Example YAML:**
-
 ```yaml
 name: CI
 on: [push, pull_request]
@@ -52,13 +46,11 @@ jobs:
 
 ## 3. **Runners**
 
-- **GitHub-hosted runners**: Pre-configured environments (Ubuntu, Windows,
-  macOS).
+- **GitHub-hosted runners**: Pre-configured environments (Ubuntu, Windows, macOS).
 - **Self-hosted runners**: Custom environments managed by users.
 - Runners execute jobs and provide compute resources.
 
 **Types of GitHub-hosted runners:**
-
 - `ubuntu-latest`, `ubuntu-22.04`, `ubuntu-20.04`
 - `windows-latest`, `windows-2022`, `windows-2019`
 - `macos-latest`, `macos-12`, `macos-11`
@@ -74,7 +66,6 @@ jobs:
   - **Composite actions**: Combine multiple steps.
 
 **Popular Actions:**
-
 - `actions/checkout@v4`: Check out repository code.
 - `actions/setup-node@v4`: Set up Node.js environment.
 - `actions/upload-artifact@v4`: Upload build artifacts.
@@ -87,50 +78,39 @@ jobs:
 ### **REST API Endpoints:**
 
 **Workflows:**
-
 - `GET /repos/{owner}/{repo}/actions/workflows` - List workflows
 - `GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}` - Get workflow
-- `POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches` -
-  Trigger workflow
+- `POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches` - Trigger workflow
 
 **Workflow Runs:**
-
 - `GET /repos/{owner}/{repo}/actions/runs` - List workflow runs
 - `GET /repos/{owner}/{repo}/actions/runs/{run_id}` - Get workflow run
 - `POST /repos/{owner}/{repo}/actions/runs/{run_id}/cancel` - Cancel run
 - `POST /repos/{owner}/{repo}/actions/runs/{run_id}/rerun` - Re-run workflow
 
 **Jobs:**
-
 - `GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs` - List jobs for run
 - `GET /repos/{owner}/{repo}/actions/jobs/{job_id}` - Get job details
 
 **Artifacts:**
-
 - `GET /repos/{owner}/{repo}/actions/artifacts` - List artifacts
 - `GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}` - Get artifact
-- `DELETE /repos/{owner}/{repo}/actions/artifacts/{artifact_id}` - Delete
-  artifact
+- `DELETE /repos/{owner}/{repo}/actions/artifacts/{artifact_id}` - Delete artifact
 
 **Self-hosted Runners:**
-
 - `GET /repos/{owner}/{repo}/actions/runners` - List runners
-- `POST /repos/{owner}/{repo}/actions/runners/registration-token` - Get
-  registration token
+- `POST /repos/{owner}/{repo}/actions/runners/registration-token` - Get registration token
 
 ---
 
 ## 6. **Secrets and Variables**
 
 **Repository Secrets:**
-
 - `GET /repos/{owner}/{repo}/actions/secrets` - List secrets
-- `PUT /repos/{owner}/{repo}/actions/secrets/{secret_name}` - Create/update
-  secret
+- `PUT /repos/{owner}/{repo}/actions/secrets/{secret_name}` - Create/update secret
 - `DELETE /repos/{owner}/{repo}/actions/secrets/{secret_name}` - Delete secret
 
 **Repository Variables:**
-
 - `GET /repos/{owner}/{repo}/actions/variables` - List variables
 - `POST /repos/{owner}/{repo}/actions/variables` - Create variable
 - `PATCH /repos/{owner}/{repo}/actions/variables/{name}` - Update variable
@@ -140,18 +120,13 @@ jobs:
 ## 7. **Environments**
 
 **Environment Management:**
-
 - `GET /repos/{owner}/{repo}/environments` - List environments
 - `GET /repos/{owner}/{repo}/environments/{environment_name}` - Get environment
-- `PUT /repos/{owner}/{repo}/environments/{environment_name}` - Create/update
-  environment
+- `PUT /repos/{owner}/{repo}/environments/{environment_name}` - Create/update environment
 
 **Environment Secrets:**
-
-- `GET /repos/{owner}/{repo}/environments/{environment_name}/secrets` - List
-  secrets
-- `PUT /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}` -
-  Create/update secret
+- `GET /repos/{owner}/{repo}/environments/{environment_name}/secrets` - List secrets
+- `PUT /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}` - Create/update secret
 
 ---
 
@@ -159,18 +134,15 @@ jobs:
 
 - `GET /repos/{owner}/{repo}/actions/caches` - List caches
 - `DELETE /repos/{owner}/{repo}/actions/caches` - Delete caches
-- `DELETE /repos/{owner}/{repo}/actions/caches/{cache_id}` - Delete specific
-  cache
+- `DELETE /repos/{owner}/{repo}/actions/caches/{cache_id}` - Delete specific cache
 
 ---
 
 ## 9. **OIDC (OpenID Connect)**
 
-GitHub Actions supports OIDC for secure authentication to cloud providers
-without storing long-lived secrets.
+GitHub Actions supports OIDC for secure authentication to cloud providers without storing long-lived secrets.
 
 **Key concepts:**
-
 - JWT tokens with claims about the workflow context
 - Trust relationships with cloud providers
 - No need for static credentials
@@ -182,7 +154,6 @@ without storing long-lived secrets.
 ### **A. Discovery and Monitoring**
 
 **1. Repository Analysis:**
-
 ```bash
 # Discover workflows in a repository
 curl -H "Authorization: token $GITHUB_TOKEN" \
@@ -190,7 +161,6 @@ curl -H "Authorization: token $GITHUB_TOKEN" \
 ```
 
 **2. Workflow Run Monitoring:**
-
 ```bash
 # Monitor recent workflow runs
 curl -H "Authorization: token $GITHUB_TOKEN" \
@@ -198,7 +168,6 @@ curl -H "Authorization: token $GITHUB_TOKEN" \
 ```
 
 **3. Job Status Tracking:**
-
 ```bash
 # Get details of a specific run
 curl -H "Authorization: token $GITHUB_TOKEN" \
@@ -208,7 +177,6 @@ curl -H "Authorization: token $GITHUB_TOKEN" \
 ### **B. Automation and Triggering**
 
 **1. Workflow Dispatch:**
-
 ```bash
 # Trigger a workflow with inputs
 curl -X POST \
@@ -219,7 +187,6 @@ curl -X POST \
 ```
 
 **2. Dynamic Secret Management:**
-
 ```bash
 # Update secrets programmatically
 curl -X PUT \
@@ -232,7 +199,6 @@ curl -X PUT \
 ### **C. Artifact and Cache Management**
 
 **1. Artifact Retrieval:**
-
 ```bash
 # Download artifacts for analysis
 curl -L -H "Authorization: token $GITHUB_TOKEN" \
@@ -240,7 +206,6 @@ curl -L -H "Authorization: token $GITHUB_TOKEN" \
 ```
 
 **2. Cache Optimization:**
-
 ```bash
 # Clear old caches to optimize storage
 curl -X DELETE \
@@ -251,7 +216,6 @@ curl -X DELETE \
 ### **D. Runner Management**
 
 **1. Self-hosted Runner Registration:**
-
 ```bash
 # Get registration token
 REGISTRATION_TOKEN=$(curl -X POST \
@@ -260,7 +224,6 @@ REGISTRATION_TOKEN=$(curl -X POST \
 ```
 
 **2. Runner Status Monitoring:**
-
 ```bash
 # Monitor runner health
 curl -H "Authorization: token $GITHUB_TOKEN" \
@@ -274,21 +237,18 @@ curl -H "Authorization: token $GITHUB_TOKEN" \
 ### **A. Intelligent CI/CD Pipeline Management**
 
 **1. Failure Analysis:**
-
 - Monitor workflow failures
 - Analyze logs for error patterns
 - Suggest fixes or optimizations
 - Automatically retry failed jobs with adjusted parameters
 
 **2. Performance Optimization:**
-
 - Track build times and resource usage
 - Suggest parallelization opportunities
 - Optimize caching strategies
 - Recommend runner upgrades
 
 **3. Security Scanning Integration:**
-
 - Trigger security scans on code changes
 - Manage security secrets and rotate credentials
 - Monitor for vulnerabilities in dependencies
@@ -297,7 +257,6 @@ curl -H "Authorization: token $GITHUB_TOKEN" \
 ### **B. Dynamic Workflow Generation**
 
 **1. Context-Aware Workflows:**
-
 ```yaml
 # AI-generated workflow based on repository analysis
 name: Smart CI
@@ -318,7 +277,6 @@ jobs:
 ```
 
 **2. Environment-Specific Deployments:**
-
 - Analyze code changes to determine deployment targets
 - Automatically configure environment-specific variables
 - Manage blue-green deployments based on risk assessment
@@ -326,13 +284,11 @@ jobs:
 ### **C. Cross-Repository Orchestration**
 
 **1. Multi-Repository Workflows:**
-
 - Coordinate deployments across microservices
 - Manage dependencies between repositories
 - Trigger downstream builds based on upstream changes
 
 **2. Organization-Wide Monitoring:**
-
 - Track workflow success rates across all repositories
 - Identify common failure patterns
 - Suggest organization-wide improvements
@@ -347,7 +303,11 @@ jobs:
 {
   "name": "workflow-ai-agent",
   "active": true,
-  "events": ["workflow_run", "workflow_job", "deployment_status"],
+  "events": [
+    "workflow_run",
+    "workflow_job",
+    "deployment_status"
+  ],
   "config": {
     "url": "https://your-ai-agent.com/github-webhook",
     "content_type": "json",
@@ -357,7 +317,6 @@ jobs:
 ```
 
 **Webhook Payload Processing:**
-
 - Real-time workflow status updates
 - Job completion notifications
 - Deployment status changes
@@ -376,8 +335,7 @@ jobs:
 
 ### **B. Rate Limiting and Performance**
 
-1. **Respect GitHub's rate limits** (5,000 requests/hour for authenticated
-   requests)
+1. **Respect GitHub's rate limits** (5,000 requests/hour for authenticated requests)
 2. **Implement exponential backoff** for retries
 3. **Cache frequently accessed data** to reduce API calls
 4. **Use conditional requests** with ETags when possible
@@ -403,7 +361,7 @@ jobs:
 For complex queries, use GitHub's GraphQL API:
 
 ```graphql
-query ($owner: String!, $repo: String!) {
+query($owner: String!, $repo: String!) {
   repository(owner: $owner, name: $repo) {
     defaultBranchRef {
       target {
@@ -436,36 +394,34 @@ query ($owner: String!, $repo: String!) {
 ## 15. **SDK and Libraries**
 
 **Official and Community Libraries:**
-
 - **Octokit** (JavaScript/TypeScript): `@octokit/rest`
 - **PyGithub** (Python): For Python-based AI agents
 - **go-github** (Go): For Go-based implementations
 - **github4j** (Java): For JVM-based agents
 
 **Example using Octokit:**
-
 ```javascript
-import { Octokit } from '@octokit/rest';
+import { Octokit } from "@octokit/rest";
 
 const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN,
+  auth: process.env.GITHUB_TOKEN
 });
 
 // List workflows
 const workflows = await octokit.rest.actions.listRepoWorkflows({
-  owner: 'octocat',
-  repo: 'Hello-World',
+  owner: "octocat",
+  repo: "Hello-World"
 });
 
 // Trigger workflow
 await octokit.rest.actions.createWorkflowDispatch({
-  owner: 'octocat',
-  repo: 'Hello-World',
-  workflow_id: 'main.yml',
-  ref: 'main',
+  owner: "octocat",
+  repo: "Hello-World",
+  workflow_id: "main.yml",
+  ref: "main",
   inputs: {
-    environment: 'production',
-  },
+    environment: "production"
+  }
 });
 ```
 
@@ -474,31 +430,25 @@ await octokit.rest.actions.createWorkflowDispatch({
 ## 16. **Troubleshooting Common Issues**
 
 ### **A. Authentication Problems**
-
 - Verify token scope and permissions
 - Check token expiration
 - Ensure proper headers are set
 
 ### **B. Workflow Failures**
-
 - Check runner availability
 - Verify secret accessibility
 - Review workflow syntax and dependencies
 
 ### **C. API Rate Limiting**
-
 - Implement proper retry logic
 - Use conditional requests
 - Consider using GitHub Apps for higher limits
 
 ### **D. Webhook Delivery Issues**
-
 - Verify endpoint accessibility
 - Check webhook secret validation
 - Monitor delivery attempts in GitHub settings
 
 ---
 
-This comprehensive guide provides AI agents with the knowledge and tools needed
-to effectively interact with GitHub Actions, from basic workflow monitoring to
-advanced automation and orchestration scenarios.
+This comprehensive guide provides AI agents with the knowledge and tools needed to effectively interact with GitHub Actions, from basic workflow monitoring to advanced automation and orchestration scenarios.

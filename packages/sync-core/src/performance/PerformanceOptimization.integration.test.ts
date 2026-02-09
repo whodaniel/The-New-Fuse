@@ -1,7 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
-import { PerformanceOptimizationService } from './PerformanceOptimizationService';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 const vi = jest;
+import { PerformanceOptimizationService } from './PerformanceOptimizationService';
+import { HorizontalScalingCoordinator } from './HorizontalScalingCoordinator';
+import { FileChangeBatcher } from './FileChangeBatcher';
+import { SyncLRUCache } from './SyncLRUCache';
+import { SyncPerformanceTelemetry } from './SyncPerformanceTelemetry';
+import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
 
 // Mock Redis for integration testing
 const mockRedis = {
@@ -13,11 +17,11 @@ const mockRedis = {
   del: jest.fn().mockResolvedValue(1),
   lpush: jest.fn().mockResolvedValue(1),
   lrange: jest.fn().mockResolvedValue([]),
-  publish: jest.fn().mockResolvedValue(1),
+  publish: jest.fn().mockResolvedValue(1)
 };
 
 const mockMetrics = {
-  recordMetric: jest.fn(),
+  recordMetric: jest.fn()
 };
 
 describe('Performance Optimization Integration', () => {
@@ -30,34 +34,38 @@ describe('Performance Optimization Integration', () => {
         heartbeatInterval: 1000,
         loadThreshold: 80,
         redistributionDelay: 2000,
-        clusterKey: 'test-cluster',
+        clusterKey: 'test-cluster'
       },
       batching: {
         maxBatchSize: 5,
         batchTimeout: 500,
         debounceDelay: 50,
-        priorityPatterns: ['config', 'template'],
+        priorityPatterns: ['config', 'template']
       },
       caching: {
         maxSize: 100,
         maxMemory: 1024 * 100, // 100KB
         ttl: 30000, // 30 seconds
         cleanupInterval: 5000,
-        tenantIsolation: true,
+        tenantIsolation: true
       },
       telemetry: {
         metricsInterval: 1000,
         retentionPeriod: 60000,
         aggregationWindow: 5000,
         enableDetailedMetrics: true,
-        maxMetricsBuffer: 1000,
+        maxMetricsBuffer: 1000
       },
       enableOptimizations: true,
       memoryThreshold: 1024 * 1024 * 50, // 50MB
-      cpuThreshold: 70,
+      cpuThreshold: 70
     };
 
-    service = new PerformanceOptimizationService(mockRedis as any, mockMetrics as any, config);
+    service = new PerformanceOptimizationService(
+      mockRedis as any,
+      mockMetrics as any,
+      config
+    );
 
     await service.initialize();
   });
@@ -76,7 +84,7 @@ describe('Performance Optimization Integration', () => {
           tenantId: 'tenant1',
           timestamp: new Date(),
           checksum: 'hash1',
-          metadata: { size: 1024 },
+          metadata: { size: 1024 }
         },
         {
           type: 'update',
@@ -84,7 +92,7 @@ describe('Performance Optimization Integration', () => {
           tenantId: 'tenant1',
           timestamp: new Date(),
           checksum: 'hash2',
-          metadata: { size: 2048 },
+          metadata: { size: 2048 }
         },
         {
           type: 'delete',
@@ -92,8 +100,8 @@ describe('Performance Optimization Integration', () => {
           tenantId: 'tenant2',
           timestamp: new Date(),
           checksum: 'hash3',
-          metadata: { size: 512 },
-        },
+          metadata: { size: 512 }
+        }
       ];
 
       // Process all file changes
@@ -102,7 +110,7 @@ describe('Performance Optimization Integration', () => {
       }
 
       // Wait for batching to complete
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      await new Promise(resolve => setTimeout(resolve, 600));
 
       const metrics = await service.getPerformanceMetrics();
       expect(metrics.batching.processedBatches).toBeGreaterThan(0);
@@ -110,7 +118,7 @@ describe('Performance Optimization Integration', () => {
 
     it('should handle high-volume file changes with batching', async () => {
       const changes: FileChangeEvent[] = [];
-
+      
       // Generate 20 file changes
       for (let i = 0; i < 20; i++) {
         changes.push({
@@ -119,16 +127,16 @@ describe('Performance Optimization Integration', () => {
           tenantId: i % 2 === 0 ? 'tenant1' : 'tenant2',
           timestamp: new Date(),
           checksum: `hash${i}`,
-          metadata: { size: 100 * i },
+          metadata: { size: 100 * i }
         });
       }
 
       // Process all changes rapidly
-      const promises = changes.map((change) => service.processFileChange(change));
+      const promises = changes.map(change => service.processFileChange(change));
       await Promise.all(promises);
 
       // Wait for batching
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       const metrics = await service.getPerformanceMetrics();
       expect(metrics.batching.processedBatches).toBeGreaterThan(1);
@@ -137,15 +145,15 @@ describe('Performance Optimization Integration', () => {
 
   describe('caching with performance tracking', () => {
     it('should cache data and track performance metrics', async () => {
-      const testData = {
-        id: 1,
-        name: 'test',
-        data: new Array(100).fill('x').join(''),
+      const testData = { 
+        id: 1, 
+        name: 'test', 
+        data: new Array(100).fill('x').join('') 
       };
 
       // Set cache data
       service.setCachedData('perf-test', testData, 'tenant1');
-
+      
       // Get cache data multiple times
       for (let i = 0; i < 10; i++) {
         const result = service.getCachedData('perf-test', 'tenant1');
@@ -177,28 +185,24 @@ describe('Performance Optimization Integration', () => {
       // Mock multiple instances
       mockRedis.smembers.mockResolvedValue(['instance1', 'instance2']);
       mockRedis.get
-        .mockResolvedValueOnce(
-          JSON.stringify({
-            instanceId: 'instance1',
-            hostname: 'host1',
-            port: 3001,
-            capabilities: ['file-sync'],
-            load: 30,
-            lastHeartbeat: new Date(),
-            status: 'active',
-          })
-        )
-        .mockResolvedValueOnce(
-          JSON.stringify({
-            instanceId: 'instance2',
-            hostname: 'host2',
-            port: 3002,
-            capabilities: ['file-sync'],
-            load: 60,
-            lastHeartbeat: new Date(),
-            status: 'active',
-          })
-        );
+        .mockResolvedValueOnce(JSON.stringify({
+          instanceId: 'instance1',
+          hostname: 'host1',
+          port: 3001,
+          capabilities: ['file-sync'],
+          load: 30,
+          lastHeartbeat: new Date(),
+          status: 'active'
+        }))
+        .mockResolvedValueOnce(JSON.stringify({
+          instanceId: 'instance2',
+          hostname: 'host2',
+          port: 3002,
+          capabilities: ['file-sync'],
+          load: 60,
+          lastHeartbeat: new Date(),
+          status: 'active'
+        }));
 
       const workload = { files: ['file1.txt', 'file2.txt'] };
       const targetInstance = await service.distributeWork('file-sync', workload);
@@ -210,23 +214,20 @@ describe('Performance Optimization Integration', () => {
     it('should handle instance failures gracefully', async () => {
       // Mock stale instance
       mockRedis.smembers.mockResolvedValue(['stale-instance']);
-      mockRedis.get.mockResolvedValue(
-        JSON.stringify({
-          instanceId: 'stale-instance',
-          hostname: 'stale-host',
-          port: 3000,
-          capabilities: ['file-sync'],
-          load: 50,
-          lastHeartbeat: new Date(Date.now() - 300000), // 5 minutes ago
-          status: 'active',
-        })
-      );
+      mockRedis.get.mockResolvedValue(JSON.stringify({
+        instanceId: 'stale-instance',
+        hostname: 'stale-host',
+        port: 3000,
+        capabilities: ['file-sync'],
+        load: 50,
+        lastHeartbeat: new Date(Date.now() - 300000), // 5 minutes ago
+        status: 'active'
+      }));
 
       const workload = { files: ['file1.txt'] };
-
-      await expect(service.distributeWork('file-sync', workload)).rejects.toThrow(
-        'No available instances'
-      );
+      
+      await expect(service.distributeWork('file-sync', workload))
+        .rejects.toThrow('No available instances');
     });
   });
 
@@ -239,17 +240,17 @@ describe('Performance Optimization Integration', () => {
         tenantId: 'tenant1',
         timestamp: new Date(),
         checksum: 'hash',
-        metadata: { size: 1024 },
+        metadata: { size: 1024 }
       });
 
       service.setCachedData('test', { data: 'value' }, 'tenant1');
       service.getCachedData('test', 'tenant1');
 
       // Wait for metrics collection
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       const metrics = await service.getPerformanceMetrics();
-
+      
       expect(metrics.scaling.instanceCount).toBeGreaterThanOrEqual(0);
       expect(metrics.batching.pendingChanges).toBeGreaterThanOrEqual(0);
       expect(metrics.caching.memoryUsage).toBeGreaterThanOrEqual(0);
@@ -280,7 +281,7 @@ describe('Performance Optimization Integration', () => {
         tenantId: 'tenant1',
         timestamp: new Date(),
         checksum: 'hash1',
-        metadata: { size: 1024 },
+        metadata: { size: 1024 }
       });
 
       await service.processFileChange({
@@ -289,7 +290,7 @@ describe('Performance Optimization Integration', () => {
         tenantId: 'tenant2',
         timestamp: new Date(),
         checksum: 'hash2',
-        metadata: { size: 1024 },
+        metadata: { size: 1024 }
       });
 
       // Test cache isolation
@@ -310,10 +311,9 @@ describe('Performance Optimization Integration', () => {
       mockRedis.lpush.mockRejectedValueOnce(new Error('Redis connection lost'));
 
       const workload = { files: ['test.txt'] };
-
-      await expect(service.distributeWork('file-sync', workload)).rejects.toThrow(
-        'Redis connection lost'
-      );
+      
+      await expect(service.distributeWork('file-sync', workload))
+        .rejects.toThrow('Redis connection lost');
 
       // Service should still be functional for other operations
       service.setCachedData('test', 'value');
@@ -328,7 +328,7 @@ describe('Performance Optimization Integration', () => {
         tenantId: 'tenant1',
         timestamp: new Date(),
         checksum: 'hash',
-        metadata: { size: 1024 },
+        metadata: { size: 1024 }
       };
 
       // This should work even if other components have issues

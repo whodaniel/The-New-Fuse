@@ -2,10 +2,7 @@
 
 ## Introduction
 
-The New Fuse component library is built using atomic design principles,
-providing a scalable and maintainable UI system. This document consolidates
-component guidelines, standards, and implementation details to serve as a
-comprehensive reference.
+The New Fuse component library is built using atomic design principles, providing a scalable and maintainable UI system. This document consolidates component guidelines, standards, and implementation details to serve as a comprehensive reference.
 
 ## Component Organization
 
@@ -66,7 +63,6 @@ ComponentName/
 ## Documentation Requirements
 
 Each component should have:
-
 1. JSDoc comments for the component and its props
 2. A README.md explaining:
    - Purpose and usage examples
@@ -75,11 +71,10 @@ Each component should have:
    - Related components
 
 Example:
-
 ```tsx
 /**
  * MessageDisplay - Renders a message from an LLM with appropriate styling
- *
+ * 
  * @param message - The message content to display
  * @param sender - The entity that sent the message
  * @param timestamp - When the message was sent
@@ -96,7 +91,6 @@ export const MessageDisplay: React.FC<MessageDisplayProps> = ({
 ## Design System
 
 ### Colors
-
 ```typescript
 // tailwind.config.js
 module.exports = {
@@ -108,13 +102,12 @@ module.exports = {
         900: '#0c4a6e',
       },
       // ... other colors
-    },
-  },
-};
+    }
+  }
+}
 ```
 
 ### Typography
-
 ```typescript
 // tailwind.config.js
 module.exports = {
@@ -130,13 +123,12 @@ module.exports = {
       lg: ['1.125rem', { lineHeight: '1.75rem' }],
       xl: ['1.25rem', { lineHeight: '1.75rem' }],
       '2xl': ['1.5rem', { lineHeight: '2rem' }],
-    },
-  },
-};
+    }
+  }
+}
 ```
 
 ### Spacing
-
 ```typescript
 // tailwind.config.js
 module.exports = {
@@ -150,34 +142,30 @@ module.exports = {
       3: '0.75rem',
       4: '1rem',
       // ... other spacing values
-    },
-  },
-};
+    }
+  }
+}
 ```
 
 ## Coding Patterns
 
 ### Component Definition
-
 - Use functional components with TypeScript interfaces
 - Use React.FC type with explicit props interface
 - Use destructuring for props
 - Avoid anonymous components
 
 ### State Management
-
 - Use hooks appropriately (useState, useEffect, useContext, etc.)
 - For complex state, consider custom hooks or context
 - Document state dependencies clearly
 
 ### Props
-
 - Make components as pure as possible
 - Use sensible defaults when appropriate
 - Validate props with PropTypes or TypeScript
 
 ### Styling
-
 - Prefer styled-components or other CSS-in-JS solution
 - Keep styles co-located with components
 - Use theme variables for consistency
@@ -200,7 +188,6 @@ module.exports = {
 ## Testing Requirements
 
 Each component should have tests that cover:
-
 - Rendering with default props
 - Rendering with various prop combinations
 - User interactions
@@ -211,32 +198,24 @@ Each component should have tests that cover:
 Located in `/apps/frontend/src/shared/ui/core/`
 
 ### Button
-
 Base button component with variants
 
 ### Card
-
-Flexible container component with compound components for structured content
-organization.
+Flexible container component with compound components for structured content organization.
 
 ### Input
-
 Form input elements with various styles, sizes, and states.
 
 ### Select
-
 Dropdown selection component built on Radix UI primitives.
 
 ### Switch
-
 Toggle switch component for boolean settings.
 
 ### Checkbox
-
 Selection component with indeterminate states.
 
 ### DropdownMenu
-
 Expandable menu component with keyboard navigation.
 
 ## Feature-Specific Components
@@ -244,21 +223,18 @@ Expandable menu component with keyboard navigation.
 Located in `/src/components/features/`
 
 ### Agent System
-
 - AgentList: Agent management interface
 - AgentDetail: Individual agent view
 - AgentMetrics: Performance monitoring
 - AgentWorkflow: Task management
 
 ### Chat System
-
 - ChatRoom: Main chat interface
 - RooCoderChat: Specialized coding chat
 - MessageList: Chat history display
 - InputPanel: Message composition
 
 ### Workflow System
-
 - WorkflowCanvas: Main workflow editor
 - NodePalette: Available node types
 - ConnectionManager: Edge handling
@@ -267,14 +243,12 @@ Located in `/src/components/features/`
 ## Workflow Integration
 
 ### AgentWorkflowManager
-
-A React component that provides a complete interface for managing agent
-workflows.
+A React component that provides a complete interface for managing agent workflows.
 
 ```typescript
 import { AgentWorkflowManager } from '@components/AgentWorkflowManager';
 
-<AgentWorkflowManager
+<AgentWorkflowManager 
   onWorkflowStart={(config) => void}
   onWorkflowStop={(id) => void}
   onStatusChange={(status) => void}
@@ -282,13 +256,12 @@ import { AgentWorkflowManager } from '@components/AgentWorkflowManager';
 ```
 
 ### StatusMonitor
-
 Displays real-time system metrics and health status.
 
 ```typescript
 import { StatusMonitor } from '@components/StatusMonitor';
 
-<StatusMonitor
+<StatusMonitor 
   refreshInterval={5000}
   showDetailedMetrics={true}
 />
@@ -297,7 +270,6 @@ import { StatusMonitor } from '@components/StatusMonitor';
 ## Best Practices
 
 1. **Component Composition**
-
    ```typescript
    // Prefer composition over inheritance
    const Card = ({ children, header }) => (
@@ -309,21 +281,19 @@ import { StatusMonitor } from '@components/StatusMonitor';
    ```
 
 2. **State Management**
-
    ```typescript
    // Use hooks for complex state
    const [state, dispatch] = useReducer(reducer, initialState);
-
+   
    // Use context for shared state
    const value = useContext(ThemeContext);
    ```
 
 3. **Performance Optimization**
-
    ```typescript
    // Memoize expensive computations
    const memoizedValue = useMemo(() => computeValue(a, b), [a, b]);
-
+   
    // Memoize callbacks
    const memoizedCallback = useCallback(() => {
      doSomething(a, b);

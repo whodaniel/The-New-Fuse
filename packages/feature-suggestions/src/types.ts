@@ -1,31 +1,31 @@
 export enum FeatureStage {
-  ANALYSIS = 'ANALYSIS',
-  DESIGN = 'DESIGN',
-  DEVELOPMENT = 'DEVELOPMENT',
-  TESTING = 'TESTING',
-  REVIEW = 'REVIEW',
-  DEPLOYMENT = 'DEPLOYMENT',
-  COMPLETED = 'COMPLETED',
-  IN_PROGRESS = 'IN_PROGRESS', // Adding this for compatibility with EnhancedTimelineView
+    ANALYSIS = 'ANALYSIS',
+    DESIGN = 'DESIGN',
+    DEVELOPMENT = 'DEVELOPMENT',
+    TESTING = 'TESTING',
+    REVIEW = 'REVIEW',
+    DEPLOYMENT = 'DEPLOYMENT',
+    COMPLETED = 'COMPLETED',
+    IN_PROGRESS = 'IN_PROGRESS' // Adding this for compatibility with EnhancedTimelineView
 }
 
 export enum SuggestionPriority {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL',
+    LOW = 'LOW',
+    MEDIUM = 'MEDIUM',
+    HIGH = 'HIGH',
+    CRITICAL = 'CRITICAL'
 }
 
 // Define SuggestionStatus directly instead of trying to import it
 export enum SuggestionStatus {
-  NEW = 'NEW',
-  UNDER_REVIEW = 'UNDER_REVIEW',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-  IMPLEMENTED = 'IMPLEMENTED',
-  SUBMITTED = 'SUBMITTED',
-  PENDING = 'PENDING',
-  CONVERTED = 'CONVERTED',
+    NEW = 'NEW',
+    UNDER_REVIEW = 'UNDER_REVIEW',
+    APPROVED = 'APPROVED',
+    REJECTED = 'REJECTED',
+    IMPLEMENTED = 'IMPLEMENTED',
+    SUBMITTED = 'SUBMITTED',
+    PENDING = 'PENDING',
+    CONVERTED = 'CONVERTED'
 }
 
 // Import from types package instead of direct file

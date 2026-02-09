@@ -1,29 +1,22 @@
 # WebSocket Connection Guide
 
-This guide provides instructions for testing the WebSocket connection between
-the Chrome extension and its backend services.
+This guide provides instructions for testing the WebSocket connection between the Chrome extension and its backend services.
 
-**Note on Ports:** The primary VS Code extension WebSocket server runs on port
-**3710**. For isolated testing, a standalone test server is provided on port
-**3711**. This guide focuses on the test server.
+**Note on Ports:** The primary VS Code extension WebSocket server runs on port **3710**. For isolated testing, a standalone test server is provided on port **3711**. This guide focuses on the test server.
 
 ## The Issue
 
-The Chrome extension is trying to connect to a WebSocket server on
-`ws://localhost:3711`, but the connection is failing with the error:
+The Chrome extension is trying to connect to a WebSocket server on `ws://localhost:3711`, but the connection is failing with the error:
 
 ```
 WebSocket connection to 'ws://localhost:3711/' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED
 ```
 
-This error occurs because the WebSocket server on port 3711 isn't running when
-the Chrome extension tries to connect to it.
+This error occurs because the WebSocket server on port 3711 isn't running when the Chrome extension tries to connect to it.
 
 ## Solution
 
-We've created a standalone WebSocket server that runs on port 3711 and handles
-the same message types as the VSCode extension's WebSocket server. This allows
-you to test the Chrome extension without having to start the VSCode extension.
+We've created a standalone WebSocket server that runs on port 3711 and handles the same message types as the VSCode extension's WebSocket server. This allows you to test the Chrome extension without having to start the VSCode extension.
 
 ### Option 1: Start the WebSocket Server from VS Code
 
@@ -43,14 +36,12 @@ you to test the Chrome extension without having to start the VSCode extension.
 ./start-websocket-server.sh
 ```
 
-4. The script will check if port 3711 is already in use and provide options if
-   it is
+4. The script will check if port 3711 is already in use and provide options if it is
 5. The WebSocket server will start and listen on port 3711
 
 ## Testing the Connection
 
-Once the WebSocket server is running, you can test the connection with the
-Chrome extension:
+Once the WebSocket server is running, you can test the connection with the Chrome extension:
 
 1. Load the Chrome extension in Chrome:
    - Go to `chrome://extensions/`
@@ -60,8 +51,7 @@ Chrome extension:
 2. Click on the extension icon to open the popup
 3. The extension should automatically try to connect to the WebSocket server
 4. You should see notifications about the connection status
-5. If the connection is successful, you'll see a "Successfully connected to
-   VSCode extension" notification
+5. If the connection is successful, you'll see a "Successfully connected to VSCode extension" notification
 
 ## Troubleshooting
 
@@ -70,8 +60,7 @@ If you're still having connection issues:
 1. **Check if the WebSocket server is running**:
    - Run `lsof -i :3711` to check if any process is using port 3711
    - If no process is using the port, start the WebSocket server
-   - If a process is using the port but it's not the WebSocket server, kill the
-     process and start the WebSocket server
+   - If a process is using the port but it's not the WebSocket server, kill the process and start the WebSocket server
 
 2. **Check the Chrome extension logs**:
    - Open Chrome DevTools for the extension background page:
@@ -94,16 +83,14 @@ We've made the following changes to fix the WebSocket connection issue:
 
 1. **Created a standalone WebSocket server**:
    - Created `test-websocket-server-3711.cjs` that runs on port 3711
-   - The server handles the same message types as the VSCode extension's
-     WebSocket server
+   - The server handles the same message types as the VSCode extension's WebSocket server
 
 2. **Added a VS Code task to start the WebSocket server**:
    - Added a task to `.vscode/tasks.json` that starts the WebSocket server
    - The task can be run from the Command Palette
 
 3. **Created a script to start the WebSocket server**:
-   - Created `start-websocket-server-3711.sh` that checks if port 3711 is in use
-     and starts the WebSocket server
+   - Created `start-websocket-server-3711.sh` that checks if port 3711 is in use and starts the WebSocket server
    - The script provides options if port 3711 is already in use
 
 4. **Updated the Chrome extension to handle connection failures**:
@@ -113,7 +100,4 @@ We've made the following changes to fix the WebSocket connection issue:
 
 ## Conclusion
 
-By following this guide, you should be able to fix the WebSocket connection
-issue between the Chrome extension and the VSCode extension. If you're still
-having issues, please refer to the troubleshooting section or contact the
-development team for assistance.
+By following this guide, you should be able to fix the WebSocket connection issue between the Chrome extension and the VSCode extension. If you're still having issues, please refer to the troubleshooting section or contact the development team for assistance.

@@ -1,6 +1,6 @@
-import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { NextFunction, Request, Response } from 'express';
 
 export interface CacheHeadersConfig {
   staticAssets: {
@@ -31,14 +31,14 @@ export class CacheHeadersMiddleware implements NestMiddleware {
     this.config = {
       staticAssets: {
         maxAge: this.configService.get('CACHE_STATIC_MAX_AGE', 31536000), // 1 year
-        immutable: true,
+        immutable: true
       },
       apiResponses: {
         maxAge: this.configService.get('CACHE_API_MAX_AGE', 300), // 5 minutes
         private: false,
-        mustRevalidate: true,
+        mustRevalidate: true
       },
-      noCache: ['/api/auth', '/api/admin', '/health', '/metrics'],
+      noCache: ['/api/auth', '/api/admin', '/health', '/metrics']
     };
   }
 
@@ -70,10 +70,10 @@ export class CacheHeadersMiddleware implements NestMiddleware {
       '.ttf',
       '.eot',
       '.webp',
-      '.avif',
+      '.avif'
     ];
 
-    return staticExtensions.some((ext) => req.path.endsWith(ext));
+    return staticExtensions.some(ext => req.path.endsWith(ext));
   }
 
   private shouldCache(req: Request): boolean {
@@ -83,7 +83,7 @@ export class CacheHeadersMiddleware implements NestMiddleware {
     }
 
     // Check if path is in no-cache list
-    return !this.config.noCache.some((path) => req.path.startsWith(path));
+    return !this.config.noCache.some(path => req.path.startsWith(path));
   }
 
   private setStaticAssetHeaders(res: Response): void {
@@ -135,7 +135,10 @@ export class CacheHeadersMiddleware implements NestMiddleware {
   }
 
   private setNoCacheHeaders(res: Response): void {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader(
+      'Cache-Control',
+      'no-store, no-cache, must-revalidate, proxy-revalidate'
+    );
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
 

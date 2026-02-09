@@ -233,5 +233,6 @@ curl -H "Accept-Encoding: gzip,deflate,br" -I https://your-production-url.com
 
 ---
 
-**Last Updated**: [Date] **Deployed By**: [Name] **Deployment Notes**: [Any
-special notes]
+**Last Updated**: [Date]
+**Deployed By**: [Name]
+**Deployment Notes**: [Any special notes]

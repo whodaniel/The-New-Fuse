@@ -1,8 +1,8 @@
-import { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider';
+import { VectorDatabaseService } from './vector-database.service';
+import { VectorDatabaseModule } from './vector-database.module';
 import { PgVectorDriver } from './drivers/pgvector.driver';
 import { QdrantDriver } from './drivers/qdrant.driver';
-import { VectorDatabaseModule } from './vector-database.module';
-import { VectorDatabaseService } from './vector-database.service';
+import { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider';
 
 describe('Core Vector DB Exports', () => {
   it('should export necessary modules', () => {

@@ -7,7 +7,7 @@ interface EmbeddingConfig {
 export class EmbeddingService {
   private provider: string;
   private logger = new Logger(EmbeddingService.name);
-
+  
   constructor(config: EmbeddingConfig = {}) {
     this.provider = config.provider || 'openai';
   }

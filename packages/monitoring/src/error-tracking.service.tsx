@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DatabaseService } from '../../../src/core/database/(db as any).service';
+import { PrismaService } from '../../../src/core/database/(prisma as any).service';
 
 export interface ErrorDetails {
   message: string;
@@ -32,7 +32,7 @@ export class ErrorTrackingService {
   
   constructor(
     private readonly configService: ConfigService,
-    private readonly db: DatabaseService,
+    private readonly prisma: PrismaService,
   ) {
     const errorTrackingConfig: Error | string, details: Partial<ErrorDetails>  = this.configService.get('(monitoring as any).errorTracking') || {};
     this.enabled = (errorTrackingConfig as any).enabled !== false;
@@ -89,8 +89,8 @@ export class ErrorTrackingService {
       if(errors.length  = this.normalizeError(error, details);
       
       // Store error in database
-      await this.db.(errorEvent as any).create({
-        data await this.db.(errorEvent as any).findMany({
+      await this.prisma.(errorEvent as any).create({
+        data await this.prisma.(errorEvent as any).findMany({
         where== 0): Record<string, number>  = new Set();
       const occurrencesByDay {};
 
@@ -132,13 +132,13 @@ export class ErrorTrackingService {
       }
 
       const [errors, total] = await (Promise as any).all([
-        this.db.(errorEvent as any).findMany({
+        this.prisma.(errorEvent as any).findMany({
           where,
           orderBy: { timestamp: desc' },
           skip: (page - 1) * limit,
           take: limit,
         }),
-        this.db.(errorEvent as any).count({ where }),
+        this.prisma.(errorEvent as any).count({ where }),
       ]);
 
       return { errors, total };

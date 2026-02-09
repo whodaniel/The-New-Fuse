@@ -1,17 +1,17 @@
 /**
  * Workflow Execution Monitor
- *
+ * 
  * Provides comprehensive monitoring and tracking capabilities for MCP workflow executions.
  * Handles execution status tracking, performance metrics, and error recovery.
  */
 
 import { EventEmitter } from 'events';
-import {
-  ErrorRecoveryConfig,
-  ExecutionStatus,
+import { 
+  ExecutionStatus, 
+  TaskExecutionStatus, 
   MCPCallback,
-  MonitoringConfig,
-  TaskExecutionStatus,
+  ErrorRecoveryConfig,
+  MonitoringConfig
 } from '../interfaces/IMCPWorkflowIntegration';
 import { MCPErrorClass } from '../types/error';
 
@@ -21,31 +21,31 @@ import { MCPErrorClass } from '../types/error';
 export interface ExecutionMetrics {
   /** Total number of executions */
   totalExecutions: number;
-
+  
   /** Currently active executions */
   activeExecutions: number;
-
+  
   /** Successfully completed executions */
   completedExecutions: number;
-
+  
   /** Failed executions */
   failedExecutions: number;
-
+  
   /** Cancelled executions */
   cancelledExecutions: number;
-
+  
   /** Average execution duration in milliseconds */
   averageExecutionTime: number;
-
+  
   /** Success rate as percentage */
   successRate: number;
-
+  
   /** Error rate as percentage */
   errorRate: number;
-
+  
   /** Executions per minute */
   executionsPerMinute: number;
-
+  
   /** Last update timestamp */
   lastUpdated: Date;
 }
@@ -56,16 +56,16 @@ export interface ExecutionMetrics {
 export interface ExecutionEvent {
   /** Event type */
   type: 'started' | 'progress' | 'completed' | 'failed' | 'cancelled' | 'timeout';
-
+  
   /** Execution ID */
   executionId: string;
-
+  
   /** Event timestamp */
   timestamp: Date;
-
+  
   /** Event payload */
   payload?: any;
-
+  
   /** Event metadata */
   metadata?: Record<string, any>;
 }
@@ -76,31 +76,31 @@ export interface ExecutionEvent {
 export interface ExecutionHistoryEntry {
   /** Execution ID */
   executionId: string;
-
+  
   /** Workflow ID */
   workflowId?: string;
-
+  
   /** Step ID */
   stepId?: string;
-
+  
   /** Execution status */
   status: TaskExecutionStatus;
-
+  
   /** Start time */
   startedAt: Date;
-
+  
   /** Completion time */
   completedAt?: Date;
-
+  
   /** Execution duration in milliseconds */
   duration?: number;
-
+  
   /** Error message if failed */
   error?: string;
-
+  
   /** Execution result */
   result?: any;
-
+  
   /** Execution metadata */
   metadata?: Record<string, any>;
 }
@@ -111,16 +111,16 @@ export interface ExecutionHistoryEntry {
 export interface AlertConfig {
   /** Alert type */
   type: 'error_rate' | 'execution_time' | 'failure_count' | 'timeout_rate';
-
+  
   /** Alert threshold */
   threshold: number;
-
+  
   /** Time window for evaluation in milliseconds */
   timeWindow: number;
-
+  
   /** Whether alert is enabled */
   enabled: boolean;
-
+  
   /** Alert callback function */
   callback?: (alert: AlertEvent) => void;
 }
@@ -131,25 +131,25 @@ export interface AlertConfig {
 export interface AlertEvent {
   /** Alert type */
   type: string;
-
+  
   /** Alert severity */
   severity: 'low' | 'medium' | 'high' | 'critical';
-
+  
   /** Alert message */
   message: string;
-
+  
   /** Current value that triggered the alert */
   currentValue: number;
-
+  
   /** Alert threshold */
   threshold: number;
-
+  
   /** Alert timestamp */
   timestamp: Date;
-
+  
   /** Related execution IDs */
   executionIds?: string[];
-
+  
   /** Alert metadata */
   metadata?: Record<string, any>;
 }
@@ -173,7 +173,7 @@ export class WorkflowExecutionMonitor extends EventEmitter {
     super();
     this.config = config;
     this.errorRecovery = errorRecovery;
-
+    
     this.metrics = {
       totalExecutions: 0,
       activeExecutions: 0,
@@ -184,9 +184,9 @@ export class WorkflowExecutionMonitor extends EventEmitter {
       successRate: 0,
       errorRate: 0,
       executionsPerMinute: 0,
-      lastUpdated: new Date(),
+      lastUpdated: new Date()
     };
-
+    
     this.setupDefaultAlerts();
   }
 
@@ -205,12 +205,9 @@ export class WorkflowExecutionMonitor extends EventEmitter {
     }
 
     // Clean up old history entries every hour
-    this.historyCleanupInterval = setInterval(
-      () => {
-        this.cleanupHistory();
-      },
-      60 * 60 * 1000
-    );
+    this.historyCleanupInterval = setInterval(() => {
+      this.cleanupHistory();
+    }, 60 * 60 * 1000);
 
     this.isStarted = true;
     this.emit('started');
@@ -243,22 +240,22 @@ export class WorkflowExecutionMonitor extends EventEmitter {
    */
   trackExecution(executionId: string, initialStatus: ExecutionStatus): void {
     this.executions.set(executionId, { ...initialStatus });
-
+    
     const event: ExecutionEvent = {
       type: 'started',
       executionId,
       timestamp: new Date(),
-      payload: { status: initialStatus.status },
+      payload: { status: initialStatus.status }
     };
-
+    
     this.addExecutionEvent(event);
-
+    
     // Add to history
     this.executionHistory.push({
       executionId,
       status: initialStatus.status,
       startedAt: new Date(),
-      metadata: initialStatus.metadata,
+      metadata: initialStatus.metadata
     });
 
     this.metrics.totalExecutions++;
@@ -268,13 +265,7 @@ export class WorkflowExecutionMonitor extends EventEmitter {
   /**
    * Update execution status
    */
-  updateExecutionStatus(
-    executionId: string,
-    status: TaskExecutionStatus,
-    progress?: number,
-    message?: string,
-    result?: any
-  ): void {
+  updateExecutionStatus(executionId: string, status: TaskExecutionStatus, progress?: number, message?: string, result?: any): void {
     const execution = this.executions.get(executionId);
     if (!execution) {
       throw new MCPErrorClass(-32001, `Execution not found: ${executionId}`);
@@ -283,11 +274,11 @@ export class WorkflowExecutionMonitor extends EventEmitter {
     const previousStatus = execution.status;
     execution.status = status;
     execution.lastUpdated = new Date();
-
+    
     if (progress !== undefined) {
       execution.progress = progress;
     }
-
+    
     if (message !== undefined) {
       execution.message = message;
     }
@@ -299,23 +290,18 @@ export class WorkflowExecutionMonitor extends EventEmitter {
     }
 
     // Update history entry
-    const historyEntry = this.executionHistory.find((h) => h.executionId === executionId);
+    const historyEntry = this.executionHistory.find(h => h.executionId === executionId);
     if (historyEntry) {
       historyEntry.status = status;
-
-      if (
-        status === TaskExecutionStatus.COMPLETED ||
-        status === TaskExecutionStatus.FAILED ||
-        status === TaskExecutionStatus.CANCELLED
-      ) {
+      
+      if (status === TaskExecutionStatus.COMPLETED || status === TaskExecutionStatus.FAILED || status === TaskExecutionStatus.CANCELLED) {
         historyEntry.completedAt = new Date();
-        historyEntry.duration =
-          historyEntry.completedAt.getTime() - historyEntry.startedAt.getTime();
-
+        historyEntry.duration = historyEntry.completedAt.getTime() - historyEntry.startedAt.getTime();
+        
         if (status === TaskExecutionStatus.FAILED && message) {
           historyEntry.error = message;
         }
-
+        
         if (result !== undefined) {
           historyEntry.result = result;
         }
@@ -328,9 +314,9 @@ export class WorkflowExecutionMonitor extends EventEmitter {
       type: eventType,
       executionId,
       timestamp: new Date(),
-      payload: { status, progress, message, result },
+      payload: { status, progress, message, result }
     };
-
+    
     this.addExecutionEvent(event);
 
     // Check for alerts
@@ -350,7 +336,7 @@ export class WorkflowExecutionMonitor extends EventEmitter {
         executionId: callback.executionId,
         status: TaskExecutionStatus.RUNNING,
         lastUpdated: new Date(),
-        metadata: { source: callback.source },
+        metadata: { source: callback.source }
       });
     }
 
@@ -410,25 +396,21 @@ export class WorkflowExecutionMonitor extends EventEmitter {
    */
   getActiveExecutions(): ExecutionStatus[] {
     return Array.from(this.executions.values())
-      .filter(
-        (e) => e.status === TaskExecutionStatus.RUNNING || e.status === TaskExecutionStatus.PENDING
-      )
-      .map((e) => ({ ...e }));
+      .filter(e => e.status === TaskExecutionStatus.RUNNING || e.status === TaskExecutionStatus.PENDING)
+      .map(e => ({ ...e }));
   }
 
   /**
    * Get execution history
    */
   getExecutionHistory(limit?: number, offset?: number): ExecutionHistoryEntry[] {
-    const sorted = [...this.executionHistory].sort(
-      (a, b) => b.startedAt.getTime() - a.startedAt.getTime()
-    );
-
+    const sorted = [...this.executionHistory].sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
+    
     if (limit !== undefined) {
       const start = offset || 0;
       return sorted.slice(start, start + limit);
     }
-
+    
     return sorted;
   }
 
@@ -436,16 +418,16 @@ export class WorkflowExecutionMonitor extends EventEmitter {
    * Get execution events
    */
   getExecutionEvents(executionId?: string, limit?: number): ExecutionEvent[] {
-    let events = executionId
-      ? this.executionEvents.filter((e) => e.executionId === executionId)
+    let events = executionId 
+      ? this.executionEvents.filter(e => e.executionId === executionId)
       : [...this.executionEvents];
-
+    
     events.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-
+    
     if (limit !== undefined) {
       events = events.slice(0, limit);
     }
-
+    
     return events;
   }
 
@@ -489,20 +471,13 @@ export class WorkflowExecutionMonitor extends EventEmitter {
       throw new MCPErrorClass(-32001, `Execution not found: ${executionId}`);
     }
 
-    if (
-      execution.status === TaskExecutionStatus.COMPLETED ||
-      execution.status === TaskExecutionStatus.FAILED ||
-      execution.status === TaskExecutionStatus.CANCELLED
-    ) {
+    if (execution.status === TaskExecutionStatus.COMPLETED || 
+        execution.status === TaskExecutionStatus.FAILED || 
+        execution.status === TaskExecutionStatus.CANCELLED) {
       throw new MCPErrorClass(-32602, `Cannot cancel execution in status: ${execution.status}`);
     }
 
-    this.updateExecutionStatus(
-      executionId,
-      TaskExecutionStatus.CANCELLED,
-      undefined,
-      reason || 'Execution cancelled'
-    );
+    this.updateExecutionStatus(executionId, TaskExecutionStatus.CANCELLED, undefined, reason || 'Execution cancelled');
     this.emit('executionCancelled', { executionId, reason });
   }
 
@@ -514,12 +489,10 @@ export class WorkflowExecutionMonitor extends EventEmitter {
     let cleanedCount = 0;
 
     for (const [executionId, status] of this.executions.entries()) {
-      if (
-        status.lastUpdated < cutoffTime &&
-        (status.status === TaskExecutionStatus.COMPLETED ||
-          status.status === TaskExecutionStatus.FAILED ||
-          status.status === TaskExecutionStatus.CANCELLED)
-      ) {
+      if (status.lastUpdated < cutoffTime && 
+          (status.status === TaskExecutionStatus.COMPLETED || 
+           status.status === TaskExecutionStatus.FAILED || 
+           status.status === TaskExecutionStatus.CANCELLED)) {
         this.executions.delete(executionId);
         cleanedCount++;
       }
@@ -537,7 +510,7 @@ export class WorkflowExecutionMonitor extends EventEmitter {
       threshold: 20, // 20% error rate
       timeWindow: 5 * 60 * 1000, // 5 minutes
       enabled: true,
-      callback: (alert) => this.emit('alert', alert),
+      callback: (alert) => this.emit('alert', alert)
     });
 
     // Long execution time alert
@@ -546,7 +519,7 @@ export class WorkflowExecutionMonitor extends EventEmitter {
       threshold: 30 * 1000, // 30 seconds
       timeWindow: 10 * 60 * 1000, // 10 minutes
       enabled: true,
-      callback: (alert) => this.emit('alert', alert),
+      callback: (alert) => this.emit('alert', alert)
     });
 
     // High failure count alert
@@ -555,22 +528,20 @@ export class WorkflowExecutionMonitor extends EventEmitter {
       threshold: 10, // 10 failures
       timeWindow: 5 * 60 * 1000, // 5 minutes
       enabled: true,
-      callback: (alert) => this.emit('alert', alert),
+      callback: (alert) => this.emit('alert', alert)
     });
   }
 
   private addExecutionEvent(event: ExecutionEvent): void {
     this.executionEvents.push(event);
-
+    
     // Keep only last 1000 events to prevent memory issues
     if (this.executionEvents.length > 1000) {
       this.executionEvents.splice(0, this.executionEvents.length - 1000);
     }
 
     if (this.config.enableDetailedLogging) {
-      console.log(
-        `[WorkflowExecutionMonitor] Event: ${event.type} for execution: ${event.executionId}`
-      );
+      console.log(`[WorkflowExecutionMonitor] Event: ${event.type} for execution: ${event.executionId}`);
     }
   }
 
@@ -578,32 +549,23 @@ export class WorkflowExecutionMonitor extends EventEmitter {
     const executions = Array.from(this.executions.values());
     const history = this.executionHistory;
 
-    this.metrics.activeExecutions = executions.filter(
-      (e) => e.status === TaskExecutionStatus.RUNNING || e.status === TaskExecutionStatus.PENDING
+    this.metrics.activeExecutions = executions.filter(e => 
+      e.status === TaskExecutionStatus.RUNNING || e.status === TaskExecutionStatus.PENDING
     ).length;
 
-    this.metrics.completedExecutions = history.filter(
-      (h) => h.status === TaskExecutionStatus.COMPLETED
-    ).length;
-    this.metrics.failedExecutions = history.filter(
-      (h) => h.status === TaskExecutionStatus.FAILED
-    ).length;
-    this.metrics.cancelledExecutions = history.filter(
-      (h) => h.status === TaskExecutionStatus.CANCELLED
-    ).length;
+    this.metrics.completedExecutions = history.filter(h => h.status === TaskExecutionStatus.COMPLETED).length;
+    this.metrics.failedExecutions = history.filter(h => h.status === TaskExecutionStatus.FAILED).length;
+    this.metrics.cancelledExecutions = history.filter(h => h.status === TaskExecutionStatus.CANCELLED).length;
 
     // Calculate success and error rates
-    const totalCompleted =
-      this.metrics.completedExecutions +
-      this.metrics.failedExecutions +
-      this.metrics.cancelledExecutions;
+    const totalCompleted = this.metrics.completedExecutions + this.metrics.failedExecutions + this.metrics.cancelledExecutions;
     if (totalCompleted > 0) {
       this.metrics.successRate = (this.metrics.completedExecutions / totalCompleted) * 100;
       this.metrics.errorRate = (this.metrics.failedExecutions / totalCompleted) * 100;
     }
 
     // Calculate average execution time
-    const completedWithDuration = history.filter((h) => h.duration !== undefined);
+    const completedWithDuration = history.filter(h => h.duration !== undefined);
     if (completedWithDuration.length > 0) {
       const totalDuration = completedWithDuration.reduce((sum, h) => sum + (h.duration || 0), 0);
       this.metrics.averageExecutionTime = totalDuration / completedWithDuration.length;
@@ -611,18 +573,14 @@ export class WorkflowExecutionMonitor extends EventEmitter {
 
     // Calculate executions per minute (last 5 minutes)
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-    const recentExecutions = history.filter((h) => h.startedAt > fiveMinutesAgo);
-    this.metrics.executionsPerMinute = recentExecutions.length / 5;
+    const recentExecutions = history.filter(h => h.startedAt > fiveMinutesAgo);
+    this.metrics.executionsPerMinute = (recentExecutions.length / 5);
 
     this.metrics.lastUpdated = new Date();
     this.emit('metricsUpdated', this.metrics);
   }
 
-  private checkAlerts(
-    executionId: string,
-    status: TaskExecutionStatus,
-    execution: ExecutionStatus
-  ): void {
+  private checkAlerts(executionId: string, status: TaskExecutionStatus, execution: ExecutionStatus): void {
     for (const [alertId, alertConfig] of this.alerts.entries()) {
       if (!alertConfig.enabled) {
         continue;
@@ -643,41 +601,30 @@ export class WorkflowExecutionMonitor extends EventEmitter {
     }
   }
 
-  private evaluateAlert(
-    config: AlertConfig,
-    executionId: string,
-    status: TaskExecutionStatus,
-    execution: ExecutionStatus
-  ): boolean {
+  private evaluateAlert(config: AlertConfig, executionId: string, status: TaskExecutionStatus, execution: ExecutionStatus): boolean {
     const timeWindow = new Date(Date.now() - config.timeWindow);
-    const recentHistory = this.executionHistory.filter((h) => h.startedAt > timeWindow);
+    const recentHistory = this.executionHistory.filter(h => h.startedAt > timeWindow);
     const totalRecent = recentHistory.length;
 
     switch (config.type) {
       case 'error_rate':
-        const failedRecent = recentHistory.filter(
-          (h) => h.status === TaskExecutionStatus.FAILED
-        ).length;
+        const failedRecent = recentHistory.filter(h => h.status === TaskExecutionStatus.FAILED).length;
         const errorRate = totalRecent > 0 ? (failedRecent / totalRecent) * 100 : 0;
         return errorRate > config.threshold;
 
       case 'execution_time':
-        const historyEntry = this.executionHistory.find((h) => h.executionId === executionId);
+        const historyEntry = this.executionHistory.find(h => h.executionId === executionId);
         if (historyEntry && historyEntry.duration) {
           return historyEntry.duration > config.threshold;
         }
         return false;
 
       case 'failure_count':
-        const failureCount = recentHistory.filter(
-          (h) => h.status === TaskExecutionStatus.FAILED
-        ).length;
+        const failureCount = recentHistory.filter(h => h.status === TaskExecutionStatus.FAILED).length;
         return failureCount > config.threshold;
 
       case 'timeout_rate':
-        const timeoutCount = recentHistory.filter(
-          (h) => h.status === TaskExecutionStatus.TIMEOUT
-        ).length;
+        const timeoutCount = recentHistory.filter(h => h.status === TaskExecutionStatus.TIMEOUT).length;
         const timeoutRate = totalRecent > 0 ? (timeoutCount / totalRecent) * 100 : 0;
         return timeoutRate > config.threshold;
 
@@ -688,7 +635,7 @@ export class WorkflowExecutionMonitor extends EventEmitter {
 
   private createAlert(alertId: string, config: AlertConfig, executionId: string): AlertEvent {
     const severity = this.determineAlertSeverity(config);
-
+    
     return {
       type: config.type,
       severity,
@@ -697,7 +644,7 @@ export class WorkflowExecutionMonitor extends EventEmitter {
       threshold: config.threshold,
       timestamp: new Date(),
       executionIds: [executionId],
-      metadata: { alertId },
+      metadata: { alertId }
     };
   }
 
@@ -729,57 +676,44 @@ export class WorkflowExecutionMonitor extends EventEmitter {
 
   private getCurrentAlertValue(config: AlertConfig): number {
     const timeWindow = new Date(Date.now() - config.timeWindow);
-    const recentHistory = this.executionHistory.filter((h) => h.startedAt > timeWindow);
+    const recentHistory = this.executionHistory.filter(h => h.startedAt > timeWindow);
 
     switch (config.type) {
       case 'error_rate':
         const totalRecent = recentHistory.length;
-        const failedRecent = recentHistory.filter(
-          (h) => h.status === TaskExecutionStatus.FAILED
-        ).length;
+        const failedRecent = recentHistory.filter(h => h.status === TaskExecutionStatus.FAILED).length;
         return totalRecent > 0 ? (failedRecent / totalRecent) * 100 : 0;
 
       case 'execution_time':
-        const durations = recentHistory.filter((h) => h.duration).map((h) => h.duration!);
+        const durations = recentHistory.filter(h => h.duration).map(h => h.duration!);
         return durations.length > 0 ? Math.max(...durations) : 0;
 
       case 'failure_count':
-        return recentHistory.filter((h) => h.status === TaskExecutionStatus.FAILED).length;
+        return recentHistory.filter(h => h.status === TaskExecutionStatus.FAILED).length;
 
       default:
         return 0;
     }
   }
 
-  private getEventTypeFromStatus(
-    status: TaskExecutionStatus,
-    previousStatus: TaskExecutionStatus
-  ): ExecutionEvent['type'] {
+  private getEventTypeFromStatus(status: TaskExecutionStatus, previousStatus: TaskExecutionStatus): ExecutionEvent['type'] {
     if (status === TaskExecutionStatus.COMPLETED) return 'completed';
     if (status === TaskExecutionStatus.FAILED) return 'failed';
     if (status === TaskExecutionStatus.CANCELLED) return 'cancelled';
     if (status === TaskExecutionStatus.TIMEOUT) return 'timeout';
-    if (status === TaskExecutionStatus.RUNNING && previousStatus !== TaskExecutionStatus.RUNNING)
-      return 'started';
+    if (status === TaskExecutionStatus.RUNNING && previousStatus !== TaskExecutionStatus.RUNNING) return 'started';
     return 'progress';
   }
 
   private mapCallbackStatusToExecutionStatus(callbackStatus: string): TaskExecutionStatus {
     switch (callbackStatus.toLowerCase()) {
-      case 'pending':
-        return TaskExecutionStatus.PENDING;
-      case 'running':
-        return TaskExecutionStatus.RUNNING;
-      case 'completed':
-        return TaskExecutionStatus.COMPLETED;
-      case 'failed':
-        return TaskExecutionStatus.FAILED;
-      case 'cancelled':
-        return TaskExecutionStatus.CANCELLED;
-      case 'timeout':
-        return TaskExecutionStatus.TIMEOUT;
-      default:
-        return TaskExecutionStatus.RUNNING;
+      case 'pending': return TaskExecutionStatus.PENDING;
+      case 'running': return TaskExecutionStatus.RUNNING;
+      case 'completed': return TaskExecutionStatus.COMPLETED;
+      case 'failed': return TaskExecutionStatus.FAILED;
+      case 'cancelled': return TaskExecutionStatus.CANCELLED;
+      case 'timeout': return TaskExecutionStatus.TIMEOUT;
+      default: return TaskExecutionStatus.RUNNING;
     }
   }
 

@@ -2,8 +2,8 @@
  * Example script demonstrating how to use the Code Execution Agent
  */
 
-import { MCPClient } from '../../packages/core/src/mcp/MCPClient.tsx'; // Replace with actual import
 import { CodeExecutionAgent } from './code-execution-agent.js';
+import { MCPClient } from '../../packages/core/src/mcp/MCPClient.tsx'; // Replace with actual import
 
 async function main() {
   // Create MCP client
@@ -27,17 +27,14 @@ async function main() {
   console.log('Example 1 Result:', result1);
 
   // Example 2: Execute JavaScript code with context
-  const result2 = await agent.executeJavaScript(
-    `
+  const result2 = await agent.executeJavaScript(`
     return customFunc(customVar);
-  `,
-    {
-      context: {
-        customVar: 42,
-        customFunc: (x) => x * 2,
-      },
-    }
-  );
+  `, {
+    context: {
+      customVar: 42,
+      customFunc: (x) => x * 2,
+    },
+  });
   console.log('Example 2 Result:', result2);
 
   // Example 3: Execute TypeScript code

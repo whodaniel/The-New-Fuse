@@ -6,7 +6,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { DatabaseService } from '../../src/db/db.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
 import { PerformanceMonitor } from '../utils/performance-monitor';
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
 
@@ -203,7 +203,7 @@ class MemoryLeakDetector {
 
 describe('Load Testing and Memory Leak Tests', () => {
   let app: INestApplication;
-  let db: DatabaseService;
+  let prisma: PrismaService;
   let performanceMonitor: PerformanceMonitor;
   let authToken: string;
   let testUser: any;
@@ -216,11 +216,11 @@ describe('Load Testing and Memory Leak Tests', () => {
     app = moduleRef.createNestApplication();
     await app.init();
 
-    db = app.get(DatabaseService);
+    prisma = app.get(PrismaService);
     performanceMonitor = app.get(PerformanceMonitor);
 
     // Setup test user
-    testUser = await db.user.create({
+    testUser = await prisma.user.create({
       data: {
         email: 'load.test@example.com',
         password: 'TestPassword123!',
@@ -239,10 +239,10 @@ describe('Load Testing and Memory Leak Tests', () => {
   });
 
   afterAll(async () => {
-    await db.agent.deleteMany({
+    await prisma.agent.deleteMany({
       where: { userId: testUser.id },
     });
-    await db.user.delete({
+    await prisma.user.delete({
       where: { id: testUser.id },
     });
     await app.close();
@@ -320,7 +320,7 @@ describe('Load Testing and Memory Leak Tests', () => {
       // Create multiple agents for testing
       const agents = await Promise.all(
         Array(10).fill().map((_, i) =>
-          db.agent.create({
+          prisma.agent.create({
             data: {
               name: `Load Test Agent ${i}`,
               description: 'Agent for load testing',
@@ -347,7 +347,7 @@ describe('Load Testing and Memory Leak Tests', () => {
       expect(loadResult.p95ResponseTime).toBeLessThan(2000);
 
       // Clean up
-      await db.agent.deleteMany({
+      await prisma.agent.deleteMany({
         where: { id: { in: agents.map(a => a.id) } },
       });
     }, 90000);
@@ -501,7 +501,7 @@ describe('Load Testing and Memory Leak Tests', () => {
 
         try {
           // Create agent
-          await db.agent.create({
+          await prisma.agent.create({
             data: {
               name: `Concurrent Test Agent ${i}`,
               description: 'Testing concurrent database operations',
@@ -542,14 +542,14 @@ describe('Load Testing and Memory Leak Tests', () => {
       expect(totalMemoryUsed).toBeLessThan(50 * 1024 * 1024);
 
       // Clean up
-      await db.agent.deleteMany({
+      await prisma.agent.deleteMany({
         where: { name: { startsWith: 'Concurrent Test Agent' } },
       });
     });
 
     it('should prevent N+1 queries under load', async () => {
       // Create related data
-      const agent = await db.agent.create({
+      const agent = await prisma.agent.create({
         data: {
           name: 'Load Test Agent for N+1',
           description: 'Testing N+1 under load',
@@ -562,7 +562,7 @@ describe('Load Testing and Memory Leak Tests', () => {
       const messageCount = 100;
       await Promise.all(
         Array(messageCount).fill().map((_, i) =>
-          db.message.create({
+          prisma.message.create({
             data: {
               content: `Test message ${i}`,
               agentId: agent.id,
@@ -575,7 +575,7 @@ describe('Load Testing and Memory Leak Tests', () => {
 
       // Test queries that might cause N+1
       const startTime = Date.now();
-      const agents = await db.agent.findMany({
+      const agents = await prisma.agent.findMany({
         include: {
           messages: true,
           user: true,
@@ -597,10 +597,10 @@ describe('Load Testing and Memory Leak Tests', () => {
       });
 
       // Clean up
-      await db.message.deleteMany({
+      await prisma.message.deleteMany({
         where: { agentId: agent.id },
       });
-      await db.agent.delete({
+      await prisma.agent.delete({
         where: { id: agent.id },
       });
     });

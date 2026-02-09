@@ -1,7 +1,6 @@
 # WebSocket Infrastructure Integration Guide
 
-This guide shows how to integrate the new WebSocket infrastructure into the
-backend app.
+This guide shows how to integrate the new WebSocket infrastructure into the backend app.
 
 ## Installation
 
@@ -49,9 +48,7 @@ import { WebSocketInfrastructureModule } from '@the-new-fuse/websocket-infrastru
     WebSocketInfrastructureModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         cors: {
-          origin: configService.get('CORS_ORIGINS')?.split(',') || [
-            'http://localhost:3000',
-          ],
+          origin: configService.get('CORS_ORIGINS')?.split(',') || ['http://localhost:3000'],
           credentials: true,
         },
         redis: {
@@ -61,16 +58,12 @@ import { WebSocketInfrastructureModule } from '@the-new-fuse/websocket-infrastru
           db: parseInt(configService.get('REDIS_DB') || '0'),
         },
         heartbeat: {
-          interval: parseInt(
-            configService.get('HEARTBEAT_INTERVAL') || '30000'
-          ),
+          interval: parseInt(configService.get('HEARTBEAT_INTERVAL') || '30000'),
           timeout: parseInt(configService.get('HEARTBEAT_TIMEOUT') || '60000'),
         },
         compression: {
           enabled: configService.get('COMPRESSION_ENABLED') === 'true',
-          threshold: parseInt(
-            configService.get('COMPRESSION_THRESHOLD') || '1024'
-          ),
+          threshold: parseInt(configService.get('COMPRESSION_THRESHOLD') || '1024'),
         },
         messageQueue: {
           enabled: configService.get('QUEUE_ENABLED') === 'true',
@@ -78,12 +71,8 @@ import { WebSocketInfrastructureModule } from '@the-new-fuse/websocket-infrastru
           ttl: parseInt(configService.get('QUEUE_TTL') || '3600000'),
         },
         connectionPool: {
-          maxConnections: parseInt(
-            configService.get('WS_MAX_CONNECTIONS') || '10000'
-          ),
-          idleTimeout: parseInt(
-            configService.get('WS_IDLE_TIMEOUT') || '300000'
-          ),
+          maxConnections: parseInt(configService.get('WS_MAX_CONNECTIONS') || '10000'),
+          idleTimeout: parseInt(configService.get('WS_IDLE_TIMEOUT') || '300000'),
         },
         monitoring: {
           enabled: configService.get('METRICS_ENABLED') === 'true',
@@ -144,8 +133,7 @@ export class EnhancedAgentCommunicationGateway
   @UseGuards(WsAuthGuard)
   async handleAgentCommunication(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody()
-    payload: {
+    @MessageBody() payload: {
       fromAgentId: string;
       toAgentId: string;
       message: any;
@@ -315,14 +303,12 @@ export class HealthController {
 If you have existing WebSocket code, here's how to migrate:
 
 #### Old Code (socket.io directly):
-
 ```typescript
 // Old
 io.emit('message', data);
 ```
 
 #### New Code (using infrastructure):
-
 ```typescript
 // New
 import { WebSocketGateway } from '@the-new-fuse/websocket-infrastructure';
@@ -484,15 +470,15 @@ services:
       - WS_MAX_CONNECTIONS=10000
       - METRICS_ENABLED=true
     ports:
-      - '3000:3000'
-      - '9090:9090'
+      - "3000:3000"
+      - "9090:9090"
     depends_on:
       - redis
 
   redis:
     image: redis:7-alpine
     ports:
-      - '6379:6379'
+      - "6379:6379"
     volumes:
       - redis-data:/data
 
@@ -536,7 +522,6 @@ CMD ["node", "dist/main.js"]
 ### Issue: Connection Drops Frequently
 
 **Solution**: Increase heartbeat timeout
-
 ```bash
 HEARTBEAT_TIMEOUT=120000  # 2 minutes
 ```
@@ -544,7 +529,6 @@ HEARTBEAT_TIMEOUT=120000  # 2 minutes
 ### Issue: High Memory Usage
 
 **Solution**: Reduce max connections and enable compression
-
 ```bash
 WS_MAX_CONNECTIONS=5000
 COMPRESSION_ENABLED=true
@@ -554,7 +538,6 @@ COMPRESSION_THRESHOLD=512
 ### Issue: Redis Connection Errors
 
 **Solution**: Check Redis connection settings
-
 ```bash
 # Test Redis connection
 redis-cli -h localhost -p 6379 ping
@@ -563,7 +546,6 @@ redis-cli -h localhost -p 6379 ping
 ### Issue: Metrics Not Showing
 
 **Solution**: Ensure metrics are enabled
-
 ```bash
 METRICS_ENABLED=true
 METRICS_PORT=9090

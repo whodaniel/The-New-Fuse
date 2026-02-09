@@ -1,7 +1,8 @@
-import { RefreshCw } from 'lucide-react';
 import React from 'react';
+import { ServiceStatusType } from '@the-new-fuse/types';
 import { useServices } from '../../hooks/useServices';
 import { ServiceStatus } from './ServiceStatus';
+import { RefreshCw } from 'lucide-react';
 
 export const ServiceMonitor: React.FC = () => {
   const { services, restartService } = useServices();
@@ -59,3 +60,4 @@ export const ServiceMonitor: React.FC = () => {
     </div>
   );
 };
+

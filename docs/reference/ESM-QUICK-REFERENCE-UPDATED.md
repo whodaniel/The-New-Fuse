@@ -33,7 +33,6 @@ cd apps/backend && bun dev
 ### Import Style Guide (Same as Before)
 
 ✅ **DO**:
-
 ```typescript
 // Local imports need .js extension (even for .ts files)
 import { MyClass } from './my-class.js';
@@ -48,7 +47,6 @@ import { utils } from './utils/js';
 ```
 
 ❌ **DON'T**:
-
 ```typescript
 // Missing extension (won't work in ESM)
 import { MyClass } from './my-class';
@@ -76,6 +74,5 @@ If you encounter module resolution issues:
 ### Documentation
 
 For more details, see:
-
 - [TypeScript ESM Configuration Guide](/docs/TYPESCRIPT_ESM_CONFIGURATION.md)
 - [Development Log](/docs/DEVELOPMENT-LOG.md)

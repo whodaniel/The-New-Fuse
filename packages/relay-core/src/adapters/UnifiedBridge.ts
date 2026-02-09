@@ -1,6 +1,7 @@
+
 /**
  * Unified Bridge for The New Fuse Framework
- *
+ * 
  * Consolidates bridge patterns from:
  * - message-bridge.js (file-based agent coordination)
  * - terminal_bridge.js (AI agent terminal sharing)

@@ -86,11 +86,7 @@ async function initialize() {
       const interceptionResult = web3Interceptor.interceptUrl(url);
 
       // If it's a Web3 URL and was successfully resolved, redirect
-      if (
-        interceptionResult.wasWeb3 &&
-        !interceptionResult.error &&
-        interceptionResult.url !== url
-      ) {
+      if (interceptionResult.wasWeb3 && !interceptionResult.error && interceptionResult.url !== url) {
         // Cancel the current navigation and redirect to resolved URL
         chrome.tabs.update(details.tabId, { url: interceptionResult.url });
 

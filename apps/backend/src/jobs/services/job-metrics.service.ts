@@ -1,6 +1,6 @@
-import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
-import { Queue } from 'bull';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue, JobCounts } from 'bull';
 import { QueueName } from '../constants/queue-names';
 
 /**
@@ -45,7 +45,7 @@ export class JobMetricsService {
     @InjectQueue(QueueName.AGENT_EXECUTION) private agentQueue: Queue,
     @InjectQueue(QueueName.REPORT_GENERATION) private reportQueue: Queue,
     @InjectQueue(QueueName.DATA_SYNC) private dataSyncQueue: Queue,
-    @InjectQueue(QueueName.CLEANUP) private cleanupQueue: Queue
+    @InjectQueue(QueueName.CLEANUP) private cleanupQueue: Queue,
   ) {}
 
   /**
@@ -62,7 +62,7 @@ export class JobMetricsService {
       completed: counts.completed || 0,
       failed: counts.failed || 0,
       delayed: counts.delayed || 0,
-      paused: (counts as any).paused || 0,
+      paused: counts.paused || 0,
       total:
         (counts.waiting || 0) +
         (counts.active || 0) +
@@ -84,7 +84,9 @@ export class JobMetricsService {
       QueueName.CLEANUP,
     ];
 
-    const metrics = await Promise.all(queues.map((queueName) => this.getQueueMetrics(queueName)));
+    const metrics = await Promise.all(
+      queues.map((queueName) => this.getQueueMetrics(queueName)),
+    );
 
     return metrics;
   }
@@ -109,12 +111,13 @@ export class JobMetricsService {
         completedJobs: 0,
         failedJobs: 0,
         successRate: 0,
-      }
+      },
     );
 
     // Calculate success rate
     const totalProcessed = overall.completedJobs + overall.failedJobs;
-    overall.successRate = totalProcessed > 0 ? (overall.completedJobs / totalProcessed) * 100 : 0;
+    overall.successRate =
+      totalProcessed > 0 ? (overall.completedJobs / totalProcessed) * 100 : 0;
 
     return {
       queues: queueMetrics,
@@ -198,7 +201,7 @@ export class JobMetricsService {
   async cleanQueue(
     queueName: QueueName,
     grace: number = 24 * 3600 * 1000,
-    status: 'completed' | 'failed' = 'completed'
+    status: 'completed' | 'failed' = 'completed',
   ): Promise<number> {
     const queue = this.getQueue(queueName);
     const cleaned = await queue.clean(grace, status);

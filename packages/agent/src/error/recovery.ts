@@ -11,14 +11,14 @@ export enum ErrorCategory {
   VALIDATION = 'validation',
   TIMEOUT = 'timeout',
   DEPENDENCY = 'dependency',
-  SYSTEM = 'system',
+  SYSTEM = 'system'
 }
 
 export enum ErrorSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  FATAL = 'fatal',
+  FATAL = 'fatal'
 }
 
 export interface ErrorRecoveryStrategy {
@@ -52,18 +52,14 @@ export class ErrorRecovery {
   /**
    * Handle an error with appropriate recovery strategy
    */
-  async handleError(
-    error: Error,
-    category: ErrorCategory,
-    severity: ErrorSeverity
-  ): Promise<boolean> {
+  async handleError(error: Error, category: ErrorCategory, severity: ErrorSeverity): Promise<boolean> {
     const errorRecord: ErrorRecord = {
       error,
       category,
       severity,
       timestamp: Date.now(),
       attempts: 0,
-      resolved: false,
+      resolved: false
     };
 
     // Add to history
@@ -81,18 +77,14 @@ export class ErrorRecovery {
     // Attempt recovery
     for (let attempt = 1; attempt <= strategy.maxRetries; attempt++) {
       errorRecord.attempts = attempt;
-
+      
       try {
-        console.log(
-          `Attempting recovery for ${category}/${severity} error (attempt ${attempt}/${strategy.maxRetries})`
-        );
+        console.log(`Attempting recovery for ${category}/${severity} error (attempt ${attempt}/${strategy.maxRetries})`);
         const recovered = await strategy.execute(error, attempt);
-
+        
         if (recovered) {
           errorRecord.resolved = true;
-          console.log(
-            `Successfully recovered from ${category}/${severity} error after ${attempt} attempts`
-          );
+          console.log(`Successfully recovered from ${category}/${severity} error after ${attempt} attempts`);
           return true;
         }
       } catch (strategyError) {
@@ -102,13 +94,11 @@ export class ErrorRecovery {
       // Wait before retry (exponential backoff)
       if (attempt < strategy.maxRetries) {
         const delay = Math.pow(strategy.backoffMultiplier, attempt - 1) * 1000;
-        await new Promise((resolve) => setTimeout(resolve, delay));
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
 
-    console.error(
-      `Failed to recover from ${category}/${severity} error after ${strategy.maxRetries} attempts`
-    );
+    console.error(`Failed to recover from ${category}/${severity} error after ${strategy.maxRetries} attempts`);
     return false;
   }
 
@@ -123,10 +113,7 @@ export class ErrorRecovery {
   /**
    * Find appropriate recovery strategy
    */
-  private findStrategy(
-    category: ErrorCategory,
-    severity: ErrorSeverity
-  ): ErrorRecoveryStrategy | null {
+  private findStrategy(category: ErrorCategory, severity: ErrorSeverity): ErrorRecoveryStrategy | null {
     const key = `${category}:${severity}`;
     return this.strategies.get(key) || null;
   }
@@ -136,7 +123,7 @@ export class ErrorRecovery {
    */
   private addToHistory(record: ErrorRecord): void {
     this.errorHistory.push(record);
-
+    
     // Trim history if too large
     if (this.errorHistory.length > this.maxHistorySize) {
       this.errorHistory = this.errorHistory.slice(-this.maxHistorySize);
@@ -158,7 +145,7 @@ export class ErrorRecovery {
         // Simple retry logic - can be enhanced
         console.log(`Network retry attempt ${attempt}`);
         return false; // Placeholder - should implement actual retry logic
-      },
+      }
     });
 
     // Timeout recovery strategy
@@ -169,8 +156,9 @@ export class ErrorRecovery {
       maxRetries: 2,
       backoffMultiplier: 1.5,
       execute: async (error: Error, attempt: number) => {
+        
         return false; // Placeholder - should implement timeout handling
-      },
+      }
     });
 
     // Resource cleanup strategy
@@ -183,7 +171,7 @@ export class ErrorRecovery {
       execute: async () => {
         // Placeholder for resource cleanup logic
         return false;
-      },
+      }
     });
   }
 
@@ -200,7 +188,7 @@ export class ErrorRecovery {
     const severityCounts = {} as Record<ErrorSeverity, number>;
     let resolvedErrors = 0;
 
-    this.errorHistory.forEach((record) => {
+    this.errorHistory.forEach(record => {
       categoryCounts[record.category] = (categoryCounts[record.category] || 0) + 1;
       severityCounts[record.severity] = (severityCounts[record.severity] || 0) + 1;
       if (record.resolved) {
@@ -212,7 +200,7 @@ export class ErrorRecovery {
       totalErrors: this.errorHistory.length,
       resolvedErrors,
       categoryCounts,
-      severityCounts,
+      severityCounts
     };
   }
 

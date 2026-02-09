@@ -1,5 +1,8 @@
 import React, { useMemo } from 'react';
 import { WorkflowDefinition, WorkflowStep } from '../types';
+import { Card, CardContent } from '../../Card/Card';
+import { Badge } from '../../Badge/Badge';
+import { ArrowRight } from 'lucide-react';
 
 interface VisualizerNode {
   id: string;
@@ -33,7 +36,7 @@ const WorkflowVisualizer: React.FC<WorkflowVisualizerProps> = ({ definition }) =
         id: step.id,
         data: { label: `${step.name} (${step.action})`, type: step.type },
         position: { x: index * xPosStep, y: yPos }, // Simple horizontal layout
-        parentIds: [], // Initialize empty array for dependencies
+        parentIds: [] // Initialize empty array for dependencies
       });
 
       // Create edges based on workflow relationships
@@ -53,16 +56,15 @@ const WorkflowVisualizer: React.FC<WorkflowVisualizerProps> = ({ definition }) =
 
       // Handle conditional logic visualization (e.g., branching)
       if (step.conditions) {
-        // Add logic to visualize conditional paths
-        // This might involve different edge types or node styling
+         // Add logic to visualize conditional paths
+         // This might involve different edge types or node styling
       }
 
       // Basic layout adjustment (very naive)
       yPos += yPosStep;
-      if (yPos > 300) {
-        // Wrap around simple layout
-        yPos = 0;
-        // Adjust x based on dependencies if needed - complex layout needed here
+      if (yPos > 300) { // Wrap around simple layout
+          yPos = 0;
+          // Adjust x based on dependencies if needed - complex layout needed here
       }
     });
 

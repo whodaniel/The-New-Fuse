@@ -1,7 +1,6 @@
 # @fuse/types
 
-This package contains all TypeScript type definitions used throughout the Fuse
-monorepo.
+This package contains all TypeScript type definitions used throughout the Fuse monorepo.
 
 ## Structure
 
@@ -41,8 +40,7 @@ import * as FuseTypes from '@fuse/types';
 - Document complex types with JSDoc comments
 - Use namespaces to avoid naming collisions when needed# @fuse/types
 
-This package contains all TypeScript type definitions used throughout the Fuse
-monorepo.
+This package contains all TypeScript type definitions used throughout the Fuse monorepo.
 
 ## Structure
 

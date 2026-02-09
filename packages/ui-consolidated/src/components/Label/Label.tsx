@@ -1,26 +1,27 @@
-import * as LabelPrimitive from '@radix-ui/react-label';
-import { cva, type VariantProps } from 'class-variance-authority';
-import * as React from 'react';
+import * as React from "react";
+import * as LabelPrimitive from "@radix-ui/react-label";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from '../../utils/cn'; // Updated import path
 
 const labelVariants = cva(
-  'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+  "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
   {
     variants: {
       variant: {
-        default: '',
+        default: "",
         required: "after:content-['*'] after:ml-0.5 after:text-destructive",
-        error: 'text-destructive',
-      },
+        error: "text-destructive"
+      }
     },
     defaultVariants: {
-      variant: 'default',
+      variant: "default",
     },
   }
 );
 
 export interface LabelProps
-  extends React.LabelHTMLAttributes<HTMLLabelElement>, VariantProps<typeof labelVariants> {
+  extends React.LabelHTMLAttributes<HTMLLabelElement>,
+    VariantProps<typeof labelVariants> {
   error?: boolean;
   required?: boolean;
   optional?: boolean; // Added optional prop
@@ -29,7 +30,7 @@ export interface LabelProps
 const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
   ({ className, error, required, variant, optional, children, ...props }, ref) => {
     // Determine variant based on props
-    const variantToUse = error ? 'error' : required ? 'required' : variant;
+    const variantToUse = error ? "error" : required ? "required" : variant;
 
     return (
       <LabelPrimitive.Root
@@ -44,6 +45,6 @@ const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
   }
 );
 
-Label.displayName = 'Label';
+Label.displayName = "Label";
 
 export { Label, labelVariants };

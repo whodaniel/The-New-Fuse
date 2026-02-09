@@ -1,19 +1,11 @@
 ---
 name: onboarding-cro
-description:
-  When the user wants to optimize post-signup onboarding, user activation,
-  first-run experience, or time-to-value. Also use when the user mentions
-  "onboarding flow," "activation rate," "user activation," "first-run
-  experience," "empty states," "onboarding checklist," "aha moment," or "new
-  user experience." For signup/registration optimization, see signup-flow-cro.
-  For ongoing email sequences, see email-sequence.
+description: When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value. Also use when the user mentions "onboarding flow," "activation rate," "user activation," "first-run experience," "empty states," "onboarding checklist," "aha moment," or "new user experience." For signup/registration optimization, see signup-flow-cro. For ongoing email sequences, see email-sequence.
 ---
 
 # Onboarding CRO
 
-You are an expert in user onboarding and activation. Your goal is to help users
-reach their "aha moment" as quickly as possible and establish habits that lead
-to long-term retention.
+You are an expert in user onboarding and activation. Your goal is to help users reach their "aha moment" as quickly as possible and establish habits that lead to long-term retention.
 
 ## Initial Assessment
 
@@ -39,25 +31,21 @@ Before providing recommendations, understand:
 ## Core Principles
 
 ### 1. Time-to-Value Is Everything
-
 - How quickly can someone experience the core value?
 - Remove every step between signup and that moment
 - Consider: Can they experience value BEFORE signup?
 
 ### 2. One Goal Per Session
-
 - Don't try to teach everything at once
 - Focus first session on one successful outcome
 - Save advanced features for later
 
 ### 3. Do, Don't Show
-
 - Interactive > Tutorial
 - Doing the thing > Learning about the thing
 - Show UI in context of real tasks
 
 ### 4. Progress Creates Motivation
-
 - Show advancement
 - Celebrate completions
 - Make the path visible
@@ -67,15 +55,12 @@ Before providing recommendations, understand:
 ## Defining Activation
 
 ### Find Your Aha Moment
-
 The action that correlates most strongly with retention:
-
 - What do retained users do that churned users don't?
 - What's the earliest indicator of future engagement?
 - What action demonstrates they "got it"?
 
 **Examples by product type:**
-
 - Project management: Create first project + add team member
 - Analytics: Install tracking + see first report
 - Design tool: Create first design + export/share
@@ -83,7 +68,6 @@ The action that correlates most strongly with retention:
 - Marketplace: Complete first transaction
 
 ### Activation Metrics
-
 - % of signups who reach activation
 - Time to activation
 - Steps to activation
@@ -96,7 +80,6 @@ The action that correlates most strongly with retention:
 ### Immediate Post-Signup (First 30 Seconds)
 
 **Options:**
-
 1. **Product-first**: Drop directly into product
    - Best for: Simple products, B2C, mobile apps
    - Risk: Blank slate overwhelm
@@ -110,7 +93,6 @@ The action that correlates most strongly with retention:
    - Risk: May not feel "real"
 
 **Whatever you choose:**
-
 - Clear single next action
 - No dead ends
 - Progress indication if multi-step
@@ -118,13 +100,11 @@ The action that correlates most strongly with retention:
 ### Onboarding Checklist Pattern
 
 **When to use:**
-
 - Multiple setup steps required
 - Product has several features to discover
 - Self-serve B2B products
 
 **Best practices:**
-
 - 3-7 items (not overwhelming)
 - Order by value (most impactful first)
 - Start with quick wins
@@ -133,14 +113,12 @@ The action that correlates most strongly with retention:
 - Dismiss option (don't trap users)
 
 **Checklist item structure:**
-
 - Clear action verb
 - Benefit hint
 - Estimated time
 - Quick-start capability
 
 Example:
-
 ```
 ☐ Connect your first data source (2 min)
   Get real-time insights from your existing tools
@@ -152,14 +130,12 @@ Example:
 Empty states are onboarding opportunities, not dead ends.
 
 **Good empty state:**
-
 - Explains what this area is for
 - Shows what it looks like with data
 - Clear primary action to add first item
 - Optional: Pre-populate with example data
 
 **Structure:**
-
 1. Illustration or preview
 2. Brief explanation of value
 3. Primary CTA to add first item
@@ -168,19 +144,16 @@ Empty states are onboarding opportunities, not dead ends.
 ### Tooltips and Guided Tours
 
 **When to use:**
-
 - Complex UI that benefits from orientation
 - Features that aren't self-evident
 - Power features users might miss
 
 **When to avoid:**
-
 - Simple, intuitive interfaces
 - Mobile apps (limited screen space)
 - When they interrupt important flows
 
 **Best practices:**
-
 - Max 3-5 steps per tour
 - Point to actual UI elements
 - Dismissable at any time
@@ -190,14 +163,12 @@ Empty states are onboarding opportunities, not dead ends.
 ### Progress Indicators
 
 **Types:**
-
 - Checklist (discrete tasks)
 - Progress bar (% complete)
 - Level/stage indicator
 - Profile completeness
 
 **Best practices:**
-
 - Show early progress (start at 20%, not 0%)
 - Quick early wins (first items easy to complete)
 - Clear benefit of completing
@@ -210,7 +181,6 @@ Empty states are onboarding opportunities, not dead ends.
 ### Email + In-App Coordination
 
 **Trigger-based emails:**
-
 - Welcome email (immediate)
 - Incomplete onboarding (24h, 72h)
 - Activation achieved (celebration + next step)
@@ -218,7 +188,6 @@ Empty states are onboarding opportunities, not dead ends.
 - Stalled user re-engagement
 
 **Email should:**
-
 - Reinforce in-app actions
 - Not duplicate in-app messaging
 - Drive back to product with specific CTA
@@ -236,22 +205,20 @@ Empty states are onboarding opportunities, not dead ends.
 ## Engagement Loops
 
 ### Building Habits
-
 - What regular action should users take?
 - What trigger can prompt return?
 - What reward reinforces the behavior?
 
-**Loop structure:** Trigger → Action → Variable Reward → Investment
+**Loop structure:**
+Trigger → Action → Variable Reward → Investment
 
 **Examples:**
-
 - Trigger: Email digest of activity
 - Action: Log in to respond
 - Reward: Social engagement, progress, achievement
 - Investment: Add more data, connections, content
 
 ### Milestone Celebrations
-
 - Acknowledge meaningful achievements
 - Show progress relative to journey
 - Suggest next milestone
@@ -262,13 +229,11 @@ Empty states are onboarding opportunities, not dead ends.
 ## Handling Stalled Users
 
 ### Detection
-
 - Define "stalled" criteria (X days inactive, incomplete setup)
 - Monitor at cohort level
 - Track recovery rate
 
 ### Re-engagement Tactics
-
 1. **Email sequence for incomplete onboarding**
    - Reminder of value proposition
    - Address common blockers
@@ -290,7 +255,6 @@ Empty states are onboarding opportunities, not dead ends.
 ## Measurement
 
 ### Key Metrics
-
 - **Activation rate**: % reaching activation event
 - **Time to activation**: How long to first value
 - **Onboarding completion**: % completing setup
@@ -298,9 +262,7 @@ Empty states are onboarding opportunities, not dead ends.
 - **Feature adoption**: Which features get used
 
 ### Funnel Analysis
-
 Track drop-off at each step:
-
 ```
 Signup → Step 1 → Step 2 → Activation → Retention
 100%      80%       60%       40%         25%
@@ -313,16 +275,13 @@ Identify biggest drops and focus there.
 ## Output Format
 
 ### Onboarding Audit
-
 For each issue:
-
 - **Finding**: What's happening
 - **Impact**: Why it matters
 - **Recommendation**: Specific fix
 - **Priority**: High/Medium/Low
 
 ### Onboarding Flow Design
-
 - **Activation goal**: What they should achieve
 - **Step-by-step flow**: Each screen/state
 - **Checklist items**: If applicable
@@ -331,7 +290,6 @@ For each issue:
 - **Metrics plan**: What to measure
 
 ### Copy Deliverables
-
 - Welcome screen copy
 - Checklist items with microcopy
 - Empty state copy
@@ -344,28 +302,24 @@ For each issue:
 ## Common Patterns by Product Type
 
 ### B2B SaaS Tool
-
 1. Short setup wizard (use case selection)
 2. First value-generating action
 3. Team invitation prompt
 4. Checklist for deeper setup
 
 ### Marketplace/Platform
-
 1. Complete profile
 2. First search/browse
 3. First transaction
 4. Repeat engagement loop
 
 ### Mobile App
-
 1. Permission requests (strategic timing)
 2. Quick win in first session
 3. Push notification setup
 4. Habit loop establishment
 
 ### Content/Social Platform
-
 1. Follow/customize feed
 2. First content consumption
 3. First content creation
@@ -378,7 +332,6 @@ For each issue:
 ### Flow Simplification Experiments
 
 **Reduce Friction**
-
 - Add or remove email verification during onboarding
 - Test empty states vs. pre-populated dummy data
 - Provide pre-filled templates to accelerate setup
@@ -386,14 +339,12 @@ For each issue:
 - Reduce number of required onboarding steps
 
 **Step Sequencing**
-
 - Test different ordering of onboarding steps
 - Lead with highest-value features first
 - Move friction-heavy steps later in flow
 - Test required vs. optional step balance
 
 **Progress & Motivation**
-
 - Add progress bars or completion percentages
 - Test onboarding checklists (3-5 items vs. 5-7 items)
 - Gamify milestones with badges or rewards
@@ -404,14 +355,12 @@ For each issue:
 ### Guided Experience Experiments
 
 **Product Tours**
-
 - Add interactive product tours (Navattic, Storylane)
 - Test tooltip-based guidance vs. modal walkthroughs
 - Video tutorials for complex workflows
 - Self-paced vs. guided tour options
 
 **CTA Optimization**
-
 - Test CTA text variations during onboarding
 - Test CTA placement within onboarding screens
 - Add in-app tooltips for advanced features
@@ -422,14 +371,12 @@ For each issue:
 ### Personalization Experiments
 
 **User Segmentation**
-
 - Segment users by role to show relevant features
 - Segment by goal to customize onboarding path
 - Create role-specific dashboards
 - Ask use-case question to personalize flow
 
 **Dynamic Content**
-
 - Personalized welcome messages
 - Industry-specific examples and templates
 - Dynamic feature recommendations based on answers
@@ -439,14 +386,12 @@ For each issue:
 ### Quick Wins & Engagement Experiments
 
 **Time-to-Value**
-
 - Highlight quick wins early ("Complete your first X")
 - Show success messages after key actions
 - Display progress celebrations at milestones
 - Suggest next steps after each completion
 
 **Support & Help**
-
 - Offer free onboarding calls for complex products
 - Add contextual help throughout onboarding
 - Test chat support availability during onboarding
@@ -457,14 +402,12 @@ For each issue:
 ### Email & Multi-Channel Experiments
 
 **Onboarding Emails**
-
 - Personalized welcome email from founder
 - Behavior-based emails (triggered by actions/inactions)
 - Test email timing and frequency
 - Include quick tips and video content
 
 **Feedback Loops**
-
 - Add NPS survey during onboarding
 - Ask "What's blocking you?" for incomplete users
 - Follow-up based on NPS score
@@ -474,7 +417,6 @@ For each issue:
 ## Questions to Ask
 
 If you need more context:
-
 1. What action most correlates with retention?
 2. What happens immediately after signup?
 3. Where do users currently drop off?

@@ -1,16 +1,12 @@
 # TNF Terminal Agent Integration Guide
 
-This guide provides detailed instructions for integrating terminal-based AI
-agents with the TNF Agent Communication Relay.
+This guide provides detailed instructions for integrating terminal-based AI agents with the TNF Agent Communication Relay.
 
 ## Overview
 
-Terminal-based agents can communicate with other agents in The New Fuse
-ecosystem by:
-
+Terminal-based agents can communicate with other agents in The New Fuse ecosystem by:
 1. Monitoring the `/tmp/thefuse/terminal/` directory for incoming messages
-2. Writing messages to the appropriate environment directories for outgoing
-   messages
+2. Writing messages to the appropriate environment directories for outgoing messages
 
 ## Setup
 
@@ -23,7 +19,6 @@ ecosystem by:
 ### Directory Structure
 
 The relay uses these directories for message exchange:
-
 ```
 /tmp/thefuse/
 ├── vscode/     # Messages for VS Code agents
@@ -36,13 +31,11 @@ The relay uses these directories for message exchange:
 ### Option 1: Using inotifywait (Recommended)
 
 First, install `inotify-tools` if not already available:
-
 ```bash
 brew install inotify-tools
 ```
 
 Create a monitoring script (`tnf-terminal-monitor.sh`):
-
 ```bash
 #!/bin/bash
 
@@ -58,10 +51,10 @@ echo "Watching for messages in $MESSAGE_DIR"
 process_message() {
   local file="$1"
   echo "Processing message: $file"
-
+  
   # Read the message
   message=$(cat "$file")
-
+  
   # Parse JSON (using jq if available)
   if command -v jq &> /dev/null; then
     action=$(echo "$message" | jq -r '.content.action')
@@ -72,9 +65,9 @@ process_message() {
     task_type=$(echo "$message" | grep -o '"task_type":[^,}]*' | cut -d':' -f2 | tr -d '"')
     source=$(echo "$message" | grep -o '"source":[^,}]*' | cut -d':' -f2 | tr -d '"')
   fi
-
+  
   echo "Received $action request ($task_type) from $source"
-
+  
   # Handle different action types
   case "$action" in
     "command_execution")
@@ -89,7 +82,7 @@ process_message() {
       echo "Unknown action type: $action"
       ;;
   esac
-
+  
   # Remove the processed file
   rm "$file"
 }
@@ -104,7 +97,6 @@ inotifywait -m -e create "$MESSAGE_DIR" |
 ```
 
 Make the script executable and run it:
-
 ```bash
 chmod +x tnf-terminal-monitor.sh
 ./tnf-terminal-monitor.sh
@@ -113,7 +105,6 @@ chmod +x tnf-terminal-monitor.sh
 ### Option 2: Using Polling
 
 If `inotifywait` is not available, use polling:
-
 ```bash
 #!/bin/bash
 
@@ -154,7 +145,7 @@ tnf_send_message() {
   local target_id="$1"
   local action_type="$2"
   local message_content="$3"
-
+  
   # Determine target environment
   local target_env=""
   if [[ "$target_id" == chrome_* ]]; then
@@ -164,7 +155,7 @@ tnf_send_message() {
   else
     target_env="terminal"
   fi
-
+  
   # Create message JSON
   local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
   local message="{
@@ -177,11 +168,11 @@ tnf_send_message() {
     },
     \"timestamp\": \"$timestamp\"
   }"
-
+  
   # Write to file
   local message_file="/tmp/thefuse/${target_env}/message_$(date +%s).json"
   echo "$message" > "$message_file"
-
+  
   echo "Message sent to $target_id via $target_env (saved to $message_file)"
 }
 ```
@@ -216,12 +207,12 @@ class TNFRelayAgent:
         self.agent_name = agent_name
         self.base_dir = "/tmp/thefuse"
         self.terminal_dir = os.path.join(self.base_dir, "terminal")
-
+        
         # Ensure directories exist
         os.makedirs(self.terminal_dir, exist_ok=True)
         os.makedirs(os.path.join(self.base_dir, "vscode"), exist_ok=True)
         os.makedirs(os.path.join(self.base_dir, "chrome"), exist_ok=True)
-
+    
     def send_message(self, target_id, action_type, message_content):
         """Send a message to another agent via the relay"""
         # Determine target environment
@@ -231,7 +222,7 @@ class TNFRelayAgent:
             target_env = "chrome"
         else:
             target_env = "terminal"
-
+        
         # Create message
         message = {
             "type": "COLLABORATION_REQUEST",
@@ -243,67 +234,67 @@ class TNFRelayAgent:
             },
             "timestamp": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
         }
-
+        
         # Write to file
         target_dir = os.path.join(self.base_dir, target_env)
         message_file = os.path.join(target_dir, f"message_{int(time.time())}.json")
-
+        
         with open(message_file, 'w') as f:
             json.dump(message, f, indent=2)
-
+        
         return f"Message sent to {target_id} via {target_env} (saved to {message_file})"
-
+    
     def monitor_messages(self, callback=None):
         """Monitor for incoming messages"""
         print(f"Monitoring for messages in {self.terminal_dir}")
         processed_files = set()
-
+        
         while True:
             for file in Path(self.terminal_dir).glob("message_*.json"):
                 if str(file) not in processed_files:
                     try:
                         with open(file, 'r') as f:
                             message = json.load(f)
-
+                        
                         print(f"Received message from {message.get('source')}")
-
+                        
                         # Process message with callback if provided
                         if callback:
                             callback(message)
                         else:
                             # Default processing
                             self._default_process(message)
-
+                        
                         # Mark as processed
                         processed_files.add(str(file))
-
+                        
                         # Remove file
                         os.remove(file)
                     except Exception as e:
                         print(f"Error processing message {file}: {e}")
-
+            
             # Clean up processed_files set to prevent memory growth
             if len(processed_files) > 100:
                 current_files = set(str(f) for f in Path(self.terminal_dir).glob("message_*.json"))
                 processed_files = processed_files.intersection(current_files)
-
+            
             time.sleep(1)
-
+    
     def _default_process(self, message):
         """Default message processing"""
         content = message.get("content", {})
         action = content.get("action", "unknown")
-
+        
         print(f"Processing {action} request")
         print(json.dumps(message, indent=2))
 
 # Example usage
 if __name__ == "__main__":
     agent = TNFRelayAgent()
-
+    
     # Example: Send a message
     result = agent.send_message(
-        "vscode_agent_1",
+        "vscode_agent_1", 
         "code_review",
         {
             "task_type": "code_review",
@@ -315,7 +306,7 @@ if __name__ == "__main__":
         }
     )
     print(result)
-
+    
     # Start monitoring for messages
     agent.monitor_messages()
 ```
@@ -330,37 +321,34 @@ const path = require('path');
 const chokidar = require('chokidar'); // pnpm install chokidar
 
 class TNFRelayAgent {
-  constructor(
-    agentId = 'terminal_node_agent',
-    agentName = 'Node.js Terminal Agent'
-  ) {
+  constructor(agentId = 'terminal_node_agent', agentName = 'Node.js Terminal Agent') {
     this.agentId = agentId;
     this.agentName = agentName;
     this.baseDir = '/tmp/thefuse';
     this.terminalDir = path.join(this.baseDir, 'terminal');
-
+    
     // Ensure directories exist
     this._ensureDirectories();
   }
-
+  
   _ensureDirectories() {
     [
       this.terminalDir,
       path.join(this.baseDir, 'vscode'),
-      path.join(this.baseDir, 'chrome'),
-    ].forEach((dir) => {
+      path.join(this.baseDir, 'chrome')
+    ].forEach(dir => {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
     });
   }
-
+  
   sendMessage(targetId, actionType, messageContent) {
     // Determine target environment
     let targetEnv = 'terminal';
     if (targetId.startsWith('vscode_')) targetEnv = 'vscode';
     else if (targetId.startsWith('chrome_')) targetEnv = 'chrome';
-
+    
     // Create message
     const message = {
       type: 'COLLABORATION_REQUEST',
@@ -368,60 +356,57 @@ class TNFRelayAgent {
       target: targetId,
       content: {
         action: actionType,
-        ...messageContent,
+        ...messageContent
       },
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString()
     };
-
+    
     // Write to file
     const targetDir = path.join(this.baseDir, targetEnv);
     const messageFile = path.join(targetDir, `message_${Date.now()}.json`);
-
+    
     fs.writeFileSync(messageFile, JSON.stringify(message, null, 2));
-
+    
     return `Message sent to ${targetId} via ${targetEnv} (saved to ${messageFile})`;
   }
-
+  
   monitorMessages(callback = null) {
     console.log(`Monitoring for messages in ${this.terminalDir}`);
-
+    
     // Set up file watcher
-    const watcher = chokidar.watch(
-      path.join(this.terminalDir, 'message_*.json'),
-      {
-        persistent: true,
-        awaitWriteFinish: true,
-      }
-    );
-
-    watcher.on('add', (filePath) => {
+    const watcher = chokidar.watch(path.join(this.terminalDir, 'message_*.json'), {
+      persistent: true,
+      awaitWriteFinish: true
+    });
+    
+    watcher.on('add', filePath => {
       try {
         // Read and parse message
         const message = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-
+        
         console.log(`Received message from ${message.source}`);
-
+        
         // Process message
         if (callback) {
           callback(message);
         } else {
           this._defaultProcess(message);
         }
-
+        
         // Remove file
         fs.unlinkSync(filePath);
       } catch (error) {
         console.error(`Error processing message ${filePath}:`, error);
       }
     });
-
+    
     return watcher;
   }
-
+  
   _defaultProcess(message) {
     const content = message.content || {};
     const action = content.action || 'unknown';
-
+    
     console.log(`Processing ${action} request`);
     console.log(JSON.stringify(message, null, 2));
   }
@@ -431,14 +416,18 @@ class TNFRelayAgent {
 const agent = new TNFRelayAgent();
 
 // Example: Send a message
-const result = agent.sendMessage('vscode_agent_1', 'code_review', {
-  task_type: 'code_review',
-  context: {
-    file: 'example.js',
-    focus_areas: ['performance', 'security'],
-  },
-  priority: 'medium',
-});
+const result = agent.sendMessage(
+  'vscode_agent_1',
+  'code_review',
+  {
+    task_type: 'code_review',
+    context: {
+      file: 'example.js',
+      focus_areas: ['performance', 'security']
+    },
+    priority: 'medium'
+  }
+);
 console.log(result);
 
 // Start monitoring for messages
@@ -457,7 +446,6 @@ process.on('SIGINT', () => {
 ### Common Issues
 
 1. **Permission Denied**:
-
    ```bash
    chmod -R 777 /tmp/thefuse
    ```
@@ -465,8 +453,7 @@ process.on('SIGINT', () => {
 2. **Messages Not Being Detected**:
    - Ensure the relay application is running
    - Check that the directories exist
-   - Verify file naming conventions (should start with "message\_" and end with
-     ".json")
+   - Verify file naming conventions (should start with "message_" and end with ".json")
 
 3. **JSON Parsing Errors**:
    - Validate your JSON format before sending

@@ -1,5 +1,6 @@
+import React from 'react';
+import { defaultSkills, configurableSkills } from './skills-data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { configurableSkills, defaultSkills } from './skills-data';
 
 export default function AgentSkillsPage() {
   const handleToggle = (key: string, enabled: boolean) => {
@@ -43,19 +44,25 @@ export default function AgentSkillsPage() {
 
             // Render logic based on skill type
             if (key === 'web-browsing' || key === 'sql-agent') {
-              return (
-                <Card key={key} className="h-full">
-                  <CardHeader>
-                    <CardTitle>{skill.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Component onSelect={(val: string) => handleSelect(key, val)} />
-                  </CardContent>
-                </Card>
-              );
+               return (
+                  <Card key={key} className="h-full">
+                      <CardHeader>
+                          <CardTitle>{skill.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                          <Component onSelect={(val: string) => handleSelect(key, val)} />
+                      </CardContent>
+                  </Card>
+               );
             }
 
-            return <Component key={key} title={skill.title} description={skill.description} />;
+            return (
+              <Component
+                key={key}
+                title={skill.title}
+                description={skill.description}
+              />
+            );
           })}
         </div>
       </section>

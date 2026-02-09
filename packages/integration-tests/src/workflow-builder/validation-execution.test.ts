@@ -1,6 +1,6 @@
 /**
  * Workflow Validation and Execution Tests
- *
+ * 
  * Tests workflow validation, execution, and real-time feedback features:
  * - Comprehensive workflow validation
  * - Real-time validation during editing
@@ -22,7 +22,7 @@ enum WorkflowNodeType {
   CONDITION = 'CONDITION',
   PARALLEL = 'PARALLEL',
   DATA_TRANSFORM = 'DATA_TRANSFORM',
-  CUSTOM = 'CUSTOM',
+  CUSTOM = 'CUSTOM'
 }
 
 // WorkflowExecutionStatus is used in the mock WorkflowBuilder class for simulation and execution state tracking
@@ -31,7 +31,7 @@ enum WorkflowExecutionStatus {
   RUNNING = 'RUNNING',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED',
+  CANCELLED = 'CANCELLED'
 }
 
 interface WorkflowValidationResult {
@@ -63,7 +63,7 @@ class WorkflowBuilder {
       type,
       name,
       position,
-      config: config || {},
+      config: config || {}
     };
     this.nodes.push(node);
     return node;
@@ -88,7 +88,7 @@ class WorkflowBuilder {
       fromNodeId,
       fromPort,
       toNodeId,
-      toPort,
+      toPort
     };
     this.connections.push(connection);
     // Added connection
@@ -101,63 +101,46 @@ class WorkflowBuilder {
     const warnings: any[] = [];
 
     // Check for missing start node
-    const hasStartNode = this.nodes.some((n) => n.type === WorkflowNodeType.START);
+    const hasStartNode = this.nodes.some(n => n.type === WorkflowNodeType.START);
     if (!hasStartNode) {
-      errors.push({
-        type: 'missing_start_node',
-        severity: 'error',
-        message: 'Workflow must have a start node',
-      });
+      errors.push({ type: 'missing_start_node', severity: 'error', message: 'Workflow must have a start node' });
     }
 
     // Check for missing end node
-    const hasEndNode = this.nodes.some((n) => n.type === WorkflowNodeType.END);
+    const hasEndNode = this.nodes.some(n => n.type === WorkflowNodeType.END);
     if (!hasEndNode) {
-      errors.push({
-        type: 'missing_end_node',
-        severity: 'error',
-        message: 'Workflow must have an end node',
-      });
+      errors.push({ type: 'missing_end_node', severity: 'error', message: 'Workflow must have an end node' });
     }
 
     // Check for disconnected nodes
     const connectedNodes = new Set();
-    this.connections.forEach((c) => {
+    this.connections.forEach(c => {
       connectedNodes.add(c.fromNodeId);
       connectedNodes.add(c.toNodeId);
     });
-    const disconnectedNodes = this.nodes.filter((n) => !connectedNodes.has(n.id));
+    const disconnectedNodes = this.nodes.filter(n => !connectedNodes.has(n.id));
     if (disconnectedNodes.length > 0) {
-      errors.push({
-        type: 'disconnected_node',
-        severity: 'error',
-        message: `Found ${disconnectedNodes.length} disconnected nodes`,
-        nodeId: disconnectedNodes[0].id,
-      });
+      errors.push({ type: 'disconnected_node', severity: 'error', message: `Found ${disconnectedNodes.length} disconnected nodes`, nodeId: disconnectedNodes[0].id });
     }
 
     // Check for circular dependencies (simplified)
-    const wouldCreateCircular = this.connections.some((c) => c.fromNodeId === c.toNodeId);
+    const wouldCreateCircular = this.connections.some(c => c.fromNodeId === c.toNodeId);
     if (wouldCreateCircular) {
-      errors.push({
-        type: 'circular_dependency',
-        severity: 'error',
-        message: 'Circular dependency detected',
-      });
+      errors.push({ type: 'circular_dependency', severity: 'error', message: 'Circular dependency detected' });
     }
 
     const result = {
       isValid: errors.length === 0,
       errors,
       warnings,
-      score: errors.length === 0 ? 85 : 0,
+      score: errors.length === 0 ? 85 : 0
     };
     // Validation result
     return result;
   }
 
   validateNode(nodeId: string) {
-    const node = this.nodes.find((n) => n.id === nodeId);
+    const node = this.nodes.find(n => n.id === nodeId);
     const errors: any[] = [];
     const warnings: any[] = [];
 
@@ -193,12 +176,12 @@ class WorkflowBuilder {
   validateConnection(connectionId: string) {
     return {
       isValid: true,
-      errors: [],
+      errors: []
     };
   }
 
   updateNode(nodeId: string, updates: any) {
-    const node = this.nodes.find((n) => n.id === nodeId);
+    const node = this.nodes.find(n => n.id === nodeId);
     if (node) {
       Object.assign(node, updates);
     }
@@ -213,7 +196,7 @@ class WorkflowBuilder {
       type: 'none',
       visible: false,
       color: '#000000',
-      animated: false,
+      animated: false
     };
   }
 
@@ -221,14 +204,14 @@ class WorkflowBuilder {
     return {
       hasError: false,
       message: 'valid',
-      suggestions: [],
+      suggestions: []
     };
   }
 
   async simulateExecution(options: any) {
     return {
       started: true,
-      executionId: 'sim-' + Date.now(),
+      executionId: 'sim-' + Date.now()
     };
   }
 
@@ -244,7 +227,7 @@ class WorkflowBuilder {
     return {
       status: 'completed',
       output: {},
-      error: null,
+      error: null
     };
   }
 
@@ -252,7 +235,7 @@ class WorkflowBuilder {
     return {
       nodeId,
       error: null,
-      recommendations: ['Check agent availability'],
+      recommendations: ['Check agent availability']
     };
   }
 
@@ -264,14 +247,14 @@ class WorkflowBuilder {
     return {
       totalDuration: 1000,
       nodeMetrics: {},
-      warnings: [],
+      warnings: []
     };
   }
 
   startDebugSession(options: any) {
     return {
       active: true,
-      breakpoints: options.breakpoints || [],
+      breakpoints: options.breakpoints || []
     };
   }
 
@@ -285,7 +268,7 @@ class WorkflowBuilder {
       variables: {},
       status: 'running',
       nextNode: null,
-      conditionResult: null,
+      conditionResult: null
     };
   }
 
@@ -305,20 +288,20 @@ class WorkflowBuilder {
     return {
       currentTasks: 0,
       recommendedLoad: 5,
-      status: 'normal',
+      status: 'normal'
     };
   }
 
   async getAgentHealth(agentId: string) {
     return {
       status: 'online',
-      lastSeen: new Date(),
+      lastSeen: new Date()
     };
   }
 
   validatePerformance() {
     return {
-      warnings: [],
+      warnings: []
     };
   }
 
@@ -327,9 +310,9 @@ class WorkflowBuilder {
       estimatedDuration: 1000,
       resourceUsage: {
         cpu: 'medium',
-        memory: 'medium',
+        memory: 'medium'
       },
-      bottlenecks: [],
+      bottlenecks: []
     };
   }
 
@@ -341,11 +324,11 @@ class WorkflowBuilder {
     return {
       applied: true,
       changes: {
-        nodesAdded: 1,
+        nodesAdded: 1
       },
       estimatedImprovement: {
-        duration: 60,
-      },
+        duration: 60
+      }
     };
   }
 
@@ -360,8 +343,8 @@ class WorkflowBuilder {
       if (visited.has(current)) continue;
       visited.add(current);
 
-      const outgoing = this.connections.filter((c) => c.fromNodeId === current);
-      stack.push(...outgoing.map((c) => c.toNodeId));
+      const outgoing = this.connections.filter(c => c.fromNodeId === current);
+      stack.push(...outgoing.map(c => c.toNodeId));
     }
 
     return false;
@@ -392,14 +375,14 @@ describe('Workflow Validation and Execution Tests', () => {
       // Create valid workflow
       const startNode = builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 });
       const taskNode = builder.addNode(
-        WorkflowNodeType.AGENT_TASK,
-        'Process Data',
+        WorkflowNodeType.AGENT_TASK, 
+        'Process Data', 
         { x: 200, y: 100 },
-        {
+        { 
           agentId: 'test-agent-id',
           task: 'Process the input data',
           priority: 'high',
-          expectedDuration: 10,
+          expectedDuration: 10
         }
       );
       const endNode = builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 });
@@ -425,11 +408,9 @@ describe('Workflow Validation and Execution Tests', () => {
       // Validation for missing start node
 
       expect(validation.isValid).toBe(false);
-      expect(
-        validation.errors.some(
-          (error) => error.type === 'missing_start_node' && error.severity === 'error'
-        )
-      ).toBe(true);
+      expect(validation.errors.some(error =>
+        error.type === 'missing_start_node' && error.severity === 'error'
+      )).toBe(true);
     });
 
     test('should detect missing end node', async () => {
@@ -441,21 +422,16 @@ describe('Workflow Validation and Execution Tests', () => {
       const validation = builder.validateWorkflow();
 
       expect(validation.isValid).toBe(false);
-      expect(
-        validation.errors.some(
-          (error) => error.type === 'missing_end_node' && error.severity === 'error'
-        )
-      ).toBe(true);
+      expect(validation.errors.some(error => 
+        error.type === 'missing_end_node' && error.severity === 'error'
+      )).toBe(true);
     });
 
     test('should detect disconnected nodes', async () => {
       // Create workflow with disconnected nodes
       const startNode = builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 });
       const endNode = builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 });
-      const isolatedNode = builder.addNode(WorkflowNodeType.AGENT_TASK, 'Isolated Task', {
-        x: 200,
-        y: 200,
-      });
+      const isolatedNode = builder.addNode(WorkflowNodeType.AGENT_TASK, 'Isolated Task', { x: 200, y: 200 });
 
       builder.addConnection(startNode.id, 'output', endNode.id, 'input');
       // isolatedNode is not connected to anything
@@ -463,11 +439,10 @@ describe('Workflow Validation and Execution Tests', () => {
       const validation = builder.validateWorkflow();
 
       expect(validation.isValid).toBe(false);
-      expect(
-        validation.errors.some(
-          (error) => error.type === 'disconnected_node' && error.nodeId === isolatedNode.id
-        )
-      ).toBe(true);
+      expect(validation.errors.some(error => 
+        error.type === 'disconnected_node' && 
+        error.nodeId === isolatedNode.id
+      )).toBe(true);
     });
 
     test('should detect circular dependencies', async () => {
@@ -479,7 +454,7 @@ describe('Workflow Validation and Execution Tests', () => {
       // Create circular connection: A -> B -> C -> A
       builder.addConnection(node1.id, 'output', node2.id, 'input');
       builder.addConnection(node2.id, 'output', node3.id, 'input');
-
+      
       // This should be prevented during connection creation
       const circularConnection = builder.addConnection(node3.id, 'output', node1.id, 'input');
       expect(circularConnection).toBeNull();
@@ -500,14 +475,12 @@ describe('Workflow Validation and Execution Tests', () => {
       const nodeValidation = builder.validateNode(invalidTask.id);
 
       expect(nodeValidation.isValid).toBe(false);
-      expect(
-        nodeValidation.errors.some(
-          (error) => error.field === 'agentId' && error.type === 'required'
-        )
-      ).toBe(true);
-      expect(
-        nodeValidation.errors.some((error) => error.field === 'task' && error.type === 'required')
-      ).toBe(true);
+      expect(nodeValidation.errors.some(error => 
+        error.field === 'agentId' && error.type === 'required'
+      )).toBe(true);
+      expect(nodeValidation.errors.some(error => 
+        error.field === 'task' && error.type === 'required'
+      )).toBe(true);
     });
 
     test('should validate condition node logic', async () => {
@@ -518,18 +491,16 @@ describe('Workflow Validation and Execution Tests', () => {
         { x: 100, y: 100 },
         {
           condition: 'invalid javascript syntax ===',
-          conditionType: 'javascript',
+          conditionType: 'javascript'
         }
       );
 
       const nodeValidation = builder.validateNode(invalidCondition.id);
 
       expect(nodeValidation.isValid).toBe(false);
-      expect(
-        nodeValidation.errors.some(
-          (error) => error.type === 'syntax_error' && error.field === 'condition'
-        )
-      ).toBe(true);
+      expect(nodeValidation.errors.some(error => 
+        error.type === 'syntax_error' && error.field === 'condition'
+      )).toBe(true);
     });
 
     test('should validate parallel node configuration', async () => {
@@ -540,42 +511,38 @@ describe('Workflow Validation and Execution Tests', () => {
         { x: 100, y: 100 },
         {
           branches: [], // Empty branches array
-          maxConcurrency: -1, // Invalid negative value
+          maxConcurrency: -1 // Invalid negative value
         }
       );
 
       const nodeValidation = builder.validateNode(invalidParallel.id);
 
       expect(nodeValidation.isValid).toBe(false);
-      expect(
-        nodeValidation.errors.some(
-          (error) => error.field === 'branches' && error.type === 'empty_array'
-        )
-      ).toBe(true);
-      expect(
-        nodeValidation.errors.some(
-          (error) => error.field === 'maxConcurrency' && error.type === 'invalid_value'
-        )
-      ).toBe(true);
+      expect(nodeValidation.errors.some(error => 
+        error.field === 'branches' && error.type === 'empty_array'
+      )).toBe(true);
+      expect(nodeValidation.errors.some(error => 
+        error.field === 'maxConcurrency' && error.type === 'invalid_value'
+      )).toBe(true);
     });
 
     test('should validate connection compatibility', async () => {
-      const dataNode = builder.addNode(WorkflowNodeType.DATA_TRANSFORM, 'Data Transform', {
-        x: 100,
-        y: 100,
-      });
-
-      const conditionNode = builder.addNode(WorkflowNodeType.CONDITION, 'Condition Check', {
-        x: 200,
-        y: 100,
-      });
+      const dataNode = builder.addNode(
+        WorkflowNodeType.DATA_TRANSFORM,
+        'Data Transform',
+        { x: 100, y: 100 }
+      );
+      
+      const conditionNode = builder.addNode(
+        WorkflowNodeType.CONDITION,
+        'Condition Check',
+        { x: 200, y: 100 }
+      );
 
       // Valid connection
       const validConnection = builder.addConnection(
-        dataNode.id,
-        'data_output',
-        conditionNode.id,
-        'condition_input'
+        dataNode.id, 'data_output',
+        conditionNode.id, 'condition_input'
       );
 
       expect(validConnection).toBeDefined();
@@ -591,10 +558,8 @@ describe('Workflow Validation and Execution Tests', () => {
       );
 
       const invalidConnection = builder.addConnection(
-        dataNode.id,
-        'invalid_output',
-        anotherDataNode.id,
-        'invalid_input'
+        dataNode.id, 'invalid_output',
+        anotherDataNode.id, 'invalid_input'
       );
 
       expect(invalidConnection).toBeNull(); // Should be prevented during creation
@@ -603,7 +568,7 @@ describe('Workflow Validation and Execution Tests', () => {
     test('should provide validation warnings for performance issues', async () => {
       // Create workflow with potential performance issues
       const startNode = builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 });
-
+      
       // Create many parallel branches
       const parallelNode = builder.addNode(
         WorkflowNodeType.PARALLEL,
@@ -611,7 +576,7 @@ describe('Workflow Validation and Execution Tests', () => {
         { x: 200, y: 100 },
         {
           branches: Array.from({ length: 50 }, (_, i) => ({ name: `Branch ${i}` })),
-          maxConcurrency: 50, // High concurrency
+          maxConcurrency: 50 // High concurrency
         }
       );
 
@@ -624,7 +589,7 @@ describe('Workflow Validation and Execution Tests', () => {
           { x: 300, y: i * 50 },
           {
             task: `Heavy computation task ${i}`,
-            expectedDuration: 3600, // 1 hour each
+            expectedDuration: 3600 // 1 hour each
           }
         );
         taskNodes.push(taskNode);
@@ -638,21 +603,15 @@ describe('Workflow Validation and Execution Tests', () => {
 
       const validation = builder.validateWorkflow();
 
-      expect(
-        validation.warnings.some(
-          (warning) => warning.type === 'high_concurrency' && warning.severity === 'warning'
-        )
-      ).toBe(true);
-      expect(
-        validation.warnings.some(
-          (warning) => warning.type === 'long_execution_time' && warning.severity === 'warning'
-        )
-      ).toBe(true);
-      expect(
-        validation.warnings.some(
-          (warning) => warning.type === 'complex_workflow' && warning.severity === 'info'
-        )
-      ).toBe(true);
+      expect(validation.warnings.some(warning => 
+        warning.type === 'high_concurrency' && warning.severity === 'warning'
+      )).toBe(true);
+      expect(validation.warnings.some(warning => 
+        warning.type === 'long_execution_time' && warning.severity === 'warning'
+      )).toBe(true);
+      expect(validation.warnings.some(warning => 
+        warning.type === 'complex_workflow' && warning.severity === 'info'
+      )).toBe(true);
     });
   });
 
@@ -671,11 +630,9 @@ describe('Workflow Validation and Execution Tests', () => {
 
       // Add start node
       const startNode = builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 });
-      expect(
-        validationEvents[validationEvents.length - 1]?.errors.some(
-          (e) => e.type === 'missing_start_node'
-        )
-      ).toBe(false);
+      expect(validationEvents[validationEvents.length - 1]?.errors.some(e => 
+        e.type === 'missing_start_node'
+      )).toBe(false);
 
       // Add task node
       const taskNode = builder.addNode(
@@ -690,11 +647,11 @@ describe('Workflow Validation and Execution Tests', () => {
 
       // Update task with agent
       builder.updateNode(taskNode.id, {
-        config: {
+        config: { 
           agentId: 'test-agent-id',
           task: 'Process data',
-          priority: 'medium',
-        },
+          priority: 'medium'
+        }
       });
 
       // Add end node
@@ -709,9 +666,9 @@ describe('Workflow Validation and Execution Tests', () => {
     });
 
     test('should highlight validation errors on canvas', async () => {
-      builder.setConfiguration({
+      builder.setConfiguration({ 
         enableRealTimeValidation: true,
-        highlightErrors: true,
+        highlightErrors: true 
       });
 
       // Create invalid task node
@@ -733,8 +690,8 @@ describe('Workflow Validation and Execution Tests', () => {
         config: {
           agentId: 'test-agent-id',
           task: 'Valid task',
-          priority: 'medium',
-        },
+          priority: 'medium'
+        }
       });
 
       // Error highlight should be removed
@@ -752,7 +709,7 @@ describe('Workflow Validation and Execution Tests', () => {
         { x: 100, y: 100 },
         {
           condition: 'input.value > invalid_syntax ===',
-          conditionType: 'javascript',
+          conditionType: 'javascript'
         }
       );
 
@@ -768,8 +725,8 @@ describe('Workflow Validation and Execution Tests', () => {
       builder.updateNode(conditionNode.id, {
         config: {
           condition: 'input.value > 100',
-          conditionType: 'javascript',
-        },
+          conditionType: 'javascript'
+        }
       });
 
       // Inline feedback should show success
@@ -790,7 +747,7 @@ describe('Workflow Validation and Execution Tests', () => {
         {
           agentId: agent.agentId,
           task: 'Process data',
-          priority: 'high',
+          priority: 'high'
         }
       );
 
@@ -802,13 +759,15 @@ describe('Workflow Validation and Execution Tests', () => {
         config: {
           agentId: 'non-existent-agent',
           task: 'Process data',
-          priority: 'high',
-        },
+          priority: 'high'
+        }
       });
 
       const invalidValidation = builder.validateNode(taskNode.id);
       expect(invalidValidation.isValid).toBe(false);
-      expect(invalidValidation.errors.some((error) => error.type === 'agent_not_found')).toBe(true);
+      expect(invalidValidation.errors.some(error => 
+        error.type === 'agent_not_found'
+      )).toBe(true);
     });
   });
 
@@ -824,7 +783,7 @@ describe('Workflow Validation and Execution Tests', () => {
           agentId: 'test-agent-id',
           task: 'Simulate data processing',
           priority: 'medium',
-          expectedDuration: 5,
+          expectedDuration: 5
         }
       );
       const endNode = builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 });
@@ -836,7 +795,7 @@ describe('Workflow Validation and Execution Tests', () => {
       const simulation = await builder.simulateExecution({
         mode: 'step-by-step',
         delay: 100, // Fast simulation
-        mockData: { input: 'test data' },
+        mockData: { input: 'test data' }
       });
 
       expect(simulation.started).toBe(true);
@@ -849,7 +808,7 @@ describe('Workflow Validation and Execution Tests', () => {
       };
 
       // Wait for simulation to complete
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       expect(progressEvents.length).toBeGreaterThan(0);
       expect(progressEvents[0].nodeId).toBe(startNode.id);
@@ -862,7 +821,7 @@ describe('Workflow Validation and Execution Tests', () => {
         builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 }),
         builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task 1', { x: 200, y: 100 }),
         builder.addNode(WorkflowNodeType.AGENT_TASK, 'Task 2', { x: 300, y: 100 }),
-        builder.addNode(WorkflowNodeType.END, 'End', { x: 400, y: 100 }),
+        builder.addNode(WorkflowNodeType.END, 'End', { x: 400, y: 100 })
       ];
 
       // Connect nodes
@@ -876,7 +835,7 @@ describe('Workflow Validation and Execution Tests', () => {
 
       // Simulate execution steps
       builder.simulateNodeExecution(nodes[0].id, 'completed', { output: 'start data' });
-
+      
       let nodeState = builder.getNodeExecutionState(nodes[0].id);
       expect(nodeState.status).toBe('completed');
       expect(nodeState.output).toEqual({ output: 'start data' });
@@ -905,7 +864,7 @@ describe('Workflow Validation and Execution Tests', () => {
         {
           agentId: 'error-agent-id',
           task: 'Task that will fail',
-          priority: 'high',
+          priority: 'high'
         }
       );
       const endNode = builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 });
@@ -918,7 +877,7 @@ describe('Workflow Validation and Execution Tests', () => {
       builder.simulateNodeExecution(errorNode.id, 'error', {
         error: 'Agent not available',
         errorCode: 'AGENT_UNAVAILABLE',
-        stackTrace: 'Error in task execution...',
+        stackTrace: 'Error in task execution...'
       });
 
       // Check error state
@@ -948,7 +907,7 @@ describe('Workflow Validation and Execution Tests', () => {
         {
           agentId: 'perf-agent-id',
           task: 'Performance test task',
-          expectedDuration: 5,
+          expectedDuration: 5
         }
       );
       const endNode = builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 });
@@ -975,11 +934,9 @@ describe('Workflow Validation and Execution Tests', () => {
       expect(metrics.nodeMetrics[taskNode.id].performanceRatio).toBeGreaterThan(1); // Slower than expected
 
       // Should generate performance warning
-      expect(
-        metrics.warnings.some(
-          (warning) => warning.type === 'slow_execution' && warning.nodeId === taskNode.id
-        )
-      ).toBe(true);
+      expect(metrics.warnings.some(warning => 
+        warning.type === 'slow_execution' && warning.nodeId === taskNode.id
+      )).toBe(true);
     });
 
     test('should support step-by-step debugging', async () => {
@@ -991,17 +948,11 @@ describe('Workflow Validation and Execution Tests', () => {
         { x: 200, y: 100 },
         {
           condition: 'input.value > 50',
-          conditionType: 'javascript',
+          conditionType: 'javascript'
         }
       );
-      const trueTask = builder.addNode(WorkflowNodeType.AGENT_TASK, 'True Branch', {
-        x: 300,
-        y: 50,
-      });
-      const falseTask = builder.addNode(WorkflowNodeType.AGENT_TASK, 'False Branch', {
-        x: 300,
-        y: 150,
-      });
+      const trueTask = builder.addNode(WorkflowNodeType.AGENT_TASK, 'True Branch', { x: 300, y: 50 });
+      const falseTask = builder.addNode(WorkflowNodeType.AGENT_TASK, 'False Branch', { x: 300, y: 150 });
       const endNode = builder.addNode(WorkflowNodeType.END, 'End', { x: 400, y: 100 });
 
       // Connect workflow
@@ -1015,7 +966,7 @@ describe('Workflow Validation and Execution Tests', () => {
       const debugSession = builder.startDebugSession({
         mode: 'step-by-step',
         breakpoints: [conditionNode.id],
-        watchVariables: ['input.value'],
+        watchVariables: ['input.value']
       });
 
       expect(debugSession.active).toBe(true);
@@ -1053,7 +1004,7 @@ describe('Workflow Validation and Execution Tests', () => {
       await env.agentRegistry.updateAgentCapabilities(agent.agentId, {
         dataProcessing: true,
         fileOperations: false,
-        apiCalls: true,
+        apiCalls: true
       });
 
       // Create task that requires specific capabilities
@@ -1064,7 +1015,7 @@ describe('Workflow Validation and Execution Tests', () => {
         {
           agentId: agent.agentId,
           task: 'Process data using API',
-          requiredCapabilities: ['dataProcessing', 'apiCalls'],
+          requiredCapabilities: ['dataProcessing', 'apiCalls']
         }
       );
 
@@ -1079,17 +1030,15 @@ describe('Workflow Validation and Execution Tests', () => {
         {
           agentId: agent.agentId,
           task: 'Process files',
-          requiredCapabilities: ['fileOperations'], // Agent doesn't have this
+          requiredCapabilities: ['fileOperations'] // Agent doesn't have this
         }
       );
 
       const incompatibleValidation = builder.validateNode(incompatibleTask.id);
       expect(incompatibleValidation.isValid).toBe(false);
-      expect(
-        incompatibleValidation.errors.some(
-          (error) => error.type === 'missing_capability' && error.capability === 'fileOperations'
-        )
-      ).toBe(true);
+      expect(incompatibleValidation.errors.some(error => 
+        error.type === 'missing_capability' && error.capability === 'fileOperations'
+      )).toBe(true);
     });
 
     test('should suggest alternative agents for tasks', async () => {
@@ -1101,19 +1050,19 @@ describe('Workflow Validation and Execution Tests', () => {
       await env.agentRegistry.updateAgentCapabilities(dataAgent.agentId, {
         dataProcessing: true,
         fileOperations: false,
-        apiCalls: false,
+        apiCalls: false
       });
 
       await env.agentRegistry.updateAgentCapabilities(fileAgent.agentId, {
         dataProcessing: false,
         fileOperations: true,
-        apiCalls: false,
+        apiCalls: false
       });
 
       await env.agentRegistry.updateAgentCapabilities(apiAgent.agentId, {
         dataProcessing: true,
         fileOperations: false,
-        apiCalls: true,
+        apiCalls: true
       });
 
       // Create task without assigned agent
@@ -1123,24 +1072,20 @@ describe('Workflow Validation and Execution Tests', () => {
         { x: 100, y: 100 },
         {
           task: 'Process data from API',
-          requiredCapabilities: ['dataProcessing', 'apiCalls'],
+          requiredCapabilities: ['dataProcessing', 'apiCalls']
         }
       );
 
       // Get agent suggestions
       const suggestions = await builder.getAgentSuggestions(taskNode.id);
-
+      
       expect(suggestions.length).toBeGreaterThan(0);
-      expect(
-        suggestions.some(
-          (suggestion) => suggestion.agentId === apiAgent.agentId && suggestion.compatibility > 0.8
-        )
-      ).toBe(true);
-      expect(
-        suggestions.some(
-          (suggestion) => suggestion.agentId === dataAgent.agentId && suggestion.compatibility < 0.8
-        )
-      ).toBe(true);
+      expect(suggestions.some(suggestion => 
+        suggestion.agentId === apiAgent.agentId && suggestion.compatibility > 0.8
+      )).toBe(true);
+      expect(suggestions.some(suggestion => 
+        suggestion.agentId === dataAgent.agentId && suggestion.compatibility < 0.8
+      )).toBe(true);
     });
 
     test('should validate agent workload and availability', async () => {
@@ -1153,7 +1098,7 @@ describe('Workflow Validation and Execution Tests', () => {
           id: `task-${i}`,
           content: `Heavy task ${i}`,
           priority: 'high',
-          status: 'in_progress',
+          status: 'in_progress'
         });
       }
 
@@ -1165,12 +1110,14 @@ describe('Workflow Validation and Execution Tests', () => {
         {
           agentId: agent.agentId,
           task: 'Additional task',
-          priority: 'high',
+          priority: 'high'
         }
       );
 
       const validation = builder.validateNode(taskNode.id);
-      expect(validation.warnings.some((warning) => warning.type === 'agent_overloaded')).toBe(true);
+      expect(validation.warnings.some(warning => 
+        warning.type === 'agent_overloaded'
+      )).toBe(true);
 
       // Get workload information
       const workloadInfo = await builder.getAgentWorkload(agent.agentId);
@@ -1191,7 +1138,7 @@ describe('Workflow Validation and Execution Tests', () => {
         {
           agentId: agent.agentId,
           task: 'Task with monitoring',
-          expectedDuration: 5,
+          expectedDuration: 5
         }
       );
 
@@ -1199,7 +1146,9 @@ describe('Workflow Validation and Execution Tests', () => {
       await env.agentRegistry.updateAgentStatus(agent.agentId, 'OFFLINE');
 
       const validation = builder.validateNode(taskNode.id);
-      expect(validation.warnings.some((warning) => warning.type === 'agent_offline')).toBe(true);
+      expect(validation.warnings.some(warning => 
+        warning.type === 'agent_offline'
+      )).toBe(true);
 
       // Check health status
       const healthStatus = await builder.getAgentHealth(agent.agentId);
@@ -1210,9 +1159,9 @@ describe('Workflow Validation and Execution Tests', () => {
       await env.agentRegistry.updateAgentStatus(agent.agentId, 'ACTIVE');
 
       const updatedValidation = builder.validateNode(taskNode.id);
-      expect(updatedValidation.warnings.some((warning) => warning.type === 'agent_offline')).toBe(
-        false
-      );
+      expect(updatedValidation.warnings.some(warning => 
+        warning.type === 'agent_offline'
+      )).toBe(false);
     });
   });
 
@@ -1220,7 +1169,7 @@ describe('Workflow Validation and Execution Tests', () => {
     test('should validate workflow performance characteristics', async () => {
       // Create performance-intensive workflow
       const startNode = builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 });
-
+      
       // Create parallel processing with many branches
       const parallelNode = builder.addNode(
         WorkflowNodeType.PARALLEL,
@@ -1228,7 +1177,7 @@ describe('Workflow Validation and Execution Tests', () => {
         { x: 200, y: 100 },
         {
           branches: Array.from({ length: 100 }, (_, i) => ({ name: `Branch ${i}` })),
-          maxConcurrency: 100,
+          maxConcurrency: 100
         }
       );
 
@@ -1245,8 +1194,8 @@ describe('Workflow Validation and Execution Tests', () => {
             resourceRequirements: {
               cpu: 'high',
               memory: 'high',
-              disk: 'medium',
-            },
+              disk: 'medium'
+            }
           }
         );
         taskNodes.push(taskNode);
@@ -1257,15 +1206,15 @@ describe('Workflow Validation and Execution Tests', () => {
       // Performance validation
       const perfValidation = builder.validatePerformance();
 
-      expect(perfValidation.warnings.some((warning) => warning.type === 'high_concurrency')).toBe(
-        true
-      );
-      expect(
-        perfValidation.warnings.some((warning) => warning.type === 'long_execution_time')
-      ).toBe(true);
-      expect(perfValidation.warnings.some((warning) => warning.type === 'resource_intensive')).toBe(
-        true
-      );
+      expect(perfValidation.warnings.some(warning => 
+        warning.type === 'high_concurrency'
+      )).toBe(true);
+      expect(perfValidation.warnings.some(warning => 
+        warning.type === 'long_execution_time'
+      )).toBe(true);
+      expect(perfValidation.warnings.some(warning => 
+        warning.type === 'resource_intensive'
+      )).toBe(true);
 
       // Get performance estimates
       const estimates = builder.getPerformanceEstimates();
@@ -1278,7 +1227,7 @@ describe('Workflow Validation and Execution Tests', () => {
     test('should suggest performance optimizations', async () => {
       // Create inefficient workflow
       const startNode = builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 });
-
+      
       // Sequential tasks that could be parallelized
       const sequentialTasks = [];
       for (let i = 0; i < 10; i++) {
@@ -1288,7 +1237,7 @@ describe('Workflow Validation and Execution Tests', () => {
           { x: (i + 1) * 100, y: 100 },
           {
             task: `Independent task ${i}`,
-            canBeParallelized: true,
+            canBeParallelized: true
           }
         );
         sequentialTasks.push(taskNode);
@@ -1301,18 +1250,17 @@ describe('Workflow Validation and Execution Tests', () => {
       for (let i = 0; i < sequentialTasks.length - 1; i++) {
         builder.addConnection(sequentialTasks[i].id, 'output', sequentialTasks[i + 1].id, 'input');
       }
-      builder.addConnection(
-        sequentialTasks[sequentialTasks.length - 1].id,
-        'output',
-        endNode.id,
-        'input'
-      );
+      builder.addConnection(sequentialTasks[sequentialTasks.length - 1].id, 'output', endNode.id, 'input');
 
       // Get optimization suggestions
       const optimizations = builder.getOptimizationSuggestions();
 
-      expect(optimizations.some((opt) => opt.type === 'parallelize_independent_tasks')).toBe(true);
-      expect(optimizations.some((opt) => opt.type === 'reduce_sequential_chain')).toBe(true);
+      expect(optimizations.some(opt => 
+        opt.type === 'parallelize_independent_tasks'
+      )).toBe(true);
+      expect(optimizations.some(opt => 
+        opt.type === 'reduce_sequential_chain'
+      )).toBe(true);
 
       // Apply automatic optimization
       const optimizedWorkflow = builder.applyOptimization('parallelize_independent_tasks');

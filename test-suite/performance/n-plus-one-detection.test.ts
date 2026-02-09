@@ -5,7 +5,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { DatabaseService } from '../../src/db/db.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
 import { OptimizedSelfAssessmentService } from '../../src/services/optimized-self-assessment.service';
 import { OptimizedPerformanceAnalyticsService } from '../../src/services/optimized-performance-analytics.service';
 import { OptimizedPrimeDirectiveService } from '../../src/services/optimized-prime-directive.service';
@@ -70,7 +70,7 @@ const queryCounter = new QueryCounter();
 
 describe('N+1 Query Pattern Tests', () => {
   let app: INestApplication;
-  let db: DatabaseService;
+  let prisma: PrismaService;
   let optimizedSelfAssessmentService: OptimizedSelfAssessmentService;
   let optimizedPerformanceAnalyticsService: OptimizedPerformanceAnalyticsService;
   let optimizedPrimeDirectiveService: OptimizedPrimeDirectiveService;
@@ -79,7 +79,7 @@ describe('N+1 Query Pattern Tests', () => {
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
-        DatabaseService,
+        PrismaService,
         OptimizedSelfAssessmentService,
         OptimizedPerformanceAnalyticsService,
         OptimizedPrimeDirectiveService,
@@ -90,7 +90,7 @@ describe('N+1 Query Pattern Tests', () => {
     app = moduleRef.createNestApplication();
     await app.init();
 
-    db = moduleRef.get<DatabaseService>(DatabaseService);
+    prisma = moduleRef.get<PrismaService>(PrismaService);
     optimizedSelfAssessmentService = moduleRef.get<OptimizedSelfAssessmentService>(OptimizedSelfAssessmentService);
     optimizedPerformanceAnalyticsService = moduleRef.get<OptimizedPerformanceAnalyticsService>(OptimizedPerformanceAnalyticsService);
     optimizedPrimeDirectiveService = moduleRef.get<OptimizedPrimeDirectiveService>(OptimizedPrimeDirectiveService);
@@ -114,7 +114,7 @@ describe('N+1 Query Pattern Tests', () => {
       queryCounter.reset();
       
       // Create test data
-      testUser = await db.user.create({
+      testUser = await prisma.user.create({
         data: {
           email: 'nplus1.test@example.com',
           password: 'TestPassword123!',
@@ -122,7 +122,7 @@ describe('N+1 Query Pattern Tests', () => {
         },
       });
 
-      testExecution = await db.promptExecution.create({
+      testExecution = await prisma.promptExecution.create({
         data: {
           userId: testUser.id,
           category: 'CHAT',
@@ -134,7 +134,7 @@ describe('N+1 Query Pattern Tests', () => {
 
       testMetrics = await Promise.all(
         Array(6).fill().map((_, i) => 
-          db.metric.create({
+          prisma.metric.create({
             data: {
               name: `metric_${i}`,
               type: 'QUALITY',
@@ -537,22 +537,22 @@ describe('N+1 Query Pattern Tests', () => {
 
   async function cleanupTestDatabase() {
     // Clean up all test data
-    await db.collectiveContribution.deleteMany({});
-    await db.primeDirectivePriority.deleteMany({});
-    await db.selfAssessment.deleteMany({});
-    await db.promptExecution.deleteMany({});
-    await db.user.deleteMany({});
-    await db.metric.deleteMany({});
+    await prisma.collectiveContribution.deleteMany({});
+    await prisma.primeDirectivePriority.deleteMany({});
+    await prisma.selfAssessment.deleteMany({});
+    await prisma.promptExecution.deleteMany({});
+    await prisma.user.deleteMany({});
+    await prisma.metric.deleteMany({});
   }
 
   async function cleanupTestExecutionData() {
-    await db.selfAssessment.deleteMany({});
-    await db.promptExecution.deleteMany({ where: { userId: testUser.id } });
-    await db.user.deleteMany({ where: { id: testUser.id } });
+    await prisma.selfAssessment.deleteMany({});
+    await prisma.promptExecution.deleteMany({ where: { userId: testUser.id } });
+    await prisma.user.deleteMany({ where: { id: testUser.id } });
   }
 
   async function createTestAssessment() {
-    return await db.selfAssessment.create({
+    return await prisma.selfAssessment.create({
       data: {
         executionId: testExecution.id,
         overallScore: 8.5,
@@ -568,9 +568,9 @@ describe('N+1 Query Pattern Tests', () => {
   async function createTestAnalyticsData() {
     // Create test assessments for analytics
     for (let i = 0; i < 20; i++) {
-      await db.selfAssessment.create({
+      await prisma.selfAssessment.create({
         data: {
-          executionId: (await db.promptExecution.create({
+          executionId: (await prisma.promptExecution.create({
             data: {
               userId: testUser.id,
               category: i % 2 === 0 ? 'CHAT' : 'WORKFLOW',
@@ -593,7 +593,7 @@ describe('N+1 Query Pattern Tests', () => {
   async function createTestPrimeDirectiveData() {
     // Create test prime directives
     for (let i = 0; i < 5; i++) {
-      await db.primeDirectivePriority.create({
+      await prisma.primeDirectivePriority.create({
         data: {
           directive: `Test directive ${i}`,
           priority: i + 1,
@@ -607,7 +607,7 @@ describe('N+1 Query Pattern Tests', () => {
   async function createTestContributionData() {
     // Create test contributions
     for (let i = 0; i < 15; i++) {
-      await db.collectiveContribution.create({
+      await prisma.collectiveContribution.create({
         data: {
           userId: testUser.id,
           description: `Contribution ${i}`,
@@ -621,9 +621,9 @@ describe('N+1 Query Pattern Tests', () => {
   async function createTestDatasetOfSize(size: number) {
     // Create dataset of specific size for performance testing
     for (let i = 0; i < size; i++) {
-      await db.selfAssessment.create({
+      await prisma.selfAssessment.create({
         data: {
-          executionId: (await db.promptExecution.create({
+          executionId: (await prisma.promptExecution.create({
             data: {
               userId: testUser.id,
               category: 'CHAT',

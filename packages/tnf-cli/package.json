@@ -4,22 +4,13 @@
   "private": true,
   "type": "module",
   "description": "TNF Agent CLI - Redis-Based Agent Communication System",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
-    },
-    "./cli": "./dist/cli.js"
-  },
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
     "tnf-agent": "./dist/cli.js"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsc --build",
     "clean": "rimraf dist .turbo .tsbuildinfo tsconfig.tsbuildinfo",
     "start": "node dist/cli.js",
     "dev": "tsx src/cli.ts",
@@ -29,8 +20,7 @@
     "ioredis": "^5.8.2",
     "uuid": "^9.0.1",
     "commander": "^13.1.0",
-    "chalk": "^5.4.1",
-    "zod": "^3.25.42"
+    "chalk": "^5.4.1"
   },
   "devDependencies": {
     "@types/node": "^24.8.1",

@@ -14,7 +14,7 @@ export const LOG_LEVELS: LogLevel = {
   ERROR: 0,
   WARN: 1,
   INFO: 2,
-  DEBUG: 3,
+  DEBUG: 3
 };
 
 export class Logger {
@@ -42,24 +42,19 @@ export class Logger {
     }
   }
 
-  private formatMessage(
-    level: string,
-    message: string,
-    errorOrContext?: Error | Record<string, any>,
-    context?: Record<string, any>,
-  ): string {
+  private formatMessage(level: string, message: string, errorOrContext?: Error | Record<string, any>, context?: Record<string, any>): string {
     const timestamp = new Date().toISOString();
-
+    
     let errorStr = '';
     let contextStr = '';
-
+    
     if (errorOrContext instanceof Error) {
       errorStr = ` - Error: ${errorOrContext.message}`;
       contextStr = context ? ` ${JSON.stringify(context)}` : '';
     } else if (errorOrContext) {
       contextStr = ` ${JSON.stringify(errorOrContext)}`;
     }
-
+    
     return `${timestamp} [${level}] [${this.context}]: ${message}${errorStr}${contextStr}`;
   }
 
@@ -67,21 +62,13 @@ export class Logger {
     return level <= this.level;
   }
 
-  error(
-    message: string,
-    errorOrContext?: Error | Record<string, any>,
-    context?: Record<string, any>,
-  ): void {
+  error(message: string, errorOrContext?: Error | Record<string, any>, context?: Record<string, any>): void {
     if (this.shouldLog(LOG_LEVELS.ERROR)) {
       console.error(this.formatMessage('ERROR', message, errorOrContext, context));
     }
   }
 
-  warn(
-    message: string,
-    errorOrContext?: Error | Record<string, any>,
-    context?: Record<string, any>,
-  ): void {
+  warn(message: string, errorOrContext?: Error | Record<string, any>, context?: Record<string, any>): void {
     if (this.shouldLog(LOG_LEVELS.WARN)) {
       console.warn(this.formatMessage('WARN', message, errorOrContext, context));
     }
@@ -93,11 +80,7 @@ export class Logger {
     }
   }
 
-  debug(
-    message: string,
-    errorOrContext?: Error | Record<string, any>,
-    context?: Record<string, any>,
-  ): void {
+  debug(message: string, errorOrContext?: Error | Record<string, any>, context?: Record<string, any>): void {
     if (this.shouldLog(LOG_LEVELS.DEBUG)) {
       console.debug(this.formatMessage('DEBUG', message, errorOrContext, context));
     }

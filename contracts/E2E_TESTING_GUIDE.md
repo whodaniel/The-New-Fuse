@@ -2,14 +2,11 @@
 
 ## Overview
 
-This guide provides comprehensive instructions for running the complete E2E test
-suite that validates the entire NFT Agent workflow from smart contract
-deployment to revenue distribution.
+This guide provides comprehensive instructions for running the complete E2E test suite that validates the entire NFT Agent workflow from smart contract deployment to revenue distribution.
 
 ## 🧪 Test Coverage
 
 ### Primary E2E Workflow Test (`test-e2e-workflow.ts`)
-
 The main E2E test covers the complete agent lifecycle:
 
 1. **Smart Contract Deployment** - Deploy all contracts with proper linking
@@ -23,7 +20,6 @@ The main E2E test covers the complete agent lifecycle:
 9. **Analytics & Reporting** - System state and performance metrics
 
 ### Comprehensive Test Suite (`run-e2e-tests.ts`)
-
 Additional validation tests include:
 
 - **Contract Compilation** - Verify all contracts compile successfully
@@ -35,7 +31,6 @@ Additional validation tests include:
 ## 🚀 Prerequisites
 
 ### 1. Environment Setup
-
 ```bash
 # Install dependencies
 cd contracts
@@ -46,42 +41,40 @@ pnpm install --save-dev hardhat @nomiclabs/hardhat-ethers ethers chai
 ```
 
 ### 2. Network Configuration
-
 Ensure your `hardhat.config.ts` includes test network configuration:
 
 ```typescript
-import { HardhatUserConfig } from 'hardhat/config';
-import '@nomiclabs/hardhat-ethers';
+import { HardhatUserConfig } from "hardhat/config";
+import "@nomiclabs/hardhat-ethers";
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: '0.8.19',
+    version: "0.8.19",
     settings: {
       optimizer: {
         enabled: true,
-        runs: 200,
-      },
-    },
+        runs: 200
+      }
+    }
   },
   networks: {
     hardhat: {
       chainId: 1337,
       accounts: {
         count: 10,
-        accountsBalance: '10000000000000000000000', // 10000 ETH
-      },
+        accountsBalance: "10000000000000000000000" // 10000 ETH
+      }
     },
     localhost: {
-      url: 'http://127.0.0.1:8545',
-    },
-  },
+      url: "http://127.0.0.1:8545"
+    }
+  }
 };
 
 export default config;
 ```
 
 ### 3. Contract Compilation
-
 ```bash
 # Compile all contracts
 npx hardhat compile
@@ -93,7 +86,6 @@ npx hardhat check
 ## 🏃‍♂️ Running Tests
 
 ### Quick E2E Workflow Test
-
 ```bash
 # Run the main E2E workflow test
 npx hardhat run scripts/test-e2e-workflow.ts
@@ -103,7 +95,6 @@ npx hardhat run scripts/test-e2e-workflow.ts --network hardhat
 ```
 
 ### Comprehensive Test Suite
-
 ```bash
 # Run the full test suite including security and performance tests
 npx hardhat run scripts/run-e2e-tests.ts
@@ -113,7 +104,6 @@ npx hardhat run scripts/run-e2e-tests.ts --network hardhat --verbose
 ```
 
 ### Individual Test Components
-
 ```bash
 # Test contract deployment only
 npx hardhat run scripts/deploy.ts
@@ -125,7 +115,6 @@ npx hardhat run scripts/test-deployment.ts
 ## 📊 Expected Test Output
 
 ### Successful E2E Workflow Output
-
 ```
 🚀 Starting E2E Workflow Test for NFT Agent System...
 ============================================================
@@ -164,11 +153,10 @@ npx hardhat run scripts/test-deployment.ts
 ```
 
 ### Test Results Summary
-
 ```
 📋 TEST SUMMARY:
 ✅ Agent NFT minted and fractionalized
-✅ Smart Account deployed and linked
+✅ Smart Account deployed and linked  
 ✅ Revenue stream created and funded
 ✅ Marketplace listing and trading functional
 ✅ Revenue distribution to shareholders working
@@ -179,52 +167,44 @@ npx hardhat run scripts/test-deployment.ts
 ## 🔍 Test Validation Points
 
 ### 1. Contract Deployment Validation
-
 - All contracts deploy successfully
 - Contract addresses are valid
 - Authorization between contracts works
 
-### 2. NFT Functionality Validation
-
+### 2. NFT Functionality Validation  
 - NFT minting with proper ownership
 - Metadata URI storage and retrieval
 - Transfer functionality
 
 ### 3. Fractionalization Validation
-
 - Proper share allocation (10,000 basis points = 100%)
 - Ownership tracking accuracy
 - Share transfer mechanics
 
 ### 4. Marketplace Validation
-
 - Listing creation and management
 - Share buying with ETH payments
 - Offer creation and acceptance
 - Proper fee collection
 
 ### 5. Revenue Distribution Validation
-
 - Revenue stream creation
 - Revenue accumulation tracking
 - Proportional distribution calculation
 - Shareholder claiming mechanism
 
 ### 6. Smart Account Validation
-
 - Account deployment via factory
 - Proper ownership assignment
 - Balance and transaction capability
 
 ### 7. Security Validation
-
 - Access control enforcement
 - Unauthorized operation rejection
 - Reentrancy protection
 - Input validation
 
 ### 8. Performance Validation
-
 - Gas usage within limits
 - Concurrent operation handling
 - Scalability under load
@@ -234,7 +214,6 @@ npx hardhat run scripts/test-deployment.ts
 ### Common Issues
 
 #### 1. Contract Compilation Errors
-
 ```bash
 # Clear cache and recompile
 npx hardhat clean
@@ -242,7 +221,6 @@ npx hardhat compile
 ```
 
 #### 2. Network Connection Issues
-
 ```bash
 # Start local Hardhat network
 npx hardhat node
@@ -252,13 +230,11 @@ npx hardhat run scripts/test-e2e-workflow.ts --network localhost
 ```
 
 #### 3. Gas Limit Errors
-
 - Increase gas limit in hardhat.config.ts
 - Optimize contract operations
 - Check for infinite loops
 
 #### 4. Balance Issues
-
 ```bash
 # Check account balances
 npx hardhat console
@@ -268,26 +244,24 @@ npx hardhat console
 
 ### Error Codes
 
-| Error                      | Description                  | Solution                     |
-| -------------------------- | ---------------------------- | ---------------------------- |
+| Error | Description | Solution |
+|-------|-------------|----------|
 | `ContractDeploymentFailed` | Contract deployment reverted | Check constructor parameters |
-| `UnauthorizedAccess`       | Access control failure       | Verify caller permissions    |
-| `InsufficientBalance`      | Not enough ETH for operation | Fund test accounts           |
-| `GasLimitExceeded`         | Transaction out of gas       | Increase gas limit           |
-| `InvalidTokenId`           | NFT doesn't exist            | Verify token was minted      |
+| `UnauthorizedAccess` | Access control failure | Verify caller permissions |
+| `InsufficientBalance` | Not enough ETH for operation | Fund test accounts |
+| `GasLimitExceeded` | Transaction out of gas | Increase gas limit |
+| `InvalidTokenId` | NFT doesn't exist | Verify token was minted |
 
 ## 📈 Performance Benchmarks
 
 ### Expected Gas Usage
-
 - **NFT Minting**: ~150,000 gas
-- **Fractionalization**: ~100,000 gas
+- **Fractionalization**: ~100,000 gas  
 - **Share Transfer**: ~75,000 gas
 - **Revenue Distribution**: ~50,000 + (recipients × 21,000) gas
 - **Marketplace Listing**: ~80,000 gas
 
 ### Performance Targets
-
 - **Test Execution Time**: < 2 minutes
 - **Contract Deployment**: < 30 seconds
 - **Transaction Confirmation**: < 5 seconds
@@ -296,15 +270,12 @@ npx hardhat console
 ## 📝 Test Reports
 
 ### Automated Reporting
-
 Test results are automatically saved to:
-
 ```
 contracts/test-reports/e2e-report-YYYY-MM-DDTHH-mm-ss.json
 ```
 
 ### Report Contents
-
 - Test execution summary
 - Individual test results
 - Gas usage analytics
@@ -312,7 +283,6 @@ contracts/test-reports/e2e-report-YYYY-MM-DDTHH-mm-ss.json
 - Error details
 
 ### Custom Reporting
-
 ```typescript
 // Access test results programmatically
 import { E2ETestRunner } from './scripts/run-e2e-tests';
@@ -345,7 +315,6 @@ Before production deployment, ensure:
 ## 🆘 Support
 
 For test-related issues:
-
 1. Check the troubleshooting section above
 2. Review test output logs for specific errors
 3. Verify environment setup and prerequisites
@@ -355,8 +324,4 @@ For test-related issues:
 
 ## Summary
 
-This comprehensive E2E testing suite validates every aspect of the NFT Agent
-system, from basic contract functionality to complex multi-user revenue
-distribution scenarios. The tests serve as both validation tools and
-documentation of expected system behavior, ensuring confidence in the production
-deployment.
+This comprehensive E2E testing suite validates every aspect of the NFT Agent system, from basic contract functionality to complex multi-user revenue distribution scenarios. The tests serve as both validation tools and documentation of expected system behavior, ensuring confidence in the production deployment.

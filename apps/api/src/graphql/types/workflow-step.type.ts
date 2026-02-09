@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { AgentType } from './agent.type';
 
 @ObjectType('WorkflowStepStatistics')

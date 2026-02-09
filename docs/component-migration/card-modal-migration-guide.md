@@ -2,16 +2,13 @@
 
 ## Overview
 
-We have consolidated multiple Card and Modal/Dialog implementations across the
-codebase into single, feature-rich components. This guide will help you migrate
-from the old implementations to the new consolidated components.
+We have consolidated multiple Card and Modal/Dialog implementations across the codebase into single, feature-rich components. This guide will help you migrate from the old implementations to the new consolidated components.
 
 ## Card Component
 
 ### New Consolidated Card Component
 
 The new Card component is located at:
-
 ```
 @the-new-fuse/ui-components/src/core/card
 ```
@@ -41,20 +38,12 @@ import { Card } from 'packages/ui-components/src/core/card';
 import { AppStack_Card } from 'apps/frontend/src/components/AppStack_Card';
 
 // After - consolidated import
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from '@the-new-fuse/ui-components/src/core/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@the-new-fuse/ui-components/src/core/card';
 ```
 
 #### 2. Update Props
 
-The new Card component has a slightly different API. Here's how to migrate from
-each previous implementation:
+The new Card component has a slightly different API. Here's how to migrate from each previous implementation:
 
 ##### From packages/ui/src/components/Card.tsx
 
@@ -99,8 +88,7 @@ each previous implementation:
 
 #### 3. New Features
 
-The consolidated Card component offers several new features you can take
-advantage of:
+The consolidated Card component offers several new features you can take advantage of:
 
 ##### Subcomponents for Better Structure
 
@@ -110,7 +98,9 @@ advantage of:
     <CardTitle>Card Title</CardTitle>
     <CardDescription>Card Description</CardDescription>
   </CardHeader>
-  <CardContent>Main content goes here</CardContent>
+  <CardContent>
+    Main content goes here
+  </CardContent>
   <CardFooter>
     <Button>Action</Button>
   </CardFooter>
@@ -130,7 +120,6 @@ advantage of:
 ### New Consolidated Modal/Dialog Component
 
 The new Dialog component is located at:
-
 ```
 @the-new-fuse/ui-components/src/core/dialog
 ```
@@ -159,21 +148,12 @@ import { Modal } from '@the-new-fuse/ui/src/components/Modal';
 import { ModalWrapper } from 'apps/frontend/src/components/ModalWrapper/ModalWrapper';
 
 // After - consolidated import
-import {
-  Modal,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@the-new-fuse/ui-components/src/core/dialog';
+import { Modal, Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@the-new-fuse/ui-components/src/core/dialog';
 ```
 
 #### 2. Update Props
 
-The new Modal/Dialog components have a slightly different API. Here's how to
-migrate from each previous implementation:
+The new Modal/Dialog components have a slightly different API. Here's how to migrate from each previous implementation:
 
 ##### From packages/ui/src/components/Modal.tsx
 
@@ -244,9 +224,7 @@ For more control, you can use the Dialog component directly:
     </DialogHeader>
     <div>Dialog Content</div>
     <DialogFooter>
-      <Button variant="outline" onClick={handleClose}>
-        Cancel
-      </Button>
+      <Button variant="outline" onClick={handleClose}>Cancel</Button>
       <Button onClick={handleSave}>Save</Button>
     </DialogFooter>
   </DialogContent>
@@ -255,17 +233,12 @@ For more control, you can use the Dialog component directly:
 
 ## Backward Compatibility
 
-For backward compatibility, we've kept the old component files, but they now
-re-export the consolidated components. This means your existing code should
-continue to work, but we recommend migrating to the new import paths for
-consistency.
+For backward compatibility, we've kept the old component files, but they now re-export the consolidated components. This means your existing code should continue to work, but we recommend migrating to the new import paths for consistency.
 
 ## Testing
 
-After migrating to the new components, make sure to test your application
-thoroughly to ensure everything works as expected.
+After migrating to the new components, make sure to test your application thoroughly to ensure everything works as expected.
 
 ## Need Help?
 
-If you encounter any issues during migration, please reach out to the
-development team for assistance.
+If you encounter any issues during migration, please reach out to the development team for assistance.

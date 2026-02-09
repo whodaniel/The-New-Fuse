@@ -1,30 +1,19 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { DatabaseService } from '@the-new-fuse/database';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { PrismaService } from '@the-new-fuse/database';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('workspaces')
 @Controller('workspaces')
 @UseGuards(JwtAuthGuard)
 export class WorkspaceController {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all workspaces' })
   @ApiResponse({ status: 200, description: 'List of all workspaces' })
   async getAllWorkspaces() {
-    // Note: Adjust based on your actual database schema
+    // Note: Adjust based on your actual Prisma schema
     return [];
   }
 

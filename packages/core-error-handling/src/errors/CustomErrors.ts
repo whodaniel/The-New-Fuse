@@ -7,7 +7,7 @@
  * and handling across the application.
  */
 
-import { BaseError, ErrorCategory, ErrorSeverity } from '../interfaces/IErrorHandling.js';
+import { BaseError, ErrorSeverity, ErrorCategory } from '../interfaces/IErrorHandling.js';
 
 /**
  * Base application error with enhanced metadata
@@ -62,12 +62,10 @@ export class ApplicationError extends Error implements BaseError {
       retryable: this.retryable,
       metadata: this.metadata,
       stack: this.stack,
-      originalError: this.originalError
-        ? {
-            message: this.originalError.message,
-            stack: this.originalError.stack,
-          }
-        : undefined,
+      originalError: this.originalError ? {
+        message: this.originalError.message,
+        stack: this.originalError.stack,
+      } : undefined,
     };
   }
 }
@@ -113,7 +111,11 @@ export class NetworkError extends ApplicationError {
  * Connection timeout error
  */
 export class TimeoutError extends NetworkError {
-  constructor(endpoint?: string, timeout?: number, originalError?: Error) {
+  constructor(
+    endpoint?: string,
+    timeout?: number,
+    originalError?: Error
+  ) {
     super(
       `Request timeout${endpoint ? ` for ${endpoint}` : ''}${timeout ? ` after ${timeout}ms` : ''}`,
       1001,
@@ -127,7 +129,10 @@ export class TimeoutError extends NetworkError {
  * Connection error
  */
 export class ConnectionError extends NetworkError {
-  constructor(endpoint?: string, originalError?: Error) {
+  constructor(
+    endpoint?: string,
+    originalError?: Error
+  ) {
     super(
       `Failed to connect${endpoint ? ` to ${endpoint}` : ''}`,
       1002,
@@ -291,9 +296,11 @@ export class RequiredFieldError extends ValidationError {
  */
 export class InvalidFormatError extends ValidationError {
   constructor(field: string, expectedFormat: string, actualValue?: any) {
-    super(`Field '${field}' has invalid format. Expected: ${expectedFormat}`, field, [
-      { field, message: `Expected format: ${expectedFormat}`, value: actualValue },
-    ]);
+    super(
+      `Field '${field}' has invalid format. Expected: ${expectedFormat}`,
+      field,
+      [{ field, message: `Expected format: ${expectedFormat}`, value: actualValue }]
+    );
     Object.defineProperty(this, 'code', { value: 3002, writable: false });
   }
 }
@@ -303,18 +310,19 @@ export class InvalidFormatError extends ValidationError {
  */
 export class OutOfRangeError extends ValidationError {
   constructor(field: string, min?: number, max?: number, actualValue?: any) {
-    const rangeMsg =
-      min !== undefined && max !== undefined
-        ? `between ${min} and ${max}`
-        : min !== undefined
-          ? `at least ${min}`
-          : max !== undefined
-            ? `at most ${max}`
-            : 'within valid range';
+    const rangeMsg = min !== undefined && max !== undefined
+      ? `between ${min} and ${max}`
+      : min !== undefined
+      ? `at least ${min}`
+      : max !== undefined
+      ? `at most ${max}`
+      : 'within valid range';
 
-    super(`Field '${field}' must be ${rangeMsg}`, field, [
-      { field, message: rangeMsg, value: actualValue },
-    ]);
+    super(
+      `Field '${field}' must be ${rangeMsg}`,
+      field,
+      [{ field, message: rangeMsg, value: actualValue }]
+    );
     Object.defineProperty(this, 'code', { value: 3003, writable: false });
   }
 }
@@ -334,7 +342,15 @@ export class BusinessError extends ApplicationError {
     metadata?: Record<string, any>,
     originalError?: Error
   ) {
-    super(message, code, severity, ErrorCategory.BUSINESS, false, metadata, originalError);
+    super(
+      message,
+      code,
+      severity,
+      ErrorCategory.BUSINESS,
+      false,
+      metadata,
+      originalError
+    );
   }
 }
 
@@ -350,8 +366,8 @@ export class NotFoundError extends BusinessError {
       resourceType && resourceId
         ? `${resourceType} with ID '${resourceId}' not found`
         : resourceType
-          ? `${resourceType} not found`
-          : 'Resource not found',
+        ? `${resourceType} not found`
+        : 'Resource not found',
       4001,
       ErrorSeverity.LOW,
       { resourceType, resourceId }
@@ -375,7 +391,10 @@ export class ConflictError extends BusinessError {
  */
 export class DuplicateResourceError extends ConflictError {
   constructor(resourceType: string, identifier: string) {
-    super(`${resourceType} '${identifier}' already exists`, { resourceType, identifier });
+    super(
+      `${resourceType} '${identifier}' already exists`,
+      { resourceType, identifier }
+    );
     Object.defineProperty(this, 'code', { value: 4003, writable: false });
   }
 }
@@ -428,7 +447,15 @@ export class SystemError extends ApplicationError {
     metadata?: Record<string, any>,
     originalError?: Error
   ) {
-    super(message, code, severity, ErrorCategory.SYSTEM, retryable, metadata, originalError);
+    super(
+      message,
+      code,
+      severity,
+      ErrorCategory.SYSTEM,
+      retryable,
+      metadata,
+      originalError
+    );
   }
 }
 
@@ -439,8 +466,20 @@ export class DatabaseError extends SystemError {
   public readonly query?: string;
   public readonly operation?: string;
 
-  constructor(message: string, operation?: string, query?: string, originalError?: Error) {
-    super(message, 5001, ErrorSeverity.CRITICAL, true, { operation, query }, originalError);
+  constructor(
+    message: string,
+    operation?: string,
+    query?: string,
+    originalError?: Error
+  ) {
+    super(
+      message,
+      5001,
+      ErrorSeverity.CRITICAL,
+      true,
+      { operation, query },
+      originalError
+    );
     this.query = query;
     this.operation = operation;
   }
@@ -491,7 +530,12 @@ export class ExternalServiceError extends SystemError {
   public readonly serviceName: string;
   public readonly statusCode?: number;
 
-  constructor(serviceName: string, message?: string, statusCode?: number, originalError?: Error) {
+  constructor(
+    serviceName: string,
+    message?: string,
+    statusCode?: number,
+    originalError?: Error
+  ) {
     super(
       message || `External service '${serviceName}' error`,
       5004,
@@ -512,8 +556,20 @@ export class FileSystemError extends SystemError {
   public readonly path?: string;
   public readonly operation?: string;
 
-  constructor(message: string, path?: string, operation?: string, originalError?: Error) {
-    super(message, 5005, ErrorSeverity.HIGH, false, { path, operation }, originalError);
+  constructor(
+    message: string,
+    path?: string,
+    operation?: string,
+    originalError?: Error
+  ) {
+    super(
+      message,
+      5005,
+      ErrorSeverity.HIGH,
+      false,
+      { path, operation },
+      originalError
+    );
     this.path = path;
     this.operation = operation;
   }
@@ -530,7 +586,12 @@ export class IntegrationError extends ApplicationError {
   public readonly provider: string;
   public readonly operation?: string;
 
-  constructor(provider: string, message?: string, operation?: string, originalError?: Error) {
+  constructor(
+    provider: string,
+    message?: string,
+    operation?: string,
+    originalError?: Error
+  ) {
     super(
       message || `Integration error with ${provider}`,
       6000,
@@ -559,7 +620,12 @@ export class ApiIntegrationError extends IntegrationError {
     message?: string,
     originalError?: Error
   ) {
-    super(provider, message || `API integration error with ${provider}`, endpoint, originalError);
+    super(
+      provider,
+      message || `API integration error with ${provider}`,
+      endpoint,
+      originalError
+    );
     Object.defineProperty(this, 'code', { value: 6001, writable: false });
     this.endpoint = endpoint;
     this.statusCode = statusCode;
@@ -608,7 +674,11 @@ export class PaymentError extends ApplicationError {
  */
 export class PaymentDeclinedError extends PaymentError {
   constructor(reason?: string, metadata?: Record<string, any>) {
-    super(`Payment declined${reason ? `: ${reason}` : ''}`, 7001, metadata);
+    super(
+      `Payment declined${reason ? `: ${reason}` : ''}`,
+      7001,
+      metadata
+    );
   }
 }
 
@@ -617,11 +687,11 @@ export class PaymentDeclinedError extends PaymentError {
  */
 export class InsufficientFundsError extends PaymentError {
   constructor(required: number, available: number, metadata?: Record<string, any>) {
-    super(`Insufficient funds. Required: ${required}, Available: ${available}`, 7002, {
-      ...metadata,
-      required,
-      available,
-    });
+    super(
+      `Insufficient funds. Required: ${required}, Available: ${available}`,
+      7002,
+      { ...metadata, required, available }
+    );
   }
 }
 

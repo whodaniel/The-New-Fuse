@@ -1,10 +1,5 @@
-import {
-  WorkspaceData,
-  WorkspaceSettings,
-  WorkspaceStats,
-  WorkspaceThread,
-} from '@/types/workspace';
 import { request } from '@/utils/request';
+import { WorkspaceData, WorkspaceThread, WorkspaceStats, WorkspaceSettings } from '@/types/workspace';
 
 class Workspace {
   static async create(data: Partial<WorkspaceData>): Promise<WorkspaceData> {
@@ -43,10 +38,7 @@ class Workspace {
     return request(`/api/workspaces/${slug}/settings`);
   }
 
-  static async updateSettings(
-    slug: string,
-    settings: Partial<WorkspaceSettings>
-  ): Promise<WorkspaceSettings> {
+  static async updateSettings(slug: string, settings: Partial<WorkspaceSettings>): Promise<WorkspaceSettings> {
     return request(`/api/workspaces/${slug}/settings`, {
       method: 'PUT',
       body: JSON.stringify(settings),
@@ -85,7 +77,11 @@ class Workspace {
     });
   }
 
-  static async submitMessageFeedback(slug: string, chatId: string, score: number): Promise<void> {
+  static async submitMessageFeedback(
+    slug: string,
+    chatId: string,
+    score: number
+  ): Promise<void> {
     return request(`/api/workspaces/${slug}/messages/${chatId}/feedback`, {
       method: 'POST',
       body: JSON.stringify({ score }),
@@ -95,7 +91,7 @@ class Workspace {
   static async getMessageTTS(slug: string, chatId: string): Promise<ArrayBuffer> {
     return request(`/api/workspaces/${slug}/messages/${chatId}/tts`, {
       headers: {
-        Accept: 'audio/mp3',
+        'Accept': 'audio/mp3',
       },
       responseType: 'arraybuffer',
     });
@@ -125,7 +121,7 @@ class Workspace {
       method: 'POST',
       body: formData,
       headers: {
-        Accept: 'application/json',
+        'Accept': 'application/json',
       },
       onProgress,
     });

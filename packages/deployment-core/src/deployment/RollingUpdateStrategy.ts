@@ -1,16 +1,16 @@
 import { Logger } from 'winston';
 import {
+  BaseDeploymentStrategy,
+  DeploymentPhase,
+  ServiceDeploymentStatus,
+  RollbackResult
+} from './DeploymentStrategy';
+import {
   DeploymentConfig,
   DeploymentResult,
   PipelineStatus,
-  ServiceDeploymentResult,
+  ServiceDeploymentResult
 } from '../types/pipeline';
-import {
-  BaseDeploymentStrategy,
-  DeploymentPhase,
-  RollbackResult,
-  ServiceDeploymentStatus,
-} from './DeploymentStrategy';
 
 /**
  * Rolling Update Deployment Strategy
@@ -27,7 +27,7 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
 
     this.logger.info(`Starting rolling update deployment: ${deploymentId}`, {
       environment: config.environment,
-      services: config.services.length,
+      services: config.services.length
     });
 
     try {
@@ -42,7 +42,7 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.PREPARING,
         currentStep: 'Preparing rolling update deployment',
-        progress: 10,
+        progress: 10
       });
 
       await this.prepareDeployment(config, deploymentId);
@@ -51,28 +51,25 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.DEPLOYING,
         currentStep: 'Deploying services with rolling update',
-        progress: 20,
+        progress: 20
       });
 
       const serviceResults: ServiceDeploymentResult[] = [];
 
       for (let i = 0; i < config.services.length; i++) {
         const service = config.services[i];
-
-        this.logDeploymentStep(
-          deploymentId,
-          `Starting rolling update for service: ${service.name}`
-        );
-
+        
+        this.logDeploymentStep(deploymentId, `Starting rolling update for service: ${service.name}`);
+        
         const serviceResult = await this.deployServiceRolling(service, config, deploymentId);
         serviceResults.push(serviceResult);
 
         // Update progress
-        const serviceProgress = ((i + 1) / config.services.length) * 60; // 60% for all services
+        const serviceProgress = (i + 1) / config.services.length * 60; // 60% for all services
         this.updateProgress(deploymentId, {
           progress: 20 + serviceProgress,
           currentStep: `Deployed ${i + 1}/${config.services.length} services`,
-          completedSteps: progress.completedSteps + 1,
+          completedSteps: progress.completedSteps + 1
         });
 
         if (serviceResult.status === PipelineStatus.FAILED) {
@@ -84,15 +81,15 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.VALIDATING,
         currentStep: 'Validating deployment health',
-        progress: 85,
+        progress: 85
       });
 
       const healthChecks = await this.getHealthChecks(config);
       const healthResults = await this.executeHealthChecks(healthChecks, deploymentId);
 
-      const unhealthyChecks = healthResults.filter((h) => h.status !== 'healthy');
+      const unhealthyChecks = healthResults.filter(h => h.status !== 'healthy');
       if (unhealthyChecks.length > 0) {
-        throw new Error(`Health checks failed: ${unhealthyChecks.map((h) => h.name).join(', ')}`);
+        throw new Error(`Health checks failed: ${unhealthyChecks.map(h => h.name).join(', ')}`);
       }
 
       // Phase 4: Completion
@@ -100,7 +97,7 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
         phase: DeploymentPhase.COMPLETED,
         currentStep: 'Rolling update deployment completed',
         progress: 100,
-        completedSteps: progress.totalSteps,
+        completedSteps: progress.totalSteps
       });
 
       const endTime = new Date();
@@ -116,38 +113,36 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
         environment: config.environment,
         services: serviceResults,
         healthChecks: healthResults,
-        logs: progress.logs,
+        logs: progress.logs
       };
 
-      this.logDeploymentStep(
-        deploymentId,
-        `Rolling update deployment completed successfully in ${duration}ms`
-      );
+      this.logDeploymentStep(deploymentId, `Rolling update deployment completed successfully in ${duration}ms`);
       this.emit('deployment:complete', { deploymentId, result });
 
       return result;
+
     } catch (error) {
       this.logger.error(`Rolling update deployment failed: ${deploymentId}`, {
         error: error.message,
-        stack: error.stack,
+        stack: error.stack
       });
 
       // Update progress to failed state
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.FAILED,
         currentStep: `Deployment failed: ${error.message}`,
-        progress: 0,
+        progress: 0
       });
 
       // Attempt rollback if configured
       if (config.rollbackPolicy.enabled && config.rollbackPolicy.automatic) {
         this.logDeploymentStep(deploymentId, 'Attempting automatic rollback', 'warn');
-
+        
         try {
           await this.rollback(deploymentId, error.message);
         } catch (rollbackError) {
           this.logger.error(`Rollback failed: ${deploymentId}`, {
-            error: rollbackError.message,
+            error: rollbackError.message
           });
         }
       }
@@ -166,7 +161,7 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
         services: [],
         healthChecks: [],
         logs: this.deployments.get(deploymentId)?.logs || [error.message],
-        error: error.message,
+        error: error.message
       };
 
       this.emit('deployment:failed', { deploymentId, result: failedResult, error });
@@ -183,7 +178,7 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
     }
 
     // Validate services have proper configuration for rolling updates
-    config.services.forEach((service) => {
+        config.services.forEach((service) => {
       if (!service.replicas || service.replicas < 1) {
         errors.push(`Service ${service.name}: Must have at least 1 replica for rolling update`);
       }
@@ -202,7 +197,7 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
     if (params.maxUnavailable && params.maxSurge) {
       const maxUnavailable = this.parsePercentage(params.maxUnavailable);
       const maxSurge = this.parsePercentage(params.maxSurge);
-
+      
       if (maxUnavailable === 0 && maxSurge === 0) {
         errors.push('Cannot have both maxUnavailable and maxSurge set to 0');
       }
@@ -210,13 +205,13 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
 
     return {
       valid: errors.length === 0,
-      errors,
+      errors
     };
   }
 
   async rollback(deploymentId: string, reason: string): Promise<RollbackResult> {
     const startTime = Date.now();
-
+    
     this.logger.info(`Starting rollback for deployment: ${deploymentId}`, { reason });
 
     try {
@@ -224,7 +219,7 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.ROLLING_BACK,
         currentStep: 'Rolling back deployment',
-        progress: 0,
+        progress: 0
       });
 
       // Get deployment progress to find services
@@ -236,16 +231,16 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
       // Rollback each service
       for (const serviceProgress of progress.services) {
         this.logDeploymentStep(deploymentId, `Rolling back service: ${serviceProgress.name}`);
-
+        
         await this.rollbackService(serviceProgress.name, serviceProgress.version.current);
-
+        
         // Update service status
         serviceProgress.status = ServiceDeploymentStatus.ROLLING_BACK;
         serviceProgress.version.target = serviceProgress.version.current;
       }
 
       // Wait for rollback to complete
-      await this.waitForRollbackComplete(progress.services.map((s) => s.name));
+      await this.waitForRollbackComplete(progress.services.map(s => s.name));
 
       const endTime = Date.now();
       const duration = endTime - startTime;
@@ -257,14 +252,15 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
         previousVersion: 'rolled-back',
         currentVersion: 'previous',
         duration,
-        logs: progress.logs,
+        logs: progress.logs
       };
+
     } catch (error) {
       const endTime = Date.now();
       const duration = endTime - startTime;
 
       this.logger.error(`Rollback failed: ${deploymentId}`, {
-        error: error.message,
+        error: error.message
       });
 
       return {
@@ -273,7 +269,7 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
         currentVersion: 'unknown',
         duration,
         logs: [`Rollback failed: ${error.message}`],
-        error: error.message,
+        error: error.message
       };
     }
   }
@@ -301,18 +297,20 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
     deploymentId: string
   ): Promise<ServiceDeploymentResult> {
     const serviceName = service.name;
-
+    
     try {
       // Get rolling update parameters
       const maxUnavailable = this.parsePercentage(
         config.strategy.parameters?.maxUnavailable || '25%'
       );
-      const maxSurge = this.parsePercentage(config.strategy.parameters?.maxSurge || '25%');
+      const maxSurge = this.parsePercentage(
+        config.strategy.parameters?.maxSurge || '25%'
+      );
 
       // Calculate rolling update batches
       const totalReplicas = service.replicas;
-      const maxUnavailableCount = Math.floor((totalReplicas * maxUnavailable) / 100);
-      const maxSurgeCount = Math.floor((totalReplicas * maxSurge) / 100);
+      const maxUnavailableCount = Math.floor(totalReplicas * maxUnavailable / 100);
+      const maxSurgeCount = Math.floor(totalReplicas * maxSurge / 100);
       const batchSize = Math.max(1, Math.min(maxUnavailableCount, maxSurgeCount));
 
       this.logDeploymentStep(
@@ -322,7 +320,7 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
 
       // Update service progress
       const progress = this.deployments.get(deploymentId);
-      const serviceProgress = progress?.services.find((s) => s.name === serviceName);
+      const serviceProgress = progress?.services.find(s => s.name === serviceName);
       if (serviceProgress) {
         serviceProgress.status = ServiceDeploymentStatus.DEPLOYING;
       }
@@ -331,7 +329,7 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
       let updatedReplicas = 0;
       while (updatedReplicas < totalReplicas) {
         const currentBatchSize = Math.min(batchSize, totalReplicas - updatedReplicas);
-
+        
         this.logDeploymentStep(
           deploymentId,
           `Updating batch of ${currentBatchSize} replicas for ${serviceName}`
@@ -371,18 +369,15 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
       }
 
       // Final health check
-      const healthCheck = await this.executeHealthCheck(
-        {
-          name: `${serviceName}-final-check`,
-          type: 'http',
-          port: service.ports?.[0]?.port || 8080,
-          path: '/health',
-          timeout: 30000,
-          interval: 5000,
-          retries: 3,
-        },
-        deploymentId
-      );
+      const healthCheck = await this.executeHealthCheck({
+        name: `${serviceName}-final-check`,
+        type: 'http',
+        port: service.ports?.[0]?.port || 8080,
+        path: '/health',
+        timeout: 30000,
+        interval: 5000,
+        retries: 3
+      }, deploymentId);
 
       if (healthCheck.status !== 'healthy') {
         throw new Error(`Final health check failed for ${serviceName}: ${healthCheck.message}`);
@@ -404,20 +399,21 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
         replicas: {
           desired: totalReplicas,
           ready: totalReplicas,
-          available: totalReplicas,
+          available: totalReplicas
         },
         image: service.image,
         version: service.tag,
-        endpoints: [`http://${serviceName}.${config.environment}.svc.cluster.local`],
+        endpoints: [`http://${serviceName}.${config.environment}.svc.cluster.local`]
       };
+
     } catch (error) {
       this.logger.error(`Rolling update failed for service: ${serviceName}`, {
-        error: error.message,
+        error: error.message
       });
 
       // Update service progress to failed
       const progress = this.deployments.get(deploymentId);
-      const serviceProgress = progress?.services.find((s) => s.name === serviceName);
+      const serviceProgress = progress?.services.find(s => s.name === serviceName);
       if (serviceProgress) {
         serviceProgress.status = ServiceDeploymentStatus.FAILED;
       }
@@ -428,11 +424,11 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
         replicas: {
           desired: service.replicas,
           ready: 0,
-          available: 0,
+          available: 0
         },
         image: service.image,
         version: service.tag,
-        endpoints: [],
+        endpoints: []
       };
     }
   }
@@ -449,14 +445,14 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
     // This would integrate with the actual orchestration platform
     this.logger.debug('Validating cluster resources', {
       environment: config.environment,
-      services: config.services.length,
+      services: config.services.length
     });
   }
 
   private async prepareDeploymentManifests(config: DeploymentConfig): Promise<void> {
     // Prepare deployment manifests for the orchestration platform
     this.logger.debug('Preparing deployment manifests', {
-      environment: config.environment,
+      environment: config.environment
     });
   }
 
@@ -464,7 +460,7 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
     // Set up monitoring and alerting for the deployment
     this.logger.debug('Setting up deployment monitoring', {
       deploymentId,
-      environment: config.environment,
+      environment: config.environment
     });
   }
 
@@ -476,34 +472,34 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
     // Deploy a batch of replicas
     // This would integrate with the actual orchestration platform
     this.logger.debug(`Deploying batch of ${batchSize} replicas for ${serviceName}`);
-
+    
     // Simulate deployment time
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
   private async removeOldReplicas(serviceName: string, count: number): Promise<void> {
     // Remove old replicas after new ones are ready
     // This would integrate with the actual orchestration platform
     this.logger.debug(`Removing ${count} old replicas for ${serviceName}`);
-
+    
     // Simulate cleanup time
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
 
   private async rollbackService(serviceName: string, previousVersion: string): Promise<void> {
     // Rollback service to previous version
     // This would integrate with the actual orchestration platform
     this.logger.debug(`Rolling back ${serviceName} to version ${previousVersion}`);
-
+    
     // Simulate rollback time
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
   }
 
   private async waitForRollbackComplete(serviceNames: string[]): Promise<void> {
     // Wait for all services to complete rollback
     this.logger.debug(`Waiting for rollback to complete for services: ${serviceNames.join(', ')}`);
-
+    
     // Simulate rollback completion time
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
   }
 }

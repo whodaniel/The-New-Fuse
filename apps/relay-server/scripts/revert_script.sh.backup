@@ -14,6 +14,6 @@ git checkout HEAD -- package.json
 git checkout HEAD -- frontend/package.json
 git checkout HEAD -- Dockerfile
 git checkout HEAD -- docker-compose.yml
-git checkout HEAD -- drizzle/schema.drizzle
+git checkout HEAD -- prisma/schema.prisma
 
 echo "Files have been reverted to their last committed versions."

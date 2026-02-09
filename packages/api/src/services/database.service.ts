@@ -1,11 +1,15 @@
 /**
  * Database Service
  * Handles database connections using Drizzle ORM
- * This replaces the legacy DatabaseService
+ * This replaces the legacy PrismaService
  */
 
-import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { DRIZZLE_CLIENT, type DrizzleClient, sql } from '@the-new-fuse/database';
+import { Injectable, OnModuleInit, OnModuleDestroy, Logger, Inject } from '@nestjs/common';
+import { 
+  DRIZZLE_CLIENT, 
+  type DrizzleClient,
+  sql 
+} from '@the-new-fuse/database';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
@@ -69,7 +73,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
    */
   async enableShutdownHooks(app: any): Promise<void> {
     this.logger.log('Enabling shutdown hooks...');
-
+    
     // Handle SIGINT
     process.on('SIGINT', async () => {
       this.logger.log('Received SIGINT, shutting down...');

@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SyncRedisConfig } from '../config/SyncRedisConfig';
-import { CommunicationHubFailover } from './CommunicationHubFailover';
+import { SyncAwareMessagingService } from './SyncAwareMessagingService';
+import { SyncAwareAgentWebSocketService } from './SyncAwareAgentWebSocketService';
 import { MessageQueueSynchronizer } from './MessageQueueSynchronizer';
+import { CommunicationHubFailover } from './CommunicationHubFailover';
+import { SyncRedisConfig } from '../config/SyncRedisConfig';
 import {
-  CommunicationNode,
-  CrossTenantRoutingConfig,
-  MessageFailoverConfig,
-  MessageQueueSyncConfig,
   SyncAwareA2AMessage,
   SyncAwareMessageUtils,
+  CrossTenantRoutingConfig,
+  MessageQueueSyncConfig,
+  MessageFailoverConfig,
+  CommunicationNode
 } from './SyncAwareA2AMessage';
-import { SyncAwareAgentWebSocketService } from './SyncAwareAgentWebSocketService';
-import { SyncAwareMessagingService } from './SyncAwareMessagingService';
 
 describe('SyncAwareMessaging Integration', () => {
   let messagingService: SyncAwareMessagingService;
@@ -23,7 +23,7 @@ describe('SyncAwareMessaging Integration', () => {
 
   const testTenantId = 'test-tenant-1';
   const testAgentId = 'test-agent-1';
-
+  
   const createTestMessage = (overrides: Partial<SyncAwareA2AMessage> = {}): SyncAwareA2AMessage => {
     const baseMessage = {
       id: `test-message-${Date.now()}`,
@@ -38,9 +38,9 @@ describe('SyncAwareMessaging Integration', () => {
         sync: SyncAwareMessageUtils.createSyncMetadata({
           tenantId: testTenantId,
           crossTenantAllowed: false,
-          priority: 'medium',
-        }),
-      },
+          priority: 'medium'
+        })
+      }
     };
 
     return { ...baseMessage, ...overrides } as SyncAwareA2AMessage;
@@ -54,14 +54,12 @@ describe('SyncAwareMessaging Integration', () => {
       publish: jest.fn().mockResolvedValue(1),
       get: jest.fn().mockImplementation((key: string) => {
         if (key.includes('status')) {
-          return Promise.resolve(
-            JSON.stringify({
-              messageId: 'test-message',
-              status: 'delivered',
-              deliveredTo: [testAgentId],
-              createdAt: Date.now(),
-            })
-          );
+          return Promise.resolve(JSON.stringify({
+            messageId: 'test-message',
+            status: 'delivered',
+            deliveredTo: [testAgentId],
+            createdAt: Date.now()
+          }));
         }
         return Promise.resolve(null);
       }),
@@ -69,7 +67,7 @@ describe('SyncAwareMessaging Integration', () => {
       keys: jest.fn().mockResolvedValue([]),
       lrange: jest.fn().mockResolvedValue([]),
       lpush: jest.fn().mockResolvedValue(1),
-      lrem: jest.fn().mockResolvedValue(1),
+      lrem: jest.fn().mockResolvedValue(1)
     };
 
     // Mock WebSocket service with realistic agent management
@@ -82,7 +80,7 @@ describe('SyncAwareMessaging Integration', () => {
       }),
       sendMessage: jest.fn().mockResolvedValue(true),
       broadcastToTenant: jest.fn().mockResolvedValue(2),
-      broadcastToAllAgents: jest.fn().mockResolvedValue(3),
+      broadcastToAllAgents: jest.fn().mockResolvedValue(3)
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -93,7 +91,7 @@ describe('SyncAwareMessaging Integration', () => {
         CommunicationHubFailover,
         {
           provide: 'UnifiedRedisService',
-          useValue: mockRedisService,
+          useValue: mockRedisService
         },
         {
           provide: SyncRedisConfig,
@@ -102,40 +100,40 @@ describe('SyncAwareMessaging Integration', () => {
               patterns: {
                 channelAll: 'test:channel:*',
                 tenantAll: (tenantId: string) => `test:tenant:${tenantId}:*`,
-                globalAll: 'test:global:*',
+                globalAll: 'test:global:*'
               },
               channels: {
                 globalSync: 'test:sync:global',
                 health: 'test:health',
-                metrics: 'test:metrics',
+                metrics: 'test:metrics'
               },
               queues: {
-                syncOperations: (tenantId?: string) =>
+                syncOperations: (tenantId?: string) => 
                   tenantId ? `test:queue:${tenantId}` : 'test:queue:global',
-                deadLetter: 'test:queue:deadletter',
+                deadLetter: 'test:queue:deadletter'
               },
               globalSync: {
                 state: (type: string, id: string) => `test:state:${type}:${id}`,
-                conflicts: 'test:conflicts',
+                conflicts: 'test:conflicts'
               },
               tenantSync: {
-                state: (tenantId: string, type: string, id: string) =>
-                  `test:tenant:${tenantId}:${type}:${id}`,
-              },
+                state: (tenantId: string, type: string, id: string) => 
+                  `test:tenant:${tenantId}:${type}:${id}`
+              }
             }),
             getTTLConfig: () => ({
               locks: 30,
               heartbeat: 60,
-              fileChecksums: 3600,
+              fileChecksums: 3600
             }),
-            validateTenantId: (tenantId: string) => /^[a-zA-Z0-9_-]+$/.test(tenantId),
-          },
+            validateTenantId: (tenantId: string) => /^[a-zA-Z0-9_-]+$/.test(tenantId)
+          }
         },
         {
           provide: 'IAgentWebSocketService',
-          useValue: mockWsService,
-        },
-      ],
+          useValue: mockWsService
+        }
+      ]
     }).compile();
 
     messagingService = module.get<SyncAwareMessagingService>(SyncAwareMessagingService);
@@ -158,7 +156,7 @@ describe('SyncAwareMessaging Integration', () => {
       const result = await messagingService.sendMessage(testAgentId, testMessage, {
         tenantId: testTenantId,
         priority: 'high',
-        requiresAck: true,
+        requiresAck: true
       });
 
       expect(result).toBeDefined();
@@ -172,21 +170,19 @@ describe('SyncAwareMessaging Integration', () => {
       const crossTenantConfig: CrossTenantRoutingConfig = {
         sourceTenantId: testTenantId,
         targetTenantIds: ['tenant-2'],
-        routingRules: [
-          {
-            condition: 'always',
-            action: 'allow',
-          },
-        ],
+        routingRules: [{
+          condition: 'always',
+          action: 'allow'
+        }],
         securityPolicy: {
           requireEncryption: false,
           allowedMessageTypes: ['TEST_MESSAGE'],
           maxMessageSize: 1024,
           rateLimiting: {
             maxMessagesPerSecond: 10,
-            maxMessagesPerMinute: 100,
-          },
-        },
+            maxMessagesPerMinute: 100
+          }
+        }
       };
 
       await messagingService.configureCrossTenantMessaging(crossTenantConfig);
@@ -198,15 +194,15 @@ describe('SyncAwareMessaging Integration', () => {
           sync: SyncAwareMessageUtils.createSyncMetadata({
             tenantId: testTenantId,
             crossTenantAllowed: true,
-            priority: 'medium',
-          }),
-        },
+            priority: 'medium'
+          })
+        }
       });
 
       const results = await messagingService.broadcastMessage(crossTenantMessage, {
         tenantIds: ['tenant-2'],
         crossTenant: true,
-        priority: 'high',
+        priority: 'high'
       });
 
       expect(results).toHaveProperty('tenant-2');
@@ -228,8 +224,8 @@ describe('SyncAwareMessaging Integration', () => {
         retentionPolicy: {
           maxAge: 3600000,
           maxSize: 100,
-          cleanupInterval: 300000,
-        },
+          cleanupInterval: 300000
+        }
       };
 
       await messagingService.configureQueueSynchronization(queueConfig);
@@ -253,7 +249,7 @@ describe('SyncAwareMessaging Integration', () => {
         consecutiveSuccesses: 5,
         responseTime: 50,
         capacity: 100,
-        currentLoad: 10,
+        currentLoad: 10
       };
 
       const fallbackNode: CommunicationNode = {
@@ -266,7 +262,7 @@ describe('SyncAwareMessaging Integration', () => {
         consecutiveSuccesses: 3,
         responseTime: 75,
         capacity: 80,
-        currentLoad: 5,
+        currentLoad: 5
       };
 
       await failoverManager.registerNode(primaryNode);
@@ -283,17 +279,17 @@ describe('SyncAwareMessaging Integration', () => {
           enabled: true,
           failureThreshold: 3,
           recoveryTimeout: 10000,
-          halfOpenMaxCalls: 2,
-        },
+          halfOpenMaxCalls: 2
+        }
       };
 
       await messagingService.configureFailover(testTenantId, failoverConfig);
 
       const testMessage = createTestMessage();
-
+      
       const result = await messagingService.sendMessage(testAgentId, testMessage, {
         tenantId: testTenantId,
-        enableFailover: true,
+        enableFailover: true
       });
 
       expect(result).toBeDefined();
@@ -306,37 +302,37 @@ describe('SyncAwareMessaging Integration', () => {
 
   describe('Performance and Scalability', () => {
     it('should handle high-volume message broadcasting', async () => {
-      const messages = Array.from({ length: 50 }, (_, i) =>
+      const messages = Array.from({ length: 50 }, (_, i) => 
         createTestMessage({ id: `bulk-message-${i}` })
       );
 
-      const broadcastPromises = messages.map((message) =>
+      const broadcastPromises = messages.map(message =>
         messagingService.broadcastMessage(message, {
           tenantIds: [testTenantId, 'tenant-2'],
-          priority: 'medium',
+          priority: 'medium'
         })
       );
 
       const results = await Promise.allSettled(broadcastPromises);
-      const successful = results.filter((r) => r.status === 'fulfilled').length;
+      const successful = results.filter(r => r.status === 'fulfilled').length;
 
       expect(successful).toBeGreaterThan(40); // Allow for some failures in high-volume scenario
     });
 
     it('should maintain performance metrics during load', async () => {
       const initialMetrics = messagingService.getMessagingMetrics();
-
+      
       // Send multiple messages
       const messagePromises = Array.from({ length: 20 }, (_, i) =>
         messagingService.sendMessage(testAgentId, createTestMessage({ id: `load-test-${i}` }), {
-          tenantId: testTenantId,
+          tenantId: testTenantId
         })
       );
 
       await Promise.allSettled(messagePromises);
 
       const finalMetrics = messagingService.getMessagingMetrics();
-
+      
       expect(finalMetrics.totalMessages).toBeGreaterThan(initialMetrics.totalMessages);
       expect(finalMetrics.averageDeliveryTime).toBeGreaterThan(0);
     });
@@ -352,7 +348,7 @@ describe('SyncAwareMessaging Integration', () => {
 
       // Should not throw error, but handle gracefully
       const result = await messagingService.sendMessage(testAgentId, testMessage, {
-        tenantId: testTenantId,
+        tenantId: testTenantId
       });
 
       expect(result).toBeDefined();
@@ -365,7 +361,7 @@ describe('SyncAwareMessaging Integration', () => {
 
       await expect(
         messagingService.sendMessage(testAgentId, testMessage, {
-          tenantId: testTenantId,
+          tenantId: testTenantId
         })
       ).rejects.toThrow('WebSocket connection failed');
 
@@ -383,8 +379,8 @@ describe('SyncAwareMessaging Integration', () => {
         retentionPolicy: {
           maxAge: 3600000,
           maxSize: 100,
-          cleanupInterval: 300000,
-        },
+          cleanupInterval: 300000
+        }
       };
 
       await messagingService.configureQueueSynchronization(queueConfig);
@@ -393,12 +389,12 @@ describe('SyncAwareMessaging Integration', () => {
       mockRedisService.lrange.mockResolvedValueOnce([
         JSON.stringify({
           message: createTestMessage({ id: 'conflict-message' }),
-          queuedAt: Date.now() - 1000,
+          queuedAt: Date.now() - 1000
         }),
         JSON.stringify({
           message: createTestMessage({ id: 'conflict-message' }), // Same ID, different content
-          queuedAt: Date.now(),
-        }),
+          queuedAt: Date.now()
+        })
       ]);
 
       await messagingService.synchronizeQueues(testTenantId);
@@ -412,12 +408,12 @@ describe('SyncAwareMessaging Integration', () => {
     it('should provide comprehensive metrics', async () => {
       // Send various types of messages
       await messagingService.sendMessage(testAgentId, createTestMessage(), {
-        tenantId: testTenantId,
+        tenantId: testTenantId
       });
 
       await messagingService.broadcastMessage(createTestMessage(), {
         tenantIds: [testTenantId, 'tenant-2'],
-        crossTenant: true,
+        crossTenant: true
       });
 
       const messagingMetrics = messagingService.getMessagingMetrics();
@@ -432,9 +428,9 @@ describe('SyncAwareMessaging Integration', () => {
 
     it('should track message delivery times accurately', async () => {
       const startTime = Date.now();
-
+      
       await messagingService.sendMessage(testAgentId, createTestMessage(), {
-        tenantId: testTenantId,
+        tenantId: testTenantId
       });
 
       const metrics = messagingService.getMessagingMetrics();
@@ -451,16 +447,16 @@ describe('SyncAwareMessaging Integration', () => {
           protocol_version: '1.0',
           sync: SyncAwareMessageUtils.createSyncMetadata({
             tenantId: 'tenant-1',
-            crossTenantAllowed: false,
-          }),
-        },
+            crossTenantAllowed: false
+          })
+        }
       });
 
       // Should not allow cross-tenant delivery without explicit permission
       await expect(
         messagingService.sendMessage('agent-in-tenant-2', tenant1Message, {
           tenantId: 'tenant-1',
-          allowCrossTenant: false,
+          allowCrossTenant: false
         })
       ).rejects.toThrow();
     });
@@ -476,7 +472,7 @@ describe('SyncAwareMessaging Integration', () => {
       // Verify checksum changes with message content
       const modifiedMessage = { ...testMessage, payload: { different: 'data' } };
       const modifiedChecksum = SyncAwareMessageUtils.calculateChecksum(modifiedMessage);
-
+      
       expect(modifiedChecksum).not.toBe(checksum);
     });
 
@@ -487,7 +483,9 @@ describe('SyncAwareMessaging Integration', () => {
         // Missing required fields
       } as any;
 
-      await expect(messagingService.sendMessage(testAgentId, invalidMessage)).rejects.toThrow();
+      await expect(
+        messagingService.sendMessage(testAgentId, invalidMessage)
+      ).rejects.toThrow();
     });
   });
 });

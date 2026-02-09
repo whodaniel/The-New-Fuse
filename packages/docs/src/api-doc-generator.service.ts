@@ -2,10 +2,11 @@
 // Generates comprehensive API documentation from type-safe repositories and controllers
 
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import { ConfigService } from '@nestjs/config';
 import { ModulesContainer, Reflector } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { Controller } from '@nestjs/common/interfaces';
+import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import * as fs from 'fs';
 import * as path from 'path';
 import { RedisCacheService } from '../../cache/src/redis-cache.service';
@@ -248,7 +249,7 @@ export interface DocGenerationOptions {
 @Injectable()
 export class ApiDocGeneratorService implements OnModuleInit {
   private readonly logger = new Logger(ApiDocGeneratorService.name);
-
+  
   private documentation: ApiDocumentation | null = null;
   private controllers: Map<string, any> = new Map();
   private schemas: Map<string, ApiSchema> = new Map();
@@ -267,7 +268,7 @@ export class ApiDocGeneratorService implements OnModuleInit {
     private configService: ConfigService,
     private modulesContainer: ModulesContainer,
     private reflector: Reflector,
-    private cacheService: RedisCacheService
+    private cacheService: RedisCacheService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -276,11 +277,9 @@ export class ApiDocGeneratorService implements OnModuleInit {
   }
 
   // Main documentation generation method
-  async generateDocumentation(
-    options: Partial<DocGenerationOptions> = {}
-  ): Promise<ApiDocumentation> {
+  async generateDocumentation(options: Partial<DocGenerationOptions> = {}): Promise<ApiDocumentation> {
     const startTime = Date.now();
-
+    
     const opts: DocGenerationOptions = {
       outputPath: this.config.defaultOutputPath,
       format: ['openapi', 'markdown'],
@@ -305,7 +304,7 @@ export class ApiDocGeneratorService implements OnModuleInit {
 
       // Generate fresh documentation
       this.documentation = await this.buildDocumentation();
-
+      
       // Generate output files
       for (const format of opts.format) {
         await this.generateOutput(format, opts);
@@ -327,6 +326,7 @@ export class ApiDocGeneratorService implements OnModuleInit {
       this.logger.log(`API documentation generated successfully in ${duration}ms`);
 
       return this.documentation;
+
     } catch (error) {
       this.logger.error('Error generating API documentation:', error);
       throw error;
@@ -356,7 +356,7 @@ export class ApiDocGeneratorService implements OnModuleInit {
 
   private buildDocumentationInfo() {
     const packageJson = this.loadPackageJson();
-
+    
     return {
       title: packageJson.name || 'The New Fuse API',
       version: packageJson.version || '1.0.0',
@@ -389,7 +389,7 @@ export class ApiDocGeneratorService implements OnModuleInit {
   // Controller discovery
   private async discoverControllers(): Promise<void> {
     const controllers = [...this.modulesContainer.values()]
-      .map((module) => (module.controllers ? [...module.controllers.values()] : []))
+      .map(module => module.controllers ? [...module.controllers.values()] : [])
       .reduce((acc, controllers) => acc.concat(controllers), []);
 
     for (const wrapper of controllers) {
@@ -410,12 +410,10 @@ export class ApiDocGeneratorService implements OnModuleInit {
     const { metatype } = wrapper;
     const controllerPath = Reflect.getMetadata(PATH_METADATA, metatype) || '';
     const controllerName = metatype.name;
-
+    
     const methods = Object.getOwnPropertyNames(metatype.prototype)
-      .filter((method) => method !== 'constructor')
-      .map((methodName) =>
-        this.extractMethodMetadata(metatype.prototype, methodName, controllerPath)
-      )
+      .filter(method => method !== 'constructor')
+      .map(methodName => this.extractMethodMetadata(metatype.prototype, methodName, controllerPath))
       .filter(Boolean);
 
     return {
@@ -429,11 +427,11 @@ export class ApiDocGeneratorService implements OnModuleInit {
   private extractMethodMetadata(prototype: any, methodName: string, controllerPath: string): any {
     const httpMethod = Reflect.getMetadata(METHOD_METADATA, prototype[methodName]);
     const methodPath = Reflect.getMetadata(PATH_METADATA, prototype[methodName]) || '';
-
+    
     if (!httpMethod) return null;
 
     const fullPath = this.combinePaths(controllerPath, methodPath);
-
+    
     // Extract additional metadata from decorators
     const summary = this.extractApiOperationSummary(prototype, methodName);
     const description = this.extractApiOperationDescription(prototype, methodName);
@@ -492,7 +490,7 @@ export class ApiDocGeneratorService implements OnModuleInit {
   private async buildEndpointParameters(method: any): Promise<ApiParameter[]> {
     // Extract parameters from method signatures and decorators
     const parameters: ApiParameter[] = [];
-
+    
     // Path parameters
     const pathParams = this.extractPathParameters(method.path);
     for (const param of pathParams) {
@@ -534,7 +532,7 @@ export class ApiDocGeneratorService implements OnModuleInit {
 
   private async buildEndpointResponses(method: any): Promise<ApiResponse[]> {
     const responses: ApiResponse[] = [];
-
+    
     // Default success response
     responses.push({
       statusCode: 200,
@@ -978,7 +976,7 @@ const message = await fetch('/api/agents/communicate', {
     const outputPath = path.join(options.outputPath, 'openapi.json');
     await this.ensureDirectoryExists(path.dirname(outputPath));
     await fs.promises.writeFile(outputPath, JSON.stringify(openApiSpec, null, 2));
-
+    
     this.logger.log(`OpenAPI spec generated: ${outputPath}`);
   }
 
@@ -987,10 +985,10 @@ const message = await fetch('/api/agents/communicate', {
 
     const markdown = this.buildMarkdownDocumentation();
     const outputPath = path.join(options.outputPath, 'README.md');
-
+    
     await this.ensureDirectoryExists(path.dirname(outputPath));
     await fs.promises.writeFile(outputPath, markdown);
-
+    
     this.logger.log(`Markdown documentation generated: ${outputPath}`);
   }
 
@@ -999,10 +997,10 @@ const message = await fetch('/api/agents/communicate', {
 
     const html = await this.buildHTMLDocumentation();
     const outputPath = path.join(options.outputPath, 'index.html');
-
+    
     await this.ensureDirectoryExists(path.dirname(outputPath));
     await fs.promises.writeFile(outputPath, html);
-
+    
     this.logger.log(`HTML documentation generated: ${outputPath}`);
   }
 
@@ -1012,7 +1010,7 @@ const message = await fetch('/api/agents/communicate', {
     const outputPath = path.join(options.outputPath, 'documentation.json');
     await this.ensureDirectoryExists(path.dirname(outputPath));
     await fs.promises.writeFile(outputPath, JSON.stringify(this.documentation, null, 2));
-
+    
     this.logger.log(`JSON documentation generated: ${outputPath}`);
   }
 
@@ -1022,10 +1020,10 @@ const message = await fetch('/api/agents/communicate', {
 
     const collection = this.buildPostmanCollection();
     const outputPath = path.join(options.outputPath, 'postman-collection.json');
-
+    
     await this.ensureDirectoryExists(path.dirname(outputPath));
     await fs.promises.writeFile(outputPath, JSON.stringify(collection, null, 2));
-
+    
     this.logger.log(`Postman collection generated: ${outputPath}`);
   }
 
@@ -1035,10 +1033,10 @@ const message = await fetch('/api/agents/communicate', {
     // Generate TypeScript SDK
     const tsSDK = this.buildTypeScriptSDK();
     const tsOutputPath = path.join(options.outputPath, 'sdk', 'typescript');
-
+    
     await this.ensureDirectoryExists(tsOutputPath);
     await fs.promises.writeFile(path.join(tsOutputPath, 'index.ts'), tsSDK);
-
+    
     this.logger.log(`TypeScript SDK generated: ${tsOutputPath}`);
   }
 
@@ -1049,18 +1047,14 @@ const message = await fetch('/api/agents/communicate', {
     return method ? `${base}/${method}` : base;
   }
 
-  private generateEndpointId(
-    controllerPath: string,
-    methodPath: string,
-    httpMethod: string
-  ): string {
+  private generateEndpointId(controllerPath: string, methodPath: string, httpMethod: string): string {
     const fullPath = this.combinePaths(controllerPath, methodPath);
     return `${httpMethod.toLowerCase()}_${fullPath.replace(/[\/{}]/g, '_')}`;
   }
 
   private extractPathParameters(path: string): string[] {
     const matches = path.match(/:(\w+)/g);
-    return matches ? matches.map((match) => match.substring(1)) : [];
+    return matches ? matches.map(match => match.substring(1)) : [];
   }
 
   private async ensureDirectoryExists(dirPath: string): Promise<void> {
@@ -1083,9 +1077,7 @@ const message = await fetch('/api/agents/communicate', {
 
   private async cacheDocumentation(documentation: ApiDocumentation): Promise<void> {
     try {
-      await this.cacheService.set(this.config.cacheKey, documentation, {
-        ttl: this.config.cacheTTL,
-      });
+      await this.cacheService.set(this.config.cacheKey, documentation, { ttl: this.config.cacheTTL });
     } catch (error) {
       this.logger.warn('Error caching documentation:', error);
     }
@@ -1093,7 +1085,7 @@ const message = await fetch('/api/agents/communicate', {
 
   private shouldRegenerateDocumentation(cachedDoc: ApiDocumentation): boolean {
     const cacheAge = Date.now() - new Date(cachedDoc.info.generatedAt).getTime();
-    return cacheAge > this.config.cacheTTL * 1000;
+    return cacheAge > (this.config.cacheTTL * 1000);
   }
 
   // Helper methods for metadata extraction
@@ -1186,7 +1178,7 @@ const message = await fetch('/api/agents/communicate', {
 
   private deduplicateSchemas(schemas: ApiSchema[]): ApiSchema[] {
     const seen = new Set<string>();
-    return schemas.filter((schema) => {
+    return schemas.filter(schema => {
       if (seen.has(schema.name)) {
         return false;
       }
@@ -1263,7 +1255,7 @@ const message = await fetch('/api/agents/communicate', {
     endpointsCount: number;
   }> {
     const cached = await this.getCachedDocumentation();
-
+    
     return {
       cached: !!cached,
       lastGenerated: cached?.info.generatedAt,

@@ -4,7 +4,7 @@
  * Supports OAuth 2.1 and dynamic client registration
  */
 import express, { Request, Response, Router } from 'express';
-import { Logger } from '../common/logger.service.js';
+import { Logger } from '../common/logger.service';
 export declare class MCPOAuthServer {
     private logger;
     private router;

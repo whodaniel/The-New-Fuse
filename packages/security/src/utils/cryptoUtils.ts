@@ -1,12 +1,12 @@
 import {
-  BinaryToTextEncoding,
-  CipherGCMTypes,
   createCipheriv,
   createDecipheriv,
   createHash,
   createHmac,
-  timingSafeEqual as nodeTimingSafeEqual,
   randomBytes,
+  timingSafeEqual as nodeTimingSafeEqual,
+  BinaryToTextEncoding,
+  CipherGCMTypes,
 } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -60,11 +60,7 @@ export function sha256(data: string | Buffer, encoding: BinaryToTextEncoding = '
  * @param {BinaryToTextEncoding} [encoding='hex'] - The output encoding.
  * @returns {string} The HMAC signature.
  */
-export function hmacSha256(
-  data: string | Buffer,
-  key: string | Buffer,
-  encoding: BinaryToTextEncoding = 'hex'
-): string {
+export function hmacSha256(data: string | Buffer, key: string | Buffer, encoding: BinaryToTextEncoding = 'hex'): string {
   return createHmac('sha256', key).update(data).digest(encoding);
 }
 

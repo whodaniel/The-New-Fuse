@@ -1,5 +1,6 @@
+import React from 'react';
 import { assertSnapshot } from '@/test/helpers/snapshot';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../Card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../Card';
 
 describe('Card Snapshots', () => {
   it('renders basic card correctly', () => {

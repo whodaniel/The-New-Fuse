@@ -1,21 +1,27 @@
-import { Plus, Search, X } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ReactFlow, {
   Background,
-  ConnectionMode,
   Controls,
-  MarkerType,
-  Node,
-  useEdgesState,
   useNodesState,
+  useEdgesState,
+  MarkerType,
+  ConnectionMode,
+  Node,
+  Edge
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import {
+  Search,
+  Plus,
+  Trash2,
+  X
+} from 'lucide-react';
 import { useWizard } from './WizardProvider';
 
 const nodeTypes = {
   concept: ConceptNode,
   relation: RelationNode,
-  entity: EntityNode,
+  entity: EntityNode
 };
 
 export function KnowledgeGraphViewer() {
@@ -60,7 +66,7 @@ export function KnowledgeGraphViewer() {
       id: node.id,
       type: node.type,
       position: node.position,
-      data: { label: node.label, ...node.data },
+      data: { label: node.label, ...node.data }
     }));
   };
 
@@ -72,9 +78,9 @@ export function KnowledgeGraphViewer() {
       label: edge.label,
       type: edge.type,
       markerEnd: {
-        type: MarkerType.ArrowClosed,
+        type: MarkerType.ArrowClosed
       },
-      style: { stroke: '#555' },
+      style: { stroke: '#555' }
     }));
   };
 
@@ -87,7 +93,7 @@ export function KnowledgeGraphViewer() {
       const angle = (2 * Math.PI * index) / nodes.length;
       node.position = {
         x: centerX + Math.cos(angle) * nodeSpacing,
-        y: centerY + Math.sin(angle) * nodeSpacing,
+        y: centerY + Math.sin(angle) * nodeSpacing
       };
     });
 
@@ -103,7 +109,7 @@ export function KnowledgeGraphViewer() {
       id: `node-${Date.now()}`,
       type: 'concept',
       position: { x: 100, y: 100 },
-      data: { label: 'New Concept' },
+      data: { label: 'New Concept' }
     };
     setNodes([...nodes, newNode]);
   };
@@ -113,7 +119,7 @@ export function KnowledgeGraphViewer() {
       setNodes((nodes) =>
         nodes.map((node) => ({
           ...node,
-          style: undefined,
+          style: undefined
         }))
       );
       return;
@@ -124,7 +130,7 @@ export function KnowledgeGraphViewer() {
         ...node,
         style: node.data.label.toLowerCase().includes(searchTerm.toLowerCase())
           ? { background: '#ff8', border: '2px solid #aa5' }
-          : { opacity: 0.3 },
+          : { opacity: 0.3 }
       }))
     );
   }, [searchTerm, setNodes, nodes]); // Added nodes to deps to match original logic approx, though this might re-trigger too much. original didn't have deps array issue shown fully.
@@ -242,10 +248,7 @@ function EntityNode({ data }: { data: any }) {
       </div>
       <div className="text-xs space-y-1">
         {Object.entries(data.properties || {}).map(([key, value]) => (
-          <div
-            key={key}
-            className="text-gray-600 dark:text-gray-400 overflow-hidden text-ellipsis whitespace-nowrap"
-          >
+          <div key={key} className="text-gray-600 dark:text-gray-400 overflow-hidden text-ellipsis whitespace-nowrap">
             <span className="font-semibold">{key}:</span> {String(value)}
           </div>
         ))}
@@ -257,7 +260,7 @@ function EntityNode({ data }: { data: any }) {
 function NodeDetailsPanel({
   node,
   onClose,
-  onUpdate,
+  onUpdate
 }: {
   node: Node;
   onClose: () => void;
@@ -320,3 +323,4 @@ function NodeDetailsPanel({
     </div>
   );
 }
+

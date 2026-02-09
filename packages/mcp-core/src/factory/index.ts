@@ -4,11 +4,11 @@
 
 export {
   MCPSystemFactory,
-  type MCPSystem,
   type MCPSystemConfig,
-  type SystemComponents,
+  type MCPSystem,
   type SystemHealth,
   type SystemMetrics,
+  type SystemComponents
 } from './MCPSystemFactory';
 
 // Default export for convenience

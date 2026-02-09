@@ -6,7 +6,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { DatabaseService } from '@the-new-fuse/database';
+import { PrismaService } from '@the-new-fuse/database';
 
 export interface SwarmConfiguration {
   maxConcurrentExecutions: number;
@@ -100,7 +100,7 @@ export class AgentSwarmOrchestrationService {
   private taskQueue = new Map<string, SwarmTask[]>();
 
   constructor(
-    private readonly drizzle: DatabaseService,
+    private readonly prisma: PrismaService,
     private readonly eventEmitter: EventEmitter2
   ) {
     this.initializeHeartbeatMonitoring();

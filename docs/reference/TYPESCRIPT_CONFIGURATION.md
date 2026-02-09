@@ -1,22 +1,19 @@
 # TypeScript Configuration Guide
 
-This document provides a comprehensive overview of the TypeScript configuration
-in The New Fuse project, explaining the structure, inheritance patterns, and
-best practices for TypeScript development.
+This document provides a comprehensive overview of the TypeScript configuration in The New Fuse project, explaining the structure, inheritance patterns, and best practices for TypeScript development.
 
 ## Configuration Files Overview
 
-The project uses a hierarchical TypeScript configuration system with several
-specialized configuration files for different purposes:
+The project uses a hierarchical TypeScript configuration system with several specialized configuration files for different purposes:
 
-| File                  | Purpose                                                                     |
-| --------------------- | --------------------------------------------------------------------------- |
-| `tsconfig.base.json`  | Base configuration that defines common settings for all TypeScript files    |
-| `tsconfig.json`       | Main configuration that extends the base and adds project-specific settings |
-| `tsconfig.build.json` | Production build configuration optimized for compilation                    |
-| `tsconfig.prod.json`  | Enhanced production configuration with optimizations                        |
-| `tsconfig.types.json` | Configuration for generating TypeScript declaration files                   |
-| `tsconfig-check.json` | Configuration for strict type checking                                      |
+| File | Purpose |
+|------|--------|
+| `tsconfig.base.json` | Base configuration that defines common settings for all TypeScript files |
+| `tsconfig.json` | Main configuration that extends the base and adds project-specific settings |
+| `tsconfig.build.json` | Production build configuration optimized for compilation |
+| `tsconfig.prod.json` | Enhanced production configuration with optimizations |
+| `tsconfig.types.json` | Configuration for generating TypeScript declaration files |
+| `tsconfig-check.json` | Configuration for strict type checking |
 
 ## Configuration Inheritance Pattern
 
@@ -32,8 +29,7 @@ tsconfig.json
 tsconfig.build.json  tsconfig.prod.json
 ```
 
-Package-specific configurations in `apps/` and `packages/` directories extend
-from `tsconfig.base.json`.
+Package-specific configurations in `apps/` and `packages/` directories extend from `tsconfig.base.json`.
 
 ## Base Configuration (tsconfig.base.json)
 
@@ -65,7 +61,6 @@ from `tsconfig.base.json`.
 ```
 
 The base configuration establishes:
-
 - ES2022 as the target JavaScript version
 - Node.js module resolution
 - Strict type checking
@@ -109,7 +104,6 @@ The base configuration establishes:
 ```
 
 The main configuration adds:
-
 - React JSX support
 - Declaration file generation
 - Source map generation
@@ -125,12 +119,16 @@ The main configuration adds:
     "noEmit": false,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "dist"]
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "dist"
+  ]
 }
 ```
 
 The build configuration:
-
 - Enables JavaScript emission (sets `noEmit` to false)
 - Excludes test files from the build
 
@@ -149,13 +147,21 @@ The build configuration:
     "declaration": true,
     "declarationMap": false
   },
-  "include": ["src/**/*", "packages/**/*", "apps/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "include": [
+    "src/**/*",
+    "packages/**/*",
+    "apps/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }
 ```
 
 The production configuration adds:
-
 - Comment removal for smaller output
 - Incremental compilation for faster builds
 - Separate output directory for production builds
@@ -190,15 +196,13 @@ The production configuration adds:
 ```
 
 The types configuration:
-
 - Only emits declaration files (no JavaScript)
 - Targets the packages source directories
 - Enables JSON module resolution
 
 ## Package-Specific Configurations
 
-Each package in the monorepo has its own TypeScript configuration that extends
-the base configuration:
+Each package in the monorepo has its own TypeScript configuration that extends the base configuration:
 
 ```json
 {
@@ -213,14 +217,20 @@ the base configuration:
     "strict": true,
     "moduleResolution": "node",
     "declaration": true,
-    "types": ["vscode", "node"]
+    "types": [
+      "vscode",
+      "node"
+    ]
   },
-  "exclude": ["node_modules", "out", "test"]
+  "exclude": [
+    "node_modules",
+    "out",
+    "test"
+  ]
 }
 ```
 
-Package-specific configurations can override settings from the base
-configuration to meet the specific needs of that package.
+Package-specific configurations can override settings from the base configuration to meet the specific needs of that package.
 
 ## TypeScript Compiler Options Explained
 
@@ -235,8 +245,7 @@ configuration to meet the specific needs of that package.
 
 - `strict`: Enables all strict type checking options
 - `strictNullChecks`: Makes null and undefined have their own distinct types
-- `strictBindCallApply`: Enables stricter checking of the bind, call, and apply
-  methods
+- `strictBindCallApply`: Enables stricter checking of the bind, call, and apply methods
 
 ### Emit Options
 
@@ -253,33 +262,25 @@ configuration to meet the specific needs of that package.
 
 ## Best Practices
 
-1. **Use the Inheritance Pattern**: Extend from base configurations rather than
-   duplicating settings
+1. **Use the Inheritance Pattern**: Extend from base configurations rather than duplicating settings
 
-2. **Maintain Strict Type Checking**: Keep `strict: true` in all configurations
-   to ensure type safety
+2. **Maintain Strict Type Checking**: Keep `strict: true` in all configurations to ensure type safety
 
-3. **Use Path Aliases**: Leverage the `paths` configuration for clean imports
-   across the monorepo
+3. **Use Path Aliases**: Leverage the `paths` configuration for clean imports across the monorepo
 
-4. **Separate Build Configurations**: Use different configurations for
-   development, testing, and production
+4. **Separate Build Configurations**: Use different configurations for development, testing, and production
 
-5. **Incremental Compilation**: Enable `incremental: true` for faster subsequent
-   builds
+5. **Incremental Compilation**: Enable `incremental: true` for faster subsequent builds
 
-6. **Project References**: Use TypeScript's project references for better build
-   performance in a monorepo
+6. **Project References**: Use TypeScript's project references for better build performance in a monorepo
 
-7. **Consistent Module Resolution**: Stick to one module resolution strategy
-   throughout the project
+7. **Consistent Module Resolution**: Stick to one module resolution strategy throughout the project
 
 ## Troubleshooting Common Issues
 
 ### Module Not Found Errors
 
 If you encounter module not found errors, check:
-
 - Path aliases in tsconfig.json
 - Module resolution strategy
 - File extensions in import statements
@@ -287,7 +288,6 @@ If you encounter module not found errors, check:
 ### Type Errors in Third-Party Libraries
 
 If you encounter type errors in third-party libraries:
-
 - Use `skipLibCheck: true` to ignore errors in declaration files
 - Install @types packages for libraries without built-in types
 - Create custom type declarations in a .d.ts file
@@ -295,7 +295,6 @@ If you encounter type errors in third-party libraries:
 ### Performance Issues
 
 If TypeScript compilation is slow:
-
 - Enable incremental compilation
 - Use project references
 - Exclude test files from the main build
@@ -303,7 +302,4 @@ If TypeScript compilation is slow:
 
 ## Conclusion
 
-The TypeScript configuration in The New Fuse project is designed to provide a
-balance between strict type safety and development flexibility. By understanding
-the inheritance patterns and specialized configurations, developers can ensure
-consistent TypeScript behavior across the entire monorepo.
+The TypeScript configuration in The New Fuse project is designed to provide a balance between strict type safety and development flexibility. By understanding the inheritance patterns and specialized configurations, developers can ensure consistent TypeScript behavior across the entire monorepo.

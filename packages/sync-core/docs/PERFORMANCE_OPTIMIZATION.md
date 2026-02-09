@@ -20,27 +20,25 @@ Complete guide for optimizing sync-core performance in production environments.
 
 Based on existing implementation in `SyncOrchestrator.ts`:
 
-| Metric             | Target       | Current     | Status        |
-| ------------------ | ------------ | ----------- | ------------- |
-| Sync Latency (p50) | < 50ms       | ~35ms       | ✅ Optimal    |
-| Sync Latency (p95) | < 100ms      | ~85ms       | ✅ Good       |
-| Sync Latency (p99) | < 200ms      | ~180ms      | ⚠️ Acceptable |
-| Throughput         | > 1000 ops/s | ~1200 ops/s | ✅ Good       |
-| Conflict Rate      | < 1%         | ~0.3%       | ✅ Excellent  |
-| Success Rate       | > 99.5%      | ~99.8%      | ✅ Excellent  |
-| Memory Usage       | < 512MB      | ~380MB      | ✅ Good       |
-| CPU Usage          | < 70%        | ~45%        | ✅ Good       |
+| Metric | Target | Current | Status |
+|--------|--------|---------|--------|
+| Sync Latency (p50) | < 50ms | ~35ms | ✅ Optimal |
+| Sync Latency (p95) | < 100ms | ~85ms | ✅ Good |
+| Sync Latency (p99) | < 200ms | ~180ms | ⚠️ Acceptable |
+| Throughput | > 1000 ops/s | ~1200 ops/s | ✅ Good |
+| Conflict Rate | < 1% | ~0.3% | ✅ Excellent |
+| Success Rate | > 99.5% | ~99.8% | ✅ Excellent |
+| Memory Usage | < 512MB | ~380MB | ✅ Good |
+| CPU Usage | < 70% | ~45% | ✅ Good |
 
 ### Performance Goals
 
 **Short-term** (Next 3 months):
-
 - Reduce p99 latency to < 150ms
 - Increase throughput to > 2000 ops/s
 - Reduce memory usage to < 256MB per instance
 
 **Long-term** (Next 6 months):
-
 - Support 10,000+ concurrent connections
 - Handle 5000+ sync operations per second
 - Enable multi-region deployment with < 100ms cross-region sync
@@ -50,7 +48,6 @@ Based on existing implementation in `SyncOrchestrator.ts`:
 ### 1. Batching Optimization
 
 **Current Implementation**:
-
 ```typescript
 // In SyncOrchestrator.ts
 private readonly BATCH_SIZE = 50;
@@ -94,7 +91,7 @@ class AdaptiveBatchProcessor {
     const startTime = Date.now();
 
     const batches = this.chunk(operations, Math.floor(this.batchSize));
-    await Promise.all(batches.map((batch) => this.executeBatch(batch)));
+    await Promise.all(batches.map(batch => this.executeBatch(batch)));
 
     const latency = Date.now() - startTime;
     this.adjustBatchSize(latency);
@@ -139,8 +136,7 @@ class PriorityBatchProcessor {
 }
 ```
 
-**Performance Improvement**: 40% reduction in p95 latency for high-priority
-operations
+**Performance Improvement**: 40% reduction in p95 latency for high-priority operations
 
 ### 2. Caching Optimization
 
@@ -208,8 +204,7 @@ class MultiLevelCache {
 }
 ```
 
-**Performance Improvement**: 70% reduction in database queries, 50% reduction in
-average latency
+**Performance Improvement**: 70% reduction in database queries, 50% reduction in average latency
 
 **Optimization 2: Cache Warming**
 
@@ -217,7 +212,7 @@ average latency
 class CacheWarmer {
   constructor(
     private cache: MultiLevelCache,
-    private database: DrizzleClient
+    private database: PrismaClient
   ) {}
 
   async warmCache() {
@@ -230,7 +225,7 @@ class CacheWarmer {
     });
 
     await Promise.all(
-      activeTenants.map((tenant) =>
+      activeTenants.map(tenant =>
         this.cache.set(`tenant:${tenant.id}`, tenant, 3600)
       )
     );
@@ -242,7 +237,7 @@ class CacheWarmer {
     });
 
     await Promise.all(
-      activeAgents.map((agent) =>
+      activeAgents.map(agent =>
         this.cache.set(`agent:${agent.id}`, agent, 600)
       )
     );
@@ -253,7 +248,7 @@ class CacheWarmer {
     });
 
     await Promise.all(
-      configs.map((config) =>
+      configs.map(config =>
         this.cache.set(`config:${config.key}`, config, 1800)
       )
     );
@@ -267,8 +262,7 @@ class CacheWarmer {
 }
 ```
 
-**Performance Improvement**: 90% cache hit rate after warming, 35% reduction in
-cold start latency
+**Performance Improvement**: 90% cache hit rate after warming, 35% reduction in cold start latency
 
 ### 3. Database Optimization
 
@@ -276,9 +270,9 @@ cold start latency
 
 ```typescript
 // In database configuration
-import { DrizzleClient } from '@drizzle/client';
+import { PrismaClient } from '@prisma/client';
 
-const drizzle = new DrizzleClient({
+const prisma = new PrismaClient({
   datasources: {
     db: {
       url: process.env.DATABASE_URL,
@@ -298,16 +292,16 @@ const drizzle = new DrizzleClient({
 
 ```typescript
 class OptimizedSyncRepository {
-  constructor(private drizzle: DrizzleClient) {}
+  constructor(private prisma: PrismaClient) {}
 
   // Bad: N+1 query problem
   async getSyncStatesOld(tenantId: string) {
-    const states = await this.drizzle.syncState.findMany({
+    const states = await this.prisma.syncState.findMany({
       where: { tenantId },
     });
 
     for (const state of states) {
-      state.resource = await this.drizzle.resource.findUnique({
+      state.resource = await this.prisma.resource.findUnique({
         where: { id: state.resourceId },
       });
     }
@@ -317,7 +311,7 @@ class OptimizedSyncRepository {
 
   // Good: Single query with includes
   async getSyncStatesOptimized(tenantId: string) {
-    return await this.drizzle.syncState.findMany({
+    return await this.prisma.syncState.findMany({
       where: { tenantId },
       include: {
         resource: true,
@@ -327,7 +321,7 @@ class OptimizedSyncRepository {
 
   // Better: Use raw SQL for complex queries
   async getSyncStatesSuperOptimized(tenantId: string) {
-    return await this.drizzle.$queryRaw`
+    return await this.prisma.$queryRaw`
       SELECT
         ss.*,
         r.name as resource_name,
@@ -343,8 +337,7 @@ class OptimizedSyncRepository {
 }
 ```
 
-**Performance Improvement**: 80% reduction in query time, 60% reduction in
-database load
+**Performance Improvement**: 80% reduction in query time, 60% reduction in database load
 
 **Optimization 3: Indexing Strategy**
 
@@ -383,14 +376,14 @@ class OptimizedRedisClient {
   constructor(private redis: Redis) {}
 
   // Bad: Sequential operations
-  async setMultipleOld(items: Array<{ key: string; value: any }>) {
+  async setMultipleOld(items: Array<{key: string, value: any}>) {
     for (const item of items) {
       await this.redis.set(item.key, JSON.stringify(item.value));
     }
   }
 
   // Good: Pipelined operations
-  async setMultipleOptimized(items: Array<{ key: string; value: any }>) {
+  async setMultipleOptimized(items: Array<{key: string, value: any}>) {
     const pipeline = this.redis.pipeline();
 
     for (const item of items) {
@@ -401,10 +394,10 @@ class OptimizedRedisClient {
   }
 
   // Better: With error handling
-  async setMultipleSuperOptimized(items: Array<{ key: string; value: any }>) {
+  async setMultipleSuperOptimized(items: Array<{key: string, value: any}>) {
     const pipeline = this.redis.pipeline();
 
-    items.forEach((item) => {
+    items.forEach(item => {
       pipeline.set(item.key, JSON.stringify(item.value), 'EX', 300);
     });
 
@@ -412,7 +405,7 @@ class OptimizedRedisClient {
 
     // Check for errors
     const errors = results
-      ?.map((result, i) => (result[0] ? { index: i, error: result[0] } : null))
+      ?.map((result, i) => result[0] ? { index: i, error: result[0] } : null)
       .filter(Boolean);
 
     if (errors && errors.length > 0) {
@@ -479,7 +472,7 @@ class OptimizedWebSocketGateway {
 
   // Bad: Iterate all connections
   broadcastToTenantOld(tenantId: string, message: any) {
-    this.server.clients.forEach((client) => {
+    this.server.clients.forEach(client => {
       if (client.tenantId === tenantId) {
         client.send(JSON.stringify(message));
       }
@@ -493,7 +486,7 @@ class OptimizedWebSocketGateway {
 
     const serialized = JSON.stringify(message);
 
-    room.forEach((client) => {
+    room.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(serialized);
       }
@@ -508,19 +501,20 @@ class OptimizedWebSocketGateway {
     const serialized = JSON.stringify(message);
 
     // Compress for large messages
-    const compressed =
-      serialized.length > 1024 ? await this.compress(serialized) : serialized;
+    const compressed = serialized.length > 1024
+      ? await this.compress(serialized)
+      : serialized;
 
     // Send in parallel batches
     const clients = Array.from(room).filter(
-      (client) => client.readyState === WebSocket.OPEN
+      client => client.readyState === WebSocket.OPEN
     );
 
     const batchSize = 100;
     for (let i = 0; i < clients.length; i += batchSize) {
       const batch = clients.slice(i, i + batchSize);
       await Promise.all(
-        batch.map((client) => this.sendSafe(client, compressed))
+        batch.map(client => this.sendSafe(client, compressed))
       );
     }
   }
@@ -560,17 +554,17 @@ class FastConflictDetector {
 
   // Good: Compare checksums
   detectConflictOptimized(
-    local: { checksum: string },
-    remote: { checksum: string }
+    local: {checksum: string},
+    remote: {checksum: string}
   ): boolean {
     return local.checksum !== remote.checksum;
   }
 
   // Better: Use version numbers
   detectConflictSuperOptimized(
-    local: { version: number; timestamp: Date },
-    remote: { version: number; timestamp: Date }
-  ): { hasConflict: boolean; resolution: 'local' | 'remote' } {
+    local: {version: number, timestamp: Date},
+    remote: {version: number, timestamp: Date}
+  ): {hasConflict: boolean, resolution: 'local' | 'remote'} {
     if (local.version === remote.version) {
       // Use timestamp for tie-breaking
       return {
@@ -599,7 +593,7 @@ class FastConflictDetector {
 
   private sortObject(obj: any): any {
     if (typeof obj !== 'object' || obj === null) return obj;
-    if (Array.isArray(obj)) return obj.map((item) => this.sortObject(item));
+    if (Array.isArray(obj)) return obj.map(item => this.sortObject(item));
 
     return Object.keys(obj)
       .sort()
@@ -626,17 +620,17 @@ import http from 'k6/http';
 
 export const options = {
   stages: [
-    { duration: '2m', target: 100 }, // Ramp up to 100 users
-    { duration: '5m', target: 100 }, // Stay at 100 users
-    { duration: '2m', target: 500 }, // Ramp up to 500 users
-    { duration: '5m', target: 500 }, // Stay at 500 users
-    { duration: '2m', target: 1000 }, // Ramp up to 1000 users
-    { duration: '5m', target: 1000 }, // Stay at 1000 users
-    { duration: '2m', target: 0 }, // Ramp down
+    { duration: '2m', target: 100 },   // Ramp up to 100 users
+    { duration: '5m', target: 100 },   // Stay at 100 users
+    { duration: '2m', target: 500 },   // Ramp up to 500 users
+    { duration: '5m', target: 500 },   // Stay at 500 users
+    { duration: '2m', target: 1000 },  // Ramp up to 1000 users
+    { duration: '5m', target: 1000 },  // Stay at 1000 users
+    { duration: '2m', target: 0 },     // Ramp down
   ],
   thresholds: {
-    http_req_duration: ['p(95)<200'], // 95% of requests under 200ms
-    ws_connecting: ['p(95)<100'], // 95% of connections under 100ms
+    'http_req_duration': ['p(95)<200'],  // 95% of requests under 200ms
+    'ws_connecting': ['p(95)<100'],       // 95% of connections under 100ms
   },
 };
 
@@ -648,14 +642,12 @@ export default function () {
     socket.on('open', () => {
       // Simulate sync operations
       for (let i = 0; i < 10; i++) {
-        socket.send(
-          JSON.stringify({
-            type: 'sync',
-            tenantId: 'tenant-123',
-            resourceType: 'document',
-            data: { id: i, content: `Test ${i}` },
-          })
-        );
+        socket.send(JSON.stringify({
+          type: 'sync',
+          tenantId: 'tenant-123',
+          resourceType: 'document',
+          data: { id: i, content: `Test ${i}` },
+        }));
       }
     });
 
@@ -675,11 +667,11 @@ export default function () {
 ### Expected Results
 
 | Concurrent Users | Throughput (ops/s) | p95 Latency (ms) | Success Rate |
-| ---------------- | ------------------ | ---------------- | ------------ |
-| 100              | 1,200              | 45               | 99.9%        |
-| 500              | 5,500              | 85               | 99.7%        |
-| 1,000            | 9,800              | 150              | 99.5%        |
-| 2,000            | 15,000             | 250              | 99.0%        |
+|------------------|---------------------|-------------------|--------------|
+| 100 | 1,200 | 45 | 99.9% |
+| 500 | 5,500 | 85 | 99.7% |
+| 1,000 | 9,800 | 150 | 99.5% |
+| 2,000 | 15,000 | 250 | 99.0% |
 
 ## Monitoring & Profiling
 
@@ -771,7 +763,6 @@ class MetricsCollector {
 ### Expected Overall Improvement
 
 With all optimizations:
-
 - **Latency**: 50-60% reduction across all percentiles
 - **Throughput**: 3-4x increase
 - **Resource usage**: 40% reduction

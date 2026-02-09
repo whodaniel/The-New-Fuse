@@ -13,7 +13,7 @@ import request from 'supertest';
 export async function createTestingModule(
   imports: any[] = [],
   providers: any[] = [],
-  controllers: any[] = [],
+  controllers: any[] = []
 ): Promise<TestingModule> {
   const moduleRef = await Test.createTestingModule({
     imports,
@@ -67,10 +67,10 @@ export function createMockRepository<T>() {
  * Create a mock service
  */
 export function createMockService<T extends Record<string, any>>(
-  methods: (keyof T)[],
+  methods: (keyof T)[]
 ): { [K in keyof T]: jest.Mock } {
   const mock: any = {};
-  methods.forEach(method => {
+  methods.forEach((method) => {
     mock[method] = jest.fn();
   });
   return mock;
@@ -105,11 +105,9 @@ export class TestRequest {
   withAuth(token: string) {
     return {
       get: (url: string) => this.get(url).set('Authorization', `Bearer ${token}`),
-      post: (url: string, body?: any) =>
-        this.post(url, body).set('Authorization', `Bearer ${token}`),
+      post: (url: string, body?: any) => this.post(url, body).set('Authorization', `Bearer ${token}`),
       put: (url: string, body?: any) => this.put(url, body).set('Authorization', `Bearer ${token}`),
-      patch: (url: string, body?: any) =>
-        this.patch(url, body).set('Authorization', `Bearer ${token}`),
+      patch: (url: string, body?: any) => this.patch(url, body).set('Authorization', `Bearer ${token}`),
       delete: (url: string) => this.delete(url).set('Authorization', `Bearer ${token}`),
     };
   }
@@ -146,7 +144,10 @@ export function createMockLogger() {
 /**
  * Wait for WebSocket connection
  */
-export async function waitForWebSocket(app: any, timeout: number = 5000): Promise<void> {
+export async function waitForWebSocket(
+  app: any,
+  timeout: number = 5000
+): Promise<void> {
   const startTime = Date.now();
   while (Date.now() - startTime < timeout) {
     try {

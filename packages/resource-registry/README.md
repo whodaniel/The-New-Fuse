@@ -1,12 +1,10 @@
 # Resource Registry
 
-A comprehensive resource management system for The New Fuse that makes resources
-available to both AI agents and humans.
+A comprehensive resource management system for The New Fuse that makes resources available to both AI agents and humans.
 
 ## Overview
 
-The Resource Registry provides a centralized system for managing, discovering,
-and accessing various types of resources including:
+The Resource Registry provides a centralized system for managing, discovering, and accessing various types of resources including:
 
 - Claude Skills
 - n8n Workflows
@@ -20,11 +18,9 @@ and accessing various types of resources including:
 ## Features
 
 - **Full CRUD Operations**: Create, read, update, and delete resources
-- **Advanced Search**: Filter by category, type, tags, keywords, visibility, and
-  more
+- **Advanced Search**: Filter by category, type, tags, keywords, visibility, and more
 - **Version Tracking**: Maintain multiple versions of resources with changelog
-- **Access Control**: Fine-grained permissions (public, agents-only, private,
-  restricted, internal)
+- **Access Control**: Fine-grained permissions (public, agents-only, private, restricted, internal)
 - **Tagging & Categorization**: Organize resources with tags and categories
 - **Usage Analytics**: Track views, downloads, and favorites
 - **MCP Integration**: Expose resources to AI agents via Model Context Protocol
@@ -158,7 +154,6 @@ node dist/mcp/resource-registry-mcp-server.js
 ```
 
 Available MCP tools:
-
 - `search_resources` - Search for resources
 - `get_resource` - Get a specific resource
 - `create_resource` - Create a new resource
@@ -178,8 +173,7 @@ Use `/resource-search` in Claude to search for resources:
 
 ## Database Schema
 
-The package includes Drizzle schema for:
-
+The package includes Prisma schema for:
 - `Resource` - Main resource table
 - `ResourceVersion` - Version history
 - `ResourceMetadata` - Extended metadata
@@ -189,7 +183,7 @@ Run migrations:
 
 ```bash
 cd packages/resource-registry
-npx drizzle migrate dev
+npx prisma migrate dev
 ```
 
 ## Access Control
@@ -309,8 +303,7 @@ MIT
 
 ## Contributing
 
-Contributions are welcome! Please read our contributing guidelines before
-submitting PRs.
+Contributions are welcome! Please read our contributing guidelines before submitting PRs.
 
 ## Support
 

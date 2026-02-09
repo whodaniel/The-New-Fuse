@@ -5,7 +5,7 @@ export enum FeatureStage {
   TESTING = 'TESTING',
   REVIEW = 'REVIEW',
   DEPLOYMENT = 'DEPLOYMENT',
-  COMPLETED = 'COMPLETED',
+  COMPLETED = 'COMPLETED'
 }
 
 export interface QualitativeAssessment {

@@ -1,48 +1,22 @@
-'use client';
-
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
-import React, { useCallback, useState } from 'react';
-
-interface AgentSearchProps {
-  onSearch: (query: string) => void;
-  placeholder?: string;
-  debounceMs?: number;
-}
-
-export const AgentSearch: React.FC<AgentSearchProps> = ({
-  onSearch,
-  placeholder = 'Search agents...',
-  debounceMs = 300,
-}) => {
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const debouncedSearch = useCallback(
-    (query: string) => {
-      const timeoutId = setTimeout(() => {
-        onSearch(query);
-      }, debounceMs);
-      return () => clearTimeout(timeoutId);
-    },
-    [onSearch, debounceMs]
-  );
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    debouncedSearch(query);
-  };
-
-  return (
-    <div className="relative w-full max-w-md">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-      <Input
-        type="text"
-        placeholder={placeholder}
-        value={searchQuery}
-        onChange={handleSearch}
-        className="pl-10 w-full"
-      />
-    </div>
-  );
+import React from "react";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentSearch = void 0;
+import react_1 from 'react';
+import lucide_react_1 from 'lucide-react';
+import Input_1 from '../ui/Input/Input';
+import useDebounce_1 from '@/hooks/useDebounce';
+const AgentSearch = ({ onSearch, placeholder = 'Search agents...', }) => {
+    const [searchQuery, setSearchQuery] = react_1.default.useState('');
+    const debouncedSearch = (0, useDebounce_1.useDebounce)(onSearch, 300);
+    const handleSearch = (e) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+        debouncedSearch(query);
+    };
+    return (<div className="w-full max-w-md">
+      <Input_1.Input type="text" placeholder={placeholder} value={searchQuery} onChange={handleSearch} icon={<lucide_react_1.Search className="h-4 w-4"/>} className="w-full"/>
+    </div>);
 };
+exports.AgentSearch = AgentSearch;
+export {};
+//# sourceMappingURL=AgentSearch.js.map

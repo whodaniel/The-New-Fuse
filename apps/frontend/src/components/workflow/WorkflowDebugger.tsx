@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DebugOptions, workflowExecutionService } from '@/services/WorkflowExecutionService';
-import { Bug, Play, RotateCcw, SkipForward, X } from 'lucide-react';
+import { Bug, Play, SkipForward, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { useReactFlow } from 'reactflow';
 
@@ -204,18 +204,6 @@ export const WorkflowDebugger: React.FC<WorkflowDebuggerProps> = ({ workflowId }
                       >
                         <SkipForward className="h-4 w-4 mr-1" />
                         Step
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          console.log('Rewinding execution...');
-                          // Hack #5: Slash Rewind logic
-                        }}
-                        className="flex-1 text-orange-500"
-                      >
-                        <RotateCcw className="h-4 w-4 mr-1" />
-                        Rewind
                       </Button>
                     </div>
                   </TabsContent>

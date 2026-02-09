@@ -6,16 +6,18 @@
  * detection capabilities over time.
  */
 
-import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
-import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
+import { Controller, Get, Post, Body, Logger } from '@nestjs/common';
 import { BrandConsistencyAgentService } from './brand-consistency-agent.service';
+import { RequireAuthLevel, AuthLevel } from '../guards/secure-auth.guard';
 
 @Controller('agents/brand-consistency')
-@RequireAuthLevel(AuthLevel.PUBLIC) // Make all endpoints public for testing
+@RequireAuthLevel(AuthLevel.PUBLIC)  // Make all endpoints public for testing
 export class BrandConsistencyController {
   private readonly logger = new Logger(BrandConsistencyController.name);
 
-  constructor(private readonly agentService: BrandConsistencyAgentService) {}
+  constructor(
+    private readonly agentService: BrandConsistencyAgentService
+  ) {}
 
   /**
    * Get agent information and current state
@@ -29,7 +31,9 @@ export class BrandConsistencyController {
    * Analyze a component for brand consistency
    */
   @Post('analyze')
-  async analyzeComponent(@Body() body: { componentPath: string; componentCode: string }) {
+  async analyzeComponent(
+    @Body() body: { componentPath: string; componentCode: string }
+  ) {
     this.logger.log(`Analyzing component: ${body.componentPath}`);
     return this.agentService.analyzeComponent(body.componentPath, body.componentCode);
   }
@@ -60,7 +64,7 @@ export class BrandConsistencyController {
   getBrandCSS() {
     return {
       css: this.agentService.generateBrandCSS(),
-      contentType: 'text/css',
+      contentType: 'text/css'
     };
   }
 
@@ -68,7 +72,9 @@ export class BrandConsistencyController {
    * Analyze multiple components at once
    */
   @Post('analyze-batch')
-  async analyzeBatch(@Body() body: { components: Array<{ path: string; code: string }> }) {
+  async analyzeBatch(
+    @Body() body: { components: Array<{ path: string; code: string }> }
+  ) {
     const results: any[] = [];
 
     for (const component of body.components) {
@@ -79,7 +85,7 @@ export class BrandConsistencyController {
     return {
       totalComponents: results.length,
       results,
-      summary: this.agentService.getAnalysisSummary(),
+      summary: this.agentService.getAnalysisSummary()
     };
   }
 
@@ -135,14 +141,14 @@ export default DemoCard;
     await this.agentService.selfImprove({
       issueType: 'color',
       wasHelpful: true,
-      learnedPattern: 'Detect non-brand gradient backgrounds in buttons',
+      learnedPattern: 'Detect non-brand gradient backgrounds in buttons'
     });
 
     return {
       message: 'Brand Consistency Agent Demo Complete',
       analysis,
       agentInfo: this.agentService.getAgentInfo(),
-      brandCSS: this.agentService.generateBrandCSS(),
+      brandCSS: this.agentService.generateBrandCSS()
     };
   }
 }

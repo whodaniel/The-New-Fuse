@@ -66,8 +66,8 @@ echo ""
 echo "🔧 Step 4: Development Tools Setup"
 echo "----------------------------------"
 
-# Generate Drizzle client if needed
-if [ -f "drizzle/schema.drizzle" ]; then
+# Generate Prisma client if needed
+if [ -f "prisma/schema.prisma" ]; then
     echo "Setting up database schema..."
     pnpm run db:generate
 fi

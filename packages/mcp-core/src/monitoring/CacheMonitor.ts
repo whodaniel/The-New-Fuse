@@ -45,7 +45,7 @@ export class CacheMonitor implements ICacheMonitor {
   constructor(config: CacheMonitorConfig, logger?: Logger) {
     this.config = config;
     this.logger = logger || new Logger('CacheMonitor');
-
+    
     // Start periodic cleanup
     setInterval(() => this.cleanup(), 60000); // Every minute
   }
@@ -58,7 +58,7 @@ export class CacheMonitor implements ICacheMonitor {
       key,
       timestamp: new Date(),
       accessTime,
-      hit: true,
+      hit: true
     };
 
     this.accessHistory.push(record);
@@ -77,7 +77,7 @@ export class CacheMonitor implements ICacheMonitor {
       key,
       timestamp: new Date(),
       accessTime,
-      hit: false,
+      hit: false
     };
 
     this.accessHistory.push(record);
@@ -95,7 +95,7 @@ export class CacheMonitor implements ICacheMonitor {
     const record: CacheEvictionRecord = {
       key,
       timestamp: new Date(),
-      reason,
+      reason
     };
 
     this.evictionHistory.push(record);
@@ -118,7 +118,7 @@ export class CacheMonitor implements ICacheMonitor {
       misses: this.totalMisses,
       hitRate,
       evictions: this.totalEvictions,
-      avgAccessTime,
+      avgAccessTime
     };
   }
 
@@ -128,8 +128,8 @@ export class CacheMonitor implements ICacheMonitor {
   getCacheStatistics(hours: number): CacheMetrics[] {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
     return this.metricsHistory
-      .filter((entry) => entry.timestamp >= cutoff)
-      .map((entry) => entry.metrics);
+      .filter(entry => entry.timestamp >= cutoff)
+      .map(entry => entry.metrics);
   }
 
   /**
@@ -141,12 +141,12 @@ export class CacheMonitor implements ICacheMonitor {
     evictionReasons: Record<string, number>;
   } {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
-    const recentAccesses = this.accessHistory.filter((record) => record.timestamp >= cutoff);
-    const recentEvictions = this.evictionHistory.filter((record) => record.timestamp >= cutoff);
+    const recentAccesses = this.accessHistory.filter(record => record.timestamp >= cutoff);
+    const recentEvictions = this.evictionHistory.filter(record => record.timestamp >= cutoff);
 
     // Calculate top keys
     const keyStats = new Map<string, { hits: number; misses: number }>();
-    recentAccesses.forEach((record) => {
+    recentAccesses.forEach(record => {
       if (!keyStats.has(record.key)) {
         keyStats.set(record.key, { hits: 0, misses: 0 });
       }
@@ -163,14 +163,14 @@ export class CacheMonitor implements ICacheMonitor {
         key,
         hits: stats.hits,
         misses: stats.misses,
-        hitRate: stats.hits + stats.misses > 0 ? stats.hits / (stats.hits + stats.misses) : 0,
+        hitRate: (stats.hits + stats.misses) > 0 ? stats.hits / (stats.hits + stats.misses) : 0
       }))
-      .sort((a, b) => b.hits + b.misses - (a.hits + a.misses))
+      .sort((a, b) => (b.hits + b.misses) - (a.hits + a.misses))
       .slice(0, 10);
 
     // Calculate access frequency by hour
     const hourlyStats = new Map<number, { accesses: number; hits: number }>();
-    recentAccesses.forEach((record) => {
+    recentAccesses.forEach(record => {
       const hour = record.timestamp.getHours();
       if (!hourlyStats.has(hour)) {
         hourlyStats.set(hour, { accesses: 0, hits: 0 });
@@ -186,20 +186,20 @@ export class CacheMonitor implements ICacheMonitor {
       .map(([hour, stats]) => ({
         hour,
         accesses: stats.accesses,
-        hitRate: stats.accesses > 0 ? stats.hits / stats.accesses : 0,
+        hitRate: stats.accesses > 0 ? stats.hits / stats.accesses : 0
       }))
       .sort((a, b) => a.hour - b.hour);
 
     // Calculate eviction reasons
     const evictionReasons: Record<string, number> = {};
-    recentEvictions.forEach((record) => {
+    recentEvictions.forEach(record => {
       evictionReasons[record.reason] = (evictionReasons[record.reason] || 0) + 1;
     });
 
     return {
       topKeys,
       accessFrequency,
-      evictionReasons,
+      evictionReasons
     };
   }
 
@@ -216,7 +216,7 @@ export class CacheMonitor implements ICacheMonitor {
   generateCacheReport(hours: number = 24): string {
     const metrics = this.getCacheMetrics();
     const patterns = this.getCacheAccessPatterns(hours);
-
+    
     const report = [
       `# Cache Performance Report`,
       '',
@@ -230,13 +230,11 @@ export class CacheMonitor implements ICacheMonitor {
       '',
       `## Top Accessed Keys (Last ${hours}h)`,
       '| Key | Hits | Misses | Hit Rate |',
-      '|-----|------|--------|----------|',
+      '|-----|------|--------|----------|'
     ];
 
-    patterns.topKeys.forEach((key) => {
-      report.push(
-        `| ${key.key} | ${key.hits} | ${key.misses} | ${(key.hitRate * 100).toFixed(2)}% |`
-      );
+    patterns.topKeys.forEach(key => {
+      report.push(`| ${key.key} | ${key.hits} | ${key.misses} | ${(key.hitRate * 100).toFixed(2)}% |`);
     });
 
     report.push('');
@@ -244,7 +242,7 @@ export class CacheMonitor implements ICacheMonitor {
     report.push('| Hour | Accesses | Hit Rate |');
     report.push('|------|----------|----------|');
 
-    patterns.accessFrequency.forEach((freq) => {
+    patterns.accessFrequency.forEach(freq => {
       report.push(`| ${freq.hour}:00 | ${freq.accesses} | ${(freq.hitRate * 100).toFixed(2)}% |`);
     });
 
@@ -264,31 +262,27 @@ export class CacheMonitor implements ICacheMonitor {
    */
   private cleanup(): void {
     const cutoff = new Date(Date.now() - this.config.retentionPeriod);
-
+    
     // Clean up access history
     const initialAccessLength = this.accessHistory.length;
-    this.accessHistory.splice(
-      0,
-      this.accessHistory.findIndex((record) => record.timestamp >= cutoff)
-    );
+    this.accessHistory.splice(0, this.accessHistory.findIndex(
+      record => record.timestamp >= cutoff
+    ));
 
     // Clean up eviction history
     const initialEvictionLength = this.evictionHistory.length;
-    this.evictionHistory.splice(
-      0,
-      this.evictionHistory.findIndex((record) => record.timestamp >= cutoff)
-    );
+    this.evictionHistory.splice(0, this.evictionHistory.findIndex(
+      record => record.timestamp >= cutoff
+    ));
 
     // Clean up metrics history
     const initialMetricsLength = this.metricsHistory.length;
-    this.metricsHistory.splice(
-      0,
-      this.metricsHistory.findIndex((entry) => entry.timestamp >= cutoff)
-    );
+    this.metricsHistory.splice(0, this.metricsHistory.findIndex(
+      entry => entry.timestamp >= cutoff
+    ));
 
-    const cleanedRecords =
-      initialAccessLength -
-      this.accessHistory.length +
+    const cleanedRecords = 
+      (initialAccessLength - this.accessHistory.length) +
       (initialEvictionLength - this.evictionHistory.length) +
       (initialMetricsLength - this.metricsHistory.length);
 
@@ -299,7 +293,7 @@ export class CacheMonitor implements ICacheMonitor {
     // Store current metrics in history
     this.metricsHistory.push({
       metrics: this.getCacheMetrics(),
-      timestamp: new Date(),
+      timestamp: new Date()
     });
   }
 }

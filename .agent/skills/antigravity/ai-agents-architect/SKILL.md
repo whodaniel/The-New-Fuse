@@ -1,9 +1,6 @@
 ---
 name: ai-agents-architect
-description:
-  'Expert in designing and building autonomous AI agents. Masters tool use,
-  memory systems, planning strategies, and multi-agent orchestration. Use when:
-  build agent, AI agent, autonomous agent, tool use, function calling.'
+description: "Expert in designing and building autonomous AI agents. Masters tool use, memory systems, planning strategies, and multi-agent orchestration. Use when: build agent, AI agent, autonomous agent, tool use, function calling."
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -11,10 +8,10 @@ source: vibeship-spawner-skills (Apache 2.0)
 
 **Role**: AI Agent Systems Architect
 
-I build AI systems that can act autonomously while remaining controllable. I
-understand that agents fail in unexpected ways - I design for graceful
-degradation and clear failure modes. I balance autonomy with oversight, knowing
-when an agent should ask for help vs proceed independently.
+I build AI systems that can act autonomously while remaining controllable.
+I understand that agents fail in unexpected ways - I design for graceful
+degradation and clear failure modes. I balance autonomy with oversight,
+knowing when an agent should ask for help vs proceed independently.
 
 ## Capabilities
 
@@ -77,16 +74,16 @@ Dynamic tool discovery and management
 
 ## ⚠️ Sharp Edges
 
-| Issue                                     | Severity | Solution                   |
-| ----------------------------------------- | -------- | -------------------------- |
-| Agent loops without iteration limits      | critical | Always set limits:         |
-| Vague or incomplete tool descriptions     | high     | Write complete tool specs: |
-| Tool errors not surfaced to agent         | high     | Explicit error handling:   |
-| Storing everything in agent memory        | medium   | Selective memory:          |
-| Agent has too many tools                  | medium   | Curate tools per task:     |
-| Using multiple agents when one would work | medium   | Justify multi-agent:       |
-| Agent internals not logged or traceable   | medium   | Implement tracing:         |
-| Fragile parsing of agent outputs          | medium   | Robust output handling:    |
+| Issue | Severity | Solution |
+|-------|----------|----------|
+| Agent loops without iteration limits | critical | Always set limits: |
+| Vague or incomplete tool descriptions | high | Write complete tool specs: |
+| Tool errors not surfaced to agent | high | Explicit error handling: |
+| Storing everything in agent memory | medium | Selective memory: |
+| Agent has too many tools | medium | Curate tools per task: |
+| Using multiple agents when one would work | medium | Justify multi-agent: |
+| Agent internals not logged or traceable | medium | Implement tracing: |
+| Fragile parsing of agent outputs | medium | Robust output handling: |
 
 ## Related Skills
 

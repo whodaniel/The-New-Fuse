@@ -2,63 +2,52 @@
 
 ## Purpose
 
-**Sync-Core** is the central real-time synchronization and coordination
-infrastructure for The New Fuse platform. It serves as the "nervous system"
-connecting all components with real-time state synchronization, conflict
-resolution, and event distribution.
+**Sync-Core** is the central real-time synchronization and coordination infrastructure for The New Fuse platform. It serves as the "nervous system" connecting all components with real-time state synchronization, conflict resolution, and event distribution.
 
 ## Core Responsibilities
 
 ### 1. **Multi-Tenant Real-Time Synchronization**
-
 - Coordinate data across all system components
 - Strict tenant isolation and data boundaries
 - Global data distribution for system-wide resources
 - Version tracking and checksum validation
 
 ### 2. **Agent State Management**
-
 - Track agent status across distributed systems
 - Synchronize agent configurations and metadata
 - Real-time agent health monitoring
 - Agent task assignment and load balancing
 
 ### 3. **Task Synchronization**
-
 - Real-time task status updates
 - Task execution tracking and progress
 - Dependency management and workflow coordination
 - Distributed task queue management
 
 ### 4. **Conflict Resolution**
-
 - Detect concurrent modification conflicts
 - Intelligent resolution strategies (latest-wins, merge, manual)
 - Audit trail for all resolutions
 - Rollback capabilities
 
 ### 5. **File System Monitoring**
-
 - Watch configuration and data files
 - Trigger synchronization on file changes
 - CMS integration for content updates
 - Project configuration synchronization
 
 ### 6. **Real-Time Notifications**
-
 - WebSocket-based event delivery
 - Multi-channel notification support
 - Priority-based message routing
 - Delivery tracking and acknowledgment
 
 ### 7. **Distributed Time Synchronization**
-
 - Logical clock for distributed ordering
 - Event timestamp coordination
 - Causality tracking across services
 
 ### 8. **Performance Monitoring**
-
 - Comprehensive metrics collection
 - Health checks and alerting
 - Performance optimization insights
@@ -94,7 +83,7 @@ resolution, and event distribution.
         ▼                     ▼                     ▼
 ┌───────────────┐    ┌────────────────┐    ┌──────────────┐
 │ Redis Pub/Sub │    │   WebSocket    │    │   Database   │
-│ - Channels    │    │   - Real-time  │    │   - Drizzle   │
+│ - Channels    │    │   - Real-time  │    │   - Prisma   │
 │ - Clustering  │    │   - Events     │    │   - Sync log │
 │ - TTL keys    │    │   - Broadcast  │    │   - Conflicts│
 └───────────────┘    └────────────────┘    └──────────────┘
@@ -107,7 +96,6 @@ resolution, and event distribution.
 **Role**: Central coordinator for all synchronization operations
 
 **Responsibilities**:
-
 - Tenant-aware data synchronization
 - Global resource distribution
 - Agent state coordination
@@ -115,7 +103,6 @@ resolution, and event distribution.
 - Event routing and broadcasting
 
 **Key Features**:
-
 - Batching for performance
 - Retry logic with exponential backoff
 - Graceful degradation
@@ -126,14 +113,12 @@ resolution, and event distribution.
 **Role**: Intelligent conflict detection and resolution
 
 **Responsibilities**:
-
 - Detect concurrent modifications
 - Apply resolution strategies
 - Maintain conflict audit trail
 - Support manual resolution workflows
 
 **Resolution Strategies**:
-
 1. **Latest Wins** - Timestamp-based (default)
 2. **Merge** - Combine non-conflicting fields
 3. **Manual** - Queue for admin review
@@ -144,7 +129,6 @@ resolution, and event distribution.
 **Role**: Distributed logical clock for event ordering
 
 **Responsibilities**:
-
 - Generate monotonic timestamps
 - Maintain causality relationships
 - Coordinate event ordering across nodes
@@ -157,14 +141,12 @@ resolution, and event distribution.
 **Role**: Real-time task coordination and execution tracking
 
 **Responsibilities**:
-
 - Task state synchronization
 - Execution progress updates
 - Dependency management
 - Workflow integration
 
 **Features**:
-
 - Real-time progress tracking
 - Automatic dependency resolution
 - Distributed task queues
@@ -175,14 +157,12 @@ resolution, and event distribution.
 **Role**: Monitor configuration and data files for changes
 
 **Responsibilities**:
-
 - Watch file system for changes
 - Trigger synchronization on updates
 - CMS integration
 - Configuration reload
 
 **Features**:
-
 - Debouncing for rapid changes
 - Tenant-specific watch paths
 - Selective file filtering
@@ -193,14 +173,12 @@ resolution, and event distribution.
 **Role**: Real-time event delivery to clients
 
 **Responsibilities**:
-
 - WebSocket message delivery
 - Multi-channel support (email, push, webhook)
 - Priority-based routing
 - Delivery tracking
 
 **Features**:
-
 - Notification rules engine
 - Template support
 - Batch delivery
@@ -279,7 +257,7 @@ TaskSyncService
 
 ### Sync State Tracking
 
-```drizzle
+```prisma
 model SyncState {
   id           String   @id @default(uuid())
   resourceType String
@@ -408,24 +386,24 @@ metrics:buffer:{timestamp}             # Metrics buffer
 ```typescript
 interface SyncMetrics {
   operations: {
-    sync: number; // Total sync operations
-    conflicts: number; // Conflicts resolved
-    fileChanges: number; // File change events
-    notifications: number; // Notifications sent
+    sync: number;              // Total sync operations
+    conflicts: number;         // Conflicts resolved
+    fileChanges: number;       // File change events
+    notifications: number;     // Notifications sent
   };
 
   performance: {
-    avgSyncLatency: number; // ms
-    maxSyncLatency: number; // ms
-    conflictRate: number; // percentage
-    successRate: number; // percentage
+    avgSyncLatency: number;    // ms
+    maxSyncLatency: number;    // ms
+    conflictRate: number;      // percentage
+    successRate: number;       // percentage
   };
 
   resources: {
     activeTenants: number;
     syncedResources: number;
     pendingOperations: number;
-    cacheHitRate: number; // percentage
+    cacheHitRate: number;      // percentage
   };
 
   health: {
@@ -506,14 +484,20 @@ import { SyncOrchestrator } from '@the-new-fuse/sync-core';
 
 @Injectable()
 export class MyService {
-  constructor(private readonly syncOrchestrator: SyncOrchestrator) {}
+  constructor(
+    private readonly syncOrchestrator: SyncOrchestrator
+  ) {}
 
   async updateData(data: any, tenantId: string) {
     // Update database
     await this.database.update(data);
 
     // Sync across all instances
-    await this.syncOrchestrator.syncTenantData(tenantId, 'myResource', data);
+    await this.syncOrchestrator.syncTenantData(
+      tenantId,
+      'myResource',
+      data
+    );
   }
 }
 ```
@@ -537,14 +521,11 @@ await fileWatcher.watchPath('/config', (event) => {
 });
 
 // Task synchronization
-await taskSync.syncTaskData(
-  {
-    id: 'task-123',
-    status: 'RUNNING',
-    progress: 50,
-  },
-  'tenant-abc'
-);
+await taskSync.syncTaskData({
+  id: 'task-123',
+  status: 'RUNNING',
+  progress: 50
+}, 'tenant-abc');
 ```
 
 ## Testing

@@ -1,16 +1,16 @@
 import { Logger } from 'winston';
 import {
+  BaseDeploymentStrategy,
+  DeploymentPhase,
+  ServiceDeploymentStatus,
+  RollbackResult
+} from './DeploymentStrategy';
+import {
   DeploymentConfig,
   DeploymentResult,
   PipelineStatus,
-  ServiceDeploymentResult,
+  ServiceDeploymentResult
 } from '../types/pipeline';
-import {
-  BaseDeploymentStrategy,
-  DeploymentPhase,
-  RollbackResult,
-  ServiceDeploymentStatus,
-} from './DeploymentStrategy';
 
 /**
  * Canary Deployment Strategy
@@ -27,12 +27,16 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
 
     this.logger.info(`Starting canary deployment: ${deploymentId}`, {
       environment: config.environment,
-      services: config.services.length,
+      services: config.services.length
     });
 
     try {
       // Initialize progress tracking
-      const progress = this.createInitialProgress(deploymentId, 'canary' as any, config.services);
+      const progress = this.createInitialProgress(
+        deploymentId,
+        'canary' as any,
+        config.services
+      );
 
       const canaryConfig = config.strategy.canaryConfig;
       if (!canaryConfig) {
@@ -43,7 +47,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.PREPARING,
         currentStep: 'Preparing canary deployment',
-        progress: 5,
+        progress: 5
       });
 
       await this.prepareCanaryDeployment(config, deploymentId);
@@ -52,7 +56,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.DEPLOYING,
         currentStep: 'Deploying canary version',
-        progress: 15,
+        progress: 15
       });
 
       const serviceResults: ServiceDeploymentResult[] = [];
@@ -70,7 +74,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.PROMOTING,
         currentStep: 'Starting progressive traffic shift',
-        progress: 25,
+        progress: 25
       });
 
       await this.executeProgressiveRollout(config, canaryConfig, deploymentId);
@@ -79,17 +83,15 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.VALIDATING,
         currentStep: 'Final validation',
-        progress: 90,
+        progress: 90
       });
 
       const healthChecks = await this.getHealthChecks(config);
       const healthResults = await this.executeHealthChecks(healthChecks, deploymentId);
 
-      const unhealthyChecks = healthResults.filter((h) => h.status !== 'healthy');
+      const unhealthyChecks = healthResults.filter(h => h.status !== 'healthy');
       if (unhealthyChecks.length > 0) {
-        throw new Error(
-          `Final health checks failed: ${unhealthyChecks.map((h) => h.name).join(', ')}`
-        );
+        throw new Error(`Final health checks failed: ${unhealthyChecks.map(h => h.name).join(', ')}`);
       }
 
       // Phase 5: Cleanup
@@ -99,7 +101,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
         phase: DeploymentPhase.COMPLETED,
         currentStep: 'Canary deployment completed',
         progress: 100,
-        completedSteps: progress.totalSteps,
+        completedSteps: progress.totalSteps
       });
 
       const endTime = new Date();
@@ -115,38 +117,36 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
         environment: config.environment,
         services: serviceResults,
         healthChecks: healthResults,
-        logs: progress.logs,
+        logs: progress.logs
       };
 
-      this.logDeploymentStep(
-        deploymentId,
-        `Canary deployment completed successfully in ${duration}ms`
-      );
+      this.logDeploymentStep(deploymentId, `Canary deployment completed successfully in ${duration}ms`);
       this.emit('deployment:complete', { deploymentId, result });
 
       return result;
+
     } catch (error) {
       this.logger.error(`Canary deployment failed: ${deploymentId}`, {
         error: error.message,
-        stack: error.stack,
+        stack: error.stack
       });
 
       // Update progress to failed state
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.FAILED,
         currentStep: `Deployment failed: ${error.message}`,
-        progress: 0,
+        progress: 0
       });
 
       // Attempt automatic rollback
       if (config.rollbackPolicy.enabled && config.rollbackPolicy.automatic) {
         this.logDeploymentStep(deploymentId, 'Attempting automatic rollback', 'warn');
-
+        
         try {
           await this.rollback(deploymentId, error.message);
         } catch (rollbackError) {
           this.logger.error(`Rollback failed: ${deploymentId}`, {
-            error: rollbackError.message,
+            error: rollbackError.message
           });
         }
       }
@@ -165,7 +165,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
         services: [],
         healthChecks: [],
         logs: this.deployments.get(deploymentId)?.logs || [error.message],
-        error: error.message,
+        error: error.message
       };
 
       this.emit('deployment:failed', { deploymentId, result: failedResult, error });
@@ -232,13 +232,13 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
 
     return {
       valid: errors.length === 0,
-      errors,
+      errors
     };
   }
 
   async rollback(deploymentId: string, reason: string): Promise<RollbackResult> {
     const startTime = Date.now();
-
+    
     this.logger.info(`Starting canary rollback: ${deploymentId}`, { reason });
 
     try {
@@ -246,7 +246,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
       this.updateProgress(deploymentId, {
         phase: DeploymentPhase.ROLLING_BACK,
         currentStep: 'Rolling back canary deployment',
-        progress: 0,
+        progress: 0
       });
 
       // Get deployment progress
@@ -259,10 +259,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
       await this.shiftTrafficToStable(deploymentId);
 
       // Remove canary instances
-      await this.removeCanaryInstances(
-        progress.services.map((s) => s.name),
-        deploymentId
-      );
+      await this.removeCanaryInstances(progress.services.map(s => s.name), deploymentId);
 
       const endTime = Date.now();
       const duration = endTime - startTime;
@@ -274,14 +271,15 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
         previousVersion: 'canary',
         currentVersion: 'stable',
         duration,
-        logs: progress.logs,
+        logs: progress.logs
       };
+
     } catch (error) {
       const endTime = Date.now();
       const duration = endTime - startTime;
 
       this.logger.error(`Canary rollback failed: ${deploymentId}`, {
-        error: error.message,
+        error: error.message
       });
 
       return {
@@ -290,17 +288,14 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
         currentVersion: 'unknown',
         duration,
         logs: [`Rollback failed: ${error.message}`],
-        error: error.message,
+        error: error.message
       };
     }
   }
 
   // Private helper methods
 
-  private async prepareCanaryDeployment(
-    config: DeploymentConfig,
-    deploymentId: string
-  ): Promise<void> {
+  private async prepareCanaryDeployment(config: DeploymentConfig, deploymentId: string): Promise<void> {
     this.logDeploymentStep(deploymentId, 'Preparing canary deployment');
 
     // Validate current stable deployment exists
@@ -321,7 +316,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
     deploymentId: string
   ): Promise<ServiceDeploymentResult> {
     const serviceName = service.name;
-
+    
     try {
       this.logDeploymentStep(deploymentId, `Deploying canary version of ${serviceName}`);
 
@@ -330,7 +325,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
 
       // Update service progress
       const progress = this.deployments.get(deploymentId);
-      const serviceProgress = progress?.services.find((s) => s.name === serviceName);
+      const serviceProgress = progress?.services.find(s => s.name === serviceName);
       if (serviceProgress) {
         serviceProgress.status = ServiceDeploymentStatus.DEPLOYING;
       }
@@ -339,28 +334,21 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
       await this.createCanaryInstances(service, canaryReplicas);
 
       // Wait for canary instances to be ready
-      const isReady = await this.waitForServiceReady(
-        `${serviceName}-canary`,
-        canaryReplicas,
-        180000
-      );
+      const isReady = await this.waitForServiceReady(`${serviceName}-canary`, canaryReplicas, 180000);
       if (!isReady) {
         throw new Error(`Canary deployment timed out for ${serviceName}`);
       }
 
       // Initial health check
-      const healthCheck = await this.executeHealthCheck(
-        {
-          name: `${serviceName}-canary-health`,
-          type: 'http',
-          port: service.ports?.[0]?.port || 8080,
-          path: '/health',
-          timeout: 30000,
-          interval: 5000,
-          retries: 3,
-        },
-        deploymentId
-      );
+      const healthCheck = await this.executeHealthCheck({
+        name: `${serviceName}-canary-health`,
+        type: 'http',
+        port: service.ports?.[0]?.port || 8080,
+        path: '/health',
+        timeout: 30000,
+        interval: 5000,
+        retries: 3
+      }, deploymentId);
 
       if (healthCheck.status !== 'healthy') {
         throw new Error(`Canary health check failed for ${serviceName}: ${healthCheck.message}`);
@@ -381,20 +369,21 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
         replicas: {
           desired: service.replicas,
           ready: canaryReplicas,
-          available: canaryReplicas,
+          available: canaryReplicas
         },
         image: service.image,
         version: service.tag,
-        endpoints: [`http://${serviceName}-canary.${config.environment}.svc.cluster.local`],
+        endpoints: [`http://${serviceName}-canary.${config.environment}.svc.cluster.local`]
       };
+
     } catch (error) {
       this.logger.error(`Canary service deployment failed: ${serviceName}`, {
-        error: error.message,
+        error: error.message
       });
 
       // Update service progress to failed
       const progress = this.deployments.get(deploymentId);
-      const serviceProgress = progress?.services.find((s) => s.name === serviceName);
+      const serviceProgress = progress?.services.find(s => s.name === serviceName);
       if (serviceProgress) {
         serviceProgress.status = ServiceDeploymentStatus.FAILED;
       }
@@ -405,11 +394,11 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
         replicas: {
           desired: service.replicas,
           ready: 0,
-          available: 0,
+          available: 0
         },
         image: service.image,
         version: service.tag,
-        endpoints: [],
+        endpoints: []
       };
     }
   }
@@ -435,7 +424,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
       const stepProgress = 25 + (i / steps.length) * 60; // 25-85% for progressive rollout
       this.updateProgress(deploymentId, {
         currentStep: `Canary step ${stepNumber}: ${step.weight}% traffic`,
-        progress: stepProgress,
+        progress: stepProgress
       });
 
       // Shift traffic to canary
@@ -445,28 +434,25 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
       const durationMs = this.parseDuration(step.duration);
       if (durationMs > 0) {
         this.logDeploymentStep(deploymentId, `Waiting ${step.duration} for metrics collection`);
-        await new Promise((resolve) => setTimeout(resolve, durationMs));
+        await new Promise(resolve => setTimeout(resolve, durationMs));
       }
 
       // Run analysis if configured
       if (analysis.length > 0) {
         this.logDeploymentStep(deploymentId, `Running canary analysis for step ${stepNumber}`);
-
+        
         const analysisResults = await this.runCanaryAnalysis(analysis, step.weight, deploymentId);
-        const failedAnalysis = analysisResults.filter((result) => !result.passed);
+        const failedAnalysis = analysisResults.filter(result => !result.passed);
 
         if (failedAnalysis.length > 0) {
-          const failedNames = failedAnalysis.map((a) => a.name).join(', ');
+          const failedNames = failedAnalysis.map(a => a.name).join(', ');
           throw new Error(`Canary analysis failed at ${step.weight}% traffic: ${failedNames}`);
         }
       }
 
       // Check for manual pause
       if (step.pause) {
-        this.logDeploymentStep(
-          deploymentId,
-          `Manual pause at step ${stepNumber} - waiting for approval`
-        );
+        this.logDeploymentStep(deploymentId, `Manual pause at step ${stepNumber} - waiting for approval`);
         await this.waitForManualApproval(deploymentId, stepNumber);
       }
 
@@ -478,10 +464,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
     await this.promoteCanaryToStable(config, deploymentId);
   }
 
-  private async cleanupCanaryDeployment(
-    config: DeploymentConfig,
-    deploymentId: string
-  ): Promise<void> {
+  private async cleanupCanaryDeployment(config: DeploymentConfig, deploymentId: string): Promise<void> {
     this.logDeploymentStep(deploymentId, 'Cleaning up canary deployment');
 
     // Remove canary-specific resources
@@ -499,7 +482,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
 
   private parseDuration(duration: string): number {
     if (duration === '0m' || duration === '0s') return 0;
-
+    
     const match = duration.match(/^(\d+)([smhd])$/);
     if (!match) return 0;
 
@@ -507,16 +490,11 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
     const value = parseInt(amount);
 
     switch (unit) {
-      case 's':
-        return value * 1000;
-      case 'm':
-        return value * 60 * 1000;
-      case 'h':
-        return value * 60 * 60 * 1000;
-      case 'd':
-        return value * 24 * 60 * 60 * 1000;
-      default:
-        return 0;
+      case 's': return value * 1000;
+      case 'm': return value * 60 * 1000;
+      case 'h': return value * 60 * 60 * 1000;
+      case 'd': return value * 24 * 60 * 60 * 1000;
+      default: return 0;
     }
   }
 
@@ -529,61 +507,51 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
     this.logger.debug('Setting up traffic splitting infrastructure');
   }
 
-  private async setupCanaryMonitoring(
-    _config: DeploymentConfig,
-    _deploymentId: string
-  ): Promise<void> {
+  private async setupCanaryMonitoring(_config: DeploymentConfig, _deploymentId: string): Promise<void> {
     this.logger.debug('Setting up canary monitoring and analysis');
   }
 
   private async createCanaryInstances(service: any, replicas: number): Promise<void> {
     this.logger.debug(`Creating ${replicas} canary instances for ${service.name}`);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
   }
 
   private async shiftTrafficToCanary(weight: number, _deploymentId: string): Promise<void> {
     this.logger.debug(`Shifting ${weight}% traffic to canary`);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
-  private async runCanaryAnalysis(
-    analysis: any[],
-    weight: number,
-    _deploymentId: string
-  ): Promise<any[]> {
+  private async runCanaryAnalysis(analysis: any[], weight: number, _deploymentId: string): Promise<any[]> {
     this.logger.debug(`Running canary analysis at ${weight}% traffic`);
-
+    
     // Simulate analysis results
-    return analysis.map((a) => ({
+    return analysis.map(a => ({
       name: a.name,
       passed: Math.random() > 0.1, // 90% success rate
       value: Math.random() * 100,
-      threshold: a.threshold,
+      threshold: a.threshold
     }));
   }
 
   private async waitForManualApproval(_deploymentId: string, stepNumber: number): Promise<void> {
     this.logger.debug(`Waiting for manual approval for step ${stepNumber}`);
     // This would integrate with approval system
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
   }
 
-  private async promoteCanaryToStable(
-    config: DeploymentConfig,
-    _deploymentId: string
-  ): Promise<void> {
+  private async promoteCanaryToStable(config: DeploymentConfig, _deploymentId: string): Promise<void> {
     this.logger.debug('Promoting canary to stable');
-
+    
     // Scale up canary to full replicas
     for (const service of config.services) {
       await this.scaleCanaryToFull(service.name, service.replicas);
     }
-
+    
     // Remove old stable instances
     for (const service of config.services) {
       await this.removeStableInstances(service.name);
     }
-
+    
     // Update service labels/selectors
     for (const service of config.services) {
       await this.promoteCanaryLabels(service.name);
@@ -592,39 +560,36 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
 
   private async shiftTrafficToStable(_deploymentId: string): Promise<void> {
     this.logger.debug('Shifting all traffic back to stable');
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
-  private async removeCanaryInstances(
-    serviceNames: string[],
-    _deploymentId: string
-  ): Promise<void> {
+  private async removeCanaryInstances(serviceNames: string[], _deploymentId: string): Promise<void> {
     this.logger.debug(`Removing canary instances for services: ${serviceNames.join(', ')}`);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
   }
 
   private async removeCanaryResources(serviceName: string): Promise<void> {
     this.logger.debug(`Removing canary resources for ${serviceName}`);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
 
   private async cleanupTrafficSplitting(_config: DeploymentConfig): Promise<void> {
     this.logger.debug('Cleaning up traffic splitting configuration');
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
 
   private async scaleCanaryToFull(serviceName: string, replicas: number): Promise<void> {
     this.logger.debug(`Scaling canary ${serviceName} to ${replicas} replicas`);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
   private async removeStableInstances(serviceName: string): Promise<void> {
     this.logger.debug(`Removing stable instances for ${serviceName}`);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
   private async promoteCanaryLabels(serviceName: string): Promise<void> {
     this.logger.debug(`Promoting canary labels for ${serviceName}`);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
 }

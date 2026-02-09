@@ -1,5 +1,5 @@
-import { CaretDown, CaretUp } from '@phosphor-icons/react';
-import { useState } from 'react';
+import React, { useState } from "react";
+import { CaretDown, CaretUp } from "@phosphor-icons/react";
 
 export default function GenericOpenAiEmbeddingOptions({ settings }) {
   const [showAdvancedControls, setShowAdvancedControls] = useState(false);
@@ -7,7 +7,9 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-center gap-[36px] mt-1.5 flex-wrap">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">Base URL</label>
+          <label className="text-white text-sm font-semibold block mb-3">
+            Base URL
+          </label>
           <input
             type="url"
             name="EmbeddingBasePath"
@@ -20,7 +22,9 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">Embedding Model</label>
+          <label className="text-white text-sm font-semibold block mb-3">
+            Embedding Model
+          </label>
           <input
             type="text"
             name="EmbeddingModelPref"
@@ -61,7 +65,9 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
             name="GenericOpenAiEmbeddingApiKey"
             className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="sk-mysecretkey"
-            defaultValue={settings?.GenericOpenAiEmbeddingApiKey ? '*'.repeat(20) : ''}
+            defaultValue={
+              settings?.GenericOpenAiEmbeddingApiKey ? "*".repeat(20) : ""
+            }
             autoComplete="off"
             spellCheck={false}
           />
@@ -75,7 +81,7 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
           }}
           className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
-          {showAdvancedControls ? 'Hide' : 'Show'} advanced settings
+          {showAdvancedControls ? "Hide" : "Show"} advanced settings
           {showAdvancedControls ? (
             <CaretUp size={14} className="ml-1" />
           ) : (

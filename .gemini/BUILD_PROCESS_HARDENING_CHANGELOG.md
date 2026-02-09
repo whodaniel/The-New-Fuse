@@ -165,7 +165,7 @@ Or for packages with additional artifacts:
 
 | Time  | Action                                      |
 | ----- | ------------------------------------------- |
-| 05:46 | Original Drizzle namespace issue discovered  |
+| 05:46 | Original Prisma namespace issue discovered  |
 | 05:49 | Root cause identified (missing .d.ts files) |
 | 05:52 | Fixed database package build cache          |
 | 06:01 | Started comprehensive hardening             |

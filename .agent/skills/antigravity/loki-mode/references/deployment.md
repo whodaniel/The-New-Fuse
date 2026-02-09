@@ -1,23 +1,21 @@
 # Deployment Reference
 
-Infrastructure provisioning and deployment instructions for all supported
-platforms.
+Infrastructure provisioning and deployment instructions for all supported platforms.
 
 ## Deployment Decision Matrix
 
-| Criteria              | Vercel/Netlify | Railway/Render | AWS      | GCP      | Azure    |
-| --------------------- | -------------- | -------------- | -------- | -------- | -------- |
-| Static/JAMstack       | Best           | Good           | Overkill | Overkill | Overkill |
-| Simple full-stack     | Good           | Best           | Overkill | Overkill | Overkill |
-| Scale to millions     | No             | Limited        | Best     | Best     | Best     |
-| Enterprise compliance | Limited        | Limited        | Best     | Good     | Best     |
-| Cost at scale         | Expensive      | Moderate       | Cheapest | Cheap    | Moderate |
-| Setup complexity      | Trivial        | Easy           | Complex  | Complex  | Complex  |
+| Criteria | Vercel/Netlify | Railway/Render | AWS | GCP | Azure |
+|----------|----------------|----------------|-----|-----|-------|
+| Static/JAMstack | Best | Good | Overkill | Overkill | Overkill |
+| Simple full-stack | Good | Best | Overkill | Overkill | Overkill |
+| Scale to millions | No | Limited | Best | Best | Best |
+| Enterprise compliance | Limited | Limited | Best | Good | Best |
+| Cost at scale | Expensive | Moderate | Cheapest | Cheap | Moderate |
+| Setup complexity | Trivial | Easy | Complex | Complex | Complex |
 
 ## Quick Start Commands
 
 ### Vercel
-
 ```bash
 # Install CLI
 npm i -g vercel
@@ -30,7 +28,6 @@ vercel env add VARIABLE_NAME production
 ```
 
 ### Netlify
-
 ```bash
 # Install CLI
 npm i -g netlify-cli
@@ -43,7 +40,6 @@ netlify env:set VARIABLE_NAME value
 ```
 
 ### Railway
-
 ```bash
 # Install CLI
 npm i -g @railway/cli
@@ -58,7 +54,6 @@ railway variables set VARIABLE_NAME=value
 ```
 
 ### Render
-
 ```yaml
 # render.yaml (Infrastructure as Code)
 services:
@@ -85,7 +80,6 @@ databases:
 ## AWS Deployment
 
 ### Architecture Template
-
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                        CloudFront                        │
@@ -112,7 +106,6 @@ databases:
 ```
 
 ### Terraform Configuration
-
 ```hcl
 # main.tf
 terraform {
@@ -152,7 +145,7 @@ module "vpc" {
 # ECS Cluster
 resource "aws_ecs_cluster" "main" {
   name = "${var.project_name}-cluster"
-
+  
   setting {
     name  = "containerInsights"
     value = "enabled"
@@ -188,7 +181,6 @@ module "rds" {
 ```
 
 ### ECS Task Definition
-
 ```json
 {
   "family": "app",
@@ -206,7 +198,9 @@ module "rds" {
           "protocol": "tcp"
         }
       ],
-      "environment": [{ "name": "NODE_ENV", "value": "production" }],
+      "environment": [
+        {"name": "NODE_ENV", "value": "production"}
+      ],
       "secrets": [
         {
           "name": "DATABASE_URL",
@@ -222,10 +216,7 @@ module "rds" {
         }
       },
       "healthCheck": {
-        "command": [
-          "CMD-SHELL",
-          "curl -f http://localhost:3000/health || exit 1"
-        ],
+        "command": ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"],
         "interval": 30,
         "timeout": 5,
         "retries": 3
@@ -236,7 +227,6 @@ module "rds" {
 ```
 
 ### GitHub Actions CI/CD
-
 ```yaml
 name: Deploy to AWS
 
@@ -291,7 +281,6 @@ jobs:
 ## GCP Deployment
 
 ### Cloud Run (Recommended for most cases)
-
 ```bash
 # Build and deploy
 gcloud builds submit --tag gcr.io/PROJECT_ID/app
@@ -305,7 +294,6 @@ gcloud run deploy app \
 ```
 
 ### Terraform for GCP
-
 ```hcl
 provider "google" {
   project = var.project_id
@@ -321,7 +309,7 @@ resource "google_cloud_run_service" "app" {
     spec {
       containers {
         image = "gcr.io/${var.project_id}/app:latest"
-
+        
         ports {
           container_port = 3000
         }
@@ -387,7 +375,6 @@ resource "google_sql_database_instance" "main" {
 ## Azure Deployment
 
 ### Azure Container Apps
-
 ```bash
 # Create resource group
 az group create --name app-rg --location eastus
@@ -416,7 +403,6 @@ az containerapp create \
 ## Kubernetes Deployment
 
 ### Manifests
-
 ```yaml
 # deployment.yaml
 apiVersion: apps/v1
@@ -450,11 +436,11 @@ spec:
                   key: database-url
           resources:
             requests:
-              memory: '128Mi'
-              cpu: '100m'
+              memory: "128Mi"
+              cpu: "100m"
             limits:
-              memory: '512Mi'
-              cpu: '500m'
+              memory: "512Mi"
+              cpu: "500m"
           livenessProbe:
             httpGet:
               path: /health
@@ -508,7 +494,6 @@ spec:
 ```
 
 ### Helm Chart Structure
-
 ```
 chart/
 ├── Chart.yaml
@@ -529,7 +514,6 @@ chart/
 ## Blue-Green Deployment
 
 ### Strategy
-
 ```
 1. Deploy new version to "green" environment
 2. Run smoke tests against green
@@ -540,7 +524,6 @@ chart/
 ```
 
 ### Implementation (AWS ALB)
-
 ```bash
 # Deploy green
 aws ecs update-service --cluster app --service app-green --task-definition app:NEW_VERSION
@@ -562,7 +545,6 @@ aws elbv2 modify-listener-rule \
 ## Rollback Procedures
 
 ### Immediate Rollback
-
 ```bash
 # AWS ECS
 aws ecs update-service --cluster app --service app --task-definition app:PREVIOUS_VERSION
@@ -575,9 +557,7 @@ vercel rollback
 ```
 
 ### Automated Rollback Triggers
-
 Monitor these metrics post-deploy:
-
 - Error rate > 1% for 5 minutes
 - p99 latency > 500ms for 5 minutes
 - Health check failures > 3 consecutive
@@ -590,7 +570,6 @@ If any trigger fires, execute automatic rollback.
 ## Secrets Management
 
 ### AWS Secrets Manager
-
 ```bash
 # Create secret
 aws secretsmanager create-secret \
@@ -607,7 +586,6 @@ aws secretsmanager create-secret \
 ```
 
 ### HashiCorp Vault
-
 ```bash
 # Store secret
 vault kv put secret/app database-url="postgresql://..."
@@ -617,12 +595,10 @@ vault kv get -field=database-url secret/app
 ```
 
 ### Environment-Specific
-
 ```
 .env.development   # Local development
 .env.staging       # Staging environment
 .env.production    # Production (never commit)
 ```
 
-All production secrets must be in a secrets manager, never in code or
-environment files.
+All production secrets must be in a secrets manager, never in code or environment files.

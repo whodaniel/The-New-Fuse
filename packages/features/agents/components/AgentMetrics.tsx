@@ -1,115 +1,102 @@
-'use client';
-
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import React from 'react';
-import { Agent, AgentMetrics as AgentMetricsType } from './types';
-
-interface AgentMetricsProps {
-  agent: Agent;
-  metrics?: AgentMetricsType;
-}
-
-interface MetricDataPoint {
-  timestamp: string;
-  value: number;
-}
-
-export const AgentMetrics: React.FC<AgentMetricsProps> = ({ agent, metrics }) => {
-  const displayMetrics = metrics || agent.metrics;
-
-  if (!displayMetrics) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <p className="text-gray-500">No metrics available for this agent</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Response Time</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold">{displayMetrics.averageResponseTime}ms</div>
-          <p className="text-sm text-gray-500">Average response time</p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Success Rate</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold">{displayMetrics.successRate}%</div>
-          <p className="text-sm text-gray-500">Request success rate</p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Total Calls</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold">{displayMetrics.totalCalls.toLocaleString()}</div>
-          <p className="text-sm text-gray-500">Total API calls</p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Tasks</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm">Completed</span>
-              <span className="font-medium">{displayMetrics.completedTasks}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm">Failed</span>
-              <span className="font-medium">{displayMetrics.failedTasks}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm">Total</span>
-              <span className="font-medium">{displayMetrics.totalTasks}</span>
-            </div>
+import React from "react";
+Object.defineProperty(exports, "__esModule", { value: true }): grid-cols-2 gap-6">
+      
+      <Card_1.Card>
+        <Card_1.CardHeader>
+          <Card_1.CardTitle>Response Time</Card_1.CardTitle>
+        </Card_1.CardHeader>
+        <Card_1.CardContent>
+          <div className = require("react");
+const Card_1: col-span-2">
+        <Card_1.CardHeader>
+          <Card_1.CardTitle>Total Calls</Card_1.CardTitle>
+        </Card_1.CardHeader>
+        <Card_1.CardContent>
+          <div className = require("../ui/Card/Card");
+import recharts_1 from 'recharts';
+const AgentMetrics = ( { agent, responseTimeData, successRateData, totalCallsData, }) => {
+    return (<div className="grid grid-cols-1 md"h-[300px]">
+            <recharts_1.ResponsiveContainer width="100%" height="100%">
+              <recharts_1.LineChart data={responseTimeData}>
+                <recharts_1.CartesianGrid strokeDasharray="3 3"/>
+                <recharts_1.XAxis dataKey="timestamp" tickFormatter={(value) => new Date(value).toLocaleTimeString()}/>
+                <recharts_1.YAxis unit="ms"/>
+                <recharts_1.Tooltip labelFormatter={(value) => new Date(value).toLocaleString()}/>
+                <recharts_1.Line type="monotone" dataKey="value" stroke="#2563eb" strokeWidth={2} dot={false}/>
+              </recharts_1.LineChart>
+            </recharts_1.ResponsiveContainer>
           </div>
-        </CardContent>
-      </Card>
+        </Card_1.CardContent>
+      </Card_1.Card>
 
-      <Card className="md:col-span-2">
-        <CardHeader>
-          <CardTitle>Resource Usage</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <div className="text-sm text-gray-500 mb-1">CPU</div>
-              <div className="text-xl font-semibold">{displayMetrics.resourceUsage?.cpu ?? 0}%</div>
+      <Card_1.Card>
+        <Card_1.CardHeader>
+          <Card_1.CardTitle>Success Rate</Card_1.CardTitle>
+        </Card_1.CardHeader>
+        <Card_1.CardContent>
+          <div className="h-[300px]">
+            <recharts_1.ResponsiveContainer width="100%" height="100%">
+              <recharts_1.LineChart data={successRateData}>
+                <recharts_1.CartesianGrid strokeDasharray="3 3"/>
+                <recharts_1.XAxis dataKey="timestamp" tickFormatter={(value) => new Date(value).toLocaleTimeString()}/>
+                <recharts_1.YAxis unit="%" domain={[0, 100]}/>
+                <recharts_1.Tooltip labelFormatter={(value) => new Date(value).toLocaleString()}/>
+                <recharts_1.Line type="monotone" dataKey="value" stroke="#16a34a" strokeWidth={2} dot={false}/>
+              </recharts_1.LineChart>
+            </recharts_1.ResponsiveContainer>
+          </div>
+        </Card_1.CardContent>
+      </Card_1.Card>
+
+      <Card_1.Card className="md"h-[300px]">
+            <recharts_1.ResponsiveContainer width="100%" height="100%">
+              <recharts_1.LineChart data={totalCallsData}>
+                <recharts_1.CartesianGrid strokeDasharray="3 3"/>
+                <recharts_1.XAxis dataKey="timestamp" tickFormatter={(value) => new Date(value).toLocaleTimeString()}/>
+                <recharts_1.YAxis />
+                <recharts_1.Tooltip labelFormatter={(value) => new Date(value).toLocaleString()}/>
+                <recharts_1.Line type="monotone" dataKey="value" stroke="#9333ea" strokeWidth={2} dot={false}/>
+              </recharts_1.LineChart>
+            </recharts_1.ResponsiveContainer>
+          </div>
+        </Card_1.CardContent>
+      </Card_1.Card>
+
+      <Card_1.Card className="md:col-span-2">
+        <Card_1.CardHeader>
+          <Card_1.CardTitle>Summary Statistics</Card_1.CardTitle>
+        </Card_1.CardHeader>
+        <Card_1.CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                Average Response Time
+              </div>
+              <div className="mt-1 text-2xl font-semibold">
+                {agent.metrics.averageResponseTime}ms
+              </div>
             </div>
-            <div>
-              <div className="text-sm text-gray-500 mb-1">Memory</div>
-              <div className="text-xl font-semibold">
-                {displayMetrics.resourceUsage?.memory ?? 0}%
+            <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              <div className="text-sm font-medium text-green-600 dark:text-green-400">
+                Success Rate
+              </div>
+              <div className="mt-1 text-2xl font-semibold">
+                {agent.metrics.successRate}%
+              </div>
+            </div>
+            <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+              <div className="text-sm font-medium text-purple-600 dark:text-purple-400">
+                Total Calls
+              </div>
+              <div className="mt-1 text-2xl font-semibold">
+                {agent.metrics.totalCalls}
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      {displayMetrics.lastActive && (
-        <Card className="md:col-span-2">
-          <CardContent className="p-4">
-            <p className="text-sm text-gray-500">
-              Last active: {new Date(displayMetrics.lastActive).toLocaleString()}
-            </p>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
+        </Card_1.CardContent>
+      </Card_1.Card>
+    </div>);
 };
+exports.AgentMetrics = AgentMetrics;
+export {};
+//# sourceMappingURL=AgentMetrics.js.map

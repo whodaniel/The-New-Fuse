@@ -12,14 +12,14 @@ export const queryAgentStateTool: AgentTool = {
   description: 'Query the state of other agents in the system',
   schema: z.object({
     agentId: z.string(),
-    stateKey: z.string().optional(),
+    stateKey: z.string().optional()
   }),
   async execute(params: { agentId: string; stateKey?: string }): Promise<any> {
     const { agentId, stateKey } = params;
     // Mock implementation
     const state = { status: 'active', messages: [], capabilities: [] };
     return stateKey ? state[stateKey as keyof typeof state] : state;
-  },
+  }
 };
 
 export const scheduleTaskTool: AgentTool = {
@@ -29,24 +29,24 @@ export const scheduleTaskTool: AgentTool = {
     taskId: z.string(),
     type: z.enum(['scheduled', 'delayed', 'cron']),
     delay: z.number().optional(),
-    cronExpression: z.string().optional(),
+    cronExpression: z.string().optional()
   }),
-  async execute(params: {
-    taskId: string;
-    type: 'scheduled' | 'delayed' | 'cron';
-    delay?: number;
-    cronExpression?: string;
+  async execute(params: { 
+    taskId: string; 
+    type: 'scheduled' | 'delayed' | 'cron'; 
+    delay?: number; 
+    cronExpression?: string 
   }): Promise<any> {
     const { taskId, type, delay, cronExpression } = params;
     // Mock implementation
     return {
-      taskId,
-      type,
+      taskId, 
+      type, 
       scheduledAt: new Date().toISOString(),
       delay,
-      cronExpression,
+      cronExpression
     };
-  },
+  }
 };
 
 export const updateCapabilitiesTool: AgentTool = {
@@ -54,7 +54,7 @@ export const updateCapabilitiesTool: AgentTool = {
   description: 'Update agent capabilities',
   schema: z.object({
     agentId: z.string(),
-    capabilities: z.array(z.string()),
+    capabilities: z.array(z.string())
   }),
   async execute(params: { agentId: string; capabilities: string[] }): Promise<any> {
     const { agentId, capabilities } = params;
@@ -62,10 +62,14 @@ export const updateCapabilitiesTool: AgentTool = {
     console.log(`Publishing capability update for agent ${agentId}`);
     return {
       agentId,
-      capabilities,
-      updatedAt: new Date().toISOString(),
+      capabilities, 
+      updatedAt: new Date().toISOString() 
     };
-  },
+  }
 };
 
-export const cloudflareAgentTools = [queryAgentStateTool, scheduleTaskTool, updateCapabilitiesTool];
+export const cloudflareAgentTools = [
+  queryAgentStateTool,
+  scheduleTaskTool,
+  updateCapabilitiesTool
+];

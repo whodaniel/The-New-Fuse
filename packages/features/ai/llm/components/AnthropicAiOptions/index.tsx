@@ -1,9 +1,9 @@
-import { Preloader } from '@/components/Preloader';
-import { useProviderEndpointAutoDiscovery } from '@/hooks/useProviderEndpointAutoDiscovery';
-import system from '@/models/system';
-import { CaretDown, CaretUp } from '@phosphor-icons/react';
 import React, { useState } from 'react';
+import { CaretUp, CaretDown } from "@phosphor-icons/react";
+import { Preloader } from "@/components/Preloader";
+import { useProviderEndpointAutoDiscovery } from "@/hooks/useProviderEndpointAutoDiscovery";
 import { BaseLLMOptionsProps, ModelSelectionProps } from '../../types';
+import system from "@/models/system";
 
 interface AnthropicAiSettings extends BaseLLMOptionsProps {
   settings: {
@@ -14,10 +14,12 @@ interface AnthropicAiSettings extends BaseLLMOptionsProps {
   };
 }
 
-const ANTHROPIC_COMMON_URLS = ['https://api.anthropic.com/v1'];
+const ANTHROPIC_COMMON_URLS = [
+  "https://api.anthropic.com/v1"
+];
 
 export default function AnthropicAiOptions({ settings }: AnthropicAiSettings): React.ReactElement {
-  const {
+  const { 
     autoDetecting,
     basePath,
     basePathValue,
@@ -25,18 +27,22 @@ export default function AnthropicAiOptions({ settings }: AnthropicAiSettings): R
     setShowAdvancedControls,
     handleAutoDetectClick,
   } = useProviderEndpointAutoDiscovery({
-    provider: 'anthropic',
+    provider: "anthropic",
     initialBasePath: settings?.AnthropicAiBasePath,
-    ENDPOINTS: ANTHROPIC_COMMON_URLS,
+    ENDPOINTS: ANTHROPIC_COMMON_URLS
   });
 
   const [tokenLimit, setTokenLimit] = useState<number>(settings?.AnthropicAiTokenLimit || 4096);
-  const [apiKey] = useState<string>(settings?.AnthropicAiApiKey || '');
+  const [apiKey] = useState<string>(settings?.AnthropicAiApiKey || "");
 
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
-        <AnthropicAiModelSelection settings={settings} basePath={basePath.value} apiKey={apiKey} />
+        <AnthropicAiModelSelection 
+          settings={settings} 
+          basePath={basePath.value}
+          apiKey={apiKey}
+        />
         <div className="flex flex-col w-60">
           <label className="text-white text-sm font-semibold block mb-2" id="token-limit-label">
             Token context window
@@ -61,7 +67,7 @@ export default function AnthropicAiOptions({ settings }: AnthropicAiSettings): R
           onClick={() => setShowAdvancedControls(!showAdvancedControls)}
           className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
-          {showAdvancedControls ? 'Hide' : 'Show'} Manual Endpoint Input
+          {showAdvancedControls ? "Hide" : "Show"} Manual Endpoint Input
           {showAdvancedControls ? (
             <CaretUp size={14} className="ml-1" />
           ) : (
@@ -110,17 +116,13 @@ export default function AnthropicAiOptions({ settings }: AnthropicAiSettings): R
   );
 }
 
-function AnthropicAiModelSelection({
-  settings,
-  basePath = null,
-  apiKey = null,
-}: ModelSelectionProps): React.ReactElement {
+function AnthropicAiModelSelection({ settings, basePath = null, apiKey = null }: ModelSelectionProps): React.ReactElement {
   const [customModels, setCustomModels] = useState<Array<{ id: string }>>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   React.useEffect(() => {
     async function findCustomModels() {
-      if (!basePath || !basePath.includes('/v1')) {
+      if (!basePath || !basePath.includes("/v1")) {
         setCustomModels([]);
         setLoading(false);
         return;
@@ -128,10 +130,10 @@ function AnthropicAiModelSelection({
 
       setLoading(true);
       try {
-        const { models } = await system.customModels('anthropic', apiKey, basePath);
+        const { models } = await system.customModels("anthropic", apiKey, basePath);
         setCustomModels(models || []);
       } catch (error) {
-        console.error('Failed to fetch custom models:', error);
+        console.error("Failed to fetch custom models:", error);
         setCustomModels([]);
       }
       setLoading(false);
@@ -153,9 +155,9 @@ function AnthropicAiModelSelection({
           className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
         >
           <option disabled selected>
-            {basePath?.includes('/v1')
-              ? '--loading available models--'
-              : 'Enter Anthropic AI URL first'}
+            {basePath?.includes("/v1")
+              ? "--loading available models--"
+              : "Enter Anthropic AI URL first"}
           </option>
         </select>
       </div>

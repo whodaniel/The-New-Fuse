@@ -2,9 +2,9 @@
  * Unit tests for DependencyGraphAnalyzer
  */
 
-import { beforeEach, describe, expect, it } from 'vitest';
-import { PackageDependency } from '../types/index.js';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { DependencyGraphAnalyzer } from './DependencyGraphAnalyzer.js';
+import { PackageDependency } from '../types/index.js';
 
 describe('DependencyGraphAnalyzer', () => {
   let analyzer: DependencyGraphAnalyzer;
@@ -21,22 +21,22 @@ describe('DependencyGraphAnalyzer', () => {
           path: '/app',
           dependencies: ['core', 'utils'],
           devDependencies: [],
-          estimatedMemoryUsage: 256,
+          estimatedMemoryUsage: 256
         },
         {
           name: 'core',
           path: '/core',
           dependencies: ['utils'],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
+          estimatedMemoryUsage: 128
         },
         {
           name: 'utils',
           path: '/utils',
           dependencies: [],
           devDependencies: [],
-          estimatedMemoryUsage: 64,
-        },
+          estimatedMemoryUsage: 64
+        }
       ];
 
       const buildOrder = analyzer.getOptimalBuildOrder(dependencies);
@@ -51,15 +51,15 @@ describe('DependencyGraphAnalyzer', () => {
           path: '/standalone1',
           dependencies: [],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
+          estimatedMemoryUsage: 128
         },
         {
           name: 'standalone2',
           path: '/standalone2',
           dependencies: [],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
-        },
+          estimatedMemoryUsage: 128
+        }
       ];
 
       const buildOrder = analyzer.getOptimalBuildOrder(dependencies);
@@ -78,15 +78,15 @@ describe('DependencyGraphAnalyzer', () => {
           path: '/a',
           dependencies: ['b'],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
+          estimatedMemoryUsage: 128
         },
         {
           name: 'b',
           path: '/b',
           dependencies: ['a'],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
-        },
+          estimatedMemoryUsage: 128
+        }
       ];
 
       const cycles = analyzer.detectCircularDependencies(dependencies);
@@ -103,22 +103,22 @@ describe('DependencyGraphAnalyzer', () => {
           path: '/a',
           dependencies: ['b'],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
+          estimatedMemoryUsage: 128
         },
         {
           name: 'b',
           path: '/b',
           dependencies: ['c'],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
+          estimatedMemoryUsage: 128
         },
         {
           name: 'c',
           path: '/c',
           dependencies: ['a'],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
-        },
+          estimatedMemoryUsage: 128
+        }
       ];
 
       const cycles = analyzer.detectCircularDependencies(dependencies);
@@ -136,15 +136,15 @@ describe('DependencyGraphAnalyzer', () => {
           path: '/a',
           dependencies: ['b'],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
+          estimatedMemoryUsage: 128
         },
         {
           name: 'b',
           path: '/b',
           dependencies: [],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
-        },
+          estimatedMemoryUsage: 128
+        }
       ];
 
       const cycles = analyzer.detectCircularDependencies(dependencies);
@@ -161,41 +161,41 @@ describe('DependencyGraphAnalyzer', () => {
           path: '/utils',
           dependencies: [],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
+          estimatedMemoryUsage: 128
         },
         {
           name: 'core',
           path: '/core',
           dependencies: ['utils'],
           devDependencies: [],
-          estimatedMemoryUsage: 256,
+          estimatedMemoryUsage: 256
         },
         {
           name: 'app1',
           path: '/app1',
           dependencies: ['core'],
           devDependencies: [],
-          estimatedMemoryUsage: 512,
+          estimatedMemoryUsage: 512
         },
         {
           name: 'app2',
           path: '/app2',
           dependencies: ['core'],
           devDependencies: [],
-          estimatedMemoryUsage: 512,
-        },
+          estimatedMemoryUsage: 512
+        }
       ];
 
       const stages = analyzer.createBuildStages(dependencies, 2);
 
       expect(stages).toHaveLength(3);
-
+      
       // First stage should contain utils
       expect(stages[0].packages).toContain('utils');
-
+      
       // Second stage should contain core
       expect(stages[1].packages).toContain('core');
-
+      
       // Third stage should contain apps
       expect(stages[2].packages).toContain('app1');
       expect(stages[2].packages).toContain('app2');
@@ -208,31 +208,31 @@ describe('DependencyGraphAnalyzer', () => {
           path: '/heavy1',
           dependencies: [],
           devDependencies: [],
-          estimatedMemoryUsage: 1500, // 1.5GB
+          estimatedMemoryUsage: 1500 // 1.5GB
         },
         {
           name: 'heavy2',
           path: '/heavy2',
           dependencies: [],
           devDependencies: [],
-          estimatedMemoryUsage: 1500, // 1.5GB
+          estimatedMemoryUsage: 1500 // 1.5GB
         },
         {
           name: 'light',
           path: '/light',
           dependencies: [],
           devDependencies: [],
-          estimatedMemoryUsage: 100,
-        },
+          estimatedMemoryUsage: 100
+        }
       ];
 
       const stages = analyzer.createBuildStages(dependencies, 10); // Large stage size
 
       // Should create separate stages due to memory limits
       expect(stages.length).toBeGreaterThan(1);
-
+      
       // Each stage should not exceed 2GB
-      stages.forEach((stage) => {
+      stages.forEach(stage => {
         expect(stage.estimatedMemoryUsage).toBeLessThanOrEqual(2048);
       });
     });
@@ -244,15 +244,15 @@ describe('DependencyGraphAnalyzer', () => {
           path: '/independent1',
           dependencies: [],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
+          estimatedMemoryUsage: 128
         },
         {
           name: 'independent2',
           path: '/independent2',
           dependencies: [],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
-        },
+          estimatedMemoryUsage: 128
+        }
       ];
 
       const stages = analyzer.createBuildStages(dependencies, 5);
@@ -268,15 +268,15 @@ describe('DependencyGraphAnalyzer', () => {
           path: '/a',
           dependencies: ['b'],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
+          estimatedMemoryUsage: 128
         },
         {
           name: 'b',
           path: '/b',
           dependencies: [],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
-        },
+          estimatedMemoryUsage: 128
+        }
       ];
 
       const stages = analyzer.createBuildStages(dependencies, 5);
@@ -292,15 +292,15 @@ describe('DependencyGraphAnalyzer', () => {
           path: '/base',
           dependencies: [],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
+          estimatedMemoryUsage: 128
         },
         {
           name: 'derived',
           path: '/derived',
           dependencies: ['base'],
           devDependencies: [],
-          estimatedMemoryUsage: 128,
-        },
+          estimatedMemoryUsage: 128
+        }
       ];
 
       const stages = analyzer.createBuildStages(dependencies, 1);
@@ -331,8 +331,8 @@ describe('DependencyGraphAnalyzer', () => {
           path: '/external-only',
           dependencies: ['lodash', 'react'], // External dependencies
           devDependencies: [],
-          estimatedMemoryUsage: 128,
-        },
+          estimatedMemoryUsage: 128
+        }
       ];
 
       const buildOrder = analyzer.getOptimalBuildOrder(dependencies);

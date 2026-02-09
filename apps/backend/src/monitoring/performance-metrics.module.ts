@@ -1,6 +1,6 @@
-import { Global, Module } from '@nestjs/common';
-import { PerformanceMetricsController } from './performance-metrics.controller';
+import { Module, Global } from '@nestjs/common';
 import { PerformanceMetricsService } from './performance-metrics.service';
+import { PerformanceMetricsController } from './performance-metrics.controller';
 
 @Global()
 @Module({

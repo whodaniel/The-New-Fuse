@@ -4,17 +4,17 @@
  */
 
 import {
-  Body,
   Controller,
   Get,
-  Headers,
-  HttpStatus,
-  Param,
   Post,
+  Param,
+  Body,
+  Headers,
   Res,
+  HttpStatus,
   Version,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProxyService } from '../proxy/proxy.service';
 
@@ -27,7 +27,10 @@ export class ChatGatewayController {
   @Version('1')
   @ApiOperation({ summary: 'Get chat sessions' })
   @ApiResponse({ status: 200, description: 'Chat sessions retrieved successfully' })
-  async getChatSessions(@Headers() headers: Record<string, string>, @Res() res: Response) {
+  async getChatSessions(
+    @Headers() headers: Record<string, string>,
+    @Res() res: Response,
+  ) {
     try {
       const response = await this.proxyService.proxyRequest(
         'backend',
@@ -52,7 +55,7 @@ export class ChatGatewayController {
   async createChatSession(
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -80,7 +83,7 @@ export class ChatGatewayController {
   async getChatMessages(
     @Param('id') id: string,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     try {
       const response = await this.proxyService.proxyRequest(
@@ -108,7 +111,7 @@ export class ChatGatewayController {
     @Param('id') id: string,
     @Body() body: any,
     @Headers() headers: Record<string, string>,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     try {
       const response = await this.proxyService.proxyRequest(

@@ -1,11 +1,9 @@
 # Developer Security Checklist
-
 **The New Fuse Platform**
 
 ## Quick Reference
 
-Use this checklist for every feature, bug fix, or code change you make. Security
-is everyone's responsibility!
+Use this checklist for every feature, bug fix, or code change you make. Security is everyone's responsibility!
 
 ---
 
@@ -35,7 +33,6 @@ is everyone's responsibility!
 - [ ] **Refresh token rotation** implemented
 
 **Example:**
-
 ```typescript
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @RequirePermissions('resource:action')
@@ -56,7 +53,6 @@ async protectedEndpoint() {
 - [ ] **Request body size** is limited
 
 **Example:**
-
 ```typescript
 export class CreateUserDto {
   @IsEmail()
@@ -75,22 +71,20 @@ export class CreateUserDto {
 
 ### SQL Injection Prevention
 
-- [ ] **Drizzle used** for database queries (parameterized by default)
+- [ ] **Prisma used** for database queries (parameterized by default)
 - [ ] **No raw SQL** with user input concatenation
 - [ ] **Raw queries** use parameterization ($queryRaw, not $queryRawUnsafe)
 - [ ] **ORM methods** used instead of raw SQL when possible
 
 **Good:**
-
 ```typescript
-await drizzle.user.findUnique({ where: { id: userId } });
-await drizzle.$queryRaw`SELECT * FROM users WHERE id = ${userId}`;
+await prisma.user.findUnique({ where: { id: userId } });
+await prisma.$queryRaw`SELECT * FROM users WHERE id = ${userId}`;
 ```
 
 **Bad:**
-
 ```typescript
-await drizzle.$executeRawUnsafe(`DELETE FROM users WHERE id = ${id}`);
+await prisma.$executeRawUnsafe(`DELETE FROM users WHERE id = ${id}`);
 ```
 
 ### XSS Prevention
@@ -104,7 +98,6 @@ await drizzle.$executeRawUnsafe(`DELETE FROM users WHERE id = ${id}`);
 - [ ] **Template escaping** enabled
 
 **Example:**
-
 ```typescript
 const sanitizedHtml = this.inputSanitization.sanitizeHTML(userInput);
 ```
@@ -128,7 +121,6 @@ const sanitizedHtml = this.inputSanitization.sanitizeHTML(userInput);
 - [ ] **Error messages** don't leak sensitive information
 
 **Example:**
-
 ```typescript
 @UseGuards(RateLimitGuard)
 @RateLimit({ requests: 100, window: 60000 })
@@ -149,13 +141,12 @@ async getData() {
 - [ ] **Personal data** can be exported/deleted (GDPR)
 
 **Example:**
-
 ```typescript
 // Encrypt before storing
 const encrypted = await this.encryption.encrypt(sensitiveData);
-await drizzle.user.update({
+await prisma.user.update({
   where: { id },
-  data: { encryptedField: JSON.stringify(encrypted) },
+  data: { encryptedField: JSON.stringify(encrypted) }
 });
 ```
 
@@ -170,7 +161,6 @@ await drizzle.user.update({
 - [ ] **API keys rotated** regularly
 
 **Good:**
-
 ```typescript
 const jwtSecret = process.env.JWT_SECRET;
 if (!jwtSecret) {
@@ -179,7 +169,6 @@ if (!jwtSecret) {
 ```
 
 **Bad:**
-
 ```typescript
 const jwtSecret = process.env.JWT_SECRET || 'default-secret';
 ```
@@ -194,7 +183,6 @@ const jwtSecret = process.env.JWT_SECRET || 'default-secret';
 - [ ] **Database errors** sanitized before sending to client
 
 **Example:**
-
 ```typescript
 try {
   // Your code
@@ -223,7 +211,6 @@ try {
 - [ ] **Log levels** appropriate (error, warn, info, debug)
 
 **Example:**
-
 ```typescript
 this.logger.security('Failed login attempt', {
   email: email,
@@ -243,7 +230,6 @@ this.logger.security('Failed login attempt', {
 - [ ] **License compliance** checked
 
 **Run before committing:**
-
 ```bash
 pnpm audit
 pnpm outdated
@@ -259,7 +245,6 @@ pnpm outdated
 - [ ] **File storage** secure and isolated
 
 **Example:**
-
 ```typescript
 const sanitizedFileName = this.inputSanitization.sanitizeFileName(fileName);
 if (file.size > MAX_FILE_SIZE) {
@@ -415,7 +400,7 @@ pnpm add -D npm-audit-resolver
 - **SonarLint** - Security and quality
 - **GitLens** - Git insights
 - **Better Comments** - Highlight security comments
-- **Drizzle** - Database ORM support
+- **Prisma** - Database ORM support
 
 ### Git Hooks
 
@@ -443,28 +428,24 @@ pnpm test
 ### Avoid These Mistakes:
 
 **❌ Trusting User Input**
-
 ```typescript
 // BAD
 const query = `SELECT * FROM users WHERE id = ${req.params.id}`;
 ```
 
 **❌ Hardcoded Secrets**
-
 ```typescript
 // BAD
 const jwtSecret = 'my-secret-key';
 ```
 
 **❌ Exposing Stack Traces**
-
 ```typescript
 // BAD
 res.status(500).json({ error: error.stack });
 ```
 
 **❌ Weak Authentication**
-
 ```typescript
 // BAD
 if (req.headers.authorization === 'Bearer token') {
@@ -473,7 +454,6 @@ if (req.headers.authorization === 'Bearer token') {
 ```
 
 **❌ Missing Input Validation**
-
 ```typescript
 // BAD
 @Post('create')
@@ -483,14 +463,12 @@ async create(@Body() data: any) { // No DTO!
 ```
 
 **❌ Logging Sensitive Data**
-
 ```typescript
 // BAD
 logger.info('User login', { password, token });
 ```
 
 **❌ Weak CORS**
-
 ```typescript
 // BAD
 app.enableCors({ origin: '*' });
@@ -513,7 +491,7 @@ app.enableCors({ origin: '*' });
 - [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
 - [NestJS Security](https://docs.nestjs.com/security/authentication)
 - [Node.js Security Best Practices](https://nodejs.org/en/docs/guides/security/)
-- [Drizzle Security](https://www.drizzle.io/docs/concepts/components/drizzle-client/deployment#security)
+- [Prisma Security](https://www.prisma.io/docs/concepts/components/prisma-client/deployment#security)
 
 ### Training
 
@@ -529,18 +507,15 @@ app.enableCors({ origin: '*' });
 ### Questions?
 
 **Security Team:**
-
 - **Email:** security@thenewfuse.com
 - **Slack:** #security
 
 **Before asking:**
-
 1. Check Security Best Practices guide
 2. Review similar code in the codebase
 3. Search OWASP resources
 
 **When asking:**
-
 - Describe what you're trying to achieve
 - Share relevant code snippet
 - Explain what you've tried
@@ -574,7 +549,6 @@ app.enableCors({ origin: '*' });
 **When in Doubt:**
 
 If you're unsure about a security decision:
-
 1. Ask the security team
 2. Review the security documentation
 3. Look for similar implementations
@@ -582,5 +556,4 @@ If you're unsure about a security decision:
 
 ---
 
-**Security is a shared responsibility. Thank you for keeping The New Fuse
-secure!**
+**Security is a shared responsibility. Thank you for keeping The New Fuse secure!**

@@ -138,13 +138,11 @@ export class WorkflowService extends BaseService {
    * @param limit Number of workflows per page
    * @returns Promise resolving to the workflows data
    */
-  async getWorkflows(
-    page: number = 1,
-    limit: number = 10
-  ): Promise<{ workflows: Workflow[]; total: number }> {
-    return this.apiClient.get<{ workflows: Workflow[]; total: number }>(this.getPath(), {
-      params: { page, limit },
-    });
+  async getWorkflows(page: number = 1, limit: number = 10): Promise<{ workflows: Workflow[]; total: number }> {
+    return this.apiClient.get<{ workflows: Workflow[]; total: number }>(
+      this.getPath(),
+      { params: { page, limit } }
+    );
   }
 
   /**
@@ -191,7 +189,10 @@ export class WorkflowService extends BaseService {
    * @returns Promise resolving to the workflow execution data
    */
   async executeWorkflow(id: string, input: any): Promise<WorkflowExecution> {
-    return this.apiClient.post<WorkflowExecution>(this.getPath(`/${id}/execute`), { input });
+    return this.apiClient.post<WorkflowExecution>(
+      this.getPath(`/${id}/execute`),
+      { input }
+    );
   }
 
   /**
@@ -219,6 +220,8 @@ export class WorkflowService extends BaseService {
    * @returns Promise resolving to the workflow execution data
    */
   async getWorkflowExecution(id: string, executionId: string): Promise<WorkflowExecution> {
-    return this.apiClient.get<WorkflowExecution>(this.getPath(`/${id}/executions/${executionId}`));
+    return this.apiClient.get<WorkflowExecution>(
+      this.getPath(`/${id}/executions/${executionId}`)
+    );
   }
 }

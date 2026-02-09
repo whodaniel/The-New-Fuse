@@ -1,3 +1,4 @@
+import { sessionManager, Session } from '@your-org/security';
 import { ChatService } from './chat.service';
 
 interface ChatSession {
@@ -14,15 +15,12 @@ export class AgentChatManager extends EventEmitter {
     super();
   }
 
-  async createSession(
-    agentId: string,
-    metadata: Record<string, unknown> = {}
-  ): Promise<ChatSession> {
+  async createSession(agentId: string, metadata: Record<string, unknown> = {}): Promise<ChatSession> {
     const session: ChatSession = {
       id: crypto.randomUUID(),
       agentId,
       messages: [],
-      metadata,
+      metadata
     };
 
     this.activeSessions.set(session.id, session);
@@ -39,12 +37,12 @@ export class AgentChatManager extends EventEmitter {
     await this.chatService.sendMessage(content, {
       sessionId,
       agentId: session.agentId,
-      ...session.metadata,
+      ...session.metadata
     });
 
     session.messages.push({
       content,
-      timestamp: new Date(),
+      timestamp: new Date()
     });
   }
 

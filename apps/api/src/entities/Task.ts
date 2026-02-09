@@ -1,13 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { Pipeline } from './Pipeline';
 import { TaskExecution } from './TaskExecution';
 
@@ -40,13 +31,13 @@ export class Task {
   @Column({ nullable: true })
   endTime!: Date;
 
-  @ManyToOne(() => Pipeline, (pipeline) => pipeline.tasks)
+  @ManyToOne(() => Pipeline, pipeline => pipeline.tasks)
   pipeline!: Pipeline;
 
   @Column()
   pipelineId!: string;
 
-  @OneToMany(() => TaskExecution, (execution) => execution.task)
+  @OneToMany(() => TaskExecution, execution => execution.task)
   taskExecutions!: TaskExecution[];
 
   @CreateDateColumn()

@@ -1,18 +1,18 @@
 /**
  * Integration Tests for PromptHandoffFlywheel
- *
+ * 
  * Tests the complete handoff system integration with existing services
  * Requirements: 4.1, 4.2, 4.3, 4.4, 4.5
  */
 
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { ConflictManager } from '../services/ConflictManager';
-import { MasterClockService } from '../services/MasterClockService';
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import { EnhancedAgentHandoffTemplateService } from './EnhancedAgentHandoffTemplateService';
-import { PromptHandoffFlywheel } from './PromptHandoffFlywheel';
-import { PromptTemplateIntegration } from './PromptTemplateIntegration';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 const vi = jest;
+import { PromptHandoffFlywheel } from './PromptHandoffFlywheel';
+import { EnhancedAgentHandoffTemplateService } from './EnhancedAgentHandoffTemplateService';
+import { PromptTemplateIntegration } from './PromptTemplateIntegration';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
+import { MasterClockService } from '../services/MasterClockService';
+import { ConflictManager } from '../services/ConflictManager';
 
 describe('PromptHandoffFlywheel Integration', () => {
   let flywheel: PromptHandoffFlywheel;
@@ -29,7 +29,11 @@ describe('PromptHandoffFlywheel Integration', () => {
     masterClock = new MasterClockService({} as any, {} as any);
     conflictManager = new ConflictManager({} as any, {} as any);
 
-    flywheel = new PromptHandoffFlywheel(syncOrchestrator, masterClock, conflictManager);
+    flywheel = new PromptHandoffFlywheel(
+      syncOrchestrator,
+      masterClock,
+      conflictManager
+    );
 
     handoffService = new EnhancedAgentHandoffTemplateService(
       flywheel,
@@ -43,26 +47,26 @@ describe('PromptHandoffFlywheel Integration', () => {
         id: `template_${Date.now()}`,
         ...template,
         currentVersion: 'v1',
-        versions: [],
+        versions: []
       }),
       getTemplate: async (id: string) => ({
         id,
         name: 'Mock Template',
         content: 'Mock content',
         variables: {},
-        updatedAt: new Date(),
+        updatedAt: new Date()
       }),
       updateTemplate: async (id: string, updates: any) => ({ id, ...updates }),
       getTemplateAnalytics: async (id: string) => ({
         totalRuns: 10,
-        successRate: 95,
+        successRate: 95
       }),
       recordExecution: async (result: any) => {},
       createVersion: async (templateId: string, version: any) => ({
         id: `version_${Date.now()}`,
-        ...version,
+        ...version
       }),
-      setActiveVersion: async (templateId: string, versionId: string) => ({}),
+      setActiveVersion: async (templateId: string, versionId: string) => ({})
     };
 
     integration = new PromptTemplateIntegration(
@@ -89,7 +93,7 @@ Agent: {{agent_id}}
 Please continue with full context awareness.`,
         variables: {
           task_description: 'Complete the integration test',
-          agent_id: 'test-agent',
+          agent_id: 'test-agent'
         },
         contextRequirements: ['task_description', 'execution_history'],
         agentCapabilities: ['general', 'testing'],
@@ -98,8 +102,8 @@ Please continue with full context awareness.`,
         loadBalancingWeight: 1.0,
         integrationMetadata: {
           syncEnabled: true,
-          conflictResolution: 'merge',
-        },
+          conflictResolution: 'merge'
+        }
       });
 
       expect(templateId).toBeDefined();
@@ -114,12 +118,12 @@ Please continue with full context awareness.`,
         templateId,
         {
           task_description: 'Integration test task',
-          context_data: 'Initial context from agent-1',
+          context_data: 'Initial context from agent-1'
         },
         {
           preserveContext: true,
           memoryIntegration: true,
-          targetAgentId: 'agent-2',
+          targetAgentId: 'agent-2'
         }
       );
 
@@ -139,7 +143,7 @@ Please continue with full context awareness.`,
       expect(context?.targetAgentId).toBe('agent-2');
       expect(context?.variables).toMatchObject({
         task_description: 'Integration test task',
-        context_data: 'Initial context from agent-1',
+        context_data: 'Initial context from agent-1'
       });
     });
 
@@ -158,15 +162,15 @@ Please continue with full context awareness.`,
         loadBalancingWeight: 1.0,
         integrationMetadata: {
           syncEnabled: true,
-          conflictResolution: 'merge',
-        },
+          conflictResolution: 'merge'
+        }
       });
 
       // Step 2: Integrate with base template service
       const integrationId = await integration.integrateTemplate(templateId, {
         createBaseTemplate: true,
         autoSync: true,
-        conflictResolution: 'merge',
+        conflictResolution: 'merge'
       });
 
       expect(integrationId).toBe(templateId);
@@ -193,7 +197,7 @@ Please continue with full context awareness.`,
   describe('Load Balancing and Backpressure Integration', () => {
     it('should distribute load across multiple agents', async () => {
       // Register multiple agents with different capabilities
-      await flywheel.registerAgent('agent-1', ['general']);
+      await flywheel.registerAgent('agent-1', ['general'], );
       await flywheel.registerAgent('agent-2', ['general']);
       await flywheel.registerAgent('agent-3', ['specialized']);
 
@@ -216,8 +220,8 @@ Please continue with full context awareness.`,
         loadBalancingWeight: 1.0,
         integrationMetadata: {
           syncEnabled: true,
-          conflictResolution: 'latest',
-        },
+          conflictResolution: 'latest'
+        }
       });
 
       // Get optimal target (should be agent-1 with lowest load)
@@ -227,7 +231,7 @@ Please continue with full context awareness.`,
         {
           'agent-1': ['general'],
           'agent-2': ['general'],
-          'agent-3': ['specialized'],
+          'agent-3': ['specialized']
         }
       );
 
@@ -249,8 +253,8 @@ Please continue with full context awareness.`,
         loadBalancingWeight: 1.0,
         integrationMetadata: {
           syncEnabled: true,
-          conflictResolution: 'latest',
-        },
+          conflictResolution: 'latest'
+        }
       });
 
       // Register agent with high load
@@ -283,14 +287,14 @@ Please continue with full context awareness.`,
         loadBalancingWeight: 1.0,
         integrationMetadata: {
           syncEnabled: true,
-          conflictResolution: 'merge',
-        },
+          conflictResolution: 'merge'
+        }
       });
 
       // Integrate with base template service
       await integration.integrateTemplate(templateId, {
         createBaseTemplate: true,
-        autoSync: true,
+        autoSync: true
       });
 
       // Execute multiple times to generate metrics
@@ -325,24 +329,31 @@ Please continue with full context awareness.`,
         loadBalancingWeight: 1.0,
         integrationMetadata: {
           syncEnabled: true,
-          conflictResolution: 'merge',
-        },
+          conflictResolution: 'merge'
+        }
       });
 
       // Create some sessions
-      const sessionId1 = await handoffService.initiateHandoffSession('agent-1', templateId, {
-        task: 'report task 1',
-      });
+      const sessionId1 = await handoffService.initiateHandoffSession(
+        'agent-1',
+        templateId,
+        { task: 'report task 1' }
+      );
 
-      const sessionId2 = await handoffService.initiateHandoffSession('agent-2', templateId, {
-        task: 'report task 2',
-      });
+      const sessionId2 = await handoffService.initiateHandoffSession(
+        'agent-2',
+        templateId,
+        { task: 'report task 2' }
+      );
 
       // Generate report
-      const report = await handoffService.generateHandoffReport(templateId, {
-        start: new Date(Date.now() - 24 * 60 * 60 * 1000), // 24 hours ago
-        end: new Date(),
-      });
+      const report = await handoffService.generateHandoffReport(
+        templateId,
+        {
+          start: new Date(Date.now() - 24 * 60 * 60 * 1000), // 24 hours ago
+          end: new Date()
+        }
+      );
 
       expect(report).toBeDefined();
       expect(report.template.id).toBe(templateId);
@@ -367,8 +378,8 @@ Please continue with full context awareness.`,
         loadBalancingWeight: 1.0,
         integrationMetadata: {
           syncEnabled: true,
-          conflictResolution: 'merge',
-        },
+          conflictResolution: 'merge'
+        }
       });
 
       // Integrate template
@@ -376,7 +387,7 @@ Please continue with full context awareness.`,
 
       // Simulate conflict by updating both templates differently
       await handoffService.updateHandoffTemplate(templateId, {
-        content: 'Handoff updated content',
+        content: 'Handoff updated content'
       });
 
       // Resolve conflict with merge strategy
@@ -400,8 +411,8 @@ Please continue with full context awareness.`,
         loadBalancingWeight: 1.0,
         integrationMetadata: {
           syncEnabled: true,
-          conflictResolution: 'latest',
-        },
+          conflictResolution: 'latest'
+        }
       });
 
       // Register agents
@@ -422,7 +433,7 @@ Please continue with full context awareness.`,
       // System should handle the failure gracefully
       const session = await handoffService.getSession(sessionId);
       expect(session).toBeDefined();
-
+      
       // The system should either retry or reassign to another agent
       // This would be handled by the flywheel's error handling mechanisms
     });
@@ -443,8 +454,8 @@ Please continue with full context awareness.`,
         loadBalancingWeight: 1.0,
         integrationMetadata: {
           syncEnabled: true,
-          conflictResolution: 'latest',
-        },
+          conflictResolution: 'latest'
+        }
       });
 
       // Register multiple agents
@@ -456,21 +467,25 @@ Please continue with full context awareness.`,
       const sessionPromises = [];
       for (let i = 1; i <= 10; i++) {
         sessionPromises.push(
-          handoffService.initiateHandoffSession(`agent-${(i % 5) + 1}`, templateId, {
-            task_id: `concurrent_task_${i}`,
-          })
+          handoffService.initiateHandoffSession(
+            `agent-${(i % 5) + 1}`,
+            templateId,
+            { task_id: `concurrent_task_${i}` }
+          )
         );
       }
 
       const sessionIds = await Promise.all(sessionPromises);
-
+      
       expect(sessionIds).toHaveLength(10);
-      expect(sessionIds.every((id) => typeof id === 'string')).toBe(true);
+      expect(sessionIds.every(id => typeof id === 'string')).toBe(true);
 
       // Verify all sessions were created
-      const sessions = await Promise.all(sessionIds.map((id) => handoffService.getSession(id)));
+      const sessions = await Promise.all(
+        sessionIds.map(id => handoffService.getSession(id))
+      );
 
-      expect(sessions.every((session) => session !== null)).toBe(true);
+      expect(sessions.every(session => session !== null)).toBe(true);
     });
   });
 });

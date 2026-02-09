@@ -2,35 +2,27 @@
 
 ## ✅ Frontend Service - SUCCESSFULLY DEPLOYED
 
-This guide documents the working configuration used to deploy the Frontend
-service, which can be replicated for other services.
+This guide documents the working configuration used to deploy the Frontend service, which can be replicated for other services.
 
 ---
 
 ## 🎯 Key Success Factors
 
 ### 1. **Use Docker (Not Nixpacks)**
-
-A standardized multi-stage `Dockerfile` provides a consistent and reproducible
-build process across all services in the monorepo.
+A standardized multi-stage `Dockerfile` provides a consistent and reproducible build process across all services in the monorepo.
 
 ### 2. **Root Directory and Dockerfile Path**
-
-- **CRITICAL**: Set the "Root Directory" in the Railway UI to the repository
-  root (`.`).
+- **CRITICAL**: Set the "Root Directory" in the Railway UI to the repository root (`.`).
 - **CRITICAL**: Set the "Dockerfile Path" to `./Dockerfile.railway`.
-- This ensures Railway can find the Dockerfile and has access to the entire
-  monorepo to resolve workspace dependencies.
+- This ensures Railway can find the Dockerfile and has access to the entire monorepo to resolve workspace dependencies.
 
 ---
 
 ## 📁 Standardized Dockerfile Configuration
 
-A single, multi-stage `Dockerfile.railway` in the root of the repository is used
-to build and deploy all services.
+A single, multi-stage `Dockerfile.railway` in the root of the repository is used to build and deploy all services.
 
 ### `Dockerfile.railway`
-
 ```dockerfile
 # Multi-stage Dockerfile for The New Fuse Backend Services
 # Optimized for monorepo with Node.js runtime
@@ -80,7 +72,7 @@ ARG SERVICE_PATH
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/apps/${SERVICE_PATH}/dist ./apps/${SERVICE_PATH}/dist
 COPY --from=build /app/packages/*/dist ./packages/
-COPY --from=build /app/drizzle ./drizzle
+COPY --from=build /app/prisma ./prisma
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
@@ -98,16 +90,11 @@ CMD ["node", "apps/${SERVICE_PATH}/dist/index.js"]
 ```
 
 **Key Points:**
-
-- **`SERVICE_PATH`**: A build-time argument (`--build-arg SERVICE_PATH=...`)
-  specifies which service to build and run (e.g., `api`, `backend`, `frontend`).
-- **Multi-stage Build**: Separates dependency installation, building, and the
-  final production image for optimization and smaller image size.
+- **`SERVICE_PATH`**: A build-time argument (`--build-arg SERVICE_PATH=...`) specifies which service to build and run (e.g., `api`, `backend`, `frontend`).
+- **Multi-stage Build**: Separates dependency installation, building, and the final production image for optimization and smaller image size.
 - **`pnpm` and `turbo`**: Uses the project's standard tooling.
-- **Non-root user**: Enhances security by running the application as a non-root
-  user.
-- **Healthcheck**: Includes a standardized healthcheck for Railway to monitor
-  the service.
+- **Non-root user**: Enhances security by running the application as a non-root user.
+- **Healthcheck**: Includes a standardized healthcheck for Railway to monitor the service.
 
 ---
 
@@ -116,27 +103,21 @@ CMD ["node", "apps/${SERVICE_PATH}/dist/index.js"]
 ### For Each Service:
 
 #### 1. **Prepare Railway Service in UI**
-
 1. Go to the Railway Dashboard.
 2. Create a new service or select an existing one.
 3. Connect to your GitHub repository and select the `main` branch.
 
 #### 2. **Configure Build Settings**
-
 1. In the service settings, go to the "Build" section.
 2. Set the **Root Directory** to the root of the monorepo (`.`).
 3. Set the **Dockerfile Path** to `./Dockerfile.railway`.
 
 #### 3. **Set the `SERVICE_PATH` Build Argument**
-
 1. In the service settings, go to the "Variables" section.
 2. Add a new variable with the key `SERVICE_PATH`.
-3. Set the value to the path of the service you want to deploy (e.g., `api`,
-   `backend`, `frontend`). This variable is used by the `Dockerfile.railway` to
-   build the correct service.
+3. Set the value to the path of the service you want to deploy (e.g., `api`, `backend`, `frontend`). This variable is used by the `Dockerfile.railway` to build the correct service.
 
 #### 4. **Set Environment Variables in Railway**
-
 - Go to service → Variables tab
 - Add required environment variables:
   - `DATABASE_URL`
@@ -145,7 +126,6 @@ CMD ["node", "apps/${SERVICE_PATH}/dist/index.js"]
   - Any service-specific variables
 
 #### 5. **Deploy and Monitor**
-
 1. Push your changes to the `main` branch to trigger an automatic deployment.
 2. Monitor the build logs in the Railway dashboard.
 3. Verify that the service deploys successfully and passes the health check.
@@ -155,47 +135,31 @@ CMD ["node", "apps/${SERVICE_PATH}/dist/index.js"]
 ## 🔧 Common Issues & Solutions
 
 ### Issue 1: Build Fails Due to Missing Dependencies
-
 **Solution:**
-
-- Ensure that all necessary `package.json` files are copied in the `base` stage
-  of the `Dockerfile.railway`.
+- Ensure that all necessary `package.json` files are copied in the `base` stage of the `Dockerfile.railway`.
 
 ### Issue 2: Workspace Dependencies Not Found at Runtime
-
 **Solution:**
-
-- Verify that the `COPY --from=build /app/packages/*/dist ./packages/` command
-  in the `Dockerfile.railway` is correctly copying the built packages.
+- Verify that the `COPY --from=build /app/packages/*/dist ./packages/` command in the `Dockerfile.railway` is correctly copying the built packages.
 
 ### Issue 3: Health Check Fails
-
 **Solution:**
-
-- Ensure that the service implements a `/health` endpoint that returns a
-  `200 OK` status.
+- Ensure that the service implements a `/health` endpoint that returns a `200 OK` status.
 - Check the service logs for any startup errors.
-- Make sure the `PORT` environment variable is being used by the application, as
-  Railway sets this automatically.
+- Make sure the `PORT` environment variable is being used by the application, as Railway sets this automatically.
 
 ---
 
 ## ✨ Best Practices
 
 ### 1. **Consistent Start Scripts**
-
-- Ensure each service has a `start` script in its `package.json` that starts the
-  application (e.g., `"start": "node dist/index.js"`).
+- Ensure each service has a `start` script in its `package.json` that starts the application (e.g., `"start": "node dist/index.js"`).
 
 ### 2. **Health Checks**
-
-- Implement a health check endpoint in all services to ensure they are running
-  correctly.
+- Implement a health check endpoint in all services to ensure they are running correctly.
 
 ### 3. **Deployment Verification Checklist**
-
 After each deployment:
-
 - [ ] Service shows "Deployed" status.
 - [ ] Health check passes.
 - [ ] Service logs show a successful startup.
@@ -210,5 +174,5 @@ After each deployment:
 
 ---
 
-**Last Updated**: After standardization to Docker deployment. **Status**: All
-services ready for Docker-based deployment.
+**Last Updated**: After standardization to Docker deployment.
+**Status**: All services ready for Docker-based deployment.

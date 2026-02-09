@@ -248,9 +248,12 @@ export class ErrorRecorder {
 
     // Capture navigation
     window.addEventListener('popstate', () => {
-      this.addBreadcrumb('navigation', `Navigated to: ${window.location.href}`, 'info', {
-        url: window.location.href,
-      });
+      this.addBreadcrumb(
+        'navigation',
+        `Navigated to: ${window.location.href}`,
+        'info',
+        { url: window.location.href }
+      );
     });
 
     // Capture console errors
@@ -282,7 +285,10 @@ export class ErrorRecorder {
   /**
    * Generate reproduction steps
    */
-  private generateReproductionSteps(error: ApplicationError, context: ErrorContext): string[] {
+  private generateReproductionSteps(
+    error: ApplicationError,
+    context: ErrorContext
+  ): string[] {
     const steps: string[] = [];
 
     // Add breadcrumb-based steps

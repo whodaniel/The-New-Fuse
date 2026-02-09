@@ -1,10 +1,4 @@
-export type JsonValue =
-  | string
-  | number
-  | boolean
-  | null
-  | JsonValue[]
-  | { [key: string]: JsonValue };
+export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 export type DataMap = Record<string, JsonValue>;
 export type UnknownRecord = Record<string, unknown>;
 export type Primitive = string | number | boolean | null | undefined;

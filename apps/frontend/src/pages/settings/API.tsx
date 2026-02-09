@@ -1,10 +1,10 @@
-import ProviderApiKeyList from '@/components/ApiKeyManagement/ProviderApiKeyList';
+import { ProviderApiKeyList } from '@/components/ApiKeyManagement/ProviderApiKeyList';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Key, Shield, Webhook, Zap } from 'lucide-react';
+import { Key, Shield, Webhook } from 'lucide-react';
 
 export default function API() {
   return (
@@ -45,16 +45,6 @@ export default function API() {
           </CardHeader>
           <CardContent>
             <ProviderApiKeyList />
-            <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end">
-              <Button
-                variant="outline"
-                className="gap-2 border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                onClick={() => window.location.href = '/settings/llm-providers'}
-              >
-                <Zap className="w-4 h-4" />
-                Advanced Intelligence Manager
-              </Button>
-            </div>
           </CardContent>
         </Card>
 

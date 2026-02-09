@@ -1,13 +1,13 @@
-import { OnQueueActive, OnQueueCompleted, OnQueueFailed, Process, Processor } from '@nestjs/bull';
+import { Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
-import { EmailService } from '../../services/email.service';
 import { QueueName } from '../constants/queue-names';
 import {
   EmailJobData,
-  NotificationEmailJobData,
   WelcomeEmailJobData,
+  NotificationEmailJobData,
 } from '../interfaces/job-data.interface';
+import { EmailService } from '../../services/email.service';
 
 /**
  * Email job processor
@@ -134,7 +134,7 @@ export class EmailProcessor {
   onFailed(job: Job, error: Error) {
     this.logger.error(
       `Job ${job.id} failed after ${job.attemptsMade} attempts. Error: ${error.message}`,
-      error.stack
+      error.stack,
     );
   }
 }

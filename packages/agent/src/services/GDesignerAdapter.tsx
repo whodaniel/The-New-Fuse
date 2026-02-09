@@ -1,9 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
-
-import type { Task, WorkflowDefinition, WorkflowStep } from '@the-new-fuse/types';
-
 import { BaseService } from '../core/BaseService';
 import { Logger } from '../types/core';
+import { WorkflowDefinition, WorkflowStep, Task } from '@the-new-fuse/types';
+import { v4 as uuidv4 } from 'uuid';
 
 interface GDesignerWorkflow {
   id: string;
@@ -13,10 +11,7 @@ interface GDesignerWorkflow {
 }
 
 interface GDesignerNodeMapping {
-  [gdesignerNodeType: string]: (
-    node: GDesignerWorkflow['nodes'][0],
-    stepOrder: number
-  ) => Partial<WorkflowStep | Task>;
+  [gdesignerNodeType: string]: (node: GDesignerWorkflow['nodes'][0], stepOrder: number) => Partial<WorkflowStep | Task>;
 }
 
 export class GDesignerAdapter extends BaseService {
@@ -27,10 +22,10 @@ export class GDesignerAdapter extends BaseService {
     super({ name: 'GDesignerAdapter' });
     this.logger = new Logger('GDesignerAdapter');
     this.nodeMapping = {
-      startNode: this.mapStartNode,
-      taskNode: this.mapTaskNode,
-      decisionNode: this.mapDecisionNode,
-      endNode: this.mapEndNode,
+      'startNode': this.mapStartNode,
+      'taskNode': this.mapTaskNode,
+      'decisionNode': this.mapDecisionNode,
+      'endNode': this.mapEndNode,
     };
     this.logger.info('GDesignerAdapter initialized.');
   }
@@ -56,9 +51,7 @@ export class GDesignerAdapter extends BaseService {
           };
           steps.push(step);
         } catch (error) {
-          this.logger.error(
-            `Error mapping node ${node.id} (type: ${node.type}): ${error instanceof Error ? error.message : String(error)}`
-          );
+          this.logger.error(`Error mapping node ${node.id} (type: ${node.type}): ${error instanceof Error ? error.message : String(error)}`);
         }
       } else {
         this.logger.warn(`No mapping function found for GDesigner node type: ${node.type}`);
@@ -73,17 +66,11 @@ export class GDesignerAdapter extends BaseService {
       steps: steps,
     };
 
-    this.logger.info(
-      `Successfully adapted workflow "${gdesignerWorkflow.name}". Found ${steps.length} steps.`
-    );
+    this.logger.info(`Successfully adapted workflow "${gdesignerWorkflow.name}". Found ${steps.length} steps.`);
     return definition;
   }
 
-  private processEdges(
-    steps: WorkflowStep[],
-    edges: GDesignerWorkflow['edges'],
-    nodes: GDesignerWorkflow['nodes']
-  ): void {
+  private processEdges(steps: WorkflowStep[], edges: GDesignerWorkflow['edges'], nodes: GDesignerWorkflow['nodes']): void {
     const nodeToStepMap = new Map(nodes.map((node, i) => [node.id, steps[i]]));
 
     for (const edge of edges) {
@@ -99,10 +86,7 @@ export class GDesignerAdapter extends BaseService {
     }
   }
 
-  private mapStartNode(
-    node: GDesignerWorkflow['nodes'][0],
-    stepOrder: number
-  ): Partial<WorkflowStep> {
+  private mapStartNode(node: GDesignerWorkflow['nodes'][0], stepOrder: number): Partial<WorkflowStep> {
     this.logger.debug(`Mapping start node: ${JSON.stringify(node.data)}`);
     return {
       name: node.data?.label || 'Start',
@@ -112,10 +96,7 @@ export class GDesignerAdapter extends BaseService {
     };
   }
 
-  private mapTaskNode(
-    node: GDesignerWorkflow['nodes'][0],
-    stepOrder: number
-  ): Partial<WorkflowStep> {
+  private mapTaskNode(node: GDesignerWorkflow['nodes'][0], stepOrder: number): Partial<WorkflowStep> {
     this.logger.debug(`Mapping task node: ${JSON.stringify(node.data)}`);
     return {
       name: node.data?.label || 'Task Step',
@@ -128,10 +109,7 @@ export class GDesignerAdapter extends BaseService {
     };
   }
 
-  private mapDecisionNode(
-    node: GDesignerWorkflow['nodes'][0],
-    stepOrder: number
-  ): Partial<WorkflowStep> {
+  private mapDecisionNode(node: GDesignerWorkflow['nodes'][0], stepOrder: number): Partial<WorkflowStep> {
     this.logger.debug(`Mapping decision node: ${JSON.stringify(node.data)}`);
     return {
       name: node.data?.label || 'Decision',
@@ -143,10 +121,7 @@ export class GDesignerAdapter extends BaseService {
     };
   }
 
-  private mapEndNode(
-    node: GDesignerWorkflow['nodes'][0],
-    stepOrder: number
-  ): Partial<WorkflowStep> {
+  private mapEndNode(node: GDesignerWorkflow['nodes'][0], stepOrder: number): Partial<WorkflowStep> {
     this.logger.debug(`Mapping end node: ${JSON.stringify(node.data)}`);
     return {
       name: node.data?.label || 'End',

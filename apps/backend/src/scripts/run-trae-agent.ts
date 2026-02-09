@@ -4,6 +4,7 @@ async function main(): Promise<void> {
   const agent = new TraeAgent();
 
   process.on('SIGINT', async () => {
+    
     await agent.cleanup();
     process.exit(0);
   });

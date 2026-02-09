@@ -13,12 +13,7 @@ export interface Session {
 }
 
 export interface SessionManager {
-  createSession(
-    user: AuthUser,
-    token: string,
-    ipAddress?: string,
-    userAgent?: string
-  ): Promise<Session>;
+  createSession(user: AuthUser, token: string, ipAddress?: string, userAgent?: string): Promise<Session>;
   validateSession(sessionId: string): Promise<boolean>;
   refreshSession(sessionId: string): Promise<Session>;
   revokeSession(sessionId: string): Promise<void>;

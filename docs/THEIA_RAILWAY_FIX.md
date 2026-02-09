@@ -171,11 +171,11 @@ Look for:
 
 ## 📊 PORT CONFIGURATION REFERENCE
 
-| Service                 | Default Port | Railway Port | Status       |
-| ----------------------- | ------------ | ------------ | ------------ |
+| Service            | Default Port | Railway Port | Status       |
+| ------------------ | ------------ | ------------ | ------------ |
 | SkIDEancer (Documented) | 3007         | 3000 ❌      | **Mismatch** |
-| Cloud Sandbox           | Auto         | Auto ✅      | Working      |
-| TNF Relay               | 3000         | N/A          | Local only   |
+| Cloud Sandbox      | Auto         | Auto ✅      | Working      |
+| TNF Relay          | 3000         | N/A          | Local only   |
 
 ---
 

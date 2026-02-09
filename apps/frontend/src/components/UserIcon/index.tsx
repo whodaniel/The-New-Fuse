@@ -1,4 +1,5 @@
-import { Robot, User } from '@phosphor-icons/react';
+import React from 'react';
+import { User, Robot } from '@phosphor-icons/react';
 
 interface UserIconProps {
   user?: {

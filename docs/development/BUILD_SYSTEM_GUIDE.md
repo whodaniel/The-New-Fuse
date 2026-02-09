@@ -2,14 +2,11 @@
 
 ## Overview
 
-The New Fuse framework features a production-optimized build system designed to
-handle the complexity of a multi-agent orchestration monorepo with native
-modules, TypeScript compilation, and cross-platform compatibility.
+The New Fuse framework features a production-optimized build system designed to handle the complexity of a multi-agent orchestration monorepo with native modules, TypeScript compilation, and cross-platform compatibility.
 
 ## 🚀 Quick Start Commands
 
 ### Health Check (Start Here!)
-
 ```bash
 # Check if your system is ready for building
 pnpm run build:health-check
@@ -19,7 +16,6 @@ node scripts/build-health-check.cjs
 ```
 
 ### Optimized Build Commands
-
 ```bash
 # Full optimized build with comprehensive error handling
 pnpm run build:optimized
@@ -38,17 +34,16 @@ pnpm run build
 
 ### 1. Core Scripts
 
-| Script                       | Purpose                             | Usage                                                               |
-| ---------------------------- | ----------------------------------- | ------------------------------------------------------------------- |
-| `build-optimized.sh`         | Production-ready build with logging | `./scripts/build-optimized.sh [all\|clean\|packages\|apps\|verify]` |
-| `build-health-check.cjs`     | System readiness verification       | `node scripts/build-health-check.cjs`                               |
-| `setup-native-modules.cjs`   | Native module setup and validation  | `node scripts/setup-native-modules.cjs`                             |
-| `memory-optimized-build.cjs` | Memory-constrained build strategy   | `node scripts/memory-optimized-build.cjs`                           |
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| `build-optimized.sh` | Production-ready build with logging | `./scripts/build-optimized.sh [all\|clean\|packages\|apps\|verify]` |
+| `build-health-check.cjs` | System readiness verification | `node scripts/build-health-check.cjs` |
+| `setup-native-modules.cjs` | Native module setup and validation | `node scripts/setup-native-modules.cjs` |
+| `memory-optimized-build.cjs` | Memory-constrained build strategy | `node scripts/memory-optimized-build.cjs` |
 
 ### 2. TypeScript Optimizations
 
 #### Electron Desktop
-
 - **Incremental compilation** with `.tsbuildinfo` caching
 - **Module resolution** set to `bundler` for renderer, `node` for main
 - **Strict mode** enabled with selective relaxation of unused variable checks
@@ -56,7 +51,6 @@ pnpm run build
 - **Decorator support** for future framework compatibility
 
 #### API & Backend Services
-
 - **Skip lib check** to speed up compilation
 - **No emit on error** set to false to allow builds with warnings
 - **Memory limits** applied via environment variables
@@ -65,15 +59,14 @@ pnpm run build
 
 The build system automatically handles these critical native modules:
 
-| Module            | Purpose                    | Status      |
-| ----------------- | -------------------------- | ----------- |
-| `drivelist`       | System drive enumeration   | ✅ Required |
-| `node-pty`        | Terminal/PTY functionality | ✅ Required |
-| `canvas`          | Graphics rendering         | ✅ Required |
-| `@vscode/ripgrep` | Code search functionality  | ⚠️ Optional |
+| Module | Purpose | Status |
+|--------|---------|---------|
+| `drivelist` | System drive enumeration | ✅ Required |
+| `node-pty` | Terminal/PTY functionality | ✅ Required |
+| `canvas` | Graphics rendering | ✅ Required |
+| `@vscode/ripgrep` | Code search functionality | ⚠️ Optional |
 
 #### Native Module Setup Process
-
 1. **Detection**: Checks if modules exist and are built
 2. **Building**: Attempts to rebuild missing modules
 3. **Fallback**: Copies from subdependencies if needed
@@ -83,7 +76,6 @@ The build system automatically handles these critical native modules:
 ## 🎯 Build Strategies
 
 ### 1. Optimized Build (`build:optimized`)
-
 **Best for: Production deployments, CI/CD**
 
 - Full system health check before starting
@@ -94,7 +86,6 @@ The build system automatically handles these critical native modules:
 - Performance report generation
 
 **Configuration:**
-
 ```bash
 export BUILD_MEMORY_LIMIT=4096
 export BUILD_CONCURRENCY=2
@@ -102,7 +93,6 @@ export NODE_ENV=production
 ```
 
 ### 2. Fast Build (`build:fast`)
-
 **Best for: Development, rapid iteration**
 
 - Builds packages and apps separately
@@ -111,7 +101,6 @@ export NODE_ENV=production
 - Parallel execution where possible
 
 ### 3. Memory-Optimized Build (`build`)
-
 **Best for: Resource-constrained environments**
 
 - Adaptive memory management
@@ -122,13 +111,11 @@ export NODE_ENV=production
 ## 📊 Performance Optimization Features
 
 ### Build Caching
-
 - **Turbo caching**: Intelligent build result caching
 - **TypeScript incremental**: `.tsbuildinfo` files for faster rebuilds
 - **Node modules**: Persistent `node_modules` with smart invalidation
 
 ### Memory Management
-
 ```bash
 # Environment variables for memory control
 BUILD_MEMORY_LIMIT=4096      # Memory limit in MB
@@ -137,7 +124,6 @@ NODE_OPTIONS="--max-old-space-size=4096"  # Node.js heap size
 ```
 
 ### Parallel Execution
-
 - **Package builds**: Core packages built before applications
 - **Independent apps**: Frontend and backend built in parallel
 - **Turbo orchestration**: Dependency-aware parallel builds
@@ -147,7 +133,6 @@ NODE_OPTIONS="--max-old-space-size=4096"  # Node.js heap size
 ### Common Issues and Solutions
 
 #### 1. Native Module Build Failures
-
 ```bash
 # Symptom: "binding.gyp not found" errors
 # Solution: Run native module setup
@@ -159,7 +144,6 @@ pnpm install
 ```
 
 #### 2. TypeScript Compilation Errors
-
 ```bash
 # Symptom: Type compatibility errors
 # Solution: Check TypeScript version consistency
@@ -170,7 +154,6 @@ cd apps/api && tsc --noEmit
 ```
 
 #### 3. Memory Issues
-
 ```bash
 # Symptom: "JavaScript heap out of memory"
 # Solution: Use low-memory build
@@ -181,7 +164,6 @@ export NODE_OPTIONS="--max-old-space-size=8192"
 ```
 
 #### 4. Turbo Cache Issues
-
 ```bash
 # Symptom: Stale build outputs
 # Solution: Clear Turbo cache
@@ -200,7 +182,6 @@ node scripts/build-health-check.cjs
 ```
 
 **Health Check Categories:**
-
 - ✅ **System Requirements**: Node.js, Bun, Turbo versions
 - ✅ **Configuration**: Package.json, TypeScript configs
 - ✅ **Native Modules**: Installation and build status
@@ -262,17 +243,16 @@ RUN pnpm install --production --frozen-lockfile
 
 ### Build Performance Targets
 
-| Metric              | Target      | Measurement            |
-| ------------------- | ----------- | ---------------------- |
-| **Cold build time** | < 5 minutes | Full monorepo build    |
-| **Warm build time** | < 2 minutes | With Turbo cache       |
-| **Memory usage**    | < 4GB peak  | During parallel builds |
-| **Cache hit rate**  | > 80%       | Subsequent builds      |
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **Cold build time** | < 5 minutes | Full monorepo build |
+| **Warm build time** | < 2 minutes | With Turbo cache |
+| **Memory usage** | < 4GB peak | During parallel builds |
+| **Cache hit rate** | > 80% | Subsequent builds |
 
 ### Monitoring
 
 Build metrics are automatically collected and can be found in:
-
 - `build-report-YYYYMMDD-HHMMSS.md` - Detailed build report
 - `turbo-build.log` - Turbo execution log
 - Individual app build logs in project root
@@ -282,7 +262,6 @@ Build metrics are automatically collected and can be found in:
 ### Custom Build Strategies
 
 You can create custom build strategies by modifying:
-
 - `BUILD_STRATEGY` environment variable
 - Custom Turbo pipeline configurations
 - Package-specific build scripts
@@ -336,5 +315,4 @@ Individual packages can override build behavior:
 4. **Keep native modules updated** for security and performance
 5. **Use Turbo caching** to speed up development cycles
 
-This build system is designed to scale with your development team while
-maintaining reliability and performance. Happy building! 🚀
+This build system is designed to scale with your development team while maintaining reliability and performance. Happy building! 🚀

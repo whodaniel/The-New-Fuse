@@ -20,7 +20,7 @@ export class AgentCardService {
       description: cardData.description || '',
       capabilities: cardData.capabilities || [],
       status: cardData.status || 'inactive',
-      metadata: cardData.metadata || {},
+      metadata: cardData.metadata || {}
     };
 
     this.cards.set(card.id, card);

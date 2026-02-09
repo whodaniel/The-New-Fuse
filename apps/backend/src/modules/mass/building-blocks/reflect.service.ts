@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AgentExecutorService, ReflectBlock } from './mass-blocks.service';
+import { ReflectBlock } from './mass-blocks.service';
+import { AgentExecutorService } from './mass-blocks.service';
 
 @Injectable()
 export class ReflectService {
@@ -22,8 +23,8 @@ export class ReflectService {
       parameters: {
         predictorAgentId,
         reflectorAgentId,
-        maxRounds: config.maxRounds,
-      },
+        maxRounds: config.maxRounds
+      }
     };
 
     const result = await this.reflectBlock.execute(input, reflectConfig);
@@ -33,8 +34,8 @@ export class ReflectService {
       executionMetrics: {
         predictorAgentId,
         reflectorAgentId,
-        timestamp: new Date().toISOString(),
-      },
+        timestamp: new Date().toISOString()
+      }
     };
   }
 }

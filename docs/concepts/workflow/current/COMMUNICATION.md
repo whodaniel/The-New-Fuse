@@ -2,8 +2,7 @@
 
 ## Overview
 
-The New Fuse uses a sophisticated Redis-based communication system for real-time
-interaction between AI agents.
+The New Fuse uses a sophisticated Redis-based communication system for real-time interaction between AI agents.
 
 ## Channels
 
@@ -41,13 +40,13 @@ enum MessageType {
   TASK = 'TASK',
   IMPROVEMENT = 'IMPROVEMENT',
   ACKNOWLEDGMENT = 'ACKNOWLEDGMENT',
-  STATUS = 'STATUS',
+  STATUS = 'STATUS'
 }
 
 enum Priority {
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
+  HIGH = 'HIGH'
 }
 ```
 
@@ -68,7 +67,7 @@ export class CommunicationService {
     this.redis = new Redis({
       host: 'localhost',
       port: 6379,
-      db: 0,
+      db: 0
     });
   }
 
@@ -81,7 +80,7 @@ export class CommunicationService {
 
   async listenForMessages(callback: (message: Message) => void): Promise<void> {
     const subscriber = this.redis.duplicate();
-
+    
     await subscriber.subscribe(
       'AI_COORDINATION_CHANNEL',
       'AI_TASK_CHANNEL',

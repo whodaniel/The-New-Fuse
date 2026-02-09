@@ -2,36 +2,29 @@
 
 ## Overview
 
-This document outlines the incident response procedures for The New Fuse
-platform. Follow these procedures when alerts are triggered or issues are
-detected.
+This document outlines the incident response procedures for The New Fuse platform. Follow these procedures when alerts are triggered or issues are detected.
 
 ## Incident Severity Levels
 
 ### P0 - Critical
-
 - **Impact**: Complete service outage or data loss
 - **Response Time**: Immediate (within 15 minutes)
 - **Examples**: All services down, database corruption, security breach
 - **Notification**: PagerDuty + Slack + Email
 
 ### P1 - High
-
 - **Impact**: Major functionality impaired, affecting many users
 - **Response Time**: Within 1 hour
-- **Examples**: API error rate > 10%, critical feature down, performance
-  degradation > 50%
+- **Examples**: API error rate > 10%, critical feature down, performance degradation > 50%
 - **Notification**: Slack + Email
 
 ### P2 - Medium
-
 - **Impact**: Minor functionality impaired, affecting some users
 - **Response Time**: Within 4 hours
 - **Examples**: Non-critical feature down, minor performance issues
 - **Notification**: Slack
 
 ### P3 - Low
-
 - **Impact**: Minimal impact, no immediate user impact
 - **Response Time**: Within 24 hours
 - **Examples**: Warning thresholds reached, minor bugs
@@ -40,20 +33,17 @@ detected.
 ## Incident Response Process
 
 ### 1. Detection
-
 - Automated alerts from monitoring systems
 - User reports
 - Team member discovery
 
 ### 2. Triage
-
 1. Assess severity level (P0-P3)
 2. Assign incident commander
 3. Create incident channel in Slack (#incident-YYYY-MM-DD-description)
 4. Document initial findings
 
 ### 3. Investigation
-
 1. Check dashboards for anomalies
 2. Review recent deployments
 3. Check logs for errors
@@ -61,14 +51,12 @@ detected.
 5. Check system resources
 
 ### 4. Communication
-
 1. Post status updates every 30 minutes for P0/P1
 2. Update status page
 3. Notify stakeholders
 4. Keep incident channel updated
 
 ### 5. Resolution
-
 1. Implement fix
 2. Verify fix in staging (if possible)
 3. Deploy fix to production
@@ -76,7 +64,6 @@ detected.
 5. Confirm resolution
 
 ### 6. Post-Incident
-
 1. Write incident report within 48 hours
 2. Conduct blameless post-mortem
 3. Create action items
@@ -86,7 +73,6 @@ detected.
 ## Quick Reference Commands
 
 ### Check Service Health
-
 ```bash
 # API Gateway
 curl https://api.example.com/health
@@ -96,7 +82,6 @@ curl https://backend.example.com/health
 ```
 
 ### Check Metrics
-
 ```bash
 # Get current metrics
 curl https://api.example.com/metrics
@@ -106,7 +91,6 @@ curl 'http://prometheus:9090/api/v1/query?query=http_requests_total'
 ```
 
 ### Check Logs
-
 ```bash
 # API Gateway logs
 kubectl logs -f deployment/api-gateway -n production
@@ -122,7 +106,6 @@ grep "ERROR" /var/log/app/$(date +%Y-%m-%d)-app.log | tail -100
 ```
 
 ### Database Status
-
 ```bash
 # Check database connections
 psql -h $DB_HOST -U $DB_USER -c "SELECT count(*) FROM pg_stat_activity;"
@@ -132,7 +115,6 @@ psql -h $DB_HOST -U $DB_USER -c "SELECT * FROM pg_stat_statements ORDER BY mean_
 ```
 
 ### Redis Status
-
 ```bash
 # Check Redis status
 redis-cli -h $REDIS_HOST ping
@@ -145,7 +127,6 @@ redis-cli -h $REDIS_HOST monitor
 ```
 
 ### Restart Services
-
 ```bash
 # Kubernetes
 kubectl rollout restart deployment/api-gateway -n production
@@ -156,7 +137,6 @@ kubectl rollout status deployment/api-gateway -n production
 ```
 
 ### Scale Services
-
 ```bash
 # Scale up
 kubectl scale deployment/api-gateway --replicas=5 -n production
@@ -172,7 +152,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 **Symptoms**: Error rate > 5%, alerts firing
 
 **Investigation Steps**:
-
 1. Check `/metrics` endpoint for error breakdown
 2. Review recent deployments
 3. Check logs for stack traces
@@ -181,14 +160,12 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 6. Check external API dependencies
 
 **Common Causes**:
-
 - Bad deployment
 - Database connection issues
 - External API failures
 - Rate limiting
 
 **Resolution**:
-
 - Rollback to previous version if recent deployment
 - Increase connection pool size if database issue
 - Implement circuit breaker for external APIs
@@ -199,7 +176,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 **Symptoms**: P95 response time > 2s, alerts firing
 
 **Investigation Steps**:
-
 1. Check `/metrics` endpoint for latency breakdown
 2. Check database query performance
 3. Review slow query logs
@@ -208,7 +184,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 6. Check network latency
 
 **Common Causes**:
-
 - Slow database queries
 - Cache misses
 - External API latency
@@ -216,7 +191,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 - N+1 queries
 
 **Resolution**:
-
 - Add database indexes
 - Optimize queries
 - Increase cache TTL
@@ -228,7 +202,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 **Symptoms**: Memory usage > 90%, alerts firing
 
 **Investigation Steps**:
-
 1. Check `/metrics` endpoint for memory metrics
 2. Review heap dumps
 3. Check for memory leaks
@@ -237,7 +210,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 6. Review recent code changes
 
 **Common Causes**:
-
 - Memory leaks
 - Large response payloads
 - Unbounded caches
@@ -245,7 +217,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 - Large file uploads
 
 **Resolution**:
-
 - Restart service (temporary)
 - Fix memory leaks
 - Implement pagination
@@ -258,7 +229,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 **Symptoms**: Connection pool utilization > 90%, alerts firing
 
 **Investigation Steps**:
-
 1. Check active connections
 2. Review long-running queries
 3. Check for connection leaks
@@ -266,7 +236,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 5. Check concurrent request count
 
 **Common Causes**:
-
 - Connection leaks
 - Long-running transactions
 - Too many concurrent requests
@@ -274,7 +243,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 - Slow queries
 
 **Resolution**:
-
 - Kill long-running queries
 - Increase pool size
 - Fix connection leaks
@@ -287,7 +255,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 **Symptoms**: Health checks failing, alerts firing
 
 **Investigation Steps**:
-
 1. Check service status
 2. Review logs for crashes
 3. Check system resources
@@ -296,7 +263,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 6. Review error traces
 
 **Common Causes**:
-
 - Application crash
 - OOM (Out of Memory)
 - Dependency failures
@@ -304,7 +270,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 - Infrastructure issues
 
 **Resolution**:
-
 - Restart service
 - Rollback deployment
 - Fix dependency issues
@@ -321,7 +286,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 ## Communication Templates
 
 ### Initial Alert
-
 ```
 🚨 **Incident Detected**
 **Severity**: P1
@@ -333,7 +297,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 ```
 
 ### Update
-
 ```
 📊 **Incident Update**
 **Time**: 10:45 UTC
@@ -343,7 +306,6 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 ```
 
 ### Resolution
-
 ```
 ✅ **Incident Resolved**
 **Duration**: 45 minutes
@@ -358,11 +320,9 @@ kubectl scale deployment/api-gateway --replicas=2 -n production
 # Incident Report: [Title]
 
 ## Summary
-
 Brief description of what happened
 
 ## Timeline
-
 - **10:30 UTC** - Alert triggered
 - **10:35 UTC** - Incident commander assigned
 - **10:40 UTC** - Root cause identified
@@ -370,48 +330,40 @@ Brief description of what happened
 - **11:20 UTC** - Incident resolved
 
 ## Impact
-
 - Duration: 50 minutes
 - Users affected: ~1000
 - Services affected: API Gateway
 - Error rate: 12%
 
 ## Root Cause
-
 Detailed explanation of what caused the incident
 
 ## Resolution
-
 What was done to resolve the incident
 
 ## Action Items
-
 - [ ] Add database indexes (owner: @john.doe, due: 2025-11-20)
 - [ ] Implement query caching (owner: @jane.smith, due: 2025-11-22)
 - [ ] Add alert for slow queries (owner: @bob.jones, due: 2025-11-19)
 
 ## Lessons Learned
-
 - What went well
 - What could be improved
 - What we learned
 
 ## Prevention
-
 How to prevent this from happening again
 ```
 
 ## On-Call Runbook
 
 ### Pre-Incident
-
 - [ ] Verify access to all monitoring tools
 - [ ] Verify access to production systems
 - [ ] Review recent changes
 - [ ] Check current system health
 
 ### During Incident
-
 - [ ] Acknowledge alert within 5 minutes
 - [ ] Create incident channel
 - [ ] Assess severity
@@ -422,7 +374,6 @@ How to prevent this from happening again
 - [ ] Monitor for stability
 
 ### Post-Incident
-
 - [ ] Close incident channel
 - [ ] Write incident report
 - [ ] Schedule post-mortem

@@ -60,8 +60,8 @@ export class WorkflowService {
     try {
       const { page = 1, limit = 20 } = options || {};
 
-      // Get workflows using Drizzle repository (system-level access for admin)
-      const workflows = await this.db.workflows.findActiveWorkflowsSystem();
+      // Get workflows using Drizzle repository
+      const workflows = await this.db.workflows.findActiveWorkflows();
 
       // Apply pagination manually
       const start = (page - 1) * limit;

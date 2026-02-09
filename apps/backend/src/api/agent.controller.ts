@@ -10,19 +10,16 @@ import {
   Put,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { db, drizzleAgentRepository, drizzleUserRepository, schema, eq } from '@the-new-fuse/database';
-import { IsArray, IsEnum, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
-import { v4 as uuidv4 } from 'uuid';
-import { createHmac } from 'crypto';
+import { db, drizzleAgentRepository, drizzleUserRepository } from '@the-new-fuse/database';
+import { IsArray, IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
 
-// Define local enums to avoid ORM dependency
+// Define local enums to avoid Prisma dependency
 export enum AgentType {
   CONVERSATIONAL = 'CONVERSATIONAL',
   TASK_BASED = 'TASK_BASED',
   AUTONOMOUS = 'AUTONOMOUS',
   REACTIVE = 'REACTIVE',
   HYBRID = 'HYBRID',
-  GENERIC = 'GENERIC',
 }
 
 export enum AgentStatus {
@@ -32,7 +29,6 @@ export enum AgentStatus {
   READY = 'READY',
   OFFLINE = 'OFFLINE',
   ERROR = 'ERROR',
-  IDLE = 'IDLE',
 }
 
 export enum AgentCapability {
@@ -46,9 +42,6 @@ export enum AgentCapability {
   MEMORY = 'MEMORY',
   PLANNING = 'PLANNING',
   TOOL_USE = 'TOOL_USE',
-  CODE_EXECUTION = 'CODE_EXECUTION',
-  BROWSER_AUTOMATION = 'BROWSER_AUTOMATION',
-  MESSAGING = 'MESSAGING',
 }
 
 export class CreateAgentDto {
@@ -64,8 +57,8 @@ export class CreateAgentDto {
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  capabilities?: string[];
+  @IsEnum(AgentCapability, { each: true })
+  capabilities?: AgentCapability[];
 
   @IsOptional()
   @IsString()
@@ -74,10 +67,6 @@ export class CreateAgentDto {
   @IsOptional()
   @IsString()
   userId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  invitationCode: string;
 }
 
 export class UpdateAgentDto {
@@ -112,45 +101,15 @@ export class UpdateAgentDto {
 }
 
 @ApiTags('Agents')
-@Controller('agents')
+@Controller('api/agents')
 export class AgentController {
   constructor() {}
-
-  private hashCode(code: string): string {
-    const secret = process.env.INVITE_CODE_SECRET || process.env.ENCRYPTION_KEY || 'tnf_invite';
-    return createHmac('sha256', secret).update(code).digest('hex');
-  }
 
   @Post()
   @ApiOperation({ summary: 'Create a new agent' })
   @ApiBody({ type: CreateAgentDto })
   async createAgent(@Body() data: CreateAgentDto): Promise<any> {
-    // 1. Validate Invitation Code
-    if (!data.invitationCode) {
-      throw new HttpException('Invitation code is required for agent registration', HttpStatus.UNAUTHORIZED);
-    }
-
-    const codeHash = this.hashCode(data.invitationCode);
-    const invite = await db.query.agentInvitationCodes.findFirst({
-      where: (table, { eq, and }) => and(
-        eq(table.codeHash, codeHash),
-        eq(table.status, 'ACTIVE')
-      )
-    });
-
-    if (!invite) {
-      throw new HttpException('Invalid or inactive invitation code', HttpStatus.UNAUTHORIZED);
-    }
-
-    if (invite.expiresAt && invite.expiresAt.getTime() < Date.now()) {
-      throw new HttpException('Invitation code has expired', HttpStatus.UNAUTHORIZED);
-    }
-
-    if (invite.maxUses !== null && invite.usedCount >= invite.maxUses) {
-      throw new HttpException('Invitation code has been exhausted', HttpStatus.UNAUTHORIZED);
-    }
-
-    // 2. Assign User
+    // If userId is not provided, we need a fallback or throw error.
     if (!data.userId) {
       // Trying to find a default user or first user to assign
       const allUsers = await drizzleUserRepository.findAll(1, 0);
@@ -161,31 +120,15 @@ export class AgentController {
       data.userId = user.id;
     }
 
-    // 3. Create Agent
-    const agent = await drizzleAgentRepository.create({
-      id: uuidv4(),
+    return drizzleAgentRepository.create({
       name: data.name,
       type: data.type as any,
-      status: AgentStatus.IDLE as any,
+      status: AgentStatus.INACTIVE as any,
       description: data.description,
       capabilities: data.capabilities || [],
       systemPrompt: data.systemPrompt,
       userId: data.userId,
-      provider: 'openclaw',
-      updatedAt: new Date(),
     } as any);
-
-    // 4. Update Invitation Usage
-    await db.update(schema.agentInvitationCodes)
-      .set({ 
-        usedCount: invite.usedCount + 1,
-        status: (invite.maxUses !== null && invite.usedCount + 1 >= invite.maxUses) ? 'EXHAUSTED' : 'ACTIVE',
-        lastUsedAt: new Date(),
-        lastUsedByAgentId: agent.id
-      })
-      .where(eq(schema.agentInvitationCodes.id, invite.id));
-
-    return agent;
   }
 
   @Get()
@@ -197,7 +140,7 @@ export class AgentController {
   @Get('active')
   @ApiOperation({ summary: 'List active agents' })
   async getActiveAgents(): Promise<any[]> {
-    return drizzleAgentRepository.findActiveSystem();
+    return drizzleAgentRepository.findByStatus('ACTIVE');
   }
 
   @Get('discover')
@@ -210,7 +153,7 @@ export class AgentController {
   @ApiOperation({ summary: 'Get agent by ID' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
   async getAgentById(@Param('id') id: string): Promise<any> {
-    const agent = await drizzleAgentRepository.findByIdSystem(id);
+    const agent = await drizzleAgentRepository.findById(id);
 
     if (!agent) {
       throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
@@ -222,7 +165,7 @@ export class AgentController {
   @ApiOperation({ summary: 'Update agent / Configure agent' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
   async updateAgent(@Param('id') id: string, @Body() updates: UpdateAgentDto): Promise<any> {
-    const agent = await drizzleAgentRepository.findByIdSystem(id);
+    const agent = await drizzleAgentRepository.findById(id);
 
     if (!agent) {
       throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
@@ -236,7 +179,11 @@ export class AgentController {
 
     // Handle capabilities
     if (updates.capabilities) {
-      data.capabilities = updates.capabilities;
+      // Filter valid capabilities from the enum
+      const validCapabilities = updates.capabilities.filter((c) =>
+        Object.values(AgentCapability).includes(c as AgentCapability)
+      ) as AgentCapability[];
+      data.capabilities = validCapabilities;
     }
 
     // Handle configuration (configPath, settings) merge
@@ -258,7 +205,7 @@ export class AgentController {
       data.config = newConfig;
     }
 
-    return drizzleAgentRepository.update(id, agent.userId, data);
+    return drizzleAgentRepository.update(id, data);
   }
 
   @Put(':id/status')
@@ -267,25 +214,19 @@ export class AgentController {
     @Param('id') id: string,
     @Body('status') status: AgentStatus
   ): Promise<any> {
-    const agent = await drizzleAgentRepository.findByIdSystem(id);
+    const agent = await drizzleAgentRepository.findById(id);
     if (!agent) {
       throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
     }
 
-    return drizzleAgentRepository.update(id, agent.userId, { status: status as any } as any);
+    return drizzleAgentRepository.update(id, { status: status as any });
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete agent' })
   async deleteAgent(@Param('id') id: string): Promise<{ message: string }> {
     try {
-      // We need to fetch the agent first to get the userId for the softDelete call
-      const agent = await drizzleAgentRepository.findByIdSystem(id);
-      if (!agent) {
-        throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
-      }
-
-      const deleted = await drizzleAgentRepository.softDelete(id, agent.userId);
+      const deleted = await drizzleAgentRepository.softDelete(id);
       if (!deleted) {
         throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
       }

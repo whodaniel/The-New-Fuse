@@ -1,7 +1,6 @@
 # Docker Optimization Report
 
-This document details the optimizations applied to The New Fuse Docker images
-and provides metrics comparing the before and after states.
+This document details the optimizations applied to The New Fuse Docker images and provides metrics comparing the before and after states.
 
 ## Executive Summary
 
@@ -18,13 +17,9 @@ Our Docker optimization effort has resulted in:
 ## Optimization Categories
 
 ### 1. Multi-Stage Build Optimization
-
 ### 2. Image Size Reduction
-
 ### 3. Build Speed Improvements
-
 ### 4. Security Hardening
-
 ### 5. Production Optimization
 
 ---
@@ -43,7 +38,6 @@ CMD ["node", "dist/main.js"]
 ```
 
 **Issues**:
-
 - Build dependencies in final image
 - No separation of build/runtime
 - Poor layer caching
@@ -82,7 +76,6 @@ CMD ["node", "dist/main.js"]
 ```
 
 **Improvements**:
-
 - 6 stages for optimal layer reuse
 - Build dependencies not in final image
 - Production dependencies only in runtime
@@ -90,12 +83,12 @@ CMD ["node", "dist/main.js"]
 
 ### Metrics
 
-| Metric             | Before   | After   | Improvement          |
-| ------------------ | -------- | ------- | -------------------- |
-| Number of stages   | 1        | 6       | 6x better separation |
-| Final image layers | 15-20    | 8-10    | 40-50% reduction     |
-| Cache hit rate     | ~20%     | ~80%    | 4x improvement       |
-| Rebuild time       | 8-12 min | 2-4 min | 60-70% faster        |
+| Metric | Before | After | Improvement |
+|--------|--------|-------|-------------|
+| Number of stages | 1 | 6 | 6x better separation |
+| Final image layers | 15-20 | 8-10 | 40-50% reduction |
+| Cache hit rate | ~20% | ~80% | 4x improvement |
+| Rebuild time | 8-12 min | 2-4 min | 60-70% faster |
 
 ---
 
@@ -113,7 +106,6 @@ the-new-fuse/backend               1.4 GB
 ```
 
 **Components**:
-
 - Base image: ~180 MB
 - Build dependencies: ~200 MB
 - Node modules (all): ~500 MB
@@ -131,7 +123,6 @@ the-new-fuse/backend               400 MB
 ```
 
 **Components**:
-
 - Base image: ~180 MB
 - Runtime dependencies: ~30 MB
 - Node modules (prod only): ~120 MB
@@ -140,21 +131,17 @@ the-new-fuse/backend               400 MB
 #### Optimization Techniques
 
 1. **Production Dependencies Only**
-
    ```dockerfile
    # Separate prod dependencies
    RUN pnpm install --prod
    ```
-
    - Savings: ~300-400 MB per service
 
 2. **Multi-Stage Builds**
-
    ```dockerfile
    # Copy only what's needed
    COPY --from=builder /app/dist ./dist
    ```
-
    - Savings: ~200 MB (source files, build artifacts)
 
 3. **Minimal Runtime Dependencies**
@@ -162,7 +149,6 @@ the-new-fuse/backend               400 MB
    # Runtime: only essential packages
    RUN apk add --no-cache libc6-compat dumb-init curl
    ```
-
    - Savings: ~150 MB (build tools removed)
 
 ### Frontend
@@ -175,7 +161,6 @@ the-new-fuse/frontend              450 MB
 ```
 
 **Components**:
-
 - Node base: ~180 MB
 - Build dependencies: ~150 MB
 - Node modules: ~80 MB
@@ -189,7 +174,6 @@ the-new-fuse/frontend              55 MB
 ```
 
 **Components**:
-
 - Nginx Alpine: ~25 MB
 - Compressed assets: ~15 MB (.gz + .br)
 - Nginx config: ~5 KB
@@ -198,21 +182,17 @@ the-new-fuse/frontend              55 MB
 #### Optimization Techniques
 
 1. **Nginx Instead of Node**
-
    ```dockerfile
    FROM nginx:alpine AS runner
    ```
-
    - Savings: ~180 MB (no Node.js needed)
 
 2. **Pre-Compression**
-
    ```dockerfile
    RUN find . -type f \( -name "*.js" -o -name "*.css" \) \
      -exec gzip -9 -k -f {} \; \
      -exec brotli -9 -k -f {} \;
    ```
-
    - Savings: ~10 MB + faster delivery
 
 3. **Static Assets Only**
@@ -221,13 +201,13 @@ the-new-fuse/frontend              55 MB
 
 ### Summary
 
-| Service     | Before      | After        | Reduction  |
-| ----------- | ----------- | ------------ | ---------- |
-| Frontend    | 450 MB      | 55 MB        | 88% ⬇️     |
-| API Gateway | 1.2 GB      | 350 MB       | 71% ⬇️     |
-| API         | 1.3 GB      | 380 MB       | 71% ⬇️     |
-| Backend     | 1.4 GB      | 400 MB       | 71% ⬇️     |
-| **Total**   | **4.35 GB** | **1.185 GB** | **73% ⬇️** |
+| Service | Before | After | Reduction |
+|---------|--------|-------|-----------|
+| Frontend | 450 MB | 55 MB | 88% ⬇️ |
+| API Gateway | 1.2 GB | 350 MB | 71% ⬇️ |
+| API | 1.3 GB | 380 MB | 71% ⬇️ |
+| Backend | 1.4 GB | 400 MB | 71% ⬇️ |
+| **Total** | **4.35 GB** | **1.185 GB** | **73% ⬇️** |
 
 ---
 
@@ -242,7 +222,6 @@ RUN pnpm install --frozen-lockfile
 ```
 
 **Issues**:
-
 - Downloads packages every build
 - No cache persistence between builds
 - 5-8 minutes for dependency installation
@@ -256,7 +235,6 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
 ```
 
 **Improvements**:
-
 - Packages cached between builds
 - Only new/changed packages downloaded
 - 30 seconds - 2 minutes for dependencies (cached)
@@ -272,7 +250,6 @@ RUN pnpm build
 ```
 
 **Issues**:
-
 - Any source change invalidates dependency cache
 - Rebuilds dependencies unnecessarily
 
@@ -295,18 +272,17 @@ RUN --mount=type=cache,target=/app/.turbo \
 ```
 
 **Improvements**:
-
 - Dependencies only reinstall if package files change
 - Better cache hit rate
 
 ### Build Time Comparison
 
-| Scenario                | Before    | After    | Improvement   |
-| ----------------------- | --------- | -------- | ------------- |
-| Cold build (no cache)   | 12-15 min | 8-10 min | 30-40% faster |
-| Warm build (full cache) | 8-12 min  | 2-4 min  | 60-70% faster |
-| Source-only change      | 6-8 min   | 1-2 min  | 75-85% faster |
-| Dependency change       | 10-12 min | 5-7 min  | 40-50% faster |
+| Scenario | Before | After | Improvement |
+|----------|--------|-------|-------------|
+| Cold build (no cache) | 12-15 min | 8-10 min | 30-40% faster |
+| Warm build (full cache) | 8-12 min | 2-4 min | 60-70% faster |
+| Source-only change | 6-8 min | 1-2 min | 75-85% faster |
+| Dependency change | 10-12 min | 5-7 min | 40-50% faster |
 
 ### COPY --link Benefits
 
@@ -321,7 +297,6 @@ COPY --link src ./src        # Independent layer
 ```
 
 **Benefits**:
-
 - Layers don't depend on each other
 - Better parallelization
 - Improved cache reuse
@@ -342,7 +317,6 @@ CMD ["node", "server.js"]  # Runs as root (uid 0)
 ```
 
 **Security Issues**:
-
 - Runs as root (uid 0)
 - Full container permissions
 - Higher risk from container escape
@@ -361,7 +335,6 @@ CMD ["node", "server.js"]
 ```
 
 **Security Improvements**:
-
 - Runs as non-root (uid 1001)
 - Limited permissions
 - Reduced attack surface
@@ -386,25 +359,23 @@ Image CVEs: 2-5 (low to medium)
 
 **Security Scan Results** (Trivy):
 
-| Service       | Before    | After    |
-| ------------- | --------- | -------- |
-| Critical CVEs | 2-3       | 0        |
-| High CVEs     | 5-8       | 0-1      |
-| Medium CVEs   | 8-12      | 2-4      |
-| Low CVEs      | 10-15     | 5-8      |
-| **Total**     | **25-38** | **7-13** |
+| Service | Before | After |
+|---------|--------|-------|
+| Critical CVEs | 2-3 | 0 |
+| High CVEs | 5-8 | 0-1 |
+| Medium CVEs | 8-12 | 2-4 |
+| Low CVEs | 10-15 | 5-8 |
+| **Total** | **25-38** | **7-13** |
 
 ### Additional Security Measures
 
 1. **Health Checks**
-
    ```dockerfile
    HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
        CMD curl -f http://localhost:3000/health || exit 1
    ```
 
 2. **Graceful Shutdown**
-
    ```dockerfile
    ENTRYPOINT ["dumb-init", "--"]
    ```
@@ -431,7 +402,6 @@ Including: node_modules/, dist/, .git/, etc.
 ```
 
 **Issues**:
-
 - Slow context transfer to Docker daemon
 - High memory usage
 - Includes unnecessary files
@@ -445,7 +415,6 @@ Excludes: All build artifacts, dependencies, version control
 ```
 
 **Improvements**:
-
 - 25x smaller build context
 - Faster builds (less I/O)
 - Lower memory usage
@@ -469,7 +438,6 @@ Strategic cache invalidation
 ```
 
 **Caching Hierarchy**:
-
 1. Base images (rarely changes)
 2. System dependencies (rarely changes)
 3. Package manager files (occasionally changes)
@@ -479,12 +447,12 @@ Strategic cache invalidation
 
 ### Resource Usage
 
-| Metric       | Before     | After      | Improvement      |
-| ------------ | ---------- | ---------- | ---------------- |
-| Build RAM    | 4-6 GB     | 2-3 GB     | 40-50% reduction |
-| Runtime RAM  | 300-500 MB | 200-350 MB | 30-40% reduction |
-| Build CPU    | 80-100%    | 60-80%     | 20-30% reduction |
-| Startup time | 15-30s     | 10-20s     | 30-40% faster    |
+| Metric | Before | After | Improvement |
+|--------|--------|-------|-------------|
+| Build RAM | 4-6 GB | 2-3 GB | 40-50% reduction |
+| Runtime RAM | 300-500 MB | 200-350 MB | 30-40% reduction |
+| Build CPU | 80-100% | 60-80% | 20-30% reduction |
+| Startup time | 15-30s | 10-20s | 30-40% faster |
 
 ---
 
@@ -506,7 +474,6 @@ RUN --mount=type=cache,target=/app/.turbo
 ```
 
 **Impact**:
-
 - 50-60% faster builds
 - Better cache utilization
 - Reduced network I/O
@@ -524,7 +491,6 @@ Stages:
 ```
 
 **Impact**:
-
 - 60-70% smaller images
 - Better layer reuse
 - Cleaner separation
@@ -537,7 +503,6 @@ RUN pnpm install --prod
 ```
 
 **Impact**:
-
 - 300-400 MB savings per service
 - Faster startup
 - Smaller attack surface
@@ -553,7 +518,6 @@ RUN gzip -9 -k *.js && brotli -9 -k *.js
 ```
 
 **Impact**:
-
 - 88% size reduction
 - Faster content delivery
 - Better performance
@@ -569,7 +533,6 @@ Excludes:
 ```
 
 **Impact**:
-
 - 90% reduction in build context
 - Faster builds
 - Lower memory usage
@@ -580,34 +543,34 @@ Excludes:
 
 ### Build Performance
 
-| Scenario               | Before | After   | Improvement |
-| ---------------------- | ------ | ------- | ----------- |
-| **Initial Build**      |        |         |             |
-| - Frontend             | 8 min  | 5 min   | 37% faster  |
-| - Backend services     | 12 min | 8 min   | 33% faster  |
-| **Cached Build**       |        |         |             |
-| - Frontend             | 6 min  | 1.5 min | 75% faster  |
-| - Backend services     | 10 min | 3 min   | 70% faster  |
-| **Source-only Change** |        |         |             |
-| - Frontend             | 5 min  | 1 min   | 80% faster  |
-| - Backend services     | 8 min  | 2 min   | 75% faster  |
+| Scenario | Before | After | Improvement |
+|----------|--------|-------|-------------|
+| **Initial Build** | | | |
+| - Frontend | 8 min | 5 min | 37% faster |
+| - Backend services | 12 min | 8 min | 33% faster |
+| **Cached Build** | | | |
+| - Frontend | 6 min | 1.5 min | 75% faster |
+| - Backend services | 10 min | 3 min | 70% faster |
+| **Source-only Change** | | | |
+| - Frontend | 5 min | 1 min | 80% faster |
+| - Backend services | 8 min | 2 min | 75% faster |
 
 ### Image Metrics
 
-| Service     | Before | After  | Layers  | Reduction |
-| ----------- | ------ | ------ | ------- | --------- |
-| Frontend    | 450 MB | 55 MB  | 8 → 5   | 88% ⬇️    |
-| API Gateway | 1.2 GB | 350 MB | 18 → 10 | 71% ⬇️    |
-| API         | 1.3 GB | 380 MB | 20 → 11 | 71% ⬇️    |
-| Backend     | 1.4 GB | 400 MB | 19 → 12 | 71% ⬇️    |
+| Service | Before | After | Layers | Reduction |
+|---------|--------|-------|--------|-----------|
+| Frontend | 450 MB | 55 MB | 8 → 5 | 88% ⬇️ |
+| API Gateway | 1.2 GB | 350 MB | 18 → 10 | 71% ⬇️ |
+| API | 1.3 GB | 380 MB | 20 → 11 | 71% ⬇️ |
+| Backend | 1.4 GB | 400 MB | 19 → 12 | 71% ⬇️ |
 
 ### Runtime Metrics
 
-| Metric         | Before | After  | Improvement   |
-| -------------- | ------ | ------ | ------------- |
-| Startup time   | 20-30s | 12-18s | 35-40% faster |
-| Memory (idle)  | 250 MB | 180 MB | 28% reduction |
-| Memory (load)  | 500 MB | 350 MB | 30% reduction |
+| Metric | Before | After | Improvement |
+|--------|--------|-------|-------------|
+| Startup time | 20-30s | 12-18s | 35-40% faster |
+| Memory (idle) | 250 MB | 180 MB | 28% reduction |
+| Memory (load) | 500 MB | 350 MB | 30% reduction |
 | Container size | 1.2 GB | 350 MB | 71% reduction |
 
 ---
@@ -616,8 +579,8 @@ Excludes:
 
 ### Storage Costs
 
-**Before**: 4.35 GB × 4 services × 3 regions = 52.2 GB **After**: 1.185 GB × 4
-services × 3 regions = 14.22 GB
+**Before**: 4.35 GB × 4 services × 3 regions = 52.2 GB
+**After**: 1.185 GB × 4 services × 3 regions = 14.22 GB
 
 **Savings**: 38 GB per deployment (73% reduction)
 
@@ -625,10 +588,10 @@ At $0.10/GB/month: **$3.80/month savings**
 
 ### Transfer Costs
 
-**Before**: 4.35 GB per deployment **After**: 1.185 GB per deployment
+**Before**: 4.35 GB per deployment
+**After**: 1.185 GB per deployment
 
 With 10 deployments/day:
-
 - Before: 43.5 GB/day
 - After: 11.85 GB/day
 - Savings: 31.65 GB/day = 950 GB/month
@@ -637,8 +600,8 @@ At $0.09/GB: **$85.50/month savings**
 
 ### Compute Time
 
-**Before**: 12 min × 4 services × 10 builds/day = 480 min/day **After**: 4 min ×
-4 services × 10 builds/day = 160 min/day
+**Before**: 12 min × 4 services × 10 builds/day = 480 min/day
+**After**: 4 min × 4 services × 10 builds/day = 160 min/day
 
 **Savings**: 320 min/day = 9,600 min/month = 160 hours/month
 
@@ -712,8 +675,7 @@ docker stats test-frontend
 
 ## Conclusion
 
-The Docker optimization effort has achieved significant improvements across all
-key metrics:
+The Docker optimization effort has achieved significant improvements across all key metrics:
 
 - **73% reduction in total image size** (4.35 GB → 1.185 GB)
 - **60-70% faster builds** with cache
@@ -721,8 +683,7 @@ key metrics:
 - **Improved security** (70% fewer CVEs)
 - **Better maintainability** (standardized, documented approach)
 
-These optimizations provide a solid foundation for scalable, efficient, and
-secure containerized deployments.
+These optimizations provide a solid foundation for scalable, efficient, and secure containerized deployments.
 
 ---
 

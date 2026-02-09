@@ -8,36 +8,14 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 const User = (props: IconProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
     <circle cx="12" cy="7" r="4"></circle>
   </svg>
 );
 
 const Robot = (props: IconProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
     <rect x="3" y="11" width="18" height="10" rx="2"></rect>
     <circle cx="12" cy="5" r="2"></circle>
     <path d="M12 7v4"></path>
@@ -53,28 +31,25 @@ interface UserData {
 
 interface UserIconProps {
   user?: UserData;
-  role?: 'user' | 'assistant' | 'system';
+  role?: "user" | "assistant" | "system";
   className?: string;
 }
 
-export default function UserIcon({
-  user,
-  role = 'user',
-  className = '',
-}: UserIconProps): JSX.Element {
-  if (role === 'assistant') {
+export default function UserIcon({ user, role = "user", className = "" }: UserIconProps): JSX.Element {
+  if (role === "assistant") {
     return (
       <div className={`w-[35px] h-[35px] flex-shrink-0 ${className}`}>
-        <Robot className="w-full h-full text-white" weight="fill" />
+        <Robot
+          className="w-full h-full text-white"
+          weight="fill"
+        />
       </div>
     );
   }
 
   if (user?.profileImage) {
     return (
-      <div
-        className={`relative w-[35px] h-[35px] rounded-full flex-shrink-0 overflow-hidden ${className}`}
-      >
+      <div className={`relative w-[35px] h-[35px] rounded-full flex-shrink-0 overflow-hidden ${className}`}>
         <img
           src={user.profileImage}
           alt="User profile"
@@ -86,7 +61,10 @@ export default function UserIcon({
 
   return (
     <div className={`w-[35px] h-[35px] flex-shrink-0 ${className}`}>
-      <User className="w-full h-full text-white" weight="fill" />
+      <User
+        className="w-full h-full text-white"
+        weight="fill"
+      />
     </div>
   );
 }

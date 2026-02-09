@@ -1,7 +1,6 @@
 # MCP Core Examples
 
-This document provides comprehensive examples of how to use the MCP Core package
-for various use cases and scenarios.
+This document provides comprehensive examples of how to use the MCP Core package for various use cases and scenarios.
 
 ## Table of Contents
 
@@ -21,51 +20,44 @@ for various use cases and scenarios.
 A basic MCP server that echoes requests back to clients.
 
 ```typescript
-import {
-  MCPSystemFactory,
-  ResourceHandler,
-  ToolHandler,
-} from '@the-new-fuse/mcp-core';
+import { MCPSystemFactory, ResourceHandler, ToolHandler } from '@the-new-fuse/mcp-core';
 
 // Create server
 const server = MCPSystemFactory.createServer({
   name: 'echo-server',
   version: '1.0.0',
-  port: 8080,
+  port: 8080
 });
 
 // Echo tool handler
 class EchoToolHandler extends ToolHandler {
   name = 'echo';
-
+  
   async execute(params: { message: string }): Promise<any> {
     return {
       echo: params.message,
       timestamp: new Date().toISOString(),
-      length: params.message.length,
+      length: params.message.length
     };
   }
-
+  
   async validate(params: any): Promise<boolean> {
     return typeof params === 'object' && typeof params.message === 'string';
   }
 }
 
 // Register the echo tool
-await server.registerTool(
-  {
-    name: 'echo',
-    description: 'Echoes back the provided message',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', maxLength: 1000 },
-      },
-      required: ['message'],
+await server.registerTool({
+  name: 'echo',
+  description: 'Echoes back the provided message',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      message: { type: 'string', maxLength: 1000 }
     },
-  },
-  new EchoToolHandler()
-);
+    required: ['message']
+  }
+}, new EchoToolHandler());
 
 // Start server
 await server.start();
@@ -80,7 +72,7 @@ import { MCPSystemFactory } from '@the-new-fuse/mcp-core';
 async function runClient() {
   const client = MCPSystemFactory.createClient({
     serverUrl: 'ws://localhost:8080',
-    connectionTimeout: 5000,
+    connectionTimeout: 5000
   });
 
   try {
@@ -95,11 +87,12 @@ async function runClient() {
       method: 'tools/call',
       params: {
         name: 'echo',
-        arguments: { message: 'Hello, MCP!' },
-      },
+        arguments: { message: 'Hello, MCP!' }
+      }
     });
 
     console.log('Echo response:', response.result);
+
   } finally {
     await client.disconnect();
   }
@@ -132,11 +125,11 @@ export class FileSystemResourceHandler extends ResourceHandler {
 
   async read(uri: string): Promise<any> {
     const filePath = this.uriToPath(uri);
-
+    
     try {
       await this.ensurePathExists(dirname(filePath));
       const stats = await fs.stat(filePath);
-
+      
       if (stats.isDirectory()) {
         return this.readDirectory(filePath);
       } else {
@@ -147,26 +140,24 @@ export class FileSystemResourceHandler extends ResourceHandler {
     }
   }
 
-  async list(
-    pattern?: string
-  ): Promise<Array<{ uri: string; name: string; mimeType?: string }>> {
+  async list(pattern?: string): Promise<Array<{ uri: string; name: string; mimeType?: string }>> {
     const files = await this.scanDirectory(this.basePath);
-
+    
     return files
-      .filter((file) => !pattern || this.matchesPattern(file, pattern))
-      .map((file) => ({
+      .filter(file => !pattern || this.matchesPattern(file, pattern))
+      .map(file => ({
         uri: this.pathToUri(file),
         name: basename(file),
-        mimeType: this.getMimeType(file),
+        mimeType: this.getMimeType(file)
       }));
   }
 
   async write(uri: string, data: any): Promise<void> {
     const filePath = this.uriToPath(uri);
-
+    
     try {
       await this.ensurePathExists(dirname(filePath));
-
+      
       let content: string;
       if (typeof data === 'string') {
         content = data;
@@ -175,15 +166,16 @@ export class FileSystemResourceHandler extends ResourceHandler {
       } else {
         content = String(data);
       }
-
+      
       await fs.writeFile(filePath, content, 'utf-8');
-
+      
       // Notify subscribers of the change
       this.notifySubscribers(uri, {
         action: 'write',
         uri,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       });
+      
     } catch (error) {
       throw new Error(`Failed to write resource ${uri}: ${error.message}`);
     }
@@ -191,59 +183,53 @@ export class FileSystemResourceHandler extends ResourceHandler {
 
   async delete(uri: string): Promise<void> {
     const filePath = this.uriToPath(uri);
-
+    
     try {
       const stats = await fs.stat(filePath);
-
+      
       if (stats.isDirectory()) {
         await fs.rmdir(filePath, { recursive: true });
       } else {
         await fs.unlink(filePath);
       }
-
+      
       // Clean up any watchers
       this.stopWatching(uri);
-
+      
       // Notify subscribers of deletion
       this.notifySubscribers(uri, {
         action: 'delete',
         uri,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       });
+      
     } catch (error) {
       throw new Error(`Failed to delete resource ${uri}: ${error.message}`);
     }
   }
 
-  async subscribe(
-    uri: string,
-    callback: (data: any) => void
-  ): Promise<() => void> {
+  async subscribe(uri: string, callback: (data: any) => void): Promise<() => void> {
     const filePath = this.uriToPath(uri);
-
+    
     // Add callback to subscriptions
     if (!this.subscriptions.has(uri)) {
       this.subscriptions.set(uri, new Set());
     }
     this.subscriptions.get(uri)!.add(callback);
-
+    
     // Start watching if not already watching
     if (!this.watchers.has(uri)) {
       try {
-        const watcher = watch(
-          filePath,
-          { persistent: false },
-          (eventType, filename) => {
-            this.handleFileChange(uri, eventType, filename);
-          }
-        );
-
+        const watcher = watch(filePath, { persistent: false }, (eventType, filename) => {
+          this.handleFileChange(uri, eventType, filename);
+        });
+        
         this.watchers.set(uri, watcher);
       } catch (error) {
         console.warn(`Failed to watch ${uri}: ${error.message}`);
       }
     }
-
+    
     // Return unsubscribe function
     return () => {
       const subscribers = this.subscriptions.get(uri);
@@ -259,7 +245,7 @@ export class FileSystemResourceHandler extends ResourceHandler {
 
   async getMetadata(uri: string): Promise<any> {
     const filePath = this.uriToPath(uri);
-
+    
     try {
       const stats = await fs.stat(filePath);
       return {
@@ -270,7 +256,7 @@ export class FileSystemResourceHandler extends ResourceHandler {
         isDirectory: stats.isDirectory(),
         isFile: stats.isFile(),
         permissions: stats.mode.toString(8),
-        checksum: await this.calculateChecksum(filePath),
+        checksum: await this.calculateChecksum(filePath)
       };
     } catch (error) {
       throw new Error(`Failed to get metadata for ${uri}: ${error.message}`);
@@ -286,53 +272,47 @@ export class FileSystemResourceHandler extends ResourceHandler {
       mimeType: this.getMimeType(filePath),
       size: stats.size,
       lastModified: stats.mtime.toISOString(),
-      encoding: 'utf-8',
+      encoding: 'utf-8'
     };
   }
 
   private async readDirectory(dirPath: string): Promise<any> {
     const entries = await fs.readdir(dirPath, { withFileTypes: true });
     const items = [];
-
+    
     for (const entry of entries) {
       const itemPath = join(dirPath, entry.name);
       const stats = await fs.stat(itemPath);
-
+      
       items.push({
         name: entry.name,
         uri: this.pathToUri(itemPath),
         type: entry.isDirectory() ? 'directory' : 'file',
         size: entry.isFile() ? stats.size : undefined,
         lastModified: stats.mtime.toISOString(),
-        mimeType: entry.isFile() ? this.getMimeType(itemPath) : undefined,
+        mimeType: entry.isFile() ? this.getMimeType(itemPath) : undefined
       });
     }
-
+    
     return {
       type: 'directory',
       items,
-      count: items.length,
+      count: items.length
     };
   }
 
-  private async scanDirectory(
-    dir: string,
-    maxDepth = 10,
-    currentDepth = 0
-  ): Promise<string[]> {
+  private async scanDirectory(dir: string, maxDepth = 10, currentDepth = 0): Promise<string[]> {
     if (currentDepth >= maxDepth) return [];
-
+    
     const files: string[] = [];
     try {
       const entries = await fs.readdir(dir, { withFileTypes: true });
-
+      
       for (const entry of entries) {
         const fullPath = join(dir, entry.name);
-
+        
         if (entry.isDirectory()) {
-          files.push(
-            ...(await this.scanDirectory(fullPath, maxDepth, currentDepth + 1))
-          );
+          files.push(...await this.scanDirectory(fullPath, maxDepth, currentDepth + 1));
         } else {
           files.push(fullPath);
         }
@@ -340,7 +320,7 @@ export class FileSystemResourceHandler extends ResourceHandler {
     } catch (error) {
       console.warn(`Failed to scan directory ${dir}: ${error.message}`);
     }
-
+    
     return files;
   }
 
@@ -355,24 +335,20 @@ export class FileSystemResourceHandler extends ResourceHandler {
     }
   }
 
-  private handleFileChange(
-    uri: string,
-    eventType: string,
-    filename?: string
-  ): void {
+  private handleFileChange(uri: string, eventType: string, filename?: string): void {
     this.notifySubscribers(uri, {
       action: 'change',
       eventType,
       filename,
       uri,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString()
     });
   }
 
   private notifySubscribers(uri: string, data: any): void {
     const subscribers = this.subscriptions.get(uri);
     if (subscribers) {
-      subscribers.forEach((callback) => {
+      subscribers.forEach(callback => {
         try {
           callback(data);
         } catch (error) {
@@ -417,19 +393,18 @@ export class FileSystemResourceHandler extends ResourceHandler {
       '.jpg': 'image/jpeg',
       '.jpeg': 'image/jpeg',
       '.gif': 'image/gif',
-      '.svg': 'image/svg+xml',
+      '.svg': 'image/svg+xml'
     };
-
+    
     return mimeTypes[ext] || 'application/octet-stream';
   }
 
   private matchesPattern(path: string, pattern: string): boolean {
     // Simple glob pattern matching
     const regex = new RegExp(
-      pattern
-        .replace(/\*\*/g, '.*')
-        .replace(/\*/g, '[^/]*')
-        .replace(/\?/g, '[^/]')
+      pattern.replace(/\*\*/g, '.*')
+              .replace(/\*/g, '[^/]*')
+              .replace(/\?/g, '[^/]')
     );
     return regex.test(path);
   }
@@ -446,25 +421,22 @@ async function setupFileServer() {
   const server = MCPSystemFactory.createServer({
     name: 'file-server',
     version: '1.0.0',
-    port: 8080,
+    port: 8080
   });
 
   const fileHandler = new FileSystemResourceHandler('./data');
 
   // Register file resources
-  await server.registerResource(
-    {
-      uri: 'file:///',
-      name: 'File System',
-      description: 'Local file system access',
-      permissions: {
-        read: true,
-        write: true,
-        subscribe: true,
-      },
-    },
-    fileHandler
-  );
+  await server.registerResource({
+    uri: 'file:///',
+    name: 'File System',
+    description: 'Local file system access',
+    permissions: {
+      read: true,
+      write: true,
+      subscribe: true
+    }
+  }, fileHandler);
 
   await server.start();
   console.log('File server running on port 8080');
@@ -488,7 +460,7 @@ export class PostgreSQLResourceHandler extends ResourceHandler {
 
   async read(uri: string): Promise<any> {
     const { table, id, query } = this.parseUri(uri);
-
+    
     try {
       if (query) {
         // Execute custom query
@@ -497,17 +469,11 @@ export class PostgreSQLResourceHandler extends ResourceHandler {
           query,
           rows: result.rows,
           rowCount: result.rowCount,
-          fields: result.fields?.map((f) => ({
-            name: f.name,
-            type: f.dataTypeID,
-          })),
+          fields: result.fields?.map(f => ({ name: f.name, type: f.dataTypeID }))
         };
       } else if (id) {
         // Get specific record
-        const result = await this.pool.query(
-          `SELECT * FROM ${table} WHERE id = $1`,
-          [id]
-        );
+        const result = await this.pool.query(`SELECT * FROM ${table} WHERE id = $1`, [id]);
         if (result.rows.length === 0) {
           throw new Error(`Record not found: ${uri}`);
         }
@@ -515,18 +481,16 @@ export class PostgreSQLResourceHandler extends ResourceHandler {
           table,
           id,
           data: result.rows[0],
-          mimeType: 'application/json',
+          mimeType: 'application/json'
         };
       } else {
         // List all records (with pagination)
-        const result = await this.pool.query(
-          `SELECT * FROM ${table} LIMIT 100`
-        );
+        const result = await this.pool.query(`SELECT * FROM ${table} LIMIT 100`);
         return {
           table,
           rows: result.rows,
           count: result.rowCount,
-          hasMore: result.rowCount === 100,
+          hasMore: result.rowCount === 100
         };
       }
     } catch (error) {
@@ -537,50 +501,45 @@ export class PostgreSQLResourceHandler extends ResourceHandler {
   async list(pattern?: string): Promise<Array<{ uri: string; name: string }>> {
     try {
       // Get all tables
-      const tablesResult = await this.pool.query(
-        `
+      const tablesResult = await this.pool.query(`
         SELECT tablename 
         FROM pg_tables 
         WHERE schemaname = 'public'
         ${pattern ? `AND tablename ILIKE $1` : ''}
-      `,
-        pattern ? [`%${pattern}%`] : []
-      );
-
+      `, pattern ? [`%${pattern}%`] : []);
+      
       const resources = [];
-
+      
       for (const row of tablesResult.rows) {
         const tableName = row.tablename;
-
+        
         // Add table resource
         resources.push({
           uri: `db://${tableName}`,
           name: `Table: ${tableName}`,
-          mimeType: 'application/json',
+          mimeType: 'application/json'
         });
-
+        
         // Add sample records (first 10)
         try {
           const recordsResult = await this.pool.query(
             `SELECT * FROM ${tableName} LIMIT 10`
           );
-
+          
           for (const record of recordsResult.rows) {
             if (record.id) {
               resources.push({
                 uri: `db://${tableName}/${record.id}`,
                 name: `${tableName} Record ${record.id}`,
-                mimeType: 'application/json',
+                mimeType: 'application/json'
               });
             }
           }
         } catch (error) {
-          console.warn(
-            `Failed to list records for table ${tableName}: ${error.message}`
-          );
+          console.warn(`Failed to list records for table ${tableName}: ${error.message}`);
         }
       }
-
+      
       return resources;
     } catch (error) {
       throw new Error(`Failed to list database resources: ${error.message}`);
@@ -589,22 +548,20 @@ export class PostgreSQLResourceHandler extends ResourceHandler {
 
   async write(uri: string, data: any): Promise<void> {
     const { table, id } = this.parseUri(uri);
-
+    
     try {
       if (id) {
         // Update existing record
         const fields = Object.keys(data);
         const values = Object.values(data);
         const placeholders = fields.map((_, i) => `$${i + 2}`).join(', ');
-        const setClause = fields
-          .map((field, i) => `${field} = $${i + 2}`)
-          .join(', ');
-
+        const setClause = fields.map((field, i) => `${field} = $${i + 2}`).join(', ');
+        
         const result = await this.pool.query(
           `UPDATE ${table} SET ${setClause} WHERE id = $1`,
           [id, ...values]
         );
-
+        
         if (result.rowCount === 0) {
           throw new Error(`Record not found: ${uri}`);
         }
@@ -614,21 +571,22 @@ export class PostgreSQLResourceHandler extends ResourceHandler {
         const values = Object.values(data);
         const placeholders = fields.map((_, i) => `$${i + 1}`).join(', ');
         const fieldsList = fields.join(', ');
-
+        
         await this.pool.query(
           `INSERT INTO ${table} (${fieldsList}) VALUES (${placeholders})`,
           values
         );
       }
-
+      
       // Notify subscribers
       this.notifySubscribers(uri, {
         action: id ? 'update' : 'insert',
         table,
         id,
         data,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       });
+      
     } catch (error) {
       throw new Error(`Database write failed: ${error.message}`);
     }
@@ -636,46 +594,41 @@ export class PostgreSQLResourceHandler extends ResourceHandler {
 
   async delete(uri: string): Promise<void> {
     const { table, id } = this.parseUri(uri);
-
+    
     if (!id) {
       throw new Error('Cannot delete entire table without specific ID');
     }
-
+    
     try {
-      const result = await this.pool.query(
-        `DELETE FROM ${table} WHERE id = $1`,
-        [id]
-      );
-
+      const result = await this.pool.query(`DELETE FROM ${table} WHERE id = $1`, [id]);
+      
       if (result.rowCount === 0) {
         throw new Error(`Record not found: ${uri}`);
       }
-
+      
       // Notify subscribers
       this.notifySubscribers(uri, {
         action: 'delete',
         table,
         id,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       });
+      
     } catch (error) {
       throw new Error(`Database delete failed: ${error.message}`);
     }
   }
 
-  async subscribe(
-    uri: string,
-    callback: (data: any) => void
-  ): Promise<() => void> {
+  async subscribe(uri: string, callback: (data: any) => void): Promise<() => void> {
     // Add to subscriptions
     if (!this.subscriptions.has(uri)) {
       this.subscriptions.set(uri, new Set());
     }
     this.subscriptions.get(uri)!.add(callback);
-
+    
     // For PostgreSQL, you could implement LISTEN/NOTIFY
     // This is a simplified example
-
+    
     return () => {
       const subscribers = this.subscriptions.get(uri);
       if (subscribers) {
@@ -689,7 +642,7 @@ export class PostgreSQLResourceHandler extends ResourceHandler {
 
   async getMetadata(uri: string): Promise<any> {
     const { table, id } = this.parseUri(uri);
-
+    
     try {
       if (id) {
         // Get record metadata
@@ -697,22 +650,21 @@ export class PostgreSQLResourceHandler extends ResourceHandler {
           `SELECT *, pg_size_pretty(pg_column_size(*)) as size FROM ${table} WHERE id = $1`,
           [id]
         );
-
+        
         if (result.rows.length === 0) {
           throw new Error(`Record not found: ${uri}`);
         }
-
+        
         return {
           table,
           id,
           size: result.rows[0].size,
           lastModified: result.rows[0].updated_at || result.rows[0].created_at,
-          fields: Object.keys(result.rows[0]),
+          fields: Object.keys(result.rows[0])
         };
       } else {
         // Get table metadata
-        const result = await this.pool.query(
-          `
+        const result = await this.pool.query(`
           SELECT 
             schemaname,
             tablename,
@@ -725,10 +677,8 @@ export class PostgreSQLResourceHandler extends ResourceHandler {
           FROM pg_tables t
           JOIN pg_class c ON c.relname = t.tablename
           WHERE schemaname = 'public' AND tablename = $1
-        `,
-          [table]
-        );
-
+        `, [table]);
+        
         return result.rows[0];
       }
     } catch (error) {
@@ -736,31 +686,27 @@ export class PostgreSQLResourceHandler extends ResourceHandler {
     }
   }
 
-  private parseUri(uri: string): {
-    table: string;
-    id?: string;
-    query?: string;
-  } {
+  private parseUri(uri: string): { table: string; id?: string; query?: string } {
     const url = new URL(uri);
     const pathParts = url.pathname.split('/').filter(Boolean);
-
+    
     if (url.search) {
       // Custom query
       const params = new URLSearchParams(url.search);
       return {
         table: pathParts[0],
-        query: params.get('q') || undefined,
+        query: params.get('q') || undefined
       };
     } else if (pathParts.length === 2) {
       // Specific record
       return {
         table: pathParts[0],
-        id: pathParts[1],
+        id: pathParts[1]
       };
     } else if (pathParts.length === 1) {
       // Table
       return {
-        table: pathParts[0],
+        table: pathParts[0]
       };
     } else {
       throw new Error(`Invalid database URI: ${uri}`);
@@ -770,7 +716,7 @@ export class PostgreSQLResourceHandler extends ResourceHandler {
   private notifySubscribers(uri: string, data: any): void {
     const subscribers = this.subscriptions.get(uri);
     if (subscribers) {
-      subscribers.forEach((callback) => {
+      subscribers.forEach(callback => {
         try {
           callback(data);
         } catch (error) {
@@ -805,10 +751,10 @@ export class CSVProcessorToolHandler extends ToolHandler {
     options?: any;
   }): Promise<any> {
     const { data, operation, options = {} } = params;
-
+    
     try {
       const rows = this.parseCSV(data);
-
+      
       switch (operation) {
         case 'parse':
           return this.parseOperation(rows, options);
@@ -831,36 +777,33 @@ export class CSVProcessorToolHandler extends ToolHandler {
       type: 'object',
       properties: {
         data: { type: 'string', minLength: 1 },
-        operation: {
-          type: 'string',
-          enum: ['parse', 'filter', 'transform', 'aggregate'],
-        },
-        options: { type: 'object' },
+        operation: { type: 'string', enum: ['parse', 'filter', 'transform', 'aggregate'] },
+        options: { type: 'object' }
       },
-      required: ['data', 'operation'],
+      required: ['data', 'operation']
     };
-
+    
     return this.ajv.validate(schema, params);
   }
 
   private parseCSV(data: string): Array<Record<string, string>> {
     const lines = data.trim().split('\n');
     if (lines.length === 0) return [];
-
+    
     const headers = this.parseCSVLine(lines[0]);
     const rows: Array<Record<string, string>> = [];
-
+    
     for (let i = 1; i < lines.length; i++) {
       const values = this.parseCSVLine(lines[i]);
       const row: Record<string, string> = {};
-
+      
       headers.forEach((header, index) => {
         row[header.trim()] = values[index]?.trim() || '';
       });
-
+      
       rows.push(row);
     }
-
+    
     return rows;
   }
 
@@ -868,10 +811,10 @@ export class CSVProcessorToolHandler extends ToolHandler {
     const result: string[] = [];
     let current = '';
     let inQuotes = false;
-
+    
     for (let i = 0; i < line.length; i++) {
       const char = line[i];
-
+      
       if (char === '"') {
         if (inQuotes && line[i + 1] === '"') {
           current += '"';
@@ -886,44 +829,38 @@ export class CSVProcessorToolHandler extends ToolHandler {
         current += char;
       }
     }
-
+    
     result.push(current);
     return result;
   }
 
-  private parseOperation(
-    rows: Array<Record<string, string>>,
-    options: any
-  ): any {
+  private parseOperation(rows: Array<Record<string, string>>, options: any): any {
     const { includeTypes = false, sampleSize = 10 } = options;
-
+    
     const result = {
       headers: rows.length > 0 ? Object.keys(rows[0]) : [],
       rowCount: rows.length,
-      sample: rows.slice(0, sampleSize),
+      sample: rows.slice(0, sampleSize)
     };
-
+    
     if (includeTypes) {
       result.types = this.inferTypes(rows);
     }
-
+    
     return result;
   }
 
-  private filterOperation(
-    rows: Array<Record<string, string>>,
-    options: any
-  ): any {
+  private filterOperation(rows: Array<Record<string, string>>, options: any): any {
     const { conditions = [], limit } = options;
-
+    
     let filtered = rows;
-
+    
     for (const condition of conditions) {
       const { field, operator, value } = condition;
-
-      filtered = filtered.filter((row) => {
+      
+      filtered = filtered.filter(row => {
         const rowValue = row[field];
-
+        
         switch (operator) {
           case 'equals':
             return rowValue === value;
@@ -944,30 +881,27 @@ export class CSVProcessorToolHandler extends ToolHandler {
         }
       });
     }
-
+    
     if (limit) {
       filtered = filtered.slice(0, limit);
     }
-
+    
     return {
       originalCount: rows.length,
       filteredCount: filtered.length,
-      data: filtered,
+      data: filtered
     };
   }
 
-  private transformOperation(
-    rows: Array<Record<string, string>>,
-    options: any
-  ): any {
+  private transformOperation(rows: Array<Record<string, string>>, options: any): any {
     const { transformations = [] } = options;
-
-    const transformed = rows.map((row) => {
+    
+    const transformed = rows.map(row => {
       const newRow = { ...row };
-
+      
       for (const transform of transformations) {
         const { field, operation, target, value } = transform;
-
+        
         switch (operation) {
           case 'rename':
             if (newRow[field] !== undefined) {
@@ -976,46 +910,36 @@ export class CSVProcessorToolHandler extends ToolHandler {
             }
             break;
           case 'uppercase':
-            if (newRow[field])
-              newRow[target || field] = newRow[field].toUpperCase();
+            if (newRow[field]) newRow[target || field] = newRow[field].toUpperCase();
             break;
           case 'lowercase':
-            if (newRow[field])
-              newRow[target || field] = newRow[field].toLowerCase();
+            if (newRow[field]) newRow[target || field] = newRow[field].toLowerCase();
             break;
           case 'trim':
             if (newRow[field]) newRow[target || field] = newRow[field].trim();
             break;
           case 'replace':
-            if (newRow[field])
-              newRow[target || field] = newRow[field].replace(
-                value.search,
-                value.replace
-              );
+            if (newRow[field]) newRow[target || field] = newRow[field].replace(value.search, value.replace);
             break;
           case 'format':
-            if (newRow[field])
-              newRow[target || field] = this.formatValue(newRow[field], value);
+            if (newRow[field]) newRow[target || field] = this.formatValue(newRow[field], value);
             break;
         }
       }
-
+      
       return newRow;
     });
-
+    
     return {
       originalCount: rows.length,
       transformedCount: transformed.length,
-      data: transformed,
+      data: transformed
     };
   }
 
-  private aggregateOperation(
-    rows: Array<Record<string, string>>,
-    options: any
-  ): any {
+  private aggregateOperation(rows: Array<Record<string, string>>, options: any): any {
     const { groupBy, aggregations = [] } = options;
-
+    
     if (groupBy) {
       return this.groupAndAggregate(rows, groupBy, aggregations);
     } else {
@@ -1023,13 +947,9 @@ export class CSVProcessorToolHandler extends ToolHandler {
     }
   }
 
-  private groupAndAggregate(
-    rows: Array<Record<string, string>>,
-    groupBy: string,
-    aggregations: any[]
-  ): any {
+  private groupAndAggregate(rows: Array<Record<string, string>>, groupBy: string, aggregations: any[]): any {
     const groups = new Map<string, Array<Record<string, string>>>();
-
+    
     // Group rows
     for (const row of rows) {
       const key = row[groupBy] || 'null';
@@ -1038,19 +958,17 @@ export class CSVProcessorToolHandler extends ToolHandler {
       }
       groups.get(key)!.push(row);
     }
-
+    
     // Aggregate each group
     const results = [];
     for (const [groupValue, groupRows] of groups) {
       const result = { [groupBy]: groupValue };
-
+      
       for (const agg of aggregations) {
         const { field, operation, alias } = agg;
-        const values = groupRows
-          .map((row) => parseFloat(row[field]))
-          .filter((v) => !isNaN(v));
+        const values = groupRows.map(row => parseFloat(row[field])).filter(v => !isNaN(v));
         const resultField = alias || `${operation}_${field}`;
-
+        
         switch (operation) {
           case 'count':
             result[resultField] = groupRows.length;
@@ -1059,60 +977,47 @@ export class CSVProcessorToolHandler extends ToolHandler {
             result[resultField] = values.reduce((sum, val) => sum + val, 0);
             break;
           case 'avg':
-            result[resultField] =
-              values.length > 0
-                ? values.reduce((sum, val) => sum + val, 0) / values.length
-                : 0;
+            result[resultField] = values.length > 0 ? values.reduce((sum, val) => sum + val, 0) / values.length : 0;
             break;
           case 'min':
-            result[resultField] =
-              values.length > 0 ? Math.min(...values) : null;
+            result[resultField] = values.length > 0 ? Math.min(...values) : null;
             break;
           case 'max':
-            result[resultField] =
-              values.length > 0 ? Math.max(...values) : null;
+            result[resultField] = values.length > 0 ? Math.max(...values) : null;
             break;
         }
       }
-
+      
       results.push(result);
     }
-
+    
     return {
       groupBy,
       groupCount: groups.size,
-      data: results,
+      data: results
     };
   }
 
-  private simpleAggregate(
-    rows: Array<Record<string, string>>,
-    aggregations: any[]
-  ): any {
+  private simpleAggregate(rows: Array<Record<string, string>>, aggregations: any[]): any {
     const result = { totalRows: rows.length };
-
+    
     for (const agg of aggregations) {
       const { field, operation, alias } = agg;
-      const values = rows
-        .map((row) => parseFloat(row[field]))
-        .filter((v) => !isNaN(v));
+      const values = rows.map(row => parseFloat(row[field])).filter(v => !isNaN(v));
       const resultField = alias || `${operation}_${field}`;
-
+      
       switch (operation) {
         case 'count':
           result[resultField] = rows.length;
           break;
         case 'count_distinct':
-          result[resultField] = new Set(rows.map((row) => row[field])).size;
+          result[resultField] = new Set(rows.map(row => row[field])).size;
           break;
         case 'sum':
           result[resultField] = values.reduce((sum, val) => sum + val, 0);
           break;
         case 'avg':
-          result[resultField] =
-            values.length > 0
-              ? values.reduce((sum, val) => sum + val, 0) / values.length
-              : 0;
+          result[resultField] = values.length > 0 ? values.reduce((sum, val) => sum + val, 0) / values.length : 0;
           break;
         case 'min':
           result[resultField] = values.length > 0 ? Math.min(...values) : null;
@@ -1122,37 +1027,29 @@ export class CSVProcessorToolHandler extends ToolHandler {
           break;
       }
     }
-
+    
     return result;
   }
 
-  private inferTypes(
-    rows: Array<Record<string, string>>
-  ): Record<string, string> {
+  private inferTypes(rows: Array<Record<string, string>>): Record<string, string> {
     if (rows.length === 0) return {};
-
+    
     const types: Record<string, string> = {};
     const headers = Object.keys(rows[0]);
-
+    
     for (const header of headers) {
-      const values = rows
-        .slice(0, 100)
-        .map((row) => row[header])
-        .filter((v) => v && v.trim());
-
+      const values = rows.slice(0, 100).map(row => row[header]).filter(v => v && v.trim());
+      
       if (values.length === 0) {
         types[header] = 'string';
         continue;
       }
-
-      const allNumbers = values.every((v) => !isNaN(parseFloat(v)));
-      const allIntegers =
-        allNumbers && values.every((v) => Number.isInteger(parseFloat(v)));
-      const allDates = values.every((v) => !isNaN(Date.parse(v)));
-      const allBooleans = values.every((v) =>
-        ['true', 'false', '1', '0', 'yes', 'no'].includes(v.toLowerCase())
-      );
-
+      
+      const allNumbers = values.every(v => !isNaN(parseFloat(v)));
+      const allIntegers = allNumbers && values.every(v => Number.isInteger(parseFloat(v)));
+      const allDates = values.every(v => !isNaN(Date.parse(v)));
+      const allBooleans = values.every(v => ['true', 'false', '1', '0', 'yes', 'no'].includes(v.toLowerCase()));
+      
       if (allBooleans) {
         types[header] = 'boolean';
       } else if (allIntegers) {
@@ -1165,7 +1062,7 @@ export class CSVProcessorToolHandler extends ToolHandler {
         types[header] = 'string';
       }
     }
-
+    
     return types;
   }
 
@@ -1176,9 +1073,9 @@ export class CSVProcessorToolHandler extends ToolHandler {
       case 'number':
         return parseFloat(value).toFixed(format.decimals || 2);
       case 'currency':
-        return new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: format.currency || 'USD',
+        return new Intl.NumberFormat('en-US', { 
+          style: 'currency', 
+          currency: format.currency || 'USD' 
         }).format(parseFloat(value));
       default:
         return value;
@@ -1207,7 +1104,7 @@ export class HTTPClientToolHandler extends ToolHandler {
       body,
       timeout = 30000,
       followRedirects = true,
-      validateCertificate = true,
+      validateCertificate = true
     } = params;
 
     try {
@@ -1219,7 +1116,7 @@ export class HTTPClientToolHandler extends ToolHandler {
         headers,
         body: body ? JSON.stringify(body) : undefined,
         signal: controller.signal,
-        redirect: followRedirects ? 'follow' : 'manual',
+        redirect: followRedirects ? 'follow' : 'manual'
       };
 
       const startTime = Date.now();
@@ -1253,10 +1150,11 @@ export class HTTPClientToolHandler extends ToolHandler {
         body: responseBody,
         timing: {
           duration: endTime - startTime,
-          timestamp: new Date().toISOString(),
+          timestamp: new Date().toISOString()
         },
-        ok: response.ok,
+        ok: response.ok
       };
+
     } catch (error) {
       if (error.name === 'AbortError') {
         throw new Error(`Request timeout after ${timeout}ms`);
@@ -1270,17 +1168,14 @@ export class HTTPClientToolHandler extends ToolHandler {
       type: 'object',
       properties: {
         url: { type: 'string', format: 'uri' },
-        method: {
-          type: 'string',
-          enum: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-        },
+        method: { type: 'string', enum: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'] },
         headers: { type: 'object', additionalProperties: { type: 'string' } },
         body: {},
         timeout: { type: 'number', minimum: 100, maximum: 300000 },
         followRedirects: { type: 'boolean' },
-        validateCertificate: { type: 'boolean' },
+        validateCertificate: { type: 'boolean' }
       },
-      required: ['url'],
+      required: ['url']
     };
 
     return this.ajv.validate(schema, params);
@@ -1302,7 +1197,7 @@ export class ImageProcessorToolHandler extends ToolHandler {
     try {
       // This is a simplified example - in practice you'd use a library like Sharp
       const buffer = Buffer.from(imageData, 'base64');
-
+      
       switch (operation) {
         case 'resize':
           return this.resizeImage(buffer, options);
@@ -1327,13 +1222,10 @@ export class ImageProcessorToolHandler extends ToolHandler {
       type: 'object',
       properties: {
         imageData: { type: 'string', minLength: 1 },
-        operation: {
-          type: 'string',
-          enum: ['resize', 'crop', 'rotate', 'filter', 'analyze'],
-        },
-        options: { type: 'object' },
+        operation: { type: 'string', enum: ['resize', 'crop', 'rotate', 'filter', 'analyze'] },
+        options: { type: 'object' }
       },
-      required: ['imageData', 'operation', 'options'],
+      required: ['imageData', 'operation', 'options']
     };
 
     return this.ajv.validate(schema, params);
@@ -1341,7 +1233,7 @@ export class ImageProcessorToolHandler extends ToolHandler {
 
   private async resizeImage(buffer: Buffer, options: any): Promise<any> {
     const { width, height, maintainAspectRatio = true } = options;
-
+    
     // Mock implementation - use Sharp or similar library in practice
     return {
       operation: 'resize',
@@ -1349,41 +1241,41 @@ export class ImageProcessorToolHandler extends ToolHandler {
       newSize: { width, height },
       maintainAspectRatio,
       outputFormat: 'jpeg',
-      processedImage: buffer.toString('base64'), // In practice, return processed image
+      processedImage: buffer.toString('base64') // In practice, return processed image
     };
   }
 
   private async cropImage(buffer: Buffer, options: any): Promise<any> {
     const { x, y, width, height } = options;
-
+    
     return {
       operation: 'crop',
       cropArea: { x, y, width, height },
       outputFormat: 'jpeg',
-      processedImage: buffer.toString('base64'),
+      processedImage: buffer.toString('base64')
     };
   }
 
   private async rotateImage(buffer: Buffer, options: any): Promise<any> {
     const { degrees } = options;
-
+    
     return {
       operation: 'rotate',
       degrees,
       outputFormat: 'jpeg',
-      processedImage: buffer.toString('base64'),
+      processedImage: buffer.toString('base64')
     };
   }
 
   private async filterImage(buffer: Buffer, options: any): Promise<any> {
     const { filter, intensity = 1.0 } = options;
-
+    
     return {
       operation: 'filter',
       filter,
       intensity,
       outputFormat: 'jpeg',
-      processedImage: buffer.toString('base64'),
+      processedImage: buffer.toString('base64')
     };
   }
 
@@ -1402,8 +1294,8 @@ export class ImageProcessorToolHandler extends ToolHandler {
       metadata: {
         created: new Date().toISOString(),
         camera: 'Unknown',
-        settings: {},
-      },
+        settings: {}
+      }
     };
   }
 }
@@ -1413,81 +1305,59 @@ async function setupToolServer() {
   const server = MCPSystemFactory.createServer({
     name: 'tool-server',
     version: '1.0.0',
-    port: 8080,
+    port: 8080
   });
 
   // Register CSV processor
-  await server.registerTool(
-    {
-      name: 'csv-processor',
-      description: 'Process CSV data with various operations',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          data: { type: 'string' },
-          operation: {
-            type: 'string',
-            enum: ['parse', 'filter', 'transform', 'aggregate'],
-          },
-          options: { type: 'object' },
-        },
-        required: ['data', 'operation'],
+  await server.registerTool({
+    name: 'csv-processor',
+    description: 'Process CSV data with various operations',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        data: { type: 'string' },
+        operation: { type: 'string', enum: ['parse', 'filter', 'transform', 'aggregate'] },
+        options: { type: 'object' }
       },
-    },
-    new CSVProcessorToolHandler()
-  );
+      required: ['data', 'operation']
+    }
+  }, new CSVProcessorToolHandler());
 
   // Register HTTP client
-  await server.registerTool(
-    {
-      name: 'http-client',
-      description: 'Make HTTP requests to external APIs',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          url: { type: 'string', format: 'uri' },
-          method: {
-            type: 'string',
-            enum: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-          },
-          headers: { type: 'object' },
-          body: {},
-          timeout: { type: 'number', minimum: 100, maximum: 300000 },
-        },
-        required: ['url'],
+  await server.registerTool({
+    name: 'http-client',
+    description: 'Make HTTP requests to external APIs',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string', format: 'uri' },
+        method: { type: 'string', enum: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'] },
+        headers: { type: 'object' },
+        body: {},
+        timeout: { type: 'number', minimum: 100, maximum: 300000 }
       },
-    },
-    new HTTPClientToolHandler()
-  );
+      required: ['url']
+    }
+  }, new HTTPClientToolHandler());
 
   // Register image processor
-  await server.registerTool(
-    {
-      name: 'image-processor',
-      description: 'Process and analyze images',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          imageData: { type: 'string' },
-          operation: {
-            type: 'string',
-            enum: ['resize', 'crop', 'rotate', 'filter', 'analyze'],
-          },
-          options: { type: 'object' },
-        },
-        required: ['imageData', 'operation', 'options'],
+  await server.registerTool({
+    name: 'image-processor',
+    description: 'Process and analyze images',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        imageData: { type: 'string' },
+        operation: { type: 'string', enum: ['resize', 'crop', 'rotate', 'filter', 'analyze'] },
+        options: { type: 'object' }
       },
-    },
-    new ImageProcessorToolHandler()
-  );
+      required: ['imageData', 'operation', 'options']
+    }
+  }, new ImageProcessorToolHandler());
 
   await server.start();
-  console.log(
-    'Tool server running on port 8080 with CSV, HTTP, and Image processing tools'
-  );
+  console.log('Tool server running on port 8080 with CSV, HTTP, and Image processing tools');
 }
 ```
 
-This comprehensive examples document provides practical implementations for
-real-world MCP usage scenarios. Each example includes proper error handling,
-validation, and follows MCP protocol best practices.
+This comprehensive examples document provides practical implementations for real-world MCP usage scenarios. Each example includes proper error handling, validation, and follows MCP protocol best practices.

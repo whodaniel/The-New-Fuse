@@ -85,9 +85,7 @@ export class WinstonLogger {
           new this.winston.transports.Console({
             format: this.winston.format.combine(
               this.winston.format.timestamp(),
-              this.config.console?.colorize
-                ? this.winston.format.colorize()
-                : this.winston.format.uncolorize(),
+              this.config.console?.colorize ? this.winston.format.colorize() : this.winston.format.uncolorize(),
               this.winston.format.printf(this.formatConsoleLog.bind(this))
             ),
           })
@@ -209,13 +207,11 @@ export class WinstonLogger {
     }
 
     this.logger.error(message, {
-      error: error
-        ? {
-            message: error.message,
-            stack: error.stack,
-            code: (error as any).code,
-          }
-        : undefined,
+      error: error ? {
+        message: error.message,
+        stack: error.stack,
+        code: (error as any).code,
+      } : undefined,
       metadata,
     });
   }

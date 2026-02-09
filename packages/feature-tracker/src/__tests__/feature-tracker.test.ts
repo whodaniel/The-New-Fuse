@@ -1,5 +1,5 @@
 const { test, expect } = require('@jest/globals');
 
 test('hello world!', () => {
-  expect(true).toBe(true);
+	expect(true).toBe(true);
 });

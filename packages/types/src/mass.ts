@@ -121,12 +121,12 @@ export interface OptimizationJob {
   updatedAt: Date;
 }
 
-export type MassBlockType =
+export type MassBlockType = 
   | 'predictor'
-  | 'aggregate'
-  | 'reflect'
-  | 'debate'
-  | 'custom'
+  | 'aggregate' 
+  | 'reflect' 
+  | 'debate' 
+  | 'custom' 
   | 'tool-use';
 
 export interface MassBlockConfig {

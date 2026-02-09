@@ -2,8 +2,7 @@
 
 ## Overview
 
-This guide covers building The New Fuse using Docker Hub Cloud and deploying to
-Railway for public release.
+This guide covers building The New Fuse using Docker Hub Cloud and deploying to Railway for public release.
 
 ---
 
@@ -30,14 +29,12 @@ chmod +x docker-buildx-setup.sh docker-build-*.sh
 ```
 
 **What this does:**
-
 - Creates Docker Hub Cloud builder instance
 - Connects to `bizsynth/tnf` cloud builder
 - Enables multi-platform builds (AMD64 + ARM64)
 - Sets up build caching
 
 **Output:**
-
 ```
 ✅ Docker Hub Cloud Builder setup complete!
 
@@ -60,7 +57,6 @@ Driver: cloud (bizsynth/tnf)
 ```
 
 **Resulting images:**
-
 - `bizsynth/the-new-fuse-api:latest`
 - `bizsynth/the-new-fuse-api:<git-sha>`
 
@@ -75,7 +71,6 @@ Driver: cloud (bizsynth/tnf)
 ```
 
 **Resulting images:**
-
 - `bizsynth/the-new-fuse-frontend:latest`
 - `bizsynth/the-new-fuse-frontend:<git-sha>`
 
@@ -95,8 +90,7 @@ Driver: cloud (bizsynth/tnf)
 
 #### Setup GitHub Secrets
 
-1. Go to:
-   https://app.docker.com/accounts/bizsynth/cloud/integrations/gha?builder=tnf
+1. Go to: https://app.docker.com/accounts/bizsynth/cloud/integrations/gha?builder=tnf
 2. Generate Docker Hub token
 3. Add to GitHub Secrets:
    - `DOCKER_HUB_TOKEN` = your Docker Hub token
@@ -104,7 +98,6 @@ Driver: cloud (bizsynth/tnf)
 #### Automated Builds Trigger
 
 Builds automatically trigger on:
-
 - ✅ Push to `main` branch → `latest` tag
 - ✅ Push to `project-reconstruction` → `project-reconstruction` tag
 - ✅ Git tags (e.g., `v1.0.0`) → `1.0.0` tag
@@ -168,7 +161,6 @@ railway up frontend
 #### Required Variables
 
 **API Service:**
-
 ```bash
 railway variables set \
   DATABASE_URL="$RAILWAY_POSTGRES_URL" \
@@ -180,7 +172,6 @@ railway variables set \
 ```
 
 **Frontend Service:**
-
 ```bash
 railway variables set \
   VITE_API_URL="https://$API_DOMAIN" \
@@ -208,17 +199,17 @@ railway variables set \
 railway run --service api bash
 
 # Inside the container
-npx drizzle migrate deploy
+npx prisma migrate deploy
 
 # Optional: Seed initial data
-npx drizzle db seed
+npx prisma db seed
 ```
 
 #### Verify Database
 
 ```bash
 # Check tables
-railway run --service api npx drizzle studio
+railway run --service api npx prisma studio
 
 # Or connect directly
 railway connect postgres
@@ -314,7 +305,6 @@ railway status
 Access Prometheus at: `https://<api-domain>/metrics`
 
 **Key Metrics:**
-
 - `http_requests_total`
 - `http_request_duration_seconds`
 - `database_query_duration_seconds`
@@ -344,7 +334,6 @@ kubectl apply -f deploy/k8s/hpa.yaml
 ```
 
 **Scaling rules:**
-
 - CPU > 70% → scale up
 - CPU < 30% → scale down
 - Min replicas: 2
@@ -353,14 +342,12 @@ kubectl apply -f deploy/k8s/hpa.yaml
 ### Performance Optimization
 
 **API:**
-
 - Enable Redis caching
 - Connection pooling (default: 10 connections)
 - Query optimization with indexes
 - Response compression (gzip)
 
 **Frontend:**
-
 - CDN for static assets
 - Image optimization
 - Code splitting
@@ -373,7 +360,6 @@ kubectl apply -f deploy/k8s/hpa.yaml
 ### Backup Strategy
 
 **Database (PostgreSQL):**
-
 ```bash
 # Automated daily backups (Railway)
 # Manual backup
@@ -381,7 +367,6 @@ railway backup create postgres
 ```
 
 **Restore:**
-
 ```bash
 railway backup restore postgres <backup-id>
 ```
@@ -433,18 +418,15 @@ railway run --service api npm run migrate:rotate-keys
 ### Railway Pricing Tiers
 
 **Starter ($5/month):**
-
 - Good for development/staging
 - Shared resources
 
 **Pro ($20/month):**
-
 - **Recommended for production**
 - Dedicated resources
 - Priority support
 
 **Enterprise (Custom):**
-
 - High availability
 - SLA guarantees
 - Dedicated account manager
@@ -458,7 +440,6 @@ railway run --service api npm run migrate:rotate-keys
 5. **Database pooling**: Reuse connections
 
 **Estimated Monthly Cost:**
-
 ```
 API (2 instances):     $40
 Frontend (1 instance): $20
@@ -551,13 +532,13 @@ railway run --service api pnpm run d:check
 
 ```bash
 # Reset database (CAUTION: deletes all data)
-railway run --service api npx drizzle migrate reset
+railway run --service api npx prisma migrate reset
 
 # Apply pending migrations
-railway run --service api npx drizzle migrate deploy
+railway run --service api npx prisma migrate deploy
 
 # Verify schema
-railway run --service api npx drizzle db pull
+railway run --service api npx prisma db pull
 ```
 
 ---
@@ -565,18 +546,15 @@ railway run --service api npx drizzle db pull
 ## Support & Resources
 
 ### Documentation
-
 - Railway: https://docs.railway.app/
 - Docker Buildx: https://docs.docker.com/buildx/
-- Drizzle: https://www.drizzle.io/docs/
+- Prisma: https://www.prisma.io/docs/
 
 ### Community
-
 - Railway Discord: https://discord.gg/railway
 - GitHub Issues: https://github.com/whodaniel/fuse/issues
 
 ### Monitoring
-
 - Railway Dashboard: https://railway.app/dashboard
 - Docker Hub: https://hub.docker.com/u/bizsynth
 - GitHub Actions: https://github.com/whodaniel/fuse/actions
@@ -586,14 +564,12 @@ railway run --service api npx drizzle db pull
 ## Success Criteria
 
 ✅ **Build Phase**
-
 - [ ] Docker images build successfully on Docker Hub Cloud
 - [ ] Multi-platform support (AMD64 + ARM64)
 - [ ] Images tagged correctly (latest, git SHA, version)
 - [ ] Build cache working efficiently
 
 ✅ **Deployment Phase**
-
 - [ ] API deployed and responding
 - [ ] Frontend deployed and accessible
 - [ ] Database connected and migrated
@@ -601,7 +577,6 @@ railway run --service api npx drizzle db pull
 - [ ] Health checks passing
 
 ✅ **Production Readiness**
-
 - [ ] SSL/TLS enabled
 - [ ] Monitoring configured
 - [ ] Backups scheduled
@@ -611,5 +586,6 @@ railway run --service api npx drizzle db pull
 
 ---
 
-**Status**: Ready for Production Deployment **Last Updated**: 2025-01-20
+**Status**: Ready for Production Deployment
+**Last Updated**: 2025-01-20
 **Version**: 1.0.0

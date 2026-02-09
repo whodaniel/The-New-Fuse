@@ -251,11 +251,11 @@ export class PromptOptimizerService {
 
     try {
       // Get the agent and its current prompt
-      // const agent = await this.db.agent.findUnique({
+      // const agent = await this.prisma.agent.findUnique({
       //   where: { id: agentId },
       //   include: { promptVersions: true },
       // });
-      const agent = await drizzleAgentRepository.findById(agentId, (config as any).userId);
+      const agent = await drizzleAgentRepository.findById(agentId);
 
       if (!agent) {
         throw new Error(`Agent ${agentId} not found`);
@@ -500,7 +500,7 @@ Return as JSON array of strings.
     massStage: string
   ): Promise<AgentPromptVersion> {
     // Get next version number
-    // const latestVersion = await this.db.agentPromptVersion.findFirst({
+    // const latestVersion = await this.prisma.agentPromptVersion.findFirst({
     //   where: { agentId },
     //   orderBy: { versionNumber: 'desc' },
     // });
@@ -508,7 +508,7 @@ Return as JSON array of strings.
 
     const nextVersion = (latestVersion?.versionNumber || 0) + 1;
 
-    // return this.db.agentPromptVersion.create({
+    // return this.prisma.agentPromptVersion.create({
     return agentPromptVersionRepository.create({
       agentId,
       versionNumber: nextVersion,
@@ -516,6 +516,6 @@ Return as JSON array of strings.
       exemplars: prompt.exemplars as any, // Cast for jsonb compatibility
       performanceMetrics: metrics as any,
       massStage,
-    } as any) as any as AgentPromptVersion;
+    }) as any as AgentPromptVersion;
   }
 }

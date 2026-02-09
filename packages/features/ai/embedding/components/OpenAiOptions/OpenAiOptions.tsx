@@ -1,3 +1,4 @@
+import React from 'react';
 import type { OpenAiEmbeddingSettings } from '@/types/embedding';
 import { COMMON_STYLES } from '@/types/embedding';
 

@@ -1,35 +1,25 @@
 ---
 name: Security Scanning Tools
-description:
-  This skill should be used when the user asks to "perform vulnerability
-  scanning", "scan networks for open ports", "assess web application security",
-  "scan wireless networks", "detect malware", "check cloud security", or
-  "evaluate system compliance". It provides comprehensive guidance on security
-  scanning tools and methodologies.
+description: This skill should be used when the user asks to "perform vulnerability scanning", "scan networks for open ports", "assess web application security", "scan wireless networks", "detect malware", "check cloud security", or "evaluate system compliance". It provides comprehensive guidance on security scanning tools and methodologies.
 metadata:
   author: zebbern
-  version: '1.1'
+  version: "1.1"
 ---
 
 # Security Scanning Tools
 
 ## Purpose
 
-Master essential security scanning tools for network discovery, vulnerability
-assessment, web application testing, wireless security, and compliance
-validation. This skill covers tool selection, configuration, and practical usage
-across different scanning categories.
+Master essential security scanning tools for network discovery, vulnerability assessment, web application testing, wireless security, and compliance validation. This skill covers tool selection, configuration, and practical usage across different scanning categories.
 
 ## Prerequisites
 
 ### Required Environment
-
 - Linux-based system (Kali Linux recommended)
 - Network access to target systems
 - Proper authorization for scanning activities
 
 ### Required Knowledge
-
 - Basic networking concepts (TCP/IP, ports, protocols)
 - Understanding of common vulnerabilities
 - Familiarity with command-line interfaces
@@ -135,7 +125,6 @@ nessuscli report --format pdf --output report.pdf <scan_id>
 ```
 
 Key Nessus features:
-
 - Comprehensive CVE detection
 - Compliance checks (PCI-DSS, HIPAA, CIS)
 - Custom scan templates
@@ -192,7 +181,6 @@ Comprehensive web application testing:
 ```
 
 Core testing workflow:
-
 1. Configure proxy and scope
 2. Spider the application
 3. Analyze sitemap
@@ -223,7 +211,6 @@ zap.sh -daemon -port 8080 -config api.key=<your_key>
 ```
 
 ZAP automation:
-
 ```bash
 # Docker-based scanning
 docker run -t owasp/zap2docker-stable zap-full-scan.py \
@@ -490,16 +477,16 @@ Structured scanning approach:
 
 Choose the right tool for each scenario:
 
-| Scenario                 | Recommended Tools      |
-| ------------------------ | ---------------------- |
-| Network Discovery        | Nmap, Masscan          |
-| Vulnerability Assessment | Nessus, OpenVAS        |
-| Web App Testing          | Burp Suite, ZAP, Nikto |
-| Wireless Security        | Aircrack-ng, Kismet    |
-| Malware Detection        | ClamAV, YARA           |
-| Cloud Security           | Prowler, ScoutSuite    |
-| Compliance               | Lynis, OpenSCAP        |
-| Protocol Analysis        | Wireshark, tcpdump     |
+| Scenario | Recommended Tools |
+|----------|-------------------|
+| Network Discovery | Nmap, Masscan |
+| Vulnerability Assessment | Nessus, OpenVAS |
+| Web App Testing | Burp Suite, ZAP, Nikto |
+| Wireless Security | Aircrack-ng, Kismet |
+| Malware Detection | ClamAV, YARA |
+| Cloud Security | Prowler, ScoutSuite |
+| Compliance | Lynis, OpenSCAP |
+| Protocol Analysis | Wireshark, tcpdump |
 
 ### Phase 10: Reporting and Documentation
 
@@ -528,50 +515,47 @@ gvm-cli socket --xml '<get_reports report_id="<id>" format_id="<pdf_format>"/>'
 
 ### Nmap Cheat Sheet
 
-| Scan Type    | Command                       |
-| ------------ | ----------------------------- |
-| Ping Scan    | `nmap -sn <target>`           |
-| Quick Scan   | `nmap -T4 -F <target>`        |
-| Full Scan    | `nmap -p- <target>`           |
-| Service Scan | `nmap -sV <target>`           |
-| OS Detection | `nmap -O <target>`            |
-| Aggressive   | `nmap -A <target>`            |
+| Scan Type | Command |
+|-----------|---------|
+| Ping Scan | `nmap -sn <target>` |
+| Quick Scan | `nmap -T4 -F <target>` |
+| Full Scan | `nmap -p- <target>` |
+| Service Scan | `nmap -sV <target>` |
+| OS Detection | `nmap -O <target>` |
+| Aggressive | `nmap -A <target>` |
 | Vuln Scripts | `nmap --script=vuln <target>` |
-| Stealth Scan | `nmap -sS -T2 <target>`       |
+| Stealth Scan | `nmap -sS -T2 <target>` |
 
 ### Common Ports Reference
 
 | Port | Service |
-| ---- | ------- |
-| 21   | FTP     |
-| 22   | SSH     |
-| 23   | Telnet  |
-| 25   | SMTP    |
-| 53   | DNS     |
-| 80   | HTTP    |
-| 443  | HTTPS   |
-| 445  | SMB     |
-| 3306 | MySQL   |
-| 3389 | RDP     |
+|------|---------|
+| 21 | FTP |
+| 22 | SSH |
+| 23 | Telnet |
+| 25 | SMTP |
+| 53 | DNS |
+| 80 | HTTP |
+| 443 | HTTPS |
+| 445 | SMB |
+| 3306 | MySQL |
+| 3389 | RDP |
 
 ## Constraints and Limitations
 
 ### Legal Considerations
-
 - Always obtain written authorization
 - Respect scope boundaries
 - Follow responsible disclosure practices
 - Comply with local laws and regulations
 
 ### Technical Limitations
-
 - Some scans may trigger IDS/IPS alerts
 - Heavy scanning can impact network performance
 - False positives require manual verification
 - Encrypted traffic may limit analysis
 
 ### Best Practices
-
 - Start with non-intrusive scans
 - Gradually increase scan intensity
 - Document all scanning activities
@@ -582,7 +566,6 @@ gvm-cli socket --xml '<get_reports report_id="<id>" format_id="<pdf_format>"/>'
 ### Scan Not Detecting Hosts
 
 **Solutions:**
-
 1. Try different discovery methods: `nmap -Pn` or `nmap -sn -PS/PA/PU`
 2. Check firewall rules blocking ICMP
 3. Use TCP SYN scan: `nmap -PS22,80,443`
@@ -591,7 +574,6 @@ gvm-cli socket --xml '<get_reports report_id="<id>" format_id="<pdf_format>"/>'
 ### Slow Scan Performance
 
 **Solutions:**
-
 1. Increase timing: `nmap -T4` or `-T5`
 2. Reduce port range: `--top-ports 100`
 3. Use Masscan for initial discovery
@@ -600,7 +582,6 @@ gvm-cli socket --xml '<get_reports report_id="<id>" format_id="<pdf_format>"/>'
 ### Web Scanner Missing Vulnerabilities
 
 **Solutions:**
-
 1. Authenticate to access protected areas
 2. Increase crawl depth
 3. Add custom injection points

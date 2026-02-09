@@ -1,20 +1,17 @@
 # Frontend Troubleshooting Guide
 
-This guide provides solutions for common issues you might encounter when running
-The New Fuse frontend application.
+This guide provides solutions for common issues you might encounter when running The New Fuse frontend application.
 
 ## Common Issues and Solutions
 
 ### 1. Dependency Resolution Issues
 
 **Symptoms:**
-
 - "No candidates found" errors
 - Missing peer dependencies
 - Version conflicts
 
 **Solutions:**
-
 - Try using `--force` flag: `yarn install --force`
 - Use npm instead of yarn: `pnpm install`
 - Install specific versions of problematic packages: `yarn add package@version`
@@ -23,13 +20,11 @@ The New Fuse frontend application.
 ### 2. TypeScript Errors
 
 **Symptoms:**
-
 - Type errors during build
 - "Cannot find module" errors
 - Path alias resolution issues
 
 **Solutions:**
-
 - Check tsconfig.json for proper configuration
 - Ensure path aliases match in both tsconfig.json and vite.config.ts
 - Add missing type definitions: `yarn add -D @types/package-name`
@@ -38,13 +33,11 @@ The New Fuse frontend application.
 ### 3. Vite Configuration Issues
 
 **Symptoms:**
-
 - Build errors related to plugins
 - Module resolution errors
 - Environment variable issues
 
 **Solutions:**
-
 - Check vite.config.ts for proper configuration
 - Ensure all plugins are correctly installed and configured
 - Verify environment variables are properly defined
@@ -53,13 +46,11 @@ The New Fuse frontend application.
 ### 4. React Component Errors
 
 **Symptoms:**
-
 - "React is not defined" errors
 - JSX syntax errors
 - Hook rules violations
 
 **Solutions:**
-
 - Ensure React is imported in all component files
 - Check for proper JSX syntax and file extensions (.jsx or .tsx)
 - Verify hook rules are followed (hooks called at top level, etc.)
@@ -68,13 +59,11 @@ The New Fuse frontend application.
 ### 5. Workspace Package Issues
 
 **Symptoms:**
-
 - "Cannot find module" errors for workspace packages
 - Version conflicts between workspace packages
 - Build order issues
 
 **Solutions:**
-
 - Build packages in the correct order (types → utils → core → ui → features)
 - Check package.json for correct workspace references
 - Ensure all workspace packages are built before running the frontend
@@ -83,13 +72,11 @@ The New Fuse frontend application.
 ### 6. Docker-related Issues
 
 **Symptoms:**
-
 - Container build failures
 - Port binding issues
 - Volume mounting problems
 
 **Solutions:**
-
 - Check Docker and docker-compose installation
 - Ensure no other services are using port 3000
 - Verify volume paths are correct

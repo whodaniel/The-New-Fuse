@@ -32,7 +32,7 @@ To build locally, use the following commands:
     _Note: In memory-constrained environments, you may need
     `pnpm install --ignore-scripts` followed by manual generation steps._
 
-2.  **Generate Drizzle Client:**
+2.  **Generate Prisma Client:**
 
     ```bash
     pnpm --filter @the-new-fuse/database run db:generate
@@ -70,6 +70,6 @@ pnpm workspace build pipeline but may depend on installed packages.
   modules, ensure you have system dependencies installed (e.g., `libcairo2-dev`
   on Linux). The `pnpm run fix:native-modules` script can help clean and rebuild
   these.
-- **Sandbox/CI Limits:** Large generated files (like Drizzle client) are ignored
+- **Sandbox/CI Limits:** Large generated files (like Prisma client) are ignored
   in `.gitignore`. Ensure `packages/database/generated/` is properly ignored to
   prevent file limit issues in restricted environments.

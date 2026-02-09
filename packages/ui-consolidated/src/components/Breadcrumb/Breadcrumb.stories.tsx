@@ -1,5 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList } from './Breadcrumb';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from './Breadcrumb';
 
 const meta: Meta<typeof Breadcrumb> = {
   title: 'Components/Breadcrumb',
@@ -91,7 +96,7 @@ export const Sizes: Story = {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-
+      
       <div>
         <h3 className="mb-2 text-sm font-medium">Default</h3>
         <Breadcrumb>
@@ -102,7 +107,7 @@ export const Sizes: Story = {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-
+      
       <div>
         <h3 className="mb-2 text-sm font-medium">Large</h3>
         <Breadcrumb size="lg">
@@ -189,42 +194,30 @@ export const Variants: Story = {
         <h3 className="mb-2 text-sm font-medium">Default</h3>
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem href="/" variant="default">
-              Home
-            </BreadcrumbItem>
-            <BreadcrumbItem href="/products" variant="default">
-              Products
-            </BreadcrumbItem>
+            <BreadcrumbItem href="/" variant="default">Home</BreadcrumbItem>
+            <BreadcrumbItem href="/products" variant="default">Products</BreadcrumbItem>
             <BreadcrumbItem isCurrent>Product Name</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-
+      
       <div>
         <h3 className="mb-2 text-sm font-medium">Ghost</h3>
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem href="/" variant="ghost">
-              Home
-            </BreadcrumbItem>
-            <BreadcrumbItem href="/products" variant="ghost">
-              Products
-            </BreadcrumbItem>
+            <BreadcrumbItem href="/" variant="ghost">Home</BreadcrumbItem>
+            <BreadcrumbItem href="/products" variant="ghost">Products</BreadcrumbItem>
             <BreadcrumbItem isCurrent>Product Name</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-
+      
       <div>
         <h3 className="mb-2 text-sm font-medium">Link</h3>
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem href="/" variant="link">
-              Home
-            </BreadcrumbItem>
-            <BreadcrumbItem href="/products" variant="link">
-              Products
-            </BreadcrumbItem>
+            <BreadcrumbItem href="/" variant="link">Home</BreadcrumbItem>
+            <BreadcrumbItem href="/products" variant="link">Products</BreadcrumbItem>
             <BreadcrumbItem isCurrent>Product Name</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -242,9 +235,7 @@ export const Collapsed: Story = {
         <BreadcrumbItem href="/products/categories">Categories</BreadcrumbItem>
         <BreadcrumbItem href="/products/categories/electronics">Electronics</BreadcrumbItem>
         <BreadcrumbItem href="/products/categories/electronics/computers">Computers</BreadcrumbItem>
-        <BreadcrumbItem href="/products/categories/electronics/computers/laptops">
-          Laptops
-        </BreadcrumbItem>
+        <BreadcrumbItem href="/products/categories/electronics/computers/laptops">Laptops</BreadcrumbItem>
         <BreadcrumbItem isCurrent>Product Name</BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

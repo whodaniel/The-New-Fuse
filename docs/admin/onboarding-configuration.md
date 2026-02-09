@@ -1,12 +1,10 @@
 # Onboarding Configuration Guide
 
-This guide explains how to configure the onboarding experience for users of The
-New Fuse platform using the Admin Control Panel.
+This guide explains how to configure the onboarding experience for users of The New Fuse platform using the Admin Control Panel.
 
 ## Overview
 
-The onboarding configuration allows you to customize the onboarding experience
-for different types of users. You can configure:
+The onboarding configuration allows you to customize the onboarding experience for different types of users. You can configure:
 
 - General settings for the onboarding process
 - User types and detection methods
@@ -22,18 +20,14 @@ for different types of users. You can configure:
 
 ## General Settings
 
-The General Settings tab allows you to configure basic settings for the
-onboarding process:
+The General Settings tab allows you to configure basic settings for the onboarding process:
 
 ### General Options
 
-- **Enable onboarding for new users**: Turn onboarding on or off for all new
-  users
-- **Skip onboarding for returning users**: Allow returning users to bypass
-  onboarding
+- **Enable onboarding for new users**: Turn onboarding on or off for all new users
+- **Skip onboarding for returning users**: Allow returning users to bypass onboarding
 - **Allow users to skip onboarding**: Let users skip the onboarding process
-- **Require email verification**: Require users to verify their email before
-  starting onboarding
+- **Require email verification**: Require users to verify their email before starting onboarding
 
 ### Appearance
 
@@ -49,10 +43,8 @@ onboarding process:
 
 ### Behavior
 
-- **Session Timeout**: How long (in minutes) before an inactive onboarding
-  session expires
-- **Save progress automatically**: Automatically save user progress during
-  onboarding
+- **Session Timeout**: How long (in minutes) before an inactive onboarding session expires
+- **Save progress automatically**: Automatically save user progress during onboarding
 - **Redirect After Completion**: Where to send users after completing onboarding
 
 ### Analytics
@@ -62,8 +54,7 @@ onboarding process:
 
 ## User Types
 
-The User Types tab allows you to define different types of users and how they
-are detected:
+The User Types tab allows you to define different types of users and how they are detected:
 
 ### Managing User Types
 
@@ -83,13 +74,11 @@ are detected:
   - **Behavior Analysis**: Detect based on user behavior
   - **Manual Selection**: Let users select their type
 - **Onboarding Flow**: Which onboarding flow to use for this user type
-- **Priority**: Order in which detection methods are evaluated (higher numbers =
-  higher priority)
+- **Priority**: Order in which detection methods are evaluated (higher numbers = higher priority)
 
 ## Onboarding Steps
 
-The Onboarding Steps tab allows you to configure the steps in the onboarding
-wizard:
+The Onboarding Steps tab allows you to configure the steps in the onboarding wizard:
 
 ### Managing Steps
 
@@ -115,8 +104,7 @@ wizard:
 
 ## AI Settings
 
-The AI Settings tab allows you to configure the AI capabilities used during
-onboarding:
+The AI Settings tab allows you to configure the AI capabilities used during onboarding:
 
 ### RAG Settings
 
@@ -127,8 +115,7 @@ onboarding:
 
 ### LLM Settings
 
-- **Default LLM Provider**: Provider for language models (OpenAI, Anthropic,
-  etc.)
+- **Default LLM Provider**: Provider for language models (OpenAI, Anthropic, etc.)
 - **Default Model**: Specific language model to use
 - **Default Temperature**: Controls randomness in responses (0-1)
 - **Default Max Tokens**: Maximum length of generated responses
@@ -158,8 +145,7 @@ onboarding:
 
 ## Wizard Preview
 
-The Wizard Preview tab allows you to see how the onboarding experience will look
-to users:
+The Wizard Preview tab allows you to see how the onboarding experience will look to users:
 
 ### Preview Options
 
@@ -193,11 +179,8 @@ to users:
 
 ## Troubleshooting
 
-- **Configuration not saving**: Ensure you have admin privileges and check your
-  network connection
-- **Preview not updating**: Try refreshing the preview or clearing your browser
-  cache
+- **Configuration not saving**: Ensure you have admin privileges and check your network connection
+- **Preview not updating**: Try refreshing the preview or clearing your browser cache
 - **Validation errors**: Address all issues listed in the validation results
 - **AI features not working**: Check your API keys and connection settings
-- **Users not seeing correct steps**: Verify user type detection and step
-  assignments
+- **Users not seeing correct steps**: Verify user type detection and step assignments

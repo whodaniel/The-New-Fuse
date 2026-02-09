@@ -17,8 +17,7 @@ export class CorrelationIdService {
   }
 
   static middleware(req: any, res: any, next: any) {
-    const correlationId =
-      req.headers['x-correlation-id'] || CorrelationIdService.generateCorrelationId();
+    const correlationId = req.headers['x-correlation-id'] || CorrelationIdService.generateCorrelationId();
     res.setHeader('x-correlation-id', correlationId);
     CorrelationIdService.runWithId(correlationId, () => next());
   }

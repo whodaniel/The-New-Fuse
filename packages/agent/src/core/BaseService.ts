@@ -93,7 +93,7 @@ export abstract class BaseService extends EventEmitter {
       name: this.name,
       status: this.isRunning ? 'running' : 'stopped',
       uptime: this.startTime ? Date.now() - this.startTime.getTime() : undefined,
-      metadata: this.getStatusMetadata(),
+      metadata: this.getStatusMetadata()
     };
   }
 

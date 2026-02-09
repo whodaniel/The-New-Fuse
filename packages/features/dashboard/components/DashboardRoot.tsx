@@ -1,7 +1,14 @@
-import { MetricsPanel } from '@the-new-fuse/metrics/MetricsPanel';
-import { DataVisualization } from '@the-new-fuse/visualization/DataVisualization';
+import React from "react";
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC } from 'react';
 import { WidgetGrid } from '@the-new-fuse/widgets/WidgetGrid';
-import { FC, JSX } from 'react';
+import { DataVisualization } from '@the-new-fuse/visualization/DataVisualization';
+import { MetricsPanel } from '@the-new-fuse/metrics/MetricsPanel';
 
 export const DashboardRoot: FC = (): JSX.Element => (): JSX.Element => (): JSX.Element => {
   return (
@@ -13,6 +20,6 @@ export const DashboardRoot: FC = (): JSX.Element => (): JSX.Element => (): JSX.E
   );
 };
 
-export * from '@the-new-fuse/metrics';
-export * from '@the-new-fuse/visualization';
 export * from '@the-new-fuse/widgets';
+export * from '@the-new-fuse/visualization';
+export * from '@the-new-fuse/metrics';

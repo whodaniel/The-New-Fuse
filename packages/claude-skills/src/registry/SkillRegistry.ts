@@ -94,24 +94,26 @@ export class SkillRegistry implements ISkillRegistry {
 
     // Filter by categories
     if (filter.categories && filter.categories.length > 0) {
-      skills = skills.filter((skill) => filter.categories!.includes(skill.category as any));
+      skills = skills.filter(skill => filter.categories!.includes(skill.category as any));
     }
 
     // Filter by tags
     if (filter.tags && filter.tags.length > 0) {
-      skills = skills.filter((skill) => skill.tags.some((tag) => filter.tags!.includes(tag)));
+      skills = skills.filter(skill =>
+        skill.tags.some(tag => filter.tags!.includes(tag))
+      );
     }
 
     // Filter by name pattern
     if (filter.namePattern) {
       const pattern = new RegExp(filter.namePattern, 'i');
-      skills = skills.filter((skill) => pattern.test(skill.name));
+      skills = skills.filter(skill => pattern.test(skill.name));
     }
 
     // Filter by description pattern
     if (filter.descriptionPattern) {
       const pattern = new RegExp(filter.descriptionPattern, 'i');
-      skills = skills.filter((skill) => pattern.test(skill.description));
+      skills = skills.filter(skill => pattern.test(skill.description));
     }
 
     return skills;
@@ -138,7 +140,7 @@ export class SkillRegistry implements ISkillRegistry {
       }
 
       // Search in tags
-      if (skill.tags.some((tag) => tag.toLowerCase().includes(queryLower))) {
+      if (skill.tags.some(tag => tag.toLowerCase().includes(queryLower))) {
         results.push(skill);
         continue;
       }

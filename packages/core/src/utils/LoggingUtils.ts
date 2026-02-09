@@ -24,10 +24,7 @@ export class LoggingUtils {
   static async writeLog(entry: LogEntry): Promise<void> {
     const logLine = `${entry.timestamp.toISOString()} [${entry.level.toUpperCase()}] ${entry.message} ${entry.metadata ? JSON.stringify(entry.metadata) : ''}\n`;
     try {
-      await fs.promises.appendFile(
-        path.join(LoggingUtils.logDirectory, LoggingUtils.logFileName),
-        logLine,
-      );
+      await fs.promises.appendFile(path.join(LoggingUtils.logDirectory, LoggingUtils.logFileName), logLine);
     } catch (error) {
       console.error('Failed to write log entry:', error);
     }
@@ -35,10 +32,7 @@ export class LoggingUtils {
 
   static async readLogs(): Promise<string> {
     try {
-      return await fs.promises.readFile(
-        path.join(LoggingUtils.logDirectory, LoggingUtils.logFileName),
-        'utf8',
-      );
+      return await fs.promises.readFile(path.join(LoggingUtils.logDirectory, LoggingUtils.logFileName), 'utf8');
     } catch (error) {
       console.error('Failed to read logs:', error);
       return '';
@@ -47,10 +41,7 @@ export class LoggingUtils {
 
   static async clearLogs(): Promise<void> {
     try {
-      await fs.promises.writeFile(
-        path.join(LoggingUtils.logDirectory, LoggingUtils.logFileName),
-        '',
-      );
+      await fs.promises.writeFile(path.join(LoggingUtils.logDirectory, LoggingUtils.logFileName), '');
       LoggingUtils.logger.info('Logs cleared.');
     } catch (error) {
       console.error('Failed to clear logs:', error);

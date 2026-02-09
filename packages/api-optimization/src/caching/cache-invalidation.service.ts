@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { CDNConfigService } from '../cdn/cdn-config.service';
 import { ResponseCacheService } from './response-cache.service';
+import { CDNConfigService } from '../cdn/cdn-config.service';
 
 export interface InvalidationStrategy {
   type: 'tag' | 'pattern' | 'time' | 'event';
@@ -41,7 +41,7 @@ export class CacheInvalidationService {
   async invalidate(strategy: InvalidationStrategy): Promise<InvalidationResult> {
     const targets = strategy.targets || ['cache'];
     const result: InvalidationResult = {
-      cache: { invalidated: 0, success: false },
+      cache: { invalidated: 0, success: false }
     };
 
     try {
@@ -57,8 +57,8 @@ export class CacheInvalidationService {
 
       this.logger.log(
         `Cache invalidated: ${strategy.type} = ${strategy.value}, ` +
-          `cache: ${result.cache.invalidated} entries, ` +
-          `cdn: ${result.cdn?.success ? 'success' : 'skipped'}`
+        `cache: ${result.cache.invalidated} entries, ` +
+        `cdn: ${result.cdn?.success ? 'success' : 'skipped'}`
       );
 
       return result;
@@ -78,7 +78,7 @@ export class CacheInvalidationService {
     return this.invalidate({
       type: 'tag',
       value: tag,
-      targets,
+      targets
     });
   }
 
@@ -92,14 +92,18 @@ export class CacheInvalidationService {
     return this.invalidate({
       type: 'pattern',
       value: pattern,
-      targets,
+      targets
     });
   }
 
   /**
    * Schedule cache invalidation
    */
-  scheduleInvalidation(id: string, strategy: InvalidationStrategy, delayMs: number): void {
+  scheduleInvalidation(
+    id: string,
+    strategy: InvalidationStrategy,
+    delayMs: number
+  ): void {
     // Clear existing job if any
     this.cancelScheduledInvalidation(id);
 
@@ -138,7 +142,9 @@ export class CacheInvalidationService {
   ): Promise<InvalidationResult[]> {
     this.logger.log(`Invalidating cache on event: ${event}`);
 
-    const results = await Promise.all(strategies.map((strategy) => this.invalidate(strategy)));
+    const results = await Promise.all(
+      strategies.map(strategy => this.invalidate(strategy))
+    );
 
     return results;
   }
@@ -153,11 +159,11 @@ export class CacheInvalidationService {
     this.logger.log(`Bulk invalidating ${items.length} items`);
 
     const results = await Promise.all(
-      items.map((item) =>
+      items.map(item =>
         this.invalidate({
           type: item.type,
           value: item.value,
-          targets,
+          targets
         })
       )
     );
@@ -176,12 +182,12 @@ export class CacheInvalidationService {
     const strategies = this.getEntityInvalidationStrategies(entityType, entityId);
 
     const results = await Promise.all(
-      strategies.map((strategy) => this.invalidate({ ...strategy, targets }))
+      strategies.map(strategy => this.invalidate({ ...strategy, targets }))
     );
 
     this.logger.log(
       `Smart invalidation for ${entityType}:${entityId}, ` +
-        `invalidated ${strategies.length} cache groups`
+      `invalidated ${strategies.length} cache groups`
     );
 
     return results;
@@ -193,7 +199,7 @@ export class CacheInvalidationService {
   getStats() {
     return {
       scheduledJobs: this.scheduledJobs.size,
-      cacheStats: this.cacheService.getStats(),
+      cacheStats: this.cacheService.getStats()
     };
   }
 
@@ -207,11 +213,15 @@ export class CacheInvalidationService {
     try {
       switch (strategy.type) {
         case 'tag':
-          invalidated = await this.cacheService.invalidateByTag(strategy.value as string);
+          invalidated = await this.cacheService.invalidateByTag(
+            strategy.value as string
+          );
           break;
 
         case 'pattern':
-          invalidated = await this.cacheService.invalidateByPattern(strategy.value as string);
+          invalidated = await this.cacheService.invalidateByPattern(
+            strategy.value as string
+          );
           break;
 
         case 'time':
@@ -225,13 +235,13 @@ export class CacheInvalidationService {
 
       return {
         invalidated,
-        success: true,
+        success: true
       };
     } catch (error) {
       this.logger.error('Cache invalidation error:', error);
       return {
         invalidated: 0,
-        success: false,
+        success: false
       };
     }
   }
@@ -243,7 +253,7 @@ export class CacheInvalidationService {
     if (!this.cdnService.isEnabled()) {
       return {
         success: false,
-        message: 'CDN not enabled',
+        message: 'CDN not enabled'
       };
     }
 
@@ -257,20 +267,20 @@ export class CacheInvalidationService {
           const result = await this.cdnService.purgeUrls(urls);
           return {
             success: result.success,
-            message: result.message,
+            message: result.message
           };
 
         default:
           return {
             success: false,
-            message: `CDN invalidation not supported for type: ${strategy.type}`,
+            message: `CDN invalidation not supported for type: ${strategy.type}`
           };
       }
     } catch (error) {
       this.logger.error('CDN invalidation error:', error);
       return {
         success: false,
-        message: (error as Error).message,
+        message: (error as Error).message
       };
     }
   }
@@ -291,32 +301,30 @@ export class CacheInvalidationService {
       user: [
         { type: 'tag', value: 'users' },
         { type: 'tag', value: `user:${entityId}` },
-        { type: 'pattern', value: `cache:*user:${entityId}*` },
+        { type: 'pattern', value: `cache:*user:${entityId}*` }
       ],
       agent: [
         { type: 'tag', value: 'agents' },
         { type: 'tag', value: `agent:${entityId}` },
         { type: 'pattern', value: `cache:*agent:${entityId}*` },
-        { type: 'tag', value: 'dashboard' }, // Agents appear on dashboard
+        { type: 'tag', value: 'dashboard' } // Agents appear on dashboard
       ],
       workflow: [
         { type: 'tag', value: 'workflows' },
         { type: 'tag', value: `workflow:${entityId}` },
-        { type: 'pattern', value: `cache:*workflow:${entityId}*` },
+        { type: 'pattern', value: `cache:*workflow:${entityId}*` }
       ],
       task: [
         { type: 'tag', value: 'tasks' },
         { type: 'tag', value: `task:${entityId}` },
-        { type: 'pattern', value: `cache:*task:${entityId}*` },
-      ],
+        { type: 'pattern', value: `cache:*task:${entityId}*` }
+      ]
     };
 
-    return (
-      strategies[entityType] || [
-        { type: 'tag', value: entityType },
-        { type: 'pattern', value: `cache:*${entityType}:${entityId}*` },
-      ]
-    );
+    return strategies[entityType] || [
+      { type: 'tag', value: entityType },
+      { type: 'pattern', value: `cache:*${entityType}:${entityId}*` }
+    ];
   }
 
   async onModuleDestroy(): Promise<void> {

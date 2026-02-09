@@ -1,6 +1,8 @@
 # Redis Service Implementation
 
-This directory contains the implementation of the Redis service for The New Fuse project. It provides a comprehensive set of Redis operations, supporting both local Docker development and Redis Cloud for production.
+This directory contains the implementation of the Redis service for The New Fuse
+project. It provides a comprehensive set of Redis operations, supporting both
+local Docker development and Redis Cloud for production.
 
 ## Features
 
@@ -101,15 +103,15 @@ async function directClientExample() {
   // Create Redis client directly
   const client = createClient({
     username: 'default',
-    password: 'CxXMZw3qW3zYXq1JYy7bCuqwRrL7tH0d',
+    password: '<REDIS_PASSWORD>',
     socket: {
       host: 'redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com',
-      port: 11337
-    }
+      port: 11337,
+    },
   });
 
   // Set up error handler
-  client.on('error', err => console.log('Redis Client Error', err));
+  client.on('error', (err) => console.log('Redis Client Error', err));
 
   // Connect to Redis
   await client.connect();
@@ -155,7 +157,7 @@ REDIS_TLS=false
 - `host`: redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com
 - `port`: 11337
 - `username`: default
-- `password`: CxXMZw3qW3zYXq1JYy7bCuqwRrL7tH0d
+- `password`: <REDIS_PASSWORD>
 - `db`: 0
 - `tls`: false
 
@@ -163,7 +165,8 @@ REDIS_TLS=false
 
 ### Docker Setup for Development
 
-We use Docker Compose for local development. The Redis service is defined in `docker-compose.dev.yml`:
+We use Docker Compose for local development. The Redis service is defined in
+`docker-compose.dev.yml`:
 
 ```yaml
 # Redis for development
@@ -171,7 +174,7 @@ redis:
   image: redis:7-alpine
   container_name: the-new-fuse-redis
   ports:
-    - "6379:6379"
+    - '6379:6379'
   volumes:
     - redis-data:/data
   command: redis-server --appendonly yes
@@ -179,7 +182,7 @@ redis:
   networks:
     - thefuse-network
   healthcheck:
-    test: ["CMD", "redis-cli", "ping"]
+    test: ['CMD', 'redis-cli', 'ping']
     interval: 10s
     timeout: 5s
     retries: 3
@@ -206,22 +209,22 @@ For production, we use Redis Cloud:
    - Host: redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com
    - Port: 11337
    - Username: default
-   - Password: CxXMZw3qW3zYXq1JYy7bCuqwRrL7tH0d
+   - Password: <REDIS_PASSWORD>
 
 2. **Connection via Redis CLI**:
 
    ```bash
-   redis-cli -u redis://default:CxXMZw3qW3zYXq1JYy7bCuqwRrL7tH0d@redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com:11337
+   redis-cli -u redis://default:<REDIS_PASSWORD>@redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com:11337
    ```
 
-3. **Environment Configuration**:
-   Set these environment variables in your production environment:
+3. **Environment Configuration**: Set these environment variables in your
+   production environment:
 
    ```env
    REDIS_HOST=redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com
    REDIS_PORT=11337
    REDIS_USERNAME=default
-   REDIS_PASSWORD=CxXMZw3qW3zYXq1JYy7bCuqwRrL7tH0d
+   REDIS_PASSWORD=<REDIS_PASSWORD>
    REDIS_TLS=false
    ```
 
@@ -308,7 +311,8 @@ For production, we use Redis Cloud:
 
 ## Logging
 
-The Redis implementation includes a comprehensive logging system that provides detailed information about Redis operations, connections, and errors.
+The Redis implementation includes a comprehensive logging system that provides
+detailed information about Redis operations, connections, and errors.
 
 ### Logging Configuration
 
@@ -332,7 +336,8 @@ Redis logs are stored in the following files:
 
 ### Log Format
 
-Logs are formatted as JSON in log files and as human-readable text in the console:
+Logs are formatted as JSON in log files and as human-readable text in the
+console:
 
 ```log
 2023-07-15T12:34:56.789Z [info] [redis-client]: Connected to Redis at localhost:6379

@@ -1,16 +1,16 @@
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import type { Agent } from '@db/client'; // Import Agent type from db client, removed database client
-import { UnifiedMonitoringService } from '@the-new-fuse/core';
-import { AgentType } from '@the-new-fuse/database'; // Removed DrizzleAgent alias
-import { AgentFactory } from '../src/agents/agent.factory';
 import { AgentsService } from '../src/agents/agents.service';
+import { PrismaService } from '../src/prisma/prisma.service';
+import { ConfigService } from '@nestjs/config';
+import { UnifiedMonitoringService } from '@the-new-fuse/core';
+import { AgentFactory } from '../src/agents/agent.factory';
 import { CreateAgentDto, UpdateAgentDto } from '../src/agents/dto'; // Assuming UpdateAgentDto exists
-import { DatabaseService } from '../src/db/db.service';
+import { AgentType } from '@the-new-fuse/database'; // Removed PrismaAgent alias
+import { jest, describe, beforeEach, it, expect } from '@jest/globals';
+import type { Agent } from '@prisma/client'; // Import Agent type from prisma client, removed PrismaClient
 
-// Mock database client methods used by the service
-const mockDb = {
+// Mock PrismaClient methods used by the service
+const mockPrisma = {
   agent: {
     create: jest.fn(),
     findMany: jest.fn(),
@@ -23,10 +23,10 @@ const mockDb = {
 describe('AgentsService', () => {
   let service: AgentsService;
   let module: TestingModule; // Declare module here
-  // Keep db variable if needed for direct assertions on the mock, though usually asserting on mockDb.agent.* is sufficient
-  // let db: DatabaseService;
+  // Keep prisma variable if needed for direct assertions on the mock, though usually asserting on mockPrisma.agent.* is sufficient
+  // let prisma: PrismaService;
 
-  // Define a reusable mock agent structure consistent with Drizzle Agent type
+  // Define a reusable mock agent structure consistent with Prisma Agent type
   const mockAgent: Agent = {
     id: 'agent-1',
     userId: 'user-1',
@@ -47,9 +47,9 @@ describe('AgentsService', () => {
       providers: [
         AgentsService,
         {
-          provide: DatabaseService,
-          // Use the mockDb object directly
-          useValue: mockDb,
+          provide: PrismaService,
+          // Use the mockPrisma object directly
+          useValue: mockPrisma,
         },
         {
           provide: ConfigService,
@@ -73,7 +73,7 @@ describe('AgentsService', () => {
     }).compile();
 
     service = module.get<AgentsService>(AgentsService);
-    // db = module.get<DatabaseService>(DatabaseService); // Get the mocked instance if needed
+    // prisma = module.get<PrismaService>(PrismaService); // Get the mocked instance if needed
   });
 
   it('should be defined', () => {
@@ -103,12 +103,12 @@ describe('AgentsService', () => {
         ...expectedAgentData, // Override with DTO and userId/config
       };
 
-      mockDb.agent.create.mockResolvedValue(createdAgent);
+      mockPrisma.agent.create.mockResolvedValue(createdAgent);
 
       const result = await service.create(userId, dto);
 
       expect(result).toEqual(createdAgent);
-      expect(mockDb.agent.create).toHaveBeenCalledWith({
+      expect(mockPrisma.agent.create).toHaveBeenCalledWith({
         data: expectedAgentData,
       });
       // Optionally check AgentFactory call
@@ -123,12 +123,12 @@ describe('AgentsService', () => {
         { ...mockAgent, id: 'agent-1', userId },
         { ...mockAgent, id: 'agent-2', userId, name: 'Test Agent 2' },
       ];
-      mockDb.agent.findMany.mockResolvedValue(agents);
+      mockPrisma.agent.findMany.mockResolvedValue(agents);
 
       const result = await service.findAll(userId);
 
       expect(result).toEqual(agents);
-      expect(mockDb.agent.findMany).toHaveBeenCalledWith({
+      expect(mockPrisma.agent.findMany).toHaveBeenCalledWith({
         where: { userId },
       });
     });
@@ -139,12 +139,12 @@ describe('AgentsService', () => {
       const userId = 'user-1';
       const agentId = 'agent-1';
       const agent = { ...mockAgent, id: agentId, userId };
-      mockDb.agent.findFirst.mockResolvedValue(agent);
+      mockPrisma.agent.findFirst.mockResolvedValue(agent);
 
       const result = await service.findOne(userId, agentId);
 
       expect(result).toEqual(agent);
-      expect(mockDb.agent.findFirst).toHaveBeenCalledWith({
+      expect(mockPrisma.agent.findFirst).toHaveBeenCalledWith({
         where: { id: agentId, userId },
       });
     });
@@ -152,12 +152,12 @@ describe('AgentsService', () => {
     it('should return null if agent not found', async () => {
       const userId = 'user-1';
       const agentId = 'not-found-agent';
-      mockDb.agent.findFirst.mockResolvedValue(null);
+      mockPrisma.agent.findFirst.mockResolvedValue(null);
 
       const result = await service.findOne(userId, agentId);
 
       expect(result).toBeNull();
-      expect(mockDb.agent.findFirst).toHaveBeenCalledWith({
+      expect(mockPrisma.agent.findFirst).toHaveBeenCalledWith({
         where: { id: agentId, userId },
       });
     });
@@ -177,37 +177,35 @@ describe('AgentsService', () => {
         id: agentId,
         userId,
         ...dto, // Apply updates
-        updatedAt: new Date(), // Drizzle update returns the updated record
+        updatedAt: new Date(), // Prisma update returns the updated record
       };
 
-      mockDb.agent.update.mockResolvedValue(updatedAgent);
+      mockPrisma.agent.update.mockResolvedValue(updatedAgent);
 
       const result = await service.update(userId, agentId, dto);
 
       expect(result).toEqual(updatedAgent);
-      expect(mockDb.agent.update).toHaveBeenCalledWith({
+      expect(mockPrisma.agent.update).toHaveBeenCalledWith({
         where: { id: agentId, userId }, // Ensure userId is used for security/scoping
         data: dto,
       });
     });
 
-    it('should throw an error if agent to update is not found (or handle as per service logic)', async () => {
-      const userId = 'user-1';
-      const agentId = 'not-found-agent';
-      const dto: UpdateAgentDto = { name: 'Updated Name' };
+     it('should throw an error if agent to update is not found (or handle as per service logic)', async () => {
+        const userId = 'user-1';
+        const agentId = 'not-found-agent';
+        const dto: UpdateAgentDto = { name: 'Updated Name' };
 
-      // Simulate Drizzle's behavior when update target doesn't exist (depends on Drizzle version/config)
-      // Often throws a P2025 error or similar. Mock that behavior.
-      mockDb.agent.update.mockRejectedValue(new Error('Record to update not found.')); // Or specific Drizzle error
+        // Simulate Prisma's behavior when update target doesn't exist (depends on Prisma version/config)
+        // Often throws a P2025 error or similar. Mock that behavior.
+        mockPrisma.agent.update.mockRejectedValue(new Error('Record to update not found.')); // Or specific Prisma error
 
-      await expect(service.update(userId, agentId, dto)).rejects.toThrow(
-        'Record to update not found.'
-      ); // Adjust error message if needed
+        await expect(service.update(userId, agentId, dto)).rejects.toThrow('Record to update not found.'); // Adjust error message if needed
 
-      expect(mockDb.agent.update).toHaveBeenCalledWith({
-        where: { id: agentId, userId },
-        data: dto,
-      });
+        expect(mockPrisma.agent.update).toHaveBeenCalledWith({
+            where: { id: agentId, userId },
+            data: dto,
+        });
     });
   });
 
@@ -215,15 +213,15 @@ describe('AgentsService', () => {
     it('should remove an agent', async () => {
       const userId = 'user-1';
       const agentId = 'agent-1';
-      const deletedAgent = { ...mockAgent, id: agentId, userId }; // Drizzle delete returns the deleted record
+      const deletedAgent = { ...mockAgent, id: agentId, userId }; // Prisma delete returns the deleted record
 
-      mockDb.agent.delete.mockResolvedValue(deletedAgent);
+      mockPrisma.agent.delete.mockResolvedValue(deletedAgent);
 
       // Assuming remove returns void or the deleted agent
       await service.remove(userId, agentId); // Or: const result = await service.remove(userId, agentId);
 
       // Assert delete was called correctly
-      expect(mockDb.agent.delete).toHaveBeenCalledWith({
+      expect(mockPrisma.agent.delete).toHaveBeenCalledWith({
         where: { id: agentId, userId }, // Ensure userId is used
       });
 
@@ -231,18 +229,18 @@ describe('AgentsService', () => {
       // expect(result).toEqual(deletedAgent); // If it returns the deleted agent
     });
 
-    it('should throw an error if agent to remove is not found (or handle as per service logic)', async () => {
-      const userId = 'user-1';
-      const agentId = 'not-found-agent';
+     it('should throw an error if agent to remove is not found (or handle as per service logic)', async () => {
+        const userId = 'user-1';
+        const agentId = 'not-found-agent';
 
-      // Simulate Drizzle's behavior when delete target doesn't exist
-      mockDb.agent.delete.mockRejectedValue(new Error('Record to delete not found.')); // Or specific Drizzle error
+        // Simulate Prisma's behavior when delete target doesn't exist
+        mockPrisma.agent.delete.mockRejectedValue(new Error('Record to delete not found.')); // Or specific Prisma error
 
-      await expect(service.remove(userId, agentId)).rejects.toThrow('Record to delete not found.'); // Adjust error message if needed
+        await expect(service.remove(userId, agentId)).rejects.toThrow('Record to delete not found.'); // Adjust error message if needed
 
-      expect(mockDb.agent.delete).toHaveBeenCalledWith({
-        where: { id: agentId, userId },
-      });
+        expect(mockPrisma.agent.delete).toHaveBeenCalledWith({
+            where: { id: agentId, userId },
+        });
     });
   });
 });

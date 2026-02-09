@@ -10,7 +10,6 @@ import {
   LLMProviderConfig,
   LLMProviderType,
   MCPServerConfig,
-  ToolSearchConfig,
 } from './types';
 
 const CONFIG_NAMESPACE = 'theNewFuse';
@@ -76,10 +75,6 @@ export class ConfigManager {
       openai: { model: 'gpt-5.2', baseUrl: 'https://api.openai.com/v1' },
       anthropic: { model: 'claude-opus-4.5-20251124', baseUrl: 'https://api.anthropic.com/v1' },
       gemini: { model: 'gemini-3-pro', baseUrl: 'https://generativelanguage.googleapis.com/v1' },
-      sambanova: {
-        model: 'llama3-405b-instruct',
-        baseUrl: 'https://api.sambanova.ai/v1',
-      },
       openrouter: { model: 'anthropic/claude-opus-4.5', baseUrl: 'https://openrouter.ai/api/v1' },
       litellm: { model: 'gpt-5.2', baseUrl: 'http://localhost:4000' },
       deepseek: { model: 'deepseek-v3.2-speciale', baseUrl: 'https://api.deepseek.com/v1' },
@@ -88,14 +83,6 @@ export class ConfigManager {
         baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
       },
       copilot: { model: 'gpt-5.2' },
-      'google-antigravity': {
-        model: 'claude-opus-4-5-thinking',
-        baseUrl: 'https://cloudcode-pa.googleapis.com',
-      },
-      kilocode: {
-        model: 'glm-4.7-free',
-        baseUrl: 'http://localhost:18790/v1',
-      },
       // CLI-based agents (local tools)
       'claude-cli': { model: 'claude-cli' },
       'gemini-cli': { model: 'gemini-cli' },
@@ -137,45 +124,6 @@ export class ConfigManager {
   getMCPServers(): MCPServerConfig[] {
     const config = vscode.workspace.getConfiguration(CONFIG_NAMESPACE);
     return config.get<MCPServerConfig[]>('mcpServers', []);
-  }
-
-  // ============================================
-  // Tool Discovery Protocol Configuration
-  // ============================================
-
-  /**
-   * Get Tool Search configuration for Anthropic Tool Discovery Protocol
-   * See: https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool
-   */
-  getToolSearchConfig(): ToolSearchConfig {
-    const config = vscode.workspace.getConfiguration(CONFIG_NAMESPACE);
-    return {
-      enabled: config.get<boolean>('toolSearch.enabled', true),
-      maxResults: config.get<number>('toolSearch.maxResults', 5),
-      defaultMethod: config.get<'regex' | 'bm25'>('toolSearch.defaultMethod', 'bm25'),
-      alwaysLoadedTools: config.get<string[]>('toolSearch.alwaysLoadedTools', [
-        'read_file',
-        'write_file',
-        'list_directory',
-        'search_files',
-      ]),
-      deferredCategories: config.get<string[]>('toolSearch.deferredCategories', [
-        'google',
-        'automation',
-        'external',
-        'database',
-      ]),
-    };
-  }
-
-  /**
-   * Update Tool Search configuration
-   */
-  async updateToolSearchConfig(updates: Partial<ToolSearchConfig>): Promise<void> {
-    const config = vscode.workspace.getConfiguration(CONFIG_NAMESPACE);
-    for (const [key, value] of Object.entries(updates)) {
-      await config.update(`toolSearch.${key}`, value, vscode.ConfigurationTarget.Global);
-    }
   }
 
   async addMCPServer(server: MCPServerConfig): Promise<void> {

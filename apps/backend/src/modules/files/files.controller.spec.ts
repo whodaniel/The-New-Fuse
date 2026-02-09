@@ -1,8 +1,8 @@
-import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { FileCategory } from './dto/file.dto';
 import { FilesController } from './files.controller';
 import { FilesService } from './files.service';
+import { BadRequestException } from '@nestjs/common';
+import { FileCategory } from './dto/file.dto';
 
 describe('FilesController', () => {
   let controller: FilesController;
@@ -70,8 +70,12 @@ describe('FilesController', () => {
     it('should throw error if no file provided', async () => {
       const req = { user: { id: 'usr_123' } };
 
-      await expect(controller.uploadFile(null as any, req)).rejects.toThrow(BadRequestException);
-      await expect(controller.uploadFile(null as any, req)).rejects.toThrow('No file provided');
+      await expect(controller.uploadFile(null as any, req)).rejects.toThrow(
+        BadRequestException
+      );
+      await expect(controller.uploadFile(null as any, req)).rejects.toThrow(
+        'No file provided'
+      );
     });
 
     it('should throw error if file size exceeds limit', async () => {
@@ -84,7 +88,9 @@ describe('FilesController', () => {
 
       const req = { user: { id: 'usr_123' } };
 
-      await expect(controller.uploadFile(mockFile, req)).rejects.toThrow(BadRequestException);
+      await expect(controller.uploadFile(mockFile, req)).rejects.toThrow(
+        BadRequestException
+      );
       await expect(controller.uploadFile(mockFile, req)).rejects.toThrow(
         'File size exceeds 10MB limit'
       );

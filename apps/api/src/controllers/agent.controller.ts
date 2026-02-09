@@ -28,7 +28,6 @@ import {
   SetRateLimitTier,
 } from '../guards/secure-auth.guard';
 import { AgentService } from '../services/agent.service';
-import { RegistrySyncService } from '../services/agent/RegistrySyncService';
 
 /**
  * Agent Controller
@@ -81,12 +80,9 @@ export class AgentController {
    * @param agentService - The agent service instance for handling business logic
    *
    * @example
-   * const controller = new AgentController(agentService, syncService);
+   * const controller = new AgentController(agentService);
    */
-  constructor(
-    private readonly agentService: AgentService,
-    private readonly syncService: RegistrySyncService
-  ) {}
+  constructor(private readonly agentService: AgentService) {}
 
   /**
    * Create a new agent
@@ -169,33 +165,6 @@ export class AgentController {
         HttpStatus.BAD_REQUEST
       );
     }
-  }
-
-  @Post('sync')
-  @ApiOperation({ summary: 'Sync local agent definitions' })
-  @ApiResponse({ status: HttpStatus.OK })
-  async syncAgents() {
-    return await this.syncService.syncLocalAgents();
-  }
-
-  @Post('sync/pydantic')
-  @ApiOperation({ summary: 'Sync Pydantic agent definitions' })
-  @ApiResponse({ status: HttpStatus.OK })
-  async syncPydantic() {
-    return await this.syncService.syncPydanticDefinitions();
-  }
-
-  @Get('tools/pydantic')
-  @ApiOperation({ summary: 'Get Pydantic agent tool definitions for tool calling' })
-  @ApiResponse({ status: HttpStatus.OK })
-  async getPydanticTools(
-    @Query('includeOutputSchema') includeOutputSchema?: string,
-    @Query('capability') capability?: string
-  ) {
-    return this.syncService.getPydanticToolDefinitions({
-      includeOutputSchema: includeOutputSchema === 'true',
-      capability,
-    });
   }
 
   /**
@@ -330,59 +299,6 @@ export class AgentController {
     } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to fetch active agents',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-  }
-
-  /**
-   * Get agent registry
-   *
-   * Returns a public registry of all agents in the system with their
-   * basic information and capabilities. This endpoint provides a
-   * catalog-style view suitable for agent discovery and browsing.
-   *
-   * @returns Promise containing agent registry entries
-   * @returns[].id - Agent identifier
-   * @returns[].name - Agent name
-   * @returns[].type - Agent type
-   * @returns[].description - Agent description
-   * @returns[].status - Current agent status
-   * @returns[].capabilities - List of agent capabilities
-   * @returns[].createdAt - Creation timestamp
-   *
-   * @throws InternalServerErrorException - When unable to fetch registry
-   *
-   * @api
-   * GET /agents/registry
-   * @requiresAuth - Bearer token in Authorization header
-   *
-   * @example
-   * const registry = await agentController.getAgentRegistry();
-   *
-   * @example
-   * // Successful response
-   * [
-   *   {
-   *     "id": "agent123",
-   *     "name": "Customer Support Bot",
-   *     "type": "chat",
-   *     "description": "Handles customer inquiries",
-   *     "status": "active",
-   *     "capabilities": ["messaging", "ticketing"],
-   *     "createdAt": "2025-11-05T02:17:55.000Z"
-   *   }
-   * ]
-   */
-  @Get('registry')
-  @ApiOperation({ summary: 'Get agent registry' })
-  @ApiResponse({ status: HttpStatus.OK, type: [AgentResponseDto] })
-  async getAgentRegistry(): Promise<AgentResponseDto[]> {
-    try {
-      return await this.agentService.getAgentRegistry();
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message || 'Failed to fetch agent registry',
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }

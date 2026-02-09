@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AgentSystem {
-  constructor() {}
+  constructor(
+  ) {}
 
   // - Agent lifecycle management
   // - Inter-agent communication protocols

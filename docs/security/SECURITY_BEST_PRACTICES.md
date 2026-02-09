@@ -1,9 +1,7 @@
 # Security Best Practices Guide
-
 **The New Fuse Platform**
 
 ## Table of Contents
-
 1. [Authentication & Authorization](#authentication--authorization)
 2. [Input Validation](#input-validation)
 3. [API Security](#api-security)
@@ -22,7 +20,6 @@
 ### JWT Token Handling
 
 **DO:**
-
 ```typescript
 // ✓ Use environment variables for secrets
 const jwtSecret = process.env.JWT_SECRET;
@@ -44,7 +41,6 @@ try {
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Never use hardcoded secrets
 const jwtSecret = 'my-secret-key';
@@ -59,7 +55,6 @@ const decoded = jwt.verify(token, secret); // No error handling
 ### Password Security
 
 **DO:**
-
 ```typescript
 // ✓ Use bcrypt with appropriate salt rounds
 import * as bcrypt from 'bcrypt';
@@ -78,7 +73,6 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Never store passwords in plain text
 user.password = password;
@@ -93,7 +87,6 @@ const hash = bcrypt.hashSync(password, 4);
 ### Permission Checks
 
 **DO:**
-
 ```typescript
 // ✓ Always check permissions before sensitive operations
 @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -109,13 +102,11 @@ if (!user.roles.includes('ADMIN')) {
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Don't rely on client-side permission checks only
 // ✗ Don't skip permission checks for "internal" endpoints
 // ✗ Don't use weak permission checks
-if (user.isAdmin === 'true') {
-  // String comparison vulnerability
+if (user.isAdmin === 'true') { // String comparison vulnerability
   // ...
 }
 ```
@@ -127,7 +118,6 @@ if (user.isAdmin === 'true') {
 ### Request Validation
 
 **DO:**
-
 ```typescript
 // ✓ Use class-validator for DTOs
 import { IsString, IsEmail, MinLength, MaxLength } from 'class-validator';
@@ -147,20 +137,17 @@ export class CreateUserDto {
 }
 
 // ✓ Enable validation globally
-app.useGlobalPipes(
-  new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-  })
-);
+app.useGlobalPipes(new ValidationPipe({
+  whitelist: true,
+  forbidNonWhitelisted: true,
+  transform: true,
+}));
 
 // ✓ Sanitize all input
 const sanitizedInput = this.inputSanitization.sanitizeText(userInput);
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Don't trust user input
 const query = `SELECT * FROM users WHERE id = ${req.params.id}`;
@@ -178,33 +165,30 @@ eval(userInput); // NEVER DO THIS
 ### SQL Injection Prevention
 
 **DO:**
-
 ```typescript
-// ✓ Use Drizzle's parameterized queries
-const user = await drizzle.user.findUnique({
-  where: { id: userId },
+// ✓ Use Prisma's parameterized queries
+const user = await prisma.user.findUnique({
+  where: { id: userId }
 });
 
 // ✓ Use parameterized queries for raw SQL
-const users = await drizzle.$queryRaw`
+const users = await prisma.$queryRaw`
   SELECT * FROM users WHERE email = ${email}
 `;
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Never concatenate user input into SQL
 const query = `SELECT * FROM users WHERE email = '${email}'`;
 
 // ✗ Don't use raw SQL without parameters
-await drizzle.$executeRawUnsafe(`DELETE FROM users WHERE id = ${id}`);
+await prisma.$executeRawUnsafe(`DELETE FROM users WHERE id = ${id}`);
 ```
 
 ### XSS Prevention
 
 **DO:**
-
 ```typescript
 // ✓ Sanitize HTML content
 import { InputSanitizationService } from './security/input-sanitization.service';
@@ -219,7 +203,6 @@ res.setHeader('Content-Security-Policy', "default-src 'self'");
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Don't render user input directly
 <div dangerouslySetInnerHTML={{ __html: userInput }} />
@@ -235,7 +218,6 @@ res.setHeader('X-XSS-Protection', '0');
 ### Rate Limiting
 
 **DO:**
-
 ```typescript
 // ✓ Implement rate limiting for all endpoints
 @UseGuards(RateLimitGuard)
@@ -252,7 +234,6 @@ async login(@Body() credentials: LoginDto) {
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Don't skip rate limiting
 // ✗ Don't use same limits for all endpoints
@@ -262,7 +243,6 @@ async login(@Body() credentials: LoginDto) {
 ### CORS Configuration
 
 **DO:**
-
 ```typescript
 // ✓ Use strict CORS configuration
 app.enableCors({
@@ -281,11 +261,10 @@ origin: (origin, callback) => {
   } else {
     callback(new Error('Not allowed by CORS'));
   }
-};
+}
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Never use wildcard in production
 app.enableCors({ origin: '*' });
@@ -297,7 +276,6 @@ origin: true,
 ### API Key Management
 
 **DO:**
-
 ```typescript
 // ✓ Use API keys for service-to-service auth
 @UseGuards(ApiKeyGuard)
@@ -311,7 +289,6 @@ async internalEndpoint() {
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Don't hardcode API keys
 const apiKey = 'sk-1234567890abcdef';
@@ -327,7 +304,6 @@ const apiKey = 'sk-1234567890abcdef';
 ### Encryption
 
 **DO:**
-
 ```typescript
 // ✓ Use strong encryption algorithms
 import * as crypto from 'crypto';
@@ -345,21 +321,20 @@ class EncryptionService {
     return {
       encrypted,
       iv: iv.toString('hex'),
-      tag: cipher.getAuthTag().toString('hex'),
+      tag: cipher.getAuthTag().toString('hex')
     };
   }
 }
 
 // ✓ Encrypt sensitive data before storage
 const encrypted = await this.encryption.encrypt(sensitiveData);
-await drizzle.user.update({
+await prisma.user.update({
   where: { id },
-  data: { encryptedData: JSON.stringify(encrypted) },
+  data: { encryptedData: JSON.stringify(encrypted) }
 });
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Don't use weak encryption
 const cipher = crypto.createCipher('des', 'key'); // Weak algorithm
@@ -374,7 +349,6 @@ const key = 'my-encryption-key';
 ### PII Handling
 
 **DO:**
-
 ```typescript
 // ✓ Minimize PII collection
 // ✓ Encrypt PII at rest
@@ -386,7 +360,7 @@ async cleanupOldData() {
   const cutoffDate = new Date();
   cutoffDate.setMonth(cutoffDate.getMonth() - 6);
 
-  await drizzle.user.deleteMany({
+  await prisma.user.deleteMany({
     where: {
       deletedAt: { lt: cutoffDate }
     }
@@ -395,7 +369,6 @@ async cleanupOldData() {
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Don't log sensitive data
 logger.info(`Password: ${password}`);
@@ -412,7 +385,6 @@ logger.debug(`Credit card: ${creditCard}`);
 ### Environment Variables
 
 **DO:**
-
 ```typescript
 // ✓ Use environment variables for secrets
 const dbUrl = process.env.DATABASE_URL;
@@ -430,7 +402,6 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/db
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Don't commit .env files
 // ✗ Don't use default values for secrets
@@ -443,12 +414,11 @@ throw new Error(`Database connection failed: ${DATABASE_URL}`);
 ### Secret Rotation
 
 **DO:**
-
 ```typescript
 // ✓ Support multiple active keys
 const secrets = [
   process.env.JWT_SECRET_CURRENT,
-  process.env.JWT_SECRET_PREVIOUS,
+  process.env.JWT_SECRET_PREVIOUS
 ];
 
 // ✓ Implement graceful rotation
@@ -471,7 +441,6 @@ function verifyToken(token: string): any {
 ### Package Security
 
 **DO:**
-
 ```bash
 # ✓ Regularly audit dependencies
 pnpm audit
@@ -490,7 +459,6 @@ pnpm update
 ```
 
 **DON'T:**
-
 ```bash
 # ✗ Don't ignore audit warnings
 # ✗ Don't use outdated packages
@@ -504,7 +472,6 @@ pnpm update
 ### Secure Error Messages
 
 **DO:**
-
 ```typescript
 // ✓ Use generic error messages in production
 if (process.env.NODE_ENV === 'production') {
@@ -517,12 +484,11 @@ if (process.env.NODE_ENV === 'production') {
 logger.error('Database error:', {
   error: error.message,
   stack: error.stack,
-  userId: user.id,
+  userId: user.id
 });
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Don't expose stack traces to users
 res.status(500).json({ error: error.stack });
@@ -543,33 +509,31 @@ catch (e) {
 ### Security Logging
 
 **DO:**
-
 ```typescript
 // ✓ Log authentication events
 logger.info('User login attempt', {
   userId: user.id,
   ip: req.ip,
   userAgent: req.headers['user-agent'],
-  success: true,
+  success: true
 });
 
 // ✓ Log authorization failures
 logger.warn('Unauthorized access attempt', {
   userId: user.id,
   resource: 'admin_panel',
-  ip: req.ip,
+  ip: req.ip
 });
 
 // ✓ Log security events
 logger.security('Rate limit exceeded', {
   ip: req.ip,
   endpoint: req.path,
-  limit: 100,
+  limit: 100
 });
 ```
 
 **DON'T:**
-
 ```typescript
 // ✗ Don't log sensitive data
 logger.info('User data:', { password, creditCard });
@@ -585,35 +549,30 @@ logger.debug(`Token: ${jwt}`);
 ### Security Checklist for Code Reviews
 
 **Authentication & Authorization:**
-
 - [ ] Are authentication checks present?
 - [ ] Are permission checks implemented?
 - [ ] Are JWT tokens validated properly?
 - [ ] Are passwords hashed with bcrypt?
 
 **Input Validation:**
-
 - [ ] Is user input validated?
 - [ ] Are DTOs using class-validator?
 - [ ] Is input sanitized?
 - [ ] Are file uploads validated?
 
 **API Security:**
-
 - [ ] Is rate limiting implemented?
 - [ ] Are security headers set?
 - [ ] Is CORS configured properly?
 - [ ] Are API keys protected?
 
 **Data Protection:**
-
 - [ ] Is sensitive data encrypted?
 - [ ] Are secrets in environment variables?
 - [ ] Is PII handled properly?
 - [ ] Are database queries parameterized?
 
 **Error Handling:**
-
 - [ ] Are errors handled gracefully?
 - [ ] Are error messages generic in production?
 - [ ] Are errors logged properly?
@@ -626,7 +585,6 @@ logger.debug(`Token: ${jwt}`);
 ### Before Deployment
 
 **Code Security:**
-
 - [ ] All user input is validated
 - [ ] All user input is sanitized
 - [ ] No SQL injection vulnerabilities
@@ -639,7 +597,6 @@ logger.debug(`Token: ${jwt}`);
 - [ ] Security logging added
 
 **Configuration:**
-
 - [ ] Environment variables configured
 - [ ] No hardcoded secrets
 - [ ] CORS configured properly
@@ -647,21 +604,18 @@ logger.debug(`Token: ${jwt}`);
 - [ ] HTTPS enforced (production)
 
 **Dependencies:**
-
 - [ ] Dependencies audited
 - [ ] No known vulnerabilities
 - [ ] Packages from trusted sources
 - [ ] Lock file updated
 
 **Testing:**
-
 - [ ] Security tests written
 - [ ] Integration tests pass
 - [ ] Manual security testing performed
 - [ ] Code review completed
 
 **Documentation:**
-
 - [ ] Security considerations documented
 - [ ] API authentication documented
 - [ ] Environment variables documented
@@ -697,9 +651,8 @@ logger.debug(`Token: ${jwt}`);
 - [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
 - [NestJS Security](https://docs.nestjs.com/security/authentication)
 - [Node.js Security Best Practices](https://nodejs.org/en/docs/guides/security/)
-- [Drizzle Security](https://www.drizzle.io/docs/concepts/components/drizzle-client/deployment#security)
+- [Prisma Security](https://www.prisma.io/docs/concepts/components/prisma-client/deployment#security)
 
 ---
 
-**Remember:** Security is everyone's responsibility. When in doubt, ask for a
-security review.
+**Remember:** Security is everyone's responsibility. When in doubt, ask for a security review.

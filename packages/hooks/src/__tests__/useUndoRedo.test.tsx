@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react-hooks';
 import { useUndoRedo } from '../hooks/useUndoRedo';
 
 describe('useUndoRedo', () => {
@@ -57,11 +57,11 @@ describe('useUndoRedo', () => {
     });
 
     expect(result.current.state).toBe('batch3');
-
+    
     act(() => {
       result.current.undo();
     });
-
+    
     expect(result.current.state).toBe('initial');
   });
 

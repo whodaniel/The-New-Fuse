@@ -5,9 +5,7 @@
 ## 1. MISSING INDEXES ANALYSIS
 
 ### Critical Missing Indexes (Foreign Keys)
-
-The following foreign key columns lack indexes, which will cause performance
-issues:
+The following foreign key columns lack indexes, which will cause performance issues:
 
 1. **User Model**
    - No indexes needed (primary model)
@@ -169,7 +167,6 @@ issues:
 ## 2. CASCADE DELETE CONFIGURATION ISSUES
 
 ### Missing onDelete Configurations
-
 Many relations lack proper cascade delete behavior:
 
 1. **ChatRoom.owner** → User
@@ -261,17 +258,13 @@ Many relations lack proper cascade delete behavior:
 ## 4. DEPRECATED PRISMA FEATURES
 
 ### Preview Features Status
-
 Current preview features in schema:
-
 - `driverAdapters`: Still in preview
 - `fullTextSearchPostgres`: Still in preview
 
-**Recommendation**: These are stable enough for production but monitor for GA
-releases.
+**Recommendation**: These are stable enough for production but monitor for GA releases.
 
 ### Binary Targets
-
 - Current: `["native"]`
 - **Issue**: May need platform-specific targets for Docker/Railway
 - **Recommendation**: Add `["native", "debian-openssl-3.0.x"]` for Railway
@@ -291,13 +284,11 @@ releases.
 ### Missing Timestamp Indexes
 
 Many models have `createdAt` and `updatedAt` but no indexes for:
-
 - Time-based queries
 - Cleanup jobs
 - Analytics
 
 Models needing timestamp indexes:
-
 - All models with createdAt/updatedAt for analytics
 - Models with expiresAt for cleanup jobs
 - Models with lastActivity for activity tracking
@@ -305,19 +296,16 @@ Models needing timestamp indexes:
 ## 6. MIGRATION CONCERNS
 
 ### Current Migration Status
-
 - 2 migrations exist:
   1. `20250503222817_init` - Initial schema
   2. `20250612202235_add_a2a_protocol_models` - A2A additions
 
 ### Migration Health
-
 - ✅ Migration lock file exists (PostgreSQL)
 - ✅ Migrations appear to be sequential
 - ⚠️ No verification of applied migrations vs schema drift
 
 ### Idempotency Issues
-
 - Need to verify migrations are idempotent
 - Should add IF NOT EXISTS checks for safety
 
@@ -339,12 +327,12 @@ Models needing timestamp indexes:
 
 4. **Connection Retry Logic**
    - No retry configuration visible
-   - **Recommendation**: Implement in DatabaseService
+   - **Recommendation**: Implement in PrismaService
 
-### Current DatabaseService Issues
+### Current PrismaService Issues
 
 1. **No Connection Pooling Config**
-   - Using default Drizzle pooling
+   - Using default Prisma pooling
    - May need PgBouncer for high traffic
 
 2. **No Retry Logic**
@@ -388,7 +376,7 @@ Models needing timestamp indexes:
 2. ✅ Configure cascade deletes for all relations
 3. ✅ Encrypt LLMConfig.apiKey
 4. ✅ Add connection pooling and SSL to DATABASE_URL
-5. ✅ Implement retry logic in DatabaseService
+5. ✅ Implement retry logic in PrismaService
 6. ✅ Add Message validation (chatId XOR roomId)
 
 ### High Priority (First Month)
@@ -411,7 +399,7 @@ Models needing timestamp indexes:
 
 ### Long Term
 
-1. ✅ Consider enhanced.schema.drizzle adoption
+1. ✅ Consider enhanced.schema.prisma adoption
 2. ✅ Implement multi-tenancy (Organizations)
 3. ✅ Add Verifiable Credentials system
 4. ✅ Set up query monitoring and analytics

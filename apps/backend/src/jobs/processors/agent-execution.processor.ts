@@ -1,9 +1,6 @@
-import { OnQueueActive, OnQueueCompleted, OnQueueFailed, Process, Processor } from '@nestjs/bull';
+import { Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
-import { ClawdEngine } from '@the-new-fuse/agent';
 import { Job } from 'bull';
-import * as fs from 'fs';
-import * as path from 'path';
 import { QueueName } from '../constants/queue-names';
 import { AgentExecutionJobData } from '../interfaces/job-data.interface';
 
@@ -20,9 +17,9 @@ export class AgentExecutionProcessor {
    */
   @Process('execute-agent')
   async handleExecuteAgent(job: Job<AgentExecutionJobData>) {
-    this.logger.log(`Processing execute-agent job ${job.id} for agent ${job.data.agentId}`);
-
-    let engine: ClawdEngine | null = null;
+    this.logger.log(
+      `Processing execute-agent job ${job.id} for agent ${job.data.agentId}`,
+    );
 
     try {
       const { agentId, userId, task, parameters, timeout } = job.data;
@@ -30,62 +27,53 @@ export class AgentExecutionProcessor {
       // Update progress
       await job.progress(10);
 
+      // Simulate agent execution (replace with actual agent service)
       const startTime = Date.now();
       const maxDuration = timeout || 300000; // Default 5 minutes
 
       this.logger.log(`Starting agent ${agentId} with task: ${task}`);
 
-      // Initialize Agent Engine
-      // Create a temporary workspace for this execution
-      const workerId = `worker-${job.id}`;
-      // In production (Railway), we might be in /app. Use appropriate temp dir.
-      const workspacePath = path.join(process.cwd(), '.agent-workspaces', workerId);
-
-      if (!fs.existsSync(workspacePath)) {
-        fs.mkdirSync(workspacePath, { recursive: true });
-      }
-
-      // Initialize engine
-      engine = new ClawdEngine(workspacePath);
-
-      // Wait a moment for connection (hacky, but ClawdEngine needs a better lifecycle API)
-      await new Promise((r) => setTimeout(r, 1000));
-
+      // Simulated agent processing
+      // TODO: Replace with actual agent service integration
       await job.progress(25);
 
-      // Execute the Skill via handleRequest
-      // We assume the skill name is in 'task' and args in 'parameters'
-      const response = await engine.handleRequest({
-        type: 'req',
-        id: job.id.toString(),
-        method: 'node.invoke',
-        params: { skillName: task, args: parameters || {} },
-      });
+      // Simulate processing time
+      await this.sleep(2000);
+      await job.progress(50);
 
-      if (!response.ok) {
-        throw new Error(response.error?.message || 'Unknown agent error');
+      // Check if we're exceeding timeout
+      if (Date.now() - startTime > maxDuration) {
+        throw new Error('Agent execution timeout exceeded');
       }
 
-      await job.progress(100);
+      await job.progress(75);
+      await this.sleep(1000);
 
-      const executionTime = Date.now() - startTime;
-      this.logger.log(`Agent ${agentId} execution completed in ${executionTime}ms`);
-
-      return {
+      const result = {
         agentId,
         userId,
         task,
         status: 'completed',
-        executionTime,
-        output: response.payload,
+        executionTime: Date.now() - startTime,
+        output: {
+          message: 'Agent execution completed successfully',
+          data: parameters,
+        },
       };
+
+      await job.progress(100);
+
+      this.logger.log(
+        `Agent ${agentId} execution completed in ${result.executionTime}ms`,
+      );
+
+      return result;
     } catch (error) {
-      this.logger.error(`Agent execution failed: ${error.message}`, error.stack);
+      this.logger.error(
+        `Agent execution failed: ${error.message}`,
+        error.stack,
+      );
       throw error;
-    } finally {
-      if (engine) {
-        await engine.shutdown();
-      }
     }
   }
 
@@ -94,9 +82,7 @@ export class AgentExecutionProcessor {
    */
   @Process('batch-execute-agents')
   async handleBatchExecuteAgents(job: Job<{ agents: AgentExecutionJobData[] }>) {
-    this.logger.log(
-      `Processing batch-execute-agents job ${job.id} with ${job.data.agents.length} agents`
-    );
+    this.logger.log(`Processing batch-execute-agents job ${job.id} with ${job.data.agents.length} agents`);
 
     try {
       const results = [];
@@ -140,7 +126,9 @@ export class AgentExecutionProcessor {
    */
   @OnQueueActive()
   onActive(job: Job) {
-    this.logger.debug(`Processing agent execution job ${job.id} of type ${job.name}`);
+    this.logger.debug(
+      `Processing agent execution job ${job.id} of type ${job.name}`,
+    );
   }
 
   /**
@@ -149,7 +137,7 @@ export class AgentExecutionProcessor {
   @OnQueueCompleted()
   onCompleted(job: Job, result: any) {
     this.logger.log(
-      `Agent execution job ${job.id} completed. Agent: ${result.agentId}, Duration: ${result.executionTime}ms`
+      `Agent execution job ${job.id} completed. Agent: ${result.agentId}, Duration: ${result.executionTime}ms`,
     );
   }
 
@@ -160,7 +148,7 @@ export class AgentExecutionProcessor {
   onFailed(job: Job, error: Error) {
     this.logger.error(
       `Agent execution job ${job.id} failed after ${job.attemptsMade} attempts. Error: ${error.message}`,
-      error.stack
+      error.stack,
     );
   }
 

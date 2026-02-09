@@ -1,6 +1,6 @@
+import { IsString, IsNotEmpty, IsOptional, IsArray, IsEnum } from 'class-validator';
 import type { CreateAgentDto as ICreateAgentDto } from '@the-new-fuse/types';
-import { AgentCapability, AgentType } from '@the-new-fuse/types';
-import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { AgentType, AgentCapability } from '@the-new-fuse/types';
 
 export class CreateAgentDto implements ICreateAgentDto {
   @IsString()

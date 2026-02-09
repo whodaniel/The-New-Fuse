@@ -1,17 +1,17 @@
 import {
+  Entity,
+  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
-import { LoginAttempt } from '../entities/LoginAttempt';
 import { UserRole } from '../types/user.types';
 import { Agent } from './agent.entity';
 import { ChatRoom } from './chat-room.entity';
 import { Message } from './message.entity';
 import { Workflow } from './workflow.entity';
+import { LoginAttempt } from '../entities/LoginAttempt';
 
 @Entity('users')
 export class User {

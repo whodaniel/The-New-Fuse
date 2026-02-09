@@ -4,7 +4,7 @@ set -e
 # Package-specific dependencies
 declare -A package_deps=(
     ["agent"]="@nestjs/common @nestjs/core rxjs"
-    ["db"]="@drizzle/client @drizzle/extension-accelerate mysql2 sqlite3"
+    ["db"]="@prisma/client @prisma/extension-accelerate mysql2 sqlite3"
     ["features"]="@nestjs/common @nestjs/core rxjs"
     ["integrations"]="axios @nestjs/axios"
     ["layout"]="react react-dom @chakra-ui/react"

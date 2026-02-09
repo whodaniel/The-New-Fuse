@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AgentExecutorService, DebateBlock } from './mass-blocks.service';
+import { DebateBlock } from './mass-blocks.service';
+import { AgentExecutorService } from './mass-blocks.service';
 
 @Injectable()
 export class DebateService {
@@ -22,8 +23,8 @@ export class DebateService {
       parameters: {
         debaterAgentIds,
         debateRounds: config.debateRounds || 3,
-        votingStrategy: config.votingStrategy || 'majority',
-      },
+        votingStrategy: config.votingStrategy || 'majority'
+      }
     };
 
     const result = await this.debateBlock.execute(input, debateConfig);
@@ -33,8 +34,8 @@ export class DebateService {
       executionMetrics: {
         debaterAgentIds,
         debateRounds: config.debateRounds || 3,
-        timestamp: new Date().toISOString(),
-      },
+        timestamp: new Date().toISOString()
+      }
     };
   }
 }

@@ -26,7 +26,7 @@ export class SessionCacheService {
 
   constructor(
     private readonly cacheManager: AdvancedCacheManager,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {
     const cacheConfig = this.configService.get('cache');
     this.defaultTTL = cacheConfig?.ttl?.session || 604800; // 7 days
@@ -39,7 +39,7 @@ export class SessionCacheService {
   async setSession(
     sessionId: string,
     data: SessionData,
-    options: SessionOptions = {}
+    options: SessionOptions = {},
   ): Promise<void> {
     const ttl = options.ttl || this.defaultTTL;
 
@@ -64,10 +64,14 @@ export class SessionCacheService {
   /**
    * Get a session
    */
-  async getSession(sessionId: string, options: SessionOptions = {}): Promise<SessionData | null> {
-    const session = await this.cacheManager.get<SessionData>(`session:${sessionId}`, {
-      prefix: 'auth:',
-    });
+  async getSession(
+    sessionId: string,
+    options: SessionOptions = {},
+  ): Promise<SessionData | null> {
+    const session = await this.cacheManager.get<SessionData>(
+      `session:${sessionId}`,
+      { prefix: 'auth:' },
+    );
 
     if (!session) {
       return null;
@@ -97,9 +101,9 @@ export class SessionCacheService {
   async refreshSession(
     sessionId: string,
     session?: SessionData,
-    options: SessionOptions = {}
+    options: SessionOptions = {},
   ): Promise<void> {
-    const sessionData = session || (await this.getSession(sessionId, { sliding: false }));
+    const sessionData = session || await this.getSession(sessionId, { sliding: false });
 
     if (!sessionData) {
       return;
@@ -122,9 +126,10 @@ export class SessionCacheService {
    * Delete a session
    */
   async deleteSession(sessionId: string): Promise<void> {
-    const session = await this.cacheManager.get<SessionData>(`session:${sessionId}`, {
-      prefix: 'auth:',
-    });
+    const session = await this.cacheManager.get<SessionData>(
+      `session:${sessionId}`,
+      { prefix: 'auth:' },
+    );
 
     if (session) {
       await this.removeSessionFromUserIndex(session.userId, sessionId);
@@ -156,9 +161,10 @@ export class SessionCacheService {
    * Get all session IDs for a user
    */
   async getUserSessions(userId: string): Promise<string[]> {
-    const sessions = await this.cacheManager.get<string[]>(`user:sessions:${userId}`, {
-      prefix: 'auth:',
-    });
+    const sessions = await this.cacheManager.get<string[]>(
+      `user:sessions:${userId}`,
+      { prefix: 'auth:' },
+    );
 
     return sessions || [];
   }
@@ -171,7 +177,7 @@ export class SessionCacheService {
 
     const sessions = await this.cacheManager.mget<SessionData>(
       sessionIds.map((id) => `session:${id}`),
-      { prefix: 'auth:' }
+      { prefix: 'auth:' },
     );
 
     return sessions
@@ -195,7 +201,7 @@ export class SessionCacheService {
   async updateSessionData(
     sessionId: string,
     updates: Partial<SessionData>,
-    options: SessionOptions = {}
+    options: SessionOptions = {},
   ): Promise<void> {
     const session = await this.getSession(sessionId, { sliding: false });
 
@@ -233,7 +239,7 @@ export class SessionCacheService {
   private async addSessionToUserIndex(
     userId: string,
     sessionId: string,
-    ttl: number
+    ttl: number,
   ): Promise<void> {
     const sessions = await this.getUserSessions(userId);
 
@@ -250,7 +256,10 @@ export class SessionCacheService {
   /**
    * Remove session from user's session index
    */
-  private async removeSessionFromUserIndex(userId: string, sessionId: string): Promise<void> {
+  private async removeSessionFromUserIndex(
+    userId: string,
+    sessionId: string,
+  ): Promise<void> {
     const sessions = await this.getUserSessions(userId);
     const filtered = sessions.filter((id) => id !== sessionId);
 
@@ -293,7 +302,7 @@ export class SessionCacheService {
     }
 
     this.logger.debug(
-      `Limited user ${userId} sessions from ${sessionsWithData.length} to ${maxSessions}`
+      `Limited user ${userId} sessions from ${sessionsWithData.length} to ${maxSessions}`,
     );
   }
 

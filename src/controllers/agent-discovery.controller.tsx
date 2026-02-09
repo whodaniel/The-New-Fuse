@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { AgentDiscoveryService } from '../services/agent-discovery.service.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
-import { AgentType } from '@drizzle/client';
+import { AgentType } from '@prisma/client';
 
 interface RegisterAgentDto {
   name: string;
@@ -10,19 +10,6 @@ interface RegisterAgentDto {
   userId: string;
   capabilities: string[];
   tools: Record<string, any>;
-  inviteCode?: string;
-  tenantId?: string;
-  organizationId?: string;
-  identity?: {
-    persistentId?: string;
-    federationId?: string;
-    ephemeralId?: string;
-    instanceId?: string;
-  };
-  trust?: {
-    tier?: 'unverified' | 'verified' | 'certified';
-    score?: number;
-  };
 }
 
 /**
@@ -44,14 +31,7 @@ export class AgentDiscoveryController {
       dto.type,
       dto.userId,
       dto.capabilities,
-      dto.tools,
-      {
-        inviteCode: dto.inviteCode,
-        tenantId: dto.tenantId,
-        organizationId: dto.organizationId,
-        identity: dto.identity,
-        trust: dto.trust
-      }
+      dto.tools
     );
   }
 

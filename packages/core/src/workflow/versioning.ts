@@ -10,7 +10,7 @@ export interface Migration {
 export class WorkflowVersionManager {
   private readonly logger = new Logger(WorkflowVersionManager.name);
   private readonly migrations = new Map<string, Migration>();
-
+  
   constructor() {
     this.registerMigrations();
   }
@@ -24,7 +24,7 @@ export class WorkflowVersionManager {
     this.logger.log(`Migrating workflow from ${currentVersion} to ${targetVersion}`);
     const migrationPath = this.calculateMigrationPath(currentVersion, targetVersion);
     let migratedWorkflow = { ...workflow };
-
+    
     for (const migration of migrationPath) {
       migratedWorkflow = await this.applyMigration(migratedWorkflow, migration);
     }
@@ -39,7 +39,7 @@ export class WorkflowVersionManager {
     // Simple version comparison - in real implementation, this would be more sophisticated
     const fromParts = from.split('.').map(Number);
     const toParts = to.split('.').map(Number);
-
+    
     if (fromParts[0] < toParts[0]) {
       // Major version upgrade
       const migration = this.migrations.get(`${from}-to-${to}`);
@@ -53,7 +53,7 @@ export class WorkflowVersionManager {
       const migration = this.migrations.get(`${from}-to-${to}`);
       if (migration) path.push(migration);
     }
-
+    
     return path.filter(Boolean);
   }
 
@@ -64,10 +64,7 @@ export class WorkflowVersionManager {
       this.logger.log(`Successfully applied migration to ${migration.to}`);
       return migrated;
     } catch (error) {
-      this.logger.error(
-        `Failed to apply migration from ${migration.from} to ${migration.to}`,
-        error,
-      );
+      this.logger.error(`Failed to apply migration from ${migration.from} to ${migration.to}`, error);
       throw error;
     }
   }
@@ -87,7 +84,7 @@ export class WorkflowVersionManager {
 
   getSupportedVersions(): string[] {
     return Array.from(this.migrations.keys())
-      .map((key) => key.split('-to-')[1])
+      .map(key => key.split('-to-')[1])
       .filter((value, index, self) => self.indexOf(value) === index)
       .sort();
   }

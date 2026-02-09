@@ -6,7 +6,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { DatabaseService } from '../../src/db/db.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
 import { AppModule } from '../../src/app.module';
 
 // Agent-specific security test cases
@@ -51,7 +51,7 @@ const AGENT_SECURITY_TESTS = {
 
 describe('Agent Endpoint Security Tests', () => {
   let app: INestApplication;
-  let db: DatabaseService;
+  let prisma: PrismaService;
   let user1Token: string;
   let user2Token: string;
   let adminToken: string;
@@ -69,10 +69,10 @@ describe('Agent Endpoint Security Tests', () => {
     app = moduleRef.createNestApplication();
     await app.init();
 
-    db = moduleRef.get<DatabaseService>(DatabaseService);
+    prisma = moduleRef.get<PrismaService>(PrismaService);
 
     // Setup test users
-    user1 = await db.user.create({
+    user1 = await prisma.user.create({
       data: {
         email: 'agent.user1@example.com',
         password: 'User1Password123!',
@@ -81,7 +81,7 @@ describe('Agent Endpoint Security Tests', () => {
       },
     });
 
-    user2 = await db.user.create({
+    user2 = await prisma.user.create({
       data: {
         email: 'agent.user2@example.com',
         password: 'User2Password123!',
@@ -90,7 +90,7 @@ describe('Agent Endpoint Security Tests', () => {
       },
     });
 
-    admin = await db.user.create({
+    admin = await prisma.user.create({
       data: {
         email: 'agent.admin@example.com',
         password: 'AdminPassword123!',
@@ -128,7 +128,7 @@ describe('Agent Endpoint Security Tests', () => {
     adminToken = adminLogin.body.access_token;
 
     // Setup test agents
-    user1Agent = await db.agent.create({
+    user1Agent = await prisma.agent.create({
       data: {
         name: 'User1 Agent',
         description: 'Agent owned by user1',
@@ -138,7 +138,7 @@ describe('Agent Endpoint Security Tests', () => {
       },
     });
 
-    user2Agent = await db.agent.create({
+    user2Agent = await prisma.agent.create({
       data: {
         name: 'User2 Agent',
         description: 'Agent owned by user2',
@@ -150,7 +150,7 @@ describe('Agent Endpoint Security Tests', () => {
   });
 
   afterAll(async () => {
-    await db.agent.deleteMany({
+    await prisma.agent.deleteMany({
       where: { 
         OR: [
           { userId: user1.id },
@@ -159,7 +159,7 @@ describe('Agent Endpoint Security Tests', () => {
         ],
       },
     });
-    await db.user.deleteMany({
+    await prisma.user.deleteMany({
       where: {
         OR: [
           { id: user1.id },
@@ -393,7 +393,7 @@ describe('Agent Endpoint Security Tests', () => {
       });
 
       it('should allow users to delete their own agents', async () => {
-        const newAgent = await db.agent.create({
+        const newAgent = await prisma.agent.create({
           data: {
             name: 'Agent to Delete',
             description: 'This agent will be deleted',
@@ -417,7 +417,7 @@ describe('Agent Endpoint Security Tests', () => {
       });
 
       it('should allow admin to delete any agent', async () => {
-        const newAgent = await db.agent.create({
+        const newAgent = await prisma.agent.create({
           data: {
             name: 'Agent for Admin Deletion',
             description: 'This agent will be deleted by admin',
@@ -462,7 +462,7 @@ describe('Agent Endpoint Security Tests', () => {
 
     it('should prevent XSS in search results', async () => {
       // First create an agent with XSS in description
-      const maliciousAgent = await db.agent.create({
+      const maliciousAgent = await prisma.agent.create({
         data: {
           name: 'XSS Agent',
           description: '<script>alert("XSS")</script>',
@@ -488,7 +488,7 @@ describe('Agent Endpoint Security Tests', () => {
       }
 
       // Clean up
-      await db.agent.delete({ where: { id: maliciousAgent.id } });
+      await prisma.agent.delete({ where: { id: maliciousAgent.id } });
     });
 
     it('should implement search result authorization', async () => {

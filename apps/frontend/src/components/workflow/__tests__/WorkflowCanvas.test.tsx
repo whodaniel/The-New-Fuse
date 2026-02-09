@@ -1,7 +1,8 @@
-import { WorkflowProvider } from '@/contexts/WorkflowContext';
-import { render, screen } from '@testing-library/react';
-import { ReactFlowProvider } from 'reactflow';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { WorkflowCanvas } from '../WorkflowCanvas';
+import { WorkflowProvider } from '@/contexts/WorkflowContext';
+import { ReactFlowProvider } from 'reactflow';
 
 // Mock the toast notifications
 jest.mock('react-toastify', () => ({
@@ -9,8 +10,8 @@ jest.mock('react-toastify', () => ({
     success: jest.fn(),
     error: jest.fn(),
     info: jest.fn(),
-    warning: jest.fn(),
-  },
+    warning: jest.fn()
+  }
 }));
 
 // Mock the services
@@ -24,11 +25,11 @@ jest.mock('@/services/WorkflowExecutionService', () => ({
       enabled: false,
       stepByStep: false,
       breakpoints: [],
-      logLevel: 'info',
+      logLevel: 'info'
     }),
-    setDebugOptions: jest.fn(),
+    setDebugOptions: jest.fn()
   },
-  ExecutionUpdate: jest.fn(),
+  ExecutionUpdate: jest.fn()
 }));
 
 // Mock the hooks
@@ -36,7 +37,7 @@ jest.mock('@/hooks', () => ({
   useWorkflow: () => ({
     workflow: { id: 'test-workflow', name: 'Test Workflow' },
     saveWorkflow: jest.fn(),
-    loadWorkflow: jest.fn(),
+    loadWorkflow: jest.fn()
   }),
   useA2ACommunication: () => ({
     agents: [],
@@ -46,8 +47,8 @@ jest.mock('@/hooks', () => ({
     loadAgents: jest.fn(),
     sendMessage: jest.fn(),
     broadcastMessage: jest.fn(),
-    sendRequestAndWaitForResponse: jest.fn(),
-  }),
+    sendRequestAndWaitForResponse: jest.fn()
+  })
 }));
 
 // Wrap component with required providers
@@ -65,12 +66,12 @@ describe('WorkflowCanvas', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-
+  
   it('renders without crashing', () => {
     renderWorkflowCanvas();
     expect(screen.getByText('Templates')).toBeInTheDocument();
   });
-
+  
   it('renders toolbar buttons', () => {
     renderWorkflowCanvas();
     expect(screen.getByText('Save')).toBeInTheDocument();
@@ -80,13 +81,13 @@ describe('WorkflowCanvas', () => {
     expect(screen.getByText('Export')).toBeInTheDocument();
     expect(screen.getByText('Import')).toBeInTheDocument();
   });
-
+  
   it('disables buttons in read-only mode', () => {
     renderWorkflowCanvas({ isReadOnly: true });
     expect(screen.getByText('Save')).toBeDisabled();
     expect(screen.getByText('Load')).toBeDisabled();
     expect(screen.getByText('Import')).toBeDisabled();
   });
-
+  
   // Add more tests as needed
 });

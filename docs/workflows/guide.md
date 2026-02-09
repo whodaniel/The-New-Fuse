@@ -1,21 +1,16 @@
 # The New Fuse Workflow System Guide
 
-This document provides a comprehensive guide to the workflow system in The New
-Fuse framework, including concepts, examples, and best practices.
+This document provides a comprehensive guide to the workflow system in The New Fuse framework, including concepts, examples, and best practices.
 
 ## Overview
 
-The Workflow System is a core component of The New Fuse that enables the
-orchestration of complex interactions between multiple AI agents. It allows you
-to define, manage, and execute sequences of operations that leverage the
-capabilities of different agents to achieve sophisticated tasks.
+The Workflow System is a core component of The New Fuse that enables the orchestration of complex interactions between multiple AI agents. It allows you to define, manage, and execute sequences of operations that leverage the capabilities of different agents to achieve sophisticated tasks.
 
 ## Key Concepts
 
 ### Workflow
 
-A workflow is a directed acyclic graph (DAG) of steps that defines a process.
-Each workflow has:
+A workflow is a directed acyclic graph (DAG) of steps that defines a process. Each workflow has:
 
 - **Unique Identifier**: A unique ID for reference
 - **Name and Description**: Human-readable identification
@@ -49,54 +44,54 @@ Data flows through a workflow via:
 ```javascript
 // Create a new workflow via API
 const workflow = await client.workflows.create({
-  name: 'Content Generation Pipeline',
-  description: 'Generates and validates content',
+  name: "Content Generation Pipeline",
+  description: "Generates and validates content",
   steps: [
     {
-      name: 'Topic Research',
-      agentId: 'agent-123',
-      action: 'research-topic',
+      name: "Topic Research",
+      agentId: "agent-123",
+      action: "research-topic",
       inputs: [
         {
-          name: 'topic',
-          source: 'input',
-          key: 'topic',
-        },
+          name: "topic",
+          source: "input",
+          key: "topic"
+        }
       ],
       outputs: [
         {
-          name: 'researchResults',
-          destination: 'workflow',
-          key: 'research',
-        },
-      ],
+          name: "researchResults",
+          destination: "workflow",
+          key: "research"
+        }
+      ]
     },
     {
-      name: 'Content Generation',
-      agentId: 'agent-456',
-      action: 'generate-content',
+      name: "Content Generation",
+      agentId: "agent-456",
+      action: "generate-content",
       inputs: [
         {
-          name: 'research',
-          source: 'workflow',
-          key: 'research',
-        },
+          name: "research",
+          source: "workflow",
+          key: "research"
+        }
       ],
       outputs: [
         {
-          name: 'content',
-          destination: 'output',
-          key: 'generatedContent',
-        },
-      ],
-    },
+          name: "content",
+          destination: "output",
+          key: "generatedContent"
+        }
+      ]
+    }
   ],
   triggers: [
     {
-      type: 'api',
-      name: 'API Trigger',
-    },
-  ],
+      type: "api",
+      name: "API Trigger"
+    }
+  ]
 });
 ```
 
@@ -133,19 +128,19 @@ const workflow = await client.workflows.create({
 
 ```javascript
 // Execute a workflow synchronously
-const result = await client.workflows.executeSync('workflow-123', {
+const result = await client.workflows.executeSync("workflow-123", {
   inputs: {
-    topic: 'Artificial Intelligence in Healthcare',
-    style: 'academic',
-  },
+    topic: "Artificial Intelligence in Healthcare",
+    style: "academic"
+  }
 });
 
 // Execute a workflow asynchronously
-const execution = await client.workflows.execute('workflow-123', {
+const execution = await client.workflows.execute("workflow-123", {
   inputs: {
-    topic: 'Artificial Intelligence in Healthcare',
-    style: 'academic',
-  },
+    topic: "Artificial Intelligence in Healthcare",
+    style: "academic"
+  }
 });
 
 // Check execution status
@@ -374,20 +369,18 @@ Manage changes to workflows over time:
 
 ```javascript
 // Create a new version of an existing workflow
-const newVersion = await client.workflows.createVersion('workflow-123', {
-  name: 'Content Generation Pipeline v2',
+const newVersion = await client.workflows.createVersion("workflow-123", {
+  name: "Content Generation Pipeline v2",
   // Updated workflow definition
 });
 
 // List all versions of a workflow
-const versions = await client.workflows.listVersions('workflow-123');
+const versions = await client.workflows.listVersions("workflow-123");
 
 // Execute a specific version
-const execution = await client.workflows.execute('workflow-123', {
-  inputs: {
-    /* ... */
-  },
-  version: 2,
+const execution = await client.workflows.execute("workflow-123", {
+  inputs: { /* ... */ },
+  version: 2
 });
 ```
 
@@ -431,30 +424,27 @@ Trigger workflows based on events:
 
 ```javascript
 // Configure an event trigger
-await client.workflows.updateTriggers('workflow-123', [
+await client.workflows.updateTriggers("workflow-123", [
   {
-    type: 'event',
-    eventType: 'document.created',
+    type: "event",
+    eventType: "document.created",
     filter: {
-      documentType: 'contract',
-    },
-  },
+      documentType: "contract"
+    }
+  }
 ]);
 
 // Emit an event that will trigger the workflow
 await client.events.emit({
-  type: 'document.created',
+  type: "document.created",
   payload: {
-    documentId: 'doc-456',
-    documentType: 'contract',
-    content: '...',
-  },
+    documentId: "doc-456",
+    documentType: "contract",
+    content: "..."
+  }
 });
 ```
 
 ## Conclusion
 
-The Workflow System in The New Fuse provides a powerful mechanism for
-orchestrating complex interactions between AI agents. By following the
-principles and patterns outlined in this guide, you can create sophisticated
-workflows that leverage the full capabilities of the platform.
+The Workflow System in The New Fuse provides a powerful mechanism for orchestrating complex interactions between AI agents. By following the principles and patterns outlined in this guide, you can create sophisticated workflows that leverage the full capabilities of the platform.

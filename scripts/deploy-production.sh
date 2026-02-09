@@ -15,7 +15,7 @@ yarn clean
 yarn install --frozen-lockfile
 yarn workspaces foreach -pt run build
 
-# Generate fresh Drizzle client
+# Generate fresh Prisma client
 echo "🗄️ Generating database client..."
 yarn workspace @the-new-fuse/database generate
 

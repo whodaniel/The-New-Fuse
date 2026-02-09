@@ -2,16 +2,13 @@
 
 ## Overview
 
-This document outlines the comprehensive input sanitization and security
-measures implemented across the entire application stack, including backend API,
-frontend application, and database interactions.
+This document outlines the comprehensive input sanitization and security measures implemented across the entire application stack, including backend API, frontend application, and database interactions.
 
 ## Security Architecture
 
 ### Backend Security (API Server)
 
 #### 1. Input Sanitization Service
-
 - **Location**: `/apps/api/src/security/input-sanitization.service.ts`
 - **Purpose**: Centralized input sanitization for all user inputs
 - **Features**:
@@ -24,7 +21,6 @@ frontend application, and database interactions.
   - JSON object recursive sanitization
 
 #### 2. Security Validation Middleware
-
 - **Location**: `/apps/api/src/middleware/security-validation.middleware.ts`
 - **Purpose**: Global request validation and sanitization
 - **Features**:
@@ -35,7 +31,6 @@ frontend application, and database interactions.
   - Length validation and limiting
 
 #### 3. CSRF Protection Middleware
-
 - **Location**: `/apps/api/src/middleware/csrf-protection.middleware.ts`
 - **Purpose**: Cross-Site Request Forgery protection
 - **Features**:
@@ -46,7 +41,6 @@ frontend application, and database interactions.
   - Configurable exempt paths
 
 #### 4. Response Sanitization Service
-
 - **Location**: `/apps/api/src/security/response-sanitization.service.ts`
 - **Purpose**: Prevent sensitive data leakage in API responses
 - **Features**:
@@ -58,7 +52,6 @@ frontend application, and database interactions.
   - Log data sanitization
 
 #### 5. Security Guard
-
 - **Location**: `/apps/api/src/guards/security.guard.ts`
 - **Purpose**: Comprehensive security validation and protection
 - **Features**:
@@ -72,7 +65,6 @@ frontend application, and database interactions.
 ### Frontend Security (Client Application)
 
 #### 1. Client Security Utilities
-
 - **Location**: `/apps/frontend/src/core/utils/client-security.ts`
 - **Purpose**: Client-side input sanitization and security measures
 - **Features**:
@@ -85,7 +77,6 @@ frontend application, and database interactions.
   - Content Security Policy application
 
 #### 2. Security Decorators
-
 - **Location**: `/apps/api/src/guards/security.guard.ts`
 - **Purpose**: Route-level security configuration
 - **Available Decorators**:
@@ -100,25 +91,21 @@ frontend application, and database interactions.
 ## Security Features Implemented
 
 ### 1. XSS Protection
-
 - **Backend**: DOMPurify HTML sanitization
 - **Frontend**: Text content sanitization and CSP headers
 - **Coverage**: All user-generated content, form inputs, and dynamic content
 
 ### 2. SQL Injection Prevention
-
 - **Method**: Input sanitization with special character escaping
 - **Coverage**: All database queries and raw SQL inputs
 - **Implementation**: Custom sanitization service for database-specific needs
 
 ### 3. CSRF Protection
-
 - **Method**: Token-based protection with session management
 - **Implementation**: Middleware-based with automatic token handling
 - **Coverage**: All state-changing requests (POST, PUT, PATCH, DELETE)
 
 ### 4. Content Security Policy
-
 - **Implementation**: Header-based CSP with strict policies
 - **Coverage**: All API responses and frontend pages
 - **Policies**:
@@ -130,7 +117,6 @@ frontend application, and database interactions.
   - Object sources: 'none'
 
 ### 5. Input Validation
-
 - **Method**: Comprehensive validation with class-validator
 - **Coverage**: All user inputs, API parameters, and form data
 - **Features**:
@@ -142,13 +128,11 @@ frontend application, and database interactions.
   - Custom validation rules
 
 ### 6. Rate Limiting
-
 - **Implementation**: Throttler-based rate limiting
 - **Configuration**: 100 requests per minute per IP
 - **Coverage**: All API endpoints
 
 ### 7. Authentication & Authorization
-
 - **Method**: JWT-based authentication with role/permission validation
 - **Coverage**: Protected routes and sensitive operations
 - **Features**:
@@ -158,7 +142,6 @@ frontend application, and database interactions.
   - Session management
 
 ### 8. Response Sanitization
-
 - **Purpose**: Prevent sensitive data leakage
 - **Coverage**: All API responses
 - **Features**:
@@ -170,7 +153,6 @@ frontend application, and database interactions.
 ## Security Testing & Monitoring
 
 ### 1. Security Testing Service
-
 - **Location**: `/apps/api/src/security/security-testing.service.ts`
 - **Purpose**: Automated security validation
 - **Tests**:
@@ -184,7 +166,6 @@ frontend application, and database interactions.
   - Data validation testing
 
 ### 2. Security Controller
-
 - **Location**: `/apps/api/src/controllers/security.controller.ts`
 - **Purpose**: Security monitoring and testing endpoints
 - **Endpoints**:
@@ -198,14 +179,12 @@ frontend application, and database interactions.
 ## Database Security
 
 ### 1. Input Sanitization
-
 - All database inputs are sanitized before queries
 - Special character escaping for SQL
 - Length validation and truncation
 - Control character removal
 
 ### 2. Query Safety
-
 - Parameterized queries (where possible)
 - Input validation before database operations
 - SQL injection prevention measures
@@ -214,14 +193,12 @@ frontend application, and database interactions.
 ## File Upload Security
 
 ### 1. File Name Sanitization
-
 - Dangerous character removal
 - Path traversal prevention
 - Length limitations
 - Extension validation
 
 ### 2. MIME Type Validation
-
 - Whitelist-based validation
 - File size limits
 - Content validation
@@ -229,14 +206,12 @@ frontend application, and database interactions.
 ## Environment-Specific Configurations
 
 ### Development
-
 - Debug mode enabled
 - Extended error messages
 - Development security settings
 - Local storage encryption disabled
 
 ### Production
-
 - Strict security policies
 - Minimal error information
 - Enhanced logging
@@ -246,7 +221,6 @@ frontend application, and database interactions.
 ## Security Best Practices
 
 ### 1. Input Handling
-
 - Always sanitize user inputs
 - Validate data types and ranges
 - Use parameterized queries
@@ -254,7 +228,6 @@ frontend application, and database interactions.
 - Filter dangerous characters
 
 ### 2. Output Handling
-
 - Sanitize all API responses
 - Remove sensitive information
 - Implement proper error handling
@@ -262,7 +235,6 @@ frontend application, and database interactions.
 - Apply Content Security Policy
 
 ### 3. Authentication
-
 - Use strong password policies
 - Implement proper session management
 - Use secure token generation
@@ -270,7 +242,6 @@ frontend application, and database interactions.
 - Multi-factor authentication support
 
 ### 4. Authorization
-
 - Implement role-based access control
 - Use principle of least privilege
 - Regular permission audits
@@ -279,7 +250,6 @@ frontend application, and database interactions.
 ## Security Monitoring
 
 ### 1. Logging
-
 - Security event logging
 - Failed authentication attempts
 - Rate limit violations
@@ -287,7 +257,6 @@ frontend application, and database interactions.
 - Suspicious activity detection
 
 ### 2. Alerting
-
 - Real-time security alerts
 - Automated threat detection
 - Security score monitoring
@@ -296,14 +265,12 @@ frontend application, and database interactions.
 ## Compliance & Standards
 
 ### 1. Data Protection
-
 - GDPR compliance measures
 - PII detection and protection
 - Data minimization principles
 - Right to deletion implementation
 
 ### 2. Security Standards
-
 - OWASP guidelines compliance
 - Industry best practices
 - Regular security audits
@@ -312,14 +279,12 @@ frontend application, and database interactions.
 ## Maintenance & Updates
 
 ### 1. Regular Updates
-
 - Security dependency updates
 - Threat intelligence integration
 - Security policy reviews
 - Framework updates
 
 ### 2. Testing
-
 - Regular security testing
 - Penetration testing
 - Code security reviews
@@ -328,14 +293,12 @@ frontend application, and database interactions.
 ## Troubleshooting
 
 ### Common Issues
-
 1. **CSRF Token Issues**: Check session management and token generation
 2. **Input Sanitization Failures**: Verify sanitization service configuration
 3. **Rate Limiting Problems**: Adjust limits based on usage patterns
 4. **Authentication Failures**: Verify JWT configuration and token validation
 
 ### Security Alerts
-
 - Monitor security test results
 - Review failed security tests
 - Investigate critical security issues
@@ -343,8 +306,4 @@ frontend application, and database interactions.
 
 ## Conclusion
 
-This comprehensive security implementation provides multi-layered protection
-against common web application vulnerabilities including XSS, SQL injection,
-CSRF, and data leakage. The system is designed to be both robust and
-maintainable, with automated testing and monitoring capabilities to ensure
-continued security effectiveness.
+This comprehensive security implementation provides multi-layered protection against common web application vulnerabilities including XSS, SQL injection, CSRF, and data leakage. The system is designed to be both robust and maintainable, with automated testing and monitoring capabilities to ensure continued security effectiveness.

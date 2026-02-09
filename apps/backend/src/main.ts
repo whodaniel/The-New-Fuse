@@ -15,12 +15,7 @@ async function bootstrap(): Promise<void> {
   // Security
   app.use(helmet());
   app.enableCors({
-    origin: configService.get('CORS_ORIGINS')?.split(',') || [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'https://thenewfuse.com',
-      'https://www.thenewfuse.com',
-    ],
+    origin: configService.get('CORS_ORIGINS')?.split(',') || ['http://localhost:3000'],
     credentials: true,
   });
 
@@ -40,9 +35,6 @@ async function bootstrap(): Promise<void> {
       },
     })
   );
-
-  // Global Prefix
-  app.setGlobalPrefix('api', { exclude: ['health'] });
 
   // Swagger Documentation
   const config = new DocumentBuilder()

@@ -14,7 +14,7 @@ interface WebSocketServerLike {
 
 // Constants for WebSocket states
 const WebSocketStates = {
-  OPEN: 1,
+  OPEN: 1
 } as const;
 
 export interface Agent {

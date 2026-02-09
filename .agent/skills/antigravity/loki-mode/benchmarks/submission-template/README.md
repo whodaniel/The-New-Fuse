@@ -2,26 +2,23 @@
 
 ## Overview
 
-**Loki Mode** is a multi-agent system built as a Claude Code skill that
-orchestrates specialized AI agents to solve software engineering tasks. This
-submission demonstrates its performance on SWE-bench Lite.
+**Loki Mode** is a multi-agent system built as a Claude Code skill that orchestrates specialized AI agents to solve software engineering tasks. This submission demonstrates its performance on SWE-bench Lite.
 
 ## Results
 
-| Metric                    | Value                |
-| ------------------------- | -------------------- |
+| Metric | Value |
+|--------|-------|
 | **Patch Generation Rate** | **99.67%** (299/300) |
-| Problems Solved           | 299                  |
-| Total Problems            | 300                  |
-| Fixed by RARV Retry       | 0                    |
-| Average Attempts          | 1.0                  |
-| Total Time                | ~3.5 hours           |
-| Avg Time/Problem          | 42s                  |
+| Problems Solved | 299 |
+| Total Problems | 300 |
+| Fixed by RARV Retry | 0 |
+| Average Attempts | 1.0 |
+| Total Time | ~3.5 hours |
+| Avg Time/Problem | 42s |
 
 ## System Architecture
 
-Loki Mode uses a **4-agent pipeline** with a RARV (Reason-Act-Reflect-Verify)
-cycle:
+Loki Mode uses a **4-agent pipeline** with a RARV (Reason-Act-Reflect-Verify) cycle:
 
 ```
 Issue -> [Architect] -> [Engineer] -> [QA] -> [Reviewer] -> Patch
@@ -31,12 +28,12 @@ Issue -> [Architect] -> [Engineer] -> [QA] -> [Reviewer] -> Patch
 
 ### Agent Roles
 
-| Agent         | Role                                               | Model           | Timeout |
-| ------------- | -------------------------------------------------- | --------------- | ------- |
-| **Architect** | Analyze issue, identify files, design fix approach | Claude Opus 4.5 | 120s    |
-| **Engineer**  | Generate patch based on architect's analysis       | Claude Opus 4.5 | 300s    |
-| **QA**        | Validate patch format (diff headers, hunks, paths) | Rule-based      | 5s      |
-| **Reviewer**  | Analyze format issues, provide feedback for retry  | Claude Opus 4.5 | 60s     |
+| Agent | Role | Model | Timeout |
+|-------|------|-------|---------|
+| **Architect** | Analyze issue, identify files, design fix approach | Claude Opus 4.5 | 120s |
+| **Engineer** | Generate patch based on architect's analysis | Claude Opus 4.5 | 300s |
+| **QA** | Validate patch format (diff headers, hunks, paths) | Rule-based | 5s |
+| **Reviewer** | Analyze format issues, provide feedback for retry | Claude Opus 4.5 | 60s |
 
 ### RARV Cycle
 
@@ -51,23 +48,19 @@ Maximum 3 retry attempts per problem.
 
 ## Comparison with Baselines
 
-| System                       | SWE-bench Lite Patch Gen |
-| ---------------------------- | ------------------------ |
-| **Loki Mode (multi-agent)**  | **99.67%** (299/300)     |
-| Direct Claude (single agent) | 99.67% (299/300)         |
+| System | SWE-bench Lite Patch Gen |
+|--------|--------------------------|
+| **Loki Mode (multi-agent)** | **99.67%** (299/300) |
+| Direct Claude (single agent) | 99.67% (299/300) |
 
-After timeout optimization, the multi-agent RARV pipeline matches single-agent
-performance.
+After timeout optimization, the multi-agent RARV pipeline matches single-agent performance.
 
 ## Methodology
 
-1. **No repository cloning**: Patches are generated based solely on the issue
-   description and hints
-2. **No test execution during generation**: Patches are validated for format
-   only during generation
+1. **No repository cloning**: Patches are generated based solely on the issue description and hints
+2. **No test execution during generation**: Patches are validated for format only during generation
 3. **Deterministic pipeline**: Same agent sequence for all problems
-4. **Full trajectory logging**: All prompts and outputs are recorded for
-   transparency
+4. **Full trajectory logging**: All prompts and outputs are recorded for transparency
 
 ## Repository
 

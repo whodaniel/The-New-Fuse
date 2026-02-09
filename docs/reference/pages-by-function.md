@@ -1,7 +1,6 @@
 # Pages by Functional Purpose in The New Fuse
 
-This document organizes pages by their functional purpose in the application,
-helping to understand user journeys and workflows.
+This document organizes pages by their functional purpose in the application, helping to understand user journeys and workflows.
 
 ## User Entry Points
 
@@ -36,56 +35,37 @@ helping to understand user journeys and workflows.
 ## User Onboarding
 
 - Home (`./apps/frontend/src/pages/OnboardingFlow/Steps/Home/index.jsx`)
-- UserSetup
-  (`./apps/frontend/src/pages/OnboardingFlow/Steps/UserSetup/index.jsx`)
-- CreateWorkspace
-  (`./apps/frontend/src/pages/OnboardingFlow/Steps/CreateWorkspace/index.jsx`)
-- LLMPreference
-  (`./apps/frontend/src/pages/OnboardingFlow/Steps/LLMPreference/index.jsx`)
-- DataHandling
-  (`./apps/frontend/src/pages/OnboardingFlow/Steps/DataHandling/index.jsx`)
+- UserSetup (`./apps/frontend/src/pages/OnboardingFlow/Steps/UserSetup/index.jsx`)
+- CreateWorkspace (`./apps/frontend/src/pages/OnboardingFlow/Steps/CreateWorkspace/index.jsx`)
+- LLMPreference (`./apps/frontend/src/pages/OnboardingFlow/Steps/LLMPreference/index.jsx`)
+- DataHandling (`./apps/frontend/src/pages/OnboardingFlow/Steps/DataHandling/index.jsx`)
 - Survey (`./apps/frontend/src/pages/OnboardingFlow/Steps/Survey/index.jsx`)
 
 ## Configuration & Settings
 
 ### General Settings
-
 - General (`./apps/frontend/src/pages/settings/General.tsx`)
 - Notifications (`./apps/frontend/src/pages/settings/Notifications.tsx`)
 
 ### Appearance & Customization
-
 - Appearance (`./apps/frontend/src/pages/GeneralSettings/Appearance/index.jsx`)
-- CustomLogo
-  (`./apps/frontend/src/pages/GeneralSettings/Appearance/CustomLogo/index.jsx`)
-- CustomAppName
-  (`./apps/frontend/src/pages/GeneralSettings/Appearance/CustomAppName/index.jsx`)
-- ThemePreference
-  (`./apps/frontend/src/pages/GeneralSettings/Appearance/ThemePreference/index.jsx`)
-- LanguagePreference
-  (`./apps/frontend/src/pages/GeneralSettings/Appearance/LanguagePreference/index.jsx`)
+- CustomLogo (`./apps/frontend/src/pages/GeneralSettings/Appearance/CustomLogo/index.jsx`)
+- CustomAppName (`./apps/frontend/src/pages/GeneralSettings/Appearance/CustomAppName/index.jsx`)
+- ThemePreference (`./apps/frontend/src/pages/GeneralSettings/Appearance/ThemePreference/index.jsx`)
+- LanguagePreference (`./apps/frontend/src/pages/GeneralSettings/Appearance/LanguagePreference/index.jsx`)
 
 ### Security & API
-
 - Security (`./apps/frontend/src/pages/GeneralSettings/Security/index.jsx`)
 - ApiKeys (`./apps/frontend/src/pages/GeneralSettings/ApiKeys/index.jsx`)
-- BrowserExtensionApiKey
-  (`./apps/frontend/src/pages/GeneralSettings/BrowserExtensionApiKey/index.jsx`)
+- BrowserExtensionApiKey (`./apps/frontend/src/pages/GeneralSettings/BrowserExtensionApiKey/index.jsx`)
 
 ### AI & Data Configuration
-
-- EmbeddingPreference
-  (`./apps/frontend/src/pages/GeneralSettings/EmbeddingPreference/index.tsx`)
-- LLMPreference
-  (`./apps/frontend/src/pages/GeneralSettings/LLMPreference/index.jsx`)
-- VectorDatabase
-  (`./apps/frontend/src/pages/GeneralSettings/VectorDatabase/index.jsx`)
-- AudioPreference
-  (`./apps/frontend/src/pages/GeneralSettings/AudioPreference/index.jsx`)
-- TranscriptionPreference
-  (`./apps/frontend/src/pages/GeneralSettings/TranscriptionPreference/index.jsx`)
-- PrivacyAndData
-  (`./apps/frontend/src/pages/GeneralSettings/PrivacyAndData/index.jsx`)
+- EmbeddingPreference (`./apps/frontend/src/pages/GeneralSettings/EmbeddingPreference/index.tsx`)
+- LLMPreference (`./apps/frontend/src/pages/GeneralSettings/LLMPreference/index.jsx`)
+- VectorDatabase (`./apps/frontend/src/pages/GeneralSettings/VectorDatabase/index.jsx`)
+- AudioPreference (`./apps/frontend/src/pages/GeneralSettings/AudioPreference/index.jsx`)
+- TranscriptionPreference (`./apps/frontend/src/pages/GeneralSettings/TranscriptionPreference/index.jsx`)
+- PrivacyAndData (`./apps/frontend/src/pages/GeneralSettings/PrivacyAndData/index.jsx`)
 
 ## Admin & System Management
 
@@ -101,15 +81,13 @@ helping to understand user journeys and workflows.
 - FlowPage (`./apps/frontend/src/components/flow/FlowPage.tsx`)
 - TimelineDemo (`./apps/frontend/src/pages/TimelineDemo.tsx`)
 - GraphDemo (`./apps/frontend/src/pages/graph-demo.tsx`)
-- CommunityHub
-  (`./apps/frontend/src/pages/GeneralSettings/CommunityHub/Trending/index.jsx`)
+- CommunityHub (`./apps/frontend/src/pages/GeneralSettings/CommunityHub/Trending/index.jsx`)
 
 ## Embedding & Integration
 
 - EmbedChats (`./apps/frontend/src/pages/GeneralSettings/EmbedChats/index.jsx`)
 - Chats (`./apps/frontend/src/pages/GeneralSettings/Chats/index.jsx`)
-- EmbedConfigs
-  (`./apps/frontend/src/pages/GeneralSettings/EmbedConfigs/index.jsx`)
+- EmbedConfigs (`./apps/frontend/src/pages/GeneralSettings/EmbedConfigs/index.jsx`)
 
 ## Error & Utility Pages
 
@@ -119,14 +97,10 @@ helping to understand user journeys and workflows.
 
 The application appears to be a comprehensive platform with:
 
-1. **AI Integration** - Multiple pages for configuring AI models, embeddings,
-   and vector databases
+1. **AI Integration** - Multiple pages for configuring AI models, embeddings, and vector databases
 2. **Collaboration Features** - Workspace management with member controls
 3. **Customization Options** - Extensive appearance and branding settings
 4. **Analytics Capabilities** - Both workspace and system-level analytics
-5. **Integration Options** - API keys and embedding configurations for external
-   use
+5. **Integration Options** - API keys and embedding configurations for external use
 
-The user journey likely starts with authentication, proceeds through onboarding,
-and then provides access to the main dashboard and workspace features, with
-settings available for customization.
+The user journey likely starts with authentication, proceeds through onboarding, and then provides access to the main dashboard and workspace features, with settings available for customization.

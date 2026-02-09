@@ -3,12 +3,12 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import * as fs from 'fs/promises';
-import * as os from 'os';
-import * as path from 'path';
-import { ResourceContent } from '../interfaces/IMCPResource';
+import { ResourceHandler, FileResourceHandler, DatabaseResourceHandler } from './ResourceHandler';
 import { MCPErrorCode } from '../types/error';
-import { DatabaseResourceHandler, FileResourceHandler, ResourceHandler } from './ResourceHandler';
+import { ResourceContent, MCPResource } from '../interfaces/IMCPResource';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import * as os from 'os';
 
 // Mock resource handler for testing abstract class
 class MockResourceHandler extends ResourceHandler {
@@ -70,11 +70,15 @@ describe('ResourceHandler', () => {
     });
 
     it('should create resource content with proper metadata', () => {
-      const content = (handler as any).createResourceContent('test://example', 'test content', {
-        mimeType: 'application/json',
-        metadata: { custom: 'value' },
-        encoding: 'utf8',
-      });
+      const content = (handler as any).createResourceContent(
+        'test://example',
+        'test content',
+        {
+          mimeType: 'application/json',
+          metadata: { custom: 'value' },
+          encoding: 'utf8'
+        }
+      );
 
       expect(content.uri).toBe('test://example');
       expect(content.content).toBe('test content');
@@ -108,7 +112,7 @@ describe('ResourceHandler', () => {
     it('should read file content', async () => {
       const uri = `file:///test.txt`;
       const content = await handler.read(uri);
-
+      
       expect(content.uri).toBe(uri);
       expect(content.content).toBe('Hello, World!');
       expect(content.mimeType).toBe('text/plain');
@@ -118,22 +122,22 @@ describe('ResourceHandler', () => {
     it('should infer MIME type from file extension', async () => {
       const jsonFile = path.join(tempDir, 'test.json');
       await fs.writeFile(jsonFile, '{"test": true}');
-
+      
       const uri = `file:///test.json`;
       const content = await handler.read(uri);
-
+      
       expect(content.mimeType).toBe('application/json');
     });
 
     it('should list files in directory', async () => {
       const jsFile = path.join(tempDir, 'script.js');
       await fs.writeFile(jsFile, 'console.log("test");');
-
+      
       const resources = await handler.list?.();
       expect(resources).toBeDefined();
       expect(resources!.length).toBe(2); // test.txt and script.js
-
-      const txtResource = resources!.find((r) => r.name === 'test.txt');
+      
+      const txtResource = resources!.find(r => r.name === 'test.txt');
       expect(txtResource).toBeDefined();
       expect(txtResource!.mimeType).toBe('text/plain');
       expect(txtResource!.permissions?.read).toBe(true);
@@ -142,7 +146,7 @@ describe('ResourceHandler', () => {
     it('should filter files by pattern', async () => {
       const jsFile = path.join(tempDir, 'script.js');
       await fs.writeFile(jsFile, 'console.log("test");');
-
+      
       const resources = await handler.list?.('js');
       expect(resources).toBeDefined();
       expect(resources!.length).toBe(1);
@@ -182,7 +186,7 @@ describe('ResourceHandler', () => {
     it('should read database content', async () => {
       const uri = 'db://test/users/1';
       const content = await handler.read(uri);
-
+      
       expect(content.uri).toBe(uri);
       expect(content.mimeType).toBe('application/json');
       expect(content.content).toContain('Sample database content');
@@ -193,7 +197,7 @@ describe('ResourceHandler', () => {
       const resources = await handler.list?.();
       expect(resources).toBeDefined();
       expect(resources!.length).toBeGreaterThan(0);
-
+      
       const resource = resources![0];
       expect(resource.uri).toContain('db://users');
       expect(resource.mimeType).toBe('application/json');

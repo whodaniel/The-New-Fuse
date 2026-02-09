@@ -2,18 +2,55 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
-import { RelayProvider } from './bridges'; // Import RelayProvider
 import { ToastProvider } from './components/ui/toast';
 import './lib/firebase'; // Ensure Firebase is initialized early
 import { AuthProvider } from './providers/AuthProvider';
 import { unstoppableDomainsService } from './services/unstoppableDomains.service';
 import './styles/globals.css'; // Re-add global CSS import
-import { installChunkErrorHandlers } from './utils/chunkLoadErrorHandler';
 
 // Custom Element Guard
 // Prevents collisions with already defined custom elements (like mce-autosize-textarea)
-// Custom Element Guard
-// Handled in index.html for earlier execution
+try {
+  if (typeof customElements !== 'undefined') {
+    // Check if property is writable before attempting to overwrite
+    const descriptor = Object.getOwnPropertyDescriptor(customElements, 'define');
+
+    if (!descriptor || descriptor.writable || descriptor.configurable) {
+      const originalDefine = customElements.define;
+
+      // Override define with a permissive wrapper
+      Object.defineProperty(customElements, 'define', {
+        value: function (
+          name: string,
+          constructor: CustomElementConstructor,
+          options?: ElementDefinitionOptions
+        ) {
+          try {
+            if (customElements.get(name)) {
+              // Permissive behavior: just return early instead of throwing
+              console.warn(
+                `[The New Fuse] Custom element '${name}' has already been defined. Skipping.`
+              );
+              return;
+            }
+            originalDefine.call(customElements, name, constructor, options);
+          } catch (e) {
+            console.error(`[The New Fuse] Error defining custom element '${name}':`, e);
+            // Don't throw, let the app continue
+          }
+        },
+        configurable: true,
+        writable: true,
+      });
+      console.log('[The New Fuse] Custom Element Guard initialized (Permissive)');
+    } else {
+      console.warn('[The New Fuse] customElements.define is read-only. Guard skipped.');
+    }
+  }
+} catch (error) {
+  // Bypass on Error: Proceed even if the guard fails
+  console.warn('[The New Fuse] Custom Element Guard initialization error:', error);
+}
 
 // Initialize Unstoppable Domains Service
 try {
@@ -40,10 +77,6 @@ try {
 }
 
 console.log('Main.tsx starting...');
-console.log('VERSION CHECK: 1.0.2 - Browser Streaming Fix (WS URL & Ports)');
-
-// Install chunk load error handlers before anything else
-installChunkErrorHandlers();
 
 const container = document.getElementById('root');
 console.log('Container found:', container);
@@ -62,9 +95,7 @@ try {
       <BrowserRouter>
         <AuthProvider>
           <ToastProvider>
-            <RelayProvider>
-              <App />
-            </RelayProvider>
+            <App />
           </ToastProvider>
         </AuthProvider>
       </BrowserRouter>

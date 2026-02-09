@@ -1,4 +1,4 @@
-import type { Task } from './task';
+import { Task } from './task';
 
 export interface ImplementationPhase {
   id: string;

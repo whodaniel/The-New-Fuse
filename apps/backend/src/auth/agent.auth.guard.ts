@@ -126,7 +126,7 @@ export class AgentAuthGuard implements CanActivate {
       }
 
       // Fetch the associated agent to ensure it exists and get details
-      const agent = await this.db.agents.findByIdSystem(registration.agentId);
+      const agent = await this.db.agents.findById(registration.agentId);
 
       if (!agent) {
         this.logger.error(`Orphaned registration found for agentId: ${registration.agentId}`);
@@ -135,18 +135,14 @@ export class AgentAuthGuard implements CanActivate {
 
       // Check if agent is active (optional, but recommended based on task description)
       // We allow 'ACTIVE' and potentially other non-disabled statuses.
-      // For now, if the agent exists and has a registration, we consider it valid.
-      // Removed checks for SUSPENDED/ARCHIVED as they are not valid AgentStatus values.
-      if (agent.status === 'INACTIVE' || agent.status === 'TERMINATED') {
+      // For now, if the agent exists and has a registration, we consider it valid unless suspended.
+      if (agent.status === 'SUSPENDED' || agent.status === 'ARCHIVED') {
         throw new UnauthorizedException('Agent is not active');
       }
 
-      const registrationMetadata = (registration.metadata || {}) as Record<string, any>;
       request.agent = {
         id: agent.id,
-        agencyId: registrationMetadata.agencyId || agent.userId,
-        tenantId: registrationMetadata.tenantId,
-        organizationId: registrationMetadata.organizationId,
+        agencyId: agent.userId, // Using userId as agencyId for now
         capabilities: (agent.capabilities as string[]) || [],
         permissions: ['agent:communicate'], // Default permission, could be expanded later
         apiKey: apiKey,

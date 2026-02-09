@@ -15,7 +15,7 @@ bun clean
 pnpm install --frozen-lockfile
 bun workspaces foreach -pt run build
 
-# Generate fresh Drizzle client
+# Generate fresh Prisma client
 echo "🗄️ Generating database client..."
 bun --filter @the-new-fuse/database run generate
 

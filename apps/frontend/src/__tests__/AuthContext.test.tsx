@@ -1,30 +1,25 @@
 /* global describe, beforeEach, it, expect, localStorage, screen */
 import '@testing-library/jest-dom/extend-expect';
 
-import { act, render, screen, waitFor } from '@testing-library/react';
-import { User } from 'firebase/auth';
-import { vi } from 'vitest';
+import { render, screen, act, waitFor } from '@testing-library/react';
 import { AuthProvider, useAuth } from '../AuthContext';
 import { auth } from '../lib/firebase';
+import { User } from 'firebase/auth';
+import { vi } from 'vitest';
 
 // Mock Firebase auth
 vi.mock('../lib/firebase', () => ({
   auth: {
     onAuthStateChanged: vi.fn(),
-    currentUser: null,
-  },
+    currentUser: null
+  }
 }));
 
 // Mock component to test useAuth hook
 const TestComponent = () => {
   const { isAuthenticated, token, user, isInitialized } = useAuth();
   if (!isInitialized) {
-    return (
-      <div
-        role="status"
-        className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"
-      ></div>
-    );
+    return <div role="status" className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>;
   }
   return (
     <div>
@@ -60,7 +55,7 @@ describe('AuthContext', () => {
       expect(screen.getByTestId('auth-status')).toHaveTextContent('not-authenticated');
       expect(screen.getByTestId('token')).toHaveTextContent('no-token');
       expect(screen.getByTestId('user')).toHaveTextContent('no-user');
-    });
+    })
   });
 
   it('should update state when user authenticates', async () => {
@@ -129,13 +124,13 @@ describe('AuthContext', () => {
     );
 
     expect(screen.getByRole('status')).toBeInTheDocument();
-
+    
     // Verify that loading state is removed after initialization
     if (authCallback) {
       act(() => {
         authCallback(null);
       });
-
+      
       await waitFor(() => {
         expect(screen.queryByRole('status')).not.toBeInTheDocument();
       });

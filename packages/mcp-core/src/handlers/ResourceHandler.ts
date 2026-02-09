@@ -2,13 +2,8 @@
  * Abstract base class for MCP Resource Handlers
  */
 
-import {
-  ResourceHandler as IResourceHandler,
-  MCPResource,
-  ResourceCallback,
-  ResourceContent,
-} from '../interfaces/IMCPResource';
-import { ErrorCategory, ErrorSeverity, MCPErrorClass, MCPErrorCode } from '../types/error';
+import { ResourceHandler as IResourceHandler, MCPResource, ResourceContent, ResourceCallback } from '../interfaces/IMCPResource';
+import { MCPErrorClass, MCPErrorCode, ErrorCategory, ErrorSeverity } from '../types/error';
 
 /**
  * Abstract base class for implementing resource handlers
@@ -52,7 +47,7 @@ export abstract class ResourceHandler implements IResourceHandler {
         category: ErrorCategory.RESOURCE,
         severity: ErrorSeverity.LOW,
         retryable: false,
-        details: { handlerType: this.constructor.name, pattern },
+        details: { handlerType: this.constructor.name, pattern }
       }
     );
   }
@@ -69,7 +64,7 @@ export abstract class ResourceHandler implements IResourceHandler {
         category: ErrorCategory.RESOURCE,
         severity: ErrorSeverity.LOW,
         retryable: false,
-        details: { handlerType: this.constructor.name, uri },
+        details: { handlerType: this.constructor.name, uri }
       }
     );
   }
@@ -86,7 +81,7 @@ export abstract class ResourceHandler implements IResourceHandler {
         category: ErrorCategory.RESOURCE,
         severity: ErrorSeverity.LOW,
         retryable: false,
-        details: { handlerType: this.constructor.name, uri },
+        details: { handlerType: this.constructor.name, uri }
       }
     );
   }
@@ -103,7 +98,7 @@ export abstract class ResourceHandler implements IResourceHandler {
           category: ErrorCategory.VALIDATION,
           severity: ErrorSeverity.MEDIUM,
           retryable: false,
-          details: { uri },
+          details: { uri }
         }
       );
     }
@@ -111,12 +106,16 @@ export abstract class ResourceHandler implements IResourceHandler {
     try {
       new URL(uri);
     } catch (error) {
-      throw new MCPErrorClass(MCPErrorCode.RESOURCE_INVALID_FORMAT, `Invalid URI format: ${uri}`, {
-        category: ErrorCategory.VALIDATION,
-        severity: ErrorSeverity.MEDIUM,
-        retryable: false,
-        details: { uri, error: error instanceof Error ? error.message : 'Unknown error' },
-      });
+      throw new MCPErrorClass(
+        MCPErrorCode.RESOURCE_INVALID_FORMAT,
+        `Invalid URI format: ${uri}`,
+        {
+          category: ErrorCategory.VALIDATION,
+          severity: ErrorSeverity.MEDIUM,
+          retryable: false,
+          details: { uri, error: error instanceof Error ? error.message : 'Unknown error' }
+        }
+      );
     }
   }
 
@@ -133,7 +132,7 @@ export abstract class ResourceHandler implements IResourceHandler {
     } = {}
   ): ResourceContent {
     const size = Buffer.isBuffer(content) ? content.length : Buffer.byteLength(content, 'utf8');
-
+    
     return {
       uri,
       mimeType: options.mimeType || this.mimeType || 'text/plain',
@@ -143,8 +142,8 @@ export abstract class ResourceHandler implements IResourceHandler {
       encoding: options.encoding || 'utf8',
       metadata: {
         ...this.metadata,
-        ...options.metadata,
-      },
+        ...options.metadata
+      }
     };
   }
 
@@ -180,16 +179,14 @@ export abstract class ResourceHandler implements IResourceHandler {
       {
         category: ErrorCategory.RESOURCE,
         severity,
-        retryable:
-          errorCode !== MCPErrorCode.RESOURCE_NOT_FOUND &&
-          errorCode !== MCPErrorCode.RESOURCE_ACCESS_DENIED,
+        retryable: errorCode !== MCPErrorCode.RESOURCE_NOT_FOUND && errorCode !== MCPErrorCode.RESOURCE_ACCESS_DENIED,
         details: {
           operation,
           uri,
           originalError: error.message,
-          errorCode: error.code,
+          errorCode: error.code
         },
-        cause: error,
+        cause: error
       }
     );
   }
@@ -205,7 +202,7 @@ export abstract class ResourceHandler implements IResourceHandler {
     capabilities: string[];
   } {
     const capabilities: string[] = ['read'];
-
+    
     if (this.list) capabilities.push('list');
     if (this.subscribe) capabilities.push('subscribe');
     if (this.unsubscribe) capabilities.push('unsubscribe');
@@ -215,7 +212,7 @@ export abstract class ResourceHandler implements IResourceHandler {
       uri: this.uri,
       name: this.name,
       mimeType: this.mimeType,
-      capabilities,
+      capabilities
     };
   }
 }
@@ -245,7 +242,7 @@ export class FileResourceHandler extends ResourceHandler {
     try {
       const fs = await import('fs/promises');
       const path = await import('path');
-
+      
       // Extract file path from URI
       const url = new URL(uri);
       let relativePath = url.pathname;
@@ -254,7 +251,7 @@ export class FileResourceHandler extends ResourceHandler {
         relativePath = relativePath.slice(1);
       }
       const filePath = path.resolve(this.basePath, relativePath);
-
+      
       // Security check: ensure file is within base path
       if (!filePath.startsWith(this.basePath)) {
         throw new MCPErrorClass(
@@ -264,21 +261,21 @@ export class FileResourceHandler extends ResourceHandler {
             category: ErrorCategory.RESOURCE,
             severity: ErrorSeverity.HIGH,
             retryable: false,
-            details: { uri, filePath, basePath: this.basePath },
+            details: { uri, filePath, basePath: this.basePath }
           }
         );
       }
 
       const content = await fs.readFile(filePath, 'utf8');
       const stats = await fs.stat(filePath);
-
+      
       return this.createResourceContent(uri, content, {
         mimeType: this.inferMimeType(filePath),
         metadata: {
           size: stats.size,
           lastModified: stats.mtime,
-          created: stats.birthtime,
-        },
+          created: stats.birthtime
+        }
       });
     } catch (error) {
       this.handleResourceError(error, 'read', uri);
@@ -289,7 +286,7 @@ export class FileResourceHandler extends ResourceHandler {
     try {
       const fs = await import('fs/promises');
       const path = await import('path');
-
+      
       const files = await fs.readdir(this.basePath, { withFileTypes: true });
       const resources: MCPResource[] = [];
 
@@ -299,7 +296,7 @@ export class FileResourceHandler extends ResourceHandler {
           if (!pattern || fileName.includes(pattern)) {
             const filePath = path.join(this.basePath, fileName);
             const uri = `file://${filePath}`;
-
+            
             resources.push({
               uri,
               name: fileName,
@@ -309,8 +306,8 @@ export class FileResourceHandler extends ResourceHandler {
               permissions: {
                 read: true,
                 write: false,
-                subscribe: false,
-              },
+                subscribe: false
+              }
             });
           }
         }
@@ -325,7 +322,7 @@ export class FileResourceHandler extends ResourceHandler {
   private inferMimeType(filePath: string): string {
     const path = require('path');
     const ext = path.extname(filePath).toLowerCase();
-
+    
     const mimeTypes: Record<string, string> = {
       '.txt': 'text/plain',
       '.json': 'application/json',
@@ -336,7 +333,7 @@ export class FileResourceHandler extends ResourceHandler {
       '.xml': 'application/xml',
       '.md': 'text/markdown',
       '.yaml': 'application/yaml',
-      '.yml': 'application/yaml',
+      '.yml': 'application/yaml'
     };
 
     return mimeTypes[ext] || 'application/octet-stream';
@@ -372,19 +369,19 @@ export class DatabaseResourceHandler extends ResourceHandler {
       // This is a placeholder implementation
       // In a real implementation, you would connect to the database
       // and execute the appropriate query based on the URI and parameters
-
+      
       const mockData = {
         id: 1,
         data: 'Sample database content',
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
 
       return this.createResourceContent(uri, JSON.stringify(mockData, null, 2), {
         mimeType: 'application/json',
         metadata: {
           table: this.tableName,
-          query: params?.query || 'SELECT * FROM ' + this.tableName,
-        },
+          query: params?.query || 'SELECT * FROM ' + this.tableName
+        }
       });
     } catch (error) {
       this.handleResourceError(error, 'read', uri);
@@ -396,7 +393,7 @@ export class DatabaseResourceHandler extends ResourceHandler {
       // This is a placeholder implementation
       // In a real implementation, you would query the database schema
       // to list available resources/tables
-
+      
       const mockResources: MCPResource[] = [
         {
           uri: `db://${this.tableName}/1`,
@@ -407,12 +404,14 @@ export class DatabaseResourceHandler extends ResourceHandler {
           permissions: {
             read: true,
             write: false,
-            subscribe: false,
-          },
-        },
+            subscribe: false
+          }
+        }
       ];
 
-      return pattern ? mockResources.filter((r) => r.name.includes(pattern)) : mockResources;
+      return pattern 
+        ? mockResources.filter(r => r.name.includes(pattern))
+        : mockResources;
     } catch (error) {
       this.handleResourceError(error, 'list', this.connectionString);
     }

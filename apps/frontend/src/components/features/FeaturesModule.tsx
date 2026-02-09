@@ -1,6 +1,6 @@
 import React from 'react';
-import { TimelineModule } from '../features/timeline/TimelineModule';
 import { AgentModule } from './agents/AgentModule';
+import { TimelineModule } from '../features/timeline/TimelineModule';
 import { AnalyticsModule } from './analytics/AnalyticsModule';
 import { APIModule } from './api/APIModule';
 import { AuthenticationModule } from './auth/AuthenticationModule';

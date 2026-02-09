@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { AlertService } from './alerts/AlertService';
 
 interface Alert {
-  name: string;
-  condition: () => boolean;
-  message: string;
+    name: string;
+    condition: () => boolean;
+    message: string;
 }
 
 @Injectable()
@@ -22,9 +22,9 @@ export class AlertManager {
   checkAlerts(): void {
     this.logger.debug('Checking alerts...');
     for (const alert of this.alerts) {
-      if (alert.condition()) {
-        this.alertService.sendAlert(alert.name, alert.message, 'warning');
-      }
+        if (alert.condition()) {
+            this.alertService.sendAlert(alert.name, alert.message, 'warning');
+        }
     }
   }
 }

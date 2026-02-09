@@ -1,12 +1,10 @@
 # Security Package
 
-This package contains security-related functionality for the project, including
-session management.
+This package contains security-related functionality for the project, including session management.
 
 ## Session Manager
 
-The `SessionManager` is responsible for handling user sessions across the
-application. It provides:
+The `SessionManager` is responsible for handling user sessions across the application. It provides:
 
 - Session creation and validation
 - Session timeout management

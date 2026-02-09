@@ -3,8 +3,13 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import type { Agent, IMCPBroker, IMCPClient } from '../interfaces';
 import { MCPAgentIntegration } from './MCPAgentIntegration';
+import type { 
+  IMCPBroker, 
+  IMCPClient, 
+  Agent
+} from '../interfaces';
+import { MCPErrorClass, MCPErrorCode } from '../types/error';
 
 // Mock implementations
 const mockBroker: IMCPBroker = {
@@ -12,7 +17,7 @@ const mockBroker: IMCPBroker = {
   unregisterService: jest.fn(),
   discoverServices: jest.fn(),
   routeRequest: jest.fn(),
-  getServiceHealth: jest.fn(),
+  getServiceHealth: jest.fn()
 };
 
 const mockClient: IMCPClient = {
@@ -23,7 +28,7 @@ const mockClient: IMCPClient = {
   listResources: jest.fn(),
   readResource: jest.fn(),
   callTool: jest.fn(),
-  getServerCapabilities: jest.fn(),
+  getServerCapabilities: jest.fn()
 };
 
 describe('MCPAgentIntegration', () => {
@@ -33,13 +38,13 @@ describe('MCPAgentIntegration', () => {
   beforeEach(() => {
     // Reset all mocks
     jest.clearAllMocks();
-
+    
     // Create fresh integration instance
     integration = new MCPAgentIntegration(mockBroker, mockClient, {
       defaultTimeout: 5000,
       maxRetries: 2,
       heartbeatInterval: 10000,
-      enableAuditLog: false,
+      enableAuditLog: false
     });
 
     // Create test agent
@@ -55,7 +60,7 @@ describe('MCPAgentIntegration', () => {
       status: 'active' as any,
       createdAt: new Date(),
       lastActivity: new Date(),
-      metadata: { type: 'test' },
+      metadata: { type: 'test' }
     };
   });
 
@@ -162,7 +167,7 @@ describe('MCPAgentIntegration', () => {
         serviceId: testAgent.id,
         status: 'offline',
         responseTime: 100,
-        errorRate: 0,
+        errorRate: 0
       });
       await integration.registerAgentAsMCPService(testAgent);
     });
@@ -188,7 +193,7 @@ describe('MCPAgentIntegration', () => {
         serviceId: testAgent.id,
         status: 'online',
         responseTime: 100,
-        errorRate: 0,
+        errorRate: 0
       });
       await integration.registerAgentAsMCPService(testAgent);
     });
@@ -213,13 +218,13 @@ describe('MCPAgentIntegration', () => {
 
     beforeEach(async () => {
       (mockBroker.registerService as Mock).mockResolvedValue(undefined);
-
+      
       // Register both agents
       await integration.registerAgentAsMCPService(testAgent);
       await integration.registerAgentAsMCPService({
         ...testAgent,
         id: targetAgent,
-        name: 'Target Agent',
+        name: 'Target Agent'
       });
     });
 
@@ -227,10 +232,14 @@ describe('MCPAgentIntegration', () => {
       (mockBroker.routeRequest as Mock).mockResolvedValue({
         jsonrpc: '2.0',
         id: 'test-id',
-        result: { success: true },
+        result: { success: true }
       });
 
-      const result = await integration.routeAgentMessage(sourceAgent, targetAgent, testMessage);
+      const result = await integration.routeAgentMessage(
+        sourceAgent,
+        targetAgent,
+        testMessage
+      );
 
       expect(result.success).toBe(true);
       expect(result.routingInfo.fromAgentId).toBe(sourceAgent);
@@ -240,7 +249,11 @@ describe('MCPAgentIntegration', () => {
     });
 
     it('should fail when target agent is not found', async () => {
-      const result = await integration.routeAgentMessage(sourceAgent, 'non-existent', testMessage);
+      const result = await integration.routeAgentMessage(
+        sourceAgent,
+        'non-existent',
+        testMessage
+      );
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('not found or not registered');
@@ -251,7 +264,11 @@ describe('MCPAgentIntegration', () => {
       // Set target agent as inactive
       await integration.updateAgentStatus(targetAgent, 'inactive' as any);
 
-      const result = await integration.routeAgentMessage(sourceAgent, targetAgent, testMessage);
+      const result = await integration.routeAgentMessage(
+        sourceAgent,
+        targetAgent,
+        testMessage
+      );
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('is not active');
@@ -263,16 +280,21 @@ describe('MCPAgentIntegration', () => {
         .mockResolvedValue({
           jsonrpc: '2.0',
           id: 'test-id',
-          result: { success: true },
+          result: { success: true }
         });
 
-      const result = await integration.routeAgentMessage(sourceAgent, targetAgent, testMessage, {
-        retryPolicy: {
-          maxRetries: 1,
-          backoffMs: 10,
-          exponential: false,
-        },
-      });
+      const result = await integration.routeAgentMessage(
+        sourceAgent,
+        targetAgent,
+        testMessage,
+        {
+          retryPolicy: {
+            maxRetries: 1,
+            backoffMs: 10,
+            exponential: false
+          }
+        }
+      );
 
       expect(result.success).toBe(true);
       expect(result.retryCount).toBe(1);
@@ -282,13 +304,18 @@ describe('MCPAgentIntegration', () => {
     it('should fail after exhausting retries', async () => {
       (mockBroker.routeRequest as Mock).mockRejectedValue(new Error('Persistent error'));
 
-      const result = await integration.routeAgentMessage(sourceAgent, targetAgent, testMessage, {
-        retryPolicy: {
-          maxRetries: 1,
-          backoffMs: 10,
-          exponential: false,
-        },
-      });
+      const result = await integration.routeAgentMessage(
+        sourceAgent,
+        targetAgent,
+        testMessage,
+        {
+          retryPolicy: {
+            maxRetries: 1,
+            backoffMs: 10,
+            exponential: false
+          }
+        }
+      );
 
       expect(result.success).toBe(false);
       expect(result.retryCount).toBe(2); // Initial attempt + 1 retry
@@ -303,7 +330,7 @@ describe('MCPAgentIntegration', () => {
         serviceId: testAgent.id,
         status: 'online',
         responseTime: 150,
-        errorRate: 0.01,
+        errorRate: 0.01
       });
       await integration.registerAgentAsMCPService(testAgent);
     });
@@ -321,9 +348,9 @@ describe('MCPAgentIntegration', () => {
     });
 
     it('should throw error for non-existent agent', async () => {
-      await expect(integration.getAgentMCPCapabilities('non-existent')).rejects.toThrow(
-        'Agent non-existent not found'
-      );
+      await expect(
+        integration.getAgentMCPCapabilities('non-existent')
+      ).rejects.toThrow('Agent non-existent not found');
     });
   });
 
@@ -335,19 +362,19 @@ describe('MCPAgentIntegration', () => {
 
     it('should return all registered agent endpoints', async () => {
       (mockBroker.registerService as Mock).mockResolvedValue(undefined);
-
+      
       await integration.registerAgentAsMCPService(testAgent);
       await integration.registerAgentAsMCPService({
         ...testAgent,
         id: 'agent-2',
-        name: 'Agent 2',
+        name: 'Agent 2'
       });
 
       const result = await integration.listAgentEndpoints();
-
+      
       expect(result).toHaveLength(2);
-      expect(result.map((e) => e.agentId)).toContain(testAgent.id);
-      expect(result.map((e) => e.agentId)).toContain('agent-2');
+      expect(result.map(e => e.agentId)).toContain(testAgent.id);
+      expect(result.map(e => e.agentId)).toContain('agent-2');
     });
   });
 
@@ -377,7 +404,11 @@ describe('MCPAgentIntegration', () => {
       const initiator = 'agent-1';
       const purpose = 'Test collaboration';
 
-      const collaboration = await integration.startCollaboration(participants, initiator, purpose);
+      const collaboration = await integration.startCollaboration(
+        participants,
+        initiator,
+        purpose
+      );
 
       expect(collaboration.participants).toEqual(participants);
       expect(collaboration.initiator).toBe(initiator);
@@ -405,9 +436,13 @@ describe('MCPAgentIntegration', () => {
 
     it('should get agent collaborations', async () => {
       const agentId = 'test-agent';
-
-      await integration.startCollaboration([agentId, 'other-agent'], agentId, 'Test 1');
-
+      
+      await integration.startCollaboration(
+        [agentId, 'other-agent'],
+        agentId,
+        'Test 1'
+      );
+      
       await integration.startCollaboration(
         ['different-agent', 'another-agent'],
         'different-agent',
@@ -428,7 +463,7 @@ describe('MCPAgentIntegration', () => {
         serviceId: testAgent.id,
         status: 'online',
         responseTime: 100,
-        errorRate: 0.05,
+        errorRate: 0.05
       });
       await integration.registerAgentAsMCPService(testAgent);
     });
@@ -456,9 +491,9 @@ describe('MCPAgentIntegration', () => {
     });
 
     it('should throw error for non-existent agent health', async () => {
-      await expect(integration.getAgentHealth('non-existent')).rejects.toThrow(
-        'Agent non-existent not found'
-      );
+      await expect(
+        integration.getAgentHealth('non-existent')
+      ).rejects.toThrow('Agent non-existent not found');
     });
 
     it('should send agent heartbeat', async () => {

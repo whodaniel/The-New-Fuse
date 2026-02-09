@@ -3,20 +3,17 @@
 ## Current Structure Analysis
 
 ### Packages to Merge
-
 - `database` package: Primary database functionality
 - `db` package: Additional database utilities
 
 ### Services to Consolidate
-
 - DatabaseService
-- DatabaseService
+- PrismaService
 - RedisService
 
 ## Consolidation Strategy
 
 ### 1. Package Merge
-
 - Create unified package structure under `@the-new-fuse/database`
 - Maintain all current functionality while eliminating redundancy
 - Preserve backwards compatibility during transition
@@ -24,25 +21,21 @@
 ### 2. Service Consolidation
 
 #### DatabaseService
-
 - Serve as the primary interface for database operations
 - Implement adapter pattern for different database backends
 - Handle connection management and pooling
 
-#### DatabaseService
-
+#### PrismaService
 - Integrate as a database provider within DatabaseService
 - Maintain type safety and schema validation
 - Handle migrations and schema updates
 
 #### RedisService
-
 - Implement as caching layer within DatabaseService
 - Handle cache invalidation and updates
 - Manage Redis connection pool
 
 ### 3. Access Patterns
-
 - Implement Repository pattern for data access
 - Standardize error handling and logging
 - Implement connection pooling and retry mechanisms
@@ -56,7 +49,7 @@
 
 2. **Service Integration**
    - Implement unified DatabaseService
-   - Migrate DatabaseService functionality
+   - Migrate PrismaService functionality
    - Integrate RedisService caching
 
 3. **Testing**
@@ -72,7 +65,6 @@
 ## Migration Guide
 
 ### For Existing Code
-
 ```typescript
 // Old way
 import { DatabaseService } from '@the-new-fuse/database';
@@ -83,7 +75,6 @@ import { DatabaseService, CacheProvider } from '@the-new-fuse/database';
 ```
 
 ### Configuration Updates
-
 ```typescript
 // New configuration structure
 interface DatabaseConfig {

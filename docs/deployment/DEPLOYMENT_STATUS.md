@@ -54,7 +54,7 @@ restartPolicyType = "ON_FAILURE"
 ```toml
 [services.api.build]
 dockerfilePath = "apps/api/Dockerfile.railway"
-watchPaths = ["apps/api/**", "packages/**", "drizzle/**"]
+watchPaths = ["apps/api/**", "packages/**", "prisma/**"]
 
 [services.api.deploy]
 healthcheckPath = "/health"
@@ -63,7 +63,7 @@ restartPolicyMaxRetries = 10
 restartPolicyType = "ON_FAILURE"
 ```
 
-**Status**: ✅ Dockerfile ready, includes Drizzle
+**Status**: ✅ Dockerfile ready, includes Prisma
 
 #### 3. **API Gateway** (Port 3002)
 
@@ -86,7 +86,7 @@ restartPolicyType = "ON_FAILURE"
 ```toml
 [services.backend.build]
 dockerfilePath = "apps/backend/Dockerfile.railway"
-watchPaths = ["apps/backend/**", "packages/**", "drizzle/**"]
+watchPaths = ["apps/backend/**", "packages/**", "prisma/**"]
 
 [services.backend.deploy]
 healthcheckPath = "/health"
@@ -95,7 +95,7 @@ restartPolicyMaxRetries = 10
 restartPolicyType = "ON_FAILURE"
 ```
 
-**Status**: ✅ Dockerfile ready, includes Drizzle
+**Status**: ✅ Dockerfile ready, includes Prisma
 
 ---
 

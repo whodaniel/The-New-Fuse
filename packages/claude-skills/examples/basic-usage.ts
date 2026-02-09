@@ -2,7 +2,11 @@
  * Basic Usage Examples for Claude Skills
  */
 
-import { ClaudeSkillsManager, SkillCategory, SkillExecutionContext } from '../src';
+import {
+  ClaudeSkillsManager,
+  SkillCategory,
+  SkillExecutionContext,
+} from '../src';
 
 async function main() {
   console.log('=== Claude Skills Integration - Basic Usage ===\n');
@@ -43,7 +47,9 @@ async function main() {
 
   // 4. Get skills by category
   console.log('4. Getting document processing skills...');
-  const docSkills = await manager.getSkillsByCategory(SkillCategory.DOCUMENT_PROCESSING);
+  const docSkills = await manager.getSkillsByCategory(
+    SkillCategory.DOCUMENT_PROCESSING
+  );
   console.log(`   ✓ Found ${docSkills.length} document skills`);
   for (const skill of docSkills) {
     console.log(`   - ${skill.name}`);

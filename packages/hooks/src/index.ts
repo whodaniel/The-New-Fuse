@@ -1,24 +1,29 @@
+import { useState, useEffect } from 'react';
+
 // Legacy hooks
-export { useAgents, useWorkflows } from './api/index';
+export * from './useFeatureToggle';
+export * from './useApiClient';
+export * from './useSuggestionActions';
+export * from './useAuth'; // Exports useAuth
+export * from './useWebSocket';
 export * from './hooks/useFeatureSuggestions';
 export * from './hooks/useKanbanBoard';
-export * from './hooks/useKeyboardShortcuts';
 export * from './hooks/useTimeline';
+export * from './hooks/useKeyboardShortcuts';
 export * from './hooks/useUndoRedo';
-export * from './useApiClient';
-export * from './useAuth'; // Exports useAuth
-export * from './useFeatureToggle';
-export * from './useSuggestionActions';
-export * from './useWebSocket';
-export { apiUseAuth as useApiAuth }; // Rename the conflicting export
 
 // API hooks - use explicit re-exports to avoid naming conflicts
 import * as apiHooks from './api/index';
+export { 
+  useAgents,
+  useWorkflows
+} from './api/index';
 
 // Re-export all api hooks except useAuth which is already exported above
-const { useAuth: apiUseAuth, ...restApiHooks } = apiHooks;
+const {useAuth: apiUseAuth, ...restApiHooks} = apiHooks;
+export {apiUseAuth as useApiAuth}; // Rename the conflicting export
 export const apiHooksNamespace = apiHooks;
-export { restApiHooks };
+export {restApiHooks};
 
 export interface UseAuthResult {
   isAuthenticated: boolean;

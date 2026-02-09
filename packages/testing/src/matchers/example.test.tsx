@@ -16,9 +16,9 @@ describe('Custom Matcher Examples', () => {
         {
           id: 'step1',
           name: 'First Step',
-          status: 'pending',
-        },
-      ],
+          status: 'pending'
+        }
+      ]
     };
 
     expect(workflow).toBeValidWorkflow();
@@ -28,7 +28,7 @@ describe('Custom Matcher Examples', () => {
     const user = {
       id: 'user1',
       permissions: ['read:posts'],
-      roles: [{ name: 'editor', permissions: ['edit:posts'] }],
+      roles: [{ name: 'editor', permissions: ['edit:posts'] }]
     };
 
     expect(user).toHavePermission('read:posts');
@@ -39,13 +39,13 @@ describe('Custom Matcher Examples', () => {
     const response = {
       status: 200,
       headers: { 'content-type': 'application/json' },
-      data: { id: '123', name: 'Test User' },
+      data: { id: '123', name: 'Test User' }
     };
 
     const contract = {
       status: 200,
       headers: { 'content-type': 'application/json' },
-      schema: z.object({ id: z.string(), name: z.string() }),
+      schema: z.object({ id: z.string(), name: z.string() })
     };
 
     expect(response).toMatchAPIContract(contract);
@@ -56,11 +56,11 @@ describe('Custom Matcher Examples', () => {
     TestComponent.displayName = 'TestComponent';
 
     const component = <TestComponent title="Test" />;
-
+    
     expect(component).toBeValidComponent({
       displayName: 'TestComponent',
       requiredProps: ['title'],
-      childrenAllowed: false,
+      childrenAllowed: false
     });
   });
 
@@ -80,7 +80,7 @@ describe('Custom Matcher Examples', () => {
 
     it('should pass for a valid React element', () => {
       expect(ValidComponent).toBeValidComponent({
-        displayName: 'TestComponent',
+        displayName: 'TestComponent'
       });
     });
 
@@ -150,7 +150,7 @@ describe('Custom Matcher Examples', () => {
       const apiResponse = {
         status: 200,
         headers: { 'content-type': 'application/json' },
-        data: { success: true, data: { message: 'ok' } },
+        data: { success: true, data: { message: 'ok' } }
       };
       expect(apiResponse).toMatchAPIContract(mockAPIContract);
     });
@@ -159,7 +159,7 @@ describe('Custom Matcher Examples', () => {
       const apiResponse = {
         status: 404,
         headers: {},
-        data: { success: true },
+        data: { success: true }
       };
       expect(apiResponse).not.toMatchAPIContract(mockAPIContract);
     });

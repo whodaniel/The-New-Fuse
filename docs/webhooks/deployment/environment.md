@@ -1,8 +1,6 @@
 # Environment Configuration Guide
 
-This guide covers setting up environment variables and configuration for The New
-Fuse webhooks, SSE, and serverless architecture across different deployment
-environments.
+This guide covers setting up environment variables and configuration for The New Fuse webhooks, SSE, and serverless architecture across different deployment environments.
 
 ## 📋 Environment Variables Overview
 
@@ -306,10 +304,10 @@ const requiredVars = [
   'NODE_ENV',
   'DATABASE_URL',
   'JWT_SECRET',
-  'WEBHOOK_SECRET_KEY',
+  'WEBHOOK_SECRET_KEY'
 ];
 
-requiredVars.forEach((varName) => {
+requiredVars.forEach(varName => {
   if (!process.env[varName]) {
     console.error(`Missing required environment variable: ${varName}`);
     process.exit(1);
@@ -365,5 +363,4 @@ pnpm run test:sse
 
 ---
 
-_For more detailed configuration options, see the individual service
-documentation._
+*For more detailed configuration options, see the individual service documentation.*

@@ -1,24 +1,12 @@
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
+import { Plus, MoreHorizontal } from 'lucide-react';
 import { useWorkspace } from '@/hooks/useWorkspace';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { webSocketService } from '@/services/websocket';
-import { MoreHorizontal, Plus } from 'lucide-react';
-import React, { useState } from 'react';
 
 interface Member {
   id: string;
@@ -44,7 +32,7 @@ export default function WorkspaceMembers() {
       setIsSubmitting(true);
       webSocketService.send('inviteMember', {
         workspaceId: currentWorkspace.id,
-        email: inviteEmail,
+        email: inviteEmail
       });
 
       setShowInviteDialog(false);
@@ -63,7 +51,7 @@ export default function WorkspaceMembers() {
       webSocketService.send('updateMemberRole', {
         workspaceId: currentWorkspace.id,
         memberId,
-        role: newRole,
+        role: newRole
       });
     } catch (error) {
       console.error('Failed to update member role:', error);
@@ -76,7 +64,7 @@ export default function WorkspaceMembers() {
     try {
       webSocketService.send('removeMember', {
         workspaceId: currentWorkspace.id,
-        memberId,
+        memberId
       });
     } catch (error) {
       console.error('Failed to remove member:', error);
@@ -93,7 +81,7 @@ export default function WorkspaceMembers() {
           </p>
         </div>
         <Button onClick={() => setShowInviteDialog(true)}>
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="mr-2 h-4 w-4"/>
           Invite Member
         </Button>
       </div>
@@ -112,13 +100,15 @@ export default function WorkspaceMembers() {
                 <div className="flex items-center space-x-4">
                   <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
                     {member.avatarUrl ? (
-                      <img
-                        src={member.avatarUrl}
-                        alt={member.name}
+                      <img 
+                        src={member.avatarUrl} 
+                        alt={member.name} 
                         className="h-full w-full rounded-full object-cover"
                       />
                     ) : (
-                      <span className="text-lg font-medium">{member.name[0].toUpperCase()}</span>
+                      <span className="text-lg font-medium">
+                        {member.name[0].toUpperCase()}
+                      </span>
                     )}
                   </div>
                   <div>
@@ -143,7 +133,7 @@ export default function WorkspaceMembers() {
                         <DropdownMenuItem onClick={() => handleRoleChange(member.id, 'member')}>
                           Make Member
                         </DropdownMenuItem>
-                        <DropdownMenuItem
+                        <DropdownMenuItem 
                           onClick={() => handleRemoveMember(member.id)}
                           className="text-destructive"
                         >
@@ -163,7 +153,9 @@ export default function WorkspaceMembers() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Invite Team Member</DialogTitle>
-            <DialogDescription>Invite a new member to join your workspace.</DialogDescription>
+            <DialogDescription>
+              Invite a new member to join your workspace.
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleInvite}>
             <div className="space-y-4 py-4">
@@ -182,7 +174,11 @@ export default function WorkspaceMembers() {
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowInviteDialog(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowInviteDialog(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>

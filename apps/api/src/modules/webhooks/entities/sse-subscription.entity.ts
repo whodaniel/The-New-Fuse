@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
 @Entity('sse_subscriptions')
 export class SseSubscription {
@@ -26,7 +26,7 @@ export class SseSubscription {
   @Column({
     name: 'last_heartbeat',
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+    default: () => 'CURRENT_TIMESTAMP'
   })
   lastHeartbeat!: Date;
 }

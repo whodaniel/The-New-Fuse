@@ -33,7 +33,7 @@ export class MonitoringService {
       type,
       timestamp: new Date(),
       data,
-      severity,
+      severity
     };
 
     this.events.push(event);
@@ -53,7 +53,9 @@ export class MonitoringService {
   }
 
   getEvents(type?: string, limit?: number): MonitoringEvent[] {
-    let filteredEvents = type ? this.events.filter((event) => event.type === type) : this.events;
+    let filteredEvents = type 
+      ? this.events.filter(event => event.type === type)
+      : this.events;
 
     if (limit) {
       filteredEvents = filteredEvents.slice(-limit);
@@ -68,7 +70,7 @@ export class MonitoringService {
       cache: await this.checkCache(),
       external_apis: await this.checkExternalAPIs(),
       memory: await this.checkMemory(),
-      cpu: await this.checkCPU(),
+      cpu: await this.checkCPU()
     };
 
     const healthyChecks = Object.values(checks).filter(Boolean).length;
@@ -86,7 +88,7 @@ export class MonitoringService {
     const health: SystemHealth = {
       status,
       checks,
-      timestamp: new Date(),
+      timestamp: new Date()
     };
 
     this.recordEvent('system.health_check', health, status === 'unhealthy' ? 'critical' : 'low');
@@ -129,9 +131,9 @@ export class MonitoringService {
       const memUsage = process.memoryUsage();
       const heapUsedMB = memUsage.heapUsed / 1024 / 1024;
       const heapTotalMB = memUsage.heapTotal / 1024 / 1024;
-
+      
       // Consider unhealthy if using more than 80% of heap
-      return heapUsedMB / heapTotalMB < 0.8;
+      return (heapUsedMB / heapTotalMB) < 0.8;
     } catch (error) {
       this.logger.error('Memory health check failed', error);
       return false;
@@ -148,11 +150,7 @@ export class MonitoringService {
     }
   }
 
-  getEventsSummary(): {
-    total: number;
-    bySeverity: Record<string, number>;
-    byType: Record<string, number>;
-  } {
+  getEventsSummary(): { total: number; bySeverity: Record<string, number>; byType: Record<string, number> } {
     const bySeverity: Record<string, number> = {};
     const byType: Record<string, number> = {};
 
@@ -164,13 +162,13 @@ export class MonitoringService {
     return {
       total: this.events.length,
       bySeverity,
-      byType,
+      byType
     };
   }
 
   clearEvents(olderThan?: Date): void {
     if (olderThan) {
-      this.events = this.events.filter((event) => event.timestamp > olderThan);
+      this.events = this.events.filter(event => event.timestamp > olderThan);
     } else {
       this.events = [];
     }

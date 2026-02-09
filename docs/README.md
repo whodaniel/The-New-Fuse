@@ -1,8 +1,6 @@
 # The New Fuse Documentation
 
-Welcome to The New Fuse documentation. This repository contains comprehensive
-guides, specifications, and references for developing with The New Fuse
-platform.
+Welcome to The New Fuse documentation. This repository contains comprehensive guides, specifications, and references for developing with The New Fuse platform.
 
 ## Documentation Sections
 
@@ -13,16 +11,13 @@ platform.
 
 ## Development & Troubleshooting
 
-- [Native Modules Guide](NATIVE_MODULES_GUIDE.md) - Handling native module
-  compatibility with Bun
-- [Build Optimization](BUILD_OPTIMIZATION.md) - Memory-efficient build
-  strategies
+- [Native Modules Guide](NATIVE_MODULES_GUIDE.md) - Handling native module compatibility with Bun
+- [Build Optimization](BUILD_OPTIMIZATION.md) - Memory-efficient build strategies
 - [Testing Guide](TESTING_GUIDE.md) - Testing practices and configuration
 
 ## Deployment
 
 [Deployment Guide](deployment/DEPLOYMENT_GUIDE.md)
-
 - [Architecture](architecture/) - System architecture and design
 - [API](api/) - API specifications and usage
 - [Development](development/) - Development guides and practices
@@ -33,6 +28,4 @@ platform.
 
 ## Contributing to Documentation
 
-Please follow the [contribution guidelines](../CONTRIBUTING.md) when updating
-documentation. All documentation should be written in Markdown and properly
-linked from this index.
+Please follow the [contribution guidelines](../CONTRIBUTING.md) when updating documentation. All documentation should be written in Markdown and properly linked from this index.

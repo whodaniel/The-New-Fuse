@@ -1,15 +1,9 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NestMiddleware,
-  UnauthorizedException,
-} from '@nestjs/common';
-import * as crypto from 'crypto';
-import { NextFunction, Request, Response } from 'express';
+import { Injectable, NestMiddleware, Logger, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
+import { SecurityLoggingService } from '../security/security-logging.service';
 import { EnhancedRateLimitService } from '../security/enhanced-rate-limit.service';
 import { InputSanitizationService } from '../security/input-sanitization.service';
-import { SecurityLoggingService } from '../security/security-logging.service';
+import * as crypto from 'crypto';
 
 declare global {
   namespace Express {
@@ -85,12 +79,12 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
     res.end = (chunk?: any, encoding?: any) => {
       const responseTime = Date.now() - startTime;
       res.setHeader('X-Response-Time', `${responseTime}ms`);
-
+      
       // Log slow requests
       if (responseTime > 5000) {
         this.logger.warn(`Slow request detected: ${req.method} ${req.path} took ${responseTime}ms`);
       }
-
+      
       return originalEnd(chunk, encoding);
     };
 
@@ -122,75 +116,25 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
       flags.threatLevel = 'high';
     }
 
-    // Check for malicious scanning patterns (WordPress, PHP shells, AWS creds, etc.)
-    const isWordPressProbe = this.detectWordPressProbing(req);
-    const isPhpInfoHarvest = this.detectPhpInfoHarvesting(req);
-    const isPhpShellAttempt = this.detectPhpShellAttempt(req);
-    const isAwsHarvest = this.detectAWSCredentialHarvesting(req);
-    const isScannerPattern = this.detectScannerPattern(req);
-
-    if (isPhpShellAttempt || isAwsHarvest) {
-      // Critical: Direct attack attempts
-      flags.isSuspicious = true;
-      flags.threatLevel = 'critical';
-      this.logger.warn(
-        `🚨 CRITICAL: Malicious attack attempt detected from ${req.clientIP} - ${req.method} ${req.path}`
-      );
-    } else if (isWordPressProbe || isPhpInfoHarvest) {
-      // High: Automated scanning
-      flags.isSuspicious = true;
-      flags.threatLevel = 'high';
-      this.logger.warn(
-        `⚠️  HIGH: Scanner probe detected from ${req.clientIP} - ${req.method} ${req.path}`
-      );
-    } else if (isScannerPattern) {
-      // Medium: Suspicious patterns
-      flags.isSuspicious = true;
-      flags.threatLevel = flags.threatLevel === 'low' ? 'medium' : flags.threatLevel;
-    }
-
     // Check request characteristics
     if (this.detectUnusualPattern(req)) {
-      flags.threatLevel = flags.threatLevel === 'low' ? 'medium' : flags.threatLevel;
+      flags.threatLevel = 'medium';
     }
 
     // Log security violations
-    if (flags.threatLevel === 'high' || flags.threatLevel === 'critical') {
-      const attackType = 'suspicious_pattern';
-      const attackSubType = isPhpShellAttempt
-        ? 'php_shell_attempt'
-        : isAwsHarvest
-          ? 'aws_credential_harvest'
-          : isWordPressProbe
-            ? 'wordpress_probe'
-            : isPhpInfoHarvest
-              ? 'php_info_harvest'
-              : 'scanner_pattern';
-
-      this.securityLogging.logSecurityViolation(attackType, {
+    if (flags.threatLevel === 'high') {
+      this.securityLogging.logSecurityViolation('suspicious_pattern', {
         ip: req.clientIP,
         endpoint: req.path,
         method: req.method,
         payload: {
-          userAgent: req.userAgent,
-          attackSubType,
-          flags: {
-            isWordPressProbe,
-            isPhpInfoHarvest,
-            isPhpShellAttempt,
-            isAwsHarvest,
-            isScannerPattern,
-          },
+          body: req.body,
+          query: req.query,
+          headers: this.sanitizeHeaders(req.headers),
         },
         severity: flags.threatLevel,
-        action: flags.threatLevel === 'critical' ? 'blocked' : 'logged',
+        action: 'blocked',
       });
-
-      // Auto-block critical threats by adding to rate limit service
-      if (flags.threatLevel === 'critical' && req.clientIP) {
-        this.rateLimitService.blockIP(req.clientIP, 3600); // Block for 1 hour
-        this.logger.error(`🔒 IP ${req.clientIP} auto-blocked for 1 hour due to critical threat`);
-      }
     }
 
     return flags;
@@ -208,12 +152,9 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
 
       // Check rate limit
       const rateLimitResult = await this.rateLimitService.checkRateLimitAuto(req);
-
+      
       // Add rate limit headers
-      res.setHeader(
-        'X-RateLimit-Limit',
-        rateLimitResult.allowed ? rateLimitResult.remaining + 1 : 0
-      );
+      res.setHeader('X-RateLimit-Limit', rateLimitResult.allowed ? rateLimitResult.remaining + 1 : 0);
       res.setHeader('X-RateLimit-Remaining', rateLimitResult.remaining);
       res.setHeader('X-RateLimit-Reset', new Date(rateLimitResult.resetTime).toISOString());
 
@@ -239,12 +180,12 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
     try {
       // Sanitize query parameters
       if (req.query && typeof req.query === 'object') {
-        Object.keys(req.query).forEach((key) => {
+        Object.keys(req.query).forEach(key => {
           const queryValue = req.query[key];
           if (typeof queryValue === 'string') {
             const sanitized = this.inputSanitization.sanitizeText(queryValue);
             req.query[key] = sanitized;
-
+            
             // Log if sanitization changed the value
             if (sanitized !== queryValue) {
               this.securityLogging.logInputValidation(req.path, req.method, {
@@ -266,7 +207,7 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
 
       // Sanitize route parameters
       if (req.params && typeof req.params === 'object') {
-        Object.keys(req.params).forEach((key) => {
+        Object.keys(req.params).forEach(key => {
           if (typeof req.params[key] === 'string') {
             req.params[key] = this.inputSanitization.sanitizeText(req.params[key]);
           }
@@ -287,19 +228,18 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
    */
   private injectSecurityHeaders(res: Response): void {
     // Content Security Policy
-    res.setHeader(
-      'Content-Security-Policy',
+    res.setHeader('Content-Security-Policy',
       "default-src 'self'; " +
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-        "style-src 'self' 'unsafe-inline'; " +
-        "img-src 'self' data: https:; " +
-        "font-src 'self'; " +
-        "connect-src 'self' wss: https:; " +
-        "frame-src 'none'; " +
-        "object-src 'none'; " +
-        "base-uri 'self'; " +
-        "form-action 'self'; " +
-        'upgrade-insecure-requests;'
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+      "style-src 'self' 'unsafe-inline'; " +
+      "img-src 'self' data: https:; " +
+      "font-src 'self'; " +
+      "connect-src 'self' wss: https:; " +
+      "frame-src 'none'; " +
+      "object-src 'none'; " +
+      "base-uri 'self'; " +
+      "form-action 'self'; " +
+      "upgrade-insecure-requests;"
     );
 
     // Additional security headers
@@ -307,15 +247,14 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader(
-      'Permissions-Policy',
+    res.setHeader('Permissions-Policy', 
       'geolocation=(), microphone=(), camera=(), payment=(), fullscreen=(*), sync-xhr=(*)'
     );
-
+    
     // Remove server information
     res.removeHeader('X-Powered-By');
     res.removeHeader('Server');
-
+    
     // HSTS (HTTPS Strict Transport Security)
     if (process.env.NODE_ENV === 'production') {
       res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
@@ -327,7 +266,7 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
    */
   private logApiResponse(req: Request, res: Response, startTime: number, body: any): void {
     const responseTime = Date.now() - startTime;
-
+    
     this.securityLogging.logApiAccess(req.method, req.path, {
       requestId: req.requestId,
       userId: req.user?.id,
@@ -350,13 +289,11 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
    * Get client IP address
    */
   private getClientIP(req: Request): string {
-    return (
-      (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
-      (req.headers['x-real-ip'] as string) ||
-      req.connection.remoteAddress ||
-      req.ip ||
-      'unknown'
-    );
+    return (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+           req.headers['x-real-ip'] as string ||
+           req.connection.remoteAddress ||
+           req.ip ||
+           'unknown';
   }
 
   /**
@@ -365,23 +302,11 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
   private detectBot(req: Request): boolean {
     const userAgent = req.userAgent?.toLowerCase() || '';
     const botPatterns = [
-      'bot',
-      'crawler',
-      'spider',
-      'scraper',
-      'curl',
-      'wget',
-      'python',
-      'java',
-      'go-http-client',
-      'okhttp',
-      'libwww',
-      'httpclient',
-      'feedburner',
-      'googlebot',
+      'bot', 'crawler', 'spider', 'scraper', 'curl', 'wget', 'python', 'java',
+      'go-http-client', 'okhttp', 'libwww', 'httpclient', 'feedburner', 'googlebot'
     ];
-
-    return botPatterns.some((pattern) => userAgent.includes(pattern));
+    
+    return botPatterns.some(pattern => userAgent.includes(pattern));
   }
 
   /**
@@ -402,7 +327,7 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
       params: req.params,
     });
 
-    return suspiciousPatterns.some((pattern) => pattern.test(content));
+    return suspiciousPatterns.some(pattern => pattern.test(content));
   }
 
   /**
@@ -424,7 +349,7 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
       params: req.params,
     });
 
-    return xssPatterns.some((pattern) => pattern.test(content));
+    return xssPatterns.some(pattern => pattern.test(content));
   }
 
   /**
@@ -435,18 +360,16 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
       /\.\.\//,
       /%2e%2e%2f/gi,
       /%252e%252e%252f/gi,
-      /\\.*\\/, // Windows path traversal
+      /\\.*\\/,  // Windows path traversal
     ];
 
-    const content =
-      req.path +
-      JSON.stringify({
-        body: req.body,
-        query: req.query,
-        params: req.params,
-      });
+    const content = req.path + JSON.stringify({
+      body: req.body,
+      query: req.query,
+      params: req.params,
+    });
 
-    return traversalPatterns.some((pattern) => pattern.test(content));
+    return traversalPatterns.some(pattern => pattern.test(content));
   }
 
   /**
@@ -461,8 +384,8 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
       'x-originating-ip',
     ];
 
-    const hasUnusualHeaders = unusualHeaders.some(
-      (header) => req.headers[header] && !header.startsWith('x-forwarded')
+    const hasUnusualHeaders = unusualHeaders.some(header => 
+      req.headers[header] && !header.startsWith('x-forwarded')
     );
 
     // Check for very long parameters
@@ -478,143 +401,18 @@ export class EnhancedSecurityMiddleware implements NestMiddleware {
   }
 
   /**
-   * Detect WordPress probing attempts
-   * Common pattern from bots scanning for WordPress installations
-   */
-  private detectWordPressProbing(req: Request): boolean {
-    const wpPatterns = [
-      /\/wp-admin\//i,
-      /\/wp-content\//i,
-      /\/wp-includes\//i,
-      /\/wp-login\.php/i,
-      /\/wordpress\//i,
-      /\/wp\//i,
-      /xmlrpc\.php/i,
-      /\/wp-config/i,
-      /\/wp-load\.php/i,
-      /\/wp-cron\.php/i,
-    ];
-
-    return wpPatterns.some((pattern) => pattern.test(req.path));
-  }
-
-  /**
-   * Detect PHP info harvesting attempts
-   * Bots often scan for phpinfo() endpoints to gather system information
-   */
-  private detectPhpInfoHarvesting(req: Request): boolean {
-    const phpInfoPatterns = [
-      /\/phpinfo/i,
-      /\/info\.php/i,
-      /\/test\.php/i,
-      /_profiler\/phpinfo/i,
-      /\/i\.php$/i,
-      /\/pi\.php$/i,
-      /\/php\.php$/i,
-      /\/php_info\.php$/i,
-      /\/phpversion\.php$/i,
-      /\/version\.php$/i,
-      /\/env\.php$/i,
-      /\/server-info\.php$/i,
-    ];
-
-    return phpInfoPatterns.some((pattern) => pattern.test(req.path));
-  }
-
-  /**
-   * Detect PHP shell/backdoor attempts
-   * Common web shell paths used by attackers
-   */
-  private detectPhpShellAttempt(req: Request): boolean {
-    const shellPatterns = [
-      /\/xleet\.php/i,
-      /\/alfa\.php/i,
-      /\/admin\.php/i,
-      /\/shell\.php/i,
-      /\/cmd\.php/i,
-      /\/backdoor/i,
-      /\/c99\.php/i,
-      /\/r57\.php/i,
-      /\/b374k/i,
-      /\/wso\.php/i,
-      /\/indoxploit/i,
-      /\/upload\.php/i,
-      /\/file\.php/i,
-      /\/files\.php/i,
-      /\/moon\.php/i,
-      /\/flower\.php/i,
-      /\/ioxi/i,
-      /\/nc\d+\.php/i,
-      /\/about\.php$/i,
-      /\/buy\.php$/i,
-      /\/aa\.php$/i,
-      /\/abcd\.php$/i,
-      /\/init\.php$/i,
-      /\/config\.phpinfo/i,
-      /\/pinfo\.php$/i,
-      /\/phpinfo\d+\.php$/i,
-      /\/cgi-bin\//i,
-    ];
-
-    return shellPatterns.some((pattern) => pattern.test(req.path));
-  }
-
-  /**
-   * Detect AWS credential harvesting attempts
-   */
-  private detectAWSCredentialHarvesting(req: Request): boolean {
-    const awsPatterns = [
-      /\/\.aws\/credentials/i,
-      /\/\.aws\/config/i,
-      /\/\.env$/i,
-      /\/\.env\.local/i,
-      /\/\.env\.production/i,
-      /\.env\.example/i,
-      /config\.json$/i,
-      /secrets\.json$/i,
-      /credentials\.json$/i,
-    ];
-
-    return awsPatterns.some((pattern) => pattern.test(req.path));
-  }
-
-  /**
-   * Detect common scanner/bot patterns
-   */
-  private detectScannerPattern(req: Request): boolean {
-    const scannerPatterns = [
-      /\/admin\/phpinfo/i,
-      /\/admin\/config/i,
-      /\/manager\/html/i,
-      /\/administrator/i,
-      /\/phpmyadmin/i,
-      /\/pma\//i,
-      /\/myadmin/i,
-      /\/mysql/i,
-      /\/dbadmin/i,
-      /\/\.git\//i,
-      /\/\.svn\//i,
-      /\/\.hg\//i,
-      /\/\.env\./i,
-      /robots\.txt$/i,
-    ];
-
-    return scannerPatterns.some((pattern) => pattern.test(req.path));
-  }
-
-  /**
    * Sanitize headers for logging
    */
   private sanitizeHeaders(headers: any): any {
     const sanitized = { ...headers };
     const sensitiveHeaders = ['authorization', 'cookie', 'x-api-key'];
-
-    sensitiveHeaders.forEach((header) => {
+    
+    sensitiveHeaders.forEach(header => {
       if (sanitized[header]) {
         sanitized[header] = '[REDACTED]';
       }
     });
-
+    
     return sanitized;
   }
 }

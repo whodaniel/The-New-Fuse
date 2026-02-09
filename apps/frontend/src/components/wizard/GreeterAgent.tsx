@@ -1,26 +1,26 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useWizard } from './WizardProvider';
 
 // Mock RAG service to avoid dependency issues
 const ragService = {
   query: async (query: string) => {
     // Mock response generation
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     return `Hello! I'm here to help you get started. You asked: "${query}". I can assist you with setting up your workspace, navigating features, or answering questions about the platform.`;
   },
   generateResponse: async (query: string, context?: any) => {
     // Mock response generation
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     return {
       response: `Hello! I'm here to help you get started. You asked: "${query}". I can assist you with setting up your workspace, navigating features, or answering questions about the platform.`,
       confidence: 0.85,
-      sources: [],
+      sources: []
     };
   },
   indexKnowledge: async (documents: any[]) => {
     console.log('Mock: Indexing knowledge documents', documents);
     return { indexed: documents.length };
-  },
+  }
 };
 
 interface Message {
@@ -38,8 +38,8 @@ interface GreeterAgentProps {
 
 export const GreeterAgent: React.FC<GreeterAgentProps> = ({
   initialMessage = "Hello! I'm your AI assistant for The New Fuse platform. I can help you get started and answer any questions you might have. What would you like to know?",
-  agentName = 'Fuse Assistant',
-  agentAvatar = '/assets/images/assistant-avatar.png',
+  agentName = "Fuse Assistant",
+  agentAvatar = "/assets/images/assistant-avatar.png"
 }) => {
   const { addConversation } = useWizard();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -56,14 +56,14 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
       You help users get started with the platform by answering their questions and providing guidance.
       The New Fuse is an AI agent coordination platform that enables intelligent interaction between different AI systems.
       Be friendly, helpful, and concise in your responses.`,
-      timestamp: new Date(),
+      timestamp: new Date()
     };
 
     const initialGreeting: Message = {
       id: 'assistant-1',
       role: 'assistant',
       content: initialMessage,
-      timestamp: new Date(),
+      timestamp: new Date()
     };
 
     setMessages([systemMessage, initialGreeting]);
@@ -71,12 +71,12 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
     // Add to conversation history in wizard state
     addConversation({
       role: 'system',
-      content: systemMessage.content,
+      content: systemMessage.content
     });
 
     addConversation({
       role: 'assistant',
-      content: initialGreeting.content,
+      content: initialGreeting.content
     });
   }, [addConversation, agentName, initialMessage]);
 
@@ -95,7 +95,7 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
       return response;
     } catch (error) {
       console.error('Error generating response from RagService:', error);
-      return 'I encountered an issue trying to find an answer for you. Please try asking in a different way or check the documentation.';
+      return "I encountered an issue trying to find an answer for you. Please try asking in a different way or check the documentation.";
     } finally {
       setIsTyping(false);
     }
@@ -109,14 +109,14 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
       id: `user-${messages.length}`,
       role: 'user',
       content: input,
-      timestamp: new Date(),
+      timestamp: new Date()
     };
 
     // Add user message to state and conversation history
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     addConversation({
       role: 'user',
-      content: input,
+      content: input
     });
 
     // Clear input
@@ -130,14 +130,14 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
       id: `assistant-${messages.length + 1}`,
       role: 'assistant',
       content: responseContent,
-      timestamp: new Date(),
+      timestamp: new Date()
     };
 
     // Add assistant message to state and conversation history
-    setMessages((prev) => [...prev, assistantMessage]);
+    setMessages(prev => [...prev, assistantMessage]);
     addConversation({
       role: 'assistant',
-      content: responseContent,
+      content: responseContent
     });
   };
 
@@ -162,33 +162,33 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
 
       {/* Messages container */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages
-          .filter((m) => m.role !== 'system')
-          .map((message) => (
+        {messages.filter(m => m.role !== 'system').map((message) => (
+          <div
+            key={message.id}
+            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
             <div
-              key={message.id}
-              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`max-w-[80%] p-3 rounded-lg ${
+                message.role === 'user' 
+                  ? 'bg-blue-50 text-gray-900' 
+                  : 'bg-gray-100 text-gray-900'
+              }`}
             >
-              <div
-                className={`max-w-[80%] p-3 rounded-lg ${
-                  message.role === 'user' ? 'bg-blue-50 text-gray-900' : 'bg-gray-100 text-gray-900'
-                }`}
-              >
-                {message.role === 'assistant' && (
-                  <div className="flex items-center space-x-1 mb-1">
-                    <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white font-semibold">
-                      {agentName.charAt(0)}
-                    </div>
-                    <span className="font-bold text-sm">{agentName}</span>
+              {message.role === 'assistant' && (
+                <div className="flex items-center space-x-1 mb-1">
+                  <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white font-semibold">
+                    {agentName.charAt(0)}
                   </div>
-                )}
-                <p>{message.content}</p>
-                <p className="text-xs text-gray-500 text-right mt-1">
-                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </p>
-              </div>
+                  <span className="font-bold text-sm">{agentName}</span>
+                </div>
+              )}
+              <p>{message.content}</p>
+              <p className="text-xs text-gray-500 text-right mt-1">
+                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </p>
             </div>
-          ))}
+          </div>
+        ))}
 
         {isTyping && (
           <div className="flex justify-start">

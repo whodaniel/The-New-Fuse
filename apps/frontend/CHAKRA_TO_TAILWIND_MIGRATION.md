@@ -1,45 +1,35 @@
 # Chakra UI to Tailwind CSS Migration Guide
 
 ## Overview
-
-This document outlines the migration strategy from Chakra UI to Tailwind CSS for
-The New Fuse frontend application.
+This document outlines the migration strategy from Chakra UI to Tailwind CSS for The New Fuse frontend application.
 
 ## Current Status
-
-- **Completed**: A2AMultiAgentChat, Dashboard components, Layout components,
-  Toast system
+- **Completed**: A2AMultiAgentChat, Dashboard components, Layout components, Toast system
 - **Remaining**: 57 files still using Chakra UI components
 - **Target**: Complete migration to Tailwind CSS utility classes
 
 ## Migration Priority
 
 ### High Priority (User-Facing)
-
 1. **Admin Panels** (`src/pages/Admin/*`)
 2. **Authentication** (`src/components/auth/*`)
-3. **Onboarding Flow** (`src/components/onboarding/*`,
-   `src/components/admin/onboarding/*`)
-4. **Analytics & Charts** (`src/components/analytics/*`,
-   `src/components/AdminPanel/*`)
+3. **Onboarding Flow** (`src/components/onboarding/*`, `src/components/admin/onboarding/*`)
+4. **Analytics & Charts** (`src/components/analytics/*`, `src/components/AdminPanel/*`)
 5. **Forms** (`src/components/forms/*`, `src/components/shared/FormFields.tsx`)
 
 ### Medium Priority
-
 1. **Workflows** (`src/pages/Workflows/*`)
 2. **Shared Components** (`src/components/shared/*`)
 3. **Prompt Workbench** (`src/components/PromptWorkbench/*`)
 4. **Agent Creation** (`src/components/AgentCreationStudio.tsx`)
 
 ### Low Priority
-
 1. **Demonstration Components** (`src/components/demo/*`)
 2. **Utility Components** (`src/components/ui/popup/*`)
 
 ## Component Mapping Reference
 
 ### Layout Components
-
 ```jsx
 // Chakra UI → Tailwind CSS
 <Box> → <div className="...">
@@ -51,7 +41,6 @@ The New Fuse frontend application.
 ```
 
 ### Typography
-
 ```jsx
 <Text> → <p className="text-...">
 <Heading> → <h1-6 className="text-... font-...">
@@ -60,7 +49,6 @@ The New Fuse frontend application.
 ```
 
 ### Form Components
-
 ```jsx
 <Input> → <input className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
 <Textarea> → <textarea className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
@@ -70,7 +58,6 @@ The New Fuse frontend application.
 ```
 
 ### Feedback Components
-
 ```jsx
 <Alert> → <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
 <AlertIcon> → <div className="flex-shrink-0 w-5 h-5 text-blue-600">
@@ -79,7 +66,6 @@ The New Fuse frontend application.
 ```
 
 ### Navigation
-
 ```jsx
 <Tabs> → Complex migration (see Tabs migration guide)
 <Menu> → <div className="relative inline-block text-left">
@@ -87,7 +73,6 @@ The New Fuse frontend application.
 ```
 
 ### Data Display
-
 ```jsx
 <Table> → <table className="min-w-full divide-y divide-gray-200">
 <Tbody> → <tbody className="bg-white divide-y divide-gray-200">
@@ -96,7 +81,6 @@ The New Fuse frontend application.
 ```
 
 ### Cards
-
 ```jsx
 <Card> → <div className="bg-white shadow rounded-lg">
 <CardHeader> → <div className="px-6 py-4 border-b border-gray-200">
@@ -107,7 +91,6 @@ The New Fuse frontend application.
 ## Common Utility Classes
 
 ### Colors
-
 ```css
 /* Text Colors */
 text-gray-900     /* Dark text */
@@ -135,7 +118,6 @@ border-red-500    /* Error borders */
 ```
 
 ### Spacing
-
 ```css
 p-4              /* Padding 4 units (16px) */
 px-6             /* Horizontal padding */
@@ -148,7 +130,6 @@ space-y-4        /* Gap between children (flex/grid) */
 ```
 
 ### Typography
-
 ```css
 text-sm          /* Small text */
 text-base        /* Base text size */
@@ -162,7 +143,6 @@ font-bold        /* Bold weight */
 ```
 
 ### Layout
-
 ```css
 flex             /* Flexbox */
 flex-col         /* Column flex */
@@ -179,7 +159,6 @@ min-h-screen     /* Minimum full screen height */
 ```
 
 ### Borders & Rounded
-
 ```css
 rounded          /* Border radius small */
 rounded-lg       /* Border radius large */
@@ -192,7 +171,6 @@ border-gray-300  /* Gray border */
 ## Migration Patterns
 
 ### 1. Simple Component Migration
-
 ```jsx
 // Before (Chakra UI)
 import { Box, Text, Button } from '@chakra-ui/react';
@@ -214,7 +192,9 @@ function MyComponent() {
 function MyComponent() {
   return (
     <div className="p-4 bg-white rounded-lg shadow-sm">
-      <p className="text-lg font-bold mb-2">Hello World</p>
+      <p className="text-lg font-bold mb-2">
+        Hello World
+      </p>
       <button className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
         Click Me
       </button>
@@ -224,27 +204,16 @@ function MyComponent() {
 ```
 
 ### 2. Complex Component Migration
-
 ```jsx
 // Before (Chakra UI)
-import {
-  Box,
-  VStack,
-  HStack,
-  Text,
-  Button,
-  Input,
-  Select,
-  FormControl,
-  FormLabel,
-  Alert,
-  AlertIcon,
-  Spinner,
+import { 
+  Box, VStack, HStack, Text, Button, Input, Select, 
+  FormControl, FormLabel, Alert, AlertIcon, Spinner 
 } from '@chakra-ui/react';
 
 function FormComponent() {
   const [loading, setLoading] = useState(false);
-
+  
   return (
     <Box maxW="md" mx="auto" p={6}>
       <VStack spacing={4} align="stretch">
@@ -252,7 +221,7 @@ function FormComponent() {
           <FormLabel>Name</FormLabel>
           <Input placeholder="Enter name" />
         </FormControl>
-
+        
         <FormControl>
           <FormLabel>Type</FormLabel>
           <Select>
@@ -260,19 +229,21 @@ function FormComponent() {
             <option value="option2">Option 2</option>
           </Select>
         </FormControl>
-
+        
         {loading && (
           <Alert status="info">
             <AlertIcon />
             <Text>Saving...</Text>
           </Alert>
         )}
-
+        
         <HStack>
           <Button colorScheme="blue" onClick={() => setLoading(true)}>
             Save
           </Button>
-          <Button variant="outline">Cancel</Button>
+          <Button variant="outline">
+            Cancel
+          </Button>
         </HStack>
       </VStack>
     </Box>
@@ -282,7 +253,7 @@ function FormComponent() {
 // After (Tailwind CSS)
 function FormComponent() {
   const [loading, setLoading] = useState(false);
-
+  
   return (
     <div className="max-w-md mx-auto p-6">
       <div className="flex flex-col space-y-4">
@@ -290,13 +261,13 @@ function FormComponent() {
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Name
           </label>
-          <input
-            type="text"
+          <input 
+            type="text" 
             placeholder="Enter name"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
-
+        
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Type
@@ -306,7 +277,7 @@ function FormComponent() {
             <option value="option2">Option 2</option>
           </select>
         </div>
-
+        
         {loading && (
           <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-center">
             <div className="flex-shrink-0 w-5 h-5 text-blue-600">
@@ -315,9 +286,9 @@ function FormComponent() {
             <p className="ml-2 text-sm text-blue-800">Saving...</p>
           </div>
         )}
-
+        
         <div className="flex space-x-2">
-          <button
+          <button 
             onClick={() => setLoading(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
@@ -336,21 +307,18 @@ function FormComponent() {
 ## Special Cases
 
 ### Dark Mode
-
 ```jsx
 // Use dark: prefix for dark mode variants
-className = 'text-gray-900 dark:text-white bg-white dark:bg-gray-800';
+className="text-gray-900 dark:text-white bg-white dark:bg-gray-800"
 ```
 
 ### Responsive Design
-
 ```jsx
 // Use responsive prefixes
-className = 'text-sm md:text-base lg:text-lg px-4 md:px-6 lg:px-8';
+className="text-sm md:text-base lg:text-lg px-4 md:px-6 lg:px-8"
 ```
 
 ### State-Based Styling
-
 ```jsx
 // Use conditional classes
 className={`px-4 py-2 rounded-lg ${isActive ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'}`}

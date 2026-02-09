@@ -3,8 +3,8 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { LoadTestScenario } from './LoadTestRunner';
 import { PerformanceValidator } from './PerformanceValidator';
+import { LoadTestScenario } from './LoadTestRunner';
 
 describe('PerformanceValidator', () => {
   let validator: PerformanceValidator;
@@ -17,23 +17,19 @@ describe('PerformanceValidator', () => {
     it('should validate performance against targets', async () => {
       const scenario: LoadTestScenario = {
         name: 'Basic Performance Test',
-        phases: [
-          {
-            name: 'Load Phase',
-            duration: 1000,
-            users: { start: 1, end: 5, rampUp: 'linear' },
-            operations: [
-              {
-                name: 'test-operation',
-                weight: 1,
-                request: {
-                  method: 'GET',
-                  path: '/test',
-                },
-              },
-            ],
-          },
-        ],
+        phases: [{
+          name: 'Load Phase',
+          duration: 1000,
+          users: { start: 1, end: 5, rampUp: 'linear' },
+          operations: [{
+            name: 'test-operation',
+            weight: 1,
+            request: {
+              method: 'GET',
+              path: '/test'
+            }
+          }]
+        }]
       };
 
       const targets = {
@@ -45,7 +41,7 @@ describe('PerformanceValidator', () => {
         maxErrorRate: 0.1,
         maxMemoryUsage: 1024 * 1024 * 1024,
         maxCPUUsage: 80,
-        minConcurrentConnections: 1,
+        minConcurrentConnections: 1
       };
 
       const result = await validator.validatePerformance(scenario, targets);
@@ -68,23 +64,19 @@ describe('PerformanceValidator', () => {
     it('should identify failed validations', async () => {
       const scenario: LoadTestScenario = {
         name: 'Strict Performance Test',
-        phases: [
-          {
-            name: 'Load Phase',
-            duration: 500,
-            users: { start: 1, end: 2, rampUp: 'linear' },
-            operations: [
-              {
-                name: 'test-operation',
-                weight: 1,
-                request: {
-                  method: 'GET',
-                  path: '/test',
-                },
-              },
-            ],
-          },
-        ],
+        phases: [{
+          name: 'Load Phase',
+          duration: 500,
+          users: { start: 1, end: 2, rampUp: 'linear' },
+          operations: [{
+            name: 'test-operation',
+            weight: 1,
+            request: {
+              method: 'GET',
+              path: '/test'
+            }
+          }]
+        }]
       };
 
       // Very strict targets that are likely to fail
@@ -97,40 +89,36 @@ describe('PerformanceValidator', () => {
         maxErrorRate: 0.001,
         maxMemoryUsage: 1024, // Very low memory limit
         maxCPUUsage: 1,
-        minConcurrentConnections: 1000,
+        minConcurrentConnections: 1000
       };
 
       const result = await validator.validatePerformance(scenario, strictTargets);
 
       expect(result.passed).toBe(false);
       expect(result.score).toBeLessThan(100);
-
-      const failedValidations = result.validations.filter((v) => !v.passed);
+      
+      const failedValidations = result.validations.filter(v => !v.passed);
       expect(failedValidations.length).toBeGreaterThan(0);
-
+      
       expect(result.recommendations.length).toBeGreaterThan(0);
     });
 
     it('should provide meaningful recommendations', async () => {
       const scenario: LoadTestScenario = {
         name: 'Recommendation Test',
-        phases: [
-          {
-            name: 'Load Phase',
-            duration: 500,
-            users: { start: 1, end: 2, rampUp: 'linear' },
-            operations: [
-              {
-                name: 'test-operation',
-                weight: 1,
-                request: {
-                  method: 'GET',
-                  path: '/test',
-                },
-              },
-            ],
-          },
-        ],
+        phases: [{
+          name: 'Load Phase',
+          duration: 500,
+          users: { start: 1, end: 2, rampUp: 'linear' },
+          operations: [{
+            name: 'test-operation',
+            weight: 1,
+            request: {
+              method: 'GET',
+              path: '/test'
+            }
+          }]
+        }]
       };
 
       const targets = {
@@ -142,21 +130,21 @@ describe('PerformanceValidator', () => {
         maxErrorRate: 0.001, // Low threshold to trigger recommendation
         maxMemoryUsage: 1024 * 1024, // Low threshold to trigger recommendation
         maxCPUUsage: 10, // Low threshold to trigger recommendation
-        minConcurrentConnections: 1,
+        minConcurrentConnections: 1
       };
 
       const result = await validator.validatePerformance(scenario, targets);
 
       expect(result.recommendations.length).toBeGreaterThan(0);
-
+      
       // Check for specific recommendation types
-      const hasResponseTimeRec = result.recommendations.some(
-        (rec) => rec.includes('caching') || rec.includes('optimize')
+      const hasResponseTimeRec = result.recommendations.some(rec => 
+        rec.includes('caching') || rec.includes('optimize')
       );
-      const hasThroughputRec = result.recommendations.some(
-        (rec) => rec.includes('scaling') || rec.includes('load balancing')
+      const hasThroughputRec = result.recommendations.some(rec => 
+        rec.includes('scaling') || rec.includes('load balancing')
       );
-
+      
       expect(hasResponseTimeRec || hasThroughputRec).toBe(true);
     });
   });
@@ -165,30 +153,26 @@ describe('PerformanceValidator', () => {
     it('should run scalability test with increasing load', async () => {
       const baseScenario: LoadTestScenario = {
         name: 'Scalability Test',
-        phases: [
-          {
-            name: 'Load Phase',
-            duration: 500,
-            users: { start: 1, end: 1, rampUp: 'linear' },
-            operations: [
-              {
-                name: 'test-operation',
-                weight: 1,
-                request: {
-                  method: 'GET',
-                  path: '/test',
-                },
-              },
-            ],
-          },
-        ],
+        phases: [{
+          name: 'Load Phase',
+          duration: 500,
+          users: { start: 1, end: 1, rampUp: 'linear' },
+          operations: [{
+            name: 'test-operation',
+            weight: 1,
+            request: {
+              method: 'GET',
+              path: '/test'
+            }
+          }]
+        }]
       };
 
       const { results, scalabilityAnalysis } = await validator.runScalabilityTest(baseScenario);
 
       expect(Array.isArray(results)).toBe(true);
       expect(results.length).toBeGreaterThan(0);
-
+      
       expect(scalabilityAnalysis).toBeDefined();
       expect(scalabilityAnalysis).toHaveProperty('linearScaling');
       expect(scalabilityAnalysis).toHaveProperty('optimalUserCount');
@@ -206,23 +190,19 @@ describe('PerformanceValidator', () => {
     it('should identify optimal user count', async () => {
       const baseScenario: LoadTestScenario = {
         name: 'Optimal Load Test',
-        phases: [
-          {
-            name: 'Load Phase',
-            duration: 300,
-            users: { start: 1, end: 1, rampUp: 'linear' },
-            operations: [
-              {
-                name: 'test-operation',
-                weight: 1,
-                request: {
-                  method: 'GET',
-                  path: '/test',
-                },
-              },
-            ],
-          },
-        ],
+        phases: [{
+          name: 'Load Phase',
+          duration: 300,
+          users: { start: 1, end: 1, rampUp: 'linear' },
+          operations: [{
+            name: 'test-operation',
+            weight: 1,
+            request: {
+              method: 'GET',
+              path: '/test'
+            }
+          }]
+        }]
       };
 
       const { scalabilityAnalysis } = await validator.runScalabilityTest(baseScenario);
@@ -237,23 +217,19 @@ describe('PerformanceValidator', () => {
     it('should run stress test to find breaking point', async () => {
       const baseScenario: LoadTestScenario = {
         name: 'Stress Test',
-        phases: [
-          {
-            name: 'Stress Phase',
-            duration: 200, // Short duration for testing
-            users: { start: 1, end: 1, rampUp: 'linear' },
-            operations: [
-              {
-                name: 'stress-operation',
-                weight: 1,
-                request: {
-                  method: 'GET',
-                  path: '/stress',
-                },
-              },
-            ],
-          },
-        ],
+        phases: [{
+          name: 'Stress Phase',
+          duration: 200, // Short duration for testing
+          users: { start: 1, end: 1, rampUp: 'linear' },
+          operations: [{
+            name: 'stress-operation',
+            weight: 1,
+            request: {
+              method: 'GET',
+              path: '/stress'
+            }
+          }]
+        }]
       };
 
       const stressResult = await validator.runStressTest(baseScenario);
@@ -276,23 +252,19 @@ describe('PerformanceValidator', () => {
     it('should identify degradation before breaking point', async () => {
       const baseScenario: LoadTestScenario = {
         name: 'Degradation Test',
-        phases: [
-          {
-            name: 'Load Phase',
-            duration: 100,
-            users: { start: 1, end: 1, rampUp: 'linear' },
-            operations: [
-              {
-                name: 'test-operation',
-                weight: 1,
-                request: {
-                  method: 'GET',
-                  path: '/test',
-                },
-              },
-            ],
-          },
-        ],
+        phases: [{
+          name: 'Load Phase',
+          duration: 100,
+          users: { start: 1, end: 1, rampUp: 'linear' },
+          operations: [{
+            name: 'test-operation',
+            weight: 1,
+            request: {
+              method: 'GET',
+              path: '/test'
+            }
+          }]
+        }]
       };
 
       const stressResult = await validator.runStressTest(baseScenario);
@@ -306,23 +278,19 @@ describe('PerformanceValidator', () => {
     it('should extract comprehensive metrics from test results', async () => {
       const scenario: LoadTestScenario = {
         name: 'Metrics Test',
-        phases: [
-          {
-            name: 'Load Phase',
-            duration: 500,
-            users: { start: 1, end: 2, rampUp: 'linear' },
-            operations: [
-              {
-                name: 'test-operation',
-                weight: 1,
-                request: {
-                  method: 'GET',
-                  path: '/test',
-                },
-              },
-            ],
-          },
-        ],
+        phases: [{
+          name: 'Load Phase',
+          duration: 500,
+          users: { start: 1, end: 2, rampUp: 'linear' },
+          operations: [{
+            name: 'test-operation',
+            weight: 1,
+            request: {
+              method: 'GET',
+              path: '/test'
+            }
+          }]
+        }]
       };
 
       const targets = {
@@ -334,7 +302,7 @@ describe('PerformanceValidator', () => {
         maxErrorRate: 0.1,
         maxMemoryUsage: 1024 * 1024 * 1024,
         maxCPUUsage: 80,
-        minConcurrentConnections: 1,
+        minConcurrentConnections: 1
       };
 
       const result = await validator.validatePerformance(scenario, targets);
@@ -379,23 +347,19 @@ describe('PerformanceValidator', () => {
     it('should validate all target types correctly', async () => {
       const scenario: LoadTestScenario = {
         name: 'Target Validation Test',
-        phases: [
-          {
-            name: 'Load Phase',
-            duration: 300,
-            users: { start: 1, end: 1, rampUp: 'linear' },
-            operations: [
-              {
-                name: 'test-operation',
-                weight: 1,
-                request: {
-                  method: 'GET',
-                  path: '/test',
-                },
-              },
-            ],
-          },
-        ],
+        phases: [{
+          name: 'Load Phase',
+          duration: 300,
+          users: { start: 1, end: 1, rampUp: 'linear' },
+          operations: [{
+            name: 'test-operation',
+            weight: 1,
+            request: {
+              method: 'GET',
+              path: '/test'
+            }
+          }]
+        }]
       };
 
       const targets = {
@@ -407,13 +371,13 @@ describe('PerformanceValidator', () => {
         maxErrorRate: 0.1,
         maxMemoryUsage: 1024 * 1024 * 1024,
         maxCPUUsage: 80,
-        minConcurrentConnections: 1,
+        minConcurrentConnections: 1
       };
 
       const result = await validator.validatePerformance(scenario, targets);
 
       // Check that all target types are validated
-      const targetNames = result.validations.map((v) => v.target);
+      const targetNames = result.validations.map(v => v.target);
       expect(targetNames).toContain('Average Response Time');
       expect(targetNames).toContain('P95 Response Time');
       expect(targetNames).toContain('P99 Response Time');
@@ -424,7 +388,7 @@ describe('PerformanceValidator', () => {
       expect(targetNames).toContain('CPU Usage');
 
       // Each validation should have required properties
-      result.validations.forEach((validation) => {
+      result.validations.forEach(validation => {
         expect(validation).toHaveProperty('target');
         expect(validation).toHaveProperty('expected');
         expect(validation).toHaveProperty('actual');
@@ -442,23 +406,19 @@ describe('PerformanceValidator', () => {
     it('should calculate deviation correctly', async () => {
       const scenario: LoadTestScenario = {
         name: 'Deviation Test',
-        phases: [
-          {
-            name: 'Load Phase',
-            duration: 200,
-            users: { start: 1, end: 1, rampUp: 'linear' },
-            operations: [
-              {
-                name: 'test-operation',
-                weight: 1,
-                request: {
-                  method: 'GET',
-                  path: '/test',
-                },
-              },
-            ],
-          },
-        ],
+        phases: [{
+          name: 'Load Phase',
+          duration: 200,
+          users: { start: 1, end: 1, rampUp: 'linear' },
+          operations: [{
+            name: 'test-operation',
+            weight: 1,
+            request: {
+              method: 'GET',
+              path: '/test'
+            }
+          }]
+        }]
       };
 
       const targets = {
@@ -470,14 +430,14 @@ describe('PerformanceValidator', () => {
         maxErrorRate: 0.1,
         maxMemoryUsage: 1024 * 1024 * 1024,
         maxCPUUsage: 80,
-        minConcurrentConnections: 1,
+        minConcurrentConnections: 1
       };
 
       const result = await validator.validatePerformance(scenario, targets);
 
       // Find response time validation
-      const responseTimeValidation = result.validations.find(
-        (v) => v.target === 'Average Response Time'
+      const responseTimeValidation = result.validations.find(v => 
+        v.target === 'Average Response Time'
       );
 
       if (responseTimeValidation && !responseTimeValidation.passed) {

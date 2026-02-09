@@ -237,11 +237,7 @@ export class AlertManager extends EventEmitter {
   /**
    * Evaluate a condition
    */
-  private evaluateCondition(
-    value: number,
-    operator: ComparisonOperator,
-    threshold: number
-  ): boolean {
+  private evaluateCondition(value: number, operator: ComparisonOperator, threshold: number): boolean {
     switch (operator) {
       case 'gt':
         return value > threshold;

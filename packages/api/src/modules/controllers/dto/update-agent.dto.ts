@@ -1,6 +1,6 @@
+import { IsString, IsOptional, IsEnum, IsArray } from 'class-validator';
 import type { UpdateAgentDto as IUpdateAgentDto } from '@the-new-fuse/types';
-import { AgentCapability, AgentType } from '@the-new-fuse/types';
-import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
+import { AgentType, AgentCapability } from '@the-new-fuse/types';
 
 export class UpdateAgentDto implements IUpdateAgentDto {
   @IsOptional()

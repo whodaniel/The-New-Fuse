@@ -4,6 +4,7 @@ import { test, expect } from '@playwright/test';
 const BASE_URL = process.env.E2E_BASE_URL || 'http://localhost:3000'; // Adjust port if needed
 
 test.describe('ADK Integration E2E Tests', () => {
+
   test('should successfully call an ADK tool via the bridge', async ({ page }) => {
     // This test assumes an API endpoint exposed by ADKController exists at /api/adk/call-tool
     // Adjust the endpoint and payload as necessary based on the actual implementation
@@ -56,4 +57,5 @@ test.describe('ADK Integration E2E Tests', () => {
 
   // Add more E2E tests for other ADK integration scenarios as needed
   // e.g., testing specific tools, authentication, complex workflows
+
 });

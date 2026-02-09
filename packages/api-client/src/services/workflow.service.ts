@@ -35,7 +35,7 @@ export enum WorkflowExecutionStatus {
   RUNNING = 'RUNNING',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED',
+  CANCELLED = 'CANCELLED'
 }
 
 /**
@@ -174,10 +174,7 @@ export class WorkflowService extends BaseService {
    * @param options Query options (page, limit, status, etc.)
    * @returns Promise with executions list
    */
-  async getExecutionsByWorkflowId(
-    workflowId: string,
-    options: Record<string, any> = {}
-  ): Promise<WorkflowExecution[]> {
+  async getExecutionsByWorkflowId(workflowId: string, options: Record<string, any> = {}): Promise<WorkflowExecution[]> {
     this.validateRequired({ workflowId }, ['workflowId']);
     const queryString = this.buildQueryString(options);
     return this.get<WorkflowExecution[]>(`/${workflowId}/executions${queryString}`);

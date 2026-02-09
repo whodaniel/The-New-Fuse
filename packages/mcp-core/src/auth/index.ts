@@ -4,32 +4,35 @@
 
 export { AuthenticationManager } from './AuthenticationManager';
 export type {
-  AuthAuditEvent,
-  AuthContext,
-  AuthManagerConfig,
-  AuthPolicy,
   AuthResult,
+  AuthContext,
   TokenInfo,
+  AuthPolicy,
+  AuthManagerConfig,
+  AuthAuditEvent
 } from './AuthenticationManager';
 
 export { RBACManager } from './RBACManager';
 export type {
-  AccessControlResult,
   Permission,
-  PolicyCondition,
-  RBACConfig,
-  ResourceAccessPolicy,
   Role,
+  ResourceAccessPolicy,
+  PolicyCondition,
+  AccessControlResult,
+  RBACConfig
 } from './RBACManager';
 
-export { MCPOperation, MCPResourceType, PermissionValidator } from './PermissionValidator';
-export type { PermissionValidationResult, ValidationContext } from './PermissionValidator';
-
-export { AuditCategory, AuditLogger, AuditSeverity, FileAuditStorage } from './AuditLogger';
+export { PermissionValidator, MCPOperation, MCPResourceType } from './PermissionValidator';
 export type {
-  AuditLoggerConfig,
-  AuditQueryFilter,
-  AuditStorageBackend,
-  AuditStorageStats,
+  PermissionValidationResult,
+  ValidationContext
+} from './PermissionValidator';
+
+export { AuditLogger, FileAuditStorage, AuditSeverity, AuditCategory } from './AuditLogger';
+export type {
   EnhancedAuditEvent,
+  AuditStorageBackend,
+  AuditQueryFilter,
+  AuditStorageStats,
+  AuditLoggerConfig
 } from './AuditLogger';

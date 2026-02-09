@@ -2,9 +2,9 @@
  * Tests for BuildMetricsCollector
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { BuildEventData, MemoryUsage } from '../types/index.js';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { BuildMetricsCollector } from './BuildMetricsCollector.js';
+import { BuildEventData, MemoryUsage } from '../types/index.js';
 
 describe('BuildMetricsCollector', () => {
   let collector: BuildMetricsCollector;
@@ -22,12 +22,12 @@ describe('BuildMetricsCollector', () => {
   describe('Collection Lifecycle', () => {
     it('should start and stop collection properly', async () => {
       expect(collector.getMetrics().startTime).toBe(0);
-
+      
       collector.startCollection();
       expect(collector.getMetrics().startTime).toBeGreaterThan(0);
-
-      await new Promise((resolve) => setTimeout(resolve, 10)); // Small delay
-
+      
+      await new Promise(resolve => setTimeout(resolve, 10)); // Small delay
+      
       collector.stopCollection();
       expect(collector.getMetrics().endTime).toBeGreaterThan(0);
       expect(collector.getMetrics().totalBuildTime).toBeGreaterThan(0);
@@ -39,7 +39,7 @@ describe('BuildMetricsCollector', () => {
       const startTime2 = collector.getMetrics().startTime;
       collector.startCollection(); // Second call should be ignored
       const startTime3 = collector.getMetrics().startTime;
-
+      
       expect(startTime1).toBe(0);
       expect(startTime2).toBeGreaterThan(0);
       expect(startTime3).toBe(startTime2); // Should not change
@@ -54,9 +54,9 @@ describe('BuildMetricsCollector', () => {
       collector.startCollection();
       collector.recordSuccessfulBuild('test-package', 1000);
       collector.stopCollection();
-
+      
       expect(collector.getMetrics().successfulBuilds).toBe(1);
-
+      
       // Start again should reset
       collector.startCollection();
       expect(collector.getMetrics().successfulBuilds).toBe(0);
@@ -72,11 +72,11 @@ describe('BuildMetricsCollector', () => {
       const event: BuildEventData = {
         type: 'build-started',
         timestamp: Date.now(),
-        payload: { test: 'data' },
+        payload: { test: 'data' }
       };
 
       collector.recordEvent(event);
-
+      
       const metrics = collector.getMetrics();
       expect(metrics.events).toHaveLength(2); // build-started from startCollection + our event
       expect(metrics.events[1]).toEqual(event);
@@ -86,16 +86,16 @@ describe('BuildMetricsCollector', () => {
       collector.recordEvent({
         type: 'stage-started',
         timestamp: Date.now(),
-        payload: { stageId: 'test-stage' },
+        payload: { stageId: 'test-stage' }
       });
 
       // Wait a bit to simulate stage duration
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise(resolve => setTimeout(resolve, 10));
 
       collector.recordEvent({
         type: 'stage-completed',
         timestamp: Date.now(),
-        payload: {},
+        payload: {}
       });
 
       const metrics = collector.getMetrics();
@@ -109,13 +109,13 @@ describe('BuildMetricsCollector', () => {
       collector.recordEvent({
         type: 'memory-threshold-exceeded',
         timestamp: Date.now(),
-        payload: { threshold: 80 },
+        payload: { threshold: 80 }
       });
 
       collector.recordEvent({
         type: 'memory-threshold-exceeded',
         timestamp: Date.now(),
-        payload: { threshold: 90 },
+        payload: { threshold: 90 }
       });
 
       const metrics = collector.getMetrics();
@@ -125,12 +125,12 @@ describe('BuildMetricsCollector', () => {
     it('should not record events when not collecting', () => {
       // Create a fresh collector for this test
       const freshCollector = new BuildMetricsCollector(100);
-
+      
       // Don't start collection, just try to record an event
       freshCollector.recordEvent({
         type: 'build-started',
         timestamp: Date.now(),
-        payload: {},
+        payload: {}
       });
 
       const metrics = freshCollector.getMetrics();
@@ -149,7 +149,7 @@ describe('BuildMetricsCollector', () => {
         current: 100,
         peak: 120,
         percentage: 50,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       };
 
       collector.recordMemorySnapshot(usage);
@@ -165,21 +165,21 @@ describe('BuildMetricsCollector', () => {
         current: 100,
         peak: 100,
         percentage: 50,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       collector.recordMemorySnapshot({
         current: 150,
         peak: 150,
         percentage: 75,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       collector.recordMemorySnapshot({
         current: 80,
         peak: 150,
         percentage: 40,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       const metrics = collector.getMetrics();
@@ -190,20 +190,20 @@ describe('BuildMetricsCollector', () => {
       collector.recordEvent({
         type: 'stage-started',
         timestamp: Date.now(),
-        payload: { stageId: 'memory-test-stage' },
+        payload: { stageId: 'memory-test-stage' }
       });
 
       collector.recordMemorySnapshot({
         current: 200,
         peak: 200,
         percentage: 80,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       collector.recordEvent({
         type: 'stage-completed',
         timestamp: Date.now(),
-        payload: {},
+        payload: {}
       });
 
       const metrics = collector.getMetrics();
@@ -212,8 +212,8 @@ describe('BuildMetricsCollector', () => {
 
     it('should start memory monitoring automatically', async () => {
       // Memory monitoring should start automatically with collection
-      await new Promise((resolve) => setTimeout(resolve, 150)); // Wait for monitoring interval
-
+      await new Promise(resolve => setTimeout(resolve, 150)); // Wait for monitoring interval
+      
       const metrics = collector.getMetrics();
       expect(metrics.memorySnapshots.length).toBeGreaterThan(0);
     });
@@ -237,14 +237,14 @@ describe('BuildMetricsCollector', () => {
       // Create a fresh collector for this test
       const freshCollector = new BuildMetricsCollector(100);
       freshCollector.startCollection();
-
+      
       freshCollector.recordFailedBuild('package-c', 'Compilation error');
       freshCollector.recordFailedBuild('package-d', 'Memory exhausted');
 
       const metrics = freshCollector.getMetrics();
       expect(metrics.successfulBuilds).toBe(0);
       expect(metrics.failedBuilds).toBe(2);
-
+      
       freshCollector.stopCollection();
     });
 
@@ -252,7 +252,7 @@ describe('BuildMetricsCollector', () => {
       collector.recordEvent({
         type: 'stage-started',
         timestamp: Date.now(),
-        payload: { stageId: 'package-stage' },
+        payload: { stageId: 'package-stage' }
       });
 
       collector.recordSuccessfulBuild('package-1', 1000);
@@ -261,7 +261,7 @@ describe('BuildMetricsCollector', () => {
       collector.recordEvent({
         type: 'stage-completed',
         timestamp: Date.now(),
-        payload: {},
+        payload: {}
       });
 
       const metrics = collector.getMetrics();
@@ -279,7 +279,7 @@ describe('BuildMetricsCollector', () => {
       collector.recordSuccessfulBuild('pkg-2', 2000);
       collector.recordFailedBuild('pkg-3', 'Error');
 
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 50));
       collector.stopCollection();
 
       const metrics = collector.getMetrics();
@@ -291,7 +291,7 @@ describe('BuildMetricsCollector', () => {
         current: 500,
         peak: 500,
         percentage: 50,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       collector.stopCollection();
@@ -306,14 +306,14 @@ describe('BuildMetricsCollector', () => {
         current: 100,
         peak: 100,
         percentage: 25,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       collector.recordMemorySnapshot({
         current: 200,
         peak: 200,
         percentage: 50,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       collector.stopCollection();
@@ -333,7 +333,7 @@ describe('BuildMetricsCollector', () => {
       collector.recordEvent({
         type: 'stage-started',
         timestamp: Date.now(),
-        payload: { stageId: 'frontend-stage' },
+        payload: { stageId: 'frontend-stage' }
       });
 
       collector.recordSuccessfulBuild('frontend-app', 2000);
@@ -341,20 +341,20 @@ describe('BuildMetricsCollector', () => {
         current: 150,
         peak: 150,
         percentage: 60,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       collector.recordEvent({
         type: 'stage-completed',
         timestamp: Date.now(),
-        payload: {},
+        payload: {}
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 50));
       collector.stopCollection();
 
       const report = collector.generateReport();
-
+      
       expect(report).toContain('Build Metrics Report');
       expect(report).toContain('Duration:');
       expect(report).toContain('Peak Memory Usage:');
@@ -368,7 +368,7 @@ describe('BuildMetricsCollector', () => {
 
     it('should handle empty metrics in report', () => {
       collector.stopCollection();
-
+      
       const report = collector.generateReport();
       expect(report).toContain('Successful Builds: 0');
       expect(report).toContain('Failed Builds: 0');
@@ -379,7 +379,7 @@ describe('BuildMetricsCollector', () => {
       collector.recordEvent({
         type: 'stage-started',
         timestamp: Date.now(),
-        payload: { stageId: 'failed-stage' },
+        payload: { stageId: 'failed-stage' }
       });
 
       collector.recordFailedBuild('broken-package', 'Syntax error');
@@ -387,7 +387,7 @@ describe('BuildMetricsCollector', () => {
       collector.recordEvent({
         type: 'build-failed',
         timestamp: Date.now(),
-        payload: { error: 'Stage failed due to compilation errors' },
+        payload: { error: 'Stage failed due to compilation errors' }
       });
 
       collector.stopCollection();
@@ -414,7 +414,7 @@ describe('BuildMetricsCollector', () => {
       collector.recordEvent({
         type: 'build-started',
         timestamp: Date.now(),
-        payload: {},
+        payload: {}
       });
       expect(eventSpy).toHaveBeenCalled();
 
@@ -427,14 +427,14 @@ describe('BuildMetricsCollector', () => {
     it('should return deep copy of metrics', () => {
       collector.startCollection();
       collector.recordSuccessfulBuild('test-pkg', 1000);
-
+      
       const metrics1 = collector.getMetrics();
       const metrics2 = collector.getMetrics();
-
+      
       // Should be equal but not the same object
       expect(metrics1).toEqual(metrics2);
       expect(metrics1).not.toBe(metrics2);
-
+      
       // Modifying returned metrics should not affect internal state
       metrics1.successfulBuilds = 999;
       expect(collector.getMetrics().successfulBuilds).toBe(1);

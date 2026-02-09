@@ -13,13 +13,13 @@ export enum TaskPriority {
   URGENT = 'URGENT',
 }
 
-export type TaskStatusType =
-  | 'pending'
-  | 'running'
-  | 'completed'
-  | 'failed'
-  | 'cancelled'
-  | 'scheduled'
+export type TaskStatusType = 
+  | 'pending' 
+  | 'running' 
+  | 'completed' 
+  | 'failed' 
+  | 'cancelled' 
+  | 'scheduled' 
   | 'in_progress';
 export interface Task {
   id: string;

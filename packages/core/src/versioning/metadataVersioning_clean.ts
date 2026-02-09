@@ -17,7 +17,7 @@ export class MetadataVersioning {
       version: `v${this.versions.length + 1}.0.0`,
       timestamp: new Date(),
       metadata: { ...metadata },
-      changes,
+      changes
     };
 
     this.versions.push(version);
@@ -26,7 +26,7 @@ export class MetadataVersioning {
   }
 
   getVersion(version: string): MetadataVersion | undefined {
-    return this.versions.find((v) => v.version === version);
+    return this.versions.find(v => v.version === version);
   }
 
   getLatestVersion(): MetadataVersion | undefined {
@@ -38,8 +38,8 @@ export class MetadataVersioning {
   }
 
   compareVersions(version1: string, version2: string): number {
-    const v1 = this.versions.findIndex((v) => v.version === version1);
-    const v2 = this.versions.findIndex((v) => v.version === version2);
+    const v1 = this.versions.findIndex(v => v.version === version1);
+    const v2 = this.versions.findIndex(v => v.version === version2);
 
     if (v1 === -1 || v2 === -1) {
       throw new Error('Version not found');

@@ -294,9 +294,7 @@ export class CommunicationBridge extends BaseBridge {
    */
   private sendToChannel(channelName: string, message: Message): void {
     const channel = this.channels.get(channelName);
-    if (!channel) {
-      return;
-    }
+    if (!channel) return;
 
     channel.messageCount++;
 

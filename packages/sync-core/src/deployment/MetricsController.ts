@@ -3,8 +3,8 @@
  * Metrics endpoints that integrate with existing monitoring infrastructure
  */
 
-import { Controller, Get, Logger, Query, Res } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Query, Logger, Res } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { Response } from 'express';
 import { SyncMetricsService } from './SyncMetricsService';
 
@@ -37,7 +37,7 @@ export class MetricsController {
       const metrics = await this.metricsService.getJsonMetrics();
       return {
         metrics,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to get JSON metrics', error);
@@ -53,7 +53,7 @@ export class MetricsController {
       const metrics = this.metricsService.getCurrentMetrics();
       return {
         metrics,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to get current metrics', error);
@@ -69,12 +69,12 @@ export class MetricsController {
     try {
       const hoursNum = hours ? parseInt(hours, 10) : 1;
       const history = this.metricsService.getMetricsHistory(hoursNum);
-
+      
       return {
         history,
         count: history.length,
         hours: hoursNum,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to get metrics history', error);
@@ -88,11 +88,11 @@ export class MetricsController {
   async getSpecificMetric(@Query('metricName') metricName: string) {
     try {
       const value = this.metricsService.getMetric(metricName);
-
+      
       return {
         metric: metricName,
         value,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error(`Failed to get metric ${metricName}`, error);
@@ -106,12 +106,12 @@ export class MetricsController {
   async getOperationMetrics() {
     try {
       const metrics = this.metricsService.getCurrentMetrics();
-
+      
       return {
         operations: metrics.operations,
         queue: metrics.queue,
         conflicts: metrics.conflicts,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to get operation metrics', error);
@@ -125,12 +125,12 @@ export class MetricsController {
   async getPerformanceMetrics() {
     try {
       const metrics = this.metricsService.getCurrentMetrics();
-
+      
       return {
         performance: metrics.performance,
         database: metrics.database,
         redis: metrics.redis,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to get performance metrics', error);
@@ -144,11 +144,11 @@ export class MetricsController {
   async getSystemMetrics() {
     try {
       const metrics = this.metricsService.getCurrentMetrics();
-
+      
       return {
         masterClock: metrics.masterClock,
         fileWatcher: metrics.fileWatcher,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to get system metrics', error);

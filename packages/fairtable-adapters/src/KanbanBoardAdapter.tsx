@@ -1,16 +1,16 @@
+import React, { useMemo, useCallback } from 'react';
 import { KanbanView } from '@the-new-fuse/fairtable-components';
-import {
-  AppState,
-  CellValue,
-  Column,
-  DataType,
-  KanbanViewOptions,
-  Row,
-  Table,
-  View,
+import { 
+  Table, 
+  View, 
+  Row, 
+  Column, 
+  AppState, 
+  KanbanViewOptions, 
+  DataType, 
   ViewType,
+  CellValue 
 } from '@the-new-fuse/fairtable-core';
-import React, { useCallback, useMemo } from 'react';
 
 // Legacy interfaces from feature-suggestions
 interface LegacyKanbanColumn {
@@ -37,7 +37,7 @@ interface LegacyKanbanBoardProps {
 /**
  * KanbanBoardAdapter - Provides backward compatibility for existing KanbanBoard usage
  * while using the new airtable-based KanbanView internally.
- *
+ * 
  * This adapter:
  * 1. Converts legacy data structures to airtable format
  * 2. Preserves existing component APIs and event handlers
@@ -48,15 +48,15 @@ const KanbanBoardAdapter: React.FC<LegacyKanbanBoardProps> = ({
   columns,
   onDragStart,
   onDragEnd,
-  onItemClick,
+  onItemClick
 }) => {
   // Show deprecation warning in development
   React.useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       console.warn(
         '🔄 [MIGRATION] KanbanBoardAdapter is being used. ' +
-          'Consider migrating to @the-new-fuse/airtable-components/KanbanView for better performance and features. ' +
-          'See migration guide: docs/migration/kanban-board.md'
+        'Consider migrating to @the-new-fuse/airtable-components/KanbanView for better performance and features. ' +
+        'See migration guide: docs/migration/kanban-board.md'
       );
     }
   }, []);
@@ -68,14 +68,14 @@ const KanbanBoardAdapter: React.FC<LegacyKanbanBoardProps> = ({
       id: 'title',
       name: 'Title',
       type: DataType.TEXT,
-      width: 200,
+      width: 200
     };
 
     const descriptionColumn: Column = {
       id: 'description',
       name: 'Description',
       type: DataType.LONG_TEXT,
-      width: 300,
+      width: 300
     };
 
     const priorityColumn: Column = {
@@ -87,8 +87,8 @@ const KanbanBoardAdapter: React.FC<LegacyKanbanBoardProps> = ({
         { id: 'LOW', name: 'Low', colorClass: 'bg-blue-100 text-blue-800' },
         { id: 'MEDIUM', name: 'Medium', colorClass: 'bg-yellow-100 text-yellow-800' },
         { id: 'HIGH', name: 'High', colorClass: 'bg-orange-100 text-orange-800' },
-        { id: 'CRITICAL', name: 'Critical', colorClass: 'bg-red-100 text-red-800' },
-      ],
+        { id: 'CRITICAL', name: 'Critical', colorClass: 'bg-red-100 text-red-800' }
+      ]
     };
 
     const statusColumn: Column = {
@@ -96,19 +96,19 @@ const KanbanBoardAdapter: React.FC<LegacyKanbanBoardProps> = ({
       name: 'Status',
       type: DataType.SINGLE_SELECT,
       width: 150,
-      options: columns.map((col) => ({
+      options: columns.map(col => ({
         id: col.id,
         name: col.title,
-        colorClass: 'bg-gray-100 text-gray-800',
-      })),
+        colorClass: 'bg-gray-100 text-gray-800'
+      }))
     };
 
     const tableColumns = [titleColumn, descriptionColumn, priorityColumn, statusColumn];
 
     // Convert legacy items to rows
     const rows: Row[] = [];
-    columns.forEach((column) => {
-      column.items.forEach((item) => {
+    columns.forEach(column => {
+      column.items.forEach(item => {
         rows.push({
           id: item.id,
           data: {
@@ -118,16 +118,16 @@ const KanbanBoardAdapter: React.FC<LegacyKanbanBoardProps> = ({
             status: column.id,
             // Preserve any additional properties
             ...Object.fromEntries(
-              Object.entries(item).filter(
-                ([key]) => !['id', 'title', 'description', 'priority'].includes(key)
+              Object.entries(item).filter(([key]) => 
+                !['id', 'title', 'description', 'priority'].includes(key)
               )
-            ),
+            )
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           parentId: null,
           depth: 0,
-          isCollapsed: false,
+          isCollapsed: false
         });
       });
     });
@@ -140,12 +140,12 @@ const KanbanBoardAdapter: React.FC<LegacyKanbanBoardProps> = ({
       rows,
       columnOrder: ['title', 'description', 'priority', 'status'],
       views: [],
-      activeViewId: 'kanban-view',
+      activeViewId: 'kanban-view'
     };
 
     // Create kanban view
     const kanbanViewOptions: KanbanViewOptions = {
-      groupByColumnId: 'status',
+      groupByColumnId: 'status'
     };
 
     const view: View = {
@@ -160,16 +160,16 @@ const KanbanBoardAdapter: React.FC<LegacyKanbanBoardProps> = ({
         title: true,
         description: true,
         priority: true,
-        status: false, // Hidden since it's used for grouping
+        status: false // Hidden since it's used for grouping
       },
-      viewSpecificOptions: kanbanViewOptions,
+      viewSpecificOptions: kanbanViewOptions
     };
 
     table.views = [view];
 
     const appState: AppState = {
       tables: [table],
-      activeTableId: table.id,
+      activeTableId: table.id
     };
 
     return {
@@ -177,29 +177,26 @@ const KanbanBoardAdapter: React.FC<LegacyKanbanBoardProps> = ({
       view,
       appState,
       columnsToDisplay: [titleColumn, descriptionColumn, priorityColumn],
-      rowsToDisplay: rows,
+      rowsToDisplay: rows
     };
   }, [columns]);
 
   // Convert airtable events back to legacy format
-  const handleUpdateCell = useCallback(
-    (rowId: string, columnId: string, value: CellValue) => {
-      if (columnId === 'status' && onDragEnd) {
-        // Find the original item and column
-        const sourceRow = rowsToDisplay.find((row) => row.id === rowId);
-        if (sourceRow) {
-          const legacyItem = convertRowToLegacyItem(sourceRow);
-          const originalColumnId = sourceRow.data.status as string;
-          const targetColumnId = value as string;
-
-          if (originalColumnId !== targetColumnId) {
-            onDragEnd(legacyItem, originalColumnId, targetColumnId);
-          }
+  const handleUpdateCell = useCallback((rowId: string, columnId: string, value: CellValue) => {
+    if (columnId === 'status' && onDragEnd) {
+      // Find the original item and column
+      const sourceRow = rowsToDisplay.find(row => row.id === rowId);
+      if (sourceRow) {
+        const legacyItem = convertRowToLegacyItem(sourceRow);
+        const originalColumnId = sourceRow.data.status as string;
+        const targetColumnId = value as string;
+        
+        if (originalColumnId !== targetColumnId) {
+          onDragEnd(legacyItem, originalColumnId, targetColumnId);
         }
       }
-    },
-    [rowsToDisplay, onDragEnd]
-  );
+    }
+  }, [rowsToDisplay, onDragEnd]);
 
   const handleOpenLinkRecordModal = useCallback(() => {
     // Not used in legacy kanban, but required by interface
@@ -218,7 +215,7 @@ const KanbanBoardAdapter: React.FC<LegacyKanbanBoardProps> = ({
       title: String(title || ''),
       description: String(description || ''),
       priority: priority as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL',
-      ...otherProps,
+      ...otherProps
     };
   };
 

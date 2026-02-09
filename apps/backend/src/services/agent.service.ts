@@ -27,8 +27,8 @@ export class AgentService {
   }
 
   async getAgentById(id: string, userId: string): Promise<any | null> {
-    const agent = await drizzleAgentRepository.findById(id, userId);
-    if (!agent) {
+    const agent = await drizzleAgentRepository.findById(id);
+    if (!agent || agent.userId !== userId) {
       return null;
     }
     return agent;
@@ -52,7 +52,7 @@ export class AgentService {
       ...data,
     };
 
-    return drizzleAgentRepository.update(id, userId, updateData);
+    return drizzleAgentRepository.update(id, updateData);
   }
 
   async deleteAgent(id: string, userId: string): Promise<any> {
@@ -60,7 +60,7 @@ export class AgentService {
     if (!agent) {
       throw new Error('Agent not found');
     }
-    await drizzleAgentRepository.hardDelete(id, userId);
+    await drizzleAgentRepository.hardDelete(id);
     return agent;
   }
 

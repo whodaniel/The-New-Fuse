@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { DatabaseService } from '../drizzle/drizzle.service.js';
+import { PrismaService } from '../prisma/prisma.service.js';
 import { Logger } from '../common/logger.service.js';
 
 const workflowSchema = z.object({
@@ -35,7 +35,7 @@ const agentSchema = z.object({
 @Injectable()
 export class SchemaValidationService {
   constructor(
-    private readonly drizzle: DatabaseService,
+    private readonly prisma: PrismaService,
     private readonly logger: Logger
   ) {}
 
@@ -122,7 +122,7 @@ export class SchemaValidationService {
 
   private async validateCapabilities(workflow: z.infer<typeof workflowSchema>): Promise<string[]> {
     const errors: string[] = [];
-    const existingCapabilities = await this.drizzle.capability.findMany({
+    const existingCapabilities = await this.prisma.capability.findMany({
       select: { name: true }
     });
     const capabilitySet = new Set(existingCapabilities.map(c => c.name));
@@ -140,7 +140,7 @@ export class SchemaValidationService {
 
   private async validateAgentCapabilities(agent: z.infer<typeof agentSchema>): Promise<string[]> {
     const errors: string[] = [];
-    const existingCapabilities = await this.drizzle.capability.findMany({
+    const existingCapabilities = await this.prisma.capability.findMany({
       select: { name: true }
     });
     const capabilitySet = new Set(existingCapabilities.map(c => c.name));

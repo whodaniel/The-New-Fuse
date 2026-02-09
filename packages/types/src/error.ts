@@ -21,7 +21,7 @@ export class CustomError extends Error {
       timestamp: new Date(),
       source: context.source || 'unknown',
       severity: context.severity || 'medium',
-      metadata: context.metadata || {},
+      metadata: context.metadata || {}
     };
   }
 }

@@ -1,18 +1,15 @@
 /**
  * Prompt Template Integration Service
- *
+ * 
  * Integrates the flywheel handoff system with existing PromptTemplateServiceImpl
  * for versioning, analytics, and template management.
- *
+ * 
  * Requirements: 4.2, 4.5
  */
 
-import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import {
-  EnhancedAgentHandoffTemplateService,
-  EnhancedHandoffTemplate,
-} from './EnhancedAgentHandoffTemplateService';
+import { EnhancedAgentHandoffTemplateService, EnhancedHandoffTemplate } from './EnhancedAgentHandoffTemplateService';
 import { PromptHandoffFlywheel } from './PromptHandoffFlywheel';
+import { SyncOrchestrator } from '../services/SyncOrchestrator';
 
 // Interface for existing PromptTemplateServiceImpl
 interface PromptTemplateServiceImpl {
@@ -25,16 +22,8 @@ interface PromptTemplateServiceImpl {
   getVersion(versionId: string): Promise<any>;
   setActiveVersion(templateId: string, versionId: string): Promise<any>;
   listVersions(templateId: string): Promise<any[]>;
-  compileTemplate(
-    templateId: string,
-    versionId?: string,
-    variables?: Record<string, any>
-  ): Promise<string>;
-  executeTemplate(
-    templateId: string,
-    versionId?: string,
-    variables?: Record<string, any>
-  ): Promise<any>;
+  compileTemplate(templateId: string, versionId?: string, variables?: Record<string, any>): Promise<string>;
+  executeTemplate(templateId: string, versionId?: string, variables?: Record<string, any>): Promise<any>;
   getTemplateAnalytics(templateId: string): Promise<any>;
   recordExecution(result: any): Promise<void>;
 }
@@ -101,7 +90,7 @@ export class PromptTemplateIntegration {
     }
 
     let baseTemplate;
-
+    
     if (options.createBaseTemplate || !handoffTemplate.baseTemplateId) {
       // Create corresponding base template
       baseTemplate = await this.promptTemplateService.createTemplate({
@@ -111,7 +100,7 @@ export class PromptTemplateIntegration {
         variables: handoffTemplate.variables,
         category: 'Handoff',
         tags: ['handoff', 'agent-communication', ...handoffTemplate.agentCapabilities],
-        isPublic: false,
+        isPublic: false
       });
 
       // Update handoff template with base reference
@@ -131,11 +120,11 @@ export class PromptTemplateIntegration {
       lastSyncAt: new Date(),
       syncMetadata: {
         versionMapping: {
-          [handoffTemplate.version]: baseTemplate.currentVersion,
+          [handoffTemplate.version]: baseTemplate.currentVersion
         },
         conflictResolution: options.conflictResolution || 'merge',
-        autoSync: options.autoSync !== false,
-      },
+        autoSync: options.autoSync !== false
+      }
     };
 
     this.integratedTemplates.set(handoffTemplateId, integrated);
@@ -144,7 +133,7 @@ export class PromptTemplateIntegration {
     await this.syncOrchestrator.syncGlobalData('template_integration', {
       action: 'integrate',
       templateId: handoffTemplateId,
-      integration: integrated,
+      integration: integrated
     });
 
     return handoffTemplateId;
@@ -173,6 +162,7 @@ export class PromptTemplateIntegration {
 
       integrated.syncStatus = 'synced';
       integrated.lastSyncAt = new Date();
+
     } catch (error) {
       integrated.syncStatus = 'error';
       throw error;
@@ -185,14 +175,17 @@ export class PromptTemplateIntegration {
     // Check if handoff template is newer
     if (handoffTemplate.updatedAt > baseTemplate.updatedAt) {
       // Create new version in base template
-      const newVersion = await this.promptTemplateService.createVersion(baseTemplate.id, {
-        version: this.getNextVersionNumber(baseTemplate.versions),
-        name: `Sync from handoff v${handoffTemplate.version}`,
-        content: handoffTemplate.content,
-        variables: handoffTemplate.variables,
-        isActive: true,
-        changelog: `Synchronized from handoff template at ${handoffTemplate.updatedAt.toISOString()}`,
-      });
+      const newVersion = await this.promptTemplateService.createVersion(
+        baseTemplate.id,
+        {
+          version: this.getNextVersionNumber(baseTemplate.versions),
+          name: `Sync from handoff v${handoffTemplate.version}`,
+          content: handoffTemplate.content,
+          variables: handoffTemplate.variables,
+          isActive: true,
+          changelog: `Synchronized from handoff template at ${handoffTemplate.updatedAt.toISOString()}`
+        }
+      );
 
       // Update version mapping
       integrated.syncMetadata.versionMapping[handoffTemplate.version] = newVersion.id;
@@ -207,7 +200,7 @@ export class PromptTemplateIntegration {
 
     // Get latest base template
     const latestBase = await this.promptTemplateService.getTemplate(baseTemplate.id);
-
+    
     if (latestBase.updatedAt > handoffTemplate.updatedAt) {
       // Update handoff template
       await this.handoffService.updateHandoffTemplate(
@@ -215,7 +208,7 @@ export class PromptTemplateIntegration {
         {
           content: latestBase.content || handoffTemplate.content,
           variables: { ...handoffTemplate.variables, ...latestBase.variables },
-          description: latestBase.description || handoffTemplate.description,
+          description: latestBase.description || handoffTemplate.description
         },
         [`Synchronized from base template v${latestBase.currentVersion}`]
       );
@@ -265,7 +258,7 @@ export class PromptTemplateIntegration {
           {
             targetAgentId: options.targetAgentId,
             preserveContext: true,
-            memoryIntegration: true,
+            memoryIntegration: true
           }
         );
 
@@ -274,6 +267,7 @@ export class PromptTemplateIntegration {
           handoffContextId = session.contexts[0].id;
           result = session.contexts[0].executionHistory[0]?.output;
         }
+
       } else {
         // Execute via base template service
         const baseResult = await this.promptTemplateService.executeTemplate(
@@ -298,9 +292,9 @@ export class PromptTemplateIntegration {
           processingTime: endTime.getTime() - startTime.getTime(),
           tokenUsage: result?.tokenUsage,
           contextPreservation: handoffContextId ? 95 : 0, // Simplified
-          handoffEfficiency: executionType === 'handoff' ? 90 : 0,
+          handoffEfficiency: executionType === 'handoff' ? 90 : 0
         },
-        variables,
+        variables
       };
 
       this.executionResults.push(executionResult);
@@ -309,6 +303,7 @@ export class PromptTemplateIntegration {
       await this.recordIntegratedExecution(executionResult);
 
       return executionResult;
+
     } catch (error) {
       const endTime = new Date();
       const executionResult: TemplateExecutionResult = {
@@ -321,9 +316,9 @@ export class PromptTemplateIntegration {
         success: false,
         error: error.message,
         metrics: {
-          processingTime: endTime.getTime() - startTime.getTime(),
+          processingTime: endTime.getTime() - startTime.getTime()
         },
-        variables,
+        variables
       };
 
       this.executionResults.push(executionResult);
@@ -356,9 +351,9 @@ export class PromptTemplateIntegration {
     );
 
     // Calculate combined metrics
-    const templateExecutions = this.executionResults.filter((e) => e.templateId === templateId);
-    const handoffExecutions = templateExecutions.filter((e) => e.executionType === 'handoff');
-    const directExecutions = templateExecutions.filter((e) => e.executionType === 'direct');
+    const templateExecutions = this.executionResults.filter(e => e.templateId === templateId);
+    const handoffExecutions = templateExecutions.filter(e => e.executionType === 'handoff');
+    const directExecutions = templateExecutions.filter(e => e.executionType === 'direct');
 
     const combinedMetrics = {
       totalExecutions: templateExecutions.length,
@@ -368,13 +363,13 @@ export class PromptTemplateIntegration {
       averageDirectTime: this.calculateAverageTime(directExecutions),
       handoffSuccessRate: this.calculateSuccessRate(handoffExecutions),
       directSuccessRate: this.calculateSuccessRate(directExecutions),
-      contextPreservationRate: this.calculateContextPreservation(handoffExecutions),
+      contextPreservationRate: this.calculateContextPreservation(handoffExecutions)
     };
 
     return {
       handoffAnalytics,
       baseAnalytics,
-      combinedMetrics,
+      combinedMetrics
     };
   }
 
@@ -395,15 +390,15 @@ export class PromptTemplateIntegration {
       case 'handoff_wins':
         await this.syncHandoffToBase(integrated);
         break;
-
+      
       case 'base_wins':
         await this.syncBaseToHandoff(integrated);
         break;
-
+      
       case 'merge':
         await this.mergeTemplates(integrated);
         break;
-
+      
       case 'manual':
         if (manualResolution) {
           await this.applyManualResolution(integrated, manualResolution);
@@ -417,7 +412,7 @@ export class PromptTemplateIntegration {
 
   private async mergeTemplates(integrated: IntegratedTemplate): Promise<void> {
     const { handoffTemplate, baseTemplate } = integrated;
-
+    
     // Simple merge strategy - can be enhanced
     const mergedContent = this.mergeContent(handoffTemplate.content, baseTemplate.content);
     const mergedVariables = { ...baseTemplate.variables, ...handoffTemplate.variables };
@@ -427,19 +422,22 @@ export class PromptTemplateIntegration {
       handoffTemplate.id,
       {
         content: mergedContent,
-        variables: mergedVariables,
+        variables: mergedVariables
       },
       ['Merged with base template']
     );
 
-    const newVersion = await this.promptTemplateService.createVersion(baseTemplate.id, {
-      version: this.getNextVersionNumber(baseTemplate.versions),
-      name: 'Merged with handoff template',
-      content: mergedContent,
-      variables: mergedVariables,
-      isActive: true,
-      changelog: 'Merged with handoff template',
-    });
+    const newVersion = await this.promptTemplateService.createVersion(
+      baseTemplate.id,
+      {
+        version: this.getNextVersionNumber(baseTemplate.versions),
+        name: 'Merged with handoff template',
+        content: mergedContent,
+        variables: mergedVariables,
+        isActive: true,
+        changelog: 'Merged with handoff template'
+      }
+    );
 
     await this.promptTemplateService.setActiveVersion(baseTemplate.id, newVersion.id);
   }
@@ -448,9 +446,11 @@ export class PromptTemplateIntegration {
     integrated: IntegratedTemplate,
     resolution: Partial<EnhancedHandoffTemplate>
   ): Promise<void> {
-    await this.handoffService.updateHandoffTemplate(integrated.handoffTemplate.id, resolution, [
-      'Manual conflict resolution applied',
-    ]);
+    await this.handoffService.updateHandoffTemplate(
+      integrated.handoffTemplate.id,
+      resolution,
+      ['Manual conflict resolution applied']
+    );
   }
 
   /**
@@ -465,20 +465,17 @@ export class PromptTemplateIntegration {
 
   private startPeriodicSync(): void {
     // Sync every 5 minutes
-    setInterval(
-      async () => {
-        for (const [templateId, integrated] of this.integratedTemplates.entries()) {
-          if (integrated.syncMetadata.autoSync) {
-            try {
-              await this.syncTemplate(templateId);
-            } catch (error) {
-              console.error(`Failed to sync template ${templateId}:`, error);
-            }
+    setInterval(async () => {
+      for (const [templateId, integrated] of this.integratedTemplates.entries()) {
+        if (integrated.syncMetadata.autoSync) {
+          try {
+            await this.syncTemplate(templateId);
+          } catch (error) {
+            console.error(`Failed to sync template ${templateId}:`, error);
           }
         }
-      },
-      5 * 60 * 1000
-    );
+      }
+    }, 5 * 60 * 1000);
   }
 
   private async handleRemoteTemplateUpdate(templateId: string): Promise<void> {
@@ -508,7 +505,7 @@ export class PromptTemplateIntegration {
         tokenUsage: result.metrics.tokenUsage,
         result: result.result,
         error: result.error,
-        variables: result.variables,
+        variables: result.variables
       });
     }
   }
@@ -524,14 +521,14 @@ export class PromptTemplateIntegration {
 
   private calculateSuccessRate(executions: TemplateExecutionResult[]): number {
     if (executions.length === 0) return 0;
-    const successful = executions.filter((e) => e.success).length;
+    const successful = executions.filter(e => e.success).length;
     return (successful / executions.length) * 100;
   }
 
   private calculateContextPreservation(executions: TemplateExecutionResult[]): number {
-    const withContext = executions.filter((e) => e.metrics.contextPreservation !== undefined);
+    const withContext = executions.filter(e => e.metrics.contextPreservation !== undefined);
     if (withContext.length === 0) return 0;
-
+    
     const total = withContext.reduce((sum, e) => sum + (e.metrics.contextPreservation || 0), 0);
     return total / withContext.length;
   }
@@ -542,7 +539,7 @@ export class PromptTemplateIntegration {
   }
 
   private getNextVersionNumber(versions: any[]): number {
-    return Math.max(...versions.map((v) => v.version || 0)) + 1;
+    return Math.max(...versions.map(v => v.version || 0)) + 1;
   }
 
   private incrementVersion(version: string): string {
@@ -567,6 +564,6 @@ export class PromptTemplateIntegration {
   }
 
   async getExecutionHistory(templateId: string): Promise<TemplateExecutionResult[]> {
-    return this.executionResults.filter((e) => e.templateId === templateId);
+    return this.executionResults.filter(e => e.templateId === templateId);
   }
 }

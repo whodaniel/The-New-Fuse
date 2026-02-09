@@ -3,16 +3,16 @@ import * as path from 'path';
 import { glob } from 'glob';
 import type { PackageInfo } from '../scanner/FileSystemScanner';
 
-export interface DrizzleModel {
+export interface PrismaModel {
   name: string;
-  fields: DrizzleField[];
-  relations: DrizzleRelation[];
+  fields: PrismaField[];
+  relations: PrismaRelation[];
   enums: string[];
   indexes: string[];
   location: string; // which schema file
 }
 
-export interface DrizzleField {
+export interface PrismaField {
   name: string;
   type: string;
   isOptional: boolean;
@@ -24,7 +24,7 @@ export interface DrizzleField {
   attributes: string[];
 }
 
-export interface DrizzleRelation {
+export interface PrismaRelation {
   name: string;
   type: string;
   relatedModel: string;
@@ -73,7 +73,7 @@ export interface UnusedDatabaseElement {
 }
 
 export interface DatabaseModelUsageReport {
-  schemas: DrizzleModel[];
+  schemas: PrismaModel[];
   modelUsage: ModelUsage[];
   unusedElements: UnusedDatabaseElement[];
   accessPatterns: DatabaseAccessPattern[];
@@ -109,8 +109,8 @@ export class DatabaseModelUsageAnalyzer {
   async analyzeDatabaseModelUsage(): Promise<DatabaseModelUsageReport> {
     console.log('Analyzing database model usage...');
 
-    // Step 1: Parse all Drizzle schemas
-    const schemas = await this.parseDrizzleSchemas();
+    // Step 1: Parse all Prisma schemas
+    const schemas = await this.parsePrismaSchemas();
     
     // Step 2: Scan codebase for database model usage
     const modelUsage = await this.scanModelUsage(schemas);
@@ -137,11 +137,11 @@ export class DatabaseModelUsageAnalyzer {
     };
   }
 
-  private async parseDrizzleSchemas(): Promise<DrizzleModel[]> {
-    const schemas: DrizzleModel[] = [];
+  private async parsePrismaSchemas(): Promise<PrismaModel[]> {
+    const schemas: PrismaModel[] = [];
     
-    // Find all Drizzle schema files
-    const schemaFiles = await glob('**/drizzle/schema.drizzle', {
+    // Find all Prisma schema files
+    const schemaFiles = await glob('**/prisma/schema.prisma', {
       cwd: this.rootPath,
       ignore: ['**/node_modules/**', '**/dist/**', '**/build/**']
     });
@@ -160,11 +160,11 @@ export class DatabaseModelUsageAnalyzer {
     return schemas;
   }
 
-  private parseSchemaContent(content: string, location: string): DrizzleModel[] {
-    const models: DrizzleModel[] = [];
+  private parseSchemaContent(content: string, location: string): PrismaModel[] {
+    const models: PrismaModel[] = [];
     const lines = content.split('\n');
     
-    let currentModel: Partial<DrizzleModel> | null = null;
+    let currentModel: Partial<PrismaModel> | null = null;
     let inModel = false;
     let braceCount = 0;
 
@@ -213,7 +213,7 @@ export class DatabaseModelUsageAnalyzer {
         
         // End of model
         if (braceCount === 0 && line.includes('}')) {
-          models.push(currentModel as DrizzleModel);
+          models.push(currentModel as PrismaModel);
           currentModel = null;
           inModel = false;
         }
@@ -223,7 +223,7 @@ export class DatabaseModelUsageAnalyzer {
     return models;
   }
 
-  private parseField(line: string): DrizzleField | null {
+  private parseField(line: string): PrismaField | null {
     const parts = line.trim().split(/\s+/);
     if (parts.length < 2) return null;
 
@@ -260,13 +260,13 @@ export class DatabaseModelUsageAnalyzer {
     };
   }
 
-  private isRelationField(field: DrizzleField): boolean {
+  private isRelationField(field: PrismaField): boolean {
     // Check if the field type is a custom type (likely a model)
     const primitiveTypes = ['String', 'Int', 'Float', 'Boolean', 'DateTime', 'Json', 'Decimal', 'Bytes'];
     return !primitiveTypes.includes(field.type) && !field.type.startsWith('enum');
   }
 
-  private parseRelation(field: DrizzleField, line: string): DrizzleRelation {
+  private parseRelation(field: PrismaField, line: string): PrismaRelation {
     const relationMatch = line.match(/@relation\(([^)]+)\)/);
     let relationName: string | undefined;
     
@@ -285,7 +285,7 @@ export class DatabaseModelUsageAnalyzer {
     };
   }
 
-  private async scanModelUsage(schemas: DrizzleModel[]): Promise<ModelUsage[]> {
+  private async scanModelUsage(schemas: PrismaModel[]): Promise<ModelUsage[]> {
     const modelUsage: ModelUsage[] = [];
     const modelNames = schemas.map(s => s.name);
     
@@ -347,14 +347,14 @@ export class DatabaseModelUsageAnalyzer {
       const line = lines[i];
       const lineNumber = i + 1;
       
-      // Look for Drizzle client operations
-      const drizzleOperations = [
+      // Look for Prisma client operations
+      const prismaOperations = [
         'create', 'findMany', 'findUnique', 'findFirst', 
         'update', 'updateMany', 'delete', 'deleteMany', 
         'upsert', 'count', 'aggregate', 'groupBy'
       ];
       
-      for (const operation of drizzleOperations) {
+      for (const operation of prismaOperations) {
         const pattern = new RegExp(`\\b${modelName.toLowerCase()}\\.${operation}\\b`, 'i');
         if (pattern.test(line)) {
           usage.usageCount++;
@@ -438,7 +438,7 @@ export class DatabaseModelUsageAnalyzer {
     return { fields, relations };
   }
 
-  private identifyUnusedElements(schemas: DrizzleModel[], modelUsage: ModelUsage[]): UnusedDatabaseElement[] {
+  private identifyUnusedElements(schemas: PrismaModel[], modelUsage: ModelUsage[]): UnusedDatabaseElement[] {
     const unusedElements: UnusedDatabaseElement[] = [];
     
     for (const schema of schemas) {
@@ -607,7 +607,7 @@ export class DatabaseModelUsageAnalyzer {
     };
   }
 
-  private generateSummary(schemas: DrizzleModel[], modelUsage: ModelUsage[], unusedElements: UnusedDatabaseElement[]): {
+  private generateSummary(schemas: PrismaModel[], modelUsage: ModelUsage[], unusedElements: UnusedDatabaseElement[]): {
     totalModels: number;
     usedModels: number;
     unusedModels: number;

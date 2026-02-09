@@ -10,15 +10,15 @@
 
 // Simulated Brand Configuration (TNF Design System)
 const brandConfig = {
-  primaryColor: '#6366f1', // Indigo
-  secondaryColor: '#8b5cf6', // Purple
-  accentColor: '#06b6d4', // Cyan
-  backgroundColor: '#0f172a', // Slate-900
-  textColor: '#f8fafc', // Slate-50
+  primaryColor: '#6366f1',      // Indigo
+  secondaryColor: '#8b5cf6',    // Purple
+  accentColor: '#06b6d4',       // Cyan
+  backgroundColor: '#0f172a',   // Slate-900
+  textColor: '#f8fafc',         // Slate-50
   fontFamily: "'Inter', sans-serif",
   borderRadius: '0.5rem',
   animationDuration: '200ms',
-  spacingUnit: 4,
+  spacingUnit: 4
 };
 
 // Sample components to analyze
@@ -41,7 +41,7 @@ export const Button = ({ children, variant = 'primary' }) => {
 
   return <button style={styles[variant]}>{children}</button>;
 };
-    `.trim(),
+    `.trim()
   },
   {
     path: 'apps/frontend/src/components/cards/FeatureCard.tsx',
@@ -67,7 +67,7 @@ export const FeatureCard = ({ title, description }) => {
     </div>
   );
 };
-    `.trim(),
+    `.trim()
   },
   {
     path: 'apps/frontend/src/components/layout/Sidebar.tsx',
@@ -97,8 +97,8 @@ export const Sidebar = ({ items }) => {
     </nav>
   );
 };
-    `.trim(),
-  },
+    `.trim()
+  }
 ];
 
 // Learning state for the agent
@@ -107,7 +107,7 @@ const learningState = {
   successfulFixes: 0,
   patternsLearned: [] as string[],
   promptEvolutions: 0,
-  currentPromptVersion: 1,
+  currentPromptVersion: 1
 };
 
 // Core prompt that evolves
@@ -154,9 +154,7 @@ function analyzeComponent(path: string, code: string): ComponentAnalysis {
     brandConfig.accentColor.toLowerCase(),
     brandConfig.backgroundColor.toLowerCase(),
     brandConfig.textColor.toLowerCase(),
-    '#ffffff',
-    '#1e293b',
-    '#94a3b8', // Common allowed variations
+    '#ffffff', '#1e293b', '#94a3b8' // Common allowed variations
   ];
 
   for (const color of hexColors) {
@@ -166,7 +164,7 @@ function analyzeComponent(path: string, code: string): ComponentAnalysis {
         severity: 'major',
         description: `Non-brand color detected: ${color}`,
         currentValue: color,
-        expectedValue: brandConfig.primaryColor,
+        expectedValue: brandConfig.primaryColor
       });
     }
   }
@@ -181,7 +179,7 @@ function analyzeComponent(path: string, code: string): ComponentAnalysis {
         severity: 'minor',
         description: 'Non-brand font detected',
         currentValue: match,
-        expectedValue: brandConfig.fontFamily,
+        expectedValue: brandConfig.fontFamily
       });
     }
   }
@@ -196,7 +194,7 @@ function analyzeComponent(path: string, code: string): ComponentAnalysis {
         severity: 'minor',
         description: `Spacing ${value}px not on ${brandConfig.spacingUnit}px grid`,
         currentValue: `${value}px`,
-        expectedValue: `${Math.round(value / brandConfig.spacingUnit) * brandConfig.spacingUnit}px`,
+        expectedValue: `${Math.round(value / brandConfig.spacingUnit) * brandConfig.spacingUnit}px`
       });
     }
   }
@@ -206,17 +204,16 @@ function analyzeComponent(path: string, code: string): ComponentAnalysis {
   for (const match of durationMatches) {
     const durationMatch = match.match(/(\d+(?:\.\d+)?)(ms|s)/);
     if (durationMatch) {
-      const duration =
-        durationMatch[2] === 's'
-          ? parseFloat(durationMatch[1]) * 1000
-          : parseFloat(durationMatch[1]);
+      const duration = durationMatch[2] === 's'
+        ? parseFloat(durationMatch[1]) * 1000
+        : parseFloat(durationMatch[1]);
       if (duration !== 200) {
         issues.push({
           type: 'animation',
           severity: 'minor',
           description: `Non-standard transition duration: ${duration}ms`,
           currentValue: `${duration}ms`,
-          expectedValue: brandConfig.animationDuration,
+          expectedValue: brandConfig.animationDuration
         });
       }
     }
@@ -230,7 +227,7 @@ function analyzeComponent(path: string, code: string): ComponentAnalysis {
       severity: 'minor',
       description: 'Border radius should use rem units',
       currentValue: match,
-      expectedValue: brandConfig.borderRadius,
+      expectedValue: brandConfig.borderRadius
     });
   }
 
@@ -244,14 +241,10 @@ function analyzeComponent(path: string, code: string): ComponentAnalysis {
 
   return {
     componentPath: path,
-    componentName:
-      path
-        .split('/')
-        .pop()
-        ?.replace(/\.tsx?$/, '') || 'Unknown',
+    componentName: path.split('/').pop()?.replace(/\.tsx?$/, '') || 'Unknown',
     issues,
     consistencyScore: Math.max(0, 100 - deductions),
-    timestamp: new Date(),
+    timestamp: new Date()
   };
 }
 
@@ -271,10 +264,7 @@ function evolvePrompt(): void {
   learningState.promptEvolutions++;
   learningState.currentPromptVersion++;
 
-  const newPatterns = learningState.patternsLearned
-    .slice(-3)
-    .map((p) => `- ${p}`)
-    .join('\n');
+  const newPatterns = learningState.patternsLearned.slice(-3).map(p => `- ${p}`).join('\n');
 
   corePrompt = `${corePrompt}
 
@@ -324,8 +314,7 @@ for (const component of sampleComponents) {
   const analysis = analyzeComponent(component.path, component.code);
   analyses.push(analysis);
 
-  const scoreEmoji =
-    analysis.consistencyScore >= 90 ? '✅' : analysis.consistencyScore >= 70 ? '⚠️' : '❌';
+  const scoreEmoji = analysis.consistencyScore >= 90 ? '✅' : analysis.consistencyScore >= 70 ? '⚠️' : '❌';
   console.log(`   ${scoreEmoji} Consistency Score: ${analysis.consistencyScore}%`);
 
   if (analysis.issues.length > 0) {
@@ -352,7 +341,7 @@ const patternsToLearn = [
   'Flag non-Inter/Outfit font families',
   'Identify spacing values not on 4px grid',
   'Check for non-200ms transition durations',
-  'Enforce 0.5rem border radius standard',
+  'Enforce 0.5rem border radius standard'
 ];
 
 console.log('🧠 Learning from analysis results...\n');

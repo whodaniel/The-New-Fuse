@@ -1,6 +1,6 @@
 /**
  * Cleanup Service for The New Fuse Framework
- *
+ * 
  * Manages cleanup of old tributary files after consolidation
  * Implements safe file removal with backup and rollback capabilities
  */
@@ -52,46 +52,46 @@ export class CleanupService {
         type: 'file',
         reason: 'Consolidated into RelayServer.ts',
         consolidatedInto: 'packages/relay-core/src/server/RelayServer.ts',
-        backupRequired: true,
+        backupRequired: true
       },
       {
-        path: 'packages/relay/enhanced-tnf-relay.js',
+        path: 'packages/relay/enhanced-tnf-relay.js', 
         type: 'file',
         reason: 'Consolidated into RelayServer.ts',
         consolidatedInto: 'packages/relay-core/src/server/RelayServer.ts',
-        backupRequired: true,
+        backupRequired: true
       },
       {
         path: 'packages/relay/basic-relay.js',
-        type: 'file',
+        type: 'file', 
         reason: 'Consolidated into RelayServer.ts',
         consolidatedInto: 'packages/relay-core/src/server/RelayServer.ts',
-        backupRequired: true,
+        backupRequired: true
       },
       {
         path: 'packages/relay/relay-adapter.js',
         type: 'file',
         reason: 'Consolidated into protocol adapters',
         consolidatedInto: 'packages/relay-core/src/protocols/',
-        backupRequired: true,
+        backupRequired: true
       },
       {
         path: 'packages/relay/message-bridge.js',
         type: 'file',
         reason: 'Consolidated into UnifiedBridge.ts',
         consolidatedInto: 'packages/relay-core/src/adapters/UnifiedBridge.ts',
-        backupRequired: true,
+        backupRequired: true
       },
       {
         path: 'packages/relay/scattered-transport-files/',
         type: 'directory',
         reason: 'Consolidated into unified transport system',
         consolidatedInto: 'packages/relay-core/src/transports/',
-        backupRequired: true,
-      },
+        backupRequired: true
+      }
     ];
 
-    relayTargets.forEach((target) => this.addCleanupTarget(target));
+    relayTargets.forEach(target => this.addCleanupTarget(target));
   }
 
   /**
@@ -101,18 +101,16 @@ export class CleanupService {
     success: boolean;
     cleaned: string[];
     backed_up: string[];
-    errors: Array<{ path: string; error: string }>;
+    errors: Array<{path: string, error: string}>;
   }> {
     const result = {
       success: true,
       cleaned: [] as string[],
       backed_up: [] as string[],
-      errors: [] as Array<{ path: string; error: string }>,
+      errors: [] as Array<{path: string, error: string}>
     };
 
-    this.logger.info(
-      `Starting cleanup of ${this.cleanupTargets.length} targets (dryRun: ${options.dryRun})`
-    );
+    this.logger.info(`Starting cleanup of ${this.cleanupTargets.length} targets (dryRun: ${options.dryRun})`);
 
     // Create backup directory if needed
     if (options.createBackups && !options.dryRun) {
@@ -122,7 +120,7 @@ export class CleanupService {
     for (const target of this.cleanupTargets) {
       try {
         const fullPath = path.resolve(this.workspaceRoot, target.path);
-
+        
         // Check if file exists
         const exists = await this.pathExists(fullPath);
         if (!exists) {
@@ -144,6 +142,7 @@ export class CleanupService {
         } else {
           this.logger.info(`[DRY RUN] Would clean up: ${target.path}`);
         }
+
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error);
         result.errors.push({ path: target.path, error: errorMsg });
@@ -152,20 +151,14 @@ export class CleanupService {
       }
     }
 
-    this.logger.info(
-      `Cleanup completed. Cleaned: ${result.cleaned.length}, Errors: ${result.errors.length}`
-    );
+    this.logger.info(`Cleanup completed. Cleaned: ${result.cleaned.length}, Errors: ${result.errors.length}`);
     return result;
   }
 
   /**
    * Create backup of file/directory
    */
-  private async createBackup(
-    sourcePath: string,
-    target: CleanupTarget,
-    backupDir: string
-  ): Promise<void> {
+  private async createBackup(sourcePath: string, target: CleanupTarget, backupDir: string): Promise<void> {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const basename = path.basename(sourcePath);
     const backupPath = path.join(backupDir, `${basename}_${timestamp}`);
@@ -183,7 +176,7 @@ export class CleanupService {
       backupTimestamp: timestamp,
       reason: target.reason,
       consolidatedInto: target.consolidatedInto,
-      type: target.type,
+      type: target.type
     };
     await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2));
 
@@ -250,9 +243,9 @@ export class CleanupService {
   } {
     return {
       totalTargets: this.cleanupTargets.length,
-      requiresBackup: this.cleanupTargets.filter((t) => t.backupRequired).length,
+      requiresBackup: this.cleanupTargets.filter(t => t.backupRequired).length,
       estimatedSpaceSaved: 'TBD', // Could calculate file sizes
-      targets: [...this.cleanupTargets],
+      targets: [...this.cleanupTargets]
     };
   }
 
@@ -263,20 +256,20 @@ export class CleanupService {
     try {
       // Find backup metadata
       const backupFiles = await fs.readdir(backupDir);
-      const metadataFile = backupFiles.find((f) => f.endsWith('.metadata.json'));
-
+      const metadataFile = backupFiles.find(f => f.endsWith('.metadata.json'));
+      
       if (!metadataFile) {
         throw new Error('No metadata file found for rollback');
       }
 
       const metadata = JSON.parse(await fs.readFile(path.join(backupDir, metadataFile), 'utf-8'));
-
+      
       if (metadata.originalPath !== targetOriginalPath) {
         throw new Error('Backup metadata does not match target path');
       }
 
       const backupPath = path.join(backupDir, metadataFile.replace('.metadata.json', ''));
-
+      
       // Restore from backup
       if (metadata.type === 'file') {
         await fs.copyFile(backupPath, targetOriginalPath);
@@ -287,9 +280,7 @@ export class CleanupService {
       this.logger.info(`Rollback successful: ${targetOriginalPath}`);
       return true;
     } catch (error) {
-      this.logger.error(
-        `Rollback failed: ${error instanceof Error ? error.message : String(error)}`
-      );
+      this.logger.error(`Rollback failed: ${error instanceof Error ? error.message : String(error)}`);
       return false;
     }
   }

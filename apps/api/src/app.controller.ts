@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('app')
 @Controller()
@@ -13,7 +13,7 @@ export class AppController {
     return {
       message: 'The New Fuse API is running',
       timestamp: new Date().toISOString(),
-      version: '1.0.0',
+      version: '1.0.0'
     };
   }
 
@@ -24,7 +24,7 @@ export class AppController {
     return {
       status: 'healthy',
       timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
+      uptime: process.uptime()
     };
   }
 }

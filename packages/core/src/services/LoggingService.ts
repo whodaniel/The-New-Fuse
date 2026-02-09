@@ -13,7 +13,7 @@ export interface LogEntry {
 @Injectable()
 export class LoggingService {
   private logger!: WinstonLogger;
-
+  
   constructor(private configService: ConfigService) {
     this.initializeWinston();
   }
@@ -21,35 +21,37 @@ export class LoggingService {
   private initializeWinston() {
     this.logger = createLogger({
       level: this.configService.get('LOG_LEVEL', 'info'),
-      format: format.combine(format.timestamp(), format.json()),
+      format: format.combine(
+        format.timestamp(),
+        format.json()
+      ),
       transports: [
         new transports.Console({
-          format: format.combine(format.colorize(), format.simple()),
+          format: format.combine(
+            format.colorize(),
+            format.simple()
+          )
         }),
         new transports.File({
           filename: 'error.log',
-          level: 'error',
+          level: 'error'
         }),
         new transports.File({
-          filename: 'combined.log',
-        }),
-      ],
+          filename: 'combined.log'
+        })
+      ]
     });
   }
 
-  async log(
-    level: 'debug' | 'info' | 'warn' | 'error',
-    message: string,
-    metadata?: Record<string, unknown>,
-  ): Promise<LogEntry> {
+  async log(level: 'debug' | 'info' | 'warn' | 'error', message: string, metadata?: Record<string, unknown>): Promise<LogEntry> {
     this.logger.log(level, message, metadata);
-
+    
     const logEntry: LogEntry = {
       id: this.generateId(),
       level,
       message,
       metadata,
-      timestamp: new Date(),
+      timestamp: new Date()
     };
     return logEntry;
   }

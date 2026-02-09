@@ -14,13 +14,13 @@ spec:
     privateKeySecretRef:
       name: letsencrypt-prod-private-key
     solvers:
-      - http01:
-          ingress:
-            class: nginx
-            podTemplate:
-              spec:
-                nodeSelector:
-                  "kubernetes.io/os": linux
+    - http01:
+        ingress:
+          class: nginx
+          podTemplate:
+            spec:
+              nodeSelector:
+                "kubernetes.io/os": linux
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -35,9 +35,9 @@ spec:
     privateKeySecretRef:
       name: letsencrypt-staging-private-key
     solvers:
-      - http01:
-          ingress:
-            class: nginx
+    - http01:
+        ingress:
+          class: nginx
 ---
 # Self-signed ClusterIssuer for development/internal services
 apiVersion: cert-manager.io/v1
@@ -64,12 +64,12 @@ spec:
     name: letsencrypt-prod
     kind: ClusterIssuer
   dnsNames:
-    - api.thenewfuse.com
-    - api-staging.thenewfuse.com
+  - api.thenewfuse.com
+  - api-staging.thenewfuse.com
   usages:
-    - digital signature
-    - key encipherment
-    - server auth
+  - digital signature
+  - key encipherment
+  - server auth
   duration: 2160h # 90 days
   renewBefore: 360h # 15 days
 ---
@@ -88,13 +88,13 @@ spec:
     name: letsencrypt-prod
     kind: ClusterIssuer
   dnsNames:
-    - app.thenewfuse.com
-    - www.thenewfuse.com
-    - thenewfuse.com
+  - app.thenewfuse.com
+  - www.thenewfuse.com
+  - thenewfuse.com
   usages:
-    - digital signature
-    - key encipherment
-    - server auth
+  - digital signature
+  - key encipherment
+  - server auth
   duration: 2160h # 90 days
   renewBefore: 360h # 15 days
 ---
@@ -113,12 +113,12 @@ spec:
     name: letsencrypt-prod
     kind: ClusterIssuer
   dnsNames:
-    - monitoring.thenewfuse.com
-    - grafana.thenewfuse.com
-    - prometheus.thenewfuse.com
+  - monitoring.thenewfuse.com
+  - grafana.thenewfuse.com
+  - prometheus.thenewfuse.com
   usages:
-    - digital signature
-    - key encipherment
-    - server auth
+  - digital signature
+  - key encipherment
+  - server auth
   duration: 2160h # 90 days
   renewBefore: 360h # 15 days

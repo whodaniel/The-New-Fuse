@@ -7,8 +7,7 @@ tags: rerender, derived-state, media-query, optimization
 
 ## Subscribe to Derived State
 
-Subscribe to derived boolean state instead of continuous values to reduce
-re-render frequency.
+Subscribe to derived boolean state instead of continuous values to reduce re-render frequency.
 
 **Incorrect (re-renders on every pixel change):**
 

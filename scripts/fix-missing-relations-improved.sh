@@ -4,14 +4,14 @@ set -e
 echo "🔧 Fixing missing relations in database schema"
 
 # 1. Determine which schema to use
-if [ -f "packages/database/drizzle/schema.drizzle" ]; then
-  echo "Using consolidated schema at packages/database/drizzle/schema.drizzle"
-  SCHEMA_PATH="packages/database/drizzle/schema.drizzle"
-  PRISMA_CMD="yarn workspace @the-new-fuse/database drizzle"
+if [ -f "packages/database/prisma/schema.prisma" ]; then
+  echo "Using consolidated schema at packages/database/prisma/schema.prisma"
+  SCHEMA_PATH="packages/database/prisma/schema.prisma"
+  PRISMA_CMD="yarn workspace @the-new-fuse/database prisma"
 else
-  echo "Using root schema at drizzle/schema.drizzle"
-  SCHEMA_PATH="drizzle/schema.drizzle"
-  PRISMA_CMD="yarn drizzle"
+  echo "Using root schema at prisma/schema.prisma"
+  SCHEMA_PATH="prisma/schema.prisma"
+  PRISMA_CMD="yarn prisma"
 fi
 
 # 2. First fix the Role enum issue if it exists
@@ -60,8 +60,8 @@ else
   else
     echo "Creating migration recovery SQL..."
     cat > ./scripts/migration-recovery.sql << EOF
--- Drop the _drizzle_migrations table to start fresh
-DROP TABLE IF EXISTS _drizzle_migrations;
+-- Drop the _prisma_migrations table to start fresh
+DROP TABLE IF EXISTS _prisma_migrations;
 
 -- Drop the enum type that might be causing issues
 DROP TYPE IF EXISTS "Role_new";
@@ -112,8 +112,8 @@ sed -i.bak 's/DROP TYPE "Role_old"/-- DROP TYPE "Role_old"/g' "$MIGRATION_FILE"
 echo "🔄 Applying the modified migration..."
 $PRISMA_CMD migrate deploy
 
-# 6. Generate Drizzle client
-echo "📦 Generating Drizzle client..."
+# 6. Generate Prisma client
+echo "📦 Generating Prisma client..."
 $PRISMA_CMD generate
 
 # 7. Test database connection
@@ -125,22 +125,22 @@ echo "🧪 Testing model accessibility..."
 TEST_FILE="test-models.ts"
 
 cat << EOF > $TEST_FILE
-import { DrizzleClient } from '@the-new-fuse/database/client'
-const drizzle = new DrizzleClient()
+import { PrismaClient } from '@the-new-fuse/database/client'
+const prisma = new PrismaClient()
 
 async function testModels() {
     try {
-        await drizzle.$connect()
+        await prisma.$connect()
         // Test a few key models
-        await drizzle.user.findMany({ take: 1 })
-        await drizzle.agent.findMany({ take: 1 })
-        await drizzle.feature.findMany({ take: 1 })
+        await prisma.user.findMany({ take: 1 })
+        await prisma.agent.findMany({ take: 1 })
+        await prisma.feature.findMany({ take: 1 })
         console.log('✅ All models accessible')
     } catch (error) {
         console.error('❌ Model access failed:', error)
         process.exit(1)
     } finally {
-        await drizzle.$disconnect()
+        await prisma.$disconnect()
     }
 }
 

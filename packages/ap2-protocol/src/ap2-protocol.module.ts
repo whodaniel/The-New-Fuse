@@ -1,7 +1,7 @@
-import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { Ap2ProtocolController } from './ap2-protocol.controller';
+import { HttpModule } from '@nestjs/axios';
 import { Ap2ProtocolService } from './ap2-protocol.service';
+import { Ap2ProtocolController } from './ap2-protocol.controller';
 
 @Module({
   imports: [HttpModule],

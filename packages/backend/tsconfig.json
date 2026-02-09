@@ -14,11 +14,19 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@the-new-fuse/*": ["../../packages/*/src"]
+      "@the-new-fuse/*": [
+        "../../packages/*/src"
+      ]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts"
+  ],
   "references": [
     {
       "path": "../../packages/types"

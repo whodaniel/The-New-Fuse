@@ -88,35 +88,22 @@ export class DirectorServiceProvider implements OnModuleInit {
         if (this.config.redisUrl) {
           const redactedUrl = this.config.redisUrl.replace(/:[^:@]+@/, ':***@');
           this.logger.log(`Connecting to Redis via URL: ${redactedUrl}`);
-          // CRITICAL: Use lazyConnect to prevent connection errors before handlers are attached
-          this.redis = new Redis(this.config.redisUrl, { lazyConnect: true });
+          this.redis = new Redis(this.config.redisUrl);
         } else {
           this.logger.log(
             `Connecting to Redis via Host: ${this.config.redisHost} (Password set: ${!!this.config.redisPassword})`
           );
-          // CRITICAL: Use lazyConnect to prevent connection errors before handlers are attached
           this.redis = new Redis({
             host: this.config.redisHost,
             port: this.config.redisPort,
             password: this.config.redisPassword,
-            lazyConnect: true,
           });
         }
 
-        // Attach error handler IMMEDIATELY after client creation to prevent unhandled error events
         this.redis.on('error', (err) => {
           this.logger.error('Redis error', err);
         });
-
-        // Now connect after handlers are attached
-        this.redis
-          .connect()
-          .then(() => {
-            this.logger.log('Redis connected for task discovery');
-          })
-          .catch((err) => {
-            this.logger.error(`Redis connection failed: ${err.message}`);
-          });
+        this.logger.log('Redis connected for task discovery');
       } catch (error) {
         this.logger.error('Failed to connect to Redis', error);
       }

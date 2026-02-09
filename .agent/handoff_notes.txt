@@ -1,42 +1,256 @@
-# Handoff Report: Browser Streaming Fix (Infrastructure & Code)
+Session Summary: Orchestration Framework Integration
 
-## 🚨 Critical Fix Applied: Server-Side Browser Binaries
-I found the root cause of the "Browser Streaming" failure. It was **NOT** a frontend issue.
-The **Backend** (running on Railway) was trying to launch a browser but failed because **Chromium was missing** from the Alpine Linux container.
+1. Achievements:
+   - Fixed TS2367 error in StallDetector (confirmed build passes).
+   - Implemented `ConversationStateMachine` in `packages/relay-core/src/orchestrator/conversation-state-machine.ts`.
+   - Integrated state machine into `TNFRelayServer`:
+     - Managers are created per-channel on first activity.
+     - Transitions from INITIALIZING -> EXECUTION on first user message.
+     - Activity records update the state machine (preventing stalls or recovering).
+     - Phase changes are broadcast to the channel as `system` messages (type: `CHANNEL_MESSAGE`).
+   - Defined `OrchestrationTask` protocol in `packages/relay-core/src/protocol/task-protocol.ts`.
 
-**Error Found:** `browserType.launch: Executable doesn't exist`
+2. Verification:
+   - `pnpm build` in `packages/relay-core` passes.
+   - `node test-orchestration.js` confirms receipt of "Conversation phase changed to: EXECUTION" message.
 
-### Actions Taken:
-1.  **Infrastructure Fix (`Dockerfile.railway`)**:
-    *   Added `chromium`, `nss`, `freetype`, etc., to the Alpine runner image.
-    *   Configured `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser` to tell Playwright where to find the system browser.
-    *   Set `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` to prevent build-time hangs.
+3. Next Steps (Phase 2 Continued):
+   - Implement `Task Dispatch`: Logic to accept `TASK_ASSIGN` messages and route them to agents.
+   - Implement `Subscription Registry`: As planned in `docs/implementation-plan-orchestration.md`.
+   - Update Chrome Extension to *display* these new system messages/tasks cleanly (currently they just appear as text).
 
-2.  **Code Resilience Fix (`packages/gemini-browser-skill/.../GeminiBrowserAutomation.ts`)**:
-    *   Removed the hard requirement for `channel: 'chrome'` (which requires Google Chrome and crashes on Alpine).
-    *   Updated the launch logic to respect the `executablePath` environment variable I set in the Dockerfile.
-    *   Forced `headless: true` when running on the server (detected via ENV var) to prevent X11 errors.
+4. Notes:
+   - The relay server must be running (`pnpm relay:start`) for any test.
+   - `StallDetector` and `ConversationStateMachine` run in parallel but cooperate (StallDetector emits recovery events, Relay updates StateMachine).
 
-## 🚀 Next Steps (User Action Required)
-**You MUST Redeploy the Backend Service on Railway** for these changes to take effect.
+---
 
-1.  Commit the changes I made.
-2.  Trigger a redeploy of the `backend` service (or `cloud-sandbox` if that's what `api-production-48f1` points to).
-3.  Once deployed, the `/api/browser-streaming/sessions` endpoint will successfully launch the now-installed Chromium.
+Session: January 16, 2026 - Fixes: Stall Detection & Broadcast Duplication
 
-## Verification
-After redeployment, run this command to verify:
-```bash
-curl -X POST https://api-production-48f1.up.railway.app/api/browser-streaming/sessions \
-  -H "Content-Type: application/json" \
-  -d '{"id": "test-1", "name": "Verification", "url": "https://google.com"}'
+## Problems Solved:
+1. **Premature Stall Detection**: System prompted "conversation stalled" before other agents joined.
+2. **Double Injection/Stuck Messages**: Messages were duplicated or stuck in input fields.
+3. **Race Conditions**: Parallel injection by FloatingPanel and ContentScript caused cutting-off.
+
+## Solutions Applied:
+1. **Stall Detector**:
+   - Updated `StallDetector.ts` to ignore conversations with < 2 participants.
+   - Increased stall threshold to 5 minutes in `standalone-relay.ts`.
+2. **Broadcast Injection**:
+   - Removed redundant `INJECT_MESSAGE` request from `FloatingPanel.ts`.
+   - Now ONLY `content/index.ts` handles injection (preventing double-typing race conditions).
+3. **Reliable Sending**:
+   - Enhanced `SimpleChatBridge.ts` with explicit `Enter` key event simulation.
+   - Added multiple fallback send strategies to fix "stuck" messages on Gemini.
+
+## Current Status:
+- Orchestrator sends "Greeting" -> No stall prompt (correct).
+- User/AI joins -> Stall detection active (correct).
+- Broadcast messages -> Injected ONCE into all tabs (correct).
+- **Streaming Injection**: Now QUEUES messages instead of blocking them if AI is streaming (Fixed "BLOCKED INJECTION").
+- **Queue Processing**: Automatically retries injection when streaming finishes.
+- **Connection Error**: Fixed `Receiving end does not exist` error in background script.
+- **Interruption Fix**: Restored 10s safety guard in `SimpleChatBridge` to ensure `isStreaming()` holds true during the gap between "Send" and "Spinner", preventing premature queue processing and "You stopped this response" errors.
+
+## Verification:
+- Relay rebuilt (`pnpm build` in relay-core).
+- Extension rebuilt (`npm run build:v5`).
+- **User must restart Relay and Reload Extension.**
+
+---
+
+Session: January 16, 2026 - FEDERATION FIX: Restoring Multi-Agent Communication
+
+## Problems Identified:
+1. **Overly Aggressive Self-Message Detection**: The partial string matching (`includes(split('-')[2])`) was incorrectly blocking external CLI agents like `orchestrator-cli` and `antigravity-agent`.
+2. **Message Drop Without SenderId**: Messages without explicit senderId were being dropped entirely, breaking CLI agent communication.
+3. **10-Second Sending Guard**: Too conservative; blocked fast multi-agent back-and-forth.
+4. **External Agent Check Too Restrictive**: Was blocking legitimate external sources.
+
+## Fixes Applied:
+1. **content/index.ts (isSelfMessage)**: Removed partial string matching - now only exact ID matches count as self-messages.
+2. **content/index.ts (isExternalAgent)**: Changed logic to only block 'You' and browser-prefixed agents, allowing CLI orchestrators through.
+3. **background/index.ts (senderId drop)**: Instead of dropping messages without senderId, now generates a timestamp-based fallback ID.
+4. **SimpleChatBridge.ts (_sendingGuard)**: Reduced from 10s to 3s for faster federation communication.
+
+## Verification Steps:
+1. Extension rebuilt: `cd apps/chrome-extension && npm run build:v5`
+2. **User must reload extension in Chrome:**
+   - Go to chrome://extensions
+   - Click refresh icon on "Fuse Connect" extension
+3. Restart relay if needed: `pnpm relay:start`
+4. Test with orchestrator: `node scripts/orchestrate_red.cjs`
+5. Test with agent: `node scripts/join_red_agent.cjs`
+
+## Expected Behavior (Restored):
+- Orchestrator sends task → Browser Agent receives it
+- AI tabs receive channel messages from external agents
+- AI responses broadcast to channel for other agents to see
+- No "self-injection loops" but external messages DO get injected
+
+---
+
+Session: January 16, 2026 (Continued) - MULTI-TAB REGISTRATION FIX
+
+## Problem Identified:
+**Second Gemini tab not registering as Page Agent**
+- When user opens two Gemini tabs in the same browser window, second tab fails to register
+- Error: `WebSocket connection to 'ws://localhost:3001/ws' failed: ERR_CONNECTION_REFUSED`
+- Root cause: If WebSocket isn't connected when `CHAT_DETECTED` fires, registration silently fails
+
+## Architecture Explanation:
+- Chrome extensions have ONE background service worker per browser profile
+- ONE WebSocket connection to relay (not per-tab, not per-window)
+- Each TAB registers as a "Page Agent" via the shared background
+- Multiple WINDOWS in the same profile share the same background
+
+## Fixes Applied:
+1. **background/index.ts (pendingPageAgents queue)**: Added queue for page agents that try to register before WebSocket is connected
+2. **background/index.ts (flushPendingPageAgents)**: New method called on WebSocket connection to register queued agents
+3. **background/index.ts (registerPageAgent)**: Now queues registration if WebSocket isn't ready
+
+## Verification Steps:
+1. Extension rebuilt: `cd apps/chrome-extension && npm run build:v5` ✅
+2. **Reload extension in Chrome**: chrome://extensions → refresh Fuse Connect
+3. Open two Gemini tabs
+4. Both should appear in Agents tab as separate "AI Chat (Gemini)" entries
+5. Messages should flow to both tabs
+
+---
+
+Session: January 16, 2026 (Continued) - CRITICAL MESSAGE ROUTING FIX
+
+## Problem Identified:
+**Messages from Tab 1 not being injected into Tab 2**
+
+Console logs showed:
 ```
-**Success Response:** `{"success": true, "session": { ... }}`
+[FuseConnect v6] 📨 Message received: {
+  from: 'browser-1768075989756-4vxxkkj7q',  // Always Browser Agent!
+  senderId: 'browser-1768075989756-4vxxkkj7q',
+  myAgentId: 'page-agent-478163357-62y4w',
+  isExternalAgent: false  // <-- WRONG! Should be TRUE
+}
+```
 
-## Technical Context for Next Agent
-- **Frontend**: Successfully verified to point to `https://api-production-48f1.up.railway.app/api`.
-- **Backend Code**: validated `GeminiBrowserAutomation.ts` handles the launch.
-- **Docker**: Confirmed `apps/cloud-sandbox` and `apps/backend` (via root Dockerfile) now have correct browser setup.
+**Root Cause:** The `isExternalAgent` check was:
+```typescript
+const isFromBrowserAgent = msg.from.startsWith('browser-');
+const isExternalAgent = ... && !isFromBrowserAgent;
+```
 
-**Note:** If `api-production-48f1` is actually `apps/cloud-sandbox` (Express) and NOT `apps/backend` (NestJS), check `apps/cloud-sandbox/Dockerfile.railway`. It uses `mcr.microsoft.com/playwright:v1.40.0-jammy` which **ALREADY WORKS**.
-*However*, since the error `browserType.launch: Executable doesn't exist` occurred, it implies the service IS running on Alpine (the root Dockerfile I fixed). Thus, my fix to `Dockerfile.railway` (the Alpine one) is the correct solution.
+This blocked ALL messages from Browser Agent, but **ALL messages from the relay come through Browser Agent**! The Browser Agent is the relay, not the original sender.
+
+## Fix Applied (content/index.ts):
+```typescript
+// BEFORE: Blocked all messages from browser-*
+const isFromBrowserAgent = msg.from?.startsWith('browser-');
+const isExternalAgent = msg.from !== 'You' && !isFromBrowserAgent && !isSelfMessage;
+
+// AFTER: Check the REAL sender in metadata, not the relay
+const isFromSelf = isSelfMessage || senderFromMetadata === this.pageAgentId;
+const isFromYou = msg.from === 'You';
+const isExternalAgent = !isFromYou && !isFromSelf;
+```
+
+## Expected Behavior Now:
+- Tab 1 (page-agent-AAA) sends a message
+- Background relays it with senderId: "page-agent-AAA"
+- Tab 2 (page-agent-BBB) receives it, sees senderId != myId → INJECT ✅
+- Tab 1 receives it back, sees senderId == myId → SKIP (no self-injection) ✅
+
+## Verification:
+1. Extension rebuilt: `cd apps/chrome-extension && npm run build:v5` ✅
+2. **Reload extension in Chrome**
+3. Open two Gemini tabs
+4. Tab 1 sends message - Tab 2 should receive and inject it
+
+---
+
+Session: January 16, 2026 (Continued) - ROOT CAUSE OF SELF-INJECTION LOOP FOUND!
+
+## Problem:
+**Tab 1 was injecting its own messages when they came back from the relay**
+
+Console logs showed:
+```
+[FuseConnect v6] ⏳ AI is streaming, QUEUING message for later injection: Tab 1, test 1, channel Red
+[FuseConnect v6] 🚀 Processing queued message: Tab 1, test 1, channel Red  // SELF-INJECTION!
+```
+
+And "You stopped this response" appeared because the same message was sent twice.
+
+## Root Cause Found:
+**FloatingPanel.myAgentId was being set to the BROWSER AGENT ID, not the PAGE AGENT ID!**
+
+The flow was:
+1. Content script calls `panel.setAgentId('page-agent-478163355-xxxx')` ✅
+2. FloatingPanel's `requestConnectionState()` calls `GET_STATE`
+3. Background responds with `agentId: this.agentId` (Browser Agent ID!)
+4. FloatingPanel sets `this.myAgentId = response.agentId` → **OVERWRITES the correct value!**
+
+Now when sending messages:
+- `metadata.senderId = 'browser-1768075989756-xxxx'` (Browser Agent ID, WRONG!)
+- When message comes back, `senderFromMetadata !== this.pageAgentId` → isExternalAgent = true → INJECT!
+
+## Fix Applied (FloatingPanel.ts):
+```typescript
+// BEFORE: Always overwrote
+this.myAgentId = response.agentId || null;
+
+// AFTER: Only use if not already set AND it's a page-agent ID
+if (!this.myAgentId && response.agentId?.startsWith('page-agent-')) {
+  this.myAgentId = response.agentId;
+}
+```
+
+## Verification:
+1. Extension rebuilt ✅
+2. **Reload extension in Chrome**
+3. Now FloatingPanel.myAgentId will correctly be `page-agent-XXXXX`
+4. Messages will have `metadata.senderId = 'page-agent-XXXXX'`
+5. Self-detection will work correctly
+
+---
+
+Session: January 16, 2026 (Final) - ✅ MULTI-TAB FEDERATION CONFIRMED WORKING!
+
+## Final Fix: SimpleChatBridge Multi-Send Bug
+
+**Problem:** SimpleChatBridge.sendMessage() was executing 4 send methods in sequence:
+1. Enter keydown on input
+2. Direct button.click()
+3. MouseEvent click
+4. Enter keydown on document
+
+ALL of these executed regardless of whether the first one worked, causing:
+- Messages sent multiple times
+- "You stopped this response" when Gemini was interrupted during generation
+
+**Fix Applied (SimpleChatBridge.ts):**
+- Added `inputWasCleared()` check after each send method
+- Return early as soon as one method succeeds
+- Only try next method if previous failed
+
+## Verification: ✅ SUCCESS!
+
+Multi-tab federation is now working:
+- Tab 1 sends message → Tab 2 receives and displays it
+- Tab 2 sends message → Tab 1 receives and displays it
+- No self-injection loops
+- Messages sent only once
+
+## Full Documentation Created:
+
+See: `.agent/MULTI_TAB_FEDERATION_DOCUMENTATION.md`
+
+Contains:
+- Complete architecture diagram
+- Message flow explanation
+- All bugs fixed with code snippets
+- Startup checklist
+- Troubleshooting guide
+- Console log reference
+
+---
+

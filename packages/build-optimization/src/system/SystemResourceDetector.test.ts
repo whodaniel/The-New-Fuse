@@ -2,7 +2,7 @@
  * Unit tests for SystemResourceDetector
  */
 
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { SystemResourceDetector } from './SystemResourceDetector.js';
 
 describe('SystemResourceDetector', () => {
@@ -84,7 +84,7 @@ describe('SystemResourceDetector', () => {
     it('should return boolean for resource check', () => {
       const result1 = detector.hasSufficientResources(100); // 100MB - should be available
       const result2 = detector.hasSufficientResources(999999); // 999GB - should not be available
-
+      
       expect(typeof result1).toBe('boolean');
       expect(typeof result2).toBe('boolean');
       expect(result1).toBe(true); // Small amount should be available
@@ -165,7 +165,7 @@ describe('SystemResourceDetector', () => {
 
       // Max heap should be less than total memory
       expect(limits.maxHeapSize).toBeLessThan(resources.totalMemory);
-
+      
       // Concurrency should be reasonable for the CPU count
       expect(limits.recommendedMaxConcurrency).toBeLessThanOrEqual(resources.cpuCores);
       expect(limits.recommendedMaxConcurrency).toBeGreaterThan(0);
@@ -182,16 +182,16 @@ describe('SystemResourceDetector', () => {
       // This test will pass regardless of actual CI state
       // since we're just testing the method returns a boolean
       const originalEnv = process.env.CI;
-
+      
       // Test with CI set
       process.env.CI = 'true';
       expect(detector.isRunningInCI()).toBe(true);
-
+      
       // Test with CI unset
       delete process.env.CI;
       const result = detector.isRunningInCI();
       expect(typeof result).toBe('boolean');
-
+      
       // Restore original
       if (originalEnv !== undefined) {
         process.env.CI = originalEnv;
@@ -225,11 +225,11 @@ describe('SystemResourceDetector', () => {
 
       // Concurrency should be reasonable for CPU count
       expect(recommendations.maxConcurrency).toBeLessThanOrEqual(resources.cpuCores);
-
+      
       // Memory threshold should be reasonable
       expect(recommendations.memoryThreshold).toBeGreaterThanOrEqual(50);
       expect(recommendations.memoryThreshold).toBeLessThanOrEqual(90);
-
+      
       // Stage size should be reasonable
       expect(recommendations.stageSize).toBeGreaterThanOrEqual(1);
       expect(recommendations.stageSize).toBeLessThanOrEqual(50);
@@ -237,17 +237,17 @@ describe('SystemResourceDetector', () => {
 
     it('should handle CI environment detection', () => {
       const originalCI = process.env.CI;
-
+      
       // Test CI environment
       process.env.CI = 'true';
       const ciRecommendations = detector.getEnvironmentRecommendations();
       expect(ciRecommendations.memoryThreshold).toBeLessThanOrEqual(80); // More conservative in CI
-
+      
       // Test local environment
       delete process.env.CI;
       const localRecommendations = detector.getEnvironmentRecommendations();
       expect(typeof localRecommendations.memoryThreshold).toBe('number');
-
+      
       // Restore original
       if (originalCI !== undefined) {
         process.env.CI = originalCI;

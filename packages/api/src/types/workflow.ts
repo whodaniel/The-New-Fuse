@@ -1,7 +1,7 @@
 export enum WorkflowExecutionStatus {
   RUNNING = 'running',
   COMPLETED = 'completed',
-  FAILED = 'failed',
+  FAILED = 'failed'
 }
 
 export interface WorkflowExecution {

@@ -2,39 +2,23 @@
  * Unit tests for Service Mesh Scaler
  */
 
-import { ScalingEvent, ServiceMeshProvider, ServiceScalingConfig } from './MCPServiceMesh';
-import { ScalingDecision, ServiceMeshScaler, ServiceMeshScalerConfig } from './ServiceMeshScaler';
+import { ServiceMeshScaler, ServiceMeshScalerConfig, ScalingDecision } from './ServiceMeshScaler';
+import { ServiceMeshProvider, ServiceScalingConfig, ScalingEvent } from './MCPServiceMesh';
 
 // Mock service mesh provider
 class MockServiceMeshProvider implements ServiceMeshProvider {
   name = 'mock-scaler';
   version = '1.0.0';
-
+  
   private services = new Map<string, any>();
   private available = true;
 
-  async registerService(): Promise<string> {
-    return 'mock-id';
-  }
+  async registerService(): Promise<string> { return 'mock-id'; }
   async unregisterService(): Promise<void> {}
-  async discoverServices(): Promise<any[]> {
-    return [];
-  }
-  async getServiceHealth() {
-    return {
-      serviceId: 'test',
-      status: 'online' as any,
-      uptime: 0,
-      responseTime: 0,
-      errorRate: 0,
-      lastCheck: new Date(),
-      score: 1,
-    };
-  }
+  async discoverServices(): Promise<any[]> { return []; }
+  async getServiceHealth() { return { serviceId: 'test', status: 'online' as any, uptime: 0, responseTime: 0, errorRate: 0, lastCheck: new Date(), score: 1 }; }
   async updateServiceHealth(): Promise<void> {}
-  async isAvailable(): Promise<boolean> {
-    return this.available;
-  }
+  async isAvailable(): Promise<boolean> { return this.available; }
 
   async configureScaling(serviceId: string, config: ServiceScalingConfig): Promise<void> {
     const service = this.services.get(serviceId) || {};
@@ -48,13 +32,11 @@ class MockServiceMeshProvider implements ServiceMeshProvider {
       throw new Error('Service not found');
     }
 
-    return (
-      service.scalingStatus || {
-        currentInstances: 2,
-        desiredInstances: 2,
-        scalingEvents: [],
-      }
-    );
+    return service.scalingStatus || {
+      currentInstances: 2,
+      desiredInstances: 2,
+      scalingEvents: []
+    };
   }
 
   async getServiceMetrics(serviceId: string) {
@@ -63,16 +45,14 @@ class MockServiceMeshProvider implements ServiceMeshProvider {
       throw new Error('Service not found');
     }
 
-    return (
-      service.metrics || {
-        serviceId,
-        requests: { total: 1000, successful: 950, failed: 50, rps: 10 },
-        responseTime: { average: 100, p50: 80, p95: 200, p99: 500 },
-        connections: { active: 5, total: 100, errors: 2 },
-        resources: { cpu: 0.5, memory: 0.6, networkIO: 1024 },
-        timestamp: new Date(),
-      }
-    );
+    return service.metrics || {
+      serviceId,
+      requests: { total: 1000, successful: 950, failed: 50, rps: 10 },
+      responseTime: { average: 100, p50: 80, p95: 200, p99: 500 },
+      connections: { active: 5, total: 100, errors: 2 },
+      resources: { cpu: 0.5, memory: 0.6, networkIO: 1024 },
+      timestamp: new Date()
+    };
   }
 
   // Test helpers
@@ -91,7 +71,7 @@ class MockServiceMeshProvider implements ServiceMeshProvider {
       connections: { active: 5, total: 100, errors: 2 },
       resources: { cpu: 0.5, memory: 0.6, networkIO: 1024 },
       timestamp: new Date(),
-      ...metrics,
+      ...metrics
     };
     this.services.set(serviceId, service);
   }
@@ -130,14 +110,14 @@ describe('ServiceMeshScaler', () => {
             metric: 'cpu',
             targetValue: 0.7,
             scaleUpThreshold: 0.8,
-            scaleDownThreshold: 0.5,
-          },
-        ],
+            scaleDownThreshold: 0.5
+          }
+        ]
       },
       enablePredictiveScaling: false,
       historyRetention: 3600,
       maxScalingOpsPerHour: 10,
-      enableNotifications: true,
+      enableNotifications: true
     };
 
     scaler = new ServiceMeshScaler(mockProvider, config);
@@ -228,9 +208,9 @@ describe('ServiceMeshScaler', () => {
             metric: 'memory',
             targetValue: 0.8,
             scaleUpThreshold: 0.9,
-            scaleDownThreshold: 0.6,
-          },
-        ],
+            scaleDownThreshold: 0.6
+          }
+        ]
       };
 
       const result = await scaler.addService('test-service', customConfig);
@@ -320,7 +300,7 @@ describe('ServiceMeshScaler', () => {
     it('should return list of managed services', async () => {
       mockProvider.addService('service-1');
       mockProvider.addService('service-2');
-
+      
       await scaler.addService('service-1');
       await scaler.addService('service-2');
 
@@ -336,7 +316,7 @@ describe('ServiceMeshScaler', () => {
     it('should return scaling statistics', async () => {
       mockProvider.addService('service-1');
       mockProvider.addService('service-2');
-
+      
       await scaler.addService('service-1');
       await scaler.addService('service-2');
 
@@ -367,7 +347,7 @@ describe('ServiceMeshScaler', () => {
 
     it('should recommend scale up when CPU is high', async () => {
       mockProvider.setServiceMetrics('test-service', {
-        resources: { cpu: 0.9, memory: 0.5, networkIO: 1024 }, // CPU above scale up threshold
+        resources: { cpu: 0.9, memory: 0.5, networkIO: 1024 } // CPU above scale up threshold
       });
 
       const decision = await scaler.evaluateService('test-service');
@@ -378,7 +358,7 @@ describe('ServiceMeshScaler', () => {
 
     it('should recommend scale down when CPU is low', async () => {
       mockProvider.setServiceMetrics('test-service', {
-        resources: { cpu: 0.3, memory: 0.5, networkIO: 1024 }, // CPU below scale down threshold
+        resources: { cpu: 0.3, memory: 0.5, networkIO: 1024 } // CPU below scale down threshold
       });
 
       const decision = await scaler.evaluateService('test-service');
@@ -389,7 +369,7 @@ describe('ServiceMeshScaler', () => {
 
     it('should recommend no action when metrics are within thresholds', async () => {
       mockProvider.setServiceMetrics('test-service', {
-        resources: { cpu: 0.6, memory: 0.5, networkIO: 1024 }, // CPU within normal range
+        resources: { cpu: 0.6, memory: 0.5, networkIO: 1024 } // CPU within normal range
       });
 
       const decision = await scaler.evaluateService('test-service');
@@ -398,9 +378,8 @@ describe('ServiceMeshScaler', () => {
     });
 
     it('should throw error for non-managed service', async () => {
-      await expect(scaler.evaluateService('non-managed-service')).rejects.toThrow(
-        'not under scaling management'
-      );
+      await expect(scaler.evaluateService('non-managed-service'))
+        .rejects.toThrow('not under scaling management');
     });
   });
 
@@ -410,7 +389,7 @@ describe('ServiceMeshScaler', () => {
       mockProvider.setScalingStatus('test-service', {
         currentInstances: 2,
         desiredInstances: 2,
-        scalingEvents: [],
+        scalingEvents: []
       });
       await scaler.addService('test-service');
     });
@@ -508,7 +487,7 @@ describe('ServiceMeshScaler', () => {
     it('should emit scaling-completed event when scaling occurs', (done) => {
       // Set high CPU to trigger scale up
       mockProvider.setServiceMetrics('test-service', {
-        resources: { cpu: 0.9, memory: 0.5, networkIO: 1024 },
+        resources: { cpu: 0.9, memory: 0.5, networkIO: 1024 }
       });
 
       scaler.on('scaling-completed', (serviceId: string, event: ScalingEvent) => {

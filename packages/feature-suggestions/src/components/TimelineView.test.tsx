@@ -1,6 +1,7 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { TimelineBranch, TimelineEvent, TimelineWorkflow } from '../types/timeline';
 import TimelineView from './TimelineView';
+import { TimelineEvent, TimelineBranch, TimelineWorkflow } from '../types/timeline';
 
 // Helper function to convert TimelineWorkflow from the timeline.ts file
 // to the format expected by the TimelineView component
@@ -15,30 +16,30 @@ const adaptWorkflowsForTimelineView = (
     status: string;
   }>;
 }> => {
-  return workflows.map((workflow) => ({
+  return workflows.map(workflow => ({
     id: workflow.id,
     name: workflow.name,
-    steps: workflow.steps.map((step) => ({
+    steps: workflow.steps.map(step => ({
       id: step.id,
       name: step.title, // Map 'title' to 'name'
-      status: typeof step.status === 'string' ? step.status : String(step.status),
-    })),
+      status: typeof step.status === 'string' ? step.status : String(step.status)
+    }))
   }));
 };
 
 jest.mock('@the-new-fuse/TimelineSlider', () => ({
   __esModule: true,
-  default: jest.fn(() => <div data-testid="timeline-slider" />),
+  default: jest.fn(() => <div data-testid="timeline-slider" />)
 }));
 
 jest.mock('@the-new-fuse/EventDetails', () => ({
   __esModule: true,
-  default: jest.fn(() => <div data-testid="event-details" />),
+  default: jest.fn(() => <div data-testid="event-details" />)
 }));
 
 jest.mock('@the-new-fuse/BranchSelector', () => ({
   __esModule: true,
-  default: jest.fn(() => <div data-testid="branch-selector" />),
+  default: jest.fn(() => <div data-testid="branch-selector" />)
 }));
 
 const mockEvents: TimelineEvent[] = [
@@ -46,8 +47,8 @@ const mockEvents: TimelineEvent[] = [
     id: '1',
     type: 'FEATURE',
     timestamp: '2025-01-01T00:00:00Z',
-    data: { title: 'Test Feature' },
-  },
+    data: { title: 'Test Feature' }
+  }
 ];
 
 const mockBranches: TimelineBranch[] = [
@@ -58,8 +59,8 @@ const mockBranches: TimelineBranch[] = [
     status: 'ACTIVE',
     events: ['1'],
     createdAt: '2025-01-01T00:00:00Z',
-    updatedAt: '2025-01-01T00:00:00Z',
-  },
+    updatedAt: '2025-01-01T00:00:00Z'
+  }
 ];
 
 const mockWorkflows: TimelineWorkflow[] = [
@@ -76,12 +77,12 @@ const mockWorkflows: TimelineWorkflow[] = [
         title: 'Step 1',
         description: 'First step',
         status: 'PENDING',
-        order: 1,
-      },
+        order: 1
+      }
     ],
     createdAt: '2025-01-01T00:00:00Z',
-    updatedAt: '2025-01-01T00:00:00Z',
-  },
+    updatedAt: '2025-01-01T00:00:00Z'
+  }
 ];
 
 describe('TimelineView', () => {

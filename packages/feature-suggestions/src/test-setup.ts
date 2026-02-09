@@ -9,9 +9,9 @@ jest.mock('@mui/material', () => {
     useTheme: jest.fn(() => ({
       palette: {
         background: {
-          paper: '#ffffff',
-        },
-      },
-    })),
+          paper: '#ffffff'
+        }
+      }
+    }))
   };
 });

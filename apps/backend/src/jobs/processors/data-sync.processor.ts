@@ -1,11 +1,12 @@
-import { OnQueueActive, OnQueueCompleted, OnQueueFailed, Process, Processor } from '@nestjs/bull';
+import { Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
-import { DatabaseService } from '@the-new-fuse/database';
-import axios from 'axios';
 import { Job } from 'bull';
-import { CacheService } from '../../cache/cache.service';
 import { QueueName } from '../constants/queue-names';
 import { DataSyncJobData } from '../interfaces/job-data.interface';
+import { DatabaseService } from '@the-new-fuse/database';
+import { CacheService } from '../../cache/cache.service';
+import axios from 'axios';
+import { sql } from 'drizzle-orm';
 
 /**
  * Data synchronization job processor
@@ -17,7 +18,7 @@ export class DataSyncProcessor {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly cacheService: CacheService
+    private readonly cacheService: CacheService,
   ) {}
 
   /**
@@ -26,7 +27,7 @@ export class DataSyncProcessor {
   @Process('sync-data')
   async handleSyncData(job: Job<DataSyncJobData>) {
     this.logger.log(
-      `Processing sync-data job ${job.id} from ${job.data.source} to ${job.data.destination}`
+      `Processing sync-data job ${job.id} from ${job.data.source} to ${job.data.destination}`,
     );
 
     try {
@@ -50,12 +51,7 @@ export class DataSyncProcessor {
       await job.progress(60);
 
       // Sync to destination
-      const syncResult = await this.syncToDestination(
-        destination,
-        transformedData,
-        syncType,
-        job.data
-      );
+      const syncResult = await this.syncToDestination(destination, transformedData, syncType, job.data);
 
       await job.progress(90);
 
@@ -74,7 +70,7 @@ export class DataSyncProcessor {
       };
 
       this.logger.log(
-        `Data sync completed. ${result.recordsSynced} records synced from ${source} to ${destination}`
+        `Data sync completed. ${result.recordsSynced} records synced from ${source} to ${destination}`,
       );
 
       return result;
@@ -99,22 +95,12 @@ export class DataSyncProcessor {
         modifiedAfter: lastSyncTime,
       };
 
-      const data = await this.fetchDataFromSource(
-        source,
-        job.data.entityType,
-        filters,
-        'incremental'
-      );
+      const data = await this.fetchDataFromSource(source, job.data.entityType, filters, 'incremental');
 
       await job.progress(50);
 
       const transformedData = await this.transformData(data, source, destination);
-      const syncResult = await this.syncToDestination(
-        destination,
-        transformedData,
-        'incremental',
-        job.data
-      );
+      const syncResult = await this.syncToDestination(destination, transformedData, 'incremental', job.data);
 
       await job.progress(100);
 
@@ -156,7 +142,7 @@ export class DataSyncProcessor {
     source: string,
     entityType?: string,
     filters?: Record<string, any>,
-    syncType?: string
+    syncType?: string,
   ) {
     this.logger.debug(`Fetching data from ${source} for entity ${entityType}`);
 
@@ -198,9 +184,7 @@ export class DataSyncProcessor {
     } else {
       // Try raw query if safe? No, too risky for generic input.
       // But we can support a few known types.
-      this.logger.warn(
-        `No specific repository found for ${entityType}, trying dynamic access or failing.`
-      );
+      this.logger.warn(`No specific repository found for ${entityType}, trying dynamic access or failing.`);
       throw new Error(`Entity type ${entityType} not supported for database fetch`);
     }
 
@@ -278,12 +262,7 @@ export class DataSyncProcessor {
   /**
    * Sync data to destination
    */
-  private async syncToDestination(
-    destination: string,
-    data: any,
-    syncType: string,
-    jobData?: DataSyncJobData
-  ) {
+  private async syncToDestination(destination: string, data: any, syncType: string, jobData?: DataSyncJobData) {
     this.logger.debug(`Syncing ${data.count} records to ${destination}`);
     const records = data.records || [];
 
@@ -303,39 +282,39 @@ export class DataSyncProcessor {
   }
 
   private async syncToDatabase(records: any[], entityType: string) {
-    if (!entityType) throw new Error('Entity type required for database destination');
+     if (!entityType) throw new Error('Entity type required for database destination');
 
-    const repo = (this.databaseService as any)[entityType];
-    if (!repo) throw new Error(`Repository for ${entityType} not found`);
+     const repo = (this.databaseService as any)[entityType];
+     if (!repo) throw new Error(`Repository for ${entityType} not found`);
 
-    let successCount = 0;
-    for (const record of records) {
-      // Assume create or update based on ID presence?
-      // Or just use create. Repos usually have create/update.
-      // This is generic, so we might try upsert if available, or just create and ignore conflicts?
-      // For simplicity in this generic processor, let's try create.
-      try {
-        // Check if record exists if ID is present
-        if (record.id && typeof repo.findById === 'function') {
-          const exists = await repo.findById(record.id);
-          if (exists && typeof repo.update === 'function') {
-            await repo.update(record.id, record);
-          } else if (typeof repo.create === 'function') {
-            await repo.create(record);
-          }
-        } else if (typeof repo.create === 'function') {
-          await repo.create(record);
+     let successCount = 0;
+     for (const record of records) {
+        // Assume create or update based on ID presence?
+        // Or just use create. Repos usually have create/update.
+        // This is generic, so we might try upsert if available, or just create and ignore conflicts?
+        // For simplicity in this generic processor, let's try create.
+        try {
+            // Check if record exists if ID is present
+            if (record.id && typeof repo.findById === 'function') {
+                const exists = await repo.findById(record.id);
+                if (exists && typeof repo.update === 'function') {
+                     await repo.update(record.id, record);
+                } else if (typeof repo.create === 'function') {
+                     await repo.create(record);
+                }
+            } else if (typeof repo.create === 'function') {
+                await repo.create(record);
+            }
+            successCount++;
+        } catch (e) {
+            this.logger.error(`Failed to sync record to database: ${e.message}`);
         }
-        successCount++;
-      } catch (e) {
-        this.logger.error(`Failed to sync record to database: ${e.message}`);
-      }
-    }
+     }
 
-    return {
-      recordCount: successCount,
-      success: successCount > 0 || records.length === 0,
-    };
+     return {
+        recordCount: successCount,
+        success: successCount > 0 || records.length === 0,
+     };
   }
 
   private async syncToRedis(records: any[], entityType: string, filters: any) {
@@ -344,16 +323,16 @@ export class DataSyncProcessor {
     const ttl = filters?.ttl;
 
     for (const record of records) {
-      const key = filters?.key || (record.id ? `${entityType}:${record.id}` : entityType);
-      if (key) {
-        await this.cacheService.set(key, record, ttl);
-        successCount++;
-      }
+        const key = filters?.key || (record.id ? `${entityType}:${record.id}` : entityType);
+        if (key) {
+            await this.cacheService.set(key, record, ttl);
+            successCount++;
+        }
     }
 
     return {
-      recordCount: successCount,
-      success: true,
+        recordCount: successCount,
+        success: true
     };
   }
 
@@ -364,14 +343,14 @@ export class DataSyncProcessor {
     // Batch or individual?
     // Let's do batch if records > 1
     try {
-      await axios.post(url, records);
-      return {
-        recordCount: records.length,
-        success: true,
-      };
+        await axios.post(url, records);
+        return {
+            recordCount: records.length,
+            success: true
+        };
     } catch (e) {
-      this.logger.error(`Failed to sync to API: ${e.message}`);
-      throw e;
+        this.logger.error(`Failed to sync to API: ${e.message}`);
+        throw e;
     }
   }
 
@@ -401,7 +380,9 @@ export class DataSyncProcessor {
    */
   @OnQueueCompleted()
   onCompleted(job: Job, result: any) {
-    this.logger.log(`Data sync job ${job.id} completed. Records synced: ${result.recordsSynced}`);
+    this.logger.log(
+      `Data sync job ${job.id} completed. Records synced: ${result.recordsSynced}`,
+    );
   }
 
   /**
@@ -411,7 +392,7 @@ export class DataSyncProcessor {
   onFailed(job: Job, error: Error) {
     this.logger.error(
       `Data sync job ${job.id} failed after ${job.attemptsMade} attempts. Error: ${error.message}`,
-      error.stack
+      error.stack,
     );
   }
 

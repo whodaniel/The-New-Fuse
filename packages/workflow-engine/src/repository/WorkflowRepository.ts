@@ -2,10 +2,10 @@
  * Workflow Repository - Persistence Layer for Unified Workflow Engine
  * 
  * Provides database operations for workflows and executions
- * Integrates with existing database schema and database structure
+ * Integrates with existing Prisma schema and database structure
  */
 
-// import { DatabaseService } from '@db/client';
+// import { PrismaClient } from '@prisma/client';
 import { Logger } from '@the-new-fuse/relay-core';
 import {
   UnifiedWorkflow,
@@ -25,13 +25,13 @@ export interface RepositoryConfig {
 }
 
 export class WorkflowRepository {
-  private db: any; // DatabaseService;
+  private prisma: any; // PrismaClient;
   private logger: Logger;
   private config: RepositoryConfig;
   private cache: Map<string, { data: any; timestamp: number }> = new Map();
 
-  constructor(db: any /* DatabaseService */, config: RepositoryConfig, logger: Logger) {
-    this.db = db;
+  constructor(prisma: any /* PrismaClient */, config: RepositoryConfig, logger: Logger) {
+    this.prisma = prisma;
     this.config = config;
     this.logger = logger;
 
@@ -44,7 +44,7 @@ export class WorkflowRepository {
    * Workflow CRUD operations
    */
   async createWorkflow(workflow: Omit<UnifiedWorkflow, 'id' | 'createdAt' | 'updatedAt'>): Promise<UnifiedWorkflow> {
-    const dbWorkflow = await this.db.workflow.create({
+    const dbWorkflow = await this.prisma.workflow.create({
       data: {
         name: workflow.name,
         description: workflow.description,
@@ -89,7 +89,7 @@ export class WorkflowRepository {
       }
     }
 
-    const dbWorkflow = await this.db.workflow.findUnique({
+    const dbWorkflow = await this.prisma.workflow.findUnique({
       where: { id },
       include: {
         agent: {
@@ -131,7 +131,7 @@ export class WorkflowRepository {
   }
 
   async updateWorkflow(id: string, updates: Partial<UnifiedWorkflow>): Promise<UnifiedWorkflow | null> {
-    const dbWorkflow = await this.db.workflow.update({
+    const dbWorkflow = await this.prisma.workflow.update({
       where: { id },
       data: {
         name: updates.name,
@@ -168,7 +168,7 @@ export class WorkflowRepository {
 
   async deleteWorkflow(id: string): Promise<boolean> {
     try {
-      await this.db.workflow.delete({
+      await this.prisma.workflow.delete({
         where: { id }
       });
       
@@ -223,7 +223,7 @@ export class WorkflowRepository {
     }
 
     const [workflows, total] = await Promise.all([
-      this.db.workflow.findMany({
+      this.prisma.workflow.findMany({
         where,
         include: {
           agent: {
@@ -245,7 +245,7 @@ export class WorkflowRepository {
         skip: query.offset || 0,
         take: query.limit || 50
       }),
-      this.db.workflow.count({ where })
+      this.prisma.workflow.count({ where })
     ]);
 
     return {
@@ -258,7 +258,7 @@ export class WorkflowRepository {
    * Execution operations
    */
   async createExecution(execution: Omit<WorkflowExecution, 'id' | 'createdAt' | 'updatedAt'>): Promise<WorkflowExecution> {
-    const dbExecution = await this.db.workflowExecution.create({
+    const dbExecution = await this.prisma.workflowExecution.create({
       data: {
         workflowId: execution.workflowId,
         status: execution.status,
@@ -274,7 +274,7 @@ export class WorkflowRepository {
   }
 
   async getExecution(id: string): Promise<WorkflowExecution | null> {
-    const dbExecution = await this.db.workflowExecution.findUnique({
+    const dbExecution = await this.prisma.workflowExecution.findUnique({
       where: { id },
       include: {
         workflow: {
@@ -295,7 +295,7 @@ export class WorkflowRepository {
   }
 
   async updateExecution(id: string, updates: Partial<WorkflowExecution>): Promise<WorkflowExecution | null> {
-    const dbExecution = await this.db.workflowExecution.update({
+    const dbExecution = await this.prisma.workflowExecution.update({
       where: { id },
       data: {
         status: updates.status,
@@ -347,7 +347,7 @@ export class WorkflowRepository {
     }
 
     const [executions, total] = await Promise.all([
-      this.db.workflowExecution.findMany({
+      this.prisma.workflowExecution.findMany({
         where,
         include: {
           workflow: {
@@ -361,7 +361,7 @@ export class WorkflowRepository {
         skip: query.offset || 0,
         take: query.limit || 50
       }),
-      this.db.workflowExecution.count({ where })
+      this.prisma.workflowExecution.count({ where })
     ]);
 
     return {
@@ -384,21 +384,21 @@ export class WorkflowRepository {
       failedExecutions,
       executionsByStatus
     ] = await Promise.all([
-      this.db.workflow.count(workflowId ? { where: { id: workflowId } } : {}),
-      this.db.workflow.count({
+      this.prisma.workflow.count(workflowId ? { where: { id: workflowId } } : {}),
+      this.prisma.workflow.count({
         where: {
           ...(workflowId && { id: workflowId }),
           status: WorkflowStatus.PUBLISHED
         }
       }),
-      this.db.workflowExecution.count({ where }),
-      this.db.workflowExecution.count({
+      this.prisma.workflowExecution.count({ where }),
+      this.prisma.workflowExecution.count({
         where: { ...where, status: WorkflowExecutionStatus.COMPLETED }
       }),
-      this.db.workflowExecution.count({
+      this.prisma.workflowExecution.count({
         where: { ...where, status: WorkflowExecutionStatus.FAILED }
       }),
-      this.db.workflowExecution.groupBy({
+      this.prisma.workflowExecution.groupBy({
         by: ['status'],
         where,
         _count: { id: true }
@@ -423,7 +423,7 @@ export class WorkflowRepository {
    * Bulk operations
    */
   async bulkUpdateWorkflowStatus(ids: string[], status: WorkflowStatus): Promise<number> {
-    const result = await this.db.workflow.updateMany({
+    const result = await this.prisma.workflow.updateMany({
       where: { id: { in: ids } },
       data: { status, updatedAt: new Date() }
     });
@@ -439,7 +439,7 @@ export class WorkflowRepository {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
-    const result = await this.db.workflowExecution.deleteMany({
+    const result = await this.prisma.workflowExecution.deleteMany({
       where: {
         startedAt: { lt: cutoffDate },
         status: { in: [WorkflowExecutionStatus.COMPLETED, WorkflowExecutionStatus.FAILED] }
@@ -609,7 +609,7 @@ export class WorkflowRepository {
 
   async healthCheck(): Promise<boolean> {
     try {
-      await this.db.$queryRaw`SELECT 1`;
+      await this.prisma.$queryRaw`SELECT 1`;
       return true;
     } catch (error) {
       this.logger.error(`Database health check failed: ${getErrorMessage(error)}`);

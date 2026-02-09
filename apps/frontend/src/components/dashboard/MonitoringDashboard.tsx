@@ -1,18 +1,24 @@
 // Monitoring Dashboard Component - Real-time system monitoring interface
 // Displays comprehensive system metrics, alerts, health checks, and performance analytics
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+
 
 import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Line,
   LineChart,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer,
+  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
 } from 'recharts';
 
 interface SystemMetrics {
@@ -147,27 +153,19 @@ const MonitoringDashboard: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'healthy':
-        return 'success';
-      case 'warning':
-        return 'warning';
-      case 'critical':
-        return 'error';
-      default:
-        return 'default';
+      case 'healthy': return 'success';
+      case 'warning': return 'warning';
+      case 'critical': return 'error';
+      default: return 'default';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'healthy':
-        return <CheckCircleIcon color="success" />;
-      case 'warning':
-        return <WarningIcon color="warning" />;
-      case 'critical':
-        return <ErrorIcon color="error" />;
-      default:
-        return <CheckCircleIcon />;
+      case 'healthy': return <CheckCircleIcon color="success" />;
+      case 'warning': return <WarningIcon color="warning" />;
+      case 'critical': return <ErrorIcon color="error" />;
+      default: return <CheckCircleIcon />;
     }
   };
 
@@ -187,7 +185,7 @@ const MonitoringDashboard: React.FC = () => {
   };
 
   const prepareChartData = (dataPoints: SystemMetrics[]) => {
-    return dataPoints.map((point) => ({
+    return dataPoints.map(point => ({
       timestamp: new Date(point.timestamp).toLocaleTimeString(),
       cpu: point.system.cpu,
       memory: point.system.memory,
@@ -220,7 +218,7 @@ const MonitoringDashboard: React.FC = () => {
   }
 
   const chartData = prepareChartData(dashboardData.historicalData.dataPoints);
-  const activeAlerts = dashboardData.alerts.filter((alert) => !alert.resolved);
+  const activeAlerts = dashboardData.alerts.filter(alert => !alert.resolved);
 
   return (
     <Box sx={{ p: 3 }}>
@@ -232,7 +230,10 @@ const MonitoringDashboard: React.FC = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <FormLabel
             control={
-              <Switch checked={autoRefresh} onChange={(e) => setAutoRefresh(e.target.checked)} />
+              <Switch
+                checked={autoRefresh}
+                onChange={(e) => setAutoRefresh(e.target.checked)}
+              />
             }
             label="Auto Refresh"
           />
@@ -268,7 +269,9 @@ const MonitoringDashboard: React.FC = () => {
               <Text variant="h6" color="textSecondary">
                 Uptime
               </Text>
-              <Text variant="h5">{formatUptime(dashboardData.overview.uptime)}</Text>
+              <Text variant="h5">
+                {formatUptime(dashboardData.overview.uptime)}
+              </Text>
             </CardBody>
           </Card>
         </SimpleGrid>
@@ -279,7 +282,9 @@ const MonitoringDashboard: React.FC = () => {
               <Text variant="h6" color="textSecondary">
                 Active Users
               </Text>
-              <Text variant="h5">{dashboardData.overview.totalUsers}</Text>
+              <Text variant="h5">
+                {dashboardData.overview.totalUsers}
+              </Text>
             </CardBody>
           </Card>
         </SimpleGrid>
@@ -290,7 +295,9 @@ const MonitoringDashboard: React.FC = () => {
               <Text variant="h6" color="textSecondary">
                 Active Agents
               </Text>
-              <Text variant="h5">{dashboardData.overview.activeAgents}</Text>
+              <Text variant="h5">
+                {dashboardData.overview.activeAgents}
+              </Text>
             </CardBody>
           </Card>
         </SimpleGrid>
@@ -301,7 +308,9 @@ const MonitoringDashboard: React.FC = () => {
               <Text variant="h6" color="textSecondary">
                 Workflows
               </Text>
-              <Text variant="h5">{dashboardData.overview.totalWorkflows}</Text>
+              <Text variant="h5">
+                {dashboardData.overview.totalWorkflows}
+              </Text>
             </CardBody>
           </Card>
         </SimpleGrid>
@@ -312,7 +321,9 @@ const MonitoringDashboard: React.FC = () => {
               <Text variant="h6" color="textSecondary">
                 System Load
               </Text>
-              <Text variant="h5">{dashboardData.overview.systemLoad.toFixed(1)}%</Text>
+              <Text variant="h5">
+                {dashboardData.overview.systemLoad.toFixed(1)}%
+              </Text>
             </CardBody>
           </Card>
         </SimpleGrid>
@@ -328,10 +339,13 @@ const MonitoringDashboard: React.FC = () => {
             {activeAlerts.slice(0, 5).map((alert) => (
               <Alert
                 key={alert.id}
-                severity={alert.type === 'critical' ? 'error' : (alert.type as any)}
+                severity={alert.type === 'critical' ? 'error' : alert.type as any}
                 sx={{ mb: 1 }}
                 action={
-                  <Button size="small" onClick={() => resolveAlert(alert.id)}>
+                  <Button
+                    size="small"
+                    onClick={() => resolveAlert(alert.id)}
+                  >
                     Resolve
                   </Button>
                 }
@@ -340,7 +354,11 @@ const MonitoringDashboard: React.FC = () => {
               </Alert>
             ))}
             {activeAlerts.length > 5 && (
-              <Button variant="outlined" onClick={() => setAlertDialogOpen(true)} sx={{ mt: 1 }}>
+              <Button
+                variant="outlined"
+                onClick={() => setAlertDialogOpen(true)}
+                sx={{ mt: 1 }}
+              >
                 View All Alerts ({activeAlerts.length})
               </Button>
             )}
@@ -474,14 +492,7 @@ const MonitoringDashboard: React.FC = () => {
               </Text>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Text variant="body2">Hit Rate</Text>
-                <Text
-                  variant="body2"
-                  color={
-                    dashboardData.realTimeMetrics.cache.hitRate > 90
-                      ? 'success.main'
-                      : 'warning.main'
-                  }
-                >
+                <Text variant="body2" color={dashboardData.realTimeMetrics.cache.hitRate > 90 ? 'success.main' : 'warning.main'}>
                   {dashboardData.realTimeMetrics.cache.hitRate.toFixed(1)}%
                 </Text>
               </Box>
@@ -509,28 +520,27 @@ const MonitoringDashboard: React.FC = () => {
               </Text>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Text variant="body2">Active Jobs</Text>
-                <Text variant="body2">{dashboardData.realTimeMetrics.queue.activeJobs}</Text>
+                <Text variant="body2">
+                  {dashboardData.realTimeMetrics.queue.activeJobs}
+                </Text>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Text variant="body2">Completed</Text>
-                <Text variant="body2">{dashboardData.realTimeMetrics.queue.completedJobs}</Text>
+                <Text variant="body2">
+                  {dashboardData.realTimeMetrics.queue.completedJobs}
+                </Text>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Text variant="body2">Failed</Text>
-                <Text
-                  variant="body2"
-                  color={
-                    dashboardData.realTimeMetrics.queue.failedJobs > 0
-                      ? 'error.main'
-                      : 'text.primary'
-                  }
-                >
+                <Text variant="body2" color={dashboardData.realTimeMetrics.queue.failedJobs > 0 ? 'error.main' : 'text.primary'}>
                   {dashboardData.realTimeMetrics.queue.failedJobs}
                 </Text>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Text variant="body2">Throughput</Text>
-                <Text variant="body2">{dashboardData.realTimeMetrics.queue.throughput}/min</Text>
+                <Text variant="body2">
+                  {dashboardData.realTimeMetrics.queue.throughput}/min
+                </Text>
               </Box>
             </CardBody>
           </Card>
@@ -598,14 +608,19 @@ const MonitoringDashboard: React.FC = () => {
                       <Tag
                         size="small"
                         label={alert.type}
-                        color={alert.type === 'critical' ? 'error' : (alert.type as any)}
+                        color={alert.type === 'critical' ? 'error' : alert.type as any}
                       />
                     </Td>
                     <Td>{alert.service}</Td>
                     <Td>{alert.message}</Td>
-                    <Td>{new Date(alert.timestamp).toLocaleString()}</Td>
                     <Td>
-                      <Button size="small" onClick={() => resolveAlert(alert.id)}>
+                      {new Date(alert.timestamp).toLocaleString()}
+                    </Td>
+                    <Td>
+                      <Button
+                        size="small"
+                        onClick={() => resolveAlert(alert.id)}
+                      >
                         Resolve
                       </Button>
                     </Td>

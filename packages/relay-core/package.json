@@ -8,7 +8,7 @@
     "tnf-relay": "./dist/standalone-relay.js"
   },
   "scripts": {
-    "build": "tsc --build",
+    "build": "tsc",
     "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
@@ -27,7 +27,6 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.2",
     "@the-new-fuse/database": "workspace:*",
-    "@the-new-fuse/extension-system": "workspace:*",
     "chokidar": "^4.0.3",
     "ethers": "^6.15.0",
     "express": "^4.22.0",

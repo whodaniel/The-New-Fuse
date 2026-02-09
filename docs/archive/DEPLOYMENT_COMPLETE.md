@@ -3,38 +3,29 @@
 ## ✅ What's Been Deployed
 
 ### 1. Railway Project
-
 - **Project Name**: the-new-fuse
-- **Dashboard URL**:
-  https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
+- **Dashboard URL**: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 - **Environment**: production
 
 ### 2. PostgreSQL Database ✅
-
 - **Status**: Provisioned and running
 - **Connection**: Automatically configured via `${{Postgres.DATABASE_URL}}`
-- **Internal Address**:
-  `postgresql://postgres:***@postgres.railway.internal:5432/railway`
+- **Internal Address**: `postgresql://postgres:***@postgres.railway.internal:5432/railway`
 
 ### 3. API Service ✅
-
 - **Status**: Building in Railway cloud
-- **Build Logs**:
-  [View API Build](https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/d40de71f-791b-4b84-97e7-23b18be289ba?id=dbc8dd5f-3ecb-48f6-9d29-7acc1e9b0de6)
+- **Build Logs**: [View API Build](https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/d40de71f-791b-4b84-97e7-23b18be289ba?id=dbc8dd5f-3ecb-48f6-9d29-7acc1e9b0de6)
 - **Service ID**: `d40de71f-791b-4b84-97e7-23b18be289ba`
 - **Dockerfile**: `apps/api/Dockerfile`
 - **Environment Variables**:
-  - ✅
-    `DATABASE_URL=postgresql://postgres:***@postgres.railway.internal:5432/railway`
+  - ✅ `DATABASE_URL=postgresql://postgres:***@postgres.railway.internal:5432/railway`
   - ✅ `JWT_SECRET=QP3TdsL7K+rBJe2YllN6+p8onci754qaaPnPcvppMW8=`
   - ✅ `NODE_ENV=production`
   - ✅ `PORT=3001`
 
 ### 4. Frontend Service ✅
-
 - **Status**: Building in Railway cloud
-- **Build Logs**:
-  [View Frontend Build](https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/c2e7324a-27a4-4128-86b4-45ff9c1deaf1?id=0f6c40a0-3bd3-4026-a905-f052630c151c)
+- **Build Logs**: [View Frontend Build](https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/c2e7324a-27a4-4128-86b4-45ff9c1deaf1?id=0f6c40a0-3bd3-4026-a905-f052630c151c)
 - **Service ID**: `c2e7324a-27a4-4128-86b4-45ff9c1deaf1`
 - **Dockerfile**: `apps/frontend/Dockerfile`
 - **Environment Variables**:
@@ -47,15 +38,11 @@
 ## 🚀 Current Status
 
 ### Build Progress
-
-The Docker images are currently building in Railway's cloud infrastructure. This
-process typically takes:
-
+The Docker images are currently building in Railway's cloud infrastructure. This process typically takes:
 - **First build**: 10-15 minutes
 - **Subsequent builds**: 3-5 minutes (with caching)
 
 ### What's Happening Now
-
 1. Railway is running your Dockerfiles in the cloud
 2. Building all dependencies from `pnpm-lock.yaml`
 3. Compiling TypeScript code
@@ -69,7 +56,6 @@ process typically takes:
 ### Step 1: Wait for Builds to Complete (10-15 min)
 
 Monitor build progress:
-
 ```bash
 # Check overall status
 railway status
@@ -104,13 +90,11 @@ cd .
 ```
 
 Example:
-
 ```bash
 ./configure-env-vars.sh https://api-production-xxxx.up.railway.app
 ```
 
 This will:
-
 - Add `VITE_API_URL` to the frontend service
 - Trigger a redeploy of the frontend with the new variable
 
@@ -133,7 +117,6 @@ railway logs --service frontend --live
 ## 🔧 Deployed Configuration
 
 ### API Service Configuration
-
 ```yaml
 Service: api
 Builder: DOCKERFILE
@@ -150,7 +133,6 @@ Environment:
 ```
 
 ### Frontend Service Configuration
-
 ```yaml
 Service: frontend
 Builder: DOCKERFILE
@@ -164,7 +146,6 @@ Environment:
 ```
 
 ### Database Configuration
-
 ```yaml
 Service: Postgres
 Type: PostgreSQL 15
@@ -176,18 +157,18 @@ Database: railway
 
 ## 📊 Deployment Timeline
 
-| Time    | Action                           | Status         |
-| ------- | -------------------------------- | -------------- |
-| 00:00   | Railway project created          | ✅ Complete    |
-| 00:01   | PostgreSQL provisioned           | ✅ Complete    |
-| 00:02   | API service created              | ✅ Complete    |
-| 00:03   | Frontend service created         | ✅ Complete    |
-| 00:04   | Code uploaded to Railway         | ✅ Complete    |
-| 00:05   | Environment variables configured | ✅ Complete    |
-| 00:06   | Docker builds started            | 🔄 In Progress |
-| +15 min | Builds complete, services live   | ⏳ Pending     |
-| +20 min | Frontend configured with API URL | ⏳ Pending     |
-| +25 min | Full stack tested and verified   | ⏳ Pending     |
+| Time | Action | Status |
+|------|--------|--------|
+| 00:00 | Railway project created | ✅ Complete |
+| 00:01 | PostgreSQL provisioned | ✅ Complete |
+| 00:02 | API service created | ✅ Complete |
+| 00:03 | Frontend service created | ✅ Complete |
+| 00:04 | Code uploaded to Railway | ✅ Complete |
+| 00:05 | Environment variables configured | ✅ Complete |
+| 00:06 | Docker builds started | 🔄 In Progress |
+| +15 min | Builds complete, services live | ⏳ Pending |
+| +20 min | Frontend configured with API URL | ⏳ Pending |
+| +25 min | Full stack tested and verified | ⏳ Pending |
 
 ---
 
@@ -210,7 +191,6 @@ Database: railway
 ### If Service Won't Start
 
 1. **Check runtime logs**:
-
    ```bash
    railway logs --service api
    ```
@@ -227,8 +207,7 @@ Database: railway
 
 ### Get Help
 
-- **Railway Dashboard**:
-  https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
+- **Railway Dashboard**: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 - **Railway Docs**: https://docs.railway.app
 - **Railway Discord**: https://discord.gg/railway
 - **Check deployment status**: `railway status`
@@ -317,12 +296,8 @@ open https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3
 
 ---
 
-**Next Action**: Wait for builds to complete, then follow Step 2 above to get
-the API URL and configure the frontend!
+**Next Action**: Wait for builds to complete, then follow Step 2 above to get the API URL and configure the frontend!
 
 Watch your builds here:
-
-- **API**:
-  https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/d40de71f-791b-4b84-97e7-23b18be289ba
-- **Frontend**:
-  https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/c2e7324a-27a4-4128-86b4-45ff9c1deaf1
+- **API**: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/d40de71f-791b-4b84-97e7-23b18be289ba
+- **Frontend**: https://railway.com/project/453fe77c-a788-412d-8507-bc3e7bc548c3/service/c2e7324a-27a4-4128-86b4-45ff9c1deaf1

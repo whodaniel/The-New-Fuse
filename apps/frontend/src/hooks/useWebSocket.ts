@@ -1,6 +1,6 @@
-import { useSession } from '@your-org/security/react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { webSocketService } from '../services/websocket.service';
+import { useSession } from '@your-org/security/react';
 
 interface WebSocketOptions {
   onConnected?: () => void;
@@ -70,7 +70,7 @@ export function useWebSocket(options: WebSocketOptions = {}): any {
       webSocketService.off('error', handleError);
       webSocketService.off('reconnect_attempt', handleReconnectAttempt);
       webSocketService.off('max_reconnect_attempts', handleMaxReconnectAttempts);
-
+      
       if (!optionsRef.current.autoReconnect) {
         webSocketService.disconnect();
       }
@@ -80,6 +80,6 @@ export function useWebSocket(options: WebSocketOptions = {}): any {
   return {
     subscribe,
     send,
-    disconnect: webSocketService.disconnect.bind(webSocketService),
+    disconnect: webSocketService.disconnect.bind(webSocketService)
   };
 }

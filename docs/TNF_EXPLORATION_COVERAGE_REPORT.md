@@ -205,20 +205,20 @@
 
 ### Contents Summary
 
-| Folder              | Children | Items Viewed                                   |
-| ------------------- | -------- | ---------------------------------------------- |
-| `ide-ide`           | 7        | -                                              |
-| `ide-ide-version2`  | 555      | ✅ `package.json`, `src-gen/backend/server.js` |
-| `ide-workspace`     | 3        | Listed only                                    |
-| `vscode-extension`  | 191      | ✅ `tnf_integration_docs.md` (846 lines!)      |
-| `scripts`           | 40       | ✅ `build-ide-final.sh`                        |
-| `browser-hub.1`     | 26       | Listed files only                              |
-| `local-ai-agents`   | 2        | ✅ `local-ai-claude code cli.json`             |
-| `tools`             | 10       | Listed only                                    |
-| `frontend-examples` | 1        | -                                              |
-| `frontend-theme`    | 1        | -                                              |
-| `2024-archive`      | 1        | -                                              |
-| `docs`              | 2        | -                                              |
+| Folder               | Children | Items Viewed                                   |
+| -------------------- | -------- | ---------------------------------------------- |
+| `ide-ide`          | 7        | -                                              |
+| `ide-ide-version2` | 555      | ✅ `package.json`, `src-gen/backend/server.js` |
+| `ide-workspace`    | 3        | Listed only                                    |
+| `vscode-extension`   | 191      | ✅ `tnf_integration_docs.md` (846 lines!)      |
+| `scripts`            | 40       | ✅ `build-ide-final.sh`                      |
+| `browser-hub.1`      | 26       | Listed files only                              |
+| `local-ai-agents`    | 2        | ✅ `local-ai-claude code cli.json`             |
+| `tools`              | 10       | Listed only                                    |
+| `frontend-examples`  | 1        | -                                              |
+| `frontend-theme`     | 1        | -                                              |
+| `2024-archive`       | 1        | -                                              |
+| `docs`               | 2        | -                                              |
 
 ---
 

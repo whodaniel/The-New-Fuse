@@ -74,10 +74,8 @@ async function loadSettings() {
   try {
     const saved = await chrome.storage.local.get(['settings']);
     if (saved.settings) {
-      document.getElementById('relayUrlInput').value =
-        saved.settings.relayUrl || 'ws://localhost:3001/ws';
-      document.getElementById('autoReconnectCheck').checked =
-        saved.settings.autoReconnect !== false;
+      document.getElementById('relayUrlInput').value = saved.settings.relayUrl || 'ws://localhost:3001/ws';
+      document.getElementById('autoReconnectCheck').checked = saved.settings.autoReconnect !== false;
       document.getElementById('debugModeCheck').checked = saved.settings.debugMode || false;
     }
   } catch (error) {

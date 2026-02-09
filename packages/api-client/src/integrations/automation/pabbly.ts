@@ -1,6 +1,6 @@
-import { ApiConfig } from '../../config/ApiConfig';
 import { ApiClient } from '../../core/ApiClient';
-import { AuthType, Integration, IntegrationConfig, IntegrationType } from '../types';
+import { ApiConfig } from '../../config/ApiConfig';
+import { Integration, IntegrationType, IntegrationConfig, AuthType } from '../types';
 
 /**
  * Pabbly Connect integration configuration
@@ -29,16 +29,16 @@ export class PabblyIntegration implements Integration {
   isEnabled: boolean = true;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
-
+  
   private apiClient: ApiClient;
-
+  
   constructor(config: PabblyConfig) {
     this.id = config.id;
     this.name = config.name;
     this.type = config.type;
     this.description = config.description;
     this.config = config;
-
+    
     // Default Pabbly capabilities
     this.capabilities = {
       actions: [
@@ -49,33 +49,37 @@ export class PabblyIntegration implements Integration {
         'list_apps',
         'get_workflow_execution_history',
         'get_app_actions',
-        'get_app_triggers',
+        'get_app_triggers'
       ],
-      triggers: ['workflow_started', 'workflow_completed', 'workflow_error'],
+      triggers: [
+        'workflow_started',
+        'workflow_completed',
+        'workflow_error'
+      ],
       supportsWebhooks: true,
-      supportsPolling: true,
+      supportsPolling: true
     };
-
+    
     // Create API client for Pabbly Connect
     const apiConfig: ApiConfig = {
       baseURL: config.baseUrl || '',
       headers: {
         ...config.defaultHeaders,
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     };
-
+    
     // Add API key if provided
     if (config.apiKey) {
       apiConfig.headers = {
         ...apiConfig.headers,
-        Authorization: `Bearer ${config.apiKey}`,
+        'Authorization': `Bearer ${config.apiKey}`
       };
     }
-
+    
     this.apiClient = new ApiClient(apiConfig);
   }
-
+  
   /**
    * Connect to Pabbly Connect API
    */
@@ -88,12 +92,10 @@ export class PabblyIntegration implements Integration {
       return true;
     } catch (error) {
       this.isConnected = false;
-      throw new Error(
-        `Failed to connect to Pabbly Connect: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to connect to Pabbly Connect: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Disconnect from Pabbly Connect
    */
@@ -102,7 +104,7 @@ export class PabblyIntegration implements Integration {
     this.updatedAt = new Date();
     return true;
   }
-
+  
   /**
    * Execute a Pabbly Connect action
    */
@@ -110,7 +112,7 @@ export class PabblyIntegration implements Integration {
     if (!this.isConnected) {
       throw new Error('Not connected to Pabbly Connect. Call connect() first.');
     }
-
+    
     switch (action) {
       case 'list_workflows':
         return this.listWorkflows();
@@ -132,7 +134,7 @@ export class PabblyIntegration implements Integration {
         throw new Error(`Unsupported Pabbly Connect action: ${action}`);
     }
   }
-
+  
   /**
    * List workflows
    */
@@ -140,12 +142,10 @@ export class PabblyIntegration implements Integration {
     try {
       return await this.apiClient.get('/api/workflows');
     } catch (error) {
-      throw new Error(
-        `Failed to list workflows: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to list workflows: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Execute a workflow
    */
@@ -153,12 +153,10 @@ export class PabblyIntegration implements Integration {
     try {
       return await this.apiClient.post(`/api/workflows/${workflowId}/execute`, data || {});
     } catch (error) {
-      throw new Error(
-        `Failed to execute workflow: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to execute workflow: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Get workflow details
    */
@@ -166,12 +164,10 @@ export class PabblyIntegration implements Integration {
     try {
       return await this.apiClient.get(`/api/workflows/${workflowId}`);
     } catch (error) {
-      throw new Error(
-        `Failed to get workflow details: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to get workflow details: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Create a workflow
    */
@@ -179,12 +175,10 @@ export class PabblyIntegration implements Integration {
     try {
       return await this.apiClient.post('/api/workflows', workflow);
     } catch (error) {
-      throw new Error(
-        `Failed to create workflow: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to create workflow: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * List available apps/integrations
    */
@@ -192,12 +186,10 @@ export class PabblyIntegration implements Integration {
     try {
       return await this.apiClient.get('/api/apps');
     } catch (error) {
-      throw new Error(
-        `Failed to list apps: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to list apps: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Get workflow execution history
    */
@@ -205,12 +197,10 @@ export class PabblyIntegration implements Integration {
     try {
       return await this.apiClient.get(`/api/workflows/${workflowId}/executions`);
     } catch (error) {
-      throw new Error(
-        `Failed to get workflow execution history: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to get workflow execution history: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Get available actions for an app
    */
@@ -218,12 +208,10 @@ export class PabblyIntegration implements Integration {
     try {
       return await this.apiClient.get(`/api/apps/${appId}/actions`);
     } catch (error) {
-      throw new Error(
-        `Failed to get app actions: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to get app actions: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Get available triggers for an app
    */
@@ -231,12 +219,10 @@ export class PabblyIntegration implements Integration {
     try {
       return await this.apiClient.get(`/api/apps/${appId}/triggers`);
     } catch (error) {
-      throw new Error(
-        `Failed to get app triggers: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to get app triggers: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Get metadata about this integration
    */
@@ -248,7 +234,7 @@ export class PabblyIntegration implements Integration {
       capabilities: this.capabilities,
       isConnected: this.isConnected,
       isEnabled: this.isEnabled,
-      lastUpdated: this.updatedAt,
+      lastUpdated: this.updatedAt
     };
   }
 }
@@ -267,11 +253,11 @@ export function createPabblyIntegration(config: Partial<PabblyConfig> = {}): Pab
     webhookSupport: true,
     apiVersion: 'v1',
     docUrl: 'https://connect.pabbly.com/api-docs',
-    logoUrl: 'https://pabbly.com/wp-content/uploads/2022/12/connect_blue_square_icon.svg',
+    logoUrl: 'https://pabbly.com/wp-content/uploads/2022/12/connect_blue_square_icon.svg'
   };
-
+  
   return new PabblyIntegration({
     ...defaultConfig,
-    ...config,
+    ...config
   });
 }

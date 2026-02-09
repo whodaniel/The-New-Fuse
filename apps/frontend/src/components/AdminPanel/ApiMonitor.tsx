@@ -1,5 +1,5 @@
-import { LoadingSpinner, StatCard } from '@/components/ui/design-system';
 import React from 'react';
+import { StatCard, LoadingSpinner } from '@/components/ui/design-system';
 import { useApiMetrics } from '../../hooks/useApiMetrics';
 
 export const ApiMonitor: React.FC = () => {
@@ -73,10 +73,7 @@ export const ApiMonitor: React.FC = () => {
           </thead>
           <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
             {endpoints.map((endpoint) => (
-              <tr
-                key={`${endpoint.method}-${endpoint.path}`}
-                className="hover:bg-neutral-50 dark:hover:bg-neutral-700"
-              >
+              <tr key={`${endpoint.method}-${endpoint.path}`} className="hover:bg-neutral-50 dark:hover:bg-neutral-700">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
                   {endpoint.path}
                 </td>
@@ -100,3 +97,4 @@ export const ApiMonitor: React.FC = () => {
     </div>
   );
 };
+

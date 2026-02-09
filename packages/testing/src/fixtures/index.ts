@@ -102,7 +102,9 @@ export const createPaginationFixture = (overrides: Partial<any> = {}) => ({
 export function createFixtureArray<T>(
   fixtureFactory: (overrides?: any) => T,
   count: number,
-  overrides?: Partial<T>,
+  overrides?: Partial<T>
 ): T[] {
-  return Array.from({ length: count }, (_, index) => fixtureFactory({ ...overrides, index }));
+  return Array.from({ length: count }, (_, index) =>
+    fixtureFactory({ ...overrides, index })
+  );
 }

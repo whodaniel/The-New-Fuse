@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../../../components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Switch } from '../../../components/ui/switch';
 
 interface DefaultSkillPanelProps {
@@ -15,11 +9,11 @@ interface DefaultSkillPanelProps {
   onToggle?: (enabled: boolean) => void;
 }
 
-const DefaultSkillPanel: React.FC<DefaultSkillPanelProps> = ({
-  title,
-  description,
+const DefaultSkillPanel: React.FC<DefaultSkillPanelProps> = ({ 
+  title, 
+  description, 
   enabled = false,
-  onToggle,
+  onToggle 
 }) => {
   return (
     <Card>
@@ -29,7 +23,10 @@ const DefaultSkillPanel: React.FC<DefaultSkillPanelProps> = ({
             <CardTitle className="text-base">{title}</CardTitle>
             {description && <CardDescription className="text-sm">{description}</CardDescription>}
           </div>
-          <Switch checked={enabled} onCheckedChange={onToggle} />
+          <Switch
+            checked={enabled}
+            onCheckedChange={onToggle}
+          />
         </div>
       </CardHeader>
       <CardContent>

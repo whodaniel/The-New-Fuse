@@ -161,7 +161,7 @@ test_database_connectivity() {
     return 0
   fi
 
-  if pnpm drizzle db execute --stdin <<< "SELECT 1;" &>/dev/null; then
+  if pnpm prisma db execute --stdin <<< "SELECT 1;" &>/dev/null; then
     log SUCCESS "Database is accessible"
     ((TESTS_PASSED++))
     return 0

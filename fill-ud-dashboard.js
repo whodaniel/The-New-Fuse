@@ -13,24 +13,19 @@ async function fillUDDashboard() {
   const browser = await puppeteer.launch({
     headless: false, // Show the browser so user can interact
     defaultViewport: null,
-    args: ['--start-maximized'],
+    args: ['--start-maximized']
   });
 
   try {
     const page = await browser.newPage();
 
     console.log('Navigating to Unstoppable Domains dashboard...');
-    console.log(
-      'URL: https://dashboard.auth.unstoppabledomains.com/clients/4d85fd51-b1a8-4e26-b97c-e67a5338a9da/branding'
-    );
+    console.log('URL: https://dashboard.auth.unstoppabledomains.com/clients/4d85fd51-b1a8-4e26-b97c-e67a5338a9da/branding');
 
-    await page.goto(
-      'https://dashboard.auth.unstoppabledomains.com/clients/4d85fd51-b1a8-4e26-b97c-e67a5338a9da/branding',
-      {
-        waitUntil: 'networkidle2',
-        timeout: 30000,
-      }
-    );
+    await page.goto('https://dashboard.auth.unstoppabledomains.com/clients/4d85fd51-b1a8-4e26-b97c-e67a5338a9da/branding', {
+      waitUntil: 'networkidle2',
+      timeout: 30000
+    });
 
     console.log('\n=== Page loaded ===\n');
 
@@ -60,11 +55,11 @@ async function fillUDDashboard() {
 
     const inputs = await page.evaluate(() => {
       const allInputs = Array.from(document.querySelectorAll('input, textarea'));
-      return allInputs.map((input) => ({
+      return allInputs.map(input => ({
         type: input.type,
         name: input.name || input.id || 'unnamed',
         placeholder: input.placeholder || '',
-        value: input.value || '',
+        value: input.value || ''
       }));
     });
 
@@ -93,6 +88,7 @@ async function fillUDDashboard() {
 
     // Keep browser open indefinitely
     await new Promise(() => {});
+
   } catch (error) {
     console.error('Error:', error.message);
     console.log('\nIf you see authentication errors, please:');

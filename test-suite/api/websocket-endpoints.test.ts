@@ -4,7 +4,7 @@ import { getAuthToken, setupTestApp, cleanupTestData } from '../test-utils/test-
 import { WebSocketGateway } from '../../../apps/api/src/gateways/websocket.gateway';
 import { WebSocketService } from '../../../apps/api/src/services/websocket.service';
 import { AuthService } from '../../../apps/api/src/services/auth.service';
-import { DatabaseService } from '../../../apps/api/src/services/db.service';
+import { PrismaService } from '../../../apps/api/src/services/prisma.service';
 import { Server as SocketIOServer, Client as SocketIOClient } from 'socket.io-client';
 import { createServer } from 'http';
 
@@ -14,7 +14,7 @@ describe('WebSocket Endpoints', () => {
   let wsGateway: WebSocketGateway;
   let wsService: WebSocketService;
   let authService: AuthService;
-  let dbService: DatabaseService;
+  let prismaService: PrismaService;
   let client: SocketIOClient;
   let authToken: string;
   let userId: string;
@@ -25,7 +25,7 @@ describe('WebSocket Endpoints', () => {
     wsGateway = app.get(WebSocketGateway);
     wsService = app.get(WebSocketService);
     authService = app.get(AuthService);
-    dbService = app.get(DatabaseService);
+    prismaService = app.get(PrismaService);
     authToken = await getAuthToken(app, 'testuser@example.com', 'password123');
     userId = 'test-user-123';
   });

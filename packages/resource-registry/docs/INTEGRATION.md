@@ -1,7 +1,6 @@
 # Resource Registry Integration Guide
 
-This guide explains how to integrate the Resource Registry into The New Fuse
-ecosystem.
+This guide explains how to integrate the Resource Registry into The New Fuse ecosystem.
 
 ## Table of Contents
 
@@ -172,9 +171,7 @@ Add to `.mcp.json`:
   "mcpServers": {
     "resource-registry": {
       "command": "node",
-      "args": [
-        "packages/resource-registry/dist/mcp/resource-registry-mcp-server.js"
-      ],
+      "args": ["packages/resource-registry/dist/mcp/resource-registry-mcp-server.js"],
       "env": {
         "DATABASE_URL": "${DATABASE_URL}"
       }
@@ -196,8 +193,7 @@ node dist/mcp/resource-registry-mcp-server.js
 
 ### 3. Use from Claude or AI Agents
 
-Once the MCP server is running, AI agents can access resources using these
-tools:
+Once the MCP server is running, AI agents can access resources using these tools:
 
 - `search_resources` - Search for resources
 - `get_resource` - Get a specific resource
@@ -226,7 +222,12 @@ async function setupAgentResources(agentId: string) {
 
   // Log access for each resource
   for (const resource of agentResources.data) {
-    await resourceRegistry.logAccess(resource.id, 'VIEW', agentId, 'agent');
+    await resourceRegistry.logAccess(
+      resource.id,
+      'VIEW',
+      agentId,
+      'agent'
+    );
   }
 
   return agentResources.data;
@@ -260,7 +261,12 @@ async function provisionAgentSkills(agentId: string) {
     });
 
     // Log download
-    await resourceRegistry.logAccess(skill.id, 'DOWNLOAD', agentId, 'agent');
+    await resourceRegistry.logAccess(
+      skill.id,
+      'DOWNLOAD',
+      agentId,
+      'agent'
+    );
   }
 
   return installedSkills;
@@ -269,14 +275,14 @@ async function provisionAgentSkills(agentId: string) {
 
 ## Database Setup
 
-### 1. Run Drizzle Migrations
+### 1. Run Prisma Migrations
 
 ```bash
-# Generate Drizzle client
+# Generate Prisma client
 pnpm db:generate
 
 # Run migrations
-npx drizzle migrate dev --name add-resource-registry
+npx prisma migrate dev --name add-resource-registry
 
 # Or use the package-specific commands
 cd packages/resource-registry
@@ -288,23 +294,21 @@ pnpm db:migrate
 Create a seed file:
 
 ```typescript
-// packages/resource-registry/drizzle/seed.ts
-import { DrizzleClient } from '@drizzle/client';
+// packages/resource-registry/prisma/seed.ts
+import { PrismaClient } from '@prisma/client';
 
-const drizzle = new DrizzleClient();
+const prisma = new PrismaClient();
 
 async function main() {
   // Seed example resources
-  await drizzle.resource.createMany({
+  await prisma.resource.createMany({
     data: [
       {
         name: 'Code Review Skill',
         description: 'Automated code review',
         category: 'CLAUDE_SKILL',
         type: 'JSON',
-        content: {
-          /* skill data */
-        },
+        content: { /* skill data */ },
         version: '1.0.0',
         source: 'github.com/example/skills',
         visibility: 'PUBLIC',
@@ -317,13 +321,13 @@ async function main() {
 
 main()
   .catch(console.error)
-  .finally(() => drizzle.$disconnect());
+  .finally(() => prisma.$disconnect());
 ```
 
 Run the seed:
 
 ```bash
-npx drizzle db seed
+npx prisma db seed
 ```
 
 ## Environment Configuration
@@ -354,14 +358,11 @@ export default {
     maxVersions: 10,
   },
   upload: {
-    maxSize: parseInt(
-      process.env.RESOURCE_REGISTRY_MAX_UPLOAD_SIZE || '10485760'
-    ),
+    maxSize: parseInt(process.env.RESOURCE_REGISTRY_MAX_UPLOAD_SIZE || '10485760'),
     allowedTypes: ['JSON', 'YAML', 'MARKDOWN', 'TYPESCRIPT', 'JAVASCRIPT'],
   },
   access: {
-    allowPublicCreate:
-      process.env.RESOURCE_REGISTRY_ALLOW_PUBLIC_CREATE === 'true',
+    allowPublicCreate: process.env.RESOURCE_REGISTRY_ALLOW_PUBLIC_CREATE === 'true',
     defaultVisibility: 'PUBLIC',
   },
   search: {
@@ -377,10 +378,7 @@ export default {
 
 ```typescript
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  ResourceRegistryModule,
-  ResourceRegistryService,
-} from '@the-new-fuse/resource-registry';
+import { ResourceRegistryModule, ResourceRegistryService } from '@the-new-fuse/resource-registry';
 
 describe('Resource Registry Integration', () => {
   let service: ResourceRegistryService;
@@ -422,18 +420,18 @@ describe('Resource Registry Integration', () => {
 Query access logs:
 
 ```typescript
-import { DrizzleClient } from '@drizzle/client';
+import { PrismaClient } from '@prisma/client';
 
-const drizzle = new DrizzleClient();
+const prisma = new PrismaClient();
 
 // Get most accessed resources
-const topResources = await drizzle.resource.findMany({
+const topResources = await prisma.resource.findMany({
   orderBy: { usageCount: 'desc' },
   take: 10,
 });
 
 // Get recent access logs
-const recentAccess = await drizzle.resourceAccessLog.findMany({
+const recentAccess = await prisma.resourceAccessLog.findMany({
   orderBy: { timestamp: 'desc' },
   take: 100,
   include: { resource: true },
@@ -444,15 +442,15 @@ const recentAccess = await drizzle.resourceAccessLog.findMany({
 
 ```typescript
 async function getResourceAnalytics() {
-  const drizzle = new DrizzleClient();
+  const prisma = new PrismaClient();
 
   const [totalResources, byCategory, topDownloaded] = await Promise.all([
-    drizzle.resource.count(),
-    drizzle.resource.groupBy({
+    prisma.resource.count(),
+    prisma.resource.groupBy({
       by: ['category'],
       _count: true,
     }),
-    drizzle.resource.findMany({
+    prisma.resource.findMany({
       orderBy: { downloadCount: 'desc' },
       take: 10,
     }),
@@ -490,5 +488,4 @@ async function getResourceAnalytics() {
    - Check searchable text is being generated
    - Verify indexes are created
 
-For more help, see the [API Documentation](./API.md) and
-[Examples](./EXAMPLES.md).
+For more help, see the [API Documentation](./API.md) and [Examples](./EXAMPLES.md).

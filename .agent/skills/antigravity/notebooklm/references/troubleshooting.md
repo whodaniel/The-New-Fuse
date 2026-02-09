@@ -2,14 +2,14 @@
 
 ## Quick Fix Table
 
-| Error                 | Solution                                                      |
-| --------------------- | ------------------------------------------------------------- |
-| ModuleNotFoundError   | Use `python scripts/run.py [script].py`                       |
-| Authentication failed | Browser must be visible for setup                             |
-| Browser crash         | `python scripts/run.py cleanup_manager.py --preserve-library` |
-| Rate limit hit        | Wait 1 hour or switch accounts                                |
-| Notebook not found    | `python scripts/run.py notebook_manager.py list`              |
-| Script not working    | Always use run.py wrapper                                     |
+| Error | Solution |
+|-------|----------|
+| ModuleNotFoundError | Use `python scripts/run.py [script].py` |
+| Authentication failed | Browser must be visible for setup |
+| Browser crash | `python scripts/run.py cleanup_manager.py --preserve-library` |
+| Rate limit hit | Wait 1 hour or switch accounts |
+| Notebook not found | `python scripts/run.py notebook_manager.py list` |
+| Script not working | Always use run.py wrapper |
 
 ## Critical: Always Use run.py
 
@@ -29,13 +29,11 @@ python scripts/auth_manager.py status  # ModuleNotFoundError!
 ### Authentication Issues
 
 #### Not authenticated error
-
 ```
 Error: Not authenticated. Please run auth setup first.
 ```
 
 **Solution:**
-
 ```bash
 # Check status
 python scripts/run.py auth_manager.py status
@@ -49,9 +47,7 @@ python scripts/run.py auth_manager.py reauth
 ```
 
 #### Authentication expires frequently
-
 **Solution:**
-
 ```bash
 # Clear old authentication
 python scripts/run.py cleanup_manager.py --preserve-library
@@ -64,13 +60,10 @@ export PERSIST_AUTH=true
 ```
 
 #### Google blocks automated login
-
 **Solution:**
-
 1. Use dedicated Google account for automation
 2. Enable "Less secure app access" if available
 3. ALWAYS use visible browser:
-
 ```bash
 python scripts/run.py auth_manager.py setup
 # Browser MUST be visible - user logs in manually
@@ -80,13 +73,11 @@ python scripts/run.py auth_manager.py setup
 ### Browser Issues
 
 #### Browser crashes or hangs
-
 ```
 TimeoutError: Waiting for selector failed
 ```
 
 **Solution:**
-
 ```bash
 # Kill hanging processes
 pkill -f chromium
@@ -100,9 +91,7 @@ python scripts/run.py auth_manager.py reauth
 ```
 
 #### Browser not found error
-
 **Solution:**
-
 ```bash
 # Install Chromium via run.py (automatic)
 python scripts/run.py auth_manager.py status
@@ -117,18 +106,15 @@ python -m patchright install chromium
 ### Rate Limiting
 
 #### Rate limit exceeded (50 queries/day)
-
 **Solutions:**
 
 **Option 1: Wait**
-
 ```bash
 # Check when limit resets (usually midnight PST)
 date -d "tomorrow 00:00 PST"
 ```
 
 **Option 2: Switch accounts**
-
 ```bash
 # Clear current auth
 python scripts/run.py auth_manager.py clear
@@ -138,7 +124,6 @@ python scripts/run.py auth_manager.py setup
 ```
 
 **Option 3: Rotate accounts**
-
 ```python
 # Use multiple accounts
 accounts = ["account1", "account2"]
@@ -150,9 +135,7 @@ for account in accounts:
 ### Notebook Access Issues
 
 #### Notebook not found
-
 **Solution:**
-
 ```bash
 # List all notebooks
 python scripts/run.py notebook_manager.py list
@@ -168,17 +151,13 @@ python scripts/run.py notebook_manager.py add \
 ```
 
 #### Access denied to notebook
-
 **Solution:**
-
 1. Check if notebook is still shared publicly
 2. Re-add notebook with updated URL
 3. Verify correct Google account is used
 
 #### Wrong notebook being used
-
 **Solution:**
-
 ```bash
 # Check active notebook
 python scripts/run.py notebook_manager.py list | grep "active"
@@ -190,13 +169,11 @@ python scripts/run.py notebook_manager.py activate --id correct-id
 ### Virtual Environment Issues
 
 #### ModuleNotFoundError
-
 ```
 ModuleNotFoundError: No module named 'patchright'
 ```
 
 **Solution:**
-
 ```bash
 # ALWAYS use run.py - it handles venv automatically!
 python scripts/run.py [any_script].py
@@ -208,9 +185,7 @@ python scripts/run.py [any_script].py
 ```
 
 #### Wrong Python version
-
 **Solution:**
-
 ```bash
 # Check Python version (needs 3.8+)
 python --version
@@ -222,9 +197,7 @@ python3.8 scripts/run.py auth_manager.py status
 ### Network Issues
 
 #### Connection timeouts
-
 **Solution:**
-
 ```bash
 # Increase timeout
 export TIMEOUT_SECONDS=60
@@ -240,13 +213,11 @@ export HTTPS_PROXY=http://proxy:port
 ### Data Issues
 
 #### Corrupted notebook library
-
 ```
 JSON decode error when listing notebooks
 ```
 
 **Solution:**
-
 ```bash
 # Backup current library
 cp ~/.claude/skills/notebooklm/data/library.json library.backup.json
@@ -259,9 +230,7 @@ python scripts/run.py notebook_manager.py add --url ... --name ...
 ```
 
 #### Disk space full
-
 **Solution:**
-
 ```bash
 # Check disk usage
 df -h ~/.claude/skills/notebooklm/data/
@@ -273,7 +242,6 @@ python scripts/run.py cleanup_manager.py --confirm --preserve-library
 ## Debugging Techniques
 
 ### Enable verbose logging
-
 ```bash
 export DEBUG=true
 export LOG_LEVEL=DEBUG
@@ -281,7 +249,6 @@ python scripts/run.py ask_question.py --question "Test" --show-browser
 ```
 
 ### Test individual components
-
 ```bash
 # Test authentication
 python scripts/run.py auth_manager.py status
@@ -294,9 +261,7 @@ python scripts/run.py ask_question.py --question "test" --show-browser
 ```
 
 ### Save screenshots on error
-
 Add to scripts for debugging:
-
 ```python
 try:
     # Your code
@@ -308,7 +273,6 @@ except Exception as e:
 ## Recovery Procedures
 
 ### Complete reset
-
 ```bash
 #!/bin/bash
 # Kill processes
@@ -337,7 +301,6 @@ fi
 ```
 
 ### Partial recovery (keep data)
-
 ```bash
 # Keep auth and library, fix execution
 cd ~/.claude/skills/notebooklm
@@ -350,30 +313,27 @@ python scripts/run.py auth_manager.py status
 ## Error Messages Reference
 
 ### Authentication Errors
-
-| Error                  | Cause              | Solution                        |
-| ---------------------- | ------------------ | ------------------------------- |
-| Not authenticated      | No valid auth      | `run.py auth_manager.py setup`  |
-| Authentication expired | Session old        | `run.py auth_manager.py reauth` |
-| Invalid credentials    | Wrong account      | Check Google account            |
-| 2FA required           | Security challenge | Complete in visible browser     |
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Not authenticated | No valid auth | `run.py auth_manager.py setup` |
+| Authentication expired | Session old | `run.py auth_manager.py reauth` |
+| Invalid credentials | Wrong account | Check Google account |
+| 2FA required | Security challenge | Complete in visible browser |
 
 ### Browser Errors
-
-| Error              | Cause              | Solution                   |
-| ------------------ | ------------------ | -------------------------- |
-| Browser not found  | Chromium missing   | Use run.py (auto-installs) |
-| Connection refused | Browser crashed    | Kill processes, restart    |
-| Timeout waiting    | Page slow          | Increase timeout           |
-| Context closed     | Browser terminated | Check logs for crashes     |
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Browser not found | Chromium missing | Use run.py (auto-installs) |
+| Connection refused | Browser crashed | Kill processes, restart |
+| Timeout waiting | Page slow | Increase timeout |
+| Context closed | Browser terminated | Check logs for crashes |
 
 ### Notebook Errors
-
-| Error              | Cause         | Solution                              |
-| ------------------ | ------------- | ------------------------------------- |
-| Notebook not found | Invalid ID    | `run.py notebook_manager.py list`     |
-| Access denied      | Not shared    | Re-share in NotebookLM                |
-| Invalid URL        | Wrong format  | Use full NotebookLM URL               |
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Notebook not found | Invalid ID | `run.py notebook_manager.py list` |
+| Access denied | Not shared | Re-share in NotebookLM |
+| Invalid URL | Wrong format | Use full NotebookLM URL |
 | No active notebook | None selected | `run.py notebook_manager.py activate` |
 
 ## Prevention Tips
@@ -387,7 +347,6 @@ python scripts/run.py auth_manager.py status
 ## Getting Help
 
 ### Diagnostic information to collect
-
 ```bash
 # System info
 python --version
@@ -404,14 +363,14 @@ ls -la ~/.claude/skills/notebooklm/data/
 
 ### Common questions
 
-**Q: Why doesn't this work in Claude web UI?** A: Web UI has no network access.
-Use local Claude Code.
+**Q: Why doesn't this work in Claude web UI?**
+A: Web UI has no network access. Use local Claude Code.
 
-**Q: Can I use multiple Google accounts?** A: Yes, use
-`run.py auth_manager.py reauth` to switch.
+**Q: Can I use multiple Google accounts?**
+A: Yes, use `run.py auth_manager.py reauth` to switch.
 
-**Q: How to increase rate limit?** A: Use multiple accounts or upgrade to Google
-Workspace.
+**Q: How to increase rate limit?**
+A: Use multiple accounts or upgrade to Google Workspace.
 
-**Q: Is this safe for my Google account?** A: Use dedicated account for
-automation. Only accesses NotebookLM.
+**Q: Is this safe for my Google account?**
+A: Use dedicated account for automation. Only accesses NotebookLM.

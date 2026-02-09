@@ -102,8 +102,6 @@ export class BrandConsistencyAgentService implements OnModuleInit {
   private readonly agentId = 'brand-consistency-agent';
   private readonly agentName = 'BrandConsistencyGuardian';
   private readonly agentVersion = '1.0.0';
-  // System user ID for agent-created content (well-known UUID for system)
-  private readonly systemUserId = '00000000-0000-0000-0000-000000000000';
 
   // Brand configuration (TNF Design System)
   private brandConfig: BrandConsistencyConfig = {
@@ -244,14 +242,13 @@ RULES:
             isPublic: false,
             tags: ['agent', 'brand', 'self-improving'],
             analytics: {},
-            userId: this.systemUserId,
           })
           .returning();
 
         if (template) {
           await this.db.client.insert(promptVersions).values({
             templateId: template.id,
-            versionNumber: 1,
+            version: 1,
             content: this.corePrompt,
             label: 'Genesis',
             variables: {},
@@ -265,12 +262,12 @@ RULES:
         // Load the latest version
         const latestVersion = await this.db.client.query.promptVersions.findFirst({
           where: eq(promptVersions.templateId, existing.id),
-          orderBy: [desc(promptVersions.versionNumber)],
+          orderBy: [desc(promptVersions.version)],
         });
 
         if (latestVersion) {
           this.corePrompt = latestVersion.content;
-          this.learningState.currentPromptVersion = latestVersion.versionNumber;
+          this.learningState.currentPromptVersion = latestVersion.version;
         }
         this.logger.log(`Loaded prompt template v${this.learningState.currentPromptVersion}`);
       }
@@ -640,7 +637,7 @@ PERFORMANCE INSIGHTS:
 
         await this.db.client.insert(promptVersions).values({
           templateId: template.id,
-          versionNumber: newVersion,
+          version: newVersion,
           content: evolvedPrompt,
           label: `Evolution-${newVersion}`,
           variables: {},

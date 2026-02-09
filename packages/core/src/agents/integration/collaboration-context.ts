@@ -34,10 +34,10 @@ export class CollaborationContextManager {
         currentPhase: 'analysis',
         activeTask: '',
         augment: [],
-        trae: [],
+        trae: []
       },
       messageQueue: new DefaultPriorityQueue<AgentMessage>(),
-      lastSyncTime: new Date(),
+      lastSyncTime: new Date()
     };
   }
 

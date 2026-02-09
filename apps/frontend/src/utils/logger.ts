@@ -1,12 +1,12 @@
 /**
  * Enhanced Logging and Monitoring Service
- *
+ * 
  * @description
  * Provides comprehensive logging, monitoring, and error tracking capabilities
  * for The New Fuse SaaS platform. Supports multiple log levels, structured
  * logging, performance monitoring, and integration with external monitoring
  * services.
- *
+ * 
  * This service implements:
  * - Structured logging with metadata
  * - Log level filtering
@@ -15,17 +15,17 @@
  * - Real-time log streaming
  * - Log rotation and storage
  * - Development and production configurations
- *
+ * 
  * @since 1.0.0
  * @author Platform Team
  * @example
  * ```typescript
  * // Basic usage
  * import { logger } from '../utils/logger';
- *
+ * 
  * logger.info('User logged in', { userId: 'user-123', ip: '192.168.1.1' });
  * logger.error('Database connection failed', error, { operation: 'user_fetch' });
- *
+ * 
  * // Performance monitoring
  * const timer = logger.startTimer('api_request');
  * // ... API call
@@ -40,7 +40,7 @@ function simpleHash(str: string): string {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
+    hash = ((hash << 5) - hash) + char;
     hash = hash & hash; // Convert to 32-bit integer
   }
   return Math.abs(hash).toString(16);
@@ -222,13 +222,13 @@ export interface MonitoringConfig {
 
 /**
  * Enhanced logger with structured logging and monitoring capabilities
- *
+ * 
  * @description
  * Provides a comprehensive logging service with structured logging,
  * performance monitoring, error tracking, and integration with external
  * monitoring services. Supports multiple output formats and configurable
  * log levels.
- *
+ * 
  * @features
  * - Structured JSON logging
  * - Log level filtering
@@ -238,19 +238,19 @@ export interface MonitoringConfig {
  * - External service integration
  * - Log rotation and retention
  * - Development and production modes
- *
+ * 
  * @example
  * ```typescript
  * // Create logger instance
  * const logger = new Logger('UserService');
- *
+ * 
  * // Log with context
  * logger.info('User created', {
  *   userId: 'user-123',
  *   email: 'user@example.com',
  *   role: 'admin'
  * });
- *
+ * 
  * // Log errors with stack traces
  * try {
  *   // Some operation
@@ -260,7 +260,7 @@ export interface MonitoringConfig {
  *     retryable: false
  *   });
  * }
- *
+ * 
  * // Performance monitoring
  * const timer = logger.startTimer('database_query');
  * await performQuery();
@@ -270,13 +270,13 @@ export interface MonitoringConfig {
 export class Logger {
   /** Logger name/category */
   private readonly name: string;
-
+  
   /** Configuration */
   private readonly config: MonitoringConfig;
-
+  
   /** Current log level */
   private readonly minLogLevel: number;
-
+  
   /** Log level precedence */
   private readonly logLevelOrder: Record<LogLevel, number> = {
     debug: 0,
@@ -294,13 +294,13 @@ export class Logger {
 
   /**
    * Constructor
-   *
+   * 
    * @param name - Logger name/category
    * @param config - Configuration options
    */
   constructor(name: string, config: Partial<MonitoringConfig> = {}) {
     this.name = name;
-
+    
     // Default configuration
     this.config = {
       logLevel: (process.env.LOG_LEVEL as LogLevel) || 'info',
@@ -315,28 +315,28 @@ export class Logger {
     };
 
     this.minLogLevel = this.logLevelOrder[this.config.logLevel];
-
+    
     // Initialize external services
     this.initializeExternalServices();
   }
 
   /**
    * Log a debug message
-   *
+   * 
    * @description
    * Logs a debug-level message with optional structured data.
    * Debug messages are typically used for detailed diagnostic information
    * that is only relevant during development or troubleshooting.
-   *
+   * 
    * @param message - Log message
    * @param data - Additional structured data
    * @param error - Optional error object
-   *
+   * 
    * @example
    * ```typescript
-   * logger.debug('Processing request', {
-   *   requestId: 'req-123',
-   *   endpoint: '/api/users'
+   * logger.debug('Processing request', { 
+   *   requestId: 'req-123', 
+   *   endpoint: '/api/users' 
    * });
    * ```
    */
@@ -346,16 +346,16 @@ export class Logger {
 
   /**
    * Log an info message
-   *
+   * 
    * @description
    * Logs an info-level message with optional structured data.
    * Info messages provide general information about application flow
    * and important events that should be tracked.
-   *
+   * 
    * @param message - Log message
    * @param data - Additional structured data
    * @param error - Optional error object
-   *
+   * 
    * @example
    * ```typescript
    * logger.info('User logged in', {
@@ -371,16 +371,16 @@ export class Logger {
 
   /**
    * Log a warning message
-   *
+   * 
    * @description
    * Logs a warning-level message with optional structured data.
    * Warning messages indicate potential issues that don't prevent
    * the application from functioning but should be monitored.
-   *
+   * 
    * @param message - Log message
    * @param data - Additional structured data
    * @param error - Optional error object
-   *
+   * 
    * @example
    * ```typescript
    * logger.warn('High memory usage detected', {
@@ -395,16 +395,16 @@ export class Logger {
 
   /**
    * Log an error message
-   *
+   * 
    * @description
    * Logs an error-level message with optional structured data and error object.
    * Error messages indicate issues that prevent operations from completing
    * successfully and should be investigated.
-   *
+   * 
    * @param message - Log message
    * @param error - Error object
    * @param data - Additional structured data
-   *
+   * 
    * @example
    * ```typescript
    * try {
@@ -412,8 +412,8 @@ export class Logger {
    * } catch (error) {
    *   logger.error('API call failed', error, {
    *     endpoint: '/api/users',
-   *     retryCount: 3,
-   *     timeout: 30000
+     *     retryCount: 3,
+     *     timeout: 30000
    *   });
    * }
    * ```
@@ -424,15 +424,15 @@ export class Logger {
 
   /**
    * Log a fatal error message
-   *
+   * 
    * @description
    * Logs a fatal-level message indicating critical errors that may
    * cause the application to crash or become unavailable.
-   *
+   * 
    * @param message - Log message
    * @param error - Error object
    * @param data - Additional structured data
-   *
+   * 
    * @example
    * ```typescript
    * logger.fatal('Database connection lost', error, {
@@ -448,19 +448,19 @@ export class Logger {
 
   /**
    * Start a performance timer
-   *
+   * 
    * @description
    * Starts a timer for measuring performance of operations.
    * The timer should be ended using the returned object.
-   *
+   * 
    * @param name - Timer name
    * @param data - Additional data to include with the result
    * @returns Timer object with end method
-   *
+   * 
    * @example
    * ```typescript
    * const timer = logger.startTimer('api_request');
-   *
+   * 
    * try {
    *   const result = await api.call();
    *   timer.end({ status: 'success', statusCode: 200 });
@@ -471,10 +471,7 @@ export class Logger {
    * }
    * ```
    */
-  startTimer(
-    name: string,
-    data?: Record<string, any>
-  ): {
+  startTimer(name: string, data?: Record<string, any>): {
     end: (endData?: Record<string, any>) => void;
   } {
     const startTime = Date.now();
@@ -484,7 +481,7 @@ export class Logger {
       end: (endData?: Record<string, any>) => {
         const endTime = Date.now();
         const duration = endTime - startTime;
-
+        
         const timingData = {
           ...data,
           duration,
@@ -505,10 +502,10 @@ export class Logger {
 
   /**
    * Record a performance metric
-   *
+   * 
    * @description
    * Records a performance metric for monitoring and analysis.
-   *
+   * 
    * @param name - Metric name
    * @param value - Metric value
    * @param unit - Unit of measurement
@@ -534,21 +531,21 @@ export class Logger {
     };
 
     this.debug('Performance metric recorded', metric);
-
+    
     // Send to external monitoring services
     this.sendToExternalServices('metric', metric);
   }
 
   /**
    * Add context information to subsequent log entries
-   *
+   * 
    * @description
    * Adds context information (like request ID, user ID, etc.) that will
    * be included in subsequent log entries until cleared.
-   *
+   * 
    * @param key - Context key
    * @param value - Context value
-   *
+   * 
    * @example
    * ```typescript
    * logger.withContext('requestId', 'req-123').info('Processing request');
@@ -562,7 +559,7 @@ export class Logger {
 
   /**
    * Clear all context information
-   *
+   * 
    * @description
    * Removes all context information that was added using withContext().
    */
@@ -572,26 +569,26 @@ export class Logger {
 
   /**
    * Create a child logger with additional context
-   *
+   * 
    * @description
    * Creates a new logger instance with additional context that
    * will be included in all its log entries.
-   *
+   * 
    * @param name - Child logger name
    * @param context - Initial context
    * @returns New logger instance with context
-   *
+   * 
    * @example
    * ```typescript
-   * const userLogger = logger.child('UserService', {
-   *   serviceName: 'User Management'
+   * const userLogger = logger.child('UserService', { 
+   *   serviceName: 'User Management' 
    * });
    * userLogger.info('User service started');
    * ```
    */
   child(name: string, context?: Record<string, any>): Logger {
     const childLogger = new Logger(`${this.name}:${name}`, this.config);
-
+    
     if (context) {
       Object.entries(context).forEach(([key, value]) => {
         childLogger.requestContext.set(key, value);
@@ -603,14 +600,19 @@ export class Logger {
 
   /**
    * Core logging method
-   *
+   * 
    * @private
    * @param level - Log level
    * @param message - Log message
    * @param data - Additional data
    * @param error - Error object
    */
-  private log(level: LogLevel, message: string, data?: Record<string, any>, error?: Error): void {
+  private log(
+    level: LogLevel,
+    message: string,
+    data?: Record<string, any>,
+    error?: Error
+  ): void {
     // Check if log level should be processed
     if (this.logLevelOrder[level] < this.minLogLevel) {
       return;
@@ -618,7 +620,7 @@ export class Logger {
 
     // Create log entry
     const logEntry = this.createLogEntry(level, message, data, error);
-
+    
     // Output to console
     if (this.config.enableConsole) {
       this.outputToConsole(logEntry);
@@ -640,7 +642,7 @@ export class Logger {
 
   /**
    * Create a structured log entry
-   *
+   * 
    * @private
    * @param level - Log level
    * @param message - Log message
@@ -669,7 +671,7 @@ export class Logger {
       source: callerInfo,
       context: this.buildContext(),
       environment: {
-        name: (process.env.NODE_ENV as any) || 'development',
+        name: process.env.NODE_ENV as any || 'development',
         version: process.env.APP_VERSION || '1.0.0',
         region: process.env.AWS_REGION || 'unknown',
         deploymentId: process.env.DEPLOYMENT_ID || 'unknown',
@@ -681,7 +683,7 @@ export class Logger {
 
   /**
    * Extract caller information from stack trace
-   *
+   * 
    * @private
    * @param stack - Stack trace
    * @returns Caller information
@@ -698,9 +700,10 @@ export class Logger {
 
     const lines = stack.split('\n');
     // Skip the first few lines (Error constructor, log method, etc.)
-    const relevantLine = lines.find(
-      (line) =>
-        !line.includes('Logger.ts') && !line.includes('createLogEntry') && line.trim().length > 0
+    const relevantLine = lines.find(line => 
+      !line.includes('Logger.ts') && 
+      !line.includes('createLogEntry') &&
+      line.trim().length > 0
     );
 
     if (!relevantLine) {
@@ -744,7 +747,7 @@ export class Logger {
 
   /**
    * Sanitize data to remove sensitive information
-   *
+   * 
    * @private
    * @param data - Data to sanitize
    * @returns Sanitized data
@@ -763,7 +766,7 @@ export class Logger {
       const result = Array.isArray(obj) ? [] : {};
 
       Object.entries(obj).forEach(([key, value]) => {
-        const shouldRedact = redactFields.some((field) =>
+        const shouldRedact = redactFields.some(field => 
           key.toLowerCase().includes(field.toLowerCase())
         );
 
@@ -784,7 +787,7 @@ export class Logger {
 
   /**
    * Build context information for the log entry
-   *
+   * 
    * @private
    * @returns Context information
    */
@@ -808,7 +811,7 @@ export class Logger {
 
   /**
    * Output log entry to console
-   *
+   * 
    * @private
    * @param logEntry - Log entry to output
    */
@@ -836,7 +839,7 @@ export class Logger {
 
   /**
    * Output log entry to file
-   *
+   * 
    * @private
    * @param logEntry - Log entry to output
    */
@@ -849,7 +852,7 @@ export class Logger {
 
   /**
    * Send data to external monitoring services
-   *
+   * 
    * @private
    * @param type - Data type ('log' or 'metric')
    * @param data - Data to send
@@ -876,7 +879,7 @@ export class Logger {
 
   /**
    * Send data to DataDog
-   *
+   * 
    * @private
    * @param type - Data type
    * @param data - Data to send
@@ -888,7 +891,7 @@ export class Logger {
 
   /**
    * Send data to Sentry
-   *
+   * 
    * @private
    * @param type - Data type
    * @param data - Data to send
@@ -900,7 +903,7 @@ export class Logger {
 
   /**
    * Send data to New Relic
-   *
+   * 
    * @private
    * @param type - Data type
    * @param data - Data to send
@@ -912,7 +915,7 @@ export class Logger {
 
   /**
    * Track errors with external error tracking services
-   *
+   * 
    * @private
    * @param logEntry - Log entry containing error information
    */
@@ -944,7 +947,7 @@ export class Logger {
 
   /**
    * Get current request ID from context
-   *
+   * 
    * @private
    * @returns Current request ID
    */
@@ -954,7 +957,7 @@ export class Logger {
 
   /**
    * Initialize external monitoring services
-   *
+   * 
    * @private
    */
   private initializeExternalServices(): void {
@@ -984,15 +987,15 @@ export class Logger {
 
 /**
  * Default logger instance for the application
- *
+ * 
  * @description
  * Pre-configured logger instance that can be used throughout the application
  * without needing to create new instances.
- *
+ * 
  * @example
  * ```typescript
  * import { logger } from '../utils/logger';
- *
+ * 
  * logger.info('Application started', { port: 3000 });
  * ```
  */
@@ -1010,16 +1013,16 @@ export const logger = new Logger('app', {
 
 /**
  * Create a structured error for logging
- *
+ * 
  * @description
  * Creates a standardized error object that includes additional context
  * information for better debugging and monitoring.
- *
+ * 
  * @param message - Error message
  * @param context - Additional context information
  * @param cause - Original error that caused this error
  * @returns Structured error object
- *
+ * 
  * @example
  * ```typescript
  * throw createError('Failed to fetch user data', {
@@ -1028,7 +1031,11 @@ export const logger = new Logger('app', {
  * }, originalError);
  * ```
  */
-export function createError(message: string, context?: Record<string, any>, cause?: Error): Error {
+export function createError(
+  message: string,
+  context?: Record<string, any>,
+  cause?: Error
+): Error {
   const error = new Error(message);
   (error as any).context = context;
   (error as any).cause = cause;
@@ -1039,13 +1046,13 @@ export function createError(message: string, context?: Record<string, any>, caus
 
 /**
  * Generate a request ID for correlation
- *
+ * 
  * @description
  * Generates a unique request ID that can be used to correlate
  * logs and events across the application for a single request.
- *
+ * 
  * @returns Unique request identifier
- *
+ * 
  * @example
  * ```typescript
  * const requestId = generateRequestId();
@@ -1058,15 +1065,15 @@ export function generateRequestId(): string {
 
 /**
  * Calculate hash for log deduplication
- *
+ * 
  * @description
  * Creates a hash from log message and context that can be used
  * to identify duplicate log entries and reduce log volume.
- *
+ * 
  * @param message - Log message
  * @param context - Log context
  * @returns Hash string
- *
+ * 
  * @example
  * ```typescript
  * const hash = calculateLogHash('Database connection failed', { error: 'timeout' });
@@ -1082,4 +1089,9 @@ export function calculateLogHash(message: string, context?: Record<string, any>)
 // ============================================================================
 
 export default logger;
-export type { ErrorInfo, LogEntry, MonitoringConfig, PerformanceMetric };
+export type {
+  LogEntry,
+  PerformanceMetric,
+  ErrorInfo,
+  MonitoringConfig,
+};

@@ -1,5 +1,5 @@
-import System from '@/models/system';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from "react";
+import System from "@/models/system";
 
 export default function GroqAiOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.GroqApiKey);
@@ -8,13 +8,15 @@ export default function GroqAiOptions({ settings }) {
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">Groq API Key</label>
+        <label className="text-white text-sm font-semibold block mb-3">
+          Groq API Key
+        </label>
         <input
           type="password"
           name="GroqApiKey"
           className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="Groq API Key"
-          defaultValue={settings?.GroqApiKey ? '*'.repeat(20) : ''}
+          defaultValue={settings?.GroqApiKey ? "*".repeat(20) : ""}
           required={true}
           autoComplete="off"
           spellCheck={false}
@@ -23,7 +25,9 @@ export default function GroqAiOptions({ settings }) {
         />
       </div>
 
-      {!settings?.credentialsOnly && <GroqAIModelSelection settings={settings} apiKey={apiKey} />}
+      {!settings?.credentialsOnly && (
+        <GroqAIModelSelection settings={settings} apiKey={apiKey} />
+      )}
     </div>
   );
 }
@@ -42,10 +46,10 @@ function GroqAIModelSelection({ apiKey, settings }) {
 
       try {
         setLoading(true);
-        const { models } = await System.customModels('groq', apiKey);
+        const { models } = await System.customModels("groq", apiKey);
         setCustomModels(models || []);
       } catch (error) {
-        console.error('Failed to fetch custom models:', error);
+        console.error("Failed to fetch custom models:", error);
         setCustomModels([]);
       } finally {
         setLoading(false);
@@ -57,7 +61,9 @@ function GroqAIModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">Chat Model Selection</label>
+        <label className="text-white text-sm font-semibold block mb-3">
+          Chat Model Selection
+        </label>
         <select
           name="GroqModelPref"
           disabled={true}
@@ -76,7 +82,9 @@ function GroqAIModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">Chat Model Selection</label>
+      <label className="text-white text-sm font-semibold block mb-3">
+        Chat Model Selection
+      </label>
       <select
         name="GroqModelPref"
         required={true}

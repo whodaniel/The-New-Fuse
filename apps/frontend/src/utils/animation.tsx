@@ -15,7 +15,11 @@ export function animate(
   keyframes: Keyframe[],
   options: AnimationOptions = {}
 ): Animation {
-  const { duration = 300, easing = 'ease-in-out', delay = 0 } = options;
+  const {
+    duration = 300,
+    easing = 'ease-in-out',
+    delay = 0,
+  } = options;
 
   return element.animate(keyframes, {
     duration,
@@ -25,12 +29,32 @@ export function animate(
   });
 }
 
-export function fadeIn(element: HTMLElement, options: AnimationOptions = {}): Animation {
-  return animate(element, [{ opacity: 0 }, { opacity: 1 }], options);
+export function fadeIn(
+  element: HTMLElement,
+  options: AnimationOptions = {}
+): Animation {
+  return animate(
+    element,
+    [
+      { opacity: 0 },
+      { opacity: 1 }
+    ],
+    options
+  );
 }
 
-export function fadeOut(element: HTMLElement, options: AnimationOptions = {}): Animation {
-  return animate(element, [{ opacity: 1 }, { opacity: 0 }], options);
+export function fadeOut(
+  element: HTMLElement,
+  options: AnimationOptions = {}
+): Animation {
+  return animate(
+    element,
+    [
+      { opacity: 1 },
+      { opacity: 0 }
+    ],
+    options
+  );
 }
 
 export function slideIn(
@@ -45,7 +69,14 @@ export function slideIn(
     bottom: { transform: 'translateY(100%)' },
   };
 
-  return animate(element, [start[direction], { transform: 'translate(0)' }], options);
+  return animate(
+    element,
+    [
+      start[direction],
+      { transform: 'translate(0)' }
+    ],
+    options
+  );
 }
 
 export function slideOut(
@@ -60,7 +91,14 @@ export function slideOut(
     bottom: { transform: 'translateY(100%)' },
   };
 
-  return animate(element, [{ transform: 'translate(0)' }, end[direction]], options);
+  return animate(
+    element,
+    [
+      { transform: 'translate(0)' },
+      end[direction]
+    ],
+    options
+  );
 }
 
 export function transition(
@@ -74,12 +112,14 @@ export function transition(
     delay = 0,
     onStart,
     onComplete,
-    onCancel,
+    onCancel
   } = options;
 
   return new Promise((resolve, reject) => {
     const originalTransition = element.style.transition;
-    const transitionString = properties.map((prop) => `${prop} ${duration}ms ${easing}`).join(', ');
+    const transitionString = properties
+      .map(prop => `${prop} ${duration}ms ${easing}`)
+      .join(', ');
 
     const cleanup = (): any => {
       element.style.transition = originalTransition;
@@ -118,7 +158,7 @@ export async function collapse(
 ): Promise<void> {
   const { height } = element.getBoundingClientRect();
   element.style.height = `${height}px`;
-
+  
   // Force repaint
   element.offsetHeight;
 
@@ -131,11 +171,14 @@ export async function collapse(
   });
 }
 
-export async function expand(element: HTMLElement, options: TransitionOptions = {}): Promise<void> {
+export async function expand(
+  element: HTMLElement,
+  options: TransitionOptions = {}
+): Promise<void> {
   element.style.height = 'auto';
   const height = element.getBoundingClientRect().height;
   element.style.height = '0';
-
+  
   // Force repaint
   element.offsetHeight;
 

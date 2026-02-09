@@ -58,10 +58,10 @@
  * - LOG_LEVEL: debug|info|warn|error (default: info)
  */
 
+import WebSocket from 'ws';
+import { createClient, RedisClientType } from 'redis';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { createClient } from 'redis';
-import WebSocket from 'ws';
 
 // ============================================================================
 // CONFIGURATION
@@ -386,9 +386,7 @@ class MasterClock {
     this.redisSub = createClient({ url: CONFIG.REDIS_URL });
 
     this.redis.on('error', (err: any) => log('error', 'REDIS', `Client error: ${err.message}`));
-    this.redisSub.on('error', (err: any) =>
-      log('error', 'REDIS', `Subscriber error: ${err.message}`)
-    );
+    this.redisSub.on('error', (err: any) => log('error', 'REDIS', `Subscriber error: ${err.message}`));
 
     await this.redis.connect();
     await this.redisSub.connect();

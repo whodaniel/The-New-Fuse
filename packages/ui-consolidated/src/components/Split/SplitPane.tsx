@@ -53,7 +53,15 @@ export interface SplitPaneProps extends React.HTMLAttributes<HTMLDivElement> {
  * </Split>
  */
 const SplitPane = React.forwardRef<HTMLDivElement, SplitPaneProps>(
-  ({ className, minSize, maxSize, defaultSize, collapsible = false, children, ...props }, ref) => {
+  ({
+    className,
+    minSize,
+    maxSize,
+    defaultSize,
+    collapsible = false,
+    children,
+    ...props
+  }, ref) => {
     return (
       <div
         ref={ref}

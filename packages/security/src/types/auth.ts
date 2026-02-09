@@ -61,7 +61,7 @@ export interface RefreshTokenPayload {
 export const UserCredentialsSchema = z.object({
   username: z.string().min(3).max(50),
   password: z.string().min(8).max(100),
-  email: z.string().email().optional(),
+  email: z.string().email().optional()
 });
 
 export const TokenPayloadSchema = z.object({
@@ -71,7 +71,7 @@ export const TokenPayloadSchema = z.object({
   permissions: z.array(z.string()),
   sessionId: z.string(),
   issuedAt: z.number(),
-  expiresAt: z.number(),
+  expiresAt: z.number()
 });
 
 // Type inference from Zod schemas

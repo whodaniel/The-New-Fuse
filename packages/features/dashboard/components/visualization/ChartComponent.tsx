@@ -1,20 +1,10 @@
-import { FC, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
+  LineChart, BarChart, PieChart, AreaChart,
+  Line, Bar, Pie, Area,
+  CartesianGrid, XAxis, YAxis,
+  Tooltip, Legend, ResponsiveContainer,
+  Cell
 } from 'recharts';
 
 export type ChartType = 'line' | 'bar' | 'pie' | 'area';
@@ -53,17 +43,12 @@ export const ChartComponent: FC<ChartComponentProps> = ({
   stacked = false,
   className = '',
   height = 300,
-  tooltipFormatter,
+  tooltipFormatter
 }) => {
   const chartColors = useMemo(() => {
     return colors.length >= yKeys.length
       ? colors
-      : [
-          ...colors,
-          ...Array(yKeys.length - colors.length).fill(
-            defaultColors[colors.length % defaultColors.length]
-          ),
-        ];
+      : [...colors, ...Array(yKeys.length - colors.length).fill(defaultColors[colors.length % defaultColors.length])];
   }, [colors, yKeys]);
 
   const renderChart = () => {
@@ -121,7 +106,10 @@ export const ChartComponent: FC<ChartComponentProps> = ({
               label
             >
               {data.map((_, index) => (
-                <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={chartColors[index % chartColors.length]}
+                />
               ))}
             </Pie>
             <Tooltip formatter={tooltipFormatter} />
@@ -156,9 +144,7 @@ export const ChartComponent: FC<ChartComponentProps> = ({
   };
 
   return (
-    <div
-      className={`w-full h-[${typeof height === 'number' ? `${height}px` : height}] ${className}`}
-    >
+    <div className={`w-full h-[${typeof height === 'number' ? `${height}px` : height}] ${className}`}>
       <ResponsiveContainer>{renderChart()}</ResponsiveContainer>
     </div>
   );

@@ -2,6 +2,8 @@
  * Connect Tab - Connection Status and Quick Actions
  */
 
+import React from 'react';
+
 interface ConnectionStatus {
   websocketConnected: boolean;
   redisConnected: boolean;
@@ -68,37 +70,25 @@ export default function ConnectTab({ status }: Props) {
 
         <div className="status-grid">
           <div className="status-item">
-            <span
-              className={`status-indicator ${status.websocketConnected ? 'status-online' : 'status-offline'}`}
-            />
+            <span className={`status-indicator ${status.websocketConnected ? 'status-online' : 'status-offline'}`} />
             <span className="status-label">TNF Relay</span>
-            <span
-              className={`status-value ${status.websocketConnected ? 'neon-text-green' : 'text-secondary'}`}
-            >
+            <span className={`status-value ${status.websocketConnected ? 'neon-text-green' : 'text-secondary'}`}>
               {status.websocketConnected ? 'CONNECTED' : 'DISCONNECTED'}
             </span>
           </div>
 
           <div className="status-item">
-            <span
-              className={`status-indicator ${status.redisConnected ? 'status-online' : 'status-offline'}`}
-            />
+            <span className={`status-indicator ${status.redisConnected ? 'status-online' : 'status-offline'}`} />
             <span className="status-label">Redis Network</span>
-            <span
-              className={`status-value ${status.redisConnected ? 'neon-text-green' : 'text-secondary'}`}
-            >
+            <span className={`status-value ${status.redisConnected ? 'neon-text-green' : 'text-secondary'}`}>
               {status.redisConnected ? 'CONNECTED' : 'DISCONNECTED'}
             </span>
           </div>
 
           <div className="status-item">
-            <span
-              className={`status-indicator ${status.currentPlatform ? 'status-online' : 'status-idle'}`}
-            />
+            <span className={`status-indicator ${status.currentPlatform ? 'status-online' : 'status-idle'}`} />
             <span className="status-label">AI Platform</span>
-            <span
-              className={`status-value ${status.currentPlatform ? 'neon-text-cyan' : 'text-secondary'}`}
-            >
+            <span className={`status-value ${status.currentPlatform ? 'neon-text-cyan' : 'text-secondary'}`}>
               {status.currentPlatform ? 'DETECTED' : 'NOT DETECTED'}
             </span>
           </div>
@@ -126,12 +116,16 @@ export default function ConnectTab({ status }: Props) {
           </div>
 
           <div className="platform-card">
-            <div className="platform-icon">{platformIcons[status.currentPlatform] || '🤖'}</div>
+            <div className="platform-icon">
+              {platformIcons[status.currentPlatform] || '🤖'}
+            </div>
             <div className="platform-info">
               <div className="platform-name">
                 {platformNames[status.currentPlatform] || status.currentPlatform}
               </div>
-              <div className="platform-url text-secondary">{window.location.hostname}</div>
+              <div className="platform-url text-secondary">
+                {window.location.hostname}
+              </div>
             </div>
           </div>
         </div>

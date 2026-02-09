@@ -1,7 +1,6 @@
 # Cross-Service Configuration Guide
 
-This document explains how services communicate and what environment variables
-must match across services for proper operation.
+This document explains how services communicate and what environment variables must match across services for proper operation.
 
 ## Table of Contents
 
@@ -51,19 +50,16 @@ must match across services for proper operation.
 ### Frontend Dependencies
 
 **Depends on:**
-
 - API Gateway (or direct API Service)
 - WebSocket server
 
 **Required Environment Variables:**
-
 ```bash
 VITE_API_URL=<API_Gateway_URL>
 VITE_WS_URL=<WebSocket_Server_URL>
 ```
 
 **Configuration Points:**
-
 - `/home/user/fuse/apps/frontend/src/config/api.ts`
 - `/home/user/fuse/apps/frontend/src/config/ports.ts`
 - `/home/user/fuse/apps/frontend/src/hooks/useApi.ts`
@@ -71,14 +67,12 @@ VITE_WS_URL=<WebSocket_Server_URL>
 ### API Gateway Dependencies
 
 **Depends on:**
-
 - Backend Service
 - API Service
 - Webhooks Service
 - SkIDEancer IDE (optional)
 
 **Required Environment Variables:**
-
 ```bash
 BACKEND_SERVICE_URL=<Backend_URL>
 AGENTS_SERVICE_URL=<API_Service_URL>
@@ -88,19 +82,16 @@ CORS_ORIGINS=<Frontend_URL>
 ```
 
 **Configuration Points:**
-
 - `/home/user/fuse/apps/api-gateway/src/proxy/proxy.service.ts`
 
 ### API Service Dependencies
 
 **Depends on:**
-
 - PostgreSQL
 - Redis
 - External AI services (optional)
 
 **Required Environment Variables:**
-
 ```bash
 DATABASE_URL=<PostgreSQL_Connection>
 REDIS_URL=<Redis_Connection>
@@ -109,20 +100,17 @@ ALLOWED_ORIGINS=<Frontend_URL>
 ```
 
 **Configuration Points:**
-
 - `/home/user/fuse/apps/api/src/config.ts`
 - `/home/user/fuse/apps/api/src/config/security.config.ts`
 
 ### Backend Service Dependencies
 
 **Depends on:**
-
 - PostgreSQL
 - Redis
 - Frontend (for CORS)
 
 **Required Environment Variables:**
-
 ```bash
 DATABASE_URL=<PostgreSQL_Connection>
 REDIS_URL=<Redis_Connection>
@@ -131,7 +119,6 @@ FRONTEND_URL=<Frontend_URL>
 ```
 
 **Configuration Points:**
-
 - `/home/user/fuse/apps/backend/src/config/passport.ts`
 - `/home/user/fuse/apps/backend/src/server.ts`
 
@@ -139,24 +126,20 @@ FRONTEND_URL=<Frontend_URL>
 
 ### MUST BE IDENTICAL
 
-These environment variables **must have the exact same value** across multiple
-services:
+These environment variables **must have the exact same value** across multiple services:
 
 #### 1. JWT_SECRET
 
 **Services:** API Service, Backend Service
 
-**Purpose:** Ensures JWT tokens signed by one service can be verified by
-another.
+**Purpose:** Ensures JWT tokens signed by one service can be verified by another.
 
 **Critical:** If these don't match:
-
 - Authentication will fail
 - Users will get logged out randomly
 - Cross-service API calls will fail with 401 errors
 
 **Setup:**
-
 ```bash
 # Generate once
 JWT_SECRET=$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
@@ -171,7 +154,6 @@ JWT_SECRET=a1b2c3d4e5f6g7h8i9j0...
 ```
 
 **Verification:**
-
 ```bash
 # Compare in Railway dashboard
 api-service → Variables → JWT_SECRET
@@ -187,14 +169,12 @@ backend-service → Variables → JWT_SECRET
 **Purpose:** Both services access the same database for consistency.
 
 **Setup (Railway):**
-
 ```bash
 # Both services should reference the same PostgreSQL instance
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 ```
 
-**Important:** While the value is the same, each service might use different
-database operations or schemas. Ensure migrations are run from one service only.
+**Important:** While the value is the same, each service might use different database operations or schemas. Ensure migrations are run from one service only.
 
 #### 3. REDIS_URL
 
@@ -203,7 +183,6 @@ database operations or schemas. Ensure migrations are run from one service only.
 **Purpose:** Shared caching, session storage, and pub/sub messaging.
 
 **Setup (Railway):**
-
 ```bash
 # Both services should reference the same Redis instance
 REDIS_URL=${{Redis.REDIS_URL}}
@@ -216,21 +195,18 @@ These variables create the communication links between services:
 #### Frontend → API Gateway/API
 
 **Frontend Configuration:**
-
 ```bash
 VITE_API_URL=https://api-gateway-production.up.railway.app
 VITE_WS_URL=wss://api-gateway-production.up.railway.app
 ```
 
 **API Gateway Configuration:**
-
 ```bash
 # Must include frontend URL for CORS
 CORS_ORIGINS=https://frontend-production.up.railway.app,https://app.thenewfuse.com
 ```
 
 **API Service Configuration:**
-
 ```bash
 # Must include frontend URL for CORS
 ALLOWED_ORIGINS=https://frontend-production.up.railway.app,https://app.thenewfuse.com
@@ -240,22 +216,20 @@ FRONTEND_URL=https://app.thenewfuse.com
 #### API Gateway → Backend Services
 
 **API Gateway Configuration:**
-
 ```bash
 BACKEND_SERVICE_URL=https://backend-production.up.railway.app
 AGENTS_SERVICE_URL=https://api-service-production.up.railway.app
 WEBHOOKS_SERVICE_URL=https://webhooks-production.up.railway.app
 ```
 
-**Verification:** These URLs should match the actual deployed URLs in Railway
-dashboard.
+**Verification:**
+These URLs should match the actual deployed URLs in Railway dashboard.
 
 ## Service Communication
 
 ### HTTP Communication Flow
 
 1. **Frontend → API Gateway**
-
    ```typescript
    // Frontend code
    const API_URL = import.meta.env.VITE_API_URL;
@@ -263,7 +237,6 @@ dashboard.
    ```
 
 2. **API Gateway → Backend Services**
-
    ```typescript
    // API Gateway proxy
    const backendUrl = this.configService.get('BACKEND_SERVICE_URL');
@@ -273,13 +246,12 @@ dashboard.
 3. **Backend Services → Database**
    ```typescript
    // Uses DATABASE_URL automatically
-   await drizzle.user.findMany();
+   await prisma.user.findMany();
    ```
 
 ### WebSocket Communication
 
 1. **Frontend Connection**
-
    ```typescript
    const wsUrl = import.meta.env.VITE_WS_URL;
    const socket = io(wsUrl);
@@ -329,21 +301,18 @@ dashboard.
 ### Deployment Order
 
 1. **Database Services First**
-
    ```
    1. PostgreSQL
    2. Redis
    ```
 
 2. **Backend Services**
-
    ```
    3. API Service (depends on DB)
    4. Backend Service (depends on DB)
    ```
 
 3. **Gateway Layer**
-
    ```
    5. API Gateway (depends on Backend Services)
    ```
@@ -416,26 +385,22 @@ Use this checklist when deploying or updating services:
 ## Service Configuration Checklist
 
 ### Shared Secrets
-
 - [ ] JWT_SECRET is identical in API and Backend services
 - [ ] JWT_SECRET is at least 64 characters
 - [ ] JWT_REFRESH_SECRET is set in API service
 
 ### Database Configuration
-
 - [ ] DATABASE_URL references same PostgreSQL in all services
 - [ ] REDIS_URL references same Redis in all services
 - [ ] Database migrations have been run
 
 ### Service URLs
-
 - [ ] VITE_API_URL in Frontend points to API Gateway
 - [ ] VITE_WS_URL in Frontend points to WebSocket server
 - [ ] BACKEND_SERVICE_URL in API Gateway points to Backend
 - [ ] AGENTS_SERVICE_URL in API Gateway points to API Service
 
 ### CORS Configuration
-
 - [ ] CORS_ORIGINS in API Gateway includes Frontend URL
 - [ ] ALLOWED_ORIGINS in API Service includes Frontend URL
 - [ ] FRONTEND_URL in Backend Service matches actual Frontend
@@ -443,14 +408,12 @@ Use this checklist when deploying or updating services:
 - [ ] No trailing slashes in URLs
 
 ### Security
-
 - [ ] All secrets are properly generated (not defaults)
 - [ ] CORS origins don't use wildcards
 - [ ] HTTPS is enforced in production
 - [ ] Rate limiting is configured
 
 ### Testing
-
 - [ ] Health endpoints return 200
 - [ ] Frontend can fetch from API
 - [ ] WebSocket connection succeeds
@@ -463,14 +426,12 @@ Use this checklist when deploying or updating services:
 ### Issue 1: CORS Errors
 
 **Symptom:**
-
 ```
 Access to fetch at 'https://api.example.com' from origin 'https://app.example.com'
 has been blocked by CORS policy
 ```
 
 **Causes:**
-
 - Frontend URL not in `CORS_ORIGINS` or `ALLOWED_ORIGINS`
 - Typo in URL (trailing slash, http vs https)
 - Service not receiving environment variable
@@ -478,7 +439,6 @@ has been blocked by CORS policy
 **Solutions:**
 
 1. **Check exact URL match:**
-
    ```bash
    # Frontend URL
    echo $VITE_FRONTEND_URL
@@ -488,7 +448,6 @@ has been blocked by CORS policy
    ```
 
 2. **Include protocol:**
-
    ```bash
    # ✓ Correct
    ALLOWED_ORIGINS=https://app.thenewfuse.com
@@ -498,7 +457,6 @@ has been blocked by CORS policy
    ```
 
 3. **No trailing slashes:**
-
    ```bash
    # ✓ Correct
    ALLOWED_ORIGINS=https://app.thenewfuse.com
@@ -516,24 +474,22 @@ has been blocked by CORS policy
 ### Issue 2: JWT Verification Fails
 
 **Symptom:**
-
 ```
 Error: invalid signature
 401 Unauthorized
 ```
 
-**Cause:** JWT_SECRET doesn't match between services
+**Cause:**
+JWT_SECRET doesn't match between services
 
 **Solution:**
 
 1. **Generate secret once:**
-
    ```bash
    node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
    ```
 
 2. **Set in both services (Railway):**
-
    ```bash
    # api-service → Variables
    JWT_SECRET=<generated_secret>
@@ -543,7 +499,6 @@ Error: invalid signature
    ```
 
 3. **Verify they match:**
-
    ```bash
    # In Railway dashboard, visually compare
    # Or use Railway CLI
@@ -560,14 +515,12 @@ Error: invalid signature
 ### Issue 3: Service Can't Reach Another Service
 
 **Symptom:**
-
 ```
 Error: connect ECONNREFUSED
 Failed to fetch from backend service
 ```
 
 **Causes:**
-
 - Incorrect service URL
 - Service not deployed
 - Service crashed during startup
@@ -575,13 +528,11 @@ Failed to fetch from backend service
 **Solutions:**
 
 1. **Verify service is running:**
-
    ```bash
    railway status --service backend-service
    ```
 
 2. **Check service URL:**
-
    ```bash
    # Get actual URL from Railway
    railway status --service backend-service
@@ -590,13 +541,11 @@ Failed to fetch from backend service
    ```
 
 3. **Check service health:**
-
    ```bash
    curl https://backend-production.up.railway.app/health
    ```
 
 4. **Update and restart:**
-
    ```bash
    # Update API Gateway with correct URL
    railway variables set BACKEND_SERVICE_URL=<correct_url> --service api-gateway
@@ -608,13 +557,11 @@ Failed to fetch from backend service
 ### Issue 4: Environment Variables Not Loading
 
 **Symptom:**
-
 ```
 Missing required environment variable: JWT_SECRET
 ```
 
 **Causes:**
-
 - Variable not set in Railway dashboard
 - Typo in variable name
 - Service not redeployed after adding variable
@@ -622,20 +569,17 @@ Missing required environment variable: JWT_SECRET
 **Solutions:**
 
 1. **Verify variable exists:**
-
    ```bash
    railway variables --service api-service
    ```
 
 2. **Check for typos:**
-
    ```bash
    # Variable names are case-sensitive
    # JWT_SECRET ≠ jwt_secret ≠ JWT_Secret
    ```
 
 3. **Redeploy after adding:**
-
    ```bash
    railway redeploy --service api-service
    ```
@@ -649,14 +593,12 @@ Missing required environment variable: JWT_SECRET
 ### Issue 5: WebSocket Connection Fails
 
 **Symptom:**
-
 ```
 WebSocket connection failed
 Error: unexpected response code: 400
 ```
 
 **Causes:**
-
 - WS URL doesn't match server
 - CORS not configured for WebSocket
 - Using HTTP instead of HTTPS (should use WS vs WSS)
@@ -664,7 +606,6 @@ Error: unexpected response code: 400
 **Solutions:**
 
 1. **Use correct protocol:**
-
    ```bash
    # Development
    VITE_WS_URL=ws://localhost:3001
@@ -674,7 +615,6 @@ Error: unexpected response code: 400
    ```
 
 2. **Match API URL:**
-
    ```bash
    # If API is at https://api.example.com
    # WebSocket should be wss://api.example.com
@@ -769,7 +709,7 @@ app.get('/health', (req, res) => {
       hasJwtSecret: !!process.env.JWT_SECRET,
       corsOrigins: process.env.ALLOWED_ORIGINS?.split(',').length || 0,
       // Don't expose actual values!
-    },
+    }
   });
 });
 ```
@@ -782,22 +722,16 @@ Create an admin endpoint (protected) to view configuration status:
 app.get('/admin/config-status', authenticateAdmin, (req, res) => {
   res.json({
     services: {
-      database: {
-        connected: true,
-        url: process.env.DATABASE_URL?.split('@')[1],
-      },
+      database: { connected: true, url: process.env.DATABASE_URL?.split('@')[1] },
       redis: { connected: true, url: process.env.REDIS_URL?.split('@')[1] },
     },
     secrets: {
-      jwt: {
-        configured: !!process.env.JWT_SECRET,
-        length: process.env.JWT_SECRET?.length,
-      },
+      jwt: { configured: !!process.env.JWT_SECRET, length: process.env.JWT_SECRET?.length },
       // Show presence, not values
     },
     cors: {
       origins: process.env.ALLOWED_ORIGINS?.split(','),
-    },
+    }
   });
 });
 ```
@@ -807,15 +741,12 @@ app.get('/admin/config-status', authenticateAdmin, (req, res) => {
 **Key Takeaways:**
 
 1. **JWT_SECRET must be identical** across API and Backend services
-2. **Service URLs must be accurate** - check Railway dashboard after each
-   deployment
+2. **Service URLs must be accurate** - check Railway dashboard after each deployment
 3. **CORS origins must match exactly** - include protocol, no trailing slashes
 4. **Deploy in order** - databases → backends → gateway → frontend
 5. **Validate after every deployment** - use health checks and test flows
-6. **Use Railway variable references** for database services:
-   `${{Postgres.DATABASE_URL}}`
+6. **Use Railway variable references** for database services: `${{Postgres.DATABASE_URL}}`
 7. **Restart services** after changing environment variables
 
-For detailed variable documentation, see
-[ENVIRONMENT_VARIABLES.md](./ENVIRONMENT_VARIABLES.md). For Railway deployment
-steps, see [RAILWAY_DEPLOYMENT_GUIDE.md](./RAILWAY_DEPLOYMENT_GUIDE.md).
+For detailed variable documentation, see [ENVIRONMENT_VARIABLES.md](./ENVIRONMENT_VARIABLES.md).
+For Railway deployment steps, see [RAILWAY_DEPLOYMENT_GUIDE.md](./RAILWAY_DEPLOYMENT_GUIDE.md).

@@ -5,7 +5,7 @@ export const ABORT_STREAM_EVENT = 'abort-stream';
 export const chatPrompt = {
   defaultPrompt: 'How can I help you today?',
   systemPrompt: 'You are a helpful assistant.',
-  maxLength: 4000,
+  maxLength: 4000
 };
 
 export enum RefusalType {

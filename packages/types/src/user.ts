@@ -3,18 +3,7 @@ import type { BaseEntity, UUID } from './core/index';
 /**
  * Represents user roles within the system.
  */
-export enum UserRole {
-  ADMIN = 'ADMIN',
-  USER = 'USER',
-  SUPER_ADMIN = 'SUPER_ADMIN',
-  AGENCY_OWNER = 'AGENCY_OWNER',
-  AGENCY_ADMIN = 'AGENCY_ADMIN',
-  AGENCY_MANAGER = 'AGENCY_MANAGER',
-  AGENT_OPERATOR = 'AGENT_OPERATOR',
-  // Legacy values
-  DEVELOPER = 'developer',
-  GUEST = 'guest',
-}
+export type UserRole = 'admin' | 'developer' | 'user' | 'guest';
 
 /**
  * Represents system permissions that can be granted to users
@@ -24,7 +13,7 @@ export enum Permission {
   WRITE_USERS = 'WRITE_USERS',
   DELETE_USERS = 'DELETE_USERS',
   MANAGE_AGENTS = 'MANAGE_AGENTS',
-  ADMIN_ACCESS = 'ADMIN_ACCESS',
+  ADMIN_ACCESS = 'ADMIN_ACCESS'
 }
 
 /**

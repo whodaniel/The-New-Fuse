@@ -3,19 +3,19 @@ services:
     heartbeat_interval: 30
     cleanup_interval: 300
     ttl: 60
-
+  
   orchestration:
     max_concurrent_workflows: 100
     timeout: 300
     retry_attempts: 3
-
+    
   protocol:
     supported_protocols:
       - mcp
       - grpc
       - rest
     translation_timeout: 5
-
+    
   resources:
     cpu_threshold: 80
     memory_threshold: 75

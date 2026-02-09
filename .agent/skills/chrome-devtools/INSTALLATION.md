@@ -8,8 +8,7 @@ Your config file is at: `~/.gemini/antigravity/mcp_config.json`
 
 ### Step 2: Add Chrome DevTools Server
 
-The server is already added to your config! Here's what's currently in your
-file:
+The server is already added to your config! Here's what's currently in your file:
 
 ```json
 {
@@ -24,11 +23,7 @@ file:
     },
     "postgres": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-postgres",
-        "postgresql://localhost:5433/tnf_dev"
-      ]
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://localhost:5433/tnf_dev"]
     },
     "puppeteer": {
       "command": "npx",
@@ -141,8 +136,7 @@ npx --version
 
 ### Issue: "Cannot connect to Chrome"
 
-**Solution**: Ensure Chrome is running and not in incognito mode. The MCP server
-needs access to the DevTools protocol.
+**Solution**: Ensure Chrome is running and not in incognito mode. The MCP server needs access to the DevTools protocol.
 
 ```bash
 # Check if Chrome is running with DevTools enabled:
@@ -226,8 +220,7 @@ Once installed:
 
 For issues:
 
-1. Check
-   [Chrome DevTools MCP Issues](https://github.com/ChromeDevTools/chrome-devtools-mcp/issues)
+1. Check [Chrome DevTools MCP Issues](https://github.com/ChromeDevTools/chrome-devtools-mcp/issues)
 2. Verify Node.js and Chrome are up to date
 3. Try restarting both the AI assistant and Chrome
 

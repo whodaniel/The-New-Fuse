@@ -3,9 +3,7 @@
 ## 🎯 Purpose & Scope
 
 **Fuse Connect** is The New Fuse's browser bridge extension that enables:
-
-1. AI chat platform integration (ChatGPT, Claude, Gemini, Perplexity, DeepSeek,
-   Qwen)
+1. AI chat platform integration (ChatGPT, Claude, Gemini, Perplexity, DeepSeek, Qwen)
 2. Multi-agent federation across browser tabs
 3. Redis agent network participation via WebSocket relay
 4. Element detection and automation capabilities
@@ -14,14 +12,12 @@
 ## 🎨 Brand Identity
 
 ### Visual Theme
-
 - **Primary Colors**: Cyan (#00D9FF) to Purple (#9D4EDD) neon gradient
 - **Logo**: "TNF" Neon Monogram with circuit board aesthetic
 - **Dark Theme**: Deep space black (#0a0a0f) with neon accents
 - **Typography**: Modern, clean sans-serif
 
 ### Design Philosophy
-
 - **Neon Cyberpunk**: High-tech, futuristic aesthetic
 - **Minimal UI**: Clean, uncluttered interface
 - **Glowing Effects**: Subtle neon glow on interactive elements
@@ -76,7 +72,6 @@
 ### 1. Popup Interface (320x500px)
 
 #### Tab 1: Connect
-
 ```
 ┌───────────────────────────────────────┐
 │ [TNF Logo]  Fuse Connect    [⚙️] [✕] │
@@ -105,7 +100,6 @@
 ```
 
 #### Tab 2: Agents
-
 ```
 ┌───────────────────────────────────────┐
 │ 🤖 Agent Network (12 Active)          │
@@ -132,7 +126,6 @@
 ```
 
 #### Tab 3: Network
-
 ```
 ┌───────────────────────────────────────┐
 │ 🔗 Federation Channels                │
@@ -159,7 +152,6 @@
 ```
 
 #### Tab 4: Settings
-
 ```
 ┌───────────────────────────────────────┐
 │ ⚙️ Settings                            │
@@ -203,7 +195,6 @@
 ```
 
 Expanded (240x400px):
-
 ```
 ┌────────────────────────┐
 │ 🚀 TNF    [−] [✕]     │
@@ -225,14 +216,13 @@ Expanded (240x400px):
 ## 🎨 Styling Guidelines
 
 ### Color Palette
-
 ```css
 /* Neon Colors */
---neon-cyan: #00d9ff;
---neon-purple: #9d4edd;
---neon-pink: #ff006e;
---neon-green: #00f5a0;
---neon-blue: #3d5afe;
+--neon-cyan: #00D9FF;
+--neon-purple: #9D4EDD;
+--neon-pink: #FF006E;
+--neon-green: #00F5A0;
+--neon-blue: #3D5AFE;
 
 /* Dark Theme */
 --bg-primary: #0a0a0f;
@@ -243,17 +233,15 @@ Expanded (240x400px):
 --border-color: rgba(0, 217, 255, 0.2);
 
 /* Status Colors */
---status-online: #00f5a0;
---status-busy: #ffb800;
+--status-online: #00F5A0;
+--status-busy: #FFB800;
 --status-offline: #666;
---status-error: #ff006e;
+--status-error: #FF006E;
 ```
 
 ### Typography
-
 ```css
---font-family:
-  -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+--font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
 --font-size-xs: 10px;
 --font-size-sm: 12px;
 --font-size-md: 14px;
@@ -262,41 +250,35 @@ Expanded (240x400px):
 ```
 
 ### Effects
-
 ```css
 /* Neon Glow */
 .neon-glow {
-  box-shadow:
-    0 0 10px var(--neon-cyan),
-    0 0 20px rgba(0, 217, 255, 0.5),
-    inset 0 0 10px rgba(0, 217, 255, 0.1);
+  box-shadow: 0 0 10px var(--neon-cyan),
+              0 0 20px rgba(0, 217, 255, 0.5),
+              inset 0 0 10px rgba(0, 217, 255, 0.1);
 }
 
 /* Gradient Background */
 .gradient-bg {
-  background: linear-gradient(
-    135deg,
+  background: linear-gradient(135deg,
     var(--neon-cyan) 0%,
-    var(--neon-purple) 100%
-  );
+    var(--neon-purple) 100%);
 }
 
 /* Circuit Pattern */
 .circuit-pattern {
-  background-image: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 217, 255, 0.03) 2px,
-    rgba(0, 217, 255, 0.03) 4px
-  );
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 217, 255, 0.03) 2px,
+      rgba(0, 217, 255, 0.03) 4px);
 }
 ```
 
 ## 🔧 Technical Implementation
 
 ### File Structure
-
 ```
 apps/chrome-extension/
 ├── manifest.json                     # Extension manifest (v3.1.0)
@@ -366,35 +348,30 @@ apps/chrome-extension/
 ### Key Features
 
 #### 1. WebSocket Manager
-
 - Auto-reconnection with exponential backoff
 - Message queuing during disconnects
 - Heartbeat monitoring
 - Multi-relay support
 
 #### 2. Redis Bridge
-
 - WebSocket-to-Redis relay communication
 - Agent registration and discovery
 - Channel subscription management
 - Message pub/sub handling
 
 #### 3. Federation Manager
-
 - Cross-tab communication
 - Channel membership management
 - Message routing (broadcast, round-robin, orchestrated)
 - Tab synchronization
 
 #### 4. Element Detection
-
 - AI platform-specific selectors
 - Visual overlay for selection
 - Auto-detection algorithms
 - Validation and error handling
 
 #### 5. Platform Adapters
-
 - Unified interface for all AI platforms
 - Message injection
 - Response monitoring
@@ -409,7 +386,13 @@ apps/chrome-extension/
   "version": "4.0.0",
   "description": "Bridge your browser to The New Fuse AI agent network",
 
-  "permissions": ["storage", "activeTab", "scripting", "tabs", "webNavigation"],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs",
+    "webNavigation"
+  ],
 
   "host_permissions": ["<all_urls>"],
 
@@ -427,26 +410,22 @@ apps/chrome-extension/
     }
   },
 
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "css": ["content.css"],
-      "run_at": "document_start"
-    }
-  ],
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": ["content.js"],
+    "css": ["content.css"],
+    "run_at": "document_start"
+  }],
 
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "floating-panel.html",
-        "floating-panel.js",
-        "icons/*.png",
-        "styles/*.css"
-      ],
-      "matches": ["<all_urls>"]
-    }
-  ],
+  "web_accessible_resources": [{
+    "resources": [
+      "floating-panel.html",
+      "floating-panel.js",
+      "icons/*.png",
+      "styles/*.css"
+    ],
+    "matches": ["<all_urls>"]
+  }],
 
   "commands": {
     "toggle-floating-panel": {

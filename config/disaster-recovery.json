@@ -7,11 +7,19 @@
       "retention": 30,
       "compression": true,
       "encryption": true,
-      "destinations": ["local", "s3", "gcs"]
+      "destinations": [
+        "local",
+        "s3",
+        "gcs"
+      ]
     },
     "files": {
       "enabled": true,
-      "paths": ["/app/uploads", "/app/logs", "/app/config"],
+      "paths": [
+        "/app/uploads",
+        "/app/logs",
+        "/app/config"
+      ],
       "schedule": "0 3 * * *",
       "retention": 30,
       "compression": true,
@@ -25,9 +33,16 @@
     }
   },
   "disasterRecovery": {
-    "regions": ["us-east-1", "us-west-2", "eu-west-1"],
+    "regions": [
+      "us-east-1",
+      "us-west-2",
+      "eu-west-1"
+    ],
     "primaryRegion": "us-east-1",
-    "failoverRegions": ["us-west-2", "eu-west-1"],
+    "failoverRegions": [
+      "us-west-2",
+      "eu-west-1"
+    ],
     "rto": 300,
     "rpo": 60,
     "autoFailover": true,
@@ -40,7 +55,9 @@
   "monitoring": {
     "enabled": true,
     "alerting": {
-      "email": ["ops@company.com"],
+      "email": [
+        "ops@company.com"
+      ],
       "slack": "#alerts",
       "pagerduty": true
     },

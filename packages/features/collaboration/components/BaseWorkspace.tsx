@@ -1,5 +1,5 @@
-import { Split } from '@/components/ui/split';
 import React, { FC } from 'react';
+import { Split } from '@/components/ui/split';
 
 interface BaseWorkspaceProps {
   header?: React.ReactNode;
@@ -14,7 +14,7 @@ export const BaseWorkspace: FC<BaseWorkspaceProps> = ({
   sidebar,
   main,
   sidebarWidth = 'w-1/4',
-  className = '',
+  className = ''
 }) => {
   return (
     <div className={`workspace ${className}`}>

@@ -5,27 +5,27 @@
 
 // Mock factories
 export const createMockUser = (overrides = {}) => ({
-  id: 'user-123',
-  email: 'test@example.com',
-  name: 'Test User',
+  id: "user-123",
+  email: "test@example.com",
+  name: "Test User",
   createdAt: new Date(),
   updatedAt: new Date(),
   ...overrides,
 });
 
 export const createMockAgent = (overrides = {}) => ({
-  id: 'agent-123',
-  name: 'TestAgent',
-  type: 'CHAT',
-  status: 'ACTIVE',
+  id: "agent-123",
+  name: "TestAgent",
+  type: "CHAT",
+  status: "ACTIVE",
   createdAt: new Date(),
   updatedAt: new Date(),
   ...overrides,
 });
 
 export const createMockConversation = (overrides = {}) => ({
-  id: 'conv-123',
-  title: 'Test Conversation',
+  id: "conv-123",
+  title: "Test Conversation",
   messages: [],
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -49,13 +49,18 @@ export const clearDatabase = async (): Promise<void> => {
   // Database cleared for tests
 };
 
-export const seedDatabase = async (_data: Record<string, any> = {}): Promise<void> => {
+export const seedDatabase = async (
+  _data: Record<string, any> = {},
+): Promise<void> => {
   // Implementation for test data seeding
   // Database seeded with test data
 };
 
 // Component test helpers
-export const renderWithProviders = (component: any, _options: Record<string, any> = {}) => {
+export const renderWithProviders = (
+  component: any,
+  _options: Record<string, any> = {},
+) => {
   // Implementation for rendering React components with providers
   return component;
 };

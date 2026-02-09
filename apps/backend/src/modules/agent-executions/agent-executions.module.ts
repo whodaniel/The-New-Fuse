@@ -5,6 +5,6 @@ import { AgentExecutionsService } from './agent-executions.service';
 @Module({
   controllers: [AgentExecutionsController],
   providers: [AgentExecutionsService],
-  exports: [AgentExecutionsService],
+  exports: [AgentExecutionsService]
 })
 export class AgentExecutionsModule {}

@@ -4,13 +4,11 @@ description: Sync n8n workflows from GitHub repositories
 
 # N8N Workflow Sync
 
-Sync n8n workflows from community repositories (Zie619/n8n-workflows,
-enescingoz/awesome-n8n-templates, Danitilahun/n8n-workflow-templates).
+Sync n8n workflows from community repositories (Zie619/n8n-workflows, enescingoz/awesome-n8n-templates, Danitilahun/n8n-workflow-templates).
 
 ## Usage
 
-This command triggers a sync operation to fetch the latest workflows from all
-configured GitHub repositories.
+This command triggers a sync operation to fetch the latest workflows from all configured GitHub repositories.
 
 ## What it does
 

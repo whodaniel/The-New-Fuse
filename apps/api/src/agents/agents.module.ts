@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseService } from '@the-new-fuse/database';
+import { PrismaService } from '@the-new-fuse/database';
 import { SelfImprovementController } from '../controllers/self-improvement.controller';
 import { AgentFactory } from './agent.factory';
 import { AgentsService } from './agents.service';
@@ -27,7 +27,7 @@ import { ReviewerAgentService } from './reviewer.service';
   imports: [ConfigModule],
   controllers: [SelfImprovementController],
   providers: [
-    DatabaseService,
+    PrismaService,
     AgentsService,
     AgentFactory,
     // Mock UnifiedMonitoringService since it's typed as 'any'
@@ -49,7 +49,7 @@ import { ReviewerAgentService } from './reviewer.service';
     CoordinatorAgentService,
   ],
   exports: [
-    DatabaseService,
+    PrismaService,
     AgentsService,
     AgentFactory,
     AnalyzerAgentService,

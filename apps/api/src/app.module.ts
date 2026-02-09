@@ -12,11 +12,9 @@ import { BrandConsistencyAgentModule } from './agents/brand-consistency-agent.mo
 import { BrowserHubSwarmModule } from './agents/browser-hub-swarm.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { BrowserStreamingModule } from './browser-streaming/browser-streaming.module';
 import { CacheService } from './cache/cache.service';
 import llmProviderConfig from './config/llm-provider.config';
 import securityConfig from './config/security.config';
-import { CLIController } from './controllers/cli.controller';
 import { HealthController } from './controllers/health.controller';
 import { MCPController } from './controllers/mcp.controller';
 import { ModelsController } from './controllers/models.controller';
@@ -26,11 +24,8 @@ import { UserManagementController } from './controllers/user-management.controll
 import { WebSocketController } from './controllers/websocket.controller';
 import { WorkflowController } from './controllers/workflow.controller';
 import { WorkspaceController } from './controllers/workspace.controller';
-import { AdvancedLLMProviderController } from './llm/advanced-llm-provider.controller';
-import { AdvancedLLMProviderService } from './llm/advanced-llm-provider.service';
 import { LLMProviderController } from './llm/llm-provider.controller';
-import { LLMProviderService, LLM_REGISTRY } from './llm/llm-provider.service';
-import { RealLLMRegistry } from './llm/real-llm-registry.service';
+import { LLMProviderService, LLM_REGISTRY, MockLLMRegistry } from './llm/llm-provider.service';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
 import { AdminModule } from './modules/admin/admin.module';
 import { AgencyHubModule } from './modules/agency-hub/agency-hub.module';
@@ -39,10 +34,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
-import { CLIModule } from './modules/cli/cli.module';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 import { ExportModule } from './modules/export/export.module';
-import { MarketplaceModule } from './modules/marketplace/marketplace.module';
 import { PromptTemplatesModule } from './modules/prompt-templates.module';
 import { SecurityModule } from './modules/security/security.module';
 import { TaskModule } from './modules/task/task.module'; // Migrated to Drizzle ORM
@@ -102,7 +95,6 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     AgentsModule, // Self-Improvement Agents Module
     AgencyHubModule, // Agency Hub with Swarm coordination
     ChatModule,
-    CLIModule, // CLI command execution
     TaskModule, // Task management - Migrated to Drizzle ORM
     EntityDiscoveryModule,
     ClaudeDevAutomationModule,
@@ -121,19 +113,15 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     PromptTemplatesModule,
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm
-    BrowserStreamingModule, // Browser-as-a-Service Streaming
     // GraphqlModule, // TEMPORARILY DISABLED: GraphQL has HttpAdapterHost DI issue - REST API still works
     TNFAutonomousModule, // 🔮 Autonomous System (Director, BMAD, Swarm)
     BillingModule,
-    MarketplaceModule, // Unified AI Asset Marketplace
   ],
   controllers: [
     AppController,
     A2AController,
-    CLIController, // CLI command execution endpoints
     HealthController, // CRITICAL: Health checks for monitoring/K8s
     LLMProviderController,
-    AdvancedLLMProviderController,
     MCPController, // MCP server management (20+ endpoints)
     ModelsController, // AI model provider selection
     SystemController,
@@ -150,10 +138,9 @@ import { SecurityModule as GlobalSecurityModule } from './security/security.modu
     // LLM Provider Services
     {
       provide: LLM_REGISTRY,
-      useClass: RealLLMRegistry,
+      useClass: MockLLMRegistry,
     },
     LLMProviderService,
-    AdvancedLLMProviderService,
     // Middleware
     SecurityValidationMiddleware,
     CsrfProtectionMiddleware,

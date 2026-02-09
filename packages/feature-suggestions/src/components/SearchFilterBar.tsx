@@ -1,5 +1,11 @@
-import { Autocomplete, Box, Chip, TextField, useTheme } from '@mui/material';
-import { FC } from 'react';
+import React, { FC } from 'react';
+import {
+  Box,
+  TextField,
+  Autocomplete,
+  Chip,
+  useTheme,
+} from '@mui/material';
 
 interface SearchFilterBarProps {
   searchTerm: string;
@@ -25,10 +31,10 @@ export const SearchFilterBar: FC<SearchFilterBarProps> = ({
   const theme = useTheme();
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        gap: 2,
+    <Box 
+      sx={{ 
+        display: 'flex', 
+        gap: 2, 
         alignItems: 'center',
         flexWrap: 'wrap',
         p: 2,
@@ -59,7 +65,7 @@ export const SearchFilterBar: FC<SearchFilterBarProps> = ({
             placeholder="Priority"
             sx={{ minWidth: 150 }}
             InputLabelProps={{
-              shrink: true,
+              shrink: true
             }}
           />
         )}
@@ -91,13 +97,18 @@ export const SearchFilterBar: FC<SearchFilterBarProps> = ({
             placeholder="Tags"
             sx={{ minWidth: 200 }}
             InputLabelProps={{
-              shrink: true,
+              shrink: true
             }}
           />
         )}
         renderTags={(value, getTagProps) =>
           value.map((option, index) => (
-            <Chip {...getTagProps({ index })} key={option} label={option} size="small" />
+            <Chip
+              {...getTagProps({ index })}
+              key={option}
+              label={option}
+              size="small"
+            />
           ))
         }
       />

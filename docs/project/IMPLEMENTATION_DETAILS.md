@@ -3,7 +3,6 @@
 ## Security Implementation
 
 ### Security Policy System
-
 ```typescript
 interface SecurityPolicy {
   level: SecurityLevel;
@@ -23,7 +22,6 @@ interface SecurityConfig {
 ```
 
 ### Credential Management
-
 ```typescript
 class KeychainCredentialsProvider {
   async readCredentials(cx: AsyncAppContext): Promise<Option<Credentials>>;
@@ -35,7 +33,6 @@ class KeychainCredentialsProvider {
 ## Monitoring & Observability
 
 ### System Monitoring
-
 ```typescript
 class SystemMonitor extends EventEmitter {
   private stats: SystemStats;
@@ -72,7 +69,6 @@ interface SystemStats {
 ```
 
 ### Agent Health Monitoring
-
 ```typescript
 class HeartbeatMonitor extends EventEmitter {
   private agentStatus: Map<string, boolean>;
@@ -92,7 +88,6 @@ class HeartbeatMonitor extends EventEmitter {
 ```
 
 ### Communication Tracking
-
 ```typescript
 class CommunicationTracker {
   private redis: Redis;
@@ -110,7 +105,6 @@ class CommunicationTracker {
 ## LLM Integration
 
 ### LLM Provider System
-
 ```typescript
 interface LLMProvider {
   initialize(): Promise<void>;
@@ -144,7 +138,6 @@ interface LLMResponse {
 ```
 
 ### LLM Registry
-
 ```typescript
 class LLMRegistry {
   private providers: Map<string, LLMProvider>;
@@ -157,7 +150,6 @@ class LLMRegistry {
 ```
 
 ### Midscene Adapter
-
 ```typescript
 class MidsceneLLMAdapter {
   private provider: MidsceneProvider;
@@ -177,7 +169,6 @@ class MidsceneLLMAdapter {
 ## Scalability & Reliability
 
 ### Agent Processing
-
 ```typescript
 class AgentProcessor {
   async processMessageWithLLM(
@@ -197,7 +188,6 @@ class AgentProcessor {
 ```
 
 ### Metrics Collection
-
 ```typescript
 interface MetricsState {
   series: Record<string, MetricSeries>;
@@ -214,7 +204,6 @@ interface MetricDataPoint {
 ```
 
 ### Error Recovery
-
 The system implements multiple layers of error recovery:
 
 1. **Automatic Retry with Backoff**

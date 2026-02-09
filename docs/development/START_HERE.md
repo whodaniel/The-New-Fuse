@@ -7,7 +7,6 @@
 Visit: https://railway.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 
 Create 4 empty services:
-
 - Click "+ New" → "Empty Service" → Name: `api`
 - Click "+ New" → "Empty Service" → Name: `backend`
 - Click "+ New" → "Empty Service" → Name: `api-gateway`
@@ -25,7 +24,6 @@ cd .
 While builds run, add environment variables in Railway dashboard.
 
 **Generate JWT Secret first:**
-
 ```bash
 openssl rand -base64 32
 ```
@@ -41,7 +39,6 @@ Then add variables for each service (see FINAL_DEPLOYMENT_STEPS.md for details).
 ## 🆘 Need Help?
 
 Check the logs:
-
 ```bash
 railway logs --service <service-name>
 ```

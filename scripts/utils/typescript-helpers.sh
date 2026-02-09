@@ -89,7 +89,7 @@ phase1_setup_dependencies() {
   yarn add -D typescript @types/react @types/react-dom @types/node || log_warning "Failed to install TypeScript dependencies"
   
   # Install core dependencies
-  yarn add reflect-metadata typeorm @drizzle/client zod reactflow react || log_warning "Failed to install core dependencies"
+  yarn add reflect-metadata typeorm @prisma/client zod reactflow react || log_warning "Failed to install core dependencies"
   
   # Install NestJS dependencies
   yarn add @nestjs/common @nestjs/core @nestjs/websockets rxjs || log_warning "Failed to install NestJS dependencies"

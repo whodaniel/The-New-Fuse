@@ -2,8 +2,7 @@
 
 ## Updated to Eclipse SkIDEancer 1.67 (December 2025)
 
-This document outlines all the new features available in SkIDEancer after the
-upgrade to SkIDEancer 1.67.
+This document outlines all the new features available in SkIDEancer after the upgrade to SkIDEancer 1.67.
 
 ---
 
@@ -11,8 +10,7 @@ upgrade to SkIDEancer 1.67.
 
 ### 1. Terminal Manager for Multiple Terminals
 
-**What's New:** A new terminal-manager extension that enables managing multiple
-terminals within a single view.
+**What's New:** A new terminal-manager extension that enables managing multiple terminals within a single view.
 
 **Features:**
 
@@ -54,8 +52,7 @@ Set to `"separate"` for traditional behavior.
 
 ### 3. Claude Code Session Forking
 
-**What's New:** Automatic session forking when editing previous requests in
-conversations.
+**What's New:** Automatic session forking when editing previous requests in conversations.
 
 **How It Works:**
 
@@ -64,8 +61,7 @@ conversations.
 3. SkIDEancer automatically creates a fork (new branch)
 4. Original conversation is preserved
 
-**Use Case:** Try multiple approaches without losing context of initial
-attempts.
+**Use Case:** Try multiple approaches without losing context of initial attempts.
 
 ---
 
@@ -86,8 +82,7 @@ attempts.
 | `/remember`         | Extracts important context from chat history |
 | `/remember <topic>` | Focus extraction on specific topic           |
 
-The Remember command saves corrections, clarifications, and project-specific
-details for future AI interactions.
+The Remember command saves corrections, clarifications, and project-specific details for future AI interactions.
 
 ---
 

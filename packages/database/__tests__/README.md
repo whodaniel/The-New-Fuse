@@ -4,8 +4,7 @@ Integration tests for Drizzle ORM repositories in The New Fuse.
 
 ## Overview
 
-This test suite provides comprehensive integration tests for all 5 Drizzle
-repositories (88 methods total) with 95% code coverage target.
+This test suite provides comprehensive integration tests for all 5 Drizzle repositories (88 methods total) with 95% code coverage target.
 
 ## Setup
 
@@ -106,11 +105,7 @@ expectValidPagination(result, 10); // 10 total items
 Utility functions for database operations:
 
 ```typescript
-import {
-  countRows,
-  truncateTable,
-  measureExecutionTime,
-} from './utils/database-helpers';
+import { countRows, truncateTable, measureExecutionTime } from './utils/database-helpers';
 
 // Count rows
 const count = await countRows('users');
@@ -162,14 +157,14 @@ describe('DrizzleUserRepository', () => {
 
 ## Coverage Goals
 
-| Repository | Methods | Tests    | Coverage Target |
-| ---------- | ------- | -------- | --------------- |
-| User       | 15      | 30+      | 95%             |
-| Agent      | 23      | 46+      | 95%             |
-| Chat       | 12      | 24+      | 95%             |
-| Task       | 18      | 36+      | 95%             |
-| Workflow   | 20      | 40+      | 95%             |
-| **Total**  | **88**  | **176+** | **95%**         |
+| Repository | Methods | Tests | Coverage Target |
+|------------|---------|-------|-----------------|
+| User       | 15      | 30+   | 95%             |
+| Agent      | 23      | 46+   | 95%             |
+| Chat       | 12      | 24+   | 95%             |
+| Task       | 18      | 36+   | 95%             |
+| Workflow   | 20      | 40+   | 95%             |
+| **Total**  | **88**  | **176+** | **95%**      |
 
 ## Troubleshooting
 
@@ -209,7 +204,6 @@ pnpm test user.repository.test.ts
 ## CI/CD Integration
 
 Tests run automatically on:
-
 - Every push to `main` or `develop`
 - Every pull request affecting `packages/database/**`
 

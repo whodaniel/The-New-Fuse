@@ -2,8 +2,7 @@
 
 ## Quick Fix Commands
 
-If you encounter TypeScript ESM issues in The New Fuse project, use these
-commands:
+If you encounter TypeScript ESM issues in The New Fuse project, use these commands:
 
 ```bash
 # Fix TypeScript ESM issues
@@ -17,17 +16,16 @@ yarn dev
 
 ## Common Issues & Solutions
 
-| Issue                      | Solution                                       |
-| -------------------------- | ---------------------------------------------- |
-| ERR_UNKNOWN_FILE_EXTENSION | Use `--loader ts-node/esm` flag                |
-| Cannot find module         | Add `.js` extensions to imports                |
-| exports is not defined     | Convert CommonJS syntax to ESM                 |
-| Path alias doesn't work    | Use `--experimental-specifier-resolution=node` |
+| Issue | Solution |
+|-------|----------|
+| ERR_UNKNOWN_FILE_EXTENSION | Use `--loader ts-node/esm` flag |
+| Cannot find module | Add `.js` extensions to imports |
+| exports is not defined | Convert CommonJS syntax to ESM |
+| Path alias doesn't work | Use `--experimental-specifier-resolution=node` |
 
 ## Required Configuration Files
 
 ### 1. nodemon.json
-
 ```json
 {
   "watch": ["src"],
@@ -38,7 +36,6 @@ yarn dev
 ```
 
 ### 2. tsconfig.node.json
-
 ```json
 {
   "extends": "./tsconfig.json",
@@ -50,7 +47,6 @@ yarn dev
 ```
 
 ### 3. package.json script
-
 ```json
 "scripts": {
   "dev": "cross-env PORT=3003 nodemon"
@@ -58,7 +54,6 @@ yarn dev
 ```
 
 ### 4. TypeScript import format
-
 ```typescript
 // Correct ESM import (note the .js extension)
 import { MyClass } from './my-class.js';
@@ -78,5 +73,4 @@ node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts
 node --experimental-specifier-resolution=node dist/index.js
 ```
 
-For detailed information, see
-[TYPESCRIPT_ESM_CONFIGURATION.md](./docs/TYPESCRIPT_ESM_CONFIGURATION.md).
+For detailed information, see [TYPESCRIPT_ESM_CONFIGURATION.md](./docs/TYPESCRIPT_ESM_CONFIGURATION.md).

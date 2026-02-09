@@ -1,13 +1,10 @@
 # Qwen Integration Guide
 
-This guide provides comprehensive instructions for integrating Qwen AI models
-into your development workflow.
+This guide provides comprehensive instructions for integrating Qwen AI models into your development workflow.
 
 ## Overview
 
-Qwen (通义千问) is a series of large language models developed by Alibaba Cloud.
-This integration allows you to leverage Qwen's capabilities within your
-applications and development environment.
+Qwen (通义千问) is a series of large language models developed by Alibaba Cloud. This integration allows you to leverage Qwen's capabilities within your applications and development environment.
 
 ## Prerequisites
 
@@ -61,7 +58,7 @@ async function generateText(prompt) {
       temperature: 0.7,
     },
   });
-
+  
   return response.output.text;
 }
 ```
@@ -78,7 +75,7 @@ async function chatWithQwen(messages) {
       messages: messages,
     },
   });
-
+  
   return response.output.choices[0].message.content;
 }
 ```
@@ -90,12 +87,12 @@ async function streamResponse(prompt) {
   const stream = await client.textGeneration({
     model: 'qwen-max',
     input: { prompt },
-    parameters: {
+    parameters: { 
       stream: true,
-      incremental_output: true,
+      incremental_output: true 
     },
   });
-
+  
   for await (const chunk of stream) {
     process.stdout.write(chunk.output.text);
   }
@@ -104,11 +101,11 @@ async function streamResponse(prompt) {
 
 ## Model Options
 
-| Model      | Description          | Context Length | Best For                           |
-| ---------- | -------------------- | -------------- | ---------------------------------- |
-| qwen-max   | Most capable model   | 32k tokens     | Complex reasoning, code generation |
-| qwen-plus  | Balanced performance | 32k tokens     | General purpose tasks              |
-| qwen-turbo | Fast responses       | 8k tokens      | Quick queries, simple tasks        |
+| Model | Description | Context Length | Best For |
+|-------|-------------|----------------|----------|
+| qwen-max | Most capable model | 32k tokens | Complex reasoning, code generation |
+| qwen-plus | Balanced performance | 32k tokens | General purpose tasks |
+| qwen-turbo | Fast responses | 8k tokens | Quick queries, simple tasks |
 
 ## Integration with VS Code Extension
 
@@ -131,24 +128,21 @@ Add to your VS Code settings.json:
 import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
-  const disposable = vscode.commands.registerCommand(
-    'qwen.generateCode',
-    async () => {
-      const editor = vscode.window.activeTextEditor;
-      if (!editor) return;
-
-      const selection = editor.selection;
-      const selectedText = editor.document.getText(selection);
-
-      const prompt = `Generate code based on: ${selectedText}`;
-      const generatedCode = await generateText(prompt);
-
-      await editor.edit((editBuilder) => {
-        editBuilder.replace(selection, generatedCode);
-      });
-    }
-  );
-
+  const disposable = vscode.commands.registerCommand('qwen.generateCode', async () => {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) return;
+    
+    const selection = editor.selection;
+    const selectedText = editor.document.getText(selection);
+    
+    const prompt = `Generate code based on: ${selectedText}`;
+    const generatedCode = await generateText(prompt);
+    
+    await editor.edit(editBuilder => {
+      editBuilder.replace(selection, generatedCode);
+    });
+  });
+  
   context.subscriptions.push(disposable);
 }
 ```
@@ -162,15 +156,14 @@ export function activate(context: vscode.ExtensionContext) {
 import { QwenClient } from './qwen-client.js';
 
 const qwenClient = new QwenClient({
-  apiKey: process.env.DASHSCOPE_API_KEY,
+  apiKey: process.env.DASHSCOPE_API_KEY
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'generateText') {
-    qwenClient
-      .generate(request.prompt)
-      .then((response) => sendResponse({ success: true, text: response }))
-      .catch((error) => sendResponse({ success: false, error: error.message }));
+    qwenClient.generate(request.prompt)
+      .then(response => sendResponse({ success: true, text: response }))
+      .catch(error => sendResponse({ success: false, error: error.message }));
     return true; // Keeps message channel open for async response
   }
 });
@@ -187,14 +180,14 @@ function enhanceTextArea(textarea) {
     const text = textarea.value;
     const response = await chrome.runtime.sendMessage({
       action: 'generateText',
-      prompt: `Improve this text: ${text}`,
+      prompt: `Improve this text: ${text}`
     });
-
+    
     if (response.success) {
       textarea.value = response.text;
     }
   };
-
+  
   textarea.parentNode.insertBefore(button, textarea.nextSibling);
 }
 
@@ -277,8 +270,7 @@ try {
 
 ## Best Practices
 
-1. **Rate Limiting**: Implement proper rate limiting to avoid API quota
-   exhaustion
+1. **Rate Limiting**: Implement proper rate limiting to avoid API quota exhaustion
 2. **Caching**: Cache responses for identical prompts to reduce API calls
 3. **Error Recovery**: Implement retry logic with exponential backoff
 4. **Token Management**: Monitor token usage to optimize costs
@@ -289,27 +281,21 @@ try {
 ### Common Issues
 
 **Authentication Error**
-
 ```
 Error: Invalid API key
 ```
-
 Solution: Verify your DASHSCOPE_API_KEY is correct and active.
 
 **Rate Limit Exceeded**
-
 ```
 Error: Request rate limit exceeded
 ```
-
 Solution: Implement request throttling or upgrade your API plan.
 
 **Model Not Found**
-
 ```
 Error: Model 'qwen-invalid' not found
 ```
-
 Solution: Use supported model names: qwen-max, qwen-plus, qwen-turbo.
 
 ### Debug Mode
@@ -319,7 +305,7 @@ Enable detailed logging:
 ```javascript
 const client = new DashScope({
   apiKey: process.env.DASHSCOPE_API_KEY,
-  debug: true,
+  debug: true
 });
 ```
 
@@ -338,12 +324,12 @@ async function streamGeneration(prompt) {
   const stream = await client.textGeneration({
     model: 'qwen-max',
     input: { prompt },
-    parameters: {
+    parameters: { 
       stream: true,
-      max_tokens: 2000,
-    },
+      max_tokens: 2000
+    }
   });
-
+  
   let fullResponse = '';
   for await (const chunk of stream) {
     const deltaText = chunk.output.text;
@@ -351,7 +337,7 @@ async function streamGeneration(prompt) {
     // Update UI incrementally
     updateUI(deltaText);
   }
-
+  
   return fullResponse;
 }
 ```
@@ -365,27 +351,26 @@ import { QwenClient } from '../src/qwen-client.js';
 
 describe('Qwen Integration', () => {
   let client;
-
+  
   beforeEach(() => {
     client = new QwenClient({
-      apiKey: process.env.TEST_API_KEY,
+      apiKey: process.env.TEST_API_KEY
     });
   });
-
+  
   test('should generate text', async () => {
     const response = await client.generate('Hello, world!');
     expect(response).toBeTruthy();
     expect(typeof response).toBe('string');
   });
-
+  
   test('should handle errors gracefully', async () => {
     const clientWithInvalidKey = new QwenClient({
-      apiKey: 'invalid-key',
+      apiKey: 'invalid-key'
     });
-
-    await expect(clientWithInvalidKey.generate('test')).rejects.toThrow(
-      'Authentication failed'
-    );
+    
+    await expect(clientWithInvalidKey.generate('test'))
+      .rejects.toThrow('Authentication failed');
   });
 });
 ```

@@ -1,5 +1,15 @@
 import React from 'react';
-import { Badge, Button, Card, Container, Input, Layout, Select, Sidebar, Split } from '../src';
+import {
+  Badge,
+  Button,
+  Card,
+  Input,
+  Select,
+  Container,
+  Split,
+  Layout,
+  Sidebar
+} from '../src';
 
 /**
  * Test component to demonstrate all consolidated components
@@ -116,9 +126,7 @@ export const TestComponents: React.FC = () => {
             <Badge variant="info">Info</Badge>
             <Badge size="sm">Small</Badge>
             <Badge size="lg">Large</Badge>
-            <Badge dismissible onDismiss={() => alert('Dismissed')}>
-              Dismissible
-            </Badge>
+            <Badge dismissible onDismiss={() => alert('Dismissed')}>Dismissible</Badge>
           </div>
         </Card>
 
@@ -139,8 +147,16 @@ export const TestComponents: React.FC = () => {
             <div className="space-y-4">
               <Input placeholder="Default input" />
               <Input label="With Label" placeholder="Labeled input" />
-              <Input label="With Error" placeholder="Error input" error="This field is required" />
-              <Input label="With Success" placeholder="Success input" success="Looks good!" />
+              <Input
+                label="With Error"
+                placeholder="Error input"
+                error="This field is required"
+              />
+              <Input
+                label="With Success"
+                placeholder="Success input"
+                success="Looks good!"
+              />
             </div>
           </Card>
         </div>

@@ -36,8 +36,8 @@ export interface RegressionAnalysisResult {
 }
 
 export interface RegressionThresholds {
-  maxDurationIncrease?: number; // percentage
-  maxMemoryIncrease?: number; // percentage
+  maxDurationIncrease?: number;  // percentage
+  maxMemoryIncrease?: number;    // percentage
   minSignificantChange?: number; // percentage
 }
 
@@ -48,10 +48,10 @@ export class RegressionDetector {
   constructor(
     baselinePath: string = path.join(process.cwd(), 'performance-baselines'),
     thresholds: RegressionThresholds = {
-      maxDurationIncrease: 10, // 10% increase in duration
-      maxMemoryIncrease: 15, // 15% increase in memory
-      minSignificantChange: 5, // 5% minimum change to be considered significant
-    },
+      maxDurationIncrease: 10,    // 10% increase in duration
+      maxMemoryIncrease: 15,      // 15% increase in memory
+      minSignificantChange: 5     // 5% minimum change to be considered significant
+    }
   ) {
     this.baselinePath = baselinePath;
     this.thresholds = thresholds;
@@ -60,17 +60,17 @@ export class RegressionDetector {
   public async saveBaseline(
     testName: string,
     results: { results: PerformanceResult[]; stats: PerformanceStats },
-    environment: string = process.env.NODE_ENV || 'development',
+    environment: string = process.env.NODE_ENV || 'development'
   ): Promise<void> {
     await this.ensureBaselineDirectory();
-
+    
     const baselineFile = path.join(this.baselinePath, `${testName}.json`);
     const baseline: BaselineMetrics = {
       timestamp: Date.now(),
       environment,
       metrics: {
-        [environment]: results,
-      },
+        [environment]: results
+      }
     };
 
     let existingBaseline: BaselineMetrics;
@@ -87,7 +87,7 @@ export class RegressionDetector {
   public async detectRegression(
     testName: string,
     currentResults: { results: PerformanceResult[]; stats: PerformanceStats },
-    environment: string = process.env.NODE_ENV || 'development',
+    environment: string = process.env.NODE_ENV || 'development'
   ): Promise<RegressionAnalysisResult> {
     const baseline = await this.loadBaseline(testName, environment);
     if (!baseline) {
@@ -101,7 +101,7 @@ export class RegressionDetector {
     // Check for duration regressions
     const durationChange = this.calculatePercentChange(
       baselineMetrics.stats.mean,
-      currentResults.stats.mean,
+      currentResults.stats.mean
     );
 
     if (Math.abs(durationChange) >= (this.thresholds.minSignificantChange || 0)) {
@@ -110,7 +110,7 @@ export class RegressionDetector {
         baselineValue: baselineMetrics.stats.mean,
         currentValue: currentResults.stats.mean,
         difference: currentResults.stats.mean - baselineMetrics.stats.mean,
-        percentChange: durationChange,
+        percentChange: durationChange
       };
 
       if (durationChange > (this.thresholds.maxDurationIncrease || 0)) {
@@ -131,7 +131,7 @@ export class RegressionDetector {
         baselineValue: baselineMemoryMean,
         currentValue: currentMemoryMean,
         difference: currentMemoryMean - baselineMemoryMean,
-        percentChange: memoryChange,
+        percentChange: memoryChange
       };
 
       if (memoryChange > (this.thresholds.maxMemoryIncrease || 0)) {
@@ -144,16 +144,19 @@ export class RegressionDetector {
     return {
       hasRegression: Object.keys(regressions).length > 0,
       regressions,
-      improvements,
+      improvements
     };
   }
 
   private async loadBaseline(
     testName: string,
-    environment: string,
+    environment: string
   ): Promise<BaselineMetrics | null> {
     try {
-      const content = await fs.readFile(path.join(this.baselinePath, `${testName}.json`), 'utf-8');
+      const content = await fs.readFile(
+        path.join(this.baselinePath, `${testName}.json`),
+        'utf-8'
+      );
       const baseline: BaselineMetrics = JSON.parse(content);
       return baseline.metrics[environment] ? baseline : null;
     } catch (error) {

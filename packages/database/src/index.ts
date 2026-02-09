@@ -2,7 +2,7 @@
  * Database Package - Drizzle ORM
  *
  * This package provides database access using Drizzle ORM.
- * Legacy ORM dependencies have been removed in favor of Drizzle.
+ * Prisma has been completely removed in favor of Drizzle.
  */
 
 // =============================================================================
@@ -24,8 +24,8 @@ export {
   type Transaction,
 } from './drizzle';
 
-// Export DatabaseService
-export { DatabaseService } from './drizzle/database.service';
+// Export DatabaseService and PrismaService (backwards compatibility)
+export { DatabaseService, PrismaService } from './drizzle/database.service';
 
 // Export Drizzle schema tables
 export * as drizzleSchema from './drizzle/schema';
@@ -50,9 +50,7 @@ export {
   revenueDistributions,
   revenueStreams,
   tasks,
-  transactions,
   users,
-  wallets,
   workflowExecutions,
   workflows,
   workspaces,
@@ -83,14 +81,35 @@ export type {
 } from './drizzle/types';
 
 // Export Drizzle repositories
-export * from './drizzle/repositories';
-
-// Explicit exports for repositories that need bundler-friendly exports
-// (Rollup/Vite can have issues with barrel re-exports from CommonJS)
 export {
+  DrizzleAgentRepository,
+  DrizzleAuditLogsRepository,
+  DrizzleChatRepository,
   DrizzlePromptTemplateRepository,
+  DrizzleTaskRepository,
+  DrizzleUserRepository,
+  DrizzleWorkflowRepository,
+  DrizzleWorkspaceRepository,
+  agentNftRepository,
+  agentPromptVersionRepository,
+  drizzleAgentRepository,
+  drizzleApiLogsRepository,
+  drizzleAuditLogsRepository,
+  drizzleChatRepository,
   drizzlePromptTemplateRepository,
-} from './drizzle/repositories/prompt-template.repository';
+  drizzleTaskRepository,
+  drizzleUserRepository,
+  drizzleWorkflowRepository,
+  drizzleWorkspaceRepository,
+  fractionalShareRepository,
+  optimizationJobRepository,
+  revenueDistributionRepository,
+  revenueStreamRepository,
+  validationDatasetRepository,
+  workflowTopologyRepository,
+  type AuditLogEntry,
+  type AuditLogQuery,
+} from './drizzle/repositories';
 
 // Export backwards compatibility repository aliases
 export {

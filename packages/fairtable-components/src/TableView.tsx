@@ -1,16 +1,8 @@
-import {
-  AppState,
-  CellValue,
-  Column,
-  DEFAULT_COLUMN_WIDTH,
-  Row,
-  ROW_HEIGHT,
-  Table,
-  View,
-} from '@the-new-fuse/fairtable-core';
-import React, { DragEvent, useCallback, useEffect, useState } from 'react';
-import ColumnHeader from './ColumnHeader';
+
+import React, { useState, useEffect, useCallback, DragEvent } from 'react';
+import { Table, Column, Row, DataType, CellValue, AppState, View, DEFAULT_COLUMN_WIDTH, ROW_HEIGHT } from '@the-new-fuse/fairtable-core';
 import { PlusIcon, TrashIcon } from './Icons';
+import ColumnHeader from './ColumnHeader';
 import TableCell from './TableCell';
 
 interface GridViewProps {
@@ -27,9 +19,9 @@ interface GridViewProps {
   onUpdateCell: (rowId: string, columnId: string, value: CellValue) => void;
   onDeleteRow: (rowId: string) => void;
   onOpenLinkRecordModal: (
-    rowId: string,
-    columnId: string,
-    linkedTableId: string,
+    rowId: string, 
+    columnId: string, 
+    linkedTableId: string, 
     currentLinkedIds: string[]
   ) => void;
 }
@@ -49,39 +41,29 @@ const GridView: React.FC<GridViewProps> = ({
   onDeleteRow,
   onOpenLinkRecordModal,
 }) => {
-  const [resizingColumn, setResizingColumn] = useState<{
-    id: string;
-    startX: number;
-    startWidth: number;
-  } | null>(null);
+  const [resizingColumn, setResizingColumn] = useState<{ id: string; startX: number; startWidth: number } | null>(null);
   const [draggedColumnId, setDraggedColumnId] = useState<string | null>(null);
   const [dropTargetColumnId, setDropTargetColumnId] = useState<string | null>(null);
 
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!resizingColumn || !table) return;
-      const currentWidth = resizingColumn.startWidth + (e.clientX - resizingColumn.startX);
-      const newWidth = Math.max(currentWidth, DEFAULT_COLUMN_WIDTH / 2); // Min width
 
-      // Live update visual width (optional, can be slow for many columns)
-      const colElement = document.querySelector(
-        `th[data-column-id="${resizingColumn.id}"]`
-      ) as HTMLElement;
-      if (colElement) colElement.style.width = `${newWidth}px`;
-    },
-    [resizingColumn, table]
-  );
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!resizingColumn || !table) return;
+    const currentWidth = resizingColumn.startWidth + (e.clientX - resizingColumn.startX);
+    const newWidth = Math.max(currentWidth, DEFAULT_COLUMN_WIDTH / 2); // Min width
+    
+    // Live update visual width (optional, can be slow for many columns)
+    const colElement = document.querySelector(`th[data-column-id="${resizingColumn.id}"]`) as HTMLElement;
+    if (colElement) colElement.style.width = `${newWidth}px`;
 
-  const handleMouseUp = useCallback(
-    (e: MouseEvent) => {
-      if (!resizingColumn || !table) return;
-      const finalWidth = resizingColumn.startWidth + (e.clientX - resizingColumn.startX);
-      const newWidth = Math.max(finalWidth, DEFAULT_COLUMN_WIDTH / 2);
-      onUpdateColumn(resizingColumn.id, { width: newWidth });
-      setResizingColumn(null);
-    },
-    [resizingColumn, table, onUpdateColumn]
-  );
+  }, [resizingColumn, table]);
+
+  const handleMouseUp = useCallback((e: MouseEvent) => {
+    if (!resizingColumn || !table) return;
+    const finalWidth = resizingColumn.startWidth + (e.clientX - resizingColumn.startX);
+    const newWidth = Math.max(finalWidth, DEFAULT_COLUMN_WIDTH / 2);
+    onUpdateColumn(resizingColumn.id, { width: newWidth });
+    setResizingColumn(null);
+  }, [resizingColumn, table, onUpdateColumn]);
 
   useEffect(() => {
     if (resizingColumn) {
@@ -117,9 +99,9 @@ const GridView: React.FC<GridViewProps> = ({
       setDropTargetColumnId(columnId);
     }
   };
-
+  
   const handleColumnDragLeave = (e: DragEvent<HTMLTableCellElement>) => {
-    setDropTargetColumnId(null);
+     setDropTargetColumnId(null);
   };
 
   const handleColumnDrop = (e: DragEvent<HTMLTableCellElement>, targetColumnId: string) => {
@@ -131,19 +113,17 @@ const GridView: React.FC<GridViewProps> = ({
     setDropTargetColumnId(null);
   };
 
+
   if (!table || !view) {
     return <div className="p-8 text-center text-slate-500">Grid view data is missing.</div>;
   }
-
+  
   return (
-    <div
-      className="flex-grow overflow-auto custom-scrollbar"
-      style={{ userSelect: resizingColumn ? 'none' : 'auto' }}
-    >
+    <div className="flex-grow overflow-auto custom-scrollbar" style={{ userSelect: resizingColumn ? 'none' : 'auto'}}>
       <table className="min-w-full border-collapse">
         <thead className="bg-slate-50">
           <tr>
-            <th
+            <th 
               className="sticky top-0 left-0 z-20 bg-slate-100 p-2 border-b border-r border-slate-300 text-xs font-medium text-slate-500"
               style={{ width: '50px', minWidth: '50px' }}
             >
@@ -163,41 +143,34 @@ const GridView: React.FC<GridViewProps> = ({
                 isDragTarget={dropTargetColumnId === col.id && draggedColumnId !== col.id}
               />
             ))}
-            <th
-              className="sticky top-0 z-10 bg-slate-50 p-0 border-b border-slate-300"
-              style={{ width: '50px' }}
-            >
+            <th className="sticky top-0 z-10 bg-slate-50 p-0 border-b border-slate-300" style={{width: '50px'}}>
               <div className="h-full flex items-center justify-center">
-                <button
+                  <button
                   onClick={onAddColumn}
                   className="p-2 text-sky-600 hover:bg-sky-100 rounded-full transition-colors"
                   title="Add new column"
-                >
+                  >
                   <PlusIcon className="w-5 h-5" />
-                </button>
+                  </button>
               </div>
             </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-slate-200">
           {rowsToDisplay.map((row, rowIndex) => (
-            <tr
-              key={row.id}
-              className="group hover:bg-slate-50"
-              style={{ height: `${ROW_HEIGHT}px` }}
-            >
-              <td
-                className="sticky left-0 bg-slate-50 group-hover:bg-slate-100 p-2 border-b border-r border-slate-300 text-xs text-slate-500 text-center select-none"
-                style={{ width: '50px', minWidth: '50px' }}
+            <tr key={row.id} className="group hover:bg-slate-50" style={{ height: `${ROW_HEIGHT}px` }}>
+              <td 
+                  className="sticky left-0 bg-slate-50 group-hover:bg-slate-100 p-2 border-b border-r border-slate-300 text-xs text-slate-500 text-center select-none"
+                  style={{ width: '50px', minWidth: '50px' }}
               >
                 <div className="flex items-center justify-center h-full">
                   <span className="group-hover:hidden">{rowIndex + 1}</span>
-                  <button
-                    onClick={() => onDeleteRow(row.id)}
-                    className="hidden group-hover:block text-red-400 hover:text-red-600"
-                    title="Delete row"
+                  <button 
+                      onClick={() => onDeleteRow(row.id)}
+                      className="hidden group-hover:block text-red-400 hover:text-red-600"
+                      title="Delete row"
                   >
-                    <TrashIcon className="w-4 h-4" />
+                      <TrashIcon className="w-4 h-4" />
                   </button>
                 </div>
               </td>
@@ -218,9 +191,9 @@ const GridView: React.FC<GridViewProps> = ({
         </tbody>
       </table>
       {rowsToDisplay.length === 0 && (
-        <div className="p-8 text-center text-slate-400">
-          This view is empty. Try adjusting filters or adding new rows.
-        </div>
+          <div className="p-8 text-center text-slate-400">
+              This view is empty. Try adjusting filters or adding new rows.
+          </div>
       )}
     </div>
   );

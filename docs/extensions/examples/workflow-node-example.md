@@ -1,13 +1,10 @@
 # Workflow Node Extension Example
 
-This example demonstrates how to create a custom workflow node extension that
-integrates with The New Fuse workflow engine. We'll build a **Data Validator
-Node** that validates and transforms data as it flows through workflows.
+This example demonstrates how to create a custom workflow node extension that integrates with The New Fuse workflow engine. We'll build a **Data Validator Node** that validates and transforms data as it flows through workflows.
 
 ## Overview
 
 The Data Validator Node will:
-
 - Validate input data against configurable schemas
 - Transform data based on validation rules
 - Provide detailed error reporting for invalid data
@@ -52,7 +49,9 @@ Create `extension.json`:
   "author": "The New Fuse Examples",
   "license": "MIT",
   "keywords": ["validation", "data", "workflow", "schema"],
-  "permissions": ["workflow_modify"],
+  "permissions": [
+    "workflow_modify"
+  ],
   "configuration": {
     "schema": {
       "type": "object",
@@ -81,9 +80,9 @@ Create `extension.json`:
             "type": "object",
             "properties": {
               "field": { "type": "string" },
-              "operation": {
-                "type": "string",
-                "enum": ["trim", "lowercase", "uppercase", "sanitize"]
+              "operation": { 
+                "type": "string", 
+                "enum": ["trim", "lowercase", "uppercase", "sanitize"] 
               }
             }
           },
@@ -151,11 +150,11 @@ export class DataValidator {
   private validateFunction: ValidateFunction<any> | null = null;
 
   constructor() {
-    this.ajv = new Ajv({
+    this.ajv = new Ajv({ 
       allErrors: true,
       removeAdditional: false,
       useDefaults: true,
-      coerceTypes: true,
+      coerceTypes: true
     });
   }
 
@@ -187,7 +186,7 @@ export class DataValidator {
           field: error.instancePath || error.schemaPath,
           message: error.message || 'Validation failed',
           value: error.data,
-          rule: error.keyword || 'unknown',
+          rule: error.keyword || 'unknown'
         });
       }
     }
@@ -198,10 +197,7 @@ export class DataValidator {
   /**
    * Apply data transformations
    */
-  applyTransformations(
-    data: any,
-    transformations: Transformation[]
-  ): {
+  applyTransformations(data: any, transformations: Transformation[]): {
     data: any;
     applied: string[];
   } {
@@ -210,15 +206,12 @@ export class DataValidator {
 
     for (const transformation of transformations) {
       const { field, operation } = transformation;
-
+      
       if (this.hasField(transformedData, field)) {
         const value = this.getFieldValue(transformedData, field);
-
+        
         if (typeof value === 'string') {
-          const transformedValue = this.applyStringTransformation(
-            value,
-            operation
-          );
+          const transformedValue = this.applyStringTransformation(value, operation);
           this.setFieldValue(transformedData, field, transformedValue);
           applied.push(`${operation} on ${field}`);
         }
@@ -244,11 +237,9 @@ export class DataValidator {
   }
 
   private hasField(obj: any, field: string): boolean {
-    return (
-      field.split('.').reduce((current, key) => {
-        return current && current[key] !== undefined;
-      }, obj) !== undefined
-    );
+    return field.split('.').reduce((current, key) => {
+      return current && current[key] !== undefined;
+    }, obj) !== undefined;
   }
 
   private getFieldValue(obj: any, field: string): any {
@@ -274,17 +265,17 @@ export class DataValidator {
 Create `src/index.ts`:
 
 ```typescript
-import {
-  ExtensionLifecycle,
+import { 
+  ExtensionLifecycle, 
   ExtensionContext,
-  WorkflowNode,
+  WorkflowNode 
 } from '@the-new-fuse/extension-system/types';
 import { DataValidator } from './validator';
-import {
-  ValidationConfig,
-  ValidationInput,
+import { 
+  ValidationConfig, 
+  ValidationInput, 
   ValidationOutput,
-  ValidationError,
+  ValidationError 
 } from './types';
 
 export class DataValidatorNode implements ExtensionLifecycle, WorkflowNode {
@@ -300,11 +291,11 @@ export class DataValidatorNode implements ExtensionLifecycle, WorkflowNode {
         required: ['id', 'name'],
         properties: {
           id: { type: 'string' },
-          name: { type: 'string' },
-        },
+          name: { type: 'string' }
+        }
       },
       strictMode: true,
-      transformations: [],
+      transformations: []
     };
   }
 
@@ -314,14 +305,12 @@ export class DataValidatorNode implements ExtensionLifecycle, WorkflowNode {
   async onLoad(context: ExtensionContext): Promise<void> {
     this.context = context;
     this.config = { ...this.config, ...context.getConfig() };
-
+    
     try {
       this.validator.setSchema(this.config.validationSchema);
       context.logger?.info('DataValidatorNode extension loaded successfully');
     } catch (error) {
-      context.logger?.error(
-        `Failed to load DataValidatorNode: ${error.message}`
-      );
+      context.logger?.error(`Failed to load DataValidatorNode: ${error.message}`);
       throw error;
     }
   }
@@ -330,16 +319,16 @@ export class DataValidatorNode implements ExtensionLifecycle, WorkflowNode {
    * Extension Lifecycle: Called when configuration changes
    */
   async onConfigChange(
-    config: Record<string, any>,
+    config: Record<string, any>, 
     context: ExtensionContext
   ): Promise<void> {
     const newConfig = { ...this.config, ...config } as ValidationConfig;
-
+    
     try {
       // Validate the new schema
       this.validator.setSchema(newConfig.validationSchema);
       this.config = newConfig;
-
+      
       context.logger?.info('DataValidatorNode configuration updated');
     } catch (error) {
       context.logger?.error(`Invalid configuration: ${error.message}`);
@@ -351,7 +340,7 @@ export class DataValidatorNode implements ExtensionLifecycle, WorkflowNode {
    * Workflow Node: Main processing method
    */
   async execute(
-    input: ValidationInput,
+    input: ValidationInput, 
     context: any
   ): Promise<ValidationOutput> {
     const { data, metadata } = input;
@@ -360,14 +349,12 @@ export class DataValidatorNode implements ExtensionLifecycle, WorkflowNode {
     try {
       // Apply transformations first
       const transformationResult = this.validator.applyTransformations(
-        data,
+        data, 
         this.config.transformations
       );
 
       // Validate the transformed data
-      const validationResult = this.validator.validate(
-        transformationResult.data
-      );
+      const validationResult = this.validator.validate(transformationResult.data);
 
       // Determine if processing should continue
       const shouldContinue = validationResult.valid || !this.config.strictMode;
@@ -378,8 +365,8 @@ export class DataValidatorNode implements ExtensionLifecycle, WorkflowNode {
           `Data validation passed for ${JSON.stringify(data)}`
         );
       } else {
-        const errorMessage = `Data validation failed: ${validationResult.errors.map((e) => e.message).join(', ')}`;
-
+        const errorMessage = `Data validation failed: ${validationResult.errors.map(e => e.message).join(', ')}`;
+        
         if (this.config.strictMode) {
           this.context.logger?.error(errorMessage);
         } else {
@@ -401,39 +388,34 @@ export class DataValidatorNode implements ExtensionLifecycle, WorkflowNode {
         metadata: {
           ...metadata,
           validationTime: processingTime,
-          validationTimestamp: new Date().toISOString(),
-        },
+          validationTimestamp: new Date().toISOString()
+        }
       };
 
       // In strict mode, throw error if validation fails
       if (!validationResult.valid && this.config.strictMode) {
-        throw new Error(
-          `Validation failed: ${validationResult.errors.map((e) => e.message).join(', ')}`
-        );
+        throw new Error(`Validation failed: ${validationResult.errors.map(e => e.message).join(', ')}`);
       }
 
       return result;
-    } catch (error) {
-      this.context.logger?.error(
-        `DataValidatorNode execution failed: ${error.message}`
-      );
 
+    } catch (error) {
+      this.context.logger?.error(`DataValidatorNode execution failed: ${error.message}`);
+      
       // Return error result
       return {
         valid: false,
         data: data,
         originalData: data,
-        errors: [
-          {
-            field: 'execution',
-            message: error.message,
-            value: data,
-            rule: 'execution_error',
-          },
-        ],
+        errors: [{
+          field: 'execution',
+          message: error.message,
+          value: data,
+          rule: 'execution_error'
+        }],
         warnings: [],
         transformationsApplied: [],
-        metadata,
+        metadata
       };
     }
   }
@@ -474,7 +456,7 @@ export class DataValidatorNode implements ExtensionLifecycle, WorkflowNode {
       schemaFields: Object.keys(this.config.validationSchema.properties || {}),
       requiredFields: this.config.validationSchema.required || [],
       transformationCount: this.config.transformations.length,
-      strictMode: this.config.strictMode,
+      strictMode: this.config.strictMode
     };
   }
 }
@@ -505,8 +487,8 @@ describe('DataValidator', () => {
         required: ['name', 'email'],
         properties: {
           name: { type: 'string' },
-          email: { type: 'string', format: 'email' },
-        },
+          email: { type: 'string', format: 'email' }
+        }
       };
 
       validator.setSchema(schema);
@@ -523,8 +505,8 @@ describe('DataValidator', () => {
         type: 'object',
         required: ['name'],
         properties: {
-          name: { type: 'string' },
-        },
+          name: { type: 'string' }
+        }
       };
 
       validator.setSchema(schema);
@@ -543,7 +525,7 @@ describe('DataValidator', () => {
       const data = { name: '  John Doe  ', email: 'JOHN@EXAMPLE.COM' };
       const transformations = [
         { field: 'name', operation: 'trim' as const },
-        { field: 'email', operation: 'lowercase' as const },
+        { field: 'email', operation: 'lowercase' as const }
       ];
 
       const result = validator.applyTransformations(data, transformations);
@@ -558,7 +540,7 @@ describe('DataValidator', () => {
       const data = { user: { profile: { name: '  JOHN  ' } } };
       const transformations = [
         { field: 'user.profile.name', operation: 'trim' as const },
-        { field: 'user.profile.name', operation: 'lowercase' as const },
+        { field: 'user.profile.name', operation: 'lowercase' as const }
       ];
 
       const result = validator.applyTransformations(data, transformations);
@@ -576,10 +558,7 @@ describe('DataValidator', () => {
 ```typescript
 import { ExtensionSystemFactory } from '@the-new-fuse/extension-system';
 
-const extensionManager = ExtensionSystemFactory.createDefault(
-  './extensions',
-  logger
-);
+const extensionManager = ExtensionSystemFactory.createDefault('./extensions', logger);
 await extensionManager.initialize();
 
 // Load the data validator extension
@@ -587,12 +566,10 @@ const result = await extensionManager.loadExtension('./data-validator-node');
 await extensionManager.activateExtension(result.extension.id);
 
 // Test the validator
-const extension = extensionManager.getExtension(
-  '@examples/data-validator-node@1.0.0'
-);
+const extension = extensionManager.getExtension('@examples/data-validator-node@1.0.0');
 const testData = {
   data: { id: '123', name: 'Test User', email: 'test@example.com' },
-  metadata: { source: 'api' },
+  metadata: { source: 'api' }
 };
 
 const validationResult = await extension.instance.execute(testData, {});
@@ -603,34 +580,31 @@ console.log('Validation result:', validationResult);
 
 ```typescript
 // Configure the validator with custom schema and transformations
-await extensionManager.setExtensionConfig(
-  '@examples/data-validator-node@1.0.0',
-  {
-    validationSchema: {
-      type: 'object',
-      required: ['userId', 'email', 'profile'],
-      properties: {
-        userId: { type: 'string', pattern: '^[0-9]+$' },
-        email: { type: 'string', format: 'email' },
-        profile: {
-          type: 'object',
-          required: ['firstName', 'lastName'],
-          properties: {
-            firstName: { type: 'string', minLength: 1 },
-            lastName: { type: 'string', minLength: 1 },
-            age: { type: 'integer', minimum: 0, maximum: 150 },
-          },
-        },
-      },
-    },
-    strictMode: false, // Continue processing with warnings
-    transformations: [
-      { field: 'email', operation: 'lowercase' },
-      { field: 'profile.firstName', operation: 'trim' },
-      { field: 'profile.lastName', operation: 'trim' },
-    ],
-  }
-);
+await extensionManager.setExtensionConfig('@examples/data-validator-node@1.0.0', {
+  validationSchema: {
+    type: 'object',
+    required: ['userId', 'email', 'profile'],
+    properties: {
+      userId: { type: 'string', pattern: '^[0-9]+$' },
+      email: { type: 'string', format: 'email' },
+      profile: {
+        type: 'object',
+        required: ['firstName', 'lastName'],
+        properties: {
+          firstName: { type: 'string', minLength: 1 },
+          lastName: { type: 'string', minLength: 1 },
+          age: { type: 'integer', minimum: 0, maximum: 150 }
+        }
+      }
+    }
+  },
+  strictMode: false, // Continue processing with warnings
+  transformations: [
+    { field: 'email', operation: 'lowercase' },
+    { field: 'profile.firstName', operation: 'trim' },
+    { field: 'profile.lastName', operation: 'trim' }
+  ]
+});
 ```
 
 ### 3. Workflow Integration
@@ -644,7 +618,7 @@ const workflowDefinition = {
     {
       id: 'input',
       type: 'input',
-      config: {},
+      config: {}
     },
     {
       id: 'validate-user-data',
@@ -661,31 +635,31 @@ const workflowDefinition = {
               required: ['firstName', 'lastName'],
               properties: {
                 firstName: { type: 'string', minLength: 1 },
-                lastName: { type: 'string', minLength: 1 },
-              },
-            },
-          },
+                lastName: { type: 'string', minLength: 1 }
+              }
+            }
+          }
         },
         transformations: [
           { field: 'email', operation: 'lowercase' },
           { field: 'profile.firstName', operation: 'trim' },
-          { field: 'profile.lastName', operation: 'trim' },
+          { field: 'profile.lastName', operation: 'trim' }
         ],
-        strictMode: true,
-      },
+        strictMode: true
+      }
     },
     {
       id: 'save-user',
       type: 'database-save',
       config: {
-        table: 'users',
-      },
-    },
+        table: 'users'
+      }
+    }
   ],
   connections: [
     { from: 'input', to: 'validate-user-data' },
-    { from: 'validate-user-data', to: 'save-user' },
-  ],
+    { from: 'validate-user-data', to: 'save-user' }
+  ]
 };
 ```
 
@@ -706,7 +680,7 @@ this.ajv.addKeyword({
       if (!schemaVal) return true;
       return /^[a-zA-Z0-9_]{3,20}$/.test(data);
     };
-  },
+  }
 });
 ```
 
@@ -718,7 +692,7 @@ Add support for async validation (e.g., checking if email exists):
 async validateAsync(data: any): Promise<{ valid: boolean; errors: ValidationError[] }> {
   // Perform async validations
   const asyncErrors: ValidationError[] = [];
-
+  
   if (data.email) {
     const emailExists = await this.checkEmailExists(data.email);
     if (emailExists) {
@@ -730,7 +704,7 @@ async validateAsync(data: any): Promise<{ valid: boolean; errors: ValidationErro
       });
     }
   }
-
+  
   return { valid: asyncErrors.length === 0, errors: asyncErrors };
 }
 ```
@@ -744,15 +718,15 @@ private validationCache = new Map<string, any>();
 
 async execute(input: ValidationInput, context: any): Promise<ValidationOutput> {
   const cacheKey = JSON.stringify(input.data);
-
+  
   if (this.validationCache.has(cacheKey)) {
     this.context.logger?.debug('Using cached validation result');
     return this.validationCache.get(cacheKey);
   }
-
+  
   const result = await this.performValidation(input, context);
   this.validationCache.set(cacheKey, result);
-
+  
   return result;
 }
 ```
@@ -785,28 +759,26 @@ import { ExtensionSystemFactory } from '@the-new-fuse/extension-system';
 
 describe('DataValidatorNode Integration', () => {
   let extensionManager;
-
+  
   beforeAll(async () => {
     extensionManager = ExtensionSystemFactory.createDefault('./dist', logger);
     await extensionManager.initialize();
-
+    
     const result = await extensionManager.loadExtension('./');
     await extensionManager.activateExtension(result.extension.id);
   });
-
+  
   it('should validate data in workflow context', async () => {
     // Test the extension in a workflow-like environment
-    const extension = extensionManager.getExtension(
-      '@examples/data-validator-node@1.0.0'
-    );
-
+    const extension = extensionManager.getExtension('@examples/data-validator-node@1.0.0');
+    
     const input = {
       data: { id: '123', name: 'Test User' },
-      metadata: { workflowId: 'test-workflow' },
+      metadata: { workflowId: 'test-workflow' }
     };
-
+    
     const result = await extension.instance.execute(input, {});
-
+    
     expect(result.valid).toBe(true);
     expect(result.data).toEqual(input.data);
   });
@@ -815,30 +787,24 @@ describe('DataValidatorNode Integration', () => {
 
 ## Next Steps
 
-This example demonstrates the core concepts of creating workflow node
-extensions. You can extend this further by:
+This example demonstrates the core concepts of creating workflow node extensions. You can extend this further by:
 
-1. **Adding more validation types** - Date validation, custom business rules,
-   etc.
+1. **Adding more validation types** - Date validation, custom business rules, etc.
 2. **Implementing caching** - Cache validation results for better performance
 3. **Adding metrics** - Track validation success rates and performance
 4. **Creating a UI** - Build a configuration interface for the validation rules
 5. **Publishing** - Share your extension with the community
 
 For more advanced examples, see:
-
-- **[Agent Capability Example](agent-capability-example.md)** - Add skills to AI
-  agents
-- **[NestJS Module Example](nestjs-module-example.md)** - Backend service
-  integration
+- **[Agent Capability Example](agent-capability-example.md)** - Add skills to AI agents
+- **[NestJS Module Example](nestjs-module-example.md)** - Backend service integration
 
 ## Troubleshooting
 
 ### Common Issues
 
 1. **Schema compilation errors** - Ensure your JSON schema is valid
-2. **Type errors** - Check that your TypeScript types match the expected
-   interfaces
+2. **Type errors** - Check that your TypeScript types match the expected interfaces
 3. **Performance issues** - Consider caching and async validation patterns
 4. **Memory leaks** - Clean up resources in the `onUnload` lifecycle method
 

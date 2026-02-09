@@ -11,9 +11,18 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { and, db, desc, drizzleSchema, eq, lt, sql, type Task } from '@the-new-fuse/database';
+import {
+  and,
+  db,
+  desc,
+  drizzleSchema,
+  eq,
+  lt,
+  sql,
+  type DrizzleTask as Task,
+} from '@the-new-fuse/database';
 
-const { agents, tasks, agentRegistrations, julesSessions } = drizzleSchema;
+const { agents, tasks, agentRegistrations } = drizzleSchema;
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
@@ -76,13 +85,13 @@ export class SelfImprovementCronService {
           // Mark as offline
           await db
             .update(agentRegistrations)
-            .set({ isOnline: false, updatedAt: new Date() } as any)
+            .set({ isOnline: false, updatedAt: new Date() })
             .where(eq(agentRegistrations.id, reg.id));
 
           // Also update parent agent status if needed
           await db
             .update(agents)
-            .set({ status: 'OFFLINE', updatedAt: new Date() } as any)
+            .set({ status: 'OFFLINE', updatedAt: new Date() })
             .where(eq(agents.id, reg.agentId));
 
           this.logger.log(`[Health] Marked agent ${reg.agentId} as OFFLINE due to stale heartbeat`);
@@ -140,10 +149,11 @@ export class SelfImprovementCronService {
             `[Patterns] ${frequentPatterns.length} patterns qualify for skill creation`
           );
 
-          // Trigger skill-builder meta-skill
+          // TODO: Trigger skill-builder meta-skill
+          // Create a task for skill-builder to generate new skills
           for (const pattern of frequentPatterns) {
             this.logger.log(`[Patterns] Queuing skill creation for pattern: ${pattern.pattern}`);
-            await this.createJulesImprovementTask(pattern);
+            // await this.createSkillBuilderTask(pattern);
           }
         }
       }
@@ -306,15 +316,6 @@ export class SelfImprovementCronService {
     } catch (error) {
       this.logger.error('[Weekly] Error in weekly meta-analysis:', error);
     }
-  }
-
-  /**
-   * Manually trigger an improvement task for a specific pattern.
-   * Useful for testing or forcing the improvement loop.
-   */
-  async triggerManualImprovement(pattern: PatternMatch): Promise<void> {
-    this.logger.log(`[Manual] Triggering improvement for pattern: ${pattern.pattern}`);
-    await this.createJulesImprovementTask(pattern);
   }
 
   /**
@@ -539,81 +540,5 @@ export class SelfImprovementCronService {
     }
 
     return null;
-  }
-
-  /**
-   * Create an improvement task for Jules
-   */
-  private async createJulesImprovementTask(pattern: PatternMatch): Promise<void> {
-    try {
-      // Find system agent
-      let systemAgent = (
-        await db
-          .select()
-          .from(agents)
-          .where(eq(agents.type, 'SYSTEM' as any))
-          .limit(1)
-      )[0];
-
-      if (!systemAgent) {
-        // Fallback to first available agent if no system agent
-        systemAgent = (await db.select().from(agents).limit(1))[0];
-        if (!systemAgent) {
-          this.logger.warn('[Patterns] No agent found to assign task');
-          return;
-        }
-      }
-
-      // Find previous sessions for context (Self-Referencing)
-      const previousSessions = await db
-        .select()
-        .from(julesSessions)
-        .where(sql`${julesSessions.metadata}->>'pattern' = ${pattern.pattern}`)
-        .orderBy(desc(julesSessions.createdAt))
-        .limit(3);
-
-      let context = `Pattern: ${pattern.pattern}\nOccurrences: ${pattern.occurrences}\nSuccess Rate: ${pattern.successRate}\nExamples:\n${pattern.examples.join('\n')}`;
-
-      if (previousSessions.length > 0) {
-        context += `\n\nPrevious Improvement Attempts:\n`;
-        previousSessions.forEach((session, i) => {
-          context += `${i + 1}. Status: ${session.status}, Result: ${JSON.stringify(session.result || {})}\n`;
-        });
-      }
-
-      const prompt = `Analyze the following pattern and generate a new skill or improvement strategy.\n\n${context}`;
-
-      // Create Task
-      const [task] = await db
-        .insert(tasks)
-        .values({
-          title: `Improvement: ${pattern.pattern}`,
-          type: 'IMPROVEMENT',
-          status: 'PENDING',
-          priority: 'MEDIUM',
-          assignedToId: systemAgent.id,
-          userId: systemAgent.userId, // Inherit user ID
-          description: prompt,
-          metadata: { pattern: pattern.pattern },
-        } as any)
-        .returning();
-
-      // Create Jules Session
-      await db.insert(julesSessions).values({
-        julesSessionId: `jules-${Date.now()}-${Math.random().toString(36).substring(7)}`, // Temporary ID
-        taskId: task.id,
-        delegatedByAgentId: systemAgent.id,
-        userId: systemAgent.userId,
-        status: 'PENDING',
-        metadata: {
-          prompt,
-          pattern: pattern.pattern,
-        },
-      } as any);
-
-      this.logger.log(`[Patterns] Created Jules improvement task for pattern: ${pattern.pattern}`);
-    } catch (error) {
-      this.logger.error('[Patterns] Error creating Jules task:', error);
-    }
   }
 }

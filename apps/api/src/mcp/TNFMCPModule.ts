@@ -13,7 +13,7 @@ import { TNFMCPController } from './TNFMCPController';
 import { TNFMCPService } from './TNFMCPService';
 
 @Module({
-  // DatabaseModule provides DatabaseService (Drizzle-backed) for all services
+  // DatabaseModule provides PrismaService (Drizzle-backed) for all services
   imports: [DatabaseModule],
   providers: [
     TNFMCPService,

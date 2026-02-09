@@ -3,7 +3,7 @@ ARG PNPM_VERSION=10.22.0
 ARG SERVICE_PATH
 ARG SERVICE_ROOT=apps
 
-# Cache bust: 2026-02-02-v1 - Force rebuild to include extension-system
+# Cache bust: 2025-12-28-v2
 #------------------------------------------------------------------------------
 # Builder stage
 #------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ FROM node:${NODE_VERSION}-alpine AS builder
 ARG SERVICE_PATH
 ARG SERVICE_ROOT=apps
 ARG PNPM_VERSION=10.22.0
-RUN apk add --no-cache python3 make g++ git cairo-dev pango-dev jpeg-dev giflib-dev
+RUN apk add --no-cache python3 make g++ cairo-dev pango-dev jpeg-dev giflib-dev
 RUN npm i -g pnpm@${PNPM_VERSION}
 
 WORKDIR /app
@@ -31,7 +31,7 @@ RUN pnpm install --frozen-lockfile || (echo "Lockfile compatibility issue detect
 RUN pnpm --filter @the-new-fuse/types build
 
 # Build database package (includes Drizzle schema compilation)
-RUN pnpm --filter @the-new-fuse/database build
+RUN pnpm --filter @the-new-fuse/database build || echo "Database build skipped"
 
 # Build essential workspace packages
 RUN pnpm --filter @the-new-fuse/api-types build
@@ -47,15 +47,12 @@ RUN pnpm --filter @the-new-fuse/api-client build
 RUN pnpm --filter @the-new-fuse/security build
 RUN pnpm --filter @the-new-fuse/mcp-core build
 RUN pnpm --filter @the-new-fuse/n8n-workflows build
-RUN pnpm --filter @the-new-fuse/extension-system build
 RUN pnpm --filter @the-new-fuse/relay-core build
 RUN pnpm --filter @the-new-fuse/ui-consolidated build
 RUN pnpm --filter @the-new-fuse/port-management build
 RUN pnpm --filter @the-new-fuse/prompt-templating build
-RUN pnpm --filter @the-new-fuse/agent build
 RUN pnpm --filter @the-new-fuse/core build
 RUN pnpm --filter @the-new-fuse/shared build
-RUN pnpm --filter @the-new-fuse/marketplace-gateway build
 
 # Build the target service AND its workspace dependencies
 # The ... suffix tells pnpm to also build dependencies
@@ -65,7 +62,7 @@ RUN pnpm --filter=./${SERVICE_ROOT}/${SERVICE_PATH}... build
 RUN echo "Verifying n8n-workflows build..." && ls -la packages/n8n-workflows/dist/index.js || (echo "ERROR: n8n-workflows dist not found!" && exit 1)
 RUN echo "Verifying relay-core build..." && ls -la packages/relay-core/dist/index.js || (echo "ERROR: relay-core dist not found!" && exit 1)
 
-# NOTE: Drizzle has been migrated to Drizzle ORM - no generation step needed
+# NOTE: Prisma has been migrated to Drizzle ORM - no generation step needed
 
 
 #------------------------------------------------------------------------------
@@ -76,17 +73,13 @@ ARG SERVICE_PATH
 ARG SERVICE_ROOT=apps
 ARG PNPM_VERSION=10.22.0
 
-RUN apk add --no-cache netcat-openbsd curl chromium nss freetype harfbuzz ca-certificates ttf-freefont && \
+RUN apk add --no-cache netcat-openbsd curl && \
     npm install -g pnpm@${PNPM_VERSION} && \
     ln -sf /usr/local/bin/pnpm /bin/pnpm && \
     ln -sf /usr/local/bin/pnpm /usr/bin/pnpm && \
     echo "Files in /bin:" && ls -la /bin/pnpm && \
     echo "Files in /usr/bin:" && ls -la /usr/bin/pnpm && \
     pnpm --version
-
-# Configure Playwright to use system Chromium
-ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
-ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # Ensure PATH includes all possible binary locations
 ENV PATH="/usr/local/bin:/usr/bin:/bin:${PATH}"
@@ -111,7 +104,6 @@ RUN echo "Runner stage - verifying types dist..." && ls -la packages/types/dist/
 RUN echo "Runner stage - verifying types package.json..." && cat packages/types/package.json | grep -E '"main"|"type"'
 RUN echo "Runner stage - verifying n8n-workflows dist..." && ls -la packages/n8n-workflows/dist/index.js || (echo "ERROR: n8n-workflows dist not found in runner!" && exit 1)
 RUN echo "Runner stage - verifying relay-core dist..." && ls -la packages/relay-core/dist/index.js || (echo "ERROR: relay-core dist not found in runner!" && exit 1)
-RUN echo "Runner stage - verifying agent dist..." && ls -la packages/agent/dist/index.js || (echo "ERROR: agent dist not found in runner!" && exit 1)
 RUN echo "Runner stage - checking node_modules symlink for n8n-workflows..." && ls -laR node_modules/@the-new-fuse/n8n-workflows 2>&1 | head -20 || echo "Symlink check failed"
 
 # Copy scripts from builder stage with executable permissions (before switching to non-root user)
@@ -125,6 +117,5 @@ USER app-user
 WORKDIR /app/${SERVICE_ROOT}/${SERVICE_PATH}
 
 ENV SERVICE_PATH=$SERVICE_PATH
-ENV NODE_ENV=production
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD ["./healthcheck.sh"]
 CMD ["./run-service.sh"]

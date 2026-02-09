@@ -1,6 +1,6 @@
-import { Badge, Card, StatCard } from '@/components/ui/design-system';
 import React from 'react';
 import { FiAlertTriangle, FiCheckCircle, FiLock, FiShield } from 'react-icons/fi';
+import { Badge, Card, StatCard } from '@/components/ui/design-system';
 
 /**
  * Security Dashboard - Displays security status and metrics
@@ -10,7 +10,9 @@ const SecurityDashboard: React.FC = () => {
     <div className="p-6">
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-2xl font-bold mb-2">Security Dashboard</h1>
+          <h1 className="text-2xl font-bold mb-2">
+            Security Dashboard
+          </h1>
           <p className="text-gray-600">Monitor and manage platform security</p>
         </div>
 

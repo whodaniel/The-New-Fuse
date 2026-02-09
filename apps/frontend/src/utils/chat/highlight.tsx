@@ -32,22 +32,22 @@ export function detectLanguage(code: string, filename?: string): string {
 
     // Map common extensions to languages
     const extensionMap: Record<string, string> = {
-      js: 'javascript',
-      jsx: 'javascript',
-      ts: 'typescript',
-      tsx: 'typescript',
-      py: 'python',
-      rb: 'ruby',
-      rs: 'rust',
-      go: 'go',
-      java: 'java',
-      kt: 'kotlin',
-      php: 'php',
-      cs: 'csharp',
-      fs: 'fsharp',
-      sh: 'bash',
-      yml: 'yaml',
-      yaml: 'yaml',
+      'js': 'javascript',
+      'jsx': 'javascript',
+      'ts': 'typescript',
+      'tsx': 'typescript',
+      'py': 'python',
+      'rb': 'ruby',
+      'rs': 'rust',
+      'go': 'go',
+      'java': 'java',
+      'kt': 'kotlin',
+      'php': 'php',
+      'cs': 'csharp',
+      'fs': 'fsharp',
+      'sh': 'bash',
+      'yml': 'yaml',
+      'yaml': 'yaml',
     };
 
     if (ext && extensionMap[ext]) {

@@ -1,50 +1,59 @@
+import React, { ReactElement } from 'react';
+import { useState, useEffect, useContext } from "react";
+import ChatHistory from './ChatHistory';
+import { CLEAR_ATTACHMENTS_EVENT, DndUploaderContext } from './DnDWrapper';
+import PromptInput, { PROMPT_INPUT_EVENT } from './PromptInput';
+import { isMobile } from "react-device-detect";
+import { SidebarMobileHeader } from '../../Sidebar';
+import { useParams } from "react-router-dom";
+import { v4 } from "uuid";
 import handleSocketResponse, {
-  ABORT_STREAM_EVENT,
+  websocketURI,
   AGENT_SESSION_END,
   AGENT_SESSION_START,
-  websocketURI,
-} from '@/utils/chat/agent';
-import { handleChat } from '@/utils/chat/handlers';
-import { Workspace } from '@/utils/workspace';
-import React, { ReactElement, useContext, useEffect, useState } from 'react';
-import { isMobile } from 'react-device-detect';
-import { useParams } from 'react-router-dom';
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
-import { v4 } from 'uuid';
-import { SidebarMobileHeader } from '../../Sidebar';
-import ChatHistory from './ChatHistory';
-import DnDFileUploaderWrapper, { CLEAR_ATTACHMENTS_EVENT, DndUploaderContext } from './DnDWrapper';
-import PromptInput, { PROMPT_INPUT_EVENT } from './PromptInput';
+  ABORT_STREAM_EVENT,
+} from "@/utils/chat/agent";
+import { handleChat } from "@/utils/chat/handlers";
+import { Workspace } from "@/utils/workspace";
+import DnDFileUploaderWrapper from './DnDWrapper';
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 // import { ChatTooltips } from './ChatTooltips';
-import { LLMSelector } from '@/components/LLMSelection/LLMSelector';
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { WorkspaceData } from '@/types/workspace';
-import { TimeStamp } from '@/utils/TimeStamp';
-import { Bot, ChevronDown, MoreHorizontal, Settings } from 'lucide-react';
+import { TimeStamp } from "@/utils/TimeStamp";
 import MessageGroup from './ChatHistory/MessageGroup';
+import { WorkspaceData } from "@/types/workspace";
+import { 
+  Settings, 
+  MoreHorizontal, 
+  ChevronDown, 
+  Bot 
+} from 'lucide-react';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { LLMSelector } from '@/components/LLMSelection/LLMSelector';
 
 interface ChatMessage {
   uuid?: string;
   content: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   attachments?: File[];
   pending?: boolean;
   userMessage?: string;
   animate?: boolean;
-  type?: 'statusResponse' | 'abort';
+  type?: "statusResponse" | "abort";
   sources?: Source[];
   closed?: boolean;
   error?: string | null;
@@ -58,7 +67,7 @@ interface Source {
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   createdAt: string | Date | number;
   editedAt?: string | Date | number;
@@ -75,7 +84,7 @@ interface ChatContainerProps {
   onEditMessage?: (params: {
     editedMessage: string;
     chatId: string;
-    role: 'user' | 'assistant';
+    role: "user" | "assistant";
     attachments?: File[];
   }) => void;
   onRegenerateMessage?: (chatId: string) => void;
@@ -90,10 +99,10 @@ export default function ChatContainer({
   onEditMessage,
   onRegenerateMessage,
   onForkThread,
-  knownHistory = [],
+  knownHistory = []
 }: ChatContainerProps): ReactElement {
   const { threadSlug = null } = useParams<{ threadSlug?: string }>();
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
   const [loadingResponse, setLoadingResponse] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>(knownHistory);
   const [socketId, setSocketId] = useState<string | null>(null);
@@ -103,9 +112,7 @@ export default function ChatContainer({
   const [selectedLLMProviderId, setSelectedLLMProviderId] = useState<string>('');
   const [isLLMDialogOpen, setIsLLMDialogOpen] = useState<boolean>(false);
 
-  const handleMessageChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
+  const handleMessageChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     setMessage(event.target.value);
   };
 
@@ -113,24 +120,26 @@ export default function ChatContainer({
     clearTranscriptOnListen: true,
   });
 
-  function setMessageEmit(messageContent = '') {
+  function setMessageEmit(messageContent = "") {
     setMessage(messageContent);
-    window.dispatchEvent(new CustomEvent(PROMPT_INPUT_EVENT, { detail: messageContent }));
+    window.dispatchEvent(
+      new CustomEvent(PROMPT_INPUT_EVENT, { detail: messageContent })
+    );
   }
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!message || message === '') return false;
+    if (!message || message === "") return false;
     const prevChatHistory: ChatMessage[] = [
       ...chatHistory,
       {
         content: message,
-        role: 'user',
+        role: "user",
         attachments: parseAttachments(),
       },
       {
-        content: '',
-        role: 'assistant',
+        content: "",
+        role: "assistant",
         pending: true,
         userMessage: message,
         animate: true,
@@ -141,7 +150,7 @@ export default function ChatContainer({
       endTTSSession();
     }
     setChatHistory(prevChatHistory);
-    setMessageEmit('');
+    setMessageEmit("");
     setLoadingResponse(true);
   };
 
@@ -154,10 +163,15 @@ export default function ChatContainer({
     const updatedHistory = chatHistory.slice(0, -1);
     const lastUserMessage = updatedHistory.slice(-1)[0];
     if (!workspace?.slug) return;
-
+    
     Workspace.deleteChats(workspace.slug, [chatId])
       .then(() =>
-        sendCommand(lastUserMessage.content, true, updatedHistory, lastUserMessage?.attachments)
+        sendCommand(
+          lastUserMessage.content,
+          true,
+          updatedHistory,
+          lastUserMessage?.attachments
+        )
       )
       .catch((e) => console.error(e));
   };
@@ -168,7 +182,7 @@ export default function ChatContainer({
     history: ChatMessage[] = [],
     attachments: File[] = []
   ) => {
-    if (!command || command === '') return false;
+    if (!command || command === "") return false;
     if (!submit) {
       setMessageEmit(command);
       return;
@@ -179,8 +193,8 @@ export default function ChatContainer({
       prevChatHistory = [
         ...history,
         {
-          content: '',
-          role: 'assistant',
+          content: "",
+          role: "assistant",
           pending: true,
           userMessage: command,
           attachments,
@@ -192,12 +206,12 @@ export default function ChatContainer({
         ...chatHistory,
         {
           content: command,
-          role: 'user',
+          role: "user",
           attachments,
         },
         {
-          content: '',
-          role: 'assistant',
+          content: "",
+          role: "assistant",
           pending: true,
           userMessage: command,
           animate: true,
@@ -206,7 +220,7 @@ export default function ChatContainer({
     }
 
     setChatHistory(prevChatHistory);
-    setMessageEmit('');
+    setMessageEmit("");
     setLoadingResponse(true);
   };
 
@@ -220,7 +234,7 @@ export default function ChatContainer({
         if (!promptMessage || !promptMessage?.userMessage) return false;
         websocket.send(
           JSON.stringify({
-            type: 'awaitingFeedback',
+            type: "awaitingFeedback",
             feedback: promptMessage?.userMessage,
           })
         );
@@ -257,34 +271,36 @@ export default function ChatContainer({
     function handleWSS() {
       try {
         if (!socketId || !!websocket) return;
-        const socket = new WebSocket(`${websocketURI()}/api/agent-invocation/${socketId}`);
+        const socket = new WebSocket(
+          `${websocketURI()}/api/agent-invocation/${socketId}`
+        );
 
         window.addEventListener(ABORT_STREAM_EVENT, () => {
           window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
           websocket?.close();
         });
 
-        socket.addEventListener('message', (event) => {
+        socket.addEventListener("message", (event) => {
           setLoadingResponse(true);
           try {
             handleSocketResponse(event, setChatHistory);
           } catch (e) {
-            console.error('Failed to parse data');
+            console.error("Failed to parse data");
             window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
             socket.close();
           }
           setLoadingResponse(false);
         });
 
-        socket.addEventListener('close', (_event) => {
+        socket.addEventListener("close", (_event) => {
           window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
           setChatHistory((prev) => [
             ...prev.filter((msg) => !!msg.content),
             {
               uuid: v4(),
-              type: 'statusResponse',
-              content: 'Agent session complete.',
-              role: 'assistant',
+              type: "statusResponse",
+              content: "Agent session complete.",
+              role: "assistant",
               sources: [],
               closed: true,
               error: null,
@@ -300,14 +316,14 @@ export default function ChatContainer({
         window.dispatchEvent(new CustomEvent(AGENT_SESSION_START));
         window.dispatchEvent(new CustomEvent(CLEAR_ATTACHMENTS_EVENT));
       } catch (e) {
-        const error = e instanceof Error ? e.message : 'Unknown error';
+        const error = e instanceof Error ? e.message : "Unknown error";
         setChatHistory((prev) => [
           ...prev.filter((msg) => !!msg.content),
           {
             uuid: v4(),
-            type: 'abort',
+            type: "abort",
             content: error,
-            role: 'assistant',
+            role: "assistant",
             sources: [],
             closed: true,
             error,
@@ -326,11 +342,11 @@ export default function ChatContainer({
   // Group messages by date
   const groupMessagesByDate = (messages: Message[]) => {
     const groups: { [key: string]: Message[] } = {};
-
+    
     messages.forEach((message: any) => {
       const timestamp = new TimeStamp(message.createdAt);
       const dateKey = timestamp.startOfDay().toISOString();
-
+      
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
@@ -348,24 +364,24 @@ export default function ChatContainer({
   return (
     <div
       className={`transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full ${
-        isMobile ? 'h-full' : 'h-[calc(100%-32px)]'
+        isMobile ? "h-full" : "h-[calc(100%-32px)]"
       } overflow-y-scroll no-scroll`}
     >
       {isMobile && <SidebarMobileHeader />}
-
+      
       {/* Chat settings header with LLM selector */}
       <div className="sticky top-0 z-10 flex justify-between items-center px-4 py-2 bg-theme-bg-secondary border-b border-theme-border">
         <div className="flex items-center space-x-2">
           <Bot className="h-5 w-5 text-theme-text-secondary" />
           <span className="font-medium">{workspace?.name || 'Chat'}</span>
         </div>
-
+        
         <div className="flex items-center space-x-2">
           <Dialog open={isLLMDialogOpen} onOpenChange={setIsLLMDialogOpen}>
             <DialogTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
+              <Button 
+                variant="ghost" 
+                size="sm" 
                 className="flex items-center space-x-1 text-sm text-theme-text-secondary"
               >
                 <Settings className="h-4 w-4" />
@@ -390,7 +406,7 @@ export default function ChatContainer({
               </div>
             </DialogContent>
           </Dialog>
-
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -410,7 +426,7 @@ export default function ChatContainer({
           </DropdownMenu>
         </div>
       </div>
-
+      
       <DnDFileUploaderWrapper>
         <ChatHistory
           history={chatHistory}

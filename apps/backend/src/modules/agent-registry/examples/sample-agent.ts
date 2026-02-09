@@ -97,7 +97,6 @@ class SelfRegisteringAgent {
       version: this.config.version,
       author: this.config.author,
       description: this.config.description,
-      invitationCode: process.env.TNF_INVITE_CODE || 'tnf_invite_replace_me',
       capabilities: this.config.capabilities,
       metadata: {
         environment: process.env.NODE_ENV || 'development',
@@ -109,7 +108,7 @@ class SelfRegisteringAgent {
 
     const response = await this.apiClient.post<RegistrationResponse>(
       '/api/agent-registry/register',
-      registrationData
+      registrationData,
     );
 
     this.authToken = response.data.authToken;
@@ -136,7 +135,7 @@ class SelfRegisteringAgent {
     console.log('\n🎯 Starting onboarding...');
 
     const response = await this.apiClient.post(
-      `/api/agent-registry/onboarding/${this.registrationId}/start`
+      `/api/agent-registry/onboarding/${this.registrationId}/start`,
     );
 
     console.log(`✅ Onboarding started: ${response.data.currentStep}`);
@@ -150,7 +149,7 @@ class SelfRegisteringAgent {
     console.log('\n🧪 Testing capabilities...');
 
     const response = await this.apiClient.post(
-      `/api/agent-registry/onboarding/${this.registrationId}/test-capabilities`
+      `/api/agent-registry/onboarding/${this.registrationId}/test-capabilities`,
     );
 
     const results = response.data;
@@ -171,7 +170,9 @@ class SelfRegisteringAgent {
     console.log('\n📚 Completing orientation...');
 
     // Get orientation steps
-    const stepsResponse = await this.apiClient.get('/api/agent-registry/orientation/steps');
+    const stepsResponse = await this.apiClient.get(
+      '/api/agent-registry/orientation/steps',
+    );
     const steps = stepsResponse.data;
 
     console.log(`   Total orientation steps: ${steps.length}`);
@@ -188,7 +189,7 @@ class SelfRegisteringAgent {
             completed: true,
             timestamp: new Date().toISOString(),
           },
-        }
+        },
       );
 
       // Simulate reading the content
@@ -200,7 +201,7 @@ class SelfRegisteringAgent {
       `/api/agent-registry/onboarding/${this.registrationId}/complete-step`,
       {
         stepId: 'orientation_completed',
-      }
+      },
     );
 
     console.log('✅ Orientation completed!');
@@ -222,7 +223,7 @@ class SelfRegisteringAgent {
           JSON.stringify({
             type: 'authenticate',
             token: this.authToken,
-          })
+          }),
         );
 
         console.log('✅ Connected to agent gateway!');
@@ -424,4 +425,4 @@ if (require.main === module) {
   main();
 }
 
-export { AgentConfig, SelfRegisteringAgent };
+export { SelfRegisteringAgent, AgentConfig };

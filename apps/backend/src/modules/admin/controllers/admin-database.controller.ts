@@ -28,7 +28,7 @@ export class AdminDatabaseController {
 
     try {
       const start = Date.now();
-      const result: any = await db.execute(sql.raw(query));
+      const result = await db.execute(sql.raw(query));
       const duration = Date.now() - start;
 
       return {

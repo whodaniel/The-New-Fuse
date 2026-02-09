@@ -23,7 +23,7 @@ export function useUndoRedo<T>(initialPresent: T): UseUndoRedoResult<T> {
   const [state, setState] = useState<UseUndoRedoState<T>>({
     past: [],
     present: initialPresent,
-    future: [],
+    future: []
   });
 
   const isInBatch = useRef(false);
@@ -33,10 +33,10 @@ export function useUndoRedo<T>(initialPresent: T): UseUndoRedoResult<T> {
   const canRedo = state.future.length > 0;
 
   const set = useCallback((newPresent: T) => {
-    setState((currentState) => ({
+    setState(currentState => ({
       past: [...currentState.past, currentState.present],
       present: newPresent,
-      future: [],
+      future: []
     }));
   }, []);
 
@@ -44,12 +44,12 @@ export function useUndoRedo<T>(initialPresent: T): UseUndoRedoResult<T> {
     setState({
       past: [],
       present: newPresent,
-      future: [],
+      future: []
     });
   }, []);
 
   const undo = useCallback(() => {
-    setState((currentState) => {
+    setState(currentState => {
       if (currentState.past.length === 0) return currentState;
 
       const previous = currentState.past[currentState.past.length - 1];
@@ -58,13 +58,13 @@ export function useUndoRedo<T>(initialPresent: T): UseUndoRedoResult<T> {
       return {
         past: newPast,
         present: previous,
-        future: [currentState.present, ...currentState.future],
+        future: [currentState.present, ...currentState.future]
       };
     });
   }, []);
 
   const redo = useCallback(() => {
-    setState((currentState) => {
+    setState(currentState => {
       if (currentState.future.length === 0) return currentState;
 
       const next = currentState.future[0];
@@ -73,7 +73,7 @@ export function useUndoRedo<T>(initialPresent: T): UseUndoRedoResult<T> {
       return {
         past: [...currentState.past, currentState.present],
         present: next,
-        future: newFuture,
+        future: newFuture
       };
     });
   }, []);
@@ -83,16 +83,13 @@ export function useUndoRedo<T>(initialPresent: T): UseUndoRedoResult<T> {
     batchUpdates.current = [];
   }, []);
 
-  const addToBatch = useCallback(
-    (update: T) => {
-      if (isInBatch.current) {
-        batchUpdates.current.push(update);
-      } else {
-        set(update);
-      }
-    },
-    [set]
-  );
+  const addToBatch = useCallback((update: T) => {
+    if (isInBatch.current) {
+      batchUpdates.current.push(update);
+    } else {
+      set(update);
+    }
+  }, [set]);
 
   const commitBatch = useCallback(() => {
     if (isInBatch.current && batchUpdates.current.length > 0) {
@@ -113,6 +110,6 @@ export function useUndoRedo<T>(initialPresent: T): UseUndoRedoResult<T> {
     canRedo,
     startBatch,
     addToBatch,
-    commitBatch,
+    commitBatch
   };
 }

@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 
 export interface SkeletonProps {
   className?: string;
@@ -7,7 +7,11 @@ export interface SkeletonProps {
 export const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
   ({ className = '', ...props }, ref) => {
     return (
-      <div className={`animate-pulse rounded-md bg-gray-200 ${className}`} ref={ref} {...props} />
+      <div 
+        className={`animate-pulse rounded-md bg-gray-200 ${className}`} 
+        ref={ref} 
+        {...props} 
+      />
     );
   }
 );

@@ -53,17 +53,13 @@ export class AssetEvaluator {
       value: 0.3,
     };
 
-    return Math.max(
-      0,
-      Math.min(
-        100,
-        compatibility * weights.compatibility +
-          (10 - complexity) * weights.complexity +
-          (10 - risk) * Math.abs(weights.risk) +
-          (10 - effort) * Math.abs(weights.effort) +
-          value * weights.value,
-      ),
-    );
+    return Math.max(0, Math.min(100,
+      (compatibility * weights.compatibility) +
+      ((10 - complexity) * weights.complexity) +
+      ((10 - risk) * Math.abs(weights.risk)) +
+      ((10 - effort) * Math.abs(weights.effort)) +
+      (value * weights.value)
+    ));
   }
 
   private _generateRecommendation(score: number): string {
@@ -150,6 +146,6 @@ export class AssetEvaluator {
       return sum + Math.pow(numValue - 5, 2);
     }, 0);
 
-    return Math.max(0.5, 1 - variance / 100);
+    return Math.max(0.5, 1 - (variance / 100));
   }
 }

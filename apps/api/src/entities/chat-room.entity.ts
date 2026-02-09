@@ -1,16 +1,16 @@
 import {
+  Entity,
+  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  Entity,
-  JoinTable,
-  ManyToMany,
+  UpdateDateColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
-import { Message } from './message.entity';
 import { User } from './user.entity';
+import { Message } from './message.entity';
 
 @Entity('chat_rooms')
 export class ChatRoom {

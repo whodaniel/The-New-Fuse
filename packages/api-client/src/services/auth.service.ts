@@ -81,10 +81,7 @@ export class AuthService extends BaseService {
    * @param password New password
    * @returns Promise with password reset response
    */
-  async resetPassword(
-    token: string,
-    password: string
-  ): Promise<{ success: boolean; message: string }> {
+  async resetPassword(token: string, password: string): Promise<{ success: boolean; message: string }> {
     this.validateRequired({ token, password }, ['token', 'password']);
     return this.post<{ success: boolean; message: string }>('/reset-password', { token, password });
   }

@@ -103,7 +103,7 @@ initialize_project() {
     # Setup environment
     cp .env.example .env
     
-    # Generate Drizzle client
+    # Generate Prisma client
     bun --filter @the-new-fuse/database run generate
     
     # Run initial build

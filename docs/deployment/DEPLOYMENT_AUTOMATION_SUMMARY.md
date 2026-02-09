@@ -67,7 +67,7 @@ Located in `/scripts/deployment/`:
    - Migration preview
    - Safe migration application
    - Post-migration verification
-   - Drizzle client generation
+   - Prisma client generation
 
 2. **db-backup.sh** - Database backup utility
    - Automated backups

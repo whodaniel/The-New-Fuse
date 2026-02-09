@@ -75,7 +75,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/uuid": "^11.0.0",
     "autoprefixer": "^10.4.21",
-    "eslint": "^9.39.2",
+    "eslint": "^9.38.0",
     "eslint-plugin-react-hooks": "^7.0.0",
     "eslint-plugin-storybook": "^0.11.1",
     "identity-obj-proxy": "^3.0.0",

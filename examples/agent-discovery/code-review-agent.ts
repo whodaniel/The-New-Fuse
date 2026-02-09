@@ -8,10 +8,10 @@
 import axios from 'axios';
 import os from 'os';
 import {
-  AgentHealthMetrics,
-  AgentHeartbeat,
   AgentRegistration,
+  AgentHeartbeat,
   AgentStatus,
+  AgentHealthMetrics,
 } from '../../packages/api/src/types/agent-discovery.types';
 
 class CodeReviewAgent {
@@ -53,8 +53,7 @@ class CodeReviewAgent {
         {
           name: 'code-review',
           version: '1.2.0',
-          description:
-            'Comprehensive code review with style, complexity, and best practice analysis',
+          description: 'Comprehensive code review with style, complexity, and best practice analysis',
           languages: ['python', 'typescript', 'javascript', 'go', 'rust'],
           confidence: 0.95,
           pricing: {
@@ -133,9 +132,7 @@ class CodeReviewAgent {
 
     try {
       await axios.post(`${this.apiBaseUrl}/agents/discovery/heartbeat`, heartbeat);
-      console.log(
-        `Heartbeat sent - Status: ${heartbeat.status}, Load: ${(this.calculateLoad() * 100).toFixed(1)}%`
-      );
+      console.log(`Heartbeat sent - Status: ${heartbeat.status}, Load: ${(this.calculateLoad() * 100).toFixed(1)}%`);
     } catch (error) {
       console.error('Failed to send heartbeat:', error);
     }
@@ -150,12 +147,11 @@ class CodeReviewAgent {
     const freeMem = os.freemem();
 
     // Calculate CPU usage (simplified)
-    const cpuUsage =
-      cpus.reduce((acc, cpu) => {
-        const total = Object.values(cpu.times).reduce((a, b) => a + b);
-        const idle = cpu.times.idle;
-        return acc + (1 - idle / total) * 100;
-      }, 0) / cpus.length;
+    const cpuUsage = cpus.reduce((acc, cpu) => {
+      const total = Object.values(cpu.times).reduce((a, b) => a + b);
+      const idle = cpu.times.idle;
+      return acc + (1 - idle / total) * 100;
+    }, 0) / cpus.length;
 
     // Calculate memory usage
     const memoryUsage = ((totalMem - freeMem) / totalMem) * 100;
@@ -220,8 +216,7 @@ class CodeReviewAgent {
       if (!success) {
         this.metrics.failedTasks++;
       }
-      this.metrics.successRate =
-        (this.metrics.totalTasks - this.metrics.failedTasks) / this.metrics.totalTasks;
+      this.metrics.successRate = (this.metrics.totalTasks - this.metrics.failedTasks) / this.metrics.totalTasks;
 
       console.log(`Code review completed. Total tasks: ${this.metrics.totalTasks}`);
     } catch (error) {

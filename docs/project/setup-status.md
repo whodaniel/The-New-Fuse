@@ -3,7 +3,6 @@
 ### Current Infrastructure Status
 
 #### Services
-
 1. **Frontend Server**
    - Running on port 5173
    - Successfully started with `yarn dev`
@@ -19,7 +18,6 @@
    - Used for agent communication between Composer and Roo Coder
 
 #### Chat Interface Setup
-
 1. **Access Path**: `/workspace/:slug`
 2. **Requirements**:
    - Create a workspace first if none exists
@@ -29,7 +27,6 @@
 ### Known Issues
 
 #### Backend TypeScript Errors
-
 1. **Passport Integration**:
    ```typescript
    // Error in src/index.ts
@@ -37,9 +34,7 @@
    ```
 
 #### Core Package Issues
-
 Multiple TypeScript errors in `packages/core/`:
-
 1. **OpenAIProvider.ts**:
    - Missing properties on ChatCompletion types
    - Type mismatches in response handling
@@ -89,4 +84,4 @@ Multiple TypeScript errors in `packages/core/`:
 3. **Bridge Service**:
    - `AgentBridgeService` manages WebSocket-Redis communication
    - Handles channel subscriptions and message routing
-   - Provides real-time updates to connected clients
+   - Provides real-time updates to connected clients 

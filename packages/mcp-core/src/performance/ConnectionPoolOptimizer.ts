@@ -92,7 +92,7 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
   private readonly config: ConnectionPoolConfig;
   private readonly factory: IConnectionFactory<T>;
   private readonly logger: Logger;
-
+  
   private readonly connections = new Set<T>();
   private readonly idleConnections = new Set<T>();
   private readonly activeConnections = new Set<T>();
@@ -101,20 +101,24 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
     reject: (error: Error) => void;
     timestamp: Date;
   }> = [];
-
+  
   private healthCheckTimer?: NodeJS.Timeout;
   private optimizationTimer?: NodeJS.Timeout;
   private running = false;
-
+  
   // Statistics
   private stats = {
     totalRequests: 0,
     totalWaitTime: 0,
     connectionsCreated: 0,
-    connectionsDestroyed: 0,
+    connectionsDestroyed: 0
   };
 
-  constructor(config: ConnectionPoolConfig, factory: IConnectionFactory<T>, logger?: Logger) {
+  constructor(
+    config: ConnectionPoolConfig,
+    factory: IConnectionFactory<T>,
+    logger?: Logger
+  ) {
     super();
     this.config = config;
     this.factory = factory;
@@ -132,7 +136,7 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
 
     this.logger.info('Initializing connection pool', {
       minSize: this.config.minSize,
-      maxSize: this.config.maxSize,
+      maxSize: this.config.maxSize
     });
 
     this.running = true;
@@ -233,7 +237,7 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
     // Wait for a connection to become available
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        const index = this.pendingRequests.findIndex((req) => req.resolve === resolve);
+        const index = this.pendingRequests.findIndex(req => req.resolve === resolve);
         if (index >= 0) {
           this.pendingRequests.splice(index, 1);
         }
@@ -250,7 +254,7 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
           clearTimeout(timeout);
           reject(error);
         },
-        timestamp: new Date(),
+        timestamp: new Date()
       });
     });
   }
@@ -303,8 +307,8 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
     const idleConnections = this.idleConnections.size;
     const invalidConnections = totalConnections - activeConnections - idleConnections;
     const pendingRequests = this.pendingRequests.length;
-    const averageWaitTime =
-      this.stats.totalRequests > 0 ? this.stats.totalWaitTime / this.stats.totalRequests : 0;
+    const averageWaitTime = this.stats.totalRequests > 0 ? 
+      this.stats.totalWaitTime / this.stats.totalRequests : 0;
     const utilizationRate = totalConnections > 0 ? activeConnections / totalConnections : 0;
 
     return {
@@ -315,7 +319,7 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
       pendingRequests,
       totalRequests: this.stats.totalRequests,
       averageWaitTime,
-      utilizationRate,
+      utilizationRate
     };
   }
 
@@ -346,10 +350,8 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
 
       for (const connection of this.idleConnections) {
         const timeSinceLastUse = currentTime - connection.lastUsed.getTime();
-        if (
-          timeSinceLastUse > idleTime &&
-          stats.totalConnections - connectionsToRemove.length > this.config.minSize
-        ) {
+        if (timeSinceLastUse > idleTime && 
+            stats.totalConnections - connectionsToRemove.length > this.config.minSize) {
           connectionsToRemove.push(connection);
         }
       }
@@ -380,16 +382,16 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
    */
   private async createConnection(): Promise<T> {
     this.logger.debug('Creating new connection');
-
+    
     const connection = await this.factory.createConnection();
     await connection.connect();
-
+    
     this.connections.add(connection);
     this.stats.connectionsCreated++;
-
+    
     this.logger.debug(`Created connection ${connection.id}`);
     this.emit('connectionCreated', connection);
-
+    
     return connection;
   }
 
@@ -398,17 +400,17 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
    */
   private async destroyConnection(connection: T): Promise<void> {
     this.logger.debug(`Destroying connection ${connection.id}`);
-
+    
     this.connections.delete(connection);
     this.idleConnections.delete(connection);
     this.activeConnections.delete(connection);
-
+    
     try {
       await connection.disconnect();
     } catch (error) {
       this.logger.error(`Error disconnecting connection ${connection.id}:`, error);
     }
-
+    
     this.stats.connectionsDestroyed++;
     this.emit('connectionDestroyed', connection);
   }
@@ -439,13 +441,13 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
     if (needed <= 0) return;
 
     this.logger.debug(`Creating ${needed} connections to reach minimum pool size`);
-
+    
     const createPromises: Promise<void>[] = [];
     for (let i = 0; i < needed; i++) {
       createPromises.push(
         this.createConnection()
-          .then((connection) => this.moveToIdle(connection))
-          .catch((error) => {
+          .then(connection => this.moveToIdle(connection))
+          .catch(error => {
             this.logger.error('Failed to create minimum connection:', error);
           })
       );
@@ -459,11 +461,11 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
    */
   private async scaleUp(count: number): Promise<void> {
     const createPromises: Promise<void>[] = [];
-
+    
     for (let i = 0; i < count; i++) {
       createPromises.push(
         this.createConnection()
-          .then((connection) => {
+          .then(connection => {
             // Serve pending request if any
             const pendingRequest = this.pendingRequests.shift();
             if (pendingRequest) {
@@ -473,7 +475,7 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
               this.moveToIdle(connection);
             }
           })
-          .catch((error) => {
+          .catch(error => {
             this.logger.error('Failed to scale up connection:', error);
           })
       );
@@ -498,17 +500,16 @@ export class OptimizedConnectionPool<T extends IConnection> extends EventEmitter
     if (!this.config.validateConnections) return;
 
     const healthCheckPromises: Promise<void>[] = [];
-
+    
     for (const connection of this.idleConnections) {
       healthCheckPromises.push(
-        connection
-          .isHealthy()
-          .then((isHealthy) => {
+        connection.isHealthy()
+          .then(isHealthy => {
             if (!isHealthy) {
               return this.destroyConnection(connection);
             }
           })
-          .catch((error) => {
+          .catch(error => {
             this.logger.error(`Health check failed for connection ${connection.id}:`, error);
             return this.destroyConnection(connection);
           })
@@ -555,10 +556,13 @@ export class ConnectionPoolFactory {
       healthCheckInterval: 60000, // 1 minute
       validateConnections: true,
       retryAttempts: 3,
-      retryDelay: 1000,
+      retryDelay: 1000
     };
 
-    return new OptimizedConnectionPool({ ...defaultConfig, ...config }, factory);
+    return new OptimizedConnectionPool(
+      { ...defaultConfig, ...config },
+      factory
+    );
   }
 
   /**
@@ -574,7 +578,7 @@ export class ConnectionPoolFactory {
       idleTimeout: 180000, // 3 minutes
       maxWaitTime: 5000,
       healthCheckInterval: 30000, // 30 seconds
-      validateConnections: true,
+      validateConnections: true
     });
   }
 
@@ -591,7 +595,7 @@ export class ConnectionPoolFactory {
       idleTimeout: 600000, // 10 minutes
       maxWaitTime: 15000,
       healthCheckInterval: 120000, // 2 minutes
-      validateConnections: true,
+      validateConnections: true
     });
   }
 }

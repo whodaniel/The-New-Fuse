@@ -60,7 +60,7 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
 
     // Simpler logic:
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+       document.removeEventListener('keydown', handleEscape);
     };
   }, [open, onOpenChange]);
 
@@ -84,23 +84,39 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
   );
 }
 
-export function DialogContent({ className = '', children }: DialogContentProps) {
-  return <div className={`p-6 ${className}`}>{children}</div>;
+export function DialogContent({ className = "", children }: DialogContentProps) {
+  return (
+    <div className={`p-6 ${className}`}>
+      {children}
+    </div>
+  );
 }
 
 export function DialogHeader({ children }: DialogHeaderProps) {
-  return <div className="mb-4">{children}</div>;
+  return (
+    <div className="mb-4">
+      {children}
+    </div>
+  );
 }
 
-export function DialogTitle({ children, className = '' }: DialogTitleProps) {
-  return <h2 className={`text-lg font-semibold text-gray-900 ${className}`}>{children}</h2>;
+export function DialogTitle({ children, className = "" }: DialogTitleProps) {
+  return (
+    <h2 className={`text-lg font-semibold text-gray-900 ${className}`}>
+      {children}
+    </h2>
+  );
 }
 
 export function DialogDescription({ children }: DialogDescriptionProps) {
-  return <p className="text-sm text-gray-600 mt-2">{children}</p>;
+  return (
+    <p className="text-sm text-gray-600 mt-2">
+      {children}
+    </p>
+  );
 }
 
-export function DialogFooter({ children, className = '' }: DialogFooterProps) {
+export function DialogFooter({ children, className = "" }: DialogFooterProps) {
   return (
     <div className={`flex justify-end space-x-2 mt-6 pt-4 border-t border-gray-200 ${className}`}>
       {children}

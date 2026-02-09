@@ -4,7 +4,6 @@
 import { relations } from 'drizzle-orm';
 import {
   boolean,
-  index,
   integer,
   jsonb,
   pgTable,
@@ -16,27 +15,27 @@ import {
 } from 'drizzle-orm/pg-core';
 import { agentStatusEnum, agentTypeEnum } from './enums';
 import { users } from './users';
-import { workspaces } from './workspace';
 
 // =============================================================================
 // AGENT
 // =============================================================================
 
 export const agents = pgTable('agents', {
-  id: varchar('id', { length: 255 }).primaryKey(),
+  id: uuid('id').primaryKey().defaultRandom(),
   name: varchar('name', { length: 255 }).notNull(),
   type: agentTypeEnum('type').notNull(),
-  status: agentStatusEnum('status').default('IDLE').notNull(),
+  status: agentStatusEnum('status').default('INACTIVE').notNull(),
   description: text('description'),
-  systemPrompt: text('systemPrompt'),
+  systemPrompt: text('system_prompt'),
   config: jsonb('config'),
-  capabilities: text('capabilities').array().notNull().default([]),
+  capabilities: jsonb('capabilities').$type<string[]>().default([]).notNull(),
   provider: varchar('provider', { length: 100 }).default('default').notNull(),
-  userId: varchar('userId', { length: 255 }),
-  avatarUrl: text('avatarUrl'),
-  deletedAt: timestamp('deletedAt'),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  deletedAt: timestamp('deleted_at'),
 });
 
 // =============================================================================
@@ -92,44 +91,7 @@ export const agentRegistrations = pgTable('agent_registrations', {
   heartbeatInterval: integer('heartbeat_interval').default(60000).notNull(),
   isOnline: boolean('is_online').default(false).notNull(),
   lastHeartbeat: timestamp('last_heartbeat'),
-  tenantId: varchar('tenant_id', { length: 255 }),
-  organizationId: varchar('organization_id', { length: 255 }),
-  agencyId: uuid('agency_id'),
-  identityLongTermId: varchar('identity_long_term_id', { length: 255 }),
-  identityEphemeralId: varchar('identity_ephemeral_id', { length: 255 }),
-  identityFederationId: varchar('identity_federation_id', { length: 255 }),
-  protocolVersion: varchar('protocol_version', { length: 50 }),
-  trustTier: varchar('trust_tier', { length: 50 }),
-  inviteId: uuid('invite_id'),
   metadata: jsonb('metadata'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-}, (table) => ({
-  tenantIdx: index('agent_registrations_tenant_idx').on(table.tenantId),
-  orgIdx: index('agent_registrations_org_idx').on(table.organizationId),
-  agencyIdx: index('agent_registrations_agency_idx').on(table.agencyId),
-  trustIdx: index('agent_registrations_trust_idx').on(table.trustTier),
-}));
-
-// =============================================================================
-// AGENT INVITATION CODES
-// =============================================================================
-
-export const agentInvitationCodes = pgTable('agent_invitation_codes', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  codeHash: varchar('code_hash', { length: 128 }).unique().notNull(),
-  status: varchar('status', { length: 50 }).default('ACTIVE').notNull(),
-  maxUses: integer('max_uses').default(1).notNull(),
-  usedCount: integer('used_count').default(0).notNull(),
-  expiresAt: timestamp('expires_at'),
-  lastUsedAt: timestamp('last_used_at'),
-  lastUsedByAgentId: uuid('last_used_by_agent_id'),
-  lastUsedByRegistrationId: uuid('last_used_by_registration_id'),
-  createdByUserId: uuid('created_by_user_id').references(() => users.id, { onDelete: 'set null' }),
-  agencyId: uuid('agency_id').references(() => workspaces.id, { onDelete: 'set null' }),
-  tenantId: varchar('tenant_id', { length: 255 }),
-  organizationId: varchar('organization_id', { length: 255 }),
-  metadata: jsonb('metadata').default({}).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -264,17 +226,6 @@ export const agentRegistrationsRelations = relations(agentRegistrations, ({ one,
   capabilities: many(agentCapabilityRegistry),
   onboardingEvents: many(agentOnboardingEvents),
   metrics: many(agentMetrics),
-}));
-
-export const agentInvitationCodesRelations = relations(agentInvitationCodes, ({ one }) => ({
-  createdBy: one(users, {
-    fields: [agentInvitationCodes.createdByUserId],
-    references: [users.id],
-  }),
-  agency: one(workspaces, {
-    fields: [agentInvitationCodes.agencyId],
-    references: [workspaces.id],
-  }),
 }));
 
 export const agentCapabilityRegistryRelations = relations(agentCapabilityRegistry, ({ one }) => ({

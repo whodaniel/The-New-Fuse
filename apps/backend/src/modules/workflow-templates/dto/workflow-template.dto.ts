@@ -1,19 +1,11 @@
+import { IsString, IsNotEmpty, IsOptional, IsArray, IsObject, MaxLength, IsBoolean } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsBoolean,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-  MaxLength,
-} from 'class-validator';
 
 export class CreateWorkflowTemplateDto {
   @ApiProperty({
     description: 'Template name',
     example: 'Customer Onboarding Flow',
-    maxLength: 200,
+    maxLength: 200
   })
   @IsNotEmpty({ message: 'Name is required' })
   @IsString()
@@ -23,7 +15,7 @@ export class CreateWorkflowTemplateDto {
   @ApiProperty({
     description: 'Template description',
     example: 'Automated workflow for onboarding new customers',
-    maxLength: 1000,
+    maxLength: 1000
   })
   @IsNotEmpty({ message: 'Description is required' })
   @IsString()
@@ -32,7 +24,7 @@ export class CreateWorkflowTemplateDto {
 
   @ApiPropertyOptional({
     description: 'Category/type of workflow',
-    example: 'automation',
+    example: 'automation'
   })
   @IsOptional()
   @IsString()
@@ -43,10 +35,10 @@ export class CreateWorkflowTemplateDto {
     example: {
       nodes: [
         { id: 'node1', type: 'trigger', config: {} },
-        { id: 'node2', type: 'action', config: {} },
+        { id: 'node2', type: 'action', config: {} }
       ],
-      edges: [{ from: 'node1', to: 'node2' }],
-    },
+      edges: [{ from: 'node1', to: 'node2' }]
+    }
   })
   @IsNotEmpty({ message: 'Template configuration is required' })
   @IsObject()
@@ -54,7 +46,7 @@ export class CreateWorkflowTemplateDto {
 
   @ApiPropertyOptional({
     description: 'Tags for categorization',
-    example: ['automation', 'customer', 'onboarding'],
+    example: ['automation', 'customer', 'onboarding']
   })
   @IsOptional()
   @IsArray()
@@ -62,7 +54,7 @@ export class CreateWorkflowTemplateDto {
 
   @ApiPropertyOptional({
     description: 'Whether template is publicly available',
-    example: false,
+    example: false
   })
   @IsOptional()
   @IsBoolean()
@@ -72,7 +64,7 @@ export class CreateWorkflowTemplateDto {
 export class UpdateWorkflowTemplateDto {
   @ApiPropertyOptional({
     description: 'Template name',
-    example: 'Updated Customer Onboarding Flow',
+    example: 'Updated Customer Onboarding Flow'
   })
   @IsOptional()
   @IsString()
@@ -81,7 +73,7 @@ export class UpdateWorkflowTemplateDto {
 
   @ApiPropertyOptional({
     description: 'Template description',
-    example: 'Updated automated workflow for onboarding',
+    example: 'Updated automated workflow for onboarding'
   })
   @IsOptional()
   @IsString()
@@ -90,14 +82,14 @@ export class UpdateWorkflowTemplateDto {
 
   @ApiPropertyOptional({
     description: 'Category/type of workflow',
-    example: 'automation',
+    example: 'automation'
   })
   @IsOptional()
   @IsString()
   category?: string;
 
   @ApiPropertyOptional({
-    description: 'Template configuration/definition',
+    description: 'Template configuration/definition'
   })
   @IsOptional()
   @IsObject()
@@ -105,14 +97,14 @@ export class UpdateWorkflowTemplateDto {
 
   @ApiPropertyOptional({
     description: 'Tags for categorization',
-    example: ['automation', 'customer'],
+    example: ['automation', 'customer']
   })
   @IsOptional()
   @IsArray()
   tags?: string[];
 
   @ApiPropertyOptional({
-    description: 'Whether template is publicly available',
+    description: 'Whether template is publicly available'
   })
   @IsOptional()
   @IsBoolean()
@@ -136,14 +128,14 @@ export class WorkflowTemplateResponseDto {
     description: 'Template configuration',
     example: {
       nodes: [],
-      edges: [],
-    },
+      edges: []
+    }
   })
   template!: Record<string, any>;
 
   @ApiPropertyOptional({
     description: 'Template tags',
-    example: ['automation', 'customer'],
+    example: ['automation', 'customer']
   })
   tags?: string[];
 

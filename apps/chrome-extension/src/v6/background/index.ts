@@ -18,8 +18,6 @@ import type {
   TNFNode,
 } from '../shared/types';
 import { simpleHash } from '../shared/utils';
-// @ts-ignore
-import youtubeService from '../services/ai-studio/youtube-service.js';
 
 // Storage keys
 const STORAGE_KEYS = {
@@ -1120,10 +1118,15 @@ class BackgroundService {
           return true; // Async response
 
         case 'AI_STUDIO_GET_PLAYLISTS':
-          youtubeService
-            .getPlaylists()
-            .then((playlists) => sendResponse({ success: true, playlists }))
-            .catch((error) => sendResponse({ success: false, error: error.message }));
+          // Fetch YouTube playlists using stored token
+          chrome.storage.local.get(['ai_studio_token'], (result) => {
+            if (!result.ai_studio_token) {
+              sendResponse({ success: false, error: 'Not authenticated' });
+              return;
+            }
+            // TODO: Implement YouTube API call
+            sendResponse({ success: true, playlists: [] });
+          });
           return true;
 
         case 'AI_STUDIO_PROCESS_VIDEO':
@@ -1157,16 +1160,22 @@ class BackgroundService {
           return true;
 
         case 'AI_VIDEO_GENERATE_HISTORY_PROMPT':
-          const historyPrompt = youtubeService.generateWatchHistoryPrompt(50);
+          const historyPrompt = `Using your Personal Intelligence access to my YouTube watch history,
+provide my last 50 watched videos.
+
+Filter out political content.
+
+Format as JSON array:
+[
+  {
+    "title": "Video Title",
+    "url": "https://www.youtube.com/watch?v=...",
+    "channel": "Channel Name",
+    "description": "Brief description"
+  }
+]`;
           sendResponse({ prompt: historyPrompt });
           break;
-
-        case 'AI_VIDEO_GET_HISTORY':
-          youtubeService
-            .getLikedVideos(50)
-            .then((videos) => sendResponse({ success: true, videos }))
-            .catch((error) => sendResponse({ success: false, error: error.message }));
-          return true;
 
         case 'AI_VIDEO_EXPORT':
           chrome.storage.local.get(['videoQueue', 'ai_studio_queue'], (result) => {

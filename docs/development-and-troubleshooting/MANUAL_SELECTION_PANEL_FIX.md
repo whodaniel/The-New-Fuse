@@ -1,10 +1,7 @@
 # 🔧 **Manual Selection Panel Access Fix**
 
 ## ❌ **Issue Identified**
-
-When in manual selection mode, users couldn't click the Connect/Disconnect
-buttons in the floating panel because:
-
+When in manual selection mode, users couldn't click the Connect/Disconnect buttons in the floating panel because:
 - Selection overlay was interfering with panel interaction
 - Z-index layering was incorrect
 - Event handlers were preventing panel clicks
@@ -12,7 +9,6 @@ buttons in the floating panel because:
 ## ✅ **Fix Applied**
 
 ### 1. **Updated Z-Index Layering**
-
 ```css
 /* Selection overlay stays below */
 #tnf-selection-overlay {
@@ -21,19 +17,17 @@ buttons in the floating panel because:
 
 /* Floating panel stays above */
 #tnf-floating-panel {
-  z-index: 999999999 !important;
+  z-index: 999999999 !important; 
   pointer-events: auto !important;
 }
 ```
 
 ### 2. **Fixed Event Handler Order**
-
 - Moved extension element check **before** preventDefault/stopPropagation
 - This allows normal clicks on the floating panel to work
 - Only prevents default behavior for non-extension elements
 
 ### 3. **Enhanced WebSocket URL Handling**
-
 - Added auto-correction for empty/invalid URLs
 - Defaults to `ws://localhost:3712` if URL is invalid
 - Prevents repeated "Invalid WebSocket URL" errors
@@ -41,15 +35,13 @@ buttons in the floating panel because:
 ## 🧪 **Testing the Fix**
 
 ### **Before Fix:**
-
 - Manual selection mode → Can't click Connect/Disconnect buttons
 - Overlay blocks panel interaction
 - Repeated WebSocket URL errors
 
 ### **After Fix:**
-
 - Manual selection mode → Can still use all panel buttons ✅
-- Connect/Disconnect buttons work normally ✅
+- Connect/Disconnect buttons work normally ✅  
 - WebSocket URL auto-corrects ✅
 - Element selection still works as expected ✅
 
@@ -82,7 +74,6 @@ buttons in the floating panel because:
 ## 🚀 **Result**
 
 Now you can:
-
 - ✅ Use manual selection mode
 - ✅ Still access all panel buttons during selection
 - ✅ Connect/disconnect WebSocket anytime

@@ -27,16 +27,6 @@ export const llmProviderConfig = ConfigModule.forRoot({
           apiKey: process.env.LITELLM_API_KEY,
           baseURL: process.env.LITELLM_BASE_URL || 'http://localhost:4000',
         },
-        openrouter: {
-          apiKey: process.env.OPENROUTER_API_KEY,
-          model: process.env.OPENROUTER_MODEL || 'qwen/qwen3-coder-next',
-          baseURL: process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1',
-        },
-        siliconflow: {
-          apiKey: process.env.SILICONFLOW_API_KEY,
-          model: process.env.SILICONFLOW_MODEL || 'deepseek-ai/DeepSeek-V3',
-          baseURL: process.env.SILICONFLOW_BASE_URL || 'https://api.siliconflow.cn/v1',
-        },
       },
       encryption: {
         key: process.env.ENCRYPTION_KEY,

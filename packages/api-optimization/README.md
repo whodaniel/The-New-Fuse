@@ -1,12 +1,10 @@
 # API Optimization Package
 
-Comprehensive API optimization infrastructure with rate limiting, caching, CDN
-configuration, and performance features for The New Fuse platform.
+Comprehensive API optimization infrastructure with rate limiting, caching, CDN configuration, and performance features for The New Fuse platform.
 
 ## Features
 
 ### 1. Redis-Based Rate Limiting
-
 - Distributed rate limiting using Redis
 - Sliding window algorithm for accurate rate limiting
 - Tiered rate limits (free, pro, enterprise, custom)
@@ -15,7 +13,6 @@ configuration, and performance features for The New Fuse platform.
 - Automatic blocking and penalty system
 
 ### 2. Response Caching
-
 - Two-tier caching (Redis + LRU in-memory)
 - Tag-based cache invalidation
 - ETags for conditional requests
@@ -24,42 +21,36 @@ configuration, and performance features for The New Fuse platform.
 - Cache statistics and monitoring
 
 ### 3. CDN Configuration
-
 - Multi-provider support (Cloudflare, CloudFront, Fastly)
 - Automatic CDN URL generation
 - Cache purging and invalidation
 - Optimal cache headers for static assets
 
 ### 4. Cache Invalidation
-
 - Multiple invalidation strategies (tag, pattern, time, event)
 - Scheduled invalidation
 - Smart entity-based invalidation
 - Bulk invalidation support
 
 ### 5. Quota Management
-
 - Hourly, daily, and monthly quotas
 - Fixed and rolling window quotas
 - Tier-based quota management
 - Usage tracking and reporting
 
 ### 6. Backpressure Handling
-
 - Request queuing to prevent overload
 - Configurable concurrency limits
 - Automatic request timeout
 - Performance metrics and monitoring
 
 ### 7. Cache Warming
-
 - Preload critical data on startup
 - Scheduled cache warming
 - Priority-based warming strategies
 - URL and tag-based warming
 
 ### 8. Monitoring & Alerting
-
 - Real-time metrics for all optimization features
 - Automatic alerting for degraded performance
 - Health checks and status reporting
@@ -120,11 +111,7 @@ CDN_ZONE_ID=your_zone_id
 
 ```typescript
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import {
-  RateLimitGuard,
-  RateLimit,
-  RateLimitPresets,
-} from '@the-new-fuse/api-optimization';
+import { RateLimitGuard, RateLimit, RateLimitPresets } from '@the-new-fuse/api-optimization';
 
 @Controller('users')
 @UseGuards(RateLimitGuard)
@@ -168,7 +155,9 @@ import { RateLimitMiddleware } from '@the-new-fuse/api-optimization';
 @Module({})
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RateLimitMiddleware).forRoutes('*');
+    consumer
+      .apply(RateLimitMiddleware)
+      .forRoutes('*');
   }
 }
 ```
@@ -183,7 +172,7 @@ import {
   CacheInterceptor,
   CacheResponse,
   CachePresets,
-  InvalidateCache,
+  InvalidateCache
 } from '@the-new-fuse/api-optimization';
 
 @Controller('dashboard')
@@ -244,7 +233,7 @@ export class UsersService {
     // Cache result
     await this.cacheService.set(cacheKey, user, {
       ttl: 300,
-      tags: ['users', `user:${userId}`],
+      tags: ['users', `user:${userId}`]
     });
 
     return user;
@@ -324,7 +313,9 @@ import { CacheHeadersMiddleware } from '@the-new-fuse/api-optimization';
 @Module({})
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CacheHeadersMiddleware).forRoutes('*');
+    consumer
+      .apply(CacheHeadersMiddleware)
+      .forRoutes('*');
   }
 }
 ```
@@ -368,7 +359,9 @@ import { BackpressureMiddleware } from '@the-new-fuse/api-optimization';
 @Module({})
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(BackpressureMiddleware).forRoutes('*');
+    consumer
+      .apply(BackpressureMiddleware)
+      .forRoutes('*');
   }
 }
 ```
@@ -390,7 +383,7 @@ export class AppService implements OnModuleInit {
       enabled: true,
       priority: 1,
       tags: ['users', 'profiles'],
-      urls: ['/api/users/popular', '/api/users/recent'],
+      urls: ['/api/users/popular', '/api/users/recent']
     });
 
     // Schedule periodic warming (every 5 minutes)
@@ -437,34 +430,33 @@ export class MonitoringController {
 ## Rate Limit Presets
 
 ```typescript
-RateLimitPresets.STRICT; // 10 requests/minute (expensive operations)
-RateLimitPresets.STANDARD; // 100 requests/minute (normal endpoints)
-RateLimitPresets.RELAXED; // 500 requests/minute (read operations)
-RateLimitPresets.BURST; // 10 requests/second (burst protection)
-RateLimitPresets.API_KEY; // 1000 requests/minute (authenticated)
-RateLimitPresets.AUTH; // 5 requests/minute (auth endpoints)
-RateLimitPresets.SEARCH; // 50 requests/minute (search)
-RateLimitPresets.UPLOAD; // 20 requests/hour (file uploads)
-RateLimitPresets.WEBHOOK; // 100 requests/minute (webhooks)
+RateLimitPresets.STRICT       // 10 requests/minute (expensive operations)
+RateLimitPresets.STANDARD     // 100 requests/minute (normal endpoints)
+RateLimitPresets.RELAXED      // 500 requests/minute (read operations)
+RateLimitPresets.BURST        // 10 requests/second (burst protection)
+RateLimitPresets.API_KEY      // 1000 requests/minute (authenticated)
+RateLimitPresets.AUTH         // 5 requests/minute (auth endpoints)
+RateLimitPresets.SEARCH       // 50 requests/minute (search)
+RateLimitPresets.UPLOAD       // 20 requests/hour (file uploads)
+RateLimitPresets.WEBHOOK      // 100 requests/minute (webhooks)
 ```
 
 ## Cache TTL Presets
 
 ```typescript
-CacheTTL.VERY_SHORT; // 30 seconds
-CacheTTL.SHORT; // 1 minute
-CacheTTL.MEDIUM; // 5 minutes (default)
-CacheTTL.LONG; // 15 minutes
-CacheTTL.VERY_LONG; // 1 hour
-CacheTTL.DAY; // 24 hours
-CacheTTL.WEEK; // 1 week
-CacheTTL.MONTH; // 1 month
+CacheTTL.VERY_SHORT  // 30 seconds
+CacheTTL.SHORT       // 1 minute
+CacheTTL.MEDIUM      // 5 minutes (default)
+CacheTTL.LONG        // 15 minutes
+CacheTTL.VERY_LONG   // 1 hour
+CacheTTL.DAY         // 24 hours
+CacheTTL.WEEK        // 1 week
+CacheTTL.MONTH       // 1 month
 ```
 
 ## Best Practices
 
 ### Rate Limiting
-
 1. Use tiered rate limits based on user subscription level
 2. Implement stricter limits for expensive operations
 3. Monitor rate limit metrics to adjust thresholds
@@ -472,7 +464,6 @@ CacheTTL.MONTH; // 1 month
 5. Provide clear error messages with retry-after headers
 
 ### Caching
-
 1. Cache frequently accessed data with appropriate TTL
 2. Use tags for easy cache invalidation
 3. Implement cache warming for critical data
@@ -480,7 +471,6 @@ CacheTTL.MONTH; // 1 month
 5. Use ETagssage patterns for conditional requests
 
 ### CDN
-
 1. Use CDN for all static assets
 2. Set long cache times for immutable assets
 3. Implement cache purging for updated content
@@ -488,7 +478,6 @@ CacheTTL.MONTH; // 1 month
 5. Monitor CDN usage and performance
 
 ### Quota Management
-
 1. Set realistic quotas based on system capacity
 2. Implement multiple quota periods (hourly, daily, monthly)
 3. Provide quota information in API responses
@@ -496,7 +485,6 @@ CacheTTL.MONTH; // 1 month
 5. Offer quota upgrades for power users
 
 ### Backpressure
-
 1. Set appropriate concurrency limits
 2. Monitor queue sizes and response times
 3. Implement graceful degradation
@@ -540,7 +528,6 @@ The package provides comprehensive monitoring:
 ## Contributing
 
 Contributions are welcome! Please ensure:
-
 - All tests pass
 - Code follows the project style guide
 - Documentation is updated

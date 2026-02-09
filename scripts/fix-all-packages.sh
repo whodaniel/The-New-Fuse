@@ -64,11 +64,11 @@ pnpm install --fix-peer-dependencies || pnpm install --force
 echo -e "${GREEN}✓${NC} Peer dependencies resolved"
 echo ""
 
-# Generate Drizzle clients
-echo -e "${BLUE}4. Generating Drizzle clients...${NC}"
-if [ -f "packages/database/drizzle/schema.drizzle" ]; then
+# Generate Prisma clients
+echo -e "${BLUE}4. Generating Prisma clients...${NC}"
+if [ -f "packages/database/prisma/schema.prisma" ]; then
     cd packages/database
-    pnpm exec drizzle generate || echo -e "${YELLOW}⚠${NC} Drizzle generation failed (may need DATABASE_URL)"
+    pnpm exec prisma generate || echo -e "${YELLOW}⚠${NC} Prisma generation failed (may need DATABASE_URL)"
     cd - > /dev/null
 fi
 echo ""

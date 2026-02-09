@@ -1,2 +1,2 @@
-export { closeDatabase, getDatabase } from './database';
-export { initializeDatabase, runMigrations } from './migrations';
+export { getDatabase, closeDatabase } from './database';
+export { runMigrations, initializeDatabase } from './migrations';

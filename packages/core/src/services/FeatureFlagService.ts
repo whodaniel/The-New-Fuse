@@ -1,10 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  FeatureFlag,
-  FeatureFlagUpdate,
-  FeatureFlagContext,
-  Environment,
-} from '../types/featureFlags';
+import { FeatureFlag, FeatureFlagUpdate, FeatureFlagContext, Environment } from '../types/featureFlags';
 // Remove external dependency - implement tracking internally if needed
 import * as crypto from 'crypto';
 
@@ -23,13 +18,13 @@ export class FeatureFlagService {
         createdBy: 'system',
         lastModifiedBy: 'system',
         createdAt: new Date(),
-        updatedAt: new Date(),
+        updatedAt: new Date()
       };
-
+      
       const newFeature: FeatureFlag = {
         ...feature,
         id,
-        metadata,
+        metadata
       };
 
       // Store by both ID and name for efficient lookups
@@ -37,7 +32,7 @@ export class FeatureFlagService {
       this.featuresByName.set(feature.name, newFeature);
 
       // Feature creation tracking would go here if needed
-
+      
       this.logger.log(`Created feature flag: ${feature.name} (${id})`);
       return newFeature;
     } catch (error) {
@@ -59,8 +54,8 @@ export class FeatureFlagService {
         metadata: {
           ...existingFeature.metadata,
           lastModifiedBy: update.metadata?.lastModifiedBy || 'system',
-          updatedAt: new Date(),
-        },
+          updatedAt: new Date()
+        }
       };
 
       // Update both maps
@@ -124,8 +119,8 @@ export class FeatureFlagService {
   async getFeatures(environment: Environment): Promise<FeatureFlag[]> {
     try {
       const allFeatures = Array.from(this.features.values());
-      return allFeatures.filter(
-        (feature) => !feature.environments || feature.environments.includes(environment),
+      return allFeatures.filter(feature => 
+        !feature.environments || feature.environments.includes(environment)
       );
     } catch (error) {
       this.logger.error('Failed to get features:', error);
@@ -169,7 +164,7 @@ export class FeatureFlagService {
 
   private evaluateRules(rules: any[], context: FeatureFlagContext): boolean {
     // Simple rule evaluation - can be extended for complex rules
-    return rules.every((rule) => {
+    return rules.every(rule => {
       switch (rule.type) {
         case 'user_attribute':
           return this.evaluateUserAttributeRule(rule, context);

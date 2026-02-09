@@ -1,13 +1,13 @@
 import {
+  Entity,
+  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
-import { Agent } from './agent.entity';
 import { Workflow } from './workflow.entity';
+import { Agent } from './agent.entity';
 
 @Entity('workflow_steps')
 export class WorkflowStep {

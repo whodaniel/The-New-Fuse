@@ -322,7 +322,7 @@ export class N8nWorkflowConverter {
   }
 
   private convertNodesFromN8n(n8nNodes: N8nNode[]): EnhancedReactFlowNode[] {
-    return n8nNodes.map((node) => {
+    return n8nNodes.map((node, index) => {
       const nodeType = this.mapNodeTypeFromN8n(node.type);
       const outputConfig = MULTI_OUTPUT_NODES[node.type];
 
@@ -384,8 +384,9 @@ export class N8nWorkflowConverter {
       const node = nodes.find((n) => n.id === sourceId);
       if (!node) return;
 
+      const nodeName = node.data.label || node.id;
       const outputTypes = node.data.outputTypes || ['main'];
-      connections[sourceId] = {};
+      connections[nodeName] = {};
 
       outputTypes.forEach((outputType) => {
         // Get edges for this output type
@@ -394,12 +395,17 @@ export class N8nWorkflowConverter {
         // Group by output index (for branching)
         const edgesByIndex = this.groupEdgesByOutputIndex(typeEdges, node.data.outputCount || 1);
 
-        connections[sourceId][outputType] = edgesByIndex.map((indexGroup) =>
-          indexGroup.map((edge) => ({
-            node: edge.target,
-            type: this.getEdgeConnectionType(edge),
-            index: this.getTargetIndex(edge),
-          }))
+        connections[nodeName][outputType] = edgesByIndex.map((indexGroup) =>
+          indexGroup.map((edge) => {
+            const targetNode = nodes.find((n) => n.id === edge.target);
+            const targetName = targetNode ? targetNode.data.label || targetNode.id : edge.target;
+
+            return {
+              node: targetName,
+              type: this.getEdgeConnectionType(edge),
+              index: this.getTargetIndex(edge),
+            };
+          })
         );
       });
     });
@@ -439,7 +445,7 @@ export class N8nWorkflowConverter {
               data: {
                 outputType,
                 branchIndex,
-                branchName: this.getBranchName(sourceNode.type, branchIndex),
+                branchName: this.getBranchName(sourceNode.type, branchIndex, branches.length),
               },
             };
 
@@ -500,7 +506,11 @@ export class N8nWorkflowConverter {
     return handle ? parseInt(handle, 10) : 0;
   }
 
-  private getBranchName(nodeType: string, branchIndex: number): string | undefined {
+  private getBranchName(
+    nodeType: string,
+    branchIndex: number,
+    totalBranches: number
+  ): string | undefined {
     const config = MULTI_OUTPUT_NODES[nodeType];
     if (!config || !config.branchNames) return undefined;
 

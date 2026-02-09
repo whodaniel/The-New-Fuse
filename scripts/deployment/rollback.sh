@@ -206,14 +206,14 @@ rollback_database() {
   # For PostgreSQL:
   # psql "$DATABASE_URL" < "$backup_file"
 
-  # For Drizzle migrations, we might need to:
-  if [[ -d "$PROJECT_ROOT/drizzle" ]]; then
-    log INFO "Reverting Drizzle migrations..."
+  # For Prisma migrations, we might need to:
+  if [[ -d "$PROJECT_ROOT/prisma" ]]; then
+    log INFO "Reverting Prisma migrations..."
 
     # Get the migration state from previous deployment
     # This would require tracking which migrations were applied
 
-    log WARNING "Drizzle migration rollback not fully implemented"
+    log WARNING "Prisma migration rollback not fully implemented"
     log INFO "You may need to manually revert migrations"
   fi
 

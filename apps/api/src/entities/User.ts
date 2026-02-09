@@ -1,18 +1,10 @@
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
 import { Agent } from './Agent';
-import { AuthEvent } from './AuthEvent';
+import { Pipeline } from './Pipeline';
 import { AuthSession } from './AuthSession';
 import { LoginAttempt } from './LoginAttempt';
-import { Pipeline } from './Pipeline';
+import { AuthEvent } from './AuthEvent';
 
 @Entity('users')
 export class User {
@@ -35,19 +27,19 @@ export class User {
   @Column({ type: 'varchar', length: 500, nullable: true })
   refreshToken!: string | null;
 
-  @OneToMany(() => Agent, (agent) => agent.user)
+  @OneToMany(() => Agent, agent => agent.user)
   agents!: Agent[];
 
-  @OneToMany(() => Pipeline, (pipeline) => pipeline.user)
+  @OneToMany(() => Pipeline, pipeline => pipeline.user)
   pipelines!: Pipeline[];
 
-  @OneToMany(() => AuthSession, (session) => session.user)
+  @OneToMany(() => AuthSession, session => session.user)
   authSessions!: AuthSession[];
 
-  @OneToMany(() => LoginAttempt, (attempt) => attempt.user)
+  @OneToMany(() => LoginAttempt, attempt => attempt.user)
   loginAttempts!: LoginAttempt[];
 
-  @OneToMany(() => AuthEvent, (event) => event.user)
+  @OneToMany(() => AuthEvent, event => event.user)
   authEvents!: AuthEvent[];
 
   @CreateDateColumn()

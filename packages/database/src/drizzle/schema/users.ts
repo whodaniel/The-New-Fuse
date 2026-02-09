@@ -10,20 +10,22 @@ import { userRoleEnum } from './enums';
 // =============================================================================
 
 export const users = pgTable('users', {
-  id: varchar('id', { length: 255 }).primaryKey(),
+  id: uuid('id').primaryKey().defaultRandom(),
   email: varchar('email', { length: 255 }).unique().notNull(),
   username: varchar('username', { length: 255 }).unique(),
   name: varchar('name', { length: 255 }),
-  walletAddress: varchar('walletAddress', { length: 255 }).unique(),
-  isActive: boolean('isActive').default(true).notNull(),
-  lastLogin: timestamp('lastLogin'),
-  refreshToken: text('refreshToken'),
-  emailVerified: boolean('emailVerified').default(false).notNull(),
-  deletedAt: timestamp('deletedAt'),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
-  hashedPassword: varchar('passwordHash', { length: 255 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  hashedPassword: varchar('hashed_password', { length: 255 }).notNull(),
   role: userRoleEnum('role').default('USER').notNull(),
+  roles: jsonb('roles').$type<string[]>().default(['USER']).notNull(),
+  isActive: boolean('is_active').default(true).notNull(),
+  lastLogin: timestamp('last_login'),
+  preferences: jsonb('preferences'),
+  refreshToken: text('refresh_token'),
+  deletedAt: timestamp('deleted_at'),
+  emailVerified: boolean('email_verified').default(false).notNull(),
+  walletAddress: varchar('wallet_address', { length: 255 }).unique(),
 });
 
 // =============================================================================

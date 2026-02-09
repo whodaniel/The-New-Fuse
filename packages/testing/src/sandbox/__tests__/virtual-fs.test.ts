@@ -65,10 +65,10 @@ describe('VirtualFileSystem', () => {
     it('should initialize with provided files', () => {
       const initialFiles = {
         '/test1.txt': 'content1',
-        '/dir/test2.txt': 'content2',
+        '/dir/test2.txt': 'content2'
       };
       vfs = new VirtualFileSystem({ initialFiles });
-
+      
       expect(vfs.readFile('/test1.txt')).toBe('content1');
       expect(vfs.readFile('/dir/test2.txt')).toBe('content2');
     });

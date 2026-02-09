@@ -1,13 +1,13 @@
 /**
  * Audit Logger for MCP security events
- *
+ * 
  * Provides comprehensive audit logging for security events, access attempts,
  * and system activities with configurable storage backends and retention policies.
  */
 
 import { EventEmitter } from 'events';
+import { writeFile, appendFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
-import { appendFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { AuthAuditEvent } from './AuthenticationManager';
 import { MCPOperation } from './PermissionValidator';
@@ -19,7 +19,7 @@ export enum AuditSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical',
+  CRITICAL = 'critical'
 }
 
 /**
@@ -33,7 +33,7 @@ export enum AuditCategory {
   SYSTEM_ADMIN = 'system_admin',
   SECURITY_VIOLATION = 'security_violation',
   CONFIGURATION = 'configuration',
-  DATA_ACCESS = 'data_access',
+  DATA_ACCESS = 'data_access'
 }
 
 /**
@@ -189,12 +189,12 @@ export class FileAuditStorage implements AuditStorageBackend {
 
   async store(event: EnhancedAuditEvent): Promise<void> {
     this.events.push(event);
-
+    
     try {
       await this.ensureLogDirectory();
       const logFile = join(this.logDirectory, `audit-${this.getDateString()}.jsonl`);
       const logLine = JSON.stringify(event) + '\n';
-
+      
       await appendFile(logFile, logLine, 'utf8');
     } catch (error) {
       console.error('Failed to store audit event to file:', error);
@@ -206,56 +206,56 @@ export class FileAuditStorage implements AuditStorageBackend {
     let filteredEvents = [...this.events];
 
     if (filter.startDate) {
-      filteredEvents = filteredEvents.filter((e) => e.timestamp >= filter.startDate!);
+      filteredEvents = filteredEvents.filter(e => e.timestamp >= filter.startDate!);
     }
 
     if (filter.endDate) {
-      filteredEvents = filteredEvents.filter((e) => e.timestamp <= filter.endDate!);
+      filteredEvents = filteredEvents.filter(e => e.timestamp <= filter.endDate!);
     }
 
     if (filter.userId) {
-      filteredEvents = filteredEvents.filter((e) => e.userId === filter.userId);
+      filteredEvents = filteredEvents.filter(e => e.userId === filter.userId);
     }
 
     if (filter.type) {
-      filteredEvents = filteredEvents.filter((e) => e.type === filter.type);
+      filteredEvents = filteredEvents.filter(e => e.type === filter.type);
     }
 
     if (filter.category) {
-      filteredEvents = filteredEvents.filter((e) => e.category === filter.category);
+      filteredEvents = filteredEvents.filter(e => e.category === filter.category);
     }
 
     if (filter.severity) {
-      filteredEvents = filteredEvents.filter((e) => e.severity === filter.severity);
+      filteredEvents = filteredEvents.filter(e => e.severity === filter.severity);
     }
 
     if (filter.success !== undefined) {
-      filteredEvents = filteredEvents.filter((e) => e.success === filter.success);
+      filteredEvents = filteredEvents.filter(e => e.success === filter.success);
     }
 
     if (filter.resource) {
-      filteredEvents = filteredEvents.filter(
-        (e) => e.resource && e.resource.includes(filter.resource!)
+      filteredEvents = filteredEvents.filter(e => 
+        e.resource && e.resource.includes(filter.resource!)
       );
     }
 
     if (filter.operation) {
-      filteredEvents = filteredEvents.filter((e) => e.operation === filter.operation);
+      filteredEvents = filteredEvents.filter(e => e.operation === filter.operation);
     }
 
     if (filter.source) {
-      filteredEvents = filteredEvents.filter((e) => e.source === filter.source);
+      filteredEvents = filteredEvents.filter(e => e.source === filter.source);
     }
 
     if (filter.minRiskScore) {
-      filteredEvents = filteredEvents.filter(
-        (e) => e.riskScore && e.riskScore >= filter.minRiskScore!
+      filteredEvents = filteredEvents.filter(e => 
+        e.riskScore && e.riskScore >= filter.minRiskScore!
       );
     }
 
     if (filter.tags && filter.tags.length > 0) {
-      filteredEvents = filteredEvents.filter(
-        (e) => e.tags && filter.tags!.some((tag) => e.tags!.includes(tag))
+      filteredEvents = filteredEvents.filter(e => 
+        e.tags && filter.tags!.some(tag => e.tags!.includes(tag))
       );
     }
 
@@ -265,16 +265,16 @@ export class FileAuditStorage implements AuditStorageBackend {
     // Apply pagination
     const offset = filter.offset || 0;
     const limit = filter.limit || filteredEvents.length;
-
+    
     return filteredEvents.slice(offset, offset + limit);
   }
 
   async cleanup(retentionDays: number): Promise<number> {
     const cutoffDate = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
     const initialCount = this.events.length;
-
-    this.events = this.events.filter((e) => e.timestamp >= cutoffDate);
-
+    
+    this.events = this.events.filter(e => e.timestamp >= cutoffDate);
+    
     return initialCount - this.events.length;
   }
 
@@ -287,14 +287,14 @@ export class FileAuditStorage implements AuditStorageBackend {
       [AuditCategory.SYSTEM_ADMIN]: 0,
       [AuditCategory.SECURITY_VIOLATION]: 0,
       [AuditCategory.CONFIGURATION]: 0,
-      [AuditCategory.DATA_ACCESS]: 0,
+      [AuditCategory.DATA_ACCESS]: 0
     };
 
     const eventsBySeverity: Record<AuditSeverity, number> = {
       [AuditSeverity.LOW]: 0,
       [AuditSeverity.MEDIUM]: 0,
       [AuditSeverity.HIGH]: 0,
-      [AuditSeverity.CRITICAL]: 0,
+      [AuditSeverity.CRITICAL]: 0
     };
 
     let oldestEvent: Date | undefined;
@@ -319,7 +319,7 @@ export class FileAuditStorage implements AuditStorageBackend {
       eventsBySeverity,
       storageSize: JSON.stringify(this.events).length,
       oldestEvent,
-      newestEvent,
+      newestEvent
     };
   }
 
@@ -349,7 +349,7 @@ export class AuditLogger extends EventEmitter {
 
   constructor(config: Partial<AuditLoggerConfig> = {}) {
     super();
-
+    
     this.config = {
       enabled: true,
       storageBackend: new FileAuditStorage(),
@@ -358,12 +358,12 @@ export class AuditLogger extends EventEmitter {
       alertThresholds: {
         failedLoginAttempts: 5,
         highRiskEvents: 10,
-        suspiciousActivity: 3,
+        suspiciousActivity: 3
       },
       enableEnrichment: true,
       batchSize: 100,
       flushInterval: 5000, // 5 seconds
-      ...config,
+      ...config
     };
 
     if (this.config.enabled) {
@@ -392,7 +392,7 @@ export class AuditLogger extends EventEmitter {
       category: AuditCategory.AUTHENTICATION,
       severity: success ? AuditSeverity.LOW : AuditSeverity.MEDIUM,
       source: 'mcp-auth',
-      metadata: { method },
+      metadata: { method }
     });
 
     await this.logEvent(event);
@@ -419,7 +419,7 @@ export class AuditLogger extends EventEmitter {
       category: AuditCategory.AUTHORIZATION,
       severity: success ? AuditSeverity.LOW : AuditSeverity.MEDIUM,
       source: 'mcp-rbac',
-      mcpOperation,
+      mcpOperation
     });
 
     await this.logEvent(event);
@@ -448,7 +448,7 @@ export class AuditLogger extends EventEmitter {
       source: 'mcp-server',
       duration,
       requestSize,
-      responseSize,
+      responseSize
     });
 
     await this.logEvent(event);
@@ -480,8 +480,8 @@ export class AuditLogger extends EventEmitter {
       metadata: {
         toolName,
         parameters: parameters ? Object.keys(parameters) : undefined,
-        resultType: result ? typeof result : undefined,
-      },
+        resultType: result ? typeof result : undefined
+      }
     });
 
     await this.logEvent(event);
@@ -513,8 +513,8 @@ export class AuditLogger extends EventEmitter {
       tags: ['security', 'violation', violationType],
       metadata: {
         violationType,
-        ...metadata,
-      },
+        ...metadata
+      }
     });
 
     await this.logEvent(event);
@@ -546,7 +546,7 @@ export class AuditLogger extends EventEmitter {
       category: AuditCategory.SYSTEM_ADMIN,
       severity: AuditSeverity.MEDIUM,
       source: 'mcp-admin',
-      metadata: { changes },
+      metadata: { changes }
     });
 
     await this.logEvent(event);
@@ -603,7 +603,7 @@ export class AuditLogger extends EventEmitter {
       severity: AuditSeverity.LOW,
       category: AuditCategory.AUTHENTICATION,
       source: 'mcp-system',
-      ...eventData,
+      ...eventData
     } as EnhancedAuditEvent;
 
     if (this.config.enableEnrichment) {
@@ -667,18 +667,18 @@ export class AuditLogger extends EventEmitter {
       [AuditSeverity.LOW]: 10,
       [AuditSeverity.MEDIUM]: 40,
       [AuditSeverity.HIGH]: 70,
-      [AuditSeverity.CRITICAL]: 90,
+      [AuditSeverity.CRITICAL]: 90
     };
 
     let score = baseScores[severity];
 
     // Adjust score based on event type
     const typeModifiers: Record<string, number> = {
-      access_denied: 20,
-      security_violation: 30,
-      login_failure: 15,
-      privilege_escalation: 40,
-      data_breach: 50,
+      'access_denied': 20,
+      'security_violation': 30,
+      'login_failure': 15,
+      'privilege_escalation': 40,
+      'data_breach': 50
     };
 
     const modifier = typeModifiers[eventType] || 0;

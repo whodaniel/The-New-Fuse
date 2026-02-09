@@ -1,7 +1,7 @@
 'use client';
 
-import { AgentChatRoom } from '@/components/AgentChatRoom';
 import React from 'react';
+import { AgentChatRoom } from '@/components/AgentChatRoom';
 
 const MainPage: React.FC = () => {
   return (

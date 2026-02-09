@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsNotEmpty, IsString } from 'class-validator';
+import { IsString, IsNotEmpty, IsIn } from 'class-validator';
 
 export class CreateProviderDto {
   @ApiProperty({ description: 'User ID associated with the provider' })
@@ -9,7 +9,7 @@ export class CreateProviderDto {
 
   @ApiProperty({
     enum: ['openai', 'anthropic', 'cohere'],
-    description: 'Name of the LLM provider',
+    description: 'Name of the LLM provider'
   })
   @IsString()
   @IsIn(['openai', 'anthropic', 'cohere'])

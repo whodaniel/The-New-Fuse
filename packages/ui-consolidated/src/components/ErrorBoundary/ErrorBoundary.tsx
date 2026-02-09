@@ -10,40 +10,34 @@ interface State {
 }
 
 class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-    };
-  }
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
-  }
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
-  }
-  render() {
-    var _a;
-    if (this.state.hasError) {
-      return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            hasError: false,
+            error: null,
+        };
+    }
+    static getDerivedStateFromError(error: Error): State {
+        return { hasError: true, error };
+    }
+    componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+        console.error('Uncaught error:', error, errorInfo);
+    }
+    render() {
+        var _a;
+        if (this.state.hasError) {
+            return (<div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
           <h1 className="text-4xl font-bold text-destructive mb-4">Oops! Something went wrong</h1>
           <p className="text-lg text-muted-foreground mb-8">
-            {((_a = this.state.error) === null || _a === void 0 ? void 0 : _a.message) ||
-              'An unexpected error occurred'}
+            {((_a = this.state.error) === null || _a === void 0 ? void 0 : _a.message) || 'An unexpected error occurred'}
           </p>
-          <button
-            className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md"
-            onClick={() => window.location.reload()}
-          >
+          <button className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md" onClick={() => window.location.reload()}>
             Reload Page
           </button>
-        </div>
-      );
+        </div>);
+        }
+        return this.props.children;
     }
-    return this.props.children;
-  }
 }
 export default ErrorBoundary;
 export { ErrorBoundary };

@@ -6,15 +6,13 @@ function waitForServer(url: string, timeout: number): Promise<void> {
     const startTime = Date.now();
 
     const checkServer = (): void => {
-      http
-        .get(url, (res) => {
-          if (res.statusCode === 200) {
-            resolve();
-          } else {
-            retry();
-          }
-        })
-        .on('error', retry);
+      http.get(url, (res) => {
+        if (res.statusCode === 200) {
+          resolve();
+        } else {
+          retry();
+        }
+      }).on('error', retry);
 
       function retry(): void {
         const elapsed = Date.now() - startTime;
@@ -46,13 +44,13 @@ async function startServer(): Promise<void> {
     shell: true,
     env: {
       ...process.env,
-      PORT: '5173',
-    },
+      PORT: '5173'
+    }
   });
 
   try {
     await waitForServer('http://localhost:5173', 30000);
-
+    
     return server;
   } catch (error) {
     console.error('Failed to start dev server:', error);

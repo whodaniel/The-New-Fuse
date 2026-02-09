@@ -4,7 +4,7 @@
  */
 
 import { Controller, Get, Logger } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SyncHealthService } from './SyncHealthService';
 
 @ApiTags('health')
@@ -36,18 +36,18 @@ export class HealthController {
     try {
       const health = await this.healthService.checkHealth();
       const ready = health.overall !== 'unhealthy';
-
+      
       return {
         ready,
         status: health.overall,
-        timestamp: health.timestamp,
+        timestamp: health.timestamp
       };
     } catch (error) {
       this.logger.error('Readiness probe failed', error);
       return {
         ready: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     }
   }
@@ -60,17 +60,17 @@ export class HealthController {
     try {
       // Simple startup check - verify services are initialized
       const started = this.healthService !== undefined;
-
+      
       return {
         started,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Startup probe failed', error);
       return {
         started: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     }
   }
@@ -82,13 +82,13 @@ export class HealthController {
     try {
       const [health, metrics] = await Promise.all([
         this.healthService.checkHealth(),
-        this.healthService.getSyncHealthMetrics(),
+        this.healthService.getSyncHealthMetrics()
       ]);
 
       return {
         health,
         metrics,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Detailed health check failed', error);
@@ -102,11 +102,11 @@ export class HealthController {
   async healthHistory() {
     try {
       const history = this.healthService.getHealthHistory();
-
+      
       return {
         history,
         count: history.length,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       this.logger.error('Failed to get health history', error);

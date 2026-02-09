@@ -1,7 +1,6 @@
 # MCP Troubleshooting Guide
 
-This guide provides detailed steps to diagnose and fix common issues with MCP
-(Model Context Protocol) in The New Fuse.
+This guide provides detailed steps to diagnose and fix common issues with MCP (Model Context Protocol) in The New Fuse.
 
 ## New Diagnostics Tools
 
@@ -36,13 +35,11 @@ We've added several new diagnostic tools to help troubleshoot MCP issues:
 ### Port Conflicts
 
 **Symptoms:**
-
 - Multiple servers configured to use the same port
 - Only one server works at a time
 - Error messages about address already in use
 
 **Solutions:**
-
 1. Run MCP Health Check to identify conflicts
 2. Edit `mcp_config.json` and change conflicting ports
 3. Use different port ranges for different service types
@@ -51,12 +48,10 @@ We've added several new diagnostic tools to help troubleshoot MCP issues:
 ### Command Not Found Errors
 
 **Symptoms:**
-
 - "Command 'thefuse.mcp.showTools' not found" messages
 - MCP commands don't work in the command palette
 
 **Solutions:**
-
 1. Run the command registration script
 2. Restart VS Code
 3. Use direct script versions instead
@@ -65,13 +60,11 @@ We've added several new diagnostic tools to help troubleshoot MCP issues:
 ### Server Connection Issues
 
 **Symptoms:**
-
 - Cannot connect to MCP servers
 - Timeout errors
 - Connection refused errors
 
 **Solutions:**
-
 1. Verify server is running with health check
 2. Check for port conflicts
 3. Ensure required commands are installed
@@ -81,18 +74,15 @@ We've added several new diagnostic tools to help troubleshoot MCP issues:
 ### Configuration Issues
 
 **Symptoms:**
-
 - Missing servers in tools list
 - Duplicate server entries
 - Inconsistent server naming
 
 **Solutions:**
-
 1. Run MCP Tools Viewer to analyze configuration
 2. Fix duplicate entries in `mcp_config.json`
 3. Ensure server names are consistent between sections
-4. Use the naming pattern: base name in `servers`, base name + suffix in
-   `mcpServers`
+4. Use the naming pattern: base name in `servers`, base name + suffix in `mcpServers`
 
 ## Fixes Made
 
@@ -104,8 +94,7 @@ We've added several new diagnostic tools to help troubleshoot MCP issues:
 
 ## VS Code Tasks
 
-These tasks are available in the VS Code command palette (Ctrl/Cmd+Shift+P, then
-"Tasks: Run Task"):
+These tasks are available in the VS Code command palette (Ctrl/Cmd+Shift+P, then "Tasks: Run Task"):
 
 - **Register MCP Commands**: Register MCP commands in VS Code
 - **Show MCP Tools Direct**: Show available MCP tools

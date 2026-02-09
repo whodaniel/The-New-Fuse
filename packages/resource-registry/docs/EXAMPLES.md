@@ -35,8 +35,7 @@ const claudeSkill = await resourceRegistry.create({
         models: ['claude-sonnet-4-5'],
       },
       prompts: {
-        review:
-          'Review this code for:\n- Best practices\n- Security issues\n- Performance concerns',
+        review: 'Review this code for:\n- Best practices\n- Security issues\n- Performance concerns',
         suggest: 'Suggest improvements for this code',
       },
     },
@@ -101,12 +100,8 @@ const n8nWorkflow = await resourceRegistry.create({
       },
     ],
     connections: {
-      'Email Trigger': {
-        main: [[{ node: 'Filter Important', type: 'main', index: 0 }]],
-      },
-      'Filter Important': {
-        main: [[{ node: 'Send to Slack', type: 'main', index: 0 }]],
-      },
+      'Email Trigger': { main: [[{ node: 'Filter Important', type: 'main', index: 0 }]] },
+      'Filter Important': { main: [[{ node: 'Send to Slack', type: 'main', index: 0 }]] },
     },
   },
   tags: ['email', 'slack', 'notifications', 'automation'],
@@ -349,9 +344,7 @@ const accessibleResources = accessControl.filterByAccess(
   agentContext
 );
 
-console.log(
-  `Agent can access ${accessibleResources.length} out of ${allResources.total} resources`
-);
+console.log(`Agent can access ${accessibleResources.length} out of ${allResources.total} resources`);
 ```
 
 ### Example 3: Assert Permissions
@@ -396,7 +389,12 @@ async function provisionAgentWithResources(agentId: string) {
   // Assign resources to agent
   for (const resource of resources.data) {
     console.log(`Provisioning ${resource.name} for agent ${agentId}`);
-    await resourceRegistry.logAccess(resource.id, 'VIEW', agentId, 'agent');
+    await resourceRegistry.logAccess(
+      resource.id,
+      'VIEW',
+      agentId,
+      'agent'
+    );
   }
 
   return resources.data;
@@ -490,14 +488,11 @@ async function getResourceAnalytics() {
 
 ## Best Practices
 
-1. **Use semantic versioning**: Always use proper semantic versions (e.g.,
-   1.0.0, 1.1.0, 2.0.0)
+1. **Use semantic versioning**: Always use proper semantic versions (e.g., 1.0.0, 1.1.0, 2.0.0)
 2. **Add meaningful tags**: Use descriptive tags to make resources discoverable
 3. **Include documentation**: Add comprehensive descriptions and usage examples
-4. **Set appropriate visibility**: Choose the right visibility level for your
-   resources
+4. **Set appropriate visibility**: Choose the right visibility level for your resources
 5. **Track dependencies**: List all dependencies in metadata
 6. **Version your content**: Create new versions for significant changes
-7. **Use access control**: Leverage the access control system to protect
-   sensitive resources
+7. **Use access control**: Leverage the access control system to protect sensitive resources
 8. **Log usage**: Track resource usage for analytics and improvements

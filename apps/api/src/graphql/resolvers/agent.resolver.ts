@@ -31,8 +31,7 @@ export class AgentResolver {
   @Query(() => AgentType, { nullable: true })
   @UseGuards(GqlAuthGuard)
   async agent(@Args('id', { type: () => ID }) id: string): Promise<Agent | null> {
-    // Use system-level access for GraphQL queries
-    return this.db.agents.findByIdSystem(id);
+    return this.db.agents.findById(id);
   }
 
   @Query(() => [AgentType])
@@ -43,9 +42,7 @@ export class AgentResolver {
     if (userId) {
       return this.db.agents.findByUserId(userId);
     }
-    // Use system-level findAll for admin/public queries
-    const result = await this.db.agents.findAllSystem(1, 100);
-    return result.data;
+    return this.db.agents.findAll(100);
   }
 
   @Mutation(() => AgentType)
@@ -75,16 +72,8 @@ export class AgentResolver {
 
   @Mutation(() => AgentType)
   @UseGuards(GqlAuthGuard)
-  async updateAgent(
-    @Args('input') input: UpdateAgentInput,
-    @Context() context: any
-  ): Promise<Agent> {
-    const userId = context.req.user?.id;
-    if (!userId) {
-      throw new Error('User not authenticated');
-    }
-
-    const agent = await this.db.agents.findById(input.id, userId);
+  async updateAgent(@Args('input') input: UpdateAgentInput): Promise<Agent> {
+    const agent = await this.db.agents.findById(input.id);
 
     if (!agent) {
       throw new Error('Agent not found');
@@ -95,7 +84,7 @@ export class AgentResolver {
     if (input.description !== undefined) updates.description = input.description;
     if (input.capabilities !== undefined) updates.capabilities = input.capabilities;
 
-    const updated = await this.db.agents.update(input.id, userId, updates);
+    const updated = await this.db.agents.update(input.id, updates);
     if (!updated) {
       throw new Error('Failed to update agent');
     }

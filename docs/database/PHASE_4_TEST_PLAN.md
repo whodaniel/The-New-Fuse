@@ -1,13 +1,13 @@
 # Phase 4: Integration Test Suite - Implementation Plan
 
-**Date**: December 29, 2024 **Priority**: HIGH (User-requested) **Estimate**:
-3-4 days **Status**: PLANNING
+**Date**: December 29, 2024
+**Priority**: HIGH (User-requested)
+**Estimate**: 3-4 days
+**Status**: PLANNING
 
 ## 🎯 Objectives
 
-Create a comprehensive integration test suite for all Drizzle ORM repositories
-to ensure:
-
+Create a comprehensive integration test suite for all Drizzle ORM repositories to ensure:
 1. All 88 repository methods work correctly
 2. Database operations are reliable and consistent
 3. Performance benchmarks are established
@@ -60,8 +60,7 @@ import postgres from 'postgres';
 import * as schema from '../src/drizzle/schema';
 
 // Test database configuration
-const TEST_DATABASE_URL =
-  process.env.TEST_DATABASE_URL ||
+const TEST_DATABASE_URL = process.env.TEST_DATABASE_URL ||
   'postgresql://newfuse:secretpass123@localhost:5433/the_new_fuse_test';
 
 let testDb: any;
@@ -171,11 +170,7 @@ packages/database/
 
 ```typescript
 // Example: packages/database/__tests__/repositories/user.repository.test.ts
-import {
-  setupTestDatabase,
-  teardownTestDatabase,
-  clearAllTables,
-} from '../setup';
+import { setupTestDatabase, teardownTestDatabase, clearAllTables } from '../setup';
 import { drizzleUserRepository } from '../../src/drizzle/repositories/user.repository';
 import { UserFactory } from '../utils/factories';
 import { expectDatabaseRow } from '../utils/assertions';
@@ -210,7 +205,9 @@ describe('DrizzleUserRepository', () => {
       await drizzleUserRepository.create(userData);
 
       // Attempt to create duplicate should fail
-      await expect(drizzleUserRepository.create(userData)).rejects.toThrow();
+      await expect(
+        drizzleUserRepository.create(userData)
+      ).rejects.toThrow();
     });
   });
 
@@ -226,9 +223,7 @@ describe('DrizzleUserRepository', () => {
     });
 
     it('should return null for non-existent email', async () => {
-      const found = await drizzleUserRepository.findByEmail(
-        'nonexistent@example.com'
-      );
+      const found = await drizzleUserRepository.findByEmail('nonexistent@example.com');
       expect(found).toBeNull();
     });
   });
@@ -240,55 +235,47 @@ describe('DrizzleUserRepository', () => {
 ## 🎯 Test Categories
 
 ### 1. CRUD Operations (Happy Path)
-
 - Create entities with valid data
 - Read entities by ID, email, etc.
 - Update entities with valid data
 - Delete entities (soft delete)
 
 ### 2. Edge Cases
-
 - Non-existent IDs return null
 - Soft-deleted entities are filtered out
 - Empty result sets handled correctly
 - Null/undefined parameter handling
 
 ### 3. Data Validation
-
 - Required fields enforced
 - Unique constraints respected
 - Foreign key relationships maintained
 - Data types validated
 
 ### 4. Pagination
-
 - Page 1 returns first N items
 - Offset/limit work correctly
 - Total count is accurate
 - Empty pages handled
 
 ### 5. Search and Filtering
-
 - Case-insensitive search works
 - Multiple criteria AND together correctly
 - Empty search returns all results
 - Special characters handled
 
 ### 6. Concurrent Operations
-
 - Multiple creates don't conflict
 - Optimistic locking (if implemented)
 - Race conditions handled
 
 ### 7. Error Handling
-
 - Database errors thrown correctly
 - Constraint violations caught
 - Transaction rollbacks work
 - Timeout handling
 
 ### 8. Performance Benchmarks
-
 - Create operations < 50ms (single)
 - Read operations < 10ms (by ID)
 - Pagination < 100ms (page of 50)
@@ -297,7 +284,6 @@ describe('DrizzleUserRepository', () => {
 ## 📊 Coverage Goals
 
 ### Code Coverage Targets
-
 - **Line Coverage**: 90%+
 - **Branch Coverage**: 85%+
 - **Function Coverage**: 100%
@@ -305,16 +291,16 @@ describe('DrizzleUserRepository', () => {
 
 ### Test Coverage Matrix
 
-| Repository | Methods | Tests    | Coverage Target |
-| ---------- | ------- | -------- | --------------- |
-| User       | 15      | 30+      | 95%             |
-| Agent      | 23      | 46+      | 95%             |
-| Chat       | 12      | 24+      | 95%             |
-| Task       | 18      | 36+      | 95%             |
-| Workflow   | 20      | 40+      | 95%             |
-| **Total**  | **88**  | **176+** | **95%**         |
+| Repository | Methods | Tests | Coverage Target |
+|------------|---------|-------|-----------------|
+| User       | 15      | 30+   | 95%             |
+| Agent      | 23      | 46+   | 95%             |
+| Chat       | 12      | 24+   | 95%             |
+| Task       | 18      | 36+   | 95%             |
+| Workflow   | 20      | 40+   | 95%             |
+| **Total**  | **88**  | **176+** | **95%**      |
 
-_Note: ~2 tests per method (happy path + edge case)_
+*Note: ~2 tests per method (happy path + edge case)*
 
 ## 🔧 Jest Configuration
 
@@ -347,7 +333,6 @@ module.exports = {
 ## 🚀 Implementation Timeline
 
 ### Day 1: Infrastructure (6-8 hours)
-
 - [ ] Create test directory structure
 - [ ] Set up Jest configuration
 - [ ] Create test database setup/teardown
@@ -356,21 +341,18 @@ module.exports = {
 - [ ] Write documentation
 
 ### Day 2: Core Repository Tests (8-10 hours)
-
 - [ ] DrizzleUserRepository tests (15 methods, ~30 tests)
 - [ ] DrizzleChatRepository tests (12 methods, ~24 tests)
 - [ ] Verify tests pass locally
 - [ ] Achieve 90%+ coverage on these repos
 
 ### Day 3: Complex Repository Tests (8-10 hours)
-
 - [ ] DrizzleAgentRepository tests (23 methods, ~46 tests)
 - [ ] DrizzleTaskRepository tests (18 methods, ~36 tests)
 - [ ] Verify tests pass locally
 - [ ] Achieve 90%+ coverage on these repos
 
 ### Day 4: Workflow & Performance (6-8 hours)
-
 - [ ] DrizzleWorkflowRepository tests (20 methods, ~40 tests)
 - [ ] Performance benchmark tests
 - [ ] Load tests
@@ -381,7 +363,6 @@ module.exports = {
 ## 🎓 Testing Best Practices
 
 ### Do's ✅
-
 - Use factories for consistent test data
 - Clean database between tests
 - Test both success and failure cases
@@ -392,7 +373,6 @@ module.exports = {
 - Use transactions for cleanup when possible
 
 ### Don'ts ❌
-
 - Don't test Drizzle ORM itself (trust the framework)
 - Don't rely on test execution order
 - Don't use production database
@@ -404,7 +384,6 @@ module.exports = {
 ## 📈 Success Criteria
 
 ### Must Have
-
 - ✅ All 88 repository methods have tests
 - ✅ 90%+ code coverage achieved
 - ✅ All tests pass locally
@@ -412,7 +391,6 @@ module.exports = {
 - ✅ No flaky tests (100% reliability)
 
 ### Nice to Have
-
 - ⭐ Performance benchmarks established
 - ⭐ Load tests for concurrent operations
 - ⭐ CI/CD integration completed
@@ -450,7 +428,9 @@ jobs:
         ports:
           - 5433:5432
         options: >-
-          --health-cmd pg_isready --health-interval 10s --health-timeout 5s
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
           --health-retries 5
 
     steps:
@@ -486,7 +466,6 @@ jobs:
 ## 📚 Documentation
 
 ### Test Documentation Requirements
-
 1. README in `__tests__/` explaining how to run tests
 2. Inline comments for complex test scenarios
 3. Performance benchmark results documented
@@ -496,7 +475,6 @@ jobs:
 ## 🎉 Expected Outcomes
 
 Upon completion of Phase 4, we will have:
-
 1. **176+ integration tests** covering all repository methods
 2. **95% code coverage** of repository code
 3. **Performance baselines** for all operations
@@ -504,5 +482,4 @@ Upon completion of Phase 4, we will have:
 5. **Complete confidence** in database layer quality
 6. **Documentation** for future test development
 
-This comprehensive test suite will ensure the Drizzle migration is
-production-ready and provides a solid foundation for future development.
+This comprehensive test suite will ensure the Drizzle migration is production-ready and provides a solid foundation for future development.

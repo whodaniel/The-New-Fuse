@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Category, NodeTemplate } from '../types/workflow';
+import { useState, useMemo } from 'react';
+import { NodeTemplate, Category } from '../types/workflow';
 
 // Define available node templates
 const defaultNodeTemplates: NodeTemplate[] = [
@@ -13,8 +13,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     config: {
       model: 'gpt-4',
       temperature: 0.7,
-      maxTokens: 1000,
-    },
+      maxTokens: 1000
+    }
   },
   {
     type: 'prompt',
@@ -24,8 +24,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     category: 'ai',
     config: {
       template: '',
-      variables: [],
-    },
+      variables: []
+    }
   },
   {
     type: 'tool',
@@ -35,8 +35,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     category: 'ai',
     config: {
       toolType: 'api',
-      endpoint: '',
-    },
+      endpoint: ''
+    }
   },
 
   // Data Nodes
@@ -48,8 +48,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     category: 'data',
     config: {
       transformType: 'map',
-      expression: '',
-    },
+      expression: ''
+    }
   },
   {
     type: 'storage',
@@ -59,8 +59,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     category: 'data',
     config: {
       storageType: 'memory',
-      key: '',
-    },
+      key: ''
+    }
   },
   {
     type: 'dataSource',
@@ -70,8 +70,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     category: 'data',
     config: {
       sourceType: 'api',
-      url: '',
-    },
+      url: ''
+    }
   },
 
   // Integration Nodes
@@ -84,8 +84,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     config: {
       method: 'GET',
       url: '',
-      headers: {},
-    },
+      headers: {}
+    }
   },
   {
     type: 'webhook',
@@ -95,8 +95,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     category: 'integration',
     config: {
       endpoint: '',
-      method: 'POST',
-    },
+      method: 'POST'
+    }
   },
   {
     type: 'notification',
@@ -106,8 +106,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     category: 'integration',
     config: {
       type: 'email',
-      recipient: '',
-    },
+      recipient: ''
+    }
   },
 
   // Flow Control Nodes
@@ -119,8 +119,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     category: 'flow',
     config: {
       condition: '',
-      operator: 'equals',
-    },
+      operator: 'equals'
+    }
   },
   {
     type: 'loop',
@@ -130,8 +130,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     category: 'flow',
     config: {
       loopType: 'forEach',
-      items: [],
-    },
+      items: []
+    }
   },
   {
     type: 'subworkflow',
@@ -141,8 +141,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     category: 'flow',
     config: {
       workflowId: '',
-      inputs: {},
-    },
+      inputs: {}
+    }
   },
 
   // I/O Nodes
@@ -154,8 +154,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     category: 'io',
     config: {
       inputType: 'text',
-      required: true,
-    },
+      required: true
+    }
   },
   {
     type: 'output',
@@ -164,8 +164,8 @@ const defaultNodeTemplates: NodeTemplate[] = [
     icon: '📤',
     category: 'io',
     config: {
-      outputType: 'text',
-    },
+      outputType: 'text'
+    }
   },
   {
     type: 'a2a',
@@ -175,9 +175,9 @@ const defaultNodeTemplates: NodeTemplate[] = [
     category: 'io',
     config: {
       targetAgent: '',
-      protocol: 'direct',
-    },
-  },
+      protocol: 'direct'
+    }
+  }
 ];
 
 // Define categories
@@ -186,32 +186,32 @@ const defaultCategories: Category[] = [
     id: 'ai',
     name: 'AI & ML',
     description: 'AI and Machine Learning nodes',
-    nodes: [],
+    nodes: []
   },
   {
     id: 'data',
     name: 'Data Processing',
     description: 'Data transformation and storage',
-    nodes: [],
+    nodes: []
   },
   {
     id: 'integration',
     name: 'Integrations',
     description: 'External service integrations',
-    nodes: [],
+    nodes: []
   },
   {
     id: 'flow',
     name: 'Flow Control',
     description: 'Control flow and logic',
-    nodes: [],
+    nodes: []
   },
   {
     id: 'io',
     name: 'Input/Output',
     description: 'Input and output operations',
-    nodes: [],
-  },
+    nodes: []
+  }
 ];
 
 export const useNodeCategories = () => {
@@ -219,24 +219,21 @@ export const useNodeCategories = () => {
 
   // Organize nodes by category
   const categories = useMemo(() => {
-    const categorizedNodes = defaultCategories.map((category) => ({
+    const categorizedNodes = defaultCategories.map(category => ({
       ...category,
-      nodes: defaultNodeTemplates.filter((node) => node.category === category.id),
+      nodes: defaultNodeTemplates.filter(node => node.category === category.id)
     }));
 
     // Filter by search term if provided
     if (searchTerm) {
-      return categorizedNodes
-        .map((category) => ({
-          ...category,
-          nodes: category.nodes.filter(
-            (node) =>
-              node.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              node.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              node.type.toLowerCase().includes(searchTerm.toLowerCase())
-          ),
-        }))
-        .filter((category) => category.nodes.length > 0);
+      return categorizedNodes.map(category => ({
+        ...category,
+        nodes: category.nodes.filter(node =>
+          node.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          node.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          node.type.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      })).filter(category => category.nodes.length > 0);
     }
 
     return categorizedNodes;
@@ -247,7 +244,7 @@ export const useNodeCategories = () => {
   };
 
   const getNodeTemplate = (nodeType: string): NodeTemplate | undefined => {
-    return defaultNodeTemplates.find((node) => node.type === nodeType);
+    return defaultNodeTemplates.find(node => node.type === nodeType);
   };
 
   const getAllNodes = (): NodeTemplate[] => {
@@ -259,6 +256,6 @@ export const useNodeCategories = () => {
     searchNodes,
     getNodeTemplate,
     getAllNodes,
-    searchTerm,
+    searchTerm
   };
 };

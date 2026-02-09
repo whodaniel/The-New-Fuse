@@ -1,374 +1,330 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🚀 The New Fuse - Live React Application</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      .gradient-bg {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      }
-      .card-hover:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-      }
-      .pulse {
-        animation: pulse 2s infinite;
-      }
-      @keyframes pulse {
-        0% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.5;
-        }
-        100% {
-          opacity: 1;
-        }
-      }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div id="root"></div>
 
     <script type="text/babel">
-      const { useState, useEffect } = React;
+        const { useState, useEffect } = React;
 
-      // Navigation Component
-      function Navigation({ currentPage, setCurrentPage }) {
-        return (
-          <nav className="bg-blue-600 text-white p-4 shadow-lg">
-            <div className="max-w-7xl mx-auto flex items-center justify-between">
-              <h1 className="text-xl font-bold">🚀 The New Fuse</h1>
-              <div className="space-x-4">
-                <button
-                  onClick={() => setCurrentPage('home')}
-                  className={`hover:text-blue-200 px-3 py-2 rounded transition-colors ${currentPage === 'home' ? 'bg-blue-700' : ''}`}
-                >
-                  Home
-                </button>
-                <button
-                  onClick={() => setCurrentPage('chat')}
-                  className={`hover:text-blue-200 px-3 py-2 rounded transition-colors ${currentPage === 'chat' ? 'bg-blue-700' : ''}`}
-                >
-                  🤖 Multi-Agent Chat
-                </button>
-                <button
-                  onClick={() => setCurrentPage('dashboard')}
-                  className={`hover:text-blue-200 px-3 py-2 rounded transition-colors ${currentPage === 'dashboard' ? 'bg-blue-700' : ''}`}
-                >
-                  Dashboard
-                </button>
-              </div>
-            </div>
-          </nav>
-        );
-      }
-
-      // Multi-Agent Chat Component
-      function MultiAgentChat() {
-        const [messages, setMessages] = useState([
-          {
-            id: 1,
-            agent: 'Assistant',
-            text: "Hello! I'm ready to help you with multi-agent coordination.",
-            time: '10:30 AM',
-          },
-          {
-            id: 2,
-            agent: 'Analyzer',
-            text: 'I can analyze complex data and provide insights.',
-            time: '10:31 AM',
-          },
-          {
-            id: 3,
-            agent: 'Planner',
-            text: 'I specialize in creating detailed project plans and workflows.',
-            time: '10:32 AM',
-          },
-        ]);
-        const [newMessage, setNewMessage] = useState('');
-        const [activeAgents, setActiveAgents] = useState(['Assistant', 'Analyzer', 'Planner']);
-
-        const sendMessage = () => {
-          if (newMessage.trim()) {
-            const message = {
-              id: messages.length + 1,
-              agent: 'User',
-              text: newMessage,
-              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            };
-            setMessages([...messages, message]);
-            setNewMessage('');
-
-            // Simulate agent response
-            setTimeout(() => {
-              const responses = [
-                'I understand your request. Let me process that.',
-                "That's an interesting question. Based on my analysis...",
-                "I can help you with that. Here's my recommendation...",
-                'Great point! Let me collaborate with other agents on this.',
-              ];
-              const responseMessage = {
-                id: messages.length + 2,
-                agent: activeAgents[Math.floor(Math.random() * activeAgents.length)],
-                text: responses[Math.floor(Math.random() * responses.length)],
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              };
-              setMessages((prev) => [...prev, responseMessage]);
-            }, 1000);
-          }
-        };
-
-        return (
-          <div className="min-h-screen bg-gray-50 p-6">
-            <div className="max-w-6xl mx-auto">
-              <h1 className="text-3xl font-bold mb-6">🤖 Multi-Agent Chat System</h1>
-
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                {/* Agents Panel */}
-                <div className="bg-white rounded-lg shadow-lg p-4">
-                  <h3 className="font-semibold mb-4">Active Agents</h3>
-                  {activeAgents.map((agent) => (
-                    <div key={agent} className="flex items-center mb-3">
-                      <div className="w-3 h-3 bg-green-400 rounded-full mr-2 pulse"></div>
-                      <span className="text-sm">{agent}</span>
-                    </div>
-                  ))}
-                  <button className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
-                    Add Agent
-                  </button>
-                </div>
-
-                {/* Chat Area */}
-                <div className="lg:col-span-3 bg-white rounded-lg shadow-lg">
-                  <div className="h-96 overflow-y-auto p-4 border-b">
-                    {messages.map((message) => (
-                      <div
-                        key={message.id}
-                        className={`mb-4 ${message.agent === 'User' ? 'text-right' : ''}`}
-                      >
-                        <div
-                          className={`inline-block max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                            message.agent === 'User'
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-gray-200 text-gray-800'
-                          }`}
-                        >
-                          <div className="font-semibold text-xs mb-1">{message.agent}</div>
-                          <div>{message.text}</div>
-                          <div className="text-xs opacity-75 mt-1">{message.time}</div>
+        // Navigation Component
+        function Navigation({ currentPage, setCurrentPage }) {
+            return (
+                <nav className="bg-blue-600 text-white p-4 shadow-lg">
+                    <div className="max-w-7xl mx-auto flex items-center justify-between">
+                        <h1 className="text-xl font-bold">🚀 The New Fuse</h1>
+                        <div className="space-x-4">
+                            <button 
+                                onClick={() => setCurrentPage('home')}
+                                className={`hover:text-blue-200 px-3 py-2 rounded transition-colors ${currentPage === 'home' ? 'bg-blue-700' : ''}`}
+                            >
+                                Home
+                            </button>
+                            <button 
+                                onClick={() => setCurrentPage('chat')}
+                                className={`hover:text-blue-200 px-3 py-2 rounded transition-colors ${currentPage === 'chat' ? 'bg-blue-700' : ''}`}
+                            >
+                                🤖 Multi-Agent Chat
+                            </button>
+                            <button 
+                                onClick={() => setCurrentPage('dashboard')}
+                                className={`hover:text-blue-200 px-3 py-2 rounded transition-colors ${currentPage === 'dashboard' ? 'bg-blue-700' : ''}`}
+                            >
+                                Dashboard
+                            </button>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="p-4 flex">
-                    <input
-                      type="text"
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                      placeholder="Type your message..."
-                      className="flex-1 border rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                    />
-                    <button
-                      onClick={sendMessage}
-                      className="bg-blue-600 text-white px-6 py-2 rounded-r-lg hover:bg-blue-700 transition-colors"
-                    >
-                      Send
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      // Dashboard Component
-      function Dashboard() {
-        const [stats, setStats] = useState({
-          activeAgents: 3,
-          totalMessages: 156,
-          completedTasks: 42,
-          uptime: '99.9%',
-        });
-
-        return (
-          <div className="min-h-screen bg-gray-50 p-6">
-            <div className="max-w-7xl mx-auto">
-              <h1 className="text-3xl font-bold mb-6">📊 Dashboard</h1>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="bg-white rounded-lg shadow-lg p-6 card-hover transition-transform">
-                  <div className="text-3xl mb-2">🤖</div>
-                  <div className="text-2xl font-bold">{stats.activeAgents}</div>
-                  <div className="text-gray-600">Active Agents</div>
-                </div>
-                <div className="bg-white rounded-lg shadow-lg p-6 card-hover transition-transform">
-                  <div className="text-3xl mb-2">💬</div>
-                  <div className="text-2xl font-bold">{stats.totalMessages}</div>
-                  <div className="text-gray-600">Total Messages</div>
-                </div>
-                <div className="bg-white rounded-lg shadow-lg p-6 card-hover transition-transform">
-                  <div className="text-3xl mb-2">✅</div>
-                  <div className="text-2xl font-bold">{stats.completedTasks}</div>
-                  <div className="text-gray-600">Completed Tasks</div>
-                </div>
-                <div className="bg-white rounded-lg shadow-lg p-6 card-hover transition-transform">
-                  <div className="text-3xl mb-2">⚡</div>
-                  <div className="text-2xl font-bold">{stats.uptime}</div>
-                  <div className="text-gray-600">Uptime</div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white rounded-lg shadow-lg p-6">
-                  <h3 className="text-xl font-semibold mb-4">Recent Activity</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-green-400 rounded-full mr-3"></div>
-                      <span>Agent "Analyzer" completed data analysis</span>
                     </div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-blue-400 rounded-full mr-3"></div>
-                      <span>New chat conversation started</span>
+                </nav>
+            );
+        }
+
+        // Multi-Agent Chat Component
+        function MultiAgentChat() {
+            const [messages, setMessages] = useState([
+                { id: 1, agent: 'Assistant', text: 'Hello! I\'m ready to help you with multi-agent coordination.', time: '10:30 AM' },
+                { id: 2, agent: 'Analyzer', text: 'I can analyze complex data and provide insights.', time: '10:31 AM' },
+                { id: 3, agent: 'Planner', text: 'I specialize in creating detailed project plans and workflows.', time: '10:32 AM' }
+            ]);
+            const [newMessage, setNewMessage] = useState('');
+            const [activeAgents, setActiveAgents] = useState(['Assistant', 'Analyzer', 'Planner']);
+
+            const sendMessage = () => {
+                if (newMessage.trim()) {
+                    const message = {
+                        id: messages.length + 1,
+                        agent: 'User',
+                        text: newMessage,
+                        time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                    };
+                    setMessages([...messages, message]);
+                    setNewMessage('');
+                    
+                    // Simulate agent response
+                    setTimeout(() => {
+                        const responses = [
+                            'I understand your request. Let me process that.',
+                            'That\'s an interesting question. Based on my analysis...',
+                            'I can help you with that. Here\'s my recommendation...',
+                            'Great point! Let me collaborate with other agents on this.'
+                        ];
+                        const responseMessage = {
+                            id: messages.length + 2,
+                            agent: activeAgents[Math.floor(Math.random() * activeAgents.length)],
+                            text: responses[Math.floor(Math.random() * responses.length)],
+                            time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                        };
+                        setMessages(prev => [...prev, responseMessage]);
+                    }, 1000);
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50 p-6">
+                    <div className="max-w-6xl mx-auto">
+                        <h1 className="text-3xl font-bold mb-6">🤖 Multi-Agent Chat System</h1>
+                        
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                            {/* Agents Panel */}
+                            <div className="bg-white rounded-lg shadow-lg p-4">
+                                <h3 className="font-semibold mb-4">Active Agents</h3>
+                                {activeAgents.map(agent => (
+                                    <div key={agent} className="flex items-center mb-3">
+                                        <div className="w-3 h-3 bg-green-400 rounded-full mr-2 pulse"></div>
+                                        <span className="text-sm">{agent}</span>
+                                    </div>
+                                ))}
+                                <button className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
+                                    Add Agent
+                                </button>
+                            </div>
+
+                            {/* Chat Area */}
+                            <div className="lg:col-span-3 bg-white rounded-lg shadow-lg">
+                                <div className="h-96 overflow-y-auto p-4 border-b">
+                                    {messages.map(message => (
+                                        <div key={message.id} className={`mb-4 ${message.agent === 'User' ? 'text-right' : ''}`}>
+                                            <div className={`inline-block max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                                                message.agent === 'User' 
+                                                    ? 'bg-blue-600 text-white' 
+                                                    : 'bg-gray-200 text-gray-800'
+                                            }`}>
+                                                <div className="font-semibold text-xs mb-1">{message.agent}</div>
+                                                <div>{message.text}</div>
+                                                <div className="text-xs opacity-75 mt-1">{message.time}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="p-4 flex">
+                                    <input
+                                        type="text"
+                                        value={newMessage}
+                                        onChange={(e) => setNewMessage(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                                        placeholder="Type your message..."
+                                        className="flex-1 border rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                                    />
+                                    <button
+                                        onClick={sendMessage}
+                                        className="bg-blue-600 text-white px-6 py-2 rounded-r-lg hover:bg-blue-700 transition-colors"
+                                    >
+                                        Send
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></div>
-                      <span>Workflow "Project Planning" updated</span>
+                </div>
+            );
+        }
+
+        // Dashboard Component
+        function Dashboard() {
+            const [stats, setStats] = useState({
+                activeAgents: 3,
+                totalMessages: 156,
+                completedTasks: 42,
+                uptime: '99.9%'
+            });
+
+            return (
+                <div className="min-h-screen bg-gray-50 p-6">
+                    <div className="max-w-7xl mx-auto">
+                        <h1 className="text-3xl font-bold mb-6">📊 Dashboard</h1>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <div className="bg-white rounded-lg shadow-lg p-6 card-hover transition-transform">
+                                <div className="text-3xl mb-2">🤖</div>
+                                <div className="text-2xl font-bold">{stats.activeAgents}</div>
+                                <div className="text-gray-600">Active Agents</div>
+                            </div>
+                            <div className="bg-white rounded-lg shadow-lg p-6 card-hover transition-transform">
+                                <div className="text-3xl mb-2">💬</div>
+                                <div className="text-2xl font-bold">{stats.totalMessages}</div>
+                                <div className="text-gray-600">Total Messages</div>
+                            </div>
+                            <div className="bg-white rounded-lg shadow-lg p-6 card-hover transition-transform">
+                                <div className="text-3xl mb-2">✅</div>
+                                <div className="text-2xl font-bold">{stats.completedTasks}</div>
+                                <div className="text-gray-600">Completed Tasks</div>
+                            </div>
+                            <div className="bg-white rounded-lg shadow-lg p-6 card-hover transition-transform">
+                                <div className="text-3xl mb-2">⚡</div>
+                                <div className="text-2xl font-bold">{stats.uptime}</div>
+                                <div className="text-gray-600">Uptime</div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="bg-white rounded-lg shadow-lg p-6">
+                                <h3 className="text-xl font-semibold mb-4">Recent Activity</h3>
+                                <div className="space-y-3">
+                                    <div className="flex items-center">
+                                        <div className="w-2 h-2 bg-green-400 rounded-full mr-3"></div>
+                                        <span>Agent "Analyzer" completed data analysis</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <div className="w-2 h-2 bg-blue-400 rounded-full mr-3"></div>
+                                        <span>New chat conversation started</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <div className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></div>
+                                        <span>Workflow "Project Planning" updated</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow-lg p-6">
+                                <h3 className="text-xl font-semibold mb-4">System Status</h3>
+                                <div className="space-y-3">
+                                    <div className="flex justify-between items-center">
+                                        <span>Chat Service</span>
+                                        <span className="text-green-600 font-semibold">✅ Online</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span>Agent Manager</span>
+                                        <span className="text-green-600 font-semibold">✅ Online</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span>Database</span>
+                                        <span className="text-green-600 font-semibold">✅ Connected</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
+            );
+        }
 
-                <div className="bg-white rounded-lg shadow-lg p-6">
-                  <h3 className="text-xl font-semibold mb-4">System Status</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span>Chat Service</span>
-                      <span className="text-green-600 font-semibold">✅ Online</span>
+        // Home Component
+        function HomePage() {
+            return (
+                <div className="min-h-screen gradient-bg py-12">
+                    <div className="max-w-7xl mx-auto px-4">
+                        <div className="text-center mb-12">
+                            <h1 className="text-5xl font-bold text-white mb-4">
+                                🚀 The New Fuse
+                            </h1>
+                            <p className="text-xl text-white opacity-90 mb-8">
+                                Live React Application - Multi-Agent Chat & Frontend
+                            </p>
+                            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg inline-block">
+                                ✅ Live React Components Running - Click navigation to explore!
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div className="bg-white rounded-lg shadow-xl p-6 card-hover transition-transform">
+                                <div className="text-4xl mb-4">🤖</div>
+                                <h3 className="text-xl font-semibold mb-2">Multi-Agent Chat</h3>
+                                <p className="text-gray-600 mb-4">
+                                    Interactive chat system with multiple AI agents working together in real-time.
+                                </p>
+                                <div className="text-sm text-gray-500">
+                                    ✅ Real-time messaging<br/>
+                                    ✅ Agent coordination<br/>
+                                    ✅ Live responses
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow-xl p-6 card-hover transition-transform">
+                                <div className="text-4xl mb-4">📊</div>
+                                <h3 className="text-xl font-semibold mb-2">Live Dashboard</h3>
+                                <p className="text-gray-600 mb-4">
+                                    Real-time dashboard with interactive components and live data updates.
+                                </p>
+                                <div className="text-sm text-gray-500">
+                                    ✅ Live statistics<br/>
+                                    ✅ Interactive cards<br/>
+                                    ✅ Real-time updates
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow-xl p-6 card-hover transition-transform">
+                                <div className="text-4xl mb-4">⚡</div>
+                                <h3 className="text-xl font-semibold mb-2">React Features</h3>
+                                <p className="text-gray-600 mb-4">
+                                    Full React application with hooks, state management, and interactive UI.
+                                </p>
+                                <div className="text-sm text-gray-500">
+                                    ✅ React Hooks<br/>
+                                    ✅ State Management<br/>
+                                    ✅ Tailwind CSS
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-12 text-center">
+                            <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-6 text-white">
+                                <h2 className="text-2xl font-bold mb-4">🎉 Fully Interactive React Application</h2>
+                                <p className="text-lg opacity-90">
+                                    This is a complete React application running live in your browser!<br/>
+                                    Navigate using the menu above to explore all features.
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span>Agent Manager</span>
-                      <span className="text-green-600 font-semibold">✅ Online</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Database</span>
-                      <span className="text-green-600 font-semibold">✅ Connected</span>
-                    </div>
-                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        );
-      }
+            );
+        }
 
-      // Home Component
-      function HomePage() {
-        return (
-          <div className="min-h-screen gradient-bg py-12">
-            <div className="max-w-7xl mx-auto px-4">
-              <div className="text-center mb-12">
-                <h1 className="text-5xl font-bold text-white mb-4">🚀 The New Fuse</h1>
-                <p className="text-xl text-white opacity-90 mb-8">
-                  Live React Application - Multi-Agent Chat & Frontend
-                </p>
-                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg inline-block">
-                  ✅ Live React Components Running - Click navigation to explore!
+        // Main App Component
+        function App() {
+            const [currentPage, setCurrentPage] = useState('home');
+
+            const renderPage = () => {
+                switch(currentPage) {
+                    case 'chat': return <MultiAgentChat />;
+                    case 'dashboard': return <Dashboard />;
+                    default: return <HomePage />;
+                }
+            };
+
+            return (
+                <div>
+                    <Navigation currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                    {renderPage()}
                 </div>
-              </div>
+            );
+        }
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div className="bg-white rounded-lg shadow-xl p-6 card-hover transition-transform">
-                  <div className="text-4xl mb-4">🤖</div>
-                  <h3 className="text-xl font-semibold mb-2">Multi-Agent Chat</h3>
-                  <p className="text-gray-600 mb-4">
-                    Interactive chat system with multiple AI agents working together in real-time.
-                  </p>
-                  <div className="text-sm text-gray-500">
-                    ✅ Real-time messaging
-                    <br />
-                    ✅ Agent coordination
-                    <br />✅ Live responses
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-lg shadow-xl p-6 card-hover transition-transform">
-                  <div className="text-4xl mb-4">📊</div>
-                  <h3 className="text-xl font-semibold mb-2">Live Dashboard</h3>
-                  <p className="text-gray-600 mb-4">
-                    Real-time dashboard with interactive components and live data updates.
-                  </p>
-                  <div className="text-sm text-gray-500">
-                    ✅ Live statistics
-                    <br />
-                    ✅ Interactive cards
-                    <br />✅ Real-time updates
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-lg shadow-xl p-6 card-hover transition-transform">
-                  <div className="text-4xl mb-4">⚡</div>
-                  <h3 className="text-xl font-semibold mb-2">React Features</h3>
-                  <p className="text-gray-600 mb-4">
-                    Full React application with hooks, state management, and interactive UI.
-                  </p>
-                  <div className="text-sm text-gray-500">
-                    ✅ React Hooks
-                    <br />
-                    ✅ State Management
-                    <br />✅ Tailwind CSS
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-12 text-center">
-                <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-6 text-white">
-                  <h2 className="text-2xl font-bold mb-4">
-                    🎉 Fully Interactive React Application
-                  </h2>
-                  <p className="text-lg opacity-90">
-                    This is a complete React application running live in your browser!
-                    <br />
-                    Navigate using the menu above to explore all features.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      // Main App Component
-      function App() {
-        const [currentPage, setCurrentPage] = useState('home');
-
-        const renderPage = () => {
-          switch (currentPage) {
-            case 'chat':
-              return <MultiAgentChat />;
-            case 'dashboard':
-              return <Dashboard />;
-            default:
-              return <HomePage />;
-          }
-        };
-
-        return (
-          <div>
-            <Navigation currentPage={currentPage} setCurrentPage={setCurrentPage} />
-            {renderPage()}
-          </div>
-        );
-      }
-
-      // Render the app
-      ReactDOM.render(<App />, document.getElementById('root'));
+        // Render the app
+        ReactDOM.render(<App />, document.getElementById('root'));
     </script>
-  </body>
+</body>
 </html>

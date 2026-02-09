@@ -1,6 +1,10 @@
-import { Logger } from 'winston';
+import {
+  PipelineResult,
+  BuildResult,
+  DeploymentResult
+} from '../types/pipeline';
 import { InfrastructureMetrics } from '../interfaces/IInfrastructureManager';
-import { BuildResult, DeploymentResult, PipelineResult } from '../types/pipeline';
+import { Logger } from 'winston';
 
 /**
  * Metrics Collector gathers and analyzes pipeline performance metrics
@@ -24,12 +28,12 @@ export class MetricsCollector {
     this.logger.debug(`Recording pipeline metrics: ${result.id}`, {
       pipelineId: result.pipelineId,
       status: result.status,
-      duration: result.duration,
+      duration: result.duration
     });
 
     // Store in history
     this.pipelineHistory.push(result);
-
+    
     // Keep only recent history (last 1000 executions)
     if (this.pipelineHistory.length > 1000) {
       this.pipelineHistory = this.pipelineHistory.slice(-1000);
@@ -37,35 +41,31 @@ export class MetricsCollector {
 
     // Update aggregated metrics
     this.updatePipelineAggregates(result);
-
+    
     // Record individual metrics
     this.recordMetric('pipeline_duration', result.duration || 0, {
       pipelineId: result.pipelineId,
       status: result.status,
-      environment: result.environment,
+      environment: result.environment
     });
 
     this.recordMetric('pipeline_success_rate', result.status === 'success' ? 1 : 0, {
       pipelineId: result.pipelineId,
-      environment: result.environment,
+      environment: result.environment
     });
 
     this.recordMetric('stage_count', result.stages.length, {
-      pipelineId: result.pipelineId,
+      pipelineId: result.pipelineId
     });
 
     // Record stage-specific metrics
-    result.stages.forEach((stage) => {
+    result.stages.forEach(stage => {
       this.recordMetric('stage_duration', stage.duration || 0, {
         pipelineId: result.pipelineId,
         stageName: stage.name,
-        stageType: stage.name.toLowerCase().includes('test')
-          ? 'test'
-          : stage.name.toLowerCase().includes('build')
-            ? 'build'
-            : stage.name.toLowerCase().includes('deploy')
-              ? 'deploy'
-              : 'other',
+        stageType: stage.name.toLowerCase().includes('test') ? 'test' : 
+                   stage.name.toLowerCase().includes('build') ? 'build' :
+                   stage.name.toLowerCase().includes('deploy') ? 'deploy' : 'other'
       });
     });
   }
@@ -77,12 +77,12 @@ export class MetricsCollector {
     this.logger.debug(`Recording build metrics: ${result.id}`, {
       triggerId: result.triggerId,
       status: result.status,
-      duration: result.duration,
+      duration: result.duration
     });
 
     // Store in history
     this.buildHistory.push(result);
-
+    
     // Keep only recent history
     if (this.buildHistory.length > 1000) {
       this.buildHistory = this.buildHistory.slice(-1000);
@@ -90,25 +90,25 @@ export class MetricsCollector {
 
     // Record metrics
     this.recordMetric('build_duration', result.duration || 0, {
-      status: result.status,
+      status: result.status
     });
 
     this.recordMetric('build_success_rate', result.status === 'success' ? 1 : 0);
 
     if (result.metrics) {
       this.recordMetric('build_artifact_size', result.metrics.artifactSize, {
-        status: result.status,
+        status: result.status
       });
 
       if (result.metrics.testCoverage) {
         this.recordMetric('test_coverage', result.metrics.testCoverage, {
-          buildId: result.id,
+          buildId: result.id
         });
       }
 
       if (result.metrics.codeQualityScore) {
         this.recordMetric('code_quality_score', result.metrics.codeQualityScore, {
-          buildId: result.id,
+          buildId: result.id
         });
       }
     }
@@ -121,12 +121,12 @@ export class MetricsCollector {
     this.logger.debug(`Recording deployment metrics: ${result.id}`, {
       deploymentId: result.deploymentId,
       environment: result.environment,
-      status: result.status,
+      status: result.status
     });
 
     // Store in history
     this.deploymentHistory.push(result);
-
+    
     // Keep only recent history
     if (this.deploymentHistory.length > 1000) {
       this.deploymentHistory = this.deploymentHistory.slice(-1000);
@@ -135,41 +135,41 @@ export class MetricsCollector {
     // Record metrics
     this.recordMetric('deployment_duration', result.duration || 0, {
       environment: result.environment,
-      status: result.status,
+      status: result.status
     });
 
     this.recordMetric('deployment_success_rate', result.status === 'success' ? 1 : 0, {
-      environment: result.environment,
+      environment: result.environment
     });
 
     this.recordMetric('deployment_frequency', 1, {
       environment: result.environment,
-      status: result.status,
+      status: result.status
     });
 
     // Record service-specific metrics
-    result.services.forEach((service) => {
+    result.services.forEach(service => {
       this.recordMetric('service_deployment_status', service.status === 'success' ? 1 : 0, {
         serviceName: service.name,
-        environment: result.environment,
+        environment: result.environment
       });
 
       this.recordMetric('service_replica_count', service.replicas.desired, {
         serviceName: service.name,
-        environment: result.environment,
+        environment: result.environment
       });
     });
 
     // Record health check metrics
-    result.healthChecks.forEach((healthCheck) => {
+    result.healthChecks.forEach(healthCheck => {
       this.recordMetric('health_check_status', healthCheck.status === 'healthy' ? 1 : 0, {
         healthCheckName: healthCheck.name,
-        environment: result.environment,
+        environment: result.environment
       });
 
       this.recordMetric('health_check_duration', healthCheck.duration, {
         healthCheckName: healthCheck.name,
-        environment: result.environment,
+        environment: result.environment
       });
     });
   }
@@ -182,16 +182,16 @@ export class MetricsCollector {
     const startTime = this.parseTimeRange(timeRange, endTime);
 
     // Filter data by time range
-    const pipelineData = this.pipelineHistory.filter(
-      (p) => p.startTime >= startTime && p.startTime <= endTime
+    const pipelineData = this.pipelineHistory.filter(p => 
+      p.startTime >= startTime && p.startTime <= endTime
     );
 
-    const buildData = this.buildHistory.filter(
-      (b) => b.startTime >= startTime && b.startTime <= endTime
+    const buildData = this.buildHistory.filter(b => 
+      b.startTime >= startTime && b.startTime <= endTime
     );
 
-    const deploymentData = this.deploymentHistory.filter(
-      (d) => d.startTime >= startTime && d.startTime <= endTime
+    const deploymentData = this.deploymentHistory.filter(d => 
+      d.startTime >= startTime && d.startTime <= endTime
     );
 
     // Calculate DORA metrics
@@ -210,18 +210,18 @@ export class MetricsCollector {
       timeRange: {
         start: startTime,
         end: endTime,
-        duration: timeRange,
+        duration: timeRange
       },
       summary: {
         totalPipelines: pipelineData.length,
         totalBuilds: buildData.length,
-        totalDeployments: deploymentData.length,
+        totalDeployments: deploymentData.length
       },
       dora: doraMetrics,
       performance: performanceMetrics,
       quality: qualityMetrics,
       reliability: reliabilityMetrics,
-      trends: this.calculateTrends(pipelineData, buildData, deploymentData),
+      trends: this.calculateTrends(pipelineData, buildData, deploymentData)
     };
   }
 
@@ -237,20 +237,20 @@ export class MetricsCollector {
     this.logger.debug(`Recording provisioning metrics: ${metrics.infrastructureId}`, {
       duration: metrics.duration,
       resourceCount: metrics.resourceCount,
-      success: metrics.success,
+      success: metrics.success
     });
 
     this.recordMetric('infrastructure_provisioning_duration', metrics.duration, {
       infrastructureId: metrics.infrastructureId,
-      success: metrics.success.toString(),
+      success: metrics.success.toString()
     });
 
     this.recordMetric('infrastructure_resource_count', metrics.resourceCount, {
-      infrastructureId: metrics.infrastructureId,
+      infrastructureId: metrics.infrastructureId
     });
 
     this.recordMetric('infrastructure_provisioning_success_rate', metrics.success ? 1 : 0, {
-      infrastructureId: metrics.infrastructureId,
+      infrastructureId: metrics.infrastructureId
     });
   }
 
@@ -271,29 +271,29 @@ export class MetricsCollector {
       healthStatus: {
         overall: 'healthy' as any,
         resources: [],
-        issues: [],
+        issues: []
       },
       costMetrics: {
         currentMonthlyCost: 500,
         projectedMonthlyCost: 520,
         costTrend: 'stable' as any,
         costByResource: [],
-        optimizationOpportunities: [],
+        optimizationOpportunities: []
       },
       performanceMetrics: {
         responseTime: 150,
         throughput: 1000,
         errorRate: 0.01,
         availability: 99.9,
-        resourceUtilization: [],
+        resourceUtilization: []
       },
       securityMetrics: {
         securityScore: 85,
         vulnerabilities: [],
         complianceStatus: [],
-        securityRecommendations: [],
+        securityRecommendations: []
       },
-      lastUpdated: new Date(),
+      lastUpdated: new Date()
     };
 
     this.infrastructureMetrics.set(infrastructureId, metrics);
@@ -310,9 +310,9 @@ export class MetricsCollector {
 
     return {
       current: {
-        runningPipelines: recentPipelines.filter((p) => p.status === 'running').length,
-        queuedPipelines: recentPipelines.filter((p) => p.status === 'pending').length,
-        recentFailures: recentPipelines.filter((p) => p.status === 'failed').length,
+        runningPipelines: recentPipelines.filter(p => p.status === 'running').length,
+        queuedPipelines: recentPipelines.filter(p => p.status === 'pending').length,
+        recentFailures: recentPipelines.filter(p => p.status === 'failed').length
       },
       recent: {
         pipelineSuccessRate: this.calculateSuccessRate(recentPipelines),
@@ -320,9 +320,9 @@ export class MetricsCollector {
         deploymentSuccessRate: this.calculateSuccessRate(recentDeployments),
         averagePipelineDuration: this.calculateAverageDuration(recentPipelines),
         averageBuildDuration: this.calculateAverageDuration(recentBuilds),
-        averageDeploymentDuration: this.calculateAverageDuration(recentDeployments),
+        averageDeploymentDuration: this.calculateAverageDuration(recentDeployments)
       },
-      alerts: this.generateAlerts(recentPipelines, recentBuilds, recentDeployments),
+      alerts: this.generateAlerts(recentPipelines, recentBuilds, recentDeployments)
     };
   }
 
@@ -331,10 +331,10 @@ export class MetricsCollector {
   private recordMetric(name: string, value: number, labels: Record<string, string> = {}): void {
     const key = `${name}_${JSON.stringify(labels)}`;
     const existing = this.metrics.get(key) || { values: [], labels };
-
+    
     existing.values.push({
       value,
-      timestamp: new Date(),
+      timestamp: new Date()
     });
 
     // Keep only recent values (last 1000)
@@ -351,7 +351,7 @@ export class MetricsCollector {
       totalExecutions: 0,
       successfulExecutions: 0,
       totalDuration: 0,
-      lastExecution: null,
+      lastExecution: null
     };
 
     existing.totalExecutions++;
@@ -366,7 +366,7 @@ export class MetricsCollector {
 
   private parseTimeRange(timeRange: string, endTime: Date): Date {
     const startTime = new Date(endTime);
-
+    
     const match = timeRange.match(/^(\d+)([hdwmy])$/);
     if (!match) {
       // Default to 24 hours
@@ -385,7 +385,7 @@ export class MetricsCollector {
         startTime.setDate(startTime.getDate() - value);
         break;
       case 'w':
-        startTime.setDate(startTime.getDate() - value * 7);
+        startTime.setDate(startTime.getDate() - (value * 7));
         break;
       case 'm':
         startTime.setMonth(startTime.getMonth() - value);
@@ -399,36 +399,28 @@ export class MetricsCollector {
   }
 
   private calculateDORAMetrics(
-    pipelineData: PipelineResult[],
+    pipelineData: PipelineResult[], 
     deploymentData: DeploymentResult[]
   ): Record<string, any> {
     // Deployment Frequency
-    const deploymentFrequency =
-      deploymentData.length > 0
-        ? deploymentData.length /
-          Math.max(
-            1,
-            this.getDaysBetween(
-              deploymentData[0].startTime,
-              deploymentData[deploymentData.length - 1].startTime
-            )
-          )
-        : 0;
+    const deploymentFrequency = deploymentData.length > 0 ? 
+      deploymentData.length / Math.max(1, this.getDaysBetween(
+        deploymentData[0].startTime, 
+        deploymentData[deploymentData.length - 1].startTime
+      )) : 0;
 
     // Lead Time for Changes (from commit to production)
     const leadTimes = pipelineData
-      .filter((p) => p.environment === 'production' && p.status === 'success')
-      .map((p) => p.duration || 0);
-    const averageLeadTime =
-      leadTimes.length > 0 ? leadTimes.reduce((sum, time) => sum + time, 0) / leadTimes.length : 0;
+      .filter(p => p.environment === 'production' && p.status === 'success')
+      .map(p => p.duration || 0);
+    const averageLeadTime = leadTimes.length > 0 ? 
+      leadTimes.reduce((sum, time) => sum + time, 0) / leadTimes.length : 0;
 
     // Change Failure Rate
-    const productionDeployments = deploymentData.filter((d) => d.environment === 'production');
-    const failedDeployments = productionDeployments.filter((d) => d.status === 'failed');
-    const changeFailureRate =
-      productionDeployments.length > 0
-        ? failedDeployments.length / productionDeployments.length
-        : 0;
+    const productionDeployments = deploymentData.filter(d => d.environment === 'production');
+    const failedDeployments = productionDeployments.filter(d => d.status === 'failed');
+    const changeFailureRate = productionDeployments.length > 0 ? 
+      failedDeployments.length / productionDeployments.length : 0;
 
     // Mean Time to Recovery (simplified - time between failure and next success)
     const meanTimeToRecovery = this.calculateMTTR(deploymentData);
@@ -437,32 +429,32 @@ export class MetricsCollector {
       deploymentFrequency: {
         value: deploymentFrequency,
         unit: 'deployments/day',
-        classification: this.classifyDeploymentFrequency(deploymentFrequency),
+        classification: this.classifyDeploymentFrequency(deploymentFrequency)
       },
       leadTimeForChanges: {
         value: averageLeadTime,
         unit: 'milliseconds',
-        classification: this.classifyLeadTime(averageLeadTime),
+        classification: this.classifyLeadTime(averageLeadTime)
       },
       changeFailureRate: {
         value: changeFailureRate,
         unit: 'percentage',
-        classification: this.classifyChangeFailureRate(changeFailureRate),
+        classification: this.classifyChangeFailureRate(changeFailureRate)
       },
       meanTimeToRecovery: {
         value: meanTimeToRecovery,
         unit: 'milliseconds',
-        classification: this.classifyMTTR(meanTimeToRecovery),
-      },
+        classification: this.classifyMTTR(meanTimeToRecovery)
+      }
     };
   }
 
   private calculatePerformanceMetrics(
-    pipelineData: PipelineResult[],
+    pipelineData: PipelineResult[], 
     buildData: BuildResult[]
   ): Record<string, any> {
-    const pipelineDurations = pipelineData.map((p) => p.duration || 0);
-    const buildDurations = buildData.map((b) => b.duration || 0);
+    const pipelineDurations = pipelineData.map(p => p.duration || 0);
+    const buildDurations = buildData.map(b => b.duration || 0);
 
     return {
       averagePipelineDuration: this.calculateAverage(pipelineDurations),
@@ -472,41 +464,35 @@ export class MetricsCollector {
       medianBuildDuration: this.calculateMedian(buildDurations),
       p95BuildDuration: this.calculatePercentile(buildDurations, 95),
       throughput: pipelineData.length,
-      parallelization: this.calculateAverageParallelization(pipelineData),
+      parallelization: this.calculateAverageParallelization(pipelineData)
     };
   }
 
   private calculateQualityMetrics(buildData: BuildResult[]): Record<string, any> {
-    const buildsWithCoverage = buildData.filter((b) => b.metrics?.testCoverage);
-    const buildsWithQuality = buildData.filter((b) => b.metrics?.codeQualityScore);
+    const buildsWithCoverage = buildData.filter(b => b.metrics?.testCoverage);
+    const buildsWithQuality = buildData.filter(b => b.metrics?.codeQualityScore);
 
-    const averageCoverage =
-      buildsWithCoverage.length > 0
-        ? buildsWithCoverage.reduce((sum, b) => sum + (b.metrics?.testCoverage || 0), 0) /
-          buildsWithCoverage.length
-        : 0;
+    const averageCoverage = buildsWithCoverage.length > 0 ?
+      buildsWithCoverage.reduce((sum, b) => sum + (b.metrics?.testCoverage || 0), 0) / buildsWithCoverage.length : 0;
 
-    const averageQualityScore =
-      buildsWithQuality.length > 0
-        ? buildsWithQuality.reduce((sum, b) => sum + (b.metrics?.codeQualityScore || 0), 0) /
-          buildsWithQuality.length
-        : 0;
+    const averageQualityScore = buildsWithQuality.length > 0 ?
+      buildsWithQuality.reduce((sum, b) => sum + (b.metrics?.codeQualityScore || 0), 0) / buildsWithQuality.length : 0;
 
     return {
       testCoverage: {
         average: averageCoverage,
-        trend: this.calculateCoverageTrend(buildsWithCoverage),
+        trend: this.calculateCoverageTrend(buildsWithCoverage)
       },
       codeQuality: {
         average: averageQualityScore,
-        trend: this.calculateQualityTrend(buildsWithQuality),
+        trend: this.calculateQualityTrend(buildsWithQuality)
       },
-      testStability: this.calculateTestStability(buildData),
+      testStability: this.calculateTestStability(buildData)
     };
   }
 
   private calculateReliabilityMetrics(
-    pipelineData: PipelineResult[],
+    pipelineData: PipelineResult[], 
     deploymentData: DeploymentResult[]
   ): Record<string, any> {
     return {
@@ -514,32 +500,32 @@ export class MetricsCollector {
       deploymentSuccessRate: this.calculateSuccessRate(deploymentData),
       rollbackRate: this.calculateRollbackRate(deploymentData),
       uptime: this.calculateUptime(deploymentData),
-      errorRate: this.calculateErrorRate(pipelineData),
+      errorRate: this.calculateErrorRate(pipelineData)
     };
   }
 
   private calculateTrends(
-    pipelineData: PipelineResult[],
-    buildData: BuildResult[],
+    pipelineData: PipelineResult[], 
+    buildData: BuildResult[], 
     deploymentData: DeploymentResult[]
   ): Record<string, any> {
     return {
       pipelineSuccessRate: this.calculateTrend(pipelineData, 'success_rate'),
       averageDuration: this.calculateTrend(pipelineData, 'duration'),
       deploymentFrequency: this.calculateTrend(deploymentData, 'frequency'),
-      buildStability: this.calculateTrend(buildData, 'success_rate'),
+      buildStability: this.calculateTrend(buildData, 'success_rate')
     };
   }
 
   private calculateSuccessRate(data: any[]): number {
     if (data.length === 0) return 0;
-    const successful = data.filter((item) => item.status === 'success').length;
+    const successful = data.filter(item => item.status === 'success').length;
     return successful / data.length;
   }
 
   private calculateAverageDuration(data: any[]): number {
     if (data.length === 0) return 0;
-    const durations = data.map((item) => item.duration || 0);
+    const durations = data.map(item => item.duration || 0);
     return durations.reduce((sum, duration) => sum + duration, 0) / durations.length;
   }
 
@@ -552,7 +538,9 @@ export class MetricsCollector {
     if (values.length === 0) return 0;
     const sorted = [...values].sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
-    return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+    return sorted.length % 2 === 0 ? 
+      (sorted[mid - 1] + sorted[mid]) / 2 : 
+      sorted[mid];
   }
 
   private calculatePercentile(values: number[], percentile: number): number {
@@ -569,18 +557,17 @@ export class MetricsCollector {
 
   private calculateMTTR(deploymentData: DeploymentResult[]): number {
     // Simplified MTTR calculation
-    const failures = deploymentData.filter((d) => d.status === 'failed');
+    const failures = deploymentData.filter(d => d.status === 'failed');
     if (failures.length === 0) return 0;
 
     let totalRecoveryTime = 0;
     let recoveryCount = 0;
 
-    failures.forEach((failure) => {
-      const nextSuccess = deploymentData.find(
-        (d) =>
-          d.startTime > failure.startTime &&
-          d.status === 'success' &&
-          d.environment === failure.environment
+    failures.forEach(failure => {
+      const nextSuccess = deploymentData.find(d => 
+        d.startTime > failure.startTime && 
+        d.status === 'success' &&
+        d.environment === failure.environment
       );
 
       if (nextSuccess) {
@@ -594,10 +581,10 @@ export class MetricsCollector {
 
   private calculateAverageParallelization(pipelineData: PipelineResult[]): number {
     if (pipelineData.length === 0) return 0;
-
-    const parallelCounts = pipelineData.map((p) => {
+    
+    const parallelCounts = pipelineData.map(p => {
       // Count stages that could run in parallel
-      return p.stages.filter((s) => s.name.includes('parallel')).length;
+      return p.stages.filter(s => s.name.includes('parallel')).length;
     });
 
     return this.calculateAverage(parallelCounts);
@@ -605,13 +592,13 @@ export class MetricsCollector {
 
   private calculateCoverageTrend(buildsWithCoverage: BuildResult[]): string {
     if (buildsWithCoverage.length < 2) return 'stable';
-
+    
     const recent = buildsWithCoverage.slice(-10);
     const older = buildsWithCoverage.slice(-20, -10);
-
-    const recentAvg = this.calculateAverage(recent.map((b) => b.metrics?.testCoverage || 0));
-    const olderAvg = this.calculateAverage(older.map((b) => b.metrics?.testCoverage || 0));
-
+    
+    const recentAvg = this.calculateAverage(recent.map(b => b.metrics?.testCoverage || 0));
+    const olderAvg = this.calculateAverage(older.map(b => b.metrics?.testCoverage || 0));
+    
     if (recentAvg > olderAvg * 1.05) return 'improving';
     if (recentAvg < olderAvg * 0.95) return 'declining';
     return 'stable';
@@ -619,13 +606,13 @@ export class MetricsCollector {
 
   private calculateQualityTrend(buildsWithQuality: BuildResult[]): string {
     if (buildsWithQuality.length < 2) return 'stable';
-
+    
     const recent = buildsWithQuality.slice(-10);
     const older = buildsWithQuality.slice(-20, -10);
-
-    const recentAvg = this.calculateAverage(recent.map((b) => b.metrics?.codeQualityScore || 0));
-    const olderAvg = this.calculateAverage(older.map((b) => b.metrics?.codeQualityScore || 0));
-
+    
+    const recentAvg = this.calculateAverage(recent.map(b => b.metrics?.codeQualityScore || 0));
+    const olderAvg = this.calculateAverage(older.map(b => b.metrics?.codeQualityScore || 0));
+    
     if (recentAvg > olderAvg * 1.05) return 'improving';
     if (recentAvg < olderAvg * 0.95) return 'declining';
     return 'stable';
@@ -634,17 +621,17 @@ export class MetricsCollector {
   private calculateTestStability(buildData: BuildResult[]): number {
     // Calculate test stability based on consistent pass/fail patterns
     if (buildData.length < 5) return 1.0;
-
+    
     const recent = buildData.slice(-20);
-    const statusChanges = recent
-      .slice(1)
-      .filter((build, index) => build.status !== recent[index].status).length;
-
-    return Math.max(0, 1 - statusChanges / recent.length);
+    const statusChanges = recent.slice(1).filter((build, index) => 
+      build.status !== recent[index].status
+    ).length;
+    
+    return Math.max(0, 1 - (statusChanges / recent.length));
   }
 
   private calculateRollbackRate(deploymentData: DeploymentResult[]): number {
-    const deploymentsWithRollback = deploymentData.filter((d) => d.rollbackInfo?.triggered);
+    const deploymentsWithRollback = deploymentData.filter(d => d.rollbackInfo?.triggered);
     return deploymentData.length > 0 ? deploymentsWithRollback.length / deploymentData.length : 0;
   }
 
@@ -659,13 +646,13 @@ export class MetricsCollector {
 
   private calculateTrend(data: any[], metric: string): string {
     if (data.length < 10) return 'insufficient_data';
-
+    
     const recent = data.slice(-5);
     const older = data.slice(-10, -5);
-
+    
     let recentValue: number;
     let olderValue: number;
-
+    
     switch (metric) {
       case 'success_rate':
         recentValue = this.calculateSuccessRate(recent);
@@ -682,19 +669,19 @@ export class MetricsCollector {
       default:
         return 'unknown';
     }
-
+    
     if (recentValue > olderValue * 1.1) return 'improving';
     if (recentValue < olderValue * 0.9) return 'declining';
     return 'stable';
   }
 
   private generateAlerts(
-    recentPipelines: PipelineResult[],
-    _recentBuilds: BuildResult[],
+    recentPipelines: PipelineResult[], 
+    _recentBuilds: BuildResult[], 
     _recentDeployments: DeploymentResult[]
   ): any[] {
     const alerts: any[] = [];
-
+    
     // High failure rate alert
     const pipelineFailureRate = 1 - this.calculateSuccessRate(recentPipelines);
     if (pipelineFailureRate > 0.2) {
@@ -702,22 +689,21 @@ export class MetricsCollector {
         type: 'high_failure_rate',
         severity: 'warning',
         message: `Pipeline failure rate is ${(pipelineFailureRate * 100).toFixed(1)}%`,
-        value: pipelineFailureRate,
+        value: pipelineFailureRate
       });
     }
-
+    
     // Long duration alert
     const avgDuration = this.calculateAverageDuration(recentPipelines);
-    if (avgDuration > 30 * 60 * 1000) {
-      // 30 minutes
+    if (avgDuration > 30 * 60 * 1000) { // 30 minutes
       alerts.push({
         type: 'long_duration',
         severity: 'info',
         message: `Average pipeline duration is ${Math.round(avgDuration / 60000)} minutes`,
-        value: avgDuration,
+        value: avgDuration
       });
     }
-
+    
     return alerts;
   }
 
@@ -739,7 +725,7 @@ export class MetricsCollector {
 
   private classifyChangeFailureRate(rate: number): string {
     if (rate <= 0.05) return 'elite';
-    if (rate <= 0.1) return 'high';
+    if (rate <= 0.10) return 'high';
     if (rate <= 0.15) return 'medium';
     return 'low';
   }

@@ -1,15 +1,19 @@
 /**
  * Request Manager for MCP Client
- *
+ * 
  * Handles request/response lifecycle, timeout management, and request queuing
  * for MCP client operations.
  */
 
 import { EventEmitter } from 'events';
+import { 
+  MCPRequest, 
+  MCPResponse, 
+  MCPNotification 
+} from '../interfaces/IMCPMessage';
 import { MCPConnection } from '../interfaces/IMCPConnection';
-import { MCPNotification, MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
-import { RetryPolicy } from '../types/common';
 import { MCPErrorClass, MCPErrorCode } from '../types/error';
+import { RetryPolicy, TimeoutConfig } from '../types/common';
 
 /**
  * Pending request information
@@ -100,7 +104,7 @@ export class RequestManager extends EventEmitter {
           resolve,
           reject,
           timestamp: new Date(),
-          priority: 0,
+          priority: 0
         });
 
         this.emit('requestQueued', request.id);
@@ -137,24 +141,19 @@ export class RequestManager extends EventEmitter {
       // Set up timeout
       const timeoutHandle = setTimeout(() => {
         this.pendingRequests.delete(request.id!);
-
+        
         if (retryCount < this.retryPolicy.maxAttempts) {
           // Retry with exponential backoff
           const delay = Math.min(
             this.retryPolicy.baseDelay * Math.pow(2, retryCount),
             this.retryPolicy.maxDelay
           );
-
+          
           setTimeout(() => {
             this.executeRequest(request, resolve, reject, timeout, retryCount + 1);
           }, delay);
         } else {
-          reject(
-            new MCPErrorClass(
-              MCPErrorCode.TIMEOUT,
-              `Request timeout after ${retryCount + 1} attempts`
-            )
-          );
+          reject(new MCPErrorClass(MCPErrorCode.TIMEOUT, `Request timeout after ${retryCount + 1} attempts`));
         }
       }, timeout);
 
@@ -166,12 +165,13 @@ export class RequestManager extends EventEmitter {
         reject,
         timeout: timeoutHandle,
         timestamp: new Date(),
-        retryCount,
+        retryCount
       });
 
       // Send the request
       await this.connection!.send(request);
       this.emit('requestSent', request.id, retryCount);
+
     } catch (error) {
       // Clean up pending request
       const pending = this.pendingRequests.get(request.id!);
@@ -186,7 +186,7 @@ export class RequestManager extends EventEmitter {
           this.retryPolicy.baseDelay * Math.pow(2, retryCount),
           this.retryPolicy.maxDelay
         );
-
+        
         setTimeout(() => {
           this.executeRequest(request, resolve, reject, timeout, retryCount + 1);
         }, delay);
@@ -263,7 +263,7 @@ export class RequestManager extends EventEmitter {
       // Process requests one by one
       while (this.requestQueue.length > 0 && this.connection && this.connection.isActive()) {
         const queuedRequest = this.requestQueue.shift()!;
-
+        
         try {
           this.executeRequest(
             queuedRequest.request,
@@ -272,11 +272,11 @@ export class RequestManager extends EventEmitter {
             this.defaultTimeout,
             0
           );
-
+          
           this.emit('requestDequeued', queuedRequest.request.id);
-
+          
           // Small delay to prevent overwhelming the connection
-          await new Promise((resolve) => setTimeout(resolve, 10));
+          await new Promise(resolve => setTimeout(resolve, 10));
         } catch (error) {
           queuedRequest.reject(error as Error);
         }
@@ -342,7 +342,7 @@ export class RequestManager extends EventEmitter {
       queuedRequests: this.requestQueue.length,
       totalRequestsSent: this.requestIdCounter,
       isProcessingQueue: this.isProcessingQueue,
-      connectionActive: this.connection?.isActive() || false,
+      connectionActive: this.connection?.isActive() || false
     };
   }
 

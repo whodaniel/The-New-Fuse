@@ -1,21 +1,21 @@
 /**
  * Multi-Agent Collaboration Example Application
- *
+ * 
  * Demonstrates advanced multi-agent collaboration using the unified framework
  * for a software development project scenario with multiple specialized agents
  */
 
-import { HeartbeatMonitoringService, Logger, MasterAgentRegistry } from '@the-new-fuse/relay-core';
+import { Logger, MasterAgentRegistry, HeartbeatMonitoringService } from '@the-new-fuse/relay-core';
 // import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine'; // Removed workflow-engine dependency
 import { ExtensionSystemFactory } from '@the-new-fuse/extension-system';
 // import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
-import { DatabaseService } from '@db/client';
-import * as fs from 'fs-extra';
+import { PrismaClient } from '@prisma/client';
 import * as path from 'path';
+import * as fs from 'fs-extra';
 
 /**
  * Multi-Agent Collaboration Application
- *
+ * 
  * Simulates a software development team with specialized agents:
  * - Project Manager: Coordinates tasks and timelines
  * - Frontend Developer: Handles UI/UX development
@@ -25,7 +25,7 @@ import * as path from 'path';
  */
 export class CollaborationApp {
   private logger: Logger;
-  private db: DatabaseService;
+  private prisma: PrismaClient;
   private agentRegistry: MasterAgentRegistry;
   private heartbeatService: HeartbeatMonitoringService;
   private workflowEngine: any;
@@ -37,7 +37,7 @@ export class CollaborationApp {
   constructor() {
     this.logger = new Logger({
       level: 'info',
-      silent: false,
+      silent: false
     });
   }
 
@@ -48,12 +48,12 @@ export class CollaborationApp {
     this.logger.info('Initializing Multi-Agent Collaboration Application...');
 
     // Setup database
-    this.db = new DatabaseService({
+    this.prisma = new PrismaClient({
       datasources: {
         db: {
-          url: 'file:./collaboration.db',
-        },
-      },
+          url: 'file:./collaboration.db'
+        }
+      }
     });
 
     // Setup Master Agent Registry with collaboration focus
@@ -67,28 +67,24 @@ export class CollaborationApp {
       maxAgents: 20,
       stagnationThresholdMs: 180000, // 3 minutes
       cleanupIntervalMs: 30000, // 30 seconds
-      collaborationMode: true,
+      collaborationMode: true
     };
 
-    this.agentRegistry = new MasterAgentRegistry(agentConfig, this.db, this.logger);
+    this.agentRegistry = new MasterAgentRegistry(agentConfig, this.prisma, this.logger);
 
     // Setup Heartbeat Monitoring for team coordination
     const heartbeatConfig = {
       checkIntervalMs: 5000, // 5 seconds for responsive collaboration
       stagnationThresholdMs: 180000, // 3 minutes
       maxMissedHeartbeats: 2,
-      enableAutoRemediation: true,
+      enableAutoRemediation: true
     };
 
-    this.heartbeatService = new HeartbeatMonitoringService(
-      heartbeatConfig,
-      this.agentRegistry,
-      this.logger
-    );
+    this.heartbeatService = new HeartbeatMonitoringService(heartbeatConfig, this.agentRegistry, this.logger);
 
     // Setup Workflow Engine
     this.workflowEngine = WorkflowEngineFactory.createDefault(
-      this.db,
+      this.prisma,
       this.agentRegistry,
       this.heartbeatService,
       this.logger
@@ -138,40 +134,16 @@ export class CollaborationApp {
     const extensionDir = path.join(__dirname, '../examples/collaboration-extensions');
 
     // Task Coordinator Extension
-    const taskCoordinatorContent = await fs.readFile(
-      path.join(extensionDir, 'task-coordinator.js'),
-      'utf-8'
-    );
-    await this.createExtension(
-      extensionDir,
-      'task-coordinator',
-      'agent_capability',
-      taskCoordinatorContent
-    );
+    const taskCoordinatorContent = await fs.readFile(path.join(extensionDir, 'task-coordinator.js'), 'utf-8');
+    await this.createExtension(extensionDir, 'task-coordinator', 'agent_capability', taskCoordinatorContent);
 
     // Communication Hub Extension
-    const communicationHubContent = await fs.readFile(
-      path.join(extensionDir, 'communication-hub.js'),
-      'utf-8'
-    );
-    await this.createExtension(
-      extensionDir,
-      'communication-hub',
-      'workflow_node',
-      communicationHubContent
-    );
+    const communicationHubContent = await fs.readFile(path.join(extensionDir, 'communication-hub.js'), 'utf-8');
+    await this.createExtension(extensionDir, 'communication-hub', 'workflow_node', communicationHubContent);
 
     // Progress Tracker Extension
-    const progressTrackerContent = await fs.readFile(
-      path.join(extensionDir, 'progress-tracker.js'),
-      'utf-8'
-    );
-    await this.createExtension(
-      extensionDir,
-      'progress-tracker',
-      'agent_capability',
-      progressTrackerContent
-    );
+    const progressTrackerContent = await fs.readFile(path.join(extensionDir, 'progress-tracker.js'), 'utf-8');
+    await this.createExtension(extensionDir, 'progress-tracker', 'agent_capability', progressTrackerContent);
 
     this.logger.info('Collaboration extensions created successfully');
   }
@@ -189,18 +161,18 @@ export class CollaborationApp {
         taskCoordination: true,
         teamManagement: true,
         statusReporting: true,
-        riskAssessment: true,
+        riskAssessment: true
       },
       configuration: {
         maxConcurrentTasks: 10,
         timeoutMs: 600000, // 10 minutes
-        retryAttempts: 2,
+        retryAttempts: 2
       },
       metadata: {
         specialization: 'project_management',
         teamRole: 'coordinator',
-        yearsExperience: 8,
-      },
+        yearsExperience: 8
+      }
     });
     this.agentIds.projectManager = pmResult.agentId;
 
@@ -213,18 +185,18 @@ export class CollaborationApp {
         uiDesign: true,
         responsiveDesign: true,
         frontendTesting: true,
-        apiIntegration: true,
+        apiIntegration: true
       },
       configuration: {
         maxConcurrentTasks: 3,
         timeoutMs: 480000, // 8 minutes
-        retryAttempts: 2,
+        retryAttempts: 2
       },
       metadata: {
         specialization: 'frontend_development',
         teamRole: 'developer',
-        technologies: ['React', 'TypeScript', 'CSS', 'Jest'],
-      },
+        technologies: ['React', 'TypeScript', 'CSS', 'Jest']
+      }
     });
     this.agentIds.frontendDeveloper = frontendResult.agentId;
 
@@ -237,18 +209,18 @@ export class CollaborationApp {
         databaseDesign: true,
         serverManagement: true,
         microservices: true,
-        securityImplementation: true,
+        securityImplementation: true
       },
       configuration: {
         maxConcurrentTasks: 4,
         timeoutMs: 600000, // 10 minutes
-        retryAttempts: 2,
+        retryAttempts: 2
       },
       metadata: {
         specialization: 'backend_development',
         teamRole: 'developer',
-        technologies: ['Node.js', 'PostgreSQL', 'Redis', 'Docker'],
-      },
+        technologies: ['Node.js', 'PostgreSQL', 'Redis', 'Docker']
+      }
     });
     this.agentIds.backendDeveloper = backendResult.agentId;
 
@@ -261,18 +233,18 @@ export class CollaborationApp {
         automatedTesting: true,
         performanceTesting: true,
         bugReporting: true,
-        testPlanCreation: true,
+        testPlanCreation: true
       },
       configuration: {
         maxConcurrentTasks: 5,
         timeoutMs: 360000, // 6 minutes
-        retryAttempts: 1,
+        retryAttempts: 1
       },
       metadata: {
         specialization: 'quality_assurance',
         teamRole: 'tester',
-        testingFrameworks: ['Jest', 'Cypress', 'Selenium'],
-      },
+        testingFrameworks: ['Jest', 'Cypress', 'Selenium']
+      }
     });
     this.agentIds.qaTester = qaResult.agentId;
 
@@ -285,18 +257,18 @@ export class CollaborationApp {
         containerization: true,
         cloudDeployment: true,
         monitoring: true,
-        infrastructureAsCode: true,
+        infrastructureAsCode: true
       },
       configuration: {
         maxConcurrentTasks: 6,
         timeoutMs: 900000, // 15 minutes
-        retryAttempts: 3,
+        retryAttempts: 3
       },
       metadata: {
         specialization: 'devops',
         teamRole: 'infrastructure',
-        platforms: ['AWS', 'Docker', 'Kubernetes', 'GitHub Actions'],
-      },
+        platforms: ['AWS', 'Docker', 'Kubernetes', 'GitHub Actions']
+      }
     });
     this.agentIds.devopsEngineer = devopsResult.agentId;
 
@@ -314,10 +286,7 @@ export class CollaborationApp {
     );
 
     // Add workflow nodes
-    const startNode = this.workflowEngine.builder.addNode('start', 'Project Start', {
-      x: 50,
-      y: 200,
-    });
+    const startNode = this.workflowEngine.builder.addNode('start', 'Project Start', { x: 50, y: 200 });
 
     // Project planning and task coordination
     const projectPlanningTask = this.workflowEngine.builder.addNode(
@@ -329,7 +298,7 @@ export class CollaborationApp {
         task: 'Plan project phases, estimate timelines, and coordinate team assignments',
         priority: 'critical',
         expectedDuration: 30,
-        requiredExtensions: ['task-coordinator', 'progress-tracker'],
+        requiredExtensions: ['task-coordinator', 'progress-tracker']
       }
     );
 
@@ -343,8 +312,8 @@ export class CollaborationApp {
         data: {
           name: 'feature-development',
           description: 'Channel for feature development coordination',
-          type: 'project',
-        },
+          type: 'project'
+        }
       }
     );
 
@@ -358,7 +327,7 @@ export class CollaborationApp {
         task: 'Develop backend APIs and database schema',
         priority: 'high',
         expectedDuration: 120,
-        requiredExtensions: ['progress-tracker'],
+        requiredExtensions: ['progress-tracker']
       }
     );
 
@@ -371,7 +340,7 @@ export class CollaborationApp {
         task: 'Develop user interface and integrate with backend',
         priority: 'high',
         expectedDuration: 100,
-        requiredExtensions: ['progress-tracker'],
+        requiredExtensions: ['progress-tracker']
       }
     );
 
@@ -384,7 +353,7 @@ export class CollaborationApp {
         coordinationType: 'synchronization',
         agentIds: [this.agentIds.backendDeveloper, this.agentIds.frontendDeveloper],
         task: 'Coordinate development progress and resolve integration issues',
-        syncPoints: ['api_design', 'integration_testing'],
+        syncPoints: ['api_design', 'integration_testing']
       }
     );
 
@@ -398,7 +367,7 @@ export class CollaborationApp {
         task: 'Perform comprehensive testing and validate functionality',
         priority: 'high',
         expectedDuration: 60,
-        requiredExtensions: ['progress-tracker'],
+        requiredExtensions: ['progress-tracker']
       }
     );
 
@@ -412,7 +381,7 @@ export class CollaborationApp {
         task: 'Prepare deployment pipeline and infrastructure',
         priority: 'medium',
         expectedDuration: 45,
-        requiredExtensions: ['progress-tracker'],
+        requiredExtensions: ['progress-tracker']
       }
     );
 
@@ -426,70 +395,27 @@ export class CollaborationApp {
         task: 'Conduct final project review and generate completion report',
         priority: 'medium',
         expectedDuration: 20,
-        requiredExtensions: ['task-coordinator', 'progress-tracker'],
+        requiredExtensions: ['task-coordinator', 'progress-tracker']
       }
     );
 
-    const endNode = this.workflowEngine.builder.addNode('end', 'Project Complete', {
-      x: 1150,
-      y: 175,
-    });
+    const endNode = this.workflowEngine.builder.addNode('end', 'Project Complete', { x: 1150, y: 175 });
 
     // Connect the workflow
-    this.workflowEngine.builder.addConnection(
-      startNode.id,
-      'output',
-      projectPlanningTask.id,
-      'task'
-    );
-    this.workflowEngine.builder.addConnection(
-      projectPlanningTask.id,
-      'result',
-      communicationSetup.id,
-      'input'
-    );
-    this.workflowEngine.builder.addConnection(
-      communicationSetup.id,
-      'success',
-      backendTask.id,
-      'task'
-    );
-    this.workflowEngine.builder.addConnection(
-      communicationSetup.id,
-      'success',
-      frontendTask.id,
-      'task'
-    );
-    this.workflowEngine.builder.addConnection(
-      backendTask.id,
-      'result',
-      teamCoordination.id,
-      'agents'
-    );
-    this.workflowEngine.builder.addConnection(
-      frontendTask.id,
-      'result',
-      teamCoordination.id,
-      'agents'
-    );
-    this.workflowEngine.builder.addConnection(
-      teamCoordination.id,
-      'synchronized',
-      qaTask.id,
-      'task'
-    );
+    this.workflowEngine.builder.addConnection(startNode.id, 'output', projectPlanningTask.id, 'task');
+    this.workflowEngine.builder.addConnection(projectPlanningTask.id, 'result', communicationSetup.id, 'input');
+    this.workflowEngine.builder.addConnection(communicationSetup.id, 'success', backendTask.id, 'task');
+    this.workflowEngine.builder.addConnection(communicationSetup.id, 'success', frontendTask.id, 'task');
+    this.workflowEngine.builder.addConnection(backendTask.id, 'result', teamCoordination.id, 'agents');
+    this.workflowEngine.builder.addConnection(frontendTask.id, 'result', teamCoordination.id, 'agents');
+    this.workflowEngine.builder.addConnection(teamCoordination.id, 'synchronized', qaTask.id, 'task');
     this.workflowEngine.builder.addConnection(qaTask.id, 'approved', deploymentPrepTask.id, 'task');
-    this.workflowEngine.builder.addConnection(
-      deploymentPrepTask.id,
-      'result',
-      projectReviewTask.id,
-      'task'
-    );
+    this.workflowEngine.builder.addConnection(deploymentPrepTask.id, 'result', projectReviewTask.id, 'task');
     this.workflowEngine.builder.addConnection(projectReviewTask.id, 'result', endNode.id, 'input');
 
     // Save workflow
     const savedWorkflow = await this.workflowEngine.repository.createWorkflow(workflow);
-
+    
     this.logger.info(`Feature development workflow created with ID: ${savedWorkflow.id}`);
     return savedWorkflow.id;
   }
@@ -502,7 +428,7 @@ export class CollaborationApp {
 
     // Get the feature development workflow
     const workflows = await this.workflowEngine.repository.getAllWorkflows();
-    const featureWorkflow = workflows.find((w) => w.name.includes('Feature Development'));
+    const featureWorkflow = workflows.find(w => w.name.includes('Feature Development'));
 
     if (!featureWorkflow) {
       throw new Error('Feature development workflow not found');
@@ -517,7 +443,7 @@ export class CollaborationApp {
         'Responsive design for mobile devices',
         'User preference customization',
         'Performance optimization',
-        'Accessibility compliance',
+        'Accessibility compliance'
       ],
       priority: 'high',
       estimatedDuration: 240, // 4 hours total
@@ -527,32 +453,35 @@ export class CollaborationApp {
         framework: 'React 18',
         backend: 'Node.js with Express',
         database: 'PostgreSQL',
-        deployment: 'AWS ECS',
-      },
+        deployment: 'AWS ECS'
+      }
     };
 
     // Execute the collaborative workflow
-    const executionId = await this.workflowEngine.engine.executeWorkflow(featureWorkflow.id, {
-      project: projectSpec,
-      teamConfiguration: {
-        projectManager: this.agentIds.projectManager,
-        frontendDeveloper: this.agentIds.frontendDeveloper,
-        backendDeveloper: this.agentIds.backendDeveloper,
-        qaTester: this.agentIds.qaTester,
-        devopsEngineer: this.agentIds.devopsEngineer,
-      },
-      collaborationSettings: {
-        communicationFrequency: 'high',
-        progressReportingInterval: 15, // 15 minutes
-        autoSyncEnabled: true,
-        conflictResolutionStrategy: 'escalate_to_pm',
-      },
-      metadata: {
-        requestId: 'collab_project_001',
-        initiatedBy: 'system',
-        timestamp: new Date(),
-      },
-    });
+    const executionId = await this.workflowEngine.engine.executeWorkflow(
+      featureWorkflow.id,
+      {
+        project: projectSpec,
+        teamConfiguration: {
+          projectManager: this.agentIds.projectManager,
+          frontendDeveloper: this.agentIds.frontendDeveloper,
+          backendDeveloper: this.agentIds.backendDeveloper,
+          qaTester: this.agentIds.qaTester,
+          devopsEngineer: this.agentIds.devopsEngineer
+        },
+        collaborationSettings: {
+          communicationFrequency: 'high',
+          progressReportingInterval: 15, // 15 minutes
+          autoSyncEnabled: true,
+          conflictResolutionStrategy: 'escalate_to_pm'
+        },
+        metadata: {
+          requestId: 'collab_project_001',
+          initiatedBy: 'system',
+          timestamp: new Date()
+        }
+      }
+    );
 
     this.logger.info(`Collaborative project execution started with ID: ${executionId}`);
 
@@ -587,7 +516,7 @@ export class CollaborationApp {
         // Stop monitoring when complete
         if (execution?.status === 'COMPLETED' || execution?.status === 'FAILED') {
           clearInterval(monitoringInterval);
-
+          
           if (execution?.status === 'COMPLETED') {
             this.logger.info('Collaborative project completed successfully!');
             await this.generateCollaborationReport(executionId);
@@ -595,6 +524,7 @@ export class CollaborationApp {
             this.logger.error(`Collaborative project failed: ${execution?.error}`);
           }
         }
+
       } catch (error) {
         this.logger.error(`Error monitoring collaboration: ${error.message}`);
       }
@@ -616,10 +546,9 @@ export class CollaborationApp {
     for (const [role, agentId] of Object.entries(this.agentIds)) {
       try {
         const profile = await this.agentRegistry.getAgentProfile(agentId);
-        const activeTasks =
-          profile.todoList?.filter((task) => task.status === 'in_progress').length || 0;
+        const activeTasks = profile.todoList?.filter(task => task.status === 'in_progress').length || 0;
         const completedTasks = profile.completedTasks || 0;
-
+        
         this.logger.info(`${role}: ${completedTasks} completed, ${activeTasks} active tasks`);
       } catch (error) {
         this.logger.warn(`Error getting progress for ${role}: ${error.message}`);
@@ -634,26 +563,26 @@ export class CollaborationApp {
    */
   private async generateCollaborationReport(executionId: string): Promise<void> {
     const execution = await this.workflowEngine.engine.getExecutionStatus(executionId);
-
+    
     const report = {
       project: {
         executionId,
         status: execution?.status,
         startTime: execution?.startTime,
         endTime: execution?.endTime,
-        duration: execution?.endTime ? execution.endTime - execution.startTime : null,
+        duration: execution?.endTime ? execution.endTime - execution.startTime : null
       },
       teamPerformance: {},
       collaboration: {
         handoffs: 0,
         communications: 0,
-        conflictsResolved: 0,
+        conflictsResolved: 0
       },
       outcomes: {
         tasksCompleted: 0,
         qualityScore: 0,
-        efficiency: 0,
-      },
+        efficiency: 0
+      }
     };
 
     // Collect team performance data
@@ -666,7 +595,7 @@ export class CollaborationApp {
           handoffsInitiated: profile.handoffsInitiated || 0,
           handoffsReceived: profile.handoffsReceived || 0,
           collaborations: profile.collaborations || 0,
-          averageTaskDuration: profile.averageTaskDuration || 0,
+          averageTaskDuration: profile.averageTaskDuration || 0
         };
 
         report.collaboration.handoffs += profile.handoffsInitiated || 0;
@@ -676,15 +605,11 @@ export class CollaborationApp {
     }
 
     // Calculate overall metrics
-    const totalCompletedTasks = Object.values(report.teamPerformance).reduce(
-      (sum: number, perf: any) => sum + perf.completedTasks,
-      0
-    );
-
+    const totalCompletedTasks = Object.values(report.teamPerformance)
+      .reduce((sum: number, perf: any) => sum + perf.completedTasks, 0);
+    
     report.outcomes.tasksCompleted = totalCompletedTasks;
-    report.outcomes.efficiency = execution?.duration
-      ? totalCompletedTasks / (execution.duration / 60000)
-      : 0;
+    report.outcomes.efficiency = execution?.duration ? (totalCompletedTasks / (execution.duration / 60000)) : 0;
 
     this.logger.info('=== COLLABORATION REPORT ===');
     this.logger.info(JSON.stringify(report, null, 2));
@@ -700,8 +625,8 @@ export class CollaborationApp {
     // Agent status
     const agents = await this.agentRegistry.getAllAgents();
     this.logger.info(`Active Agents: ${agents.length}`);
-
-    agents.forEach((agent) => {
+    
+    agents.forEach(agent => {
       this.logger.info(`  - ${agent.name} (${agent.type}): ${agent.status}`);
     });
 
@@ -734,8 +659,8 @@ export class CollaborationApp {
       await this.agentRegistry.shutdown();
     }
 
-    if (this.db) {
-      await this.db.$disconnect();
+    if (this.prisma) {
+      await this.prisma.$disconnect();
     }
 
     this.logger.info('Collaboration Application shut down successfully');
@@ -744,12 +669,7 @@ export class CollaborationApp {
   /**
    * Helper method to create extensions
    */
-  private async createExtension(
-    baseDir: string,
-    name: string,
-    type: string,
-    content: string
-  ): Promise<void> {
+  private async createExtension(baseDir: string, name: string, type: string, content: string): Promise<void> {
     const extensionDir = path.join(baseDir, name);
     await fs.ensureDir(extensionDir);
 
@@ -762,7 +682,7 @@ export class CollaborationApp {
       main: 'index.js',
       author: 'Collaboration App',
       keywords: ['collaboration', 'teamwork', 'coordination'],
-      permissions: ['agent_control', 'workflow_modify'],
+      permissions: ['agent_control', 'workflow_modify']
     };
 
     await fs.writeJson(path.join(extensionDir, 'extension.json'), manifest, { spaces: 2 });

@@ -89,11 +89,11 @@ export class MetricsCollector {
       };
 
       const existingSeries = this.metrics.get(metric.name);
-
+      
       if (existingSeries) {
         // Add to existing series
         existingSeries.dataPoints.push(dataPoint);
-
+        
         // Trim if too many data points
         if (existingSeries.dataPoints.length > this.maxDataPoints) {
           existingSeries.dataPoints = existingSeries.dataPoints.slice(-this.maxDataPoints);
@@ -109,26 +109,21 @@ export class MetricsCollector {
             description: `Metric collected from ${metric.source}`,
           },
         };
-
+        
         this.metrics.set(metric.name, newSeries);
       }
 
-      logger.debug('Collected metric', {
-        name: metric.name,
-        value: metric.value,
-        source: metric.source,
+      logger.debug('Collected metric', { 
+        name: metric.name, 
+        value: metric.value, 
+        source: metric.source 
       });
     } catch (error) {
       logger.error('Failed to collect metric', error as Error, { metric: metric.name });
     }
   }
 
-  recordCounter(
-    name: string,
-    value: number = 1,
-    tags: Record<string, string> = {},
-    source: string = 'system',
-  ): void {
+  recordCounter(name: string, value: number = 1, tags: Record<string, string> = {}, source: string = 'system'): void {
     const metric: Metric = {
       name,
       value,
@@ -142,13 +137,7 @@ export class MetricsCollector {
     this.collect(metric);
   }
 
-  recordGauge(
-    name: string,
-    value: number,
-    unit: string = 'units',
-    tags: Record<string, string> = {},
-    source: string = 'system',
-  ): void {
+  recordGauge(name: string, value: number, unit: string = 'units', tags: Record<string, string> = {}, source: string = 'system'): void {
     const metric: Metric = {
       name,
       value,
@@ -162,12 +151,7 @@ export class MetricsCollector {
     this.collect(metric);
   }
 
-  recordTimer(
-    name: string,
-    duration: number,
-    tags: Record<string, string> = {},
-    source: string = 'system',
-  ): void {
+  recordTimer(name: string, duration: number, tags: Record<string, string> = {}, source: string = 'system'): void {
     const metric: Metric = {
       name,
       value: duration,
@@ -181,13 +165,7 @@ export class MetricsCollector {
     this.collect(metric);
   }
 
-  recordHistogram(
-    name: string,
-    value: number,
-    unit: string = 'units',
-    tags: Record<string, string> = {},
-    source: string = 'system',
-  ): void {
+  recordHistogram(name: string, value: number, unit: string = 'units', tags: Record<string, string> = {}, source: string = 'system'): void {
     const metric: Metric = {
       name,
       value,
@@ -218,10 +196,8 @@ export class MetricsCollector {
   }
 
   getTotalDataPoints(): number {
-    return Array.from(this.metrics.values()).reduce(
-      (total, series) => total + series.dataPoints.length,
-      0,
-    );
+    return Array.from(this.metrics.values())
+      .reduce((total, series) => total + series.dataPoints.length, 0);
   }
 
   clearMetrics(): void {
@@ -239,11 +215,11 @@ export class MetricsCollector {
 
   getMetricsSummary(): Record<string, any> {
     const summary: Record<string, any> = {};
-
+    
     for (const [name, series] of this.metrics) {
-      const values = series.dataPoints.map((dp) => dp.value);
+      const values = series.dataPoints.map(dp => dp.value);
       const count = values.length;
-
+      
       if (count === 0) {
         summary[name] = { count: 0 };
         continue;
@@ -253,13 +229,10 @@ export class MetricsCollector {
       const avg = sum / count;
       const min = Math.min(...values);
       const max = Math.max(...values);
-
+      
       // Calculate percentiles for histograms and timers
       let percentiles: Record<string, number> = {};
-      if (
-        series.metadata.type === MetricType.HISTOGRAM ||
-        series.metadata.type === MetricType.TIMER
-      ) {
+      if (series.metadata.type === MetricType.HISTOGRAM || series.metadata.type === MetricType.TIMER) {
         const sorted = values.sort((a, b) => a - b);
         percentiles = {
           p50: this.calculatePercentile(sorted, 50),
@@ -290,12 +263,12 @@ export class MetricsCollector {
   }
 
   private flushOldMetrics(): void {
-    const cutoffTime = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
+    const cutoffTime = new Date(Date.now() - (24 * 60 * 60 * 1000)); // 24 hours ago
     let flushedCount = 0;
 
     for (const [name, series] of this.metrics) {
       const originalLength = series.dataPoints.length;
-      series.dataPoints = series.dataPoints.filter((dp) => dp.timestamp > cutoffTime);
+      series.dataPoints = series.dataPoints.filter(dp => dp.timestamp > cutoffTime);
       const flushed = originalLength - series.dataPoints.length;
       flushedCount += flushed;
 
@@ -313,14 +286,14 @@ export class MetricsCollector {
   // Utility method for timing operations
   time<T>(name: string, operation: () => Promise<T>, tags?: Record<string, string>): Promise<T> {
     const startTime = Date.now();
-
+    
     return operation()
-      .then((result) => {
+      .then(result => {
         const duration = Date.now() - startTime;
         this.recordTimer(name, duration, tags);
         return result;
       })
-      .catch((error) => {
+      .catch(error => {
         const duration = Date.now() - startTime;
         this.recordTimer(name, duration, { ...tags, error: 'true' });
         throw error;
@@ -330,7 +303,7 @@ export class MetricsCollector {
   // Utility method for timing synchronous operations
   timeSync<T>(name: string, operation: () => T, tags?: Record<string, string>): T {
     const startTime = Date.now();
-
+    
     try {
       const result = operation();
       const duration = Date.now() - startTime;

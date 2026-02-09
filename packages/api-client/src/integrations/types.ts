@@ -19,7 +19,7 @@ export enum AuthType {
   OAUTH2 = 'oauth2',
   BASIC = 'basic',
   CUSTOM = 'custom',
-  NONE = 'none',
+  NONE = 'none'
 }
 
 /**
@@ -58,7 +58,7 @@ export interface Integration {
   isEnabled: boolean;
   createdAt: Date;
   updatedAt: Date;
-
+  
   connect(): Promise<boolean>;
   disconnect(): Promise<boolean>;
   execute(action: string, params?: Record<string, any>): Promise<any>;

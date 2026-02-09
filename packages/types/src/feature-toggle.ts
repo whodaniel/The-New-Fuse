@@ -7,5 +7,5 @@ export interface FeatureToggleContextType {
 
 export const FeatureToggleContext = createContext<FeatureToggleContextType>({
   enabledFeatures: [],
-  isEnabled: () => false,
+  isEnabled: () => false
 });

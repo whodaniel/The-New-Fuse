@@ -30,7 +30,7 @@ export class StorageService {
     try {
       const bucket = options.bucket || process.env.S3_BUCKET_NAME || 'the-new-fuse-uploads';
       const key = options.key || `${uuidv4()}-${filename}`;
-
+      
       const uploadParams = {
         Bucket: bucket,
         Key: key,
@@ -40,9 +40,9 @@ export class StorageService {
       };
 
       const result = await this.s3.upload(uploadParams).promise();
-
+      
       this.logger.log(`File uploaded successfully: ${result.Location}`);
-
+      
       return {
         url: result.Location,
         key: result.Key,
@@ -61,7 +61,7 @@ export class StorageService {
       };
 
       await this.s3.deleteObject(deleteParams).promise();
-
+      
       this.logger.log(`File deleted successfully: ${key}`);
     } catch (error) {
       this.logger.error('Failed to delete file:', error);
@@ -69,7 +69,11 @@ export class StorageService {
     }
   }
 
-  async getSignedUrl(key: string, expiresIn: number = 3600, bucket?: string): Promise<string> {
+  async getSignedUrl(
+    key: string,
+    expiresIn: number = 3600,
+    bucket?: string
+  ): Promise<string> {
     try {
       const params = {
         Bucket: bucket || process.env.S3_BUCKET_NAME || 'the-new-fuse-uploads',

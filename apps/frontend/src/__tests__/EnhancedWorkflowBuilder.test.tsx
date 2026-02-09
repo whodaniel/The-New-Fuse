@@ -2,8 +2,9 @@
  * Tests for Enhanced Workflow Builder
  */
 
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import EnhancedWorkflowBuilder from '../pages/Workflows/EnhancedWorkflowBuilder';
 
 // Mock ReactFlow
@@ -18,14 +19,16 @@ jest.mock('reactflow', () => ({
   Background: () => <div data-testid="background" />,
   Panel: ({ children }: any) => <div data-testid="panel">{children}</div>,
   MarkerType: { ArrowClosed: 'arrowclosed' },
-  Position: { Top: 'top', Bottom: 'bottom', Left: 'left', Right: 'right' },
+  Position: { Top: 'top', Bottom: 'bottom', Left: 'left', Right: 'right' }
 }));
 
 // Mock fetch
 global.fetch = jest.fn();
 
 const renderWorkflowBuilder = () => {
-  return render(<EnhancedWorkflowBuilder />);
+  return render(
+      <EnhancedWorkflowBuilder />
+  );
 };
 
 describe('EnhancedWorkflowBuilder', () => {
@@ -33,7 +36,7 @@ describe('EnhancedWorkflowBuilder', () => {
     jest.clearAllMocks();
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: false,
-      json: async () => [],
+      json: async () => []
     });
   });
 
@@ -146,7 +149,7 @@ describe('EnhancedWorkflowBuilder', () => {
     it('should call API when saving workflow', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ id: 'workflow-1', name: 'Test Workflow' }),
+        json: async () => ({ id: 'workflow-1', name: 'Test Workflow' })
       });
 
       renderWorkflowBuilder();
@@ -164,7 +167,7 @@ describe('EnhancedWorkflowBuilder', () => {
           '/api/workflows',
           expect.objectContaining({
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' }
           })
         );
       });
@@ -179,7 +182,7 @@ describe('EnhancedWorkflowBuilder', () => {
       const mockLink = {
         href: '',
         download: '',
-        click: jest.fn(),
+        click: jest.fn()
       } as any;
       createElementSpy.mockReturnValue(mockLink);
 
@@ -200,12 +203,12 @@ describe('EnhancedWorkflowBuilder', () => {
     it('should load available agents on mount', async () => {
       const mockAgents = [
         { id: 'agent-1', name: 'Code Reviewer', type: 'code-reviewer', status: 'ACTIVE' },
-        { id: 'agent-2', name: 'Researcher', type: 'researcher', status: 'ACTIVE' },
+        { id: 'agent-2', name: 'Researcher', type: 'researcher', status: 'ACTIVE' }
       ];
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockAgents,
+        json: async () => mockAgents
       });
 
       renderWorkflowBuilder();

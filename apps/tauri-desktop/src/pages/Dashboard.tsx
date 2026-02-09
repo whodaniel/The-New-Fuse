@@ -7,8 +7,8 @@ import { useAgentStore } from '../stores/agentStore';
 import type { DashboardStats } from '../types';
 
 /**
- * Dashboard Page - Mission Control
- * The central command center for the entire TNF ecosystem.
+ * Dashboard Page - System Console Edition
+ * Focused on "Under the Hood" visibility for the AI Engineer
  */
 const Dashboard: React.FC = () => {
   const { agents } = useAgentStore();
@@ -33,8 +33,9 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const handleEmergencyStop = () => {
+    // In a real implementation, this would call a tauri command to kill all processes
     const confirm = window.confirm(
-      '⚠️ EMERGENCY PROTOCOL: This will immediately halt all agent processes. Confirm?'
+      '⚠️ EMERGENCY STOP: This will kill all agents and close connections. Are you sure?'
     );
     if (confirm) {
       console.log('Emergency stop triggered');
@@ -44,102 +45,86 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="dashboard-container">
-      {/* HUD Header */}
-      <header className="hud-header">
-        <div className="header-left">
-          <div className="status-indicator">
-            <span className={`indicator-light ${isConnected ? 'online' : 'offline'}`}></span>
-            <span className="indicator-text">
-              {isConnected ? 'SYSTEM ONLINE' : 'SYSTEM OFFLINE'}
-            </span>
-          </div>
-          <h1 className="mission-title">Mission Control</h1>
+      {/* Header */}
+      <header className="dashboard-header">
+        <div>
+          <h1 className="page-title">System Console</h1>
+          <p className="page-subtitle">
+            {isConnected ? '🟢 Connected via Local Relay' : '🔴 Local Relay Offline'}
+          </p>
         </div>
 
-        <div className="hud-controls">
-          <div className="tab-switcher">
-            <button
-              className={`hud-tab ${activeTab === 'monitor' ? 'active' : ''}`}
-              onClick={() => setActiveTab('monitor')}
-            >
-              <span className="icon">📡</span> MONITOR
-            </button>
-            <button
-              className={`hud-tab ${activeTab === 'controls' ? 'active' : ''}`}
-              onClick={() => setActiveTab('controls')}
-            >
-              <span className="icon">⚡</span> CONTROLS
-            </button>
-          </div>
-
-          <div className="divider"></div>
-
-          <button className="kill-switch" onClick={handleEmergencyStop} title="Emergency Stop">
-            <span className="icon">🛑</span> ABORT
+        <div className="tab-switcher">
+          <button
+            className={`tab-btn ${activeTab === 'monitor' ? 'active' : ''}`}
+            onClick={() => setActiveTab('monitor')}
+          >
+            📡 Monitor
           </button>
+          <button
+            className={`tab-btn ${activeTab === 'controls' ? 'active' : ''}`}
+            onClick={() => setActiveTab('controls')}
+          >
+            ⚡ Controls
+          </button>
+        </div>
+
+        <div className="header-actions">
+          <button className="emergency-stop-btn" onClick={handleEmergencyStop} title="Kill Switch">
+            🛑 STOP
+          </button>
+          <span className="env-badge local">LOCAL: 3000</span>
+          <span className="env-badge cloud">CLOUD: Connected</span>
         </div>
       </header>
 
-      {/* Main Viewport */}
-      <div className="viewport">
+      {/* Tab Content */}
+      <div className="console-content">
         {activeTab === 'monitor' ? (
-          <div className="grid-layout">
-            {/* Sector A: Network Topology */}
-            <div className="sector network-sector">
-              <div className="sector-header">
-                <h3>Topology</h3>
-                <span className="live-badge">LIVE FEED</span>
+          <div className="console-grid">
+            {/* Top Row: Network Visualization */}
+            <div className="console-card full-width">
+              <div className="card-header">
+                <h3>Resources & Topology</h3>
+                <span className="live-indicator">● LIVE</span>
               </div>
-              <div className="graph-container">
-                <NetworkGraph />
-              </div>
+              <NetworkGraph />
             </div>
 
-            {/* Sector B: Telemetry */}
-            <div className="sector telemetry-sector">
-              <div className="sector-header">
-                <h3>Telemetry</h3>
+            {/* Bottom Left: System Health */}
+            <div className="console-card">
+              <div className="card-header">
+                <h3>Active Processes</h3>
               </div>
               <div className="process-list">
-                <div className="telemetry-row">
-                  <span className="label">Tauri Bridge</span>
-                  <span className="value status-ok">ACTIVE</span>
-                  <span className="metric">PID: 8421</span>
+                <div className="process-item">
+                  <span className="status-dot green"></span>
+                  <span>Tauri Bridge Relay</span>
+                  <span className="pid">PID: 8421</span>
                 </div>
-                <div className="telemetry-row">
-                  <span className="label">Redis Bus</span>
-                  <span className="value status-ok">ACTIVE</span>
-                  <span className="metric">Port: 6379</span>
+                <div className="process-item">
+                  <span className="status-dot green"></span>
+                  <span>Redis Server</span>
+                  <span className="pid">PID: 6379</span>
                 </div>
-                <div className="telemetry-row">
-                  <span className="label">Swarm Uplink</span>
-                  <span className={`value ${isConnected ? 'status-ok' : 'status-err'}`}>
-                    {isConnected ? 'ESTABLISHED' : 'SEVERED'}
-                  </span>
-                  <span className="metric">12ms</span>
-                </div>
-                <div className="telemetry-row">
-                  <span className="label">Active Agents</span>
-                  <span className="value status-info">
-                    {agents.filter((a) => a.status === 'active').length}
-                  </span>
-                  <span className="metric">/ {agents.length}</span>
+                <div className="process-item">
+                  <span className={`status-dot ${isConnected ? 'green' : 'red'}`}></span>
+                  <span>Cloud WebSocket</span>
+                  <span className="pid">{isConnected ? 'ESTABLISHED' : 'CLOSED'}</span>
                 </div>
               </div>
             </div>
 
-            {/* Sector C: Command Console */}
-            <div className="sector console-sector">
-              <div className="sector-header">
-                <h3>Terminal Uplink</h3>
+            {/* Bottom Right: Live Logs */}
+            <div className="console-card terminal-card">
+              <div className="card-header">
+                <h3>Bridge Logs</h3>
               </div>
-              <div className="terminal-wrapper">
-                <Terminal showQuickActions={false} className="dashboard-terminal" />
-              </div>
+              <Terminal className="console-terminal" showQuickActions={false} />
             </div>
           </div>
         ) : (
-          <div className="controls-layer">
+          <div className="controls-container">
             <QuickActionsDashboard />
           </div>
         )}
@@ -151,222 +136,195 @@ const Dashboard: React.FC = () => {
           height: 100vh;
           display: flex;
           flex-direction: column;
-          background: #0b0e14; /* Deep space black */
+          background: #0f172a;
           color: #e2e8f0;
-          font-family: 'JetBrains Mono', monospace; /* Tech feel */
         }
 
-        /* HUD Header */
-        .hud-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-            position: relative;
+        .dashboard-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 24px;
+          flex-shrink: 0;
         }
 
-        .hud-header::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 30%;
-            height: 1px;
-            background: #3b82f6;
-            box-shadow: 0 0 10px #3b82f6;
+        .page-title {
+          font-family: 'Outfit', sans-serif;
+          font-size: 24px;
+          color: #f8fafc;
+          margin: 0;
         }
 
-        .header-left {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 10px;
-            letter-spacing: 1px;
-            color: #64748b;
-        }
-
-        .indicator-light {
-            width: 6px; height: 6px; border-radius: 50%;
-        }
-        .indicator-light.online { background: #10b981; box-shadow: 0 0 8px #10b981; }
-        .indicator-light.offline { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
-
-        .mission-title {
-            margin: 0;
-            font-family: 'Outfit', sans-serif;
-            font-size: 24px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            background: linear-gradient(90deg, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hud-controls {
-            display: flex;
-            align-items: center;
-            gap: 16px;
+        .page-subtitle {
+          color: #94a3b8;
+          font-size: 14px;
+          margin: 4px 0 0;
         }
 
         .tab-switcher {
+            background: #1e293b;
+            padding: 4px;
+            border-radius: 8px;
             display: flex;
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(71, 85, 105, 0.3);
-            border-radius: 6px;
-            padding: 2px;
+            gap: 4px;
         }
 
-        .hud-tab {
+        .tab-btn {
             background: transparent;
             border: none;
             color: #94a3b8;
-            padding: 8px 16px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
+            padding: 8px 24px;
+            border-radius: 6px;
+            cursor: pointer;
             font-weight: 600;
-            cursor: pointer;
-            border-radius: 4px;
-            display: flex; align-items: center; gap: 8px;
             transition: all 0.2s;
         }
 
-        .hud-tab.active {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.1);
+        .tab-btn.active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
-        .divider { width: 1px; height: 24px; background: rgba(255,255,255,0.1); }
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
 
-        .kill-switch {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #ef4444;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
+        .emergency-stop-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-weight: bold;
             cursor: pointer;
+            margin-right: 16px;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
             transition: all 0.2s;
-            display: flex; align-items: center; gap: 8px;
         }
 
-        .kill-switch:hover {
-            background: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+        .emergency-stop-btn:hover {
+            transform: scale(1.05);
+            background: #dc2626;
         }
 
-        /* Viewport */
-        .viewport {
+        .env-badge {
+          padding: 4px 12px;
+          border-radius: 4px;
+          font-family: monospace;
+          font-size: 12px;
+          margin-left: 8px;
+        }
+        .env-badge.local { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .env-badge.cloud { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+
+        .console-content {
             flex: 1;
-            overflow: hidden;
+            min-height: 0;
             display: flex;
             flex-direction: column;
         }
 
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            grid-template-rows: 2fr 1.5fr;
-            gap: 16px;
-            height: 100%;
-        }
-
-        .sector {
-            background: rgba(17, 24, 39, 0.6);
-            border: 1px solid rgba(59, 130, 246, 0.15);
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Corner accents for sectors */
-        .sector::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 8px; height: 8px;
-            border-top: 1px solid #3b82f6; border-left: 1px solid #3b82f6;
-        }
-        .sector::after {
-            content: ''; position: absolute; bottom: 0; right: 0; width: 8px; height: 8px;
-            border-bottom: 1px solid #3b82f6; border-right: 1px solid #3b82f6;
-        }
-
-        .sector-header {
-            background: rgba(30, 41, 59, 0.3);
-            padding: 8px 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
-        .sector-header h3 {
-            margin: 0; font-size: 11px; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px;
-        }
-
-        .live-badge {
-            font-size: 9px; color: #10b981; font-weight: 700; animation: pulse 2s infinite;
-        }
-
-        /* Network Sector */
-        .network-sector {
-            grid-column: 1 / 2;
-            grid-row: 1 / 2;
-        }
-        .graph-container { flex: 1; position: relative; overflow: hidden; }
-
-        /* Telemetry Sector */
-        .telemetry-sector {
-            grid-column: 2 / 3;
-            grid-row: 1 / 2;
-        }
-        .process-list {
-            padding: 16px;
-            display: flex; flex-direction: column; gap: 8px;
-        }
-        .telemetry-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 8px;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 4px;
-        }
-        .telemetry-row .label { color: #94a3b8; font-size: 11px; }
-        .telemetry-row .value { font-weight: 600; font-size: 12px; }
-        .status-ok { color: #10b981; }
-        .status-err { color: #ef4444; }
-        .status-info { color: #60a5fa; }
-        .telemetry-row .metric { color: #64748b; font-size: 10px; font-family: monospace; }
-
-        /* Console Sector */
-        .console-sector {
-            grid-column: 1 / -1;
-            grid-row: 2 / 3;
-        }
-        .terminal-wrapper {
+        .controls-container {
             flex: 1;
-            background: #000;
-        }
-
-        .controls-layer {
-            height: 100%;
-            border-radius: 8px;
+            background: #1e293b;
+            border-radius: 12px;
             overflow: hidden;
-            border: 1px solid rgba(59, 130, 246, 0.2);
+            border: 1px solid #334155;
         }
 
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+        .console-grid {
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          grid-template-rows: auto 1fr;
+          gap: 16px;
+          flex: 1;
+          min-height: 0;
         }
+
+        .console-card {
+          background: #1e293b;
+          border: 1px solid #334155;
+          border-radius: 12px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+      }
+
+      .console-card.full-width {
+          grid-column: 1 / -1;
+          height: 350px;
+      }
+
+      .terminal-card {
+        background: #1a1b26;
+      }
+
+      .card-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid #334155;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .card-header h3 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .live-indicator {
+        color: #10b981;
+        font-size: 12px;
+        font-weight: bold;
+        animation: pulse 2s infinite;
+      }
+
+      .process-list {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .process-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 13px;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+      .status-dot.green { background: #10b981; box-shadow: 0 0 8px #10b981; }
+      .status-dot.red { background: #ef4444; }
+
+      .pid {
+        margin-left: auto;
+        color: #64748b;
+      }
+
+      .console-terminal {
+        flex: 1;
+        min-height: 0;
+      }
+
+      @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+      }
       `}</style>
     </div>
   );

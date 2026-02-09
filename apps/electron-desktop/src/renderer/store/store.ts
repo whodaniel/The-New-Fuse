@@ -1,8 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { chatSlice } from './chatSlice';
-import { connectionSlice } from './connectionSlice';
-import { elementsSlice } from './elementsSlice';
-import { portsSlice } from './portsSlice';
+import { configureStore } from '@reduxjs/toolkit'
+import { connectionSlice } from './connectionSlice'
+import { elementsSlice } from './elementsSlice'
+import { chatSlice } from './chatSlice'
+import { portsSlice } from './portsSlice'
 
 export const store = configureStore({
   reducer: {
@@ -17,7 +17,7 @@ export const store = configureStore({
         ignoredActions: ['persist/PERSIST'],
       },
     }),
-});
+})
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch

@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import { eq } from 'drizzle-orm';
 import { db } from './drizzle/client';
 import { users } from './drizzle/schema/users';
@@ -18,7 +17,6 @@ async function seed() {
     [user] = await db
       .insert(users)
       .values({
-        id: crypto.randomUUID(),
         email,
         username: 'admin',
         name: 'Admin User',

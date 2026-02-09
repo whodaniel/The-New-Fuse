@@ -1,53 +1,59 @@
 /**
  * CMS Integration Example
- *
+ * 
  * Demonstrates how to use the CMS integration system with existing
  * user and tenant systems for personal content management, project
  * configuration sync, collaborative content sharing, and private data isolation.
  */
 
-import { DatabaseService, UserRole } from '@the-new-fuse/database/generated/db';
+import { PrismaClient, UserRole } from '@the-new-fuse/database/generated/prisma';
 import { RedisService } from '../config/SyncRedisConfig';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
 import { EnhancedFileSystemWatcher } from '../watchers/EnhancedFileSystemWatcher';
 import { CMSIntegrationService } from './CMSIntegrationService';
-import {
-  ConflictResolutionStrategy,
-  ContentType,
+import { 
+  ContentType, 
+  PrivacyLevel, 
   Permission,
-  PrivacyLevel,
   SyncFrequency,
+  ConflictResolutionStrategy
 } from './types';
 
 async function demonstrateCMSIntegration() {
   // Initialize dependencies (these would be injected in real application)
-  const db = new DatabaseService();
+  const prisma = new PrismaClient();
   const redis = new RedisService({
     host: 'localhost',
     port: 6379,
-    keyPrefix: 'cms:',
+    keyPrefix: 'cms:'
   });
-  const syncOrchestrator = new SyncOrchestrator(db, redis, {} as any);
+  const syncOrchestrator = new SyncOrchestrator(prisma, redis, {} as any);
   const fileWatcher = new EnhancedFileSystemWatcher({
     watchPaths: ['./config', './content'],
-    ignorePatterns: ['node_modules', '.git'],
+    ignorePatterns: ['node_modules', '.git']
   });
 
   // Initialize CMS Integration Service
-  const cmsService = new CMSIntegrationService(db, redis, syncOrchestrator, fileWatcher, {
-    enablePersonalContent: true,
-    enableProjectSync: true,
-    enableCollaboration: true,
-    defaultPrivacy: PrivacyLevel.PRIVATE,
-    maxContentSize: 10 * 1024 * 1024, // 10MB
-    allowedContentTypes: [
-      ContentType.DOCUMENT,
-      ContentType.TEMPLATE,
-      ContentType.CONFIGURATION,
-      ContentType.SCRIPT,
-    ],
-    syncInterval: 30000, // 30 seconds
-  });
+  const cmsService = new CMSIntegrationService(
+    prisma,
+    redis,
+    syncOrchestrator,
+    fileWatcher,
+    {
+      enablePersonalContent: true,
+      enableProjectSync: true,
+      enableCollaboration: true,
+      defaultPrivacy: PrivacyLevel.PRIVATE,
+      maxContentSize: 10 * 1024 * 1024, // 10MB
+      allowedContentTypes: [
+        ContentType.DOCUMENT,
+        ContentType.TEMPLATE,
+        ContentType.CONFIGURATION,
+        ContentType.SCRIPT
+      ],
+      syncInterval: 30000 // 30 seconds
+    }
+  );
 
   await cmsService.initialize();
 
@@ -55,9 +61,9 @@ async function demonstrateCMSIntegration() {
 
   // Example 1: Personal Content Management
   console.log('\n📝 Example 1: Personal Content Management');
-
+  
   const userId = 'user-123';
-
+  
   // Create personal content
   const personalContent = await cmsService.createPersonalContent(userId, {
     type: ContentType.DOCUMENT,
@@ -69,15 +75,15 @@ async function demonstrateCMSIntegration() {
       language: 'en',
       format: 'markdown',
       size: 0,
-      accessCount: 0,
+      accessCount: 0
     },
     privacy: PrivacyLevel.PRIVATE,
     sharingSettings: {
       isPublic: false,
       allowedUsers: [],
       allowedRoles: [],
-      permissions: [],
-    },
+      permissions: []
+    }
   });
 
   console.log(`✅ Created personal content: ${personalContent.id}`);
@@ -95,17 +101,17 @@ async function demonstrateCMSIntegration() {
       database: {
         host: 'localhost',
         port: 5432,
-        name: 'myproject_dev',
+        name: 'myproject_dev'
       },
       api: {
         baseUrl: 'http://localhost:3000',
-        timeout: 5000,
+        timeout: 5000
       },
       features: {
         enableLogging: true,
         enableMetrics: true,
-        debugMode: true,
-      },
+        debugMode: true
+      }
     },
     privacy: PrivacyLevel.PRIVATE,
     collaborators: [],
@@ -114,8 +120,8 @@ async function demonstrateCMSIntegration() {
       frequency: SyncFrequency.REAL_TIME,
       conflictResolution: ConflictResolutionStrategy.LAST_WRITE_WINS,
       backupEnabled: true,
-      versionHistory: true,
-    },
+      versionHistory: true
+    }
   });
 
   console.log(`✅ Created project configuration: ${projectConfig.id}`);
@@ -161,7 +167,7 @@ async function demonstrateCMSIntegration() {
     includePersonal: true,
     includeShared: true,
     includeCollaborative: true,
-    limit: 10,
+    limit: 10
   });
 
   console.log(`✅ Retrieved user content for ${userId}:`);
@@ -176,9 +182,7 @@ async function demonstrateCMSIntegration() {
 
   // Display collaborative projects
   userContent.collaborativeProjects.forEach((project, index) => {
-    console.log(
-      `   Project ${index + 1}: ${project.name} (${project.collaborators.length} collaborators)`
-    );
+    console.log(`   Project ${index + 1}: ${project.name} (${project.collaborators.length} collaborators)`);
   });
 
   // Example 5: Privacy Compliance Audit
@@ -207,15 +211,9 @@ async function demonstrateCMSIntegration() {
 
   // Display audit details
   console.log('   Audit Details:');
-  console.log(
-    `     Personal Content: ${JSON.stringify(auditResult.details.personalContent, null, 2)}`
-  );
-  console.log(
-    `     Project Configurations: ${JSON.stringify(auditResult.details.projectConfigurations, null, 2)}`
-  );
-  console.log(
-    `     Collaborative Content: ${JSON.stringify(auditResult.details.collaborativeContent, null, 2)}`
-  );
+  console.log(`     Personal Content: ${JSON.stringify(auditResult.details.personalContent, null, 2)}`);
+  console.log(`     Project Configurations: ${JSON.stringify(auditResult.details.projectConfigurations, null, 2)}`);
+  console.log(`     Collaborative Content: ${JSON.stringify(auditResult.details.collaborativeContent, null, 2)}`);
 
   // Example 6: Sync User CMS Data
   console.log('\n🔄 Example 6: Sync User CMS Data');
@@ -240,16 +238,16 @@ async function demonstrateCMSIntegration() {
         members: [userId, collaboratorUserId],
         roles: {
           [userId]: 'owner',
-          [collaboratorUserId]: 'manager',
-        },
+          [collaboratorUserId]: 'manager'
+        }
       },
       workflow: {
         stages: ['development', 'testing', 'production'],
         approvals: {
           testing: [userId],
-          production: [userId, collaboratorUserId],
-        },
-      },
+          production: [userId, collaboratorUserId]
+        }
+      }
     },
     privacy: PrivacyLevel.SHARED,
     collaborators: [],
@@ -258,27 +256,15 @@ async function demonstrateCMSIntegration() {
       frequency: SyncFrequency.REAL_TIME,
       conflictResolution: ConflictResolutionStrategy.MERGE,
       backupEnabled: true,
-      versionHistory: true,
-    },
+      versionHistory: true
+    }
   });
 
   // Add multiple collaborators with different roles
   const teamMembers = [
-    {
-      userId: 'developer-1',
-      role: UserRole.AGENT_OPERATOR,
-      permissions: [Permission.READ, Permission.WRITE],
-    },
-    {
-      userId: 'developer-2',
-      role: UserRole.AGENT_OPERATOR,
-      permissions: [Permission.READ, Permission.WRITE],
-    },
-    {
-      userId: 'manager-1',
-      role: UserRole.AGENCY_MANAGER,
-      permissions: [Permission.READ, Permission.WRITE, Permission.SHARE],
-    },
+    { userId: 'developer-1', role: UserRole.AGENT_OPERATOR, permissions: [Permission.READ, Permission.WRITE] },
+    { userId: 'developer-2', role: UserRole.AGENT_OPERATOR, permissions: [Permission.READ, Permission.WRITE] },
+    { userId: 'manager-1', role: UserRole.AGENCY_MANAGER, permissions: [Permission.READ, Permission.WRITE, Permission.SHARE] }
   ];
 
   for (const member of teamMembers) {
@@ -334,29 +320,22 @@ Please follow our contribution guidelines...
       size: 0,
       accessCount: 0,
       customFields: {
-        templateVariables: [
-          'PROJECT_NAME',
-          'PROJECT_DESCRIPTION',
-          'TEAM_MEMBERS',
-          'PROJECT_CONFIG',
-        ],
+        templateVariables: ['PROJECT_NAME', 'PROJECT_DESCRIPTION', 'TEAM_MEMBERS', 'PROJECT_CONFIG'],
         templateType: 'documentation',
-        version: '1.0',
-      },
+        version: '1.0'
+      }
     },
     privacy: PrivacyLevel.SHARED,
     sharingSettings: {
       isPublic: false,
       allowedUsers: [collaboratorUserId],
       allowedRoles: [UserRole.AGENCY_MANAGER, UserRole.AGENCY_ADMIN],
-      permissions: [],
-    },
+      permissions: []
+    }
   });
 
   console.log(`✅ Created documentation template: ${documentTemplate.id}`);
-  console.log(
-    `   Template variables: ${documentTemplate.metadata.customFields?.templateVariables?.join(', ')}`
-  );
+  console.log(`   Template variables: ${documentTemplate.metadata.customFields?.templateVariables?.join(', ')}`);
   console.log(`   Shared with: ${documentTemplate.sharingSettings.allowedRoles.join(', ')}`);
 
   console.log('\n🎉 CMS Integration demonstration completed successfully!');
@@ -371,7 +350,7 @@ Please follow our contribution guidelines...
   console.log('✅ Multi-user collaboration workflows');
 
   // Cleanup
-  await db.$disconnect();
+  await prisma.$disconnect();
 }
 
 // Error handling wrapper

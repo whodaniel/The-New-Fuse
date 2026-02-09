@@ -1,4 +1,4 @@
-import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -104,9 +104,7 @@ export class QueryOptimizerInterceptor implements NestInterceptor {
 
     // Log successful optimized queries
     if (stats.count <= 5 && stats.count > 0) {
-      this.logger.log(
-        `✅ Optimized queries on ${route}: ${stats.count} queries in ${stats.duration}ms`
-      );
+      this.logger.log(`✅ Optimized queries on ${route}: ${stats.count} queries in ${stats.duration}ms`);
     }
   }
 
@@ -128,9 +126,7 @@ export class QueryOptimizerInterceptor implements NestInterceptor {
   private suggestOptimization(patterns: [string, number][]): void {
     const mostFrequent = patterns[0];
     if (mostFrequent && mostFrequent[1] > 5) {
-      this.logger.warn(
-        `   💡 Suggestion: Consider using Drizzle joins or select projections to fetch related data in a single query`
-      );
+      this.logger.warn(`   💡 Suggestion: Consider using Prisma's include/select to fetch related data in a single query`);
       this.logger.warn(`   💡 Or implement DataLoader pattern for batching`);
     }
   }

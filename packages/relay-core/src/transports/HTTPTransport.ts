@@ -9,9 +9,9 @@ import { EventEmitter } from 'events';
 
 import express from 'express';
 
-import type { Server } from 'http';
 import type { InterceptRule, RelayMessage, Transport } from '../types/index.js';
 import type { Logger } from '../utils/Logger.js';
+import type { Server } from 'http';
 
 export interface HTTPTransportConfig {
   port: number;
@@ -56,9 +56,7 @@ export class HTTPTransport extends EventEmitter implements Transport {
 
       return true;
     } catch (error) {
-      this.logger.error(
-        `Failed to start HTTP server: ${error instanceof Error ? error.message : String(error)}`
-      );
+      this.logger.error(`Failed to start HTTP server: ${error instanceof Error ? error.message : String(error)}`);
       return false;
     }
   }
@@ -106,7 +104,7 @@ export class HTTPTransport extends EventEmitter implements Transport {
 
     app.post('/send-message', (req, res) => {
       const message: RelayMessage = req.body;
-      this.messageHandlers.forEach((handler) => handler(message));
+      this.messageHandlers.forEach(handler => handler(message));
       res.json({ success: true, message: 'Message received' });
     });
   }

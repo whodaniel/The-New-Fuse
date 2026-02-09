@@ -172,13 +172,7 @@
       "id": "task-009",
       "type": "eng-frontend",
       "priority": 6,
-      "dependencies": [
-        "task-003",
-        "task-005",
-        "task-006",
-        "task-007",
-        "task-008"
-      ],
+      "dependencies": ["task-003", "task-005", "task-006", "task-007", "task-008"],
       "payload": {
         "action": "create-api-client",
         "description": "Create API client functions",
@@ -325,13 +319,7 @@
       "id": "task-016",
       "type": "eng-frontend",
       "priority": 2,
-      "dependencies": [
-        "task-011",
-        "task-012",
-        "task-013",
-        "task-014",
-        "task-015"
-      ],
+      "dependencies": ["task-011", "task-012", "task-013", "task-014", "task-015"],
       "payload": {
         "action": "assemble-app",
         "description": "Assemble App.tsx with all components",

@@ -28,13 +28,13 @@ The SkIDEancer IDE is deployed separately from the main TNF monorepo because:
 
 ### Key Files
 
-| File                          | Purpose                              |
-| ----------------------------- | ------------------------------------ |
-| `Dockerfile`                  | Build and runtime configuration      |
-| `railway.toml`                | Railway-specific settings            |
+| File                          | Purpose                         |
+| ----------------------------- | ------------------------------- |
+| `Dockerfile`                  | Build and runtime configuration |
+| `railway.toml`                | Railway-specific settings       |
 | `package.json`                | SkIDEancer dependencies (Yarn-based) |
-| `src-gen/backend/main.js`     | Production entry point               |
-| `src-gen/frontend/index.html` | Frontend entry point                 |
+| `src-gen/backend/main.js`     | Production entry point          |
+| `src-gen/frontend/index.html` | Frontend entry point            |
 
 ## Troubleshooting History
 
@@ -62,8 +62,8 @@ Error: The configuration is not set. Did you call FrontendApplicationConfigProvi
 ```
 
 **Root Cause:** Webpack bundling created multiple copies of the config provider
-module. SkIDEancer's singleton pattern using `Symbol('...')` created unique
-symbols per copy, breaking the pattern.
+module. SkIDEancer's singleton pattern using `Symbol('...')` created unique symbols
+per copy, breaking the pattern.
 
 **Solution:** Three-phase patching to replace `Symbol('...')` with
 `Symbol.for('...')`:

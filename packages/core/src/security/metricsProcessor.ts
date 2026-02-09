@@ -116,7 +116,7 @@ export class MetricsProcessor implements OnModuleInit, OnModuleDestroy {
     const totalMemory = os.totalmem();
     return {
       cpuUsage: os.loadavg()[0],
-      memoryUsage: ((totalMemory - freeMemory) / totalMemory) * 100,
+      memoryUsage: (totalMemory - freeMemory) / totalMemory * 100,
     };
   }
 

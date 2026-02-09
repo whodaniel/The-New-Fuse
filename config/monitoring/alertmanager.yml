@@ -1,42 +1,42 @@
 global:
   # Global configuration for Alertmanager
-  smtp_smarthost: "localhost:587"
-  smtp_from: "alerts@yourcompany.com"
-  smtp_auth_username: "alerts@yourcompany.com"
-  smtp_auth_password: "your-email-password"
-
+  smtp_smarthost: 'localhost:587'
+  smtp_from: 'alerts@yourcompany.com'
+  smtp_auth_username: 'alerts@yourcompany.com'
+  smtp_auth_password: 'your-email-password'
+  
   # Slack configuration
-  slack_api_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
-
+  slack_api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+  
   # PagerDuty configuration
-  pagerduty_url: "https://events.pagerduty.com/v2/enqueue"
-
+  pagerduty_url: 'https://events.pagerduty.com/v2/enqueue'
+  
   # Default resolution timeout
   resolve_timeout: 5m
 
 # Routing configuration
 route:
   # Default receiver for all alerts
-  receiver: "default-notifications"
-
+  receiver: 'default-notifications'
+  
   # Group alerts by these labels
-  group_by: ["alertname", "cluster", "service"]
-
+  group_by: ['alertname', 'cluster', 'service']
+  
   # Wait time before sending initial notification
   group_wait: 30s
-
+  
   # Wait time before sending additional notifications for the same group
   group_interval: 5m
-
+  
   # Wait time before sending resolved notifications
   repeat_interval: 12h
-
+  
   # Child routes for specific alert types
   routes:
     # Critical alerts - immediate notification
     - match:
         severity: critical
-      receiver: "critical-alerts"
+      receiver: 'critical-alerts'
       group_wait: 10s
       group_interval: 1m
       repeat_interval: 5m
@@ -44,41 +44,41 @@ route:
         # Database critical alerts
         - match:
             service: database
-          receiver: "database-critical"
-
-        # API critical alerts
+          receiver: 'database-critical'
+        
+        # API critical alerts  
         - match:
             service: api
-          receiver: "api-critical"
-
+          receiver: 'api-critical'
+    
     # Warning alerts - standard notification
     - match:
         severity: warning
-      receiver: "warning-alerts"
+      receiver: 'warning-alerts'
       group_wait: 1m
       group_interval: 10m
       repeat_interval: 2h
-
+    
     # Infrastructure alerts
     - match:
         category: infrastructure
-      receiver: "infrastructure-alerts"
+      receiver: 'infrastructure-alerts'
       group_wait: 2m
       group_interval: 15m
       repeat_interval: 4h
-
+    
     # Application alerts
     - match:
         category: application
-      receiver: "application-alerts"
+      receiver: 'application-alerts'
       group_wait: 1m
       group_interval: 5m
       repeat_interval: 1h
-
+    
     # Security alerts - immediate high-priority notification
     - match:
         category: security
-      receiver: "security-alerts"
+      receiver: 'security-alerts'
       group_wait: 0s
       group_interval: 30s
       repeat_interval: 15m
@@ -87,42 +87,42 @@ route:
 inhibit_rules:
   # Inhibit warning alerts if critical alert is firing
   - source_match:
-      severity: "critical"
+      severity: 'critical'
     target_match:
-      severity: "warning"
-    equal: ["alertname", "instance"]
-
+      severity: 'warning'
+    equal: ['alertname', 'instance']
+  
   # Inhibit node alerts if entire cluster is down
   - source_match:
-      alertname: "ClusterDown"
+      alertname: 'ClusterDown'
     target_match_re:
-      alertname: "Node.*"
-    equal: ["cluster"]
-
+      alertname: 'Node.*'
+    equal: ['cluster']
+  
   # Inhibit service alerts if load balancer is down
   - source_match:
-      alertname: "LoadBalancerDown"
+      alertname: 'LoadBalancerDown'
     target_match_re:
-      alertname: "Service.*"
-    equal: ["cluster"]
+      alertname: 'Service.*'
+    equal: ['cluster']
 
 # Receiver configurations
 receivers:
   # Default notification receiver
-  - name: "default-notifications"
+  - name: 'default-notifications'
     email_configs:
-      - to: "devops@yourcompany.com"
-        subject: "[ALERT] {{ .GroupLabels.alertname }} - {{ .GroupLabels.cluster }}"
+      - to: 'devops@yourcompany.com'
+        subject: '[ALERT] {{ .GroupLabels.alertname }} - {{ .GroupLabels.cluster }}'
         body: |
           {{ range .Alerts }}
           Alert: {{ .Annotations.summary }}
           Description: {{ .Annotations.description }}
           Labels: {{ range .Labels.SortedPairs }}{{ .Name }}={{ .Value }} {{ end }}
           {{ end }}
-
+    
     slack_configs:
-      - channel: "#alerts"
-        title: "Alert: {{ .GroupLabels.alertname }}"
+      - channel: '#alerts'
+        title: 'Alert: {{ .GroupLabels.alertname }}'
         text: |
           {{ range .Alerts }}
           *Alert:* {{ .Annotations.summary }}
@@ -133,13 +133,13 @@ receivers:
         send_resolved: true
 
   # Critical alerts receiver
-  - name: "critical-alerts"
+  - name: 'critical-alerts'
     email_configs:
-      - to: "oncall@yourcompany.com, devops@yourcompany.com"
-        subject: "[CRITICAL] {{ .GroupLabels.alertname }} - IMMEDIATE ACTION REQUIRED"
+      - to: 'oncall@yourcompany.com, devops@yourcompany.com'
+        subject: '[CRITICAL] {{ .GroupLabels.alertname }} - IMMEDIATE ACTION REQUIRED'
         body: |
           🚨 CRITICAL ALERT 🚨
-
+          
           {{ range .Alerts }}
           Alert: {{ .Annotations.summary }}
           Description: {{ .Annotations.description }}
@@ -148,15 +148,15 @@ receivers:
           Instance: {{ .Labels.instance }}
           Started: {{ .StartsAt }}
           {{ end }}
-
+          
           Please investigate immediately!
-
+    
     slack_configs:
-      - channel: "#critical-alerts"
-        title: "🚨 CRITICAL: {{ .GroupLabels.alertname }}"
+      - channel: '#critical-alerts'
+        title: '🚨 CRITICAL: {{ .GroupLabels.alertname }}'
         text: |
           <!channel> CRITICAL ALERT REQUIRES IMMEDIATE ATTENTION
-
+          
           {{ range .Alerts }}
           *Alert:* {{ .Annotations.summary }}
           *Description:* {{ .Annotations.description }}
@@ -165,133 +165,133 @@ receivers:
           *Started:* {{ .StartsAt }}
           {{ end }}
         send_resolved: true
-        color: "danger"
-
+        color: 'danger'
+    
     pagerduty_configs:
-      - routing_key: "YOUR_PAGERDUTY_INTEGRATION_KEY"
-        description: "{{ .GroupLabels.alertname }}: {{ .GroupLabels.instance }}"
-        severity: "critical"
+      - routing_key: 'YOUR_PAGERDUTY_INTEGRATION_KEY'
+        description: '{{ .GroupLabels.alertname }}: {{ .GroupLabels.instance }}'
+        severity: 'critical'
 
   # Database critical alerts
-  - name: "database-critical"
+  - name: 'database-critical'
     email_configs:
-      - to: "dba@yourcompany.com, oncall@yourcompany.com"
-        subject: "[DB CRITICAL] {{ .GroupLabels.alertname }}"
+      - to: 'dba@yourcompany.com, oncall@yourcompany.com'
+        subject: '[DB CRITICAL] {{ .GroupLabels.alertname }}'
         body: |
           🔥 DATABASE CRITICAL ALERT 🔥
-
+          
           {{ range .Alerts }}
           Database Alert: {{ .Annotations.summary }}
           Description: {{ .Annotations.description }}
           Database: {{ .Labels.datname }}
           Instance: {{ .Labels.instance }}
           {{ end }}
-
+    
     slack_configs:
-      - channel: "#database-alerts"
-        title: "🔥 DB CRITICAL: {{ .GroupLabels.alertname }}"
-        color: "danger"
+      - channel: '#database-alerts'
+        title: '🔥 DB CRITICAL: {{ .GroupLabels.alertname }}'
+        color: 'danger'
 
   # API critical alerts
-  - name: "api-critical"
+  - name: 'api-critical'
     email_configs:
-      - to: "backend-team@yourcompany.com, oncall@yourcompany.com"
-        subject: "[API CRITICAL] {{ .GroupLabels.alertname }}"
-
+      - to: 'backend-team@yourcompany.com, oncall@yourcompany.com'
+        subject: '[API CRITICAL] {{ .GroupLabels.alertname }}'
+    
     slack_configs:
-      - channel: "#api-alerts"
-        title: "⚠️ API CRITICAL: {{ .GroupLabels.alertname }}"
-        color: "danger"
+      - channel: '#api-alerts'
+        title: '⚠️ API CRITICAL: {{ .GroupLabels.alertname }}'
+        color: 'danger'
 
   # Warning alerts receiver
-  - name: "warning-alerts"
+  - name: 'warning-alerts'
     email_configs:
-      - to: "devops@yourcompany.com"
-        subject: "[WARNING] {{ .GroupLabels.alertname }}"
-
+      - to: 'devops@yourcompany.com'
+        subject: '[WARNING] {{ .GroupLabels.alertname }}'
+    
     slack_configs:
-      - channel: "#warnings"
-        title: "⚠️ Warning: {{ .GroupLabels.alertname }}"
-        color: "warning"
+      - channel: '#warnings'
+        title: '⚠️ Warning: {{ .GroupLabels.alertname }}'
+        color: 'warning'
         send_resolved: true
 
   # Infrastructure alerts receiver
-  - name: "infrastructure-alerts"
+  - name: 'infrastructure-alerts'
     email_configs:
-      - to: "infrastructure@yourcompany.com"
-        subject: "[INFRA] {{ .GroupLabels.alertname }}"
-
+      - to: 'infrastructure@yourcompany.com'
+        subject: '[INFRA] {{ .GroupLabels.alertname }}'
+    
     slack_configs:
-      - channel: "#infrastructure"
-        title: "🏗️ Infrastructure: {{ .GroupLabels.alertname }}"
-        color: "warning"
+      - channel: '#infrastructure'
+        title: '🏗️ Infrastructure: {{ .GroupLabels.alertname }}'
+        color: 'warning'
 
   # Application alerts receiver
-  - name: "application-alerts"
+  - name: 'application-alerts'
     email_configs:
-      - to: "developers@yourcompany.com"
-        subject: "[APP] {{ .GroupLabels.alertname }}"
-
+      - to: 'developers@yourcompany.com'
+        subject: '[APP] {{ .GroupLabels.alertname }}'
+    
     slack_configs:
-      - channel: "#application-alerts"
-        title: "📱 Application: {{ .GroupLabels.alertname }}"
+      - channel: '#application-alerts'
+        title: '📱 Application: {{ .GroupLabels.alertname }}'
 
   # Security alerts receiver
-  - name: "security-alerts"
+  - name: 'security-alerts'
     email_configs:
-      - to: "security@yourcompany.com, oncall@yourcompany.com"
-        subject: "[SECURITY] {{ .GroupLabels.alertname }} - IMMEDIATE ATTENTION"
+      - to: 'security@yourcompany.com, oncall@yourcompany.com'
+        subject: '[SECURITY] {{ .GroupLabels.alertname }} - IMMEDIATE ATTENTION'
         body: |
           🛡️ SECURITY ALERT 🛡️
-
+          
           {{ range .Alerts }}
           Security Alert: {{ .Annotations.summary }}
           Description: {{ .Annotations.description }}
           Source: {{ .Labels.instance }}
           {{ end }}
-
+          
           Please investigate immediately for potential security breach!
-
+    
     slack_configs:
-      - channel: "#security-alerts"
-        title: "🛡️ SECURITY: {{ .GroupLabels.alertname }}"
+      - channel: '#security-alerts'
+        title: '🛡️ SECURITY: {{ .GroupLabels.alertname }}'
         text: |
           <!channel> SECURITY ALERT - INVESTIGATE IMMEDIATELY
-
+          
           {{ range .Alerts }}
           *Alert:* {{ .Annotations.summary }}
           *Description:* {{ .Annotations.description }}
           *Source:* {{ .Labels.instance }}
           {{ end }}
-        color: "danger"
+        color: 'danger'
         send_resolved: true
-
+    
     pagerduty_configs:
-      - routing_key: "YOUR_SECURITY_PAGERDUTY_KEY"
-        description: "Security Alert: {{ .GroupLabels.alertname }}"
-        severity: "critical"
+      - routing_key: 'YOUR_SECURITY_PAGERDUTY_KEY'
+        description: 'Security Alert: {{ .GroupLabels.alertname }}'
+        severity: 'critical'
 
 # Templates for custom message formatting
 templates:
-  - "/etc/alertmanager/templates/*.tmpl"
+  - '/etc/alertmanager/templates/*.tmpl'
 
 # Time intervals for maintenance windows
 time_intervals:
-  - name: "maintenance-window"
+  - name: 'maintenance-window'
     time_intervals:
       - times:
-          - start_time: "02:00"
-            end_time: "04:00"
-        weekdays: ["sunday"]
-
-  - name: "business-hours"
+          - start_time: '02:00'
+            end_time: '04:00'
+        weekdays: ['sunday']
+        
+  - name: 'business-hours'
     time_intervals:
       - times:
-          - start_time: "09:00"
-            end_time: "17:00"
-        weekdays: ["monday:friday"]
+          - start_time: '09:00'
+            end_time: '17:00'
+        weekdays: ['monday:friday']
 
 # Mute rules for scheduled maintenance
 mute_time_intervals:
-  - name: "maintenance-mute"
-    time_intervals: ["maintenance-window"]
+  - name: 'maintenance-mute'
+    time_intervals: ['maintenance-window']

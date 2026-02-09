@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { SyncDashboardService } from './SyncDashboardService';
+import { DashboardWebSocketIntegration } from './DashboardWebSocketIntegration';
+import { DashboardMonitoringIntegration } from './DashboardMonitoringIntegration';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { SyncRedisConfig } from '../config/SyncRedisConfig';
-import { DashboardMonitoringIntegration } from './DashboardMonitoringIntegration';
-import { DashboardWebSocketIntegration } from './DashboardWebSocketIntegration';
-import { SyncDashboardService } from './SyncDashboardService';
+import { EventEmitter } from 'events';
 
 describe('SyncDashboard Integration', () => {
   let dashboardService: SyncDashboardService;
@@ -26,20 +27,20 @@ describe('SyncDashboard Integration', () => {
       set: jest.fn(),
       del: jest.fn(),
       exists: jest.fn(),
-      expire: jest.fn(),
+      expire: jest.fn()
     } as any;
 
     mockRedisConfig = {
       getChannelName: jest.fn(),
       getKeyPattern: jest.fn(),
       getTenantKey: jest.fn(),
-      getGlobalKey: jest.fn(),
+      getGlobalKey: jest.fn()
     } as any;
 
     mockWsService = {
       broadcastToTenant: jest.fn().mockResolvedValue(1),
       broadcastToAll: jest.fn().mockResolvedValue(5),
-      sendToUser: jest.fn().mockResolvedValue(true),
+      sendToUser: jest.fn().mockResolvedValue(true)
     };
 
     mockMonitoringService = {
@@ -50,11 +51,11 @@ describe('SyncDashboard Integration', () => {
         redis: 'healthy',
         database: 'healthy',
         fileSystem: 'healthy',
-        webSocket: 'healthy',
+        webSocket: 'healthy'
       }),
       createAlert: jest.fn().mockResolvedValue(undefined),
       on: jest.fn(),
-      emit: jest.fn(),
+      emit: jest.fn()
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -64,32 +65,30 @@ describe('SyncDashboard Integration', () => {
         DashboardMonitoringIntegration,
         {
           provide: UnifiedRedisService,
-          useValue: mockRedisService,
+          useValue: mockRedisService
         },
         {
           provide: SyncRedisConfig,
-          useValue: mockRedisConfig,
+          useValue: mockRedisConfig
         },
         {
           provide: 'IAgentWebSocketService',
-          useValue: mockWsService,
+          useValue: mockWsService
         },
         {
           provide: 'IMonitoringService',
-          useValue: mockMonitoringService,
+          useValue: mockMonitoringService
         },
         {
           provide: 'IExistingMonitoringService',
-          useValue: mockMonitoringService,
-        },
-      ],
+          useValue: mockMonitoringService
+        }
+      ]
     }).compile();
 
     dashboardService = module.get<SyncDashboardService>(SyncDashboardService);
     wsIntegration = module.get<DashboardWebSocketIntegration>(DashboardWebSocketIntegration);
-    monitoringIntegration = module.get<DashboardMonitoringIntegration>(
-      DashboardMonitoringIntegration
-    );
+    monitoringIntegration = module.get<DashboardMonitoringIntegration>(DashboardMonitoringIntegration);
 
     // Setup mock implementations
     mockRedisConfig.getChannelName.mockImplementation((type, subtype) => `sync:${type}:${subtype}`);
@@ -118,7 +117,7 @@ describe('SyncDashboard Integration', () => {
         throughput: '15.2',
         network_errors: '2',
         conflict_errors: '3',
-        validation_errors: '1',
+        validation_errors: '1'
       });
 
       // Trigger metrics collection
@@ -135,9 +134,9 @@ describe('SyncDashboard Integration', () => {
             data: expect.objectContaining({
               operations: { sync: 25, conflicts: 5, fileChanges: 12 },
               performance: { avgSyncTime: 180, successRate: 94, throughput: 15.2 },
-              errors: { networkErrors: 2, conflictErrors: 3, validationErrors: 1 },
-            }),
-          }),
+              errors: { networkErrors: 2, conflictErrors: 3, validationErrors: 1 }
+            })
+          })
         })
       );
 
@@ -161,10 +160,10 @@ describe('SyncDashboard Integration', () => {
             data: expect.objectContaining({
               status: 'healthy',
               clockSync: expect.objectContaining({
-                status: 'synced',
-              }),
-            }),
-          }),
+                status: 'synced'
+              })
+            })
+          })
         })
       );
     });
@@ -175,7 +174,7 @@ describe('SyncDashboard Integration', () => {
         message: 'High sync latency detected',
         component: 'sync_monitor',
         tenantId: 'test-tenant',
-        metadata: { latency: 5000 },
+        metadata: { latency: 5000 }
       };
 
       // Create alert
@@ -186,7 +185,7 @@ describe('SyncDashboard Integration', () => {
         expect.objectContaining({
           ...alertData,
           id: expect.any(String),
-          timestamp: expect.any(Date),
+          timestamp: expect.any(Date)
         })
       );
 
@@ -197,8 +196,8 @@ describe('SyncDashboard Integration', () => {
           type: 'sync_dashboard_update',
           payload: expect.objectContaining({
             type: 'system_alert',
-            data: expect.objectContaining(alertData),
-          }),
+            data: expect.objectContaining(alertData)
+          })
         })
       );
 
@@ -213,7 +212,7 @@ describe('SyncDashboard Integration', () => {
         type: 'task_progress' as const,
         userId: 'user-123',
         data: { taskId: 'task-456', progress: 85, status: 'in_progress' },
-        timestamp: new Date(),
+        timestamp: new Date()
       };
 
       // Process user-specific update
@@ -224,7 +223,7 @@ describe('SyncDashboard Integration', () => {
         'user-123',
         expect.objectContaining({
           type: 'sync_dashboard_update',
-          payload: userUpdate,
+          payload: userUpdate
         })
       );
     });
@@ -242,7 +241,7 @@ describe('SyncDashboard Integration', () => {
         source: 'heartbeat_service',
         data: { agentId: 'agent-123' },
         timestamp: new Date(),
-        severity: 'medium' as const,
+        severity: 'medium' as const
       };
 
       // Simulate monitoring event
@@ -255,7 +254,7 @@ describe('SyncDashboard Integration', () => {
         {
           source: 'heartbeat_service',
           severity: 'medium',
-          tenant: 'global',
+          tenant: 'global'
         }
       );
     });
@@ -267,7 +266,7 @@ describe('SyncDashboard Integration', () => {
         data: { status: 'critical', component: 'database' },
         timestamp: new Date(),
         tenantId: 'test-tenant',
-        severity: 'critical' as const,
+        severity: 'critical' as const
       };
 
       // Simulate critical monitoring event
@@ -295,9 +294,9 @@ describe('SyncDashboard Integration', () => {
           resourceType: 'agent',
           resourceId: 'agent-456',
           startedAt: new Date(),
-          completedAt: new Date(),
+          completedAt: new Date()
         },
-        timestamp: new Date(),
+        timestamp: new Date()
       };
 
       // Process the update
@@ -307,7 +306,7 @@ describe('SyncDashboard Integration', () => {
       expect(mockWsService.broadcastToTenant).toHaveBeenCalledWith(
         'test-tenant',
         expect.objectContaining({
-          payload: syncUpdate,
+          payload: syncUpdate
         })
       );
 
@@ -328,9 +327,9 @@ describe('SyncDashboard Integration', () => {
           conflictType: 'concurrent',
           localVersion: { version: 1 },
           remoteVersion: { version: 2 },
-          createdAt: new Date(),
+          createdAt: new Date()
         },
-        timestamp: new Date(),
+        timestamp: new Date()
       };
 
       // Process conflict update
@@ -340,7 +339,7 @@ describe('SyncDashboard Integration', () => {
       expect(mockWsService.broadcastToTenant).toHaveBeenCalledWith(
         'test-tenant',
         expect.objectContaining({
-          payload: conflictUpdate,
+          payload: conflictUpdate
         })
       );
     });
@@ -362,16 +361,16 @@ describe('SyncDashboard Integration', () => {
           resourceType: 'file',
           resourceId: `file-${i}`,
           startedAt: new Date(),
-          completedAt: new Date(),
+          completedAt: new Date()
         },
-        timestamp: new Date(),
+        timestamp: new Date()
       }));
 
       // Process all updates
       const startTime = Date.now();
-      await Promise.all(
-        updates.map((update) => dashboardService['processDashboardUpdate'](update))
-      );
+      await Promise.all(updates.map(update => 
+        dashboardService['processDashboardUpdate'](update)
+      ));
       const endTime = Date.now();
 
       // Verify performance (should complete within reasonable time)
@@ -388,11 +387,13 @@ describe('SyncDashboard Integration', () => {
         level: 'info' as const,
         message: `Test alert ${i}`,
         component: 'test',
-        tenantId: 'test-tenant',
+        tenantId: 'test-tenant'
       }));
 
       // Create all alerts
-      await Promise.all(alerts.map((alert) => dashboardService.createAlert(alert)));
+      await Promise.all(alerts.map(alert => 
+        dashboardService.createAlert(alert)
+      ));
 
       // Verify cache is limited (max 100)
       const dashboardData = await dashboardService.getDashboardData('test-tenant');
@@ -419,7 +420,7 @@ describe('SyncDashboard Integration', () => {
         type: 'sync_metrics' as const,
         tenantId: 'test-tenant',
         data: { operations: { sync: 1, conflicts: 0, fileChanges: 0 } },
-        timestamp: new Date(),
+        timestamp: new Date()
       };
 
       // Should not throw

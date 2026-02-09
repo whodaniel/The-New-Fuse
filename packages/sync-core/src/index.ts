@@ -5,18 +5,18 @@ export * from './types';
 export * from './config/SyncRedisConfig';
 
 // Database integration
-// Temporarily disabled - Drizzle migration to Drizzle ORM pending
+// Temporarily disabled - Prisma migration to Drizzle ORM pending
 // export * from './database/SyncDatabaseService';
 
 // Services
 export * from './services/MasterClockService';
-// Temporarily disabled - requires Drizzle-based SyncDatabaseService
+// Temporarily disabled - requires Prisma-based SyncDatabaseService
 // export * from './services/SyncOrchestrator';
 // ConflictManager temporarily disabled - requires BaseErrorHandler refactoring
 // export * from './services/ConflictManager';
 
 // Watchers
-// Temporarily disabled - requires Drizzle-based SyncDatabaseService
+// Temporarily disabled - requires Prisma-based SyncDatabaseService
 // export * from './watchers/EnhancedFileSystemWatcher';
 
 // Messaging (Task 7 - Sync-aware messaging)
@@ -48,7 +48,7 @@ export * from './services/MasterClockService';
 // export * from './error';
 
 // Performance Optimization (Task 13 - Performance optimization and scalability features)
-// Temporarily disabled - requires EnhancedFileSystemWatcher which uses Drizzle
+// Temporarily disabled - requires EnhancedFileSystemWatcher which uses Prisma
 // export * from './performance';
 
 // This package provides the core infrastructure for multi-tenant synchronization

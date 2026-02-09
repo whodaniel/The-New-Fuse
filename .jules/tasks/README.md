@@ -25,7 +25,7 @@ file can be sent to a separate Jules instance for parallel execution.
 
 | Task                                          | Description                            | Complexity |
 | --------------------------------------------- | -------------------------------------- | ---------- |
-| [05](JULES_TASK_05_core_drizzle_migration.md)  | Migrate Core Drizzle Service to Drizzle | ⭐⭐⭐⭐   |
+| [05](JULES_TASK_05_core_prisma_migration.md)  | Migrate Core Prisma Service to Drizzle | ⭐⭐⭐⭐   |
 | [06](JULES_TASK_06_core_messaging_service.md) | Migrate MessagingService to Drizzle    | ⭐⭐⭐⭐   |
 
 ### 📋 Code Quality & Validation (Priority: MEDIUM)

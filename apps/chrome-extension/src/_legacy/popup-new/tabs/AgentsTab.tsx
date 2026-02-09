@@ -2,7 +2,7 @@
  * Agents Tab - View Active Agents in Network
  */
 
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Props {
   status: any;
@@ -91,9 +91,7 @@ export default function AgentsTab({ status }: Props) {
                     {agent.capabilities && (
                       <div className="agent-capabilities">
                         {agent.capabilities.slice(0, 3).map((cap: string) => (
-                          <span key={cap} className="capability-tag">
-                            {cap}
-                          </span>
+                          <span key={cap} className="capability-tag">{cap}</span>
                         ))}
                       </div>
                     )}
@@ -108,9 +106,7 @@ export default function AgentsTab({ status }: Props) {
           <div className="empty-state">
             <div className="empty-icon">🔍</div>
             <p className="empty-text">No network agents detected</p>
-            <p className="empty-subtext text-secondary">
-              Connect to TNF Relay to see active agents
-            </p>
+            <p className="empty-subtext text-secondary">Connect to TNF Relay to see active agents</p>
           </div>
         )}
       </div>

@@ -40,8 +40,8 @@ available to both AI agents and humans through multiple integration points.
 │   ├── EXAMPLES.md                            # Usage examples
 │   ├── INTEGRATION.md                         # Integration guide
 │   └── QUICK_START.md                         # Quick start guide
-├── drizzle/
-│   └── schema.drizzle                          # Database schema
+├── prisma/
+│   └── schema.prisma                          # Database schema
 ├── package.json
 ├── tsconfig.json
 ├── jest.config.js
@@ -306,7 +306,7 @@ Resources are discoverable by registered agents:
 
 ### 2. Database Integration
 
-Added to main Drizzle schema at `/drizzle/schema.drizzle`:
+Added to main Prisma schema at `/prisma/schema.prisma`:
 
 - Resource models
 - ResourceVersion models
@@ -317,7 +317,7 @@ Added to main Drizzle schema at `/drizzle/schema.drizzle`:
 **Migrations:**
 
 ```bash
-npx drizzle migrate dev --name add-resource-registry
+npx prisma migrate dev --name add-resource-registry
 ```
 
 ### 3. NestJS Integration
@@ -519,7 +519,7 @@ export class AppModule {}
 
 ### ✅ Database
 
-- [x] 4 Drizzle models
+- [x] 4 Prisma models
 - [x] 5 enums
 - [x] Indexes for performance
 - [x] Full-text search indexes
@@ -550,7 +550,7 @@ export class AppModule {}
 - [x] Agent registry hooks
 - [x] Slash command
 - [x] MCP server
-- [x] Main Drizzle schema
+- [x] Main Prisma schema
 
 ## Usage Statistics Tracking
 

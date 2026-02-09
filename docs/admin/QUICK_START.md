@@ -66,12 +66,7 @@ Create an admin guard to protect routes:
 
 ```typescript
 // apps/backend/src/modules/admin/guards/admin.guard.ts
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -112,17 +107,17 @@ http://localhost:3000/admin
 
 ## Features Overview
 
-| Feature          | Route                     | Description                                  |
-| ---------------- | ------------------------- | -------------------------------------------- |
-| Main Dashboard   | `/admin`                  | Overview of system metrics and quick actions |
-| User Management  | `/admin/user-management`  | Manage users, roles, and permissions         |
-| System Metrics   | `/admin/system-metrics`   | Real-time performance monitoring             |
-| Agent Management | `/admin/agent-management` | Control and monitor AI agents                |
-| Database Admin   | `/admin/database`         | Execute queries and manage database          |
-| API Analytics    | `/admin/api-analytics`    | API usage and performance metrics            |
-| Configuration    | `/admin/configuration`    | System configuration management              |
-| Audit Logs       | `/admin/audit-logs`       | View system activity logs                    |
-| Backup & Restore | `/admin/backup-restore`   | Database backup and recovery                 |
+| Feature | Route | Description |
+|---------|-------|-------------|
+| Main Dashboard | `/admin` | Overview of system metrics and quick actions |
+| User Management | `/admin/user-management` | Manage users, roles, and permissions |
+| System Metrics | `/admin/system-metrics` | Real-time performance monitoring |
+| Agent Management | `/admin/agent-management` | Control and monitor AI agents |
+| Database Admin | `/admin/database` | Execute queries and manage database |
+| API Analytics | `/admin/api-analytics` | API usage and performance metrics |
+| Configuration | `/admin/configuration` | System configuration management |
+| Audit Logs | `/admin/audit-logs` | View system activity logs |
+| Backup & Restore | `/admin/backup-restore` | Database backup and recovery |
 
 ## First Steps
 
@@ -136,8 +131,7 @@ http://localhost:3000/admin
 
 **Important**: Make sure to change default credentials immediately after setup!
 
-The authentication system uses your existing user management. Ensure you have a
-user with `role: 'admin'`.
+The authentication system uses your existing user management. Ensure you have a user with `role: 'admin'`.
 
 ## Customization
 
@@ -168,25 +162,22 @@ All admin pages use Tailwind CSS. Update colors in component files:
 
 ```typescript
 // Example: Change primary color from blue to purple
-className = 'bg-blue-600'; // Change to "bg-purple-600"
+className="bg-blue-600" // Change to "bg-purple-600"
 ```
 
 ## Troubleshooting
 
 ### Routes not working
-
 - Verify AdminModule is imported in app.module.ts
 - Check that routes are added to your router
 - Ensure backend server is running
 
 ### Unauthorized errors
-
 - Implement AdminGuard
 - Verify user has admin role
 - Check authentication middleware
 
 ### Metrics not loading
-
 - Check API endpoints are responding
 - Verify CORS settings
 - Check browser console for errors
@@ -195,14 +186,11 @@ className = 'bg-blue-600'; // Change to "bg-purple-600"
 
 - Read the [Complete Admin Dashboard Guide](./ADMIN_DASHBOARD_GUIDE.md)
 - Review the [API Reference](./ADMIN_DASHBOARD_GUIDE.md#api-reference)
-- Check
-  [Security Considerations](./ADMIN_DASHBOARD_GUIDE.md#security-considerations)
+- Check [Security Considerations](./ADMIN_DASHBOARD_GUIDE.md#security-considerations)
 
 ## Support
 
 For detailed documentation, see:
-
-- [ADMIN_DASHBOARD_GUIDE.md](./ADMIN_DASHBOARD_GUIDE.md) - Complete feature
-  documentation
+- [ADMIN_DASHBOARD_GUIDE.md](./ADMIN_DASHBOARD_GUIDE.md) - Complete feature documentation
 - Backend: `/apps/backend/src/modules/admin/`
 - Frontend: `/apps/frontend/src/pages/Admin/`

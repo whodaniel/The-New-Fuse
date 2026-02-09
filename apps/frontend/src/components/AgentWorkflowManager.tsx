@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useWebSocket } from '../hooks/useWebSocket';
+import { Card, CardHeader, CardContent } from './ui/card';
+import { Button } from './ui/button';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
+import { Progress } from './ui/progress';
 import { Alert } from './ui/alert';
 import { Badge } from './ui/badge';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader } from './ui/card';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
-import { Progress } from './ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
 
 interface AgentWorkflow {
   id: string;
@@ -45,20 +45,20 @@ export function AgentWorkflowManager() {
       name: 'Data Analysis Pipeline',
       type: 'analysis',
       description: 'Standard data processing and analysis workflow',
-      defaultAgentCount: 3,
+      defaultAgentCount: 3
     },
     {
       name: 'Trading Strategy',
       type: 'trading',
       description: 'Automated trading workflow with market analysis',
-      defaultAgentCount: 2,
+      defaultAgentCount: 2
     },
     {
       name: 'Security Audit',
       type: 'security',
       description: 'Comprehensive security analysis workflow',
-      defaultAgentCount: 4,
-    },
+      defaultAgentCount: 4
+    }
   ];
 
   useEffect(() => {
@@ -76,19 +76,19 @@ export function AgentWorkflowManager() {
   };
 
   const handleBatchAction = (action: 'pause' | 'resume' | 'stop') => {
-    selectedWorkflows.forEach((id) => {
+    selectedWorkflows.forEach(id => {
       send('workflow_action', { id, action });
     });
     setSelectedWorkflows(new Set());
   };
 
   const handleCreateWorkflow = () => {
-    const template = templates.find((t) => t.name === selectedTemplate);
+    const template = templates.find(t => t.name === selectedTemplate);
     if (template) {
       send('create_workflow', {
         template: template.name,
         type: template.type,
-        agentCount: template.defaultAgentCount,
+        agentCount: template.defaultAgentCount
       });
       setShowCreateDialog(false);
       setSelectedTemplate('');
@@ -107,15 +107,16 @@ export function AgentWorkflowManager() {
     });
   };
 
-  const filteredWorkflows =
-    selectedType === 'all' ? workflows : workflows.filter((w) => w.type === selectedType);
+  const filteredWorkflows = selectedType === 'all' 
+    ? workflows
+    : workflows.filter(w => w.type === selectedType);
 
   const getStatusColor = (status: AgentWorkflow['status']) => {
     const colors = {
       running: 'bg-green-500',
       paused: 'bg-yellow-500',
       completed: 'bg-blue-500',
-      failed: 'bg-red-500',
+      failed: 'bg-red-500'
     };
     return colors[status];
   };
@@ -126,20 +127,35 @@ export function AgentWorkflowManager() {
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <h3 className="text-lg font-semibold">Agent Workflows</h3>
-            <Button size="sm" onClick={() => setShowCreateDialog(true)}>
+            <Button
+              size="sm"
+              onClick={() => setShowCreateDialog(true)}
+            >
               Create Workflow
             </Button>
           </div>
           <div className="flex items-center space-x-4">
             {selectedWorkflows.size > 0 && (
               <div className="flex space-x-2">
-                <Button size="sm" variant="outline" onClick={() => handleBatchAction('pause')}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleBatchAction('pause')}
+                >
                   Pause Selected
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => handleBatchAction('resume')}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleBatchAction('resume')}
+                >
                   Resume Selected
                 </Button>
-                <Button size="sm" variant="destructive" onClick={() => handleBatchAction('stop')}>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => handleBatchAction('stop')}
+                >
                   Stop Selected
                 </Button>
               </div>
@@ -174,9 +190,17 @@ export function AgentWorkflowManager() {
                   <div>
                     <h4 className="font-medium">{workflow.name}</h4>
                     <div className="flex space-x-2 mt-1">
-                      <Badge className={getStatusColor(workflow.status)}>{workflow.status}</Badge>
-                      <Badge variant="outline">{workflow.agentCount} agents</Badge>
-                      {workflow.template && <Badge variant="secondary">{workflow.template}</Badge>}
+                      <Badge className={getStatusColor(workflow.status)}>
+                        {workflow.status}
+                      </Badge>
+                      <Badge variant="outline">
+                        {workflow.agentCount} agents
+                      </Badge>
+                      {workflow.template && (
+                        <Badge variant="secondary">
+                          {workflow.template}
+                        </Badge>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -220,15 +244,21 @@ export function AgentWorkflowManager() {
 
                 <div className="grid grid-cols-3 gap-4 mt-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold">{workflow.metrics.tasksCompleted}</div>
+                    <div className="text-2xl font-bold">
+                      {workflow.metrics.tasksCompleted}
+                    </div>
                     <div className="text-sm text-gray-600">Completed</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold">{workflow.metrics.tasksRemaining}</div>
+                    <div className="text-2xl font-bold">
+                      {workflow.metrics.tasksRemaining}
+                    </div>
                     <div className="text-sm text-gray-600">Remaining</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold">{workflow.metrics.errorRate}%</div>
+                    <div className="text-2xl font-bold">
+                      {workflow.metrics.errorRate}%
+                    </div>
                     <div className="text-sm text-gray-600">Error Rate</div>
                   </div>
                 </div>
@@ -262,15 +292,21 @@ export function AgentWorkflowManager() {
             </Select>
             {selectedTemplate && (
               <div className="text-sm text-gray-600">
-                {templates.find((t) => t.name === selectedTemplate)?.description}
+                {templates.find(t => t.name === selectedTemplate)?.description}
               </div>
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowCreateDialog(false)}
+            >
               Cancel
             </Button>
-            <Button onClick={handleCreateWorkflow} disabled={!selectedTemplate}>
+            <Button
+              onClick={handleCreateWorkflow}
+              disabled={!selectedTemplate}
+            >
               Create
             </Button>
           </DialogFooter>

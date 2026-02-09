@@ -51,7 +51,7 @@ duplication **Effort:** 2 hours **Files Affected:** 2+ strategy files
 export abstract class BaseOAuthStrategy {
   constructor(
     protected configService: ConfigService,
-    protected drizzle: DatabaseService
+    protected prisma: PrismaService
   ) {}
 
   protected abstract getProviderIdField(): 'googleId' | 'githubId';
@@ -72,17 +72,17 @@ export abstract class BaseOAuthStrategy {
     const providerIdField = this.getProviderIdField();
 
     // Find by provider ID first
-    let user = await this.drizzle.user.findUnique({
+    let user = await this.prisma.user.findUnique({
       where: { [providerIdField]: id },
     });
 
     if (!user) {
       // Check if user exists with email
-      user = await this.drizzle.user.findUnique({ where: { email } });
+      user = await this.prisma.user.findUnique({ where: { email } });
 
       if (user) {
         // Link provider account
-        user = await this.drizzle.user.update({
+        user = await this.prisma.user.update({
           where: { id: user.id },
           data: {
             [providerIdField]: id,
@@ -92,7 +92,7 @@ export abstract class BaseOAuthStrategy {
         });
       } else {
         // Create new user
-        user = await this.drizzle.user.create({
+        user = await this.prisma.user.create({
           data: {
             email,
             name: displayName || username || email.split('@')[0],
@@ -105,7 +105,7 @@ export abstract class BaseOAuthStrategy {
       }
     } else {
       // Update profile picture
-      user = await this.drizzle.user.update({
+      user = await this.prisma.user.update({
         where: { id: user.id },
         data: { picture: photos?.[0]?.value },
       });
@@ -118,8 +118,8 @@ export abstract class BaseOAuthStrategy {
 // apps/backend/src/auth/google.strategy.ts (AFTER - 25 lines)
 @Injectable()
 export class GoogleStrategy extends BaseOAuthStrategy {
-  constructor(configService: ConfigService, drizzle: DatabaseService) {
-    super(configService, drizzle);
+  constructor(configService: ConfigService, prisma: PrismaService) {
+    super(configService, prisma);
     PassportStrategy.call(this, Strategy, 'google');
     // ... config
   }

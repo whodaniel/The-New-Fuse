@@ -1,5 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -8,41 +7,24 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Icons } from '@/components/ui/icons';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { StarRating } from '@/components/ui/star-rating';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from '@/components/ui/use-toast';
-import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { MCPMarketplaceService, MCPMarketplaceServer } from '../services/MCPMarketplaceService';
 import { useMcpServers } from '../hooks/useMcp';
-import { MCPMarketplaceServer, MCPMarketplaceService } from '../services/MCPMarketplaceService';
+import { StarRating } from '@/components/ui/star-rating';
+import { Icons } from '@/components/ui/icons';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { toast } from '@/components/ui/use-toast';
 
 /**
  * MCP Marketplace component for browsing and installing MCP servers
@@ -58,41 +40,40 @@ export function MCPMarketplace() {
   const [selectedServer, setSelectedServer] = useState<MCPMarketplaceServer | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [installDialogOpen, setInstallDialogOpen] = useState(false);
-
+  
   const marketplaceService = new MCPMarketplaceService();
   const { createServer, servers: installedServers } = useMcpServers();
-
+  
   // Load servers on mount
   useEffect(() => {
     fetchServers();
   }, []);
-
+  
   // Filter servers when search query or category changes
   useEffect(() => {
     if (!servers.length) return;
-
+    
     let filtered = [...servers];
-
+    
     // Apply category filter
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter((server) => server.category === selectedCategory);
+      filtered = filtered.filter(server => server.category === selectedCategory);
     }
-
+    
     // Apply search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (server) =>
-          server.name.toLowerCase().includes(query) ||
-          server.description.toLowerCase().includes(query) ||
-          server.publisher.toLowerCase().includes(query) ||
-          server.capabilities.some((cap) => cap.toLowerCase().includes(query))
+      filtered = filtered.filter(server => 
+        server.name.toLowerCase().includes(query) ||
+        server.description.toLowerCase().includes(query) ||
+        server.publisher.toLowerCase().includes(query) ||
+        server.capabilities.some(cap => cap.toLowerCase().includes(query))
       );
     }
-
+    
     setFilteredServers(filtered);
   }, [servers, searchQuery, selectedCategory]);
-
+  
   /**
    * Fetch all servers from the marketplace
    */
@@ -102,32 +83,32 @@ export function MCPMarketplace() {
       const data = await marketplaceService.getServers();
       setServers(data);
       setFilteredServers(data);
-
+      
       // Extract unique categories
-      const uniqueCategories = Array.from(new Set(data.map((server) => server.category)));
+      const uniqueCategories = Array.from(new Set(data.map(server => server.category)));
       setCategories(uniqueCategories);
-
+      
       setLoading(false);
     } catch (error) {
       console.error('Error fetching MCP marketplace servers:', error);
       setLoading(false);
     }
   };
-
+  
   /**
    * Handle search input change
    */
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
-
+  
   /**
    * Handle category selection change
    */
   const handleCategoryChange = (value: string) => {
     setSelectedCategory(value);
   };
-
+  
   /**
    * Show server details dialog
    */
@@ -135,7 +116,7 @@ export function MCPMarketplace() {
     setSelectedServer(server);
     setDialogOpen(true);
   };
-
+  
   /**
    * Show installation dialog
    */
@@ -143,35 +124,31 @@ export function MCPMarketplace() {
     setSelectedServer(server);
     setInstallDialogOpen(true);
   };
-
+  
   /**
    * Check if server is already installed
    */
   const isServerInstalled = (serverId: string) => {
-    return installedServers.some((server) => server.id === serverId);
+    return installedServers.some(server => server.id === serverId);
   };
-
+  
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">MCP Server Marketplace</h1>
         <Button variant="outline" onClick={fetchServers} disabled={loading}>
-          {loading ? (
-            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Icons.refresh className="mr-2 h-4 w-4" />
-          )}
+          {loading ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" /> : <Icons.refresh className="mr-2 h-4 w-4" />}
           Refresh
         </Button>
       </div>
-
+      
       <Tabs defaultValue="browse" value={activeTab} onValueChange={setActiveTab} className="mb-6">
         <TabsList className="mb-4">
           <TabsTrigger value="browse">Browse</TabsTrigger>
           <TabsTrigger value="popular">Popular</TabsTrigger>
           <TabsTrigger value="recent">Recently Added</TabsTrigger>
         </TabsList>
-
+        
         <div className="flex gap-4 mb-6">
           <div className="flex-1">
             <Input
@@ -188,7 +165,7 @@ export function MCPMarketplace() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              {categories.map((category) => (
+              {categories.map(category => (
                 <SelectItem key={category} value={category}>
                   {category}
                 </SelectItem>
@@ -196,7 +173,7 @@ export function MCPMarketplace() {
             </SelectContent>
           </Select>
         </div>
-
+        
         <TabsContent value="browse" className="mt-0">
           {loading ? (
             <div className="flex justify-center items-center h-64">
@@ -208,7 +185,7 @@ export function MCPMarketplace() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredServers.map((server) => (
+              {filteredServers.map(server => (
                 <ServerCard
                   key={server.id}
                   server={server}
@@ -220,7 +197,7 @@ export function MCPMarketplace() {
             </div>
           )}
         </TabsContent>
-
+        
         <TabsContent value="popular" className="mt-0">
           {loading ? (
             <div className="flex justify-center items-center h-64">
@@ -231,7 +208,7 @@ export function MCPMarketplace() {
               {filteredServers
                 .sort((a, b) => b.downloads - a.downloads)
                 .slice(0, 6)
-                .map((server) => (
+                .map(server => (
                   <ServerCard
                     key={server.id}
                     server={server}
@@ -243,7 +220,7 @@ export function MCPMarketplace() {
             </div>
           )}
         </TabsContent>
-
+        
         <TabsContent value="recent" className="mt-0">
           {loading ? (
             <div className="flex justify-center items-center h-64">
@@ -252,11 +229,9 @@ export function MCPMarketplace() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredServers
-                .sort(
-                  (a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()
-                )
+                .sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime())
                 .slice(0, 6)
-                .map((server) => (
+                .map(server => (
                   <ServerCard
                     key={server.id}
                     server={server}
@@ -269,7 +244,7 @@ export function MCPMarketplace() {
           )}
         </TabsContent>
       </Tabs>
-
+      
       {selectedServer && (
         <ServerDetailsDialog
           server={selectedServer}
@@ -282,7 +257,7 @@ export function MCPMarketplace() {
           isInstalled={isServerInstalled(selectedServer.id)}
         />
       )}
-
+      
       {selectedServer && (
         <ServerInstallDialog
           server={selectedServer}
@@ -293,14 +268,14 @@ export function MCPMarketplace() {
       )}
     </div>
   );
-
+  
   /**
    * Handle server installation
    */
   async function handleInstallServer(server: MCPMarketplaceServer, config?: Record<string, any>) {
     try {
       const success = await marketplaceService.installServer(server.id, config);
-
+      
       if (success) {
         // Add server to the list of installed servers
         await createServer({
@@ -308,28 +283,28 @@ export function MCPMarketplace() {
           description: server.description,
           command: server.installCommand,
           args: server.args,
-          env: config || {},
+          env: config || {}
         });
-
+        
         toast({
-          title: 'Server Installed',
+          title: "Server Installed",
           description: `${server.name} has been installed successfully`,
-          variant: 'default',
+          variant: "default",
         });
-
+        
         setInstallDialogOpen(false);
       } else {
         toast({
-          title: 'Installation Failed',
-          description: 'There was an error installing the server',
-          variant: 'destructive',
+          title: "Installation Failed",
+          description: "There was an error installing the server",
+          variant: "destructive",
         });
       }
     } catch (error: any) {
       toast({
-        title: 'Installation Failed',
-        description: error.message || 'There was an error installing the server',
-        variant: 'destructive',
+        title: "Installation Failed",
+        description: error.message || "There was an error installing the server",
+        variant: "destructive",
       });
     }
   }
@@ -338,13 +313,13 @@ export function MCPMarketplace() {
 /**
  * Server card component
  */
-function ServerCard({
-  server,
-  onViewDetails,
+function ServerCard({ 
+  server, 
+  onViewDetails, 
   onInstall,
-  isInstalled,
-}: {
-  server: MCPMarketplaceServer;
+  isInstalled
+}: { 
+  server: MCPMarketplaceServer; 
   onViewDetails: () => void;
   onInstall: () => void;
   isInstalled: boolean;
@@ -365,12 +340,10 @@ function ServerCard({
         <p className="line-clamp-3 text-sm text-muted-foreground mb-3">{server.description}</p>
         <div className="flex items-center justify-between">
           <StarRating rating={server.rating} />
-          <span className="text-sm text-muted-foreground">
-            {server.downloads.toLocaleString()} downloads
-          </span>
+          <span className="text-sm text-muted-foreground">{server.downloads.toLocaleString()} downloads</span>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
-          {server.capabilities.slice(0, 3).map((capability) => (
+          {server.capabilities.slice(0, 3).map(capability => (
             <Badge key={capability} variant="secondary" className="text-xs">
               {capability}
             </Badge>
@@ -386,13 +359,13 @@ function ServerCard({
         <Button variant="outline" size="sm" onClick={onViewDetails}>
           View Details
         </Button>
-        <Button
-          variant={isInstalled ? 'secondary' : 'default'}
-          size="sm"
+        <Button 
+          variant={isInstalled ? "secondary" : "default"} 
+          size="sm" 
           onClick={onInstall}
           disabled={isInstalled}
         >
-          {isInstalled ? 'Installed' : 'Install'}
+          {isInstalled ? "Installed" : "Install"}
         </Button>
       </CardFooter>
     </Card>
@@ -402,14 +375,14 @@ function ServerCard({
 /**
  * Server details dialog component
  */
-function ServerDetailsDialog({
-  server,
-  open,
+function ServerDetailsDialog({ 
+  server, 
+  open, 
   onClose,
   onInstall,
-  isInstalled,
-}: {
-  server: MCPMarketplaceServer;
+  isInstalled
+}: { 
+  server: MCPMarketplaceServer; 
   open: boolean;
   onClose: () => void;
   onInstall: () => void;
@@ -424,25 +397,26 @@ function ServerDetailsDialog({
             <Badge variant="outline">{server.category}</Badge>
           </div>
           <DialogDescription className="flex items-center gap-2">
-            <span>By {server.publisher}</span> •<span>Version {server.version}</span> •
+            <span>By {server.publisher}</span> • 
+            <span>Version {server.version}</span> • 
             <span>Updated {new Date(server.lastUpdated).toLocaleDateString()}</span>
           </DialogDescription>
         </DialogHeader>
-
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2">
             <h3 className="text-lg font-semibold mb-2">Description</h3>
             <p className="text-muted-foreground mb-4">{server.description}</p>
-
+            
             <h3 className="text-lg font-semibold mb-2">Capabilities</h3>
             <div className="flex flex-wrap gap-2 mb-4">
-              {server.capabilities.map((capability) => (
+              {server.capabilities.map(capability => (
                 <Badge key={capability} variant="secondary">
                   {capability}
                 </Badge>
               ))}
             </div>
-
+            
             {server.requiresConfiguration && (
               <div className="bg-muted p-3 rounded-md mt-4">
                 <h4 className="font-medium flex items-center gap-2">
@@ -455,7 +429,7 @@ function ServerDetailsDialog({
               </div>
             )}
           </div>
-
+          
           <div className="space-y-4">
             <div className="bg-muted p-4 rounded-md">
               <div className="flex justify-between mb-2">
@@ -463,12 +437,12 @@ function ServerDetailsDialog({
                 <span>{server.rating.toFixed(1)}/5.0</span>
               </div>
               <StarRating rating={server.rating} />
-
+              
               <div className="flex justify-between items-center mt-4 mb-2">
                 <h4 className="font-medium">Downloads</h4>
                 <span>{server.downloads.toLocaleString()}</span>
               </div>
-
+              
               <div className="flex justify-between items-center mt-4">
                 <h4 className="font-medium">Install Command</h4>
               </div>
@@ -476,9 +450,13 @@ function ServerDetailsDialog({
                 {server.installCommand} {server.args.join(' ')}
               </code>
             </div>
-
-            <Button className="w-full" onClick={onInstall} disabled={isInstalled}>
-              {isInstalled ? 'Already Installed' : 'Install Server'}
+            
+            <Button 
+              className="w-full" 
+              onClick={onInstall}
+              disabled={isInstalled}
+            >
+              {isInstalled ? "Already Installed" : "Install Server"}
             </Button>
           </div>
         </div>
@@ -490,13 +468,13 @@ function ServerDetailsDialog({
 /**
  * Server installation dialog component
  */
-function ServerInstallDialog({
-  server,
-  open,
+function ServerInstallDialog({ 
+  server, 
+  open, 
   onClose,
-  onInstall,
-}: {
-  server: MCPMarketplaceServer;
+  onInstall
+}: { 
+  server: MCPMarketplaceServer; 
   open: boolean;
   onClose: () => void;
   onInstall: (config?: Record<string, any>) => void;
@@ -506,42 +484,38 @@ function ServerInstallDialog({
     if (!server.requiresConfiguration || !server.configurationSchema) {
       return z.object({});
     }
-
+    
     const schemaFields: Record<string, any> = {};
-
+    
     // Add fields based on the configuration schema
     Object.entries(server.configurationSchema.properties).forEach(([key, prop]: [string, any]) => {
       const isRequired = server.configurationSchema?.required?.includes(key) || false;
-
+      
       if (prop.type === 'string') {
-        schemaFields[key] = isRequired
-          ? z.string().min(1, { message: `${key} is required` })
-          : z.string().optional();
+        schemaFields[key] = isRequired ? z.string().min(1, { message: `${key} is required` }) : z.string().optional();
       } else if (prop.type === 'number') {
-        schemaFields[key] = isRequired
-          ? z.number({ required_error: `${key} is required` })
-          : z.number().optional();
+        schemaFields[key] = isRequired ? z.number({ required_error: `${key} is required` }) : z.number().optional();
       } else if (prop.type === 'boolean') {
         schemaFields[key] = z.boolean().optional();
       }
     });
-
+    
     return z.object(schemaFields);
   };
-
+  
   const formSchema = createFormSchema();
-
+  
   // Create the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {}
   });
-
+  
   // Handle form submission
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     onInstall(values);
   };
-
+  
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
@@ -549,75 +523,78 @@ function ServerInstallDialog({
           <DialogTitle>Install MCP Server</DialogTitle>
           <DialogDescription>
             {server.requiresConfiguration
-              ? 'Configure the server before installation'
-              : 'Ready to install this MCP server'}
+              ? "Configure the server before installation"
+              : "Ready to install this MCP server"}
           </DialogDescription>
         </DialogHeader>
-
+        
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {server.requiresConfiguration && server.configurationSchema ? (
               <div className="space-y-4">
-                {Object.entries(server.configurationSchema.properties).map(
-                  ([key, prop]: [string, any]) => {
-                    const isRequired = server.configurationSchema?.required?.includes(key) || false;
-
-                    if (prop.type === 'boolean') {
-                      return (
-                        <FormField
-                          key={key}
-                          control={form.control}
-                          name={key}
-                          render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4">
-                              <FormControl>
-                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                              </FormControl>
-                              <div className="space-y-1 leading-none">
-                                <FormLabel>
-                                  {key}
-                                  {isRequired && <span className="text-destructive"> *</span>}
-                                </FormLabel>
-                                {prop.description && (
-                                  <p className="text-sm text-muted-foreground">
-                                    {prop.description}
-                                  </p>
-                                )}
-                              </div>
-                            </FormItem>
-                          )}
-                        />
-                      );
-                    }
-
+                {Object.entries(server.configurationSchema.properties).map(([key, prop]: [string, any]) => {
+                  const isRequired = server.configurationSchema?.required?.includes(key) || false;
+                  
+                  if (prop.type === 'boolean') {
                     return (
                       <FormField
                         key={key}
                         control={form.control}
                         name={key}
                         render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>
-                              {key}
-                              {isRequired && <span className="text-destructive"> *</span>}
-                            </FormLabel>
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4">
                             <FormControl>
-                              <Input
-                                {...field}
-                                type={prop.type === 'number' ? 'number' : 'text'}
-                                placeholder={prop.description}
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
                               />
                             </FormControl>
-                            {prop.description && (
-                              <p className="text-xs text-muted-foreground">{prop.description}</p>
-                            )}
-                            <FormMessage />
+                            <div className="space-y-1 leading-none">
+                              <FormLabel>
+                                {key}
+                                {isRequired && <span className="text-destructive"> *</span>}
+                              </FormLabel>
+                              {prop.description && (
+                                <p className="text-sm text-muted-foreground">
+                                  {prop.description}
+                                </p>
+                              )}
+                            </div>
                           </FormItem>
                         )}
                       />
                     );
                   }
-                )}
+                  
+                  return (
+                    <FormField
+                      key={key}
+                      control={form.control}
+                      name={key}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {key}
+                            {isRequired && <span className="text-destructive"> *</span>}
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              type={prop.type === 'number' ? 'number' : 'text'}
+                              placeholder={prop.description}
+                            />
+                          </FormControl>
+                          {prop.description && (
+                            <p className="text-xs text-muted-foreground">
+                              {prop.description}
+                            </p>
+                          )}
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  );
+                })}
               </div>
             ) : (
               <div className="py-4 text-center">
@@ -627,12 +604,14 @@ function ServerInstallDialog({
                 </p>
               </div>
             )}
-
+            
             <DialogFooter>
               <Button variant="outline" type="button" onClick={onClose}>
                 Cancel
               </Button>
-              <Button type="submit">Install</Button>
+              <Button type="submit">
+                Install
+              </Button>
             </DialogFooter>
           </form>
         </Form>

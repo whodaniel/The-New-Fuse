@@ -1,20 +1,20 @@
 /**
  * User-related type definitions
  */
-import { ISODateTime, UUID } from './common';
+import { UUID, ISODateTime } from './common';
 
 export enum UserRole {
   ADMIN = 'admin',
   USER = 'user',
   DEVELOPER = 'developer',
-  VIEWER = 'viewer',
+  VIEWER = 'viewer'
 }
 
 export enum UserStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   SUSPENDED = 'suspended',
-  PENDING = 'pending',
+  PENDING = 'pending'
 }
 
 export interface UserModel {

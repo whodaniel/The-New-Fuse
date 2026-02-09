@@ -1,7 +1,7 @@
+import { createPool, Pool, PoolConfig } from 'mysql2/promise';
+import { Redis } from 'ioredis';
 import { Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import { Redis } from 'ioredis';
-import { Pool } from 'mysql2/promise';
 
 const logger = new Logger('DatabaseConfig');
 
@@ -31,13 +31,13 @@ export class DatabaseConfig extends EventEmitter {
     connections: {
       active: 0,
       idle: 0,
-      max: 0,
+      max: 0
     },
     cache: {
       hits: 0,
       misses: 0,
-      size: 0,
-    },
+      size: 0
+    }
   };
 
   constructor() {
@@ -49,7 +49,7 @@ export class DatabaseConfig extends EventEmitter {
       this.redis = new (Redis as any)({
         host: process.env.REDIS_HOST || 'localhost',
         port: parseInt(process.env.REDIS_PORT || '6379'),
-        password: process.env.REDIS_PASSWORD,
+        password: process.env.REDIS_PASSWORD
       });
     } catch (error) {
       logger.error('Failed to initialize Redis:', error);
@@ -66,7 +66,7 @@ export class DatabaseConfig extends EventEmitter {
   async addShard(shardName: string, config: any): Promise<void> {
     try {
       const pool = await Pool.createPool(config);
-
+      
       pool.on('connection', () => {
         this.metrics.connections.active++;
         this.updateRedisMetrics(shardName, 'connections', 1).catch(logger.error);
@@ -109,8 +109,9 @@ export class DatabaseConfig extends EventEmitter {
       const duration = Date.now() - startTime;
 
       // Update metrics
-      this.metrics.avgLatencyMs =
-        (this.metrics.avgLatencyMs * this.metrics.queries + duration) / (this.metrics.queries + 1);
+      this.metrics.avgLatencyMs = 
+        (this.metrics.avgLatencyMs * this.metrics.queries + duration) / 
+        (this.metrics.queries + 1);
       this.metrics.queries++;
 
       await this.updateRedisMetrics(shard, 'latency', duration);
@@ -129,16 +130,14 @@ export class DatabaseConfig extends EventEmitter {
   }
 
   async close(): Promise<void> {
-    await Promise.all(
-      Object.entries(this.shardMap).map(async ([shard, pool]) => {
-        try {
-          await pool.end();
-          logger.info(`Closed connection pool for shard ${shard}`);
-        } catch (error) {
-          logger.error(`Error closing pool for shard ${shard}:`, error);
-        }
-      })
-    );
+    await Promise.all(Object.entries(this.shardMap).map(async ([shard, pool]) => {
+      try {
+        await pool.end();
+        logger.info(`Closed connection pool for shard ${shard}`);
+      } catch (error) {
+        logger.error(`Error closing pool for shard ${shard}:`, error);
+      }
+    }));
 
     if (this.redis) {
       await this.redis.quit();
@@ -150,8 +149,8 @@ export class DatabaseConfig extends EventEmitter {
 async function initDb(): any {
   const defaultShards = {
     main: {
-      uri: process.env.DATABASE_URL || 'mysql://user:password@localhost:3306/main',
-    },
+      uri: process.env.DATABASE_URL || 'mysql://user:password@localhost:3306/main'
+    }
   };
   await exports.dbConfig.initShards(defaultShards);
 }
@@ -159,3 +158,5 @@ async function initDb(): any {
 export function getDb(): any {
   return exports.dbConfig;
 }
+
+;

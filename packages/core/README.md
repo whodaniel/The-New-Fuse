@@ -5,7 +5,6 @@ Core functionality for The New Fuse platform. Provides essential services, utili
 ## Overview
 
 The core package is the foundation of The New Fuse platform, providing production-ready implementations of critical services including:
-
 - System monitoring and metrics collection
 - Agent orchestration and LLM services
 - Memory management systems
@@ -17,7 +16,6 @@ The core package is the foundation of The New Fuse platform, providing productio
 ## Features
 
 ### Monitoring & Performance
-
 - **System Monitor**: Real-time system health monitoring
 - **Metrics Collector**: Application and performance metrics
 - **Performance Monitor**: Detailed performance tracking
@@ -26,7 +24,6 @@ The core package is the foundation of The New Fuse platform, providing productio
 - **Trace & Span**: Distributed tracing support
 
 ### AI & Agents
-
 - **Agent Orchestrator**: Multi-agent task coordination
 - **Agent Swarm Orchestration**: Swarm intelligence coordination
 - **Agent LLM Service**: LLM integration for agents
@@ -34,26 +31,22 @@ The core package is the foundation of The New Fuse platform, providing productio
 - **Local AI Detection**: Detect local AI capabilities
 
 ### Memory & State
-
 - **Memory System**: Advanced memory management
 - **Memory Manager**: Long-term and short-term memory
 - **Context Management**: Conversation and task context
 
 ### Workflow & Processing
-
 - **Workflow Engine**: Execute complex workflows
 - **Workflow Executor**: Task execution and coordination
 - **Pipeline Processing**: Data processing pipelines
 
 ### Configuration & Database
-
 - **Config Service**: Centralized configuration management
 - **Database Service**: Database abstraction layer
 - **Redis Integration**: Redis caching and pub/sub
 - **Feature Flags**: Feature flag management (Mongo-backed)
 
 ### Utilities
-
 - **Logger**: Structured logging with Winston
 - **Error Utilities**: Error handling helpers
 - **Type Definitions**: Comprehensive TypeScript types
@@ -309,23 +302,17 @@ interface LLMResponse {
 }
 
 class AgentLLMService {
-  async complete(
-    prompt: string,
-    options?: {
-      model?: string;
-      temperature?: number;
-      maxTokens?: number;
-      stopSequences?: string[];
-    },
-  ): Promise<LLMResponse>;
+  async complete(prompt: string, options?: {
+    model?: string;
+    temperature?: number;
+    maxTokens?: number;
+    stopSequences?: string[];
+  }): Promise<LLMResponse>;
 
-  async chat(
-    messages: Array<{
-      role: 'user' | 'assistant' | 'system';
-      content: string;
-    }>,
-    options?: object,
-  ): Promise<LLMResponse>;
+  async chat(messages: Array<{
+    role: 'user' | 'assistant' | 'system';
+    content: string;
+  }>, options?: object): Promise<LLMResponse>;
 
   async embed(text: string): Promise<number[]>;
 }
@@ -712,7 +699,12 @@ const allMetrics = await monitoring.getAllMetrics();
 ### Multi-Agent System
 
 ```typescript
-import { AgentOrchestrator, AgentSwarmOrchestrationService, Agent, Task } from '@the-new-fuse/core';
+import {
+  AgentOrchestrator,
+  AgentSwarmOrchestrationService,
+  Agent,
+  Task,
+} from '@the-new-fuse/core';
 
 // Create orchestrator
 const orchestrator = new AgentOrchestrator();
@@ -763,7 +755,11 @@ const result = await swarm.executeSwarmTask(complexTask);
 ### Workflow with Memory Integration
 
 ```typescript
-import { WorkflowEngine, MemorySystem, logger } from '@the-new-fuse/core';
+import {
+  WorkflowEngine,
+  MemorySystem,
+  logger,
+} from '@the-new-fuse/core';
 
 const engine = new WorkflowEngine();
 const memory = new MemorySystem({
@@ -864,10 +860,10 @@ await featureFlags.setFlag({
 
 ```typescript
 import { DatabaseService } from '@the-new-fuse/core';
-import { DatabaseService } from '@the-new-fuse/database';
+import { PrismaService } from '@the-new-fuse/database';
 
 // Core provides database abstraction
-// Database package provides Drizzle implementation
+// Database package provides Prisma implementation
 const db = new DatabaseService();
 await db.connect(process.env.DATABASE_URL);
 ```
@@ -893,13 +889,21 @@ if (user) {
 
 ```typescript
 import { logger } from '@the-new-fuse/core';
-import { SystemError, DatabaseError } from '@the-new-fuse/core-error-handling';
+import {
+  SystemError,
+  DatabaseError,
+} from '@the-new-fuse/core-error-handling';
 
 try {
   await dbOperation();
 } catch (error) {
   logger.error('Database operation failed', error);
-  throw new DatabaseError('Failed to execute query', 'SELECT', query, error);
+  throw new DatabaseError(
+    'Failed to execute query',
+    'SELECT',
+    query,
+    error
+  );
 }
 ```
 
@@ -1082,25 +1086,21 @@ packages/core/
 ## Performance Considerations
 
 ### Memory Management
-
 - Short-term memory uses LRU cache with configurable capacity
 - Long-term memory uses vector database for efficient recall
 - Automatic memory consolidation to prevent overflow
 
 ### Monitoring Overhead
-
 - Configurable check intervals (default: 5s)
 - Lightweight metric collection
 - Async operations to prevent blocking
 
 ### Agent Coordination
-
 - Task queue for efficient distribution
 - Agent pooling for resource management
 - Automatic load balancing
 
 ### Workflow Execution
-
 - Step-level error handling
 - Parallel execution where possible
 - Efficient state management
@@ -1152,10 +1152,10 @@ timer(); // Always complete timer
 
 ```typescript
 // Start small
-rolloutPercentage: 1; // 1%
+rolloutPercentage: 1 // 1%
 
 // Monitor and increase
-rolloutPercentage: (5, 10, 25, 50, 100);
+rolloutPercentage: 5, 10, 25, 50, 100
 ```
 
 ## Troubleshooting
@@ -1201,7 +1201,6 @@ const status = await engine.getWorkflowStatus(workflowId);
 ## Dependencies
 
 Core dependencies:
-
 - `@nestjs/common` - NestJS framework
 - `@nestjs/core` - NestJS core
 - `@nestjs/config` - Configuration management
@@ -1218,7 +1217,6 @@ MIT
 ## Contributing
 
 Contributions are welcome! Please follow these guidelines:
-
 1. Fork the repository
 2. Create a feature branch
 3. Add tests for new features
@@ -1228,14 +1226,13 @@ Contributions are welcome! Please follow these guidelines:
 ## Support
 
 For issues and questions:
-
 - Open an issue on GitHub
 - Check the documentation
 - Contact the maintainers
 
 ## Related Packages
 
-- `@the-new-fuse/database` - Database integration (Drizzle)
+- `@the-new-fuse/database` - Database integration (Prisma)
 - `@the-new-fuse/core-auth` - Authentication and authorization
 - `@the-new-fuse/core-error-handling` - Error handling utilities
 - `@the-new-fuse/resource-registry` - Resource management
@@ -1246,7 +1243,6 @@ For issues and questions:
 ## Roadmap
 
 Future enhancements:
-
 - OpenTelemetry integration
 - GraphQL support
 - Enhanced vector database integration

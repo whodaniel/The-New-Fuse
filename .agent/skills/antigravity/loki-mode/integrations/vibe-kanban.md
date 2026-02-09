@@ -1,18 +1,16 @@
 # Vibe Kanban Integration
 
-Loki Mode can optionally integrate with
-[Vibe Kanban](https://github.com/BloopAI/vibe-kanban) to provide a visual
-dashboard for monitoring autonomous execution.
+Loki Mode can optionally integrate with [Vibe Kanban](https://github.com/BloopAI/vibe-kanban) to provide a visual dashboard for monitoring autonomous execution.
 
 ## Why Use Vibe Kanban with Loki Mode?
 
-| Feature             | Loki Mode Alone      | + Vibe Kanban          |
-| ------------------- | -------------------- | ---------------------- |
-| Task visualization  | File-based queues    | Visual kanban board    |
-| Progress monitoring | Log files            | Real-time dashboard    |
-| Manual intervention | Edit queue files     | Drag-and-drop tasks    |
-| Code review         | Automated 3-reviewer | + Visual diff review   |
-| Parallel agents     | Background subagents | Isolated git worktrees |
+| Feature | Loki Mode Alone | + Vibe Kanban |
+|---------|-----------------|---------------|
+| Task visualization | File-based queues | Visual kanban board |
+| Progress monitoring | Log files | Real-time dashboard |
+| Manual intervention | Edit queue files | Drag-and-drop tasks |
+| Code review | Automated 3-reviewer | + Visual diff review |
+| Parallel agents | Background subagents | Isolated git worktrees |
 
 ## Setup
 
@@ -36,7 +34,7 @@ Or create `.loki/config/integrations.yaml`:
 ```yaml
 vibe-kanban:
   enabled: true
-  sync_interval: 30 # seconds
+  sync_interval: 30  # seconds
   export_path: ~/.vibe-kanban/loki-tasks/
 ```
 
@@ -81,17 +79,17 @@ Loki Mode exports tasks in Vibe Kanban compatible format:
 
 ### Mapping Loki Phases to Kanban Columns
 
-| Loki Phase     | Kanban Column |
-| -------------- | ------------- |
-| BOOTSTRAP      | Backlog       |
-| DISCOVERY      | Planning      |
-| ARCHITECTURE   | Planning      |
-| INFRASTRUCTURE | In Progress   |
-| DEVELOPMENT    | In Progress   |
-| QA             | Review        |
-| DEPLOYMENT     | Deploying     |
-| BUSINESS_OPS   | Done          |
-| GROWTH         | Done          |
+| Loki Phase | Kanban Column |
+|------------|---------------|
+| BOOTSTRAP | Backlog |
+| DISCOVERY | Planning |
+| ARCHITECTURE | Planning |
+| INFRASTRUCTURE | In Progress |
+| DEVELOPMENT | In Progress |
+| QA | Review |
+| DEPLOYMENT | Deploying |
+| BUSINESS_OPS | Done |
+| GROWTH | Done |
 
 ## Export Script
 
@@ -167,31 +165,26 @@ done
 ## Benefits of Combined Usage
 
 ### 1. Visual Progress Tracking
-
 See all active Loki agents as tasks moving across your kanban board.
 
 ### 2. Safe Isolation
-
-Vibe Kanban runs each agent in isolated git worktrees, perfect for Loki's
-parallel development.
+Vibe Kanban runs each agent in isolated git worktrees, perfect for Loki's parallel development.
 
 ### 3. Human-in-the-Loop Option
-
 Pause autonomous execution, review changes visually, then resume.
 
 ### 4. Multi-Project Dashboard
-
 If running Loki Mode on multiple projects, see all in one Vibe Kanban instance.
 
 ## Comparison: When to Use What
 
-| Scenario                        | Recommendation                    |
-| ------------------------------- | --------------------------------- |
-| Fully autonomous, no monitoring | Loki Mode + Wrapper only          |
-| Need visual progress dashboard  | Add Vibe Kanban                   |
-| Want manual task prioritization | Use Vibe Kanban to reorder        |
-| Code review before merge        | Use Vibe Kanban's diff viewer     |
-| Multiple concurrent PRDs        | Vibe Kanban for project switching |
+| Scenario | Recommendation |
+|----------|----------------|
+| Fully autonomous, no monitoring | Loki Mode + Wrapper only |
+| Need visual progress dashboard | Add Vibe Kanban |
+| Want manual task prioritization | Use Vibe Kanban to reorder |
+| Code review before merge | Use Vibe Kanban's diff viewer |
+| Multiple concurrent PRDs | Vibe Kanban for project switching |
 
 ## Future Integration Ideas
 

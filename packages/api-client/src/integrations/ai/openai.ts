@@ -1,6 +1,6 @@
-import { ApiConfig } from '../../config/ApiConfig';
 import { ApiClient } from '../../core/ApiClient';
-import { AuthType, Integration, IntegrationConfig, IntegrationType } from '../types';
+import { ApiConfig } from '../../config/ApiConfig';
+import { Integration, IntegrationType, IntegrationConfig, AuthType } from '../types';
 
 /**
  * OpenAI integration configuration
@@ -69,7 +69,7 @@ export class OpenAIIntegration implements Integration {
     if (config.apiKey) {
       apiConfig.headers = {
         ...apiConfig.headers,
-        Authorization: `Bearer ${config.apiKey}`,
+        'Authorization': `Bearer ${config.apiKey}`,
       };
     }
     // Add Organization header if provided
@@ -95,13 +95,8 @@ export class OpenAIIntegration implements Integration {
       return true;
     } catch (error) {
       this.isConnected = false;
-      console.error(
-        `OpenAI connection error: ${error instanceof Error ? error.message : String(error)}`,
-        (error as any).response?.data
-      );
-      throw new Error(
-        `Failed to connect to OpenAI: ${error instanceof Error ? error.message : String(error)}`
-      );
+      console.error(`OpenAI connection error: ${(error instanceof Error ? error.message : String(error))}`, (error as any).response?.data);
+      throw new Error(`Failed to connect to OpenAI: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -119,8 +114,8 @@ export class OpenAIIntegration implements Integration {
    */
   async execute(action: string, params: Record<string, any>): Promise<any> {
     if (!this.isConnected) {
-      // Allow connection attempt if not connected
-      if (action === 'connect') {
+       // Allow connection attempt if not connected
+       if (action === 'connect') {
         return this.connect();
       }
       throw new Error('Not connected to OpenAI. Call connect() first.');
@@ -154,11 +149,7 @@ export class OpenAIIntegration implements Integration {
   /**
    * Create a chat completion
    */
-  private async createChatCompletion(
-    model: string,
-    messages: any[],
-    options?: Record<string, any>
-  ): Promise<any> {
+  private async createChatCompletion(model: string, messages: any[], options?: Record<string, any>): Promise<any> {
     if (!messages || messages.length === 0) {
       throw new Error('Messages array must be provided for chat completion.');
     }
@@ -171,16 +162,14 @@ export class OpenAIIntegration implements Integration {
       ...options, // Spread other potential options like top_p, stream, etc.
     };
     // Remove undefined values to avoid sending them in the payload
-    Object.keys(payload).forEach((key) => payload[key] === undefined && delete payload[key]);
+    Object.keys(payload).forEach(key => payload[key] === undefined && delete payload[key]);
+
 
     try {
       return await this.apiClient.post('/chat/completions', payload);
     } catch (error) {
       if (error instanceof Error) {
-        console.error(
-          `OpenAI chat completion error for model ${model}: ${error.message}`,
-          (error as any).response?.data
-        );
+        console.error(`OpenAI chat completion error for model ${model}: ${error.message}`, (error as any).response?.data);
         throw new Error(`Failed to create chat completion: ${error.message}`);
       } else {
         console.error(`OpenAI chat completion error for model ${model}: ${String(error)}`, error);
@@ -192,12 +181,8 @@ export class OpenAIIntegration implements Integration {
   /**
    * Create a legacy completion
    */
-  private async createCompletion(
-    model: string,
-    prompt: string,
-    options?: Record<string, any>
-  ): Promise<any> {
-    if (!prompt) {
+  private async createCompletion(model: string, prompt: string, options?: Record<string, any>): Promise<any> {
+     if (!prompt) {
       throw new Error('Prompt must be provided for completion.');
     }
     const payload: Record<string, any> = {
@@ -207,16 +192,13 @@ export class OpenAIIntegration implements Integration {
       temperature: options?.temperature ?? this.config.defaultTemperature ?? 0.7,
       ...options,
     };
-    Object.keys(payload).forEach((key) => payload[key] === undefined && delete payload[key]);
+    Object.keys(payload).forEach(key => payload[key] === undefined && delete payload[key]);
 
     try {
       return await this.apiClient.post('/completions', payload);
     } catch (error) {
       if (error instanceof Error) {
-        console.error(
-          `OpenAI completion error for model ${model}: ${error.message}`,
-          (error as any).response?.data
-        );
+        console.error(`OpenAI completion error for model ${model}: ${error.message}`, (error as any).response?.data);
         throw new Error(`Failed to create completion: ${error.message}`);
       } else {
         console.error(`OpenAI completion error for model ${model}: ${String(error)}`, error);
@@ -229,7 +211,7 @@ export class OpenAIIntegration implements Integration {
    * Create an embedding
    */
   private async createEmbedding(model: string, input: string | string[]): Promise<any> {
-    if (!input) {
+     if (!input) {
       throw new Error('Input must be provided for embedding.');
     }
     const payload = { model, input };
@@ -238,10 +220,7 @@ export class OpenAIIntegration implements Integration {
       return await this.apiClient.post('/embeddings', payload);
     } catch (error) {
       if (error instanceof Error) {
-        console.error(
-          `OpenAI embedding error for model ${model}: ${error.message}`,
-          (error as any).response?.data
-        );
+        console.error(`OpenAI embedding error for model ${model}: ${error.message}`, (error as any).response?.data);
         throw new Error(`Failed to create embedding: ${error.message}`);
       } else {
         console.error(`OpenAI embedding error for model ${model}: ${String(error)}`, error);
@@ -250,7 +229,7 @@ export class OpenAIIntegration implements Integration {
     }
   }
 
-  /**
+   /**
    * List available models
    */
   private async listModels(): Promise<any> {
@@ -266,6 +245,7 @@ export class OpenAIIntegration implements Integration {
       }
     }
   }
+
 
   /**
    * Get metadata about this integration
@@ -299,8 +279,7 @@ export function createOpenAIIntegration(config: Partial<OpenAIConfig> = {}): Ope
     id: 'openai',
     name: 'OpenAI',
     type: IntegrationType.AI,
-    description:
-      'Access powerful AI models like GPT-4 and GPT-3.5 for various natural language tasks.',
+    description: 'Access powerful AI models like GPT-4 and GPT-3.5 for various natural language tasks.',
     baseUrl: 'https://api.openai.com/v1',
     authType: AuthType.API_KEY,
     apiVersion: 'v1',

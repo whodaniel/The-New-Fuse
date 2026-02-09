@@ -12,14 +12,14 @@ export enum TaskStatus {
   CANCELLED = 'cancelled',
   TODO = 'todo',
   RUNNING = 'running',
-  DONE = 'done',
+  DONE = 'done'
 }
 
 export enum TaskPriority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical',
+  CRITICAL = 'critical'
 }
 
 export enum TaskType {
@@ -34,7 +34,7 @@ export enum TaskType {
   RESEARCH = 'research',
   ANALYSIS = 'analysis',
   ACTION = 'action',
-  INTEGRATION = 'integration',
+  INTEGRATION = 'integration'
 }
 
 // Workflow related enums
@@ -48,7 +48,7 @@ export enum WorkflowStatus {
   PAUSED = 'paused',
   STOPPED = 'stopped',
   ACTIVE = 'active',
-  DRAFT = 'DRAFT', // Add missing DRAFT status
+  DRAFT = 'DRAFT' // Add missing DRAFT status
 }
 
 export enum WorkflowStepType {
@@ -70,7 +70,7 @@ export enum WorkflowStepType {
   DATA_FLOW = 'data_flow',
   DOCUMENTATION = 'documentation',
   REPORT = 'report',
-  ANALYZE = 'analyze',
+  ANALYZE = 'analyze'
 }
 
 // Analysis related enums
@@ -80,7 +80,7 @@ export enum AnalysisType {
   PERFORMANCE = 'performance',
   CODE_QUALITY = 'code_quality',
   CUSTOM = 'custom',
-  SECURITY_SCAN = 'security_scan',
+  SECURITY_SCAN = 'security_scan'
 }
 
 export enum AnalysisStatus {
@@ -89,14 +89,14 @@ export enum AnalysisStatus {
   FAILED = 'failed',
   PENDING = 'pending',
   RUNNING = 'running',
-  COMPLETED = 'completed',
+  COMPLETED = 'completed'
 }
 
 export enum Severity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical',
+  CRITICAL = 'critical'
 }
 
 // Security related enums
@@ -104,7 +104,7 @@ export enum SecuritySeverity {
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL',
+  CRITICAL = 'CRITICAL'
 }
 
 export enum FeatureStage {
@@ -114,7 +114,7 @@ export enum FeatureStage {
   TESTING = 'TESTING',
   DEPLOYMENT = 'DEPLOYMENT',
   MONITORING = 'MONITORING',
-  DEPLOYED = 'DEPLOYED',
+  DEPLOYED = 'DEPLOYED'
 }
 
 export enum StateEventType {
@@ -124,7 +124,7 @@ export enum StateEventType {
   SNAPSHOT_CREATED = 'state.snapshot.created',
   TRANSACTION_RECORDED = 'state.transaction.recorded',
   SYNC_STARTED = 'state.sync.started',
-  SYNC_COMPLETED = 'state.sync.completed',
+  SYNC_COMPLETED = 'state.sync.completed'
 }
 
 // Communication related enums
@@ -142,14 +142,14 @@ export enum MessageType {
   HEARTBEAT = 'heartbeat',
   INFO = 'info',
   WARNING = 'warning',
-  TEXT = 'text',
+  TEXT = 'text'
 }
 
 export enum Priority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical',
+  CRITICAL = 'critical'
 }
 
 // Error related enums
@@ -157,7 +157,7 @@ export enum ErrorSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical',
+  CRITICAL = 'critical'
 }
 
 // Feature/Suggestion related enums
@@ -174,14 +174,14 @@ export enum SuggestionStatus {
   CLOSED = 'CLOSED',
 
   // Legacy statuses (kept for backward compatibility)
-  NEW = 'new',
+  NEW = 'new'
 }
 
 export enum SuggestionPriority {
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL',
+  CRITICAL = 'CRITICAL'
 }
 
 // Agent related enums
@@ -195,7 +195,7 @@ export enum AgentStatus {
   INITIALIZING = 'INITIALIZING',
   READY = 'READY',
   TERMINATED = 'TERMINATED',
-  ARCHIVED = 'ARCHIVED',
+  ARCHIVED = 'ARCHIVED'
 }
 
 export enum AgentType {
@@ -207,7 +207,7 @@ export enum AgentType {
   ANALYSIS = 'ANALYSIS',
   CONVERSATIONAL = 'CONVERSATIONAL',
   IDE_EXTENSION = 'IDE_EXTENSION',
-  API = 'API',
+  API = 'API'
 }
 
 export enum AgentRole {
@@ -216,7 +216,7 @@ export enum AgentRole {
   REVIEWER = 'reviewer',
   ARCHITECT = 'architect',
   TESTER = 'tester',
-  DOCUMENTER = 'documenter',
+  DOCUMENTER = 'documenter'
 }
 
 export enum AgentCapability {
@@ -256,17 +256,17 @@ export enum AgentCapability {
   RESEARCH = 'research',
   ANALYSIS = 'analysis',
   INTEGRATION = 'integration',
-
+  
   // Data and automation capabilities
   DATA_ANALYSIS = 'data_analysis',
   AUTOMATION = 'automation',
-  API_INTEGRATION = 'api_integration',
+  API_INTEGRATION = 'api_integration'
 }
 
 export enum AgentFramework {
   VSCODE = 'vscode',
   WEBIDE = 'webide',
-  CLI = 'cli',
+  CLI = 'cli'
 }
 
 // Notification related enums
@@ -279,21 +279,21 @@ export enum NotificationType {
   USER = 'user',
   TASK = 'task',
   WORKFLOW = 'workflow',
-  AGENT = 'agent',
+  AGENT = 'agent'
 }
 
 export enum NotificationPriority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical',
+  CRITICAL = 'critical'
 }
 
 export enum NotificationStatus {
   UNREAD = 'unread',
   READ = 'read',
   ARCHIVED = 'archived',
-  DELETED = 'deleted',
+  DELETED = 'deleted'
 }
 
 // Duplicate FeatureStage enum removed from line ~222
@@ -301,28 +301,28 @@ export enum NotificationStatus {
 export enum ListingType {
   SALE = 'sale',
   AUCTION = 'auction',
-  LEASE = 'lease',
+  LEASE = 'lease'
 }
 
 export enum ListingStatus {
   ACTIVE = 'active',
   SOLD = 'sold',
   CANCELLED = 'cancelled',
-  EXPIRED = 'expired',
+  EXPIRED = 'expired'
 }
 
 export enum TransactionStatus {
   PENDING = 'pending',
   COMPLETED = 'completed',
   FAILED = 'failed',
-  REFUNDED = 'refunded',
+  REFUNDED = 'refunded'
 }
 
 export enum PaymentMethod {
   ETH = 'eth',
   SOL = 'sol',
   USDC = 'usdc',
-  CUSTOM_TOKEN = 'custom_token',
+  CUSTOM_TOKEN = 'custom_token'
 }
 
 export enum EventType {
@@ -330,5 +330,5 @@ export enum EventType {
   TASK_UPDATED = 'task_updated',
   TASK_COMPLETED = 'task_completed',
   AGENT_STATUS_CHANGED = 'agent_status_changed',
-  SYSTEM_ERROR = 'system_error',
+  SYSTEM_ERROR = 'system_error'
 }

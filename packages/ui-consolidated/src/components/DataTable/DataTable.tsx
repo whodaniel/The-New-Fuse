@@ -53,4 +53,5 @@ function DataTable({ data, columns, className = '', onRowClick }: DataTableProps
   );
 }
 
-export { DataTable, DataTable as Table };
+export { DataTable };
+export { DataTable as Table };

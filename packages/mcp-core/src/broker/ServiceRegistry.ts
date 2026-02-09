@@ -1,14 +1,14 @@
 /**
  * Service Registry Implementation
- *
+ * 
  * Manages service registration, discovery, and lifecycle with support for
  * both in-memory and persistent storage backends.
  */
 
 import { EventEmitter } from 'events';
-import { MCPServiceInfo, RegistryConfig, ServiceQuery } from '../types';
+import { MCPServiceInfo, ServiceQuery, RegistryConfig } from '../types';
 import { ServiceStatus } from '../types/common';
-import { JSONRPCErrorCode, MCPErrorClass, MCPErrorCode } from '../types/error';
+import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
 
 /**
  * Service Registry class for managing MCP service registration and discovery
@@ -82,7 +82,10 @@ export class ServiceRegistry extends EventEmitter {
    */
   async register(service: MCPServiceInfo): Promise<void> {
     if (!this.isStarted) {
-      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Service registry is not started');
+      throw new MCPErrorClass(
+        MCPErrorCode.SERVICE_UNAVAILABLE,
+        'Service registry is not started'
+      );
     }
 
     // Set registration timestamp
@@ -90,7 +93,7 @@ export class ServiceRegistry extends EventEmitter {
       ...service,
       registeredAt: new Date(),
       lastHeartbeat: new Date(),
-      status: service.status || ServiceStatus.ONLINE,
+      status: service.status || ServiceStatus.ONLINE
     };
 
     // Store service
@@ -110,12 +113,18 @@ export class ServiceRegistry extends EventEmitter {
    */
   async unregister(serviceId: string): Promise<void> {
     if (!this.isStarted) {
-      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Service registry is not started');
+      throw new MCPErrorClass(
+        MCPErrorCode.SERVICE_UNAVAILABLE,
+        'Service registry is not started'
+      );
     }
 
     const service = this.services.get(serviceId);
     if (!service) {
-      throw new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, `Service not found: ${serviceId}`);
+      throw new MCPErrorClass(
+        MCPErrorCode.RESOURCE_NOT_FOUND,
+        `Service not found: ${serviceId}`
+      );
     }
 
     // Clear TTL timer
@@ -137,7 +146,10 @@ export class ServiceRegistry extends EventEmitter {
    */
   async get(serviceId: string): Promise<MCPServiceInfo | null> {
     if (!this.isStarted) {
-      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Service registry is not started');
+      throw new MCPErrorClass(
+        MCPErrorCode.SERVICE_UNAVAILABLE,
+        'Service registry is not started'
+      );
     }
 
     return this.services.get(serviceId) || null;
@@ -148,7 +160,10 @@ export class ServiceRegistry extends EventEmitter {
    */
   async getAll(): Promise<MCPServiceInfo[]> {
     if (!this.isStarted) {
-      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Service registry is not started');
+      throw new MCPErrorClass(
+        MCPErrorCode.SERVICE_UNAVAILABLE,
+        'Service registry is not started'
+      );
     }
 
     return Array.from(this.services.values());
@@ -159,17 +174,23 @@ export class ServiceRegistry extends EventEmitter {
    */
   async update(serviceId: string, service: MCPServiceInfo): Promise<void> {
     if (!this.isStarted) {
-      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Service registry is not started');
+      throw new MCPErrorClass(
+        MCPErrorCode.SERVICE_UNAVAILABLE,
+        'Service registry is not started'
+      );
     }
 
     if (!this.services.has(serviceId)) {
-      throw new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, `Service not found: ${serviceId}`);
+      throw new MCPErrorClass(
+        MCPErrorCode.RESOURCE_NOT_FOUND,
+        `Service not found: ${serviceId}`
+      );
     }
 
     // Update service with new heartbeat timestamp
     const updatedService: MCPServiceInfo = {
       ...service,
-      lastHeartbeat: new Date(),
+      lastHeartbeat: new Date()
     };
 
     this.services.set(serviceId, updatedService);
@@ -187,45 +208,51 @@ export class ServiceRegistry extends EventEmitter {
    */
   async discover(query: ServiceQuery): Promise<MCPServiceInfo[]> {
     if (!this.isStarted) {
-      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Service registry is not started');
+      throw new MCPErrorClass(
+        MCPErrorCode.SERVICE_UNAVAILABLE,
+        'Service registry is not started'
+      );
     }
 
     let services = Array.from(this.services.values());
 
     // Apply filters
     if (query.name) {
-      services = services.filter((service) =>
+      services = services.filter(service => 
         service.name.toLowerCase().includes(query.name!.toLowerCase())
       );
     }
 
     if (query.capability) {
-      services = services.filter((service) => service.capabilities.includes(query.capability!));
+      services = services.filter(service =>
+        service.capabilities.includes(query.capability!)
+      );
     }
 
     if (query.resource) {
-      services = services.filter((service) =>
-        service.resources.some(
-          (resource) =>
-            resource.name.toLowerCase().includes(query.resource!.toLowerCase()) ||
-            resource.uri.toLowerCase().includes(query.resource!.toLowerCase())
+      services = services.filter(service =>
+        service.resources.some(resource => 
+          resource.name.toLowerCase().includes(query.resource!.toLowerCase()) ||
+          resource.uri.toLowerCase().includes(query.resource!.toLowerCase())
         )
       );
     }
 
     if (query.tool) {
-      services = services.filter((service) =>
-        service.tools.some((tool) => tool.name.toLowerCase().includes(query.tool!.toLowerCase()))
+      services = services.filter(service =>
+        service.tools.some(tool => 
+          tool.name.toLowerCase().includes(query.tool!.toLowerCase())
+        )
       );
     }
 
     if (query.status) {
-      services = services.filter((service) => service.status === query.status);
+      services = services.filter(service => service.status === query.status);
     }
 
     if (query.tags && query.tags.length > 0) {
-      services = services.filter(
-        (service) => service.tags && query.tags!.some((tag) => service.tags!.includes(tag))
+      services = services.filter(service =>
+        service.tags && query.tags!.some(tag => service.tags!.includes(tag))
       );
     }
 
@@ -257,12 +284,18 @@ export class ServiceRegistry extends EventEmitter {
    */
   async heartbeat(serviceId: string): Promise<void> {
     if (!this.isStarted) {
-      throw new MCPErrorClass(MCPErrorCode.SERVICE_UNAVAILABLE, 'Service registry is not started');
+      throw new MCPErrorClass(
+        MCPErrorCode.SERVICE_UNAVAILABLE,
+        'Service registry is not started'
+      );
     }
 
     const service = this.services.get(serviceId);
     if (!service) {
-      throw new MCPErrorClass(MCPErrorCode.RESOURCE_NOT_FOUND, `Service not found: ${serviceId}`);
+      throw new MCPErrorClass(
+        MCPErrorCode.RESOURCE_NOT_FOUND,
+        `Service not found: ${serviceId}`
+      );
     }
 
     // Update heartbeat timestamp
@@ -317,27 +350,22 @@ export class ServiceRegistry extends EventEmitter {
    */
   getStatistics() {
     const services = Array.from(this.services.values());
-    const statusCounts = services.reduce(
-      (acc, service) => {
-        acc[service.status] = (acc[service.status] || 0) + 1;
-        return acc;
-      },
-      {} as Record<ServiceStatus, number>
-    );
+    const statusCounts = services.reduce((acc, service) => {
+      acc[service.status] = (acc[service.status] || 0) + 1;
+      return acc;
+    }, {} as Record<ServiceStatus, number>);
 
     return {
       totalServices: services.length,
       statusCounts,
-      oldestService: services.reduce(
-        (oldest, service) =>
-          !oldest || service.registeredAt < oldest.registeredAt ? service : oldest,
+      oldestService: services.reduce((oldest, service) => 
+        !oldest || service.registeredAt < oldest.registeredAt ? service : oldest, 
         null as MCPServiceInfo | null
       ),
-      newestService: services.reduce(
-        (newest, service) =>
-          !newest || service.registeredAt > newest.registeredAt ? service : newest,
+      newestService: services.reduce((newest, service) => 
+        !newest || service.registeredAt > newest.registeredAt ? service : newest, 
         null as MCPServiceInfo | null
-      ),
+      )
     };
   }
 
@@ -374,10 +402,10 @@ export class ServiceRegistry extends EventEmitter {
    */
   private applyGenericFilter(services: MCPServiceInfo[], filter: any): MCPServiceInfo[] {
     const { field, operator, value } = filter;
-
-    return services.filter((service) => {
+    
+    return services.filter(service => {
       let fieldValue: any;
-
+      
       // Get field value from service
       switch (field) {
         case 'name':
@@ -412,7 +440,7 @@ export class ServiceRegistry extends EventEmitter {
           fieldValue = service.metadata[field];
           break;
       }
-
+      
       // Apply operator
       switch (operator) {
         case 'eq':
@@ -454,7 +482,7 @@ export class ServiceRegistry extends EventEmitter {
       for (const sort of sortConfig) {
         const field = sort.field;
         const direction = sort.direction || 'asc';
-
+        
         let aValue: any;
         let bValue: any;
 
@@ -511,16 +539,15 @@ export class ServiceRegistry extends EventEmitter {
    * Check if a service has the required capabilities
    */
   hasCapabilities(service: MCPServiceInfo, requiredCapabilities: string[]): boolean {
-    return requiredCapabilities.every((capability) => service.capabilities.includes(capability));
+    return requiredCapabilities.every(capability => 
+      service.capabilities.includes(capability)
+    );
   }
 
   /**
    * Check capability compatibility between services
    */
-  checkCapabilityCompatibility(
-    serviceA: MCPServiceInfo,
-    serviceB: MCPServiceInfo
-  ): {
+  checkCapabilityCompatibility(serviceA: MCPServiceInfo, serviceB: MCPServiceInfo): {
     compatible: boolean;
     commonCapabilities: string[];
     missingInA: string[];
@@ -534,31 +561,30 @@ export class ServiceRegistry extends EventEmitter {
   } {
     const capabilitiesA = new Set(serviceA.capabilities);
     const capabilitiesB = new Set(serviceB.capabilities);
-
-    const commonCapabilities = serviceA.capabilities.filter((cap) => capabilitiesB.has(cap));
-    const missingInA = serviceB.capabilities.filter((cap) => !capabilitiesA.has(cap));
-    const missingInB = serviceA.capabilities.filter((cap) => !capabilitiesB.has(cap));
-
+    
+    const commonCapabilities = serviceA.capabilities.filter(cap => capabilitiesB.has(cap));
+    const missingInA = serviceB.capabilities.filter(cap => !capabilitiesA.has(cap));
+    const missingInB = serviceA.capabilities.filter(cap => !capabilitiesB.has(cap));
+    
     // Calculate compatibility score
     const totalCapabilities = new Set([...serviceA.capabilities, ...serviceB.capabilities]).size;
-    const compatibilityScore =
-      totalCapabilities > 0 ? commonCapabilities.length / totalCapabilities : 0;
-
+    const compatibilityScore = totalCapabilities > 0 ? commonCapabilities.length / totalCapabilities : 0;
+    
     // Analyze resource compatibility
-    const resourcesA = new Set(serviceA.resources.map((r) => r.name));
-    const resourcesB = new Set(serviceB.resources.map((r) => r.name));
-    const commonResources = serviceA.resources.filter((r) => resourcesB.has(r.name));
+    const resourcesA = new Set(serviceA.resources.map(r => r.name));
+    const resourcesB = new Set(serviceB.resources.map(r => r.name));
+    const commonResources = serviceA.resources.filter(r => resourcesB.has(r.name));
     const resourceCompatibility = commonResources.length > 0;
-
+    
     // Analyze tool compatibility
-    const toolsA = new Set(serviceA.tools.map((t) => t.name));
-    const toolsB = new Set(serviceB.tools.map((t) => t.name));
-    const commonTools = serviceA.tools.filter((t) => toolsB.has(t.name));
+    const toolsA = new Set(serviceA.tools.map(t => t.name));
+    const toolsB = new Set(serviceB.tools.map(t => t.name));
+    const commonTools = serviceA.tools.filter(t => toolsB.has(t.name));
     const toolCompatibility = commonTools.length > 0;
-
+    
     // Analyze version compatibility (simple semantic version check)
     const versionCompatibility = this.checkVersionCompatibility(serviceA.version, serviceB.version);
-
+    
     return {
       compatible: commonCapabilities.length > 0,
       commonCapabilities,
@@ -568,8 +594,8 @@ export class ServiceRegistry extends EventEmitter {
       analysis: {
         resourceCompatibility,
         toolCompatibility,
-        versionCompatibility,
-      },
+        versionCompatibility
+      }
     };
   }
 
@@ -582,10 +608,10 @@ export class ServiceRegistry extends EventEmitter {
         const parts = version.split('.').map(Number);
         return { major: parts[0] || 0, minor: parts[1] || 0, patch: parts[2] || 0 };
       };
-
+      
       const vA = parseVersion(versionA);
       const vB = parseVersion(versionB);
-
+      
       // Compatible if major versions match
       return vA.major === vB.major;
     } catch {
@@ -599,12 +625,12 @@ export class ServiceRegistry extends EventEmitter {
    */
   async findCompatibleServices(targetService: MCPServiceInfo): Promise<MCPServiceInfo[]> {
     const allServices = await this.getAll();
-
-    return allServices.filter((service) => {
+    
+    return allServices.filter(service => {
       if (service.id === targetService.id) {
         return false; // Don't include the target service itself
       }
-
+      
       const compatibility = this.checkCapabilityCompatibility(service, targetService);
       return compatibility.compatible;
     });
@@ -613,28 +639,26 @@ export class ServiceRegistry extends EventEmitter {
   /**
    * Advanced service discovery with capability matching
    */
-  async discoverWithCapabilityMatching(
-    query: ServiceQuery & {
-      requiredCapabilities?: string[];
-      compatibleWith?: string;
-      minHealthScore?: number;
-      maxAge?: number;
-      capabilityMatchMode?: 'all' | 'any' | 'exact';
-      includePartialMatches?: boolean;
-    }
-  ): Promise<MCPServiceInfo[]> {
+  async discoverWithCapabilityMatching(query: ServiceQuery & {
+    requiredCapabilities?: string[];
+    compatibleWith?: string;
+    minHealthScore?: number;
+    maxAge?: number;
+    capabilityMatchMode?: 'all' | 'any' | 'exact';
+    includePartialMatches?: boolean;
+  }): Promise<MCPServiceInfo[]> {
     let services = await this.discover(query);
-
+    
     // Filter by required capabilities with different matching modes
     if (query.requiredCapabilities && query.requiredCapabilities.length > 0) {
       const matchMode = query.capabilityMatchMode || 'all';
-
-      services = services.filter((service) => {
+      
+      services = services.filter(service => {
         switch (matchMode) {
           case 'all':
             return this.hasCapabilities(service, query.requiredCapabilities!);
           case 'any':
-            return query.requiredCapabilities!.some((cap) => service.capabilities.includes(cap));
+            return query.requiredCapabilities!.some(cap => service.capabilities.includes(cap));
           case 'exact':
             return this.hasExactCapabilities(service, query.requiredCapabilities!);
           default:
@@ -642,12 +666,12 @@ export class ServiceRegistry extends EventEmitter {
         }
       });
     }
-
+    
     // Filter by compatibility with another service
     if (query.compatibleWith) {
       const targetService = await this.get(query.compatibleWith);
       if (targetService) {
-        services = services.filter((service) => {
+        services = services.filter(service => {
           const compatibility = this.checkCapabilityCompatibility(service, targetService);
           if (query.includePartialMatches) {
             return compatibility.compatibilityScore > 0;
@@ -656,21 +680,23 @@ export class ServiceRegistry extends EventEmitter {
         });
       }
     }
-
+    
     // Filter by minimum health score
     if (query.minHealthScore !== undefined) {
-      services = services.filter((service) => (service.healthScore || 0) >= query.minHealthScore!);
+      services = services.filter(service => 
+        (service.healthScore || 0) >= query.minHealthScore!
+      );
     }
-
+    
     // Filter by maximum age
     if (query.maxAge !== undefined) {
       const now = new Date();
-      services = services.filter((service) => {
+      services = services.filter(service => {
         const age = now.getTime() - service.registeredAt.getTime();
         return age <= query.maxAge!;
       });
     }
-
+    
     return services;
   }
 
@@ -680,11 +706,9 @@ export class ServiceRegistry extends EventEmitter {
   private hasExactCapabilities(service: MCPServiceInfo, requiredCapabilities: string[]): boolean {
     const serviceCapabilities = new Set(service.capabilities);
     const requiredCapabilitiesSet = new Set(requiredCapabilities);
-
-    return (
-      serviceCapabilities.size === requiredCapabilitiesSet.size &&
-      [...serviceCapabilities].every((cap) => requiredCapabilitiesSet.has(cap))
-    );
+    
+    return serviceCapabilities.size === requiredCapabilitiesSet.size &&
+           [...serviceCapabilities].every(cap => requiredCapabilitiesSet.has(cap));
   }
 
   /**
@@ -709,75 +733,77 @@ export class ServiceRegistry extends EventEmitter {
       weightByHealth = true,
       weightByUsage = false,
       excludeTags = [],
-      includeTags = [],
+      includeTags = []
     } = options;
-
+    
     let recommendations: MCPServiceInfo[] = [];
-
+    
     // Find compatible services
     if (includeCompatible) {
       const compatible = await this.findCompatibleServices(currentService);
       recommendations.push(...compatible);
     }
-
+    
     // Find similar services (same capabilities)
     if (includeSimilar) {
       const similar = await this.discoverWithCapabilityMatching({
         requiredCapabilities: currentService.capabilities,
-        capabilityMatchMode: 'any',
+        capabilityMatchMode: 'any'
       });
-      recommendations.push(...similar.filter((s) => s.id !== currentService.id));
+      recommendations.push(...similar.filter(s => s.id !== currentService.id));
     }
-
+    
     // Remove duplicates
-    let uniqueRecommendations = recommendations.filter(
-      (service, index, self) => index === self.findIndex((s) => s.id === service.id)
+    let uniqueRecommendations = recommendations.filter((service, index, self) =>
+      index === self.findIndex(s => s.id === service.id)
     );
-
+    
     // Apply tag filters
     if (excludeTags.length > 0) {
-      uniqueRecommendations = uniqueRecommendations.filter(
-        (service) => !service.tags?.some((tag) => excludeTags.includes(tag))
+      uniqueRecommendations = uniqueRecommendations.filter(service =>
+        !service.tags?.some(tag => excludeTags.includes(tag))
       );
     }
-
+    
     if (includeTags.length > 0) {
-      uniqueRecommendations = uniqueRecommendations.filter((service) =>
-        service.tags?.some((tag) => includeTags.includes(tag))
+      uniqueRecommendations = uniqueRecommendations.filter(service =>
+        service.tags?.some(tag => includeTags.includes(tag))
       );
     }
-
+    
     // Calculate recommendation scores
-    const scoredRecommendations = uniqueRecommendations.map((service) => {
+    const scoredRecommendations = uniqueRecommendations.map(service => {
       let score = 0;
-
+      
       // Base compatibility score
       const compatibility = this.checkCapabilityCompatibility(currentService, service);
       score += compatibility.compatibilityScore * 0.4;
-
+      
       // Health score weight
       if (weightByHealth) {
         score += (service.healthScore || 0) * 0.3;
       }
-
+      
       // Usage weight (based on metadata if available)
       if (weightByUsage && service.metadata.usageCount) {
         const normalizedUsage = Math.min(service.metadata.usageCount / 1000, 1);
         score += normalizedUsage * 0.2;
       }
-
+      
       // Recency bonus (newer services get slight preference)
       const age = Date.now() - service.registeredAt.getTime();
       const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
-      const recencyScore = Math.max(0, 1 - age / maxAge);
+      const recencyScore = Math.max(0, 1 - (age / maxAge));
       score += recencyScore * 0.1;
-
+      
       return { service, score };
     });
-
+    
     // Sort by score (descending)
     scoredRecommendations.sort((a, b) => b.score - a.score);
-
-    return scoredRecommendations.slice(0, maxRecommendations).map((item) => item.service);
+    
+    return scoredRecommendations
+      .slice(0, maxRecommendations)
+      .map(item => item.service);
   }
 }

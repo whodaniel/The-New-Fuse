@@ -39,7 +39,7 @@ export class LocalAIDetectionService {
 
       // Start periodic detection
       this.detectionInterval = setInterval(() => {
-        this.detectAllProviders().catch((error) => {
+        this.detectAllProviders().catch(error => {
           logger.error('Error during periodic AI detection', error as Error);
         });
       }, this.detectionIntervalMs);
@@ -87,7 +87,7 @@ export class LocalAIDetectionService {
   }
 
   detectAvailableAIs(): LocalAIProvider[] {
-    return Array.from(this.providers.values()).filter((provider) => provider.isAvailable);
+    return Array.from(this.providers.values()).filter(provider => provider.isAvailable);
   }
 
   getAllProviders(): LocalAIProvider[] {
@@ -104,23 +104,19 @@ export class LocalAIDetectionService {
       isAvailable: false,
       lastChecked: new Date(),
     });
-
+    
     logger.info('Added AI provider', { name: provider.name, type: provider.type });
-
+    
     // Check availability immediately
-    this.checkProviderAvailability(provider)
-      .then((isAvailable) => {
-        const updatedProvider = this.providers.get(provider.name);
-        if (updatedProvider) {
-          updatedProvider.isAvailable = isAvailable;
-          updatedProvider.lastChecked = new Date();
-        }
-      })
-      .catch((error) => {
-        logger.error('Failed to check provider availability', error as Error, {
-          provider: provider.name,
-        });
-      });
+    this.checkProviderAvailability(provider).then(isAvailable => {
+      const updatedProvider = this.providers.get(provider.name);
+      if (updatedProvider) {
+        updatedProvider.isAvailable = isAvailable;
+        updatedProvider.lastChecked = new Date();
+      }
+    }).catch(error => {
+      logger.error('Failed to check provider availability', error as Error, { provider: provider.name });
+    });
   }
 
   removeProvider(name: string): boolean {
@@ -149,10 +145,7 @@ export class LocalAIDetectionService {
           return false;
       }
     } catch (error) {
-      logger.debug('Provider availability check failed', {
-        error: error as Error,
-        provider: provider.name,
-      });
+      logger.debug('Provider availability check failed', { error: error as Error, provider: provider.name });
       return false;
     }
   }
@@ -208,7 +201,7 @@ export class LocalAIDetectionService {
       },
     ];
 
-    defaultProviders.forEach((provider) => {
+    defaultProviders.forEach(provider => {
       this.providers.set(provider.name, {
         ...provider,
         isAvailable: false,
@@ -233,21 +226,18 @@ export class LocalAIDetectionService {
           provider.models = models;
         }
       } catch (error) {
-        logger.debug('Provider detection failed', {
-          error: error as Error,
-          provider: provider.name,
-        });
+        logger.debug('Provider detection failed', { error: error as Error, provider: provider.name });
         provider.isAvailable = false;
         provider.lastChecked = new Date();
       }
     });
 
     await Promise.allSettled(checkPromises);
-
-    const availableCount = providers.filter((p) => p.isAvailable).length;
-    logger.debug('AI provider detection completed', {
-      total: providers.length,
-      available: availableCount,
+    
+    const availableCount = providers.filter(p => p.isAvailable).length;
+    logger.debug('AI provider detection completed', { 
+      total: providers.length, 
+      available: availableCount 
     });
   }
 
@@ -352,7 +342,7 @@ export class LocalAIDetectionService {
           ...options.headers,
         },
       });
-
+      
       clearTimeout(timeoutId);
       return response;
     } catch (error) {
@@ -379,7 +369,7 @@ export class LocalAIDetectionService {
     }
 
     const startTime = Date.now();
-
+    
     try {
       const available = await this.checkProviderAvailability(provider);
       const models = available ? await this.getProviderModels(providerName) : [];
@@ -403,21 +393,18 @@ export class LocalAIDetectionService {
 
   public getProviderStats(): Record<string, any> {
     const providers = Array.from(this.providers.values());
-    const available = providers.filter((p) => p.isAvailable);
-    const byType = providers.reduce(
-      (acc, p) => {
-        acc[p.type] = (acc[p.type] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
+    const available = providers.filter(p => p.isAvailable);
+    const byType = providers.reduce((acc, p) => {
+      acc[p.type] = (acc[p.type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
     return {
       total: providers.length,
       available: available.length,
       unavailable: providers.length - available.length,
       byType,
-      lastCheck: Math.min(...providers.map((p) => p.lastChecked?.getTime() || 0)),
+      lastCheck: Math.min(...providers.map(p => p.lastChecked?.getTime() || 0)),
     };
   }
   /**
@@ -425,14 +412,14 @@ export class LocalAIDetectionService {
    */
   async detectAndCreateAgents(userId: string): Promise<any[]> {
     logger.info('Detecting and creating agents for user', { userId });
-
+    
     const availableProviders = this.detectAvailableAIs();
     const agents: any[] = [];
 
     for (const provider of availableProviders) {
       try {
         const models = await this.getProviderModels(provider.name);
-
+        
         const agentDto = {
           name: `${provider.name.charAt(0).toUpperCase() + provider.name.slice(1)} Agent`,
           type: provider.type,
@@ -450,14 +437,12 @@ export class LocalAIDetectionService {
             endpoint: provider.endpoint,
             localAI: true,
             models: models,
-          },
+          }
         };
 
         agents.push(agentDto);
       } catch (error) {
-        logger.error('Failed to create agent DTO for provider', error as Error, {
-          providerName: provider.name,
-        });
+        logger.error('Failed to create agent DTO for provider', error as Error, { providerName: provider.name });
       }
     }
 
@@ -469,14 +454,14 @@ export class LocalAIDetectionService {
    */
   async createDefaultSystemAgents(): Promise<any[]> {
     logger.info('Creating default system agents for all detected local AIs');
-
+    
     const availableProviders = this.detectAvailableAIs();
     const systemAgents: any[] = [];
 
     for (const provider of availableProviders) {
       try {
         const models = await this.getProviderModels(provider.name);
-
+        
         const systemAgentDto = {
           name: `System ${provider.name.charAt(0).toUpperCase() + provider.name.slice(1)} Agent`,
           type: provider.type,
@@ -496,14 +481,12 @@ export class LocalAIDetectionService {
             localAI: true,
             system: true,
             models: models,
-          },
+          }
         };
 
         systemAgents.push(systemAgentDto);
       } catch (error) {
-        logger.error('Failed to create system agent DTO for provider', error as Error, {
-          providerName: provider.name,
-        });
+        logger.error('Failed to create system agent DTO for provider', error as Error, { providerName: provider.name });
       }
     }
 
@@ -515,7 +498,7 @@ export class LocalAIDetectionService {
    */
   private getCapabilitiesForProvider(provider: LocalAIProvider): string[] {
     const baseCapabilities = ['chat', 'code_generation', 'analysis'];
-
+    
     switch (provider.type) {
       case 'ollama':
         return [...baseCapabilities, 'code_review', 'documentation'];
@@ -536,7 +519,7 @@ export class LocalAIDetectionService {
   private getSystemCapabilitiesForProvider(provider: LocalAIProvider): string[] {
     const systemCapabilities = ['task_execution', 'workflow', 'automation'];
     const providerCapabilities = this.getCapabilitiesForProvider(provider);
-
+    
     return [...systemCapabilities, ...providerCapabilities];
   }
 }

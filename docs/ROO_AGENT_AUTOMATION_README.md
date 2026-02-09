@@ -1,16 +1,12 @@
 # Roo Code Agent Automation System - The New Fuse Integration
 
-A comprehensive TypeScript system for automated creation and management of Roo
-Code AI agents, fully integrated with The New Fuse platform architecture.
+A comprehensive TypeScript system for automated creation and management of Roo Code AI agents, fully integrated with The New Fuse platform architecture.
 
 ## 🚀 Features
 
-- **Pre-defined Agent Templates**: 13+ specialized agent templates for different
-  development roles
-- **Team Configurations**: Ready-made team setups (fullstack, startup,
-  enterprise, etc.)
-- **MCP Integration**: Full Model Context Protocol support for extending
-  capabilities
+- **Pre-defined Agent Templates**: 13+ specialized agent templates for different development roles
+- **Team Configurations**: Ready-made team setups (fullstack, startup, enterprise, etc.)
+- **MCP Integration**: Full Model Context Protocol support for extending capabilities
 - **Multi-tenant Support**: Global and project-specific agent configurations
 - **REST API**: Complete NestJS-based API for programmatic access
 - **CLI Tool**: Interactive command-line interface for easy management
@@ -20,7 +16,6 @@ Code AI agents, fully integrated with The New Fuse platform architecture.
 ## 📋 Agent Templates
 
 ### Core Development Agents
-
 - **👨‍💻 Senior Developer** - Complex coding, architecture, code reviews
 - **🧪 QA Engineer** - Testing, automation, quality assurance
 - **⚙️ DevOps Engineer** - Infrastructure, CI/CD, cloud operations
@@ -33,7 +28,6 @@ Code AI agents, fully integrated with The New Fuse platform architecture.
 - **🗄️ Database Architect** - Database design, optimization, migrations
 
 ### The New Fuse Platform Specialists
-
 - **🔄 Workflow Orchestrator** - Multi-agent workflow coordination
 - **🔗 MCP Integration Specialist** - Protocol implementation, tool integration
 - **💬 Agent Communication Expert** - Inter-agent messaging, real-time sync
@@ -41,7 +35,6 @@ Code AI agents, fully integrated with The New Fuse platform architecture.
 ## 🏗️ Architecture Integration
 
 ### File Structure in The New Fuse
-
 ```
 src/
 ├── services/
@@ -62,8 +55,7 @@ src/
 
 ### 1. Add to The New Fuse Platform
 
-The system is designed to integrate seamlessly with your existing platform. Add
-the module to your main application:
+The system is designed to integrate seamlessly with your existing platform. Add the module to your main application:
 
 ```typescript
 // In your main app.module.ts
@@ -110,7 +102,6 @@ Add the TNF Agent Automation MCP server to your Roo Code configuration:
 ### REST API
 
 #### Create a Single Agent
-
 ```bash
 POST /api/roo-agents/agents
 {
@@ -126,7 +117,6 @@ POST /api/roo-agents/agents
 ```
 
 #### Create a Development Team
-
 ```bash
 POST /api/roo-agents/teams
 {
@@ -135,19 +125,16 @@ POST /api/roo-agents/teams
 ```
 
 #### List Available Templates
-
 ```bash
 GET /api/roo-agents/templates
 ```
 
 #### Get Active Agents
-
 ```bash
 GET /api/roo-agents/agents
 ```
 
 #### Update an Agent
-
 ```bash
 PUT /api/roo-agents/agents/senior-dev
 {
@@ -157,7 +144,6 @@ PUT /api/roo-agents/agents/senior-dev
 ```
 
 #### Delete an Agent
-
 ```bash
 DELETE /api/roo-agents/agents/senior-dev?isGlobal=true
 ```
@@ -165,13 +151,11 @@ DELETE /api/roo-agents/agents/senior-dev?isGlobal=true
 ### Command Line Interface
 
 #### Interactive Mode
-
 ```bash
 npx tsx src/scripts/roo-agent-cli.ts interactive
 ```
 
 #### Quick Commands
-
 ```bash
 # Create a single agent
 npx tsx src/scripts/roo-agent-cli.ts create-agent
@@ -205,11 +189,11 @@ const agent = await agentService.createAgent({
   templateKey: 'senior-developer',
   customizations: {
     name: 'Backend Specialist',
-    customInstructions: 'Focus on Node.js and database optimization',
+    customInstructions: 'Focus on Node.js and database optimization'
   },
   isGlobal: true,
   mcpEnabled: true,
-  autoStart: true,
+  autoStart: true
 });
 
 // Create a team
@@ -224,8 +208,7 @@ const stats = await agentService.getAgentStatistics();
 
 ### Using with Roo Code (via MCP)
 
-Once the MCP server is configured, you can interact with the agent automation
-system directly from Roo Code:
+Once the MCP server is configured, you can interact with the agent automation system directly from Roo Code:
 
 ```
 # In Roo Code chat
@@ -243,13 +226,11 @@ List all available agent templates and their capabilities
 ### Global vs Project-Specific Agents
 
 #### Global Agents
-
 - Stored in user's VS Code global settings
 - Available across all workspaces
 - Ideal for general-purpose agents
 
 #### Project-Specific Agents
-
 - Stored in `.roo/modes.json` in project root
 - Only available in specific project
 - Can be version controlled with the project
@@ -262,24 +243,24 @@ The system supports multiple MCP servers:
 ```typescript
 // Available MCP servers
 const MCP_SERVERS = {
-  context7: {
+  'context7': {
     name: 'context7',
     command: 'npx',
     args: ['-y', '@upstash/context7-mcp@latest'],
-    description: 'General-purpose server with database, web search, utilities',
+    description: 'General-purpose server with database, web search, utilities'
   },
-  git: {
+  'git': {
     name: 'git',
     command: 'npx',
     args: ['-y', '@modelcontextprotocol/server-git'],
-    description: 'Git operations server',
+    description: 'Git operations server'
   },
   'tnf-workflow': {
     name: 'tnf-workflow',
     command: 'node',
     args: ['../mcp/MCPWorkflowServer.js'],
-    description: 'The New Fuse workflow management',
-  },
+    description: 'The New Fuse workflow management'
+  }
 };
 ```
 
@@ -293,14 +274,14 @@ const API_PROFILES = {
     provider: 'anthropic',
     model: 'claude-3-sonnet',
     temperature: 0.3,
-    maxTokens: 4096,
+    maxTokens: 4096
   },
   'cost-effective': {
     provider: 'anthropic',
     model: 'claude-3-haiku',
     temperature: 0.4,
-    maxTokens: 2048,
-  },
+    maxTokens: 2048
+  }
 };
 ```
 
@@ -308,8 +289,7 @@ const API_PROFILES = {
 
 ### Event-Driven Integration
 
-The service emits events that can be consumed by other parts of The New Fuse
-platform:
+The service emits events that can be consumed by other parts of The New Fuse platform:
 
 ```typescript
 // Listen for agent creation events
@@ -332,15 +312,15 @@ Integrate with The New Fuse workflow system:
 // Example: Auto-create agents based on project type
 async function setupProjectAgents(projectType: string, projectPath: string) {
   const teamType = getTeamTypeForProject(projectType);
-
+  
   if (teamType) {
     const agents = await agentService.createDevelopmentTeam(teamType);
-
+    
     // Setup project-specific configurations
     for (const agent of agents) {
       await agentService.createProjectMode(agent, projectPath);
     }
-
+    
     return agents;
   }
 }
@@ -358,11 +338,11 @@ class IntegratedAgentService extends RooAgentAutomationService {
     private communicationService: RooCodeCommunication
   ) {
     super(mcpService);
-
+    
     // Setup communication event handlers
     this.setupCommunicationHandlers();
   }
-
+  
   private setupCommunicationHandlers() {
     this.communicationService.on('collaboration_request', async (request) => {
       if (request.action === 'create_agent') {
@@ -410,19 +390,19 @@ class MonitoredAgentService extends RooAgentAutomationService {
     super(mcpService);
     this.setupMetricsTracking();
   }
-
+  
   private setupMetricsTracking() {
     this.on('agent_created', (agent) => {
       this.metricsService.incrementCounter('agents.created', {
         template: agent.slug,
-        category: agent.categories?.[0] || 'unknown',
+        category: agent.categories?.[0] || 'unknown'
       });
     });
-
+    
     this.on('team_created', ({ teamType, agents }) => {
       this.metricsService.incrementCounter('teams.created', {
         type: teamType,
-        size: agents.length,
+        size: agents.length
       });
     });
   }
@@ -438,14 +418,11 @@ class MonitoredAgentService extends RooAgentAutomationService {
 const restrictedAgent = {
   groups: [
     'read',
-    [
-      'edit',
-      {
-        fileRegex: '\\.(test|spec)\\.(js|ts)$',
-        description: 'Test files only',
-      },
-    ],
-  ],
+    ['edit', {
+      fileRegex: '\\.(test|spec)\\.(js|ts)$',
+      description: 'Test files only'
+    }]
+  ]
 };
 ```
 
@@ -463,7 +440,7 @@ private validateAgentConfig(config: AgentTemplate): void {
   if (!config.name || !config.slug || !config.roleDefinition) {
     throw new Error('Invalid agent configuration: missing required fields');
   }
-
+  
   // Additional validation logic
 }
 ```
@@ -475,13 +452,11 @@ private validateAgentConfig(config: AgentTemplate): void {
 If you've been creating Roo Code agents manually:
 
 1. **Export existing configurations**:
-
    ```bash
    npx tsx src/scripts/roo-agent-cli.ts export-existing
    ```
 
 2. **Import into the system**:
-
    ```typescript
    await agentService.importAgent('./existing-agent.json');
    ```
@@ -501,7 +476,6 @@ If you've been creating Roo Code agents manually:
 ### Adding New Agent Templates
 
 1. **Define the template** in `roo-agent-templates.ts`:
-
    ```typescript
    'my-new-agent': {
      name: '🎯 My New Agent',
@@ -549,7 +523,6 @@ If you've been creating Roo Code agents manually:
 ### Common Issues
 
 #### 1. MCP Server Not Starting
-
 ```bash
 # Check MCP server configuration
 cat ~/.config/Code/User/mcp_settings.json
@@ -559,7 +532,6 @@ node dist/mcp/TNFAgentAutomationMCPServer.js
 ```
 
 #### 2. Agent Creation Fails
-
 ```bash
 # Check permissions
 ls -la ~/.config/Code/User/
@@ -569,7 +541,6 @@ ls -la .roo/
 ```
 
 #### 3. Communication Issues
-
 ```bash
 # Check Redis connection
 redis-cli ping
@@ -593,8 +564,7 @@ Logger.overrideLogger(['debug', 'error', 'log', 'verbose', 'warn']);
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for
-details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
@@ -605,6 +575,4 @@ details.
 
 ---
 
-For more information, support, or to contribute, please visit our
-[GitHub repository](https://github.com/your-org/the-new-fuse) or contact the
-development team.
+For more information, support, or to contribute, please visit our [GitHub repository](https://github.com/your-org/the-new-fuse) or contact the development team.

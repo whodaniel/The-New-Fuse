@@ -86,9 +86,9 @@ export class SyncPerformanceTelemetry {
       tags: {
         operation_type: metrics.operationType,
         success: metrics.success.toString(),
-        error_type: metrics.errorType || 'none',
+        error_type: metrics.errorType || 'none'
       },
-      tenantId: metrics.tenantId,
+      tenantId: metrics.tenantId
     });
 
     this.addMetric({
@@ -97,9 +97,9 @@ export class SyncPerformanceTelemetry {
       unit: 'bytes',
       timestamp: new Date(),
       tags: {
-        operation_type: metrics.operationType,
+        operation_type: metrics.operationType
       },
-      tenantId: metrics.tenantId,
+      tenantId: metrics.tenantId
     });
 
     this.addMetric({
@@ -108,9 +108,9 @@ export class SyncPerformanceTelemetry {
       unit: 'count',
       timestamp: new Date(),
       tags: {
-        operation_type: metrics.operationType,
+        operation_type: metrics.operationType
       },
-      tenantId: metrics.tenantId,
+      tenantId: metrics.tenantId
     });
 
     this.logger.debug('Sync operation recorded', {
@@ -118,7 +118,7 @@ export class SyncPerformanceTelemetry {
       duration: metrics.duration,
       success: metrics.success,
       resourceCount: metrics.resourceCount,
-      dataSize: metrics.dataSize,
+      dataSize: metrics.dataSize
     });
   }
 
@@ -133,9 +133,9 @@ export class SyncPerformanceTelemetry {
    * End timing a sync operation and record metrics
    */
   endOperation(
-    operationId: string,
-    operationType: string,
-    success: boolean,
+    operationId: string, 
+    operationType: string, 
+    success: boolean, 
     resourceCount: number = 0,
     dataSize: number = 0,
     tenantId?: string,
@@ -157,7 +157,7 @@ export class SyncPerformanceTelemetry {
       errorType,
       resourceCount,
       dataSize,
-      tenantId,
+      tenantId
     });
   }
 
@@ -172,7 +172,7 @@ export class SyncPerformanceTelemetry {
       value: metrics.cpuUsage,
       unit: 'percent',
       timestamp: new Date(),
-      tags: {},
+      tags: {}
     });
 
     this.addMetric({
@@ -180,7 +180,7 @@ export class SyncPerformanceTelemetry {
       value: metrics.memoryUsage,
       unit: 'bytes',
       timestamp: new Date(),
-      tags: {},
+      tags: {}
     });
 
     this.addMetric({
@@ -188,7 +188,7 @@ export class SyncPerformanceTelemetry {
       value: metrics.diskUsage,
       unit: 'percent',
       timestamp: new Date(),
-      tags: {},
+      tags: {}
     });
 
     this.addMetric({
@@ -196,7 +196,7 @@ export class SyncPerformanceTelemetry {
       value: metrics.networkLatency,
       unit: 'ms',
       timestamp: new Date(),
-      tags: {},
+      tags: {}
     });
 
     this.addMetric({
@@ -204,25 +204,20 @@ export class SyncPerformanceTelemetry {
       value: metrics.activeConnections,
       unit: 'count',
       timestamp: new Date(),
-      tags: {},
+      tags: {}
     });
   }
 
   /**
    * Record cache performance metrics
    */
-  recordCacheMetrics(
-    hitRate: number,
-    missRate: number,
-    evictionCount: number,
-    memoryUsage: number
-  ): void {
+  recordCacheMetrics(hitRate: number, missRate: number, evictionCount: number, memoryUsage: number): void {
     this.addMetric({
       name: 'cache_hit_rate',
       value: hitRate,
       unit: 'percent',
       timestamp: new Date(),
-      tags: {},
+      tags: {}
     });
 
     this.addMetric({
@@ -230,7 +225,7 @@ export class SyncPerformanceTelemetry {
       value: missRate,
       unit: 'percent',
       timestamp: new Date(),
-      tags: {},
+      tags: {}
     });
 
     this.addMetric({
@@ -238,7 +233,7 @@ export class SyncPerformanceTelemetry {
       value: evictionCount,
       unit: 'count',
       timestamp: new Date(),
-      tags: {},
+      tags: {}
     });
 
     this.addMetric({
@@ -246,7 +241,7 @@ export class SyncPerformanceTelemetry {
       value: memoryUsage,
       unit: 'bytes',
       timestamp: new Date(),
-      tags: {},
+      tags: {}
     });
   }
 
@@ -259,7 +254,7 @@ export class SyncPerformanceTelemetry {
       value: batchSize,
       unit: 'count',
       timestamp: new Date(),
-      tags: { priority },
+      tags: { priority }
     });
 
     this.addMetric({
@@ -267,7 +262,7 @@ export class SyncPerformanceTelemetry {
       value: processingTime,
       unit: 'ms',
       timestamp: new Date(),
-      tags: { priority },
+      tags: { priority }
     });
   }
 
@@ -285,16 +280,15 @@ export class SyncPerformanceTelemetry {
   } {
     const uptime = Date.now() - this.startTime;
     const uptimeSeconds = uptime / 1000;
-
+    
     return {
       uptime,
       totalOperations: this.syncOperationCount,
       errorRate: this.syncOperationCount > 0 ? this.syncErrorCount / this.syncOperationCount : 0,
-      averageDuration:
-        this.syncOperationCount > 0 ? this.totalSyncDuration / this.syncOperationCount : 0,
+      averageDuration: this.syncOperationCount > 0 ? this.totalSyncDuration / this.syncOperationCount : 0,
       peakMemoryUsage: this.peakMemoryUsage,
       totalDataSynced: this.totalDataSynced,
-      operationsPerSecond: uptimeSeconds > 0 ? this.syncOperationCount / uptimeSeconds : 0,
+      operationsPerSecond: uptimeSeconds > 0 ? this.syncOperationCount / uptimeSeconds : 0
     };
   }
 
@@ -302,19 +296,19 @@ export class SyncPerformanceTelemetry {
    * Get tenant-specific metrics
    */
   getTenantMetrics(tenantId: string): PerformanceMetric[] {
-    return this.metricsBuffer.filter((metric) => metric.tenantId === tenantId);
+    return this.metricsBuffer.filter(metric => metric.tenantId === tenantId);
   }
 
   /**
    * Get metrics by type and time range
    */
   getMetrics(
-    metricName?: string,
-    startTime?: Date,
+    metricName?: string, 
+    startTime?: Date, 
     endTime?: Date,
     tenantId?: string
   ): PerformanceMetric[] {
-    return this.metricsBuffer.filter((metric) => {
+    return this.metricsBuffer.filter(metric => {
       if (metricName && metric.name !== metricName) return false;
       if (startTime && metric.timestamp < startTime) return false;
       if (endTime && metric.timestamp > endTime) return false;
@@ -355,7 +349,7 @@ export class SyncPerformanceTelemetry {
   private collectAndSendMetrics(): void {
     try {
       const summary = this.getPerformanceSummary();
-
+      
       // Send summary metrics to monitoring service
       this.metricsService.recordMetric('sync_total_operations', summary.totalOperations);
       this.metricsService.recordMetric('sync_error_rate', summary.errorRate);
@@ -370,7 +364,7 @@ export class SyncPerformanceTelemetry {
       this.logger.debug('Metrics collected and sent', {
         totalOperations: summary.totalOperations,
         errorRate: summary.errorRate,
-        averageDuration: summary.averageDuration,
+        averageDuration: summary.averageDuration
       });
     } catch (error) {
       this.logger.error('Failed to collect metrics', { error });
@@ -383,7 +377,7 @@ export class SyncPerformanceTelemetry {
   private cleanupOldMetrics(): void {
     const cutoffTime = new Date(Date.now() - this.config.retentionPeriod);
     const initialSize = this.metricsBuffer.length;
-
+    
     // Remove metrics older than retention period
     let i = 0;
     while (i < this.metricsBuffer.length) {
@@ -398,7 +392,7 @@ export class SyncPerformanceTelemetry {
     if (removedCount > 0) {
       this.logger.debug('Cleaned up old metrics', {
         removedCount,
-        remainingCount: this.metricsBuffer.length,
+        remainingCount: this.metricsBuffer.length
       });
     }
   }
@@ -409,18 +403,18 @@ export class SyncPerformanceTelemetry {
   exportMetrics(format: 'json' | 'csv' = 'json'): string {
     if (format === 'csv') {
       const headers = ['name', 'value', 'unit', 'timestamp', 'tags', 'tenantId'];
-      const rows = this.metricsBuffer.map((metric) => [
+      const rows = this.metricsBuffer.map(metric => [
         metric.name,
         metric.value.toString(),
         metric.unit,
         metric.timestamp.toISOString(),
         JSON.stringify(metric.tags),
-        metric.tenantId || '',
+        metric.tenantId || ''
       ]);
-
-      return [headers, ...rows].map((row) => row.join(',')).join('\n');
+      
+      return [headers, ...rows].map(row => row.join(',')).join('\n');
     }
-
+    
     return JSON.stringify(this.metricsBuffer, null, 2);
   }
 
@@ -436,7 +430,7 @@ export class SyncPerformanceTelemetry {
     this.peakMemoryUsage = 0;
     this.totalDataSynced = 0;
     this.startTime = Date.now();
-
+    
     this.logger.info('Performance telemetry reset');
   }
 
@@ -447,10 +441,10 @@ export class SyncPerformanceTelemetry {
     if (this.metricsTimer) {
       clearInterval(this.metricsTimer);
     }
-
+    
     // Send final metrics
     this.collectAndSendMetrics();
-
+    
     this.logger.info('Performance telemetry shutdown complete');
   }
 }

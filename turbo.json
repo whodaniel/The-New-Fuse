@@ -341,16 +341,16 @@
       "cache": false
     },
     "db:generate": {
-      "inputs": ["drizzle/schema.drizzle"],
+      "inputs": ["prisma/schema.prisma"],
       "outputs": [
-        "node_modules/.drizzle/**",
-        "drizzle/generated/**",
+        "node_modules/.prisma/**",
+        "prisma/generated/**",
         "generated/**"
       ],
       "cache": true
     },
     "db:migrate": {
-      "inputs": ["drizzle/migrations/**", "drizzle/schema.drizzle"],
+      "inputs": ["prisma/migrations/**", "prisma/schema.prisma"],
       "cache": false
     },
     "db:studio": {

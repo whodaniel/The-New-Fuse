@@ -5,23 +5,20 @@ This integration combines our existing agent framework with GDesigner's advanced
 ## Setup and Installation
 
 1. **Install Dependencies**
-
 ```bash
 # Using pip (recommended)
 pip install -r requirements.txt
 ```
 
 2. **Configure API Keys**
-   Create a `.env` file with OpenAI credentials:
-
+Create a `.env` file with OpenAI credentials:
 ```env
 BASE_URL = "" # OpenAI LLM backend URL
 API_KEY = "" # OpenAI API key
 ```
 
 3. **Download Required Datasets**
-   For experimental validation, download:
-
+For experimental validation, download:
 - MMLU dataset
 - HumanEval dataset
 - GSM8K dataset
@@ -31,45 +28,35 @@ Place each dataset in its respective folder under `GDesigner-3063/datasets/`.
 ## Core Components
 
 ### 1. GDesigner Adapter (`gdesigner_adapter.py`)
-
 Provides a clean interface to GDesigner's functionality:
-
 - Graph-based agent topology management
 - Specialized agents (math solver, code writer, analyzer)
 - GNN-based optimization
 - Task analysis capabilities
 
 ### 2. Hybrid Topology Manager (`hybrid_topology_manager.py`)
-
 Combines our existing topology management with GDesigner's graph-based approach:
-
 - Maintains both traditional and graph-based agent connections
 - Virtual node integration for task awareness
 - Dynamic topology optimization
 - Communication weight management
 
 ### 3. Hybrid Agent Orchestrator (`hybrid_agent_orchestrator.py`)
-
 Enhanced orchestration that leverages both systems:
-
 - Task-specific topology optimization
 - Specialized agent routing
 - Hybrid communication management
 - Context-aware task processing
 
 ### 4. GDesigner Agent Factory (`agent_factory_gdesigner.py`)
-
 Factory for creating and configuring integrated agents:
-
 - Creates standard and specialized agents
 - Configures agent teams
 - Manages agent configurations
 - Handles topology initialization
 
 ### 5. System Integrator (`system_integrator.py`)
-
 High-level interface for the integrated system:
-
 - System initialization and configuration
 - Task team creation and management
 - Task processing with automatic specialization
@@ -78,7 +65,6 @@ High-level interface for the integrated system:
 ## Experimental Validation
 
 ### Running MMLU Experiments
-
 ```bash
 # Full connected topology with spatial optimization
 python experiments/run_mmlu.py \
@@ -91,7 +77,6 @@ python experiments/run_mmlu.py \
 ```
 
 ### Running GSM8K Experiments
-
 ```bash
 # Mathematical reasoning experiments
 python experiments/run_gsm8k.py \
@@ -104,7 +89,6 @@ python experiments/run_gsm8k.py \
 ```
 
 ### Running HumanEval Experiments
-
 ```bash
 # Code generation experiments
 python experiments/run_humaneval.py \
@@ -117,7 +101,6 @@ python experiments/run_humaneval.py \
 ```
 
 ### Experiment Parameters
-
 - `mode`: Topology mode (FullConnected, Ring, Star)
 - `batch_size`: Number of parallel tasks
 - `agent_nums`: Number of agents in the system
@@ -128,7 +111,6 @@ python experiments/run_humaneval.py \
 ## Usage Examples
 
 ### 1. Basic System Initialization
-
 ```python
 from core.agents.integration.system_integrator import SystemIntegrator, SystemConfig
 
@@ -143,7 +125,6 @@ await system.initialize_system()
 ```
 
 ### 2. Creating a Task-Specific Team
-
 ```python
 # Create team optimized for a specific task
 team_result = await system.create_task_team(
@@ -159,7 +140,6 @@ topology = team_result['topology']
 ```
 
 ### 3. Processing a Task
-
 ```python
 from core.types.task import Task
 
@@ -179,7 +159,6 @@ result = await system.process_task(task)
 ```
 
 ### 4. Running Experiments
-
 ```python
 # Configure experiment
 from core.experiments.experiment_runner import ExperimentRunner

@@ -1,8 +1,13 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import * as crypto from 'crypto';
-import { Request, Response } from 'express';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Request, Response } from 'express';
+import * as crypto from 'crypto';
 
 /**
  * ETag Interceptor for conditional request handling
@@ -24,7 +29,10 @@ export class ETagInterceptor implements NestInterceptor {
 
         // Generate ETag from response data
         const content = JSON.stringify(data);
-        const etag = `"${crypto.createHash('md5').update(content).digest('hex')}"`;
+        const etag = `"${crypto
+          .createHash('md5')
+          .update(content)
+          .digest('hex')}"`;
 
         // Set ETag header
         response.setHeader('ETag', etag);
@@ -38,7 +46,7 @@ export class ETagInterceptor implements NestInterceptor {
 
         // Set cache-control headers
         response.setHeader('Cache-Control', 'private, must-revalidate');
-      })
+      }),
     );
   }
 }

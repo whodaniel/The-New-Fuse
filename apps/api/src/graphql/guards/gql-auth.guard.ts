@@ -1,4 +1,4 @@
-import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
 import { SecurityLoggingService } from '../../security/security-logging.service';
@@ -7,7 +7,7 @@ import { SecurityLoggingService } from '../../security/security-logging.service'
 export class GqlAuthGuard {
   constructor(
     private jwtService: JwtService,
-    private securityLogging: SecurityLoggingService
+    private securityLogging: SecurityLoggingService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -54,12 +54,10 @@ export class GqlAuthGuard {
   }
 
   private getClientIP(req: any): string {
-    return (
-      req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
-      req.headers['x-real-ip'] ||
-      req.connection?.remoteAddress ||
-      req.ip ||
-      'unknown'
-    );
+    return req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+           req.headers['x-real-ip'] ||
+           req.connection?.remoteAddress ||
+           req.ip ||
+           'unknown';
   }
 }

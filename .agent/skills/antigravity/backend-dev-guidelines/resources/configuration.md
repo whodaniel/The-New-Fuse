@@ -18,7 +18,6 @@ Complete guide to managing configuration in backend microservices.
 ### Why UnifiedConfig?
 
 **Problems with process.env:**
-
 - ❌ No type safety
 - ❌ No validation
 - ❌ Hard to test
@@ -27,7 +26,6 @@ Complete guide to managing configuration in backend microservices.
 - ❌ Runtime errors for typos
 
 **Benefits of unifiedConfig:**
-
 - ✅ Type-safe configuration
 - ✅ Single source of truth
 - ✅ Validated at startup
@@ -55,7 +53,6 @@ const dbHost = config.database.host;
 ### Why This Matters
 
 **Example of problems:**
-
 ```typescript
 // Typo in environment variable name
 const host = process.env.DB_HSOT; // undefined! No error!
@@ -66,7 +63,6 @@ const timeout = parseInt(process.env.TIMEOUT); // NaN if not set!
 ```
 
 **With unifiedConfig:**
-
 ```typescript
 const port = config.server.port; // number, guaranteed
 const timeout = config.timeouts.default; // number, with fallback
@@ -80,40 +76,40 @@ const timeout = config.timeouts.default; // number, with fallback
 
 ```typescript
 export interface UnifiedConfig {
-  database: {
-    host: string;
-    port: number;
-    username: string;
-    password: string;
-    database: string;
-  };
-  server: {
-    port: number;
-    sessionSecret: string;
-  };
-  tokens: {
-    jwt: string;
-    inactivity: string;
-    internal: string;
-  };
-  keycloak: {
-    realm: string;
-    client: string;
-    baseUrl: string;
-    secret: string;
-  };
-  aws: {
-    region: string;
-    emailQueueUrl: string;
-    accessKeyId: string;
-    secretAccessKey: string;
-  };
-  sentry: {
-    dsn: string;
-    environment: string;
-    tracesSampleRate: number;
-  };
-  // ... more sections
+    database: {
+        host: string;
+        port: number;
+        username: string;
+        password: string;
+        database: string;
+    };
+    server: {
+        port: number;
+        sessionSecret: string;
+    };
+    tokens: {
+        jwt: string;
+        inactivity: string;
+        internal: string;
+    };
+    keycloak: {
+        realm: string;
+        client: string;
+        baseUrl: string;
+        secret: string;
+    };
+    aws: {
+        region: string;
+        emailQueueUrl: string;
+        accessKeyId: string;
+        secretAccessKey: string;
+    };
+    sentry: {
+        dsn: string;
+        environment: string;
+        tracesSampleRate: number;
+    };
+    // ... more sections
 }
 ```
 
@@ -130,31 +126,27 @@ const configPath = path.join(__dirname, '../../config.ini');
 const iniConfig = ini.parse(fs.readFileSync(configPath, 'utf-8'));
 
 export const config: UnifiedConfig = {
-  database: {
-    host: iniConfig.database?.host || process.env.DB_HOST || 'localhost',
-    port: parseInt(iniConfig.database?.port || process.env.DB_PORT || '3306'),
-    username: iniConfig.database?.username || process.env.DB_USER || 'root',
-    password: iniConfig.database?.password || process.env.DB_PASSWORD || '',
-    database: iniConfig.database?.database || process.env.DB_NAME || 'blog_dev',
-  },
-  server: {
-    port: parseInt(iniConfig.server?.port || process.env.PORT || '3002'),
-    sessionSecret:
-      iniConfig.server?.sessionSecret ||
-      process.env.SESSION_SECRET ||
-      'dev-secret',
-  },
-  // ... more configuration
+    database: {
+        host: iniConfig.database?.host || process.env.DB_HOST || 'localhost',
+        port: parseInt(iniConfig.database?.port || process.env.DB_PORT || '3306'),
+        username: iniConfig.database?.username || process.env.DB_USER || 'root',
+        password: iniConfig.database?.password || process.env.DB_PASSWORD || '',
+        database: iniConfig.database?.database || process.env.DB_NAME || 'blog_dev',
+    },
+    server: {
+        port: parseInt(iniConfig.server?.port || process.env.PORT || '3002'),
+        sessionSecret: iniConfig.server?.sessionSecret || process.env.SESSION_SECRET || 'dev-secret',
+    },
+    // ... more configuration
 };
 
 // Validate critical config
 if (!config.tokens.jwt) {
-  throw new Error('JWT secret not configured!');
+    throw new Error('JWT secret not configured!');
 }
 ```
 
 **Key Points:**
-
 - Read from config.ini first
 - Fallback to process.env
 - Default values for development
@@ -206,7 +198,6 @@ PORT=80
 ```
 
 **Precedence:**
-
 1. config.ini (highest priority)
 2. process.env variables
 3. Hard-coded defaults (lowest priority)
@@ -233,12 +224,12 @@ sentry.ini
 // Production: Environment variables
 
 export const config: UnifiedConfig = {
-  database: {
-    password: process.env.DB_PASSWORD || iniConfig.database?.password || '',
-  },
-  tokens: {
-    jwt: process.env.JWT_SECRET || iniConfig.tokens?.jwt || '',
-  },
+    database: {
+        password: process.env.DB_PASSWORD || iniConfig.database?.password || '',
+    },
+    tokens: {
+        jwt: process.env.JWT_SECRET || iniConfig.tokens?.jwt || '',
+    },
 };
 ```
 
@@ -255,7 +246,6 @@ grep -r "process.env" blog-api/src/ --include="*.ts" | wc -l
 ### Migration Example
 
 **Before:**
-
 ```typescript
 // Scattered throughout code
 const timeout = parseInt(process.env.OPENID_HTTP_TIMEOUT_MS || '15000');
@@ -264,7 +254,6 @@ const jwtSecret = process.env.JWT_SECRET;
 ```
 
 **After:**
-
 ```typescript
 import { config } from './config/unifiedConfig';
 
@@ -274,7 +263,6 @@ const jwtSecret = config.tokens.jwt;
 ```
 
 **Benefits:**
-
 - Type-safe
 - Centralized
 - Easy to test
@@ -283,6 +271,5 @@ const jwtSecret = config.tokens.jwt;
 ---
 
 **Related Files:**
-
 - [SKILL.md](SKILL.md)
 - [testing-guide.md](testing-guide.md)

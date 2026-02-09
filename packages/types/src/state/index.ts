@@ -10,7 +10,7 @@ export enum StateEventType {
   SYNC_COMPLETED = '(state as any).sync.completed',
   SYNC_FAILED = '(state as any).sync.failed',
   LOCK_ACQUIRED = '(state as any).lock.acquired',
-  LOCK_RELEASED = '(state as any).lock.released',
+  LOCK_RELEASED = '(state as any).lock.released'
 }
 
 export interface StateValue {

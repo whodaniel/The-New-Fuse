@@ -47,9 +47,11 @@ export class RetryService extends BaseService {
    * @param options Retry configuration options.
    * @returns A promise that resolves with the result of the operation or rejects if all retries fail.
    */
-  async execute<T>(operation: () => Promise<T>, options?: Partial<RetryOptions>): Promise<T> {
-    const config: Required<Omit<RetryOptions, 'isRetryable' | 'onRetry'>> &
-      Pick<RetryOptions, 'isRetryable' | 'onRetry'> = {
+  async execute<T>(
+    operation: () => Promise<T>,
+    options?: Partial<RetryOptions>
+  ): Promise<T> {
+    const config: Required<Omit<RetryOptions, 'isRetryable' | 'onRetry'>> & Pick<RetryOptions, 'isRetryable' | 'onRetry'> = {
       ...DEFAULT_RETRY_OPTIONS,
       ...options,
     };
@@ -67,9 +69,7 @@ export class RetryService extends BaseService {
         }
         return result;
       } catch (error) {
-        this.logger.warn(
-          `Attempt ${attempt} failed: ${error instanceof Error ? error.message : String(error)}`
-        );
+        this.logger.warn(`Attempt ${attempt} failed: ${error instanceof Error ? error.message : String(error)}`);
 
         if (attempt >= config.maxAttempts) {
           this.logger.error(`Operation failed after ${attempt} attempts. Giving up.`);
@@ -93,7 +93,7 @@ export class RetryService extends BaseService {
         }
 
         this.logger.info(`Waiting ${delay}ms before next retry (attempt ${attempt + 1})...`);
-        await new Promise((resolve) => setTimeout(resolve, delay));
+        await new Promise(resolve => setTimeout(resolve, delay));
 
         // Calculate next delay
         currentDelay = Math.min(
@@ -113,6 +113,6 @@ export class RetryService extends BaseService {
    * @param ms Delay duration in milliseconds.
    */
   static delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

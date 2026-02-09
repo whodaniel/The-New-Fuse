@@ -1,37 +1,10 @@
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig, loadEnv, type Plugin } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import compression from 'vite-plugin-compression';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import tsconfigPaths from 'vite-tsconfig-paths';
-
-/**
- * Plugin to inject module preload error handling
- * This prevents the app from breaking when a lazy-loaded chunk fails to load
- */
-function modulePreloadPolyfill(): Plugin {
-  return {
-    name: 'module-preload-polyfill',
-    transformIndexHtml(html) {
-      // Inject error handling for module preload failures
-      const script = `
-        <script>
-          // Handle module preload errors
-          window.addEventListener('vite:preloadError', (event) => {
-            console.error('Module preload error:', event);
-            // Reload the page to get fresh chunks
-            if (!window.__vitePreloadErrorHandled) {
-              window.__vitePreloadErrorHandled = true;
-              window.location.reload();
-            }
-          });
-        </script>
-      `;
-      return html.replace('</head>', `${script}</head>`);
-    },
-  };
-}
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -60,14 +33,13 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
-      modulePreloadPolyfill(),
       tsconfigPaths({
         ignoreConfigErrors: true,
         projects: [path.resolve(__dirname, 'tsconfig.json')],
       }),
       // Provide Node.js polyfills for browser (required by ethers.js, @uauth, etc.)
       nodePolyfills({
-        include: ['buffer', 'process', 'stream', 'util', 'crypto', 'perf_hooks'],
+        include: ['buffer', 'process', 'stream', 'util', 'crypto'],
         globals: {
           Buffer: true,
           global: true,
@@ -110,7 +82,6 @@ export default defineConfig(({ mode }) => {
         '@types/react-dom',
       ],
       alias: {
-        'scheduler': path.resolve(__dirname, '../../node_modules/scheduler'),
         '@': path.resolve(__dirname, 'src'),
         // Note: @the-new-fuse/core is NOT aliased because it contains Node.js-only code
         // @the-new-fuse/utils is aliased to a browser-safe shim
@@ -137,21 +108,12 @@ export default defineConfig(({ mode }) => {
         'mysql2/promise': path.resolve(__dirname, 'src/stubs/empty.ts'),
         mysql2: path.resolve(__dirname, 'src/stubs/empty.ts'),
         '@nestjs/common': path.resolve(__dirname, 'src/stubs/nestjs-common.ts'),
-        '@nestjs/config': path.resolve(__dirname, 'src/stubs/nestjs-config.ts'),
-        '@nestjs/core': path.resolve(__dirname, 'src/stubs/empty.ts'),
         '@nestjs/swagger': path.resolve(__dirname, 'src/stubs/nestjs-swagger.ts'),
         'class-validator': path.resolve(__dirname, 'src/stubs/class-validator.ts'),
         // Stub @uauth/js which has browser-incompatible @unstoppabledomains/resolution deps
         '@uauth/js': path.resolve(__dirname, 'src/stubs/uauth-js.ts'),
-        // Handle nested imports for stubbed packages using regex keys
-        '/^@nestjs\\/common\\/.*/': path.resolve(__dirname, 'src/stubs/nestjs-common.ts'),
-        '/^@nestjs\\/config\\/.*/': path.resolve(__dirname, 'src/stubs/nestjs-config.ts'),
-        '/^@nestjs\\/core\\/.*/': path.resolve(__dirname, 'src/stubs/empty.ts'),
-        '/^@nestjs\\/swagger\\/.*/': path.resolve(__dirname, 'src/stubs/nestjs-swagger.ts'),
-        perf_hooks: path.resolve(__dirname, 'src/stubs/perf-hooks.ts'),
       },
     },
-
     define: {
       // Inject environment variables at build time
       __DEPLOYMENT_CONFIG__: JSON.stringify({
@@ -216,11 +178,6 @@ export default defineConfig(({ mode }) => {
       cssCodeSplit: true, // Enable CSS code splitting
       // Reduce chunk size warning limit to catch large bundles earlier
       chunkSizeWarningLimit: 500,
-      // Ensure stable chunk hashes across builds for better caching
-      modulePreload: {
-        // Retry failed module preloads
-        polyfill: true,
-      },
       // Advanced terser options for production
       terserOptions: isProduction
         ? {

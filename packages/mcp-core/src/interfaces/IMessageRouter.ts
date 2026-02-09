@@ -1,12 +1,12 @@
 /**
  * Message Router Interface
- *
+ * 
  * Defines the contract for message routing functionality including
  * request routing, load balancing, event subscription, and metrics collection.
  */
 
+import { MCPRequest, MCPResponse, MCPNotification } from './IMCPMessage';
 import { RoutingInfo, RoutingMetrics } from '../types/broker';
-import { MCPNotification, MCPRequest, MCPResponse } from './IMCPMessage';
 
 /**
  * Event callback function type

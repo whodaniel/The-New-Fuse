@@ -8,7 +8,7 @@
       "customInstructions": "## Migration Process\n1. Analyze current schema and data\n2. Plan migration strategy with rollback options\n3. Generate migration scripts with proper constraints\n4. Create testing strategy for data integrity",
       "groups": [
         "read",
-        {"type": "edit", "allowedPaths": ["^/migrations/.*", "^/drizzle/.*", "^/db/.*"]},
+        {"type": "edit", "allowedPaths": ["^/migrations/.*", "^/prisma/.*", "^/db/.*"]},
         "command"
       ]
     },

@@ -1,6 +1,6 @@
 /**
  * Agent Registry Adapter
- *
+ * 
  * Bridges the MasterAgentRegistry to the interface expected by WorkflowEngineFactory
  */
 
@@ -31,7 +31,7 @@ export class AgentRegistryAdapter implements AgentRegistry {
   getAgent(agentId: string): any | undefined {
     const profile = this.masterRegistry.getAgentProfile(agentId);
     if (!profile) return undefined;
-
+    
     return this.convertToLegacyAgent(profile);
   }
 
@@ -52,7 +52,9 @@ export class AgentRegistryAdapter implements AgentRegistry {
   }
 
   getAllAgents(): any[] {
-    return this.masterRegistry.getAllAgents().map((profile) => this.convertToLegacyAgent(profile));
+    return this.masterRegistry.getAllAgents().map(profile => 
+      this.convertToLegacyAgent(profile)
+    );
   }
 
   async addAgentTodo(agentId: string, taskData: any): Promise<string> {
@@ -70,7 +72,7 @@ export class AgentRegistryAdapter implements AgentRegistry {
         .map(([cap, _]) => cap),
       registeredAt: profile.registeredAt,
       lastSeen: profile.lastSeen,
-      metadata: profile.metadata,
+      metadata: profile.metadata
     };
   }
 }

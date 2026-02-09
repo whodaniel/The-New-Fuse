@@ -25,7 +25,7 @@ export enum ErrorSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical',
+  CRITICAL = 'critical'
 }
 
 /**
@@ -38,7 +38,7 @@ export enum ErrorCategory {
   VALIDATION = 'validation',
   SYSTEM = 'system',
   BUSINESS = 'business',
-  UNKNOWN = 'unknown',
+  UNKNOWN = 'unknown'
 }
 
 /**
@@ -106,10 +106,7 @@ export interface ErrorStatistics {
 /**
  * Generic error handler system interface
  */
-export interface IErrorHandlerSystem<
-  TError = BaseError,
-  TContext = ErrorContext,
-> extends EventEmitter {
+export interface IErrorHandlerSystem<TError = BaseError, TContext = ErrorContext> extends EventEmitter {
   handleError(error: TError, context: TContext): Promise<RecoveryResult | null>;
   registerRecoveryStrategy(strategy: RecoveryStrategy<TError, TContext>): void;
   registerErrorHandler(errorCode: number, handler: ErrorHandler<TError, TContext>): void;

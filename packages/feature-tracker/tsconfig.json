@@ -7,8 +7,15 @@
     "sourceMap": true,
     "types": []
   },
-  "include": ["src/**/*", "metrics/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.*"],
+  "include": [
+    "src/**/*",
+    "metrics/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.*"
+  ],
   "references": [
     {
       "path": "../core"

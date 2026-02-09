@@ -1,8 +1,6 @@
 # The New Fuse UI Components
 
-This package contains the consolidated UI components for The New Fuse platform.
-It provides a consistent set of components that can be used across the
-application.
+This package contains the consolidated UI components for The New Fuse platform. It provides a consistent set of components that can be used across the application.
 
 ## Features
 
@@ -28,7 +26,10 @@ function MyComponent() {
   return (
     <Card title="My Form">
       <form>
-        <Input label="Name" placeholder="Enter your name" />
+        <Input
+          label="Name"
+          placeholder="Enter your name"
+        />
         <Select
           label="Country"
           options={[

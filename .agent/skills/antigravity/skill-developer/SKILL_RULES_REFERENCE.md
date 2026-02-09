@@ -1,7 +1,6 @@
 # skill-rules.json - Complete Reference
 
-Complete schema and configuration reference for
-`.claude/skills/skill-rules.json`.
+Complete schema and configuration reference for `.claude/skills/skill-rules.json`.
 
 ## Table of Contents
 
@@ -18,8 +17,7 @@ Complete schema and configuration reference for
 
 **Path:** `.claude/skills/skill-rules.json`
 
-This JSON file defines all skills and their trigger conditions for the
-auto-activation system.
+This JSON file defines all skills and their trigger conditions for the auto-activation system.
 
 ---
 
@@ -27,34 +25,34 @@ auto-activation system.
 
 ```typescript
 interface SkillRules {
-  version: string;
-  skills: Record<string, SkillRule>;
+    version: string;
+    skills: Record<string, SkillRule>;
 }
 
 interface SkillRule {
-  type: 'guardrail' | 'domain';
-  enforcement: 'block' | 'suggest' | 'warn';
-  priority: 'critical' | 'high' | 'medium' | 'low';
+    type: 'guardrail' | 'domain';
+    enforcement: 'block' | 'suggest' | 'warn';
+    priority: 'critical' | 'high' | 'medium' | 'low';
 
-  promptTriggers?: {
-    keywords?: string[];
-    intentPatterns?: string[]; // Regex strings
-  };
+    promptTriggers?: {
+        keywords?: string[];
+        intentPatterns?: string[];  // Regex strings
+    };
 
-  fileTriggers?: {
-    pathPatterns: string[]; // Glob patterns
-    pathExclusions?: string[]; // Glob patterns
-    contentPatterns?: string[]; // Regex strings
-    createOnly?: boolean; // Only trigger on file creation
-  };
+    fileTriggers?: {
+        pathPatterns: string[];     // Glob patterns
+        pathExclusions?: string[];  // Glob patterns
+        contentPatterns?: string[]; // Regex strings
+        createOnly?: boolean;       // Only trigger on file creation
+    };
 
-  blockMessage?: string; // For guardrails, {file_path} placeholder
+    blockMessage?: string;  // For guardrails, {file_path} placeholder
 
-  skipConditions?: {
-    sessionSkillUsed?: boolean; // Skip if used in session
-    fileMarkers?: string[]; // e.g., ["@skip-validation"]
-    envOverride?: string; // e.g., "SKIP_DB_VERIFICATION"
-  };
+    skipConditions?: {
+        sessionSkillUsed?: boolean;      // Skip if used in session
+        fileMarkers?: string[];          // e.g., ["@skip-validation"]
+        envOverride?: string;            // e.g., "SKIP_DB_VERIFICATION"
+    };
 }
 ```
 
@@ -64,50 +62,50 @@ interface SkillRule {
 
 ### Top Level
 
-| Field     | Type   | Required | Description                      |
-| --------- | ------ | -------- | -------------------------------- |
-| `version` | string | Yes      | Schema version (currently "1.0") |
-| `skills`  | object | Yes      | Map of skill name → SkillRule    |
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `version` | string | Yes | Schema version (currently "1.0") |
+| `skills` | object | Yes | Map of skill name → SkillRule |
 
 ### SkillRule Fields
 
-| Field            | Type   | Required   | Description                                                    |
-| ---------------- | ------ | ---------- | -------------------------------------------------------------- |
-| `type`           | string | Yes        | "guardrail" (enforced) or "domain" (advisory)                  |
-| `enforcement`    | string | Yes        | "block" (PreToolUse), "suggest" (UserPromptSubmit), or "warn"  |
-| `priority`       | string | Yes        | "critical", "high", "medium", or "low"                         |
-| `promptTriggers` | object | Optional   | Triggers for UserPromptSubmit hook                             |
-| `fileTriggers`   | object | Optional   | Triggers for PreToolUse hook                                   |
-| `blockMessage`   | string | Optional\* | Required if enforcement="block". Use `{file_path}` placeholder |
-| `skipConditions` | object | Optional   | Escape hatches and session tracking                            |
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `type` | string | Yes | "guardrail" (enforced) or "domain" (advisory) |
+| `enforcement` | string | Yes | "block" (PreToolUse), "suggest" (UserPromptSubmit), or "warn" |
+| `priority` | string | Yes | "critical", "high", "medium", or "low" |
+| `promptTriggers` | object | Optional | Triggers for UserPromptSubmit hook |
+| `fileTriggers` | object | Optional | Triggers for PreToolUse hook |
+| `blockMessage` | string | Optional* | Required if enforcement="block". Use `{file_path}` placeholder |
+| `skipConditions` | object | Optional | Escape hatches and session tracking |
 
-\*Required for guardrails
+*Required for guardrails
 
 ### promptTriggers Fields
 
-| Field            | Type     | Required | Description                                |
-| ---------------- | -------- | -------- | ------------------------------------------ |
-| `keywords`       | string[] | Optional | Exact substring matches (case-insensitive) |
-| `intentPatterns` | string[] | Optional | Regex patterns for intent detection        |
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `keywords` | string[] | Optional | Exact substring matches (case-insensitive) |
+| `intentPatterns` | string[] | Optional | Regex patterns for intent detection |
 
 ### fileTriggers Fields
 
-| Field             | Type     | Required | Description                                 |
-| ----------------- | -------- | -------- | ------------------------------------------- |
-| `pathPatterns`    | string[] | Yes\*    | Glob patterns for file paths                |
-| `pathExclusions`  | string[] | Optional | Glob patterns to exclude (e.g., test files) |
-| `contentPatterns` | string[] | Optional | Regex patterns to match file content        |
-| `createOnly`      | boolean  | Optional | Only trigger when creating new files        |
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `pathPatterns` | string[] | Yes* | Glob patterns for file paths |
+| `pathExclusions` | string[] | Optional | Glob patterns to exclude (e.g., test files) |
+| `contentPatterns` | string[] | Optional | Regex patterns to match file content |
+| `createOnly` | boolean | Optional | Only trigger when creating new files |
 
-\*Required if fileTriggers is present
+*Required if fileTriggers is present
 
 ### skipConditions Fields
 
-| Field              | Type     | Required | Description                                |
-| ------------------ | -------- | -------- | ------------------------------------------ |
-| `sessionSkillUsed` | boolean  | Optional | Skip if skill already used this session    |
-| `fileMarkers`      | string[] | Optional | Skip if file contains comment marker       |
-| `envOverride`      | string   | Optional | Environment variable name to disable skill |
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `sessionSkillUsed` | boolean | Optional | Skip if skill already used this session |
+| `fileMarkers` | string[] | Optional | Skip if file contains comment marker |
+| `envOverride` | string | Optional | Environment variable name to disable skill |
 
 ---
 
@@ -124,7 +122,7 @@ Complete example of a blocking guardrail skill with all features:
 
     "promptTriggers": {
       "keywords": [
-        "drizzle",
+        "prisma",
         "database",
         "table",
         "column",
@@ -141,7 +139,7 @@ Complete example of a blocking guardrail skill with all features:
 
     "fileTriggers": {
       "pathPatterns": [
-        "**/schema.drizzle",
+        "**/schema.prisma",
         "**/migrations/**/*.sql",
         "database/src/**/*.ts",
         "form/src/**/*.ts",
@@ -150,11 +148,14 @@ Complete example of a blocking guardrail skill with all features:
         "projects/src/**/*.ts",
         "utilities/src/**/*.ts"
       ],
-      "pathExclusions": ["**/*.test.ts", "**/*.spec.ts"],
+      "pathExclusions": [
+        "**/*.test.ts",
+        "**/*.spec.ts"
+      ],
       "contentPatterns": [
         "import.*[Pp]risma",
-        "DatabaseService",
-        "drizzle\\.",
+        "PrismaService",
+        "prisma\\.",
         "\\.findMany\\(",
         "\\.findUnique\\(",
         "\\.findFirst\\(",
@@ -168,11 +169,13 @@ Complete example of a blocking guardrail skill with all features:
       ]
     },
 
-    "blockMessage": "⚠️ BLOCKED - Database Operation Detected\n\n📋 REQUIRED ACTION:\n1. Use Skill tool: 'database-verification'\n2. Verify ALL table and column names against schema\n3. Check database structure with DESCRIBE commands\n4. Then retry this edit\n\nReason: Prevent column name errors in Drizzle queries\nFile: {file_path}\n\n💡 TIP: Add '// @skip-validation' comment to skip future checks",
+    "blockMessage": "⚠️ BLOCKED - Database Operation Detected\n\n📋 REQUIRED ACTION:\n1. Use Skill tool: 'database-verification'\n2. Verify ALL table and column names against schema\n3. Check database structure with DESCRIBE commands\n4. Then retry this edit\n\nReason: Prevent column name errors in Prisma queries\nFile: {file_path}\n\n💡 TIP: Add '// @skip-validation' comment to skip future checks",
 
     "skipConditions": {
       "sessionSkillUsed": true,
-      "fileMarkers": ["@skip-validation"],
+      "fileMarkers": [
+        "@skip-validation"
+      ],
       "envOverride": "SKIP_DB_VERIFICATION"
     }
   }
@@ -238,7 +241,10 @@ Complete example of a suggestion-based domain skill:
         "frontend/src/features/submissions/**/*.tsx",
         "frontend/src/features/submissions/**/*.ts"
       ],
-      "pathExclusions": ["**/*.test.tsx", "**/*.test.ts"]
+      "pathExclusions": [
+        "**/*.test.tsx",
+        "**/*.test.ts"
+      ]
     }
   }
 }
@@ -269,26 +275,23 @@ If valid, jq will pretty-print the JSON. If invalid, it will show the error.
 ### Common JSON Errors
 
 **Trailing comma:**
-
 ```json
 {
-  "keywords": ["one", "two"] // ❌ Trailing comma
+  "keywords": ["one", "two",]  // ❌ Trailing comma
 }
 ```
 
 **Missing quotes:**
-
 ```json
 {
-  "type": "guardrail" // ❌ Missing quotes on key
+  type: "guardrail"  // ❌ Missing quotes on key
 }
 ```
 
 **Single quotes (invalid JSON):**
-
 ```json
 {
-  "type": "guardrail" // ❌ Must use double quotes
+  'type': 'guardrail'  // ❌ Must use double quotes
 }
 ```
 
@@ -307,7 +310,6 @@ If valid, jq will pretty-print the JSON. If invalid, it will show the error.
 ---
 
 **Related Files:**
-
 - [SKILL.md](SKILL.md) - Main skill guide
 - [TRIGGER_TYPES.md](TRIGGER_TYPES.md) - Complete trigger documentation
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Debugging configuration issues

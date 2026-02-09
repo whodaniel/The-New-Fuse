@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AgentNFTRevenueDashboard } from '../../components/nft/AgentNFTRevenueDashboard';
 import { useToast } from '../../hooks/useToast';
@@ -23,8 +23,8 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
     const getUserWallet = async () => {
       try {
         if ((window as any).ethereum) {
-          const accounts = await (window as any).ethereum.request({
-            method: 'eth_accounts',
+          const accounts = await (window as any).ethereum.request({ 
+            method: 'eth_accounts' 
           });
           if (accounts.length > 0) {
             setUserAddress(accounts[0]);
@@ -41,9 +41,9 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
   const handleCreateStream = async (data: any) => {
     if (!agentNftId) {
       toast({
-        title: 'No Agent Selected',
-        description: 'Please select an agent to create a revenue stream.',
-        variant: 'destructive',
+        title: "No Agent Selected",
+        description: "Please select an agent to create a revenue stream.",
+        variant: "destructive"
       });
       return;
     }
@@ -61,11 +61,11 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
       if (response.ok) {
         const result = await response.json();
         toast({
-          title: 'Revenue Stream Created!',
+          title: "Revenue Stream Created!",
           description: `Stream "${data.streamName}" has been created successfully.`,
-          variant: 'success',
+          variant: "success"
         });
-
+        
         // Refresh the component
         window.location.reload();
       } else {
@@ -74,9 +74,9 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
     } catch (error) {
       console.error('Create stream error:', error);
       toast({
-        title: 'Creation Failed',
-        description: 'There was an error creating the revenue stream. Please try again.',
-        variant: 'destructive',
+        title: "Creation Failed",
+        description: "There was an error creating the revenue stream. Please try again.",
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
@@ -96,11 +96,11 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
       if (response.ok) {
         const result = await response.json();
         toast({
-          title: 'Revenue Distributed!',
-          description: 'Revenue has been successfully distributed to all shareholders.',
-          variant: 'success',
+          title: "Revenue Distributed!",
+          description: "Revenue has been successfully distributed to all shareholders.",
+          variant: "success"
         });
-
+        
         // Refresh the component
         window.location.reload();
       } else {
@@ -109,9 +109,9 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
     } catch (error) {
       console.error('Distribute revenue error:', error);
       toast({
-        title: 'Distribution Failed',
-        description: 'There was an error distributing revenue. Please try again.',
-        variant: 'destructive',
+        title: "Distribution Failed",
+        description: "There was an error distributing revenue. Please try again.",
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
@@ -129,17 +129,17 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
         body: JSON.stringify({
           amount,
           txHash: `0x${Math.random().toString(16).substr(2, 64)}`, // Mock tx hash
-          blockNumber: Math.floor(Math.random() * 1000000),
+          blockNumber: Math.floor(Math.random() * 1000000)
         }),
       });
 
       if (response.ok) {
         toast({
-          title: 'Revenue Added!',
+          title: "Revenue Added!",
           description: `${amount} ETH has been added to the revenue stream.`,
-          variant: 'success',
+          variant: "success"
         });
-
+        
         // Refresh the component
         window.location.reload();
       } else {
@@ -148,9 +148,9 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
     } catch (error) {
       console.error('Add revenue error:', error);
       toast({
-        title: 'Addition Failed',
-        description: 'There was an error adding revenue. Please try again.',
-        variant: 'destructive',
+        title: "Addition Failed",
+        description: "There was an error adding revenue. Please try again.",
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
@@ -173,7 +173,7 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <button
+              <button 
                 onClick={() => navigate('/agents')}
                 className="text-white/70 hover:text-white transition-colors"
               >
@@ -182,7 +182,7 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
               <h1 className="text-xl font-bold text-white">Revenue Management</h1>
             </div>
             <div className="flex items-center gap-4">
-              <button
+              <button 
                 onClick={() => navigate('/agents/nft-marketplace')}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
               >
@@ -197,7 +197,7 @@ export const RevenueDashboardPage: React.FC<RevenueDashboardPageProps> = () => {
           </div>
         </div>
       </div>
-
+      
       <AgentNFTRevenueDashboard
         agentNftId={agentNftId || undefined}
         userAddress={userAddress}

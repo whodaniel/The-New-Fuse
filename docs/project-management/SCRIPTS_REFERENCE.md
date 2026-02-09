@@ -115,10 +115,10 @@ Run these from the monorepo root (`/home/user/fuse`):
 
 | Script             | Description            | Usage                |
 | ------------------ | ---------------------- | -------------------- |
-| `pnpm db:generate` | Generate Drizzle client | After schema changes |
+| `pnpm db:generate` | Generate Prisma client | After schema changes |
 | `pnpm db:migrate`  | Run migrations         | Database updates     |
 | `pnpm db:reset`    | Reset database         | Development reset    |
-| `pnpm db:studio`   | Open Drizzle Studio     | Database UI          |
+| `pnpm db:studio`   | Open Prisma Studio     | Database UI          |
 
 ### Docker
 

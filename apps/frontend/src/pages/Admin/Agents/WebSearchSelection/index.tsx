@@ -1,12 +1,6 @@
 import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../../components/ui/card';
 import { Button } from '../../../../components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../../../../components/ui/card';
 
 interface WebSearchSelectionProps {
   onSelect?: (provider: string) => void;
@@ -30,7 +24,11 @@ const AgentWebSearchSelection: React.FC<WebSearchSelectionProps> = ({ onSelect }
               <CardDescription className="text-xs">{provider.description}</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button size="sm" onClick={() => onSelect?.(provider.id)} className="w-full">
+              <Button 
+                size="sm" 
+                onClick={() => onSelect?.(provider.id)}
+                className="w-full"
+              >
                 Select {provider.name}
               </Button>
             </CardContent>

@@ -14,8 +14,8 @@ if ! psql -lqt | cut -d \| -f 1 | grep -qw the_new_fuse_db; then
   createdb the_new_fuse_db
 fi
 
-# Generate Drizzle client
-echo "Generating Drizzle client..."
+# Generate Prisma client
+echo "Generating Prisma client..."
 cd packages/database && yarn db:generate
 
 # Run migrations

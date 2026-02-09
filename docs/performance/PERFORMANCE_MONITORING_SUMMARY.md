@@ -489,7 +489,7 @@ scripts/performance/
 4. **Integrate in Applications**
    - Add Web Vitals to frontend
    - Add APM to backend
-   - Add database monitoring to Drizzle
+   - Add database monitoring to Prisma
 
 5. **Run Initial Tests**
    ```bash

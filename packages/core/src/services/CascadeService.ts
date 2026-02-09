@@ -212,11 +212,7 @@ export class CascadeService extends EventEmitter {
     }
   }
 
-  private async executeSequential(
-    controllerId: string,
-    steps: CascadeStep[],
-    input: any,
-  ): Promise<any> {
+  private async executeSequential(controllerId: string, steps: CascadeStep[], input: any): Promise<any> {
     const results: any[] = [];
     const controller = this.controllers.get(controllerId)!;
 
@@ -246,11 +242,7 @@ export class CascadeService extends EventEmitter {
     return results;
   }
 
-  private async executeParallel(
-    controllerId: string,
-    steps: CascadeStep[],
-    input: any,
-  ): Promise<any[]> {
+  private async executeParallel(controllerId: string, steps: CascadeStep[], input: any): Promise<any[]> {
     const controller = this.controllers.get(controllerId)!;
     const promises = steps.map(async (step) => {
       const context: CascadeContext = {
@@ -279,11 +271,7 @@ export class CascadeService extends EventEmitter {
     return Promise.all(promises);
   }
 
-  private async executeWaterfall(
-    controllerId: string,
-    steps: CascadeStep[],
-    input: any,
-  ): Promise<any> {
+  private async executeWaterfall(controllerId: string, steps: CascadeStep[], input: any): Promise<any> {
     let currentInput = input;
     const controller = this.controllers.get(controllerId)!;
 
@@ -313,11 +301,7 @@ export class CascadeService extends EventEmitter {
     return currentInput;
   }
 
-  private async executePipeline(
-    controllerId: string,
-    steps: CascadeStep[],
-    input: any,
-  ): Promise<any> {
+  private async executePipeline(controllerId: string, steps: CascadeStep[], input: any): Promise<any> {
     const controller = this.controllers.get(controllerId)!;
     const executed = new Set<string>();
     const results = new Map<string, any>();
@@ -330,7 +314,7 @@ export class CascadeService extends EventEmitter {
       // Execute dependencies first
       if (step.dependencies && step.dependencies.length > 0) {
         for (const depId of step.dependencies) {
-          const depStep = steps.find((s) => s.id === depId);
+          const depStep = steps.find(s => s.id === depId);
           if (!depStep) {
             throw new Error(`Dependency not found: ${depId}`);
           }
@@ -383,11 +367,8 @@ export class CascadeService extends EventEmitter {
         const result = await Promise.race([
           promise,
           new Promise((_, reject) =>
-            setTimeout(
-              () => reject(new Error(`Step ${step.id} timed out after ${timeout}ms`)),
-              timeout,
-            ),
-          ),
+            setTimeout(() => reject(new Error(`Step ${step.id} timed out after ${timeout}ms`)), timeout)
+          )
         ]);
         return result;
       } catch (error) {
@@ -396,7 +377,7 @@ export class CascadeService extends EventEmitter {
         }
 
         this.logger.debug(`Step ${step.id} attempt ${attempt + 1} failed, retrying...`);
-        await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
       }
     }
   }

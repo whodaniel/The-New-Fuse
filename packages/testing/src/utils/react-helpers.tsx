@@ -22,7 +22,7 @@ export interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
  */
 export function renderWithProviders(
   ui: React.ReactElement,
-  options: CustomRenderOptions = {},
+  options: CustomRenderOptions = {}
 ): RenderResult & { user: ReturnType<typeof userEvent.setup> } {
   const { initialState, route = '/', ...renderOptions } = options;
 
@@ -99,7 +99,7 @@ export function mockResizeObserver() {
 export function mockMatchMedia(matches: boolean = false) {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
-    value: jest.fn().mockImplementation(query => ({
+    value: jest.fn().mockImplementation((query) => ({
       matches,
       media: query,
       onchange: null,
@@ -119,7 +119,7 @@ export function createMockFile(
   name: string,
   size: number,
   type: string,
-  lastModified?: number,
+  lastModified?: number
 ): File {
   const blob = new Blob(['a'.repeat(size)], { type });
   const file = new File([blob], name, { type, lastModified: lastModified || Date.now() });

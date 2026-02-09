@@ -1,35 +1,31 @@
 /**
  * Dashboard Integration Module
- *
+ * 
  * This module provides real-time sync updates for user control panels,
  * integrating with existing AdminDashboard and AgentWebSocketService.
  */
 
 // Core dashboard service
 export { SyncDashboardService } from './SyncDashboardService';
-export type {
-  DashboardUpdate,
-  DashboardUpdateType,
+export type { 
   IAgentWebSocketService,
   IMonitoringService,
-  SyncDashboardConfig,
   SystemAlert,
+  DashboardUpdateType,
+  DashboardUpdate,
+  SyncDashboardConfig
 } from './SyncDashboardService';
 
 // React integration
-export {
-  useFilteredAlerts,
-  useHealthScore,
-  useRecentOperations,
-  useSyncDashboard,
-} from './useSyncDashboard';
+export { useSyncDashboard } from './useSyncDashboard';
+export { useFilteredAlerts, useRecentOperations, useHealthScore } from './useSyncDashboard';
 export type {
-  DashboardData,
-  SyncHealth,
-  SyncMetrics,
-  SyncOperation,
   UseSyncDashboardConfig,
   UseSyncDashboardReturn,
+  DashboardData,
+  SyncMetrics,
+  SyncHealth,
+  SyncOperation
 } from './useSyncDashboard';
 
 // Enhanced dashboard component
@@ -42,18 +38,18 @@ export { DashboardWebSocketIntegration } from './DashboardWebSocketIntegration';
 // Monitoring integration
 export { DashboardMonitoringIntegration } from './DashboardMonitoringIntegration';
 export type {
-  AlertThreshold,
-  IExistingHeartbeatService,
-  IExistingMetricsService,
   IExistingMonitoringService,
-  MonitoringEvent,
+  IExistingMetricsService,
+  IExistingHeartbeatService,
   MonitoringEventType,
+  MonitoringEvent,
+  AlertThreshold
 } from './DashboardMonitoringIntegration';
 
 // Re-export types from other modules for convenience
 export type {
-  SyncHealth as CoreSyncHealth,
   SyncMetrics as CoreSyncMetrics,
+  SyncHealth as CoreSyncHealth,
   SyncOperation as CoreSyncOperation,
-  SystemAlert as CoreSystemAlert,
+  SystemAlert as CoreSystemAlert
 } from '../types';

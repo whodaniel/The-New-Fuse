@@ -75,8 +75,8 @@ build_and_test() {
     echo "Installing dependencies..."
     pnpm install --frozen-lockfile
     
-    # Generate Drizzle client
-    echo "Generating Drizzle client..."
+    # Generate Prisma client
+    echo "Generating Prisma client..."
     pnpm run db:generate
     
     # Build packages

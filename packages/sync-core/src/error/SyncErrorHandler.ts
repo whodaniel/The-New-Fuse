@@ -4,16 +4,23 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter } from 'events';
 import {
-  BaseError,
   BaseErrorHandler,
-  BaseErrorHandlerConfig,
-  ErrorCategory,
+  BaseError,
   ErrorContext,
-  ErrorSeverity,
+  ErrorHandler,
+  RecoveryStrategy,
   RecoveryResult,
+  ErrorSeverity,
+  ErrorCategory,
+  BaseErrorHandlerConfig
 } from '@the-new-fuse/core-error-handling';
-import { IMetricsCollector, IMonitoringSystem } from '@the-new-fuse/core-monitoring';
+import {
+  IMonitoringSystem,
+  IMetricsCollector,
+  MetricDataPoint
+} from '@the-new-fuse/core-monitoring';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 /**
@@ -131,17 +138,17 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
       alertThresholds: {
         errorRate: 10, // errors per minute
         criticalErrorCount: 5,
-        failedRecoveryRate: 0.5, // 50%
+        failedRecoveryRate: 0.5 // 50%
       },
-      ...config,
+      ...config
     };
 
     super(syncConfig, logger);
-
+    
     this.syncLogger = logger || new Logger('SyncErrorHandler');
     this.fallbackQueue = syncConfig.fallbackQueueName;
     this.monitoringSystem = monitoringSystem;
-
+    
     this.syncStatistics = {
       totalErrors: 0,
       errorsByType: {},
@@ -150,7 +157,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
       errorsByOperation: {},
       retrySuccessRate: 0,
       avgRecoveryTime: 0,
-      criticalErrors: 0,
+      criticalErrors: 0
     };
 
     if (this.monitoringSystem) {
@@ -169,10 +176,10 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
     operation?: string
   ): Promise<RecoveryResult | null> {
     const syncError = this.normalizeSyncError(error, context, operation);
-
+    
     // Update sync-specific statistics
     this.updateSyncStatistics(syncError);
-
+    
     // Record metrics if available
     if (this.metricsCollector) {
       this.recordErrorMetrics(syncError);
@@ -212,7 +219,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
         maxRetries: error.retryable ? 5 : 1,
         retryCount: 0,
         nextRetryAt: this.calculateNextRetryTime(0),
-        createdAt: new Date(),
+        createdAt: new Date()
       };
 
       // Use Redis sorted set for priority queue
@@ -229,11 +236,12 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
       this.syncLogger.debug(`Queued fallback operation: ${fallbackOp.id}`, {
         operation: fallbackOp.operation,
         priority: fallbackOp.priority,
-        tenantId: context.tenantId,
+        tenantId: context.tenantId
       });
 
       // Emit event for monitoring
       this.emit('fallbackQueued', { operation: fallbackOp, error, context });
+
     } catch (queueError) {
       this.syncLogger.error('Failed to queue fallback operation:', queueError);
       // Don't throw - this is a fallback mechanism itself
@@ -246,14 +254,14 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
   async processFallbackQueue(batchSize: number = 10): Promise<void> {
     try {
       const now = Date.now();
-
+      
       // Get operations ready for retry
       const operations = await this.redisService.zrange(this.fallbackQueue, 0, batchSize - 1);
-
+      
       for (const opStr of operations) {
         try {
           const operation: FallbackOperation = JSON.parse(opStr);
-
+          
           // Check if it's time to retry
           if (operation.nextRetryAt.getTime() > now) {
             continue;
@@ -269,14 +277,16 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
             // Requeue with updated retry info
             operation.retryCount++;
             operation.nextRetryAt = this.calculateNextRetryTime(operation.retryCount);
-
+            
             const newScore = operation.priority * 1000 + operation.nextRetryAt.getTime();
             await this.redisService.zadd(this.fallbackQueue, newScore, JSON.stringify(operation));
           }
+
         } catch (processError) {
           this.syncLogger.error('Error processing fallback operation:', processError);
         }
       }
+
     } catch (error) {
       this.syncLogger.error('Error processing fallback queue:', error);
     }
@@ -294,16 +304,16 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
    */
   clearSyncHistory(): void {
     this.clearErrorHistory();
-    Object.keys(this.syncStatistics.errorsByType).forEach((key) => {
+    Object.keys(this.syncStatistics.errorsByType).forEach(key => {
       this.syncStatistics.errorsByType[key] = 0;
     });
-    Object.keys(this.syncStatistics.errorsByResource).forEach((key) => {
+    Object.keys(this.syncStatistics.errorsByResource).forEach(key => {
       this.syncStatistics.errorsByResource[key] = 0;
     });
-    Object.keys(this.syncStatistics.errorsByTenant).forEach((key) => {
+    Object.keys(this.syncStatistics.errorsByTenant).forEach(key => {
       this.syncStatistics.errorsByTenant[key] = 0;
     });
-    Object.keys(this.syncStatistics.errorsByOperation).forEach((key) => {
+    Object.keys(this.syncStatistics.errorsByOperation).forEach(key => {
       this.syncStatistics.errorsByOperation[key] = 0;
     });
     this.syncStatistics.totalErrors = 0;
@@ -341,7 +351,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
           return true; // Assume retry will be handled by caller
         }
         return false;
-      },
+      }
     });
 
     // Conflict resolution strategy
@@ -356,7 +366,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
           return await this.attemptConflictResolution(error, context);
         }
         return false;
-      },
+      }
     });
 
     // Permission retry strategy
@@ -372,7 +382,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
           return true;
         }
         return false;
-      },
+      }
     });
 
     // Resource cleanup strategy
@@ -387,7 +397,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
           return await this.attemptResourceCleanup(error, context);
         }
         return false;
-      },
+      }
     });
   }
 
@@ -403,9 +413,9 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
         this.syncLogger.warn(`Network error in sync operation: ${error.message}`, {
           syncId: context.syncId,
           resourceType: error.resourceType,
-          tenantId: context.tenantId,
+          tenantId: context.tenantId
         });
-      },
+      }
     });
 
     // Conflict error handler
@@ -417,9 +427,9 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
           syncId: context.syncId,
           resourceType: error.resourceType,
           resourceId: error.resourceId,
-          tenantId: context.tenantId,
+          tenantId: context.tenantId
         });
-      },
+      }
     });
 
     // Critical error handler
@@ -432,12 +442,12 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
           resourceType: error.resourceType,
           resourceId: error.resourceId,
           tenantId: context.tenantId,
-          stackTrace: error.metadata.stackTrace,
+          stackTrace: error.metadata.stackTrace
         });
-
+        
         // Emit critical error event for immediate attention
         this.emit('criticalSyncError', { error, context });
-      },
+      }
     });
   }
 
@@ -470,8 +480,8 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
       metadata: {
         syncContext: context,
         originalError: error,
-        stackTrace: error.stack,
-      },
+        stackTrace: error.stack
+      }
     };
 
     return syncError;
@@ -489,14 +499,14 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
    */
   private determineErrorCode(error: Error): number {
     const message = error.message.toLowerCase();
-
+    
     if (message.includes('network') || message.includes('connection')) return 1001;
     if (message.includes('timeout')) return 1002;
     if (message.includes('conflict')) return 2001;
     if (message.includes('permission') || message.includes('unauthorized')) return 3001;
     if (message.includes('validation')) return 4001;
     if (message.includes('resource') || message.includes('not found')) return 4002;
-
+    
     return 9999; // Unknown error
   }
 
@@ -505,9 +515,11 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
    */
   private isRetryableError(error: Error): boolean {
     const message = error.message.toLowerCase();
-    const retryablePatterns = ['network', 'timeout', 'connection', 'temporary', 'retry'];
-
-    return retryablePatterns.some((pattern) => message.includes(pattern));
+    const retryablePatterns = [
+      'network', 'timeout', 'connection', 'temporary', 'retry'
+    ];
+    
+    return retryablePatterns.some(pattern => message.includes(pattern));
   }
 
   /**
@@ -515,7 +527,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
    */
   private determineSeverity(error: Error): ErrorSeverity {
     const message = error.message.toLowerCase();
-
+    
     if (message.includes('critical') || message.includes('fatal')) {
       return ErrorSeverity.CRITICAL;
     }
@@ -525,7 +537,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
     if (message.includes('timeout') || message.includes('retry')) {
       return ErrorSeverity.MEDIUM;
     }
-
+    
     return ErrorSeverity.LOW;
   }
 
@@ -534,7 +546,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
    */
   private determineCategory(error: Error): ErrorCategory {
     const message = error.message.toLowerCase();
-
+    
     if (message.includes('network') || message.includes('connection')) {
       return ErrorCategory.NETWORK;
     }
@@ -544,7 +556,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
     if (message.includes('validation')) {
       return ErrorCategory.VALIDATION;
     }
-
+    
     return ErrorCategory.SYSTEM;
   }
 
@@ -553,14 +565,14 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
    */
   private determineErrorType(error: Error): SyncError['type'] {
     const message = error.message.toLowerCase();
-
+    
     if (message.includes('network') || message.includes('connection')) return 'network';
     if (message.includes('conflict')) return 'conflict';
     if (message.includes('permission') || message.includes('unauthorized')) return 'permission';
     if (message.includes('validation')) return 'validation';
     if (message.includes('timeout')) return 'timeout';
     if (message.includes('resource') || message.includes('not found')) return 'resource';
-
+    
     return 'validation'; // Default fallback
   }
 
@@ -569,25 +581,25 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
    */
   private updateSyncStatistics(error: SyncError): void {
     this.syncStatistics.totalErrors++;
-
+    
     // Update by type
-    this.syncStatistics.errorsByType[error.type] =
+    this.syncStatistics.errorsByType[error.type] = 
       (this.syncStatistics.errorsByType[error.type] || 0) + 1;
-
+    
     // Update by resource
-    this.syncStatistics.errorsByResource[error.resourceType] =
+    this.syncStatistics.errorsByResource[error.resourceType] = 
       (this.syncStatistics.errorsByResource[error.resourceType] || 0) + 1;
-
+    
     // Update by tenant
     if (error.tenantId) {
-      this.syncStatistics.errorsByTenant[error.tenantId] =
+      this.syncStatistics.errorsByTenant[error.tenantId] = 
         (this.syncStatistics.errorsByTenant[error.tenantId] || 0) + 1;
     }
-
+    
     // Update by operation
-    this.syncStatistics.errorsByOperation[error.syncOperation] =
+    this.syncStatistics.errorsByOperation[error.syncOperation] = 
       (this.syncStatistics.errorsByOperation[error.syncOperation] || 0) + 1;
-
+    
     // Update critical errors
     if (error.severity === ErrorSeverity.CRITICAL) {
       this.syncStatistics.criticalErrors++;
@@ -605,16 +617,12 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
       type: error.type,
       resourceType: error.resourceType,
       severity: error.severity,
-      tenantId: error.tenantId || 'global',
+      tenantId: error.tenantId || 'global'
     };
 
     this.metricsCollector.incrementCounter('sync_errors_total', labels);
-    this.metricsCollector.recordGauge(
-      'sync_error_severity_score',
-      this.getSeverityScore(error.severity),
-      labels
-    );
-
+    this.metricsCollector.recordGauge('sync_error_severity_score', this.getSeverityScore(error.severity), labels);
+    
     if (error.retryable) {
       this.metricsCollector.incrementCounter('sync_retryable_errors_total', labels);
     }
@@ -625,16 +633,11 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
    */
   private getSeverityScore(severity: ErrorSeverity): number {
     switch (severity) {
-      case ErrorSeverity.LOW:
-        return 1;
-      case ErrorSeverity.MEDIUM:
-        return 2;
-      case ErrorSeverity.HIGH:
-        return 3;
-      case ErrorSeverity.CRITICAL:
-        return 4;
-      default:
-        return 0;
+      case ErrorSeverity.LOW: return 1;
+      case ErrorSeverity.MEDIUM: return 2;
+      case ErrorSeverity.HIGH: return 3;
+      case ErrorSeverity.CRITICAL: return 4;
+      default: return 0;
     }
   }
 
@@ -642,11 +645,9 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
    * Check if error is critical and requires immediate attention
    */
   private isCriticalError(error: SyncError): boolean {
-    return (
-      error.severity === ErrorSeverity.CRITICAL ||
-      (error.type === 'conflict' && error.resourceType === 'agent') ||
-      error.syncOperation.includes('master_clock')
-    );
+    return error.severity === ErrorSeverity.CRITICAL ||
+           error.type === 'conflict' && error.resourceType === 'agent' ||
+           error.syncOperation.includes('master_clock');
   }
 
   /**
@@ -664,7 +665,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
       syncId: context.syncId,
       operation: error.syncOperation,
       timestamp: error.timestamp,
-      stackTrace: error.metadata.stackTrace,
+      stackTrace: error.metadata.stackTrace
     });
 
     // Emit critical error event for immediate escalation
@@ -675,7 +676,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
       this.metricsCollector.incrementCounter('sync_critical_errors_total', {
         type: error.type,
         resourceType: error.resourceType,
-        tenantId: context.tenantId || 'global',
+        tenantId: context.tenantId || 'global'
       });
     }
   }
@@ -685,19 +686,19 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
    */
   private calculateFallbackPriority(error: SyncError): number {
     let priority = 1;
-
+    
     // Higher priority for critical errors
     if (error.severity === ErrorSeverity.CRITICAL) priority += 10;
     if (error.severity === ErrorSeverity.HIGH) priority += 5;
-
+    
     // Higher priority for certain resource types
     if (error.resourceType === 'agent') priority += 3;
     if (error.resourceType === 'template') priority += 2;
-
+    
     // Higher priority for certain operations
     if (error.syncOperation.includes('master_clock')) priority += 5;
     if (error.syncOperation.includes('heartbeat')) priority += 3;
-
+    
     return priority;
   }
 
@@ -711,7 +712,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
       baseDelay * Math.pow(config.retryDelayMultiplier, retryCount),
       config.maxRetryDelay
     );
-
+    
     return new Date(Date.now() + delay);
   }
 
@@ -723,13 +724,13 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
       this.syncLogger.debug(`Processing fallback operation: ${operation.id}`, {
         operation: operation.operation,
         retryCount: operation.retryCount,
-        tenantId: operation.context.tenantId,
+        tenantId: operation.context.tenantId
       });
 
       // Emit event for custom processing
       const result = await new Promise<boolean>((resolve) => {
         this.emit('processFallbackOperation', operation, resolve);
-
+        
         // Default timeout if no handler responds
         setTimeout(() => resolve(false), 5000);
       });
@@ -743,6 +744,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
       }
 
       return result;
+
     } catch (error) {
       this.syncLogger.error(`Error processing fallback operation ${operation.id}:`, error);
       return false;
@@ -752,20 +754,18 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
   /**
    * Attempt automatic conflict resolution
    */
-  private async attemptConflictResolution(
-    error: SyncError,
-    context: SyncContext
-  ): Promise<boolean> {
+  private async attemptConflictResolution(error: SyncError, context: SyncContext): Promise<boolean> {
     try {
       // Emit conflict resolution event for custom handlers
       const resolved = await new Promise<boolean>((resolve) => {
         this.emit('resolveConflict', error, context, resolve);
-
+        
         // Default timeout
         setTimeout(() => resolve(false), 10000);
       });
 
       return resolved;
+
     } catch (error) {
       this.syncLogger.error('Error in conflict resolution:', error);
       return false;
@@ -780,12 +780,13 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
       // Emit resource cleanup event for custom handlers
       const cleaned = await new Promise<boolean>((resolve) => {
         this.emit('cleanupResource', error, context, resolve);
-
+        
         // Default timeout
         setTimeout(() => resolve(false), 5000);
       });
 
       return cleaned;
+
     } catch (error) {
       this.syncLogger.error('Error in resource cleanup:', error);
       return false;
@@ -797,7 +798,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
    */
   private initializeMetricsCollection(): void {
     const config = this.config as SyncErrorHandlerConfig;
-
+    
     if (!config.enableMetricsCollection || !this.metricsCollector) {
       return;
     }
@@ -814,7 +815,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
     if (!this.metricsCollector) return;
 
     const stats = this.getSyncStatistics();
-
+    
     // Report error counts
     this.metricsCollector.recordGauge('sync_total_errors', stats.totalErrors);
     this.metricsCollector.recordGauge('sync_critical_errors', stats.criticalErrors);
@@ -840,7 +841,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
    */
   private checkAlertThresholds(stats: SyncErrorStatistics): void {
     const config = this.config as SyncErrorHandlerConfig;
-
+    
     if (!config.enableAlerts) return;
 
     // Check error rate
@@ -849,7 +850,7 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
         type: 'errorRate',
         threshold: config.alertThresholds.errorRate,
         current: this.statistics.errorRate,
-        message: `Sync error rate exceeded threshold: ${this.statistics.errorRate}/min`,
+        message: `Sync error rate exceeded threshold: ${this.statistics.errorRate}/min`
       });
     }
 
@@ -859,17 +860,17 @@ export class SyncErrorHandler extends BaseErrorHandler<SyncError, SyncContext> {
         type: 'criticalErrors',
         threshold: config.alertThresholds.criticalErrorCount,
         current: stats.criticalErrors,
-        message: `Critical sync errors exceeded threshold: ${stats.criticalErrors}`,
+        message: `Critical sync errors exceeded threshold: ${stats.criticalErrors}`
       });
     }
 
     // Check failed recovery rate
-    if (stats.retrySuccessRate < 1 - config.alertThresholds.failedRecoveryRate) {
+    if (stats.retrySuccessRate < (1 - config.alertThresholds.failedRecoveryRate)) {
       this.emit('alertTriggered', {
         type: 'recoveryFailure',
         threshold: config.alertThresholds.failedRecoveryRate,
         current: 1 - stats.retrySuccessRate,
-        message: `Sync recovery failure rate exceeded threshold: ${(1 - stats.retrySuccessRate) * 100}%`,
+        message: `Sync recovery failure rate exceeded threshold: ${(1 - stats.retrySuccessRate) * 100}%`
       });
     }
   }

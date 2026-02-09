@@ -1,8 +1,6 @@
 # Complete MCP Specifications Guide
 
-This comprehensive guide consolidates all Model Context Protocol (MCP)
-specifications, implementation details, server extensions, and troubleshooting
-information.
+This comprehensive guide consolidates all Model Context Protocol (MCP) specifications, implementation details, server extensions, and troubleshooting information.
 
 ## Table of Contents
 
@@ -15,10 +13,7 @@ information.
 
 ## MCP Protocol Specification
 
-The Model Context Protocol (MCP) is a standardized communication protocol for
-inter-LLM communication in the Fuse framework. It enables different AI models
-and agents to share context, execute capabilities, and coordinate on complex
-tasks.
+The Model Context Protocol (MCP) is a standardized communication protocol for inter-LLM communication in the Fuse framework. It enables different AI models and agents to share context, execute capabilities, and coordinate on complex tasks.
 
 ### Protocol Structure
 
@@ -26,36 +21,35 @@ MCP messages follow a structured format:
 
 ```typescript
 interface MCPMessage<T = unknown> {
-  version: string;
-  messageId: string;
-  timestamp: number;
-  source: {
-    id: string;
-    type: 'ai_agent' | 'user' | 'system';
-    capabilities: string[];
-  };
-  target: {
-    id: string;
-    type: 'ai_agent' | 'user' | 'system';
-  };
-  content: {
-    type: MCPMessageType;
-    action: string;
-    data: T;
-    priority: 'low' | 'medium' | 'high';
-  };
-  metadata?: {
-    correlationId?: string;
-    sessionId?: string;
-    context?: any;
-  };
+    version: string;
+    messageId: string;
+    timestamp: number;
+    source: {
+        id: string;
+        type: 'ai_agent' | 'user' | 'system';
+        capabilities: string[];
+    };
+    target: {
+        id: string;
+        type: 'ai_agent' | 'user' | 'system';
+    };
+    content: {
+        type: MCPMessageType;
+        action: string;
+        data: T;
+        priority: 'low' | 'medium' | 'high';
+    };
+    metadata?: {
+        correlationId?: string;
+        sessionId?: string;
+        context?: any;
+    };
 }
 ```
 
 ### Message Types
 
 #### Request Messages
-
 Used to request a capability or action from another agent:
 
 ```json
@@ -92,7 +86,6 @@ Used to request a capability or action from another agent:
 ```
 
 #### Response Messages
-
 Used to respond to requests:
 
 ```json
@@ -126,7 +119,6 @@ Used to respond to requests:
 ```
 
 #### Event Messages
-
 Used for notifications and asynchronous updates:
 
 ```json
@@ -154,7 +146,6 @@ Used for notifications and asynchronous updates:
 ### Communication Patterns
 
 #### Synchronous Communication
-
 ```typescript
 async function syncRequest(message: MCPMessage): Promise<MCPMessage> {
   const response = await sendMessage(message);
@@ -163,24 +154,19 @@ async function syncRequest(message: MCPMessage): Promise<MCPMessage> {
 ```
 
 #### Asynchronous Communication
-
 ```typescript
-function asyncRequest(
-  message: MCPMessage,
-  callback: (response: MCPMessage) => void
-) {
+function asyncRequest(message: MCPMessage, callback: (response: MCPMessage) => void) {
   sendMessage(message);
   registerCallback(message.id, callback);
 }
 ```
 
 #### Broadcast Communication
-
 ```typescript
 function broadcastEvent(event: MCPMessage) {
   const targets = getActiveAgents();
-  targets.forEach((target) => {
-    sendMessage({ ...event, target });
+  targets.forEach(target => {
+    sendMessage({...event, target});
   });
 }
 ```
@@ -196,7 +182,11 @@ const server = new MCPServer({
   name: 'Fuse MCP Server',
   version: '1.0.0',
   port: 3711,
-  capabilities: ['file-operations', 'code-analysis', 'agent-communication'],
+  capabilities: [
+    'file-operations',
+    'code-analysis',
+    'agent-communication'
+  ]
 });
 
 // Register tools
@@ -205,16 +195,16 @@ server.registerTool('analyzeCode', {
   parameters: {
     code: { type: 'string', required: true },
     language: { type: 'string', required: true },
-    options: { type: 'object', required: false },
+    options: { type: 'object', required: false }
   },
   handler: async (params) => {
     // Implementation
     return {
       issues: [],
       suggestions: [],
-      metrics: {},
+      metrics: {}
     };
-  },
+  }
 });
 
 // Start server
@@ -269,7 +259,7 @@ const MCP_ERROR_CODES = {
   PERMISSION_DENIED: 'PERMISSION_DENIED',
   TIMEOUT: 'TIMEOUT',
   AGENT_UNAVAILABLE: 'AGENT_UNAVAILABLE',
-  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  VALIDATION_ERROR: 'VALIDATION_ERROR'
 };
 ```
 
@@ -288,26 +278,23 @@ const DeploymentSchema = z.object({
   options: z.object({
     version: z.string().regex(/^\d+\.\d+\.\d+$/),
     enableFeatures: z.array(z.string()).optional(),
-    rollback: z.boolean().default(true),
+    rollback: z.boolean().default(true)
   }),
-  timestamp: z
-    .string()
-    .datetime()
-    .transform((str) => new Date(str)),
+  timestamp: z.string().datetime().transform(str => new Date(str))
 });
 
 export const deploymentTools = {
   deployApplication: async (params: any, context: MCPContext) => {
     const validated = DeploymentSchema.parse(params);
-
+    
     // Implementation
-    return {
-      success: true,
-      deploymentId: `deploy-${Date.now()}`,
-      environment: validated.environment,
-      version: validated.options.version,
+    return { 
+      success: true, 
+      deploymentId: `deploy-${Date.now()}`, 
+      environment: validated.environment, 
+      version: validated.options.version 
     };
-  },
+  }
 };
 ```
 
@@ -319,16 +306,16 @@ class StatefulTool {
 
   async processWithState(params: any, context: MCPContext) {
     const sessionKey = `${context.sessionId}:${context.agentId}`;
-
+    
     // Get previous state
     const previousState = this.state.get(sessionKey) || {};
-
+    
     // Process with state
     const result = await this.process(params, previousState);
-
+    
     // Update state
     this.state.set(sessionKey, result.newState);
-
+    
     return result.output;
   }
 
@@ -336,7 +323,7 @@ class StatefulTool {
     // Implementation that uses and updates state
     return {
       output: {},
-      newState: {},
+      newState: {}
     };
   }
 }
@@ -354,7 +341,7 @@ class DatabaseTool {
 
   constructor() {
     this.pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
+      connectionString: process.env.DATABASE_URL
     });
   }
 
@@ -365,7 +352,7 @@ class DatabaseTool {
       return {
         rows: result.rows,
         rowCount: result.rowCount,
-        fields: result.fields?.map((f) => f.name),
+        fields: result.fields?.map(f => f.name)
       };
     } finally {
       client.release();
@@ -390,11 +377,11 @@ class APIIntegrationTool {
     const response = await fetch(`${this.baseURL}${params.endpoint}`, {
       method: params.method,
       headers: {
-        Authorization: `Bearer ${this.apiKey}`,
+        'Authorization': `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
-        ...params.headers,
+        ...params.headers
       },
-      body: params.data ? JSON.stringify(params.data) : undefined,
+      body: params.data ? JSON.stringify(params.data) : undefined
     });
 
     if (!response.ok) {
@@ -430,15 +417,16 @@ class AgentRegistry {
   registerAgent(agent: AgentInfo) {
     this.agents.set(agent.id, {
       ...agent,
-      lastSeen: new Date(),
+      lastSeen: new Date()
     });
   }
 
   findAgentsByCapability(capability: string): AgentInfo[] {
-    return Array.from(this.agents.values()).filter(
-      (agent) =>
-        agent.capabilities.includes(capability) && agent.status === 'online'
-    );
+    return Array.from(this.agents.values())
+      .filter(agent => 
+        agent.capabilities.includes(capability) && 
+        agent.status === 'online'
+      );
   }
 
   async routeMessage(message: MCPMessage): Promise<string[]> {
@@ -446,7 +434,7 @@ class AgentRegistry {
       // Auto-route based on required capability
       const capability = message.content.action;
       const availableAgents = this.findAgentsByCapability(capability);
-
+      
       if (availableAgents.length === 0) {
         throw new MCPError(
           'NO_AVAILABLE_AGENTS',
@@ -455,7 +443,7 @@ class AgentRegistry {
       }
 
       // Load balancing - select least busy agent
-      const targetAgent = availableAgents.reduce((prev, current) =>
+      const targetAgent = availableAgents.reduce((prev, current) => 
         prev.status === 'online' ? prev : current
       );
 
@@ -491,19 +479,17 @@ class TaskCoordinator {
     this.agentRegistry = agentRegistry;
   }
 
-  async submitTask(
-    taskData: Omit<Task, 'id' | 'status' | 'createdAt' | 'updatedAt'>
-  ): Promise<string> {
+  async submitTask(taskData: Omit<Task, 'id' | 'status' | 'createdAt' | 'updatedAt'>): Promise<string> {
     const task: Task = {
       ...taskData,
       id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       status: 'pending',
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
 
     this.tasks.set(task.id, task);
-
+    
     // Check if dependencies are satisfied
     if (await this.areDependenciesSatisfied(task)) {
       await this.assignTask(task);
@@ -513,17 +499,15 @@ class TaskCoordinator {
   }
 
   private async areDependenciesSatisfied(task: Task): Promise<boolean> {
-    return task.dependencies.every((depId) => {
+    return task.dependencies.every(depId => {
       const dep = this.tasks.get(depId);
       return dep && dep.status === 'completed';
     });
   }
 
   private async assignTask(task: Task) {
-    const availableAgents = this.agentRegistry.findAgentsByCapability(
-      task.type
-    );
-
+    const availableAgents = this.agentRegistry.findAgentsByCapability(task.type);
+    
     if (availableAgents.length === 0) {
       throw new MCPError(
         'NO_AVAILABLE_AGENTS',
@@ -548,22 +532,22 @@ class TaskCoordinator {
       source: {
         id: 'task-coordinator',
         type: 'system',
-        capabilities: ['task-coordination'],
+        capabilities: ['task-coordination']
       },
       target: {
         id: agentId,
-        type: 'ai_agent',
+        type: 'ai_agent'
       },
       content: {
         type: 'task-assignment',
         action: task.type,
         data: task.data,
-        priority: 'medium',
+        priority: 'medium'
       },
       metadata: {
         taskId: task.id,
-        correlationId: task.id,
-      },
+        correlationId: task.id
+      }
     };
 
     // Send message through MCP
@@ -577,21 +561,18 @@ class TaskCoordinator {
 ### Core MCP Tasks
 
 #### Communication Tasks
-
 - **send_message**: Send message to specific agent
 - **broadcast_message**: Send message to multiple agents
 - **subscribe_events**: Subscribe to event notifications
 - **unsubscribe_events**: Unsubscribe from events
 
 #### Agent Management Tasks
-
 - **register_agent**: Register new agent in the system
 - **update_agent_status**: Update agent availability status
 - **query_agents**: Find agents by capabilities
 - **get_agent_info**: Get detailed agent information
 
 #### Tool Execution Tasks
-
 - **execute_tool**: Execute a specific tool with parameters
 - **list_tools**: Get available tools and their descriptions
 - **get_tool_schema**: Get parameter schema for a tool
@@ -646,7 +627,6 @@ interface QueryAgentsTask {
 ### Common Issues
 
 #### Connection Problems
-
 ```typescript
 // Check MCP server status
 async function checkMCPStatus() {
@@ -674,24 +654,20 @@ async function connectWithRetry(maxRetries = 3) {
 ```
 
 #### Message Delivery Issues
-
 ```typescript
 // Message acknowledgment system
 class MessageTracker {
-  private pendingMessages: Map<
-    string,
-    {
-      message: MCPMessage;
-      timestamp: number;
-      retries: number;
-    }
-  > = new Map();
+  private pendingMessages: Map<string, {
+    message: MCPMessage;
+    timestamp: number;
+    retries: number;
+  }> = new Map();
 
   async sendWithTracking(message: MCPMessage, maxRetries = 3) {
     this.pendingMessages.set(message.messageId, {
       message,
       timestamp: Date.now(),
-      retries: 0,
+      retries: 0
     });
 
     try {
@@ -710,26 +686,19 @@ class MessageTracker {
     tracked.retries++;
     if (tracked.retries < 3) {
       // Retry with exponential backoff
-      setTimeout(
-        () => {
-          this.sendMessage(tracked.message);
-        },
-        1000 * Math.pow(2, tracked.retries)
-      );
+      setTimeout(() => {
+        this.sendMessage(tracked.message);
+      }, 1000 * Math.pow(2, tracked.retries));
     } else {
       // Give up and notify sender
       this.pendingMessages.delete(messageId);
-      throw new MCPError(
-        'MESSAGE_DELIVERY_FAILED',
-        `Failed to deliver message after ${tracked.retries} retries`
-      );
+      throw new MCPError('MESSAGE_DELIVERY_FAILED', `Failed to deliver message after ${tracked.retries} retries`);
     }
   }
 }
 ```
 
 #### Performance Issues
-
 ```typescript
 // Message rate limiting
 class RateLimiter {
@@ -767,7 +736,6 @@ class RateLimiter {
 ### Debugging Tools
 
 #### Message Inspector
-
 ```typescript
 class MessageInspector {
   private messageLog: MCPMessage[] = [];
@@ -779,8 +747,8 @@ class MessageInspector {
       metadata: {
         ...message.metadata,
         direction,
-        loggedAt: Date.now(),
-      },
+        loggedAt: Date.now()
+      }
     });
 
     if (this.messageLog.length > this.maxLogSize) {
@@ -794,30 +762,20 @@ class MessageInspector {
     timeRange?: { start: number; end: number };
     content?: string;
   }): MCPMessage[] {
-    return this.messageLog.filter((msg) => {
-      if (
-        criteria.agentId &&
-        msg.source.id !== criteria.agentId &&
-        msg.target.id !== criteria.agentId
-      )
-        return false;
-
-      if (criteria.messageType && msg.content.type !== criteria.messageType)
-        return false;
-
-      if (
-        criteria.timeRange &&
-        (msg.timestamp < criteria.timeRange.start ||
-          msg.timestamp > criteria.timeRange.end)
-      )
-        return false;
-
-      if (
-        criteria.content &&
-        !JSON.stringify(msg.content).includes(criteria.content)
-      )
-        return false;
-
+    return this.messageLog.filter(msg => {
+      if (criteria.agentId && 
+          msg.source.id !== criteria.agentId && 
+          msg.target.id !== criteria.agentId) return false;
+      
+      if (criteria.messageType && msg.content.type !== criteria.messageType) return false;
+      
+      if (criteria.timeRange && 
+          (msg.timestamp < criteria.timeRange.start || 
+           msg.timestamp > criteria.timeRange.end)) return false;
+      
+      if (criteria.content && 
+          !JSON.stringify(msg.content).includes(criteria.content)) return false;
+      
       return true;
     });
   }
@@ -832,24 +790,24 @@ class MessageInspector {
       totalMessages: this.messageLog.length,
       messagesByType: {} as Record<string, number>,
       messagesByAgent: {} as Record<string, number>,
-      averageResponseTime: 0,
+      averageResponseTime: 0
     };
 
     let responseTimes: number[] = [];
 
-    this.messageLog.forEach((msg) => {
+    this.messageLog.forEach(msg => {
       // Count by type
-      report.messagesByType[msg.content.type] =
+      report.messagesByType[msg.content.type] = 
         (report.messagesByType[msg.content.type] || 0) + 1;
 
       // Count by agent
-      report.messagesByAgent[msg.source.id] =
+      report.messagesByAgent[msg.source.id] = 
         (report.messagesByAgent[msg.source.id] || 0) + 1;
 
       // Calculate response times for request-response pairs
       if (msg.content.type === 'response' && msg.metadata?.requestId) {
-        const request = this.messageLog.find(
-          (m) => m.messageId === msg.metadata!.requestId
+        const request = this.messageLog.find(m => 
+          m.messageId === msg.metadata!.requestId
         );
         if (request) {
           responseTimes.push(msg.timestamp - request.timestamp);
@@ -858,7 +816,7 @@ class MessageInspector {
     });
 
     if (responseTimes.length > 0) {
-      report.averageResponseTime =
+      report.averageResponseTime = 
         responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
     }
 
@@ -926,11 +884,11 @@ class SlackMCPBridge {
       source: {
         id: `slack-${slackMessage.user}`,
         type: 'user',
-        capabilities: [],
+        capabilities: []
       },
       target: {
         id: 'slack-bot-agent',
-        type: 'ai_agent',
+        type: 'ai_agent'
       },
       content: {
         type: 'user-message',
@@ -938,10 +896,10 @@ class SlackMCPBridge {
         data: {
           text: slackMessage.text,
           channel: slackMessage.channel,
-          user: slackMessage.user,
+          user: slackMessage.user
         },
-        priority: 'medium',
-      },
+        priority: 'medium'
+      }
     };
 
     return await this.mcpServer.handleMessage(mcpMessage);
@@ -949,8 +907,4 @@ class SlackMCPBridge {
 }
 ```
 
-This complete MCP specifications guide consolidates all protocol definitions,
-implementation details, server extensions, troubleshooting information, and
-advanced integration patterns. All technical specifications and implementation
-details have been preserved while providing a comprehensive reference for MCP
-development and deployment.
+This complete MCP specifications guide consolidates all protocol definitions, implementation details, server extensions, troubleshooting information, and advanced integration patterns. All technical specifications and implementation details have been preserved while providing a comprehensive reference for MCP development and deployment.

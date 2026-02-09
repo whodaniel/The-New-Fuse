@@ -1,6 +1,6 @@
+import React, { useEffect, useState } from 'react';
 import { Button, Input } from '@/components/core';
 import Loading from '@/components/Loading';
-import { useEffect, useState } from 'react';
 
 interface PortRegistration {
   id: string;
@@ -18,7 +18,7 @@ export default function PortManagement() {
   const fetchPorts = () => {
     setLoading(true);
     fetch('/api/ports')
-      .then((res) => res.json())
+      .then(res => res.json())
       .then((data: PortRegistration[]) => setPorts(data))
       .finally(() => setLoading(false));
   };
@@ -53,7 +53,7 @@ export default function PortManagement() {
           </tr>
         </thead>
         <tbody>
-          {ports.map((p) => (
+          {ports.map(p => (
             <tr key={p.id}>
               <td className="border px-2 py-1">{p.serviceName}</td>
               <td className="border px-2 py-1">{p.environment}</td>
@@ -64,9 +64,7 @@ export default function PortManagement() {
                   type="number"
                   className="w-20"
                   value={reassignValues[p.id] || ''}
-                  onChange={(e) =>
-                    setReassignValues({ ...reassignValues, [p.id]: parseInt(e.target.value, 10) })
-                  }
+                  onChange={e => setReassignValues({ ...reassignValues, [p.id]: parseInt(e.target.value, 10) })}
                   placeholder="New port"
                 />
                 <Button size="sm" onClick={() => handleReassign(p.id)}>

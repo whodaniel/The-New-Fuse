@@ -1,7 +1,7 @@
-import { Chat } from '@/components/ui/chat';
+import React, { FC, useState } from 'react';
 import { Split } from '@/components/ui/split';
+import { Chat } from '@/components/ui/chat';
 import { WorkflowCanvas } from '@/components/ui/workflow-canvas';
-import { FC, useState } from 'react';
 
 export const AgentWorkspace: FC<{ workspaceData: unknown }> = () => {
   const [activeAgents, setActiveAgents] = useState<string[]>([]);
@@ -15,10 +15,15 @@ export const AgentWorkspace: FC<{ workspaceData: unknown }> = () => {
           onAgentInteraction={(agentId, data) => {
             // Handle agent interactions
           }}
-          tools={['flowchart', 'codeEditor', 'whiteboard', 'documentViewer']}
+          tools={[
+            'flowchart',
+            'codeEditor',
+            'whiteboard',
+            'documentViewer'
+          ]}
         />
       </div>
-
+      
       <div className="w-1/4">
         <Chat
           participants={activeAgents}

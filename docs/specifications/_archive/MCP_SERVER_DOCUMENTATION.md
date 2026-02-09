@@ -2,13 +2,9 @@
 
 ## Overview
 
-The Model-Controller-Provider (MCP) server is a critical middleware component in
-The New Fuse that enables AI agents to securely interact with your development
-environment. It provides a standardized interface for file operations, build
-processes, and state management.
+The Model-Controller-Provider (MCP) server is a critical middleware component in The New Fuse that enables AI agents to securely interact with your development environment. It provides a standardized interface for file operations, build processes, and state management.
 
-This document covers the setup, usage, and extension of the MCP server,
-including its integration with VS Code and AI agents.
+This document covers the setup, usage, and extension of the MCP server, including its integration with VS Code and AI agents.
 
 ## Table of Contents
 
@@ -27,8 +23,7 @@ The MCP server offers the following capabilities:
 
 - **File Operations**: Read, write, and list files in the workspace
 - **Build Management**: Execute build scripts defined in package.json
-- **State Management**: Store and retrieve conversation history and agent
-  preferences
+- **State Management**: Store and retrieve conversation history and agent preferences
 - **Security**: API key authentication for secure access
 - **VS Code Integration**: Register and discover MCP servers from VS Code
 - **Tool Discovery**: Browse available tools and their parameters
@@ -55,13 +50,11 @@ The MCP server follows a modular architecture:
 ### Building and Starting the MCP Server
 
 1. Build the MCP server:
-
    ```bash
    yarn build:mcp
    ```
 
 2. Start the MCP server:
-
    ```bash
    yarn mcp:start
    ```
@@ -72,8 +65,7 @@ The MCP server follows a modular architecture:
 
 ### Using The New Fuse MCP Server
 
-The New Fuse MCP server is now included in the available MCP servers
-configuration. It provides the following capabilities:
+The New Fuse MCP server is now included in the available MCP servers configuration. It provides the following capabilities:
 
 - File operations: Read, write, and manage files in the workspace
 - Build operations: Execute build scripts and manage build processes
@@ -156,24 +148,23 @@ The VS Code integration provides:
 
 ### Endpoints
 
-| Endpoint                        | Method | Description                     |
-| ------------------------------- | ------ | ------------------------------- |
-| `/health`                       | GET    | Server health check             |
-| `/mcp/tools`                    | GET    | List available tools            |
-| `/mcp/capabilities`             | GET    | List available capabilities     |
-| `/mcp/request`                  | POST   | Execute a tool                  |
-| `/mcp/discovery`                | GET    | Get server metadata             |
-| `/mcp/register`                 | POST   | Register a client               |
-| `/mcp/conversation`             | POST   | Create a conversation           |
-| `/mcp/conversation/:id/message` | POST   | Add a message to a conversation |
-| `/mcp/conversation/:id/history` | GET    | Get conversation history        |
-| `/mcp/agent/:id/state/:key`     | GET    | Get agent state                 |
-| `/mcp/agent/:id/state`          | POST   | Set agent state                 |
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Server health check |
+| `/mcp/tools` | GET | List available tools |
+| `/mcp/capabilities` | GET | List available capabilities |
+| `/mcp/request` | POST | Execute a tool |
+| `/mcp/discovery` | GET | Get server metadata |
+| `/mcp/register` | POST | Register a client |
+| `/mcp/conversation` | POST | Create a conversation |
+| `/mcp/conversation/:id/message` | POST | Add a message to a conversation |
+| `/mcp/conversation/:id/history` | GET | Get conversation history |
+| `/mcp/agent/:id/state/:key` | GET | Get agent state |
+| `/mcp/agent/:id/state` | POST | Set agent state |
 
 ### Authentication
 
-All endpoints (except `/health` and `/mcp/discovery`) require the `X-API-Key`
-header with a valid API key.
+All endpoints (except `/health` and `/mcp/discovery`) require the `X-API-Key` header with a valid API key.
 
 ## Extending the MCP Server
 
@@ -189,7 +180,7 @@ Example:
 // 1. Define schema
 const RunTestSchema = z.object({
   testName: z.string().describe('Name of the test to run'),
-  timeout: z.number().optional().describe('Test timeout in ms'),
+  timeout: z.number().optional().describe('Test timeout in ms')
 });
 
 // 2. Implement functionality
@@ -197,7 +188,7 @@ export const testTools = {
   runTest: async (params: RunTestParams, context: ToolContext) => {
     // Implementation here
     return { success: true, output: 'Test results...' };
-  },
+  }
 };
 
 // 3. Register in server.ts
@@ -205,7 +196,7 @@ mcpServer.registerTool('runTest', {
   description: 'Runs a specific test',
   parameters: z.object({
     testName: z.string().describe('Name of the test to run'),
-    timeout: z.number().optional().describe('Test timeout in ms'),
+    timeout: z.number().optional().describe('Test timeout in ms')
   }),
   execute: testTools.runTest,
 });
@@ -213,8 +204,7 @@ mcpServer.registerTool('runTest', {
 
 ### Adding New Capabilities
 
-1. Define the capability in `server.ts` in the `MCP_SERVICE_INFO.capabilities`
-   array
+1. Define the capability in `server.ts` in the `MCP_SERVICE_INFO.capabilities` array
 2. Add details in the `/mcp/capabilities/details` endpoint
 3. Implement related tools
 
@@ -233,8 +223,7 @@ The current implementation uses a simple API key system. To enhance security:
 - **Server Won't Start**: Check if port 3000 is already in use
 - **Authentication Failures**: Verify the API key is correct
 - **Tool Execution Errors**: Check parameter types and validation
-- **VS Code Integration Issues**: Ensure the MCP server is running before
-  initializing
+- **VS Code Integration Issues**: Ensure the MCP server is running before initializing
 
 ### Logs
 

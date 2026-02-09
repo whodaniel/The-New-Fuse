@@ -30,13 +30,13 @@ export class WorkspaceApiService {
         return {
           success: false,
           error: errorData.message || 'Request failed',
-          message: errorData.message || 'Request failed',
+          message: errorData.message || 'Request failed'
         };
       } catch (e) {
         return {
           success: false,
           error: response.statusText || 'Request failed',
-          message: response.statusText || 'Request failed',
+          message: response.statusText || 'Request failed'
         };
       }
     }
@@ -45,13 +45,13 @@ export class WorkspaceApiService {
       const data = await response.json();
       return {
         success: true,
-        data: data as T,
+        data: data as T
       };
     } catch (e) {
       return {
         success: true,
         data: undefined,
-        message: 'Request successful but no data returned',
+        message: 'Request successful but no data returned'
       };
     }
   }
@@ -62,16 +62,16 @@ export class WorkspaceApiService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
         },
-        credentials: 'include',
+        credentials: 'include'
       });
       return this.handleResponse<Workspace>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: 'Failed to fetch current workspace',
+        message: 'Failed to fetch current workspace'
       };
     }
   }
@@ -82,16 +82,16 @@ export class WorkspaceApiService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
         },
-        credentials: 'include',
+        credentials: 'include'
       });
       return this.handleResponse<{ workspaces: Workspace[]; total: number }>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: 'Failed to fetch workspaces',
+        message: 'Failed to fetch workspaces'
       };
     }
   }
@@ -102,16 +102,16 @@ export class WorkspaceApiService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
         },
-        credentials: 'include',
+        credentials: 'include'
       });
       return this.handleResponse<Workspace>(response);
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
-        message: `Failed to fetch workspace ${id}`,
+        message: `Failed to fetch workspace ${id}`
       };
     }
   }

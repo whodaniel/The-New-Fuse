@@ -6,14 +6,14 @@
  */
 
 // Jest globals are available without import
-import { performance } from 'perf_hooks';
+import { MCPServer } from '../server/MCPServer';
 import { MCPSystemFactory } from '../factory/MCPSystemFactory';
 import { ResourceManager } from '../handlers/ResourceManager';
 import { ToolExecutionEngine } from '../handlers/ToolExecutionEngine';
-import { MCPServer } from '../server/MCPServer';
-import { LogLevel } from '../types/common';
-import { MCPRequest, MCPResponse } from '../types/message';
 import { MCPServerConfig } from '../types/server';
+import { MCPRequest, MCPResponse } from '../types/message';
+import { LogLevel } from '../types/common';
+import { performance } from 'perf_hooks';
 
 describe('MCP Performance Tests', () => {
   let server: MCPServer;
@@ -33,7 +33,7 @@ describe('MCP Performance Tests', () => {
       logLevel: LogLevel.ERROR,
       options: {
         requestSizeLimit: 10 * 1024 * 1024, // 10MB
-      },
+      }
     };
 
     server = MCPSystemFactory.createServer(config);
@@ -45,7 +45,7 @@ describe('MCP Performance Tests', () => {
         cpuTime: 1000,
         memory: 512 * 1024 * 1024,
         fileOperations: 1000,
-        networkOperations: 1000,
+        networkOperations: 1000
       }
     );
   });
@@ -68,8 +68,8 @@ describe('MCP Performance Tests', () => {
           params: {},
           meta: {
             timestamp: new Date(),
-            priority: 'normal',
-          },
+            priority: 'normal'
+          }
         });
       }
 
@@ -92,7 +92,7 @@ describe('MCP Performance Tests', () => {
 
       // Verify all messages were processed successfully
       expect(results.length).toBe(messageCount);
-      results.forEach((result) => {
+      results.forEach(result => {
         expect(result.jsonrpc).toBe('2.0');
         expect(result).toHaveProperty('id');
       });
@@ -113,7 +113,7 @@ describe('MCP Performance Tests', () => {
           jsonrpc: '2.0',
           id: i,
           method: 'resources/list',
-          params: {},
+          params: {}
         };
 
         await server.handleRequest(message);
@@ -122,7 +122,7 @@ describe('MCP Performance Tests', () => {
         latencies.push(latency);
 
         // Small delay to simulate realistic load
-        await new Promise((resolve) => setTimeout(resolve, 1));
+        await new Promise(resolve => setTimeout(resolve, 1));
       }
 
       const avgLatency = latencies.reduce((sum, lat) => sum + lat, 0) / latencies.length;
@@ -134,9 +134,7 @@ describe('MCP Performance Tests', () => {
       console.log(`Min latency: ${minLatency.toFixed(2)}ms`);
       const p99Latency = latencies.sort((a, b) => a - b)[Math.floor(latencies.length * 0.99)];
 
-      console.log(
-        `Latency stats: Avg=${avgLatency.toFixed(2)}ms, P95=${p95Latency.toFixed(2)}ms, P99=${p99Latency.toFixed(2)}ms`
-      );
+      console.log(`Latency stats: Avg=${avgLatency.toFixed(2)}ms, P95=${p95Latency.toFixed(2)}ms, P99=${p99Latency.toFixed(2)}ms`);
 
       expect(avgLatency).toBeLessThan(5); // Sub-5ms average latency
       expect(p99Latency).toBeLessThan(20); // Sub-20ms tail latency
@@ -158,9 +156,9 @@ describe('MCP Performance Tests', () => {
             read: async () => ({
               uri: `file:///test/resource-${i}.txt`,
               mimeType: 'text/plain',
-              content: 'test content',
-            }),
-          },
+              content: 'test content'
+            })
+          }
         };
         resourceManager.registerResource(resource);
         resources.push(resource);
@@ -184,18 +182,18 @@ describe('MCP Performance Tests', () => {
         name: 'Cached Resource',
         caching: {
           enabled: true,
-          ttl: 60,
+          ttl: 60
         },
         handler: {
           read: async () => {
-            await new Promise((resolve) => setTimeout(resolve, 50)); // Simulate slow I/O
+            await new Promise(resolve => setTimeout(resolve, 50)); // Simulate slow I/O
             return {
               uri: 'file:///test/cached-resource.txt',
               mimeType: 'text/plain',
-              content: 'cached content',
+              content: 'cached content'
             };
-          },
-        },
+          }
+        }
       };
 
       resourceManager.registerResource(resource);
@@ -228,9 +226,9 @@ describe('MCP Performance Tests', () => {
         inputSchema: {
           type: 'object',
           properties: {
-            duration: { type: 'number' },
-          },
-        },
+            duration: { type: 'number' }
+          }
+        }
       };
 
       await server.registerTool({
@@ -240,13 +238,13 @@ describe('MCP Performance Tests', () => {
         handler: {
           execute: async (params: any) => {
             const duration = params.duration || 10;
-            await new Promise((resolve) => setTimeout(resolve, duration));
+            await new Promise(resolve => setTimeout(resolve, duration));
             return {
               success: true,
-              result: `Completed after ${duration}ms`,
+              result: `Completed after ${duration}ms`
             };
-          },
-        },
+          }
+        }
       });
 
       const concurrentExecutions = 50;
@@ -261,8 +259,8 @@ describe('MCP Performance Tests', () => {
           method: 'tools/call',
           params: {
             name: tool.name,
-            arguments: { duration: 10 },
-          },
+            arguments: { duration: 10 }
+          }
         });
         executions.push(execution);
       }
@@ -270,12 +268,10 @@ describe('MCP Performance Tests', () => {
       const results = await Promise.all(executions);
       const executionTime = performance.now() - startTime;
 
-      console.log(
-        `${concurrentExecutions} concurrent executions completed in ${executionTime.toFixed(2)}ms`
-      );
+      console.log(`${concurrentExecutions} concurrent executions completed in ${executionTime.toFixed(2)}ms`);
 
       expect(results.length).toBe(concurrentExecutions);
-      results.forEach((response) => {
+      results.forEach(response => {
         expect(response.result).toHaveProperty('result');
       });
 
@@ -289,8 +285,8 @@ describe('MCP Performance Tests', () => {
         description: 'A tool that times out',
         inputSchema: { type: 'object' },
         config: {
-          timeout: 100, // 100ms timeout
-        },
+          timeout: 100 // 100ms timeout
+        }
       };
 
       await server.registerTool({
@@ -301,13 +297,13 @@ describe('MCP Performance Tests', () => {
         handler: {
           execute: async () => {
             // This will take longer than the timeout
-            await new Promise((resolve) => setTimeout(resolve, 200));
+            await new Promise(resolve => setTimeout(resolve, 200));
             return {
               success: true,
-              result: 'Should not complete',
+              result: 'Should not complete'
             };
-          },
-        },
+          }
+        }
       });
 
       const startTime = performance.now();
@@ -320,9 +316,9 @@ describe('MCP Performance Tests', () => {
         method: 'tools/call',
         params: {
           name: tool.name,
-          arguments: {},
+          arguments: {}
         },
-        meta: { timeout: 100 },
+        meta: { timeout: 100 }
       });
 
       const executionTime = performance.now() - startTime;
@@ -343,12 +339,12 @@ describe('MCP Performance Tests', () => {
         inputSchema: {
           type: 'object',
           properties: {
-            arraySize: { type: 'number' },
-          },
+            arraySize: { type: 'number' }
+          }
         },
         config: {
-          maxMemory: 10 * 1024 * 1024, // 10MB limit
-        },
+          maxMemory: 10 * 1024 * 1024 // 10MB limit
+        }
       };
 
       await server.registerTool({
@@ -361,19 +357,17 @@ describe('MCP Performance Tests', () => {
             const size = params.arraySize || 1000000;
 
             // Create a large array (should be within memory limits)
-            const largeArray = new Array(size)
-              .fill(0)
-              .map((_, i) => ({ id: i, data: `item-${i}` }));
+            const largeArray = new Array(size).fill(0).map((_, i) => ({ id: i, data: `item-${i}` }));
 
             return {
               success: true,
               result: `Created array with ${largeArray.length} items`,
               data: {
-                memoryUsage: process.memoryUsage().heapUsed,
-              },
+                memoryUsage: process.memoryUsage().heapUsed
+              }
             };
-          },
-        },
+          }
+        }
       });
 
       const startMemory = process.memoryUsage().heapUsed;
@@ -384,8 +378,8 @@ describe('MCP Performance Tests', () => {
         method: 'tools/call',
         params: {
           name: tool.name,
-          arguments: { arraySize: 100000 },
-        },
+          arguments: { arraySize: 100000 }
+        }
       });
 
       const endMemory = process.memoryUsage().heapUsed;
@@ -425,19 +419,16 @@ describe('MCP Performance Tests', () => {
             jsonrpc: '2.0',
             id: Date.now(),
             method: 'resources/list',
-            params: {},
+            params: {}
           };
 
           server.handleRequest(message).catch(() => {}); // Ignore errors for this test
 
           // Take memory snapshot every 500ms
-          if (
-            memorySnapshots.length === 0 ||
-            Date.now() - memorySnapshots[memorySnapshots.length - 1].time >= 500
-          ) {
+          if (memorySnapshots.length === 0 || Date.now() - memorySnapshots[memorySnapshots.length - 1].time >= 500) {
             memorySnapshots.push({
               time: Date.now() - startTime,
-              memory: process.memoryUsage(),
+              memory: process.memoryUsage()
             });
           }
         }, messageInterval);
@@ -448,7 +439,7 @@ describe('MCP Performance Tests', () => {
       const finalMemory = process.memoryUsage();
 
       console.log('Memory usage over time:');
-      memorySnapshots.forEach((snapshot) => {
+      memorySnapshots.forEach(snapshot => {
         const heapMB = (snapshot.memory.heapUsed / 1024 / 1024).toFixed(2);
         console.log(`  ${snapshot.time}ms: ${heapMB}MB heap`);
       });
@@ -466,10 +457,8 @@ describe('MCP Performance Tests', () => {
         const lastQuarter = memorySnapshots.slice(-2);
         const firstQuarter = memorySnapshots.slice(0, 2);
 
-        const lastAvg =
-          lastQuarter.reduce((sum, snap) => sum + snap.memory.heapUsed, 0) / lastQuarter.length;
-        const firstAvg =
-          firstQuarter.reduce((sum, snap) => sum + snap.memory.heapUsed, 0) / firstQuarter.length;
+        const lastAvg = lastQuarter.reduce((sum, snap) => sum + snap.memory.heapUsed, 0) / lastQuarter.length;
+        const firstAvg = firstQuarter.reduce((sum, snap) => sum + snap.memory.heapUsed, 0) / firstQuarter.length;
 
         const growth = (lastAvg - firstAvg) / firstAvg;
 
@@ -498,7 +487,7 @@ describe('MCP Performance Tests', () => {
             jsonrpc: '2.0',
             id: i,
             method: 'test/echo',
-            params: { data: largeData },
+            params: { data: largeData }
           };
           // Expect error because test/echo is not implemented, but we measure overhead
           promises.push(server.handleRequest(message));
@@ -511,12 +500,10 @@ describe('MCP Performance Tests', () => {
         results.push({
           size,
           time: processingTime,
-          throughput,
+          throughput
         });
 
-        console.log(
-          `Size: ${(size / 1024).toFixed(1)}KB, Messages: ${messageCount}, Time: ${processingTime.toFixed(2)}ms, Throughput: ${(throughput / 1024 / 1024).toFixed(2)}MB/s`
-        );
+        console.log(`Size: ${(size / 1024).toFixed(1)}KB, Messages: ${messageCount}, Time: ${processingTime.toFixed(2)}ms, Throughput: ${(throughput / 1024 / 1024).toFixed(2)}MB/s`);
       }
 
       // Performance should degrade gracefully with size
@@ -546,9 +533,9 @@ describe('MCP Performance Tests', () => {
             read: async () => ({
               uri: `file:///scale-test/resource-${i}.txt`,
               mimeType: 'text/plain',
-              content: `Scale test content for resource ${i}`,
-            }),
-          },
+              content: `Scale test content for resource ${i}`
+            })
+          }
         });
       }
 
@@ -561,9 +548,9 @@ describe('MCP Performance Tests', () => {
           handler: {
             execute: async () => ({
               success: true,
-              result: `Tool ${i} executed`,
-            }),
-          },
+              result: `Tool ${i} executed`
+            })
+          }
         });
       }
 
@@ -582,10 +569,7 @@ describe('MCP Performance Tests', () => {
       // Test specific operations
       const specificResourceStart = performance.now();
       const mockContext = { principal: 'test', roles: [], permissions: [] };
-      const specificResource = await resourceManager.readResource(
-        `file:///scale-test/resource-${Math.floor(resourceCount / 2)}.txt`,
-        mockContext
-      );
+      const specificResource = await resourceManager.readResource(`file:///scale-test/resource-${Math.floor(resourceCount / 2)}.txt`, mockContext);
       const specificResourceTime = performance.now() - specificResourceStart;
 
       const specificToolStart = performance.now();
@@ -595,14 +579,12 @@ describe('MCP Performance Tests', () => {
         method: 'tools/call',
         params: {
           name: `scale-test-tool-${Math.floor(toolCount / 2)}`,
-          arguments: {},
-        },
+          arguments: {}
+        }
       });
       const specificToolTime = performance.now() - specificToolStart;
 
-      console.log(
-        `Resource listing (${allResources.length} resources): ${resourceListTime.toFixed(2)}ms`
-      );
+      console.log(`Resource listing (${allResources.length} resources): ${resourceListTime.toFixed(2)}ms`);
       console.log(`Tool listing (${allTools.length} tools): ${toolListTime.toFixed(2)}ms`);
       console.log(`Specific resource access: ${specificResourceTime.toFixed(2)}ms`);
       console.log(`Specific tool execution: ${specificToolTime.toFixed(2)}ms`);

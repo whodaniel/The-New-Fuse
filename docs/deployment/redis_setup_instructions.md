@@ -1,7 +1,6 @@
 # Redis Setup and Troubleshooting
 
 ## 1. Start Redis Server
-
 First, let's ensure Redis is properly running:
 
 ```bash
@@ -16,29 +15,24 @@ redis-cli ping  # Should return "PONG"
 ```
 
 ## 2. Connection Verification
-
 If the above fails, verify these points:
 
 1. Check Docker status:
-
 ```bash
 docker ps | grep redis
 ```
 
 2. Verify Redis port availability:
-
 ```bash
 sudo lsof -i :6379
 ```
 
 3. Test Redis connection:
-
 ```bash
 redis-cli -h localhost -p 6379
 ```
 
 ## 3. Alternative Setup
-
 If Docker setup fails, use direct Redis installation:
 
 ```bash
@@ -54,7 +48,6 @@ sudo service redis-server status
 ```
 
 ## 4. Connection Test
-
 Once Redis is running, test the connection:
 
 ```bash
@@ -65,8 +58,6 @@ redis-cli ping
 redis-cli monitor
 ```
 
-After confirming Redis is running, proceed with the previous onboarding
-instructions.
+After confirming Redis is running, proceed with the previous onboarding instructions.
 
-Note: If you continue to experience connection issues, please share the output
-of these commands for further diagnosis.
+Note: If you continue to experience connection issues, please share the output of these commands for further diagnosis.

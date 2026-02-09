@@ -15,6 +15,7 @@ export interface SanitizationOptions {
 }
 
 export class ClientSecurityUtils {
+  
   /**
    * Sanitize HTML content to prevent XSS
    */
@@ -94,14 +95,12 @@ export class ClientSecurityUtils {
       return 'unnamed_file';
     }
 
-    return (
-      fileName
-        .replace(/[\/\\?%*:|"<>]/g, '_') // Replace dangerous characters
-        .replace(/\.\./g, '_') // Remove path traversal
-        .replace(/^\.*/, '') // Remove leading dots
-        .substring(0, 255) // Limit length
-        .trim() || 'unnamed_file'
-    );
+    return fileName
+      .replace(/[\/\\?%*:|"<>]/g, '_') // Replace dangerous characters
+      .replace(/\.\./g, '_') // Remove path traversal
+      .replace(/^\.*/, '') // Remove leading dots
+      .substring(0, 255) // Limit length
+      .trim() || 'unnamed_file';
   }
 
   /**
@@ -114,7 +113,7 @@ export class ClientSecurityUtils {
 
     try {
       const parsed = new URL(url);
-
+      
       // Only allow certain protocols
       const allowedProtocols = ['http:', 'https:', 'mailto:', 'tel:'];
       if (!allowedProtocols.includes(parsed.protocol)) {
@@ -122,8 +121,7 @@ export class ClientSecurityUtils {
       }
 
       // Remove dangerous characters
-      return parsed
-        .toString()
+      return parsed.toString()
         .replace(/[<>"']/g, '')
         .substring(0, 2048);
     } catch {
@@ -190,7 +188,7 @@ export class ClientSecurityUtils {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.sanitizeObject(item));
+      return obj.map(item => this.sanitizeObject(item));
     }
 
     if (typeof obj === 'object') {
@@ -217,7 +215,7 @@ export class ClientSecurityUtils {
       '>': '&gt;',
       '"': '&quot;',
       "'": '&#39;',
-      '/': '&#x2F;',
+      '/': '&#x2F;'
     };
     return text.replace(/[&<>"'/]/g, (m) => map[m]);
   }
@@ -228,7 +226,7 @@ export class ClientSecurityUtils {
   static generateCSRFToken(): string {
     const array = new Uint8Array(32);
     crypto.getRandomValues(array);
-    return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join('');
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
   }
 
   /**
@@ -243,7 +241,7 @@ export class ClientSecurityUtils {
    */
   static createSecureFormData(data: Record<string, any>): FormData {
     const formData = new FormData();
-
+    
     for (const [key, value] of Object.entries(data)) {
       const sanitizedKey = this.sanitizeText(key, { maxLength: 100 });
       if (sanitizedKey && value !== undefined && value !== null) {
@@ -254,7 +252,7 @@ export class ClientSecurityUtils {
         }
       }
     }
-
+    
     return formData;
   }
 
@@ -263,16 +261,16 @@ export class ClientSecurityUtils {
    */
   static sanitizeQueryParams(params: Record<string, string>): Record<string, string> {
     const sanitized: Record<string, string> = {};
-
+    
     for (const [key, value] of Object.entries(params)) {
       const sanitizedKey = this.sanitizeText(key, { maxLength: 100 });
       const sanitizedValue = this.sanitizeText(value, { maxLength: 1000 });
-
+      
       if (sanitizedKey && sanitizedValue) {
         sanitized[sanitizedKey] = sanitizedValue;
       }
     }
-
+    
     return sanitized;
   }
 
@@ -295,7 +293,7 @@ export class ClientSecurityUtils {
       const sanitizedKey = this.sanitizeText(key, { maxLength: 100 });
       const encoded = localStorage.getItem(sanitizedKey);
       if (!encoded) return null;
-
+      
       const decoded = atob(encoded);
       return JSON.parse(decoded);
     } catch (error) {
@@ -325,7 +323,7 @@ export class ClientSecurityUtils {
       "frame-src 'none'",
       "object-src 'none'",
       "base-uri 'self'",
-      "form-action 'self'",
+      "form-action 'self'"
     ].join('; ');
     document.head.appendChild(meta);
   }
@@ -336,9 +334,8 @@ export class ClientSecurityUtils {
   static generateSecureRandom(length: number = 32): string {
     const array = new Uint8Array(length);
     crypto.getRandomValues(array);
-    return Array.from(
-      array,
-      (byte) => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[byte % 62]
+    return Array.from(array, byte => 
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[byte % 62]
     ).join('');
   }
 
@@ -377,18 +374,10 @@ export class ClientSecurityUtils {
 
     // Common password check
     const commonPasswords = [
-      'password',
-      '123456',
-      'qwerty',
-      'admin',
-      'letmein',
-      'welcome',
-      'monkey',
-      'dragon',
-      'master',
-      'shadow',
+      'password', '123456', 'qwerty', 'admin', 'letmein',
+      'welcome', 'monkey', 'dragon', 'master', 'shadow'
     ];
-
+    
     if (commonPasswords.includes(password.toLowerCase())) {
       feedback.push('Avoid common passwords');
       score = 0;
@@ -403,7 +392,7 @@ export class ClientSecurityUtils {
     return {
       isValid: score >= 4 && feedback.length === 0,
       score: Math.min(score, 5),
-      feedback,
+      feedback
     };
   }
 }
@@ -421,7 +410,7 @@ export function useSecureInput(initialValue: string = '', options: SanitizationO
     value,
     setValue,
     handleChange,
-    reset: () => setValue(initialValue),
+    reset: () => setValue(initialValue)
   };
 }
 

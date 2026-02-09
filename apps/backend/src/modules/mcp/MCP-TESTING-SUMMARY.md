@@ -101,7 +101,7 @@ Time:        49.412 s
    ```
 
 3. **Fix module dependencies:**
-   - Resolve `DrizzleModule` import paths
+   - Resolve `PrismaModule` import paths
    - Ensure all cross-package type exports are consistent
 
 4. **Gradually add integration tests:**

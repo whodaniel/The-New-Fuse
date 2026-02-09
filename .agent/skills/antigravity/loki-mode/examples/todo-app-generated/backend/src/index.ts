@@ -1,6 +1,6 @@
-import cors from 'cors';
 import express, { Express, Request, Response } from 'express';
-import { closeDatabase, initializeDatabase } from './db';
+import cors from 'cors';
+import { initializeDatabase, closeDatabase } from './db';
 import todosRouter from './routes/todos';
 
 const app: Express = express();

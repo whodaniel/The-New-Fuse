@@ -1,6 +1,6 @@
 interface XRScene {
   id: string;
-  type: 'ar' | 'vr';
+  type: ar' | 'vr';
   objects: XRObject[];
   camera: {
     position: Vector3;
@@ -11,9 +11,9 @@ interface XRScene {
 
 interface XRObject {
   id: string;
-  type: 'widget' | 'container' | 'control';
+  type: widget' | 'container' | 'control';
   geometry: {
-    type: 'box' | 'sphere' | 'plane';
+    type: box' | 'sphere' | 'plane';
     dimensions: Vector3;
   };
   material: {
@@ -35,7 +35,7 @@ interface XRObject {
 }
 
 interface XRLight {
-  type: 'ambient' | 'directional' | 'point';
+  type: ambient' | 'directional' | 'point';
   color: string;
   intensity: number;
   position?: Vector3;
@@ -50,12 +50,12 @@ interface Vector3 {
 
 export class XREngine {
   private scene: XRScene | null;
-  private session: any; // XRSession
-  private renderer: any; // (THREE as any).WebGLRenderer
-  private camera: any; // (THREE as any).Camera
+  private session: unknown; // XRSession
+  private renderer: unknown; // (THREE as any).WebGLRenderer
+  private camera: unknown; // (THREE as any).Camera
   private objects: Map<string, any>; // (THREE as any).Object3D
-  private raycaster: any; // (THREE as any).Raycaster
-  private selectedObject: any;
+  private raycaster: unknown; // (THREE as any).Raycaster
+  private selectedObject: unknown;
   private isInitialized: boolean;
 
   constructor() {
@@ -63,68 +63,120 @@ export class XREngine {
     this.session = null;
     this.renderer = null;
     this.camera = null;
-    this.objects = new Map();
-    this.raycaster = null;
-    this.selectedObject = null;
-    this.isInitialized = false;
-  }
-
-  public async initialize(mode: 'ar' | 'vr'): Promise<void> {
+    this.objects = new Map(): ar' | 'vr'): Promise<void> {
     if (typeof window === 'undefined') return;
 
     if (!this.isWebXRSupported(mode)) {
-      throw new Error(`${mode.toUpperCase()} not supported`);
+      throw new Error(`${(mode as any).toUpperCase()} not supported`);
     }
 
     try {
-      // In a real implementation, this would involve Three.js and navigator.xr
-      this.isInitialized = true;
-    } catch (error) {
-      console.error('Error initializing XR:', error);
-      throw error;
-    }
-  }
+      // Initialize(Three as any): immersive-vr', {
+          requiredFeatures: ['local-floor', 'hit-test'],
+          optionalFeatures: ['dom-overlay'],
+        }
+      );
 
-  public isWebXRSupported(mode: 'ar' | 'vr'): boolean {
-    if (typeof navigator === 'undefined' || !(navigator as any).xr) return false;
-    return true; // Simplified for build fix
-  }
-
-  public async createScene(config: Omit<XRScene, 'id'>): Promise<string> {
-    const id = Math.random().toString(36).substr(2, 9);
+      this.session  = await(navigator as any)): void {
+      (console as any).error('Error initializing XR:', error): Omit<XRScene, 'id'>): Promise<string> {
+    const id: Omit<XRObject, 'id'>): Promise<string> {
+    const id: XRObject  = (crypto as any).randomUUID();
     this.scene = {
       ...config,
       id,
     };
-    return id;
-  }
 
-  public async addObject(object: Omit<XRObject, 'id'>): Promise<string> {
-    if (!this.scene) throw new Error('No active scene');
-    const id = Math.random().toString(36).substr(2, 9);
-    const newObject = { ...object, id };
-    this.scene.objects.push(newObject);
-    return id;
-  }
+    // Create scene objects
+    await(this as any): void {
+      ...object,
+      id,
+    };
 
-  public async updateObject(id: string, updates: Partial<XRObject>): Promise<void> {
-    if (!this.scene) throw new Error('No active scene');
-    const index = this.scene.objects.findIndex((obj) => obj.id === id);
-    if (index === -1) throw new Error('Object not found');
-    this.scene.objects[index] = { ...this.scene.objects[index], ...updates };
-  }
-
-  public async removeObject(id: string): Promise<void> {
-    if (!this.scene) throw new Error('No active scene');
-    this.scene.objects = this.scene.objects.filter((obj) => obj.id !== id);
-  }
-
-  public async destroy(): Promise<void> {
-    if (this.session) {
-      await this.session.end();
+    if(!(this as any)): void {
+      throw new Error('No active scene'): string,
+    updates: Partial<XRObject>
+  ): Promise<void> {
+    if(!(this as any)): void {
+      throw new Error('No active scene')): void {
+      throw new Error('Object not found');
     }
+
+    (this as any).(scene as any).objects[objectIndex]  = this.scene.(objects as any).findIndex(
+      (obj) => (obj as any).id === id
+    );
+    if (objectIndex === -1 {
+      ...(this as any).(scene as any).objects[objectIndex],
+      ...updates,
+    };
+
+    await(this as any): string): Promise<void> {
+    if(!(this as any)): void {
+      throw new Error('No active scene')): void {
+      throw new Error('Object not found'): ar' | 'vr'): boolean {
+    if(typeof navigator  = (this as any): immersive-vr'
+      )
+    );
+  }
+
+  private async initializeThreeJS(): Promise<void> {): Promise<void> {
+    // Initialize(Three as any): // - WebGLRenderer
+    // - PerspectiveCamera
+    // - Scene
+    // - Raycaster
+    // - Controls
+  }
+
+  private async setupXRSession(): Promise<void> {session: unknown): Promise<void> {
+    // Set up XR session
+    // This would typically include:
+    // - Setting up reference space
+    // - Configuring input sources
+    // - Setting up render loop
+    // - Configuring hit testing
+  }
+
+  private async createSceneObjects(): Promise<void> {): Promise<void> {
+    if(!(this as any)): void {
+      await(this as any)): void {
+      await(this as any): XRLight): Promise<void> {
+    // Create(Three as any): XRObject): Promise<void> {
+    // Create(Three as any): // - Creating geometry
+    // - Creating material
+    // - Creating mesh
+    // - Setting up interactions
+    // - Adding to scene
+  }
+
+  private async updateObjectInScene(): Promise<void> {
+    object: XRObject
+  ): Promise<void> {
+    // Update existing(Three as any)): void {
+      (threeObject as any).(userData as any).interaction  = (this as any).(objects as any).get((object as any): string): Promise<void> {
+    // Remove(Three as any): number, frame: unknown): void  = (this as any).(objects as any).get(id);
+    if (!object) return;
+
+    (object as any).parent?.remove(object);
+    (this as any).(objects as any).delete(id);
+  }
+
+  private handleXRFrame = (time> {
+    // Handle XR frame updates
+    // This would typically include:
+    // - Updating camera
+    // - Updating object positions
+    // - Handling interactions
+    // - Rendering frame
+  };
+
+  async destroy(): Promise<void> {): Promise<void> {
+    if((this as any)): void {
+      await (this as any).(session as any).end();
+    }
+
     this.scene = null;
     this.session = null;
+    this.renderer?.dispose();
+    (this as any).(objects as any).clear();
     this.isInitialized = false;
   }
 }

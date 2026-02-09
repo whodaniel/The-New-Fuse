@@ -4,12 +4,12 @@
  */
 
 import {
-  ErrorSeverity,
   InfrastructureTemplate,
   ResourceDefinition,
-  ResourceType,
+  ErrorSeverity,
   SuggestionType,
-  VariableType,
+  ResourceType,
+  VariableType
 } from '../types/infrastructure';
 
 export interface ValidationRule {
@@ -59,7 +59,7 @@ export class TemplateValidator {
             rule: rule.name,
             severity: ErrorSeverity.ERROR,
             message: `Validation rule failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            path: 'template',
+            path: 'template'
           });
         }
       }
@@ -74,57 +74,57 @@ export class TemplateValidator {
             rule: name,
             severity: ErrorSeverity.ERROR,
             message: `Custom validation rule failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            path: 'template',
+            path: 'template'
           });
         }
       }
 
       // Categorize issues
       const errors = issues
-        .filter((i) => i.severity === ErrorSeverity.ERROR)
-        .map((i) => ({
+        .filter(i => i.severity === ErrorSeverity.ERROR)
+        .map(i => ({
           code: i.rule,
           message: i.message,
           path: i.path,
-          severity: i.severity,
+          severity: i.severity
         }));
 
       const warnings = issues
-        .filter((i) => i.severity === ErrorSeverity.WARNING)
-        .map((i) => ({
+        .filter(i => i.severity === ErrorSeverity.WARNING)
+        .map(i => ({
           code: i.rule,
           message: i.message,
           path: i.path,
-          recommendation: i.suggestion || 'Review and consider fixing this issue',
+          recommendation: i.suggestion || 'Review and consider fixing this issue'
         }));
 
       const suggestions = issues
-        .filter((i) => i.severity === ErrorSeverity.INFO && i.suggestion)
-        .map((i) => ({
+        .filter(i => i.severity === ErrorSeverity.INFO && i.suggestion)
+        .map(i => ({
           type: this.getSuggestionType(i.rule),
           message: i.message,
           path: i.path,
-          improvement: i.suggestion!,
+          improvement: i.suggestion!
         }));
 
-      const mappedErrors = errors.map((err) => ({
+      const mappedErrors = errors.map(err => ({
         ...err,
         rule: err.code || 'unknown',
-        severity: ErrorSeverity.ERROR,
+        severity: ErrorSeverity.ERROR
       }));
-
-      const mappedWarnings = warnings.map((warn) => ({
+      
+      const mappedWarnings = warnings.map(warn => ({
         ...warn,
         rule: warn.code || 'unknown',
-        severity: ErrorSeverity.WARNING,
+        severity: ErrorSeverity.WARNING
       }));
-
-      const mappedSuggestions = suggestions.map((sugg) => ({
+      
+      const mappedSuggestions = suggestions.map(sugg => ({
         ...sugg,
         rule: sugg.type || 'unknown',
         severity: ErrorSeverity.INFO,
         message: sugg.message,
-        path: sugg.path,
+        path: sugg.path
       }));
 
       return {
@@ -132,14 +132,15 @@ export class TemplateValidator {
         issues: [...mappedErrors, ...mappedWarnings, ...mappedSuggestions],
         errors: mappedErrors,
         warnings: mappedWarnings,
-        suggestions: mappedSuggestions,
+        suggestions: mappedSuggestions
       };
+
     } catch (error) {
       const errorIssue = {
         rule: 'VALIDATION_FAILED',
         message: `Template validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
         path: 'template',
-        severity: ErrorSeverity.ERROR,
+        severity: ErrorSeverity.ERROR
       };
 
       return {
@@ -147,7 +148,7 @@ export class TemplateValidator {
         issues: [errorIssue],
         errors: [errorIssue],
         warnings: [],
-        suggestions: [],
+        suggestions: []
       };
     }
   }
@@ -161,7 +162,10 @@ export class TemplateValidator {
   }
 
   getAvailableRules(): string[] {
-    return [...this.rules.map((r) => r.name), ...Array.from(this.customRules.keys())];
+    return [
+      ...this.rules.map(r => r.name),
+      ...Array.from(this.customRules.keys())
+    ];
   }
 
   private initializeDefaultRules(): void {
@@ -173,7 +177,7 @@ export class TemplateValidator {
       new SecurityValidationRule(),
       new PerformanceValidationRule(),
       new CostOptimizationRule(),
-      new BestPracticesRule(),
+      new BestPracticesRule()
     ];
   }
 
@@ -201,7 +205,7 @@ class RequiredFieldsRule implements ValidationRule {
         rule: this.name,
         severity: this.severity,
         message: 'Template ID is required',
-        path: 'template.id',
+        path: 'template.id'
       });
     }
 
@@ -210,7 +214,7 @@ class RequiredFieldsRule implements ValidationRule {
         rule: this.name,
         severity: this.severity,
         message: 'Template name is required',
-        path: 'template.name',
+        path: 'template.name'
       });
     }
 
@@ -219,7 +223,7 @@ class RequiredFieldsRule implements ValidationRule {
         rule: this.name,
         severity: this.severity,
         message: 'Template version is required',
-        path: 'template.version',
+        path: 'template.version'
       });
     }
 
@@ -228,7 +232,7 @@ class RequiredFieldsRule implements ValidationRule {
         rule: this.name,
         severity: this.severity,
         message: 'Template provider is required',
-        path: 'template.provider',
+        path: 'template.provider'
       });
     }
 
@@ -239,7 +243,7 @@ class RequiredFieldsRule implements ValidationRule {
           rule: this.name,
           severity: this.severity,
           message: 'Resource name is required',
-          path: `template.resources[${index}].name`,
+          path: `template.resources[${index}].name`
         });
       }
 
@@ -248,7 +252,7 @@ class RequiredFieldsRule implements ValidationRule {
           rule: this.name,
           severity: this.severity,
           message: 'Resource type is required',
-          path: `template.resources[${index}].type`,
+          path: `template.resources[${index}].type`
         });
       }
     });
@@ -276,7 +280,7 @@ class ResourceNamingRule implements ValidationRule {
             severity: this.severity,
             message: 'Resource name should use lowercase letters, numbers, and hyphens only',
             path: `template.resources[${index}].name`,
-            suggestion: 'Use kebab-case naming convention (e.g., my-resource-name)',
+            suggestion: 'Use kebab-case naming convention (e.g., my-resource-name)'
           });
         }
 
@@ -287,7 +291,7 @@ class ResourceNamingRule implements ValidationRule {
             severity: ErrorSeverity.ERROR,
             message: `Resource name "${resource.name}" is reserved`,
             path: `template.resources[${index}].name`,
-            suggestion: 'Choose a different name that is not reserved',
+            suggestion: 'Choose a different name that is not reserved'
           });
         }
 
@@ -298,7 +302,7 @@ class ResourceNamingRule implements ValidationRule {
             severity: this.severity,
             message: 'Resource name is too long (max 63 characters)',
             path: `template.resources[${index}].name`,
-            suggestion: 'Shorten the resource name',
+            suggestion: 'Shorten the resource name'
           });
         }
       }
@@ -315,7 +319,7 @@ class DependencyValidationRule implements ValidationRule {
 
   validate(template: InfrastructureTemplate): ValidationIssue[] {
     const issues: ValidationIssue[] = [];
-    const resourceNames = new Set(template.resources.map((r) => r.name));
+    const resourceNames = new Set(template.resources.map(r => r.name));
 
     template.resources.forEach((resource, index) => {
       if (resource.dependencies) {
@@ -327,7 +331,7 @@ class DependencyValidationRule implements ValidationRule {
               severity: this.severity,
               message: `Resource depends on non-existent resource: ${dep}`,
               path: `template.resources[${index}].dependencies[${depIndex}]`,
-              suggestion: 'Remove the dependency or add the missing resource',
+              suggestion: 'Remove the dependency or add the missing resource'
             });
           }
 
@@ -338,7 +342,7 @@ class DependencyValidationRule implements ValidationRule {
               severity: this.severity,
               message: 'Resource cannot depend on itself',
               path: `template.resources[${index}].dependencies[${depIndex}]`,
-              suggestion: 'Remove the self-dependency',
+              suggestion: 'Remove the self-dependency'
             });
           }
         });
@@ -347,13 +351,13 @@ class DependencyValidationRule implements ValidationRule {
 
     // Check for circular dependencies
     const circularDeps = this.findCircularDependencies(template.resources);
-    circularDeps.forEach((cycle) => {
+    circularDeps.forEach(cycle => {
       issues.push({
         rule: this.name,
         severity: this.severity,
         message: `Circular dependency detected: ${cycle.join(' -> ')}`,
         path: 'template.resources',
-        suggestion: 'Break the circular dependency by removing or restructuring dependencies',
+        suggestion: 'Break the circular dependency by removing or restructuring dependencies'
       });
     });
 
@@ -364,7 +368,7 @@ class DependencyValidationRule implements ValidationRule {
     const cycles: string[][] = [];
     const visited = new Set<string>();
     const recursionStack = new Set<string>();
-    const resourceMap = new Map(resources.map((r) => [r.name, r]));
+    const resourceMap = new Map(resources.map(r => [r.name, r]));
 
     const dfs = (resourceName: string, path: string[]): void => {
       if (recursionStack.has(resourceName)) {
@@ -415,7 +419,7 @@ class VariableValidationRule implements ValidationRule {
           rule: this.name,
           severity: this.severity,
           message: 'Variable name is required',
-          path: `template.variables[${index}].name`,
+          path: `template.variables[${index}].name`
         });
       }
 
@@ -424,7 +428,7 @@ class VariableValidationRule implements ValidationRule {
           rule: this.name,
           severity: this.severity,
           message: 'Variable type is required',
-          path: `template.variables[${index}].type`,
+          path: `template.variables[${index}].type`
         });
       }
 
@@ -433,10 +437,9 @@ class VariableValidationRule implements ValidationRule {
         issues.push({
           rule: this.name,
           severity: ErrorSeverity.WARNING,
-          message:
-            'Variable name should start with a letter and contain only letters, numbers, and underscores',
+          message: 'Variable name should start with a letter and contain only letters, numbers, and underscores',
           path: `template.variables[${index}].name`,
-          suggestion: 'Use snake_case or camelCase naming convention',
+          suggestion: 'Use snake_case or camelCase naming convention'
         });
       }
 
@@ -449,7 +452,7 @@ class VariableValidationRule implements ValidationRule {
             severity: this.severity,
             message: `Default value type does not match variable type ${variable.type}`,
             path: `template.variables[${index}].defaultValue`,
-            suggestion: 'Ensure the default value matches the declared variable type',
+            suggestion: 'Ensure the default value matches the declared variable type'
           });
         }
       }
@@ -461,8 +464,7 @@ class VariableValidationRule implements ValidationRule {
           severity: ErrorSeverity.WARNING,
           message: 'Required variable has no default value',
           path: `template.variables[${index}]`,
-          suggestion:
-            'Consider providing a default value or ensure the variable is provided at runtime',
+          suggestion: 'Consider providing a default value or ensure the variable is provided at runtime'
         });
       }
     });
@@ -504,17 +506,17 @@ class SecurityValidationRule implements ValidationRule {
         /password\s*[:=]\s*["'][^"']+["']/i,
         /secret\s*[:=]\s*["'][^"']+["']/i,
         /api[_-]?key\s*[:=]\s*["'][^"']+["']/i,
-        /token\s*[:=]\s*["'][^"']+["']/i,
+        /token\s*[:=]\s*["'][^"']+["']/i
       ];
 
-      secretPatterns.forEach((pattern) => {
+      secretPatterns.forEach(pattern => {
         if (pattern.test(resourceStr)) {
           issues.push({
             rule: this.name,
             severity: ErrorSeverity.ERROR,
             message: 'Hardcoded secrets detected in resource properties',
             path: `template.resources[${index}].properties`,
-            suggestion: 'Use variables or secret management systems instead of hardcoded secrets',
+            suggestion: 'Use variables or secret management systems instead of hardcoded secrets'
           });
         }
       });
@@ -531,7 +533,7 @@ class SecurityValidationRule implements ValidationRule {
                 severity: this.severity,
                 message: 'Firewall rule allows access from anywhere on non-standard port',
                 path: `template.resources[${index}].properties.sourceRanges[${rangeIndex}]`,
-                suggestion: 'Restrict access to specific IP ranges or use standard ports',
+                suggestion: 'Restrict access to specific IP ranges or use standard ports'
               });
             }
           }
@@ -546,7 +548,7 @@ class SecurityValidationRule implements ValidationRule {
             severity: this.severity,
             message: 'Cloud Storage bucket is not encrypted',
             path: `template.resources[${index}].properties`,
-            suggestion: 'Enable encryption for Cloud Storage buckets',
+            suggestion: 'Enable encryption for Cloud Storage buckets'
           });
         }
       }
@@ -576,7 +578,7 @@ class PerformanceValidationRule implements ValidationRule {
             severity: this.severity,
             message: 'Compute Engine instance may be undersized',
             path: `template.resources[${index}].properties.machineType`,
-            suggestion: 'Consider using a larger machine type for better performance',
+            suggestion: 'Consider using a larger machine type for better performance'
           });
         }
       }
@@ -589,7 +591,7 @@ class PerformanceValidationRule implements ValidationRule {
             severity: ErrorSeverity.WARNING,
             message: 'Load balancer missing health check configuration',
             path: `template.resources[${index}].properties`,
-            suggestion: 'Add health check configuration to ensure proper load balancing',
+            suggestion: 'Add health check configuration to ensure proper load balancing'
           });
         }
       }
@@ -612,16 +614,13 @@ class CostOptimizationRule implements ValidationRule {
       if (resource.type === ResourceType.COMPUTE_ENGINE) {
         const machineType = resource.properties.machineType;
 
-        if (
-          machineType &&
-          (machineType.includes('n1-highmem') || machineType.includes('n1-highcpu'))
-        ) {
+        if (machineType && (machineType.includes('n1-highmem') || machineType.includes('n1-highcpu'))) {
           issues.push({
             rule: this.name,
             severity: this.severity,
             message: 'High-performance machine type detected - consider if full capacity is needed',
             path: `template.resources[${index}].properties.machineType`,
-            suggestion: 'Review if a smaller machine type would be sufficient',
+            suggestion: 'Review if a smaller machine type would be sufficient'
           });
         }
       }
@@ -633,7 +632,7 @@ class CostOptimizationRule implements ValidationRule {
           severity: this.severity,
           message: 'Compute Engine instance without auto-scaling may lead to over-provisioning',
           path: `template.resources[${index}].properties`,
-          suggestion: 'Consider using Managed Instance Groups with auto-scaling to optimize costs',
+          suggestion: 'Consider using Managed Instance Groups with auto-scaling to optimize costs'
         });
       }
     });
@@ -658,7 +657,7 @@ class BestPracticesRule implements ValidationRule {
           severity: this.severity,
           message: 'Resource missing tags',
           path: `template.resources[${index}].tags`,
-          suggestion: 'Add tags for better resource management and cost tracking',
+          suggestion: 'Add tags for better resource management and cost tracking'
         });
       }
 
@@ -669,7 +668,7 @@ class BestPracticesRule implements ValidationRule {
           severity: this.severity,
           message: 'Resource missing environment tag',
           path: `template.resources[${index}].tags`,
-          suggestion: 'Add environment tag to identify resource environment',
+          suggestion: 'Add environment tag to identify resource environment'
         });
       }
     });
@@ -681,7 +680,7 @@ class BestPracticesRule implements ValidationRule {
         severity: this.severity,
         message: 'Template missing description',
         path: 'template.metadata.description',
-        suggestion: 'Add a description to explain the purpose of this template',
+        suggestion: 'Add a description to explain the purpose of this template'
       });
     }
 

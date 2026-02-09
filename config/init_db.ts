@@ -2,10 +2,10 @@
  * Initialize the FUSE-AI database with necessary tables and the founding architect.
  */
 
-import path from 'path';
 import { DataSource } from 'typeorm';
-import { getSettings } from './config.tsx';
+import path from 'path';
 import { AdminRegistry } from './models/admin_registry.js';
+import { getSettings } from './config.tsx';
 
 const settings = getSettings();
 
@@ -16,7 +16,7 @@ async function initDatabase(): Promise<void> {
     url: settings.SQLALCHEMY_DATABASE_URI,
     synchronize: true,
     logging: true,
-    entities: [path.join(__dirname, 'models', '*.entity.{ts,js}')],
+    entities: [path.join(__dirname, 'models', '*.entity.{ts,js}')]
   });
 
   try {
@@ -39,16 +39,14 @@ async function initDatabase(): Promise<void> {
     `;
 
     const foundingArchitect = await registry.registerFoundingArchitect({
-      fullName: 'Daniel Adam Goldberg',
-      knownAs: 'Daniel Who',
+      fullName: "Daniel Adam Goldberg",
+      knownAs: "Daniel Who",
       dateOfBirth: new Date(1975, 11, 5), // Note: Month is 0-based in JavaScript
-      visionStatement: visionStatement,
+      visionStatement: visionStatement
     });
+
   } catch (error) {
-    console.error(
-      'Error initializing database:',
-      error instanceof Error ? error.message : String(error)
-    );
+    console.error('Error initializing database:', error instanceof Error ? error.message : String(error));
     throw error;
   } finally {
     // Close database connection
@@ -58,7 +56,7 @@ async function initDatabase(): Promise<void> {
 
 // Run if this is the main module
 if (require.main === module) {
-  initDatabase().catch((error) => {
+  initDatabase().catch(error => {
     console.error('Failed to initialize database:', error);
     process.exit(1);
   });

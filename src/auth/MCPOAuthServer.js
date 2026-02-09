@@ -1,19 +1,13 @@
-"use strict";
 /**
  * MCP OAuth Authorization Server for The New Fuse
  * Implements RFC 8414 (Authorization Server Metadata) and RFC 9728 (Protected Resource Metadata)
  * Supports OAuth 2.1 and dynamic client registration
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MCPOAuthServer = void 0;
-const express_1 = require("express");
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+import { Router } from 'express';
+import jwt from 'jsonwebtoken';
 // Refactored: Use centralized cryptoUtils for all cryptographic operations
-const cryptoUtils_1 = require("../utils/cryptoUtils");
-class MCPOAuthServer {
+import { getRandomBytes } from '../utils/cryptoUtils';
+export class MCPOAuthServer {
     logger;
     router;
     clients = new Map();
@@ -28,7 +22,7 @@ class MCPOAuthServer {
         this.JWT_SECRET = process.env.TNF_OAUTH_JWT_SECRET || 'tnf-mcp-oauth-secret-change-in-production';
         this.ISSUER = process.env.TNF_OAUTH_ISSUER || 'https://api.thenewfuse.com';
         this.BASE_URL = process.env.TNF_BASE_URL || 'http://localhost:3001';
-        this.router = (0, express_1.Router)();
+        this.router = Router();
         this.setupRoutes();
         this.initializeDefaultClients();
     }
@@ -61,11 +55,7 @@ class MCPOAuthServer {
     async getAuthServerMetadata(req, res) {
         const metadata = {
             issuer: this.ISSUER,
-            authorization_endpoint: `${this.BASE_URL}/oauth/authorize`,
-            token_endpoint: `${this.BASE_URL}/oauth/token`,
-            userinfo_endpoint: `${this.BASE_URL}/oauth/userinfo`,
-            revocation_endpoint: `${this.BASE_URL}/oauth/revoke`,
-            registration_endpoint: `${this.BASE_URL}/oauth/register`,
+            authorization_endpoint: `${this.BASE_URL}/oauth/authorize`, token_endpoint: `${this.BASE_URL}/oauth/token`, userinfo_endpoint: `${this.BASE_URL}/oauth/userinfo`, revocation_endpoint: `${this.BASE_URL}/oauth/revoke`, registration_endpoint: `${this.BASE_URL}/oauth/register`,
             // Supported features
             response_types_supported: ['code'],
             grant_types_supported: ['authorization_code', 'client_credentials', 'refresh_token'],
@@ -87,10 +77,8 @@ class MCPOAuthServer {
             ],
             // Security
             require_request_uri_registration: false,
-            require_signed_request_object: false,
-            jwks_uri: `${this.BASE_URL}/.well-known/jwks.json`,
-            // Additional metadata
-            service_documentation: `${this.BASE_URL}/docs/oauth`,
+            require_signed_request_object: false, jwks_uri: `${this.BASE_URL}/.well-known/jwks.json`,
+            // Additional metadata service_documentation: `${this.BASE_URL}/docs/oauth`,
             ui_locales_supported: ['en-US'],
             // TNF-specific
             tnf_platform_version: '2.1.0',
@@ -105,20 +93,18 @@ class MCPOAuthServer {
     async getProtectedResourceMetadata(req, res) {
         const metadata = {
             resource: `${this.BASE_URL}/mcp`,
-            authorization_servers: [`${this.ISSUER}`],
+            authorization_servers: [this.ISSUER],
             // MCP Resource Information
             mcp_servers: [
                 {
                     name: 'the-new-fuse-main',
                     capabilities: ['agent-management', 'chat-operations', 'workflow-execution'],
-                    scopes_required: ['mcp:read', 'tnf:agents'],
-                    endpoint: `${this.BASE_URL}/mcp/main`
+                    scopes_required: ['mcp:read', 'tnf:agents'], endpoint: `${this.BASE_URL}/mcp/main`
                 },
                 {
                     name: 'tnf-relay-server',
                     capabilities: ['relay-management', 'api-interception'],
-                    scopes_required: ['mcp:admin', 'tnf:relay'],
-                    endpoint: `${this.BASE_URL}/mcp/relay`
+                    scopes_required: ['mcp:admin', 'tnf:relay'], endpoint: `${this.BASE_URL}/mcp/relay`
                 }
             ],
             // Supported bearer token types
@@ -132,13 +118,10 @@ class MCPOAuthServer {
                 'tnf:monitoring:view',
                 'tnf:relay:control'
             ],
-            // Security requirements
-            resource_documentation: `${this.BASE_URL}/docs/mcp-api`,
-            resource_policy_uri: `${this.BASE_URL}/policies/mcp-usage`,
+            // Security requirements resource_documentation: `${this.BASE_URL}/docs/mcp-api`, resource_policy_uri: `${this.BASE_URL}/policies/mcp-usage`,
             // MCP-specific metadata
             mcp_protocol_version: '2025-06-18',
-            supported_auth_flows: ['authorization_code', 'client_credentials'],
-            token_introspection_endpoint: `${this.BASE_URL}/oauth/introspect`
+            supported_auth_flows: ['authorization_code', 'client_credentials'], token_introspection_endpoint: `${this.BASE_URL}/oauth/introspect`
         };
         res.json(metadata);
         this.logger.log('Served Protected Resource metadata');
@@ -268,8 +251,8 @@ class MCPOAuthServer {
                 error_description: 'client_name and redirect_uris are required'
             });
         }
-        const client_id = `tnf_${(0, cryptoUtils_1.getRandomBytes)(16).toString('hex')}`;
-        const client_secret = (0, cryptoUtils_1.getRandomBytes)(32).toString('hex');
+        const client_id = `tnf_${getRandomBytes(16).toString('hex')}`;
+        const client_secret = getRandomBytes(32).toString('hex');
         const client = {
             client_id,
             client_secret,
@@ -293,8 +276,7 @@ class MCPOAuthServer {
             scope,
             token_endpoint_auth_method,
             client_id_issued_at: Math.floor(Date.now() / 1000),
-            client_secret_expires_at: 0, // Never expires
-            registration_client_uri: `${this.BASE_URL}/oauth/register/${client_id}`,
+            client_secret_expires_at: 0, // Never expires registration_client_uri: `${this.BASE_URL}/oauth/register/${client_id}`,
             mcp_capabilities
         });
         this.logger.log(`Registered new OAuth client: ${client_name} (${client_id})`);
@@ -307,24 +289,20 @@ class MCPOAuthServer {
             mcp_version: '2025-06-18',
             platform: 'The New Fuse',
             platform_version: '2.1.0',
-            oauth_discovery: {
-                authorization_server_metadata: `${this.BASE_URL}/.well-known/oauth-authorization-server`,
-                protected_resource_metadata: `${this.BASE_URL}/.well-known/oauth-protected-resource`
+            oauth_discovery: { authorization_server_metadata: `${this.BASE_URL}/.well-known/oauth-authorization-server`, protected_resource_metadata: `${this.BASE_URL}/.well-known/oauth-protected-resource`
             },
             available_servers: [
                 {
                     name: 'the-new-fuse-main',
                     description: 'Complete TNF platform capabilities',
-                    transport: 'sse',
-                    endpoint: `${this.BASE_URL}/mcp/main/sse`,
+                    transport: 'sse', endpoint: `${this.BASE_URL}/mcp/main/sse`,
                     auth_required: true,
                     scopes: ['mcp:read', 'tnf:agents', 'tnf:workflows']
                 },
                 {
                     name: 'tnf-relay-server',
                     description: 'TNF relay and interception services',
-                    transport: 'sse',
-                    endpoint: `${this.BASE_URL}/mcp/relay/sse`,
+                    transport: 'sse', endpoint: `${this.BASE_URL}/mcp/relay/sse`,
                     auth_required: true,
                     scopes: ['mcp:admin', 'tnf:relay']
                 }
@@ -332,8 +310,7 @@ class MCPOAuthServer {
             supported_transports: ['stdio', 'sse', 'websocket'],
             supported_auth_methods: ['oauth2', 'bearer_token'],
             registration_info: {
-                dynamic_registration_supported: true,
-                registration_endpoint: `${this.BASE_URL}/oauth/register`,
+                dynamic_registration_supported: true, registration_endpoint: `${this.BASE_URL}/oauth/register`,
                 client_authentication_required: false
             }
         };
@@ -371,22 +348,21 @@ class MCPOAuthServer {
     }
     // Helper methods
     generateAuthCode() {
-        return (0, cryptoUtils_1.getRandomBytes)(32).toString('hex');
+        return getRandomBytes(32).toString('hex');
     }
     generateAccessToken(client_id, user_id, scope) {
         const payload = {
             iss: this.ISSUER,
-            sub: user_id || client_id,
-            aud: `${this.BASE_URL}/mcp`,
+            sub: user_id || client_id, aud: `${this.BASE_URL}/mcp`,
             client_id,
             scope,
             iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) + 3600
         };
-        return jsonwebtoken_1.default.sign(payload, this.JWT_SECRET);
+        return jwt.sign(payload, this.JWT_SECRET);
     }
     generateRefreshToken(client_id, user_id) {
-        return (0, cryptoUtils_1.getRandomBytes)(32).toString('hex');
+        return getRandomBytes(32).toString('hex');
     }
     getMCPResourcesForScope(scope) {
         const scopes = scope.split(' ');
@@ -465,5 +441,4 @@ class MCPOAuthServer {
         res.json({ token_exchanged: true });
     }
 }
-exports.MCPOAuthServer = MCPOAuthServer;
 //# sourceMappingURL=MCPOAuthServer.js.map

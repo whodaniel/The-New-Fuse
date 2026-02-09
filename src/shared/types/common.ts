@@ -29,7 +29,7 @@ export interface DatabaseInclude {
   [relation: string]: boolean | DatabaseQuery;
 }
 
-export interface DrizzleClient {
+export interface PrismaClient {
   [model: string]: {
     findMany: (args?: DatabaseQuery) => Promise<any[]>;
     findFirst: (args?: DatabaseQuery) => Promise<any | null>;

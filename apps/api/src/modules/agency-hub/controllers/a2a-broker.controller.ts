@@ -1,17 +1,24 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthLevel, RequireAuthLevel } from '../../../guards/secure-auth.guard';
 import {
-  A2AMessageBrokerService,
-  A2AMessageType,
-  A2APriority,
-} from '../services/a2a-message-broker.service';
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Query,
+  HttpStatus,
+  HttpException,
+} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { A2AMessageBrokerService, A2AMessageType, A2APriority } from '../services/a2a-message-broker.service';
+import { RequireAuthLevel, AuthLevel } from '../../../guards/secure-auth.guard';
 
 @ApiTags('a2a-broker')
 @Controller('a2a')
-@RequireAuthLevel(AuthLevel.PUBLIC) // Make public for testing
+@RequireAuthLevel(AuthLevel.PUBLIC)  // Make public for testing
 export class A2AMessageBrokerController {
-  constructor(private readonly brokerService: A2AMessageBrokerService) {}
+  constructor(
+    private readonly brokerService: A2AMessageBrokerService
+  ) {}
 
   // ==================== MESSAGING ====================
 
@@ -19,8 +26,7 @@ export class A2AMessageBrokerController {
   @ApiOperation({ summary: 'Send a direct message to an agent' })
   @ApiResponse({ status: 201, description: 'Message sent successfully' })
   async sendMessage(
-    @Body()
-    body: {
+    @Body() body: {
       from: string;
       to: string;
       type: A2AMessageType;
@@ -37,7 +43,7 @@ export class A2AMessageBrokerController {
       payload: body.payload,
       priority: body.priority || A2APriority.MEDIUM,
       correlationId: body.correlationId,
-      ttl: body.ttl,
+      ttl: body.ttl
     });
 
     return { success: true, messageId };
@@ -47,14 +53,19 @@ export class A2AMessageBrokerController {
   @ApiOperation({ summary: 'Broadcast a message to all agents' })
   @ApiResponse({ status: 201, description: 'Broadcast sent successfully' })
   async broadcastMessage(
-    @Body() body: { from: string; type: A2AMessageType; payload: any; priority?: A2APriority }
+    @Body() body: {
+      from: string;
+      type: A2AMessageType;
+      payload: any;
+      priority?: A2APriority;
+    }
   ) {
     const messageId = await this.brokerService.sendMessage({
       type: body.type,
       from: body.from,
       to: 'broadcast',
       payload: body.payload,
-      priority: body.priority || A2APriority.MEDIUM,
+      priority: body.priority || A2APriority.MEDIUM
     });
 
     return { success: true, messageId };
@@ -63,7 +74,10 @@ export class A2AMessageBrokerController {
   @Get('messages/:agentId')
   @ApiOperation({ summary: 'Get pending messages for an agent' })
   @ApiResponse({ status: 200, description: 'Messages retrieved' })
-  async getPendingMessages(@Param('agentId') agentId: string, @Query('limit') limit: number = 50) {
+  async getPendingMessages(
+    @Param('agentId') agentId: string,
+    @Query('limit') limit: number = 50
+  ) {
     const messages = await this.brokerService.getPendingMessages(agentId, limit);
     return { agentId, count: messages.length, messages };
   }
@@ -71,7 +85,10 @@ export class A2AMessageBrokerController {
   @Get('messages/:agentId/peek')
   @ApiOperation({ summary: 'Peek at pending messages without consuming them' })
   @ApiResponse({ status: 200, description: 'Messages peeked' })
-  async peekMessages(@Param('agentId') agentId: string, @Query('limit') limit: number = 10) {
+  async peekMessages(
+    @Param('agentId') agentId: string,
+    @Query('limit') limit: number = 10
+  ) {
     const messages = await this.brokerService.peekMessages(agentId, limit);
     return { agentId, count: messages.length, messages };
   }
@@ -81,7 +98,9 @@ export class A2AMessageBrokerController {
   @Post('channels')
   @ApiOperation({ summary: 'Create a new communication channel' })
   @ApiResponse({ status: 201, description: 'Channel created' })
-  async createChannel(@Body() body: { name: string; participants?: string[] }) {
+  async createChannel(
+    @Body() body: { name: string; participants?: string[] }
+  ) {
     const channel = await this.brokerService.createChannel(body.name, body.participants || []);
     return { success: true, channel };
   }
@@ -89,7 +108,10 @@ export class A2AMessageBrokerController {
   @Post('channels/:channelName/join')
   @ApiOperation({ summary: 'Join a communication channel' })
   @ApiResponse({ status: 200, description: 'Joined channel' })
-  async joinChannel(@Param('channelName') channelName: string, @Body() body: { agentId: string }) {
+  async joinChannel(
+    @Param('channelName') channelName: string,
+    @Body() body: { agentId: string }
+  ) {
     await this.brokerService.joinChannel(body.agentId, channelName);
     return { success: true, channel: channelName, agentId: body.agentId };
   }
@@ -97,7 +119,10 @@ export class A2AMessageBrokerController {
   @Post('channels/:channelName/leave')
   @ApiOperation({ summary: 'Leave a communication channel' })
   @ApiResponse({ status: 200, description: 'Left channel' })
-  async leaveChannel(@Param('channelName') channelName: string, @Body() body: { agentId: string }) {
+  async leaveChannel(
+    @Param('channelName') channelName: string,
+    @Body() body: { agentId: string }
+  ) {
     await this.brokerService.leaveChannel(body.agentId, channelName);
     return { success: true, channel: channelName, agentId: body.agentId };
   }
@@ -107,8 +132,7 @@ export class A2AMessageBrokerController {
   @ApiResponse({ status: 201, description: 'Message sent to channel' })
   async sendToChannel(
     @Param('channelName') channelName: string,
-    @Body()
-    body: {
+    @Body() body: {
       from: string;
       type: A2AMessageType;
       payload: any;
@@ -119,7 +143,7 @@ export class A2AMessageBrokerController {
       type: body.type,
       from: body.from,
       payload: body.payload,
-      priority: body.priority || A2APriority.MEDIUM,
+      priority: body.priority || A2APriority.MEDIUM
     });
 
     return { success: true, messageId, channel: channelName };
@@ -131,7 +155,11 @@ export class A2AMessageBrokerController {
   @ApiOperation({ summary: 'Start a new conversation between agents' })
   @ApiResponse({ status: 201, description: 'Conversation started' })
   async startConversation(
-    @Body() body: { initiatorId: string; participantIds: string[]; topic?: string }
+    @Body() body: {
+      initiatorId: string;
+      participantIds: string[];
+      topic?: string;
+    }
   ) {
     const conversationId = await this.brokerService.startConversation(
       body.initiatorId,

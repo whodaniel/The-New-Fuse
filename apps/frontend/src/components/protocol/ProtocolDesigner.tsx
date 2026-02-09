@@ -1,7 +1,7 @@
-import { Card } from '@/components/ui/card';
-import { Select } from '@/components/ui/select';
 import React from 'react';
 import { Flow } from 'reactflow';
+import { Card } from '@/components/ui/card';
+import { Select } from '@/components/ui/select';
 
 interface ProtocolNode {
   type: 'request' | 'response' | 'error';
@@ -22,20 +22,20 @@ export const ProtocolDesigner: React.FC = () => {
           options={[
             { label: 'JSON', value: 'json' },
             { label: 'Protocol Buffers', value: 'protobuf' },
-            { label: 'GraphQL', value: 'graphql' },
+            { label: 'GraphQL', value: 'graphql' }
           ]}
         />
-        <Button
-          onClick={() => {
-            /* Export protocol */
-          }}
-        >
+        <Button onClick={() => {/* Export protocol */}}>
           Export Protocol
         </Button>
       </div>
 
       <div className="flex-1">
-        <Flow nodes={nodes} onNodesChange={setNodes} fitView />
+        <Flow
+          nodes={nodes}
+          onNodesChange={setNodes}
+          fitView
+        />
       </div>
 
       <Card className="m-4">

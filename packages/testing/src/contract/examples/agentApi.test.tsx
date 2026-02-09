@@ -8,7 +8,7 @@ enum ProtocolType {
   HTTP = 'http',
   WEBSOCKET = 'websocket',
   MCP = 'mcp',
-  GRPC = 'grpc',
+  GRPC = 'grpc'
 }
 import { SecurityScheme } from '@the-new-fuse/types';
 
@@ -31,7 +31,7 @@ describe('Agent API Contract Tests', () => {
       requestSchema: CreateAgentDto,
       responseSchema: Agent,
       protocol: ProtocolType.HTTP,
-      security: { type: 'bearer', bearerFormat: 'JWT' } as SecurityScheme,
+      security: { type: 'bearer', bearerFormat: 'JWT' } as SecurityScheme
     };
 
     contractEnforcer.registerContract(CREATE_AGENT_CONTRACT_KEY, createAgentContract);
@@ -44,13 +44,10 @@ describe('Agent API Contract Tests', () => {
         type: AgentType.BASIC,
         // @ts-ignore
         config: { key: 'value' }, // Adjusted to remove potential type error if config is not in CreateAgentDto
-        description: 'Test agent description',
+        description: 'Test agent description'
       };
 
-      const result = await contractEnforcer.validateRequest(
-        CREATE_AGENT_CONTRACT_KEY,
-        validRequest,
-      );
+      const result = await contractEnforcer.validateRequest(CREATE_AGENT_CONTRACT_KEY, validRequest);
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
@@ -59,14 +56,11 @@ describe('Agent API Contract Tests', () => {
       const invalidRequest = {
         // Missing required 'name' field
         // @ts-ignore
-        type: AgentType.BASIC,
+        type: AgentType.BASIC
       };
 
       // @ts-ignore
-      const result = await contractEnforcer.validateRequest(
-        CREATE_AGENT_CONTRACT_KEY,
-        invalidRequest,
-      );
+      const result = await contractEnforcer.validateRequest(CREATE_AGENT_CONTRACT_KEY, invalidRequest);
       expect(result.isValid).toBe(false);
       expect(result.errors).toHaveLength(1);
     });
@@ -80,20 +74,16 @@ describe('Agent API Contract Tests', () => {
         isActive: true, // Adjusted to remove potential type error if isActive is not in Agent
         createdAt: new Date(),
         updatedAt: new Date(),
-        status: AgentStatus.ACTIVE, // Added missing status
+        status: AgentStatus.ACTIVE // Added missing status
       };
 
-      const result = await contractEnforcer.validateResponse(
-        CREATE_AGENT_CONTRACT_KEY,
-        validResponse,
-      );
+      const result = await contractEnforcer.validateResponse(CREATE_AGENT_CONTRACT_KEY, validResponse);
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
     // Test mock data generation and validation (assuming TestUtils is set up)
-    it('should generate mock Agent data that conforms to the Agent schema', async () => {
-      // Made async
+    it('should generate mock Agent data that conforms to the Agent schema', async () => { // Made async
       // Arrange: Generate mock data using TestUtils
       // Ensure TestUtils.generateMockData is implemented correctly based on the schema/DTO
       const mockAgent = TestUtils.generateMockData<Agent>(Agent); // Changed testUtils to TestUtils

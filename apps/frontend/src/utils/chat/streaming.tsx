@@ -47,7 +47,7 @@ export async function handleChatStream(
       }
 
       const { value, done } = await reader.read();
-
+      
       if (done) {
         // Process any remaining buffer content
         if (buffer) {
@@ -103,5 +103,8 @@ export function createAbortController(): AbortController {
 }
 
 export function isStreamingSupported(): boolean {
-  return !!(typeof ReadableStream === 'function' && typeof TextDecoder === 'function');
+  return !!(
+    typeof ReadableStream === 'function' &&
+    typeof TextDecoder === 'function'
+  );
 }

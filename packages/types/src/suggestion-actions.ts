@@ -9,5 +9,5 @@ export interface SuggestionActionsContextType {
 export const SuggestionActionsContext = createContext<SuggestionActionsContextType>({
   submitSuggestion: async () => {},
   approveSuggestion: async () => {},
-  rejectSuggestion: async () => {},
+  rejectSuggestion: async () => {}
 });

@@ -1,7 +1,6 @@
 # Component Patterns
 
-Modern React component architecture for the application emphasizing type safety,
-lazy loading, and Suspense boundaries.
+Modern React component architecture for the application emphasizing type safety, lazy loading, and Suspense boundaries.
 
 ---
 
@@ -10,7 +9,6 @@ lazy loading, and Suspense boundaries.
 ### Why React.FC
 
 All components use the `React.FC<Props>` pattern for:
-
 - Explicit type safety for props
 - Consistent component signatures
 - Clear prop interface documentation
@@ -40,7 +38,6 @@ export default MyComponent;
 ```
 
 **Key Points:**
-
 - Props interface defined separately with JSDoc comments
 - `React.FC<Props>` provides type safety
 - Destructure props in parameters
@@ -53,7 +50,6 @@ export default MyComponent;
 ### When to Lazy Load
 
 Lazy load components that are:
-
 - Heavy (DataGrid, charts, rich text editors)
 - Route-level components
 - Modal/dialog content (not shown initially)
@@ -65,13 +61,15 @@ Lazy load components that are:
 import React from 'react';
 
 // Lazy load heavy component
-const PostDataGrid = React.lazy(() => import('./grids/PostDataGrid'));
+const PostDataGrid = React.lazy(() =>
+    import('./grids/PostDataGrid')
+);
 
 // For named exports
 const MyComponent = React.lazy(() =>
-  import('./MyComponent').then((module) => ({
-    default: module.MyComponent,
-  }))
+    import('./MyComponent').then(module => ({
+        default: module.MyComponent
+    }))
 );
 ```
 
@@ -109,7 +107,6 @@ export default PostTable;
 ### SuspenseLoader Component
 
 **Import:**
-
 ```typescript
 import { SuspenseLoader } from '~components/SuspenseLoader';
 // Or
@@ -117,7 +114,6 @@ import { SuspenseLoader } from '@/components/SuspenseLoader';
 ```
 
 **Usage:**
-
 ```typescript
 <SuspenseLoader>
     <LazyLoadedComponent />
@@ -125,7 +121,6 @@ import { SuspenseLoader } from '@/components/SuspenseLoader';
 ```
 
 **What it does:**
-
 - Shows loading indicator while lazy component loads
 - Smooth fade-in animation
 - Consistent loading experience
@@ -134,7 +129,6 @@ import { SuspenseLoader } from '@/components/SuspenseLoader';
 ### Where to Place Suspense Boundaries
 
 **Route Level:**
-
 ```typescript
 // routes/my-route/index.tsx
 const MyPage = lazy(() => import('@/features/my-feature/components/MyPage'));
@@ -149,7 +143,6 @@ function Route() {
 ```
 
 **Component Level:**
-
 ```typescript
 function ParentComponent() {
     return (
@@ -164,7 +157,6 @@ function ParentComponent() {
 ```
 
 **Multiple Boundaries:**
-
 ```typescript
 function Page() {
     return (
@@ -315,7 +307,6 @@ export default MyComponent;
 ### When to Split Components
 
 **Split into multiple components when:**
-
 - Component exceeds 300 lines
 - Multiple distinct responsibilities
 - Reusable sections
@@ -348,7 +339,6 @@ function ParentContainer() {
 ### When to Keep Together
 
 **Keep in same file when:**
-
 - Component < 200 lines
 - Tightly coupled logic
 - Not reusable elsewhere
@@ -369,7 +359,6 @@ export default MyComponent;
 ```
 
 **Why:**
-
 - Named export for testing/refactoring
 - Default export for lazy loading convenience
 - Both options available to consumers
@@ -378,9 +367,9 @@ export default MyComponent;
 
 ```typescript
 const MyComponent = React.lazy(() =>
-  import('./MyComponent').then((module) => ({
-    default: module.MyComponent,
-  }))
+    import('./MyComponent').then(module => ({
+        default: module.MyComponent
+    }))
 );
 ```
 
@@ -421,7 +410,6 @@ export const Child: React.FC<ChildProps> = ({ data, onSelect }) => {
 ### Avoid Prop Drilling
 
 **Use context for deep nesting:**
-
 ```typescript
 // ❌ AVOID - Prop drilling 5+ levels
 <A prop={x}>
@@ -499,7 +487,6 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 ## Summary
 
 **Modern Component Recipe:**
-
 1. `React.FC<Props>` with TypeScript
 2. Lazy load if heavy: `React.lazy(() => import())`
 3. Wrap in `<SuspenseLoader>` for loading
@@ -510,8 +497,6 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 8. No early returns for loading states
 
 **See Also:**
-
 - [data-fetching.md](data-fetching.md) - useSuspenseQuery details
-- [loading-and-error-states.md](loading-and-error-states.md) - Suspense best
-  practices
+- [loading-and-error-states.md](loading-and-error-states.md) - Suspense best practices
 - [complete-examples.md](complete-examples.md) - Full working examples

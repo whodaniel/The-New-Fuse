@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Pool } from 'pg';
 import type {
-  CollectionConfig,
   IVectorDatabase,
-  VectorDatabaseConfig,
   VectorDocument,
   VectorQuery,
   VectorSearchResult,
+  CollectionConfig,
+  VectorDatabaseConfig,
 } from '../interface/vector-database.interface';
 
 @Injectable()
@@ -109,9 +109,7 @@ export class PgVectorDriver implements IVectorDatabase {
     // Only allow alphanumeric characters, underscores, and hyphens
     const sanitized = identifier.replace(/[^a-zA-Z0-9_-]/g, '');
     if (sanitized !== identifier || sanitized.length === 0) {
-      throw new Error(
-        'Invalid identifier: must contain only alphanumeric characters, underscores, and hyphens'
-      );
+      throw new Error('Invalid identifier: must contain only alphanumeric characters, underscores, and hyphens');
     }
     // Additional length validation
     if (sanitized.length > 63) {
@@ -136,7 +134,7 @@ export class PgVectorDriver implements IVectorDatabase {
         )
       `);
 
-      return result.rows.map((row) => row.table_name);
+      return result.rows.map(row => row.table_name);
     } catch (error) {
       this.logger.error('Failed to list collections', error);
       throw error;
@@ -148,16 +146,13 @@ export class PgVectorDriver implements IVectorDatabase {
   async collectionExists(name: string): Promise<boolean> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query(
-        `
+      const result = await client.query(`
         SELECT EXISTS (
           SELECT 1 FROM information_schema.tables 
           WHERE table_name = $1 
           AND table_schema = 'public'
         )
-      `,
-        [name]
-      );
+      `, [name]);
 
       return result.rows[0].exists;
     } catch (error) {
@@ -203,11 +198,7 @@ export class PgVectorDriver implements IVectorDatabase {
     }
   }
 
-  async updateDocument(
-    collection: string,
-    id: string,
-    document: Partial<VectorDocument>
-  ): Promise<void> {
+  async updateDocument(collection: string, id: string, document: Partial<VectorDocument>): Promise<void> {
     const client = await this.pool.connect();
     try {
       const setParts: string[] = [];
@@ -278,14 +269,11 @@ export class PgVectorDriver implements IVectorDatabase {
   async getDocument(collection: string, id: string): Promise<VectorDocument | null> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query(
-        `
+      const result = await client.query(`
         SELECT id, content, metadata, embedding 
         FROM "${collection}" 
         WHERE id = $1
-      `,
-        [id]
-      );
+      `, [id]);
 
       if (result.rows.length === 0) {
         return null;
@@ -348,8 +336,8 @@ export class PgVectorDriver implements IVectorDatabase {
       const result = await client.query(sqlQuery, values);
 
       return result.rows
-        .filter((row) => 1 - row.distance >= query.threshold)
-        .map((row) => ({
+        .filter(row => (1 - row.distance) >= query.threshold)
+        .map(row => ({
           id: row.id,
           content: row.content,
           metadata: row.metadata,

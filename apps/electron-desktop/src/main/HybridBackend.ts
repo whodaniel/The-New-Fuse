@@ -1,6 +1,6 @@
-import { ChildProcess, spawn } from 'child_process';
-import { EventEmitter } from 'events';
+import { spawn, ChildProcess } from 'child_process';
 import { join } from 'path';
+import { EventEmitter } from 'events';
 
 export class HybridBackend extends EventEmitter {
   private nativeHost: ChildProcess | null = null;
@@ -16,7 +16,7 @@ export class HybridBackend extends EventEmitter {
       console.log('Starting native host from:', hostPath);
       console.log('__dirname is:', __dirname);
       this.nativeHost = spawn('python3', [hostPath], {
-        stdio: 'pipe',
+        stdio: 'pipe'
       });
 
       this.nativeHost.stdout?.on('data', (data) => {
@@ -66,7 +66,7 @@ export class HybridBackend extends EventEmitter {
       const request = {
         id: requestId,
         command,
-        args,
+        args
       };
 
       const responseHandler = (response: any) => {

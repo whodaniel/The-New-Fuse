@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState, useCallback } from 'react';
 
 export interface Agent {
   id: string;
@@ -15,16 +15,13 @@ export function useA2AAgents() {
     setAgents([]);
   }, []);
 
-  const findAgentsByType = useCallback(
-    (type: string) => {
-      return agents.filter((agent) => agent.type === type);
-    },
-    [agents]
-  );
+  const findAgentsByType = useCallback((type: string) => {
+    return agents.filter(agent => agent.type === type);
+  }, [agents]);
 
   return {
     agents,
     refreshAgents,
-    findAgentsByType,
+    findAgentsByType
   };
 }

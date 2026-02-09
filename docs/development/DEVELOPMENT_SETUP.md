@@ -18,7 +18,7 @@ cp .env.example .env
 # Install all dependencies
 pnpm install
 
-# Generate Drizzle types
+# Generate Prisma types
 pnpm run db:generate
 ```
 

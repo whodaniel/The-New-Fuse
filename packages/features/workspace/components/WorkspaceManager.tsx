@@ -1,10 +1,8 @@
-import { useCallback, useState } from 'react';
-
+import React, { useState, useCallback } from 'react';
+import { UnifiedWorkspace, UnifiedMessage, ChatThread } from '../../types/unified';
 import { EnhancedChatBubble } from '../chat/EnhancedChatBubble';
-import { AgentLLMService } from '../services/llm/agent-llm';
 import { Button, Card } from '../ui';
-
-import type { ChatThread, UnifiedMessage, UnifiedWorkspace } from '../types/unified';
+import { AgentLLMService } from '../../services/llm/agent-llm';
 
 interface WorkspaceManagerProps {
   workspace: UnifiedWorkspace;
@@ -19,9 +17,7 @@ export function WorkspaceManager({ workspace, user }: WorkspaceManagerProps) {
   const [message, setMessage] = useState('');
 
   const handleSendMessage = useCallback(async () => {
-    if (!message.trim() || !activeThread) {
-      return;
-    }
+    if (!message.trim() || !activeThread) return;
 
     const newMessage: UnifiedMessage = {
       id: crypto.randomUUID(),
@@ -41,27 +37,23 @@ export function WorkspaceManager({ workspace, user }: WorkspaceManagerProps) {
 
     // Add user message to the thread
     const updatedMessages = [...activeThread.messages, newMessage];
-    setActiveThread((prev) =>
-      prev
-        ? {
-            ...prev,
-            messages: updatedMessages,
-          }
-        : null
-    );
+    setActiveThread(prev => ({
+      ...prev!,
+      messages: updatedMessages,
+    }));
     setMessage('');
 
     try {
       // Get the active agent
       const activeAgent = workspace.agents[0]; // TODO: Implement agent selection
-
-      if (!activeAgent) {
-        throw new Error('No active agent available');
-      }
-
-      // Process message with the active agent using the singleton service
+      
+      // Process message with the agent
       const agentLLM = AgentLLMService.getInstance();
-      const response = await agentLLM.processAgentMessage(activeAgent, newMessage, updatedMessages);
+      const response = await agentLLM.processAgentMessage(
+        activeAgent,
+        newMessage,
+        updatedMessages
+      );
 
       // Add agent response to the thread
       const agentMessage: UnifiedMessage = {
@@ -81,14 +73,10 @@ export function WorkspaceManager({ workspace, user }: WorkspaceManagerProps) {
         },
       };
 
-      setActiveThread((prev) =>
-        prev
-          ? {
-              ...prev,
-              messages: [...prev.messages, agentMessage],
-            }
-          : null
-      );
+      setActiveThread(prev => ({
+        ...prev!,
+        messages: [...prev!.messages, agentMessage],
+      }));
     } catch (error) {
       console.error('Error processing message:', error);
       // Add error message to thread
@@ -109,14 +97,10 @@ export function WorkspaceManager({ workspace, user }: WorkspaceManagerProps) {
         },
       };
 
-      setActiveThread((prev) =>
-        prev
-          ? {
-              ...prev,
-              messages: [...prev.messages, errorMessage],
-            }
-          : null
-      );
+      setActiveThread(prev => ({
+        ...prev!,
+        messages: [...prev!.messages, errorMessage],
+      }));
     }
   }, [message, activeThread, user, workspace]);
 
@@ -125,7 +109,7 @@ export function WorkspaceManager({ workspace, user }: WorkspaceManagerProps) {
       {/* Thread List */}
       <div className="w-64 border-r border-gray-200 dark:border-gray-700 p-4">
         <h2 className="text-lg font-semibold mb-4">Threads</h2>
-        {workspace.threads.map((thread) => (
+        {workspace.threads.map(thread => (
           <Button
             key={thread.id}
             variant={activeThread?.id === thread.id ? 'primary' : 'secondary'}
@@ -142,7 +126,7 @@ export function WorkspaceManager({ workspace, user }: WorkspaceManagerProps) {
         {activeThread ? (
           <>
             <div className="flex-1 overflow-y-auto p-4">
-              {activeThread.messages.map((message) => (
+              {activeThread.messages.map(message => (
                 <EnhancedChatBubble
                   key={message.id}
                   message={message}
@@ -156,7 +140,7 @@ export function WorkspaceManager({ workspace, user }: WorkspaceManagerProps) {
                 <input
                   type="text"
                   value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  onChange={e => setMessage(e.target.value)}
                   className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 p-2"
                   placeholder="Type your message..."
                 />

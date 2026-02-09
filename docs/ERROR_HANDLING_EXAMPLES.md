@@ -40,7 +40,12 @@ async function fetchData(url: string) {
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw ErrorFactory.fromHttpResponse(response.status, errorData, url, 'GET');
+    throw ErrorFactory.fromHttpResponse(
+      response.status,
+      errorData,
+      url,
+      'GET'
+    );
   }
 
   return response.json();
@@ -75,7 +80,7 @@ async function fetchWithRetry(url: string) {
       maxAttempts: 3,
       initialDelay: 1000,
       backoffMultiplier: 2,
-      jitter: true,
+      jitter: true
     }
   );
 }
@@ -115,8 +120,8 @@ try {
     description: friendly.message,
     action: {
       label: 'Learn More',
-      onClick: () => console.log(friendly.suggestion),
-    },
+      onClick: () => console.log(friendly.suggestion)
+    }
   });
 }
 ```
@@ -129,7 +134,7 @@ try {
 import {
   BaseErrorHandler,
   NetworkReconnectionStrategy,
-  TokenRefreshStrategy,
+  TokenRefreshStrategy
 } from '@tnf/core-error-handling';
 
 class AppErrorHandler extends BaseErrorHandler {
@@ -154,7 +159,7 @@ class AppErrorHandler extends BaseErrorHandler {
 // Usage
 const errorHandler = new AppErrorHandler({
   enableAutoRecovery: true,
-  maxRecoveryAttempts: 3,
+  maxRecoveryAttempts: 3
 });
 
 try {
@@ -162,7 +167,7 @@ try {
 } catch (error) {
   await errorHandler.handleError(error, {
     component: 'ApiService',
-    operation: 'fetchData',
+    operation: 'fetchData'
   });
 }
 ```
@@ -177,7 +182,7 @@ const externalApiBreaker = new CircuitBreaker(
   {
     failureThreshold: 5,
     resetTimeout: 60000,
-    operationName: 'externalApi',
+    operationName: 'externalApi'
   }
 );
 
@@ -207,7 +212,7 @@ errorRecorder.addBreadcrumb('ui.click', 'User clicked edit button');
 errorRecorder.setStateCapture(() => ({
   user: getCurrentUser(),
   route: window.location.pathname,
-  formData: getFormState(),
+  formData: getFormState()
 }));
 
 try {
@@ -219,12 +224,12 @@ try {
     {
       component: 'ProfileForm',
       operation: 'updateProfile',
-      userId: currentUser.id,
+      userId: currentUser.id
     },
     {
       method: 'PUT',
       url: '/api/profile',
-      body: data,
+      body: data
     }
   );
 
@@ -254,19 +259,18 @@ errorMessageFormatter.addCustomMessage(9000, {
   en: {
     title: 'Subscription Required',
     message: 'This feature requires an active subscription.',
-    suggestion: 'Upgrade your plan to access this feature.',
+    suggestion: 'Upgrade your plan to access this feature.'
   },
   es: {
     title: 'Suscripción Requerida',
     message: 'Esta función requiere una suscripción activa.',
-    suggestion: 'Mejora tu plan para acceder a esta función.',
+    suggestion: 'Mejora tu plan para acceder a esta función.'
   },
   fr: {
     title: 'Abonnement Requis',
     message: 'Cette fonctionnalité nécessite un abonnement actif.',
-    suggestion:
-      'Mettez à niveau votre forfait pour accéder à cette fonctionnalité.',
-  },
+    suggestion: 'Mettez à niveau votre forfait pour accéder à cette fonctionnalité.'
+  }
 });
 ```
 
@@ -287,10 +291,7 @@ function validateUserInput(data: any) {
   if (!data.password) {
     errors.push({ field: 'password', message: 'Password is required' });
   } else if (data.password.length < 8) {
-    errors.push({
-      field: 'password',
-      message: 'Password must be at least 8 characters',
-    });
+    errors.push({ field: 'password', message: 'Password must be at least 8 characters' });
   }
 
   if (errors.length > 0) {
@@ -305,7 +306,7 @@ async function handleSubmit(data) {
     await submitForm(data);
   } catch (error) {
     if (error instanceof ValidationError) {
-      error.validationErrors?.forEach((err) => {
+      error.validationErrors?.forEach(err => {
         showFieldError(err.field, err.message);
       });
     }
@@ -407,7 +408,7 @@ describe('UserService', () => {
 
   it('should convert HTTP errors correctly', () => {
     const error = ErrorFactory.fromHttpResponse(401, {
-      message: 'Unauthorized',
+      message: 'Unauthorized'
     });
 
     expect(error).toBeInstanceOf(AuthenticationError);
@@ -465,7 +466,7 @@ degradationStrategy.registerFallbackHandler('getRecommendations', async () => {
   return {
     items: await getPopularItems(),
     isDegraded: true,
-    message: 'Showing popular items instead of personalized recommendations',
+    message: 'Showing popular items instead of personalized recommendations'
   };
 });
 
@@ -504,8 +505,8 @@ class ProductionErrorHandler extends BaseErrorHandler {
         errorCode: error.code,
         message: error.message,
         count,
-        severity: error.severity,
-      }),
+        severity: error.severity
+      })
     });
   }
 }

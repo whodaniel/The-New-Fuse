@@ -1,30 +1,20 @@
 ---
 name: Metasploit Framework
-description:
-  This skill should be used when the user asks to "use Metasploit for
-  penetration testing", "exploit vulnerabilities with msfconsole", "create
-  payloads with msfvenom", "perform post-exploitation", "use auxiliary modules
-  for scanning", or "develop custom exploits". It provides comprehensive
-  guidance for leveraging the Metasploit Framework in security assessments.
+description: This skill should be used when the user asks to "use Metasploit for penetration testing", "exploit vulnerabilities with msfconsole", "create payloads with msfvenom", "perform post-exploitation", "use auxiliary modules for scanning", or "develop custom exploits". It provides comprehensive guidance for leveraging the Metasploit Framework in security assessments.
 metadata:
   author: zebbern
-  version: '1.1'
+  version: "1.1"
 ---
 
 # Metasploit Framework
 
 ## Purpose
 
-Leverage the Metasploit Framework for comprehensive penetration testing, from
-initial exploitation through post-exploitation activities. Metasploit provides a
-unified platform for vulnerability exploitation, payload generation, auxiliary
-scanning, and maintaining access to compromised systems during authorized
-security assessments.
+Leverage the Metasploit Framework for comprehensive penetration testing, from initial exploitation through post-exploitation activities. Metasploit provides a unified platform for vulnerability exploitation, payload generation, auxiliary scanning, and maintaining access to compromised systems during authorized security assessments.
 
 ## Prerequisites
 
 ### Required Tools
-
 ```bash
 # Metasploit comes pre-installed on Kali Linux
 # For other systems:
@@ -38,14 +28,12 @@ sudo msfdb init
 ```
 
 ### Required Knowledge
-
 - Network and system fundamentals
 - Understanding of vulnerabilities and exploits
 - Basic programming concepts
 - Target enumeration techniques
 
 ### Required Access
-
 - Written authorization for testing
 - Network access to target systems
 - Understanding of scope and rules of engagement
@@ -408,37 +396,37 @@ msf6 > sessions -i 1
 
 ### Essential MSFConsole Commands
 
-| Command            | Description                 |
-| ------------------ | --------------------------- |
-| `search [term]`    | Search for modules          |
-| `use [module]`     | Select a module             |
-| `info`             | Display module information  |
-| `show options`     | Show configurable options   |
-| `set [OPT] [val]`  | Set option value            |
-| `setg [OPT] [val]` | Set global option           |
-| `run` / `exploit`  | Execute module              |
-| `check`            | Verify target vulnerability |
-| `back`             | Deselect module             |
-| `sessions -l`      | List active sessions        |
-| `sessions -i [N]`  | Interact with session       |
-| `jobs -l`          | List background jobs        |
-| `db_nmap`          | Run nmap with database      |
+| Command | Description |
+|---------|-------------|
+| `search [term]` | Search for modules |
+| `use [module]` | Select a module |
+| `info` | Display module information |
+| `show options` | Show configurable options |
+| `set [OPT] [val]` | Set option value |
+| `setg [OPT] [val]` | Set global option |
+| `run` / `exploit` | Execute module |
+| `check` | Verify target vulnerability |
+| `back` | Deselect module |
+| `sessions -l` | List active sessions |
+| `sessions -i [N]` | Interact with session |
+| `jobs -l` | List background jobs |
+| `db_nmap` | Run nmap with database |
 
 ### Meterpreter Essential Commands
 
-| Command           | Description                  |
-| ----------------- | ---------------------------- |
-| `sysinfo`         | System information           |
-| `getuid`          | Current user                 |
-| `getsystem`       | Attempt privilege escalation |
-| `hashdump`        | Dump password hashes         |
-| `shell`           | Drop to system shell         |
-| `upload/download` | File transfer                |
-| `screenshot`      | Capture screen               |
-| `keyscan_start`   | Start keylogger              |
-| `migrate [PID]`   | Move to another process      |
-| `background`      | Background session           |
-| `portfwd`         | Port forwarding              |
+| Command | Description |
+|---------|-------------|
+| `sysinfo` | System information |
+| `getuid` | Current user |
+| `getsystem` | Attempt privilege escalation |
+| `hashdump` | Dump password hashes |
+| `shell` | Drop to system shell |
+| `upload/download` | File transfer |
+| `screenshot` | Capture screen |
+| `keyscan_start` | Start keylogger |
+| `migrate [PID]` | Move to another process |
+| `background` | Background session |
+| `portfwd` | Port forwarding |
 
 ### Common Exploit Modules
 
@@ -463,21 +451,18 @@ exploit/multi/http/jenkins_script_console
 ## Constraints and Limitations
 
 ### Legal Requirements
-
 - Only use on systems you own or have written authorization to test
 - Document all testing activities
 - Follow rules of engagement
 - Report all findings to appropriate parties
 
 ### Technical Limitations
-
 - Modern AV/EDR may detect Metasploit payloads
 - Some exploits require specific target configurations
 - Firewall rules may block reverse connections
 - Not all exploits work on all target versions
 
 ### Operational Security
-
 - Use encrypted channels (reverse_https) when possible
 - Clean up artifacts after testing
 - Avoid detection by monitoring systems
@@ -485,9 +470,9 @@ exploit/multi/http/jenkins_script_console
 
 ## Troubleshooting
 
-| Issue                    | Solutions                                                                         |
-| ------------------------ | --------------------------------------------------------------------------------- |
-| Database not connected   | Run `sudo msfdb init`, start PostgreSQL, then `db_connect`                        |
-| Exploit fails/no session | Run `check`; verify payload architecture; check firewall; try different payloads  |
-| Session dies immediately | Migrate to stable process; use stageless payload; check AV; use AutoRunScript     |
-| Payload detected by AV   | Use encoding `-e x86/shikata_ga_nai -i 10`; use evasion modules; custom templates |
+| Issue | Solutions |
+|-------|-----------|
+| Database not connected | Run `sudo msfdb init`, start PostgreSQL, then `db_connect` |
+| Exploit fails/no session | Run `check`; verify payload architecture; check firewall; try different payloads |
+| Session dies immediately | Migrate to stable process; use stageless payload; check AV; use AutoRunScript |
+| Payload detected by AV | Use encoding `-e x86/shikata_ga_nai -i 10`; use evasion modules; custom templates |

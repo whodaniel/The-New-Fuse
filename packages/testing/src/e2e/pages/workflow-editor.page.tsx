@@ -26,7 +26,7 @@ export class WorkflowEditorPage extends BasePage {
   async connectNodes(sourceId: string, targetId: string) {
     const sourceNode = this.page.locator(`[data-node-id="${sourceId}"]`);
     const targetNode = this.page.locator(`[data-node-id="${targetId}"]`);
-
+    
     // Simulate drag and drop to connect nodes
     await sourceNode.hover();
     await this.page.mouse.down();
@@ -34,7 +34,7 @@ export class WorkflowEditorPage extends BasePage {
     if (targetBounds) {
       await this.page.mouse.move(
         targetBounds.x + targetBounds.width / 2,
-        targetBounds.y + targetBounds.height / 2,
+        targetBounds.y + targetBounds.height / 2
       );
     }
     await this.page.mouse.up();

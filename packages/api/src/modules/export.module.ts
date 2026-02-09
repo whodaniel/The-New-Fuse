@@ -5,6 +5,6 @@ import { ExportController } from '../controllers/export.controller';
 @Module({
   controllers: [ExportController],
   providers: [], // ConversationExportService temporarily disabled
-  exports: [], // ConversationExportService temporarily disabled
+  exports: []    // ConversationExportService temporarily disabled
 })
 export class ExportModule {}

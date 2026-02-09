@@ -2,11 +2,8 @@
  * Unit tests for TypeScriptCompilationManager
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  TypeScriptCompilationManager,
-  TypeScriptCompilationOptions,
-} from './TypeScriptCompilationManager.js';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { TypeScriptCompilationManager, TypeScriptCompilationOptions } from './TypeScriptCompilationManager.js';
 
 describe('TypeScriptCompilationManager', () => {
   let manager: TypeScriptCompilationManager;
@@ -17,7 +14,7 @@ describe('TypeScriptCompilationManager', () => {
     // Store original values
     originalProcess = global.process;
     originalGc = global.gc;
-
+    
     // Mock process
     global.process = {
       ...originalProcess,
@@ -25,15 +22,15 @@ describe('TypeScriptCompilationManager', () => {
         heapUsed: 100 * 1024 * 1024, // 100MB
         heapTotal: 200 * 1024 * 1024,
         external: 10 * 1024 * 1024,
-        rss: 150 * 1024 * 1024,
+        rss: 150 * 1024 * 1024
       })),
       env: {},
-      cwd: vi.fn(() => '/test/workspace'),
+      cwd: vi.fn(() => '/test/workspace')
     } as any;
-
+    
     // Mock global gc
     global.gc = vi.fn();
-
+    
     // Create manager instance
     manager = new TypeScriptCompilationManager();
   });
@@ -54,9 +51,9 @@ describe('TypeScriptCompilationManager', () => {
       const options: TypeScriptCompilationOptions = {
         incremental: false,
         maxMemoryUsage: 1024,
-        skipLibCheck: false,
+        skipLibCheck: false
       };
-
+      
       const customManager = new TypeScriptCompilationManager(options);
       expect(customManager).toBeInstanceOf(TypeScriptCompilationManager);
     });
@@ -85,7 +82,7 @@ describe('TypeScriptCompilationManager', () => {
     it('should handle missing garbage collection gracefully', async () => {
       // Remove gc from global
       delete (global as any).gc;
-
+      
       // Should not throw an error
       await expect(async () => {
         await manager.cleanupCompilerMemory();
@@ -96,21 +93,21 @@ describe('TypeScriptCompilationManager', () => {
   describe('getCompilationMetrics', () => {
     it('should return initial metrics', () => {
       const metrics = manager.getCompilationMetrics();
-
+      
       expect(metrics).toEqual({
         totalTime: 0,
         peakMemoryUsage: 0,
         projectsCompiled: 0,
         successfulCompilations: 0,
         failedCompilations: 0,
-        errors: [],
+        errors: []
       });
     });
 
     it('should return a copy of metrics', () => {
       const metrics1 = manager.getCompilationMetrics();
       const metrics2 = manager.getCompilationMetrics();
-
+      
       expect(metrics1).not.toBe(metrics2);
       expect(metrics1).toEqual(metrics2);
     });
@@ -120,7 +117,7 @@ describe('TypeScriptCompilationManager', () => {
     it('should handle empty project list', async () => {
       const result = await manager.compileProjects([]);
       expect(result).toBe(true);
-
+      
       const metrics = manager.getCompilationMetrics();
       expect(metrics.projectsCompiled).toBe(0);
     });
@@ -128,7 +125,7 @@ describe('TypeScriptCompilationManager', () => {
     it('should handle non-existent project paths', async () => {
       const result = await manager.compileProjects(['/nonexistent/path']);
       expect(result).toBe(true); // Should succeed with no projects found
-
+      
       const metrics = manager.getCompilationMetrics();
       expect(metrics.projectsCompiled).toBe(0);
     });
@@ -137,7 +134,7 @@ describe('TypeScriptCompilationManager', () => {
       const startTime = Date.now();
       await manager.compileProjects([]);
       const endTime = Date.now();
-
+      
       const metrics = manager.getCompilationMetrics();
       expect(metrics.totalTime).toBeGreaterThanOrEqual(0);
       expect(metrics.totalTime).toBeLessThanOrEqual(endTime - startTime + 100); // Allow some margin
@@ -155,27 +152,27 @@ describe('TypeScriptCompilationManager', () => {
   describe('configuration options', () => {
     it('should accept incremental compilation option', () => {
       const options: TypeScriptCompilationOptions = {
-        incremental: true,
+        incremental: true
       };
-
+      
       const managerWithOptions = new TypeScriptCompilationManager(options);
       expect(managerWithOptions).toBeInstanceOf(TypeScriptCompilationManager);
     });
 
     it('should accept memory limit option', () => {
       const options: TypeScriptCompilationOptions = {
-        maxMemoryUsage: 1024,
+        maxMemoryUsage: 1024
       };
-
+      
       const managerWithOptions = new TypeScriptCompilationManager(options);
       expect(managerWithOptions).toBeInstanceOf(TypeScriptCompilationManager);
     });
 
     it('should accept skip lib check option', () => {
       const options: TypeScriptCompilationOptions = {
-        skipLibCheck: true,
+        skipLibCheck: true
       };
-
+      
       const managerWithOptions = new TypeScriptCompilationManager(options);
       expect(managerWithOptions).toBeInstanceOf(TypeScriptCompilationManager);
     });
@@ -185,14 +182,14 @@ describe('TypeScriptCompilationManager', () => {
     it('should handle compilation errors gracefully', async () => {
       // Test with invalid project paths
       const result = await manager.compileProjects(['/invalid/path']);
-
+      
       // Should not throw, but may return false or true depending on implementation
       expect(typeof result).toBe('boolean');
     });
 
     it('should collect error information', async () => {
       await manager.compileProjects(['/invalid/path']);
-
+      
       const metrics = manager.getCompilationMetrics();
       expect(Array.isArray(metrics.errors)).toBe(true);
     });
@@ -208,7 +205,7 @@ describe('TypeScriptCompilationManager', () => {
   describe('compilation metrics', () => {
     it('should initialize metrics correctly', () => {
       const metrics = manager.getCompilationMetrics();
-
+      
       expect(metrics.totalTime).toBe(0);
       expect(metrics.peakMemoryUsage).toBe(0);
       expect(metrics.projectsCompiled).toBe(0);
@@ -221,10 +218,10 @@ describe('TypeScriptCompilationManager', () => {
     it('should provide immutable metrics', () => {
       const metrics1 = manager.getCompilationMetrics();
       const metrics2 = manager.getCompilationMetrics();
-
+      
       // Should be different objects
       expect(metrics1).not.toBe(metrics2);
-
+      
       // But with same content
       expect(metrics1).toEqual(metrics2);
     });

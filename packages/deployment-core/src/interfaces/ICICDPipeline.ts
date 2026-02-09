@@ -1,13 +1,13 @@
-import {
-  BuildResult,
-  BuildTrigger,
-  DeploymentConfig,
-  DeploymentResult,
-  PipelineConfig,
-  PipelineDefinition,
-  PipelineResult,
+import { 
+  BuildTrigger, 
+  BuildResult, 
+  PipelineDefinition, 
+  PipelineResult, 
+  DeploymentConfig, 
+  DeploymentResult, 
+  RollbackResult, 
   PipelineStatus,
-  RollbackResult,
+  PipelineConfig
 } from '../types/pipeline';
 
 /**

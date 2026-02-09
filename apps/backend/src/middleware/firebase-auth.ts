@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { auth } from '../lib/firebase-admin';
 
 export interface AuthRequest extends Request {
@@ -9,7 +9,11 @@ export interface AuthRequest extends Request {
   };
 }
 
-export const verifyFirebaseToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const verifyFirebaseToken = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
@@ -18,13 +22,13 @@ export const verifyFirebaseToken = async (req: AuthRequest, res: Response, next:
 
     const token = authHeader.split('Bearer ')[1];
     const decodedToken = await auth.verifyIdToken(token);
-
+    
     req.user = {
       uid: decodedToken.uid,
       email: decodedToken.email,
       role: decodedToken.role,
     };
-
+    
     next();
   } catch (error) {
     console.error('Error verifying Firebase token:', error);
@@ -32,7 +36,11 @@ export const verifyFirebaseToken = async (req: AuthRequest, res: Response, next:
   }
 };
 
-export const requireAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const requireAdmin = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: 'Unauthorized: No user found' });

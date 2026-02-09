@@ -1,10 +1,10 @@
 import { SetMetadata } from '@nestjs/common';
+import { CacheOptions } from './response-cache.service';
 import {
   CACHE_KEY_METADATA,
   CACHE_OPTIONS_METADATA,
-  SKIP_CACHE_METADATA,
+  SKIP_CACHE_METADATA
 } from './cache.interceptor';
-import { CacheOptions } from './response-cache.service';
 
 /**
  * Cache the response of an endpoint
@@ -60,7 +60,7 @@ export const CacheTTL = {
   WEEK: 604800,
 
   /** 1 month - for immutable data */
-  MONTH: 2592000,
+  MONTH: 2592000
 };
 
 /**
@@ -73,7 +73,7 @@ export const CachePresets = {
   USER_PROFILE: {
     ttl: CacheTTL.MEDIUM,
     tags: ['users'],
-    refreshThreshold: 60,
+    refreshThreshold: 60
   },
 
   /**
@@ -82,7 +82,7 @@ export const CachePresets = {
   DASHBOARD: {
     ttl: CacheTTL.SHORT,
     tags: ['dashboard', 'analytics'],
-    refreshThreshold: 15,
+    refreshThreshold: 15
   },
 
   /**
@@ -91,7 +91,7 @@ export const CachePresets = {
   SEARCH_RESULTS: {
     ttl: CacheTTL.MEDIUM,
     tags: ['search'],
-    refreshThreshold: 60,
+    refreshThreshold: 60
   },
 
   /**
@@ -99,7 +99,7 @@ export const CachePresets = {
    */
   LIST: {
     ttl: CacheTTL.MEDIUM,
-    refreshThreshold: 60,
+    refreshThreshold: 60
   },
 
   /**
@@ -107,7 +107,7 @@ export const CachePresets = {
    */
   STATIC: {
     ttl: CacheTTL.VERY_LONG,
-    refreshThreshold: 600,
+    refreshThreshold: 600
   },
 
   /**
@@ -116,7 +116,7 @@ export const CachePresets = {
   ANALYTICS: {
     ttl: CacheTTL.LONG,
     tags: ['analytics'],
-    refreshThreshold: 180,
+    refreshThreshold: 180
   },
 
   /**
@@ -125,7 +125,7 @@ export const CachePresets = {
   CONFIG: {
     ttl: CacheTTL.VERY_LONG,
     tags: ['config'],
-    refreshThreshold: 600,
+    refreshThreshold: 600
   },
 
   /**
@@ -133,8 +133,8 @@ export const CachePresets = {
    */
   PUBLIC_API: {
     ttl: CacheTTL.LONG,
-    refreshThreshold: 180,
-  },
+    refreshThreshold: 180
+  }
 };
 
 /**
@@ -145,7 +145,11 @@ export const CachePresets = {
  * async updateUser() { ... }
  */
 export const InvalidateCache = (tags: string[]) => {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+  ) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWebSocket } from '../hooks/useWebSocket';
 
 interface WorkflowState {
@@ -13,7 +13,7 @@ export function useWorkflowIntegration(): any {
     isConnected: false,
     activeWorkflows: 0,
     totalAgents: 0,
-    systemHealth: 'healthy',
+    systemHealth: 'healthy'
   });
 
   const { subscribe, send } = useWebSocket();
@@ -28,13 +28,13 @@ export function useWorkflowIntegration(): any {
         setState((prev: any) => ({
           ...prev,
           activeWorkflows: data.activeWorkflows,
-          totalAgents: data.totalAgents,
+          totalAgents: data.totalAgents
         }));
       }),
 
       subscribe('system_health', (health: WorkflowState['systemHealth']) => {
         setState((prev: any) => ({ ...prev, systemHealth: health }));
-      }),
+      })
     ];
 
     // Initialize connection
@@ -67,6 +67,6 @@ export function useWorkflowIntegration(): any {
   return {
     ...state,
     startWorkflow,
-    stopWorkflow,
+    stopWorkflow
   };
 }

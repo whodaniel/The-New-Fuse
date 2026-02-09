@@ -2,9 +2,9 @@
  * Tests for BuildFailureAnalyzer
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { BuildResult, MemoryUsage, SystemResources } from '../types/index.js';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BuildFailureAnalyzer, FailureType } from './BuildFailureAnalyzer.js';
+import { BuildResult, SystemResources, MemoryUsage } from '../types/index.js';
 import { DetailedBuildMetrics } from './BuildMetricsCollector.js';
 
 describe('BuildFailureAnalyzer', () => {
@@ -14,13 +14,13 @@ describe('BuildFailureAnalyzer', () => {
 
   beforeEach(() => {
     analyzer = new BuildFailureAnalyzer();
-
+    
     mockSystemResources = {
       totalMemory: 8192,
       availableMemory: 4096,
       cpuCores: 4,
       platform: 'linux',
-      nodeVersion: '18.0.0',
+      nodeVersion: '18.0.0'
     };
 
     mockBuildMetrics = {
@@ -41,8 +41,8 @@ describe('BuildFailureAnalyzer', () => {
         memoryEfficiencyScore: 75,
         concurrencyUtilization: 80,
         cleanupTime: 500,
-        memoryViolations: 0,
-      },
+        memoryViolations: 0
+      }
     };
   });
 
@@ -54,12 +54,10 @@ describe('BuildFailureAnalyzer', () => {
         peakMemoryUsage: 7500,
         packagesBuilt: 5,
         error: 'JavaScript heap out of memory',
-        metrics: mockBuildMetrics,
+        metrics: mockBuildMetrics
       };
 
-      const errorLogs = [
-        'FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory',
-      ];
+      const errorLogs = ['FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory'];
 
       const { analysis } = await analyzer.analyzeBuildFailure(
         buildResult,
@@ -80,7 +78,7 @@ describe('BuildFailureAnalyzer', () => {
         peakMemoryUsage: 7500,
         packagesBuilt: 5,
         error: 'Build failed',
-        metrics: mockBuildMetrics,
+        metrics: mockBuildMetrics
       };
 
       mockBuildMetrics.peakMemoryUsage = 7500; // > 90% of 8192 MB
@@ -103,10 +101,10 @@ describe('BuildFailureAnalyzer', () => {
         peakMemoryUsage: 1024,
         packagesBuilt: 3,
         error: 'TypeScript error TS2304: Cannot find name',
-        metrics: mockBuildMetrics,
+        metrics: mockBuildMetrics
       };
 
-      const errorLogs = ["src/app.ts(10,5): error TS2304: Cannot find name 'unknownVariable'"];
+      const errorLogs = ['src/app.ts(10,5): error TS2304: Cannot find name \'unknownVariable\''];
 
       const { analysis } = await analyzer.analyzeBuildFailure(
         buildResult,
@@ -125,8 +123,8 @@ describe('BuildFailureAnalyzer', () => {
         duration: 5000,
         peakMemoryUsage: 512,
         packagesBuilt: 0,
-        error: "Cannot resolve module 'missing-package'",
-        metrics: mockBuildMetrics,
+        error: 'Cannot resolve module \'missing-package\'',
+        metrics: mockBuildMetrics
       };
 
       const { analysis } = await analyzer.analyzeBuildFailure(
@@ -146,7 +144,7 @@ describe('BuildFailureAnalyzer', () => {
         peakMemoryUsage: 1024,
         packagesBuilt: 2,
         error: 'Build timed out after 300 seconds',
-        metrics: mockBuildMetrics,
+        metrics: mockBuildMetrics
       };
 
       const { analysis } = await analyzer.analyzeBuildFailure(
@@ -166,7 +164,7 @@ describe('BuildFailureAnalyzer', () => {
         peakMemoryUsage: 1024,
         packagesBuilt: 1,
         error: 'Unknown build error occurred',
-        metrics: mockBuildMetrics,
+        metrics: mockBuildMetrics
       };
 
       const { analysis } = await analyzer.analyzeBuildFailure(
@@ -186,7 +184,7 @@ describe('BuildFailureAnalyzer', () => {
         peakMemoryUsage: 2048,
         packagesBuilt: 3,
         error: 'Build failed',
-        metrics: mockBuildMetrics,
+        metrics: mockBuildMetrics
       };
 
       mockBuildMetrics.stageMetrics = [
@@ -197,7 +195,7 @@ describe('BuildFailureAnalyzer', () => {
           duration: 5000,
           packages: ['package-a', 'package-b'],
           peakMemoryUsage: 1024,
-          success: true,
+          success: true
         },
         {
           stageId: 'stage-2',
@@ -207,8 +205,8 @@ describe('BuildFailureAnalyzer', () => {
           packages: ['package-c', 'package-d'],
           peakMemoryUsage: 2048,
           success: false,
-          error: 'Compilation failed',
-        },
+          error: 'Compilation failed'
+        }
       ];
 
       const { analysis } = await analyzer.analyzeBuildFailure(
@@ -226,12 +224,12 @@ describe('BuildFailureAnalyzer', () => {
       const memoryHistory: MemoryUsage[] = [
         { current: 6500, peak: 6500, percentage: 80, timestamp: Date.now() - 10000 },
         { current: 7000, peak: 7000, percentage: 85, timestamp: Date.now() - 5000 },
-        { current: 7500, peak: 7500, percentage: 92, timestamp: Date.now() },
+        { current: 7500, peak: 7500, percentage: 92, timestamp: Date.now() }
       ];
 
       const recommendations = analyzer.analyzeMemoryIssues(memoryHistory, mockSystemResources);
 
-      const criticalRec = recommendations.find((r) => r.priority === 'critical');
+      const criticalRec = recommendations.find(r => r.priority === 'critical');
       expect(criticalRec).toBeDefined();
       expect(criticalRec?.title).toContain('Reduce Peak Memory Usage');
       expect(criticalRec?.configChanges?.maxConcurrency).toBeLessThanOrEqual(2);
@@ -240,20 +238,20 @@ describe('BuildFailureAnalyzer', () => {
     it('should detect memory leaks from rapid growth', () => {
       const memoryHistory: MemoryUsage[] = [];
       const baseTime = Date.now() - 60000; // 1 minute ago
-
+      
       // Simulate rapid memory growth (15 MB/min)
       for (let i = 0; i < 10; i++) {
         memoryHistory.push({
-          current: 1000 + i * 150, // Growing by 150MB every 6 seconds
-          peak: 1000 + i * 150,
+          current: 1000 + (i * 150), // Growing by 150MB every 6 seconds
+          peak: 1000 + (i * 150),
           percentage: 50,
-          timestamp: baseTime + i * 6000,
+          timestamp: baseTime + (i * 6000)
         });
       }
 
       const recommendations = analyzer.analyzeMemoryIssues(memoryHistory, mockSystemResources);
 
-      const leakRec = recommendations.find((r) => r.title.includes('Memory Leak'));
+      const leakRec = recommendations.find(r => r.title.includes('Memory Leak'));
       expect(leakRec).toBeDefined();
       expect(leakRec?.priority).toBe('high');
     });
@@ -262,12 +260,12 @@ describe('BuildFailureAnalyzer', () => {
       const memoryHistory: MemoryUsage[] = [
         { current: 5000, peak: 5000, percentage: 61, timestamp: Date.now() - 10000 },
         { current: 5200, peak: 5200, percentage: 63, timestamp: Date.now() - 5000 },
-        { current: 5100, peak: 5200, percentage: 62, timestamp: Date.now() },
+        { current: 5100, peak: 5200, percentage: 62, timestamp: Date.now() }
       ];
 
       const recommendations = analyzer.analyzeMemoryIssues(memoryHistory, mockSystemResources);
 
-      const optimizeRec = recommendations.find((r) => r.title.includes('Memory Efficiency'));
+      const optimizeRec = recommendations.find(r => r.title.includes('Memory Efficiency'));
       expect(optimizeRec).toBeDefined();
       expect(optimizeRec?.priority).toBe('medium');
     });
@@ -283,7 +281,7 @@ describe('BuildFailureAnalyzer', () => {
       const lowMemorySystem: SystemResources = {
         ...mockSystemResources,
         totalMemory: 2048,
-        availableMemory: 1024,
+        availableMemory: 1024
       };
 
       const recommendations = analyzer.generateSystemRecommendations(
@@ -291,7 +289,7 @@ describe('BuildFailureAnalyzer', () => {
         mockBuildMetrics
       );
 
-      const lowMemRec = recommendations.find((r) => r.title.includes('Low Memory'));
+      const lowMemRec = recommendations.find(r => r.title.includes('Low Memory'));
       expect(lowMemRec).toBeDefined();
       expect(lowMemRec?.priority).toBe('high');
       expect(lowMemRec?.configChanges?.maxConcurrency).toBe(1);
@@ -302,7 +300,7 @@ describe('BuildFailureAnalyzer', () => {
         ...mockSystemResources,
         totalMemory: 32768,
         availableMemory: 24576,
-        cpuCores: 16,
+        cpuCores: 16
       };
 
       const recommendations = analyzer.generateSystemRecommendations(
@@ -310,7 +308,7 @@ describe('BuildFailureAnalyzer', () => {
         mockBuildMetrics
       );
 
-      const highPerfRec = recommendations.find((r) => r.title.includes('High-Performance'));
+      const highPerfRec = recommendations.find(r => r.title.includes('High-Performance'));
       expect(highPerfRec).toBeDefined();
       expect(highPerfRec?.priority).toBe('low');
       expect(highPerfRec?.configChanges?.maxConcurrency).toBeGreaterThan(4);
@@ -319,12 +317,15 @@ describe('BuildFailureAnalyzer', () => {
     it('should provide macOS-specific recommendations', () => {
       const macSystem: SystemResources = {
         ...mockSystemResources,
-        platform: 'darwin',
+        platform: 'darwin'
       };
 
-      const recommendations = analyzer.generateSystemRecommendations(macSystem, mockBuildMetrics);
+      const recommendations = analyzer.generateSystemRecommendations(
+        macSystem,
+        mockBuildMetrics
+      );
 
-      const macRec = recommendations.find((r) => r.title.includes('macOS'));
+      const macRec = recommendations.find(r => r.title.includes('macOS'));
       expect(macRec).toBeDefined();
       expect(macRec?.priority).toBe('medium');
     });
@@ -338,7 +339,7 @@ describe('BuildFailureAnalyzer', () => {
         peakMemoryUsage: 7500,
         packagesBuilt: 5,
         error: 'JavaScript heap out of memory',
-        metrics: mockBuildMetrics,
+        metrics: mockBuildMetrics
       };
 
       mockBuildMetrics.peakMemoryUsage = 7500;
@@ -350,11 +351,11 @@ describe('BuildFailureAnalyzer', () => {
       );
 
       expect(recommendations.length).toBeGreaterThan(0);
-
-      const criticalRecs = recommendations.filter((r) => r.priority === 'critical');
+      
+      const criticalRecs = recommendations.filter(r => r.priority === 'critical');
       expect(criticalRecs.length).toBeGreaterThan(0);
-
-      const memoryRec = recommendations.find((r) => r.category === 'memory');
+      
+      const memoryRec = recommendations.find(r => r.category === 'memory');
       expect(memoryRec).toBeDefined();
     });
 
@@ -365,7 +366,7 @@ describe('BuildFailureAnalyzer', () => {
         peakMemoryUsage: 7500,
         packagesBuilt: 5,
         error: 'Multiple issues detected',
-        metrics: mockBuildMetrics,
+        metrics: mockBuildMetrics
       };
 
       mockBuildMetrics.peakMemoryUsage = 7500;
@@ -377,10 +378,10 @@ describe('BuildFailureAnalyzer', () => {
       );
 
       // Check that critical recommendations come first
-      const priorities = recommendations.map((r) => r.priority);
+      const priorities = recommendations.map(r => r.priority);
       const criticalIndex = priorities.indexOf('critical');
       const lowIndex = priorities.indexOf('low');
-
+      
       if (criticalIndex !== -1 && lowIndex !== -1) {
         expect(criticalIndex).toBeLessThan(lowIndex);
       }
@@ -393,7 +394,7 @@ describe('BuildFailureAnalyzer', () => {
         peakMemoryUsage: 2048,
         packagesBuilt: 5,
         error: 'TypeScript error',
-        metrics: mockBuildMetrics,
+        metrics: mockBuildMetrics
       };
 
       const { recommendations: recs1 } = await analyzer.analyzeBuildFailure(
@@ -424,27 +425,27 @@ describe('BuildFailureAnalyzer', () => {
           current: 7500,
           peak: 7500,
           percentage: 92,
-          timestamp: Date.now(),
-        },
+          timestamp: Date.now()
+        }
       };
 
       mockBuildMetrics.memorySnapshots = [
         { current: 1000, peak: 1000, percentage: 12, timestamp: Date.now() - 10000 },
         { current: 5000, peak: 5000, percentage: 61, timestamp: Date.now() - 5000 },
-        { current: 7500, peak: 7500, percentage: 92, timestamp: Date.now() },
+        { current: 7500, peak: 7500, percentage: 92, timestamp: Date.now() }
       ];
 
       mockBuildMetrics.events = [
         {
           type: 'build-started',
           timestamp: Date.now() - 30000,
-          payload: { startTime: Date.now() - 30000 },
+          payload: { startTime: Date.now() - 30000 }
         },
         {
           type: 'memory-threshold-exceeded',
           timestamp: Date.now() - 5000,
-          payload: { threshold: 80 },
-        },
+          payload: { threshold: 80 }
+        }
       ];
 
       const log = analyzer.generateTroubleshootingLog(
@@ -474,16 +475,24 @@ describe('BuildFailureAnalyzer', () => {
         peakMemoryUsage: 2048,
         packagesBuilt: 5,
         error: 'Build failed',
-        metrics: mockBuildMetrics,
+        metrics: mockBuildMetrics
       };
 
       expect(analyzer.getAnalysisHistory()).toHaveLength(0);
 
-      await analyzer.analyzeBuildFailure(buildResult, mockBuildMetrics, mockSystemResources);
+      await analyzer.analyzeBuildFailure(
+        buildResult,
+        mockBuildMetrics,
+        mockSystemResources
+      );
 
       expect(analyzer.getAnalysisHistory()).toHaveLength(1);
 
-      await analyzer.analyzeBuildFailure(buildResult, mockBuildMetrics, mockSystemResources);
+      await analyzer.analyzeBuildFailure(
+        buildResult,
+        mockBuildMetrics,
+        mockSystemResources
+      );
 
       expect(analyzer.getAnalysisHistory()).toHaveLength(2);
     });
@@ -495,10 +504,14 @@ describe('BuildFailureAnalyzer', () => {
         peakMemoryUsage: 2048,
         packagesBuilt: 5,
         error: 'Build failed',
-        metrics: mockBuildMetrics,
+        metrics: mockBuildMetrics
       };
 
-      await analyzer.analyzeBuildFailure(buildResult, mockBuildMetrics, mockSystemResources);
+      await analyzer.analyzeBuildFailure(
+        buildResult,
+        mockBuildMetrics,
+        mockSystemResources
+      );
 
       expect(analyzer.getAnalysisHistory()).toHaveLength(1);
 
@@ -519,15 +532,19 @@ describe('BuildFailureAnalyzer', () => {
         peakMemoryUsage: 2048,
         packagesBuilt: 5,
         error: 'Build failed',
-        metrics: mockBuildMetrics,
+        metrics: mockBuildMetrics
       };
 
-      await analyzer.analyzeBuildFailure(buildResult, mockBuildMetrics, mockSystemResources);
+      await analyzer.analyzeBuildFailure(
+        buildResult,
+        mockBuildMetrics,
+        mockSystemResources
+      );
 
       expect(eventSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           analysis: expect.any(Object),
-          recommendations: expect.any(Array),
+          recommendations: expect.any(Array)
         })
       );
     });

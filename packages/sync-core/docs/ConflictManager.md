@@ -1,50 +1,36 @@
 # ConflictManager
 
-The ConflictManager is a core service in the multi-tenant chokidar
-synchronization system that handles synchronization conflicts using existing
-database transaction patterns. It integrates seamlessly with the existing Drizzle
-database infrastructure and audit logging system.
+The ConflictManager is a core service in the multi-tenant chokidar synchronization system that handles synchronization conflicts using existing database transaction patterns. It integrates seamlessly with the existing Prisma database infrastructure and audit logging system.
 
 ## Overview
 
-The ConflictManager extends the BaseErrorHandler from the core-error-handling
-package and provides comprehensive conflict detection, resolution, and
-management capabilities while maintaining tenant isolation and security.
+The ConflictManager extends the BaseErrorHandler from the core-error-handling package and provides comprehensive conflict detection, resolution, and management capabilities while maintaining tenant isolation and security.
 
 ## Features
 
-- **Conflict Detection**: Automatically detects version, checksum, and
-  concurrent modification conflicts
-- **Multiple Resolution Strategies**: Supports latest_wins, merge, rollback, and
-  manual resolution strategies
+- **Conflict Detection**: Automatically detects version, checksum, and concurrent modification conflicts
+- **Multiple Resolution Strategies**: Supports latest_wins, merge, rollback, and manual resolution strategies
 - **Auto-Resolution**: Intelligent automatic resolution for simple conflicts
-- **Tenant Isolation**: Maintains strict tenant boundaries during conflict
-  resolution
-- **Audit Logging**: Integrates with existing AuthEvent table for comprehensive
-  audit trails
-- **Error Handling**: Built-in error handling with retry mechanisms and recovery
-  strategies
-- **Database Transactions**: Uses existing Drizzle transaction patterns for data
-  consistency
+- **Tenant Isolation**: Maintains strict tenant boundaries during conflict resolution
+- **Audit Logging**: Integrates with existing AuthEvent table for comprehensive audit trails
+- **Error Handling**: Built-in error handling with retry mechanisms and recovery strategies
+- **Database Transactions**: Uses existing Prisma transaction patterns for data consistency
 
 ## Architecture Integration
 
 ### Database Integration
-
-- Uses existing `DrizzleClient` for database operations
+- Uses existing `PrismaClient` for database operations
 - Integrates with `SyncDatabaseService` for sync-specific operations
 - Leverages existing `SyncState` and `SyncConflict` models
 - Uses database transactions to ensure consistency
 
 ### Error Handling Integration
-
 - Extends `BaseErrorHandler` from core-error-handling package
 - Implements custom error types for conflict-specific scenarios
 - Provides recovery strategies for transient failures
 - Integrates with existing monitoring and alerting systems
 
 ### Audit Logging Integration
-
 - Uses existing `AuthEvent` table for audit logging
 - Creates system user for automated conflict resolution events
 - Maintains comprehensive audit trails for compliance
@@ -56,14 +42,14 @@ management capabilities while maintaining tenant isolation and security.
 ```typescript
 import { ConflictManager } from '@the-new-fuse/sync-core';
 import { SyncDatabaseService } from '@the-new-fuse/sync-core';
-import { DrizzleClient } from '@the-new-fuse/database';
+import { PrismaClient } from '@the-new-fuse/database';
 
 // Initialize dependencies
-const drizzle = new DrizzleClient();
-const syncDb = new SyncDatabaseService(drizzle);
+const prisma = new PrismaClient();
+const syncDb = new SyncDatabaseService(prisma);
 
 // Create ConflictManager instance
-const conflictManager = new ConflictManager(drizzle, syncDb);
+const conflictManager = new ConflictManager(prisma, syncDb);
 ```
 
 ### Conflict Detection
@@ -71,11 +57,11 @@ const conflictManager = new ConflictManager(drizzle, syncDb);
 ```typescript
 // Detect conflicts during synchronization
 const conflict = await conflictManager.detectConflict(
-  'agent', // Resource type
-  'agent-123', // Resource ID
-  localVersion, // Local version data
-  remoteVersion, // Remote version data
-  'tenant-456' // Optional tenant ID
+  'agent',                    // Resource type
+  'agent-123',               // Resource ID
+  localVersion,              // Local version data
+  remoteVersion,             // Remote version data
+  'tenant-456'               // Optional tenant ID
 );
 
 if (conflict) {
@@ -88,10 +74,10 @@ if (conflict) {
 ```typescript
 // Resolve conflict with specific strategy
 const resolution = await conflictManager.resolveConflict(
-  conflict.id, // Conflict ID
-  'latest_wins', // Resolution strategy
-  'user-123', // Resolver ID
-  tenantContext // Optional tenant context
+  conflict.id,               // Conflict ID
+  'latest_wins',             // Resolution strategy
+  'user-123',                // Resolver ID
+  tenantContext              // Optional tenant context
 );
 
 console.log(`Resolved with strategy: ${resolution.strategy}`);
@@ -108,48 +94,38 @@ console.log(`Auto-resolved ${resolvedCount} conflicts`);
 ## Conflict Types
 
 ### Version Conflicts
-
 Occur when local and remote versions have different version numbers.
-
 - **Auto-resolution**: `latest_wins` strategy
 - **Detection**: Compares version fields in data objects
 
 ### Checksum Conflicts
-
 Occur when data content differs but versions might be the same.
-
 - **Auto-resolution**: `merge` strategy (if compatible)
 - **Detection**: SHA-256 checksum comparison
 
 ### Concurrent Conflicts
-
 Occur when both local and remote versions differ from the stored state.
-
 - **Auto-resolution**: None (requires manual intervention)
 - **Detection**: Both versions differ from current sync state
 
 ## Resolution Strategies
 
 ### latest_wins
-
 - Selects the remote version as the resolved data
 - Best for: Version conflicts where newer is better
 - Risk: May lose local changes
 
 ### merge
-
 - Automatically merges non-conflicting changes
 - Best for: Compatible object structures
 - Risk: May create inconsistent merged state
 
 ### rollback
-
 - Keeps the local version, discarding remote changes
 - Best for: When local changes should be preserved
 - Risk: May lose important remote updates
 
 ### manual
-
 - Requires human intervention to resolve
 - Best for: Complex conflicts requiring business logic
 - Risk: Delays in resolution
@@ -159,18 +135,15 @@ Occur when both local and remote versions differ from the stored state.
 The ConflictManager implements comprehensive error handling:
 
 ### Error Types
-
 - **5001**: Conflict detection errors (database connectivity, etc.)
 - **5002**: Conflict resolution errors (transaction failures, etc.)
 - **5003**: General system errors
 
 ### Recovery Strategies
-
 - **database-retry**: Retries database operations with exponential backoff
 - **conflict-fallback**: Applies safe fallback resolution when possible
 
 ### Error Events
-
 ```typescript
 // Listen to error events
 conflictManager.on('error', (error, context) => {
@@ -186,19 +159,17 @@ conflictManager.on('recoverySuccess', (event) => {
 ## Monitoring and Statistics
 
 ### Conflict Statistics
-
 ```typescript
 const stats = await conflictManager.getConflictStatistics('tenant-123');
 console.log({
   total: stats.totalSyncStates,
   pending: stats.pendingConflicts,
   resolved: stats.resolvedConflicts,
-  conflictRate: stats.conflictRate,
+  conflictRate: stats.conflictRate
 });
 ```
 
 ### Resource-Specific Conflicts
-
 ```typescript
 const conflicts = await conflictManager.getResourceConflicts(
   'agent',
@@ -208,7 +179,6 @@ const conflicts = await conflictManager.getResourceConflicts(
 ```
 
 ### Maintenance Operations
-
 ```typescript
 // Clean up old resolved conflicts (older than 30 days)
 const cleanedUp = await conflictManager.cleanupResolvedConflicts(30);
@@ -219,7 +189,6 @@ const cleanedUp = await conflictManager.cleanupResolvedConflicts(30);
 The ConflictManager maintains strict tenant isolation:
 
 ### Tenant Context
-
 ```typescript
 interface TenantSyncContext {
   tenantId: string;
@@ -230,7 +199,6 @@ interface TenantSyncContext {
 ```
 
 ### Isolation Levels
-
 - **strict**: Complete tenant isolation, no cross-tenant operations
 - **controlled**: Limited cross-tenant operations with explicit permissions
 - **shared**: Shared resources with tenant-aware access control
@@ -238,19 +206,16 @@ interface TenantSyncContext {
 ## Security Considerations
 
 ### Data Protection
-
 - All conflict data is encrypted in transit and at rest
 - Tenant boundaries are enforced at the database level
 - Audit trails are maintained for all conflict operations
 
 ### Access Control
-
 - Resolution operations require appropriate permissions
 - System operations use dedicated system user account
 - All operations are logged with user attribution
 
 ### Privacy
-
 - Tenant data never crosses isolation boundaries
 - Conflict resolution respects existing privacy settings
 - Audit logs exclude sensitive data content
@@ -258,19 +223,16 @@ interface TenantSyncContext {
 ## Performance Optimization
 
 ### Batching
-
 - Auto-resolution processes conflicts in batches
 - Database operations are optimized with transactions
 - Bulk operations reduce database round trips
 
 ### Caching
-
 - Conflict statistics are cached for performance
 - Checksum calculations are optimized
 - Database queries use appropriate indexes
 
 ### Scalability
-
 - Horizontal scaling through Redis coordination
 - Database connection pooling for high concurrency
 - Asynchronous processing for non-blocking operations
@@ -278,7 +240,6 @@ interface TenantSyncContext {
 ## Integration Examples
 
 ### With SyncOrchestrator
-
 ```typescript
 // In SyncOrchestrator
 const conflict = await this.conflictManager.detectConflict(
@@ -296,7 +257,6 @@ if (conflict) {
 ```
 
 ### With File System Watcher
-
 ```typescript
 // In EnhancedFileSystemWatcher
 watcher.on('change', async (filePath) => {
@@ -306,7 +266,7 @@ watcher.on('change', async (filePath) => {
     localFileData,
     remoteFileData
   );
-
+  
   if (conflict) {
     await conflictManager.resolveConflict(
       conflict.id,
@@ -329,7 +289,6 @@ The ConflictManager includes comprehensive tests covering:
 - Performance characteristics
 
 Run tests with:
-
 ```bash
 pnpm test ConflictManager.test.ts
 ```
@@ -337,20 +296,18 @@ pnpm test ConflictManager.test.ts
 ## Configuration
 
 ### Environment Variables
-
 - `CONFLICT_AUTO_RESOLUTION_ENABLED`: Enable/disable auto-resolution
 - `CONFLICT_CLEANUP_INTERVAL_DAYS`: Days to keep resolved conflicts
 - `CONFLICT_MAX_RETRY_ATTEMPTS`: Maximum retry attempts for failed operations
 
 ### Service Configuration
-
 ```typescript
-const conflictManager = new ConflictManager(drizzle, syncDb, {
+const conflictManager = new ConflictManager(prisma, syncDb, {
   enableAutoRecovery: true,
   maxRecoveryAttempts: 3,
   statisticsInterval: 60000,
   enableLogging: true,
-  logLevel: 'error',
+  logLevel: 'error'
 });
 ```
 
@@ -374,13 +331,11 @@ const conflictManager = new ConflictManager(drizzle, syncDb, {
    - Review conflict cleanup frequency
 
 ### Debug Logging
-
 Enable debug logging to troubleshoot issues:
-
 ```typescript
-const conflictManager = new ConflictManager(drizzle, syncDb, {
+const conflictManager = new ConflictManager(prisma, syncDb, {
   enableLogging: true,
-  logLevel: 'debug',
+  logLevel: 'debug'
 });
 ```
 
@@ -389,60 +344,46 @@ const conflictManager = new ConflictManager(drizzle, syncDb, {
 ### Methods
 
 #### `detectConflict(resourceType, resourceId, localVersion, remoteVersion, tenantId?)`
-
 Detects conflicts between local and remote versions of a resource.
 
 #### `resolveConflict(conflictId, strategy, resolvedBy, context?)`
-
 Resolves a conflict using the specified strategy.
 
 #### `getPendingConflicts(tenantId?)`
-
 Gets all pending conflicts for a tenant or globally.
 
 #### `getResourceConflicts(resourceType, resourceId, tenantId?)`
-
 Gets all conflicts for a specific resource.
 
 #### `autoResolveConflicts(tenantId?)`
-
 Automatically resolves conflicts using predefined rules.
 
 #### `cleanupResolvedConflicts(olderThanDays)`
-
 Cleans up old resolved conflicts.
 
 #### `getConflictStatistics(tenantId?)`
-
 Gets conflict statistics for monitoring.
 
 ### Events
 
 #### `error`
-
 Emitted when an error occurs during conflict operations.
 
 #### `recoverySuccess`
-
 Emitted when error recovery succeeds.
 
 #### `recoveryFailure`
-
 Emitted when error recovery fails.
 
 ## Best Practices
 
-1. **Monitor Conflict Rates**: Keep track of conflict statistics to identify
-   systemic issues
-2. **Use Appropriate Strategies**: Choose resolution strategies based on data
-   criticality
+1. **Monitor Conflict Rates**: Keep track of conflict statistics to identify systemic issues
+2. **Use Appropriate Strategies**: Choose resolution strategies based on data criticality
 3. **Regular Cleanup**: Clean up old resolved conflicts to maintain performance
 4. **Test Resolution Logic**: Thoroughly test custom resolution strategies
-5. **Audit Trail Review**: Regularly review audit logs for security and
-   compliance
+5. **Audit Trail Review**: Regularly review audit logs for security and compliance
 6. **Performance Monitoring**: Monitor resolution times and database performance
-7. **Tenant Isolation**: Always verify tenant boundaries in custom
-   implementations
+7. **Tenant Isolation**: Always verify tenant boundaries in custom implementations
 
 ## Future Enhancements
 

@@ -8,21 +8,13 @@
  * Example tests for a Button component
  */
 
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
 
 // This is a placeholder - adjust based on your actual Button component
-const Button = ({
-  onClick,
-  children,
-  disabled = false,
-}: {
-  onClick?: () => void;
-  children: React.ReactNode;
-  disabled?: boolean;
-}) => (
+const Button = ({ onClick, children, disabled = false }: { onClick?: () => void, children: React.ReactNode, disabled?: boolean }) => (
   <button onClick={onClick} disabled={disabled}>
     {children}
   </button>
@@ -52,11 +44,7 @@ describe('Button Component', () => {
     const handleClick = vi.fn();
     const user = userEvent.setup();
 
-    render(
-      <Button onClick={handleClick} disabled>
-        Click me
-      </Button>
-    );
+    render(<Button onClick={handleClick} disabled>Click me</Button>);
 
     const button = screen.getByRole('button', { name: /click me/i });
     await user.click(button);

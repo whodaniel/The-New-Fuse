@@ -1,33 +1,40 @@
-/**
- * Enhanced Redis Agent Client for TNF CLI
- *
- * Features:
- * - A2A Protocol compliance
- * - Message reliability (ACK/NACK, retry logic)
- * - Circuit breaker pattern
- * - Structured logging with trace IDs
- * - Task management integration
- */
-
 import { Redis } from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
-import { CircuitBreaker, getCircuitBreakerRegistry } from './circuit-breaker.js';
-import { ConfigManager } from './config.js';
-import { Logger, createLogger } from './logger.js';
-import { TaskManager } from './task-manager.js';
-import { AgentPlatform, AgentRole } from './types.js';
 
-import type {
-  AgentCard,
-  AgentInfo,
-  AgentMessage,
-  CLIConfig,
-  MessageAck,
-  Task,
-  TaskCreateRequest,
-} from './types.js';
+export interface AgentInfo {
+  id: string;
+  name: string;
+  role: 'orchestrator' | 'broker' | 'worker' | 'participant';
+  platform: 'antigravity' | 'gemini' | 'claude' | 'jules' | 'vscode' | 'browser' | string;
+  status: 'active' | 'idle' | 'offline';
+  capabilities: string[];
+  registeredAt: string;
+  lastSeen: string;
+  isOnline?: boolean;
+}
 
-export type { AgentInfo, AgentMessage };
+export interface AgentMessage {
+  id: string;
+  timestamp: string;
+  from: {
+    agentId: string;
+    agentName: string;
+    role: string;
+    platform: string;
+  };
+  to?: {
+    agentId?: string;
+    channel?: string;
+    role?: string;
+    broadcast?: boolean;
+  };
+  type: 'message' | 'command' | 'response' | 'heartbeat' | 'status';
+  content: string;
+  conversationId?: string;
+  replyTo?: string;
+  expectsResponse?: boolean;
+  metadata?: any;
+}
 
 export const CONFIG = {
   redis: {
@@ -42,127 +49,56 @@ export const CONFIG = {
     orchestrator: 'tnf:orchestrator',
     broker: 'tnf:broker',
     heartbeat: 'tnf:heartbeat',
-    acks: 'tnf:acks',
-    deadLetter: 'tnf:deadletter',
   },
   heartbeatInterval: 30000, // 30 seconds
 };
-
-interface PendingMessage {
-  message: AgentMessage;
-  resolve: (value: MessageAck) => void;
-  reject: (reason: any) => void;
-  retries: number;
-  timeout: NodeJS.Timeout;
-}
 
 export class RedisAgentClient {
   private publisher: Redis | null = null;
   private subscriber: Redis | null = null;
   private agentInfo: AgentInfo | null = null;
-  private config: CLIConfig;
-  private logger: Logger;
-  private messageHandlers: Map<string, Array<(message: AgentMessage, channel: string) => void>> =
-    new Map();
+  private messageHandlers: Map<string, Array<(message: AgentMessage, channel: string) => void>> = new Map();
   private heartbeatTimer: NodeJS.Timeout | null = null;
   public currentConversation: string | null = null;
 
-  // Reliability features
-  private pendingMessages: Map<string, PendingMessage> = new Map();
-  private circuitBreaker: CircuitBreaker;
+  constructor() {}
 
-  // Task management
-  public taskManager: TaskManager;
+  async initialize() {
+    const redisConfig = {
+      host: CONFIG.redis.host,
+      port: CONFIG.redis.port,
+      password: CONFIG.redis.password,
+      retryStrategy: (times: number) => Math.min(times * 50, 2000),
+      maxRetriesPerRequest: 3,
+    };
 
-  // Agent Card
-  private agentCard?: AgentCard;
+    this.publisher = new Redis(redisConfig);
+    this.subscriber = new Redis(redisConfig);
 
-  constructor(config?: CLIConfig) {
-    this.config = config || new ConfigManager().getConfig();
-    this.logger = createLogger(this.config.logging);
-    this.circuitBreaker = getCircuitBreakerRegistry().create('redis-client', {
-      failureThreshold: 5,
-      successThreshold: 3,
-      timeoutMs: 60000,
-      halfOpenMaxCalls: 3,
+    this.subscriber.on('message', (channel: string, message: string) => {
+      this.handleIncomingMessage(channel, message);
     });
-    this.taskManager = new TaskManager(this.logger);
+
+    this.subscriber.on('error', (error: Error) => {
+      console.error('Redis subscriber error:', error.message);
+    });
+
+    this.publisher.on('error', (error: Error) => {
+      console.error('Redis publisher error:', error.message);
+    });
+
+    // Use ping to check connection
+    try {
+      await this.publisher.ping();
+    } catch (err) {
+      console.warn(`⚠️ Could not connect to Redis at ${CONFIG.redis.host}:${CONFIG.redis.port}`);
+      throw err;
+    }
   }
 
-  async initialize(): Promise<void> {
-    await this.circuitBreaker.execute(async () => {
-      const redisConfig = {
-        host: this.config.redis.host,
-        port: this.config.redis.port,
-        password: this.config.redis.password,
-        retryStrategy: (times: number) => {
-          const delay = Math.min(times * 50, 2000);
-          this.logger.debug(`Redis retry attempt ${times}, delay ${delay}ms`);
-          return delay;
-        },
-        maxRetriesPerRequest: this.config.reliability.maxRetries,
-        enableReadyCheck: true,
-        enableOfflineQueue: true,
-      };
-
-      // Add TLS if configured
-      if (this.config.redis.tls?.enabled) {
-        (redisConfig as any).tls = {
-          ca: this.config.redis.tls.ca,
-          cert: this.config.redis.tls.cert,
-          key: this.config.redis.tls.key,
-        };
-      }
-
-      this.publisher = new Redis(redisConfig);
-      this.subscriber = new Redis(redisConfig);
-
-      this.subscriber.on('message', (channel: string, message: string) => {
-        this.handleIncomingMessage(channel, message);
-      });
-
-      this.subscriber.on('error', (error: Error) => {
-        this.logger.error('Redis subscriber error', {}, error);
-      });
-
-      this.publisher.on('error', (error: Error) => {
-        this.logger.error('Redis publisher error', {}, error);
-      });
-
-      this.publisher.on('connect', () => {
-        this.logger.info('Redis publisher connected');
-      });
-
-      this.subscriber.on('connect', () => {
-        this.logger.info('Redis subscriber connected');
-      });
-
-      // Use ping to check connection
-      try {
-        await this.publisher.ping();
-        this.logger.info('Redis connection established');
-      } catch (err) {
-        this.logger.error(
-          `Could not connect to Redis at ${this.config.redis.host}:${this.config.redis.port}`,
-          {},
-          err as Error
-        );
-        throw err;
-      }
-    });
-  }
-
-  async register(
-    name: string,
-    role: AgentRole,
-    platform: AgentPlatform,
-    capabilities: string[] = [],
-    agentCard?: AgentCard
-  ): Promise<AgentInfo> {
-    const id = `agent_${name}_${Date.now()}`;
-
+  async register(name: string, role: any, platform: string, capabilities: string[] = []) {
     this.agentInfo = {
-      id,
+      id: `agent_${name}_${Date.now()}`,
       name,
       role,
       platform,
@@ -170,16 +106,9 @@ export class RedisAgentClient {
       capabilities: capabilities.length > 0 ? capabilities : this.getDefaultCapabilities(platform),
       registeredAt: new Date().toISOString(),
       lastSeen: new Date().toISOString(),
-      isOnline: true,
-      agentCard,
     };
 
-    if (!this.publisher || !this.subscriber) {
-      throw new Error('Client not initialized');
-    }
-
-    // Update logger with agent ID
-    this.logger.setAgentId(id);
+    if (!this.publisher || !this.subscriber) throw new Error('Client not initialized');
 
     // Store in Redis
     await this.publisher.hset(
@@ -194,31 +123,18 @@ export class RedisAgentClient {
       CONFIG.channels.conversations,
       CONFIG.channels.orchestrator,
       CONFIG.channels.broker,
-      CONFIG.channels.acks,
-      `tnf:direct:*:${this.agentInfo.id}`,
-      `tnf:agent:${this.agentInfo.id}`
+      `tnf:direct:*:${this.agentInfo.id}`
     );
 
     // Announce registration
     await this.broadcast({
       type: 'status',
       content: `Agent ${name} (${role}) is now online`,
-      metadata: {
-        event: 'agent_registered',
-        agentInfo: this.agentInfo,
-        capabilities: this.agentInfo.capabilities,
-      },
+      metadata: { event: 'agent_registered', agentInfo: this.agentInfo },
     });
 
     // Start heartbeat
     this.startHeartbeat();
-
-    this.logger.info(`Agent registered: ${name} (${id})`, {
-      agentId: id,
-      name,
-      role,
-      platform,
-    });
 
     return this.agentInfo;
   }
@@ -235,172 +151,36 @@ export class RedisAgentClient {
     return capabilityMap[platform] || ['general'];
   }
 
-  async send(content: string, options: any = {}): Promise<AgentMessage> {
-    return this.circuitBreaker.execute(async () => {
-      if (!this.agentInfo || !this.publisher) {
-        throw new Error('Agent not registered or publisher not initialized');
-      }
-
-      const traceId = options.traceId || uuidv4();
-      const message: AgentMessage = {
-        id: uuidv4(),
-        traceId,
-        timestamp: new Date().toISOString(),
-        from: {
-          agentId: this.agentInfo.id,
-          agentName: this.agentInfo.name,
-          role: this.agentInfo.role,
-          platform: this.agentInfo.platform,
-        },
-        to: options.to,
-        type: options.type || 'message',
-        content,
-        parts: options.parts,
-        conversationId: options.conversationId || this.currentConversation || undefined,
-        replyTo: options.replyTo,
-        expectsResponse: options.expectsResponse || this.config.reliability.enableAcks,
-        metadata: {
-          priority: options.priority || 'normal',
-          ttl: options.ttl,
-          retryCount: 0,
-          maxRetries: this.config.reliability.maxRetries,
-          ...options.metadata,
-        },
-      };
-
-      const channel = options.channel || CONFIG.channels.conversations;
-
-      // If ACKs are enabled and message expects response, set up tracking
-      if (this.config.reliability.enableAcks && message.expectsResponse) {
-        return this.sendWithAck(message, channel);
-      }
-
-      await this.publisher.publish(channel, JSON.stringify(message));
-
-      this.logger.debug(`Message sent: ${message.id}`, {
-        messageId: message.id,
-        traceId,
-        channel,
-        type: message.type,
-      });
-
-      return message;
-    });
-  }
-
-  private async sendWithAck(message: AgentMessage, channel: string): Promise<AgentMessage> {
-    return new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        this.pendingMessages.delete(message.id);
-
-        // Retry logic
-        const retryCount = message.metadata?.retryCount || 0;
-        const maxRetries = message.metadata?.maxRetries || this.config.reliability.maxRetries;
-
-        if (retryCount < maxRetries) {
-          this.logger.warn(
-            `Message ${message.id} timed out, retrying (${retryCount + 1}/${maxRetries})`,
-            {
-              messageId: message.id,
-              retryCount: retryCount + 1,
-            }
-          );
-
-          message.metadata = {
-            ...message.metadata,
-            retryCount: retryCount + 1,
-          };
-
-          this.sendWithAck(message, channel).then(resolve).catch(reject);
-        } else {
-          // Send to dead letter queue
-          this.sendToDeadLetter(message, 'timeout');
-          reject(new Error(`Message ${message.id} failed after ${maxRetries} retries`));
-        }
-      }, this.config.reliability.messageTimeoutMs);
-
-      this.pendingMessages.set(message.id, {
-        message,
-        resolve: (ack) => {
-          clearTimeout(timeout);
-          this.pendingMessages.delete(message.id);
-          this.logger.debug(`Message ${message.id} acknowledged`, {
-            messageId: message.id,
-            ack,
-          });
-          resolve(message);
-        },
-        reject: (error) => {
-          clearTimeout(timeout);
-          this.pendingMessages.delete(message.id);
-          reject(error);
-        },
-        retries: 0,
-        timeout,
-      });
-
-      this.publisher!.publish(channel, JSON.stringify(message)).catch((error) => {
-        clearTimeout(timeout);
-        this.pendingMessages.delete(message.id);
-        reject(error);
-      });
-    });
-  }
-
-  private async sendToDeadLetter(message: AgentMessage, reason: string): Promise<void> {
-    if (!this.config.reliability.deadLetterQueue || !this.publisher) return;
-
-    const dlqEntry = {
-      message,
-      reason,
-      timestamp: new Date().toISOString(),
-    };
-
-    await this.publisher.lpush(CONFIG.channels.deadLetter, JSON.stringify(dlqEntry));
-
-    this.logger.warn(`Message sent to dead letter queue: ${message.id}`, {
-      messageId: message.id,
-      reason,
-    });
-  }
-
-  private async handleAck(ack: MessageAck): Promise<void> {
-    const pending = this.pendingMessages.get(ack.messageId);
-    if (pending) {
-      if (ack.status === 'acknowledged') {
-        pending.resolve(ack);
-      } else {
-        pending.reject(new Error(`Message rejected: ${ack.reason}`));
-      }
+  async send(content: string, options: any = {}) {
+    if (!this.agentInfo || !this.publisher) {
+      throw new Error('Agent not registered or publisher not initialized');
     }
-  }
 
-  async sendAck(
-    messageId: string,
-    status: 'acknowledged' | 'rejected',
-    reason?: string
-  ): Promise<void> {
-    if (!this.publisher || !this.agentInfo) return;
-
-    const ack: MessageAck = {
-      messageId,
-      traceId: uuidv4(),
+    const message: AgentMessage = {
+      id: uuidv4(),
       timestamp: new Date().toISOString(),
-      status,
-      reason,
-      processedAt: new Date().toISOString(),
+      from: {
+        agentId: this.agentInfo.id,
+        agentName: this.agentInfo.name,
+        role: this.agentInfo.role,
+        platform: this.agentInfo.platform,
+      },
+      to: options.to,
+      type: options.type || 'message',
+      content,
+      conversationId: options.conversationId || this.currentConversation || undefined,
+      replyTo: options.replyTo,
+      expectsResponse: options.expectsResponse,
+      metadata: options.metadata,
     };
 
-    await this.publisher.publish(
-      CONFIG.channels.acks,
-      JSON.stringify({
-        ...ack,
-        from: this.agentInfo.id,
-      })
-    );
+    const channel = options.channel || CONFIG.channels.conversations;
+    await this.publisher.publish(channel, JSON.stringify(message));
+
+    return message;
   }
 
-  async broadcast(options: any): Promise<AgentMessage> {
+  async broadcast(options: any) {
     return this.send(options.content, {
       ...options,
       channel: CONFIG.channels.agents,
@@ -408,7 +188,7 @@ export class RedisAgentClient {
     });
   }
 
-  async startConversation(topic: string): Promise<string> {
+  async startConversation(topic: string) {
     this.currentConversation = `convo_${topic}_${Date.now()}`;
 
     await this.broadcast({
@@ -421,226 +201,85 @@ export class RedisAgentClient {
       },
     });
 
-    this.logger.info(`Conversation started: ${this.currentConversation}`, {
-      conversationId: this.currentConversation,
-      topic,
-    });
-
     return this.currentConversation;
   }
 
-  joinConversation(conversationId: string): void {
+  joinConversation(conversationId: string) {
     this.currentConversation = conversationId;
-    this.logger.debug(`Joined conversation: ${conversationId}`);
   }
 
-  private handleIncomingMessage(channel: string, messageStr: string): void {
+  private handleIncomingMessage(channel: string, messageStr: string) {
     try {
       const message: AgentMessage = JSON.parse(messageStr);
 
-      // Skip own messages
       if (message.from?.agentId === this.agentInfo?.id) {
         return;
       }
 
-      // Handle ACKs
-      if (message.type === 'ack') {
-        this.handleAck(message as any);
-        return;
-      }
-
-      // Send ACK if expected
-      if (message.expectsResponse && this.config.reliability.enableAcks) {
-        this.sendAck(message.id, 'acknowledged');
-      }
-
-      this.logger.debug(`Message received: ${message.id}`, {
-        messageId: message.id,
-        traceId: message.traceId,
-        from: message.from?.agentId,
-        type: message.type,
-        channel,
-      });
-
-      // Notify type-specific handlers
       const handlers = this.messageHandlers.get(message.type) || [];
-      handlers.forEach((handler) => {
-        try {
-          handler(message, channel);
-        } catch (error) {
-          this.logger.error('Error in message handler', { messageId: message.id }, error as Error);
-        }
-      });
+      handlers.forEach((handler) => handler(message, channel));
 
-      // Notify all handlers
       const allHandlers = this.messageHandlers.get('*') || [];
-      allHandlers.forEach((handler) => {
-        try {
-          handler(message, channel);
-        } catch (error) {
-          this.logger.error('Error in message handler', { messageId: message.id }, error as Error);
-        }
-      });
+      allHandlers.forEach((handler) => handler(message, channel));
     } catch (error: any) {
-      this.logger.error('Error parsing message', {}, error);
+      console.error('Error parsing message:', error.message);
     }
   }
 
-  onMessage(type: string, handler: (message: AgentMessage, channel: string) => void): void {
+  onMessage(type: string, handler: (message: AgentMessage, channel: string) => void) {
     if (!this.messageHandlers.has(type)) {
       this.messageHandlers.set(type, []);
     }
     this.messageHandlers.get(type)!.push(handler);
   }
 
-  offMessage(type: string, handler: (message: AgentMessage, channel: string) => void): void {
-    const handlers = this.messageHandlers.get(type);
-    if (handlers) {
-      const index = handlers.indexOf(handler);
-      if (index > -1) {
-        handlers.splice(index, 1);
-      }
-    }
-  }
-
-  private startHeartbeat(): void {
+  private startHeartbeat() {
     this.heartbeatTimer = setInterval(async () => {
       if (this.agentInfo && this.publisher) {
         this.agentInfo.lastSeen = new Date().toISOString();
 
-        try {
-          await this.publisher.hset(
-            'tnf:agent-registry',
-            this.agentInfo.id,
-            JSON.stringify(this.agentInfo)
-          );
+        await this.publisher.hset(
+          'tnf:agent-registry',
+          this.agentInfo.id,
+          JSON.stringify(this.agentInfo)
+        );
 
-          await this.publisher.publish(
-            CONFIG.channels.heartbeat,
-            JSON.stringify({
-              agentId: this.agentInfo.id,
-              agentName: this.agentInfo.name,
-              timestamp: this.agentInfo.lastSeen,
-              status: this.agentInfo.status,
-            })
-          );
-        } catch (error) {
-          this.logger.error('Heartbeat failed', {}, error as Error);
-        }
+        await this.publisher.publish(
+          CONFIG.channels.heartbeat,
+          JSON.stringify({
+            agentId: this.agentInfo.id,
+            agentName: this.agentInfo.name,
+            timestamp: this.agentInfo.lastSeen,
+          })
+        );
       }
-    }, this.config.heartbeat.intervalMs);
+    }, CONFIG.heartbeatInterval);
   }
 
   async listAgents(): Promise<AgentInfo[]> {
     if (!this.publisher) return [];
+    const agents = await this.publisher.hgetall('tnf:agent-registry');
+    const agentList: AgentInfo[] = [];
 
-    return this.circuitBreaker.execute(async () => {
-      const agents = await this.publisher!.hgetall('tnf:agent-registry');
-      const agentList: AgentInfo[] = [];
+    for (const [id, jsonStr] of Object.entries(agents)) {
+      try {
+        const agent = JSON.parse(jsonStr as string);
+        const lastSeen = new Date(agent.lastSeen);
+        const isOnline = Date.now() - lastSeen.getTime() < CONFIG.heartbeatInterval * 2;
 
-      for (const [id, jsonStr] of Object.entries(agents)) {
-        try {
-          const agent = JSON.parse(jsonStr as string);
-          const lastSeen = new Date(agent.lastSeen);
-          const isOnline = Date.now() - lastSeen.getTime() < this.config.heartbeat.timeoutMs;
-
-          agentList.push({
-            ...agent,
-            isOnline,
-          });
-        } catch (e) {
-          // Skip invalid
-        }
+        agentList.push({
+          ...agent,
+          isOnline,
+        });
+      } catch (e) {
+        // Skip invalid
       }
-
-      return agentList;
-    });
-  }
-
-  async getAgent(agentId: string): Promise<AgentInfo | null> {
-    if (!this.publisher) return null;
-
-    const agentJson = await this.publisher.hget('tnf:agent-registry', agentId);
-    if (!agentJson) return null;
-
-    try {
-      return JSON.parse(agentJson);
-    } catch {
-      return null;
-    }
-  }
-
-  async updateAgentCard(agentCard: AgentCard): Promise<void> {
-    if (!this.agentInfo) return;
-
-    this.agentInfo.agentCard = agentCard;
-
-    if (this.publisher) {
-      await this.publisher.hset(
-        'tnf:agent-registry',
-        this.agentInfo.id,
-        JSON.stringify(this.agentInfo)
-      );
     }
 
-    this.logger.info('AgentCard updated', {
-      agentId: this.agentInfo.id,
-      skills: agentCard.skills.map((s) => s.id),
-    });
+    return agentList;
   }
 
-  async discoverAgentsBySkill(skillId: string): Promise<AgentInfo[]> {
-    const allAgents = await this.listAgents();
-    return allAgents.filter((agent) =>
-      agent.agentCard?.skills.some((skill) => skill.id === skillId || skill.tags.includes(skillId))
-    );
-  }
-
-  // Task management helpers
-  async createTask(request: TaskCreateRequest): Promise<Task> {
-    const task = this.taskManager.createTask(request, this.agentInfo?.id || 'unknown');
-
-    // Broadcast task creation
-    await this.broadcast({
-      type: 'status',
-      content: `Task created: ${task.title}`,
-      metadata: {
-        event: 'task_created',
-        taskId: task.id,
-        task: task,
-      },
-    });
-
-    return task;
-  }
-
-  async assignTask(taskId: string, agentId: string): Promise<Task> {
-    const task = this.taskManager.assignTask(taskId, agentId);
-
-    // Notify assigned agent
-    await this.send(`You have been assigned task: ${task.title}`, {
-      to: { agentId },
-      type: 'command',
-      metadata: {
-        event: 'task_assigned',
-        taskId: task.id,
-        task: task,
-      },
-    });
-
-    return task;
-  }
-
-  async cleanup(): Promise<void> {
-    this.logger.info('Cleaning up agent client...');
-
-    // Clear pending messages
-    for (const [id, pending] of this.pendingMessages) {
-      clearTimeout(pending.timeout);
-      pending.reject(new Error('Client shutting down'));
-    }
-    this.pendingMessages.clear();
-
+  async cleanup() {
     if (this.heartbeatTimer) {
       clearInterval(this.heartbeatTimer);
     }
@@ -662,15 +301,5 @@ export class RedisAgentClient {
 
     if (this.subscriber) await this.subscriber.quit();
     if (this.publisher) await this.publisher.quit();
-
-    this.logger.info('Agent client cleaned up');
-  }
-
-  getAgentInfo(): AgentInfo | null {
-    return this.agentInfo;
-  }
-
-  getCircuitBreakerMetrics(): ReturnType<CircuitBreaker['getMetrics']> {
-    return this.circuitBreaker.getMetrics();
   }
 }

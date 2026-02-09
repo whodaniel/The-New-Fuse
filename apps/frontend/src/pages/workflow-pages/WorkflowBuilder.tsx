@@ -14,7 +14,6 @@ import ReactFlow, {
   useNodesState,
 } from 'reactflow';
 // ReactFlow styles will be imported via the build system
-import { GlassCard } from '@/components/ui/design-system';
 import {
   FiCalendar,
   FiCloud,
@@ -30,6 +29,7 @@ import {
 } from 'react-icons/fi';
 import { WorkflowApiService } from '../../api/workflow';
 import { Badge, Button, Card, CardContent } from '../../components/ui';
+import { GlassCard } from '@/components/ui/design-system';
 import { FormLabel } from '../../components/ui/form';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';

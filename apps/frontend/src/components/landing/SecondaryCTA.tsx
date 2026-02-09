@@ -1,7 +1,7 @@
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import React from 'react';
-import { useAnalytics } from '../../hooks/useAnalytics';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Button } from '../ui/button';
+import { useAnalytics } from '../../hooks/useAnalytics';
 
 export interface SecondaryCTAProps {
   title?: string;
@@ -50,8 +50,7 @@ export const SecondaryCTA: React.FC<SecondaryCTAProps> = ({
 
   const variants = {
     default: 'bg-gray-50 dark:bg-gray-900',
-    gradient:
-      'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-950 dark:to-indigo-950',
+    gradient: 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-950 dark:to-indigo-950',
     minimal: 'bg-white dark:bg-gray-950',
   };
 
@@ -123,9 +122,7 @@ export const CompactSecondaryCTA: React.FC<Omit<SecondaryCTAProps, 'benefits' | 
   };
 
   return (
-    <div
-      className={`flex flex-col sm:flex-row items-center justify-between gap-6 p-8 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 ${className}`}
-    >
+    <div className={`flex flex-col sm:flex-row items-center justify-between gap-6 p-8 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 ${className}`}>
       <div className="text-white text-center sm:text-left">
         <h3 className="text-2xl font-bold mb-2">{title}</h3>
         <p className="text-blue-100">{description}</p>

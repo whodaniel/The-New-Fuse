@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface Agent {
   id: string;
@@ -31,6 +31,6 @@ export function useAgents() {
     selectedAgent,
     conversationId,
     selectAgent,
-    clearConversation,
+    clearConversation
   };
 }

@@ -10,11 +10,11 @@
 
 ### Branding
 
-| Item         | Source Path                                     | Migration Strategy                 |
-| ------------ | ----------------------------------------------- | ---------------------------------- |
+| Item         | Source Path                                     | Migration Strategy            |
+| ------------ | ----------------------------------------------- | ----------------------------- |
 | Main Icon    | `resources/darwin/code.icns`                    | Convert to PNG/SVG for SkIDEancer  |
 | Favicon      | `resources/server/favicon.ico`                  | Copy to SkIDEancer `lib/frontend/` |
-| Server Icons | `resources/server/code-192.png`, `code-512.png` | Use for PWA manifest               |
+| Server Icons | `resources/server/code-192.png`, `code-512.png` | Use for PWA manifest          |
 | Linux Icon   | `resources/linux/code.png`                      | Convert for SkIDEancer             |
 
 ### Built-in Extensions (from product.json)
@@ -223,10 +223,10 @@ Map VS Code settings to SkIDEancer preferences:
 ## 6. Files to Copy
 
 | From SkIDEancer                 | To SkIDEancer               | Purpose          |
-| ------------------------------- | --------------------------- | ---------------- |
-| `resources/server/favicon.ico`  | `lib/frontend/`             | Browser favicon  |
-| `resources/server/code-192.png` | `lib/frontend/`             | PWA icon         |
-| `resources/server/code-512.png` | `lib/frontend/`             | PWA splash       |
+| ------------------------------- | ---------------------- | ---------------- |
+| `resources/server/favicon.ico`  | `lib/frontend/`        | Browser favicon  |
+| `resources/server/code-192.png` | `lib/frontend/`        | PWA icon         |
+| `resources/server/code-512.png` | `lib/frontend/`        | PWA splash       |
 | `extensions/theme-monokai/`     | Custom SkIDEancer extension | Theme            |
 | `.vscode/settings.json`         | SkIDEancer preferences      | Default settings |
 

@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/hooks/useAuth';
 import React from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { useAuth } from '@/hooks/useAuth';
 
 const Login = React.lazy(() => import('./Login'));
 const Register = React.lazy(() => import('./Register'));
@@ -14,7 +14,9 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
       <Card className="w-full max-w-lg">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center font-bold">Welcome to The New Fuse</CardTitle>
+          <CardTitle className="text-2xl text-center font-bold">
+            Welcome to The New Fuse
+          </CardTitle>
         </CardHeader>
         <CardContent>{children}</CardContent>
       </Card>
@@ -24,7 +26,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
 
 const Auth = () => {
   const { isAuthenticated } = useAuth();
-
+  
   if (isAuthenticated) {
     return <Navigate to="/" replace />;
   }

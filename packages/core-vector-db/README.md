@@ -1,7 +1,6 @@
 # Core Vector Database Service
 
-A production-ready NestJS microservice providing vector database functionality
-with gRPC and HTTP interfaces.
+A production-ready NestJS microservice providing vector database functionality with gRPC and HTTP interfaces.
 
 ## Features
 
@@ -66,26 +65,22 @@ const client = new VectorStoreGrpcClient();
 await client.createCollection({
   name: 'documents',
   dimension: 1536,
-  metric: 'cosine',
+  metric: 'cosine'
 });
 
 // Add documents with automatic embedding generation
-await client.addDocuments(
-  'documents',
-  [
-    {
-      id: 'doc1',
-      content: 'This is a sample document',
-      metadata: { type: 'sample' },
-    },
-  ],
-  true
-);
+await client.addDocuments('documents', [
+  {
+    id: 'doc1',
+    content: 'This is a sample document',
+    metadata: { type: 'sample' }
+  }
+], true);
 
 // Search by text
 const results = await client.searchByText('documents', 'sample query', {
   limit: 10,
-  threshold: 0.7,
+  threshold: 0.7
 });
 ```
 
@@ -101,14 +96,12 @@ const results = await client.searchByText('documents', 'sample query', {
 
 - `upsertDocuments(request)` - Insert or update documents
 - `getDocument(collection, id)` - Retrieve a specific document
-- `addDocuments(collection, documents, generateEmbeddings)` - Convenience method
-  for adding documents
+- `addDocuments(collection, documents, generateEmbeddings)` - Convenience method for adding documents
 
 ### Search Operations
 
 - `similaritySearch(request)` - Vector similarity search
-- `searchByText(collection, text, options)` - Text-based search with automatic
-  embedding
+- `searchByText(collection, text, options)` - Text-based search with automatic embedding
 - `searchByEmbedding(collection, embedding, options)` - Direct embedding search
 
 ### Health & Monitoring
@@ -121,7 +114,6 @@ const results = await client.searchByText('documents', 'sample query', {
 ### Vector Database Drivers
 
 #### Qdrant Configuration
-
 ```typescript
 {
   type: 'qdrant',
@@ -131,7 +123,6 @@ const results = await client.searchByText('documents', 'sample query', {
 ```
 
 #### PgVector Configuration
-
 ```typescript
 {
   type: 'pgvector',
@@ -143,7 +134,6 @@ const results = await client.searchByText('documents', 'sample query', {
 ```
 
 ### Embedding Configuration
-
 ```typescript
 {
   provider: 'openai',
@@ -196,8 +186,7 @@ const adapter = new LegacyVectorAdapter(grpcClient);
 
 ### gRPC Service Discovery
 
-The service automatically registers with the gRPC infrastructure and provides
-health checks for load balancing.
+The service automatically registers with the gRPC infrastructure and provides health checks for load balancing.
 
 ## Monitoring
 
@@ -246,13 +235,13 @@ spec:
         app: vector-db-service
     spec:
       containers:
-        - name: vector-db
-          image: the-new-fuse/core-vector-db:latest
-          ports:
-            - containerPort: 50051
-          env:
-            - name: QDRANT_URL
-              value: 'http://qdrant:6333'
+      - name: vector-db
+        image: the-new-fuse/core-vector-db:latest
+        ports:
+        - containerPort: 50051
+        env:
+        - name: QDRANT_URL
+          value: "http://qdrant:6333"
 ```
 
 ## Troubleshooting

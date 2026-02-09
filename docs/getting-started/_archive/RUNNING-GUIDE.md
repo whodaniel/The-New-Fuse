@@ -1,7 +1,6 @@
 # The New Fuse - Running Guide
 
-This guide provides instructions on how to build, run, and test The New Fuse
-project.
+This guide provides instructions on how to build, run, and test The New Fuse project.
 
 ## Prerequisites
 
@@ -33,15 +32,13 @@ There are several ways to run The New Fuse project:
 
 ### Option 1: Comprehensive Development Setup
 
-This option builds all packages in the correct order and runs the full
-application:
+This option builds all packages in the correct order and runs the full application:
 
 ```bash
 ./run-development.sh
 ```
 
 When prompted, you can choose to:
-
 1. Run frontend and backend separately
 2. Run using Docker
 
@@ -63,8 +60,7 @@ This option runs Docker services and opens a browser to view the frontend UI:
 
 ### Option 4: Complete Rebuild and Run
 
-This option performs a clean rebuild of all packages and restarts all Docker
-services:
+This option performs a clean rebuild of all packages and restarts all Docker services:
 
 ```bash
 ./rebuild-and-run.sh
@@ -115,8 +111,7 @@ If you encounter issues:
 
 1. Check service status: `./check-services.sh`
 2. Verify Docker is running
-3. View detailed logs: `./view-logs.sh` or for a specific service
-   `./view-logs.sh typescript-frontend`
+3. View detailed logs: `./view-logs.sh` or for a specific service `./view-logs.sh typescript-frontend`
 4. Check for port conflicts: `lsof -i :3000` (or other port numbers)
 5. Restart Docker services: `docker compose restart`
 6. Rebuild from scratch: `./rebuild-and-run.sh`
@@ -124,15 +119,13 @@ If you encounter issues:
 ### Common Issues and Solutions
 
 1. **Frontend not loading**
-   - Check if the frontend container is running:
-     `docker compose ps typescript-frontend`
+   - Check if the frontend container is running: `docker compose ps typescript-frontend`
    - View frontend logs: `./view-logs.sh typescript-frontend`
    - Verify port 3000 is accessible: `curl -I http://localhost:3000`
 
 2. **Backend API errors**
    - Check backend logs: `./view-logs.sh typescript-backend`
-   - Verify the backend container is healthy:
-     `docker compose ps typescript-backend`
+   - Verify the backend container is healthy: `docker compose ps typescript-backend`
    - Check backend is accessible: `curl -I http://localhost:3002`
 
 3. **Docker build errors**
@@ -152,5 +145,4 @@ For VS Code users, the following tasks are available:
 - **Kill Port Processes** - Kill processes using development ports
 - **Check Docker Ports** - Check Docker port availability
 - **Build Production Pipeline** - Run the production build process
-- **Start WebSocket Server** - Start the WebSocket server for real-time
-  communication
+- **Start WebSocket Server** - Start the WebSocket server for real-time communication

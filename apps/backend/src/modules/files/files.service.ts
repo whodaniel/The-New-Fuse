@@ -1,10 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import {
-  FileCategory,
-  FileListQueryDto,
-  FileListResponseDto,
-  FileUploadResponseDto,
-} from './dto/file.dto';
+import { FileUploadResponseDto, FileCategory, FileListQueryDto, FileListResponseDto } from './dto/file.dto';
 
 @Injectable()
 export class FilesService {
@@ -26,7 +21,7 @@ export class FilesService {
         url: 'https://storage.example.com/files/file_001',
         uploadedBy: 'usr_123',
         uploadedAt: new Date('2024-01-15T10:00:00Z'),
-        metadata: { pages: 25 },
+        metadata: { pages: 25 }
       },
       {
         id: 'file_002',
@@ -37,15 +32,15 @@ export class FilesService {
         url: 'https://storage.example.com/files/file_002',
         uploadedBy: 'usr_123',
         uploadedAt: new Date('2024-01-16T11:30:00Z'),
-        metadata: { width: 500, height: 500 },
-      },
+        metadata: { width: 500, height: 500 }
+      }
     ];
 
-    mockFiles.forEach((file) => this.files.set(file.id, file));
+    mockFiles.forEach(file => this.files.set(file.id, file));
   }
 
   async uploadFile(
-    file: any,
+    file: Express.Multer.File,
     userId: string,
     metadata?: Record<string, any>
   ): Promise<FileUploadResponseDto> {
@@ -63,7 +58,7 @@ export class FilesService {
       url: `https://storage.example.com/files/${fileId}`,
       uploadedBy: userId,
       uploadedAt: new Date(),
-      metadata,
+      metadata
     };
 
     this.files.set(fileId, uploadedFile);
@@ -80,11 +75,11 @@ export class FilesService {
     let fileList = Array.from(this.files.values());
 
     // Filter by user
-    fileList = fileList.filter((file) => file.uploadedBy === userId);
+    fileList = fileList.filter(file => file.uploadedBy === userId);
 
     // Filter by category
     if (category) {
-      fileList = fileList.filter((file) => file.category === category);
+      fileList = fileList.filter(file => file.category === category);
     }
 
     const total = fileList.length;
@@ -98,8 +93,8 @@ export class FilesService {
         total,
         page,
         limit,
-        totalPages,
-      },
+        totalPages
+      }
     };
   }
 

@@ -1,6 +1,6 @@
 /**
  * Memory Cleanup Utility
- *
+ * 
  * Provides utilities for cleaning up memory between TypeScript compilation stages:
  * - Garbage collection hints
  * - TypeScript compiler memory release
@@ -61,7 +61,7 @@ export class MemoryCleanupUtility {
       cleanupDelay: 100,
       maxCleanupAttempts: 3,
       memoryThreshold: 50, // 50MB threshold for successful cleanup
-      ...config,
+      ...config
     };
   }
 
@@ -77,28 +77,25 @@ export class MemoryCleanupUtility {
       // Attempt cleanup multiple times if needed
       for (let attempt = 1; attempt <= this.config.maxCleanupAttempts; attempt++) {
         await this.executeCleanupStep(errors);
-
+        
         // Check if cleanup was effective
         const currentMemory = this.getCurrentMemoryUsage();
         const memoryFreed = memoryBefore.current - currentMemory.current;
-
-        if (
-          memoryFreed >= this.config.memoryThreshold ||
-          attempt === this.config.maxCleanupAttempts
-        ) {
+        
+        if (memoryFreed >= this.config.memoryThreshold || attempt === this.config.maxCleanupAttempts) {
           const result: MemoryCleanupResult = {
             success: memoryFreed >= this.config.memoryThreshold,
             memoryBefore,
             memoryAfter: currentMemory,
             memoryFreed,
             duration: Date.now() - startTime,
-            errors,
+            errors
           };
-
+          
           this.cleanupHistory.push(result);
           return result;
         }
-
+        
         // Wait before next attempt
         await this.delay(this.config.cleanupDelay);
       }
@@ -111,11 +108,12 @@ export class MemoryCleanupUtility {
         memoryAfter,
         memoryFreed: memoryBefore.current - memoryAfter.current,
         duration: Date.now() - startTime,
-        errors: [...errors, 'Cleanup did not meet memory threshold after maximum attempts'],
+        errors: [...errors, 'Cleanup did not meet memory threshold after maximum attempts']
       };
-
+      
       this.cleanupHistory.push(result);
       return result;
+
     } catch (error) {
       const memoryAfter = this.getCurrentMemoryUsage();
       const result: MemoryCleanupResult = {
@@ -124,12 +122,9 @@ export class MemoryCleanupUtility {
         memoryAfter,
         memoryFreed: Math.max(0, memoryBefore.current - memoryAfter.current),
         duration: Date.now() - startTime,
-        errors: [
-          ...errors,
-          `Cleanup failed: ${error instanceof Error ? error.message : String(error)}`,
-        ],
+        errors: [...errors, `Cleanup failed: ${error instanceof Error ? error.message : String(error)}`]
       };
-
+      
       this.cleanupHistory.push(result);
       return result;
     }
@@ -152,12 +147,10 @@ export class MemoryCleanupUtility {
       }
 
       // Strategy 3: Use setImmediate to allow GC opportunity
-      await new Promise((resolve) => setImmediate(resolve));
+      await new Promise(resolve => setImmediate(resolve));
+
     } catch (error) {
-      console.warn(
-        'Garbage collection warning:',
-        error instanceof Error ? error.message : String(error)
-      );
+      console.warn('Garbage collection warning:', error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -185,11 +178,9 @@ export class MemoryCleanupUtility {
       }
 
       console.debug(`Cleared ${clearedCount} modules from cache`);
+
     } catch (error) {
-      console.warn(
-        'Module cache cleanup warning:',
-        error instanceof Error ? error.message : String(error)
-      );
+      console.warn('Module cache cleanup warning:', error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -211,11 +202,9 @@ export class MemoryCleanupUtility {
 
       // Allow time for cleanup
       await this.delay(this.config.cleanupDelay);
+
     } catch (error) {
-      console.warn(
-        'TypeScript compiler memory cleanup warning:',
-        error instanceof Error ? error.message : String(error)
-      );
+      console.warn('TypeScript compiler memory cleanup warning:', error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -233,7 +222,7 @@ export class MemoryCleanupUtility {
     return (
       memoryFreed >= this.config.memoryThreshold ||
       percentageFreed >= 10 ||
-      afterMemory.current < beforeMemory.peak * 0.7
+      afterMemory.current < (beforeMemory.peak * 0.7)
     );
   }
 
@@ -254,11 +243,11 @@ export class MemoryCleanupUtility {
         successfulCleanups: 0,
         averageMemoryFreed: 0,
         averageDuration: 0,
-        totalMemoryFreed: 0,
+        totalMemoryFreed: 0
       };
     }
 
-    const successful = this.cleanupHistory.filter((r) => r.success);
+    const successful = this.cleanupHistory.filter(r => r.success);
     const totalMemoryFreed = this.cleanupHistory.reduce((sum, r) => sum + r.memoryFreed, 0);
     const totalDuration = this.cleanupHistory.reduce((sum, r) => sum + r.duration, 0);
 
@@ -267,7 +256,7 @@ export class MemoryCleanupUtility {
       successfulCleanups: successful.length,
       averageMemoryFreed: totalMemoryFreed / this.cleanupHistory.length,
       averageDuration: totalDuration / this.cleanupHistory.length,
-      totalMemoryFreed,
+      totalMemoryFreed
     };
   }
 
@@ -294,6 +283,7 @@ export class MemoryCleanupUtility {
 
       // Step 4: Additional cleanup delay
       await this.delay(this.config.cleanupDelay);
+
     } catch (error) {
       errors.push(`Cleanup step failed: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -305,12 +295,12 @@ export class MemoryCleanupUtility {
   private getCurrentMemoryUsage(): MemoryUsage {
     const usage = process.memoryUsage();
     const current = Math.round(usage.heapUsed / 1024 / 1024);
-
+    
     return {
       current,
       peak: current, // For this context, current is the peak we're measuring
       percentage: 0, // Would need system total memory to calculate
-      timestamp: Date.now(),
+      timestamp: Date.now()
     };
   }
 
@@ -324,12 +314,13 @@ export class MemoryCleanupUtility {
       for (let i = 0; i < 10; i++) {
         arrays.push(new Array(1000).fill(null));
       }
-
+      
       // Allow GC opportunity
       await this.delay(10);
-
+      
       // Clear references
       arrays.length = 0;
+      
     } catch (error) {
       // Ignore errors in memory pressure creation
     }
@@ -359,10 +350,10 @@ export class MemoryCleanupUtility {
       'node_modules/@vitest',
       '/node:',
       'internal/',
-      'bootstrap_',
+      'bootstrap_'
     ];
 
-    return !unsafePatterns.some((pattern) => key.includes(pattern));
+    return !unsafePatterns.some(pattern => key.includes(pattern));
   }
 
   /**
@@ -420,6 +411,6 @@ export class MemoryCleanupUtility {
    * Utility delay function
    */
   private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

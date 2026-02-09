@@ -218,7 +218,7 @@ Once Backend is deployed and running:
 
 ```bash
 # Option 1: Use Railway CLI
-railway run npx drizzle migrate deploy
+railway run npx prisma migrate deploy
 
 # Option 2: Add to Dockerfile.railway (automatic)
 # This is already configured in the Dockerfile
@@ -227,7 +227,7 @@ railway run npx drizzle migrate deploy
 Check logs for migration success:
 
 ```
-Railway logs → Backend → Search for "drizzle migrate"
+Railway logs → Backend → Search for "prisma migrate"
 ```
 
 ---
@@ -257,7 +257,7 @@ Railway logs → Backend → Search for "drizzle migrate"
 1. Verify PostgreSQL plugin is added
 2. Check `DATABASE_URL` environment variable
 3. Ensure Backend service can reach database (Railway private networking)
-4. Run `npx drizzle migrate deploy` manually
+4. Run `npx prisma migrate deploy` manually
 
 ### Inter-service Communication Issues
 

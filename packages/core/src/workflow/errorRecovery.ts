@@ -33,7 +33,7 @@ export class ErrorRecoveryManager {
 
   async recover(workflowId: string, error: WorkflowError): Promise<RecoveryResult> {
     const strategy = this.determineRecoveryStrategy(error);
-
+    
     switch (strategy) {
       case 'retry':
         return this.retryStep(workflowId, error);
@@ -47,7 +47,7 @@ export class ErrorRecoveryManager {
         return { success: false, strategy, error: new Error(error.code) };
     }
   }
-
+  
   private determineRecoveryStrategy(error: WorkflowError): RecoveryStrategy {
     if (error.code === 'NETWORK_ERROR' || error.code === 'TIMEOUT_ERROR') {
       return 'retry';
@@ -56,56 +56,46 @@ export class ErrorRecoveryManager {
     } else if (error.code === 'NON_CRITICAL_ERROR') {
       return 'skip';
     }
-
+    
     return 'rollback'; // Default strategy
   }
-
+  
   private async retryStep(workflowId: string, _error: WorkflowError): Promise<RecoveryResult> {
     const strategy = this.retryStrategies.get(workflowId) || {
       maxAttempts: 3,
       backoffMs: 1000,
-      exponential: true,
+      exponential: true
     };
-
+    
     // Implementation for retry logic would go here
     // Use strategy for retry configuration
     console.log(`Retrying with strategy:`, strategy);
     return { success: true, strategy: 'retry' };
   }
-
-  private async rollbackToCheckpoint(
-    workflowId: string,
-    _error: WorkflowError,
-  ): Promise<RecoveryResult> {
+  
+  private async rollbackToCheckpoint(workflowId: string, _error: WorkflowError): Promise<RecoveryResult> {
     const checkpoints = this.checkpoints.get(workflowId) || [];
     const lastCheckpoint = checkpoints[checkpoints.length - 1];
-
+    
     if (!lastCheckpoint) {
       return { success: false, strategy: 'rollback', error: new Error('No checkpoint available') };
     }
-
+    
     // Implementation for rollback logic would go here
     return { success: true, strategy: 'rollback', checkpoint: lastCheckpoint };
   }
-
-  private async compensateTransaction(
-    _workflowId: string,
-    _error: WorkflowError,
-  ): Promise<RecoveryResult> {
+  
+  private async compensateTransaction(_workflowId: string, _error: WorkflowError): Promise<RecoveryResult> {
     // Implementation for compensation logic would go here
     return { success: true, strategy: 'compensate' };
   }
-
+  
   private async skipStep(_workflowId: string, _error: WorkflowError): Promise<RecoveryResult> {
     // Implementation for skip logic would go here
     return { success: true, strategy: 'skip' };
   }
-
-  createCheckpoint(
-    workflowId: string,
-    stepId: string,
-    state: Record<string, unknown>,
-  ): WorkflowCheckpoint {
+  
+  createCheckpoint(workflowId: string, stepId: string, state: Record<string, unknown>): WorkflowCheckpoint {
     const checkpoint: WorkflowCheckpoint = {
       id: `checkpoint_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       workflowId,
@@ -113,19 +103,19 @@ export class ErrorRecoveryManager {
       state,
       timestamp: new Date(),
     };
-
+    
     if (!this.checkpoints.has(workflowId)) {
       this.checkpoints.set(workflowId, []);
     }
-
+    
     this.checkpoints.get(workflowId)!.push(checkpoint);
     return checkpoint;
   }
-
+  
   setRetryStrategy(workflowId: string, strategy: RetryStrategy): void {
     this.retryStrategies.set(workflowId, strategy);
   }
-
+  
   clearCheckpoints(workflowId: string): void {
     this.checkpoints.delete(workflowId);
   }

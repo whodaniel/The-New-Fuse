@@ -171,7 +171,7 @@ packages//core/backup/src_original/metrics/metrics.service.tsx:import { Injectab
 packages//core/backup/src_original/metrics/metrics.service.tsx:import { MetricsConfig, PerformanceMetrics, SystemPerformanceMetrics } from '@the-new-fuse/types';
 packages//core/backup/src_original/metrics/metrics.service.tsx:import { Logger } from '@the-new-fuse/utils';
 packages//core/backup/src_original/metrics/metrics.service.tsx:import { MetricsCollector } from '../monitoring/metrics-collector.service';
-packages//core/backup/src_original/metrics/metrics.service.tsx:import { DatabaseService } from '../drizzle/drizzle.service';
+packages//core/backup/src_original/metrics/metrics.service.tsx:import { PrismaService } from '../prisma/prisma.service';
 packages//core/backup/src_original/metrics/metrics.service.tsx:import { ErrorCategory, ErrorSeverity } from '../monitoring/ErrorTrackingService';
 ---
 File: packages//core/backup/src_original/metrics/MetricsService.tsx
@@ -180,7 +180,7 @@ packages//core/backup/src_original/metrics/MetricsService.tsx:import { SystemMet
 ---
 File: packages//core/backup/src_original/metrics/MetricService.tsx
 packages//core/backup/src_original/metrics/MetricService.tsx:import { Injectable } from '@nestjs/common';
-packages//core/backup/src_original/metrics/MetricService.tsx:import { DatabaseService } from '../drizzle/drizzle.service';
+packages//core/backup/src_original/metrics/MetricService.tsx:import { PrismaService } from '../prisma/prisma.service';
 packages//core/backup/src_original/metrics/MetricService.tsx:import { PerformanceMetrics  } from '@the-new-fuse/types;';
 ---
 File: packages//core/backup/src_original/middleware/rateLimiter.tsx
@@ -236,9 +236,9 @@ packages//core/backup/src_original/database/DatabaseMonitor.tsx:import { Logger 
 packages//core/backup/src_original/database/DatabaseMonitor.tsx:import { DatabaseManager } from './databaseManager';
 packages//core/backup/src_original/database/DatabaseMonitor.tsx:import { EventEmitter2 } from '@nestjs/event-emitter';
 ---
-File: packages//core/backup/src_original/database/drizzle.service.tsx
-packages//core/backup/src_original/database/drizzle.service.tsx:import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-packages//core/backup/src_original/database/drizzle.service.tsx:import { DrizzleClient } from '@the-new-fuse/database';
+File: packages//core/backup/src_original/database/prisma.service.tsx
+packages//core/backup/src_original/database/prisma.service.tsx:import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+packages//core/backup/src_original/database/prisma.service.tsx:import { PrismaClient } from '@the-new-fuse/database';
 ---
 File: packages//core/backup/src_original/database/MigrationValidationService.tsx
 packages//core/backup/src_original/database/MigrationValidationService.tsx:import { Injectable, OnModuleInit } from '@nestjs/common';
@@ -253,7 +253,7 @@ packages//core/backup/src_original/database/database-health.service.tsx:import {
 packages//core/backup/src_original/database/database-health.service.tsx:import { ConfigService } from '@nestjs/config';
 packages//core/backup/src_original/database/database-health.service.tsx:import { EventEmitter2 } from '@nestjs/event-emitter';
 packages//core/backup/src_original/database/database-health.service.tsx:import { CentralizedLoggingService } from '../logging/centralized-logging.service';
-packages//core/backup/src_original/database/database-health.service.tsx:import { DatabaseService } from '../drizzle/drizzle.service';
+packages//core/backup/src_original/database/database-health.service.tsx:import { PrismaService } from '../prisma/prisma.service';
 packages//core/backup/src_original/database/database-health.service.tsx:import { ConnectionPoolManager } from './ConnectionPoolManager';
 ---
 File: packages//core/backup/src_original/database/BaseEntity.tsx
@@ -279,7 +279,7 @@ packages//core/backup/src_original/database/query-performance-monitor.service.ts
 packages//core/backup/src_original/database/query-performance-monitor.service.tsx:import { ConfigService } from '@nestjs/config';
 packages//core/backup/src_original/database/query-performance-monitor.service.tsx:import { EventEmitter2 } from '@nestjs/event-emitter';
 packages//core/backup/src_original/database/query-performance-monitor.service.tsx:import { CentralizedLoggingService } from '../logging/centralized-logging.service';
-packages//core/backup/src_original/database/query-performance-monitor.service.tsx:import { DatabaseService } from '../drizzle/drizzle.service';
+packages//core/backup/src_original/database/query-performance-monitor.service.tsx:import { PrismaService } from '../prisma/prisma.service';
 packages//core/backup/src_original/database/query-performance-monitor.service.tsx:import { PerformanceMonitoringService } from '../monitoring/performance-monitoring.service';
 packages//core/backup/src_original/database/query-performance-monitor.service.tsx:import { CorrelationIdManager } from '../utils/correlation-id';
 ---
@@ -317,7 +317,7 @@ packages//core/backup/src_original/database/database.service.tsx:import { Logger
 ---
 File: packages//core/backup/src_original/database/database_service.tsx
 packages//core/backup/src_original/database/database_service.tsx:import { Injectable } from '@nestjs/common';
-packages//core/backup/src_original/database/database_service.tsx:import { DatabaseService } from '@the-new-fuse/database';
+packages//core/backup/src_original/database/database_service.tsx:import { PrismaService } from '@the-new-fuse/database';
 packages//core/backup/src_original/database/database_service.tsx:import { User  } from '@the-new-fuse/types;';
 ---
 File: packages//core/backup/src_original/database/repositories/SessionRepository.tsx
@@ -434,7 +434,7 @@ packages//core/backup/src_original/database/database-optimizer.service.tsx:impor
 packages//core/backup/src_original/database/database-optimizer.service.tsx:import { ConfigService } from '@nestjs/config';
 packages//core/backup/src_original/database/database-optimizer.service.tsx:import { EventEmitter2 } from '@nestjs/event-emitter';
 packages//core/backup/src_original/database/database-optimizer.service.tsx:import { CentralizedLoggingService } from '../logging/centralized-logging.service';
-packages//core/backup/src_original/database/database-optimizer.service.tsx:import { DatabaseService } from '../drizzle/drizzle.service';
+packages//core/backup/src_original/database/database-optimizer.service.tsx:import { PrismaService } from '../prisma/prisma.service';
 packages//core/backup/src_original/database/database-optimizer.service.tsx:import { PerformanceMonitoringService } from '../monitoring/performance-monitoring.service';
 ---
 File: packages//core/backup/src_original/database/entities/User.tsx
@@ -559,14 +559,14 @@ packages//core/backup/src_original/analysis/ComponentAnalyzer.tsx:import { Event
 ---
 File: packages//core/backup/src_original/analysis/quality/code.quality.analyzer.tsx
 packages//core/backup/src_original/analysis/quality/code.quality.analyzer.tsx:import { Injectable } from '@nestjs/common';
-packages//core/backup/src_original/analysis/quality/code.quality.analyzer.tsx:import { DatabaseService } from '../../database/drizzle.service';
+packages//core/backup/src_original/analysis/quality/code.quality.analyzer.tsx:import { PrismaService } from '../../database/prisma.service';
 packages//core/backup/src_original/analysis/quality/code.quality.analyzer.tsx:import { CodeQualityIssue, ErrorSeverity  } from '@the-new-fuse/types';
 ---
 File: packages//core/backup/src_original/analysis/security/security.scanner.tsx
 packages//core/backup/src_original/analysis/security/security.scanner.tsx:import { Injectable } from '@nestjs/common';
-packages//core/backup/src_original/analysis/security/security.scanner.tsx:import { DatabaseService } from '../../database/drizzle.service';
+packages//core/backup/src_original/analysis/security/security.scanner.tsx:import { PrismaService } from '../../database/prisma.service';
 packages//core/backup/src_original/analysis/security/security.scanner.tsx:import { SecurityVulnerability, SecuritySeverity, SecurityScanResult } from '@the-new-fuse/types';
-packages//core/backup/src_original/analysis/security/security.scanner.tsx:import { Drizzle } from '@the-new-fuse/database';
+packages//core/backup/src_original/analysis/security/security.scanner.tsx:import { Prisma } from '@the-new-fuse/database';
 ---
 File: packages//core/backup/src_original/analysis/DependencyMapper.tsx
 ---
@@ -577,7 +577,7 @@ packages//core/backup/src_original/analysis/AnalysisVisualizer.tsx:import { Anal
 ---
 File: packages//core/backup/src_original/analysis/dependency/dependency.mapper.tsx
 packages//core/backup/src_original/analysis/dependency/dependency.mapper.tsx:import { Injectable } from '@nestjs/common';
-packages//core/backup/src_original/analysis/dependency/dependency.mapper.tsx:import { DatabaseService } from '../../database/drizzle.service';
+packages//core/backup/src_original/analysis/dependency/dependency.mapper.tsx:import { PrismaService } from '../../database/prisma.service';
 packages//core/backup/src_original/analysis/dependency/dependency.mapper.tsx:import { DependencyNode, DependencyEdge, DependencyGraph  } from '@the-new-fuse/types;';
 ---
 File: packages//core/backup/src_original/analysis/AnalysisManager.tsx
@@ -724,7 +724,7 @@ File: packages//core/backup/src_original/memory/memory.service.tsx
 packages//core/backup/src_original/memory/memory.service.tsx:import { Injectable } from '@nestjs/common';
 packages//core/backup/src_original/memory/memory.service.tsx:import { Logger } from '@the-new-fuse/utils';
 packages//core/backup/src_original/memory/memory.service.tsx:import { Memory } from '@the-new-fuse/types';
-packages//core/backup/src_original/memory/memory.service.tsx:import { DrizzleClient } from '@the-new-fuse/database';
+packages//core/backup/src_original/memory/memory.service.tsx:import { PrismaClient } from '@the-new-fuse/database';
 ---
 File: packages//core/backup/src_original/memory/memory.entity.tsx
 packages//core/backup/src_original/memory/memory.entity.tsx:import { MemoryType } from './types';
@@ -852,7 +852,7 @@ packages//core/backup/src_original/security/ip-blocking.service.tsx:import { Inj
 packages//core/backup/src_original/security/ip-blocking.service.tsx:import { ConfigService } from '@nestjs/config';
 packages//core/backup/src_original/security/ip-blocking.service.tsx:import { EventEmitter2 } from '@nestjs/event-emitter';
 packages//core/backup/src_original/security/ip-blocking.service.tsx:import { Logger } from '@the-new-fuse/utils';
-packages//core/backup/src_original/security/ip-blocking.service.tsx:import { DatabaseService } from '../drizzle/drizzle.service';
+packages//core/backup/src_original/security/ip-blocking.service.tsx:import { PrismaService } from '../prisma/prisma.service';
 packages//core/backup/src_original/security/ip-blocking.service.tsx:import { ErrorTrackingService, ErrorCategory, ErrorSeverity } from '../monitoring/ErrorTrackingService';
 ---
 File: packages//core/backup/src_original/security/RateLimiter.tsx
@@ -996,7 +996,7 @@ packages//core/backup/src_original/security/audit-logging.service.tsx:import { I
 packages//core/backup/src_original/security/audit-logging.service.tsx:import { ConfigService } from '@nestjs/config';
 packages//core/backup/src_original/security/audit-logging.service.tsx:import { EventEmitter2 } from '@nestjs/event-emitter';
 packages//core/backup/src_original/security/audit-logging.service.tsx:import { Logger } from '@the-new-fuse/utils';
-packages//core/backup/src_original/security/audit-logging.service.tsx:import { DatabaseService } from '../drizzle/drizzle.service';
+packages//core/backup/src_original/security/audit-logging.service.tsx:import { PrismaService } from '../prisma/prisma.service';
 packages//core/backup/src_original/security/audit-logging.service.tsx:import { CorrelationIdManager } from '../utils/correlation-id';
 packages//core/backup/src_original/security/audit-logging.service.tsx:import { Request } from 'express';
 ---
@@ -1057,7 +1057,7 @@ packages//core/backup/src_original/auth/jwt.module.tsx:import { ConfigService } 
 ---
 File: packages//core/backup/src_original/auth/auth.service.tsx
 packages//core/backup/src_original/auth/auth.service.tsx:import { Injectable } from '@nestjs/common';
-packages//core/backup/src_original/auth/auth.service.tsx:import { DatabaseService } from '../drizzle/drizzle.service';
+packages//core/backup/src_original/auth/auth.service.tsx:import { PrismaService } from '../prisma/prisma.service';
 packages//core/backup/src_original/auth/auth.service.tsx:import * as bcrypt from 'bcrypt';
 packages//core/backup/src_original/auth/auth.service.tsx:import { JwtService } from '@nestjs/jwt';
 packages//core/backup/src_original/auth/auth.service.tsx:import { Logger  } from '@the-new-fuse/utils;';
@@ -1072,14 +1072,14 @@ File: packages//core/backup/src_original/auth/auth-service.tsx
 packages//core/backup/src_original/auth/auth-service.tsx:import { Injectable  } from '@nestjs/common';
 packages//core/backup/src_original/auth/auth-service.tsx:import { JwtService } from '@nestjs/jwt'';
 packages//core/backup/src_original/auth/auth-service.tsx:import { ConfigService } from '@nestjs/config';
-packages//core/backup/src_original/auth/auth-service.tsx:import { DatabaseService } from '../drizzle/drizzle.service';
+packages//core/backup/src_original/auth/auth-service.tsx:import { PrismaService } from '../prisma/prisma.service';
 packages//core/backup/src_original/auth/auth-service.tsx:import { compare, hash } from 'bcrypt';
 packages//core/backup/src_original/auth/auth-service.tsx:import { User } from '@the-new-fuse/database';
 ---
 File: packages//core/backup/src_original/auth/firebase-auth.service.tsx
 packages//core/backup/src_original/auth/firebase-auth.service.tsx:import { Injectable } from '@nestjs/common';
 packages//core/backup/src_original/auth/firebase-auth.service.tsx:import { FirebaseConfig } from '../config/firebase.config';
-packages//core/backup/src_original/auth/firebase-auth.service.tsx:import { DrizzleClient, Session, User } from '@the-new-fuse/database';
+packages//core/backup/src_original/auth/firebase-auth.service.tsx:import { PrismaClient, Session, User } from '@the-new-fuse/database';
 packages//core/backup/src_original/auth/firebase-auth.service.tsx:import { Logger } from '@the-new-fuse/utils';
 packages//core/backup/src_original/auth/firebase-auth.service.tsx:import { auth  } from 'firebase-admin;';
 ---
@@ -1270,9 +1270,9 @@ packages//core/backup/src_original/vectordb/embedding-service.tsx:import { Logge
 ---
 File: packages//core/backup/src_original/vectordb/types.tsx
 ---
-File: packages//core/backup/src_original/drizzle/drizzle.service.tsx
-packages//core/backup/src_original/drizzle/drizzle.service.tsx:import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-packages//core/backup/src_original/drizzle/drizzle.service.tsx:import { DrizzleClient } from '@the-new-fuse/database';
+File: packages//core/backup/src_original/prisma/prisma.service.tsx
+packages//core/backup/src_original/prisma/prisma.service.tsx:import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+packages//core/backup/src_original/prisma/prisma.service.tsx:import { PrismaClient } from '@the-new-fuse/database';
 ---
 File: packages//core/backup/src_original/api-management/provider-registry.tsx
 packages//core/backup/src_original/api-management/provider-registry.tsx:import { EventEmitter } from ''events';
@@ -1410,7 +1410,7 @@ packages//core/backup/src_original/application_factory.tsx:import { StateService
 packages//core/backup/src_original/application_factory.tsx:import { MetricsService } from './metrics/metrics.service';
 packages//core/backup/src_original/application_factory.tsx:import { TaskService } from './task/task.service';
 packages//core/backup/src_original/application_factory.tsx:import { RedisService } from './redis/redis.service';
-packages//core/backup/src_original/application_factory.tsx:import { DatabaseService } from './drizzle/drizzle.service';
+packages//core/backup/src_original/application_factory.tsx:import { PrismaService } from './prisma/prisma.service';
 packages//core/backup/src_original/application_factory.tsx:import Redis from 'ioredis';
 ---
 File: packages//core/backup/src_original/agent/AgentProcessor.tsx
@@ -1694,7 +1694,7 @@ packages//core/backup/src_original/task/TaskQueue.tsx:import { EventEmitter } fr
 ---
 File: packages//core/backup/src_original/task/task.service.tsx
 packages//core/backup/src_original/task/task.service.tsx:import { Injectable } from '@nestjs/common';
-packages//core/backup/src_original/task/task.service.tsx:import { DrizzleClient } from '@the-new-fuse/database';
+packages//core/backup/src_original/task/task.service.tsx:import { PrismaClient } from '@the-new-fuse/database';
 packages//core/backup/src_original/task/task.service.tsx:import { Logger  } from '@the-new-fuse/utils;';
 ---
 File: packages//core/backup/src_original/task/TaskScheduler.tsx
@@ -1790,7 +1790,7 @@ packages//core/backup/src_original/task/__tests__/task-scheduler.service.spec.ts
 ---
 File: packages//core/backup/src_original/task/task.repository.tsx
 packages//core/backup/src_original/task/task.repository.tsx:import { Injectable } from '@nestjs/common';
-packages//core/backup/src_original/task/task.repository.tsx:import { DatabaseService } from '../database/drizzle.service';
+packages//core/backup/src_original/task/task.repository.tsx:import { PrismaService } from '../database/prisma.service';
 packages//core/backup/src_original/task/task.repository.tsx:import { Task, TaskQuery, TaskResult, TaskType } from './types';
 ---
 File: packages//core/backup/src_original/task/subscribers/TaskSubscriber.tsx
@@ -1800,8 +1800,8 @@ packages//core/backup/src_original/task/subscribers/TaskSubscriber.tsx:import { 
 File: packages//core/backup/src_original/task/TaskManager.tsx
 packages//core/backup/src_original/task/TaskManager.tsx:import { Injectable } from '@nestjs/common';
 packages//core/backup/src_original/task/TaskManager.tsx:import { TaskStatus, TaskStatusType, TaskType, TaskPriority, TaskResult, Task, TaskMetadata } from '@the-new-fuse/types';
-packages//core/backup/src_original/task/TaskManager.tsx:import { DrizzleClient } from '@the-new-fuse/database';
-packages//core/backup/src_original/task/TaskManager.tsx:import { DatabaseService } from '@the-new-fuse/database';
+packages//core/backup/src_original/task/TaskManager.tsx:import { PrismaClient } from '@the-new-fuse/database';
+packages//core/backup/src_original/task/TaskManager.tsx:import { PrismaService } from '@the-new-fuse/database';
 packages//core/backup/src_original/task/TaskManager.tsx:import crypto from 'crypto';
 ---
 File: packages//core/backup/src_original/task/types.tsx
@@ -2011,7 +2011,7 @@ packages//core/backup/src_original/communication/websocket-service.tsx:import { 
 ---
 File: packages//core/backup/src_original/communication/MessageRouter.tsx
 packages//core/backup/src_original/communication/MessageRouter.tsx:import { Injectable } from '@nestjs/common';
-packages//core/backup/src_original/communication/MessageRouter.tsx:import { Message, Channel, ChannelType, MessageType, ChannelMetadata, DrizzleChannel } from './types'; // Adjusted import, added DrizzleChannel
+packages//core/backup/src_original/communication/MessageRouter.tsx:import { Message, Channel, ChannelType, MessageType, ChannelMetadata, PrismaChannel } from './types'; // Adjusted import, added PrismaChannel
 packages//core/backup/src_original/communication/MessageRouter.tsx:import { Logger } from '@the-new-fuse/utils';
 packages//core/backup/src_original/communication/MessageRouter.tsx:import { DatabaseService } from '@the-new-fuse/database';
 packages//core/backup/src_original/communication/MessageRouter.tsx:import { EventEmitter } from 'events';
@@ -2110,7 +2110,7 @@ packages//core/backup/src_original/monitoring/unified-monitoring.service.tsx:imp
 packages//core/backup/src_original/monitoring/unified-monitoring.service.tsx:import * as Sentry from '@sentry/node';
 packages//core/backup/src_original/monitoring/unified-monitoring.service.tsx:import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 packages//core/backup/src_original/monitoring/unified-monitoring.service.tsx:import { metrics, logger } from '@the-new-fuse/utils';
-packages//core/backup/src_original/monitoring/unified-monitoring.service.tsx:import { DatabaseService  } from '@the-new-fuse/database;';
+packages//core/backup/src_original/monitoring/unified-monitoring.service.tsx:import { PrismaService  } from '@the-new-fuse/database;';
 ---
 File: packages//core/backup/src_original/monitoring/monitoring.service.tsx
 ---
@@ -2209,7 +2209,7 @@ packages//core/backup/src_original/monitoring/api-usage-tracker.tsx:import { Log
 File: packages//core/backup/src_original/monitoring/alerts/AlertService.tsx
 packages//core/backup/src_original/monitoring/alerts/AlertService.tsx:import { Injectable, OnModuleInit } from '@nestjs/common';
 packages//core/backup/src_original/monitoring/alerts/AlertService.tsx:import { Logger } from '@the-new-fuse/utils';
-packages//core/backup/src_original/monitoring/alerts/AlertService.tsx:import { DatabaseService } from '@the-new-fuse/database';
+packages//core/backup/src_original/monitoring/alerts/AlertService.tsx:import { PrismaService } from '@the-new-fuse/database';
 packages//core/backup/src_original/monitoring/alerts/AlertService.tsx:import { Redis } from 'ioredis';
 packages//core/backup/src_original/monitoring/alerts/AlertService.tsx:import { EventEmitter } from 'events';
 ---
@@ -2254,7 +2254,7 @@ packages//core/backup/src_original/monitoring/performance-monitoring.service.tsx
 packages//core/backup/src_original/monitoring/performance-monitoring.service.tsx:import { ConfigService } from '@nestjs/config';
 packages//core/backup/src_original/monitoring/performance-monitoring.service.tsx:import { EventEmitter2 } from '@nestjs/event-emitter';
 packages//core/backup/src_original/monitoring/performance-monitoring.service.tsx:import { Logger } from '@the-new-fuse/utils';
-packages//core/backup/src_original/monitoring/performance-monitoring.service.tsx:import { DatabaseService } from '../drizzle/drizzle.service';
+packages//core/backup/src_original/monitoring/performance-monitoring.service.tsx:import { PrismaService } from '../prisma/prisma.service';
 packages//core/backup/src_original/monitoring/performance-monitoring.service.tsx:import * as process from 'process';
 packages//core/backup/src_original/monitoring/performance-monitoring.service.tsx:import * as os from 'os';
 packages//core/backup/src_original/monitoring/performance-monitoring.service.tsx:import { CorrelationIdManager } from '../utils/correlation-id';
@@ -2270,7 +2270,7 @@ packages//core/backup/src_original/monitoring/business-metrics.service.tsx:impor
 packages//core/backup/src_original/monitoring/business-metrics.service.tsx:import { EventEmitter2 } from '@nestjs/event-emitter';
 packages//core/backup/src_original/monitoring/business-metrics.service.tsx:import { Logger } from '@the-new-fuse/utils';
 packages//core/backup/src_original/monitoring/business-metrics.service.tsx:import { PerformanceMonitoringService } from './performance-monitoring.service';
-packages//core/backup/src_original/monitoring/business-metrics.service.tsx:import { DatabaseService } from '../drizzle/drizzle.service';
+packages//core/backup/src_original/monitoring/business-metrics.service.tsx:import { PrismaService } from '../prisma/prisma.service';
 ---
 File: packages//core/backup/src_original/monitoring/metrics-collector.service.tsx
 packages//core/backup/src_original/monitoring/metrics-collector.service.tsx:import { Injectable } from '@nestjs/common';
@@ -2325,7 +2325,7 @@ packages//core/backup/src_original/monitoring/error-alert.service.tsx:import { E
 packages//core/backup/src_original/monitoring/error-alert.service.tsx:import { Logger } from '@the-new-fuse/utils';
 packages//core/backup/src_original/monitoring/error-alert.service.tsx:import { ErrorCategory, ErrorSeverity } from './ErrorTrackingService';
 packages//core/backup/src_original/monitoring/error-alert.service.tsx:import { ConfigService } from '@nestjs/config';
-packages//core/backup/src_original/monitoring/error-alert.service.tsx:import { DatabaseService } from '../drizzle/drizzle.service';
+packages//core/backup/src_original/monitoring/error-alert.service.tsx:import { PrismaService } from '../prisma/prisma.service';
 ---
 File: packages//core/backup/src_original/monitoring/trae-observer.tsx
 ---
@@ -2462,7 +2462,7 @@ packages//core/backup/src_original/error/ErrorHandlingService.tsx:import { Metri
 ---
 File: packages//core/backup/src_original/notifications/notification.handler.tsx
 packages//core/backup/src_original/notifications/notification.handler.tsx:import { Injectable, OnModuleInit } from '@nestjs/common';
-packages//core/backup/src_original/notifications/notification.handler.tsx:import { DatabaseService } from '../drizzle/drizzle.service';
+packages//core/backup/src_original/notifications/notification.handler.tsx:import { PrismaService } from '../prisma/prisma.service';
 ---
 File: packages//core/backup/src_original/project_visualizer.tsx
 packages//core/backup/src_original/project_visualizer.tsx:import React, { useEffect, useCallback } from ''react';
@@ -5049,7 +5049,7 @@ packages//communication/src/websocket/WebSocketService.tsx:import { AuthService 
 File: packages//monitoring/src/error-tracking.service.tsx
 packages//monitoring/src/error-tracking.service.tsx:import { Injectable, Logger } from '@nestjs/common';
 packages//monitoring/src/error-tracking.service.tsx:import { ConfigService } from '@nestjs/config';
-packages//monitoring/src/error-tracking.service.tsx:import { DatabaseService } from '../../../src/core/database/(drizzle as any).service';
+packages//monitoring/src/error-tracking.service.tsx:import { PrismaService } from '../../../src/core/database/(prisma as any).service';
 ---
 File: packages//monitoring/src/monitoring.service.tsx
 packages//monitoring/src/monitoring.service.tsx:import { Injectable, Logger } from '@nestjs/common';
@@ -5070,7 +5070,7 @@ packages//monitoring/src/alerts/alert.service.tsx:import { RedisService } from '
 File: packages//monitoring/src/security-logging.service.tsx
 packages//monitoring/src/security-logging.service.tsx:import { Injectable, Logger } from '@nestjs/common';
 packages//monitoring/src/security-logging.service.tsx:import { ConfigService } from '@nestjs/config';
-packages//monitoring/src/security-logging.service.tsx:import { DatabaseService } from '@the-new-fuse/database';
+packages//monitoring/src/security-logging.service.tsx:import { PrismaService } from '@the-new-fuse/database';
 ---
 File: packages//monitoring/src/MonitoringService.tsx
 packages//monitoring/src/MonitoringService.tsx:import { Injectable } from '@nestjs/common';
@@ -5080,7 +5080,7 @@ packages//monitoring/src/MonitoringService.tsx:import { RedisService } from './R
 File: packages//monitoring/src/performance-monitoring.service.tsx
 packages//monitoring/src/performance-monitoring.service.tsx:import { Injectable, Logger } from '@nestjs/common';
 packages//monitoring/src/performance-monitoring.service.tsx:import { ConfigService } from '@nestjs/config';
-packages//monitoring/src/performance-monitoring.service.tsx:import { DatabaseService } from '../../../src/core/database/(drizzle as any).service';
+packages//monitoring/src/performance-monitoring.service.tsx:import { PrismaService } from '../../../src/core/database/(prisma as any).service';
 ---
 File: packages//monitoring/src/dashboards/monitoring-dashboard.service.tsx
 packages//monitoring/src/dashboards/monitoring-dashboard.service.tsx:import { Injectable, Logger } from '@nestjs/common';
@@ -9648,14 +9648,14 @@ apps//frontend/src/store/agentSlice.tsx:import { api } from '../services/api';
 File: apps//api/test/agents.service.spec.tsx
 apps//api/test/agents.service.spec.tsx:import { Test, TestingModule } from '@nestjs/testing';
 apps//api/test/agents.service.spec.tsx:import { AgentsService } from '../src/agents/agents.service';
-apps//api/test/agents.service.spec.tsx:import { DatabaseService } from '../src/drizzle/drizzle.service';
+apps//api/test/agents.service.spec.tsx:import { PrismaService } from '../src/prisma/prisma.service';
 apps//api/test/agents.service.spec.tsx:import { ConfigService } from '@nestjs/config';
 apps//api/test/agents.service.spec.tsx:import { UnifiedMonitoringService } from '@the-new-fuse/core';
 apps//api/test/agents.service.spec.tsx:import { AgentFactory } from '../src/agents/agent.factory';
 apps//api/test/agents.service.spec.tsx:import { CreateAgentDto, UpdateAgentDto } from '../src/agents/dto'; // Assuming UpdateAgentDto exists
-apps//api/test/agents.service.spec.tsx:import { AgentType } from '@the-new-fuse/database'; // Removed DrizzleAgent alias
+apps//api/test/agents.service.spec.tsx:import { AgentType } from '@the-new-fuse/database'; // Removed PrismaAgent alias
 apps//api/test/agents.service.spec.tsx:import { jest, describe, beforeEach, it, expect } from '@jest/globals';
-apps//api/test/agents.service.spec.tsx:import type { Agent } from '@drizzle/client'; // Import Agent type from drizzle client, removed DrizzleClient
+apps//api/test/agents.service.spec.tsx:import type { Agent } from '@prisma/client'; // Import Agent type from prisma client, removed PrismaClient
 ---
 File: apps//api/test/websocket.gateway.spec.tsx
 apps//api/test/websocket.gateway.spec.tsx:import { Test, TestingModule } from '@nestjs/testing';

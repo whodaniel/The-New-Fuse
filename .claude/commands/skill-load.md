@@ -1,13 +1,11 @@
 ---
 description: "Load and initialize Claude skills from Anthropic's repository"
-category: 'claude-skills'
+category: "claude-skills"
 ---
 
-Load specific Claude skills or all available skills from Anthropic's official
-skills repository.
+Load specific Claude skills or all available skills from Anthropic's official skills repository.
 
 **Usage**:
-
 ```
 /skill-load all                    # Load all available skills
 /skill-load pdf xlsx pptx         # Load specific skills
@@ -18,7 +16,6 @@ skills repository.
 **Parameters**: $ARGUMENTS (skill names, "all", or filters)
 
 **Priority Skills** (automatically loaded):
-
 - mcp-builder
 - pdf
 - xlsx
@@ -26,7 +23,6 @@ skills repository.
 - skill-creator
 
 **What happens**:
-
 1. Clones/updates Anthropic's skills repository
 2. Parses skill definitions from SKILL.md files
 3. Registers skills with The New Fuse resource registry
@@ -34,7 +30,6 @@ skills repository.
 5. Creates tool endpoints for skill execution
 
 **After loading**, skills are available as:
-
 - MCP resources (`skill://skill-name`)
 - MCP tools (`skill_skill_name`)
 - Slash commands (`/skill-<name>`)

@@ -15,10 +15,7 @@ export interface WorkflowContext {
 }
 
 export class ConditionNode {
-  async execute(
-    config: ConditionConfig,
-    context: WorkflowContext,
-  ): Promise<{ nextStep?: string; result: boolean }> {
+  async execute(config: ConditionConfig, context: WorkflowContext): Promise<{ nextStep?: string; result: boolean }> {
     if (!config.condition) {
       throw new Error('Condition is required');
     }
@@ -29,12 +26,10 @@ export class ConditionNode {
       const nextStep = result ? config.trueBranch : config.falseBranch;
       return {
         nextStep,
-        result,
+        result
       };
     } catch (error) {
-      throw new Error(
-        `Condition evaluation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      );
+      throw new Error(`Condition evaluation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 

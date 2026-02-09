@@ -1,3 +1,4 @@
+
 /**
  * MCP Transport for The New Fuse Relay System
  *
@@ -5,11 +6,11 @@
  * Handles communication with Model Context Protocol (MCP) clients.
  */
 
+import { EventEmitter } from 'events';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { EventEmitter } from 'events';
-import { RelayMessage, Transport } from '../types/index.js';
+import { Transport, RelayMessage } from '../types/index.js';
 import { Logger } from '../utils/Logger.js';
 
 export interface MCPTransportConfig {
@@ -61,9 +62,7 @@ export class MCPTransport extends EventEmitter implements Transport {
 
       return true;
     } catch (error) {
-      this.logger.error(
-        `Failed to start MCP server: ${error instanceof Error ? error.message : String(error)}`
-      );
+      this.logger.error(`Failed to start MCP server: ${error instanceof Error ? error.message : String(error)}`);
       return false;
     }
   }
@@ -107,7 +106,7 @@ export class MCPTransport extends EventEmitter implements Transport {
         timestamp: new Date().toISOString(),
       };
 
-      this.messageHandlers.forEach((handler) => handler(message));
+      this.messageHandlers.forEach(handler => handler(message));
 
       return { content: [{ type: 'text', text: 'Tool call received' }] };
     });

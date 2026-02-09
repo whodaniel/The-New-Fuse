@@ -1,15 +1,6 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { Pipeline } from './Pipeline';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { User } from './User';
+import { Pipeline } from './Pipeline';
 
 @Entity()
 export class Agent {
@@ -25,13 +16,13 @@ export class Agent {
   @Column({ type: 'jsonb', nullable: true })
   config!: Record<string, any>;
 
-  @ManyToOne(() => User, (user) => user.agents)
+  @ManyToOne(() => User, user => user.agents)
   user!: User;
 
   @Column()
   userId!: string;
 
-  @OneToMany(() => Pipeline, (pipeline) => pipeline.agent)
+  @OneToMany(() => Pipeline, pipeline => pipeline.agent)
   pipelines!: Pipeline[];
 
   @CreateDateColumn()

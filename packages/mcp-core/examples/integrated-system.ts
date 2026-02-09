@@ -1,11 +1,11 @@
 /**
  * Integrated MCP System Example
- *
+ * 
  * This example demonstrates how to use the MCPSystemFactory to create
  * a fully integrated MCP system with all components working together.
  */
 
-import { MCPSystemConfig, MCPSystemFactory } from '../src/factory/MCPSystemFactory';
+import { MCPSystemFactory, MCPSystemConfig } from '../src/factory/MCPSystemFactory';
 import { LogLevel } from '../src/types/common';
 
 async function createIntegratedMCPSystem() {
@@ -22,22 +22,22 @@ async function createIntegratedMCPSystem() {
       timeout: 30000,
       enableAuth: false,
       enableTLS: false,
-      logLevel: LogLevel.INFO,
+      logLevel: LogLevel.INFO
     },
     relay: {
-      enabled: true,
+      enabled: true
     },
     workflow: {
-      enabled: true,
+      enabled: true
     },
     ide: {
-      enabled: false, // Disable for this example
+      enabled: false // Disable for this example
     },
     development: {
       hotReload: true,
       debugMode: true,
-      mockServices: false,
-    },
+      mockServices: false
+    }
   };
 
   // Create the integrated system
@@ -61,11 +61,11 @@ async function createIntegratedMCPSystem() {
             content: `Hello from integrated MCP system! Time: ${new Date().toISOString()}`,
             metadata: {
               generated: new Date(),
-              systemInfo: 'Integrated MCP System Example',
-            },
+              systemInfo: 'Integrated MCP System Example'
+            }
           };
-        },
-      },
+        }
+      }
     });
 
     await mcpSystem.registerResource({
@@ -78,7 +78,7 @@ async function createIntegratedMCPSystem() {
             message: 'This is sample data from the integrated MCP system',
             timestamp: new Date().toISOString(),
             systemStatus: 'operational',
-            features: ['resources', 'tools', 'workflows', 'monitoring'],
+            features: ['resources', 'tools', 'workflows', 'monitoring']
           };
 
           return {
@@ -87,11 +87,11 @@ async function createIntegratedMCPSystem() {
             content: JSON.stringify(sampleData, null, 2),
             metadata: {
               generated: new Date(),
-              dataType: 'sample',
-            },
+              dataType: 'sample'
+            }
           };
-        },
-      },
+        }
+      }
     });
 
     // Register some example tools
@@ -101,25 +101,25 @@ async function createIntegratedMCPSystem() {
       inputSchema: {
         type: 'object',
         properties: {
-          message: { type: 'string' },
+          message: { type: 'string' }
         },
-        required: ['message'],
+        required: ['message']
       },
       handler: {
         async execute(params: { message: string }) {
           const systemHealth = await mcpSystem.getHealth();
-
+          
           return {
             success: true,
             result: {
               echo: params.message,
               timestamp: new Date().toISOString(),
               systemHealth: systemHealth.status,
-              uptime: systemHealth.uptime,
-            },
+              uptime: systemHealth.uptime
+            }
           };
-        },
-      },
+        }
+      }
     });
 
     await mcpSystem.registerTool({
@@ -130,14 +130,14 @@ async function createIntegratedMCPSystem() {
         properties: {
           operation: { type: 'string', enum: ['add', 'subtract', 'multiply', 'divide'] },
           a: { type: 'number' },
-          b: { type: 'number' },
+          b: { type: 'number' }
         },
-        required: ['operation', 'a', 'b'],
+        required: ['operation', 'a', 'b']
       },
       handler: {
         async execute(params: { operation: string; a: number; b: number }) {
           let result: number;
-
+          
           switch (params.operation) {
             case 'add':
               result = params.a + params.b;
@@ -152,7 +152,7 @@ async function createIntegratedMCPSystem() {
               if (params.b === 0) {
                 return {
                   success: false,
-                  error: 'Division by zero is not allowed',
+                  error: 'Division by zero is not allowed'
                 };
               }
               result = params.a / params.b;
@@ -160,7 +160,7 @@ async function createIntegratedMCPSystem() {
             default:
               return {
                 success: false,
-                error: `Unknown operation: ${params.operation}`,
+                error: `Unknown operation: ${params.operation}`
               };
           }
 
@@ -170,11 +170,11 @@ async function createIntegratedMCPSystem() {
               operation: params.operation,
               operands: [params.a, params.b],
               result,
-              timestamp: new Date().toISOString(),
-            },
+              timestamp: new Date().toISOString()
+            }
           };
-        },
-      },
+        }
+      }
     });
 
     console.log('✅ Resources and tools registered');
@@ -182,12 +182,12 @@ async function createIntegratedMCPSystem() {
     // Display system information
     const health = await mcpSystem.getHealth();
     const metrics = await mcpSystem.getMetrics();
-
+    
     console.log('\n📊 System Status:');
     console.log(`  Status: ${health.status}`);
     console.log(`  Uptime: ${health.uptime}ms`);
     console.log(`  Components: ${Object.keys(health.components).join(', ')}`);
-
+    
     console.log('\n📈 System Metrics:');
     console.log(`  Resources: ${metrics.resources.registered} registered`);
     console.log(`  Tools: ${metrics.tools.registered} registered`);
@@ -200,7 +200,7 @@ async function createIntegratedMCPSystem() {
     const pingResponse = await mcpSystem.server.handleRequest({
       jsonrpc: '2.0',
       id: 1,
-      method: 'server/ping',
+      method: 'server/ping'
     });
     console.log('🏓 Ping response:', pingResponse.result);
 
@@ -209,7 +209,7 @@ async function createIntegratedMCPSystem() {
       jsonrpc: '2.0',
       id: 2,
       method: 'resources/read',
-      params: { uri: 'example://greeting' },
+      params: { uri: 'example://greeting' }
     });
     console.log('📖 Resource content:', resourceResponse.result?.content);
 
@@ -218,10 +218,10 @@ async function createIntegratedMCPSystem() {
       jsonrpc: '2.0',
       id: 3,
       method: 'tools/call',
-      params: {
-        name: 'echo',
-        arguments: { message: 'Hello from integrated system!' },
-      },
+      params: { 
+        name: 'echo', 
+        arguments: { message: 'Hello from integrated system!' } 
+      }
     });
     console.log('🔧 Tool result:', toolResponse.result);
 
@@ -230,10 +230,10 @@ async function createIntegratedMCPSystem() {
       jsonrpc: '2.0',
       id: 4,
       method: 'tools/call',
-      params: {
-        name: 'calculate',
-        arguments: { operation: 'multiply', a: 7, b: 6 },
-      },
+      params: { 
+        name: 'calculate', 
+        arguments: { operation: 'multiply', a: 7, b: 6 } 
+      }
     });
     console.log('🧮 Calculation result:', calcResponse.result);
 
@@ -242,10 +242,10 @@ async function createIntegratedMCPSystem() {
       jsonrpc: '2.0',
       id: 5,
       method: 'tools/call',
-      params: {
-        name: 'system-health',
-        arguments: { detailed: true },
-      },
+      params: { 
+        name: 'system-health', 
+        arguments: { detailed: true } 
+      }
     });
     console.log('🏥 System health check:', healthResponse.result?.result?.health?.status);
 
@@ -263,6 +263,7 @@ async function createIntegratedMCPSystem() {
       console.log('🛑 System stopped');
       process.exit(0);
     }, 10000);
+
   } catch (error) {
     console.error('❌ Error:', error);
     if (mcpSystem.server.isRunning()) {
@@ -288,8 +289,8 @@ async function demonstrateSystemVariants() {
       timeout: 30000,
       enableAuth: true,
       enableTLS: true,
-      logLevel: LogLevel.WARN,
-    },
+      logLevel: LogLevel.WARN
+    }
   });
   console.log('   ✅ Production system created (not started)');
 
@@ -310,29 +311,29 @@ async function demonstrateSystemVariants() {
       timeout: 60000,
       enableAuth: false,
       enableTLS: false,
-      logLevel: LogLevel.DEBUG,
+      logLevel: LogLevel.DEBUG
     },
     relay: {
-      enabled: true,
+      enabled: true
     },
     workflow: {
-      enabled: true,
+      enabled: true
     },
     ide: {
       enabled: true,
       port: 3006,
-      aiFeatures: true,
+      aiFeatures: true
     },
     monitoring: {
       enabled: true,
       metricsPort: 9090,
-      prometheusEnabled: true,
+      prometheusEnabled: true
     },
     development: {
       hotReload: false,
       debugMode: true,
-      mockServices: false,
-    },
+      mockServices: false
+    }
   });
   console.log('   ✅ Custom system created (not started)');
 

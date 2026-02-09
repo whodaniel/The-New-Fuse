@@ -1,11 +1,11 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { Schema } from 'joi';
 
 // Create simple validation error
 class ValidationError extends Error {
   statusCode: number;
   details: any[];
-
+  
   constructor(message: string, details: any[]) {
     super(message);
     this.statusCode = 400;
@@ -17,15 +17,14 @@ export const validateRequest = (schema: Schema): any => {
   return (req: Request, _res: Response, next: NextFunction) => {
     const { error } = schema.validate(req.body, {
       abortEarly: false,
-      stripUnknown: true,
+      stripUnknown: true
     });
 
     if (error) {
-      throw new ValidationError(
-        'Validation error',
-        error.details.map((err) => ({
+      throw new ValidationError('Validation error', 
+        error.details.map(err => ({
           field: err.path.join('.'),
-          message: err.message,
+          message: err.message
         }))
       );
     }

@@ -1,3 +1,5 @@
+
+
 /**
  * Logger for The New Fuse Relay System
  */
@@ -68,3 +70,4 @@ export class Logger {
     }
   }
 }
+

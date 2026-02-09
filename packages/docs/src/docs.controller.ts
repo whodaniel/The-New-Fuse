@@ -2,32 +2,32 @@
 // Provides endpoints for generating, viewing, and managing API documentation
 
 import {
-  Body,
   Controller,
   Get,
-  Header,
-  Param,
   Post,
   Put,
   Query,
+  Param,
+  Body,
   Res,
   UseGuards,
   UseInterceptors,
+  Header,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
-  ApiExcludeEndpoint,
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
   ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiQuery,
+  ApiParam,
+  ApiExcludeEndpoint,
 } from '@nestjs/swagger';
-import { User } from '@db/client';
 import { Response } from 'express';
-import { PerformanceInterceptor } from '../interceptors/performance.interceptor';
 import { JwtAuthGuard } from '../modules/auth/guards/jwt-auth.guard';
+import { PerformanceInterceptor } from '../interceptors/performance.interceptor';
 import { CurrentUser } from '../modules/decorators/current-user.decorator';
+import { User } from '@prisma/client';
 import {
   ApiDocGeneratorService,
   ApiDocumentation,
@@ -49,7 +49,7 @@ export class DocsController {
       const documentation = await this.docGeneratorService.generateDocumentation({
         format: ['openapi'],
       });
-
+      
       const openApiSpec = this.convertToOpenAPI(documentation);
       res.json(openApiSpec);
     } catch (error) {
@@ -137,7 +137,7 @@ export class DocsController {
         format: [],
         generatePostmanCollection: true,
       });
-
+      
       // In real implementation, would read the generated Postman collection file
       const collection = {
         info: {
@@ -147,7 +147,7 @@ export class DocsController {
         },
         item: [],
       };
-
+      
       res.json(collection);
     } catch (error) {
       res.status(500).json({ error: 'Failed to generate Postman collection' });
@@ -160,8 +160,7 @@ export class DocsController {
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get complete API documentation',
-    description:
-      'Returns the complete auto-generated API documentation with all schemas, endpoints, and examples',
+    description: 'Returns the complete auto-generated API documentation with all schemas, endpoints, and examples',
   })
   @ApiQuery({
     name: 'format',
@@ -175,14 +174,14 @@ export class DocsController {
   })
   async getDocumentation(
     @Query('format') format: 'json' | 'openapi' = 'json',
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<ApiDocumentation | any> {
     const documentation = await this.docGeneratorService.generateDocumentation();
-
+    
     if (format === 'openapi') {
       return this.convertToOpenAPI(documentation);
     }
-
+    
     return documentation;
   }
 
@@ -199,7 +198,7 @@ export class DocsController {
   })
   async generateDocumentation(
     @Body() options: Partial<DocGenerationOptions>,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<{
     success: boolean;
     message: string;
@@ -207,14 +206,14 @@ export class DocsController {
     generatedFiles: string[];
   }> {
     const documentation = await this.docGeneratorService.generateDocumentation(options);
-
+    
     const generatedFiles = [];
     if (options.format?.includes('openapi')) generatedFiles.push('openapi.json');
     if (options.format?.includes('markdown')) generatedFiles.push('README.md');
     if (options.format?.includes('html')) generatedFiles.push('index.html');
     if (options.generatePostmanCollection) generatedFiles.push('postman-collection.json');
     if (options.generateSDK) generatedFiles.push('sdk/typescript/index.ts');
-
+    
     return {
       success: true,
       message: 'Documentation generated successfully',
@@ -234,13 +233,15 @@ export class DocsController {
     status: 200,
     description: 'Documentation regenerated successfully',
   })
-  async regenerateDocumentation(@CurrentUser() user: User): Promise<{
+  async regenerateDocumentation(
+    @CurrentUser() user: User,
+  ): Promise<{
     success: boolean;
     message: string;
     documentation: ApiDocumentation;
   }> {
     const documentation = await this.docGeneratorService.regenerateDocumentation();
-
+    
     return {
       success: true,
       message: 'Documentation regenerated successfully',
@@ -259,7 +260,9 @@ export class DocsController {
     status: 200,
     description: 'Documentation status retrieved successfully',
   })
-  async getDocumentationStatus(@CurrentUser() user: User): Promise<{
+  async getDocumentationStatus(
+    @CurrentUser() user: User,
+  ): Promise<{
     cached: boolean;
     lastGenerated?: string;
     controllersCount: number;
@@ -268,7 +271,7 @@ export class DocsController {
     cacheStatus: string;
   }> {
     const status = await this.docGeneratorService.getDocumentationStatus();
-
+    
     return {
       ...status,
       availableFormats: ['openapi', 'markdown', 'html', 'json'],
@@ -307,7 +310,7 @@ export class DocsController {
     @Query('controller') controller?: string,
     @Query('method') method?: string,
     @Query('tag') tag?: string,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<{
     endpoints: any[];
     totalCount: number;
@@ -319,24 +322,20 @@ export class DocsController {
   }> {
     const documentation = await this.docGeneratorService.generateDocumentation();
     let endpoints = documentation.endpoints;
-
+    
     // Apply filters
     if (controller) {
-      endpoints = endpoints.filter((ep) =>
-        ep.controller.toLowerCase().includes(controller.toLowerCase())
-      );
+      endpoints = endpoints.filter(ep => ep.controller.toLowerCase().includes(controller.toLowerCase()));
     }
-
+    
     if (method) {
-      endpoints = endpoints.filter((ep) => ep.method === method.toUpperCase());
+      endpoints = endpoints.filter(ep => ep.method === method.toUpperCase());
     }
-
+    
     if (tag) {
-      endpoints = endpoints.filter((ep) =>
-        ep.tags.some((t) => t.toLowerCase().includes(tag.toLowerCase()))
-      );
+      endpoints = endpoints.filter(ep => ep.tags.some(t => t.toLowerCase().includes(tag.toLowerCase())));
     }
-
+    
     return {
       endpoints,
       totalCount: endpoints.length,
@@ -362,7 +361,7 @@ export class DocsController {
   })
   async getSchemas(
     @Query('search') search?: string,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<{
     schemas: any[];
     totalCount: number;
@@ -370,16 +369,15 @@ export class DocsController {
   }> {
     const documentation = await this.docGeneratorService.generateDocumentation();
     let schemas = documentation.schemas;
-
+    
     if (search) {
       const searchLower = search.toLowerCase();
-      schemas = schemas.filter(
-        (schema) =>
-          schema.name.toLowerCase().includes(searchLower) ||
-          schema.description.toLowerCase().includes(searchLower)
+      schemas = schemas.filter(schema => 
+        schema.name.toLowerCase().includes(searchLower) ||
+        schema.description.toLowerCase().includes(searchLower)
       );
     }
-
+    
     return {
       schemas,
       totalCount: schemas.length,
@@ -412,7 +410,7 @@ export class DocsController {
   async getExamples(
     @Query('category') category?: 'request' | 'response' | 'workflow' | 'integration',
     @Query('tag') tag?: string,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<{
     examples: any[];
     totalCount: number;
@@ -424,17 +422,17 @@ export class DocsController {
   }> {
     const documentation = await this.docGeneratorService.generateDocumentation();
     let examples = documentation.examples;
-
+    
     if (category) {
-      examples = examples.filter((ex) => ex.category === category);
+      examples = examples.filter(ex => ex.category === category);
     }
-
+    
     if (tag) {
-      examples = examples.filter((ex) => ex.tags.includes(tag));
+      examples = examples.filter(ex => ex.tags.includes(tag));
     }
-
-    const categories = [...new Set(documentation.examples.map((ex) => ex.category))];
-
+    
+    const categories = [...new Set(documentation.examples.map(ex => ex.category))];
+    
     return {
       examples,
       totalCount: examples.length,
@@ -461,7 +459,7 @@ export class DocsController {
   })
   async getChangelog(
     @Query('version') version?: string,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<{
     changelog: any[];
     totalVersions: number;
@@ -470,15 +468,14 @@ export class DocsController {
   }> {
     const documentation = await this.docGeneratorService.generateDocumentation();
     let changelog = documentation.changelog;
-
+    
     if (version) {
-      changelog = changelog.filter((entry) => entry.version === version);
+      changelog = changelog.filter(entry => entry.version === version);
     }
-
-    const breakingChanges = documentation.changelog.flatMap((entry) =>
-      entry.changes.filter((change) => change.breakingChange)
-    );
-
+    
+    const breakingChanges = documentation.changelog
+      .flatMap(entry => entry.changes.filter(change => change.breakingChange));
+    
     return {
       changelog,
       totalVersions: documentation.changelog.length,
@@ -506,18 +503,18 @@ export class DocsController {
   async exportDocumentation(
     @Param('format') format: 'openapi' | 'markdown' | 'html' | 'json' | 'postman',
     @Res() res: Response,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<void> {
     try {
       const documentation = await this.docGeneratorService.generateDocumentation({
         format: [format as any],
         generatePostmanCollection: format === 'postman',
       });
-
+      
       let content: string;
       let contentType: string;
       let filename: string;
-
+      
       switch (format) {
         case 'openapi':
           content = JSON.stringify(this.convertToOpenAPI(documentation), null, 2);
@@ -548,10 +545,11 @@ export class DocsController {
           res.status(400).json({ error: 'Unsupported format' });
           return;
       }
-
+      
       res.setHeader('Content-Type', contentType);
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(content);
+      
     } catch (error) {
       res.status(500).json({ error: `Failed to export documentation as ${format}` });
     }
@@ -576,25 +574,26 @@ export class DocsController {
   async downloadSDK(
     @Param('language') language: 'typescript' | 'javascript' | 'python' | 'java',
     @Res() res: Response,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<void> {
     try {
       await this.docGeneratorService.generateDocumentation({
         format: [],
         generateSDK: true,
       });
-
+      
       // For now, only TypeScript is implemented
       if (language !== 'typescript') {
         res.status(400).json({ error: `SDK for ${language} not yet available` });
         return;
       }
-
+      
       const sdkContent = this.generateTypeScriptSDK();
-
+      
       res.setHeader('Content-Type', 'application/typescript');
       res.setHeader('Content-Disposition', `attachment; filename="api-sdk.ts"`);
       res.send(sdkContent);
+      
     } catch (error) {
       res.status(500).json({ error: `Failed to generate ${language} SDK` });
     }
@@ -624,29 +623,21 @@ ${documentation.info.description}
 
 ## Endpoints
 
-${documentation.endpoints
-  .map(
-    (endpoint) =>
-      `### ${endpoint.method} ${endpoint.path}
+${documentation.endpoints.map(endpoint => 
+  `### ${endpoint.method} ${endpoint.path}
 
 ${endpoint.description}
 
 **Tags:** ${endpoint.tags.join(', ')}
-`
-  )
-  .join('\n')}
+`).join('\n')}
 
 ## Schemas
 
-${documentation.schemas
-  .map(
-    (schema) =>
-      `### ${schema.name}
+${documentation.schemas.map(schema => 
+  `### ${schema.name}
 
 ${schema.description}
-`
-  )
-  .join('\n')}
+`).join('\n')}
 `;
   }
 
@@ -669,16 +660,13 @@ ${schema.description}
   <p><strong>Version:</strong> ${documentation.info.version}</p>
   
   <h2>Endpoints</h2>
-  ${documentation.endpoints
-    .map(
-      (endpoint) =>
-        `<div class="endpoint">
+  ${documentation.endpoints.map(endpoint => 
+    `<div class="endpoint">
       <h3><span class="method">${endpoint.method}</span> <span class="path">${endpoint.path}</span></h3>
       <p>${endpoint.description}</p>
       <p><strong>Tags:</strong> ${endpoint.tags.join(', ')}</p>
     </div>`
-    )
-    .join('')}
+  ).join('')}
 </body>
 </html>`;
   }
@@ -691,7 +679,7 @@ ${schema.description}
         version: documentation.info.version,
         schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json',
       },
-      item: documentation.endpoints.map((endpoint) => ({
+      item: documentation.endpoints.map(endpoint => ({
         name: `${endpoint.method} ${endpoint.path}`,
         request: {
           method: endpoint.method,
@@ -823,12 +811,12 @@ export class ApiClient {
 
   private buildOpenAPIPaths(endpoints: any[]): any {
     const paths: any = {};
-
-    endpoints.forEach((endpoint) => {
+    
+    endpoints.forEach(endpoint => {
       if (!paths[endpoint.path]) {
         paths[endpoint.path] = {};
       }
-
+      
       paths[endpoint.path][endpoint.method.toLowerCase()] = {
         operationId: endpoint.operationId,
         summary: endpoint.summary,
@@ -841,14 +829,14 @@ export class ApiClient {
         deprecated: endpoint.deprecated,
       };
     });
-
+    
     return paths;
   }
 
   private buildOpenAPISchemas(schemas: any[]): any {
     const openApiSchemas: any = {};
-
-    schemas.forEach((schema) => {
+    
+    schemas.forEach(schema => {
       openApiSchemas[schema.name] = {
         type: schema.type,
         description: schema.description,
@@ -857,21 +845,21 @@ export class ApiClient {
         example: schema.examples[0],
       };
     });
-
+    
     return openApiSchemas;
   }
 
   private buildOpenAPIResponses(responses: any[]): any {
     const openApiResponses: any = {};
-
-    responses.forEach((response) => {
+    
+    responses.forEach(response => {
       openApiResponses[response.statusCode] = {
         description: response.description,
         content: response.content,
         headers: response.headers,
       };
     });
-
+    
     return openApiResponses;
   }
 }

@@ -1,12 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+const vi = jest;
 import * as fs from 'fs/promises';
-import * as os from 'os';
 import * as path from 'path';
+import * as os from 'os';
+import { EnhancedFileSystemWatcher, WatcherConfig } from './EnhancedFileSystemWatcher';
 import { SyncRedisConfig } from '../config/SyncRedisConfig';
 import { SyncDatabaseService } from '../database/SyncDatabaseService';
 import { FileChangeEvent } from '../types';
-import { EnhancedFileSystemWatcher, WatcherConfig } from './EnhancedFileSystemWatcher';
-const vi = jest;
 
 // Mock dependencies
 jest.mock('fs/promises');
@@ -44,7 +44,7 @@ describe('EnhancedFileSystemWatcher', () => {
   afterEach(async () => {
     // Clean up
     await watcher.stopAllWatchers();
-
+    
     // Remove temp directory
     try {
       await fs.rm(tempDir, { recursive: true, force: true });
@@ -61,14 +61,14 @@ describe('EnhancedFileSystemWatcher', () => {
       };
 
       await expect(watcher.initialize(config)).resolves.not.toThrow();
-
+      
       const status = watcher.getWatcherStatus();
       expect(status.initialized).toBe(true);
     });
 
     it('should reject invalid tenant ID', async () => {
       jest.mocked(redisConfig.validateTenantId).mockReturnValue(false);
-
+      
       const config: WatcherConfig = {
         paths: [tempDir],
         tenantId: 'invalid@tenant',
@@ -103,20 +103,18 @@ describe('EnhancedFileSystemWatcher', () => {
       const patterns = [path.join(tempDir, '**/*')];
 
       await expect(watcher.watchTenantFiles(tenantId, patterns)).resolves.not.toThrow();
-
+      
       const status = watcher.getWatcherStatus();
       expect(status.activeWatchers).toBeGreaterThan(0);
     });
 
     it('should reject invalid tenant ID for watching', async () => {
       jest.mocked(redisConfig.validateTenantId).mockReturnValue(false);
-
+      
       const tenantId = 'invalid@tenant';
       const patterns = [path.join(tempDir, '**/*')];
 
-      await expect(watcher.watchTenantFiles(tenantId, patterns)).rejects.toThrow(
-        'Invalid tenant ID format'
-      );
+      await expect(watcher.watchTenantFiles(tenantId, patterns)).rejects.toThrow('Invalid tenant ID format');
     });
 
     it('should not create duplicate tenant watchers', async () => {
@@ -143,7 +141,7 @@ describe('EnhancedFileSystemWatcher', () => {
       const patterns = [path.join(tempDir, '**/*')];
 
       await expect(watcher.watchGlobalFiles(patterns)).resolves.not.toThrow();
-
+      
       const status = watcher.getWatcherStatus();
       expect(status.activeWatchers).toBeGreaterThan(0);
     });
@@ -171,7 +169,7 @@ describe('EnhancedFileSystemWatcher', () => {
 
     it('should detect file creation', (done) => {
       const patterns = [path.join(tempDir, '**/*')];
-
+      
       watcher.watchGlobalFiles(patterns).then(() => {
         watcher.once('fileChange', (event: FileChangeEvent) => {
           expect(event.type).toBe('create');
@@ -190,15 +188,15 @@ describe('EnhancedFileSystemWatcher', () => {
 
     it('should detect file modification', (done) => {
       const patterns = [path.join(tempDir, '**/*')];
-
+      
       // First create the file
       fs.writeFile(testFile, 'initial content').then(() => {
         watcher.watchGlobalFiles(patterns).then(() => {
           let changeCount = 0;
-
+          
           watcher.on('fileChange', (event: FileChangeEvent) => {
             changeCount++;
-
+            
             if (changeCount === 1) {
               // First event should be 'create' from initial file
               expect(event.type).toBe('create');
@@ -220,17 +218,16 @@ describe('EnhancedFileSystemWatcher', () => {
 
     it('should detect file deletion', (done) => {
       const patterns = [path.join(tempDir, '**/*')];
-
+      
       // First create the file
       fs.writeFile(testFile, 'content to delete').then(() => {
         watcher.watchGlobalFiles(patterns).then(() => {
           let changeCount = 0;
-
+          
           watcher.on('fileChange', (event: FileChangeEvent) => {
             changeCount++;
-
-            if (changeCount === 2) {
-              // Skip the initial 'create' event
+            
+            if (changeCount === 2) { // Skip the initial 'create' event
               expect(event.type).toBe('delete');
               expect(event.filePath).toBe(testFile);
               expect(event.checksum).toBe('');
@@ -254,7 +251,7 @@ describe('EnhancedFileSystemWatcher', () => {
         enableConflictDetection: true,
       };
       await watcher.initialize(config);
-
+      
       // Create test file
       await fs.writeFile(testFile, 'initial content');
     });
@@ -274,7 +271,7 @@ describe('EnhancedFileSystemWatcher', () => {
       });
 
       const conflicts = await watcher.detectConflicts(testFile);
-
+      
       expect(conflicts).toHaveLength(1);
       expect(conflicts[0].conflictType).toBe('checksum');
       expect(conflicts[0].filePath).toBe(testFile);
@@ -284,7 +281,7 @@ describe('EnhancedFileSystemWatcher', () => {
       jest.mocked(dbService.getSyncState).mockRejectedValue(new Error('Database error'));
 
       const conflicts = await watcher.detectConflicts(testFile);
-
+      
       expect(conflicts).toHaveLength(0);
     });
   });
@@ -295,14 +292,14 @@ describe('EnhancedFileSystemWatcher', () => {
         paths: [tempDir],
       };
       await watcher.initialize(config);
-
+      
       // Create test file
       await fs.writeFile(testFile, 'test content for checksum');
     });
 
     it('should calculate file checksum', async () => {
       const checksum = await watcher.refreshFileChecksum(testFile);
-
+      
       expect(checksum).toBeDefined();
       expect(typeof checksum).toBe('string');
       expect(checksum.length).toBe(64); // SHA-256 hex length
@@ -310,7 +307,7 @@ describe('EnhancedFileSystemWatcher', () => {
 
     it('should cache file checksums', async () => {
       await watcher.refreshFileChecksum(testFile);
-
+      
       const cachedChecksum = watcher.getFileChecksum(testFile);
       expect(cachedChecksum).toBeDefined();
     });
@@ -318,7 +315,7 @@ describe('EnhancedFileSystemWatcher', () => {
     it('should return consistent checksums for same content', async () => {
       const checksum1 = await watcher.refreshFileChecksum(testFile);
       const checksum2 = await watcher.refreshFileChecksum(testFile);
-
+      
       expect(checksum1).toBe(checksum2);
     });
   });
@@ -334,12 +331,12 @@ describe('EnhancedFileSystemWatcher', () => {
     it('should stop specific watcher', async () => {
       const patterns = [path.join(tempDir, '**/*')];
       await watcher.watchGlobalFiles(patterns);
-
+      
       let status = watcher.getWatcherStatus();
       expect(status.activeWatchers).toBe(1);
-
+      
       await watcher.stopWatcher('global');
-
+      
       status = watcher.getWatcherStatus();
       expect(status.activeWatchers).toBe(0);
     });
@@ -348,12 +345,12 @@ describe('EnhancedFileSystemWatcher', () => {
       const patterns = [path.join(tempDir, '**/*')];
       await watcher.watchGlobalFiles(patterns);
       await watcher.watchTenantFiles('test-tenant', patterns);
-
+      
       let status = watcher.getWatcherStatus();
       expect(status.activeWatchers).toBe(2);
-
+      
       await watcher.stopAllWatchers();
-
+      
       status = watcher.getWatcherStatus();
       expect(status.activeWatchers).toBe(0);
       expect(status.initialized).toBe(false);
@@ -363,7 +360,7 @@ describe('EnhancedFileSystemWatcher', () => {
   describe('health check', () => {
     it('should report unhealthy when not initialized', async () => {
       const health = await watcher.healthCheck();
-
+      
       expect(health.status).toBe('unhealthy');
       expect(health.details.initialized).toBe(false);
     });
@@ -373,9 +370,9 @@ describe('EnhancedFileSystemWatcher', () => {
         paths: [tempDir],
       };
       await watcher.initialize(config);
-
+      
       const health = await watcher.healthCheck();
-
+      
       expect(health.status).toBe('degraded');
       expect(health.details.initialized).toBe(true);
       expect(health.details.activeWatchers).toBe(0);
@@ -386,12 +383,12 @@ describe('EnhancedFileSystemWatcher', () => {
         paths: [tempDir],
       };
       await watcher.initialize(config);
-
+      
       const patterns = [path.join(tempDir, '**/*')];
       await watcher.watchGlobalFiles(patterns);
-
+      
       const health = await watcher.healthCheck();
-
+      
       expect(health.status).toBe('healthy');
       expect(health.details.initialized).toBe(true);
       expect(health.details.activeWatchers).toBeGreaterThan(0);
@@ -413,7 +410,7 @@ describe('EnhancedFileSystemWatcher', () => {
 
     it('should clear pending changes', () => {
       watcher.clearPendingChanges();
-
+      
       const pendingChanges = watcher.getPendingChanges();
       expect(pendingChanges).toHaveLength(0);
     });

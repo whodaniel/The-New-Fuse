@@ -60,7 +60,7 @@ export class AssetRegistry {
   async registerAsset(
     assetId: string,
     classification: Classification,
-    sourceInfo: SourceInfo,
+    sourceInfo: SourceInfo
   ): Promise<void> {
     const timestamp = new Date();
     const assetEntry: AssetEntry = {
@@ -97,11 +97,7 @@ export class AssetRegistry {
     return Array.from(this.assets.values());
   }
 
-  async addRelationship(
-    sourceId: string,
-    targetId: string,
-    relationshipType: string,
-  ): Promise<void> {
+  async addRelationship(sourceId: string, targetId: string, relationshipType: string): Promise<void> {
     this.relationships.setEdge(sourceId, targetId, relationshipType);
   }
 

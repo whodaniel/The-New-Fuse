@@ -1,6 +1,6 @@
-import { renderHook } from '@testing-library/react';
 import React from 'react';
-import { A2AProvider, useA2AContext } from '..';
+import { renderHook } from '@testing-library/react';
+import { useA2AContext, A2AProvider } from '..';
 
 describe('useA2AContext', () => {
   it('should throw an error when used outside of a provider', () => {

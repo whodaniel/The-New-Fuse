@@ -1,28 +1,23 @@
-import { DeliveryStatus, IntegrationSource } from '@the-new-fuse/types';
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Input,
-  Select,
-} from '@the-new-fuse/ui-consolidated';
-import {
+import React, { useState, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@the-new-fuse/ui-consolidated';
+import { Button } from '@the-new-fuse/ui-consolidated';
+import { Badge } from '@the-new-fuse/ui-consolidated';
+import { Input } from '@the-new-fuse/ui-consolidated';
+import { Select } from '@the-new-fuse/ui-consolidated';
+import { 
+  Search, 
+  RefreshCw, 
+  Download, 
+  Eye,
   AlertTriangle,
   CheckCircle,
-  Clock,
-  Download,
-  ExternalLink,
-  Eye,
-  Filter,
-  RefreshCw,
-  RotateCcw,
-  Search,
   XCircle,
+  Clock,
+  RotateCcw,
+  ExternalLink,
+  Filter,
 } from 'lucide-react';
-import React, { useMemo, useState } from 'react';
+import { DeliveryStatus, IntegrationSource } from '@the-new-fuse/types';
 import { useWebhookManagement } from './hooks/useWebhookManagement';
 
 export interface WebhookDeliveryLog {
@@ -66,7 +61,10 @@ const STATUS_ICONS: Record<DeliveryStatus, JSX.Element> = {
   [DeliveryStatus.ABANDONED]: <AlertTriangle className="w-4 h-4" />,
 };
 
-export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliveryLogsProps) {
+export function WebhookDeliveryLogs({
+  webhookConfigId,
+  className,
+}: WebhookDeliveryLogsProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<DeliveryStatus | 'all'>('all');
   const [selectedSource, setSelectedSource] = useState<IntegrationSource | 'all'>('all');
@@ -99,10 +97,10 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
         setLogs([]);
       }
     };
-
+    
     fetchLogs();
   }, [getDeliveryLogs, webhookConfigId]);
-
+  
   // Fallback mock data if logs array is empty
   React.useEffect(() => {
     if (logs.length === 0) {
@@ -118,7 +116,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
           response_time_ms: 245,
           request_headers: { 'Content-Type': 'application/json' },
           request_body: { event: 'payment.completed', amount: 1000 },
-          response_headers: { Status: '200 OK' },
+          response_headers: { 'Status': '200 OK' },
           response_body: { received: true },
           created_at: new Date().toISOString(),
           source: IntegrationSource.STRIPE,
@@ -133,20 +131,18 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
     let filtered = logs;
 
     if (webhookConfigId) {
-      filtered = filtered.filter((log) => log.webhook_config_id === webhookConfigId);
+      filtered = filtered.filter(log => log.webhook_config_id === webhookConfigId);
     }
 
     if (selectedStatus !== 'all') {
-      filtered = filtered.filter((log) => log.status === selectedStatus);
+      filtered = filtered.filter(log => log.status === selectedStatus);
     }
 
     if (selectedSource !== 'all') {
-      filtered = filtered.filter((log) => log.source === selectedSource);
+      filtered = filtered.filter(log => log.source === selectedSource);
     }
 
-    return filtered.sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
+    return filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }, [logs, webhookConfigId, searchTerm, selectedStatus, selectedSource]);
 
   // handleRetry is already defined inside the useMemo callback
@@ -184,7 +180,11 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Delivery Logs</h3>
         <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.location.reload()}
+          >
             <RefreshCw className="w-4 h-4 mr-1" />
             Refresh
           </Button>
@@ -218,7 +218,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
               onValueChange={(value: DeliveryStatus | 'all') => setSelectedStatus(value)}
             >
               <option value="all">All Statuses</option>
-              {Object.values(DeliveryStatus).map((status) => (
+              {Object.values(DeliveryStatus).map(status => (
                 <option key={status} value={status}>
                   {getStatusText(status)}
                 </option>
@@ -229,7 +229,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
               onValueChange={(value: IntegrationSource | 'all') => setSelectedSource(value)}
             >
               <option value="all">All Sources</option>
-              {Object.values(IntegrationSource).map((source) => (
+              {Object.values(IntegrationSource).map(source => (
                 <option key={source} value={source}>
                   {source}
                 </option>
@@ -285,8 +285,12 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
                     <tr key={log.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{log.event_type}</div>
-                          <div className="text-sm text-gray-500">{log.source}</div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {log.event_type}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {log.source}
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -297,9 +301,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div
-                            className={`text-sm font-medium ${getHttpStatusColor(log.http_status)}`}
-                          >
+                          <div className={`text-sm font-medium ${getHttpStatusColor(log.http_status)}`}>
                             {log.http_status}
                           </div>
                           {log.error_message && (
@@ -311,8 +313,12 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm text-gray-900">{log.response_time_ms}ms</div>
-                          <div className="text-sm text-gray-500">{formatDate(log.created_at)}</div>
+                          <div className="text-sm text-gray-900">
+                            {log.response_time_ms}ms
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {formatDate(log.created_at)}
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -373,7 +379,11 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
               <CardHeader className="border-b">
                 <div className="flex items-center justify-between">
                   <CardTitle>Delivery Log Details</CardTitle>
-                  <Button variant="ghost" size="sm" onClick={() => setShowDetails(false)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowDetails(false)}
+                  >
                     ✕
                   </Button>
                 </div>
@@ -384,41 +394,18 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
                   <div>
                     <h4 className="font-medium mb-2">Event Information</h4>
                     <div className="space-y-1 text-sm">
-                      <div>
-                        Event Type: <span className="font-medium">{selectedLog.event_type}</span>
-                      </div>
-                      <div>
-                        Source: <span className="font-medium">{selectedLog.source}</span>
-                      </div>
-                      <div>
-                        Event ID: <span className="font-mono text-xs">{selectedLog.event_id}</span>
-                      </div>
+                      <div>Event Type: <span className="font-medium">{selectedLog.event_type}</span></div>
+                      <div>Source: <span className="font-medium">{selectedLog.source}</span></div>
+                      <div>Event ID: <span className="font-mono text-xs">{selectedLog.event_id}</span></div>
                     </div>
                   </div>
                   <div>
                     <h4 className="font-medium mb-2">Delivery Information</h4>
                     <div className="space-y-1 text-sm">
-                      <div>
-                        Status:{' '}
-                        <Badge className={STATUS_COLORS[selectedLog.status]}>
-                          {getStatusText(selectedLog.status)}
-                        </Badge>
-                      </div>
-                      <div>
-                        HTTP Status:{' '}
-                        <span
-                          className={`font-medium ${getHttpStatusColor(selectedLog.http_status)}`}
-                        >
-                          {selectedLog.http_status}
-                        </span>
-                      </div>
-                      <div>
-                        Response Time:{' '}
-                        <span className="font-medium">{selectedLog.response_time_ms}ms</span>
-                      </div>
-                      <div>
-                        Attempt: <span className="font-medium">{selectedLog.attempt_number}</span>
-                      </div>
+                      <div>Status: <Badge className={STATUS_COLORS[selectedLog.status]}>{getStatusText(selectedLog.status)}</Badge></div>
+                      <div>HTTP Status: <span className={`font-medium ${getHttpStatusColor(selectedLog.http_status)}`}>{selectedLog.http_status}</span></div>
+                      <div>Response Time: <span className="font-medium">{selectedLog.response_time_ms}ms</span></div>
+                      <div>Attempt: <span className="font-medium">{selectedLog.attempt_number}</span></div>
                     </div>
                   </div>
                 </div>
@@ -429,9 +416,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
                   <div className="space-y-2">
                     <div>
                       <div className="text-sm font-medium">URL:</div>
-                      <div className="text-sm font-mono bg-gray-100 p-2 rounded">
-                        {selectedLog.delivery_url}
-                      </div>
+                      <div className="text-sm font-mono bg-gray-100 p-2 rounded">{selectedLog.delivery_url}</div>
                     </div>
                     <div>
                       <div className="text-sm font-medium">Headers:</div>

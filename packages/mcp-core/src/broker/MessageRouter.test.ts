@@ -6,12 +6,12 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MCPNotification, MCPRequest, MCPResponse } from '../interfaces/IMCPMessage';
-import { MCPServiceInfo, RoutingInfo } from '../types/broker';
-import { LoadBalancingStrategy, ServiceStatus } from '../types/common';
-import { JSONRPCErrorCode, MCPErrorClass, MCPErrorCode } from '../types/error';
-import { LoadBalancer } from './LoadBalancer';
 import { MessageRouter } from './MessageRouter';
+import { LoadBalancer } from './LoadBalancer';
+import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
+import { MCPServiceInfo, RoutingInfo } from '../types/broker';
+import { ServiceStatus, LoadBalancingStrategy } from '../types/common';
+import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
 
 describe('MessageRouter', () => {
   let messageRouter: MessageRouter;
@@ -32,7 +32,7 @@ describe('MessageRouter', () => {
         status: ServiceStatus.ONLINE,
         metadata: {},
         registeredAt: new Date(),
-        lastHeartbeat: new Date(),
+        lastHeartbeat: new Date()
       },
       {
         id: 'service-2',
@@ -45,19 +45,19 @@ describe('MessageRouter', () => {
         status: ServiceStatus.ONLINE,
         metadata: {},
         registeredAt: new Date(),
-        lastHeartbeat: new Date(),
-      },
+        lastHeartbeat: new Date()
+      }
     ];
 
     // Create real load balancer
     loadBalancer = new LoadBalancer({
       defaultStrategy: LoadBalancingStrategy.ROUND_ROBIN,
       useHealthCheck: true,
-      stickySession: false,
+      stickySession: false
     });
 
     // Add services to load balancer
-    mockServices.forEach((service) => {
+    mockServices.forEach(service => {
       loadBalancer.addService(service);
     });
 
@@ -102,7 +102,7 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       // Start a request but don't await it
@@ -122,20 +122,18 @@ describe('MessageRouter', () => {
 
       // Mock the private sendRequestToService method
       const originalSendRequest = messageRouter['sendRequestToService'];
-      messageRouter['sendRequestToService'] = jest
-        .fn()
-        .mockImplementation(async (request, serviceId, timeout) => {
-          const response: MCPResponse = {
-            jsonrpc: '2.0',
-            id: request.id,
-            result: {
-              serviceId,
-              method: request.method,
-              timestamp: new Date().toISOString(),
-            },
-          };
-          return response;
-        });
+      messageRouter['sendRequestToService'] = jest.fn().mockImplementation(async (request, serviceId, timeout) => {
+        const response: MCPResponse = {
+          jsonrpc: '2.0',
+          id: request.id,
+          result: {
+            serviceId,
+            method: request.method,
+            timestamp: new Date().toISOString()
+          }
+        };
+        return response;
+      });
     });
 
     it('should route request to selected service successfully', async () => {
@@ -143,7 +141,7 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: { test: 'data' },
+        params: { test: 'data' }
       };
 
       const response = await messageRouter.routeRequest(request);
@@ -158,11 +156,11 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       const routingInfo: RoutingInfo = {
-        targetService: 'service-2',
+        targetService: 'service-2'
       };
 
       const response = await messageRouter.routeRequest(request, routingInfo);
@@ -176,11 +174,11 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       // Remove all services from load balancer
-      mockServices.forEach((service) => {
+      mockServices.forEach(service => {
         loadBalancer.removeService(service.id);
       });
 
@@ -193,11 +191,11 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       const routingInfo: RoutingInfo = {
-        targetService: 'non-existent-service',
+        targetService: 'non-existent-service'
       };
 
       const response = await messageRouter.routeRequest(request, routingInfo);
@@ -214,13 +212,11 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       await expect(messageRouter.routeRequest(request)).rejects.toThrow(MCPErrorClass);
-      await expect(messageRouter.routeRequest(request)).rejects.toThrow(
-        'Message router is not started'
-      );
+      await expect(messageRouter.routeRequest(request)).rejects.toThrow('Message router is not started');
     });
   });
 
@@ -234,7 +230,7 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       const routingInfo: RoutingInfo = {
@@ -242,8 +238,8 @@ describe('MessageRouter', () => {
           maxAttempts: 3,
           initialDelay: 100,
           backoffMultiplier: 2,
-          maxDelay: 5000,
-        },
+          maxDelay: 5000
+        }
       };
 
       let callCount = 0;
@@ -255,7 +251,7 @@ describe('MessageRouter', () => {
         return {
           jsonrpc: '2.0',
           id: request.id,
-          result: { success: true },
+          result: { success: true }
         };
       });
 
@@ -270,7 +266,7 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'invalid/method',
-        params: {},
+        params: {}
       };
 
       const routingInfo: RoutingInfo = {
@@ -278,8 +274,8 @@ describe('MessageRouter', () => {
           maxAttempts: 3,
           initialDelay: 100,
           backoffMultiplier: 2,
-          maxDelay: 5000,
-        },
+          maxDelay: 5000
+        }
       };
 
       let callCount = 0;
@@ -298,7 +294,7 @@ describe('MessageRouter', () => {
         initialDelay: 1000,
         maxDelay: 10000,
         backoffMultiplier: 2,
-        jitter: 0.1,
+        jitter: 0.1
       };
 
       const delay1 = messageRouter['calculateRetryDelay'](1, retryPolicy);
@@ -306,13 +302,13 @@ describe('MessageRouter', () => {
       const delay3 = messageRouter['calculateRetryDelay'](3, retryPolicy);
 
       expect(delay1).toBeGreaterThanOrEqual(900); // 1000 * (1-0.1)
-      expect(delay1).toBeLessThanOrEqual(1100); // 1000 * (1+0.1)
+      expect(delay1).toBeLessThanOrEqual(1100);   // 1000 * (1+0.1)
 
       expect(delay2).toBeGreaterThanOrEqual(1800); // 2000 * (1-0.1)
-      expect(delay2).toBeLessThanOrEqual(2200); // 2000 * (1+0.1)
+      expect(delay2).toBeLessThanOrEqual(2200);    // 2000 * (1+0.1)
 
       expect(delay3).toBeGreaterThanOrEqual(3600); // 4000 * (1-0.1)
-      expect(delay3).toBeLessThanOrEqual(4400); // 4000 * (1+0.1)
+      expect(delay3).toBeLessThanOrEqual(4400);    // 4000 * (1+0.1)
     });
 
     it('should respect maximum delay limit', async () => {
@@ -320,7 +316,7 @@ describe('MessageRouter', () => {
         initialDelay: 1000,
         maxDelay: 2000,
         backoffMultiplier: 3,
-        jitter: 0, // Remove jitter for predictable testing
+        jitter: 0 // Remove jitter for predictable testing
       };
 
       const delay5 = messageRouter['calculateRetryDelay'](5, retryPolicy);
@@ -339,27 +335,21 @@ describe('MessageRouter', () => {
       const notification: MCPNotification = {
         jsonrpc: '2.0',
         method: 'notification/test',
-        params: { message: 'test broadcast' },
+        params: { message: 'test broadcast' }
       };
 
       await messageRouter.broadcastNotification(notification);
 
       expect(messageRouter['sendNotificationToService']).toHaveBeenCalledTimes(2);
-      expect(messageRouter['sendNotificationToService']).toHaveBeenCalledWith(
-        notification,
-        'service-1'
-      );
-      expect(messageRouter['sendNotificationToService']).toHaveBeenCalledWith(
-        notification,
-        'service-2'
-      );
+      expect(messageRouter['sendNotificationToService']).toHaveBeenCalledWith(notification, 'service-1');
+      expect(messageRouter['sendNotificationToService']).toHaveBeenCalledWith(notification, 'service-2');
     });
 
     it('should handle partial failures in broadcast', async () => {
       const notification: MCPNotification = {
         jsonrpc: '2.0',
         method: 'notification/test',
-        params: {},
+        params: {}
       };
 
       // Mock one service to fail
@@ -377,12 +367,10 @@ describe('MessageRouter', () => {
       const notification: MCPNotification = {
         jsonrpc: '2.0',
         method: 'notification/test',
-        params: {},
+        params: {}
       };
 
-      await expect(messageRouter.broadcastNotification(notification)).rejects.toThrow(
-        MCPErrorClass
-      );
+      await expect(messageRouter.broadcastNotification(notification)).rejects.toThrow(MCPErrorClass);
     });
   });
 
@@ -393,7 +381,7 @@ describe('MessageRouter', () => {
       messageRouter['sendRequestToService'] = jest.fn().mockResolvedValue({
         jsonrpc: '2.0',
         id: 'test',
-        result: {},
+        result: {}
       });
     });
 
@@ -406,7 +394,7 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       await messageRouter.routeRequest(request);
@@ -418,15 +406,15 @@ describe('MessageRouter', () => {
     });
 
     it('should track failure metrics correctly', async () => {
-      messageRouter['sendRequestToService'] = jest
-        .fn()
-        .mockRejectedValue(new MCPErrorClass(MCPErrorCode.INTERNAL_ERROR, 'Service error'));
+      messageRouter['sendRequestToService'] = jest.fn().mockRejectedValue(
+        new MCPErrorClass(MCPErrorCode.INTERNAL_ERROR, 'Service error')
+      );
 
       const request: MCPRequest = {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       await expect(messageRouter.routeRequest(request)).rejects.toThrow();
@@ -442,22 +430,22 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'request-1',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       const request2: MCPRequest = {
         jsonrpc: '2.0',
         id: 'request-2',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       const routingInfo1: RoutingInfo = {
-        targetService: 'service-1',
+        targetService: 'service-1'
       };
 
       const routingInfo2: RoutingInfo = {
-        targetService: 'service-1',
+        targetService: 'service-1'
       };
 
       await messageRouter.routeRequest(request1, routingInfo1);
@@ -472,7 +460,7 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       await messageRouter.routeRequest(request);
@@ -493,7 +481,7 @@ describe('MessageRouter', () => {
 
       // Mock a slow request
       messageRouter['sendRequestToService'] = jest.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 100));
         return { jsonrpc: '2.0', id: 'test', result: {} };
       });
 
@@ -501,7 +489,7 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       const requestPromise = messageRouter.routeRequest(request);
@@ -522,14 +510,8 @@ describe('MessageRouter', () => {
     });
 
     it('should identify retryable errors correctly', async () => {
-      const retryableError = new MCPErrorClass(
-        MCPErrorCode.CONNECTION_TIMEOUT,
-        'Connection timeout'
-      );
-      const nonRetryableError = new MCPErrorClass(
-        JSONRPCErrorCode.INVALID_REQUEST,
-        'Invalid request'
-      );
+      const retryableError = new MCPErrorClass(MCPErrorCode.CONNECTION_TIMEOUT, 'Connection timeout');
+      const nonRetryableError = new MCPErrorClass(JSONRPCErrorCode.INVALID_REQUEST, 'Invalid request');
 
       expect(messageRouter['isRetryableError'](retryableError)).toBe(true);
       expect(messageRouter['isRetryableError'](nonRetryableError)).toBe(false);
@@ -545,12 +527,12 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
-      messageRouter['sendRequestToService'] = jest
-        .fn()
-        .mockRejectedValue(new MCPErrorClass(MCPErrorCode.INTERNAL_ERROR, 'Service error'));
+      messageRouter['sendRequestToService'] = jest.fn().mockRejectedValue(
+        new MCPErrorClass(MCPErrorCode.INTERNAL_ERROR, 'Service error')
+      );
 
       await expect(messageRouter.routeRequest(request)).rejects.toThrow();
 
@@ -565,7 +547,7 @@ describe('MessageRouter', () => {
       messageRouter['sendRequestToService'] = jest.fn().mockResolvedValue({
         jsonrpc: '2.0',
         id: 'test',
-        result: {},
+        result: {}
       });
     });
 
@@ -574,11 +556,11 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       const routingInfo: RoutingInfo = {
-        loadBalancing: LoadBalancingStrategy.LEAST_CONNECTIONS,
+        loadBalancing: LoadBalancingStrategy.LEAST_CONNECTIONS
       };
 
       const response = await messageRouter.routeRequest(request, routingInfo);
@@ -592,11 +574,11 @@ describe('MessageRouter', () => {
         jsonrpc: '2.0',
         id: 'test-request',
         method: 'test/method',
-        params: {},
+        params: {}
       };
 
       const routingInfo: RoutingInfo = {
-        timeout: 5000,
+        timeout: 5000
       };
 
       const response = await messageRouter.routeRequest(request, routingInfo);

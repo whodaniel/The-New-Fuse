@@ -1,3 +1,4 @@
+import React from 'react';
 import { assertSnapshot } from '@/test/helpers/snapshot';
 import { Dropdown } from '../Dropdown';
 
@@ -78,8 +79,12 @@ describe('Dropdown Snapshots', () => {
       <Dropdown>
         <Dropdown.Trigger>Filters</Dropdown.Trigger>
         <Dropdown.Content>
-          <Dropdown.CheckboxItem checked>Show Archived</Dropdown.CheckboxItem>
-          <Dropdown.CheckboxItem>Show Deleted</Dropdown.CheckboxItem>
+          <Dropdown.CheckboxItem checked>
+            Show Archived
+          </Dropdown.CheckboxItem>
+          <Dropdown.CheckboxItem>
+            Show Deleted
+          </Dropdown.CheckboxItem>
           <Dropdown.Separator />
           <Dropdown.CheckboxItem checked disabled>
             Show System Files

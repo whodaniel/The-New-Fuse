@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-echo "🔄 Starting Drizzle Schema Consolidation"
+echo "🔄 Starting Prisma Schema Consolidation"
 
 # Create timestamp for backup
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-BACKUP_DIR="./backups/drizzle_schemas_${TIMESTAMP}"
+BACKUP_DIR="./backups/prisma_schemas_${TIMESTAMP}"
 
 # 1. Create backups
 echo "📦 Creating backups..."
@@ -13,26 +13,26 @@ mkdir -p "${BACKUP_DIR}"
 
 # Array of schema locations to backup
 SCHEMA_LOCATIONS=(
-    "apps/backend/drizzle/schema.drizzle"
-    "packages/core/drizzle/schema.drizzle"
-    "drizzle/schema.drizzle"
-    "apps/api/drizzle/schema.drizzle"
-    "packages/database/drizzle/schema.drizzle"
-    "packages/database/src/schemas/audit-compliance.drizzle"
-    "packages/database/src/schemas/feature-tracking.drizzle"
-    "packages/database/src/schemas/feature-suggestions.drizzle"
-    "packages/database/src/schemas/timeline.drizzle"
+    "apps/backend/prisma/schema.prisma"
+    "packages/core/prisma/schema.prisma"
+    "prisma/schema.prisma"
+    "apps/api/prisma/schema.prisma"
+    "packages/database/prisma/schema.prisma"
+    "packages/database/src/schemas/audit-compliance.prisma"
+    "packages/database/src/schemas/feature-tracking.prisma"
+    "packages/database/src/schemas/feature-suggestions.prisma"
+    "packages/database/src/schemas/timeline.prisma"
 )
 
 # Create temporary directory for schema consolidation
 TEMP_DIR=$(mktemp -d)
-CONSOLIDATED_SCHEMA="${TEMP_DIR}/consolidated.drizzle"
+CONSOLIDATED_SCHEMA="${TEMP_DIR}/consolidated.prisma"
 TEMP_MODELS="${TEMP_DIR}/models.tmp"
 
 # Initialize consolidated schema with database connection
 cat > "$CONSOLIDATED_SCHEMA" << EOL
 generator client {
-  provider = "drizzle-client-js"
+  provider = "prisma-client-js"
   previewFeatures = ["tracing"]
 }
 
@@ -100,9 +100,9 @@ chmod +x "${BACKUP_DIR}/rollback.sh"
 
 # 2. Place new consolidated schema
 echo "📝 Installing new consolidated schema..."
-mkdir -p packages/database/drizzle
-cp "$CONSOLIDATED_SCHEMA" packages/database/drizzle/schema.drizzle
-echo "✓ Created consolidated schema at: packages/database/drizzle/schema.drizzle"
+mkdir -p packages/database/prisma
+cp "$CONSOLIDATED_SCHEMA" packages/database/prisma/schema.prisma
+echo "✓ Created consolidated schema at: packages/database/prisma/schema.prisma"
 
 # Clean up temporary directory
 rm -rf "$TEMP_DIR"
@@ -113,13 +113,13 @@ find . -type f -name "*.ts" -o -name "*.js" | while read -r file; do
     if [[ $file == *"node_modules"* ]] || [[ $file == *"$BACKUP_DIR"* ]]; then
         continue
     fi
-    sed -i.bak 's|@drizzle/client|@the-new-fuse/database/client|g' "$file"
-    sed -i.bak 's|../../drizzle/generated/client|@the-new-fuse/database/client|g' "$file"
+    sed -i.bak 's|@prisma/client|@the-new-fuse/database/client|g' "$file"
+    sed -i.bak 's|../../prisma/generated/client|@the-new-fuse/database/client|g' "$file"
     rm -f "$file.bak"
 done
 
 echo "✅ Schema consolidation complete!"
 echo "📁 Backups stored in: $BACKUP_DIR"
-echo "⚠️  Please review the consolidated schema at packages/database/drizzle/schema.drizzle"
-echo "⚠️  After reviewing, run: bun --filter @the-new-fuse/database run drizzle migrate dev --name schema_consolidation"
+echo "⚠️  Please review the consolidated schema at packages/database/prisma/schema.prisma"
+echo "⚠️  After reviewing, run: bun --filter @the-new-fuse/database run prisma migrate dev --name schema_consolidation"
 echo "↩️  To rollback changes, run: $BACKUP_DIR/rollback.sh"

@@ -1,10 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  AutomationRequest,
-  AutomationResult,
-  ClaudeDevAutomationService,
-  ClaudeDevTemplate,
-} from '../services/ClaudeDevAutomationService';
+import { ClaudeDevAutomationService, AutomationRequest, AutomationResult, ClaudeDevTemplate } from '../services/ClaudeDevAutomationService';
 
 // MCP (Model Context Protocol) Server for The New Fuse Claude Dev Integration
 // This server exposes Claude Dev automation capabilities through a standardized protocol
@@ -46,7 +41,9 @@ export class TNFClaudeDevMCPServer {
   private readonly logger = new Logger(TNFClaudeDevMCPServer.name);
   private tools: MCPTool[] = [];
 
-  constructor(private readonly claudeDevService: ClaudeDevAutomationService) {
+  constructor(
+    private readonly claudeDevService: ClaudeDevAutomationService,
+  ) {
     this.initializeTools();
   }
 
@@ -62,10 +59,10 @@ export class TNFClaudeDevMCPServer {
             category: {
               type: 'string',
               enum: ['development', 'analysis', 'automation', 'communication'],
-              description: 'Filter templates by category',
-            },
-          },
-        },
+              description: 'Filter templates by category'
+            }
+          }
+        }
       },
       {
         name: 'tnf_get_template',
@@ -75,11 +72,11 @@ export class TNFClaudeDevMCPServer {
           properties: {
             templateId: {
               type: 'string',
-              description: 'ID of the template to retrieve',
-            },
+              description: 'ID of the template to retrieve'
+            }
           },
-          required: ['templateId'],
-        },
+          required: ['templateId']
+        }
       },
       {
         name: 'tnf_execute_automation',
@@ -89,29 +86,29 @@ export class TNFClaudeDevMCPServer {
           properties: {
             templateId: {
               type: 'string',
-              description: 'ID of the template to use',
+              description: 'ID of the template to use'
             },
             parameters: {
               type: 'object',
-              description: 'Parameters required by the template',
+              description: 'Parameters required by the template'
             },
             priority: {
               type: 'string',
               enum: ['low', 'medium', 'high', 'urgent'],
-              description: 'Execution priority',
+              description: 'Execution priority'
             },
             context: {
               type: 'object',
               properties: {
                 projectId: { type: 'string' },
                 workflowId: { type: 'string' },
-                parentTaskId: { type: 'string' },
+                parentTaskId: { type: 'string' }
               },
-              description: 'Additional context for the automation',
-            },
+              description: 'Additional context for the automation'
+            }
           },
-          required: ['templateId', 'parameters'],
-        },
+          required: ['templateId', 'parameters']
+        }
       },
       {
         name: 'tnf_get_automation_result',
@@ -121,11 +118,11 @@ export class TNFClaudeDevMCPServer {
           properties: {
             automationId: {
               type: 'string',
-              description: 'ID of the automation to check',
-            },
+              description: 'ID of the automation to check'
+            }
           },
-          required: ['automationId'],
-        },
+          required: ['automationId']
+        }
       },
       {
         name: 'tnf_list_automations',
@@ -137,15 +134,15 @@ export class TNFClaudeDevMCPServer {
               type: 'number',
               minimum: 1,
               maximum: 100,
-              description: 'Maximum number of results to return',
+              description: 'Maximum number of results to return'
             },
             status: {
               type: 'string',
               enum: ['pending', 'running', 'completed', 'failed', 'cancelled'],
-              description: 'Filter by automation status',
-            },
-          },
-        },
+              description: 'Filter by automation status'
+            }
+          }
+        }
       },
       {
         name: 'tnf_cancel_automation',
@@ -155,11 +152,11 @@ export class TNFClaudeDevMCPServer {
           properties: {
             automationId: {
               type: 'string',
-              description: 'ID of the automation to cancel',
-            },
+              description: 'ID of the automation to cancel'
+            }
           },
-          required: ['automationId'],
-        },
+          required: ['automationId']
+        }
       },
       {
         name: 'tnf_create_custom_template',
@@ -169,20 +166,20 @@ export class TNFClaudeDevMCPServer {
           properties: {
             name: {
               type: 'string',
-              description: 'Name of the template',
+              description: 'Name of the template'
             },
             description: {
               type: 'string',
-              description: 'Description of what the template does',
+              description: 'Description of what the template does'
             },
             category: {
               type: 'string',
               enum: ['development', 'analysis', 'automation', 'communication'],
-              description: 'Template category',
+              description: 'Template category'
             },
             prompt: {
               type: 'string',
-              description: 'The prompt template with parameter placeholders',
+              description: 'The prompt template with parameter placeholders'
             },
             parameters: {
               type: 'array',
@@ -190,10 +187,7 @@ export class TNFClaudeDevMCPServer {
                 type: 'object',
                 properties: {
                   name: { type: 'string' },
-                  type: {
-                    type: 'string',
-                    enum: ['string', 'number', 'boolean', 'array', 'object'],
-                  },
+                  type: { type: 'string', enum: ['string', 'number', 'boolean', 'array', 'object'] },
                   description: { type: 'string' },
                   required: { type: 'boolean' },
                   defaultValue: {},
@@ -203,49 +197,41 @@ export class TNFClaudeDevMCPServer {
                       min: { type: 'number' },
                       max: { type: 'number' },
                       pattern: { type: 'string' },
-                      options: { type: 'array', items: { type: 'string' } },
-                    },
-                  },
+                      options: { type: 'array', items: { type: 'string' } }
+                    }
+                  }
                 },
-                required: ['name', 'type', 'description', 'required'],
+                required: ['name', 'type', 'description', 'required']
               },
-              description: 'Template parameters definition',
+              description: 'Template parameters definition'
             },
             outputFormat: {
               type: 'string',
               enum: ['json', 'markdown', 'code', 'plain'],
-              description: 'Expected output format',
+              description: 'Expected output format'
             },
             estimatedTokens: {
               type: 'number',
               minimum: 1,
-              description: 'Estimated token usage',
+              description: 'Estimated token usage'
             },
             tags: {
               type: 'array',
               items: { type: 'string' },
-              description: 'Tags for template categorization',
-            },
+              description: 'Tags for template categorization'
+            }
           },
-          required: [
-            'name',
-            'description',
-            'category',
-            'prompt',
-            'parameters',
-            'estimatedTokens',
-            'tags',
-          ],
-        },
+          required: ['name', 'description', 'category', 'prompt', 'parameters', 'estimatedTokens', 'tags']
+        }
       },
       {
         name: 'tnf_get_usage_stats',
         description: 'Get automation usage statistics for the current user',
         inputSchema: {
           type: 'object',
-          properties: {},
-        },
-      },
+          properties: {}
+        }
+      }
     ];
 
     this.logger.log(`Initialized MCP server with ${this.tools.length} tools`);
@@ -261,14 +247,14 @@ export class TNFClaudeDevMCPServer {
           tools: {},
           resources: {},
           prompts: {},
-          logging: {},
+          logging: {}
         },
         serverInfo: {
           name: 'tnf-claude-dev-server',
           version: '1.0.0',
-          description: 'The New Fuse Claude Dev Automation MCP Server',
-        },
-      },
+          description: 'The New Fuse Claude Dev Automation MCP Server'
+        }
+      }
     };
   }
 
@@ -277,15 +263,15 @@ export class TNFClaudeDevMCPServer {
     return {
       id: 'tools-list',
       result: {
-        tools: this.tools,
-      },
+        tools: this.tools
+      }
     };
   }
 
   // Handle tools/call request
   async handleToolCall(request: MCPRequest): Promise<MCPResponse> {
     const { name, arguments: args } = request.params;
-
+    
     try {
       let result: any;
 
@@ -332,11 +318,12 @@ export class TNFClaudeDevMCPServer {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(result, null, 2),
-            },
-          ],
-        },
+              text: JSON.stringify(result, null, 2)
+            }
+          ]
+        }
       };
+
     } catch (error) {
       this.logger.error(`Tool call failed for ${name}:`, error);
       return {
@@ -344,34 +331,30 @@ export class TNFClaudeDevMCPServer {
         error: {
           code: -32603,
           message: (error as Error).message || 'Internal error',
-          data: { tool: name, args },
-        },
+          data: { tool: name, args }
+        }
       };
     }
   }
 
   // Tool implementation methods
-  private async handleListTemplates(
-    category?: string
-  ): Promise<{ templates: ClaudeDevTemplate[] }> {
+  private async handleListTemplates(category?: string): Promise<{ templates: ClaudeDevTemplate[] }> {
     const templates = await this.claudeDevService.listTemplates(category);
     return { templates };
   }
 
-  private async handleGetTemplate(
-    templateId: string
-  ): Promise<{ template: ClaudeDevTemplate | null }> {
+  private async handleGetTemplate(templateId: string): Promise<{ template: ClaudeDevTemplate | null }> {
     if (!templateId) {
       throw new Error('Template ID is required');
     }
-
+    
     const template = await this.claudeDevService.getTemplate(templateId);
     return { template };
   }
 
   private async handleExecuteAutomation(args: any): Promise<{ automation: AutomationResult }> {
     const { templateId, parameters, priority, context } = args;
-
+    
     if (!templateId || !parameters) {
       throw new Error('Template ID and parameters are required');
     }
@@ -381,16 +364,14 @@ export class TNFClaudeDevMCPServer {
       parameters,
       userId: 'mcp-user', // In a real implementation, get this from the MCP context
       priority: priority || 'medium',
-      context,
+      context
     };
 
     const automation = await this.claudeDevService.executeAutomation(automationRequest);
     return { automation };
   }
 
-  private async handleGetAutomationResult(
-    automationId: string
-  ): Promise<{ automation: AutomationResult | null }> {
+  private async handleGetAutomationResult(automationId: string): Promise<{ automation: AutomationResult | null }> {
     if (!automationId) {
       throw new Error('Automation ID is required');
     }
@@ -399,15 +380,12 @@ export class TNFClaudeDevMCPServer {
     return { automation };
   }
 
-  private async handleListAutomations(
-    limit?: number,
-    status?: string
-  ): Promise<{ automations: AutomationResult[] }> {
+  private async handleListAutomations(limit?: number, status?: string): Promise<{ automations: AutomationResult[] }> {
     const userId = 'mcp-user'; // In a real implementation, get this from the MCP context
     let automations = await this.claudeDevService.listAutomations(userId, limit || 50);
 
     if (status) {
-      automations = automations.filter((a) => a.status === status);
+      automations = automations.filter(a => a.status === status);
     }
 
     return { automations };
@@ -453,8 +431,8 @@ export class TNFClaudeDevMCPServer {
           id: message.id,
           error: {
             code: -32601,
-            message: `Method not found: ${message.method}`,
-          },
+            message: `Method not found: ${message.method}`
+          }
         };
     }
   }

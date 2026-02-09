@@ -9,10 +9,8 @@ Search through thousands of n8n workflows from community repositories.
 ## Usage
 
 You can use this command to search for n8n workflows by:
-
 - **Query**: Search by name, description, or tags
-- **Category**: Filter by workflow category (ai-agents, automation,
-  api-integrations, etc.)
+- **Category**: Filter by workflow category (ai-agents, automation, api-integrations, etc.)
 - **Complexity**: Filter by complexity level (simple, medium, complex)
 - **Tags**: Filter by specific tags
 
@@ -33,8 +31,7 @@ You can use this command to search for n8n workflows by:
 ## Available Categories
 
 - **ai-agents**: AI models, LLMs, and agent automation
-- **api-integrations**: Third-party API integrations (Gmail, Slack, GitHub,
-  etc.)
+- **api-integrations**: Third-party API integrations (Gmail, Slack, GitHub, etc.)
 - **automation**: General automation and scheduled tasks
 - **data-processing**: Data transformation and ETL workflows
 - **database-operations**: Database queries and operations
@@ -51,7 +48,6 @@ You can use this command to search for n8n workflows by:
 ## Task
 
 Based on the user's request:
-
 1. Identify the search criteria (query, category, tags, complexity)
 2. Make a request to `/api/workflows/n8n` with appropriate query parameters
 3. Present the results in a clear, organized format
@@ -60,7 +56,6 @@ Based on the user's request:
 6. Suggest similar or related workflows if appropriate
 
 Remember to format the response in a user-friendly way with:
-
 - Workflow names and descriptions
 - Categories and tags
 - Complexity level

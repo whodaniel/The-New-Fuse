@@ -58,7 +58,7 @@ import { Brain, Network, Workflow } from 'lucide-react';
     description="Streamlined workflows"
     accent="green"
   />
-</FeaturesSection>;
+</FeaturesSection>
 ```
 
 ### 3. Using Complete Showcase
@@ -67,7 +67,7 @@ import { Brain, Network, Workflow } from 'lucide-react';
 import { FeatureShowcase } from '@/components/landing';
 
 // All features pre-configured
-<FeatureShowcase />;
+<FeatureShowcase />
 ```
 
 ### 4. Using HeroStats
@@ -76,7 +76,7 @@ import { FeatureShowcase } from '@/components/landing';
 import { HeroStats } from '@/components/landing';
 
 // Pre-configured stats
-<HeroStats />;
+<HeroStats />
 ```
 
 ### 5. Using InteractiveDemo
@@ -85,7 +85,7 @@ import { HeroStats } from '@/components/landing';
 import { InteractiveDemo } from '@/components/landing';
 
 // Interactive step-by-step demo
-<InteractiveDemo />;
+<InteractiveDemo />
 ```
 
 ## Custom Configurations
@@ -123,7 +123,7 @@ import { Shield, Lock, Eye } from 'lucide-react';
     accent="blue"
     delay={0.2}
   />
-</FeaturesSection>;
+</FeaturesSection>
 ```
 
 ### Two-Column Layout
@@ -159,59 +159,30 @@ All icons from Lucide React are supported. Common ones:
 ```tsx
 import {
   // AI & ML
-  Brain,
-  Cpu,
-  Sparkles,
-  Zap,
+  Brain, Cpu, Sparkles, Zap,
 
   // Collaboration
-  Users,
-  MessageSquare,
-  Video,
-  Phone,
+  Users, MessageSquare, Video, Phone,
 
   // Development
-  Code,
-  Terminal,
-  GitBranch,
-  Database,
+  Code, Terminal, GitBranch, Database,
 
   // Features
-  Shield,
-  Lock,
-  Globe,
-  Cloud,
-  Network,
-  Workflow,
-  Settings,
-  Layers,
+  Shield, Lock, Globe, Cloud,
+  Network, Workflow, Settings, Layers,
 
   // UI
-  Check,
-  CheckCircle2,
-  ArrowRight,
-  X,
-  Star,
-  Heart,
-  ThumbsUp,
-  Award,
+  Check, CheckCircle2, ArrowRight, X,
+  Star, Heart, ThumbsUp, Award,
 
   // Integration
-  Plug,
-  Link,
-  Share2,
-  Download,
+  Plug, Link, Share2, Download,
 
   // Media
-  Image,
-  FileText,
-  Folder,
-  File,
+  Image, FileText, Folder, File,
 
   // Status
-  AlertCircle,
-  Info,
-  HelpCircle,
+  AlertCircle, Info, HelpCircle,
 } from 'lucide-react';
 ```
 
@@ -220,11 +191,11 @@ import {
 Choose from 5 pre-configured accent colors:
 
 ```tsx
-accent = 'blue'; // Primary, trust, technology
-accent = 'purple'; // AI, innovation, premium
-accent = 'green'; // Success, growth, sustainability
-accent = 'orange'; // Energy, creativity, collaboration
-accent = 'pink'; // Design, creative, unique
+accent="blue"    // Primary, trust, technology
+accent="purple"  // AI, innovation, premium
+accent="green"   // Success, growth, sustainability
+accent="orange"  // Energy, creativity, collaboration
+accent="pink"    // Design, creative, unique
 ```
 
 ## Animation Delays
@@ -310,14 +281,13 @@ Replace placeholder URLs with actual images:
 
 ```tsx
 // Before
-imageSrc = 'https://placehold.co/600x400/667eea/ffffff/png?text=AI+Agents';
+imageSrc="https://placehold.co/600x400/667eea/ffffff/png?text=AI+Agents"
 
 // After
-imageSrc = '/images/features/ai-agents.webp';
+imageSrc="/images/features/ai-agents.webp"
 ```
 
 Recommended image specs:
-
 - Format: WebP or PNG
 - Dimensions: 600x400 (3:2 ratio)
 - File size: < 100KB
@@ -364,20 +334,17 @@ No configuration needed!
 ## Performance Tips
 
 1. **Lazy load images**:
-
 ```tsx
 <img loading="lazy" src={imageSrc} alt={imageAlt} />
 ```
 
 2. **Use WebP images**:
-
 ```bash
 # Convert images
 cwebp input.png -q 80 -o output.webp
 ```
 
 3. **Optimize animations**:
-
 ```tsx
 // Reduce motion for accessibility
 @media (prefers-reduced-motion: reduce) {
@@ -386,38 +353,30 @@ cwebp input.png -q 80 -o output.webp
 ```
 
 4. **Code splitting**:
-
 ```tsx
-const FeatureShowcase = React.lazy(
-  () => import('@/components/landing/FeatureShowcase')
-);
+const FeatureShowcase = React.lazy(() => import('@/components/landing/FeatureShowcase'));
 ```
 
 ## Troubleshooting
 
 ### Icons not showing?
-
 ```bash
 npm install lucide-react
 ```
 
 ### Animations not working?
-
 ```bash
 npm install framer-motion
 ```
 
 ### TypeScript errors?
-
 ```bash
 # Rebuild the project
 npm run build
 ```
 
 ### Styles not applying?
-
 Make sure Tailwind CSS is configured:
-
 ```js
 // tailwind.config.ts
 content: [
@@ -428,7 +387,6 @@ content: [
 ## Advanced Customization
 
 ### Custom Animation Delays
-
 ```tsx
 // Fibonacci sequence for natural feel
 <FeatureCard delay={0} {...} />
@@ -440,7 +398,6 @@ content: [
 ```
 
 ### Custom Colors
-
 Edit `FeatureCard.tsx` to add new accent colors:
 
 ```tsx
@@ -456,7 +413,6 @@ const accentColors = {
 ```
 
 ### Custom Grid Layouts
-
 Modify `FeaturesSection.tsx`:
 
 ```tsx

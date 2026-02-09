@@ -76,7 +76,7 @@ async findAllAgents(
 const agents = await this.agentRepository.findMany(whereClause);
 
 // ✅ GOOD: Fetch only needed fields
-const agents = await this.drizzle.agent.findMany({
+const agents = await this.prisma.agent.findMany({
   where: whereClause,
   select: {
     id: true,
@@ -107,11 +107,11 @@ const agents = await this.drizzle.agent.findMany({
 
 #### 1.3 Missing Indexes (HIGH IMPACT)
 
-**Location**: `/home/user/fuse/drizzle/schema.drizzle`
+**Location**: `/home/user/fuse/prisma/schema.prisma`
 
 **Missing Indexes**:
 
-```drizzle
+```prisma
 // User table
 @@index([email, isActive])          // Login queries
 @@index([role, isActive])            // Admin user filtering
@@ -398,7 +398,7 @@ async getRooms(page = 1, limit = 50): Promise<PaginatedRooms> {
 
 ```typescript
 // ❌ BAD: Loads ALL related data
-const agent = await this.drizzle.agent.findUnique({
+const agent = await this.prisma.agent.findUnique({
   where: { id },
   include: {
     user: true,
@@ -412,7 +412,7 @@ const agent = await this.drizzle.agent.findUnique({
 });
 
 // ✅ GOOD: Load only what you need
-const agent = await this.drizzle.agent.findUnique({
+const agent = await this.prisma.agent.findUnique({
   where: { id },
   select: {
     id: true,
@@ -450,7 +450,7 @@ const agent = await this.drizzle.agent.findUnique({
 ### 1. Add Missing Database Indexes
 
 **Effort**: 15 minutes **Expected Gain**: 70-90% query speed improvement
-**Files**: `drizzle/schema.drizzle`
+**Files**: `prisma/schema.prisma`
 
 ### 2. Add Pagination to Agent/Chat Queries
 
@@ -468,7 +468,7 @@ Agent, Workflow, and User controllers
 ### 4. Add Field Selection to Reduce Data Transfer
 
 **Effort**: 20 minutes **Expected Gain**: 40% response size reduction **Files**:
-All service files with Drizzle queries
+All service files with Prisma queries
 
 ### 5. Replace Wildcard Imports
 
@@ -483,7 +483,7 @@ All service files with Drizzle queries
 
 #### Recommended Index Additions
 
-```drizzle
+```prisma
 model User {
   // ... existing fields
 

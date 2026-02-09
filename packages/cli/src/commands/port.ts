@@ -1,10 +1,11 @@
 // packages/cli/src/commands/port.ts
-import { PortRegistryService } from '@the-new-fuse/port-management';
 import { Command } from 'commander';
+import { PortRegistryService } from '@the-new-fuse/port-management';
 
 export function createPortCommand(): Command {
   const portService = new PortRegistryService();
-  const command = new Command('port').description('Manage registered service ports');
+  const command = new Command('port')
+    .description('Manage registered service ports');
 
   // List all port registrations
   command
@@ -32,10 +33,7 @@ export function createPortCommand(): Command {
     .command('register')
     .description('Register a port for a service')
     .requiredOption('-s, --service <name>', 'Service name')
-    .requiredOption(
-      '-t, --type <type>',
-      'Service type (frontend|api|backend|broker|database|other)'
-    )
+    .requiredOption('-t, --type <type>', 'Service type (frontend|api|backend|broker|database|other)')
     .option('-e, --env <env>', 'Environment', 'development')
     .option('-p, --port <number>', 'Port number', parseInt)
     .action(async (options) => {
@@ -47,15 +45,13 @@ export function createPortCommand(): Command {
         port,
       });
       console.log('Port registered:');
-      console.table([
-        {
-          id: registration.id,
-          service: registration.serviceName,
-          port: registration.port,
-          status: registration.status,
-          environment: registration.environment,
-        },
-      ]);
+      console.table([{
+        id: registration.id,
+        service: registration.serviceName,
+        port: registration.port,
+        status: registration.status,
+        environment: registration.environment,
+      }]);
     });
 
   // Reassign an existing port

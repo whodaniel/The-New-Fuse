@@ -21,11 +21,11 @@ export class LoginPage extends BasePage {
   async login(username: string, password: string, rememberMe = false) {
     await this.waitAndFill(this.usernameInput, username);
     await this.waitAndFill(this.passwordInput, password);
-
+    
     if (rememberMe) {
       await this.waitAndClick(this.rememberMeCheckbox);
     }
-
+    
     await this.waitAndClick(this.loginButton);
     await this.waitForLoad();
   }

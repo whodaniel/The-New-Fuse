@@ -27,7 +27,7 @@ This script:
 - Identifies all tables using the Role enum
 - Creates and executes a SQL script to properly handle the enum conversion
 - Marks the problematic migration as applied
-- Generates the Drizzle client
+- Generates the Prisma client
 
 You will be prompted for the PostgreSQL password for the 'postgres' user.
 
@@ -44,23 +44,23 @@ Then mark the migration as applied:
 
 ```bash
 cd packages/database
-npx drizzle migrate resolve --applied "20250409015715_initial_schema"
-npx drizzle generate
+npx prisma migrate resolve --applied "20250409015715_initial_schema"
+npx prisma generate
 ```
 
 ### 3. Migration File
 
 We've also created a proper migration file at:
-`packages/database/drizzle/migrations/20250409035715_fix_role_enum_comprehensive/`
+`packages/database/prisma/migrations/20250409035715_fix_role_enum_comprehensive/`
 
 You can apply this migration using:
 
 ```bash
 cd packages/database
-npx drizzle migrate resolve --rolled-back "20250409015715_initial_schema"
-npx drizzle db execute --file=drizzle/migrations/20250409035715_fix_role_enum_comprehensive/migration.sql
-npx drizzle migrate resolve --applied "20250409035715_fix_role_enum_comprehensive"
-npx drizzle generate
+npx prisma migrate resolve --rolled-back "20250409015715_initial_schema"
+npx prisma db execute --file=prisma/migrations/20250409035715_fix_role_enum_comprehensive/migration.sql
+npx prisma migrate resolve --applied "20250409035715_fix_role_enum_comprehensive"
+npx prisma generate
 ```
 
 ## After Fixing
@@ -69,7 +69,7 @@ After applying any of these fixes, you should be able to run:
 
 ```bash
 cd packages/database
-npx drizzle migrate dev --name add_your_changes
+npx prisma migrate dev --name add_your_changes
 ```
 
 To create new migrations as needed.
@@ -87,5 +87,5 @@ If you encounter issues:
 dropdb -U postgres -h localhost fuse
 createdb -U postgres -h localhost fuse
 cd packages/database
-npx drizzle migrate reset --force
+npx prisma migrate reset --force
 ```

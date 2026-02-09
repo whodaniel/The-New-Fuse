@@ -2,17 +2,14 @@
  * Unit tests for MCPClient
  */
 
-import { ConnectionStatus } from '../interfaces/IMCPConnection';
-import { MCPClientConfig } from '../types/client';
 import { MCPClient } from './MCPClient';
+import { MCPClientConfig } from '../types/client';
+import { ConnectionStatus } from '../interfaces/IMCPConnection';
+import { MCPErrorCode } from '../types/error';
 
 // Mock WebSocket
 class MockCloseEvent extends Event {
-  constructor(
-    type: string,
-    public code?: number,
-    public reason?: string
-  ) {
+  constructor(type: string, public code?: number, public reason?: string) {
     super(type);
   }
 }
@@ -54,9 +51,9 @@ class MockWebSocket {
             result: {
               capabilities: [
                 { name: 'resources', version: '1.0' },
-                { name: 'tools', version: '1.0' },
-              ],
-            },
+                { name: 'tools', version: '1.0' }
+              ]
+            }
           };
         } else if (message.method === 'resources/list') {
           response = {
@@ -65,9 +62,9 @@ class MockWebSocket {
             result: {
               resources: [
                 { uri: 'test://resource1', name: 'Resource 1' },
-                { uri: 'test://resource2', name: 'Resource 2' },
-              ],
-            },
+                { uri: 'test://resource2', name: 'Resource 2' }
+              ]
+            }
           };
         } else if (message.method === 'resources/read') {
           response = {
@@ -76,8 +73,8 @@ class MockWebSocket {
             result: {
               uri: message.params.uri,
               mimeType: 'text/plain',
-              content: 'Test content',
-            },
+              content: 'Test content'
+            }
           };
         } else if (message.method === 'tools/call') {
           response = {
@@ -85,14 +82,14 @@ class MockWebSocket {
             id: message.id,
             result: {
               success: true,
-              result: { output: 'Tool executed successfully' },
-            },
+              result: { output: 'Tool executed successfully' }
+            }
           };
         } else if (message.method === 'ping') {
           response = {
             jsonrpc: '2.0',
             id: message.id,
-            result: { status: 'pong' },
+            result: { status: 'pong' }
           };
         } else {
           response = {
@@ -100,8 +97,8 @@ class MockWebSocket {
             id: message.id,
             error: {
               code: -32601,
-              message: 'Method not found',
-            },
+              message: 'Method not found'
+            }
           };
         }
 
@@ -133,12 +130,12 @@ describe('MCPClient', () => {
       retryPolicy: {
         maxAttempts: 3,
         baseDelay: 1000,
-        maxDelay: 10000,
+        maxDelay: 10000
       },
       options: {
         enableCaching: true,
-        cacheTTL: 300000,
-      },
+        cacheTTL: 300000
+      }
     };
 
     client = new MCPClient(config);
@@ -215,7 +212,7 @@ describe('MCPClient', () => {
         jsonrpc: '2.0' as const,
         id: 'test-1',
         method: 'initialize',
-        params: {},
+        params: {}
       };
 
       const response = await client.sendRequest(request);
@@ -230,7 +227,7 @@ describe('MCPClient', () => {
         jsonrpc: '2.0' as const,
         id: 'test-error',
         method: 'nonexistent-method',
-        params: {},
+        params: {}
       };
 
       await expect(client.sendRequest(request)).rejects.toThrow();
@@ -243,7 +240,7 @@ describe('MCPClient', () => {
         jsonrpc: '2.0' as const,
         id: 'test-disconnected',
         method: 'test',
-        params: {},
+        params: {}
       };
 
       await expect(client.sendRequest(request)).rejects.toThrow();
@@ -352,7 +349,7 @@ describe('MCPClient', () => {
       const notification = {
         jsonrpc: '2.0' as const,
         method: 'test-notification',
-        params: { data: 'test' },
+        params: { data: 'test' }
       };
 
       await expect(client.sendNotification(notification)).resolves.not.toThrow();
@@ -371,7 +368,7 @@ describe('MCPClient', () => {
         client.emit('notification', {
           jsonrpc: '2.0',
           method: 'test-notification',
-          params: {},
+          params: {}
         });
       }, 10);
     });
@@ -389,7 +386,7 @@ describe('MCPClient', () => {
         client.emit('notification', {
           jsonrpc: '2.0',
           method: 'specific-method',
-          params: {},
+          params: {}
         });
       }, 10);
     });
@@ -406,7 +403,7 @@ describe('MCPClient', () => {
         jsonrpc: '2.0',
         id: 'stats-test',
         method: 'initialize',
-        params: {},
+        params: {}
       });
 
       const updatedStats = client.getStatistics();
@@ -443,7 +440,7 @@ describe('MCPClient', () => {
 
       const shortTimeoutConfig = {
         ...config,
-        timeout: 100,
+        timeout: 100
       };
       const timeoutClient = new MCPClient(shortTimeoutConfig);
 
@@ -465,7 +462,7 @@ describe('MCPClient', () => {
 
       const timeoutClient = new MCPClient({
         ...config,
-        timeout: 100,
+        timeout: 100
       });
 
       await timeoutClient.connect('ws://localhost:8080');
@@ -474,7 +471,7 @@ describe('MCPClient', () => {
         jsonrpc: '2.0' as const,
         id: 'timeout-test',
         method: 'test',
-        params: {},
+        params: {}
       };
 
       await expect(timeoutClient.sendRequest(request)).rejects.toThrow();

@@ -5,18 +5,14 @@
  * capabilities of the MCP client, including caching behavior.
  */
 
+import { MCPClient } from './MCPClient';
+import { MCPClientConfig } from '../types/client';
 import { MCPResource, ResourceContent } from '../interfaces/IMCPResource';
 import { ToolResult } from '../interfaces/IMCPTool';
-import { MCPClientConfig } from '../types/client';
-import { MCPClient } from './MCPClient';
 
 // Mock WebSocket for testing
 class MockCloseEvent extends Event {
-  constructor(
-    type: string,
-    public code?: number,
-    public reason?: string
-  ) {
+  constructor(type: string, public code?: number, public reason?: string) {
     super(type);
   }
 }
@@ -57,9 +53,9 @@ class MockWebSocket {
       result: {
         capabilities: [
           { name: 'resources', version: '1.0.0', description: 'Resource access' },
-          { name: 'tools', version: '1.0.0', description: 'Tool execution' },
-        ],
-      },
+          { name: 'tools', version: '1.0.0', description: 'Tool execution' }
+        ]
+      }
     }));
 
     // Resources list handler
@@ -70,36 +66,36 @@ class MockWebSocket {
           name: 'Document 1',
           description: 'Test document 1',
           mimeType: 'text/plain',
-          handler: null as any,
+          handler: null as any
         },
         {
           uri: 'file:///test/document2.json',
           name: 'Document 2',
           description: 'Test JSON document',
           mimeType: 'application/json',
-          handler: null as any,
+          handler: null as any
         },
         {
           uri: 'database://users/table',
           name: 'Users Table',
           description: 'User database table',
           mimeType: 'application/x-database-table',
-          handler: null as any,
-        },
+          handler: null as any
+        }
       ];
 
       let filteredResources = resources;
       if (message.params?.pattern) {
         const pattern = message.params.pattern;
-        filteredResources = resources.filter(
-          (r) => r.uri.includes(pattern) || r.name.includes(pattern)
+        filteredResources = resources.filter(r =>
+          r.uri.includes(pattern) || r.name.includes(pattern)
         );
       }
 
       return {
         jsonrpc: '2.0',
         id: message.id,
-        result: { resources: filteredResources },
+        result: { resources: filteredResources }
       };
     });
 
@@ -111,22 +107,17 @@ class MockWebSocket {
         'file:///test/document1.txt': {
           uri: 'file:///test/document1.txt',
           mimeType: 'text/plain',
-          content:
-            'This is the content of document 1.\nIt contains multiple lines.\nAnd some test data.',
+          content: 'This is the content of document 1.\nIt contains multiple lines.\nAnd some test data.'
         },
         'file:///test/document2.json': {
           uri: 'file:///test/document2.json',
           mimeType: 'application/json',
-          content: JSON.stringify(
-            {
-              id: 1,
-              name: 'Test Object',
-              data: { key: 'value', numbers: [1, 2, 3] },
-              timestamp: '2024-01-01T00:00:00Z',
-            },
-            null,
-            2
-          ),
+          content: JSON.stringify({
+            id: 1,
+            name: 'Test Object',
+            data: { key: 'value', numbers: [1, 2, 3] },
+            timestamp: '2024-01-01T00:00:00Z'
+          }, null, 2)
         },
         'database://users/table': {
           uri: 'database://users/table',
@@ -135,10 +126,10 @@ class MockWebSocket {
             schema: { id: 'integer', name: 'string', email: 'string' },
             rows: [
               { id: 1, name: 'John Doe', email: 'john@example.com' },
-              { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
-            ],
-          }),
-        },
+              { id: 2, name: 'Jane Smith', email: 'jane@example.com' }
+            ]
+          })
+        }
       };
 
       const content = contentMap[uri];
@@ -149,15 +140,15 @@ class MockWebSocket {
           error: {
             code: -32001,
             message: 'Resource not found',
-            data: { uri },
-          },
+            data: { uri }
+          }
         };
       }
 
       return {
         jsonrpc: '2.0',
         id: message.id,
-        result: content,
+        result: content
       };
     });
 
@@ -166,37 +157,29 @@ class MockWebSocket {
       const { name, arguments: args } = message.params || {};
 
       const toolHandlers: Record<string, (args: any) => ToolResult> = {
-        echo: (args) => ({
+        'echo': (args) => ({
           success: true,
-          result: { echo: args.message || 'Hello, World!' },
+          result: { echo: args.message || 'Hello, World!' }
         }),
-        calculate: (args) => {
+        'calculate': (args) => {
           const { a, b, operation } = args;
           let result: number;
 
           switch (operation) {
-            case 'add':
-              result = a + b;
-              break;
-            case 'subtract':
-              result = a - b;
-              break;
-            case 'multiply':
-              result = a * b;
-              break;
-            case 'divide':
-              result = b !== 0 ? a / b : NaN;
-              break;
+            case 'add': result = a + b; break;
+            case 'subtract': result = a - b; break;
+            case 'multiply': result = a * b; break;
+            case 'divide': result = b !== 0 ? a / b : NaN; break;
             default:
               return {
                 success: false,
-                error: `Unknown operation: ${operation}`,
+                error: `Unknown operation: ${operation}`
               };
           }
 
           return {
             success: true,
-            result: { calculation: result, operation, operands: [a, b] },
+            result: { calculation: result, operation, operands: [a, b] }
           };
         },
         'text-process': (args) => {
@@ -204,47 +187,41 @@ class MockWebSocket {
           let result: string;
 
           switch (operation) {
-            case 'uppercase':
-              result = text.toUpperCase();
-              break;
-            case 'lowercase':
-              result = text.toLowerCase();
-              break;
-            case 'reverse':
-              result = text.split('').reverse().join('');
-              break;
+            case 'uppercase': result = text.toUpperCase(); break;
+            case 'lowercase': result = text.toLowerCase(); break;
+            case 'reverse': result = text.split('').reverse().join(''); break;
             case 'length':
               return {
                 success: true,
-                result: { length: text.length, text },
+                result: { length: text.length, text }
               };
             default:
               return {
                 success: false,
-                error: `Unknown text operation: ${operation}`,
+                error: `Unknown text operation: ${operation}`
               };
           }
 
           return {
             success: true,
-            result: { processed: result, original: text, operation },
+            result: { processed: result, original: text, operation }
           };
         },
         'slow-tool': (args) => {
           // Simulate a slow tool for timeout testing
-          return new Promise((resolve) => {
+          return new Promise(resolve => {
             setTimeout(() => {
               resolve({
                 success: true,
-                result: { message: 'Slow operation completed', delay: args.delay || 1000 },
+                result: { message: 'Slow operation completed', delay: args.delay || 1000 }
               });
             }, args.delay || 1000);
           });
         },
         'error-tool': () => ({
           success: false,
-          error: 'Simulated tool error for testing',
-        }),
+          error: 'Simulated tool error for testing'
+        })
       };
 
       const handler = toolHandlers[name];
@@ -255,8 +232,8 @@ class MockWebSocket {
           error: {
             code: -32601,
             message: 'Tool not found',
-            data: { toolName: name },
-          },
+            data: { toolName: name }
+          }
         };
       }
 
@@ -265,7 +242,7 @@ class MockWebSocket {
         return {
           jsonrpc: '2.0',
           id: message.id,
-          result,
+          result
         };
       } catch (error) {
         return {
@@ -274,8 +251,8 @@ class MockWebSocket {
           error: {
             code: -32603,
             message: 'Tool execution failed',
-            data: { error: error.message },
-          },
+            data: { error: error.message }
+          }
         };
       }
     });
@@ -290,11 +267,9 @@ class MockWebSocket {
 
           if (handler) {
             const response = handler(message);
-            this.onmessage(
-              new MessageEvent('message', {
-                data: JSON.stringify(response),
-              })
-            );
+            this.onmessage(new MessageEvent('message', {
+              data: JSON.stringify(response)
+            }));
           } else {
             // Default error response
             const errorResponse = {
@@ -303,14 +278,12 @@ class MockWebSocket {
               error: {
                 code: -32601,
                 message: 'Method not found',
-                data: { method: message.method },
-              },
+                data: { method: message.method }
+              }
             };
-            this.onmessage(
-              new MessageEvent('message', {
-                data: JSON.stringify(errorResponse),
-              })
-            );
+            this.onmessage(new MessageEvent('message', {
+              data: JSON.stringify(errorResponse)
+            }));
           }
         } catch (error) {
           // Invalid JSON
@@ -319,14 +292,12 @@ class MockWebSocket {
             id: null,
             error: {
               code: -32700,
-              message: 'Parse error',
-            },
+              message: 'Parse error'
+            }
           };
-          this.onmessage(
-            new MessageEvent('message', {
-              data: JSON.stringify(errorResponse),
-            })
-          );
+          this.onmessage(new MessageEvent('message', {
+            data: JSON.stringify(errorResponse)
+          }));
         }
       }
     }, 5);
@@ -355,12 +326,12 @@ describe('Client Resource and Tool Access', () => {
       retryPolicy: {
         maxAttempts: 3,
         baseDelay: 100,
-        maxDelay: 1000,
+        maxDelay: 1000
       },
       options: {
         enableCaching: true,
-        cacheTTL: 60000,
-      },
+        cacheTTL: 60000
+      }
     };
 
     client = new MCPClient(config);
@@ -381,7 +352,7 @@ describe('Client Resource and Tool Access', () => {
       expect(Array.isArray(resources)).toBe(true);
       expect(resources.length).toBe(3);
 
-      const uris = resources.map((r) => r.uri);
+      const uris = resources.map(r => r.uri);
       expect(uris).toContain('file:///test/document1.txt');
       expect(uris).toContain('file:///test/document2.json');
       expect(uris).toContain('database://users/table');
@@ -435,9 +406,8 @@ describe('Client Resource and Tool Access', () => {
     });
 
     test('should handle non-existent resource', async () => {
-      await expect(client.readResource('file:///nonexistent.txt')).rejects.toThrow(
-        'Resource not found'
-      );
+      await expect(client.readResource('file:///nonexistent.txt'))
+        .rejects.toThrow('Resource not found');
     });
 
     test('should cache resource content', async () => {
@@ -470,12 +440,12 @@ describe('Client Resource and Tool Access', () => {
 
     test('should call echo tool successfully', async () => {
       const result = await client.callTool('echo', {
-        message: 'Hello from test!',
+        message: 'Hello from test!'
       });
 
       expect(result.success).toBe(true);
       expect(result.result).toEqual({
-        echo: 'Hello from test!',
+        echo: 'Hello from test!'
       });
     });
 
@@ -484,7 +454,7 @@ describe('Client Resource and Tool Access', () => {
       const addResult = await client.callTool('calculate', {
         a: 10,
         b: 5,
-        operation: 'add',
+        operation: 'add'
       });
       expect(addResult.success).toBe(true);
       expect(addResult.result.calculation).toBe(15);
@@ -493,7 +463,7 @@ describe('Client Resource and Tool Access', () => {
       const multiplyResult = await client.callTool('calculate', {
         a: 7,
         b: 8,
-        operation: 'multiply',
+        operation: 'multiply'
       });
       expect(multiplyResult.success).toBe(true);
       expect(multiplyResult.result.calculation).toBe(56);
@@ -502,7 +472,7 @@ describe('Client Resource and Tool Access', () => {
       const divideResult = await client.callTool('calculate', {
         a: 20,
         b: 4,
-        operation: 'divide',
+        operation: 'divide'
       });
       expect(divideResult.success).toBe(true);
       expect(divideResult.result.calculation).toBe(5);
@@ -514,7 +484,7 @@ describe('Client Resource and Tool Access', () => {
       // Uppercase
       const upperResult = await client.callTool('text-process', {
         text,
-        operation: 'uppercase',
+        operation: 'uppercase'
       });
       expect(upperResult.success).toBe(true);
       expect(upperResult.result.processed).toBe('HELLO WORLD');
@@ -522,7 +492,7 @@ describe('Client Resource and Tool Access', () => {
       // Reverse
       const reverseResult = await client.callTool('text-process', {
         text,
-        operation: 'reverse',
+        operation: 'reverse'
       });
       expect(reverseResult.success).toBe(true);
       expect(reverseResult.result.processed).toBe('dlroW olleH');
@@ -530,7 +500,7 @@ describe('Client Resource and Tool Access', () => {
       // Length
       const lengthResult = await client.callTool('text-process', {
         text,
-        operation: 'length',
+        operation: 'length'
       });
       expect(lengthResult.success).toBe(true);
       expect(lengthResult.result.length).toBe(11);
@@ -544,7 +514,8 @@ describe('Client Resource and Tool Access', () => {
     });
 
     test('should handle non-existent tool', async () => {
-      await expect(client.callTool('nonexistent-tool', {})).rejects.toThrow('Tool not found');
+      await expect(client.callTool('nonexistent-tool', {}))
+        .rejects.toThrow('Tool not found');
     });
 
     test('should cache tool results for deterministic operations', async () => {
@@ -614,7 +585,7 @@ describe('Client Resource and Tool Access', () => {
         client.callTool('calculate', { a: 5, b: 3, operation: 'add' }),
         client.callTool('calculate', { a: 10, b: 2, operation: 'multiply' }),
         client.callTool('text-process', { text: 'test', operation: 'uppercase' }),
-        client.callTool('echo', { message: 'concurrent test' }),
+        client.callTool('echo', { message: 'concurrent test' })
       ];
 
       const results = await Promise.all(promises);
@@ -632,7 +603,7 @@ describe('Client Resource and Tool Access', () => {
         client.readResource('file:///test/document1.txt'),
         client.callTool('echo', { message: 'mixed operations' }),
         client.readResource('file:///test/document2.json'),
-        client.callTool('calculate', { a: 7, b: 4, operation: 'subtract' }),
+        client.callTool('calculate', { a: 7, b: 4, operation: 'subtract' })
       ];
 
       const results = await Promise.all(promises);
@@ -687,8 +658,8 @@ describe('Client Resource and Tool Access', () => {
         ...config,
         options: {
           ...config.options,
-          cacheTTL: 100, // 100ms
-        },
+          cacheTTL: 100 // 100ms
+        }
       });
 
       await shortCacheClient.connect('ws://localhost:8080');
@@ -698,7 +669,7 @@ describe('Client Resource and Tool Access', () => {
         const content1 = await shortCacheClient.readResource('file:///test/document1.txt');
 
         // Wait for cache to expire
-        await new Promise((resolve) => setTimeout(resolve, 150));
+        await new Promise(resolve => setTimeout(resolve, 150));
 
         // Second read (cache should be expired)
         const content2 = await shortCacheClient.readResource('file:///test/document1.txt');
@@ -708,6 +679,7 @@ describe('Client Resource and Tool Access', () => {
         // Both reads should have been actual requests (not cached)
         const stats = shortCacheClient.getCacheStatistics();
         expect(stats.missCount).toBeGreaterThanOrEqual(2);
+
       } finally {
         await shortCacheClient.cleanup();
       }

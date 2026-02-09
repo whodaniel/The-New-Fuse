@@ -1,3 +1,4 @@
+import { sessionManager } from '../SessionManager';
 import { AuthUser } from '../../types/auth';
 
 describe('SessionManager', () => {
@@ -15,7 +16,7 @@ describe('SessionManager', () => {
     sessionManager = new sessionManager({
       maxConcurrentSessions: 2,
       sessionTimeout: 1000, // 1 second for testing
-      extendOnActivity: true,
+      extendOnActivity: true
     });
   });
 
@@ -46,7 +47,7 @@ describe('SessionManager', () => {
     const session = await sessionManager.createSession(mockUser, 'token123');
 
     // Wait for session to expire
-    await new Promise((resolve) => setTimeout(resolve, 1100));
+    await new Promise(resolve => setTimeout(resolve, 1100));
 
     const isValid = await sessionManager.validateSession(session.id);
     expect(isValid).toBe(false);

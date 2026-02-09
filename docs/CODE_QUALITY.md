@@ -1,7 +1,7 @@
 # Code Quality Guidelines
 
-This document outlines the code quality standards, tooling, and best practices
-for The New Fuse monorepo.
+This document outlines the code quality standards, tooling, and best practices for The New
+Fuse monorepo.
 
 ## Table of Contents
 
@@ -20,8 +20,8 @@ for The New Fuse monorepo.
 
 ## Overview
 
-Our code quality setup ensures consistent code style, catches bugs early, and
-improves code maintainability through:
+Our code quality setup ensures consistent code style, catches bugs early, and improves code
+maintainability through:
 
 - **ESLint**: Linting for TypeScript, JavaScript, and React
 - **Prettier**: Code formatting
@@ -47,7 +47,7 @@ Install the recommended extensions:
 - ESLint (`dbaeumer.vscode-eslint`)
 - Prettier (`esbenp.prettier-vscode`)
 - EditorConfig (`editorconfig.editorconfig`)
-- Drizzle (`drizzle.drizzle`)
+- Prisma (`prisma.prisma`)
 - Jest (`orta.vscode-jest`)
 - TypeScript (`ms-vscode.vscode-typescript-next`)
 
@@ -71,10 +71,8 @@ The root `.eslintrc.json` provides base configuration for the entire monorepo:
 
 - **Consistent type imports**: Use `import type` for type-only imports
 - **No floating promises**: All promises must be awaited or handled
-- **No explicit any**: Warns on `any` usage (not an error to allow gradual
-  typing)
-- **Unused variables**: Error with ignore pattern for variables starting with
-  `_`
+- **No explicit any**: Warns on `any` usage (not an error to allow gradual typing)
+- **Unused variables**: Error with ignore pattern for variables starting with `_`
 
 #### React
 
@@ -91,8 +89,7 @@ The root `.eslintrc.json` provides base configuration for the entire monorepo:
 
 #### General
 
-- **No console**: Warns on console usage (except `console.warn` and
-  `console.error`)
+- **No console**: Warns on console usage (except `console.warn` and `console.error`)
 - **Prefer const**: Enforces `const` over `let` when possible
 - **No var**: Errors on `var` usage
 - **Equality**: Requires `===` and `!==` (except for null checks)
@@ -162,11 +159,7 @@ Automatically runs on `git commit`:
 
 ```javascript
 module.exports = {
-  '*.{ts,tsx,js,jsx}': [
-    'eslint --fix',
-    'prettier --write',
-    () => 'tsc --noEmit --pretty',
-  ],
+  '*.{ts,tsx,js,jsx}': ['eslint --fix', 'prettier --write', () => 'tsc --noEmit --pretty'],
   '*.json': ['prettier --write'],
   '*.md': ['prettier --write'],
   '*.{yml,yaml}': ['prettier --write'],
@@ -638,4 +631,5 @@ pnpm husky install
 
 ---
 
-**Last Updated**: 2025-11-18 **Maintained By**: The New Fuse Team
+**Last Updated**: 2025-11-18
+**Maintained By**: The New Fuse Team

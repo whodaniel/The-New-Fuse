@@ -1,12 +1,9 @@
 # GDesigner Integration Guide
 
 ## Overview
-
-This integration combines The New Fuse with GDesigner's graph-based multi-agent
-capabilities, providing enhanced performance and stability.
+This integration combines The New Fuse with GDesigner's graph-based multi-agent capabilities, providing enhanced performance and stability.
 
 ## Key Metrics
-
 - Latency: 43% reduction
 - Memory Usage: 25.8% reduction
 - Throughput: 75% increase
@@ -15,14 +12,12 @@ capabilities, providing enhanced performance and stability.
 ## Setup Instructions
 
 ### Prerequisites
-
 - Node.js 18+
 - Docker 20+
 - PostgreSQL 13+
 - Redis 6+
 
 ### Installation
-
 ```bash
 # Clone repository
 git clone [repository-url]
@@ -39,26 +34,20 @@ cp .env.example .env
 ```
 
 ### Monitoring
-
 The system exposes metrics at:
-
 - `/metrics` - Prometheus format metrics
 - `/health` - Health check endpoint
 - `/status` - Detailed system status
 
 ### Maintenance
-
 Regular maintenance tasks:
-
 1. Monitor queue depth
 2. Check cache hit rates
 3. Review error logs
 4. Update API keys monthly
 
 ### Troubleshooting
-
 Common issues and solutions:
-
 1. Queue Overflow
    - Check backpressure settings
    - Verify client connection limits

@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import './App.css';
-import { ConfirmDialog } from './components/ConfirmDialog';
-import { EmptyState } from './components/EmptyState';
+import { useTodos } from './hooks/useTodos';
 import { TodoForm } from './components/TodoForm';
 import { TodoList } from './components/TodoList';
-import { useTodos } from './hooks/useTodos';
+import { EmptyState } from './components/EmptyState';
+import { ConfirmDialog } from './components/ConfirmDialog';
+import './App.css';
 
 function App() {
   const { todos, loading, error, addTodo, toggleTodo, removeTodo } = useTodos();
@@ -49,14 +49,22 @@ function App() {
       <main className="app-main">
         <TodoForm onAddTodo={addTodo} />
 
-        {error && <div className="error-message">{error}</div>}
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
 
         {loading ? (
           <div className="loading">Loading todos...</div>
         ) : todos.length === 0 ? (
           <EmptyState />
         ) : (
-          <TodoList todos={todos} onToggle={toggleTodo} onDelete={handleDeleteClick} />
+          <TodoList
+            todos={todos}
+            onToggle={toggleTodo}
+            onDelete={handleDeleteClick}
+          />
         )}
       </main>
 

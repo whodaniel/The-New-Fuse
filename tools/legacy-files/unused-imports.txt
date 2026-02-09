@@ -53,7 +53,7 @@
   type Agent
 
 ./apps/backend/src/services/chatService.ts:
-  DrizzleClient
+  PrismaClient
 
 ./apps/backend/src/services/loggingService.ts:
   Logger
@@ -1596,7 +1596,7 @@
   type Agent
 
 ./backups/final_consolidation_20250319_011835/apps/backend/src/services/chatService.ts:
-  DrizzleClient
+  PrismaClient
 
 ./backups/final_consolidation_20250319_011835/apps/backend/src/services/loggingService.ts:
   Logger
@@ -2227,7 +2227,7 @@
   TaskType, TaskMetadata
 
 ./backups/final_consolidation_20250319_011835/packages/core/src/task/TaskManager.ts:
-  DrizzleClient
+  PrismaClient
 
 ./backups/final_consolidation_20250319_011835/packages/core/src/task/TaskModule.ts:
   ConfigService, TaskRepository
@@ -2299,7 +2299,7 @@
   createClient
 
 ./backups/final_consolidation_20250319_011835/packages/database/src/DatabaseManager.ts:
-  DatabaseService, TransactionManager
+  PrismaService, TransactionManager
 
 ./backups/final_consolidation_20250319_011835/packages/database/src/models/messageSchema.ts:
   v4
@@ -2566,7 +2566,7 @@
   type Agent
 
 ./backups/final_consolidation_20250319_021143/apps/backend/src/services/chatService.ts:
-  DrizzleClient
+  PrismaClient
 
 ./backups/final_consolidation_20250319_021143/apps/backend/src/services/loggingService.ts:
   Logger
@@ -3197,7 +3197,7 @@
   TaskType, TaskMetadata
 
 ./backups/final_consolidation_20250319_021143/packages/core/src/task/TaskManager.ts:
-  DrizzleClient
+  PrismaClient
 
 ./backups/final_consolidation_20250319_021143/packages/core/src/task/TaskModule.ts:
   ConfigService, TaskRepository
@@ -3269,7 +3269,7 @@
   createClient
 
 ./backups/final_consolidation_20250319_021143/packages/database/src/DatabaseManager.ts:
-  DatabaseService, TransactionManager
+  PrismaService, TransactionManager
 
 ./backups/final_consolidation_20250319_021143/packages/database/src/models/messageSchema.ts:
   v4
@@ -3533,7 +3533,7 @@
   type Agent
 
 ./backups/final_consolidation_20250319_030606/apps/backend/src/services/chatService.ts:
-  DrizzleClient
+  PrismaClient
 
 ./backups/final_consolidation_20250319_030606/apps/backend/src/services/loggingService.ts:
   Logger
@@ -4164,7 +4164,7 @@
   TaskType, TaskMetadata
 
 ./backups/final_consolidation_20250319_030606/packages/core/src/task/TaskManager.ts:
-  DrizzleClient
+  PrismaClient
 
 ./backups/final_consolidation_20250319_030606/packages/core/src/task/TaskModule.ts:
   ConfigService, TaskRepository
@@ -4236,7 +4236,7 @@
   createClient
 
 ./backups/final_consolidation_20250319_030606/packages/database/src/DatabaseManager.ts:
-  DatabaseService, TransactionManager
+  PrismaService, TransactionManager
 
 ./backups/final_consolidation_20250319_030606/packages/database/src/models/messageSchema.ts:
   v4
@@ -4506,7 +4506,7 @@
   type Agent
 
 ./backups/final_consolidation_20250320_014157/apps/backend/src/services/chatService.ts:
-  DrizzleClient
+  PrismaClient
 
 ./backups/final_consolidation_20250320_014157/apps/backend/src/services/loggingService.ts:
   Logger
@@ -5134,7 +5134,7 @@
   TaskType, TaskMetadata
 
 ./backups/final_consolidation_20250320_014157/packages/core/src/task/TaskManager.ts:
-  DrizzleClient
+  PrismaClient
 
 ./backups/final_consolidation_20250320_014157/packages/core/src/task/TaskModule.ts:
   ConfigService, TaskRepository
@@ -5206,7 +5206,7 @@
   createClient
 
 ./backups/final_consolidation_20250320_014157/packages/database/src/DatabaseManager.ts:
-  DatabaseService, TransactionManager
+  PrismaService, TransactionManager
 
 ./backups/final_consolidation_20250320_014157/packages/database/src/models/messageSchema.ts:
   v4
@@ -5809,7 +5809,7 @@
   type Agent
 
 ./backups/typescript_migration_20250318_123855/apps/backend/src/services/chatService.ts:
-  DrizzleClient
+  PrismaClient
 
 ./backups/typescript_migration_20250318_123855/apps/backend/src/services/loggingService.ts:
   Logger
@@ -6437,7 +6437,7 @@
   TaskType, TaskMetadata
 
 ./backups/typescript_migration_20250318_123855/packages/core/src/task/TaskManager.ts:
-  DrizzleClient
+  PrismaClient
 
 ./backups/typescript_migration_20250318_123855/packages/core/src/task/TaskModule.ts:
   ConfigService, TaskRepository
@@ -6509,7 +6509,7 @@
   createClient
 
 ./backups/typescript_migration_20250318_123855/packages/database/src/DatabaseManager.ts:
-  DatabaseService, TransactionManager
+  PrismaService, TransactionManager
 
 ./backups/typescript_migration_20250318_123855/packages/database/src/models/messageSchema.ts:
   v4
@@ -7082,7 +7082,7 @@
   v4
 
 ./backups/typescript_migration_20250318_123855/src/core/database/subscribers/user.subscriber.ts:
-  Drizzle, User
+  Prisma, User
 
 ./backups/typescript_migration_20250318_123855/src/database/database.module.ts:
   User, Agent, Task, TaskExecution, Pipeline, AuthSession, LoginAttempt, AuthEvent
@@ -7112,7 +7112,7 @@
   CacheService
 
 ./backups/typescript_migration_20250318_123855/src/services/agentService.ts:
-  Drizzle
+  Prisma
 
 ./backups/typescript_migration_20250318_123855/src/types/component-types.d.ts:
   PropsWithChildren
@@ -7507,7 +7507,7 @@ AnalysisStatus
   TaskType, TaskMetadata
 
 ./packages/core/src/task/TaskManager.ts:
-  DrizzleClient
+  PrismaClient
 
 ./packages/core/src/task/TaskModule.ts:
   ConfigService, TaskRepository
@@ -7600,7 +7600,7 @@ AnalysisStatus
   createClient
 
 ./packages/database/src/DatabaseManager.ts:
-  DatabaseService, TransactionManager
+  PrismaService, TransactionManager
 
 ./packages/database/src/models/messageSchema.ts:
   v4
@@ -8017,7 +8017,7 @@ AnalysisStatus
   v4
 
 ./src/core/database/subscribers/user.subscriber.ts:
-  Drizzle, User
+  Prisma, User
 
 ./src/database/database.module.ts:
   User, Agent, Task, TaskExecution, Pipeline, AuthSession, LoginAttempt, AuthEvent
@@ -8044,7 +8044,7 @@ AnalysisStatus
   randomBytes, scrypt, promisify
 
 ./src/services/agentService.ts:
-  Drizzle
+  Prisma
 
 ./src/test/suite/mcp-integration.test.ts:
   ErrorCode, MCPError

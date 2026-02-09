@@ -4,11 +4,11 @@ import Redis from 'ioredis';
 import { LRUCache } from 'lru-cache';
 
 export interface CacheOptions {
-  ttl?: number; // Time to live in seconds
-  tags?: string[]; // Cache tags for invalidation
-  compress?: boolean; // Enable compression
-  namespace?: string; // Cache namespace
-  skipCache?: boolean; // Skip caching for this request
+  ttl?: number;              // Time to live in seconds
+  tags?: string[];           // Cache tags for invalidation
+  compress?: boolean;        // Enable compression
+  namespace?: string;        // Cache namespace
+  skipCache?: boolean;       // Skip caching for this request
   refreshThreshold?: number; // Refresh cache if TTL < threshold
 }
 
@@ -41,7 +41,7 @@ export class ResponseCacheService {
     sets: 0,
     invalidations: 0,
     memoryHits: 0,
-    redisHits: 0,
+    redisHits: 0
   };
 
   constructor(private configService: ConfigService) {
@@ -59,7 +59,7 @@ export class ResponseCacheService {
       port: redisPort,
       password: redisPassword,
       retryStrategy: (times) => Math.min(times * 50, 2000),
-      maxRetriesPerRequest: 3,
+      maxRetriesPerRequest: 3
     });
 
     this.redis.on('error', (error) => {
@@ -82,7 +82,7 @@ export class ResponseCacheService {
       ttl: 60000, // 1 minute TTL for memory cache
       allowStale: false,
       updateAgeOnGet: true,
-      updateAgeOnHas: false,
+      updateAgeOnHas: false
     });
 
     this.logger.log('Memory cache initialized');
@@ -146,7 +146,11 @@ export class ResponseCacheService {
   /**
    * Set cached data
    */
-  async set<T = any>(key: string, data: T, options: CacheOptions = {}): Promise<boolean> {
+  async set<T = any>(
+    key: string,
+    data: T,
+    options: CacheOptions = {}
+  ): Promise<boolean> {
     const namespace = options.namespace || 'cache';
     const cacheKey = `${namespace}:${key}`;
     const ttl = options.ttl || 300; // Default 5 minutes
@@ -157,7 +161,7 @@ export class ResponseCacheService {
         timestamp: Date.now(),
         ttl,
         tags: options.tags,
-        etag: this.generateETag(data),
+        etag: this.generateETag(data)
       };
 
       // Store in Redis
@@ -213,7 +217,7 @@ export class ResponseCacheService {
 
       // Delete all keys associated with the tag
       const pipeline = this.redis.pipeline();
-      keys.forEach((key) => {
+      keys.forEach(key => {
         pipeline.del(key);
         this.memoryCache.delete(key);
       });
@@ -258,7 +262,7 @@ export class ResponseCacheService {
 
       // Delete all matching keys
       const pipeline = this.redis.pipeline();
-      keys.forEach((key) => {
+      keys.forEach(key => {
         pipeline.del(key);
         this.memoryCache.delete(key);
       });
@@ -279,7 +283,7 @@ export class ResponseCacheService {
    * Batch get multiple keys
    */
   async mget<T = any>(keys: string[], namespace = 'cache'): Promise<Array<T | null>> {
-    const cacheKeys = keys.map((k) => `${namespace}:${k}`);
+    const cacheKeys = keys.map(k => `${namespace}:${k}`);
 
     try {
       const redisValues = await this.redis.mget(...cacheKeys);
@@ -320,7 +324,7 @@ export class ResponseCacheService {
       ...this.stats,
       hitRate: Math.round(hitRate * 100) / 100,
       memoryCacheSize: this.memoryCache.size,
-      memoryCacheMax: this.memoryCache.max,
+      memoryCacheMax: this.memoryCache.max
     };
   }
 
@@ -355,13 +359,13 @@ export class ResponseCacheService {
       await this.redis.ping();
       return {
         status: 'healthy',
-        latency: Date.now() - startTime,
+        latency: Date.now() - startTime
       };
     } catch (error) {
       this.logger.error('Cache health check failed:', error);
       return {
         status: 'unhealthy',
-        latency: Date.now() - startTime,
+        latency: Date.now() - startTime
       };
     }
   }
@@ -401,7 +405,7 @@ export class ResponseCacheService {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
+      hash = ((hash << 5) - hash) + char;
       hash = hash & hash;
     }
     return `"${Math.abs(hash).toString(36)}"`;

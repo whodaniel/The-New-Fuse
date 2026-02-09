@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ApiEndpointMonitoringService } from '../security/api-endpoint-monitoring.service';
 import { EnhancedRateLimitService } from '../security/enhanced-rate-limit.service';
 import { SecurityLoggingService } from '../security/security-logging.service';
+import { ApiEndpointMonitoringService } from '../security/api-endpoint-monitoring.service';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class SecurityIntegrationService {
@@ -29,7 +30,7 @@ export class SecurityIntegrationService {
     try {
       // 1. Rate limiting check
       const rateLimitResult = await this.rateLimitService.checkRateLimitAuto(request);
-
+      
       if (!rateLimitResult.allowed) {
         this.securityLogging.logRateLimit('limit_exceeded', {
           ip: clientIP,
@@ -60,26 +61,17 @@ export class SecurityIntegrationService {
       });
 
       // 4. Update monitoring (method, endpoint, statusCode, responseTime, userId?, ip?)
-      this.monitoringService.recordRequest(
-        request.method,
-        request.path,
-        200,
-        Date.now() - startTime,
-        request.user?.id,
-        clientIP
-      );
+      this.monitoringService.recordRequest(request.method, request.path, 200, Date.now() - startTime, request.user?.id, clientIP);
 
       return {
         allowed: true,
         rateLimitRemaining: rateLimitResult.remaining,
         securityFlags,
       };
-    } catch (error) {
-      this.logger.error(
-        `Security check failed: ${(error as Error).message}`,
-        (error as Error).stack
-      );
 
+    } catch (error) {
+      this.logger.error(`Security check failed: ${(error as Error).message}`, (error as Error).stack);
+      
       // Log as suspicious_pattern since 'security_check_error' is not a valid violation type
       this.securityLogging.logSecurityViolation('suspicious_pattern', {
         ip: clientIP,
@@ -101,13 +93,13 @@ export class SecurityIntegrationService {
    */
   async validateJWT(request: any): Promise<any> {
     const authHeader = request.headers.authorization;
-
+    
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return null;
     }
 
     const token = authHeader.substring(7);
-
+    
     try {
       // Import JWT service dynamically to avoid circular dependencies
       const { JwtService } = await import('@nestjs/jwt');
@@ -147,20 +139,16 @@ export class SecurityIntegrationService {
     switch (requiredLevel) {
       case 'system':
         return user.roles?.includes('system') || user.permissions?.includes('system:access');
-
+      
       case 'admin':
-        return (
-          user.roles?.includes('admin') ||
-          user.permissions?.includes('admin:access') ||
-          user.roles?.includes('system')
-        );
-
+        return user.roles?.includes('admin') || user.permissions?.includes('admin:access') || user.roles?.includes('system');
+      
       case 'user':
         return true; // Any authenticated user
-
+      
       case 'public':
         return true;
-
+      
       default:
         return false;
     }
@@ -170,13 +158,11 @@ export class SecurityIntegrationService {
    * Get client IP address
    */
   private getClientIP(request: any): string {
-    return (
-      (request.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
-      (request.headers['x-real-ip'] as string) ||
-      request.connection.remoteAddress ||
-      request.ip ||
-      'unknown'
-    );
+    return (request.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+           request.headers['x-real-ip'] as string ||
+           request.connection.remoteAddress ||
+           request.ip ||
+           'unknown';
   }
 
   /**
@@ -200,7 +186,7 @@ export class SecurityIntegrationService {
     // Check for suspicious patterns
     const userAgent = request.headers['user-agent'] || '';
     const path = request.path || '';
-
+    
     // Suspicious patterns
     const suspiciousPatterns = [
       /(\<|%3C)script/i, // XSS attempts
@@ -210,11 +196,7 @@ export class SecurityIntegrationService {
     ];
 
     for (const pattern of suspiciousPatterns) {
-      if (
-        pattern.test(userAgent) ||
-        pattern.test(path) ||
-        pattern.test(JSON.stringify(request.body))
-      ) {
+      if (pattern.test(userAgent) || pattern.test(path) || pattern.test(JSON.stringify(request.body))) {
         flags.isSuspicious = true;
         flags.threatLevel = 'medium';
         break;
@@ -222,7 +204,12 @@ export class SecurityIntegrationService {
     }
 
     // High threat level indicators
-    const highThreatPatterns = [/sqlmap/i, /nikto/i, /nessus/i, /burp/i];
+    const highThreatPatterns = [
+      /sqlmap/i,
+      /nikto/i,
+      /nessus/i,
+      /burp/i,
+    ];
 
     for (const pattern of highThreatPatterns) {
       if (pattern.test(userAgent) || pattern.test(path)) {
@@ -241,20 +228,11 @@ export class SecurityIntegrationService {
   private detectBot(request: any): boolean {
     const userAgent = (request.headers['user-agent'] || '').toLowerCase();
     const botPatterns = [
-      'bot',
-      'crawler',
-      'spider',
-      'scraper',
-      'curl',
-      'wget',
-      'python',
-      'requests',
-      'http',
-      'scanner',
-      'scan',
+      'bot', 'crawler', 'spider', 'scraper', 'curl', 'wget',
+      'python', 'requests', 'http', 'scanner', 'scan'
     ];
 
-    return botPatterns.some((pattern) => userAgent.includes(pattern));
+    return botPatterns.some(pattern => userAgent.includes(pattern));
   }
 
   /**

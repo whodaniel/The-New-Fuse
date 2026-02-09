@@ -3,8 +3,8 @@
  */
 
 // @ts-expect-error - Jest globals are available without import
-import { MCPErrorCode } from '../types/error';
 import { MessageValidator } from './messageValidator';
+import { MCPErrorCode } from '../types/error';
 
 describe('MessageValidator', () => {
   describe('Message Type Detection and Validation', () => {
@@ -13,7 +13,7 @@ describe('MessageValidator', () => {
         jsonrpc: '2.0',
         id: 1,
         method: 'test.method',
-        params: { key: 'value' },
+        params: { key: 'value' }
       };
 
       const result = MessageValidator.validateMessage(request);
@@ -26,7 +26,7 @@ describe('MessageValidator', () => {
       const response = {
         jsonrpc: '2.0',
         id: 1,
-        result: { success: true },
+        result: { success: true }
       };
 
       const result = MessageValidator.validateMessage(response);
@@ -38,7 +38,7 @@ describe('MessageValidator', () => {
       const notification = {
         jsonrpc: '2.0',
         method: 'test.notification',
-        params: { message: 'hello' },
+        params: { message: 'hello' }
       };
 
       const result = MessageValidator.validateMessage(notification);
@@ -55,7 +55,7 @@ describe('MessageValidator', () => {
     it('should reject message without jsonrpc version', () => {
       const message = {
         id: 1,
-        method: 'test',
+        method: 'test'
       };
 
       const result = MessageValidator.validateMessage(message);
@@ -67,7 +67,7 @@ describe('MessageValidator', () => {
       const message = {
         jsonrpc: '1.0',
         id: 1,
-        method: 'test',
+        method: 'test'
       };
 
       const result = MessageValidator.validateMessage(message);
@@ -77,7 +77,7 @@ describe('MessageValidator', () => {
 
     it('should reject ambiguous message', () => {
       const message = {
-        jsonrpc: '2.0',
+        jsonrpc: '2.0'
         // No id, method, result, or error
       };
 
@@ -140,7 +140,7 @@ describe('MessageValidator', () => {
       const error = {
         code: -32600,
         message: 'Invalid Request',
-        data: { additional: 'info' },
+        data: { additional: 'info' }
       };
 
       const result = MessageValidator.validateError(error);
@@ -150,7 +150,7 @@ describe('MessageValidator', () => {
 
     it('should reject error without code', () => {
       const error = {
-        message: 'Invalid Request',
+        message: 'Invalid Request'
       };
 
       const result = MessageValidator.validateError(error);
@@ -160,7 +160,7 @@ describe('MessageValidator', () => {
 
     it('should reject error without message', () => {
       const error = {
-        code: -32600,
+        code: -32600
       };
 
       const result = MessageValidator.validateError(error);
@@ -257,7 +257,7 @@ describe('MessageValidator', () => {
         jsonrpc: '2.0',
         id: 1,
         method: 'test.method',
-        params: { key: 'value' },
+        params: { key: 'value' }
       };
 
       const result = MessageValidator.validateAndNormalize(request);
@@ -268,7 +268,7 @@ describe('MessageValidator', () => {
       const invalidMessage = {
         jsonrpc: '1.0', // Wrong version
         id: 1,
-        method: 'test',
+        method: 'test'
       };
 
       expect(() => {
@@ -280,7 +280,7 @@ describe('MessageValidator', () => {
   describe('Error Creation', () => {
     it('should create validation error with correct properties', () => {
       const error = MessageValidator.createValidationError('Test error', { test: 'data' });
-
+      
       expect(error.code).toBe(MCPErrorCode.MESSAGE_INVALID_FORMAT);
       expect(error.message).toBe('Test error');
       expect(error.category).toBe('validation');

@@ -1,5 +1,5 @@
-import { A2AMessage, AgentRegistration } from '@the-new-fuse/a2a-core';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { AgentRegistration, A2AMessage, AgentStatus } from '@the-new-fuse/a2a-core';
 
 export interface A2AConnectionConfig {
   url: string;
@@ -32,7 +32,7 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
     connecting: false,
     authenticated: false,
     error: null,
-    reconnectAttempts: 0,
+    reconnectAttempts: 0
   });
 
   const [agents, setAgents] = useState<any[]>([]);
@@ -44,19 +44,19 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
       return;
     }
 
-    setConnectionState((prev) => ({ ...prev, connecting: true, error: null }));
+    setConnectionState(prev => ({ ...prev, connecting: true, error: null }));
 
     try {
       const ws = new WebSocket(config.url);
       wsRef.current = ws;
 
       ws.onopen = () => {
-        setConnectionState((prev) => ({
+        setConnectionState(prev => ({
           ...prev,
           connected: true,
           connecting: false,
           authenticated: true,
-          reconnectAttempts: 0,
+          reconnectAttempts: 0
         }));
       };
 
@@ -64,7 +64,7 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
         try {
           const data = JSON.parse(event.data);
           if (data.type === 'message') {
-            setMessages((prev) => [...prev, data.payload]);
+            setMessages(prev => [...prev, data.payload]);
           } else if (data.type === 'agents') {
             setAgents(data.payload);
           }
@@ -74,27 +74,28 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
       };
 
       ws.onclose = () => {
-        setConnectionState((prev) => ({
+        setConnectionState(prev => ({
           ...prev,
           connected: false,
           connecting: false,
-          authenticated: false,
+          authenticated: false
         }));
         wsRef.current = null;
       };
 
       ws.onerror = (error) => {
-        setConnectionState((prev) => ({
+        setConnectionState(prev => ({
           ...prev,
           error: 'WebSocket connection failed',
-          connecting: false,
+          connecting: false
         }));
       };
+
     } catch (error) {
-      setConnectionState((prev) => ({
+      setConnectionState(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : 'Connection failed',
-        connecting: false,
+        connecting: false
       }));
     }
   }, [config.url, connectionState.connecting, connectionState.connected]);
@@ -104,45 +105,35 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
       wsRef.current.close();
       wsRef.current = null;
     }
-    setConnectionState((prev) => ({
+    setConnectionState(prev => ({
       ...prev,
       connected: false,
       connecting: false,
-      authenticated: false,
+      authenticated: false
     }));
   }, []);
 
-  const registerAgent = useCallback(
-    async (registration: AgentRegistration) => {
-      if (!wsRef.current || !connectionState.connected) {
-        throw new Error('Not connected to A2A service');
-      }
+  const registerAgent = useCallback(async (registration: AgentRegistration) => {
+    if (!wsRef.current || !connectionState.connected) {
+      throw new Error('Not connected to A2A service');
+    }
 
-      wsRef.current.send(
-        JSON.stringify({
-          type: 'register',
-          payload: registration,
-        })
-      );
-    },
-    [connectionState.connected]
-  );
+    wsRef.current.send(JSON.stringify({
+      type: 'register',
+      payload: registration
+    }));
+  }, [connectionState.connected]);
 
-  const sendMessage = useCallback(
-    async (message: Partial<A2AMessage>) => {
-      if (!wsRef.current || !connectionState.connected) {
-        throw new Error('Not connected to A2A service');
-      }
+  const sendMessage = useCallback(async (message: Partial<A2AMessage>) => {
+    if (!wsRef.current || !connectionState.connected) {
+      throw new Error('Not connected to A2A service');
+    }
 
-      wsRef.current.send(
-        JSON.stringify({
-          type: 'message',
-          payload: message,
-        })
-      );
-    },
-    [connectionState.connected]
-  );
+    wsRef.current.send(JSON.stringify({
+      type: 'message',
+      payload: message
+    }));
+  }, [connectionState.connected]);
 
   useEffect(() => {
     return () => {
@@ -157,6 +148,6 @@ export function useA2A(config: A2AConnectionConfig): A2AHookReturn {
     registerAgent,
     sendMessage,
     agents,
-    messages,
+    messages
   };
 }

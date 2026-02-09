@@ -1,11 +1,11 @@
 /**
  * CMS Integration Types
- *
+ * 
  * Type definitions for the Content Management System integration
  * with existing user and tenant systems.
  */
 
-import { UserRole } from '@the-new-fuse/database/generated/db';
+import { UserRole } from '@the-new-fuse/database/generated/prisma';
 
 export interface ContentItem {
   id: string;
@@ -119,21 +119,21 @@ export enum ContentType {
   SCRIPT = 'script',
   DATA = 'data',
   MEDIA = 'media',
-  PROJECT = 'project',
+  PROJECT = 'project'
 }
 
 export enum PrivacyLevel {
   PRIVATE = 'private',
   TENANT = 'tenant',
   SHARED = 'shared',
-  PUBLIC = 'public',
+  PUBLIC = 'public'
 }
 
 export enum AccessLevel {
   READ = 'read',
   WRITE = 'write',
   ADMIN = 'admin',
-  OWNER = 'owner',
+  OWNER = 'owner'
 }
 
 export enum Permission {
@@ -141,7 +141,7 @@ export enum Permission {
   WRITE = 'write',
   DELETE = 'delete',
   SHARE = 'share',
-  ADMIN = 'admin',
+  ADMIN = 'admin'
 }
 
 export enum SyncFrequency {
@@ -149,14 +149,14 @@ export enum SyncFrequency {
   EVERY_MINUTE = 'every_minute',
   EVERY_HOUR = 'every_hour',
   DAILY = 'daily',
-  MANUAL = 'manual',
+  MANUAL = 'manual'
 }
 
 export enum ConflictResolutionStrategy {
   LAST_WRITE_WINS = 'last_write_wins',
   MERGE = 'merge',
   MANUAL = 'manual',
-  VERSION_BRANCH = 'version_branch',
+  VERSION_BRANCH = 'version_branch'
 }
 
 export enum RestrictionType {
@@ -164,7 +164,7 @@ export enum RestrictionType {
   TIME_WINDOW = 'time_window',
   GEOGRAPHIC = 'geographic',
   DEVICE = 'device',
-  ROLE_BASED = 'role_based',
+  ROLE_BASED = 'role_based'
 }
 
 export interface CMSEvent {
@@ -185,5 +185,5 @@ export enum CMSEventType {
   PERMISSION_GRANTED = 'permission_granted',
   PERMISSION_REVOKED = 'permission_revoked',
   SYNC_COMPLETED = 'sync_completed',
-  CONFLICT_DETECTED = 'conflict_detected',
+  CONFLICT_DETECTED = 'conflict_detected'
 }

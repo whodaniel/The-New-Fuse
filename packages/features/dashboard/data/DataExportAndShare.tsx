@@ -1,97 +1,97 @@
-import { FC, useState } from 'react';
-
-interface DataExportAndShareProps {
-  data: any[];
-}
-
-export const DataExportAndShare: FC<DataExportAndShareProps> = ({ data }) => {
-  const [format, setFormat] = useState<'csv' | 'json' | 'xml'>('csv');
-  const [platform, setPlatform] = useState<'email' | 'slack' | 'google-drive'>('email');
-  const [isExportModalOpen, setExportModalOpen] = useState(false);
-  const [isShareModalOpen, setShareModalOpen] = useState(false);
-
-  const handleExport = () => {
-    console.log(`Exporting data in ${format} format...`, data);
-    setExportModalOpen(false);
-  };
-
-  const handleShare = () => {
-    console.log(`Sharing data via ${platform}...`, data);
-    setShareModalOpen(false);
-  };
-
-  return (
-    <div className="flex space-x-2">
-      <button
-        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-        onClick={() => setExportModalOpen(true)}
-      >
-        Export Data
-      </button>
-      <button
-        className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50"
-        onClick={() => setShareModalOpen(true)}
-      >
-        Share Data
-      </button>
-
-      {isExportModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
-            <h2 className="text-xl font-bold mb-4">Export Data</h2>
-            <select
-              value={format}
-              onChange={(e) => setFormat(e.target.value as any)}
-              className="w-full p-2 border rounded-md mb-4"
-            >
-              <option value="csv">CSV</option>
-              <option value="json">JSON</option>
-              <option value="xml">XML</option>
-            </select>
-            <div className="flex justify-end space-x-2">
-              <button onClick={() => setExportModalOpen(false)} className="px-4 py-2 text-gray-600">
-                Cancel
-              </button>
-              <button
-                onClick={handleExport}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md"
-              >
-                Export
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {isShareModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
-            <h2 className="text-xl font-bold mb-4">Share Data</h2>
-            <select
-              value={platform}
-              onChange={(e) => setPlatform(e.target.value as any)}
-              className="w-full p-2 border rounded-md mb-4"
-            >
-              <option value="email">Email</option>
-              <option value="slack">Slack</option>
-              <option value="google-drive">Google Drive</option>
-            </select>
-            <div className="flex justify-end space-x-2">
-              <button onClick={() => setShareModalOpen(false)} className="px-4 py-2 text-gray-600">
-                Cancel
-              </button>
-              <button onClick={handleShare} className="px-4 py-2 bg-blue-600 text-white rounded-md">
-                Share
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+"use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ShareModal = exports.ExportModal = exports.ShareButton = exports.ExportButton = exports.DataExportAndShare = void 0;
+var react_1 = require("react");
+var DataFetcher_1 = require("./DataFetcher");
+var useDataSource_1 = require("./useDataSource");
+var DataExportAndShare = function (_a) {
+    var data = _a.data;
+    var _b = (0, react_1.useState)({
+        format: csv',
+    }), exportOptions = _b[0], setExportOptions = _b[1];
+    var _c = (0, react_1.useState)({
+        platform: email',
+    }), shareOptions = _c[0], setShareOptions = _c[1];
+    var _d = (0, react_1.useState)(false), isExportModalOpen = _d[0], setExportModalOpen = _d[1];
+    var _e = (0, react_1.useState)(false), isShareModalOpen = _e[0], setShareModalOpen = _e[1];
+    var handleExport = function () {
+        var exporter = new DataFetcher_1.DataFetcher(data);
+        var exportedData = exporter.export(exportOptions);
+        // Implement download or save functionality here
+        
+    };
+    var handleShare = function () {
+        var dataSource = (0, useDataSource_1.useDataSource)(shareOptions.platform);
+        // Implement share functionality here
+        
+    };
+    return (<div>
+      <button onClick={function () { return setExportModalOpen(true); }}>Export Data</button>
+      <button onClick={function () { return setShareModalOpen(true); }}>Share Data</button>
 
-export const ExportButton: FC = () => <button>Export</button>;
-export const ShareButton: FC = () => <button>Share</button>;
-export const ExportModal: FC = () => <div>Export Modal</div>;
-export const ShareModal: FC = () => <div>Share Modal</div>;
+      {isExportModalOpen && (<div>
+          <h2>Export Data</h2>
+          <select value={exportOptions.format} onChange={function (e) {
+                return setExportOptions(__assign(__assign({}, exportOptions), { format: e.target.value }));
+            }}>
+            <option value="csv">CSV</option>
+            <option value="json">JSON</option>
+            <option value="xml">XML</option>
+          </select>
+          <button onClick={handleExport}>Export</button>
+          <button onClick={function () { return setExportModalOpen(false); }}>Cancel</button>
+        </div>)}
+
+      {isShareModalOpen && (<div>
+          <h2>Share Data</h2>
+          <select value={shareOptions.platform} onChange={function (e) {
+                return setShareOptions(__assign(__assign({}, shareOptions), { platform: e.target.value }));
+            }}>
+            <option value="email">Email</option>
+            <option value="slack">Slack</option>
+            <option value="google-drive">Google Drive</option>
+          </select>
+          <button onClick={handleShare}>Share</button>
+          <button onClick={function () { return setShareModalOpen(false); }}>Cancel</button>
+        </div>)}
+    </div>);
+};
+exports.DataExportAndShare = DataExportAndShare;
+var ExportButton = function () { return (<button>Export</button>); };
+exports.ExportButton = ExportButton;
+var ShareButton = function () { return (<button>Share</button>); };
+exports.ShareButton = ShareButton;
+var ExportModal = function () { return (<div>
+    <h2>Export Options</h2>
+    <select>
+      <option value="csv">CSV</option>
+      <option value="json">JSON</option>
+      <option value="xml">XML</option>
+    </select>
+    <button>Export</button>
+    <button>Cancel</button>
+  </div>); };
+exports.ExportModal = ExportModal;
+var ShareModal = function () { return (<div>
+    <h2>Share Options</h2>
+    <select>
+      <option value="email">Email</option>
+      <option value="slack">Slack</option>
+      <option value="google-drive">Google Drive</option>
+    </select>
+    <button>Share</button>
+    <button>Cancel</button>
+  </div>); };
+exports.ShareModal = ShareModal;
+export {};

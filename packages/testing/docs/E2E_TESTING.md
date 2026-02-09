@@ -2,9 +2,7 @@
 
 ## Overview
 
-This document describes the end-to-end testing framework for The New Fuse platform. The framework is
-built using Playwright and provides comprehensive testing capabilities including functional testing,
-performance testing, and visual regression testing.
+This document describes the end-to-end testing framework for The New Fuse platform. The framework is built using Playwright and provides comprehensive testing capabilities including functional testing, performance testing, and visual regression testing.
 
 ## Getting Started
 
@@ -75,7 +73,6 @@ Page objects encapsulate the structure and behavior of web pages:
 ### Test Fixtures
 
 Custom fixtures provide:
-
 - Authenticated page states
 - Test data management
 - Visual regression testing
@@ -89,7 +86,10 @@ Custom fixtures provide:
 import { test } from '../../fixtures/custom-test';
 
 test.describe('Feature Name', () => {
-  test('should perform specific action', async ({ dashboardPage, testHelpers }) => {
+  test('should perform specific action', async ({ 
+    dashboardPage,
+    testHelpers 
+  }) => {
     // Test implementation
   });
 });

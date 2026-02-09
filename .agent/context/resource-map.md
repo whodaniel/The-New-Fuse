@@ -397,14 +397,3 @@ skill-builder (meta)
 what it knows by reading this, then loads specific knowledge on-demand.
 
 **Living Document**: This map grows as the TNF knowledge base expands.
-
-### 5. **agent-registry** (Unified Registry) ⭐
-
-- **Location**: `.agent/context/agent-registry-map.md`
-- **Purpose**: Tracks the status and components of the unified agent management
-  system.
-- **Use When**: Registering, syncing, or discovering agents across the
-  ecosystem.
-- **Related Files**:
-  - `packages/database/src/drizzle/repositories/agent.repository.ts`
-  - `packages/extension-system/src/agents/pydantic/unified_registry.py`

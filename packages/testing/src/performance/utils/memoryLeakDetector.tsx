@@ -10,7 +10,7 @@ export interface MemorySnapshot {
 
 export interface LeakDetectionResult {
   isLeaking: boolean;
-  leakRate: number; // bytes per second
+  leakRate: number;  // bytes per second
   totalMemoryGrowth: number;
   duration: number;
   snapshots: MemorySnapshot[];
@@ -22,11 +22,11 @@ export interface LeakDetectionResult {
 }
 
 export interface LeakDetectionOptions {
-  duration?: number; // milliseconds
-  measureInterval?: number; // milliseconds
+  duration?: number;  // milliseconds
+  measureInterval?: number;  // milliseconds
   iterations?: number;
-  allowedGrowthRate?: number; // bytes per second
-  minConfidence?: number; // 0 to 1
+  allowedGrowthRate?: number;  // bytes per second
+  minConfidence?: number;  // 0 to 1
 }
 
 /**
@@ -34,14 +34,14 @@ export interface LeakDetectionOptions {
  */
 export async function detectMemoryLeak(
   operation: () => Promise<void> | void,
-  options: LeakDetectionOptions = {},
+  options: LeakDetectionOptions = {}
 ): Promise<LeakDetectionResult> {
   const {
-    duration = 10000, // 10 seconds default
-    measureInterval = 100, // 100ms default
+    duration = 10000,  // 10 seconds default
+    measureInterval = 100,  // 100ms default
     iterations = 1,
-    allowedGrowthRate = 1024, // 1KB per second
-    minConfidence = 0.8,
+    allowedGrowthRate = 1024,  // 1KB per second
+    minConfidence = 0.8
   } = options;
 
   const snapshots: MemorySnapshot[] = [];
@@ -60,7 +60,7 @@ export async function detectMemoryLeak(
       heapUsed: memUsage.heapUsed,
       heapTotal: memUsage.heapTotal,
       external: memUsage.external,
-      arrayBuffers: memUsage.arrayBuffers,
+      arrayBuffers: memUsage.arrayBuffers
     });
 
     await new Promise(resolve => setTimeout(resolve, measureInterval));
@@ -78,7 +78,7 @@ export async function detectMemoryLeak(
     totalMemoryGrowth: memoryGrowth,
     duration: totalDuration,
     snapshots,
-    analysisDetails: analysis,
+    analysisDetails: analysis
   };
 }
 
@@ -117,14 +117,14 @@ function analyzeMemoryGrowth(snapshots: MemorySnapshot[]): {
     return sum + Math.pow(heap - meanHeap, 2);
   }, 0);
 
-  const rSquared = 1 - residualSS / totalSS;
+  const rSquared = 1 - (residualSS / totalSS);
 
   // Calculate confidence based on R-squared and sample size
-  const confidence = Math.min((rSquared * Math.log10(n)) / 2, 1);
+  const confidence = Math.min(rSquared * Math.log10(n) / 2, 1);
 
   return {
     linearRegressionSlope: slope,
     rSquared,
-    confidence,
+    confidence
   };
 }

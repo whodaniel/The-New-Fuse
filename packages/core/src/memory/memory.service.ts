@@ -3,7 +3,7 @@ export enum MemoryType {
   SHORT_TERM = 'short_term',
   LONG_TERM = 'long_term',
   EPISODIC = 'episodic',
-  SEMANTIC = 'semantic',
+  SEMANTIC = 'semantic'
 }
 
 export interface CreateMemoryDto {

@@ -1,7 +1,6 @@
 # Background Job Processing System
 
-A robust background job processing system for The New Fuse backend built with
-Bull (Redis-based queue) and NestJS.
+A robust background job processing system for The New Fuse backend built with Bull (Redis-based queue) and NestJS.
 
 ## Table of Contents
 
@@ -54,14 +53,12 @@ jobs/
 ## Queue Types
 
 ### 1. Email Queue
-
 - **Purpose**: Send emails (welcome, notifications, etc.)
 - **Rate Limit**: 100 jobs/minute
 - **Retry Attempts**: 3
 - **Backoff**: 5 seconds
 
 ### 2. Agent Execution Queue
-
 - **Purpose**: Run long-running agent tasks
 - **Rate Limit**: 10 jobs/minute
 - **Retry Attempts**: 2
@@ -69,7 +66,6 @@ jobs/
 - **Timeout**: 5 minutes (configurable)
 
 ### 3. Report Generation Queue
-
 - **Purpose**: Generate reports (PDF, CSV, JSON, XLSX)
 - **Rate Limit**: 5 jobs/minute
 - **Retry Attempts**: 3
@@ -77,7 +73,6 @@ jobs/
 - **Timeout**: 10 minutes
 
 ### 4. Data Sync Queue
-
 - **Purpose**: Synchronize data between systems
 - **Rate Limit**: 2 jobs/minute
 - **Retry Attempts**: 5
@@ -85,7 +80,6 @@ jobs/
 - **Timeout**: 30 minutes
 
 ### 5. Cleanup Queue
-
 - **Purpose**: Clean up old data, sessions, temp files
 - **Rate Limit**: 1 job/minute
 - **Retry Attempts**: 2
@@ -97,7 +91,6 @@ jobs/
 ### Email Processor
 
 **Supported Jobs:**
-
 - `send-email` - Generic email sending
 - `welcome-email` - Welcome email for new users
 - `notification-email` - Notification emails
@@ -105,29 +98,24 @@ jobs/
 ### Agent Execution Processor
 
 **Supported Jobs:**
-
 - `execute-agent` - Execute a single agent
 - `batch-execute-agents` - Execute multiple agents in batch
 
 ### Report Generation Processor
 
 **Supported Jobs:**
-
-- `generate-report` - Generate reports (user-activity, agent-performance,
-  system-metrics, revenue)
+- `generate-report` - Generate reports (user-activity, agent-performance, system-metrics, revenue)
 - `scheduled-report` - Scheduled report generation
 
 ### Data Sync Processor
 
 **Supported Jobs:**
-
 - `sync-data` - Full or incremental data synchronization
 - `incremental-sync` - Incremental sync with timestamp tracking
 
 ### Cleanup Processor
 
 **Supported Jobs:**
-
 - `cleanup` - Clean up old data (sessions, temp files, tokens, logs)
 
 ## Usage Examples
@@ -146,14 +134,11 @@ export class UserService {
     // ... create user logic
 
     // Send welcome email
-    await this.jobQueue.sendWelcomeEmail(
-      {
-        userId: user.id,
-        email: user.email,
-        name: user.name,
-      },
-      JobPriority.HIGH
-    );
+    await this.jobQueue.sendWelcomeEmail({
+      userId: user.id,
+      email: user.email,
+      name: user.name,
+    }, JobPriority.HIGH);
   }
 }
 ```
@@ -161,68 +146,56 @@ export class UserService {
 ### Executing an Agent
 
 ```typescript
-await this.jobQueue.executeAgent(
-  {
-    agentId: 'agent-123',
-    userId: 'user-456',
-    task: 'Process data analysis',
-    parameters: {
-      dataset: 'sales-2024',
-      analysisType: 'trend',
-    },
-    timeout: 600000, // 10 minutes
+await this.jobQueue.executeAgent({
+  agentId: 'agent-123',
+  userId: 'user-456',
+  task: 'Process data analysis',
+  parameters: {
+    dataset: 'sales-2024',
+    analysisType: 'trend',
   },
-  JobPriority.NORMAL
-);
+  timeout: 600000, // 10 minutes
+}, JobPriority.NORMAL);
 ```
 
 ### Generating a Report
 
 ```typescript
-await this.jobQueue.generateReport(
-  {
-    reportType: 'user-activity',
-    userId: 'admin',
-    parameters: {
-      startDate: '2024-01-01',
-      endDate: '2024-12-31',
-    },
-    format: 'pdf',
-    emailOnComplete: true,
-    email: 'admin@thenewfuse.com',
+await this.jobQueue.generateReport({
+  reportType: 'user-activity',
+  userId: 'admin',
+  parameters: {
+    startDate: '2024-01-01',
+    endDate: '2024-12-31',
   },
-  JobPriority.NORMAL
-);
+  format: 'pdf',
+  emailOnComplete: true,
+  email: 'admin@thenewfuse.com',
+}, JobPriority.NORMAL);
 ```
 
 ### Syncing Data
 
 ```typescript
-await this.jobQueue.syncData(
-  {
-    source: 'database',
-    destination: 'cache',
-    syncType: 'incremental',
-    entityType: 'users',
-    filters: {
-      modifiedAfter: lastSyncTime,
-    },
+await this.jobQueue.syncData({
+  source: 'database',
+  destination: 'cache',
+  syncType: 'incremental',
+  entityType: 'users',
+  filters: {
+    modifiedAfter: lastSyncTime,
   },
-  JobPriority.NORMAL
-);
+}, JobPriority.NORMAL);
 ```
 
 ### Running Cleanup
 
 ```typescript
-await this.jobQueue.cleanup(
-  {
-    cleanupType: 'old_sessions',
-    olderThan: 7, // days
-    batchSize: 100,
-  },
-  JobPriority.LOW
-);
+await this.jobQueue.cleanup({
+  cleanupType: 'old_sessions',
+  olderThan: 7, // days
+  batchSize: 100,
+}, JobPriority.LOW);
 ```
 
 ## Monitoring
@@ -256,23 +229,19 @@ console.log('Issues:', health.issues);
 The system automatically runs these scheduled jobs:
 
 ### Daily Jobs
-
 - **2:00 AM UTC** - Cleanup old sessions (7 days)
 - **3:00 AM UTC** - Cleanup temp files (1 day)
 - **1:00 AM UTC** - Daily data synchronization
 
 ### Periodic Jobs
-
 - **Every 6 hours** - Cleanup expired tokens
 - **Every hour** - Incremental data sync
 - **Every 5 minutes** - Job queue health check
 
 ### Weekly Jobs
-
 - **Monday 9:00 AM UTC** - Weekly performance report
 
 ### Monthly Jobs
-
 - **1st of month, 8:00 AM UTC** - Monthly user activity report
 - **Sunday 4:00 AM UTC** - Cleanup old logs (30 days)
 
@@ -320,13 +289,11 @@ export const QUEUE_SETTINGS = {
 ## API Endpoints
 
 ### Get Overall Statistics
-
 ```
 GET /api/jobs/stats
 ```
 
 Response:
-
 ```json
 {
   "queues": [...],
@@ -342,49 +309,41 @@ Response:
 ```
 
 ### Get Queue Metrics
-
 ```
 GET /api/jobs/queues/:queueName
 ```
 
 ### Get Failed Jobs
-
 ```
 GET /api/jobs/queues/:queueName/failed?limit=10
 ```
 
 ### Get Active Jobs
-
 ```
 GET /api/jobs/queues/:queueName/active?limit=10
 ```
 
 ### Get Queue Health
-
 ```
 GET /api/jobs/queues/:queueName/health
 ```
 
 ### Pause a Queue
-
 ```
 POST /api/jobs/queues/:queueName/pause
 ```
 
 ### Resume a Queue
-
 ```
 POST /api/jobs/queues/:queueName/resume
 ```
 
 ### Clean Old Jobs
-
 ```
 POST /api/jobs/queues/:queueName/clean?grace=86400000&status=completed
 ```
 
 ### Get Dashboard Data
-
 ```
 GET /api/jobs/dashboard
 ```
@@ -399,7 +358,6 @@ Jobs can be assigned priorities:
 - **LOW (4)** - Lowest priority
 
 Example:
-
 ```typescript
 await this.jobQueue.sendEmail(data, JobPriority.CRITICAL);
 ```
@@ -419,7 +377,6 @@ All jobs have automatic retry with exponential backoff:
 ```
 
 Failed jobs are retried:
-
 - 1st retry: after 5 seconds
 - 2nd retry: after 10 seconds
 - 3rd retry: after 20 seconds
@@ -440,32 +397,25 @@ The system handles graceful shutdown automatically:
 2. **Set reasonable timeouts** - Especially for long-running tasks
 3. **Monitor queue health** - Check the health endpoints regularly
 4. **Clean old jobs** - Use the cleanup endpoints to remove old completed jobs
-5. **Handle failures gracefully** - Implement proper error handling in
-   processors
+5. **Handle failures gracefully** - Implement proper error handling in processors
 6. **Use idempotent jobs** - Jobs should be safe to retry
 7. **Log important events** - All processors log key events
 
 ## Troubleshooting
 
 ### High Failure Rate
-
 Check failed jobs endpoint to see error messages:
-
 ```
 GET /api/jobs/queues/email/failed?limit=100
 ```
 
 ### Queue Backlog
-
 Check waiting jobs and increase worker concurrency or rate limits.
 
 ### Stuck Jobs
-
-The system automatically detects and recovers stalled jobs. Check logs for
-details.
+The system automatically detects and recovers stalled jobs. Check logs for details.
 
 ### Redis Connection Issues
-
 Verify Redis is running and credentials are correct in environment variables.
 
 ## Future Enhancements

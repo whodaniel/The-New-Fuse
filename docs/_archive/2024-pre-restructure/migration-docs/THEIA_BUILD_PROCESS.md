@@ -2,9 +2,7 @@
 
 ## Overview
 
-The Browser Hub build process has been optimized to ensure full functionality.
-The build process uses **pnpm** for package management and dependency
-resolution.
+The Browser Hub build process has been optimized to ensure full functionality. The build process uses **pnpm** for package management and dependency resolution.
 
 ## Build Process
 
@@ -104,8 +102,7 @@ This will verify:
 
 ## Result
 
-When you run `pnpm run build` followed by `pnpm run dev`, the Browser Hub will
-be:
+When you run `pnpm run build` followed by `pnpm run dev`, the Browser Hub will be:
 
 1. ✅ Fully built using pnpm
 2. ✅ Completely functional with all services ready

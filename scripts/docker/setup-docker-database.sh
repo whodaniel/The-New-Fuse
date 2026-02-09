@@ -8,8 +8,8 @@ docker run --name the-new-fuse-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRE
 echo "Waiting for PostgreSQL to start..."
 sleep 5
 
-# Generate Drizzle client
-echo "Generating Drizzle client..."
+# Generate Prisma client
+echo "Generating Prisma client..."
 yarn workspace @the-new-fuse/database db:generate
 
 # Run migrations

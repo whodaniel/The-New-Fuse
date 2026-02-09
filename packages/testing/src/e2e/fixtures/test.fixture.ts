@@ -49,7 +49,7 @@ export const test = base.extend<CustomFixtures>({
   authenticatedPage: async ({ page, authUtils }, use) => {
     const testUser: AuthUser = {
       username: process.env.TEST_USER || 'testuser',
-      password: process.env.TEST_PASSWORD || 'testpass',
+      password: process.env.TEST_PASSWORD || 'testpass'
     };
 
     await authUtils.loginAsUser(testUser);
@@ -62,7 +62,7 @@ export const test = base.extend<CustomFixtures>({
 
   testInfo: async ({ testInfo }, use) => {
     await use(testInfo);
-  },
+  }
 });
 
 export { expect } from '@playwright/test';

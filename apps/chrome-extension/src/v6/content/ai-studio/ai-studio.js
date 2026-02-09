@@ -1,8 +1,8 @@
-// The New Fuse - AI Studio Content Script
+// Content script for automating Google AI Studio
 // PHOENIX EDITION: Fixed all blocking errors from CLI tool learnings
 // Updates: gemini-3-flash-preview model, error recovery, permission handling
 
-console.log('[TNF] AI Studio Content Script loaded on', window.location.href);
+console.log('AI Studio Automator PHOENIX: Content script loaded on', window.location.href);
 
 // ============================================
 // SAFEGUARD: Check if chrome API is available
@@ -10,14 +10,14 @@ console.log('[TNF] AI Studio Content Script loaded on', window.location.href);
 const chromeAvailable = typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id;
 
 if (!chromeAvailable) {
-  console.log('[TNF] Chrome extension context not available, script will not run.');
+  console.log('[Automator] Chrome extension context not available, script will not run.');
   // Exit early if not in proper extension context
 } else {
   // ============================================
   // CONFIGURATION
   // ============================================
   const MAX_SEGMENT_DURATION = 45 * 60; // 45 minutes in seconds
-  const GEMINI_MODEL = 'gemini-3-flash-preview'; // Latest model as of Jan 2026
+  const GEMINI_MODEL = 'gemini-1.5-flash'; // Stable model for production, can be changed to gemini-3-flash-preview if available
   const PROMPT_TEMPLATE = `Extract all key points of information from this video. Focus specifically on AI-related concepts, technical innovations, and implementation details. Provide a dense, structured bulleted list of the provided key information in a downloadable .md format.`;
 
   // Error recovery configuration
@@ -36,12 +36,12 @@ if (!chromeAvailable) {
     try {
       chrome.runtime.sendMessage(message).catch(() => {});
     } catch (e) {
-      console.log('[TNF] Could not send message (context may be invalid)');
+      console.log('[Automator] Could not send message (context may be invalid)');
     }
   }
 
   function sendLog(message, level = 'info') {
-    console.log(`[TNF Phoenix] ${message}`);
+    console.log(`[Automator Phoenix] ${message}`);
     safeSendMessage({ type: 'LOG', message, level });
   }
 
@@ -248,63 +248,20 @@ if (!chromeAvailable) {
 
     await sleep(1500);
 
-    // Try multiple selectors for the Insert button (AI Studio UI changes frequently)
-    let insertBtn = null;
-
-    // Strategy 1: aria-label variations
-    const ariaLabels = ['Insert images, videos, audio, or files', 'Insert', 'Add files', 'Upload'];
-
-    for (const label of ariaLabels) {
-      insertBtn = document.querySelector(`button[aria-label*="${label}" i]`);
-      if (insertBtn) {
-        sendLog(`Found Insert button with aria-label containing: ${label}`, 'success');
-        break;
-      }
-    }
-
-    // Strategy 2: Icon-based search (Material icons)
+    let insertBtn = document.querySelector(
+      'button[aria-label="Insert images, videos, audio, or files"]'
+    );
     if (!insertBtn) {
       const buttons = Array.from(document.querySelectorAll('button'));
-      insertBtn = buttons.find((b) => {
-        const text = b.textContent || '';
-        const ariaLabel = b.getAttribute('aria-label') || '';
-        // Common Material icon names for insert/upload
-        return (
-          text.includes('note_add') ||
-          text.includes('add_circle') ||
-          text.includes('upload') ||
-          ariaLabel.toLowerCase().includes('insert') ||
-          ariaLabel.toLowerCase().includes('add')
-        );
-      });
-      if (insertBtn) sendLog('Found Insert button via icon search', 'success');
-    }
-
-    // Strategy 3: Position-based (usually near the bottom of chat)
-    if (!insertBtn) {
-      const buttons = Array.from(document.querySelectorAll('button'));
-      // Look for buttons in a toolbar/action area (common pattern)
-      insertBtn = buttons.find((b) => {
-        const parent = b.parentElement;
-        return (
-          parent &&
-          (parent.classList.contains('toolbar') ||
-            parent.classList.contains('actions') ||
-            parent.getAttribute('role') === 'toolbar')
-        );
-      });
-      if (insertBtn) sendLog('Found Insert button via position', 'success');
+      insertBtn = buttons.find(
+        (b) =>
+          b.querySelector('span')?.textContent?.includes('note_add') ||
+          b.textContent.includes('note_add')
+      );
     }
 
     if (!insertBtn) {
-      // Log all button aria-labels for debugging
-      const allButtons = Array.from(document.querySelectorAll('button'));
-      const buttonInfo = allButtons.slice(0, 10).map((b) => ({
-        text: b.textContent?.substring(0, 30),
-        aria: b.getAttribute('aria-label')?.substring(0, 50),
-      }));
-      sendLog(`Available buttons (first 10): ${JSON.stringify(buttonInfo)}`, 'debug');
-      throw new Error('Insert button not found after trying all strategies');
+      throw new Error('Insert button not found');
     }
 
     await clickElement(insertBtn, 'Insert button');
@@ -574,7 +531,7 @@ if (!chromeAvailable) {
     if (downloadBtn) {
       await clickElement(downloadBtn, 'Download button');
       sendLog('Report downloaded', 'success');
-      return { success: true, content: null };
+      return true;
     }
 
     const copyBtn = buttons.find((b) => {
@@ -593,22 +550,20 @@ if (!chromeAvailable) {
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `TNF_Report_${videoId}_Segment${segmentIndex}_${Date.now()}.md`;
+          a.download = `Report_${videoId}_Segment${segmentIndex}_${Date.now()}.md`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
           sendLog('Report saved as markdown file', 'success');
-
-          // Return the content so it can be sent to backend
-          return { success: true, content: text };
+          return true;
         }
       } catch (e) {
         sendLog('Could not auto-save report from clipboard', 'warning');
       }
     }
 
-    return { success: false, content: null };
+    return false;
   }
 
   // ============================================
@@ -676,20 +631,16 @@ if (!chromeAvailable) {
             throw new Error(result.error);
           }
 
-          let reportData = null;
           if (result.complete) {
-            reportData = await downloadReport(videoId, segmentIndex);
+            await downloadReport(videoId, segmentIndex);
           }
 
           safeSendMessage({
             type: 'TASK_COMPLETE',
             taskType: 'PROCESS_SEGMENT',
             url: url,
-            title: title,
-            videoId: videoId,
             segmentIndex: segmentIndex,
             success: result.complete,
-            reportContent: reportData?.content || null,
           });
           break;
 
@@ -712,7 +663,7 @@ if (!chromeAvailable) {
   // ============================================
 
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log('[TNF Phoenix] Received message:', message.action || message.type);
+    console.log('[Automator Phoenix] Received message:', message.action || message.type);
 
     if (message.action === 'EXECUTE_TASK') {
       processTask(message.task);
@@ -783,7 +734,7 @@ if (!chromeAvailable) {
             );
           }
         } catch (e) {
-          console.log('[TNF] Could not sync queue:', e);
+          console.log('[Automator] Could not sync queue:', e);
         }
       }
     }

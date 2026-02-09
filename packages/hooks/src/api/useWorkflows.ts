@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
+  WorkflowService,
   Workflow,
   WorkflowCreateData,
-  WorkflowExecution,
-  WorkflowService,
   WorkflowUpdateData,
+  WorkflowExecution,
 } from '../mocks/api-client';
 
 /**
@@ -106,14 +106,14 @@ export interface UseWorkflowsOptions {
  * Hook for working with workflows
  * @param options Workflows hook options
  * @returns Workflows hook result
- *
+ * 
  * @example
  * // Create workflow service
  * const workflowService = new WorkflowService(apiClient);
- *
+ * 
  * // Use workflows hook
  * const { workflows, isLoading, createWorkflow, executeWorkflow } = useWorkflows({ workflowService });
- *
+ * 
  * // Execute workflow
  * const handleExecuteWorkflow = async (id, input) => {
  *   try {
@@ -126,21 +126,21 @@ export interface UseWorkflowsOptions {
  */
 export function useWorkflows(options: UseWorkflowsOptions): UseWorkflowsResult {
   const { workflowService, initialPage = 1, initialLimit = 10, fetchOnMount = true } = options;
-
+  
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
   const [page, setPage] = useState<number>(initialPage);
   const [limit, setLimit] = useState<number>(initialLimit);
-
+  
   const fetchWorkflows = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
-
+      
       const response = await workflowService.getWorkflows(page, limit);
-
+      
       setWorkflows(response.workflows);
       setTotal(response.total);
     } catch (err) {
@@ -149,81 +149,68 @@ export function useWorkflows(options: UseWorkflowsOptions): UseWorkflowsResult {
       setIsLoading(false);
     }
   }, [workflowService, page, limit]);
-
-  const getWorkflow = useCallback(
-    async (id: string) => {
-      try {
-        return await workflowService.getWorkflow(id);
-      } catch (err) {
-        setError(err as Error);
-        throw err;
-      }
-    },
-    [workflowService]
-  );
-
-  const createWorkflow = useCallback(
-    async (data: WorkflowCreateData) => {
-      try {
-        const workflow = await workflowService.createWorkflow(data);
-
-        // Refresh workflows list
-        fetchWorkflows();
-
-        return workflow;
-      } catch (err) {
-        setError(err as Error);
-        throw err;
-      }
-    },
-    [workflowService, fetchWorkflows]
-  );
-
-  const updateWorkflow = useCallback(
-    async (id: string, data: WorkflowUpdateData) => {
-      try {
-        const workflow = await workflowService.updateWorkflow(id, data);
-
-        // Update workflow in list
-        setWorkflows((prevWorkflows) => prevWorkflows.map((w) => (w.id === id ? workflow : w)));
-
-        return workflow;
-      } catch (err) {
-        setError(err as Error);
-        throw err;
-      }
-    },
-    [workflowService]
-  );
-
-  const deleteWorkflow = useCallback(
-    async (id: string) => {
-      try {
-        await workflowService.deleteWorkflow(id);
-
-        // Remove workflow from list
-        setWorkflows((prevWorkflows) => prevWorkflows.filter((w) => w.id !== id));
-        setTotal((prevTotal) => prevTotal - 1);
-      } catch (err) {
-        setError(err as Error);
-        throw err;
-      }
-    },
-    [workflowService]
-  );
-
-  const executeWorkflow = useCallback(
-    async (id: string, input: any) => {
-      try {
-        return await workflowService.executeWorkflow(id, input);
-      } catch (err) {
-        setError(err as Error);
-        throw err;
-      }
-    },
-    [workflowService]
-  );
-
+  
+  const getWorkflow = useCallback(async (id: string) => {
+    try {
+      return await workflowService.getWorkflow(id);
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  }, [workflowService]);
+  
+  const createWorkflow = useCallback(async (data: WorkflowCreateData) => {
+    try {
+      const workflow = await workflowService.createWorkflow(data);
+      
+      // Refresh workflows list
+      fetchWorkflows();
+      
+      return workflow;
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  }, [workflowService, fetchWorkflows]);
+  
+  const updateWorkflow = useCallback(async (id: string, data: WorkflowUpdateData) => {
+    try {
+      const workflow = await workflowService.updateWorkflow(id, data);
+      
+      // Update workflow in list
+      setWorkflows((prevWorkflows) =>
+        prevWorkflows.map((w) => (w.id === id ? workflow : w))
+      );
+      
+      return workflow;
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  }, [workflowService]);
+  
+  const deleteWorkflow = useCallback(async (id: string) => {
+    try {
+      await workflowService.deleteWorkflow(id);
+      
+      // Remove workflow from list
+      setWorkflows((prevWorkflows) => prevWorkflows.filter((w) => w.id !== id));
+      setTotal((prevTotal) => prevTotal - 1);
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  }, [workflowService]);
+  
+  const executeWorkflow = useCallback(async (id: string, input: any) => {
+    try {
+      return await workflowService.executeWorkflow(id, input);
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  }, [workflowService]);
+  
   const getWorkflowExecutions = useCallback(
     async (id: string, execPage: number = 1, execLimit: number = 10) => {
       try {
@@ -235,13 +222,13 @@ export function useWorkflows(options: UseWorkflowsOptions): UseWorkflowsResult {
     },
     [workflowService]
   );
-
+  
   useEffect(() => {
     if (fetchOnMount) {
       fetchWorkflows();
     }
   }, [fetchOnMount, fetchWorkflows]);
-
+  
   return {
     workflows,
     total,

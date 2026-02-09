@@ -1,7 +1,7 @@
-import { useDebug } from '@/hooks/useDebug';
 import React from 'react';
-import { ErrorBoundary } from './ErrorBoundary';
+import { useDebug } from '@/hooks/useDebug';
 import { PerformanceMonitor } from './PerformanceMonitor';
+import { ErrorBoundary } from './ErrorBoundary';
 
 export const DevTools: React.FC = () => {
   const { enabled, metrics, errors } = useDebug();

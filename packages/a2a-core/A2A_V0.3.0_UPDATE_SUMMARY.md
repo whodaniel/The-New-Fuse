@@ -1,17 +1,15 @@
 # A2A Protocol v0.3.0 Update Summary
 
-**Date**: November 18, 2025 **Updated By**: Claude AI Assistant **Protocol
-Version**: v0.3.0 **Specification Source**: https://github.com/a2aproject/A2A
-(Linux Foundation)
+**Date**: November 18, 2025
+**Updated By**: Claude AI Assistant
+**Protocol Version**: v0.3.0
+**Specification Source**: https://github.com/a2aproject/A2A (Linux Foundation)
 
 ---
 
 ## Executive Summary
 
-The New Fuse's A2A (Agent-to-Agent) Protocol implementation has been updated to
-comply with the official **A2A Protocol v0.3.0 specification** from the Linux
-Foundation. This update brings full standards compliance, enabling
-interoperability with other A2A-compliant agent systems.
+The New Fuse's A2A (Agent-to-Agent) Protocol implementation has been updated to comply with the official **A2A Protocol v0.3.0 specification** from the Linux Foundation. This update brings full standards compliance, enabling interoperability with other A2A-compliant agent systems.
 
 ### What Was Updated
 
@@ -25,14 +23,11 @@ interoperability with other A2A-compliant agent systems.
 ## Key Changes in v0.3.0
 
 ### 1. Protocol Version
-
 - **Changed from**: `1.0.0` (custom)
 - **Changed to**: `0.3.0` (official Linux Foundation spec)
 
 ### 2. Message Format
-
 **Before** (Custom):
-
 ```typescript
 {
   id: "msg-123",
@@ -45,7 +40,6 @@ interoperability with other A2A-compliant agent systems.
 ```
 
 **After** (v0.3.0):
-
 ```typescript
 {
   role: "user",
@@ -61,7 +55,6 @@ interoperability with other A2A-compliant agent systems.
 ```
 
 ### 3. Task-Based Interaction Model
-
 V0.3.0 introduces **stateful tasks** with lifecycle management:
 
 ```typescript
@@ -69,40 +62,32 @@ Task States: submitted → working → completed/failed/canceled
 ```
 
 Each task tracks:
-
 - Conversation history
 - Current state
 - Generated artifacts
 - Related context
 
 ### 4. Transport Protocols
-
 **New**: Support for multiple transport protocols
-
 - **JSON-RPC 2.0** (primary) - Standardized request/response
 - **gRPC** (optional) - High-performance binary protocol
 - **HTTP+JSON** (optional) - REST-style endpoints
 
 ### 5. Security Enhancements
-
 **New in v0.3.0**:
-
 - ✅ **mTLS Support** - Mutual TLS authentication
 - ✅ **OAuth2 Metadata URL** - RFC 8414 authorization server metadata
 - ✅ **Per-Skill Security** - Skills can specify their own auth requirements
 - ✅ **OpenAPI 3.0 Schemes** - Standardized security definitions
 
 ### 6. Agent Discovery
-
 **New**: Structured AgentCard manifest
 
 **Well-Known URI Changed**:
-
 - Old: `/.well-known/agent.json`
 - New: `/.well-known/agent-card.json`
 
 AgentCard includes:
-
 - Protocol version (required)
 - Skills and capabilities
 - Supported transport protocols
@@ -111,9 +96,8 @@ AgentCard includes:
 - Optional JWS signatures
 
 ### 7. Streaming and Push Notifications
-
-**Streaming**: Server-Sent Events (SSE) for real-time updates **Push
-Notifications**: Standardized webhook configuration
+**Streaming**: Server-Sent Events (SSE) for real-time updates
+**Push Notifications**: Standardized webhook configuration
 
 ---
 
@@ -148,18 +132,15 @@ enum TaskState { Submitted, Working, Completed, ... }
 ## Files Updated
 
 ### 1. Types (`/packages/a2a-core/src/types.ts`)
-
 **Status**: ✅ Complete
 
 **Changes**:
-
 - All v0.3.0 types implemented
 - 148 new type definitions
 - Zod schemas for runtime validation
 - Backward compatibility layer
 
 **Key Types Added**:
-
 - `AgentCard` - Agent metadata
 - `Message` - Structured message with parts
 - `Task` - Stateful conversation
@@ -170,11 +151,9 @@ enum TaskState { Submitted, Working, Completed, ... }
 - All JSON-RPC 2.0 request/response types
 
 ### 2. README (`/packages/a2a-core/README.md`)
-
 **Status**: ✅ Complete
 
 **Contents**:
-
 - Quick start guide
 - Complete API reference
 - Code examples for all features
@@ -187,11 +166,9 @@ enum TaskState { Submitted, Working, Completed, ... }
 - Architecture diagram
 
 ### 3. Migration Guide (`/packages/a2a-core/MIGRATION_GUIDE_V0.3.0.md`)
-
 **Status**: ✅ Complete
 
 **Contents**:
-
 - All breaking changes documented
 - Before/after code examples
 - Step-by-step migration instructions
@@ -200,11 +177,9 @@ enum TaskState { Submitted, Working, Completed, ... }
 - Type comparison tables
 
 ### 4. Implementation Status (`/packages/a2a-core/V0.3.0_IMPLEMENTATION_STATUS.md`)
-
 **Status**: ✅ Complete
 
 **Contents**:
-
 - Detailed checklist of completed work
 - Required implementation tasks
 - Service architecture recommendations
@@ -212,11 +187,9 @@ enum TaskState { Submitted, Working, Completed, ... }
 - Estimated effort (5-7 days)
 
 ### 5. Package Configuration (`/packages/a2a-core/package.json`)
-
 **Status**: ✅ Updated
 
 **Changes**:
-
 - Version: `1.0.0` → `0.3.0`
 - Description updated for v0.3.0
 
@@ -227,11 +200,9 @@ enum TaskState { Submitted, Working, Completed, ... }
 ### High Priority
 
 #### 1. Service Refactoring (`src/a2a.service.ts`)
-
 **Status**: ⚠️ Required
 
 The service needs comprehensive refactoring to:
-
 - Implement task-based model
 - Add JSON-RPC 2.0 method handlers
 - Support message parts (TextPart, FilePart, DataPart)
@@ -239,7 +210,6 @@ The service needs comprehensive refactoring to:
 - Add SSE streaming support
 
 **Methods to Implement**:
-
 - `message/send` - Create task and send message
 - `message/stream` - Streaming with SSE
 - `tasks/get` - Retrieve task status
@@ -249,11 +219,9 @@ The service needs comprehensive refactoring to:
 - `agent/getAuthenticatedExtendedCard`
 
 #### 2. Controller Updates (`src/a2a.controller.ts`)
-
 **Status**: ⚠️ Required
 
 The controller needs to:
-
 - Handle JSON-RPC 2.0 request format
 - Route to service methods
 - Return JSON-RPC 2.0 responses
@@ -261,11 +229,9 @@ The controller needs to:
 - Implement SSE streaming endpoint
 
 #### 3. Testing (`tests/a2a.service.spec.ts`)
-
 **Status**: ⚠️ Required
 
 Tests need to:
-
 - Cover all v0.3.0 methods
 - Test task lifecycle
 - Test streaming
@@ -292,7 +258,6 @@ Tests need to:
 ## New Features in v0.3.0
 
 ### 1. Mutual TLS (mTLS)
-
 Client certificate authentication for enhanced security.
 
 ```typescript
@@ -307,7 +272,6 @@ Client certificate authentication for enhanced security.
 ```
 
 ### 2. OAuth2 Metadata URL
-
 Points to RFC 8414 authorization server metadata.
 
 ```typescript
@@ -319,7 +283,6 @@ Points to RFC 8414 authorization server metadata.
 ```
 
 ### 3. Per-Skill Security
-
 Individual skills can specify their own security requirements.
 
 ```typescript
@@ -332,7 +295,6 @@ Individual skills can specify their own security requirements.
 ```
 
 ### 4. AgentCard Signatures
-
 Optional JWS signatures for verifying agent card authenticity.
 
 ```typescript
@@ -345,7 +307,6 @@ Optional JWS signatures for verifying agent card authenticity.
 ```
 
 ### 5. Multiple Transport Interfaces
-
 Agents can declare support for multiple transports.
 
 ```typescript
@@ -365,28 +326,25 @@ Agents can declare support for multiple transports.
 All agent interactions use JSON-RPC 2.0 over HTTPS:
 
 ### Core Methods
-
-| Method              | Description                 |
-| ------------------- | --------------------------- |
-| `message/send`      | Send message to agent       |
-| `message/stream`    | Send message with streaming |
-| `tasks/get`         | Get task status             |
-| `tasks/cancel`      | Cancel task                 |
-| `tasks/resubscribe` | Resume streaming            |
+| Method | Description |
+|--------|-------------|
+| `message/send` | Send message to agent |
+| `message/stream` | Send message with streaming |
+| `tasks/get` | Get task status |
+| `tasks/cancel` | Cancel task |
+| `tasks/resubscribe` | Resume streaming |
 
 ### Push Notification Methods
-
-| Method                                | Description       |
-| ------------------------------------- | ----------------- |
-| `tasks/pushNotificationConfig/set`    | Configure webhook |
-| `tasks/pushNotificationConfig/get`    | Get config        |
-| `tasks/pushNotificationConfig/list`   | List all configs  |
-| `tasks/pushNotificationConfig/delete` | Delete config     |
+| Method | Description |
+|--------|-------------|
+| `tasks/pushNotificationConfig/set` | Configure webhook |
+| `tasks/pushNotificationConfig/get` | Get config |
+| `tasks/pushNotificationConfig/list` | List all configs |
+| `tasks/pushNotificationConfig/delete` | Delete config |
 
 ### Discovery Methods
-
-| Method                               | Description             |
-| ------------------------------------ | ----------------------- |
+| Method | Description |
+|--------|-------------|
 | `agent/getAuthenticatedExtendedCard` | Get extended agent card |
 
 ---
@@ -394,7 +352,6 @@ All agent interactions use JSON-RPC 2.0 over HTTPS:
 ## Error Handling
 
 ### JSON-RPC 2.0 Standard Errors
-
 - `-32700` Parse error
 - `-32600` Invalid request
 - `-32601` Method not found
@@ -402,7 +359,6 @@ All agent interactions use JSON-RPC 2.0 over HTTPS:
 - `-32603` Internal error
 
 ### A2A-Specific Errors (-32000 to -32099)
-
 - `-32001` Task not found
 - `-32002` Task already canceled
 - `-32003` Task not cancelable
@@ -423,11 +379,7 @@ All agent interactions use JSON-RPC 2.0 over HTTPS:
 ### Creating an AgentCard
 
 ```typescript
-import {
-  AgentCard,
-  A2A_PROTOCOL_VERSION,
-  TransportProtocol,
-} from '@the-new-fuse/a2a-core';
+import { AgentCard, A2A_PROTOCOL_VERSION, TransportProtocol } from '@the-new-fuse/a2a-core';
 
 const agentCard: AgentCard = {
   protocolVersion: A2A_PROTOCOL_VERSION,
@@ -469,7 +421,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 const message: Message = {
   role: 'user',
-  parts: [{ kind: 'text', text: 'Hello, can you help me?' }],
+  parts: [
+    { kind: 'text', text: 'Hello, can you help me?' },
+  ],
   messageId: uuidv4(),
   kind: 'message',
 };
@@ -485,7 +439,7 @@ const response = await fetch(agentCard.url, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    Authorization: 'Bearer YOUR_TOKEN',
+    'Authorization': 'Bearer YOUR_TOKEN',
   },
   body: JSON.stringify(request),
 });
@@ -540,35 +494,30 @@ The v0.3.0 implementation follows this architecture:
 For teams migrating existing code:
 
 ### Phase 1: Preparation
-
 - [ ] Read the migration guide
 - [ ] Review v0.3.0 specification
 - [ ] Identify affected code
 - [ ] Plan migration timeline
 
 ### Phase 2: Type Updates
-
 - [x] Update imports to new types
 - [x] Replace deprecated enums
 - [x] Update message structures
 - [ ] Fix type errors
 
 ### Phase 3: Implementation
-
 - [ ] Refactor service methods
 - [ ] Update controller endpoints
 - [ ] Implement task management
 - [ ] Add streaming support
 
 ### Phase 4: Testing
-
 - [ ] Update unit tests
 - [ ] Add integration tests
 - [ ] Test with other A2A agents
 - [ ] Performance testing
 
 ### Phase 5: Deployment
-
 - [ ] Deploy to staging
 - [ ] Update documentation
 - [ ] Deploy to production
@@ -579,23 +528,19 @@ For teams migrating existing code:
 ## Resources
 
 ### Official Documentation
-
 - **Specification**: https://github.com/a2aproject/A2A
 - **Documentation**: https://a2aproject.github.io/A2A/
 - **v0.3.0 Release**: https://github.com/a2aproject/A2A/releases/tag/v0.3.0
 - **Changelog**: https://github.com/a2aproject/A2A/blob/main/CHANGELOG.md
 
 ### Project Files
-
 - **Types**: `/packages/a2a-core/src/types.ts`
 - **README**: `/packages/a2a-core/README.md`
 - **Migration Guide**: `/packages/a2a-core/MIGRATION_GUIDE_V0.3.0.md`
-- **Implementation Status**:
-  `/packages/a2a-core/V0.3.0_IMPLEMENTATION_STATUS.md`
+- **Implementation Status**: `/packages/a2a-core/V0.3.0_IMPLEMENTATION_STATUS.md`
 - **This Summary**: `/packages/a2a-core/A2A_V0.3.0_UPDATE_SUMMARY.md`
 
 ### Local Spec Copy
-
 - **Path**: `/tmp/a2a-spec/` (cloned during implementation)
 - **TypeScript Types**: `/tmp/a2a-spec/types/src/types.ts`
 - **Documentation**: `/tmp/a2a-spec/docs/`
@@ -644,21 +589,22 @@ For teams migrating existing code:
 
 ### Completed Work
 
-✅ **Type System** - 100% v0.3.0 compliant ✅ **Documentation** - Comprehensive
-guides and examples ✅ **Package Config** - Version updated to 0.3.0 ✅
-**Backward Compatibility** - Legacy types marked as deprecated ✅
-**Validation** - Zod schemas for runtime checks
+✅ **Type System** - 100% v0.3.0 compliant
+✅ **Documentation** - Comprehensive guides and examples
+✅ **Package Config** - Version updated to 0.3.0
+✅ **Backward Compatibility** - Legacy types marked as deprecated
+✅ **Validation** - Zod schemas for runtime checks
 
 ### Remaining Work
 
-⚠️ **Service Implementation** - Requires refactoring (5-7 days) ⚠️ **Controller
-Updates** - JSON-RPC handlers needed ⚠️ **Testing** - Full v0.3.0 test coverage
+⚠️ **Service Implementation** - Requires refactoring (5-7 days)
+⚠️ **Controller Updates** - JSON-RPC handlers needed
+⚠️ **Testing** - Full v0.3.0 test coverage
 ⚠️ **Examples** - Working code samples
 
 ### Impact
 
-This update brings The New Fuse into **full compliance** with the official A2A
-Protocol v0.3.0 specification, enabling:
+This update brings The New Fuse into **full compliance** with the official A2A Protocol v0.3.0 specification, enabling:
 
 - ✅ Interoperability with other A2A agents
 - ✅ Standards-based communication
@@ -669,16 +615,13 @@ Protocol v0.3.0 specification, enabling:
 
 ### Breaking Changes
 
-Yes - This is a **major breaking change**. Existing implementations must be
-migrated using the provided migration guide.
+Yes - This is a **major breaking change**. Existing implementations must be migrated using the provided migration guide.
 
 ### Recommended Action
 
-**For New Projects**: Start with v0.3.0 types and implement according to the
-README.
+**For New Projects**: Start with v0.3.0 types and implement according to the README.
 
-**For Existing Projects**: Review the migration guide and plan a phased
-migration.
+**For Existing Projects**: Review the migration guide and plan a phased migration.
 
 ---
 
@@ -693,9 +636,10 @@ For questions or assistance:
 
 ---
 
-**Update completed by**: Claude AI Assistant **Date**: November 18, 2025
-**Protocol Version**: v0.3.0 **Status**: Types and documentation complete,
-service implementation required
+**Update completed by**: Claude AI Assistant
+**Date**: November 18, 2025
+**Protocol Version**: v0.3.0
+**Status**: Types and documentation complete, service implementation required
 
 ---
 

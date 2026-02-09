@@ -98,9 +98,9 @@ log "📊 Setting up test database..."
 dropdb --if-exists "$TEST_DB_NAME" 2>/dev/null || true
 createdb "$TEST_DB_NAME"
 
-# Run database migrations
+# Run Prisma migrations
 log "Running database migrations..."
-pnpm db:push 2>&1 | tee -a "$LOG_FILE"
+npx prisma db push --force-reset --schema=../../prisma/schema.prisma 2>&1 | tee -a "$LOG_FILE"
 
 success "Test database ready"
 

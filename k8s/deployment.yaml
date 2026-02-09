@@ -15,10 +15,10 @@ spec:
         app: api
     spec:
       containers:
-        - name: api
-          image: us-central1-docker.pkg.dev/your-gcp-project-id/the-new-fuse/api:latest
-          ports:
-            - containerPort: 3001
+      - name: api
+        image: us-central1-docker.pkg.dev/your-gcp-project-id/the-new-fuse/api:latest
+        ports:
+        - containerPort: 3001
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -37,10 +37,10 @@ spec:
         app: frontend
     spec:
       containers:
-        - name: frontend
-          image: us-central1-docker.pkg.dev/your-gcp-project-id/the-new-fuse/frontend:latest
-          ports:
-            - containerPort: 3000
+      - name: frontend
+        image: us-central1-docker.pkg.dev/your-gcp-project-id/the-new-fuse/frontend:latest
+        ports:
+        - containerPort: 3000
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -59,10 +59,10 @@ spec:
         app: a2a-service
     spec:
       containers:
-        - name: a2a-service
-          image: us-central1-docker.pkg.dev/your-gcp-project-id/the-new-fuse/a2a-service:latest
-          ports:
-            - containerPort: 3000
+      - name: a2a-service
+        image: us-central1-docker.pkg.dev/your-gcp-project-id/the-new-fuse/a2a-service:latest
+        ports:
+        - containerPort: 3000
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -81,7 +81,7 @@ spec:
         app: message-broker
     spec:
       containers:
-        - name: message-broker
-          image: us-central1-docker.pkg.dev/your-gcp-project-id/the-new-fuse/message-broker:latest
-          ports:
-            - containerPort: 3002
+      - name: message-broker
+        image: us-central1-docker.pkg.dev/your-gcp-project-id/the-new-fuse/message-broker:latest
+        ports:
+        - containerPort: 3002

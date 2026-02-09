@@ -20,7 +20,7 @@ export function parseCodeBlock(block: string, options: ParseOptions = {}): CodeB
     return {
       language: '',
       code: block,
-      highlighted: shouldHighlight ? highlightCode(block) : block,
+      highlighted: shouldHighlight ? highlightCode(block) : block
     };
   }
 
@@ -35,17 +35,17 @@ export function parseCodeBlock(block: string, options: ParseOptions = {}): CodeB
   return {
     language,
     code,
-    highlighted: shouldHighlight ? highlightCode(code, { language }) : code,
+    highlighted: shouldHighlight ? highlightCode(code, { language }) : code
   };
 }
 
 export function extractCodeBlocks(content: string): CodeBlock[] {
   const codeBlockRegex = /```[\s\S]*?```/g;
   const matches = content.match(codeBlockRegex);
-
+  
   if (!matches) return [];
 
-  return matches.map((block) => parseCodeBlock(block));
+  return matches.map(block => parseCodeBlock(block));
 }
 
 export function wrapInCodeBlock(code: string, language = ''): string {
@@ -84,7 +84,7 @@ export function getLanguageLabel(language: string): string {
     json: 'JSON',
     xml: 'XML',
     markdown: 'Markdown',
-    md: 'Markdown',
+    md: 'Markdown'
   };
 
   return languageLabels[language.toLowerCase()] || language;

@@ -1,22 +1,15 @@
 # @the-new-fuse/core-error-handling
 
-Unified error handling system for The New Fuse. Provides comprehensive error
-classes, error recovery strategies, retry logic, and logging utilities for
-robust application error management.
+Unified error handling system for The New Fuse. Provides comprehensive error classes, error recovery strategies, retry logic, and logging utilities for robust application error management.
 
 ## Overview
 
-The core-error-handling package is a production-ready error management system
-that provides structured error handling across The New Fuse platform. It
-includes custom error classes for common scenarios, recovery strategies, retry
-mechanisms, and comprehensive logging.
+The core-error-handling package is a production-ready error management system that provides structured error handling across The New Fuse platform. It includes custom error classes for common scenarios, recovery strategies, retry mechanisms, and comprehensive logging.
 
 ## Features
 
-- **Comprehensive Error Classes**: Pre-built error types for all common
-  scenarios
-- **Error Categories**: Network, Authentication, Validation, Business, System,
-  Integration, Payment
+- **Comprehensive Error Classes**: Pre-built error types for all common scenarios
+- **Error Categories**: Network, Authentication, Validation, Business, System, Integration, Payment
 - **Error Severity Levels**: Critical, High, Medium, Low
 - **Structured Error Metadata**: Rich context and debugging information
 - **Retry Logic**: Configurable automatic retry with exponential backoff
@@ -107,11 +100,7 @@ try {
 Base error class with rich metadata.
 
 ```typescript
-import {
-  ApplicationError,
-  ErrorSeverity,
-  ErrorCategory,
-} from '@the-new-fuse/core-error-handling';
+import { ApplicationError, ErrorSeverity, ErrorCategory } from '@the-new-fuse/core-error-handling';
 
 const error = new ApplicationError(
   'Error message',
@@ -321,46 +310,46 @@ throw new InsufficientFundsError(100, 50);
 import { ErrorCodes } from '@the-new-fuse/core-error-handling';
 
 // Network errors (1000-1999)
-ErrorCodes.NETWORK_ERROR; // 1000
-ErrorCodes.TIMEOUT; // 1001
-ErrorCodes.CONNECTION_ERROR; // 1002
+ErrorCodes.NETWORK_ERROR;        // 1000
+ErrorCodes.TIMEOUT;              // 1001
+ErrorCodes.CONNECTION_ERROR;     // 1002
 
 // Auth errors (2000-2999)
-ErrorCodes.AUTH_ERROR; // 2000
-ErrorCodes.TOKEN_EXPIRED; // 2001
-ErrorCodes.INVALID_CREDENTIALS; // 2002
-ErrorCodes.AUTHORIZATION_ERROR; // 2100
+ErrorCodes.AUTH_ERROR;           // 2000
+ErrorCodes.TOKEN_EXPIRED;        // 2001
+ErrorCodes.INVALID_CREDENTIALS;  // 2002
+ErrorCodes.AUTHORIZATION_ERROR;  // 2100
 
 // Validation errors (3000-3999)
-ErrorCodes.VALIDATION_ERROR; // 3000
-ErrorCodes.REQUIRED_FIELD; // 3001
-ErrorCodes.INVALID_FORMAT; // 3002
-ErrorCodes.OUT_OF_RANGE; // 3003
+ErrorCodes.VALIDATION_ERROR;     // 3000
+ErrorCodes.REQUIRED_FIELD;       // 3001
+ErrorCodes.INVALID_FORMAT;       // 3002
+ErrorCodes.OUT_OF_RANGE;         // 3003
 
 // Business errors (4000-4999)
-ErrorCodes.BUSINESS_ERROR; // 4000
-ErrorCodes.NOT_FOUND; // 4001
-ErrorCodes.CONFLICT; // 4002
-ErrorCodes.DUPLICATE_RESOURCE; // 4003
-ErrorCodes.OPERATION_NOT_ALLOWED; // 4004
-ErrorCodes.RATE_LIMIT; // 4005
+ErrorCodes.BUSINESS_ERROR;       // 4000
+ErrorCodes.NOT_FOUND;            // 4001
+ErrorCodes.CONFLICT;             // 4002
+ErrorCodes.DUPLICATE_RESOURCE;   // 4003
+ErrorCodes.OPERATION_NOT_ALLOWED;// 4004
+ErrorCodes.RATE_LIMIT;           // 4005
 
 // System errors (5000-5999)
-ErrorCodes.SYSTEM_ERROR; // 5000
-ErrorCodes.DATABASE_ERROR; // 5001
-ErrorCodes.CONFIGURATION_ERROR; // 5002
-ErrorCodes.SERVICE_UNAVAILABLE; // 5003
+ErrorCodes.SYSTEM_ERROR;         // 5000
+ErrorCodes.DATABASE_ERROR;       // 5001
+ErrorCodes.CONFIGURATION_ERROR;  // 5002
+ErrorCodes.SERVICE_UNAVAILABLE;  // 5003
 ErrorCodes.EXTERNAL_SERVICE_ERROR; // 5004
-ErrorCodes.FILE_SYSTEM_ERROR; // 5005
+ErrorCodes.FILE_SYSTEM_ERROR;    // 5005
 
 // Integration errors (6000-6999)
-ErrorCodes.INTEGRATION_ERROR; // 6000
-ErrorCodes.API_INTEGRATION_ERROR; // 6001
+ErrorCodes.INTEGRATION_ERROR;    // 6000
+ErrorCodes.API_INTEGRATION_ERROR;// 6001
 
 // Payment errors (7000-7999)
-ErrorCodes.PAYMENT_ERROR; // 7000
-ErrorCodes.PAYMENT_DECLINED; // 7001
-ErrorCodes.INSUFFICIENT_FUNDS; // 7002
+ErrorCodes.PAYMENT_ERROR;        // 7000
+ErrorCodes.PAYMENT_DECLINED;     // 7001
+ErrorCodes.INSUFFICIENT_FUNDS;   // 7002
 ```
 
 ## Retry Logic
@@ -386,12 +375,11 @@ const result = await retry.executeWithRetry(async () => {
 ```typescript
 const retry = new RetryLogic({
   maxRetries: 5,
-  baseDelay: 1000, // 1 second
-  maxDelay: 30000, // 30 seconds max
-  exponentialBackoff: true, // 1s, 2s, 4s, 8s, 16s
-  jitter: true, // Add randomness to prevent thundering herd
-  retryableErrors: [
-    // Only retry these errors
+  baseDelay: 1000,           // 1 second
+  maxDelay: 30000,           // 30 seconds max
+  exponentialBackoff: true,  // 1s, 2s, 4s, 8s, 16s
+  jitter: true,              // Add randomness to prevent thundering herd
+  retryableErrors: [         // Only retry these errors
     NetworkError,
     TimeoutError,
     ServiceUnavailableError,
@@ -432,9 +420,9 @@ const retry = new RetryLogic({
 import { CircuitBreaker } from '@the-new-fuse/core-error-handling';
 
 const breaker = new CircuitBreaker({
-  failureThreshold: 5, // Open after 5 failures
-  resetTimeout: 60000, // Try again after 60s
-  halfOpenRequests: 3, // Test with 3 requests when half-open
+  failureThreshold: 5,      // Open after 5 failures
+  resetTimeout: 60000,      // Try again after 60s
+  halfOpenRequests: 3,      // Test with 3 requests when half-open
 });
 
 const result = await breaker.execute(async () => {
@@ -511,16 +499,23 @@ logger.log({
 try {
   await dangerousOperation();
 } catch (error) {
-  logger.error('Operation failed', error, {
-    operation: 'dangerousOperation',
-    userId: 'user-123',
-    attempt: 3,
-  });
+  logger.error(
+    'Operation failed',
+    error,
+    {
+      operation: 'dangerousOperation',
+      userId: 'user-123',
+      attempt: 3,
+    }
+  );
 
   // Log error with correlation ID for tracking
-  logger.errorWithCorrelation('Operation failed', error, 'correlation-id-123', {
-    metadata,
-  });
+  logger.errorWithCorrelation(
+    'Operation failed',
+    error,
+    'correlation-id-123',
+    { metadata }
+  );
 }
 ```
 
@@ -599,10 +594,14 @@ export class ExternalApiService {
       try {
         const response = await fetch(url);
         if (!response.ok) {
-          throw new NetworkError('API request failed', 1000, {
-            endpoint: url,
-            statusCode: response.status,
-          });
+          throw new NetworkError(
+            'API request failed',
+            1000,
+            {
+              endpoint: url,
+              statusCode: response.status,
+            }
+          );
         }
         return await response.json();
       } catch (error) {
@@ -701,9 +700,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     };
 
     // Find the closest code range
-    const ranges = Object.keys(codeRanges)
-      .map(Number)
-      .sort((a, b) => b - a);
+    const ranges = Object.keys(codeRanges).map(Number).sort((a, b) => b - a);
     for (const range of ranges) {
       if (error.code >= range) {
         return codeRanges[range];
@@ -767,12 +764,12 @@ const appLogger = CoreLogger.getInstance();
 ### With Database Package
 
 ```typescript
-import { DatabaseService } from '@the-new-fuse/database';
+import { PrismaService } from '@the-new-fuse/database';
 import { DatabaseError } from '@the-new-fuse/core-error-handling';
 
 async function queryDatabase() {
   try {
-    return await drizzle.user.findMany();
+    return await prisma.user.findMany();
   } catch (error) {
     throw new DatabaseError(
       'Failed to query users',
@@ -962,7 +959,6 @@ MIT
 ## Contributing
 
 Contributions are welcome! Please:
-
 1. Fork the repository
 2. Create a feature branch
 3. Add tests for new error types
@@ -971,7 +967,6 @@ Contributions are welcome! Please:
 ## Support
 
 For issues and questions:
-
 - Open an issue on GitHub
 - Check the documentation
 - Review error code reference

@@ -1,7 +1,7 @@
 // Import required API client and types
-import { ApiConfig } from '../../config/ApiConfig';
 import { ApiClient } from '../../core/ApiClient';
-import { AuthType, Integration, IntegrationConfig, IntegrationType } from '../types';
+import { ApiConfig } from '../../config/ApiConfig';
+import { Integration, IntegrationType, IntegrationConfig, AuthType } from '../types';
 
 /**
  * Stability AI configuration
@@ -32,16 +32,16 @@ export class StabilityAIIntegration implements Integration {
   isEnabled: boolean = true;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
-
+  
   private apiClient: ApiClient;
-
+  
   constructor(config: StabilityAIConfig) {
     this.id = config.id;
     this.name = config.name;
     this.type = config.type;
     this.description = config.description;
     this.config = config;
-
+    
     // Default Stability AI capabilities
     this.capabilities = {
       actions: [
@@ -52,24 +52,27 @@ export class StabilityAIIntegration implements Integration {
         'masking',
         'list_engines',
         'get_engine',
-        'get_user_balance',
+        'get_user_balance'
       ],
-      dataTypes: ['image', 'text'],
+      dataTypes: [
+        'image',
+        'text'
+      ]
     };
-
+    
     // Create API client for Stability AI
     const apiConfig: ApiConfig = {
       baseURL: config.baseUrl || '',
       headers: {
         ...config.defaultHeaders,
         'Content-Type': 'application/json',
-        Authorization: config.apiKey ? `Bearer ${config.apiKey}` : '',
-      },
+        'Authorization': config.apiKey ? `Bearer ${config.apiKey}` : ''
+      }
     };
-
+    
     this.apiClient = new ApiClient(apiConfig);
   }
-
+  
   /**
    * Connect to Stability AI
    */
@@ -79,21 +82,19 @@ export class StabilityAIIntegration implements Integration {
       if (!this.config.apiKey) {
         throw new Error('API key is required to connect to Stability AI');
       }
-
+      
       // Verify credentials by making a test request to get user's balance
       await this.getUserBalance();
-
+      
       this.isConnected = true;
       this.updatedAt = new Date();
       return true;
     } catch (error) {
       this.isConnected = false;
-      throw new Error(
-        `Failed to connect to Stability AI: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to connect to Stability AI: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Disconnect from Stability AI
    */
@@ -102,7 +103,7 @@ export class StabilityAIIntegration implements Integration {
     this.updatedAt = new Date();
     return true;
   }
-
+  
   /**
    * Execute a Stability AI action
    */
@@ -110,7 +111,7 @@ export class StabilityAIIntegration implements Integration {
     if (!this.isConnected) {
       throw new Error('Not connected to Stability AI. Call connect() first.');
     }
-
+    
     switch (action) {
       case 'text_to_image':
         return this.textToImage(params);
@@ -132,7 +133,7 @@ export class StabilityAIIntegration implements Integration {
         throw new Error(`Unsupported Stability AI action: ${action}`);
     }
   }
-
+  
   /**
    * Generate an image from text prompt
    */
@@ -144,30 +145,28 @@ export class StabilityAIIntegration implements Integration {
         height: this.config.defaultHeight || 512,
         cfg_scale: this.config.defaultCfgScale || 7,
         steps: this.config.defaultSteps || 30,
-        samples: 1,
+        samples: 1
       };
-
+      
       const requestBody = {
-        text_prompts: Array.isArray(params.text_prompts)
-          ? params.text_prompts
-          : [{ text: params.prompt || params.text || '', weight: params.weight || 1 }],
+        text_prompts: Array.isArray(params.text_prompts) ? 
+          params.text_prompts : 
+          [{ text: params.prompt || params.text || '', weight: params.weight || 1 }],
         height: params.height || defaultParams.height,
         width: params.width || defaultParams.width,
         cfg_scale: params.cfg_scale || defaultParams.cfg_scale,
         samples: params.samples || defaultParams.samples,
         steps: params.steps || defaultParams.steps,
         style_preset: params.style_preset,
-        seed: params.seed,
+        seed: params.seed
       };
-
+      
       return await this.apiClient.post(`/v1/generation/${engine}/text-to-image`, requestBody);
     } catch (error) {
-      throw new Error(
-        `Failed to generate image from text: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to generate image from text: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Generate an image from another image and text prompt
    */
@@ -176,42 +175,40 @@ export class StabilityAIIntegration implements Integration {
       if (!params.image_base64 && !params.image) {
         throw new Error('Base64 encoded image or image URL is required');
       }
-
+      
       const engine = params.engine || this.config.engine || 'stable-diffusion-v1-5';
       const defaultParams = {
         cfg_scale: this.config.defaultCfgScale || 7,
         steps: this.config.defaultSteps || 30,
         samples: 1,
-        image_strength: 0.35,
+        image_strength: 0.35
       };
-
+      
       // If image is provided as URL, we need to download and convert to base64
       let imageBase64 = params.image_base64;
       if (!imageBase64 && params.image) {
         imageBase64 = await this.urlToBase64(params.image);
       }
-
+      
       const requestBody = {
-        text_prompts: Array.isArray(params.text_prompts)
-          ? params.text_prompts
-          : [{ text: params.prompt || params.text || '', weight: params.weight || 1 }],
+        text_prompts: Array.isArray(params.text_prompts) ? 
+          params.text_prompts : 
+          [{ text: params.prompt || params.text || '', weight: params.weight || 1 }],
         init_image: imageBase64,
         image_strength: params.image_strength || defaultParams.image_strength,
         cfg_scale: params.cfg_scale || defaultParams.cfg_scale,
         samples: params.samples || defaultParams.samples,
         steps: params.steps || defaultParams.steps,
         style_preset: params.style_preset,
-        seed: params.seed,
+        seed: params.seed
       };
-
+      
       return await this.apiClient.post(`/v1/generation/${engine}/image-to-image`, requestBody);
     } catch (error) {
-      throw new Error(
-        `Failed to generate image from image: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to generate image from image: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Upscale an image
    */
@@ -220,32 +217,27 @@ export class StabilityAIIntegration implements Integration {
       if (!params.image_base64 && !params.image) {
         throw new Error('Base64 encoded image or image URL is required');
       }
-
+      
       const engine = params.engine || 'esrgan-v1-x2plus';
-
+      
       // If image is provided as URL, we need to download and convert to base64
       let imageBase64 = params.image_base64;
       if (!imageBase64 && params.image) {
         imageBase64 = await this.urlToBase64(params.image);
       }
-
+      
       const requestBody = {
         image: imageBase64,
         width: params.width,
-        height: params.height,
+        height: params.height
       };
-
-      return await this.apiClient.post(
-        `/v1/generation/${engine}/image-to-image/upscale`,
-        requestBody
-      );
+      
+      return await this.apiClient.post(`/v1/generation/${engine}/image-to-image/upscale`, requestBody);
     } catch (error) {
-      throw new Error(
-        `Failed to upscale image: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to upscale image: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Inpainting (fill in parts of an image based on a mask)
    */
@@ -254,54 +246,49 @@ export class StabilityAIIntegration implements Integration {
       if (!params.image_base64 && !params.image) {
         throw new Error('Base64 encoded image or image URL is required');
       }
-
+      
       if (!params.mask_base64 && !params.mask) {
         throw new Error('Base64 encoded mask or mask URL is required');
       }
-
+      
       const engine = params.engine || this.config.engine || 'stable-inpainting-v1-0';
       const defaultParams = {
         cfg_scale: this.config.defaultCfgScale || 7,
         steps: this.config.defaultSteps || 30,
-        samples: 1,
+        samples: 1
       };
-
+      
       // If image is provided as URL, we need to download and convert to base64
       let imageBase64 = params.image_base64;
       if (!imageBase64 && params.image) {
         imageBase64 = await this.urlToBase64(params.image);
       }
-
+      
       // If mask is provided as URL, we need to download and convert to base64
       let maskBase64 = params.mask_base64;
       if (!maskBase64 && params.mask) {
         maskBase64 = await this.urlToBase64(params.mask);
       }
-
+      
       const requestBody = {
-        text_prompts: Array.isArray(params.text_prompts)
-          ? params.text_prompts
-          : [{ text: params.prompt || params.text || '', weight: params.weight || 1 }],
+        text_prompts: Array.isArray(params.text_prompts) ? 
+          params.text_prompts : 
+          [{ text: params.prompt || params.text || '', weight: params.weight || 1 }],
         init_image: imageBase64,
         mask_image: maskBase64,
         cfg_scale: params.cfg_scale || defaultParams.cfg_scale,
         samples: params.samples || defaultParams.samples,
         steps: params.steps || defaultParams.steps,
         style_preset: params.style_preset,
-        seed: params.seed,
+        seed: params.seed
       };
-
-      return await this.apiClient.post(
-        `/v1/generation/${engine}/image-to-image/masking`,
-        requestBody
-      );
+      
+      return await this.apiClient.post(`/v1/generation/${engine}/image-to-image/masking`, requestBody);
     } catch (error) {
-      throw new Error(
-        `Failed to perform inpainting: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to perform inpainting: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Masking (same as inpainting, different endpoint)
    */
@@ -309,7 +296,7 @@ export class StabilityAIIntegration implements Integration {
     // This is an alias for inpainting
     return this.inpainting(params);
   }
-
+  
   /**
    * List available engines
    */
@@ -317,12 +304,10 @@ export class StabilityAIIntegration implements Integration {
     try {
       return await this.apiClient.get('/v1/engines/list');
     } catch (error) {
-      throw new Error(
-        `Failed to list engines: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to list engines: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Get a specific engine
    */
@@ -330,12 +315,10 @@ export class StabilityAIIntegration implements Integration {
     try {
       return await this.apiClient.get(`/v1/engines/id/${engineId}`);
     } catch (error) {
-      throw new Error(
-        `Failed to get engine: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to get engine: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Get user balance (credits)
    */
@@ -343,12 +326,10 @@ export class StabilityAIIntegration implements Integration {
     try {
       return await this.apiClient.get('/v1/user/balance');
     } catch (error) {
-      throw new Error(
-        `Failed to get user balance: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to get user balance: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-
+  
   /**
    * Convert a URL to base64
    * Note: In a real implementation, this would use fetch to get the image
@@ -360,10 +341,10 @@ export class StabilityAIIntegration implements Integration {
     if (url.startsWith('data:image')) {
       return url.split(',')[1];
     }
-
+    
     throw new Error('URL to base64 conversion not implemented in this example');
   }
-
+  
   /**
    * Get metadata about this integration
    */
@@ -376,9 +357,9 @@ export class StabilityAIIntegration implements Integration {
       isConnected: this.isConnected,
       isEnabled: this.isEnabled,
       defaultEngine: this.config.engine,
-      lastUpdated: this.updatedAt,
+      lastUpdated: this.updatedAt
     };
-
+    
     if (this.isConnected) {
       try {
         metadata.engines = await this.listEngines();
@@ -387,7 +368,7 @@ export class StabilityAIIntegration implements Integration {
         metadata.error = error instanceof Error ? error.message : String(error);
       }
     }
-
+    
     return metadata;
   }
 }
@@ -395,9 +376,7 @@ export class StabilityAIIntegration implements Integration {
 /**
  * Create a new Stability AI integration
  */
-export function createStabilityAIIntegration(
-  config: Partial<StabilityAIConfig> = {}
-): StabilityAIIntegration {
+export function createStabilityAIIntegration(config: Partial<StabilityAIConfig> = {}): StabilityAIIntegration {
   const defaultConfig: StabilityAIConfig = {
     id: 'stability-ai',
     name: 'Stability AI',
@@ -411,11 +390,11 @@ export function createStabilityAIIntegration(
     defaultCfgScale: 7,
     defaultSteps: 30,
     docUrl: 'https://platform.stability.ai/docs/api',
-    logoUrl: 'https://stability.ai/dist/stability-ai-logo.svg',
+    logoUrl: 'https://stability.ai/dist/stability-ai-logo.svg'
   };
-
+  
   return new StabilityAIIntegration({
     ...defaultConfig,
-    ...config,
+    ...config
   });
 }

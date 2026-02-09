@@ -12,18 +12,23 @@ import { createClient } from 'redis';
 async function redisCloudExample() {
   console.log('=== Redis Cloud Connection Example ===');
 
+  const redisPassword = process.env.REDIS_PASSWORD;
+  if (!redisPassword) {
+    throw new Error('REDIS_PASSWORD is required to connect to Redis Cloud.');
+  }
+
   // Create a Redis client connected to Redis Cloud
   const client = createClient({
-    username: 'default',
-    password: 'CxXMZw3qW3zYXq1JYy7bCuqwRrL7tH0d',
+    username: process.env.REDIS_USERNAME || 'default',
+    password: redisPassword,
     socket: {
-      host: 'redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com',
-      port: 11337
-    }
+      host: process.env.REDIS_HOST || 'redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com',
+      port: Number(process.env.REDIS_PORT || 11337),
+    },
   });
 
   // Set up error handler
-  client.on('error', err => console.log('Redis Client Error', err));
+  client.on('error', (err) => console.log('Redis Client Error', err));
 
   // Test the connection
   try {

@@ -31,7 +31,7 @@ export class MemoryOptimizer {
       recentlyAccessedItems: 0,
       oldItems: 0,
       averageScore: 0,
-      memoryPressure: 0,
+      memoryPressure: 0
     };
   }
 

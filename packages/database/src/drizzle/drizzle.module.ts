@@ -6,8 +6,8 @@ import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import { DatabaseService } from './database.service';
 import * as schema from './schema';
+import { DatabaseService } from './database.service';
 
 // Injection token for the Drizzle client
 export const DRIZZLE_CLIENT = Symbol('DRIZZLE_CLIENT');
@@ -36,7 +36,7 @@ export interface DrizzleModuleOptions {
  * Then inject the client:
  * ```typescript
  * constructor(@Inject(DRIZZLE_CLIENT) private db: DrizzleClient) {}
- * // OR use DatabaseService:
+ * // OR use DatabaseService (also available as PrismaService alias):
  * constructor(private db: DatabaseService) {}
  * ```
  */

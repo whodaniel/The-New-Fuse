@@ -1,8 +1,8 @@
+import { useCallback, useEffect, useState } from 'react';
 import {
   unstoppableDomainsService,
   UnstoppableDomainsUser,
 } from '@/services/unstoppableDomains.service';
-import { useCallback, useEffect, useState } from 'react';
 
 export interface UseUnstoppableDomainsReturn {
   user: UnstoppableDomainsUser | null;
@@ -27,8 +27,7 @@ export const useUnstoppableDomains = (): UseUnstoppableDomainsReturn => {
   // Initialize the service
   useEffect(() => {
     const clientID = import.meta.env.VITE_UNSTOPPABLE_DOMAINS_CLIENT_ID;
-    const redirectUri =
-      import.meta.env.VITE_UNSTOPPABLE_DOMAINS_REDIRECT_URI ||
+    const redirectUri = import.meta.env.VITE_UNSTOPPABLE_DOMAINS_REDIRECT_URI || 
       `${window.location.origin}/auth/unstoppable-callback`;
 
     if (clientID) {
@@ -69,7 +68,7 @@ export const useUnstoppableDomains = (): UseUnstoppableDomainsReturn => {
       setIsLoading(true);
       setError(null);
       await unstoppableDomainsService.login();
-
+      
       // After successful login, fetch user data
       const userData = await unstoppableDomainsService.getUser();
       setUser(userData);

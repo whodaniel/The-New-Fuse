@@ -17,7 +17,7 @@ Run security audit on dependencies and address vulnerabilities.
    - Note all HIGH and CRITICAL vulnerabilities
 2. Check for outdated dependencies:
    - `pnpm outdated`
-   - Focus on major security packages (@nestjs/\*, drizzle, pg, etc.)
+   - Focus on major security packages (@nestjs/\*, prisma, pg, etc.)
 3. For each HIGH/CRITICAL vulnerability:
    - Identify the affected package
    - Check if update is available that fixes it

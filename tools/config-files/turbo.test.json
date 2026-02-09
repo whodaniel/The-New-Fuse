@@ -55,14 +55,14 @@
     },
     "db:generate": {
       "inputs": [
-        "drizzle/schema.drizzle",
+        "prisma/schema.prisma",
         "drizzle.config.*",
         "src/db/schema/**/*.{ts,js}",
         "migrations/**/*.sql"
       ],
       "outputs": [
         "src/generated/**",
-        "drizzle/generated/**",
+        "prisma/generated/**",
         "drizzle/**"
       ],
       "cache": true

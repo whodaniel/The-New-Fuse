@@ -1,60 +1,60 @@
+import React, { useState, useRef, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import {
-  Alert,
-  AlertIcon,
-  Avatar,
-  Badge,
+  VStack,
+  HStack,
   Box,
+  Text,
   Button,
   Card,
   CardBody,
+  Badge,
   Divider,
-  Flex,
-  HStack,
-  Icon,
-  IconButton,
-  Text,
-  Textarea,
   useToast,
-  VStack,
-} from '@chakra-ui/react';
-import React, { useEffect, useRef, useState } from 'react';
-import { FiDownload, FiSend, FiTrash2 } from 'react-icons/fi';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../store/store';
+  Alert,
+  AlertIcon,
+  Textarea,
+  IconButton,
+  Flex,
+  Avatar,
+  Icon
+} from '@chakra-ui/react'
+import { FiSend, FiTrash2, FiDownload } from 'react-icons/fi'
+import type { RootState } from '../../store/store'
 
 // Using local interface to match the chatSlice type (timestamp as string for Redux serialization)
 interface ChatMessage {
-  id: string;
-  content: string;
-  timestamp: string;
-  sender: 'user' | 'system' | 'ai' | 'chrome';
+  id: string
+  content: string
+  timestamp: string
+  sender: 'user' | 'system' | 'ai' | 'chrome'
   metadata?: {
-    platform?: string;
-    confidence?: number;
-    tabId?: number;
-    url?: string;
-  };
+    platform?: string
+    confidence?: number
+    tabId?: number
+    url?: string
+  }
 }
 
 export const ChatTab: React.FC = () => {
-  const toast = useToast();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const { messages } = useSelector((state: RootState) => state.chat);
-  const { tnfRelay } = useSelector((state: RootState) => state.connections);
-  const { mapping } = useSelector((state: RootState) => state.elements);
-
-  const [inputMessage, setInputMessage] = useState('');
-  const [isSending, setIsSending] = useState(false);
+  const toast = useToast()
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  
+  const { messages } = useSelector((state: RootState) => state.chat)
+  const { tnfRelay } = useSelector((state: RootState) => state.connections)
+  const { mapping } = useSelector((state: RootState) => state.elements)
+  
+  const [inputMessage, setInputMessage] = useState('')
+  const [isSending, setIsSending] = useState(false)
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
-
+    if (!inputMessage.trim()) return
+    
     if (!tnfRelay.connected) {
       toast({
         title: 'Not Connected',
@@ -62,23 +62,23 @@ export const ChatTab: React.FC = () => {
         status: 'warning',
         duration: 3000,
         isClosable: true,
-      });
-      return;
+      })
+      return
     }
 
-    setIsSending(true);
+    setIsSending(true)
     try {
       if (window.api) {
-        const response = await window.api.chatSend(inputMessage.trim());
+        const response = await window.api.chatSend(inputMessage.trim())
         if (response.success) {
-          setInputMessage('');
+          setInputMessage('')
           toast({
             title: 'Message Sent',
             description: 'Your message has been processed',
             status: 'success',
             duration: 2000,
             isClosable: true,
-          });
+          })
         } else {
           toast({
             title: 'Send Failed',
@@ -86,7 +86,7 @@ export const ChatTab: React.FC = () => {
             status: 'error',
             duration: 3000,
             isClosable: true,
-          });
+          })
         }
       }
     } catch {
@@ -96,15 +96,15 @@ export const ChatTab: React.FC = () => {
         status: 'error',
         duration: 3000,
         isClosable: true,
-      });
+      })
     } finally {
-      setIsSending(false);
+      setIsSending(false)
     }
-  };
+  }
 
   const handleSendToChrome = async () => {
-    if (!inputMessage.trim()) return;
-
+    if (!inputMessage.trim()) return
+    
     if (!mapping?.chatInput || !mapping?.sendButton) {
       toast({
         title: 'Elements Not Detected',
@@ -112,28 +112,28 @@ export const ChatTab: React.FC = () => {
         status: 'warning',
         duration: 3000,
         isClosable: true,
-      });
-      return;
+      })
+      return
     }
 
-    setIsSending(true);
+    setIsSending(true)
     try {
       if (window.api) {
         const response = await window.api.chromeSendMessage({
           type: 'SEND_CHAT_MESSAGE',
           message: inputMessage.trim(),
-          mapping: mapping,
-        });
-
+          mapping: mapping
+        })
+        
         if (response.success) {
-          setInputMessage('');
+          setInputMessage('')
           toast({
             title: 'Message Sent to Browser',
             description: 'Message sent directly to the chat interface',
             status: 'success',
             duration: 2000,
             isClosable: true,
-          });
+          })
         } else {
           toast({
             title: 'Browser Send Failed',
@@ -141,7 +141,7 @@ export const ChatTab: React.FC = () => {
             status: 'error',
             duration: 3000,
             isClosable: true,
-          });
+          })
         }
       }
     } catch {
@@ -151,11 +151,11 @@ export const ChatTab: React.FC = () => {
         status: 'error',
         duration: 3000,
         isClosable: true,
-      });
+      })
     } finally {
-      setIsSending(false);
+      setIsSending(false)
     }
-  };
+  }
 
   const handleClearHistory = async () => {
     try {
@@ -167,7 +167,7 @@ export const ChatTab: React.FC = () => {
         status: 'info',
         duration: 2000,
         isClosable: true,
-      });
+      })
     } catch {
       toast({
         title: 'Clear Failed',
@@ -175,35 +175,35 @@ export const ChatTab: React.FC = () => {
         status: 'error',
         duration: 3000,
         isClosable: true,
-      });
+      })
     }
-  };
+  }
 
   const handleExportHistory = () => {
     try {
       const exportData = {
         timestamp: new Date().toISOString(),
         messages: messages,
-        totalMessages: messages.length,
-      };
-
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `chat-history-${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
+        totalMessages: messages.length
+      }
+      
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `chat-history-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      
       toast({
         title: 'History Exported',
         description: 'Chat history has been exported to file',
         status: 'success',
         duration: 2000,
         isClosable: true,
-      });
+      })
     } catch {
       toast({
         title: 'Export Failed',
@@ -211,46 +211,36 @@ export const ChatTab: React.FC = () => {
         status: 'error',
         duration: 3000,
         isClosable: true,
-      });
+      })
     }
-  };
+  }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
+      e.preventDefault()
+      handleSendMessage()
     }
-  };
+  }
 
   const getSenderColor = (sender: ChatMessage['sender']) => {
     switch (sender) {
-      case 'user':
-        return 'blue';
-      case 'ai':
-        return 'green';
-      case 'system':
-        return 'purple';
-      case 'chrome':
-        return 'orange';
-      default:
-        return 'gray';
+      case 'user': return 'blue'
+      case 'ai': return 'green'
+      case 'system': return 'purple'
+      case 'chrome': return 'orange'
+      default: return 'gray'
     }
-  };
+  }
 
   const getSenderIcon = (sender: ChatMessage['sender']) => {
     switch (sender) {
-      case 'user':
-        return '👤';
-      case 'ai':
-        return '🤖';
-      case 'system':
-        return '⚙️';
-      case 'chrome':
-        return '🌐';
-      default:
-        return '❓';
+      case 'user': return '👤'
+      case 'ai': return '🤖'
+      case 'system': return '⚙️'
+      case 'chrome': return '🌐'
+      default: return '❓'
     }
-  };
+  }
 
   const renderMessage = (message: ChatMessage) => (
     <Box key={message.id} mb={4}>
@@ -262,7 +252,7 @@ export const ChatTab: React.FC = () => {
           color="white"
           icon={<Text>{getSenderIcon(message.sender)}</Text>}
         />
-
+        
         <Box flex={1}>
           <HStack mb={1}>
             <Text fontSize="sm" fontWeight="bold" color={`${getSenderColor(message.sender)}.400`}>
@@ -277,7 +267,7 @@ export const ChatTab: React.FC = () => {
               </Badge>
             )}
           </HStack>
-
+          
           <Box
             bg={message.sender === 'user' ? 'blue.900' : 'whiteAlpha.100'}
             p={3}
@@ -289,7 +279,7 @@ export const ChatTab: React.FC = () => {
               {message.content}
             </Text>
           </Box>
-
+          
           {message.metadata?.confidence && (
             <Text fontSize="xs" color="gray.500" mt={1}>
               Confidence: {message.metadata.confidence}%
@@ -298,7 +288,7 @@ export const ChatTab: React.FC = () => {
         </Box>
       </HStack>
     </Box>
-  );
+  )
 
   return (
     <VStack spacing={6} align="stretch" h="600px">
@@ -308,8 +298,8 @@ export const ChatTab: React.FC = () => {
           <AlertIcon />
           <Box>
             <Text fontSize="sm">
-              TNF Relay connection required for chat functionality. Please connect in the
-              Connections tab first.
+              TNF Relay connection required for chat functionality. 
+              Please connect in the Connections tab first.
             </Text>
           </Box>
         </Alert>
@@ -320,14 +310,12 @@ export const ChatTab: React.FC = () => {
         <CardBody py={3}>
           <HStack justify="space-between">
             <HStack>
-              <Text fontSize="md" fontWeight="bold">
-                Chat History
-              </Text>
+              <Text fontSize="md" fontWeight="bold">Chat History</Text>
               <Badge colorScheme="blue" variant="subtle">
                 {messages.length} messages
               </Badge>
             </HStack>
-
+            
             <HStack>
               <IconButton
                 aria-label="Export history"
@@ -354,9 +342,9 @@ export const ChatTab: React.FC = () => {
       {/* Messages Display */}
       <Card bg="whiteAlpha.50" borderColor="whiteAlpha.200" flex={1}>
         <CardBody>
-          <Box
-            h="300px"
-            overflowY="auto"
+          <Box 
+            h="300px" 
+            overflowY="auto" 
             pr={2}
             css={{
               '&::-webkit-scrollbar': {
@@ -373,9 +361,7 @@ export const ChatTab: React.FC = () => {
           >
             {messages.length === 0 ? (
               <Flex align="center" justify="center" h="100%" direction="column">
-                <Text color="gray.500" mb={2}>
-                  No messages yet
-                </Text>
+                <Text color="gray.500" mb={2}>No messages yet</Text>
                 <Text fontSize="sm" color="gray.600">
                   Send a message to start the conversation
                 </Text>
@@ -408,10 +394,10 @@ export const ChatTab: React.FC = () => {
               borderColor="whiteAlpha.300"
               _focus={{
                 borderColor: 'blue.400',
-                boxShadow: '0 0 0 1px blue.400',
+                boxShadow: '0 0 0 1px blue.400'
               }}
             />
-
+            
             <HStack justify="space-between" w="100%">
               <HStack>
                 <Text fontSize="xs" color="gray.500">
@@ -423,7 +409,7 @@ export const ChatTab: React.FC = () => {
                   </Badge>
                 )}
               </HStack>
-
+              
               <HStack>
                 {mapping?.chatInput && mapping?.sendButton && (
                   <Button
@@ -437,7 +423,7 @@ export const ChatTab: React.FC = () => {
                     Send to Browser
                   </Button>
                 )}
-
+                
                 <Button
                   onClick={handleSendMessage}
                   colorScheme="blue"
@@ -454,5 +440,5 @@ export const ChatTab: React.FC = () => {
         </CardBody>
       </Card>
     </VStack>
-  );
-};
+  )
+}

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Logger } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 
 @Controller('transactions')
@@ -10,8 +10,7 @@ export class TransactionsController {
   @Post('execute/:walletId')
   async executeTransaction(
     @Param('walletId') walletId: string,
-    @Body()
-    transactionData: {
+    @Body() transactionData: {
       to: string;
       value: string;
       data?: string;
@@ -29,8 +28,7 @@ export class TransactionsController {
   @Post('execute-batch/:walletId')
   async executeBatchTransaction(
     @Param('walletId') walletId: string,
-    @Body()
-    batchData: {
+    @Body() batchData: {
       transactions: Array<{
         to: string;
         value: string;
@@ -94,16 +92,13 @@ export class TransactionsController {
   // }
 
   @Post('ai-user-operation')
-  async createAIUserOperation(
-    @Body()
-    userOpData: {
-      agentVerifierId: string;
-      to: string;
-      value: string;
-      data?: string;
-      chainId?: number;
-    }
-  ) {
+  async createAIUserOperation(@Body() userOpData: {
+    agentVerifierId: string;
+    to: string;
+    value: string;
+    data?: string;
+    chainId?: number;
+  }) {
     try {
       return await this.transactionsService.buildAndSignUserOpForAI(
         userOpData.agentVerifierId,

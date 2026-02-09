@@ -3,7 +3,6 @@
 ## Incident Response Protocol
 
 ### 1. Immediate Response
-
 1. **Incident Detection**
    - Monitor system alerts
    - Review error logs
@@ -29,13 +28,11 @@
 ### PostgreSQL Recovery
 
 1. Stop the application to prevent new connections:
-
    ```bash
    yarn stop
    ```
 
 2. Restore from backup:
-
    ```bash
    # Drop existing database if needed
    dropdb -h localhost -U postgres fuse
@@ -47,44 +44,40 @@
    psql -h localhost -U postgres -d fuse < backup.sql
    ```
 
-3. Run Drizzle migrations:
-
+3. Run Prisma migrations:
    ```bash
    cd packages/database
-   yarn drizzle migrate deploy
+   yarn prisma migrate deploy
    ```
 
 4. Verify data integrity:
    ```bash
-   yarn drizzle db pull
-   yarn drizzle validate
+   yarn prisma db pull
+   yarn prisma validate
    ```
 
 ### Common Recovery Scenarios
 
 1. Failed Migration:
-
    ```bash
    # Reset database (development only)
-   yarn drizzle migrate reset
+   yarn prisma migrate reset
 
    # Or rollback to last known good state
    psql -h localhost -U postgres -d fuse < backup.sql
-   yarn drizzle migrate deploy
+   yarn prisma migrate deploy
    ```
 
 2. Corrupted Schema:
-
    ```bash
-   # Regenerate Drizzle client
-   yarn drizzle generate
+   # Regenerate Prisma client
+   yarn prisma generate
 
    # Validate schema
-   yarn drizzle validate
+   yarn prisma validate
    ```
 
 3. Connection Issues:
-
    ```bash
    # Check PostgreSQL status
    brew services status postgresql@17
@@ -96,13 +89,11 @@
 ### Recovery Verification
 
 1. Check table structure:
-
    ```bash
-   yarn drizzle db pull
+   yarn prisma db pull
    ```
 
 2. Verify data:
-
    ```sql
    -- Check user table
    SELECT COUNT(*) FROM users;
@@ -117,9 +108,7 @@
    ```
 
 #### Redis Recovery
-
 1. **Cache Invalidation**
-
    ```bash
    # Clear specific cache
    redis-cli DEL cache_key
@@ -129,7 +118,6 @@
    ```
 
 2. **Persistence Issues**
-
    ```bash
    # Check persistence status
    redis-cli INFO persistence
@@ -139,9 +127,7 @@
    ```
 
 #### API Service Recovery
-
 1. **Service Restart**
-
    ```bash
    # Graceful shutdown
    pm2 stop api-service
@@ -154,7 +140,6 @@
    ```
 
 2. **Load Balancer Issues**
-
    ```bash
    # Check node health
    curl http://localhost:3001/api/health
@@ -166,7 +151,6 @@
 ### 3. State Recovery
 
 #### User Sessions
-
 1. **Token Invalidation**
    - Revoke compromised tokens
    - Force re-authentication
@@ -178,7 +162,6 @@
    - Update session metadata
 
 #### Task State
-
 1. **Task Queue Recovery**
    - Identify incomplete tasks
    - Restore task priorities
@@ -192,9 +175,7 @@
 ### 4. Monitoring Recovery
 
 #### System Metrics
-
 1. **Metric Collection**
-
    ```bash
    # Verify metric collection
    curl http://localhost:3001/api/metrics
@@ -211,13 +192,12 @@
 ### 5. Prevention Measures
 
 #### Automated Recovery
-
 ```typescript
 class AutoRecovery {
   async attemptRecovery(error: SystemError): Promise<boolean> {
     const strategy = this.getRecoveryStrategy(error);
     let attempts = 0;
-
+    
     while (attempts < strategy.maxAttempts) {
       try {
         await strategy.execute();
@@ -227,14 +207,13 @@ class AutoRecovery {
         await this.wait(strategy.getBackoffTime(attempts));
       }
     }
-
+    
     return false;
   }
 }
 ```
 
 #### Health Checks
-
 ```typescript
 class HealthCheck {
   async verifySystemHealth(): Promise<HealthStatus> {
@@ -242,12 +221,12 @@ class HealthCheck {
       this.checkDatabase(),
       this.checkRedis(),
       this.checkAPI(),
-      this.checkMessageQueue(),
+      this.checkMessageQueue()
     ]);
-
+    
     return {
-      healthy: checks.every((c) => c.healthy),
-      services: checks.reduce((acc, c) => ({ ...acc, [c.name]: c.status }), {}),
+      healthy: checks.every(c => c.healthy),
+      services: checks.reduce((acc, c) => ({...acc, [c.name]: c.status}), {})
     };
   }
 }

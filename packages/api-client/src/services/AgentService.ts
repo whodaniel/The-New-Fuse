@@ -96,13 +96,11 @@ export class AgentService extends BaseService {
    * @param limit Number of agents per page
    * @returns Promise resolving to the agents data
    */
-  async getAgents(
-    page: number = 1,
-    limit: number = 10
-  ): Promise<{ agents: Agent[]; total: number }> {
-    return this.apiClient.get<{ agents: Agent[]; total: number }>(this.getPath(), {
-      params: { page, limit },
-    });
+  async getAgents(page: number = 1, limit: number = 10): Promise<{ agents: Agent[]; total: number }> {
+    return this.apiClient.get<{ agents: Agent[]; total: number }>(
+      this.getPath(),
+      { params: { page, limit } }
+    );
   }
 
   /**

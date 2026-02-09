@@ -20,10 +20,10 @@
  * 5. Final report is generated and distributed
  */
 
-import { Logger } from '@nestjs/common';
-import { APIIntegrationAgent } from './api-integration-agent';
 import { CoordinatorAgent } from './coordinator-agent';
 import { DataProcessingAgent } from './data-processing-agent';
+import { APIIntegrationAgent } from './api-integration-agent';
+import { Logger } from '@nestjs/common';
 
 const logger = new Logger('MultiAgentCoordination');
 
@@ -56,7 +56,10 @@ class AnalyticsAgent {
         'Category A has highest volume',
         'Anomaly detected in recent data',
       ],
-      recommendations: ['Increase monitoring frequency', 'Review Category C data quality'],
+      recommendations: [
+        'Increase monitoring frequency',
+        'Review Category C data quality',
+      ],
     };
   }
 }
@@ -73,7 +76,10 @@ class ReporterAgent {
     // Client initialization code here
   }
 
-  async generateReport(analysisResults: any, distributionList: string[]): Promise<any> {
+  async generateReport(
+    analysisResults: any,
+    distributionList: string[]
+  ): Promise<any> {
     logger.log(`[${this.agentId}] Generating report...`);
 
     const report = {
@@ -87,7 +93,9 @@ class ReporterAgent {
     };
 
     // Distribute to recipients
-    logger.log(`[${this.agentId}] Distributing report to ${distributionList.length} recipients`);
+    logger.log(
+      `[${this.agentId}] Distributing report to ${distributionList.length} recipients`
+    );
 
     return report;
   }
@@ -104,7 +112,10 @@ export async function runMultiAgentCoordination(): Promise<void> {
   // Initialize all agents
   const coordinator = new CoordinatorAgent('coordinator_main', SERVER_ENDPOINT);
   const dataFetcher = new APIIntegrationAgent('data_fetcher', SERVER_ENDPOINT);
-  const dataProcessor = new DataProcessingAgent('data_processor', SERVER_ENDPOINT);
+  const dataProcessor = new DataProcessingAgent(
+    'data_processor',
+    SERVER_ENDPOINT
+  );
   const analytics = new AnalyticsAgent('analytics_agent', SERVER_ENDPOINT);
   const reporter = new ReporterAgent('reporter_agent', SERVER_ENDPOINT);
 
@@ -135,7 +146,9 @@ export async function runMultiAgentCoordination(): Promise<void> {
 
     // Sub-step 3.1: Data Fetching
     logger.log('\n  [Data Fetcher] Fetching data from external API');
-    const rawData = await dataFetcher.fetchExternalData(workflowConfig.inputs.apiEndpoint);
+    const rawData = await dataFetcher.fetchExternalData(
+      workflowConfig.inputs.apiEndpoint
+    );
     logger.log(`  [Data Fetcher] Fetched ${JSON.stringify(rawData).length} bytes of data`);
 
     // Sub-step 3.2: Data Processing
@@ -242,7 +255,9 @@ export async function runMultiAgentCoordination(): Promise<void> {
 
     // Pattern 3: Collaboration
     logger.log('\n  Pattern 3: Multi-Agent Collaboration');
-    logger.log('  [Data Processor & Analytics] Collaborating on data validation');
+    logger.log(
+      '  [Data Processor & Analytics] Collaborating on data validation'
+    );
     await dataProcessor.collaborateWith('analytics_agent', 'data_validation', {
       dataset: 'processed_data',
       validationRules: ['range_check', 'null_check'],
@@ -299,7 +314,10 @@ export class AdvancedCoordinationPatterns {
    * Pattern 1: Pipeline Processing
    * Agents process data in sequence, each adding value
    */
-  static async pipelineProcessing(agents: any[], initialData: any): Promise<any> {
+  static async pipelineProcessing(
+    agents: any[],
+    initialData: any
+  ): Promise<any> {
     logger.log('Executing Pipeline Processing Pattern');
 
     let data = initialData;
@@ -317,7 +335,10 @@ export class AdvancedCoordinationPatterns {
    * Pattern 2: Parallel Processing with Aggregation
    * Multiple agents process data in parallel, results are aggregated
    */
-  static async parallelProcessing(agents: any[], data: any): Promise<any> {
+  static async parallelProcessing(
+    agents: any[],
+    data: any
+  ): Promise<any> {
     logger.log('Executing Parallel Processing Pattern');
 
     const promises = agents.map((agent, index) => {
@@ -347,7 +368,10 @@ export class AdvancedCoordinationPatterns {
 
     // Main coordinator assigns work to sub-coordinators
     const assignments = subCoordinators.map((subCoord, index) => {
-      const assignedWorkers = workers.slice(index * 2, (index + 1) * 2);
+      const assignedWorkers = workers.slice(
+        index * 2,
+        (index + 1) * 2
+      );
       return subCoord.coordinate(assignedWorkers);
     });
 
@@ -382,11 +406,16 @@ export class AdvancedCoordinationPatterns {
    * Pattern 5: Consensus Building
    * Multiple agents collaborate to reach consensus
    */
-  static async consensusBuilding(agents: any[], proposal: any): Promise<any> {
+  static async consensusBuilding(
+    agents: any[],
+    proposal: any
+  ): Promise<any> {
     logger.log('Executing Consensus Building Pattern');
 
     // Each agent evaluates the proposal
-    const votes = await Promise.all(agents.map((agent) => agent.evaluate(proposal)));
+    const votes = await Promise.all(
+      agents.map((agent) => agent.evaluate(proposal))
+    );
 
     // Count votes
     const approve = votes.filter((v) => v.decision === 'approve').length;
@@ -394,7 +423,9 @@ export class AdvancedCoordinationPatterns {
 
     const consensus = approve > reject ? 'approved' : 'rejected';
 
-    logger.log(`  Consensus result: ${consensus} (${approve} approve, ${reject} reject)`);
+    logger.log(
+      `  Consensus result: ${consensus} (${approve} approve, ${reject} reject)`
+    );
 
     return {
       consensus,

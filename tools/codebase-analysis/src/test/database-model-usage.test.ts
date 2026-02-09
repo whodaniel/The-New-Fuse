@@ -37,7 +37,7 @@ describe('DatabaseModelUsageAnalyzer', () => {
   });
 
   describe('parseSchemaContent', () => {
-    it('should parse a simple Drizzle model', () => {
+    it('should parse a simple Prisma model', () => {
       const schemaContent = `
         model User {
           id    String @id @default(uuid())
@@ -56,7 +56,7 @@ describe('DatabaseModelUsageAnalyzer', () => {
       
       // Access private method for testing
       const parseMethod = (analyzer as any).parseSchemaContent.bind(analyzer);
-      const models = parseMethod(schemaContent, 'test-schema.drizzle');
+      const models = parseMethod(schemaContent, 'test-schema.prisma');
       
       expect(models).toHaveLength(2);
       expect(models[0].name).toBe('User');
@@ -122,7 +122,7 @@ describe('DatabaseModelUsageAnalyzer', () => {
   describe('extractFieldUsage', () => {
     it('should extract fields from select clause', () => {
       const extractMethod = (analyzer as any).extractFieldUsage.bind(analyzer);
-      const line = 'const user = await drizzle.user.findUnique({ select: { id: true, email: true } })';
+      const line = 'const user = await prisma.user.findUnique({ select: { id: true, email: true } })';
       
       const result = extractMethod(line, 'User');
       
@@ -132,7 +132,7 @@ describe('DatabaseModelUsageAnalyzer', () => {
 
     it('should extract relations from include clause', () => {
       const extractMethod = (analyzer as any).extractFieldUsage.bind(analyzer);
-      const line = 'const user = await drizzle.user.findUnique({ include: { posts: true, profile: true } })';
+      const line = 'const user = await prisma.user.findUnique({ include: { posts: true, profile: true } })';
       
       const result = extractMethod(line, 'User');
       
@@ -142,7 +142,7 @@ describe('DatabaseModelUsageAnalyzer', () => {
 
     it('should extract fields from where clause', () => {
       const extractMethod = (analyzer as any).extractFieldUsage.bind(analyzer);
-      const line = 'const users = await drizzle.user.findMany({ where: { email: "test@example.com", isActive: true } })';
+      const line = 'const users = await prisma.user.findMany({ where: { email: "test@example.com", isActive: true } })';
       
       const result = extractMethod(line, 'User');
       

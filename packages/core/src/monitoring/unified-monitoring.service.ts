@@ -12,7 +12,11 @@ export class UnifiedMonitoringService {
     // this event to a service like Segment, Mixpanel, or a custom event pipeline.
   }
 
-  observeMetric(name: string, value: number, tags: Record<string, string> = {}): void {
+  observeMetric(
+    name: string,
+    value: number,
+    tags: Record<string, string> = {},
+  ): void {
     this.logger.log(`Observing metric: ${name} = ${value}`, tags);
     // This is a placeholder for a more robust implementation that would send
     // this metric to a time-series database like Prometheus or InfluxDB.

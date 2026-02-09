@@ -26,19 +26,19 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@the-new-fuse/database": "workspace:*",
     "lucide-react": "^0.546.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "reactflow": "^11.11.4"
+    "reactflow": "^11.11.4",
+    "@the-new-fuse/database": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
-    "eslint": "^9.39.2",
+    "eslint": "^9.38.0",
     "jest": "^30.2.0",
-    "rimraf": "^6.0.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "rimraf": "^6.0.1"
   },
   "peerDependencies": {
     "react": "^19.2.3",

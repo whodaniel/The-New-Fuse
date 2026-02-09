@@ -1,6 +1,6 @@
 /**
  * TypeScript Compilation Manager
- *
+ * 
  * Optimizes TypeScript compilation for memory efficiency through:
  * - Incremental compilation using project references
  * - Memory-efficient compiler options
@@ -8,11 +8,11 @@
  * - Memory cleanup between compilation stages
  */
 
-import { ChildProcess, spawn } from 'child_process';
+import { spawn, ChildProcess } from 'child_process';
 import { promises as fs } from 'fs';
-import { dirname, join, resolve } from 'path';
+import { join, dirname, resolve } from 'path';
 import { ITypeScriptCompilationManager } from '../interfaces/index.js';
-import { MemoryCleanupConfig, MemoryCleanupUtility } from './MemoryCleanupUtility.js';
+import { MemoryCleanupUtility, MemoryCleanupConfig } from './MemoryCleanupUtility.js';
 
 /**
  * TypeScript project configuration
@@ -77,7 +77,7 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
     projectsCompiled: 0,
     successfulCompilations: 0,
     failedCompilations: 0,
-    errors: [],
+    errors: []
   };
   private activeProcesses: Map<string, ChildProcess> = new Map();
 
@@ -87,9 +87,9 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
       preserveWatchOutput: true,
       skipLibCheck: true,
       maxMemoryUsage: 2048, // 2GB default
-      ...options,
+      ...options
     };
-
+    
     // Initialize memory cleanup utility
     this.memoryCleanupUtility = new MemoryCleanupUtility({
       aggressiveGC: true,
@@ -97,30 +97,27 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
       clearTypeScriptCache: true,
       cleanupDelay: 100,
       memoryThreshold: 50, // 50MB threshold
-      ...cleanupConfig,
+      ...cleanupConfig
     });
   }
 
   /**
    * Compile TypeScript projects with optimization
    */
-  async compileProjects(
-    projects: string[],
-    options?: TypeScriptCompilationOptions
-  ): Promise<boolean> {
+  async compileProjects(projects: string[], options?: TypeScriptCompilationOptions): Promise<boolean> {
     const startTime = Date.now();
     const compilationOptions = { ...this.compilationOptions, ...options };
-
+    
     try {
       // Reset metrics for this compilation run
       this.resetMetrics();
-
+      
       // Discover and analyze TypeScript projects
       const tsProjects = await this.discoverTypeScriptProjects(projects);
-
+      
       // Sort projects by dependencies for optimal build order
       const sortedProjects = this.sortProjectsByDependencies(tsProjects);
-
+      
       // Compile projects in dependency order
       let allSuccessful = true;
       for (const project of sortedProjects) {
@@ -128,19 +125,18 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
         if (!success) {
           allSuccessful = false;
         }
-
+        
         // Clean up memory between projects if enabled
         if (compilationOptions.incremental) {
           await this.cleanupCompilerMemory();
         }
       }
-
+      
       this.metrics.totalTime = Date.now() - startTime;
       return allSuccessful;
+      
     } catch (error) {
-      this.metrics.errors.push(
-        `Compilation failed: ${error instanceof Error ? error.message : String(error)}`
-      );
+      this.metrics.errors.push(`Compilation failed: ${error instanceof Error ? error.message : String(error)}`);
       this.metrics.totalTime = Date.now() - startTime;
       return false;
     }
@@ -161,34 +157,24 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
     try {
       // Terminate any active TypeScript processes first
       await this.terminateActiveProcesses();
-
+      
       // Use the comprehensive memory cleanup utility
       const cleanupResult = await this.memoryCleanupUtility.performCleanup();
-
+      
       // Log cleanup results for monitoring
       if (cleanupResult.success) {
-        console.debug(
-          `Memory cleanup successful: freed ${cleanupResult.memoryFreed}MB in ${cleanupResult.duration}ms`
-        );
+        console.debug(`Memory cleanup successful: freed ${cleanupResult.memoryFreed}MB in ${cleanupResult.duration}ms`);
       } else {
-        console.warn(
-          `Memory cleanup partially successful: freed ${cleanupResult.memoryFreed}MB, errors:`,
-          cleanupResult.errors
-        );
+        console.warn(`Memory cleanup partially successful: freed ${cleanupResult.memoryFreed}MB, errors:`, cleanupResult.errors);
       }
-
+      
       // Update metrics with cleanup information
       if (cleanupResult.memoryFreed > 0) {
-        this.metrics.peakMemoryUsage = Math.max(
-          this.metrics.peakMemoryUsage,
-          cleanupResult.memoryBefore.current
-        );
+        this.metrics.peakMemoryUsage = Math.max(this.metrics.peakMemoryUsage, cleanupResult.memoryBefore.current);
       }
+      
     } catch (error) {
-      console.warn(
-        'Memory cleanup warning:',
-        error instanceof Error ? error.message : String(error)
-      );
+      console.warn('Memory cleanup warning:', error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -218,7 +204,7 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
    */
   private async discoverTypeScriptProjects(projectPaths: string[]): Promise<TypeScriptProject[]> {
     const projects: TypeScriptProject[] = [];
-
+    
     for (const projectPath of projectPaths) {
       try {
         const configPath = await this.findTsConfig(projectPath);
@@ -227,13 +213,10 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
           projects.push(project);
         }
       } catch (error) {
-        console.warn(
-          `Failed to analyze project ${projectPath}:`,
-          error instanceof Error ? error.message : String(error)
-        );
+        console.warn(`Failed to analyze project ${projectPath}:`, error instanceof Error ? error.message : String(error));
       }
     }
-
+    
     return projects;
   }
 
@@ -244,9 +227,9 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
     const possiblePaths = [
       join(projectPath, 'tsconfig.json'),
       join(projectPath, 'tsconfig.build.json'),
-      join(projectPath, 'src', 'tsconfig.json'),
+      join(projectPath, 'src', 'tsconfig.json')
     ];
-
+    
     for (const configPath of possiblePaths) {
       try {
         await fs.access(configPath);
@@ -255,7 +238,7 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
         // Continue to next path
       }
     }
-
+    
     return null;
   }
 
@@ -265,16 +248,16 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
   private async analyzeTypeScriptProject(configPath: string): Promise<TypeScriptProject> {
     const configContent = await fs.readFile(configPath, 'utf-8');
     const config = JSON.parse(configContent);
-
+    
     const projectName = this.extractProjectName(configPath);
     const dependencies = this.extractProjectReferences(config);
     const estimatedMemoryUsage = this.estimateMemoryUsage(config, configPath);
-
+    
     return {
       name: projectName,
       configPath,
       dependencies,
-      estimatedMemoryUsage,
+      estimatedMemoryUsage
     };
   }
 
@@ -300,19 +283,19 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
   private estimateMemoryUsage(config: any, configPath: string): number {
     // Base memory usage
     let estimatedUsage = 256; // 256MB base
-
+    
     // Adjust based on compiler options
     const compilerOptions = config.compilerOptions || {};
-
+    
     if (compilerOptions.strict) estimatedUsage += 128;
     if (compilerOptions.declaration) estimatedUsage += 64;
     if (compilerOptions.sourceMap) estimatedUsage += 32;
-
+    
     // Adjust based on project size (rough estimate)
     const projectDir = dirname(configPath);
     // This is a simplified estimation - in practice, you'd analyze file count/size
     estimatedUsage += 128; // Additional 128MB for average project
-
+    
     return estimatedUsage;
   }
 
@@ -323,37 +306,37 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
     const sorted: TypeScriptProject[] = [];
     const visited = new Set<string>();
     const visiting = new Set<string>();
-
+    
     const visit = (project: TypeScriptProject) => {
       if (visiting.has(project.name)) {
         throw new Error(`Circular dependency detected involving ${project.name}`);
       }
-
+      
       if (visited.has(project.name)) {
         return;
       }
-
+      
       visiting.add(project.name);
-
+      
       // Visit dependencies first
       for (const depName of project.dependencies) {
-        const depProject = projects.find((p) => p.name === depName);
+        const depProject = projects.find(p => p.name === depName);
         if (depProject) {
           visit(depProject);
         }
       }
-
+      
       visiting.delete(project.name);
       visited.add(project.name);
       sorted.push(project);
     };
-
+    
     for (const project of projects) {
       if (!visited.has(project.name)) {
         visit(project);
       }
     }
-
+    
     return sorted;
   }
 
@@ -361,18 +344,18 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
    * Compile a single TypeScript project
    */
   private async compileProject(
-    project: TypeScriptProject,
+    project: TypeScriptProject, 
     options: TypeScriptCompilationOptions
   ): Promise<boolean> {
     const startTime = Date.now();
-
+    
     try {
       // Prepare compiler arguments
       const args = this.buildCompilerArguments(project, options);
-
+      
       // Execute TypeScript compiler
       const success = await this.executeTypeScriptCompiler(project.name, args);
-
+      
       // Update metrics
       this.metrics.projectsCompiled++;
       if (success) {
@@ -380,18 +363,17 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
       } else {
         this.metrics.failedCompilations++;
       }
-
+      
       // Track memory usage
       const memoryUsage = this.getCurrentMemoryUsage();
       if (memoryUsage > this.metrics.peakMemoryUsage) {
         this.metrics.peakMemoryUsage = memoryUsage;
       }
-
+      
       return success;
+      
     } catch (error) {
-      this.metrics.errors.push(
-        `Project ${project.name}: ${error instanceof Error ? error.message : String(error)}`
-      );
+      this.metrics.errors.push(`Project ${project.name}: ${error instanceof Error ? error.message : String(error)}`);
       this.metrics.failedCompilations++;
       return false;
     }
@@ -401,31 +383,31 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
    * Build TypeScript compiler arguments
    */
   private buildCompilerArguments(
-    project: TypeScriptProject,
+    project: TypeScriptProject, 
     options: TypeScriptCompilationOptions
   ): string[] {
     const args = ['--project', project.configPath];
-
+    
     if (options.incremental) {
       args.push('--incremental');
     }
-
+    
     if (options.tsBuildInfoFile) {
       args.push('--tsBuildInfoFile', options.tsBuildInfoFile);
     }
-
+    
     if (options.preserveWatchOutput) {
       args.push('--preserveWatchOutput');
     }
-
+    
     if (options.skipLibCheck) {
       args.push('--skipLibCheck');
     }
-
+    
     if (options.noCheck) {
       args.push('--noCheck');
     }
-
+    
     return args;
   }
 
@@ -439,26 +421,26 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
         stdio: ['pipe', 'pipe', 'pipe'],
         env: {
           ...process.env,
-          NODE_OPTIONS: `--max-old-space-size=${this.compilationOptions.maxMemoryUsage}`,
-        },
+          NODE_OPTIONS: `--max-old-space-size=${this.compilationOptions.maxMemoryUsage}`
+        }
       });
-
+      
       this.activeProcesses.set(projectName, childProcess);
-
+      
       let stdout = '';
       let stderr = '';
-
+      
       childProcess.stdout?.on('data', (data: Buffer) => {
         stdout += data.toString();
       });
-
+      
       childProcess.stderr?.on('data', (data: Buffer) => {
         stderr += data.toString();
       });
-
+      
       childProcess.on('close', (code: number | null) => {
         this.activeProcesses.delete(projectName);
-
+        
         if (code === 0) {
           resolve(true);
         } else {
@@ -466,7 +448,7 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
           resolve(false);
         }
       });
-
+      
       childProcess.on('error', (error: Error) => {
         this.activeProcesses.delete(projectName);
         this.metrics.errors.push(`${projectName}: ${error.message}`);
@@ -483,9 +465,9 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
     const possiblePaths = [
       resolve(process.cwd(), 'node_modules/.bin/tsc'),
       resolve(process.cwd(), 'node_modules/typescript/bin/tsc'),
-      'tsc', // Fallback to global tsc
+      'tsc' // Fallback to global tsc
     ];
-
+    
     return possiblePaths[0]; // Use first option for now
   }
 
@@ -497,29 +479,29 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
     return Math.round(usage.heapUsed / 1024 / 1024);
   }
 
+
+
   /**
    * Terminate all active TypeScript processes
    */
   private async terminateActiveProcesses(): Promise<void> {
     const promises: Promise<void>[] = [];
-
+    
     for (const [projectName, process] of this.activeProcesses) {
-      promises.push(
-        new Promise((resolve) => {
-          process.on('close', () => resolve());
-          process.kill('SIGTERM');
-
-          // Force kill after 5 seconds
-          setTimeout(() => {
-            if (!process.killed) {
-              process.kill('SIGKILL');
-            }
-            resolve();
-          }, 5000);
-        })
-      );
+      promises.push(new Promise((resolve) => {
+        process.on('close', () => resolve());
+        process.kill('SIGTERM');
+        
+        // Force kill after 5 seconds
+        setTimeout(() => {
+          if (!process.killed) {
+            process.kill('SIGKILL');
+          }
+          resolve();
+        }, 5000);
+      }));
     }
-
+    
     await Promise.all(promises);
     this.activeProcesses.clear();
   }
@@ -534,7 +516,7 @@ export class TypeScriptCompilationManager implements ITypeScriptCompilationManag
       projectsCompiled: 0,
       successfulCompilations: 0,
       failedCompilations: 0,
-      errors: [],
+      errors: []
     };
   }
 }

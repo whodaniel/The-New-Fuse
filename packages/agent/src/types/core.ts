@@ -1,3 +1,4 @@
+
 export type ClineResponse = any;
 export type ResponseQueue = any;
 export type AgentRoutes = any;
@@ -29,12 +30,12 @@ export type REDIS_QUEUES = any;
 export type FeatureFlag = any;
 export type FeatureFlagDocument = any;
 export class Logger {
-  constructor(context: string) {}
-  info(...args: any[]): void {}
-  log(...args: any[]): void {}
-  error(...args: any[]): void {}
-  warn(...args: any[]): void {}
-  debug(...args: any[]): void {}
+    constructor(context: string) {}
+    info(...args: any[]): void {}
+    log(...args: any[]): void {}
+    error(...args: any[]): void {}
+    warn(...args: any[]): void {}
+    debug(...args: any[]): void {}
 }
 export type logger = any;
 export type PerformanceMetrics = any;

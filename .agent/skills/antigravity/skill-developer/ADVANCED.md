@@ -6,20 +6,17 @@ Ideas and concepts for future improvements to the skill system.
 
 ## Dynamic Rule Updates
 
-**Current State:** Requires Claude Code restart to pick up changes to
-skill-rules.json
+**Current State:** Requires Claude Code restart to pick up changes to skill-rules.json
 
 **Future Enhancement:** Hot-reload configuration without restart
 
 **Implementation Ideas:**
-
 - Watch skill-rules.json for changes
 - Reload on file modification
 - Invalidate cached compiled regexes
 - Notify user of reload
 
 **Benefits:**
-
 - Faster iteration during skill development
 - No need to restart Claude Code
 - Better developer experience
@@ -33,7 +30,6 @@ skill-rules.json
 **Future Enhancement:** Specify skill dependencies and load order
 
 **Configuration Idea:**
-
 ```json
 {
   "my-advanced-skill": {
@@ -45,13 +41,11 @@ skill-rules.json
 ```
 
 **Use Cases:**
-
 - Advanced skill builds on base skill knowledge
 - Ensure foundational skills loaded first
 - Chain skills for complex workflows
 
 **Benefits:**
-
 - Better skill composition
 - Clearer skill relationships
 - Progressive disclosure
@@ -65,7 +59,6 @@ skill-rules.json
 **Future Enhancement:** Enforce based on context or environment
 
 **Configuration Idea:**
-
 ```json
 {
   "enforcement": {
@@ -80,13 +73,11 @@ skill-rules.json
 ```
 
 **Use Cases:**
-
 - Stricter enforcement in production
 - Relaxed rules during development
 - CI/CD pipeline requirements
 
 **Benefits:**
-
 - Environment-appropriate enforcement
 - Flexible rule application
 - Context-aware guardrails
@@ -100,7 +91,6 @@ skill-rules.json
 **Future Enhancement:** Track skill usage patterns and effectiveness
 
 **Metrics to Collect:**
-
 - Skill trigger frequency
 - False positive rate
 - False negative rate
@@ -109,14 +99,12 @@ skill-rules.json
 - Performance metrics (execution time)
 
 **Dashbord Ideas:**
-
 - Most/least used skills
 - Skills with highest false positive rate
 - Performance bottlenecks
 - Skill effectiveness scores
 
 **Benefits:**
-
 - Data-driven skill improvement
 - Identify problems early
 - Optimize patterns based on real usage
@@ -130,7 +118,6 @@ skill-rules.json
 **Future Enhancement:** Version skills and track compatibility
 
 **Configuration Idea:**
-
 ```json
 {
   "my-skill": {
@@ -143,7 +130,6 @@ skill-rules.json
 ```
 
 **Benefits:**
-
 - Track skill evolution
 - Ensure compatibility
 - Document changes
@@ -158,13 +144,11 @@ skill-rules.json
 **Future Enhancement:** Support multiple languages for skill content
 
 **Implementation Ideas:**
-
 - Language-specific SKILL.md variants
 - Automatic language detection
 - Fallback to English
 
 **Use Cases:**
-
 - International teams
 - Localized documentation
 - Multi-language projects
@@ -178,21 +162,19 @@ skill-rules.json
 **Future Enhancement:** Automated skill testing
 
 **Features:**
-
 - Test cases for trigger patterns
 - Assertion framework
 - CI/CD integration
 - Coverage reports
 
 **Example Test:**
-
 ```typescript
 describe('database-verification', () => {
-  it('triggers on Drizzle imports', () => {
+  it('triggers on Prisma imports', () => {
     const result = testSkill({
-      prompt: 'add user tracking',
-      file: 'services/user.ts',
-      content: "import { DatabaseService } from './drizzle'",
+      prompt: "add user tracking",
+      file: "services/user.ts",
+      content: "import { PrismaService } from './prisma'"
     });
 
     expect(result.triggered).toBe(true);
@@ -202,7 +184,6 @@ describe('database-verification', () => {
 ```
 
 **Benefits:**
-
 - Prevent regressions
 - Validate patterns before deployment
 - Confidence in changes

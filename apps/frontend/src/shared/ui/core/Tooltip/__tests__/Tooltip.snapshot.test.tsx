@@ -1,6 +1,7 @@
+import React from 'react';
 import { assertSnapshot } from '@/test/helpers/snapshot';
-import { Button } from '../../Button';
 import { Tooltip } from '../Tooltip';
+import { Button } from '../../Button';
 
 describe('Tooltip Snapshots', () => {
   it('renders basic tooltip correctly', () => {
@@ -56,16 +57,14 @@ describe('Tooltip Snapshots', () => {
 
   it('renders tooltip with HTML content', () => {
     assertSnapshot(
-      <Tooltip
-        content={
-          <div className="space-y-2">
-            <p className="font-semibold">Rich Content</p>
-            <p className="text-sm text-gray-500">With multiple lines</p>
-            <div className="h-1 w-full bg-gray-200 rounded" />
-            <p className="text-xs">And custom formatting</p>
-          </div>
-        }
-      >
+      <Tooltip content={
+        <div className="space-y-2">
+          <p className="font-semibold">Rich Content</p>
+          <p className="text-sm text-gray-500">With multiple lines</p>
+          <div className="h-1 w-full bg-gray-200 rounded" />
+          <p className="text-xs">And custom formatting</p>
+        </div>
+      }>
         <Button>Rich Tooltip</Button>
       </Tooltip>
     );

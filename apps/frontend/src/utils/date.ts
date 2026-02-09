@@ -5,14 +5,17 @@ export interface DateFormatOptions {
   format?: 'short' | 'medium' | 'long';
 }
 
-export function formatDate(date: Date | string | number, options: DateFormatOptions = {}): string {
+export function formatDate(
+  date: Date | string | number,
+  options: DateFormatOptions = {}
+): string {
   const dateObj = new Date(date);
-
+  
   const {
     includeTime = true,
     includeSeconds = false,
     includeDate = true,
-    format = 'medium',
+    format = 'medium'
   } = options;
 
   const formatOptions: Intl.DateTimeFormatOptions = {
@@ -22,7 +25,7 @@ export function formatDate(date: Date | string | number, options: DateFormatOpti
     hour: includeTime ? '2-digit' : undefined,
     minute: includeTime ? '2-digit' : undefined,
     second: includeTime && includeSeconds ? '2-digit' : undefined,
-    hour12: true,
+    hour12: true
   };
 
   if (!includeDate) {

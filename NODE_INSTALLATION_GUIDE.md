@@ -1,7 +1,6 @@
 # Node.js and CLI Installation Fix Guide
 
-Your Homebrew installation is in a broken state with locked files and corrupted
-cache. This guide provides two solutions.
+Your Homebrew installation is in a broken state with locked files and corrupted cache. This guide provides two solutions.
 
 ## Current Problem
 
@@ -13,19 +12,16 @@ cache. This guide provides two solutions.
 ## Solution 1: NVM (Recommended for reliability)
 
 **Pros:**
-
 - More reliable on macOS 12
 - Easy to switch Node versions
 - No sudo/permission issues
 
 **Run this:**
-
 ```bash
 ./fix-node-installation.sh
 ```
 
 After completion:
-
 ```bash
 source ~/.zshrc
 ```
@@ -33,12 +29,10 @@ source ~/.zshrc
 ## Solution 2: Homebrew Only (Simpler)
 
 **Pros:**
-
 - Simpler if it works
 - Uses system package manager
 
 **Run this:**
-
 ```bash
 ./fix-node-brew-only.sh
 ```
@@ -46,7 +40,6 @@ source ~/.zshrc
 ## Manual Step-by-Step (If scripts fail)
 
 ### 1. Clean Homebrew Locks
-
 ```bash
 sudo rm -rf /usr/local/var/homebrew/locks
 sudo mkdir -p /usr/local/var/homebrew/locks
@@ -54,7 +47,6 @@ pkill -9 brew || true
 ```
 
 ### 2. Reset Homebrew
-
 ```bash
 brew cleanup --prune=all
 brew update-reset
@@ -62,20 +54,17 @@ brew update
 ```
 
 ### 3. Remove Broken Installations
-
 ```bash
 brew uninstall --force --ignore-dependencies node || true
 brew uninstall --force --ignore-dependencies z3 || true
 ```
 
 ### 4. Install Node.js via Homebrew
-
 ```bash
 brew install node
 ```
 
 **OR** Install via nvm:
-
 ```bash
 # Install nvm
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
@@ -90,20 +79,17 @@ nvm use --lts
 ```
 
 ### 5. Verify Node.js
-
 ```bash
 node --version
 npm --version
 ```
 
 ### 6. Install Claude CLI
-
 ```bash
 npm install -g @anthropic-ai/claude-code
 ```
 
 ### 7. Install Gemini CLI
-
 ```bash
 # Option A: Official Google CLI (if available)
 npm install -g @google/genai-cli
@@ -152,7 +138,6 @@ source ~/.zshrc
 ## What the Antigravity Agent Needs
 
 The agent needs:
-
 - ✅ Node.js (any LTS version 18+)
 - ✅ npm (comes with Node.js)
 - ✅ Claude CLI (for Claude Code functionality)
@@ -161,7 +146,6 @@ The agent needs:
 ## Next Steps After Installation
 
 1. Verify all tools are working:
-
    ```bash
    node --version && npm --version && claude --version
    ```
@@ -178,5 +162,4 @@ The agent needs:
 
 ## Support
 
-If both scripts fail, the manual steps should work. The core issue is Homebrew's
-broken state on macOS 12 (unsupported version).
+If both scripts fail, the manual steps should work. The core issue is Homebrew's broken state on macOS 12 (unsupported version).

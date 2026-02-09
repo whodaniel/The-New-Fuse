@@ -62,7 +62,7 @@ const DEFAULT_OPTIONS: GenerateWorkflowOptions = {
   nodeCount: 5,
   edgeCount: 4,
   withMetadata: true,
-  withVariables: false,
+  withVariables: false
 };
 
 export const generateWorkflow = (options: GenerateWorkflowOptions = {}): GeneratedWorkflow => {
@@ -85,16 +85,13 @@ export const generateWorkflow = (options: GenerateWorkflowOptions = {}): Generat
     updatedAt: generateTimestamp({ past: true }),
     lastExecutedAt: generateTimestamp({ past: true }),
     executionCount: Math.floor(Math.random() * 100),
-    statistics: generateWorkflowStatistics(),
+    statistics: generateWorkflowStatistics()
   };
 
   return workflow;
 };
 
-export const generateWorkflows = (
-  count: number,
-  options: GenerateWorkflowOptions = {},
-): GeneratedWorkflow[] => {
+export const generateWorkflows = (count: number, options: GenerateWorkflowOptions = {}): GeneratedWorkflow[] => {
   return Array.from({ length: count }, () => generateWorkflow(options));
 };
 
@@ -104,7 +101,7 @@ const generateNodes = (count: number): WorkflowNode[] => {
     type: pickRandom(NODE_TYPES),
     position: {
       x: Math.random() * 800,
-      y: Math.random() * 600,
+      y: Math.random() * 600
     },
     data: {
       label: `Node ${index + 1}`,
@@ -112,9 +109,9 @@ const generateNodes = (count: number): WorkflowNode[] => {
       outputs: ['output1', 'output2'],
       config: {
         timeout: Math.random() * 5000,
-        retries: Math.floor(Math.random() * 3),
-      },
-    },
+        retries: Math.floor(Math.random() * 3)
+      }
+    }
   }));
 };
 
@@ -127,7 +124,7 @@ const generateEdges = (nodes: WorkflowNode[], count: number): WorkflowEdge[] => 
       target: nodes[i + 1].id,
       type: pickRandom(EDGE_TYPES),
       animated: Math.random() > 0.5,
-      label: Math.random() > 0.7 ? `Connection ${i + 1}` : undefined,
+      label: Math.random() > 0.7 ? `Connection ${i + 1}` : undefined
     });
   }
   return edges;
@@ -137,27 +134,25 @@ const generateWorkflowMetadata = (): Record<string, any> => ({
   version: '1.0.0',
   tags: ['test', 'generated'],
   category: pickRandom(['automation', 'integration', 'processing']),
-  priority: pickRandom(['low', 'medium', 'high']),
+  priority: pickRandom(['low', 'medium', 'high'])
 });
 
 const generateWorkflowVariables = (): Record<string, any> => ({
   apiKey: 'test-api-key',
   baseUrl: 'https://api.example.com',
   timeout: 5000,
-  retryCount: 3,
+  retryCount: 3
 });
 
-const generateTriggers = (): Record<string, any>[] => [
-  {
-    type: 'schedule',
-    config: {
-      cron: '0 * * * *',
-    },
-  },
-];
+const generateTriggers = (): Record<string, any>[] => ([{
+  type: 'schedule',
+  config: {
+    cron: '0 * * * *'
+  }
+}]);
 
 const generateWorkflowStatistics = (): any => ({
   averageExecutionTime: Math.random() * 1000,
   successRate: Math.random() * 100,
-  lastExecutionStatus: pickRandom(['success', 'failed', 'partial']),
+  lastExecutionStatus: pickRandom(['success', 'failed', 'partial'])
 });

@@ -28,7 +28,7 @@ existing implementations. This has resulted in:
 - **Purpose:** Full agent registration with onboarding, capabilities,
   verification
 - **Features:**
-  - Drizzle-based persistence
+  - Prisma-based persistence
   - Authentication tokens
   - Capability registry
   - Directory entries
@@ -96,7 +96,7 @@ incompatible functionality.
 │   │   ├── AgentRegistry.ts (unified registry interface)
 │   │   └── types.ts
 │   ├── persistence/
-│   │   ├── DatabasePersistence.ts (Drizzle)
+│   │   ├── DatabasePersistence.ts (Prisma)
 │   │   └── CachePersistence.ts (Redis)
 │   ├── services/
 │   │   ├── RegistrationService.ts (from backend)
@@ -112,7 +112,7 @@ incompatible functionality.
 
 1. Create new `/packages/agent-registry` package
 2. Extract core interfaces from all implementations
-3. Implement unified persistence layer (Drizzle + Redis)
+3. Implement unified persistence layer (Prisma + Redis)
 4. Port registration logic from backend service
 5. Port discovery logic from api service
 6. Create migration scripts for existing data
@@ -232,7 +232,7 @@ functionality.
 #### A. `/apps/backend/src/auth/google.strategy.ts`
 
 - **Type:** Passport Google OAuth20 Strategy
-- **Features:** User creation, Google ID linking, Drizzle integration
+- **Features:** User creation, Google ID linking, Prisma integration
 - **Status:** Active, used by backend
 
 #### B. `/apps/backend/src/auth/google.service.ts`

@@ -107,7 +107,7 @@ if [ $COMPLETED -eq $TOTAL ]; then
   echo "1. Review results: docs/JULES_ARCHITECTURE_SESSIONS.md"
   echo "2. Pull sessions: jules remote pull --session [ID]"
   echo "3. Apply patches: jules remote pull --session [ID] --apply"
-  echo "4. Run migrations: cd drizzle && npx drizzle migrate dev"
+  echo "4. Run migrations: cd prisma && npx prisma migrate dev"
   echo ""
 elif [ $FAILED -gt 0 ]; then
   echo -e "${RED}⚠️  Some sessions failed${NC}"

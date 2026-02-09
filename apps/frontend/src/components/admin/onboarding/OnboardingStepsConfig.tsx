@@ -1,7 +1,16 @@
-import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@the-new-fuse/ui-consolidated';
-import { ArrowDown, ArrowUp, Edit2, Eye, Info, Plus, Trash2 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  ArrowUp,
+  ArrowDown,
+  Eye,
+  Settings,
+  Info
+} from 'lucide-react';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { OnboardingAdminService } from '../../../services/onboarding-admin.service';
 
 interface OnboardingStepsConfigProps {
@@ -12,15 +21,7 @@ interface OnboardingStepsConfigProps {
 
 interface StepConfig {
   id: string;
-  type:
-    | 'welcome'
-    | 'profile'
-    | 'ai_preferences'
-    | 'workspace'
-    | 'tools'
-    | 'greeter'
-    | 'completion'
-    | 'custom';
+  type: 'welcome' | 'profile' | 'ai_preferences' | 'workspace' | 'tools' | 'greeter' | 'completion' | 'custom';
   title: string;
   description: string;
   enabled: boolean;
@@ -44,7 +45,7 @@ interface StepConfig {
 export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
   onSave,
   onChange,
-  hasUnsavedChanges,
+  hasUnsavedChanges
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [steps, setSteps] = useState<StepConfig[]>([]);
@@ -54,11 +55,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
-  const showToast = (
-    title: string,
-    description?: string,
-    status: 'success' | 'error' = 'success'
-  ) => {
+  const showToast = (title: string, description?: string, status: 'success' | 'error' = 'success') => {
     // Simple toast implementation - in a real app you might use a toast library
     console.log(`Toast: ${title} - ${description} (${status})`);
   };
@@ -86,11 +83,10 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
             userTypes: ['human', 'ai_agent'],
             content: {
               heading: 'Welcome to The New Fuse',
-              subheading:
-                'The AI agent coordination platform that enables intelligent interaction between different AI systems.',
+              subheading: 'The AI agent coordination platform that enables intelligent interaction between different AI systems.',
               imageUrl: '/assets/images/welcome.png',
-              buttonText: 'Get Started',
-            },
+              buttonText: 'Get Started'
+            }
           },
           {
             id: '2',
@@ -102,8 +98,8 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
             userTypes: ['human'],
             content: {
               heading: 'Tell us about yourself',
-              subheading: 'This information helps us personalize your experience.',
-            },
+              subheading: 'This information helps us personalize your experience.'
+            }
           },
           {
             id: '3',
@@ -115,10 +111,10 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
             userTypes: ['human', 'ai_agent'],
             content: {
               heading: 'All Set!',
-              subheading: "You're ready to start using The New Fuse.",
-              buttonText: 'Get Started',
-            },
-          },
+              subheading: 'You\'re ready to start using The New Fuse.',
+              buttonText: 'Get Started'
+            }
+          }
         ]);
       } finally {
         setIsLoading(false);
@@ -142,9 +138,9 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
       userTypes: ['human'],
       content: {
         heading: 'New Step',
-        subheading: 'Description of the new step',
+        subheading: 'Description of the new step'
       },
-      customFields: [],
+      customFields: []
     };
 
     setCurrentStep(newStep);
@@ -153,13 +149,13 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
   };
 
   const handleEditStep = (step: StepConfig) => {
-    setCurrentStep({ ...step });
+    setCurrentStep({...step});
     setIsEditing(true);
     onOpen();
   };
 
   const handleDeleteStep = (id: string) => {
-    setSteps(steps.filter((step) => step.id !== id));
+    setSteps(steps.filter(step => step.id !== id));
     onChange();
 
     showToast('Step deleted', undefined, 'success');
@@ -169,7 +165,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
     if (!currentStep) return;
 
     if (isEditing) {
-      setSteps(steps.map((step) => (step.id === currentStep.id ? currentStep : step)));
+      setSteps(steps.map(step => step.id === currentStep.id ? currentStep : step));
     } else {
       setSteps([...steps, currentStep]);
     }
@@ -181,7 +177,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
   };
 
   const handleMoveStep = (id: string, direction: 'up' | 'down') => {
-    const index = steps.findIndex((step) => step.id === id);
+    const index = steps.findIndex(step => step.id === id);
     if (
       (direction === 'up' && index === 0) ||
       (direction === 'down' && index === steps.length - 1)
@@ -199,7 +195,9 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
   };
 
   const handleToggleStep = (id: string) => {
-    setSteps(steps.map((step) => (step.id === id ? { ...step, enabled: !step.enabled } : step)));
+    setSteps(steps.map(step =>
+      step.id === id ? {...step, enabled: !step.enabled} : step
+    ));
     onChange();
   };
 
@@ -223,34 +221,28 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
     } catch (err) {
       console.error('Error saving onboarding steps:', err);
 
-      showToast(
-        'Error saving changes',
-        'There was an error saving your changes. Please try again.',
-        'error'
-      );
+      showToast('Error saving changes', 'There was an error saving your changes. Please try again.', 'error');
     }
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     if (!currentStep) return;
 
     const { name, value } = e.target;
-
+    
     if (name.startsWith('content.')) {
       const contentKey = name.split('.')[1];
       setCurrentStep({
         ...currentStep,
         content: {
           ...currentStep.content,
-          [contentKey]: value,
-        },
+          [contentKey]: value
+        }
       });
     } else {
       setCurrentStep({
         ...currentStep,
-        [name]: value,
+        [name]: value
       });
     }
   };
@@ -260,7 +252,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
 
     setCurrentStep({
       ...currentStep,
-      [name]: checked,
+      [name]: checked
     });
   };
 
@@ -268,12 +260,12 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
     if (!currentStep) return;
 
     const userTypes = currentStep.userTypes.includes(userType)
-      ? currentStep.userTypes.filter((type) => type !== userType)
+      ? currentStep.userTypes.filter(type => type !== userType)
       : [...currentStep.userTypes, userType];
 
     setCurrentStep({
       ...currentStep,
-      userTypes,
+      userTypes
     });
   };
 
@@ -281,7 +273,11 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-lg font-semibold">Onboarding Wizard Steps</h2>
-        <Button onClick={handleAddStep} disabled={isLoading} className="flex items-center gap-2">
+        <Button
+          onClick={handleAddStep}
+          disabled={isLoading}
+          className="flex items-center gap-2"
+        >
           <Plus />
           Add Step
         </Button>
@@ -294,8 +290,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
         <div className="relative group">
           <Info className="text-gray-400 cursor-help" />
           <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
-            Each step represents a screen in the onboarding wizard. Steps can be customized for
-            different user types.
+            Each step represents a screen in the onboarding wizard. Steps can be customized for different user types.
           </div>
         </div>
       </div>
@@ -323,7 +318,11 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="steps">
           {(provided) => (
-            <div className="space-y-4" {...provided.droppableProps} ref={provided.innerRef}>
+            <div
+              className="space-y-4"
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
               {steps.map((step, index) => (
                 <Draggable key={step.id} draggableId={step.id} index={index}>
                   {(provided) => (
@@ -339,13 +338,11 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-2">
                             <h3 className="text-sm font-semibold">{step.title}</h3>
-                            <span
-                              className={`px-2 py-1 text-xs rounded-full ${
-                                step.required
-                                  ? 'bg-red-100 text-red-800'
-                                  : 'bg-green-100 text-green-800'
-                              }`}
-                            >
+                            <span className={`px-2 py-1 text-xs rounded-full ${
+                              step.required 
+                                ? 'bg-red-100 text-red-800' 
+                                : 'bg-green-100 text-green-800'
+                            }`}>
                               {step.required ? 'Required' : 'Optional'}
                             </span>
                             {!step.enabled && (
@@ -439,8 +436,13 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center p-6 border-b">
-              <h2 className="text-lg font-semibold">{isEditing ? 'Edit Step' : 'Add New Step'}</h2>
-              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-lg font-semibold">
+                {isEditing ? 'Edit Step' : 'Add New Step'}
+              </h2>
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-600"
+              >
                 ×
               </button>
             </div>
@@ -487,9 +489,7 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Description
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                     <textarea
                       name="description"
                       value={currentStep.description}
@@ -557,10 +557,16 @@ export const OnboardingStepsConfig: React.FC<OnboardingStepsConfigProps> = ({
               )}
             </div>
             <div className="flex justify-end gap-3 p-6 border-t">
-              <Button onClick={onClose} variant="outline">
+              <Button
+                onClick={onClose}
+                variant="outline"
+              >
                 Cancel
               </Button>
-              <Button onClick={handleSaveStep} className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Button
+                onClick={handleSaveStep}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
                 {isEditing ? 'Update Step' : 'Add Step'}
               </Button>
             </div>

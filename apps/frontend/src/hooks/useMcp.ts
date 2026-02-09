@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export interface McpToolParameter {
   name: string;
@@ -30,17 +30,17 @@ export const useMcp = () => {
   const [servers, setServers] = useState<McpServer[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
+  
   // Load MCP servers from API
   const loadServers = useCallback(async () => {
     setLoading(true);
     setError(null);
-
+    
     try {
       // In a real app, this would fetch MCP servers from an API
       // For now, we'll just simulate a delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       // Mock data
       const mockServers: McpServer[] = [
         {
@@ -57,19 +57,19 @@ export const useMcp = () => {
                   name: 'query',
                   type: 'string',
                   description: 'Search query',
-                  required: true,
+                  required: true
                 },
                 maxResults: {
                   name: 'maxResults',
                   type: 'number',
                   description: 'Maximum number of results',
-                  default: 10,
-                },
+                  default: 10
+                }
               },
               returns: {
                 type: 'array',
-                description: 'Array of search results',
-              },
+                description: 'Array of search results'
+              }
             },
             {
               name: 'FileEditor',
@@ -79,19 +79,19 @@ export const useMcp = () => {
                   name: 'filePath',
                   type: 'string',
                   description: 'Path to the file',
-                  required: true,
+                  required: true
                 },
                 content: {
                   name: 'content',
                   type: 'string',
                   description: 'New content for the file',
-                  required: true,
-                },
+                  required: true
+                }
               },
               returns: {
                 type: 'object',
-                description: 'Result of the operation',
-              },
+                description: 'Result of the operation'
+              }
             },
             {
               name: 'GitOperations',
@@ -101,21 +101,21 @@ export const useMcp = () => {
                   name: 'operation',
                   type: 'string',
                   description: 'Git operation to perform',
-                  required: true,
+                  required: true
                 },
                 branch: {
                   name: 'branch',
                   type: 'string',
                   description: 'Git branch',
-                  default: 'main',
-                },
+                  default: 'main'
+                }
               },
               returns: {
                 type: 'object',
-                description: 'Result of the Git operation',
-              },
-            },
-          ],
+                description: 'Result of the Git operation'
+              }
+            }
+          ]
         },
         {
           id: 'server-2',
@@ -131,29 +131,29 @@ export const useMcp = () => {
                   name: 'url',
                   type: 'string',
                   description: 'API URL',
-                  required: true,
+                  required: true
                 },
                 method: {
                   name: 'method',
                   type: 'string',
                   description: 'HTTP method',
-                  default: 'GET',
+                  default: 'GET'
                 },
                 headers: {
                   name: 'headers',
                   type: 'object',
-                  description: 'HTTP headers',
+                  description: 'HTTP headers'
                 },
                 body: {
                   name: 'body',
                   type: 'object',
-                  description: 'Request body',
-                },
+                  description: 'Request body'
+                }
               },
               returns: {
                 type: 'object',
-                description: 'API response',
-              },
+                description: 'API response'
+              }
             },
             {
               name: 'DataProcessor',
@@ -163,23 +163,23 @@ export const useMcp = () => {
                   name: 'data',
                   type: 'object',
                   description: 'Input data',
-                  required: true,
+                  required: true
                 },
                 transformations: {
                   name: 'transformations',
                   type: 'array',
-                  description: 'List of transformations to apply',
-                },
+                  description: 'List of transformations to apply'
+                }
               },
               returns: {
                 type: 'object',
-                description: 'Transformed data',
-              },
-            },
-          ],
-        },
+                description: 'Transformed data'
+              }
+            }
+          ]
+        }
       ];
-
+      
       setServers(mockServers);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to load MCP servers'));
@@ -187,48 +187,49 @@ export const useMcp = () => {
       setLoading(false);
     }
   }, []);
-
+  
   // Load servers on mount
   useEffect(() => {
     loadServers();
   }, [loadServers]);
-
+  
   // Execute a tool on an MCP server
-  const executeTool = useCallback(
-    async (serverName: string, toolName: string, parameters: Record<string, any>) => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        // In a real app, this would execute the tool via an API
-        // For now, we'll just simulate a delay
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        console.log('Executing tool:', { serverName, toolName, parameters });
-
-        return {
-          success: true,
-          result: {
-            message: `Successfully executed ${toolName} on ${serverName}`,
-            timestamp: new Date().toISOString(),
-          },
-        };
-      } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to execute tool'));
-        throw err;
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
-
+  const executeTool = useCallback(async (
+    serverName: string,
+    toolName: string,
+    parameters: Record<string, any>
+  ) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // In a real app, this would execute the tool via an API
+      // For now, we'll just simulate a delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      console.log('Executing tool:', { serverName, toolName, parameters });
+      
+      return {
+        success: true,
+        result: {
+          message: `Successfully executed ${toolName} on ${serverName}`,
+          timestamp: new Date().toISOString()
+        }
+      };
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to execute tool'));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  
   return {
     servers,
     loading,
     error,
     loadServers,
-    executeTool,
+    executeTool
   };
 };
 

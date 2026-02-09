@@ -1,9 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
-import * as fs from 'fs/promises';
-import * as os from 'os';
-import * as path from 'path';
-import { EnhancedFileSystemWatcher, WatcherConfig } from './EnhancedFileSystemWatcher';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 const vi = jest;
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import * as os from 'os';
+import { EnhancedFileSystemWatcher, WatcherConfig } from './EnhancedFileSystemWatcher';
 
 // Simple integration test without complex mocking
 describe('EnhancedFileSystemWatcher Integration', () => {
@@ -57,16 +57,16 @@ describe('EnhancedFileSystemWatcher Integration', () => {
     } as any;
 
     const watcher = new EnhancedFileSystemWatcher(redisConfig, dbService);
-
+    
     const config: WatcherConfig = {
       paths: [tempDir],
     };
 
     await expect(watcher.initialize(config)).resolves.not.toThrow();
-
+    
     const status = watcher.getWatcherStatus();
     expect(status.initialized).toBe(true);
-
+    
     await watcher.stopAllWatchers();
   });
 
@@ -84,26 +84,26 @@ describe('EnhancedFileSystemWatcher Integration', () => {
     } as any;
 
     const watcher = new EnhancedFileSystemWatcher(redisConfig, dbService);
-
+    
     const config: WatcherConfig = {
       paths: [tempDir],
     };
 
     await watcher.initialize(config);
-
+    
     // Create test file
     await fs.writeFile(testFile, 'test content');
-
+    
     const checksum = await watcher.refreshFileChecksum(testFile);
-
+    
     expect(checksum).toBeDefined();
     expect(typeof checksum).toBe('string');
     expect(checksum.length).toBe(64); // SHA-256 hex length
-
+    
     // Should cache the checksum
     const cachedChecksum = watcher.getFileChecksum(testFile);
     expect(cachedChecksum).toBe(checksum);
-
+    
     await watcher.stopAllWatchers();
   });
 
@@ -121,24 +121,24 @@ describe('EnhancedFileSystemWatcher Integration', () => {
     } as any;
 
     const watcher = new EnhancedFileSystemWatcher(redisConfig, dbService);
-
+    
     // Should be unhealthy when not initialized
     let health = await watcher.healthCheck();
     expect(health.status).toBe('unhealthy');
     expect(health.details.initialized).toBe(false);
-
+    
     // Initialize
     const config: WatcherConfig = {
       paths: [tempDir],
     };
     await watcher.initialize(config);
-
+    
     // Should be degraded when initialized but no watchers
     health = await watcher.healthCheck();
     expect(health.status).toBe('degraded');
     expect(health.details.initialized).toBe(true);
     expect(health.details.activeWatchers).toBe(0);
-
+    
     await watcher.stopAllWatchers();
   });
 
@@ -156,23 +156,23 @@ describe('EnhancedFileSystemWatcher Integration', () => {
     } as any;
 
     const watcher = new EnhancedFileSystemWatcher(redisConfig, dbService);
-
+    
     const config: WatcherConfig = {
       paths: [tempDir],
     };
     await watcher.initialize(config);
-
+    
     // Should start with no pending changes
     let pendingChanges = watcher.getPendingChanges();
     expect(Array.isArray(pendingChanges)).toBe(true);
     expect(pendingChanges.length).toBe(0);
-
+    
     // Clear pending changes
     watcher.clearPendingChanges();
-
+    
     pendingChanges = watcher.getPendingChanges();
     expect(pendingChanges.length).toBe(0);
-
+    
     await watcher.stopAllWatchers();
   });
 
@@ -190,7 +190,7 @@ describe('EnhancedFileSystemWatcher Integration', () => {
     } as any;
 
     const watcher = new EnhancedFileSystemWatcher(redisConfig, dbService);
-
+    
     const config: WatcherConfig = {
       paths: [tempDir],
       tenantId: 'invalid@tenant', // Invalid tenant ID

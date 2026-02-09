@@ -1,4 +1,4 @@
-import type { DataMap, JsonValue } from './core/base-types';
+import type { JsonValue, DataMap } from './core/base-types';
 
 export interface AgentConfig {
   tools?: AgentTool[];
@@ -10,14 +10,11 @@ export interface AgentTool {
   name: string;
   type: string;
   description: string;
-  parameters?: Record<
-    string,
-    {
-      type: string;
-      description: string;
-      required?: boolean;
-    }
-  >;
+  parameters?: Record<string, {
+    type: string;
+    description: string;
+    required?: boolean;
+  }>;
   execute: (input: DataMap) => Promise<JsonValue>;
 }
 

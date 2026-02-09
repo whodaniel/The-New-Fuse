@@ -20,7 +20,7 @@ package build success) **Target**: Public Beta Launch on Railway
 
 1. **5 Packages Failing**: sync-core (critical), integration-tests,
    web-scraping, ui-consolidated, core
-2. **Drizzle Placeholder**: Using mock client - real database operations won't
+2. **Prisma Placeholder**: Using mock client - real database operations won't
    work
 3. **Railway Not Deployed**: Configured but not live
 4. **396 TODO/FIXME Items**: Technical debt across codebase
@@ -36,17 +36,17 @@ package build success) **Target**: Public Beta Launch on Railway
 #### Week 1: Critical Build Fixes
 
 - [ ] **Fix sync-core package** (BLOCKER)
-  - Add missing Drizzle models: SyncConflict, AuthEvent, SyncState, TaskExecution
+  - Add missing Prisma models: SyncConflict, AuthEvent, SyncState, TaskExecution
   - Fix improper relative imports from core-monitoring
   - Export FileChangeEvent from EnhancedFileSystemWatcher
   - Add missing prompt-templating package or remove dependency
   - **Impact**: Unblocks core and ui-consolidated packages
 
-- [ ] **Resolve Drizzle Binary Issue** (CRITICAL)
-  - Option A: Set up Drizzle environment variables for offline mode
-  - Option B: Use Docker-based Drizzle generation
-  - Option C: Update to latest Drizzle version with working binaries
-  - Create real Drizzle client to replace placeholder
+- [ ] **Resolve Prisma Binary Issue** (CRITICAL)
+  - Option A: Set up Prisma environment variables for offline mode
+  - Option B: Use Docker-based Prisma generation
+  - Option C: Update to latest Prisma version with working binaries
+  - Create real Prisma client to replace placeholder
   - **Impact**: Enables actual database operations
 
 - [ ] **Fix integration-tests package**
@@ -192,7 +192,7 @@ package build success) **Target**: Public Beta Launch on Railway
 # This is THE blocker
 cd packages/sync-core
 
-# Fix 1: Add missing Drizzle models to database schema
+# Fix 1: Add missing Prisma models to database schema
 # Fix 2: Change relative imports to package imports
 # Fix 3: Export FileChangeEvent
 # Fix 4: Resolve prompt-templating dependency
@@ -200,12 +200,12 @@ cd packages/sync-core
 pnpm build  # Should succeed
 ```
 
-### Day 3-4: Resolve Drizzle Issue
+### Day 3-4: Resolve Prisma Issue
 
 ```bash
 # Try Docker-based approach
 cd packages/database
-docker run --rm -v $(pwd):/app -w /app node:20 npx drizzle generate
+docker run --rm -v $(pwd):/app -w /app node:20 npx prisma generate
 
 # Or set environment variables
 export PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1
@@ -241,9 +241,9 @@ git push origin main
 
 **Solution Steps**:
 
-1. Add missing Drizzle models to schema.drizzle:
+1. Add missing Prisma models to schema.prisma:
 
-   ```drizzle
+   ```prisma
    model SyncConflict {
      id String @id @default(cuid())
      // ... fields based on usage
@@ -291,11 +291,11 @@ ui-consolidated)
 
 ---
 
-### Task 2: Resolve Drizzle Binary Issue [CRITICAL]
+### Task 2: Resolve Prisma Binary Issue [CRITICAL]
 
-**Problem**: Cannot download Drizzle binaries (403 Forbidden)
+**Problem**: Cannot download Prisma binaries (403 Forbidden)
 
-**Current Workaround**: Placeholder Drizzle client (no real database ops)
+**Current Workaround**: Placeholder Prisma client (no real database ops)
 
 **Permanent Solutions**:
 
@@ -304,35 +304,35 @@ ui-consolidated)
 ```bash
 # Skip checksum validation
 export PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1
-pnpm --filter @the-new-fuse/database drizzle generate
+pnpm --filter @the-new-fuse/database prisma generate
 ```
 
 **Option B: Docker-Based Generation**
 
 ```dockerfile
-# Create packages/database/Dockerfile.drizzle
+# Create packages/database/Dockerfile.prisma
 FROM node:20-alpine
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY packages/database ./packages/database
 RUN npm install -g pnpm@10.22.0
 RUN pnpm install --filter @the-new-fuse/database
-RUN pnpm --filter @the-new-fuse/database exec drizzle generate
+RUN pnpm --filter @the-new-fuse/database exec prisma generate
 ```
 
 ```bash
-# Generate Drizzle client in Docker
-docker build -f packages/database/Dockerfile.drizzle -t fuse-drizzle .
-docker run --rm -v $(pwd)/packages/database:/output fuse-drizzle \
+# Generate Prisma client in Docker
+docker build -f packages/database/Dockerfile.prisma -t fuse-prisma .
+docker run --rm -v $(pwd)/packages/database:/output fuse-prisma \
   sh -c "cp -r /app/packages/database/generated /output/"
 ```
 
-**Option C: Upgrade Drizzle**
+**Option C: Upgrade Prisma**
 
 ```bash
 # Update to latest version
-pnpm --filter @the-new-fuse/database add drizzle@latest @drizzle/client@latest
-pnpm --filter @the-new-fuse/database exec drizzle generate
+pnpm --filter @the-new-fuse/database add prisma@latest @prisma/client@latest
+pnpm --filter @the-new-fuse/database exec prisma generate
 ```
 
 **Time Estimate**: 1-2 days **Impact**: Enables actual database operations for
@@ -345,7 +345,7 @@ all apps
 **Prerequisites**:
 
 - [ ] All critical packages building
-- [ ] Drizzle client working
+- [ ] Prisma client working
 - [ ] Environment variables documented
 
 **Environment Variables Needed**:
@@ -409,7 +409,7 @@ www.thenewfuse.com
 
 ### What Worked Well
 
-1. **Drizzle Placeholder Approach**: Allowed builds to continue while resolving
+1. **Prisma Placeholder Approach**: Allowed builds to continue while resolving
    binary issues
 2. **Making Native Modules Optional**: Prevented unnecessary build failures
 3. **TypeScript Config Standardization**: ESNext/bundler across all packages
@@ -429,7 +429,7 @@ www.thenewfuse.com
 
 ### High Risk
 
-- **Database Operations**: Drizzle placeholder means no real DB until fixed
+- **Database Operations**: Prisma placeholder means no real DB until fixed
 - **sync-core Complexity**: Many interdependencies, could take longer than
   estimated
 - **First Railway Deploy**: Unknown issues may arise
@@ -454,7 +454,7 @@ www.thenewfuse.com
 ### Must Have (Blockers)
 
 - [ ] 100% of critical packages building (min 35/37)
-- [ ] Drizzle client working with real database
+- [ ] Prisma client working with real database
 - [ ] User can register, login, and access dashboard
 - [ ] All services healthy and communicating on Railway
 - [ ] www.thenewfuse.com loads with SSL
@@ -510,7 +510,7 @@ pnpm build 2>&1 | tee build.log
 ### Week 1 Goal
 
 - sync-core package building ✅
-- Drizzle client functional ✅
+- Prisma client functional ✅
 - 35+ packages building ✅
 
 ### Week 2 Goal

@@ -1,5 +1,5 @@
-import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils';
 
 /**
@@ -35,12 +35,9 @@ export const tabsTriggerVariants = cva(
     variants: {
       variant: {
         default: 'rounded-sm',
-        pills:
-          'rounded-full border border-transparent data-[state=active]:bg-primary data-[state=active]:text-primary-foreground',
-        underline:
-          'rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none',
-        bordered:
-          'border-r border-border first:rounded-l-sm last:rounded-r-sm last:border-0 data-[state=active]:bg-muted',
+        pills: 'rounded-full border border-transparent data-[state=active]:bg-primary data-[state=active]:text-primary-foreground',
+        underline: 'rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none',
+        bordered: 'border-r border-border first:rounded-l-sm last:rounded-r-sm last:border-0 data-[state=active]:bg-muted',
       },
       fullWidth: {
         true: 'flex-1',
@@ -77,13 +74,15 @@ export const tabsContentVariants = cva(
  * TabsList component props
  */
 export interface TabsListProps
-  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof tabsListVariants> {}
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof tabsListVariants> {}
 
 /**
  * TabsTrigger component props
  */
 export interface TabsTriggerProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof tabsTriggerVariants> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof tabsTriggerVariants> {
   /**
    * Value of the tab
    */
@@ -102,7 +101,8 @@ export interface TabsTriggerProps
  * TabsContent component props
  */
 export interface TabsContentProps
-  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof tabsContentVariants> {
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof tabsContentVariants> {
   /**
    * Value of the tab
    */
@@ -200,37 +200,31 @@ const useTabs = () => {
  * </Tabs>
  */
 const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
-  (
-    {
-      defaultValue,
-      value,
-      onValueChange,
-      variant = 'default',
-      fullWidth = false,
-      className,
-      children,
-      ...props
-    },
-    ref
-  ) => {
+  ({
+    defaultValue,
+    value,
+    onValueChange,
+    variant = 'default',
+    fullWidth = false,
+    className,
+    children,
+    ...props
+  }, ref) => {
     const [tabValue, setTabValue] = React.useState(value || defaultValue || '');
-
+    
     React.useEffect(() => {
       if (value !== undefined) {
         setTabValue(value);
       }
     }, [value]);
-
-    const handleValueChange = React.useCallback(
-      (newValue: string) => {
-        if (value === undefined) {
-          setTabValue(newValue);
-        }
-        onValueChange?.(newValue);
-      },
-      [value, onValueChange]
-    );
-
+    
+    const handleValueChange = React.useCallback((newValue: string) => {
+      if (value === undefined) {
+        setTabValue(newValue);
+      }
+      onValueChange?.(newValue);
+    }, [value, onValueChange]);
+    
     return (
       <TabsContext.Provider
         value={{
@@ -240,7 +234,11 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
           fullWidth,
         }}
       >
-        <div ref={ref} className={cn('', className)} {...props}>
+        <div
+          ref={ref}
+          className={cn('', className)}
+          {...props}
+        >
           {children}
         </div>
       </TabsContext.Provider>
@@ -253,19 +251,21 @@ Tabs.displayName = 'Tabs';
 /**
  * TabsList component for containing tab triggers
  */
-const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(({ className, ...props }, ref) => {
-  const { variant, fullWidth } = useTabs();
-
-  return (
-    <div
-      ref={ref}
-      className={cn(tabsListVariants({ variant, fullWidth }), className)}
-      role="tablist"
-      aria-orientation="horizontal"
-      {...props}
-    />
-  );
-});
+const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(
+  ({ className, ...props }, ref) => {
+    const { variant, fullWidth } = useTabs();
+    
+    return (
+      <div
+        ref={ref}
+        className={cn(tabsListVariants({ variant, fullWidth }), className)}
+        role="tablist"
+        aria-orientation="horizontal"
+        {...props}
+      />
+    );
+  }
+);
 
 TabsList.displayName = 'TabsList';
 
@@ -276,7 +276,7 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
   ({ className, value, icon, badge, children, ...props }, ref) => {
     const { value: selectedValue, onValueChange, variant, fullWidth } = useTabs();
     const isActive = selectedValue === value;
-
+    
     return (
       <button
         ref={ref}
@@ -305,9 +305,9 @@ const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(
   ({ className, value, children, ...props }, ref) => {
     const { value: selectedValue, variant } = useTabs();
     const isActive = selectedValue === value;
-
+    
     if (!isActive) return null;
-
+    
     return (
       <div
         ref={ref}
@@ -324,4 +324,4 @@ const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(
 
 TabsContent.displayName = 'TabsContent';
 
-export { Tabs, TabsContent, TabsList, TabsTrigger };
+export { Tabs, TabsList, TabsTrigger, TabsContent };

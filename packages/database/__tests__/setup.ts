@@ -3,15 +3,14 @@
  * Initializes test database and provides utilities for test execution
  */
 
-import { sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
+import { sql } from 'drizzle-orm';
 import * as schema from '../src/drizzle/schema';
 
 // Test database configuration
 const TEST_DATABASE_URL =
-  process.env.TEST_DATABASE_URL ||
-  'postgresql://newfuse:secretpass123@localhost:5433/the_new_fuse_test';
+  process.env.TEST_DATABASE_URL || 'postgresql://newfuse:secretpass123@localhost:5433/the_new_fuse_test';
 
 let testClient: postgres.Sql | null = null;
 let testDb: ReturnType<typeof drizzle> | null = null;

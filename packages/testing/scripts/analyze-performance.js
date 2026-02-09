@@ -21,10 +21,10 @@ function analyzeResults(results, thresholds) {
       performance: {
         acceptable: 0,
         degraded: 0,
-        critical: 0,
-      },
+        critical: 0
+      }
     },
-    details: [],
+    details: []
   };
 
   results.suites.forEach(suite => {
@@ -32,16 +32,13 @@ function analyzeResults(results, thresholds) {
       const testName = spec.title;
       const duration = spec.duration;
       const threshold = thresholds[testName] || thresholds.default;
-
-      const performanceStatus =
-        duration <= threshold.target
-          ? 'acceptable'
-          : duration <= threshold.warning
-            ? 'degraded'
-            : 'critical';
-
+      
+      const performanceStatus = 
+        duration <= threshold.target ? 'acceptable' :
+        duration <= threshold.warning ? 'degraded' : 'critical';
+      
       analysis.summary.performance[performanceStatus]++;
-
+      
       if (spec.ok) analysis.summary.passed++;
       else analysis.summary.failed++;
 
@@ -50,7 +47,7 @@ function analyzeResults(results, thresholds) {
         duration,
         threshold: threshold.target,
         status: performanceStatus,
-        metrics: spec.results?.[0]?.attachments?.find(a => a.name === 'metrics')?.body || {},
+        metrics: spec.results?.[0]?.attachments?.find(a => a.name === 'metrics')?.body || {}
       });
     });
   });
@@ -73,14 +70,14 @@ function generateReport(analysis) {
     `| Performance Critical | ${analysis.summary.performance.critical} |`,
     '\n## Detailed Results\n',
     '| Test | Duration (ms) | Threshold (ms) | Status |',
-    '|------|---------------|----------------|---------|',
+    '|------|---------------|----------------|---------|'
   ];
 
   analysis.details
     .sort((a, b) => b.duration - a.duration)
     .forEach(detail => {
       report.push(
-        `| ${detail.name} | ${detail.duration.toFixed(2)} | ${detail.threshold} | ${detail.status} |`,
+        `| ${detail.name} | ${detail.duration.toFixed(2)} | ${detail.threshold} | ${detail.status} |`
       );
     });
 
@@ -88,14 +85,12 @@ function generateReport(analysis) {
   if (analysis.summary.performance.degraded > 0 || analysis.summary.performance.critical > 0) {
     report.push('\n## Recommendations');
     report.push('The following tests showed degraded performance:');
-
+    
     analysis.details
       .filter(d => d.status !== 'acceptable')
       .forEach(detail => {
-        report.push(
-          `- ${detail.name}: ${detail.duration.toFixed(2)}ms (threshold: ${detail.threshold}ms)`,
-        );
-
+        report.push(`- ${detail.name}: ${detail.duration.toFixed(2)}ms (threshold: ${detail.threshold}ms)`);
+        
         // Add specific recommendations based on metrics
         if (detail.metrics.resourceCount > 50) {
           report.push('  - Consider reducing the number of network requests');

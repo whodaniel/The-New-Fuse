@@ -109,15 +109,15 @@ export function getErrorMessage(error: unknown): string {
   if (error instanceof AppError) {
     return error.message;
   }
-
+  
   if (error instanceof Error) {
     return error.message;
   }
-
+  
   if (typeof error === 'string') {
     return error;
   }
-
+  
   return 'An unknown error occurred';
 }
 
@@ -135,7 +135,11 @@ export function createErrorFromResponse(response: Response): AppError {
     case 404:
       return new NotFoundError(statusText);
     default:
-      return new AppError(statusText || 'An error occurred with the request', 'API_ERROR', status);
+      return new AppError(
+        statusText || 'An error occurred with the request',
+        'API_ERROR',
+        status
+      );
   }
 }
 

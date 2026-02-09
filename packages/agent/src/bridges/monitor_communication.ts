@@ -11,7 +11,7 @@
 
 import { EventEmitter } from 'events';
 
-import type { MessageType } from './index';
+import { MessageType } from './index';
 
 // ============================================================
 // MONITORING TYPES
@@ -71,9 +71,7 @@ export class MonitorCommunication extends EventEmitter {
    * Track a message
    */
   trackMessage(metric: Omit<MessageMetric, 'id' | 'timestamp'>): void {
-    if (!this.trackingEnabled) {
-      return;
-    }
+    if (!this.trackingEnabled) return;
 
     const fullMetric: MessageMetric = {
       ...metric,
@@ -225,9 +223,7 @@ export class MonitorCommunication extends EventEmitter {
     const since = new Date(Date.now() - windowMs);
     const recent = this.metrics.filter((m) => m.timestamp >= since);
 
-    if (recent.length === 0) {
-      return 0;
-    }
+    if (recent.length === 0) return 0;
 
     return recent.filter((m) => !m.success).length / recent.length;
   }

@@ -1,38 +1,17 @@
+import { PerformanceOptimizationService, PerformanceConfig } from './PerformanceOptimizationService';
 import { FileChangeEvent } from '../watchers/EnhancedFileSystemWatcher';
-import {
-  PerformanceConfig,
-  PerformanceOptimizationService,
-} from './PerformanceOptimizationService';
 
 // Mock services for example purposes
 class MockRedisService {
-  async setex(key: string, seconds: number, value: string): Promise<string> {
-    return 'OK';
-  }
-  async get(key: string): Promise<string | null> {
-    return null;
-  }
-  async sadd(key: string, member: string): Promise<number> {
-    return 1;
-  }
-  async smembers(key: string): Promise<string[]> {
-    return [];
-  }
-  async srem(key: string, member: string): Promise<number> {
-    return 1;
-  }
-  async del(key: string): Promise<number> {
-    return 1;
-  }
-  async lpush(key: string, value: string): Promise<number> {
-    return 1;
-  }
-  async lrange(key: string, start: number, stop: number): Promise<string[]> {
-    return [];
-  }
-  async publish(channel: string, message: string): Promise<number> {
-    return 1;
-  }
+  async setex(key: string, seconds: number, value: string): Promise<string> { return 'OK'; }
+  async get(key: string): Promise<string | null> { return null; }
+  async sadd(key: string, member: string): Promise<number> { return 1; }
+  async smembers(key: string): Promise<string[]> { return []; }
+  async srem(key: string, member: string): Promise<number> { return 1; }
+  async del(key: string): Promise<number> { return 1; }
+  async lpush(key: string, value: string): Promise<number> { return 1; }
+  async lrange(key: string, start: number, stop: number): Promise<string[]> { return []; }
+  async publish(channel: string, message: string): Promise<number> { return 1; }
 }
 
 class MockMetricsService {
@@ -43,7 +22,7 @@ class MockMetricsService {
 
 /**
  * Example: Setting up Performance Optimization Service
- *
+ * 
  * This example demonstrates how to configure and use the performance optimization
  * service with horizontal scaling, batching, caching, and telemetry.
  */
@@ -60,31 +39,33 @@ async function setupPerformanceOptimization() {
       heartbeatInterval: 5000, // 5 seconds
       loadThreshold: 80, // 80% load threshold
       redistributionDelay: 30000, // 30 seconds
-      clusterKey: 'sync-cluster',
+      clusterKey: 'sync-cluster'
     },
     batching: {
       maxBatchSize: 50, // Process up to 50 changes per batch
       batchTimeout: 2000, // 2 seconds max wait
       debounceDelay: 200, // 200ms debounce for rapid changes
-      priorityPatterns: ['config', 'template', '.env', 'schema'],
+      priorityPatterns: [
+        'config', 'template', '.env', 'schema'
+      ]
     },
     caching: {
       maxSize: 10000, // 10k cache entries
       maxMemory: 1024 * 1024 * 100, // 100MB memory limit
       ttl: 1800000, // 30 minutes TTL
       cleanupInterval: 300000, // 5 minutes cleanup
-      tenantIsolation: true,
+      tenantIsolation: true
     },
     telemetry: {
       metricsInterval: 30000, // 30 seconds
       retentionPeriod: 3600000 * 24, // 24 hours
       aggregationWindow: 300000, // 5 minutes
       enableDetailedMetrics: true,
-      maxMetricsBuffer: 50000,
+      maxMetricsBuffer: 50000
     },
     enableOptimizations: true,
     memoryThreshold: 1024 * 1024 * 500, // 500MB
-    cpuThreshold: 85, // 85%
+    cpuThreshold: 85 // 85%
   };
 
   // Create and initialize the service
@@ -95,7 +76,7 @@ async function setupPerformanceOptimization() {
   );
 
   await performanceService.initialize();
-
+  
   console.log('Performance optimization service initialized');
   return performanceService;
 }
@@ -114,7 +95,7 @@ async function processFileChangesExample(performanceService: PerformanceOptimiza
       tenantId: 'tenant-1',
       timestamp: new Date(),
       checksum: 'abc123',
-      metadata: { size: 2048, priority: 'high' },
+      metadata: { size: 2048, priority: 'high' }
     },
     {
       type: 'update',
@@ -122,7 +103,7 @@ async function processFileChangesExample(performanceService: PerformanceOptimiza
       tenantId: 'tenant-1',
       timestamp: new Date(),
       checksum: 'def456',
-      metadata: { size: 4096, priority: 'high' },
+      metadata: { size: 4096, priority: 'high' }
     },
     {
       type: 'update',
@@ -130,8 +111,8 @@ async function processFileChangesExample(performanceService: PerformanceOptimiza
       tenantId: 'tenant-2',
       timestamp: new Date(),
       checksum: 'ghi789',
-      metadata: { size: 1024, priority: 'low' },
-    },
+      metadata: { size: 1024, priority: 'low' }
+    }
   ];
 
   // Process file changes (they will be batched automatically)
@@ -141,12 +122,12 @@ async function processFileChangesExample(performanceService: PerformanceOptimiza
   }
 
   // Wait for batching to complete
-  await new Promise((resolve) => setTimeout(resolve, 3000));
-
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  
   const metrics = await performanceService.getPerformanceMetrics();
   console.log('Batching metrics:', {
     processedBatches: metrics.batching.processedBatches,
-    pendingChanges: metrics.batching.pendingChanges,
+    pendingChanges: metrics.batching.pendingChanges
   });
 }
 
@@ -160,13 +141,13 @@ async function cachingExample(performanceService: PerformanceOptimizationService
   const userData = {
     id: 'user-123',
     name: 'John Doe',
-    preferences: { theme: 'dark', language: 'en' },
+    preferences: { theme: 'dark', language: 'en' }
   };
 
   const configData = {
     apiEndpoint: 'https://api.example.com',
     timeout: 30000,
-    retries: 3,
+    retries: 3
   };
 
   // Set cached data with tenant isolation
@@ -190,7 +171,7 @@ async function cachingExample(performanceService: PerformanceOptimizationService
   const metrics = await performanceService.getPerformanceMetrics();
   console.log('Cache metrics:', {
     hitRate: (metrics.caching.hitRate * 100).toFixed(2) + '%',
-    memoryUsage: Math.round(metrics.caching.memoryUsage / 1024) + ' KB',
+    memoryUsage: Math.round(metrics.caching.memoryUsage / 1024) + ' KB'
   });
 }
 
@@ -205,14 +186,10 @@ async function workDistributionExample(performanceService: PerformanceOptimizati
     const syncWork = {
       operation: 'sync-templates',
       templates: ['template1.md', 'template2.md'],
-      priority: 'high',
+      priority: 'high'
     };
 
-    const targetInstance = await performanceService.distributeWork(
-      'template-sync',
-      syncWork,
-      'tenant-1'
-    );
+    const targetInstance = await performanceService.distributeWork('template-sync', syncWork, 'tenant-1');
     console.log(`Work distributed to instance: ${targetInstance}`);
 
     // Check for assigned work (in a real scenario, this would be called by worker instances)
@@ -222,6 +199,7 @@ async function workDistributionExample(performanceService: PerformanceOptimizati
     // Update instance load
     performanceService.updateInstanceLoad(65);
     console.log('Updated instance load to 65%');
+
   } catch (error) {
     console.log('Work distribution not available (no other instances):', error.message);
   }
@@ -235,29 +213,28 @@ async function monitoringExample(performanceService: PerformanceOptimizationServ
 
   // Get comprehensive performance metrics
   const metrics = await performanceService.getPerformanceMetrics();
-
+  
   console.log('Performance Metrics:');
   console.log('- Scaling:');
   console.log(`  * Instance Count: ${metrics.scaling.instanceCount}`);
   console.log(`  * Current Load: ${metrics.scaling.currentLoad}%`);
-
+  
   console.log('- Batching:');
   console.log(`  * Pending Changes: ${metrics.batching.pendingChanges}`);
   console.log(`  * Active Batches: ${metrics.batching.activeBatches}`);
   console.log(`  * Processed Batches: ${metrics.batching.processedBatches}`);
-
+  
   console.log('- Caching:');
   console.log(`  * Hit Rate: ${(metrics.caching.hitRate * 100).toFixed(2)}%`);
   console.log(`  * Memory Usage: ${Math.round(metrics.caching.memoryUsage / 1024)} KB`);
   console.log(`  * Evictions: ${metrics.caching.evictionCount}`);
-
+  
   console.log('- System:');
   console.log(`  * Memory Usage: ${Math.round(metrics.system.memoryUsage / 1024 / 1024)} MB`);
   console.log(`  * Uptime: ${Math.round(metrics.system.uptime / 1000)} seconds`);
 
   // Force optimization if needed
-  if (metrics.system.memoryUsage > 100 * 1024 * 1024) {
-    // 100MB
+  if (metrics.system.memoryUsage > 100 * 1024 * 1024) { // 100MB
     console.log('High memory usage detected, forcing optimization...');
     await performanceService.forceOptimization();
     console.log('Optimization completed');
@@ -272,7 +249,7 @@ async function highLoadExample(performanceService: PerformanceOptimizationServic
 
   // Simulate high-volume file changes
   const promises: Promise<void>[] = [];
-
+  
   for (let i = 0; i < 100; i++) {
     const change: FileChangeEvent = {
       type: i % 3 === 0 ? 'create' : i % 3 === 1 ? 'update' : 'delete',
@@ -280,7 +257,7 @@ async function highLoadExample(performanceService: PerformanceOptimizationServic
       tenantId: `tenant-${i % 5}`, // 5 different tenants
       timestamp: new Date(),
       checksum: `hash-${i}`,
-      metadata: { size: Math.random() * 10000 },
+      metadata: { size: Math.random() * 10000 }
     };
 
     promises.push(performanceService.processFileChange(change));
@@ -288,19 +265,19 @@ async function highLoadExample(performanceService: PerformanceOptimizationServic
 
   console.log('Processing 100 file changes concurrently...');
   const startTime = Date.now();
-
+  
   await Promise.all(promises);
-
+  
   const processingTime = Date.now() - startTime;
   console.log(`Completed in ${processingTime}ms`);
 
   // Wait for batching to complete
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+  await new Promise(resolve => setTimeout(resolve, 3000));
 
   const finalMetrics = await performanceService.getPerformanceMetrics();
   console.log('Final batching metrics:', {
     processedBatches: finalMetrics.batching.processedBatches,
-    pendingChanges: finalMetrics.batching.pendingChanges,
+    pendingChanges: finalMetrics.batching.pendingChanges
   });
 }
 
@@ -324,6 +301,7 @@ async function runExamples() {
     await highLoadExample(performanceService);
 
     console.log('\n✅ All examples completed successfully!');
+
   } catch (error) {
     console.error('❌ Example failed:', error);
   } finally {
@@ -337,13 +315,13 @@ async function runExamples() {
 
 // Export for use in other examples
 export {
-  cachingExample,
-  highLoadExample,
-  monitoringExample,
-  processFileChangesExample,
-  runExamples,
   setupPerformanceOptimization,
+  processFileChangesExample,
+  cachingExample,
   workDistributionExample,
+  monitoringExample,
+  highLoadExample,
+  runExamples
 };
 
 // Run examples if this file is executed directly

@@ -5,19 +5,16 @@
 ### Running the Extension
 
 1. Open your terminal and navigate to the project root directory:
-
    ```bash
    cd .
    ```
 
 2. Run the start script to launch VS Code with the extension:
-
    ```bash
    ./start.sh
    ```
 
    If the script isn't executable, make it so first:
-
    ```bash
    chmod +x start.sh
    ```
@@ -35,7 +32,6 @@
 #### Status Bar
 
 Look for these icons in the status bar at the bottom of VS Code:
-
 - 🚀 (rocket) - Click to open The New Fuse
 - 🤖 (robot) - Click to start AI Collaboration
 - 📊 (list-tree) - Click to open the Command Center
@@ -67,8 +63,6 @@ If commands don't appear in the Command Palette:
 
 ### Next Steps
 
-Explore the Master Command Center which provides a visual interface to all the
-extension's capabilities:
-
+Explore the Master Command Center which provides a visual interface to all the extension's capabilities:
 - Open Command Palette
 - Type "Open Master Command Center" and press Enter

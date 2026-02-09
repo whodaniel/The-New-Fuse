@@ -3,12 +3,7 @@
  */
 
 import { EventEmitter } from 'events';
-import {
-  HealthCheck,
-  HealthCheckResult,
-  ISystemHealthMonitor,
-  SystemHealthStatus,
-} from '../interfaces/IMonitoring';
+import { ISystemHealthMonitor, SystemHealthStatus, HealthCheck, HealthCheckResult } from '../interfaces/IMonitoring';
 import { Logger } from '../utils/Logger';
 
 export interface SystemHealthMonitorConfig {
@@ -48,7 +43,7 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
 
     this.logger.info('Starting system health monitor', {
       checkInterval: this.config.checkInterval,
-      timeout: this.config.timeout,
+      timeout: this.config.timeout
     });
 
     this.running = true;
@@ -96,7 +91,7 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
       components[name] = {
         healthy: result.healthy,
         message: result.message,
-        lastCheck: result.timestamp,
+        lastCheck: result.timestamp
       };
 
       totalComponents++;
@@ -133,8 +128,8 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
         memoryUsage: memoryUsage.heapUsed,
         cpuUsage: 0, // Simplified - would need more complex calculation
         diskUsage: 0, // Would need disk usage check
-        networkLatency,
-      },
+        networkLatency
+      }
     };
   }
 
@@ -153,7 +148,7 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
     this.logger.debug(`Registered health check: ${check.name}`, {
       interval: check.interval,
       timeout: check.timeout,
-      enabled: check.enabled,
+      enabled: check.enabled
     });
   }
 
@@ -188,7 +183,7 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
         if (!result.healthy) {
           this.logger.warn(`Health check failed: ${name}`, {
             message: result.message,
-            duration: result.duration,
+            duration: result.duration
           });
         }
       } catch (error) {
@@ -198,7 +193,7 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
           message: error instanceof Error ? error.message : 'Unknown error',
           duration: 0,
           timestamp: new Date(),
-          details: { error: error instanceof Error ? error.stack : error },
+          details: { error: error instanceof Error ? error.stack : error }
         };
 
         results.push(errorResult);
@@ -230,11 +225,14 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
     });
 
     try {
-      const result = await Promise.race([check.check(), timeoutPromise]);
+      const result = await Promise.race([
+        check.check(),
+        timeoutPromise
+      ]);
 
       return {
         ...result,
-        duration: Date.now() - startTime,
+        duration: Date.now() - startTime
       };
     } catch (error) {
       throw error;
@@ -259,9 +257,9 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
         const usagePercent = (heapUsedMB / heapTotalMB) * 100;
 
         const healthy = usagePercent < 90; // Alert if over 90%
-        const message = healthy
-          ? `Memory usage normal: ${heapUsedMB.toFixed(2)}MB (${usagePercent.toFixed(1)}%)`
-          : `High memory usage: ${heapUsedMB.toFixed(2)}MB (${usagePercent.toFixed(1)}%)`;
+        const message = healthy ? 
+          `Memory usage normal: ${heapUsedMB.toFixed(2)}MB (${usagePercent.toFixed(1)}%)` :
+          `High memory usage: ${heapUsedMB.toFixed(2)}MB (${usagePercent.toFixed(1)}%)`;
 
         return {
           name: 'memory-usage',
@@ -273,10 +271,10 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
             heapUsed: memoryUsage.heapUsed,
             heapTotal: memoryUsage.heapTotal,
             external: memoryUsage.external,
-            rss: memoryUsage.rss,
-          },
+            rss: memoryUsage.rss
+          }
         };
-      },
+      }
     });
 
     // Event loop lag check
@@ -288,14 +286,14 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
       enabled: true,
       check: async (): Promise<HealthCheckResult> => {
         const start = Date.now();
-
-        await new Promise((resolve) => setImmediate(resolve));
-
+        
+        await new Promise(resolve => setImmediate(resolve));
+        
         const lag = Date.now() - start;
         const healthy = lag < 100; // Alert if lag > 100ms
-        const message = healthy
-          ? `Event loop responsive: ${lag}ms lag`
-          : `Event loop lag detected: ${lag}ms`;
+        const message = healthy ?
+          `Event loop responsive: ${lag}ms lag` :
+          `Event loop lag detected: ${lag}ms`;
 
         return {
           name: 'event-loop-lag',
@@ -303,9 +301,9 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
           message,
           duration: lag,
           timestamp: new Date(),
-          details: { lag },
+          details: { lag }
         };
-      },
+      }
     });
 
     // Process uptime check
@@ -318,7 +316,7 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
       check: async (): Promise<HealthCheckResult> => {
         const uptimeSeconds = process.uptime();
         const uptimeHours = uptimeSeconds / 3600;
-
+        
         // Always healthy, just informational
         const message = `Process uptime: ${uptimeHours.toFixed(2)} hours`;
 
@@ -331,10 +329,10 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
           details: {
             uptimeSeconds,
             uptimeHours,
-            pid: process.pid,
-          },
+            pid: process.pid
+          }
         };
-      },
+      }
     });
 
     // File descriptor check (Unix-like systems)
@@ -357,7 +355,7 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
               message,
               duration: 0,
               timestamp: new Date(),
-              details: {},
+              details: {}
             };
           } catch (error) {
             return {
@@ -366,10 +364,10 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
               message: 'Could not check file descriptor usage',
               duration: 0,
               timestamp: new Date(),
-              details: { error: error instanceof Error ? error.message : error },
+              details: { error: error instanceof Error ? error.message : error }
             };
           }
-        },
+        }
       });
     }
 
@@ -381,7 +379,7 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
    */
   private async measureNetworkLatency(): Promise<number> {
     const start = Date.now();
-
+    
     try {
       // Simple network check - in production you might ping a specific service
       await new Promise((resolve, reject) => {
@@ -391,7 +389,7 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
           resolve(undefined);
         });
       });
-
+      
       return Date.now() - start;
     } catch (error) {
       return -1; // Indicate network issue
@@ -403,7 +401,7 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
    */
   private getOverallStatus(): SystemHealthStatus {
     const allResults = Array.from(this.checkResults.values());
-
+    
     if (allResults.length === 0) {
       return {
         healthy: true,
@@ -415,38 +413,36 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
           memoryUsage: process.memoryUsage().heapUsed / process.memoryUsage().heapTotal,
           cpuUsage: 0,
           diskUsage: 0,
-          networkLatency: 0,
-        },
+          networkLatency: 0
+        }
       };
     }
 
-    const healthyResults = allResults.filter((result) => result.healthy);
+    const healthyResults = allResults.filter(result => result.healthy);
     const healthy = healthyResults.length === allResults.length;
     const score = Math.round((healthyResults.length / allResults.length) * 100);
-
+    
     const components: Record<string, any> = {};
     for (const result of allResults) {
       components[result.name] = {
         healthy: result.healthy,
         message: result.message,
-        lastCheck: result.timestamp,
+        lastCheck: result.timestamp
       };
     }
 
     return {
       healthy,
       score,
-      message: healthy
-        ? 'All health checks passing'
-        : `${allResults.length - healthyResults.length} health check(s) failing`,
+      message: healthy ? 'All health checks passing' : `${allResults.length - healthyResults.length} health check(s) failing`,
       components,
       metrics: {
         uptime: process.uptime(),
         memoryUsage: process.memoryUsage().heapUsed / process.memoryUsage().heapTotal,
         cpuUsage: 0,
         diskUsage: 0,
-        networkLatency: 0,
-      },
+        networkLatency: 0
+      }
     };
   }
 
@@ -459,10 +455,9 @@ export class SystemHealthMonitor extends EventEmitter implements ISystemHealthMo
 
     // Remove old results
     const initialLength = this.resultHistory.length;
-    this.resultHistory.splice(
-      0,
-      this.resultHistory.findIndex((result) => result.timestamp >= cutoff)
-    );
+    this.resultHistory.splice(0, this.resultHistory.findIndex(
+      result => result.timestamp >= cutoff
+    ));
 
     // Also limit by count
     if (this.resultHistory.length > maxHistory) {

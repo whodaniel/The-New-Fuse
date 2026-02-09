@@ -11,8 +11,8 @@ metadata:
 spec:
   podSelector: {}
   policyTypes:
-    - Ingress
-    - Egress
+  - Ingress
+  - Egress
 ---
 # Network Policy for API Services
 apiVersion: networking.k8s.io/v1
@@ -28,73 +28,73 @@ spec:
     matchLabels:
       app: fuse-api
   policyTypes:
-    - Ingress
-    - Egress
+  - Ingress
+  - Egress
   ingress:
-    # Allow traffic from load balancer/nginx
-    - from:
-        - podSelector:
-            matchLabels:
-              app: nginx
-      ports:
-        - protocol: TCP
-          port: 3001
-    # Allow traffic from frontend services
-    - from:
-        - podSelector:
-            matchLabels:
-              app: fuse-frontend
-      ports:
-        - protocol: TCP
-          port: 3001
-    # Allow traffic from monitoring services
-    - from:
-        - podSelector:
-            matchLabels:
-              app: prometheus
-      ports:
-        - protocol: TCP
-          port: 3001
-    # Allow traffic from autoscaler
-    - from:
-        - podSelector:
-            matchLabels:
-              app: fuse-autoscaler
-      ports:
-        - protocol: TCP
-          port: 3001
+  # Allow traffic from load balancer/nginx
+  - from:
+    - podSelector:
+        matchLabels:
+          app: nginx
+    ports:
+    - protocol: TCP
+      port: 3001
+  # Allow traffic from frontend services
+  - from:
+    - podSelector:
+        matchLabels:
+          app: fuse-frontend
+    ports:
+    - protocol: TCP
+      port: 3001
+  # Allow traffic from monitoring services
+  - from:
+    - podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 3001
+  # Allow traffic from autoscaler
+  - from:
+    - podSelector:
+        matchLabels:
+          app: fuse-autoscaler
+    ports:
+    - protocol: TCP
+      port: 3001
   egress:
-    # Allow DNS resolution
-    - to: []
-      ports:
-        - protocol: UDP
-          port: 53
-    # Allow connection to PostgreSQL
-    - to:
-        - podSelector:
-            matchLabels:
-              app: postgres
-      ports:
-        - protocol: TCP
-          port: 5432
-    # Allow connection to Redis
-    - to:
-        - podSelector:
-            matchLabels:
-              app: redis
-      ports:
-        - protocol: TCP
-          port: 6379
-    # Allow HTTPS outbound for external APIs
-    - to: []
-      ports:
-        - protocol: TCP
-          port: 443
-    # Allow HTTP outbound for external APIs
-    - to: []
-      ports:
-        - protocol: TCP
-          port: 80
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow connection to PostgreSQL
+  - to:
+    - podSelector:
+        matchLabels:
+          app: postgres
+    ports:
+    - protocol: TCP
+      port: 5432
+  # Allow connection to Redis
+  - to:
+    - podSelector:
+        matchLabels:
+          app: redis
+    ports:
+    - protocol: TCP
+      port: 6379
+  # Allow HTTPS outbound for external APIs
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443
+  # Allow HTTP outbound for external APIs
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 80
 ---
 # Network Policy for Frontend Services
 apiVersion: networking.k8s.io/v1
@@ -110,44 +110,44 @@ spec:
     matchLabels:
       app: fuse-frontend
   policyTypes:
-    - Ingress
-    - Egress
+  - Ingress
+  - Egress
   ingress:
-    # Allow traffic from load balancer/nginx
-    - from:
-        - podSelector:
-            matchLabels:
-              app: nginx
-      ports:
-        - protocol: TCP
-          port: 3000
-    # Allow traffic from monitoring services
-    - from:
-        - podSelector:
-            matchLabels:
-              app: prometheus
-      ports:
-        - protocol: TCP
-          port: 3000
+  # Allow traffic from load balancer/nginx
+  - from:
+    - podSelector:
+        matchLabels:
+          app: nginx
+    ports:
+    - protocol: TCP
+      port: 3000
+  # Allow traffic from monitoring services
+  - from:
+    - podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 3000
   egress:
-    # Allow DNS resolution
-    - to: []
-      ports:
-        - protocol: UDP
-          port: 53
-    # Allow connection to API services
-    - to:
-        - podSelector:
-            matchLabels:
-              app: fuse-api
-      ports:
-        - protocol: TCP
-          port: 3001
-    # Allow HTTPS outbound for CDN/assets
-    - to: []
-      ports:
-        - protocol: TCP
-          port: 443
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow connection to API services
+  - to:
+    - podSelector:
+        matchLabels:
+          app: fuse-api
+    ports:
+    - protocol: TCP
+      port: 3001
+  # Allow HTTPS outbound for CDN/assets
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443
 ---
 # Network Policy for Database Services (PostgreSQL)
 apiVersion: networking.k8s.io/v1
@@ -163,31 +163,31 @@ spec:
     matchLabels:
       app: postgres
   policyTypes:
-    - Ingress
-    - Egress
+  - Ingress
+  - Egress
   ingress:
-    # Allow connections from API services only
-    - from:
-        - podSelector:
-            matchLabels:
-              app: fuse-api
-      ports:
-        - protocol: TCP
-          port: 5432
-    # Allow connections from monitoring for health checks
-    - from:
-        - podSelector:
-            matchLabels:
-              app: prometheus
-      ports:
-        - protocol: TCP
-          port: 5432
+  # Allow connections from API services only
+  - from:
+    - podSelector:
+        matchLabels:
+          app: fuse-api
+    ports:
+    - protocol: TCP
+      port: 5432
+  # Allow connections from monitoring for health checks
+  - from:
+    - podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 5432
   egress:
-    # Allow DNS resolution
-    - to: []
-      ports:
-        - protocol: UDP
-          port: 53
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
 ---
 # Network Policy for Cache Services (Redis)
 apiVersion: networking.k8s.io/v1
@@ -203,31 +203,31 @@ spec:
     matchLabels:
       app: redis
   policyTypes:
-    - Ingress
-    - Egress
+  - Ingress
+  - Egress
   ingress:
-    # Allow connections from API services only
-    - from:
-        - podSelector:
-            matchLabels:
-              app: fuse-api
-      ports:
-        - protocol: TCP
-          port: 6379
-    # Allow connections from monitoring for health checks
-    - from:
-        - podSelector:
-            matchLabels:
-              app: prometheus
-      ports:
-        - protocol: TCP
-          port: 6379
+  # Allow connections from API services only
+  - from:
+    - podSelector:
+        matchLabels:
+          app: fuse-api
+    ports:
+    - protocol: TCP
+      port: 6379
+  # Allow connections from monitoring for health checks
+  - from:
+    - podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 6379
   egress:
-    # Allow DNS resolution
-    - to: []
-      ports:
-        - protocol: UDP
-          port: 53
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
 ---
 # Network Policy for Monitoring Services (Prometheus)
 apiVersion: networking.k8s.io/v1
@@ -243,55 +243,55 @@ spec:
     matchLabels:
       app: prometheus
   policyTypes:
-    - Ingress
-    - Egress
+  - Ingress
+  - Egress
   ingress:
-    # Allow traffic from Grafana
-    - from:
-        - podSelector:
-            matchLabels:
-              app: grafana
-      ports:
-        - protocol: TCP
-          port: 9090
-    # Allow traffic from autoscaler
-    - from:
-        - podSelector:
-            matchLabels:
-              app: fuse-autoscaler
-      ports:
-        - protocol: TCP
-          port: 9090
-    # Allow traffic from load balancer for health checks
-    - from:
-        - podSelector:
-            matchLabels:
-              app: nginx
-      ports:
-        - protocol: TCP
-          port: 9090
+  # Allow traffic from Grafana
+  - from:
+    - podSelector:
+        matchLabels:
+          app: grafana
+    ports:
+    - protocol: TCP
+      port: 9090
+  # Allow traffic from autoscaler
+  - from:
+    - podSelector:
+        matchLabels:
+          app: fuse-autoscaler
+    ports:
+    - protocol: TCP
+      port: 9090
+  # Allow traffic from load balancer for health checks
+  - from:
+    - podSelector:
+        matchLabels:
+          app: nginx
+    ports:
+    - protocol: TCP
+      port: 9090
   egress:
-    # Allow DNS resolution
-    - to: []
-      ports:
-        - protocol: UDP
-          port: 53
-    # Allow scraping all services
-    - to:
-        - podSelector: {}
-      ports:
-        - protocol: TCP
-          port: 3000
-        - protocol: TCP
-          port: 3001
-        - protocol: TCP
-          port: 5432
-        - protocol: TCP
-          port: 6379
-        - protocol: TCP
-          port: 9090
-        - protocol: TCP
-          port: 9200
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow scraping all services
+  - to:
+    - podSelector: {}
+    ports:
+    - protocol: TCP
+      port: 3000
+    - protocol: TCP
+      port: 3001
+    - protocol: TCP
+      port: 5432
+    - protocol: TCP
+      port: 6379
+    - protocol: TCP
+      port: 9090
+    - protocol: TCP
+      port: 9200
 ---
 # Network Policy for Grafana
 apiVersion: networking.k8s.io/v1
@@ -307,39 +307,39 @@ spec:
     matchLabels:
       app: grafana
   policyTypes:
-    - Ingress
-    - Egress
+  - Ingress
+  - Egress
   ingress:
-    # Allow traffic from load balancer
-    - from:
-        - podSelector:
-            matchLabels:
-              app: nginx
-      ports:
-        - protocol: TCP
-          port: 3000
+  # Allow traffic from load balancer
+  - from:
+    - podSelector:
+        matchLabels:
+          app: nginx
+    ports:
+    - protocol: TCP
+      port: 3000
   egress:
-    # Allow DNS resolution
-    - to: []
-      ports:
-        - protocol: UDP
-          port: 53
-    # Allow connection to Prometheus
-    - to:
-        - podSelector:
-            matchLabels:
-              app: prometheus
-      ports:
-        - protocol: TCP
-          port: 9090
-    # Allow connection to Elasticsearch
-    - to:
-        - podSelector:
-            matchLabels:
-              app: elasticsearch
-      ports:
-        - protocol: TCP
-          port: 9200
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow connection to Prometheus
+  - to:
+    - podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 9090
+  # Allow connection to Elasticsearch
+  - to:
+    - podSelector:
+        matchLabels:
+          app: elasticsearch
+    ports:
+    - protocol: TCP
+      port: 9200
 ---
 # Network Policy for Elasticsearch
 apiVersion: networking.k8s.io/v1
@@ -355,55 +355,55 @@ spec:
     matchLabels:
       app: elasticsearch
   policyTypes:
-    - Ingress
-    - Egress
+  - Ingress
+  - Egress
   ingress:
-    # Allow traffic from Kibana
-    - from:
-        - podSelector:
-            matchLabels:
-              app: kibana
-      ports:
-        - protocol: TCP
-          port: 9200
-    # Allow traffic from Grafana
-    - from:
-        - podSelector:
-            matchLabels:
-              app: grafana
-      ports:
-        - protocol: TCP
-          port: 9200
-    # Allow traffic from API services for logging
-    - from:
-        - podSelector:
-            matchLabels:
-              app: fuse-api
-      ports:
-        - protocol: TCP
-          port: 9200
-    # Allow traffic from Jaeger
-    - from:
-        - podSelector:
-            matchLabels:
-              app: jaeger
-      ports:
-        - protocol: TCP
-          port: 9200
+  # Allow traffic from Kibana
+  - from:
+    - podSelector:
+        matchLabels:
+          app: kibana
+    ports:
+    - protocol: TCP
+      port: 9200
+  # Allow traffic from Grafana
+  - from:
+    - podSelector:
+        matchLabels:
+          app: grafana
+    ports:
+    - protocol: TCP
+      port: 9200
+  # Allow traffic from API services for logging
+  - from:
+    - podSelector:
+        matchLabels:
+          app: fuse-api
+    ports:
+    - protocol: TCP
+      port: 9200
+  # Allow traffic from Jaeger
+  - from:
+    - podSelector:
+        matchLabels:
+          app: jaeger
+    ports:
+    - protocol: TCP
+      port: 9200
   egress:
-    # Allow DNS resolution
-    - to: []
-      ports:
-        - protocol: UDP
-          port: 53
-    # Allow cluster communication (for multi-node Elasticsearch)
-    - to:
-        - podSelector:
-            matchLabels:
-              app: elasticsearch
-      ports:
-        - protocol: TCP
-          port: 9300
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow cluster communication (for multi-node Elasticsearch)
+  - to:
+    - podSelector:
+        matchLabels:
+          app: elasticsearch
+    ports:
+    - protocol: TCP
+      port: 9300
 ---
 # Network Policy for Load Balancer (Nginx)
 apiVersion: networking.k8s.io/v1
@@ -419,46 +419,46 @@ spec:
     matchLabels:
       app: nginx
   policyTypes:
-    - Ingress
-    - Egress
+  - Ingress
+  - Egress
   ingress:
-    # Allow all inbound traffic (public-facing)
-    - {}
+  # Allow all inbound traffic (public-facing)
+  - {}
   egress:
-    # Allow DNS resolution
-    - to: []
-      ports:
-        - protocol: UDP
-          port: 53
-    # Allow connection to all backend services
-    - to:
-        - podSelector:
-            matchLabels:
-              app: fuse-api
-      ports:
-        - protocol: TCP
-          port: 3001
-    - to:
-        - podSelector:
-            matchLabels:
-              app: fuse-frontend
-      ports:
-        - protocol: TCP
-          port: 3000
-    - to:
-        - podSelector:
-            matchLabels:
-              app: prometheus
-      ports:
-        - protocol: TCP
-          port: 9090
-    - to:
-        - podSelector:
-            matchLabels:
-              app: grafana
-      ports:
-        - protocol: TCP
-          port: 3000
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow connection to all backend services
+  - to:
+    - podSelector:
+        matchLabels:
+          app: fuse-api
+    ports:
+    - protocol: TCP
+      port: 3001
+  - to:
+    - podSelector:
+        matchLabels:
+          app: fuse-frontend
+    ports:
+    - protocol: TCP
+      port: 3000
+  - to:
+    - podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 9090
+  - to:
+    - podSelector:
+        matchLabels:
+          app: grafana
+    ports:
+    - protocol: TCP
+      port: 3000
 ---
 # Network Policy for Auto-scaling Service
 apiVersion: networking.k8s.io/v1
@@ -474,41 +474,41 @@ spec:
     matchLabels:
       app: fuse-autoscaler
   policyTypes:
-    - Ingress
-    - Egress
+  - Ingress
+  - Egress
   ingress:
-    # Allow traffic from monitoring for health checks
-    - from:
-        - podSelector:
-            matchLabels:
-              app: prometheus
-      ports:
-        - protocol: TCP
-          port: 3000
+  # Allow traffic from monitoring for health checks
+  - from:
+    - podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 3000
   egress:
-    # Allow DNS resolution
-    - to: []
-      ports:
-        - protocol: UDP
-          port: 53
-    # Allow connection to Prometheus for metrics
-    - to:
-        - podSelector:
-            matchLabels:
-              app: prometheus
-      ports:
-        - protocol: TCP
-          port: 9090
-    # Allow connection to Kubernetes API server
-    - to: []
-      ports:
-        - protocol: TCP
-          port: 443
-    # Allow connection to API services for health checks
-    - to:
-        - podSelector:
-            matchLabels:
-              app: fuse-api
-      ports:
-        - protocol: TCP
-          port: 3001
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow connection to Prometheus for metrics
+  - to:
+    - podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 9090
+  # Allow connection to Kubernetes API server
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443
+  # Allow connection to API services for health checks
+  - to:
+    - podSelector:
+        matchLabels:
+          app: fuse-api
+    ports:
+    - protocol: TCP
+      port: 3001

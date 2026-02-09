@@ -1,11 +1,16 @@
 /**
  * Enhanced BaseService Example
- *
+ * 
  * This example demonstrates how to use the enhanced BaseService
  * to create consistent and maintainable API service classes.
  */
 
-import { BaseService, createApiClient, type ApiClient } from '@the-new-fuse/api-client';
+import {
+  createApiClient,
+  BaseService,
+  type ApiClient,
+  type TokenStorage
+} from '@the-new-fuse/api-client';
 
 // Example: Creating a custom service that extends BaseService
 interface Product {
@@ -42,16 +47,14 @@ class ProductService extends BaseService {
   }
 
   // List products with filtering and pagination
-  async getProducts(
-    options: {
-      page?: number;
-      limit?: number;
-      category?: string;
-      minPrice?: number;
-      maxPrice?: number;
-      search?: string;
-    } = {}
-  ): Promise<Product[]> {
+  async getProducts(options: {
+    page?: number;
+    limit?: number;
+    category?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    search?: string;
+  } = {}): Promise<Product[]> {
     return this.list<Product[]>('', options);
   }
 
@@ -63,11 +66,10 @@ class ProductService extends BaseService {
   // Create new product with validation
   async createProduct(data: ProductCreateData): Promise<Product> {
     // Validate required fields
-    this.validateRequired({ name: data.name, price: data.price, category: data.category }, [
-      'name',
-      'price',
-      'category',
-    ]);
+    this.validateRequired(
+      { name: data.name, price: data.price, category: data.category },
+      ['name', 'price', 'category']
+    );
 
     // Additional business validation
     if (data.price <= 0) {
@@ -114,8 +116,8 @@ async function demonstrateEnhancedServices() {
     baseURL: 'https://api.example.com',
     timeout: 10000,
     headers: {
-      'User-Agent': 'MyApp/1.0.0',
-    },
+      'User-Agent': 'MyApp/1.0.0'
+    }
   });
 
   // Create service instances
@@ -129,7 +131,7 @@ async function demonstrateEnhancedServices() {
       limit: 10,
       category: 'electronics',
       minPrice: 100,
-      maxPrice: 500,
+      maxPrice: 500
     });
     console.log(`Found ${products.length} products`);
 
@@ -144,20 +146,20 @@ async function demonstrateEnhancedServices() {
       name: 'New Smartphone',
       price: 299.99,
       category: 'electronics',
-      description: 'Latest model smartphone with advanced features',
+      description: 'Latest model smartphone with advanced features'
     });
     console.log('Created product:', newProduct);
 
     // Update product
     const updatedProduct = await productService.updateProduct(newProduct.id, {
       price: 279.99,
-      description: 'Latest model smartphone with advanced features - On Sale!',
+      description: 'Latest model smartphone with advanced features - On Sale!'
     });
     console.log('Updated product:', updatedProduct);
 
     // Search products
     const searchResults = await productService.searchProducts('smartphone', {
-      limit: 5,
+      limit: 5
     });
     console.log(`Search results: ${searchResults.length} products found`);
 
@@ -172,6 +174,7 @@ async function demonstrateEnhancedServices() {
     ];
     const bulkUpdated = await productService.bulkUpdatePrices(priceUpdates);
     console.log(`Bulk updated ${bulkUpdated.length} products`);
+
   } catch (error) {
     console.error('API Error:', error);
   }
@@ -186,14 +189,14 @@ class OrderService extends BaseService {
   // Demonstrate custom query building
   async getOrdersByDateRange(startDate: string, endDate: string): Promise<any[]> {
     this.validateRequired({ startDate, endDate }, ['startDate', 'endDate']);
-
+    
     const queryString = this.buildQueryString({
       startDate,
       endDate,
       sort: 'createdAt',
-      order: 'desc',
+      order: 'desc'
     });
-
+    
     return this.get<any[]>(queryString);
   }
 
@@ -205,7 +208,7 @@ class OrderService extends BaseService {
   // Demonstrate error handling patterns
   async cancelOrder(orderId: string, reason?: string): Promise<any> {
     this.validateRequired({ orderId }, ['orderId']);
-
+    
     try {
       return await this.patch<any>(`/${orderId}/cancel`, { reason });
     } catch (error) {
@@ -217,11 +220,15 @@ class OrderService extends BaseService {
 }
 
 // Export for use in other examples
-export { demonstrateEnhancedServices, OrderService, ProductService };
+export {
+  ProductService,
+  OrderService,
+  demonstrateEnhancedServices
+};
 
 /**
  * Key Benefits of the Enhanced BaseService:
- *
+ * 
  * 1. **Consistency**: All services follow the same patterns
  * 2. **Validation**: Built-in parameter validation
  * 3. **Error Handling**: Consistent error handling across services
@@ -230,7 +237,7 @@ export { demonstrateEnhancedServices, OrderService, ProductService };
  * 6. **Flexibility**: Easy to extend with custom methods
  * 7. **Query Building**: Automatic query string construction
  * 8. **Path Management**: Automatic path construction and normalization
- *
+ * 
  * Common Patterns Supported:
  * - CRUD operations (Create, Read, Update, Delete)
  * - List with pagination and filtering

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 
 interface ApiMetrics {
@@ -30,7 +30,7 @@ export function useApiMetrics(): any {
     errorRate: 0,
     avgResponseTime: 0,
     requestsOverTime: [],
-    responseTimesOverTime: [],
+    responseTimesOverTime: []
   });
   const [endpoints, setEndpoints] = useState<EndpointMetrics[]>([]);
   const [errors, setErrors] = useState<ApiError[]>([]);
@@ -47,7 +47,7 @@ export function useApiMetrics(): any {
       const [metricsData, endpointsData, errorsData] = await Promise.all([
         api.get('/admin/metrics/overview'),
         api.get('/admin/metrics/endpoints'),
-        api.get('/admin/metrics/errors'),
+        api.get('/admin/metrics/errors')
       ]);
 
       setMetrics(metricsData.data);

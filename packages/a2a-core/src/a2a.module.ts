@@ -15,7 +15,11 @@ export class A2ACoreModule {
   static forRoot(config?: Partial<A2AConfig>): DynamicModule {
     return {
       module: A2ACoreModule,
-      imports: [ConfigModule, RedisModule.forRoot({ isGlobal: true }), Ap2ProtocolModule],
+      imports: [
+        ConfigModule,
+        RedisModule.forRoot({ isGlobal: true }),
+        Ap2ProtocolModule,
+      ],
       providers: [
         {
           provide: 'A2A_CONFIG',
@@ -80,7 +84,11 @@ export class A2ACoreModule {
   }): DynamicModule {
     return {
       module: A2ACoreModule,
-      imports: [ConfigModule, RedisModule.forRoot({ isGlobal: true }), ...(options.imports || [])],
+      imports: [
+        ConfigModule,
+        RedisModule.forRoot({ isGlobal: true }),
+        ...(options.imports || []),
+      ],
       providers: [
         {
           provide: 'A2A_CONFIG',

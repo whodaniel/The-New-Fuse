@@ -32,9 +32,9 @@ export interface ExportMetadata {
 
 export interface ShareConfig {
   id: string;
-  type: 'view' | 'edit';
+  type: view' | 'edit';
   recipient: {
-    type: 'user' | 'team' | 'public';
+    type: user' | 'team' | 'public';
     id?: string;
     email?: string;
   };

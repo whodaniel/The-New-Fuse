@@ -6,10 +6,10 @@
  */
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import { EnhancedFileSystemWatcher } from '../src/services/EnhancedFileSystemWatcher';
 import { SyncOrchestrator } from '../src/services/SyncOrchestrator';
+import { EnhancedFileSystemWatcher } from '../src/services/EnhancedFileSystemWatcher';
+import * as path from 'path';
+import * as fs from 'fs/promises';
 
 interface ContentFile {
   path: string;
@@ -32,7 +32,7 @@ export class CMSSyncService implements OnModuleInit {
 
   constructor(
     private readonly syncOrchestrator: SyncOrchestrator,
-    private readonly fileWatcher: EnhancedFileSystemWatcher
+    private readonly fileWatcher: EnhancedFileSystemWatcher,
   ) {}
 
   async onModuleInit() {
@@ -44,18 +44,26 @@ export class CMSSyncService implements OnModuleInit {
    */
   private async initializeFileWatching() {
     // Watch content directory
-    await this.fileWatcher.watchPath(this.contentPath, this.handleContentChange.bind(this), {
-      recursive: true,
-      filter: /\.(md|json|yaml)$/,
-      debounce: 500, // Wait 500ms before processing
-    });
+    await this.fileWatcher.watchPath(
+      this.contentPath,
+      this.handleContentChange.bind(this),
+      {
+        recursive: true,
+        filter: /\.(md|json|yaml)$/,
+        debounce: 500, // Wait 500ms before processing
+      }
+    );
 
     // Watch config directory
-    await this.fileWatcher.watchPath(this.configPath, this.handleConfigChange.bind(this), {
-      recursive: false,
-      filter: /\.json$/,
-      debounce: 1000,
-    });
+    await this.fileWatcher.watchPath(
+      this.configPath,
+      this.handleConfigChange.bind(this),
+      {
+        recursive: false,
+        filter: /\.json$/,
+        debounce: 1000,
+      }
+    );
 
     console.log('File watching initialized for CMS sync');
   }
@@ -63,7 +71,10 @@ export class CMSSyncService implements OnModuleInit {
   /**
    * Handle content file changes
    */
-  private async handleContentChange(event: { type: 'add' | 'change' | 'unlink'; path: string }) {
+  private async handleContentChange(event: {
+    type: 'add' | 'change' | 'unlink';
+    path: string;
+  }) {
     console.log(`Content file ${event.type}: ${event.path}`);
 
     try {
@@ -84,7 +95,10 @@ export class CMSSyncService implements OnModuleInit {
   /**
    * Handle config file changes
    */
-  private async handleConfigChange(event: { type: 'add' | 'change' | 'unlink'; path: string }) {
+  private async handleConfigChange(event: {
+    type: 'add' | 'change' | 'unlink';
+    path: string;
+  }) {
     console.log(`Config file ${event.type}: ${event.path}`);
 
     try {
@@ -114,10 +128,13 @@ export class CMSSyncService implements OnModuleInit {
     contentFile.checksum = this.calculateChecksum(content);
 
     // Sync globally (CMS content is tenant-independent)
-    await this.syncOrchestrator.syncGlobalData('cms_content', {
-      path: this.getRelativePath(filePath),
-      ...contentFile,
-    });
+    await this.syncOrchestrator.syncGlobalData(
+      'cms_content',
+      {
+        path: this.getRelativePath(filePath),
+        ...contentFile,
+      }
+    );
 
     // Update CMS database
     await this.updateCMSDatabase(contentFile);
@@ -133,11 +150,14 @@ export class CMSSyncService implements OnModuleInit {
     const config = JSON.parse(content);
 
     // Sync configuration globally
-    await this.syncOrchestrator.syncGlobalData('config', {
-      path: this.getRelativePath(filePath),
-      config,
-      updatedAt: new Date(),
-    });
+    await this.syncOrchestrator.syncGlobalData(
+      'config',
+      {
+        path: this.getRelativePath(filePath),
+        config,
+        updatedAt: new Date(),
+      }
+    );
 
     console.log(`Config synced: ${filePath}`);
   }
@@ -146,11 +166,14 @@ export class CMSSyncService implements OnModuleInit {
    * Remove content file from sync
    */
   private async removeContentFile(filePath: string) {
-    await this.syncOrchestrator.syncGlobalData('cms_content', {
-      path: this.getRelativePath(filePath),
-      deleted: true,
-      deletedAt: new Date(),
-    });
+    await this.syncOrchestrator.syncGlobalData(
+      'cms_content',
+      {
+        path: this.getRelativePath(filePath),
+        deleted: true,
+        deletedAt: new Date(),
+      }
+    );
 
     await this.removeCMSContent(this.getRelativePath(filePath));
 
@@ -211,7 +234,7 @@ export class CMSSyncService implements OnModuleInit {
     const metadata: any = {};
 
     // Simple YAML parsing (use proper yaml library in production)
-    frontmatter.split('\n').forEach((line) => {
+    frontmatter.split('\n').forEach(line => {
       const [key, ...valueParts] = line.split(':');
       if (key && valueParts.length > 0) {
         const value = valueParts.join(':').trim();
@@ -268,11 +291,14 @@ export class CMSSyncService implements OnModuleInit {
    */
   private async triggerReload(configPath: string) {
     // Broadcast reload signal
-    await this.syncOrchestrator.syncGlobalData('system_event', {
-      type: 'CONFIG_RELOAD',
-      configPath: this.getRelativePath(configPath),
-      timestamp: new Date(),
-    });
+    await this.syncOrchestrator.syncGlobalData(
+      'system_event',
+      {
+        type: 'CONFIG_RELOAD',
+        configPath: this.getRelativePath(configPath),
+        timestamp: new Date(),
+      }
+    );
 
     console.log(`Reload triggered for config: ${configPath}`);
   }

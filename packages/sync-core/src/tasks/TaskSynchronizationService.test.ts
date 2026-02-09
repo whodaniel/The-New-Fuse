@@ -1,18 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DatabaseService } from '@the-new-fuse/database';
-import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { TaskSynchronizationService, TaskSyncData, TaskExecutionSyncData } from './TaskSynchronizationService';
 import { SyncOrchestrator } from '../services/SyncOrchestrator';
-import {
-  TaskExecutionSyncData,
-  TaskSyncData,
-  TaskSynchronizationService,
-} from './TaskSynchronizationService';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { PrismaService } from '@the-new-fuse/database';
 
 describe('TaskSynchronizationService', () => {
   let service: TaskSynchronizationService;
   let mockRedisService: jest.Mocked<UnifiedRedisService>;
   let mockWebSocketService: jest.Mocked<any>;
-  let mockDbService: jest.Mocked<DatabaseService>;
+  let mockDbService: jest.Mocked<PrismaService>;
   let mockSyncOrchestrator: jest.Mocked<SyncOrchestrator>;
 
   beforeEach(async () => {
@@ -24,13 +20,13 @@ describe('TaskSynchronizationService', () => {
       lpush: jest.fn(),
       get: jest.fn(),
       set: jest.fn(),
-      del: jest.fn(),
+      del: jest.fn()
     } as any;
 
     mockWebSocketService = {
       sendMessage: jest.fn().mockResolvedValue(true),
       broadcastToAllUsers: jest.fn().mockResolvedValue(1),
-      broadcastToTenant: jest.fn().mockResolvedValue(1),
+      broadcastToTenant: jest.fn().mockResolvedValue(1)
     };
 
     mockDbService = {
@@ -38,25 +34,25 @@ describe('TaskSynchronizationService', () => {
         findMany: jest.fn(),
         findUnique: jest.fn(),
         update: jest.fn(),
-        create: jest.fn(),
+        create: jest.fn()
       },
       taskExecution: {
         update: jest.fn(),
-        create: jest.fn(),
+        create: jest.fn()
       },
       workflow: {
-        findMany: jest.fn(),
+        findMany: jest.fn()
       },
       user: {
-        findMany: jest.fn(),
+        findMany: jest.fn()
       },
       $executeRaw: jest.fn(),
-      $queryRaw: jest.fn(),
+      $queryRaw: jest.fn()
     } as any;
 
     mockSyncOrchestrator = {
       syncTenantData: jest.fn(),
-      syncGlobalData: jest.fn(),
+      syncGlobalData: jest.fn()
     } as any;
 
     const module: TestingModule = await Test.createTestingModule({
@@ -64,21 +60,21 @@ describe('TaskSynchronizationService', () => {
         TaskSynchronizationService,
         {
           provide: UnifiedRedisService,
-          useValue: mockRedisService,
+          useValue: mockRedisService
         },
         {
           provide: 'IWebSocketService',
-          useValue: mockWebSocketService,
+          useValue: mockWebSocketService
         },
         {
-          provide: DatabaseService,
-          useValue: mockDbService,
+          provide: PrismaService,
+          useValue: mockDbService
         },
         {
           provide: SyncOrchestrator,
-          useValue: mockSyncOrchestrator,
-        },
-      ],
+          useValue: mockSyncOrchestrator
+        }
+      ]
     }).compile();
 
     service = module.get<TaskSynchronizationService>(TaskSynchronizationService);
@@ -98,16 +94,19 @@ describe('TaskSynchronizationService', () => {
             {
               id: 'step1',
               nextSteps: ['step2', 'step3'],
-              conditions: {},
-            },
-          ],
-        },
+              conditions: {}
+            }
+          ]
+        }
       ]);
 
       await service.onModuleInit();
 
       expect(mockRedisService.psubscribe).toHaveBeenCalledTimes(3);
-      expect(mockRedisService.psubscribe).toHaveBeenCalledWith('task_sync:*', expect.any(Function));
+      expect(mockRedisService.psubscribe).toHaveBeenCalledWith(
+        'task_sync:*',
+        expect.any(Function)
+      );
       expect(mockRedisService.psubscribe).toHaveBeenCalledWith(
         'task_execution:*',
         expect.any(Function)
@@ -126,15 +125,15 @@ describe('TaskSynchronizationService', () => {
             {
               id: 'step1',
               nextSteps: ['step2'],
-              conditions: {},
+              conditions: {}
             },
             {
               id: 'step2',
               nextSteps: ['step3'],
-              conditions: {},
-            },
-          ],
-        },
+              conditions: {}
+            }
+          ]
+        }
       ];
 
       mockDbService.workflow.findMany.mockResolvedValue(mockWorkflows);
@@ -158,7 +157,7 @@ describe('TaskSynchronizationService', () => {
         userId: 'user1',
         version: 1,
         lastModified: new Date(),
-        modifiedBy: 'user1',
+        modifiedBy: 'user1'
       };
 
       mockDbService.$executeRaw.mockResolvedValue([{ id: 'task1' }]);
@@ -170,7 +169,7 @@ describe('TaskSynchronizationService', () => {
         'task',
         expect.objectContaining({
           ...taskData,
-          syncTimestamp: expect.any(Date),
+          syncTimestamp: expect.any(Date)
         })
       );
 
@@ -178,7 +177,7 @@ describe('TaskSynchronizationService', () => {
         'task_sync:tenant1',
         expect.objectContaining({
           taskData,
-          timestamp: expect.any(Number),
+          timestamp: expect.any(Number)
         })
       );
 
@@ -195,7 +194,7 @@ describe('TaskSynchronizationService', () => {
         userId: 'user1',
         version: 2,
         lastModified: new Date(),
-        modifiedBy: 'user1',
+        modifiedBy: 'user1'
       };
 
       // Mock dependent task
@@ -205,16 +204,18 @@ describe('TaskSynchronizationService', () => {
         type: 'dependent_task',
         priority: 'MEDIUM',
         pipelineId: 'pipeline1',
-        userId: 'user1',
+        userId: 'user1'
       });
 
-      mockDbService.task.findMany.mockResolvedValue([{ id: 'task1', status: 'COMPLETED' }]);
+      mockDbService.task.findMany.mockResolvedValue([
+        { id: 'task1', status: 'COMPLETED' }
+      ]);
 
       mockDbService.$executeRaw.mockResolvedValue([{ id: 'task1' }]);
 
       // Set up dependency relationship
       await service.updateTaskDependencies('task2', ['task1'], 'tenant1');
-
+      
       await service.syncTaskData(taskData, 'tenant1');
 
       // Verify dependent task was updated
@@ -231,7 +232,7 @@ describe('TaskSynchronizationService', () => {
         userId: 'user1',
         version: 1,
         lastModified: new Date(),
-        modifiedBy: 'user1',
+        modifiedBy: 'user1'
       };
 
       mockDbService.$executeRaw.mockRejectedValue(new Error('Database error'));
@@ -250,13 +251,13 @@ describe('TaskSynchronizationService', () => {
         startedAt: new Date(),
         completedAt: new Date(),
         version: 1,
-        lastModified: new Date(),
+        lastModified: new Date()
       };
 
       mockDbService.$executeRaw.mockResolvedValue([{ id: 'exec1' }]);
       mockDbService.task.findUnique.mockResolvedValue({
         id: 'task1',
-        userId: 'user1',
+        userId: 'user1'
       });
 
       await service.syncTaskExecution(executionData, 'tenant1');
@@ -266,7 +267,7 @@ describe('TaskSynchronizationService', () => {
         'task',
         expect.objectContaining({
           execution: executionData,
-          syncTimestamp: expect.any(Date),
+          syncTimestamp: expect.any(Date)
         })
       );
 
@@ -274,7 +275,7 @@ describe('TaskSynchronizationService', () => {
         'task_execution:tenant1',
         expect.objectContaining({
           executionData,
-          timestamp: expect.any(Number),
+          timestamp: expect.any(Number)
         })
       );
     });
@@ -287,13 +288,13 @@ describe('TaskSynchronizationService', () => {
         startedAt: new Date(),
         completedAt: new Date(),
         version: 1,
-        lastModified: new Date(),
+        lastModified: new Date()
       };
 
       mockDbService.$executeRaw.mockResolvedValue([{ id: 'exec1' }]);
       mockDbService.task.findUnique.mockResolvedValue({
         id: 'task1',
-        userId: 'user1',
+        userId: 'user1'
       });
 
       await service.syncTaskExecution(executionData, 'tenant1');
@@ -306,10 +307,10 @@ describe('TaskSynchronizationService', () => {
             notifications: expect.arrayContaining([
               expect.objectContaining({
                 type: 'task_completed',
-                taskId: 'task1',
-              }),
-            ]),
-          }),
+                taskId: 'task1'
+              })
+            ])
+          })
         })
       );
     });
@@ -329,8 +330,8 @@ describe('TaskSynchronizationService', () => {
           dependencyUpdate: expect.objectContaining({
             taskId,
             dependencies,
-            updateType: 'reorder',
-          }),
+            updateType: 'reorder'
+          })
         })
       );
 
@@ -370,7 +371,7 @@ describe('TaskSynchronizationService', () => {
         userId: 'user1',
         version: 1,
         lastModified: new Date('2023-01-01T10:00:00Z'),
-        modifiedBy: 'user1',
+        modifiedBy: 'user1'
       };
 
       const remoteVersion: TaskSyncData = {
@@ -378,7 +379,7 @@ describe('TaskSynchronizationService', () => {
         status: 'COMPLETED',
         version: 2,
         lastModified: new Date('2023-01-01T11:00:00Z'),
-        modifiedBy: 'user2',
+        modifiedBy: 'user2'
       };
 
       mockDbService.$executeRaw.mockResolvedValue([{ id: 'task1' }]);
@@ -406,7 +407,7 @@ describe('TaskSynchronizationService', () => {
         version: 1,
         lastModified: new Date('2023-01-01T10:00:00Z'),
         modifiedBy: 'user1',
-        metadata: { field1: 'value1' },
+        metadata: { field1: 'value1' }
       };
 
       const remoteVersion: TaskSyncData = {
@@ -415,7 +416,7 @@ describe('TaskSynchronizationService', () => {
         version: 1,
         lastModified: new Date('2023-01-01T10:30:00Z'),
         modifiedBy: 'user2',
-        metadata: { field2: 'value2' },
+        metadata: { field2: 'value2' }
       };
 
       mockDbService.$executeRaw.mockResolvedValue([{ id: 'task1' }]);
@@ -435,8 +436,8 @@ describe('TaskSynchronizationService', () => {
         conflictResolvedAt: expect.any(Date),
         originalVersions: {
           local: 1,
-          remote: 1,
-        },
+          remote: 1
+        }
       });
     });
   });
@@ -444,7 +445,7 @@ describe('TaskSynchronizationService', () => {
   describe('dependency management', () => {
     it('should get task dependencies correctly', async () => {
       await service.updateTaskDependencies('task1', ['dep1', 'dep2'], 'tenant1');
-
+      
       const dependencies = await service.getTaskDependencies('task1');
       expect(dependencies).toEqual(['dep1', 'dep2']);
     });
@@ -452,7 +453,7 @@ describe('TaskSynchronizationService', () => {
     it('should get task dependents correctly', async () => {
       await service.updateTaskDependencies('task1', ['dep1'], 'tenant1');
       await service.updateTaskDependencies('task2', ['dep1'], 'tenant1');
-
+      
       const dependents = await service.getTaskDependents('dep1');
       expect(dependents).toEqual(['task1', 'task2']);
     });
@@ -461,13 +462,13 @@ describe('TaskSynchronizationService', () => {
       // Mock completed dependencies
       mockDbService.task.findMany.mockResolvedValue([
         { id: 'dep1', status: 'COMPLETED' },
-        { id: 'dep2', status: 'COMPLETED' },
+        { id: 'dep2', status: 'COMPLETED' }
       ]);
 
       // Use reflection to access private method for testing
       const checkMethod = (service as any).checkAllDependenciesCompleted;
       const result = await checkMethod.call(service, ['dep1', 'dep2']);
-
+      
       expect(result).toBe(true);
     });
 
@@ -475,13 +476,13 @@ describe('TaskSynchronizationService', () => {
       // Mock incomplete dependencies
       mockDbService.task.findMany.mockResolvedValue([
         { id: 'dep1', status: 'COMPLETED' },
-        { id: 'dep2', status: 'IN_PROGRESS' },
+        { id: 'dep2', status: 'IN_PROGRESS' }
       ]);
 
       // Use reflection to access private method for testing
       const checkMethod = (service as any).checkAllDependenciesCompleted;
       const result = await checkMethod.call(service, ['dep1', 'dep2']);
-
+      
       expect(result).toBe(false);
     });
   });
@@ -501,15 +502,15 @@ describe('TaskSynchronizationService', () => {
     it('should get task sync status', async () => {
       const taskId = 'task1';
       await service.updateTaskDependencies(taskId, ['dep1'], 'tenant1');
-
+      
       const status = await service.getTaskSyncStatus(taskId);
-
+      
       expect(status).toEqual({
         taskId,
         hasPendingSync: false,
         lastSyncOperation: undefined,
         dependencyCount: 1,
-        dependentCount: 0,
+        dependentCount: 0
       });
     });
   });

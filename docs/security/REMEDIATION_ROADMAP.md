@@ -1,36 +1,37 @@
 # Security Remediation Roadmap
-
-**The New Fuse Platform** **Generated:** 2025-11-18
+**The New Fuse Platform**
+**Generated:** 2025-11-18
 
 ## Overview
 
-This roadmap outlines the security improvements needed based on our
-comprehensive security audit. Items are prioritized by severity and impact.
+This roadmap outlines the security improvements needed based on our comprehensive security audit. Items are prioritized by severity and impact.
 
 ## Executive Summary
 
-**Current Security Score:** 7.5/10 (GOOD) **Target Security Score:** 9.5/10
-(EXCELLENT) **Estimated Timeline:** 12 weeks **Required Resources:** 2-3
-engineers
+**Current Security Score:** 7.5/10 (GOOD)
+**Target Security Score:** 9.5/10 (EXCELLENT)
+**Estimated Timeline:** 12 weeks
+**Required Resources:** 2-3 engineers
 
 ---
 
 ## Phase 1: Critical Security Fixes (Week 1-2)
 
-**Priority:** CRITICAL **Timeline:** 2 weeks **Owner:** Security Team
+**Priority:** CRITICAL
+**Timeline:** 2 weeks
+**Owner:** Security Team
 
 ### 1.1 Remove Hardcoded Secrets
-
-**Status:** 🔴 Critical **Effort:** 8 hours **Impact:** High
+**Status:** 🔴 Critical
+**Effort:** 8 hours
+**Impact:** High
 
 **Issues:**
-
 - Multiple files contain hardcoded secret fallbacks
 - Default JWT secrets in development mode
 - Weak encryption key fallbacks
 
 **Files to Fix:**
-
 ```
 /apps/backend/src/controllers/authController.ts:29
 /apps/backend/src/utils/auth.utils.ts:6
@@ -47,14 +48,12 @@ engineers
 ```
 
 **Action Items:**
-
 - [ ] Remove all hardcoded fallback secrets
 - [ ] Implement startup validation for required secrets
 - [ ] Add environment variable validation script
 - [ ] Update documentation
 
 **Implementation:**
-
 ```typescript
 // Before (INSECURE):
 const jwtSecret = process.env.JWT_SECRET || 'default-secret';
@@ -67,7 +66,6 @@ if (!jwtSecret) {
 ```
 
 **Validation Script:**
-
 ```bash
 #!/bin/bash
 # scripts/validate-secrets.sh
@@ -91,24 +89,22 @@ echo "✓ All required secrets are set"
 ```
 
 ### 1.2 Fix Encryption Implementation
-
-**Status:** 🔴 Critical **Effort:** 12 hours **Impact:** High
+**Status:** 🔴 Critical
+**Effort:** 12 hours
+**Impact:** High
 
 **Issues:**
-
 - Weak key derivation
 - Using AES-CBC instead of AES-GCM
 - No authentication for encrypted data
 
 **Action Items:**
-
 - [ ] Implement proper key derivation (PBKDF2/scrypt)
 - [ ] Migrate to AES-GCM for authenticated encryption
 - [ ] Add key rotation mechanism
 - [ ] Update all encrypted data
 
 **Implementation:**
-
 ```typescript
 import * as crypto from 'crypto';
 
@@ -127,7 +123,7 @@ class EncryptionService {
       secret,
       process.env.ENCRYPTION_SALT || 'default-salt',
       100000, // iterations
-      32, // key length
+      32,     // key length
       'sha256'
     );
   }
@@ -143,7 +139,7 @@ class EncryptionService {
       encrypted,
       iv: iv.toString('hex'),
       tag: cipher.getAuthTag().toString('hex'),
-      version: 'v2', // For migration tracking
+      version: 'v2' // For migration tracking
     };
   }
 
@@ -165,18 +161,17 @@ class EncryptionService {
 ```
 
 ### 1.3 Update Vulnerable Dependencies
-
-**Status:** 🔴 Critical **Effort:** 4 hours **Impact:** Medium
+**Status:** 🔴 Critical
+**Effort:** 4 hours
+**Impact:** Medium
 
 **Action Items:**
-
 - [ ] Run `pnpm audit --fix`
 - [ ] Manually update packages that cannot be auto-fixed
 - [ ] Test application thoroughly
 - [ ] Update lock file
 
 **Commands:**
-
 ```bash
 # 1. Audit and fix
 pnpm audit --fix
@@ -196,21 +191,22 @@ pnpm audit
 
 ## Phase 2: High-Priority Improvements (Week 3-4)
 
-**Priority:** HIGH **Timeline:** 2 weeks **Owner:** Development Team
+**Priority:** HIGH
+**Timeline:** 2 weeks
+**Owner:** Development Team
 
 ### 2.1 Implement Secret Rotation
-
-**Status:** 🟡 High **Effort:** 16 hours **Impact:** High
+**Status:** 🟡 High
+**Effort:** 16 hours
+**Impact:** High
 
 **Action Items:**
-
 - [ ] Support multiple active JWT secrets
 - [ ] Implement graceful secret rotation
 - [ ] Create secret rotation runbook
 - [ ] Set up automated rotation reminders
 
 **Implementation:**
-
 ```typescript
 // Multi-secret support for graceful rotation
 class JWTService {
@@ -246,24 +242,23 @@ class JWTService {
 ```
 
 ### 2.2 Enable Database Encryption at Rest
-
-**Status:** 🟡 High **Effort:** 8 hours **Impact:** High
+**Status:** 🟡 High
+**Effort:** 8 hours
+**Impact:** High
 
 **Action Items:**
-
 - [ ] Enable PostgreSQL encryption at rest
 - [ ] Configure Railway database encryption
 - [ ] Encrypt sensitive fields in application layer
 - [ ] Document encryption strategy
 
-**Drizzle Field-Level Encryption:**
-
+**Prisma Field-Level Encryption:**
 ```typescript
-// Install drizzle-field-encryption
-// pnpm add drizzle-field-encryption
+// Install prisma-field-encryption
+// pnpm add prisma-field-encryption
 
-// In Drizzle middleware
-drizzle.$use(async (params, next) => {
+// In Prisma middleware
+prisma.$use(async (params, next) => {
   if (params.model === 'User') {
     if (params.action === 'create' || params.action === 'update') {
       if (params.args.data.email) {
@@ -287,18 +282,17 @@ drizzle.$use(async (params, next) => {
 ```
 
 ### 2.3 Strengthen CSP Policy
-
-**Status:** 🟡 High **Effort:** 12 hours **Impact:** Medium
+**Status:** 🟡 High
+**Effort:** 12 hours
+**Impact:** Medium
 
 **Action Items:**
-
 - [ ] Remove 'unsafe-inline' from CSP
 - [ ] Implement nonce-based CSP
 - [ ] Add CSP reporting
 - [ ] Test with all pages
 
 **Implementation:**
-
 ```typescript
 // Generate nonce for each request
 app.use((req, res, next) => {
@@ -310,20 +304,19 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   const nonce = res.locals.cspNonce;
 
-  res.setHeader(
-    'Content-Security-Policy',
+  res.setHeader('Content-Security-Policy',
     `default-src 'self'; ` +
-      `script-src 'self' 'nonce-${nonce}'; ` +
-      `style-src 'self' 'nonce-${nonce}'; ` +
-      `img-src 'self' data: https:; ` +
-      `font-src 'self'; ` +
-      `connect-src 'self' wss: https:; ` +
-      `frame-src 'none'; ` +
-      `object-src 'none'; ` +
-      `base-uri 'self'; ` +
-      `form-action 'self'; ` +
-      `upgrade-insecure-requests; ` +
-      `report-uri /api/csp-report`
+    `script-src 'self' 'nonce-${nonce}'; ` +
+    `style-src 'self' 'nonce-${nonce}'; ` +
+    `img-src 'self' data: https:; ` +
+    `font-src 'self'; ` +
+    `connect-src 'self' wss: https:; ` +
+    `frame-src 'none'; ` +
+    `object-src 'none'; ` +
+    `base-uri 'self'; ` +
+    `form-action 'self'; ` +
+    `upgrade-insecure-requests; ` +
+    `report-uri /api/csp-report`
   );
 
   next();
@@ -331,18 +324,17 @@ app.use((req, res, next) => {
 ```
 
 ### 2.4 Implement WebSocket Authentication
-
-**Status:** 🟡 High **Effort:** 8 hours **Impact:** Medium
+**Status:** 🟡 High
+**Effort:** 8 hours
+**Impact:** Medium
 
 **Action Items:**
-
 - [ ] Add JWT authentication to WebSocket connections
 - [ ] Implement rate limiting for WebSocket messages
 - [ ] Add connection timeout
 - [ ] Enable WSS in production
 
 **Implementation:**
-
 ```typescript
 // Socket.io with JWT authentication
 io.use(async (socket, next) => {
@@ -369,7 +361,7 @@ io.on('connection', (socket) => {
     }
 
     const messages = messageRateLimiter.get(userId);
-    const recentMessages = messages.filter((t) => now - t < 60000);
+    const recentMessages = messages.filter(t => now - t < 60000);
 
     if (recentMessages.length >= 30) {
       socket.emit('error', 'Rate limit exceeded');
@@ -389,21 +381,22 @@ io.on('connection', (socket) => {
 
 ## Phase 3: Medium-Priority Enhancements (Week 5-8)
 
-**Priority:** MEDIUM **Timeline:** 4 weeks **Owner:** Development Team
+**Priority:** MEDIUM
+**Timeline:** 4 weeks
+**Owner:** Development Team
 
 ### 3.1 Implement Centralized Logging
-
-**Status:** 🟢 Medium **Effort:** 24 hours **Impact:** High
+**Status:** 🟢 Medium
+**Effort:** 24 hours
+**Impact:** High
 
 **Options:**
-
 1. **ELK Stack** (Elasticsearch, Logstash, Kibana)
 2. **Datadog**
 3. **CloudWatch Logs**
 4. **Logtail**
 
 **Action Items:**
-
 - [ ] Choose logging solution
 - [ ] Set up centralized logging infrastructure
 - [ ] Configure log shipping
@@ -411,11 +404,11 @@ io.on('connection', (socket) => {
 - [ ] Set up alerts
 
 ### 3.2 Add JWT Token Blacklisting
-
-**Status:** 🟢 Medium **Effort:** 8 hours **Impact:** Medium
+**Status:** 🟢 Medium
+**Effort:** 8 hours
+**Impact:** Medium
 
 **Implementation:**
-
 ```typescript
 // Redis-based token blacklist
 class TokenBlacklistService {
@@ -451,11 +444,11 @@ async logout(token: string): Promise<void> {
 ```
 
 ### 3.3 Implement GDPR Compliance Features
-
-**Status:** 🟢 Medium **Effort:** 40 hours **Impact:** High
+**Status:** 🟢 Medium
+**Effort:** 40 hours
+**Impact:** High
 
 **Action Items:**
-
 - [ ] Data export functionality
 - [ ] Account deletion with data cleanup
 - [ ] Consent management
@@ -464,7 +457,6 @@ async logout(token: string): Promise<void> {
 - [ ] Data retention policies
 
 **Data Export:**
-
 ```typescript
 @Get('export')
 @UseGuards(JwtAuthGuard)
@@ -486,13 +478,12 @@ async exportUserData(@CurrentUser() user: User) {
 ```
 
 **Account Deletion:**
-
 ```typescript
 @Delete('account')
 @UseGuards(JwtAuthGuard)
 async deleteAccount(@CurrentUser() user: User) {
   // Soft delete user
-  await drizzle.user.update({
+  await prisma.user.update({
     where: { id: user.id },
     data: {
       deletedAt: new Date(),
@@ -509,11 +500,11 @@ async deleteAccount(@CurrentUser() user: User) {
 ```
 
 ### 3.4 Set Up Monitoring and Alerting
-
-**Status:** 🟢 Medium **Effort:** 16 hours **Impact:** High
+**Status:** 🟢 Medium
+**Effort:** 16 hours
+**Impact:** High
 
 **Action Items:**
-
 - [ ] Set up Prometheus metrics
 - [ ] Create Grafana dashboards
 - [ ] Configure alerts
@@ -521,7 +512,6 @@ async deleteAccount(@CurrentUser() user: User) {
 - [ ] Document alert response procedures
 
 **Metrics to Monitor:**
-
 - Failed login attempts
 - Rate limit violations
 - API error rates
@@ -534,21 +524,22 @@ async deleteAccount(@CurrentUser() user: User) {
 
 ## Phase 4: Low-Priority & Ongoing (Week 9-12)
 
-**Priority:** LOW **Timeline:** 4 weeks (ongoing) **Owner:** Entire Team
+**Priority:** LOW
+**Timeline:** 4 weeks (ongoing)
+**Owner:** Entire Team
 
 ### 4.1 Implement Automated Security Scanning
-
-**Status:** 🔵 Low **Effort:** 12 hours **Impact:** Medium
+**Status:** 🔵 Low
+**Effort:** 12 hours
+**Impact:** Medium
 
 **Tools to Implement:**
-
 - **Snyk:** Dependency vulnerability scanning
 - **SonarQube:** Code quality and security
 - **OWASP ZAP:** Dynamic security testing
 - **Trivy:** Container scanning
 
 **CI/CD Integration:**
-
 ```yaml
 # .github/workflows/security.yml
 name: Security Scanning
@@ -576,11 +567,11 @@ jobs:
 ```
 
 ### 4.2 Security Training Program
-
-**Status:** 🔵 Low **Effort:** Ongoing **Impact:** High
+**Status:** 🔵 Low
+**Effort:** Ongoing
+**Impact:** High
 
 **Training Topics:**
-
 - Secure coding practices
 - OWASP Top 10
 - Authentication best practices
@@ -589,35 +580,33 @@ jobs:
 - Social engineering awareness
 
 **Schedule:**
-
 - **Monthly:** Security newsletter
 - **Quarterly:** Security training session
 - **Bi-annually:** Phishing simulation
 - **Annually:** Comprehensive security review
 
 ### 4.3 Regular Security Audits
-
-**Status:** 🔵 Low **Effort:** Ongoing **Impact:** High
+**Status:** 🔵 Low
+**Effort:** Ongoing
+**Impact:** High
 
 **Audit Schedule:**
-
 - **Weekly:** Automated dependency scans
 - **Monthly:** Code security review
 - **Quarterly:** Manual security audit
 - **Annually:** External penetration test
 
 ### 4.4 Increase Password Salt Rounds
-
-**Status:** 🔵 Low **Effort:** 2 hours **Impact:** Low
+**Status:** 🔵 Low
+**Effort:** 2 hours
+**Impact:** Low
 
 **Action Items:**
-
 - [ ] Update salt rounds from 10 to 12
 - [ ] Test performance impact
 - [ ] Deploy gradually
 
 **Implementation:**
-
 ```typescript
 class HashingService {
   private readonly saltRounds = 12; // Increased from 10
@@ -633,7 +622,6 @@ class HashingService {
 ## Implementation Checklist
 
 ### Week 1-2: Critical Fixes
-
 - [ ] Remove all hardcoded secrets
 - [ ] Implement startup validation
 - [ ] Fix encryption implementation
@@ -642,7 +630,6 @@ class HashingService {
 - [ ] Deploy to production
 
 ### Week 3-4: High-Priority
-
 - [ ] Implement secret rotation
 - [ ] Enable database encryption
 - [ ] Strengthen CSP policy
@@ -651,7 +638,6 @@ class HashingService {
 - [ ] Deploy to production
 
 ### Week 5-8: Medium-Priority
-
 - [ ] Set up centralized logging
 - [ ] Implement token blacklisting
 - [ ] Add GDPR features
@@ -660,7 +646,6 @@ class HashingService {
 - [ ] Document procedures
 
 ### Week 9-12: Low-Priority & Ongoing
-
 - [ ] Set up automated scanning
 - [ ] Launch security training
 - [ ] Schedule regular audits
@@ -674,7 +659,6 @@ class HashingService {
 ### Security KPIs
 
 **Before Remediation:**
-
 - Security Score: 7.5/10
 - Critical Vulnerabilities: 3
 - High Vulnerabilities: 4
@@ -683,7 +667,6 @@ class HashingService {
 - OWASP Compliance: 70%
 
 **Target After Remediation:**
-
 - Security Score: 9.5/10
 - Critical Vulnerabilities: 0
 - High Vulnerabilities: 0
@@ -692,7 +675,6 @@ class HashingService {
 - OWASP Compliance: 95%
 
 **Monitoring Metrics:**
-
 - Mean Time to Detect (MTTD): <15 minutes
 - Mean Time to Respond (MTTR): <4 hours
 - False Positive Rate: <5%
@@ -705,7 +687,6 @@ class HashingService {
 ### Estimated Costs
 
 **Tools and Services:**
-
 - Snyk Pro: $99/month
 - Datadog: $15/host/month
 - PagerDuty: $21/user/month
@@ -715,7 +696,6 @@ class HashingService {
 **Total Annual Cost:** ~$10,000
 
 **Personnel:**
-
 - Security Lead: 20% allocation
 - Backend Engineers: 40 hours/month for 3 months
 - DevOps Engineer: 20 hours/month
@@ -727,27 +707,27 @@ class HashingService {
 ### Risks if Not Implemented
 
 **Critical Issues:**
-
 - **Data Breach Risk:** HIGH - Hardcoded secrets could be exploited
 - **Compliance Risk:** HIGH - GDPR violations possible
 - **Reputation Risk:** HIGH - Security incidents damage trust
 - **Financial Risk:** MEDIUM - Potential fines and legal costs
 
-**Mitigation:** Immediate implementation of Phase 1 (Critical Fixes) is
-essential.
+**Mitigation:**
+Immediate implementation of Phase 1 (Critical Fixes) is essential.
 
 ---
 
 ## Approval and Sign-off
 
-**Prepared by:** Security Team **Date:** 2025-11-18 **Review by:** CTO,
-Engineering Manager **Approved by:** ********\_******** **Start Date:**
-********\_********
+**Prepared by:** Security Team
+**Date:** 2025-11-18
+**Review by:** CTO, Engineering Manager
+**Approved by:** _________________
+**Start Date:** _________________
 
 ---
 
 **Next Steps:**
-
 1. Review and approve this roadmap
 2. Assign owners for each phase
 3. Create tickets in project management system

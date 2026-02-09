@@ -2,22 +2,18 @@
 
 ## Overview
 
-This document outlines the roadmap for The New Fuse project, including current
-status, planned features, and future directions.
+This document outlines the roadmap for The New Fuse project, including current status, planned features, and future directions.
 
 ## Current Status (Q2 2023)
 
 The New Fuse is currently in active development with the following components:
 
-- **Core Framework**: The foundation of the system, including the MCP and A2A
-  protocols
+- **Core Framework**: The foundation of the system, including the MCP and A2A protocols
 - **VS Code Extension**: Integration with VS Code for AI agent coordination
-- **Agent Adapters**: Support for various AI agents (GitHub Copilot, Claude,
-  etc.)
+- **Agent Adapters**: Support for various AI agents (GitHub Copilot, Claude, etc.)
 - **Workflow System**: Tools for creating and executing multi-agent workflows
 
-The immediate focus is on stabilizing the codebase, fixing TypeScript errors,
-and ensuring all components work together seamlessly.
+The immediate focus is on stabilizing the codebase, fixing TypeScript errors, and ensuring all components work together seamlessly.
 
 ## Short-Term Goals (Q3 2023)
 
@@ -101,40 +97,40 @@ and ensuring all components work together seamlessly.
 
 ### MCP Protocol
 
-| Feature                  | Status         | Target  |
-| ------------------------ | -------------- | ------- |
-| Basic Message Structure  | ✅ Completed   | Q2 2023 |
-| Capability Discovery     | 🔄 In Progress | Q3 2023 |
-| Context Sharing          | 🔄 In Progress | Q3 2023 |
-| Tool Execution           | 🔄 In Progress | Q3 2023 |
-| Security Measures        | 📅 Planned     | Q4 2023 |
-| Performance Optimization | 📅 Planned     | Q4 2023 |
-| Federated Networks       | 📅 Planned     | 2024    |
+| Feature | Status | Target |
+|---------|--------|--------|
+| Basic Message Structure | ✅ Completed | Q2 2023 |
+| Capability Discovery | 🔄 In Progress | Q3 2023 |
+| Context Sharing | 🔄 In Progress | Q3 2023 |
+| Tool Execution | 🔄 In Progress | Q3 2023 |
+| Security Measures | 📅 Planned | Q4 2023 |
+| Performance Optimization | 📅 Planned | Q4 2023 |
+| Federated Networks | 📅 Planned | 2024 |
 
 ### A2A Protocol
 
-| Feature                  | Status         | Target  |
-| ------------------------ | -------------- | ------- |
-| Basic Message Structure  | ✅ Completed   | Q2 2023 |
-| Protocol Adapters        | 🔄 In Progress | Q3 2023 |
-| WebSocket Communication  | 🔄 In Progress | Q3 2023 |
-| Message Routing          | 🔄 In Progress | Q3 2023 |
-| Error Handling           | 📅 Planned     | Q3 2023 |
-| Security Measures        | 📅 Planned     | Q4 2023 |
-| Performance Optimization | 📅 Planned     | Q4 2023 |
+| Feature | Status | Target |
+|---------|--------|--------|
+| Basic Message Structure | ✅ Completed | Q2 2023 |
+| Protocol Adapters | 🔄 In Progress | Q3 2023 |
+| WebSocket Communication | 🔄 In Progress | Q3 2023 |
+| Message Routing | 🔄 In Progress | Q3 2023 |
+| Error Handling | 📅 Planned | Q3 2023 |
+| Security Measures | 📅 Planned | Q4 2023 |
+| Performance Optimization | 📅 Planned | Q4 2023 |
 
 ### VS Code Extension
 
-| Feature                   | Status         | Target  |
-| ------------------------- | -------------- | ------- |
-| Basic Extension Structure | ✅ Completed   | Q2 2023 |
-| Command Registration      | ✅ Completed   | Q2 2023 |
-| MCP Integration           | 🔄 In Progress | Q3 2023 |
-| Agent Adapters            | 🔄 In Progress | Q3 2023 |
-| UI Components             | 🔄 In Progress | Q3 2023 |
-| Workflow Builder          | 📅 Planned     | Q4 2023 |
-| Collaborative Coding      | 📅 Planned     | Q4 2023 |
-| Settings Management       | 📅 Planned     | Q4 2023 |
+| Feature | Status | Target |
+|---------|--------|--------|
+| Basic Extension Structure | ✅ Completed | Q2 2023 |
+| Command Registration | ✅ Completed | Q2 2023 |
+| MCP Integration | 🔄 In Progress | Q3 2023 |
+| Agent Adapters | 🔄 In Progress | Q3 2023 |
+| UI Components | 🔄 In Progress | Q3 2023 |
+| Workflow Builder | 📅 Planned | Q4 2023 |
+| Collaborative Coding | 📅 Planned | Q4 2023 |
+| Settings Management | 📅 Planned | Q4 2023 |
 
 ## Milestones
 
@@ -172,7 +168,4 @@ and ensuring all components work together seamlessly.
 
 ## Conclusion
 
-The New Fuse has the potential to significantly enhance how developers work with
-AI assistants by enabling these assistants to collaborate effectively. By
-following this roadmap, we can realize this potential and create a framework
-that revolutionizes AI-assisted software development.
+The New Fuse has the potential to significantly enhance how developers work with AI assistants by enabling these assistants to collaborate effectively. By following this roadmap, we can realize this potential and create a framework that revolutionizes AI-assisted software development.

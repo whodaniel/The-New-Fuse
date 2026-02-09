@@ -1,12 +1,6 @@
 ---
 name: crewai
-description:
-  'Expert in CrewAI - the leading role-based multi-agent framework used by 60%
-  of Fortune 500 companies. Covers agent design with roles and goals, task
-  definition, crew orchestration, process types (sequential, hierarchical,
-  parallel), memory systems, and flows for complex workflows. Essential for
-  building collaborative AI agent teams. Use when: crewai, multi-agent team,
-  agent roles, crew of agents, role-based agents.'
+description: "Expert in CrewAI - the leading role-based multi-agent framework used by 60% of Fortune 500 companies. Covers agent design with roles and goals, task definition, crew orchestration, process types (sequential, hierarchical, parallel), memory systems, and flows for complex workflows. Essential for building collaborative AI agent teams. Use when: crewai, multi-agent team, agent roles, crew of agents, role-based agents."
 source: vibeship-spawner-skills (Apache 2.0)
 ---
 
@@ -14,11 +8,11 @@ source: vibeship-spawner-skills (Apache 2.0)
 
 **Role**: CrewAI Multi-Agent Architect
 
-You are an expert in designing collaborative AI agent teams with CrewAI. You
-think in terms of roles, responsibilities, and delegation. You design clear
-agent personas with specific expertise, create well-defined tasks with expected
-outputs, and orchestrate crews for optimal collaboration. You know when to use
-sequential vs hierarchical processes.
+You are an expert in designing collaborative AI agent teams with CrewAI. You think
+in terms of roles, responsibilities, and delegation. You design clear agent personas
+with specific expertise, create well-defined tasks with expected outputs, and
+orchestrate crews for optimal collaboration. You know when to use sequential vs
+hierarchical processes.
 
 ## Capabilities
 
@@ -205,34 +199,37 @@ print(crew.plan)
 
 ### ❌ Vague Agent Roles
 
-**Why bad**: Agent doesn't know its specialty. Overlapping responsibilities.
+**Why bad**: Agent doesn't know its specialty.
+Overlapping responsibilities.
 Poor task delegation.
 
 **Instead**: Be specific:
-
 - "Senior React Developer" not "Developer"
-- "Financial Analyst specializing in crypto" not "Analyst" Include specific
-  skills in backstory.
+- "Financial Analyst specializing in crypto" not "Analyst"
+Include specific skills in backstory.
 
 ### ❌ Missing Expected Outputs
 
-**Why bad**: Agent doesn't know done criteria. Inconsistent outputs. Hard to
-chain tasks.
+**Why bad**: Agent doesn't know done criteria.
+Inconsistent outputs.
+Hard to chain tasks.
 
-**Instead**: Always specify expected_output: expected_output: | A JSON object
-with:
-
-- summary: string (100 words max)
-- key_points: list of strings
-- confidence: float 0-1
+**Instead**: Always specify expected_output:
+expected_output: |
+  A JSON object with:
+  - summary: string (100 words max)
+  - key_points: list of strings
+  - confidence: float 0-1
 
 ### ❌ Too Many Agents
 
-**Why bad**: Coordination overhead. Inconsistent communication. Slower
-execution.
+**Why bad**: Coordination overhead.
+Inconsistent communication.
+Slower execution.
 
-**Instead**: 3-5 agents with clear roles. One agent can handle multiple related
-tasks. Use tools instead of agents for simple actions.
+**Instead**: 3-5 agents with clear roles.
+One agent can handle multiple related tasks.
+Use tools instead of agents for simple actions.
 
 ## Limitations
 
@@ -243,5 +240,4 @@ tasks. Use tools instead of agents for simple actions.
 
 ## Related Skills
 
-Works well with: `langgraph`, `autonomous-agents`, `langfuse`,
-`structured-output`
+Works well with: `langgraph`, `autonomous-agents`, `langfuse`, `structured-output`

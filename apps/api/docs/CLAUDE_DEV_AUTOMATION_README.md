@@ -1,15 +1,13 @@
 # Claude Dev Automation System
 
-This document describes the Claude Dev automation system integrated into The New
-Fuse API server.
+This document describes the Claude Dev automation system integrated into The New Fuse API server.
 
 ## Overview
 
-The Claude Dev automation system provides AI-powered automation capabilities for
-development tasks, including:
+The Claude Dev automation system provides AI-powered automation capabilities for development tasks, including:
 
 - Code review and analysis
-- API documentation generation
+- API documentation generation  
 - Unit test creation
 - Data analysis and insights
 - Custom automation templates
