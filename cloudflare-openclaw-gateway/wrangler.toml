@@ -8,3 +8,5 @@ preview_urls = false
 
 [vars]
 ENVIRONMENT = "dev"
+# Real inference executor target (TNF backend orchestrator endpoint)
+EXECUTOR_URL = "https://backend-production-5c20.up.railway.app/orchestrator/execute"

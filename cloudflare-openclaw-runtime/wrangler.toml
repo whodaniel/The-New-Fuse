@@ -16,5 +16,9 @@ OPENCLAW_GATEWAY_URL = "https://openclaw-gateway.bizsynth.workers.dev/v1/ingress
 binding = "SHAREDSTATE_SERVICE"
 service = "tnf-sharedstate"
 
+[[services]]
+binding = "OPENCLAW_GATEWAY_SERVICE"
+service = "openclaw-gateway"
+
 # Queues disabled for now (Cloudflare account may require explicit enablement for Queues).
 # We will re-enable once Queues are confirmed active.

@@ -109,7 +109,7 @@ type FinalizeMirrorArgs = {
   ts: string;
   by: string;
   agent: string;
-  visibility: string;
+  visibility: 'private' | 'team' | 'public';
   prefix: string;
   blobKey: string;
   filename: string;

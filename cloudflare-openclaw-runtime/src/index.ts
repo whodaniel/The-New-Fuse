@@ -2,6 +2,7 @@ export interface Env {
   ENVIRONMENT: string;
   SHAREDSTATE_API_BASE: string;
   SHAREDSTATE_SERVICE: Fetcher;
+  OPENCLAW_GATEWAY_SERVICE?: Fetcher;
   OPENCLAW_GATEWAY_URL?: string;
   OPENCLAW_GATEWAY_AUTH_TOKEN?: string;
   // OPENCLAW_EVENTS: Queue; // disabled until Queues enabled
@@ -66,8 +67,10 @@ async function telegramSendMessage(env: Env, chatId: number | string, text: stri
 }
 
 async function callGateway(env: Env, update: any, requestId: string) {
-  if (!env.OPENCLAW_GATEWAY_URL) {
-    return { ok: false, status: 0, error: 'NO_GATEWAY_URL' };
+  const hasService = Boolean(env.OPENCLAW_GATEWAY_SERVICE);
+  const hasUrl = Boolean(env.OPENCLAW_GATEWAY_URL);
+  if (!hasService && !hasUrl) {
+    return { ok: false, status: 0, error: 'NO_GATEWAY_TARGET' };
   }
 
   const headers: Record<string, string> = {
@@ -79,15 +82,26 @@ async function callGateway(env: Env, update: any, requestId: string) {
     headers['authorization'] = `Bearer ${env.OPENCLAW_GATEWAY_AUTH_TOKEN}`;
   }
 
-  const res = await fetch(env.OPENCLAW_GATEWAY_URL, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      channel: 'telegram',
-      requestId,
-      update,
-    }),
+  const requestBody = JSON.stringify({
+    channel: 'telegram',
+    requestId,
+    update,
   });
+
+  let res: Response;
+  if (env.OPENCLAW_GATEWAY_SERVICE) {
+    res = await env.OPENCLAW_GATEWAY_SERVICE.fetch('https://openclaw-gateway/v1/ingress/telegram', {
+      method: 'POST',
+      headers,
+      body: requestBody,
+    });
+  } else {
+    res = await fetch(env.OPENCLAW_GATEWAY_URL as string, {
+      method: 'POST',
+      headers,
+      body: requestBody,
+    });
+  }
 
   const ct = res.headers.get('content-type') || '';
   const body = ct.includes('application/json')
