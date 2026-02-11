@@ -3,6 +3,7 @@ export interface Env {
   SHAREDSTATE_API_BASE: string;
   SHAREDSTATE_SERVICE: Fetcher;
   OPENCLAW_GATEWAY_SERVICE?: Fetcher;
+  SHAREDSTATE_AUTH_TOKEN?: string;
   OPENCLAW_GATEWAY_URL?: string;
   OPENCLAW_GATEWAY_AUTH_TOKEN?: string;
   // OPENCLAW_EVENTS: Queue; // disabled until Queues enabled
@@ -30,10 +31,15 @@ async function depositReceipt(env: Env, receipt: any) {
     data: receipt.data,
   };
 
+  const headers: Record<string, string> = { 'content-type': 'application/json' };
+  if (env.SHAREDSTATE_AUTH_TOKEN) {
+    headers['x-auth-token'] = env.SHAREDSTATE_AUTH_TOKEN;
+  }
+
   // Prefer service binding (reliable, avoids edge fetch quirks)
   const res = await env.SHAREDSTATE_SERVICE.fetch('https://sharedstate/deposit', {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers,
     body: JSON.stringify(payload),
   });
 
