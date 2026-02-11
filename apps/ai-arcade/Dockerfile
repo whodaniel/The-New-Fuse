@@ -18,16 +18,19 @@ COPY pnpm-workspace.yaml ./
 COPY pnpm-lock.yaml ./
 COPY package.json ./
 
+# Copy scripts directory (needed by root postinstall)
+COPY scripts/ ./scripts/
+
 # Copy the ai-arcade app
 COPY apps/ai-arcade ./apps/ai-arcade
 
-# Install dependencies for ai-arcade only
-RUN cd apps/ai-arcade && pnpm install --no-frozen-lockfile
+# Install dependencies - use --ignore-scripts to skip postinstall, then install again
+RUN pnpm install --no-frozen-lockfile --filter ai-arcade... --ignore-scripts && \
+    cd apps/ai-arcade && pnpm install --no-frozen-lockfile --ignore-scripts
 
 # Build the AI Arcade application
 WORKDIR /app/apps/ai-arcade
 ENV NODE_ENV=production
-# Skip TypeScript check if tsconfig is missing
 RUN npx vite build
 
 #------------------------------------------------------------------------------
