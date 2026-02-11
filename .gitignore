@@ -121,8 +121,17 @@ ai_video_library.html
 *-state.json
 packages/testing/performance-reports/
 
+# Credential and secret files
+**/service-account-key.json
+**/firebase-credentials.json
+**/firebase-credentials.json.removed
+**/*-service-account*.json
+
 # Google MCP Server Credentials
 packages/google-docs-mcp-server/credentials.json
 packages/google-docs-mcp-server/token.json
 packages/google-drive-mcp-server/credentials/
 packages/google-sheets-mcp-server/credentials.json
+
+# Test files with potential secrets
+**/test-openrouter*.js

@@ -26,7 +26,12 @@ export function escapeNodeText(str: string | null | undefined) {
   const frag = document.createElement('div');
   render(html`${str}`, frag);
 
-  return frag.innerHTML.replaceAll(/<!--([^-]*)-->/gim, '');
+  let result = frag.innerHTML;
+  const commentPattern = /<!--[\s\S]*?-->/gim;
+  while (commentPattern.test(result)) {
+    result = result.replaceAll(commentPattern, '');
+  }
+  return result;
 }
 
 export function unescapeNodeText(str: string | null | undefined) {

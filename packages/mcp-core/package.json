@@ -82,7 +82,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.25.2",
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "ajv": "^8.17.1",
     "ws": "^8.18.3",
     "uuid": "^13.0.0",
@@ -108,7 +108,7 @@
     "typedoc": "^0.28.14"
   },
   "peerDependencies": {
-    "@modelcontextprotocol/sdk": "^1.15.0"
+    "@modelcontextprotocol/sdk": "^1.26.0"
   },
   "optionalDependencies": {
     "@the-new-fuse/types": "workspace:*",

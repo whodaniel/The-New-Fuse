@@ -1,7 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { DepositResponse, Receipt } from './shared-state.types';
+
+const SAFE_RUNTIME_PATTERN = /^[a-zA-Z0-9_-]+$/;
 
 @Injectable()
 export class SharedStateService {
@@ -46,10 +48,17 @@ export class SharedStateService {
       throw new Error('SharedState API not configured');
     }
 
+    if (!SAFE_RUNTIME_PATTERN.test(runtime)) {
+      throw new BadRequestException('Invalid runtime identifier');
+    }
+
     try {
-      const response = await axios.get(`${this.apiBase}/context/${runtime}?inline=1`, {
-        headers: this.headers,
-      });
+      const response = await axios.get(
+        `${this.apiBase}/context/${encodeURIComponent(runtime)}?inline=1`,
+        {
+          headers: this.headers,
+        }
+      );
       return response.data;
     } catch (error: any) {
       this.logger.error(`Failed to fetch context for ${runtime}: ${error.message}`, error.stack);
