@@ -54,11 +54,17 @@ ENV NODE_ENV=production
 ENV VITE_API_URL=https://api.thenewfuse.com
 ENV VITE_BACKEND_URL=https://backend.thenewfuse.com
 
-# Firebase config is loaded from .env.production (committed to repo)
-# Do NOT set empty ENV vars here - they would override .env.production values
+# Firebase config - passed as Docker build args from Railway environment variables
+# These MUST be set as ENV so Vite can inline them at build time via import.meta.env.*
+ENV VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY
+ENV VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN
+ENV VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID
+ENV VITE_FIREBASE_STORAGE_BUCKET=$VITE_FIREBASE_STORAGE_BUCKET
+ENV VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID
+ENV VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
 
-# Force cache invalidation: 2026-01-23T11:15:00Z
-RUN echo "Building with NODE_ENV=$NODE_ENV" && pnpm run build -- --mode production
+# Force cache invalidation: 2026-02-11T07:25:00Z
+RUN echo "Building with NODE_ENV=$NODE_ENV FIREBASE_PROJECT=$VITE_FIREBASE_PROJECT_ID" && pnpm run build -- --mode production
 
 #------------------------------------------------------------------------------
 # Runner stage - Production image

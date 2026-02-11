@@ -21,10 +21,12 @@
 
         // GLOBAL ERROR FILTER: Catch and swallow specific collision and module resolution errors
         // This acts as a safety net if the guard is bypassed or loaded late.
-        window.addEventListener('error', function(event) {
-          // Robustly catch custom element definition errors
-          const msg = (event.message || '').toLowerCase();
-          if (
+        window.addEventListener(
+          'error',
+          function (event) {
+            // Robustly catch custom element definition errors
+            const msg = (event.message || '').toLowerCase();
+            if (
               msg.includes('mce-autosize-textarea') ||
               msg.includes('already been defined') ||
               msg.includes('already been used') ||
@@ -32,25 +34,33 @@
               msg.includes('scheduler') ||
               // Catch "Uncaught Error: ..." variations
               (msg.includes('uncaught') && msg.includes('custom element'))
-          ) {
-            // Silently swallow these errors
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            return true;
-          }
-        }, true);
+            ) {
+              // Silently swallow these errors
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              return true;
+            }
+          },
+          true
+        );
 
         // Also catch unhandled promise rejections for module loading failures
-        window.addEventListener('unhandledrejection', function(event) {
-          if (event.reason && event.reason.message && (
-              event.reason.message.includes('Failed to resolve module specifier') ||
-              event.reason.message.includes('scheduler') ||
-              event.reason.message.includes('already been defined')
-          )) {
-            event.preventDefault();
-            return true;
-          }
-        }, true);
+        window.addEventListener(
+          'unhandledrejection',
+          function (event) {
+            if (
+              event.reason &&
+              event.reason.message &&
+              (event.reason.message.includes('Failed to resolve module specifier') ||
+                event.reason.message.includes('scheduler') ||
+                event.reason.message.includes('already been defined'))
+            ) {
+              event.preventDefault();
+              return true;
+            }
+          },
+          true
+        );
 
         try {
           // Keep track of all registered elements
@@ -371,16 +381,16 @@
               if (window._schedulerShim) return window._schedulerShim;
 
               const schedulerShim = {
-                unstable_scheduleCallback: function(priority, callback) {
+                unstable_scheduleCallback: function (priority, callback) {
                   return setTimeout(callback, 0);
                 },
-                unstable_cancelCallback: function(task) {
+                unstable_cancelCallback: function (task) {
                   clearTimeout(task);
                 },
-                unstable_now: function() {
+                unstable_now: function () {
                   return performance.now();
                 },
-                unstable_getCurrentPriorityLevel: function() {
+                unstable_getCurrentPriorityLevel: function () {
                   return 3; // NormalPriority
                 },
                 unstable_ImmediatePriority: 1,
@@ -388,19 +398,19 @@
                 unstable_NormalPriority: 3,
                 unstable_LowPriority: 4,
                 unstable_IdlePriority: 5,
-                unstable_runWithPriority: function(priority, callback) {
+                unstable_runWithPriority: function (priority, callback) {
                   return callback();
                 },
-                unstable_next: function(callback) {
+                unstable_next: function (callback) {
                   return callback();
                 },
-                unstable_wrapCallback: function(callback) {
+                unstable_wrapCallback: function (callback) {
                   return callback;
                 },
-                unstable_shouldYield: function() {
+                unstable_shouldYield: function () {
                   return false;
                 },
-                unstable_requestPaint: function() {},
+                unstable_requestPaint: function () {},
                 unstable_Profiling: null,
               };
               window._schedulerShim = schedulerShim;
@@ -417,9 +427,7 @@
 
     <!-- Global Custom Element Guard: Prevents crashes from duplicate definitions -->
     <!-- SEO and Meta Information -->
-    <title>
-      The New Fuse - DEBUG MODE
-    </title>
+    <title>The New Fuse - AI Agent Orchestration Platform</title>
     <meta
       name="description"
       content="Orchestrate intelligent workflows, enable seamless agent communication, and unlock the full potential of AI automation with The New Fuse. Support for MCP and A2A protocols."
