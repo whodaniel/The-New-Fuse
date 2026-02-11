@@ -20,6 +20,7 @@ import { MCPModule } from './modules/mcp/mcp.module';
 import { OrchestratorModule } from './modules/orchestrator';
 import { RelayModule } from './modules/relay/relay.module';
 import { SelfImprovementModule } from './modules/self-improvement/self-improvement.module';
+import { SharedStateModule } from './modules/shared-state/shared-state.module';
 import { SystemMetricsModule } from './modules/system-metrics/system-metrics.module';
 import { WorkflowTemplatesModule } from './modules/workflow-templates/workflow-templates.module';
 // PrismaModule removed - migrated to DrizzleModule
@@ -77,6 +78,7 @@ import { UsersModule } from './users/users.module';
     OrchestratorModule, // TNF Orchestration - Heartbeat, Coordination, Handoffs
     RelayModule, // Relay Core - Agent-to-Agent communication relay
     SelfImprovementModule, // Autonomous improvement loop
+    SharedStateModule, // Cloudflare SharedState Integration
     AGUIModule, // AG-UI Protocol - Real-time agent visualization pipeline
   ],
   controllers: [AppController, CacheController],

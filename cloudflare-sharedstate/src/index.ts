@@ -3,6 +3,7 @@ export interface Env {
   SHAREDSTATE_BUCKET: R2Bucket;
   SHAREDSTATE_DB: D1Database;
   RECEIPT_SEQ: DurableObjectNamespace;
+  SHAREDSTATE_AUTH_TOKEN?: string;
 }
 
 type ReceiptType =
@@ -45,6 +46,15 @@ function isoNow() {
 
 function rid(prefix = 'rcpt') {
   return `${prefix}_${crypto.randomUUID()}`;
+}
+
+function authorized(req: Request, env: Env) {
+  // Hardening: Fail closed unless strictly in 'dev' environment
+  if (!env.SHAREDSTATE_AUTH_TOKEN) {
+    return env.ENVIRONMENT === 'dev';
+  }
+  const token = req.headers.get('x-auth-token');
+  return token === env.SHAREDSTATE_AUTH_TOKEN;
 }
 
 async function readJson(req: Request) {
@@ -220,7 +230,11 @@ export default {
     const url = new URL(req.url);
 
     if (url.pathname === '/health') {
-      return json({ ok: true, env: env.ENVIRONMENT });
+      return json({ ok: true, env: env.ENVIRONMENT, authConfigured: Boolean(env.SHAREDSTATE_AUTH_TOKEN) });
+    }
+
+    if (!authorized(req, env)) {
+      return json({ ok: false, error: 'UNAUTHORIZED' }, { status: 401 });
     }
 
     // POST /deposit — canonical receipt deposit
