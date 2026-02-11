@@ -1,0 +1,10 @@
+name = "openclaw-gateway"
+main = "src/index.ts"
+compatibility_date = "2026-02-11"
+
+account_id = "db1d3832768b2bbad4c5c5d9dbc63f8b"
+workers_dev = true
+preview_urls = false
+
+[vars]
+ENVIRONMENT = "dev"
