@@ -153,7 +153,7 @@
     "@types/otplib": "^10.0.0",
     "@types/react-speech-recognition": "^3.9.6",
     "@vercel/node": "^3.0.21",
-    "axios": "^1.11.0",
+    "axios": "^1.13.5",
     "canvas": "^3.1.2",
     "cheerio": "^1.0.0-rc.12",
     "chokidar": "^4.0.3",

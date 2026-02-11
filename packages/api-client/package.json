@@ -18,7 +18,7 @@
   "dependencies": {
     "@the-new-fuse/api-types": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
-    "axios": "^1.12.2",
+    "axios": "^1.13.5",
     "qs": "^6.14.1"
   },
   "devDependencies": {
