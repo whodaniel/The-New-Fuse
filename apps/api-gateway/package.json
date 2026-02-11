@@ -36,7 +36,7 @@
     "@the-new-fuse/jules-integration": "workspace:*",
     "@the-new-fuse/relay-core": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
-    "axios": "^1.12.2",
+    "axios": "^1.13.5",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
     "express": "^5.2.1",

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.2",
-    "axios": "^1.7.9",
+    "axios": "^1.13.5",
     "dotenv": "^16.4.7",
     "glob": "^11.0.0",
     "js-yaml": "^4.1.0",
