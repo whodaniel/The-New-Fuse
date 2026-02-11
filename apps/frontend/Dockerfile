@@ -63,7 +63,8 @@ RUN rm -rf .turbo node_modules/.cache/turbo
 ENV TURBO_FORCE=true
 
 # Build frontend with exclusions for packages that aren't needed and have issues
-RUN npm run build || pnpm run build
+# Explicitly exclude ai-arcade so TheNewFuse production is decoupled from Arcade failures
+RUN npm run build -- --filter=!ai-arcade || pnpm run build -- --filter=!ai-arcade
 
 # Normalize dist directory location
 # If running from monorepo root, build output is in apps/frontend/dist

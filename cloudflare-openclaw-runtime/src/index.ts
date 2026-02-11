@@ -11,6 +11,26 @@ export interface Env {
   TELEGRAM_WEBHOOK_SECRET_TOKEN?: string;
 }
 
+interface Receipt {
+  by: string;
+  type: string;
+  scope: unknown;
+  perm: unknown;
+  refs: unknown;
+  data: unknown;
+}
+
+interface TelegramUpdate {
+  update_id: number;
+  message?: {
+    message_id: number;
+    date: number;
+    chat?: { id: number; type: string };
+    from?: { id: number; username?: string };
+    text?: string;
+  };
+}
+
 function json(data: unknown, init: ResponseInit = {}) {
   return new Response(JSON.stringify(data, null, 2), {
     ...init,
@@ -21,7 +41,7 @@ function json(data: unknown, init: ResponseInit = {}) {
   });
 }
 
-async function depositReceipt(env: Env, receipt: any) {
+async function depositReceipt(env: Env, receipt: Receipt) {
   const payload = {
     by: receipt.by,
     type: receipt.type,
@@ -72,7 +92,7 @@ async function telegramSendMessage(env: Env, chatId: number | string, text: stri
   return { ok: res.ok, status: res.status, body };
 }
 
-async function callGateway(env: Env, update: any, requestId: string) {
+async function callGateway(env: Env, update: unknown, requestId: string) {
   const hasService = Boolean(env.OPENCLAW_GATEWAY_SERVICE);
   const hasUrl = Boolean(env.OPENCLAW_GATEWAY_URL);
   if (!hasService && !hasUrl) {
@@ -122,11 +142,13 @@ function verifyTelegramSecret(
 ): { ok: boolean; got: string; expectedSet: boolean } {
   const expected = env.TELEGRAM_WEBHOOK_SECRET_TOKEN;
   const got = req.headers.get('x-telegram-bot-api-secret-token') || '';
-  if (!expected) return { ok: true, got, expectedSet: false }; // allow if not configured
+  if (!expected) {
+    return { ok: true, got, expectedSet: false }; // allow if not configured
+  }
   return { ok: got === expected, got, expectedSet: true };
 }
 
-export default {
+const worker = {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
 
@@ -144,8 +166,10 @@ export default {
       // DO NOT hard-fail webhook delivery — Telegram may disable webhooks on repeated 401s.
       // Instead, record verification status in receipts.
 
-      const update = await req.json<any>().catch(() => null);
-      if (!update) return json({ ok: false, error: 'BAD_JSON' }, { status: 400 });
+      const update = await req.json<TelegramUpdate>().catch(() => null);
+      if (!update) {
+        return json({ ok: false, error: 'BAD_JSON' }, { status: 400 });
+      }
 
       const receipt = {
         by: 'openclaw-runtime',
@@ -174,18 +198,21 @@ export default {
       };
 
       const deposited = await depositReceipt(env, receipt);
-      console.log('telegram_webhook_deposit', deposited);
+      // console.log('telegram_webhook_deposit', deposited);
 
       const chatId = update?.message?.chat?.id;
       const requestId = `tg_${update?.update_id || crypto.randomUUID()}`;
 
-      let gateway: any = { ok: false, error: 'SKIPPED_NO_CHAT' };
-      let sent: any = null;
+      let gateway: { ok: boolean; status?: number; error?: string; body?: unknown } = {
+        ok: false,
+        error: 'SKIPPED_NO_CHAT',
+      };
+      let sent: { ok: boolean; status?: number; body?: unknown } | null = null;
       let fallbackUsed = false;
 
       if (chatId) {
         gateway = await callGateway(env, update, requestId);
-        const gatewayReply = gateway?.body?.replyText;
+        const gatewayReply = (gateway?.body as { replyText?: string })?.replyText;
 
         let outboundText: string;
         if (gateway.ok && typeof gatewayReply === 'string' && gatewayReply.trim().length > 0) {
@@ -246,3 +273,5 @@ export default {
     return json({ ok: false, error: 'NOT_FOUND' }, { status: 404 });
   },
 };
+
+export default worker;
