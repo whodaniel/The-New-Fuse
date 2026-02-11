@@ -50,13 +50,12 @@ dockerBuildArgs = { VITE_FIREBASE_API_KEY = "${{VITE_FIREBASE_API_KEY}}", VITE_F
 [services.TheNewFuse.deploy]
 healthcheckPath = "/"
 
-# AI Arcade Service (same frontend, different domain)
+# AI Arcade Service (standalone agent storefront)
 [services.ai-arcade]
 builder = "DOCKERFILE"
 [services.ai-arcade.build]
-dockerfilePath = "Dockerfile"
-watchPaths = ["apps/frontend/**", "packages/**"]
-dockerBuildArgs = { VITE_FIREBASE_API_KEY = "${{VITE_FIREBASE_API_KEY}}", VITE_FIREBASE_AUTH_DOMAIN = "${{VITE_FIREBASE_AUTH_DOMAIN}}", VITE_FIREBASE_PROJECT_ID = "${{VITE_FIREBASE_PROJECT_ID}}", VITE_FIREBASE_STORAGE_BUCKET = "${{VITE_FIREBASE_STORAGE_BUCKET}}", VITE_FIREBASE_MESSAGING_SENDER_ID = "${{VITE_FIREBASE_MESSAGING_SENDER_ID}}", VITE_FIREBASE_APP_ID = "${{VITE_FIREBASE_APP_ID}}" }
+dockerfilePath = "apps/ai-arcade/Dockerfile"
+watchPaths = ["apps/ai-arcade/**"]
 [services.ai-arcade.deploy]
 healthcheckPath = "/"
 
