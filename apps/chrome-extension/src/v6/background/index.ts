@@ -822,6 +822,44 @@ class BackgroundService {
    * Handle incoming agent message
    */
   private handleAgentMessage(message: AgentMessage): void {
+    // LOOP GUARD: burst-mute repeated identical payloads (prevents intro/handshake echo storms)
+    // Keyed by (from, channel, prefix-of-content). If a source repeats >5 times in 10s, mute 60s.
+    // This is defensive: even if an upstream agent loops, the browser bridge stays usable.
+    try {
+      const now = Date.now();
+      // @ts-expect-error - dynamic runtime guard store
+      const guard = (this as any).__loopGuard || {
+        counts: new Map<string, { firstTs: number; n: number }>(),
+        mutedUntil: new Map<string, number>(),
+      };
+      // @ts-expect-error - persist
+      (this as any).__loopGuard = guard;
+
+      const from = (message as any).from || '';
+      const channel = (message as any).channel || '';
+      const content = (message as any).content || '';
+      const mutedUntil = guard.mutedUntil.get(from) || 0;
+      if (mutedUntil && now < mutedUntil) {
+        return;
+      }
+
+      const key = `${from}:${channel}:${content.slice(0, 280)}`;
+      const rec = guard.counts.get(key) || { firstTs: now, n: 0 };
+      if (now - rec.firstTs > 10000) {
+        rec.firstTs = now;
+        rec.n = 0;
+      }
+      rec.n += 1;
+      guard.counts.set(key, rec);
+
+      if (rec.n > 5) {
+        guard.mutedUntil.set(from, now + 60000);
+        console.warn('[FuseConnect v6] Loop guard muted source for 60s:', from);
+        return;
+      }
+    } catch {
+      // ignore
+    }
     // CRITICAL: We need to handle 'own' messages if they are on a channel
     // because "Browser Agent" represents ALL windows/tabs.
     // If Window A sends a message, it goes to Relay -> Relay broadcasts to Channel -> Browser Agent receives it.

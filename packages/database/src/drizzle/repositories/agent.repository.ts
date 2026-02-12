@@ -3,7 +3,7 @@
  * Example of migrating from Prisma to Drizzle using the Repository Pattern
  */
 import * as crypto from 'crypto';
-import { and, desc, eq, isNull, like, or, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull, like, or, sql } from 'drizzle-orm';
 import { db } from '../client';
 import {
   agentCapabilityRegistry,
@@ -614,6 +614,21 @@ export class DrizzleAgentRepository {
       .where(isNull(agents.deletedAt));
 
     return result[0]?.count ?? 0;
+  }
+
+  /**
+   * Verify if a list of capabilities exist in the registry
+   */
+  async verifyCapabilities(capabilityNames: string[]): Promise<string[]> {
+    if (!capabilityNames.length) return [];
+
+    const results = await db
+      .select({ name: agentCapabilityRegistry.capabilityName })
+      .from(agentCapabilityRegistry)
+      .where(inArray(agentCapabilityRegistry.capabilityName, capabilityNames));
+
+    const existingNames = new Set(results.map((r) => r.name));
+    return capabilityNames.filter((name) => !existingNames.has(name));
   }
 }
 

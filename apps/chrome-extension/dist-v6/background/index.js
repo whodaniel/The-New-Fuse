@@ -730,6 +730,32 @@
      * Handle incoming agent message
      */
     handleAgentMessage(message) {
+      // LOOP GUARD: burst-mute repeated identical payloads (prevents intro/handshake echo storms)
+      try {
+        const now = Date.now();
+        const key = `${message.from || ''}:${message.channel || ''}:${(message.content || '').slice(0, 280)}`;
+        this.__loopGuard = this.__loopGuard || { counts: new Map(), mutedUntil: new Map() };
+        const mutedUntil = this.__loopGuard.mutedUntil.get(message.from) || 0;
+        if (mutedUntil && now < mutedUntil) {
+          return;
+        }
+        const rec = this.__loopGuard.counts.get(key) || { firstTs: now, n: 0 };
+        // reset window after 10s
+        if (now - rec.firstTs > 10000) {
+          rec.firstTs = now;
+          rec.n = 0;
+        }
+        rec.n += 1;
+        this.__loopGuard.counts.set(key, rec);
+        if (rec.n > 5) {
+          this.__loopGuard.mutedUntil.set(message.from, now + 60000);
+          console.warn('[FuseConnect v6] Loop guard muted source for 60s:', message.from);
+          return;
+        }
+      } catch (e) {
+        // ignore
+      }
+
       // CRITICAL: We need to handle 'own' messages if they are on a channel
       // because "Browser Agent" represents ALL windows/tabs.
       // If Window A sends a message, it goes to Relay -> Relay broadcasts to Channel -> Browser Agent receives it.

@@ -24,8 +24,6 @@
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
   background: radial-gradient(circle at top center, #1a1a2e 0%, #0a0a0c 100%);
@@ -37,6 +35,7 @@ h1 {
   line-height: 1.1;
   background: linear-gradient(to bottom right, var(--accent-neon), var(--accent-purple));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
   font-weight: 800;

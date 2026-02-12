@@ -1,8 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { db } from '../../packages/database/src/drizzle/client';
+import { DrizzleAgentRepository } from '../../packages/database/src/drizzle/repositories';
+import { agents } from '../../packages/database/src/drizzle/schema/agents';
+import { Logger } from '../common/logger.service.js';
 import { MCPBrokerService } from '../mcp/services/mcp-broker.service.tsx';
 import { AgentCapabilityDiscoveryService } from '../services/AgentCapabilityDiscoveryService.js';
-import { Logger } from '../common/logger.service.js';
-import { AgentType, AgentStatus } from '@prisma/client';
 
 /**
  * Script to register Augment as an AI Agent in the database
@@ -11,32 +12,33 @@ import { AgentType, AgentStatus } from '@prisma/client';
  * This serves as the standard discovery protocol for all new agents.
  */
 async function registerAugmentAgent(): Promise<void> {
-  const prisma = new PrismaClient();
   const logger = new Logger('register-augment');
+  const agentRepository = new DrizzleAgentRepository();
 
   try {
-    // Initialize services
-    const mcpBroker = new MCPBrokerService(prisma, logger);
+    // Initialize services (note: MCPBrokerService may need updates for Drizzle)
+    const mcpBroker = new MCPBrokerService(logger);
     const capabilityDiscovery = new AgentCapabilityDiscoveryService(
       mcpBroker,
-      prisma,
+      agentRepository,
       null as any, // EventEmitter not needed for registration
       logger
     );
 
-    // Register core agent
-    const agent = await prisma.agent.create({
-      data: {
+    // Register core agent using Drizzle
+    const [agent] = await db
+      .insert(agents)
+      .values({
         name: 'Augment',
-        type: AgentType.AUGMENT,
-        status: AgentStatus.ACTIVE,
+        type: 'ANALYSIS',
+        status: 'ACTIVE',
         metadata: {
           version: '1.0.0',
           description: 'Augment AI Agent with MCP integration',
-          initialization: Date.now()
-        }
-      }
-    });
+          initialization: Date.now(),
+        },
+      })
+      .returning();
 
     logger.info('Created Augment agent record:', agent.id);
 
@@ -53,8 +55,8 @@ async function registerAugmentAgent(): Promise<void> {
           parameters: tool.parameters || {},
           metadata: {
             capabilities: tool.capabilities,
-            isCoreTool: true
-          }
+            isCoreTool: true,
+          },
         });
 
         logger.info(`Registered capability: ${tool.name}`);
@@ -66,8 +68,10 @@ async function registerAugmentAgent(): Promise<void> {
       id: agent.id,
       name: agent.name,
       type: agent.type,
-      capabilities: Object.values(tools).flat().map((t: any) => t.name),
-      metadata: agent.metadata
+      capabilities: Object.values(tools)
+        .flat()
+        .map((t: any) => t.name),
+      metadata: agent.metadata,
     });
 
     logger.info('Successfully registered Augment agent with MCP broker');
@@ -79,12 +83,11 @@ async function registerAugmentAgent(): Promise<void> {
     }
 
     logger.info(`Registered ${registeredCapabilities.length} capabilities successfully`);
-
   } catch (error) {
     logger.error('Failed to register Augment agent:', error);
     throw error;
   } finally {
-    await prisma.$disconnect();
+    // Drizzle doesn't require explicit disconnect
   }
 }
 
@@ -101,8 +104,8 @@ async function getMCPTools(): Promise<Record<string, any[]>> {
           capabilities: ['file_access', 'file_write'],
           parameters: {
             path: { type: 'string', required: true },
-            operation: { type: 'string', enum: ['read', 'write', 'delete'] }
-          }
+            operation: { type: 'string', enum: ['read', 'write', 'delete'] },
+          },
         },
         {
           name: 'shell-executor',
@@ -111,8 +114,8 @@ async function getMCPTools(): Promise<Record<string, any[]>> {
           parameters: {
             command: { type: 'string', required: true },
             workingDir: { type: 'string' },
-            timeout: { type: 'number' }
-          }
+            timeout: { type: 'number' },
+          },
         },
         {
           name: 'http-client',
@@ -122,9 +125,9 @@ async function getMCPTools(): Promise<Record<string, any[]>> {
             url: { type: 'string', required: true },
             method: { type: 'string', enum: ['GET', 'POST', 'PUT', 'DELETE'] },
             headers: { type: 'object' },
-            body: { type: 'any' }
-          }
-        }
+            body: { type: 'any' },
+          },
+        },
       ],
       analysis_tools: [
         {
@@ -134,8 +137,8 @@ async function getMCPTools(): Promise<Record<string, any[]>> {
           parameters: {
             source: { type: 'string', required: true },
             language: { type: 'string' },
-            rules: { type: 'array' }
-          }
+            rules: { type: 'array' },
+          },
         },
         {
           name: 'type-checker',
@@ -143,9 +146,9 @@ async function getMCPTools(): Promise<Record<string, any[]>> {
           capabilities: ['type_checking'],
           parameters: {
             code: { type: 'string', required: true },
-            tsConfig: { type: 'object' }
-          }
-        }
+            tsConfig: { type: 'object' },
+          },
+        },
       ],
       database_tools: [
         {
@@ -154,8 +157,8 @@ async function getMCPTools(): Promise<Record<string, any[]>> {
           capabilities: ['database_access'],
           parameters: {
             query: { type: 'string', required: true },
-            params: { type: 'array' }
-          }
+            params: { type: 'array' },
+          },
         },
         {
           name: 'vector-db',
@@ -164,9 +167,9 @@ async function getMCPTools(): Promise<Record<string, any[]>> {
           parameters: {
             embedding: { type: 'array', required: true },
             collection: { type: 'string' },
-            limit: { type: 'number' }
-          }
-        }
+            limit: { type: 'number' },
+          },
+        },
       ],
       integration_tools: [
         {
@@ -175,8 +178,8 @@ async function getMCPTools(): Promise<Record<string, any[]>> {
           capabilities: ['github_integration'],
           parameters: {
             endpoint: { type: 'string', required: true },
-            token: { type: 'string', required: true }
-          }
+            token: { type: 'string', required: true },
+          },
         },
         {
           name: 'vscode-extension',
@@ -184,9 +187,9 @@ async function getMCPTools(): Promise<Record<string, any[]>> {
           capabilities: ['vscode_integration'],
           parameters: {
             command: { type: 'string', required: true },
-            args: { type: 'array' }
-          }
-        }
+            args: { type: 'array' },
+          },
+        },
       ],
       memory_tools: [
         {
@@ -196,8 +199,8 @@ async function getMCPTools(): Promise<Record<string, any[]>> {
           parameters: {
             operation: { type: 'string', enum: ['get', 'set', 'update'] },
             key: { type: 'string', required: true },
-            value: { type: 'any' }
-          }
+            value: { type: 'any' },
+          },
         },
         {
           name: 'knowledge-base',
@@ -205,10 +208,10 @@ async function getMCPTools(): Promise<Record<string, any[]>> {
           capabilities: ['knowledge_access'],
           parameters: {
             query: { type: 'string', required: true },
-            filters: { type: 'object' }
-          }
-        }
-      ]
+            filters: { type: 'object' },
+          },
+        },
+      ],
     };
   } catch (error) {
     console.error('Error getting MCP tools:', error);
@@ -229,4 +232,4 @@ if (require.main === module) {
     });
 }
 
-export { registerAugmentAgent, getMCPTools };
+export { getMCPTools, registerAugmentAgent };

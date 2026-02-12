@@ -30,6 +30,9 @@
         'perplexity.ai',
         'poe.com',
         'aistudio.google.com',
+        'openclaw-cloud-production-934c.up.railway.app', // OpenClaw cloud control UI
+        '127.0.0.1', // Local OpenClaw host
+        'localhost', // Local OpenClaw host
         'localhost:3000', // Local dev with chat
         'localhost:3000', // Local dev with chat
         'localhost:3001', // Local backend
@@ -92,6 +95,10 @@
         // The New Fuse (Custom App) - High Priority
         'input[placeholder="Type a message..."]',
         'input[placeholder="Type a message..."][type="text"]',
+        // OpenClaw Chat UI
+        '.chat-compose textarea',
+        'textarea[placeholder*="Message" i]',
+        'textarea[placeholder*="start chatting" i]',
         // Gemini 2025+ patterns (highest priority - latest interface)
         'rich-textarea p[contenteditable="true"]',
         'rich-textarea p[data-placeholder]',
@@ -132,6 +139,10 @@
         // The New Fuse (Custom App) - High Priority
         'button:has(svg path[d="M5 12h14M12 5l7 7-7 7"])', // Exact path match
         'button:has(svg[stroke="currentColor"])', // Generic SVG button match for our app
+        // OpenClaw Chat UI
+        '.chat-compose button.primary',
+        '.chat-compose .btn.primary',
+        '.chat-compose button[type="submit"]',
         // Gemini-specific - EXPANDED
         'button[aria-label*="Send" i]',
         'button[aria-label*="submit" i]',
@@ -393,26 +404,60 @@
      * Count model responses (for detecting new responses)
      */
     countModelResponses() {
-      return document.querySelectorAll('model-response').length;
+      const modelResponses = document.querySelectorAll('model-response').length;
+      if (modelResponses > 0) return modelResponses;
+      const openClawThread = document.querySelector('.chat-thread');
+      if (openClawThread) {
+        const entries = Array.from(openClawThread.querySelectorAll(':scope > *')).filter((el) => {
+          const text = (el.textContent || '').trim();
+          return text.length > 0;
+        });
+        return entries.length;
+      }
+      const generic = document.querySelectorAll(
+        '[data-message-author-role="assistant"], [class*="assistant-message"], [class*="model-response"]'
+      ).length;
+      return generic;
     }
     /**
      * Get latest response text
      */
     getLatestResponse() {
+      const cleanText = (node) => {
+        if (!node) return null;
+        const clone = node.cloneNode(true);
+        clone
+          .querySelectorAll('button, [role="button"], .chip, [class*="action"], .chat-compose')
+          .forEach((el) => el.remove());
+        const text = (clone.textContent || '').replace(/\s+/g, ' ').trim();
+        if (!text) return null;
+        if (text.length < 8) return null;
+        return text;
+      };
       const responses = document.querySelectorAll('model-response');
-      if (responses.length === 0) return null;
-      const lastResponse = responses[responses.length - 1];
-      const markdown = lastResponse.querySelector('.markdown');
-      if (!markdown) {
-        return (lastResponse.textContent || '').trim() || null;
+      if (responses.length > 0) {
+        const lastResponse = responses[responses.length - 1];
+        const markdown = lastResponse.querySelector('.markdown');
+        const txt = cleanText(markdown || lastResponse);
+        if (txt) return txt;
       }
-      // Clone and clean up the markdown content
-      const clone = markdown.cloneNode(true);
-      clone
-        .querySelectorAll('button, [role="button"], .chip, [class*="action"]')
-        .forEach((el) => el.remove());
-      const text = (clone.textContent || '').trim();
-      return text.length > 0 ? text : null;
+      const openClawThread = document.querySelector('.chat-thread');
+      if (openClawThread) {
+        const candidates = Array.from(openClawThread.querySelectorAll(':scope > *'));
+        for (let i = candidates.length - 1; i >= 0; i--) {
+          const text = cleanText(candidates[i]);
+          if (!text) continue;
+          const low = text.toLowerCase();
+          if (low.includes('disconnected from gateway')) continue;
+          if (low === 'openclaw' || low === '🦞') continue;
+          return text;
+        }
+      }
+      const generic = document.querySelectorAll('[data-message-author-role="assistant"]');
+      if (generic.length > 0) {
+        return cleanText(generic[generic.length - 1]);
+      }
+      return null;
     }
     /**
      * Check if AI is currently streaming a response
@@ -600,12 +645,13 @@
       this.isWaitingForResponse = true;
       let stableCount = 0;
       let lastContent = '';
-      let lastResponseCount = responsesBefore;
+      const initialContent = this.getLatestResponse() || '';
       this.responseCheckInterval = window.setInterval(() => {
         const currentResponseCount = this.countModelResponses();
-        // Check if new response appeared
-        if (currentResponseCount > responsesBefore) {
-          const content = this.getLatestResponse();
+        const content = this.getLatestResponse();
+        const hasNewResponse = currentResponseCount > responsesBefore;
+        const hasUpdatedLatest = !!content && content !== initialContent;
+        if (hasNewResponse || hasUpdatedLatest) {
           const streaming = this.isStreaming();
           // Also check for image/media content in the latest response
           const hasMedia = this.checkForMediaContent();
@@ -641,7 +687,6 @@
               }
             }
           }
-          lastResponseCount = currentResponseCount;
         }
       }, 1000);
       // Timeout after 180 seconds (3 minutes) - enough for image/video generation

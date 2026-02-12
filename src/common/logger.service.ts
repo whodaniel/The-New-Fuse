@@ -12,15 +12,22 @@ export class Logger {
   private formatMessage(level: string, message: string, ...args: any[]): string {
     const timestamp = new Date().toISOString();
     const contextStr = this.context ? `[${this.context}] ` : '';
-    const argsStr = args.length > 0 ? ` ${args.map(arg => 
-      typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-    ).join(' ')}` : '';
-    
+    const argsStr =
+      args.length > 0
+        ? ` ${args
+            .map((arg) => (typeof arg === 'object' ? JSON.stringify(arg) : String(arg)))
+            .join(' ')}`
+        : '';
+
     return `${timestamp} [${level}] ${contextStr}${message}${argsStr}`;
   }
 
   log(message: string, ...args: any[]) {
     console.log(this.formatMessage('LOG', message, ...args));
+  }
+
+  info(message: string, ...args: any[]) {
+    this.log(message, ...args);
   }
 
   error(message: string, ...args: any[]) {

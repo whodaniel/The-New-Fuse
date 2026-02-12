@@ -150,7 +150,10 @@
       "parser": "espree",
       "parserOptions": {
         "ecmaVersion": 2021,
-        "sourceType": "script"
+        "sourceType": "module"
+      },
+      "env": {
+        "node": true
       },
       "rules": {
         "@typescript-eslint/no-var-requires": "off",
