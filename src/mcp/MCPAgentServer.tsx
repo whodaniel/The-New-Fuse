@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 
-import { MCPServer, MCPServerOptions } from './MCPServer.tsx';
+import { MCPServer, MCPServerOptions } from './MCPServer.js';
 
 const agentCapabilitySchema = z.object({
   id: z.string(),
@@ -49,7 +49,6 @@ interface AgentServiceInterface {
 export class MCPAgentServer extends MCPServer {
   private apiToolRegistrar: APIToolRegistrar;
   private apiValidator: AgentAPIValidator;
-  protected logger: Logger;
 
   constructor(
     options: MCPServerOptions = {},
@@ -62,8 +61,7 @@ export class MCPAgentServer extends MCPServer {
         registerCapability: {
           description: 'Register new agent capability',
           parameters: agentCapabilitySchema,
-          execute: async (capability: unknown) =>
-            this.registerNewCapability(capability as z.infer<typeof agentCapabilitySchema>),
+          execute: async (capability: unknown) => this.registerNewCapability(capability as any),
         },
         sendMessage: {
           description: 'Send message between agents',
@@ -81,11 +79,10 @@ export class MCPAgentServer extends MCPServer {
     });
     this.apiToolRegistrar = new APIToolRegistrar();
     this.apiValidator = new AgentAPIValidator();
-    this.logger = new Logger(MCPAgentServer.name);
   }
 
   async registerNewCapability(
-    capability: z.infer<typeof agentCapabilitySchema>
+    capability: any
   ): Promise<{ success: boolean; capabilityId: string }> {
     try {
       await this.validateCapability(capability);
@@ -93,7 +90,7 @@ export class MCPAgentServer extends MCPServer {
         ? await this.agentService.registerCapability(capability)
         : { id: capability.id };
       await this.notifyCapabilityUpdate(registeredCap);
-      return { success: true, capabilityId: registeredCap.id };
+      return { success: true, capabilityId: (registeredCap as any).id };
     } catch (error) {
       this.logger.error(
         `Error registering capability: ${error instanceof Error ? error.message : String(error)}`

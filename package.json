@@ -216,6 +216,11 @@
       "electron@<28.3.2": ">=28.3.2",
       "electron@<35.7.5": ">=35.7.5",
       "zustand": "4.5.5"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "unrs-resolver",
+      "canvas"
+    ]
   }
 }
