@@ -41,6 +41,8 @@
     apiGateway: 'http://localhost:3000',
     backend: 'http://localhost:3000',
     saas: 'http://localhost:3002',
+    // Canonical edge state (Cloudflare)
+    tnfWorker: 'https://tnf-agent-orchestration.bizsynth.workers.dev',
   };
   // Native messaging host name
   const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
@@ -686,6 +688,8 @@
         case 'CHANNEL_MESSAGE':
         case 'MESSAGE_RECEIVE':
           const agentMessage = message.payload;
+          // best-effort transcript persistence at the edge
+          this.appendTranscriptFromRelay(agentMessage);
           this.handleAgentMessage(agentMessage);
           break;
         case 'MESSAGE_STREAM_START':
@@ -724,6 +728,46 @@
             `Task: ${message.payload.task.title}`
           );
           break;
+      }
+    }
+    async appendTranscriptFromRelay(message) {
+      // Only persist messages from the NFT Alpha 1 channel (your requested test channel)
+      const channel = message.channel || '';
+      if (channel !== 'NFT Alpha 1') return;
+      const role =
+        message.type === 'system'
+          ? 'system'
+          : message.type === 'response'
+            ? 'assistant'
+            : message.type === 'command'
+              ? 'tool'
+              : 'user';
+      const sessionKey = `relay:${channel}`;
+      const entry = {
+        id: simpleHash(
+          `${sessionKey}|${message.id}|${message.from}|${message.to}|${message.timestamp}`
+        ),
+        ts: message.timestamp || Date.now(),
+        role,
+        content: message.content || '',
+        meta: {
+          source: 'tnf-relay',
+          channel,
+          from: message.from,
+          to: message.to,
+          msgType: message.type,
+        },
+      };
+      if (!entry.content) return;
+      try {
+        const url = `${DEFAULT_NODES.tnfWorker}/transcript/append?sessionKey=${encodeURIComponent(sessionKey)}`;
+        await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+          body: JSON.stringify({ entries: [entry] }),
+        });
+      } catch (e) {
+        // best-effort; do not break UI
       }
     }
     /**

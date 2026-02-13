@@ -5065,6 +5065,8 @@
    * 2. User presses Ctrl+Shift+F keyboard shortcut
    */
 
+  // MUST BE FIRST - Patches customElements.define
+
   // CRITICAL: Skip initialization on SkIDEancer IDE pages to prevent conflicts
   if (window.location.hostname === 'skideancer.thenewfuse.com') {
     console.log(
@@ -5073,8 +5075,6 @@
     // Stop execution (no top-level export allowed in content scripts)
     throw new Error('FuseConnect disabled on IDE pages');
   }
-  // MUST BE FIRST - Patches customElements.define
-
   class FuseConnectContentScript {
     constructor() {
       this.panel = null;

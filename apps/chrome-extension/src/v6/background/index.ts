@@ -35,10 +35,23 @@ const DEFAULT_NODES = {
   apiGateway: 'http://localhost:3000',
   backend: 'http://localhost:3000',
   saas: 'http://localhost:3002',
+
+  // Canonical edge state (Cloudflare)
+  tnfWorker: 'https://tnf-agent-orchestration.bizsynth.workers.dev',
 };
 
 // Native messaging host name
 const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
+
+type TranscriptRole = 'system' | 'user' | 'assistant' | 'tool';
+
+type TranscriptEntry = {
+  id: string;
+  ts: number;
+  role: TranscriptRole;
+  content: string;
+  meta?: Record<string, unknown>;
+};
 
 class BackgroundService {
   // Connections
@@ -768,6 +781,8 @@ class BackgroundService {
       case 'CHANNEL_MESSAGE':
       case 'MESSAGE_RECEIVE':
         const agentMessage = message.payload as AgentMessage;
+        // best-effort transcript persistence at the edge
+        this.appendTranscriptFromRelay(agentMessage);
         this.handleAgentMessage(agentMessage);
         break;
 
@@ -815,6 +830,52 @@ class BackgroundService {
           `Task: ${(message.payload as any).task.title}`
         );
         break;
+    }
+  }
+
+  private async appendTranscriptFromRelay(message: AgentMessage): Promise<void> {
+    // Only persist messages from the NFT Alpha 1 channel (your requested test channel)
+    const channel = message.channel || '';
+    if (channel !== 'NFT Alpha 1') return;
+
+    const role: TranscriptRole =
+      message.type === 'system'
+        ? 'system'
+        : message.type === 'response'
+          ? 'assistant'
+          : message.type === 'command'
+            ? 'tool'
+            : 'user';
+
+    const sessionKey = `relay:${channel}`;
+
+    const entry: TranscriptEntry = {
+      id: simpleHash(
+        `${sessionKey}|${message.id}|${message.from}|${message.to}|${message.timestamp}`
+      ),
+      ts: message.timestamp || Date.now(),
+      role,
+      content: message.content || '',
+      meta: {
+        source: 'tnf-relay',
+        channel,
+        from: message.from,
+        to: message.to,
+        msgType: message.type,
+      },
+    };
+
+    if (!entry.content) return;
+
+    try {
+      const url = `${DEFAULT_NODES.tnfWorker}/transcript/append?sessionKey=${encodeURIComponent(sessionKey)}`;
+      await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+        body: JSON.stringify({ entries: [entry] }),
+      });
+    } catch (e) {
+      // best-effort; do not break UI
     }
   }
 
