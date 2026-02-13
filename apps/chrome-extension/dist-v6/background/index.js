@@ -732,8 +732,13 @@
     }
     async appendTranscriptFromRelay(message) {
       // Only persist messages from the NFT Alpha 1 channel (your requested test channel)
+      // Match both exact "NFT Alpha 1" and slugified "nft-alpha-1" variants
       const channel = message.channel || '';
-      if (channel !== 'NFT Alpha 1') return;
+      const isNftAlpha1 =
+        channel === 'NFT Alpha 1' ||
+        channel.toLowerCase() === 'nft-alpha-1' ||
+        (channel.toLowerCase().includes('nft') && channel.toLowerCase().includes('alpha'));
+      if (!isNftAlpha1) return;
       const role =
         message.type === 'system'
           ? 'system'
