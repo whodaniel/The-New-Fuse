@@ -1391,6 +1391,26 @@ Format as JSON array:
           sendResponse({ success: true });
           break;
 
+        case 'CHANNEL_DELETE':
+          const channelIdToDelete = message.channelId;
+          if (channelIdToDelete === 'general') {
+            sendResponse({ success: false, error: 'Cannot delete general channel' });
+            break;
+          }
+          this.channels.delete(channelIdToDelete);
+          this.joinedChannels.delete(channelIdToDelete);
+          this.broadcastToTabs({
+            type: 'CHANNELS_UPDATE',
+            channels: Array.from(this.channels.values()),
+          });
+          this.saveChannels();
+          this.send({
+            type: 'CHANNEL_DELETE',
+            channelId: channelIdToDelete,
+          });
+          sendResponse({ success: true });
+          break;
+
         case 'CONTENT_SCRIPT_READY':
           // Send current state to new tab
           if (sender.tab?.id) {

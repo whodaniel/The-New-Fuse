@@ -2295,13 +2295,18 @@
                 return `
             <div class="fcp6-chat-card" data-msg-id="${msg.id}">
             <div class="fcp6-chat-header">
-              <div style="display: flex; align-items: center; gap: 6px;">
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                 <span class="fcp6-chat-from" title="Agent ID: ${this.escapeHtml(senderId)}">
                   ${this.escapeHtml(senderName)}
                 </span>
-                <span style="font-size: 9px; font-family: monospace; background: rgba(255,255,255,0.1); padding: 1px 4px; border-radius: 3px; color: rgba(255,255,255,0.4);" title="${this.escapeHtml(senderId)}">
-                  #${this.escapeHtml(shortId)}
-                </span>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <span style="font-size: 9px; font-family: monospace; background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 4px; color: rgba(255,255,255,0.6); user-select: text; -webkit-user-select: text;" title="Click copy to get full ID: ${this.escapeHtml(senderId)}">
+                    #${this.escapeHtml(shortId)}
+                  </span>
+                  <button class="fcp6-btn" data-action="copy-to-clipboard" data-value="${this.escapeHtml(senderId)}" title="Copy Agent ID" style="width: 18px; height: 18px; font-size: 8px; padding: 0; background: rgba(0,217,255,0.1); color: #00D9FF; border: 1px solid rgba(0,217,255,0.2);">
+                    📋
+                  </button>
+                </div>
               </div>
               <span class="fcp6-chat-time">${this.formatTime(msg.timestamp)}</span>
             </div>
@@ -2337,7 +2342,10 @@
               <div class="fcp6-channel-name">${this.escapeHtml(ch.name)}</div>
               <div class="fcp6-channel-members">${ch.members.length} active agents</div>
             </div>
-            ${this.currentChannel === ch.id ? '<div class="fcp6-badge">✓</div>' : ''}
+            <div style="display:flex; gap:4px; align-items:center;">
+              ${this.currentChannel === ch.id ? '<div class="fcp6-badge" style="position:static; margin:0;">✓</div>' : ''}
+              ${ch.id !== 'general' ? `<button class="fcp6-btn" data-action="delete-channel" data-channel-id="${ch.id}" title="Delete Channel" style="background:rgba(255,51,102,0.1); color:#ff3366; width:22px; height:22px;">×</button>` : ''}
+            </div>
           </div>
         `
                 )
@@ -2950,6 +2958,57 @@
       this.update();
     }
     /**
+     * Delete a channel (Admin only or creator - enforced by relay)
+     */
+    deleteChannel(channelId) {
+      if (channelId === 'general') {
+        alert('The General channel cannot be deleted.');
+        return;
+      }
+      const ch = this.channels.find((c) => c.id === channelId);
+      const name = ch ? ch.name : channelId;
+      if (!confirm(`Are you sure you want to delete the channel "${name}"?`)) {
+        return;
+      }
+      console.log('[FuseConnect] Deleting channel:', channelId);
+      this.safeSendMessage(
+        {
+          type: 'CHANNEL_DELETE',
+          channelId,
+        },
+        (response) => {
+          if (response?.success) {
+            console.log('[FuseConnect] Channel delete request sent');
+            // Optimistically remove from local list
+            this.channels = this.channels.filter((c) => c.id !== channelId);
+            if (this.currentChannel === channelId) {
+              this.currentChannel = null;
+            }
+            this.update();
+          }
+        }
+      );
+    }
+    /**
+     * Copy text to clipboard
+     */
+    copyToClipboard(text, element) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          if (element) {
+            const originalText = element.innerHTML;
+            element.innerHTML = '✅';
+            setTimeout(() => {
+              element.innerHTML = originalText;
+            }, 1500);
+          }
+        })
+        .catch((err) => {
+          console.error('[FuseConnect] Failed to copy:', err);
+        });
+    }
+    /**
      * Safely send a message to Chrome runtime, handling context invalidation
      */
     safeSendMessage(message, callback) {
@@ -3230,12 +3289,20 @@
             const isFromSelfFallback =
               msg.from === 'You' || msg.from === this.myAgentId || msg.from?.includes(this.panelId);
             const isOwnMessage = isFromSelf || isFromSelfFallback;
-            // Content deduplication (prevent exact duplicate messages in short window)
-            const isDuplicate = this.messages.some(
-              (m) => m.content === msg.content && Date.now() - m.timestamp < 3000
-            );
+            // DEDUPE LOCK: Prevent doubled Human input.
+            // Check if we already have a message with this content from ourselves in a short window.
+            // This stops the "Optimistic UI" local push from colliding with the "Relay Roundtrip" back-broadcast.
+            const isDuplicate = this.messages.some((m) => {
+              // Match by ID if both have one
+              if (msg.id && m.id === msg.id) return true;
+              // Match by content + sender + time window (fallback for optimistic local IDs)
+              const sameContent = m.content === msg.content;
+              const sameSender = m.from === msg.from || (isOwnMessage && m.from === 'You');
+              const withinWindow = Math.abs((m.timestamp || 0) - (msg.timestamp || 0)) < 10000;
+              return sameContent && sameSender && withinWindow;
+            });
             if (isDuplicate) {
-              console.log('[FuseConnect] Skipping duplicate message');
+              console.log('[FuseConnect] Deduped message (already shown):', msg.id || 'local');
               break;
             }
             // Add ALL messages to chat display (this is a chatroom - everyone sees everything)
@@ -3597,8 +3664,18 @@
         case 'expand':
           this.expand();
           break;
+        case 'copy-to-clipboard':
+          if (element && element.dataset.value) {
+            this.copyToClipboard(element.dataset.value, element);
+          }
+          break;
         case 'select-channel':
           // Handled by change listener, but good to have case
+          break;
+        case 'delete-channel':
+          if (element && element.dataset.channelId) {
+            this.deleteChannel(element.dataset.channelId);
+          }
           break;
         case 'inject-to-chat':
           this.injectToPageChat();
