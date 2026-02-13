@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "composite": true,
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
@@ -28,8 +27,9 @@
       "@the-new-fuse/types": ["../types/src"],
       "@the-new-fuse/utils": ["../utils/src"]
     },
+    "rootDir": "src",
     "types": ["node", "jest", "react"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.stories.tsx"]
 }
