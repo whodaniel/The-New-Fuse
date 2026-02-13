@@ -363,10 +363,12 @@
                 content: e.content,
                 ts: e.ts,
                 seq: e.seq,
+                id: e.id,
               });
-              if (e.role === 'assistant' && e.content) {
-                this.callbacks.onResponse?.(e.content);
-              }
+              // CRITICAL FIX: Polled transcript entries from Cloudflare are for DISPLAY ONLY.
+              // We must NEVER call onResponse() here, because onResponse() triggers the "Response Complete"
+              // flow which broadcasts back to the relay, creating an infinite loop.
+              // Scraped responses from the actual page DOM are still handled by the MutationObserver.
             }
             return;
           }
@@ -384,10 +386,9 @@
               content: e.content,
               ts: e.ts,
               seq: e.seq,
+              id: e.id,
             });
-            if (e.role === 'assistant' && e.content) {
-              this.callbacks.onResponse?.(e.content);
-            }
+            // CRITICAL FIX: Same as above. Polled entries are for UI rendering only.
           }
           this.transcriptLastSeq = Math.max(this.transcriptLastSeq, lastSeq || 0);
         } catch (err) {
@@ -5106,6 +5107,9 @@
       this.panelVisible = false;
       this.chatReady = false;
       this.pageAgentId = null;
+      // DEDUPE GUARD: Track message IDs we have already processed (injected or shown)
+      // to prevent infinite loops from the relay-Cloudflare-Extension circle.
+      this.processedMessageIds = new Set();
       // FEDERATION IMPROVEMENT: Track pending requests for response correlation
       this.pendingRequests = new Map();
       // FEDERATION IMPROVEMENT: Message Queue for delayed injection
@@ -5179,6 +5183,8 @@
           this.processInjectionQueue();
         },
         onTranscriptEntry: (entry) => {
+          // Track the ID in our dedupe guard
+          if (entry.id) this.processedMessageIds.add(entry.id);
           // Forward canonical transcript updates from Cloudflare DO to panel
           if (this.panel) {
             this.panel.handleMessage({
@@ -5499,6 +5505,13 @@
             case 'NEW_MESSAGE':
               if (message.message) {
                 const msg = message.message;
+                // DEDUPE GUARD: Never process the same message ID twice.
+                // This is vital for stopping feedback loops between Relay and Cloudflare.
+                if (msg.id && this.processedMessageIds.has(msg.id)) {
+                  safeSendResponse({ success: true, reason: 'deduped' });
+                  return true;
+                }
+                if (msg.id) this.processedMessageIds.add(msg.id);
                 const myChannel = this.panel?.getCurrentChannel();
                 const messageChannel = msg.channel || msg.metadata?.channel;
                 // CHANNEL FILTERING:

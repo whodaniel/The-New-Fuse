@@ -433,13 +433,15 @@ export class TNFRelayServer extends EventEmitter {
       }
 
       case 'CHANNEL_CREATE': {
-        const requestedName =
-          ((payload as Record<string, unknown>)?.name as string) || 'Unnamed Channel';
+        const rawName = ((payload as Record<string, unknown>)?.name as string) || 'Unnamed Channel';
+        const requestedName = rawName.trim();
+        const normalizedRequested = requestedName.toLowerCase().replace(/\s+/g, ' ');
 
         // Check if a channel with this name already exists
         let existingChannel: Channel | null = null;
         for (const ch of this.channels.values()) {
-          if (ch.name.toLowerCase() === requestedName.toLowerCase()) {
+          const normalizedExisting = ch.name.trim().toLowerCase().replace(/\s+/g, ' ');
+          if (normalizedExisting === normalizedRequested) {
             existingChannel = ch;
             break;
           }
@@ -448,7 +450,7 @@ export class TNFRelayServer extends EventEmitter {
         if (existingChannel) {
           // Channel exists - join it instead of creating duplicate
           console.log(
-            `[Relay] Channel '${requestedName}' already exists (${existingChannel.id}), joining instead`
+            `[Relay] Channel '${requestedName}' (normalized: '${normalizedRequested}') already exists (${existingChannel.id}), joining instead`
           );
           if (agentId && !existingChannel.members.includes(agentId)) {
             existingChannel.members.push(agentId);

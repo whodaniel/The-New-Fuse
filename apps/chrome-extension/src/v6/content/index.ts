@@ -42,6 +42,10 @@ class FuseConnectContentScript {
   private chatReady = false;
   private pageAgentId: string | null = null;
 
+  // DEDUPE GUARD: Track message IDs we have already processed (injected or shown)
+  // to prevent infinite loops from the relay-Cloudflare-Extension circle.
+  private processedMessageIds: Set<string> = new Set();
+
   // FEDERATION IMPROVEMENT: Track pending requests for response correlation
   private pendingRequests: Map<
     string,
@@ -143,6 +147,9 @@ class FuseConnectContentScript {
         this.processInjectionQueue();
       },
       onTranscriptEntry: (entry) => {
+        // Track the ID in our dedupe guard
+        if (entry.id) this.processedMessageIds.add(entry.id);
+
         // Forward canonical transcript updates from Cloudflare DO to panel
         if (this.panel) {
           this.panel.handleMessage({
@@ -509,6 +516,15 @@ class FuseConnectContentScript {
           case 'NEW_MESSAGE':
             if (message.message) {
               const msg = message.message;
+
+              // DEDUPE GUARD: Never process the same message ID twice.
+              // This is vital for stopping feedback loops between Relay and Cloudflare.
+              if (msg.id && this.processedMessageIds.has(msg.id)) {
+                safeSendResponse({ success: true, reason: 'deduped' });
+                return true;
+              }
+              if (msg.id) this.processedMessageIds.add(msg.id);
+
               const myChannel = this.panel?.getCurrentChannel();
               const messageChannel = msg.channel || msg.metadata?.channel;
 

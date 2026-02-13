@@ -151,10 +151,12 @@ class SimpleChatBridge {
               content: e.content,
               ts: e.ts,
               seq: e.seq,
+              id: e.id,
             });
-            if (e.role === 'assistant' && e.content) {
-              this.callbacks.onResponse?.(e.content);
-            }
+            // CRITICAL FIX: Polled transcript entries from Cloudflare are for DISPLAY ONLY.
+            // We must NEVER call onResponse() here, because onResponse() triggers the "Response Complete"
+            // flow which broadcasts back to the relay, creating an infinite loop.
+            // Scraped responses from the actual page DOM are still handled by the MutationObserver.
           }
           return;
         }
@@ -170,10 +172,9 @@ class SimpleChatBridge {
             content: e.content,
             ts: e.ts,
             seq: e.seq,
+            id: e.id,
           });
-          if (e.role === 'assistant' && e.content) {
-            this.callbacks.onResponse?.(e.content);
-          }
+          // CRITICAL FIX: Same as above. Polled entries are for UI rendering only.
         }
         this.transcriptLastSeq = Math.max(this.transcriptLastSeq, lastSeq || 0);
       } catch (err: any) {
