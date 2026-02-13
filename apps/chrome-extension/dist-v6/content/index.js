@@ -778,6 +778,14 @@
           const low = text.toLowerCase();
           if (low.includes('disconnected from gateway')) continue;
           if (low === 'openclaw' || low === '🦞') continue;
+          // CRITICAL: Block user message scrapes to prevent doubling in OpenClaw
+          if (
+            low.startsWith('u ') ||
+            low.startsWith('you ') ||
+            low.includes(' you ') ||
+            (low.startsWith('u') && low.length < 5)
+          )
+            continue;
           return text;
         }
       }
