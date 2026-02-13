@@ -1,5 +1,6 @@
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { useState } from 'react';
+import { apiService } from '../../services/api';
 
 interface PayPalSubscriptionButtonProps {
   planId?: string;
@@ -48,24 +49,10 @@ export const PayPalSubscriptionButton = ({
 
             // Call our backend to record the subscription
             try {
-              const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/billing/paypal/subscribe`,
-                {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    // 'Authorization': `Bearer ${token}` // TODO: Add Auth Token from context
-                  },
-                  body: JSON.stringify({
-                    subscriptionID: data.subscriptionID,
-                    planID: planId,
-                  }),
-                }
-              );
-
-              if (!response.ok) {
-                console.error('Failed to record subscription on backend');
-              }
+              const response = await apiService.post('/api/billing/paypal/subscribe', {
+                subscriptionID: data.subscriptionID,
+                planID: planId,
+              });
 
               if (onSuccess && data.subscriptionID) {
                 onSuccess(data.subscriptionID);

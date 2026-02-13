@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { AgentListing } from '../services/ArcadeService';
 import './AgentDetailModal.css';
 import { PayPalButton } from './PayPalButton';
@@ -7,9 +8,17 @@ interface AgentDetailModalProps {
   agent: AgentListing;
   onClose: () => void;
   onSuccess: (id: string) => void;
+  onPlay?: () => void;
 }
 
-const AgentDetailModal: React.FC<AgentDetailModalProps> = ({ agent, onClose, onSuccess }) => {
+const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
+  agent,
+  onClose,
+  onSuccess,
+  onPlay,
+}) => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -46,11 +55,27 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({ agent, onClose, onS
         </div>
 
         <div className="modal-footer">
-          <h4 className="unlock-title">UNLOCK INSTANCE</h4>
-          <PayPalButton
-            planId={agent.payPalPlanId || 'P-3WD251534W148423SNFXJQVI'}
-            onSuccess={onSuccess}
-          />
+          {isAuthenticated ? (
+            <>
+              <button className="play-now-button" onClick={onPlay}>
+                🎮 Play Now
+              </button>
+              <div className="subscription-section">
+                <h4 className="unlock-title">UNLOCK INSTANCE</h4>
+                <PayPalButton
+                  planId={agent.payPalPlanId || 'P-3WD251534W148423SNFXJQVI'}
+                  onSuccess={onSuccess}
+                />
+              </div>
+            </>
+          ) : (
+            <div className="login-prompt">
+              <p>Login to play with this agent</p>
+              <button className="login-prompt-button" onClick={onClose}>
+                Close & Login
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

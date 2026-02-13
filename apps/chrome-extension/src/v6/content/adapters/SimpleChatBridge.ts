@@ -1,7 +1,11 @@
 /**
- * Fuse Connect v5 - Simple Chat Bridge
+ * Fuse Connect v6 - Simple Chat Bridge
  *
- * RESTORED FROM BACKUP: Using simple selector approach that actually works.
+ * NOTE: This file still contains legacy v5 comments, but it is used by v6.
+ *
+ * Cloudflare upgrade (2026-02): when a target UI is unreliable (e.g. OpenClaw cloud
+ * transcript rendering issues), we can use the TNF Agent Orchestration worker as a
+ * canonical transcript store and poll it from the content script.
  */
 
 export interface ChatElements {
@@ -11,9 +15,16 @@ export interface ChatElements {
 }
 
 export interface ChatBridgeCallbacks {
+  // Called when we detect assistant output (DOM scrape or TNF transcript poll)
   onResponse?: (content: string) => void;
   onError?: (error: string) => void;
+
+  // Optional: raw transcript events (edge DO)
+  onTranscriptEntry?: (entry: { role: string; content: string; ts: number; seq?: number }) => void;
 }
+
+import { DEFAULT_NODES } from '../../shared/constants';
+import { TnfTranscriptClient } from '../utils/TnfTranscriptClient';
 
 class SimpleChatBridge {
   private lastResponseText = '';
@@ -22,6 +33,11 @@ class SimpleChatBridge {
   private isWaitingForResponse = false;
   private responseCheckInterval: number | null = null;
   private _sendingGuard = false; // Safety guard for UI lag between click and streaming state
+
+  // TNF Transcript polling (Cloudflare DO)
+  private transcriptClient: TnfTranscriptClient | null = null;
+  private transcriptPollTimer: number | null = null;
+  private transcriptLastSeq: number = 0;
 
   // ORCHESTRATOR IMPROVEMENT: Element caching to reduce DOM scanning
   private cachedElements: ChatElements | null = null;
@@ -74,6 +90,19 @@ class SimpleChatBridge {
 
     // Load custom sites from storage
     this.loadCustomSites();
+
+    // Always enable transcript polling on OpenClaw cloud UI (DOM rendering is currently unreliable there).
+    // This will power the TNF injectable modal with canonical state from Cloudflare.
+    try {
+      const host = window.location.hostname.toLowerCase();
+      if (host.includes('openclaw-cloud') || host.endsWith('up.railway.app')) {
+        const workerUrl = DEFAULT_NODES.tnfWorker;
+        const sessionKey = this.deriveSessionKey();
+        this.enableTranscriptPolling(workerUrl, sessionKey);
+      }
+    } catch (e) {
+      // non-fatal
+    }
   }
 
   /**
@@ -90,6 +119,71 @@ class SimpleChatBridge {
         }
       });
     }
+  }
+
+  /**
+   * Derive a stable sessionKey for Cloudflare transcript storage.
+   * Best effort: host + OpenClaw session query param (if present).
+   */
+  private deriveSessionKey(): string {
+    const host = window.location.hostname.toLowerCase();
+    const url = new URL(window.location.href);
+    const session = url.searchParams.get('session') || 'main';
+    return `openclaw-ui:${host}:session:${session}`;
+  }
+
+  private enableTranscriptPolling(workerUrl: string, sessionKey: string): void {
+    // Avoid double-start
+    if (this.transcriptPollTimer) return;
+
+    this.transcriptClient = new TnfTranscriptClient(workerUrl, sessionKey);
+
+    const poll = async () => {
+      if (!this.transcriptClient) return;
+      try {
+        // First pull: load latest and set cursor.
+        if (this.transcriptLastSeq === 0) {
+          const { lastSeq, entries } = await this.transcriptClient.latest(50);
+          this.transcriptLastSeq = lastSeq || 0;
+          for (const e of entries) {
+            this.callbacks.onTranscriptEntry?.({
+              role: e.role,
+              content: e.content,
+              ts: e.ts,
+              seq: e.seq,
+            });
+            if (e.role === 'assistant' && e.content) {
+              this.callbacks.onResponse?.(e.content);
+            }
+          }
+          return;
+        }
+
+        const { lastSeq, entries } = await this.transcriptClient.since(this.transcriptLastSeq, 200);
+        for (const e of entries) {
+          this.transcriptLastSeq = Math.max(
+            this.transcriptLastSeq,
+            e.seq || this.transcriptLastSeq
+          );
+          this.callbacks.onTranscriptEntry?.({
+            role: e.role,
+            content: e.content,
+            ts: e.ts,
+            seq: e.seq,
+          });
+          if (e.role === 'assistant' && e.content) {
+            this.callbacks.onResponse?.(e.content);
+          }
+        }
+        this.transcriptLastSeq = Math.max(this.transcriptLastSeq, lastSeq || 0);
+      } catch (err: any) {
+        this.callbacks.onError?.(String(err?.message || err));
+      }
+    };
+
+    // Kick off now, then poll.
+    poll();
+    this.transcriptPollTimer = window.setInterval(poll, 1500);
   }
 
   /**

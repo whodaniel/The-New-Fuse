@@ -731,31 +731,40 @@
      */
     handleAgentMessage(message) {
       // LOOP GUARD: burst-mute repeated identical payloads (prevents intro/handshake echo storms)
+      // Keyed by (from, channel, prefix-of-content). If a source repeats >5 times in 10s, mute 60s.
+      // This is defensive: even if an upstream agent loops, the browser bridge stays usable.
       try {
         const now = Date.now();
-        const key = `${message.from || ''}:${message.channel || ''}:${(message.content || '').slice(0, 280)}`;
-        this.__loopGuard = this.__loopGuard || { counts: new Map(), mutedUntil: new Map() };
-        const mutedUntil = this.__loopGuard.mutedUntil.get(message.from) || 0;
+        // @ts-expect-error - dynamic runtime guard store
+        const guard = this.__loopGuard || {
+          counts: new Map(),
+          mutedUntil: new Map(),
+        };
+        // @ts-expect-error - persist
+        this.__loopGuard = guard;
+        const from = message.from || '';
+        const channel = message.channel || '';
+        const content = message.content || '';
+        const mutedUntil = guard.mutedUntil.get(from) || 0;
         if (mutedUntil && now < mutedUntil) {
           return;
         }
-        const rec = this.__loopGuard.counts.get(key) || { firstTs: now, n: 0 };
-        // reset window after 10s
+        const key = `${from}:${channel}:${content.slice(0, 280)}`;
+        const rec = guard.counts.get(key) || { firstTs: now, n: 0 };
         if (now - rec.firstTs > 10000) {
           rec.firstTs = now;
           rec.n = 0;
         }
         rec.n += 1;
-        this.__loopGuard.counts.set(key, rec);
+        guard.counts.set(key, rec);
         if (rec.n > 5) {
-          this.__loopGuard.mutedUntil.set(message.from, now + 60000);
-          console.warn('[FuseConnect v6] Loop guard muted source for 60s:', message.from);
+          guard.mutedUntil.set(from, now + 60000);
+          console.warn('[FuseConnect v6] Loop guard muted source for 60s:', from);
           return;
         }
-      } catch (e) {
+      } catch {
         // ignore
       }
-
       // CRITICAL: We need to handle 'own' messages if they are on a channel
       // because "Browser Agent" represents ALL windows/tabs.
       // If Window A sends a message, it goes to Relay -> Relay broadcasts to Channel -> Browser Agent receives it.
