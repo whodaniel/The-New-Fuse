@@ -835,12 +835,15 @@ class BackgroundService {
 
   private async appendTranscriptFromRelay(message: AgentMessage): Promise<void> {
     // Only persist messages from the NFT Alpha 1 channel (your requested test channel)
-    // Match both exact "NFT Alpha 1" and slugified "nft-alpha-1" variants
-    const channel = message.channel || '';
+    // IMPORTANT: Relay uses channel ids (e.g. "channel-1770...") while UI shows channel names.
+    const channelId = message.channel || '';
+    const channelName = (this.channels.get(channelId) as any)?.name || '';
+
+    const label = (channelName || channelId).toString();
     const isNftAlpha1 =
-      channel === 'NFT Alpha 1' ||
-      channel.toLowerCase() === 'nft-alpha-1' ||
-      (channel.toLowerCase().includes('nft') && channel.toLowerCase().includes('alpha'));
+      label === 'NFT Alpha 1' ||
+      label.toLowerCase() === 'nft-alpha-1' ||
+      (label.toLowerCase().includes('nft') && label.toLowerCase().includes('alpha'));
     if (!isNftAlpha1) return;
 
     const role: TranscriptRole =
@@ -852,18 +855,20 @@ class BackgroundService {
             ? 'tool'
             : 'user';
 
-    const sessionKey = `relay:${channel}`;
+    const sessionKey = `relay:NFT Alpha 1`;
 
     const entry: TranscriptEntry = {
       id: simpleHash(
-        `${sessionKey}|${message.id}|${message.from}|${message.to}|${message.timestamp}`
+        `${sessionKey}|${message.id}|${message.from}|${message.to}|${message.timestamp}|${channelId}`
       ),
       ts: message.timestamp || Date.now(),
       role,
       content: message.content || '',
       meta: {
         source: 'tnf-relay',
-        channel,
+        channelId,
+        channelName,
+        channel: label,
         from: message.from,
         to: message.to,
         msgType: message.type,
