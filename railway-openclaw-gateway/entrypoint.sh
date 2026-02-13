@@ -23,5 +23,8 @@ if [ -n "$KILO_REFRESH_TOKEN" ]; then
   "
 fi
 
-echo "Starting OpenClaw gateway on port ${OPENCLAW_GATEWAY_PORT:-18789}..."
-exec openclaw gateway start --port "${OPENCLAW_GATEWAY_PORT:-18789}" --bind "${OPENCLAW_GATEWAY_BIND:-0.0.0.0}"
+# Use Railway's PORT if available, otherwise default
+GATEWAY_PORT="${PORT:-${OPENCLAW_GATEWAY_PORT:-18789}}"
+
+echo "Starting OpenClaw gateway on port ${GATEWAY_PORT}..."
+exec openclaw gateway start --port "${GATEWAY_PORT}" --bind "${OPENCLAW_GATEWAY_BIND:-0.0.0.0}"
