@@ -142,6 +142,15 @@ class FuseConnectContentScript {
         // Trigger queue processing after response
         this.processInjectionQueue();
       },
+      onTranscriptEntry: (entry) => {
+        // Forward canonical transcript updates from Cloudflare DO to panel
+        if (this.panel) {
+          this.panel.handleMessage({
+            type: 'TRANSCRIPT_UPDATE',
+            entry: entry,
+          });
+        }
+      },
       onError: (error) => {
         console.error('[FuseConnect v6] Chat bridge error:', error);
       },

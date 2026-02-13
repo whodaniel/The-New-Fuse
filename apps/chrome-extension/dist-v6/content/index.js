@@ -3294,6 +3294,30 @@
           this.chatElements = message.elements;
           this.update();
           break;
+        case 'TRANSCRIPT_UPDATE':
+          if (message.entry) {
+            const entry = message.entry;
+            // Add to local messages if not already present (dedupe by id)
+            const id = entry.id || `transcript-${entry.ts}-${entry.seq}`;
+            if (!this.messages.some((m) => m.id === id)) {
+              this.messages.push({
+                id,
+                from:
+                  entry.role === 'user'
+                    ? this.myAgentId || 'You'
+                    : entry.role === 'assistant'
+                      ? 'AI (Edge)'
+                      : entry.role,
+                to: entry.role === 'user' ? 'AI' : 'User',
+                content: entry.content,
+                timestamp: entry.ts,
+                type: 'text',
+                metadata: entry.meta,
+              });
+              this.update();
+            }
+          }
+          break;
         case 'STREAMING_UPDATE':
           this.streamingState = message.state;
           this.update();
@@ -5153,6 +5177,15 @@
           });
           // Trigger queue processing after response
           this.processInjectionQueue();
+        },
+        onTranscriptEntry: (entry) => {
+          // Forward canonical transcript updates from Cloudflare DO to panel
+          if (this.panel) {
+            this.panel.handleMessage({
+              type: 'TRANSCRIPT_UPDATE',
+              entry: entry,
+            });
+          }
         },
         onError: (error) => {
           console.error('[FuseConnect v6] Chat bridge error:', error);
