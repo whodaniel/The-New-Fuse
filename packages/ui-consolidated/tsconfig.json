@@ -27,7 +27,6 @@
       "@the-new-fuse/types": ["../types/src"],
       "@the-new-fuse/utils": ["../utils/src"]
     },
-    "rootDir": "src",
     "types": ["node", "jest", "react"]
   },
   "include": ["src"],
