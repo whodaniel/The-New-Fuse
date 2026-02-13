@@ -898,12 +898,10 @@ class BackgroundService {
     // This is defensive: even if an upstream agent loops, the browser bridge stays usable.
     try {
       const now = Date.now();
-      // @ts-expect-error - dynamic runtime guard store
       const guard = (this as any).__loopGuard || {
         counts: new Map<string, { firstTs: number; n: number }>(),
         mutedUntil: new Map<string, number>(),
       };
-      // @ts-expect-error - persist
       (this as any).__loopGuard = guard;
 
       const from = (message as any).from || '';

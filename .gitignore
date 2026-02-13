@@ -18,6 +18,14 @@ build/
 out/
 .next/
 
+# Compiled TypeScript output in source directories
+**/*.d.ts
+**/*.d.ts.map
+# **/*.js # Commented out: unsafe for mixed TS/JS projects
+# **/*.js.map # Commented out: unsafe for mixed TS/JS projects
+!**/*.config.js
+!**/*.config.ts
+
 # Turbo
 .turbo/
 
@@ -135,3 +143,6 @@ packages/google-sheets-mcp-server/credentials.json
 
 # Test files with potential secrets
 **/test-openrouter*.js
+
+# Telemetry and monitoring IDs
+telemetry-id
