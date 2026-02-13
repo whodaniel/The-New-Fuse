@@ -54,7 +54,7 @@ ENV NODE_OPTIONS=--max-old-space-size=4096
 # This avoids Turbo cache issues in fresh Docker builds
 RUN pnpm --filter @the-new-fuse/types build || true
 RUN pnpm --filter @the-new-fuse/database build || true
-RUN pnpm --filter @the-new-fuse/core-vector-db build || true  
+RUN pnpm --filter @the-new-fuse/core-vector-db build || true
 RUN pnpm --filter @the-new-fuse/core build || true
 
 # Clear Turbo cache and run the full build
@@ -64,7 +64,7 @@ ENV TURBO_FORCE=true
 
 # Build frontend with exclusions for packages that aren't needed and have issues
 # Explicitly exclude ai-arcade so TheNewFuse production is decoupled from Arcade failures
-RUN npm run build -- --filter=!ai-arcade || pnpm run build -- --filter=!ai-arcade
+RUN npm run build:frontend
 
 # Normalize dist directory location
 # If running from monorepo root, build output is in apps/frontend/dist

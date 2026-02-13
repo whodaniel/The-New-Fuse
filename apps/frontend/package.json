@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3002",
     "build": "vite build --mode production",
+    "build:frontend": "npm run build",
     "build:deps": "pnpm --filter @the-new-fuse/ap2-protocol build && pnpm --filter @the-new-fuse/a2a-core build && pnpm --filter @the-new-fuse/a2a-react build && pnpm --filter @the-new-fuse/feature-suggestions build && pnpm --filter @the-new-fuse/features build && pnpm --filter @the-new-fuse/port-management build && pnpm --filter @the-new-fuse/prompt-templating build && pnpm --filter @the-new-fuse/types build && pnpm --filter @the-new-fuse/ui-consolidated build",
     "build:watch": "vite build --watch",
     "build:analyze": "vite build && npx vite-bundle-analyzer dist",
