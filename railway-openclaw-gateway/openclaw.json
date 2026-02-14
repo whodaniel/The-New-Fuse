@@ -1,7 +1,7 @@
 {
   "gateway": {
     "port": 19001,
-    "bind": "lan",
+    "mode": "local",
     "auth": {
       "token": "${OPENCLAW_GATEWAY_TOKEN}"
     },

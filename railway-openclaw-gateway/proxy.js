@@ -77,12 +77,8 @@ function startGateway() {
     'gateway',
     'run',
     '--allow-unconfigured',
-    '--bind',
-    'lan',
     '--port',
     String(TARGET_PORT),
-    '--token',
-    String(process.env.OPENCLAW_GATEWAY_TOKEN),
   ];
 
   const child = spawn('openclaw', args, {
