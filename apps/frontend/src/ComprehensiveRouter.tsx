@@ -29,6 +29,7 @@ const KnowledgeHub = lazy(() => import('./pages/KnowledgeHub'));
 const ExecutionConsole = lazy(() => import('./pages/workflow-pages/ExecutionConsole'));
 const AgentIdentity = lazy(() => import('./pages/Agents/AgentIdentity'));
 const SystemObservatory = lazy(() => import('./pages/SystemObservatory'));
+const TNFCommandCenter = lazy(() => import('./pages/TNFCommandCenter'));
 const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
 const AgentsPage = lazy(() => import('./pages/AgentsRevolution')); // REVOLUTIONARY NEW DESIGN
 const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
@@ -316,6 +317,7 @@ export default function ComprehensiveRouter() {
             <Route path="/agents/:id" element={<AgentDetail />} />
             <Route path="/agents/:id/identity" element={<AgentIdentity />} />
             <Route path="/observatory" element={<SystemObservatory />} />
+            <Route path="/command-center" element={<TNFCommandCenter />} />
             <Route
               path="/agents/onboard"
               element={

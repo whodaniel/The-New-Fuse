@@ -1,49 +1,59 @@
 /**
  * GitHub Copilot Integration Controller
- * 
+ *
  * REST API controller for managing GitHub Copilot VS Code integration
  * Provides comprehensive endpoints for chat participants, commands, and multi-tenant management
  */
 
 import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
+  BadRequestException,
   Body,
-  Param,
-  Query,
+  Controller,
+  Delete,
+  Get,
+  Headers,
   HttpCode,
   HttpStatus,
-  Logger,
-  BadRequestException,
-  NotFoundException,
   InternalServerErrorException,
-  UseGuards,
+  Logger,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+  Query,
+  Res,
   StreamableFile,
-  Headers,
-  Res
+  UseGuards
 } from '@nestjs/common';
-import { 
-  ApiTags, 
-  ApiOperation, 
-  ApiResponse, 
-  ApiBody, 
-  ApiParam, 
-  ApiQuery,
+import {
   ApiBearerAuth,
-  ApiHeader
+  ApiBody,
+  ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags
 } from '@nestjs/swagger';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Response } from 'express';
-import { CopilotIntegrationService } from '../services/CopilotIntegrationService';
-import { AuthGuard } from '../auth/guards/auth.guard';
-import { TenantGuard } from '@the-new-fuse/core/guards/tenant.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
+
+// User roles enum - aligned with Drizzle schema
+enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  AGENCY_OWNER = 'AGENCY_OWNER',
+  AGENCY_ADMIN = 'AGENCY_ADMIN',
+  AGENCY_MANAGER = 'AGENCY_MANAGER',
+  AGENT_OPERATOR = 'AGENT_OPERATOR',
+  TENANT_ADMIN = 'TENANT_ADMIN',
+}
+
 import { Roles } from '@the-new-fuse/core/decorators/roles.decorator';
+import { TenantGuard } from '@the-new-fuse/core/guards/tenant.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { Tenant } from '../decorators/tenant.decorator';
-import { UserRole } from '@prisma/client';
+import { CopilotIntegrationService } from '../services/CopilotIntegrationService';
 
 // DTOs for API documentation and validation
 export class CreateChatParticipantDto {
@@ -212,13 +222,13 @@ export class CopilotIntegrationController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.TENANT_ADMIN)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Initialize Copilot integration service',
     description: 'Initialize the service with configuration options'
   })
   @ApiBody({ type: IntegrationConfigDto })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Service initialized successfully',
     schema: {
       type: 'object',
@@ -236,15 +246,15 @@ export class CopilotIntegrationController {
     try {
       await this.copilotService.initialize(config);
       const serviceStatus = await this.copilotService.getServiceStatus(tenantId);
-      
+
       this.eventEmitter.emit('copilot.service.initialized', {
         tenantId,
         config,
         timestamp: new Date()
       });
 
-      return { 
-        success: true, 
+      return {
+        success: true,
         message: 'Copilot integration service initialized successfully',
         serviceStatus
       };
@@ -258,12 +268,12 @@ export class CopilotIntegrationController {
    * Get service status and health
    */
   @Get('status')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get service status',
     description: 'Retrieve current service status, health, and metrics'
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Service status retrieved successfully'
   })
   async getStatus(@Tenant() tenantId: string) {
@@ -281,13 +291,13 @@ export class CopilotIntegrationController {
   @Post('participants')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.TENANT_ADMIN, UserRole.USER)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Create chat participant',
     description: 'Register a new VS Code chat participant'
   })
   @ApiBody({ type: CreateChatParticipantDto })
-  @ApiResponse({ 
-    status: 201, 
+  @ApiResponse({
+    status: 201,
     description: 'Chat participant created successfully'
   })
   async createChatParticipant(
@@ -296,10 +306,10 @@ export class CopilotIntegrationController {
   ) {
     try {
       const result = await this.copilotService.registerChatParticipant(
-        tenantId, 
+        tenantId,
         participantDto
       );
-      
+
       this.eventEmitter.emit('copilot.participant.created', {
         tenantId,
         participantId: participantDto.id,
@@ -317,24 +327,24 @@ export class CopilotIntegrationController {
    * Get all chat participants for tenant
    */
   @Get('participants')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get chat participants',
     description: 'Retrieve all registered chat participants for the tenant'
   })
-  @ApiQuery({ 
-    name: 'active', 
-    required: false, 
+  @ApiQuery({
+    name: 'active',
+    required: false,
     type: Boolean,
     description: 'Filter by active status'
   })
-  @ApiQuery({ 
-    name: 'category', 
-    required: false, 
+  @ApiQuery({
+    name: 'category',
+    required: false,
     type: String,
     description: 'Filter by category'
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Chat participants retrieved successfully'
   })
   async getChatParticipants(
@@ -357,13 +367,13 @@ export class CopilotIntegrationController {
    * Get specific chat participant
    */
   @Get('participants/:participantId')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get chat participant details',
     description: 'Retrieve detailed information about a specific chat participant'
   })
   @ApiParam({ name: 'participantId', description: 'Chat participant ID' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Chat participant details retrieved'
   })
   async getChatParticipant(
@@ -372,14 +382,14 @@ export class CopilotIntegrationController {
   ) {
     try {
       const participant = await this.copilotService.getChatParticipant(
-        tenantId, 
+        tenantId,
         participantId
       );
-      
+
       if (!participant) {
         throw new NotFoundException('Chat participant not found');
       }
-      
+
       return participant;
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
@@ -394,14 +404,14 @@ export class CopilotIntegrationController {
   @Put('participants/:participantId')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.TENANT_ADMIN, UserRole.USER)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Update chat participant',
     description: 'Update configuration of an existing chat participant'
   })
   @ApiParam({ name: 'participantId', description: 'Chat participant ID' })
   @ApiBody({ type: UpdateChatParticipantDto })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Chat participant updated successfully'
   })
   async updateChatParticipant(
@@ -415,7 +425,7 @@ export class CopilotIntegrationController {
         participantId,
         updateDto
       );
-      
+
       this.eventEmitter.emit('copilot.participant.updated', {
         tenantId,
         participantId,
@@ -435,13 +445,13 @@ export class CopilotIntegrationController {
   @Delete('participants/:participantId')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.TENANT_ADMIN)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Delete chat participant',
     description: 'Remove a chat participant and unregister from VS Code'
   })
   @ApiParam({ name: 'participantId', description: 'Chat participant ID' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Chat participant deleted successfully'
   })
   async deleteChatParticipant(
@@ -450,16 +460,16 @@ export class CopilotIntegrationController {
   ) {
     try {
       await this.copilotService.unregisterChatParticipant(tenantId, participantId);
-      
+
       this.eventEmitter.emit('copilot.participant.deleted', {
         tenantId,
         participantId,
         timestamp: new Date()
       });
 
-      return { 
-        success: true, 
-        message: 'Chat participant deleted successfully' 
+      return {
+        success: true,
+        message: 'Chat participant deleted successfully'
       };
     } catch (error) {
       this.logger.error('Failed to delete chat participant', error);
@@ -471,19 +481,19 @@ export class CopilotIntegrationController {
    * Handle chat request to participant
    */
   @Post('participants/:participantId/chat')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Send chat request',
     description: 'Send a chat request to a specific participant'
   })
   @ApiParam({ name: 'participantId', description: 'Chat participant ID' })
   @ApiBody({ type: ChatRequestDto })
-  @ApiHeader({ 
-    name: 'Accept', 
+  @ApiHeader({
+    name: 'Accept',
     description: 'Use text/event-stream for streaming responses',
-    required: false 
+    required: false
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Chat response generated',
     content: {
       'application/json': {
@@ -503,12 +513,12 @@ export class CopilotIntegrationController {
   ) {
     try {
       const isStreaming = accept?.includes('text/event-stream');
-      
+
       if (isStreaming) {
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
-        
+
         return await this.copilotService.handleChatRequestStream(
           tenantId,
           participantId,
@@ -532,13 +542,13 @@ export class CopilotIntegrationController {
    * Get available commands for participant
    */
   @Get('participants/:participantId/commands')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get participant commands',
     description: 'Retrieve available commands for a chat participant'
   })
   @ApiParam({ name: 'participantId', description: 'Chat participant ID' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Commands retrieved successfully'
   })
   async getParticipantCommands(
@@ -547,7 +557,7 @@ export class CopilotIntegrationController {
   ) {
     try {
       return await this.copilotService.getParticipantCommands(
-        tenantId, 
+        tenantId,
         participantId
       );
     } catch (error) {
@@ -560,24 +570,24 @@ export class CopilotIntegrationController {
    * Get agent templates
    */
   @Get('templates')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get agent templates',
     description: 'Retrieve all available agent templates'
   })
-  @ApiQuery({ 
-    name: 'category', 
-    required: false, 
+  @ApiQuery({
+    name: 'category',
+    required: false,
     type: String,
     description: 'Filter by category'
   })
-  @ApiQuery({ 
-    name: 'tags', 
-    required: false, 
+  @ApiQuery({
+    name: 'tags',
+    required: false,
     type: String,
     description: 'Filter by tags (comma-separated)'
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Agent templates retrieved successfully'
   })
   async getAgentTemplates(
@@ -602,13 +612,13 @@ export class CopilotIntegrationController {
   @Post('templates')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.TENANT_ADMIN)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Create agent template',
     description: 'Create a new reusable agent template'
   })
   @ApiBody({ type: CreateAgentTemplateDto })
-  @ApiResponse({ 
-    status: 201, 
+  @ApiResponse({
+    status: 201,
     description: 'Agent template created successfully'
   })
   async createAgentTemplate(
@@ -617,7 +627,7 @@ export class CopilotIntegrationController {
   ) {
     try {
       const result = await this.copilotService.createAgentTemplate(templateDto);
-      
+
       this.eventEmitter.emit('copilot.template.created', {
         tenantId,
         templateId: templateDto.id,
@@ -637,14 +647,14 @@ export class CopilotIntegrationController {
   @Put('templates/:templateId')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.TENANT_ADMIN)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Update agent template',
     description: 'Update an existing agent template'
   })
   @ApiParam({ name: 'templateId', description: 'Agent template ID' })
   @ApiBody({ type: UpdateAgentTemplateDto })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Agent template updated successfully'
   })
   async updateAgentTemplate(
@@ -657,7 +667,7 @@ export class CopilotIntegrationController {
         templateId,
         updateDto
       );
-      
+
       this.eventEmitter.emit('copilot.template.updated', {
         tenantId,
         templateId,
@@ -677,12 +687,12 @@ export class CopilotIntegrationController {
   @Post('templates/:templateId/participants')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.TENANT_ADMIN, UserRole.USER)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Create participant from template',
     description: 'Create a new chat participant using an agent template'
   })
   @ApiParam({ name: 'templateId', description: 'Agent template ID' })
-  @ApiBody({ 
+  @ApiBody({
     schema: {
       type: 'object',
       properties: {
@@ -691,8 +701,8 @@ export class CopilotIntegrationController {
       }
     }
   })
-  @ApiResponse({ 
-    status: 201, 
+  @ApiResponse({
+    status: 201,
     description: 'Participant created from template successfully'
   })
   async createParticipantFromTemplate(
@@ -707,7 +717,7 @@ export class CopilotIntegrationController {
         body.participantId,
         body.customizations
       );
-      
+
       this.eventEmitter.emit('copilot.participant.created.from.template', {
         tenantId,
         templateId,
@@ -728,13 +738,13 @@ export class CopilotIntegrationController {
   @Post('participants/batch')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.TENANT_ADMIN)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Batch operations on participants',
     description: 'Perform batch operations on multiple chat participants'
   })
   @ApiBody({ type: BatchOperationDto })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Batch operation completed successfully'
   })
   async batchParticipantOperations(
@@ -746,7 +756,7 @@ export class CopilotIntegrationController {
         tenantId,
         operation
       );
-      
+
       this.eventEmitter.emit('copilot.participants.batch.operation', {
         tenantId,
         operation: operation.action,
@@ -767,18 +777,18 @@ export class CopilotIntegrationController {
   @Get('metrics')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.TENANT_ADMIN)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get integration metrics',
     description: 'Retrieve usage metrics and analytics for the integration'
   })
-  @ApiQuery({ 
-    name: 'period', 
-    required: false, 
+  @ApiQuery({
+    name: 'period',
+    required: false,
     enum: ['hour', 'day', 'week', 'month'],
     description: 'Time period for metrics'
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Metrics retrieved successfully'
   })
   async getMetrics(
@@ -799,12 +809,12 @@ export class CopilotIntegrationController {
   @Get('export')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.TENANT_ADMIN)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Export configuration',
     description: 'Export tenant configuration as JSON file'
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Configuration exported successfully',
     content: {
       'application/json': {
@@ -834,25 +844,25 @@ export class CopilotIntegrationController {
   @Post('import')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.TENANT_ADMIN)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Import configuration',
     description: 'Import tenant configuration from JSON data'
   })
-  @ApiBody({ 
+  @ApiBody({
     schema: {
       type: 'object',
       properties: {
         configuration: { type: 'object' },
-        mergeMode: { 
-          type: 'string', 
+        mergeMode: {
+          type: 'string',
           enum: ['replace', 'merge'],
           default: 'merge'
         }
       }
     }
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Configuration imported successfully'
   })
   async importConfiguration(
@@ -865,7 +875,7 @@ export class CopilotIntegrationController {
         body.configuration,
         body.mergeMode || 'merge'
       );
-      
+
       this.eventEmitter.emit('copilot.configuration.imported', {
         tenantId,
         mergeMode: body.mergeMode,
@@ -883,12 +893,12 @@ export class CopilotIntegrationController {
    * WebSocket connection info
    */
   @Get('websocket/info')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get WebSocket connection info',
     description: 'Retrieve WebSocket connection details for real-time updates'
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'WebSocket info retrieved successfully'
   })
   async getWebSocketInfo(@Tenant() tenantId: string) {

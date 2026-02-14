@@ -7,6 +7,7 @@ type Shell = import('electron').Shell;
 import { join } from 'path';
 import { HybridBackend } from './HybridBackend';
 import { getSecureStorage, SecureStorageService } from './SecureStorageService';
+import { CopilotLoop } from './CopilotLoop';
 
 const isDev = process.env.NODE_ENV === 'development' || process.env.ELECTRON_DEV === '1';
 const browserHubEntry = process.env.BROWSER_HUB_ENTRY || 'unified-hub.html';
@@ -15,6 +16,7 @@ class ElectronMain {
   private mainWindow: BrowserWindow | null = null;
   private hybridBackend: HybridBackend | null = null;
   private secureStorage: SecureStorageService | null = null;
+  private copilotLoop: CopilotLoop = new CopilotLoop();
   private views: Map<string, BrowserView> = new Map();
   private activeViewId: string | null = null;
 
@@ -265,6 +267,27 @@ class ElectronMain {
 
     ipcMain.handle('tnf:status', async () => {
       return this.hybridBackend!.getTNFRelayStatus();
+    });
+
+    // Copilot Loop commands
+    ipcMain.handle('copilot:start', async (_: any, config: any) => {
+        if (config) this.copilotLoop.setConfig(config);
+        this.copilotLoop.start();
+        return { success: true, active: true };
+    });
+
+    ipcMain.handle('copilot:stop', async () => {
+        this.copilotLoop.stop();
+        return { success: true, active: false };
+    });
+
+    ipcMain.handle('copilot:status', async () => {
+        return { active: this.copilotLoop.isActive() };
+    });
+
+    ipcMain.handle('copilot:configure', async (_: any, config: any) => {
+        this.copilotLoop.setConfig(config);
+        return { success: true };
     });
 
     // MCP commands

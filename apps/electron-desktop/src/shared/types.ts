@@ -202,41 +202,55 @@ export interface IpcResponse<T = any> {
   error?: string
 }
 
+// Copilot Configuration
+export interface CopilotConfig {
+    intervalMs?: number
+    directives?: string
+    apiEndpoint?: string
+    model?: string
+}
+
 // Window API types (exposed through preload)
 export interface WindowAPI {
   // TNF Relay
   tnfConnect: (config: TNFRelayConfig) => Promise<IpcResponse<boolean>>
   tnfDisconnect: () => Promise<IpcResponse<boolean>>
   tnfStatus: () => Promise<IpcResponse<TNFRelayStatus>>
-  
+
   // MCP
   mcpConnect: (config: MCPConfig) => Promise<IpcResponse<boolean>>
   mcpDisconnect: () => Promise<IpcResponse<boolean>>
   mcpStatus: () => Promise<IpcResponse<MCPStatus>>
-  
+
   // Port monitoring
   portsAdd: (port: number) => Promise<IpcResponse<boolean>>
   portsRemove: (port: number) => Promise<IpcResponse<boolean>>
   portsList: () => Promise<IpcResponse<number[]>>
   portsStatus: () => Promise<IpcResponse<PortStatus[]>>
-  
+
   // Native commands
   nativeExecute: (command: string, args?: string[]) => Promise<IpcResponse<NativeCommandResult>>
-  
+
   // Chrome extension
   chromeElementDetected: (elementData: ElementInfo) => Promise<IpcResponse<boolean>>
   chromeSendMessage: (message: any) => Promise<IpcResponse<any>>
-  
+
   // System
   systemStatus: () => Promise<IpcResponse<SystemStatus>>
-  
+
   // Chat
   chatSend: (message: string) => Promise<IpcResponse<ChatMessage>>
   chatHistory: () => Promise<IpcResponse<ChatMessage[]>>
-  
+
   // Shell integration
   openExternal: (url: string) => Promise<IpcResponse<boolean>>
-  
+
+  // Copilot Integration
+  copilotStart: (config?: CopilotConfig) => Promise<IpcResponse<{ active: boolean }>>
+  copilotStop: () => Promise<IpcResponse<{ active: boolean }>>
+  copilotStatus: () => Promise<IpcResponse<{ active: boolean }>>
+  copilotConfigure: (config: CopilotConfig) => Promise<IpcResponse<boolean>>
+
   // Secure Storage / API Key Management
   secureStorageSave: (provider: string, apiKey: string, customName?: string, metadata?: Record<string, string>) => Promise<SecureStorageSaveResponse>
   secureStorageGet: (provider: string) => Promise<SecureStorageGetResponse>
@@ -245,7 +259,7 @@ export interface WindowAPI {
   secureStorageHas: (provider: string) => Promise<boolean>
   secureStorageStatus: () => Promise<SecureStorageStatusResponse>
   secureStorageProviders: () => Promise<Record<string, AIProviderInfo>>
-  
+
   // Events
   onSystemEvent: (callback: (event: string, data: any) => void) => void
   offSystemEvent: (callback: (event: string, data: any) => void) => void
