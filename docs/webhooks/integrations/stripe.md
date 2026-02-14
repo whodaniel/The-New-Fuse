@@ -1,6 +1,7 @@
 # Stripe Integration Setup Guide
 
-This guide walks you through setting up Stripe webhooks with The New Fuse platform to receive real-time payment events and automate business processes.
+This guide walks you through setting up Stripe webhooks with The New Fuse
+platform to receive real-time payment events and automate business processes.
 
 ## 📋 Prerequisites
 
@@ -81,7 +82,7 @@ Add to your `.env` file:
 ```bash
 # Stripe Configuration
 STRIPE_WEBHOOK_SECRET=whsec_your_stripe_webhook_secret_here
-STRIPE_API_KEY=sk_live_your_stripe_api_key  # Optional: for API calls back to Stripe
+STRIPE_API_KEY=<STRIPE_API_KEY>  # Optional: for API calls back to Stripe
 ```
 
 #### Register Webhook Configuration
@@ -150,29 +151,29 @@ Check The New Fuse dashboard to verify events are being received and processed:
 
 ### Payment Events
 
-| Stripe Event | Business Event Type | Description |
-|--------------|-------------------|-------------|
-| `payment_intent.succeeded` | `payment_received` | Successful payment |
-| `payment_intent.payment_failed` | `payment_failed` | Failed payment attempt |
-| `charge.succeeded` | `payment_received` | Successful charge |
-| `charge.failed` | `payment_failed` | Failed charge |
+| Stripe Event                    | Business Event Type | Description            |
+| ------------------------------- | ------------------- | ---------------------- |
+| `payment_intent.succeeded`      | `payment_received`  | Successful payment     |
+| `payment_intent.payment_failed` | `payment_failed`    | Failed payment attempt |
+| `charge.succeeded`              | `payment_received`  | Successful charge      |
+| `charge.failed`                 | `payment_failed`    | Failed charge          |
 
 ### Customer Events
 
-| Stripe Event | Business Event Type | Description |
-|--------------|-------------------|-------------|
-| `customer.created` | `customer_created` | New customer registered |
-| `customer.updated` | `customer_updated` | Customer information changed |
-| `customer.subscription.created` | `subscription_changed` | New subscription |
-| `customer.subscription.updated` | `subscription_changed` | Subscription modified |
+| Stripe Event                    | Business Event Type    | Description                  |
+| ------------------------------- | ---------------------- | ---------------------------- |
+| `customer.created`              | `customer_created`     | New customer registered      |
+| `customer.updated`              | `customer_updated`     | Customer information changed |
+| `customer.subscription.created` | `subscription_changed` | New subscription             |
+| `customer.subscription.updated` | `subscription_changed` | Subscription modified        |
 
 ### Invoice Events
 
-| Stripe Event | Business Event Type | Description |
-|--------------|-------------------|-------------|
-| `invoice.created` | `invoice_generated` | Invoice created |
-| `invoice.payment_succeeded` | `payment_received` | Invoice paid |
-| `invoice.payment_failed` | `payment_failed` | Invoice payment failed |
+| Stripe Event                | Business Event Type | Description            |
+| --------------------------- | ------------------- | ---------------------- |
+| `invoice.created`           | `invoice_generated` | Invoice created        |
+| `invoice.payment_succeeded` | `payment_received`  | Invoice paid           |
+| `invoice.payment_failed`    | `payment_failed`    | Invoice payment failed |
 
 ## 🔍 Event Payload Examples
 
@@ -246,7 +247,8 @@ Check The New Fuse dashboard to verify events are being received and processed:
 
 ### Webhook Signature Verification
 
-The New Fuse automatically verifies Stripe webhook signatures using your webhook secret. This ensures events are legitimate.
+The New Fuse automatically verifies Stripe webhook signatures using your webhook
+secret. This ensures events are legitimate.
 
 ### IP Allowlisting (Optional)
 
@@ -273,7 +275,8 @@ Regularly rotate your webhook secrets and update The New Fuse configuration.
 Error: Invalid webhook signature
 ```
 
-**Solution:** Verify the webhook secret is correctly configured in your environment variables.
+**Solution:** Verify the webhook secret is correctly configured in your
+environment variables.
 
 #### 2. Events Not Appearing in Dashboard
 
@@ -283,7 +286,8 @@ Error: Invalid webhook signature
 
 #### 3. Duplicate Events
 
-Stripe may send duplicate events. The New Fuse handles this automatically using event IDs.
+Stripe may send duplicate events. The New Fuse handles this automatically using
+event IDs.
 
 ### Debug Mode
 
@@ -345,8 +349,8 @@ const customEventMapping = {
   'payment_intent.succeeded': {
     businessEventType: 'revenue_generated',
     priority: 'high',
-    automation: ['update_crm', 'send_receipt', 'update_analytics']
-  }
+    automation: ['update_crm', 'send_receipt', 'update_analytics'],
+  },
 };
 ```
 
@@ -366,4 +370,5 @@ const shouldProcess = (event) => {
 
 ---
 
-*For additional support, contact The New Fuse support team or refer to the [troubleshooting guide](../development/troubleshooting.md).*
+_For additional support, contact The New Fuse support team or refer to the
+[troubleshooting guide](../development/troubleshooting.md)._

@@ -40,6 +40,7 @@ class SimpleChatBridge {
     'perplexity.ai',
     'poe.com',
     'aistudio.google.com',
+    'openclaw-cloud-production-934c.up.railway.app', // OpenClaw cloud control UI
     'localhost:3000', // Local dev with chat
     'localhost:3001', // Local backend
   ];
@@ -83,6 +84,11 @@ class SimpleChatBridge {
       'input[placeholder="Type a message..."]',
       'input[placeholder="Type a message..."][type="text"]',
 
+      // OpenClaw Chat UI
+      '.chat-compose textarea',
+      'textarea[placeholder*="Message" i]',
+      'textarea[placeholder*="start chatting" i]',
+
       // Gemini 2025+ patterns (highest priority - latest interface)
       'rich-textarea p[contenteditable="true"]',
       'rich-textarea p[data-placeholder]',
@@ -124,6 +130,11 @@ class SimpleChatBridge {
       // The New Fuse (Custom App) - High Priority
       'button:has(svg path[d="M5 12h14M12 5l7 7-7 7"])', // Exact path match
       'button:has(svg[stroke="currentColor"])', // Generic SVG button match for our app
+
+      // OpenClaw Chat UI
+      '.chat-compose button.primary',
+      '.chat-compose .btn.primary',
+      '.chat-compose button[type="submit"]',
 
       // Gemini-specific - EXPANDED
       'button[aria-label*="Send" i]',
@@ -415,31 +426,75 @@ class SimpleChatBridge {
    * Count model responses (for detecting new responses)
    */
   countModelResponses(): number {
-    return document.querySelectorAll('model-response').length;
+    // Primary path for Gemini-style UIs
+    const modelResponses = document.querySelectorAll('model-response').length;
+    if (modelResponses > 0) return modelResponses;
+
+    // OpenClaw chat UI fallback
+    const openClawThread = document.querySelector('.chat-thread');
+    if (openClawThread) {
+      const entries = Array.from(openClawThread.querySelectorAll(':scope > *')).filter((el) => {
+        const text = (el.textContent || '').trim();
+        return text.length > 0;
+      });
+      return entries.length;
+    }
+
+    // Generic assistant-like message fallback
+    const generic = document.querySelectorAll(
+      '[data-message-author-role="assistant"], [class*="assistant-message"], [class*="model-response"]'
+    ).length;
+    return generic;
   }
 
   /**
    * Get latest response text
    */
   getLatestResponse(): string | null {
+    const cleanText = (node: Element | null): string | null => {
+      if (!node) return null;
+      const clone = node.cloneNode(true) as HTMLElement;
+      clone
+        .querySelectorAll('button, [role="button"], .chip, [class*="action"], .chat-compose')
+        .forEach((el) => el.remove());
+      const text = (clone.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!text) return null;
+      // Avoid false positives like lone branding emoji or tiny fragments
+      if (text.length < 8) return null;
+      return text;
+    };
+
+    // Primary path for Gemini-style UIs
     const responses = document.querySelectorAll('model-response');
-    if (responses.length === 0) return null;
-
-    const lastResponse = responses[responses.length - 1];
-    const markdown = lastResponse.querySelector('.markdown');
-
-    if (!markdown) {
-      return (lastResponse.textContent || '').trim() || null;
+    if (responses.length > 0) {
+      const lastResponse = responses[responses.length - 1];
+      const markdown = lastResponse.querySelector('.markdown');
+      const txt = cleanText(markdown || lastResponse);
+      if (txt) return txt;
     }
 
-    // Clone and clean up the markdown content
-    const clone = markdown.cloneNode(true) as HTMLElement;
-    clone
-      .querySelectorAll('button, [role="button"], .chip, [class*="action"]')
-      .forEach((el) => el.remove());
+    // OpenClaw chat UI fallback: only inspect chat-thread scoped entries
+    const openClawThread = document.querySelector('.chat-thread');
+    if (openClawThread) {
+      const candidates = Array.from(openClawThread.querySelectorAll(':scope > *'));
+      for (let i = candidates.length - 1; i >= 0; i--) {
+        const text = cleanText(candidates[i]);
+        if (!text) continue;
+        // Skip obvious non-reply/system status text
+        const low = text.toLowerCase();
+        if (low.includes('disconnected from gateway')) continue;
+        if (low === 'openclaw' || low === '🦞') continue;
+        return text;
+      }
+    }
 
-    const text = (clone.textContent || '').trim();
-    return text.length > 0 ? text : null;
+    // Narrow generic fallback to assistant-role only
+    const generic = document.querySelectorAll('[data-message-author-role="assistant"]');
+    if (generic.length > 0) {
+      return cleanText(generic[generic.length - 1]);
+    }
+
+    return null;
   }
 
   /**
@@ -660,14 +715,17 @@ class SimpleChatBridge {
     this.isWaitingForResponse = true;
     let stableCount = 0;
     let lastContent = '';
-    let lastResponseCount = responsesBefore;
+    const initialContent = this.getLatestResponse() || '';
 
     this.responseCheckInterval = window.setInterval(() => {
       const currentResponseCount = this.countModelResponses();
+      const content = this.getLatestResponse();
 
-      // Check if new response appeared
-      if (currentResponseCount > responsesBefore) {
-        const content = this.getLatestResponse();
+      // Check if a new response appeared OR existing latest response content changed
+      const hasNewResponse = currentResponseCount > responsesBefore;
+      const hasUpdatedLatest = !!content && content !== initialContent;
+
+      if (hasNewResponse || hasUpdatedLatest) {
         const streaming = this.isStreaming();
 
         // Also check for image/media content in the latest response
@@ -709,8 +767,6 @@ class SimpleChatBridge {
             }
           }
         }
-
-        lastResponseCount = currentResponseCount;
       }
     }, 1000);
 

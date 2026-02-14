@@ -23,7 +23,7 @@
     "@the-new-fuse/ap2-protocol": "workspace:^",
     "@the-new-fuse/mcp-core": "workspace:^",
     "@the-new-fuse/utils": "workspace:^",
-    "axios": "^1.6.2",
+    "axios": "^1.13.5",
     "cheerio": "^1.0.0-rc.12",
     "mime-types": "^2.1.35",
     "node-fetch": "^3.3.2",

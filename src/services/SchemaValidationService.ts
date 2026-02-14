@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { PrismaService } from '../prisma/prisma.service.js';
+
+import { DrizzleAgentRepository } from '@the-new-fuse/database';
+
 import { Logger } from '../common/logger.service.js';
 
 const workflowSchema = z.object({
@@ -8,19 +10,21 @@ const workflowSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   version: z.string(),
-  tasks: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-    type: z.string(),
-    configuration: z.object({
-      requirements: z.object({
-        capabilities: z.array(z.string())
+  tasks: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      type: z.string(),
+      configuration: z.object({
+        requirements: z.object({
+          capabilities: z.array(z.string()),
+        }),
+        parameters: z.record(z.string(), z.unknown()).optional(),
       }),
-      parameters: z.record(z.unknown()).optional()
-    }),
-    dependencies: z.array(z.string()).optional()
-  })),
-  metadata: z.record(z.unknown()).optional()
+      dependencies: z.array(z.string()).optional(),
+    })
+  ),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 const agentSchema = z.object({
@@ -29,26 +33,26 @@ const agentSchema = z.object({
   type: z.string(),
   capabilities: z.array(z.string()),
   status: z.enum(['active', 'inactive', 'busy']),
-  metadata: z.record(z.unknown()).optional()
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 @Injectable()
 export class SchemaValidationService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly agentRepository: DrizzleAgentRepository,
     private readonly logger: Logger
   ) {}
 
-  async validateWorkflow(workflow: unknown): Promise<{ 
-    valid: boolean; 
-    errors?: string[] 
+  async validateWorkflow(workflow: unknown): Promise<{
+    valid: boolean;
+    errors?: string[];
   }> {
     try {
       const result = workflowSchema.safeParse(workflow);
       if (!result.success) {
         return {
           valid: false,
-          errors: result.error.errors.map(e => e.message)
+          errors: result.error.issues.map((e) => e.message),
         };
       }
 
@@ -65,25 +69,25 @@ export class SchemaValidationService {
       }
 
       return { valid: true };
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Error validating workflow:', error);
-      return { 
-        valid: false, 
-        errors: [error.message] 
+      return {
+        valid: false,
+        errors: [(error as Error).message || 'Unknown error'],
       };
     }
   }
 
   async validateAgent(agent: unknown): Promise<{
     valid: boolean;
-    errors?: string[]
+    errors?: string[];
   }> {
     try {
       const result = agentSchema.safeParse(agent);
       if (!result.success) {
         return {
           valid: false,
-          errors: result.error.errors.map(e => e.message)
+          errors: result.error.issues.map((e) => e.message),
         };
       }
 
@@ -94,18 +98,20 @@ export class SchemaValidationService {
       }
 
       return { valid: true };
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Error validating agent:', error);
       return {
         valid: false,
-        errors: [error.message]
+        errors: [(error as Error).message || 'Unknown error'],
       };
     }
   }
 
-  private async validateTaskDependencies(workflow: z.infer<typeof workflowSchema>): Promise<string[]> {
+  private async validateTaskDependencies(
+    workflow: z.infer<typeof workflowSchema>
+  ): Promise<string[]> {
     const errors: string[] = [];
-    const taskIds = new Set(workflow.tasks.map(t => t.id));
+    const taskIds = new Set(workflow.tasks.map((t) => t.id));
 
     for (const task of workflow.tasks) {
       if (task.dependencies) {
@@ -121,37 +127,34 @@ export class SchemaValidationService {
   }
 
   private async validateCapabilities(workflow: z.infer<typeof workflowSchema>): Promise<string[]> {
-    const errors: string[] = [];
-    const existingCapabilities = await this.prisma.capability.findMany({
-      select: { name: true }
-    });
-    const capabilitySet = new Set(existingCapabilities.map(c => c.name));
-
+    const requiredCapabilities = new Set<string>();
     for (const task of workflow.tasks) {
       for (const capability of task.configuration.requirements.capabilities) {
-        if (!capabilitySet.has(capability)) {
-          errors.push(`Task ${task.id} requires unknown capability: ${capability}`);
-        }
+        requiredCapabilities.add(capability);
       }
     }
 
-    return errors;
+    if (requiredCapabilities.size === 0) {
+      return [];
+    }
+
+    const missingCapabilities = await this.agentRepository.verifyCapabilities(
+      Array.from(requiredCapabilities)
+    );
+
+    return missingCapabilities.map(
+      (cap: string) => `Required capability not found in registry: ${cap}`
+    );
   }
 
   private async validateAgentCapabilities(agent: z.infer<typeof agentSchema>): Promise<string[]> {
-    const errors: string[] = [];
-    const existingCapabilities = await this.prisma.capability.findMany({
-      select: { name: true }
-    });
-    const capabilitySet = new Set(existingCapabilities.map(c => c.name));
-
-    for (const capability of agent.capabilities) {
-      if (!capabilitySet.has(capability)) {
-        errors.push(`Agent ${agent.id} claims unknown capability: ${capability}`);
-      }
+    if (!agent.capabilities.length) {
+      return [];
     }
 
-    return errors;
+    const missingCapabilities = await this.agentRepository.verifyCapabilities(agent.capabilities);
+
+    return missingCapabilities.map((cap: string) => `Agent claims unknown capability: ${cap}`);
   }
 
   async migrateWorkflow(workflow: unknown): Promise<{
@@ -164,7 +167,7 @@ export class SchemaValidationService {
       if (!validation.valid) {
         return {
           success: false,
-          errors: validation.errors
+          errors: validation.errors,
         };
       }
 
@@ -173,13 +176,13 @@ export class SchemaValidationService {
 
       return {
         success: true,
-        migratedWorkflow
+        migratedWorkflow,
       };
     } catch (error) {
       this.logger.error('Error migrating workflow:', error);
       return {
         success: false,
-        errors: [error.message]
+        errors: [(error as Error).message || 'Unknown error'],
       };
     }
   }
@@ -193,8 +196,8 @@ export class SchemaValidationService {
       metadata: {
         ...workflow.metadata,
         migrated: true,
-        migrationTimestamp: Date.now()
-      }
+        migrationTimestamp: Date.now(),
+      },
     };
   }
 }

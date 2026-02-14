@@ -1,11 +1,11 @@
+import { Body, Controller, Delete, Get, Param, Post, Put, Res, UseGuards } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { AgentDto } from '../modules/controllers/dto/agent.dto'; // Updated import path
+import { CurrentUser } from '../modules/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
 import { AgentService } from '../services/agent.service';
 import { toError } from '../utils/error';
-import { CurrentUser } from '../modules/decorators/current-user.decorator';
-import { UseGuards, Get, Post, Put, Delete, Param, Body, Controller } from '@nestjs/common';
-import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import { AgentDto } from '../modules/controllers/dto/agent.dto'; // Updated import path
 
 interface User {
   id: string;
@@ -16,9 +16,7 @@ interface User {
 @Controller('agents')
 @UseGuards(JwtAuthGuard)
 export class AgentController {
-  constructor(
-    private readonly agentService: AgentService,
-  ) {}
+  constructor(private readonly agentService: AgentService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all agents for authenticated user' })
@@ -63,19 +61,23 @@ export class AgentController {
     } catch (error) {
       const err = toError(error);
       if (err.message?.includes('already exists')) {
-         return res.status(409).json({ error: err.message });
+        return res.status(409).json({ error: err.message });
       }
       return res.status(400).json({ error: err.message });
     }
   }
-
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an agent' })
   @ApiBody({ type: AgentDto })
   @ApiResponse({ status: 200, description: 'Agent updated', type: AgentDto })
   @ApiResponse({ status: 404, description: 'Agent not found' })
-  async updateAgent(@Param('id') id: string, @Body() updateAgentDto: AgentDto, @CurrentUser() user: User, res: Response) {
+  async updateAgent(
+    @Param('id') id: string,
+    @Body() updateAgentDto: AgentDto,
+    @CurrentUser() user: User,
+    res: Response
+  ) {
     try {
       // Remove timestamp fields that should be managed by the service
       const { createdAt: _createdAt2, updatedAt: _updatedAt2, ...agentData } = updateAgentDto;
@@ -83,10 +85,42 @@ export class AgentController {
       return res.status(200).json(updatedAgent);
     } catch (error) {
       const err = toError(error);
-       if (err.message?.includes('not found')) {
+      if (err.message?.includes('not found')) {
         return res.status(404).json({ error: err.message });
       }
       return res.status(400).json({ error: err.message });
+    }
+  }
+
+  @Post(':id/start')
+  @ApiOperation({ summary: 'Start an agent' })
+  @ApiResponse({ status: 200, description: 'Agent started', type: AgentDto })
+  async startAgent(@Param('id') id: string, @CurrentUser() user: User, @Res() res: Response) {
+    try {
+      const agent = await this.agentService.startAgent(id, user.id);
+      return res.status(200).json(agent);
+    } catch (error) {
+      const err = toError(error);
+      if (err.message?.includes('not found')) {
+        return res.status(404).json({ error: err.message });
+      }
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  @Post(':id/stop')
+  @ApiOperation({ summary: 'Stop an agent' })
+  @ApiResponse({ status: 200, description: 'Agent stopped', type: AgentDto })
+  async stopAgent(@Param('id') id: string, @CurrentUser() user: User, @Res() res: Response) {
+    try {
+      const agent = await this.agentService.stopAgent(id, user.id);
+      return res.status(200).json(agent);
+    } catch (error) {
+      const err = toError(error);
+      if (err.message?.includes('not found')) {
+        return res.status(404).json({ error: err.message });
+      }
+      return res.status(500).json({ error: err.message });
     }
   }
 
@@ -98,12 +132,12 @@ export class AgentController {
     try {
       const deleted = await this.agentService.deleteAgent(id, user.id);
       if (!deleted) {
-         return res.status(404).json({ error: 'Agent not found or could not be deleted' });
+        return res.status(404).json({ error: 'Agent not found or could not be deleted' });
       }
       return res.status(204).send();
     } catch (error) {
       const err = toError(error);
-       if (err.message?.includes('not found')) {
+      if (err.message?.includes('not found')) {
         return res.status(404).json({ error: err.message });
       }
       return res.status(500).json({ error: err.message });

@@ -1,6 +1,6 @@
 /**
  * Agent Service - Drizzle ORM Implementation
- * 
+ *
  * This service provides business logic for Agent operations.
  * It uses the Drizzle-based AgentRepository for data access.
  */
@@ -103,7 +103,7 @@ export class AgentService {
       if (!agent) {
         throw new Error(`Agent with ID ${id} not found for this user`);
       }
-      
+
       const updatedAgent = await this.agentRepository.update(id, data);
       if (!updatedAgent) {
         throw new Error(`Failed to update agent ${id}`);
@@ -254,6 +254,39 @@ export class AgentService {
       return registeredAgents;
     } catch (error) {
       return this.handleError(error, 'createSystemLocalAIAgents');
+    }
+  }
+  /**
+   * Start an agent (Set status to active)
+   */
+  async startAgent(id: string, userId: string): Promise<Agent> {
+    try {
+      const agent = await this.agentRepository.findOne({ id, userId });
+      if (!agent) {
+        throw new Error(`Agent with ID ${id} not found for this user`);
+      }
+
+      const updated = await this.agentRepository.update(id, { status: 'active' });
+      return updated!;
+    } catch (error) {
+      return this.handleError(error, `startAgent(${id})`);
+    }
+  }
+
+  /**
+   * Stop an agent (Set status to inactive)
+   */
+  async stopAgent(id: string, userId: string): Promise<Agent> {
+    try {
+      const agent = await this.agentRepository.findOne({ id, userId });
+      if (!agent) {
+        throw new Error(`Agent with ID ${id} not found for this user`);
+      }
+
+      const updated = await this.agentRepository.update(id, { status: 'inactive' });
+      return updated!;
+    } catch (error) {
+      return this.handleError(error, `stopAgent(${id})`);
     }
   }
 }

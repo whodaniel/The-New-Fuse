@@ -14,6 +14,15 @@ import { getMCPDiscoveryService } from '../services/MCPDiscoveryService';
 import { getMCPService } from '../services/MCPService';
 import { getOpenRouterService } from '../services/OpenRouterService';
 import {
+  getA2AProtocolService,
+  getAGUIProtocolService,
+  getAgentRegistryService,
+  getCollectiveOrchestratorService,
+  getMemoryBankService,
+  getProtocolTranslationService,
+  getRelayServerService,
+} from '../services/tnf-framework';
+import {
   getCurrentFilePath,
   getCurrentLanguageId,
   getSelectedText,
@@ -668,6 +677,226 @@ export function registerCommands(
       handler: async () => {
         const discoveryService = getMCPDiscoveryService();
         await discoveryService.exportConfiguration();
+      },
+    },
+
+    // ============================================
+    // TNF Framework: A2A Protocol Commands
+    // ============================================
+    {
+      id: 'theNewFuse.a2aProtocol',
+      handler: async () => {
+        const a2aService = getA2AProtocolService();
+        await a2aService.showProtocolManager();
+      },
+    },
+    {
+      id: 'theNewFuse.a2aConnectAgent',
+      handler: async () => {
+        const a2aService = getA2AProtocolService();
+        await a2aService.connect();
+      },
+    },
+    {
+      id: 'theNewFuse.a2aSendMessage',
+      handler: async () => {
+        const a2aService = getA2AProtocolService();
+        const agents = a2aService.getAgents();
+        const selected = await showQuickPick(
+          agents.map((a) => ({ label: a.name, description: a.id })),
+          { placeHolder: 'Select an agent' }
+        );
+        if (selected) {
+          await a2aService.sendMessage({
+            to: selected.description!,
+            action: 'test',
+            payload: { message: 'Hello from VS Code!' },
+          });
+        }
+      },
+    },
+
+    // ============================================
+    // TNF Framework: Agent Registry Commands
+    // ============================================
+    {
+      id: 'theNewFuse.agentRegistry',
+      handler: async () => {
+        const registryService = getAgentRegistryService();
+        await registryService.showDirectory();
+      },
+    },
+    {
+      id: 'theNewFuse.agentDiscover',
+      handler: async () => {
+        const a2aService = getA2AProtocolService();
+        await a2aService.discoverAgents();
+        showInfo('Agent discovery complete');
+      },
+    },
+    {
+      id: 'theNewFuse.agentRegister',
+      handler: async () => {
+        const registryService = getAgentRegistryService();
+        await registryService.showRegistrationWizard();
+      },
+    },
+    {
+      id: 'theNewFuse.agentDirectory',
+      handler: async () => {
+        const registryService = getAgentRegistryService();
+        await registryService.showDirectory();
+      },
+    },
+
+    // ============================================
+    // TNF Framework: AG-UI Protocol Commands
+    // ============================================
+    {
+      id: 'theNewFuse.aguiProtocol',
+      handler: async () => {
+        const aguiService = getAGUIProtocolService();
+        await aguiService.showProtocolPanel();
+      },
+    },
+    {
+      id: 'theNewFuse.aguiVisualize',
+      handler: async () => {
+        const aguiService = getAGUIProtocolService();
+        await aguiService.generateVisualization({
+          type: 'agent-flow',
+          data: {},
+          title: 'Agent Flow Visualization',
+        });
+      },
+    },
+    {
+      id: 'theNewFuse.aguiSession',
+      handler: async () => {
+        const aguiService = getAGUIProtocolService();
+        await aguiService.showSessionsPanel();
+      },
+    },
+
+    // ============================================
+    // TNF Framework: Relay Server Commands
+    // ============================================
+    {
+      id: 'theNewFuse.relayServer',
+      handler: async () => {
+        const relayService = getRelayServerService();
+        await relayService.showRelayPanel();
+      },
+    },
+    {
+      id: 'theNewFuse.relayConnect',
+      handler: async () => {
+        const relayService = getRelayServerService();
+        await relayService.connect();
+      },
+    },
+    {
+      id: 'theNewFuse.relayMonitor',
+      handler: async () => {
+        const relayService = getRelayServerService();
+        await relayService.showMonitoringPanel();
+      },
+    },
+
+    // ============================================
+    // TNF Framework: Protocol Translation Commands
+    // ============================================
+    {
+      id: 'theNewFuse.protocolTranslation',
+      handler: async () => {
+        const translationService = getProtocolTranslationService();
+        await translationService.showTranslationPanel();
+      },
+    },
+    {
+      id: 'theNewFuse.translateProtocol',
+      handler: async () => {
+        const translationService = getProtocolTranslationService();
+        await translationService.translateFromEditor();
+      },
+    },
+
+    // ============================================
+    // TNF Framework: Memory Bank Commands
+    // ============================================
+    {
+      id: 'theNewFuse.memoryBank',
+      handler: async () => {
+        const memoryService = getMemoryBankService();
+        await memoryService.showMemoryBank();
+      },
+    },
+    {
+      id: 'theNewFuse.memoryContext',
+      handler: async () => {
+        const memoryService = getMemoryBankService();
+        await memoryService.showActiveContext();
+      },
+    },
+    {
+      id: 'theNewFuse.memoryBrief',
+      handler: async () => {
+        const memoryService = getMemoryBankService();
+        await memoryService.showProjectBrief();
+      },
+    },
+    {
+      id: 'theNewFuse.memoryPatterns',
+      handler: async () => {
+        const memoryService = getMemoryBankService();
+        await memoryService.showSystemPatterns();
+      },
+    },
+
+    // ============================================
+    // TNF Framework: Collective Orchestrator Commands
+    // ============================================
+    {
+      id: 'theNewFuse.collectiveOrchestrator',
+      handler: async () => {
+        const collectiveService = getCollectiveOrchestratorService();
+        await collectiveService.showOrchestrator();
+      },
+    },
+    {
+      id: 'theNewFuse.distributeTask',
+      handler: async () => {
+        const taskName = await vscode.window.showInputBox({
+          prompt: 'Enter task name',
+          placeHolder: 'New Task',
+        });
+        if (taskName) {
+          const collectiveService = getCollectiveOrchestratorService();
+          await collectiveService.distributeTask({
+            name: taskName,
+            description: 'Task distributed via VS Code',
+          });
+          showInfo(`Task distributed: ${taskName}`);
+        }
+      },
+    },
+
+    // ============================================
+    // TNF Framework: Federation Commands
+    // ============================================
+    {
+      id: 'theNewFuse.federationNetwork',
+      handler: async () => {
+        const collectiveService = getCollectiveOrchestratorService();
+        await collectiveService.showFederationNetwork();
+      },
+    },
+    {
+      id: 'theNewFuse.federationJoin',
+      handler: async () => {
+        const a2aService = getA2AProtocolService();
+        await a2aService.connect();
+        showInfo('Joined federation network');
       },
     },
   ];

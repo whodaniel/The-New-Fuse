@@ -1,15 +1,17 @@
 # Connecting to Redis Cloud
 
-This guide explains how to connect to Redis Cloud using the Node.js Redis client.
+This guide explains how to connect to Redis Cloud using the Node.js Redis
+client.
 
 ## Redis Cloud Connection Details
 
-Redis Cloud is a fully-managed cloud service for Redis. Here are the connection details for your Redis Cloud instance:
+Redis Cloud is a fully-managed cloud service for Redis. Here are the connection
+details for your Redis Cloud instance:
 
 - **Host**: redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com
 - **Port**: 11337
 - **Username**: default
-- **Password**: CxXMZw3qW3zYXq1JYy7bCuqwRrL7tH0d
+- **Password**: <REDIS_PASSWORD>
 - **TLS/SSL**: Enabled
 
 ## Connecting via Command Line
@@ -17,18 +19,19 @@ Redis Cloud is a fully-managed cloud service for Redis. Here are the connection 
 You can connect to Redis Cloud using the Redis CLI:
 
 ```bash
-redis-cli -u redis://default:CxXMZw3qW3zYXq1JYy7bCuqwRrL7tH0d@redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com:11337
+redis-cli -u redis://default:<REDIS_PASSWORD>@redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com:11337
 ```
 
 For a secure connection with TLS/SSL:
 
 ```bash
-redis-cli -u rediss://default:CxXMZw3qW3zYXq1JYy7bCuqwRrL7tH0d@redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com:11337
+redis-cli -u rediss://default:<REDIS_PASSWORD>@redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com:11337
 ```
 
 ## Connecting with Node.js Redis Client
 
-The recommended way to connect to Redis Cloud is using the official Node.js Redis client:
+The recommended way to connect to Redis Cloud is using the official Node.js
+Redis client:
 
 ```typescript
 import { createClient } from 'redis';
@@ -36,15 +39,15 @@ import { createClient } from 'redis';
 // Create a Redis client connected to Redis Cloud
 const client = createClient({
   username: 'default',
-  password: 'CxXMZw3qW3zYXq1JYy7bCuqwRrL7tH0d',
+  password: '<REDIS_PASSWORD>',
   socket: {
     host: 'redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com',
-    port: 11337
-  }
+    port: 11337,
+  },
 });
 
 // Set up error handler
-client.on('error', err => console.log('Redis Client Error', err));
+client.on('error', (err) => console.log('Redis Client Error', err));
 
 // Connect to Redis
 await client.connect();
@@ -52,7 +55,7 @@ await client.connect();
 // Use Redis operations
 await client.set('foo', 'bar');
 const value = await client.get('foo');
-console.log(value);  // Outputs: bar
+console.log(value); // Outputs: bar
 
 // Disconnect when done
 await client.disconnect();
@@ -67,14 +70,14 @@ import { createClient } from 'redis';
 
 // Create a Redis client using the URL connection string
 const client = createClient({
-  url: 'redis://default:CxXMZw3qW3zYXq1JYy7bCuqwRrL7tH0d@redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com:11337'
+  url: 'redis://default:<REDIS_PASSWORD>@redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com:11337',
 });
 
 // Connect and use Redis
 await client.connect();
 await client.set('foo', 'bar');
 const value = await client.get('foo');
-console.log(value);  // Outputs: bar
+console.log(value); // Outputs: bar
 await client.disconnect();
 ```
 
@@ -173,7 +176,10 @@ const members = await client.sMembers('myset');
 
 ```typescript
 // Add members to a sorted set
-await client.zAdd('myzset', [{ score: 1, value: 'one' }, { score: 2, value: 'two' }]);
+await client.zAdd('myzset', [
+  { score: 1, value: 'one' },
+  { score: 2, value: 'two' },
+]);
 
 // Get a range of members from a sorted set
 const range = await client.zRange('myzset', 0, -1);
@@ -232,22 +238,27 @@ await client.ft.create('idx:products', {
     type: 'VECTOR',
     AS: 'embedding',
     DIM: 128,
-    DISTANCE_METRIC: 'COSINE'
-  }
+    DISTANCE_METRIC: 'COSINE',
+  },
 });
 
 // Search vectors
-const results = await client.ft.search('idx:products', '*=>[KNN 5 @embedding $query_vec]', {
-  PARAMS: {
-    query_vec: '[0.1, 0.2, 0.3, ...]'
-  },
-  RETURN: ['$.name', '$.description']
-});
+const results = await client.ft.search(
+  'idx:products',
+  '*=>[KNN 5 @embedding $query_vec]',
+  {
+    PARAMS: {
+      query_vec: '[0.1, 0.2, 0.3, ...]',
+    },
+    RETURN: ['$.name', '$.description'],
+  }
+);
 ```
 
 ## SSL/TLS Configuration
 
-When connecting to Redis Cloud with SSL/TLS, you can configure the following parameters:
+When connecting to Redis Cloud with SSL/TLS, you can configure the following
+parameters:
 
 ```typescript
 import { createClient } from 'redis';
@@ -264,12 +275,13 @@ const client = createClient({
     key: fs.readFileSync('/path/to/key.pem'),
     cert: fs.readFileSync('/path/to/cert.pem'),
     rejectUnauthorized: true, // Equivalent to cert_reqs
-    servername: 'redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com'
-  }
+    servername: 'redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com',
+  },
 });
 ```
 
-Note that Redis Cloud manages its own certificates, so you typically don't need to specify these SSL/TLS parameters unless you're using a custom setup.
+Note that Redis Cloud manages its own certificates, so you typically don't need
+to specify these SSL/TLS parameters unless you're using a custom setup.
 
 ## Redis Cloud Features
 
@@ -281,18 +293,23 @@ Redis Cloud provides several features beyond standard Redis:
 4. **RedisTimeSeries**: Time series data structure
 5. **RedisBloom**: Probabilistic data structures
 
-To use these features, you'll need to ensure they are enabled in your Redis Cloud instance and then use the corresponding methods in our Redis implementation.
+To use these features, you'll need to ensure they are enabled in your Redis
+Cloud instance and then use the corresponding methods in our Redis
+implementation.
 
 ## Security Considerations
 
 1. **Keep your password secure**: Don't commit the password to version control
-2. **Use environment variables**: Store sensitive connection details in environment variables
+2. **Use environment variables**: Store sensitive connection details in
+   environment variables
 3. **Use TLS/SSL**: Always use TLS/SSL for production connections
-4. **Restrict access**: Use Redis ACLs to restrict access to specific commands and keys
+4. **Restrict access**: Use Redis ACLs to restrict access to specific commands
+   and keys
 
 ## Logging
 
-The Redis implementation includes comprehensive logging for Redis Cloud connections and operations.
+The Redis implementation includes comprehensive logging for Redis Cloud
+connections and operations.
 
 ### Log Configuration
 
@@ -328,9 +345,11 @@ You can monitor Redis Cloud connections and operations through logs:
 
 If you encounter connection issues:
 
-1. **Check network connectivity**: Ensure your network allows outbound connections to the Redis Cloud host and port
+1. **Check network connectivity**: Ensure your network allows outbound
+   connections to the Redis Cloud host and port
 2. **Verify credentials**: Double-check username and password
-3. **TLS/SSL issues**: Ensure your environment trusts the Redis Cloud certificates
+3. **TLS/SSL issues**: Ensure your environment trusts the Redis Cloud
+   certificates
 4. **Timeout issues**: Increase connection timeout settings if needed
 5. **Check logs**: Review Redis logs for detailed error information
 6. **Enable debug logging**: Set `REDIS_LOG_LEVEL=debug` for more detailed logs

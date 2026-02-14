@@ -60,6 +60,34 @@ const ACTION_CATEGORIES = [
     ],
   },
   {
+    name: 'Copilot & Context',
+    icon: FiZap,
+    description: 'Constant AI context awareness and analysis',
+    actions: [
+      {
+        id: 'start-copilot',
+        label: 'Start Copilot Loop',
+        icon: '👁️',
+        description: 'Enable constant screen analysis loop',
+        apiMethod: 'copilotStart',
+      },
+      {
+        id: 'stop-copilot',
+        label: 'Stop Copilot Loop',
+        icon: '🛑',
+        description: 'Disable screen analysis',
+        apiMethod: 'copilotStop',
+      },
+      {
+        id: 'copilot-status',
+        label: 'Check Status',
+        icon: '❓',
+        description: 'Check if copilot is active',
+        apiMethod: 'copilotStatus',
+      },
+    ],
+  },
+  {
     name: 'External Tools',
     icon: FiGlobe,
     description: 'Open external TNF tools and services',
@@ -144,6 +172,21 @@ export const QuickActionsDashboard: React.FC = () => {
           window.open(action.url, '_blank');
         }
         toast({ title: 'Opened Link', status: 'success', duration: 2000 });
+      } else if (action.apiMethod) {
+        if (window.api && (window.api as any)[action.apiMethod]) {
+          const res = await (window.api as any)[action.apiMethod]();
+          if (res.success) {
+            toast({
+              title: 'Success',
+              description: `Action ${action.label} completed`,
+              status: 'success',
+            });
+          } else {
+            toast({ title: 'Error', description: res.error || 'Action failed', status: 'error' });
+          }
+        } else {
+          toast({ title: 'API Not Available', status: 'error' });
+        }
       } else if (action.command) {
         if (window.api) {
           // naive splitting of command
@@ -260,7 +303,9 @@ export const QuickActionsDashboard: React.FC = () => {
                             {action.description}
                           </Text>
                         </VStack>
-                        {action.command && <Icon as={FiPlay} boxSize={3} color="gray.600" />}
+                        {(action.command || action.apiMethod) && (
+                          <Icon as={FiPlay} boxSize={3} color="gray.600" />
+                        )}
                       </HStack>
                     </Button>
                   ))}

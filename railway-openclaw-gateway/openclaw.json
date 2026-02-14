@@ -1,0 +1,95 @@
+{
+  "gateway": {
+    "port": 18789,
+    "mode": "cloud",
+    "bind": "0.0.0.0",
+    "auth": {
+      "token": ""
+    }
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "kilo": {
+        "baseUrl": "https://api.kilo.ai/api/gateway/",
+        "apiKey": "INJECTED_AT_RUNTIME",
+        "api": "openai-completions",
+        "authHeader": true,
+        "models": [
+          {
+            "id": "z-ai/glm-5:free",
+            "name": "GLM 5.0 (Free)",
+            "reasoning": true,
+            "input": ["text"],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 200000,
+            "maxTokens": 32000
+          },
+          {
+            "id": "minimax/minimax-m2.5:free",
+            "name": "MiniMax M2.5 (Free)",
+            "reasoning": true,
+            "input": ["text"],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 200000,
+            "maxTokens": 32000
+          }
+        ]
+      },
+      "kilocode": {
+        "baseUrl": "https://api.kilo.ai/api/gateway/",
+        "apiKey": "INJECTED_AT_RUNTIME",
+        "api": "openai-completions",
+        "authHeader": true,
+        "models": [
+          {
+            "id": "minimax-m2.5:free",
+            "name": "MiniMax-M2.5 (Free)",
+            "reasoning": true,
+            "input": ["text"],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 200000,
+            "maxTokens": 32000
+          },
+          {
+            "id": "glm-4.7-free",
+            "name": "GLM-4.7 (Free)",
+            "reasoning": true,
+            "input": ["text"],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 128000,
+            "maxTokens": 8192
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "kilo/z-ai/glm-5:free",
+        "fallbacks": ["kilo/minimax/minimax-m2.5:free"]
+      }
+    }
+  }
+}

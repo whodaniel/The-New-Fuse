@@ -1,7 +1,8 @@
 import { Bell, Camera, Globe, Lock, Mail, Palette, Save, Shield, User, Zap } from 'lucide-react';
 import React, { FormEvent, useEffect, useState } from 'react';
-import { useAuth } from '../../providers/AuthProvider';
+import { AuthService } from '../../core/services/AuthService';
 import { useAuthorization } from '../../hooks/useAuthorization';
+import { useAuth } from '../../providers/AuthProvider';
 
 // This should match the UserProfile type in apps/api/src/services/userService.ts
 interface UserProfile {
@@ -28,6 +29,12 @@ const UserProfilePage: React.FC = () => {
   const [bio, setBio] = useState<string>('');
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
   const [notifications, setNotifications] = useState<boolean>(false);
+
+  // Password Change State
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3003';
 
@@ -100,6 +107,41 @@ const UserProfilePage: React.FC = () => {
 
     fetchProfile();
   }, [API_BASE_URL, user]);
+
+  const handlePasswordChange = async () => {
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
+    setIsChangingPassword(true);
+    setError(null);
+    setSuccessMessage(null);
+
+    try {
+      const authService = AuthService.getInstance();
+      const result = await authService.changePassword(newPassword);
+
+      if (result.success) {
+        setSuccessMessage('Password updated successfully');
+        setShowPasswordForm(false);
+        setNewPassword('');
+        setConfirmPassword('');
+        setTimeout(() => setSuccessMessage(null), 3000);
+      } else {
+        setError(result.error?.message || 'Failed to update password');
+      }
+    } catch (err: any) {
+      setError(err.message || 'An error occurred');
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -242,12 +284,19 @@ const UserProfilePage: React.FC = () => {
                 {user?.email || profile?.email}
               </p>
               <div className="mt-3 flex gap-2 justify-center md:justify-start">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-200 border border-blue-400/30">
-                  Premium User
-                </span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-200 border border-green-400/30">
-                  Verified
-                </span>
+                {/* Dynamically show badges based on real data if available in the future.
+                    For now, hiding misleading 'Verified' / 'Premium' until backend supports subscription/verification flags.
+                */}
+                {userRole === 'SUPER_ADMIN' && (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-500/20 text-purple-200 border border-purple-400/30">
+                    System Admin
+                  </span>
+                )}
+                {isAdmin && userRole !== 'SUPER_ADMIN' && (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-200 border border-blue-400/30">
+                    Admin
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -255,44 +304,58 @@ const UserProfilePage: React.FC = () => {
 
         {/* Sovereign Context Section */}
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 mb-6 fade-in scale-in">
-             <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center">
-                        <Globe className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                        <h2 className="text-xl font-bold text-white">Sovereign Context</h2>
-                        <p className="text-sm text-gray-400">Your presence across the multitenant framework</p>
-                    </div>
-                </div>
-                <div className="text-right">
-                    <span className="text-[10px] uppercase font-black text-gray-500 tracking-widest block">System Privilege</span>
-                    <span className="text-lg font-extrabold text-blue-400">{userRole}</span>
-                </div>
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center">
+                <Globe className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Sovereign Context</h2>
+                <p className="text-sm text-gray-400">
+                  Your presence across the multitenant framework
+                </p>
+              </div>
             </div>
+            <div className="text-right">
+              <span className="text-[10px] uppercase font-black text-gray-500 tracking-widest block">
+                System Privilege
+              </span>
+              <span className="text-lg font-extrabold text-blue-400">{userRole || 'USER'}</span>
+            </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-black/40 border border-white/5">
-                    <div className="flex justify-between items-start mb-2">
-                        <span className="text-xs font-bold text-gray-500 uppercase">Primary Agency</span>
-                        <Zap className="w-3 h-3 text-amber-400" />
-                    </div>
-                    <div className="text-white font-bold">The New Fuse Core</div>
-                    <div className="text-[10px] text-gray-500 mt-1">ID: agency-core-001</div>
-                </div>
-                <div className="p-4 rounded-xl bg-black/40 border border-white/5 opacity-50">
-                    <div className="flex justify-between items-start mb-2">
-                        <span className="text-xs font-bold text-gray-500 uppercase">Secondary Nodes</span>
-                    </div>
-                    <div className="text-gray-400 italic text-sm">No secondary agencies linked</div>
-                </div>
+          <div className="grid grid-cols-1 gap-4">
+            {/* Dynamic Agency / Context Info */}
+            <div className="p-4 rounded-xl bg-black/40 border border-white/5">
+              <div className="flex justify-between items-start mb-2">
+                <span className="text-xs font-bold text-gray-500 uppercase">Current Scope</span>
+                <Zap className="w-3 h-3 text-amber-400" />
+              </div>
+              <div className="text-white font-bold">
+                {userRole === 'SUPER_ADMIN'
+                  ? 'Global System Scope'
+                  : (user as any)?.agencyId
+                    ? 'Agency Environment'
+                    : 'Personal Workspace'}
+              </div>
+              <div className="text-[10px] text-gray-500 mt-1">
+                {(user as any)?.agencyId
+                  ? `Agency ID: ${(user as any).agencyId}`
+                  : (user as any)?.tenantId
+                    ? `Tenant ID: ${(user as any).tenantId}`
+                    : userRole === 'SUPER_ADMIN'
+                      ? 'Root Access Enabled'
+                      : 'Standard Access'}
+              </div>
             </div>
-            
-            {isAdmin && (
-                <div className="mt-6 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-emerald-300 text-xs leading-relaxed">
-                    <strong>Global Admin Note:</strong> You have absolute observability across all provisioned agencies. Tenancy isolation is bypassed for administrative operations.
-                </div>
-            )}
+          </div>
+
+          {isAdmin && (
+            <div className="mt-6 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-emerald-300 text-xs leading-relaxed">
+              <strong>Global Admin Note:</strong> You have absolute observability across all
+              provisioned agencies. Tenancy isolation is bypassed for administrative operations.
+            </div>
+          )}
         </div>
 
         {/* Messages */}
@@ -423,7 +486,7 @@ const UserProfilePage: React.FC = () => {
             </div>
           </div>
 
-          {/* Security Section (Placeholder) */}
+          {/* Security Section */}
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 fade-in animation-delay-200">
             <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
@@ -436,35 +499,100 @@ const UserProfilePage: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              <button
-                type="button"
-                className="w-full flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-lg hover:bg-white/10 transition-all duration-200 backdrop-blur-sm"
-              >
-                <span className="text-white font-medium">Change Password</span>
-                <svg
-                  className="w-5 h-5 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
+              {/* Change Password UI */}
+              <div className="p-4 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm">
+                {!showPasswordForm ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordForm(true)}
+                    className="w-full flex items-center justify-between group"
+                  >
+                    <span className="text-white font-medium group-hover:text-blue-400 transition-colors">
+                      Change Password
+                    </span>
+                    <svg
+                      className="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition-colors"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                ) : (
+                  <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-400 mb-1">
+                        New Password
+                      </label>
+                      <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-md text-white text-sm focus:ring-1 focus:ring-blue-500 outline-none"
+                        placeholder="Enter new password"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-400 mb-1">
+                        Confirm Password
+                      </label>
+                      <input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-md text-white text-sm focus:ring-1 focus:ring-blue-500 outline-none"
+                        placeholder="Confirm new password"
+                      />
+                    </div>
+                    <div className="flex justify-end gap-2 mt-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowPasswordForm(false);
+                          setNewPassword('');
+                          setConfirmPassword('');
+                        }}
+                        className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handlePasswordChange}
+                        disabled={isChangingPassword || !newPassword || !confirmPassword}
+                        className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {isChangingPassword ? 'Updating...' : 'Update Password'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
 
-              <button
-                type="button"
-                className="w-full flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-lg hover:bg-white/10 transition-all duration-200 backdrop-blur-sm"
-              >
-                <span className="text-white font-medium">Two-Factor Authentication</span>
-                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-500/20 text-green-200 border border-green-400/30">
-                  Enabled
-                </span>
-              </button>
+              <div className="w-full flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-lg backdrop-blur-sm opacity-75">
+                <div className="flex flex-col">
+                  <span className="text-white font-medium">Two-Factor Authentication</span>
+                  <span className="text-[10px] text-gray-500">
+                    Enhanced security via authenticator app
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    // Toast logic embedded here or handled by parent
+                    alert('Two-Factor Authentication setup is coming soon.');
+                  }}
+                  className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-700/50 text-gray-400 border border-gray-600/30 cursor-not-allowed"
+                >
+                  Disabled
+                </button>
+              </div>
             </div>
           </div>
 

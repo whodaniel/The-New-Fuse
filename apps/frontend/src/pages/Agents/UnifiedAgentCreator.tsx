@@ -451,7 +451,7 @@ export const UnifiedAgentCreator: React.FC = () => {
             ? AgentType.ASSISTANT
             : AgentType.BASIC;
 
-      await agentService.createAgent({
+      const newAgent = await agentService.createAgent({
         name: quickFormData.name,
         description: quickFormData.description,
         type: agentType,
@@ -463,7 +463,7 @@ export const UnifiedAgentCreator: React.FC = () => {
         },
       });
 
-      addToast('Agent created successfully!', 'success');
+      addToast(`Agent "${newAgent.name}" created successfully!`, 'success');
       navigate('/agents');
     } catch (error) {
       console.error('Error creating quick agent:', error);
@@ -474,7 +474,7 @@ export const UnifiedAgentCreator: React.FC = () => {
   // Handle advanced agent creation
   const handleAdvancedSubmit = async (values: any) => {
     try {
-      await agentService.createAgent({
+      const newAgent = await agentService.createAgent({
         name: values.name,
         type: values.type,
         description: values.description,
@@ -483,7 +483,7 @@ export const UnifiedAgentCreator: React.FC = () => {
         // config removed as it is not in CreateAgentDto
       });
 
-      addToast('Agent created successfully!', 'success');
+      addToast(`Agent "${newAgent.name}" created successfully!`, 'success');
       navigate('/agents');
     } catch (error) {
       console.error('Error creating advanced agent:', error);
@@ -1086,12 +1086,19 @@ export const UnifiedAgentCreator: React.FC = () => {
 
           {/* Validation Errors */}
           {wizardValidationErrors.length > 0 && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              {wizardValidationErrors.map((error, idx) => (
-                <p key={idx} className="text-sm text-red-600">
-                  {error}
-                </p>
-              ))}
+            <div
+              className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg"
+              role="alert"
+              aria-live="assertive"
+            >
+              <h3 className="text-sm font-semibold text-red-800">
+                Please correct the following errors:
+              </h3>
+              <ul className="mt-2 list-disc list-inside text-sm text-red-700">
+                {wizardValidationErrors.map((error, idx) => (
+                  <li key={idx}>{error}</li>
+                ))}
+              </ul>
             </div>
           )}
 

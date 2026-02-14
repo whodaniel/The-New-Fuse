@@ -79,7 +79,7 @@ Community-maintained integrations:
 6. Copy Bot User OAuth Token
 7. Add to `.env`:
    ```
-   SLACK_BOT_TOKEN=xoxb-your-token
+   SLACK_BOT_TOKEN=<SLACK_BOT_TOKEN>
    SLACK_TEAM_ID=your_team_id
    ```
 

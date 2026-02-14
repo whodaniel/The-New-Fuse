@@ -21,6 +21,9 @@ export const DEFAULT_NODES = {
   apiGateway: 'http://localhost:8080',
   backend: 'http://localhost:3001',
   saas: 'http://localhost:3002',
+
+  // Cloudflare TNF agent orchestration (canonical edge state)
+  tnfWorker: 'https://tnf-agent-orchestration.bizsynth.workers.dev',
 };
 
 // ============================================

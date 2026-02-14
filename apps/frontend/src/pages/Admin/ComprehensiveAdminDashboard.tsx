@@ -23,6 +23,8 @@ import {
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import dashboardService from '../../services/dashboard.service';
+
 interface SystemMetrics {
   totalUsers: number;
   activeUsers: number;
@@ -64,6 +66,7 @@ export default function ComprehensiveAdminDashboard() {
   const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<'1h' | '24h' | '7d' | '30d'>('24h');
 
   // Mock performance data for charts
@@ -86,30 +89,12 @@ export default function ComprehensiveAdminDashboard() {
 
   const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
 
-  useEffect(() => {
-    loadDashboardData();
-    const interval = setInterval(loadDashboardData, 30000); // Refresh every 30s
-    return () => clearInterval(interval);
-  }, [timeRange]);
-
   const loadDashboardData = async () => {
     setLoading(true);
+    setError(null);
     try {
-      // Fetch real dashboard metrics
-      const response = await fetch('/api/admin/metrics/dashboard', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const data = await dashboardService.getAdminDashboardMetrics();
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch dashboard metrics: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-
-      // Format uptime
       const uptimeSeconds = data.system.uptime || 0;
       const days = Math.floor(uptimeSeconds / (24 * 60 * 60));
       const hours = Math.floor((uptimeSeconds % (24 * 60 * 60)) / (60 * 60));
@@ -118,51 +103,45 @@ export default function ComprehensiveAdminDashboard() {
       setMetrics({
         totalUsers: data.users?.total || 0,
         activeUsers: data.users?.active || 0,
-        totalWorkspaces: 0, // TODO: Add workspaces count to backend
-        activeWorkspaces: 0, // TODO: Add active workspaces count
+        totalWorkspaces: data.workspaces?.total || 0,
+        activeWorkspaces: data.workspaces?.active || 0,
         totalAgents: data.agents?.total || 0,
         runningAgents: data.agents?.active || 0,
         systemUptime: uptimeStr,
         serverHealth: data.system?.health || 'healthy',
         memoryUsage: data.system?.memory?.percentage || 0,
         cpuUsage: data.system?.cpu?.usage || 0,
-        diskUsage: 0, // TODO: Add disk usage to backend
-        networkTraffic: 0, // TODO: Add network traffic tracking
-        apiRequests: 0, // TODO: Add API request counting
-        apiErrors: 0, // TODO: Add error tracking
-        databaseConnections: 0, // TODO: Add DB connection monitoring
-        cacheHitRate: 0, // TODO: Add cache monitoring
+        diskUsage: data.system?.disk?.percentage || 0,
+        networkTraffic: data.system?.network?.traffic || 0,
+        apiRequests: data.api?.requests || 0,
+        apiErrors: data.api?.errors || 0,
+        databaseConnections: data.system?.db?.connections || 0,
+        cacheHitRate: data.system?.cache?.hitRate || 0,
       });
 
-      // Fetch recent audit logs for activity feed
-      const auditResponse = await fetch('/api/admin/audit-logs?limit=5', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-
-      if (auditResponse.ok) {
-        const auditData = await auditResponse.json();
-        const activities: RecentActivity[] = auditData.map((log: any) => ({
-          id: log.id,
-          type: log.resourceType || 'system',
-          user: log.userId || 'System',
-          action: log.action,
-          timestamp: new Date(log.createdAt),
-          status: log.status === 'success' ? 'success' : 'error',
-        }));
-        setRecentActivities(activities);
-      }
-
-      // TODO: Implement alerts system
-      setAlerts([]);
+      const activities: RecentActivity[] = (data.auditLogs || []).map((log: any) => ({
+        id: log.id,
+        type: log.resourceType || 'system',
+        user: log.userId || 'System',
+        action: log.action,
+        timestamp: new Date(log.createdAt),
+        status: log.status === 'success' ? 'success' : 'error',
+      }));
+      setRecentActivities(activities);
+      setAlerts(data.alerts || []);
     } catch (error) {
+      setError('Failed to load dashboard data.');
       console.error('Error loading dashboard data:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadDashboardData();
+    const interval = setInterval(loadDashboardData, 30000);
+    return () => clearInterval(interval);
+  }, [timeRange]);
 
   const getHealthBadge = (health: SystemMetrics['serverHealth']) => {
     const badges = {
@@ -300,13 +279,23 @@ export default function ComprehensiveAdminDashboard() {
   ];
 
   if (loading && !metrics) {
+    return <DashboardSkeleton />;
+  }
+
+  if (error) {
     return (
-      <div className="p-8 max-w-7xl mx-auto">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <RefreshCw className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-gray-600">Loading dashboard...</p>
-          </div>
+      <div className="p-8 max-w-7xl mx-auto flex items-center justify-center min-h-[400px]">
+        <div className="text-center bg-red-50 border border-red-200 p-8 rounded-lg">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-red-800 mb-2">Failed to Load Data</h2>
+          <p className="text-red-600 mb-6">{error}</p>
+          <button
+            onClick={loadDashboardData}
+            className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center mx-auto"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -338,6 +327,7 @@ export default function ComprehensiveAdminDashboard() {
             <button
               onClick={loadDashboardData}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+              disabled={loading}
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh

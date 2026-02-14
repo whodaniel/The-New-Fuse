@@ -83,87 +83,59 @@ export const apiService = {
     return response.data;
   },
 
-  // Mock API functions for API settings page
+  // --- Real API Integration for Settings ---
+
   generatePersonalAccessToken: async () => {
-    console.log('Mock API: Generating personal access token...');
-    // Simulate a network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const token = `nfuse_pat_${Math.random().toString(36).substring(2)}`;
-    const prefix = token.substring(0, 12);
-    // In a real app, you'd only send the prefix and metadata, not the full token
-    return { token, prefix, createdAt: new Date().toISOString() };
+    const response = await api.post<{ token: string; prefix: string; createdAt: string }>(
+      '/api/tokens'
+    );
+    return response.data;
   },
 
   revokePersonalAccessToken: async (prefix: string) => {
-    console.log(`Mock API: Revoking personal access token with prefix ${prefix}...`);
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await api.delete(`/api/tokens/${prefix}`);
     return { success: true };
   },
 
   getPersonalAccessTokens: async () => {
-    console.log('Mock API: Fetching personal access tokens...');
-    await new Promise(resolve => setTimeout(resolve, 500));
-    // Return some mock data
-    return [
-      { prefix: 'nfuse_pat_abc123', createdAt: new Date().toISOString() },
-      { prefix: 'nfuse_pat_def456', createdAt: new Date().toISOString() },
-    ];
+    const response = await api.get<{ prefix: string; createdAt: string }[]>('/api/tokens');
+    return response.data;
   },
 
   saveWebhookUrl: async (url: string) => {
-    console.log(`Mock API: Saving webhook URL: ${url}`);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    // In a real app, you would save this to a database
-    localStorage.setItem('webhookUrl', url);
+    await api.post('/api/webhooks/config', { url });
     return { success: true };
   },
 
   testWebhookUrl: async (url: string) => {
-    console.log(`Mock API: Testing webhook URL: ${url}`);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // Simulate a successful or failed test
-    const success = Math.random() > 0.2; // 80% chance of success
-    if (success) {
-      return { success: true, message: 'Webhook test successful!' };
-    } else {
-      return { success: false, message: 'Webhook test failed. Please check your endpoint.' };
-    }
+    const response = await api.post<{ success: boolean; message: string }>('/api/webhooks/test', {
+      url,
+    });
+    return response.data;
   },
 
   getWebhookUrl: async () => {
-    console.log('Mock API: Fetching webhook URL...');
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const url = localStorage.getItem('webhookUrl');
-    return { url };
+    const response = await api.get<{ url: string }>('/api/webhooks/config');
+    return response.data;
   },
 
   saveProviderApiKey: async (provider: string, apiKey: string) => {
-    console.log(`Mock API: Saving API key for provider: ${provider}`);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    // Simulate API key validation
-    if (apiKey.includes('invalid')) {
-      return Promise.reject({ message: 'The provided API key is invalid.' });
-    }
-    const id = `${provider.toLowerCase()}_${Math.random().toString(36).substring(2)}`;
-    const newKey = { id, provider };
-    const existingKeys = JSON.parse(localStorage.getItem('providerApiKeys') || '[]');
-    localStorage.setItem('providerApiKeys', JSON.stringify([...existingKeys, newKey]));
-    return newKey;
+    // SECURITY: Keys are sent over HTTPS to backend for encryption
+    const response = await api.post<{ id: string; provider: string }>('/api/provider-keys', {
+      provider,
+      apiKey,
+    });
+    return response.data;
   },
 
   deleteProviderApiKey: async (id: string) => {
-    console.log(`Mock API: Deleting provider API key with id: ${id}`);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const existingKeys = JSON.parse(localStorage.getItem('providerApiKeys') || '[]');
-    const updatedKeys = existingKeys.filter((key: any) => key.id !== id);
-    localStorage.setItem('providerApiKeys', JSON.stringify(updatedKeys));
+    await api.delete(`/api/provider-keys/${id}`);
     return { success: true };
   },
 
   getProviderApiKeys: async () => {
-    console.log('Mock API: Fetching provider API keys...');
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const keys = JSON.parse(localStorage.getItem('providerApiKeys') || '[]');
-    return keys;
+    // Returns only metadata (id, provider), NOT the key itself
+    const response = await api.get<{ id: string; provider: string }[]>('/api/provider-keys');
+    return response.data;
   },
 };

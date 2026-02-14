@@ -41,6 +41,8 @@
     apiGateway: 'http://localhost:3000',
     backend: 'http://localhost:3000',
     saas: 'http://localhost:3002',
+    // Canonical edge state (Cloudflare)
+    tnfWorker: 'https://tnf-agent-orchestration.bizsynth.workers.dev',
   };
   // Native messaging host name
   const NATIVE_HOST_NAME = 'com.thenewfuse.native_host';
@@ -686,6 +688,8 @@
         case 'CHANNEL_MESSAGE':
         case 'MESSAGE_RECEIVE':
           const agentMessage = message.payload;
+          // best-effort transcript persistence at the edge
+          this.appendTranscriptFromRelay(agentMessage);
           this.handleAgentMessage(agentMessage);
           break;
         case 'MESSAGE_STREAM_START':
@@ -726,10 +730,94 @@
           break;
       }
     }
+    async appendTranscriptFromRelay(message) {
+      // Only persist messages from the NFT Alpha 1 channel (your requested test channel)
+      // IMPORTANT: Relay uses channel ids (e.g. "channel-1770...") while UI shows channel names.
+      const channelId = message.channel || '';
+      const channelName = this.channels.get(channelId)?.name || '';
+      const label = (channelName || channelId).toString();
+      const isNftAlpha1 =
+        label === 'NFT Alpha 1' ||
+        label.toLowerCase() === 'nft-alpha-1' ||
+        (label.toLowerCase().includes('nft') && label.toLowerCase().includes('alpha'));
+      if (!isNftAlpha1) return;
+      const role =
+        message.type === 'system'
+          ? 'system'
+          : message.type === 'response'
+            ? 'assistant'
+            : message.type === 'command'
+              ? 'tool'
+              : 'user';
+      const sessionKey = `relay:NFT Alpha 1`;
+      const entry = {
+        id: simpleHash(
+          `${sessionKey}|${message.id}|${message.from}|${message.to}|${message.timestamp}|${channelId}`
+        ),
+        ts: message.timestamp || Date.now(),
+        role,
+        content: message.content || '',
+        meta: {
+          source: 'tnf-relay',
+          channelId,
+          channelName,
+          channel: label,
+          from: message.from,
+          to: message.to,
+          msgType: message.type,
+        },
+      };
+      if (!entry.content) return;
+      try {
+        const url = `${DEFAULT_NODES.tnfWorker}/transcript/append?sessionKey=${encodeURIComponent(sessionKey)}`;
+        await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Session-Key': sessionKey },
+          body: JSON.stringify({ entries: [entry] }),
+        });
+      } catch (e) {
+        // best-effort; do not break UI
+      }
+    }
     /**
      * Handle incoming agent message
      */
     handleAgentMessage(message) {
+      // LOOP GUARD: burst-mute repeated identical payloads (prevents intro/handshake echo storms)
+      // Keyed by (from, channel, prefix-of-content). If a source repeats >5 times in 10s, mute 60s.
+      // This is defensive: even if an upstream agent loops, the browser bridge stays usable.
+      try {
+        const now = Date.now();
+        // @ts-expect-error - dynamic runtime guard store
+        const guard = this.__loopGuard || {
+          counts: new Map(),
+          mutedUntil: new Map(),
+        };
+        // @ts-expect-error - persist
+        this.__loopGuard = guard;
+        const from = message.from || '';
+        const channel = message.channel || '';
+        const content = message.content || '';
+        const mutedUntil = guard.mutedUntil.get(from) || 0;
+        if (mutedUntil && now < mutedUntil) {
+          return;
+        }
+        const key = `${from}:${channel}:${content.slice(0, 280)}`;
+        const rec = guard.counts.get(key) || { firstTs: now, n: 0 };
+        if (now - rec.firstTs > 10000) {
+          rec.firstTs = now;
+          rec.n = 0;
+        }
+        rec.n += 1;
+        guard.counts.set(key, rec);
+        if (rec.n > 5) {
+          guard.mutedUntil.set(from, now + 60000);
+          console.warn('[FuseConnect v6] Loop guard muted source for 60s:', from);
+          return;
+        }
+      } catch {
+        // ignore
+      }
       // CRITICAL: We need to handle 'own' messages if they are on a channel
       // because "Browser Agent" represents ALL windows/tabs.
       // If Window A sends a message, it goes to Relay -> Relay broadcasts to Channel -> Browser Agent receives it.
@@ -1149,6 +1237,25 @@ Format as JSON array:
             this.broadcastToTabs({
               type: 'JOINED_CHANNELS_UPDATE',
               joinedChannels: Array.from(this.joinedChannels),
+            });
+            sendResponse({ success: true });
+            break;
+          case 'CHANNEL_DELETE':
+            const channelIdToDelete = message.channelId;
+            if (channelIdToDelete === 'general') {
+              sendResponse({ success: false, error: 'Cannot delete general channel' });
+              break;
+            }
+            this.channels.delete(channelIdToDelete);
+            this.joinedChannels.delete(channelIdToDelete);
+            this.broadcastToTabs({
+              type: 'CHANNELS_UPDATE',
+              channels: Array.from(this.channels.values()),
+            });
+            this.saveChannels();
+            this.send({
+              type: 'CHANNEL_DELETE',
+              channelId: channelIdToDelete,
             });
             sendResponse({ success: true });
             break;

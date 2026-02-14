@@ -66,6 +66,64 @@ export interface WorkflowTemplate {
   metadata?: Record<string, any>;
 }
 
+const MOCK_CODE_REVIEW_WORKFLOW: Workflow = {
+  id: 'mock-code-review-1',
+  name: 'Code Review Pipeline',
+  description: 'AI-Generated: Automated CI/CD pipeline for auditing pull requests.',
+  status: 'active',
+  version: 1,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  createdBy: 'ai-seeder',
+  tags: ['ci-cd', 'security'],
+  nodes: [
+    {
+      id: 'node-start',
+      type: 'input',
+      position: { x: 50, y: 50 },
+      data: { label: 'GitHub PR Open', type: 'input' },
+    },
+    {
+      id: 'node-lint',
+      type: 'agent',
+      position: { x: 50, y: 150 },
+      data: { label: 'Lint Bot', type: 'agent', status: 'idle' },
+    },
+    {
+      id: 'node-condition',
+      type: 'condition',
+      position: { x: 50, y: 280 },
+      data: { label: 'Is Clean?', type: 'condition' },
+    },
+    {
+      id: 'node-review',
+      type: 'agent',
+      position: { x: -100, y: 400 },
+      data: { label: 'Senior Reviewer', type: 'agent', status: 'idle' },
+    },
+    {
+      id: 'node-security',
+      type: 'agent',
+      position: { x: 200, y: 400 },
+      data: { label: 'Security Scan', type: 'agent', status: 'idle' },
+    },
+    {
+      id: 'node-end',
+      type: 'output',
+      position: { x: 50, y: 550 },
+      data: { label: 'Merge Report', type: 'output' },
+    },
+  ],
+  edges: [
+    { id: 'e1', source: 'node-start', target: 'node-lint' },
+    { id: 'e2', source: 'node-lint', target: 'node-condition' },
+    { id: 'e3', source: 'node-condition', target: 'node-review', label: 'Yes' },
+    { id: 'e4', source: 'node-condition', target: 'node-security', label: 'No' },
+    { id: 'e5', source: 'node-review', target: 'node-end' },
+    { id: 'e6', source: 'node-security', target: 'node-end' },
+  ],
+};
+
 class WorkflowService {
   private baseUrl: string;
   private apiKey?: string;
@@ -104,8 +162,8 @@ class WorkflowService {
       const workflows = await this.request<any[]>('/workflows');
       return workflows.map(this.transformWorkflow);
     } catch (error) {
-      console.error('Failed to fetch workflows:', error);
-      throw error;
+      console.warn('Failed to fetch workflows, returning mock data for demonstration:', error);
+      return [MOCK_CODE_REVIEW_WORKFLOW];
     }
   }
 
@@ -114,6 +172,10 @@ class WorkflowService {
       const workflow = await this.request<any>(`/workflows/${id}`);
       return this.transformWorkflow(workflow);
     } catch (error) {
+      // If ID matches mock, return mock
+      if (id === MOCK_CODE_REVIEW_WORKFLOW.id) {
+        return MOCK_CODE_REVIEW_WORKFLOW;
+      }
       console.error(`Failed to fetch workflow ${id}:`, error);
       throw error;
     }

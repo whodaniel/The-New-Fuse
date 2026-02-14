@@ -5,7 +5,20 @@
  * Allows agents to register, send heartbeats, and check system health.
  */
 
-import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Headers,
+  HttpCode,
+  HttpStatus,
+  Logger,
+  Param,
+  Post,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { OrchestratorService } from './orchestrator.service';
 
@@ -30,12 +43,28 @@ interface ActivityDto {
   metadata?: Record<string, unknown>;
 }
 
+interface ExecuteDto {
+  channel: 'telegram';
+  requestId: string;
+  idempotencyKey?: string;
+  sessionId?: string;
+  update: {
+    message?: {
+      text?: string;
+      from?: { id?: string | number };
+    };
+  };
+}
+
 @ApiTags('orchestrator')
 @Controller('orchestrator')
 export class OrchestratorController {
   private readonly logger = new Logger('OrchestratorController');
 
-  constructor(private readonly orchestratorService: OrchestratorService) {}
+  constructor(
+    private readonly orchestratorService: OrchestratorService,
+    private readonly configService: ConfigService
+  ) {}
 
   @Get('health')
   @ApiOperation({ summary: 'Get system health and agent metrics' })
@@ -129,6 +158,44 @@ export class OrchestratorController {
       lastActivity: status.lastActivity.toISOString(),
       currentTask: status.currentTask,
       consecutiveFailures: status.consecutiveFailures,
+    };
+  }
+
+  @Post('execute')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary:
+      'Gateway execution endpoint for channel ingress (idempotent by requestId/idempotencyKey)',
+  })
+  @ApiResponse({ status: 200, description: 'Execution response with replyText' })
+  async execute(@Body() dto: ExecuteDto, @Headers('authorization') authorization?: string) {
+    const requiredToken = this.configService.get<string>('ORCHESTRATOR_EXEC_AUTH');
+    if (requiredToken) {
+      const got = authorization || '';
+      if (got !== `Bearer ${requiredToken}`) {
+        throw new UnauthorizedException('UNAUTHORIZED');
+      }
+    }
+
+    const text = dto?.update?.message?.text;
+    if (!text || typeof text !== 'string' || !text.trim()) {
+      throw new BadRequestException('MESSAGE_TEXT_REQUIRED');
+    }
+
+    const result = await this.orchestratorService.executeGatewayPrompt({
+      requestId: dto.requestId,
+      idempotencyKey: dto.idempotencyKey,
+      sessionId: dto.sessionId,
+      text,
+      channel: dto.channel,
+      userId: dto?.update?.message?.from?.id ? String(dto.update.message.from.id) : undefined,
+    });
+
+    return {
+      ok: true,
+      requestId: dto.requestId,
+      replyText: result.replyText,
+      metadata: result.metadata,
     };
   }
 

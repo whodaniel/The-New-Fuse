@@ -1,7 +1,7 @@
 #!/bin/bash
 # Railway Deployment Setup Commands
 # Generated: 2025-11-13
-# JWT_SECRET: yNo9S8VOKv4BcwB81BJlVj3zOONqOmeIwgx4dk+iQOI=
+# JWT_SECRET: <JWT_SECRET>
 
 echo "===== RAILWAY DEPLOYMENT SETUP ====="
 echo ""
@@ -28,7 +28,7 @@ echo "  # Add DATABASE_URL (reference to Postgres)"
 echo "  railway variables set DATABASE_URL='${{Postgres.DATABASE_URL}}'"
 echo ""
 echo "  # Add JWT_SECRET"
-echo "  railway variables set JWT_SECRET='yNo9S8VOKv4BcwB81BJlVj3zOONqOmeIwgx4dk+iQOI='"
+echo "  railway variables set JWT_SECRET='<JWT_SECRET>'"
 echo ""
 echo "  # Add CORS_ORIGIN (you'll get the frontend URL after deployment)"
 echo "  # railway variables set CORS_ORIGIN='https://your-frontend-url.up.railway.app'"
@@ -45,7 +45,7 @@ echo "  # Add DATABASE_URL"
 echo "  railway variables set DATABASE_URL='${{Postgres.DATABASE_URL}}'"
 echo ""
 echo "  # Add JWT_SECRET"
-echo "  railway variables set JWT_SECRET='yNo9S8VOKv4BcwB81BJlVj3zOONqOmeIwgx4dk+iQOI='"
+echo "  railway variables set JWT_SECRET='<JWT_SECRET>'"
 echo ""
 echo "  # Redeploy backend service"
 echo "  railway up --detach"
@@ -56,7 +56,7 @@ echo "  railway service"
 echo "  # Select 'api-gateway' from the list"
 echo ""
 echo "  # Add JWT_SECRET"
-echo "  railway variables set JWT_SECRET='yNo9S8VOKv4BcwB81BJlVj3zOONqOmeIwgx4dk+iQOI='"
+echo "  railway variables set JWT_SECRET='<JWT_SECRET>'"
 echo ""
 echo "  # Redeploy api-gateway service"
 echo "  railway up --detach"

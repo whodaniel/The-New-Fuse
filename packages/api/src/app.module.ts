@@ -11,6 +11,7 @@ import { LlmModule } from '@the-new-fuse/core';
 import { DrizzleModule } from '@the-new-fuse/database';
 import { HealthController } from './controllers/health.controller';
 import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
+import { AdminModule } from './modules/admin.module';
 import { AgentModule } from './modules/agent.module';
 import { ExportModule } from './modules/export.module';
 import { WorkflowModule } from './modules/workflow.module';
@@ -62,6 +63,7 @@ import { HealthService } from './services/health.service';
     // Feature modules
     AgentModule,
     WorkflowModule,
+    AdminModule,
     ExportModule,
     LlmModule,
   ],

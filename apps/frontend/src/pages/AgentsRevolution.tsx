@@ -98,24 +98,22 @@ export const AgentsRevolution = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch agents from the API
-  useEffect(() => {
-    const fetchAgents = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const fetchedAgents = await agentService.getAgents();
-        setAgents(fetchedAgents.map(transformAgent));
-      } catch (err) {
-        console.error('Error fetching agents:', err);
-        setError('Failed to load agents. Please try again.');
-        // Show empty state if no agents found
-        setAgents([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchAgents = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const fetchedAgents = await agentService.getAgents();
+      setAgents(fetchedAgents.map(transformAgent));
+    } catch (err) {
+      console.error('Error fetching agents:', err);
+      setError('An unexpected error occurred while fetching your agents. Please try again.');
+      setAgents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchAgents();
   }, []);
 
@@ -154,10 +152,14 @@ export const AgentsRevolution = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-transparent flex items-center justify-center">
-        <div className="text-center">
-          <Bot className="w-16 h-16 text-red-400 mx-auto mb-4" />
-          <p className="text-xl text-red-400 mb-4">{error}</p>
-          <PremiumButton onClick={() => window.location.reload()} variant="gradient">
+        <div className="text-center p-8">
+          <div className="inline-flex rounded-full bg-red-500/10 p-4">
+            <Bot className="w-16 h-16 text-red-400" />
+          </div>
+          <h2 className="mt-6 text-3xl font-bold text-white">Oops! Something went wrong.</h2>
+          <p className="mt-4 text-lg text-gray-400">{error}</p>
+          <PremiumButton onClick={fetchAgents} variant="gradient" className="mt-8">
+            <ArrowRight className="mr-2 h-5 w-5" />
             Try Again
           </PremiumButton>
         </div>

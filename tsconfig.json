@@ -1,5 +1,7 @@
 {
   "extends": "./tsconfig.base.json",
+  "include": ["src/**/*"],
+  "exclude": ["src/mcp/**/*"],
   "files": [],
   "references": [
     { "path": "./packages/types" },
@@ -11,6 +13,7 @@
     { "path": "./packages/prompt-templating" },
     { "path": "./packages/feature-suggestions" },
     { "path": "./packages/port-management" },
-    { "path": "./packages/ui-consolidated" }
+    { "path": "./packages/ui-consolidated" },
+    { "path": "./packages/database" }
   ]
 }

@@ -19,10 +19,10 @@ const redisConfig = {
     password: '',
   },
   production: {
-    host: 'redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com',
-    port: 11337,
-    username: 'default',
-    password: 'CxXMZw3qW3zYXq1JYy7bCuqwRrL7tH0d',
+    host: process.env.REDIS_HOST || 'redis-11337.c93.us-east-1-3.ec2.redns.redis-cloud.com',
+    port: parseInt(process.env.REDIS_PORT || '11337', 10),
+    username: process.env.REDIS_USERNAME || 'default',
+    password: process.env.REDIS_PASSWORD || '',
     tls: true
   }
 };

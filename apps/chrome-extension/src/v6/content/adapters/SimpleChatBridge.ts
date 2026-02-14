@@ -1,7 +1,11 @@
 /**
- * Fuse Connect v5 - Simple Chat Bridge
+ * Fuse Connect v6 - Simple Chat Bridge
  *
- * RESTORED FROM BACKUP: Using simple selector approach that actually works.
+ * NOTE: This file still contains legacy v5 comments, but it is used by v6.
+ *
+ * Cloudflare upgrade (2026-02): when a target UI is unreliable (e.g. OpenClaw cloud
+ * transcript rendering issues), we can use the TNF Agent Orchestration worker as a
+ * canonical transcript store and poll it from the content script.
  */
 
 export interface ChatElements {
@@ -11,9 +15,16 @@ export interface ChatElements {
 }
 
 export interface ChatBridgeCallbacks {
+  // Called when we detect assistant output (DOM scrape or TNF transcript poll)
   onResponse?: (content: string) => void;
   onError?: (error: string) => void;
+
+  // Optional: raw transcript events (edge DO)
+  onTranscriptEntry?: (entry: { role: string; content: string; ts: number; seq?: number }) => void;
 }
+
+import { DEFAULT_NODES } from '../../shared/constants';
+import { TnfTranscriptClient } from '../utils/TnfTranscriptClient';
 
 class SimpleChatBridge {
   private lastResponseText = '';
@@ -22,6 +33,11 @@ class SimpleChatBridge {
   private isWaitingForResponse = false;
   private responseCheckInterval: number | null = null;
   private _sendingGuard = false; // Safety guard for UI lag between click and streaming state
+
+  // TNF Transcript polling (Cloudflare DO)
+  private transcriptClient: TnfTranscriptClient | null = null;
+  private transcriptPollTimer: number | null = null;
+  private transcriptLastSeq: number = 0;
 
   // ORCHESTRATOR IMPROVEMENT: Element caching to reduce DOM scanning
   private cachedElements: ChatElements | null = null;
@@ -39,6 +55,7 @@ class SimpleChatBridge {
     'perplexity.ai',
     'poe.com',
     'aistudio.google.com',
+    'openclaw-cloud-production-934c.up.railway.app', // OpenClaw cloud control UI
     'localhost:3000', // Local dev with chat
     'localhost:3000', // Local dev with chat
     'localhost:3001', // Local backend
@@ -73,6 +90,19 @@ class SimpleChatBridge {
 
     // Load custom sites from storage
     this.loadCustomSites();
+
+    // Always enable transcript polling on OpenClaw cloud UI (DOM rendering is currently unreliable there).
+    // This will power the TNF injectable modal with canonical state from Cloudflare.
+    try {
+      const host = window.location.hostname.toLowerCase();
+      if (host.includes('openclaw-cloud') || host.endsWith('up.railway.app')) {
+        const workerUrl = DEFAULT_NODES.tnfWorker;
+        const sessionKey = this.deriveSessionKey();
+        this.enableTranscriptPolling(workerUrl, sessionKey);
+      }
+    } catch (e) {
+      // non-fatal
+    }
   }
 
   /**
@@ -89,6 +119,72 @@ class SimpleChatBridge {
         }
       });
     }
+  }
+
+  /**
+   * Derive a stable sessionKey for Cloudflare transcript storage.
+   * Best effort: host + OpenClaw session query param (if present).
+   */
+  private deriveSessionKey(): string {
+    const host = window.location.hostname.toLowerCase();
+    const url = new URL(window.location.href);
+    const session = url.searchParams.get('session') || 'main';
+    return `openclaw-ui:${host}:session:${session}`;
+  }
+
+  private enableTranscriptPolling(workerUrl: string, sessionKey: string): void {
+    // Avoid double-start
+    if (this.transcriptPollTimer) return;
+
+    this.transcriptClient = new TnfTranscriptClient(workerUrl, sessionKey);
+
+    const poll = async () => {
+      if (!this.transcriptClient) return;
+      try {
+        // First pull: load latest and set cursor.
+        if (this.transcriptLastSeq === 0) {
+          const { lastSeq, entries } = await this.transcriptClient.latest(50);
+          this.transcriptLastSeq = lastSeq || 0;
+          for (const e of entries) {
+            this.callbacks.onTranscriptEntry?.({
+              role: e.role,
+              content: e.content,
+              ts: e.ts,
+              seq: e.seq,
+              id: e.id,
+            });
+            // CRITICAL FIX: Polled transcript entries from Cloudflare are for DISPLAY ONLY.
+            // We must NEVER call onResponse() here, because onResponse() triggers the "Response Complete"
+            // flow which broadcasts back to the relay, creating an infinite loop.
+            // Scraped responses from the actual page DOM are still handled by the MutationObserver.
+          }
+          return;
+        }
+
+        const { lastSeq, entries } = await this.transcriptClient.since(this.transcriptLastSeq, 200);
+        for (const e of entries) {
+          this.transcriptLastSeq = Math.max(
+            this.transcriptLastSeq,
+            e.seq || this.transcriptLastSeq
+          );
+          this.callbacks.onTranscriptEntry?.({
+            role: e.role,
+            content: e.content,
+            ts: e.ts,
+            seq: e.seq,
+            id: e.id,
+          });
+          // CRITICAL FIX: Same as above. Polled entries are for UI rendering only.
+        }
+        this.transcriptLastSeq = Math.max(this.transcriptLastSeq, lastSeq || 0);
+      } catch (err: any) {
+        this.callbacks.onError?.(String(err?.message || err));
+      }
+    };
+
+    // Kick off now, then poll.
+    poll();
+    this.transcriptPollTimer = window.setInterval(poll, 1500);
   }
 
   /**
@@ -110,6 +206,11 @@ class SimpleChatBridge {
       // The New Fuse (Custom App) - High Priority
       'input[placeholder="Type a message..."]',
       'input[placeholder="Type a message..."][type="text"]',
+
+      // OpenClaw Chat UI
+      '.chat-compose textarea',
+      'textarea[placeholder*="Message" i]',
+      'textarea[placeholder*="start chatting" i]',
 
       // Gemini 2025+ patterns (highest priority - latest interface)
       'rich-textarea p[contenteditable="true"]',
@@ -152,6 +253,11 @@ class SimpleChatBridge {
       // The New Fuse (Custom App) - High Priority
       'button:has(svg path[d="M5 12h14M12 5l7 7-7 7"])', // Exact path match
       'button:has(svg[stroke="currentColor"])', // Generic SVG button match for our app
+
+      // OpenClaw Chat UI
+      '.chat-compose button.primary',
+      '.chat-compose .btn.primary',
+      '.chat-compose button[type="submit"]',
 
       // Gemini-specific - EXPANDED
       'button[aria-label*="Send" i]',
@@ -434,31 +540,83 @@ class SimpleChatBridge {
    * Count model responses (for detecting new responses)
    */
   countModelResponses(): number {
-    return document.querySelectorAll('model-response').length;
+    // Primary path for Gemini-style UIs
+    const modelResponses = document.querySelectorAll('model-response').length;
+    if (modelResponses > 0) return modelResponses;
+
+    // OpenClaw chat UI fallback
+    const openClawThread = document.querySelector('.chat-thread');
+    if (openClawThread) {
+      const entries = Array.from(openClawThread.querySelectorAll(':scope > *')).filter((el) => {
+        const text = (el.textContent || '').trim();
+        return text.length > 0;
+      });
+      return entries.length;
+    }
+
+    // Generic assistant-like message fallback
+    const generic = document.querySelectorAll(
+      '[data-message-author-role="assistant"], [class*="assistant-message"], [class*="model-response"]'
+    ).length;
+    return generic;
   }
 
   /**
    * Get latest response text
    */
   getLatestResponse(): string | null {
+    const cleanText = (node: Element | null): string | null => {
+      if (!node) return null;
+      const clone = node.cloneNode(true) as HTMLElement;
+      clone
+        .querySelectorAll('button, [role="button"], .chip, [class*="action"], .chat-compose')
+        .forEach((el) => el.remove());
+      const text = (clone.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!text) return null;
+      // Avoid false positives like lone branding emoji or tiny fragments
+      if (text.length < 8) return null;
+      return text;
+    };
+
+    // Primary path for Gemini-style UIs
     const responses = document.querySelectorAll('model-response');
-    if (responses.length === 0) return null;
-
-    const lastResponse = responses[responses.length - 1];
-    const markdown = lastResponse.querySelector('.markdown');
-
-    if (!markdown) {
-      return (lastResponse.textContent || '').trim() || null;
+    if (responses.length > 0) {
+      const lastResponse = responses[responses.length - 1];
+      const markdown = lastResponse.querySelector('.markdown');
+      const txt = cleanText(markdown || lastResponse);
+      if (txt) return txt;
     }
 
-    // Clone and clean up the markdown content
-    const clone = markdown.cloneNode(true) as HTMLElement;
-    clone
-      .querySelectorAll('button, [role="button"], .chip, [class*="action"]')
-      .forEach((el) => el.remove());
+    // OpenClaw chat UI fallback: only inspect chat-thread scoped entries
+    const openClawThread = document.querySelector('.chat-thread');
+    if (openClawThread) {
+      const candidates = Array.from(openClawThread.querySelectorAll(':scope > *'));
+      for (let i = candidates.length - 1; i >= 0; i--) {
+        const text = cleanText(candidates[i]);
+        if (!text) continue;
+        // Skip obvious non-reply/system status text
+        const low = text.toLowerCase();
+        if (low.includes('disconnected from gateway')) continue;
+        if (low === 'openclaw' || low === '🦞') continue;
+        // CRITICAL: Block user message scrapes to prevent doubling in OpenClaw
+        if (
+          low.startsWith('u ') ||
+          low.startsWith('you ') ||
+          low.includes(' you ') ||
+          (low.startsWith('u') && low.length < 5)
+        )
+          continue;
+        return text;
+      }
+    }
 
-    const text = (clone.textContent || '').trim();
-    return text.length > 0 ? text : null;
+    // Narrow generic fallback to assistant-role only
+    const generic = document.querySelectorAll('[data-message-author-role="assistant"]');
+    if (generic.length > 0) {
+      return cleanText(generic[generic.length - 1]);
+    }
+
+    return null;
   }
 
   /**
@@ -679,14 +837,17 @@ class SimpleChatBridge {
     this.isWaitingForResponse = true;
     let stableCount = 0;
     let lastContent = '';
-    let lastResponseCount = responsesBefore;
+    const initialContent = this.getLatestResponse() || '';
 
     this.responseCheckInterval = window.setInterval(() => {
       const currentResponseCount = this.countModelResponses();
+      const content = this.getLatestResponse();
 
-      // Check if new response appeared
-      if (currentResponseCount > responsesBefore) {
-        const content = this.getLatestResponse();
+      // Check if a new response appeared OR existing latest response content changed
+      const hasNewResponse = currentResponseCount > responsesBefore;
+      const hasUpdatedLatest = !!content && content !== initialContent;
+
+      if (hasNewResponse || hasUpdatedLatest) {
         const streaming = this.isStreaming();
 
         // Also check for image/media content in the latest response
@@ -728,8 +889,6 @@ class SimpleChatBridge {
             }
           }
         }
-
-        lastResponseCount = currentResponseCount;
       }
     }, 1000);
 

@@ -15,6 +15,13 @@ import { accessibilityTree } from './utils/AccessibilityTree';
 import { captchaHandler } from './utils/CaptchaHandler';
 import { humanSimulator } from './utils/HumanBehaviorSimulator';
 
+// CRITICAL: Skip initialization on SkIDEancer IDE pages to prevent conflicts
+if (window.location.hostname === 'skideancer.thenewfuse.com') {
+  console.log('[FuseConnect v6] Skipping SkIDEancer IDE page - extension disabled on this domain');
+  // Stop execution (no top-level export allowed in content scripts)
+  throw new Error('FuseConnect disabled on IDE pages');
+}
+
 // Guard against multiple initialization (can happen in iframes or with hot reload)
 declare global {
   interface Window {
@@ -34,6 +41,10 @@ class FuseConnectContentScript {
   private panelVisible = false;
   private chatReady = false;
   private pageAgentId: string | null = null;
+
+  // DEDUPE GUARD: Track message IDs we have already processed (injected or shown)
+  // to prevent infinite loops from the relay-Cloudflare-Extension circle.
+  private processedMessageIds: Set<string> = new Set();
 
   // FEDERATION IMPROVEMENT: Track pending requests for response correlation
   private pendingRequests: Map<
@@ -134,6 +145,18 @@ class FuseConnectContentScript {
 
         // Trigger queue processing after response
         this.processInjectionQueue();
+      },
+      onTranscriptEntry: (entry) => {
+        // Track the ID in our dedupe guard
+        if (entry.id) this.processedMessageIds.add(entry.id);
+
+        // Forward canonical transcript updates from Cloudflare DO to panel
+        if (this.panel) {
+          this.panel.handleMessage({
+            type: 'TRANSCRIPT_UPDATE',
+            entry: entry,
+          });
+        }
       },
       onError: (error) => {
         console.error('[FuseConnect v6] Chat bridge error:', error);
@@ -493,6 +516,15 @@ class FuseConnectContentScript {
           case 'NEW_MESSAGE':
             if (message.message) {
               const msg = message.message;
+
+              // DEDUPE GUARD: Never process the same message ID twice.
+              // This is vital for stopping feedback loops between Relay and Cloudflare.
+              if (msg.id && this.processedMessageIds.has(msg.id)) {
+                safeSendResponse({ success: true, reason: 'deduped' });
+                return true;
+              }
+              if (msg.id) this.processedMessageIds.add(msg.id);
+
               const myChannel = this.panel?.getCurrentChannel();
               const messageChannel = msg.channel || msg.metadata?.channel;
 

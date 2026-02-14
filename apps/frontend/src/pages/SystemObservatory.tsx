@@ -1,210 +1,916 @@
-import React, { useState } from 'react';
-import { 
-  Activity, 
-  Globe, 
-  Layers, 
-  Shield, 
-  Zap, 
-  Search, 
-  Maximize, 
-  Database,
+import {
+  Activity,
+  Brain,
   Cpu,
+  Database,
+  FileText,
+  Globe,
+  Layers,
+  Maximize,
+  Network,
   RefreshCcw,
-  Network
+  Search,
+  Shield,
+  Tags,
+  Wrench,
+  Zap,
 } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { GlassCard } from '../components/ui/premium/GlassCard';
 import { PremiumButton } from '../components/ui/premium/PremiumButton';
-import { MemoryVisualizer } from '../components/memory/visualization/MemoryVisualizer';
+// MemoryVisualizer kept for future “cluster view” mode; Semantic tab now primarily uses GraphVisualizer (ReactFlow)
+
 import { GraphVisualizerWrapper as GraphVisualizer } from '../components/wizard/graph/GraphVisualizer';
 
-export const SystemObservatory: React.FC = () => {
-    const [activeLayer, setActiveLayer] = useState<'topology' | 'semantic' | 'metrics'>('topology');
-
-    return (
-        <div className="space-y-8 animate-in fade-in duration-1000">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center border border-indigo-500/20 shadow-2xl">
-                        <Globe className="w-8 h-8 text-indigo-400" />
-                    </div>
-                    <div>
-                        <h1 className="text-4xl font-black text-white tracking-widest uppercase">
-                            System <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Observatory</span>
-                        </h1>
-                        <p className="text-gray-500 font-mono text-sm uppercase tracking-widest">Global Fleet Intelligence & Node Topology</p>
-                    </div>
-                </div>
-
-                <div className="flex gap-2 bg-white/5 p-1 rounded-xl border border-white/10 backdrop-blur-md">
-                    <TabButton 
-                        active={activeLayer === 'topology'} 
-                        icon={<Network className="w-4 h-4" />} 
-                        label="Network" 
-                        onClick={() => setActiveLayer('topology')} 
-                    />
-                    <TabButton 
-                        active={activeLayer === 'semantic'} 
-                        icon={<Database className="w-4 h-4" />} 
-                        label="Semantic" 
-                        onClick={() => setActiveLayer('semantic')} 
-                    />
-                    <TabButton 
-                        active={activeLayer === 'metrics'} 
-                        icon={<Activity className="w-4 h-4" />} 
-                        label="Metrics" 
-                        onClick={() => setActiveLayer('metrics')} 
-                    />
-                </div>
-            </div>
-
-            {/* Main Visualizer Area */}
-            <div className="grid grid-cols-1 xl:grid-cols-4 gap-8 h-[700px]">
-                <div className="xl:col-span-3 h-full">
-                    {activeLayer === 'topology' && (
-                        <div className="h-full">
-                             <GraphVisualizer 
-                                nodes={MOCK_NODES} 
-                                edges={MOCK_EDGES} 
-                            />
-                        </div>
-                    )}
-                    {activeLayer === 'semantic' && (
-                        <div className="h-full">
-                            <MemoryVisualizer 
-                                clusters={MOCK_SEMANTIC_CLUSTERS} 
-                            />
-                        </div>
-                    )}
-                    {activeLayer === 'metrics' && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
-                            <MetricsCard title="Network Latency" color="blue" />
-                            <MetricsCard title="Throughput (msg/s)" color="purple" />
-                            <MetricsCard title="Memory Usage" color="emerald" />
-                            <MetricsCard title="Agent Satisfaction" color="amber" />
-                        </div>
-                    )}
-                </div>
-
-                {/* Info Sidebar */}
-                <div className="space-y-6">
-                    <h2 className="text-sm font-black text-gray-500 uppercase tracking-[0.2em] mb-4">Live Context</h2>
-                    
-                    <GlassCard className="p-6 border-white/5 space-y-6">
-                        <SidebarStat label="Active Nodes" value="142" icon={<Cpu className="text-blue-400" />} />
-                        <SidebarStat label="Agencies" value="12" icon={<Layers className="text-purple-400" />} />
-                        <SidebarStat label="Throughput" value="2.4k/s" icon={<Zap className="text-amber-400" />} />
-                        <SidebarStat label="Security Level" value="Level 4" icon={<Shield className="text-emerald-400" />} />
-                    </GlassCard>
-
-                    <GlassCard className="p-6 bg-indigo-600/5 border-indigo-500/20">
-                        <h3 className="text-white font-bold mb-2 flex items-center gap-2">
-                             <RefreshCcw className="w-4 h-4 text-indigo-400 animate-spin-slow" />
-                             Auto-Discovery
-                        </h3>
-                        <p className="text-xs text-gray-400 leading-relaxed mb-4">
-                            New agents are automatically indexed into the semantic space and message bus.
-                        </p>
-                        <PremiumButton variant="outline" className="w-full text-[10px] py-1 h-8">
-                            Re-scan Fleet
-                        </PremiumButton>
-                    </GlassCard>
-
-                    <div className="p-4 rounded-xl border border-white/5 bg-black/40">
-                        <div className="text-[10px] font-bold text-gray-500 uppercase mb-2">Observatory Command</div>
-                        <div className="flex gap-2">
-                            <SmallAction icon={<Search />} />
-                            <SmallAction icon={<Maximize />} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+type AgentIndex = {
+  generatedAt: string;
+  counts: { agentDefinitions: number; overlayConfigs: number };
+  agents: Array<{
+    id: string;
+    name: string;
+    description?: string;
+    tools?: string[];
+    traits?: string[];
+    abilities?: string[];
+    overlayTools?: string[];
+    template?: string;
+    bodyMarkdown?: string;
+    semantic?: {
+      relatedConcepts?: Array<{ concept: string; score: number }>;
+      definingDocs?: Array<{ path: string; score: number; snippet?: string }>;
+    };
+    sources: { definitionPath: string; overlayPaths?: string[] };
+  }>;
 };
 
-const TabButton: React.FC<{ active: boolean; icon: React.ReactNode; label: string; onClick: () => void }> = ({ active, icon, label, onClick }) => (
-    <button 
-        onClick={onClick}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-            active 
-            ? 'bg-indigo-600 text-white shadow-[0_0_20px_rgba(79,70,229,0.4)]' 
-            : 'text-gray-400 hover:text-white hover:bg-white/5'
-        }`}
-    >
-        {icon}
-        <span className="text-sm font-bold">{label}</span>
-    </button>
-);
-
-const SidebarStat: React.FC<{ label: string; value: string; icon: React.ReactNode }> = ({ label, value, icon }) => (
-    <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-white/5 border border-white/5">
-                {icon}
-            </div>
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{label}</span>
-        </div>
-        <span className="text-sm font-black text-white">{value}</span>
-    </div>
-);
-
-const MetricsCard: React.FC<{ title: string; color: 'blue' | 'purple' | 'emerald' | 'amber' }> = ({ title, color }) => {
-    const colors = {
-        blue: 'border-blue-500/30 text-blue-400',
-        purple: 'border-purple-500/30 text-purple-400',
-        emerald: 'border-emerald-500/30 text-emerald-400',
-        amber: 'border-amber-500/30 text-amber-400'
+type SemanticNode = {
+  id: string;
+  data: {
+    label: string;
+    kind: 'category' | 'agent' | 'tool' | 'trait' | 'ability' | 'concept' | 'doc';
+    meta?: {
+      path?: string;
+      snippet?: string;
+      concept?: string;
     };
+  };
+  position: { x: number; y: number };
+  style?: Record<string, any>;
+};
+
+type SemanticEdge = {
+  id: string;
+  source: string;
+  target: string;
+  label?: string;
+  animated?: boolean;
+};
+
+function slugId(label: string): string {
+  return label
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function categorizeAgent(name: string): string {
+  const n = name.toLowerCase();
+  if (/(support|customer|helpdesk|ticket)/.test(n)) return 'Support';
+  if (/(marketing|seo|growth|funnel|sales|ad-|ads|affiliate)/.test(n)) return 'Marketing & Growth';
+  if (/(content|podcast|tiktok|youtube|social|newsletter|copy|writer)/.test(n))
+    return 'Content & Media';
+  if (/(devops|infra|deployment|docker|kubernetes|railway|cloud|security)/.test(n))
+    return 'DevOps & Security';
+  if (/(research|information|retrieval|analyst|analysis|intel|intelligence)/.test(n))
+    return 'Research & Analysis';
+  if (/(product|ux|ui|design)/.test(n)) return 'Product & Design';
+  if (/(code|coding|typescript|backend|frontend|qa|test)/.test(n)) return 'Engineering';
+  return 'General';
+}
+
+export const SystemObservatory: React.FC = () => {
+  const [activeLayer, setActiveLayer] = useState<'topology' | 'semantic' | 'metrics'>('topology');
+  const [agentIndex, setAgentIndex] = useState<AgentIndex | null>(null);
+  const [agentSearch, setAgentSearch] = useState<string>('');
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const [selectedDocPath, setSelectedDocPath] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Load static index generated by scripts/observatory/build-agent-index.ts
+    // Served from: apps/frontend/public/observatory/agents.index.json
+    fetch('/observatory/agents.index.json')
+      .then((r) =>
+        r.ok ? r.json() : Promise.reject(new Error(`Failed to load agent index (${r.status})`))
+      )
+      .then((json) => setAgentIndex(json))
+      .catch(() => setAgentIndex(null));
+  }, []);
+
+  const filteredAgents = useMemo(() => {
+    const agents = agentIndex?.agents ?? [];
+    const q = agentSearch.trim().toLowerCase();
+    if (!q) return agents;
+    return agents.filter((a) => {
+      const hay =
+        `${a.name} ${a.description ?? ''} ${(a.tools ?? []).join(' ')} ${(a.traits ?? []).join(' ')} ${(a.abilities ?? []).join(' ')}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }, [agentIndex, agentSearch]);
+
+  const agentsByCategory = useMemo(() => {
+    const map = new Map<string, AgentIndex['agents']>();
+    for (const a of filteredAgents) {
+      const cat = categorizeAgent(a.name);
+      map.set(cat, [...(map.get(cat) ?? []), a]);
+    }
+    // stable order
+    const ordered = Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    return ordered;
+  }, [filteredAgents]);
+
+  const selectedAgent = useMemo(() => {
+    if (!selectedAgentId) return null;
+    return (agentIndex?.agents ?? []).find((a) => a.id === selectedAgentId) ?? null;
+  }, [agentIndex, selectedAgentId]);
+
+  const selectedDoc = useMemo(() => {
+    if (!selectedAgent || !selectedDocPath) return null;
     return (
-        <GlassCard className={`p-6 ${colors[color]} relative flex flex-col justify-end overflow-hidden`}>
-            <div className="absolute top-0 right-0 p-4 opacity-10">
-                <Activity className="w-24 h-24" />
-            </div>
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] mb-1">{title}</div>
-            <div className="text-2xl font-bold text-white">NORMALIZED</div>
-            <div className="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full w-2/3 bg-current" />
-            </div>
-        </GlassCard>
+      (selectedAgent.semantic?.definingDocs ?? []).find((d) => d.path === selectedDocPath) ?? null
     );
+  }, [selectedAgent, selectedDocPath]);
+
+  const semanticGraph = useMemo((): { nodes: SemanticNode[]; edges: SemanticEdge[] } => {
+    // Two modes:
+    // - Overview: categories -> agents (collapsed)
+    // - Focused: selected agent -> tools/traits/abilities (1-hop)
+
+    const nodes: SemanticNode[] = [];
+    const edges: SemanticEdge[] = [];
+
+    const nodeStyleByKind: Record<SemanticNode['data']['kind'], any> = {
+      category: {
+        background: 'rgba(79,70,229,0.10)',
+        border: '1px solid rgba(99,102,241,0.25)',
+        color: '#e5e7eb',
+        fontWeight: 800,
+        padding: 10,
+        borderRadius: 14,
+      },
+      agent: {
+        background: 'rgba(2,132,199,0.10)',
+        border: '1px solid rgba(56,189,248,0.25)',
+        color: '#e5e7eb',
+        fontWeight: 700,
+        padding: 10,
+        borderRadius: 14,
+      },
+      tool: {
+        background: 'rgba(245,158,11,0.10)',
+        border: '1px solid rgba(251,191,36,0.25)',
+        color: '#e5e7eb',
+        fontWeight: 600,
+        padding: 10,
+        borderRadius: 14,
+      },
+      trait: {
+        background: 'rgba(168,85,247,0.10)',
+        border: '1px solid rgba(192,132,252,0.25)',
+        color: '#e5e7eb',
+        fontWeight: 600,
+        padding: 10,
+        borderRadius: 14,
+      },
+      ability: {
+        background: 'rgba(16,185,129,0.10)',
+        border: '1px solid rgba(52,211,153,0.25)',
+        color: '#e5e7eb',
+        fontWeight: 600,
+        padding: 10,
+        borderRadius: 14,
+      },
+      concept: {
+        background: 'rgba(244,63,94,0.08)',
+        border: '1px solid rgba(251,113,133,0.22)',
+        color: '#e5e7eb',
+        fontWeight: 600,
+        padding: 10,
+        borderRadius: 14,
+      },
+      doc: {
+        background: 'rgba(148,163,184,0.08)',
+        border: '1px solid rgba(148,163,184,0.20)',
+        color: '#e5e7eb',
+        fontWeight: 500,
+        padding: 10,
+        borderRadius: 14,
+      },
+    };
+
+    const edgeStyleByLabel: Record<string, any> = {
+      contains: { stroke: 'rgba(99,102,241,0.35)', strokeWidth: 1 },
+      uses: { stroke: 'rgba(251,191,36,0.40)', strokeWidth: 1.5 },
+      trait: { stroke: 'rgba(192,132,252,0.40)', strokeWidth: 1.5 },
+      ability: { stroke: 'rgba(52,211,153,0.40)', strokeWidth: 1.5 },
+      concept: { stroke: 'rgba(251,113,133,0.40)', strokeWidth: 1.5 },
+      doc: { stroke: 'rgba(148,163,184,0.30)', strokeWidth: 1 },
+    };
+
+    if (!selectedAgent) {
+      const cats = agentsByCategory.slice(0, 12); // keep light
+      cats.forEach(([category, agents], i) => {
+        const catId = `cat:${slugId(category)}`;
+        nodes.push({
+          id: catId,
+          data: { label: category, kind: 'category' },
+          position: { x: 0, y: i * 80 },
+          style: nodeStyleByKind.category,
+        });
+
+        agents.slice(0, 18).forEach((a, j) => {
+          const agentId = `agent:${a.id}`;
+          nodes.push({
+            id: agentId,
+            data: { label: a.name, kind: 'agent' },
+            position: { x: 240 + (j % 2) * 240, y: i * 80 + Math.floor(j / 2) * 44 },
+            style: nodeStyleByKind.agent,
+          });
+          edges.push({
+            id: `e:${catId}->${agentId}`,
+            source: catId,
+            target: agentId,
+            label: 'contains',
+            style: edgeStyleByLabel.contains,
+          });
+        });
+      });
+
+      return { nodes, edges };
+    }
+
+    const rootId = `agent:${selectedAgent.id}`;
+    nodes.push({
+      id: rootId,
+      data: { label: selectedAgent.name, kind: 'agent' },
+      position: { x: 0, y: 0 },
+      style: nodeStyleByKind.agent,
+    });
+
+    const tools = selectedAgent.tools ?? [];
+    tools.slice(0, 30).forEach((t, idx) => {
+      const id = `tool:${slugId(t)}`;
+      nodes.push({
+        id,
+        data: { label: t, kind: 'tool' },
+        position: { x: 320, y: -260 + idx * 36 },
+        style: nodeStyleByKind.tool,
+      });
+      edges.push({
+        id: `e:${rootId}->${id}`,
+        source: rootId,
+        target: id,
+        label: 'uses',
+        animated: true,
+        style: edgeStyleByLabel.uses,
+      });
+    });
+
+    const traits = selectedAgent.traits ?? [];
+    traits.slice(0, 20).forEach((t, idx) => {
+      const id = `trait:${slugId(t)}`;
+      nodes.push({
+        id,
+        data: { label: t, kind: 'trait' },
+        position: { x: 700, y: -260 + idx * 36 },
+        style: nodeStyleByKind.trait,
+      });
+      edges.push({
+        id: `e:${rootId}->${id}`,
+        source: rootId,
+        target: id,
+        label: 'trait',
+        style: edgeStyleByLabel.trait,
+      });
+    });
+
+    const abilities = selectedAgent.abilities ?? [];
+    abilities.slice(0, 20).forEach((a, idx) => {
+      const id = `ability:${slugId(a)}`;
+      nodes.push({
+        id,
+        data: { label: a, kind: 'ability' },
+        position: { x: 700, y: 140 + idx * 36 },
+        style: nodeStyleByKind.ability,
+      });
+      edges.push({
+        id: `e:${rootId}->${id}`,
+        source: rootId,
+        target: id,
+        label: 'ability',
+        style: edgeStyleByLabel.ability,
+      });
+    });
+
+    // semantic enrichment: concept neighborhood + defining docs
+    const concepts = selectedAgent.semantic?.relatedConcepts ?? [];
+    concepts.slice(0, 12).forEach((c, idx) => {
+      const id = `concept:${slugId(c.concept)}`;
+      nodes.push({
+        id,
+        data: { label: c.concept, kind: 'concept', meta: { concept: c.concept } },
+        position: { x: 320, y: 220 + idx * 34 },
+        style: nodeStyleByKind.concept,
+      });
+      edges.push({
+        id: `e:${rootId}->${id}`,
+        source: rootId,
+        target: id,
+        label: 'concept',
+        style: edgeStyleByLabel.concept,
+      });
+    });
+
+    const docs = selectedAgent.semantic?.definingDocs ?? [];
+    docs.slice(0, 10).forEach((d, idx) => {
+      const id = `doc:${slugId(d.path)}`;
+      const label = d.path.length > 42 ? `…${d.path.slice(-42)}` : d.path;
+      nodes.push({
+        id,
+        data: { label, kind: 'doc', meta: { path: d.path, snippet: d.snippet } },
+        position: { x: 980, y: -240 + idx * 44 },
+        style: nodeStyleByKind.doc,
+      });
+      edges.push({
+        id: `e:${rootId}->${id}`,
+        source: rootId,
+        target: id,
+        label: 'doc',
+        style: edgeStyleByLabel.doc,
+      });
+    });
+
+    return { nodes, edges };
+  }, [agentsByCategory, selectedAgent]);
+
+  return (
+    <div className="space-y-8 animate-in fade-in duration-1000">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center border border-indigo-500/20 shadow-2xl">
+            <Globe className="w-8 h-8 text-indigo-400" />
+          </div>
+          <div>
+            <h1 className="text-4xl font-black text-white tracking-widest uppercase">
+              System{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
+                Observatory
+              </span>
+            </h1>
+            <p className="text-gray-500 font-mono text-sm uppercase tracking-widest">
+              Global Fleet Intelligence & Node Topology
+            </p>
+          </div>
+        </div>
+
+        <div className="flex gap-2 bg-white/5 p-1 rounded-xl border border-white/10 backdrop-blur-md">
+          <TabButton
+            active={activeLayer === 'topology'}
+            icon={<Network className="w-4 h-4" />}
+            label="Network"
+            onClick={() => setActiveLayer('topology')}
+          />
+          <TabButton
+            active={activeLayer === 'semantic'}
+            icon={<Database className="w-4 h-4" />}
+            label="Semantic"
+            onClick={() => setActiveLayer('semantic')}
+          />
+          <TabButton
+            active={activeLayer === 'metrics'}
+            icon={<Activity className="w-4 h-4" />}
+            label="Metrics"
+            onClick={() => setActiveLayer('metrics')}
+          />
+        </div>
+      </div>
+
+      {/* Main Visualizer Area */}
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-8 h-[700px]">
+        <div className="xl:col-span-3 h-full">
+          {activeLayer === 'topology' && (
+            <div className="h-full">
+              <GraphVisualizer nodes={MOCK_NODES} edges={MOCK_EDGES} />
+            </div>
+          )}
+          {activeLayer === 'semantic' && (
+            <div className="h-full grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {/* Agent directory */}
+              <GlassCard className="p-4 border-white/5 bg-black/40 lg:col-span-1 h-full overflow-hidden flex flex-col">
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+                      <Tags className="w-4 h-4 text-indigo-300" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                        Agents
+                      </div>
+                      <div className="text-[10px] text-gray-600 font-mono">
+                        {agentIndex ? `${agentIndex.counts.agentDefinitions} loaded` : 'Loading…'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative mb-3">
+                  <input
+                    value={agentSearch}
+                    onChange={(e) => setAgentSearch(e.target.value)}
+                    placeholder="Search agents, tools, traits…"
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-gray-600 outline-none focus:ring-2 focus:ring-indigo-600/40"
+                  />
+                  <div className="absolute right-2 top-2.5 text-gray-600">
+                    <Search className="w-4 h-4" />
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-auto pr-1 space-y-2">
+                  {agentsByCategory.map(([category, agents]) => (
+                    <details
+                      key={category}
+                      className="group rounded-lg border border-white/10 bg-white/5"
+                    >
+                      <summary className="cursor-pointer select-none list-none px-3 py-2 flex items-center justify-between">
+                        <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">
+                          {category}
+                        </span>
+                        <span className="text-[10px] text-gray-600 font-mono">{agents.length}</span>
+                      </summary>
+                      <div className="px-3 pb-2 space-y-1">
+                        {agents.slice(0, 60).map((a) => (
+                          <button
+                            key={a.id}
+                            onClick={() => setSelectedAgentId(a.id)}
+                            className={`w-full text-left text-sm px-2 py-1.5 rounded-md transition-all border ${
+                              selectedAgentId === a.id
+                                ? 'bg-indigo-600/20 border-indigo-500/30 text-white'
+                                : 'bg-black/20 border-transparent text-gray-300 hover:bg-white/5 hover:text-white'
+                            }`}
+                          >
+                            <div className="font-semibold leading-tight">{a.name}</div>
+                            {a.description && (
+                              <div className="text-[10px] text-gray-600 line-clamp-2">
+                                {a.description}
+                              </div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              </GlassCard>
+
+              {/* Semantic graph */}
+              <div className="lg:col-span-2 h-full space-y-3">
+                <div className="flex flex-wrap gap-2 text-[10px] font-mono text-gray-600">
+                  <span className="px-2 py-1 rounded-full border border-indigo-500/20 bg-indigo-500/10 text-gray-300">
+                    Category
+                  </span>
+                  <span className="px-2 py-1 rounded-full border border-sky-500/20 bg-sky-500/10 text-gray-300">
+                    Agent
+                  </span>
+                  <span className="px-2 py-1 rounded-full border border-amber-500/20 bg-amber-500/10 text-gray-300">
+                    Tool
+                  </span>
+                  <span className="px-2 py-1 rounded-full border border-purple-500/20 bg-purple-500/10 text-gray-300">
+                    Trait
+                  </span>
+                  <span className="px-2 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-gray-300">
+                    Ability
+                  </span>
+                  <span className="px-2 py-1 rounded-full border border-rose-500/20 bg-rose-500/10 text-gray-300">
+                    Concept
+                  </span>
+                  <span className="px-2 py-1 rounded-full border border-slate-400/20 bg-slate-400/10 text-gray-300">
+                    Doc
+                  </span>
+                </div>
+
+                <div className="h-[640px]">
+                  <GraphVisualizer
+                    nodes={semanticGraph.nodes as any}
+                    edges={semanticGraph.edges as any}
+                    onNodeClick={(_, node: any) => {
+                      const kind = node?.data?.kind;
+                      if (kind === 'agent' && typeof node.id === 'string') {
+                        const id = node.id.replace(/^agent:/, '');
+                        setSelectedAgentId(id);
+                        setSelectedDocPath(null);
+                      }
+                      if (kind === 'doc') {
+                        const p = node?.data?.meta?.path;
+                        if (typeof p === 'string') setSelectedDocPath(p);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+          {activeLayer === 'metrics' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
+              <MetricsCard title="Network Latency" color="blue" />
+              <MetricsCard title="Throughput (msg/s)" color="purple" />
+              <MetricsCard title="Memory Usage" color="emerald" />
+              <MetricsCard title="Agent Satisfaction" color="amber" />
+            </div>
+          )}
+        </div>
+
+        {/* Info Sidebar */}
+        <div className="space-y-6">
+          <h2 className="text-sm font-black text-gray-500 uppercase tracking-[0.2em] mb-4">
+            Live Context
+          </h2>
+
+          <GlassCard className="p-6 border-white/5 space-y-6">
+            <SidebarStat
+              label="Active Nodes"
+              value="142"
+              icon={<Cpu className="text-blue-400" />}
+            />
+            <SidebarStat
+              label="Agencies"
+              value="12"
+              icon={<Layers className="text-purple-400" />}
+            />
+            <SidebarStat
+              label="Throughput"
+              value="2.4k/s"
+              icon={<Zap className="text-amber-400" />}
+            />
+            <SidebarStat
+              label="Security Level"
+              value="Level 4"
+              icon={<Shield className="text-emerald-400" />}
+            />
+          </GlassCard>
+
+          {activeLayer === 'semantic' && (
+            <GlassCard className="p-6 border-white/5 bg-black/40">
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                    <Brain className="w-4 h-4 text-purple-300" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                      Selected Agent
+                    </div>
+                    <div className="text-[10px] text-gray-600 font-mono">
+                      {selectedAgent ? selectedAgent.id : 'None'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {!selectedAgent && (
+                <div className="text-xs text-gray-500">
+                  Pick an agent from the list (or click a node in the semantic graph) to view its
+                  full profile.
+                </div>
+              )}
+
+              {selectedAgent && (
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <PremiumButton
+                      variant="outline"
+                      className="flex-1 text-[10px] py-1 h-8"
+                      onClick={async () => {
+                        try {
+                          const pack = {
+                            kind: 'TNF::ContextPack',
+                            version: 1,
+                            generatedAt: new Date().toISOString(),
+                            agent: {
+                              id: selectedAgent.id,
+                              name: selectedAgent.name,
+                              description: selectedAgent.description,
+                              tools: selectedAgent.tools ?? [],
+                              traits: selectedAgent.traits ?? [],
+                              abilities: selectedAgent.abilities ?? [],
+                              overlayTools: selectedAgent.overlayTools ?? [],
+                              template: selectedAgent.template,
+                              sources: selectedAgent.sources,
+                              semantic: selectedAgent.semantic,
+                              bodyMarkdown: selectedAgent.bodyMarkdown,
+                            },
+                          };
+                          await navigator.clipboard.writeText(JSON.stringify(pack, null, 2));
+                        } catch (e) {
+                          // swallow; clipboard may be unavailable depending on browser context
+                        }
+                      }}
+                    >
+                      Copy Context Pack
+                    </PremiumButton>
+                    <PremiumButton
+                      variant="outline"
+                      className="text-[10px] py-1 h-8"
+                      onClick={() => {
+                        setSelectedAgentId(null);
+                        setSelectedDocPath(null);
+                      }}
+                    >
+                      Clear
+                    </PremiumButton>
+                  </div>
+                  <div>
+                    <div className="text-sm font-black text-white leading-tight">
+                      {selectedAgent.name}
+                    </div>
+                    {selectedAgent.description && (
+                      <div className="text-xs text-gray-500 mt-1 leading-relaxed">
+                        {selectedAgent.description}
+                      </div>
+                    )}
+                  </div>
+
+                  <details className="rounded-lg border border-white/10 bg-white/5">
+                    <summary className="cursor-pointer select-none list-none px-3 py-2 flex items-center gap-2">
+                      <Wrench className="w-4 h-4 text-indigo-300" />
+                      <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">
+                        Tools
+                      </span>
+                      <span className="ml-auto text-[10px] text-gray-600 font-mono">
+                        {(selectedAgent.tools ?? []).length}
+                      </span>
+                    </summary>
+                    <div className="px-3 pb-3 pt-1 space-y-1">
+                      {(selectedAgent.tools ?? []).length === 0 && (
+                        <div className="text-xs text-gray-600">
+                          No tools listed in front matter.
+                        </div>
+                      )}
+                      {(selectedAgent.tools ?? []).map((t) => (
+                        <div key={t} className="text-xs text-gray-400 font-mono">
+                          • {t}
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+
+                  {(selectedAgent.traits?.length ||
+                    selectedAgent.abilities?.length ||
+                    selectedAgent.overlayTools?.length) && (
+                    <details className="rounded-lg border border-white/10 bg-white/5">
+                      <summary className="cursor-pointer select-none list-none px-3 py-2 flex items-center gap-2">
+                        <Tags className="w-4 h-4 text-purple-300" />
+                        <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">
+                          Traits / Abilities
+                        </span>
+                      </summary>
+                      <div className="px-3 pb-3 pt-1 space-y-2">
+                        {!!selectedAgent.traits?.length && (
+                          <div>
+                            <div className="text-[10px] text-gray-600 uppercase tracking-widest mb-1">
+                              Traits
+                            </div>
+                            <div className="text-xs text-gray-400 font-mono">
+                              {selectedAgent.traits.join(', ')}
+                            </div>
+                          </div>
+                        )}
+                        {!!selectedAgent.abilities?.length && (
+                          <div>
+                            <div className="text-[10px] text-gray-600 uppercase tracking-widest mb-1">
+                              Abilities
+                            </div>
+                            <div className="text-xs text-gray-400 font-mono">
+                              {selectedAgent.abilities.join(', ')}
+                            </div>
+                          </div>
+                        )}
+                        {!!selectedAgent.overlayTools?.length && (
+                          <div>
+                            <div className="text-[10px] text-gray-600 uppercase tracking-widest mb-1">
+                              Overlay Tools
+                            </div>
+                            <div className="text-xs text-gray-400 font-mono">
+                              {selectedAgent.overlayTools.join(', ')}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </details>
+                  )}
+
+                  {(selectedAgent.semantic?.relatedConcepts?.length ||
+                    selectedAgent.semantic?.definingDocs?.length) && (
+                    <details className="rounded-lg border border-white/10 bg-white/5" open>
+                      <summary className="cursor-pointer select-none list-none px-3 py-2 flex items-center gap-2">
+                        <Database className="w-4 h-4 text-rose-300" />
+                        <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">
+                          Semantic
+                        </span>
+                      </summary>
+                      <div className="px-3 pb-3 pt-1 space-y-3">
+                        {!!selectedAgent.semantic?.relatedConcepts?.length && (
+                          <div>
+                            <div className="text-[10px] text-gray-600 uppercase tracking-widest mb-1">
+                              Related concepts
+                            </div>
+                            <div className="space-y-1">
+                              {selectedAgent.semantic.relatedConcepts.slice(0, 10).map((c) => (
+                                <div
+                                  key={c.concept}
+                                  className="flex items-center justify-between gap-3 text-[10px] text-gray-400 font-mono"
+                                >
+                                  <span>{c.concept}</span>
+                                  <span className="text-gray-600">{c.score}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {!!selectedAgent.semantic?.definingDocs?.length && (
+                          <div>
+                            <div className="text-[10px] text-gray-600 uppercase tracking-widest mb-1">
+                              Defining docs (click to preview)
+                            </div>
+                            <div className="space-y-1">
+                              {selectedAgent.semantic.definingDocs.slice(0, 10).map((d) => (
+                                <button
+                                  key={d.path}
+                                  onClick={() => setSelectedDocPath(d.path)}
+                                  className={`w-full flex items-center justify-between gap-3 text-[10px] font-mono px-2 py-1 rounded border transition-all ${
+                                    selectedDocPath === d.path
+                                      ? 'bg-white/10 border-white/10 text-white'
+                                      : 'bg-black/20 border-transparent text-gray-400 hover:bg-white/5 hover:text-white'
+                                  }`}
+                                >
+                                  <span className="truncate text-left">{d.path}</span>
+                                  <span className="text-gray-600">{d.score}</span>
+                                </button>
+                              ))}
+                            </div>
+
+                            {selectedDoc && (
+                              <div className="mt-3 rounded-lg bg-black/30 border border-white/5 p-2">
+                                <div className="text-[10px] text-gray-600 font-mono mb-1">
+                                  Preview: {selectedDoc.path}
+                                </div>
+                                <div className="text-[10px] leading-relaxed text-gray-400 whitespace-pre-wrap font-mono">
+                                  {selectedDoc.snippet ?? 'No snippet available.'}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </details>
+                  )}
+
+                  <details className="rounded-lg border border-white/10 bg-white/5">
+                    <summary className="cursor-pointer select-none list-none px-3 py-2 flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-gray-300" />
+                      <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">
+                        Definition
+                      </span>
+                    </summary>
+                    <div className="px-3 pb-3 pt-1 space-y-2">
+                      <div className="text-[10px] text-gray-600 font-mono">
+                        Source: {selectedAgent.sources.definitionPath}
+                      </div>
+                      {selectedAgent.sources.overlayPaths?.length ? (
+                        <div className="text-[10px] text-gray-600 font-mono">
+                          Overlay: {selectedAgent.sources.overlayPaths.join(', ')}
+                        </div>
+                      ) : null}
+                      {selectedAgent.bodyMarkdown ? (
+                        <pre className="text-[10px] leading-relaxed text-gray-400 whitespace-pre-wrap font-mono max-h-56 overflow-auto rounded-lg bg-black/30 border border-white/5 p-2">
+                          {selectedAgent.bodyMarkdown}
+                        </pre>
+                      ) : (
+                        <div className="text-xs text-gray-600">No body markdown captured.</div>
+                      )}
+                    </div>
+                  </details>
+                </div>
+              )}
+            </GlassCard>
+          )}
+
+          <GlassCard className="p-6 bg-indigo-600/5 border-indigo-500/20">
+            <h3 className="text-white font-bold mb-2 flex items-center gap-2">
+              <RefreshCcw className="w-4 h-4 text-indigo-400 animate-spin-slow" />
+              Auto-Discovery
+            </h3>
+            <p className="text-xs text-gray-400 leading-relaxed mb-4">
+              New agents are automatically indexed into the semantic space and message bus.
+            </p>
+            <PremiumButton variant="outline" className="w-full text-[10px] py-1 h-8">
+              Re-scan Fleet
+            </PremiumButton>
+          </GlassCard>
+
+          <div className="p-4 rounded-xl border border-white/5 bg-black/40">
+            <div className="text-[10px] font-bold text-gray-500 uppercase mb-2">
+              Observatory Command
+            </div>
+            <div className="flex gap-2">
+              <SmallAction icon={<Search />} />
+              <SmallAction icon={<Maximize />} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const TabButton: React.FC<{
+  active: boolean;
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}> = ({ active, icon, label, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+      active
+        ? 'bg-indigo-600 text-white shadow-[0_0_20px_rgba(79,70,229,0.4)]'
+        : 'text-gray-400 hover:text-white hover:bg-white/5'
+    }`}
+  >
+    {icon}
+    <span className="text-sm font-bold">{label}</span>
+  </button>
+);
+
+const SidebarStat: React.FC<{ label: string; value: string; icon: React.ReactNode }> = ({
+  label,
+  value,
+  icon,
+}) => (
+  <div className="flex items-center justify-between">
+    <div className="flex items-center gap-3">
+      <div className="p-2 rounded-lg bg-white/5 border border-white/5">{icon}</div>
+      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{label}</span>
+    </div>
+    <span className="text-sm font-black text-white">{value}</span>
+  </div>
+);
+
+const MetricsCard: React.FC<{ title: string; color: 'blue' | 'purple' | 'emerald' | 'amber' }> = ({
+  title,
+  color,
+}) => {
+  const colors = {
+    blue: 'border-blue-500/30 text-blue-400',
+    purple: 'border-purple-500/30 text-purple-400',
+    emerald: 'border-emerald-500/30 text-emerald-400',
+    amber: 'border-amber-500/30 text-amber-400',
+  };
+  return (
+    <GlassCard
+      className={`p-6 ${colors[color]} relative flex flex-col justify-end overflow-hidden`}
+    >
+      <div className="absolute top-0 right-0 p-4 opacity-10">
+        <Activity className="w-24 h-24" />
+      </div>
+      <div className="text-[10px] font-black uppercase tracking-[0.2em] mb-1">{title}</div>
+      <div className="text-2xl font-bold text-white">NORMALIZED</div>
+      <div className="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+        <div className="h-full w-2/3 bg-current" />
+      </div>
+    </GlassCard>
+  );
 };
 
 const SmallAction: React.FC<{ icon: React.ReactNode }> = ({ icon }) => (
-    <button className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-500 hover:text-white hover:bg-white/10 transition-all">
-        {React.cloneElement(icon as React.ReactElement, { className: 'w-4 h-4' })}
-    </button>
+  <button className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-500 hover:text-white hover:bg-white/10 transition-all">
+    {React.cloneElement(icon as React.ReactElement, { className: 'w-4 h-4' })}
+  </button>
 );
 
 const MOCK_NODES = [
-    { id: '1', data: { label: 'US-East-1' }, position: { x: 250, y: 50 }, type: 'input' },
-    { id: '2', data: { label: 'EU-Central-1' }, position: { x: 100, y: 150 } },
-    { id: '3', data: { label: 'AP-South-1' }, position: { x: 400, y: 150 } },
-    { id: '4', data: { label: 'Relay-Core' }, position: { x: 250, y: 250 }, type: 'output' },
+  { id: '1', data: { label: 'US-East-1' }, position: { x: 250, y: 50 }, type: 'input' },
+  { id: '2', data: { label: 'EU-Central-1' }, position: { x: 100, y: 150 } },
+  { id: '3', data: { label: 'AP-South-1' }, position: { x: 400, y: 150 } },
+  { id: '4', data: { label: 'Relay-Core' }, position: { x: 250, y: 250 }, type: 'output' },
 ];
 
 const MOCK_EDGES = [
-    { id: 'e1-2', source: '1', target: '2', animated: true },
-    { id: 'e1-3', source: '1', target: '3', animated: true },
-    { id: 'e2-4', source: '2', target: '4' },
-    { id: 'e3-4', source: '3', target: '4' },
+  { id: 'e1-2', source: '1', target: '2', animated: true },
+  { id: 'e1-3', source: '1', target: '3', animated: true },
+  { id: 'e2-4', source: '2', target: '4' },
+  { id: 'e3-4', source: '3', target: '4' },
 ];
 
-const MOCK_SEMANTIC_CLUSTERS = [
-    {
-        id: 'c1',
-        label: 'Aura Protocol',
-        items: [
-            { id: 'p1', content: 'Initialization logic for sub-second handshake', metadata: { confidence: 0.99, source: 'sys' } },
-            { id: 'p2', content: 'Quantum-safe key exchange', metadata: { confidence: 0.91, source: 'sec' } }
-        ]
-    },
-    {
-        id: 'c2',
-        label: 'Sovereign ID',
-        items: [
-            { id: 'p3', content: 'Zero-knowledge proofs for agent identity', metadata: { confidence: 0.95, source: 'auth' } }
-        ]
-    }
-];
+// MOCK_SEMANTIC_CLUSTERS removed: Semantic tab now loads real agent index from /observatory/agents.index.json
 
 export default SystemObservatory;

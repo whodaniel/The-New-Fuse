@@ -1,12 +1,16 @@
 /**
  * Agent Endpoint Security Tests
  * Focused testing of agent-related API endpoints for security vulnerabilities
+ * Updated to use Drizzle ORM
  */
 
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
-import { PrismaService } from '../../src/prisma/prisma.service';
+import {
+  DrizzleAgentRepository,
+  DrizzleUserRepository,
+} from '../../packages/database/src/drizzle/repositories';
 import { AppModule } from '../../src/app.module';
 
 // Agent-specific security test cases
@@ -42,16 +46,14 @@ const AGENT_SECURITY_TESTS = {
     'admin_privilege_escalation',
     'cross_user_operations',
   ],
-  dataExposure: [
-    'sensitive_metadata_access',
-    'internal_config_exposure',
-    'user_data_leakage',
-  ],
+  dataExposure: ['sensitive_metadata_access', 'internal_config_exposure', 'user_data_leakage'],
 };
 
 describe('Agent Endpoint Security Tests', () => {
   let app: INestApplication;
-  let prisma: PrismaService;
+  let drizzleService: DrizzleService;
+  let agentRepository: DrizzleAgentRepository;
+  let userRepository: DrizzleUserRepository;
   let user1Token: string;
   let user2Token: string;
   let adminToken: string;
@@ -69,103 +71,81 @@ describe('Agent Endpoint Security Tests', () => {
     app = moduleRef.createNestApplication();
     await app.init();
 
-    prisma = moduleRef.get<PrismaService>(PrismaService);
+    drizzleService = moduleRef.get<DrizzleService>(DrizzleService);
+    agentRepository = moduleRef.get<DrizzleAgentRepository>(DrizzleAgentRepository);
+    userRepository = moduleRef.get<DrizzleUserRepository>(DrizzleUserRepository);
 
     // Setup test users
-    user1 = await prisma.user.create({
-      data: {
-        email: 'agent.user1@example.com',
-        password: 'User1Password123!',
-        name: 'Agent Test User 1',
-        role: 'USER',
-      },
+    user1 = await userRepository.create({
+      email: 'agent.user1@example.com',
+      password: 'User1Password123!',
+      name: 'Agent Test User 1',
+      role: 'USER',
     });
 
-    user2 = await prisma.user.create({
-      data: {
-        email: 'agent.user2@example.com',
-        password: 'User2Password123!',
-        name: 'Agent Test User 2',
-        role: 'USER',
-      },
+    user2 = await userRepository.create({
+      email: 'agent.user2@example.com',
+      password: 'User2Password123!',
+      name: 'Agent Test User 2',
+      role: 'USER',
     });
 
-    admin = await prisma.user.create({
-      data: {
-        email: 'agent.admin@example.com',
-        password: 'AdminPassword123!',
-        name: 'Agent Test Admin',
-        role: 'ADMIN',
-      },
+    admin = await userRepository.create({
+      email: 'agent.admin@example.com',
+      password: 'AdminPassword123!',
+      name: 'Agent Test Admin',
+      role: 'ADMIN',
     });
 
     // Setup authentication
-    const user1Login = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({
-        email: user1.email,
-        password: 'User1Password123!',
-      });
+    const user1Login = await request(app.getHttpServer()).post('/auth/login').send({
+      email: user1.email,
+      password: 'User1Password123!',
+    });
 
     user1Token = user1Login.body.access_token;
 
-    const user2Login = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({
-        email: user2.email,
-        password: 'User2Password123!',
-      });
+    const user2Login = await request(app.getHttpServer()).post('/auth/login').send({
+      email: user2.email,
+      password: 'User2Password123!',
+    });
 
     user2Token = user2Login.body.access_token;
 
-    const adminLogin = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({
-        email: admin.email,
-        password: 'AdminPassword123!',
-      });
+    const adminLogin = await request(app.getHttpServer()).post('/auth/login').send({
+      email: admin.email,
+      password: 'AdminPassword123!',
+    });
 
     adminToken = adminLogin.body.access_token;
 
     // Setup test agents
-    user1Agent = await prisma.agent.create({
-      data: {
-        name: 'User1 Agent',
-        description: 'Agent owned by user1',
-        type: 'CHAT',
-        userId: user1.id,
-        config: { setting1: 'value1' },
-      },
+    user1Agent = await agentRepository.create({
+      name: 'User1 Agent',
+      description: 'Agent owned by user1',
+      type: 'CHAT',
+      userId: user1.id,
+      config: { setting1: 'value1' },
     });
 
-    user2Agent = await prisma.agent.create({
-      data: {
-        name: 'User2 Agent',
-        description: 'Agent owned by user2',
-        type: 'WORKFLOW',
-        userId: user2.id,
-        config: { setting2: 'value2' },
-      },
+    user2Agent = await agentRepository.create({
+      name: 'User2 Agent',
+      description: 'Agent owned by user2',
+      type: 'WORKFLOW',
+      userId: user2.id,
+      config: { setting2: 'value2' },
     });
   });
 
   afterAll(async () => {
     await prisma.agent.deleteMany({
-      where: { 
-        OR: [
-          { userId: user1.id },
-          { userId: user2.id },
-          { userId: admin.id },
-        ],
+      where: {
+        OR: [{ userId: user1.id }, { userId: user2.id }, { userId: admin.id }],
       },
     });
     await prisma.user.deleteMany({
       where: {
-        OR: [
-          { id: user1.id },
-          { id: user2.id },
-          { id: admin.id },
-        ],
+        OR: [{ id: user1.id }, { id: user2.id }, { id: admin.id }],
       },
     });
     await app.close();
@@ -185,7 +165,7 @@ describe('Agent Endpoint Security Tests', () => {
             .set('Authorization', `Bearer ${user1Token}`);
 
           expect([200, 400]).toContain(response.status);
-          
+
           if (response.status === 200) {
             expect(response.body.name).not.toContain('<script>');
             expect(response.body.name).not.toContain('javascript:');
@@ -205,7 +185,7 @@ describe('Agent Endpoint Security Tests', () => {
             .set('Authorization', `Bearer ${user1Token}`);
 
           expect([200, 400]).toContain(response.status);
-          
+
           if (response.status === 200) {
             expect(response.body.description).not.toContain('<script>');
             expect(response.body.description).not.toContain('onerror=');
@@ -237,12 +217,13 @@ describe('Agent Endpoint Security Tests', () => {
               name: 'Test Agent',
               description: 'Test description',
               type: 'CHAT',
-              config: typeof maliciousConfig === 'string' ? JSON.parse(maliciousConfig) : maliciousConfig,
+              config:
+                typeof maliciousConfig === 'string' ? JSON.parse(maliciousConfig) : maliciousConfig,
             })
             .set('Authorization', `Bearer ${user1Token}`);
 
           expect([200, 400]).toContain(response.status);
-          
+
           if (response.status === 200 && response.body.config) {
             const configStr = JSON.stringify(response.body.config);
             expect(configStr).not.toContain('<script>');
@@ -306,7 +287,7 @@ describe('Agent Endpoint Security Tests', () => {
           .set('Authorization', `Bearer ${user1Token}`);
 
         expect(response.status).toBe(200);
-        
+
         // Should not expose sensitive internal data
         expect(response.body).not.toHaveProperty('internal_id');
         expect(response.body).not.toHaveProperty('secrets');
@@ -315,11 +296,7 @@ describe('Agent Endpoint Security Tests', () => {
       });
 
       it('should prevent SQL injection in agent ID parameter', async () => {
-        const maliciousIds = [
-          "1' OR '1'='1",
-          '1; DROP TABLE agents; --',
-          '../../../etc/passwd',
-        ];
+        const maliciousIds = ["1' OR '1'='1", '1; DROP TABLE agents; --', '../../../etc/passwd'];
 
         for (const maliciousId of maliciousIds) {
           const response = await request(app.getHttpServer())
@@ -374,7 +351,7 @@ describe('Agent Endpoint Security Tests', () => {
           .set('Authorization', `Bearer ${user1Token}`);
 
         expect([200, 400]).toContain(response.status);
-        
+
         if (response.status === 200) {
           expect(response.body.name).not.toContain('<script>');
           expect(response.body.description).not.toContain('onerror=');
@@ -453,7 +430,7 @@ describe('Agent Endpoint Security Tests', () => {
           .set('Authorization', `Bearer ${user1Token}`);
 
         expect([200, 400]).toContain(response.status);
-        
+
         if (response.status === 200) {
           expect(response.body).not.toMatch(/error|exception|sql/i);
         }
@@ -480,7 +457,7 @@ describe('Agent Endpoint Security Tests', () => {
         .set('Authorization', `Bearer ${user1Token}`);
 
       expect([200, 400]).toContain(response.status);
-      
+
       if (response.status === 200 && response.body.results) {
         response.body.results.forEach((agent: any) => {
           expect(agent.description || '').not.toContain('<script>');
@@ -502,7 +479,7 @@ describe('Agent Endpoint Security Tests', () => {
         .set('Authorization', `Bearer ${user1Token}`);
 
       expect(response.status).toBe(200);
-      
+
       if (response.body.results) {
         // User1 should only see their own agents and public ones
         const visibleAgentIds = response.body.results.map((agent: any) => agent.id);
@@ -628,10 +605,10 @@ describe('Agent Endpoint Security Tests', () => {
         .set('Authorization', `Bearer ${user1Token}`);
 
       expect(response.status).toBe(200);
-      
+
       if (response.body) {
         const agents = Array.isArray(response.body) ? response.body : response.body.data || [];
-        
+
         agents.forEach((agent: any) => {
           // Should not expose sensitive data in lists
           expect(agent).not.toHaveProperty('internal_config');
@@ -681,7 +658,7 @@ describe('Agent Endpoint Security Tests', () => {
         .set('Authorization', `Bearer ${user1Token}`);
 
       expect([200, 400]).toContain(response.status);
-      
+
       if (response.status === 200 && response.body.config) {
         const configStr = JSON.stringify(response.body.config);
         expect(configStr).not.toContain('<script>');
@@ -693,7 +670,7 @@ describe('Agent Endpoint Security Tests', () => {
   describe('Agent Performance and DoS Protection', () => {
     it('should handle expensive operations safely', async () => {
       const startTime = Date.now();
-      
+
       // Try to trigger expensive search
       const response = await request(app.getHttpServer())
         .post('/agents/search')
@@ -725,10 +702,12 @@ describe('Agent Endpoint Security Tests', () => {
         description: 'a'.repeat(100000), // 100KB
         type: 'CHAT',
         config: {
-          data: Array(1000).fill().map((_, i) => ({
-            key: `key${i}`,
-            value: 'x'.repeat(1000),
-          })),
+          data: Array(1000)
+            .fill()
+            .map((_, i) => ({
+              key: `key${i}`,
+              value: 'x'.repeat(1000),
+            })),
         },
       };
 

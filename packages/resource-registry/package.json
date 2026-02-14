@@ -45,7 +45,7 @@
     "db:studio": "prisma studio --schema=./prisma/schema.prisma"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.25.2",
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "@nestjs/common": "^11.1.10",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^11.1.10",

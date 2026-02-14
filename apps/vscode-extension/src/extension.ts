@@ -31,7 +31,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<TheNew
     log.info('✓ Configuration manager initialized');
 
     // Initialize services
-    await initializeServices();
+    await initializeServices(context);
     log.info('✓ Services initialized');
 
     // Create and register chat view provider
@@ -58,10 +58,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<TheNew
       })
     );
 
-    // Show status bar item
+    // Show status bar item with TNF branding
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    statusBarItem.text = '$(robot) TNF';
-    statusBarItem.tooltip = 'The New Fuse AI Assistant';
+    statusBarItem.text = '$(fuse) TNF';
+    statusBarItem.tooltip = 'The New Fuse - AI-Powered Development Platform';
     statusBarItem.command = 'theNewFuse.sendMessage';
     statusBarItem.show();
     context.subscriptions.push(statusBarItem);
@@ -132,9 +132,9 @@ class ExtensionAPI implements TheNewFuseAPI {
 
 /**
  * Initialize all services
- * Now includes Workspace and Tool Orchestration services
+ * Now includes Workspace, Tool Orchestration, and TNF Framework services
  */
-async function initializeServices(): Promise<void> {
+async function initializeServices(context: vscode.ExtensionContext): Promise<void> {
   // Initialize AI Service
   const aiService = AIService.getInstance();
   await aiService.initialize();
@@ -145,14 +145,12 @@ async function initializeServices(): Promise<void> {
   await chatService.initialize();
   log.debug('✓ Chat Service ready');
 
-  // Initialize Workspace Service (NEW in v9.1.0)
+  // Initialize Workspace Service
   const workspaceService = WorkspaceService.getInstance();
-  // Workspace service is ready immediately (singleton pattern)
   log.debug('✓ Workspace Service ready');
 
-  // Initialize Tool Orchestration Service (NEW in v9.1.0)
+  // Initialize Tool Orchestration Service
   const orchestrationService = ToolOrchestrationService.getInstance();
-  // Orchestration service is ready immediately (singleton pattern)
   log.debug('✓ Tool Orchestration Service ready');
 
   // Initialize MCP Service (non-blocking)
@@ -161,6 +159,45 @@ async function initializeServices(): Promise<void> {
     log.warn('MCP service initialization failed (non-critical)', error);
   });
   log.debug('✓ MCP Service initializing');
+
+  // ============================================
+  // TNF Framework Services (v9.1.0)
+  // ============================================
+
+  // Initialize A2A Protocol Service
+  A2AProtocolService.getInstance(context);
+  await A2AProtocolService.getInstance()!.initialize();
+  log.debug('✓ A2A Protocol Service ready');
+
+  // Initialize Agent Registry Service
+  AgentRegistryService.getInstance(context);
+  await AgentRegistryService.getInstance()!.initialize();
+  log.debug('✓ Agent Registry Service ready');
+
+  // Initialize AG-UI Protocol Service
+  AGUIProtocolService.getInstance(context);
+  await AGUIProtocolService.getInstance()!.initialize();
+  log.debug('✓ AG-UI Protocol Service ready');
+
+  // Initialize Relay Server Service
+  RelayServerService.getInstance(context);
+  await RelayServerService.getInstance()!.initialize();
+  log.debug('✓ Relay Server Service ready');
+
+  // Initialize Protocol Translation Service
+  ProtocolTranslationService.getInstance(context);
+  await ProtocolTranslationService.getInstance()!.initialize();
+  log.debug('✓ Protocol Translation Service ready');
+
+  // Initialize Memory Bank Service
+  MemoryBankService.getInstance(context);
+  await MemoryBankService.getInstance()!.initialize();
+  log.debug('✓ Memory Bank Service ready');
+
+  // Initialize Collective Orchestrator Service
+  CollectiveOrchestratorService.getInstance(context);
+  await CollectiveOrchestratorService.getInstance()!.initialize();
+  log.debug('✓ Collective Orchestrator Service ready');
 }
 
 /**

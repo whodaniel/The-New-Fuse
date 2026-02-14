@@ -1,12 +1,256 @@
 /******/ (() => {
   // webpackBootstrap
-  /******/ 'use strict'; // ./src/v6/content/adapters/SimpleChatBridge.ts
+  /******/ 'use strict'; // ./src/v6/shared/constants.ts
 
   /**
-   * Fuse Connect v5 - Simple Chat Bridge
-   *
-   * RESTORED FROM BACKUP: Using simple selector approach that actually works.
+   * Fuse Connect v6 - Constants and Configuration
    */
+  // ============================================
+  // EXTENSION METADATA
+  // ============================================
+  const EXTENSION_NAME = 'Fuse Connect';
+  const EXTENSION_VERSION = '6.0.0';
+  const EXTENSION_ID = 'fuse-connect-v6';
+  // ============================================
+  // NODE ENDPOINTS
+  // ============================================
+  const DEFAULT_NODES = {
+    relay: 'ws://localhost:3000/ws',
+    apiGateway: 'http://localhost:8080',
+    backend: 'http://localhost:3001',
+    saas: 'http://localhost:3002',
+    // Cloudflare TNF agent orchestration (canonical edge state)
+    tnfWorker: 'https://tnf-agent-orchestration.bizsynth.workers.dev',
+  };
+  // ============================================
+  // CHAT DETECTION CONFIG
+  // ============================================
+  const DEFAULT_CHAT_DETECTION = {
+    inputSelectors: [
+      // Contenteditable (modern AI UIs)
+      'div[contenteditable="true"][role="textbox"]',
+      'div[contenteditable="true"][data-placeholder]',
+      'div.ProseMirror[contenteditable="true"]',
+      'div[contenteditable="true"]',
+      // Textareas
+      'textarea[placeholder*="message" i]',
+      'textarea[placeholder*="ask" i]',
+      'textarea[placeholder*="type" i]',
+      'textarea[data-testid*="input" i]',
+      'textarea#prompt-textarea',
+      'form textarea',
+      'textarea',
+    ],
+    contentEditableCheck: true,
+    textareaCheck: true,
+    sendButtonSelectors: [
+      'button[data-testid*="send" i]',
+      'button[aria-label*="send" i]',
+      'button[type="submit"]',
+      'button.send-button',
+      'form button:last-of-type',
+    ],
+    buttonTextPatterns: [/send/i, /submit/i, /ask/i, /→/, /➤/, /▶/],
+    ariaLabelPatterns: [/send/i, /submit/i],
+    messageContainerSelectors: [
+      'div[class*="message-list"]',
+      'div[class*="conversation"]',
+      'main div[class*="scroll"]',
+      'div[role="log"]',
+    ],
+    streamingIndicatorSelectors: [
+      'div[data-is-streaming="true"]',
+      'div[class*="streaming"]',
+      '.generating',
+    ],
+    retryInterval: 500,
+    maxRetries: 20,
+    inputDebounce: 100,
+  };
+  // ============================================
+  // NOTIFICATION DEFAULTS
+  // ============================================
+  const DEFAULT_NOTIFICATIONS = {
+    enabled: true,
+    sound: false,
+    desktop: true,
+    badge: true,
+    showMessages: true,
+    showAgentEvents: true,
+    showSystemEvents: false,
+    muteChannels: [],
+    quietHoursEnabled: false,
+    quietHoursStart: '22:00',
+    quietHoursEnd: '08:00',
+  };
+  // ============================================
+  // DEFAULT SETTINGS
+  // ============================================
+  const DEFAULT_SETTINGS = {
+    nodes: {
+      endpoints: DEFAULT_NODES,
+      autoDiscover: true,
+      healthCheckInterval: 30000,
+    },
+    autoConnect: true,
+    chatDetection: DEFAULT_CHAT_DETECTION,
+    autoInject: true,
+    panel: {
+      defaultPosition: { x: 20, y: 20 },
+      defaultSize: { width: 360, height: 480 },
+      defaultMode: 'collapsed',
+      opacity: 1,
+      theme: 'neon',
+    },
+    notifications: DEFAULT_NOTIFICATIONS,
+    federation: {
+      autoJoinChannels: ['general'],
+      defaultChannel: 'general',
+    },
+    debug: {
+      enabled: false,
+      logLevel: 'warn',
+      logToConsole: true,
+      logToStorage: false,
+      recordNetworkTraffic: false,
+    },
+    shortcuts: {
+      togglePanel: 'Ctrl+Shift+F',
+      quickMessage: 'Ctrl+Shift+M',
+      focusInput: 'Ctrl+Shift+I',
+    },
+  };
+  // ============================================
+  // STORAGE KEYS
+  // ============================================
+  const STORAGE_KEYS = {
+    settings: 'fuse_settings',
+    agentId: 'fuse_agent_id',
+    panelState: 'fuse_panel_state',
+    channels: 'fuse_channels',
+    joinedChannels: 'fuse_joined_channels',
+    notifications: 'fuse_notifications',
+    knownNodes: 'fuse_known_nodes',
+    recentMessages: 'fuse_recent_messages',
+  };
+  // ============================================
+  // UI CONSTANTS
+  // ============================================
+  const PANEL_DIMENSIONS = {
+    minWidth: 300,
+    minHeight: 200,
+    maxWidth: 600,
+    maxHeight: 800,
+    collapsedHeight: 48,
+    defaultWidth: 360,
+    defaultHeight: 480,
+  };
+  const Z_INDEX = {
+    panel: 2147483647,
+    overlay: 2147483646,
+    notification: 2147483645,
+  };
+  // ============================================
+  // TIMING CONSTANTS
+  // ============================================
+  const TIMINGS = {
+    debounceDelay: 300,
+    retryInterval: 1000,
+    heartbeatInterval: 30000,
+    healthCheckInterval: 10000,
+    reconnectDelay: 5000,
+    streamingTimeout: 2000,
+    responsePollingInterval: 500,
+    maxResponseWait: 60000,
+  };
+  // ============================================
+  // MESSAGE TYPES
+  // ============================================
+  const MESSAGE_TYPES = {
+    // Agent lifecycle
+    AGENT_REGISTER: 'AGENT_REGISTER',
+    AGENT_UNREGISTER: 'AGENT_UNREGISTER',
+    AGENT_LIST: 'AGENT_LIST',
+    AGENT_STATUS: 'AGENT_STATUS',
+    AGENT_HEARTBEAT: 'AGENT_HEARTBEAT',
+    // Messaging
+    MESSAGE_SEND: 'MESSAGE_SEND',
+    MESSAGE_RECEIVE: 'MESSAGE_RECEIVE',
+    BROADCAST_MESSAGE: 'BROADCAST_MESSAGE',
+    // Streaming
+    MESSAGE_STREAM_START: 'MESSAGE_STREAM_START',
+    MESSAGE_STREAM_CHUNK: 'MESSAGE_STREAM_CHUNK',
+    MESSAGE_STREAM_END: 'MESSAGE_STREAM_END',
+    // Channels
+    CHANNEL_CREATE: 'CHANNEL_CREATE',
+    CHANNEL_JOIN: 'CHANNEL_JOIN',
+    CHANNEL_LEAVE: 'CHANNEL_LEAVE',
+    CHANNEL_LIST: 'CHANNEL_LIST',
+    CHANNEL_MESSAGE: 'CHANNEL_MESSAGE',
+    // Chat injection
+    INJECT_MESSAGE: 'INJECT_MESSAGE',
+    INJECT_RESULT: 'INJECT_RESULT',
+    CHAT_DETECTED: 'CHAT_DETECTED',
+    RESPONSE_DETECTED: 'RESPONSE_DETECTED',
+    RESPONSE_COMPLETE: 'RESPONSE_COMPLETE',
+    STREAMING_UPDATE: 'STREAMING_UPDATE',
+    // System
+    HEARTBEAT: 'HEARTBEAT',
+    WELCOME: 'WELCOME',
+    ERROR: 'ERROR',
+    CONNECTION_STATUS: 'CONNECTION_STATUS',
+    CONTENT_SCRIPT_READY: 'CONTENT_SCRIPT_READY',
+    TOGGLE_PANEL: 'TOGGLE_PANEL',
+    REQUEST_SYNC: 'REQUEST_SYNC',
+  }; // ./src/v6/content/utils/TnfTranscriptClient.ts
+
+  /**
+   * TNF Transcript Client (Cloudflare DO)
+   *
+   * Reads/writes canonical transcript entries stored at the edge.
+   */
+  class TnfTranscriptClient {
+    constructor(workerUrl, sessionKey) {
+      this.workerUrl = workerUrl;
+      this.sessionKey = sessionKey;
+    }
+    async latest(limit = 50) {
+      const url = `${this.workerUrl}/transcript/latest?sessionKey=${encodeURIComponent(this.sessionKey)}&limit=${limit}`;
+      const res = await fetch(url, { method: 'GET' });
+      if (!res.ok) throw new Error(`transcript.latest failed: ${res.status}`);
+      const data = await res.json();
+      return { lastSeq: data.lastSeq || 0, entries: data.entries || [] };
+    }
+    async since(afterSeq, limit = 200) {
+      const url = `${this.workerUrl}/transcript/since?sessionKey=${encodeURIComponent(this.sessionKey)}&afterSeq=${afterSeq}&limit=${limit}`;
+      const res = await fetch(url, { method: 'GET' });
+      if (!res.ok) throw new Error(`transcript.since failed: ${res.status}`);
+      const data = await res.json();
+      return { lastSeq: data.lastSeq || 0, entries: data.entries || [] };
+    }
+    async append(entries) {
+      const url = `${this.workerUrl}/transcript/append?sessionKey=${encodeURIComponent(this.sessionKey)}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Session-Key': this.sessionKey },
+        body: JSON.stringify({ entries }),
+      });
+      if (!res.ok) throw new Error(`transcript.append failed: ${res.status}`);
+      const data = await res.json();
+      return { lastSeq: data.lastSeq || 0, added: data.added || [] };
+    }
+  } // ./src/v6/content/adapters/SimpleChatBridge.ts
+
+  /**
+   * Fuse Connect v6 - Simple Chat Bridge
+   *
+   * NOTE: This file still contains legacy v5 comments, but it is used by v6.
+   *
+   * Cloudflare upgrade (2026-02): when a target UI is unreliable (e.g. OpenClaw cloud
+   * transcript rendering issues), we can use the TNF Agent Orchestration worker as a
+   * canonical transcript store and poll it from the content script.
+   */
+
   class SimpleChatBridge {
     constructor() {
       this.lastResponseText = '';
@@ -15,6 +259,10 @@
       this.isWaitingForResponse = false;
       this.responseCheckInterval = null;
       this._sendingGuard = false; // Safety guard for UI lag between click and streaming state
+      // TNF Transcript polling (Cloudflare DO)
+      this.transcriptClient = null;
+      this.transcriptPollTimer = null;
+      this.transcriptLastSeq = 0;
       // ORCHESTRATOR IMPROVEMENT: Element caching to reduce DOM scanning
       this.cachedElements = null;
       this.cacheValidUntil = 0;
@@ -30,6 +278,7 @@
         'perplexity.ai',
         'poe.com',
         'aistudio.google.com',
+        'openclaw-cloud-production-934c.up.railway.app', // OpenClaw cloud control UI
         'localhost:3000', // Local dev with chat
         'localhost:3000', // Local dev with chat
         'localhost:3001', // Local backend
@@ -59,6 +308,18 @@
       }
       // Load custom sites from storage
       this.loadCustomSites();
+      // Always enable transcript polling on OpenClaw cloud UI (DOM rendering is currently unreliable there).
+      // This will power the TNF injectable modal with canonical state from Cloudflare.
+      try {
+        const host = window.location.hostname.toLowerCase();
+        if (host.includes('openclaw-cloud') || host.endsWith('up.railway.app')) {
+          const workerUrl = DEFAULT_NODES.tnfWorker;
+          const sessionKey = this.deriveSessionKey();
+          this.enableTranscriptPolling(workerUrl, sessionKey);
+        }
+      } catch (e) {
+        // non-fatal
+      }
     }
     /**
      * Load custom allowed sites from storage
@@ -74,6 +335,69 @@
           }
         });
       }
+    }
+    /**
+     * Derive a stable sessionKey for Cloudflare transcript storage.
+     * Best effort: host + OpenClaw session query param (if present).
+     */
+    deriveSessionKey() {
+      const host = window.location.hostname.toLowerCase();
+      const url = new URL(window.location.href);
+      const session = url.searchParams.get('session') || 'main';
+      return `openclaw-ui:${host}:session:${session}`;
+    }
+    enableTranscriptPolling(workerUrl, sessionKey) {
+      // Avoid double-start
+      if (this.transcriptPollTimer) return;
+      this.transcriptClient = new TnfTranscriptClient(workerUrl, sessionKey);
+      const poll = async () => {
+        if (!this.transcriptClient) return;
+        try {
+          // First pull: load latest and set cursor.
+          if (this.transcriptLastSeq === 0) {
+            const { lastSeq, entries } = await this.transcriptClient.latest(50);
+            this.transcriptLastSeq = lastSeq || 0;
+            for (const e of entries) {
+              this.callbacks.onTranscriptEntry?.({
+                role: e.role,
+                content: e.content,
+                ts: e.ts,
+                seq: e.seq,
+                id: e.id,
+              });
+              // CRITICAL FIX: Polled transcript entries from Cloudflare are for DISPLAY ONLY.
+              // We must NEVER call onResponse() here, because onResponse() triggers the "Response Complete"
+              // flow which broadcasts back to the relay, creating an infinite loop.
+              // Scraped responses from the actual page DOM are still handled by the MutationObserver.
+            }
+            return;
+          }
+          const { lastSeq, entries } = await this.transcriptClient.since(
+            this.transcriptLastSeq,
+            200
+          );
+          for (const e of entries) {
+            this.transcriptLastSeq = Math.max(
+              this.transcriptLastSeq,
+              e.seq || this.transcriptLastSeq
+            );
+            this.callbacks.onTranscriptEntry?.({
+              role: e.role,
+              content: e.content,
+              ts: e.ts,
+              seq: e.seq,
+              id: e.id,
+            });
+            // CRITICAL FIX: Same as above. Polled entries are for UI rendering only.
+          }
+          this.transcriptLastSeq = Math.max(this.transcriptLastSeq, lastSeq || 0);
+        } catch (err) {
+          this.callbacks.onError?.(String(err?.message || err));
+        }
+      };
+      // Kick off now, then poll.
+      poll();
+      this.transcriptPollTimer = window.setInterval(poll, 1500);
     }
     /**
      * Find chat elements on the page - Enhanced with platform-specific selectors
@@ -92,6 +416,10 @@
         // The New Fuse (Custom App) - High Priority
         'input[placeholder="Type a message..."]',
         'input[placeholder="Type a message..."][type="text"]',
+        // OpenClaw Chat UI
+        '.chat-compose textarea',
+        'textarea[placeholder*="Message" i]',
+        'textarea[placeholder*="start chatting" i]',
         // Gemini 2025+ patterns (highest priority - latest interface)
         'rich-textarea p[contenteditable="true"]',
         'rich-textarea p[data-placeholder]',
@@ -132,6 +460,10 @@
         // The New Fuse (Custom App) - High Priority
         'button:has(svg path[d="M5 12h14M12 5l7 7-7 7"])', // Exact path match
         'button:has(svg[stroke="currentColor"])', // Generic SVG button match for our app
+        // OpenClaw Chat UI
+        '.chat-compose button.primary',
+        '.chat-compose .btn.primary',
+        '.chat-compose button[type="submit"]',
         // Gemini-specific - EXPANDED
         'button[aria-label*="Send" i]',
         'button[aria-label*="submit" i]',
@@ -393,26 +725,76 @@
      * Count model responses (for detecting new responses)
      */
     countModelResponses() {
-      return document.querySelectorAll('model-response').length;
+      // Primary path for Gemini-style UIs
+      const modelResponses = document.querySelectorAll('model-response').length;
+      if (modelResponses > 0) return modelResponses;
+      // OpenClaw chat UI fallback
+      const openClawThread = document.querySelector('.chat-thread');
+      if (openClawThread) {
+        const entries = Array.from(openClawThread.querySelectorAll(':scope > *')).filter((el) => {
+          const text = (el.textContent || '').trim();
+          return text.length > 0;
+        });
+        return entries.length;
+      }
+      // Generic assistant-like message fallback
+      const generic = document.querySelectorAll(
+        '[data-message-author-role="assistant"], [class*="assistant-message"], [class*="model-response"]'
+      ).length;
+      return generic;
     }
     /**
      * Get latest response text
      */
     getLatestResponse() {
+      const cleanText = (node) => {
+        if (!node) return null;
+        const clone = node.cloneNode(true);
+        clone
+          .querySelectorAll('button, [role="button"], .chip, [class*="action"], .chat-compose')
+          .forEach((el) => el.remove());
+        const text = (clone.textContent || '').replace(/\s+/g, ' ').trim();
+        if (!text) return null;
+        // Avoid false positives like lone branding emoji or tiny fragments
+        if (text.length < 8) return null;
+        return text;
+      };
+      // Primary path for Gemini-style UIs
       const responses = document.querySelectorAll('model-response');
-      if (responses.length === 0) return null;
-      const lastResponse = responses[responses.length - 1];
-      const markdown = lastResponse.querySelector('.markdown');
-      if (!markdown) {
-        return (lastResponse.textContent || '').trim() || null;
+      if (responses.length > 0) {
+        const lastResponse = responses[responses.length - 1];
+        const markdown = lastResponse.querySelector('.markdown');
+        const txt = cleanText(markdown || lastResponse);
+        if (txt) return txt;
       }
-      // Clone and clean up the markdown content
-      const clone = markdown.cloneNode(true);
-      clone
-        .querySelectorAll('button, [role="button"], .chip, [class*="action"]')
-        .forEach((el) => el.remove());
-      const text = (clone.textContent || '').trim();
-      return text.length > 0 ? text : null;
+      // OpenClaw chat UI fallback: only inspect chat-thread scoped entries
+      const openClawThread = document.querySelector('.chat-thread');
+      if (openClawThread) {
+        const candidates = Array.from(openClawThread.querySelectorAll(':scope > *'));
+        for (let i = candidates.length - 1; i >= 0; i--) {
+          const text = cleanText(candidates[i]);
+          if (!text) continue;
+          // Skip obvious non-reply/system status text
+          const low = text.toLowerCase();
+          if (low.includes('disconnected from gateway')) continue;
+          if (low === 'openclaw' || low === '🦞') continue;
+          // CRITICAL: Block user message scrapes to prevent doubling in OpenClaw
+          if (
+            low.startsWith('u ') ||
+            low.startsWith('you ') ||
+            low.includes(' you ') ||
+            (low.startsWith('u') && low.length < 5)
+          )
+            continue;
+          return text;
+        }
+      }
+      // Narrow generic fallback to assistant-role only
+      const generic = document.querySelectorAll('[data-message-author-role="assistant"]');
+      if (generic.length > 0) {
+        return cleanText(generic[generic.length - 1]);
+      }
+      return null;
     }
     /**
      * Check if AI is currently streaming a response
@@ -600,12 +982,14 @@
       this.isWaitingForResponse = true;
       let stableCount = 0;
       let lastContent = '';
-      let lastResponseCount = responsesBefore;
+      const initialContent = this.getLatestResponse() || '';
       this.responseCheckInterval = window.setInterval(() => {
         const currentResponseCount = this.countModelResponses();
-        // Check if new response appeared
-        if (currentResponseCount > responsesBefore) {
-          const content = this.getLatestResponse();
+        const content = this.getLatestResponse();
+        // Check if a new response appeared OR existing latest response content changed
+        const hasNewResponse = currentResponseCount > responsesBefore;
+        const hasUpdatedLatest = !!content && content !== initialContent;
+        if (hasNewResponse || hasUpdatedLatest) {
           const streaming = this.isStreaming();
           // Also check for image/media content in the latest response
           const hasMedia = this.checkForMediaContent();
@@ -641,7 +1025,6 @@
               }
             }
           }
-          lastResponseCount = currentResponseCount;
         }
       }, 1000);
       // Timeout after 180 seconds (3 minutes) - enough for image/video generation
@@ -1920,13 +2303,18 @@
                 return `
             <div class="fcp6-chat-card" data-msg-id="${msg.id}">
             <div class="fcp6-chat-header">
-              <div style="display: flex; align-items: center; gap: 6px;">
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                 <span class="fcp6-chat-from" title="Agent ID: ${this.escapeHtml(senderId)}">
                   ${this.escapeHtml(senderName)}
                 </span>
-                <span style="font-size: 9px; font-family: monospace; background: rgba(255,255,255,0.1); padding: 1px 4px; border-radius: 3px; color: rgba(255,255,255,0.4);" title="${this.escapeHtml(senderId)}">
-                  #${this.escapeHtml(shortId)}
-                </span>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <span style="font-size: 9px; font-family: monospace; background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 4px; color: rgba(255,255,255,0.6); user-select: text; -webkit-user-select: text;" title="Click copy to get full ID: ${this.escapeHtml(senderId)}">
+                    #${this.escapeHtml(shortId)}
+                  </span>
+                  <button class="fcp6-btn" data-action="copy-to-clipboard" data-value="${this.escapeHtml(senderId)}" title="Copy Agent ID" style="width: 18px; height: 18px; font-size: 8px; padding: 0; background: rgba(0,217,255,0.1); color: #00D9FF; border: 1px solid rgba(0,217,255,0.2);">
+                    📋
+                  </button>
+                </div>
               </div>
               <span class="fcp6-chat-time">${this.formatTime(msg.timestamp)}</span>
             </div>
@@ -1962,7 +2350,10 @@
               <div class="fcp6-channel-name">${this.escapeHtml(ch.name)}</div>
               <div class="fcp6-channel-members">${ch.members.length} active agents</div>
             </div>
-            ${this.currentChannel === ch.id ? '<div class="fcp6-badge">✓</div>' : ''}
+            <div style="display:flex; gap:4px; align-items:center;">
+              ${this.currentChannel === ch.id ? '<div class="fcp6-badge" style="position:static; margin:0;">✓</div>' : ''}
+              ${ch.id !== 'general' ? `<button class="fcp6-btn" data-action="delete-channel" data-channel-id="${ch.id}" title="Delete Channel" style="background:rgba(255,51,102,0.1); color:#ff3366; width:22px; height:22px;">×</button>` : ''}
+            </div>
           </div>
         `
                 )
@@ -2575,6 +2966,57 @@
       this.update();
     }
     /**
+     * Delete a channel (Admin only or creator - enforced by relay)
+     */
+    deleteChannel(channelId) {
+      if (channelId === 'general') {
+        alert('The General channel cannot be deleted.');
+        return;
+      }
+      const ch = this.channels.find((c) => c.id === channelId);
+      const name = ch ? ch.name : channelId;
+      if (!confirm(`Are you sure you want to delete the channel "${name}"?`)) {
+        return;
+      }
+      console.log('[FuseConnect] Deleting channel:', channelId);
+      this.safeSendMessage(
+        {
+          type: 'CHANNEL_DELETE',
+          channelId,
+        },
+        (response) => {
+          if (response?.success) {
+            console.log('[FuseConnect] Channel delete request sent');
+            // Optimistically remove from local list
+            this.channels = this.channels.filter((c) => c.id !== channelId);
+            if (this.currentChannel === channelId) {
+              this.currentChannel = null;
+            }
+            this.update();
+          }
+        }
+      );
+    }
+    /**
+     * Copy text to clipboard
+     */
+    copyToClipboard(text, element) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          if (element) {
+            const originalText = element.innerHTML;
+            element.innerHTML = '✅';
+            setTimeout(() => {
+              element.innerHTML = originalText;
+            }, 1500);
+          }
+        })
+        .catch((err) => {
+          console.error('[FuseConnect] Failed to copy:', err);
+        });
+    }
+    /**
      * Safely send a message to Chrome runtime, handling context invalidation
      */
     safeSendMessage(message, callback) {
@@ -2855,12 +3297,20 @@
             const isFromSelfFallback =
               msg.from === 'You' || msg.from === this.myAgentId || msg.from?.includes(this.panelId);
             const isOwnMessage = isFromSelf || isFromSelfFallback;
-            // Content deduplication (prevent exact duplicate messages in short window)
-            const isDuplicate = this.messages.some(
-              (m) => m.content === msg.content && Date.now() - m.timestamp < 3000
-            );
+            // DEDUPE LOCK: Prevent doubled Human input.
+            // Check if we already have a message with this content from ourselves in a short window.
+            // This stops the "Optimistic UI" local push from colliding with the "Relay Roundtrip" back-broadcast.
+            const isDuplicate = this.messages.some((m) => {
+              // Match by ID if both have one
+              if (msg.id && m.id === msg.id) return true;
+              // Match by content + sender + time window (fallback for optimistic local IDs)
+              const sameContent = m.content === msg.content;
+              const sameSender = m.from === msg.from || (isOwnMessage && m.from === 'You');
+              const withinWindow = Math.abs((m.timestamp || 0) - (msg.timestamp || 0)) < 10000;
+              return sameContent && sameSender && withinWindow;
+            });
             if (isDuplicate) {
-              console.log('[FuseConnect] Skipping duplicate message');
+              console.log('[FuseConnect] Deduped message (already shown):', msg.id || 'local');
               break;
             }
             // Add ALL messages to chat display (this is a chatroom - everyone sees everything)
@@ -2919,6 +3369,30 @@
         case 'CHAT_DETECTED':
           this.chatElements = message.elements;
           this.update();
+          break;
+        case 'TRANSCRIPT_UPDATE':
+          if (message.entry) {
+            const entry = message.entry;
+            // Add to local messages if not already present (dedupe by id)
+            const id = entry.id || `transcript-${entry.ts}-${entry.seq}`;
+            if (!this.messages.some((m) => m.id === id)) {
+              this.messages.push({
+                id,
+                from:
+                  entry.role === 'user'
+                    ? this.myAgentId || 'You'
+                    : entry.role === 'assistant'
+                      ? 'AI (Edge)'
+                      : entry.role,
+                to: entry.role === 'user' ? 'AI' : 'User',
+                content: entry.content,
+                timestamp: entry.ts,
+                type: 'text',
+                metadata: entry.meta,
+              });
+              this.update();
+            }
+          }
           break;
         case 'STREAMING_UPDATE':
           this.streamingState = message.state;
@@ -3198,8 +3672,18 @@
         case 'expand':
           this.expand();
           break;
+        case 'copy-to-clipboard':
+          if (element && element.dataset.value) {
+            this.copyToClipboard(element.dataset.value, element);
+          }
+          break;
         case 'select-channel':
           // Handled by change listener, but good to have case
+          break;
+        case 'delete-channel':
+          if (element && element.dataset.channelId) {
+            this.deleteChannel(element.dataset.channelId);
+          }
           break;
         case 'inject-to-chat':
           this.injectToPageChat();
@@ -4693,6 +5177,14 @@
 
   // MUST BE FIRST - Patches customElements.define
 
+  // CRITICAL: Skip initialization on SkIDEancer IDE pages to prevent conflicts
+  if (window.location.hostname === 'skideancer.thenewfuse.com') {
+    console.log(
+      '[FuseConnect v6] Skipping SkIDEancer IDE page - extension disabled on this domain'
+    );
+    // Stop execution (no top-level export allowed in content scripts)
+    throw new Error('FuseConnect disabled on IDE pages');
+  }
   class FuseConnectContentScript {
     constructor() {
       this.panel = null;
@@ -4700,6 +5192,9 @@
       this.panelVisible = false;
       this.chatReady = false;
       this.pageAgentId = null;
+      // DEDUPE GUARD: Track message IDs we have already processed (injected or shown)
+      // to prevent infinite loops from the relay-Cloudflare-Extension circle.
+      this.processedMessageIds = new Set();
       // FEDERATION IMPROVEMENT: Track pending requests for response correlation
       this.pendingRequests = new Map();
       // FEDERATION IMPROVEMENT: Message Queue for delayed injection
@@ -4771,6 +5266,17 @@
           });
           // Trigger queue processing after response
           this.processInjectionQueue();
+        },
+        onTranscriptEntry: (entry) => {
+          // Track the ID in our dedupe guard
+          if (entry.id) this.processedMessageIds.add(entry.id);
+          // Forward canonical transcript updates from Cloudflare DO to panel
+          if (this.panel) {
+            this.panel.handleMessage({
+              type: 'TRANSCRIPT_UPDATE',
+              entry: entry,
+            });
+          }
         },
         onError: (error) => {
           console.error('[FuseConnect v6] Chat bridge error:', error);
@@ -5084,6 +5590,13 @@
             case 'NEW_MESSAGE':
               if (message.message) {
                 const msg = message.message;
+                // DEDUPE GUARD: Never process the same message ID twice.
+                // This is vital for stopping feedback loops between Relay and Cloudflare.
+                if (msg.id && this.processedMessageIds.has(msg.id)) {
+                  safeSendResponse({ success: true, reason: 'deduped' });
+                  return true;
+                }
+                if (msg.id) this.processedMessageIds.add(msg.id);
                 const myChannel = this.panel?.getCurrentChannel();
                 const messageChannel = msg.channel || msg.metadata?.channel;
                 // CHANNEL FILTERING:

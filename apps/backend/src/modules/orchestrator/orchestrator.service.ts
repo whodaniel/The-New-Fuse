@@ -2,8 +2,8 @@ import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nest
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import Redis from 'ioredis';
-import { AgentLifecycleManager } from './AgentLifecycleManager';
 import { RedisLockService } from '../../services/redis-lock.service';
+import { AgentLifecycleManager } from './AgentLifecycleManager';
 
 // Types for the orchestrator services
 interface HeartbeatConfig {
@@ -45,7 +45,11 @@ class HeartbeatMonitoringService {
   private eventEmitter: EventEmitter2;
   private redisLockService: RedisLockService;
 
-  constructor(config: HeartbeatConfig, eventEmitter: EventEmitter2, redisLockService: RedisLockService) {
+  constructor(
+    config: HeartbeatConfig,
+    eventEmitter: EventEmitter2,
+    redisLockService: RedisLockService
+  ) {
     this.config = config;
     this.eventEmitter = eventEmitter;
     this.redisLockService = redisLockService;
@@ -69,7 +73,9 @@ class HeartbeatMonitoringService {
   async registerAgent(agentId: string, expectedResponseTime?: number): Promise<void> {
     const lockId = await this.redisLockService.acquireLock(`registerAgent:${agentId}`, 10);
     if (!lockId) {
-      this.logger.warn(`Could not acquire lock to register agent ${agentId}. It might be registered by another instance.`);
+      this.logger.warn(
+        `Could not acquire lock to register agent ${agentId}. It might be registered by another instance.`
+      );
       return;
     }
 
@@ -231,7 +237,7 @@ export class OrchestratorService implements OnModuleInit, OnModuleDestroy {
   constructor(
     @Inject(ConfigService) private configService: ConfigService,
     @Inject(EventEmitter2) private eventEmitter: EventEmitter2,
-    private readonly redisLockService: RedisLockService,
+    private readonly redisLockService: RedisLockService
   ) {
     // NEW: Initialize Redis client
     const redisUrl = this.configService.get('REDIS_URL') || 'redis://localhost:6379';
@@ -250,7 +256,11 @@ export class OrchestratorService implements OnModuleInit, OnModuleDestroy {
       stagnationThresholdMs: parseInt(this.configService.get('STAGNATION_THRESHOLD_MS') || '30000'),
     };
 
-    this.heartbeatService = new HeartbeatMonitoringService(heartbeatConfig, this.eventEmitter, this.redisLockService);
+    this.heartbeatService = new HeartbeatMonitoringService(
+      heartbeatConfig,
+      this.eventEmitter,
+      this.redisLockService
+    );
     this.heartbeatService.start();
 
     // Register TNF itself as the Master Agent
@@ -344,6 +354,116 @@ export class OrchestratorService implements OnModuleInit, OnModuleDestroy {
     if (this.heartbeatService) {
       this.heartbeatService.recordHeartbeat(agentId, taskId);
     }
+  }
+
+  async executeGatewayPrompt(input: {
+    requestId: string;
+    idempotencyKey?: string;
+    sessionId?: string;
+    text: string;
+    channel?: string;
+    userId?: string;
+  }): Promise<{ replyText: string; metadata: Record<string, unknown> }> {
+    const dedupeKey = input.idempotencyKey || input.requestId;
+    const responseKey = `orchestrator:exec:response:${dedupeKey}`;
+
+    try {
+      const existing = await this.redis.get(responseKey);
+      if (existing) {
+        const parsed = JSON.parse(existing);
+        return parsed;
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Idempotency cache read failed for ${dedupeKey}: ${(error as Error).message}`
+      );
+    }
+
+    const openAiKey = this.configService.get<string>('OPENAI_API_KEY');
+    const anthropicKey = this.configService.get<string>('ANTHROPIC_API_KEY');
+
+    const systemPrompt =
+      'You are TNF execution plane. Provide concise, useful replies. Follow TNF directives and avoid leaking secrets.';
+
+    let replyText: string | undefined;
+    let model: string;
+
+    if (openAiKey) {
+      model = this.configService.get<string>('OPENAI_MODEL') || 'gpt-4o-mini';
+      const response = await fetch('https://api.openai.com/v1/responses', {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${openAiKey}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          input: [
+            { role: 'system', content: [{ type: 'input_text', text: systemPrompt }] },
+            { role: 'user', content: [{ type: 'input_text', text: input.text }] },
+          ],
+        }),
+      });
+
+      const body = (await response.json().catch(() => null)) as any;
+      if (!response.ok) {
+        const detail = body?.error?.message || `status_${response.status}`;
+        throw new Error(`EXECUTION_MODEL_ERROR:${detail}`);
+      }
+
+      replyText = body?.output_text || body?.output?.[0]?.content?.[0]?.text;
+    } else if (anthropicKey) {
+      model = this.configService.get<string>('ANTHROPIC_MODEL') || 'claude-3-5-haiku-latest';
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': anthropicKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          max_tokens: 400,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: input.text }],
+        }),
+      });
+
+      const body = (await response.json().catch(() => null)) as any;
+      if (!response.ok) {
+        const detail = body?.error?.message || `status_${response.status}`;
+        throw new Error(`EXECUTION_MODEL_ERROR:${detail}`);
+      }
+
+      replyText = body?.content?.[0]?.text;
+    } else {
+      throw new Error('NO_MODEL_API_KEY_CONFIGURED');
+    }
+
+    if (!replyText || typeof replyText !== 'string') {
+      throw new Error('EXECUTION_MODEL_BAD_RESPONSE');
+    }
+
+    const result = {
+      replyText,
+      metadata: {
+        requestId: input.requestId,
+        idempotencyKey: input.idempotencyKey || null,
+        sessionId: input.sessionId || null,
+        model,
+        channel: input.channel || null,
+      },
+    };
+
+    try {
+      await this.redis.set(responseKey, JSON.stringify(result), 'EX', 600);
+    } catch (error) {
+      this.logger.warn(
+        `Idempotency cache write failed for ${dedupeKey}: ${(error as Error).message}`
+      );
+    }
+
+    return result;
   }
 
   getSystemHealth(): ReturnType<HeartbeatMonitoringService['getHealthMetrics']> | null {

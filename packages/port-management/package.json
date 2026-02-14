@@ -19,7 +19,7 @@
   "dependencies": {
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/utils": "workspace:*",
-    "axios": "^1.12.2",
+    "axios": "^1.13.5",
     "node-port-check": "^2.0.1",
     "portfinder": "^1.0.38",
     "ws": "^8.18.3",
