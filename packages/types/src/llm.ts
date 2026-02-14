@@ -7,6 +7,10 @@ export interface LLMConfig {
   presencePenalty?: number;
   stopSequences?: string[];
   apiKey?: string;
+  baseURL?: string;
+  maxRetries?: number;
+  timeout?: number;
+  safetySettings?: any[]; // Using any[] to avoid deep coupling with Google types here
 }
 
 export interface LLMMessage {
