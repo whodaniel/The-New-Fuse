@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
-import { GlassCard, PremiumButton } from '@/components/ui/premium';
-import { Plus, MoreHorizontal } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import { useWorkspace } from '@/hooks/useWorkspace';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { PremiumInput } from '@/components/ui/premium';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { webSocketService } from '@/services/websocket';
+import { MoreHorizontal, Plus } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface Member {
   id: string;
@@ -31,7 +42,7 @@ export default function WorkspaceMembers() {
       setIsSubmitting(true);
       webSocketService.send('inviteMember', {
         workspaceId: currentWorkspace.id,
-        email: inviteEmail
+        email: inviteEmail,
       });
 
       setShowInviteDialog(false);
@@ -50,7 +61,7 @@ export default function WorkspaceMembers() {
       webSocketService.send('updateMemberRole', {
         workspaceId: currentWorkspace.id,
         memberId,
-        role: newRole
+        role: newRole,
       });
     } catch (error) {
       console.error('Failed to update member role:', error);
@@ -63,7 +74,7 @@ export default function WorkspaceMembers() {
     try {
       webSocketService.send('removeMember', {
         workspaceId: currentWorkspace.id,
-        memberId
+        memberId,
       });
     } catch (error) {
       console.error('Failed to remove member:', error);
@@ -80,73 +91,72 @@ export default function WorkspaceMembers() {
           </p>
         </div>
         <PremiumButton onClick={() => setShowInviteDialog(true)}>
-          <Plus className="mr-2 h-4 w-4"/>
+          <Plus className="mr-2 h-4 w-4" />
           Invite Member
         </PremiumButton>
       </div>
 
-      <GlassCard title="Members" subtitle={`${members.length} member${members.length !== 1 ? 's' : ''} in workspace`}>
-          <div className="space-y-4">
-            {members.map((member) => (
-              <div key={member.id} className="flex items-center justify-between py-2">
-                <div className="flex items-center space-x-4">
-                  <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
-                    {member.avatarUrl ? (
-                      <img
-                        src={member.avatarUrl}
-                        alt={member.name}
-                        className="h-full w-full rounded-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-lg font-medium">
-                        {member.name[0].toUpperCase()}
-                      </span>
-                    )}
-                  </div>
-                  <div>
-                    <p className="font-medium">{member.name}</p>
-                    <p className="text-sm text-muted-foreground">{member.email}</p>
-                  </div>
+      <GlassCard
+        title="Members"
+        subtitle={`${members.length} member${members.length !== 1 ? 's' : ''} in workspace`}
+      >
+        <div className="space-y-4">
+          {members.map((member) => (
+            <div key={member.id} className="flex items-center justify-between py-2">
+              <div className="flex items-center space-x-4">
+                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
+                  {member.avatarUrl ? (
+                    <img
+                      src={member.avatarUrl}
+                      alt={member.name}
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-lg font-medium">{member.name[0].toUpperCase()}</span>
+                  )}
                 </div>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <PremiumButton variant="ghost" size="sm">
-                      <span className="mr-2">{member.role}</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </PremiumButton>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {member.role !== 'owner' && (
-                      <>
-                        <DropdownMenuItem onClick={() => handleRoleChange(member.id, 'admin')}>
-                          Make Admin
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleRoleChange(member.id, 'member')}>
-                          Make Member
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleRemoveMember(member.id)}
-                          className="text-destructive"
-                        >
-                          Remove Member
-                        </DropdownMenuItem>
-                      </>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div>
+                  <p className="font-medium">{member.name}</p>
+                  <p className="text-sm text-muted-foreground">{member.email}</p>
+                </div>
               </div>
-            ))}
-          </div>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <PremiumButton variant="ghost" size="sm">
+                    <span className="mr-2">{member.role}</span>
+                    <MoreHorizontal className="h-4 w-4" />
+                  </PremiumButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {member.role !== 'owner' && (
+                    <>
+                      <DropdownMenuItem onClick={() => handleRoleChange(member.id, 'admin')}>
+                        Make Admin
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleRoleChange(member.id, 'member')}>
+                        Make Member
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleRemoveMember(member.id)}
+                        className="text-destructive"
+                      >
+                        Remove Member
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ))}
+        </div>
       </GlassCard>
 
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Invite Team Member</DialogTitle>
-            <DialogDescription>
-              Invite a new member to join your workspace.
-            </DialogDescription>
+            <DialogDescription>Invite a new member to join your workspace.</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleInvite}>
             <div className="space-y-4 py-4">

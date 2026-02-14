@@ -1,25 +1,28 @@
-import React, { useState } from 'react';
-import { GlassCard } from '@/components/ui/premium';
-import { PremiumButton } from '@/components/ui/premium';
-import { PremiumInput } from '@/components/ui/premium';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { 
-  Settings, 
-  Bell, 
-  Shield, 
-  Palette, 
-  Database, 
-  Clock, 
-  Users,
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
   BarChart3,
+  Bell,
+  Clock,
+  Database,
+  Palette,
+  RefreshCw,
   Save,
-  RefreshCw
+  Settings,
+  Users,
 } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface DashboardSettingsProps {}
 
@@ -34,7 +37,7 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
     maxDataPoints: '100',
     retentionDays: '30',
     enableAlerts: true,
-    alertThreshold: '80'
+    alertThreshold: '80',
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +46,7 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
     setIsLoading(true);
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       console.log('Dashboard settings saved:', settings);
     } catch (error) {
       console.error('Failed to save settings:', error);
@@ -63,7 +66,7 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
       maxDataPoints: '100',
       retentionDays: '30',
       enableAlerts: true,
-      alertThreshold: '80'
+      alertThreshold: '80',
     });
   };
 
@@ -110,7 +113,10 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
         </TabsList>
 
         <TabsContent value="display" className="space-y-6">
-          <GlassCard title="Display Preferences" subtitle="Customize how your dashboard looks and feels">
+          <GlassCard
+            title="Display Preferences"
+            subtitle="Customize how your dashboard looks and feels"
+          >
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
@@ -121,8 +127,8 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                 </div>
                 <Switch
                   checked={settings.darkMode}
-                  onCheckedChange={(checked) => 
-                    setSettings(prev => ({ ...prev, darkMode: checked }))
+                  onCheckedChange={(checked) =>
+                    setSettings((prev) => ({ ...prev, darkMode: checked }))
                   }
                 />
               </div>
@@ -138,8 +144,8 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                 </div>
                 <Switch
                   checked={settings.compactView}
-                  onCheckedChange={(checked) => 
-                    setSettings(prev => ({ ...prev, compactView: checked }))
+                  onCheckedChange={(checked) =>
+                    setSettings((prev) => ({ ...prev, compactView: checked }))
                   }
                 />
               </div>
@@ -155,8 +161,8 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                 </div>
                 <Switch
                   checked={settings.showMetrics}
-                  onCheckedChange={(checked) => 
-                    setSettings(prev => ({ ...prev, showMetrics: checked }))
+                  onCheckedChange={(checked) =>
+                    setSettings((prev) => ({ ...prev, showMetrics: checked }))
                   }
                 />
               </div>
@@ -172,8 +178,8 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                   <Label htmlFor="maxDataPoints">Max Data Points</Label>
                   <Select
                     value={settings.maxDataPoints}
-                    onValueChange={(value) => 
-                      setSettings(prev => ({ ...prev, maxDataPoints: value }))
+                    onValueChange={(value) =>
+                      setSettings((prev) => ({ ...prev, maxDataPoints: value }))
                     }
                   >
                     <SelectTrigger>
@@ -192,8 +198,8 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                   <Label htmlFor="retentionDays">Data Retention (Days)</Label>
                   <Select
                     value={settings.retentionDays}
-                    onValueChange={(value) => 
-                      setSettings(prev => ({ ...prev, retentionDays: value }))
+                    onValueChange={(value) =>
+                      setSettings((prev) => ({ ...prev, retentionDays: value }))
                     }
                   >
                     <SelectTrigger>
@@ -213,7 +219,10 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-6">
-          <GlassCard title="Notification Settings" subtitle="Manage alerts and notification preferences">
+          <GlassCard
+            title="Notification Settings"
+            subtitle="Manage alerts and notification preferences"
+          >
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
@@ -224,8 +233,8 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                 </div>
                 <Switch
                   checked={settings.showNotifications}
-                  onCheckedChange={(checked) => 
-                    setSettings(prev => ({ ...prev, showNotifications: checked }))
+                  onCheckedChange={(checked) =>
+                    setSettings((prev) => ({ ...prev, showNotifications: checked }))
                   }
                 />
               </div>
@@ -241,8 +250,8 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                 </div>
                 <Switch
                   checked={settings.enableAlerts}
-                  onCheckedChange={(checked) => 
-                    setSettings(prev => ({ ...prev, enableAlerts: checked }))
+                  onCheckedChange={(checked) =>
+                    setSettings((prev) => ({ ...prev, enableAlerts: checked }))
                   }
                 />
               </div>
@@ -259,7 +268,7 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                       max="100"
                       value={settings.alertThreshold}
                       onChange={(e) =>
-                        setSettings(prev => ({ ...prev, alertThreshold: e.target.value }))
+                        setSettings((prev) => ({ ...prev, alertThreshold: e.target.value }))
                       }
                       className="max-w-xs"
                     />
@@ -274,7 +283,10 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
         </TabsContent>
 
         <TabsContent value="performance" className="space-y-6">
-          <GlassCard title="Performance Settings" subtitle="Configure refresh rates and performance options">
+          <GlassCard
+            title="Performance Settings"
+            subtitle="Configure refresh rates and performance options"
+          >
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
@@ -285,8 +297,8 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                 </div>
                 <Switch
                   checked={settings.autoRefresh}
-                  onCheckedChange={(checked) => 
-                    setSettings(prev => ({ ...prev, autoRefresh: checked }))
+                  onCheckedChange={(checked) =>
+                    setSettings((prev) => ({ ...prev, autoRefresh: checked }))
                   }
                 />
               </div>
@@ -298,8 +310,8 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = () => {
                     <Label htmlFor="refreshInterval">Refresh Interval (seconds)</Label>
                     <Select
                       value={settings.refreshInterval}
-                      onValueChange={(value) => 
-                        setSettings(prev => ({ ...prev, refreshInterval: value }))
+                      onValueChange={(value) =>
+                        setSettings((prev) => ({ ...prev, refreshInterval: value }))
                       }
                     >
                       <SelectTrigger className="max-w-xs">

@@ -1,10 +1,6 @@
-import {
-  PremiumButton as Button,
-  PremiumInput as Input,
-  GlassCard,
-} from '@/components/ui/premium';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverBody } from '@/components/ui/popover';
+import { PremiumButton as Button, PremiumInput as Input } from '@/components/ui/premium';
 import { NodeProperties, NodeToolbox, WorkflowCanvas } from '@/components/workflow';
 import { WorkflowProvider } from '@/contexts/WorkflowContext';
 import { useWorkflow } from '@/hooks';

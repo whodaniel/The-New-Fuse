@@ -1,6 +1,6 @@
 /**
  * TNF Permission Manager
- * 
+ *
  * This module enforces access control for documents and knowledge based on TNF membership levels.
  * SUPER_ADMIN (Daniel) has full access to everything.
  */
@@ -37,50 +37,48 @@ export class PermissionManager {
       documentPath: 'docs/infrastructure/',
       minRole: UserRole.ADMIN,
       minTier: SubscriptionTier.ENTERPRISE,
-      description: 'TNF API Gateway details'
+      description: 'TNF API Gateway details',
     },
     {
       id: 'infra-architecture',
       documentPath: 'docs/architecture/',
       minRole: UserRole.ADMIN,
       minTier: SubscriptionTier.ENTERPRISE,
-      description: 'TNF Core Architecture'
+      description: 'TNF Core Architecture',
     },
     {
       id: 'agent-configs',
       documentPath: '.claude/agents/',
       minRole: UserRole.ADMIN,
-      description: 'Agent knowledge bases and configs'
+      description: 'Agent knowledge bases and configs',
     },
     {
       id: 'personal-PII',
       documentPath: 'docs/personal/',
       minRole: UserRole.SUPER_ADMIN,
-      description: 'Personal info and PII'
+      description: 'Personal info and PII',
     },
     {
       id: 'business-logic',
       documentPath: 'docs/business/',
       minRole: UserRole.SUPER_ADMIN,
-      description: 'Business models and monetization'
-    }
+      description: 'Business models and monetization',
+    },
   ];
 
   /**
    * Check if a role and tier can access a document path
    */
   public static canAccess(
-    role: UserRole, 
+    role: UserRole,
     tier: SubscriptionTier,
-    documentPath: string, 
-    agentId?: string
+    documentPath: string,
+    agentId?: string,
   ): boolean {
     // Super Admin always has access
     if (role === UserRole.SUPER_ADMIN) return true;
 
-    const permission = this.permissions.find(p => 
-      documentPath.startsWith(p.documentPath)
-    );
+    const permission = this.permissions.find((p) => documentPath.startsWith(p.documentPath));
 
     if (!permission) {
       // Default to allowing agents access to generic docs

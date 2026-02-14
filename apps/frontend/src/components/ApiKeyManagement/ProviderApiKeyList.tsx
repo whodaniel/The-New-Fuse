@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { apiService } from '@/services/api';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface ApiKey {
   id: string;
@@ -29,7 +29,7 @@ export function ProviderApiKeyList() {
       console.error(error);
       toast.error('Failed to fetch provider API keys');
     } finally {
-      setLoading(prev => ({ ...prev, list: false }));
+      setLoading((prev) => ({ ...prev, list: false }));
     }
   };
 
@@ -38,7 +38,7 @@ export function ProviderApiKeyList() {
       toast.error('Provider and API Key are required.');
       return;
     }
-    setLoading(prev => ({ ...prev, save: true }));
+    setLoading((prev) => ({ ...prev, save: true }));
     try {
       const newKey = await apiService.saveProviderApiKey(provider, apiKey);
       setApiKeys([...apiKeys, newKey]);
@@ -48,7 +48,7 @@ export function ProviderApiKeyList() {
     } catch (error: any) {
       toast.error(error.message || 'Failed to save API key');
     } finally {
-      setLoading(prev => ({ ...prev, save: false }));
+      setLoading((prev) => ({ ...prev, save: false }));
     }
   };
 

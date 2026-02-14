@@ -15,17 +15,17 @@ const BlogPostCard = ({
   excerpt: string;
 }) => (
   <GlassCard className="p-6">
-      <div className="flex items-center text-sm text-gray-500 mb-2">
-        <Calendar className="h-4 w-4 mr-2" />
-        <span>{date}</span>
-        <User className="h-4 w-4 ml-4 mr-2" />
-        <span>{author}</span>
-      </div>
-      <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
-      <p className="text-gray-400 text-sm mb-4">{excerpt}</p>
-      <PremiumButton variant="outline" size="sm">
-        Read More
-      </PremiumButton>
+    <div className="flex items-center text-sm text-gray-500 mb-2">
+      <Calendar className="h-4 w-4 mr-2" />
+      <span>{date}</span>
+      <User className="h-4 w-4 ml-4 mr-2" />
+      <span>{author}</span>
+    </div>
+    <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
+    <p className="text-gray-400 text-sm mb-4">{excerpt}</p>
+    <PremiumButton variant="outline" size="sm">
+      Read More
+    </PremiumButton>
   </GlassCard>
 );
 

@@ -24,11 +24,11 @@ const IntegrationCard = ({
   description: string;
 }) => (
   <GlassCard hover className="p-6">
-      <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-        <Icon className="h-6 w-6 text-white" />
-      </div>
-      <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
-      <p className="text-gray-400 text-sm leading-relaxed">{description}</p>
+    <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+      <Icon className="h-6 w-6 text-white" />
+    </div>
+    <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
+    <p className="text-gray-400 text-sm leading-relaxed">{description}</p>
   </GlassCard>
 );
 

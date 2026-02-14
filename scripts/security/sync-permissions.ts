@@ -1,8 +1,8 @@
-import { PermissionManager, Role } from '../../packages/core/src/security/permission-manager';
+import { Role } from '../../packages/core/src/security/permission-manager';
 
 /**
  * Sync Document Permissions to Cloudflare D1
- * 
+ *
  * This script ensures the LDS knowledge graph respects our security tiers.
  */
 

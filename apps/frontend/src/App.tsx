@@ -8,8 +8,8 @@ import { RouteProvider } from './components/route-context';
 import { LayoutProvider } from './contexts/LayoutContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 
-import SubdomainRouter from './routers/SubdomainRouter';
 import { ShortcutsHelp } from './components/layout/ShortcutsHelp';
+import SubdomainRouter from './routers/SubdomainRouter';
 
 const queryClient = new QueryClient();
 

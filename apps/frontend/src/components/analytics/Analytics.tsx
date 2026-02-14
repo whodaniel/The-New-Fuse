@@ -100,18 +100,18 @@ export const Analytics: React.FC = () => {
         {/* Knowledge Graph Tab */}
         <TabsContent value="knowledge">
           <GlassCard title="Knowledge Graph Analysis">
-              <div className="h-96 bg-gray-100 rounded-md p-4 flex items-center justify-center">
-                <p className="text-gray-500">Knowledge graph visualization</p>
-              </div>
+            <div className="h-96 bg-gray-100 rounded-md p-4 flex items-center justify-center">
+              <p className="text-gray-500">Knowledge graph visualization</p>
+            </div>
           </GlassCard>
         </TabsContent>
 
         {/* Task Analysis Tab */}
         <TabsContent value="tasks">
           <GlassCard title="Task Allocation Analysis">
-              <div className="h-96 bg-gray-100 rounded-md p-4 flex items-center justify-center">
-                <p className="text-gray-500">Task allocation visualization</p>
-              </div>
+            <div className="h-96 bg-gray-100 rounded-md p-4 flex items-center justify-center">
+              <p className="text-gray-500">Task allocation visualization</p>
+            </div>
           </GlassCard>
         </TabsContent>
       </Tabs>

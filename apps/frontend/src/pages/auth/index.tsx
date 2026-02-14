@@ -1,7 +1,7 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
 import { GlassCard } from '@/components/ui/premium';
 import { useAuth } from '@/hooks/useAuth';
+import React from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 const Login = React.lazy(() => import('./Login'));
 const Register = React.lazy(() => import('./Register'));
@@ -21,7 +21,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
 
 const Auth = () => {
   const { isAuthenticated } = useAuth();
-  
+
   if (isAuthenticated) {
     return <Navigate to="/" replace />;
   }

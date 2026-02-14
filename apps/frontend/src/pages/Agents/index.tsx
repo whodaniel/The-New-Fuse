@@ -1,6 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { PremiumInput } from '@/components/ui/premium';
-import { GlassCard, PremiumButton } from '@/components/ui/premium';
+import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import { agentService, type Agent } from '@/services/AgentService';
 import { motion } from 'framer-motion';
 import {

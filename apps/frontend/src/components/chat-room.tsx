@@ -1,8 +1,8 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui/premium';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { useEffect, useState } from 'react';
 import { webSocketService } from '../services/websocket';
 
 interface ChatMessage {
@@ -11,52 +11,52 @@ interface ChatMessage {
 }
 
 export function ChatRoom({ roomId, agents }: { roomId: string; agents: any[] }) {
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
-    const [input, setInput] = useState('');
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [input, setInput] = useState('');
 
-    useEffect(() => {
-        webSocketService.on(`chatRoom:${roomId}`, (data: ChatMessage) => {
-            setMessages((prev) => [...prev, data]);
-        });
-        return () => {
-            webSocketService.off(`chatRoom:${roomId}`, () => { });
-        };
-    }, [roomId]);
-
-    const handleSend = () => {
-        if (input.trim()) {
-            webSocketService.send('chatMessage', { roomId, message: input });
-            setInput('');
-        }
+  useEffect(() => {
+    webSocketService.on(`chatRoom:${roomId}`, (data: ChatMessage) => {
+      setMessages((prev) => [...prev, data]);
+    });
+    return () => {
+      webSocketService.off(`chatRoom:${roomId}`, () => {});
     };
+  }, [roomId]);
 
-    return (
-      <GlassCard title={`Chat Room: ${roomId}`} className="w-full max-w-2xl h-[600px] flex flex-col">
-        <div className="flex-grow flex flex-col">
-          <ScrollArea className="flex-grow mb-4">
-            {messages.map((msg, index) => (
-              <div key={index} className="flex items-start space-x-2 mb-4">
-                <Avatar>
-                  <AvatarImage src={msg.agent.avatar} alt={msg.agent.name}/>
-                  <AvatarFallback>{msg.agent.name[0]}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-semibold">{msg.agent.name}</p>
-                  <p>{msg.content}</p>
-                </div>
+  const handleSend = () => {
+    if (input.trim()) {
+      webSocketService.send('chatMessage', { roomId, message: input });
+      setInput('');
+    }
+  };
+
+  return (
+    <GlassCard title={`Chat Room: ${roomId}`} className="w-full max-w-2xl h-[600px] flex flex-col">
+      <div className="flex-grow flex flex-col">
+        <ScrollArea className="flex-grow mb-4">
+          {messages.map((msg, index) => (
+            <div key={index} className="flex items-start space-x-2 mb-4">
+              <Avatar>
+                <AvatarImage src={msg.agent.avatar} alt={msg.agent.name} />
+                <AvatarFallback>{msg.agent.name[0]}</AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-semibold">{msg.agent.name}</p>
+                <p>{msg.content}</p>
               </div>
-            ))}
-          </ScrollArea>
-          <div className="flex space-x-2">
-            <PremiumInput
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type a message..."
-              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            />
-            <PremiumButton onClick={handleSend}>Send</PremiumButton>
-          </div>
+            </div>
+          ))}
+        </ScrollArea>
+        <div className="flex space-x-2">
+          <PremiumInput
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type a message..."
+            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+          />
+          <PremiumButton onClick={handleSend}>Send</PremiumButton>
         </div>
-      </GlassCard>
-    );
+      </div>
+    </GlassCard>
+  );
 }

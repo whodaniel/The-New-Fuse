@@ -1,17 +1,17 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
 import { GlassCard, PremiumButton } from '@/components/ui/premium';
-import { Plus } from 'lucide-react';
-import { WorkspaceLayout } from './WorkspaceLayout';
 import { useWorkspace } from '@/hooks/useWorkspace';
+import { Plus } from 'lucide-react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import WorkspaceAnalytics from './Analytics';
+import WorkspaceMembers from './Members';
 import WorkspaceOverview from './Overview';
 import WorkspaceSettings from './Settings';
-import WorkspaceMembers from './Members';
-import WorkspaceAnalytics from './Analytics';
+import { WorkspaceLayout } from './WorkspaceLayout';
 const WorkspaceRoutes = () => {
-    const { workspaces, createWorkspace } = useWorkspace();
-    if (!(workspaces === null || workspaces === void 0 ? void 0 : workspaces.length)) {
-        return (<div className="container mx-auto px-4 py-8">
+  const { workspaces, createWorkspace } = useWorkspace();
+  if (!(workspaces === null || workspaces === void 0 ? void 0 : workspaces.length)) {
+    return (
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-lg mx-auto space-y-8">
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-bold">Create your first workspace</h1>
@@ -21,23 +21,26 @@ const WorkspaceRoutes = () => {
           </div>
 
           <GlassCard title="No workspaces found">
-              <PremiumButton onClick={createWorkspace} fullWidth>
-                <Plus className="mr-2 h-4 w-4"/>
-                Create Workspace
-              </PremiumButton>
+            <PremiumButton onClick={createWorkspace} fullWidth>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Workspace
+            </PremiumButton>
           </GlassCard>
         </div>
-      </div>);
-    }
-    return (<Routes>
-      <Route path="/" element={<Navigate to={workspaces[0].id} replace/>}/>
+      </div>
+    );
+  }
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to={workspaces[0].id} replace />} />
       <Route path=":workspaceId" element={<WorkspaceLayout />}>
-        <Route index element={<Navigate to="overview" replace/>}/>
-        <Route path="overview" element={<WorkspaceOverview />}/>
-        <Route path="members" element={<WorkspaceMembers />}/>
-        <Route path="analytics" element={<WorkspaceAnalytics />}/>
-        <Route path="settings" element={<WorkspaceSettings />}/>
+        <Route index element={<Navigate to="overview" replace />} />
+        <Route path="overview" element={<WorkspaceOverview />} />
+        <Route path="members" element={<WorkspaceMembers />} />
+        <Route path="analytics" element={<WorkspaceAnalytics />} />
+        <Route path="settings" element={<WorkspaceSettings />} />
       </Route>
-    </Routes>);
+    </Routes>
+  );
 };
 export default WorkspaceRoutes;

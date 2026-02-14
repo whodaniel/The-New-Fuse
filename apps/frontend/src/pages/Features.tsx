@@ -29,17 +29,15 @@ const FeatureCard = ({
   description: string;
   color?: string;
 }) => (
-  <GlassCard
-    className="group hover:shadow-lg transition-all duration-300 p-6"
-  >
-      <div
-        className={`w-12 h-12 rounded-lg bg-linear-to-br from-${color}-500 to-${color}-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
-        aria-hidden="true"
-      >
-        <Icon className="h-6 w-6 text-white" />
-      </div>
-      <h3 className="text-lg font-semibold mb-2 text-gray-900">{title}</h3>
-      <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
+  <GlassCard className="group hover:shadow-lg transition-all duration-300 p-6">
+    <div
+      className={`w-12 h-12 rounded-lg bg-linear-to-br from-${color}-500 to-${color}-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
+      aria-hidden="true"
+    >
+      <Icon className="h-6 w-6 text-white" />
+    </div>
+    <h3 className="text-lg font-semibold mb-2 text-gray-900">{title}</h3>
+    <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
   </GlassCard>
 );
 
@@ -88,24 +86,24 @@ export const Features = () => {
                   size="lg"
                   className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group focus:ring-4 focus:ring-white/50"
                   aria-label="Get started with The New Fuse features"
-                  onClick={() => window.location.href = '/auth/register'}
+                  onClick={() => (window.location.href = '/auth/register')}
                 >
-                    <Rocket
-                      className="mr-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
-                      aria-hidden="true"
-                    />
-                    Get Started
-                    <ArrowRight
-                      className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
-                      aria-hidden="true"
-                    />
+                  <Rocket
+                    className="mr-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
+                    aria-hidden="true"
+                  />
+                  Get Started
+                  <ArrowRight
+                    className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
+                    aria-hidden="true"
+                  />
                 </PremiumButton>
                 <PremiumButton
                   size="lg"
                   variant="outline"
                   className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg focus:ring-4 focus:ring-white/50"
                   aria-label="Learn more about features"
-                  onClick={() => window.location.href = '/'}
+                  onClick={() => (window.location.href = '/')}
                 >
                   Back to Home
                 </PremiumButton>
@@ -297,20 +295,20 @@ export const Features = () => {
                   size="lg"
                   className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group focus:ring-4 focus:ring-white/50"
                   aria-label="Get started free with The New Fuse"
-                  onClick={() => window.location.href = '/auth/register'}
+                  onClick={() => (window.location.href = '/auth/register')}
                 >
-                    Get Started Free
-                    <ArrowRight
-                      className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
-                      aria-hidden="true"
-                    />
+                  Get Started Free
+                  <ArrowRight
+                    className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300"
+                    aria-hidden="true"
+                  />
                 </PremiumButton>
                 <PremiumButton
                   size="lg"
                   variant="outline"
                   className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg focus:ring-4 focus:ring-white/50"
                   aria-label="Access your dashboard"
-                  onClick={() => window.location.href = '/auth/login'}
+                  onClick={() => (window.location.href = '/auth/login')}
                 >
                   Access Dashboard
                 </PremiumButton>

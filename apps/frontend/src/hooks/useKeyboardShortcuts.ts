@@ -14,18 +14,53 @@ export const useKeyboardShortcuts = () => {
   const [showHelp, setShowHelp] = useState(false);
 
   const shortcuts: Shortcut[] = [
-    { key: '?', description: 'Toggle keyboard shortcuts help', category: 'Global', action: () => setShowHelp(prev => !prev) },
-    { key: 'Escape', description: 'Close help or modals', category: 'Global', action: () => setShowHelp(false) },
-    { key: 'Cmd+K', description: 'Open command palette', category: 'Global', action: () => document.dispatchEvent(new CustomEvent('cmd:palette')) },
+    {
+      key: '?',
+      description: 'Toggle keyboard shortcuts help',
+      category: 'Global',
+      action: () => setShowHelp((prev) => !prev),
+    },
+    {
+      key: 'Escape',
+      description: 'Close help or modals',
+      category: 'Global',
+      action: () => setShowHelp(false),
+    },
+    {
+      key: 'Cmd+K',
+      description: 'Open command palette',
+      category: 'Global',
+      action: () => document.dispatchEvent(new CustomEvent('cmd:palette')),
+    },
     { key: 'Cmd+H', description: 'Go to Home', category: 'Navigation', path: '/' },
     { key: 'Cmd+A', description: 'Go to Agents', category: 'Navigation', path: '/agents' },
     { key: 'Cmd+W', description: 'Go to Workflows', category: 'Navigation', path: '/workflows' },
-    { key: 'Cmd+C', description: 'Go to Command Center', category: 'Navigation', path: '/command-center' },
+    {
+      key: 'Cmd+C',
+      description: 'Go to Command Center',
+      category: 'Navigation',
+      path: '/command-center',
+    },
     { key: 'Cmd+,', description: 'Open Settings', category: 'Navigation', path: '/settings' },
     { key: 'Cmd+N', description: 'Create New Agent', category: 'Actions', path: '/agents/new' },
-    { key: 'Cmd+S', description: 'Save current work', category: 'Actions', action: () => document.dispatchEvent(new CustomEvent('app:save')) },
-    { key: 'Cmd+B', description: 'Toggle Sidebar', category: 'Global', action: () => document.dispatchEvent(new CustomEvent('sidebar:toggle')) },
-    { key: 'Cmd+Shift+P', description: 'Toggle Performance Monitor', category: 'Global', action: () => document.dispatchEvent(new CustomEvent('perf:toggle')) },
+    {
+      key: 'Cmd+S',
+      description: 'Save current work',
+      category: 'Actions',
+      action: () => document.dispatchEvent(new CustomEvent('app:save')),
+    },
+    {
+      key: 'Cmd+B',
+      description: 'Toggle Sidebar',
+      category: 'Global',
+      action: () => document.dispatchEvent(new CustomEvent('sidebar:toggle')),
+    },
+    {
+      key: 'Cmd+Shift+P',
+      description: 'Toggle Performance Monitor',
+      category: 'Global',
+      action: () => document.dispatchEvent(new CustomEvent('perf:toggle')),
+    },
   ];
 
   useEffect(() => {
@@ -45,10 +80,10 @@ export const useKeyboardShortcuts = () => {
       const key = event.key;
       const isShift = event.shiftKey;
 
-      const matchedShortcut = shortcuts.find(s => {
+      const matchedShortcut = shortcuts.find((s) => {
         if (s.key === '?') return key === '?' || (key === '/' && isShift);
         if (s.key === 'Escape') return key === 'Escape';
-        
+
         const parts = s.key.split('+');
         const hasShift = parts.includes('Shift');
         const hasMod = parts.includes('Cmd');
